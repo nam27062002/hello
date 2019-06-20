@@ -179,8 +179,8 @@ public class DragonCorpse : MonoBehaviour {
 			{
 				if ( !string.IsNullOrEmpty(bodyParts[i]) )
 				{
-					GameObject prefabObj = Resources.Load<GameObject>("Game/Equipable/Items/" + dragonSku + "/" + bodyParts[i]);
-					if ( prefabObj != null )
+					GameObject prefabObj = HDAddressablesManager.Instance.LoadAsset<GameObject>(bodyParts[i]);
+                    if ( prefabObj != null )
 					{
 						GameObject objInstance = Instantiate<GameObject>(prefabObj);
 						Equipable equipable = objInstance.GetComponent<Equipable>();
@@ -245,13 +245,14 @@ public class DragonCorpse : MonoBehaviour {
 		if(_name == null || _name.Equals("default") || _name.Equals("")) {
 			_name = dragonSku + "_0";		// Default skin, all dragons should have it
 		}
-			// Not all dragons have wings
-		Material wingsMaterial = null;
-		Material originalWing = Resources.Load<Material>(DragonEquip.SKIN_PATH + dragonSku + "/" + _name + "_wings");
-		if ( originalWing )
+
+        // Not all dragons have wings
+        Material wingsMaterial = null;
+		Material originalWing = HDAddressablesManager.Instance.LoadAsset<Material>(_name + "_wings");
+        if ( originalWing )
 			wingsMaterial = new Material( originalWing );
         Material bodyMaterial = null;
-        Material bodyResource = Resources.Load<Material>(DragonEquip.SKIN_PATH + dragonSku + "/" + _name + "_body");
+        Material bodyResource = HDAddressablesManager.Instance.LoadAsset<Material>(_name + "_body");
         if ( bodyResource )
 		    bodyMaterial = new Material ( bodyResource );
             
@@ -331,11 +332,10 @@ public class DragonCorpse : MonoBehaviour {
 	public void CleanSkin()
 	{
 		string _name = "dragon_empty";
+        Material wingsMaterial = HDAddressablesManager.Instance.LoadAsset<Material>(_name + "_wings");
+        Material bodyMaterial = HDAddressablesManager.Instance.LoadAsset<Material>(_name + "_body");
 
-		Material wingsMaterial = Resources.Load<Material>(DragonEquip.SKIN_PATH + _name + "_wings");
-		Material bodyMaterial = Resources.Load<Material>(DragonEquip.SKIN_PATH + _name + "_body");
-
-		for (int i = 0; i < m_renderers.Length; i++) {
+        for (int i = 0; i < m_renderers.Length; i++) {
 			bool isWings = m_renderers[i].tag == "DragonWings";
             if (isWings)
             {

@@ -14,6 +14,8 @@ public static class EditorAutomaticAddressables {
 
     private static string[] AREAS = { "village", "castle", "dark" };
 
+    private static string[] LOCAL_DRAGONS = { "dragon_baby", "dragon_crocodile", "dragon_reptile" };
+
 
     public static JSONClass BuildRestoreCatalog() {
         List<AddressablesCatalogEntry> entryList = new List<AddressablesCatalogEntry>();
@@ -59,8 +61,19 @@ public static class EditorAutomaticAddressables {
                     }
                 } else {
                     foreach (string bundle in bundleList) {
-                        if (bundle.Contains(AREAS[0]) || bundle.Contains("shared")) {
+                        if (bundle.Contains(AREAS[0]) || bundle.Contains("shared") || bundle.EndsWith("_local", System.StringComparison.InvariantCulture)) {
                             localAssetBundles.Add(bundle);
+                        }
+                        else
+                        {
+                            for (int i = 0; i < LOCAL_DRAGONS.Length; i++)
+                            {
+                                if ( bundle.Contains( LOCAL_DRAGONS[i]) && !bundle.Contains( "animoji" )) 
+                                {
+                                    localAssetBundles.Add(bundle);
+                                    break;
+                                }
+                            }
                         }
                     }
                 }
@@ -87,6 +100,10 @@ public static class EditorAutomaticAddressables {
 
             }
             catalog.Add("groups", groups);
+            
+            
+            
+            
         }
 
         return catalog;
@@ -110,6 +127,15 @@ public static class EditorAutomaticAddressables {
         GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/3D/Gameplay/Equipable/items/NPC/"), false, entries, bundlesSet);
         GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/3D/Gameplay/Particles/"), false, entries, bundlesSet);
         GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/3D/Gameplay/Projectiles/"), false, entries, bundlesSet);
+        GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/3D/Gameplay/Dragons/Prefabs/"), false, entries, bundlesSet);
+        GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/3D/Gameplay/Dragons/Skins/"), false, entries, bundlesSet);
+        GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/3D/Gameplay/Dragons/Items/"), false, entries, bundlesSet);
+        GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/UI/Metagame/Dragons/Disguises/"), false, entries, bundlesSet);
+        GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/3D/Gameplay/Pets/Prefabs/"), false, entries, bundlesSet);
+        GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/UI/Metagame/Pets/"), false, entries, bundlesSet);
+
+        // AR (only for iOS)
+        GetEntriesFromDirectory(new DirectoryInfo("Assets/PlatformResources/iOS/AR/Animojis/"), false, entries, bundlesSet, null, BuildTarget.iOS);
 
         _entries = entries;
         _bundles = bundlesSet.ToList();
@@ -119,26 +145,46 @@ public static class EditorAutomaticAddressables {
         List<AddressablesCatalogEntry> entries = new List<AddressablesCatalogEntry>();
         HashSet<string> bundlesSet = new HashSet<string>();
 
+        System.Type[] instanciableTypes = new System.Type[] { typeof(UnityEngine.GameObject), typeof(UnityEditor.SceneAsset) };
         GetEntriesFromDirectory(new DirectoryInfo("Assets/AI"), false, null, bundlesSet);
         GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/3D/Gameplay/Entities"), false, null, bundlesSet);
-        GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/3D/Gameplay/Entities/PrefabsMenu/"), false, entries, bundlesSet, true);
+        GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/3D/Gameplay/Entities/PrefabsMenu/"), false, entries, bundlesSet, instanciableTypes);
         GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/Particles/"), false, null, bundlesSet);
         GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/VFX/"), false, null, bundlesSet);
-        GetEntriesFromDirectory(new DirectoryInfo("Assets/Game/Scenes/Levels/"), false, entries, bundlesSet, true);
-        GetEntriesFromDirectory(new DirectoryInfo("Assets/" + IEntity.ENTITY_PREFABS_PATH), true, entries, bundlesSet, true);
+        GetEntriesFromDirectory(new DirectoryInfo("Assets/Game/Scenes/Levels/"), false, entries, bundlesSet, instanciableTypes);
+        GetEntriesFromDirectory(new DirectoryInfo("Assets/" + IEntity.ENTITY_PREFABS_PATH), true, entries, bundlesSet, instanciableTypes);
         GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/3D/Gameplay/Blockers/Prefabs/"), false, entries, bundlesSet);
-        GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/3D/Gameplay/Equipable/items/NPC/"), false, entries, bundlesSet, true);
-        GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/3D/Gameplay/Particles/"), false, entries, bundlesSet, true);
-        GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/3D/Gameplay/Projectiles/"), false, entries, bundlesSet, true);
+        GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/3D/Gameplay/Equipable/items/NPC/"), false, entries, bundlesSet, instanciableTypes);
+        GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/3D/Gameplay/Particles/"), false, entries, bundlesSet, instanciableTypes);
+        GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/3D/Gameplay/Projectiles/"), false, entries, bundlesSet, instanciableTypes);
+
+        // Add all dragon bundles to bundleSet and (prefabs and materials) to entries
+        System.Type[] instanciableTypesAndMaterials = new System.Type[] { typeof(UnityEngine.GameObject), typeof(UnityEditor.SceneAsset), typeof( UnityEngine.Material ) };
+        GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/3D/Gameplay/Dragons/Prefabs/"), false, entries, bundlesSet, instanciableTypes);
+        GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/3D/Gameplay/Dragons/Skins/"), false, entries, bundlesSet, instanciableTypesAndMaterials);
+        GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/3D/Gameplay/Dragons/Items/"), false, entries, bundlesSet, instanciableTypes);
+
+        // Disguise icons
+        System.Type[] instanciableTypesTextures = new System.Type[] { typeof(UnityEngine.Texture2D) };
+        GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/UI/Metagame/Dragons/Disguises/"), false, entries, bundlesSet, instanciableTypesTextures);
+
+        // Add all pets bundles
+        GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/3D/Gameplay/Pets/Prefabs/"), false, entries, bundlesSet, instanciableTypes);
+        GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/UI/Metagame/Pets/"), false, entries, bundlesSet, instanciableTypesTextures);
+
+        // AR (only for iOS)
+        GetEntriesFromDirectory(new DirectoryInfo("Assets/PlatformResources/iOS/AR/Animojis/"), false, entries, bundlesSet, instanciableTypes, BuildTarget.iOS);
 
         _entries = entries;
         _bundles = bundlesSet.ToList();
     }
 
-    private static void GetEntriesFromDirectory(DirectoryInfo _directory, bool _addLastFolder,  List<AddressablesCatalogEntry> _entries, HashSet<string> _bundles, bool _onlyInstantiables = false) {
+    private static void GetEntriesFromDirectory(DirectoryInfo _directory, bool _addLastFolder,  List<AddressablesCatalogEntry> _entries, HashSet<string> _bundles, System.Type[] _allowedTypes = null, BuildTarget platform = BuildTarget.NoTarget) {
+        string platformAsString = (platform == BuildTarget.NoTarget) ? null : platform.ToString();
+
         DirectoryInfo[] directories = _directory.GetDirectories();
         foreach (DirectoryInfo directory in directories) {
-            GetEntriesFromDirectory(directory, _addLastFolder, _entries, _bundles, _onlyInstantiables);
+            GetEntriesFromDirectory(directory, _addLastFolder, _entries, _bundles, _allowedTypes);
         }
 
         FileInfo[] files = _directory.GetFiles();
@@ -155,9 +201,9 @@ public static class EditorAutomaticAddressables {
                     bool createEntry = false;
 
                     if (_entries != null) {
-                        if (_onlyInstantiables) {
+                        if (_allowedTypes != null) {
                             System.Type t = AssetDatabase.GetMainAssetTypeAtPath(filePath);
-                            createEntry = (t == typeof(UnityEngine.GameObject)) || (t == typeof(UnityEditor.SceneAsset));
+                            createEntry = _allowedTypes.Contains(t);
                         } else {
                             createEntry = true;
                         }
@@ -180,10 +226,11 @@ public static class EditorAutomaticAddressables {
                             }
                         }
 
-                        AddressablesCatalogEntry entry = new AddressablesCatalogEntry(id, variant, AssetDatabase.AssetPathToGUID(filePath), true) {
+                        AddressablesCatalogEntry entry = new AddressablesCatalogEntry(id, variant, AssetDatabase.AssetPathToGUID(filePath), true, true) {
                             LocationType = AddressablesTypes.ELocationType.AssetBundles,
                             AssetName = assetName,
-                            AssetBundleName = assetBundle
+                            AssetBundleName = assetBundle,
+                            Platform = platformAsString                                                        
                         };
 
 

@@ -144,6 +144,7 @@ GameObject:
   - component: {fileID: 222397657205604236}
   - component: {fileID: 114634441485424096}
   - component: {fileID: 114736136132723286}
+  - component: {fileID: 114204370521111634}
   m_Layer: 5
   m_Name: Icon
   m_TagString: Untagged
@@ -151,6 +152,21 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &114204370521111634
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1961466319903268}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 285cd8cfbf6c84d2fab86d95b9d993fc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_assetId: 
+  m_loadOnAwake: 0
+  m_image: {fileID: 114634441485424096}
+  m_loadingPrefab: {fileID: 0}
 --- !u!114 &114634441485424096
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -221,7 +237,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_showInfoButton: 1
-  m_image: {fileID: 114634441485424096}
+  m_enableMask: 0
+  m_loader: {fileID: 114204370521111634}
 --- !u!222 &222378785652548598
 CanvasRenderer:
   m_ObjectHideFlags: 1

@@ -155,6 +155,11 @@ public class UIColorFX : UIBehaviour {	// Inherit from UIBehaviour to have some 
 		get { return m_imageMaterial; }
 	}
 
+	private Material m_imageMaterialWithRamp = null;
+	public Material imageMaterialWithRamp {
+		get { return m_imageMaterialWithRamp; }
+	}
+
 	private Material m_fontMaterial = null;
 	public Material fontMaterial {
 		get { return m_fontMaterial; }
@@ -334,6 +339,9 @@ public class UIColorFX : UIBehaviour {	// Inherit from UIBehaviour to have some 
 		// Images
 		if(m_applyToImages) {
 			UpdateMaterial(m_imageMaterial);
+			if(m_colorRampEnabled) {
+				UpdateMaterial(m_imageMaterialWithRamp);
+			}
 			UpdateMaterial(m_imageMaterialReplacement);
 		}
 
@@ -353,12 +361,15 @@ public class UIColorFX : UIBehaviour {	// Inherit from UIBehaviour to have some 
 			_mat.SetColor("_ColorMultiply", colorMultiply);
 			_mat.SetColor("_ColorAdd", colorAdd);
 
-			_mat.SetFloat("_ColorRampEnabled", m_colorRampEnabled ? 1f : 0f);
-			if(m_colorRampEnabled) {
-				_mat.SetTexture("_ColorRampTex", colorRamp);
+			// Color ramp: only if enabled and if material is the ramp material
+			if(_mat == m_imageMaterialWithRamp) {
+				_mat.SetFloat("_ColorRampEnabled", m_colorRampEnabled ? 1f : 0f);
+				if(m_colorRampEnabled) {
+					_mat.SetTexture("_ColorRampTex", colorRamp);
 #if ALLOW_RAMP_INTENSITY
-				_mat.SetFloat("_ColorRampIntensity", colorRampIntensity);
+					_mat.SetFloat("_ColorRampIntensity", colorRampIntensity);
 #endif
+				}
 			}
 
 			_mat.SetFloat("_Alpha", alpha);
@@ -375,19 +386,22 @@ public class UIColorFX : UIBehaviour {	// Inherit from UIBehaviour to have some 
 	/// Make sure materials are created and apply them to all subchildren.
 	/// </summary>
 	private void ApplyMaterials() {
-		// Choose material based on setup
-		string suffix = "";
-		if(m_colorRampEnabled) {
-			suffix = COLOR_RAMP_MATERIAL_SUFFIX;
-		}
-
 		// Create all materials if not already done
 		if(m_applyToImages) {
+			// Without ramp
 			if(m_imageMaterial == null) {
-				Material matBase = Resources.Load<Material>(IMAGE_REFERENCE_MATERIAL_PATH + suffix);
+				Material matBase = Resources.Load<Material>(IMAGE_REFERENCE_MATERIAL_PATH);
 				m_imageMaterial = new Material(matBase);
 				m_imageMaterial.hideFlags = HideFlags.HideAndDontSave;
 				m_imageMaterial.name = "MT_UIColorFX_" + this.name;
+			}
+
+			// With ramp (only if needed)
+			if(m_colorRampEnabled && m_imageMaterialWithRamp == null) {
+				Material matBase = Resources.Load<Material>(IMAGE_REFERENCE_MATERIAL_PATH + COLOR_RAMP_MATERIAL_SUFFIX);
+				m_imageMaterialWithRamp = new Material(matBase);
+				m_imageMaterialWithRamp.hideFlags = HideFlags.HideAndDontSave;
+				m_imageMaterialWithRamp.name = "MT_UIColorFX_" + this.name + COLOR_RAMP_MATERIAL_SUFFIX;
 			}
 		}
 
@@ -403,9 +417,19 @@ public class UIColorFX : UIBehaviour {	// Inherit from UIBehaviour to have some 
 		// Get all image components and replace their material
 		if(m_applyToImages) {
 			if(m_imageMaterial != null) {
+				Material targetMaterial = null;
 				Image[] images = GetComponentsInChildren<Image>();
 				foreach(Image img in images) {
-					img.material = m_imageMaterial;
+					// If using color ramp, use the color ramp material ONLY for this object
+					targetMaterial = m_imageMaterial;
+					if(img.gameObject == this.gameObject) {
+						if(m_colorRampEnabled && m_imageMaterialWithRamp != null) {
+							targetMaterial = m_imageMaterialWithRamp;
+						}
+					}
+
+					// Apply selected material
+					img.material = targetMaterial;
 				}
 			}
 		}
@@ -428,6 +452,11 @@ public class UIColorFX : UIBehaviour {	// Inherit from UIBehaviour to have some 
 		if(m_imageMaterial != null) {
 			DestroyImmediate(m_imageMaterial);
 			m_imageMaterial = null;
+		}
+
+		if(m_imageMaterialWithRamp != null) {
+			DestroyImmediate(m_imageMaterialWithRamp);
+			m_imageMaterialWithRamp = null;
 		}
 
 		if(m_imageMaterialReplacement != null) {

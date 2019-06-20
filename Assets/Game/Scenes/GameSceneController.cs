@@ -134,10 +134,7 @@ public class GameSceneController : GameSceneControllerBase {
         m_mapUsageTracker = new TrackerMapUsage();
         m_specialPowerTimeTracker = new TrackerSpecialPowerTime();
 
-        Screen.sleepTimeout = SleepTimeout.NeverSleep;
-
-        // Make sure loading screen is visible
-        LoadingScreen.Toggle(true, false);
+        Screen.sleepTimeout = SleepTimeout.NeverSleep;        
 
         // Check whether the tutorial popup must be displayed
         if (!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.FIRST_RUN)
@@ -639,8 +636,10 @@ public class GameSceneController : GameSceneControllerBase {
                 // Stops performance track
                 HDTrackingManager.Instance.Notify_StopPerformanceTracker();
 
+                HDTrackingManager.Instance.Notify_LoadingResultsStart();
+
                 // Show loading screen
-                LoadingScreen.Toggle(true, false);
+                LoadingScreen.Toggle(true, false, true);
 
 				// Disable dragon and entities!
      			InstanceManager.player.gameObject.SetActive(false);
@@ -680,13 +679,13 @@ public class GameSceneController : GameSceneControllerBase {
                         i++;
 					}
                 }
-                                                     
+                                                                     
                 List<string> scenesToLoad = new List<string>();
                 scenesToLoad.Add(ResultsScreenController.NAME);
-                m_switchAsyncScenes.Perform(scenesToUnload, scenesToLoad, true, OnResultsSceneLoaded, OnScenesUnloaded);
 
-                List<string> dependencyIds = HDAddressablesManager.Instance.GetAssetBundlesGroupDependencyIds((LevelManager.currentArea));
-                HDAddressablesManager.Instance.UnloadDependencyIdsList(dependencyIds);
+                List<string> dependencyIdsToUnload = HDAddressablesManager.Instance.GetAssetBundlesGroupDependencyIds((LevelManager.currentArea));
+                AddressablesBatchHandle batchHandle = HDAddressablesManager.Instance.GetAddressablesAreaBatchHandle(ResultsScreenController.NAME);                
+                m_switchAsyncScenes.Perform(scenesToUnload, scenesToLoad, true, dependencyIdsToUnload, batchHandle.DependencyIds, OnResultsSceneLoaded, OnScenesUnloaded);                                               
 
                 HDAddressablesManager.Instance.Ingame_NotifyLevelUnloaded();
             } break;

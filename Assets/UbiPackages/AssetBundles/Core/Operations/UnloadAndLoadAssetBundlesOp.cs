@@ -36,6 +36,12 @@ public class UnloadAndLoadAssetBundlesOp : UbiAsyncOperation
                         AssetBundlesManager.Instance.UnloadAssetBundleList(AssetBundleIdsToUnload);
                     }
 
+                    if (OnUnloadDone != null)
+                    {
+                        OnUnloadDone();
+                        OnUnloadDone = null;
+                    }
+
                     Step = EStep.LoadingNextAssetBundleList;
                     break;
 
@@ -46,7 +52,54 @@ public class UnloadAndLoadAssetBundlesOp : UbiAsyncOperation
                     }
                     else
                     {
-                        Request = AssetBundlesManager.Instance.LoadAssetBundleList(AssetBundleIdsToLoad, null, true);
+                        List<string> idsToLoad;
+                        if (AssetBundleIdsToLoad == null)
+                        {
+                            idsToLoad = AssetBundleIdsToLoad;
+                        }
+                        else
+                        {
+                            idsToLoad = new List<string>();
+
+                            // Filters out the remote asset bundles that are not available                         
+                            int count = AssetBundleIdsToLoad.Count;
+                            for (int i = 0; i < count; i++)
+                            {
+                                if (AssetBundlesManager.Instance.IsAssetBundleAvailable(AssetBundleIdsToLoad[i]))
+                                {
+                                    idsToLoad.Add(AssetBundleIdsToLoad[i]);
+                                }                                
+                            }
+
+                            if (AssetBundlesManager.CanLog())
+                            {
+                                string msg = null;
+                                count = MandatoryAssetBundleIdsToLoad.Count;
+                                for (int i = 0; i < count; i++)
+                                {
+                                    if (!AssetBundlesManager.Instance.IsAssetBundleAvailable(MandatoryAssetBundleIdsToLoad[i]))
+                                    {
+                                        if (msg == null)
+                                        {
+                                            msg = "";
+                                        }
+                                        else
+                                        {
+                                            msg += ", ";
+                                        }
+
+                                        msg += MandatoryAssetBundleIdsToLoad[i];
+                                    }
+                                }
+
+                                if (msg != null)
+                                {
+                                    AssetBundlesManager.Logger.LogError("Following asset bundles couldn't be loaded: " + msg);
+                                }
+                            }
+                        }
+                        
+                        Request = AssetBundlesManager.Instance.LoadAssetBundleList(idsToLoad, null, true);
                     }
                     break;
             }
@@ -57,11 +110,14 @@ public class UnloadAndLoadAssetBundlesOp : UbiAsyncOperation
 
     private List<string> AssetBundleIdsToUnload { get; set; }
     private List<string> AssetBundleIdsToLoad { get; set; }
+    private List<string> MandatoryAssetBundleIdsToLoad { get; set; }
 
-    public void Setup(List<string> rawAssetBundleIdsToUnload, List<string> rawAssetBundleIdsToLoad)
+    private System.Action OnUnloadDone { get; set; }
+
+    public void Setup(List<string> rawAssetBundleIdsToUnload, List<string> rawAssetBundleIdsToLoad, List<string> rawMandatoryAssetBundleIdsToLoad, System.Action onUnloadDone = null)
     {
         Step = EStep.None;
-        
+        /*
         List<string> assetBundleIdsToStay = null;
 
         // Only the asset bundles that are not required by rawAssetBundleIdsToLoad need to be unloaded
@@ -73,6 +129,14 @@ public class UnloadAndLoadAssetBundlesOp : UbiAsyncOperation
 
         AssetBundleIdsToUnload = assetBundleIdsToUnload;
         AssetBundleIdsToLoad = assetBundleIdsToLoad;
+        */
+
+        AssetBundleIdsToUnload = rawAssetBundleIdsToUnload;
+        AssetBundleIdsToLoad = rawAssetBundleIdsToLoad;
+        
+        MandatoryAssetBundleIdsToLoad = rawMandatoryAssetBundleIdsToLoad;
+
+        OnUnloadDone = onUnloadDone;
 
         Step = EStep.UnloadingPreviousAssetBundleList;
     }

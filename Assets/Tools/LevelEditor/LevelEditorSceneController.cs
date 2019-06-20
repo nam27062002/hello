@@ -47,7 +47,7 @@ namespace LevelEditor {
             ApplicationManager.CreateInstance();
 			ControlPanel.CreateInstance();
 
-			HDAddressablesManager.Instance.Initialise();
+			HDAddressablesManager.Instance.Initialize();
 
             // Initialize some required managers
 			ContentManager.InitContent(true, false);
@@ -56,9 +56,10 @@ namespace LevelEditor {
             BubbledEntitySystem.CreateInstance();
             SpawnerManager.CreateInstance();
 
+			// Initialize fake profile for the level editor
             UsersManager.CreateInstance();
 
-            DragonManager.SetupUser(UsersManager.currentUser);
+			DragonManager.SetupUser(UsersManager.currentUser);
             MissionManager.SetupUser(UsersManager.currentUser);
             EggManager.SetupUser(UsersManager.currentUser);
             ChestManager.SetupUser(UsersManager.currentUser);
@@ -96,12 +97,30 @@ namespace LevelEditor {
 			while( !PersistenceFacade.instance.LocalDriver.IsLoadedInGame)
 			{
 				yield return null;
-			}            
+			}
+
+			// Mark tutorial as completed
+			UsersManager.currentUser.SetTutorialStepCompleted(TutorialStep.ALL, true);
+			UsersManager.currentUser.gamesPlayed = 25;
+
+			// Override some values in the user profile
+			DefinitionNode testDragonDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, LevelEditor.settings.testDragon);
+			if(testDragonDef.GetAsString("type") == DragonDataClassic.TYPE_CODE) {
+				UsersManager.currentUser.currentClassicDragon = testDragonDef.sku;
+				SceneController.SetMode(Mode.DEFAULT);
+			} else {
+				UsersManager.currentUser.currentSpecialDragon = testDragonDef.sku;
+				SceneController.SetMode(Mode.SPECIAL_DRAGONS);
+			}
 
             InstanceManager.player.gameObject.SetActive(true);
 
 			ChestManager.CreateInstance();
+			ChestManager.SetupUser(UsersManager.currentUser);
+
 			EggManager.CreateInstance();
+			EggManager.SetupUser(UsersManager.currentUser);
+
 			CollectiblesManager.CreateInstance();
 			CollectiblesManager.OnLevelLoaded();
 

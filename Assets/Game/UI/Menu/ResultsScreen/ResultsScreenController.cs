@@ -291,6 +291,10 @@ public class ResultsScreenController : MonoBehaviour {
 		// Find out next step
 		m_stepIdx = CheckNextStep();
 
+        if (m_stepIdx == (int)Step.INIT) {
+            HDTrackingManager.Instance.Notify_LoadingResultsEnd();
+        }
+
 		// If we're at the last step, go back to menu!
 		if(m_stepIdx >= m_activeSequence.Length) {
 			GoToMenu();
@@ -350,7 +354,7 @@ public class ResultsScreenController : MonoBehaviour {
 	/// </summary>
 	private void GoToMenu() {
 		// Show loading screen
-		LoadingScreen.Toggle(true, false);
+		LoadingScreen.Toggle(true, false, false);
 
 		// If a new dragon was unlocked, tell the menu to show the dragon unlocked screen first!
 		// [AOC] TODO!!

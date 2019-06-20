@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using SimpleJSON;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -26,41 +27,34 @@ public class HDAddressablesManager : AddressablesManager
 
     private HDDownloadablesTracker m_tracker;
 
+    private string LastSceneId { get; set; }
+
     /// <summary>
     /// Make sure this method is called after ContentDeltaManager.OnContentDelta() was called since this method uses data from assetsLUT to create downloadables catalog.
     /// </summary>
-    public void Initialise()
+    public void Initialize()
     {
-        Logger logger = (FeatureSettingsManager.IsDebugEnabled) ? new CPLogger(ControlPanel.ELogChannel.Addressables) : null;
-        
-        string addressablesPath = "Addressables";
-        string assetBundlesPath = addressablesPath;
-        string addressablesCatalogPath = Path.Combine(addressablesPath, "addressablesCatalog");        
+        LastSceneId = null;
 
-        // Addressables catalog 
-        TextAsset targetFile = Resources.Load<TextAsset>(addressablesCatalogPath);
-        string catalogAsText = (targetFile == null) ? null : targetFile.text;        
-        JSONNode catalogASJSON = (string.IsNullOrEmpty(catalogAsText)) ? null : JSON.Parse(catalogAsText);
+        Logger logger = (FeatureSettingsManager.IsDebugEnabled) ? new CPLogger(ControlPanel.ELogChannel.Addressables) : null;
+
+        // Addressables catalog     
+        string catalogAsText = GetAddressablesFileText("addressablesCatalog", true);
+        JSONNode catalogAsJSON = (string.IsNullOrEmpty(catalogAsText)) ? null : JSON.Parse(catalogAsText);
 
         // Retrieves downloadables catalog
         // TODO: Retrieve this information from the assetsLUT cached
+        // Downloadables catalog        
         /*
-        string downloadablesPath = addressablesPath;
-        string downloadablesCatalogPath = Path.Combine(downloadablesPath, "downloadablesCatalog.json");
-        if (BetterStreamingAssets.FileExists(downloadablesCatalogPath))
-        {
-            catalogAsText = BetterStreamingAssets.ReadAllText(downloadablesCatalogPath);
-        }
-        JSONNode downloadablesCatalogAsJSON = (string.IsNullOrEmpty(catalogAsText)) ? null : JSON.Parse(catalogAsText);
+        catalogAsText = GetAddressablesFileText("downloadablesCatalog", true);
+        JSONNode downloadablesCatalogASJSON = (string.IsNullOrEmpty(catalogAsText)) ? null : JSON.Parse(catalogAsText);
         */
 
-        // Downloadables config
-        string downloadablesConfigPath = Path.Combine(addressablesPath, "downloadablesConfig");
-        targetFile = Resources.Load<TextAsset>(downloadablesConfigPath);
-        catalogAsText = (targetFile == null) ? null : targetFile.text;
-        JSONNode downloadablesConfigJSON = (string.IsNullOrEmpty(catalogAsText)) ? null : JSON.Parse(catalogAsText);
+        // Downloadables config        
+        catalogAsText = GetAddressablesFileText("downloadablesConfig", false);
+        JSONNode downloadablesConfigAsJSON = (string.IsNullOrEmpty(catalogAsText)) ? null : JSON.Parse(catalogAsText);
         Downloadables.Config downloadablesConfig = new Downloadables.Config();
-        downloadablesConfig.Load(downloadablesConfigJSON, logger);
+        downloadablesConfig.Load(downloadablesConfigAsJSON, logger);
 
         // downloadablesCatalog is created out of latest assetsLUT
         ContentDeltaManager.ContentDeltaData assetsLUT = ContentDeltaManager.SharedInstance.m_kServerDeltaData;
@@ -72,16 +66,38 @@ public class HDAddressablesManager : AddressablesManager
         m_tracker = new HDDownloadablesTracker(downloadablesConfig, logger);
         JSONNode downloadablesCatalogAsJSON = AssetsLUTToDownloadablesCatalog(assetsLUT);
 
+        // AssetBundles catalog
+        catalogAsText = GetAddressablesFileText("assetBundlesCatalog", true);
+        JSONNode abCatalogAsJSON = (string.IsNullOrEmpty(catalogAsText)) ? null : JSON.Parse(catalogAsText);
+
 #if UNITY_EDITOR && false
         bool useMockDrivers = true;
 #else
         Calety.Server.ServerConfig kServerConfig = ServerManager.SharedInstance.GetServerConfig();
 	    bool useMockDrivers = (kServerConfig != null && kServerConfig.m_eBuildEnvironment != CaletyConstants.eBuildEnvironments.BUILD_PRODUCTION);                       
 #endif
-        Initialize(catalogASJSON, assetBundlesPath, downloadablesConfig, downloadablesCatalogAsJSON, useMockDrivers, m_tracker, logger);
+        Initialize(catalogAsJSON, abCatalogAsJSON, downloadablesConfig, downloadablesCatalogAsJSON, useMockDrivers, m_tracker, logger);
 
         InitDownloadableHandles();        
         InitAddressablesAreas();
+    }
+
+    private string GetAddressablesFileText(string fileName, bool platformDependent)
+    {
+#if UNITY_EDITOR
+        string path = "Assets/Editor/Addressables/generated/";
+        if (platformDependent)
+        {
+            path += UnityEditor.EditorUserBuildSettings.activeBuildTarget.ToString() + "/";
+        }
+
+        path += fileName + ".json";
+        return File.ReadAllText(path);
+#else
+        string path = "Addressables/" + fileName;                        
+        TextAsset targetFile = Resources.Load<TextAsset>(path);
+        return (targetFile == null) ? null : targetFile.text;
+#endif
     }
 
     private string GetEnvironmentUrlBase()
@@ -308,12 +324,15 @@ public class HDAddressablesManager : AddressablesManager
             m_addressablesAreaLoader = new HDAddressablesAreaLoader();
         }
 
-        m_addressablesAreaLoader.Setup(handle, sceneId);
+        // First loading mustn't show the dragon icon
+        m_addressablesAreaLoader.Setup(handle, sceneId, ((sceneId == MenuSceneController.NAME && !string.IsNullOrEmpty(LastSceneId)) || sceneId == GameSceneController.NAME));
+
+        LastSceneId = sceneId;
 
         return m_addressablesAreaLoader;
     }
     
-    private AddressablesBatchHandle GetAddressablesAreaBatchHandle(string sceneId)
+    public AddressablesBatchHandle GetAddressablesAreaBatchHandle(string sceneId)
     {
         AddressablesBatchHandle returnValue = new AddressablesBatchHandle();        
         if (sceneId == MenuSceneController.NAME)
@@ -323,10 +342,13 @@ public class HDAddressablesManager : AddressablesManager
         }
         else if (sceneId == GameSceneController.NAME)
         {
-            // Dependecies because of area_1 level            
-            AddLevelArea1DependenciesToAddressablesBatchHandle(returnValue);
-
-            // Dependencies because of the current dragon (ingame version)
+            // Game
+            AddGameDependenciesToAddressablesBatchHandle(returnValue);            
+        }
+        else if (sceneId == ResultsScreenController.NAME)
+        {
+            // Results
+            AddResultsDependenciesToAddressablesBatchHandle(returnValue);
         }
 
         return returnValue;
@@ -354,7 +376,7 @@ public class Ingame_SwitchAreaHandle
         private List<AddressablesOp> m_prevAreaScenesToUnload;
         private List<AddressablesOp> m_nextAreaScenesToLoad;        
 
-        public Ingame_SwitchAreaHandle(string prevArea, string nextArea, List<string> prevAreaRealSceneNames, List<string> nextAreaRealSceneNames)
+        public Ingame_SwitchAreaHandle(string prevArea, string nextArea, List<string> prevAreaRealSceneNames, List<string> nextAreaRealSceneNames, List<string> dependenciesToStayInMemory)
         {
             PrevAreaRealSceneNames = prevAreaRealSceneNames;
             NextAreaRealSceneNames = nextAreaRealSceneNames;
@@ -384,8 +406,15 @@ public class Ingame_SwitchAreaHandle
             List<string> assetBundleIdsToLoad;            
             UbiListUtils.SplitIntersectionAndDisjoint(nextAreaDependencyIds, assetBundleIdsToStay, out assetBundleIdsToStay, out assetBundleIdsToLoad);
 
-            DependencyIdsToLoad = assetBundleIdsToLoad;
-            DependencyIdsToUnload = assetBundleIdsToUnload;            
+            // Makes sure that the dependencyIds (typically the ones that player's dragon and pets depend on) that need to stay in memory are not unloaded
+            List<string> actualAssetBundleIdsToUnload;
+            UbiListUtils.SplitIntersectionAndDisjoint(assetBundleIdsToUnload, dependenciesToStayInMemory, out assetBundleIdsToStay, out actualAssetBundleIdsToUnload);
+
+            List<string> actualAssetBundleIdsToLoad;
+            UbiListUtils.SplitIntersectionAndDisjoint(assetBundleIdsToLoad, dependenciesToStayInMemory, out assetBundleIdsToStay, out actualAssetBundleIdsToLoad);
+
+            DependencyIdsToLoad = actualAssetBundleIdsToLoad;
+            DependencyIdsToUnload = actualAssetBundleIdsToUnload;            
         }       
 
         public bool NeedsToUnloadPrevAreaDependencies()
@@ -472,7 +501,7 @@ public class Ingame_SwitchAreaHandle
         }
     }    
 
-    public Ingame_SwitchAreaHandle Ingame_SwitchArea(string prevArea, string newArea, List<string> prevAreaRealSceneNames, List<string> nextAreaRealSceneNames)
+    public Ingame_SwitchAreaHandle Ingame_SwitchArea(string prevArea, string newArea, List<string> prevAreaRealSceneNames, List<string> nextAreaRealSceneNames, List<string> dependencyIdsToStayInMemory)
     {
         // Makes sure that all scenes are available. For now a scene is not scheduled to be loaded if it's not available because there's no support
         // for downloading stuff during the loading screen. 
@@ -493,7 +522,7 @@ public class Ingame_SwitchAreaHandle
             }
         }
 
-        return new Ingame_SwitchAreaHandle(prevArea, newArea, prevAreaRealSceneNames, nextAreaRealSceneNames);
+        return new Ingame_SwitchAreaHandle(prevArea, newArea, prevAreaRealSceneNames, nextAreaRealSceneNames, dependencyIdsToStayInMemory);
     }
 
     /// <summary>
@@ -517,13 +546,16 @@ public class Ingame_SwitchAreaHandle
     // [AOC] Keep it hardcoded? For now it's fine since there aren't so many 
     //		 groups and rules can be tricky to represent in content
 
-    private const string DOWNLOADABLE_GROUP_LEVEL_AREA_1 = GROUP_LEVEL_AREA_1;
-    private const string DOWNLOADABLE_GROUP_LEVEL_AREA_2 = GROUP_LEVEL_AREA_2;
-    private const string DOWNLOADABLE_GROUP_LEVEL_AREA_3 = GROUP_LEVEL_AREA_3;
+    private const string DOWNLOADABLE_GROUP_LEVEL_AREA_1        = GROUP_LEVEL_AREA_1;
+    private const string DOWNLOADABLE_GROUP_LEVEL_AREA_2        = GROUP_LEVEL_AREA_2;
+    private const string DOWNLOADABLE_GROUP_LEVEL_AREA_3        = GROUP_LEVEL_AREA_3;
     
     // Combined    
-    private const string DOWNLOADABLE_GROUP_LEVEL_AREAS_1_2 = "areas1_2";
-    private const string DOWNLOADABLE_GROUP_LEVEL_AREAS_1_2_3 = "areas1_2_3";
+    private const string DOWNLOADABLE_GROUP_LEVEL_AREAS_1_2     = "areas1_2";
+    private const string DOWNLOADABLE_GROUP_LEVEL_AREAS_1_2_3   = "areas1_2_3";
+
+    // All downloadables
+    private const string DOWNLOADABLE_GROUP_ALL                 = "all";
 
     /// <summary>
     /// Downloadable.Handle objects are cached because they're going to be requested ofter and generating them often may trigger garbage collector often
@@ -567,7 +599,7 @@ public class Ingame_SwitchAreaHandle
     /// </summary>
     /// <param name="handleId">Id of the handle requested. This id is the one used in <c>InitDownloadableHandles()</c> when the handles were created.</param>
     /// <returns>Returns a <c>Downloadables.Handle</c> object which handles the downloading of all downloadables associated to the groups used when <c>handleId</c> was created.</returns>
-    public Downloadables.Handle GetDownloadablesHandle(string handleId)
+    private Downloadables.Handle GetDownloadablesHandle(string handleId)
     {
         Downloadables.Handle returnValue = null;
         if (m_downloadableHandles != null && !string.IsNullOrEmpty(handleId))
@@ -585,6 +617,10 @@ public class Ingame_SwitchAreaHandle
     /// <returns>The handle for all downloadables required for that dragon.</returns>
     /// <param name="_dragonSku">Classic dragon sku.</param>
     public Downloadables.Handle GetHandleForClassicDragon(string _dragonSku) {
+		// Create new handle. We will fill it with downloadable Ids based on target dragon status
+		Downloadables.Handle handle = CreateDownloadablesHandle();
+		List<string> resourceIDs = new List<string>();
+
 		// Get target dragon info
 		IDragonData dragonData = DragonManager.GetDragonData(_dragonSku);
 
@@ -592,9 +628,20 @@ public class Ingame_SwitchAreaHandle
 		// 1. Level area dependencies: will depend basically on the dragon's tier
 		//    Some powers allow dragons to go to areas above their tier, check for those cases as well
 		List<string> equippedPowers = GetPowersList(dragonData.persistentDisguise, dragonData.pets);
+		Downloadables.Handle levelHandle = GetLevelHandle(dragonData.tier, equippedPowers);
+		handle.AddDownloadableIds(levelHandle.GetDownloadableIds());
 
-		// No more dependencies to be checked: return handler!
-		return GetHandleForDragonTier(dragonData.tier, equippedPowers);
+		// 2. Dragon bundles
+		resourceIDs.AddRange(GetResourceIDsForDragon(_dragonSku));
+
+		// 3. Equipped pets bundles
+		for(int i = 0; i < dragonData.pets.Count; ++i) {
+			resourceIDs.AddRange(GetResourceIDsForPet(dragonData.pets[i]));
+		}
+
+		// No more dependencies to be checked: Add resource IDs and return!
+		HDAddressablesManager.Instance.AddResourceListDownloadableIdsToHandle(handle, resourceIDs);
+		return handle;
 	}
 
 	/// <summary>
@@ -613,6 +660,10 @@ public class Ingame_SwitchAreaHandle
 	/// <returns>The handle for all downloadables required for that dragon.</returns>
 	/// <param name="_tournament">Tournament data.</param>
 	public Downloadables.Handle GetHandleForTournamentDragon(HDTournamentManager _tournament) {
+		// Create new handle. We will fill it with downloadable Ids based on target dragon status
+		Downloadables.Handle handle = CreateDownloadablesHandle();
+		List<string> resourceIDs = new List<string>();
+
 		// Get target dragon info
 		IDragonData dragonData = _tournament.tournamentData.tournamentDef.dragonData;
 
@@ -620,18 +671,49 @@ public class Ingame_SwitchAreaHandle
 		// 1. Level area dependencies: will depend basically on the dragon's tier
 		//    Some powers allow dragons to go to areas above their tier, check for those cases as well
 		List<string> equippedPowers = GetPowersList(dragonData.disguise, dragonData.pets);
+		Downloadables.Handle levelHandle = GetLevelHandle(dragonData.tier, equippedPowers);
+		handle.AddDownloadableIds(levelHandle.GetDownloadableIds());
 
-		// No more dependencies to be checked: return handler!
-		return GetHandleForDragonTier(dragonData.tier, equippedPowers);
+		// 2. Dragon bundles
+		resourceIDs.AddRange(GetResourceIDsForDragon(dragonData.sku));
+
+		// 3. Equipped pets bundles
+		for(int i = 0; i < dragonData.pets.Count; ++i) {
+			resourceIDs.AddRange(GetResourceIDsForPet(dragonData.pets[i]));
+		}
+
+		// 4. [AOC] TODO!! Level bundles for target spawn point. Feature not yet implemented.
+
+		// No more dependencies to be checked: Add resource IDs and return!
+		HDAddressablesManager.Instance.AddResourceListDownloadableIdsToHandle(handle, resourceIDs);
+		return handle;
 	}
 
-	/// <summary>
-	/// Get the handle for all dowloadables required for a dragon tier and a list of equipped powers.
-	/// </summary>
-	/// <returns>The handle for all downloadables required for the given setup.</returns>
-	/// <param name="_tier">Tier.</param>
-	/// <param name="_powers">Powers sku list.</param>
-	private Downloadables.Handle GetHandleForDragonTier(DragonTier _tier, List<string> _powers) {
+
+    /// <summary>
+    /// Get a handle for the specified disguise
+    /// </summary>
+    /// <returns>The handle for all downloadables required for that disguise.</returns>
+    /// <param name="_dragonSku">Special dragon sku.</param>
+    public AddressablesBatchHandle GetHandleForDragonDisguise(string _dragonSku)
+    {
+        AddressablesBatchHandle handle = new AddressablesBatchHandle();
+
+        AddDisguiseDependencies(handle, DragonManager.GetDragonData(_dragonSku));
+
+        return handle;
+
+
+    }
+
+
+    /// <summary>
+    /// Get the handle for all level dowloadables required for a dragon tier and a list of equipped powers.
+    /// </summary>
+    /// <returns>The handle for all downloadables required for the given setup.</returns>
+    /// <param name="_tier">Tier.</param>
+    /// <param name="_powers">Powers sku list.</param>
+    private Downloadables.Handle GetLevelHandle(DragonTier _tier, List<string> _powers) {
 		// Check equipped powers to detect those that might modify the target tier
 		for(int i = 0; i < _powers.Count; ++i) {
 			// Is it one of the tier-modifying powers?
@@ -678,6 +760,52 @@ public class Ingame_SwitchAreaHandle
         }
 	}
 
+    public Downloadables.Handle GetHandleForAllDownloadables()
+    {
+        Downloadables.Handle returnValue = null;
+        if (m_downloadableHandles == null)
+        {
+            if (FeatureSettingsManager.IsDebugEnabled)
+            {
+                LogError("You need to call HDADdressablesManager.Instance.Initialise() before calling this method");
+            }
+        }
+        else
+        {
+            if (!m_downloadableHandles.TryGetValue(DOWNLOADABLE_GROUP_ALL, out returnValue))
+            {
+                returnValue = CreateAllDownloadablesHandle();
+                m_downloadableHandles.Add(DOWNLOADABLE_GROUP_ALL, returnValue);
+            }            
+        }
+
+        // Are we debugging?
+        if (DebugSettings.useDownloadablesMockHandlers)
+        {
+
+            // Use the singleton all downloadables mock handle
+            if (! Downloadables.AllDownloadablesMockHandle.Instance.MockupInitialized)
+            {
+                // Initialize mock
+                Downloadables.AllDownloadablesMockHandle.Instance.Initialize (
+                0f, // Bytes
+                50f * 1024f * 1024f,    // Bytes
+                1f * 60f,   // Seconds
+                false, false
+                //,new List<Downloadables.AllDownloadablesMockHandle.Action> { new Downloadables.AllDownloadablesMockHandle.Action (10, Downloadables.Handle.EError.NO_CONNECTION)}
+                );
+            }
+
+            return Downloadables.AllDownloadablesMockHandle.Instance;
+        }
+        else
+        {
+            // The real deal
+            return returnValue;
+        }
+        
+    }
+
     private bool HasPermissionRequestedForAnyDownloadableHandle()
     {
         if (m_downloadableHandles != null)
@@ -723,23 +851,201 @@ public class Ingame_SwitchAreaHandle
 		return powers;
 	}
 
-    #endregion
+	#endregion
 
-    #region ADDRESSABLES_BATCH_HANDLERS            
-    private void AddMenuDependenciesToAddressablesBatchHandle(AddressablesBatchHandle handle)
+	#region Asset Ids Getters
+	/// <summary>
+	/// Obtain a list of all the resources needed for a dragon.
+	/// Doesn't include equipped pets.
+	/// </summary>
+	/// <returns>The list of all the resources needed for a dragon.</returns>
+	/// <param name="_dragonSku">Dragon sku.</param>
+	public List<string> GetResourceIDsForDragon(string _dragonSku) {
+		// Aux vars
+		HashSet<string> ids = new HashSet<string>();
+		DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, _dragonSku);
+
+		// [AOC] In theory all assets go in the same bundle, but just in case add them all
+		if(def != null) {
+			// Dragon prefabs
+			// A bit different for special dragons
+			if(def.GetAsString("type") == DragonDataSpecial.TYPE_CODE) {
+				// Get all special tier definitions linked to this dragon and add the resource ids for each of them
+				List<DefinitionNode> specialTierDefs = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.SPECIAL_DRAGON_TIERS, "specialDragon", def.sku);
+				for(int i = 0; i < specialTierDefs.Count; ++i) {
+					// It is a hash set, so we're ensuring no duplicates
+					ids.Add(specialTierDefs[i].GetAsString("gamePrefab"));
+					ids.Add(specialTierDefs[i].GetAsString("menuPrefab"));
+					ids.Add(specialTierDefs[i].GetAsString("resultsPrefab"));
+				}
+			} else {
+				ids.Add(def.GetAsString("gamePrefab"));
+				ids.Add(def.GetAsString("menuPrefab"));
+				ids.Add(def.GetAsString("resultsPrefab"));
+			}
+
+			// Skin assets
+			// [AOC] Don't need to add them as they go with the same bundle as the dragon prefabs
+
+			// Icons
+			// [AOC] Don't need to add them as they go with the same bundle as the dragon prefabs
+		}
+
+		return ids.ToList();
+	}
+
+	/// <summary>
+	/// Obtain a list of all the resources needed for a pet.
+	/// </summary>
+	/// <returns>The list of all the resources needed for a pet.</returns>
+	/// <param name="_petSku">Pet sku.</param>
+	public List<string> GetResourceIDsForPet(string _petSku) {
+		// Aux vars
+		List<string> ids = new List<string>();
+		DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PETS, _petSku);
+
+		// [AOC] In theory all assets go in the same bundle, but just in case add them all
+		if(def != null) {
+			// Pet prefabs
+			ids.Add(def.GetAsString("gamePrefab"));
+			ids.Add(def.GetAsString("menuPrefab"));
+
+			// Icon
+			ids.Add(def.GetAsString("icon"));
+		}
+
+		return ids;
+	}
+	#endregion
+
+	#region ADDRESSABLES_BATCH_HANDLERS            
+	private void AddMenuDependenciesToAddressablesBatchHandle(AddressablesBatchHandle handle)
     {
         if (handle != null)
         {
+            // Menu group
             handle.AddGroup(GROUP_MENU);
+
+            // All menu prefabs dependencies
+            Dictionary<string, DefinitionNode> dragons = DefinitionsManager.SharedInstance.GetDefinitions(DefinitionsCategory.DRAGONS);
+
+            List<string> mandatoryBundles = new List<string>();
+            mandatoryBundles.Add("shared"); // We need animations
+            mandatoryBundles.Add("particles_shared");   // for the particles
+
+            List<string> optionalBundles = new List<string>();
+            foreach (KeyValuePair<string, DefinitionNode> pair in dragons)
+            {
+                mandatoryBundles.Add( pair.Key + "_local" );
+                optionalBundles.Add( pair.Key ); // for disguises
+            }
+            handle.AddDependencyIds( mandatoryBundles );
+            handle.AddDependencyIds( optionalBundles, false );
+
+            Dictionary<string, IDragonData> dragonDatas = DragonManager.dragonsBySku;
+            foreach (KeyValuePair<string, IDragonData> pair in dragonDatas) {
+                if (pair.Value.isOwned) {
+                    AddPetDependencies(handle, pair.Value);
+                }
+            }
         }
     }
-     
-    private void AddLevelArea1DependenciesToAddressablesBatchHandle(AddressablesBatchHandle handle)
+
+    private void AddGameDependenciesToAddressablesBatchHandle(AddressablesBatchHandle handle)
     { 
         if (handle != null)
         {
+            // Area 1 level dependencies
             handle.AddGroup(GROUP_LEVEL_AREA_1);
+
+            // Current dragon ingame dependencies
+            IDragonData data = GetCurrentDragonData();
+            handle.AddAddressable(data.gamePrefab);
+
+            AddDisguiseDependencies( handle, data, true );
+
+            AddPetDependencies(handle, data);
         }        
+    }
+
+    private void AddResultsDependenciesToAddressablesBatchHandle(AddressablesBatchHandle handle)
+    {
+        // Current dragon results dependencies 
+        IDragonData dragon = GetCurrentDragonData(); 
+        string resultPrefab = "";
+        if ( dragon.type == IDragonData.Type.SPECIAL )
+        {
+            DefinitionNode specialTierDef = DragonDataSpecial.GetDragonTierDef(dragon.sku, dragon.tier);
+            resultPrefab = specialTierDef.GetAsString("resultsPrefab");
+        }
+        else
+        {
+            resultPrefab = dragon.def.GetAsString("resultsPrefab");
+        }
+        handle.AddAddressable( resultPrefab );
+        AddDisguiseDependencies( handle, dragon, false );
+
+        // Add next dragon icon
+        IDragonData nextDragonData = DragonManager.GetNextDragonData(dragon.sku);
+		if(nextDragonData != null) {
+            string defaultIcon = IDragonData.GetDefaultDisguise(nextDragonData.def.sku).Get("icon");
+            handle.AddAddressable( defaultIcon );
+        }
+    }    
+
+    private IDragonData GetCurrentDragonData()
+    {
+        IDragonData dragon = null;
+        if ( HDLiveDataManager.tournament.isActive)
+        {
+            dragon = HDLiveDataManager.tournament.tournamentData.tournamentDef.dragonData;
+        }
+        else
+        {
+            dragon = DragonManager.currentDragon;
+        }
+        return dragon;
+    }
+
+    private void AddDisguiseDependencies( AddressablesBatchHandle handle, IDragonData data, bool ingame = true )
+    {
+        DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, data.disguise);
+        // Materials
+        string skin = def.Get("skin");
+        if ( ingame )
+        {
+            handle.AddAddressable( skin + "_ingame_body" );
+            handle.AddAddressable( skin + "_ingame_wings" );
+        }
+        else
+        {
+            handle.AddAddressable( skin + "_body" );
+            handle.AddAddressable( skin + "_wings" );
+        }
+
+        // Body Parts
+        List<string> bodyParts = def.GetAsList<string>("body_parts");
+        for (int j = 0; j < bodyParts.Count; j++)
+        {
+            handle.AddAddressable(bodyParts[j]);
+        }
+
+        // Icon
+        handle.AddAddressable( def.Get("icon") );
+
+
+    }
+
+    private void AddPetDependencies( AddressablesBatchHandle handle, IDragonData data )
+    {
+        foreach (string pet in data.pets)
+        {
+            DefinitionNode petDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PETS, pet);
+            if (petDef != null) {
+                string id = petDef.Get("gamePrefab");
+                handle.AddAddressable(id);
+            }
+        }
     }
 #endregion
 }

@@ -60,7 +60,10 @@ namespace AI {
 				}
 				else
 				{
+					m_petDogSpawner.ForceReset();
 					Debug.TaggedLogError( "PetDog", "No Entity on " + m_petDogSpawner.GetSelectedPrefabStr());
+					m_transitionParam[0] = m_data.m_eatPauseAfterPreyRelease.GetRandom();
+					Transition(OnPreyReleased, m_transitionParam);
 				}
 			}
 

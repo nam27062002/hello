@@ -471,7 +471,7 @@ public class Builder : MonoBehaviour, UnityEditor.Build.IPreprocessBuild
 
 	private static AddressablesManager.EMode GetAddressablesMode()
 	{
-		AddressablesManager.EMode returnValue = AddressablesManager.EMode.Editor;
+		AddressablesManager.EMode returnValue = AddressablesManager.EffectiveMode;
 
 		string addressablesModeStr = GetArg("-addressablesMode");											  
 		if (!string.IsNullOrEmpty(addressablesModeStr)) 

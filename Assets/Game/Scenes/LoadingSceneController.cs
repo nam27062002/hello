@@ -172,6 +172,11 @@ public class LoadingSceneController : SceneController {
     // References
 	[SerializeField] private TextMeshProUGUI m_loadingTxt = null;
 	[SerializeField] private Slider m_loadingBar = null;
+
+	[Space]
+	[SerializeField] private AssetsDownloadFlow m_assetsDownloadFlow = null;
+
+	[Space]
 	public InitRefObject m_savingReferences;	// this will point to an asset that points to lozalication and rules to make sure they get into the apk and not in the obb file
 	public GameObject m_messagePopup;
 
@@ -196,6 +201,8 @@ public class LoadingSceneController : SceneController {
         CREATING_SINGLETONS,
         SHOWING_UPGRADE_POPUP,
         SHOWING_COUNTRY_BLACKLISTED_POPUP,
+        DOWNLOADING_MISSING_BUNDLES,
+        DONE,
         COUNT
     }
     private State m_state = State.NONE;
@@ -209,6 +216,8 @@ public class LoadingSceneController : SceneController {
 	/// server request doesn't receive a response. 
 	/// </summary>
 	private float m_stateTimeoutAt = 0;
+    
+    private Downloadables.Handle m_downloadablesHandle;
 
     //------------------------------------------------------------------//
     // GENERIC METHODS													//
@@ -246,6 +255,10 @@ public class LoadingSceneController : SceneController {
 
         // Always start in DEFAULT mode
         SceneController.SetMode(Mode.DEFAULT);
+
+		// Init download assets flow with no handler (should hide it)
+		m_downloadablesHandle = null;
+		m_assetsDownloadFlow.InitWithHandle(null);
     }
 
 	/// <summary>
@@ -267,87 +280,15 @@ public class LoadingSceneController : SceneController {
         //DefinitionsManager.CreateInstance(true);	// Moved to Awake() so content is the very first thing loaded (a lot of things depend on it)
 
 
-#if UNITY_ANDROID
-            CaletySettings settingsInstance = (CaletySettings)Resources.Load("CaletySettings");
-            if (settingsInstance != null)
-            {
-                m_androidPermissionsListener = new AndroidPermissionsListener ();
-				AndroidPermissionsManager.SharedInstance.SetListener (m_androidPermissionsListener);
-
-                AndroidPermissionsManager.AndroidPermissionsConfig kAndroidPermissionsConfig = new AndroidPermissionsManager.AndroidPermissionsConfig ();
-                for (int i = 0; i < settingsInstance.m_kAndroidDangerousPermissions.Count; ++i)
-                {
-                    AndroidPermissionsManager.AndroidDangerousPermission kNewAndroidDangerousPermission = new AndroidPermissionsManager.AndroidDangerousPermission();
-                    kNewAndroidDangerousPermission.m_strPermission = settingsInstance.m_kAndroidDangerousPermissions[i];
-
-                    string text = settingsInstance.m_kAndroidDangerousPermissions[i];   // Get the text
-                    text = text.Replace (".", "_").ToUpper ();                          // Replace . per _ and convert it to mayus
-                    text = "TID_" + text;                                               // Add TID_
-					kNewAndroidDangerousPermission.m_strPermissionsMessage = LocalizationManager.SharedInstance.Localize(text);
-
-                    kAndroidPermissionsConfig.m_kAndroidDangerousPermissions.Add(kNewAndroidDangerousPermission);
-                }
-				kAndroidPermissionsConfig.m_strPermissionsInSettingsMessage = LocalizationManager.SharedInstance.Localize( "TID_POPUP_ANDROID_PERMISSION_SETTINGS_TEXT" );
-				kAndroidPermissionsConfig.m_strPermissionsShutdownMessage   = LocalizationManager.SharedInstance.Localize( "TID_POPUP_ANDROID_PERMISSION_EXIT" );
-				kAndroidPermissionsConfig.m_strPopupButtonYes               = "TID_POPUP_ANDROID_PERMISSION_ALLOW";
-				kAndroidPermissionsConfig.m_strPopupButtonNo                = "TID_POPUP_ANDROID_PERMISSION_DENY";
-				kAndroidPermissionsConfig.m_strPopupButtonSettings          = "TID_POPUP_ANDROID_PERMISSION_SETTINGS";
-				kAndroidPermissionsConfig.m_strPopupButtonExit              = "TID_EXIT_GAME";
-
-                AndroidPermissionsManager.SharedInstance.Initialise(ref kAndroidPermissionsConfig);
-                
-				if(!AndroidPermissionsManager.SharedInstance.CheckDangerousPermissions ()) {
-                    // Application.targetFrameRate = 10;
-					SetState(State.WAITING_ANDROID_PERMISSIONS);
-				}else{
-                    // Load persistence
-                    if ( CacheServerManager.SharedInstance.GameNeedsUpdate() )
-                    {
-						SetState(State.SHOWING_UPGRADE_POPUP);
-                    }
-                    else
-                    {
-                    	SetState(State.WAITING_FOR_RULES);
-                    }
-			        // TEST
-			        /*
-					m_state = State.WAITING_ANDROID_PERMISSIONS;
-					m_androidPermissionsListener.m_permissionsFinished = false;
-					CaletyConstants.PopupConfig pConfig = new CaletyConstants.PopupConfig();
-					pConfig.m_strTitle = "";
-					pConfig.m_strMessage = LocalizationManager.SharedInstance.Localize("TID_POPUP_ANDROID_PERMISSION_SETTINGS_TEXT");
-					pConfig.m_strIconURL = "";
-					AndroidPermissionsManager.AndroidPermissionsPopupButton button = new AndroidPermissionsManager.AndroidPermissionsPopupButton();
-					button.m_strText = "TID_EXIT_GAME";
-					button.m_pOnResponse = m_androidPermissionsListener.onAndroidPermissionsFinished;
-					pConfig.m_kPopupButtons.Add(button);
-					m_androidPermissionsListener.onAndroidPermissionPopupNeeded( pConfig );
-					*/
-				}
-            }
-            else
-            {
-				// Load persistence
-                if ( CacheServerManager.SharedInstance.GameNeedsUpdate() )
-                {
-					SetState(State.SHOWING_UPGRADE_POPUP);
-                }
-                else
-                {
-                	SetState(State.WAITING_FOR_RULES);
-                }
-            }
-        #else
-			// Load persistence
-            if ( CacheServerManager.SharedInstance.GameNeedsUpdate() )
-            {
-				SetState(State.SHOWING_UPGRADE_POPUP);
-            }
-            else
-            {
-            	SetState(State.WAITING_FOR_RULES);
-            }			
-        #endif
+		// Load persistence
+        if ( CacheServerManager.SharedInstance.GameNeedsUpdate() )
+        {
+			SetState(State.SHOWING_UPGRADE_POPUP);
+        }
+        else
+        {
+        	SetState(State.WAITING_FOR_RULES);
+        }			
     }
 
     public static void SetSavedLanguage()
@@ -375,7 +316,10 @@ public class LoadingSceneController : SceneController {
 		if(!DebugSettings.showMissingTids) {
 			LocalizationManager.SharedInstance.FillEmptyTids("lang_english");
 		}
-    }    
+
+		// Notify the rest of the game!
+		Broadcaster.Broadcast(BroadcastEventType.LANGUAGE_CHANGED);
+	}    
 
     /// <summary>
     /// Called every frame.
@@ -493,6 +437,21 @@ public class LoadingSceneController : SceneController {
             case State.SHOWING_COUNTRY_BLACKLISTED_POPUP:
             {}
             break;
+            case State.DOWNLOADING_MISSING_BUNDLES:
+            {
+				// Wait for download to finish
+                if (m_downloadablesHandle != null)
+                {
+                    m_downloadablesHandle.Update();
+                    if (m_downloadablesHandle.IsAvailable())
+                    {						
+                        SetState(State.DONE);
+                    }           
+                }
+            }break;
+            case State.DONE:
+            {
+            }break;        
             default:
     		{
 				// Update load progress
@@ -517,11 +476,54 @@ public class LoadingSceneController : SceneController {
                     // is important because it might decide which offers the user will see
                     HDCustomizerManager.instance.CheckAndApply();
 
-                    // Loads main menu scene
-                    FlowManager.GoToMenu();
+                    // Check if all equiped stuff is available or wait
+                    if ( AllEquipedIsDownloaded() )
+                    {
+                        SetState( State.DONE );
+                    }
+                    else 
+                    {
+                        SetState( State.DOWNLOADING_MISSING_BUNDLES );                        
+                    }                    
 		        }
     		}break;
     	}		
+    }
+
+
+    private bool AllEquipedIsDownloaded()
+    {
+        bool ret = true;
+        // Check if all eqquiped skins or pets are downloaded
+        List<string> toCheck = new List<string>();
+        Dictionary<string, IDragonData> dragons = DragonManager.dragonsBySku;
+        foreach( KeyValuePair<string, IDragonData> pair in dragons )
+        {
+			// Only owned dragons
+            if ( pair.Value.isOwned )
+            {
+				// Dragon bundle: only check equipped skin, we can access the menu with the rest
+				DefinitionNode skinDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, pair.Value.disguise);
+				if(skinDef != null) {
+					toCheck.Add(skinDef.GetAsString("skin") + "_body");	// All dragon skins should have a _body material - this is enough to check whether we need to download the bundle
+				} else {
+					// Shouldn't get here, but just in case - if the equipped skin is not found, use the whole dragon bundle as reference
+					toCheck.AddRange(HDAddressablesManager.Instance.GetResourceIDsForDragon(pair.Key));
+				}
+
+				// Equipped pets bundles: menu and ingame prefabs, portraits...
+				if(pair.Value.pets.Count > 0) {
+					for(int i = 0; i < pair.Value.pets.Count; ++i) {
+						toCheck.AddRange(HDAddressablesManager.Instance.GetResourceIDsForPet(pair.Value.pets[i]));
+					}
+				}
+            }
+        }
+
+        if ( toCheck.Count > 0 )
+            ret = HDAddressablesManager.Instance.IsResourceListAvailable(toCheck);
+
+        return ret;
     }
 
 	/// <summary>
@@ -540,23 +542,25 @@ public class LoadingSceneController : SceneController {
             Log(m_state + " -> " + state + " time = " + deltaTime);
         }
 
-		// Actions to perform when leaving a specific state
-		switch(m_state) {
-			case State.LOADING_RULES: {
-				// Initialize fonts before showing any other popup
-				// Do it here because we need the Android permissions to be given and the rules to be loaded
-				FontManager.instance.Init();
+        // Actions to perform when leaving a specific state
+        switch (m_state)
+        {
+            case State.LOADING_RULES:
+            {
+                // Initialize fonts before showing any other popup
+                // Do it here because we need the Android permissions to be given and the rules to be loaded
+                FontManager.instance.Init();
 
-				// This manager is initialised as soon as rules are loaded because it's used for configuration, which requires to read rules
-				// The stuff that this manager handles has to be done only once, regardless the game reboots
-				FeatureSettingsManager.CreateInstance(false);                
+                // This manager is initialised as soon as rules are loaded because it's used for configuration, which requires to read rules
+                // The stuff that this manager handles has to be done only once, regardless the game reboots
+                FeatureSettingsManager.CreateInstance(false);
 
-				// Tracking is initialised as soon as possible so very early events can be tracked. We need to wait for rules to be loaded because it could be disabled by configuration
-				HDTrackingManager.Instance.Init();                
-			} break;
-		}
+                // Tracking is initialised as soon as possible so very early events can be tracked. We need to wait for rules to be loaded because it could be disabled by configuration
+                HDTrackingManager.Instance.Init();
+            } break;
+        }
 
-		m_stateTimeoutAt = 0;
+        m_stateTimeoutAt = 0;
 
 		// Switch state
         m_state = state;
@@ -688,13 +692,34 @@ public class LoadingSceneController : SceneController {
                 TransactionManager.instance.Initialise();
 
                 HDCustomizerManager.instance.Initialise();   
-                HDAddressablesManager.Instance.Initialise();                                
+                HDAddressablesManager.Instance.Initialize();                                
             } break;
 
            case State.WAITING_SAVE_FACADE:
            {
                 StartLoadFlow();	            	                                
            }break;
+
+            case State.DOWNLOADING_MISSING_BUNDLES:
+            {
+				// Initialize download flow with ALL downloadables handler
+				m_downloadablesHandle = HDAddressablesManager.Instance.GetHandleForAllDownloadables();
+				m_assetsDownloadFlow.InitWithHandle(m_downloadablesHandle);
+
+					// Trigger any required popup
+					// Only mandatory and error popups
+					m_assetsDownloadFlow.OpenPopupByState(
+						PopupAssetsDownloadFlow.PopupType.MANDATORY | PopupAssetsDownloadFlow.PopupType.ERROR,
+                        AssetsDownloadFlow.Context.LOADING_SCREEN
+
+                    );
+			}break;
+
+            case State.DONE:
+            {
+                // Loads main menu scene
+                FlowManager.GoToMenu();
+            }break;
         }
     }
 

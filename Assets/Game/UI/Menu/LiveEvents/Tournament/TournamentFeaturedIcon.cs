@@ -240,30 +240,47 @@ public class TournamentFeaturedIcon : MonoBehaviour {
 	/// Tournament Play button has been pressed.
 	/// </summary>
 	public void OnPlayButton() {
-        
-			if ( m_tournamentManager.RequiresUpdate() )
+
+        // OTA: Check for assets for this specific tournament
+        // If we dont have downloaded the content yet, dont go to the tournament screen
+        Downloadables.Handle tournamentHandle = HDAddressablesManager.Instance.GetHandleForTournamentDragon(m_tournamentManager);
+        if (!tournamentHandle.IsAvailable())
+        {
+            // Get the download handle from the parent scene controller
+            MenuDragonScreenController parent = transform.parent.GetComponent<MenuDragonScreenController>();
+            AssetsDownloadFlow downloadHandle = parent.assetsDownloadFlow;
+
+            // Initialize download flow with handle for ALL assets
+            downloadHandle.InitWithHandle(HDAddressablesManager.Instance.GetHandleForAllDownloadables());
+            downloadHandle.OpenPopupByState(PopupAssetsDownloadFlow.PopupType.ANY, AssetsDownloadFlow.Context.PLAYER_CLICKS_ON_TOURNAMENT);
+
+            return;
+        }
+
+
+        if ( m_tournamentManager.RequiresUpdate() )
 			{
 					// Show update popup!
 					PopupManager.OpenPopupInstant( PopupUpdateEvents.PATH );
 
 					// Go to tournament info screen
 					HDTrackingManager.Instance.Notify_TournamentClickOnMainScreen("no_tournament");
-			}
-			else
-			{
-                if ( InstanceManager.menuSceneController.transitionManager.transitionAllowed )
-                {
-            		// Change game mode
-    	        	SceneController.SetMode(SceneController.Mode.TOURNAMENT);
-        	    	HDLiveDataManager.instance.SwitchToTournament();
+		}
+		else
+		{
+            if ( InstanceManager.menuSceneController.transitionManager.transitionAllowed )
+            {
+            	// Change game mode
+    	        SceneController.SetMode(SceneController.Mode.TOURNAMENT);
+        	    HDLiveDataManager.instance.SwitchToTournament();
     	
-        	    	// Send Tracking event
-            		HDTrackingManager.Instance.Notify_TournamentClickOnMainScreen(m_tournamentManager.data.definition.m_name);
+        	    // Send Tracking event
+            	HDTrackingManager.Instance.Notify_TournamentClickOnMainScreen(m_tournamentManager.data.definition.m_name);
     
-            		// Go to tournament info screen
-            		InstanceManager.menuSceneController.GoToScreen(MenuScreen.TOURNAMENT_INFO);
-    			}
-            }
+            	// Go to tournament info screen
+            	InstanceManager.menuSceneController.GoToScreen(MenuScreen.TOURNAMENT_INFO);
+    		}
+        }
 	}
 
 	/// <summary>

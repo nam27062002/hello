@@ -4,9 +4,9 @@ using UnityEngine.SceneManagement;
 
 public class AddressablesFromAssetBundlesProvider : AddressablesProvider
 {
-    public void Initialize(string localAssetBundlesPath, Downloadables.Config downloadablesConfig, JSONNode downloadablesCatalog, bool useMockDrivers, Downloadables.Tracker tracker, Logger logger)
+    public void Initialize(JSONNode assetBundlesCatalog, Downloadables.Config downloadablesConfig, JSONNode downloadablesCatalog, bool useMockDrivers, Downloadables.Tracker tracker, Logger logger)
     {        
-        AssetBundlesManager.Instance.Initialize(localAssetBundlesPath, downloadablesConfig, downloadablesCatalog, useMockDrivers, tracker, logger);
+        AssetBundlesManager.Instance.Initialize(assetBundlesCatalog, downloadablesConfig, downloadablesCatalog, useMockDrivers, tracker, logger);
     }
 
     public void Reset()
@@ -112,6 +112,15 @@ public class AddressablesFromAssetBundlesProvider : AddressablesProvider
         return ProcessAssetBundlesOpRequest(request);        
     }    
 
+    public override T LoadAsset<T>(AddressablesCatalogEntry entry)
+    {
+        if (CanLog())
+        {
+            Log("LoadAsset by Editor provider");
+        }
+        return AssetBundlesManager.Instance.LoadAsset<T>(entry.AssetBundleName, entry.AssetName);   
+    }
+
     public override object LoadAsset(AddressablesCatalogEntry entry)
     {
         if (CanLog())
@@ -181,14 +190,44 @@ public class AddressablesFromAssetBundlesProvider : AddressablesProvider
         return AssetBundlesManager.Instance.CreateDownloadablesHandle(groupIds);
     }
 
+    public Downloadables.Handle CreateAllDownloadablesHandle()
+    {
+        return AssetBundlesManager.Instance.CreateAllDownloadablesHandle();
+    }
+
     public void SetDownloadablesGroupPriority(string groupId, int priority)
     {
         AssetBundlesManager.Instance.SetDownloadablesGroupPriority(groupId, priority);
     }
 
+    public bool GetDownloadableGroupPermissionRequested(string groupId)
+    {
+        return AssetBundlesManager.Instance.GetDownloadableGroupPermissionRequested(groupId);
+    }
+
+    public void SetDownloadableGroupPermissionRequested(string groupId, bool value)
+    {
+        AssetBundlesManager.Instance.SetDownloadableGroupPermissionRequested(groupId, value);
+    }
+
+    public bool GetDownloadableGroupPermissionGranted(string groupId)
+    {
+        return AssetBundlesManager.Instance.GetDownloadableGroupPermissionGranted(groupId);
+    }
+
+    public void SetDownloadableGroupPermissionGranted(string groupId, bool value)
+    {
+        AssetBundlesManager.Instance.SetDownloadableGroupPermissionGranted(groupId, value);
+    }
+
     public bool IsAssetBundleRemote(string id)
     {
         return AssetBundlesManager.Instance.IsAssetBundleRemote(id);
+    }
+
+    public bool ExistsDependencyId(string id)
+    {
+        return AssetBundlesManager.Instance.GetAssetBundleHandle(id) != null;
     }
 
     public void Update()

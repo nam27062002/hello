@@ -40,7 +40,7 @@ Shader "Hungry Dragon/NPC/NPC Diffuse"
 			#pragma multi_compile __ FREEZE
 			#pragma multi_compile __ TINT
 			#pragma shader_feature COLORMODE_NONE COLORMODE_TINT COLORMODE_GRADIENT COLORMODE_COLORRAMP COLORMODE_COLORRAMPMASKED COLORMODE_BLENDTEX
-			#pragma shader_feature LITMODE_UNLIT LITMODE_LIT
+//			#pragma shader_feature LITMODE_UNLIT LITMODE_LIT
 
 			#include "UnityCG.cginc"
 			#include "Lighting.cginc"

@@ -406,7 +406,17 @@ public class PopupCustomizer : MonoBehaviour {
 
 					case "skins": {
 						// Make sure selected dragon is owned (requirement for opening the skins screen)
-						InstanceManager.menuSceneController.SetSelectedDragon(DragonManager.currentDragon.def.sku);	// Current dragon is the last owned selected dragon
+						string targetDragon = DragonManager.currentDragon.def.sku;  // Current dragon is owned for sure
+						InstanceManager.menuSceneController.SetSelectedDragon(targetDragon);
+
+						// Check whether all assets required for the selected dragon are available or not
+						// Get assets download handle for selected dragon
+						Downloadables.Handle dragonHandle = HDAddressablesManager.Instance.GetHandleForClassicDragon(targetDragon);
+						if(!dragonHandle.IsAvailable()) {
+							// Dragon assets not available, just close the popup
+							nextScreen = MenuScreen.NONE;
+							break;
+						}
 
 						// Initialize the skins screen
 						MenuTransitionManager screensController = InstanceManager.menuSceneController.transitionManager;

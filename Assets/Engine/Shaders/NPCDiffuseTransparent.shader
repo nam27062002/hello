@@ -1,6 +1,4 @@
-﻿// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
-
-Shader "Hungry Dragon/NPC/NPC Diffuse + Transparent (Spawners)"
+﻿Shader "Hungry Dragon/NPC/NPC Diffuse + Transparent (Spawners)"
 {
 	Properties
 	{
@@ -38,7 +36,7 @@ Shader "Hungry Dragon/NPC/NPC Diffuse + Transparent (Spawners)"
 
 			#pragma multi_compile __ FREEZE
 			#pragma shader_feature COLORMODE_NONE COLORMODE_TINT COLORMODE_GRADIENT COLORMODE_COLORRAMP COLORMODE_COLORRAMPMASKED COLORMODE_BLENDTEX
-			#pragma shader_feature LITMODE_UNLIT LITMODE_LIT
+//			#pragma shader_feature LITMODE_UNLIT LITMODE_LIT
 			#pragma multi_compile __ OPAQUEALPHA
 
 			#include "UnityCG.cginc"

@@ -39,9 +39,16 @@ public class TournamentInfoScreen : MonoBehaviour, IBroadcastListener {
     [SeparatorAttribute("Buttons")]
     [SerializeField] private Button m_playButton = null;
 
+    [SeparatorAttribute("Others")]
+    [SerializeField] private AssetsDownloadFlow m_assetsDownloadFlow = null;
+    public AssetsDownloadFlow assetsDownloadFlow
+    {
+        get { return m_assetsDownloadFlow; }
+    }
 
-	//----------------------------------------------------------------//
-	private HDTournamentManager m_tournament;
+
+    //----------------------------------------------------------------//
+    private HDTournamentManager m_tournament;
 	private HDTournamentDefinition m_definition;
 	private bool m_waitingRewardsData = false;
     private bool m_waitingDefinition = false;
@@ -225,15 +232,59 @@ public class TournamentInfoScreen : MonoBehaviour, IBroadcastListener {
 	/// The next screen button has been pressed.
 	/// </summary>
 	public void OnNextButton() {
-        if (!m_waitingDefinition) {
-            // Send Tracking event
-            HDTrackingManager.Instance.Notify_TournamentClickOnNextOnDetailsScreen(m_definition.m_name);
 
-            // [AOC] TODO!! Select fixed or flexible build screen!
-            InstanceManager.menuSceneController.GoToScreen(MenuScreen.TOURNAMENT_DRAGON_SETUP, true);
+        // Check for assets for this specific tournament
+        Downloadables.Handle tournamentHandle = HDAddressablesManager.Instance.GetHandleForTournamentDragon(m_tournament);
+        if (!tournamentHandle.IsAvailable())
+        {
+            // Initialize download flow with handle for ALL assets
+            m_assetsDownloadFlow.InitWithHandle(HDAddressablesManager.Instance.GetHandleForAllDownloadables());
+            m_assetsDownloadFlow.OpenPopupByState(PopupAssetsDownloadFlow.PopupType.ANY, AssetsDownloadFlow.Context.PLAYER_CLICKS_ON_TOURNAMENT);
+
+            return;
         }
+
+        if (m_waitingDefinition)
+        {
+            return;
+        }
+
+        // Get all the dependencies needed for the current skin (otherwise the dragon skin looks fuchsia)
+        AddressablesBatchHandle handle = HDAddressablesManager.Instance.GetHandleForDragonDisguise(m_definition.m_build.dragon);
+        List<string> dependencyIds = handle.DependencyIds;
+
+        // Make sure all the dragon resources are being loaded
+        // (If they are already loaded in memory will jump directly to the callback)
+        AddressablesOp op = HDAddressablesManager.Instance.LoadDependencyIdsListAsync(dependencyIds);
+
+        // The next tournament screen will be called in the async load callback
+        op.OnDone = GoToTournamentDragonScreen;
+
 	}
-    
+
+    /// <summary>
+    /// Callback function called after the the dragon dependencies are loaded
+    /// </summary>
+    private void GoToTournamentDragonScreen(AddressablesOp op)
+    {
+
+        if (op.Error != null)
+        {
+            Debug.LogError("Error loading the dragon resources " + m_definition.m_build.dragon);
+            return;
+        }
+
+        // All resources are loaded, go to the next screen.
+
+        // Send Tracking event
+        HDTrackingManager.Instance.Notify_TournamentClickOnNextOnDetailsScreen(m_definition.m_name);
+
+        // [AOC] TODO!! Select fixed or flexible build screen!
+        InstanceManager.menuSceneController.GoToScreen(MenuScreen.TOURNAMENT_DRAGON_SETUP, true);
+
+    }
+
+
     /// <summary>
     /// Back button has been pressed.
     /// </summary>
@@ -259,6 +310,9 @@ public class TournamentInfoScreen : MonoBehaviour, IBroadcastListener {
 		m_waitingRewardsData = false;
         m_waitingNetwork = false;
 
+        // OTA: Show download progress if the download is active
+        m_assetsDownloadFlow.InitWithHandle(HDAddressablesManager.Instance.GetHandleForAllDownloadables());
+    
         // Program a periodic update
         InvokeRepeating("UpdatePeriodic", 0f, UPDATE_FREQUENCY);
 	}

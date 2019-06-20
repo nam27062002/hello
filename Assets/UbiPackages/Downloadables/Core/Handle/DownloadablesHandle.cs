@@ -1,24 +1,17 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 namespace Downloadables
 {
+
     /// <summary>
     /// This class is responsible for handling the progress of a list of downloadables.
     /// </summary>
-    public abstract class Handle
+     public abstract class Handle
     {
-        protected static Manager sm_manager;
-        protected static DiskDriver sm_diskDriver;
-
-        public static void StaticSetup(Manager manager, DiskDriver diskDriver)
-        {
-            sm_manager = manager;
-            sm_diskDriver = diskDriver;
-        }
 
         //------------------------------------------------------------------------//
-        // CONSTANTS															  //
+        // ENUM     															  //
         //------------------------------------------------------------------------//
         public enum EError
         {
@@ -35,11 +28,24 @@ namespace Downloadables
             UNKNOWN,
 
             NONE
-        }        
+        }
+
+        public enum DownloadState
+        {
+            NOT_STARTED,
+            DOWNLOADING,
+            SUCCESSFUL,
+            ERROR
+        }
+
 
         //------------------------------------------------------------------------//
         // MEMBERS AND PROPERTIES												  //
         //------------------------------------------------------------------------//
+
+        protected static Manager sm_manager;
+        protected static DiskDriver sm_diskDriver;
+
         public float Progress
         {
             get
@@ -59,6 +65,19 @@ namespace Downloadables
         //------------------------------------------------------------------------//
         // METHODS																  //
         //------------------------------------------------------------------------//        
+
+        public static void StaticSetup(Manager manager, DiskDriver diskDriver)
+        {
+            sm_manager = manager;
+            sm_diskDriver = diskDriver;
+        }
+
+
+        /// <summary>
+        /// Add a list of downloadable ids to the handle.
+        /// </summary>
+        /// <param name="downloadableIds">List of downloadable ids to add to the list of downloadables handled by this handle.</param>
+        public virtual void AddDownloadableIds(List<string> downloadableIds) {}
 
         /// <summary>
         /// Returns whether or not the list of downloadables handled by this class are available.
@@ -101,10 +120,12 @@ namespace Downloadables
 
         public abstract void SetIsPermissionGranted(bool value);
 
+        public virtual List<string> GetDownloadableIds() { return null; }
+
         /// <summary>
         /// Returns the size in bytes of this list of downloadables that have been downloaded so far.
         /// </summary>        
-        public abstract long GetDownloadedBytes();
+        public abstract long GetDownloadedBytes();        
 
         /// <summary>
         /// Returns the total size in bytes of this list of downloadables.
@@ -209,5 +230,41 @@ namespace Downloadables
         /// To be called manually to refresh group state, progress, errors, etc.
         /// </summary>
         public virtual void Update() {}
+
+
+        /// <summary>
+        /// Returns the state of the download of this handler
+        /// </summary>
+        public DownloadState GetState ()
+        {
+
+            if (IsAvailable())
+            {
+                // The content is already downloaded and available
+                return DownloadState.SUCCESSFUL;
+            }
+
+            if (NeedsToRequestPermission())
+            {
+
+                // The downloaded didnt start yet
+                return DownloadState.NOT_STARTED;
+                
+
+            } else
+            {
+
+                if (GetError() != EError.NONE)
+                {
+                    // Download failed
+                    return DownloadState.ERROR;
+                }
+
+
+                // The download has started
+                return DownloadState.DOWNLOADING;
+
+            }
+        }
     }
 }

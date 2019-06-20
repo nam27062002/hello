@@ -90,7 +90,7 @@ public class MenuDragonScreenController : MonoBehaviour {
         m_goToScreen = MenuScreen.NONE;
 
 		// Check pending rewards
-		if(UsersManager.currentUser.rewardStack.Count > 0 && false) {
+		if(UsersManager.currentUser.rewardStack.Count > 0) {
 			m_goToScreen = MenuScreen.PENDING_REWARD;
 			return;
 		}
@@ -110,7 +110,6 @@ public class MenuDragonScreenController : MonoBehaviour {
 		// Unsubscribe to external events.
 		Messenger.RemoveListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnTransitionStarted);
 		Messenger.RemoveListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_END, OnTransitionEnd);
-        Messenger.RemoveListener<string>(MessengerEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
     }
 
 	/// <summary>
@@ -176,7 +175,7 @@ public class MenuDragonScreenController : MonoBehaviour {
 	// OTHER METHODS														  //
 	//------------------------------------------------------------------------//
 	/// <summary>
-	/// Launch the unlock animation!
+	/// Launch the unlock animation! Dragon acquired via HC
 	/// </summary>
 	/// <param name="_unlockedDragonSku">Unlocked dragon sku.</param>
 	/// <param name="_initialDelay">Initial delay before launching the unlock animation.</param>
@@ -272,7 +271,7 @@ public class MenuDragonScreenController : MonoBehaviour {
 	}
 
 	/// <summary>
-	/// Launch the acquire animation!
+	/// Launch the acquire animation! Dragon acquired via XP+SC
 	/// </summary>
 	/// <param name="_acquiredDragonSku">Acquired dragon sku.</param>
 	public void LaunchAcquireAnim(string _acquiredDragonSku) {
@@ -296,9 +295,16 @@ public class MenuDragonScreenController : MonoBehaviour {
 				// Toggle animating mode
 				SetAnimationFlag(false, !pendingReveals);   // Only allow post actions if there are no pending reveals
 
-				// If there are no pending reveals, check for download popups
-				// Otherwise the check will be performed after the reveal animation (via the OnDragonSelected event)
-				CheckDownloadFlowForDragon(_acquiredDragonSku, true);
+				// OTA: Check if the dragon is downloaded
+				Downloadables.Handle acquiredDragonHandle = HDAddressablesManager.Instance.GetHandleForClassicDragon(_acquiredDragonSku);
+				if(!acquiredDragonHandle.IsAvailable()) {
+					// Initialize download flow with handle for ALL and check for popups
+					m_assetsDownloadFlow.InitWithHandle(HDAddressablesManager.Instance.GetHandleForAllDownloadables());
+
+                    // this case will never be triggered by the Sparks acquisition, so we know
+                    // that if we reach this case, its because the player acquired a medium (or bigger) dragon
+                    m_assetsDownloadFlow.OpenPopupIfNeeded(AssetsDownloadFlow.Context.PLAYER_BUYS_NOT_DOWNLOADED_DRAGON);
+				}
 			})
 			.SetAutoKill(true)
 			.Play();
@@ -501,32 +507,6 @@ public class MenuDragonScreenController : MonoBehaviour {
 		}
 	}
 
-	/// <summary>
-	/// Check downloadable group status for a target dragon.
-	/// </summary>
-	/// <param name="_sku">The sku of the dragon we want to check.</param>
-	/// <param name="_checkPopups">Open popups if needed?</param>
-	private void CheckDownloadFlowForDragon(string _sku, bool _checkPopups = false) {
-		// Just in case don't do anything if disabled
-		if(!this.isActiveAndEnabled) return;
-
-		// Get handler for this dragon
-		Downloadables.Handle handle = null;
-
-		// We don't want to show anything if the dragon is not owned
-		if(DragonManager.IsDragonOwned(_sku)) {
-			handle = HDAddressablesManager.Instance.GetHandleForClassicDragon(_sku);
-		}
-
-		// Trigger flow!
-		m_assetsDownloadFlow.InitWithHandle(handle);
-
-		// Check for popups?
-		if(_checkPopups) {
-			m_assetsDownloadFlow.OpenPopupIfNeeded();
-		}
-	}
-
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
@@ -546,9 +526,15 @@ public class MenuDragonScreenController : MonoBehaviour {
 			GameVars.unlockedDragonSku = string.Empty;
 		}
 
-		// Initialize the assets download flow with currently selected dragon
-		CheckDownloadFlowForDragon(InstanceManager.menuSceneController.selectedDragon, false);	// Don't show popups, the menu interstitial popups controller will take care of it
-	}
+		// Initialize the assets download flow for ALL assets
+		// Only show if player has already been notified
+		Downloadables.Handle allHandle = HDAddressablesManager.Instance.GetHandleForAllDownloadables();
+		if(!allHandle.NeedsToRequestPermission()) {
+			// Init the assets download flow. Don't show popups though, the menu interstitial popups controller will take care of it
+			m_assetsDownloadFlow.InitWithHandle(allHandle);
+		}
+
+    }
 
 	/// <summary>
 	/// The current menu screen has changed (animation starts now).
@@ -578,9 +564,6 @@ public class MenuDragonScreenController : MonoBehaviour {
 
 			// Save persistence to store current dragon
 			PersistenceFacade.instance.Save_Request(true);
-
-			// Unsubscribe to external events
-			Messenger.RemoveListener<string>(MessengerEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
 		}
 	}
 
@@ -592,9 +575,6 @@ public class MenuDragonScreenController : MonoBehaviour {
 	private void OnTransitionEnd(MenuScreen _from, MenuScreen _to) {
 		// If entering this screen
 		if(_to == MenuScreen.DRAGON_SELECTION) {
-			// Subscribe to external events
-			Messenger.AddListener<string>(MessengerEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
-
 			// If we have a dragon selection pending, do it now!
 			if(!string.IsNullOrEmpty(m_pendingToSelectDragon)) {
 				InstanceManager.menuSceneController.SetSelectedDragon(m_pendingToSelectDragon);
@@ -607,60 +587,77 @@ public class MenuDragonScreenController : MonoBehaviour {
     /// Play button has been pressed.
     /// </summary>
     public void OnPlayButton() {
-        if ( InstanceManager.menuSceneController.transitionManager.transitionAllowed )
-        {
-			// Check whether all assets required for the current dragon are available or not
-			// [AOC] CAREFUL! Current dragon is not necessarily the selected one! Make sure we're checking the right set of assets.
-			// Get assets download handle for current dragon
-			string currentDragonSku = UsersManager.currentUser.currentClassicDragon;
-			Downloadables.Handle currentDragonHandle = HDAddressablesManager.Instance.GetHandleForClassicDragon(currentDragonSku);
-			if(!currentDragonHandle.IsAvailable()) {
-				// Scroll back to current dragon
-				// This will trigger the OnDragonSelected callback that will then update the Assets Download Flow with the right handler
-				InstanceManager.menuSceneController.SetSelectedDragon(currentDragonSku);
+		// Avoid spamming
+		if(!InstanceManager.menuSceneController.transitionManager.transitionAllowed) return;
 
-				// If needed, show assets download popup and don't continue
-				PopupAssetsDownloadFlow popup = m_assetsDownloadFlow.OpenPopupByState(false);
-				if(popup != null) return;
+		// Check whether all assets required for the current dragon are available or not
+		// [AOC] CAREFUL! Current dragon is not necessarily the selected one! Make sure we're checking the right set of assets.
+		// Get assets download handle for current dragon
+		string currentDragonSku = UsersManager.currentUser.currentClassicDragon;
+		Downloadables.Handle currentDragonHandle = HDAddressablesManager.Instance.GetHandleForClassicDragon(currentDragonSku);
+		if(!currentDragonHandle.IsAvailable()) {
+			// Scroll back to current dragon
+			InstanceManager.menuSceneController.SetSelectedDragon(currentDragonSku);
+
+			// Resources not available, which means we need to download ALL
+			m_assetsDownloadFlow.InitWithHandle(HDAddressablesManager.Instance.GetHandleForAllDownloadables());
+
+			// If needed, show assets download popup. Download will be already in progress at this point.
+			m_assetsDownloadFlow.OpenPopupByState(PopupAssetsDownloadFlow.PopupType.ANY, AssetsDownloadFlow.Context.PLAYER_BUYS_NOT_DOWNLOADED_DRAGON);
+
+			// Don't move to next screen
+			return;
+		}
+
+		// Select target screen
+		MenuScreen nextScreen = MenuScreen.MISSIONS;
+
+		// If there is an active quest, go to the quest screen
+		// Do it as well if the event is pending reward collection
+		if ( UsersManager.currentUser.gamesPlayed >= GameSettings.ENABLE_QUESTS_AT_RUN )
+		{
+			HDQuestManager quest = HDLiveDataManager.quest;
+			if ( quest.EventExists() )	
+			{
+				if (quest.IsTeasing() || quest.IsRunning() || quest.IsRewardPending())
+				{
+					nextScreen = MenuScreen.GLOBAL_EVENTS;	
+				}
 			}
+		}
 
-    		// Select target screen
-    		MenuScreen nextScreen = MenuScreen.MISSIONS;
-    
-    		// If there is an active quest, go to the quest screen
-    		// Do it as well if the event is pending reward collection
-    		if ( UsersManager.currentUser.gamesPlayed >= GameSettings.ENABLE_QUESTS_AT_RUN )
-    		{
-    			HDQuestManager quest = HDLiveDataManager.quest;
-    			if ( quest.EventExists() )	
-    			{
-    				if (quest.IsTeasing() || quest.IsRunning() || quest.IsRewardPending())
-    				{
-    					nextScreen = MenuScreen.GLOBAL_EVENTS;	
-    				}
-    			}
-    		}
-    
-    		// Go to target screen
-    		InstanceManager.menuSceneController.GoToScreen(nextScreen);
-    
-    		// Tutorial tracking
-    		if (!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.MISSIONS_INFO)) {
-    			HDTrackingManager.Instance.Notify_Funnel_FirstUX(FunnelData_FirstUX.Steps._08_continue_clicked);
-    		}
-        }
+		// Go to target screen
+		InstanceManager.menuSceneController.GoToScreen(nextScreen);
+
+		// Tutorial tracking
+		if (!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.MISSIONS_INFO)) {
+			HDTrackingManager.Instance.Notify_Funnel_FirstUX(FunnelData_FirstUX.Steps._08_continue_clicked);
+		}
 	}
 
 	/// <summary>
-	/// A new dragon has been selected.
+	/// Skins screen button has been pressed.
 	/// </summary>
-	/// <param name="_sku">The sku of the selected dragon.</param>
-	private void OnDragonSelected(string _sku) {
-		// Make sure this is the active screen
-		// [AOC] Do this because the screen is still enabled when transitioning to the Lab, which also triggers the Dragon Selected event
-		if(InstanceManager.menuSceneController.currentScreen == MenuScreen.DRAGON_SELECTION) {
-			// Check OTA
-			CheckDownloadFlowForDragon(_sku, true);
+	public void OnSkinsButton() {
+		// Avoid spamming
+		if(!InstanceManager.menuSceneController.transitionManager.transitionAllowed) return;
+
+		// Check whether all assets required for the selected dragon are available or not
+		// Get assets download handle for current dragon
+		string selectedDragonSku = InstanceManager.menuSceneController.selectedDragon;
+		Downloadables.Handle dragonHandle = HDAddressablesManager.Instance.GetHandleForClassicDragon(selectedDragonSku);
+		if(!dragonHandle.IsAvailable()) {
+			// Resources not available, which means we need to download ALL
+			m_assetsDownloadFlow.InitWithHandle(HDAddressablesManager.Instance.GetHandleForAllDownloadables());
+
+			// If needed, show assets download popup
+			m_assetsDownloadFlow.OpenPopupByState(PopupAssetsDownloadFlow.PopupType.ANY, AssetsDownloadFlow.Context.PLAYER_CLICKS_ON_SKINS);
+
+			// Don't move to next screen
+			return;
 		}
+
+		// All checks passed, go to target screen
+		InstanceManager.menuSceneController.GoToScreen(MenuScreen.SKINS);
 	}
 }

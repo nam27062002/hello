@@ -119,10 +119,15 @@ public class LevelLoader
 
     private bool m_loadSync;
 
+    private List<string> m_dependencyIdsToStayInMemory;
+
     public LevelLoader(string prevArea, string nextArea)
     {
         m_prevArea = prevArea;
         m_nextArea = nextArea;
+
+        AddressablesBatchHandle handle = HDAddressablesManager.Instance.GetAddressablesAreaBatchHandle(GameSceneController.NAME);
+        m_dependencyIdsToStayInMemory = handle.DependencyIds;
     }
 
     public void Reset()
@@ -192,9 +197,10 @@ public class LevelLoader
     public void Perform(bool loadSync, OnChangeStateCallback onChangeState = null)
     {        
         m_loadSync = loadSync;
-        OnChangeState = onChangeState;        
+        OnChangeState = onChangeState;
 
-        m_loadLevelHandle = HDAddressablesManager.Instance.Ingame_SwitchArea(m_prevArea, m_nextArea, m_realSceneNamesToUnload, m_realSceneNamesToLoad);        
+        // Retrieves the dependencies (typically the ones that player's dragon and pets depend on) that shouldn't be unloaded between areas
+        m_loadLevelHandle = HDAddressablesManager.Instance.Ingame_SwitchArea(m_prevArea, m_nextArea, m_realSceneNamesToUnload, m_realSceneNamesToLoad, m_dependencyIdsToStayInMemory);        
         State = EState.UnloadingPrevAreaScenes;        
     }
 

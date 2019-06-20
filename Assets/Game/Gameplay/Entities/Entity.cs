@@ -317,6 +317,24 @@ public class Entity : IEntity, IBroadcastListener {
 		return IsEdible(_tier) || CanBeHolded( _tier );
 	}
 
+	public DragonTier MinSmashTier(){
+		DragonTier ret = DragonTier.COUNT;
+		if ( m_isEdible && m_isEdibleByZ ){
+			ret = m_edibleFromTier;
+		} else if ( m_canBeGrabbed && m_canBeLatchedOn) {
+			if ( m_grabFromTier < m_latchFromTier ){
+				ret = m_grabFromTier;
+			}else{
+				ret = m_latchFromTier;
+			}
+		}else if ( m_canBeGrabbed ){
+			ret = m_grabFromTier;
+		}else if ( m_canBeLatchedOn ){
+			ret = m_latchFromTier;
+		}
+		return ret;
+	}
+
 	public bool IntersectsWith(Vector2 _center, float _radius) {
 		if (m_bounds != null) {
 			return m_bounds.Overlaps(_center, _radius);

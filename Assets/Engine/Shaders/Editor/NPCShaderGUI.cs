@@ -43,6 +43,11 @@ internal class NPCDiffuseShaderGUI : ShaderGUI
         readonly public static string enableReflectionMapText = "Enable Reflection Map";
         readonly public static string reflectionMapText = "Reflection map";
         readonly public static string reflectionAmountText = "Reflection amount";
+        readonly public static string enableFresnelText = "Enable Fresnel";
+        readonly public static string fresnelPowerText = "Fresnel Power";
+        readonly public static string fresnelColorText = "Fresnel Color";
+        readonly public static string outlineWidthText = "Outline Width";
+        readonly public static string outlineColorText = "Outline Color";
     }
 
     MaterialProperty mp_mainTexture;
@@ -57,9 +62,15 @@ internal class NPCDiffuseShaderGUI : ShaderGUI
     MaterialProperty mp_enableReflectionMap;
     MaterialProperty mp_reflectionMap;
     MaterialProperty mp_reflectionAmount;
+    MaterialProperty mp_enableFresnel;
+    MaterialProperty mp_fresnelPower;
+    MaterialProperty mp_fresnelColor;
+
+    MaterialProperty mp_outlineWidth;
+    MaterialProperty mp_outlineColor;
 
     MaterialEditor m_materialEditor;
-    
+
     readonly static int m_labelWidth = 150;
 
     private GUISkin editorSkin;
@@ -67,6 +78,7 @@ internal class NPCDiffuseShaderGUI : ShaderGUI
 
     private bool m_npcDiffuseTransparent = false;
     private bool m_npcDiffuseUnlit = false;
+    private bool m_npcDiffuseOutline = false;
 
     //------------------------------------------------------------------------//
     // METHODS																  //
@@ -100,6 +112,15 @@ internal class NPCDiffuseShaderGUI : ShaderGUI
             mp_enableReflectionMap = FindProperty("_EnableReflectionMap", props);
             mp_reflectionMap = FindProperty("_ReflectionMap", props);
             mp_reflectionAmount = FindProperty("_ReflectionAmount", props);
+            mp_enableFresnel = FindProperty("_EnableFresnel", props);
+            mp_fresnelPower = FindProperty("_FresnelPower", props);
+            mp_fresnelColor = FindProperty("_FresnelColor", props);
+        }
+
+        if (m_npcDiffuseOutline)
+        {
+            mp_outlineWidth = FindProperty("_OutlineWidth", props);
+            mp_outlineColor = FindProperty("_OutlineColor", props);
         }
 
     }
@@ -114,6 +135,7 @@ internal class NPCDiffuseShaderGUI : ShaderGUI
         Material material = materialEditor.target as Material;
         m_npcDiffuseTransparent = material.shader.name.Contains("Transparent");
         m_npcDiffuseUnlit = material.shader.name.Contains("Lit-Unlit");
+        m_npcDiffuseOutline = material.shader.name.Contains("Outline");
 
         IniEditorSkin();
         FindProperties(props); // MaterialProperties can be animated so we do not cache them but fetch them every event to ensure animated values are updated correctly
@@ -126,7 +148,7 @@ internal class NPCDiffuseShaderGUI : ShaderGUI
 
         if (m_npcDiffuseUnlit)
         {
-//            materialEditor.ShaderProperty(mp_litMode, Styles.litModeText);
+            //            materialEditor.ShaderProperty(mp_litMode, Styles.litModeText);
             featureSet(mp_litMode, Styles.litModeText);
         }
 
@@ -141,6 +163,12 @@ internal class NPCDiffuseShaderGUI : ShaderGUI
                 materialEditor.TextureProperty(mp_reflectionMap, Styles.reflectionMapText);
                 materialEditor.ShaderProperty(mp_reflectionAmount, Styles.reflectionAmountText);
             }
+
+            if (featureSet(mp_enableFresnel, Styles.enableFresnelText))
+            {
+                materialEditor.ShaderProperty(mp_fresnelPower, Styles.fresnelPowerText);
+                materialEditor.ShaderProperty(mp_fresnelColor, Styles.fresnelColorText);
+            }
         }
 
         EditorGUI.BeginChangeCheck();
@@ -150,7 +178,7 @@ internal class NPCDiffuseShaderGUI : ShaderGUI
 
         int colorMode = (int)mp_ColorMode.floatValue;
 
-        switch(colorMode)
+        switch (colorMode)
         {
             case 1:
                 materialEditor.ShaderProperty(mp_Tint1Color, Styles.tintColorText);
@@ -168,6 +196,12 @@ internal class NPCDiffuseShaderGUI : ShaderGUI
         }
 
         EditorGUILayout.BeginVertical(editorSkin.customStyles[3]);
+
+        if (m_npcDiffuseOutline)
+        {
+            materialEditor.ShaderProperty(mp_outlineWidth, Styles.outlineWidthText);
+            materialEditor.ShaderProperty(mp_outlineColor, Styles.outlineColorText);
+        }
 
         EditorGUILayout.BeginHorizontal();
         EditorGUILayout.LabelField(Styles.renderQueueText);
@@ -192,12 +226,12 @@ internal class NPCDiffuseShaderGUI : ShaderGUI
             //            material.shaderKeywords = null;
             DebugKeywords(material);
         }
-/*
-        if (GUILayout.Button("Reset keywords"))
-        {
-            material.shaderKeywords = null;
-        }
-*/
+        /*
+                if (GUILayout.Button("Reset keywords"))
+                {
+                    material.shaderKeywords = null;
+                }
+        */
     }
 
     static void SetKeyword(Material m, string keyword, bool state)
@@ -224,4 +258,83 @@ internal class NPCDiffuseShaderGUI : ShaderGUI
             Debug.Log("Material keywords: " + kw);
     }
 
+    static readonly string[] ColorModeKeywords =
+    {
+        "COLORMODE_NONE", "COLORMODE_TINT", "COLORMODE_GRADIENT", "COLORMODE_COLORRAMP", "COLORMODE_COLORRAMPMASKED", "COLORMODE_BLENDTEX"
+    };
+
+    static bool checkForColorModeKeywords(Material mat)
+    {
+        foreach (string keyword in ColorModeKeywords)
+        {
+            if (mat.IsKeywordEnabled(keyword))
+                return true;
+        }
+
+        return false;
+    }
+
+    static readonly string[] LitModeKeywords =
+    {
+        "LITMODE_UNLIT", "LITMODE_LIT"
+    };
+
+    static bool checkForLitModeKeywords(Material mat)
+    {
+        foreach (string keyword in LitModeKeywords)
+        {
+            if (mat.IsKeywordEnabled(keyword))
+                return true;
+        }
+
+        return false;
+    }
+
+
+
+    /// <summary>
+    /// Seek for old scenary shaders and change by new scenary standard material
+    /// </summary>
+    [MenuItem("Tools/NPC/Fix all NPCDiffuse materials")]
+    public static void FixNPCDiffuseMaterials   ()
+    {
+        Debug.Log("Obtaining material list");
+
+        Material[] materialList;
+        AssetFinder.FindAssetInContent<Material>(Directory.GetCurrentDirectory() + "\\Assets", out materialList);
+
+        int npcDiffuse = 0;
+        int sChanged = 0;
+
+        for (int c = 0; c < materialList.Length; c++)
+        {
+            Material mat = materialList[c];
+
+            if (mat.shader.name.Contains("NPC Diffuse"))
+            {
+                bool mchanged = false;
+                if (!checkForColorModeKeywords(mat))
+                {
+                    mat.EnableKeyword(ColorModeKeywords[0]);
+                    mchanged = true;
+                }
+                if (!checkForLitModeKeywords(mat))
+                {
+                    mat.EnableKeyword(LitModeKeywords[1]);
+                    mchanged = true;
+                }
+
+                if (mchanged)
+                {
+                    EditorUtility.SetDirty(mat);
+                    sChanged++;
+                }
+
+                npcDiffuse++;
+
+            }
+        }
+
+        Debug.Log("NPC Diffuse Materials found: " + npcDiffuse + " NPC Diffuse Materials fixed: " + sChanged);
+    }
 }

@@ -415,12 +415,22 @@ public class HDTrackingManager
 	/// <param name="area_loading_duration">Duration in seconds.</param>
 	public virtual void Notify_LoadingAreaEnd( string original_area, string destination_area, float area_loading_duration ){}
 
-	/// <summary>
-	/// The player has opened an info popup.
-	/// </summary>
-	/// <param name="_popupName">Name of the opened popup. Prefab name.</param>
-	/// <param name="_action">How was this popup opened? One of "automatic", "info_button" or "settings".</param>
-	public virtual void Notify_InfoPopup(string _popupName, string _action) {}
+    /// <summary>
+    /// Notifies the loading results start.
+    /// </summary>    	
+	public virtual void Notify_LoadingResultsStart() { }
+
+    /// <summary>
+    /// Notifies the loading results end.
+    /// </summary>    	
+	public virtual void Notify_LoadingResultsEnd() { }
+
+    /// <summary>
+    /// The player has opened an info popup.
+    /// </summary>
+    /// <param name="_popupName">Name of the opened popup. Prefab name.</param>
+    /// <param name="_action">How was this popup opened? One of "automatic", "info_button" or "settings".</param>
+    public virtual void Notify_InfoPopup(string _popupName, string _action) {}
 
 	/// <summary>
 	/// Notifies the missions.

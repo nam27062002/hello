@@ -25,6 +25,7 @@ public class LabButton : MonoBehaviour {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	[SerializeField] private Selectable m_target = null;
+	[SerializeField] private Animator m_iconAnim = null;
 
 	// Internal
 	private bool m_toggle = true;
@@ -95,6 +96,11 @@ public class LabButton : MonoBehaviour {
 				m_target.animationTriggers.normalTrigger = m_defaultTriggers.disabledTrigger;
 				m_target.animationTriggers.highlightedTrigger = m_defaultTriggers.disabledTrigger;
 				m_target.animationTriggers.pressedTrigger = m_defaultTriggers.disabledTrigger;
+			}
+
+			// Apply to icon animation
+			if(m_iconAnim != null) {
+				m_iconAnim.enabled = m_toggle;
 			}
 		} else {
 			Debug.LogError("<color=red>SELECTABLE NOT FOUND</color>");

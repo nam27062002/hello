@@ -19,3 +19,9 @@ public enum DragonTier {
 
 	COUNT
 }
+
+class DragonTierGlobals
+{
+	public static DragonTier LAST_TIER = DragonTier.TIER_4;
+}
+

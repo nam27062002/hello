@@ -984,6 +984,16 @@ public class HDTrackingManagerImp : HDTrackingManager {
         m_eventQueue.Enqueue(e);
     }
 
+    public override void Notify_LoadingResultsStart()
+    {
+        Session_LoadingResultsStartAt = Time.realtimeSinceStartup;
+    }    
+
+    public override void Notify_LoadingResultsEnd()
+    {
+        Track_LoadingResultsEnd(Time.realtimeSinceStartup - Session_LoadingResultsStartAt);
+    }
+
     /// <summary>
     /// The player has opened an info popup.
     /// </summary>
@@ -1652,7 +1662,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private bool SendRtTracking()
     {
         bool ret = true;
-        ret = !(GDPRManager.SharedInstance.IsAgeRestrictionEnabled() || GDPRManager.SharedInstance.IsConsentRestrictionEnabled());
+        ret = !(GDPRManager.SharedInstance.IsAgeRestrictionEnabled() || GDPRManager.SharedInstance.IsConsentTrackingRestrictionEnabled());
         return ret;
     }
 
@@ -2161,6 +2171,22 @@ public class HDTrackingManagerImp : HDTrackingManager {
             m_playingMode = EPlayingMode.NONE;
         }
 
+    }
+
+    private void Track_LoadingResultsEnd(float durationInSeconds)
+    {
+        string eName = "custom.gameplay.loadgameend";
+        int timeInMilliseconds = (int)(durationInSeconds * 1000.0f);
+        if (FeatureSettingsManager.IsDebugEnabled)
+        {
+            Log(eName + ": " + TRACK_PARAM_LOADING_TIME + ": " + timeInMilliseconds);
+        }
+
+        HDTrackingEvent e = new HDTrackingEvent(eName);
+        {
+            e.data.Add(TRACK_PARAM_LOADING_TIME, timeInMilliseconds);
+        }
+        m_eventQueue.Enqueue(e);
     }
 
     private void Track_PerformanceTrack(int deltaXP, int avgFPS, Vector3 positionBL, Vector3 positionTR, bool fireRush) {
@@ -3150,6 +3176,8 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private bool mSession_IsNotifyOnPauseEnabled;
 
     private bool Session_GameStartSent { get; set; }
+
+    private float Session_LoadingResultsStartAt { get; set; }
 
     /// <summary>
     /// Whether or not the session is allowed to notify on pause/resume. This is used to avoid session paused/resumed events when the user

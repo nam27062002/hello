@@ -29,7 +29,7 @@ public class LoadingScreen : UbiBCN.SingletonMonoBehaviour<LoadingScreen> {
 	[SerializeField] private ShowHideAnimator m_animator = null;
 	[SerializeField] private Canvas m_loadingCanvas = null;
 	[Space]
-	[SerializeField] private Image m_dragonIcon = null;
+	[SerializeField] private UISpriteAddressablesLoader m_dragonIconLoader = null;
     [SerializeField] private Image m_tierIcon = null;
     [Space]
     [SerializeField] private PowerIcon[] m_powerIcons = null;
@@ -50,6 +50,7 @@ public class LoadingScreen : UbiBCN.SingletonMonoBehaviour<LoadingScreen> {
 
 	public void Awake(){
 		m_animator.OnHidePostAnimation.AddListener(OnHidePostAnimation);
+	//	m_animator.OnShowPostAnimation.AddListener();
 	}
 
 	public void OnHidePostAnimation(ShowHideAnimator _animator) {
@@ -62,8 +63,9 @@ public class LoadingScreen : UbiBCN.SingletonMonoBehaviour<LoadingScreen> {
 	/// </summary>
 	/// <param name="_show">Whether to show or hide the screen.</param>
 	/// <param name="_animate">Use fade animation?</param>
-	public static void Toggle(bool _show, bool _animate = true) {
+	public static void Toggle(bool _show, bool _animate = true, bool loadAddressables = false) {
 		if ( _show ){
+			InitWithCurrentData(loadAddressables);
 			instance.m_loadingCanvas.gameObject.SetActive(true);
 			instance.m_loadingCanvas.worldCamera.gameObject.SetActive(true);
 		}
@@ -74,24 +76,42 @@ public class LoadingScreen : UbiBCN.SingletonMonoBehaviour<LoadingScreen> {
 	/// <summary>
 	/// Initialize the screen with current data: selected dragon, skin, pets, etc.
 	/// </summary>
-	public static void InitWithCurrentData() {
-		// Aux vars
-		IDragonData currentDragon = null;
-		if (SceneController.mode == SceneController.Mode.TOURNAMENT) {
-			currentDragon = HDLiveDataManager.tournament.tournamentData.tournamentDef.dragonData;
-		} else {
-			currentDragon = DragonManager.currentDragon;
-		}
+	private static void InitWithCurrentData(bool loadAddressables) {
+        IDragonData currentDragon = GetCurrentDragonData();
 
-		DefinitionNode skinDef = skinDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, currentDragon.disguise);
-		List<string> pets = currentDragon.pets;
+        if (loadAddressables) {
+            LoadAddressables();
+        } else {
+            instance.m_dragonIconLoader.IsVisible = false;
+        }
 
-		// Dragon image
-		instance.m_dragonIcon.sprite = Resources.Load<Sprite>(UIConstants.DISGUISE_ICONS_PATH + currentDragon.def.sku + "/" + skinDef.Get("icon"));
+
         instance.m_tierIcon.sprite = ResourcesExt.LoadFromSpritesheet(UIConstants.UI_SPRITESHEET_PATH, currentDragon.tierDef.Get("icon"));
 
 		// Powers: skin + pets
 		// [AOC] PowerIcon does all the job for us!
 		PowerIcon.InitPowerIconsWithDragonData(ref instance.m_powerIcons, currentDragon);
 	}
+
+    private static IDragonData GetCurrentDragonData() {
+        IDragonData currentDragon = null;
+        if (SceneController.mode == SceneController.Mode.TOURNAMENT)
+        {
+            currentDragon = HDLiveDataManager.tournament.tournamentData.tournamentDef.dragonData;
+        }
+        else
+        {
+            currentDragon = DragonManager.currentDragon;
+        }
+
+        return currentDragon;
+    }
+
+    public static void LoadAddressables() {
+        IDragonData currentDragon = GetCurrentDragonData();        
+        DefinitionNode skinDef = skinDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, currentDragon.disguise);
+
+        instance.m_dragonIconLoader.IsVisible = true;
+        instance.m_dragonIconLoader.LoadAsync(skinDef.Get("icon"));
+    }
 }

@@ -313,8 +313,26 @@ public class LabStatUpgrader : MonoBehaviour {
 		// Nothing to do if either dragon or stat data are not valid
 		if(m_dragonData == null || m_statData == null) return;
 
-		// Launch transaction
-		ResourcesFlow purchaseFlow = new ResourcesFlow("UPGRADE_SPECIAL_DRAGON_STAT");
+        // OTA: we prevent the upgrade if the asset bundles are not downloaded
+        // because some of the upgraded dragons need the downloadable content
+        Downloadables.Handle allContentHandle = HDAddressablesManager.Instance.GetHandleForAllDownloadables();
+
+        if (!allContentHandle.IsAvailable())
+        {
+            // Get the download flow from the parent lab screen
+            AssetsDownloadFlow assetsDownloadFlow = InstanceManager.menuSceneController.GetScreenData(MenuScreen.LAB_DRAGON_SELECTION).
+                                                        ui.GetComponent<LabDragonSelectionScreen>().assetsDownloadFlow;
+
+            assetsDownloadFlow.InitWithHandle(allContentHandle);
+            PopupAssetsDownloadFlow popup = assetsDownloadFlow.OpenPopupByState(PopupAssetsDownloadFlow.PopupType.ANY,
+                                                                                AssetsDownloadFlow.Context.PLAYER_CLICKS_ON_UPGRADE_SPECIAL);
+            // Abort the upgrade
+            return;
+        }
+        
+
+        // Launch transaction
+        ResourcesFlow purchaseFlow = new ResourcesFlow("UPGRADE_SPECIAL_DRAGON_STAT");
 		purchaseFlow.OnSuccess.AddListener(OnUpgradePurchaseSuccess);
 		purchaseFlow.Begin(
 			m_dragonData.GetStatUpgradePrice(m_stat),

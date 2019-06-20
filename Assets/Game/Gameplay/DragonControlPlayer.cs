@@ -242,21 +242,23 @@ public class DragonControlPlayer : MonoBehaviour {
 	}
 
 	void OnDisable() {
-		if(touchControls != null) {
-			touchControls.SetTouchObjRendering(false);
-			touchControls.SetTouch2ObjRendering(false, false);
-			touchControls.enabled = false;
-		}
+        if (ApplicationManager.IsAlive) {
+            if (touchControls != null)
+            {
+                touchControls.SetTouchObjRendering(false);
+                touchControls.SetTouch2ObjRendering(false, false);
+                touchControls.enabled = false;
+            }
 
-		if(tiltControls != null)
-			tiltControls.enabled = false;
+            if (tiltControls != null)
+                tiltControls.enabled = false;
 
-		if(joystickControls != null)
-			joystickControls.enabled = false;
+            if (joystickControls != null)
+                joystickControls.enabled = false;
 
-		moving = false;
-		action = false;
-
+            moving = false;
+            action = false;
+        }
 	}
 
 	//------------------------------------------------------------------------//

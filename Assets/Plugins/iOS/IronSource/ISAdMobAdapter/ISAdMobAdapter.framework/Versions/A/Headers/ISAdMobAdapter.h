@@ -9,6 +9,8 @@
 #import <Foundation/Foundation.h>
 #import "IronSource/ISBaseAdapter+Internal.h"
 
+static NSString * const AdMobAdapterVersion     = @"4.3.3";
+
 @interface ISAdMobAdapter : ISBaseAdapter
 
 @end
