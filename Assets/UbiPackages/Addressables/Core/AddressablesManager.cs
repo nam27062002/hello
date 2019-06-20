@@ -126,8 +126,11 @@ public class AddressablesManager
             m_catalog = GetEditorCatalog(true);            
             buildCatalog = false;
 
-            // We don't want downloadables to download when editor mode is enabled
-            downloadablesCatalogJSON = null;
+            // We don't want asset bundles to be used when editor mode is enabled
+            assetBundlesCatalogJSON = null;
+
+            // We don't want downloadables to download when editor mode is enabled            
+            downloadablesCatalogJSON = null;            
         }
 #endif
         if (buildCatalog)
