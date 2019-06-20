@@ -118,7 +118,7 @@ public class CPDownloadablesTab : MonoBehaviour
 
         if (m_downloadCompletedPopupToggle != null)
         {
-            m_downloadCompletedPopupToggle.isOn = Prefs.GetBoolPlayer(AssetsDownloadFlowSettings.OTA_DOWNLOAD_COMPLETE_POPUP_SHOWN, false);
+            m_downloadCompletedPopupToggle.isOn = Prefs.GetBoolPlayer(AssetsDownloadFlowSettings.OTA_SHOW_DOWNLOAD_COMPLETE_POPUP, false);
         }
 
 #if UNITY_EDITOR
@@ -169,7 +169,7 @@ public class CPDownloadablesTab : MonoBehaviour
     public void OnDownloadCompletedPopupToggleClick()
     {
         bool newValue = m_downloadCompletedPopupToggle.isOn;
-        Prefs.SetBoolPlayer(AssetsDownloadFlowSettings.OTA_DOWNLOAD_COMPLETE_POPUP_SHOWN, newValue);
+        Prefs.SetBoolPlayer(AssetsDownloadFlowSettings.OTA_SHOW_DOWNLOAD_COMPLETE_POPUP, newValue);
     }
 
     #region dumper
