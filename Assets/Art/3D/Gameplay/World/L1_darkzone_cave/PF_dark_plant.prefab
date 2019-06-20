@@ -137,16 +137,16 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1574461698360696}
-  m_LocalRotation: {x: 0.49202657, y: 0.50784826, z: 0.49202657, w: -0.50784826}
-  m_LocalPosition: {x: -181.5138, y: 111.99, z: 2.09}
-  m_LocalScale: {x: 1.1841904, y: 1.1841904, z: 1.1841904}
+  m_LocalRotation: {x: 0.47687283, y: 0.52028465, z: 0.4774598, w: -0.52338165}
+  m_LocalPosition: {x: -28.8, y: 84.36, z: 1.437}
+  m_LocalScale: {x: 1.1260598, y: 1.12606, z: 1.1260602}
   m_Children:
   - {fileID: 4475561583598158}
   - {fileID: 4389620705332228}
   - {fileID: 4996990701331764}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: -88.187004, y: -90.00001, z: 0}
+  m_LocalEulerAnglesHint: {x: -84.87601, y: -87.567, z: -2.289}
 --- !u!4 &4996990701331764
 Transform:
   m_ObjectHideFlags: 1
@@ -170,6 +170,7 @@ MeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -185,6 +186,7 @@ MeshRenderer:
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
   m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
@@ -211,6 +213,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8120059800728421a9caa1901cb4b847, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_tags: 0
   m_sku: building_small
   m_tier: 0
   m_disintegrable: 1
@@ -275,6 +278,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_feedbackParticleMatchDirection: 0
   m_burnParticle:
     name: PF_FireProc
@@ -314,6 +318,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_disintegrateParticle:
     name: 
     path: 
@@ -352,7 +357,9 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_useAnimator: 0
+  m_viewScripts: []
   m_boxelSize: 1
   m_hitRadius: 1.5
 --- !u!114 &114711928036937368
