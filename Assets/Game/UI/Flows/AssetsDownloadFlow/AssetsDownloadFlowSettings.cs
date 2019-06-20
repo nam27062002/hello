@@ -23,7 +23,7 @@ public class AssetsDownloadFlowSettings : SingletonScriptableObject<AssetsDownlo
     //------------------------------------------------------------------------//
 
 
-    public const string OTA_DOWNLOAD_COMPLETE_POPUP_SHOWN = "OTA_DOWNLOAD_COMPLETE_POPUP_ALREADY_SHOWN";
+    public const string OTA_SHOW_DOWNLOAD_COMPLETE_POPUP = "OTA_SHOW_DOWNLOAD_COMPLETE_POPUP";
 
 
     //------------------------------------------------------------------------//
