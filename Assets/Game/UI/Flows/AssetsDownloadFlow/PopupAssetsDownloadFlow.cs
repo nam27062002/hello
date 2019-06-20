@@ -264,13 +264,8 @@ public class PopupAssetsDownloadFlow : MonoBehaviour {
                         m_downloadInProgressGroup.gameObject.SetActive(false);
                         m_downloadCompletedGroup.gameObject.SetActive(true);
 
-                        // If we didnt show the "download completed" popup to the player before
-                        if (!Prefs.GetBoolPlayer(AssetsDownloadFlowSettings.OTA_DOWNLOAD_COMPLETE_POPUP_SHOWN, false))
-                        {
-                            // Mark it as shown, so the popup wont be launched again
-                            Prefs.SetBoolPlayer(AssetsDownloadFlowSettings.OTA_DOWNLOAD_COMPLETE_POPUP_SHOWN, true);
-
-                        }
+                        // Mark it as shown, so the popup wont be launched again
+                        Prefs.SetBoolPlayer(AssetsDownloadFlowSettings.OTA_SHOW_DOWNLOAD_COMPLETE_POPUP, false);
 
                     }
                     else {
@@ -472,8 +467,11 @@ public class PopupAssetsDownloadFlow : MonoBehaviour {
 		// Tracking
 		HDTrackingManager.Instance.Notify_PopupOTA(this.name, Downloadables.Popup.EAction.Wifi_Only);
 
-		// Close Popup
-		GetComponent<PopupController>().Close(true);
+        // The player accepted the popup so we will show the "completed download" popup when finished
+        Prefs.SetBoolPlayer(AssetsDownloadFlowSettings.OTA_SHOW_DOWNLOAD_COMPLETE_POPUP, true);
+
+        // Close Popup
+        GetComponent<PopupController>().Close(true);
 	}
 
 	/// <summary>
@@ -487,8 +485,11 @@ public class PopupAssetsDownloadFlow : MonoBehaviour {
 		// Tracking
 		HDTrackingManager.Instance.Notify_PopupOTA(this.name, Downloadables.Popup.EAction.Wifi_Mobile);
 
-		// Close Popup
-		GetComponent<PopupController>().Close(true);
+        // The player accepted the popup so we will show the "completed download" popup when finished
+        Prefs.SetBoolPlayer(AssetsDownloadFlowSettings.OTA_SHOW_DOWNLOAD_COMPLETE_POPUP, true);
+
+        // Close Popup
+        GetComponent<PopupController>().Close(true);
 	}
 
 	/// <summary>
