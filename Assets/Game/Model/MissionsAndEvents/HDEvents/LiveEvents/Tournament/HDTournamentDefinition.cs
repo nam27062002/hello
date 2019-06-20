@@ -66,6 +66,7 @@ public class HDTournamentDefinition : HDLiveEventDefinition{
 		public int m_loops;
 		public string m_area = "";
 		public string m_spawnPoint = "";
+        public string m_spawnPointTID = "";
 		public float m_progressionSeconds = 0f;
 		public int m_progressionXP = 0;
 
@@ -138,9 +139,13 @@ public class HDTournamentDefinition : HDLiveEventDefinition{
 				DefinitionNode spawnPointDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.LEVEL_SPAWN_POINTS, m_spawnPoint);
 				if (spawnPointDef != null) {
 					m_area = spawnPointDef.Get("area");
-				} else {
+                    m_spawnPointTID = spawnPointDef.Get("tidName");
+                } else {
+                    Debug.Log("Spawning point with sku=" + m_spawnPoint + " not defined in xml");
 					m_area = "";
-				}
+                    m_spawnPointTID = "";
+
+                }
 			}
 		}
 
