@@ -677,8 +677,12 @@ public class GameServerManagerCalety : GameServerManager {
     //--------------------------------------------------------------------------
 
     public override void HDEvents_GetDefinition(int _eventID, ServerCallback _callback) {
-		Dictionary<string, string> parameters = new Dictionary<string, string>();
-		parameters.Add("eventId", _eventID.ToString(JSON_FORMAT));
+		JSONNode json = new JSONClass();
+        json.Add("eventId", _eventID.ToString(JSON_FORMAT));
+        
+        Dictionary<string, string> parameters = new Dictionary<string, string>();
+        parameters.Add("body", json.ToString());
+
 		Commands_EnqueueCommand(ECommand.HDLiveEvents_GetEventDefinition, parameters, _callback);
 	}
 
@@ -1259,16 +1263,14 @@ public class GameServerManagerCalety : GameServerManager {
                         kParams.Add("isChildren", GDPRManager.SharedInstance.IsAgeRestrictionEnabled().ToString().ToLower());
                         Command_SendCommand(COMMAND_HD_LIVE_EVENTS_GET_MY_EVENTS, kParams);
                     } break;
-
-                case ECommand.HDLiveEvents_GetEventDefinition:
+                
                 case ECommand.HDLiveEvents_GetMyProgress:
                 case ECommand.HDLiveEvents_GetLeaderboard:                
                 case ECommand.HDLiveEvents_FinishMyEvent:                 {
                         Dictionary<string, string> kParams = new Dictionary<string, string>();
                         kParams["eventId"] = parameters["eventId"];
                         string global_event_command = "";
-                        switch (command.Cmd) {
-                            case ECommand.HDLiveEvents_GetEventDefinition: global_event_command = COMMAND_HD_LIVE_EVENTS_GET_EVENT_DEF; break;
+                        switch (command.Cmd) {                            
                             case ECommand.HDLiveEvents_GetMyProgress: global_event_command = COMMAND_HD_LIVE_EVENTS_GET_MY_PROGRESS; break;
                             case ECommand.HDLiveEvents_GetLeaderboard: global_event_command = COMMAND_HD_LIVE_EVENTS_GET_LEADERBOARD; break;                            
                             case ECommand.HDLiveEvents_FinishMyEvent: global_event_command = COMMAND_HD_LIVE_EVENTS_FINISH_MY_EVENT; break;                            
@@ -1276,6 +1278,11 @@ public class GameServerManagerCalety : GameServerManager {
 
                         Command_SendCommand(global_event_command, kParams);
                     } break;
+
+                case ECommand.HDLiveEvents_GetEventDefinition: {
+                        JSONClass data = JSON.Parse(parameters["body"]) as JSONClass;
+                        Command_SendCommandAsGameAction(ACTION_HD_LIVE_EVENTS_GET_EVENT_DEF, data, true);
+                } break;
 
                 case ECommand.HDLiveEvents_Tournament_Enter: {
                         JSONClass data = JSON.Parse(parameters["body"]) as JSONClass;
@@ -1756,6 +1763,7 @@ public class GameServerManagerCalety : GameServerManager {
 	private const string COMMAND_GLOBAL_EVENTS_GET_LEADERBOARD = "/api/gevent/leaderboard";
     //--------------------------------------------------------------------------------
 
+    private const string ACTION_HD_LIVE_EVENTS_GET_EVENT_DEF = "events/get";
     private const string ACTION_HD_LIVE_EVENTS_TOURNAMENT_ENTER = "tournaments/register";
     private const string ACTION_HD_LIVE_EVENTS_TOURNAMENT_SET_SCORE = "tournaments/score/set";
     private const string ACTION_HD_LIVE_EVENTS_TOURNAMENT_GET_REFUND = "tournaments/refund";
@@ -1763,7 +1771,7 @@ public class GameServerManagerCalety : GameServerManager {
     private const string ACTION_HD_LIVE_EVENTS_QUEST_REGISTER_PROGRESS = "quests/progress/add";    
     private const string ACTION_HD_LIVE_EVENTS_QUEST_GET_MY_REWARD = "quests/rewards/get";
     private const string COMMAND_HD_LIVE_EVENTS_GET_MY_EVENTS = "/api/levent/getMyEvents";
-    private const string COMMAND_HD_LIVE_EVENTS_GET_EVENT_DEF = "/api/levent/get";
+    
     private const string COMMAND_HD_LIVE_EVENTS_GET_MY_PROGRESS = "/api/levent/getProgress";
     private const string COMMAND_HD_LIVE_EVENTS_GET_LEADERBOARD = "/api/levent/getLeaderboard";    
     private const string COMMAND_HD_LIVE_EVENTS_FINISH_MY_EVENT = "/api/levent/finish";    
@@ -1818,7 +1826,6 @@ public class GameServerManagerCalety : GameServerManager {
 		nm.RegistryEndPoint(COMMAND_GLOBAL_EVENTS_GET_LEADERBOARD, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);        
 
 		nm.RegistryEndPoint(COMMAND_HD_LIVE_EVENTS_GET_MY_EVENTS, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
-		nm.RegistryEndPoint(COMMAND_HD_LIVE_EVENTS_GET_EVENT_DEF, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
 		nm.RegistryEndPoint(COMMAND_HD_LIVE_EVENTS_GET_MY_PROGRESS, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
         nm.RegistryEndPoint(COMMAND_HD_LIVE_EVENTS_GET_LEADERBOARD, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
 		nm.RegistryEndPoint(COMMAND_HD_LIVE_EVENTS_FINISH_MY_EVENT, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);     
