@@ -296,12 +296,14 @@ public class MenuSceneController : SceneController {
 	/// Play button has been pressed.
 	/// </summary>
 	public void GoToGame() {
-		// Show loading screen
-		LoadingScreen.Toggle(true, false);
+		if (!GameSceneManager.isLoading) {
+			// Show loading screen
+			LoadingScreen.Toggle(true, false);
 
-		// Go to game!
-		// [AOC] No need to block the button, the GameFlow already controls spamming
-		FlowManager.GoToGame();
+			// Go to game!
+			// [AOC] No need to block the button, the GameFlow already controls spamming
+			FlowManager.GoToGame();
+		}
 	}
 
 	/// <summary>
