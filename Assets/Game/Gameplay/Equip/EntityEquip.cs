@@ -5,16 +5,22 @@ using UnityEngine;
 public class EntityEquip : MonoBehaviour {
 
     [Serializable]
-    private class Item {
+    public class Item {
         public string equipablePrefabName;
         public GameObject[] toDisableOnEquip = new GameObject[0];
 
         [Separator]
         [Range(0f, 1f)]public float probability = 1f;
         public string season = "";
+
+        [Separator]
+        public Vector3 position = GameConstants.Vector3.zero;
+        public Vector3 scale = GameConstants.Vector3.one;
+        public Vector3 rotation = GameConstants.Vector3.zero;
     }
 
     [SerializeField] private Item[] m_inventory = new Item[0];
+    public Item[] inventory { get { return m_inventory; } }
 
     private AttachPoint[] m_attachPoints = new AttachPoint[(int)Equipable.AttachPoint.Count];
     private List<string> m_equippedSkus = new List<string>();
@@ -43,7 +49,7 @@ public class EntityEquip : MonoBehaviour {
                     int attackPointIdx = (int)equipable.attachPoint;
                     if (equipable != null && attackPointIdx < m_attachPoints.Length && m_attachPoints[attackPointIdx] != null) {
                         if (m_attachPoints[attackPointIdx].item == null) {
-                            m_attachPoints[attackPointIdx].EquipAccessory(equipable);
+                            m_attachPoints[attackPointIdx].EquipAccessory(equipable, item.position, item.scale, item.rotation);
                             m_equippedSkus.Add(equipable.sku);
                             for (int j = 0; j < item.toDisableOnEquip.Length; ++j) {
                                 item.toDisableOnEquip[j].SetActive(false);
