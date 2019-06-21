@@ -421,6 +421,9 @@ public class DragonPowerUp : MonoBehaviour {
 				if(powerUp2Def != null) {
 					type = powerUp2Def.GetAsString("type");
 				}
+				//TONI
+				type = "special";
+				//TONI
 			} break;
 		}
 
@@ -491,6 +494,11 @@ public class DragonPowerUp : MonoBehaviour {
 			} break;
 
 			// Special
+			//TONI
+			case "special":
+			case "sun":
+			case "shoot_bubble":
+			//TONI
 			case "lives":
 			case "dragonram":
 			case "magnet":
