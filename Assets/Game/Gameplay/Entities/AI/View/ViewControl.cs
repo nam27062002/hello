@@ -1217,7 +1217,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable, IBroadcastLi
 		SpawnEatenParticlesAt( _transform );
 	}
 
-	public void Burn(float _burnAnimSeconds) {
+	public void Burn(float _burnAnimSeconds, FireColorSetupManager.FireColorType _burnColor) {
 		if (m_idleAudioAO != null && m_idleAudioAO.IsPlaying()){
 			m_idleAudioAO.Stop();
 			RemoveAudioParent( ref m_idleAudioAO );
@@ -1227,10 +1227,10 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable, IBroadcastLi
 			if (m_burnParticle.IsValid()) {
 				if (m_firePoints != null && m_firePoints.Length > 0) {
 					for (int i = 0; i < m_firePoints.Length; i++) {						
-						SpawnBurnParticle(m_firePoints[i], i, _burnAnimSeconds);
+						SpawnBurnParticle(m_firePoints[i], i, _burnAnimSeconds, _burnColor);
 					}
 				} else {
-					SpawnBurnParticle(m_transform, 0, _burnAnimSeconds);
+					SpawnBurnParticle(m_transform, 0, _burnAnimSeconds, _burnColor);
 				}
 			}
 		}
@@ -1248,7 +1248,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable, IBroadcastLi
 		}
 	}
 
-	private void SpawnBurnParticle(Transform _parent, int _index, float _disableInSeconds) {
+	private void SpawnBurnParticle(Transform _parent, int _index, float _disableInSeconds, FireColorSetupManager.FireColorType _burnColor) {
 		GameObject go = m_burnParticle.Spawn();
 		if (go != null) {
 			Transform t = go.transform;
@@ -1261,6 +1261,10 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable, IBroadcastLi
 
 			DisableInSeconds dis = go.GetComponent<DisableInSeconds>();
 			dis.activeTime = _disableInSeconds;
+
+			FireTypeAutoSelector fireTypeAutoSelector = go.GetComponent<FireTypeAutoSelector>();
+			if ( fireTypeAutoSelector != null )
+				fireTypeAutoSelector.m_fireType = _burnColor;
 		} else {
 			m_fireParticles[_index] = null;
 			m_fireParticlesParents[_index] = null;
