@@ -26,6 +26,10 @@ public class EntityEquipEditor : Editor {
 		m_selectedItem = 0;
 	}
 
+	private void OnDestroy() {
+		ClearItems();
+	}
+
 	
 	public override void OnInspectorGUI()
     {
