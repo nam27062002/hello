@@ -262,7 +262,7 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable, IBroadcastListen
 						GameObject ex = m_explosionProcHandler.Spawn(null, n.transform.position);
 						if (ex != null) {
 							ex.transform.localScale = n.transform.localScale * 1.0f;
-							ex.GetComponent<ExplosionProcController>().Explode(i * 0.015f); //delay
+							ex.GetComponent<ExplosionProcController>().Explode(i * 0.015f, n.colorType); //delay
 						}
 
 						m_disintegrateParticle.Spawn(n.transform.position + m_disintegrateParticle.offset);

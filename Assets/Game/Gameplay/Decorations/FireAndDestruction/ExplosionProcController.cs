@@ -3,20 +3,20 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class ExplosionProcController : MonoBehaviour {
-	private Animator m_animator;
-	private DisableInSeconds m_disableInSecs;
+	public Animator m_animator;
+	public DisableInSeconds m_disableInSecs;
+	public FireTypeAutoSelector m_fireAutoSelector;
 
 	private float m_timer;
 
 	private void Awake() {
-		m_animator = GetComponent<Animator>();
-		m_disableInSecs = GetComponent<DisableInSeconds>();
 		m_timer = 0f;
 	}
 
-	public void Explode(float _delay) {
+	public void Explode(float _delay, FireColorSetupManager.FireColorType _color) {
 		m_timer = _delay + 0.01f;
 		m_disableInSecs.activeTime = 1f + _delay;
+		m_fireAutoSelector.m_fireType = _color;
 	}
 
 	private void Update() {

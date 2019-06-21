@@ -82,6 +82,7 @@ MeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -97,12 +98,14 @@ MeshRenderer:
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
   m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
+  m_SortingLayer: 0
   m_SortingOrder: 0
 --- !u!33 &33000014282011298
 MeshFilter:
@@ -122,106 +125,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8a786abc177bb4837966cb444efef7e4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_fireStartColorA: {r: 1, g: 0.64705884, b: 0.41960785, a: 1}
-  m_fireStartColorB: {r: 1, g: 1, b: 0.39215687, a: 1}
-  m_fireGradient:
-    key0:
-      serializedVersion: 2
-      rgba: 4294967295
-    key1:
-      serializedVersion: 2
-      rgba: 4294967295
-    key2:
-      serializedVersion: 2
-      rgba: 0
-    key3:
-      serializedVersion: 2
-      rgba: 0
-    key4:
-      serializedVersion: 2
-      rgba: 0
-    key5:
-      serializedVersion: 2
-      rgba: 0
-    key6:
-      serializedVersion: 2
-      rgba: 0
-    key7:
-      serializedVersion: 2
-      rgba: 0
-    ctime0: 0
-    ctime1: 65535
-    ctime2: 0
-    ctime3: 0
-    ctime4: 0
-    ctime5: 0
-    ctime6: 0
-    ctime7: 0
-    atime0: 0
-    atime1: 65535
-    atime2: 0
-    atime3: 0
-    atime4: 0
-    atime5: 0
-    atime6: 0
-    atime7: 0
-    m_Mode: 0
-    m_NumColorKeys: 2
-    m_NumAlphaKeys: 2
-  m_fireMaterial: {fileID: 2100000, guid: c2ace3526bccdc041ad79841095f8094, type: 2}
+  m_fireColorVariant: 0
   m_fireOnly: []
-  m_megaStartColorA: {r: 0.47058824, g: 0.5411765, b: 1, a: 1}
-  m_megaStartColorB: {r: 0.39215687, g: 0.9254902, b: 1, a: 1}
-  m_megaGradient:
-    key0:
-      serializedVersion: 2
-      rgba: 4294967295
-    key1:
-      serializedVersion: 2
-      rgba: 4294967295
-    key2:
-      serializedVersion: 2
-      rgba: 0
-    key3:
-      serializedVersion: 2
-      rgba: 0
-    key4:
-      serializedVersion: 2
-      rgba: 0
-    key5:
-      serializedVersion: 2
-      rgba: 0
-    key6:
-      serializedVersion: 2
-      rgba: 0
-    key7:
-      serializedVersion: 2
-      rgba: 0
-    ctime0: 0
-    ctime1: 65535
-    ctime2: 0
-    ctime3: 0
-    ctime4: 0
-    ctime5: 0
-    ctime6: 0
-    ctime7: 0
-    atime0: 0
-    atime1: 65535
-    atime2: 0
-    atime3: 0
-    atime4: 0
-    atime5: 0
-    atime6: 0
-    atime7: 0
-    m_Mode: 0
-    m_NumColorKeys: 2
-    m_NumAlphaKeys: 2
-  m_megaMaterial: {fileID: 2100000, guid: 7c11ca78aae9bc142856793c295ff136, type: 2}
   m_megaOnly: []
   m_psChangeStartColors: []
   m_psChangeGradientColors: []
   m_rChangeMaterials:
   - {fileID: 23000011814843698}
+  m_fireType: 0
 --- !u!114 &114000013355048048
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -245,3 +156,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ffa5694eda91647eb8cb359fa67b2af9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_renderer: {fileID: 23000011814843698}
+  m_colorSelector: {fileID: 114000011166009582}
