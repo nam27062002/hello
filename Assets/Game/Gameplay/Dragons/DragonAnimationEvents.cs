@@ -174,7 +174,7 @@ public class DragonAnimationEvents : MonoBehaviour {
 		}
 	}
 
-	void OnKo( DamageType type , Transform _source)
+	protected virtual void OnKo( DamageType type , Transform _source)
 	{
 		if ( type == DamageType.MINE || type == DamageType.BIG_DAMAGE || InstanceManager.player.m_alwaysSpawnCorpse )
 		{
@@ -186,7 +186,7 @@ public class DragonAnimationEvents : MonoBehaviour {
 		}
 	}
 
-	void OnRevive(DragonPlayer.ReviveReason reason)
+	protected virtual void OnRevive(DragonPlayer.ReviveReason reason)
 	{
 		PlaySound( m_onReviveSound );
 	}
