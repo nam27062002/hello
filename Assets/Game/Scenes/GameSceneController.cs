@@ -46,6 +46,8 @@ public class GameSceneController : GameSceneControllerBase {
 
     private const bool m_useSyncLoading = false;
 
+    protected ToggleParam m_pauseParam = new ToggleParam();
+
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
@@ -455,7 +457,8 @@ public class GameSceneController : GameSceneControllerBase {
                     //Stop Performance tracking 
                     HDTrackingManagerImp.Instance.Notify_StopPerformanceTracker();
 					// Notify the game
-					Messenger.Broadcast<bool>(MessengerEvents.GAME_PAUSED, true);
+                    m_pauseParam.value = true;
+                    Broadcaster.Broadcast(BroadcastEventType.GAME_PAUSED, m_pauseParam);
 				}
 
 				// Increase stack
@@ -475,7 +478,8 @@ public class GameSceneController : GameSceneControllerBase {
 					Screen.sleepTimeout = SleepTimeout.NeverSleep;
 
 					// Notify the game
-					Messenger.Broadcast<bool>(MessengerEvents.GAME_PAUSED, false);
+                    m_pauseParam.value = false;
+                    Broadcaster.Broadcast(BroadcastEventType.GAME_PAUSED, m_pauseParam);
                     //Start Performance tracking 
                     HDTrackingManagerImp.Instance.Notify_StartPerformanceTracker();
 
