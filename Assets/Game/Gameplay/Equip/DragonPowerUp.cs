@@ -373,6 +373,37 @@ public class DragonPowerUp : MonoBehaviour {
 				}
 			} break;
 
+			//TONI
+			case "combined":
+			{
+				DefinitionNode powerUp1 = DefinitionsManager.SharedInstance.GetDefinition (DefinitionsCategory.POWERUPS, _powerDef.GetAsString ("param1"));
+				string typePower1 = powerUp1.GetAsString("type");
+				if (typePower1 == "combined") {
+					DefinitionNode powerUp1c = DefinitionsManager.SharedInstance.GetDefinition (DefinitionsCategory.POWERUPS, powerUp1.GetAsString ("param1"));
+					DefinitionNode powerUp2c = DefinitionsManager.SharedInstance.GetDefinition (DefinitionsCategory.POWERUPS, powerUp1.GetAsString ("param2"));
+					DefinitionNode powerUp3 = DefinitionsManager.SharedInstance.GetDefinition (DefinitionsCategory.POWERUPS, _powerDef.GetAsString ("param2"));
+					string paramX1 = "param1";
+					string paramX2 = "param1";
+					string paramX3 = "param1";
+					if (powerUp1c.GetAsString ("type") == "lower_damage")
+						paramX1 = "param2";
+					if (powerUp2c.GetAsString ("type") == "lower_damage")
+						paramX2 = "param2";
+					if (powerUp3.GetAsString ("type") == "lower_damage")
+						paramX3 = "param2";					
+					return _powerDef.GetLocalized (fieldId, StringUtils.FormatNumber ((int)(powerUp1c.GetAsFloat (paramX1) * multiplier)), StringUtils.FormatNumber ((int)(powerUp2c.GetAsFloat (paramX2) * multiplier)), StringUtils.FormatNumber ((int)(powerUp3.GetAsFloat (paramX3) * multiplier)), color.ToHexString ("#"));				
+				} else {
+					DefinitionNode powerUp2 = DefinitionsManager.SharedInstance.GetDefinition (DefinitionsCategory.POWERUPS, _powerDef.GetAsString ("param2"));
+					string paramX1 = "param1";
+					string paramX2 = "param1";
+					if (powerUp1.GetAsString ("type") == "lower_damage")
+						paramX1 = "param2";
+					if (powerUp2.GetAsString ("type") == "lower_damage")
+						paramX2 = "param2";
+					return _powerDef.GetLocalized (fieldId, StringUtils.FormatNumber ((int)(powerUp1.GetAsFloat (paramX1) * multiplier)), StringUtils.FormatNumber ((int)(powerUp2.GetAsFloat (paramX2) * multiplier)), color.ToHexString ("#"));				
+				}
+			} break;
+			//TONI
 			// Powers with 1 int parameter
 			case "hp_increase":
 			case "boost_increase":
@@ -390,7 +421,6 @@ public class DragonPowerUp : MonoBehaviour {
 			{
 				return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber((int)(_powerDef.GetAsFloat("param1") * multiplier)), color.ToHexString("#"));
 			} break;
-
 			// Rest of powers (no params)
 			default: {
 				return _powerDef.GetLocalized(fieldId, color.ToHexString("#"));
