@@ -19,8 +19,10 @@ public class DragonSuperSize : MonoBehaviour {
 	protected bool m_infiniteBoost;
 	protected bool m_eatEverything;
 	protected float m_modeDuration;
+	public float modeDuration { get { return m_modeDuration; } }
 
 	protected float m_timer;
+	public float time { get { return m_timer; } }
 
 	// Use this for initialization
 	void Start () 
