@@ -67,7 +67,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
         // This class needs to know whether or not the user is in the middle of a game
         Messenger.AddListener(MessengerEvents.GAME_COUNTDOWN_STARTED, Game_OnCountdownStarted);
-        Messenger.AddListener<bool>(MessengerEvents.GAME_PAUSED, Game_OnPaused);
+        Broadcaster.AddListener(BroadcastEventType.GAME_PAUSED, this);
         Broadcaster.AddListener(BroadcastEventType.GAME_ENDED, this);
         Broadcaster.AddListener(BroadcastEventType.LANGUAGE_CHANGED, this);
 
@@ -124,7 +124,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         base.OnDestroy();
 
         Messenger.RemoveListener(MessengerEvents.GAME_COUNTDOWN_STARTED, Game_OnCountdownStarted);
-        Messenger.RemoveListener<bool>(MessengerEvents.GAME_PAUSED, Game_OnPaused);
+        Broadcaster.RemoveListener(BroadcastEventType.GAME_PAUSED, this);
         Broadcaster.RemoveListener(BroadcastEventType.GAME_ENDED, this);
         Broadcaster.RemoveListener(BroadcastEventType.LANGUAGE_CHANGED, this);
 
@@ -157,6 +157,10 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
             case BroadcastEventType.LANGUAGE_CHANGED:
             {
                     Language_OnChanged();
+            }break;
+            case BroadcastEventType.GAME_PAUSED:
+            {
+                Game_OnPaused( (broadcastEventInfo as ToggleParam).value );
             }break;
         }
     }

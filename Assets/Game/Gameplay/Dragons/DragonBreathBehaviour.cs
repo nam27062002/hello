@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class DragonBreathBehaviour : MonoBehaviour {
+public class DragonBreathBehaviour : MonoBehaviour, IBroadcastListener {
 	//-----------------------------------------------
 	// Constants
 	//-----------------------------------------------
@@ -175,7 +175,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 
 		Messenger.AddListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_BURNED, OnEntityBurned);
 		Messenger.AddListener<Reward, Transform>(MessengerEvents.REWARD_APPLIED, OnRewardApplied);
-		Messenger.AddListener<bool>(MessengerEvents.GAME_PAUSED, OnGamePaused);
+		Broadcaster.AddListener(BroadcastEventType.GAME_PAUSED, this);
 
 		ChangeState(State.NORMAL);
         
@@ -185,12 +185,8 @@ public class DragonBreathBehaviour : MonoBehaviour {
         }
 	}
 
-	/// <summary>
-	/// The component has been enabled.
-	/// </summary>
-	private void OnEnable()
-	{
-	}
+	
+
 
 	public void SetFuryMax( float max )
 	{
@@ -214,8 +210,20 @@ public class DragonBreathBehaviour : MonoBehaviour {
 	{
 		Messenger.RemoveListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_BURNED, OnEntityBurned);
 		Messenger.RemoveListener<Reward, Transform>(MessengerEvents.REWARD_APPLIED, OnRewardApplied);
-		Messenger.RemoveListener<bool>(MessengerEvents.GAME_PAUSED, OnGamePaused);
+		Broadcaster.RemoveListener(BroadcastEventType.GAME_PAUSED, this);
 	}
+
+	public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+	{
+		switch( eventType )
+		{
+			case BroadcastEventType.GAME_PAUSED:
+			{
+				OnGamePaused( (broadcastEventInfo as ToggleParam).value );
+			}break;
+		}
+	}
+
 
 	void OnDisable() {
 		if ( ApplicationManager.IsAlive )
