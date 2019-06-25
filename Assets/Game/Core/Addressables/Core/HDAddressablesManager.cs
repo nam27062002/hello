@@ -932,21 +932,22 @@ public class Ingame_SwitchAreaHandle
             List<string> mandatoryBundles = new List<string>();
             mandatoryBundles.Add("shared"); // We need animations
             mandatoryBundles.Add("particles_shared");   // for the particles
+			handle.AddDependencyIds( mandatoryBundles ); 
 
-            List<string> optionalBundles = new List<string>();
+			// menu dragons
             foreach (KeyValuePair<string, DefinitionNode> pair in dragons)
             {
-                mandatoryBundles.Add( pair.Key + "_local" );
-                optionalBundles.Add( pair.Key ); // for disguises
-            }
-            handle.AddDependencyIds( mandatoryBundles );
-            handle.AddDependencyIds( optionalBundles, false );
+				handle.AddAddressable(pair.Value.Get("menuPrefab"));            
+            }                      
 
             Dictionary<string, IDragonData> dragonDatas = DragonManager.dragonsBySku;
             foreach (KeyValuePair<string, IDragonData> pair in dragonDatas) {
                 if (pair.Value.isOwned) {
                     AddPetDependencies(handle, pair.Value);
                 }
+
+				// Disguises
+				AddDisguiseDependencies (handle, pair.Value, false);
             }
         }
     }
