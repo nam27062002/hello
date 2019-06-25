@@ -28,6 +28,8 @@ public class DragonDinoAnimationEvents : DragonAnimationEvents {
 
     DragonMotionDino m_dragonMotion;
 
+    protected ParticleSystem m_jetpackParticle;
+
     protected override void Start()
     {
         base.Start();
@@ -73,6 +75,9 @@ public class DragonDinoAnimationEvents : DragonAnimationEvents {
             m_headbuttParticleInstance.gameObject.SetActive(false);
             SceneManager.MoveGameObjectToScene(m_headbuttParticleInstance.gameObject, gameObject.scene);
         }
+
+        // Search Jetpack particle
+        m_jetpackParticle = transform.FindTransformRecursive("jetpack_1").GetComponentInChildren<ParticleSystem>();
     }
 
     protected void Step()
@@ -120,5 +125,20 @@ public class DragonDinoAnimationEvents : DragonAnimationEvents {
             m_headbuttParticleInstance.Play();
         }
     }
+
+
+    protected override void OnKo( DamageType type , Transform _source)
+	{
+		base.OnKo(type , _source);
+        // Pause Jetpack particle
+        m_jetpackParticle.Stop();
+	}
+
+	protected override void OnRevive(DragonPlayer.ReviveReason reason)
+	{
+		base.OnRevive(reason);
+        // Resume Jetpack particle
+        m_jetpackParticle.Play();
+	}
 
 }
