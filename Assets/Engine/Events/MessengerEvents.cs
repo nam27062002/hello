@@ -84,7 +84,7 @@ public enum MessengerEvents {
 	// GAME_AREA_ENTER,			// no params 
 	// GAME_AREA_EXIT,				// no params
 	GAME_UPDATED,				// no params
-	GAME_PAUSED,				// params: bool _paused
+	// GAME_PAUSED,				// params: bool _paused
 	// GAME_ENDED,					// no params
 	REWARD_APPLIED,				// params: Reward _reward, Transform _entity
 	SCORE_MULTIPLIER_CHANGED,	// params: ScoreMultiplier _newMultiplier, int goldScoreMultiplier

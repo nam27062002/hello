@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.Audio;
 
-public class DragonAnimationEvents : MonoBehaviour {
+public class DragonAnimationEvents : MonoBehaviour, IBroadcastListener {
 
 	private DragonAttackBehaviour m_attackBehaviour;
 	protected DragonParticleController m_particleController;
@@ -97,7 +97,8 @@ public class DragonAnimationEvents : MonoBehaviour {
 		Messenger.AddListener<DamageType, Transform>(MessengerEvents.PLAYER_KO, OnKo);
 		Messenger.AddListener<DragonPlayer.ReviveReason>(MessengerEvents.PLAYER_REVIVE, OnRevive);
 		Messenger.AddListener<DragonBreathBehaviour.Type, float>(MessengerEvents.PREWARM_FURY_RUSH, OnPrewarmFuryRush);
-        Messenger.AddListener<bool>(MessengerEvents.GAME_PAUSED, OnGamePaused);
+        Broadcaster.AddListener( BroadcastEventType.GAME_PAUSED, this);
+		
 		m_eventsRegistered = true;
 		// m_animator.SetBool( "starving", true);
 
@@ -130,7 +131,7 @@ public class DragonAnimationEvents : MonoBehaviour {
 			Messenger.RemoveListener<DamageType, Transform>(MessengerEvents.PLAYER_KO, OnKo);
 			Messenger.RemoveListener<DragonPlayer.ReviveReason>(MessengerEvents.PLAYER_REVIVE, OnRevive);
 			Messenger.RemoveListener<DragonBreathBehaviour.Type, float>(MessengerEvents.PREWARM_FURY_RUSH, OnPrewarmFuryRush);
-            Messenger.RemoveListener<bool>(MessengerEvents.GAME_PAUSED, OnGamePaused);
+			Broadcaster.RemoveListener( BroadcastEventType.GAME_PAUSED, this);
 		}
 	}
 
@@ -144,6 +145,17 @@ public class DragonAnimationEvents : MonoBehaviour {
 					InstanceManager.musicController.RegisterSnapshot(m_insideWaterSnapshot);
 				m_checkWaterSnapshot = false;
 			}
+		}
+	}
+
+	public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+	{
+		switch( eventType )
+		{
+			case BroadcastEventType.GAME_PAUSED:
+			{
+				OnGamePaused( ( broadcastEventInfo as ToggleParam ).value );
+			}break;
 		}
 	}
 
