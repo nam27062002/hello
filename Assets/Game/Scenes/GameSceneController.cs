@@ -582,6 +582,12 @@ public class GameSceneController : GameSceneControllerBase {
 
                 PoolManager.PreBuild();
                 ParticleManager.Clear();
+
+                if (SeasonManager.activeSeason.Equals("xmas")) {
+                    ParticleManager.EnableBloodOverride("PS_XMasPresentCollect");
+                } else {
+                    ParticleManager.DisableBloodOverride();
+                }
 				ParticleManager.PreBuild();
 
 				// Initialize minimum loading time as well

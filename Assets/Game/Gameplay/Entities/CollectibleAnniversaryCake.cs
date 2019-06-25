@@ -1,10 +1,15 @@
-﻿
+﻿using UnityEngine;
+
 public class CollectibleAnniversaryCake : CollectibleEntity {
 
+	private int m_cakesToHuge;
 	private DragonSuperSize m_dragonSuperSize;
 
-	public override void Spawn(ISpawner _spawner) {
-		base.Spawn(_spawner);
+	protected override void Awake() {
+		base.Awake();
+
+		DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, "dragonSettings");
+		m_cakesToHuge = def.GetAsInt("anniversaryCakesToHuge", 1);
 		m_dragonSuperSize = InstanceManager.player.GetComponent<DragonSuperSize>();
 	}
 
@@ -12,9 +17,8 @@ public class CollectibleAnniversaryCake : CollectibleEntity {
 		if (m_dragonSuperSize.time > 0f) {
 			RewardManager.killCount[sku] = 0;
 		} else {
-			if (RewardManager.killCount.ContainsKey(sku) && RewardManager.killCount[sku] >= 5) {
+			if (RewardManager.killCount.ContainsKey(sku) && RewardManager.killCount[sku] >= m_cakesToHuge) {
 				RewardManager.killCount[sku] = 0;
-
 				Messenger.Broadcast(MessengerEvents.ALL_HUNGRY_LETTERS_COLLECTED);
 			}
 		}
