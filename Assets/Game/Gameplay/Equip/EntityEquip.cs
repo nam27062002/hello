@@ -11,6 +11,7 @@ public class EntityEquip : MonoBehaviour {
 
         [Separator]
         [Range(0f, 1f)]public float probability = 1f;
+        [SeasonList]
         public string season = "";
 
         [Separator]
