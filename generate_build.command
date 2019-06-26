@@ -366,10 +366,10 @@ if $BUILD_ANDROID; then
 
   if $GENERATE_AAB; then
   APK_FILE="${APK_NAME}.aab"
-  elif
+  else
   APK_FILE="${APK_NAME}.apk"
   fi
-  
+
   APK_OUTPUT_DIR="${OUTPUT_DIR}/apks/${APK_NAME}"
   mkdir -p "${APK_OUTPUT_DIR}"
   mv "${OUTPUT_DIR}/apks/${APK_FILE}" "${APK_OUTPUT_DIR}/"
