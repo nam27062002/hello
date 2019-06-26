@@ -881,8 +881,13 @@ public class HDTrackingManagerImp : HDTrackingManager {
     public override void Notify_Funnel_FirstUX(FunnelData_FirstUX.Steps _step) {
         // This step has to be sent only within the first session
         if (TrackingPersistenceSystem.SessionCount == 1) {
-            Log("FTUX Funnel - step: " + m_firstUXFunnel.GetStepName(_step) + ", duration: " + m_firstUXFunnel.GetStepDuration(_step));
-            Track_Funnel(m_firstUXFunnel.name, m_firstUXFunnel.GetStepName(_step), m_firstUXFunnel.GetStepDuration(_step), m_firstUXFunnel.GetStepTotalTime(_step), Session_IsFirstTime);
+			int _stepDuration = m_firstUXFunnel.GetStepDuration(_step);
+
+			if (FeatureSettingsManager.IsDebugEnabled) {
+				Log("FTUX Funnel - step: " + m_firstUXFunnel.GetStepName(_step) + ", duration: " + _stepDuration);
+			}
+
+			Track_Funnel(m_firstUXFunnel.name, m_firstUXFunnel.GetStepName(_step), _stepDuration, m_firstUXFunnel.GetStepTotalTime(_step), Session_IsFirstTime);
         }
 
         if (_step == FunnelData_FirstUX.Steps.Count - 1 && m_playingMode == EPlayingMode.TUTORIAL) {
