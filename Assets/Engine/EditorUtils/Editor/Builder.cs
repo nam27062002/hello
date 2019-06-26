@@ -147,12 +147,16 @@ public class Builder : MonoBehaviour, UnityEditor.Build.IPreprocessBuild
 		string date = System.DateTime.Now.ToString("yyyyMMdd");
 		string code = GetArg("-code");
 		string finalApkName = code + "_" + GameSettings.internalVersion + "_" + date + "_b" + PlayerSettings.Android.bundleVersionCode + "_" +
-			GetEnvironmentString() + "_" + AddressablesManager.ModeToKey(AddressablesManager.EffectiveMode) + ".apk";
+			GetEnvironmentString() + "_" + AddressablesManager.ModeToKey(AddressablesManager.EffectiveMode) + (aabValue ? ".aab": ".apk");
 
 		string stagePath = System.IO.Path.Combine(outputDir, finalApkName);	// Should be something like ouputDir/hd_2.4.3_20160826_b12421.apk
 
 		// Some feedback
-		UnityEngine.Debug.Log("Generating Android APK at path: " + stagePath);
+		if (aabValue) {
+			UnityEngine.Debug.Log ("Generating Android AAB at path: " + stagePath);
+		} else {
+			UnityEngine.Debug.Log ("Generating Android APK at path: " + stagePath);
+		}
 
 		// string keyPath = Application.dataPath;
 		// keyPath = keyPath.Substring( 0, keyPath.Length - "Assets".Length);
