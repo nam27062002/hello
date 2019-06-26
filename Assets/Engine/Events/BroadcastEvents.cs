@@ -43,6 +43,8 @@ public enum BroadcastEventType
     BOOST_TOGGLED,              // params: ToggleParam
     SPECIAL_POWER_TOGGLED,      // params: ToggleParam
 
+    GAME_PAUSED,                // params: ToggleParam
+
 	// Debug
 	DEBUG_REFRESH_DAILY_REWARDS,    // no params
     

@@ -136,7 +136,12 @@ public class TouchControlsDPad : TouchControls {
                 ToggleParam toggleParam = (ToggleParam)broadcastEventInfo;
                 OnBoost(toggleParam.value); 
             }break;
+			default:
+			{
+				base.OnBroadcastSignal( eventType, broadcastEventInfo );
+			}break;
         }
+		
     }
     
 	
