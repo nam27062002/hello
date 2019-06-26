@@ -37,22 +37,32 @@ public class LoadAssetFromAssetBundleOp : AssetBundlesOp
             {
                 NotifyError(EResult.Error_Asset_Not_Found_In_AB);
             }
+            else
+            {
+                // We want to finish the request as soon as possible to reduce loading times
+                UpdateRequest();
+            }
         }
     }
 
     protected override void ExtendedUpdate()
     {
+        UpdateRequest();        
+    }
+
+    private void UpdateRequest()
+    {
         if (m_request.isDone)
         {
             object asset = m_request.asset;
             if (asset != null)
-            {               
-                NotifySuccess(asset);                
+            {
+                NotifySuccess(asset);
             }
             else
             {
                 NotifyError(EResult.Error_Asset_Not_Found_In_AB);
-            }            
+            }
         }
     }
 
