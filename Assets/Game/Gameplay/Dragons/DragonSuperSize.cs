@@ -23,6 +23,12 @@ public class DragonSuperSize : MonoBehaviour {
 
 	protected float m_timer;
 	public float time { get { return m_timer; } }
+	public void AddTime(float _time) {
+		if (m_timer > 0f) {
+			m_timer = Mathf.Min(m_timer + _time, m_modeDuration);
+		}
+	}
+	
 
 	// Use this for initialization
 	void Start () 
@@ -47,12 +53,14 @@ public class DragonSuperSize : MonoBehaviour {
 
 		Messenger.AddListener(MessengerEvents.EARLY_ALL_HUNGRY_LETTERS_COLLECTED, OnEarlyLetters);
 		Messenger.AddListener(MessengerEvents.ALL_HUNGRY_LETTERS_COLLECTED, OnLettersCollected);
+		Messenger.AddListener(MessengerEvents.ANNIVERSARY_CAKE_FULL_EATEN, StartSuperSize);
 	}
 
 	void OnDestroy()
 	{
 		Messenger.RemoveListener(MessengerEvents.EARLY_ALL_HUNGRY_LETTERS_COLLECTED, OnEarlyLetters);
 		Messenger.RemoveListener(MessengerEvents.ALL_HUNGRY_LETTERS_COLLECTED, OnLettersCollected);
+		Messenger.RemoveListener(MessengerEvents.ANNIVERSARY_CAKE_FULL_EATEN, StartSuperSize);
 	}
 	
 	// Update is called once per frame
@@ -124,9 +132,9 @@ public class DragonSuperSize : MonoBehaviour {
 		Messenger.Broadcast<bool>( MessengerEvents.SUPER_SIZE_TOGGLE, true);
 	}
 
-	void OnSuperSize( bool _value )
+	void OnSuperSize(bool _value )
 	{
-		if ( _value )
+		if (_value) 
 		{
 			StartSuperSize();
 		}
