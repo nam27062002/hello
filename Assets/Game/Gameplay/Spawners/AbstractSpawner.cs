@@ -276,15 +276,13 @@ public abstract class AbstractSpawner : MonoBehaviour, ISpawner
         }
 
         if (index > -1) {
-            if (_killedByPlayer)
-            {
+            if (_killedByPlayer) {
                 EntitiesKilled++;
             }
             EntitiesAlive--;
 
 			PoolHandler handler = GetPoolHandler((uint)index);
-            if (ProfilerSettingsManager.ENABLED)
-            {               
+            if (ProfilerSettingsManager.ENABLED) {               
 				SpawnerManager.RemoveFromTotalLogicUnits(1, GetPrefabNameToSpawn(((uint)index)));
             }
 
