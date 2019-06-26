@@ -31,22 +31,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!1 &1085694757404852
-GameObject:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 5
-  m_Component:
-  - component: {fileID: 4104491137701020}
-  - component: {fileID: 114196100710349752}
-  m_Layer: 22
-  m_Name: VFX
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
 --- !u!1 &1472693859828716
 GameObject:
   m_ObjectHideFlags: 0
@@ -64,18 +48,18 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!1 &1926122348235748
+--- !u!1 &1503290987760774
 GameObject:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   serializedVersion: 5
   m_Component:
-  - component: {fileID: 4396582501609150}
-  - component: {fileID: 33875700572695260}
-  - component: {fileID: 23914392169829224}
-  m_Layer: 22
-  m_Name: MexicanPepper
+  - component: {fileID: 4820975450765468}
+  - component: {fileID: 33559342208288264}
+  - component: {fileID: 23579239666815636}
+  m_Layer: 0
+  m_Name: anniversary_cake
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -88,38 +72,12 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000012775619424}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -55.92, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4692774276776710}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!4 &4104491137701020
-Transform:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1085694757404852}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 4692774276776710}
-  m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!4 &4396582501609150
-Transform:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1926122348235748}
-  m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: -0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 4692774276776710}
-  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4692774276776710
 Transform:
@@ -131,17 +89,29 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 4104491137701020}
-  - {fileID: 4396582501609150}
+  - {fileID: 4820975450765468}
   m_Father: {fileID: 4000010793146780}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!23 &23914392169829224
+--- !u!4 &4820975450765468
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1503290987760774}
+  m_LocalRotation: {x: 0.021926759, y: -0.39458722, z: -0.3145244, w: 0.8630727}
+  m_LocalPosition: {x: -0.19281012, y: -0.2288568, z: 0.174}
+  m_LocalScale: {x: 1.7688042, y: 1.7688048, z: 1.7688046}
+  m_Children: []
+  m_Father: {fileID: 4692774276776710}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 2.292, y: -46.513, z: -21.031}
+--- !u!23 &23579239666815636
 MeshRenderer:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1926122348235748}
+  m_GameObject: {fileID: 1503290987760774}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -150,7 +120,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: b6a14ffac1edc4e7fb87ead3931036cd, type: 2}
+  - {fileID: 2100000, guid: ff1c0da08f3706349b48c82622bc5f0e, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -170,66 +140,13 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!33 &33875700572695260
+--- !u!33 &33559342208288264
 MeshFilter:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1926122348235748}
-  m_Mesh: {fileID: 4300002, guid: e0c89cabe173b43758598fdc9ee5a5ef, type: 3}
---- !u!114 &114196100710349752
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1085694757404852}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d4ed6093cd7fb4c21b212d932617ed46, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_activationMode: 0
-  m_parent: {fileID: 4396582501609150}
-  m_view: {fileID: 23914392169829224}
-  m_particleDatas:
-  - name: PS_MexicanPepperFlames
-    path: 
-    changeStartColor: 0
-    startColor: {r: 0, g: 0, b: 0, a: 0}
-    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
-    changeColorOvertime: 0
-    colorOvertime:
-      serializedVersion: 2
-      key0: {r: 0, g: 0, b: 0, a: 0}
-      key1: {r: 0, g: 0, b: 0, a: 0}
-      key2: {r: 0, g: 0, b: 0, a: 0}
-      key3: {r: 0, g: 0, b: 0, a: 0}
-      key4: {r: 0, g: 0, b: 0, a: 0}
-      key5: {r: 0, g: 0, b: 0, a: 0}
-      key6: {r: 0, g: 0, b: 0, a: 0}
-      key7: {r: 0, g: 0, b: 0, a: 0}
-      ctime0: 0
-      ctime1: 65535
-      ctime2: 0
-      ctime3: 0
-      ctime4: 0
-      ctime5: 0
-      ctime6: 0
-      ctime7: 0
-      atime0: 0
-      atime1: 65535
-      atime2: 0
-      atime3: 0
-      atime4: 0
-      atime5: 0
-      atime6: 0
-      atime7: 0
-      m_Mode: 0
-      m_NumColorKeys: 2
-      m_NumAlphaKeys: 2
-    offset: {x: 0, y: 0, z: 0}
-    scale: 1
-    orientate: 0
+  m_GameObject: {fileID: 1503290987760774}
+  m_Mesh: {fileID: 4300000, guid: 92844031651affc40b7d6cb21d17811b, type: 3}
 --- !u!114 &114243610535433748
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -305,8 +222,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 26323fbf3c446446d9485c1c49f860bb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_tags: 1024
-  m_sku: Anniversary1_Cake_Piece
+  m_tags: 0
+  m_sku: BadJunk
   m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1
 --- !u!114 &114426787062319742
