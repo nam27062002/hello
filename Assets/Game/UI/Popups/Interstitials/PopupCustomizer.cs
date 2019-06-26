@@ -204,7 +204,7 @@ public class PopupCustomizer : MonoBehaviour {
 		} catch {}
 
 
-		if (textsJson == null) {
+		if (textsJson == null || textsJson is JSONString) {
 			// If json couldn't be parsed from the given string, assume it's a simple message and put it in the main textfield
 			if (m_messageField.element != null) {
 				m_messageField.element.text = m_localizedConfig.m_strMessage;
