@@ -53,6 +53,11 @@ public class EditorBuildMenu : MonoBehaviour
         buildPlayerOptions.assetBundleManifestPath = "AssetBundles/" + buildTargetAsString + "/" + buildTargetAsString + ".manifest";
 
         BuildOptions options = BuildOptions.None;
+		if (EditorUserBuildSettings.development)
+		{
+			options |= BuildOptions.Development;
+		}
+
         if (EditorUserBuildSettings.allowDebugging)
         {
             options |= BuildOptions.AllowDebugging;
@@ -63,6 +68,10 @@ public class EditorBuildMenu : MonoBehaviour
             options |= BuildOptions.ConnectWithProfiler;
         }
 
+		Debug.Log ("BuildOptions = " + options + " development = " + EditorUserBuildSettings.development + 
+				   " allowDebugging = " + EditorUserBuildSettings.allowDebugging + 
+			       " connectWithProfiler = " + EditorUserBuildSettings.connectProfiler);
+		
         buildPlayerOptions.options = options;
 
         BuildPipeline.BuildPlayer(buildPlayerOptions);        
