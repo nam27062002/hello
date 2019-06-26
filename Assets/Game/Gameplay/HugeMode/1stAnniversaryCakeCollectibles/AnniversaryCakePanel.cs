@@ -49,7 +49,7 @@ public class AnniversaryCakePanel : MonoBehaviour, IBroadcastListener {
 				m_cakeSliceCount = def.GetAsInt("anniversaryCakesToHuge", 6);
 
 				m_timePerSlice = m_DragonSuperSize.modeDuration / m_cakeSliceCount;
-				m_sizeUpMultPerSlice = (m_DragonSuperSize.sizeUpMultiplier * 0.5f) / m_cakeSliceCount;
+				m_sizeUpMultPerSlice = ((m_DragonSuperSize.sizeUpMultiplier - 1f) * 0.5f) / m_cakeSliceCount;
 
 				ChangeState(State.EatCake);
 			} break;
@@ -87,8 +87,8 @@ public class AnniversaryCakePanel : MonoBehaviour, IBroadcastListener {
 	private void OnCakeSliceEaten(Vector3 _pos) {
 		if (m_state == State.EatCake) {
 			m_cakeSlicesEaten++;
-			m_cakeImage.fillAmount = m_cakeSlicesEaten / m_cakeSliceCount;
-			m_DragonPlayer.SetSuperSize(m_sizeUpMultPerSlice * m_cakeSlicesEaten);
+			m_cakeImage.fillAmount = (float)m_cakeSlicesEaten / m_cakeSliceCount;
+			m_DragonPlayer.SetSuperSize(1f + m_sizeUpMultPerSlice * m_cakeSlicesEaten);
 
 			if (m_cakeSlicesEaten >= m_cakeSliceCount) {
 				ChangeState(State.DigestCake);
