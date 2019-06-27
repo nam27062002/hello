@@ -280,15 +280,87 @@ public class LoadingSceneController : SceneController {
         //DefinitionsManager.CreateInstance(true);	// Moved to Awake() so content is the very first thing loaded (a lot of things depend on it)
 
 
-		// Load persistence
-        if ( CacheServerManager.SharedInstance.GameNeedsUpdate() )
-        {
-			SetState(State.SHOWING_UPGRADE_POPUP);
-        }
-        else
-        {
-        	SetState(State.WAITING_FOR_RULES);
-        }			
+#if UNITY_ANDROID
+            CaletySettings settingsInstance = (CaletySettings)Resources.Load("CaletySettings");
+            if (settingsInstance != null)
+            {
+                m_androidPermissionsListener = new AndroidPermissionsListener ();
+				AndroidPermissionsManager.SharedInstance.SetListener (m_androidPermissionsListener);
+
+                AndroidPermissionsManager.AndroidPermissionsConfig kAndroidPermissionsConfig = new AndroidPermissionsManager.AndroidPermissionsConfig ();
+                for (int i = 0; i < settingsInstance.m_kAndroidDangerousPermissions.Count; ++i)
+                {
+                    AndroidPermissionsManager.AndroidDangerousPermission kNewAndroidDangerousPermission = new AndroidPermissionsManager.AndroidDangerousPermission();
+                    kNewAndroidDangerousPermission.m_strPermission = settingsInstance.m_kAndroidDangerousPermissions[i];
+
+                    string text = settingsInstance.m_kAndroidDangerousPermissions[i];   // Get the text
+                    text = text.Replace (".", "_").ToUpper ();                          // Replace . per _ and convert it to mayus
+                    text = "TID_" + text;                                               // Add TID_
+					kNewAndroidDangerousPermission.m_strPermissionsMessage = LocalizationManager.SharedInstance.Localize(text);
+
+                    kAndroidPermissionsConfig.m_kAndroidDangerousPermissions.Add(kNewAndroidDangerousPermission);
+                }
+				kAndroidPermissionsConfig.m_strPermissionsInSettingsMessage = LocalizationManager.SharedInstance.Localize( "TID_POPUP_ANDROID_PERMISSION_SETTINGS_TEXT" );
+				kAndroidPermissionsConfig.m_strPermissionsShutdownMessage   = LocalizationManager.SharedInstance.Localize( "TID_POPUP_ANDROID_PERMISSION_EXIT" );
+				kAndroidPermissionsConfig.m_strPopupButtonYes               = "TID_POPUP_ANDROID_PERMISSION_ALLOW";
+				kAndroidPermissionsConfig.m_strPopupButtonNo                = "TID_POPUP_ANDROID_PERMISSION_DENY";
+				kAndroidPermissionsConfig.m_strPopupButtonSettings          = "TID_POPUP_ANDROID_PERMISSION_SETTINGS";
+				kAndroidPermissionsConfig.m_strPopupButtonExit              = "TID_EXIT_GAME";
+
+                AndroidPermissionsManager.SharedInstance.Initialise(ref kAndroidPermissionsConfig);
+                
+				if(!AndroidPermissionsManager.SharedInstance.CheckDangerousPermissions ()) {
+                    // Application.targetFrameRate = 10;
+					SetState(State.WAITING_ANDROID_PERMISSIONS);
+				}else{
+                    // Load persistence
+                    if ( CacheServerManager.SharedInstance.GameNeedsUpdate() )
+                    {
+						SetState(State.SHOWING_UPGRADE_POPUP);
+                    }
+                    else
+                    {
+                    	SetState(State.WAITING_FOR_RULES);
+                    }
+			        // TEST
+			        /*
+					m_state = State.WAITING_ANDROID_PERMISSIONS;
+					m_androidPermissionsListener.m_permissionsFinished = false;
+					CaletyConstants.PopupConfig pConfig = new CaletyConstants.PopupConfig();
+					pConfig.m_strTitle = "";
+					pConfig.m_strMessage = LocalizationManager.SharedInstance.Localize("TID_POPUP_ANDROID_PERMISSION_SETTINGS_TEXT");
+					pConfig.m_strIconURL = "";
+					AndroidPermissionsManager.AndroidPermissionsPopupButton button = new AndroidPermissionsManager.AndroidPermissionsPopupButton();
+					button.m_strText = "TID_EXIT_GAME";
+					button.m_pOnResponse = m_androidPermissionsListener.onAndroidPermissionsFinished;
+					pConfig.m_kPopupButtons.Add(button);
+					m_androidPermissionsListener.onAndroidPermissionPopupNeeded( pConfig );
+					*/
+				}
+            }
+            else
+            {
+				// Load persistence
+                if ( CacheServerManager.SharedInstance.GameNeedsUpdate() )
+                {
+					SetState(State.SHOWING_UPGRADE_POPUP);
+                }
+                else
+                {
+                	SetState(State.WAITING_FOR_RULES);
+                }
+            }
+        #else
+			// Load persistence
+            if ( CacheServerManager.SharedInstance.GameNeedsUpdate() )
+            {
+				SetState(State.SHOWING_UPGRADE_POPUP);
+            }
+            else
+            {
+            	SetState(State.WAITING_FOR_RULES);
+            }			
+        #endif
     }
 
     public static void SetSavedLanguage()

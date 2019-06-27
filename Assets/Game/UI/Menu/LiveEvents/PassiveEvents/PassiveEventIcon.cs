@@ -59,7 +59,7 @@ public class PassiveEventIcon : IPassiveEventIcon {
 		if(m_modifierIcon != null) {
 			// Init icon
 			HDPassiveEventDefinition def = m_passiveEventManager.data.definition as HDPassiveEventDefinition;
-			if(def.mainMod != null) {
+			if(def.mainMod != null) {				
 				m_modifierIcon.gameObject.SetActive(true);
 				m_modifierIcon.InitFromDefinition(def.mainMod);
 			} else {
