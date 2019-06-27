@@ -2,7 +2,15 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class FireNode : MonoBehaviour, IQuadTreeItem {
+public interface IFireNode : IQuadTreeItem {
+	BoundingSphere boundingSphere { get; }
+	CircleAreaBounds area { get; }
+	void UpdateLogic();
+	void SetEffectVisibility(bool _visible);
+	void Burn(Vector2 _direction, bool _dragonBreath, DragonTier _tier, DragonBreathBehaviour.Type _breathType, IEntity.Type _source, FireColorSetupManager.FireColorType _fireColorType);
+}
+
+public class FireNode : MonoBehaviour, IFireNode {
 	private enum State {
 		Idle = 0,
 		Spreading,
