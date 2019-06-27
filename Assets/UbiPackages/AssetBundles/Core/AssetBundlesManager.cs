@@ -897,7 +897,7 @@ public class AssetBundlesManager
         if (!LoadAssetFromAssetBundlesFullOp.EarlyExit(assetBundleId, assetName, onDone))
         {
             // We want to finish the request as soon as possible to reduce loading times
-            if (IsAssetBundleAvailable(assetBundleId))
+            if (IsAssetBundleLoaded(assetBundleId))
             {
                 returnValue.NotifyResult(AssetBundlesOp.EResult.Success, null);
             }

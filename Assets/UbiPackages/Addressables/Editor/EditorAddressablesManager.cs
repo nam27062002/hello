@@ -109,7 +109,9 @@ public class EditorAddressablesManager
         BuildCatalog(filePath, AddressablesTypes.EProviderMode.AsCatalog, target, changeAssets);
     }
 
-    private static string GENERATED_IN_PLAYER_ASSETS_LUT_FOLDER = "Assets/Resources/AssetsLUT/";
+	private static string ASSETS_LUT_FOLDER_NAME = "AssetsLUT";
+	private static string GENERATED_IN_PLAYER_ASSETS_LUT_PARENT_FOLDER = "Assets/Resources";
+	private static string GENERATED_IN_PLAYER_ASSETS_LUT_FOLDER = GENERATED_IN_PLAYER_ASSETS_LUT_PARENT_FOLDER + "/" + ASSETS_LUT_FOLDER_NAME + "/";
     private static string GENERATED_IN_PLAYER_ADDRESSABLES_FOLDER = "Assets/Resources/Addressables/";
 
     private void CopyPlatformAssetsLUTToResources(BuildTarget target)
@@ -119,13 +121,13 @@ public class EditorAddressablesManager
         if (Directory.Exists(directoryInResources))
         {
             if (File.Exists(assetsLUTInResources))
-            {
+            {				
                 File.Delete(assetsLUTInResources);
             }
         }
         else
         {
-            // Makes sure that the destination folder exists        
+            // Makes sure that the destination folder exists  
             Directory.CreateDirectory(directoryInResources);
         }
 
@@ -144,7 +146,7 @@ public class EditorAddressablesManager
         assetsLUTSource += ".json";
 
         if (File.Exists(assetsLUTSource))
-        {
+        {				
             File.Copy(assetsLUTSource, assetsLUTInResources);
         }
         else
@@ -158,7 +160,7 @@ public class EditorAddressablesManager
     public void CopyGeneratedFilesToPlayer(BuildTarget target)
     {
         // Copy the platform assetsLUT to Resources
-        if (Downloadables.Manager.USE_CRC_IN_URL)
+        //if (Downloadables.Manager.USE_CRC_IN_URL)
         {
             CopyPlatformAssetsLUTToResources(target);
         }        
