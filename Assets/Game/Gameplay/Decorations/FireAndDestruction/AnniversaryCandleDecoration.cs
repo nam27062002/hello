@@ -50,10 +50,12 @@ public class AnniversaryCandleDecoration : MonoBehaviour, IFireNode {
 	// Update is called once per frame
 	private void Update () {
 		if (m_state == State.LIGHT_UP) {
-			m_timer -= Time.deltaTime;
-			if (m_timer <= 0f) {
-				m_effect.Stop();
-				m_state = State.IDLE;
+			if (m_timer > 0) {
+				m_timer -= Time.deltaTime;
+				if (m_timer <= 0f) {
+					m_effect.Stop();
+					m_state = State.IDLE;
+				}
 			}
 		}
 	}
