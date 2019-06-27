@@ -143,6 +143,7 @@ public enum MessengerEvents {
 	ALL_HUNGRY_LETTERS_COLLECTED,			//
 	ANNIVERSARY_CAKE_SLICE_EATEN,
 	ANNIVERSARY_CAKE_FULL_EATEN,
+
 	SUPER_SIZE_TOGGLE,			// params: bool _activated
 	TICKET_COLLECTED,				// no params
 	TICKET_COLLECTED_FAIL,			// no params

@@ -22,6 +22,9 @@ public class AnniversaryCakePanel : MonoBehaviour, IBroadcastListener {
 	private float m_timePerSlice;
 	private float m_sizeUpMultPerSlice;
 	private State m_state;
+	public State state { get { return m_state; } }
+
+	private bool m_startHugeModeAtLastSlice;
 
 
 	// Use this for initialization
@@ -31,12 +34,16 @@ public class AnniversaryCakePanel : MonoBehaviour, IBroadcastListener {
 	
 	protected void OnEnable() {
 		Broadcaster.AddListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
-		Messenger.AddListener<Vector3>(MessengerEvents.ANNIVERSARY_CAKE_SLICE_EATEN, OnCakeSliceEaten);		
+		Messenger.AddListener<Vector3>(MessengerEvents.ANNIVERSARY_CAKE_SLICE_EATEN, OnCakeSliceEaten);
+		Messenger.AddListener(MessengerEvents.START_ALL_HUNGRY_LETTERS_COLLECTED, OnStartingLetters);
+		Messenger.AddListener<bool, DragonSuperSize.Source>(MessengerEvents.SUPER_SIZE_TOGGLE, OnSuperSizeToggle);		
 	}
 
 	protected void OnDisable() {
 		Broadcaster.RemoveListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
-		Messenger.RemoveListener<Vector3>(MessengerEvents.ANNIVERSARY_CAKE_SLICE_EATEN, OnCakeSliceEaten);		
+		Messenger.RemoveListener<Vector3>(MessengerEvents.ANNIVERSARY_CAKE_SLICE_EATEN, OnCakeSliceEaten);	
+		Messenger.RemoveListener(MessengerEvents.START_ALL_HUNGRY_LETTERS_COLLECTED, OnStartingLetters);
+		Messenger.RemoveListener<bool, DragonSuperSize.Source>(MessengerEvents.SUPER_SIZE_TOGGLE, OnSuperSizeToggle);	
 	}
 
 	public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo) {
@@ -46,7 +53,7 @@ public class AnniversaryCakePanel : MonoBehaviour, IBroadcastListener {
 				m_DragonSuperSize = m_DragonPlayer.GetComponent<DragonSuperSize>();
 
 				DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, "dragonSettings");
-				m_cakeSliceCount = def.GetAsInt("anniversaryCakesToHuge", 6);
+				m_cakeSliceCount = def.GetAsInt("anniversaryCakeSlices", 6);
 
 				m_timePerSlice = m_DragonSuperSize.modeDuration / m_cakeSliceCount;
 				m_sizeUpMultPerSlice = ((m_DragonSuperSize.sizeUpMultiplier - 1f) * 0.5f) / m_cakeSliceCount;
@@ -59,10 +66,7 @@ public class AnniversaryCakePanel : MonoBehaviour, IBroadcastListener {
 	// Update is called once per frame
 	private void Update () {
 		if (m_state == State.DigestCake) {
-			m_cakeImage.fillAmount = m_DragonSuperSize.time / m_DragonSuperSize.modeDuration;
-			if (m_DragonSuperSize.time <= 0f) {
-				ChangeState(State.EatCake);
-			}
+			m_cakeImage.fillAmount = m_DragonSuperSize.time / m_DragonSuperSize.modeDuration;			
 		}
 	}
 
@@ -71,6 +75,7 @@ public class AnniversaryCakePanel : MonoBehaviour, IBroadcastListener {
 			case State.EatCake:
 			m_cakeSlicesEaten = 0;
 			m_cakeImage.fillAmount = 0;
+			m_startHugeModeAtLastSlice = true;
 			break;
 
 			case State.DigestCake:
@@ -83,19 +88,48 @@ public class AnniversaryCakePanel : MonoBehaviour, IBroadcastListener {
 	//--------------------------------------------------
 	//-- Callbacks
 	//--------------------------------------------------
+
+	private void OnStartingLetters() {
+		m_startHugeModeAtLastSlice = false;
+	}
 	
 	private void OnCakeSliceEaten(Vector3 _pos) {
 		if (m_state == State.EatCake) {
-			m_cakeSlicesEaten++;
-			m_cakeImage.fillAmount = (float)m_cakeSlicesEaten / m_cakeSliceCount;
-			m_DragonPlayer.SetSuperSize(1f + m_sizeUpMultPerSlice * m_cakeSlicesEaten);
-
-			if (m_cakeSlicesEaten >= m_cakeSliceCount) {
-				ChangeState(State.DigestCake);
+			if (m_cakeSlicesEaten < m_cakeSliceCount) {
+				m_cakeSlicesEaten++;
+				m_cakeImage.fillAmount = (float)m_cakeSlicesEaten / m_cakeSliceCount;
+				
+				if (m_startHugeModeAtLastSlice) {
+					m_DragonPlayer.SetSuperSize(1f + m_sizeUpMultPerSlice * m_cakeSlicesEaten);
+					
+					if (m_cakeSlicesEaten == m_cakeSliceCount) {
+						ChangeState(State.DigestCake);
+					}
+				}
 			}
 		} else if (m_state == State.DigestCake) {
 			// add time
 			m_DragonSuperSize.AddTime(m_timePerSlice);
+		}
+	}
+
+	private void OnSuperSizeToggle(bool _activated, DragonSuperSize.Source _source) {
+		if (_source == DragonSuperSize.Source.LETTERS) {
+			if (_activated) {
+				m_startHugeModeAtLastSlice = false;
+			} else {
+				if (m_cakeSlicesEaten == m_cakeSliceCount) {
+					ChangeState(State.DigestCake);
+				} else {
+					m_DragonPlayer.SetSuperSize(1f + m_sizeUpMultPerSlice * m_cakeSlicesEaten);
+				}
+				m_startHugeModeAtLastSlice = true;
+			}
+		} else {
+			if (!_activated) {
+				ChangeState(State.EatCake);
+			}
+			m_startHugeModeAtLastSlice = true;
 		}
 	}
 }

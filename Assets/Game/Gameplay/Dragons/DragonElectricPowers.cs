@@ -98,12 +98,12 @@ public class DragonElectricPowers : MonoBehaviour {
             SceneManager.MoveGameObjectToScene(m_blastParticleSystem.gameObject, gameObject.scene);
             m_blastParticleSystem.gameObject.SetActive(true);
         }
-        Messenger.AddListener<bool>(MessengerEvents.SUPER_SIZE_TOGGLE, OnSuperSizeToggle);
+        Messenger.AddListener<bool, DragonSuperSize.Source>(MessengerEvents.SUPER_SIZE_TOGGLE, OnSuperSizeToggle);
     }
 
     private void OnDestroy()
     {
-        Messenger.RemoveListener<bool>(MessengerEvents.SUPER_SIZE_TOGGLE, OnSuperSizeToggle);
+        Messenger.RemoveListener<bool, DragonSuperSize.Source>(MessengerEvents.SUPER_SIZE_TOGGLE, OnSuperSizeToggle);
     }
 
     // Update is called once per frame
@@ -264,7 +264,7 @@ public class DragonElectricPowers : MonoBehaviour {
             AudioController.Play( m_lightningSound, transform );
     }
     
-    private void OnSuperSizeToggle(bool _active)
+    private void OnSuperSizeToggle(bool _active, DragonSuperSize.Source _source)
     {
         DragonSuperSize superSize = InstanceManager.player.GetComponent<DragonSuperSize>();
         if ( superSize != null )

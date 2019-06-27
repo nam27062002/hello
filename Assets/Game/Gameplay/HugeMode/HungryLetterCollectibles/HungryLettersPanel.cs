@@ -8,7 +8,6 @@ public class HungryLettersPanel : MonoBehaviour
 	//------------------------------------------------------------
 	// Inspector Variables:
 	//------------------------------------------------------------
-
 	[SerializeField]
 	private HungryLetterUiContainer m_uiLetterContainer;
 	[SerializeField]
@@ -43,6 +42,8 @@ public class HungryLettersPanel : MonoBehaviour
 	private UnityEngine.Coroutine m_dismissCoroutine;
 	private UnityEngine.Coroutine m_onTweenCompleteCoroutine;
 
+	private bool m_startAnimWhenLastLetterCollected;
+
 	//------------------------------------------------------------
 	// Public Properties:
 	//------------------------------------------------------------
@@ -66,6 +67,8 @@ public class HungryLettersPanel : MonoBehaviour
 			DestroyImmediate(gameObject);
 		}
 
+		m_startAnimWhenLastLetterCollected = true;
+
 		// m_tween.AddOnFinished(TweenCompleted);
 		m_uiLetterContainer.Init(m_letterPlaces.Length);
 	}
@@ -81,6 +84,15 @@ public class HungryLettersPanel : MonoBehaviour
 		}
 		*/
 	}
+
+	private void OnEnable() {
+		Messenger.AddListener<bool, DragonSuperSize.Source>(MessengerEvents.SUPER_SIZE_TOGGLE, OnSuperSizeToggle);
+	}
+
+	private void OnDisable() {
+		Messenger.RemoveListener<bool, DragonSuperSize.Source>(MessengerEvents.SUPER_SIZE_TOGGLE, OnSuperSizeToggle);
+	}
+
 
 	//------------------------------------------------------------
 	// Public Methods:
@@ -158,19 +170,21 @@ public class HungryLettersPanel : MonoBehaviour
 
 	public void OnLetterInPlace()
 	{
-		m_letterInPlaceCounter++;
+		m_letterInPlaceCounter++;		
 		// when all the letters are in place on the panel trigger the all collected animation.
 		if(m_letterInPlaceCounter == m_letterPlaces.Length)
 		{
-			// dismiss the all collected panel.
-			if(m_fromAllInPlaceToAllCollectedDelay > 0f)
+			if(m_startAnimWhenLastLetterCollected)
 			{
-				m_dismissCoroutine = StartCoroutine(Delay(m_fromAllInPlaceToAllCollectedDelay, StartAllCollectedAnimation));
-			}
-			else
-			{
-				StartAllCollectedAnimation();
-			}
+				if(m_fromAllInPlaceToAllCollectedDelay > 0f)
+				{
+					m_dismissCoroutine = StartCoroutine(Delay(m_fromAllInPlaceToAllCollectedDelay, StartAllCollectedAnimation));
+				}
+				else
+				{
+					StartAllCollectedAnimation();
+				}
+			} 
 		}
 	}
 
@@ -233,6 +247,23 @@ public class HungryLettersPanel : MonoBehaviour
 		Messenger.Broadcast(MessengerEvents.START_ALL_HUNGRY_LETTERS_COLLECTED);
 	}
 
+	private void OnSuperSizeToggle(bool _activated, DragonSuperSize.Source _source)
+	{
+		if (_source == DragonSuperSize.Source.CAKE) {
+			if (_activated) {
+				m_startAnimWhenLastLetterCollected = false;
+			} else {
+				if (m_letterInPlaceCounter == m_letterPlaces.Length) {
+					StartAllCollectedAnimation();
+					Messenger.Broadcast(MessengerEvents.ALL_HUNGRY_LETTERS_COLLECTED);
+				}
+				m_startAnimWhenLastLetterCollected = true;
+			}
+		} else {
+			m_startAnimWhenLastLetterCollected = true;
+		}
+	}
+
 	public void OnAllCollectedAnimationFinished()
 	{
 		m_allCollectedInPlaceCounter++;
@@ -244,7 +275,11 @@ public class HungryLettersPanel : MonoBehaviour
 			// AudioManager.PlaySfx(AudioManager.Ui.HungryComplete);
 			// AudioController.Play("AudioManager.Ui.HungryComplete");
 			// send out the event for all the hungry letters being collected.
-			Messenger.Broadcast(MessengerEvents.ALL_HUNGRY_LETTERS_COLLECTED);
+
+			if (m_startAnimWhenLastLetterCollected) {
+				Messenger.Broadcast(MessengerEvents.ALL_HUNGRY_LETTERS_COLLECTED);
+			}
+
 			// release the lock and dismiss this panel.
 			m_allCollectedLock = false;
 			RequestDismission();

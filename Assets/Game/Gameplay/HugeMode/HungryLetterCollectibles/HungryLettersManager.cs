@@ -120,7 +120,7 @@ public class HungryLettersManager : MonoBehaviour
 
 	protected void OnEnable()
 	{
-		Messenger.AddListener<bool>(MessengerEvents.SUPER_SIZE_TOGGLE, OnSuperSizeToggle);
+		Messenger.AddListener<bool, DragonSuperSize.Source>(MessengerEvents.SUPER_SIZE_TOGGLE, OnSuperSizeToggle);
 		Messenger.AddListener(MessengerEvents.START_ALL_HUNGRY_LETTERS_COLLECTED, OnAllCollectedStart);
 #if !PRODUCTION || UNITY_EDITOR
 		// TODO: Recover This!
@@ -131,7 +131,7 @@ public class HungryLettersManager : MonoBehaviour
 
 	protected void OnDisable()
 	{
-		Messenger.RemoveListener<bool>(MessengerEvents.SUPER_SIZE_TOGGLE, OnSuperSizeToggle);
+		Messenger.RemoveListener<bool, DragonSuperSize.Source>(MessengerEvents.SUPER_SIZE_TOGGLE, OnSuperSizeToggle);
 		Messenger.RemoveListener(MessengerEvents.START_ALL_HUNGRY_LETTERS_COLLECTED, OnAllCollectedStart);
 #if !PRODUCTION || UNITY_EDITOR
 		// TODO: Recover This!
@@ -471,22 +471,23 @@ public class HungryLettersManager : MonoBehaviour
 			AudioController.Play(m_onStartLettersCollectedSound);
 	}
 
-	private void OnSuperSizeToggle(bool _activated)
+	private void OnSuperSizeToggle(bool _activated, DragonSuperSize.Source _source)
 	{
-		if (!_activated)
-		{
-			// respawn the letters after a SSM event only when we have already collected all of them.
-			if(m_lettersCollected == m_letterPrefabs.Length)
+		if (_source == DragonSuperSize.Source.LETTERS) {
+			if (!_activated)
 			{
-				Respawn();
-			}	
+				// respawn the letters after a SSM event only when we have already collected all of them.
+				if(m_lettersCollected == m_letterPrefabs.Length)
+				{
+					Respawn();
+				}	
+			}
+			else
+			{
+				if ( !string.IsNullOrEmpty(m_onLettersCollectedSound) )
+					AudioController.Play(m_onLettersCollectedSound);
+			}
 		}
-		else
-		{
-			if ( !string.IsNullOrEmpty(m_onLettersCollectedSound) )
-				AudioController.Play(m_onLettersCollectedSound);
-		}
-
 	}
 
 	//------------------------------------------------------------
