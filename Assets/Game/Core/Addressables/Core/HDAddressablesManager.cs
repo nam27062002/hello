@@ -905,7 +905,7 @@ public class Ingame_SwitchAreaHandle
 		DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PETS, _petSku);
 
 		// [AOC] In theory all assets go in the same bundle, but just in case add them all
-		if(def != null) {
+		if (def != null) {
 			// Pet prefabs
 			ids.Add(def.GetAsString("gamePrefab"));
 			ids.Add(def.GetAsString("menuPrefab"));
