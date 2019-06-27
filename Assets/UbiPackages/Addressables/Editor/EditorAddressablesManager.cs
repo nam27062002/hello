@@ -163,7 +163,7 @@ public class EditorAddressablesManager
     public void CopyGeneratedFilesToPlayer(BuildTarget target)
     {
         // Copy the platform assetsLUT to Resources
-        if (Downloadables.Manager.USE_CRC_IN_URL)
+        //if (Downloadables.Manager.USE_CRC_IN_URL)
         {
             CopyPlatformAssetsLUTToResources(target);
         }        
