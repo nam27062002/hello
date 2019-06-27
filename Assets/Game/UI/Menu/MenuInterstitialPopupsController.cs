@@ -560,8 +560,8 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
                         float downloadProgress = HDAddressablesManager.Instance.GetHandleForAllDownloadables().Progress;
                         if (downloadProgress >= 1)
                         {
-                            // Make sure the popup hasn't been launched previously
-                            if (!Prefs.GetBoolPlayer(AssetsDownloadFlowSettings.OTA_DOWNLOAD_COMPLETE_POPUP_SHOWN, false))
+                            // Make sure we need to show the popup (the download popup was accepted at some point)
+                            if (Prefs.GetBoolPlayer(AssetsDownloadFlowSettings.OTA_SHOW_DOWNLOAD_COMPLETE_POPUP, false))
                             {
                                 // Force to show the popup
                                 screenController.assetsDownloadFlow.OpenPopupByState(PopupAssetsDownloadFlow.PopupType.ANY, AssetsDownloadFlow.Context.NOT_SPECIFIED, true);

@@ -5,7 +5,7 @@
 /// </summary>
 public class UnloadAndLoadAssetBundlesGroupOp : UnloadAndLoadAssetBundlesOp
 {    
-    public void Setup(string groupToUnloadId, string groupToLoadId, bool isGroupToLoadMandatory=true)
+    public void Setup(string groupToUnloadId, string groupToLoadId, bool isGroupToLoadMandatory=true, System.Action onUnloadDone=null)
     {        
         List<string> groupToUnloadDependencyIds = null;
         List<string> groupToLoadDependencyIds = null;
@@ -31,6 +31,6 @@ public class UnloadAndLoadAssetBundlesGroupOp : UnloadAndLoadAssetBundlesOp
         UbiListUtils.SplitIntersectionAndDisjoint(groupToLoadDependencyIds, assetBundleIdsToStay, out assetBundleIdsToStay, out assetBundleIdsToLoad);
 
         List<string> mandatoryIdsToLoad = (isGroupToLoadMandatory) ? assetBundleIdsToLoad : null;        
-        Setup(assetBundleIdsToUnload, assetBundleIdsToLoad, mandatoryIdsToLoad);        
+        Setup(assetBundleIdsToUnload, assetBundleIdsToLoad, mandatoryIdsToLoad, onUnloadDone);        
     }    
 }

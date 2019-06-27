@@ -27,11 +27,15 @@ public class HDAddressablesManager : AddressablesManager
 
     private HDDownloadablesTracker m_tracker;
 
+    private string LastSceneId { get; set; }
+
     /// <summary>
     /// Make sure this method is called after ContentDeltaManager.OnContentDelta() was called since this method uses data from assetsLUT to create downloadables catalog.
     /// </summary>
     public void Initialize()
     {
+        LastSceneId = null;
+
         Logger logger = (FeatureSettingsManager.IsDebugEnabled) ? new CPLogger(ControlPanel.ELogChannel.Addressables) : null;
 
         // Addressables catalog     
@@ -320,7 +324,10 @@ public class HDAddressablesManager : AddressablesManager
             m_addressablesAreaLoader = new HDAddressablesAreaLoader();
         }
 
-        m_addressablesAreaLoader.Setup(handle, sceneId);
+        // First loading mustn't show the dragon icon
+        m_addressablesAreaLoader.Setup(handle, sceneId, ((sceneId == MenuSceneController.NAME && !string.IsNullOrEmpty(LastSceneId)) || sceneId == GameSceneController.NAME));
+
+        LastSceneId = sceneId;
 
         return m_addressablesAreaLoader;
     }
@@ -925,21 +932,22 @@ public class Ingame_SwitchAreaHandle
             List<string> mandatoryBundles = new List<string>();
             mandatoryBundles.Add("shared"); // We need animations
             mandatoryBundles.Add("particles_shared");   // for the particles
+			handle.AddDependencyIds( mandatoryBundles ); 
 
-            List<string> optionalBundles = new List<string>();
+			// menu dragons
             foreach (KeyValuePair<string, DefinitionNode> pair in dragons)
             {
-                mandatoryBundles.Add( pair.Key + "_local" );
-                optionalBundles.Add( pair.Key ); // for disguises
-            }
-            handle.AddDependencyIds( mandatoryBundles );
-            handle.AddDependencyIds( optionalBundles, false );
+				handle.AddAddressable(pair.Value.Get("menuPrefab"));            
+            }                      
 
             Dictionary<string, IDragonData> dragonDatas = DragonManager.dragonsBySku;
             foreach (KeyValuePair<string, IDragonData> pair in dragonDatas) {
                 if (pair.Value.isOwned) {
                     AddPetDependencies(handle, pair.Value);
                 }
+
+				// Disguises
+				AddDisguiseDependencies (handle, pair.Value, false);
             }
         }
     }

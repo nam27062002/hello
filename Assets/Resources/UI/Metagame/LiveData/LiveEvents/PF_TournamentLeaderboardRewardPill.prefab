@@ -21,6 +21,7 @@ GameObject:
   - component: {fileID: 224405837124844962}
   - component: {fileID: 222160424232939680}
   - component: {fileID: 114869347750781100}
+  - component: {fileID: 114959501076508716}
   m_Layer: 5
   m_Name: RewardImage
   m_TagString: Untagged
@@ -888,7 +889,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_icon: {fileID: 114869347750781100}
-  m_iconLoader: {fileID: 0}
+  m_iconLoader: {fileID: 114959501076508716}
   m_rewardText: {fileID: 114270725375219744}
   m_showNameForEggsAndPets: 1
   m_showNameForCurrencies: 0
@@ -968,6 +969,21 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &114959501076508716
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1089109405314636}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 285cd8cfbf6c84d2fab86d95b9d993fc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_assetId: 
+  m_loadOnAwake: 0
+  m_image: {fileID: 114869347750781100}
+  m_loadingPrefab: {fileID: 0}
 --- !u!114 &114973194580263302
 MonoBehaviour:
   m_ObjectHideFlags: 1

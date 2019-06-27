@@ -221,7 +221,7 @@ namespace AI {
 				if (m_collider != null) m_collider.enabled = false;
 				m_entity.Disable(true);
 			} else if (_trigger == SignalTriggers.OnBurning) {
-				m_viewControl.Burn(m_inflammable.burningTime);
+				m_viewControl.Burn(m_inflammable.burningTime, m_inflammable.burnedColor);
 				if (m_motion != null) m_motion.Stop();
 				if (m_collider != null) m_collider.enabled = false;
 			} else if (_trigger == SignalTriggers.OnInvulnerable || _trigger == SignalTriggers.OnVulnerable) {

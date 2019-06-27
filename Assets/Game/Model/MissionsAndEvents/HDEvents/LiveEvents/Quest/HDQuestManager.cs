@@ -177,6 +177,21 @@ public class HDQuestManager : HDLiveEventManager, IBroadcastListener{
 		}
     }
 
+	public override void RequestRewards() {
+		if (!m_requestingRewards && m_data.m_state < HDLiveEventData.State.REWARD_COLLECTED)
+		{
+			m_requestingRewards = true;
+			if ( HDLiveDataManager.TEST_CALLS )
+	        {
+				ApplicationManager.instance.StartCoroutine( DelayedCall(m_type + "_rewards.json", RequestRewardsResponse));
+	        }
+	        else
+	        {
+				GameServerManager.SharedInstance.HDEvents_Quest_GetMyReward(data.m_eventId, RequestRewardsResponse);    
+	        }
+        }
+	}
+
 	public void Contribute(float _runScore,float _keysMultiplier, bool _spentHC, bool _viewAD)
 	{
 
@@ -197,7 +212,7 @@ public class HDQuestManager : HDLiveEventManager, IBroadcastListener{
 		}
 		else
 		{
-			GameServerManager.SharedInstance.HDEvents_AddProgress(data.m_eventId, contribution, OnContributeResponse);    
+			GameServerManager.SharedInstance.HDEvents_Quest_AddProgress(data.m_eventId, contribution, OnContributeResponse);    
 		}
 	}
 

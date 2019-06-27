@@ -45,7 +45,8 @@ public class HDTournamentDefinition : HDLiveEventDefinition{
 
 	public LeaderboardData m_leaderboard = new LeaderboardData();
 
-	protected HDLiveData.DragonBuild m_build = new HDLiveData.DragonBuild();
+	public HDLiveData.DragonBuild m_build = new HDLiveData.DragonBuild();
+
 	protected IDragonData m_dragonData = new DragonDataClassic();
 	public IDragonData dragonData {
 		get { return m_dragonData; }

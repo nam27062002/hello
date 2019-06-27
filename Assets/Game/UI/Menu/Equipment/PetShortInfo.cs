@@ -26,7 +26,6 @@ public class PetShortInfo : MonoBehaviour {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed references
-	[SerializeField] private Image m_image = null;
 	[SerializeField] private Localizer m_nameText = null;
 	[SerializeField] private TextMeshProUGUI m_powerDescText = null;
 	
@@ -41,9 +40,10 @@ public class PetShortInfo : MonoBehaviour {
 		// Make sure data is valid
 		if(_petDef == null) return;
 
-		// Icon
-		if(m_image != null) {
-			m_image.sprite = Resources.Load<Sprite>(UIConstants.PET_ICONS_PATH + _petDef.Get("icon"));	
+        // The icon is now loaded asynchronously from the catalog
+        UISpriteAddressablesLoader iconLoader = GetComponent<UISpriteAddressablesLoader>();
+		if(iconLoader != null) {
+            iconLoader.LoadAsync(_petDef.Get("icon"));
 		}
 
 		// Name

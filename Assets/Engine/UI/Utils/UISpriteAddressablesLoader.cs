@@ -49,8 +49,11 @@ public class UISpriteAddressablesLoader : MonoBehaviour {
     /// Initialization.
     /// </summary>
     private void Awake() {
-        m_image.sprite = null;
-        m_image.enabled = false;
+
+        // [JOM] In some places the sprite is loaded out of this component,
+        // so dont deactive/remove the sprite here (bug HDK-5410)
+        //m_image.sprite = null;
+        //m_image.enabled = false;
 
         // Show loading icon from start
         ShowLoading(true);
@@ -110,7 +113,7 @@ public class UISpriteAddressablesLoader : MonoBehaviour {
     }
 
     public AddressablesOp LoadAsync() {
-        // Disable the image component to avoid the white placeholder until the load is finished.
+        // Remove the image until the load is finished.
         m_image.enabled = false;
         m_image.sprite = null;
 
@@ -127,7 +130,7 @@ public class UISpriteAddressablesLoader : MonoBehaviour {
     /// </summary>
     private void Update() {
         if (m_loadingRequest != null) {
-            if (m_loadingRequest.isDone) {
+            if (m_loadingRequest.isDone && m_loadingRequest.GetAsset<Sprite>() != null ) {
                 m_image.sprite = m_loadingRequest.GetAsset<Sprite>();
                 m_image.enabled = true;
                 m_loadingRequest = null;
@@ -157,6 +160,11 @@ public class UISpriteAddressablesLoader : MonoBehaviour {
                 m_loadingSymbol = null;
             }
         }
+    }
+
+    public bool IsVisible {
+        get { return (m_image == null) ? false : m_image.enabled; }
+        set { if (m_image != null) m_image.enabled = value; }
     }
 
     //------------------------------------------------------------------------//
