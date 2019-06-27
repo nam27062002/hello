@@ -354,7 +354,7 @@ public class ResultsScreenController : MonoBehaviour {
 	/// </summary>
 	private void GoToMenu() {
 		// Show loading screen
-		LoadingScreen.Toggle(true, false);
+		LoadingScreen.Toggle(true, false, false);
 
 		// If a new dragon was unlocked, tell the menu to show the dragon unlocked screen first!
 		// [AOC] TODO!!

@@ -27,11 +27,15 @@ public class HDAddressablesManager : AddressablesManager
 
     private HDDownloadablesTracker m_tracker;
 
+    private string LastSceneId { get; set; }
+
     /// <summary>
     /// Make sure this method is called after ContentDeltaManager.OnContentDelta() was called since this method uses data from assetsLUT to create downloadables catalog.
     /// </summary>
     public void Initialize()
     {
+        LastSceneId = null;
+
         Logger logger = (FeatureSettingsManager.IsDebugEnabled) ? new CPLogger(ControlPanel.ELogChannel.Addressables) : null;
 
         // Addressables catalog     
@@ -320,7 +324,10 @@ public class HDAddressablesManager : AddressablesManager
             m_addressablesAreaLoader = new HDAddressablesAreaLoader();
         }
 
-        m_addressablesAreaLoader.Setup(handle, sceneId);
+        // First loading mustn't show the dragon icon
+        m_addressablesAreaLoader.Setup(handle, sceneId, ((sceneId == MenuSceneController.NAME && !string.IsNullOrEmpty(LastSceneId)) || sceneId == GameSceneController.NAME));
+
+        LastSceneId = sceneId;
 
         return m_addressablesAreaLoader;
     }
@@ -682,13 +689,31 @@ public class Ingame_SwitchAreaHandle
 		return handle;
 	}
 
-	/// <summary>
-	/// Get the handle for all level dowloadables required for a dragon tier and a list of equipped powers.
-	/// </summary>
-	/// <returns>The handle for all downloadables required for the given setup.</returns>
-	/// <param name="_tier">Tier.</param>
-	/// <param name="_powers">Powers sku list.</param>
-	private Downloadables.Handle GetLevelHandle(DragonTier _tier, List<string> _powers) {
+
+    /// <summary>
+    /// Get a handle for the specified disguise
+    /// </summary>
+    /// <returns>The handle for all downloadables required for that disguise.</returns>
+    /// <param name="_dragonSku">Special dragon sku.</param>
+    public AddressablesBatchHandle GetHandleForDragonDisguise(string _dragonSku)
+    {
+        AddressablesBatchHandle handle = new AddressablesBatchHandle();
+
+        AddDisguiseDependencies(handle, DragonManager.GetDragonData(_dragonSku));
+
+        return handle;
+
+
+    }
+
+
+    /// <summary>
+    /// Get the handle for all level dowloadables required for a dragon tier and a list of equipped powers.
+    /// </summary>
+    /// <returns>The handle for all downloadables required for the given setup.</returns>
+    /// <param name="_tier">Tier.</param>
+    /// <param name="_powers">Powers sku list.</param>
+    private Downloadables.Handle GetLevelHandle(DragonTier _tier, List<string> _powers) {
 		// Check equipped powers to detect those that might modify the target tier
 		for(int i = 0; i < _powers.Count; ++i) {
 			// Is it one of the tier-modifying powers?
@@ -907,21 +932,22 @@ public class Ingame_SwitchAreaHandle
             List<string> mandatoryBundles = new List<string>();
             mandatoryBundles.Add("shared"); // We need animations
             mandatoryBundles.Add("particles_shared");   // for the particles
+			handle.AddDependencyIds( mandatoryBundles ); 
 
-            List<string> optionalBundles = new List<string>();
+			// menu dragons
             foreach (KeyValuePair<string, DefinitionNode> pair in dragons)
             {
-                mandatoryBundles.Add( pair.Key + "_local" );
-                optionalBundles.Add( pair.Key ); // for disguises
-            }
-            handle.AddDependencyIds( mandatoryBundles );
-            handle.AddDependencyIds( optionalBundles, false );
+				handle.AddAddressable(pair.Value.Get("menuPrefab"));            
+            }                      
 
             Dictionary<string, IDragonData> dragonDatas = DragonManager.dragonsBySku;
             foreach (KeyValuePair<string, IDragonData> pair in dragonDatas) {
                 if (pair.Value.isOwned) {
                     AddPetDependencies(handle, pair.Value);
                 }
+
+				// Disguises
+				AddDisguiseDependencies (handle, pair.Value, false);
             }
         }
     }

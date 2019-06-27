@@ -275,6 +275,7 @@ public class MenuPetLoader : MonoBehaviour {
             DestroyImmediate(child.gameObject);	// Immediate so it can be called from the editor
 			m_petInstance = null;
 		}
+		m_petSku = "";
 	}
 
 	//------------------------------------------------------------------//

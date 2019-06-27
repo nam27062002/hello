@@ -72,7 +72,18 @@ namespace Metagame {
 			dragonData.Acquire();
 
 			// Track
-			HDTrackingManager.Instance.Notify_DragonUnlocked(dragonData.def.sku, dragonData.GetOrder());
+			switch( dragonData.type )
+			{
+				default:
+				case IDragonData.Type.CLASSIC:{
+					HDTrackingManager.Instance.Notify_DragonUnlocked(dragonData.def.sku, dragonData.GetOrder());
+				}break;
+				case IDragonData.Type.SPECIAL:
+				{
+					// TODO. Removed to fix HDK-5276
+				}break;
+			}
+				
 		}
 
 		/// <summary>

@@ -888,7 +888,7 @@ public class AssetBundlesManager
     /// <param name="assetName">Name of the asset to load.</param>    
     /// <param name="onDone">Callback that will be called when the asset has been loaded or if an error happened throughout the process.</param>    
     public AssetBundlesOpRequest LoadAssetAsync(string assetBundleId, string assetName, AssetBundlesOp.OnDoneCallback onDone, bool buildRequest = false)
-    {        
+    {                
         AssetBundlesOpRequest returnValue = PreprocessRequest(buildRequest, ref onDone);
 
         returnValue.AssetBundleId = assetBundleId;
@@ -896,14 +896,28 @@ public class AssetBundlesManager
 
         if (!LoadAssetFromAssetBundlesFullOp.EarlyExit(assetBundleId, assetName, onDone))
         {
-            LoadAssetFromAssetBundlesFullOp op = new LoadAssetFromAssetBundlesFullOp();
-            op.Setup(assetBundleId, assetName, onDone);
-            Ops_PerformOp(op);
-            PostprocessRequest(returnValue, op);
+            // We want to finish the request as soon as possible to reduce loading times
+            if (IsAssetBundleLoaded(assetBundleId))
+            {
+                returnValue.NotifyResult(AssetBundlesOp.EResult.Success, null);
+            }
+            else
+            {
+                LoadAssetFromAssetBundlesFullOp op = new LoadAssetFromAssetBundlesFullOp();
+                op.Setup(assetBundleId, assetName, onDone);
+                Ops_PerformOp(op);
+                PostprocessRequest(returnValue, op);
+            }
         }
 
         return returnValue;
-    }   
+    }
+
+    private bool IsAssetBundleLoaded(string assetBundleId)
+    {        
+        AssetBundleHandle handle = GetAssetBundleHandle(assetBundleId);
+        return (handle != null && handle.IsLoaded());        
+    }
 
     /// <summary>
     /// Loads asynchronously an asset called <c>assetName</c> from an asset bundle. 

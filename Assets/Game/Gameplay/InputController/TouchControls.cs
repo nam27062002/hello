@@ -68,18 +68,24 @@ abstract public class TouchControls : MonoBehaviour, IBroadcastListener {
 
         // Subscribe to external events
         Messenger.AddListener<string>(MessengerEvents.CP_PREF_CHANGED, OnPrefChanged);
-		Messenger.AddListener<bool>(MessengerEvents.GAME_PAUSED, OnPause);
+		Broadcaster.AddListener(BroadcastEventType.GAME_PAUSED, this);
     }
 	
     public virtual void OnDestroy() {
         // Unsubscribe from external events
-        Messenger.RemoveListener<string>(MessengerEvents.CP_PREF_CHANGED, OnPrefChanged);        
-		Messenger.RemoveListener<bool>(MessengerEvents.GAME_PAUSED, OnPause);
+        Messenger.RemoveListener<string>(MessengerEvents.CP_PREF_CHANGED, OnPrefChanged);      
+		Broadcaster.RemoveListener(BroadcastEventType.GAME_PAUSED, this);
     }
     
     public virtual void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
     {
-        
+        switch( eventType )
+		{
+			case BroadcastEventType.GAME_PAUSED:
+			{
+				OnPause((broadcastEventInfo as ToggleParam).value);
+			}break;
+		}
     }
     
 

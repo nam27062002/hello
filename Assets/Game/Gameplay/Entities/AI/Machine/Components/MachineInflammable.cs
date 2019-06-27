@@ -30,6 +30,7 @@ namespace AI {
 		private float m_actualBurningTime = 0;
 		public float burningTime { get { return m_actualBurningTime; } }
         FireColorSetupManager.FireColorType m_burnedColor;
+		public FireColorSetupManager.FireColorType burnedColor { get {return m_burnedColor;}}
 
 		//-----------------------------------------------
 		//
@@ -78,6 +79,7 @@ namespace AI {
             if (m_machine.IsBubbled()) {
                 BubbledEntitySystem.RemoveEntity(m_entity);
             }
+			m_burnedColor = fireColorType;
 
             // raise flags
             m_machine.SetSignal(Signals.Type.Burning, true);
@@ -91,7 +93,6 @@ namespace AI {
 			m_entity.onDieStatus.reason = IEntity.DyingReason.BURNED;
             
 			m_entity.onDieStatus.isInFreeFall = m_machine.IsInFreeFall();
-            m_burnedColor = fireColorType;
 
 			if (m_pilot != null) {
 				m_entity.onDieStatus.isPressed_ActionA = m_pilot.IsActionPressed(Pilot.Action.Button_A);

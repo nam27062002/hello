@@ -52,6 +52,28 @@ public class EditorBuildMenu : MonoBehaviour
         buildPlayerOptions.options = BuildOptions.None;
         buildPlayerOptions.assetBundleManifestPath = "AssetBundles/" + buildTargetAsString + "/" + buildTargetAsString + ".manifest";
 
+        BuildOptions options = BuildOptions.None;
+		if (EditorUserBuildSettings.development)
+		{
+			options |= BuildOptions.Development;
+		}
+
+        if (EditorUserBuildSettings.allowDebugging)
+        {
+            options |= BuildOptions.AllowDebugging;
+        }
+
+        if (EditorUserBuildSettings.connectProfiler)
+        {
+            options |= BuildOptions.ConnectWithProfiler;
+        }
+
+		Debug.Log ("BuildOptions = " + options + " development = " + EditorUserBuildSettings.development + 
+				   " allowDebugging = " + EditorUserBuildSettings.allowDebugging + 
+			       " connectWithProfiler = " + EditorUserBuildSettings.connectProfiler);
+		
+        buildPlayerOptions.options = options;
+
         BuildPipeline.BuildPlayer(buildPlayerOptions);        
         /*
 		BuildSummary summary = report.summary;

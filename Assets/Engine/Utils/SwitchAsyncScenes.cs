@@ -42,6 +42,13 @@ public class SwitchAsyncScenes
                     Resources.UnloadUnusedAssets();
                     System.GC.Collect();
                     break;
+
+                case EState.LOADING_EXTRA_DEPENDENCIES:
+                    if (OnDependenciesDone != null)
+                    {
+                        OnDependenciesDone();
+                    }
+                    break;
             }
 
             mState = value;
@@ -100,6 +107,7 @@ public class SwitchAsyncScenes
 
     private System.Action OnDone { get; set; }
 	private System.Action OnUnload { get; set; }
+    private System.Action OnDependenciesDone { get; set; }
 
     public SwitchAsyncScenes()
     {
@@ -122,19 +130,32 @@ public class SwitchAsyncScenes
         }
 
         OnDone = null;
+        OnUnload = null;
+        OnDependenciesDone = null;
     }
 
     public void Perform(List<string> scenesToUnload, List<string> scenesToLoad, bool delayActivationScenes, List<string> extraDependenciesToUnload=null, List<string> extraDependenciesToLoad=null, 
-                        System.Action onDone=null, System.Action onUnload=null)
+                        System.Action onDone=null, System.Action onUnload=null, System.Action onDependenciesDone=null)
     {
         Reset();
         ScenesToUnload = scenesToUnload;
         ScenesToLoad = scenesToLoad;
         DelayActivationScenes = delayActivationScenes;
-        ExtraDependenciesToUnload = extraDependenciesToUnload;
-        ExtraDependenciesToLoad = extraDependenciesToLoad;
+
+        List<string> assetBundleIdsToStay = null;
+
+        // Only the asset bundles that are not required by rawAssetBundleIdsToLoad need to be unloaded
+        List<string> assetBundleIdsToUnload;
+        UbiListUtils.SplitIntersectionAndDisjoint(extraDependenciesToUnload, extraDependenciesToLoad, out assetBundleIdsToStay, out assetBundleIdsToUnload);
+
+        List<string> assetBundleIdsToLoad;
+        UbiListUtils.SplitIntersectionAndDisjoint(extraDependenciesToLoad, assetBundleIdsToStay, out assetBundleIdsToStay, out assetBundleIdsToLoad);
+
+        ExtraDependenciesToUnload = assetBundleIdsToUnload;
+        ExtraDependenciesToLoad = assetBundleIdsToLoad;
         OnDone = onDone;
 		OnUnload = onUnload;
+        OnDependenciesDone = onDependenciesDone;
         State = EState.UNLOADING_SCENES;
     }
 

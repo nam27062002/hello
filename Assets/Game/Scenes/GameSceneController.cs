@@ -46,6 +46,8 @@ public class GameSceneController : GameSceneControllerBase {
 
     private const bool m_useSyncLoading = false;
 
+    protected ToggleParam m_pauseParam = new ToggleParam();
+
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
@@ -134,10 +136,7 @@ public class GameSceneController : GameSceneControllerBase {
         m_mapUsageTracker = new TrackerMapUsage();
         m_specialPowerTimeTracker = new TrackerSpecialPowerTime();
 
-        Screen.sleepTimeout = SleepTimeout.NeverSleep;
-
-        // Make sure loading screen is visible
-        LoadingScreen.Toggle(true, false);
+        Screen.sleepTimeout = SleepTimeout.NeverSleep;        
 
         // Check whether the tutorial popup must be displayed
         if (!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.FIRST_RUN)
@@ -458,7 +457,8 @@ public class GameSceneController : GameSceneControllerBase {
                     //Stop Performance tracking 
                     HDTrackingManagerImp.Instance.Notify_StopPerformanceTracker();
 					// Notify the game
-					Messenger.Broadcast<bool>(MessengerEvents.GAME_PAUSED, true);
+                    m_pauseParam.value = true;
+                    Broadcaster.Broadcast(BroadcastEventType.GAME_PAUSED, m_pauseParam);
 				}
 
 				// Increase stack
@@ -478,7 +478,8 @@ public class GameSceneController : GameSceneControllerBase {
 					Screen.sleepTimeout = SleepTimeout.NeverSleep;
 
 					// Notify the game
-					Messenger.Broadcast<bool>(MessengerEvents.GAME_PAUSED, false);
+                    m_pauseParam.value = false;
+                    Broadcaster.Broadcast(BroadcastEventType.GAME_PAUSED, m_pauseParam);
                     //Start Performance tracking 
                     HDTrackingManagerImp.Instance.Notify_StartPerformanceTracker();
 
@@ -642,7 +643,7 @@ public class GameSceneController : GameSceneControllerBase {
                 HDTrackingManager.Instance.Notify_LoadingResultsStart();
 
                 // Show loading screen
-                LoadingScreen.Toggle(true, false);
+                LoadingScreen.Toggle(true, false, true);
 
 				// Disable dragon and entities!
      			InstanceManager.player.gameObject.SetActive(false);

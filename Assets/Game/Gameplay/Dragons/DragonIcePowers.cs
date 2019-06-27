@@ -77,7 +77,23 @@ public class DragonIcePowers : MonoBehaviour {
         
         m_currentRadius = Mathf.Lerp(m_currentRadius, radius, Time.deltaTime * 5.0f);
         m_frozenRegistry.m_distanceSqr = m_currentRadius * m_currentRadius;
-        m_frozenRegistry.m_checkTier = !m_breath.IsFuryOn();
+        if ( !m_breath.IsFuryOn() )
+        {
+            m_frozenRegistry.m_checkType = FreezingObjectsRegistry.FreezingCheckType.EAT;
+        }
+        else
+        {
+            if ( m_breath.type != DragonBreathBehaviour.Type.Mega )
+            {
+                m_frozenRegistry.m_checkType = FreezingObjectsRegistry.FreezingCheckType.BURN;
+            }
+            else
+            {
+                m_frozenRegistry.m_checkType = FreezingObjectsRegistry.FreezingCheckType.NONE;
+            }
+        }
+
+        m_frozenRegistry.m_checkTier = !m_breath.IsFuryOn();    // TODO Check it can be burned instead
         
         if ( m_boost.IsBoostActive() && !m_active )
         {

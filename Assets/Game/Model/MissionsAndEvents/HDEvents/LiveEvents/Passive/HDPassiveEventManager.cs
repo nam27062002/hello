@@ -59,7 +59,7 @@ public class HDPassiveEventManager : HDLiveEventManager {
     // PARENT OVERRIDES														  //
     //------------------------------------------------------------------------//
 
-    public override void OnLiveDataResponse() {}
+    override public void OnLiveDataResponse() {}
 
     /// <summary>
     /// Check for state changes based on timestamps.
@@ -73,6 +73,8 @@ public class HDPassiveEventManager : HDLiveEventManager {
 			FinishEvent();
 		}
 	}
+
+	override public void RequestRewards() {	}
 
 	/// <summary>
 	/// Mark the event as finished.

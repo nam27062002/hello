@@ -32,7 +32,7 @@ namespace AI {
 		[SerializeField] protected float m_mass = 1f;
 		[SerializeField] private UpVector m_defaultUpVector = UpVector.Up;
 		[SerializeField] protected float m_orientationSpeed = 120f;
-        [SerializeField] private bool m_useAngularVelocity = false;
+        [SerializeField] protected bool m_useAngularVelocity = false;
 
 
         //--------------------------------------------------		
@@ -251,13 +251,6 @@ namespace AI {
                     break;
 			}
 
-            if (m_useAngularVelocity) {
-                m_rbody.angularVelocity = Util.GetAngularVelocityForRotationBlend(m_machineTransform.rotation, m_targetRotation, m_orientationSpeed);
-            } else {
-                m_rotation = Quaternion.RotateTowards(m_rotation, m_targetRotation, Time.deltaTime * m_orientationSpeed);
-                m_machineTransform.rotation = m_rotation;
-            }
-
             // Check if targeting to bend through that direction
             if (m_attackTarget) {
 				Vector3 dir = m_attackTarget.position - position;
@@ -303,6 +296,13 @@ namespace AI {
 						m_rbody.angularVelocity = GameConstants.Vector3.zero;
 						m_rbody.velocity = m_velocity;
 					} break;
+			}
+
+			if (m_useAngularVelocity) {
+                m_rbody.angularVelocity = Util.GetAngularVelocityForRotationBlend(m_machineTransform.rotation, m_targetRotation, m_orientationSpeed);
+            } else {           
+                m_rotation = Quaternion.RotateTowards(m_rotation, m_targetRotation, Time.fixedDeltaTime * m_orientationSpeed);
+                m_machineTransform.rotation = m_rotation;            
 			}
 		}
 
