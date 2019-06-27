@@ -1179,7 +1179,7 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
     private void UpdateMovementToPoint( float _deltaTime, Vector3 targetPoint )
 	{
 		Vector3 impulse = (targetPoint - m_transform.position).normalized;
-		UpdateMovementImpulse( _deltaTime, impulse);
+		UpdateMovementImpulse( _deltaTime, impulse, true);
 	}
 
 	//------------------------------------------------------------------//
@@ -1195,7 +1195,7 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 		UpdateMovementImpulse( _deltaTime, impulse);
 	}
 
-	private void UpdateMovementImpulse( float _deltaTime, Vector3 impulse)
+	private void UpdateMovementImpulse( float _deltaTime, Vector3 impulse, bool rotateSlowly = false)
 	{
 		CheckGround( out m_raycastHit);
 		if (m_boost.IsBoostActive())
@@ -1231,7 +1231,7 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 			m_impulse += (acceleration * _deltaTime) - ( m_impulse.normalized * m_dragonFricction * impulseMag * _deltaTime); // velocity = acceleration - friction * velocity
 
 			m_direction = m_impulse.normalized;
-			RotateToDirection( impulse );
+			RotateToDirection( impulse, rotateSlowly );
 		}
 		else
 		{
