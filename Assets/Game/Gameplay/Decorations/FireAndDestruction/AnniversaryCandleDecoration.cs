@@ -2,13 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AnniversaryCandleDecoration : MonoBehaviour, IFireNode {
+public class AnniversaryCandleDecoration : IEntity, IFireNode {
 	private enum State {
 		IDLE = 0,
 		LIGHT_UP
 	}
 	
-	
+	[EntitySkuList]
+	[SerializeField] private string m_sku;
+	public override string sku { get { return m_sku; } }
 	[SerializeField] private Rect m_rect;
 	[SerializeField] private float m_lightUpTime = 60f;
 	[SerializeField] private ViewParticleSpawner m_effect;
@@ -22,6 +24,7 @@ public class AnniversaryCandleDecoration : MonoBehaviour, IFireNode {
 	private CircleAreaBounds m_area;
 	public CircleAreaBounds area { get { return m_area; } }
 
+	private Reward m_reward;
 
 	private float m_timer;
 	private State m_state;
@@ -31,9 +34,24 @@ public class AnniversaryCandleDecoration : MonoBehaviour, IFireNode {
 	//-------------|
 	//-- Generic --|
 	//-------------|
-	private void Awake() {
+	protected override void Awake() {
+		base.Awake();
+
 		m_transform = transform;
-		
+		m_def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.ENTITIES, sku);
+
+		m_reward = new Reward();
+		m_reward.score = m_def.GetAsInt("rewardScore");
+		m_reward.coins = m_def.GetAsInt("rewardCoins");
+		m_reward.pc = m_def.GetAsInt("rewardPC");
+		m_reward.health = m_def.GetAsFloat("rewardHealth");
+		m_reward.energy = m_def.GetAsFloat("rewardEnergy");
+		m_reward.xp = m_def.GetAsFloat("rewardXp");
+		m_reward.fury = m_def.GetAsFloat("rewardFury", 0);
+
+		m_reward.origin = m_def.Get("sku");
+		m_reward.category = m_def.Get("category");
+
 		m_timer = 0f;
 		m_state = State.IDLE;
 	}
@@ -76,6 +94,9 @@ public class AnniversaryCandleDecoration : MonoBehaviour, IFireNode {
 		if (m_state == State.IDLE) {
 			//light up candle
 			m_effect.Spawn();
+			
+			Messenger.Broadcast<Transform, IEntity, Reward>(MessengerEvents.ENTITY_BURNED, m_transform, this, m_reward);
+
 			m_timer = m_lightUpTime;
 			m_state = State.LIGHT_UP;
 		}
