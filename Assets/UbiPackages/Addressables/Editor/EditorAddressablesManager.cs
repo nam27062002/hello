@@ -180,7 +180,7 @@ public class EditorAddressablesManager
     
     public void DeleteGeneratedFilesFromPlayer()
     {
-        EditorFileUtils.DeleteFileOrDirectory(GENERATED_IN_PLAYER_ASSETS_LUT_FOLDER);
+        //EditorFileUtils.DeleteFileOrDirectory(GENERATED_IN_PLAYER_ASSETS_LUT_FOLDER);
         EditorFileUtils.DeleteFileOrDirectory(GENERATED_IN_PLAYER_ADDRESSABLES_FOLDER);
     }
 
