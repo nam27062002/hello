@@ -100,6 +100,7 @@ public abstract class Modifier : IModifierDefinition {
     //------------------------------------------------------------------------//
     // ABSTRACT METHODS														  //
     //------------------------------------------------------------------------//
+    public virtual bool isValid() { return true; }
     public abstract void Apply();
 	public abstract void Remove();
 

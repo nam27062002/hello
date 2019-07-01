@@ -47,6 +47,13 @@ public class HDPassiveEventDefinition : HDLiveEventDefinition {
 		m_mainMod = null;
 	}
 
+	override public SimpleJSON.JSONClass ToJson() {
+		if (m_otherMods.Count == 0 && m_dragonMods.Count == 0) {
+			return null;
+		}
+		return base.ToJson();
+	}
+
 	/// <summary>
 	/// Initialize the definition with JSON data.
 	/// </summary>
