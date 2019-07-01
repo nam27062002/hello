@@ -136,6 +136,7 @@ public class Builder : MonoBehaviour, UnityEditor.Build.IPreprocessBuild
 		}
 		PlayerSettings.Android.useAPKExpansionFiles = obbValue;
 
+		#if UNITY_ANDROID
         bool aabValue = false;
         string generateAAB = GetArg("-aab");
         if (generateAAB != null)
@@ -143,6 +144,7 @@ public class Builder : MonoBehaviour, UnityEditor.Build.IPreprocessBuild
             bool.TryParse(generateAAB, out aabValue);
         }
         EditorUserBuildSettings.buildAppBundle = aabValue;
+		#endif
 
 		string date = System.DateTime.Now.ToString("yyyyMMdd");
 		string code = GetArg("-code");
