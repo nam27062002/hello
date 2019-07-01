@@ -12,9 +12,8 @@ public class PetGelatoSpawner : AbstractSpawner, IBroadcastListener  {
 		Back
 	};
 
-	//-------------------------------------------------------------------	
-	[SerializeField] public Range m_spawnTime = new Range(40f, 45f);
 
+	[SerializeField] private float m_searchRange;
 
 	//-------------------------------------------------------------------		
 	[System.Serializable]
@@ -24,11 +23,14 @@ public class PetGelatoSpawner : AbstractSpawner, IBroadcastListener  {
 	}
 
 	[SerializeField] private List<EntityPrefab> m_selectedPrefabs;
-
+	
 	
 	private string[] m_prefabNames;
 	private PoolHandler[] m_poolHandlers;
 
+
+	private Entity[] m_checkEntities = new Entity[50];
+	private int m_numCheckEntities = 0;
 
 	private Vector3[] m_positions = new Vector3[255];
 	private int[] m_tierToPoolHandler = new int[255];
@@ -36,6 +38,7 @@ public class PetGelatoSpawner : AbstractSpawner, IBroadcastListener  {
 
 	private List<IEntity> m_entitiesAlive;
 	private List<int> m_entitiesAliveIndex;
+
 
 
     void Awake() {
@@ -130,8 +133,11 @@ public class PetGelatoSpawner : AbstractSpawner, IBroadcastListener  {
 			// find npcs....
 			m_entitiesToSpawn = 5;
 
-			bla bla 
-
+			m_numCheckEntities = EntityManager.instance.GetOverlapingEntities(transform.position, m_searchRange, m_checkEntities);
+			for (int e = 0; e < m_numCheckEntities; e++) {
+				
+				bla bla 
+			}
 
 			bool succes = Respawn();
 			if (succes) {
