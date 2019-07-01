@@ -61,7 +61,7 @@ public class EditorAddressablesMenu : MonoBehaviour
 
 	public static void CopyPlatformAssetsLUTToResources(BuildTarget target)
 	{
-		m_manager.CopyPlatformAssetsLUTToResources(target);
+		Manager.CopyPlatformAssetsLUTToResources(target);
 	}
 
     // 1.Clear
