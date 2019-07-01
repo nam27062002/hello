@@ -1,5 +1,6 @@
 using FGOL.Save;
 using System;
+using System.IO;
 public class PersistenceLocalDriver
 {
 	public bool IsLoadedInGame { get; set; }
@@ -20,8 +21,7 @@ public class PersistenceLocalDriver
             {
                 key = PersistenceProfile.DEFAULT_PROFILE;
             }
-
-            SavePaths_Generate(key);            
+            SavePaths_Generate(key);
         }
     }
 
@@ -31,10 +31,11 @@ public class PersistenceLocalDriver
 
 	public PersistenceLocalDriver()
 	{
-		string dataName = PersistencePrefs.ActiveProfileName;        
-		Data = new PersistenceData(dataName);
+        string dataName = PersistencePrefs.ActiveProfileName;
+        Data = new PersistenceData(dataName);
 		Reset();
 	}
+
 
     public void Destroy()
     {
@@ -63,6 +64,26 @@ public class PersistenceLocalDriver
 
 	protected virtual void ExtendedLoad()
 	{
+        // Migration code
+        // Move Default.sav to Devault_0.sav
+        string dataName = PersistencePrefs.ActiveProfileName;
+        string oldPath = SaveUtilities.GetSavePath(dataName);
+        string newPath = SaveUtilities.GetSavePath(dataName + "_0");
+        if ( File.Exists( oldPath ) && !File.Exists(newPath) )
+        {
+            Data.Load( oldPath );    
+            if ( Data.LoadState == PersistenceStates.ELoadState.OK )
+            {
+                Data.Save( newPath );
+                // if save if ok then delete file
+                if (SavePaths_Verify(newPath))
+                {
+                    File.Delete( oldPath );
+                }
+            }
+        }
+
+
         int currentIndex = SavePaths_LatestIndex;        
         int latestIndex = currentIndex;
         string savePath;
@@ -348,12 +369,7 @@ public class PersistenceLocalDriver
         string name;
         for (int i = 0; i  < SAVE_PATHS_COUNT; i++)
         {
-            name = key;
-            if (SAVE_PATHS_MULTIPLE_ENABLED && i > 0)
-            {
-                name += "_" + i;
-            }
-
+            name = key + "_" + i;
             mSavePaths[i] = SaveUtilities.GetSavePath(name);
         }
     }
