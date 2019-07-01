@@ -114,7 +114,7 @@ public class EditorAddressablesManager
 	private static string GENERATED_IN_PLAYER_ASSETS_LUT_FOLDER = GENERATED_IN_PLAYER_ASSETS_LUT_PARENT_FOLDER + "/" + ASSETS_LUT_FOLDER_NAME + "/";
     private static string GENERATED_IN_PLAYER_ADDRESSABLES_FOLDER = "Assets/Resources/Addressables/";
 
-    private void CopyPlatformAssetsLUTToResources(BuildTarget target)
+    public void CopyPlatformAssetsLUTToResources(BuildTarget target)
     {
         string directoryInResources = GENERATED_IN_PLAYER_ASSETS_LUT_FOLDER;
         string assetsLUTInResources = directoryInResources + "assetsLUT.json";
@@ -160,10 +160,10 @@ public class EditorAddressablesManager
     public void CopyGeneratedFilesToPlayer(BuildTarget target)
     {
         // Copy the platform assetsLUT to Resources
-        /*if (Downloadables.Manager.USE_CRC_IN_URL)
+        if (Downloadables.Manager.USE_CRC_IN_URL)
         {
             CopyPlatformAssetsLUTToResources(target);
-        }*/        
+        }        
 
         string platformStr = target.ToString();
         string directoryInResources = GENERATED_IN_PLAYER_ADDRESSABLES_FOLDER;
@@ -180,7 +180,7 @@ public class EditorAddressablesManager
     
     public void DeleteGeneratedFilesFromPlayer()
     {
-        //EditorFileUtils.DeleteFileOrDirectory(GENERATED_IN_PLAYER_ASSETS_LUT_FOLDER);
+        EditorFileUtils.DeleteFileOrDirectory(GENERATED_IN_PLAYER_ASSETS_LUT_FOLDER);
         EditorFileUtils.DeleteFileOrDirectory(GENERATED_IN_PLAYER_ADDRESSABLES_FOLDER);
     }
 

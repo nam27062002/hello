@@ -59,6 +59,11 @@ public class EditorAddressablesMenu : MonoBehaviour
         }
     }
 
+	public static void CopyPlatformAssetsLUTToResources(BuildTarget target)
+	{
+		m_manager.CopyPlatformAssetsLUTToResources(target);
+	}
+
     // 1.Clear
     // Deletes AssetBundles/<currentPlatformName> folder, Assets/Streaming_Assets/Addressables folder, Downloadables folder
     [MenuItem(ADDRESSABLES_BUILD_BY_STEPS_MENU_CLEAR)]
