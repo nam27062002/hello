@@ -46,7 +46,7 @@ public class MenuDragonLoader : MonoBehaviour {
 			RefreshDragon();
 		}
 	}
-
+	
 	[SkuList(DefinitionsCategory.DRAGONS, true)]
 	[SerializeField] private string m_dragonSku = "";
 	public string dragonSku {
@@ -315,10 +315,12 @@ public class MenuDragonLoader : MonoBehaviour {
 		// Apply equipment
 		DragonEquip equip = m_dragonInstance.GetComponent<DragonEquip>();
 		if(equip != null) {
-			if ( !Application.isPlaying )
-			{
+			if (!Application.isPlaying) {
 				equip.Init();
 			}
+
+			equip.EquipPets(m_mode == Mode.TOURNAMENT);
+
 			// Apply disguise (if any)
 			if(!string.IsNullOrEmpty(m_disguiseSku) && equip.dragonDisguiseSku != m_disguiseSku) {
 				equip.EquipDisguise(m_disguiseSku);
