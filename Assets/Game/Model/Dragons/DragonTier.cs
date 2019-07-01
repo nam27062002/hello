@@ -16,12 +16,20 @@ public enum DragonTier {
 	TIER_2,		// M
 	TIER_3,		// L
 	TIER_4,		// XL
+	TIER_5, 	// XXL
 
 	COUNT
 }
 
 class DragonTierGlobals
 {
-	public static DragonTier LAST_TIER = DragonTier.TIER_4;
-}
+	public static DragonTier LAST_TIER = DragonTier.COUNT - 1;
 
+	public static DragonTier GetFromInt(int _tier) {
+		if (_tier == -1) {
+			return DragonTier.COUNT;
+		}
+
+		return (DragonTier) _tier;
+	}
+}

@@ -5,7 +5,7 @@ using UnityEngine;
 public class DragonIcePowers : MonoBehaviour {
 
 	[Header("Shield Drains")]
-	public float[] m_shieldDrainByTier = new float[ (int)DragonTier.COUNT ]{ 1.1f, 1.1f, 1.1f, 1.1f, 1.1f};
+	public float[] m_shieldDrainByTier = new float[ (int)DragonTier.COUNT ]{ 1.1f, 1.1f, 1.1f, 1.1f, 1.1f, 1.1f};
     [Header("Frozen Area Setup")]
     public float m_frozenAreaRadius = 1;
     public float m_frozenAreaRadiusUnderwater = 2;
