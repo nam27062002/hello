@@ -61,6 +61,9 @@ public class Localizer : MonoBehaviour, IBroadcastListener {
 		}
 	}
 
+	// Internal logic
+	private bool m_ignoreLanguageChange = false;
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -100,19 +103,7 @@ public class Localizer : MonoBehaviour, IBroadcastListener {
 		Broadcaster.RemoveListener(BroadcastEventType.LANGUAGE_CHANGED, this);
 	}
 
-    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
-    {
-        switch( eventType )
-        {
-            case BroadcastEventType.LANGUAGE_CHANGED:
-            {
-                OnLanguageChanged();
-            }break;
-        }
-    }
-    
-    
-	//------------------------------------------------------------------------//
+    //------------------------------------------------------------------------//
 	// STATIC METHODS														  //
 	//------------------------------------------------------------------------//
 	/// <summary>
@@ -164,7 +155,10 @@ public class Localizer : MonoBehaviour, IBroadcastListener {
 
 		// Special Case: if tid is empty, skip localization, replacement and casing and put an empty string
 		if(string.IsNullOrEmpty(m_tid)) {
-			m_text.text = string.Empty;
+			// Except if text was forced
+			if(!m_ignoreLanguageChange) {
+				m_text.text = string.Empty;
+			}
 			return;
 		}
 
@@ -191,15 +185,42 @@ public class Localizer : MonoBehaviour, IBroadcastListener {
 
 		// Refresh text
 		Localize();
+
+		// Listen to future language changes
+		m_ignoreLanguageChange = false;
+	}
+
+	/// <summary>
+	/// Directly set an already localized text.
+	/// Use for texts that don't require localization or texts localized from outside.
+	/// </summary>
+	/// <param name="_text">Text to be applied to the textfield.</param>
+	public void Set(string _text) {
+		// Clear tid and params
+		m_tid = string.Empty;
+		m_replacements = null;
+
+		// Refresh text
+		if(m_text != null) {
+			m_text.text = _text;
+		}
+
+		// Ignore future language changes
+		m_ignoreLanguageChange = true;
 	}
 
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Localization language has changed, update textfield.
-	/// </summary>
-	private void OnLanguageChanged() {
-		Localize();
+	public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo) {
+		switch(eventType) {
+			// Language has been changed!
+			case BroadcastEventType.LANGUAGE_CHANGED: {
+				// Re-localize (if allowed)
+				if(!m_ignoreLanguageChange) {
+					Localize();
+				}
+			} break;
+		}
 	}
 }

@@ -109,7 +109,8 @@ public class PowerTooltip : MonoBehaviour {
 		// Name and description
 		// Name
 		if(m_nameText != null) {
-            m_nameText.Localize(_modDef.GetName());
+			// Already localized by the modifier definition
+			m_nameText.Set(_modDef.GetName());
 		}
 
 		// Desc

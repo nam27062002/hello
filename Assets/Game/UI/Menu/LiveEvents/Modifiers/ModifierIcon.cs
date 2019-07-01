@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ModifierIcon : MonoBehaviour {
+public class ModifierIcon : MonoBehaviour, IBroadcastListener {
 
 	[SerializeField] private Image m_icon;
 	[SerializeField] private TextMeshProUGUI m_text;
@@ -21,6 +21,16 @@ public class ModifierIcon : MonoBehaviour {
 	}
 
 	private IModifierDefinition m_def;
+
+	private void OnEnable() {
+		// Subscribe to external events
+		Broadcaster.AddListener(BroadcastEventType.LANGUAGE_CHANGED, this);
+	}
+
+	private void OnDisable() {
+		// Unsubscribe from external events
+		Broadcaster.RemoveListener(BroadcastEventType.LANGUAGE_CHANGED, this);
+	}
 
 
 	public void InitFromDefinition(IModifierDefinition _def) {
@@ -67,5 +77,21 @@ public class ModifierIcon : MonoBehaviour {
 
 		// Set arrow offset to make it point to this icon
 		_tooltip.SetArrowOffset(m_tooltipArrowOffset);
+	}
+
+	//------------------------------------------------------------------------//
+	// CALLBACKS															  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Ons the broadcast signal.
+	/// </summary>
+	/// <param name="_eventType">Event type.</param>
+	/// <param name="_broadcastEventInfo">Broadcast event info.</param>
+	public void OnBroadcastSignal(BroadcastEventType _eventType, BroadcastEventInfo _broadcastEventInfo) {
+		switch(_eventType) {
+			case BroadcastEventType.LANGUAGE_CHANGED: {
+				InitFromDefinition(m_def);
+			} break;
+		}
 	}
 }
