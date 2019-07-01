@@ -108,6 +108,7 @@ GameObject:
   - component: {fileID: 224614251636688260}
   - component: {fileID: 222471481112435368}
   - component: {fileID: 114359834468737838}
+  - component: {fileID: 114988313917987746}
   m_Layer: 5
   m_Name: DragonIcon
   m_TagString: Untagged
@@ -782,8 +783,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2e3eedcba421948d1ac712f3d495135f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_applyToFonts: 0
+  m_applyToImages: 1
   m_colorMultiply: {r: 1, g: 1, b: 1, a: 1}
   m_colorAdd: {r: 0, g: 0, b: 0, a: 0}
+  m_colorRampEnabled: 0
+  m_colorRamp: {fileID: 0}
   m_alpha: 1
   m_brightness: 0
   m_saturation: 0
@@ -1241,7 +1246,7 @@ MonoBehaviour:
     - {r: 0.57254905, g: 0.09019608, b: 0.098039225, a: 1}
   m_rewardIcon: {fileID: 114300572870397282}
   m_rewardText: {fileID: 114545236988617374}
-  m_dragonIcon: {fileID: 114359834468737838}
+  m_dragonIconLoader: {fileID: 114988313917987746}
   m_levelText: {fileID: 114868258739470900}
   m_tooltip: {fileID: 0}
   m_scrollToButton: {fileID: 0}
@@ -1505,6 +1510,21 @@ MonoBehaviour:
   - {fileID: 0}
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &114988313917987746
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1198609935659212}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 285cd8cfbf6c84d2fab86d95b9d993fc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_assetId: 
+  m_loadOnAwake: 0
+  m_image: {fileID: 114359834468737838}
+  m_loadingPrefab: {fileID: 0}
 --- !u!114 &114996735628134634
 MonoBehaviour:
   m_ObjectHideFlags: 1
