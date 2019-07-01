@@ -497,7 +497,7 @@ public class Builder : MonoBehaviour, UnityEditor.Build.IPreprocessBuild
 	{
 		// Platform assetsLUT file needs to be moved to Resources. We need to do it here because otherwise this file is not loaded on time 
 		// when building from the script
-		EditorAddressablesMenu.CopyPlatformAssetsLUTToResources()ditorUserBuildSettings.activeBuildTarget);
+		EditorAddressablesMenu.CopyPlatformAssetsLUTToResources(EditorUserBuildSettings.activeBuildTarget);
 
 		EditorAddressablesMenu.SetMode(GetAddressablesMode());	
 		UnityEngine.Debug.Log ("Addressables mode: " + AddressablesManager.Mode);
