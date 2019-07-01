@@ -8,6 +8,7 @@
 // INCLUDES																//
 //----------------------------------------------------------------------//
 using UnityEngine;
+using UnityEngine.Events;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -26,11 +27,18 @@ public class MenuDragonLoader : MonoBehaviour {
         TOURNAMENT
 	}
 
-	//------------------------------------------------------------------//
-	// MEMBERS AND PROPERTIES											//
-	//------------------------------------------------------------------//
-	// Exposed setup
-	[SerializeField] private Mode m_mode = Mode.CURRENT_DRAGON;
+    //------------------------------------------------------------------//
+    // INTERNAL CLASSES 												//
+    //------------------------------------------------------------------//
+
+    [System.Serializable]
+    public class MenuDragonLoaderEvent : UnityEvent<MenuDragonLoader> { }
+
+    //------------------------------------------------------------------//
+    // MEMBERS AND PROPERTIES											//
+    //------------------------------------------------------------------//
+    // Exposed setup
+    [SerializeField] private Mode m_mode = Mode.CURRENT_DRAGON;
 	public Mode mode {
 		get { return m_mode; }
 		set {
@@ -126,6 +134,9 @@ public class MenuDragonLoader : MonoBehaviour {
 				RefreshDragon();
 		}
 	}
+
+    [Space(10)]
+    public MenuDragonLoaderEvent OnCompleteLoad;
 
 	// Debug
 	[SkuList(DefinitionsCategory.DRAGONS, false)]
@@ -271,6 +282,11 @@ public class MenuDragonLoader : MonoBehaviour {
 			m_asyncRequest = null;
 			if (onDragonLoaded != null)
 				onDragonLoaded(this);
+
+            if (OnCompleteLoad != null)
+            {
+                OnCompleteLoad.Invoke(this);
+            }
 		}
 	}
 
