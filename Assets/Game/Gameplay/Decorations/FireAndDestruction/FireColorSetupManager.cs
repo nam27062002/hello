@@ -20,6 +20,20 @@ public class FireColorSetupManager : MonoBehaviour {
         COUNT
     };
 
+    // COMPARER. Use this on all your Dictionaries
+    public struct FireColorTypeComparer : IEqualityComparer<FireColorType>
+    {
+        public bool Equals(FireColorType b1, FireColorType b2)
+        {
+            return b1 == b2;
+        }
+        public int GetHashCode(FireColorType bx)
+        {
+            return (int)bx;
+        }
+    }
+
+
     public enum FireColorVariants
     {
         DEFAULT,
@@ -28,18 +42,26 @@ public class FireColorSetupManager : MonoBehaviour {
         UNDERWATER,
     };
     
-    Dictionary<FireColorType, Dictionary<FireColorVariants, FireColorConfig>> m_loadedColors = new Dictionary<FireColorType, Dictionary<FireColorVariants, FireColorConfig>>();
+    FireColorTypeComparer m_fireColorTypeComparer;
+    Dictionary<FireColorType, Dictionary<FireColorVariants, FireColorConfig>> m_loadedColors;
         // Materials used when a decoration is burning
-    Dictionary<FireColorType, Material> m_originalBurnMaterial = new Dictionary<FireColorType, Material>();
-    Dictionary<FireColorType, List<Material>> m_freeDecorationBurnMaterial = new Dictionary<FireColorType, List<Material>>();
+    Dictionary<FireColorType, Material> m_originalBurnMaterial;
+    Dictionary<FireColorType, List<Material>> m_freeDecorationBurnMaterial;
     
         // Materials used when a decoration is burned. This is the destroyed mesh under the normal mesh
-    Dictionary<FireColorType, Material> m_burnedViewMaterial = new Dictionary<FireColorType, Material>();
+    Dictionary<FireColorType, Material> m_burnedViewMaterial;
     
     Dictionary<FireColorConfig, List<Material>> m_freeConfigMaterials = new Dictionary<FireColorConfig, List<Material>>();
     
     private void Awake()
     {
+        m_fireColorTypeComparer = new FireColorTypeComparer();
+        m_loadedColors = new Dictionary<FireColorType, Dictionary<FireColorVariants, FireColorConfig>>( m_fireColorTypeComparer );
+        m_originalBurnMaterial = new Dictionary<FireColorType, Material>(m_fireColorTypeComparer);
+        m_freeDecorationBurnMaterial = new Dictionary<FireColorType, List<Material>>(m_fireColorTypeComparer);
+
+        m_burnedViewMaterial = new Dictionary<FireColorType, Material>(m_fireColorTypeComparer);
+
         m_instance = this;
         int max = (int)FireColorType.COUNT;
         for (int i = 0; i < max; i++)
