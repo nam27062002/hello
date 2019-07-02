@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Cage : IEntity {
 	
+	[SerializeField] private float m_disableDelay = 270f;
+
 	private ISpawner m_spawner;
 	private float m_timer;
 	private bool m_wasDestroyed;
@@ -14,6 +16,8 @@ public class Cage : IEntity {
 
 	private CircleArea2D m_bounds;
 	public override CircleArea2D circleArea { get{ return m_bounds; } }
+
+	private bool m_disabling;
 
 	//
 	protected override void Awake() {
@@ -38,12 +42,20 @@ public class Cage : IEntity {
 		m_spawner = _spawner;
 		m_wasDestroyed = false;
 		m_timer = 0f;
+		m_disabling = false;
 		base.Spawn(_spawner);
 	}
 
 	//
 	public override void Disable(bool _destroyed) {	
-		m_timer = 0.25f;
+		if (!m_disabling) {
+			if (m_wasDestroyed) {
+				m_timer = m_disableDelay;
+			} else {
+				m_timer = 0.25f;
+			}
+			m_disabling = true;
+		}
 	}
 
 	public bool IntersectsWith(Vector2 _center, float _radius) {
@@ -57,10 +69,11 @@ public class Cage : IEntity {
 	}
 
 	// Update is called once per frame
-	void Update() {
-		if (m_timer > 0f) {
+	public override void CustomUpdate() {
+		base.CustomUpdate();
+		if (m_disabling) {
 			m_timer -= Time.deltaTime;
-			if (m_timer <= 0f) {	
+			if (m_timer <= 0f) {
 				m_spawner.RemoveEntity(this, m_wasDestroyed);
 				base.Disable(m_wasDestroyed);
 			}
