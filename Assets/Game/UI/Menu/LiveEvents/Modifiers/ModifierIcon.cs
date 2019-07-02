@@ -83,10 +83,10 @@ public class ModifierIcon : MonoBehaviour, IBroadcastListener {
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
 	/// <summary>
-	/// Ons the broadcast signal.
+	/// An event has been broadcasted.
 	/// </summary>
 	/// <param name="_eventType">Event type.</param>
-	/// <param name="_broadcastEventInfo">Broadcast event info.</param>
+	/// <param name="_broadcastEventInfo">Event data.</param>
 	public void OnBroadcastSignal(BroadcastEventType _eventType, BroadcastEventInfo _broadcastEventInfo) {
 		switch(_eventType) {
 			case BroadcastEventType.LANGUAGE_CHANGED: {

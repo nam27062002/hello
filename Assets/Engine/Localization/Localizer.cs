@@ -212,8 +212,13 @@ public class Localizer : MonoBehaviour, IBroadcastListener {
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
-	public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo) {
-		switch(eventType) {
+	/// <summary>
+	/// An event has been broadcasted.
+	/// </summary>
+	/// <param name="_eventType">Event type.</param>
+	/// <param name="_broadcastEventInfo">Event data.</param>
+	public void OnBroadcastSignal(BroadcastEventType _eventType, BroadcastEventInfo _broadcastEventInfo) {
+		switch(_eventType) {
 			// Language has been changed!
 			case BroadcastEventType.LANGUAGE_CHANGED: {
 				// Re-localize (if allowed)
