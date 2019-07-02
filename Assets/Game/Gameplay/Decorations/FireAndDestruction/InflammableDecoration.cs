@@ -109,7 +109,8 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable, IBroadcastListen
     protected void OnDestroy() {
         ReturnAshMaterial();
 
-		EntityManager.instance.UnregisterDecoration(m_entity);
+		if ( EntityManager.instance != null )
+			EntityManager.instance.UnregisterDecoration(m_entity);
 
         // Unsubscribe from external events
         Broadcaster.RemoveListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
