@@ -32,8 +32,8 @@ public class EditorBuildMenu : MonoBehaviour
         string path = EditorUtility.SaveFilePanel("Build " + buildTargetAsString, "Builds", "", "");
 
         if (buildTarget == BuildTarget.Android)
-        {
-            string extension = ".apk";
+        {			
+			string extension = (EditorUserBuildSettings.buildAppBundle) ? ".aab" : ".apk";
             if (!path.EndsWith(extension))
             {
                 path += extension;
