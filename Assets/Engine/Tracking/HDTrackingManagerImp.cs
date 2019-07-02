@@ -3247,6 +3247,8 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private void Session_NotifyRoundEnd() {
         Session_IsARoundRunning = false;
 
+        Session_GameRoundCount++;
+
         string economyGroupString = EconomyGroupToString(EEconomyGroup.REWARD_RUN);
         UserProfile userProfile = UsersManager.currentUser;
 
