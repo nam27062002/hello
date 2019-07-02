@@ -45,7 +45,7 @@ public class PopupDailyRewards : MonoBehaviour, IBroadcastListener {
 	private bool m_rewardCollected = false; // Prevent collect spamming
 
 	// Internal references
-	private CurrencyTransferFX m_currencyFX = null;
+	private ParticlesFlowFX m_currencyFX = null;
 
 	// Cache some data
 	private DailyRewardsSequence m_sequence = null;
@@ -174,8 +174,8 @@ public class PopupDailyRewards : MonoBehaviour, IBroadcastListener {
 					toWorldPos.z = -0.5f;
 
 					// Ready!
-					m_currencyFX = CurrencyTransferFX.LoadAndLaunch(
-						CurrencyTransferFX.GetDefaultPrefabPathForCurrency(collectedReward.currency),
+					m_currencyFX = ParticlesFlowFX.LoadAndLaunch(
+						ParticlesFlowFX.GetDefaultPrefabPathForCurrency(collectedReward.currency),
 						this.GetComponentInParent<Canvas>().transform,
 						fromWorldPos,
 						toWorldPos

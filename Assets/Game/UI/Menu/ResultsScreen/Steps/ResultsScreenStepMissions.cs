@@ -37,7 +37,7 @@ public class ResultsScreenStepMissions : ResultsScreenSequenceStep {
 
 	// Internal
 	private int m_completedMissions = 0;
-	private List<CurrencyTransferFX> m_currencyFX = new List<CurrencyTransferFX>();
+	private List<ParticlesFlowFX> m_currencyFX = new List<ParticlesFlowFX>();
 	private List<Mission> m_fakeMissions = new List<Mission>();
 	
 	//------------------------------------------------------------------------//
@@ -170,8 +170,8 @@ public class ResultsScreenStepMissions : ResultsScreenSequenceStep {
 
 			// Show some coins flying around! (unless skipped)
 			if(!m_skipped) {
-				CurrencyTransferFX fx = CurrencyTransferFX.LoadAndLaunch(
-					CurrencyTransferFX.COINS,
+				ParticlesFlowFX fx = ParticlesFlowFX.LoadAndLaunch(
+					ParticlesFlowFX.COINS,
 					this.GetComponentInParent<Canvas>().transform,
 					_pill.rewardText.transform.position + new Vector3(0f, 0f, -0.5f),		// Offset Z so the coins don't collide with the UI elements
 					m_coinsCounter.transform.position + new Vector3(0f, 0f, -0.5f)
@@ -196,8 +196,8 @@ public class ResultsScreenStepMissions : ResultsScreenSequenceStep {
 
             // Show some coins flying around! (unless skipped)
             if (!m_skipped) {
-                CurrencyTransferFX fx = CurrencyTransferFX.LoadAndLaunch(
-                    CurrencyTransferFX.GOLDEN_FRAGMENTS,
+                ParticlesFlowFX fx = ParticlesFlowFX.LoadAndLaunch(
+                    ParticlesFlowFX.GOLDEN_FRAGMENTS,
                     this.GetComponentInParent<Canvas>().transform,
                     _pill.rewardText.transform.position + new Vector3(0f, 0f, -0.5f),       // Offset Z so the coins don't collide with the UI elements
                     m_gfCounter.transform.position + new Vector3(0f, 0f, -0.5f)
