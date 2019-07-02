@@ -137,6 +137,16 @@ public class HDCP2Manager
         return returnValue;
     }
 
+    public string GetDebugInfo()
+    {
+        TrackingPersistenceSystem trackingSystem = HDTrackingManager.Instance.TrackingPersistenceSystem;
+        bool ftuxPassed = trackingSystem != null && trackingSystem.GameRoundCount >= 3;
+
+        return "IsInterstitialAvailable = " + IsInterstitialAvailable() + " CP2InterstitialEnabled = " + FeatureSettingsManager.instance.IsCP2InterstitialEnabled() + " Inititalized = " + IsInitialised() + " state = " + m_state +
+            " CanUserPlayInterstitial = " + CanUserPlayInterstitial() + " timeToWait = " + GetUserRestrictionTimeToWait() + " ftuxPassed= " + ftuxPassed +
+            " minRoundsSoFar = " + HDTrackingManager.Instance.Session_GameRoundCount + " minRoundsRequired = " + FeatureSettingsManager.instance.GetCP2InterstitialMinRounds();
+    }
+
     private void PlayInterstitialInternal(Action<bool> onDone)
     {
         if (IsInterstitialAvailable())
