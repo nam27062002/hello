@@ -32,8 +32,8 @@ public class PetGelatoSpawner : AbstractSpawner, IBroadcastListener  {
 	private Entity[] m_checkEntities = new Entity[50];
 	private int m_numCheckEntities = 0;
 
-	private Vector3[] m_positions = new Vector3[255];
-	private int[] m_tierToPoolHandler = new int[255];
+	private Vector3[] m_positions = new Vector3[50];
+	private int[] m_tierToPoolHandler = new int[50];
 	private uint m_entitiesToSpawn = 0;
 
 	private List<IEntity> m_entitiesAlive;
@@ -131,12 +131,20 @@ public class PetGelatoSpawner : AbstractSpawner, IBroadcastListener  {
 	public void Spawn() {
 		if (State == EState.Respawning) {
 			// find npcs....
-			m_entitiesToSpawn = 5;
+			m_entitiesToSpawn = 0;
 
 			m_numCheckEntities = EntityManager.instance.GetOverlapingEntities(transform.position, m_searchRange, m_checkEntities);
 			for (int e = 0; e < m_numCheckEntities; e++) {
+				Entity entity = m_checkEntities[e];
+				int tierIndex = (int)entity.edibleFromTier;
 				
-				bla bla 
+				if (tierIndex < m_prefabNames.Length) {					
+					m_positions[m_entitiesToSpawn] = entity.machine.position;
+					m_tierToPoolHandler[m_entitiesToSpawn] = tierIndex;
+
+					m_entitiesToSpawn++;
+					entity.Disable(true);					
+				}
 			}
 
 			bool succes = Respawn();
