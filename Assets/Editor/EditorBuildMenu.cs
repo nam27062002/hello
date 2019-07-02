@@ -31,6 +31,7 @@ public class EditorBuildMenu : MonoBehaviour
         string buildTargetAsString = buildTarget.ToString();
         string path = EditorUtility.SaveFilePanel("Build " + buildTargetAsString, "Builds", "", "");
 
+#if UNITY_ANDROID
         if (buildTarget == BuildTarget.Android)
         {			
 			string extension = (EditorUserBuildSettings.buildAppBundle) ? ".aab" : ".apk";
@@ -39,6 +40,7 @@ public class EditorBuildMenu : MonoBehaviour
                 path += extension;
             }
         }
+#endif
 
         PlayerSettings.Android.keystoreName = "AndroidKeys/releaseKey.keystore";
         PlayerSettings.Android.keystorePass = "android";
