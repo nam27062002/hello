@@ -18,7 +18,7 @@ using TMPro;
 /// <summary>
 /// Simple controller for a disguise power icon.
 /// </summary>
-public class PowerIcon : MonoBehaviour {
+public class PowerIcon : MonoBehaviour, IBroadcastListener {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -75,6 +75,21 @@ public class PowerIcon : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Component has been enabled.
+	/// </summary>
+	private void OnEnable() {
+		// Subscribe to external events
+		Broadcaster.AddListener(BroadcastEventType.LANGUAGE_CHANGED, this);
+	}
+
+	/// <summary>
+	/// Component has been disabled.
+	/// </summary>
+	private void OnDisable() {
+		// Unsubscribe from external events
+		Broadcaster.RemoveListener(BroadcastEventType.LANGUAGE_CHANGED, this);
+	}
 
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //
@@ -125,19 +140,8 @@ public class PowerIcon : MonoBehaviour {
 				m_powerIcon.sprite = Resources.Load<Sprite>(UIConstants.POWER_ICONS_PATH + _powerDef.GetAsString("icon"));
 			}
 
-			// Name
-			if(m_nameText != null) {
-				m_nameText.Localize(_powerDef.Get("tidName"));
-			}
-
-			// Short description
-			if(m_shortDescriptionText != null) {
-                if (m_mode == Mode.SPECIAL_DRAGON) {
-                    m_shortDescriptionText.text = _powerDef.GetLocalized("tidDescShort");
-                } else {
-                    m_shortDescriptionText.text = DragonPowerUp.GetDescription(_powerDef, true, m_mode == Mode.PET);	// Custom formatting depending on powerup type, already localized
-                }
-			}
+			// Texts
+			RefreshTexts();
 
 			// Lock
 			SetLocked(_locked);
@@ -154,6 +158,31 @@ public class PowerIcon : MonoBehaviour {
 
 		// Image color
 		if(m_powerIcon != null) m_powerIcon.color = _locked ? Color.gray : Color.white;
+	}
+
+	/// <summary>
+	/// Initialize the short description textfield.
+	/// </summary>
+	private void RefreshTexts() {
+		// Power name
+		if(m_nameText != null) {
+			if(m_powerDef != null) {
+				m_nameText.Localize(m_powerDef.Get("tidName"));
+			} else {
+				m_nameText.Localize(string.Empty);
+			}
+		}
+
+		// Short description
+		if(m_shortDescriptionText != null) {
+			if(m_powerDef == null) {
+				m_shortDescriptionText.text = string.Empty;
+			} else if(m_mode == Mode.SPECIAL_DRAGON) {
+				m_shortDescriptionText.text = m_powerDef.GetLocalized("tidDescShort");
+			} else {
+				m_shortDescriptionText.text = DragonPowerUp.GetDescription(m_powerDef, true, m_mode == Mode.PET);    // Custom formatting depending on powerup type, already localized
+			}
+		}
 	}
 
 	//------------------------------------------------------------------------//
@@ -185,6 +214,20 @@ public class PowerIcon : MonoBehaviour {
 		_tooltip.SetArrowOffset(m_tooltipArrowOffset);
 	}
 
+	/// <summary>
+	/// An event has been broadcasted.
+	/// </summary>
+	/// <param name="_eventType">Event type.</param>
+	/// <param name="_broadcastEventInfo">Event data.</param>
+	public void OnBroadcastSignal(BroadcastEventType _eventType, BroadcastEventInfo _broadcastEventInfo) {
+		switch(_eventType) {
+			// Language has been changed!
+			case BroadcastEventType.LANGUAGE_CHANGED: {
+				// Refresh some texts
+				RefreshTexts();
+			} break;
+		}
+	}
 	//------------------------------------------------------------------------//
 	// STATIC UTILS METHODS													  //
 	//------------------------------------------------------------------------//
