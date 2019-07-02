@@ -110,7 +110,7 @@ public abstract class Modifier : IModifierDefinition, IBroadcastListener {
 		Broadcaster.RemoveListener(BroadcastEventType.LANGUAGE_CHANGED, this);
 	}
 
-	private void RebuildTexts() {
+	public void RebuildTexts() {
 		m_name = LocalizationManager.SharedInstance.Localize(m_tidName);
 		m_desc = LocalizationManager.SharedInstance.Localize(m_tidDesc, m_textParams);
 		m_descShort = LocalizationManager.SharedInstance.Localize(m_tidDescShort, m_textParams);

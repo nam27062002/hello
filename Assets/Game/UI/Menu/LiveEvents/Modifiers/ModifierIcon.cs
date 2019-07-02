@@ -90,6 +90,7 @@ public class ModifierIcon : MonoBehaviour, IBroadcastListener {
 	public void OnBroadcastSignal(BroadcastEventType _eventType, BroadcastEventInfo _broadcastEventInfo) {
 		switch(_eventType) {
 			case BroadcastEventType.LANGUAGE_CHANGED: {
+				if(m_def != null) m_def.RebuildTexts();
 				InitFromDefinition(m_def);
 			} break;
 		}
