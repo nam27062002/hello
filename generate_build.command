@@ -283,10 +283,6 @@ if [ "$INCREASE_VERSION_NUMBER" == true ]; then
     #set -e
 fi
 
-
-print_builder "Updating version number..."
-eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.updateVersionNumbers"
-
 # Read internal version number
 # Unity creates a tmp file outputVersion.txt with the version number in it. Read from it and remove it.
 print_builder "Reading internal version number..."
@@ -346,6 +342,11 @@ if [ "$VERSION_CODE_PARAMS" != "" ]; then
     print_builder "Settign version code numbers";
     eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.SetVersionCode ${VERSION_CODE_PARAMS}"
 fi
+
+
+print_builder "Updating version number..."
+eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.updateVersionNumbers"
+
 
 eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.OutputBundleIdentifier"
 PACKAGE_NAME="$(cat bundleIdentifier.txt)"
