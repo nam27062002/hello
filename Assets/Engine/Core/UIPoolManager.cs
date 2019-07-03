@@ -22,7 +22,7 @@ public class UIPoolManager : UbiBCN.SingletonMonoBehaviour<UIPoolManager> {
 		if (instance.m_pools.ContainsKey(_prefab.name)) {
 			return instance.m_handlers[instance.m_pools[_prefab.name]];
 		} else {
-			Pool pool = new Pool(_prefab, _container, _initSize, _canGrow, _container == instance.transform, _temporary);	// [AOC] Create new container if given container is the Pool Manager.
+			Pool pool = new Pool(_prefab, _prefab.name, null, _container, _initSize, _canGrow, _container == instance.transform, _temporary);	// [AOC] Create new container if given container is the Pool Manager.
 			PoolHandler handler = new PoolHandler(pool);
 
 			instance.m_pools.Add(_prefab.name, pool);
