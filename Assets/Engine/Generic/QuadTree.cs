@@ -123,6 +123,28 @@ public class QuadTree<T> where T : IQuadTreeItem {
 		Rect r = new Rect(_point, Vector3.one * 0.1f);
 		return GetItemsInRange(r);
 	}
+	
+	private bool HasItemsInRange(  QuadTreeNode<T> _node, Rect _rect) {
+       bool ret = false;
+		if ( _node.IsLeaf()) {
+			// Check intersection item by item
+			for(int i = 0; i < _node.items.Count && !ret; i++) {				
+				ret = _rect.Overlaps(_node.items[i].boundingRect);
+			}
+		}else{
+			for (int i = 0; i < 4 && !ret; i++) {
+				if (_node.child[i].Intersects(_rect)) {
+					ret = HasItemsInRange(  _node.child[i], _rect);
+				}
+			}
+		}
+	   return ret;
+	}
+
+	public bool HasItemsAt(Vector2 _point) {
+		Rect r = new Rect(_point, Vector3.one * 0.1f);
+		return HasItemsInRange(m_root,r);
+	}
 
 	/// <summary>
 	/// Find all items within the given rectangle.

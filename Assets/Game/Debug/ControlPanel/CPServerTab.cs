@@ -238,6 +238,12 @@ public class CPServerTab : MonoBehaviour {
         HDCP2Manager.Instance.PlayInterstitial(false);        
     }
 
+    public void OnDebugCP2()
+    {
+        FeatureSettingsManager manager = FeatureSettingsManager.instance;
+        Output("CP2Enabled = " + manager.IsCP2Enabled() + " " + HDCP2Manager.Instance.GetDebugInfo());
+    }
+
     private void OnIntersitialDone( bool success )
     {
         string msg = "OnInterstitialDone success = " + success;

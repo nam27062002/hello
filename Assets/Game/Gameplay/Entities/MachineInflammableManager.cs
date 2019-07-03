@@ -11,7 +11,9 @@ public class MachineInflammableManager : UbiBCN.SingletonMonoBehaviour<MachineIn
         public Material disintegrate;
         public Material end;
     }
-    private Dictionary<FireColorSetupManager.FireColorType, AshesMaterials> m_ashesMats = new Dictionary<FireColorSetupManager.FireColorType, AshesMaterials>();
+
+    FireColorSetupManager.FireColorTypeComparer m_fireColorTyeComparer;
+    private Dictionary<FireColorSetupManager.FireColorType, AshesMaterials> m_ashesMats;
 	private Dictionary<FireColorSetupManager.FireColorType, float> m_timers;
     private Dictionary<FireColorSetupManager.FireColorType, List<AI.MachineInflammable>> m_list_wait;
     private Dictionary<FireColorSetupManager.FireColorType, List<AI.MachineInflammable>> m_list_disintegrate;
@@ -21,10 +23,14 @@ public class MachineInflammableManager : UbiBCN.SingletonMonoBehaviour<MachineIn
 		instance.__Add(_machine, _fireColor);
 	}
 
-	private void Awake() {
-		m_list_wait = new Dictionary<FireColorSetupManager.FireColorType, List<AI.MachineInflammable>>();
-		m_list_disintegrate = new Dictionary<FireColorSetupManager.FireColorType, List<AI.MachineInflammable>>();
-        m_timers = new Dictionary<FireColorSetupManager.FireColorType, float>();
+	private void Awake()  {
+
+        m_fireColorTyeComparer = new FireColorSetupManager.FireColorTypeComparer();
+        m_ashesMats = new Dictionary<FireColorSetupManager.FireColorType, AshesMaterials> (m_fireColorTyeComparer);
+        m_timers = new Dictionary<FireColorSetupManager.FireColorType, float>(m_fireColorTyeComparer);
+		m_list_wait = new Dictionary<FireColorSetupManager.FireColorType, List<AI.MachineInflammable>>(m_fireColorTyeComparer);
+		m_list_disintegrate = new Dictionary<FireColorSetupManager.FireColorType, List<AI.MachineInflammable>>(m_fireColorTyeComparer);
+        
         int max = (int)FireColorSetupManager.FireColorType.COUNT;
         for (int i = 0; i < max; i++)
         {

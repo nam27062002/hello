@@ -1300,6 +1300,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 224982315096204190}
+  - component: {fileID: 114320704116836640}
   m_Layer: 5
   m_Name: DragonPreview
   m_TagString: Untagged
@@ -3183,9 +3184,9 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1132058345514914}
-  m_LocalRotation: {x: 0, y: -0.66620713, z: 0, w: 0.74576676}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalRotation: {x: 9.3132235e-10, y: 0.056257125, z: -0.000000007450579, w: 0.9984163}
+  m_LocalPosition: {x: -578.7963, y: 63.623188, z: -1000.0005}
+  m_LocalScale: {x: 55.17402, y: 55.173996, z: 55.174004}
   m_Children:
   - {fileID: 4303194248485464}
   m_Father: {fileID: 224406540212791620}
@@ -3653,17 +3654,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
-      - m_Target: {fileID: 1604608257255676}
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
       - m_Target: {fileID: 114561554520341830}
         m_MethodName: Play
         m_Mode: 5
@@ -3675,13 +3665,8 @@ MonoBehaviour:
           m_StringArgument: hd_popup_open
           m_BoolArgument: 0
         m_CallState: 2
-    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-  OnOpenPostAnimation:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1604608257255676}
-        m_MethodName: SetActive
+      - m_Target: {fileID: 114320704116836640}
+        m_MethodName: Show
         m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3691,6 +3676,11 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  OnOpenPostAnimation:
+    m_PersistentCalls:
+      m_Calls:
       - m_Target: {fileID: 114500038654340930}
         m_MethodName: Refresh
         m_Mode: 1
@@ -4323,6 +4313,80 @@ MonoBehaviour:
   m_ChildForceExpandHeight: 1
   m_ChildControlWidth: 1
   m_ChildControlHeight: 1
+--- !u!114 &114320704116836640
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1604608257255676}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9634bc65078f347cf933d4c74430cb15, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_tweenType: 7
+  m_tweenDuration: 0.4
+  m_tweenValue: 0
+  m_tweenEase: 27
+  m_tweenDelay: 0.65
+  m_ignoreTimeScale: 1
+  m_showTweens: []
+  m_hideTweens: []
+  m_animator: {fileID: 0}
+  m_triggerChildren: 0
+  m_canBeTriggeredByParents: 0
+  OnShowPreAnimation:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 114500038654340930}
+        m_MethodName: SetConstantUpdateBounds
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  OnShowPreAnimationAfterDelay:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  OnShowPostAnimation:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 114500038654340930}
+        m_MethodName: SetConstantUpdateBounds
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  OnHidePreAnimation:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  OnHidePostAnimation:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  OnShowCheck:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
 --- !u!114 &114326458838102370
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4721,7 +4785,7 @@ MonoBehaviour:
   m_rectTransform: {fileID: 224982315096204190}
   m_fitType: 0
   m_constantUpdateRect: 1
-  m_constantUpdateBounds: 0
+  m_constantUpdateBounds: 1
   m_showBounds: 1
   m_rectBoundsColor: {r: 1, g: 0, b: 0, a: 0.5}
   m_targetBoundsColor: {r: 0, g: 0, b: 1, a: 0.5}
@@ -4931,6 +4995,11 @@ MonoBehaviour:
   m_allowAltAnimations: 1
   m_altAnimationsMaxLevel: 10
   m_loadAsync: 0
+  OnCompleteLoad:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: MenuDragonLoader+MenuDragonLoaderEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
   m_placeholderDragonSku: dragon_classic
 --- !u!114 &114675678292442740
 MonoBehaviour:
@@ -6004,7 +6073,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0.000061035156, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224050605721368734
@@ -6250,17 +6319,17 @@ RectTransform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1500400028482796}
-  m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 0, z: 0.0002445319}
-  m_LocalScale: {x: 55.262478, y: 55.262478, z: 55.262478}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0.8668424, y: 0.8668424, z: 0.8668424}
   m_Children:
   - {fileID: 4824432351639640}
   m_Father: {fileID: 224982315096204190}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 3.8976593, y: -47.27307}
+  m_AnchoredPosition: {x: 526.91656, y: -96.06288}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224480763060842486
@@ -6426,7 +6495,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -112.99, y: -96}
+  m_AnchoredPosition: {x: -112.98999, y: -96}
   m_SizeDelta: {x: 140, y: 140}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224756019895516454
@@ -6589,8 +6658,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -34, y: 15}
-  m_SizeDelta: {x: 96, y: -104}
+  m_AnchoredPosition: {x: -12.850003, y: 15}
+  m_SizeDelta: {x: 53.699993, y: -104}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!225 &225000010019887816
 CanvasGroup:

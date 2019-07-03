@@ -167,7 +167,7 @@ public class CageBehaviour : MonoBehaviour, ISpawnable {
 				m_viewDestroyed[i].SetActive(true);
 			}
 			SetCollisionsEnabled(false);
-
+			
 			m_prisonerSpawner.SetEntitiesFree();
 
 			if (!string.IsNullOrEmpty(m_onBreakSound)) {

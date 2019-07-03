@@ -79,10 +79,8 @@ public class WaterAreaManager : UbiBCN.SingletonMonoBehaviour<WaterAreaManager>,
 
 	public bool IsInsideWater(Vector3 _point) {
 		if (m_waterTree != null) {
-			WaterController[] w = m_waterTree.GetItemsAt(_point);
-			return w.Length > 0;
+			return m_waterTree.HasItemsAt(_point);
 		}
-
 		return false;
 	}
 

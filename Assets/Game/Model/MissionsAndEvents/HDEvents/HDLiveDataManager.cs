@@ -176,7 +176,7 @@ public class HDLiveDataManager : Singleton<HDLiveDataManager> {
     public void LoadEventsFromCache() {
         long cacheTimestamp = 0;
         if (CacheServerManager.SharedInstance.HasKey("hdliveeventstimestamp")) {
-            cacheTimestamp = long.Parse(CacheServerManager.SharedInstance.GetVariable("hdliveeventstimestamp"));
+            long.TryParse(CacheServerManager.SharedInstance.GetVariable("hdliveeventstimestamp"), out cacheTimestamp);            
         }
 
         if (GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong() - cacheTimestamp < CACHE_TIMEOUT_MS) {

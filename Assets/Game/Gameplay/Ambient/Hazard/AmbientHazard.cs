@@ -163,6 +163,7 @@ public class AmbientHazard : MonoBehaviour, IBroadcastListener {
         Broadcaster.AddListener(BroadcastEventType.GAME_AREA_ENTER, this);
         Broadcaster.AddListener(BroadcastEventType.GAME_AREA_EXIT, this);
         Broadcaster.AddListener(BroadcastEventType.GAME_ENDED, this);
+        EntityManager.instance.RegisterAmbientHazard(this);
     }
 
     /// <summary>
@@ -174,6 +175,8 @@ public class AmbientHazard : MonoBehaviour, IBroadcastListener {
         Broadcaster.RemoveListener(BroadcastEventType.GAME_AREA_ENTER, this);
         Broadcaster.RemoveListener(BroadcastEventType.GAME_AREA_EXIT, this);
         Broadcaster.RemoveListener(BroadcastEventType.GAME_ENDED, this);
+
+        EntityManager.instance.UnregisterAmbientHazard(this);
     }
 
     public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
@@ -215,11 +218,11 @@ public class AmbientHazard : MonoBehaviour, IBroadcastListener {
     /// <summary>
     /// Called every frame
     /// </summary>
-    private void Update() {
+    public void CustomUpdate(float _delta) {
         if (m_levelLoaded) {
             // Update state timer
             if(m_stateTargetTime > 0f) {
-                m_stateTimer += Time.deltaTime;
+                m_stateTimer += _delta;
                 if(m_stateTimer >= m_stateTargetTime) {
                     // Timer up! Different actions based on state
                     switch(m_state) {
@@ -247,7 +250,7 @@ public class AmbientHazard : MonoBehaviour, IBroadcastListener {
             // Only if visual activation is enabled (radius > 0)
             if(m_visualActivationRadius > 0f) {
                 // Update detection timer (optimization to avoid performing the check every frame)
-                m_visualActivationCheckTimer += Time.deltaTime;
+                m_visualActivationCheckTimer += _delta;
                 if(m_visualActivationCheckTimer >= VISUAL_ACTIVATION_CHECK_INTERVAL) {
                     // Reset timer
                     m_visualActivationCheckTimer = 0f;

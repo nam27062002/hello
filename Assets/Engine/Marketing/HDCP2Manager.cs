@@ -124,11 +124,27 @@ public class HDCP2Manager
 
     private float GetUserRestrictionTimeToWait()
     {
-        // Checks that the minimum time since a cp2 interstitial was last played has passed        
+        float returnValue = 0f;
+
+        // If the user has already seen a cp2 interstitial then checks that the minimum time between two consecutive cp2 interstitials has passed
         long latestTimestamp = PersistencePrefs.GetCp2InterstitialLatestAt();
-        long diff = GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong() - latestTimestamp;
-        float timeToWait = (FeatureSettingsManager.instance.GetCP2InterstitialFrequency() * 1000 - diff) / 1000f;
-        return timeToWait;
+        if (latestTimestamp > 0)
+        {
+            long diff = GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong() - latestTimestamp;
+            returnValue = (FeatureSettingsManager.instance.GetCP2InterstitialFrequency() * 1000 - diff) / 1000f;            
+        }
+
+        return returnValue;
+    }
+
+    public string GetDebugInfo()
+    {
+        TrackingPersistenceSystem trackingSystem = HDTrackingManager.Instance.TrackingPersistenceSystem;
+        bool ftuxPassed = trackingSystem != null && trackingSystem.GameRoundCount >= 3;
+
+        return "IsInterstitialAvailable = " + IsInterstitialAvailable() + " CP2InterstitialEnabled = " + FeatureSettingsManager.instance.IsCP2InterstitialEnabled() + " Inititalized = " + IsInitialised() + " state = " + m_state +
+            " CanUserPlayInterstitial = " + CanUserPlayInterstitial() + " timeToWait = " + GetUserRestrictionTimeToWait() + " ftuxPassed= " + ftuxPassed +
+            " minRoundsSoFar = " + HDTrackingManager.Instance.Session_GameRoundCount + " minRoundsRequired = " + FeatureSettingsManager.instance.GetCP2InterstitialMinRounds();
     }
 
     private void PlayInterstitialInternal(Action<bool> onDone)
