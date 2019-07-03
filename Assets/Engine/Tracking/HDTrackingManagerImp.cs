@@ -375,6 +375,11 @@ public class HDTrackingManagerImp : HDTrackingManager {
             int sessionNumber = TrackingPersistenceSystem.SessionCount;
             string trackingID = TrackingPersistenceSystem.UserID;
             string userID = PersistencePrefs.ServerUserId;
+			if (userID == null) {
+				// TrackingManager expects this parameter to be non null
+				userID = "";
+			}
+
             //ETrackPlatform trackPlatform = (GameSessionManager.SharedInstance.IsLogged()) ? ETrackPlatform.E_TRACK_PLATFORM_ONLINE : ETrackPlatform.E_TRACK_PLATFORM_OFFLINE;
             ETrackPlatform trackPlatform = ETrackPlatform.E_TRACK_PLATFORM_ONLINE;
             //ETrackPlatform trackPlatform = ETrackPlatform.E_TRACK_PLATFORM_OFFLINE;
@@ -393,7 +398,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
             kTrackingConfig.m_strMergeAccountEventName = "MERGE_ACCOUNTS";
             kTrackingConfig.m_strClientVersion = Session_BuildVersion;
             kTrackingConfig.m_strTrackingID = trackingID;
-            kTrackingConfig.m_strUserIDOptional = userID;
+			kTrackingConfig.m_strUserIDOptional = (userID == null) ? "" : userID; // 
             kTrackingConfig.m_iSessionNumber = sessionNumber;
             kTrackingConfig.m_iMaxCachedLoggedDays = 3;
 
