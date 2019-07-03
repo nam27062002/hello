@@ -6,17 +6,30 @@ using UnityEngine.UI;
 
 public class AnniversaryCakePanel : MonoBehaviour, IBroadcastListener {
 
-	public enum State {
+    //------------------------------------------------------------------------//
+    // ENUMS											                        //
+    //------------------------------------------------------------------------//
+    public enum State {
 		Init = 0,
 		EatCake,
         LaunchAnimation,
 		DigestCake
 	}
 
-	[SerializeField] private Image m_cakeImage;
+    //------------------------------------------------------------------------//
+    // MEMBERS AND PROPERTIES												  //
+    //------------------------------------------------------------------------//
+
+    // Exposed
+    [SerializeField] private Image m_cakeImage;
+
     [Tooltip("The speed factor when animating the cake counter")]
     [SerializeField] private float m_radialSpeed;
 
+    // Cached values
+    private Animator m_animator;
+
+    // Internal logic
     // The real value of the cake (the value of cakeImage is being animated, so its not immediate)
     private float m_cakeValue;
 
@@ -35,10 +48,12 @@ public class AnniversaryCakePanel : MonoBehaviour, IBroadcastListener {
 
 	// Use this for initialization
 	private void Start () {
+
 		ChangeState(State.Init);
 
+        m_animator = GetComponent<Animator>();
 
-	}
+    }
 	
 	protected void OnEnable() {
 		Broadcaster.AddListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
@@ -104,6 +119,9 @@ public class AnniversaryCakePanel : MonoBehaviour, IBroadcastListener {
                 // Trigger the happy bday animated title and confetti before the bday mode
                 Messenger.Broadcast(MessengerEvents.ANNIVERSARY_LAUNCH_ANIMATION);
 
+                // Launch cake animation
+                m_animator.SetTrigger("fullCakeEaten");
+
                 // Start bday mode after 2 secs delay
                 UbiBCN.CoroutineManager.DelayedCall(
                     () => { ChangeState(State.DigestCake); }, 2f);
@@ -153,7 +171,7 @@ public class AnniversaryCakePanel : MonoBehaviour, IBroadcastListener {
 		}
 
         // Launch cake animation
-        GetComponent<Animator>().SetTrigger("cakePieceEaten");
+        m_animator.SetTrigger("cakePieceEaten");
 	}
 
 

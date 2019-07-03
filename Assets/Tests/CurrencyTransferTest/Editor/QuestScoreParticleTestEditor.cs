@@ -60,9 +60,9 @@ public class QuestScoreParticleTestEditor : Editor {
 
 		if(GUILayout.Button("TEST", GUILayout.Height(50))) {
 			if(Application.isPlaying) {
-                ParticlesFlowFX fx = m_target.GetComponentInChildren<ParticlesFlowFX>();
+                ParticlesTrailFX fx = m_target.GetComponentInChildren<ParticlesTrailFX>();
 				if(fx == null) {
-					fx = ParticlesFlowFX.LoadAndLaunch(
+					fx = ParticlesTrailFX.LoadAndLaunch(
 						"UI/FX/PF_ScoreTransferFX",
 						m_target.transform,
 						m_target.startPoint.position + new Vector3(0f, 0f, -0.5f),

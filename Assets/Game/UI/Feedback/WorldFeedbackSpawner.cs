@@ -33,7 +33,7 @@ public class WorldFeedbackSpawner : MonoBehaviour, IBroadcastListener {
 	[SerializeField] private GameObject m_killFeedbackPrefab = null;
 	[SerializeField] private GameObject m_flockBonusFeedbackPrefab = null;
 	[SerializeField] private GameObject m_escapedFeedbackPrefab = null;
-    [SerializeField] private ParticlesFlowFX m_cakeEatenFeedbackPrefab = null;
+    [SerializeField] private ParticlesTrailFX m_cakeEatenFeedbackPrefab = null;
 
     [Separator("Container References")]
 	[SerializeField] private GameObject m_scoreFeedbackContainer = null;
@@ -395,7 +395,7 @@ public class WorldFeedbackSpawner : MonoBehaviour, IBroadcastListener {
             // To the cake icon
             Vector3 sink = m_cakeCrumbsDestination.position;
 
-            ParticlesFlowFX.InstantiateAndLaunch(m_cakeEatenFeedbackPrefab.gameObject, transform, source, sink);
+            ParticlesTrailFX.InstantiateAndLaunch(m_cakeEatenFeedbackPrefab.gameObject, transform, source, sink);
 
         }
     }   

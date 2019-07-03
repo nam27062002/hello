@@ -1,4 +1,4 @@
-﻿// ParticlesFlowFXEditor.cs
+﻿// ParticlesTrailFXEditor.cs
 // @projectName
 // 
 // Created by @author on 18/10/2017.
@@ -16,9 +16,9 @@ using UnityEditor;
 /// <summary>
 /// Custom editor for the CurrencyTransferFX class.
 /// </summary>
-[CustomEditor(typeof(ParticlesFlowFX), true)]	// True to be used by heir classes as well
+[CustomEditor(typeof(ParticlesTrailFX), true)]	// True to be used by heir classes as well
 [CanEditMultipleObjects]
-public class ParticlesFlowFXEditor : Editor {
+public class ParticlesTrailFXEditor : Editor {
     //------------------------------------------------------------------------//
     // CONSTANTS															  //
     //------------------------------------------------------------------------//
@@ -27,7 +27,7 @@ public class ParticlesFlowFXEditor : Editor {
     // MEMBERS AND PROPERTIES												  //
     //------------------------------------------------------------------------//
     // Casted target object
-    ParticlesFlowFX m_targetCurrencyTransferFX = null;
+    ParticlesTrailFX m_targetCurrencyTransferFX = null;
 
 	//------------------------------------------------------------------------//
 	// METHODS																  //
@@ -37,7 +37,7 @@ public class ParticlesFlowFXEditor : Editor {
 	/// </summary>
 	private void OnEnable() {
 		// Get target object
-		m_targetCurrencyTransferFX = target as ParticlesFlowFX;
+		m_targetCurrencyTransferFX = target as ParticlesTrailFX;
 	}
 
 	/// <summary>
