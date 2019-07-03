@@ -263,9 +263,9 @@ public class ParticleManager : UbiBCN.SingletonMonoBehaviour<ParticleManager> {
 
                 if (go != null) {
 					if (m_poolLimits == PoolLimits.Unlimited) {
-						container.pool = new Pool(go, instance.transform, 1, true, true, true);
+						container.pool = new Pool(go, _prefabName, container.variant, instance.transform, 1, true, true, true);
 					} else {
-						container.pool = new Pool(go, instance.transform, container.size, false, true, true);
+						container.pool = new Pool(go, _prefabName, container.variant, instance.transform, container.size, false, true, true);
 					}
 					m_iterator.Add(container.pool);
 				}

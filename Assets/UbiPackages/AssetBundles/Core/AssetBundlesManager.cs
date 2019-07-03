@@ -913,7 +913,7 @@ public class AssetBundlesManager
         return returnValue;
     }
 
-    private bool IsAssetBundleLoaded(string assetBundleId)
+    public bool IsAssetBundleLoaded(string assetBundleId)
     {        
         AssetBundleHandle handle = GetAssetBundleHandle(assetBundleId);
         return (handle != null && handle.IsLoaded());        
