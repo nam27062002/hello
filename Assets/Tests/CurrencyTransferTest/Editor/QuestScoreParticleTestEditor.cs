@@ -60,9 +60,9 @@ public class QuestScoreParticleTestEditor : Editor {
 
 		if(GUILayout.Button("TEST", GUILayout.Height(50))) {
 			if(Application.isPlaying) {
-				CurrencyTransferFX fx = m_target.GetComponentInChildren<CurrencyTransferFX>();
+                ParticlesFlowFX fx = m_target.GetComponentInChildren<ParticlesFlowFX>();
 				if(fx == null) {
-					fx = CurrencyTransferFX.LoadAndLaunch(
+					fx = ParticlesFlowFX.LoadAndLaunch(
 						"UI/FX/PF_ScoreTransferFX",
 						m_target.transform,
 						m_target.startPoint.position + new Vector3(0f, 0f, -0.5f),

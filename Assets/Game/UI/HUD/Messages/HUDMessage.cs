@@ -78,7 +78,8 @@ public class HUDMessage : MonoBehaviour, IBroadcastListener {
 		BOOST_SPACE,
 		TIMES_UP,
 		TARGET_REACHED,
-        BREAK_OBJECT_TO_OPEN
+        BREAK_OBJECT_TO_OPEN,
+        HAPPY_BIRTHDAY
 	}
 
 	// How to react with consecutive triggers
@@ -247,8 +248,9 @@ public class HUDMessage : MonoBehaviour, IBroadcastListener {
 			case Type.BOOST_SPACE:			Messenger.AddListener(MessengerEvents.BOOST_SPACE, OnBoostSky); break;
 			case Type.TIMES_UP:				Messenger.AddListener(MessengerEvents.TIMES_UP, ShowCallback); break;
 			case Type.TARGET_REACHED:		Messenger.AddListener(MessengerEvents.TARGET_REACHED, ShowObjCompleted); break;
+            case Type.HAPPY_BIRTHDAY:       Messenger.AddListener(MessengerEvents.ANNIVERSARY_LAUNCH_ANIMATION, OnStartBirthdayMode); break;
 
-		}
+        }
 
 		switch(m_hideMode) {
 			case HideMode.TIMER:			Messenger.AddListener(MessengerEvents.GAME_STARTED, OnGameStarted);	break;
@@ -760,11 +762,21 @@ public class HUDMessage : MonoBehaviour, IBroadcastListener {
 		Show();
 	}
 
-	/// <summary>
-	/// An egg has been found while playing but we failed to collect it (inventory full).
+    /// <summary>
+	/// All the pieces of the cake have been collected.
 	/// </summary>
 	/// <param name="_egg">The found egg.</param>
-	private void OnEggCollectedFail(CollectibleEgg _egg) {
+    private void OnStartBirthdayMode ()
+    {
+        Show();
+    }
+
+
+    /// <summary>
+    /// An egg has been found while playing but we failed to collect it (inventory full).
+    /// </summary>
+    /// <param name="_egg">The found egg.</param>
+    private void OnEggCollectedFail(CollectibleEgg _egg) {
 		Show();
 	}
 

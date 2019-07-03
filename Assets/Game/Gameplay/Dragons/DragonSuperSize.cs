@@ -61,14 +61,14 @@ public class DragonSuperSize : MonoBehaviour {
 
 		Messenger.AddListener(MessengerEvents.EARLY_ALL_HUNGRY_LETTERS_COLLECTED, OnEarlyLetters);
 		Messenger.AddListener(MessengerEvents.ALL_HUNGRY_LETTERS_COLLECTED, OnLettersCollected);
-		Messenger.AddListener(MessengerEvents.ANNIVERSARY_CAKE_FULL_EATEN, OnCakeEaten);
+		Messenger.AddListener(MessengerEvents.ANNIVERSARY_START_BDAY_MODE, OnCakeEaten);
 	}
 
 	void OnDestroy()
 	{
 		Messenger.RemoveListener(MessengerEvents.EARLY_ALL_HUNGRY_LETTERS_COLLECTED, OnEarlyLetters);
 		Messenger.RemoveListener(MessengerEvents.ALL_HUNGRY_LETTERS_COLLECTED, OnLettersCollected);
-		Messenger.RemoveListener(MessengerEvents.ANNIVERSARY_CAKE_FULL_EATEN, OnCakeEaten);
+		Messenger.RemoveListener(MessengerEvents.ANNIVERSARY_START_BDAY_MODE, OnCakeEaten);
 	}
 	
 	// Update is called once per frame
