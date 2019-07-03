@@ -14,6 +14,7 @@ public class PetGelatoSpawner : AbstractSpawner, IBroadcastListener  {
 
 
 	[SerializeField] private float m_searchRange;
+	[SerializeField] private float m_searchCooldown;
 
 	//-------------------------------------------------------------------		
 	[System.Serializable]
@@ -22,7 +23,7 @@ public class PetGelatoSpawner : AbstractSpawner, IBroadcastListener  {
 		public string spawnPrefab = "";
 	}
 
-	[SerializeField] private List<EntityPrefab> m_selectedPrefabs;
+	[SerializeField] private EntityPrefab[] m_selectedPrefabs = new EntityPrefab[(int)DragonTier.COUNT];
 	
 	
 	private string[] m_prefabNames;
@@ -39,12 +40,15 @@ public class PetGelatoSpawner : AbstractSpawner, IBroadcastListener  {
 	private List<IEntity> m_entitiesAlive;
 	private List<int> m_entitiesAliveIndex;
 
+	private float m_timer;
 
 
     void Awake() {
 		// Register change area events
 		Broadcaster.AddListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
 		Broadcaster.AddListener(BroadcastEventType.GAME_AREA_ENTER, this);
+
+		m_timer = m_searchCooldown;
     }
 
 	override protected void OnDestroy() {
@@ -54,6 +58,14 @@ public class PetGelatoSpawner : AbstractSpawner, IBroadcastListener  {
 
 		if (ApplicationManager.IsAlive) {
 			ForceRemoveEntities();
+		}
+	}
+
+	private void Update() {
+		m_timer -= Time.deltaTime;
+		if (m_timer <= 0f) {
+			Spawn();
+			m_timer = m_searchCooldown;
 		}
 	}
 
@@ -86,7 +98,7 @@ public class PetGelatoSpawner : AbstractSpawner, IBroadcastListener  {
 		List<string> listValidPrefab = new List<string>();
 		List<PoolHandler> listValidHandlers = new List<PoolHandler>();
 
-		for (int i = 0; i< m_selectedPrefabs.Count; i++) {
+		for (int i = 0; i< m_selectedPrefabs.Length; i++) {
 			string prefab = m_selectedPrefabs[i].spawnPrefab;
 			PoolHandler handle = PoolManager.GetHandler(prefab);
 			if (handle != null) {
@@ -147,8 +159,8 @@ public class PetGelatoSpawner : AbstractSpawner, IBroadcastListener  {
 				}
 			}
 
-			bool succes = Respawn();
-			if (succes) {
+			Respawn();
+			{
 				for (int i = 0; i < m_entitiesToSpawn; ++i) {
 					m_entities[i] = null;
 				}
