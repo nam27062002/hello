@@ -21,13 +21,20 @@ public class AnniversaryCakePanel : MonoBehaviour, IBroadcastListener {
     //------------------------------------------------------------------------//
 
     // Exposed
-    [SerializeField] private Image m_cakeImage;
+    [SerializeField] private GameObject m_cakeGroup;
 
-    [Tooltip("The speed factor when animating the cake counter")]
-    [SerializeField] private float m_radialSpeed;
+    [Space(10)]
+    [SerializeField] private Image m_radialCakeCounter;
+    [Tooltip("Determines how fast is the cake counter updating its value")]
+    [SerializeField] private float m_radialSpeedFactor;
+
+    [Space(10)]
+    [Tooltip("Time to wait between eating the last piece of cake and entering birthday mode")]
+    [SerializeField] private float m_birthdayModeDelayInSecs;
+    [SerializeField] private GameObject m_birthdayModeEffects;
 
     // Cached values
-    private Animator m_animator;
+    private Animator m_cakeAnimator;
 
     // Internal logic
     // The real value of the cake (the value of cakeImage is being animated, so its not immediate)
@@ -51,7 +58,7 @@ public class AnniversaryCakePanel : MonoBehaviour, IBroadcastListener {
 
 		ChangeState(State.Init);
 
-        m_animator = GetComponent<Animator>();
+        m_cakeAnimator = m_cakeGroup.GetComponent<Animator>();
 
     }
 	
@@ -93,38 +100,43 @@ public class AnniversaryCakePanel : MonoBehaviour, IBroadcastListener {
 		}
 
         // Animate the cake counter
-        if (m_cakeImage.fillAmount != m_cakeValue)
+        if (m_radialCakeCounter.fillAmount != m_cakeValue)
         {
-            float delta = m_cakeValue - m_cakeImage.fillAmount;
-            m_cakeImage.fillAmount += Time.deltaTime * m_radialSpeed * delta; 
+            float delta = m_cakeValue - m_radialCakeCounter.fillAmount;
+            m_radialCakeCounter.fillAmount += Time.deltaTime * m_radialSpeedFactor * delta; 
         }
 
     }
 
 	private void ChangeState(State _newState) {
-		switch(_newState) {
+        // Deactivate bday mode FX
+        m_birthdayModeEffects.SetActive(false);
+
+        switch (_newState) {
+
             case State.Init:
                 // Reset the counter
                 m_cakeValue = 0;
-                m_cakeImage.fillAmount = 0;
+                m_radialCakeCounter.fillAmount = 0;
                 break;
 
             case State.EatCake:
 			    m_cakeSlicesEaten = 0;
                 m_cakeValue = 0;
 			    m_startHugeModeAtLastSlice = true;
-			    break;
+
+                break;
 
             case State.LaunchAnimation:
                 // Trigger the happy bday animated title and confetti before the bday mode
                 Messenger.Broadcast(MessengerEvents.ANNIVERSARY_LAUNCH_ANIMATION);
 
                 // Launch cake animation
-                m_animator.SetTrigger("fullCakeEaten");
+                m_cakeAnimator.SetTrigger("fullCakeEaten");
 
                 // Start bday mode after 2 secs delay
                 UbiBCN.CoroutineManager.DelayedCall(
-                    () => { ChangeState(State.DigestCake); }, 2f);
+                    () => { ChangeState(State.DigestCake); }, m_birthdayModeDelayInSecs);
 
                 break;
 
@@ -132,6 +144,9 @@ public class AnniversaryCakePanel : MonoBehaviour, IBroadcastListener {
                 // Start the birthday mode
                 Debug.Log("Start birthday mode");
                 Messenger.Broadcast(MessengerEvents.ANNIVERSARY_START_BDAY_MODE);
+
+                // Activate bday mode FX
+                m_birthdayModeEffects.SetActive(true);
 			    break;
 		}
 		m_state = _newState;
@@ -171,7 +186,7 @@ public class AnniversaryCakePanel : MonoBehaviour, IBroadcastListener {
 		}
 
         // Launch cake animation
-        m_animator.SetTrigger("cakePieceEaten");
+        m_cakeAnimator.SetTrigger("cakePieceEaten");
 	}
 
 

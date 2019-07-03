@@ -248,7 +248,7 @@ public class HUDMessage : MonoBehaviour, IBroadcastListener {
 			case Type.BOOST_SPACE:			Messenger.AddListener(MessengerEvents.BOOST_SPACE, OnBoostSky); break;
 			case Type.TIMES_UP:				Messenger.AddListener(MessengerEvents.TIMES_UP, ShowCallback); break;
 			case Type.TARGET_REACHED:		Messenger.AddListener(MessengerEvents.TARGET_REACHED, ShowObjCompleted); break;
-            case Type.HAPPY_BIRTHDAY:       Messenger.AddListener(MessengerEvents.ANNIVERSARY_LAUNCH_ANIMATION, OnStartBirthdayMode); break;
+            case Type.HAPPY_BIRTHDAY:       Messenger.AddListener(MessengerEvents.ANNIVERSARY_START_BDAY_MODE, OnStartBirthdayMode); break;
 
         }
 
