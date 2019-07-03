@@ -3247,6 +3247,8 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private void Session_NotifyRoundEnd() {
         Session_IsARoundRunning = false;
 
+        Session_GameRoundCount++;
+
         string economyGroupString = EconomyGroupToString(EEconomyGroup.REWARD_RUN);
         UserProfile userProfile = UsersManager.currentUser;
 
@@ -3273,7 +3275,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
         if ( paid )
         {
             if (Session_RewardsInRoundPaid == null) {
-                Session_RewardsInRoundPaid = new Dictionary<UserProfile.Currency, int>();
+                Session_RewardsInRoundPaid = new Dictionary<UserProfile.Currency, int>( UserProfile.s_currencyComparerComparer );
             }
 
             if (Session_RewardsInRoundPaid.ContainsKey(currency)) {
@@ -3286,7 +3288,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
         else
         {
             if (Session_RewardsInRound == null) {
-                Session_RewardsInRound = new Dictionary<UserProfile.Currency, int>();
+                Session_RewardsInRound = new Dictionary<UserProfile.Currency, int>( UserProfile.s_currencyComparerComparer );
             }
 
             if (Session_RewardsInRound.ContainsKey(currency)) {

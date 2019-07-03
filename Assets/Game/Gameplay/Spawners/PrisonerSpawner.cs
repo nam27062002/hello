@@ -144,10 +144,9 @@ public class PrisonerSpawner : AbstractSpawner, IBroadcastListener {
         for (int i = 0; i < m_entities.Length; i++) {
             if (m_entities[i] != null) {
                 m_entities[i].transform.parent = m_parents[i];
-
-                // change state in machine
-				m_entities[i].machine.LeaveDevice(true);
-				m_entities[i] = null;
+                // change state in machine				
+				m_entities[i].machine.LeaveDevice(true);				
+				//m_entities[i] = null;
             }
         }
     }

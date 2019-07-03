@@ -174,11 +174,14 @@ public class UIRotator : MonoBehaviour {
 	/// Editor helper.
 	/// </summary>
 	private void OnDrawGizmosSelected() {
+		// Nothing if component is not enabled
 		if(!this.isActiveAndEnabled) return;
 
+		// Set Handles matrix to this object's transform
 		RectTransform rt = this.transform as RectTransform;
 		Handles.matrix = rt.localToWorldMatrix;
 
+		// Draw angle range
 		Handles.color = Colors.WithAlpha(Colors.skyBlue, 0.25f);
 		Handles.DrawSolidArc(
 			Vector3.zero,
@@ -188,6 +191,7 @@ public class UIRotator : MonoBehaviour {
 			m_radius
 		);
 
+		// Draw arrow body
 		Handles.color = Color.red;
 		float arrowAngleDist = Mathf.Min(m_angleRange.distance * 0.30f, 60f);    // Xdeg or 30% of the arc if distance is less than Xdeg
 		arrowAngleDist = m_clockwise ? arrowAngleDist : -arrowAngleDist;
@@ -199,7 +203,7 @@ public class UIRotator : MonoBehaviour {
 			m_radius
 		);
 
-
+		// Draw arrow tip
 		float arrowAngle = CorrectAngle(m_angleRange.min + (m_clockwise ? arrowAngleDist : -arrowAngleDist));
 		Vector3 arrowTipPoint = Vector3.right * m_radius;
 		arrowTipPoint = arrowTipPoint.RotateXYDegrees(arrowAngle);
@@ -207,11 +211,12 @@ public class UIRotator : MonoBehaviour {
 		Handles.matrix = Handles.matrix * Matrix4x4.Rotate(Quaternion.Euler(0f, 0f, arrowAngle));
 		float arrowWingsSize = m_radius * 0.1f;	// Proportional to the radius
 		Handles.DrawAAPolyLine(
-			new Vector3(1f, 1f, 0f).normalized * arrowWingsSize,
+			new Vector3(1f, m_clockwise ? 1f : -1f, 0f).normalized * arrowWingsSize,
 			Vector3.zero,
-			new Vector3(-1f, 1f, 0f).normalized * arrowWingsSize
+			new Vector3(-1f, m_clockwise ? 1f : -1f, 0f).normalized * arrowWingsSize
 		);
 
+		// Restore Handles matrix and color :)
 		Handles.matrix = Matrix4x4.identity;
 		Handles.color = Color.white;
 	}

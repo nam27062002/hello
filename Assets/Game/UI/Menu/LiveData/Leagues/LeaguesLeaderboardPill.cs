@@ -81,7 +81,7 @@ LeaguesLeaderboardPill : ScrollRectItem<LeaguesLeaderboardPillData> {
     [SerializeField] private TextMeshProUGUI m_rewardText = null;
 
     [Space]
-    [SerializeField] private Image m_dragonIcon = null;
+    [SerializeField] private UISpriteAddressablesLoader m_dragonIconLoader = null;
     [SerializeField] private TextMeshProUGUI m_levelText = null;
 
 	[Space]
@@ -140,10 +140,12 @@ LeaguesLeaderboardPill : ScrollRectItem<LeaguesLeaderboardPillData> {
         DefinitionNode skinDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, _data.record.build.skin);
 		string icon = IDragonData.DEFAULT_SKIN_ICON;
         if (skinDef != null) {
-            icon = skinDef.Get("icon");
-        }
-        m_dragonIcon.sprite = HDAddressablesManager.Instance.LoadAsset<Sprite>(icon);
 
+            icon = skinDef.Get("icon");
+
+        }
+
+        m_dragonIconLoader.LoadAsync(icon);
         m_levelText.text = StringUtils.FormatNumber(_data.record.build.level);
 
 		// Store last used data
