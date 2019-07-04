@@ -28,7 +28,6 @@ public abstract class IDragonData : IUISelectorItem {
 	//------------------------------------------------------------------//
 	public const string GAME_PREFAB_PATH = "Game/Dragons/";
 	public const string MENU_PREFAB_PATH = "UI/Menu/Dragons/";
-	public const string DEFAULT_SKIN_ICON = "icon_disguise_0";
 
 	public enum Type {
 		CLASSIC,

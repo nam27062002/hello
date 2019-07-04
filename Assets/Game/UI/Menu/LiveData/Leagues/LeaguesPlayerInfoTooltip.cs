@@ -32,7 +32,7 @@ public class LeaguesPlayerInfoTooltip : UITooltip {
 	[Space]
 	[SerializeField] private Localizer m_dragonNameText = null;
 	[SerializeField] private TextMeshProUGUI m_dragonLevelText = null;
-	[SerializeField] private Image m_dragonImage = null;
+	[SerializeField] private UISpriteAddressablesLoader m_dragonIconLoader = null;
 	[Space]
 	[SerializeField] private TextMeshProUGUI m_healthText = null;
 	[SerializeField] private TextMeshProUGUI m_energyText = null;
@@ -71,13 +71,20 @@ public class LeaguesPlayerInfoTooltip : UITooltip {
 			m_dragonLevelText.text = StringUtils.FormatNumber(_playerInfo.build.level);
 		}
 
-		if(m_dragonImage != null) {
-			DefinitionNode skinDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, _playerInfo.build.skin);
-			string icon = IDragonData.DEFAULT_SKIN_ICON;
-			if(skinDef != null) {
-				icon = skinDef.Get("icon");
-			}
-            m_dragonImage.sprite = HDAddressablesManager.Instance.LoadAsset<Sprite>(icon);
+		if(m_dragonIconLoader != null) {
+            DefinitionNode skinDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, _playerInfo.build.skin);
+            if (skinDef != null)
+            {
+                string icon = skinDef.Get("icon");
+                m_dragonIconLoader.LoadAsync(icon);
+
+            }
+            else
+            {
+                // Something failed, do not show any icon
+                m_dragonIconLoader.IsVisible = false;
+            }
+
 		}
 
 		// Stats
