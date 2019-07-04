@@ -11,6 +11,7 @@ public class FireColorSetupManager : MonoBehaviour {
         }
     }
 
+    //////// FIRE COLOR TYPE ENUM ////////
     public enum FireColorType
     {
         RED,
@@ -20,6 +21,23 @@ public class FireColorSetupManager : MonoBehaviour {
         COUNT
     };
 
+    // COMPARER. Use this on all your Dictionaries
+    public struct FireColorTypeComparer : IEqualityComparer<FireColorType>
+    {
+        public bool Equals(FireColorType b1, FireColorType b2)
+        {
+            return b1 == b2;
+        }
+        public int GetHashCode(FireColorType bx)
+        {
+            return (int)bx;
+        }
+    }
+
+    public static FireColorTypeComparer s_fireColorTypeComparer = new FireColorTypeComparer();
+    ////////////////////////////////
+
+    //////// FIRE COLOR VARIANTS ENUM ////////
     public enum FireColorVariants
     {
         DEFAULT,
@@ -27,19 +45,41 @@ public class FireColorSetupManager : MonoBehaviour {
         EXPLOSION,
         UNDERWATER,
     };
+
+    // COMPARER. Use this on all your Dictionaries
+    public struct FireColorVariantsComparer : IEqualityComparer<FireColorVariants>
+    {
+        public bool Equals(FireColorVariants b1, FireColorVariants b2)
+        {
+            return b1 == b2;
+        }
+        public int GetHashCode(FireColorVariants bx)
+        {
+            return (int)bx;
+        }
+    }
+    public static FireColorVariantsComparer s_fireColorVariantsComparer = new FireColorVariantsComparer();
+    ////////////////////////////////
     
-    Dictionary<FireColorType, Dictionary<FireColorVariants, FireColorConfig>> m_loadedColors = new Dictionary<FireColorType, Dictionary<FireColorVariants, FireColorConfig>>();
+    
+    Dictionary<FireColorType, Dictionary<FireColorVariants, FireColorConfig>> m_loadedColors;
         // Materials used when a decoration is burning
-    Dictionary<FireColorType, Material> m_originalBurnMaterial = new Dictionary<FireColorType, Material>();
-    Dictionary<FireColorType, List<Material>> m_freeDecorationBurnMaterial = new Dictionary<FireColorType, List<Material>>();
+    Dictionary<FireColorType, Material> m_originalBurnMaterial;
+    Dictionary<FireColorType, List<Material>> m_freeDecorationBurnMaterial;
     
         // Materials used when a decoration is burned. This is the destroyed mesh under the normal mesh
-    Dictionary<FireColorType, Material> m_burnedViewMaterial = new Dictionary<FireColorType, Material>();
+    Dictionary<FireColorType, Material> m_burnedViewMaterial;
     
     Dictionary<FireColorConfig, List<Material>> m_freeConfigMaterials = new Dictionary<FireColorConfig, List<Material>>();
     
     private void Awake()
     {
+        m_loadedColors = new Dictionary<FireColorType, Dictionary<FireColorVariants, FireColorConfig>>( s_fireColorTypeComparer );
+        m_originalBurnMaterial = new Dictionary<FireColorType, Material>(s_fireColorTypeComparer);
+        m_freeDecorationBurnMaterial = new Dictionary<FireColorType, List<Material>>(s_fireColorTypeComparer);
+
+        m_burnedViewMaterial = new Dictionary<FireColorType, Material>(s_fireColorTypeComparer);
+
         m_instance = this;
         int max = (int)FireColorType.COUNT;
         for (int i = 0; i < max; i++)
@@ -62,7 +102,7 @@ public class FireColorSetupManager : MonoBehaviour {
         if (!m_loadedColors.ContainsKey( fireColorType ))
         {
             MachineInflammableManager.instance.RegisterColor(fireColorType);
-            Dictionary<FireColorVariants, FireColorConfig> loadColors = new Dictionary<FireColorVariants, FireColorConfig>();
+            Dictionary<FireColorVariants, FireColorConfig> loadColors = new Dictionary<FireColorVariants, FireColorConfig>( s_fireColorVariantsComparer );
             switch( fireColorType )
             {
                 case FireColorType.BLUE:

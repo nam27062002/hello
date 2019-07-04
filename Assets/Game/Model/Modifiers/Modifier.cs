@@ -1,6 +1,6 @@
 ﻿
 
-public abstract class Modifier : IModifierDefinition {
+public abstract class Modifier : IModifierDefinition, IBroadcastListener {
     public static string SKU_CUSTOM = "custom";
 
 	//------------------------------------------------------------------------//
@@ -65,7 +65,10 @@ public abstract class Modifier : IModifierDefinition {
     protected Modifier(string _type, string _target) {
         m_type = _type;
         m_target = _target;
-    }
+
+		// Subscribe to external events
+		Broadcaster.AddListener(BroadcastEventType.LANGUAGE_CHANGED, this);
+	}
 
     protected Modifier(string _type, string _target, DefinitionNode _def) {
         m_type = _type;
@@ -79,7 +82,10 @@ public abstract class Modifier : IModifierDefinition {
             m_tidDesc       = _def.Get("tidDesc");
             m_tidDescShort  = _def.Get("tidDescShort");
         }
-    }
+
+		// Subscribe to external events
+		Broadcaster.AddListener(BroadcastEventType.LANGUAGE_CHANGED, this);
+	}
 
     protected Modifier(string _type, string _target, SimpleJSON.JSONNode _data) {
         m_type = _type;
@@ -94,8 +100,21 @@ public abstract class Modifier : IModifierDefinition {
             m_tidDesc       = _data.GetSafe("tidDesc", m_tidDesc);
             m_tidDescShort  = _data.GetSafe("tidDescShort", m_tidDescShort);
         }
-    }
 
+		// Subscribe to external events
+		Broadcaster.AddListener(BroadcastEventType.LANGUAGE_CHANGED, this);
+	}
+
+	~Modifier() {
+		// Unsubscribe from external events
+		Broadcaster.RemoveListener(BroadcastEventType.LANGUAGE_CHANGED, this);
+	}
+
+	public void RebuildTexts() {
+		m_name = LocalizationManager.SharedInstance.Localize(m_tidName);
+		m_desc = LocalizationManager.SharedInstance.Localize(m_tidDesc, m_textParams);
+		m_descShort = LocalizationManager.SharedInstance.Localize(m_tidDescShort, m_textParams);
+	}
 
     //------------------------------------------------------------------------//
     // ABSTRACT METHODS														  //
@@ -106,10 +125,7 @@ public abstract class Modifier : IModifierDefinition {
 
 	protected void BuildTextParams(params string[] _params) {
 		m_textParams = _params;
-
-        m_name = LocalizationManager.SharedInstance.Localize(m_tidName);
-        m_desc = LocalizationManager.SharedInstance.Localize(m_tidDesc, m_textParams);
-        m_descShort = LocalizationManager.SharedInstance.Localize(m_tidDescShort, m_textParams);
+		RebuildTexts();
 	}
 
     protected virtual SimpleJSON.JSONClass __ToJson() {
@@ -144,4 +160,20 @@ public abstract class Modifier : IModifierDefinition {
         }
         return data;
     }
+
+	//------------------------------------------------------------------------//
+	// CALLBACKS															  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Ons the broadcast signal.
+	/// </summary>
+	/// <param name="_eventType">Event type.</param>
+	/// <param name="_broadcastEventInfo">Broadcast event info.</param>
+	public void OnBroadcastSignal(BroadcastEventType _eventType, BroadcastEventInfo _broadcastEventInfo) {
+		switch(_eventType) {
+			case BroadcastEventType.LANGUAGE_CHANGED: {
+				RebuildTexts();
+			} break;
+		}
+	}
 }

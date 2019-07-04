@@ -9,6 +9,7 @@ public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager>, IBroa
 	private List<Cage> m_cages;
 	private List<Decoration> m_decorations;
     private List<Entity> m_searchList;
+    private List<AmbientHazard> m_ambientHazards;
     private Rect m_area;
 
 
@@ -64,6 +65,7 @@ public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager>, IBroa
 		m_cages = new List<Cage>();
 		m_decorations = new List<Decoration>();
         m_searchList = new List<Entity>();
+        m_ambientHazards = new List<AmbientHazard>();
         m_entitiesColliderMask = 1 << LayerMask.NameToLayer("AirPreys") | 1 << LayerMask.NameToLayer("WaterPreys") | 1 << LayerMask.NameToLayer("MachinePreys") | 1 << LayerMask.NameToLayer("GroundPreys") | 1 << LayerMask.NameToLayer("Mines");
 
         m_updateEnabled = false;
@@ -122,6 +124,9 @@ public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager>, IBroa
 
 	public void RegisterDecoration(Decoration _deco)	{ m_decorations.Add(_deco); }
 	public void UnregisterDecoration(Decoration _deco)	{ m_decorations.Remove(_deco); }
+
+    public void RegisterAmbientHazard(AmbientHazard _hazard)	{ m_ambientHazards.Add(_hazard); }
+	public void UnregisterAmbientHazard(AmbientHazard _hazard)	{ m_ambientHazards.Remove(_hazard); }
 
 
     public Entity[] GetEntitiesInRange2D(Vector2 _center, float _radius)
@@ -388,6 +393,7 @@ public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager>, IBroa
         if (m_updateEnabled) {
             int i;
             int count;
+            float delta = Time.deltaTime;
 
             count = m_pets.Count - 1;
             for (i = count; i >= 0; i--) {
@@ -418,6 +424,13 @@ public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager>, IBroa
             for (i = count; i >= 0; i--) {
                 m_decorations[i].CustomUpdate();
             }
+
+            count = m_ambientHazards.Count-1;
+            for (i = count; i >= 0; i--)
+            {
+                m_ambientHazards[i].CustomUpdate( delta );
+            }
+
 
             FreezingObjectsRegistry.instance.CustomUpdate();
 

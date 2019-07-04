@@ -105,7 +105,8 @@ public class Builder : MonoBehaviour, UnityEditor.Build.IPreprocessBuild
 		
 	//[MenuItem ("Build/Android")]
 	static void GenerateAPK()
-	{		
+	{	
+#if UNITY_ANDROID	
 		PrepareAddressablesMode();
 
 		// Save Player Settings
@@ -177,6 +178,7 @@ public class Builder : MonoBehaviour, UnityEditor.Build.IPreprocessBuild
         {
             PlayerSettings.SetScriptingDefineSymbolsForGroup(BuildTargetGroup.Android, oldSymbols);
         }
+#endif
 	}
 
 	/// <summary>
@@ -478,9 +480,22 @@ public class Builder : MonoBehaviour, UnityEditor.Build.IPreprocessBuild
 				CaletySettingsEditor.UpdateManifest( settingsInstance, currentModularSettings );
 			}
 		}			
-	}				
+	}
 
-	private static AddressablesManager.EMode GetAddressablesMode()
+    private static void updateVersionNumbers()
+    {
+        CaletySettings settingsInstance = (CaletySettings)Resources.Load("CaletySettings");
+        if (settingsInstance != null)
+        {
+            CaletyModularSettings currentModularSettings = CaletyModularSettingsEditor.GetCaletyModularSettings();
+            // Update Gradle
+            CaletySettingsEditor.UpdateGradleConfig(currentModularSettings);
+            // Generate Manifest
+            CaletySettingsEditor.UpdateManifest(settingsInstance, currentModularSettings);
+        }
+    }
+
+    private static AddressablesManager.EMode GetAddressablesMode()
 	{
 		AddressablesManager.EMode returnValue = AddressablesManager.EffectiveMode;
 
@@ -495,6 +510,10 @@ public class Builder : MonoBehaviour, UnityEditor.Build.IPreprocessBuild
 
 	private static void SetAddressablesMode()
 	{
+		// Platform assetsLUT file needs to be moved to Resources. We need to do it here because otherwise this file is not loaded on time 
+		// when building from the script
+		EditorAddressablesMenu.CopyPlatformAssetsLUTToResources(EditorUserBuildSettings.activeBuildTarget);
+
 		EditorAddressablesMenu.SetMode(GetAddressablesMode());	
 		UnityEngine.Debug.Log ("Addressables mode: " + AddressablesManager.Mode);
 	}

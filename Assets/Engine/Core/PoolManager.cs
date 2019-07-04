@@ -239,7 +239,7 @@ public class PoolManager : UbiBCN.SingletonMonoBehaviour<PoolManager> {
 
 				if (sm_printPools) size = 1;
                
-                 Pool pool = new Pool(go, transform, size, _canGrow, true, _temporay);
+                 Pool pool = new Pool(go, _prefabName, null, transform, size, _canGrow, true, _temporay);
 				_container.pool = pool;
 				m_iterator.Add(pool);
 			} else {

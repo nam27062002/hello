@@ -14,7 +14,7 @@ namespace AI {
 
 			protected override void OnEnter(State _oldState, object[] _param) {
 				m_timer = 0;
-				if (_param.Length > 0 && _param[0] is float )
+				if (_param != null && _param.Length > 0 && _param[0] is float )
 					m_timer = (float)_param[0];
 				
 			}

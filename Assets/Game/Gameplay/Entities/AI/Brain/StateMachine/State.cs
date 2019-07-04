@@ -59,7 +59,7 @@ namespace AI
 			}
 		}
 		
-		public void Enter(State oldState, object[] param)
+		public void Enter(State oldState, object[] param = null)
 		{
 			for(int i = 0; i < m_componentInstances.Length; i++)
 			{

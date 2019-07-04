@@ -374,6 +374,8 @@ public class DragonPowerUp : MonoBehaviour {
 			} break;
 
 			//TONI
+			//We need to get all parameters for each single powerup. Combined powers could be a combination of 3 powers. As we can have just 2 parameters by power, a powerup that
+			//combines 3 powers is a combination of a 'normal' power and a combined power of 2
 			case "combined":
 			{
 				DefinitionNode powerUp1 = DefinitionsManager.SharedInstance.GetDefinition (DefinitionsCategory.POWERUPS, _powerDef.GetAsString ("param1"));
@@ -498,12 +500,12 @@ public class DragonPowerUp : MonoBehaviour {
 			case "vacuum":
 			case "prey_hp_boost":
             case "drop_present":
+			case "food_increase":			
             {
 				return UIConstants.PET_CATEGORY_EAT;
 			} break;
 
 			// Health
-			case "food_increase":
 			case "hp_increase":
 			{
 				return UIConstants.PET_CATEGORY_HEALTH;
