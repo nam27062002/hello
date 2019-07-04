@@ -290,9 +290,12 @@ public class GameSettings : SingletonScriptableObject<GameSettings> {
         if ( _pause )
         {
             // Mute all sound when the app pauses
-            instance.m_audioMixer.SetFloat("MusicVolume", -80f);
-            instance.m_audioMixer.SetFloat("SfxVolume", -80f);
-            instance.m_audioMixer.SetFloat("Sfx2DVolume", -80f);
+			if(instance.m_audioMixer != null) 
+			{
+				instance.m_audioMixer.SetFloat("MusicVolume", -80f);
+				instance.m_audioMixer.SetFloat("SfxVolume", -80f);
+				instance.m_audioMixer.SetFloat("Sfx2DVolume", -80f);
+			}
         }
         else
         {
