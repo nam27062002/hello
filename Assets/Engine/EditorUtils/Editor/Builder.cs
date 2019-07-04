@@ -480,9 +480,22 @@ public class Builder : MonoBehaviour, UnityEditor.Build.IPreprocessBuild
 				CaletySettingsEditor.UpdateManifest( settingsInstance, currentModularSettings );
 			}
 		}			
-	}				
+	}
 
-	private static AddressablesManager.EMode GetAddressablesMode()
+    private static void updateVersionNumbers()
+    {
+        CaletySettings settingsInstance = (CaletySettings)Resources.Load("CaletySettings");
+        if (settingsInstance != null)
+        {
+            CaletyModularSettings currentModularSettings = CaletyModularSettingsEditor.GetCaletyModularSettings();
+            // Update Gradle
+            CaletySettingsEditor.UpdateGradleConfig(currentModularSettings);
+            // Generate Manifest
+            CaletySettingsEditor.UpdateManifest(settingsInstance, currentModularSettings);
+        }
+    }
+
+    private static AddressablesManager.EMode GetAddressablesMode()
 	{
 		AddressablesManager.EMode returnValue = AddressablesManager.EffectiveMode;
 

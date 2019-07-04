@@ -343,6 +343,11 @@ if [ "$VERSION_CODE_PARAMS" != "" ]; then
     eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.SetVersionCode ${VERSION_CODE_PARAMS}"
 fi
 
+
+print_builder "Updating version number..."
+eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.updateVersionNumbers"
+
+
 eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.OutputBundleIdentifier"
 PACKAGE_NAME="$(cat bundleIdentifier.txt)"
 rm -f "bundleIdentifier.txt"
