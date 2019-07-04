@@ -186,10 +186,12 @@ public class HDLiveEventDefinition {
 				if ( modDef != null )
 				{
 					Modifier m = Modifier.CreateFromDefinition(modDef);
-					if (m is ModifierDragon) {
-						m_dragonMods.Add(m);
-					} else {
-						m_otherMods.Add(m);
+					if (m.isValid()) {
+						if (m is ModifierDragon) {
+							m_dragonMods.Add(m);
+						} else {
+							m_otherMods.Add(m);
+						}
 					}
 				}
 			}
@@ -199,11 +201,13 @@ public class HDLiveEventDefinition {
             JSONArray _mods = _data["customMods"].AsArray;
             for (int i = 0; i < _mods.Count; ++i) {
                 Modifier m = Modifier.CreateFromJson(_mods[i]);
-                if (m is ModifierDragon) {
-                    m_dragonMods.Add(m);
-                } else {
-                    m_otherMods.Add(m);
-                }
+				if (m.isValid()) {
+					if (m is ModifierDragon) {
+						m_dragonMods.Add(m);
+					} else {
+						m_otherMods.Add(m);
+					}
+				}
             }
         }
         //

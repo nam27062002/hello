@@ -235,7 +235,18 @@ public class UI3DScaler : MonoBehaviour {
 		Refresh(true, true);
 	}
 
-	//------------------------------------------------------------------------//
-	// CALLBACKS															  //
-	//------------------------------------------------------------------------//
+    /// <summary>
+    /// Set if the bounds need to be updated in every frame.
+    /// Sometimes we need to enable it during an animation and disable it 
+    /// when its finished.
+    /// </summary>
+    public void SetConstantUpdateBounds (bool enable)
+    {
+        m_constantUpdateBounds = enable;
+    }
+
+
+    //------------------------------------------------------------------------//
+    // CALLBACKS															  //
+    //------------------------------------------------------------------------//
 }

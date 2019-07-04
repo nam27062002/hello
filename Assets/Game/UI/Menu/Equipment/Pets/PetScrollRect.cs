@@ -250,7 +250,9 @@ public class PetScrollRect : OptimizedScrollRect<PetPill, PetPillData> {
 	}
 
 	protected override void OnFocusFinished(PetPill _pill) {
-		if (_pill.def.sku == m_unlockingPet) {
+		if (_pill == null || _pill.def == null) {
+			m_unlockingPet = "";
+		} else if (_pill.def.sku == m_unlockingPet) {
 			_pill.PrepareUnlockAnim();
 			_pill.LaunchUnlockAnim();
 			m_unlockingPet = "";

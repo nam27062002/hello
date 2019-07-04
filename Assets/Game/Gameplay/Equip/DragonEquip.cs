@@ -76,22 +76,18 @@ public class DragonEquip : MonoBehaviour {
 
 		// Equip current disguise
 		if (m_equipOnAwake){
-			if ( m_menuMode )
-			{
+			if (m_menuMode) {
+				//EquipPets(SceneController.mode == SceneController.Mode.TOURNAMENT);
 				EquipDisguise(UsersManager.currentUser.GetEquipedDisguise(m_dragonSku));
-			}
-			else
-			{
+			} else {				
 				// Check if tournament/build active
-                if ( HDLiveDataManager.tournament.isActive )
-				{
+                if (HDLiveDataManager.tournament.isActive) {
+					EquipPets(true);
 					EquipDisguise(HDLiveDataManager.tournament.tournamentData.tournamentDef.dragonData.disguise);
-				}
-				else
-				{
+				} else {
+					EquipPets(false);
 					EquipDisguise(UsersManager.currentUser.GetEquipedDisguise(m_dragonSku));
 				}
-
 			}
 		}
 	}
@@ -162,22 +158,6 @@ public class DragonEquip : MonoBehaviour {
 		}
 	}
 
-	private void Start() {
-		// Equip current pets loadout
-		if (m_equipPets) {
-			List<string> pets = UsersManager.currentUser.GetEquipedPets(m_dragonSku);
-
-            if (SceneController.mode == SceneController.Mode.TOURNAMENT) {
-                pets = HDLiveDataManager.tournament.tournamentData.tournamentDef.dragonData.pets;
-            } else {
-                pets = UsersManager.currentUser.GetEquipedPets(m_dragonSku);
-            }
-
-			for(int i = 0; i < pets.Count; i++) {
-				EquipPet(pets[i], i);
-			}
-		}
-	}
 
 	/// <summary>
 	/// The component has been enabled.
@@ -227,6 +207,22 @@ public class DragonEquip : MonoBehaviour {
 			if ( i > (int) Equipable.AttachPoint.Pet_5 && m_attachPoints[i] != null)
 			{
 				m_attachPoints[i].Unequip(true);
+			}
+		}
+	}
+
+	public void EquipPets(bool _useTournamentPets) {
+		if (m_equipPets) {
+			List<string> pets = UsersManager.currentUser.GetEquipedPets(m_dragonSku);
+
+			if (_useTournamentPets) {
+				pets = HDLiveDataManager.tournament.tournamentData.tournamentDef.dragonData.pets;
+			} else {
+				pets = UsersManager.currentUser.GetEquipedPets(m_dragonSku);
+			}
+
+			for(int i = 0; i < pets.Count; i++) {
+				EquipPet(pets[i], i);
 			}
 		}
 	}

@@ -80,8 +80,8 @@ public class AssetBundlesOpRequest : UbiAsyncOperation
 
         isDone = true;   
         if (OnDone != null)
-        {
-            OnDone(result, GetData<Object>());
+        {            
+            OnDone(result, data);
         }
     }
 

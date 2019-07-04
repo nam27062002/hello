@@ -31,14 +31,16 @@ public class EditorBuildMenu : MonoBehaviour
         string buildTargetAsString = buildTarget.ToString();
         string path = EditorUtility.SaveFilePanel("Build " + buildTargetAsString, "Builds", "", "");
 
+#if UNITY_ANDROID
         if (buildTarget == BuildTarget.Android)
-        {
-            string extension = ".apk";
+        {			
+			string extension = (EditorUserBuildSettings.buildAppBundle) ? ".aab" : ".apk";
             if (!path.EndsWith(extension))
             {
                 path += extension;
             }
         }
+#endif
 
         PlayerSettings.Android.keystoreName = "AndroidKeys/releaseKey.keystore";
         PlayerSettings.Android.keystorePass = "android";
@@ -51,6 +53,28 @@ public class EditorBuildMenu : MonoBehaviour
         buildPlayerOptions.target = buildTarget;
         buildPlayerOptions.options = BuildOptions.None;
         buildPlayerOptions.assetBundleManifestPath = "AssetBundles/" + buildTargetAsString + "/" + buildTargetAsString + ".manifest";
+
+        BuildOptions options = BuildOptions.None;
+		if (EditorUserBuildSettings.development)
+		{
+			options |= BuildOptions.Development;
+		}
+
+        if (EditorUserBuildSettings.allowDebugging)
+        {
+            options |= BuildOptions.AllowDebugging;
+        }
+
+        if (EditorUserBuildSettings.connectProfiler)
+        {
+            options |= BuildOptions.ConnectWithProfiler;
+        }
+
+		Debug.Log ("BuildOptions = " + options + " development = " + EditorUserBuildSettings.development + 
+				   " allowDebugging = " + EditorUserBuildSettings.allowDebugging + 
+			       " connectWithProfiler = " + EditorUserBuildSettings.connectProfiler);
+		
+        buildPlayerOptions.options = options;
 
         BuildPipeline.BuildPlayer(buildPlayerOptions);        
         /*

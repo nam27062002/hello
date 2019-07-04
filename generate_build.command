@@ -26,6 +26,7 @@ CREATE_TAG=false
   # build config
 BUILD_ANDROID=false
 GENERATE_OBB=false
+GENERATE_AAB=false
 BUILD_IOS=false
 ENVIRONMENT=false
 ADDRESSABLES_MODE=Catalog
@@ -94,6 +95,8 @@ do
         BUILD_ANDROID=true
     elif [ "$PARAM_NAME" == "-obb" ]; then
         GENERATE_OBB=true
+    elif [ "$PARAM_NAME" == "-aab" ]; then
+        GENERATE_AAB=true        
     elif [ "$PARAM_NAME" == "-ios" ]; then
         BUILD_IOS=true
     elif [ "$PARAM_NAME" == "-iosTeam" ] ; then
@@ -340,6 +343,11 @@ if [ "$VERSION_CODE_PARAMS" != "" ]; then
     eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.SetVersionCode ${VERSION_CODE_PARAMS}"
 fi
 
+
+print_builder "Updating version number..."
+eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.updateVersionNumbers"
+
+
 eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.OutputBundleIdentifier"
 PACKAGE_NAME="$(cat bundleIdentifier.txt)"
 rm -f "bundleIdentifier.txt"
@@ -352,7 +360,7 @@ if $BUILD_ANDROID; then
   mkdir -p "${OUTPUT_DIR}/apks/"
 
   # Do it!
-  eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.GenerateAPK -buildTarget android -outputDir \"${OUTPUT_DIR}/apks/\" -obb ${GENERATE_OBB} -code ${PROJECT_CODE_NAME} -addressablesMode ${ADDRESSABLES_MODE}"
+  eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.GenerateAPK -buildTarget android -outputDir \"${OUTPUT_DIR}/apks/\" -obb ${GENERATE_OBB} -aab ${GENERATE_AAB} -code ${PROJECT_CODE_NAME} -addressablesMode ${ADDRESSABLES_MODE}"
 
   # Unity creates a tmp file androidBuildVersion.txt with the android build version number in it. Read from it and remove it.
 	print_builder "BUILDER: Reading internal android build version number";
@@ -360,7 +368,13 @@ if $BUILD_ANDROID; then
 	ANDROID_BUILD_VERSION="$(cat androidBuildVersion.txt)"
 	rm -f "androidBuildVersion.txt";
   APK_NAME="${PROJECT_CODE_NAME}_${VERSION_ID}_${DATE}_b${ANDROID_BUILD_VERSION}_${ENVIRONMENT}_${ADDRESSABLES_MODE}"
+
+  if $GENERATE_AAB; then
+  APK_FILE="${APK_NAME}.aab"
+  else
   APK_FILE="${APK_NAME}.apk"
+  fi
+
   APK_OUTPUT_DIR="${OUTPUT_DIR}/apks/${APK_NAME}"
   mkdir -p "${APK_OUTPUT_DIR}"
   mv "${OUTPUT_DIR}/apks/${APK_FILE}" "${APK_OUTPUT_DIR}/"

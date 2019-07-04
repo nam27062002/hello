@@ -6,6 +6,7 @@ public interface IModifierDefinition {
     string GetName();
     string GetDescription();
     string GetDescriptionShort();
+	void RebuildTexts();
 
     SimpleJSON.JSONClass ToJson();
 }

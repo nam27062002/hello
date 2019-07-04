@@ -49,8 +49,11 @@ public class UISpriteAddressablesLoader : MonoBehaviour {
     /// Initialization.
     /// </summary>
     private void Awake() {
-        m_image.sprite = null;
-        m_image.enabled = false;
+
+        // [JOM] In some places the sprite is loaded out of this component,
+        // so dont deactive/remove the sprite here (bug HDK-5410)
+        //m_image.sprite = null;
+        //m_image.enabled = false;
 
         // Show loading icon from start
         ShowLoading(true);

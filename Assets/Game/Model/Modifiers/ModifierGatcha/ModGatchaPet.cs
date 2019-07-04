@@ -20,6 +20,14 @@ public class ModGatchaPet : ModifierGatcha {
         }
 	}
 
+	public override bool isValid() { 
+		List<string> resourceIDs = new List<string>();		
+		foreach (string sku in m_skuList) {
+			resourceIDs.AddRange(HDAddressablesManager.Instance.GetResourceIDsForPet(sku));
+		}		 
+		return HDAddressablesManager.Instance.IsResourceListAvailable(resourceIDs); 	
+	}
+
 	public override void Apply() {
         for (int i = 0; i < m_skuList.Count; ++i)
             Metagame.RewardEgg.OverridePetProb(m_skuList[i], m_weight);

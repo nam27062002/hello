@@ -549,7 +549,9 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager>, IBroa
         // XP
         bool skipXP = false;
         if (!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.DRAGON_SELECTION)) {
-            skipXP = (InstanceManager.player.data as DragonDataClassic).progression.progressCurrentLevel > 0.9f;
+            //TONIskipXP = (InstanceManager.player.data as DragonDataClassic).progression.progressCurrentLevel > 0.9f;
+			if ((InstanceManager.player.data as DragonDataClassic).progression.level == 3.0f)
+				skipXP = (InstanceManager.player.data as DragonDataClassic).progression.progressCurrentLevel > 0.7f;
         } else {
             skipXP = SceneController.mode == SceneController.Mode.TOURNAMENT || InstanceManager.player.data.type != IDragonData.Type.CLASSIC;// [AOC] Only CLASSIC dragons!
         }

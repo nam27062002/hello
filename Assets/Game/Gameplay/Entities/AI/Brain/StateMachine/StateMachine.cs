@@ -146,7 +146,7 @@ namespace AI
 			}
 		}
 	    
-		void DoTransition(State to, object[] param)
+		void DoTransition(State to, object[] param = null)
 	    {
 			m_queuedTransition = null;
 			m_transitionParam = null;

@@ -243,9 +243,12 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
         for (int i = 0; i < max; i++){
             history.Enqueue( rotationalOffers[i]["sku"]);
         }
-        
+
+        // Crashlytics was reporting a Null reference, protect it just in case
+		int rotationalActiveOffers = settings != null ? settings.rotationalActiveOffers : 1;
+		
 		// Do we need to activate a new rotational pack?
-		while(m_activeRotationalOffers.Count < settings.rotationalActiveOffers && loopCount < maxLoops) {
+		while( m_activeRotationalOffers.Count < rotationalActiveOffers && loopCount < maxLoops) {
 			Log(Colors.orange.Tag("Rotational offers required: {0} active"), m_activeRotationalOffers.Count);
 			UpdateRotationalHistory(null);	// Make sure rotational history has the proper size
 			LogRotationalHistory();

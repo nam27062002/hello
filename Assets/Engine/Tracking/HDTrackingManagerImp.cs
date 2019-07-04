@@ -375,6 +375,11 @@ public class HDTrackingManagerImp : HDTrackingManager {
             int sessionNumber = TrackingPersistenceSystem.SessionCount;
             string trackingID = TrackingPersistenceSystem.UserID;
             string userID = PersistencePrefs.ServerUserId;
+			if (userID == null) {
+				// TrackingManager expects this parameter to be non null
+				userID = "";
+			}
+
             //ETrackPlatform trackPlatform = (GameSessionManager.SharedInstance.IsLogged()) ? ETrackPlatform.E_TRACK_PLATFORM_ONLINE : ETrackPlatform.E_TRACK_PLATFORM_OFFLINE;
             ETrackPlatform trackPlatform = ETrackPlatform.E_TRACK_PLATFORM_ONLINE;
             //ETrackPlatform trackPlatform = ETrackPlatform.E_TRACK_PLATFORM_OFFLINE;
@@ -393,7 +398,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
             kTrackingConfig.m_strMergeAccountEventName = "MERGE_ACCOUNTS";
             kTrackingConfig.m_strClientVersion = Session_BuildVersion;
             kTrackingConfig.m_strTrackingID = trackingID;
-            kTrackingConfig.m_strUserIDOptional = userID;
+			kTrackingConfig.m_strUserIDOptional = (userID == null) ? "" : userID; // 
             kTrackingConfig.m_iSessionNumber = sessionNumber;
             kTrackingConfig.m_iMaxCachedLoggedDays = 3;
 
@@ -881,8 +886,13 @@ public class HDTrackingManagerImp : HDTrackingManager {
     public override void Notify_Funnel_FirstUX(FunnelData_FirstUX.Steps _step) {
         // This step has to be sent only within the first session
         if (TrackingPersistenceSystem.SessionCount == 1) {
-            Log("FTUX Funnel - step: " + m_firstUXFunnel.GetStepName(_step) + ", duration: " + m_firstUXFunnel.GetStepDuration(_step));
-            Track_Funnel(m_firstUXFunnel.name, m_firstUXFunnel.GetStepName(_step), m_firstUXFunnel.GetStepDuration(_step), m_firstUXFunnel.GetStepTotalTime(_step), Session_IsFirstTime);
+			int _stepDuration = m_firstUXFunnel.GetStepDuration(_step);
+
+			if (FeatureSettingsManager.IsDebugEnabled) {
+				Log("FTUX Funnel - step: " + m_firstUXFunnel.GetStepName(_step) + ", duration: " + _stepDuration);
+			}
+
+			Track_Funnel(m_firstUXFunnel.name, m_firstUXFunnel.GetStepName(_step), _stepDuration, m_firstUXFunnel.GetStepTotalTime(_step), Session_IsFirstTime);
         }
 
         if (_step == FunnelData_FirstUX.Steps.Count - 1 && m_playingMode == EPlayingMode.TUTORIAL) {
@@ -3242,6 +3252,8 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private void Session_NotifyRoundEnd() {
         Session_IsARoundRunning = false;
 
+        Session_GameRoundCount++;
+
         string economyGroupString = EconomyGroupToString(EEconomyGroup.REWARD_RUN);
         UserProfile userProfile = UsersManager.currentUser;
 
@@ -3268,7 +3280,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
         if ( paid )
         {
             if (Session_RewardsInRoundPaid == null) {
-                Session_RewardsInRoundPaid = new Dictionary<UserProfile.Currency, int>();
+                Session_RewardsInRoundPaid = new Dictionary<UserProfile.Currency, int>( UserProfile.s_currencyComparerComparer );
             }
 
             if (Session_RewardsInRoundPaid.ContainsKey(currency)) {
@@ -3281,7 +3293,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
         else
         {
             if (Session_RewardsInRound == null) {
-                Session_RewardsInRound = new Dictionary<UserProfile.Currency, int>();
+                Session_RewardsInRound = new Dictionary<UserProfile.Currency, int>( UserProfile.s_currencyComparerComparer );
             }
 
             if (Session_RewardsInRound.ContainsKey(currency)) {

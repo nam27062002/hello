@@ -28,6 +28,8 @@ public class UserProfile : UserPersistenceSystem
     //------------------------------------------------------------------------//
     // CONSTANTS															  //
     //------------------------------------------------------------------------//
+
+	/////// Currency Enum ///////
 	public enum Currency {
 		NONE = -1,
 
@@ -39,6 +41,22 @@ public class UserProfile : UserPersistenceSystem
 
 		COUNT
 	};
+
+   	// COMPARER. Use this on all your Dictionaries
+    public struct CurrencyComparer : IEqualityComparer<Currency>
+    {
+        public bool Equals(Currency b1, Currency b2)
+        {
+            return b1 == b2;
+        }
+        public int GetHashCode(Currency bx)
+        {
+            return (int)bx;
+        }
+    }
+
+    public static CurrencyComparer s_currencyComparerComparer = new CurrencyComparer();
+	////////////////////////////
 
 	public class CurrencyData {
 

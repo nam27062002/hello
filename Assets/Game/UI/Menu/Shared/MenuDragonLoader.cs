@@ -8,6 +8,7 @@
 // INCLUDES																//
 //----------------------------------------------------------------------//
 using UnityEngine;
+using UnityEngine.Events;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -26,11 +27,18 @@ public class MenuDragonLoader : MonoBehaviour {
         TOURNAMENT
 	}
 
-	//------------------------------------------------------------------//
-	// MEMBERS AND PROPERTIES											//
-	//------------------------------------------------------------------//
-	// Exposed setup
-	[SerializeField] private Mode m_mode = Mode.CURRENT_DRAGON;
+    //------------------------------------------------------------------//
+    // INTERNAL CLASSES 												//
+    //------------------------------------------------------------------//
+
+    [System.Serializable]
+    public class MenuDragonLoaderEvent : UnityEvent<MenuDragonLoader> { }
+
+    //------------------------------------------------------------------//
+    // MEMBERS AND PROPERTIES											//
+    //------------------------------------------------------------------//
+    // Exposed setup
+    [SerializeField] private Mode m_mode = Mode.CURRENT_DRAGON;
 	public Mode mode {
 		get { return m_mode; }
 		set {
@@ -38,7 +46,7 @@ public class MenuDragonLoader : MonoBehaviour {
 			RefreshDragon();
 		}
 	}
-
+	
 	[SkuList(DefinitionsCategory.DRAGONS, true)]
 	[SerializeField] private string m_dragonSku = "";
 	public string dragonSku {
@@ -126,6 +134,9 @@ public class MenuDragonLoader : MonoBehaviour {
 				RefreshDragon();
 		}
 	}
+
+    [Space(10)]
+    public MenuDragonLoaderEvent OnCompleteLoad;
 
 	// Debug
 	[SkuList(DefinitionsCategory.DRAGONS, false)]
@@ -271,6 +282,11 @@ public class MenuDragonLoader : MonoBehaviour {
 			m_asyncRequest = null;
 			if (onDragonLoaded != null)
 				onDragonLoaded(this);
+
+            if (OnCompleteLoad != null)
+            {
+                OnCompleteLoad.Invoke(this);
+            }
 		}
 	}
 
@@ -299,10 +315,12 @@ public class MenuDragonLoader : MonoBehaviour {
 		// Apply equipment
 		DragonEquip equip = m_dragonInstance.GetComponent<DragonEquip>();
 		if(equip != null) {
-			if ( !Application.isPlaying )
-			{
+			if (!Application.isPlaying) {
 				equip.Init();
 			}
+
+			equip.EquipPets(m_mode == Mode.TOURNAMENT);
+
 			// Apply disguise (if any)
 			if(!string.IsNullOrEmpty(m_disguiseSku) && equip.dragonDisguiseSku != m_disguiseSku) {
 				equip.EquipDisguise(m_disguiseSku);

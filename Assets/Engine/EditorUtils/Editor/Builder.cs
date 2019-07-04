@@ -105,7 +105,8 @@ public class Builder : MonoBehaviour, UnityEditor.Build.IPreprocessBuild
 		
 	//[MenuItem ("Build/Android")]
 	static void GenerateAPK()
-	{		
+	{	
+#if UNITY_ANDROID	
 		PrepareAddressablesMode();
 
 		// Save Player Settings
@@ -136,16 +137,27 @@ public class Builder : MonoBehaviour, UnityEditor.Build.IPreprocessBuild
 		}
 		PlayerSettings.Android.useAPKExpansionFiles = obbValue;
 
+        bool aabValue = false;
+        string generateAAB = GetArg("-aab");
+        if (generateAAB != null)
+        {
+            bool.TryParse(generateAAB, out aabValue);
+        }
+        EditorUserBuildSettings.buildAppBundle = aabValue;
 
 		string date = System.DateTime.Now.ToString("yyyyMMdd");
 		string code = GetArg("-code");
 		string finalApkName = code + "_" + GameSettings.internalVersion + "_" + date + "_b" + PlayerSettings.Android.bundleVersionCode + "_" +
-			GetEnvironmentString() + "_" + AddressablesManager.ModeToKey(AddressablesManager.EffectiveMode) + ".apk";
+			GetEnvironmentString() + "_" + AddressablesManager.ModeToKey(AddressablesManager.EffectiveMode) + (aabValue ? ".aab": ".apk");
 
 		string stagePath = System.IO.Path.Combine(outputDir, finalApkName);	// Should be something like ouputDir/hd_2.4.3_20160826_b12421.apk
 
 		// Some feedback
-		UnityEngine.Debug.Log("Generating Android APK at path: " + stagePath);
+		if (aabValue) {
+			UnityEngine.Debug.Log ("Generating Android AAB at path: " + stagePath);
+		} else {
+			UnityEngine.Debug.Log ("Generating Android APK at path: " + stagePath);
+		}
 
 		// string keyPath = Application.dataPath;
 		// keyPath = keyPath.Substring( 0, keyPath.Length - "Assets".Length);
@@ -166,6 +178,7 @@ public class Builder : MonoBehaviour, UnityEditor.Build.IPreprocessBuild
         {
             PlayerSettings.SetScriptingDefineSymbolsForGroup(BuildTargetGroup.Android, oldSymbols);
         }
+#endif
 	}
 
 	/// <summary>
@@ -467,9 +480,22 @@ public class Builder : MonoBehaviour, UnityEditor.Build.IPreprocessBuild
 				CaletySettingsEditor.UpdateManifest( settingsInstance, currentModularSettings );
 			}
 		}			
-	}				
+	}
 
-	private static AddressablesManager.EMode GetAddressablesMode()
+    private static void updateVersionNumbers()
+    {
+        CaletySettings settingsInstance = (CaletySettings)Resources.Load("CaletySettings");
+        if (settingsInstance != null)
+        {
+            CaletyModularSettings currentModularSettings = CaletyModularSettingsEditor.GetCaletyModularSettings();
+            // Update Gradle
+            CaletySettingsEditor.UpdateGradleConfig(currentModularSettings);
+            // Generate Manifest
+            CaletySettingsEditor.UpdateManifest(settingsInstance, currentModularSettings);
+        }
+    }
+
+    private static AddressablesManager.EMode GetAddressablesMode()
 	{
 		AddressablesManager.EMode returnValue = AddressablesManager.EffectiveMode;
 
@@ -484,6 +510,10 @@ public class Builder : MonoBehaviour, UnityEditor.Build.IPreprocessBuild
 
 	private static void SetAddressablesMode()
 	{
+		// Platform assetsLUT file needs to be moved to Resources. We need to do it here because otherwise this file is not loaded on time 
+		// when building from the script
+		EditorAddressablesMenu.CopyPlatformAssetsLUTToResources(EditorUserBuildSettings.activeBuildTarget);
+
 		EditorAddressablesMenu.SetMode(GetAddressablesMode());	
 		UnityEngine.Debug.Log ("Addressables mode: " + AddressablesManager.Mode);
 	}
