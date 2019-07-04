@@ -128,24 +128,23 @@ public class AnniversaryCakePanel : MonoBehaviour, IBroadcastListener {
                 break;
 
             case State.LaunchAnimation:
-                // Trigger the happy bday animated title and confetti before the bday mode
-                Messenger.Broadcast(MessengerEvents.ANNIVERSARY_LAUNCH_ANIMATION);
-
                 // Launch cake animation
                 m_cakeAnimator.SetTrigger("fullCakeEaten");
 
-                // Start bday mode after 2 secs delay
+                // Start bday mode after delay to let the cake animation play
                 UbiBCN.CoroutineManager.DelayedCall(
-                    () => { ChangeState(State.DigestCake); }, m_birthdayModeDelayInSecs);
+                    () => { ChangeState(State.DigestCake); }, m_birthdayModeDelayInSecs,false);
 
                 break;
 
             case State.DigestCake:
                 // Start the birthday mode
                 Debug.Log("Start birthday mode");
+
+                // Activate supersize and the "Hungry Bday" message
                 Messenger.Broadcast(MessengerEvents.ANNIVERSARY_START_BDAY_MODE);
 
-                // Activate bday mode FX
+                // Activate bday mode FX (confetti and pink frame)
                 m_birthdayModeEffects.SetActive(true);
 			    break;
 		}
