@@ -112,9 +112,14 @@ public class MetagameRewardView : MonoBehaviour, IBroadcastListener {
 				// Get the pet preview
 				DefinitionNode petDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PETS, m_reward.sku);
 				if(petDef != null) {
-                    if (m_iconLoader != null)   m_iconLoader.LoadAsync(petDef.Get("icon"));
-                    else                        iconSprite = HDAddressablesManager.Instance.LoadAsset<Sprite>(petDef.Get("icon"));
-
+                        if (m_iconLoader != null)
+                        {
+                            m_iconLoader.LoadAsync(petDef.Get("icon"));
+                        }
+                        else
+                        {
+                            iconSprite = HDAddressablesManager.Instance.LoadAsset<Sprite>(petDef.Get("icon"));
+                        }
 					rewardText = petDef.GetLocalized("tidName");
 					powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, petDef.Get("powerup"));
 				} else {
@@ -129,8 +134,14 @@ public class MetagameRewardView : MonoBehaviour, IBroadcastListener {
 			case Metagame.RewardSkin.TYPE_CODE: {
 				DefinitionNode skinDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, m_reward.sku);
 				if(skinDef != null) {
-                    if (m_iconLoader != null)   m_iconLoader.LoadAsync(skinDef.Get("icon"));
-                    else                        iconSprite = HDAddressablesManager.Instance.LoadAsset<Sprite>(skinDef.Get("icon"));
+                        if (m_iconLoader != null)
+                        {
+                            m_iconLoader.LoadAsync(skinDef.Get("icon"));
+                        }
+                        else
+                        {
+                            iconSprite = HDAddressablesManager.Instance.LoadAsset<Sprite>(skinDef.Get("icon"));
+                        }
 					rewardText = skinDef.GetLocalized("tidName");
 					powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, skinDef.Get("powerup"));
 				} else {
@@ -143,8 +154,14 @@ public class MetagameRewardView : MonoBehaviour, IBroadcastListener {
 				DefinitionNode dragonDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, m_reward.sku);
 				if(dragonDef != null) {
                     string defaultIcon = IDragonData.GetDefaultDisguise(dragonDef.sku).Get("icon");
-                    if (m_iconLoader != null) m_iconLoader.LoadAsync(defaultIcon);
-                    else iconSprite = HDAddressablesManager.Instance.LoadAsset<Sprite>(defaultIcon);
+                        if (m_iconLoader != null)
+                        {
+                            m_iconLoader.LoadAsync(defaultIcon);
+                        }
+                        else
+                        {
+                            iconSprite = HDAddressablesManager.Instance.LoadAsset<Sprite>(defaultIcon);
+                        }
 					rewardText = dragonDef.GetLocalized("tidName");
 					powerDef = null;
 				} else {
