@@ -27,13 +27,20 @@ public class PetGelatoSpawner : AbstractSpawner, IBroadcastListener  {
 	
 	private string[] m_prefabNames;
 	private PoolHandler[] m_poolHandlers;
-	private int[] m_entitiesToSpawnPerHandler;
+	
+	private uint m_gelatosToSpawn = 0;
+	private int[] m_gelatoTypesToSpawn;
 
 	private Entity[] m_checkEntities = new Entity[50];
+	private Vector3[] m_gelatoPositions = new Vector3[50];
+	private Transform[] m_gelatoLockedInCage = new Transform[50];	
+	private bool[] m_gelatoGolden = new bool[50];
+	private int[] m_indexToGelato = new int[50];
+	
+	
+	private List<IEntity> m_spawnedGelatos;
+	private List<int> m_spawnedGelatosIndex;
 
-	private Vector3[] m_positions = new Vector3[50];
-	private int[] m_tierToPoolHandler = new int[50];
-	private uint m_entitiesToSpawn = 0;
 
 	private DragonTier m_tierCheck;
 
@@ -43,6 +50,9 @@ public class PetGelatoSpawner : AbstractSpawner, IBroadcastListener  {
     void Awake() {
 		// Register change area events
 		Broadcaster.AddListener(BroadcastEventType.POOL_MANAGER_READY, this);
+
+		m_spawnedGelatos = new List<IEntity>();
+		m_spawnedGelatosIndex = new List<int>();
 
 		m_timer = m_searchCooldown;
     }
@@ -102,7 +112,7 @@ public class PetGelatoSpawner : AbstractSpawner, IBroadcastListener  {
 		
 		m_prefabNames = listValidPrefab.ToArray();
 		m_poolHandlers = listValidHandlers.ToArray();
-		m_entitiesToSpawnPerHandler = new int[m_poolHandlers.Length];
+		m_gelatoTypesToSpawn = new int[m_poolHandlers.Length];
 
 		m_onSpawnEffect.CreatePool();
 	}
@@ -113,8 +123,6 @@ public class PetGelatoSpawner : AbstractSpawner, IBroadcastListener  {
         UseSpawnManagerTree = false;
 
 		m_tierCheck = InstanceManager.player.data.tier;
-
-        RegisterInSpawnerManager();
     }
 
     protected override uint GetMaxEntities() {
@@ -122,28 +130,27 @@ public class PetGelatoSpawner : AbstractSpawner, IBroadcastListener  {
     }
 
     protected override uint GetEntitiesAmountToRespawn() {        
-        return m_entitiesToSpawn;
+        return m_gelatosToSpawn;
     }        
 
 	protected override PoolHandler GetPoolHandler(uint index) {
-		return m_poolHandlers[m_tierToPoolHandler[index]];
+		return m_poolHandlers[m_indexToGelato[index]];
 	}
 
     protected override string GetPrefabNameToSpawn(uint index) {
-        return m_prefabNames[m_tierToPoolHandler[index]];
+        return m_prefabNames[m_indexToGelato[index]];
     }    
 
 
 	public void Spawn() {
-		m_timer = 0f;	
-
+		m_timer = 0f;
 		if (State == EState.Respawning) {
-			m_entitiesToSpawn = 0;
+			m_gelatosToSpawn = 0;
 
 			int entityCount = EntityManager.instance.GetOnScreenEntities(m_checkEntities);
 
-			for (int i = 0; i < m_entitiesToSpawnPerHandler.Length; ++i) {
-				m_entitiesToSpawnPerHandler[i] = 0;
+			for (int i = 0; i < m_gelatoTypesToSpawn.Length; ++i) {
+				m_gelatoTypesToSpawn[i] = 0;
 			}
 
 			for (int i = 0; i < entityCount; ++i) {
@@ -155,25 +162,46 @@ public class PetGelatoSpawner : AbstractSpawner, IBroadcastListener  {
 					int tierIndex = (int)entity.edibleFromTier;
 					
 					if (tierIndex < m_prefabNames.Length
-					&&  m_entitiesToSpawnPerHandler[tierIndex] < m_poolHandlers[tierIndex].pool.NumFreeObjects()) {
+					&&  m_gelatoTypesToSpawn[tierIndex] < m_poolHandlers[tierIndex].pool.NumFreeObjects()) {
 						if (entity.circleArea != null) {
-							m_positions[m_entitiesToSpawn] = entity.circleArea.center;
+							m_gelatoPositions[m_gelatosToSpawn] = entity.circleArea.center;
 						} else {
-							m_positions[m_entitiesToSpawn] = entity.machine.position;
+							m_gelatoPositions[m_gelatosToSpawn] = entity.machine.position;
 						}
-						m_tierToPoolHandler[m_entitiesToSpawn] = tierIndex;
+
+						if (entity.machine.GetSignal(Signals.Type.LockedInCage)) {
+							m_gelatoLockedInCage[m_gelatosToSpawn] = entity.machine.transform.parent;
+						} else {
+							m_gelatoLockedInCage[m_gelatosToSpawn] = null;
+						}
+
+						m_gelatoGolden[m_gelatosToSpawn] = entity.isGolden;
+
+						m_indexToGelato[m_gelatosToSpawn] = tierIndex;
 						
-						m_onSpawnEffect.Spawn(m_positions[m_entitiesToSpawn]);
+						m_onSpawnEffect.Spawn(m_gelatoPositions[m_gelatosToSpawn]);
+
 						entity.Disable(true);
 
-						m_entitiesToSpawn++;
-						m_entitiesToSpawnPerHandler[tierIndex]++;
+						m_gelatosToSpawn++;
+						m_gelatoTypesToSpawn[tierIndex]++;
 					}
 				}				
 			}
 
-			if (m_entitiesToSpawn > 0) {
+			if (m_gelatosToSpawn > 0) {
 				Respawn();
+ 				
+				for (int i = 0; i < EntitiesAlive; i++) {
+            		m_entities[i] = null;
+				}
+
+				EntitiesToSpawn = 0;
+				EntitiesAlive = 0;
+				EntitiesKilled = 0;
+				EntitiesAllKilledByPlayer = false;
+
+				State = EState.Respawning;
 				m_timer = m_searchCooldown;				
 			} else {
 				m_timer *= 0.25f;
@@ -181,19 +209,68 @@ public class PetGelatoSpawner : AbstractSpawner, IBroadcastListener  {
 		}
 	}
 
-	protected override void OnAllEntitiesRemoved(IEntity _lastEntity, bool _allKilledByPlayer) {
-		State = EState.Respawning;
+	public override void ForceRemoveEntities() {
+		foreach (IEntity entity in m_spawnedGelatos) {	
+			RemoveEntity(entity, false);
+		}
+		OnForceRemoveEntities();
+	}
+
+	public override void RemoveEntity(IEntity _entity, bool _killedByPlayer) {
+		int index = m_spawnedGelatos.IndexOf(_entity);
+
+		if (index >= 0) {
+			int tierIndex = m_spawnedGelatosIndex[index];
+
+			if (ProfilerSettingsManager.ENABLED) {               
+				SpawnerManager.RemoveFromTotalLogicUnits(1, m_prefabNames[tierIndex]);
+            }
+
+            // Unregisters the entity            
+            UnregisterFromEntityManager(_entity);
+
+            // Returns the entity to the pool
+			ReturnEntityToPool(m_poolHandlers[tierIndex], _entity.gameObject);
+
+			OnRemoveEntity(_entity, index, _killedByPlayer);
+
+            if (m_spawnedGelatos.Count == 0) {
+				OnAllEntitiesRemoved(_entity, false);
+			}
+
+			m_spawnedGelatos.RemoveAt(index);
+			m_spawnedGelatosIndex.RemoveAt(index);
+		}
 	}
 
 	protected override void OnEntitySpawned(IEntity spawning, uint index, Vector3 originPos) {	   	
         Transform t = spawning.transform;
         
-		t.position = m_positions[index];
+		t.position = m_gelatoPositions[index];
 		t.localScale = GameConstants.Vector3.one;
 		t.rotation = GameConstants.Quaternion.identity;
 
 		t.localScale = Vector3.one;
+
+		if (m_gelatoGolden[index]) {
+			spawning.SetGolden(Spawner.EntityGoldMode.Gold);
+		}
+
+		m_spawnedGelatos.Add(spawning);
+		m_spawnedGelatosIndex.Add(m_indexToGelato[(int)index]);
     }
+
+	protected override void OnMachineSpawned(IMachine machine, uint index) {
+		if (m_gelatoLockedInCage[index] != null) {
+			machine.EnterDevice(true);
+			machine.transform.SetParent(m_gelatoLockedInCage[index], true);
+			m_gelatoLockedInCage[index] = null;
+		}
+	}
+
+	protected override void OnAllEntitiesRemoved(IEntity _lastEntity, bool _allKilledByPlayer) {
+		State = EState.Respawning;
+	}
 
     //-------------------------------------------------------------------
 }
