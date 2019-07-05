@@ -182,7 +182,7 @@ TID_PC_NOT_ENOUGH=Nicht genug <TID_PC_NAME_PLURAL>!
 TID_GEN_LIST_SEPARATOR=, 
 TID_GEN_LIST_SEPARATOR_OR=oder
 TID_GEN_LIST_SEPARATOR_AND=und
-TID_MISSION_OBJECTIVE_ENEMIES=Feinde
+TID_MISSION_OBJECTIVE_ENEMIES=Gegner
 TID_MISSION_OBJECTIVE_KILL_DESC_SINGLE_RUN=Töte %U0 %U1 in einem einzigen Durchgang!
 TID_MISSION_OBJECTIVE_KILL_DESC_MULTI_RUN=Töte insgesamt %U0 %U1!
 TID_MISSION_OBJECTIVE_SURVIVE_DESC_SINGLE_RUN=Überlebe %U0 in einem einzigen Durchgang!
@@ -208,11 +208,11 @@ TID_EGG_PREVIEW_REWARD=Vorschau!
 TID_POWERUP_DIVE_NAME=Tauchen
 TID_POWERUP_DIVE_DESC=Ermöglicht es dem Drachen, sich kontrolliert unter Wasser zu bewegen. 
 TID_POWERUP_DIVE_DESC_SHORT=<color=%U0>Bademeister</color>
-TID_POWERUP_HP_NAME=Lebensenergie-Steigerung
-TID_POWERUP_HP_DESC=Der Drache erhält <color=%U1>+%U0%</color> Lebensenergie.
-TID_POWERUP_HP_DESC_SHORT=<color=%U1>Lebensenergie +%U0 %</color>
-TID_POWERUP_BOOST_NAME=Boost-Steigerung
-TID_POWERUP_BOOST_DESC_SHORT=<color=%U1>Boost +%U0%</color>
+TID_POWERUP_HP_NAME=Lebenspunkte-Steigerung
+TID_POWERUP_HP_DESC=Der Drache erhält <color=%U1>+%U0%</color> Lebenspunkte.
+TID_POWERUP_HP_DESC_SHORT=<color=%U1>Lebenspunkte +%U0 %</color>
+TID_POWERUP_BOOST_NAME=Schub-Steigerung
+TID_POWERUP_BOOST_DESC_SHORT=<color=%U1>Schub +%U0%</color>
 TID_POWERUP_FURY_SIZE_NAME=Feuerstrahl-Erhöhung
 TID_POWERUP_FURY_SIZE_DESC=Die Reichweite des Feueratems erhöht sich um <color=%U1>%U0%</color>.
 TID_POWERUP_FURY_SIZE_DESC_SHORT=<color=%U1>Feuerstrahl +%U0 %</color>
@@ -229,8 +229,8 @@ TID_POWERUP_DRAGONRAM_NAME=Mauerbrecher
 TID_POWERUP_DRAGONRAM_DESC=Der Drache kann Hindernisse zerstören, die <color=%U1>%U0</color> größer sind als er.
 TID_POWERUP_DRAGONRAM_DESC_SHORT=<color=%U0>Durchbricht Mauern</color>
 TID_POWERUP_PREYHPBOOST_NAME=Das tägliche Brot
-TID_POWERUP_PREYHPBOOST_DESC=Fressen <color=%U2>%U0</color> regeneriert <color=%U3>%U1%</color> zusätzliche Lebensenergie.
-TID_POWERUP_PREYHPBOOST_DESC_SHORT=<color=%U3>+%U1% Lebensenergie beim Fressen</color>
+TID_POWERUP_PREYHPBOOST_DESC=Fressen <color=%U2>%U0</color> regeneriert <color=%U3>%U1%</color> zusätzliche Lebenspunkte.
+TID_POWERUP_PREYHPBOOST_DESC_SHORT=<color=%U3>+%U1% Lebenspunkte beim Fressen</color>
 TID_GEN_SAVE=SPEICHERN
 TID_GEN_CONTINUE=FORTFAHREN
 TID_GEN_ENABLE=AKTIVIEREN
@@ -457,7 +457,7 @@ TID_FEEDBACK_TUTO_HOLD_TO_BOOST=Tippe mit dem anderen Finger für einen Schub!
 TID_FEEDBACK_EGG_INVENTORY_FULL=<TID_EGG>-Inventar voll
 TID_SKIN_NEW=Neues <TID_DISGUISE>
 TID_FEEDBACK_TUTO_EAT=Friss zum Überleben!
-TID_FEEDBACK_TUTO_BOOST=Boost
+TID_FEEDBACK_TUTO_BOOST=Schub
 TID_FEEDBACK_TUTO_MOVE=Bewegen
 TID_FEEDBACK_TUTO_PLAY=Spielen!
 TID_SETTINGS_TAB_SAVE=Speichern
@@ -665,7 +665,7 @@ TID_QUIP_ENT_KILL_DRG_MINEBIG_02=BUMM-BUMM-BUMM!
 TID_QUIP_ENT_KILL_DRG_CATAPULT_01=Für eine Handvoll Steine!
 TID_QUIP_ENT_KILL_DRG_CATAPULT_02=Achtung, Steinschlag!
 TID_TIP_LOADING_MINIMAP=Mit der <TID_COLOR_MAP>Karte<TID_END_COLOR> kannst du Level erkunden! Greife über das Kartensymbol im Spiel darauf zu.
-TID_TIP_LOADING_FOOD=Durch das Fressen von Ködern, erhältst du Gesundheit. Vermeide Hunger, um deinen Durchgang zu verlängern.
+TID_TIP_LOADING_FOOD=Durch das Fressen von Ködern, erhältst du Lebenspunkte. Vermeide Hunger, um deinen Durchgang zu verlängern.
 TID_TIP_LOADING_AIRFLOWS=Windstöße drücken dich in eine Richtung. Wenn du ihnen folgst, wirst du schneller!
 TID_TIP_LOADING_INCUBATOR=Gefundene <TID_COLOR_EGG><TID_EGG_PLURAL><TID_END_COLOR> müssen ausgebrütet werden. Sei geduldig, deine Belohnung wartet auf dich!
 TID_TIP_LOADING_CATAPULT=Friss den Soldaten am Katapult, um es zu deaktivieren.
@@ -740,9 +740,9 @@ TID_POWERUP_LOWER_DAMAGE_POISON_DESC_SHORT=<color=%U1>Giftschaden <nobr>-%U0 %</
 TID_POWERUP_LOWER_DAMAGE_ARROWS_NAME=Geringerer Pfeilschaden
 TID_POWERUP_LOWER_DAMAGE_ARROWS_DESC=Der durch Pfeile verursachte Schaden verringert sich um <color=%U1>%U0 %</color>.
 TID_POWERUP_LOWER_DAMAGE_ARROWS_DESC_SHORT=<color=%U1>Pfeilschaden <nobr>-%U0 %</nobr></color>
-TID_POWERUP_REDUCE_LIFE_DRAIN_NAME=Verringerter Lebensenergie-Entzug
-TID_POWERUP_REDUCE_LIFE_DRAIN_DESC=Der Drache verliert <color=%U1>%U0 %</color> weniger Lebensenergie durch Lebensenergie-Entzug.
-TID_POWERUP_REDUCE_LIFE_DRAIN_DESC_SHORT=<color=%U1>Lebensernergie-Entzug <nobr>%U0%</nobr></color>
+TID_POWERUP_REDUCE_LIFE_DRAIN_NAME=Verringerter Lebenspunkte-Entzug
+TID_POWERUP_REDUCE_LIFE_DRAIN_DESC=Der Drache verliert <color=%U1>%U0 %</color> weniger Lebenspunkte durch Lebenspunkte-Entzug.
+TID_POWERUP_REDUCE_LIFE_DRAIN_DESC_SHORT=<color=%U1>Lebenspunkt-Entzug <nobr>%U0%</nobr></color>
 TID_POWERUP_SPEED_NAME=Tempo-Steigerung
 TID_POWERUP_SPEED_DESC=Basisgeschwindigkeit des Drachen erhöht sich um <color=%U1>%U0 %</color>.
 TID_POWERUP_SPEED_DESC_SHORT=<color=%U1>Tempo +%U0 %</color>
@@ -772,7 +772,7 @@ TID_POWERUP_FIREBALL_DESC_SHORT=<color=%U0>Spuckt Feuerbälle</color>
 TID_EGG_SHOW_REWARD=Sammlung
 TID_POWERUP_FREEZE_AURA_NAME=Frost-Aura
 TID_POWERUP_FREEZE_AURA_DESC=Verlangsamt alles, was in seine Nähe kommt.
-TID_POWERUP_FREEZE_AURA_DESC_SHORT=<color=%U0>Verlangsamt Feinde</color>
+TID_POWERUP_FREEZE_AURA_DESC_SHORT=<color=%U0>Verlangsamt Gegner</color>
 TID_POWERUP_MAGNET_NAME=Magnetisch
 TID_POWERUP_MAGNET_DESC=Verstreut magnetische Felder, die nahe Beute anziehen und gruppieren.
 TID_POWERUP_MAGNET_DESC_SHORT=<color=%U0>Zieht Beute an</color>
@@ -932,7 +932,7 @@ TID_EDIBLE_SHIELDMAN_PL=Schildwachen
 TID_CALIBRATING=Kalibriere ...
 TID_CALIBRATION_DONE=Fertig!
 TID_POWERUP_BOMB_NAME=Bombe
-TID_POWERUP_BOMB_DESC=Explodiert manchmal und vernichtet Feinde in einem bestimmten Radius.
+TID_POWERUP_BOMB_DESC=Explodiert manchmal und vernichtet Gegner in einem bestimmten Radius.
 TID_POWERUP_BOMB_DESC_SHORT=<color=%U0>Fliegende Bombe</color>
 TID_EGG=Ei
 TID_EGG_PLURAL=Eier
@@ -1129,12 +1129,12 @@ TID_POWERUP_CAGE_BREAKER_NAME=Käfigbrecher
 TID_POWERUP_CAGE_BREAKER_DESC=Der <TID_PET> rast gegen Käfige und zerstört sie.
 TID_POWERUP_CAGE_BREAKER_DESC_SHORT=<color=%U0>Zerstört Käfige</color>
 TID_POWERUP_STUN_NAME=Betäubungskanone
-TID_POWERUP_STUN_DESC=Der <TID_PET> betäubt Feinde durch Berührung und macht sie dadurch für einige Sekunden bewegungsunfähig.
+TID_POWERUP_STUN_DESC=Der <TID_PET> betäubt Gegner durch Berührung und macht sie dadurch für einige Sekunden bewegungsunfähig.
 TID_POWERUP_STUN_DESC_SHORT=<color=%U0>Meister-Betäuber</color>
-TID_POWERUP_FASTER_BOOST_NAME=Schnellere Boost-Regeneration
-TID_POWERUP_FASTER_BOOST_DESC=Die Boost-Anzeige regeneriert sich <color=%U1>+%U0%</color> schneller.
+TID_POWERUP_FASTER_BOOST_NAME=Schnellere Schub-Regeneration
+TID_POWERUP_FASTER_BOOST_DESC=Die Schub-Anzeige regeneriert sich <color=%U1>+%U0%</color> schneller.
 TID_POWERUP_FASTER_BOOST_DESC_SHORT=<color=%U1>Schub-Regen. +%U0 %</color>
-TID_POWERUP_UNLIMITED_BOOST_NAME=Verrückter Boost
+TID_POWERUP_UNLIMITED_BOOST_NAME=Verrückter Schub
 TID_POWERUP_UNLIMITED_BOOST_DESC=Der <TID_PET> läuft manchmal Amok und verleiht für kurze Zeit einen unbegrenzten Schub.
 TID_POWERUP_UNLIMITED_BOOST_DESC_SHORT=<color=%U0>Unbegrenzter Schub</color>
 TID_POWERUP_FINDBONUSCHESTS_NAME=Truhen finden
@@ -1169,8 +1169,8 @@ TID_EVENT_RESULTS_NOT_LOGGED_IN_MESSAGE=Melde dich bei einem sozialen Netzwerk a
 TID_EVENT_RESULTS_NOT_LOGGED_IN_BUTTON=Verbinden
 TID_EVENT_BONUS_DRAGON_INFO_MESSAGE=Spiele mit %U0, um deine Mitwirkung zu verdoppeln!
 TID_POWERUP_LOWER_DAMAGE_DRAGON_NAME=Geringerer Drachen-Schaden
-TID_POWERUP_LOWER_DAMAGE_DRAGON_DESC=Der von feindlichen Drachen zugefügte Schaden verringert sich um <color=%U1>%U0 %</color>.
-TID_POWERUP_LOWER_DAMAGE_DRAGON_DESC_SHORT=<color=%U1>Feindlicher Drachen-Schaden -%U0 %</color>
+TID_POWERUP_LOWER_DAMAGE_DRAGON_DESC=Der von gegnerischen Drachen zugefügte Schaden verringert sich um <color=%U1>%U0 %</color>.
+TID_POWERUP_LOWER_DAMAGE_DRAGON_DESC_SHORT=<color=%U1>Gegnerischer Drachen-Schaden -%U0 %</color>
 TID_MISSION_OBJECTIVE_DISTANCE_DESC_SINGLE_RUN=Fliege %U0 Meter in einem einzigen Durchgang!
 TID_MISSION_OBJECTIVE_DISTANCE_DESC_MULTI_RUN=Fliege insgesamt %U0 Meter!
 TID_LOADING_AD=Lade Werbung …
@@ -1216,7 +1216,7 @@ TID_SHOP_TAB_KEYS=<TID_ICON_KEY><TID_KEY_NAME_PLURAL>
 TID_PRIVACYTERMS_MID=Datenschutzerklärung und Bedingungen
 TID_SETTINGS_3DTOUCH=3D-Touch
 TID_PET_CATEGORY_EAT=Futter
-TID_PET_CATEGORY_HEALTH=Lebensenergie
+TID_PET_CATEGORY_HEALTH=Lebenspunkte
 TID_PET_CATEGORY_SPEED=Tempo
 TID_PET_CATEGORY_SCORE=Ergebnis
 TID_PET_CATEGORY_FIRE=Feuer
@@ -1487,10 +1487,10 @@ TID_TRANSACTION_MESSAGE=Alleine zu gehen ist gefährlich, nimm dieses Geschenk!
 TID_TRANSACTION_TITLE=Geschenk
 TID_TRANSACTION_GET_IT=Hol es dir!
 TID_POWERUP_TRANSFORM_GOLD_NAME=Goldblüte!
-TID_POWERUP_TRANSFORM_GOLD_DESC=Vergoldet manchmal angezeigte Feinde.
+TID_POWERUP_TRANSFORM_GOLD_DESC=Vergoldet manchmal angezeigte Gegner.
 TID_POWERUP_TRANSFORM_GOLD_DESC_SHORT=<color=%U0>Goldene Verwandlung</color>
 TID_POWERUP_HP_DOWN_DRAIN_DOWN_NAME=Energisch
-TID_POWERUP_HP_DOWN_DRAIN_DOWN_DESC=Lebensentzug ist um <color=%U0>50 %</color> reduziert, aber maximale LP sind um <color=%U0>30 %</color> reduziert.
+TID_POWERUP_HP_DOWN_DRAIN_DOWN_DESC=Lebensentzug reduziert sich um <color=%U2>%U0 %</color>, aber maximale LP reduzieren sich um <color=%U2>%U1 %</color>.
 TID_POWERUP_HP_DOWN_DRAIN_DOWN_DESC_SHORT=<color=%U2>Lebensentzug vs. maximale LP</color>
 TID_OFFER_ITEM_SC=%U0 <TID_SC_NAME_PLURAL>
 TID_OFFER_ITEM_HC=%U0 <TID_PC_NAME_PLURAL>
@@ -1562,7 +1562,7 @@ TID_STORE_PACK_24=Unglaubliches Sonderangebot!
 TID_STORE_PACK_25=Unfassbares Sonderangebot!
 TID_STORE_PACK_26=Großartiges Sonderangebot!
 TID_STORE_PACK_27=Bestes Sonderangebot!
-TID_FEEDBACK_TUTO_HOLD_TO_FLY=Verwende den Boost, um höher zu fliegen.
+TID_FEEDBACK_TUTO_HOLD_TO_FLY=Verwende den Schub, um höher zu fliegen.
 TID_STORE_ACHIEVEMENT_GP_TITLE_01=Größer und größer
 TID_STORE_ACHIEVEMENT_GP_TITLE_02=Setz die Ebenen in Brand!
 TID_STORE_ACHIEVEMENT_GP_TITLE_03=Lass die Schweine fliegen.
@@ -2130,7 +2130,7 @@ TID_DRAGON_SPECIAL_HELICOPTER_POWER2_TITLE=Kabumms
 TID_DRAGON_SPECIAL_HELICOPTER_POWER2_DESC=Verschießt zusätzlich zum Maschinengewehrfeuer Bomben.
 TID_DRAGON_SPECIAL_HELICOPTER_POWER3_TITLE=Minikopter
 TID_DRAGON_SPECIAL_HELICOPTER_POWER3_DESC=Entlässt eine Drohne mit Minigun, die auf die Gegner schießt.
-TID_DRAGON_STAT_HEALTH=Lebensenergie
+TID_DRAGON_STAT_HEALTH=Lebenspunkte
 TID_DRAGON_STAT_SPEED=Tempo
 TID_DRAGON_STAT_ENERGY=<TID_ENERGY_NAME>
 TID_DRAGON_GET_NOW_PC_GF=<TID_COLOR_BTN_PREMIUM>JETZT HOLEN!<TID_END_COLOR>\n<TID_ICON_PC>%U0<TID_COLOR_BTN_PREMIUM> + <TID_END_COLOR><TID_ICON_GF>%U1
@@ -2378,7 +2378,7 @@ TID_STORE_PACK_CAMPAIGN2PROMO30=Großes Helden-Event-Paket!
 TID_STORE_PACK_CAMPAIGN1PROMO15=Kleines Mittelalterliches-Event-Paket!
 TID_STORE_PACK_CAMPAIGN2PROMO15=Kleines Helden-Event-Paket!
 TID_POWERUP_SCORE_DOWN_FIRE_DURATION_UP_NAME=Ein Feuerkelch ist unterwegs!
-TID_POWERUP_SCORE_DOWN_FIRE_DURATION_UP_DESC=<TID_FIRE_RUSH>-Dauer erhöht sich um <color=%U0>50%</color>, aber die Punktzahl verringert sich um <color=%U0>10%</color>.
+TID_POWERUP_SCORE_DOWN_FIRE_DURATION_UP_DESC=<TID_FIRE_RUSH> verlängert sich um <color=%U2>%U1 %</color>, aber die Punktzahl verringert sich um <color=%U2>%U0 %</color>.
 TID_POWERUP_SCORE_DOWN_FIRE_DURATION_UP_DESC_SHORT=<color=%U2>Punkte gegen Feuerdauer</color>
 TID_DRAGON_SPECIAL_ICEDRAGON_NAME=Icebreaker
 TID_DRAGON_SPECIAL_ICEDRAGON_DESC=Majestätischer Eisdrache, der von gefrorenen Scherben geschützt wird. Schub zum EINFRIEREN.
@@ -2530,128 +2530,81 @@ TID_OTA_COMPLETED_BODY=Jetzt kannst du das vollständige „Hungry Dragon“-Erl
 TID_OTA_PERMISSION_POPUP_UPGRADE_SPECIAL_TITLE=Inhalt herunterladen
 TID_OTA_PERMISSION_POPUP_UPGRADE_SPECIAL_BODY=Du musst %U0 zusätzliche Inhalte herunterladen, bevor du diesen Drachen aufwerten kannst.
 TID_DRAGON_TIER_0_NAME=XS
-TID_POWERUP_DISGUISE_01_NAME=
-TID_POWERUP_DISGUISE_02_NAME=
-TID_POWERUP_DISGUISE_03_NAME=
-TID_POWERUP_DISGUISE_04_NAME=
-TID_POWERUP_DISGUISE_05_NAME=
-TID_POWERUP_DISGUISE_06_NAME=
-TID_POWERUP_DISGUISE_07_NAME=
-TID_POWERUP_DISGUISE_08_NAME=
-TID_POWERUP_DISGUISE_09_NAME=
-TID_POWERUP_DISGUISE_10_NAME=
-TID_POWERUP_DISGUISE_11_NAME=
-TID_POWERUP_DISGUISE_12_NAME=
-TID_POWERUP_DISGUISE_13_NAME=
-TID_POWERUP_DISGUISE_14_NAME=
-TID_POWERUP_DISGUISE_15_NAME=
-TID_POWERUP_DISGUISE_16_NAME=
-TID_POWERUP_DISGUISE_17_NAME=
-TID_POWERUP_DISGUISE_18_NAME=
-TID_POWERUP_DISGUISE_19_NAME=
-TID_POWERUP_DISGUISE_20_NAME=
-TID_POWERUP_DISGUISE_21_NAME=
-TID_POWERUP_DISGUISE_22_NAME=
-TID_POWERUP_DISGUISE_23_NAME=
-TID_POWERUP_DISGUISE_24_NAME=
-TID_POWERUP_DISGUISE_25_NAME=
-TID_POWERUP_DISGUISE_26_NAME=
-TID_POWERUP_DISGUISE_27_NAME=
-TID_POWERUP_DISGUISE_28_NAME=
-TID_POWERUP_DISGUISE_29_NAME=
-TID_POWERUP_DISGUISE_30_NAME=
-TID_POWERUP_DISGUISE_06_DESC=
-TID_POWERUP_DISGUISE_11_DESC=
-TID_POWERUP_DISGUISE_14_DESC=
-TID_POWERUP_DISGUISE_15_DESC=
-TID_POWERUP_DISGUISE_13_DESC=
-TID_POWERUP_DISGUISE_12_DESC=
-TID_POWERUP_DISGUISE_29_DESC=
-TID_POWERUP_DISGUISE_16_DESC=
-TID_POWERUP_DISGUISE_17_DESC=
-TID_POWERUP_DISGUISE_30_DESC=
-TID_POWERUP_DISGUISE_18_DESC=
-TID_POWERUP_DISGUISE_19_DESC=
-TID_POWERUP_DISGUISE_20_DESC=
-TID_POWERUP_DISGUISE_21_DESC=
-TID_POWERUP_DISGUISE_22_DESC=
-TID_POWERUP_DISGUISE_23_DESC=
-TID_POWERUP_DISGUISE_24_DESC=
-TID_POWERUP_DISGUISE_25_DESC=
-TID_POWERUP_DISGUISE_26_DESC=
-TID_POWERUP_DISGUISE_27_DESC=
-TID_POWERUP_DISGUISE_28_DESC=
-TID_POWERUP_DISGUISE_11_DESC_SHORT=
-TID_POWERUP_DISGUISE_12_DESC_SHORT=
-TID_POWERUP_DISGUISE_29_DESC_SHORT=
-TID_POWERUP_DISGUISE_13_DESC_SHORT=
-TID_POWERUP_DISGUISE_14_DESC_SHORT=
-TID_POWERUP_DISGUISE_15_DESC_SHORT=
-TID_POWERUP_DISGUISE_16_DESC_SHORT=
-TID_POWERUP_DISGUISE_17_DESC_SHORT=
-TID_POWERUP_DISGUISE_30_DESC_SHORT=
-TID_POWERUP_DISGUISE_18_DESC_SHORT=
-TID_POWERUP_DISGUISE_19_DESC_SHORT=
-TID_POWERUP_DISGUISE_20_DESC_SHORT=
-TID_POWERUP_DISGUISE_21_DESC_SHORT=
-TID_POWERUP_DISGUISE_22_DESC_SHORT=
-TID_POWERUP_DISGUISE_23_DESC_SHORT=
-TID_POWERUP_DISGUISE_24_DESC_SHORT=
-TID_POWERUP_DISGUISE_25_DESC_SHORT=
-TID_POWERUP_DISGUISE_26_DESC_SHORT=
-TID_POWERUP_DISGUISE_27_DESC_SHORT=
-TID_POWERUP_DISGUISE_28_DESC_SHORT=
-TID_POWERUP_DISGUISE_06_DESC_SHORT=
-TID_POWERUP_DISGUISE_11_DESC_LOW=
-TID_POWERUP_DISGUISE_11_DESC_LOW_SHORT=
-TID_POWERUP_DISGUISE_18_DESC_LOW=
-TID_POWERUP_DISGUISE_18_DESC_LOW_SHORT=
-TID_POWERUP_DISGUISE_19_DESC_LOW=
-TID_POWERUP_DISGUISE_19_DESC_LOW_SHORT=
-TID_POWERUP_DISGUISE_20_DESC_LOW=
-TID_POWERUP_DISGUISE_20_DESC_LOW_SHORT=
-TID_POWERUP_DISGUISE_21_DESC_LOW=
-TID_POWERUP_DISGUISE_21_DESC_LOW_SHORT=
-TID_POWERUP_DISGUISE_22_DESC_LOW=
-TID_POWERUP_DISGUISE_22_DESC_LOW_SHORT=
-TID_LIVEOPS_01=
-TID_POWERUP_DISGUISE_31_NAME=
-TID_POWERUP_DISGUISE_31_DESC=
-TID_POWERUP_DISGUISE_31_DESC_SHORT=
-TID_DRAGON_DARK_NAME=
-TID_DRAGON_DARK_DESC=
-TID_POWERUP_DISGUISE_01_DESC_SHORT=
-TID_POWERUP_DISGUISE_02_DESC_SHORT=
-TID_POWERUP_DISGUISE_03_DESC_SHORT=
-TID_POWERUP_DISGUISE_04_DESC_SHORT=
-TID_POWERUP_DISGUISE_05_DESC_SHORT=
-TID_POWERUP_DISGUISE_07_DESC_SHORT=
-TID_POWERUP_DISGUISE_08_DESC_SHORT=
-TID_POWERUP_DISGUISE_09_DESC_SHORT=
-TID_POWERUP_DISGUISE_10_DESC_SHORT=
-TID_SKIN_DARK_0_NAME=
-TID_SKIN_DARK_1_NAME=
-TID_SKIN_DARK_2_NAME=
-TID_SKIN_DARK_3_NAME=
-TID_SKIN_DARK_4_NAME=
-TID_SEASON_ANNIVERSARY_NAME=
-TID_HUNGRY_BIRTHDAY_NAME=
-TID_ENTITY_DISGUISE_BIRTHDAY=
-TID_EVENT_TOURNAMENT_WEARING_TIME_LIMIT_BIRTHDAY=
-TID_EVENT_TOURNAMENT_WEARING_NORMAL_BIRTHDAY=
-TID_GLOBAL_EVENT_BIRTHDAY_HATS=
-TID_QUIP_DRG_KILL_ENT_BIRTHDAY_CAKE_01=
-TID_QUIP_DRG_KILL_ENT_BIRTHDAY_CAKE_02=
-TID_EDIBLE_BIRTHDAY_CAKES_PL=
-TID_EVENT_TOURNAMENT_EAT_TIME_LIMIT_BIRTHDAY_CAKE=
-TID_EVENT_TOURNAMENT_EAT_NORMAL_BIRTHDAY_CAKE=
-TID_EVENT_TOURNAMENT_TIME_LIMIT_HUNGRY_BIRTHDAY_MODE=
-TID_GLOBAL_EVENT_BIRTHDAY_CAKES=
-TID_GLOBAL_EVENT_HUNGRY_BIRTHDAY=
-TID_ENTITY_CANDLE_BIRTHDAY_PL=
-TID_EVENT_TOURNAMENT_TIME_LIMIT_BIRTHDAY_CANDLE=
-TID_EVENT_TOURNAMENT_NORMAL_BIRTHDAY_CANDLE=
-TID_GLOBAL_EVENT_BIRTHDAY_CANDLES=
-TID_MOD_HUNGRY_BIRTHDAY_DESCRIPTION=
-TID_TOURNAMENT_INFO_WHERE=
-TID_TOURNAMENT_INFO_HOW=
+TID_POWERUP_DISGUISE_01_NAME=Flammenwerfer
+TID_POWERUP_DISGUISE_02_NAME=Fackelstoß
+TID_POWERUP_DISGUISE_03_NAME=Tempodämon
+TID_POWERUP_DISGUISE_04_NAME=Tiefdunkel
+TID_POWERUP_DISGUISE_05_NAME=Superlader
+TID_POWERUP_DISGUISE_06_NAME=Gegengift
+TID_POWERUP_DISGUISE_07_NAME=Minenschwamm
+TID_POWERUP_DISGUISE_08_NAME=Blitzmerker
+TID_POWERUP_DISGUISE_09_NAME=Drachenherz
+TID_POWERUP_DISGUISE_10_NAME=Hamsterer
+TID_POWERUP_DISGUISE_11_NAME=Unsichtbarer Tod
+TID_POWERUP_DISGUISE_12_NAME=Mehr Münzen beim Tauchen
+TID_POWERUP_DISGUISE_13_NAME=Jung und weise
+TID_POWERUP_DISGUISE_14_NAME=Roter toter Drache
+TID_POWERUP_DISGUISE_15_NAME=Münz-Sammler
+TID_POWERUP_DISGUISE_16_NAME=Pharao des Feuers
+TID_POWERUP_DISGUISE_17_NAME=Wilde Wut
+TID_POWERUP_DISGUISE_18_NAME=Blutiger Schild
+TID_POWERUP_DISGUISE_19_NAME=Verzauberte Rüstung
+TID_POWERUP_DISGUISE_20_NAME=Energiehungrig
+TID_POWERUP_DISGUISE_21_NAME=Energiebeschleuniger
+TID_POWERUP_DISGUISE_22_NAME=Verteidigungsmeister
+TID_POWERUP_DISGUISE_23_NAME=Göttliches Gold
+TID_POWERUP_DISGUISE_24_NAME=Mondwanderer
+TID_POWERUP_DISGUISE_25_NAME=Kiefer des Todes
+TID_POWERUP_DISGUISE_26_NAME=Vernichtung
+TID_POWERUP_DISGUISE_27_NAME=Stahlhaut
+TID_POWERUP_DISGUISE_28_NAME=Fluch des Drachen
+TID_POWERUP_DISGUISE_29_NAME=Feuerschwimmer
+TID_POWERUP_DISGUISE_30_NAME=Tempowissenschaftler
+TID_POWERUP_DISGUISE_06_DESC=Giftangriffe können diesem Drachen nichts anhaben.
+TID_POWERUP_DISGUISE_11_DESC=<TID_DRAGON_STAT_SPEED> erhöht sich um <color=%U2>%U0 %</color>.\n<TID_FIRE_RUSH> verlängert sich um <color=%U2>%U1 %</color>.
+TID_POWERUP_DISGUISE_14_DESC=Schaden durch Gift reduziert sich um <color=%U2>%U0 %</color>.\n<TID_FIRE_RUSH> verlängert sich um <color=%U2>%U1 %</color>.
+TID_POWERUP_DISGUISE_15_DESC=<TID_FIRE_RUSH> vergrößert sich um <color=%U2>%U0 %</color>.\Die Menge an <TID_SC_NAME_PLURAL>, die durch das Fressen von Beute gewonnen wird, erhöht sich um <color=%U2>%U1 %</color>.
+TID_POWERUP_DISGUISE_13_DESC=<TID_DRAGON_STAT_SPEED> erhöht sich um <color=%U2>%U0 %</color>.\nEP erhöhen sich um <color=%U2>%U1 %</color>.
+TID_POWERUP_DISGUISE_12_DESC=Der Spieler steuert den Drachen unter Wasser.\nDie Menge der <TID_SC_NAME_PLURAL>, die durch das Fressen von Beute erlangt wird, erhöht sich um <color=%U2>%U1 %</color>.
+TID_POWERUP_DISGUISE_29_DESC=Der Spieler steuert den Drachen unter Wasser.\n<TID_FIRE_RUSH> vergrößert sich um <color=%U2>%U1 %</color>.
+TID_POWERUP_DISGUISE_16_DESC=<TID_FIRE_RUSH> verlängert sich um <color=%U2>%U0 %</color>.\nLebenspunkte erhöhen sich um <color=%U2>%U1 %</color>.
+TID_POWERUP_DISGUISE_17_DESC=<TID_FIRE_RUSH> vergrößert sich um <color=%U2>%U0 %</color>.\n<TID_ENERGY_NAME> erhöht sich um <color=%U2>%U1 %</color>.
+TID_POWERUP_DISGUISE_30_DESC=<TID_DRAGON_STAT_SPEED> erhöht sich um <color=%U2>%U0 %</color>.\n<TID_ENERGY_NAME> erhöht sich um <color=%U2>%U1 %</color>.
+TID_POWERUP_DISGUISE_18_DESC=Schaden durch Gift reduziert sich um <color=%U2>%U0 %</color>.\nLebenspunkte erhöhen sich um <color=%U2>%U1 %</color>.
+TID_POWERUP_DISGUISE_19_DESC=Schaden durch <TID_KILLABLE_MINE_PL> reduziert sich um <color=%U2>%U0 %</color>.\nEP erhöhen sich um <color=%U2>%U1 %</color>.
+TID_POWERUP_DISGUISE_20_DESC=Schaden durch <TID_KILLABLE_MINE_PL> reduziert sich um <color=%U2>%U0 %</color>.\n<TID_FIRE_RUSH> verlängert sich um <color=%U2>%U1 %</color>.
+TID_POWERUP_DISGUISE_21_DESC=<TID_FIRE_RUSH> vergrößert sich um <color=%U2>%U0 %</color>.\nSchaden durch <TID_KILLABLE_MINE_PL> reduziert sich um <color=%U2>%U1 %</color>.
+TID_POWERUP_DISGUISE_22_DESC=Schaden durch Gift reduziert sich um <color=%U2>%U0 %</color> und durch <TID_KILLABLE_MINE_PL> um <color=%U2>%U1 %</color>.
+TID_POWERUP_DISGUISE_23_DESC=Schaden durch <TID_KILLABLE_MINE_PL> reduziert sich um <color=%U3>%U0 %</color>.\n<TID_FIRE_RUSH> verlängert sich um <color=%U3>%U1 %</color>.\nDie Menge der <TID_SC_NAME_PLURAL>, die durch das Fressen von Beute erlangt wird, erhöht sich um <color=%U3>%U2 %</color>.
+TID_POWERUP_DISGUISE_24_DESC=Schaden durch Gift reduziert sich um <color=%U3>%U0 %</color> und durch <TID_KILLABLE_MINE_PL> um <color=%U3>%U1 %</color>.\nEP erhöhen sich um <color=%U3>%U2 %</color>.
+TID_POWERUP_DISGUISE_25_DESC=<TID_FIRE_RUSH>-Dauer erhöht sich um <color=%U3>%U1 %</color>.\nSchaden durch <TID_KILLABLE_MINE_PL> reduziert sich um <color=%U3>%U2 %</color>.\n<TID_DRAGON_STAT_SPEED> erhöht sich um <color=%U3>%U0 %</color>.
+TID_POWERUP_DISGUISE_26_DESC=<TID_FIRE_RUSH> vergrößert sich um <color=%U3>%U0 %</color>.\nSchaden durch <TID_KILLABLE_MINE_PL> reduziert sich um <color=%U3>%U1 %</color>.\nEP erhöhen sich um <color=%U3>%U2 %</color>.
+TID_POWERUP_DISGUISE_27_DESC=Schaden durch <TID_KILLABLE_MINE_PL> reduziert sich um <color=%U3>%U0 %</color>.\nEP erhöht sich um <color=%U3>%U1 %</color>.\nLebenspunkte erhöhen sich um <color=%U3>%U2 %</color>.
+TID_POWERUP_DISGUISE_28_DESC=Schaden durch Gift reduziert sich um <color=%U3>%U0 %</color>.\nLebenspunkte erhöhen sich um <color=%U3>%U1 %</color>.\n<TID_ENERGY_NAME> erhöht sich um <color=%U3>%U2 %</color>.
+TID_POWERUP_DISGUISE_31_DESC=<TID_FIRE_RUSH> vergrößert sich um <color=%U3>%U0 %</color>.\n<TID_ENERGY_NAME> erhöht sich um <color=%U3>%U1 %</color>.\n<color=%U3>%U2 %</color> <TID_SC_NAME_PLURAL>-Gewinn durch das Fressen von Beute.
+TID_SKIN_DARK_0_NAME=Umbra
+TID_SEASON_ANNIVERSARY_NAME=Erster Geburtstag
+TID_HUNGRY_BIRTHDAY_NAME=Hungry Birthday!
+TID_ENTITY_DISGUISE_BIRTHDAY=Geburtstagshut
+TID_EVENT_TOURNAMENT_WEARING_TIME_LIMIT_BIRTHDAY=Töte so viel Beute in %U0 wie du kannst, während du einen <TID_ENTITY_DISGUISE_BIRTHDAY> trägst!
+TID_EVENT_TOURNAMENT_WEARING_NORMAL_BIRTHDAY=Töte so viel Beute in einem Lauf wie du kannst, während du einen <TID_ENTITY_DISGUISE_BIRTHDAY> trägst!
+TID_GLOBAL_EVENT_BIRTHDAY_HATS=Friss %U0 Beute, während du einen <TID_ENTITY_DISGUISE_BIRTHDAY> trägst.
+TID_QUIP_DRG_KILL_ENT_BIRTHDAY_CAKE_01=DELIKAT!
+TID_QUIP_DRG_KILL_ENT_BIRTHDAY_CAKE_02=Das muss gefeiert werden!
+TID_EDIBLE_BIRTHDAY_CAKES_PL=Geburtstagskuchen
+TID_EVENT_TOURNAMENT_EAT_TIME_LIMIT_BIRTHDAY_CAKE=Friss so viele <TID_EDIBLE_BIRTHDAY_CAKES_PL> in %U0 wie du kannst!
+TID_EVENT_TOURNAMENT_EAT_NORMAL_BIRTHDAY_CAKE=Friss so viele <TID_EDIBLE_BIRTHDAY_CAKES_PL> in einem Durchgang wie du kannst!
+TID_EVENT_TOURNAMENT_TIME_LIMIT_HUNGRY_BIRTHDAY_MODE=Starte so viele „<TID_HUNGRY_BIRTHDAY_NAME>“-Modi in %U0 wie du kannst!
+TID_GLOBAL_EVENT_BIRTHDAY_CAKES=Friss %U0 <TID_EDIBLE_BIRTHDAY_CAKES_PL>!
+TID_GLOBAL_EVENT_HUNGRY_BIRTHDAY=Starte %U0 „<TID_HUNGRY_BIRTHDAY_NAME>“-Modi!
+TID_ENTITY_CANDLE_BIRTHDAY_PL=Kerzen
+TID_EVENT_TOURNAMENT_TIME_LIMIT_BIRTHDAY_CANDLE=Zünde so viele <TID_ENTITY_CANDLE_BIRTHDAY_PL> in %U0 an wie du kannst!
+TID_EVENT_TOURNAMENT_NORMAL_BIRTHDAY_CANDLE=Zünde so viele <TID_ENTITY_CANDLE_BIRTHDAY_PL> in einem Durchgang an wie du kannst!
+TID_GLOBAL_EVENT_BIRTHDAY_CANDLES=Zünde %U0 <TID_ENTITY_CANDLE_BIRTHDAY_PL> an.
+TID_MOD_HUNGRY_BIRTHDAY_DESCRIPTION=Friss <TID_EDIBLE_BIRTHDAY_CAKES_PL>, um den „<TID_HUNGRY_BIRTHDAY_NAME>“-Modus zu starten!
+TID_TOURNAMENT_INFO_WHERE=Startpunkt
+TID_TOURNAMENT_INFO_HOW=Regeln
+TID_SEASON_ANNIVERSARY_NAME_01=
+TID_SEASON_ANNIVERSARY_NAME_02=
+TID_FEEDBACK_HUNGRY_BIRTHDAY_LINE_1=
+TID_FEEDBACK_HUNGRY_BIRTHDAY_LINE_2=
