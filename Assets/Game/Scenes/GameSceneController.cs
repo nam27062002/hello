@@ -151,33 +151,24 @@ public class GameSceneController : GameSceneControllerBase {
         }
 
         // Load the dragon
-		// DEBUG: Special dragon testing
-        if ( DebugSettings.useSpecialDragon )
-        {
+        // DEBUG: Special dragon testing
+        if (DebugSettings.useSpecialDragon) {
             // Hola soy special SPECIAAAAAAL
-			// [AOC] xDDDDDDDD
+            // [AOC] xDDDDDDDD
             string dragon = DebugSettings.Prefs_GetStringPlayer(DebugSettings.SPECIAL_DRAGON_SKU, "dragon_helicopter");
             DragonTier dragonTier = ( DragonTier )DebugSettings.specialDragonTier;
             int powerLevel = DebugSettings.specialDragonPowerLevel;
             int hpBoost = DebugSettings.specialDragonHpBoostLevel;
             int speedBoost = DebugSettings.specialDragonSpeedBoostLevel;
             int energyBoost = DebugSettings.specialDragonEnergyBoostLevel;
-            DragonManager.LoadSpecialDragon_DEBUG(dragon, dragonTier, powerLevel, hpBoost, speedBoost, energyBoost);
-            
-        }
-        else
-        {
-            if ( HDLiveDataManager.tournament.isActive)
-            {
-				DragonManager.LoadDragon(HDLiveDataManager.tournament.tournamentData.tournamentDef.dragonData);
+            DragonManager.LoadSpecialDragon_DEBUG(dragon, dragonTier, powerLevel, hpBoost, speedBoost, energyBoost);                    
+        } else {
+            if (HDLiveDataManager.tournament.isActive) {
+                DragonManager.LoadDragon(HDLiveDataManager.tournament.tournamentData.tournamentDef.dragonData);
+            } else {
+                DragonManager.LoadDragon(DragonManager.currentDragon.sku);	// currentDragon Will automatically select between classic and special dragons depending on active mode
             }
-            else
-            {
-				DragonManager.LoadDragon(DragonManager.currentDragon.sku);	// currentDragon Will automatically select between classic and special dragons depending on active mode
-            }
-
         }
-        
 		
 		Messenger.AddListener(MessengerEvents.GAME_COUNTDOWN_ENDED, CountDownEnded);
         Messenger.AddListener<float>(MessengerEvents.PLAYER_LEAVING_AREA, OnPlayerLeavingArea);

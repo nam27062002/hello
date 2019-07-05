@@ -157,14 +157,53 @@ MonoBehaviour:
     y: 0
     width: 2
     height: 2
-  m_searchRange: 4
-  m_searchCooldown: 30
+  m_searchCooldown: 5
   m_selectedPrefabs:
-  - spawnPrefab: Junk/PF_BadJunkBone
-  - spawnPrefab: Junk/PF_BadJunkEye
-  - spawnPrefab: Junk/PF_BadJunkFrog
-  - spawnPrefab: Junk/PF_BadJunkMagicBottle
-  - spawnPrefab: Junk/PF_Star
+  - PF_Gelato_0_XS
+  - PF_Gelato_1_S
+  - PF_Gelato_2_M
+  - PF_Gelato_3_L
+  - PF_Gelato_4_XL
+  - PF_Gelato_5_XXL
+  m_onSpawnEffect:
+    name: PS_IceExplosion
+    path: 
+    changeStartColor: 0
+    startColor: {r: 1, g: 1, b: 1, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
+    changeColorOvertime: 0
+    colorOvertime:
+      serializedVersion: 2
+      key0: {r: 1, g: 1, b: 1, a: 1}
+      key1: {r: 1, g: 1, b: 1, a: 1}
+      key2: {r: 0, g: 0, b: 0, a: 0}
+      key3: {r: 0, g: 0, b: 0, a: 0}
+      key4: {r: 0, g: 0, b: 0, a: 0}
+      key5: {r: 0, g: 0, b: 0, a: 0}
+      key6: {r: 0, g: 0, b: 0, a: 0}
+      key7: {r: 0, g: 0, b: 0, a: 0}
+      ctime0: 0
+      ctime1: 65535
+      ctime2: 0
+      ctime3: 0
+      ctime4: 0
+      ctime5: 0
+      ctime6: 0
+      ctime7: 0
+      atime0: 0
+      atime1: 65535
+      atime2: 0
+      atime3: 0
+      atime4: 0
+      atime5: 0
+      atime6: 0
+      atime7: 0
+      m_Mode: 0
+      m_NumColorKeys: 2
+      m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
+    scale: 0.5
+    orientate: 0
 --- !u!114 &114113651879358194
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -482,7 +521,7 @@ MonoBehaviour:
   m_airMotion:
     m_mass: 1
     m_defaultUpVector: 0
-    m_orientationSpeed: 180
+    m_orientationSpeed: 360
     m_useAngularVelocity: 1
     m_dragonStyleRotation: 0
     m_faceDirection: 1
@@ -514,7 +553,7 @@ MonoBehaviour:
     min: 0.5
     max: 1
   m_useSpawnerRotation: 0
-  m_serializedJson: '[{"petWanderSku":"common","baseSpeed":5,"speedWhen":0,"speedMultiplier":1.5,"dataType":"AI.Behaviour.PetOrbitPlayerData","editorFolded":false}]'
+  m_serializedJson: '[{"petWanderSku":"common","dataType":"AI.Behaviour.FollowPlayerData","editorFolded":false}]'
   m_databaseKey: PF_PetGelato_66
   m_preciseDestArrival: 0
   m_avoidDistanceAttenuation: 0

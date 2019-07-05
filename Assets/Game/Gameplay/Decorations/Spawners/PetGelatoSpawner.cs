@@ -13,7 +13,6 @@ public class PetGelatoSpawner : AbstractSpawner, IBroadcastListener  {
 	};
 
 
-	[SerializeField] private float m_searchRange;
 	[SerializeField] private float m_searchCooldown;
 
 	//-------------------------------------------------------------------		
@@ -23,38 +22,34 @@ public class PetGelatoSpawner : AbstractSpawner, IBroadcastListener  {
 		public string spawnPrefab = "";
 	}
 
-	[SerializeField] private EntityPrefab[] m_selectedPrefabs = new EntityPrefab[(int)DragonTier.COUNT];
-	
+	[SerializeField] private string[] m_selectedPrefabs = new string[(int)DragonTier.COUNT];
+	[SerializeField] private ParticleData m_onSpawnEffect;
 	
 	private string[] m_prefabNames;
 	private PoolHandler[] m_poolHandlers;
-
+	private int[] m_entitiesToSpawnPerHandler;
 
 	private Entity[] m_checkEntities = new Entity[50];
-	private int m_numCheckEntities = 0;
 
 	private Vector3[] m_positions = new Vector3[50];
 	private int[] m_tierToPoolHandler = new int[50];
 	private uint m_entitiesToSpawn = 0;
 
-	private List<IEntity> m_entitiesAlive;
-	private List<int> m_entitiesAliveIndex;
+	private DragonTier m_tierCheck;
 
 	private float m_timer;
 
 
     void Awake() {
 		// Register change area events
-		Broadcaster.AddListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
-		Broadcaster.AddListener(BroadcastEventType.GAME_AREA_ENTER, this);
+		Broadcaster.AddListener(BroadcastEventType.POOL_MANAGER_READY, this);
 
 		m_timer = m_searchCooldown;
     }
 
 	override protected void OnDestroy() {
 		base.OnDestroy();
-		Broadcaster.RemoveListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
-		Broadcaster.RemoveListener(BroadcastEventType.GAME_AREA_ENTER, this);
+		Broadcaster.RemoveListener(BroadcastEventType.POOL_MANAGER_READY, this);
 
 		if (ApplicationManager.IsAlive) {
 			ForceRemoveEntities();
@@ -65,7 +60,6 @@ public class PetGelatoSpawner : AbstractSpawner, IBroadcastListener  {
 		m_timer -= Time.deltaTime;
 		if (m_timer <= 0f) {
 			Spawn();
-			m_timer = m_searchCooldown;
 		}
 	}
 
@@ -85,8 +79,7 @@ public class PetGelatoSpawner : AbstractSpawner, IBroadcastListener  {
     {
         switch( eventType )
         {
-			case BroadcastEventType.GAME_AREA_ENTER:
-            case BroadcastEventType.GAME_LEVEL_LOADED:
+			case BroadcastEventType.POOL_MANAGER_READY:
             {
 				PreparePools();
 				ForceReset();
@@ -99,16 +92,19 @@ public class PetGelatoSpawner : AbstractSpawner, IBroadcastListener  {
 		List<PoolHandler> listValidHandlers = new List<PoolHandler>();
 
 		for (int i = 0; i< m_selectedPrefabs.Length; i++) {
-			string prefab = m_selectedPrefabs[i].spawnPrefab;
-			PoolHandler handle = PoolManager.GetHandler(prefab);
+			string prefab = m_selectedPrefabs[i];
+			PoolHandler handle = PoolManager.RequestPool(prefab, 1);
 			if (handle != null) {
-				listValidPrefab.Add(m_selectedPrefabs[i].spawnPrefab);
+				listValidPrefab.Add(prefab);
 				listValidHandlers.Add(handle);
 			}
 		}		
 		
 		m_prefabNames = listValidPrefab.ToArray();
-		m_poolHandlers = listValidHandlers.ToArray();		
+		m_poolHandlers = listValidHandlers.ToArray();
+		m_entitiesToSpawnPerHandler = new int[m_poolHandlers.Length];
+
+		m_onSpawnEffect.CreatePool();
 	}
 
     protected override void OnStart() {
@@ -116,11 +112,9 @@ public class PetGelatoSpawner : AbstractSpawner, IBroadcastListener  {
         UseProgressiveRespawn = false;
         UseSpawnManagerTree = false;
 
-		m_entitiesAlive = new List<IEntity>();
-		m_entitiesAliveIndex = new List<int>();
+		m_tierCheck = InstanceManager.player.data.tier;
 
         RegisterInSpawnerManager();
-		PreparePools();
     }
 
     protected override uint GetMaxEntities() {
@@ -141,82 +135,64 @@ public class PetGelatoSpawner : AbstractSpawner, IBroadcastListener  {
 
 
 	public void Spawn() {
+		m_timer = 0f;	
+
 		if (State == EState.Respawning) {
-			// find npcs....
 			m_entitiesToSpawn = 0;
 
-			m_numCheckEntities = EntityManager.instance.GetOverlapingEntities(transform.position, m_searchRange, m_checkEntities);
-			for (int e = 0; e < m_numCheckEntities; e++) {
-				Entity entity = m_checkEntities[e];
-				int tierIndex = (int)entity.edibleFromTier;
-				
-				if (tierIndex < m_prefabNames.Length) {					
-					m_positions[m_entitiesToSpawn] = entity.machine.position;
-					m_tierToPoolHandler[m_entitiesToSpawn] = tierIndex;
+			int entityCount = EntityManager.instance.GetOnScreenEntities(m_checkEntities);
 
-					m_entitiesToSpawn++;
-					entity.Disable(true);					
-				}
+			for (int i = 0; i < m_entitiesToSpawnPerHandler.Length; ++i) {
+				m_entitiesToSpawnPerHandler[i] = 0;
 			}
 
-			Respawn();
-			{
-				for (int i = 0; i < m_entitiesToSpawn; ++i) {
-					m_entities[i] = null;
-				}
-				EntitiesAlive = 0;
-				EntitiesKilled = 0;
-				EntitiesToSpawn = 0;
-				State = EState.Respawning;
+			for (int i = 0; i < entityCount; ++i) {
+				// Check if it can be eaten by the player
+				Entity entity = m_checkEntities[i];
+
+				if (!entity.HasTag(IEntity.Tag.Collectible)
+				&& (entity.IsEdible(m_tierCheck) || entity.CanBeHolded(m_tierCheck))) {
+					int tierIndex = (int)entity.edibleFromTier;
+					
+					if (tierIndex < m_prefabNames.Length
+					&&  m_entitiesToSpawnPerHandler[tierIndex] < m_poolHandlers[tierIndex].pool.NumFreeObjects()) {
+						if (entity.circleArea != null) {
+							m_positions[m_entitiesToSpawn] = entity.circleArea.center;
+						} else {
+							m_positions[m_entitiesToSpawn] = entity.machine.position;
+						}
+						m_tierToPoolHandler[m_entitiesToSpawn] = tierIndex;
+						
+						m_onSpawnEffect.Spawn(m_positions[m_entitiesToSpawn]);
+						entity.Disable(true);
+
+						m_entitiesToSpawn++;
+						m_entitiesToSpawnPerHandler[tierIndex]++;
+					}
+				}				
+			}
+
+			if (m_entitiesToSpawn > 0) {
+				Respawn();
+				m_timer = m_searchCooldown;				
+			} else {
+				m_timer *= 0.25f;
 			}
 		}
 	}
 
-	public new void ForceRemoveEntities() {
-		foreach (IEntity e in m_entitiesAlive) {
-			RemoveEntity(e, false);
-		}
+	protected override void OnAllEntitiesRemoved(IEntity _lastEntity, bool _allKilledByPlayer) {
+		State = EState.Respawning;
 	}
 
-	public new void RemoveEntity(IEntity _entity, bool _killedByPlayer) {
-        int index = -1;
-        for (int i = 0; i < m_entitiesAlive.Count && index == -1; i++) {
-            if (m_entitiesAlive[i] != null && m_entitiesAlive[i] == _entity) {
-                index = i;                                                
-            }
-        }
-
-        if (index > -1) {   
-			PoolHandler handler = m_poolHandlers[m_entitiesAliveIndex[index]];
-            if (ProfilerSettingsManager.ENABLED) {               
-				SpawnerManager.RemoveFromTotalLogicUnits(1, m_prefabNames[m_entitiesAliveIndex[index]]);
-            }
-
-            // Unregisters the entity
-            UnregisterFromEntityManager(_entity);
-            // Returns the entity to the pool
-			ReturnEntityToPool(handler, _entity.gameObject);
-
-			m_entitiesAlive.RemoveAt(index);
-			m_entitiesAliveIndex.RemoveAt(index);
-        }
-    }
-
-	protected override void OnEntitySpawned(IEntity spawning, uint index, Vector3 originPos) {
-	   	Transform groundSensor = spawning.transform.Find("groundSensor");
+	protected override void OnEntitySpawned(IEntity spawning, uint index, Vector3 originPos) {	   	
         Transform t = spawning.transform;
         
 		t.position = m_positions[index];
 		t.localScale = GameConstants.Vector3.one;
-		t.rotation = GameConstants.Quaternion.identity;		
+		t.rotation = GameConstants.Quaternion.identity;
 
-		if (groundSensor != null) {
-			t.position -= groundSensor.localPosition;
-		}
 		t.localScale = Vector3.one;
-
-		m_entitiesAlive.Add(spawning);
-		m_entitiesAliveIndex.Add(m_tierToPoolHandler[index]);
     }
 
     //-------------------------------------------------------------------
