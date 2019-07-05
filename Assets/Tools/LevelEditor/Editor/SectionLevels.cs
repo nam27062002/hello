@@ -21,7 +21,6 @@ using System.Collections.Generic;
 // CLASSES																//
 //----------------------------------------------------------------------//
 namespace LevelEditor {
-	/// <summary>
 	/// 
 	/// </summary>
 	public class SectionLevels : ILevelEditorSection {
@@ -30,6 +29,8 @@ namespace LevelEditor {
 		//------------------------------------------------------------------//
 		private static readonly string ASSETS_DIR = "Assets/Game/Scenes/Levels";
 		private static readonly float AUTOSAVE_FREQUENCY = 60f;	// Seconds
+
+		
 
 		//------------------------------------------------------------------//
 		// MEMBERS AND PROPERTIES											//
@@ -236,8 +237,6 @@ namespace LevelEditor {
 
         Level getLightmapScene()
         {
-            Level ret = null;
-
             for (int c = 0; c < m_activeLevels.Length; c++)
             {
                 List<Level> levelList = m_activeLevels[c];
@@ -313,6 +312,7 @@ namespace LevelEditor {
                 GUIStyle titleStyle = new GUIStyle(EditorStyles.largeLabel);
     			titleStyle.fontSize = 20;
 			    titleStyle.alignment = TextAnchor.MiddleCenter;
+
 			    if(activeLevels != null && activeLevels.Count > 0) {
     				GUILayout.Label(activeLevels[0].gameObject.scene.name, titleStyle);
 			    } else {
@@ -528,7 +528,8 @@ namespace LevelEditor {
 			// Unity makes it easy for us
 			bool isDirty = false;
 			for( int i = 0; i<activeLevels.Count && !isDirty; i++ )
-				isDirty = isDirty || activeLevels[i].gameObject.scene.isDirty;
+				if (activeLevels[i] != null)
+					isDirty = isDirty || activeLevels[i].gameObject.scene.isDirty;
 			return isDirty;
 		}
 
