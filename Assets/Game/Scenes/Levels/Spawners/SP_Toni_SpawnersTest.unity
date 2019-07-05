@@ -3512,7 +3512,7 @@ GameObject:
   - component: {fileID: 572647085}
   - component: {fileID: 572647086}
   m_Layer: 0
-  m_Name: GameObject (1)
+  m_Name: Slice2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3528,8 +3528,8 @@ Transform:
   m_LocalPosition: {x: 131.23, y: 39.3, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 1117695729}
-  m_RootOrder: 6
+  m_Father: {fileID: 722091684}
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &572647086
 MonoBehaviour:
@@ -4456,6 +4456,40 @@ Transform:
   m_Father: {fileID: 378527486}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &722091683
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 722091684}
+  m_Layer: 0
+  m_Name: CakeSlices
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &722091684
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 722091683}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 1477648727}
+  - {fileID: 572647085}
+  - {fileID: 916371979}
+  - {fileID: 916397937}
+  - {fileID: 2010231590}
+  - {fileID: 782713237}
+  m_Father: {fileID: 1117695729}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &722567503
 GameObject:
   m_ObjectHideFlags: 0
@@ -4800,7 +4834,7 @@ GameObject:
   - component: {fileID: 782713237}
   - component: {fileID: 782713238}
   m_Layer: 0
-  m_Name: GameObject (5)
+  m_Name: Slice6
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4816,8 +4850,8 @@ Transform:
   m_LocalPosition: {x: 124.58, y: 43.81, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 1117695729}
-  m_RootOrder: 10
+  m_Father: {fileID: 722091684}
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &782713238
 MonoBehaviour:
@@ -5639,7 +5673,7 @@ GameObject:
   - component: {fileID: 916371979}
   - component: {fileID: 916371980}
   m_Layer: 0
-  m_Name: GameObject (2)
+  m_Name: Slice3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5655,8 +5689,8 @@ Transform:
   m_LocalPosition: {x: 124.58, y: 39.3, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 1117695729}
-  m_RootOrder: 7
+  m_Father: {fileID: 722091684}
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &916371980
 MonoBehaviour:
@@ -5720,7 +5754,7 @@ GameObject:
   - component: {fileID: 916397937}
   - component: {fileID: 916397938}
   m_Layer: 0
-  m_Name: GameObject (3)
+  m_Name: Slice4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5736,8 +5770,8 @@ Transform:
   m_LocalPosition: {x: 137.3, y: 43.81, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 1117695729}
-  m_RootOrder: 8
+  m_Father: {fileID: 722091684}
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &916397938
 MonoBehaviour:
@@ -7042,12 +7076,7 @@ Transform:
   - {fileID: 883113615}
   - {fileID: 525645741}
   - {fileID: 350812397}
-  - {fileID: 1477648727}
-  - {fileID: 572647085}
-  - {fileID: 916371979}
-  - {fileID: 916397937}
-  - {fileID: 2010231590}
-  - {fileID: 782713237}
+  - {fileID: 722091684}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -9521,7 +9550,7 @@ GameObject:
   - component: {fileID: 1477648727}
   - component: {fileID: 1477648728}
   m_Layer: 0
-  m_Name: GameObject
+  m_Name: Slice1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9533,12 +9562,12 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1477648726}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 137.3, y: 39.3, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 1117695729}
-  m_RootOrder: 5
+  m_Father: {fileID: 722091684}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1477648728
 MonoBehaviour:
@@ -13164,7 +13193,7 @@ GameObject:
   - component: {fileID: 2010231590}
   - component: {fileID: 2010231591}
   m_Layer: 0
-  m_Name: GameObject (4)
+  m_Name: Slice5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -13180,8 +13209,8 @@ Transform:
   m_LocalPosition: {x: 131.23, y: 43.81, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 1117695729}
-  m_RootOrder: 9
+  m_Father: {fileID: 722091684}
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2010231591
 MonoBehaviour:
