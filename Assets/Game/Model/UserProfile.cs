@@ -802,6 +802,7 @@ public class UserProfile : UserPersistenceSystem
 		#if UNITY_EDITOR
 		JsonFormatter fmt = new JsonFormatter();
 		Debug.Log("<color=cyan>SAVING USER PROFILE:</color> " + fmt.PrettyPrint(json.ToString()));
+		Debug.Log(json.ToString());
 		#endif
     }
 
