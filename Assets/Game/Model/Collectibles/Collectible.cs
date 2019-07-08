@@ -163,8 +163,8 @@ public abstract class Collectible : MonoBehaviour {
 		// If already collected, skip
 		if(m_state == State.COLLECTED) return;
 
-		// Only if player is alive!
-		if(InstanceManager.player != null && !InstanceManager.player.IsAlive()) {
+		// Only if player is alive! and not in intro movement
+		if(InstanceManager.player != null && (!InstanceManager.player.IsAlive() || InstanceManager.player.IsIntroMovement())) {
 			return;
 		}
 

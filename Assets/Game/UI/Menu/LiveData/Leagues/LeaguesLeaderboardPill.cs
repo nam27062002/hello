@@ -138,14 +138,18 @@ LeaguesLeaderboardPill : ScrollRectItem<LeaguesLeaderboardPillData> {
 
         // Build
         DefinitionNode skinDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, _data.record.build.skin);
-		string icon = IDragonData.DEFAULT_SKIN_ICON;
         if (skinDef != null) {
 
-            icon = skinDef.Get("icon");
+            string icon = skinDef.Get("icon");
+            m_dragonIconLoader.LoadAsync(icon);
 
+        } else
+        {
+            // Something failed, do not show any icon
+            m_dragonIconLoader.IsVisible = false;
         }
 
-        m_dragonIconLoader.LoadAsync(icon);
+
         m_levelText.text = StringUtils.FormatNumber(_data.record.build.level);
 
 		// Store last used data
