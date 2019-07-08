@@ -106,7 +106,7 @@ public class DragonPowerUp : MonoBehaviour {
 
 	void SetPowerUp( string powerUpSku, bool _fromPet )
 	{
-		DragonPlayer player = GetComponent<DragonPlayer>();
+		DragonPlayer player = InstanceManager.player;
 		DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, powerUpSku);
 
 		if ( def != null )

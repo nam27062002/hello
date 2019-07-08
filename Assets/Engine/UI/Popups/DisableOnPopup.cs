@@ -122,10 +122,11 @@ public class DisableOnPopup : MonoBehaviour, IBroadcastListener {
 	/// <param name="_popup">The popup that has been opened.</param>
 	private void OnPopupOpened(PopupController _popup) {
 		// If target popups was not manually defined, store current popup count as reference
+		// [AOC] By this point, the opened popup has already been added to the PopupManager.openedPopups list
 		if(m_refPopupCount < 0) {
-			m_refPopupCount = PopupManager.openPopupsCount;
+			m_refPopupCount = PopupManager.openPopupsCount - 1;	// [AOC] Excluding the one that has just been opened
 
-			// If this component belongs to a popup, increase ref amount to include parent popup if it's still not opened
+			// If this component belongs to a popup, don't count it!
 			PopupController parentPopup = GetComponentInParent<PopupController>();
 			if(parentPopup != null) {
 				// Don't if already counted
