@@ -455,4 +455,13 @@ public class Entity : IEntity, IBroadcastListener {
 	public static void SetGoldenModifier(bool _value) {
 		sm_goldenModifier = _value;
 	}
+
+	public static void RemovePowerUps()
+	{
+		m_powerUpSCMultiplier = 0;
+		m_powerUpScoreMultiplier = 0;
+		m_powerUpXpMultiplier = 0;
+		sm_goldenModifier = false;
+
+	}
 }

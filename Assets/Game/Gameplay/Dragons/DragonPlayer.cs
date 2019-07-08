@@ -319,6 +319,23 @@ public class DragonPlayer : MonoBehaviour, IBroadcastListener {
         m_form = Form.NORMAL;
 	}
 
+	public void RemovePowerUps()
+	{
+		m_healthBonus = 0;
+		SetHealthBonus( m_healthBonus );
+		m_energyBonus = 0;
+		SetBoostBonus( m_energyBonus );
+		
+		m_freeRevives = 0;
+		m_tierIncreaseBreak = 0;
+		m_mummyPowerStacks = 0;
+
+		m_shield.Clear();
+		m_shieldTimers.Clear();
+
+		m_dragonHeatlhBehaviour.RemovePowerUps();
+	}
+
 	void OnDestroy()
 	{
 		// Unsubscribe from external events

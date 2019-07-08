@@ -534,6 +534,14 @@ public class DragonEquip : MonoBehaviour {
 		}
 	}
 
+	public void UnequipAllPets()
+	{
+		for (int i = (int)Equipable.AttachPoint.Pet_1; i <= (int)Equipable.AttachPoint.Pet_5; i++)
+		{
+			EquipPet( "", i-(int)Equipable.AttachPoint.Pet_1 );
+		}
+	}
+
 	/// <summary>
 	/// Equip a single pet.
 	/// </summary>
