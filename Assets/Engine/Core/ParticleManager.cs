@@ -87,6 +87,13 @@ public class ParticleManager : UbiBCN.SingletonMonoBehaviour<ParticleManager> {
 		instance.__Clear();
 	}
 
+	/// <summary>
+	/// Will clear all unused particles on all pools.
+	/// </summary>
+	public static void ClearUnsued(){
+		instance.__ClearUnsued();
+	}
+
 
 
 	//---------------------------------------------------------------//
@@ -290,6 +297,16 @@ public class ParticleManager : UbiBCN.SingletonMonoBehaviour<ParticleManager> {
 		m_pools.Clear();
 		m_iterator.Clear();
 	}
+
+	private void __ClearUnsued() {
+		foreach(KeyValuePair<string, PoolContainer> pair in m_pools) {
+			PoolContainer pc = pair.Value;
+			if (pc.pool != null) {
+				pc.pool.ClearFreeInstances();
+			}
+		}
+	}
+
 
 	#region utils
 	/// <summary>
