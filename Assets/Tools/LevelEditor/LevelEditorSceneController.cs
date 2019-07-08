@@ -232,11 +232,11 @@ namespace LevelEditor {
 				startPos.z = 0f;
 				InstanceManager.player.transform.position = startPos;
 			} else {
-				// Put player in position and make it playable
-				InstanceManager.player.MoveToSpawnPoint(true);
-				if ( LevelEditor.settings.useIntro )
-				{
-					InstanceManager.player.StartIntroMovement( true );	
+				// Put player in position and make it playable				
+				if (LevelEditor.settings.useIntro) {
+					startPos = InstanceManager.player.StartIntroMovement(true);	
+				} else {
+					startPos = InstanceManager.player.MoveToSpawnPoint(true);
 				}
 			}
 			InstanceManager.player.playable = true;
