@@ -90,11 +90,13 @@ public class FogManager : MonoBehaviour, IBroadcastListener
 
 	float m_start;
 	float m_end;
+	// Texture to apply to the shader
 	Texture2D m_texture;
+	Color[] m_textureColors = new Color[FogAttributes.TEXTURE_SIZE];
 
 	float m_tmpStart;
 	float m_tmpEnd;
-	Texture2D m_tmpTexture;
+	Color[] m_tmpTexture = new Color[FogAttributes.TEXTURE_SIZE];
 	bool m_updateTmpTexture = false;
 
 	bool m_firstTime = true;
@@ -103,6 +105,7 @@ public class FogManager : MonoBehaviour, IBroadcastListener
 	float m_transitionTimer = 0;
 	FogAttributes m_lastSelectedAttributes;
 	FogAttributes m_selectedAttributes = null;
+	Color[] m_selectedTextureColors = new Color[FogAttributes.TEXTURE_SIZE];
 	FogArea m_lastSelectedArea = null;
 	bool m_active = false;
 	bool m_updateValues = true;
@@ -113,10 +116,13 @@ public class FogManager : MonoBehaviour, IBroadcastListener
 	private RenderTexture m_blitDestination;
 	private float m_blitLerpValue = 0;
 	bool m_updateBlitOriginTexture = false;
+
+
 	FogAttributes m_forcedAttributes = null;
 	bool m_forceUpdate = false;
 	bool m_usingFire = false;
 	bool m_wasUsingFire = false;
+
 
 	void Awake()
 	{
@@ -127,10 +133,6 @@ public class FogManager : MonoBehaviour, IBroadcastListener
 		m_texture = new Texture2D( FogAttributes.TEXTURE_SIZE,1, TextureFormat.RGBA32, false);
 		m_texture.filterMode = FilterMode.Bilinear;
 		m_texture.wrapMode = TextureWrapMode.Clamp;
-
-		m_tmpTexture = new Texture2D( FogAttributes.TEXTURE_SIZE,1, TextureFormat.RGBA32, false);
-		m_tmpTexture.filterMode = FilterMode.Bilinear;
-		m_tmpTexture.wrapMode = TextureWrapMode.Clamp;
 
 		m_blitDestination = new RenderTexture( FogAttributes.TEXTURE_SIZE, 1, 0);
 		m_blitDestination.filterMode = FilterMode.Bilinear;
@@ -143,7 +145,6 @@ public class FogManager : MonoBehaviour, IBroadcastListener
 		Shader s = Shader.Find("Hidden/FogBlend");
 		m_fogBlendMaterial = new Material(s);
 		m_fogBlendMaterial.SetTexture("_OriginalTex", m_blitOrigin);
-
 			// Register default attributes
 		CheckTextureAvailability( m_defaultAreaFog );
 
@@ -258,6 +259,7 @@ public class FogManager : MonoBehaviour, IBroadcastListener
 					}
 					m_wasUsingFire = true;
 					m_lastSelectedArea = selectedFogArea;
+					
 				}
 				else if ( m_activeFogAreaList.Count > 0)
 				{
@@ -291,10 +293,13 @@ public class FogManager : MonoBehaviour, IBroadcastListener
 
 					m_lastSelectedAttributes = m_selectedAttributes;
 					m_transitionTimer = m_transitionDuration = transitionDuration;
-
 					// Copy destination render texture to original texture
 					m_updateBlitOriginTexture = true;
 					m_updateTmpTexture = true;
+
+					// Update selected colors
+					for( int i = 0; i<FogAttributes.TEXTURE_SIZE; i++ )
+						m_selectedTextureColors[i] = m_selectedAttributes.texture.GetPixel(i,0);
 				}
 			}
 
@@ -305,7 +310,7 @@ public class FogManager : MonoBehaviour, IBroadcastListener
 					UpdateApplyMode();
 				}break;
 				case FogBlendMode.BLIT:
-				{
+				{					
 					UpdateBlitMode();
 				}break;
 			}
@@ -326,7 +331,7 @@ public class FogManager : MonoBehaviour, IBroadcastListener
 			if (m_updateTmpTexture)
 			{
 				for( int i = 0; i<FogAttributes.TEXTURE_SIZE; i++ )
-					m_tmpTexture.SetPixel(i, 0, m_texture.GetPixel(i,0));
+					m_tmpTexture[i] = m_texture.GetPixel(i,0);
 			}
 			if ( m_transitionTimer > 0 )
 			{
@@ -343,9 +348,10 @@ public class FogManager : MonoBehaviour, IBroadcastListener
 					m_end = Mathf.Lerp( m_tmpEnd, m_selectedAttributes.m_fogEnd, delta);
 					for( int i = 0; i<FogAttributes.TEXTURE_SIZE; i++ )
 					{
-						Color c = Color.Lerp( m_tmpTexture.GetPixel(i,0), m_selectedAttributes.texture.GetPixel(i,0), delta);
-						m_texture.SetPixel( i, 0, c);
+						m_textureColors[i] = Color.Lerp( m_tmpTexture[i], m_selectedTextureColors[i], delta);
+						
 					}
+					m_texture.SetPixels(m_textureColors);
 				}
 			}
 		}
@@ -367,10 +373,13 @@ public class FogManager : MonoBehaviour, IBroadcastListener
 		m_start = m_tmpStart = m_selectedAttributes.m_fogStart;
 		m_end = m_tmpEnd = m_selectedAttributes.m_fogEnd;
 		for( int i = 0; i<FogAttributes.TEXTURE_SIZE; i++ )
-			m_texture.SetPixel(i, 0, m_selectedAttributes.texture.GetPixel(i,0));
-		for( int i = 0; i<FogAttributes.TEXTURE_SIZE; i++ )
-			m_tmpTexture.SetPixel(i, 0, m_selectedAttributes.texture.GetPixel(i,0));
+		{
+			m_tmpTexture[i] = m_selectedAttributes.texture.GetPixel(i,0);
+			m_textureColors[i] = m_tmpTexture[i];
+		}
+		m_texture.SetPixels(m_textureColors);
 	}
+
 
 	void UpdateBlitMode()
 	{
@@ -537,6 +546,7 @@ public class FogManager : MonoBehaviour, IBroadcastListener
 		}
 		m_lastBlendMode = m_fogBlendMode;
 	}
+
 
 	void OnDrawGizmosSelected()
 	{
