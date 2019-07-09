@@ -9,11 +9,5 @@ public class SceneController : MonoBehaviour
 	void Start ()
     {
         ApplicationController.Instance.SetScene(m_scene);	
-	}
-	
-	// Update is called once per frame
-	void Update ()
-    {
-		
-	}
+	}		
 }

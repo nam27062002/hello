@@ -29,47 +29,32 @@ public class ApplicationController : Singleton<ApplicationController>
 
     void OnAddressablesInit()
     {
-        Debug.Log("OnAddressablesInit");
-        //LoadCubeAsync();
-    }
-
-    /*private void LoadCubeAsync()
-    {
-        AddressablesOp op = m_addressablesManager.LoadAssetAsync("UbiCube");
-        op.OnDone = OnLoadedCube;
-    }
-
-    private void OnLoadedCube(AddressablesOp op)
-    {
-        GameObject prefab = op.GetAsset<GameObject>();
-        if (prefab != null)
-        {
-            Instantiate(prefab);
-        }
-    }*/
+        Debug.Log("OnAddressablesInit");     
+    }    
 
     void Update()
     {
         m_addressablesManager.Update();
 
-        if (m_levelScenesAsyncOp == null)
+        switch (OpType)
         {
-            // Changes scene
-            if (Input.GetKeyDown(KeyCode.C))
-            {
-                LevelScenes_Switch();
-            }
+            case EOpType.None:
+                // Changes scenes
+                if (Input.GetKeyDown(KeyCode.C))
+                {
+                    LevelScenes_Switch();
+                }
+                else if (Input.GetKeyDown(KeyCode.I))
+                {
+                    LevelScenes_Instantiate();
+                }
+                break;            
         }
-        else if (m_levelScenesAsyncOp.isDone)
+        
+        if (m_levelScenesAsyncOp != null && m_levelScenesAsyncOp.isDone)
         {
-            m_levelScenesAsyncOp = null;
-
-            int sceneAsInt = (int)m_prevScene;
-            m_scene = (EScene)((sceneAsInt + 1) % SCENES_COUNT);
-
-            string currentSceneId = LevelScenes_GetSceneName(m_scene);
-            m_addressablesManager.LoadSceneAsync(currentSceneId);
-        }
+            LevelScenes_OnOpDone();            
+        }       
     }
 
     protected override void OnApplicationQuitExtended()
@@ -78,17 +63,75 @@ public class ApplicationController : Singleton<ApplicationController>
     }
 
     #region level_scenes
-    private AsyncOperation m_levelScenesAsyncOp;
+    private enum EOpType
+    {
+        None,
+        LoadingLoadingScene,
+        LoadingLevelScene,
+        InstantiatingScene
+    };
+
+    private EOpType OpType { get; set; }
+
+    private UbiAsyncOperation m_levelScenesAsyncOp;
 
     public void LevelScenes_Switch()
     {
         m_prevScene = m_scene;
-        m_levelScenesAsyncOp = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync("SC_Loading");        
+        AsyncOperation op = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync("SC_Loading");
+        m_levelScenesAsyncOp = new UbiUnityAsyncOperation(op);
+
+        OpType = EOpType.LoadingLoadingScene;
     }
 
     private string LevelScenes_GetSceneName(EScene scene)
     {
         return "SC_" + scene.ToString();
+    }
+
+    private string LevelScenes_GetPrefabName(EScene scene)
+    {
+        return "PF_" + scene.ToString();
+    }
+
+    private void LevelScenes_Instantiate()
+    {
+        string prefabName = LevelScenes_GetPrefabName(m_scene);
+        AddressablesOp op = m_addressablesManager.LoadAssetAsync(prefabName);
+        op.OnDone = LevelScenes_OnInstantiated;
+
+        m_levelScenesAsyncOp = op;
+        OpType = EOpType.InstantiatingScene;
+    }    
+
+    private void LevelScenes_OnInstantiated(AddressablesOp op)
+    {
+        GameObject prefab = op.GetAsset<GameObject>();
+        if (prefab != null)
+        {
+            Instantiate(prefab);
+        }
+    }
+
+    private void LevelScenes_OnOpDone()
+    {
+        switch (OpType)
+        {
+            case EOpType.LoadingLoadingScene:
+                OpType = EOpType.LoadingLevelScene;
+
+                int sceneAsInt = (int)m_prevScene;
+                m_scene = (EScene)((sceneAsInt + 1) % SCENES_COUNT);
+
+                string currentSceneId = LevelScenes_GetSceneName(m_scene);
+                m_levelScenesAsyncOp = m_addressablesManager.LoadSceneAsync(currentSceneId);
+                break;
+
+            default:
+                OpType = EOpType.None;
+                m_levelScenesAsyncOp = null;
+                break;            
+        }
     }
     #endregion
 
