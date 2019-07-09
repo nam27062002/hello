@@ -33,7 +33,7 @@ public class Entity : IEntity, IBroadcastListener {
 
 	protected Reward m_reward;
 	public Reward reward { get { return m_reward; }}
-	public override int score { get { return m_reward.score; } }
+	public override float score { get { return m_reward.score; } }
 
 	private float m_goldenChance = 0f;
 	public float goldenChance { get { return m_goldenChance; }}
@@ -421,7 +421,7 @@ public class Entity : IEntity, IBroadcastListener {
 	void ApplyPowerUpMultipliers()
 	{
 		m_reward.score = m_def.GetAsInt("rewardScore");
-		m_reward.score += Mathf.FloorToInt((m_reward.score * m_powerUpScoreMultiplier) / 100.0f);
+		m_reward.score += ((m_reward.score * m_powerUpScoreMultiplier) / 100.0f);
 
 		m_reward.coins = m_def.GetAsInt("rewardCoins");
 		m_reward.coins += ((m_reward.coins * m_powerUpSCMultiplier) / 100.0f);

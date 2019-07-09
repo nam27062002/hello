@@ -15,8 +15,8 @@ public class Gelato : Entity {
 	}
 
 	protected override void OnRewardCreated() {
-		m_reward.score = (int)(m_reward.score * m_scoreMultiplier);
-		m_reward.coins = (int)(m_reward.coins * m_coinsMultiplier);
-		m_reward.xp = (int)(m_reward.xp * m_xpMultiplier);
+		m_reward.score = (m_reward.score * m_scoreMultiplier);
+		m_reward.coins = (m_reward.coins * m_coinsMultiplier);
+		m_reward.xp = (m_reward.xp * m_xpMultiplier);
 	}
 }
