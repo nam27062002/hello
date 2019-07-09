@@ -75,9 +75,10 @@ public class DragonXPBar : MonoBehaviour {
 	[SerializeField] protected GameObject m_barSeparatorPrefab = null;
 	[SerializeField] protected RectTransform m_barSeparatorsParent = null;
 	[SerializeField] protected GameObject m_disguiseMarkerPrefab = null;
+    [SerializeField] protected UITooltip m_levelToolTip = null;
 
-	// Internal
-	protected DragonDataClassic m_dragonData = null;	// Last used dragon data
+    // Internal
+    protected DragonDataClassic m_dragonData = null;	// Last used dragon data
 	protected List<DragonXPBarSeparator> m_barSeparators = new List<DragonXPBarSeparator>();
 	protected List<DisguiseInfo> m_disguises = new List<DisguiseInfo>();
 	
@@ -88,8 +89,12 @@ public class DragonXPBar : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	virtual protected void Awake() {
-		// Create, initialize and instantiate a pool of bar separators
-		ResizeSeparatorsPool(SEPARATORS_POOL_SIZE);
+        // The bar has children prefabs just for edition purposes. Remove them all.
+        m_barSeparatorsParent.DestroyAllChildren(true);
+
+        // Create, initialize and instantiate a pool of bar separators
+        ResizeSeparatorsPool(SEPARATORS_POOL_SIZE);
+
 	}
 
 	/// <summary>
@@ -314,9 +319,13 @@ public class DragonXPBar : MonoBehaviour {
 					GameObject markerObj = (GameObject)GameObject.Instantiate(m_disguiseMarkerPrefab, markersParent, false);
 					markerObj.transform.SetAsLastSibling();	// Make sure it shows at the top
 					info.barMarker = markerObj.GetComponent<DragonXPBarSkinMarker>();
-					info.barMarker.skinSku = defList[i].sku;
+                    info.barMarker.skinSku = defList[i].sku;
 					info.barMarker.AttachToSlider(m_xpBar, info.delta);
-				} else {
+                    if (m_levelToolTip != null)
+                    {
+                        markerObj.GetComponent<UITooltipTrigger>().tooltip = m_levelToolTip;
+                    }
+                } else {
 					info.barMarker.skinSku = defList[i].sku;
 					info.barMarker.SetDelta(info.delta);
 					info.barMarker.gameObject.SetActive(true);
