@@ -309,8 +309,9 @@ public class DragonXPBar : MonoBehaviour {
 				// Initialize info
 				info.def = defList[i];
 
-				// Compute delta corresponding to this disguise unlock level
-				info.delta = Mathf.InverseLerp(0, _data.progression.maxLevel, unlockLevel);
+
+                // Compute delta corresponding to this disguise unlock level
+                info.delta = Mathf.InverseLerp(0, _data.progression.maxLevel, unlockLevel);
 				info.unlocked = (info.delta <= m_xpBar.normalizedValue);    // Use current var value to quickly determine initial state
 				info.unlocked |= UsersManager.currentUser.wardrobe.GetSkinState(info.def.sku) == Wardrobe.SkinState.OWNED;	// Also unlocked if previously owned (i.e. via offer pack)
 
@@ -318,8 +319,9 @@ public class DragonXPBar : MonoBehaviour {
 				if(info.barMarker == null) {
 					GameObject markerObj = (GameObject)GameObject.Instantiate(m_disguiseMarkerPrefab, markersParent, false);
 					markerObj.transform.SetAsLastSibling();	// Make sure it shows at the top
-					info.barMarker = markerObj.GetComponent<DragonXPBarSkinMarker>();
+                    info.barMarker = markerObj.GetComponent<DragonXPBarSkinMarker>();
                     info.barMarker.skinSku = defList[i].sku;
+                    info.barMarker.Definition = defList[i];
 					info.barMarker.AttachToSlider(m_xpBar, info.delta);
                     if (m_levelToolTip != null)
                     {
@@ -327,7 +329,8 @@ public class DragonXPBar : MonoBehaviour {
                     }
                 } else {
 					info.barMarker.skinSku = defList[i].sku;
-					info.barMarker.SetDelta(info.delta);
+                    info.barMarker.Definition = defList[i];
+                    info.barMarker.SetDelta(info.delta);
 					info.barMarker.gameObject.SetActive(true);
 				}
 			}
