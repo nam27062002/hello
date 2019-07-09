@@ -13,7 +13,7 @@ public class GelatoEditor : Editor {
 
 		do {
 			Debug.Log(p.name);
-			if (p.name == "m_sku" || p.name == "m_Script" || p.name == "m_hideNeedTierMessage" || p.name == "m_ObjectHideFlags") {
+			if (p.name == "m_Script" || p.name == "m_hideNeedTierMessage" || p.name == "m_ObjectHideFlags") {
 				// do nothing			
 			} else {
 				// Default
