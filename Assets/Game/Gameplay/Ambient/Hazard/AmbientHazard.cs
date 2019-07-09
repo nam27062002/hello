@@ -176,7 +176,8 @@ public class AmbientHazard : MonoBehaviour, IBroadcastListener {
         Broadcaster.RemoveListener(BroadcastEventType.GAME_AREA_EXIT, this);
         Broadcaster.RemoveListener(BroadcastEventType.GAME_ENDED, this);
 
-        EntityManager.instance.UnregisterAmbientHazard(this);
+        if ( EntityManager.instance != null )
+            EntityManager.instance.UnregisterAmbientHazard(this);
     }
 
     public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
