@@ -74,7 +74,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4724927180755098}
   - component: {fileID: 114852160868262876}
-  - component: {fileID: 114017590212296800}
+  - component: {fileID: 114906343188479878}
   - component: {fileID: 114888887093796134}
   - component: {fileID: 114286171497133230}
   m_Layer: 26
@@ -286,21 +286,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &114017590212296800
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1997435732470536}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1481a8fd1eb264508b749aceca994767, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_tags: 1024
-  m_sku: Canary01_Flock
-  m_hideNeedTierMessage: 0
-  m_dieOutsideFrustum: 1
 --- !u!114 &114088691920500752
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -697,3 +682,21 @@ MonoBehaviour:
     m_ashExceptions: []
     m_disableOnBurn: []
   m_onSpawnSound: 
+--- !u!114 &114906343188479878
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1997435732470536}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d16256bd347f54116aa2b0b7b4255142, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_tags: 1024
+  m_sku: BadJunk
+  m_hideNeedTierMessage: 0
+  m_dieOutsideFrustum: 1
+  m_scoreMultiplier: 2
+  m_coinsMultiplier: 2
+  m_xpMultiplier: 2

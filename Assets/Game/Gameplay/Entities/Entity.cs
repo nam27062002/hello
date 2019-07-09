@@ -10,7 +10,7 @@ public class Entity : IEntity, IBroadcastListener {
 	//-----------------------------------------------
 	// Exposed to inspector
 	[EntitySkuList]
-	[SerializeField] private string m_sku;
+	[SerializeField] protected string m_sku;
 	public override string sku { get { return m_sku; } }
 
 	[SerializeField] private bool m_hideNeedTierMessage = false;
@@ -31,7 +31,7 @@ public class Entity : IEntity, IBroadcastListener {
 	protected CircleArea2D m_bounds;
 	public override CircleArea2D circleArea { get{ return m_bounds; } }
 
-	private Reward m_reward;
+	protected Reward m_reward;
 	public Reward reward { get { return m_reward; }}
 	public override int score { get { return m_reward.score; } }
 
@@ -124,55 +124,57 @@ public class Entity : IEntity, IBroadcastListener {
     }
     
 
-	private void InitFromDef() {
+	protected void InitFromDef() {
 		// Get the definition
 		m_def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.ENTITIES, sku);
 
-		// Cache some frequently accessed values from the definition for faster access
-		// Reward
-		// m_reward.score = m_def.GetAsInt("rewardScore");
-		// m_reward.coins = m_def.GetAsInt("rewardCoins");
-		// m_reward.xp = m_def.GetAsFloat("rewardXp");
+		if (m_def != null) {
+			// Cache some frequently accessed values from the definition for faster access
+			// Reward
+			// m_reward.score = m_def.GetAsInt("rewardScore");
+			// m_reward.coins = m_def.GetAsInt("rewardCoins");
+			// m_reward.xp = m_def.GetAsFloat("rewardXp");
 
-		m_reward.pc = m_def.GetAsInt("rewardPC");
-		m_reward.health = m_def.GetAsFloat("rewardHealth");
-		m_reward.energy = m_def.GetAsFloat("rewardEnergy");
-		m_reward.fury = m_def.GetAsFloat("rewardFury", 0);
+			m_reward.pc = m_def.GetAsInt("rewardPC");
+			m_reward.health = m_def.GetAsFloat("rewardHealth");
+			m_reward.energy = m_def.GetAsFloat("rewardEnergy");
+			m_reward.fury = m_def.GetAsFloat("rewardFury", 0);
 
-		m_reward.origin = m_def.Get("sku");
-		m_reward.category = m_def.Get("category");
+			m_reward.origin = m_def.Get("sku");
+			m_reward.category = m_def.Get("category");
 
-        OnRewardCreated();
+			OnRewardCreated();
 
 
-        // Simple data
-        m_goldenChance = m_def.GetAsFloat("goldenChance");
-		if (sm_goldenModifier && m_goldenChance > 0)
-			m_goldenChance = 1f;
+			// Simple data
+			m_goldenChance = m_def.GetAsFloat("goldenChance");
+			if (sm_goldenModifier && m_goldenChance > 0)
+				m_goldenChance = 1f;
 
-		m_pcChance = m_def.GetAsFloat("pcChance");
+			m_pcChance = m_def.GetAsFloat("pcChance");
 
-		m_isBurnable = m_def.GetAsBool("isBurnable");
-		m_burnableFromTier = DragonTierGlobals.GetFromInt(m_def.GetAsInt("burnableFromTier"));
+			m_isBurnable = m_def.GetAsBool("isBurnable");
+			m_burnableFromTier = DragonTierGlobals.GetFromInt(m_def.GetAsInt("burnableFromTier"));
 
-		m_isEdible = m_def.GetAsBool("isEdible");
-		m_edibleFromTier = DragonTierGlobals.GetFromInt(m_def.GetAsInt("edibleFromTier"));
+			m_isEdible = m_def.GetAsBool("isEdible");
+			m_edibleFromTier = DragonTierGlobals.GetFromInt(m_def.GetAsInt("edibleFromTier"));
 
-		m_canBeGrabbed = m_def.GetAsBool("canBeGrabed", false);
-		m_grabFromTier = DragonTierGlobals.GetFromInt(m_def.GetAsInt("grabFromTier"));
+			m_canBeGrabbed = m_def.GetAsBool("canBeGrabed", false);
+			m_grabFromTier = DragonTierGlobals.GetFromInt(m_def.GetAsInt("grabFromTier"));
 
-		m_canBeLatchedOn = m_def.GetAsBool("canBeLatchedOn", false);
-		m_latchFromTier = DragonTierGlobals.GetFromInt(m_def.GetAsInt("latchOnFromTier"));
+			m_canBeLatchedOn = m_def.GetAsBool("canBeLatchedOn", false);
+			m_latchFromTier = DragonTierGlobals.GetFromInt(m_def.GetAsInt("latchOnFromTier"));
 
-        m_maxHealth = m_def.GetAsFloat("maxHealth", 1);
-        if (InstanceManager.player != null) {
-            m_maxHealth *= (1f + (m_def.GetAsFloat("healthScalePerDragonTier", 0f) * (int)InstanceManager.player.data.tier));
-        }
+			m_maxHealth = m_def.GetAsFloat("maxHealth", 1);
+			if (InstanceManager.player != null) {
+				m_maxHealth *= (1f + (m_def.GetAsFloat("healthScalePerDragonTier", 0f) * (int)InstanceManager.player.data.tier));
+			}
 
-        // Feedback data
-        m_feedbackData.InitFromDef(m_def);
+			// Feedback data
+			m_feedbackData.InitFromDef(m_def);
 
-		ApplyPowerUpMultipliers();
+			ApplyPowerUpMultipliers();
+		}
 	}
 	
 

@@ -32,6 +32,7 @@ public class PetGelatoSpawner : AbstractSpawner, IBroadcastListener  {
 	private int[] m_gelatoTypesToSpawn;
 
 	private Entity[] m_checkEntities = new Entity[50];
+	private DefinitionNode[] m_gelatoDefinitions = new DefinitionNode[50];
 	private Vector3[] m_gelatoPositions = new Vector3[50];
 	private Transform[] m_gelatoLockedInCage = new Transform[50];	
 	private bool[] m_gelatoGolden = new bool[50];
@@ -163,6 +164,9 @@ public class PetGelatoSpawner : AbstractSpawner, IBroadcastListener  {
 					
 					if (tierIndex < m_prefabNames.Length
 					&&  m_gelatoTypesToSpawn[tierIndex] < m_poolHandlers[tierIndex].pool.NumFreeObjects()) {
+
+						m_gelatoDefinitions[m_gelatosToSpawn] = entity.def;
+
 						if (entity.circleArea != null) {
 							m_gelatoPositions[m_gelatosToSpawn] = entity.circleArea.center;
 						} else {
@@ -244,7 +248,10 @@ public class PetGelatoSpawner : AbstractSpawner, IBroadcastListener  {
 	}
 
 	protected override void OnEntitySpawned(IEntity spawning, uint index, Vector3 originPos) {	   	
-        Transform t = spawning.transform;
+        Gelato gelato = spawning as Gelato;
+		gelato.SetSku(m_gelatoDefinitions[index].sku);
+
+		Transform t = spawning.transform;
         
 		t.position = m_gelatoPositions[index];
 		t.localScale = GameConstants.Vector3.one;
