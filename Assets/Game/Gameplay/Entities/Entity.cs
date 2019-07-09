@@ -130,23 +130,6 @@ public class Entity : IEntity, IBroadcastListener {
 
 		if (m_def != null) {
 			// Cache some frequently accessed values from the definition for faster access
-			// Reward
-			// m_reward.score = m_def.GetAsInt("rewardScore");
-			// m_reward.coins = m_def.GetAsInt("rewardCoins");
-			// m_reward.xp = m_def.GetAsFloat("rewardXp");
-
-			m_reward.pc = m_def.GetAsInt("rewardPC");
-			m_reward.health = m_def.GetAsFloat("rewardHealth");
-			m_reward.energy = m_def.GetAsFloat("rewardEnergy");
-			m_reward.fury = m_def.GetAsFloat("rewardFury", 0);
-
-			m_reward.origin = m_def.Get("sku");
-			m_reward.category = m_def.Get("category");
-
-			OnRewardCreated();
-
-
-			// Simple data
 			m_goldenChance = m_def.GetAsFloat("goldenChance");
 			if (sm_goldenModifier && m_goldenChance > 0)
 				m_goldenChance = 1f;
@@ -165,18 +148,31 @@ public class Entity : IEntity, IBroadcastListener {
 			m_canBeLatchedOn = m_def.GetAsBool("canBeLatchedOn", false);
 			m_latchFromTier = DragonTierGlobals.GetFromInt(m_def.GetAsInt("latchOnFromTier"));
 
-			m_maxHealth = m_def.GetAsFloat("maxHealth", 1);
-			if (InstanceManager.player != null) {
-				m_maxHealth *= (1f + (m_def.GetAsFloat("healthScalePerDragonTier", 0f) * (int)InstanceManager.player.data.tier));
-			}
+			BuildRewardFromDef(m_def);
 
 			// Feedback data
-			m_feedbackData.InitFromDef(m_def);
-
-			ApplyPowerUpMultipliers();
+			m_feedbackData.InitFromDef(m_def);			
 		}
 	}
-	
+
+	protected void BuildRewardFromDef(DefinitionNode _node) {
+		m_reward.pc = _node.GetAsInt("rewardPC");
+		m_reward.health = _node.GetAsFloat("rewardHealth");
+		m_reward.energy = _node.GetAsFloat("rewardEnergy");
+		m_reward.fury = _node.GetAsFloat("rewardFury", 0);
+
+		m_reward.origin = _node.Get("sku");
+		m_reward.category = _node.Get("category");
+
+		OnRewardCreated();
+
+		m_maxHealth = _node.GetAsFloat("maxHealth", 1);
+		if (InstanceManager.player != null) {
+			m_maxHealth *= (1f + (_node.GetAsFloat("healthScalePerDragonTier", 0f) * (int)InstanceManager.player.data.tier));
+		}
+
+		ApplyPowerUpMultipliers();
+	}	
 
 	override public void Spawn(ISpawner _spawner) {        
         base.Spawn(_spawner);
@@ -262,7 +258,7 @@ public class Entity : IEntity, IBroadcastListener {
     /// <param name="_burnt">Set to <c>true</c> if the cause of the death was fire - affects the reward.</param>
     public override Reward GetOnKillReward(DyingReason _reason) {
 		// Create a copy of the base rewards and tune them
-		Reward newReward = reward;	// Since it's a struct, this creates a new copy rather than being a reference
+		Reward newReward = m_reward;	// Since it's a struct, this creates a new copy rather than being a reference
 
 		// Give coins? True if the entity was golden or has been burnt
 		if(!m_isGolden && !InstanceManager.player.breathBehaviour.IsFuryOn()) {

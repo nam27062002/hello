@@ -10,9 +10,8 @@ public class Gelato : Entity {
 	[SerializeField] private float m_xpMultiplier = 2f;
 
 	//-----------------------------------------------------	
-	public void SetSku(string _sku) {
-		m_sku = _sku;
-		InitFromDef();
+	public void OverrideRewardFromDef(DefinitionNode _def) {
+		BuildRewardFromDef(_def);
 	}
 
 	protected override void OnRewardCreated() {

@@ -160,35 +160,37 @@ public class PetGelatoSpawner : AbstractSpawner, IBroadcastListener  {
 
 				if (!entity.HasTag(IEntity.Tag.Collectible)
 				&& (entity.IsEdible(m_tierCheck) || entity.CanBeHolded(m_tierCheck))) {
-					int tierIndex = (int)entity.edibleFromTier;
-					
-					if (tierIndex < m_prefabNames.Length
-					&&  m_gelatoTypesToSpawn[tierIndex] < m_poolHandlers[tierIndex].pool.NumFreeObjects()) {
-
-						m_gelatoDefinitions[m_gelatosToSpawn] = entity.def;
-
-						if (entity.circleArea != null) {
-							m_gelatoPositions[m_gelatosToSpawn] = entity.circleArea.center;
-						} else {
-							m_gelatoPositions[m_gelatosToSpawn] = entity.machine.position;
-						}
-
-						if (entity.machine.GetSignal(Signals.Type.LockedInCage)) {
-							m_gelatoLockedInCage[m_gelatosToSpawn] = entity.machine.transform.parent;
-						} else {
-							m_gelatoLockedInCage[m_gelatosToSpawn] = null;
-						}
-
-						m_gelatoGolden[m_gelatosToSpawn] = entity.isGolden;
-
-						m_indexToGelato[m_gelatosToSpawn] = tierIndex;
+					if (!entity.machine.IsDying() && !entity.machine.IsDead()) {
+						int tierIndex = (int)entity.edibleFromTier;
 						
-						m_onSpawnEffect.Spawn(m_gelatoPositions[m_gelatosToSpawn]);
+						if (tierIndex < m_prefabNames.Length
+						&&  m_gelatoTypesToSpawn[tierIndex] < m_poolHandlers[tierIndex].pool.NumFreeObjects()) {
 
-						entity.Disable(true);
+							m_gelatoDefinitions[m_gelatosToSpawn] = entity.def;
 
-						m_gelatosToSpawn++;
-						m_gelatoTypesToSpawn[tierIndex]++;
+							if (entity.circleArea != null) {
+								m_gelatoPositions[m_gelatosToSpawn] = entity.circleArea.center;
+							} else {
+								m_gelatoPositions[m_gelatosToSpawn] = entity.machine.position;
+							}
+
+							if (entity.machine.GetSignal(Signals.Type.LockedInCage)) {
+								m_gelatoLockedInCage[m_gelatosToSpawn] = entity.machine.transform.parent;
+							} else {
+								m_gelatoLockedInCage[m_gelatosToSpawn] = null;
+							}
+
+							m_gelatoGolden[m_gelatosToSpawn] = entity.isGolden;
+
+							m_indexToGelato[m_gelatosToSpawn] = tierIndex;
+							
+							m_onSpawnEffect.Spawn(m_gelatoPositions[m_gelatosToSpawn]);
+
+							entity.Disable(true);
+
+							m_gelatosToSpawn++;
+							m_gelatoTypesToSpawn[tierIndex]++;
+						}
 					}
 				}				
 			}
@@ -249,7 +251,7 @@ public class PetGelatoSpawner : AbstractSpawner, IBroadcastListener  {
 
 	protected override void OnEntitySpawned(IEntity spawning, uint index, Vector3 originPos) {	   	
         Gelato gelato = spawning as Gelato;
-		gelato.SetSku(m_gelatoDefinitions[index].sku);
+		gelato.OverrideRewardFromDef(m_gelatoDefinitions[index]);
 
 		Transform t = spawning.transform;
         
