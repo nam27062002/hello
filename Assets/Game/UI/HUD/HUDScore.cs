@@ -65,15 +65,19 @@ public class HUDScore : HudWidget {
         return RewardManager.score;
     }
 
-    //------------------------------------------------------------------//
-    // CALLBACKS														//
-    //------------------------------------------------------------------//
-    /// <summary>
-    /// A reward has been applied, show feedback for it.
-    /// </summary>
-    /// <param name="_reward">The reward that has been applied.</param>
-    /// <param name="_entity">The entity that triggered the reward. Can be null.</param>
-    private void OnRewardApplied(Reward _reward, Transform _entity) {
+	protected override float GetMinimumAnimInterval() {
+		return 0.25f;
+	}
+
+	//------------------------------------------------------------------//
+	// CALLBACKS														//
+	//------------------------------------------------------------------//
+	/// <summary>
+	/// A reward has been applied, show feedback for it.
+	/// </summary>
+	/// <param name="_reward">The reward that has been applied.</param>
+	/// <param name="_entity">The entity that triggered the reward. Can be null.</param>
+	private void OnRewardApplied(Reward _reward, Transform _entity) {
 		// We only care about score rewards
 		if(_reward.score > 0) {
             UpdateValue(GetValue(), true);            
