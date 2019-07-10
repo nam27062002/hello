@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class HorizontalMotion_v2 : MonoBehaviour, ISpawnable {
+public class HorizontalMotion_v2 : ISpawnable {
 
 	public static float DEFAULT_AMPLITUDE { get { return 2f; } }
 
@@ -20,12 +20,12 @@ public class HorizontalMotion_v2 : MonoBehaviour, ISpawnable {
 	}
 
 
-	public void Spawn(ISpawner _spawner) {
+	override public void Spawn(ISpawner _spawner) {
 		m_time = 0f;
 		m_originalPostion = transform.position;
 	}
 
-	public void CustomUpdate() {}
+	override public void CustomUpdate() {}
 
 
 	// Update is called once per frame
