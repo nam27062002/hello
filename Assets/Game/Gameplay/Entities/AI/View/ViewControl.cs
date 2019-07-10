@@ -123,12 +123,16 @@ public class ViewControl : IViewControl, IBroadcastListener {
 
 
 	//-----------------------------------------------
+	[SerializeField]
 	protected Entity m_entity;
+	[SerializeField]
 	protected Animator m_animator;
 	protected float m_animatorSpeed;
+	[SerializeField]
 	protected bool m_isAnimatorAvailable;
 	protected float m_disableAnimatorTimer;
 
+	[SerializeField]
 	private Renderer[] m_renderers;
     private List<Material[]> m_rendererMaterials;
 
@@ -172,11 +176,16 @@ public class ViewControl : IViewControl, IBroadcastListener {
 	private float m_currentBlendX;
 	private float m_currentBlendY;
 
+	[SerializeField]
 	private bool[] m_specialAnimations;
+	[SerializeField]
 	private int m_animA_Hash;
+	[SerializeField]
 	private int m_animB_Hash;
+	[SerializeField]
 	private int m_animC_Hash;
 
+	[SerializeField]
 	protected PreyAnimationEvents m_animEvents;
 	override public PreyAnimationEvents animationEvents { get { return m_animEvents; } }
 
@@ -207,10 +216,12 @@ public class ViewControl : IViewControl, IBroadcastListener {
 
 
 
+	[SerializeField]
     private Transform m_transform;
 
 	private ulong m_id;
 	private Transform m_viewManagerTransform;
+	[SerializeField]
 	private Transform m_view;
 	// local backup
 	private Vector3 m_viewPosition;
@@ -235,10 +246,6 @@ public class ViewControl : IViewControl, IBroadcastListener {
         if (sm_goldenInloveMaterial == null) sm_goldenInloveMaterial = new Material(Resources.Load("Game/Materials/NPC_GoldenInlove") as Material);
 		//---------------------------- 
 
-		m_entity = GetComponent<Entity>();
-		m_transform = transform;
-		m_view = m_transform.FindObjectRecursive("view").transform;
-		m_animator = m_view.GetComponent<Animator>();
 		if (m_animator != null) {
 			m_isAnimatorAvailable = true;
 			m_animator.logWarnings = false;
@@ -250,7 +257,7 @@ public class ViewControl : IViewControl, IBroadcastListener {
 			m_animatorCullingMode = AnimatorCullingMode.CullCompletely;
 		}
 
-		m_animEvents = m_transform.FindComponentRecursive<PreyAnimationEvents>();
+		
 		if (m_animEvents != null) {
 			m_animEvents.onAttackStart += animEventsOnAttackStart;
 			m_animEvents.onAttackEnd += animEventsOnAttackEnd;
@@ -263,7 +270,7 @@ public class ViewControl : IViewControl, IBroadcastListener {
 		m_materialsFrozen = new Dictionary<int, List<Material>>();
         m_materialsInlove = new Dictionary<int, List<Material>>();
 		m_materialList = new List<Material>();
-		m_renderers = GetComponentsInChildren<Renderer>();
+		
         m_rendererMaterials = new List<Material[]>();
 
         m_vertexCount = 0;
@@ -343,10 +350,7 @@ public class ViewControl : IViewControl, IBroadcastListener {
 			m_useFrozenParticle = false;
 		}
 
-		m_specialAnimations = new bool[(int)SpecialAnims.Count];
-		m_animA_Hash = UnityEngine.Animator.StringToHash(m_animA);
-		m_animB_Hash = UnityEngine.Animator.StringToHash(m_animB);
-		m_animC_Hash = UnityEngine.Animator.StringToHash(m_animC);
+		
 
 		m_fireParticles = new Transform[Mathf.Max(1, m_firePoints.Length)];
 		m_fireParticlesParents = new Transform[m_fireParticles.Length];
@@ -380,6 +384,22 @@ public class ViewControl : IViewControl, IBroadcastListener {
 		SentViewToManager();
 		#endif
     }
+
+	[ContextMenu("Get References")]
+	public void GetReferences()
+	{
+		m_entity = GetComponent<Entity>();
+		m_transform = transform;
+		m_view = m_transform.FindObjectRecursive("view").transform;
+		m_animator = m_view.GetComponent<Animator>();
+		m_animEvents = m_transform.FindComponentRecursive<PreyAnimationEvents>();
+		m_renderers = GetComponentsInChildren<Renderer>();
+
+		m_specialAnimations = new bool[(int)SpecialAnims.Count];
+		m_animA_Hash = UnityEngine.Animator.StringToHash(m_animA);
+		m_animB_Hash = UnityEngine.Animator.StringToHash(m_animB);
+		m_animC_Hash = UnityEngine.Animator.StringToHash(m_animC);
+	}
 
 	void SentViewToManager() {
 		if (m_isAnimatorAvailable) {
