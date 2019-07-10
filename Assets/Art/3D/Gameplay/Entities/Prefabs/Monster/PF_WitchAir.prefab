@@ -1402,6 +1402,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_tags: 128
+  m_otherSpawnables:
+  - {fileID: 114018133616288074}
+  - {fileID: 11485536}
+  - {fileID: 11483728}
+  m_otherSpawnablesCount: 3
+  m_pilot: {fileID: 11485536}
+  m_machine: {fileID: 114018133616288074}
+  m_viewControl: {fileID: 11483728}
+  m_equip: {fileID: 0}
   m_sku: Witch
   m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1
@@ -1657,6 +1666,7 @@ MonoBehaviour:
   m_energy: 2
   m_energyDrainSec: 1
   m_energyRecoverSec: 0.2
+  m_machine: {fileID: 0}
   m_brainResource: {fileID: 11400000, guid: 51430fe07f0e141f99deacb67d7c126c, type: 2}
   m_railSeparation:
     min: 0.5

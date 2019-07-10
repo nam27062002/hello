@@ -478,6 +478,7 @@ MonoBehaviour:
   m_energy: 10
   m_energyDrainSec: 1
   m_energyRecoverSec: 1
+  m_machine: {fileID: 0}
   m_brainResource: {fileID: 11400000, guid: 49187d524b36743a7ba28d0b7c3542f6, type: 2}
   m_railSeparation:
     min: 0.5
@@ -516,6 +517,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_tags: 16384
+  m_otherSpawnables:
+  - {fileID: 114502869521405126}
+  - {fileID: 114000011655322506}
+  - {fileID: 114000011197873700}
+  m_otherSpawnablesCount: 3
+  m_pilot: {fileID: 114000011655322506}
+  m_machine: {fileID: 114502869521405126}
+  m_viewControl: {fileID: 114000011197873700}
+  m_equip: {fileID: 0}
   m_sku: Fish02_Generic
   m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1

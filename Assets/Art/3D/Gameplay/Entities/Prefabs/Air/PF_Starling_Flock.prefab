@@ -472,6 +472,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_tags: 6
+  m_otherSpawnables:
+  - {fileID: 114357914599739360}
+  - {fileID: 11443674}
+  - {fileID: 11468462}
+  m_otherSpawnablesCount: 3
+  m_pilot: {fileID: 11443674}
+  m_machine: {fileID: 114357914599739360}
+  m_viewControl: {fileID: 11468462}
+  m_equip: {fileID: 0}
   m_sku: Starling_Flock
   m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1
@@ -504,6 +513,7 @@ MonoBehaviour:
   m_energy: 5
   m_energyDrainSec: 2.5
   m_energyRecoverSec: 0.2
+  m_machine: {fileID: 0}
   m_brainResource: {fileID: 11400000, guid: 0880f58945d004e4a9334a99cdfb0b84, type: 2}
   m_railSeparation:
     min: 0.5

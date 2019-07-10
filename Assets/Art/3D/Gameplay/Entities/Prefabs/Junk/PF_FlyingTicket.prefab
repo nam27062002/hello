@@ -192,6 +192,9 @@ MonoBehaviour:
   m_animA: 
   m_animB: 
   m_animC: 
+  m_useFreezeParticle: 0
+  m_freezeParticleScale: 1
+  m_useMoveAnimInLove: 0
   m_exclamationTransform: {fileID: 0}
   m_speedToWaterSplash: 0
   m_waterSplashParticle:
@@ -446,6 +449,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_tags: 1024
+  m_otherSpawnables:
+  - {fileID: 114921518987072694}
+  - {fileID: 114898857369252430}
+  - {fileID: 114400225865560770}
+  m_otherSpawnablesCount: 3
+  m_pilot: {fileID: 114921518987072694}
+  m_machine: {fileID: 114898857369252430}
+  m_viewControl: {fileID: 114400225865560770}
+  m_equip: {fileID: 0}
   m_sku: FlyingTicket
   m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1
@@ -518,6 +530,7 @@ MonoBehaviour:
     m_mass: 5
     m_defaultUpVector: 0
     m_orientationSpeed: 120
+    m_useAngularVelocity: 0
     m_dragonStyleRotation: 0
     m_faceDirection: 1
     m_rollRotation: 1
@@ -558,6 +571,7 @@ MonoBehaviour:
   m_energy: 20
   m_energyDrainSec: 0.75
   m_energyRecoverSec: 0.5
+  m_machine: {fileID: 0}
   m_brainResource: {fileID: 11400000, guid: fcba6844efb2f4ff6b18023d9b2856d4, type: 2}
   m_railSeparation:
     min: 0.5

@@ -1276,6 +1276,7 @@ MonoBehaviour:
   m_energy: 10
   m_energyDrainSec: 1
   m_energyRecoverSec: 1
+  m_machine: {fileID: 0}
   m_brainResource: {fileID: 11400000, guid: 2973e0dff3bca4eeaa41a566097da044, type: 2}
   m_railSeparation:
     min: 0.5
@@ -1326,6 +1327,7 @@ MonoBehaviour:
     m_mass: 100
     m_defaultUpVector: 0
     m_orientationSpeed: 20
+    m_useAngularVelocity: 0
     m_dragonStyleRotation: 0
     m_faceDirection: 1
     m_rollRotation: 1
@@ -1348,7 +1350,9 @@ MonoBehaviour:
       needBoost: 1
     - count: 1
       needBoost: 0
-    m_keyList: 0000000001000000020000000300000004000000
+    - count: 1
+      needBoost: 0
+    m_keyList: 000000000100000002000000030000000400000005000000
   m_ground:
   - {fileID: 65360551459491276}
   - {fileID: 65921364670197034}
@@ -1659,6 +1663,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_tags: 64
+  m_otherSpawnables:
+  - {fileID: 114198291991142778}
+  - {fileID: 114256234119139888}
+  - {fileID: 114474965724746028}
+  m_otherSpawnablesCount: 3
+  m_pilot: {fileID: 114198291991142778}
+  m_machine: {fileID: 114256234119139888}
+  m_viewControl: {fileID: 114474965724746028}
+  m_equip: {fileID: 0}
   m_sku: GoblinBoat
   m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1

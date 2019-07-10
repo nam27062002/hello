@@ -386,6 +386,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_tags: 32
+  m_otherSpawnables:
+  - {fileID: 114000013417668926}
+  - {fileID: 114518787568215428}
+  - {fileID: 114000013177032072}
+  m_otherSpawnablesCount: 3
+  m_pilot: {fileID: 114000013417668926}
+  m_machine: {fileID: 114518787568215428}
+  m_viewControl: {fileID: 114000013177032072}
+  m_equip: {fileID: 0}
   m_sku: RichMan
   m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1
@@ -671,6 +680,7 @@ MonoBehaviour:
   m_energy: 10
   m_energyDrainSec: 1
   m_energyRecoverSec: 1
+  m_machine: {fileID: 0}
   m_brainResource: {fileID: 11400000, guid: 07aa01537e9ca4a1989b4cc7ba3be1cd, type: 2}
   m_railSeparation:
     min: 1.5
@@ -747,6 +757,7 @@ MonoBehaviour:
     m_mass: 2.5
     m_defaultUpVector: 0
     m_orientationSpeed: 230
+    m_useAngularVelocity: 0
     m_faceDirection: 0
     m_limitHorizontalRotation: 0
     m_faceLeftAngle: -90

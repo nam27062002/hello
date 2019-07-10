@@ -789,6 +789,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_tags: 16
+  m_otherSpawnables:
+  - {fileID: 114995346237751618}
+  - {fileID: 114977868653219834}
+  - {fileID: 114939957777588980}
+  m_otherSpawnablesCount: 3
+  m_pilot: {fileID: 114995346237751618}
+  m_machine: {fileID: 114977868653219834}
+  m_viewControl: {fileID: 114939957777588980}
+  m_equip: {fileID: 0}
   m_sku: Miner
   m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1
@@ -1085,6 +1094,7 @@ MonoBehaviour:
     m_mass: 2.5
     m_defaultUpVector: 0
     m_orientationSpeed: 120
+    m_useAngularVelocity: 0
     m_faceDirection: 0
     m_limitHorizontalRotation: 0
     m_faceLeftAngle: -90
@@ -1104,6 +1114,7 @@ MonoBehaviour:
   m_energy: 10
   m_energyDrainSec: 1
   m_energyRecoverSec: 1
+  m_machine: {fileID: 0}
   m_brainResource: {fileID: 11400000, guid: af593a7751e074e42b7091f92be97d92, type: 2}
   m_railSeparation:
     min: 2

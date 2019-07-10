@@ -472,6 +472,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_tags: 256
+  m_otherSpawnables:
+  - {fileID: 114633210379111216}
+  - {fileID: 114155644437042880}
+  - {fileID: 114772094923774810}
+  m_otherSpawnablesCount: 3
+  m_pilot: {fileID: 114772094923774810}
+  m_machine: {fileID: 114633210379111216}
+  m_viewControl: {fileID: 114155644437042880}
+  m_equip: {fileID: 0}
   m_sku: MineMedium
   m_hideNeedTierMessage: 1
   m_dieOutsideFrustum: 1
@@ -526,6 +535,7 @@ MonoBehaviour:
   m_energy: 10
   m_energyDrainSec: 1
   m_energyRecoverSec: 1
+  m_machine: {fileID: 0}
   m_brainResource: {fileID: 11400000, guid: 01e097987dda34dae88639be166bccba, type: 2}
   m_railSeparation:
     min: 0.5

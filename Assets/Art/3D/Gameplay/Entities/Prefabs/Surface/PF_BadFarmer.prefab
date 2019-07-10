@@ -65,6 +65,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_tags: 32
+  m_otherSpawnables:
+  - {fileID: 11498554}
+  - {fileID: 114367530730793688}
+  - {fileID: 11470958}
+  m_otherSpawnablesCount: 3
+  m_pilot: {fileID: 11498554}
+  m_machine: {fileID: 114367530730793688}
+  m_viewControl: {fileID: 11470958}
+  m_equip: {fileID: 0}
   m_sku: BadFarmer
   m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1
@@ -320,6 +329,7 @@ MonoBehaviour:
   m_energy: 10
   m_energyDrainSec: 1
   m_energyRecoverSec: 1
+  m_machine: {fileID: 0}
   m_brainResource: {fileID: 11400000, guid: 1bc6a6f8f3bad4cb59a9ab4625e5fd20, type: 2}
   m_railSeparation:
     min: 2
@@ -829,6 +839,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 32ee45223b4af4374bf6c562470c1498, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_activation: 0
+  m_damage: 1
   m_timeBetweenHits: 0.5
   m_damageType: 0
   m_knockback: 0

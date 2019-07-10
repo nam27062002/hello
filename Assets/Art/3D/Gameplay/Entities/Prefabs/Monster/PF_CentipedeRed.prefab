@@ -495,6 +495,7 @@ MonoBehaviour:
   m_energy: 10
   m_energyDrainSec: 1
   m_energyRecoverSec: 1
+  m_machine: {fileID: 0}
   m_brainResource: {fileID: 11400000, guid: 76679fb054b184b1ba79b044aaf7c2d5, type: 2}
   m_railSeparation:
     min: 2
@@ -519,6 +520,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_tags: 8192
+  m_otherSpawnables:
+  - {fileID: 114546924173360704}
+  - {fileID: 114936245893518294}
+  - {fileID: 114029562522687476}
+  m_otherSpawnablesCount: 3
+  m_pilot: {fileID: 114546924173360704}
+  m_machine: {fileID: 114936245893518294}
+  m_viewControl: {fileID: 114029562522687476}
+  m_equip: {fileID: 0}
   m_sku: CentipedeRed
   m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1
@@ -649,6 +659,7 @@ MonoBehaviour:
     m_mass: 25
     m_defaultUpVector: 0
     m_orientationSpeed: 80
+    m_useAngularVelocity: 0
     m_limitHorizontalRotation: 0
     m_faceLeftAngle: -90
     m_faceRightAngle: 90

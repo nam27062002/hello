@@ -49,6 +49,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_tags: 2
+  m_otherSpawnables:
+  - {fileID: 114524764969975804}
+  - {fileID: 114148115676174714}
+  - {fileID: 11485410}
+  m_otherSpawnablesCount: 3
+  m_pilot: {fileID: 114524764969975804}
+  m_machine: {fileID: 114148115676174714}
+  m_viewControl: {fileID: 11485410}
+  m_equip: {fileID: 0}
   m_sku: Rat
   m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1
@@ -1301,6 +1310,7 @@ MonoBehaviour:
     m_mass: 1
     m_defaultUpVector: 0
     m_orientationSpeed: 360
+    m_useAngularVelocity: 0
     m_limitHorizontalRotation: 0
     m_faceLeftAngle: -90
     m_faceRightAngle: 90
@@ -1349,6 +1359,7 @@ MonoBehaviour:
   m_energy: 10
   m_energyDrainSec: 1
   m_energyRecoverSec: 1
+  m_machine: {fileID: 0}
   m_brainResource: {fileID: 11400000, guid: 538eb56e133744a4aa09733374f137e1, type: 2}
   m_railSeparation:
     min: 0.5

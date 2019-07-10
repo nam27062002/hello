@@ -993,6 +993,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_tags: 2
+  m_otherSpawnables:
+  - {fileID: 11481650}
+  - {fileID: 114595925673888788}
+  - {fileID: 11485410}
+  m_otherSpawnablesCount: 3
+  m_pilot: {fileID: 11481650}
+  m_machine: {fileID: 114595925673888788}
+  m_viewControl: {fileID: 11485410}
+  m_equip: {fileID: 0}
   m_sku: Cow
   m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1
@@ -1011,6 +1020,7 @@ MonoBehaviour:
   m_energy: 10
   m_energyDrainSec: 1
   m_energyRecoverSec: 1
+  m_machine: {fileID: 0}
   m_brainResource: {fileID: 11400000, guid: af593a7751e074e42b7091f92be97d92, type: 2}
   m_railSeparation:
     min: 2
@@ -1432,6 +1442,7 @@ MonoBehaviour:
     m_mass: 2.5
     m_defaultUpVector: 0
     m_orientationSpeed: 150
+    m_useAngularVelocity: 0
     m_faceDirection: 0
     m_limitHorizontalRotation: 0
     m_faceLeftAngle: -90

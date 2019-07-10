@@ -444,6 +444,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_tags: 6
+  m_otherSpawnables:
+  - {fileID: 114367933387858878}
+  - {fileID: 11464010}
+  - {fileID: 11415034}
+  m_otherSpawnablesCount: 3
+  m_pilot: {fileID: 11464010}
+  m_machine: {fileID: 114367933387858878}
+  m_viewControl: {fileID: 11415034}
+  m_equip: {fileID: 0}
   m_sku: Canary02_Flock
   m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1
@@ -713,6 +722,7 @@ MonoBehaviour:
   m_energy: 2
   m_energyDrainSec: 1.5
   m_energyRecoverSec: 0.1
+  m_machine: {fileID: 0}
   m_brainResource: {fileID: 11400000, guid: 35a662e89e7a340ab9f035ee4612930b, type: 2}
   m_railSeparation:
     min: 0.5

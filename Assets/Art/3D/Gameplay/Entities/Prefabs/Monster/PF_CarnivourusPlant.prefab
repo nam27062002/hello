@@ -533,6 +533,7 @@ MonoBehaviour:
   m_energy: 0
   m_energyDrainSec: 0
   m_energyRecoverSec: 0
+  m_machine: {fileID: 0}
   m_brainResource: {fileID: 11400000, guid: 047d83fe3da8b43e9bf127fbfb36fc3a, type: 2}
   m_railSeparation:
     min: 0
@@ -567,6 +568,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 32ee45223b4af4374bf6c562470c1498, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_activation: 0
+  m_damage: 1
   m_timeBetweenHits: 0.5
   m_damageType: 0
   m_knockback: 1
@@ -634,6 +637,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_tags: 40960
+  m_otherSpawnables:
+  - {fileID: 114321448773090644}
+  - {fileID: 114558533144900826}
+  - {fileID: 114753451066023294}
+  m_otherSpawnablesCount: 3
+  m_pilot: {fileID: 114321448773090644}
+  m_machine: {fileID: 114558533144900826}
+  m_viewControl: {fileID: 114753451066023294}
+  m_equip: {fileID: 0}
   m_sku: carnivorousPlant
   m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1

@@ -175,6 +175,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_tags: 0
+  m_otherSpawnables:
+  - {fileID: 114543426749591474}
+  - {fileID: 114110473117823166}
+  - {fileID: 114933889436016548}
+  m_otherSpawnablesCount: 3
+  m_pilot: {fileID: 114543426749591474}
+  m_machine: {fileID: 114110473117823166}
+  m_viewControl: {fileID: 114933889436016548}
+  m_equip: {fileID: 0}
 --- !u!114 &114543426749591474
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -190,6 +199,7 @@ MonoBehaviour:
   m_energy: 10
   m_energyDrainSec: 1
   m_energyRecoverSec: 1
+  m_machine: {fileID: 0}
   m_brainResource: {fileID: 11400000, guid: 17be5771a8e654a079d3db7f077859e6, type: 2}
   m_railSeparation:
     min: 0.5

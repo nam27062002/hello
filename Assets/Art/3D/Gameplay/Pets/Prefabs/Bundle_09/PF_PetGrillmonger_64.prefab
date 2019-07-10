@@ -210,6 +210,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_tags: 0
+  m_otherSpawnables:
+  - {fileID: 114831078634976046}
+  - {fileID: 114722637523472458}
+  - {fileID: 114417972561622340}
+  m_otherSpawnablesCount: 3
+  m_pilot: {fileID: 114831078634976046}
+  m_machine: {fileID: 114722637523472458}
+  m_viewControl: {fileID: 114417972561622340}
+  m_equip: {fileID: 0}
   m_sku: pet_64
 --- !u!114 &114417972561622340
 MonoBehaviour:
@@ -723,6 +732,7 @@ MonoBehaviour:
   m_energy: 10
   m_energyDrainSec: 1
   m_energyRecoverSec: 1
+  m_machine: {fileID: 0}
   m_brainResource: {fileID: 11400000, guid: 99d05253409184a5d8b186d72eb1ec30, type: 2}
   m_railSeparation:
     min: 0.5

@@ -659,6 +659,7 @@ MonoBehaviour:
   m_energy: 20
   m_energyDrainSec: 1.25
   m_energyRecoverSec: 1
+  m_machine: {fileID: 0}
   m_brainResource: {fileID: 11400000, guid: 8b5af2942e113474ab478d8d8fe9e787, type: 2}
   m_railSeparation:
     min: 0.5
@@ -1079,6 +1080,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_tags: 16384
+  m_otherSpawnables:
+  - {fileID: 114297654000619600}
+  - {fileID: 114762415619802314}
+  - {fileID: 114302170369657314}
+  - {fileID: 114290380252968346}
+  m_otherSpawnablesCount: 4
+  m_pilot: {fileID: 114297654000619600}
+  m_machine: {fileID: 114762415619802314}
+  m_viewControl: {fileID: 114302170369657314}
+  m_equip: {fileID: 0}
   m_sku: Shark
   m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1

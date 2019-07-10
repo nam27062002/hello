@@ -124,6 +124,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_tags: 32
+  m_otherSpawnables:
+  - {fileID: 11498554}
+  - {fileID: 114505410760987206}
+  - {fileID: 11470958}
+  m_otherSpawnablesCount: 3
+  m_pilot: {fileID: 11498554}
+  m_machine: {fileID: 114505410760987206}
+  m_viewControl: {fileID: 11470958}
+  m_equip: {fileID: 0}
   m_sku: Soldier
   m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1
@@ -375,6 +384,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 32ee45223b4af4374bf6c562470c1498, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_activation: 0
+  m_damage: 1
   m_timeBetweenHits: 0.5
   m_damageType: 0
   m_knockback: 0
@@ -396,6 +407,7 @@ MonoBehaviour:
   m_energy: 10
   m_energyDrainSec: 1
   m_energyRecoverSec: 1
+  m_machine: {fileID: 0}
   m_brainResource: {fileID: 11400000, guid: c7b0b12a6b3f947b6b1d291d6fea96e5, type: 2}
   m_railSeparation:
     min: 2
@@ -1587,6 +1599,7 @@ MonoBehaviour:
     m_mass: 2.5
     m_defaultUpVector: 0
     m_orientationSpeed: 230
+    m_useAngularVelocity: 0
     m_faceDirection: 0
     m_limitHorizontalRotation: 0
     m_faceLeftAngle: -90

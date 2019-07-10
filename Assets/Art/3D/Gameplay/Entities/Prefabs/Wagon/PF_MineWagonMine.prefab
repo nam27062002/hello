@@ -487,6 +487,9 @@ MonoBehaviour:
   m_animA: 
   m_animB: 
   m_animC: 
+  m_useFreezeParticle: 0
+  m_freezeParticleScale: 1
+  m_useMoveAnimInLove: 0
   m_exclamationTransform: {fileID: 0}
   m_speedToWaterSplash: 0
   m_waterSplashParticle:
@@ -737,6 +740,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_tags: 64
+  m_otherSpawnables:
+  - {fileID: 114841953096760618}
+  - {fileID: 114947252965343510}
+  - {fileID: 114488342276520406}
+  m_otherSpawnablesCount: 3
+  m_pilot: {fileID: 0}
+  m_machine: {fileID: 114947252965343510}
+  m_viewControl: {fileID: 114488342276520406}
+  m_equip: {fileID: 0}
   m_sku: MineWagonMine
   m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 0
@@ -755,6 +767,7 @@ MonoBehaviour:
   m_energy: 10
   m_energyDrainSec: 1
   m_energyRecoverSec: 1
+  m_machine: {fileID: 0}
   m_speed: 5
 --- !u!114 &114947252965343510
 MonoBehaviour:
@@ -796,6 +809,7 @@ MonoBehaviour:
     m_mass: 10
     m_defaultUpVector: 0
     m_orientationSpeed: 240
+    m_useAngularVelocity: 0
   m_canExplode: 1
   m_explosionDamage: 60
   m_explosionRadius: 2

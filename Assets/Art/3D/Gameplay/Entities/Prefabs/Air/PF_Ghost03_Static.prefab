@@ -437,6 +437,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_tags: 8
+  m_otherSpawnables:
+  - {fileID: 114699198948750056}
+  - {fileID: 114311415021949368}
+  - {fileID: 114807299092481164}
+  m_otherSpawnablesCount: 3
+  m_pilot: {fileID: 114807299092481164}
+  m_machine: {fileID: 114699198948750056}
+  m_viewControl: {fileID: 114311415021949368}
+  m_equip: {fileID: 0}
   m_sku: Ghost03
   m_hideNeedTierMessage: 1
   m_dieOutsideFrustum: 1
@@ -455,6 +464,7 @@ MonoBehaviour:
   m_energy: 10
   m_energyDrainSec: 1
   m_energyRecoverSec: 1
+  m_machine: {fileID: 0}
   m_brainResource: {fileID: 11400000, guid: 590111f57a62ae1448c942fac85818f0, type: 2}
   m_railSeparation:
     min: 0.5

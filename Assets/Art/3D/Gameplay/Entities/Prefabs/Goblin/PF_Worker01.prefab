@@ -682,6 +682,7 @@ MonoBehaviour:
     m_mass: 2.5
     m_defaultUpVector: 0
     m_orientationSpeed: 120
+    m_useAngularVelocity: 0
     m_faceDirection: 0
     m_limitHorizontalRotation: 0
     m_faceLeftAngle: -90
@@ -781,6 +782,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_tags: 16
+  m_otherSpawnables:
+  - {fileID: 114934410790466528}
+  - {fileID: 114119588032569970}
+  - {fileID: 114678768962758026}
+  m_otherSpawnablesCount: 3
+  m_pilot: {fileID: 114934410790466528}
+  m_machine: {fileID: 114119588032569970}
+  m_viewControl: {fileID: 114678768962758026}
+  m_equip: {fileID: 114270163939963086}
   m_sku: Worker
   m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1
@@ -1075,6 +1085,7 @@ MonoBehaviour:
   m_energy: 10
   m_energyDrainSec: 1
   m_energyRecoverSec: 1
+  m_machine: {fileID: 0}
   m_brainResource: {fileID: 11400000, guid: af593a7751e074e42b7091f92be97d92, type: 2}
   m_railSeparation:
     min: 2

@@ -373,6 +373,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_tags: 73728
+  m_otherSpawnables:
+  - {fileID: 11444444}
+  - {fileID: 114146071563085198}
+  - {fileID: 11417534}
+  m_otherSpawnablesCount: 3
+  m_pilot: {fileID: 11444444}
+  m_machine: {fileID: 114146071563085198}
+  m_viewControl: {fileID: 11417534}
+  m_equip: {fileID: 0}
   m_sku: SpiderGreenTurret
   m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1
@@ -391,6 +400,7 @@ MonoBehaviour:
   m_energy: 10
   m_energyDrainSec: 1
   m_energyRecoverSec: 1
+  m_machine: {fileID: 0}
   m_brainResource: {fileID: 11400000, guid: f17cc2532d6954a84858d6ca52a7cf9e, type: 2}
   m_railSeparation:
     min: 0.5
@@ -664,6 +674,7 @@ MonoBehaviour:
     m_mass: 2.5
     m_defaultUpVector: 5
     m_orientationSpeed: 120
+    m_useAngularVelocity: 0
     m_dragonStyleRotation: 0
     m_faceDirection: 1
     m_rollRotation: 0

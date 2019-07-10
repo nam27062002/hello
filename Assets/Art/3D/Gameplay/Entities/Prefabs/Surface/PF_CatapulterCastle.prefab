@@ -211,6 +211,7 @@ MonoBehaviour:
   m_energy: 10
   m_energyDrainSec: 1
   m_energyRecoverSec: 1
+  m_machine: {fileID: 0}
   m_brainResource: {fileID: 0}
   m_railSeparation:
     min: 0.5
@@ -483,6 +484,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_tags: 32
+  m_otherSpawnables:
+  - {fileID: 114000010804607206}
+  - {fileID: 114822994953153240}
+  - {fileID: 114000012861816458}
+  m_otherSpawnablesCount: 3
+  m_pilot: {fileID: 114000010804607206}
+  m_machine: {fileID: 114822994953153240}
+  m_viewControl: {fileID: 114000012861816458}
+  m_equip: {fileID: 0}
   m_sku: Catapulter
   m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 0
