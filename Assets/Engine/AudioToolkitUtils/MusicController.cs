@@ -98,6 +98,10 @@ public class MusicController : MonoBehaviour, IBroadcastListener
     private void OnSuperSize(bool _activated, DragonSuperSize.Source _source) 
     {
         m_useSuperSizeMusic = _activated;
+        if ( m_useSuperSizeMusic && !string.IsNullOrEmpty( m_superSizeStartSFX ))
+        {
+            AudioController.Play( m_superSizeStartSFX );
+        }
     }
 
 
@@ -109,6 +113,7 @@ public class MusicController : MonoBehaviour, IBroadcastListener
     public string m_fireRushMusic = "";
     public string m_megaFireRushMusic = "";
     public string m_superSizeMusic = "";
+    public string m_superSizeStartSFX = "";
     private bool m_useFireRushMusic = false;
     private bool m_useSuperSizeMusic = false;
 	private DragonBreathBehaviour.Type m_fireRushType = DragonBreathBehaviour.Type.None;
