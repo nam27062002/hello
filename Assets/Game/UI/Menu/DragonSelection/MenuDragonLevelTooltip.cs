@@ -60,7 +60,7 @@ public class MenuDragonLevelTooltip : UITooltipMultidirectional
         // Skin info
         m_skinName = LocalizationManager.SharedInstance.Localize(_skinDefinition.Get("tidName"));
         m_skinIconId = _skinDefinition.Get("icon");
-        m_unlockLevel = _skinDefinition.GetAsInt("level");
+        m_unlockLevel = _skinDefinition.GetAsInt("unlockLevel");
 
         // Power up info
         string powerUpSku = _skinDefinition.Get("powerup");
