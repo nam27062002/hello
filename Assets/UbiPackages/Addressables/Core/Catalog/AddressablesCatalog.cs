@@ -1,6 +1,10 @@
 ﻿using SimpleJSON;
 using System.Collections.Generic;
 
+#if UNITY_EDITOR
+using System.Linq;
+#endif
+
 /// <summary>
 /// This class is responsible for storing a catalog of <c>AddressablesEntry</c> objects
 /// </summary>
@@ -8,6 +12,7 @@ public class AddressablesCatalog
 {
     private static string CATALOG_ATT_ENTRIES = "entries";
     public static string CATALOG_ATT_LOCAL_AB_LIST = "localAssetBundles";
+    public static string CATALOG_ATT_AB_CONFIG = "abConfig";
     public static string CATALOG_ATT_GROUPS = "groups";
 
     /// <summary>
@@ -21,7 +26,7 @@ public class AddressablesCatalog
     private Dictionary<string, Dictionary<string, AddressablesCatalogEntry>> m_entriesWithVariants;
 
 #if UNITY_EDITOR
-    private List<string> m_localABList;
+    private EditorAssetBundlesConfig m_abConfig;    
 
     private Dictionary<string, AssetBundlesGroup> m_groups;
 
@@ -42,7 +47,7 @@ public class AddressablesCatalog
 
 #if UNITY_EDITOR
         m_groups = new Dictionary<string, AssetBundlesGroup>();
-        m_localABList = new List<string>();
+        m_abConfig = new EditorAssetBundlesConfig();        
 #endif
     }
 
@@ -52,8 +57,8 @@ public class AddressablesCatalog
         m_entriesWithVariants.Clear();
 
 #if UNITY_EDITOR
-        m_groups.Clear();
-        m_localABList.Clear();
+        m_groups.Clear();        
+        m_abConfig.Reset();
 #endif
     }
 
@@ -72,9 +77,15 @@ public class AddressablesCatalog
 
 #if UNITY_EDITOR
             if (m_editorMode)
-            {
+            {                
+                JSONNode abConfigJSON = catalogJSON[CATALOG_ATT_AB_CONFIG];
+                if (abConfigJSON == null && catalogJSON.ContainsKey(CATALOG_ATT_LOCAL_AB_LIST))
+                {
+                    abConfigJSON = EditorAssetBundlesConfig.TranslateLocalAbListJSONToAbConfigJSON(catalogJSON[CATALOG_ATT_LOCAL_AB_LIST].AsArray);
+                }
+                m_abConfig.Load(abConfigJSON, logger);
+
                 LoadGroups(catalogJSON[CATALOG_ATT_GROUPS].AsArray, logger, strictMode);
-                LoadLocalABList(catalogJSON[CATALOG_ATT_LOCAL_AB_LIST].AsArray);
 
                 SetAddressablesMode(AddressablesManager.EffectiveMode);
             }
@@ -92,13 +103,13 @@ public class AddressablesCatalog
 #if UNITY_EDITOR
         if (m_editorMode)
         {            
-            data.Add(CATALOG_ATT_LOCAL_AB_LIST, LocalABListToJSON());
+            data.Add(CATALOG_ATT_AB_CONFIG, m_abConfig.ToJSON());
             data.Add(CATALOG_ATT_GROUPS, GroupsToJSON());
         }
 #endif
 
         return data;
-    }   
+    }      
 
     private bool LoadEntries(JSONArray entries, Logger logger)
     {
@@ -275,49 +286,16 @@ public class AddressablesCatalog
         return m_entriesWithVariants.ContainsKey(id);
     }
 
-#if UNITY_EDITOR
-    public void LoadLocalABList(JSONArray entries)
-    {
-        if (entries != null)
-        {            
-            int count = entries.Count;
-            string abName;
-            for (int i = 0; i < count; ++i)
-            {
-                abName = entries[i];
-
-                abName = abName.Trim();
-                // Makes sure that there's no duplicates
-                if (!string.IsNullOrEmpty(abName) && !m_localABList.Contains(abName))
-                {
-                    m_localABList.Add(abName);
-                }
-            }          
-        }
-    }
-
-    private JSONArray LocalABListToJSON()
-    {
-        JSONArray data = new JSONArray();
-        int count = m_localABList.Count;
-        for (int i = 0; i < count; i++)
-        {            
-            if (!string.IsNullOrEmpty(m_localABList[i]))
-            {
-                data.Add(m_localABList[i]);
-            }
-        }
-
-        return data;
-    }
-
+#if UNITY_EDITOR    
     public List<string> GetLocalABList()
-    {
-        return m_localABList;
+    {        
+        return m_abConfig.GetLocalABList();
     }
 
     private void SetAddressablesMode(AddressablesManager.EMode mode)
-    {        
+    {
+        m_abConfig.SetAddressablesMode(mode);
+
         foreach (KeyValuePair<string, AddressablesCatalogEntry> pair in m_entriesNoVariants)
         {
             SetAddressablesModeToEntry(mode, pair.Value);
@@ -329,58 +307,54 @@ public class AddressablesCatalog
             {
                 SetAddressablesModeToEntry(mode, pair.Value);
             }
-        }
+        }        
 
-        if (mode == AddressablesManager.EMode.LocalAssetBundlesInResources || mode == AddressablesManager.EMode.AllInResources)
-        {
-            if (mode == AddressablesManager.EMode.LocalAssetBundlesInResources)
-            {
-                int count = m_localABList.Count;
+        switch (mode)
+        {            
+            case AddressablesManager.EMode.LocalAssetBundlesInResources:                
+                int count;
+                List<string> list;
                 foreach (KeyValuePair<string, AssetBundlesGroup> pair in m_groups)
                 {
-                    for (int i = 0; i < count; i++)
+                    list = pair.Value.AssetBundleIds;
+                    if (list != null)
                     {
-                        if (pair.Value.AssetBundleIds != null && pair.Value.AssetBundleIds.Contains(m_localABList[i]))
+                        count = list.Count;
+                        for (int i = count - 1; i > -1;  i--)
                         {
-                            pair.Value.AssetBundleIds.Remove(m_localABList[i]);
+                            if (m_abConfig.ContainsAssetBundle(list[i]) && m_abConfig.GetAssetBundleLocation(list[i]) == EditorAssetBundlesConfigEntry.ELocation.Resources)
+                            {
+                                list.RemoveAt(i);
+                            }
                         }
                     }
                 }
-            }
-            else
-            {
+                break;
+
+            case AddressablesManager.EMode.AllInResources:
                 m_groups.Clear();
-            }
-
-
-            m_localABList.Clear();
-        }
+                break;
+        }        
     }
 
     private void SetAddressablesModeToEntry(AddressablesManager.EMode mode, AddressablesCatalogEntry entry)
     {
         string abName = entry.AssetBundleName;
 
-        switch (mode)
+        if (!string.IsNullOrEmpty(abName))
         {
-            case AddressablesManager.EMode.AllInResources:
+            bool containsEntry = m_abConfig.ContainsAssetBundle(abName);
+            if (mode == AddressablesManager.EMode.AllInResources || 
+                (containsEntry && m_abConfig.GetAssetBundleLocation(abName) == EditorAssetBundlesConfigEntry.ELocation.Resources))
+            {
                 entry.SetupAsEntryInResources(entry.Id);
-                break;
-
-            case AddressablesManager.EMode.AllInLocalAssetBundles:
-                if (!string.IsNullOrEmpty(abName) && !m_localABList.Contains(abName))
-                {
-                    m_localABList.Add(abName);
-                }
-                break;
-
-            case AddressablesManager.EMode.LocalAssetBundlesInResources:
-                if (m_localABList.Contains(abName))
-                {
-                    entry.SetupAsEntryInResources(entry.Id);
-                }
-                break;
-        }
+            }
+            else if (mode == AddressablesManager.EMode.AllInLocalAssetBundles && 
+                     (!containsEntry  || m_abConfig.GetAssetBundleLocation(abName) == EditorAssetBundlesConfigEntry.ELocation.Local))
+            {
+                m_abConfig.SetAssetBundleLocation(abName, EditorAssetBundlesConfigEntry.ELocation.Local, true);
+            }
+        }     
     }   
 
     public List<string> GetUsedABList()
@@ -412,8 +386,8 @@ public class AddressablesCatalog
                 UbiListUtils.AddRange(returnValue, pair.Value.AssetBundleIds, false, true);
             }
         }
-
-        UbiListUtils.AddRange(returnValue, m_localABList, false, true);
+        
+        UbiListUtils.AddRange(returnValue, m_abConfig.GetLocalABList(), false, true);
 
         return returnValue;
     }
@@ -428,6 +402,7 @@ public class AddressablesCatalog
             {
                 group = new AssetBundlesGroup();
                 group.Load(groups[i]);              
+                
                 if (m_groups.ContainsKey(group.Id))
                 {
                     m_groups[group.Id].Join(groups[i]);
@@ -440,10 +415,33 @@ public class AddressablesCatalog
                 else
                 {
                     m_groups.Add(group.Id, group);
-                }                
+                }
+
+                // Strip the asset bundles that are located in Resources
+                StripAssetBundlesInResourcesFromGroup(group.Id);
             }
         }
     }
+
+    private void StripAssetBundlesInResourcesFromGroup(string groupId)
+    {
+        AssetBundlesGroup group = null;
+        m_groups.TryGetValue(groupId, out group);
+        if (group != null)
+        {
+            List<string> abIds = group.AssetBundleIds;
+            if (abIds != null)
+            {                
+                for (int i = abIds.Count - 1; i > -1; i--)
+                {
+                    if (m_abConfig.ContainsAssetBundle(abIds[i]) && m_abConfig.GetAssetBundleLocation(abIds[i]) == EditorAssetBundlesConfigEntry.ELocation.Resources)
+                    {
+                        abIds.RemoveAt(i);
+                    }
+                }
+            }
+        }
+    }    
 
     private JSONArray GroupsToJSON()
     {
@@ -570,14 +568,27 @@ public class AddressablesCatalog
             }
         }
 
-        // Deletes the asset bundles that are still in this list because they are not used for target platform        
-        foreach (KeyValuePair<string, bool> pair in m_bannedABList)
+        // Deletes the asset bundles that are still in this list because they are not used for target platform                
+        List<string> abIdsToBan = m_bannedABList.Keys.ToList();
+        if (abIdsToBan != null)
         {
-            if (m_localABList.Contains(pair.Key))
+            m_abConfig.BanAssetBundles(abIdsToBan);
+
+            count = abIdsToBan.Count;
+            foreach (KeyValuePair<string, AssetBundlesGroup> pair in m_groups)
             {
-                m_localABList.Remove(pair.Key);
+                if (pair.Value.AssetBundleIds != null)
+                {
+                    for (int i = 0; i < count; i++)
+                    {
+                        if (pair.Value.AssetBundleIds.Contains(abIdsToBan[i]))
+                        {
+                            pair.Value.AssetBundleIds.Remove(abIdsToBan[i]);
+                        }
+                    }
+                }
             }
-        }
+        }        
     }
 
     private void SetupEntriesPlatform(Dictionary<string, AddressablesCatalogEntry> entries, UnityEditor.BuildTarget target, Dictionary<string, bool> assetBundlesToDelete)

@@ -1,11 +1,27 @@
 {
 	"entries":
 	[		
+		{"id":"t_village", "locationType":"AssetBundles", "guid":"f35c5ccca55194843b6fdbd5079b50a3", "abName":"ab_assets_village"},				
+		{"id":"PF_Village", "locationType":"AssetBundles", "guid":"900c3204b30970240bb7f1bc357b9f7d", "abName":"ab_assets_village" },						
+		{"id":"SC_Village", "locationType":"AssetBundles", "guid":"006cd3fd4b728b94c8e6947be359af4b", "abName":"ab_sc_village" },
+		{"id":"PF_Castle", "locationType":"AssetBundles", "guid":"8d2d48890d8ddf2419e676200a7962fc", "abName":"ab_assets_castle" },								
+		{"id":"PF_Dark", "locationType":"AssetBundles", "guid":"c1156fd7ae8471343ba71ef5939dcc69", "abName":"ab_assets_dark", "platform":"Android" }								
 	],	
 	
-	"localAssetBundles":[],
+	"abConfig":
+	{
+		"entries":
+		[
+			{"id":"ab_assets_village", "location":"Local" },				
+			{"id":"ab_assets_castle", "location":"Resources" },		
+			{"id":"ab_assets_dark", "location":"Remote" }
+		]
+	},
 	
 	"groups":
-	[				
+	[		
+		{"id": "gr_village", "assetBundles": ["ab_assets_village", "ab_sc_village"]},
+		{"id": "gr_castle", "assetBundles": ["ab_assets_castle"]},
+		{"id": "gr_dark", "assetBundles": ["ab_assets_dark"]}
 	]
 }
