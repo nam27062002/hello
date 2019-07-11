@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ViewParticleSpawner : MonoBehaviour {
+public class ViewParticleSpawner : MonoBehaviour, IBroadcastListener {
 	private enum ActivationMode {
 		AUTO,
 		MANUAL
@@ -55,17 +55,31 @@ public class ViewParticleSpawner : MonoBehaviour {
 	void Start()
 	{
 		Messenger.AddListener<string>(MessengerEvents.SCENE_PREUNLOAD, OnScenePreunload);
+		Broadcaster.AddListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
+        Broadcaster.AddListener(BroadcastEventType.GAME_AREA_ENTER, this);
 	}
 
 	void OnDestroy()
 	{
 		Messenger.RemoveListener<string>(MessengerEvents.SCENE_PREUNLOAD, OnScenePreunload);
+        Broadcaster.RemoveListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
+        Broadcaster.RemoveListener(BroadcastEventType.GAME_AREA_ENTER, this);
 	}
 
 	void OnScenePreunload(string _scene)
 	{
 		enabled = false;
 	}
+	public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo) {
+        switch (eventType) {
+            case BroadcastEventType.GAME_LEVEL_LOADED:
+            case BroadcastEventType.GAME_AREA_ENTER:
+                for (int i = 0; i < m_particleDatas.Length; ++i) {
+					m_particleDatas[i].CreatePool();
+				}
+            break;
+        }
+    }
 
 	void OnDisable() {
 		ForceReturn();

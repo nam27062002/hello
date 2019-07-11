@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AnniversaryCandleDecoration : IEntity, IFireNode {
+public class AnniversaryCandleDecoration : IEntity, IFireNode, IBroadcastListener {
 	private enum State {
 		IDLE = 0,
 		LIGHT_UP
@@ -54,10 +54,28 @@ public class AnniversaryCandleDecoration : IEntity, IFireNode {
 
 		m_timer = 0f;
 		m_state = State.IDLE;
+
+        Broadcaster.AddListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
+        Broadcaster.AddListener(BroadcastEventType.GAME_AREA_ENTER, this);
 	}
 
+	protected void OnDestroy() {    
+        // Unsubscribe from external events
+        Broadcaster.RemoveListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
+        Broadcaster.RemoveListener(BroadcastEventType.GAME_AREA_ENTER, this);
+    }
+
+	public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo) {
+        switch (eventType) {
+            case BroadcastEventType.GAME_LEVEL_LOADED:
+            case BroadcastEventType.GAME_AREA_ENTER:
+                OnLevelLoaded();
+            break;
+        }
+    }
+
 	// Use this for initialization
-	private void Start () {
+	private void OnLevelLoaded() {
 		m_rect.center += (Vector2)m_transform.position;
 		m_area = new CircleAreaBounds(m_transform.position, m_rect.size.magnitude);
 		m_boundingSphere = new BoundingSphere(m_transform.position, 8f * m_transform.localScale.x);
