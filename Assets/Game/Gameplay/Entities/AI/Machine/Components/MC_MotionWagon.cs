@@ -13,14 +13,14 @@ namespace AI {
 		}
 
 		private Vector3 m_right;
-		private float m_acceleration;
+		private float m_accelerationScalar;
 
 		private float m_distanceMoved;
 
 		//--------------------------------------------------
 		protected override void ExtendedInit() {			
 			m_distanceMoved = 0f;
-			m_acceleration = 0f;
+			m_accelerationScalar = 0f;
 		}
 
 		protected override void ExtendedUpdate() {
@@ -33,16 +33,16 @@ namespace AI {
 			float speed = m_pilot.speed;// - (m_direction.y * m_pilot.speed * 0.9f);
 
 			if (m_direction.y < 0) { // going down
-				m_acceleration += Math.Abs(m_direction.y) * 0.5f;
-				if (m_acceleration > m_pilot.speed * 2f) 
-					m_acceleration = m_pilot.speed * 2f;
+				m_accelerationScalar += Math.Abs(m_direction.y) * 0.5f;
+				if (m_accelerationScalar > m_pilot.speed * 2f) 
+					m_accelerationScalar = m_pilot.speed * 2f;
 			} else { // going up
-				m_acceleration -= 0.05f;
-				if (m_acceleration < -m_pilot.speed * 0.1f) 
-					m_acceleration = -m_pilot.speed * 0.1f;
+				m_accelerationScalar -= 0.05f;
+				if (m_accelerationScalar < -m_pilot.speed * 0.1f) 
+					m_accelerationScalar = -m_pilot.speed * 0.1f;
 			}
 
-			speed += m_acceleration;
+			speed += m_accelerationScalar;
 
 			m_velocity = m_direction * speed;
 

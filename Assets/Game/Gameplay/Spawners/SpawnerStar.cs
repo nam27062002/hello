@@ -91,7 +91,9 @@ public class SpawnerStar : AbstractSpawner {
     }
 
     protected override bool CanRespawnExtended() {
-		if (m_respawnConditions.IsReadyToSpawn(m_gameSceneController.elapsedSeconds, RewardManager.xp)) {
+		if (m_respawnConditions.IsReadyToSpawn(m_gameSceneController.elapsedSeconds + m_gameSceneController.progressionOffsetSeconds, 
+											   RewardManager.xp + m_gameSceneController.progressionOffsetXP))
+		{
 			// If we don't have any entity alive, proceed
 			if (EntitiesAlive == 0) {
 				// Respawn on cooldown?
@@ -102,7 +104,9 @@ public class SpawnerStar : AbstractSpawner {
 			}
 		}
 		// If we can't spawn and we're ready to be disabled, wait untill all entities are dead to do it
-		else if (m_respawnConditions.IsReadyToBeDisabled(m_gameSceneController.elapsedSeconds, RewardManager.xp)) {
+		else if (m_respawnConditions.IsReadyToBeDisabled(m_gameSceneController.elapsedSeconds + m_gameSceneController.progressionOffsetSeconds,
+														 RewardManager.xp + m_gameSceneController.progressionOffsetXP))
+		{
 			if (EntitiesAlive == 0) {
 				UnregisterFromSpawnerManager();
 				Destroy(gameObject);

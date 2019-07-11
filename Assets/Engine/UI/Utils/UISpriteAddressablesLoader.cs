@@ -117,10 +117,18 @@ public class UISpriteAddressablesLoader : MonoBehaviour {
         m_image.enabled = false;
         m_image.sprite = null;
 
-        // We don't care if we're already loading another asset, it will be ignored once done loading
-        m_loadingRequest = HDAddressablesManager.Instance.LoadAssetAsync(m_assetId);        
+		// If we already have an ongoing request, cancel it
+		if(m_loadingRequest != null) {
+			m_loadingRequest.Cancel();
+			m_loadingRequest = null;
+			ShowLoading(false);
+		}
 
-        ShowLoading(true);
+		// We don't care if we're already loading another asset, it will be ignored once done loading
+		if(!string.IsNullOrEmpty(m_assetId)) {
+			m_loadingRequest = HDAddressablesManager.Instance.LoadAssetAsync(m_assetId);
+			ShowLoading(true);
+		}
 
         return m_loadingRequest;
     }

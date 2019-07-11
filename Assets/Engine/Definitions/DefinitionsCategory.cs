@@ -72,6 +72,8 @@ public class DefinitionsCategory
 	// Game
 	public const string SCORE_MULTIPLIERS = "SCORE_MULTIPLIERS";
 	public const string SURVIVAL_BONUS = "SURVIVAL_BONUS";
+	public const string LEVEL_SPAWN_POINTS = "LEVEL_SPAWN_POINTS";
+	public const string LEVEL_PROGRESSION = "LEVEL_PROGRESSION";
 
 	// Metagame
 	public const string EGGS = "EGGS";	

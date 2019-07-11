@@ -18,10 +18,7 @@ using UnityEngine;
 /// implementation of this class.
 /// </summary>
 public class GameSceneControllerBase : SceneController, IBroadcastListener {
-	//------------------------------------------------------------------//
-	// CONSTANTS														//
-	//------------------------------------------------------------------//
-
+	
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
@@ -31,6 +28,18 @@ public class GameSceneControllerBase : SceneController, IBroadcastListener {
 		get { return m_elapsedSeconds; }
         set { m_elapsedSeconds = value; }
     }
+
+	private int m_progressionOffsetXP;
+	public int progressionOffsetXP { 
+		get { return m_progressionOffsetXP; } 
+		set { m_progressionOffsetXP = value; } 
+	}
+
+	private float m_progressionOffsetSeconds;
+	public float progressionOffsetSeconds {
+		get { return m_progressionOffsetSeconds; }
+		set { m_progressionOffsetSeconds = value; }
+	}
 
 	// Handled by heirs
 	protected bool m_paused = false;
