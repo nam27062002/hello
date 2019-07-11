@@ -178,10 +178,9 @@ namespace LevelEditor {
 				m_elapsedSeconds += Time.deltaTime;
 
 				if (Input.GetKeyDown(KeyCode.I))
-				{
-					bool usingEditor = true;
-					Vector3 startPos = InstanceManager.player.StartIntroMovement( usingEditor );
-					InstanceManager.gameCamera.StartIntro( startPos );
+				{					
+					SpawnPlayer(true);
+					
 					LevelTypeSpawners sp = FindObjectOfType<LevelTypeSpawners>();
 					if ( sp != null )
 						sp.IntroSpawn(InstanceManager.player.data.def.sku);
@@ -231,18 +230,11 @@ namespace LevelEditor {
 				startPos = mainCamera.transform.position;
 				startPos.z = 0f;
 				InstanceManager.player.transform.position = startPos;
+				InstanceManager.player.playable = true;
+				InstanceManager.gameCamera.Init(startPos);
 			} else {
-				// Put player in position and make it playable				
-				if (LevelEditor.settings.useIntro) {
-					startPos = InstanceManager.player.StartIntroMovement(true);	
-				} else {
-					startPos = InstanceManager.player.MoveToSpawnPoint(true);
-				}
-			}
-			InstanceManager.player.playable = true;
-
-			// Init game camera
-			InstanceManager.gameCamera.Init(startPos);
+				SpawnPlayer(true);
+			}			
 			
 			// Instantiate map prefab
 			InitLevelMap();
