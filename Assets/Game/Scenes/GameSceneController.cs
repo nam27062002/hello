@@ -238,9 +238,8 @@ public class GameSceneController : GameSceneControllerBase {
 		else if (Input.GetKeyDown(KeyCode.I))
 		{
 			// Check if in editor!
-			bool usingEditor = false;
-			Vector3 startPos = InstanceManager.player.StartIntroMovement(usingEditor);
-			InstanceManager.gameCamera.StartIntro(startPos);
+            SpawnPlayer(false);
+			
 			LevelEditor.LevelTypeSpawners sp = FindObjectOfType<LevelEditor.LevelTypeSpawners>();
 			if ( sp != null )
 				sp.IntroSpawn(InstanceManager.player.data.def.sku);
@@ -530,15 +529,9 @@ public class GameSceneController : GameSceneControllerBase {
                 Broadcaster.Broadcast(BroadcastEventType.GAME_LEVEL_LOADED);
 
 				// Enable dragon back and put it in the spawn point
-				// Don't make it playable until the countdown ends
-				InstanceManager.player.playable = false;
-				InstanceManager.player.gameObject.SetActive(true);
-				
-                Vector3 startPos = InstanceManager.player.StartIntroMovement();
-
-                // Init game camera
-				InstanceManager.gameCamera.Init(startPos);
-				
+				// Don't make it playable until the countdown ends				
+                SpawnPlayer(false);
+  				
 				// Spawn collectibles
 				CollectiblesManager.OnLevelLoaded();
 
