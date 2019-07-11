@@ -6,16 +6,17 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: MT_Gelato
-  m_Shader: {fileID: 4800000, guid: 2345015ac46679e4cb5817ed44c82547, type: 3}
-  m_ShaderKeywords: DIFFUSE_AS_SPECULARMASK FRESNEL SPECULAR
+  m_Name: MT_GelatoL
+  m_Shader: {fileID: 4800000, guid: 2792aaa8ace564651ba7198784ab33a8, type: 3}
+  m_ShaderKeywords: BLENDAXIS_X COLORMODE_COLORRAMP DIFFUSE_AS_SPECULARMASK FXLAYER_COLORIZE
+    LITMODE_LIT OPAQUESPECULAR REFLECTIONTYPE_NORMAL SELFILLUMINATE_NORMAL SPECULAR
+    _ZWRITE_ON
   m_LightmapFlags: 1
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: 2010
+  m_CustomRenderQueue: -1
   stringTagMap:
     QUEUE: Geometry
-    RenderType: Opaque
   disabledShaderPasses: []
   m_SavedProperties:
     serializedVersion: 3
@@ -49,7 +50,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: fd1de57caa0c5452d8ce3454d687503b, type: 3}
+        m_Texture: {fileID: 2800000, guid: 6428a60ae6c4be74aa52c59abae82ac3, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
@@ -64,16 +65,26 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _RampTex:
+        m_Texture: {fileID: 2800000, guid: 0afe6de0be16e304daf74c171c5ab2c0, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _ReflectionMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
-    - FXLayer: 0
+    - BlendAxis: 0
+    - ColorMode: 3
+    - FXLayer: 4
+    - LitMode: 1
     - ReflectionType: 0
     - SelfIlluminate: 0
     - _Alpha_as_depth: 0
+    - _BlendAlpha: 1
     - _BlendMode: 0
+    - _BlendUVOffset: 0
+    - _BlendUVScale: 1
     - _BumpScale: 1
     - _ColorRampAmount: 0
     - _ColorRampID0: 0
@@ -90,10 +101,11 @@ Material:
     - _EnableCutoff: 0
     - _EnableDiffuseAsSpecMask: 1
     - _EnableDoublesided: 0
-    - _EnableFresnel: 1
+    - _EnableFresnel: 0
     - _EnableNormalMap: 0
     - _EnableOpaqueFresnel: 0
-    - _EnableOpaqueSpecular: 0
+    - _EnableOpaqueSpecular: 1
+    - _EnableReflectionMap: 0
     - _EnableSilhouette: 0
     - _EnableSpecular: 1
     - _EnableVertexOffset: 0
@@ -102,7 +114,8 @@ Material:
     - _EnableVertexOffsetZ: 0
     - _FireAmount: 0
     - _FireSpeed: 1
-    - _Fresnel: 7.3
+    - _Fresnel: 5.68
+    - _FresnelPower: 0.27
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
@@ -116,7 +129,7 @@ Material:
     - _Parallax: 0.02
     - _ReflectionAmount: 0
     - _SmoothnessTextureChannel: 0
-    - _SpecExponent: 75
+    - _SpecExponent: 76.95
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _StencilMask: 10
@@ -130,9 +143,11 @@ Material:
     - _ColorAdd: {r: 0.01145449, g: 0.029411793, b: 0.010813159, a: 0}
     - _ColorMultiply: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _FresnelColor: {r: 0.37254903, g: 0.22352943, b: 0.41176474, a: 1}
+    - _FresnelColor: {r: 0.77660036, g: 0.7900369, b: 0.9264706, a: 1}
     - _InnerLightColor: {r: 0.15084344, g: 0.33088237, b: 0.18933451, a: 1}
     - _ReflectionColor: {r: 1, g: 1, b: 1, a: 1}
     - _SecondLightColor: {r: 0.18176903, g: 0.20240723, b: 0.30147058, a: 0}
-    - _SecondLightDir: {r: -0.021338955, g: -0.31297112, b: -0.9495229, a: 0}
+    - _SecondLightDir: {r: 0.16938922, g: -0.0130299255, b: -0.9854631, a: 0}
     - _Tint: {r: 0.79746974, g: 0.86183923, b: 0.86764705, a: 1}
+    - _Tint1: {r: 0.74264705, g: 0, b: 0, a: 1}
+    - _Tint2: {r: 1, g: 1, b: 1, a: 1}
