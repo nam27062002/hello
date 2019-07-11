@@ -219,11 +219,13 @@ public class OptimizedScrollRect<T, D> : ScrollRect where T : ScrollRectItem<D> 
 	}
 
 	private void CreatePillOfType(int _type) {
-		GameObject instance = GameObject.Instantiate<GameObject>(m_pillPrefabs[_type], content, false);
+		GameObject prefab = m_pillPrefabs[_type];
+		GameObject instance = GameObject.Instantiate<GameObject>(prefab, content, false);
 		instance.SetActive(false);
 		T pill = instance.GetComponent<T>();
 		pill.pillType = _type;
 		pill.ComputeSize();
+		instance.SetUniqueName(prefab.name);
 		m_poolsOfPills[_type].Push(pill);
 
 		OnPillCreated(pill);

@@ -160,11 +160,15 @@ public class SpawnerRoulette : MonoBehaviour, ISpawner {
 
 	public bool CanRespawn() {
 		if (m_state == State.Idle) {
-			if (m_respawnConditions.IsReadyToBeDisabled(m_gameSceneController.elapsedSeconds, RewardManager.xp)) {
+			if (m_respawnConditions.IsReadyToBeDisabled(m_gameSceneController.elapsedSeconds + m_gameSceneController.progressionOffsetSeconds,
+														RewardManager.xp + m_gameSceneController.progressionOffsetXP))
+			{
 				if (!m_camera.IsInsideActivationMaxArea(area.bounds)) {
 					Destroy(gameObject);
 				}
-			} else if (m_respawnConditions.IsReadyToSpawn(m_gameSceneController.elapsedSeconds, RewardManager.xp)) {
+			} else if (m_respawnConditions.IsReadyToSpawn(m_gameSceneController.elapsedSeconds + m_gameSceneController.progressionOffsetSeconds, 
+														  RewardManager.xp + m_gameSceneController.progressionOffsetXP)) 
+			{
 				bool isInsideActivationArea = m_camera.IsInsideActivationMinArea(area.bounds);
 				if (isInsideActivationArea) {
 					if (m_gameSceneController.elapsedSeconds > m_respawnTime) {

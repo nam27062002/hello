@@ -203,6 +203,8 @@ public class ContentManager
         // Game
         kDefinitionFiles.Add(DefinitionsCategory.SCORE_MULTIPLIERS, new string[] { "Rules/scoreMultiplierDefinitions" });
         kDefinitionFiles.Add(DefinitionsCategory.SURVIVAL_BONUS, new string[] { "Rules/survivalBonusDefinitions" });
+        kDefinitionFiles.Add(DefinitionsCategory.LEVEL_SPAWN_POINTS, new string[] { "Rules/levelSpawnPointDefinitions" });
+        kDefinitionFiles.Add(DefinitionsCategory.LEVEL_PROGRESSION, new string[] { "Rules/levelProgressionDefinitions" });
 
         // Metagame
         kDefinitionFiles.Add(DefinitionsCategory.EGGS, new string[] { "Rules/eggDefinitions" });
@@ -249,10 +251,6 @@ public class ContentManager
 		// UI
 		kDefinitionFiles.Add(DefinitionsCategory.SHARE_LOCATIONS, new string[] { "Rules/shareLocationDefinitions" });
         kDefinitionFiles.Add(DefinitionsCategory.ICONS, new string[] { "Rules/iconDefinitions" });
-
-
-        // ADD HERE ANY NEW DEFINITIONS FILE!
-
 
 
         DefinitionsManager.SharedInstance.Initialise(ref kDefinitionFiles, !UseDeltaContent);

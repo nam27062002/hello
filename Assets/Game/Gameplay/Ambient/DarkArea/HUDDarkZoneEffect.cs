@@ -22,6 +22,24 @@ public class HUDDarkZoneEffect : MonoBehaviour {
     private float m_currentRadius;
     private float m_currentFallOff;
 
+    private static HUDDarkZoneEffect m_instance = null;
+
+    public static void hotInitialize(CandleData candleData)
+    {
+        if (m_instance != null)
+        {
+
+            if (!m_instance.m_enableState)
+            {
+                m_instance.m_blackImage.material = m_instance.m_candleMaterial;
+                m_instance.m_blackImage.enabled = true;
+                m_instance.m_enableState = true;
+                m_instance.setFireRushMaterials(true);
+                m_instance.setMaterialParameters(candleData.m_Color, candleData.m_Color2, candleData.m_radius, candleData.m_fallOff);
+            }
+        }
+    }
+
     [Serializable]
     public class CandleData
     {
@@ -60,6 +78,7 @@ public class HUDDarkZoneEffect : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
+        m_instance = this;
         m_blackImage = GetComponent<MeshRenderer>();
 //        m_candleMaterial = new Material(m_candleEffect);
         m_oldMaterial = m_blackImage.material;

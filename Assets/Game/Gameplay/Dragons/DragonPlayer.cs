@@ -689,13 +689,21 @@ public class DragonPlayer : MonoBehaviour, IBroadcastListener {
 	/// Uses GameObject.Find, so don't abuse it!
 	/// </summary>
 	/// <param name="_levelEditor">Try to use the level editor's spawn point?</param>
-	public void MoveToSpawnPoint(bool _levelEditor) {
+	public Vector3 MoveToSpawnPoint(bool _levelEditor) {
 		// Use level editor's spawn point or try to use specific's dragon spawn point?
 		GameObject spawnPointObj = null;
 		if(_levelEditor) {
-			spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME + "_" + LevelEditor.LevelTypeSpawners.LEVEL_EDITOR_SPAWN_POINT_NAME);
-			if ( spawnPointObj == null )
-				spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME + "_" + data.def.sku);
+			string selectedSP = LevelEditor.LevelEditor.settings.spawnPoint;
+			if (!string.IsNullOrEmpty(selectedSP)) {
+				spawnPointObj = GameObject.Find(selectedSP);
+			}
+
+			if (spawnPointObj == null) {
+				spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME + "_" + LevelEditor.LevelTypeSpawners.LEVEL_EDITOR_SPAWN_POINT_NAME);
+				if (spawnPointObj == null) {
+					spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME + "_" + data.def.sku);
+				}
+			}
 		} else {
 			spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME + "_" + data.def.sku);
 		}
@@ -708,20 +716,48 @@ public class DragonPlayer : MonoBehaviour, IBroadcastListener {
 		// Move to position
 		if(spawnPointObj != null) {
 			m_dragonMotion.MoveToSpawnPosition(spawnPointObj.transform.position);
+			return spawnPointObj.transform.position;
 		}
+
+		return GameConstants.Vector3.zero;
 	}
 
-	public void StartIntroMovement( bool useLevelEditor = false )
+
+	/// <summary>
+	/// Search for a valid starting point.
+	/// </summary>
+	/// <returns>Returns the starting position.</returns>
+	public Vector3 StartIntroMovement( bool useLevelEditor = false )
 	{
         if(m_dragonEatBehaviour != null)
 		    m_dragonEatBehaviour.enabled = true;
 		GameObject spawnPointObj = null;
+		
 		if(useLevelEditor) {
-			spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME + "_" + LevelEditor.LevelTypeSpawners.LEVEL_EDITOR_SPAWN_POINT_NAME);
-			if ( spawnPointObj == null )
-				spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME + "_" + data.def.sku);
+			string selectedSP = LevelEditor.LevelEditor.settings.spawnPoint;
+			if (!string.IsNullOrEmpty(selectedSP)) {
+				spawnPointObj = GameObject.Find(selectedSP);
+			}
+
+			if (spawnPointObj == null) {
+				spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME + "_" + LevelEditor.LevelTypeSpawners.LEVEL_EDITOR_SPAWN_POINT_NAME);
+				if (spawnPointObj == null) {
+					spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME + "_" + data.def.sku);
+				}
+			}
 		} else {
-			spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME + "_" + data.def.sku);
+			// maybe we are inside a tournament
+			if (HDLiveDataManager.tournament.isActive) {
+				HDTournamentDefinition tournamentDef = HDLiveDataManager.tournament.tournamentData.tournamentDef;
+				string selectedSP = tournamentDef.m_goal.m_spawnPoint;
+				if (!string.IsNullOrEmpty(selectedSP)) {
+					spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME + "_" + selectedSP);
+				}
+			}
+			
+			if (spawnPointObj == null) {
+				spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME + "_" + data.def.sku);
+			}
 		}
 		// If we couldn't find a valid spawn point, try to find a generic one
 		if(spawnPointObj == null) {
@@ -732,7 +768,11 @@ public class DragonPlayer : MonoBehaviour, IBroadcastListener {
 		{
 			Vector3 introPos = spawnPointObj.transform.position;
 			m_dragonMotion.StartIntroMovement(introPos);
+
+			return introPos;
 		}
+
+		return GameConstants.Vector3.zero;
 	}
 
 	//------------------------------------------------------------------//
