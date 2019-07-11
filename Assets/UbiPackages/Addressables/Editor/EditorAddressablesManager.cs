@@ -61,7 +61,9 @@ public class EditorAddressablesManager
     {
         Debug.Log("Clearing addressables...");        
         EditorFileUtils.DeleteFileOrDirectory(EditorAssetBundlesManager.DOWNLOADABLES_FOLDER + "/" + target.ToString());
-        ClearResourcesGenerated();
+
+        MoveGeneratedResourcesToOriginalUbication();
+        
         EditorFileUtils.DeleteFileOrDirectory(EditorFileUtils.PathCombine(m_assetBundlesLocalDestinationPath, target.ToString()));
         EditorFileUtils.DeleteFileOrDirectory(ADDRESSABLES_PLAYER_ASSET_BUNDLES_PATH);
 
