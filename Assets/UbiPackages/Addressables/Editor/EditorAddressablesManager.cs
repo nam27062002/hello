@@ -90,7 +90,9 @@ public class EditorAddressablesManager
         BuildTarget target = EditorUserBuildSettings.activeBuildTarget;
         BuildTarget otherTarget = (target == BuildTarget.iOS) ? BuildTarget.Android : BuildTarget.iOS;
         GeneratePlayerCatalog(otherTarget, false);
-        GeneratePlayerCatalog(target, true);
+
+        // We don't want the assets to change when building in Editor mode in order to avoid confusion when committing changes
+        GeneratePlayerCatalog(target, AddressablesManager.Mode != AddressablesManager.EMode.Editor);
     }
     
     public void GeneratePlayerCatalog(BuildTarget target, bool changeAssets)
