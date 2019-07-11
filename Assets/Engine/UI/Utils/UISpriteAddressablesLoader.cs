@@ -134,6 +134,9 @@ public class UISpriteAddressablesLoader : MonoBehaviour {
                 m_image.sprite = m_loadingRequest.GetAsset<Sprite>();
                 m_image.enabled = true;
                 m_loadingRequest = null;
+
+                // Hide the loading prefab
+                ShowLoading(false);
             }
         }
     }   

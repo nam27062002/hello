@@ -319,7 +319,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1171975503095556
 GameObject:
   m_ObjectHideFlags: 1
@@ -914,6 +914,7 @@ GameObject:
   - component: {fileID: 224262619906601562}
   - component: {fileID: 222241223995497182}
   - component: {fileID: 114278074001486286}
+  - component: {fileID: 114017028682189480}
   m_Layer: 5
   m_Name: DragonIcon
   m_TagString: Untagged
@@ -1774,7 +1775,7 @@ MonoBehaviour:
   m_rankText: {fileID: 114381551518023494}
   m_dragonNameText: {fileID: 114121115675866472}
   m_dragonLevelText: {fileID: 114549492931894378}
-  m_dragonImage: {fileID: 114278074001486286}
+  m_dragonIconLoader: {fileID: 114017028682189480}
   m_healthText: {fileID: 114965659915454910}
   m_energyText: {fileID: 114664975482186774}
   m_speedText: {fileID: 114665184642913062}
@@ -1784,6 +1785,21 @@ MonoBehaviour:
   - {fileID: 114821626876034984}
   - {fileID: 114517223007771998}
   m_noPetsMessage: {fileID: 1246847081127522}
+--- !u!114 &114017028682189480
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1612686574497646}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 285cd8cfbf6c84d2fab86d95b9d993fc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_assetId: 
+  m_loadOnAwake: 0
+  m_image: {fileID: 114278074001486286}
+  m_loadingPrefab: {fileID: 0}
 --- !u!114 &114022704060255644
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3370,7 +3386,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 530f62ef9ebcb4c0b94ef0a2a2b8f4c2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_image: {fileID: 114666354044465120}
   m_nameText: {fileID: 114668680407004804}
   m_powerDescText: {fileID: 114267865494527846}
 --- !u!114 &114369649995228948
@@ -4589,7 +4604,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 530f62ef9ebcb4c0b94ef0a2a2b8f4c2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_image: {fileID: 114226709050288450}
   m_nameText: {fileID: 114080557535098490}
   m_powerDescText: {fileID: 114942551732467018}
 --- !u!114 &114529613501479588
@@ -5953,7 +5967,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 530f62ef9ebcb4c0b94ef0a2a2b8f4c2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_image: {fileID: 114329893224850572}
   m_nameText: {fileID: 114434364417608546}
   m_powerDescText: {fileID: 114112549846907510}
 --- !u!114 &114784043246975016
@@ -6084,7 +6097,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 530f62ef9ebcb4c0b94ef0a2a2b8f4c2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_image: {fileID: 114607583103401086}
   m_nameText: {fileID: 114328725259908006}
   m_powerDescText: {fileID: 114408434285384690}
 --- !u!114 &114838720579910050
@@ -7708,7 +7720,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 230}
+  m_SizeDelta: {x: 886.01, y: 230}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!224 &224008472457622080
 RectTransform:
@@ -8063,10 +8075,10 @@ RectTransform:
   m_Father: {fileID: 224006456936093092}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 50}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 443.005, y: -130}
+  m_SizeDelta: {x: 386.01, y: 50}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!224 &224258031023813640
 RectTransform:
