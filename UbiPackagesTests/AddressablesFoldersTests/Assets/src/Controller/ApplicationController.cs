@@ -40,7 +40,7 @@ public class ApplicationController : Singleton<ApplicationController>
         {
             case EOpType.None:
                 // Changes scenes
-                if (Input.GetKeyDown(KeyCode.C))
+                if (Input.GetKeyDown(KeyCode.S))
                 {
                     LevelScenes_Switch();
                 }
@@ -48,7 +48,15 @@ public class ApplicationController : Singleton<ApplicationController>
                 {
                     LevelScenes_Instantiate();
                 }
-                break;            
+                else if (Input.GetKeyDown(KeyCode.C))
+                {
+#if USE_CHINA
+                    GameObject go = m_addressablesManager.LoadAsset<GameObject>("PF_China");
+                    //GameObject go = m_addressablesManager.LoadAsset<GameObject>("Generated/AssetCatalog/China/Instantiables/PF_China");
+                    Instantiate(go);
+#endif
+                }
+                break;                                            
         }
         
         if (m_levelScenesAsyncOp != null && m_levelScenesAsyncOp.isDone)
