@@ -233,6 +233,25 @@ public class AddressablesCatalog
 
         return returnValue;
     }
+
+#if UNITY_EDITOR
+    public List<AddressablesCatalogEntry> GetEntriesFilteredByDefineSymbols(List<string> defineSymbols)
+    {
+        List<AddressablesCatalogEntry> returnValue = GetEntries();
+        if (returnValue != null)
+        {
+            for (int i = returnValue.Count - 1; i > -1; i--)
+            {
+                if (!string.IsNullOrEmpty(returnValue[i].DefineSymbol) && !defineSymbols.Contains(returnValue[i].DefineSymbol))
+                {
+                    returnValue.RemoveAt(i);
+                }
+            }
+        }
+
+        return returnValue;
+    }
+#endif
     
     public List<AddressablesCatalogEntry> GetEntries()
     {

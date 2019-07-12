@@ -56,16 +56,13 @@ public class EditorAssetBundlesConfig
 
     public EditorAssetBundlesConfig()
     {
+        m_entries = new Dictionary<string, EditorAssetBundlesConfigEntry>();
         m_localABList = new List<string>();
     }
 
     public void Reset()
-    {
-        if (m_entries != null)
-        {
-            m_entries.Clear();
-        }
-
+    {        
+        m_entries.Clear();     
         m_localABList.Clear();
     }
 
@@ -86,16 +83,7 @@ public class EditorAssetBundlesConfig
     private void LoadEntries(JSONArray entries, Logger logger)
     {        
         if (entries != null)
-        {        
-            if (m_entries == null)
-            {
-                m_entries = new Dictionary<string, EditorAssetBundlesConfigEntry>();
-            }    
-            else
-            {
-                m_entries.Clear();
-            }
-
+        {                    
             EditorAssetBundlesConfigEntry entry;
             int count = entries.Count;
             for (int i = 0; i < count; ++i)
@@ -170,7 +158,7 @@ public class EditorAssetBundlesConfig
                 m_localABList.Add(pair.Key);
             }
         }
-    }
+    }   
 
     public void BanAssetBundles(List<string> abIds)
     {
