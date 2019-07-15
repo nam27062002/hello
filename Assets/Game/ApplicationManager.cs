@@ -1494,25 +1494,6 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         m_debugParticlesVisibility = true;
     }
 
-    private void Debug_OnSendPlayTest()
-    {
-        if (FeatureSettingsManager.instance.IsMiniTrackingEnabled)
-        {
-            MiniTrackingEngine.SendTrackingFile(false,
-			(FGOL.Server.Error _error, GameServerManager.ServerResponse _response) => 
-            {
-				if (_error == null)
-                {
-                    Debug.Log("Play test tracking sent successfully");
-                }
-                else
-                {
-                    Debug.Log("Error when sending play test tracking");
-                }
-            });
-        }
-    }
-
     private void Debug_TestPlayerProgress()
     {
         Debug.Log("player progress = " + UsersManager.currentUser.GetPlayerProgress());

@@ -176,6 +176,7 @@ public class MetagameRewardView : MonoBehaviour, IBroadcastListener {
 				string tidName = "TID_EGG";
 				DefinitionNode eggDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.EGGS, m_reward.sku);
 				if(eggDef != null) {
+					if (m_iconLoader != null) m_iconLoader.LoadAsync(string.Empty);
 					iconSprite = Resources.Load<Sprite>(UIConstants.EGG_ICONS_PATH + eggDef.Get("icon"));
 					tidName = eggDef.Get("tidName");
 				}
@@ -200,6 +201,7 @@ public class MetagameRewardView : MonoBehaviour, IBroadcastListener {
 			case Metagame.RewardHardCurrency.TYPE_CODE:
 			case Metagame.RewardGoldenFragments.TYPE_CODE: {
 				// Get the icon linked to this currency
+				if (m_iconLoader != null) m_iconLoader.LoadAsync(string.Empty);
 				iconSprite = UIConstants.GetIconSprite(UIConstants.GetCurrencyIcon(m_reward.currency));
 
 				// Show currency name?

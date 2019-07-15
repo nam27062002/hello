@@ -178,10 +178,9 @@ namespace LevelEditor {
 				m_elapsedSeconds += Time.deltaTime;
 
 				if (Input.GetKeyDown(KeyCode.I))
-				{
-					bool usingEditor = true;
-					InstanceManager.player.StartIntroMovement( usingEditor );
-					InstanceManager.gameCamera.StartIntro( usingEditor );
+				{					
+					SpawnPlayer(true);
+					
 					LevelTypeSpawners sp = FindObjectOfType<LevelTypeSpawners>();
 					if ( sp != null )
 						sp.IntroSpawn(InstanceManager.player.data.def.sku);
@@ -218,26 +217,25 @@ namespace LevelEditor {
 			ParticleManager.PreBuild();
 			PoolManager.Build();
 
+			// Setup progression offset based on spawn position
+			progressionOffsetSeconds = float.Parse(LevelEditor.settings.progressionOffsetSeconds);
+			progressionOffsetXP = int.Parse(LevelEditor.settings.progressionOffsetXP);
+
 			// Reset dragon stats
 			InstanceManager.player.ResetStats(false);
-
+			
+			Vector3 startPos = GameConstants.Vector3.zero;
+			// Setup spawn position
 			if (LevelEditor.settings.spawnAtCameraPos) {
-				Vector3 startPos = mainCamera.transform.position;
+				startPos = mainCamera.transform.position;
 				startPos.z = 0f;
 				InstanceManager.player.transform.position = startPos;
+				InstanceManager.player.playable = true;
+				InstanceManager.gameCamera.Init(startPos);
 			} else {
-				// Put player in position and make it playable
-				InstanceManager.player.MoveToSpawnPoint(true);
-				if ( LevelEditor.settings.useIntro )
-				{
-					InstanceManager.player.StartIntroMovement( true );	
-				}
-			}
-			InstanceManager.player.playable = true;
-
-			// Init game camera
-			InstanceManager.gameCamera.Init();
-
+				SpawnPlayer(true);
+			}			
+			
 			// Instantiate map prefab
 			InitLevelMap();
 

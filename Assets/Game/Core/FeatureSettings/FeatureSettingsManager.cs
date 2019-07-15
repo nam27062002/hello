@@ -1606,15 +1606,6 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         }
     }
 
-    public bool IsMiniTrackingEnabled
-    {
-        get
-        {
-            // Disabled since it's a temporary tracking that is used only for play test
-            return false;
-        }
-    }
-
     public bool IsContentDeltasEnabled
     {
         get

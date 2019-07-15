@@ -44,53 +44,52 @@ public class HazardFistMotion : MonoBehaviour {
 
 	//
 	// Use this for initialization
-	void Awake() {
-		if (m_speed > 0) {
-			if(Camera.main != null) {
-				m_camera = Camera.main.GetComponent<GameCamera>();
+	void Awake() {	
+		if(Camera.main != null) {
+			m_camera = Camera.main.GetComponent<GameCamera>();
+		}
+
+		m_realDistance = m_distance * transform.localScale.x;
+
+		m_columnHeight = m_staticColumn.bounds.size.y * 0.95f;
+
+		m_staticColumnTransform = m_staticColumn.transform;
+		m_fistTransform = m_fist.transform;
+
+		m_initialPosY = m_staticColumnTransform.localPosition.y;
+
+		int auxColumnsCount = Mathf.FloorToInt(m_realDistance / m_columnHeight);
+		m_mobileColumnTransforms = new Transform[auxColumnsCount];
+
+		float yScale = (m_realDistance / auxColumnsCount) / m_columnHeight;
+		m_columnHeight *= yScale;
+
+		float scale = 1f;
+		for (int i = 0; i < auxColumnsCount; ++i) {
+			GameObject go = GameObject.Instantiate(m_staticColumn.gameObject);
+			Transform tr = go.transform;
+			tr.SetParent(transform);
+			tr.CopyFrom(m_staticColumnTransform);
+			if (i > 0) { // the column next to the hand won't be scaled
+				tr.localScale = tr.localScale.x * (new Vector3(scale, yScale, scale));
 			}
+			tr.localRotation = Quaternion.AngleAxis(Random.Range(0f, 360f), Vector3.up);
+			m_mobileColumnTransforms[i] = tr;
 
-			m_realDistance = m_distance * transform.localScale.x;
+			scale -= 0.1f;
+		}
 
-			m_columnHeight = m_staticColumn.bounds.size.y * 0.95f;
+		m_staticColumnTransform.localScale = m_staticColumnTransform.localScale.x * (new Vector3(scale, yScale, scale));
 
-			m_staticColumnTransform = m_staticColumn.transform;
-			m_fistTransform = m_fist.transform;
+		m_hitGroundParticles.CreatePool();
+		m_spawnParticles = true;
 
-			m_initialPosY = m_staticColumnTransform.localPosition.y;
+		m_time = 0f;
 
-			int auxColumnsCount = Mathf.FloorToInt(m_realDistance / m_columnHeight);
-			m_mobileColumnTransforms = new Transform[auxColumnsCount];
-
-			float yScale = (m_realDistance / auxColumnsCount) / m_columnHeight;
-			m_columnHeight *= yScale;
-
-			float scale = 1f;
-			for (int i = 0; i < auxColumnsCount; ++i) {
-				GameObject go = GameObject.Instantiate(m_staticColumn.gameObject);
-				Transform tr = go.transform;
-				tr.SetParent(transform);
-				tr.CopyFrom(m_staticColumnTransform);
-				if (i > 0) { // the column next to the hand won't be scaled
-					tr.localScale = tr.localScale.x * (new Vector3(scale, yScale, scale));
-				}
-				tr.localRotation = Quaternion.AngleAxis(Random.Range(0f, 360f), Vector3.up);
-				m_mobileColumnTransforms[i] = tr;
-
-				scale -= 0.1f;
-			}
-
-			m_staticColumnTransform.localScale = m_staticColumnTransform.localScale.x * (new Vector3(scale, yScale, scale));
-
-			m_hitGroundParticles.CreatePool();
-			m_spawnParticles = true;
-
-			m_time = 0f;
-
-			m_lastSinValue = -1;
+		m_lastSinValue = -1;
+		
+		if (m_speed > 0f) {
 			m_state = State.UP;
-
-
 		}else{
 			m_state = State.IDLE;
 		}
@@ -135,7 +134,11 @@ public class HazardFistMotion : MonoBehaviour {
 
 			if (sinValue < -1.8f) {
 				if (m_spawnParticles) {
-					if (m_camera.IsInsideCameraFrustrum(m_fistTransform.position)) {
+					if (m_camera == null) {
+						if (Camera.main != null) {
+							m_camera = Camera.main.GetComponent<GameCamera>();
+						}
+					} else if (m_camera.IsInsideCameraFrustrum(m_fistTransform.position)) {
 						m_hitGroundParticles.Spawn(m_fistTransform.position);
 					}
 					m_spawnParticles = false;
@@ -154,15 +157,22 @@ public class HazardFistMotion : MonoBehaviour {
 		{
 			case State.UP:
 			{
-				if ( !string.IsNullOrEmpty(m_goingUpSound) && m_camera.IsInsideCameraFrustrum(m_fistTransform.position) )
-					AudioController.Play(m_goingUpSound, m_fistTransform.position);
-					
-			}break;
+				if (m_camera == null) {
+					if (Camera.main != null) {
+						m_camera = Camera.main.GetComponent<GameCamera>();
+					}
+				} else if ( !string.IsNullOrEmpty(m_goingUpSound) && m_camera.IsInsideCameraFrustrum(m_fistTransform.position) )
+					AudioController.Play(m_goingUpSound, m_fistTransform.position);				
+			} break;
 			case State.DOWN:
 			{
-				if ( !string.IsNullOrEmpty(m_goingDownSound) && m_camera.IsInsideCameraFrustrum(m_fistTransform.position) )
-					AudioController.Play(m_goingDownSound, m_fistTransform.position);
-			}break;
+				if (m_camera == null) {
+					if (Camera.main != null) {
+						m_camera = Camera.main.GetComponent<GameCamera>();
+					}
+				} else if ( !string.IsNullOrEmpty(m_goingDownSound) && m_camera.IsInsideCameraFrustrum(m_fistTransform.position) )
+					AudioController.Play(m_goingDownSound, m_fistTransform.position);				
+			} break;
 		}
 	}
 }
