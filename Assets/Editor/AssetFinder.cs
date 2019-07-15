@@ -461,6 +461,21 @@ public class AssetFinder : EditorWindow {
 					obj.gameObject.name = prefabName + "-IN"; 
             }
         }
+		SpawnerStar[] spawnerStarList;
+		FindAssetInScene<SpawnerStar>(out spawnerStarList,true);
+		Undo.RecordObjects(spawnerStarList, "Disable static batching");
+		foreach (SpawnerStar obj in spawnerStarList) 
+		{
+			Object prefab = EditorUtility.GetPrefabParent(obj.gameObject);
+			if (prefab != null) 
+			{
+				string prefabName = prefab.name;
+				obj.gameObject.name = prefabName + "@";
+				// Inactive spawners ends with "-IN"
+				if (!obj.gameObject.activeInHierarchy)
+					obj.gameObject.name = prefabName + "-IN"; 
+			}
+		}
     }
 
 	[MenuItem("Hungry Dragon/Balancing/Spawners Rename Part 2")]
@@ -501,6 +516,21 @@ public class AssetFinder : EditorWindow {
 				{
 					prefabName = prefabName + "_KILL_" + ((activationKill != null) ? activationKill.sku.ToString() : "None") + "-" + ((activationKill != null) ? activationKill.value.ToString() : "0") + "_" + ((deactivationKill != null) ? deactivationKill.sku.ToString() : "None") + "-" + ((deactivationKill != null) ? deactivationKill.value.ToString() : "0") ;
 				}
+				obj.gameObject.name = prefabName.Replace("@","");
+				// Inactive spawners ends with "-IN"
+				if (!obj.gameObject.activeInHierarchy)
+					obj.gameObject.name = prefabName + "-IN";
+			}
+		}
+		SpawnerStar[] spawnerStarList;
+		FindAssetInScene<SpawnerStar>(out spawnerStarList,true);
+		Undo.RecordObjects(spawnerStarList, "Disable static batching");
+		foreach (SpawnerStar obj in spawnerStarList) 
+		{
+			Object prefab = EditorUtility.GetPrefabParent(obj.gameObject);
+			if (prefab != null) 
+			{
+				string prefabName = prefab.name;
 				obj.gameObject.name = prefabName.Replace("@","");
 				// Inactive spawners ends with "-IN"
 				if (!obj.gameObject.activeInHierarchy)
