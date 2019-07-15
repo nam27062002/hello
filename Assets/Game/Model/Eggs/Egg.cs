@@ -234,8 +234,12 @@ public class Egg {
         Broadcaster.Broadcast(BroadcastEventType.EGG_STATE_CHANGED, m_eggStateChanged);
 
 		// Save persistence
-		// [AOC] A bit of an overkill, try to improve it on the future
-		if(!m_testMode) PersistenceFacade.instance.Save_Request();
+		if ( m_state != State.SHOWROOM )
+		{
+			// [AOC] A bit of an overkill, try to improve it on the future
+			if(!m_testMode) PersistenceFacade.instance.Save_Request();
+		}
+		
 	}
 
 	/// <summary>
