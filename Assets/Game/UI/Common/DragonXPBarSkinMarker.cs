@@ -33,18 +33,35 @@ public class DragonXPBarSkinMarker : DragonXPBarSeparator {
 		set { m_skinSku = value; }
 	}
 
-	//------------------------------------------------------------------------//
-	// GENERIC METHODS														  //
-	//------------------------------------------------------------------------//
+    public DefinitionNode Definition
+    {
+        get { return m_definition; }
+        set { m_definition = value; }
+    }
 
-	//------------------------------------------------------------------------//
-	// PUBLIC METHODS														  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Show the proper clip based on slider's value and current delta.
-	/// Put the separator in position.
-	/// </summary>
-	public override void Refresh() {
+    private DefinitionNode m_definition;
+
+    // Cached reference
+    //private UITooltipTrigger m_trigger;
+    //private MenuDragonLevelTooltip m_tooltip;
+
+    //------------------------------------------------------------------------//
+    // GENERIC METHODS														  //
+    //------------------------------------------------------------------------//
+
+    public void Awake()
+    {
+        
+    }
+
+    //------------------------------------------------------------------------//
+    // PUBLIC METHODS														  //
+    //------------------------------------------------------------------------//
+    /// <summary>
+    /// Show the proper clip based on slider's value and current delta.
+    /// Put the separator in position.
+    /// </summary>
+    public override void Refresh() {
 		// Call parent
 		base.Refresh();
 
@@ -60,8 +77,55 @@ public class DragonXPBarSkinMarker : DragonXPBarSeparator {
 		m_inactiveObj.SetActive(!active);
 	}
 
-	//------------------------------------------------------------------------//
-	// CALLBACKS															  //
-	//------------------------------------------------------------------------//
+    //------------------------------------------------------------------------//
+    // CALLBACKS															  //
+    //------------------------------------------------------------------------//
 
+    public void OnTooltipOpen()
+    {
+        UITooltipTrigger m_trigger = GetComponent<UITooltipTrigger>();
+        MenuDragonLevelTooltip m_tooltip = (MenuDragonLevelTooltip) m_trigger.tooltip;
+
+        // Show the tooltip to the left or to the right based on its position on 
+        // screen, trying to avoid the player's fingers covering it.
+
+        // Find out best direction (Multidirectional tooltip makes it easy for us)
+        UITooltipMultidirectional.ShowDirection bestDir = m_tooltip.CalculateBestDirection(
+            m_trigger.anchor.position,
+            UITooltipMultidirectional.BestDirectionOptions.HORIZONTAL_ONLY
+        );
+
+        // Adjust offset based on best direction
+        Vector2 offset = m_trigger.offset;
+        if (bestDir == UITooltipMultidirectional.ShowDirection.LEFT)
+        {
+            offset.x = -Mathf.Abs(offset.x);
+        }
+        else if (bestDir == UITooltipMultidirectional.ShowDirection.RIGHT)
+        {
+            offset.x = Mathf.Abs(offset.x);
+        }
+
+        // Apply new offset and direction
+        m_trigger.offset = offset;
+        m_tooltip.SetupDirection(bestDir);
+
+
+        // Skin info
+        string skinName = LocalizationManager.SharedInstance.Localize(m_definition.Get("tidName"));
+        string skinIconId = m_definition.Get("icon");
+        string unlockLevel =  LocalizationManager.SharedInstance.Localize("TID_LAB_TOOLTIP_UNLOCK_LEVEL",
+                                                                          m_definition.Get("unlockLevel")
+                                                                          );
+
+        // Power up info
+        string powerUpSku = m_definition.Get("powerup");
+        DefinitionNode powerUpDef = DefinitionsManager.SharedInstance.GetDefinitionByVariable(DefinitionsCategory.POWERUPS, "sku", powerUpSku);
+        string powerUpText = DragonPowerUp.GetDescription(powerUpDef, false, false);
+        Sprite powerUpIcon = Resources.Load<Sprite>(UIConstants.POWER_ICONS_PATH + powerUpDef.Get("icon"));
+
+        // Set the content of the tooltip
+        m_tooltip.Init(skinName, powerUpText, skinIconId, powerUpIcon, unlockLevel);
+
+    }
 }

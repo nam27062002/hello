@@ -18,10 +18,7 @@ using UnityEngine;
 /// implementation of this class.
 /// </summary>
 public class GameSceneControllerBase : SceneController, IBroadcastListener {
-	//------------------------------------------------------------------//
-	// CONSTANTS														//
-	//------------------------------------------------------------------//
-
+	
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
@@ -31,6 +28,18 @@ public class GameSceneControllerBase : SceneController, IBroadcastListener {
 		get { return m_elapsedSeconds; }
         set { m_elapsedSeconds = value; }
     }
+
+	private int m_progressionOffsetXP;
+	public int progressionOffsetXP { 
+		get { return m_progressionOffsetXP; } 
+		set { m_progressionOffsetXP = value; } 
+	}
+
+	private float m_progressionOffsetSeconds;
+	public float progressionOffsetSeconds {
+		get { return m_progressionOffsetSeconds; }
+		set { m_progressionOffsetSeconds = value; }
+	}
 
 	// Handled by heirs
 	protected bool m_paused = false;
@@ -111,6 +120,60 @@ public class GameSceneControllerBase : SceneController, IBroadcastListener {
 				InstanceManager.mapCamera.gameObject.SetActive(false);
 			}
 		}
+	}
+
+	protected void SpawnPlayer(bool _isLevelEditor) {
+		GameObject spawnPointObj = null;
+		string dragonSKU = InstanceManager.player.data.def.sku;
+
+		if (_isLevelEditor) {
+			string selectedSP = LevelEditor.LevelEditor.settings.spawnPoint;
+			if (!string.IsNullOrEmpty(selectedSP)) {
+				spawnPointObj = GameObject.Find(selectedSP);
+			}
+
+			if (spawnPointObj == null) {
+				spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME + "_" + LevelEditor.LevelTypeSpawners.LEVEL_EDITOR_SPAWN_POINT_NAME);
+				if (spawnPointObj == null) {
+					spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME + "_" + dragonSKU);
+				}
+			}
+		} else {
+			// maybe we are inside a tournament
+			if (HDLiveDataManager.tournament.isActive) {
+				HDTournamentDefinition tournamentDef = HDLiveDataManager.tournament.tournamentData.tournamentDef;
+				string selectedSP = tournamentDef.m_goal.m_spawnPoint;
+				if (!string.IsNullOrEmpty(selectedSP)) {
+					spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME + "_" + selectedSP);
+				}
+			}
+			
+			if (spawnPointObj == null) {
+				spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME + "_" + dragonSKU);
+			}
+		}
+		// If we couldn't find a valid spawn point, try to find a generic one
+		if (spawnPointObj == null) {
+			spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME);
+		}
+
+		if (spawnPointObj != null) {
+			DragonSpawnPoint dsp = spawnPointObj.GetComponent<DragonSpawnPoint>();
+			if (dsp != null) dsp.Spawn();
+
+			Vector3 startPos = spawnPointObj.transform.position;
+			
+			InstanceManager.player.gameObject.SetActive(true);
+			if (_isLevelEditor && !LevelEditor.LevelEditor.settings.useIntro) {
+				InstanceManager.player.playable = true;
+				InstanceManager.player.dragonMotion.MoveToSpawnPosition(startPos);				
+			} else {
+				InstanceManager.player.playable = false;
+				InstanceManager.player.dragonMotion.StartIntroMovement(startPos);
+			}		
+			// Init game camera
+			InstanceManager.gameCamera.Init(startPos);
+		}	
 	}
 
 	//------------------------------------------------------------------------//
