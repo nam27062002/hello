@@ -66,11 +66,11 @@ public class LabButton : MonoBehaviour {
 		}
 
 		// Check required number of runs
-		m_toggle = (UsersManager.currentUser.gamesPlayed >= GameSettings.ENABLE_LAB_AT_RUN);
+		bool toggle = (UsersManager.currentUser.gamesPlayed >= GameSettings.ENABLE_LAB_AT_RUN);
 
 		// If a dragon of the required tier is acquired before completing the minimum amount of runs (via HC), toggle anyways
 		if(DragonManager.biggestOwnedDragon.tier >= DragonDataSpecial.MIN_TIER_TO_UNLOCK) {
-			m_toggle = true;
+			toggle = true;
 		}
 
 		// Requires a Selectable component
@@ -88,7 +88,7 @@ public class LabButton : MonoBehaviour {
 
 			// Don't actually disable the button, allow tapping to it to give feedabck on when the button will be unlocked
 			// To do the trick, we'll switch the button's state animation triggers
-			if(m_toggle) {
+			if(toggle) {
 				m_target.animationTriggers.normalTrigger = m_defaultTriggers.normalTrigger;
 				m_target.animationTriggers.highlightedTrigger = m_defaultTriggers.highlightedTrigger;
 				m_target.animationTriggers.pressedTrigger = m_defaultTriggers.pressedTrigger;
@@ -100,11 +100,21 @@ public class LabButton : MonoBehaviour {
 
 			// Apply to icon animation
 			if(m_iconAnim != null) {
-				m_iconAnim.enabled = m_toggle;
+				m_iconAnim.enabled = toggle;
 			}
 		} else {
 			Debug.LogError("<color=red>SELECTABLE NOT FOUND</color>");
 		}
+
+		// If state has changed, force a visual refresh of the button
+		if(toggle != m_toggle) {
+			// [AOC] How to force a refresh? Unity style -____-
+			m_target.interactable = !m_target.interactable;
+			m_target.interactable = !m_target.interactable;
+		}
+
+		// Store new state
+		m_toggle = toggle;
 	}
 
 	/// <summary>
