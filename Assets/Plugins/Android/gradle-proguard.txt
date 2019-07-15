@@ -3,6 +3,8 @@
 -keep class org.fmod.* { *; }
 -keep class org.calety.** { *; }
 -keep class com.fgol.** { *; }
+-keep class com.ubisoft.** { *; }
+-keep class com.appsflyer.** { *; }
 
 -keep public class android.webkit.JavascriptInterface {}
 
@@ -25,6 +27,7 @@
 -keep class com.ironsource.adapters.** { *;}
 -keep class com.ironsource.unity.androidbridge.** { *;}
 
+-keep class com.facebook.unity.** { *; }
 
 # --------------------
 # AdColony
@@ -91,12 +94,13 @@
 
 
 #crashlytics
+-keep class com.crashlytics.android.** { *; }
 #-keep class io.fabric.unity.android.** { *; }
 #-keepclassmembers class io.fabric.unity.android.** { *; }
 -keepattributes *Annotation*
 -keepattributes SourceFile,LineNumberTable
 -keep public class * extends java.lang.Exception
--keepresourcexmlelements manifest/application/meta-data@name=io.fabric.ApiKey
+# -keepresourcexmlelements manifest/application/meta-data@name=io.fabric.ApiKey
 -keep class io.fabric.unity.android.** { *; }
 -dontwarn io.fabric.unity.android.**
 -keep class io.fabric.sdk.android.** { *; }
