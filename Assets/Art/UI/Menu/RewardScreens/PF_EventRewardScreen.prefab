@@ -1459,7 +1459,6 @@ GameObject:
   m_Component:
   - component: {fileID: 224288644559290974}
   - component: {fileID: 222592679607036694}
-  - component: {fileID: 114011927958137688}
   - component: {fileID: 114859587187898200}
   - component: {fileID: 114735578490904358}
   m_Layer: 5
@@ -1509,7 +1508,6 @@ GameObject:
   m_Component:
   - component: {fileID: 224564213292692308}
   - component: {fileID: 114467854805931770}
-  - component: {fileID: 114119148785849504}
   - component: {fileID: 114547264016255480}
   - component: {fileID: 114104527076749090}
   - component: {fileID: 114048040697988038}
@@ -2863,20 +2861,6 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
---- !u!114 &114011927958137688
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1420907699741574}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_tid: 
-  m_caseType: 0
-  m_replacements: []
 --- !u!114 &114021568442432488
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3511,22 +3495,6 @@ MonoBehaviour:
   - {fileID: 0}
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!114 &114119148785849504
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1432614749353312}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b2be8f3b19db14f47aefd2e74af48c5d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_arrow: {fileID: 224622327992705556}
-  m_arrowDir: 0
-  m_titleText: {fileID: 0}
-  m_messageText: {fileID: 0}
-  m_icon: {fileID: 0}
 --- !u!114 &114120373671078302
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6759,8 +6727,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 795702126f7f24747a48500c6fbc8d32, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_nameText: {fileID: 114011927958137688}
-  m_descriptionText: {fileID: 114960248812510072}
+  m_arrow: {fileID: 0}
+  m_arrowDir: 0
+  m_titleText: {fileID: 114735578490904358}
+  m_messageText: {fileID: 114960248812510072}
+  m_icon: {fileID: 0}
   m_powerIcon: {fileID: 114569855512839426}
   m_lockInfo: {fileID: 0}
 --- !u!114 &114469087779594032
@@ -10425,7 +10396,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 63a0d607bdf0345978cc94305485a042, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_tooltip: {fileID: 114119148785849504}
+  m_tooltip: {fileID: 114467854805931770}
   m_prefabPath: 
   m_anchor: {fileID: 0}
   m_offset: {x: 0, y: 200}
@@ -26823,7 +26794,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 1662.1449, y: -100}
+  m_AnchoredPosition: {x: 1506, y: -100}
   m_SizeDelta: {x: 200, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224138405609381002

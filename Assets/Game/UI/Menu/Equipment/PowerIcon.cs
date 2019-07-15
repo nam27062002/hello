@@ -237,18 +237,21 @@ public class PowerIcon : MonoBehaviour, IBroadcastListener {
 		// Make sure the trigger that opened the tooltip is linked to this icon
 		if(_trigger != trigger) return;
 
-		// Tooltip will take care of the rest
-		PowerTooltip powerTooltip = _tooltip.GetComponent<PowerTooltip>();
-		if(powerTooltip != null) {
-			// Initialize
-			powerTooltip.InitFromDefinition(m_powerDef, m_mode);
+        if (!_tooltip is PowerTooltip) return;
 
-			// Set lock state
-			powerTooltip.SetLocked(m_lockIcon != null && m_lockIcon.activeSelf);	// Use lock icon visibility to determine whether power is locked or not
+        PowerTooltip powerTooltip = (PowerTooltip)_tooltip;
+
+		// Tooltip will take care of the rest
+		if(powerTooltip != null) {
+            // Initialize
+            powerTooltip.InitFromDefinition(m_powerDef, m_mode);
+
+            // Set lock state
+            powerTooltip.SetLocked(m_lockIcon != null && m_lockIcon.activeSelf);	// Use lock icon visibility to determine whether power is locked or not
 		}
 
-		// Set arrow offset to make it point to this icon
-		_tooltip.SetArrowOffset(m_tooltipArrowOffset);
+        // Set arrow offset to make it point to this icon
+        powerTooltip.SetArrowOffset(m_tooltipArrowOffset);
 	}
 
 	/// <summary>

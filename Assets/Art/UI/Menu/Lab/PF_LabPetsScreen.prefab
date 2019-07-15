@@ -195,7 +195,6 @@ GameObject:
   m_Component:
   - component: {fileID: 224190566358001702}
   - component: {fileID: 114228615023976554}
-  - component: {fileID: 114300716454476922}
   - component: {fileID: 114140316408090612}
   - component: {fileID: 114112738102561950}
   - component: {fileID: 114849433222051064}
@@ -2787,7 +2786,6 @@ GameObject:
   m_Component:
   - component: {fileID: 224795711849163298}
   - component: {fileID: 114645890198528628}
-  - component: {fileID: 114586403626631278}
   - component: {fileID: 114806445126522308}
   - component: {fileID: 114096554202547494}
   - component: {fileID: 114153915038499312}
@@ -4515,7 +4513,6 @@ GameObject:
   m_Component:
   - component: {fileID: 224311690208035716}
   - component: {fileID: 222393992766027658}
-  - component: {fileID: 114044159333681298}
   - component: {fileID: 114159147598533168}
   m_Layer: 5
   m_Name: PowerupNameText
@@ -4733,7 +4730,6 @@ GameObject:
   m_Component:
   - component: {fileID: 224506074801106828}
   - component: {fileID: 222298885382715358}
-  - component: {fileID: 114637052911801346}
   - component: {fileID: 114300231335884590}
   m_Layer: 5
   m_Name: PowerupNameText
@@ -8905,20 +8901,6 @@ MonoBehaviour:
     m_TypeName: UnityEngine.UI.Toggle+ToggleEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
   m_IsOn: 0
---- !u!114 &114044159333681298
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1706578947553612}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_tid: 
-  m_caseType: 0
-  m_replacements: []
 --- !u!114 &114044653819011172
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -9156,7 +9138,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 114325706033065976}
   m_HandleRect: {fileID: 224941213747400938}
   m_Direction: 0
-  m_Value: 0
+  m_Value: 1
   m_Size: 0.99999714
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -9455,7 +9437,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 63a0d607bdf0345978cc94305485a042, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_tooltip: {fileID: 114300716454476922}
+  m_tooltip: {fileID: 114228615023976554}
   m_prefabPath: 
   m_anchor: {fileID: 0}
   m_offset: {x: 100, y: 0}
@@ -11455,7 +11437,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 63a0d607bdf0345978cc94305485a042, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_tooltip: {fileID: 114586403626631278}
+  m_tooltip: {fileID: 114645890198528628}
   m_prefabPath: 
   m_anchor: {fileID: 0}
   m_offset: {x: -100, y: 0}
@@ -11899,8 +11881,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 795702126f7f24747a48500c6fbc8d32, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_nameText: {fileID: 114637052911801346}
-  m_descriptionText: {fileID: 114451135956807250}
+  m_arrow: {fileID: 0}
+  m_arrowDir: 0
+  m_titleText: {fileID: 114300231335884590}
+  m_messageText: {fileID: 114451135956807250}
+  m_icon: {fileID: 0}
   m_powerIcon: {fileID: 114475026592476840}
   m_lockInfo: {fileID: 0}
 --- !u!114 &114230290203151492
@@ -13224,7 +13209,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 63a0d607bdf0345978cc94305485a042, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_tooltip: {fileID: 114300716454476922}
+  m_tooltip: {fileID: 114228615023976554}
   m_prefabPath: 
   m_anchor: {fileID: 0}
   m_offset: {x: 100, y: 0}
@@ -13438,22 +13423,6 @@ MonoBehaviour:
   - {fileID: 0}
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!114 &114300716454476922
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1017548696736700}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b2be8f3b19db14f47aefd2e74af48c5d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_arrow: {fileID: 224084748144833202}
-  m_arrowDir: 1
-  m_titleText: {fileID: 114300231335884590}
-  m_messageText: {fileID: 114451135956807250}
-  m_icon: {fileID: 0}
 --- !u!114 &114307688769050974
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -15408,7 +15377,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 63a0d607bdf0345978cc94305485a042, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_tooltip: {fileID: 114586403626631278}
+  m_tooltip: {fileID: 114645890198528628}
   m_prefabPath: 
   m_anchor: {fileID: 0}
   m_offset: {x: -100, y: 0}
@@ -17604,22 +17573,6 @@ MonoBehaviour:
   m_saturation: 1
   m_contrast: 0.3
   m_lateMultiply: 0
---- !u!114 &114586403626631278
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1430841059462154}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b2be8f3b19db14f47aefd2e74af48c5d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_arrow: {fileID: 224214556702568632}
-  m_arrowDir: 1
-  m_titleText: {fileID: 114159147598533168}
-  m_messageText: {fileID: 114310731210008772}
-  m_icon: {fileID: 0}
 --- !u!114 &114586444562813740
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -18833,20 +18786,6 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
---- !u!114 &114637052911801346
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1740819759954864}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_tid: 
-  m_caseType: 0
-  m_replacements: []
 --- !u!114 &114639714549249514
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -18877,8 +18816,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 795702126f7f24747a48500c6fbc8d32, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_nameText: {fileID: 114044159333681298}
-  m_descriptionText: {fileID: 114310731210008772}
+  m_arrow: {fileID: 0}
+  m_arrowDir: 0
+  m_titleText: {fileID: 114159147598533168}
+  m_messageText: {fileID: 114310731210008772}
+  m_icon: {fileID: 0}
   m_powerIcon: {fileID: 114203667919064840}
   m_lockInfo: {fileID: 0}
 --- !u!114 &114648559582316498
@@ -21590,7 +21532,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 63a0d607bdf0345978cc94305485a042, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_tooltip: {fileID: 114300716454476922}
+  m_tooltip: {fileID: 114228615023976554}
   m_prefabPath: 
   m_anchor: {fileID: 0}
   m_offset: {x: 100, y: 0}
@@ -39021,7 +38963,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 0.012817383, y: 0}
+  m_AnchoredPosition: {x: 0.023254395, y: 0}
   m_SizeDelta: {x: 100, y: 0}
   m_Pivot: {x: 0, y: 0}
 --- !u!224 &224705907116958956

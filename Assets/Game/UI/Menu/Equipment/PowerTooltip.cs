@@ -15,9 +15,10 @@ using System;
 // CLASSES																	  //
 //----------------------------------------------------------------------------//
 /// <summary>
-/// Simple controller for a disguise power tooltip.
+/// Simple controller for a power tooltip.
 /// </summary>
-public class PowerTooltip : MonoBehaviour {
+public class PowerTooltip : UITooltip
+{
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -26,26 +27,18 @@ public class PowerTooltip : MonoBehaviour {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed References
-	[SerializeField] private Localizer m_nameText = null;
-	public Localizer nameText {
-		get { return m_nameText; }
-	}
 
-	[SerializeField] private TMPro.TextMeshProUGUI m_descriptionText = null;
-	public TMPro.TextMeshProUGUI descriptionText {
-		get { return m_descriptionText; }
-	}
 
-	[Space]
 	[SerializeField] private PowerIcon m_powerIcon = null;
 	public PowerIcon powerIcon {
 		get { return m_powerIcon; }
 	}
 
-	[SerializeField] private GameObject m_lockInfo = null;
+    [SerializeField] private GameObject m_lockInfo = null;
 
-	// Data
-	private DefinitionNode m_powerDef = null;
+
+    // Data
+    private DefinitionNode m_powerDef = null;
 	public DefinitionNode powerDef {
 		get { return m_powerDef; }
 	}
@@ -58,10 +51,11 @@ public class PowerTooltip : MonoBehaviour {
 	/// </summary>
 	private void Awake() {
 		// Check required fields
-		Debug.Assert(m_nameText != null, "Required field!");
-		Debug.Assert(m_descriptionText != null, "Required field!");
 		Debug.Assert(m_powerIcon != null, "Required field!");
-	}
+
+        // Start hidden
+        animator.ForceHide(false);
+    }
 
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //
@@ -85,13 +79,15 @@ public class PowerTooltip : MonoBehaviour {
 
 		// Name and description
 		// Name
-		if(m_nameText != null) {
-			m_nameText.Localize(_powerDef.Get("tidName"));
+		if(m_titleText != null) {
+            string title = LocalizationManager.SharedInstance.Localize(_powerDef.Get("tidName"));
+            Debug.Log ("set Title: " + title);
+            m_titleText.text = title;
 		}
 
 		// Desc
-		if(m_descriptionText != null) {
-			m_descriptionText.text = DragonPowerUp.GetDescription(_powerDef, false, _mode == PowerIcon.Mode.PET);   // Custom formatting depending on powerup type, already localized
+		if(m_messageText != null) {
+            m_messageText.text = DragonPowerUp.GetDescription(_powerDef, false, _mode == PowerIcon.Mode.PET);   // Custom formatting depending on powerup type, already localized
 		}
 	}
 
