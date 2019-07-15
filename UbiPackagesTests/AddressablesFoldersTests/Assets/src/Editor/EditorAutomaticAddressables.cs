@@ -37,8 +37,13 @@ public static class EditorAutomaticAddressables {
     {
         EditorAssetBundlesConfig returnValue = new EditorAssetBundlesConfig();
 
-        returnValue.SetAssetBundleLocation("ab_assets_castle", EditorAssetBundlesConfigEntry.ELocation.Local, true);
-        returnValue.SetAssetBundleLocation("ab_assets_village", EditorAssetBundlesConfigEntry.ELocation.Local, true);
+        returnValue.SetAssetBundleLocation("ab_assets_castle", EditorAssetBundlesConfigEntry.ELocation.Remote, true);
+        returnValue.SetAssetBundleLocation("ab_sc_castle", EditorAssetBundlesConfigEntry.ELocation.Remote, true);
+
+        returnValue.SetAssetBundleLocation("ab_assets_village", EditorAssetBundlesConfigEntry.ELocation.Resources, true);
+        returnValue.SetAssetBundleLocation("ab_sc_village", EditorAssetBundlesConfigEntry.ELocation.Resources, true);
+
+        returnValue.SetAssetBundleLocation("ab_assets_village-castle", EditorAssetBundlesConfigEntry.ELocation.Remote, true);
         returnValue.SetAssetBundleLocation("ab_assets_dark", EditorAssetBundlesConfigEntry.ELocation.Local, true);
 
         return returnValue;
@@ -96,9 +101,15 @@ public static class EditorAutomaticAddressables {
 #if USE_CHINA
         //addToCatalog = false;
 #endif
+        GetEntriesFromDirectory(new DirectoryInfo("Assets/AssetCatalog/Level/Medieval/Utils/Instantiables"), false, entries, bundlesSet, null, BuildTarget.NoTarget, AddressablesTypes.ELocationType.Resources, null, addToCatalog);
 
         GetEntriesFromDirectory(new DirectoryInfo("Assets/AssetCatalog/Level/Medieval/Village/Instantiables"), false, entries, bundlesSet, null, BuildTarget.NoTarget, AddressablesTypes.ELocationType.AssetBundles, null, addToCatalog);
+        GetEntriesFromDirectory(new DirectoryInfo("Assets/AssetCatalog/Level/Medieval/Village/Assets/Scenes"), false, entries, bundlesSet, null, BuildTarget.NoTarget, AddressablesTypes.ELocationType.AssetBundles, null, addToCatalog);
+
         GetEntriesFromDirectory(new DirectoryInfo("Assets/AssetCatalog/Level/Medieval/Castle/Instantiables"), false, entries, bundlesSet, null, BuildTarget.NoTarget, AddressablesTypes.ELocationType.AssetBundles, null, addToCatalog);
+        GetEntriesFromDirectory(new DirectoryInfo("Assets/AssetCatalog/Level/Medieval/Castle/Assets/Scenes"), false, entries, bundlesSet, null, BuildTarget.NoTarget, AddressablesTypes.ELocationType.AssetBundles, null, addToCatalog);
+
+        GetEntriesFromDirectory(new DirectoryInfo("Assets/AssetCatalog/Level/Medieval/Village-Castle/Instantiables"), false, entries, bundlesSet, null, BuildTarget.NoTarget, AddressablesTypes.ELocationType.AssetBundles, null, addToCatalog);
         GetEntriesFromDirectory(new DirectoryInfo("Assets/AssetCatalog/Level/Medieval/Dark/Instantiables"), false, entries, bundlesSet, null, BuildTarget.NoTarget, AddressablesTypes.ELocationType.AssetBundles, "USE_DARK", addToCatalog);
 
         // China

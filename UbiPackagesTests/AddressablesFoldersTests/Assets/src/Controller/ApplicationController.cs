@@ -22,7 +22,7 @@ public class ApplicationController : Singleton<ApplicationController>
         m_scene = scene;
     }
 
-    void Start()
+    void Awake()
     {
         Addressables_Init();
     }
@@ -104,7 +104,8 @@ public class ApplicationController : Singleton<ApplicationController>
 
     private void LevelScenes_Instantiate()
     {
-        string prefabName = LevelScenes_GetPrefabName(m_scene);
+        //string prefabName = LevelScenes_GetPrefabName(m_scene);
+        string prefabName = "PF_VillageCastle";
         AddressablesOp op = m_addressablesManager.LoadAssetAsync(prefabName);
         op.OnDone = LevelScenes_OnInstantiated;
 
@@ -145,6 +146,8 @@ public class ApplicationController : Singleton<ApplicationController>
 
     #region addressables
     private AddressablesManager m_addressablesManager = new AddressablesManager();
+
+    public AddressablesManager AddressablesManager { get { return m_addressablesManager; } }
 
     private void Addressables_Init()
     {
