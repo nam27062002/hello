@@ -65,6 +65,8 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable, IBroadcastLi
 	[SerializeField] private string m_animB = "";
 	[SerializeField] private string m_animC = "";
 
+	[SeparatorAttribute("Render")]
+	[SerializeField] private List<Renderer> m_materialChangeExceptions = new List<Renderer>();
     
     [SeparatorAttribute("Freeze Particle")]
     [SerializeField] private bool m_useFreezeParticle = false;
@@ -129,7 +131,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable, IBroadcastLi
 	protected bool m_isAnimatorAvailable;
 	protected float m_disableAnimatorTimer;
 
-	private Renderer[] m_renderers;
+	private List<Renderer> m_renderers;
     private List<Material[]> m_rendererMaterials;
 
     private Dictionary<int, List<Material>> m_materials;
@@ -263,58 +265,54 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable, IBroadcastLi
 		m_materialsFrozen = new Dictionary<int, List<Material>>();
         m_materialsInlove = new Dictionary<int, List<Material>>();
 		m_materialList = new List<Material>();
-		m_renderers = GetComponentsInChildren<Renderer>();
         m_rendererMaterials = new List<Material[]>();
 
         m_vertexCount = 0;
 		m_rendererCount = 0;
 
-		if (m_renderers != null) {
-			m_rendererCount = m_renderers.Length;
-                        
-			for (int i = 0; i < m_rendererCount; i++) {
-				Renderer renderer = m_renderers[i];
+		m_renderers = new List<Renderer>();
+		Renderer[] renderers = GetComponentsInChildren<Renderer>();
+		
+		if (renderers != null) {
+			int renderersCount = renderers.Length;
+			for (int i = 0; i < renderersCount; i++) {
+				Renderer renderer = renderers[i];
+				
+				if (!m_materialChangeExceptions.Contains(renderer)) {
+					Material[] materials = renderer.sharedMaterials;
+					m_renderers.Add(renderer);
 
-				// Keep the vertex count (for DEBUG)
-				/*if (renderer.GetType() == typeof(SkinnedMeshRenderer)) {
-					m_vertexCount += (renderer as SkinnedMeshRenderer).sharedMesh.vertexCount;
-				} else if (renderer.GetType() == typeof(MeshRenderer)) {
-					MeshFilter filter = renderer.GetComponent<MeshFilter>();
-					if (filter != null) {
-						m_vertexCount += filter.sharedMesh.vertexCount;
-					}
-				}*/
-
-				Material[] materials = renderer.sharedMaterials;
-
-				// Stores the materials of this renderer in a dictionary for direct access//
-				int renderID = renderer.GetInstanceID();
-				m_materials[renderID] = new List<Material>();
-				m_materialsFrozen[renderID] = new List<Material>();
-                m_materialsInlove[renderID] = new List<Material>();
-                
-				for (int m = 0; m < materials.Length; ++m) {
-					Material mat = materials[m];
-					if (m_showDamageFeedback) mat = new Material(materials[m]);
-
-                    if (mat != null) {
-                        m_materialList.Add(mat);
-                    }
+					// Stores the materials of this renderer in a dictionary for direct access//
+					int renderID = renderer.GetInstanceID();
+					m_materials[renderID] = new List<Material>();
+					m_materialsFrozen[renderID] = new List<Material>();
+					m_materialsInlove[renderID] = new List<Material>();
 					
-                    m_materials[renderID].Add(mat);
-					if ( mat != null ){
-						m_materialsFrozen[renderID].Add(FrozenMaterialManager.GetFrozenMaterialFor(mat));
-                        m_materialsInlove[renderID].Add(InloveMaterialManager.GetInloveMaterialFor(mat));
-					}else{
-						m_materialsFrozen[renderID].Add(null);
-                        m_materialsInlove[renderID].Add(null);
-					}
+					for (int m = 0; m < materials.Length; ++m) {
+						Material mat = materials[m];
+						if (m_showDamageFeedback) mat = new Material(materials[m]);
 
-					materials[m] = null; // remove all materials to avoid instantiation.
+						if (mat != null) {
+							m_materialList.Add(mat);
+						}
+						
+						m_materials[renderID].Add(mat);
+						if ( mat != null ){
+							m_materialsFrozen[renderID].Add(FrozenMaterialManager.GetFrozenMaterialFor(mat));
+							m_materialsInlove[renderID].Add(InloveMaterialManager.GetInloveMaterialFor(mat));
+						}else{
+							m_materialsFrozen[renderID].Add(null);
+							m_materialsInlove[renderID].Add(null);
+						}
+
+						materials[m] = null; // remove all materials to avoid instantiation.
+					}
+					renderer.sharedMaterials = materials;
+					m_rendererMaterials.Add(materials);
 				}
-				renderer.sharedMaterials = materials;
-                m_rendererMaterials.Add(materials);
             }
+
+			m_rendererCount = m_renderers.Count;
         }
 
 		if (!string.IsNullOrEmpty(m_corpseAsset)) {
@@ -625,7 +623,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable, IBroadcastLi
 
 		// Restore materials
 		if(m_renderers != null) {
-			for(int i = 0; i < m_renderers.Length; i++) {
+			for(int i = 0; i < m_rendererCount; i++) {
 				int id = m_renderers[i].GetInstanceID();
                 Material[] materials = m_rendererMaterials[i];
 				for(int m = 0; m < materials.Length; m++) {

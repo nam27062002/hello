@@ -67,7 +67,7 @@ GameObject:
   m_IsActive: 1
 --- !u!1 &1602517789530758
 GameObject:
-  m_ObjectHideFlags: 1
+  m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   serializedVersion: 5
@@ -123,9 +123,10 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000012775619424}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 109.25402, y: 47.820698, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
+  - {fileID: 4086940505528772}
   - {fileID: 4692774276776710}
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -136,14 +137,14 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1602517789530758}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0, y: -0.06, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: -0.06000042, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4436668604580768}
   - {fileID: 4179186973240854}
-  m_Father: {fileID: 4692774276776710}
-  m_RootOrder: 1
+  m_Father: {fileID: 4000010793146780}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4179186973240854
 Transform:
@@ -182,9 +183,8 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4820975450765468}
-  - {fileID: 4086940505528772}
   m_Father: {fileID: 4000010793146780}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4820975450765468
 Transform:
@@ -287,8 +287,12 @@ MonoBehaviour:
   m_inflammable:
     m_burningTime: 0
     m_canBeDissolved: 1
-    m_ashExceptions: []
-    m_disableOnBurn: []
+    m_ashExceptions:
+    - {fileID: 199636790704260538}
+    - {fileID: 199025758592424330}
+    - {fileID: 199333776294508150}
+    m_disableOnBurn:
+    - {fileID: 1602517789530758}
   m_onSpawnSound: 
 --- !u!114 &114273272889596234
 MonoBehaviour:
@@ -366,6 +370,10 @@ MonoBehaviour:
   m_animA: 
   m_animB: 
   m_animC: 
+  m_materialChangeExceptions:
+  - {fileID: 199636790704260538}
+  - {fileID: 199025758592424330}
+  - {fileID: 199333776294508150}
   m_useFreezeParticle: 0
   m_freezeParticleScale: 1
   m_useMoveAnimInLove: 0
@@ -750,7 +758,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -160724335
+  randomSeed: -62284914
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -4117,7 +4125,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 1588721627
+  randomSeed: -669167783
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -7484,7 +7492,7 @@ ParticleSystem:
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 74392561
+  randomSeed: 379190949
   InitialModule:
     serializedVersion: 3
     enabled: 1

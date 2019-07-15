@@ -595,11 +595,11 @@ public class GameSceneController : GameSceneControllerBase {
 
                 PoolManager.PreBuild();
                 ParticleManager.Clear();
-
-                if (SeasonManager.activeSeason.Equals("xmas")) {
-                    ParticleManager.EnableBloodOverride("PS_XMasPresentCollect");
-                } else {
+                string bloodOverride = SeasonManager.GetBloodParticlesName();
+                if (string.IsNullOrEmpty(bloodOverride)) {
                     ParticleManager.DisableBloodOverride();
+                } else {
+                    ParticleManager.EnableBloodOverride(bloodOverride);
                 }
 				ParticleManager.PreBuild();
 

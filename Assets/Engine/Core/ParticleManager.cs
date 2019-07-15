@@ -378,18 +378,18 @@ public class ParticleManager : UbiBCN.SingletonMonoBehaviour<ParticleManager> {
         {
             string variant = "";
             switch (level) {
-                case FeatureSettings.ELevel5Values.very_low:
+            	case FeatureSettings.ELevel5Values.very_low:
                 case FeatureSettings.ELevel5Values.low:
-                variant = "Low";
+                	variant = "Low";
                 break;
                 case FeatureSettings.ELevel5Values.mid:
-                variant = "Master";
+                	variant = "Master";
                 break;
                 case FeatureSettings.ELevel5Values.high:
-                variant = "High";
+              		 variant = "High";
                 break;
                 case FeatureSettings.ELevel5Values.very_high:
-                variant = "VeryHigh";
+                	variant = "VeryHigh";
                 break;
             }
 
