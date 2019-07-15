@@ -34,6 +34,7 @@ public class HUDDarkZoneEffect : MonoBehaviour {
                 m_instance.m_blackImage.material = m_instance.m_candleMaterial;
                 m_instance.m_blackImage.enabled = true;
                 m_instance.m_enableState = true;
+                m_instance.m_currentTrigger = null;
                 m_instance.setFireRushMaterials(true);
                 m_instance.m_currentColor = candleData.m_Color;
                 m_instance.m_currentColor2 = candleData.m_Color2;
