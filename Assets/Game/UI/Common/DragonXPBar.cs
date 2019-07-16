@@ -89,8 +89,6 @@ public class DragonXPBar : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	virtual protected void Awake() {
-        // The bar has children prefabs just for edition purposes. Remove them all.
-        m_barSeparatorsParent.DestroyAllChildren(true);
 
         // Create, initialize and instantiate a pool of bar separators
         ResizeSeparatorsPool(SEPARATORS_POOL_SIZE);
