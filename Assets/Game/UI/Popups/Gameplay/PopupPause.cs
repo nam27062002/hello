@@ -122,15 +122,12 @@ public class PopupPause : PopupPauseBase {
 	/// End game button has been pressed
 	/// </summary>
 	public void OnEndGameButton() {
-		PopupManager.OpenPopupInstant(PopupExitRunConfirmation.PATH);
-		/*
-		if (GameSettings.Get(GameSettings.SHOW_EXIT_RUN_CONFIRMATION_POPUP)) {
-			PopupManager.OpenPopupInstant(PopupExitRunConfirmation.PATH);
-		} else {
-			if (InstanceManager.gameSceneController != null) {
-				InstanceManager.gameSceneController.EndGame(true);
-			}
-		}*/
+		// Open confirmation popup
+		PopupController popup = PopupManager.OpenPopupInstant(PopupExitRunConfirmation.PATH);
+		if(popup != null) {
+			// Move forward so the mission 3D icons are rendered behind
+			popup.transform.SetLocalPosZ(-1000f);
+		}
 	}
 
 	/// <summary>

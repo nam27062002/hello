@@ -2102,6 +2102,7 @@ GameObject:
   - component: {fileID: 222320909131664828}
   - component: {fileID: 114738002512900896}
   - component: {fileID: 114970808390486652}
+  - component: {fileID: 114383105685586882}
   m_Layer: 5
   m_Name: 3DIcon
   m_TagString: Untagged
@@ -2707,6 +2708,7 @@ GameObject:
   - component: {fileID: 222625974057188008}
   - component: {fileID: 114843118952381962}
   - component: {fileID: 114841411498595548}
+  - component: {fileID: 114435086936128560}
   m_Layer: 5
   m_Name: 3DIcon
   m_TagString: Untagged
@@ -3212,6 +3214,7 @@ GameObject:
   - component: {fileID: 222305605356949400}
   - component: {fileID: 114938910198478714}
   - component: {fileID: 114297383715896704}
+  - component: {fileID: 114631077412757812}
   m_Layer: 5
   m_Name: 3DIcon
   m_TagString: Untagged
@@ -9196,7 +9199,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_tweenType: 7
   m_tweenDuration: 0.3
-  m_tweenValue: 2
+  m_tweenValue: 0
   m_tweenEase: 17
   m_tweenDelay: 0
   m_ignoreTimeScale: 1
@@ -10839,6 +10842,25 @@ MonoBehaviour:
   m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 1
   m_ChildControlHeight: 1
+--- !u!114 &114383105685586882
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1385101835989338}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f996de6264cf4e73a2f19fcf80acb9f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_applyOnStart: 1
+  m_targets: []
+  m_uiTargets: []
+  m_transformTargets:
+  - target: {fileID: 224331576553253674}
+    newRenderQueue: 2800
+    graphics: 0
+    renderers: 1
 --- !u!114 &114388532275560576
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -11241,6 +11263,25 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &114435086936128560
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1516510751939792}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f996de6264cf4e73a2f19fcf80acb9f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_applyOnStart: 1
+  m_targets: []
+  m_uiTargets: []
+  m_transformTargets:
+  - target: {fileID: 224618375808124512}
+    newRenderQueue: 2800
+    graphics: 0
+    renderers: 1
 --- !u!114 &114435913786149956
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -14280,6 +14321,25 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &114631077412757812
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1611126372695478}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f996de6264cf4e73a2f19fcf80acb9f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_applyOnStart: 1
+  m_targets: []
+  m_uiTargets: []
+  m_transformTargets:
+  - target: {fileID: 224816146184747018}
+    newRenderQueue: 2800
+    graphics: 0
+    renderers: 1
 --- !u!114 &114631319818143958
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -15740,7 +15800,18 @@ MonoBehaviour:
   m_loadedInstance: {fileID: 0}
   OnLoadingComplete:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 114383105685586882}
+        m_MethodName: Apply
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UI3DAddressablesLoader+UI3DAddressablesLoaderEvent, Assembly-CSharp,
       Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
 --- !u!114 &114740544638428076
@@ -17429,7 +17500,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_tweenType: 7
   m_tweenDuration: 0.3
-  m_tweenValue: 2
+  m_tweenValue: 0
   m_tweenEase: 17
   m_tweenDelay: 0
   m_ignoreTimeScale: 1
@@ -17489,7 +17560,18 @@ MonoBehaviour:
   m_loadedInstance: {fileID: 0}
   OnLoadingComplete:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 114435086936128560}
+        m_MethodName: Apply
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UI3DAddressablesLoader+UI3DAddressablesLoaderEvent, Assembly-CSharp,
       Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
 --- !u!114 &114847915500245192
@@ -19334,7 +19416,18 @@ MonoBehaviour:
   m_loadedInstance: {fileID: 0}
   OnLoadingComplete:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 114631077412757812}
+        m_MethodName: Apply
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UI3DAddressablesLoader+UI3DAddressablesLoaderEvent, Assembly-CSharp,
       Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
 --- !u!114 &114941617556552106
@@ -19511,7 +19604,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_tweenType: 7
   m_tweenDuration: 0.3
-  m_tweenValue: 2
+  m_tweenValue: 0
   m_tweenEase: 17
   m_tweenDelay: 0
   m_ignoreTimeScale: 1
@@ -21339,7 +21432,7 @@ RectTransform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1209845062977110}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -400}
+  m_LocalPosition: {x: 0, y: 0, z: -1000}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 224268224542879722}
@@ -23430,7 +23523,7 @@ RectTransform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1848180377930016}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -400}
+  m_LocalPosition: {x: 0, y: 0, z: -1000}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 224493935108278898}
@@ -25968,7 +26061,7 @@ RectTransform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1391092220466218}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -400}
+  m_LocalPosition: {x: 0, y: 0, z: -1000}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 224201640814182798}

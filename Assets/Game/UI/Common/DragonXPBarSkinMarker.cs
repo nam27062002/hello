@@ -111,21 +111,8 @@ public class DragonXPBarSkinMarker : DragonXPBarSeparator {
         m_tooltip.SetupDirection(bestDir);
 
 
-        // Skin info
-        string skinName = LocalizationManager.SharedInstance.Localize(m_definition.Get("tidName"));
-        string skinIconId = m_definition.Get("icon");
-        string unlockLevel =  LocalizationManager.SharedInstance.Localize("TID_LAB_TOOLTIP_UNLOCK_LEVEL",
-                                                                          m_definition.Get("unlockLevel")
-                                                                          );
-
-        // Power up info
-        string powerUpSku = m_definition.Get("powerup");
-        DefinitionNode powerUpDef = DefinitionsManager.SharedInstance.GetDefinitionByVariable(DefinitionsCategory.POWERUPS, "sku", powerUpSku);
-        string powerUpText = DragonPowerUp.GetDescription(powerUpDef, false, false);
-        Sprite powerUpIcon = Resources.Load<Sprite>(UIConstants.POWER_ICONS_PATH + powerUpDef.Get("icon"));
-
         // Set the content of the tooltip
-        m_tooltip.Init(skinName, powerUpText, skinIconId, powerUpIcon, unlockLevel);
+        m_tooltip.Init(m_definition);
 
     }
 }

@@ -10,9 +10,9 @@ Set objOutputFile 		= objFSO.CreateTextFile("spawnersProg.txt", 2, true)
 
 
 REM Set objInputFile = objFSO.OpenTextFile("..\..\Assets\Game\Scenes\Levels\Spawners\SP_Medieval_Final_Village.unity")
-Set objInputFile = objFSO.OpenTextFile("..\..\Assets\Game\Scenes\Levels\Spawners\SP_Medieval_Final_Castle_Market.unity")
-Set objInputFile = objFSO.OpenTextFile("..\..\Assets\Game\Scenes\Levels\Spawners\SP_Medieval_Final_Castle_Mines.unity")
-REM Set objInputFile = objFSO.OpenTextFile("..\..\Assets\Game\Scenes\Levels\Spawners\SP_Medieval_Final_Dark.unity")
+REM Set objInputFile = objFSO.OpenTextFile("..\..\Assets\Game\Scenes\Levels\Spawners\SP_Medieval_Final_Castle_Market.unity")
+REM Set objInputFile = objFSO.OpenTextFile("..\..\Assets\Game\Scenes\Levels\Spawners\SP_Medieval_Final_Castle_Mines.unity")
+Set objInputFile = objFSO.OpenTextFile("..\..\Assets\Game\Scenes\Levels\Spawners\SP_Medieval_Final_Dark.unity")
 Dim substrToFind
 
 	Do until objInputFile.AtEndOfStream
@@ -21,8 +21,8 @@ Dim substrToFind
 		If foundStrMatch(tmpStr,substrToFind) = true Then
 			tmpStr = objInputFile.ReadLine
 			REM WScript.echo tmpStr
-			tmpStrToSave = Replace(Replace(Replace(Replace(Replace(Replace(Replace(Replace(Replace(Replace(Replace(Replace(Replace(Replace(Replace(Replace(Replace(Replace(Replace(tmpStr,"value: ",""),"SP_","SP@"),"_Evade","@Evade"),"_Generic","@Generic"),"_Squid","@Squid"),"_Static","@Static"),"_Flock","@Flock"),"_Dark","@Dark"),"_Mix","@Mix"),"_Random","@Random"),"_Worker","@Worker"),"_Root","@Root")," ",""),"Air_","Air@"),"PF_","PF@"),"BG_","BG@"),"_Path","@Path"),"_Plant","@Plant"),"_",";")
-			tmpStr = Replace(Replace(Replace(Replace(Replace(Replace(Replace(Replace(Replace(Replace(Replace(Replace(Replace(Replace(Replace(Replace(Replace(Replace(Replace(tmpStr,"value: ",""),"SP_","SP"),"_Evade",""),"_Generic",""),"_Squid",""),"_Static",""),"_Flock",""),"_Dark",""),"_Mix",""),"_Random",""),"_Worker",""),"_Root","")," ",""),"PF_","PF"),"BG_",""),"_Path",""),"_Plant",""),"Air_",""),"_",";")
+			tmpStrToSave = Replace(Replace(Replace(Replace(Replace(Replace(Replace(Replace(Replace(Replace(Replace(Replace(Replace(Replace(Replace(Replace(Replace(Replace(Replace(Replace(Replace(Replace(Replace(Replace(tmpStr,"value: ",""),"SP_","SP@"),"_Evade","@Evade"),"_Generic","@Generic"),"_Squid","@Squid"),"_Static","@Static"),"_Flock","@Flock"),"_Dark","@Dark"),"_Mix","@Mix"),"_Random","@Random"),"_Root","@Root")," ",""),"Air_","Air@"),"PF_","PF@"),"BG_","BG@"),"_Path","@Path"),"Star_H","Star@H"),"Star_U","Star@U"),"Star_N","Star@N"),"Star_G","Star@G"),"Star_R","Star@R"),"Star_Y","Star@Y"),"_Plant","@Plant"),"_",";")
+			tmpStr = Replace(Replace(Replace(Replace(Replace(Replace(Replace(Replace(Replace(Replace(Replace(Replace(Replace(Replace(Replace(Replace(Replace(Replace(Replace(Replace(Replace(Replace(Replace(Replace(tmpStr,"value: ",""),"SP_","SP"),"_Evade",""),"_Generic",""),"_Squid",""),"_Static",""),"_Flock",""),"_Dark",""),"_Mix",""),"_Random",""),"_Root","")," ",""),"PF_","PF"),"BG_",""),"_Path",""),"_Plant",""),"Air_",""),"Star_H","Star"),"Star_U","Star"),"Star_N","Star"),"Star_G","Star"),"Star_R","Star"),"Star_Y","Star"),"_",";")
 			tmpStr2 = ";"
 			If foundStrMatch(tmpStr,tmpStr2) = false Then
 				tmpStr = Replace(tmpStrToSave,"@","_") + ";0;0;-"
