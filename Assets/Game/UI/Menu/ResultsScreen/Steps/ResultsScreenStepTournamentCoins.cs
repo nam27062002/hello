@@ -31,6 +31,7 @@ public class ResultsScreenStepTournamentCoins : ResultsScreenSequenceStep {
 	[Space]
 	[SerializeField] private NumberTextAnimator m_coinsCounter = null;
 	[SerializeField] private NumberTextAnimator m_pcCounter = null;
+	[SerializeField] private NumberTextAnimator m_gfCounter = null;
 
 	// Internal
 	private CurrencyTransferFX m_coinsFX = null;
@@ -53,6 +54,7 @@ public class ResultsScreenStepTournamentCoins : ResultsScreenSequenceStep {
 		// Init currency counters
 		m_coinsCounter.SetValue(m_controller.totalCoins, false);
 		m_pcCounter.SetValue(m_controller.totalPc, false);
+		m_gfCounter.SetValue(m_controller.totalGf, false);
 
 		// Update total coins
 		m_controller.totalCoins += m_controller.coins;
