@@ -8,7 +8,7 @@ Material:
   m_PrefabInternal: {fileID: 0}
   m_Name: dragon_dark_3_body
   m_Shader: {fileID: 4800000, guid: 2345015ac46679e4cb5817ed44c82547, type: 3}
-  m_ShaderKeywords: FRESNEL FXLAYER_REFLECTION NORMALMAP SPECULAR
+  m_ShaderKeywords: FRESNEL FXLAYER_REFLECTION NORMALMAP SELFILLUMINATE_EMISSIVE SPECULAR
   m_LightmapFlags: 5
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -71,7 +71,7 @@ Material:
     m_Floats:
     - FXLayer: 1
     - ReflectionType: 0
-    - SelfIlluminate: 0
+    - SelfIlluminate: 3
     - _BlendMode: 0
     - _BumpScale: 1
     - _ColorRampAmount: 0
@@ -102,9 +102,9 @@ Material:
     - _EnableVertexOffsetZ: 0
     - _FireAmount: 0
     - _FireSpeed: 1
-    - _Fresnel: 2.16
+    - _Fresnel: 9.19
     - _Glossiness: 0.5
-    - _InnerLightAdd: 0
+    - _InnerLightAdd: 1.65
     - _InnerLightWavePhase: 1
     - _InnerLightWaveSpeed: 1
     - _Metallic: 0
@@ -113,7 +113,7 @@ Material:
     - _OcclusionStrength: 1
     - _Parallax: 0.02
     - _ReflectionAmount: 1
-    - _SpecExponent: 26.7
+    - _SpecExponent: 80
     - _SrcBlend: 1
     - _StencilMask: 10
     - _UVSec: 0
@@ -127,9 +127,9 @@ Material:
     - _ColorMultiply: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _EmissionColorUI: {r: 1, g: 1, b: 1, a: 1}
-    - _FresnelColor: {r: 0.31617647, g: 0.31246668, b: 0.29060337, a: 1}
-    - _InnerLightColor: {r: 0.252, g: 0.116, b: 0, a: 1}
+    - _FresnelColor: {r: 0.2352941, g: 0.13233115, b: 0.019031145, a: 1}
+    - _InnerLightColor: {r: 1, g: 0.33569977, b: 0.03676468, a: 1}
     - _ReflectionColor: {r: 1, g: 1, b: 1, a: 1}
     - _SecondLightColor: {r: 0.14127378, g: 0.17839901, b: 0.28676468, a: 0}
-    - _SecondLightDir: {r: -0.1294996, g: 0.38088122, b: -0.9155104, a: 0}
+    - _SecondLightDir: {r: 0.57894737, g: 0.5263158, b: -0.6227452, a: 0}
     - _Tint: {r: 0.75735295, g: 0.75735295, b: 0.75735295, a: 1}
