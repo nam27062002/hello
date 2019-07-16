@@ -44,7 +44,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: c83f2f65db136314db827cf1908ecb8c, type: 2}
+  - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -156,24 +156,24 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1363612444948474}
-  m_LocalRotation: {x: 0.7474518, y: -0.66430974, z: -0.0021542849, w: 0.0019461833}
-  m_LocalPosition: {x: 919, y: -550.3, z: 0}
-  m_LocalScale: {x: 1.1153306, y: 0.78579247, z: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
+  m_LocalPosition: {x: -59.9, y: -25.2, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 466452}
   - {fileID: 4208740059703338}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0.003, y: 180.323, z: 263.445}
+  m_LocalEulerAnglesHint: {x: 180, y: 180, z: 267.897}
 --- !u!4 &4208740059703338
 Transform:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1643867676170994}
-  m_LocalRotation: {x: -0.74722326, y: 0.6641075, z: -0.018607711, w: -0.016506387}
-  m_LocalPosition: {x: -822.8906, y: 2069.9421, z: 17.070559}
-  m_LocalScale: {x: 10.134073, y: 7.214205, z: 2.0013227}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4353432873079808}
   m_Father: {fileID: 4179107262380996}
@@ -186,8 +186,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1601960706176808}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: -0, y: -1.5, z: 0}
+  m_LocalScale: {x: 40, y: 30.075188, z: 1}
   m_Children: []
   m_Father: {fileID: 4208740059703338}
   m_RootOrder: 0
@@ -281,8 +281,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_type: 3
+  m_prefabPath: 
   m_rotateWithObject: 0
-  m_zoomCompensation: 1
+  m_zoomCompensation: 0
 --- !u!212 &212328652950834876
 SpriteRenderer:
   m_ObjectHideFlags: 1

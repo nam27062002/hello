@@ -698,13 +698,6 @@ public class LoadingSceneController : SceneController {
 
                 AntiCheatsManager.CreateInstance();
 				                
-                if (FeatureSettingsManager.instance.IsMiniTrackingEnabled)
-                {
-                    // Initialize local mini-tracking session!
-                    // [AOC] Generate a unique ID with the device's identifier and the number of progress resets
-                    MiniTrackingEngine.InitSession(SystemInfo.deviceUniqueIdentifier + "_" + PlayerPrefs.GetInt("RESET_PROGRESS_COUNT", 0).ToString());
-                }
-
                 UsersManager.CreateInstance();
 
                 // Game		        

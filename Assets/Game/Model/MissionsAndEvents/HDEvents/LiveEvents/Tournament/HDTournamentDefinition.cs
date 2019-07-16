@@ -66,6 +66,10 @@ public class HDTournamentDefinition : HDLiveEventDefinition{
 		public long m_targetAmount;
 		public int m_loops;
 		public string m_area = "";
+		public string m_spawnPoint = "";
+        public string m_spawnPointTID = "";
+		public float m_progressionSeconds = 0f;
+		public int m_progressionXP = 0;
 
 		public override void Clear ()
 		{
@@ -74,7 +78,11 @@ public class HDTournamentDefinition : HDLiveEventDefinition{
 			m_seconds = -1;
 			m_targetAmount = -1;
 			m_loops = -1;
+			
 			m_area = "";
+			m_spawnPoint = "";
+			m_progressionSeconds = 0f;
+			m_progressionXP = 0;
 		}
 
 		public override void ParseGoal (JSONNode _data)
@@ -121,8 +129,24 @@ public class HDTournamentDefinition : HDLiveEventDefinition{
 				}
 			}
 
-			if ( _data.ContainsKey("area") ){
-				m_area = _data["area"];
+			if (_data.ContainsKey("area")) {
+				JSONNode area = _data["area"];
+
+				m_spawnPoint = area.GetSafe("spawnPoint", "");
+
+				m_progressionXP = area.GetSafe("xp", "0").AsInt;
+				m_progressionSeconds = area.GetSafe("time", "0").AsFloat;
+
+				DefinitionNode spawnPointDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.LEVEL_SPAWN_POINTS, m_spawnPoint);
+				if (spawnPointDef != null) {
+					m_area = spawnPointDef.Get("area");
+                    m_spawnPointTID = spawnPointDef.Get("tidName");
+                } else {
+                    Debug.Log("Spawning point with sku=" + m_spawnPoint + " not defined in xml");
+					m_area = "";
+                    m_spawnPointTID = "";
+
+                }
 			}
 		}
 
@@ -160,7 +184,15 @@ public class HDTournamentDefinition : HDLiveEventDefinition{
 				}break;
 			}
             ret.Add("gameMode", gameMode);
-			ret.Add("area", m_area);
+
+			SimpleJSON.JSONClass area = new JSONClass();
+			{				
+				area.Add("spawnPoint", m_spawnPoint);
+				area.Add("xp", m_progressionXP);
+				area.Add("time", m_progressionSeconds);
+			}
+			ret.Add("area", area);
+			
 			return ret;
 		}
 	}

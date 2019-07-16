@@ -245,17 +245,24 @@ public class SocialPlatformManager : MonoBehaviour
     
     public bool IsLoggedIn()
     {
-        return m_socialUtils.IsLoggedIn();
+        if (m_socialUtils != null)
+            return m_socialUtils.IsLoggedIn();
+
+        return false;
     }
 
 	public bool IsLogInTimeoutEnabled()
 	{
-		return m_socialUtils.IsLogInTimeoutEnabled();
+        if (m_socialUtils != null)
+		    return m_socialUtils.IsLogInTimeoutEnabled();
+
+        return false;
 	}
 
 	public void OnLogInTimeout()
 	{
-		m_socialUtils.OnLogInTimeout();
+        if (m_socialUtils != null)
+		    m_socialUtils.OnLogInTimeout();
 	}
 
     public void Logout()

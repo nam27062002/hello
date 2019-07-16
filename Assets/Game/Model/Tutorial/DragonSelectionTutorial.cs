@@ -296,7 +296,7 @@ public class DragonSelectionTutorial : MonoBehaviour {
 		}
 
 		// If the tutorial wasn't completed, launch it now
-		if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.DRAGON_SELECTION) && !DebugSettings.isPlayTest) // Skip tutorial for the playtests
+		if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.DRAGON_SELECTION))
 		{		
 			StartTutorial();
 		}

@@ -574,7 +574,11 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
                 System.DateTime midnight = UsersManager.currentUser.dailyRewards.nextCollectionTimestamp;
                 double secondsToMidnight = (midnight - System.DateTime.Now).TotalSeconds;
                 int moreSeconds = 9 * 60 * 60;  // 9 AM
-                HDNotificationsManager.instance.ScheduleNewDailyReward ((int)secondsToMidnight + moreSeconds);
+                int timeToNotification = (int)secondsToMidnight + moreSeconds;
+                if ( timeToNotification > 0 )
+                {
+                    HDNotificationsManager.instance.ScheduleNewDailyReward (timeToNotification);
+                }
             }
 			// [AOC] TODO!!
         }
@@ -1492,25 +1496,6 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     {
         m_debugParticles = null;
         m_debugParticlesVisibility = true;
-    }
-
-    private void Debug_OnSendPlayTest()
-    {
-        if (FeatureSettingsManager.instance.IsMiniTrackingEnabled)
-        {
-            MiniTrackingEngine.SendTrackingFile(false,
-			(FGOL.Server.Error _error, GameServerManager.ServerResponse _response) => 
-            {
-				if (_error == null)
-                {
-                    Debug.Log("Play test tracking sent successfully");
-                }
-                else
-                {
-                    Debug.Log("Error when sending play test tracking");
-                }
-            });
-        }
     }
 
     private void Debug_TestPlayerProgress()

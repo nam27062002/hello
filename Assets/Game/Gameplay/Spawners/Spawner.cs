@@ -366,7 +366,9 @@ public class Spawner : AbstractSpawner {
 			m_readyToBeDisabled = true;
 		}
 		// If we can spawn, do it
-		else if (CanSpawn(m_gameSceneController.elapsedSeconds, RewardManager.xp)) {
+		else if (CanSpawn(m_gameSceneController.elapsedSeconds + m_gameSceneController.progressionOffsetSeconds, 
+						  RewardManager.xp + m_gameSceneController.progressionOffsetXP))
+		{
 			// If we don't have any entity alive, proceed
 			if (EntitiesAlive == 0) {
 				// Respawn on cooldown?

@@ -34,7 +34,7 @@ namespace LevelEditor {
 		/// </summary>
 		virtual protected void Awake() {
 			// Make ouselves static, we don't want to accidentally move the parent object
-			this.gameObject.isStatic = true;
+			this.gameObject.isStatic = true;			
 		}
 	}
 }
