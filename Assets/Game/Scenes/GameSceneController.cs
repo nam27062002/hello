@@ -139,8 +139,7 @@ public class GameSceneController : GameSceneControllerBase {
         Screen.sleepTimeout = SleepTimeout.NeverSleep;        
 
         // Check whether the tutorial popup must be displayed
-        if (!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.FIRST_RUN)
-            || DebugSettings.isPlayTest)
+        if (!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.FIRST_RUN))
         {
             // Tracking
             string popupName = System.IO.Path.GetFileNameWithoutExtension(PopupTutorialControls.PATH);
