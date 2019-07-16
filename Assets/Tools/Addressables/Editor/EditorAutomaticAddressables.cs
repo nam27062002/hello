@@ -35,6 +35,21 @@ public static class EditorAutomaticAddressables {
         return catalog;
     }
 
+    /*private static EditorAssetBundlesConfig GetEditorAssetBundlesConfig()
+    {
+        EditorAssetBundlesConfig returnValue = new EditorAssetBundlesConfig();
+
+        returnValue.SetAssetBundleLocation("ab_assets_castle", EditorAssetBundlesConfigEntry.ELocation.Remote, true);
+        returnValue.SetAssetBundleLocation("ab_sc_castle", EditorAssetBundlesConfigEntry.ELocation.Remote, true);
+
+        returnValue.SetAssetBundleLocation("ab_assets_village", EditorAssetBundlesConfigEntry.ELocation.Resources, true);
+        returnValue.SetAssetBundleLocation("ab_sc_village", EditorAssetBundlesConfigEntry.ELocation.Resources, true);
+
+        returnValue.SetAssetBundleLocation("ab_assets_village-castle", EditorAssetBundlesConfigEntry.ELocation.Remote, true);
+        returnValue.SetAssetBundleLocation("ab_assets_dark", EditorAssetBundlesConfigEntry.ELocation.Local, true);
+
+        return returnValue;
+    }*/
 
     public static JSONClass BuildCatalog(bool _allBundlesLocal) {
         List<AddressablesCatalogEntry> entryList;
@@ -80,6 +95,7 @@ public static class EditorAutomaticAddressables {
             }
             catalog.Add("localAssetBundles", localAssetBundles);
 
+            //catalog.Add(AddressablesCatalog.CATALOG_ATT_AB_CONFIG, GetEditorAssetBundlesConfig().ToJSON());
 
             JSONArray groups = new JSONArray();
             {
@@ -179,12 +195,13 @@ public static class EditorAutomaticAddressables {
         _bundles = bundlesSet.ToList();
     }
 
-    private static void GetEntriesFromDirectory(DirectoryInfo _directory, bool _addLastFolder,  List<AddressablesCatalogEntry> _entries, HashSet<string> _bundles, System.Type[] _allowedTypes = null, BuildTarget platform = BuildTarget.NoTarget) {
+    private static void GetEntriesFromDirectory(DirectoryInfo _directory, bool _addLastFolder,  List<AddressablesCatalogEntry> _entries, HashSet<string> _bundles, System.Type[] _allowedTypes = null, BuildTarget platform = BuildTarget.NoTarget,
+                                                AddressablesTypes.ELocationType locationType = AddressablesTypes.ELocationType.AssetBundles, string defineSymbol = null, bool addToCatalogPlayer = true) {
         string platformAsString = (platform == BuildTarget.NoTarget) ? null : platform.ToString();
 
         DirectoryInfo[] directories = _directory.GetDirectories();
         foreach (DirectoryInfo directory in directories) {
-            GetEntriesFromDirectory(directory, _addLastFolder, _entries, _bundles, _allowedTypes);
+            GetEntriesFromDirectory(directory, _addLastFolder, _entries, _bundles, _allowedTypes, platform, locationType, defineSymbol, addToCatalogPlayer);
         }
 
         FileInfo[] files = _directory.GetFiles();
@@ -226,7 +243,7 @@ public static class EditorAutomaticAddressables {
                             }
                         }
 
-                        AddressablesCatalogEntry entry = new AddressablesCatalogEntry(id, variant, AssetDatabase.AssetPathToGUID(filePath), true, true) {
+                        AddressablesCatalogEntry entry = new AddressablesCatalogEntry(id, variant, AssetDatabase.AssetPathToGUID(filePath), true, true, defineSymbol, addToCatalogPlayer) {
                             LocationType = AddressablesTypes.ELocationType.AssetBundles,
                             AssetName = assetName,
                             AssetBundleName = assetBundle,
