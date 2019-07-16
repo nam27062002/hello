@@ -174,6 +174,7 @@ GameObject:
   - component: {fileID: 224364171551274308}
   - component: {fileID: 222931034468373988}
   - component: {fileID: 114607583103401086}
+  - component: {fileID: 114455534090564686}
   m_Layer: 5
   m_Name: PetIcon
   m_TagString: Untagged
@@ -780,6 +781,7 @@ GameObject:
   - component: {fileID: 224658060459660204}
   - component: {fileID: 222554591538342796}
   - component: {fileID: 114329893224850572}
+  - component: {fileID: 114520027540673652}
   m_Layer: 5
   m_Name: PetIcon
   m_TagString: Untagged
@@ -1071,6 +1073,7 @@ GameObject:
   - component: {fileID: 224408195805000488}
   - component: {fileID: 222992159202852310}
   - component: {fileID: 114666354044465120}
+  - component: {fileID: 114574962853611766}
   m_Layer: 5
   m_Name: PetIcon
   m_TagString: Untagged
@@ -1663,6 +1666,7 @@ GameObject:
   - component: {fileID: 224964140344002708}
   - component: {fileID: 222695139857930568}
   - component: {fileID: 114226709050288450}
+  - component: {fileID: 114576119919153970}
   m_Layer: 5
   m_Name: PetIcon
   m_TagString: Untagged
@@ -3388,6 +3392,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_nameText: {fileID: 114668680407004804}
   m_powerDescText: {fileID: 114267865494527846}
+  m_iconLoader: {fileID: 114574962853611766}
 --- !u!114 &114369649995228948
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4162,6 +4167,21 @@ MonoBehaviour:
   m_tid: 
   m_caseType: 0
   m_replacements: []
+--- !u!114 &114455534090564686
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1085183473240906}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 285cd8cfbf6c84d2fab86d95b9d993fc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_assetId: 
+  m_loadOnAwake: 0
+  m_image: {fileID: 114607583103401086}
+  m_loadingPrefab: {fileID: 0}
 --- !u!114 &114458397235660988
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4606,6 +4626,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_nameText: {fileID: 114080557535098490}
   m_powerDescText: {fileID: 114942551732467018}
+  m_iconLoader: {fileID: 114576119919153970}
+--- !u!114 &114520027540673652
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1470597867008538}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 285cd8cfbf6c84d2fab86d95b9d993fc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_assetId: 
+  m_loadOnAwake: 0
+  m_image: {fileID: 114329893224850572}
+  m_loadingPrefab: {fileID: 0}
 --- !u!114 &114529613501479588
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5040,6 +5076,36 @@ MonoBehaviour:
   m_color1: {r: 1, g: 0.748366, b: 0.43382353, a: 1}
   m_color2: {r: 0.8470589, g: 0.5137255, b: 0.3019608, a: 1}
   m_direction: 0
+--- !u!114 &114574962853611766
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1670494278211604}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 285cd8cfbf6c84d2fab86d95b9d993fc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_assetId: 
+  m_loadOnAwake: 0
+  m_image: {fileID: 114666354044465120}
+  m_loadingPrefab: {fileID: 0}
+--- !u!114 &114576119919153970
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1973369084808746}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 285cd8cfbf6c84d2fab86d95b9d993fc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_assetId: 
+  m_loadOnAwake: 0
+  m_image: {fileID: 114226709050288450}
+  m_loadingPrefab: {fileID: 0}
 --- !u!114 &114578778172044342
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5969,6 +6035,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_nameText: {fileID: 114434364417608546}
   m_powerDescText: {fileID: 114112549846907510}
+  m_iconLoader: {fileID: 114520027540673652}
 --- !u!114 &114784043246975016
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6099,6 +6166,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_nameText: {fileID: 114328725259908006}
   m_powerDescText: {fileID: 114408434285384690}
+  m_iconLoader: {fileID: 114455534090564686}
 --- !u!114 &114838720579910050
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -7084,7 +7152,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 224262998584976852}
   m_Direction: 2
   m_Value: 0
-  m_Size: 0.99999994
+  m_Size: 0.9999965
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -7792,7 +7860,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -0.00003705359}
+  m_AnchoredPosition: {x: 0, y: 0.004615202}
   m_SizeDelta: {x: -40, y: 715.2}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!224 &224072583020097194
