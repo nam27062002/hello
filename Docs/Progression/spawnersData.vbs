@@ -59,7 +59,7 @@ Function spawnerInfo()
 		Else If foundStrMatch(tmpStr,substrToFind2) = true Then
 			prefabFolder = Replace(tmpStr,"m_entityPrefab: ","")
 			Else
-				prefabFolder = Replace(tmpStr,"m_entityPrefabStr: ","")
+				prefabFolder = Replace(tmpStr,"m_entityPrefabStr: ","")  
 			End If
 		End If
 		aux = Replace(Replace(prefabFolder,"/","\")," ","")
