@@ -574,7 +574,11 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
                 System.DateTime midnight = UsersManager.currentUser.dailyRewards.nextCollectionTimestamp;
                 double secondsToMidnight = (midnight - System.DateTime.Now).TotalSeconds;
                 int moreSeconds = 9 * 60 * 60;  // 9 AM
-                HDNotificationsManager.instance.ScheduleNewDailyReward ((int)secondsToMidnight + moreSeconds);
+                int timeToNotification = (int)secondsToMidnight + moreSeconds;
+                if ( timeToNotification > 0 )
+                {
+                    HDNotificationsManager.instance.ScheduleNewDailyReward (timeToNotification);
+                }
             }
 			// [AOC] TODO!!
         }
