@@ -537,7 +537,7 @@ public class Spawner : AbstractSpawner {
 			if (m_groupBonus > 0 && _lastEntity != null) {
 				Reward reward = new Reward();
 				reward.score = (int)(m_groupBonus * EntitiesKilled);
-				Messenger.Broadcast<Transform, IEntity, Reward>(MessengerEvents.ENTITY_BURNED, _lastEntity.transform, _lastEntity, reward);
+				Messenger.Broadcast<Transform, IEntity, Reward>(MessengerEvents.FLOCK_EATEN, _lastEntity.transform, _lastEntity, reward);
 			}
 
 			// Reroll the Golden chance
