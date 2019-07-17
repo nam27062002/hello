@@ -971,6 +971,9 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 			case State.Intro:
 			{
 				m_introTimer -= Time.deltaTime;
+				if ( m_introTimer < 0.5f && !m_dragon.playable )
+					m_dragon.playable = true;
+
 				if ( m_introTimer <= 0 )
 				{
 					ChangeState( State.Idle );
