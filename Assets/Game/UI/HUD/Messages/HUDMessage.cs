@@ -407,6 +407,12 @@ public class HUDMessage : MonoBehaviour, IBroadcastListener {
 	/// </summary>
 	/// <returns>Whether the message could be displayed or not (HUDMessageSystem priorities).</returns>
 	virtual public bool Show() {
+		if ( m_type == Type.MISSION_ZONE )
+		{
+			TextMeshProUGUI text = this.FindComponentRecursive<TextMeshProUGUI>();
+			Debug.Log(Color.green.Tag("HUDMESSAGE Show " + text.text + " "+ m_visible));
+		}
+		
 		// If already active, decide how to proceed
 		bool force = false;
 		if(m_visible) {
@@ -440,7 +446,9 @@ public class HUDMessage : MonoBehaviour, IBroadcastListener {
 		m_visible = true;
 
 		// Trigger anim
+		m_anim.ResetTrigger( GameConstants.Animator.OUT );
 		m_anim.SetTrigger( GameConstants.Animator.IN );
+
 
 		// Setup hide mode
 		m_hideTimer = m_messageDuration;
@@ -454,18 +462,35 @@ public class HUDMessage : MonoBehaviour, IBroadcastListener {
 
     public void OnHideMessage()
     {
+		if ( m_type == Type.MISSION_ZONE )
+		{
+			TextMeshProUGUI text = this.FindComponentRecursive<TextMeshProUGUI>();
+			Debug.Log(Colors.orange.Tag("HUDMESSAGE OnHideMessage " + text.text + " "+ m_visible));
+		}
+
         if (m_hideMode == HideMode.ANIMATION)
         {
             Hide(true);
         }
-        // Deactivate all
-        SetOthersVisible(false);
+
+		if (!m_visible)
+		{
+			// Deactivate all
+        	SetOthersVisible(false);
+		}
+        
     }
 
 	/// <summary>
 	/// Trigger the "out" animation.
 	/// </summary>
 	virtual public void Hide( bool _outDone = false ) {
+		if ( m_type == Type.MISSION_ZONE )
+		{
+			TextMeshProUGUI text = this.FindComponentRecursive<TextMeshProUGUI>();
+			Debug.Log(Colors.purple.Tag("HUDMESSAGE Hide " + text.text + " "+ m_visible));
+		}
+
 		// Skip if already inactive
 		if(!m_visible) return;
 
@@ -473,6 +498,7 @@ public class HUDMessage : MonoBehaviour, IBroadcastListener {
 		m_visible = false;
 		m_hideTimer = 0f;
 
+		m_anim.ResetTrigger( GameConstants.Animator.IN );
 		// Trigger anim
         if ( !_outDone )
 		    m_anim.SetTrigger( GameConstants.Animator.OUT );
@@ -715,6 +741,7 @@ public class HUDMessage : MonoBehaviour, IBroadcastListener {
 			{
                 if (UsersManager.currentUser.m_visitedZones.Contains(zone.m_zoneId))
                 {
+					m_zoneId = zone.m_zoneId;
     				// Get text to show
     				TextMeshProUGUI text = this.FindComponentRecursive<TextMeshProUGUI>();
     		        string localized = LocalizationManager.SharedInstance.Localize(zone.m_zoneTid);
@@ -726,8 +753,10 @@ public class HUDMessage : MonoBehaviour, IBroadcastListener {
         else
         {
             // Hide small reminder
-            if (!m_onlyFirstTime)
+            if (!m_onlyFirstTime && zone.m_zoneId == m_zoneId)	// Only hide if still the same
+			{
                 Hide();
+			}
         }
 	}
     
