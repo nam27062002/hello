@@ -19,15 +19,18 @@ using TMPro;
 /// Simple class to encapsulate the preview of an item.
 /// </summary>
 public class OfferItemPreviewSkin2d : IOfferItemPreview {
-    //------------------------------------------------------------------------//
-    // CONSTANTS															  //
-    //------------------------------------------------------------------------//
+	//------------------------------------------------------------------------//
+	// CONSTANTS															  //
+	//------------------------------------------------------------------------//
+	public override OfferItemPrefabs.PrefabType type {
+		get { return OfferItemPrefabs.PrefabType.PREVIEW_2D; }
+	}
 
-    //------------------------------------------------------------------------//
-    // MEMBERS AND PROPERTIES												  //
-    //------------------------------------------------------------------------//
-    // Exposed
-    [SerializeField] private UISpriteAddressablesLoader m_loader = null;
+	//------------------------------------------------------------------------//
+	// MEMBERS AND PROPERTIES												  //
+	//------------------------------------------------------------------------//
+	// Exposed
+	[SerializeField] private UISpriteAddressablesLoader m_loader = null;
 
     //------------------------------------------------------------------------//
     // OfferItemPreview IMPLEMENTATION										  //
