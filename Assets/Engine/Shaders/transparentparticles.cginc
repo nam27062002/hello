@@ -167,8 +167,14 @@ fixed4 frag(v2f i) : COLOR
 #endif
 
 #if defined(DISSOLVE_ENABLED)
+
+#if defined(DISSOLVE_VERTEXCOLORALFA)
+	float ramp = -1.0 + (i.color.w * 2.0);
+	col.a = clamp(tex.g * smoothstep(_DissolveStep.x, _DissolveStep.y, (tex.b + ramp) * nDissolve) * _OpacitySaturation * nAlpha, 0.0, 1.0);
+#else
 	float ramp = -1.0 + (i.particledata.x * 2.0);
 	col.a = clamp(tex.g * smoothstep(_DissolveStep.x, _DissolveStep.y, (tex.b + ramp) * nDissolve) * _OpacitySaturation * vcolor.w * nAlpha, 0.0, 1.0);
+#endif
 
 #else	//DISSOLVE_ENABLED
 	col.a = clamp(tex.g * _OpacitySaturation * vcolor.w, 0.0, 1.0) * nAlpha;

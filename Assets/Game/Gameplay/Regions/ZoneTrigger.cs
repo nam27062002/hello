@@ -10,7 +10,9 @@ public class ZoneTrigger : MonoBehaviour
     public bool m_isStartingArea = false;
     private int m_inside = 0;
     private Coroutine m_checkIntroMovement = null;
+    private static List<ZoneTrigger> s_activeZones = new List<ZoneTrigger>();
     private static Dictionary<string, int> s_enters = new Dictionary<string,int>();
+
     private static int s_zonetriggers = 0;
 
     public void Awake()
@@ -22,7 +24,11 @@ public class ZoneTrigger : MonoBehaviour
     {
 		s_zonetriggers--;
 		if ( s_zonetriggers == 0 )
-			s_enters.Clear();
+        {
+            s_enters.Clear();
+            s_activeZones.Clear();
+        }
+			
     }
 
     void OnTriggerEnter (Collider other)
@@ -43,7 +49,9 @@ public class ZoneTrigger : MonoBehaviour
                         }
                         // if first then trigger zone
                         if ( s_enters[ m_zoneId ] == 1 )
-                            Messenger.Broadcast<bool, ZoneTrigger>(MessengerEvents.MISSION_ZONE, true, this);
+                        {
+                           OnEnterNewZone(this);
+                        }
                     }
                 }
                 else
@@ -73,10 +81,24 @@ public class ZoneTrigger : MonoBehaviour
             }
             // if first then trigger zone
             if ( s_enters[ m_zoneId ] == 1 )
-                Messenger.Broadcast<bool, ZoneTrigger>(MessengerEvents.MISSION_ZONE, true, this);
+            {
+                OnEnterNewZone(this);
+            }
         }
         m_checkIntroMovement = null;
         yield return null;
+    }
+
+    void OnEnterNewZone( ZoneTrigger zone )
+    {
+        if ( s_activeZones.Count > 0)   // The first one saved form an id
+        {
+            // Exit previous zone
+            Messenger.Broadcast<bool, ZoneTrigger>(MessengerEvents.MISSION_ZONE, false, s_activeZones[ s_activeZones.Count - 1 ]);
+        }
+        // Enter new zone
+        s_activeZones.Add( this );
+        Messenger.Broadcast<bool, ZoneTrigger>(MessengerEvents.MISSION_ZONE, true, this);
     }
 	
 	void OnTriggerExit (Collider other)
@@ -93,10 +115,40 @@ public class ZoneTrigger : MonoBehaviour
                         s_enters[m_zoneId] = s_enters[m_zoneId] - 1;
                         // If no one left we are leaving a zone
                         if (s_enters[m_zoneId] == 0)
-                            Messenger.Broadcast<bool, ZoneTrigger>(MessengerEvents.MISSION_ZONE, false, this);
+                        {
+                            OnExitZone(this);
+                        }
                     }
                 }
             }
         }
+    }
+
+    void OnExitZone(ZoneTrigger zone)
+    {
+        bool isCurrent = false;
+        isCurrent = s_activeZones.Last().m_zoneId == zone.m_zoneId;
+        // Check if zone is last to exit
+        if ( isCurrent )
+        {
+            Messenger.Broadcast<bool, ZoneTrigger>(MessengerEvents.MISSION_ZONE, false, this);
+        }
+
+        // Remove all instances of this zone id
+        int length = s_activeZones.Count;
+        for (int i = length-1; i >= 0; i--)
+        {
+            if ( s_activeZones[i].m_zoneId == zone.m_zoneId )
+            {
+                s_activeZones.RemoveAt(i);
+            }
+        }
+
+        // if this id was the current zone, we deleted it, if we still have active zones we entered the new one
+        if ( isCurrent && s_activeZones.Count > 0 )
+        {
+            Messenger.Broadcast<bool, ZoneTrigger>(MessengerEvents.MISSION_ZONE, true, s_activeZones.Last());
+        }
+                            
     }
 }
