@@ -24,7 +24,7 @@ namespace Downloadables
         // The default value of HttpWebRequest.Timeout is 100 seconds. That's the value that we want to use since all asset bundles are downloaded from the same source, so if one triggers timeout
         // then all will. It must be bigger than 15 seconds since according to documentation (https://docs.microsoft.com/en-us/dotnet/api/system.net.httpwebrequest.timeout?view=netframework-4.8#System_Net_HttpWebRequest_Timeout) 
         // DNS name resolution can take up to 15 seconds to return or timeout.
-        private static int TIMEOUT = 100000; 
+        private static int TIMEOUT = 30000; 
 
         private Manager m_manager;
         private string m_urlBase;
