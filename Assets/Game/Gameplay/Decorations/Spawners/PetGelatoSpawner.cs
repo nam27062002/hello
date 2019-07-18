@@ -12,7 +12,7 @@ public class PetGelatoSpawner : AbstractSpawner, IBroadcastListener  {
 		Back
 	};
 
-
+	[SerializeField][EnumMask] private IEntity.Tag ignoreTag = 0;
 	[SerializeField] private float m_searchCooldown;
 
 	//-------------------------------------------------------------------		
@@ -158,11 +158,11 @@ public class PetGelatoSpawner : AbstractSpawner, IBroadcastListener  {
 				// Check if it can be eaten by the player
 				Entity entity = m_checkEntities[i];
 
-				if (!entity.HasTag(IEntity.Tag.Collectible)
+				if (!entity.HasTag(ignoreTag)
 				&& (entity.IsEdible(m_tierCheck) || entity.CanBeHolded(m_tierCheck))) {
 					if (!entity.machine.IsDying() && !entity.machine.IsDead()) {
-						int tierIndex = (int)entity.edibleFromTier;
-						
+						int tierIndex = Random.Range(0, m_poolHandlers.Length);
+
 						if (tierIndex < m_prefabNames.Length
 						&&  m_gelatoTypesToSpawn[tierIndex] < m_poolHandlers[tierIndex].pool.NumFreeObjects()) {
 
