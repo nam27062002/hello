@@ -14,6 +14,7 @@ public class ParticleManager : UbiBCN.SingletonMonoBehaviour<ParticleManager> {
 		public ParticleHandler	handler;
 		public int				size;
 		public string			variant;
+		public bool				isBlood;
 	}
 
 	public enum PoolLimits {
@@ -37,10 +38,21 @@ public class ParticleManager : UbiBCN.SingletonMonoBehaviour<ParticleManager> {
 	}
 
 	private bool m_useBlood = true;
+	private bool m_overrideBlood = false;
+	private string m_overrideBloodName = "";
 
 	//---------------------------------------------------------------//
 	//-- Static Methods ---------------------------------------------//
 	//---------------------------------------------------------------//
+
+	public static void EnableBloodOverride(string _newBlood) {
+		instance.m_overrideBlood = true;
+		instance.m_overrideBloodName = _newBlood;
+	}
+
+	public static void DisableBloodOverride() {
+		instance.m_overrideBlood = false;
+	}
 
 	public static void PreBuild() {
         Clear();
@@ -143,13 +155,14 @@ public class ParticleManager : UbiBCN.SingletonMonoBehaviour<ParticleManager> {
 		return poolSizes;
 	}
 
-	private PoolContainer ResetPoolContainerSize( DefinitionNode def ){
+	private PoolContainer ResetPoolContainerSize(DefinitionNode def) {
 		PoolContainer pc = null;
 		if (m_pools.ContainsKey(def.sku)) {
 			pc = m_pools[def.sku];
 		} else {
             pc = new PoolContainer {
-                handler = new ParticleHandler()
+                handler = new ParticleHandler(),
+				isBlood = def.GetAsBool("isBlood", false)
             };
 
             m_pools.Add(def.sku, pc);
@@ -160,7 +173,7 @@ public class ParticleManager : UbiBCN.SingletonMonoBehaviour<ParticleManager> {
 		pc.size = def.GetAsInt("count");
 
         // npew read the current profile
-		switch(FeatureSettingsManager.instance.Particles) {
+		switch (FeatureSettingsManager.instance.Particles) {
 			case FeatureSettings.ELevel5Values.very_low:							
             case FeatureSettings.ELevel5Values.low:              CheckLow(def, ref pc);	break;
             case FeatureSettings.ELevel5Values.high:            CheckHigh(def, ref pc);	break;				
@@ -168,8 +181,8 @@ public class ParticleManager : UbiBCN.SingletonMonoBehaviour<ParticleManager> {
 		}
 
 		// size is 0 if we dont want to use blood and the particle is blood
-		if (!m_useBlood && def.GetAsBool("isBlood", false)) {
-			pc.size = 0;
+		if (pc.isBlood && !m_overrideBlood && !m_useBlood) {
+			pc.size = 0;		
 		}
 
 		return pc;
@@ -258,10 +271,15 @@ public class ParticleManager : UbiBCN.SingletonMonoBehaviour<ParticleManager> {
 				m_pools.Add(_prefabName, container);
 			}
 
-			if (container.pool == null) {				
-                GameObject go = HDAddressablesManager.Instance.LoadAsset<GameObject>(_prefabName, container.variant);
+			if (container.pool == null) {
+				string prefabName = _prefabName;
+				if (container.isBlood && m_overrideBlood) {
+					prefabName = m_overrideBloodName;
+				}
+                GameObject go = HDAddressablesManager.Instance.LoadAsset<GameObject>(prefabName, container.variant);				
 
                 if (go != null) {
+					go.name = _prefabName;
 					if (m_poolLimits == PoolLimits.Unlimited) {
 						container.pool = new Pool(go, _prefabName, container.variant, instance.transform, 1, true, true, true);
 					} else {
@@ -360,18 +378,18 @@ public class ParticleManager : UbiBCN.SingletonMonoBehaviour<ParticleManager> {
         {
             string variant = "";
             switch (level) {
-                case FeatureSettings.ELevel5Values.very_low:
+            	case FeatureSettings.ELevel5Values.very_low:
                 case FeatureSettings.ELevel5Values.low:
-                variant = "Low";
+                	variant = "Low";
                 break;
                 case FeatureSettings.ELevel5Values.mid:
-                variant = "Master";
+                	variant = "Master";
                 break;
                 case FeatureSettings.ELevel5Values.high:
-                variant = "High";
+              		 variant = "High";
                 break;
                 case FeatureSettings.ELevel5Values.very_high:
-                variant = "VeryHigh";
+                	variant = "VeryHigh";
                 break;
             }
 

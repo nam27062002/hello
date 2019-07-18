@@ -125,7 +125,7 @@ public class PopupLauncher : MonoBehaviour, IBroadcastListener {
 	// INTERNAL																  //
 	//------------------------------------------------------------------------//
 	/// <summary>
-	/// Send the popup to the popups queue
+	/// Open the popup via PopupManager
 	/// Invokes the OnPopupInit event.
 	/// </summary>
 	private void OpenPopupInternal() {
@@ -135,8 +135,9 @@ public class PopupLauncher : MonoBehaviour, IBroadcastListener {
 
         m_popup.OnOpen.AddListener(DoTracking);
 
-        // Send the popup to the popups queue
-        PopupManager.EnqueuePopup(m_popupPath);
+        // Open it!
+        PopupManager.OpenPopupInstant(m_popupPath);
+
         
     }
 
