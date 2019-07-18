@@ -578,6 +578,12 @@ public class GameSceneController : GameSceneControllerBase {
 
                 PoolManager.PreBuild();
                 ParticleManager.Clear();
+                string bloodOverride = SeasonManager.GetBloodParticlesName();
+                if (string.IsNullOrEmpty(bloodOverride)) {
+                    ParticleManager.DisableBloodOverride();
+                } else {
+                    ParticleManager.EnableBloodOverride(bloodOverride);
+                }
 				ParticleManager.PreBuild();
 
 				// Initialize minimum loading time as well

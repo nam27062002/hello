@@ -22,7 +22,7 @@ using System.Collections.Generic;
 /// Visual effect to make a flock of sprites fly from one point of the screen to another.
 /// Typically used to represent currency transfers.
 /// </summary>
-public class CurrencyTransferFX : MonoBehaviour {
+public class ParticlesTrailFX : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -40,13 +40,13 @@ public class CurrencyTransferFX : MonoBehaviour {
 		set { m_prefab = value; ValidatePool(); }
 	}
 
-	[SerializeField] private Vector3 m_from = Vector3.zero;
+    [SerializeField] private Vector3 m_from = Vector3.zero;
 	public Vector3 fromPos {
 		get { return m_from; }
 		set { m_from = value; InitVars(); }
 	}
 
-	[SerializeField] private Vector3 m_to = Vector3.one;
+    [SerializeField] private Vector3 m_to = Vector3.one;
 	public Vector3 toPos {
 		get { return m_to; }
 		set { m_to = value; InitVars(); }
@@ -352,7 +352,7 @@ public class CurrencyTransferFX : MonoBehaviour {
 		// Main movement tween -------------------------------------------------
 		seq.Append(
 			target.DOBlendableMoveBy(m_offset, duration)
-			.SetEase(m_ease)
+			.SetEase( m_ease)
 		);
 
 		// Amplitude variation -------------------------------------------------
@@ -449,13 +449,13 @@ public class CurrencyTransferFX : MonoBehaviour {
 	/// <param name="_from">Initial position, world coordinates.</param>
 	/// <param name="_to">Final position, world coordinates.</param>
 	/// <param name="_duration">Total duration.</param>
-	public static CurrencyTransferFX CreateAndLaunch(GameObject _prefab, Transform _parent, Vector3 _from, Vector3 _to, float _duration) {
+	public static ParticlesTrailFX CreateAndLaunch(GameObject _prefab, Transform _parent, Vector3 _from, Vector3 _to, float _duration) {
 		// Ignore if prefab is null
 		if(_prefab == null) return null;
 
 		// Crete a new game object and attach the Transfer FX component
 		GameObject obj = new GameObject();
-		CurrencyTransferFX newInstance = obj.AddComponent<CurrencyTransferFX>();
+		ParticlesTrailFX newInstance = obj.AddComponent<ParticlesTrailFX>();
 
 		// Initialize new instance
 		InitNewInstance(ref newInstance, _parent, _from, _to);
@@ -481,15 +481,15 @@ public class CurrencyTransferFX : MonoBehaviour {
 	/// <param name="_parent">Where to instantiate the new FX.</param>
 	/// <param name="_from">Initial position, world coordinates.</param>
 	/// <param name="_to">Final position, world coordinates.</param>
-	public static CurrencyTransferFX InstantiateAndLaunch(GameObject _prefab, Transform _parent, Vector3 _from, Vector3 _to) {
+	public static ParticlesTrailFX InstantiateAndLaunch(GameObject _prefab, Transform _parent, Vector3 _from, Vector3 _to) {
 		// Given prefab must be valid
 		if(_prefab == null) return null;
 
 		// And have the TransferFX component
-		if(_prefab.GetComponent<CurrencyTransferFX>() == null) return null;
+		if(_prefab.GetComponent<ParticlesTrailFX>() == null) return null;
 
 		// Create a new instance
-		CurrencyTransferFX fx = GameObject.Instantiate<GameObject>(_prefab).GetComponent<CurrencyTransferFX>();
+		ParticlesTrailFX fx = GameObject.Instantiate<GameObject>(_prefab).GetComponent<ParticlesTrailFX>();
 
 		// Initialize fx instance
 		InitNewInstance(ref fx, _parent, _from, _to);
@@ -511,7 +511,7 @@ public class CurrencyTransferFX : MonoBehaviour {
 	/// <param name="_parent">Where to instantiate the new FX.</param>
 	/// <param name="_from">Initial position, world coordinates.</param>
 	/// <param name="_to">Final position, world coordinates.</param>
-	public static CurrencyTransferFX LoadAndLaunch(string _prefabPath, Transform _parent, Vector3 _from, Vector3 _to) {
+	public static ParticlesTrailFX LoadAndLaunch(string _prefabPath, Transform _parent, Vector3 _from, Vector3 _to) {
 		// Load the prefab from resources and use corresponding method
 		GameObject prefab = Resources.Load<GameObject>(_prefabPath);
 		return InstantiateAndLaunch(prefab, _parent, _from, _to);
@@ -538,7 +538,7 @@ public class CurrencyTransferFX : MonoBehaviour {
 	/// <param name="_parent">Where to put the new FX.</param>
 	/// <param name="_from">Initial position, world coordinates.</param>
 	/// <param name="_to">Final position, world coordinates.</param>
-	private static void InitNewInstance(ref CurrencyTransferFX _newInstance, Transform _parent, Vector3 _from, Vector3 _to) {
+	private static void InitNewInstance(ref ParticlesTrailFX _newInstance, Transform _parent, Vector3 _from, Vector3 _to) {
 		// Setup given parameters
 		_newInstance.fromPos = _from;
 		_newInstance.toPos = _to;

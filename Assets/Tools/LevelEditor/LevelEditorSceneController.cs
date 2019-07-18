@@ -214,6 +214,12 @@ namespace LevelEditor {
 		private void StartGame() {
 			LevelManager.SetCurrentLevel(LevelEditor.settings.levelSku);
 
+			string bloodOverride = SeasonManager.GetBloodParticlesName();
+			if (string.IsNullOrEmpty(bloodOverride)) {
+				ParticleManager.DisableBloodOverride();
+			} else {
+				ParticleManager.EnableBloodOverride(bloodOverride);
+			}
 			ParticleManager.PreBuild();
 			PoolManager.Build();
 

@@ -33,15 +33,17 @@ public class WorldFeedbackSpawner : MonoBehaviour, IBroadcastListener {
 	[SerializeField] private GameObject m_killFeedbackPrefab = null;
 	[SerializeField] private GameObject m_flockBonusFeedbackPrefab = null;
 	[SerializeField] private GameObject m_escapedFeedbackPrefab = null;
+    [SerializeField] private ParticlesTrailFX m_cakeEatenFeedbackPrefab = null;
 
-	[Separator("Container References")]
+    [Separator("Container References")]
 	[SerializeField] private GameObject m_scoreFeedbackContainer = null;
 	[SerializeField] private GameObject m_killFeedbackContainer = null;
 	[SerializeField] private GameObject m_escapeFeedbackContainer = null;
 	[SerializeField] private GameObject m_3dFeedbackContainer = null;
+    [SerializeField] private Transform m_cakeCrumbsDestination = null;
 
-	// Internal
-	private Queue<WorldFeedbackController> m_feedbacksQueue = new Queue<WorldFeedbackController>();	// [AOC] In order to prevent too many feedbacks appearing at once, use a queue to show them sequentially
+    // Internal
+    private Queue<WorldFeedbackController> m_feedbacksQueue = new Queue<WorldFeedbackController>();	// [AOC] In order to prevent too many feedbacks appearing at once, use a queue to show them sequentially
 
     public int m_scoreFeedbackMax = 15;
     public int m_coinsFeedbackMax = 5;
@@ -55,8 +57,9 @@ public class WorldFeedbackSpawner : MonoBehaviour, IBroadcastListener {
 	private PoolHandler m_killFeedbackPoolHandler;
 	private PoolHandler m_flockBonusFeedbackPoolHandler;
 	private PoolHandler m_escapedFeedbackPoolHandler;
+    private PoolHandler m_cakeFeedbackPoolHandler;
 
-	private bool m_particlesFeedbackEnabled = false;
+    private bool m_particlesFeedbackEnabled = false;
 
     //------------------------------------------------------------------//
     // GENERIC METHODS													//
@@ -120,8 +123,9 @@ public class WorldFeedbackSpawner : MonoBehaviour, IBroadcastListener {
 			m_pcFeedbackPoolHandler = UIPoolManager.CreatePool(m_pcFeedbackPrefab, m_3dFeedbackContainer.transform, 2, false, false);
 		}
 
-		// Start with the 3D feedback container disabled - will be enabled on demand
-		m_3dFeedbackContainer.SetActive(false);
+
+        // Start with the 3D feedback container disabled - will be enabled on demand
+        m_3dFeedbackContainer.SetActive(false);
 
 		if ( m_particlesFeedbackEnabled )
         	Cache_Init();
@@ -147,7 +151,9 @@ public class WorldFeedbackSpawner : MonoBehaviour, IBroadcastListener {
 			Messenger.AddListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_DESTROYED, OnDestroyed);
 			Messenger.AddListener<Transform, IEntity, Reward>(MessengerEvents.FLOCK_EATEN, OnFlockEaten);
 			Messenger.AddListener<Transform, IEntity, Reward>(MessengerEvents.STAR_COMBO, OnStarCombo);
-			Messenger.AddListener<Transform>(MessengerEvents.ENTITY_ESCAPED, OnEscaped);
+            Messenger.AddListener<Vector3>(MessengerEvents.ANNIVERSARY_CAKE_SLICE_EATEN, OnEatCake);
+
+            Messenger.AddListener<Transform>(MessengerEvents.ENTITY_ESCAPED, OnEscaped);
 	        
         }
 		
@@ -169,7 +175,8 @@ public class WorldFeedbackSpawner : MonoBehaviour, IBroadcastListener {
 			Messenger.RemoveListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_DESTROYED, OnDestroyed);
 			Messenger.RemoveListener<Transform, IEntity, Reward>(MessengerEvents.FLOCK_EATEN, OnFlockEaten);
 			Messenger.RemoveListener<Transform, IEntity, Reward>(MessengerEvents.STAR_COMBO, OnStarCombo);
-			Messenger.RemoveListener<Transform>(MessengerEvents.ENTITY_ESCAPED, OnEscaped);
+            Messenger.RemoveListener<Vector3>(MessengerEvents.ANNIVERSARY_CAKE_SLICE_EATEN, OnEatCake);
+            Messenger.RemoveListener<Transform>(MessengerEvents.ENTITY_ESCAPED, OnEscaped);
         }
 		
     }
@@ -373,7 +380,28 @@ public class WorldFeedbackSpawner : MonoBehaviour, IBroadcastListener {
 		}           		
 	}
 
-	private void OnEscaped(Transform _entity) {
+    /// <summary>
+    /// A piece of cake has been eaten.
+    /// </summary>
+    /// <param name="_position">The cake pieces position.</param>
+    private void OnEatCake(Vector3 _position)
+    {
+        if (m_cakeEatenFeedbackPrefab != null)
+        {
+
+            // From the center of the screen
+            Vector3 source = transform.position;
+
+            // To the cake icon
+            Vector3 sink = m_cakeCrumbsDestination.position;
+
+            ParticlesTrailFX.InstantiateAndLaunch(m_cakeEatenFeedbackPrefab.gameObject, transform, source, sink);
+
+        }
+    }   
+
+
+    private void OnEscaped(Transform _entity) {
 		SpawnEscapedFeedback(_entity);
 	}
 
