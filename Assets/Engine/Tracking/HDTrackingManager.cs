@@ -309,22 +309,24 @@ public class HDTrackingManager
 
     /// <summary>
     /// Called when an ad has been requested by the user. 
+    /// <param name="rewarded"><c>true</c> is it's a rewarded video.</param>
     /// <param name="adType">Ad Type.</param>
     /// <param name="rewardType">Type of reward given for watching the ad.</param>
     /// <param name="adIsAvailable"><c>true</c>c> if the ad is available, <c>false</c> otherwise.</param>
     /// <param name="provider">Ad Provider. Optional.</param>    
     /// </summary>
-    public virtual void Notify_AdStarted(string adType, string rewardType, bool adIsAvailable, string provider=null) {}
+    public virtual void Notify_AdStarted(bool rewarded, string adType, string rewardType, bool adIsAvailable, string provider=null) {}
 
     /// <summary>
     /// Called when the ad requested by the user has finished
+    /// <param name="rewarded"><c>true</c> is it's a rewarded video.</param>
     /// <param name="adType">Ad Type.</param>    
     /// <param name="adIsLoaded"><c>true</c>c> if the ad was effectively viewed, <c>false</c> otherwise.</param>
     /// <param name="maxReached"><c>true</c> if the user has reached the limit of ad viewing authorized by the app. Used for reward ads</param>
     /// <param name="adViewingDuration">Duration in seconds of the ad viewing.</param>
     /// <param name="provider">Ad Provider. Optional.</param>    
     /// </summary>
-    public virtual void Notify_AdFinished(string adType, bool adIsLoaded, bool maxReached, int adViewingDuration=0, string provider=null) {}
+    public virtual void Notify_AdFinished(bool rewarded, string adType, bool adIsLoaded, bool maxReached, int adViewingDuration=0, string provider=null) {}
 
     /// <summary>
     /// Called when Menu has been loaded

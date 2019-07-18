@@ -803,13 +803,14 @@ public class HDTrackingManagerImp : HDTrackingManager {
 
     /// <summary>
     /// Called when an ad has been requested by the user.
+    /// <param name="rewarded"><c>true</c> is it's a rewarded video.</param>
     /// <param name="adType">Ad Type.</param>
     /// <param name="rewardType">Type of reward given for watching the ad.</param>
     /// <param name="adIsAvailable"><c>true</c>c> if the ad is available, <c>false</c> otherwise.</param>
     /// <param name="provider">Ad Provider. Optional.</param>
     /// </summary>
-    public override void Notify_AdStarted(string adType, string rewardType, bool adIsAvailable, string provider = null) {
-        Track_AdStarted(adType, rewardType, adIsAvailable, provider);
+    public override void Notify_AdStarted(bool rewarded, string adType, string rewardType, bool adIsAvailable, string provider = null) {
+        Track_AdStarted(rewarded, adType, rewardType, adIsAvailable, provider);
 
         // The app is paused when an ad is played. According to BI session closed event shouldn't be sent when the app is paused to play an ad and
         // session started event shouldn't be sent when the app is resumed once the ad is over
@@ -818,13 +819,14 @@ public class HDTrackingManagerImp : HDTrackingManager {
 
     /// <summary>
     /// Called then the ad requested by the user has finished
+    /// <param name="rewarded"><c>true</c> is it's a rewarded video.</param>
     /// <param name="adType">Ad Type.</param>
     /// <param name="adIsLoaded"><c>true</c>c> if the ad was effectively viewed, <c>false</c> otherwise.</param>
     /// <param name="maxReached"><c>true</c> if the user has reached the limit of ad viewing authorized by the app. Used for reward ads</param>
     /// <param name="adViewingDuration">Duration in seconds of the ad viewing.</param>
     /// <param name="provider">Ad Provider. Optional.</param>
     /// </summary>
-    public override void Notify_AdFinished(string adType, bool adIsLoaded, bool maxReached, int adViewingDuration = 0, string provider = null) {
+    public override void Notify_AdFinished(bool rewarded, string adType, bool adIsLoaded, bool maxReached, int adViewingDuration = 0, string provider = null) {
         if (adIsLoaded && TrackingPersistenceSystem != null) {
             TrackingPersistenceSystem.AdsCount++;
 
@@ -839,7 +841,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
             }
         }
 
-        Track_AdFinished(adType, adIsLoaded, maxReached, adViewingDuration, provider);
+        Track_AdFinished(rewarded, adType, adIsLoaded, maxReached, adViewingDuration, provider);
 
         Session_IsNotifyOnPauseEnabled = true;
     }
@@ -1730,9 +1732,9 @@ public class HDTrackingManagerImp : HDTrackingManager {
         m_eventQueue.Enqueue(e);
     }
 
-    private void Track_AdStarted(string adType, string rewardType, bool adIsAvailable, string provider = null) {
+    private void Track_AdStarted(bool rewarded, string adType, string rewardType, bool adIsAvailable, string provider = null) {
         if (FeatureSettingsManager.IsDebugEnabled) {
-            Log("Track_AdStarted adType = " + adType + " rewardType = " + rewardType + " adIsAvailable = " + adIsAvailable + " provider = " + provider);
+            Log("Track_AdStarted rewarded = " + rewarded + " adType = " + adType + " rewardType = " + rewardType + " adIsAvailable = " + adIsAvailable + " provider = " + provider);
         }
 
         HDTrackingEvent e = new HDTrackingEvent("custom.game.ad.start");
@@ -1759,9 +1761,9 @@ public class HDTrackingManagerImp : HDTrackingManager {
         m_eventQueue.Enqueue(e);
     }
 
-    private void Track_AdFinished(string adType, bool adIsLoaded, bool maxReached, int adViewingDuration, string provider) {
+    private void Track_AdFinished(bool rewarded, string adType, bool adIsLoaded, bool maxReached, int adViewingDuration, string provider) {
         if (FeatureSettingsManager.IsDebugEnabled) {
-            Log("Track_AdFinished adType = " + adType + " adIsLoaded = " + adIsLoaded + " maxReached = " + maxReached +
+            Log("Track_AdFinished rewarded = " + rewarded + " adType = " + adType + " adIsLoaded = " + adIsLoaded + " maxReached = " + maxReached +
                 " adViewingDuration = " + adViewingDuration + " provider = " + provider);
         }
 
@@ -1778,6 +1780,11 @@ public class HDTrackingManagerImp : HDTrackingManager {
         // af_ad_shown
         e = new HDTrackingEvent("af_ad_shown");
         m_eventQueue.Enqueue(e);
+
+        // specific af_ad_shown
+        string specificEventName = (rewarded) ? "af_ad_shown_rewarded" : "af_ad_shown_interstitial";
+        e = new HDTrackingEvent(specificEventName);
+        m_eventQueue.Enqueue(e);        
 
         // fb_ad_shown
         e = new HDTrackingEvent("fb_ad_shown");
