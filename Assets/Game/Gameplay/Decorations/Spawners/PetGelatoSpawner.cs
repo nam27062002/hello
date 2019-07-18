@@ -256,7 +256,7 @@ public class PetGelatoSpawner : AbstractSpawner, IBroadcastListener  {
 		Transform t = spawning.transform;
         
 		t.position = m_gelatoPositions[index];
-		t.localScale = GameConstants.Vector3.one;
+		t.localScale = GameConstants.Vector3.one * m_gelatoDefinitions[index].GetAsFloat("gelatoSize", 1f);
 		t.rotation = GameConstants.Quaternion.identity;
 
 		t.localScale = Vector3.one;
