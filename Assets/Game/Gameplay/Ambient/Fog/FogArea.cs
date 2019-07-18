@@ -60,6 +60,8 @@ public class FogArea : MonoBehaviour, IBroadcastListener
 		if ( other.CompareTag("Player") && !m_playerInside)	
 		{
 			m_playerInside = true;
+			if ( InstanceManager.player.IsIntroMovement() )
+				InstanceManager.fogManager.firstTime = true;
 		    InstanceManager.fogManager.ActivateArea( this );
 			transform.localScale = m_startScale * m_insideScale;
 		}
