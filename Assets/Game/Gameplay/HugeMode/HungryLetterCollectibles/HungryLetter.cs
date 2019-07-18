@@ -73,7 +73,7 @@ public class HungryLetter : MonoBehaviour
 	{
 		DragonPlayer player = InstanceManager.player;
 		// use rigidbody as a shortcut to the player's root, in case player obj has colliders on sub objects.
-		if((player == null) || coll.attachedRigidbody == null || coll.attachedRigidbody.gameObject != player.gameObject)
+		if((player == null) || coll.attachedRigidbody == null || coll.attachedRigidbody.gameObject != player.gameObject || player.IsIntroMovement())
 		{
 			return;
 		}
