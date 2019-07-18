@@ -60,7 +60,7 @@ abstract public class IEntity :  MonoBehaviour, ISpawnable {
 	protected float m_health;
 	public float health { get { return m_health; } set { m_health = value; } }
 
-	public virtual int score { get { return 0; } }
+	public virtual float score { get { return 0; } }
 
 	public ISpawnable[] m_otherSpawnables;
 	protected int m_otherSpawnablesCount;

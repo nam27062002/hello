@@ -287,7 +287,7 @@ public class WorldFeedbackSpawner : MonoBehaviour, IBroadcastListener {
 	                ScoreCacheItemData itemData = m_cacheDatas[ECacheTypes.Score].GetCacheItemDataAvailable() as ScoreCacheItemData;
 	                if (itemData != null)
 	                {
-	                    itemData.Spawn(CacheWatch.ElapsedMilliseconds, worldPos, _reward.score);
+	                    itemData.Spawn(CacheWatch.ElapsedMilliseconds, worldPos, Mathf.FloorToInt(_reward.score));
 	                    m_feedbacksQueue.Enqueue(itemData.Controller);
 	                }
 				}

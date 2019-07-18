@@ -17,6 +17,8 @@ using System.Collections.Generic;
 /// Tracker for score.
 /// </summary>
 public class TrackerScore : TrackerBase {
+	private float m_score;
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -45,6 +47,8 @@ public class TrackerScore : TrackerBase {
 		// Unsubscribe from external events
 		Messenger.RemoveListener<Reward, Transform>(MessengerEvents.REWARD_APPLIED, OnRewardApplied);
 
+		m_score = 0f;
+
 		// Call parent
 		base.Clear();
 	}
@@ -61,6 +65,21 @@ public class TrackerScore : TrackerBase {
 		return base.RoundTargetValue(_targetValue);	// Apply default filter
 	}
 
+	/// <summary>
+	/// Sets the initial value for the tracker.
+	/// Doesn't perform any check or trigger any event.
+	/// Use for initialization/reset/restore persistence.
+	/// Use also by heirs to reset any custom vars that needed to be reset.
+	/// </summary>
+	/// <param name="_initialValue">Initial value.</param>
+	override public void InitValue(long _initialValue) {
+		// Call parent
+		base.InitValue(_initialValue);
+
+		// Reset local vars
+		m_score = (float)_initialValue;
+	}
+
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
@@ -72,7 +91,8 @@ public class TrackerScore : TrackerBase {
 	private void OnRewardApplied(Reward _reward, Transform _entity) {
 		// We only care about score rewards
 		if(_reward.score > 0) {
-			currentValue += _reward.score;
+			m_score += _reward.score;
+			currentValue = Mathf.FloorToInt(m_score);
 		}
 	}
 }
