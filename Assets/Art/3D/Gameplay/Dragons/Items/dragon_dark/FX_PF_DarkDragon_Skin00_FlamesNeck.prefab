@@ -107,7 +107,6 @@ GameObject:
   - component: {fileID: 198471579162799564}
   - component: {fileID: 199541224033705038}
   - component: {fileID: 114768683026125482}
-  - component: {fileID: 114479234708255562}
   m_Layer: 0
   m_Name: Glow
   m_TagString: Untagged
@@ -336,24 +335,6 @@ MonoBehaviour:
   m_addToBodyParts: 0
   m_stopInsideWater: 0
   m_stopWhenDead: 0
---- !u!114 &114479234708255562
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1844743419232806}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 438cf31a59dc645398073c030faafc6e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_scaleOrigin: 0
-  m_scale: 1
-  m_transform: {fileID: 0}
-  m_resetFirst: 0
-  m_scaleLifetime: 0
-  m_scaleAllChildren: 1
-  m_whenScale: 0
 --- !u!114 &114538046934533626
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -381,11 +362,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_scaleOrigin: 1
   m_scale: 1
-  m_transform: {fileID: 0}
-  m_resetFirst: 0
+  m_transform: {fileID: 4912135757304792}
+  m_resetFirst: 1
   m_scaleLifetime: 0
   m_scaleAllChildren: 1
-  m_whenScale: 0
+  m_whenScale: 3
 --- !u!198 &198412358447451466
 ParticleSystem:
   m_ObjectHideFlags: 1
@@ -446,7 +427,7 @@ ParticleSystem:
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 0
-  randomSeed: 746180082
+  randomSeed: -1699830747
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -3807,7 +3788,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 0
-  randomSeed: 908196718
+  randomSeed: -1619663731
   InitialModule:
     serializedVersion: 3
     enabled: 1

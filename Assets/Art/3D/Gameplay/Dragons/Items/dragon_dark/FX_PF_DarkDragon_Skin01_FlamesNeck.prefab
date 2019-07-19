@@ -107,7 +107,6 @@ GameObject:
   - component: {fileID: 198471579162799564}
   - component: {fileID: 199541224033705038}
   - component: {fileID: 114970878000665090}
-  - component: {fileID: 114195510426515422}
   m_Layer: 0
   m_Name: Glow
   m_TagString: Untagged
@@ -322,24 +321,6 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1756821997840194}
   m_Mesh: {fileID: 4300006, guid: 824063a80745c7b4994565e850666694, type: 3}
---- !u!114 &114195510426515422
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1844743419232806}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 438cf31a59dc645398073c030faafc6e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_scaleOrigin: 0
-  m_scale: 1
-  m_transform: {fileID: 0}
-  m_resetFirst: 0
-  m_scaleLifetime: 0
-  m_scaleAllChildren: 1
-  m_whenScale: 0
 --- !u!114 &114286211882685578
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -381,11 +362,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_scaleOrigin: 1
   m_scale: 1
-  m_transform: {fileID: 0}
-  m_resetFirst: 0
+  m_transform: {fileID: 4912135757304792}
+  m_resetFirst: 1
   m_scaleLifetime: 0
   m_scaleAllChildren: 1
-  m_whenScale: 0
+  m_whenScale: 3
 --- !u!198 &198412358447451466
 ParticleSystem:
   m_ObjectHideFlags: 1
@@ -446,7 +427,7 @@ ParticleSystem:
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 0
-  randomSeed: 372315428
+  randomSeed: 1873995396
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -3807,7 +3788,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 0
-  randomSeed: -868987698
+  randomSeed: 1626313055
   InitialModule:
     serializedVersion: 3
     enabled: 1
