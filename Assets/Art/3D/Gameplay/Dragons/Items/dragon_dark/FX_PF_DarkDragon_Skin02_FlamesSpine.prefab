@@ -38,6 +38,7 @@ GameObject:
   - component: {fileID: 4702870501082274}
   - component: {fileID: 198106782626662438}
   - component: {fileID: 199340563518123988}
+  - component: {fileID: 114320604716202978}
   m_Layer: 0
   m_Name: Glow
   m_TagString: Untagged
@@ -71,6 +72,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4814783741796416}
   - component: {fileID: 114348490419608302}
+  - component: {fileID: 114628141217192932}
   m_Layer: 0
   m_Name: FX_PF_DarkDragon_Skin02_FlamesSpine
   m_TagString: Untagged
@@ -320,6 +322,24 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1801554944268526}
   m_Mesh: {fileID: 4300004, guid: 824063a80745c7b4994565e850666694, type: 3}
+--- !u!114 &114320604716202978
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1311128869155908}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 438cf31a59dc645398073c030faafc6e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_scaleOrigin: 0
+  m_scale: 1
+  m_transform: {fileID: 0}
+  m_resetFirst: 0
+  m_scaleLifetime: 0
+  m_scaleAllChildren: 1
+  m_whenScale: 0
 --- !u!114 &114348490419608302
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -334,6 +354,20 @@ MonoBehaviour:
   m_attachPoint: 9
   m_sku: 
   m_showOnResults: 1
+--- !u!114 &114628141217192932
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1540815926781598}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff4cedaa499f74e61b5a72ac7f18311d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_addToBodyParts: 0
+  m_stopInsideWater: 0
+  m_stopWhenDead: 0
 --- !u!198 &198106782626662438
 ParticleSystem:
   m_ObjectHideFlags: 1

@@ -21,6 +21,7 @@ GameObject:
   - component: {fileID: 4303163477229234}
   - component: {fileID: 198240486160320918}
   - component: {fileID: 199920908798274156}
+  - component: {fileID: 114423349583145602}
   m_Layer: 0
   m_Name: Glow
   m_TagString: Untagged
@@ -54,6 +55,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4999948322250066}
   - component: {fileID: 114926074352810308}
+  - component: {fileID: 114545147227696270}
   m_Layer: 0
   m_Name: FX_PF_DarkDragon_Skin04_FlamesSpine
   m_TagString: Untagged
@@ -320,6 +322,38 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1714965624147932}
   m_Mesh: {fileID: 4300004, guid: 824063a80745c7b4994565e850666694, type: 3}
+--- !u!114 &114423349583145602
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1002921902364424}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 438cf31a59dc645398073c030faafc6e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_scaleOrigin: 1
+  m_scale: 1
+  m_transform: {fileID: 0}
+  m_resetFirst: 0
+  m_scaleLifetime: 0
+  m_scaleAllChildren: 1
+  m_whenScale: 0
+--- !u!114 &114545147227696270
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1375472112375392}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff4cedaa499f74e61b5a72ac7f18311d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_addToBodyParts: 0
+  m_stopInsideWater: 0
+  m_stopWhenDead: 0
 --- !u!114 &114926074352810308
 MonoBehaviour:
   m_ObjectHideFlags: 1
