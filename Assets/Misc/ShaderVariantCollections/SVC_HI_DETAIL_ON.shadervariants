@@ -261,6 +261,12 @@ ShaderVariantCollection:
       - keywords: AUTOMATICPANNING BLENDMODE_PREMULTIPLY COLOR_RAMP EXTENDED_PARTICLES
           HI_DETAIL_ON NOISEUV NOISE_TEXTURE NOISE_TEXTURE_ALPHA
         passType: 0
+      - keywords: APPLY_RGB_COLOR_VERTEX BLENDMODE_ALPHABLEND DISSOLVE_ENABLED EXTENDED_PARTICLES
+          FLOWMAP HI_DETAIL_ON NOISEUV
+        passType: 0
+      - keywords: BLENDMODE_PREMULTIPLY DISSOLVE_ENABLED DISSOLVE_VERTEXCOLORALFA
+          EXTENDED_PARTICLES HI_DETAIL_ON
+        passType: 0
   - first: {fileID: 4800000, guid: 057ac1be4a48b2c4eabf08f13b7feda6, type: 3}
     second:
       variants:
@@ -343,6 +349,12 @@ ShaderVariantCollection:
       - keywords: HI_DETAIL_ON NORMALMAP SPECULAR
         passType: 4
       - keywords: FRESNEL HI_DETAIL_ON NORMALMAP SPECULAR
+        passType: 4
+      - keywords: CUTOFF HI_DETAIL_ON NORMALMAP
+        passType: 4
+      - keywords: CUTOFF HI_DETAIL_ON NORMALMAP SPECULAR
+        passType: 4
+      - keywords: CUTOFF FRESNEL HI_DETAIL_ON NORMALMAP SPECULAR
         passType: 4
       - keywords: DOUBLESIDED FRESNEL HI_DETAIL_ON NORMALMAP SPECULAR
         passType: 4
@@ -444,6 +456,21 @@ ShaderVariantCollection:
       - keywords: FRESNEL FXLAYER_REFLECTION HI_DETAIL_ON NORMALMAP OPAQUEFRESNEL
           REFLECTIONTYPE_NORMAL SPECULAR
         passType: 4
+      - keywords: FXLAYER_REFLECTION HI_DETAIL_ON NORMALMAP REFLECTIONTYPE_COLOR SELFILLUMINATE_NORMAL
+          SPECULAR
+        passType: 4
+      - keywords: DIFFUSE_AS_SPECULARMASK FXLAYER_REFLECTION HI_DETAIL_ON NORMALMAP
+          REFLECTIONTYPE_COLOR SELFILLUMINATE_NORMAL SPECULAR
+        passType: 4
+      - keywords: FRESNEL FXLAYER_REFLECTION HI_DETAIL_ON NORMALMAP REFLECTIONTYPE_COLOR
+          SELFILLUMINATE_EMISSIVE SPECULAR
+        passType: 4
+      - keywords: BLENDFRESNEL FRESNEL FXLAYER_REFLECTION HI_DETAIL_ON NORMALMAP REFLECTIONTYPE_COLOR
+          SELFILLUMINATE_EMISSIVE SPECULAR
+        passType: 4
+      - keywords: DIFFUSE_AS_SPECULARMASK FRESNEL HI_DETAIL_ON NORMALMAP REFLECTIONTYPE_COLOR
+          SELFILLUMINATE_EMISSIVE SPECULAR
+        passType: 4
   - first: {fileID: 4800000, guid: 2792aaa8ace564651ba7198784ab33a8, type: 3}
     second:
       variants:
@@ -488,8 +515,6 @@ ShaderVariantCollection:
       variants:
       - keywords: HI_DETAIL_ON VERTEXCOLOR_NONE
         passType: 0
-      - keywords: HI_DETAIL_ON OPAQUEALPHA VERTEXCOLOR_NONE
-        passType: 0
       - keywords: HI_DETAIL_ON OPAQUEALPHA SPECULAR VERTEXCOLOR_NONE
         passType: 0
       - keywords: EMISSIVE_NONE HI_DETAIL_ON SPECULAR VERTEXCOLOR_NONE
@@ -515,8 +540,6 @@ ShaderVariantCollection:
       - keywords: FOG HI_DETAIL_ON NORMALMAP OPAQUEALPHA VERTEXCOLOR_NONE
         passType: 0
       - keywords: EMISSIVE_NONE FOG HI_DETAIL_ON OPAQUEALPHA VERTEXCOLOR_NONE
-        passType: 0
-      - keywords: CUTOFF EMISSIVE_NONE FOG HI_DETAIL_ON OPAQUEALPHA VERTEXCOLOR_NONE
         passType: 0
       - keywords: FOG HI_DETAIL_ON MAINCOLOR_TEXTURE OPAQUEALPHA VERTEXCOLOR_NONE
         passType: 0
@@ -789,3 +812,20 @@ ShaderVariantCollection:
       variants:
       - keywords: HI_DETAIL_ON
         passType: 0
+  - first: {fileID: 4800000, guid: 4d4ad820f36dbc1429b53a7702b00536, type: 3}
+    second:
+      variants:
+      - keywords: BLENDMODE_ADDITIVEALPHABLEND HI_DETAIL_ON
+        passType: 0
+  - first: {fileID: 4800000, guid: 3880f73760fb52c4bba39b1167e234e7, type: 3}
+    second:
+      variants:
+      - keywords: BLENDAXIS_X COLORMODE_COLORRAMPMASKED FRESNEL HI_DETAIL_ON LITMODE_UNLIT
+        passType: 4
+      - keywords: BLENDAXIS_X COLORMODE_COLORRAMP FRESNEL HI_DETAIL_ON LITMODE_UNLIT
+        passType: 4
+      - keywords: BLENDAXIS_X COLORMODE_NONE FRESNEL HI_DETAIL_ON LITMODE_UNLIT
+        passType: 4
+      - keywords: BLENDAXIS_X COLORMODE_COLORRAMP FRESNEL HI_DETAIL_ON LITMODE_UNLIT
+          REFLECTIONMAP
+        passType: 4
