@@ -441,7 +441,10 @@ public class ParticleScaler : MonoBehaviour
 			}break;
 			case ScaleOrigin.TRANSFORM_SCALE:
 			{
-				Scale( m_transform.lossyScale.x );
+                if (m_transform != null)
+                {
+                    Scale(m_transform.lossyScale.x);
+                }
 			}break;
 			case ScaleOrigin.ATTRIBUTE_SCALE:
 			{
