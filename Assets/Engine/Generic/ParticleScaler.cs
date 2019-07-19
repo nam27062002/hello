@@ -442,9 +442,13 @@ public class ParticleScaler : MonoBehaviour
 			case ScaleOrigin.TRANSFORM_SCALE:
 			{
                 if (m_transform != null)
-                {
-                    Scale(m_transform.lossyScale.x);
-                }
+                    {
+                        Scale(m_transform.lossyScale.x);
+                    }
+                else
+                    {
+                        Debug.LogError("The parameter transform in ParticleScaler shouldn't be null");
+                    }
 			}break;
 			case ScaleOrigin.ATTRIBUTE_SCALE:
 			{
