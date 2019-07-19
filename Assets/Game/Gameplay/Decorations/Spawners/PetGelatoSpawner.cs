@@ -45,33 +45,44 @@ public class PetGelatoSpawner : AbstractSpawner, IBroadcastListener  {
 
 	private DragonTier m_tierCheck;
 
+    private bool m_enabled;
 	private float m_timer;
 
 
     void Awake() {
 		// Register change area events
 		Broadcaster.AddListener(BroadcastEventType.POOL_MANAGER_READY, this);
+        Broadcaster.AddListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
+        Broadcaster.AddListener(BroadcastEventType.GAME_AREA_ENTER, this);
+        Broadcaster.AddListener(BroadcastEventType.GAME_AREA_EXIT, this);
 
-		m_spawnedGelatos = new List<IEntity>();
+        m_spawnedGelatos = new List<IEntity>();
 		m_spawnedGelatosIndex = new List<int>();
 
-		m_timer = m_searchCooldown;
+        m_enabled = false;
+        m_timer = m_searchCooldown;
     }
 
 	override protected void OnDestroy() {
 		base.OnDestroy();
 		Broadcaster.RemoveListener(BroadcastEventType.POOL_MANAGER_READY, this);
+        Broadcaster.RemoveListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
+        Broadcaster.RemoveListener(BroadcastEventType.GAME_AREA_ENTER, this);
+        Broadcaster.RemoveListener(BroadcastEventType.GAME_AREA_EXIT, this);
 
-		if (ApplicationManager.IsAlive) {
+        if (ApplicationManager.IsAlive) {
 			ForceRemoveEntities();
 		}
 	}
 
 	private void Update() {
-		m_timer -= Time.deltaTime;
-		if (m_timer <= 0f) {
-			Spawn();
-		}
+        if (m_enabled) {
+            m_timer -= Time.deltaTime;
+            if (m_timer <= 0f)
+            {
+                Spawn();
+            }
+        }
 	}
 
     public override List<string> GetPrefabList() {
@@ -95,6 +106,18 @@ public class PetGelatoSpawner : AbstractSpawner, IBroadcastListener  {
 				PreparePools();
 				ForceReset();
             }break;
+
+            case BroadcastEventType.GAME_LEVEL_LOADED:
+            case BroadcastEventType.GAME_AREA_ENTER:
+                {
+                    m_enabled = true;
+                }
+                break;
+            case BroadcastEventType.GAME_AREA_EXIT:
+                {
+                    m_enabled = false;
+                }
+                break;
         }
     }
 
@@ -216,7 +239,8 @@ public class PetGelatoSpawner : AbstractSpawner, IBroadcastListener  {
 	}
 
 	public override void ForceRemoveEntities() {
-		foreach (IEntity entity in m_spawnedGelatos) {	
+        IEntity[] entities = m_spawnedGelatos.ToArray();
+        foreach (IEntity entity in entities) {	
 			RemoveEntity(entity, false);
 		}
 		OnForceRemoveEntities();
