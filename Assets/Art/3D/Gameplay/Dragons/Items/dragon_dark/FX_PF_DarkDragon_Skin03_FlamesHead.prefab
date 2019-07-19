@@ -72,6 +72,7 @@ GameObject:
   - component: {fileID: 4032399072448778}
   - component: {fileID: 198894474026558522}
   - component: {fileID: 199936333496855222}
+  - component: {fileID: 114572881118773100}
   m_Layer: 0
   m_Name: Glow
   m_TagString: Untagged
@@ -171,6 +172,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4548562904557362}
   - component: {fileID: 114274579748461056}
+  - component: {fileID: 114461048490594456}
   m_Layer: 12
   m_Name: FX_PF_DarkDragon_Skin03_FlamesHead
   m_TagString: Untagged
@@ -579,6 +581,38 @@ MonoBehaviour:
   m_attachPoint: 17
   m_sku: 
   m_showOnResults: 1
+--- !u!114 &114461048490594456
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1867282884650710}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff4cedaa499f74e61b5a72ac7f18311d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_addToBodyParts: 0
+  m_stopInsideWater: 0
+  m_stopWhenDead: 0
+--- !u!114 &114572881118773100
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1478730273158522}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 438cf31a59dc645398073c030faafc6e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_scaleOrigin: 1
+  m_scale: 1
+  m_transform: {fileID: 0}
+  m_resetFirst: 0
+  m_scaleLifetime: 0
+  m_scaleAllChildren: 1
+  m_whenScale: 0
 --- !u!198 &198587905597363204
 ParticleSystem:
   m_ObjectHideFlags: 1
