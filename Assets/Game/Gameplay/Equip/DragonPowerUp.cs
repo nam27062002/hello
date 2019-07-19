@@ -569,7 +569,8 @@ public class DragonPowerUp : MonoBehaviour {
 			case "tranformGold":
 			case "shoot_horns":
 			case "kill":
-			case "mummy":			
+			case "mummy":	
+			case "transform_ice_cream":
 			{
 				return UIConstants.PET_CATEGORY_SPECIAL;
 			} break;
