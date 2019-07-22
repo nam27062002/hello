@@ -99,7 +99,7 @@ public class DailyReward {
 		rewardData.sku = _def.GetAsString("rewardSku");
 		if(rewardData.typeCode == Metagame.RewardSoftCurrency.TYPE_CODE) {
 			// Apply SC scaling
-			rewardData.amount = Metagame.RewardSoftCurrency.ScaleByMaxDragonOwned(rewardData.amount);
+			rewardData.amount = ScaleByMaxDragonOwned(rewardData.amount);
 		}
 		reward = Metagame.Reward.CreateFromData(rewardData, ECONOMY_GROUP, DEFAULT_SOURCE);
 
@@ -112,12 +112,22 @@ public class DailyReward {
 		}
 	}
 
-	/// <summary>
-	/// Collect the reward :)
-	/// No checks performed.
-	/// </summary>
-	/// <param name="_doubled">Has the reward been doubled?</param>
-	public void Collect(bool _doubled) {
+    private long ScaleByMaxDragonOwned(long _amount)
+    {
+        DefinitionNode rewardScaleFactorDef = DefinitionsManager.SharedInstance.GetDefinitionByVariable(DefinitionsCategory.DAILY_REWARD_MODIFIERS, "dragon", DragonManager.biggestOwnedDragon.def.sku);
+        if (rewardScaleFactorDef != null)
+        {
+            return Mathf.RoundToInt(((float)_amount) * rewardScaleFactorDef.GetAsFloat("dailyRewardsSCRewardMultiplier"));
+        }
+        return _amount;
+    }
+
+    /// <summary>
+    /// Collect the reward :)
+    /// No checks performed.
+    /// </summary>
+    /// <param name="_doubled">Has the reward been doubled?</param>
+    public void Collect(bool _doubled) {
 		// Double the reward?
 		// [AOC] Just in case, don't do it again if it has already been doubled!
 		if(_doubled && !this.doubled) {
