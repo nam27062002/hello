@@ -31,7 +31,8 @@ public abstract class IDragonData : IUISelectorItem {
 
 	public enum Type {
 		CLASSIC,
-		SPECIAL
+		SPECIAL,
+        ALL
 	}
 
 	// Dragons can be unlocked with coins when the previous tier is completed (all dragons in it at max level), or directly with PC.
@@ -306,7 +307,16 @@ public abstract class IDragonData : IUISelectorItem {
 	/// The order of this dragon.
 	/// </summary>
 	public int GetOrder() {
-		return (def == null) ? -1 : def.GetAsInt("order");
+
+        if (def == null) return -1;
+
+        // Special dragons are ordered sequentially after the regular ones
+        if (type == Type.SPECIAL)
+        {
+            return def.GetAsInt("order") + DragonManager.GetDragonsCount(Type.CLASSIC);
+        }
+
+		return def.GetAsInt("order");
 	}
 
 	/// <summary>

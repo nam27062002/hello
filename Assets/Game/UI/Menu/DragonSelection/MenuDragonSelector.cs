@@ -48,9 +48,9 @@ public class MenuDragonSelector : UISelectorTemplate<IDragonData>, IPointerClick
 		// Subscribe to events
 		OnSelectionChanged.AddListener(OnSelectedDragonChanged);
 
-        // Initialize items list
+        // Initialize items list with all the dragons
         enableEvents = false;
-        Init(DragonManager.GetDragonsByOrder(m_dragonType));
+        Init(DragonManager.GetDragonsByOrder(IDragonData.Type.ALL));
 
         // Figure out initial index
         string selectedSku = InstanceManager.menuSceneController.selectedDragon;

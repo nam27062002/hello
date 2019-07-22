@@ -140,9 +140,9 @@ public class DragonManager : UbiBCN.SingletonMonoBehaviour<DragonManager> {
 			return true;
 		} else {
 			bool isFirst = true;
-			List<IDragonData> matchingDragonsByOrder = GetDragonsByOrder(data.type);
-			for (int i = order - 1; order >= 0 && i < matchingDragonsByOrder.Count; --order) {
-				isFirst = isFirst && (matchingDragonsByOrder[i].GetLockState() <= IDragonData.LockState.TEASE);
+			List<IDragonData> allDragons = GetDragonsByOrder(IDragonData.Type.ALL);
+			for (int i = order - 1; order >= 0 && i < allDragons.Count; --order) {
+				isFirst = isFirst && (allDragons[i].GetLockState() <= IDragonData.LockState.TEASE);
 			}
 			return isFirst;
 		}
@@ -156,13 +156,13 @@ public class DragonManager : UbiBCN.SingletonMonoBehaviour<DragonManager> {
 		if(data == null) return false;
 
 		int order = data.GetOrder();
-		List<IDragonData> matchingDragonsByOrder = GetDragonsByOrder(data.type);
-		if (order == instance.m_classicDragonsByOrder.Count - 1) {
+		List<IDragonData> allDragons = GetDragonsByOrder(IDragonData.Type.ALL);
+		if (order == allDragons.Count - 1) {
 			return true;
 		} else {
 			bool isLast = true;
-			for (int i = order + 1; order < matchingDragonsByOrder.Count && i < matchingDragonsByOrder.Count; ++order) {
-				isLast = isLast && (matchingDragonsByOrder[i].GetLockState() <= IDragonData.LockState.TEASE);
+			for (int i = order + 1; order < allDragons.Count && i < allDragons.Count; ++order) {
+				isLast = isLast && (allDragons[i].GetLockState() <= IDragonData.LockState.TEASE);
 			}
 			return isLast;
 		}
@@ -189,10 +189,10 @@ public class DragonManager : UbiBCN.SingletonMonoBehaviour<DragonManager> {
 	public static IDragonData GetPreviousDragonData(string _sku) {
 		// Just check order
 		IDragonData data = GetDragonData(_sku);
-		List<IDragonData> matchingDragonsByOrder = GetDragonsByOrder(data.type);
-		int order = data.GetOrder();
-		if(order > 0 && order < matchingDragonsByOrder.Count) {	// Exclude if first dragon
-			return matchingDragonsByOrder[order - 1];
+        List<IDragonData> allDragons = GetDragonsByOrder(IDragonData.Type.ALL);
+        int order = data.GetOrder();
+		if(order > 0 && order < allDragons.Count) {	// Exclude if first dragon
+			return allDragons[order - 1];
 		}
 
 		// Not found! Probably last dragon
@@ -207,10 +207,10 @@ public class DragonManager : UbiBCN.SingletonMonoBehaviour<DragonManager> {
 	public static IDragonData GetNextDragonData(string _sku) {
 		// Just check order
 		IDragonData data = GetDragonData(_sku);
-		List<IDragonData> matchingDragonsByOrder = GetDragonsByOrder(data.type);
-		int order = data.GetOrder();
-		if(order < matchingDragonsByOrder.Count - 1) {	// Exclude if last dragon
-			return matchingDragonsByOrder[order + 1];
+        List<IDragonData> allDragons = GetDragonsByOrder(IDragonData.Type.ALL);
+        int order = data.GetOrder();
+		if(order < allDragons.Count - 1) {	// Exclude if last dragon
+			return allDragons[order + 1];
 		}
 
 		// Not found! Probably last dragon
@@ -227,7 +227,12 @@ public class DragonManager : UbiBCN.SingletonMonoBehaviour<DragonManager> {
 		List<IDragonData> matchingDragonsByOrder = null;
 		switch(_type) {
 			case IDragonData.Type.CLASSIC: matchingDragonsByOrder = instance.m_classicDragonsByOrder; break;
-			case IDragonData.Type.SPECIAL: matchingDragonsByOrder = instance.m_specialDragonsByOrder; break;
+
+            case IDragonData.Type.SPECIAL: matchingDragonsByOrder = instance.m_specialDragonsByOrder; break;
+
+            case IDragonData.Type.ALL:  matchingDragonsByOrder = new List<IDragonData>();
+                                        matchingDragonsByOrder.AddRange(instance.m_classicDragonsByOrder);
+                                        matchingDragonsByOrder.AddRange(instance.m_specialDragonsByOrder); break;
 		}
 
 		if(_createNewList && matchingDragonsByOrder != null) {
@@ -237,12 +242,14 @@ public class DragonManager : UbiBCN.SingletonMonoBehaviour<DragonManager> {
 		}
 	}
 
-	/// <summary>
-	/// Get all the dragons at a given tier.
-	/// </summary>
-	/// <returns>The data of the dragons at the given tier.</returns>
-	/// <param name="_tier">The tier to look for.</param>
-	public static List<IDragonData> GetDragonsByTier(DragonTier _tier, bool _includeHidden = false, bool _includeSpecial = false) {
+
+
+    /// <summary>
+    /// Get all the dragons at a given tier.
+    /// </summary>
+    /// <returns>The data of the dragons at the given tier.</returns>
+    /// <param name="_tier">The tier to look for.</param>
+    public static List<IDragonData> GetDragonsByTier(DragonTier _tier, bool _includeHidden = false, bool _includeSpecial = false) {
 		// Iterate the dragons list looking for those belonging to the target tier
 		List<IDragonData> list = new List<IDragonData>();
 		foreach(KeyValuePair<string, IDragonData> kvp in instance.m_dragonsBySku) {
@@ -280,16 +287,33 @@ public class DragonManager : UbiBCN.SingletonMonoBehaviour<DragonManager> {
 		return list;
 	}
 
-	//------------------------------------------------------------------//
-	// PUBLIC UTILS														//
-	//------------------------------------------------------------------//
-	/// <summary>
-	/// Creates an instance of the dragon with the given ID and replaces the current
-	/// player in the scene.
-	/// The newly created instance can be accessed through the InstanceManager.player property.
-	/// </summary>
-	/// <param name="_sku">The sku of the dragon we want to instantiate on the scene.</param>
-	public static void LoadDragon(string _sku) {
+    /// <summary>
+    /// Get the amount of dragons of a type
+    /// </summary>
+    /// <param name="_type">The type of the dragon</param>
+    public static int GetDragonsCount (IDragonData.Type _type)
+    {
+        switch (_type)
+        {
+            case IDragonData.Type.CLASSIC: return instance.m_classicDragonsByOrder.Count; 
+            case IDragonData.Type.SPECIAL: return instance.m_specialDragonsByOrder.Count; 
+            case IDragonData.Type.ALL: return instance.m_classicDragonsByOrder.Count + instance.m_specialDragonsByOrder.Count; 
+        }
+
+        // Error
+        return -1;
+    }
+
+    //------------------------------------------------------------------//
+    // PUBLIC UTILS														//
+    //------------------------------------------------------------------//
+    /// <summary>
+    /// Creates an instance of the dragon with the given ID and replaces the current
+    /// player in the scene.
+    /// The newly created instance can be accessed through the InstanceManager.player property.
+    /// </summary>
+    /// <param name="_sku">The sku of the dragon we want to instantiate on the scene.</param>
+    public static void LoadDragon(string _sku) {
 		// Get the data for the new dragon
 		IDragonData data = DragonManager.GetDragonData(_sku);
 		Debug.Assert(data != null, "Attempting to load dragon with id " + _sku + ", but the manager has no data linked to this id");

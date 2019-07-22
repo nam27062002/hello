@@ -18,7 +18,7 @@ public enum DragonTier {
 	TIER_4,		// XL
 	TIER_5, 	// XXL
 
-	COUNT
+    COUNT
 }
 
 class DragonTierGlobals
