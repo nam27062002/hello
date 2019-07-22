@@ -85,8 +85,8 @@ public class AnniversaryCakePanel : MonoBehaviour, IBroadcastListener {
 				DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, "dragonSettings");
 				m_cakeSliceCount = def.GetAsInt("anniversaryCakeSlices", 6);
 
-				m_timePerSlice = m_DragonSuperSize.modeDuration / m_cakeSliceCount;
-				m_sizeUpMultPerSlice = ((m_DragonSuperSize.sizeUpMultiplier - 1f) * 0.5f) / m_cakeSliceCount;
+				m_timePerSlice = m_DragonPlayer.data.superModeDuration / m_cakeSliceCount;
+				m_sizeUpMultPerSlice = ((m_DragonPlayer.data.superSizeUpMultiplier - 1f) * 0.5f) / m_cakeSliceCount;
 
 				ChangeState(State.EatCake);
 			} break;
