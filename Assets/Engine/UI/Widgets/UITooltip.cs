@@ -33,6 +33,7 @@ public class UITooltip : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// Exposed References
 	[SerializeField] protected RectTransform m_arrow = null;
+	[Tooltip("Arrow Dir determins in which axis the arrow moves (i.e. arrows pointing to left and right are moving in the VERTICAL axis, while arrows pointing up and down are moving in the HORIZONTAL axis.")]
 	[SerializeField] protected ArrowDirection m_arrowDir = ArrowDirection.HORIZONTAL;
 	public ArrowDirection arrowDir {
 		get { return m_arrowDir; }
