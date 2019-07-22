@@ -114,7 +114,7 @@ public class DailyReward {
 
     private long ScaleByMaxDragonOwned(long _amount)
     {
-        DefinitionNode rewardScaleFactorDef = DefinitionsManager.SharedInstance.GetDefinitionByVariable(DefinitionsCategory.DAILY_REWARD_MODIFIERS, "dragon", DragonManager.biggestOwnedDragon.def.sku);
+        DefinitionNode rewardScaleFactorDef = DefinitionsManager.SharedInstance.GetDefinitionByVariable(DefinitionsCategory.DAILY_REWARD_MODIFIERS, "dragonSku", DragonManager.biggestOwnedDragon.def.sku);
         if (rewardScaleFactorDef != null)
         {
             return Mathf.RoundToInt(((float)_amount) * rewardScaleFactorDef.GetAsFloat("dailyRewardsSCRewardMultiplier"));
