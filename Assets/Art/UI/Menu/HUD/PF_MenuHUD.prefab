@@ -1183,6 +1183,7 @@ GameObject:
   - component: {fileID: 224350133441746376}
   - component: {fileID: 114395123126686736}
   - component: {fileID: 114422650503594764}
+  - component: {fileID: 114839116809155532}
   m_Layer: 5
   m_Name: DragonDiscountIcon
   m_TagString: Untagged
@@ -6167,6 +6168,31 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &114839116809155532
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1488070139361974}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a1ccf5c30da243be93264797f5bc17c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_targetAnimator: {fileID: 114422650503594764}
+  m_checkSelectedDragon: 0
+  m_hideForDragons: 0
+  m_targetDragonSku: 
+  m_showIfShadow: 0
+  m_showIfLocked: 0
+  m_showIfAvailable: 0
+  m_showIfOwned: 1
+  m_checkScreens: 1
+  m_mode: 0
+  m_targetScreens: 01000000
+  m_hideDelay: 0
+  m_showDelay: 0
+  m_restartShowAnimation: 0
 --- !u!114 &114843162011677028
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -7457,11 +7483,9 @@ RectTransform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children:
-  - {fileID: 224789463251442404}
-  - {fileID: 224934272060322930}
+  m_Children: []
   m_Father: {fileID: 224350133441746376}
-  m_RootOrder: 0
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -7534,6 +7558,8 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.9984, y: 0.9984, z: 0.9984}
   m_Children:
+  - {fileID: 224789463251442404}
+  - {fileID: 224934272060322930}
   - {fileID: 224311555232615004}
   m_Father: {fileID: 22416352}
   m_RootOrder: 6
@@ -8132,12 +8158,12 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 224153743287835862}
-  m_Father: {fileID: 224311555232615004}
+  m_Father: {fileID: 224350133441746376}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 25, y: 20}
+  m_AnchoredPosition: {x: 24.99884, y: 20}
   m_SizeDelta: {x: 0, y: -40.000008}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224806512906907966
@@ -8324,12 +8350,12 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 224048748102615544}
-  m_Father: {fileID: 224311555232615004}
+  m_Father: {fileID: 224350133441746376}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 300, y: -270}
+  m_AnchoredPosition: {x: 300.00354, y: -270}
   m_SizeDelta: {x: 300, y: 60}
   m_Pivot: {x: 1, y: 0}
 --- !u!224 &224947517039995386
