@@ -202,10 +202,9 @@ namespace LevelEditor {
 				m_elapsedSeconds += Time.deltaTime;
 
 				if (Input.GetKeyDown(KeyCode.I))
-				{
-					bool usingEditor = true;
-					Vector3 startPos = InstanceManager.player.StartIntroMovement( usingEditor );
-					InstanceManager.gameCamera.StartIntro( startPos );
+				{					
+					SpawnPlayer(true);
+					
 					LevelTypeSpawners sp = FindObjectOfType<LevelTypeSpawners>();
 					if ( sp != null )
 						sp.IntroSpawn(InstanceManager.player.data.def.sku);
@@ -239,6 +238,12 @@ namespace LevelEditor {
 		private void StartGame() {
 			LevelManager.SetCurrentLevel(LevelEditor.settings.levelSku);
 
+			string bloodOverride = SeasonManager.GetBloodParticlesName();
+			if (string.IsNullOrEmpty(bloodOverride)) {
+				ParticleManager.DisableBloodOverride();
+			} else {
+				ParticleManager.EnableBloodOverride(bloodOverride);
+			}
 			ParticleManager.PreBuild();
 			PoolManager.Build();
 
@@ -255,18 +260,11 @@ namespace LevelEditor {
 				startPos = mainCamera.transform.position;
 				startPos.z = 0f;
 				InstanceManager.player.transform.position = startPos;
+				InstanceManager.player.playable = true;
+				InstanceManager.gameCamera.Init(startPos);
 			} else {
-				// Put player in position and make it playable
-				InstanceManager.player.MoveToSpawnPoint(true);
-				if ( LevelEditor.settings.useIntro )
-				{
-					InstanceManager.player.StartIntroMovement( true );	
-				}
-			}
-			InstanceManager.player.playable = true;
-
-			// Init game camera
-			InstanceManager.gameCamera.Init(startPos);
+				SpawnPlayer(true);
+			}			
 			
 			// Instantiate map prefab
 			InitLevelMap();

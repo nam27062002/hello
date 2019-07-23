@@ -15,6 +15,7 @@ public class MusicController : MonoBehaviour, IBroadcastListener
         m_defaultAudioSnapshot = InstanceManager.masterMixer.FindSnapshot("Default");
 
         Messenger.AddListener<string>(MessengerEvents.SCENE_PREUNLOAD, OnScenePreunload);
+        Messenger.AddListener<bool, DragonSuperSize.Source>(MessengerEvents.SUPER_SIZE_TOGGLE, OnSuperSize);
         Broadcaster.AddListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
         Broadcaster.AddListener(BroadcastEventType.FURY_RUSH_TOGGLED, this);
 
@@ -26,6 +27,7 @@ public class MusicController : MonoBehaviour, IBroadcastListener
     void OnDestroy()
     {
 		Messenger.RemoveListener<string>(MessengerEvents.SCENE_PREUNLOAD, OnScenePreunload);
+        Messenger.RemoveListener<bool, DragonSuperSize.Source>(MessengerEvents.SUPER_SIZE_TOGGLE, OnSuperSize);
         Broadcaster.RemoveListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
         Broadcaster.RemoveListener(BroadcastEventType.FURY_RUSH_TOGGLED, this);
         InstanceManager.musicController = null;
@@ -93,6 +95,15 @@ public class MusicController : MonoBehaviour, IBroadcastListener
         IsEnabled = true;
     }
 
+    private void OnSuperSize(bool _activated, DragonSuperSize.Source _source) 
+    {
+        m_useSuperSizeMusic = _activated;
+        if ( m_useSuperSizeMusic && !string.IsNullOrEmpty( m_superSizeStartSFX ))
+        {
+            AudioController.Play( m_superSizeStartSFX );
+        }
+    }
+
 
     #region main_music
     // This region is responsible for handling the main music of the game. The main music is the music that has to be played by default, however there are some areas in the game, such as the
@@ -101,7 +112,10 @@ public class MusicController : MonoBehaviour, IBroadcastListener
     public string m_mainMusicKey = "amb_bed";
     public string m_fireRushMusic = "";
     public string m_megaFireRushMusic = "";
+    public string m_superSizeMusic = "";
+    public string m_superSizeStartSFX = "";
     private bool m_useFireRushMusic = false;
+    private bool m_useSuperSizeMusic = false;
 	private DragonBreathBehaviour.Type m_fireRushType = DragonBreathBehaviour.Type.None;
     #endregion
 
@@ -218,8 +232,27 @@ public class MusicController : MonoBehaviour, IBroadcastListener
 		string keyToPlay = null;
 		bool waitToPlay = false;
 		float musicFadeOut = m_musicFadeOut;
-		if (!m_useFireRushMusic)
-		{
+		
+        if (m_useSuperSizeMusic) 
+        {
+            keyToPlay = m_superSizeMusic;
+			musicFadeOut = 0;
+            secondsToSwitchMusic = 0;
+        }
+        else if (m_useFireRushMusic) 
+        {
+             switch( m_fireRushType )
+        	{
+				default: 
+        		case DragonBreathBehaviour.Type.Standard: keyToPlay = m_fireRushMusic;break;
+				case DragonBreathBehaviour.Type.Mega: keyToPlay = m_megaFireRushMusic;break;
+
+        	}
+			musicFadeOut = 0;
+            secondsToSwitchMusic = 0;
+        }
+        else 
+        {
 			if ( !m_waitingMusicToFinish )
 			{
 				if (Ambience_ToPlay.IsValid())
@@ -236,18 +269,6 @@ public class MusicController : MonoBehaviour, IBroadcastListener
 	        {
 				keyToPlay = Music_CurrentKey;
 	        }
-        }
-        else
-        {
-        	switch( m_fireRushType )
-        	{
-				default: 
-        		case DragonBreathBehaviour.Type.Standard: keyToPlay = m_fireRushMusic;break;
-				case DragonBreathBehaviour.Type.Mega: keyToPlay = m_megaFireRushMusic;break;
-
-        	}
-			musicFadeOut = 0;
-            secondsToSwitchMusic = 0;
         }
           
         if (secondsToSwitchMusic <= 0)

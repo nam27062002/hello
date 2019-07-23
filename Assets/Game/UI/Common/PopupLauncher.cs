@@ -125,7 +125,7 @@ public class PopupLauncher : MonoBehaviour, IBroadcastListener {
 	// INTERNAL																  //
 	//------------------------------------------------------------------------//
 	/// <summary>
-	/// Gather the popup from the manager and open it.
+	/// Open the popup via PopupManager
 	/// Invokes the OnPopupInit event.
 	/// </summary>
 	private void OpenPopupInternal() {
@@ -133,29 +133,19 @@ public class PopupLauncher : MonoBehaviour, IBroadcastListener {
 		m_popup = PopupManager.LoadPopup(m_popupPath);
 		OnPopupInit.Invoke(m_popup);
 
-		// Open (apply delay)
-		if(m_delay > 0f) {
-			UbiBCN.CoroutineManager.DelayedCall(() => DoOpen(), m_delay);
-		} else {
-			DoOpen();
-		}
-	}
+        m_popup.OnOpen.AddListener(DoTracking);
 
-	/// <summary>
-	/// Executes the popup open method and tracking event.
-	/// </summary>
-	private void DoOpen() {
-		// Send tracking event (if any)
-		DoTracking();
+        // Open it!
+        PopupManager.OpenPopupInstant(m_popupPath);
 
-		// Open popup
-		m_popup.Open();
-	}
+        
+    }
+
 
 	/// <summary>
 	/// Sends the defined tracking action.
 	/// </summary>
-	private void DoTracking() {
+	private void DoTracking(PopupController _controller) {
 		// Ignore if none
 		if(m_trackingAction == TrackingAction.NONE) return;
 

@@ -75,8 +75,15 @@ public class RenderQueueSetter : MonoBehaviour {
 	/// <summary>
 	/// Do the actual render queue change.
 	/// </summary>
-	/// <param name="_overrideRenderQueue">Force a specific renderQueue?</param>
-	public void Apply(int _overrideRenderQueue = -1) {
+	public void Apply() {
+		Apply(-1);
+	}
+
+	/// <summary>
+	/// Do the actual render queue change.
+	/// </summary>
+	/// <param name="_overrideRenderQueue">Force a specific renderQueue? Use -1 to respect values defined in the inspector.</param>
+	public void Apply(int _overrideRenderQueue) {
 		// Renderers
 		for(int i = 0; i < m_targets.Length; ++i) {
 			Apply(m_targets[i].renderer, _overrideRenderQueue < 0 ? m_targets[i].newRenderQueue : _overrideRenderQueue);

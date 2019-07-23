@@ -75,9 +75,10 @@ public class DragonXPBar : MonoBehaviour {
 	[SerializeField] protected GameObject m_barSeparatorPrefab = null;
 	[SerializeField] protected RectTransform m_barSeparatorsParent = null;
 	[SerializeField] protected GameObject m_disguiseMarkerPrefab = null;
+    [SerializeField] protected UITooltip m_levelToolTip = null;
 
-	// Internal
-	protected DragonDataClassic m_dragonData = null;	// Last used dragon data
+    // Internal
+    protected DragonDataClassic m_dragonData = null;	// Last used dragon data
 	protected List<DragonXPBarSeparator> m_barSeparators = new List<DragonXPBarSeparator>();
 	protected List<DisguiseInfo> m_disguises = new List<DisguiseInfo>();
 	
@@ -88,8 +89,10 @@ public class DragonXPBar : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	virtual protected void Awake() {
-		// Create, initialize and instantiate a pool of bar separators
-		ResizeSeparatorsPool(SEPARATORS_POOL_SIZE);
+
+        // Create, initialize and instantiate a pool of bar separators
+        ResizeSeparatorsPool(SEPARATORS_POOL_SIZE);
+
 	}
 
 	/// <summary>
@@ -287,25 +290,30 @@ public class DragonXPBar : MonoBehaviour {
 			DefinitionsManager.SharedInstance.SortByProperty(ref defList, "unlockLevel", DefinitionsManager.SortType.NUMERIC);
 			int slotIdx = 0;
 			for(int i = 0; i < defList.Count; i++) {
-				// Skip if unlockLevel is 0 (default skin)
-				int unlockLevel = defList[i].GetAsInt("unlockLevel");
-				if(unlockLevel <= 0) continue;
+                
+                // Skip if unlockLevel is 0 (default skin)
+                int unlockLevel = defList[i].GetAsInt("unlockLevel");
+                if (unlockLevel <= 0) {
+                    
+                    continue;
+                }
 
 				// Can we reuse info object?
 				DisguiseInfo info = null;
-				if(i < m_disguises.Count) {
+				if(slotIdx < m_disguises.Count) {
 					info = m_disguises[slotIdx];
 				} else {
 					info = new DisguiseInfo();
 					m_disguises.Add(info);
 				}
-				slotIdx++;
 
-				// Initialize info
-				info.def = defList[i];
 
-				// Compute delta corresponding to this disguise unlock level
-				info.delta = Mathf.InverseLerp(0, _data.progression.maxLevel, unlockLevel);
+                // Initialize info
+                info.def = defList[i];
+
+
+                // Compute delta corresponding to this disguise unlock level
+                info.delta = Mathf.InverseLerp(0, _data.progression.maxLevel, unlockLevel);
 				info.unlocked = (info.delta <= m_xpBar.normalizedValue);    // Use current var value to quickly determine initial state
 				info.unlocked |= UsersManager.currentUser.wardrobe.GetSkinState(info.def.sku) == Wardrobe.SkinState.OWNED;	// Also unlocked if previously owned (i.e. via offer pack)
 
@@ -313,15 +321,23 @@ public class DragonXPBar : MonoBehaviour {
 				if(info.barMarker == null) {
 					GameObject markerObj = (GameObject)GameObject.Instantiate(m_disguiseMarkerPrefab, markersParent, false);
 					markerObj.transform.SetAsLastSibling();	// Make sure it shows at the top
-					info.barMarker = markerObj.GetComponent<DragonXPBarSkinMarker>();
-					info.barMarker.skinSku = defList[i].sku;
+                    info.barMarker = markerObj.GetComponent<DragonXPBarSkinMarker>();
+                    info.barMarker.skinSku = defList[i].sku;
+                    info.barMarker.Definition = defList[i];
 					info.barMarker.AttachToSlider(m_xpBar, info.delta);
-				} else {
+                    if (m_levelToolTip != null)
+                    {
+                        markerObj.GetComponent<UITooltipTrigger>().tooltip = m_levelToolTip;
+                    }
+                } else {
 					info.barMarker.skinSku = defList[i].sku;
-					info.barMarker.SetDelta(info.delta);
+                    info.barMarker.Definition = defList[i];
+                    info.barMarker.SetDelta(info.delta);
 					info.barMarker.gameObject.SetActive(true);
 				}
-			}
+
+                slotIdx++;
+            }
 
 			// Reset the rest of info objects
 			for(int i = slotIdx; i < m_disguises.Count; i++) {

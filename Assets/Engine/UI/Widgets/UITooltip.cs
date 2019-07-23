@@ -33,6 +33,7 @@ public class UITooltip : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// Exposed References
 	[SerializeField] protected RectTransform m_arrow = null;
+	[Tooltip("Arrow Dir determins in which axis the arrow moves (i.e. arrows pointing to left and right are moving in the VERTICAL axis, while arrows pointing up and down are moving in the HORIZONTAL axis.")]
 	[SerializeField] protected ArrowDirection m_arrowDir = ArrowDirection.HORIZONTAL;
 	public ArrowDirection arrowDir {
 		get { return m_arrowDir; }
@@ -52,6 +53,10 @@ public class UITooltip : MonoBehaviour {
 		}
 	}
 
+	// Backup values
+	private float m_arrowOffset = 0.5f;	// Arrow offset, being 0.5 the center of the side (default), 0 the beginning and 1 the end.
+	private float m_arrowOffsetCorrection = 0f;
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -59,6 +64,20 @@ public class UITooltip : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	protected void Awake() {
+		// Backup some values
+		if(m_arrow != null) {
+			// Original arrow offset
+			switch(m_arrowDir) {
+				case ArrowDirection.HORIZONTAL: {
+					m_arrowOffset = m_arrow.anchorMin.x;
+				} break;
+
+				case ArrowDirection.VERTICAL: {
+					m_arrowOffset = m_arrow.anchorMin.y;
+				} break;
+			}
+		}
+
 		// Get animator ref
 		m_animator = GetComponent<ShowHideAnimator>();
 
@@ -74,6 +93,9 @@ public class UITooltip : MonoBehaviour {
 		// Skip if there is no arrow
 		if(m_arrow == null) return;
 
+		// Store new value
+		m_arrowOffset = _offset;
+
 		// Apply offset
 		switch(m_arrowDir) {
 			case ArrowDirection.HORIZONTAL: {
@@ -86,6 +108,9 @@ public class UITooltip : MonoBehaviour {
 				m_arrow.anchorMax = new Vector2(m_arrow.anchorMax.x, _offset);
 			} break;
 		}
+
+		// Re-apply offset correction
+		CorrectArrowOffset(m_arrowOffsetCorrection);
 	}
 
 	/// <summary>
@@ -96,34 +121,43 @@ public class UITooltip : MonoBehaviour {
 		// Skip if there is no arrow
 		if(m_arrow == null) return;
 
+		// Store value
+		m_arrowOffsetCorrection = _offset;
+
 		// Apply offset
 		switch(m_arrowDir) {
 			case ArrowDirection.HORIZONTAL: {
 				RectTransform parentRT = m_arrow.parent as RectTransform;
 				float size = parentRT.rect.width;
+				if(Mathf.Abs(size) < Mathf.Epsilon) break;  // Just in case, avoid division by 0
+
 				float relativeOffset = _offset / size;
-				m_arrow.anchorMin = new Vector2(m_arrow.anchorMin.x + relativeOffset, m_arrow.anchorMin.y);
-				m_arrow.anchorMax = new Vector2(m_arrow.anchorMax.x + relativeOffset, m_arrow.anchorMax.y);
+				relativeOffset += m_arrowOffset;	// Add to original offset
+				m_arrow.anchorMin = new Vector2(relativeOffset, m_arrow.anchorMin.y);
+				m_arrow.anchorMax = new Vector2(relativeOffset, m_arrow.anchorMax.y);
 			} break;
 
 			case ArrowDirection.VERTICAL: {
 				RectTransform parentRT = m_arrow.parent as RectTransform;
 				float size = parentRT.rect.height;
+				if(Mathf.Abs(size) < Mathf.Epsilon) break;	// Just in case, avoid division by 0
+
 				float relativeOffset = _offset / size;
-				m_arrow.anchorMin = new Vector2(m_arrow.anchorMin.x, m_arrow.anchorMin.y + relativeOffset);
-				m_arrow.anchorMax = new Vector2(m_arrow.anchorMax.x, m_arrow.anchorMax.y + relativeOffset);
+				relativeOffset += m_arrowOffset;    // Add to original offset
+				m_arrow.anchorMin = new Vector2(m_arrow.anchorMin.x, relativeOffset);
+				m_arrow.anchorMax = new Vector2(m_arrow.anchorMax.x, relativeOffset);
 			} break;
 		}
 	}
 
-    /// <summary>
-    /// Initialize the tooltip with the given texts.
-    /// If the tooltip has no textfields assigned, will be ignored.
-    /// If a text is left empty, its corresponding textfield will be disabled.
-    /// </summary>
-    /// <param name="_title">Title string.</param>
-    /// <param name="_text">Text string.</param>
-    public void InitWithText(string _title, string _text) {
+	/// <summary>
+	/// Initialize the tooltip with the given texts.
+	/// If the tooltip has no textfields assigned, will be ignored.
+	/// If a text is left empty, its corresponding textfield will be disabled.
+	/// </summary>
+	/// <param name="_title">Title string.</param>
+	/// <param name="_text">Text string.</param>
+	public void InitWithText(string _title, string _text) {
         Init(_title, _text, "");
     }
 

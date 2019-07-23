@@ -4,6 +4,12 @@ using UnityEngine;
 
 public class DragonSuperSize : MonoBehaviour {
 
+	public enum Source {
+		NONE = -1,
+		LETTERS = 0,
+		CAKE
+	}
+
 	protected DragonPlayer m_dragon;
 	protected DragonBoostBehaviour m_boost;
 	protected DragonMotion m_motion;
@@ -19,8 +25,17 @@ public class DragonSuperSize : MonoBehaviour {
 	protected bool m_infiniteBoost;
 	protected bool m_eatEverything;
 	protected float m_modeDuration;
+	public float modeDuration { get { return m_modeDuration; } }
 
 	protected float m_timer;
+	public float time { get { return m_timer; } }
+	public void AddTime(float _time) {
+		if (m_timer > 0f) {
+			m_timer = Mathf.Min(m_timer + _time, m_modeDuration);
+		}
+	}
+
+	private Source m_source;	
 
 	// Use this for initialization
 	void Start () 
@@ -42,15 +57,18 @@ public class DragonSuperSize : MonoBehaviour {
         m_modeDuration = data.superModeDuration;
         
 		m_timer = 0;
+		m_source = Source.NONE;
 
 		Messenger.AddListener(MessengerEvents.EARLY_ALL_HUNGRY_LETTERS_COLLECTED, OnEarlyLetters);
 		Messenger.AddListener(MessengerEvents.ALL_HUNGRY_LETTERS_COLLECTED, OnLettersCollected);
+		Messenger.AddListener(MessengerEvents.ANNIVERSARY_START_BDAY_MODE, OnCakeEaten);
 	}
 
 	void OnDestroy()
 	{
 		Messenger.RemoveListener(MessengerEvents.EARLY_ALL_HUNGRY_LETTERS_COLLECTED, OnEarlyLetters);
 		Messenger.RemoveListener(MessengerEvents.ALL_HUNGRY_LETTERS_COLLECTED, OnLettersCollected);
+		Messenger.RemoveListener(MessengerEvents.ANNIVERSARY_START_BDAY_MODE, OnCakeEaten);
 	}
 	
 	// Update is called once per frame
@@ -63,8 +81,7 @@ public class DragonSuperSize : MonoBehaviour {
 				m_timer -= Time.deltaTime;
 				if ( m_timer <= 0 ) 
 				{
-					EndSuperSize();
-					Messenger.Broadcast<bool>( MessengerEvents.SUPER_SIZE_TOGGLE, false);
+					EndSuperSize();					
 				}
 			}
 		}
@@ -99,6 +116,8 @@ public class DragonSuperSize : MonoBehaviour {
 		m_motion.superSizeSpeedMultiplier = m_speedUpMultiplier;
 		m_eat.sizeUpEatSpeedFactor = m_biteUpMultiplier;
 		m_eat.eatEverything = m_eatEverything;
+
+		Messenger.Broadcast<bool, Source>(MessengerEvents.SUPER_SIZE_TOGGLE, true, m_source);
 	}
 
 	void EndSuperSize()
@@ -109,6 +128,10 @@ public class DragonSuperSize : MonoBehaviour {
 		m_motion.superSizeSpeedMultiplier = 1;
 		m_eat.sizeUpEatSpeedFactor = 1;
 		m_eat.eatEverything = false;
+
+		Source lastSource = m_source;
+		m_source = Source.NONE;
+		Messenger.Broadcast<bool, Source>(MessengerEvents.SUPER_SIZE_TOGGLE, false, lastSource);		
 	}
 
 	void OnEarlyLetters()
@@ -118,15 +141,13 @@ public class DragonSuperSize : MonoBehaviour {
 
 	void OnLettersCollected()
 	{
-		StartSuperSize();
-		Messenger.Broadcast<bool>( MessengerEvents.SUPER_SIZE_TOGGLE, true);
+		m_source = Source.LETTERS;
+		StartSuperSize();		
 	}
 
-	void OnSuperSize( bool _value )
+	void OnCakeEaten() 
 	{
-		if ( _value )
-		{
-			StartSuperSize();
-		}
+		m_source = Source.CAKE;
+		StartSuperSize();		
 	}
 }

@@ -68,8 +68,6 @@ public class DebugSettings : SingletonScriptableObject<DebugSettings> {
     public const string MENU_CAMERA_TRANSITION_DURATION			= "MENU_CAMERA_TRANSITION_DURATION";
     public const string POPUP_AD_DURATION						= "POPUP_AD_DURATION";
 
-    public const string PLAY_TEST						        = "PLAY_TEST";
-
     public const string MAP_ZOOM_SPEED							= "MAP_ZOOM_SPEED";
     private const string MAP_ZOOM_RESET							= "MAP_ZOOM_RESET";
     private const string MAP_POSITION_RESET						= "MAP_POSITION_RESET";
@@ -189,12 +187,7 @@ public class DebugSettings : SingletonScriptableObject<DebugSettings> {
 		set { Prefs_SetBoolPlayer(DRAGON_SLOW_POWER_UP, value); }
 	}
 
-	public static bool isPlayTest {
-		get { return Prefs_GetBoolPlayer(PLAY_TEST, false); }
-		set { Prefs_SetBoolPlayer(PLAY_TEST, value); }
-	}
-
-    static bool m_hitStopEnabled = true;
+	static bool m_hitStopEnabled = true;
 	public static bool hitStopEnabled{
 		get { return m_hitStopEnabled; }
 		set { m_hitStopEnabled = value;}

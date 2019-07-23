@@ -497,7 +497,7 @@ public class Spawner : AbstractSpawner {
         }
     }
 
-	protected override void OnMachineSpawned(IMachine machine) {
+	protected override void OnMachineSpawned(IMachine machine, uint index) {
 		if (m_groupController) {				
 			machine.EnterGroup(ref m_groupController.flock);
 		//	machine.position = transform.position + m_groupController.flock.GetOffset(machine, 2f);
@@ -537,7 +537,7 @@ public class Spawner : AbstractSpawner {
 			if (m_groupBonus > 0 && _lastEntity != null) {
 				Reward reward = new Reward();
 				reward.score = (int)(m_groupBonus * EntitiesKilled);
-				Messenger.Broadcast<Transform, IEntity, Reward>(MessengerEvents.ENTITY_BURNED, _lastEntity.transform, _lastEntity, reward);
+				Messenger.Broadcast<Transform, IEntity, Reward>(MessengerEvents.FLOCK_EATEN, _lastEntity.transform, _lastEntity, reward);
 			}
 
 			// Reroll the Golden chance

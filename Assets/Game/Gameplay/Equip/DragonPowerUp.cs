@@ -120,7 +120,7 @@ public class DragonPowerUp : MonoBehaviour {
 
 	void SetPowerUp( string powerUpSku, bool _fromPet )
 	{
-		DragonPlayer player = GetComponent<DragonPlayer>();
+		DragonPlayer player = InstanceManager.player;
 		DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, powerUpSku);
 
 		if ( def != null )
@@ -583,7 +583,8 @@ public class DragonPowerUp : MonoBehaviour {
 			case "tranformGold":
 			case "shoot_horns":
 			case "kill":
-			case "mummy":			
+			case "mummy":	
+			case "transform_ice_cream":
 			{
 				return UIConstants.PET_CATEGORY_SPECIAL;
 			} break;

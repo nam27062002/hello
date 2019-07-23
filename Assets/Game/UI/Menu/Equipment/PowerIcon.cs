@@ -49,8 +49,14 @@ public class PowerIcon : MonoBehaviour, IBroadcastListener {
 	[Space]
 	[SerializeField][Range(0, 1)] private float m_tooltipArrowOffset = 0.5f;
 
-	// Data
-	private DefinitionNode m_powerDef = null;
+    [Separator("Levels")]
+    [Tooltip("Optional")] [SerializeField] private int m_level = 0;
+    [Tooltip("Optional")] [SerializeField] private List<Image> m_arrows = null;
+    [Tooltip("Optional")] [SerializeField] private List<Color> m_arrowColors = null;
+
+
+    // Data
+    private DefinitionNode m_powerDef = null;
 	public DefinitionNode powerDef {
 		get { return m_powerDef; }
 	}
@@ -140,6 +146,9 @@ public class PowerIcon : MonoBehaviour, IBroadcastListener {
 				m_powerIcon.sprite = Resources.Load<Sprite>(UIConstants.POWER_ICONS_PATH + _powerDef.GetAsString("icon"));
 			}
 
+            // Level arrows
+            RefreshArrows();
+
 			// Texts
 			RefreshTexts();
 
@@ -185,33 +194,64 @@ public class PowerIcon : MonoBehaviour, IBroadcastListener {
 		}
 	}
 
-	//------------------------------------------------------------------------//
-	// CALLBACKS															  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// A tooltip is about to be opened.
-	/// If the trigger is attached to this power icon, initialize tooltip with this
-	/// button's power def.
-	/// Link it via the inspector.
+    /// <summary>
+	/// Initialize the small arrow icons that indicate the level of the power up
 	/// </summary>
-	/// <param name="_tooltip">The tooltip about to be opened.</param>
-	/// <param name="_trigger">The button which triggered the event.</param>
-	public void OnTooltipOpen(UITooltip _tooltip, UITooltipTrigger _trigger) {
+	private void RefreshArrows()
+    {
+        m_level = m_powerDef.GetAsInt("level");
+
+        if (m_arrows != null)
+        {
+            for (int i = 0; i < m_arrows.Count; i++)
+            {
+                // Show an amount of arrows according to the powerup level
+                m_arrows[i].gameObject.SetActive(i < m_level);
+
+                if (m_arrowColors != null && m_arrowColors[m_level - 1] != null)
+                {
+                    if (m_level > 0)
+                    {
+                        // Color the arrows according to the level
+                        m_arrows[i].color = m_arrowColors[m_level - 1];
+                    }
+                }
+
+            }
+        }
+
+    }
+
+    //------------------------------------------------------------------------//
+    // CALLBACKS															  //
+    //------------------------------------------------------------------------//
+    /// <summary>
+    /// A tooltip is about to be opened.
+    /// If the trigger is attached to this power icon, initialize tooltip with this
+    /// button's power def.
+    /// Link it via the inspector.
+    /// </summary>
+    /// <param name="_tooltip">The tooltip about to be opened.</param>
+    /// <param name="_trigger">The button which triggered the event.</param>
+    public void OnTooltipOpen(UITooltip _tooltip, UITooltipTrigger _trigger) {
 		// Make sure the trigger that opened the tooltip is linked to this icon
 		if(_trigger != trigger) return;
 
-		// Tooltip will take care of the rest
-		PowerTooltip powerTooltip = _tooltip.GetComponent<PowerTooltip>();
-		if(powerTooltip != null) {
-			// Initialize
-			powerTooltip.InitFromDefinition(m_powerDef, m_mode);
+        if (!_tooltip is PowerTooltip) return;
 
-			// Set lock state
-			powerTooltip.SetLocked(m_lockIcon != null && m_lockIcon.activeSelf);	// Use lock icon visibility to determine whether power is locked or not
+        PowerTooltip powerTooltip = (PowerTooltip)_tooltip;
+
+		// Tooltip will take care of the rest
+		if(powerTooltip != null) {
+            // Initialize
+            powerTooltip.InitFromDefinition(m_powerDef, m_mode);
+
+            // Set lock state
+            powerTooltip.SetLocked(m_lockIcon != null && m_lockIcon.activeSelf);	// Use lock icon visibility to determine whether power is locked or not
 		}
 
-		// Set arrow offset to make it point to this icon
-		_tooltip.SetArrowOffset(m_tooltipArrowOffset);
+        // Set arrow offset to make it point to this icon
+        powerTooltip.SetArrowOffset(m_tooltipArrowOffset);
 	}
 
 	/// <summary>

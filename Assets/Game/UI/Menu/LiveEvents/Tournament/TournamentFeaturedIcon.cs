@@ -241,9 +241,9 @@ public class TournamentFeaturedIcon : MonoBehaviour {
 	/// </summary>
 	public void OnPlayButton() {
 
-        // OTA: Check for assets for this specific tournament
+        // OTA: Check for assets for all the downloadable content
         // If we dont have downloaded the content yet, dont go to the tournament screen
-        Downloadables.Handle tournamentHandle = HDAddressablesManager.Instance.GetHandleForTournamentDragon(m_tournamentManager);
+        Downloadables.Handle tournamentHandle = HDAddressablesManager.Instance.GetHandleForAllDownloadables();
         if (!tournamentHandle.IsAvailable())
         {
             // Get the download handle from the parent scene controller

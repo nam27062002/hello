@@ -35,6 +35,8 @@ public enum BroadcastEventType
     UI_MAP_ZOOM_CHANGED,        // param: UIMapZoomChanged
     UI_MAP_EXPIRED,				// no params
     
+    POOL_MANAGER_READY,
+
     GAME_LEVEL_LOADED,
     GAME_AREA_ENTER,
     GAME_AREA_EXIT,

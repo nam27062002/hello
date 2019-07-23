@@ -160,7 +160,7 @@ public class Pool {
 		}
 	}
 
-	public int NumFreeObjects(){
+	public int NumFreeObjects() {
 		return m_freeObjects.Count;
 	}
 

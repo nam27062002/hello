@@ -25,14 +25,17 @@ public class MenuDragonBirdControl : MonoBehaviour {
 		m_dragonAnimator = view.GetComponent<Animator>();
 
 		m_prefabInstance = Instantiate<GameObject>(m_prefab);
-		m_prefabInstance.transform.parent = view;
-		m_prefabInstance.transform.localPosition = GameConstants.Vector3.zero;
-		m_prefabInstance.transform.localRotation = GameConstants.Quaternion.identity;
-		m_prefabInstance.transform.localScale = GameConstants.Vector3.one;
-		m_birdAnimator = m_prefabInstance.GetComponent<Animator>();
-		m_birdRenderer = m_prefabInstance.GetComponentInChildren<Renderer>();
-		m_prefabInstance.SetActive(false);
-		m_playingBird = false;
+		if ( m_prefabInstance != null )
+		{
+			m_prefabInstance.transform.parent = view;
+			m_prefabInstance.transform.localPosition = GameConstants.Vector3.zero;
+			m_prefabInstance.transform.localRotation = GameConstants.Quaternion.identity;
+			m_prefabInstance.transform.localScale = GameConstants.Vector3.one;
+			m_birdAnimator = m_prefabInstance.GetComponent<Animator>();
+			m_birdRenderer = m_prefabInstance.GetComponentInChildren<Renderer>();
+			m_prefabInstance.SetActive(false);
+			m_playingBird = false;
+		}
 	}
 
     public void OnDisable()
@@ -43,13 +46,16 @@ public class MenuDragonBirdControl : MonoBehaviour {
 
     public void PlayBird()
 	{	
-		m_playingBird = true;
-		m_waitToSync = true;
-		m_prefabInstance.SetActive(true);
-		m_birdAnimator.speed = 0.9f;
-		m_birdAnimator.Play("SelectionScreen", 0, 0);
-		if ( m_materials.Count > 0 )
-			m_birdRenderer.material = m_materials[ Random.Range(0, m_materials.Count) ];
+		if ( m_prefabInstance != null )
+		{
+			m_playingBird = true;
+			m_waitToSync = true;
+			m_prefabInstance.SetActive(true);
+			m_birdAnimator.speed = 0.9f;
+			m_birdAnimator.Play("SelectionScreen", 0, 0);
+			if ( m_materials.Count > 0 )
+				m_birdRenderer.material = m_materials[ Random.Range(0, m_materials.Count) ];
+		}
 	}
 
 	void Update()

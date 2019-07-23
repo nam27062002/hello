@@ -127,7 +127,7 @@ public class PrisonerSpawner : AbstractSpawner, IBroadcastListener {
 		m_allKilledByPlayer = false;
 	}
 
-	protected override void OnMachineSpawned(AI.IMachine machine) {
+	protected override void OnMachineSpawned(AI.IMachine machine, uint index) {
         machine.EnterDevice(true);
     }
 
