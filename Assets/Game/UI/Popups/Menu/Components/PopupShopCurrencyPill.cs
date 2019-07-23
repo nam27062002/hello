@@ -49,7 +49,7 @@ public class PopupShopCurrencyPill : IPopupShopPill {
 
 	// Internal
 	private ResourceRequest m_iconLoadTask = null;
-	private static int s_loadingTaskPriority = -1;
+	private static int s_loadingTaskPriority = 0;
 
 	private bool m_waitingForPrice = false;
 
@@ -69,6 +69,7 @@ public class PopupShopCurrencyPill : IPopupShopPill {
 				// Clear loading task
 				m_iconLoadTask = null;
 				s_loadingTaskPriority--;
+				if(s_loadingTaskPriority < 0) s_loadingTaskPriority = 0;	// Can't be negative!
 			}
 		}
 
