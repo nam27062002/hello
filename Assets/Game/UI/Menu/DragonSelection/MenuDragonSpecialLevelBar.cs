@@ -16,21 +16,36 @@ using UnityEngine;
 /// 
 /// </summary>
 public class MenuDragonSpecialLevelBar : MonoBehaviour {
-	//------------------------------------------------------------------------//
-	// CONSTANTS															  //
-	//------------------------------------------------------------------------//
-	
-	//------------------------------------------------------------------------//
-	// MEMBERS AND PROPERTIES												  //
-	//------------------------------------------------------------------------//
-	
-	//------------------------------------------------------------------------//
-	// GENERIC METHODS														  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Initialization.
-	/// </summary>
-	private void Awake() {
+    //------------------------------------------------------------------------//
+    // CONSTANTS															  //
+    //------------------------------------------------------------------------//
+
+    //------------------------------------------------------------------------//
+    // MEMBERS AND PROPERTIES												  //
+    //------------------------------------------------------------------------//
+
+    [SerializeField] protected Localizer m_dragonNameText;
+    public Localizer dragonNameText
+    {
+        get { return m_dragonNameText; }
+    }
+
+    [SerializeField] protected Localizer m_dragonDescText;
+    public Localizer dragonDescText
+    {
+        get { return m_dragonDescText; }
+    }
+
+    // Internal
+    protected DragonDataSpecial m_dragonData = null;	// Last used dragon data
+
+    //------------------------------------------------------------------------//
+    // GENERIC METHODS														  //
+    //------------------------------------------------------------------------//
+    /// <summary>
+    /// Initialization.
+    /// </summary>
+    private void Awake() {
 
 	}
 
@@ -97,28 +112,53 @@ public class MenuDragonSpecialLevelBar : MonoBehaviour {
     {
 
         // Only show special dragons bar
-        if (DragonManager.GetDragonData(_sku).type != IDragonData.Type.SPECIAL)
+        bool special = DragonManager.GetDragonData(_sku).type == IDragonData.Type.SPECIAL;
+        gameObject.SetActive(special);
+
+        // Nope
+        if (!special) return;
+
+        // Get new dragon's data from the dragon manager
+        DragonDataSpecial data = DragonManager.GetDragonData(_sku) as DragonDataSpecial;
+        if (data == null) return;
+
+        // Things to update only when target dragon has changed
+        if (m_dragonData != data)
         {
-            gameObject.SetActive(false);
-            return;
-        }
+            // Dragon Name
+            if (m_dragonNameText != null)
+            {
+                switch (data.GetLockState())
+                {
+                    case DragonDataSpecial.LockState.SHADOW:
+                    case DragonDataSpecial.LockState.REVEAL:
+                        m_dragonNameText.Localize("TID_SELECT_DRAGON_UNKNOWN_NAME");
+                        break;
+                    default:
+                        m_dragonNameText.Localize(data.def.GetAsString("tidName"));
+                        break;
+                }
+            }
 
 
-        gameObject.SetActive(true);
-        
-        // Ignore delay if disabled (coroutines can't be started with the component disabled)
-        if (isActiveAndEnabled && _delay > 0)
-        {
-            // Start internal coroutine
-            //StartCoroutine(RefreshDelayed(_sku, _delay));
+
+            if (m_dragonDescText != null)
+            {
+                m_dragonDescText.Localize(data.def.GetAsString("tidDesc"));
+
+                // If the dragon is owned, hide the description
+                m_dragonDescText.gameObject.SetActive(!data.isOwned);
+            }
+
+            // Store new dragon data
+            m_dragonData = data;
+
+
         }
-        else
-        {
-            // Get new dragon's data from the dragon manager and do the refresh logic
-            //Refresh(DragonManager.GetDragonData(_sku) as DragonDataSpecial);
-        }
+
+        //------------------------------------------------------------------------//
+        // CALLBACKS															  //
+        //------------------------------------------------------------------------//
+
     }
-    //------------------------------------------------------------------------//
-    // CALLBACKS															  //
-    //------------------------------------------------------------------------//
 }

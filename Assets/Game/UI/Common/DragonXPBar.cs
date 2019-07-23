@@ -101,8 +101,17 @@ public class DragonXPBar : MonoBehaviour {
 	/// <param name="_sku">The sku of the dragon whose data we want to use to initialize the bar.</param>
 	/// <param name="_delay">Optional delay before refreshing the data. Useful to sync with other UI animations.</param>
 	virtual public void Refresh(string _sku, float _delay = -1f) {
-		// Ignore delay if disabled (coroutines can't be started with the component disabled)
-		if(isActiveAndEnabled && _delay > 0) {
+
+        // Only show classic dragons bar
+        bool classic = DragonManager.GetDragonData(_sku).type == IDragonData.Type.CLASSIC;
+        gameObject.SetActive(classic);
+
+        // Nope
+        if (!classic) return;
+
+
+        // Ignore delay if disabled (coroutines can't be started with the component disabled)
+        if (isActiveAndEnabled && _delay > 0) {
 			// Start internal coroutine
 			StartCoroutine(RefreshDelayed(_sku, _delay));
 		} else {
@@ -163,6 +172,8 @@ public class DragonXPBar : MonoBehaviour {
 	/// </summary>
 	/// <param name="_data">Dragon data.</param>
 	virtual protected void Refresh(DragonDataClassic _data) {
+
+
 		// Check params
 		if(_data == null) return;
 
@@ -196,10 +207,18 @@ public class DragonXPBar : MonoBehaviour {
 				}
 			}
 
-			if(m_dragonDescText != null) m_dragonDescText.Localize(_data.def.GetAsString("tidDesc"));
-			
-			// Bar separators and markers
-			InitSeparators(_data);
+
+
+            if (m_dragonDescText != null)
+            {
+                m_dragonDescText.Localize(_data.def.GetAsString("tidDesc"));
+
+                // If the dragon is owned, hide the description
+                m_dragonDescText.gameObject.SetActive(!_data.isOwned);
+            }
+
+            // Bar separators and markers
+            InitSeparators(_data);
 
 			// Store new dragon data
 			m_dragonData = _data;
