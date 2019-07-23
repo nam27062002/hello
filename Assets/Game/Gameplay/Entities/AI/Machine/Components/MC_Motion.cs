@@ -427,10 +427,7 @@ namespace AI {
 					break;
 
 				case State.Locked:
-					m_rbody.isKinematic = false;
-                    m_rbody.detectCollisions = true;
-                    m_rbody.constraints = m_rbodyConstraints;
-                    m_rbody.interpolation = RigidbodyInterpolation.Interpolate;
+                    m_rbody.useGravity = false;
                     m_viewControl.Scared(false);
 					OnCollisionGroundExit(null);
 					break;
@@ -461,10 +458,7 @@ namespace AI {
 					break;
 
 				case State.Locked:
-					m_rbody.isKinematic = true;
-                    m_rbody.detectCollisions = false;
-                    m_rbody.constraints = RigidbodyConstraints.None;
-                    m_rbody.interpolation = RigidbodyInterpolation.None;
+                    m_rbody.useGravity = true;
                     m_viewControl.Scared(true);
                     Stop();
                     break;
