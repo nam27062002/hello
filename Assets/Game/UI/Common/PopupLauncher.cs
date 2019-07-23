@@ -135,10 +135,8 @@ public class PopupLauncher : MonoBehaviour, IBroadcastListener {
 
         m_popup.OnOpen.AddListener(DoTracking);
 
-        // Open it!
-        PopupManager.OpenPopupInstant(m_popupPath);
-
-        
+		// Open it!
+		m_popup.Open();
     }
 
 
