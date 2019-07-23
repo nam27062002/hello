@@ -44,7 +44,8 @@ namespace LevelEditor {
 			new SectionLevels(),
 			new SectionSimulation(),
 			new SectionDragonSpawn(),
-			new SectionLevelEditorConfig()
+			new SectionLevelEditorConfig(),
+            new SectionVertexDensity()
 		};
 
 		// Styles
@@ -53,11 +54,12 @@ namespace LevelEditor {
 		// Level control
 		private string m_sceneName = "";
 
-		//------------------------------------------------------------------//
-		// PROPERTIES														//
-		//------------------------------------------------------------------//
-		// Windows instance
-		private static LevelEditorWindow m_instance = null;
+
+        //------------------------------------------------------------------//
+        // PROPERTIES														//
+        //------------------------------------------------------------------//
+        // Windows instance
+        private static LevelEditorWindow m_instance = null;
 		public static LevelEditorWindow instance {
 			get {
 				if(m_instance == null) {
@@ -72,6 +74,7 @@ namespace LevelEditor {
 		public static SectionSimulation sectionSimulation { get { return instance.m_sections[1] as SectionSimulation; }}
 		public static SectionDragonSpawn sectionDragonSpawn { get { return instance.m_sections[2] as SectionDragonSpawn; }}
 		public static SectionLevelEditorConfig sectionParticleManager { get { return instance.m_sections[3] as SectionLevelEditorConfig; }}
+        public static SectionVertexDensity sectionVertexDensity {  get { return instance.m_sections[4] as SectionVertexDensity; } }
 
 		// Styles shortcut
 		public static Styles styles { get { return instance.m_styles; }}
@@ -307,6 +310,9 @@ namespace LevelEditor {
 
 				// Simulation section
 				sectionSimulation.OnGUI();
+
+                // Vertex density section
+                sectionVertexDensity.OnGUI();
 			} EditorGUILayoutExt.EndVerticalSafe();
 		}
 
