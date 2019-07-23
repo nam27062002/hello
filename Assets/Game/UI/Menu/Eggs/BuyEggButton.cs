@@ -51,6 +51,7 @@ public class BuyEggButton : MonoBehaviour {
     		// Get price and start purchase flow
     		DefinitionNode eggDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.EGGS, Egg.SKU_PREMIUM_EGG);
     		ResourcesFlow purchaseFlow = new ResourcesFlow("BUY_EGG");
+			purchaseFlow.forceConfirmation = true;	// [AOC] Because the buy egg button is pretty close to the "play" button, accidental taps can happen. Force confirmation popup regardless of the egg price.
     		purchaseFlow.OnSuccess.AddListener(
     			(ResourcesFlow _flow) => {
     				// Play sound!
@@ -64,7 +65,12 @@ public class BuyEggButton : MonoBehaviour {
     				InstanceManager.menuSceneController.StartOpenEggFlow(purchasedEgg);
     			}
     		);
-    		purchaseFlow.Begin(eggDef.GetAsLong("pricePC"), UserProfile.Currency.HARD, HDTrackingManager.EEconomyGroup.BUY_EGG, eggDef);
+    		purchaseFlow.Begin(
+				eggDef.GetAsLong("pricePC"),
+				UserProfile.Currency.HARD,
+				HDTrackingManager.EEconomyGroup.BUY_EGG,
+				eggDef
+			);
         }
 	}
 }
