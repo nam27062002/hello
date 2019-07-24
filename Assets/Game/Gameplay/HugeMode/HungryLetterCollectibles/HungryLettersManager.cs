@@ -82,8 +82,11 @@ public class HungryLettersManager : MonoBehaviour
 
 	protected void Awake()
 	{
-       Init();
-       m_reward.origin = "letter";
+        if (Application.isPlaying)
+            InstanceManager.hungryLettersManager = this;
+
+        Init();
+        m_reward.origin = "letter";
 	}
 
 	protected void Init(){
@@ -140,11 +143,17 @@ public class HungryLettersManager : MonoBehaviour
 #endif
 	}
 
-	//------------------------------------------------------------
-	// Public Methods:
-	//------------------------------------------------------------
+    void OnDestroy() {
+        if (Application.isPlaying && ApplicationManager.IsAlive) {
+            InstanceManager.hungryLettersManager = null;
+        }
+    }
 
-	public void LetterCollected(HungryLetter letter)
+    //------------------------------------------------------------
+    // Public Methods:
+    //------------------------------------------------------------
+
+    public void LetterCollected(HungryLetter letter)
 	{
         // report analytics before to move the letter in the UI.
         HDTrackingManager.Instance.Notify_HungryLetterCollected();
