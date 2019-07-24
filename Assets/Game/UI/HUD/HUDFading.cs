@@ -127,14 +127,18 @@ public class HUDFading : MonoBehaviour, IBroadcastListener {
     IEnumerator DisableInTime()
     {
         yield return new WaitForSeconds(1.0f);
-        m_blackImage.enabled = false;
-        enabled = false;
+		if( m_state == State.NONE )
+		{
+			m_blackImage.enabled = false;
+        	enabled = false;
+		}
+        
     }
 
 
     void PlayerLeavingArea(float estimatedLeavingTime)
 	{
-		FADE_DURATION = 0.75f * estimatedLeavingTime;
+		FADE_DURATION = 0.5f * estimatedLeavingTime;
 		StartFadeOut();
 	}
 
