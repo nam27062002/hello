@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEditor;
 using UnityEngine.SceneManagement;
 using UnityEditor.SceneManagement;
 
@@ -51,11 +52,15 @@ namespace LevelEditor
         };
 
         List<TransformNode> m_nodeList = new List<TransformNode>();
+        int m_totalVertex, m_totalPolygons;
+        int m_hierarchyLevel;
+        NodeDensity[] m_nodeDensity = null;
 
         public struct NodeDensity
         {
             public TransformNode node;
             public int numvertex;
+            public int numpolygon;
         }
 
         void checkGameObjectHierarchy(TransformNode root, GameObject go)
@@ -69,6 +74,7 @@ namespace LevelEditor
                     TransformNode node = new TransformNode(go.transform, mesh.vertexCount, mesh.triangles.Length / 3);
                     root.m_Childs.Add(node);
                     root = node;
+                    m_nodeList.Add(node);
                 }
             }
 
@@ -97,10 +103,24 @@ namespace LevelEditor
                     }
                 }
             }
+
+            m_totalVertex = 0;
+            m_totalPolygons = 0;
+            foreach(TransformNode tn in m_nodeList)
+            {
+                m_totalVertex += tn.m_vertex;
+                m_totalPolygons += tn.m_polygons;
+            }
+
+            Debug.Log("Total transform nodes with mesh filter: " + m_nodeList.Count);
+            Debug.Log("Total vertex in scene: " + m_totalVertex);
+            Debug.Log("Total polygon in scene: " + m_totalPolygons);
+
+            m_hierarchyLevel = 1;
         }
 
 
-        int getNodeVertexDensityAtLevel(TransformNode node, int currentLevel, int level, List<int> results)
+        int getNodeVertexDensityAtLevel(TransformNode node, int currentLevel, int level, List<NodeDensity> results)
         {
             if (currentLevel < level)
             {
@@ -129,6 +149,7 @@ namespace LevelEditor
                     }
                     nd.numvertex = count;
                 }
+                results.Add(nd);
             }
             else
             {
@@ -154,6 +175,21 @@ namespace LevelEditor
         {
             List<NodeDensity> result = new List<NodeDensity>();
 
+            getNodeVertexDensityAtLevel(m_nodeList[0], 0, level, result);
+
+            for (int a = 0; a < result.Count - 1; a++)
+            {
+                for (int b = a + 1; b < result.Count; b++)
+                {
+                    if (result[a].numvertex < result[b].numvertex)
+                    {
+                        NodeDensity temp = result[a];
+                        result[a] = result[b];
+                        result[b] = temp;
+                    }
+                }
+            }
+
             return result.ToArray();
         }
 
@@ -168,10 +204,12 @@ namespace LevelEditor
         {
         }
 
+        Vector2 scrollPos = Vector2.zero;
 
         /// <summary>
         /// Draw the section.
         /// </summary>
+        /// 
         public void OnGUI()
         {
             // Title - encapsulate in a nice button to make it foldable
@@ -191,6 +229,44 @@ namespace LevelEditor
                 if (GUILayout.Button("Gather scene info"))
                 {
                     gatherHierarchyTree();
+                    m_nodeDensity = getVertexDensityAtLevel(m_hierarchyLevel);
+                }
+
+                if (m_nodeList.Count > 0)
+                {
+                    
+                    GUILayout.Label("Total transform nodes with mesh filter: " + m_nodeList.Count);
+                    GUILayout.Label("Total vertex in scene: " + m_totalVertex);
+                    GUILayout.Label("Total polygon in scene: " + m_totalPolygons);
+                    EditorGUI.BeginChangeCheck();
+                    m_hierarchyLevel = EditorGUILayout.IntField("Hierarchy level: ", m_hierarchyLevel);
+                    if (EditorGUI.EndChangeCheck())
+                    {
+                        m_nodeDensity = getVertexDensityAtLevel(m_hierarchyLevel);
+                    }
+                    if (m_nodeDensity != null)
+                    {
+                        GUILayout.Label(m_nodeDensity.Length.ToString() + " nodes at level " + m_hierarchyLevel);
+                        EditorGUILayout.Separator();
+                        scrollPos = GUILayout.BeginScrollView(scrollPos);
+                        int nodeCount = m_nodeDensity.Length > 100 ? 100 : m_nodeDensity.Length;
+                        EditorGUILayout.BeginVertical();
+                        for (int c = 0; c < nodeCount; c++)
+                        {
+                            if (m_nodeDensity[c].node.m_Node != null)
+                            {
+                                EditorGUILayout.BeginHorizontal();
+                                if(GUILayout.Button(m_nodeDensity[c].node.m_Node.gameObject.name))
+                                {
+                                    Selection.activeGameObject = m_nodeDensity[c].node.m_Node.gameObject;
+                                }
+                                GUILayout.Label(" vertex: " + m_nodeDensity[c].numvertex);
+                                EditorGUILayout.EndHorizontal();
+                            }
+                        }
+                        EditorGUILayout.EndVertical();
+                        GUILayout.EndScrollView();
+                    }
                 }
             }
         }
