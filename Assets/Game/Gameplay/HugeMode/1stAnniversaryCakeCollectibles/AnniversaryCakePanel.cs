@@ -50,6 +50,8 @@ public class AnniversaryCakePanel : MonoBehaviour, IBroadcastListener {
 	private State m_state;
 	public State state { get { return m_state; } }
 
+    private float m_timer;
+
 	private bool m_startHugeModeAtLastSlice;
 
 
@@ -95,9 +97,20 @@ public class AnniversaryCakePanel : MonoBehaviour, IBroadcastListener {
 
 	// Update is called once per frame
 	private void Update () {
-		if (m_state == State.DigestCake) {
-			m_cakeValue = m_DragonSuperSize.time / m_DragonSuperSize.modeDuration;			
-		}
+#if UNITY_EDITOR
+        if (Input.GetKeyDown(KeyCode.C)) {
+            OnCakeSliceEaten(Vector3.zero);
+        }
+#endif
+
+        if (m_state == State.DigestCake) {
+            m_cakeValue = m_DragonSuperSize.time / m_DragonSuperSize.modeDuration;
+        } else if (m_state == State.LaunchAnimation) {
+            m_timer -= Time.deltaTime;
+            if (m_timer <= 0f) {
+                ChangeState(State.DigestCake);
+            }
+        }
 
         // Animate the cake counter
         if (m_radialCakeCounter.fillAmount != m_cakeValue)
@@ -105,7 +118,6 @@ public class AnniversaryCakePanel : MonoBehaviour, IBroadcastListener {
             float delta = m_cakeValue - m_radialCakeCounter.fillAmount;
             m_radialCakeCounter.fillAmount += Time.deltaTime * m_radialSpeedFactor * delta; 
         }
-
     }
 
 	private void ChangeState(State _newState) {
@@ -132,9 +144,7 @@ public class AnniversaryCakePanel : MonoBehaviour, IBroadcastListener {
                 m_cakeAnimator.SetTrigger("fullCakeEaten");
 
                 // Start bday mode after delay to let the cake animation play
-                UbiBCN.CoroutineManager.DelayedCall(
-                    () => { ChangeState(State.DigestCake); }, m_birthdayModeDelayInSecs,false);
-
+                m_timer = m_birthdayModeDelayInSecs;
                 break;
 
             case State.DigestCake:
@@ -144,8 +154,10 @@ public class AnniversaryCakePanel : MonoBehaviour, IBroadcastListener {
                 // Activate supersize and the "Hungry Bday" message
                 Messenger.Broadcast(MessengerEvents.ANNIVERSARY_START_BDAY_MODE);
 
-                // Activate bday mode FX (confetti and pink frame)
-                m_birthdayModeEffects.SetActive(true);
+                if (FeatureSettingsManager.instance.LevelsLOD > FeatureSettings.ELevel4Values.low) {
+                    // Activate bday mode FX (confetti and pink frame)
+                    m_birthdayModeEffects.SetActive(true);
+                }
 			    break;
 		}
 		m_state = _newState;
