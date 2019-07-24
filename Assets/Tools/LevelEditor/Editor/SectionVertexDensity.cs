@@ -52,6 +52,12 @@ namespace LevelEditor
 
         List<TransformNode> m_nodeList = new List<TransformNode>();
 
+        public struct NodeDensity
+        {
+            public TransformNode node;
+            public int numvertex;
+        }
+
         void checkGameObjectHierarchy(TransformNode root, GameObject go)
         {
             MeshFilter mFilter = go.GetComponent<MeshFilter>();
@@ -94,6 +100,64 @@ namespace LevelEditor
         }
 
 
+        int getNodeVertexDensityAtLevel(TransformNode node, int currentLevel, int level, List<int> results)
+        {
+            if (currentLevel < level)
+            {
+                if (node.m_Childs.Count == 0) return 0;
+
+                foreach(TransformNode childNode in node.m_Childs)
+                {
+                    getNodeVertexDensityAtLevel(childNode, currentLevel + 1, level, results);
+                }
+            }
+            else if (currentLevel == level)
+            {
+                NodeDensity nd = new NodeDensity();
+
+                nd.node = node;
+                if (node.m_Childs.Count == 0)
+                {
+                    nd.numvertex = node.m_vertex;
+                }
+                else
+                {
+                    int count = 0;
+                    foreach (TransformNode childNode in node.m_Childs)
+                    {
+                        count += getNodeVertexDensityAtLevel(childNode, currentLevel + 1, level, results);
+                    }
+                    nd.numvertex = count;
+                }
+            }
+            else
+            {
+                if (node.m_Childs.Count == 0)
+                {
+                    return node.m_vertex;
+                }
+                else
+                {
+                    int count = 0;
+                    foreach (TransformNode childNode in node.m_Childs)
+                    {
+                        count += getNodeVertexDensityAtLevel(childNode, currentLevel + 1, level, results);
+                    }
+                    return count;
+                }
+            }
+            return 0;
+        }
+
+
+        NodeDensity[] getVertexDensityAtLevel(int level)
+        {
+            List<NodeDensity> result = new List<NodeDensity>();
+
+            return result.ToArray();
+        }
+
+
         //--------------------------------------------------------------------//
         // INTERFACE IMPLEMENTATION											  //
         //--------------------------------------------------------------------//
@@ -123,6 +187,11 @@ namespace LevelEditor
             // -Only show if unfolded
             if (!folded)
             {
+                GUI.backgroundColor = Colors.paleGreen;
+                if (GUILayout.Button("Gather scene info"))
+                {
+                    gatherHierarchyTree();
+                }
             }
         }
     }
