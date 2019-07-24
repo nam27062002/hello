@@ -35,7 +35,6 @@ namespace AI {
 
 			// 
 			Transform m_eggTransform = null;
-			HungryLettersManager m_lettersManager = null;
 
 			public override StateComponentData CreateData() {
 				return new PetSearchCollectibleTargetData();
@@ -68,7 +67,6 @@ namespace AI {
 					}break;
                     case CollectibleType.LETTERS:
                     {
-                        m_lettersManager = FindObjectOfType<HungryLettersManager>();        
                     }break;
                     case CollectibleType.CHEST:
                     {
@@ -130,7 +128,7 @@ namespace AI {
 					}break;
 					case CollectibleType.LETTERS:
 					{
-						closestObject = m_lettersManager.GetClosestActiveLetter(centerPos);
+						closestObject = InstanceManager.hungryLettersManager.GetClosestActiveLetter(centerPos);
 					}break;
 				}
 				return closestObject;
