@@ -212,9 +212,6 @@ public class DragonXPBar : MonoBehaviour {
             if (m_dragonDescText != null)
             {
                 m_dragonDescText.Localize(_data.def.GetAsString("tidDesc"));
-
-                // If the dragon is owned, hide the description
-                m_dragonDescText.gameObject.SetActive(!_data.isOwned);
             }
 
             // Bar separators and markers

@@ -13,9 +13,9 @@ using UnityEngine;
 // CLASSES																	  //
 //----------------------------------------------------------------------------//
 /// <summary>
-/// This class listens to any dragon selection change and enables the proper info box depending on the dragon type
+/// This class listens to any dragon selection change and enables the proper object depending on the dragon type
 /// </summary>
-public class MenuDragonInfoController : MonoBehaviour {
+public class DragonTypeSelector : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -24,17 +24,22 @@ public class MenuDragonInfoController : MonoBehaviour {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	
-    [SerializeField] private GameObject m_classicDragonInfo;
-    [SerializeField] private GameObject m_specialDragonInfo;
-        
+    [Tooltip("Enable this group is a classic dragon is selected")]
+    [SerializeField] private ShowHideAnimator m_classicDragonGroup;
 
-	//------------------------------------------------------------------------//
-	// GENERIC METHODS														  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Initialization.
-	/// </summary>
-	private void Awake() {
+    [Tooltip("Enable this group is a special dragon is selected")]
+    [SerializeField] private ShowHideAnimator m_specialDragonGroup;
+
+    [SerializeField] private bool m_animate;
+
+
+    //------------------------------------------------------------------------//
+    // GENERIC METHODS														  //
+    //------------------------------------------------------------------------//
+    /// <summary>
+    /// Initialization.
+    /// </summary>
+    private void Awake() {
 
         Messenger.AddListener<string>(MessengerEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
 
@@ -54,14 +59,28 @@ public class MenuDragonInfoController : MonoBehaviour {
         // Show the proper info box depending on the selected type of dragon
         bool special = DragonManager.GetDragonData(_sku).type == IDragonData.Type.SPECIAL;
 
-        if (m_classicDragonInfo != null)
+        if (m_classicDragonGroup != null)
         {
-            m_specialDragonInfo.SetActive(special);
+            if (!special)
+            {
+                m_classicDragonGroup.Show(m_animate);
+            }
+            else{
+                m_classicDragonGroup.Hide(m_animate);
+            }
+
         }
 
-        if (m_specialDragonInfo != null)
+        if (m_specialDragonGroup != null)
         {
-            m_classicDragonInfo.SetActive(!special);
+            if (special)
+            {
+                m_specialDragonGroup.Show(m_animate);
+            }
+            else
+            {
+                m_specialDragonGroup.Hide(m_animate);
+            }
         }
         
     }

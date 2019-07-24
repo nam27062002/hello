@@ -15,7 +15,7 @@ using UnityEngine;
 /// <summary>
 /// 
 /// </summary>
-public class MenuDragonSpecialLevelBar : MonoBehaviour {
+public class MenuDragonSpecialInfo : MonoBehaviour {
     //------------------------------------------------------------------------//
     // CONSTANTS															  //
     //------------------------------------------------------------------------//
@@ -24,20 +24,16 @@ public class MenuDragonSpecialLevelBar : MonoBehaviour {
     // MEMBERS AND PROPERTIES												  //
     //------------------------------------------------------------------------//
 
-    [SerializeField] protected Localizer m_dragonNameText;
-    public Localizer dragonNameText
-    {
-        get { return m_dragonNameText; }
-    }
+    [SerializeField] private Localizer m_dragonNameText;
 
-    [SerializeField] protected Localizer m_dragonDescText;
-    public Localizer dragonDescText
-    {
-        get { return m_dragonDescText; }
-    }
+    [SerializeField] private Localizer m_dragonDescText;
+
+    [SerializeField] private LabDragonBar m_specialDragonLevelBar;
+
+    [SerializeField] private LabStatUpgrader[] m_stats = new LabStatUpgrader[0];
 
     // Internal
-    protected DragonDataSpecial m_dragonData = null;	// Last used dragon data
+    private DragonDataSpecial m_dragonData = null;	// Last used dragon data
 
     //------------------------------------------------------------------------//
     // GENERIC METHODS														  //
@@ -46,8 +42,10 @@ public class MenuDragonSpecialLevelBar : MonoBehaviour {
     /// Initialization.
     /// </summary>
     private void Awake() {
+        // Subscribe to external events
+        Messenger.AddListener<string>(MessengerEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
 
-	}
+    }
 
 	/// <summary>
 	/// First update call.
@@ -60,11 +58,9 @@ public class MenuDragonSpecialLevelBar : MonoBehaviour {
 	/// Component has been enabled.
 	/// </summary>
 	private void OnEnable() {
-        // Subscribe to external events
-        Messenger.AddListener<string>(MessengerEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
-
+        
         // Do a first refresh
-        Refresh(InstanceManager.menuSceneController.selectedDragon);
+        Refresh(InstanceManager.menuSceneController.selectedDragon, 0.25f);
     }
 
 	/// <summary>
@@ -92,15 +88,6 @@ public class MenuDragonSpecialLevelBar : MonoBehaviour {
     // OTHER METHODS														  //
     //------------------------------------------------------------------------//
 
-    /// <summary>
-    /// A new dragon has been selected.
-    /// </summary>
-    /// <param name="_sku">The sku of the selected dragon.</param>
-    private void OnDragonSelected(string _sku)
-    {
-        // Refresh after some delay to let the animation finish
-        Refresh(_sku, 0.25f);
-    }
 
 
     /// <summary>
@@ -145,20 +132,54 @@ public class MenuDragonSpecialLevelBar : MonoBehaviour {
             if (m_dragonDescText != null)
             {
                 m_dragonDescText.Localize(data.def.GetAsString("tidDesc"));
+            }
 
-                // If the dragon is owned, hide the description
-                m_dragonDescText.gameObject.SetActive(!data.isOwned);
+            // Update level bar
+            m_specialDragonLevelBar.BuildFromDragonData(data);
+
+            // Upgrade buttons
+            for (int i = 0; i < m_stats.Length; ++i)
+            {
+                m_stats[i].InitFromData(m_dragonData);
             }
 
             // Store new dragon data
             m_dragonData = data;
 
-
         }
-
-        //------------------------------------------------------------------------//
-        // CALLBACKS															  //
-        //------------------------------------------------------------------------//
-
     }
+
+
+    //------------------------------------------------------------------------//
+    // CALLBACKS															  //
+    //------------------------------------------------------------------------//
+
+    /// <summary>
+    /// A new dragon has been selected.
+    /// </summary>
+    /// <param name="_sku">The sku of the selected dragon.</param>
+    private void OnDragonSelected(string _sku)
+    {
+        // Refresh after some delay to let the animation finish
+        Refresh(_sku, 0.25f);
+    }
+
+
+    /// <summary>
+    /// Info button has been pressed.
+    /// </summary>
+    public void OnInfoButton()
+    {
+        // Skip if dragon data is not valid
+        if (m_dragonData == null) return;
+
+        // Tracking
+        string popupName = System.IO.Path.GetFileNameWithoutExtension(PopupSpecialDragonInfo.PATH);
+        HDTrackingManager.Instance.Notify_InfoPopup(popupName, "info_button");
+
+        // Open the dragon info popup and initialize it with the current dragon's data
+        PopupSpecialDragonInfo popup = PopupManager.OpenPopupInstant(PopupSpecialDragonInfo.PATH).GetComponent<PopupSpecialDragonInfo>();
+        popup.Init(m_dragonData);
+    }
+
 }

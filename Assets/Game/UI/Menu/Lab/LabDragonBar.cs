@@ -43,29 +43,62 @@ public class LabDragonBar : MonoBehaviour {
     private List<DefinitionNode> m_definitionSkill;
 
 
-	//---[Generic Methods]------------------------------------------------------
-	private void Awake() {
+
+    //------------------------------------------------------------------------//
+    // GENERIC METHODS														  //
+    //------------------------------------------------------------------------//
+    private void Awake() {
 		// Clear any placeholder bar left from UI editing
 		m_content.DestroyAllChildren(false);
 		DestroyElements();
-	}
 
-	private void SetLevel(int _level) {
+        Messenger.AddListener<DragonDataSpecial, DragonDataSpecial.Stat>(MessengerEvents.SPECIAL_DRAGON_STAT_UPGRADED, OnStatUpgraded);
+    }
+
+
+
+    //------------------------------------------------------------------------//
+    // OTHER METHODS														  //
+    //------------------------------------------------------------------------//
+
+    public void BuildFromDragonData(DragonDataSpecial _dragonData)
+    {
+        m_maxLevel = _dragonData.maxLevel + 1;
+
+        // tier data
+        List<DefinitionNode> tierDefs = _dragonData.specialTierDefsByOrder;
+        m_levelTier = new int[tierDefs.Count];
+        m_unlockClassicTier = new int[tierDefs.Count];
+        for (int i = 0; i < tierDefs.Count; ++i)
+        {
+            m_levelTier[i] = tierDefs[i].GetAsInt("upgradeLevelToUnlock");
+            m_unlockClassicTier[i] = (int)IDragonData.SkuToTier(tierDefs[i].GetAsString("mainProgressionRestriction"));
+        }
+
+        //skills
+        m_definitionSkill = _dragonData.specialPowerDefsByOrder;
+        m_levelSkill = new int[m_definitionSkill.Count];
+        for (int i = 0; i < m_definitionSkill.Count; ++i)
+        {
+            m_levelSkill[i] = m_definitionSkill[i].GetAsInt("upgradeLevelToUnlock");
+        }
+
+        SetLevel(_dragonData.GetLevel());
+        m_maxTierUnlocked = (int)DragonManager.biggestOwnedDragon.tier;
+
+        CreateElements();
+        ArrangeElements();
+    }
+
+
+    private void SetLevel(int _level) {
 		// Update level var
 		m_currentLevel = _level;
 
-		// Refresh visuals
-		if(m_levelText != null) {
-			int level = m_currentLevel; //Mathf.Min(m_currentLevel, m_maxLevel - 1);	// Cap level?
-			m_levelText.Localize(
-				m_levelText.tid,
-				StringUtils.FormatNumber(level),
-				StringUtils.FormatNumber(m_maxLevel)		// If using "Level 14" format, this parameter will just be ignored
-			);
-		}
+        Refresh();
 	}
 
-	//---[Build Methods]--------------------------------------------------------
+
 	private void CreateElements() {
         int levelElementsCount = m_maxLevel - m_levelTier.Length - m_levelSkill.Length;
 
@@ -232,31 +265,7 @@ public class LabDragonBar : MonoBehaviour {
         }
     }
 
-    public void BuildFromDragonData(DragonDataSpecial _dragonData) {
-        m_maxLevel = _dragonData.maxLevel + 1;
-
-        // tier data
-        List<DefinitionNode> tierDefs = _dragonData.specialTierDefsByOrder;
-        m_levelTier = new int[tierDefs.Count];
-        m_unlockClassicTier = new int[tierDefs.Count];
-        for (int i = 0; i < tierDefs.Count; ++i) {
-            m_levelTier[i] = tierDefs[i].GetAsInt("upgradeLevelToUnlock");
-            m_unlockClassicTier[i] = (int)IDragonData.SkuToTier(tierDefs[i].GetAsString("mainProgressionRestriction"));
-        }
-
-        //skills
-        m_definitionSkill = _dragonData.specialPowerDefsByOrder;
-        m_levelSkill = new int[m_definitionSkill.Count];
-        for (int i = 0; i < m_definitionSkill.Count; ++i) {
-            m_levelSkill[i] = m_definitionSkill[i].GetAsInt("upgradeLevelToUnlock");
-        }
-
-		SetLevel(_dragonData.GetLevel());
-        m_maxTierUnlocked = (int)DragonManager.biggestOwnedDragon.tier;
-
-        CreateElements();
-        ArrangeElements();
-    }
+    
 
     public void BuildUsingDebugValues() {
         m_maxLevel = m_debugMaxLevel;
@@ -280,5 +289,31 @@ public class LabDragonBar : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Refresh the GUI
+    /// </summary>
+    private void Refresh()
+    {
+        // Refresh visuals
+        if (m_levelText != null)
+        {
+            int level = m_currentLevel; //Mathf.Min(m_currentLevel, m_maxLevel - 1);	// Cap level?
+            m_levelText.Localize(
+                m_levelText.tid,
+                StringUtils.FormatNumber(level),
+                StringUtils.FormatNumber(m_maxLevel)        // If using "Level 14" format, this parameter will just be ignored
+            );
+        }
+    }
+
     //---[Callbacks]----------------------------------------------------------//
+    /// <summary>
+    /// A dragon stat has been upgraded.
+    /// </summary>
+    private void OnStatUpgraded(DragonDataSpecial _dragonData, DragonDataSpecial.Stat _stat)
+    {
+        // Let's just refresh for now
+        AddLevel();
+    }
+
 }
