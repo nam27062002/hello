@@ -48,6 +48,12 @@ public class ResourcesFlow : IBroadcastListener {
 
 	// Constant values
 	public const long PC_CONFIRMATION_POPUP_THRESHOLD = 20;	// Show confirmation popup for PC purchases bigger than this threshold
+	public enum ConfirmationPopupBehaviour {
+		THRESHOLD,				// Popup will be triggered when amount to purchase is above PC_CONFIRMATION_POPUP_THRESHOLD
+		FORCE,				// Always trigger popup. "Don't show again" toggle won't be displayed.
+		IGNORE_THRESHOLD,	// Popup will be triggered regardless of the amount to purchase, unless the "Don't show again" toggle had been previously set
+		DONT_SHOW				// Don't show
+	}
 
 	// Custom events
 	public class ResourcesFlowEvent : UnityEvent<ResourcesFlow> { };
@@ -56,10 +62,10 @@ public class ResourcesFlow : IBroadcastListener {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Flow setup - to be defined between the flow creation and the Begin() call
-	private bool m_forceConfirmation = false;	// Force a confirmation popup to appear, regardles of the amount of PC to be spent
-	public bool forceConfirmation {
-		get { return m_forceConfirmation; }
-		set { m_forceConfirmation = value; }
+	private ConfirmationPopupBehaviour m_confirmationPopupBehaviour = ConfirmationPopupBehaviour.THRESHOLD;
+	public ConfirmationPopupBehaviour confirmationPopupBehaviour {
+		get { return m_confirmationPopupBehaviour; }
+		set { m_confirmationPopupBehaviour = value; }
 	}
 
 	// Flow data
@@ -199,7 +205,7 @@ public class ResourcesFlow : IBroadcastListener {
 		m_finishTransaction = _finishTransaction;
 
         // Try it now!
-		TryTransaction(true, m_forceConfirmation);
+		TryTransaction(m_confirmationPopupBehaviour);
 	}
 
 	//------------------------------------------------------------------------//
@@ -247,9 +253,8 @@ public class ResourcesFlow : IBroadcastListener {
 	/// state will be updated according to that.
 	/// If everything is ok, transaction will be executed.
 	/// </summary>
-	/// <param name="_askConfirmationForBigPCAmounts">If set to true, a confirmation popup will be triggered for big PC amounts and the transaction wont happen until the popup is confirmed.</param>
-	/// <param name="_forceConfirmation">If set to true, previous parameter will be overruled and the confirmation popup will always appear (regardless of the amount).</param>
-	private void TryTransaction(bool _askConfirmationForBigPCAmounts, bool _forceConfirmation) {
+	/// <param name="_confirmationPopupBehaviour">Trigger confirmation popup for big PC amounts?</param>
+	private void TryTransaction(ConfirmationPopupBehaviour _confirmationPopupBehaviour) {
 		// Close any popup opened by this resources flow instance
 		ClosePopups();
 
@@ -285,8 +290,7 @@ public class ResourcesFlow : IBroadcastListener {
 
 				case UserProfile.Currency.HARD: {
 					// Show confirmation popup?
-					if(_forceConfirmation ||
-					_askConfirmationForBigPCAmounts && GameSettings.Get(GameSettings.SHOW_BIG_AMOUNT_CONFIRMATION_POPUP) && (m_originalAmount > PC_CONFIRMATION_POPUP_THRESHOLD)) {
+					if(CheckConfirmationPopup(_confirmationPopupBehaviour, m_originalAmount)) {
 						// Final PC amount over threshold!
 						// Show confirmation popup
 						OpenBigAmountConfirmationPopup(m_originalAmount, OnBigAmountConfirmedMissingPC);	// If confirmed, open missing PC popup
@@ -307,8 +311,7 @@ public class ResourcesFlow : IBroadcastListener {
 		else {
 			// Confirmation required?
 			// Only if confirmation popup is enabled
-			if(_forceConfirmation ||
-			_askConfirmationForBigPCAmounts && GameSettings.Get(GameSettings.SHOW_BIG_AMOUNT_CONFIRMATION_POPUP)) {
+			if(CheckConfirmationPopup(_confirmationPopupBehaviour, long.MaxValue)) {	// Ignore threshold (use long.MaxValue to always pass through the threshold)
 				// Final PC cost?
 				long finalPCAmount = 0;
 
@@ -323,7 +326,7 @@ public class ResourcesFlow : IBroadcastListener {
 				}
 
 				// Final PC amount over threshold?
-				if(m_forceConfirmation || finalPCAmount > PC_CONFIRMATION_POPUP_THRESHOLD) {
+				if(CheckConfirmationPopup(m_confirmationPopupBehaviour, finalPCAmount)) {	// Use default resources flow behaviour
 					// Show confirmation popup
 					OpenBigAmountConfirmationPopup(finalPCAmount, OnBigAmountConfirmedTryTransaction);    // Do the transaction on success
 					return; // Don't do anything else until confirmed by user
@@ -551,7 +554,7 @@ public class ResourcesFlow : IBroadcastListener {
 		// Open and initialize the popup
 		PopupController popup = PopupManager.LoadPopup(ResourcesFlowBigAmountConfirmationPopup.PATH);
 		ResourcesFlowBigAmountConfirmationPopup confirmationPopup = popup.GetComponent<ResourcesFlowBigAmountConfirmationPopup>();
-		confirmationPopup.Init(_amount, !m_forceConfirmation);	// Don't show the "Never show again" toggle if forcing the popup
+		confirmationPopup.Init(_amount, m_confirmationPopupBehaviour != ConfirmationPopupBehaviour.FORCE);	// Don't show the "Never show again" toggle if forcing the popup
 
 		confirmationPopup.OnAccept.RemoveAllListeners();	// We're recycling popups, so we don't want events to be added twice!
 		confirmationPopup.OnAccept.AddListener(_onSuccess);
@@ -587,6 +590,27 @@ public class ResourcesFlow : IBroadcastListener {
 		ChangeState(State.SHOWING_PC_SHOP);
 	}
 
+	/// <summary>
+	/// Check whether the confirmation popup should be opened or not based on given behaviour and PC amount.
+	/// </summary>
+	/// <param name="_behaviour">Behaviour to be considered.</param>
+	/// <param name="_pcAmount">Amount of PC to be considered.</param>
+	/// <returns></returns>
+	private bool CheckConfirmationPopup(ConfirmationPopupBehaviour _behaviour, long _pcAmount) {
+		// Check the "Don't show again" toggle value
+		bool allowed = GameSettings.Get(GameSettings.SHOW_BIG_AMOUNT_CONFIRMATION_POPUP);
+
+		// Depends on behaviour
+		switch(_behaviour) {
+			case ConfirmationPopupBehaviour.THRESHOLD:			return allowed && _pcAmount > PC_CONFIRMATION_POPUP_THRESHOLD;
+			case ConfirmationPopupBehaviour.FORCE:				return true;
+			case ConfirmationPopupBehaviour.IGNORE_THRESHOLD:	return allowed;
+			case ConfirmationPopupBehaviour.DONT_SHOW:			return false;
+		}
+
+		return false;
+	}
+
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
@@ -617,7 +641,7 @@ public class ResourcesFlow : IBroadcastListener {
 			UsersManager.currentUser.SpendCurrency(UserProfile.Currency.HARD, (ulong)m_extraPCCost);
 
 			// Transaction will do everything! ^_^
-			TryTransaction(false, false);	// Ask confirmation? No, looks weird after having purchased the gems
+			TryTransaction(ConfirmationPopupBehaviour.DONT_SHOW);	// Ask confirmation? No, looks weird after having purchased the gems
 		}
 	}
 
@@ -627,7 +651,7 @@ public class ResourcesFlow : IBroadcastListener {
 	private void OnPCPackPurchased() {
 		Log("OnPCPackPurchased");
 		// We should have enough PC to complete the transaction now, do it!
-		TryTransaction(false, false);	// Ask confirmation? No, looks weird after having purchased the pack
+		TryTransaction(ConfirmationPopupBehaviour.DONT_SHOW);	// Ask confirmation? No, looks weird after having purchased the pack
 	}
 
 	/// <summary>
@@ -658,12 +682,12 @@ public class ResourcesFlow : IBroadcastListener {
 			// Was PC the main currency or were we buying extra PC?
 			if(m_currency == UserProfile.Currency.HARD) {
 				// Try transaction again
-				TryTransaction(false, false);	// Ask confirmation? No, looks weird after having purchased the gems
+				TryTransaction(ConfirmationPopupBehaviour.DONT_SHOW);	// Ask confirmation? No, looks weird after having purchased the gems
 			} else {
 				// Have we bought enough extra PC?
 				if(m_extraPCCost <= UsersManager.currentUser.pc) {
 					// Yes! Complete transaction
-					TryTransaction(false, false);	// Ask confirmation? No, looks weird after having purchased the gems
+					TryTransaction(ConfirmationPopupBehaviour.DONT_SHOW);	// Ask confirmation? No, looks weird after having purchased the gems
 				} else {
 					// No! Refresh the MISSING_EXTRA_PC popup
 					ResourcesFlowMissingPCPopup pcPopup = GetPopup<ResourcesFlowMissingPCPopup>();
@@ -691,7 +715,7 @@ public class ResourcesFlow : IBroadcastListener {
 	/// Big amount confirmation popup has been confirmed and transaction is already validated.
 	/// </summary>
 	private void OnBigAmountConfirmedTryTransaction() {
-		TryTransaction(false, false);
+		TryTransaction(ConfirmationPopupBehaviour.DONT_SHOW);
 	}
 
 	/// <summary>
