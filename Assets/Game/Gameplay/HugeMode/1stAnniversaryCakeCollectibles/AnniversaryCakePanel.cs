@@ -154,8 +154,10 @@ public class AnniversaryCakePanel : MonoBehaviour, IBroadcastListener {
                 // Activate supersize and the "Hungry Bday" message
                 Messenger.Broadcast(MessengerEvents.ANNIVERSARY_START_BDAY_MODE);
 
-                // Activate bday mode FX (confetti and pink frame)
-                m_birthdayModeEffects.SetActive(true);
+                if (FeatureSettingsManager.instance.LevelsLOD > FeatureSettings.ELevel4Values.low) {
+                    // Activate bday mode FX (confetti and pink frame)
+                    m_birthdayModeEffects.SetActive(true);
+                }
 			    break;
 		}
 		m_state = _newState;
