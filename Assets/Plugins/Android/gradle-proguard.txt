@@ -91,6 +91,8 @@
 -keep class com.google.android.gms.internal.** { *; }
 -dontwarn com.google.android.gms.ads.identifier.**
 
+# share button on android
+-keep class android.support.v4.content.** { *; }
 
 
 #crashlytics
@@ -104,3 +106,4 @@
 -keep class io.fabric.unity.android.** { *; }
 -dontwarn io.fabric.unity.android.**
 -keep class io.fabric.sdk.android.** { *; }
+
