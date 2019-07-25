@@ -12,4 +12,5 @@ public class InitRefObject : ScriptableObject {
 	public TMPro.TMP_Settings m_textSettings;
 	public List<Material> m_materials = new List<Material>();
     public TextAsset m_assetsLut;
+	public UnityEngine.Audio.AudioMixer m_audioMixer;
 }

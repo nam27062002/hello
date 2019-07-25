@@ -533,7 +533,7 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager>, IBroa
 		// Apply multiplier
 		_reward.score = (_reward.score * currentScoreMultiplier);
 		instance.m_scorePrecision += _reward.score;
-		instance.m_score += (long)instance.m_scorePrecision;
+		instance.m_score = (long)instance.m_scorePrecision;
 
 		// Coins
 		long deltaCoins = instance.m_coins;

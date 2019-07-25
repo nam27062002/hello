@@ -82,7 +82,7 @@ public class UITooltip : MonoBehaviour {
 		m_animator = GetComponent<ShowHideAnimator>();
 
 		// Start hidden
-		animator.ForceHide(false);
+		if(animator != null) animator.ForceHide(false);
 	}
 
 	/// <summary>

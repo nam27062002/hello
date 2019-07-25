@@ -120,9 +120,9 @@ public class PrisonerSpawner : AbstractSpawner, IBroadcastListener {
 	protected override void OnEntitySpawned(IEntity spawning, uint index, Vector3 originPos) {
         Transform t = spawning.transform;
 		Transform parent = m_spawnAtTransform[index % m_spawnAtTransform.Length];
-		t.parent = parent;
-		t.localPosition = Vector3.zero;
-		t.localScale = Vector3.one * m_scale.GetRandom();
+        t.position = GameConstants.Vector3.zero;
+        t.SetParent(parent, false);
+		t.localScale = GameConstants.Vector3.one * m_scale.GetRandom();
 
 		m_allKilledByPlayer = false;
 	}

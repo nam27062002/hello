@@ -33,7 +33,6 @@ namespace AI {
 			CollectibleEgg egg = null;
 			CollectibleChest chest = null;
 			HungryLetter letter = null;
-			HungryLettersManager m_lettersManager;
 
 			PetPointingCollectibleTargetData m_data;
 			float m_speed;
@@ -63,9 +62,7 @@ namespace AI {
 
 				m_farRange = maxLevelScale * m_data.m_farRangeMultiplier;
 				m_farRange = m_farRange * m_farRange;
-
-				m_lettersManager = FindObjectOfType<HungryLettersManager>();
-
+                
 				m_speed = InstanceManager.player.dragonMotion.absoluteMaxSpeed * m_data.m_speedMultiplier;
                 m_visualCue = m_pilot.GetComponent<UIGameEntitySpawn>();
 
@@ -110,7 +107,7 @@ namespace AI {
 				}
 				else if ( letter )
 				{
-					if (m_lettersManager.IsLetterCollected( letter.letter))
+					if (InstanceManager.hungryLettersManager.IsLetterCollected( letter.letter))
 						Transition(OnCollected);
 				}
 

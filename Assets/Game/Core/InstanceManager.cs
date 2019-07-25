@@ -83,7 +83,13 @@ public class InstanceManager : UbiBCN.SingletonMonoBehaviour<InstanceManager> {
 		set { if(instance != null) instance.m_zoneManager = value; }
 	}
 
-	private FogManager m_fogManager = null;
+    private HungryLettersManager m_hungryLettersManager = null;
+    public static HungryLettersManager hungryLettersManager {
+        get { return instance.m_hungryLettersManager; }
+        set { if (instance != null) instance.m_hungryLettersManager = value; }
+    }
+
+    private FogManager m_fogManager = null;
 	public static FogManager fogManager{
 		get { return instance.m_fogManager; }
 		set { if(instance != null) instance.m_fogManager = value; }
