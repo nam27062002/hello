@@ -319,11 +319,6 @@ ShaderVariantCollection:
       variants:
       - keywords: LOW_DETAIL_ON
         passType: 0
-  - first: {fileID: 4800000, guid: 1e432315427554fac90b38453d9f6fed, type: 3}
-    second:
-      variants:
-      - keywords: LOW_DETAIL_ON
-        passType: 0
   - first: {fileID: 4800000, guid: 1e938c1d9985e47d7988779cea0578e2, type: 3}
     second:
       variants:
@@ -459,17 +454,14 @@ ShaderVariantCollection:
       - keywords: FXLAYER_REFLECTION LOW_DETAIL_ON NORMALMAP REFLECTIONTYPE_COLOR
           SELFILLUMINATE_NORMAL SPECULAR
         passType: 4
-      - keywords: DIFFUSE_AS_SPECULARMASK FXLAYER_REFLECTION LOW_DETAIL_ON NORMALMAP
-          REFLECTIONTYPE_COLOR SELFILLUMINATE_NORMAL SPECULAR
+      - keywords: FRESNEL LOW_DETAIL_ON NORMALMAP REFLECTIONTYPE_COLOR SELFILLUMINATE_EMISSIVE
+          SPECULAR
         passType: 4
       - keywords: FRESNEL FXLAYER_REFLECTION LOW_DETAIL_ON NORMALMAP REFLECTIONTYPE_COLOR
           SELFILLUMINATE_EMISSIVE SPECULAR
         passType: 4
       - keywords: BLENDFRESNEL FRESNEL FXLAYER_REFLECTION LOW_DETAIL_ON NORMALMAP
           REFLECTIONTYPE_COLOR SELFILLUMINATE_EMISSIVE SPECULAR
-        passType: 4
-      - keywords: DIFFUSE_AS_SPECULARMASK FRESNEL LOW_DETAIL_ON NORMALMAP REFLECTIONTYPE_COLOR
-          SELFILLUMINATE_EMISSIVE SPECULAR
         passType: 4
   - first: {fileID: 4800000, guid: 2792aaa8ace564651ba7198784ab33a8, type: 3}
     second:
@@ -808,6 +800,11 @@ ShaderVariantCollection:
       - keywords: LOW_DETAIL_ON
         passType: 0
   - first: {fileID: 4800000, guid: f684eb3ebc0d4b84b9e0993bc851b365, type: 3}
+    second:
+      variants:
+      - keywords: LOW_DETAIL_ON
+        passType: 0
+  - first: {fileID: 4800000, guid: 1e432315427554fac90b38453d9f6fed, type: 3}
     second:
       variants:
       - keywords: LOW_DETAIL_ON

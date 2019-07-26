@@ -1,48 +1,48 @@
-// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
 
 //#undef DYNAMIC_LIGHT
 
 struct appdata_t
 {
 	float4 vertex : POSITION;
-	float2 uv : TEXCOORD0;
-	float4 color : COLOR;
-	float3 normal : NORMAL;
-	float4 tangent : TANGENT;
+	half2 uv : TEXCOORD0;
+	fixed4 color : COLOR;
+	half3 normal : NORMAL;
+	half4 tangent : TANGENT;
 };
 
 struct v2f
 {
 	float4 vertex : SV_POSITION;
-	float4 color : COLOR;
+	fixed4 color : COLOR;
 
 
-	float3 normalWorld : NORMAL;
+	half3 normalWorld : NORMAL;
 
 #if defined(LITMODE_LIT)
 
 
 #if defined(NORMALMAP)
-	float3 tangentWorld : TANGENT;
-	float3 binormalWorld : TEXCOORD5;
+	half3 tangentWorld : TANGENT;
+	half3 binormalWorld : TEXCOORD5;
 #endif
 
 #if defined(DYNAMIC_LIGHT)
-	float3 vLight : TEXCOORD2;
+	half3 vLight : TEXCOORD2;
 #endif
 
 #if defined(SPECULAR) || defined(SPECMASK)
-	float3 halfDir : TEXCOORD7;
+	half3 halfDir : TEXCOORD7;
 #endif
 
 #endif //defined(LITMODE_LIT)
 
 
 #if defined(FRESNEL) || defined(FREEZE) || defined(REFLECTIONMAP)
-	float3 viewDir : VECTOR;
+	half3 viewDir : VECTOR;
 #endif
 
-	float2 uv : TEXCOORD0;
+	half2 uv : TEXCOORD0;
 
 #if defined(MATCAP) || defined(FREEZE)
 	float2 cap : TEXCOORD1;
@@ -144,7 +144,7 @@ v2f vert(appdata_t v)
 #if defined(VERTEX_ANIMATION)
 
 #if defined(JELLY)
-	float4 anim = sin(_Time.y * _TimePhase + v.vertex.y * _Period);
+	half4 anim = sin(_Time.y * _TimePhase + v.vertex.y * _Period);
 	v.vertex.xyz += anim.y * _VertexAnimation.y * v.normal * v.color.g;
 	anim = sin(_Time.y * _TimePhase2 + v.vertex.y * _Period2);
 	v.vertex += anim * _VertexAnimation2 * v.color.r; //* (1.0 - s);
@@ -152,7 +152,7 @@ v2f vert(appdata_t v)
 	v.vertex += anim * _VertexAnimation3 * v.color.b; // *(1.0 - s);
 
 #else
-	float4 anim = sin(_Time.y * _TimePhase + v.vertex.y * _Period);
+	half4 anim = sin(_Time.y * _TimePhase + v.vertex.y * _Period);
 	v.vertex += anim * _VertexAnimation * v.color.g;
 
 #endif
@@ -162,7 +162,7 @@ v2f vert(appdata_t v)
 
 	o.uv = TRANSFORM_TEX(v.uv, _MainTex);
 
-	float3 normal = UnityObjectToWorldNormal(v.normal);
+	half3 normal = UnityObjectToWorldNormal(v.normal);
 
 #if defined(DYNAMIC_LIGHT) && defined(LITMODE_LIT)
 	o.vLight = ShadeSH9(float4(normal, 1.0));
@@ -181,17 +181,17 @@ v2f vert(appdata_t v)
 	float3 worldPos = mul(unity_ObjectToWorld, v.vertex);
 
 #if defined(FRESNEL) || defined(FREEZE) || defined(REFLECTIONMAP) || (defined(LITMODE_LIT) && (defined(SPECULAR) || defined(SPECMASK)))
-	float3 viewDirection = normalize(_WorldSpaceCameraPos - worldPos.xyz);
+	half3 viewDirection = normalize(_WorldSpaceCameraPos - worldPos.xyz);
 #endif
 
 #if defined(SPECULAR) && defined(LITMODE_LIT)
 	// Half View - See: Blinn-Phong
 	//	fixed3 worldPos = mul(unity_ObjectToWorld, v.vertex);
-	float3 lightDirection = normalize(_WorldSpaceLightPos0.xyz);
+	half3 lightDirection = normalize(_WorldSpaceLightPos0.xyz);
 	o.halfDir = normalize(lightDirection + viewDirection);
 
 #elif defined(SPECMASK) && defined(LITMODE_LIT)
-	float3 lightDirection = normalize(_SecondLightDir.xyz);
+	half3 lightDirection = normalize(_SecondLightDir.xyz);
 	o.halfDir = normalize(lightDirection + viewDirection);
 
 #endif
@@ -205,8 +205,8 @@ v2f vert(appdata_t v)
 	o.color = v.color;
 
 #if defined(MATCAP) || defined(FREEZE)
-	float3 worldNorm = normalize(unity_WorldToObject[0].xyz * v.normal.x + unity_WorldToObject[1].xyz * v.normal.y + unity_WorldToObject[2].xyz * v.normal.z);
-	worldNorm = mul((float3x3)UNITY_MATRIX_V, worldNorm);
+	half3 worldNorm = normalize(unity_WorldToObject[0].xyz * v.normal.x + unity_WorldToObject[1].xyz * v.normal.y + unity_WorldToObject[2].xyz * v.normal.z);
+	worldNorm = mul((half3x3)UNITY_MATRIX_V, worldNorm);
 	o.cap.xy = worldNorm.xy * 0.5 + 0.5;
 #endif
 
@@ -217,12 +217,12 @@ fixed4 frag(v2f i) : SV_Target
 {
 #if defined(NORMALMAP) && defined(LITMODE_LIT)
 	// Calc normal from detail texture normal and tangent world
-	float4 encodedNormal = tex2D(_NormalTex, i.uv);
-	float3 localCoords = float3(2.0 * encodedNormal.xy - float2(1.0, 1.0), 1.0 / _NormalStrength);
-	float3x3 local2WorldTranspose = float3x3(i.tangentWorld, i.binormalWorld, i.normalWorld);
-	float3 normalDirection = normalize(mul(localCoords, local2WorldTranspose));
+	half4 encodedNormal = tex2D(_NormalTex, i.uv);
+	half3 localCoords = float3(2.0 * encodedNormal.xy - float2(1.0, 1.0), 1.0 / _NormalStrength);
+	half3x3 local2WorldTranspose = float3x3(i.tangentWorld, i.binormalWorld, i.normalWorld);
+	half3 normalDirection = normalize(mul(localCoords, local2WorldTranspose));
 #else
-	float3 normalDirection = i.normalWorld;
+	half3 normalDirection = i.normalWorld;
 #endif
 
 	fixed4 diff = tex2D(_MainTex, i.uv);
@@ -233,7 +233,7 @@ fixed4 frag(v2f i) : SV_Target
 	//	fixed specMask = 0.2126 * reflection.r + 0.7152 * reflection.g + 0.0722 * reflection.b;
 	//	float ref = specMask * _ReflectionAmount * detail.b;
 
-	float ref = _ReflectionAmount;
+	half ref = _ReflectionAmount;
 
 #if defined(COLORMODE_COLORRAMPMASKED)
 	diff.x = (1.0 - ref) * diff.x + ref * reflection.x;
