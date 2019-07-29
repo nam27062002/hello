@@ -450,10 +450,6 @@ public class DragonDataSpecial : IDragonData {
 			Messenger.Broadcast<DragonDataSpecial>(MessengerEvents.SPECIAL_DRAGON_POWER_UPGRADED, this);
 		}
 
-		if(oldTier != tier) {
-			Messenger.Broadcast<DragonDataSpecial>(MessengerEvents.SPECIAL_DRAGON_TIER_UPGRADED, this);
-		}
-
 		// Save persistence!
 		PersistenceFacade.instance.Save_Request(true);
 	}

@@ -187,7 +187,7 @@ public class MenuDragonUnlockSpecialDragon : MonoBehaviour {
 		// HDTrackingManager.Instance.Notify_DragonUnlocked(m_transactionDragonData.def.sku, m_transactionDragonData.GetOrder());
 
 		// Show a nice animation!
-		InstanceManager.menuSceneController.GetScreenData(MenuScreen.LAB_DRAGON_SELECTION).ui.GetComponent<LabDragonSelectionScreen>().LaunchAcquireAnim(m_transactionDragonData.def.sku);
+		InstanceManager.menuSceneController.GetScreenData(MenuScreen.DRAGON_SELECTION).ui.GetComponent<MenuDragonScreenController>().LaunchAcquireAnim(m_transactionDragonData.def.sku);
 
 		// Reset transaction cached data
 		ResetTransactionData();

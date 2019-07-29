@@ -100,10 +100,12 @@ public class MenuDragonSpecialInfo : MonoBehaviour {
 
         // Only show special dragons bar
         bool special = DragonManager.GetDragonData(_sku).type == IDragonData.Type.SPECIAL;
-        gameObject.SetActive(special);
 
         // Nope
-        if (!special) return;
+        if (!special) {
+            m_dragonData = null;
+            return;
+            }
 
         // Get new dragon's data from the dragon manager
         DragonDataSpecial data = DragonManager.GetDragonData(_sku) as DragonDataSpecial;
@@ -140,7 +142,7 @@ public class MenuDragonSpecialInfo : MonoBehaviour {
             // Upgrade buttons
             for (int i = 0; i < m_stats.Length; ++i)
             {
-                m_stats[i].InitFromData(m_dragonData);
+                m_stats[i].InitFromData(data);
             }
 
             // Store new dragon data

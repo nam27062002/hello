@@ -106,9 +106,9 @@ public class LabStatUpgrader : MonoBehaviour {
 		// Subscribe to external events
 		Messenger.AddListener<DragonDataSpecial, DragonDataSpecial.Stat>(MessengerEvents.SPECIAL_DRAGON_STAT_UPGRADED, OnDragonStatUpgraded);
 
-		// Make sure we're displaying the right info
-		// [AOC] Delay by one frame to do it when the object is actually enabled
-		UbiBCN.CoroutineManager.DelayedCallByFrames(
+        // Make sure we're displaying the right info
+        // [AOC] Delay by one frame to do it when the object is actually enabled
+        UbiBCN.CoroutineManager.DelayedCallByFrames(
 			() => { Refresh(false); },
 			1
 		);
@@ -120,7 +120,7 @@ public class LabStatUpgrader : MonoBehaviour {
 	private void OnDisable() {
 		// Unsubscribe from external events
 		Messenger.RemoveListener<DragonDataSpecial, DragonDataSpecial.Stat>(MessengerEvents.SPECIAL_DRAGON_STAT_UPGRADED, OnDragonStatUpgraded);
-	}
+    }
 
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //
@@ -398,11 +398,11 @@ public class LabStatUpgrader : MonoBehaviour {
 		Refresh(true);
 	}
 
-	/// <summary>
-	/// The value number animator needs to format a new value.
-	/// </summary>
-	/// <param name="_animator">The number animator requesting the formatting.</param>
-	private void OnSetValueText(NumberTextAnimator _animator) {
+    /// <summary>
+    /// The value number animator needs to format a new value.
+    /// </summary>
+    /// <param name="_animator">The number animator requesting the formatting.</param>
+    private void OnSetValueText(NumberTextAnimator _animator) {
 		switch(MODE) {
 			case Mode.PERCENTAGE_BONUS: {
 				// Percentage bonus format
