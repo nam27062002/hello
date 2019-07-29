@@ -70,11 +70,19 @@ public class HungryDragonEditorMenu
     [MenuItem("Hungry Dragon/Content/Reload Rules", false, 50)]
 	public static void ReloadDefinitions() { ContentManager.InitContent(true, false); }
 
-    //---------------------------------------------------- TOOLS -----------------------------------------------------//
-    /// <summary>
-    /// Saves all assets to disk. Useful to make sure changes in scriptable object instances are stored.
-    /// </summary>
-    [MenuItem("Hungry Dragon/Tools/Save Assets", false, 0)]
+	//---------------------------------------------------- TOOLS -----------------------------------------------------//
+	/// <summary>
+	/// Custom toolbar for the project.
+	/// </summary>
+	[MenuItem("Hungry Dragon/Tools/Hungry Dragon Toolbar", false, -100)]
+	public static void HungryDragonToolbar() {
+		HungryDragonEditorToolbar.ShowWindow();
+	}
+
+	/// <summary>
+	/// Saves all assets to disk. Useful to make sure changes in scriptable object instances are stored.
+	/// </summary>
+	[MenuItem("Hungry Dragon/Tools/Save Assets", false, 0)]
     public static void SaveAssets()
     {
         AssetDatabase.SaveAssets();
@@ -206,15 +214,6 @@ public class HungryDragonEditorMenu
 	}
 
     /// <summary>
-    /// Custom toolbar for the project.
-    /// </summary>
-    [MenuItem("Hungry Dragon/Tools/Hungry Dragon Toolbar", false, 100)]
-    public static void HungryDragonToolbar()
-    {
-        HungryDragonEditorToolbar.ShowWindow();
-    }
-
-    /// <summary>
     /// Custom tools for the dragon selection menu.
     /// </summary>
     [MenuItem("Hungry Dragon/Tools/Dragon Selection Menu Tools", false, 150)]
@@ -223,10 +222,42 @@ public class HungryDragonEditorMenu
         DragonMenuToolsEditorWindow.ShowWindow();
     }
 
-    /// <summary>
-    /// Regenerate the icon for the selected entity prefab.
-    /// </summary>
-    [MenuItem("Hungry Dragon/Tools/Generate Spawner Icons (selected entity prefabs)", false, 200)]
+	/// <summary>
+	/// Capture tool for dragon disguises.
+	/// </summary>
+	[MenuItem("Hungry Dragon/Tools/UI Disguises Capture Tool", false, 200)]
+	public static void OpenDisguisesCaptureTool() {
+		OpenScene("Assets/Tools/UITools/CaptureTool/SC_DisguisesCaptureTool.unity", true);
+	}
+
+	/// <summary>
+	/// Capture tool for dragon disguises.
+	/// </summary>
+	[MenuItem("Hungry Dragon/Tools/UI Pets Capture Tool", false, 201)]
+	public static void OpenPetsCaptureTool() {
+		OpenScene("Assets/Tools/UITools/CaptureTool/SC_PetsCaptureTool.unity", true);
+	}
+
+	/// <summary>
+	/// Capture tool for dragon disguises.
+	/// </summary>
+	[MenuItem("Hungry Dragon/Tools/UI Spawners Capture Tool", false, 202)]
+	public static void OpenSpawnersCaptureTool() {
+		OpenScene("Assets/Tools/UITools/CaptureTool/SC_SpawnersCaptureTool.unity", true);
+	}
+
+	/// <summary>
+	/// Capture tool for dragon disguises.
+	/// </summary>
+	[MenuItem("Hungry Dragon/Tools/Live Event Icons Capture Tool", false, 203)]
+	public static void OpenLiveEventIconsCaptureTool() {
+		OpenScene("Assets/Tools/UITools/CaptureTool/SC_LiveEventIconsCaptureTool.unity", true);
+	}
+
+	/// <summary>
+	/// Regenerate the icon for the selected entity prefab.
+	/// </summary>
+	[MenuItem("Hungry Dragon/Tools/Generate Spawner Icons (selected entity prefabs)", false, 204)]
     public static void GenerateSpawnerIconsSelected()
     {
         // Show error message if nothing is selected
@@ -280,7 +311,7 @@ public class HungryDragonEditorMenu
     /// <summary>
     /// Regenerate the icon for all the spawners in the scene.
     /// </summary>
-    [MenuItem("Hungry Dragon/Tools/Generate Spawner Icons (all, takes a while)", false, 201)]
+    [MenuItem("Hungry Dragon/Tools/Generate Spawner Icons (all, takes a while)", false, 205)]
     public static void GenerateSpawnerIconsAll()
     {
         //SpawnerIconGeneratorEditor.GenerateSpawnerIconsInScene();

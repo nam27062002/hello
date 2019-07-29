@@ -21,7 +21,6 @@ GameObject:
   - component: {fileID: 4299468317765830}
   - component: {fileID: 198999519336730960}
   - component: {fileID: 199037571590121884}
-  - component: {fileID: 114901141562080774}
   m_Layer: 12
   m_Name: PS_Wings
   m_TagString: Untagged
@@ -52,9 +51,9 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1028164542569660}
-  m_LocalRotation: {x: -0.11182317, y: -0.039804157, z: 0.19972435, w: 0.97263634}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -1.1400005, y: -0.36000064, z: 0.87999964}
-  m_LocalScale: {x: 1, y: 0.33333373, z: 0.3333337}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4452187977160358}
   m_RootOrder: 0
@@ -101,24 +100,6 @@ MonoBehaviour:
   m_attachPoint: 27
   m_sku: 
   m_showOnResults: 1
---- !u!114 &114901141562080774
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1028164542569660}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 438cf31a59dc645398073c030faafc6e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_scaleOrigin: 1
-  m_scale: 1
-  m_transform: {fileID: 4299468317765830}
-  m_resetFirst: 1
-  m_scaleLifetime: 0
-  m_scaleAllChildren: 1
-  m_whenScale: 3
 --- !u!198 &198999519336730960
 ParticleSystem:
   m_ObjectHideFlags: 1
@@ -179,7 +160,7 @@ ParticleSystem:
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 0
-  randomSeed: 499286386
+  randomSeed: 1733324301
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -832,9 +813,9 @@ ParticleSystem:
         m_Curve:
         - serializedVersion: 2
           time: 0
-          value: 0.58128077
-          inSlope: 0.68060184
-          outSlope: 0.68060184
+          value: 0
+          inSlope: 2.8817732
+          outSlope: 2.8817732
           tangentMode: 0
         - serializedVersion: 2
           time: 1

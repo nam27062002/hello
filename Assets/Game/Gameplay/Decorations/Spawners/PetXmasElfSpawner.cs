@@ -26,11 +26,13 @@ public class PetXmasElfSpawner : MonoBehaviour, ISpawner, IBroadcastListener {
 		// SpawnerManager.instance.Register(this, true);
 		m_entityInfo = new List<EntityInfo>();
 		Initialize();
-		Broadcaster.AddListener(BroadcastEventType.GAME_AREA_ENTER, this);
+        Broadcaster.AddListener(BroadcastEventType.POOL_MANAGER_READY, this);
+        Broadcaster.AddListener(BroadcastEventType.GAME_AREA_ENTER, this);
     }
 
 	void OnDestroy() {
-		Broadcaster.RemoveListener(BroadcastEventType.GAME_AREA_ENTER, this);
+        Broadcaster.RemoveListener(BroadcastEventType.POOL_MANAGER_READY, this);
+        Broadcaster.RemoveListener(BroadcastEventType.GAME_AREA_ENTER, this);
 	}
 
 
@@ -38,6 +40,7 @@ public class PetXmasElfSpawner : MonoBehaviour, ISpawner, IBroadcastListener {
     {
         switch( eventType )
         {
+            case BroadcastEventType.POOL_MANAGER_READY:
             case BroadcastEventType.GAME_AREA_ENTER:
             {
                 CreatePool();

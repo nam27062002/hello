@@ -33,9 +33,6 @@ namespace AI {
 			float m_range;
 			PetSearchCollectibleTargetData m_data;
 
-			// 
-			Transform m_eggTransform = null;
-			HungryLettersManager m_lettersManager = null;
 
 			public override StateComponentData CreateData() {
 				return new PetSearchCollectibleTargetData();
@@ -56,26 +53,6 @@ namespace AI {
 				m_data = m_pilot.GetComponentData<PetSearchCollectibleTargetData>();
 				m_range = m_owner.data.maxScale * m_data.m_dragonSizeRangeMultiplier;
 				m_range = m_range * m_range;
-				
-				switch( m_data.m_type )
-				{
-					case CollectibleType.EGG:
-					{
-						if (!CollectiblesManager.egg.collected)
-						{
-							m_eggTransform = CollectiblesManager.egg.transform;
-						}
-					}break;
-                    case CollectibleType.LETTERS:
-                    {
-                        m_lettersManager = FindObjectOfType<HungryLettersManager>();        
-                    }break;
-                    case CollectibleType.CHEST:
-                    {
-                        
-                    }break;
-				}
-
 			}
 
 			// The first element in _param must contain the amount of time without detecting an enemy
@@ -130,7 +107,7 @@ namespace AI {
 					}break;
 					case CollectibleType.LETTERS:
 					{
-						closestObject = m_lettersManager.GetClosestActiveLetter(centerPos);
+						closestObject = InstanceManager.hungryLettersManager.GetClosestActiveLetter(centerPos);
 					}break;
 				}
 				return closestObject;

@@ -303,7 +303,8 @@ public class HUDMessage : MonoBehaviour, IBroadcastListener {
 			case Type.BOOST_SPACE:			Messenger.RemoveListener(MessengerEvents.BOOST_SPACE, OnBoostSky); break;
 			case Type.TIMES_UP:				Messenger.RemoveListener(MessengerEvents.TIMES_UP, ShowCallback); break;
 			case Type.TARGET_REACHED:		Messenger.RemoveListener(MessengerEvents.TARGET_REACHED, ShowObjCompleted); break;
-		}
+            case Type.HAPPY_BIRTHDAY:       Messenger.RemoveListener(MessengerEvents.ANNIVERSARY_START_BDAY_MODE, OnStartBirthdayMode); break;
+        }
 
 		switch(m_hideMode) {
 			case HideMode.TIMER:			Messenger.RemoveListener(MessengerEvents.GAME_STARTED, OnGameStarted);	break;

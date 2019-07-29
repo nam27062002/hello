@@ -54,7 +54,7 @@ public class PowerTooltip : UITooltip
 		Debug.Assert(m_powerIcon != null, "Required field!");
 
         // Start hidden
-        animator.ForceHide(false);
+        if(animator != null) animator.ForceHide(false);
     }
 
 	//------------------------------------------------------------------------//
