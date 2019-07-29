@@ -145,6 +145,13 @@ public static class EditorAutomaticAddressables {
         List<AddressablesCatalogEntry> entries = new List<AddressablesCatalogEntry>();
         HashSet<string> bundlesSet = new HashSet<string>();
 
+
+        System.Type[] instanciableTypesAnimationControllers = new System.Type[] { typeof(UnityEngine.AnimatorOverrideController),
+                                                                                  typeof(UnityEditor.Animations.AnimatorController)};
+        GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/3D/Gameplay/Dragons/"), false, entries, bundlesSet, instanciableTypesAnimationControllers);
+
+
+
         System.Type[] instanciableTypes = new System.Type[] { typeof(UnityEngine.GameObject), typeof(UnityEditor.SceneAsset) };
         GetEntriesFromDirectory(new DirectoryInfo("Assets/AI"), false, null, bundlesSet);
         GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/3D/Gameplay/Entities"), false, null, bundlesSet);
@@ -164,7 +171,7 @@ public static class EditorAutomaticAddressables {
         GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/3D/Gameplay/Dragons/Skins/"), false, entries, bundlesSet, instanciableTypesAndMaterials);
         GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/3D/Gameplay/Dragons/Items/"), false, entries, bundlesSet, instanciableTypes);
 
-        // Disguise icons
+           // Disguise icons
         System.Type[] instanciableTypesTextures = new System.Type[] { typeof(UnityEngine.Texture2D) };
         GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/UI/Metagame/Dragons/Disguises/"), false, entries, bundlesSet, instanciableTypesTextures);
 
