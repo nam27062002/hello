@@ -1301,6 +1301,9 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4325334052691908}
+  - component: {fileID: 54876299373188932}
+  - component: {fileID: 114980518037403344}
+  - component: {fileID: 114477568169279626}
   m_Layer: 0
   m_Name: PF_DragonDarkMenu
   m_TagString: Untagged
@@ -1465,7 +1468,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1626783902470106}
   m_LocalRotation: {x: -0.043088973, y: 0.7300832, z: 0.04018112, w: 0.68081367}
-  m_LocalPosition: {x: 0.646, y: 0.671, z: -0.205}
+  m_LocalPosition: {x: 0.646, y: 0.671, z: -0.20500001}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4740442601637048}
@@ -1767,7 +1770,7 @@ Transform:
   m_GameObject: {fileID: 1895390293061604}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 3, y: 3, z: 3}
   m_Children:
   - {fileID: 4065659494419512}
   - {fileID: 4836784266048886}
@@ -2628,6 +2631,21 @@ Transform:
   m_Father: {fileID: 4065659494419512}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!54 &54876299373188932
+Rigidbody:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1895390293061604}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 1.5
+  m_AngularDrag: 0.05
+  m_UseGravity: 0
+  m_IsKinematic: 0
+  m_Interpolate: 1
+  m_Constraints: 56
+  m_CollisionDetection: 0
 --- !u!65 &65286152033053664
 BoxCollider:
   m_ObjectHideFlags: 1
@@ -2999,10 +3017,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_parentName: waist_JT
-  m_parentRoot: {fileID: 4325334052691908}
+  m_parentRoot: {fileID: 0}
   m_worldPositionStays: 0
   m_resetScale: 0
   m_when: 0
+--- !u!114 &114477568169279626
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1895390293061604}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 090ee74b4c8f446638d451fe04e3c3c2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_menuMode: 1
+  m_equipPets: 1
+  m_equipOnAwake: 1
 --- !u!114 &114490704811704678
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3147,6 +3179,43 @@ MonoBehaviour:
   m_worldPositionStays: 1
   m_resetScale: 0
   m_when: 0
+--- !u!114 &114980518037403344
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1895390293061604}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7df435df7e20c490390430baa726a0be, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_sku: dragon_dark
+  m_altAnimConfigs:
+  - m_range:
+      min: 4
+      max: 10
+    m_allowFaceDetails: 1
+    m_loopsMin: 3
+    m_loopsMax: 4
+    m_special: 0
+    m_timeToNext: 0
+    m_isPreferedAnimation: 0
+    m_animationLevel: 0
+  - m_range:
+      min: 6
+      max: 12
+    m_allowFaceDetails: 0
+    m_loopsMin: 1
+    m_loopsMax: 1
+    m_special: 0
+    m_timeToNext: 0
+    m_isPreferedAnimation: 0
+    m_animationLevel: 4
+  m_hasFire: 0
+  m_dragonFlameStandard: {fileID: 0}
+  m_bloodParticle: {fileID: 0}
+  m_extraParticles: []
 --- !u!137 &137088146943018662
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1
