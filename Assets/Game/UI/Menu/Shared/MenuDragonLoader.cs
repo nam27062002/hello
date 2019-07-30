@@ -415,7 +415,7 @@ public class MenuDragonLoader : MonoBehaviour {
 				if(Application.isPlaying) {
 					LoadDragon(DragonManager.currentDragon.sku, DragonManager.currentDragon.disguise);
 				} else {
-					LoadDragon(m_placeholderDragonSku);
+					LoadDragon(m_placeholderDragonSku, string.Empty, true);
 				}
 			} break;
 
@@ -423,18 +423,22 @@ public class MenuDragonLoader : MonoBehaviour {
 				if(Application.isPlaying) {
 					LoadDragon(InstanceManager.menuSceneController.selectedDragon);
 				} else {
-					LoadDragon(m_placeholderDragonSku);
+					LoadDragon(m_placeholderDragonSku, string.Empty, true);
 				}
 			} break;
 
 			case Mode.MANUAL: {
-				LoadDragon(currentDragonSku, currentDisguiseSku);
+				LoadDragon(currentDragonSku, currentDisguiseSku, !Application.isPlaying);
 			} break;
 
             case Mode.TOURNAMENT: {
-                    IDragonData dragonData = HDLiveDataManager.tournament.tournamentData.tournamentDef.dragonData;
-                    LoadDragon(dragonData.sku);
-                } break;
+				if(Application.isPlaying) {
+					IDragonData dragonData = HDLiveDataManager.tournament.tournamentData.tournamentDef.dragonData;
+					LoadDragon(dragonData.sku);
+				} else {
+					LoadDragon(m_placeholderDragonSku, string.Empty, true);
+				}
+            } break;
         }
 	}
 
