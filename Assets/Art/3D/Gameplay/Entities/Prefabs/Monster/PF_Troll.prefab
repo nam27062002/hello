@@ -1270,6 +1270,7 @@ MonoBehaviour:
   m_animA: guard
   m_animB: turn attack
   m_animC: 
+  m_materialChangeExceptions: []
   m_useFreezeParticle: 0
   m_freezeParticleScale: 1
   m_useMoveAnimInLove: 0
@@ -1490,6 +1491,19 @@ MonoBehaviour:
   m_onPanicAudio: 
   m_idleAudio: 
   m_skins: []
+  m_entity: {fileID: 114883298474649214}
+  m_animator: {fileID: 95761275247812264}
+  m_isAnimatorAvailable: 0
+  m_renderers:
+  - {fileID: 137681709434929498}
+  - {fileID: 199554606119916534}
+  m_specialAnimations: 000000
+  m_animA_Hash: -1357769780
+  m_animB_Hash: 395784863
+  m_animC_Hash: 0
+  m_animEvents: {fileID: 114626060187900646}
+  m_transform: {fileID: 4889497157332238}
+  m_view: {fileID: 4893368449749230}
   m_attackAudios:
   - hd_troll_attack
   - hd_troll_attack
@@ -1544,6 +1558,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_tags: 12288
+  m_otherSpawnables:
+  - {fileID: 114942837333358150}
+  - {fileID: 114605653605623280}
+  - {fileID: 114755393446273384}
+  m_otherSpawnablesCount: 3
+  m_pilot: {fileID: 114942837333358150}
+  m_machine: {fileID: 114605653605623280}
+  m_viewControl: {fileID: 114755393446273384}
+  m_equip: {fileID: 114230852818586306}
   m_sku: Troll
   m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1
@@ -1646,6 +1669,7 @@ MonoBehaviour:
   m_energy: 10
   m_energyDrainSec: 1
   m_energyRecoverSec: 1
+  m_machine: {fileID: 0}
   m_brainResource: {fileID: 11400000, guid: 3cd87b86bb6114016ac1664f93dfbd8a, type: 2}
   m_railSeparation:
     min: 2

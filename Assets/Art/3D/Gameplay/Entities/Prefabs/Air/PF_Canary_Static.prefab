@@ -51,6 +51,7 @@ MonoBehaviour:
   m_energy: 10
   m_energyDrainSec: 1
   m_energyRecoverSec: 1
+  m_machine: {fileID: 0}
   m_brainResource: {fileID: 0}
   m_railSeparation:
     min: 0.5
@@ -301,6 +302,18 @@ MonoBehaviour:
   m_onPanicAudio: hd_bird_alert
   m_idleAudio: hd_bird_idle
   m_skins: []
+  m_entity: {fileID: 11492212}
+  m_animator: {fileID: 95147606404118956}
+  m_isAnimatorAvailable: 0
+  m_renderers:
+  - {fileID: 137983815198093736}
+  m_specialAnimations: 000000
+  m_animA_Hash: 0
+  m_animB_Hash: 0
+  m_animC_Hash: 0
+  m_animEvents: {fileID: 0}
+  m_transform: {fileID: 444214}
+  m_view: {fileID: 4848449944061300}
 --- !u!114 &11492212
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -313,6 +326,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_tags: 6
+  m_otherSpawnables:
+  - {fileID: 114127650638097710}
+  - {fileID: 11430714}
+  - {fileID: 11439040}
+  m_otherSpawnablesCount: 3
+  m_pilot: {fileID: 11430714}
+  m_machine: {fileID: 114127650638097710}
+  m_viewControl: {fileID: 11439040}
+  m_equip: {fileID: 0}
   m_sku: Canary01_Flock
   m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1

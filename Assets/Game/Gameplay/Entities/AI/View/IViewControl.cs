@@ -1,15 +1,13 @@
 ﻿
-public interface IViewControl {
-	PreyAnimationEvents animationEvents { get; }
-	int vertexCount { get; }
-	int rendererCount { get; }
-    float freezeParticleScale { get; }
+public abstract class IViewControl : ISpawnable {
+	public abstract PreyAnimationEvents animationEvents { get; }
+	public abstract int vertexCount { get; }
+	public abstract int rendererCount { get; }
+    public abstract float freezeParticleScale { get; }
 
-    void PreDisable();
+    public abstract void PreDisable();
 
-	void Spawn(ISpawner _spawner);
+	public abstract void ForceGolden();
 
-	void ForceGolden();
-
-    void Freezing(float freezeLevel);
+    public abstract void Freezing(float freezeLevel);
 }

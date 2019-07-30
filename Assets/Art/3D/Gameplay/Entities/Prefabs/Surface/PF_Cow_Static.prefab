@@ -995,6 +995,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_tags: 2
+  m_otherSpawnables:
+  - {fileID: 11481650}
+  - {fileID: 114595925673888788}
+  - {fileID: 11485410}
+  m_otherSpawnablesCount: 3
+  m_pilot: {fileID: 11481650}
+  m_machine: {fileID: 114595925673888788}
+  m_viewControl: {fileID: 11485410}
+  m_equip: {fileID: 114653660921217360}
   m_sku: Cow
   m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1
@@ -1013,6 +1022,7 @@ MonoBehaviour:
   m_energy: 10
   m_energyDrainSec: 1
   m_energyRecoverSec: 1
+  m_machine: {fileID: 0}
   m_brainResource: {fileID: 11400000, guid: ae918391f7583944f947f900687234ec, type: 2}
   m_railSeparation:
     min: 2
@@ -1042,6 +1052,7 @@ MonoBehaviour:
   m_animA: 
   m_animB: 
   m_animC: 
+  m_materialChangeExceptions: []
   m_useFreezeParticle: 0
   m_freezeParticleScale: 1
   m_useMoveAnimInLove: 0
@@ -1257,6 +1268,18 @@ MonoBehaviour:
   m_onPanicAudio: hd_cow_alert
   m_idleAudio: 
   m_skins: []
+  m_entity: {fileID: 11469952}
+  m_animator: {fileID: 9539136}
+  m_isAnimatorAvailable: 0
+  m_renderers:
+  - {fileID: 13765156}
+  m_specialAnimations: 000000
+  m_animA_Hash: 0
+  m_animB_Hash: 0
+  m_animC_Hash: 0
+  m_animEvents: {fileID: 0}
+  m_transform: {fileID: 458018}
+  m_view: {fileID: 410874}
 --- !u!114 &11493972
 MonoBehaviour:
   m_ObjectHideFlags: 1

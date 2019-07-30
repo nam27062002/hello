@@ -221,6 +221,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_tags: 256
+  m_otherSpawnables:
+  - {fileID: 114298882449481204}
+  - {fileID: 114271306518064158}
+  - {fileID: 114301746842086958}
+  m_otherSpawnablesCount: 3
+  m_pilot: {fileID: 114301746842086958}
+  m_machine: {fileID: 114298882449481204}
+  m_viewControl: {fileID: 114271306518064158}
+  m_equip: {fileID: 0}
   m_sku: MineMedium
   m_hideNeedTierMessage: 1
   m_dieOutsideFrustum: 1
@@ -246,6 +255,7 @@ MonoBehaviour:
   m_animA: 
   m_animB: 
   m_animC: 
+  m_materialChangeExceptions: []
   m_useFreezeParticle: 0
   m_freezeParticleScale: 1
   m_useMoveAnimInLove: 0
@@ -461,6 +471,18 @@ MonoBehaviour:
   m_onPanicAudio: 
   m_idleAudio: 
   m_skins: []
+  m_entity: {fileID: 114070796696504166}
+  m_animator: {fileID: 0}
+  m_isAnimatorAvailable: 0
+  m_renderers:
+  - {fileID: 23145837268657622}
+  m_specialAnimations: 000000
+  m_animA_Hash: 0
+  m_animB_Hash: 0
+  m_animC_Hash: 0
+  m_animEvents: {fileID: 0}
+  m_transform: {fileID: 4952291739315502}
+  m_view: {fileID: 4015099390833410}
 --- !u!114 &114298882449481204
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -527,6 +549,7 @@ MonoBehaviour:
   m_energy: 10
   m_energyDrainSec: 1
   m_energyRecoverSec: 1
+  m_machine: {fileID: 0}
   m_brainResource: {fileID: 11400000, guid: 91d304c73d1dd42ca947fb91474a6252, type: 2}
   m_railSeparation:
     min: 0.5

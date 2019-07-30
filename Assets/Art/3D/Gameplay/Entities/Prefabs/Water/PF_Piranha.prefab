@@ -384,6 +384,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_tags: 16384
+  m_otherSpawnables:
+  - {fileID: 114000012500185668}
+  - {fileID: 114664032288207086}
+  - {fileID: 114000013479320964}
+  - {fileID: 114000011589734688}
+  m_otherSpawnablesCount: 4
+  m_pilot: {fileID: 114000012500185668}
+  m_machine: {fileID: 114664032288207086}
+  m_viewControl: {fileID: 114000013479320964}
+  m_equip: {fileID: 0}
   m_sku: Piranha
   m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1
@@ -503,6 +513,7 @@ MonoBehaviour:
   m_energy: 10
   m_energyDrainSec: 1
   m_energyRecoverSec: 1
+  m_machine: {fileID: 0}
   m_brainResource: {fileID: 11400000, guid: 4f9b057e9309c47f588d24b01c78688b, type: 2}
   m_railSeparation:
     min: 0.5
@@ -551,6 +562,7 @@ MonoBehaviour:
   m_animA: latch
   m_animB: 
   m_animC: 
+  m_materialChangeExceptions: []
   m_useFreezeParticle: 1
   m_freezeParticleScale: 1
   m_useMoveAnimInLove: 0
@@ -766,6 +778,18 @@ MonoBehaviour:
   m_onPanicAudio: 
   m_idleAudio: 
   m_skins: []
+  m_entity: {fileID: 114000010155194142}
+  m_animator: {fileID: 95236557894806110}
+  m_isAnimatorAvailable: 0
+  m_renderers:
+  - {fileID: 137223123823176414}
+  m_specialAnimations: 000000
+  m_animA_Hash: 1195109557
+  m_animB_Hash: 0
+  m_animC_Hash: 0
+  m_animEvents: {fileID: 114727592408664178}
+  m_transform: {fileID: 4000011300439392}
+  m_view: {fileID: 4020561647918162}
 --- !u!114 &114664032288207086
 MonoBehaviour:
   m_ObjectHideFlags: 1

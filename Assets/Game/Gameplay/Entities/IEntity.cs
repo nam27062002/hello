@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System;
 
-abstract public class IEntity :  MonoBehaviour, ISpawnable {
+abstract public class IEntity : ISpawnable {
     [Flags]
     public enum Tag {
         Animal      = (1 << 1),
@@ -62,17 +62,23 @@ abstract public class IEntity :  MonoBehaviour, ISpawnable {
 
 	public virtual float score { get { return 0; } }
 
+	[SerializeField]
 	public ISpawnable[] m_otherSpawnables;
+	[SerializeField]
 	protected int m_otherSpawnablesCount;
+	[SerializeField]
 	protected AI.AIPilot m_pilot;
 	public AI.AIPilot pilot { get { return m_pilot; } }
 
+	[SerializeField]
 	protected AI.IMachine m_machine;
 	public AI.IMachine machine { get { return m_machine; } }
 
+	[SerializeField]
 	protected IViewControl m_viewControl;
     public IViewControl viewControl { get { return m_viewControl; } }
 
+	[SerializeField]
     protected EntityEquip m_equip;
     public EntityEquip equip { get { return m_equip; } }
 
@@ -80,6 +86,12 @@ abstract public class IEntity :  MonoBehaviour, ISpawnable {
 
 
 	protected virtual void Awake() {
+        onDieStatus = new OnDieStatus();
+	}
+
+ 	[ContextMenu("Get References")]
+	public void GetReferences()
+	{
 		ISpawnable[] spawners = GetComponents<ISpawnable>();
 		m_otherSpawnables = new ISpawnable[ spawners.Length - 1 ];
 		m_otherSpawnablesCount = 0;
@@ -96,10 +108,9 @@ abstract public class IEntity :  MonoBehaviour, ISpawnable {
 		m_viewControl = GetComponent<IViewControl>();
         m_equip = GetComponent<EntityEquip>();
 
-        onDieStatus = new OnDieStatus();
 	}
 
-	public virtual void Spawn(ISpawner _spawner) {
+	override public void Spawn(ISpawner _spawner) {
 		m_health = m_maxHealth;
 
 		onDieStatus.isInFreeFall = false;
@@ -150,7 +161,7 @@ abstract public class IEntity :  MonoBehaviour, ISpawnable {
 		return new Reward();
 	}
 
-    public virtual void CustomUpdate() {
+    override public void CustomUpdate() {
 		for (int i = 0; i < m_otherSpawnablesCount; i++) {
 			m_otherSpawnables[i].CustomUpdate();
     	}

@@ -119,6 +119,7 @@ MonoBehaviour:
   m_animA: 
   m_animB: 
   m_animC: 
+  m_materialChangeExceptions: []
   m_useFreezeParticle: 0
   m_freezeParticleScale: 1
   m_useMoveAnimInLove: 0
@@ -334,6 +335,19 @@ MonoBehaviour:
   m_onPanicAudio: hd_villager_scream
   m_idleAudio: 
   m_skins: []
+  m_entity: {fileID: 11490718}
+  m_animator: {fileID: 95605868366492234}
+  m_isAnimatorAvailable: 0
+  m_renderers:
+  - {fileID: 137028602535831862}
+  - {fileID: 137688189455062042}
+  m_specialAnimations: 000000
+  m_animA_Hash: 0
+  m_animB_Hash: 0
+  m_animC_Hash: 0
+  m_animEvents: {fileID: 114773068625381422}
+  m_transform: {fileID: 464592}
+  m_view: {fileID: 4876215813334948}
 --- !u!114 &11429734
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -349,6 +363,7 @@ MonoBehaviour:
   m_energy: 10
   m_energyDrainSec: 1
   m_energyRecoverSec: 1
+  m_machine: {fileID: 0}
   m_brainResource: {fileID: 11400000, guid: 776837644347f4fd1b6fb6868af723eb, type: 2}
   m_railSeparation:
     min: 2
@@ -393,6 +408,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_tags: 32
+  m_otherSpawnables:
+  - {fileID: 11429734}
+  - {fileID: 114759142306896002}
+  - {fileID: 11425356}
+  m_otherSpawnablesCount: 3
+  m_pilot: {fileID: 11429734}
+  m_machine: {fileID: 114759142306896002}
+  m_viewControl: {fileID: 11425356}
+  m_equip: {fileID: 0}
   m_sku: Archer02
   m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1
@@ -729,6 +753,7 @@ MonoBehaviour:
     m_mass: 2.5
     m_defaultUpVector: 0
     m_orientationSpeed: 230
+    m_useAngularVelocity: 0
     m_faceDirection: 0
     m_limitHorizontalRotation: 0
     m_faceLeftAngle: -90

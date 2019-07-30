@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SimpleDevice : MonoBehaviour, ISpawnable, IBroadcastListener {
+public class SimpleDevice : ISpawnable, IBroadcastListener {
 
 	private AutoSpawnBehaviour m_autoSpawner;
 	private InflammableDecoration m_inflammable;
@@ -27,7 +27,7 @@ public class SimpleDevice : MonoBehaviour, ISpawnable, IBroadcastListener {
         Broadcaster.AddListener(BroadcastEventType.GAME_ENDED, this);
     }
 
-    public void Spawn(ISpawner _spawner) {
+    override public void Spawn(ISpawner _spawner) {
         OnRespawn();
     }
 
@@ -58,7 +58,7 @@ public class SimpleDevice : MonoBehaviour, ISpawnable, IBroadcastListener {
     }
 
     // Update is called once per frame
-    public void CustomUpdate() { } // Not used at the moment
+    override public void CustomUpdate() { } // Not used at the moment
     void Update () {
 		if (m_enabled) {
 			if (m_inflammable.IsBurning() 

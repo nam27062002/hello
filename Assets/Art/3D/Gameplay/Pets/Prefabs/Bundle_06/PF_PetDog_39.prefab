@@ -324,6 +324,7 @@ MonoBehaviour:
   m_animA: 
   m_animB: 
   m_animC: 
+  m_materialChangeExceptions: []
   m_useFreezeParticle: 0
   m_freezeParticleScale: 1
   m_useMoveAnimInLove: 0
@@ -539,6 +540,18 @@ MonoBehaviour:
   m_onPanicAudio: 
   m_idleAudio: 
   m_skins: []
+  m_entity: {fileID: 0}
+  m_animator: {fileID: 95428558869472570}
+  m_isAnimatorAvailable: 0
+  m_renderers:
+  - {fileID: 137485866724857652}
+  m_specialAnimations: 000000
+  m_animA_Hash: 0
+  m_animB_Hash: 0
+  m_animC_Hash: 0
+  m_animEvents: {fileID: 114881653337698488}
+  m_transform: {fileID: 424588}
+  m_view: {fileID: 4587793263031640}
 --- !u!114 &114000011716939334
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -554,6 +567,7 @@ MonoBehaviour:
   m_energy: 10
   m_energyDrainSec: 1
   m_energyRecoverSec: 1
+  m_machine: {fileID: 0}
   m_brainResource: {fileID: 11400000, guid: 4f812763403ad494e8dd0c3478ded54d, type: 2}
   m_railSeparation:
     min: 0.5
@@ -693,6 +707,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_tags: 0
+  m_otherSpawnables:
+  - {fileID: 114000011716939334}
+  - {fileID: 114686186145264284}
+  - {fileID: 114000011637225726}
+  - {fileID: 114000013147041998}
+  m_otherSpawnablesCount: 4
+  m_pilot: {fileID: 114000011716939334}
+  m_machine: {fileID: 114686186145264284}
+  m_viewControl: {fileID: 114000011637225726}
+  m_equip: {fileID: 0}
   m_sku: pet_39
 --- !u!114 &114382133897834958
 MonoBehaviour:

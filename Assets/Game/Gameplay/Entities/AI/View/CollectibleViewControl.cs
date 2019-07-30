@@ -3,7 +3,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-public class CollectibleViewControl : MonoBehaviour, IViewControl, ISpawnable {
+public class CollectibleViewControl : IViewControl {
 	
 	//-----------------------------------------------
 	[SeparatorAttribute("Collect")]
@@ -16,12 +16,12 @@ public class CollectibleViewControl : MonoBehaviour, IViewControl, ISpawnable {
 	private AudioObject m_onCollectAudioAO;
 
 	private int m_vertexCount;
-	public int vertexCount { get { return m_vertexCount; } }
+	override public int vertexCount { get { return m_vertexCount; } }
 
 	private int m_rendererCount;
-	public int rendererCount { get { return m_rendererCount; } }
+	override public int rendererCount { get { return m_rendererCount; } }
 
-    public float freezeParticleScale { get { return 1f; } }
+    override public float freezeParticleScale { get { return 1f; } }
 
 
     private Transform m_view;
@@ -32,7 +32,7 @@ public class CollectibleViewControl : MonoBehaviour, IViewControl, ISpawnable {
 
 	protected bool m_instantiateMaterials = false;
 
-	public PreyAnimationEvents animationEvents { get { return null; } }
+	override public PreyAnimationEvents animationEvents { get { return null; } }
 
     //-----------------------------------------------
     // Use this for initialization
@@ -91,7 +91,7 @@ public class CollectibleViewControl : MonoBehaviour, IViewControl, ISpawnable {
 		}
     }
 
-	public virtual void Spawn(ISpawner _spawner) {
+	override public void Spawn(ISpawner _spawner) {
 		// Restore materials
 		for (int i = 0; i < m_renderers.Length; i++) {
 			int id = m_renderers[i].GetInstanceID();
@@ -117,7 +117,7 @@ public class CollectibleViewControl : MonoBehaviour, IViewControl, ISpawnable {
     	RemoveAudios();
     }
 
-    public void PreDisable() {
+    override public void PreDisable() {
 		RemoveAudios();
     }
 
@@ -151,7 +151,7 @@ public class CollectibleViewControl : MonoBehaviour, IViewControl, ISpawnable {
 		return true;
 	}
 
-	public void ForceGolden(){}
-    public void Freezing(float freezeLevel) { }
-	public virtual void CustomUpdate() {}
+	override public void ForceGolden(){}
+    override public void Freezing(float freezeLevel) { }
+	override public void CustomUpdate() {}
 }
