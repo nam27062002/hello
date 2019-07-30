@@ -147,7 +147,9 @@ public class PopupAdBlocker : MonoBehaviour {
 
 		// Clear callbacks and register new one
 		OnAdFinished.RemoveAllListeners();
-		OnAdFinished.AddListener(_onAdFinishedCallback);
+		if (_onAdFinishedCallback != null) {
+			OnAdFinished.AddListener (_onAdFinishedCallback);
+		}
 
 		// If popup already opened, launch ad immediately
 		if(GetComponent<PopupController>().isOpen) {
