@@ -39,10 +39,22 @@ public class TrackerBirthdayModeTime : TrackerBaseTime {
         base.Clear();
     }
 
-    //------------------------------------------------------------------------//
-    // CALLBACKS															  //
-    //------------------------------------------------------------------------//
-    private void OnSuperSizeToggle(bool _activated, DragonSuperSize.Source _source) {
+	/// <summary>
+	/// Localizes and formats a value according to this tracker's type
+	/// (i.e. "52", "500 meters", "10 minutes").
+	/// </summary>
+	/// <returns>The localized and formatted value for this tracker's type.</returns>
+	/// <param name="_value">Value to be formatted.</param>
+	override public string FormatValue(long _value) {
+		// Format value as time
+		// [AOC] Digits formatting looks cooler in a leaderboard MM:SS
+		return TimeUtils.FormatTime(_value, TimeUtils.EFormat.DIGITS, 2, TimeUtils.EPrecision.MINUTES, true);
+	}
+
+	//------------------------------------------------------------------------//
+	// CALLBACKS															  //
+	//------------------------------------------------------------------------//
+	private void OnSuperSizeToggle(bool _activated, DragonSuperSize.Source _source) {
         if (_source == DragonSuperSize.Source.CAKE) {
             m_updateTime = _activated;
         }
