@@ -210,124 +210,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &93159279
-GameObject:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  serializedVersion: 5
-  m_Component:
-  - component: {fileID: 93159280}
-  - component: {fileID: 93159283}
-  - component: {fileID: 93159282}
-  - component: {fileID: 93159281}
-  - component: {fileID: 93159285}
-  - component: {fileID: 93159284}
-  m_Layer: 0
-  m_Name: CameraALL
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &93159280
-Transform:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 93159279}
-  m_LocalRotation: {x: 0.014629468, y: 0.029290343, z: -0.00042873205, w: 0.9994638}
-  m_LocalPosition: {x: -6, y: 3, z: -102.28}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 342381499}
-  m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!81 &93159281
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 93159279}
-  m_Enabled: 1
---- !u!124 &93159282
-Behaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 93159279}
-  m_Enabled: 1
---- !u!20 &93159283
-Camera:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 93159279}
-  m_Enabled: 1
-  serializedVersion: 2
-  m_ClearFlags: 2
-  m_BackGroundColor: {r: 0.2784314, g: 0.2784314, b: 0.2784314, a: 0}
-  m_NormalizedViewPortRect:
-    serializedVersion: 2
-    x: 0
-    y: 0
-    width: 1
-    height: 1
-  near clip plane: 0.3
-  far clip plane: 1000
-  field of view: 45
-  orthographic: 0
-  orthographic size: 5
-  m_Depth: -1
-  m_CullingMask:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_RenderingPath: -1
-  m_TargetTexture: {fileID: 0}
-  m_TargetDisplay: 0
-  m_TargetEye: 3
-  m_HDR: 1
-  m_AllowMSAA: 1
-  m_AllowDynamicResolution: 0
-  m_ForceIntoRT: 0
-  m_OcclusionCulling: 1
-  m_StereoConvergence: 10
-  m_StereoSeparation: 0.022
---- !u!114 &93159284
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 93159279}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 04c7f5b64c315416295b46ac2da9e7ce, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_lookAtPointLocal: {x: 0, y: 0, z: 0}
-  m_lookAtObject: {fileID: 1118247406}
-  m_editMode: 0
---- !u!114 &93159285
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 93159279}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c3dd3e70b2eda45d69149af105f063ed, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_moveSpeed: 0.5
-  m_rotationSpeed: 0.5
-  m_forwardKey: 113
-  m_backwardsKey: 101
-  m_leftKey: 97
-  m_rightKey: 100
-  m_upKey: 119
-  m_downKey: 115
-  m_rotationModifierKey: 304
-  m_rotateByDefault: 0
 --- !u!1 &111929159
 GameObject:
   m_ObjectHideFlags: 0
@@ -543,7 +425,7 @@ Transform:
   - {fileID: 610918727}
   - {fileID: 1115240278}
   m_Father: {fileID: 342381499}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &216131442
 GameObject:
@@ -823,6 +705,7 @@ GameObject:
   - component: {fileID: 282605528}
   - component: {fileID: 282605532}
   - component: {fileID: 282605531}
+  - component: {fileID: 282605533}
   m_Layer: 0
   m_Name: Camera4
   m_TagString: Untagged
@@ -907,7 +790,7 @@ MonoBehaviour:
   m_lookAt: {fileID: 419437600}
   m_rotationSpeed: 0.5
   m_zoomSpeed: 0.5
-  m_holdMouseButtonToRotate: -1
+  m_holdMouseButtonToRotate: 0
 --- !u!114 &282605532
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -929,6 +812,21 @@ MonoBehaviour:
   m_downKey: 115
   m_rotationModifierKey: 304
   m_rotateByDefault: 0
+--- !u!114 &282605533
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 282605526}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57eb57753cacb416cb07ebe4ecee6504, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_reverseOnDisable: 1
+  m_toActivateOnEnable:
+  - {fileID: 419437599}
+  m_toDeactivateOnEnable: []
 --- !u!1 &342381498
 GameObject:
   m_ObjectHideFlags: 0
@@ -954,7 +852,6 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 93159280}
   - {fileID: 1118247406}
   - {fileID: 1044823562}
   - {fileID: 1751500093}
@@ -1372,6 +1269,7 @@ GameObject:
   - component: {fileID: 610918728}
   - component: {fileID: 610918732}
   - component: {fileID: 610918731}
+  - component: {fileID: 610918733}
   m_Layer: 0
   m_Name: Camera3
   m_TagString: Untagged
@@ -1456,7 +1354,7 @@ MonoBehaviour:
   m_lookAt: {fileID: 1115240278}
   m_rotationSpeed: 0.5
   m_zoomSpeed: 0.5
-  m_holdMouseButtonToRotate: -1
+  m_holdMouseButtonToRotate: 0
 --- !u!114 &610918732
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1478,6 +1376,21 @@ MonoBehaviour:
   m_downKey: 115
   m_rotationModifierKey: 304
   m_rotateByDefault: 0
+--- !u!114 &610918733
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 610918726}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57eb57753cacb416cb07ebe4ecee6504, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_reverseOnDisable: 1
+  m_toActivateOnEnable:
+  - {fileID: 1115240277}
+  m_toDeactivateOnEnable: []
 --- !u!1 &789488493
 GameObject:
   m_ObjectHideFlags: 0
@@ -1857,7 +1770,7 @@ Transform:
   - {fileID: 1060251280}
   - {fileID: 239280428}
   m_Father: {fileID: 342381499}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1060251279
 GameObject:
@@ -1872,6 +1785,7 @@ GameObject:
   - component: {fileID: 1060251281}
   - component: {fileID: 1060251285}
   - component: {fileID: 1060251284}
+  - component: {fileID: 1060251286}
   m_Layer: 0
   m_Name: Camera1
   m_TagString: Untagged
@@ -1956,7 +1870,7 @@ MonoBehaviour:
   m_lookAt: {fileID: 239280428}
   m_rotationSpeed: 0.5
   m_zoomSpeed: 0.5
-  m_holdMouseButtonToRotate: -1
+  m_holdMouseButtonToRotate: 0
 --- !u!114 &1060251285
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1978,6 +1892,21 @@ MonoBehaviour:
   m_downKey: 115
   m_rotationModifierKey: 304
   m_rotateByDefault: 0
+--- !u!114 &1060251286
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1060251279}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57eb57753cacb416cb07ebe4ecee6504, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_reverseOnDisable: 1
+  m_toActivateOnEnable:
+  - {fileID: 239280427}
+  m_toDeactivateOnEnable: []
 --- !u!1 &1115240277
 GameObject:
   m_ObjectHideFlags: 0
@@ -2066,7 +1995,7 @@ Transform:
   - {fileID: 1845874745}
   - {fileID: 389686297}
   m_Father: {fileID: 342381499}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1190173269
 GameObject:
@@ -2081,6 +2010,7 @@ GameObject:
   - component: {fileID: 1190173271}
   - component: {fileID: 1190173275}
   - component: {fileID: 1190173274}
+  - component: {fileID: 1190173276}
   m_Layer: 0
   m_Name: CameraPet
   m_TagString: Untagged
@@ -2165,7 +2095,7 @@ MonoBehaviour:
   m_lookAt: {fileID: 789488494}
   m_rotationSpeed: 0.5
   m_zoomSpeed: 0.5
-  m_holdMouseButtonToRotate: -1
+  m_holdMouseButtonToRotate: 0
 --- !u!114 &1190173275
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2187,6 +2117,21 @@ MonoBehaviour:
   m_downKey: 115
   m_rotationModifierKey: 304
   m_rotateByDefault: 0
+--- !u!114 &1190173276
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1190173269}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57eb57753cacb416cb07ebe4ecee6504, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_reverseOnDisable: 1
+  m_toActivateOnEnable:
+  - {fileID: 789488493}
+  m_toDeactivateOnEnable: []
 --- !u!1001 &1242888621
 Prefab:
   m_ObjectHideFlags: 0
@@ -2448,7 +2393,6 @@ MonoBehaviour:
   - {fileID: 1912242797}
   - {fileID: 610918730}
   - {fileID: 282605530}
-  - {fileID: 93159283}
   - {fileID: 1190173273}
 --- !u!1 &1751500092
 GameObject:
@@ -2478,7 +2422,7 @@ Transform:
   - {fileID: 1912242794}
   - {fileID: 442115347}
   m_Father: {fileID: 342381499}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1785316349
 GameObject:
@@ -2600,6 +2544,7 @@ GameObject:
   - component: {fileID: 1845874746}
   - component: {fileID: 1845874750}
   - component: {fileID: 1845874749}
+  - component: {fileID: 1845874751}
   m_Layer: 0
   m_Name: Camera0
   m_TagString: Untagged
@@ -2684,7 +2629,7 @@ MonoBehaviour:
   m_lookAt: {fileID: 389686297}
   m_rotationSpeed: 0.5
   m_zoomSpeed: 0.5
-  m_holdMouseButtonToRotate: -1
+  m_holdMouseButtonToRotate: 0
 --- !u!114 &1845874750
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2706,6 +2651,21 @@ MonoBehaviour:
   m_downKey: 115
   m_rotationModifierKey: 304
   m_rotateByDefault: 0
+--- !u!114 &1845874751
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1845874744}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57eb57753cacb416cb07ebe4ecee6504, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_reverseOnDisable: 1
+  m_toActivateOnEnable:
+  - {fileID: 389686296}
+  m_toDeactivateOnEnable: []
 --- !u!1 &1899079041
 GameObject:
   m_ObjectHideFlags: 0
@@ -2734,7 +2694,7 @@ Transform:
   - {fileID: 282605527}
   - {fileID: 419437600}
   m_Father: {fileID: 342381499}
-  m_RootOrder: 5
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1912242793
 GameObject:
@@ -2749,6 +2709,7 @@ GameObject:
   - component: {fileID: 1912242795}
   - component: {fileID: 1912242799}
   - component: {fileID: 1912242798}
+  - component: {fileID: 1912242800}
   m_Layer: 0
   m_Name: Camera2
   m_TagString: Untagged
@@ -2833,7 +2794,7 @@ MonoBehaviour:
   m_lookAt: {fileID: 442115347}
   m_rotationSpeed: 0.5
   m_zoomSpeed: 0.5
-  m_holdMouseButtonToRotate: -1
+  m_holdMouseButtonToRotate: 0
 --- !u!114 &1912242799
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2855,3 +2816,18 @@ MonoBehaviour:
   m_downKey: 115
   m_rotationModifierKey: 304
   m_rotateByDefault: 0
+--- !u!114 &1912242800
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1912242793}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57eb57753cacb416cb07ebe4ecee6504, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_reverseOnDisable: 1
+  m_toActivateOnEnable:
+  - {fileID: 442115346}
+  m_toDeactivateOnEnable: []

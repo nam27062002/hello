@@ -1301,6 +1301,9 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4325334052691908}
+  - component: {fileID: 54797831966189698}
+  - component: {fileID: 114786052883213230}
+  - component: {fileID: 114701445256196734}
   m_Layer: 0
   m_Name: PF_DragonDarkResults
   m_TagString: Untagged
@@ -1465,7 +1468,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1626783902470106}
   m_LocalRotation: {x: -0.043088973, y: 0.7300832, z: 0.04018112, w: 0.68081367}
-  m_LocalPosition: {x: 0.646, y: 0.671, z: -0.205}
+  m_LocalPosition: {x: -5.494848, y: 61.570797, z: -2.8885937}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4740442601637048}
@@ -1766,8 +1769,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1895390293061604}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 18.422543, y: -182.69939, z: 8.050781}
+  m_LocalScale: {x: 3, y: 3, z: 3}
   m_Children:
   - {fileID: 4065659494419512}
   - {fileID: 4836784266048886}
@@ -1837,7 +1840,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1540283959208070}
   m_LocalRotation: {x: -0.043088973, y: 0.7300832, z: 0.04018112, w: 0.68081367}
-  m_LocalPosition: {x: -1.8343742, y: -1.5163015, z: -0.12999997}
+  m_LocalPosition: {x: -7.9752216, y: 59.383495, z: -2.8135936}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4881959555266542}
@@ -2370,7 +2373,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1803762514972714}
   m_LocalRotation: {x: -0, y: -0, z: 0.058916736, w: 0.9982629}
-  m_LocalPosition: {x: -2.0729256, y: 0.49761963, z: -0.009499868}
+  m_LocalPosition: {x: -8.213774, y: 61.397415, z: -2.6930938}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4853318803626262}
@@ -2628,6 +2631,21 @@ Transform:
   m_Father: {fileID: 4065659494419512}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!54 &54797831966189698
+Rigidbody:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1895390293061604}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 1.5
+  m_AngularDrag: 0.05
+  m_UseGravity: 0
+  m_IsKinematic: 0
+  m_Interpolate: 1
+  m_Constraints: 56
+  m_CollisionDetection: 0
 --- !u!65 &65286152033053664
 BoxCollider:
   m_ObjectHideFlags: 1
@@ -2999,7 +3017,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_parentName: waist_JT
-  m_parentRoot: {fileID: 4325334052691908}
+  m_parentRoot: {fileID: 0}
   m_worldPositionStays: 0
   m_resetScale: 0
   m_when: 0
@@ -3071,6 +3089,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_point: 26
+--- !u!114 &114701445256196734
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1895390293061604}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 090ee74b4c8f446638d451fe04e3c3c2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_menuMode: 1
+  m_equipPets: 1
+  m_equipOnAwake: 1
 --- !u!114 &114702307592920698
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3119,6 +3151,23 @@ MonoBehaviour:
   m_worldPositionStays: 1
   m_resetScale: 0
   m_when: 0
+--- !u!114 &114786052883213230
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1895390293061604}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7df435df7e20c490390430baa726a0be, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_sku: dragon_dark
+  m_altAnimConfigs: []
+  m_hasFire: 0
+  m_dragonFlameStandard: {fileID: 0}
+  m_bloodParticle: {fileID: 0}
+  m_extraParticles: []
 --- !u!114 &114807368567128156
 MonoBehaviour:
   m_ObjectHideFlags: 1
