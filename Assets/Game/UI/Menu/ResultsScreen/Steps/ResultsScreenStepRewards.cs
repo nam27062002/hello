@@ -34,7 +34,7 @@ public class ResultsScreenStepRewards : ResultsScreenSequenceStep {
 	[SerializeField] private NumberTextAnimator m_pcCounter = null;
 
 	// Internal
-	private CurrencyTransferFX m_coinsFX = null;
+	private ParticlesTrailFX m_coinsFX = null;
 
 	//------------------------------------------------------------------------//
 	// ResultsScreenStep IMPLEMENTATION										  //
@@ -92,8 +92,8 @@ public class ResultsScreenStepRewards : ResultsScreenSequenceStep {
 
 		// Show nice FX! (unless skipped)
 		if(!m_skipped) {
-			m_coinsFX = CurrencyTransferFX.LoadAndLaunch(
-				CurrencyTransferFX.COINS,
+			m_coinsFX = ParticlesTrailFX.LoadAndLaunch(
+				ParticlesTrailFX.COINS,
 				this.GetComponentInParent<Canvas>().transform,
 				m_coinsSpawnPoint.position + new Vector3(0f, 0f, -0.5f),		// Offset Z so the coins don't collide with the UI elements
 				m_coinsCounter.transform.position + new Vector3(0f, 0f, -0.5f)

@@ -196,7 +196,7 @@ public class PetDogSpawner : AbstractSpawner, IBroadcastListener  {
 		t.localScale = Vector3.one;
     }
 
-    protected override void OnMachineSpawned(AI.IMachine machine) {
+    protected override void OnMachineSpawned(AI.IMachine machine, uint index) {
         m_operator = machine;
     }
 

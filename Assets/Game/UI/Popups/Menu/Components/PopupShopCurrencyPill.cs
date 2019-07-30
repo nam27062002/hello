@@ -36,6 +36,7 @@ public class PopupShopCurrencyPill : IPopupShopPill {
 
 	[Space]
 	[SerializeField] private MultiCurrencyButton m_priceButtons = null;
+	[SerializeField] private LoadingDots m_loadingPricePlaceholder = null;
 
 	[Space]
 	[SerializeField] private GameObject m_bestValueObj = null;
@@ -48,7 +49,9 @@ public class PopupShopCurrencyPill : IPopupShopPill {
 
 	// Internal
 	private ResourceRequest m_iconLoadTask = null;
-	private static int s_loadingTaskPriority = -1;
+	private static int s_loadingTaskPriority = 0;
+
+	private bool m_waitingForPrice = false;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -66,6 +69,16 @@ public class PopupShopCurrencyPill : IPopupShopPill {
 				// Clear loading task
 				m_iconLoadTask = null;
 				s_loadingTaskPriority--;
+				if(s_loadingTaskPriority < 0) s_loadingTaskPriority = 0;	// Can't be negative!
+			}
+		}
+
+		// Waiting for price?
+		if(m_waitingForPrice) {
+			// Store initialized?
+			if(GameStoreManager.SharedInstance.IsReady()) {
+				// Yes! Refresh prices
+				RefreshPrice();
 			}
 		}
 	}
@@ -99,7 +112,7 @@ public class PopupShopCurrencyPill : IPopupShopPill {
 			s_loadingTaskPriority++;
 		}
 		m_iconLoadTask = Resources.LoadAsync<GameObject>(UIConstants.SHOP_ICONS_PATH + _def.Get("icon"));
-		m_iconLoadTask.priority = s_loadingTaskPriority;
+		m_iconLoadTask.priority = loadingTaskPriority;
 
 		// Amount
 		m_amountText.text = UIConstants.GetIconString(m_def.GetAsInt("amount"), m_type, UIConstants.IconAlignment.LEFT);
@@ -114,13 +127,34 @@ public class PopupShopCurrencyPill : IPopupShopPill {
 			m_bestValueObj.SetActive(m_def.GetAsBool("bestValue", false));
 		}
 
-		// Price
-		// Figure out currency first
-		// Special case for real money
-		m_currency = UserProfile.SkuToCurrency(m_def.Get("priceType"));
+		// Price and currency
 		m_price = m_def.GetAsFloat("price");
+		m_currency = UserProfile.SkuToCurrency(m_def.Get("priceType"));
+		RefreshPrice();
+	}
+
+	/// <summary>
+	/// Initialize price tags.
+	/// </summary>
+	private void RefreshPrice() {
+		// Special case for real money
 		if(m_currency == UserProfile.Currency.REAL) {
-			m_priceButtons.SetAmount(GetLocalizedIAPPrice(m_price), m_currency);
+			// If localized prices haven't been received from the store yet, wait for it
+			bool storeReady = GameStoreManager.SharedInstance.IsReady();
+
+			// Buttons
+			if(m_priceButtons != null) {
+				m_priceButtons.gameObject.SetActive(storeReady);
+				if(storeReady) {
+					m_priceButtons.SetAmount(GetLocalizedIAPPrice(m_price), m_currency);
+				}
+			}
+
+			// Loading placeholder
+			if(m_loadingPricePlaceholder != null) m_loadingPricePlaceholder.gameObject.SetActive(!storeReady);
+
+			// Internal flag
+			m_waitingForPrice = !storeReady;
 		} else {
 			m_priceButtons.SetAmount(m_price, m_currency);
 		}

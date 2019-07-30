@@ -13,6 +13,7 @@ using System;
 using System.Text;
 using System.Collections;
 using TMPro;
+using Fabric.Crashlytics;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -242,6 +243,24 @@ public class CPServerTab : MonoBehaviour {
     {
         FeatureSettingsManager manager = FeatureSettingsManager.instance;
         Output("CP2Enabled = " + manager.IsCP2Enabled() + " " + HDCP2Manager.Instance.GetDebugInfo());
+    }
+
+    public void OnCrashlyticsNonFatal()
+    {
+        Output("Crashlytics: non-fatal exception");
+        Crashlytics.ThrowNonFatal();
+    }
+
+    public void OnCrashlyticsCrash()
+    {
+        Output("Crashlytics: crash");
+        Crashlytics.Crash();
+    }
+
+    public void OnCrashlyticsRecordException()
+    {
+        Output("Crashlytics: record exception");
+        Fabric.Crashlytics.Crashlytics.RecordCustomException("Crashlytics", "Record custom exception test", "");
     }
 
     private void OnIntersitialDone( bool success )

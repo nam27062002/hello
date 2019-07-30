@@ -109,7 +109,7 @@ public class GameAds : UbiBCN.SingletonMonoBehaviour<GameAds> {
         CurrentAdPurpose = EAdPurpose.INTERSTITIAL;
 
         // Ad has been requested is tracked
-        HDTrackingManager.Instance.Notify_AdStarted(Track_EAdPurposeToAdType(CurrentAdPurpose), Track_EAdPurposeToRewardType(CurrentAdPurpose), true, adProvider.GetId());
+        HDTrackingManager.Instance.Notify_AdStarted(false, Track_EAdPurposeToAdType(CurrentAdPurpose), Track_EAdPurposeToRewardType(CurrentAdPurpose), true, adProvider.GetId());
 
         adProvider.ShowInterstitial(onShowInterstitial);       
 	}	
@@ -119,7 +119,7 @@ public class GameAds : UbiBCN.SingletonMonoBehaviour<GameAds> {
         if (FeatureSettingsManager.IsDebugEnabled)
             AdProvider.Log("onShowInterstitial success = " +giveReward + " duration = " + duration + " msg = " + msg);
 
-        HDTrackingManager.Instance.Notify_AdFinished(Track_EAdPurposeToAdType(CurrentAdPurpose), giveReward, false, duration, GetAdProvider().GetId());
+        HDTrackingManager.Instance.Notify_AdFinished(false, Track_EAdPurposeToAdType(CurrentAdPurpose), giveReward, false, duration, GetAdProvider().GetId());
 
         if ( giveReward ){
             PlayerPrefs.SetInt(RUNS_WITHOUT_ADS_KEY, 0);
@@ -153,7 +153,7 @@ public class GameAds : UbiBCN.SingletonMonoBehaviour<GameAds> {
         AdProvider adProvider = GetAdProvider();
 
 		// Ad has been requested is tracked
-        HDTrackingManager.Instance.Notify_AdStarted(Track_EAdPurposeToAdType(adPurpose), Track_EAdPurposeToRewardType(adPurpose), true, adProvider.GetId());
+        HDTrackingManager.Instance.Notify_AdStarted(true, Track_EAdPurposeToAdType(adPurpose), Track_EAdPurposeToRewardType(adPurpose), true, adProvider.GetId());
 
         if (FeatureSettingsManager.IsDebugEnabled)
             AdProvider.Log("ShowRewarded processing...");
@@ -167,7 +167,7 @@ public class GameAds : UbiBCN.SingletonMonoBehaviour<GameAds> {
         if (FeatureSettingsManager.IsDebugEnabled)
             AdProvider.Log("onShowRewarded success = " + giveReward + " duration = " + duration + " msg = " + msg);
 
-        HDTrackingManager.Instance.Notify_AdFinished(Track_EAdPurposeToAdType(CurrentAdPurpose), giveReward, false, duration, GetAdProvider().GetId());
+        HDTrackingManager.Instance.Notify_AdFinished(true, Track_EAdPurposeToAdType(CurrentAdPurpose), giveReward, false, duration, GetAdProvider().GetId());
 
         CurrentAdPurpose = EAdPurpose.NONE;
         

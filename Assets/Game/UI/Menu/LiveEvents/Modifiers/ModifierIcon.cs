@@ -66,13 +66,11 @@ public class ModifierIcon : MonoBehaviour, IBroadcastListener {
 		if(_trigger != trigger) return;
 
 		// Tooltip will take care of the rest
-		PowerTooltip powerTooltip = _tooltip.GetComponent<PowerTooltip>();
-		if(powerTooltip != null) {
+		ModifierTooltip modifierTooltip = _tooltip.GetComponent<ModifierTooltip>();
+		if(modifierTooltip != null) {
 			// Initialize
-			powerTooltip.InitFromDefinition(m_def);
+			modifierTooltip.InitFromDefinition(m_def);
 
-			// Set lock state
-			powerTooltip.SetLocked(false);	// Use lock icon visibility to determine whether power is locked or not
 		}
 
 		// Set arrow offset to make it point to this icon

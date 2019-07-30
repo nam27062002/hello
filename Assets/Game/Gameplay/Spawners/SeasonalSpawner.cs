@@ -6,6 +6,7 @@ public class SeasonalSpawner : Spawner {
 
     [System.Serializable]
     public class SeasonalConfig {
+        [SeasonList]
         public string m_season;
 
         [EntitySeasonalPrefabListAttribute]

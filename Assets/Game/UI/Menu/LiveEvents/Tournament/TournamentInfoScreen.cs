@@ -149,9 +149,20 @@ public class TournamentInfoScreen : MonoBehaviour, IBroadcastListener {
                     }
                 }
 
-                //MAP
-                m_mapContainer.SetActive(!string.IsNullOrEmpty(m_definition.m_goal.m_area));
-                m_areaText.text = m_definition.m_goal.m_area;
+                //STARTING POINT
+                string startingPointTID = m_definition.m_goal.m_spawnPointTID;
+
+                if (!string.IsNullOrEmpty(startingPointTID)){
+
+                    m_mapContainer.SetActive(true);
+                    m_areaText.text = LocalizationManager.SharedInstance.Localize(startingPointTID);
+
+                } else {
+
+                    m_mapContainer.SetActive(false);
+
+                }
+                
 
                 //LEADERBOARD
                 if (m_tournament.data.m_state <= HDLiveEventData.State.NOT_JOINED) {
@@ -250,7 +261,7 @@ public class TournamentInfoScreen : MonoBehaviour, IBroadcastListener {
         }
 
         // Get all the dependencies needed for the current skin (otherwise the dragon skin looks fuchsia)
-        AddressablesBatchHandle handle = HDAddressablesManager.Instance.GetHandleForDragonDisguise(m_definition.m_build.dragon);
+        AddressablesBatchHandle handle = HDAddressablesManager.Instance.GetHandleForDragonDisguise(m_definition.dragonData);
         List<string> dependencyIds = handle.DependencyIds;
 
         // Make sure all the dragon resources are being loaded

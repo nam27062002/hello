@@ -38,10 +38,16 @@ public class PopupShopOffersPill : IPopupShopPill {
 	[SerializeField] private Localizer m_packNameText = null;
 	[SerializeField] private Localizer m_discountText = null;
 	[SerializeField] private Localizer m_remainingTimeText = null;
+
 	[Space]
 	[SerializeField] private Text m_priceText = null;
 	[SerializeField] private Text m_previousPriceText = null;
 	[SerializeField] private GameObject m_featuredHighlight = null;
+
+	[Space]
+	[SerializeField] private GameObject m_priceButtonGroup = null;
+	[SerializeField] private GameObject m_loadingPricePlaceholder = null;
+
 	[Separator("Optional Decorations")]
 	[SerializeField] private UIGradient m_backgroundGradient = null;
 	[SerializeField] private UIGradient m_frameGradientLeft = null;
@@ -54,7 +60,9 @@ public class PopupShopOffersPill : IPopupShopPill {
 	}
 
 	// Internal
+	private float m_discount = 0f;
 	private float m_previousPrice = 0f;
+	private bool m_waitingForPrice = false;
 	private StringBuilder m_sb = new StringBuilder();
 
 	//------------------------------------------------------------------------//
@@ -64,7 +72,14 @@ public class PopupShopOffersPill : IPopupShopPill {
 	/// Called every frame.
 	/// </summary>
 	private void Update() {
-		
+		// Waiting for price?
+		if(m_waitingForPrice) {
+			// Store initialized?
+			if(GameStoreManager.SharedInstance.IsReady()) {
+				// Yes! Refresh prices
+				RefreshPrice();
+			}
+		}
 	}
 
 	//------------------------------------------------------------------------//
@@ -86,39 +101,21 @@ public class PopupShopOffersPill : IPopupShopPill {
 		}
 		this.gameObject.SetActive(true);
 
-		// Store def
+		// Store def and some vars
 		m_def = _pack.def;
+		m_currency = UserProfile.Currency.REAL; // For now offer packs are only bought wtih real money!
 
-		// Pricing
-		m_currency = UserProfile.Currency.REAL;	// For now offer packs are only bought wtih real money!
-		m_price = m_def.GetAsFloat("refPrice");
-		StoreManager.StoreProduct productInfo = null;
-		if(GameStoreManager.SharedInstance.IsReady()) {
-			productInfo = GameStoreManager.SharedInstance.GetStoreProduct(GetIAPSku());
-			if(productInfo != null) {
-				// Price is localized by the store api, if available
-				m_price = productInfo.m_fLocalisedPriceValue;
-			}
-		}
-
-		// Compute price before applying the discount
-		float discount = m_pack.def.GetAsFloat("discount", 0f);
-		bool validDiscount = discount > 0f;
+		// Discount
+		m_discount = m_pack.def.GetAsFloat("discount", 0f);
+		bool validDiscount = m_discount > 0f;
 		if(validDiscount) {
-			discount = Mathf.Clamp(discount, 0.01f, 0.99f); // [AOC] Just to be sure input discount is valid
-			m_previousPrice = m_price / (1f - discount);
-
-			// [AOC] Beautify original price so it's more credible
-			// 		 Put the same decimal part as the actual price
-			m_previousPrice = Mathf.Floor(m_previousPrice) + (m_price - Mathf.Floor(m_price));
-		} else {
-			m_previousPrice = m_price;
+			m_discount = Mathf.Clamp(m_discount, 0.01f, 0.99f); // [AOC] Just to be sure input discount is valid
 		}
-
+		
 		// Init visuals
 		OfferColorGradient gradientSetup = null;
 		if(validDiscount) {
-			gradientSetup = OfferItemPrefabs.GetGradient(discount);
+			gradientSetup = OfferItemPrefabs.GetGradient(m_discount);
 		} else {
 			gradientSetup = OfferItemPrefabs.GetGradient(0.9f);	// [AOC] Hardcoded!! Use high-discount colors
 		}
@@ -139,51 +136,8 @@ public class PopupShopOffersPill : IPopupShopPill {
 			m_discountText.text.colorGradient = Gradient4ToVertexGradient(gradientSetup.discountGradient);
 			m_discountText.Localize(
 				"TID_OFFER_DISCOUNT_PERCENTAGE",
-				StringUtils.FormatNumber(discount * 100f, 0)
+				StringUtils.FormatNumber(m_discount * 100f, 0)
 			);
-		}
-
-		// Price
-		string localizedPrice = GetLocalizedIAPPrice(m_price);
-		m_priceText.text = localizedPrice;
-
-		// Original price
-		// Don't show if there is no valid discount
-		m_previousPriceText.gameObject.SetActive(validDiscount);
-		if(validDiscount) {
-			// [AOC] This gets quite tricky. We will try to keep the format of the 
-			//		 localized price (given by the store), but replacing the actual amount.
-			// Supported cases: "$150" "150€" "$ 150" "150 €"
-			string localizedPreviousPrice = StringUtils.FormatNumber(m_previousPrice, 2);
-			string currencySymbol = (productInfo != null) ? productInfo.m_strCurrencySymbol : "$";
-
-			// a) "$150"
-			if(localizedPrice.StartsWith(currencySymbol, StringComparison.InvariantCultureIgnoreCase)) {
-				localizedPreviousPrice = currencySymbol + localizedPreviousPrice;
-			}
-
-			// b) "$ 150"
-			else if(localizedPrice.StartsWith(currencySymbol + " ", StringComparison.InvariantCultureIgnoreCase)) {
-				localizedPreviousPrice = currencySymbol + " " + localizedPreviousPrice;
-			}
-
-			// c) "150€"
-			else if(localizedPrice.EndsWith(currencySymbol, StringComparison.InvariantCultureIgnoreCase)) {
-				localizedPreviousPrice = localizedPreviousPrice + currencySymbol;
-			}
-
-			// d) "150 €"
-			else if(localizedPrice.EndsWith(" " + currencySymbol, StringComparison.InvariantCultureIgnoreCase)) {
-				localizedPreviousPrice = localizedPreviousPrice + " " + currencySymbol;
-			}
-
-			// e) Anything else
-			else {
-				// Show just the formatted number - nothing to do
-			}
-
-			// Done! Set text
-			m_previousPriceText.text = localizedPreviousPrice;
 		}
 
 		// Featured highlight
@@ -219,6 +173,99 @@ public class PopupShopOffersPill : IPopupShopPill {
 
 		if(m_frameGradientRight != null) {
 			m_frameGradientRight.gradient.Set(gradientSetup.pillFrameGradient);
+		}
+
+		// Price texts
+		RefreshPrice();
+	}
+
+	/// <summary>
+	/// Refresh all price-related texts.
+	/// </summary>
+	private void RefreshPrice() {
+		// If localized prices haven't been received from the store yet, wait for it
+		bool storeReady = GameStoreManager.SharedInstance.IsReady();
+
+		// Loading placeholder
+		if(m_loadingPricePlaceholder != null) m_loadingPricePlaceholder.gameObject.SetActive(!storeReady);
+
+		// Internal flag
+		m_waitingForPrice = !storeReady;
+
+		// Initialize price
+		// Get localized price
+		m_price = m_def.GetAsFloat("refPrice");
+		StoreManager.StoreProduct productInfo = null;
+		if(GameStoreManager.SharedInstance.IsReady()) {
+			productInfo = GameStoreManager.SharedInstance.GetStoreProduct(GetIAPSku());
+			if(productInfo != null) {
+				// Price is localized by the store api, if available
+				m_price = productInfo.m_fLocalisedPriceValue;
+			}
+		}
+
+		// Compute previous price
+		bool validDiscount = m_discount > 0f;
+		if(validDiscount) {
+			m_previousPrice = m_price / (1f - m_discount);
+
+			// [AOC] Beautify original price so it's more credible
+			// 		 Put the same decimal part as the actual price
+			m_previousPrice = Mathf.Floor(m_previousPrice) + (m_price - Mathf.Floor(m_price));
+		} else {
+			m_previousPrice = m_price;
+		}
+
+		// Buttons
+		if(m_priceButtonGroup != null) {
+			// Show?
+			m_priceButtonGroup.gameObject.SetActive(storeReady);
+
+			// If store is ready, initialize textfields
+			if(storeReady) {
+				// Price Text
+				string localizedPrice = GetLocalizedIAPPrice(m_price);
+				m_priceText.text = localizedPrice;
+
+				// Original price
+				// Don't show if there is no valid discount
+				m_previousPriceText.gameObject.SetActive(validDiscount);
+				if(validDiscount) {
+					// [AOC] This gets quite tricky. We will try to keep the format of the 
+					//		 localized price (given by the store), but replacing the actual amount.
+					// Supported cases: "$150" "150€" "$ 150" "150 €"
+					string localizedPreviousPrice = StringUtils.FormatNumber(m_previousPrice, 2);
+					string currencySymbol = (productInfo != null) ? productInfo.m_strCurrencySymbol : "$";
+
+					// a) "$150"
+					if(localizedPrice.StartsWith(currencySymbol, StringComparison.InvariantCultureIgnoreCase)) {
+						localizedPreviousPrice = currencySymbol + localizedPreviousPrice;
+					}
+
+					// b) "$ 150"
+					else if(localizedPrice.StartsWith(currencySymbol + " ", StringComparison.InvariantCultureIgnoreCase)) {
+						localizedPreviousPrice = currencySymbol + " " + localizedPreviousPrice;
+					}
+
+					// c) "150€"
+					else if(localizedPrice.EndsWith(currencySymbol, StringComparison.InvariantCultureIgnoreCase)) {
+						localizedPreviousPrice = localizedPreviousPrice + currencySymbol;
+					}
+
+					// d) "150 €"
+					else if(localizedPrice.EndsWith(" " + currencySymbol, StringComparison.InvariantCultureIgnoreCase)) {
+						localizedPreviousPrice = localizedPreviousPrice + " " + currencySymbol;
+					}
+
+					// e) Anything else
+					else {
+						// Show just the formatted number - nothing to do
+					}
+
+					// Done! Set text
+					m_previousPriceText.text = localizedPreviousPrice;
+				}
+			}
 		}
 	}
 

@@ -52,10 +52,19 @@ public abstract class  CaptureTool : MonoBehaviour {
 		COUNT
 	}
 
+	protected enum FileNameMode {
+		UNIQUE,
+		DATE,
+		REPLACE
+	}
+
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed
+	[Separator("Photo Setup")]
+	[SerializeField] private FileNameMode m_nameMode = FileNameMode.UNIQUE;
+
 	[Separator("Photo Setup")]
 	[SerializeField] private RectTransform m_cropGuide = null;
 	[SerializeField] private Dropdown m_modeDropdown = null;
@@ -430,17 +439,39 @@ public abstract class  CaptureTool : MonoBehaviour {
 		if(m_picture == null) return;
 
 		// Compose screenshot path
-		string filePath = GetSaveDirPath() + "/" + GetFilename() + "_" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".png";
-		Debug.Log("Saving screenshot at " + filePath);
+		string dirPath = GetSaveDirPath() + "/";
+		string filename = GetFilename();
+		string extension = ".png";
+		string fullPath = "";
+		switch(m_nameMode) {
+			case FileNameMode.DATE: {
+				fullPath = dirPath + filename + "_" + DateTime.Now.ToString("yyyyMMddHHmmss") + extension;
+			} break;
+
+			case FileNameMode.UNIQUE: {
+					int i = 0;
+					do {
+						// An file already exists with this name?
+						fullPath = dirPath + filename + (i > 0 ? "_" + i : "") + extension;
+						++i;
+					} while(File.Exists(fullPath));
+			} break;
+
+			case FileNameMode.REPLACE: {
+				fullPath = dirPath + filename + extension;
+			} break;
+		}
+
+		Debug.Log("Saving screenshot at " + fullPath);
 
 		// Overwrite any existing picture with the same name
-		if(File.Exists(filePath)) {
-			File.Delete(filePath);
+		if(File.Exists(fullPath)) {
+			File.Delete(fullPath);
 		}
 
 		// Save picture!
 		byte[] bytes = m_picture.EncodeToPNG();
-		File.WriteAllBytes(filePath, bytes);
+		File.WriteAllBytes(fullPath, bytes);
 
 		// Close popup
 		m_picturePreviewPopup.SetActive(false);

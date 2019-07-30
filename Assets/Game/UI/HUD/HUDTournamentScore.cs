@@ -89,6 +89,10 @@ public class HUDTournamentScore : HudWidget {
 		return ret;
     }
 
+	protected override float GetMinimumAnimInterval() {
+		return 0.25f;
+	}
+
 	//------------------------------------------------------------------//
 	// INTERNAL UTILS													//
 	//------------------------------------------------------------------//

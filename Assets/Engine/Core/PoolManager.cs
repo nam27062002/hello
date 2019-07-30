@@ -23,10 +23,10 @@ public class PoolManager : UbiBCN.SingletonMonoBehaviour<PoolManager> {
     public static bool sm_printPools = false;
 
 	// Entity Pools requests (delayed pool manager)
-	private SortedDictionary<string, PoolContainer> m_pools = new SortedDictionary<string, PoolContainer>();
+	private Dictionary<string, PoolContainer> m_pools = new Dictionary<string, PoolContainer>();
 	private List<Pool> m_iterator = new List<Pool>();
 
-	private SortedDictionary<string, int> m_poolSizes = new SortedDictionary<string, int>();
+	private Dictionary<string, int> m_poolSizes = new Dictionary<string, int>();
 
 
 	private float m_printTimer = 10f;
@@ -64,6 +64,7 @@ public class PoolManager : UbiBCN.SingletonMonoBehaviour<PoolManager> {
 	public static void PreBuild() {
         Clear(true);
 		instance.GetPoolSizesForCurrentArea();
+		Broadcaster.Broadcast(BroadcastEventType.POOL_MANAGER_READY);
 	}
 
 	public static void Build() { 
@@ -119,9 +120,11 @@ public class PoolManager : UbiBCN.SingletonMonoBehaviour<PoolManager> {
 					string fileName = "NPC_Pools_" + LevelManager.currentLevelData.def.sku + "_" + LevelManager.currentArea + ".xml";
 					using (StreamWriter sw = new StreamWriter(fileName, false)) {
 						sw.WriteLine("<Definitions>");
-						foreach (KeyValuePair<string, PoolContainer> pair in m_pools) {
-							if (pair.Value.pool != null) {
-								sw.WriteLine("<Definition sku=\"" + pair.Key + "\" poolSize=\"" + pair.Value.pool.Size() + "\"/>");
+						List<string> keys = m_pools.Keys.ToList();
+						keys.Sort();
+						for( int i = 0; i<keys.Count; i++ ){
+							if ( m_pools[ keys[i] ].pool != null) {
+								sw.WriteLine("<Definition sku=\"" + keys[i] + "\" poolSize=\"" + m_pools[ keys[i] ].pool.Size() + "\"/>");
 							}
 						}
 						sw.WriteLine("</Definitions>");

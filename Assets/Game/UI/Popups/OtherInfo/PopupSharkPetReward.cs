@@ -22,7 +22,7 @@ public class PopupSharkPetReward : PopupInfoPet {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	public const string PATH = "UI/Popups/OtherInfo/PF_PopupSharkPetReward";
+	new public const string PATH = "UI/Popups/OtherInfo/PF_PopupSharkPetReward";
 	public const string PET_SKU = "pet_68";
 
 	//------------------------------------------------------------------------//

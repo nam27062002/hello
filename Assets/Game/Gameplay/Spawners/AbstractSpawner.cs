@@ -201,8 +201,6 @@ public abstract class AbstractSpawner : MonoBehaviour, ISpawner
 				OnEntitySpawned(entity, EntitiesSpawned, startPosition);
             }
 
-			EntitiesSpawned++;
-
 			IViewControl view = spawning.GetComponent<IViewControl>();
 			if (view != null) {
 				view.Spawn(this);
@@ -211,7 +209,7 @@ public abstract class AbstractSpawner : MonoBehaviour, ISpawner
 			AI.IMachine machine = spawning.GetComponent<AI.IMachine>();
             if (machine != null) {
                 machine.Spawn(this);
-                OnMachineSpawned(machine);
+                OnMachineSpawned(machine, EntitiesSpawned);
 			}
 
             AI.AIPilot pilot = spawning.GetComponent<AI.AIPilot>();
@@ -228,6 +226,8 @@ public abstract class AbstractSpawner : MonoBehaviour, ISpawner
                 components = spawning.GetComponents<ISpawnable>();
             }
 
+			EntitiesSpawned++;
+
             foreach (ISpawnable component in components)
             {
                 if (component != entity && component != pilot && component != machine && component != view)
@@ -242,7 +242,7 @@ public abstract class AbstractSpawner : MonoBehaviour, ISpawner
         }
     }        
 
-    public void ForceRemoveEntities() {
+    public virtual void ForceRemoveEntities() {
         for (int i = 0; i < EntitiesToSpawn; i++) {
             if (m_entities[i] != null) {
                 RemoveEntity(m_entities[i], false);
@@ -267,7 +267,7 @@ public abstract class AbstractSpawner : MonoBehaviour, ISpawner
 			entity.SetGolden(Spawner.EntityGoldMode.Gold);
     }
 
-    public void RemoveEntity(IEntity _entity, bool _killedByPlayer) {
+    public virtual void RemoveEntity(IEntity _entity, bool _killedByPlayer) {
         int index = -1;
         for (int i = 0; i < EntitiesToSpawn && index == -1; i++) {
             if (m_entities[i] != null && m_entities[i] == _entity) {
@@ -276,15 +276,13 @@ public abstract class AbstractSpawner : MonoBehaviour, ISpawner
         }
 
         if (index > -1) {
-            if (_killedByPlayer)
-            {
+            if (_killedByPlayer) {
                 EntitiesKilled++;
             }
             EntitiesAlive--;
 
 			PoolHandler handler = GetPoolHandler((uint)index);
-            if (ProfilerSettingsManager.ENABLED)
-            {               
+            if (ProfilerSettingsManager.ENABLED) {               
 				SpawnerManager.RemoveFromTotalLogicUnits(1, GetPrefabNameToSpawn(((uint)index)));
             }
 
@@ -384,7 +382,7 @@ public abstract class AbstractSpawner : MonoBehaviour, ISpawner
 	protected abstract string GetPrefabNameToSpawn(uint index);
     protected virtual void OnCreateInstance(uint index, GameObject go) {}    
 	protected virtual void OnEntitySpawned(IEntity spawning, uint index, Vector3 originPos) {}
-	protected virtual void OnMachineSpawned(AI.IMachine machine) {}
+	protected virtual void OnMachineSpawned(AI.IMachine machine, uint index) {}
     protected virtual void OnPilotSpawned(AI.Pilot pilot) {}
     protected virtual void OnAllEntitiesRespawned() {}    
 	protected virtual void OnRemoveEntity(IEntity _entity, int index, bool _killedByPlayer) {}

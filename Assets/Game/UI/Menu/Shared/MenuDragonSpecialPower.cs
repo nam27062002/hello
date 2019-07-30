@@ -65,7 +65,7 @@ public class MenuDragonSpecialPower : MonoBehaviour {
             m_data = _data;
 
             // Get all the dependencies needed for the current skin
-            AddressablesBatchHandle handle = HDAddressablesManager.Instance.GetHandleForDragonDisguise(_data.sku);
+            AddressablesBatchHandle handle = HDAddressablesManager.Instance.GetHandleForDragonDisguise(_data);
             List<string> dependencyIds = handle.DependencyIds;
 
             // Load de the dependencies asynchronously

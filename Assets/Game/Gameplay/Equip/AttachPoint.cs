@@ -14,15 +14,12 @@ public class AttachPoint : MonoBehaviour {
 
 
 	public void Unequip(bool _destroyItem) {
-		if(m_item == null) return;
+		if (m_item == null) return;
 
-		if(_destroyItem) {
-			if ( Application.isPlaying )
-			{
+		if (_destroyItem) {
+			if (Application.isPlaying) {
 				GameObject.Destroy(m_item.gameObject);
-			}
-			else
-			{
+			} else {
 				GameObject.DestroyImmediate(m_item.gameObject);
 			}
 		}
@@ -57,12 +54,21 @@ public class AttachPoint : MonoBehaviour {
 		}
 	}
 
-	public void EquipAccessory( Equipable _accesory ) {
+	public void EquipAccessory( Equipable _accesory) {
 		m_item = _accesory;
 		m_item.transform.parent = transform;
 		m_item.transform.localPosition = Vector3.zero;
 		m_item.transform.localScale = Vector3.one;
 		m_item.transform.localRotation = Quaternion.identity;
+		m_item.gameObject.SetLayerRecursively(transform.gameObject.layer);
+	}
+
+	public void EquipAccessory( Equipable _accesory, Vector3 _position, Vector3 _scale, Vector3 _rotation) {
+		m_item = _accesory;
+		m_item.transform.parent = transform;
+		m_item.transform.localPosition = _position;
+		m_item.transform.localScale = _scale;
+		m_item.transform.localRotation = Quaternion.Euler(_rotation);
 		m_item.gameObject.SetLayerRecursively(transform.gameObject.layer);
 	}
 

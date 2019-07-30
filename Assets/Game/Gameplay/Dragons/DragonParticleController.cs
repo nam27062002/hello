@@ -119,6 +119,11 @@ public class DragonParticleController : MonoBehaviour, IBroadcastListener
 	{
 		DragonAnimationEvents dragonAnimEvents = transform.parent.GetComponentInChildren<DragonAnimationEvents>();
 		
+		m_dargonMotion = transform.parent.GetComponent<DragonMotion>();
+		m_dragonEat = transform.parent.GetComponent<DragonEatBehaviour>();
+		m_dragonEquip = transform.parent.GetComponent<DragonEquip>();	
+		
+		
 		// Instantiate Particles (at start so we don't feel any framerate drop during gameplay)
 		m_levelUpInstance = ParticleManager.InitParticle(m_levelUp, m_levelUpAnchor);
 		// m_reviveInstance = InitParticles(m_revive, m_reviveAnchor);
@@ -134,9 +139,6 @@ public class DragonParticleController : MonoBehaviour, IBroadcastListener
 		}
 
 		m_cloudTrailInstance = ParticleManager.InitParticle(m_cloudTrail, m_cloudTrailAnchor);
-		m_dargonMotion = transform.parent.GetComponent<DragonMotion>();
-		m_dragonEat = transform.parent.GetComponent<DragonEatBehaviour>();
-		m_dragonEquip = transform.parent.GetComponent<DragonEquip>();
 		m_waterDepth = InstanceManager.player.data.scale + m_waterDepthIncrease;
 		_transform = transform;
 

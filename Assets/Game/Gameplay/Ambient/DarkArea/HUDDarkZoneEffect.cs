@@ -22,6 +22,33 @@ public class HUDDarkZoneEffect : MonoBehaviour {
     private float m_currentRadius;
     private float m_currentFallOff;
 
+    private static HUDDarkZoneEffect m_instance = null;
+
+    public static void hotInitialize(CandleData candleData)
+    {
+        if (m_instance != null)
+        {
+
+            if (!m_instance.m_enableState)
+            {
+                m_instance.m_blackImage.material = m_instance.m_candleMaterial;
+                m_instance.m_blackImage.enabled = true;
+                m_instance.m_enableState = true;
+                m_instance.m_currentTrigger = null;
+                m_instance.m_currentColor = candleData.m_Color;
+                m_instance.m_currentColor2 = candleData.m_Color2;
+                m_instance.m_currentRadius = candleData.m_radius;
+                m_instance.m_currentFallOff = candleData.m_fallOff;
+//                m_instance.setMaterialParameters(candleData.m_Color, candleData.m_Color2, candleData.m_radius, candleData.m_fallOff);
+            }
+        }
+    }
+
+    public static bool IsEnabled
+    {
+        get { return m_instance != null ? m_instance.m_enableState : false; }
+    }
+
     [Serializable]
     public class CandleData
     {
@@ -47,19 +74,11 @@ public class HUDDarkZoneEffect : MonoBehaviour {
     };
 
     private CandleData m_defaultCandleData = new CandleData(0.5f, 0.5f, Color.black, Color.black);
-
-    private struct matInstanceBackup
-    {
-        public Material mat;
-        public int renderQueue;
-    };
     public float m_fireRushMultiplier = 1.0f;
-
-
-    private List<matInstanceBackup> fireRushMats = null;// new List<Material>();
 
     // Use this for initialization
     void Start () {
+        m_instance = this;
         m_blackImage = GetComponent<MeshRenderer>();
 //        m_candleMaterial = new Material(m_candleEffect);
         m_oldMaterial = m_blackImage.material;
@@ -99,7 +118,6 @@ public class HUDDarkZoneEffect : MonoBehaviour {
                 m_blackImage.material = m_candleMaterial;
                 m_blackImage.enabled = true;
                 m_enableState = true;
-                setFireRushMaterials(true);
             }
         }
         else
@@ -111,7 +129,6 @@ public class HUDDarkZoneEffect : MonoBehaviour {
                 if (cd.m_noEffect)  // disable dark screen and effect
                 {
                     m_blackImage.material = m_oldMaterial;
-                    setFireRushMaterials(false);
                     m_blackImage.enabled = false;
                     m_enableState = false;
 //                    m_currentTrigger = null;
@@ -132,44 +149,8 @@ public class HUDDarkZoneEffect : MonoBehaviour {
         m_candleMaterial.SetFloat("_FallOff", falloff * m_currentFireRushMultiplier);
     }
 
-    private void setFireRushMaterials(bool enable)
-    {
-        foreach(matInstanceBackup mb in fireRushMats)
-        {
-            if (enable)
-            {
-                mb.mat.renderQueue = mb.renderQueue + 1000;
-            }
-            else
-            {
-                mb.mat.renderQueue = mb.renderQueue;
-            }
-        }
-    }
-
     void Update()
     {
-        if (fireRushMats == null)
-        {
-            FireBreathDynamic[] fireRush = m_dragonPlayer.GetComponentsInChildren<FireBreathDynamic>(true);
-
-            if (fireRush.Length != 0)
-            {
-                fireRushMats = new List<matInstanceBackup>();
-                foreach (FireBreathDynamic fr in fireRush)
-                {
-                    ParticleSystemRenderer[] particleRenderers = fr.GetComponentsInChildren<ParticleSystemRenderer>(true);
-                    foreach (ParticleSystemRenderer psr in particleRenderers)
-                    {
-                        matInstanceBackup mb = new matInstanceBackup();
-                        mb.mat = psr.material;
-                        mb.renderQueue = mb.mat.renderQueue;
-                        fireRushMats.Add(mb);
-                    }
-                }
-            }
-        }
-
         if (m_enableState)
         {
             if (m_currentTrigger != null)

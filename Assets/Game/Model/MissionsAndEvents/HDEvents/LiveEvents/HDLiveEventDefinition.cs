@@ -201,7 +201,7 @@ public class HDLiveEventDefinition {
             JSONArray _mods = _data["customMods"].AsArray;
             for (int i = 0; i < _mods.Count; ++i) {
                 Modifier m = Modifier.CreateFromJson(_mods[i]);
-				if (m.isValid()) {
+				if (m != null && m.isValid()) {
 					if (m is ModifierDragon) {
 						m_dragonMods.Add(m);
 					} else {

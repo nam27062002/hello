@@ -183,13 +183,22 @@ public class UITooltipTrigger : MonoBehaviour, IPointerDownHandler, IPointerUpHa
 
 					// Get some aux vars
 					Canvas canvas = GetComponentInParent<Canvas>();
-					Rect tooltipRect = (m_tooltip.transform as RectTransform).rect;	// Tooltip in local coords
-					Rect canvasRect = (canvas.transform as RectTransform).rect;	// Canvas in local coords
-					tooltipRect = m_tooltip.transform.TransformRect(tooltipRect, canvas.transform);
-					Vector3 finalOffset = Vector3.zero;
+					Vector3 finalOffset = GameConstants.Vector3.zero;
 
 					// If required, make sure tooltip is not out of screen
 					if(m_checkScreenBounds) {
+						// Aux vars
+						Rect canvasRect = (canvas.transform as RectTransform).rect; // Canvas in local coords
+						Rect tooltipRect = (m_tooltip.transform as RectTransform).rect; // Tooltip in local coords
+						tooltipRect = m_tooltip.transform.TransformRect(tooltipRect, canvas.transform);
+
+						// Take safe area in account
+						UISafeArea safeArea = UIConstants.safeArea;
+						canvasRect.xMin += safeArea.left;
+						canvasRect.xMax -= safeArea.right;
+						canvasRect.yMin += safeArea.bottom;
+						canvasRect.yMax -= safeArea.top;
+
 						// Check horizontal edges
 						if(tooltipRect.xMin < canvasRect.xMin) {
 							finalOffset.x = canvasRect.xMin - tooltipRect.xMin;

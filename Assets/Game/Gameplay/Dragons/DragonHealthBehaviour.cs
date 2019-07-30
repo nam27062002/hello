@@ -499,4 +499,10 @@ public class DragonHealthBehaviour : MonoBehaviour {
     {
         m_dots.Clear();
     }
+
+	public void RemovePowerUps()
+	{
+		m_globalEatingHpBoost = 0;
+		m_eatingHpBoosts.Clear();
+	}
 }

@@ -589,9 +589,7 @@ public class AdProviderIronSource : AdProvider
         void InterstitialAdShowSucceededEvent()
         {
             if (FeatureSettingsManager.IsDebugEnabled)
-                Log("IronSource:: --> Interstitial PLAY-Back SUCCESS");
-
-            NotifyPlaybackResult(PlaybackResult.SUCCESS);
+				Log("IronSource:: --> Interstitial AdShowSucceededEvent: Ad window opened successfully");				           
         }
 
         void InterstitialAdShowFailedEvent(IronSourceError error)
@@ -622,6 +620,8 @@ public class AdProviderIronSource : AdProvider
                 Log("IronSource: --> Interstitial Ad Closed Event");
             if (mAdProvider.onVideoAdClosed!= null)
                 mAdProvider.onVideoAdClosed();
+
+			NotifyPlaybackResult(PlaybackResult.SUCCESS);
         }
 
         void InterstitialAdRewardedEvent()

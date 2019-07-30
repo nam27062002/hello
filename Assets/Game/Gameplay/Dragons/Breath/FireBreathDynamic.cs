@@ -92,8 +92,18 @@ public class FireBreathDynamic : MonoBehaviour , IBroadcastListener
 	public List<ParticleSetup> m_underWaterParticles;
 	protected List<ParticleSystem> m_underWaterParticlesInstances = new List<ParticleSystem>();
 
+
+    private struct matInstanceBackup
+    {
+        public Material mat;
+        public int renderQueue;
+    };
+
+    private List<matInstanceBackup> m_fireRushMaterials = new List<matInstanceBackup>();
+
 	private bool m_insideWater = false;
 	private float m_waterHeigth = 0;
+    private bool m_darkCavesEffect = false;
 
     private ParticleSystem[] m_particleList;
 
@@ -174,6 +184,7 @@ public class FireBreathDynamic : MonoBehaviour , IBroadcastListener
 
         ParticleSystem ps;
         int max;
+        m_fireRushMaterials.Clear();
 
         max = m_fireParticles.Count;
         for (int i = 0; i < max; i++)
@@ -182,6 +193,12 @@ public class FireBreathDynamic : MonoBehaviour , IBroadcastListener
             if (ps != null)
             {
                 m_fireParticlesInstances.Add(ps);
+
+                ParticleSystemRenderer psRend = ps.GetComponent<ParticleSystemRenderer>();
+                matInstanceBackup mb = new matInstanceBackup();
+                mb.mat = psRend.material;
+                mb.renderQueue = mb.mat.renderQueue;
+                m_fireRushMaterials.Add(mb);
             }
         }
         
@@ -191,6 +208,11 @@ public class FireBreathDynamic : MonoBehaviour , IBroadcastListener
             ps = ParticleManager.InitLeveledParticle( m_underWaterParticles[i].name, m_underWaterParticles[i].anchor);
             if ( ps != null) { 
                 m_underWaterParticlesInstances.Add( ps );
+                ParticleSystemRenderer psRend = ps.GetComponent<ParticleSystemRenderer>();
+                matInstanceBackup mb = new matInstanceBackup();
+                mb.mat = psRend.material;
+                mb.renderQueue = mb.mat.renderQueue;
+                m_fireRushMaterials.Add(mb);
             }
         }    
         yield return null;
@@ -201,7 +223,31 @@ public class FireBreathDynamic : MonoBehaviour , IBroadcastListener
         }
         setEffectScale(m_collisionMaxDistance / 2.0f, 1);
     }
-    
+
+
+    //Update fire rush materials for dark cave effect
+    private void updateMaterialsForDarkEffect()
+    {
+        if (m_fireRushMaterials.Count > 0.0f)
+        {
+            bool darkEffect = HUDDarkZoneEffect.IsEnabled;
+            if (m_darkCavesEffect != darkEffect)
+            {
+                foreach (matInstanceBackup mb in m_fireRushMaterials)
+                {
+                    if (darkEffect)
+                    {
+                        mb.mat.renderQueue = mb.renderQueue + 1000;
+                    }
+                    else
+                    {
+                        mb.mat.renderQueue = mb.renderQueue;
+                    }
+                }
+                m_darkCavesEffect = darkEffect;
+            }
+        }
+    }
 
             
     // Use this for initialization
@@ -278,6 +324,7 @@ public class FireBreathDynamic : MonoBehaviour , IBroadcastListener
         particlePos.x = m_collisionDistance < particleDistance ? m_collisionDistance : particleDistance;
         m_whipEnd.transform.localPosition = particlePos;
 
+        updateMaterialsForDarkEffect();
     }
 
     void UpdateWhip()
@@ -476,6 +523,8 @@ public class FireBreathDynamic : MonoBehaviour , IBroadcastListener
 
         enableState = value;
     }
+
+
 
 	public void SwitchToWaterMode()
     {

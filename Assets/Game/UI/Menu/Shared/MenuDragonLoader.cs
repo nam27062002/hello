@@ -123,7 +123,9 @@ public class MenuDragonLoader : MonoBehaviour {
 	}
 
 	public bool m_loadAsync = false;
+    private ResourceRequest m_asyncResourceRequest = null;
 	private AddressablesOp m_asyncRequest = null;
+    private string m_loadingPrefabName;
 
 	private bool m_useShadowMaterial = false;
 	public bool useShadowMaterial {
@@ -144,6 +146,7 @@ public class MenuDragonLoader : MonoBehaviour {
 
 	// Internal
 	private MenuDragonPreview m_dragonInstance = null;
+    private GameObject m_dragonViewInstance = null;
 	public MenuDragonPreview dragonInstance {
 		get { return m_dragonInstance; }
 	}
@@ -217,7 +220,7 @@ public class MenuDragonLoader : MonoBehaviour {
 			{
 				if ( m_asyncRequest == null && !m_configured )
 				{
-					ConfigureInstance( m_dragonInstance.gameObject );					
+					ConfigureInstance( m_dragonInstance.gameObject, m_dragonViewInstance );					
 				}
                 if (onDragonLoaded != null)
                     onDragonLoaded(this);
@@ -231,8 +234,7 @@ public class MenuDragonLoader : MonoBehaviour {
 		// Update dragon and disguise skus
 		m_dragonSku = _sku;
 		m_disguiseSku = _disguiseSku;
-
-
+                
 		// Load selected dragon
 		DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, _sku);
 		if(def != null) {
@@ -240,27 +242,33 @@ public class MenuDragonLoader : MonoBehaviour {
 			if (  m_useResultsScreen )
 				prefabColumn = "resultsPrefab";
 
-            string prefab = "";
+            m_loadingPrefabName = "";
             if ( def.Get("type") == "special" )
             {
                 // TODO: Change this and use a proper tier
                 DefinitionNode specialTierDef = DragonDataSpecial.GetDragonTierDef(_sku, DragonTier.TIER_1);
-                prefab = specialTierDef.GetAsString(prefabColumn);
+                m_loadingPrefabName = specialTierDef.GetAsString(prefabColumn);
             }
             else
             {
-                prefab = def.GetAsString(prefabColumn);
+                m_loadingPrefabName = def.GetAsString(prefabColumn);
             }
 
 			if (m_loadAsync && !forceSync && FeatureSettingsManager.MenuDragonsAsyncLoading){
-                m_asyncRequest = HDAddressablesManager.Instance.LoadAssetAsync( prefab );
+                m_asyncResourceRequest = Resources.LoadAsync<GameObject>("Game/Dragons/MenuView/" + m_loadingPrefabName);
+                m_asyncRequest = HDAddressablesManager.Instance.LoadAssetAsync(m_loadingPrefabName);
             }
             else{
-				// Instantiate the prefab and add it as child of this object
-				GameObject dragonPrefab = HDAddressablesManager.Instance.LoadAsset<GameObject>(prefab);
+				// Instantiate the prefab and add it as child of this object               
+				GameObject dragonPrefab = HDAddressablesManager.Instance.LoadAsset<GameObject>(m_loadingPrefabName);
+                GameObject viewPrefab = Resources.Load<GameObject>("Game/Dragons/MenuView/" + m_loadingPrefabName);
                 if (dragonPrefab != null) {
 					GameObject newInstance = GameObject.Instantiate<GameObject>(dragonPrefab);
-					ConfigureInstance( newInstance );
+                    GameObject viewInstance = null;
+                    if (viewPrefab != null) {
+                        viewInstance = GameObject.Instantiate<GameObject>(viewPrefab);
+                    }
+					ConfigureInstance( newInstance, viewInstance);
 					if (onDragonLoaded != null)
 						onDragonLoaded(this);
 				}
@@ -274,25 +282,43 @@ public class MenuDragonLoader : MonoBehaviour {
 
 	void Update()
 	{
-		if ( m_asyncRequest != null && m_asyncRequest.isDone )
+		if ( m_asyncRequest != null && m_asyncResourceRequest != null
+        &&   m_asyncRequest.isDone && m_asyncResourceRequest.isDone)
 		{
             GameObject go = m_asyncRequest.GetAsset<GameObject>();
             GameObject newInstance = GameObject.Instantiate<GameObject>( go );
-            ConfigureInstance( newInstance );
-			m_asyncRequest = null;
-			if (onDragonLoaded != null)
+
+            go = m_asyncResourceRequest.asset as GameObject;
+            GameObject viewInstance = null;
+            if (go != null) {
+                viewInstance = GameObject.Instantiate<GameObject>(go);
+            }
+
+            ConfigureInstance( newInstance, viewInstance );
+
+            m_asyncRequest = null;
+            m_asyncResourceRequest = null;
+
+            if (onDragonLoaded != null)
 				onDragonLoaded(this);
 
             if (OnCompleteLoad != null)
-            {
                 OnCompleteLoad.Invoke(this);
-            }
 		}
 	}
 
-	public void ConfigureInstance(GameObject newInstance){
+	public void ConfigureInstance(GameObject newInstance, GameObject viewInstance) {
 
 		m_configured = true;
+
+        if (viewInstance != null) {
+            Animator animator = viewInstance.FindComponentRecursive<Animator>();
+            if (animator != null) {
+                string acName = m_loadingPrefabName.Replace("PF_", "AC_");
+                animator.runtimeAnimatorController = HDAddressablesManager.Instance.LoadAsset<RuntimeAnimatorController>(acName);
+            }
+            viewInstance.transform.SetParent(newInstance.transform, false);
+        }
 
 		newInstance.transform.SetParent(this.transform, false);
 		newInstance.transform.localPosition = Vector3.zero;
@@ -306,6 +332,7 @@ public class MenuDragonLoader : MonoBehaviour {
 		// Store dragon preview and launch the default animation
 		m_dragonInstance = newInstance.GetComponent<MenuDragonPreview>();
 		m_dragonInstance.SetAnim(m_anim);
+        m_dragonViewInstance = viewInstance;
 
         // Reset scale if requiredDragonData
         if (m_resetDragonScale) {
@@ -315,22 +342,26 @@ public class MenuDragonLoader : MonoBehaviour {
 		// Apply equipment
 		DragonEquip equip = m_dragonInstance.GetComponent<DragonEquip>();
 		if(equip != null) {
-			if (!Application.isPlaying) {
-				equip.Init();
-			}
+            if (viewInstance != null) {
+                equip.InitAtStart(string.IsNullOrEmpty(m_disguiseSku)? equip.dragonDisguiseSku : m_disguiseSku, m_mode == Mode.TOURNAMENT, m_showPets);
+            } else {
+                if (!Application.isPlaying) {
+                    equip.Init();
+                }
 
-			equip.EquipPets(m_mode == Mode.TOURNAMENT);
+                equip.EquipPets(m_mode == Mode.TOURNAMENT);
 
-			// Apply disguise (if any)
-			if(!string.IsNullOrEmpty(m_disguiseSku) && equip.dragonDisguiseSku != m_disguiseSku) {
-				equip.EquipDisguise(m_disguiseSku);
-			}
+                // Apply disguise (if any)
+                if (!string.IsNullOrEmpty(m_disguiseSku) && equip.dragonDisguiseSku != m_disguiseSku) {
+                    equip.EquipDisguise(m_disguiseSku);
+                }
 
-			// Toggle pets
-			equip.TogglePets(m_showPets, false);
+                // Toggle pets
+                equip.TogglePets(m_showPets, false);
 
-			if (m_hideResultsEquipment)
-				equip.HideResultsEquipment();
+                if (m_hideResultsEquipment)
+                    equip.HideResultsEquipment();
+            }
 		}
 
 		// Remove fresnel if required
@@ -384,7 +415,7 @@ public class MenuDragonLoader : MonoBehaviour {
 				if(Application.isPlaying) {
 					LoadDragon(DragonManager.currentDragon.sku, DragonManager.currentDragon.disguise);
 				} else {
-					LoadDragon(m_placeholderDragonSku);
+					LoadDragon(m_placeholderDragonSku, string.Empty, true);
 				}
 			} break;
 
@@ -392,18 +423,22 @@ public class MenuDragonLoader : MonoBehaviour {
 				if(Application.isPlaying) {
 					LoadDragon(InstanceManager.menuSceneController.selectedDragon);
 				} else {
-					LoadDragon(m_placeholderDragonSku);
+					LoadDragon(m_placeholderDragonSku, string.Empty, true);
 				}
 			} break;
 
 			case Mode.MANUAL: {
-				LoadDragon(currentDragonSku, currentDisguiseSku);
+				LoadDragon(currentDragonSku, currentDisguiseSku, !Application.isPlaying);
 			} break;
 
             case Mode.TOURNAMENT: {
-                    IDragonData dragonData = HDLiveDataManager.tournament.tournamentData.tournamentDef.dragonData;
-                    LoadDragon(dragonData.sku);
-                } break;
+				if(Application.isPlaying) {
+					IDragonData dragonData = HDLiveDataManager.tournament.tournamentData.tournamentDef.dragonData;
+					LoadDragon(dragonData.sku);
+				} else {
+					LoadDragon(m_placeholderDragonSku, string.Empty, true);
+				}
+            } break;
         }
 	}
 
@@ -413,7 +448,9 @@ public class MenuDragonLoader : MonoBehaviour {
 	public void UnloadDragon() {
 		// Just make sure the object doesn't have anything attached
 		m_asyncRequest = null;
-		m_dragonInstance = null;
+        m_asyncResourceRequest = null;
+        m_dragonInstance = null;
+        m_dragonViewInstance = null;
 		m_configured = false;
 		foreach(Transform child in transform) {
 			if(Application.isPlaying) {
