@@ -45,6 +45,7 @@ public class ParticleScaler : MonoBehaviour
 		public float m_startSizeYMultiplier;
 		public float m_startSizeZMultiplier;
 		public float m_gravityModifierMultiplier;
+		public float m_minGravityMultiplier;
 		public float m_startSpeedMultiplier;
 		public float m_startLifetimeMultiplier;
 
@@ -162,6 +163,14 @@ public class ParticleScaler : MonoBehaviour
 
 
 		data.m_gravityModifierMultiplier = mainModule.gravityModifierMultiplier;
+		switch( mainModule.gravityModifier.mode )
+		{
+			case ParticleSystemCurveMode.TwoConstants:
+			{
+				data.m_minGravityMultiplier = mainModule.gravityModifier.constantMin;
+			}break;
+		}
+
 		data.m_startSpeedMultiplier = mainModule.startSpeedMultiplier;
 		data.m_startLifetimeMultiplier = mainModule.startLifetimeMultiplier;
 
@@ -313,6 +322,15 @@ public class ParticleScaler : MonoBehaviour
             }
             
 			mainModule.gravityModifierMultiplier = data.m_gravityModifierMultiplier;
+			switch( mainModule.gravityModifier.mode )
+			{
+				case ParticleSystemCurveMode.TwoConstants:
+				{
+					ParticleSystem.MinMaxCurve curve = mainModule.gravityModifier;
+					curve.constantMin = data.m_minGravityMultiplier;
+					mainModule.gravityModifier = curve;
+				}break;
+			}
             mainModule.startSpeedMultiplier = data.m_startSpeedMultiplier;
             mainModule.startLifetimeMultiplier = data.m_startLifetimeMultiplier;
 
@@ -514,6 +532,16 @@ public class ParticleScaler : MonoBehaviour
             }
 
             mainModule.gravityModifierMultiplier *= scale;
+			switch( mainModule.gravityModifier.mode )
+			{
+				case ParticleSystemCurveMode.TwoConstants:
+				{
+					ParticleSystem.MinMaxCurve curve = mainModule.gravityModifier;
+					curve.constantMin *= scale;
+					mainModule.gravityModifier = curve;
+				}break;
+			}
+
             mainModule.startSpeedMultiplier *= scale;
             if (m_scaleLifetime)
                 mainModule.startLifetimeMultiplier *= scale;
