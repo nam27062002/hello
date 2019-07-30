@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class HDCP2Manager
 {
@@ -28,7 +29,7 @@ public class HDCP2Manager
 
     private CP2Listener m_listener = null;
 
-    private Action<bool> m_onPlayPromoDone;
+    private UnityAction<bool> m_onPlayPromoDone;
 
     public void Initialise()
     {
@@ -168,7 +169,7 @@ public class HDCP2Manager
     }
 
     private void PlayPromo(CrossPromo.PromoType promoType, Action<bool> onDone)
-    {
+    {        
         if (FeatureSettingsManager.IsDebugEnabled)
         {
 			Log("Playing promo " + promoType.ToString() + " listener is not null = " + (m_listener != null));
@@ -185,7 +186,17 @@ public class HDCP2Manager
 
     private void OnPlayPromo(bool success)
     {
+        if (FeatureSettingsManager.IsDebugEnabled)
+        {
+            Log("OnPlayPromo success = " + success);
+        }
+
         SetState(EState.None);
+        if (m_onPlayPromoDone != null)
+        {
+            m_onPlayPromoDone(success);
+            m_onPlayPromoDone = null;
+        }
     }
 
     private void OnRestrictedPlayPromo(bool success)
@@ -214,8 +225,10 @@ public class HDCP2Manager
     /// Plays a cp2 interstitial if there's one available.
     /// </summary>
     /// <param name="checkRestrictionPerUser">Whether or not user's restrictions should be checked too</param>
-    public void PlayInterstitial(bool checkRestrictionPerUser)
+    public void PlayInterstitial(bool checkRestrictionPerUser, UnityAction<bool> onDone)
     {
+        m_onPlayPromoDone = onDone;
+
         if (checkRestrictionPerUser)
         {
             if (CanUserPlayInterstitial())
@@ -224,7 +237,7 @@ public class HDCP2Manager
             }
             else if (FeatureSettingsManager.IsDebugEnabled)
             {
-
+                OnPlayPromo(false);
                 Log("Can't play CP2 interstitial because of user's restriction. The user has to wait " + GetUserRestrictionTimeToWait() + " seconds more");
             }
         }
