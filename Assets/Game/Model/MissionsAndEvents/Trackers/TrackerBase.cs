@@ -222,10 +222,13 @@ public class TrackerBase {
 			case "eat_gold":        return new TrackerEatGolden(_params);
 			case "eat_suicidal":    return new TrackerEatWhileActionActive(TrackerEatWhileActionActive.Actions.FreeFall, _params);
 			case "eat_spec_anim_a": return new TrackerEatWhileActionActive(TrackerEatWhileActionActive.Actions.PilotActionA, _params);
-			//-----------------------------------
 
-			// Collect is quite special: depending on first parameter, create one of the existing trackers
-			case "collect": {
+            case "birthday_mode_count": return new TrackerBirthdayMode();
+            case "birthday_mode_time":  return new TrackerBirthdayModeTime();
+            //-----------------------------------
+
+            // Collect is quite special: depending on first parameter, create one of the existing trackers
+            case "collect": {
 				if(_params.Count < 1) return null;
 				switch(_params[0]) {
 					case "coins":	return new TrackerGold();
