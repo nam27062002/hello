@@ -277,49 +277,43 @@ public class ViewControl : IViewControl, IBroadcastListener {
         m_vertexCount = 0;
 		m_rendererCount = 0;
 
-		m_renderers = new List<Renderer>();
-		Renderer[] renderers = GetComponentsInChildren<Renderer>();
+		Renderer[] renderers = m_renderers;
 		
 		if (renderers != null) {
 			int renderersCount = renderers.Length;
 			for (int i = 0; i < renderersCount; i++) {
 				Renderer renderer = renderers[i];
+				Material[] materials = renderer.sharedMaterials;
+
+				// Stores the materials of this renderer in a dictionary for direct access//
+				int renderID = renderer.GetInstanceID();
+				m_materials[renderID] = new List<Material>();
+				m_materialsFrozen[renderID] = new List<Material>();
+				m_materialsInlove[renderID] = new List<Material>();
 				
-				if (!m_materialChangeExceptions.Contains(renderer)) {
-					Material[] materials = renderer.sharedMaterials;
-					m_renderers.Add(renderer);
+				for (int m = 0; m < materials.Length; ++m) {
+					Material mat = materials[m];
+					if (m_showDamageFeedback) mat = new Material(materials[m]);
 
-					// Stores the materials of this renderer in a dictionary for direct access//
-					int renderID = renderer.GetInstanceID();
-					m_materials[renderID] = new List<Material>();
-					m_materialsFrozen[renderID] = new List<Material>();
-					m_materialsInlove[renderID] = new List<Material>();
-					
-					for (int m = 0; m < materials.Length; ++m) {
-						Material mat = materials[m];
-						if (m_showDamageFeedback) mat = new Material(materials[m]);
-
-						if (mat != null) {
-							m_materialList.Add(mat);
-						}
-						
-						m_materials[renderID].Add(mat);
-						if ( mat != null ){
-							m_materialsFrozen[renderID].Add(FrozenMaterialManager.GetFrozenMaterialFor(mat));
-							m_materialsInlove[renderID].Add(InloveMaterialManager.GetInloveMaterialFor(mat));
-						}else{
-							m_materialsFrozen[renderID].Add(null);
-							m_materialsInlove[renderID].Add(null);
-						}
-
-						materials[m] = null; // remove all materials to avoid instantiation.
+					if (mat != null) {
+						m_materialList.Add(mat);
 					}
-					renderer.sharedMaterials = materials;
-					m_rendererMaterials.Add(materials);
-				}
-            }
+					
+					m_materials[renderID].Add(mat);
+					if ( mat != null ){
+						m_materialsFrozen[renderID].Add(FrozenMaterialManager.GetFrozenMaterialFor(mat));
+						m_materialsInlove[renderID].Add(InloveMaterialManager.GetInloveMaterialFor(mat));
+					}else{
+						m_materialsFrozen[renderID].Add(null);
+						m_materialsInlove[renderID].Add(null);
+					}
 
-			m_rendererCount = m_renderers.Count;
+					materials[m] = null; // remove all materials to avoid instantiation.
+				}
+				renderer.sharedMaterials = materials;
+				m_rendererMaterials.Add(materials);
+            }
+			m_rendererCount = m_renderers.Length;
         }
 
 		if (!string.IsNullOrEmpty(m_corpseAsset)) {
@@ -391,7 +385,15 @@ public class ViewControl : IViewControl, IBroadcastListener {
 		m_view = m_transform.FindObjectRecursive("view").transform;
 		m_animator = m_view.GetComponent<Animator>();
 		m_animEvents = m_transform.FindComponentRecursive<PreyAnimationEvents>();
-		m_renderers = GetComponentsInChildren<Renderer>();
+		List<Renderer> renderers = new List<Renderer>(GetComponentsInChildren<Renderer>());
+		for (int i = renderers.Count-1; i>=0; i--)
+		{
+			if (m_materialChangeExceptions.Contains(renderers[i])) {
+				renderers.RemoveAt( i );
+			}
+		}
+		m_renderers = renderers.ToArray();
+		
 
 		m_specialAnimations = new bool[(int)SpecialAnims.Count];
 		m_animA_Hash = UnityEngine.Animator.StringToHash(m_animA);
