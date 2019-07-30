@@ -92,10 +92,26 @@ public class OrbitalCameraController : MonoBehaviour {
 		// Only if active!
 		if(!isActiveAndEnabled) return;
 
+		// Change zoom?
+		// If mouse wheel has been scrolled
+		if(Input.mouseScrollDelta.sqrMagnitude > Mathf.Epsilon) {
+			// Change value size based on mouse wheel
+			float zoomOffset = Input.mouseScrollDelta.y * -m_zoomSpeed;
+
+			// Do it!
+			Vector3 dir = transform.position - m_lookAt.position;
+			float newDist = dir.magnitude + zoomOffset;
+			if(newDist > Mathf.Epsilon) {   // Don't go inside the object!
+				transform.position = m_lookAt.position + dir.normalized * newDist;
+			}
+		}
+
 		// Apply rotation?
 		if(m_holdMouseButtonToRotate == MouseButton.NONE || Input.GetMouseButton((int)m_holdMouseButtonToRotate)) {
-			transform.RotateAround(m_lookAt.position, Vector3.up, m_mouseDelta.x * -m_rotationSpeed);
-			transform.RotateAround(m_lookAt.position, Vector3.right, m_mouseDelta.y * m_rotationSpeed);
+			if(m_mouseDelta.sqrMagnitude > Mathf.Epsilon) {
+				transform.RotateAround(m_lookAt.position, Vector3.up, m_mouseDelta.x * -m_rotationSpeed);
+				transform.RotateAround(m_lookAt.position, Vector3.right, m_mouseDelta.y * m_rotationSpeed);
+			}
 		}
 	}
 
