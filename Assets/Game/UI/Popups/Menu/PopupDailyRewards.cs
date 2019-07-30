@@ -277,7 +277,7 @@ public class PopupDailyRewards : MonoBehaviour, IBroadcastListener {
 		if(m_rewardCollected) return;
 
 		// Trigger rewarded ad
-		PopupAdBlocker.Launch(true, GameAds.EAdPurpose.DAILY_REWARD_DOUBLE, OnAdRewardCallback);
+		PopupAdBlocker.LaunchAd(true, GameAds.EAdPurpose.DAILY_REWARD_DOUBLE, OnAdRewardCallback);
 	}
 
 	/// <summary>
