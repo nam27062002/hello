@@ -22,7 +22,10 @@ public class OfferItemPreviewEgg2d : IOfferItemPreview {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	
+	public override OfferItemPrefabs.PrefabType type {
+		get { return OfferItemPrefabs.PrefabType.PREVIEW_2D; }
+	}
+
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//

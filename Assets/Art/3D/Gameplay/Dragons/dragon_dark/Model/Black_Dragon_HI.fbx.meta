@@ -170,6 +170,12 @@ ModelImporter:
     100328: Wing_finger_03_LF_CTRL_NULL
     100330: wrist_LF_JT
     100332: wrist_RT_JT
+    100334: Black_Dragon_Body
+    100336: Black_Dragon_Wings
+    100338: Fire_Dummy
+    100340: SuctionPoint
+    100342: SwallowPoint
+    100344: Dragon_Head
     400000: ankle_LF_JT
     400002: ankle_RT_JT
     400004: Arm_LF_CTRL
@@ -337,9 +343,19 @@ ModelImporter:
     400328: Wing_finger_03_LF_CTRL_NULL
     400330: wrist_LF_JT
     400332: wrist_RT_JT
+    400334: Black_Dragon_Body
+    400336: Black_Dragon_Wings
+    400338: Fire_Dummy
+    400340: SuctionPoint
+    400342: SwallowPoint
+    400344: Dragon_Head
     4300000: Dragon_Black
+    4300002: Black_Dragon_Body
+    4300004: Black_Dragon_Wings
     9500000: //RootNode
     13700000: Dragon_Black
+    13700002: Black_Dragon_Body
+    13700004: Black_Dragon_Wings
   externalObjects: {}
   materials:
     importMaterials: 0
@@ -350,7 +366,7 @@ ModelImporter:
     legacyGenerateAnimations: 4
     bakeSimulation: 0
     resampleCurves: 1
-    optimizeGameObjects: 0
+    optimizeGameObjects: 1
     motionNodeName: 
     rigImportErrors: 
     rigImportWarnings: 
@@ -364,7 +380,35 @@ ModelImporter:
     animationPositionError: 0.5
     animationScaleError: 0.5
     animationWrapMode: 0
-    extraExposedTransformPaths: []
+    extraExposedTransformPaths:
+    - root_JT/chest_JT/arm_LF_JT
+    - root_JT/chest_JT/arm_LF_JT/elbow_LF_JT
+    - root_JT/chest_JT/arm_LF_JT/elbow_LF_JT/wrist_LF_JT
+    - root_JT/chest_JT/arm_LF_JT/elbow_LF_JT/wrist_LF_JT/hand_LF_JT
+    - root_JT/chest_JT/arm_RT_JT
+    - root_JT/chest_JT/arm_RT_JT/elbow_RT_JT
+    - root_JT/chest_JT/arm_RT_JT/elbow_RT_JT/wrist_RT_JT
+    - root_JT/chest_JT/arm_RT_JT/elbow_RT_JT/wrist_RT_JT/hand_RT_JT
+    - root_JT/chest_JT/neck_01_JT
+    - root_JT/chest_JT/neck_01_JT/neck_02_JT
+    - root_JT/chest_JT/neck_01_JT/neck_02_JT/head_JT
+    - root_JT/chest_JT/neck_01_JT/neck_02_JT/head_JT/brain_JT/head_end_JT
+    - root_JT/chest_JT/spline_01_JT
+    - root_JT/chest_JT/spline_01_JT/spline_02_JT/waist_JT
+    - root_JT/chest_JT/spline_01_JT/spline_02_JT/waist_JT/leg_LF_JT
+    - root_JT/chest_JT/spline_01_JT/spline_02_JT/waist_JT/leg_LF_JT/knee_LF_JT/ankle_LF_JT
+    - root_JT/chest_JT/spline_01_JT/spline_02_JT/waist_JT/leg_RT_JT
+    - root_JT/chest_JT/spline_01_JT/spline_02_JT/waist_JT/leg_RT_JT/knee_RT_JT/ankle_RT_JT
+    - root_JT/chest_JT/spline_01_JT/spline_02_JT/waist_JT/leg_RT_JT/knee_RT_JT/ankle_RT_JT/foot_RT_JT
+    - root_JT/chest_JT/spline_01_JT/spline_02_JT/waist_JT/tail_01_JT
+    - root_JT/chest_JT/spline_01_JT/spline_02_JT/waist_JT/tail_01_JT/tail_02_JT
+    - root_JT/chest_JT/spline_01_JT/spline_02_JT/waist_JT/tail_01_JT/tail_02_JT/tail_03_JT
+    - root_JT/chest_JT/spline_01_JT/spline_02_JT/waist_JT/tail_01_JT/tail_02_JT/tail_03_JT/tail_04_JT
+    - root_JT/chest_JT/spline_01_JT/spline_02_JT/waist_JT/tail_01_JT/tail_02_JT/tail_03_JT/tail_04_JT/joint8
+    - root_JT/chest_JT/neck_01_JT/neck_02_JT/head_JT/SuctionPoint
+    - root_JT/chest_JT/neck_01_JT/neck_02_JT/head_JT/Fire_Dummy
+    - root_JT/chest_JT/neck_01_JT/neck_02_JT/head_JT/SwallowPoint
+    - root_JT/chest_JT/neck_01_JT/neck_02_JT/Dragon_Head
     extraUserProperties: []
     clipAnimations: []
     isReadable: 0
@@ -418,5 +462,5 @@ ModelImporter:
   humanoidOversampling: 1
   additionalBone: 0
   userData: 
-  assetBundleName: 
+  assetBundleName: dragon_dark_local
   assetBundleVariant: 

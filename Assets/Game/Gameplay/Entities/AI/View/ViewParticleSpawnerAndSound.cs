@@ -46,9 +46,10 @@ public class ViewParticleSpawnerAndSound : ViewParticleSpawner {
 		SpawnSound();
 	}
 
-	override protected void StopAndReturn() {
-		base.StopAndReturn();
+	override protected bool StopAndReturn() {
+		bool ret = base.StopAndReturn();
 		RemoveAudioParent(ref m_idleAudioAO);
+        return ret;
 	}
 	 
 	override protected void ForceReturn(){

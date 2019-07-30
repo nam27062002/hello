@@ -68,11 +68,13 @@ public class Wardrobe
 		// Skip if wardrobe not initialized
 		if(m_disguises == null) return;
 
+		SkinState _prevState = m_disguises[_skinSku];
+
 		// Just do it!
 		m_disguises[_skinSku] = _newSkinState;
 
 		// If skin has been acquired, notify game
-		if(_newSkinState == SkinState.OWNED) {
+		if(_newSkinState == SkinState.OWNED && _prevState != SkinState.OWNED) {
 			Messenger.Broadcast<string>(MessengerEvents.SKIN_ACQUIRED, _skinSku);
 		}
 	}

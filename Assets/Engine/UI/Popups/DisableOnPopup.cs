@@ -126,13 +126,10 @@ public class DisableOnPopup : MonoBehaviour, IBroadcastListener {
 		if(m_refPopupCount < 0) {
 			m_refPopupCount = PopupManager.openPopupsCount - 1;	// [AOC] Excluding the one that has just been opened
 
-			// If this component belongs to a popup, don't count it!
+			// If the popup is parent of this component, count it as well!
 			PopupController parentPopup = GetComponentInParent<PopupController>();
-			if(parentPopup != null) {
-				// Don't if already counted
-				if(!PopupManager.openedPopups.Contains(parentPopup)) {
-					m_refPopupCount++;
-				}
+			if(parentPopup != null && _popup == parentPopup) {
+				m_refPopupCount++;
 			}
 		}
 

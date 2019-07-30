@@ -121,29 +121,25 @@ public class MenuDragonPreview : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
-	/// <summary>
-	/// Initialization.
-	/// </summary>
-	private void Awake() {
-		m_animator = GetComponentInChildren<Animator>();
-		m_renderers = GetComponentsInChildren<Renderer>();
-		m_materials = new Dictionary<int, List<Material>>();
-
-		if (m_renderers != null) {
-			for (int i = 0; i < m_renderers.Length; i++) {
-				Renderer renderer = m_renderers[i];
-				Material[] materials = renderer.sharedMaterials;
-
-				// Stores the materials of this renderer in a dictionary for direct access//
-				List<Material> materialList = new List<Material>();	
-				materialList.AddRange(materials);						
-				m_materials[renderer.GetInstanceID()] = materialList;
-			}
-		}
-	}
-
+	
 	void Start(){
-		m_count = m_altAnimConfigs.Count;
+        m_animator = GetComponentInChildren<Animator>();
+        m_renderers = GetComponentsInChildren<Renderer>();
+        m_materials = new Dictionary<int, List<Material>>();
+
+        if (m_renderers != null) {
+            for (int i = 0; i < m_renderers.Length; i++) {
+                Renderer renderer = m_renderers[i];
+                Material[] materials = renderer.sharedMaterials;
+
+                // Stores the materials of this renderer in a dictionary for direct access//
+                List<Material> materialList = new List<Material>();
+                materialList.AddRange(materials);
+                m_materials[renderer.GetInstanceID()] = materialList;
+            }
+        }
+
+        m_count = m_altAnimConfigs.Count;
 
 		NumLoopsBehaviour[] behaviours = m_animator.GetBehaviours<NumLoopsBehaviour>();
 		int behavioursCount = behaviours.Length;

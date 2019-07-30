@@ -60,7 +60,7 @@ abstract public class IEntity : ISpawnable {
 	protected float m_health;
 	public float health { get { return m_health; } set { m_health = value; } }
 
-	public virtual int score { get { return 0; } }
+	public virtual float score { get { return 0; } }
 
 	[SerializeField]
 	public ISpawnable[] m_otherSpawnables;

@@ -310,7 +310,7 @@ public class InflammableDecoration : ISpawnable, IBroadcastListener {
 
 				case State.Extinguish:
 					// Advance dissolve!
-					if (!m_useAnimator) {
+					if (!m_useAnimator && m_ashMaterial != null) {
 						m_ashMaterial.SetFloat("_BurnLevel", m_timer.GetDelta() * 3.0f);
 					}
 

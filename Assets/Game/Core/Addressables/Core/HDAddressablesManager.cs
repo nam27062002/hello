@@ -695,12 +695,10 @@ public class Ingame_SwitchAreaHandle
     /// </summary>
     /// <returns>The handle for all downloadables required for that disguise.</returns>
     /// <param name="_dragonSku">Special dragon sku.</param>
-    public AddressablesBatchHandle GetHandleForDragonDisguise(string _dragonSku)
+    public AddressablesBatchHandle GetHandleForDragonDisguise(IDragonData _dragonData)
     {
         AddressablesBatchHandle handle = new AddressablesBatchHandle();
-
-        AddDisguiseDependencies(handle, DragonManager.GetDragonData(_dragonSku));
-
+        AddDisguiseDependencies(handle, _dragonData);
         return handle;
 
 

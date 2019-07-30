@@ -59,10 +59,12 @@ namespace LevelEditor {
 			// Initialize fake profile for the level editor
             UsersManager.CreateInstance();
 
+
 			DragonManager.SetupUser(UsersManager.currentUser);
             MissionManager.SetupUser(UsersManager.currentUser);
             EggManager.SetupUser(UsersManager.currentUser);
             ChestManager.SetupUser(UsersManager.currentUser);
+
             GameStoreManager.SharedInstance.Initialize();
 
             PersistenceFacade.instance.Reset();            
@@ -75,6 +77,28 @@ namespace LevelEditor {
 			}
 
             PoolManager.instance.poolLimits = PoolManager.PoolLimits.Unlimited;
+
+			// Prepare pets
+			System.Collections.Generic.List<string> equipedPets = UsersManager.currentUser.GetEquipedPets(LevelEditor.settings.testDragon);
+			for (int i = 0; i < equipedPets.Count; i++)
+			{
+				UsersManager.currentUser.UnequipPet(LevelEditor.settings.testDragon, equipedPets[i]);
+			}
+			// Set pets
+			// Unlock all pets
+			System.Collections.Generic.List<DefinitionNode> petDefs = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.PETS);
+			for(int i = 0; i < petDefs.Count; i++) {
+				UsersManager.currentUser.petCollection.UnlockPet(petDefs[i].sku);
+			}
+
+			for (int i = 0; i < LevelEditor.settings.testPets.Length; i++)
+			{
+				string petSku = LevelEditor.settings.testPets[i];
+				if ( !string.IsNullOrEmpty(petSku) && petSku != "none" )
+				{
+					UsersManager.currentUser.EquipPet(LevelEditor.settings.testDragon, petSku);
+				}
+			}
 
             // Load the dragon
             DragonManager.LoadDragon(LevelEditor.settings.testDragon);
@@ -214,6 +238,12 @@ namespace LevelEditor {
 		private void StartGame() {
 			LevelManager.SetCurrentLevel(LevelEditor.settings.levelSku);
 
+			string bloodOverride = SeasonManager.GetBloodParticlesName();
+			if (string.IsNullOrEmpty(bloodOverride)) {
+				ParticleManager.DisableBloodOverride();
+			} else {
+				ParticleManager.EnableBloodOverride(bloodOverride);
+			}
 			ParticleManager.PreBuild();
 			PoolManager.Build();
 

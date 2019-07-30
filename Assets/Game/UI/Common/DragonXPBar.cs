@@ -89,8 +89,6 @@ public class DragonXPBar : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	virtual protected void Awake() {
-        // The bar has children prefabs just for edition purposes. Remove them all.
-        m_barSeparatorsParent.DestroyAllChildren(true);
 
         // Create, initialize and instantiate a pool of bar separators
         ResizeSeparatorsPool(SEPARATORS_POOL_SIZE);
@@ -292,22 +290,26 @@ public class DragonXPBar : MonoBehaviour {
 			DefinitionsManager.SharedInstance.SortByProperty(ref defList, "unlockLevel", DefinitionsManager.SortType.NUMERIC);
 			int slotIdx = 0;
 			for(int i = 0; i < defList.Count; i++) {
-				// Skip if unlockLevel is 0 (default skin)
-				int unlockLevel = defList[i].GetAsInt("unlockLevel");
-				if(unlockLevel <= 0) continue;
+                
+                // Skip if unlockLevel is 0 (default skin)
+                int unlockLevel = defList[i].GetAsInt("unlockLevel");
+                if (unlockLevel <= 0) {
+                    
+                    continue;
+                }
 
 				// Can we reuse info object?
 				DisguiseInfo info = null;
-				if(i < m_disguises.Count) {
+				if(slotIdx < m_disguises.Count) {
 					info = m_disguises[slotIdx];
 				} else {
 					info = new DisguiseInfo();
 					m_disguises.Add(info);
 				}
-				slotIdx++;
 
-				// Initialize info
-				info.def = defList[i];
+
+                // Initialize info
+                info.def = defList[i];
 
 
                 // Compute delta corresponding to this disguise unlock level
@@ -333,7 +335,9 @@ public class DragonXPBar : MonoBehaviour {
                     info.barMarker.SetDelta(info.delta);
 					info.barMarker.gameObject.SetActive(true);
 				}
-			}
+
+                slotIdx++;
+            }
 
 			// Reset the rest of info objects
 			for(int i = slotIdx; i < m_disguises.Count; i++) {

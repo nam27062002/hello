@@ -60,7 +60,7 @@ public class MenuTransitionManager : MonoBehaviour {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	[SerializeField] private Camera m_camera = null;
-	public Camera camera {
+	new public Camera camera {
 		get { return m_camera; }
 	}
 

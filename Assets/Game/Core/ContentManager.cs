@@ -157,9 +157,9 @@ public class ContentManager
         kDefinitionFiles.Add(DefinitionsCategory.PARTICLE_MANAGER_SETTINGS_LEVEL_0_AREA1, new string[] { "Rules/PM_level_0_area1", "Rules/PM_level_0_common" });
         kDefinitionFiles.Add(DefinitionsCategory.PARTICLE_MANAGER_SETTINGS_LEVEL_0_AREA2, new string[] { "Rules/PM_level_0_area2", "Rules/PM_level_0_common" });
         kDefinitionFiles.Add(DefinitionsCategory.PARTICLE_MANAGER_SETTINGS_LEVEL_0_AREA3, new string[] { "Rules/PM_level_0_area3", "Rules/PM_level_0_common" });
-		kDefinitionFiles.Add(DefinitionsCategory.POOL_MANAGER_SETTINGS_LEVEL_0_AREA2, new string[] { "Rules/NPC_Pools_level_0_area2" });
-		kDefinitionFiles.Add(DefinitionsCategory.POOL_MANAGER_SETTINGS_LEVEL_0_AREA1, new string[] { "Rules/NPC_Pools_level_0_area1" });
-		kDefinitionFiles.Add(DefinitionsCategory.POOL_MANAGER_SETTINGS_LEVEL_0_AREA3, new string[] { "Rules/NPC_Pools_level_0_area3" });
+		kDefinitionFiles.Add(DefinitionsCategory.POOL_MANAGER_SETTINGS_LEVEL_0_AREA2, new string[] { "Rules/NPC_Pools_level_0_area2", "Rules/NPC_Pools_level_0_common" });
+		kDefinitionFiles.Add(DefinitionsCategory.POOL_MANAGER_SETTINGS_LEVEL_0_AREA1, new string[] { "Rules/NPC_Pools_level_0_area1", "Rules/NPC_Pools_level_0_common" });
+		kDefinitionFiles.Add(DefinitionsCategory.POOL_MANAGER_SETTINGS_LEVEL_0_AREA3, new string[] { "Rules/NPC_Pools_level_0_area3", "Rules/NPC_Pools_level_0_common" });
 
         // kDefinitionFiles.Add(DefinitionsCategory.SETTINGS, );
 
@@ -214,8 +214,9 @@ public class ContentManager
         kDefinitionFiles.Add(DefinitionsCategory.RARITIES, new string[] { "Rules/rarityDefinitions" });
         kDefinitionFiles.Add(DefinitionsCategory.HUNGRY_LETTERS, new string[] { "Rules/hungryLettersDefinitions" });
 		kDefinitionFiles.Add(DefinitionsCategory.DAILY_REWARDS, new string[] { "Rules/dailyRewardsDefinitions" });
+        kDefinitionFiles.Add(DefinitionsCategory.DAILY_REWARD_MODIFIERS, new string[] { "Rules/dailyRewardsDragonModifiersDefinitions" });
 
-            // Interstitials
+        // Interstitials
         // kDefinitionFiles.Add(DefinitionsCategory.INTERSTITIALS_PROFILES, new string[] { "Rules/interstitialAdsProfilesDefinitions" });
         kDefinitionFiles.Add(DefinitionsCategory.INTERSTITIALS_SETUP, new string[] { "Rules/interstitialAdsSettingsDefinitions" });    
 

@@ -22,12 +22,14 @@ public class OfferItemPreviewPet3d : IOfferItemPreview {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	
+	public override OfferItemPrefabs.PrefabType type {
+		get { return OfferItemPrefabs.PrefabType.PREVIEW_3D; }
+	}
+
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	[SerializeField] private MenuPetLoader m_petPreview = null;
-
 
     //------------------------------------------------------------------------//
     // GENERIC METHODS                                                        //
@@ -35,7 +37,6 @@ public class OfferItemPreviewPet3d : IOfferItemPreview {
     protected void OnDestroy() {
         m_petPreview.OnLoadingComplete.RemoveListener(OnLoadingComplete);
     }
-
 
     //------------------------------------------------------------------------//
     // OfferItemPreview IMPLEMENTATION										  //

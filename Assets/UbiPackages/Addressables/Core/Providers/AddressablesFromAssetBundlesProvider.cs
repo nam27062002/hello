@@ -116,7 +116,7 @@ public class AddressablesFromAssetBundlesProvider : AddressablesProvider
     {
         if (CanLog())
         {
-            Log("LoadAsset by Editor provider");
+            Log("LoadAsset by FromAssetBundles provider");
         }
         return AssetBundlesManager.Instance.LoadAsset<T>(entry.AssetBundleName, entry.AssetName);   
     }

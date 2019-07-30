@@ -41,6 +41,11 @@ public class DragonPowerUp : MonoBehaviour {
 
 	void Start() 
 	{
+		ApplyPowerups();
+	}
+
+	public void ApplyPowerups()
+	{
 		InstanceManager.APPLY_DRAGON_MODIFIERS();
 
 		CPModifiers.ApplyDragonMods();
@@ -102,6 +107,15 @@ public class DragonPowerUp : MonoBehaviour {
 			Broadcaster.Broadcast(BroadcastEventType.APPLY_ENTITY_POWERUPS);
 			m_warnEntities = false;
 		}
+	}
+
+	public void ResetPowerUps()
+	{
+		InstanceManager.player.RemovePowerUps();
+		Entity.RemovePowerUps();
+		Broadcaster.Broadcast(BroadcastEventType.APPLY_ENTITY_POWERUPS);
+
+		ApplyPowerups();
 	}
 
 	void SetPowerUp( string powerUpSku, bool _fromPet )
@@ -569,7 +583,8 @@ public class DragonPowerUp : MonoBehaviour {
 			case "tranformGold":
 			case "shoot_horns":
 			case "kill":
-			case "mummy":			
+			case "mummy":	
+			case "transform_ice_cream":
 			{
 				return UIConstants.PET_CATEGORY_SPECIAL;
 			} break;

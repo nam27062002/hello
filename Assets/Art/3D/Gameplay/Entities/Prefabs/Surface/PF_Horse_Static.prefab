@@ -196,6 +196,7 @@ GameObject:
   - component: {fileID: 11485410}
   - component: {fileID: 136000011044019352}
   - component: {fileID: 54000013725969172}
+  - component: {fileID: 114855782819767930}
   m_Layer: 21
   m_Name: PF_Horse_Static
   m_TagString: Untagged
@@ -790,10 +791,11 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 128698}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -6.8491635, y: -4.928601, z: 0}
+  m_LocalPosition: {x: 1.1584466, y: -2.580571, z: -1.0853004}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 423974}
+  - {fileID: 4404562483343060}
   - {fileID: 4000012690697974}
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -1390,6 +1392,38 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!1 &1197530431996828
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4404562483343060}
+  m_Layer: 21
+  m_Name: AttachPoints
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!1 &1406795912571570
+GameObject:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4322805881733782}
+  - component: {fileID: 114285304336087394}
+  - component: {fileID: 114697256948858016}
+  m_Layer: 0
+  m_Name: Head_1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!4 &4000012690697974
 Transform:
   m_ObjectHideFlags: 1
@@ -1400,6 +1434,33 @@ Transform:
   m_LocalPosition: {x: 0, y: -1.09, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
+  m_Father: {fileID: 458018}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &4322805881733782
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1406795912571570}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.00017315971, y: 2.322, z: 1.844}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4404562483343060}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &4404562483343060
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1197530431996828}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 4322805881733782}
   m_Father: {fileID: 458018}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1463,6 +1524,53 @@ MonoBehaviour:
     m_limitHorizontalRotation: 0
     m_faceLeftAngle: -90
     m_faceRightAngle: 90
+--- !u!114 &114285304336087394
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1406795912571570}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ece7f0589cf74ddf97a0a63886f8499, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_point: 5
+--- !u!114 &114697256948858016
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1406795912571570}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9aae6699537414c7ab185eeaef226fe0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_parentName: Quadruped_Head
+  m_parentRoot: {fileID: 458018}
+  m_worldPositionStays: 1
+  m_resetScale: 0
+  m_when: 0
+--- !u!114 &114855782819767930
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 128698}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1f45dfbaed20447daa07123ab6b7cd80, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_inventory:
+  - equipablePrefabName: PF_Party_Hat
+    toDisableOnEquip: []
+    probability: 1
+    season: Anniversary1
+    position: {x: 0, y: 0.17, z: 0.11}
+    scale: {x: 0.5, y: 0.5, z: 0.5}
+    rotation: {x: 18.38, y: 0, z: 2.9}
 --- !u!136 &136000011044019352
 CapsuleCollider:
   m_ObjectHideFlags: 1

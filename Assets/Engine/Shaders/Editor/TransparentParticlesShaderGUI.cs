@@ -53,6 +53,8 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
         readonly public static string opacitySaturationText = "Opacity saturation";
         readonly public static string colorMultiplierText = "Color multiplier";
         readonly public static string enableDissolveText = "Enable Alpha Dissolve";
+        readonly public static string dissolveThroughVColorText = "Dissolve through vertex color alpha";
+
         readonly public static string colorSourceText = "Color source";
         readonly public static string enableColorVertexText = "Enable Color Vertex";
         readonly public static string dissolveStepMinText = "Dissolve step min";
@@ -72,7 +74,8 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
         readonly public static string renderQueueText = "Render queue";
         readonly public static string zTestText = "Z Test";
         readonly public static string zCullMode = "Cull Mode";
-        readonly public static string dissolveTipText = "Alpha dissolve receives custom data from particle system in TEXCOORD0.zw and MainTex.gb.";
+        readonly public static string dissolveTipText = "Alpha dissolve receives custom data from particle system in TEXCOORD0.z and MainTex.b.";
+        readonly public static string colorMultiplierTipText = "Color multiplier receives custom data from particle system in TEXCOORD0.w and MainTex.r.";
         readonly public static string postEffectText = "PostEffect";
         readonly public static string enableNoiseTextureText = "Enable noise texture";
         readonly public static string noiseTextureText = "Noise texture";
@@ -119,6 +122,7 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
     /// Toggle Material Properties
     /// </summary>
     MaterialProperty mp_enableDissolve;
+    MaterialProperty mp_enableDissolveVertexColorAlpha;
     MaterialProperty mp_enableColorRamp;
     MaterialProperty mp_enableColorVertex;
 //    MaterialProperty mp_enableAutomaticPanning;
@@ -196,6 +200,7 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
         mp_enableEmissivePower = FindProperty("_EnableEmissivePower", props);
         mp_enableExtendedParticles = FindProperty("_EnableExtendedParticles", props);
         mp_enableDissolve = FindProperty("_EnableAlphaDissolve", props);
+        mp_enableDissolveVertexColorAlpha = FindProperty("_EnableDissolveVertexColorAlpha", props);
         mp_enableNoiseTexture = FindProperty("_EnableNoiseTexture", props);
         mp_enableNoiseTextureEmission = FindProperty("_EnableNoiseTextureEmission", props);
         mp_enableNoiseTextureAlpha = FindProperty("_EnableNoiseTextureAlpha", props);
@@ -546,7 +551,12 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
 
             if (dissolve != 0)
             {
-                EditorGUILayout.HelpBox(Styles.dissolveTipText, MessageType.Info);
+                m_materialEditor.ShaderProperty(mp_enableDissolveVertexColorAlpha, Styles.dissolveThroughVColorText);
+                if (mp_enableDissolveVertexColorAlpha.floatValue == 0.0f)
+                {
+                    EditorGUILayout.HelpBox(Styles.dissolveTipText, MessageType.Info);
+                }
+
 
                 Vector4 tem = mp_dissolveStep.vectorValue;
                 Vector2 p1 = new Vector2(tem.x, tem.y);
@@ -572,6 +582,7 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
 
             if (ncol == ColorSource.TextureRamp)
             {
+                EditorGUILayout.HelpBox(Styles.colorMultiplierTipText, MessageType.Info);
                 materialEditor.ShaderProperty(mp_colorRamp, Styles.colorRampText);
                 materialEditor.ShaderProperty(mp_colorMultiplier, Styles.colorMultiplierText);
             }
@@ -581,6 +592,7 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
             }
             else
             {
+                EditorGUILayout.HelpBox(Styles.colorMultiplierTipText, MessageType.Info);
                 materialEditor.ShaderProperty(mp_basicColor, Styles.basicColorText);
                 materialEditor.ShaderProperty(mp_saturatedColor, Styles.saturatedColorText);
                 materialEditor.ShaderProperty(mp_colorMultiplier, Styles.colorMultiplierText);

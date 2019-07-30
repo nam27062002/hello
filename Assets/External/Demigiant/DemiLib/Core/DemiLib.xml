@@ -32,10 +32,24 @@
             Background colors
             </summary>
         </member>
+        <member name="F:DG.DemiLib.DeColorBG.editor">
+            <summary>Editor background color</summary>
+        </member>
         <member name="T:DG.DemiLib.DeColorContent">
             <summary>
             Content colors
             </summary>
+        </member>
+        <member name="T:DG.DemiLib.DeInputUtils">
+            <summary>
+            Various Input utils
+            </summary>
+        </member>
+        <member name="M:DG.DemiLib.DeInputUtils.IsNumKeyDown">
+            <summary>
+            Returns a number key int if a number key was pressed in this frame, or -1 otherwise
+            </summary>
+            <returns></returns>
         </member>
         <member name="T:DG.DemiLib.DeScope">
              <summary>
@@ -87,9 +101,19 @@
             If the item exists sets it, otherwise first creates it and then sets it
             </summary>
         </member>
+        <member name="M:DG.DemiLib.External.DeHierarchyComponent.StoreItemSeparator(UnityEngine.GameObject,DG.DemiLib.External.DeHierarchyComponent.SeparatorType,DG.DemiLib.External.DeHierarchyComponent.HColor)">
+            <summary>
+            If the item exists sets it, otherwise first creates it and then sets it
+            </summary>
+        </member>
         <member name="M:DG.DemiLib.External.DeHierarchyComponent.RemoveItemData(UnityEngine.GameObject)">
             <summary>
             Returns TRUE if the item existed and was removed.
+            </summary>
+        </member>
+        <member name="M:DG.DemiLib.External.DeHierarchyComponent.ResetSeparator(UnityEngine.GameObject)">
+            <summary>
+            Returns TRUE if the item existed and was changed.
             </summary>
         </member>
         <member name="M:DG.DemiLib.External.DeHierarchyComponent.GetItem(UnityEngine.GameObject)">
@@ -106,6 +130,30 @@
         <member name="P:DG.DemiLib.IEditorGUINode.connectedNodesIds">
             <summary>Ids of all forward connected nodes. Length indicates how many forward connections are allowed.
             Min length represents available connections from node.</summary>
+        </member>
+        <member name="T:DG.DemiLib.IntRange">
+            <summary>
+            A serializable struct including a min and a max int value
+            </summary>
+        </member>
+        <member name="F:DG.DemiLib.IntRange.min">
+            <summary>Min value</summary>
+        </member>
+        <member name="F:DG.DemiLib.IntRange.max">
+            <summary>Max value</summary>
+        </member>
+        <member name="M:DG.DemiLib.IntRange.#ctor(System.Int32,System.Int32)">
+            <summary>
+            Creates a new Range
+            </summary>
+        </member>
+        <member name="M:DG.DemiLib.IntRange.RandomWithin">
+            <summary>
+            Returns a random value within this range (min/max included)
+            </summary>
+        </member>
+        <member name="M:DG.DemiLib.IntRange.ToString">
+            <inheritdoc />
         </member>
         <member name="T:DG.DemiLib.Range">
             <summary>
@@ -125,8 +173,11 @@
         </member>
         <member name="M:DG.DemiLib.Range.RandomWithin">
             <summary>
-            Returns a random value within this range
+            Returns a random value within this range (min/max included)
             </summary>
+        </member>
+        <member name="M:DG.DemiLib.Range.ToString">
+            <inheritdoc />
         </member>
     </members>
 </doc>
