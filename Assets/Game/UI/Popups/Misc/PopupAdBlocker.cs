@@ -21,6 +21,13 @@ using UnityEngine.Events;
 /// </summary>
 [RequireComponent(typeof(PopupController))]
 public class PopupAdBlocker : MonoBehaviour {
+    
+    public enum EAdType {
+        AdRewarded,
+        AdInterstitial,
+        CP2Interstitial
+    };
+    
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -35,7 +42,7 @@ public class PopupAdBlocker : MonoBehaviour {
 
 	// Setup
 	private GameAds.EAdPurpose m_adPurpose = GameAds.EAdPurpose.NONE;
-	private bool m_rewarded = true;
+	private EAdType m_adType = EAdType.AdRewarded;
 
 	// Internal
 	private bool m_adPending = false;
@@ -46,27 +53,38 @@ public class PopupAdBlocker : MonoBehaviour {
 	public GameObject m_panel;
 	public GameObject m_cancelButton;
 	private bool m_adSuccess = false;
-	//------------------------------------------------------------------------//
-	// STATIC METHODS														  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Special static initializer which will perform some checks and show some feedbacks
-	/// if the Ad can't be launched, and will display the ad with the given configuration otherwise.
-	/// </summary>
-	/// <param name="_rewarded">Rewarded or interstitial?</param>
-	/// <param name="_adPurpose">Purpose of the ad.</param>
-	/// <param name="_onAdFinishedCallback">Callback to be invoked when Ad has finished.</param>
-	public static PopupController Launch(bool _rewarded, GameAds.EAdPurpose _adPurpose, UnityAction<bool> _onAdFinishedCallback) {
+    //------------------------------------------------------------------------//
+    // STATIC METHODS														  //
+    //------------------------------------------------------------------------// 
+    public static PopupController LaunchAd(bool rewarded, GameAds.EAdPurpose _adPurpose, UnityAction<bool> _onAdFinishedCallback) {
+        EAdType adType = (rewarded) ? EAdType.AdRewarded : EAdType.AdInterstitial;
+
+        if (FeatureSettingsManager.AreCheatsEnabled)
+            ControlPanel.Log("Launching Ad rewarded = " + rewarded + " purpose = " + _adPurpose, ControlPanel.ELogChannel.General);
+
+        return LaunchAdType(adType, _adPurpose, _onAdFinishedCallback);
+    }
+
+    public static PopupController LaunchCp2Interstitial(UnityAction<bool> _onAdFinishedCallback) {
+        if (FeatureSettingsManager.AreCheatsEnabled)
+            ControlPanel.Log("Launching CP2Intersitial", ControlPanel.ELogChannel.CP2);
+            
+        return LaunchAdType(EAdType.CP2Interstitial, GameAds.EAdPurpose.NONE, _onAdFinishedCallback);
+    }
+
+    /// <summary>
+    /// Special static initializer which will perform some checks and show some feedbacks
+    /// if the Ad can't be launched, and will display the ad with the given configuration otherwise.
+    /// </summary>
+    /// <param name="_adType">Ad type</param>
+    /// <param name="_adPurpose">Purpose of the ad.</param>
+    /// <param name="_onAdFinishedCallback">Callback to be invoked when Ad has finished.</param>
+    private static PopupController LaunchAdType(EAdType _adType, GameAds.EAdPurpose _adPurpose, UnityAction<bool> _onAdFinishedCallback) {
 		// If ad can't be displayed, show error message instead of the popup
 		if(!GameAds.adsAvailable) {
 			PopupManager.canvas.worldCamera.gameObject.SetActive(true);
 
-            string text = "";
-            if ( _rewarded ){
-                text = LocalizationManager.SharedInstance.Localize("TID_AD_ERROR");
-            } else {
-                text = LocalizationManager.SharedInstance.Localize("TID_AD_AUTO_ERROR");
-            }
+            string text = GetErrorTextByAdType(_adType);            
             
 			// Show some feedback
 			UIFeedbackText errorText = UIFeedbackText.CreateAndLaunch(
@@ -86,7 +104,7 @@ public class PopupAdBlocker : MonoBehaviour {
 			m_sBlocking = true;
 			// Open and initialize popup with the given settings!
 			PopupController popup = PopupManager.LoadPopup(PopupAdBlocker.PATH);
-			popup.GetComponent<PopupAdBlocker>().Init(_rewarded, _adPurpose, _onAdFinishedCallback);
+			popup.GetComponent<PopupAdBlocker>().Init(_adType, _adPurpose, _onAdFinishedCallback);
 			popup.Open();
 			return popup;
 		}
@@ -96,7 +114,16 @@ public class PopupAdBlocker : MonoBehaviour {
 		}
 
 		return null;
-	}
+	}       
+    
+    private static bool WasAdTriggeredByUser(EAdType _adType) {
+        return _adType == EAdType.AdRewarded;
+    }
+
+    private static string GetErrorTextByAdType(EAdType _adType) {
+        string tid = WasAdTriggeredByUser(_adType) ? "TID_AD_ERROR" : "TID_AD_AUTO_ERROR";        
+        return LocalizationManager.SharedInstance.Localize(tid);        
+    } 
 
 	//------------------------------------------------------------------------//
 	// INTERNAL METHODS														  //
@@ -104,10 +131,10 @@ public class PopupAdBlocker : MonoBehaviour {
 	/// <summary>
 	/// Parametrized initializer.
 	/// </summary>
-	/// <param name="_rewarded">Rewarded or interstitial?</param>
+	/// <param name="_adType">Ad Type</param>
 	/// <param name="_adPurpose">Purpose of the ad.</param>
 	/// <param name="_onAdFinishedCallback">Callback to be invoked when Ad has finished.</param>
-	private void Init(bool _rewarded, GameAds.EAdPurpose _adPurpose, UnityAction<bool> _onAdFinishedCallback) {
+	private void Init(EAdType _adType, GameAds.EAdPurpose _adPurpose, UnityAction<bool> _onAdFinishedCallback) {
 		m_panel.SetActive(true);
 		m_cancelButton.SetActive(false);
 
@@ -115,7 +142,7 @@ public class PopupAdBlocker : MonoBehaviour {
 		m_adPending = true;
 
 		// Store parameters
-		m_rewarded = _rewarded;
+		m_adType = _adType;
 		m_adPurpose = _adPurpose;
 
 		// Clear callbacks and register new one
@@ -132,12 +159,19 @@ public class PopupAdBlocker : MonoBehaviour {
 	/// Launch the ad with the current setup.
 	/// </summary>
 	private void LaunchAd() {
-		// Rewarded?
-		if(m_rewarded) {
-			GameAds.instance.ShowRewarded(m_adPurpose, OnAdResult);
-		} else {
-			GameAds.instance.ShowInterstitial(OnAdResult);
-		}
+		switch (m_adType) {
+            case EAdType.AdRewarded:
+                GameAds.instance.ShowRewarded(m_adPurpose, OnAdResult);
+                break;
+
+            case EAdType.AdInterstitial:
+                GameAds.instance.ShowInterstitial(OnAdResult);
+                break;
+
+            case EAdType.CP2Interstitial:
+                HDCP2Manager.Instance.PlayInterstitial(true, OnAdResult);
+                break;
+        }		
 
 		// Ad not pending anymore!
 		m_adPending = false;
@@ -167,14 +201,9 @@ public class PopupAdBlocker : MonoBehaviour {
 
 		// If the ad couldn't be displayed, show message
 		if(!_success && !m_forcedCancel) {
-            string text = "";
-            if ( m_rewarded ){
-                text = LocalizationManager.SharedInstance.Localize("TID_AD_ERROR");
-            } else {
-                text = LocalizationManager.SharedInstance.Localize("TID_AD_AUTO_ERROR");
-            }
-            
-			UIFeedbackText feedbackText = UIFeedbackText.CreateAndLaunch(
+            string text = GetErrorTextByAdType(m_adType);
+
+            UIFeedbackText feedbackText = UIFeedbackText.CreateAndLaunch(
 				text,
 				Vector2.one * 0.5f,
 				PopupManager.canvas.transform as RectTransform
@@ -200,7 +229,7 @@ public class PopupAdBlocker : MonoBehaviour {
 	}
 
 	public void OnOpenPostAnimation(){
-        if ( m_rewarded )
+        if (WasAdTriggeredByUser(m_adType))
     		m_cancelButton.SetActive( true );
 	}
 

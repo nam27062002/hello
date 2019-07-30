@@ -1527,7 +1527,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
     private void Debug_TestCP2Interstitial()
     {
-        HDCP2Manager.Instance.PlayInterstitial(false);
+        HDCP2Manager.Instance.PlayInterstitial(false, null);
     }
 
     private const string LOG_CHANNEL = "[ApplicationManager]";
