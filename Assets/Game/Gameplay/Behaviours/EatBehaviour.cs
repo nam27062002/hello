@@ -1079,36 +1079,20 @@ public abstract class EatBehaviour : ISpawnable {
 		Vector3 bloodPos = m_mouth.position;
 		bloodPos.z = -50f;
 		GameObject go = m_holdingBloodParticle.Spawn(bloodPos + m_holdingBloodParticle.offset);
-		if ( go != null )
-		{
-			FollowTransform ft = go.GetComponent<FollowTransform>();
-			if (ft != null)
-			{
-				ft.m_follow = m_mouth;
-				ft.m_offset = m_holdingBloodParticle.offset;
-			}
-				
-		}
-		m_bloodEmitter.Add(go);
-	}
 
-	private void StartFreezing(){
-		Vector3 bloodPos = m_mouth.position;
-		bloodPos.z = -50f;
-		GameObject go = m_holdingFreezeParticle.Spawn(bloodPos + m_holdingFreezeParticle.offset);
-		if ( go != null )
-		{
-			FollowTransform ft = go.GetComponent<FollowTransform>();
-			if (ft != null)
-			{
-				ft.m_follow = m_mouth;
-				ft.m_offset = m_holdingFreezeParticle.offset;
-			}
-				
-		}
-		m_freezeEmitter.Add(go);
-	}
+        if (!ParticleManager.IsBloodOverrided()) {
+            if (go != null) {
+                FollowTransform ft = go.GetComponent<FollowTransform>();
+                if (ft != null) {
+                    ft.m_follow = m_mouth;
+                    ft.m_offset = m_holdingBloodParticle.offset;
+                }
 
+            }
+            m_bloodEmitter.Add(go);
+        }
+	}
+    
 	private void UpdateBlood() {
 		if ( !m_useBlood ) return;
 		if (m_bloodEmitter.Count > 0) {
@@ -1131,7 +1115,22 @@ public abstract class EatBehaviour : ISpawnable {
 		}
 	}
 
-	private void UpdateFreezing() {
+    private void StartFreezing() {
+        Vector3 bloodPos = m_mouth.position;
+        bloodPos.z = -50f;
+        GameObject go = m_holdingFreezeParticle.Spawn(bloodPos + m_holdingFreezeParticle.offset);
+        if (go != null) {
+            FollowTransform ft = go.GetComponent<FollowTransform>();
+            if (ft != null) {
+                ft.m_follow = m_mouth;
+                ft.m_offset = m_holdingFreezeParticle.offset;
+            }
+
+        }
+        m_freezeEmitter.Add(go);
+    }
+
+    private void UpdateFreezing() {
 		if (m_freezeEmitter.Count > 0) {
 			bool empty = true;
 			Vector3 bloodPos = m_mouth.position;
