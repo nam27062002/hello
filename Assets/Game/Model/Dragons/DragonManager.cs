@@ -41,26 +41,10 @@ public class DragonManager : UbiBCN.SingletonMonoBehaviour<DragonManager> {
 
 	// Shortcut to get the data of the currently selected dragon
 	// [AOC] Adding support for different dragon types and game modes
-	public static IDragonData currentDragon {
-		get { 
-			switch(SceneController.mode) {
-				case SceneController.Mode.SPECIAL_DRAGONS: {
-					return currentSpecialDragon;
-				} break;
-
-				default: {
-					return currentClassicDragon;
-				} break;
-			}
-		}
-	}
-
-	public static DragonDataClassic currentClassicDragon {
-		get { return GetDragonData(instance.m_user.currentClassicDragon) as DragonDataClassic; }
-	}
-
-	public static DragonDataSpecial currentSpecialDragon {
-		get { return GetDragonData(instance.m_user.currentSpecialDragon) as DragonDataSpecial; }
+	public static IDragonData CurrentDragon {
+		get {
+            return GetDragonData(instance.m_user.CurrentDragon);
+        }
 	}
 
     public static IDragonData GetClassicDragonsByOrder(int order)

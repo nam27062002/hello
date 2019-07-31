@@ -132,7 +132,7 @@ public class MenuSceneController : SceneController {
 		// Define initial selected dragon
 		if(string.IsNullOrEmpty(GameVars.menuInitialDragon)) {
 			// Default behaviour: Last dragon used
-			m_selectedDragon = DragonManager.currentDragon.sku;
+			m_selectedDragon = DragonManager.CurrentDragon.sku;
 		} else {
 			// Forced dragon
 			//SetSelectedDragon(GameVars.menuInitialDragon);
@@ -317,9 +317,9 @@ public class MenuSceneController : SceneController {
 		// If owned and different from profile's current dragon, update profile
 		// [AOC] Consider the newly selected dragon's type
 		IDragonData selectedDragonData = DragonManager.GetDragonData(_sku);
-		if(_sku != UsersManager.currentUser.GetCurrentDragon(selectedDragonData.type) && selectedDragonData.isOwned) {
+		if(_sku != UsersManager.currentUser.CurrentDragon && selectedDragonData.isOwned) {
 			// Update profile
-			UsersManager.currentUser.SetCurrentDragon(selectedDragonData.type, _sku);
+			UsersManager.currentUser.CurrentDragon = _sku;
 
             // Save persistence
             PersistenceFacade.instance.Save_Request();

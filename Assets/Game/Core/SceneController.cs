@@ -112,7 +112,7 @@ public class SceneController : MonoBehaviour {
 			case Mode.DEFAULT: {
 				// Set selected dragon to the current classic dragon
 				if(InstanceManager.menuSceneController != null) {
-					InstanceManager.menuSceneController.SetSelectedDragon(DragonManager.currentClassicDragon.sku);
+					InstanceManager.menuSceneController.SetSelectedDragon(DragonManager.CurrentDragon.sku);
 				}
 			} break;
 
@@ -121,8 +121,8 @@ public class SceneController : MonoBehaviour {
 				if(InstanceManager.menuSceneController != null) {
 					// Current special dragon can be null if no special dragon has been unlocked yet
 					string selectedDragonSku = "";
-					if(DragonManager.currentSpecialDragon != null) {
-						selectedDragonSku = DragonManager.currentSpecialDragon.sku;
+					if(DragonManager.CurrentDragon != null) {
+						selectedDragonSku = DragonManager.CurrentDragon.sku;
 					} else {
 						selectedDragonSku = DragonManager.GetDragonsByOrder(IDragonData.Type.SPECIAL).First().sku;	// Select first dragon
 					}

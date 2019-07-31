@@ -256,7 +256,7 @@ public class LabDragonSelectionScreen : MonoBehaviour {
 		if(!InstanceManager.menuSceneController.transitionManager.transitionAllowed) return;
 
         // Get assets download handle for current dragon
-        string currentDragonSku = UsersManager.currentUser.currentSpecialDragon;
+        string currentDragonSku = UsersManager.currentUser.CurrentDragon;
         Downloadables.Handle currentDragonHandle = HDAddressablesManager.Instance.GetHandleForSpecialDragon(currentDragonSku);
         if (!currentDragonHandle.IsAvailable())
         {

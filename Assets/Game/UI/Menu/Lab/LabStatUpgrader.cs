@@ -348,8 +348,13 @@ public class LabStatUpgrader : MonoBehaviour {
 	/// The upgrade button has been pressed!
 	/// </summary>
 	public void OnUpgradeButton() {
+
 		// Nothing to do if either dragon or stat data are not valid
 		if(m_dragonData == null || m_statData == null) return;
+
+        // If next level is unlocking a new power, something went wrong
+        if (m_dragonData.IsUnlockingNewPower()) return;
+
 
         // OTA: we prevent the upgrade if the asset bundles are not downloaded
         // because some of the upgraded dragons need the downloadable content

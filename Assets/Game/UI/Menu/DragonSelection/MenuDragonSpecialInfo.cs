@@ -7,6 +7,7 @@
 //----------------------------------------------------------------------------//
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
+using System.Collections;
 using UnityEngine;
 
 //----------------------------------------------------------------------------//
@@ -108,53 +109,96 @@ public class MenuDragonSpecialInfo : MonoBehaviour {
         if (!special) {
             m_dragonData = null;
             return;
-            }
+        }
+
+
+        // Ignore delay if disabled (coroutines can't be started with the component disabled)
+        if (isActiveAndEnabled && _delay > 0)
+        {
+            // Start internal coroutine
+            StartCoroutine(RefreshDelayed(_sku, _delay));
+        }
+        else
+        {
+            // Get new dragon's data from the dragon manager and do the refresh logic
+            Refresh(DragonManager.GetDragonData(_sku) as DragonDataSpecial);
+        }
+
+
+    }
+
+
+    private void Refresh (DragonDataSpecial _data)
+    {
 
         // Get new dragon's data from the dragon manager
-        DragonDataSpecial data = DragonManager.GetDragonData(_sku) as DragonDataSpecial;
-        if (data == null) return;
+        if (_data == null) return;
 
         // Things to update only when target dragon has changed
-        if (m_dragonData != data)
+        if (m_dragonData != _data)
         {
             // Dragon Name
             if (m_dragonNameText != null)
             {
-                switch (data.GetLockState())
+                switch (_data.GetLockState())
                 {
                     case DragonDataSpecial.LockState.SHADOW:
                     case DragonDataSpecial.LockState.REVEAL:
                         m_dragonNameText.Localize("TID_SELECT_DRAGON_UNKNOWN_NAME");
                         break;
                     default:
-                        m_dragonNameText.Localize(data.def.GetAsString("tidName"));
+                        m_dragonNameText.Localize(_data.def.GetAsString("tidName"));
                         break;
                 }
             }
 
 
-
             if (m_dragonDescText != null)
             {
-                m_dragonDescText.Localize(data.def.GetAsString("tidDesc"));
+                m_dragonDescText.Localize(_data.def.GetAsString("tidDesc"));
             }
 
             // Update level bar
-            m_specialDragonLevelBar.BuildFromDragonData(data);
+            m_specialDragonLevelBar.BuildFromDragonData(_data);
 
             // Upgrade buttons
             for (int i = 0; i < m_stats.Length; ++i)
             {
-                m_stats[i].InitFromData(data);
+                m_stats[i].InitFromData(_data);
             }
 
             // Upgrade powerup button
-            m_powerUpgrade.InitFromData(data);
+            m_powerUpgrade.InitFromData(_data);
 
             // Store new dragon data
-            m_dragonData = data;
+            m_dragonData = _data;
 
         }
+    }
+
+    //------------------------------------------------------------------------//
+    // COROUTINE															  //
+    //------------------------------------------------------------------------//
+
+    /// <summary>
+    /// Delayed refresh.
+    /// </summary>
+    /// <param name="_sku">The sku of the dragon whose data we want to use to initialize the bar.</param>
+    /// <param name="_delay">Optional delay before refreshing the data. Useful to sync with other UI animations.</param>
+    private IEnumerator RefreshDelayed(string _sku, float _delay = -1f)
+    {
+        // If there is a delay, respect it
+        if (_delay > 0f)
+        {
+            yield return new WaitForSeconds(_delay);
+        }
+
+        // Get new dragon's data from the dragon manager
+        DragonDataSpecial data = DragonManager.GetDragonData(_sku) as DragonDataSpecial;
+        if (data == null) yield break;
+
+        // Call virtual method
+        Refresh(data);
     }
 
 

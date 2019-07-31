@@ -144,12 +144,12 @@ public class MenuDragonScreenController : MonoBehaviour {
 		// Cheat for simulating dragon unlock
 		#if UNITY_EDITOR
 		if(Input.GetKeyDown(KeyCode.U)) {
-			int order = DragonManager.currentDragon.def.GetAsInt("order");
+			int order = DragonManager.CurrentDragon.def.GetAsInt("order");
 			List<IDragonData> dragonsByOrder = DragonManager.GetDragonsByOrder(IDragonData.Type.CLASSIC);
 			if(order < dragonsByOrder.Count - 1) {	// Exclude if playing with last dragon
 				IDragonData nextDragonData = dragonsByOrder[order + 1];
 				if(nextDragonData != null) {
-					InstanceManager.menuSceneController.dragonSelector.SetSelectedDragon(DragonManager.currentDragon.def.sku);
+					InstanceManager.menuSceneController.dragonSelector.SetSelectedDragon(DragonManager.CurrentDragon.def.sku);
 					DOVirtual.DelayedCall(1f, () => { LaunchUnlockAnim(nextDragonData.def.sku, m_initialDelay, m_scrollDuration, true); });
 				}
 			}
@@ -366,8 +366,8 @@ public class MenuDragonScreenController : MonoBehaviour {
                         m_toHideOnTeaseAnim[i].ForceShow(true);
                     }
 
-					InstanceManager.menuSceneController.dragonSelector.OnSelectedDragonChanged(DragonManager.currentDragon, DragonManager.currentDragon);
-					InstanceManager.menuSceneController.dragonScroller.FocusDragon(DragonManager.currentDragon.def.sku, true);
+					InstanceManager.menuSceneController.dragonSelector.OnSelectedDragonChanged(DragonManager.CurrentDragon, DragonManager.CurrentDragon);
+					InstanceManager.menuSceneController.dragonScroller.FocusDragon(DragonManager.CurrentDragon.def.sku, true);
 				}
 
 				// Toggle animating mode
@@ -438,8 +438,8 @@ public class MenuDragonScreenController : MonoBehaviour {
 					for(int i = 0; i < m_toHideOnTeaseAnim.Length; i++) {
 						m_toHideOnTeaseAnim[i].ForceShow(true);
 					}
-					InstanceManager.menuSceneController.dragonSelector.OnSelectedDragonChanged(DragonManager.currentDragon, DragonManager.currentDragon);
-					InstanceManager.menuSceneController.dragonScroller.FocusDragon(DragonManager.currentDragon.def.sku, true);
+					InstanceManager.menuSceneController.dragonSelector.OnSelectedDragonChanged(DragonManager.CurrentDragon, DragonManager.CurrentDragon);
+					InstanceManager.menuSceneController.dragonScroller.FocusDragon(DragonManager.CurrentDragon.def.sku, true);
 				}
 
 				// Toggle animating mode
@@ -594,7 +594,7 @@ public class MenuDragonScreenController : MonoBehaviour {
 		// Check whether all assets required for the current dragon are available or not
 		// [AOC] CAREFUL! Current dragon is not necessarily the selected one! Make sure we're checking the right set of assets.
 		// Get assets download handle for current dragon
-		string currentDragonSku = UsersManager.currentUser.currentClassicDragon;
+		string currentDragonSku = UsersManager.currentUser.CurrentDragon;
 		Downloadables.Handle currentDragonHandle = HDAddressablesManager.Instance.GetHandleForClassicDragon(currentDragonSku);
 		if(!currentDragonHandle.IsAvailable()) {
 			// Scroll back to current dragon

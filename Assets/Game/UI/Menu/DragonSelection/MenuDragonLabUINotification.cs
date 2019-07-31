@@ -74,14 +74,14 @@ public class MenuDragonLabUINotification : MonoBehaviour {
 		bool show = true;
 
 		// Don't show if the player doesn't own any special dragon
-		if(DragonManager.currentSpecialDragon == null) {
+		if(DragonManager.CurrentDragon == null) {
 			m_notification.Hide(true, true);
 			return;
 		}
 		
 		// Don't show if the player doesn't own any special dragon
 		if(show) {
-			show &= DragonManager.currentSpecialDragon != null;
+			show &= DragonManager.CurrentDragon != null;
 		}
 
 		// Show only if the season is in PENDING_REWARDS state

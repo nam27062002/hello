@@ -253,13 +253,19 @@ public class ResultsScreenController : MonoBehaviour {
 				m_activeSequence = m_tournamentStepsSequence;
 			} break;
 
-			case GameSceneController.Mode.SPECIAL_DRAGONS: {
-				m_activeSequence = m_specialDragonStepsSequence;
-			} break;
-
 			default: {
-				m_activeSequence = m_defaultStepsSequence;
-			} break;
+                    if (DragonManager.CurrentDragon.type == IDragonData.Type.CLASSIC)
+                    {
+                        m_activeSequence = m_defaultStepsSequence;
+                    }
+                    else if (DragonManager.CurrentDragon.type == IDragonData.Type.SPECIAL)
+                    {
+                        m_activeSequence = m_specialDragonStepsSequence;
+                    }else
+                    {
+                        Debug.LogError("Something bad happen. The dragon type is not correct");
+                    }
+                } break;
 		}
 
 		// Init those steps that are gonna be used

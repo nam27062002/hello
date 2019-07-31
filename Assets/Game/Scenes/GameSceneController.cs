@@ -165,7 +165,7 @@ public class GameSceneController : GameSceneControllerBase {
             if (HDLiveDataManager.tournament.isActive) {
                 DragonManager.LoadDragon(HDLiveDataManager.tournament.tournamentData.tournamentDef.dragonData);
             } else {
-                DragonManager.LoadDragon(DragonManager.currentDragon.sku);	// currentDragon Will automatically select between classic and special dragons depending on active mode
+                DragonManager.LoadDragon(DragonManager.CurrentDragon.sku);	// currentDragon Will automatically select between classic and special dragons depending on active mode
             }
         }
 		
@@ -571,7 +571,7 @@ public class GameSceneController : GameSceneControllerBase {
                         m_levelLoader = LevelManager.LoadLevel(tournamentDef.m_goal.m_area);  
                     }
                 } else {
-                    m_levelLoader = LevelManager.LoadLevelForDragon(DragonManager.currentDragon.sku);
+                    m_levelLoader = LevelManager.LoadLevelForDragon(DragonManager.CurrentDragon.sku);
                 }
                 
                 m_levelLoader.Perform(m_useSyncLoading);

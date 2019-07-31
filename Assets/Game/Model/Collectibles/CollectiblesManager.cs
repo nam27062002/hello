@@ -273,7 +273,7 @@ public class CollectiblesManager : UbiBCN.SingletonMonoBehaviour<CollectiblesMan
 			// Filter by dragon tier? (blockers, etc.)
 			List<GameObject> filteredCollectibles = new List<GameObject>();
 			if(_filterTier) {
-				DragonTier currentTier = DragonManager.IsReady() ? DragonManager.currentDragon.tier : DragonTier.TIER_0;
+				DragonTier currentTier = DragonManager.IsReady() ? DragonManager.CurrentDragon.tier : DragonTier.TIER_0;
 				filteredCollectibles = allCollectibles.Where((GameObject _go) => { 
 					T c = _go.GetComponent<T>();
 					return currentTier >= c.requiredTier && currentTier <= c.maxTier;

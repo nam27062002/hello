@@ -378,7 +378,7 @@ public class PopupCustomizer : MonoBehaviour {
 
 					case "pets": {
 						// Make sure selected dragon is owned (requirement for opening the pets screen)
-						InstanceManager.menuSceneController.SetSelectedDragon(DragonManager.currentDragon.def.sku);	// Current dragon is the last owned selected dragon
+						InstanceManager.menuSceneController.SetSelectedDragon(DragonManager.CurrentDragon.def.sku);	// Current dragon is the last owned selected dragon
 
 						// Initialize the pets screen
 						MenuTransitionManager screensController = InstanceManager.menuSceneController.transitionManager;
@@ -406,7 +406,7 @@ public class PopupCustomizer : MonoBehaviour {
 
 					case "skins": {
 						// Make sure selected dragon is owned (requirement for opening the skins screen)
-						string targetDragon = DragonManager.currentDragon.def.sku;  // Current dragon is owned for sure
+						string targetDragon = DragonManager.CurrentDragon.def.sku;  // Current dragon is owned for sure
 						InstanceManager.menuSceneController.SetSelectedDragon(targetDragon);
 
 						// Check whether all assets required for the selected dragon are available or not

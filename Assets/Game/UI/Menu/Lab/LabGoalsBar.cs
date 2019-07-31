@@ -149,7 +149,7 @@ public class LabGoalsBar : MonoBehaviour {
 	/// </summary>
 	public void OnPlayButton() {
 		// If no special dragon is available, show error message
-		if(DragonManager.currentSpecialDragon == null) {
+		if(DragonManager.CurrentDragon == null) {
 			UIFeedbackText.CreateAndLaunch(
 				"TID_LAB_ERROR_NO_SPECIAL_DRAGON_OWNED",
 				GameConstants.Vector2.center,
@@ -161,7 +161,7 @@ public class LabGoalsBar : MonoBehaviour {
 		// Just in case, make sure all assets required for the current dragon are available
 		// Usually we shouldn't get access to this screen if not, but in some corner cases it's possible to get to this point (HDK-4661, HDK-4663)
 		// Get assets download handle for current dragon
-		string currentDragonSku = UsersManager.currentUser.currentSpecialDragon;
+		string currentDragonSku = UsersManager.currentUser.CurrentDragon;
 		Downloadables.Handle currentDragonHandle = HDAddressablesManager.Instance.GetHandleForClassicDragon(currentDragonSku);
 		if(!currentDragonHandle.IsAvailable()) {
 			// If needed, show assets download popup

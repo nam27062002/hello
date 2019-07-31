@@ -262,7 +262,7 @@ public class OpenEggScreenController : MonoBehaviour {
 		switch(m_scene.eggData.rewardData.reward.type) {
 			case Metagame.RewardPet.TYPE_CODE: {
 				// Make sure selected dragon is owned
-				InstanceManager.menuSceneController.SetSelectedDragon(DragonManager.currentDragon.def.sku);	// Current dragon is always owned
+				InstanceManager.menuSceneController.SetSelectedDragon(DragonManager.CurrentDragon.def.sku);	// Current dragon is always owned
 
 				// Go to the pets screen
 				// Add a frame of delay to make sure everyone has been notified that the selected dragon has changed

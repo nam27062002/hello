@@ -25,7 +25,7 @@ public class LabDragonBarEditor : Editor {
 
         if (GUILayout.Button("Rebuild from current dragon"))
         {
-            xpBar.BuildFromDragonData(DragonManager.currentSpecialDragon);
+            xpBar.BuildFromDragonData(DragonManager.CurrentDragon as DragonDataSpecial);
         }
     }
 

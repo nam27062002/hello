@@ -108,11 +108,13 @@ public class DragonPowerUpgrader : MonoBehaviour {
         {
             if (m_dragonData.IsUnlockingNewPower())
             {
-                m_showHide.Show();
+                Debug.Log("Show power upgrader");
+                gameObject.SetActive(true);
             }
             else
             {
-                m_showHide.Hide();
+                Debug.Log("Hide power upgrader");
+                gameObject.SetActive(false);
                 return;
             }
         }
@@ -158,8 +160,10 @@ public class DragonPowerUpgrader : MonoBehaviour {
         // Nothing to do if either dragon or stat data are not valid
         if (m_dragonData == null ) return;
 
-        // OTA: we prevent the upgrade if the asset bundles are not downloaded
-        // because some of the upgraded dragons need the downloadable content
+        // If next level is not unlocking a new power, something went wrong
+        if (!m_dragonData.IsUnlockingNewPower()) return;
+
+
         Downloadables.Handle allContentHandle = HDAddressablesManager.Instance.GetHandleForAllDownloadables();
 
         if (!allContentHandle.IsAvailable())
