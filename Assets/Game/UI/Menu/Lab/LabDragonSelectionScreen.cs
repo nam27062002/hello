@@ -167,19 +167,7 @@ public class LabDragonSelectionScreen : MonoBehaviour {
 		// Upgrade locked info
 		if(m_upgradeLockedInfoText != null) {
 			// Show if no more upgrades are possible
-			// [AOC] Unless the cause is because all stats are already maxed!
-			DragonTier nextRequiredTier = m_dragonData.GetNextRequiredTier();
-			bool show = !m_dragonData.CanUpgradeStats() && !m_dragonData.allStatsMaxed && nextRequiredTier != DragonTier.COUNT;
-			m_upgradeLockedInfoText.gameObject.SetActive(show);
 
-			// Update text
-			if(show) {
-				m_upgradeLockedInfoText.Localize(	// Unlock a %U0 dragon to keep upgrading %U1!
-					m_upgradeLockedInfoText.tid,
-                    UIConstants.GetSpriteTag(UIConstants.GetDragonTierIcon(nextRequiredTier)),
-                 	m_dragonData.def.GetLocalized("tidName")
-				);
-			}
 		}
 	}
 
@@ -224,7 +212,7 @@ public class LabDragonSelectionScreen : MonoBehaviour {
     public void OnShowPostAnimation() {
 		// Subscribe to external events
 		Messenger.AddListener<string>(MessengerEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
-		Messenger.AddListener<DragonDataSpecial, DragonDataSpecial.Stat>(MessengerEvents.SPECIAL_DRAGON_STAT_UPGRADED, OnStatUpgraded);
+		Messenger.AddListener<DragonDataSpecial>(MessengerEvents.SPECIAL_DRAGON_LEVEL_UPGRADED, OnLevelUpgraded);
 
 		// If the season has finished, go to the league screen
 		MenuScreen prevScreen = InstanceManager.menuSceneController.transitionManager.prevScreen;
@@ -243,7 +231,7 @@ public class LabDragonSelectionScreen : MonoBehaviour {
 	public void OnHidePreAnimation() {
 		// Unsubscribe from external events
 		Messenger.RemoveListener<string>(MessengerEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
-		Messenger.RemoveListener<DragonDataSpecial, DragonDataSpecial.Stat>(MessengerEvents.SPECIAL_DRAGON_STAT_UPGRADED, OnStatUpgraded);
+		Messenger.RemoveListener<DragonDataSpecial>(MessengerEvents.SPECIAL_DRAGON_LEVEL_UPGRADED, OnLevelUpgraded);
 	}
 
 	/// <summary>
@@ -313,10 +301,9 @@ public class LabDragonSelectionScreen : MonoBehaviour {
 	/// <summary>
 	/// A dragon stat has been upgraded.
 	/// </summary>
-	private void OnStatUpgraded(DragonDataSpecial _dragonData, DragonDataSpecial.Stat _stat) {
+	private void OnLevelUpgraded(DragonDataSpecial _dragonData ) {
 		// Let's just refresh for now
 		Refresh(true);
-        m_dragonExpBar.AddLevel();
 	}
 
 	/// <summary>

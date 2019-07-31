@@ -808,7 +808,7 @@ public class GameSceneController : GameSceneControllerBase {
                     isSpecial = true;
                     // TODO
                     DragonDataSpecial specialData = dragonData as DragonDataSpecial;
-                    dragonProgress = specialData.GetLevel();
+                    dragonProgress = specialData.Level;
                 }
                 dragonSkin = dragonData.disguise;
                 pets = dragonData.pets;

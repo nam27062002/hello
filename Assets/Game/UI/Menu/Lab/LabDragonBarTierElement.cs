@@ -16,7 +16,7 @@ public class LabDragonBarTierElement : LabDragonBarLockedElement {
 		base.OnEnable();
 
 		// Subscribe to external events
-		Messenger.AddListener<DragonDataSpecial>(MessengerEvents.SPECIAL_DRAGON_TIER_UPGRADED, OnTierUpgraded);
+		Messenger.AddListener<DragonDataSpecial>(MessengerEvents.SPECIAL_DRAGON_LEVEL_UPGRADED, OnLevelUpgraded);
 	}
 
 	protected override void OnDisable() {
@@ -25,7 +25,7 @@ public class LabDragonBarTierElement : LabDragonBarLockedElement {
 
 		// Unsubscribe from external events
 		// Subscribe to external events
-		Messenger.RemoveListener<DragonDataSpecial>(MessengerEvents.SPECIAL_DRAGON_TIER_UPGRADED, OnTierUpgraded);
+		Messenger.RemoveListener<DragonDataSpecial>(MessengerEvents.SPECIAL_DRAGON_LEVEL_UPGRADED, OnLevelUpgraded);
 	}
 
     public void SetTier(int _index) {
@@ -57,7 +57,7 @@ public class LabDragonBarTierElement : LabDragonBarLockedElement {
 		);
 	}
 
-	private void OnTierUpgraded(DragonDataSpecial _dragonData) {
+	private void OnLevelUpgraded(DragonDataSpecial _dragonData) {
 		// Unlocked tier matches the one represented by this element?
 		if(m_tier == _dragonData.tier) {
 			// Show some VFX

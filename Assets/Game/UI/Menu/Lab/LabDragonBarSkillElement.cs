@@ -18,7 +18,7 @@ public class LabDragonBarSkillElement : LabDragonBarLockedElement {
 		base.OnEnable();
 
 		// Subscribe to external events
-		Messenger.AddListener<DragonDataSpecial>(MessengerEvents.SPECIAL_DRAGON_POWER_UPGRADED, OnSkillUpgraded);
+		Messenger.AddListener<DragonDataSpecial>(MessengerEvents.SPECIAL_DRAGON_POWER_UPGRADED, OnPowerUpgraded);
 	}
 
 	protected override void OnDisable() {
@@ -27,7 +27,7 @@ public class LabDragonBarSkillElement : LabDragonBarLockedElement {
 
 		// Unsubscribe from external events
 		// Subscribe to external events
-		Messenger.RemoveListener<DragonDataSpecial>(MessengerEvents.SPECIAL_DRAGON_POWER_UPGRADED, OnSkillUpgraded);
+		Messenger.RemoveListener<DragonDataSpecial>(MessengerEvents.SPECIAL_DRAGON_POWER_UPGRADED, OnPowerUpgraded);
 	}
 
 	public void SetDefinition(DefinitionNode _def) {
@@ -80,7 +80,7 @@ public class LabDragonBarSkillElement : LabDragonBarLockedElement {
 		);
     }
 
-	private void OnSkillUpgraded(DragonDataSpecial _dragonData) {
+	private void OnPowerUpgraded(DragonDataSpecial _dragonData) {
 		// Unlocked skill upgrade matches the one represented by this element?
 		if(_dragonData.biggestPowerDef == null) return;
 		if(m_def.sku == _dragonData.biggestPowerDef.sku) {

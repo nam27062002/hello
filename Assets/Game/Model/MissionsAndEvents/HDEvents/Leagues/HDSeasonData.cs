@@ -521,7 +521,7 @@ public class HDSeasonData {
                     build.Add("level", classicData.progression.level);
                 } else {
                     DragonDataSpecial specialData = dragonData as DragonDataSpecial;
-                    build.Add("level", specialData.GetLevel());
+                    build.Add("level", specialData.Level);
 
                     SimpleJSON.JSONClass stats = new SimpleJSON.JSONClass();
                     {

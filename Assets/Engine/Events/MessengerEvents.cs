@@ -246,9 +246,10 @@ public enum MessengerEvents {
 	TARGET_REACHED,
 
 	// Lab/Special Dragons
-	SPECIAL_DRAGON_STAT_UPGRADED,	// params: DragonDataSpecial _dragonData, DragonDataSpecial.Stat _stat
+	//SPECIAL_DRAGON_STAT_UPGRADED,	// params: DragonDataSpecial _dragonData, DragonDataSpecial.Stat _stat
 	SPECIAL_DRAGON_POWER_UPGRADED,	// params: DragonDataSpecial _dragonData
-	SPECIAL_DRAGON_TIER_UPGRADED,	// params: DragonDataSpecial _dragonData
+	//SPECIAL_DRAGON_TIER_UPGRADED,	// params: DragonDataSpecial _dragonData
+    SPECIAL_DRAGON_LEVEL_UPGRADED,	// params: DragonDataSpecial _dragonData
 
     // Modifiers
     MODIFIER_ECONOMY_DRAGON_PRICE_CHANGED,  // params: IDragonData

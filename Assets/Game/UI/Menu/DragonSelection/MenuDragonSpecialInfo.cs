@@ -31,6 +31,8 @@ public class MenuDragonSpecialInfo : MonoBehaviour {
     [SerializeField] private LabDragonBar m_specialDragonLevelBar;
 
     [SerializeField] private LabStatUpgrader[] m_stats = new LabStatUpgrader[0];
+    [SerializeField] private DragonPowerUpgrader m_powerUpgrade;
+
 
     // Internal
     private DragonDataSpecial m_dragonData = null;	// Last used dragon data
@@ -44,6 +46,7 @@ public class MenuDragonSpecialInfo : MonoBehaviour {
     private void Awake() {
         // Subscribe to external events
         Messenger.AddListener<string>(MessengerEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
+        Messenger.AddListener<IDragonData>(MessengerEvents.DRAGON_ACQUIRED, OnDragonAcquired);
 
     }
 
@@ -145,6 +148,9 @@ public class MenuDragonSpecialInfo : MonoBehaviour {
                 m_stats[i].InitFromData(data);
             }
 
+            // Upgrade powerup button
+            m_powerUpgrade.InitFromData(data);
+
             // Store new dragon data
             m_dragonData = data;
 
@@ -164,6 +170,20 @@ public class MenuDragonSpecialInfo : MonoBehaviour {
     {
         // Refresh after some delay to let the animation finish
         Refresh(_sku, 0.25f);
+    }
+
+    /// <summary>
+    /// A new dragon has been unlocked.
+    /// </summary>
+    /// <param name="_data">The sku of the unlocked dragon.</param>
+    private void OnDragonAcquired(IDragonData _data)
+    {
+        // If the unlocked dragon is the selected one
+        if (_data.sku == m_dragonData.sku)
+        {
+            // Refresh after some delay to let the animation finish
+            Refresh(m_dragonData.sku, 0.25f);
+        }
     }
 
 

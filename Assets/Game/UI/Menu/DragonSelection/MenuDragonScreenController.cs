@@ -94,6 +94,7 @@ public class MenuDragonScreenController : MonoBehaviour {
 			m_goToScreen = MenuScreen.PENDING_REWARD;
 			return;
 		}
+
 	}
 
 	/// <summary>
@@ -101,7 +102,7 @@ public class MenuDragonScreenController : MonoBehaviour {
 	/// </summary>
 	private void OnDisable() {
 
-	}
+    }
 
 	/// <summary>
 	/// Destructor.
@@ -660,4 +661,6 @@ public class MenuDragonScreenController : MonoBehaviour {
 		// All checks passed, go to target screen
 		InstanceManager.menuSceneController.GoToScreen(MenuScreen.SKINS);
 	}
+
+
 }

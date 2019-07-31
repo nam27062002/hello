@@ -58,9 +58,10 @@ public class DefinitionsCategory
 	public const string DRAGON_STATS = "DRAGON_STATS";
     public const string SPECIAL_DRAGON_TIERS = "SPECIAL_DRAGON_TIERS";
     public const string SPECIAL_DRAGON_POWERS = "SPECIAL_DRAGON_POWERS";
+    public const string SPECIAL_DRAGON_UPGRADES = "SPECIAL_DRAGON_UPGRADES";
 
-	// Entities
-	public const string PETS 				= "PETS";
+    // Entities
+    public const string PETS 				= "PETS";
 	public const string PET_MOVEMENT 		= "PET_MOVEMENT";
 	public const string PET_CATEGORIES 		= "PET_CATEGORIES";
 	public const string ENTITIES 			= "ENTITIES";

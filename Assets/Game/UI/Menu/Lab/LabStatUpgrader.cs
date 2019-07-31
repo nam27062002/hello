@@ -11,6 +11,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
 using System.Collections.Generic;
+using TMPro;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -37,6 +38,7 @@ public class LabStatUpgrader : MonoBehaviour {
 
 	private const string ANIM_STATE_PARAM_ID = "state";
 
+
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
@@ -51,7 +53,8 @@ public class LabStatUpgrader : MonoBehaviour {
 	[SerializeField] private CircularLayout m_separatorsContainer = null;
 	[Space]
 	[SerializeField] private Image[] m_icons = new Image[0];
-	[SerializeField] private Localizer m_priceText = null;
+    [SerializeField] private TextMeshProUGUI m_counterText = null;
+    [SerializeField] private Localizer m_priceText = null;
 	[SerializeField] private NumberTextAnimator m_valueText = null;
 	[SerializeField] private RectTransform m_feedbackAnchor = null;
 
@@ -62,6 +65,7 @@ public class LabStatUpgrader : MonoBehaviour {
 	// Internal references
 	private GameObject m_separatorPrefab = null;
 	private List<GameObject> m_separators = new List<GameObject>();
+    private ShowHideAnimator m_showHide = null;
 
 	// Other internal vars
 	private string m_formattedStepValue = "";
@@ -97,44 +101,45 @@ public class LabStatUpgrader : MonoBehaviour {
 		if(m_valueText != null) {
 			m_valueText.CustomTextSetter = OnSetValueText;
 		}
-	}
 
-	/// <summary>
-	/// Component has been enabled.
-	/// </summary>
-	private void OnEnable() {
-		// Subscribe to external events
-		Messenger.AddListener<DragonDataSpecial, DragonDataSpecial.Stat>(MessengerEvents.SPECIAL_DRAGON_STAT_UPGRADED, OnDragonStatUpgraded);
+        // Cache showHideAnimator
+        m_showHide = GetComponent<ShowHideAnimator>();
+
+        // Subscribe to external events
+        Messenger.AddListener<DragonDataSpecial>(MessengerEvents.SPECIAL_DRAGON_LEVEL_UPGRADED, OnDragonLevelUpgraded);
 
         // Make sure we're displaying the right info
         // [AOC] Delay by one frame to do it when the object is actually enabled
         UbiBCN.CoroutineManager.DelayedCallByFrames(
-			() => { Refresh(false); },
-			1
-		);
-	}
+            () => { Refresh(false); },
+            1
+        );
 
-	/// <summary>
-	/// Component has been disabled
-	/// </summary>
-	private void OnDisable() {
-		// Unsubscribe from external events
-		Messenger.RemoveListener<DragonDataSpecial, DragonDataSpecial.Stat>(MessengerEvents.SPECIAL_DRAGON_STAT_UPGRADED, OnDragonStatUpgraded);
     }
 
-	//------------------------------------------------------------------------//
-	// OTHER METHODS														  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Initialize with the given dragon data and stat type.
-	/// </summary>
-	/// <param name="_dragonData">Dragon data to be used.</param>
-	/// <param name="_stat">Stat to be used.</param>
-	public void InitFromData(DragonDataSpecial _dragonData, DragonDataSpecial.Stat _stat) {
+
+    public void OnShowPreAnimation()
+    {
+        Refresh(false);
+    }
+
+
+
+    //------------------------------------------------------------------------//
+    // OTHER METHODS														  //
+    //------------------------------------------------------------------------//
+    /// <summary>
+    /// Initialize with the given dragon data and stat type.
+    /// </summary>
+    /// <param name="_dragonData">Dragon data to be used.</param>
+    /// <param name="_stat">Stat to be used.</param>
+    public void InitFromData(DragonDataSpecial _dragonData, DragonDataSpecial.Stat _stat) {
 		// Overwrite default stat and use default initializer
 		m_stat = _stat;
 		InitFromData(_dragonData);
 	}
+
+    
 
 	/// <summary>
 	/// Initialize with the given dragon data pre-defined stat type.
@@ -197,6 +202,21 @@ public class LabStatUpgrader : MonoBehaviour {
 		// Nothing to do if either dragon or stat data are not valid
 		if(m_dragonData == null || m_statData == null) return;
 
+
+        // Hide button if the next upgrade unlocks a new power
+        if (m_showHide != null)
+        {
+            if (m_dragonData.IsUnlockingNewPower())
+            {
+                m_showHide.Hide();
+                return;
+            }
+            else
+            {
+                m_showHide.Show();
+            }
+        }
+
 		// Refresh progress var value
 		if(m_progressBar != null) {
 			// [AOC] Match separator's circular layout min and max angles
@@ -239,49 +259,67 @@ public class LabStatUpgrader : MonoBehaviour {
 			}
 		}
 
-		// Refresh upgrade price
-		if(m_priceText != null) {
-			switch(MODE) {
-				case Mode.PERCENTAGE_BONUS: {
-					m_formattedStepValue = StringUtils.MultiplierToPercentageIncrease(m_statData.valueStep + 1, true);
+        // Counter text
+        if (m_counterText != null)
+        {
+            m_counterText.text = m_dragonData.GetStat(m_stat).level + "/" + m_dragonData.GetStat(m_stat).maxLevel;
+        }
 
-					m_priceText.Localize(
-						m_priceText.tid,
-						m_formattedStepValue,
-						StringUtils.FormatNumber(m_dragonData.GetStatUpgradePrice(m_stat))
-					);
-				} break;
 
-				case Mode.ABSOLUTE_VALUE: {
-					float baseValue = 0f;
-					switch(m_stat) {
-						case DragonDataSpecial.Stat.HEALTH: baseValue = m_dragonData.specialTierDef.GetAsFloat("health"); break;
-						case DragonDataSpecial.Stat.SPEED: baseValue = m_dragonData.specialTierDef.GetAsFloat("force") * 10f; break;
-						case DragonDataSpecial.Stat.ENERGY: baseValue = m_dragonData.specialTierDef.GetAsFloat("energyBase"); break;
-					}
-					long longValue = (long)Mathf.RoundToInt(baseValue * m_statData.valueStep);
-					m_formattedStepValue = "+" + StringUtils.FormatNumber(longValue);
+        // Refresh upgrade price
+        Price upgradePrice = m_dragonData.GetNextUpgradePrice();
 
-					m_priceText.Localize(
-						m_priceText.tid,
-						m_formattedStepValue,
-						StringUtils.FormatNumber(m_dragonData.GetStatUpgradePrice(m_stat))
-					);
-				} break;
+        if (m_priceText != null && upgradePrice != null)
+            {
+            switch (MODE)
+            {
+                case Mode.PERCENTAGE_BONUS:
+                    {
+                        m_formattedStepValue = StringUtils.MultiplierToPercentageIncrease(m_statData.valueStep + 1, true);
 
-				case Mode.LEVEL_PROGRESSION: {
-					m_formattedStepValue = string.Empty;
+                        m_priceText.text.text = UIConstants.GetIconString(
+                            upgradePrice.Amount.ToString(),
+                            UIConstants.GetCurrencyIcon(upgradePrice.Currency),
+                            UIConstants.IconAlignment.LEFT
+                        );
+                    }
+                    break;
 
-					// Disable localizer and just show the price
-					m_priceText.enabled = false;
-					m_priceText.text.text = UIConstants.GetIconString(
-						m_dragonData.GetStatUpgradePrice(m_stat),
-						UserProfile.Currency.GOLDEN_FRAGMENTS,
-						UIConstants.IconAlignment.LEFT
-					);
-				} break;
-			}
-		}
+                case Mode.ABSOLUTE_VALUE:
+                    {
+                        float baseValue = 0f;
+                        switch (m_stat)
+                        {
+                            case DragonDataSpecial.Stat.HEALTH: baseValue = m_dragonData.specialTierDef.GetAsFloat("health"); break;
+                            case DragonDataSpecial.Stat.SPEED: baseValue = m_dragonData.specialTierDef.GetAsFloat("force") * 10f; break;
+                            case DragonDataSpecial.Stat.ENERGY: baseValue = m_dragonData.specialTierDef.GetAsFloat("energyBase"); break;
+                        }
+                        long longValue = (long)Mathf.RoundToInt(baseValue * m_statData.valueStep);
+                        m_formattedStepValue = "+" + StringUtils.FormatNumber(longValue);
+
+                        m_priceText.text.text = UIConstants.GetIconString(
+                            upgradePrice.Amount.ToString(),
+                            UIConstants.GetCurrencyIcon(upgradePrice.Currency),
+                            UIConstants.IconAlignment.LEFT
+                        );
+                    }
+                    break;
+
+                case Mode.LEVEL_PROGRESSION:
+                    {
+                        m_formattedStepValue = string.Empty;
+
+                        // Disable localizer and just show the price
+                        m_priceText.enabled = false;
+                        m_priceText.text.text = UIConstants.GetIconString(
+                            upgradePrice.Amount.ToString(),
+                            UIConstants.GetCurrencyIcon(upgradePrice.Currency),
+                            UIConstants.IconAlignment.LEFT
+                        );
+                    }
+                    break;
+            }
+        }
 
 		// Change animation state
 		if(m_stateAnimator != null) {
@@ -329,17 +367,22 @@ public class LabStatUpgrader : MonoBehaviour {
             // Abort the upgrade
             return;
         }
-        
+
+        // Get the price of the current upgrade
+        Price upgradePrice = m_dragonData.GetNextUpgradePrice();
 
         // Launch transaction
-        ResourcesFlow purchaseFlow = new ResourcesFlow("UPGRADE_SPECIAL_DRAGON_STAT");
-		purchaseFlow.OnSuccess.AddListener(OnUpgradePurchaseSuccess);
-		purchaseFlow.Begin(
-			m_dragonData.GetStatUpgradePrice(m_stat),
-			UserProfile.Currency.GOLDEN_FRAGMENTS,
-            HDTrackingManager.EEconomyGroup.UNKNOWN, //HDTrackingManager.EEconomyGroup.SPECIAL_DRAGON_UPGRADE,
-			null
-		);
+        if (upgradePrice != null)
+        {
+            ResourcesFlow purchaseFlow = new ResourcesFlow("UPGRADE_SPECIAL_DRAGON_STAT");
+            purchaseFlow.OnSuccess.AddListener(OnUpgradePurchaseSuccess);
+            purchaseFlow.Begin(
+                System.Convert.ToInt64(upgradePrice.Amount),
+                upgradePrice.Currency,
+                HDTrackingManager.EEconomyGroup.UNKNOWN, //HDTrackingManager.EEconomyGroup.SPECIAL_DRAGON_UPGRADE,
+                null
+            );
+        }
 	}
 
 	/// <summary>
@@ -389,11 +432,11 @@ public class LabStatUpgrader : MonoBehaviour {
 	}
 
 	/// <summary>
-	/// A special dragon stat has been upgraded.
+	/// A special dragon level has been upgraded.
 	/// </summary>
 	/// <param name="_dragonData">Target dragon data.</param>
 	/// <param name="_stat">Target stat.</param>
-	private void OnDragonStatUpgraded(DragonDataSpecial _dragonData, DragonDataSpecial.Stat _stat) {
+	private void OnDragonLevelUpgraded(DragonDataSpecial _dragonData) {
 		// Refresh visuals regardles of the stat (we might get locked)
 		Refresh(true);
 	}

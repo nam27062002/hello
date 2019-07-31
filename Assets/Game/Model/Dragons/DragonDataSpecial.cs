@@ -35,19 +35,30 @@ public class DragonDataSpecial : IDragonData {
 		COUNT
 	}
 
-	//------------------------------------------------------------------------//
-	// MEMBERS AND PROPERTIES												  //
-	//------------------------------------------------------------------------//
-	// Progression
-	public int maxLevel = (int)Stat.COUNT * 10;	// [AOC] HARDCODED!! Should go to content
-	
-	// Stats
-	private DragonStatData[] m_stats = new DragonStatData[(int)Stat.COUNT];
+    //------------------------------------------------------------------------//
+    // MEMBERS AND PROPERTIES												  //
+    //------------------------------------------------------------------------//
+    // Progression
+    private int m_level;
+    public int Level
+    {
+        get { return m_level; }
+    }
+
+    private int m_maxLevel; // Calculated base in the specialDragonUpgradesDefinitions table
+    public int MaxLevel
+    {
+        get { return m_maxLevel; }
+    }
+
+    // Stats
+    private DragonStatData[] m_stats = new DragonStatData[(int)Stat.COUNT];
 	private long m_statUpgradePriceBase = 0;
 	private long m_statUpgradePriceCoefA = 0;
 	private long m_statUpgradePriceCoefB = 0;
+    private List<DefinitionNode> m_upgrades;
 
-	public bool allStatsMaxed {
+    public bool allStatsMaxed {
 		get {
 			for(int i = 0; i < m_stats.Length; ++i) {
 				if(m_stats[i].level < m_stats[i].maxLevel) {
@@ -248,12 +259,13 @@ public class DragonDataSpecial : IDragonData {
             return m_specialTierDef.GetAsString("gamePrefab");
         }
     }
-#endregion
 
-	//------------------------------------------------------------------------//
-	// CONSTRUCTOR                                                            //
-	//------------------------------------------------------------------------//
-	public DragonDataSpecial()
+    #endregion
+
+    //------------------------------------------------------------------------//
+    // CONSTRUCTOR                                                            //
+    //------------------------------------------------------------------------//
+    public DragonDataSpecial()
     {
         for (int i = 0; i < (int)Stat.COUNT; i++)
         {
@@ -289,8 +301,15 @@ public class DragonDataSpecial : IDragonData {
 		m_statUpgradePriceCoefA = _def.GetAsLong("priceCoefA", 1);
 		m_statUpgradePriceCoefB = _def.GetAsLong("priceCoefB", 1);
 
+        // Upgrades
+        m_upgrades = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.SPECIAL_DRAGON_UPGRADES);
+        DefinitionsManager.SharedInstance.SortByProperty(ref m_upgrades, "order", DefinitionsManager.SortType.NUMERIC);
+
+        // Max level is defined by the upgrades table
+        m_maxLevel = m_upgrades.Count;
+
         // Type
-		m_type = Type.SPECIAL;
+        m_type = Type.SPECIAL;
 	}
     
 	/// <summary>
@@ -376,15 +395,39 @@ public class DragonDataSpecial : IDragonData {
 		return m_stats[(int)_stat];
 	}
 
-	/// <summary>
-	/// Get the cost (in golden fragments) of upgrading a specific stat for this dragon.
-	/// </summary>
-	/// <returns>The upgrade price in golden fragments.</returns>
-	/// <param name="_stat">The stat to be checked.</param>
-	public long GetStatUpgradePrice(Stat _stat) {
-		// baseCost + (upgradeLevel ^ A ) * B
-		return m_statUpgradePriceBase + (long)(Mathf.Pow(GetStat(_stat).level, m_statUpgradePriceCoefA)) * m_statUpgradePriceCoefB;
-	}
+
+    /// <summary>
+    /// Get the cost (in SC or HC) of upgrading this dragon (both a stat upgrade or acquiring new power).
+    /// </summary>
+    /// <returns>The upgrade price in the proper currency.</returns>
+    public Price GetNextUpgradePrice ()
+    {
+        // If the max level has been reached return null
+        if (m_level == MaxLevel) return null;
+
+        // Take the upgrade that corresponds the next level 
+        DefinitionNode nextUpgrade = m_upgrades[m_level];
+
+        int priceSC = nextUpgrade.GetAsInt("priceSC");
+        int priceHC = nextUpgrade.GetAsInt("priceHC");
+
+        if (priceSC > 0)
+        {
+            // Soft currency
+            return new Price(priceSC, UserProfile.Currency.SOFT);
+        }
+
+        if (priceHC > 0)
+        {
+            // Hard currency
+            return new Price(priceHC, UserProfile.Currency.HARD);
+        }
+
+        // [JOM] For now the upgrades will be only paid in SC and HC. No more golden fragments.
+
+        return null;
+    }
+
 
 	/// <summary>
 	/// Check whether this dragon can upgrade stats or not.
@@ -396,23 +439,6 @@ public class DragonDataSpecial : IDragonData {
 		// Never if all stats are maxed!
 		if(allStatsMaxed) return false;
 
-		// Check if this dragon's next level unlocks a new tier
-		int nextLevel = GetLevel() + 1;
-		DefinitionNode nextTierDef = null;
-		for(int i = 0; i < m_specialTierDefsByOrder.Count; ++i) {
-            // Is this tier unlocked next level?
-            if (m_specialTierDefsByOrder[i].GetAsInt("upgradeLevelToUnlock") >= nextLevel) {
-                nextTierDef = m_specialTierDefsByOrder[i];
-                break;
-            }
-        }
-
-        if (nextTierDef != null) {
-            // Is next tier restricted by the classic dragons biggest owned tier?
-            DragonTier requiredClassicTier = SkuToTier(nextTierDef.GetAsString("mainProgressionRestriction"));
-            return requiredClassicTier <= DragonManager.biggestOwnedDragon.tier;
-        }
-
 		// Nothing preventing stats upgrade
 		return true;
 	}
@@ -420,7 +446,6 @@ public class DragonDataSpecial : IDragonData {
 	/// <summary>
 	/// Perform a stat level up.
 	/// Will trigger SPECIAL_DRAGON_STAT_UPGRADED.
-	/// May also trigger SPECIAL_DRAGON_POWER_UPGRADED and SPECIAL_DRAGON_TIER_UPGRADED events.
 	/// </summary>
 	/// <param name="_stat">Stat to be increased.</param>
 	public void UpgradeStat(Stat _stat) {
@@ -430,34 +455,59 @@ public class DragonDataSpecial : IDragonData {
 		// Ignore if stat is maxed out
 		if(statData.level == statData.maxLevel) return;
 
-		// Cache current values to detect upgrades
-		int oldPowerLevel = powerLevel;
-		DragonTier oldTier = tier;
-
 		// Increase stat level
 		statData.level++;
 
-		// Refresh power and tier
-		RefreshPowerLevel();
-		RefreshTier();
-        RefreshDisguise();
-        
-		// Notify listeners
-		Messenger.Broadcast<DragonDataSpecial, DragonDataSpecial.Stat>(MessengerEvents.SPECIAL_DRAGON_STAT_UPGRADED, this, _stat);
+        // Increase dragon level
+        m_level++;
 
-		// Look for upgrades and notify listeners
-		if(oldPowerLevel != powerLevel) {
-			Messenger.Broadcast<DragonDataSpecial>(MessengerEvents.SPECIAL_DRAGON_POWER_UPGRADED, this);
-		}
+		// Notify listeners
+		Messenger.Broadcast<DragonDataSpecial>(MessengerEvents.SPECIAL_DRAGON_LEVEL_UPGRADED, this);
 
 		// Save persistence!
 		PersistenceFacade.instance.Save_Request(true);
 	}
-    
-	/// <summary>
-	/// Set the tier of this dragon. No checks performed or events triggered.
+
+    /// <summary>
+	/// Perform a power up and a level up.
+	/// Will trigger SPECIAL_DRAGON_POWER_UPGRADED events.
 	/// </summary>
-	/// <param name="_tier">New tier.</param>
+	public void UpgradePower()
+    {
+        // Ignore if stat is maxed out
+        if (m_level == m_maxLevel) return;
+
+        // Doble check if there is a power acquisition in this upgrade
+        if (! IsUnlockingNewPower())
+        {
+            Debug.LogError("Cannot acquire a new power in this level. Something went wrong."); return;
+        }
+
+        // Cache current values to detect upgrades
+        int oldPowerLevel = powerLevel;
+
+        // Increase dragon level
+        m_level++;
+        Messenger.Broadcast<DragonDataSpecial>(MessengerEvents.SPECIAL_DRAGON_LEVEL_UPGRADED, this);
+
+        // Refresh power and tier
+        RefreshPowerLevel();
+        RefreshDisguise();
+
+        // Look for upgrades and notify listeners
+        if (oldPowerLevel != powerLevel)
+        {
+            Messenger.Broadcast<DragonDataSpecial>(MessengerEvents.SPECIAL_DRAGON_POWER_UPGRADED, this);
+        }
+
+        // Save persistence!
+        PersistenceFacade.instance.Save_Request(true);
+    }
+
+    /// <summary>
+    /// Set the tier of this dragon. No checks performed or events triggered.
+    /// </summary>
+    /// <param name="_tier">New tier.</param>
     public void SetTier(DragonTier _tier)
     {
         string tierSku = TierToSku(_tier);
@@ -482,24 +532,7 @@ public class DragonDataSpecial : IDragonData {
 		m_persistentDisguise = m_disguise;
 	}
 
-	/// <summary>
-	/// Find the classic tier required for the next tier upgrade.
-	/// </summary>
-	/// <returns>The next required tier. DragonTier.COUNT if none.</returns>
-	public DragonTier GetNextRequiredTier() {
-		// Find next tier upgrade
-		int level = GetLevel();
-		for(int i = 0; i < m_specialTierDefsByOrder.Count; ++i) {
-			// Is it the next tier upgrade?
-			if(m_specialTierDefsByOrder[i].GetAsInt("upgradeLevelToUnlock") > level) {
-				// Return required tier
-				return SkuToTier(m_specialTierDefsByOrder[i].GetAsString("mainProgressionRestriction"));
-			}
-		}
-
-		// No next tier upgrade found (probably we're max level)
-		return DragonTier.COUNT;
-	}
+	
     
 	/// <summary>
 	/// Update this dragon's power level based on current dragon level.
@@ -509,31 +542,51 @@ public class DragonDataSpecial : IDragonData {
 		// Reset power level
         powerLevel = 0;
 
-		// Get dragon's current level
-        int level = GetLevel();
-
 		// Check Special Dragon power definitions
         int max = m_specialPowerDefsByOrder.Count;
         for (int i = 0; i < max; i++)
         {
-            if (m_specialPowerDefsByOrder[i].GetAsInt("upgradeLevelToUnlock") <= level )
+            if (m_specialPowerDefsByOrder[i].GetAsInt("upgradeLevelToUnlock") <= m_level )
             {
                 powerLevel++;
             }
         }
     }
 
+
+    /// <summary>
+    /// Check if the next level upgrade will unlock a new power
+    /// </summary>
+    public bool IsUnlockingNewPower()
+    {
+
+        // Check Special Dragon power definitions
+        int max = m_specialPowerDefsByOrder.Count;
+        for (int i = 0; i < max; i++)
+        {
+            // Is next level unlockin a power?
+            if (m_level + 1 == m_specialPowerDefsByOrder[i].GetAsInt("upgradeLevelToUnlock") )
+            {
+                return true;
+            }
+        }
+
+        return false;
+
+    }
+
+
+
 	/// <summary>
 	/// Update this dragon's tier based on current dragon level.
 	/// </summary>
 	public void RefreshTier() {
 		// Get dragon's current level
-		int level = GetLevel();
 
 		// Check Tier definitions for this dragon
         string biggestTierSku = "tier_0";
 		for(int i = 0; i < m_specialTierDefsByOrder.Count; ++i) {
-			if(m_specialTierDefsByOrder[i].GetAsInt("upgradeLevelToUnlock") <= level) {
+			if(m_specialTierDefsByOrder[i].GetAsInt("upgradeLevelToUnlock") <= m_level) {
 				biggestTierSku = m_specialTierDefsByOrder[i].Get("tier");
 			}
 		}
@@ -544,10 +597,10 @@ public class DragonDataSpecial : IDragonData {
 			SetTier(biggestTierDefNode);
 		}
 	}
+
     
     public void RefreshDisguise(){
         // Get dragon's current level
-        int level = GetLevel();
 
         // Get disguises
         List<DefinitionNode> skinDefs = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.DISGUISES, "dragonSku", m_sku);
@@ -558,7 +611,7 @@ public class DragonDataSpecial : IDragonData {
         for (int i = 0; i < skinDefs.Count; i++)
         {
             int testLevel = skinDefs[i].GetAsInt("unlockLevel");
-            if ( testLevel <= level && unlockLevel < testLevel)
+            if ( testLevel <= m_level && unlockLevel < testLevel)
             {
                 testLevel = unlockLevel;
                 definition = skinDefs[i];
@@ -576,20 +629,6 @@ public class DragonDataSpecial : IDragonData {
 
     }
     
-
-	/// <summary>
-	/// Get this special dragon's accumulated level.
-	/// </summary>
-	/// <returns>The current level of this special dragon.</returns>
-    public int GetLevel()
-    {
-        int ret = 0;
-        for (int i = 0; i < (int)Stat.COUNT; i++)
-        {
-            ret += m_stats[i].level;
-        }
-        return ret;
-    }
 
 	//------------------------------------------------------------------------//
 	// STATIC UTILS															  //
@@ -627,6 +666,9 @@ public class DragonDataSpecial : IDragonData {
 		for(int i = 0; i < m_stats.Length; ++i) {
 			m_stats[i].level = 0;
 		}
+
+        // Level
+        m_level = 0;
 	}
 
 	/// <summary>
@@ -651,8 +693,21 @@ public class DragonDataSpecial : IDragonData {
 			}
 		}
 
-		// Power level - Based on level, so just do a refresh
-		RefreshPowerLevel();
+        // Level 
+        if (_data.ContainsKey("level"))
+        {
+            m_level = _data["level"].AsInt;
+        }
+        else
+        {
+            // Do some data migration from old model to the new one
+            // Check confluence
+            // https://mdc-web-tomcat17.ubisoft.org/confluence/display/ubm/%5BHD%5D+Legendary+Dragons+-+Design+2.0
+        }
+
+
+        // Power level - Based on level, so just do a refresh
+        RefreshPowerLevel();
 
 		// Tier - Based on level, so just do a refresh
 		RefreshTier();
@@ -679,5 +734,8 @@ public class DragonDataSpecial : IDragonData {
 			statsData.Add(m_stats[i].Save());
 		}
 		_data.Add("stats", statsData);
+
+        // Level
+        _data.Add("level", m_level);
 	}
 }
