@@ -1224,6 +1224,7 @@ MonoBehaviour:
   m_animA: block
   m_animB: 
   m_animC: 
+  m_materialChangeExceptions: []
   m_useFreezeParticle: 0
   m_freezeParticleScale: 1
   m_useMoveAnimInLove: 0
@@ -1439,6 +1440,19 @@ MonoBehaviour:
   m_onPanicAudio: 
   m_idleAudio: 
   m_skins: []
+  m_entity: {fileID: 114460180047881828}
+  m_animator: {fileID: 95230341821274814}
+  m_isAnimatorAvailable: 0
+  m_renderers:
+  - {fileID: 137089286013040086}
+  - {fileID: 23727356076952580}
+  m_specialAnimations: 000000
+  m_animA_Hash: -2095343838
+  m_animB_Hash: 0
+  m_animC_Hash: 0
+  m_animEvents: {fileID: 0}
+  m_transform: {fileID: 4100654238070392}
+  m_view: {fileID: 4062293528896756}
   m_shield: {fileID: 1590487835054842}
 --- !u!114 &114356153153718186
 MonoBehaviour:
@@ -1468,6 +1482,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_tags: 131104
+  m_otherSpawnables:
+  - {fileID: 114761317490976774}
+  - {fileID: 114702372177656946}
+  - {fileID: 114173085454010408}
+  m_otherSpawnablesCount: 3
+  m_pilot: {fileID: 114761317490976774}
+  m_machine: {fileID: 114702372177656946}
+  m_viewControl: {fileID: 114173085454010408}
+  m_equip: {fileID: 0}
   m_sku: ShieldMan
   m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1
@@ -1566,6 +1589,7 @@ MonoBehaviour:
   m_energy: 10
   m_energyDrainSec: 1
   m_energyRecoverSec: 1
+  m_machine: {fileID: 0}
   m_brainResource: {fileID: 11400000, guid: c90f297689df0448aa95098df895daa7, type: 2}
   m_railSeparation:
     min: 2

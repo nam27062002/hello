@@ -179,7 +179,7 @@ public class HUDRevive : MonoBehaviour {
 		m_timer.Stop();
 
 		// Show video ad!
-		PopupAdBlocker.Launch(true, GameAds.EAdPurpose.REVIVE, OnVideoRewardCallback);
+		PopupAdBlocker.LaunchAd(true, GameAds.EAdPurpose.REVIVE, OnVideoRewardCallback);
 	}
 
 	void OnVideoRewardCallback( bool done ){

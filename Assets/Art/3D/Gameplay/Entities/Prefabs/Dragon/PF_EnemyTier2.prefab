@@ -522,6 +522,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_tags: 518
+  m_otherSpawnables:
+  - {fileID: 114139203071145650}
+  - {fileID: 114000011653825936}
+  - {fileID: 114000012425715312}
+  - {fileID: 114000010733057202}
+  - {fileID: 114766445481020318}
+  m_otherSpawnablesCount: 5
+  m_pilot: {fileID: 114000011653825936}
+  m_machine: {fileID: 114139203071145650}
+  m_viewControl: {fileID: 114000012425715312}
+  m_equip: {fileID: 114252859335090790}
   m_sku: EnemyTier2
   m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1
@@ -540,6 +551,7 @@ MonoBehaviour:
   m_energy: 10
   m_energyDrainSec: 1
   m_energyRecoverSec: 1
+  m_machine: {fileID: 0}
   m_brainResource: {fileID: 11400000, guid: d95e4279165be4a26a70cb1fa716b06f, type: 2}
   m_railSeparation:
     min: 0.5
@@ -804,6 +816,19 @@ MonoBehaviour:
   m_onPanicAudio: 
   m_idleAudio: 
   m_skins: []
+  m_entity: {fileID: 114000011541247252}
+  m_animator: {fileID: 95229483289964150}
+  m_isAnimatorAvailable: 0
+  m_renderers:
+  - {fileID: 137095667239271826}
+  - {fileID: 137152620867779254}
+  m_specialAnimations: 000000
+  m_animA_Hash: 363092969
+  m_animB_Hash: 0
+  m_animC_Hash: 0
+  m_animEvents: {fileID: 114217385779553334}
+  m_transform: {fileID: 4000014232033856}
+  m_view: {fileID: 4472592951548884}
 --- !u!114 &114139203071145650
 MonoBehaviour:
   m_ObjectHideFlags: 1

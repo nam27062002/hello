@@ -81,6 +81,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_tags: 6
+  m_otherSpawnables:
+  - {fileID: 114034267683096242}
+  - {fileID: 11437250}
+  - {fileID: 11499696}
+  - {fileID: 114000012610682864}
+  m_otherSpawnablesCount: 4
+  m_pilot: {fileID: 11437250}
+  m_machine: {fileID: 114034267683096242}
+  m_viewControl: {fileID: 11499696}
+  m_equip: {fileID: 0}
   m_sku: BatBig_Flock
   m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1
@@ -99,6 +109,7 @@ MonoBehaviour:
   m_energy: 10
   m_energyDrainSec: 1
   m_energyRecoverSec: 1
+  m_machine: {fileID: 0}
   m_brainResource: {fileID: 11400000, guid: dad1c7bb0c1fe428095688a1d8608b84, type: 2}
   m_railSeparation:
     min: 0.5
@@ -379,6 +390,18 @@ MonoBehaviour:
   m_onPanicAudio: 
   m_idleAudio: 
   m_skins: []
+  m_entity: {fileID: 11407728}
+  m_animator: {fileID: 95289798630724812}
+  m_isAnimatorAvailable: 0
+  m_renderers:
+  - {fileID: 137664311449549126}
+  m_specialAnimations: 000000
+  m_animA_Hash: 1195109557
+  m_animB_Hash: 0
+  m_animC_Hash: 0
+  m_animEvents: {fileID: 114741441519738280}
+  m_transform: {fileID: 469052}
+  m_view: {fileID: 4836021601490414}
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

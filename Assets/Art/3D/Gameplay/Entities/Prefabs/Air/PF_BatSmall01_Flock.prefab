@@ -464,6 +464,7 @@ MonoBehaviour:
   m_energy: 5
   m_energyDrainSec: 1
   m_energyRecoverSec: 0.25
+  m_machine: {fileID: 0}
   m_brainResource: {fileID: 11400000, guid: 0f4b55188281b4dc38577a13aeb9fe87, type: 2}
   m_railSeparation:
     min: 0.5
@@ -728,6 +729,18 @@ MonoBehaviour:
   m_onPanicAudio: hd_batsmall_scared
   m_idleAudio: hd_batsmall_idle
   m_skins: []
+  m_entity: {fileID: 11494276}
+  m_animator: {fileID: 9511350}
+  m_isAnimatorAvailable: 0
+  m_renderers:
+  - {fileID: 13700364}
+  m_specialAnimations: 000000
+  m_animA_Hash: 0
+  m_animB_Hash: 0
+  m_animC_Hash: 0
+  m_animEvents: {fileID: 0}
+  m_transform: {fileID: 443508}
+  m_view: {fileID: 476310}
 --- !u!114 &11494276
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -740,6 +753,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_tags: 6
+  m_otherSpawnables:
+  - {fileID: 114756319375900448}
+  - {fileID: 11452102}
+  - {fileID: 11492314}
+  m_otherSpawnablesCount: 3
+  m_pilot: {fileID: 11452102}
+  m_machine: {fileID: 114756319375900448}
+  m_viewControl: {fileID: 11492314}
+  m_equip: {fileID: 0}
   m_sku: BatSmall_Flock
   m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1

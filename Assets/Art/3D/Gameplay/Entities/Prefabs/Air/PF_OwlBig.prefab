@@ -417,6 +417,7 @@ MonoBehaviour:
   m_energy: 3
   m_energyDrainSec: 1
   m_energyRecoverSec: 0.25
+  m_machine: {fileID: 0}
   m_brainResource: {fileID: 11400000, guid: fcba6844efb2f4ff6b18023d9b2856d4, type: 2}
   m_railSeparation:
     min: 0.5
@@ -667,6 +668,18 @@ MonoBehaviour:
   m_onPanicAudio: 
   m_idleAudio: hd_owl_idle
   m_skins: []
+  m_entity: {fileID: 11476168}
+  m_animator: {fileID: 9582942}
+  m_isAnimatorAvailable: 0
+  m_renderers:
+  - {fileID: 13777030}
+  m_specialAnimations: 000000
+  m_animA_Hash: 0
+  m_animB_Hash: 0
+  m_animC_Hash: 0
+  m_animEvents: {fileID: 0}
+  m_transform: {fileID: 453366}
+  m_view: {fileID: 443562}
 --- !u!114 &11476168
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -679,6 +692,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_tags: 6
+  m_otherSpawnables:
+  - {fileID: 114052923332963864}
+  - {fileID: 11446116}
+  - {fileID: 11426416}
+  m_otherSpawnablesCount: 3
+  m_pilot: {fileID: 11426416}
+  m_machine: {fileID: 114052923332963864}
+  m_viewControl: {fileID: 11446116}
+  m_equip: {fileID: 0}
   m_sku: OwlBig
   m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1

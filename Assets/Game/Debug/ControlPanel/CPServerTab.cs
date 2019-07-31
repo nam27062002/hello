@@ -236,7 +236,14 @@ public class CPServerTab : MonoBehaviour {
 
     public void OnButton6()
     {
-        HDCP2Manager.Instance.PlayInterstitial(false);        
+        //HDCP2Manager.Instance.PlayInterstitial(false, OnIntersitialDone);        
+        PopupAdBlocker.LaunchCp2Interstitial(OnCp2IntersitialDone);
+    }
+
+    private void OnCp2IntersitialDone(bool success)
+    {
+        string msg = "OnCp2IntersitialDone success = " + success;
+        Output(msg);
     }
 
     public void OnDebugCP2()
@@ -255,6 +262,12 @@ public class CPServerTab : MonoBehaviour {
     {
         Output("Crashlytics: crash");
         Crashlytics.Crash();
+    }
+
+    public void OnCrashlyticsRecordException()
+    {
+        Output("Crashlytics: record exception");
+        Fabric.Crashlytics.Crashlytics.RecordCustomException("Crashlytics", "Record custom exception test", "");
     }
 
     private void OnIntersitialDone( bool success )

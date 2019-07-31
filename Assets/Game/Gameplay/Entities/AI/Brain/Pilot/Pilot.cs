@@ -3,7 +3,7 @@ using System.Collections;
 using System;
 
 namespace AI {
-	public abstract class Pilot : MonoBehaviour, ISpawnable {
+	public abstract class Pilot : ISpawnable {
 		
 		[Flags]
 		public enum Action {
@@ -215,9 +215,9 @@ namespace AI {
 			m_externalImpulse += _externalImpulse;
 		}
 
-		public virtual void Spawn(ISpawner _spawner) {}
+		override public void Spawn(ISpawner _spawner) {}
 
-		public virtual void CustomUpdate() {
+		override public void CustomUpdate() {
         
 			if (m_boostAvailable && IsActionPressed(Action.Boost)) {
 				m_currentSpeed = Mathf.Lerp(m_currentSpeed, m_boostSpeed, Time.deltaTime * m_blendSpeedFactor);

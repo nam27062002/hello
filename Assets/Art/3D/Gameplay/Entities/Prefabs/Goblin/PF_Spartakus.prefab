@@ -373,6 +373,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 32ee45223b4af4374bf6c562470c1498, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_activation: 0
+  m_damage: 1
   m_timeBetweenHits: 0.25
   m_damageType: 0
   m_knockback: 0
@@ -394,6 +396,7 @@ MonoBehaviour:
   m_energy: 10
   m_energyDrainSec: 1
   m_energyRecoverSec: 1
+  m_machine: {fileID: 0}
   m_brainResource: {fileID: 11400000, guid: 7475e2da87c584e05add2638c8e298b1, type: 2}
   m_railSeparation:
     min: 2
@@ -464,6 +467,7 @@ MonoBehaviour:
   m_animA: 
   m_animB: dizzy
   m_animC: 
+  m_materialChangeExceptions: []
   m_useFreezeParticle: 0
   m_freezeParticleScale: 1
   m_useMoveAnimInLove: 0
@@ -679,6 +683,19 @@ MonoBehaviour:
   m_onPanicAudio: hd_goblin_alert
   m_idleAudio: 
   m_skins: []
+  m_entity: {fileID: 114905478596655192}
+  m_animator: {fileID: 95072094928568226}
+  m_isAnimatorAvailable: 0
+  m_renderers:
+  - {fileID: 137574512359749574}
+  - {fileID: 23968589442439128}
+  m_specialAnimations: 000000
+  m_animA_Hash: 0
+  m_animB_Hash: 1238444923
+  m_animC_Hash: 0
+  m_animEvents: {fileID: 114846399770475922}
+  m_transform: {fileID: 4534541583550050}
+  m_view: {fileID: 4855014877996854}
   m_stars: {fileID: 1791678880970122}
   m_onJumpAttackAudio: hd_goblin_spartakus_attack
   m_onReceptionAudio: 
@@ -733,6 +750,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_tags: 16
+  m_otherSpawnables:
+  - {fileID: 114596843481681700}
+  - {fileID: 114950780866452924}
+  - {fileID: 114869025050082016}
+  m_otherSpawnablesCount: 3
+  m_pilot: {fileID: 114596843481681700}
+  m_machine: {fileID: 114950780866452924}
+  m_viewControl: {fileID: 114869025050082016}
+  m_equip: {fileID: 0}
   m_sku: Spartakus
   m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1
@@ -776,6 +802,7 @@ MonoBehaviour:
     m_mass: 2.5
     m_defaultUpVector: 0
     m_orientationSpeed: 230
+    m_useAngularVelocity: 0
     m_faceDirection: 0
     m_limitHorizontalRotation: 0
     m_faceLeftAngle: -90

@@ -1118,6 +1118,7 @@ MonoBehaviour:
   m_animA: scared
   m_animB: 
   m_animC: 
+  m_materialChangeExceptions: []
   m_useFreezeParticle: 0
   m_freezeParticleScale: 1
   m_useMoveAnimInLove: 0
@@ -1333,6 +1334,18 @@ MonoBehaviour:
   m_onPanicAudio: 
   m_idleAudio: 
   m_skins: []
+  m_entity: {fileID: 114347789815785798}
+  m_animator: {fileID: 95159979201126158}
+  m_isAnimatorAvailable: 0
+  m_renderers:
+  - {fileID: 137311308350102336}
+  m_specialAnimations: 000000
+  m_animA_Hash: 1683801514
+  m_animB_Hash: 0
+  m_animC_Hash: 0
+  m_animEvents: {fileID: 0}
+  m_transform: {fileID: 4945479189592584}
+  m_view: {fileID: 4652812238675926}
 --- !u!114 &114173371290625606
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1348,6 +1361,7 @@ MonoBehaviour:
   m_energy: 10
   m_energyDrainSec: 1
   m_energyRecoverSec: 1
+  m_machine: {fileID: 0}
   m_brainResource: {fileID: 11400000, guid: 110c52f145e7a476dbf0317b801a73b3, type: 2}
   m_railSeparation:
     min: 0.5
@@ -1369,6 +1383,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_tags: 32
+  m_otherSpawnables:
+  - {fileID: 114173371290625606}
+  - {fileID: 114945181315244204}
+  - {fileID: 114024127994988972}
+  m_otherSpawnablesCount: 3
+  m_pilot: {fileID: 114173371290625606}
+  m_machine: {fileID: 114945181315244204}
+  m_viewControl: {fileID: 114024127994988972}
+  m_equip: {fileID: 0}
   m_sku: Villager01
   m_hideNeedTierMessage: 1
   m_dieOutsideFrustum: 1

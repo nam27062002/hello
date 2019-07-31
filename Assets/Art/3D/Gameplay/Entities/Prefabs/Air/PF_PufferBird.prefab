@@ -155,6 +155,7 @@ MonoBehaviour:
   m_energy: 5
   m_energyDrainSec: 1
   m_energyRecoverSec: 1
+  m_machine: {fileID: 0}
   m_brainResource: {fileID: 11400000, guid: efa39130f432946c2adc676b846a725d, type: 2}
   m_railSeparation:
     min: 0.5
@@ -179,6 +180,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_tags: 6
+  m_otherSpawnables:
+  - {fileID: 114056540230131248}
+  - {fileID: 114245192592415224}
+  - {fileID: 114648187097529924}
+  m_otherSpawnablesCount: 3
+  m_pilot: {fileID: 114056540230131248}
+  m_machine: {fileID: 114245192592415224}
+  m_viewControl: {fileID: 114648187097529924}
+  m_equip: {fileID: 0}
   m_sku: PufferBird
   m_hideNeedTierMessage: 1
   m_dieOutsideFrustum: 1
@@ -280,6 +290,7 @@ MonoBehaviour:
   m_animA: 
   m_animB: 
   m_animC: 
+  m_materialChangeExceptions: []
   m_useFreezeParticle: 0
   m_freezeParticleScale: 1
   m_useMoveAnimInLove: 0
@@ -495,6 +506,18 @@ MonoBehaviour:
   m_onPanicAudio: 
   m_idleAudio: 
   m_skins: []
+  m_entity: {fileID: 114209956649639122}
+  m_animator: {fileID: 95658488811627300}
+  m_isAnimatorAvailable: 0
+  m_renderers:
+  - {fileID: 137394124825280062}
+  m_specialAnimations: 000000
+  m_animA_Hash: 0
+  m_animB_Hash: 0
+  m_animC_Hash: 0
+  m_animEvents: {fileID: 114338771330716452}
+  m_transform: {fileID: 4148427725040518}
+  m_view: {fileID: 4045164333906590}
 --- !u!135 &135469972888536920
 SphereCollider:
   m_ObjectHideFlags: 1

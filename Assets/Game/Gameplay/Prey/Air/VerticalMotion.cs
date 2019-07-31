@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class VerticalMotion : Initializable, ISpawnable {
+public class VerticalMotion : ISpawnable {
 
 	public static float DEFAULT_AMPLITUDE { get { return 2f; } }
 
@@ -19,18 +19,12 @@ public class VerticalMotion : Initializable, ISpawnable {
 		m_originalPostion = transform.position;
 	}
 
-	
-	public override void Initialize() {		
+	override public void Spawn(ISpawner _spawner) {
 		m_time = 0f;
 		m_originalPostion = transform.position;
 	}
 
-	public void Spawn(ISpawner _spawner) {
-		m_time = 0f;
-		m_originalPostion = transform.position;
-	}
-
-	public void CustomUpdate() {}
+	override public void CustomUpdate() {}
 
 
 	// Update is called once per frame

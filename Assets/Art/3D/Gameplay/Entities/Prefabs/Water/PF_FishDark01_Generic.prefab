@@ -311,6 +311,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_tags: 16384
+  m_otherSpawnables:
+  - {fileID: 114436497994483538}
+  - {fileID: 114000013907561372}
+  - {fileID: 114000013458673740}
+  m_otherSpawnablesCount: 3
+  m_pilot: {fileID: 114000013907561372}
+  m_machine: {fileID: 114436497994483538}
+  m_viewControl: {fileID: 114000013458673740}
+  m_equip: {fileID: 0}
   m_sku: FishDark
   m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1
@@ -350,6 +359,7 @@ MonoBehaviour:
   m_animA: 
   m_animB: 
   m_animC: 
+  m_materialChangeExceptions: []
   m_useFreezeParticle: 1
   m_freezeParticleScale: 1
   m_useMoveAnimInLove: 0
@@ -565,6 +575,19 @@ MonoBehaviour:
   m_onPanicAudio: 
   m_idleAudio: 
   m_skins: []
+  m_entity: {fileID: 114000012165437688}
+  m_animator: {fileID: 95894058049324468}
+  m_isAnimatorAvailable: 0
+  m_renderers:
+  - {fileID: 23297609463550254}
+  - {fileID: 137093513717248210}
+  m_specialAnimations: 000000
+  m_animA_Hash: 0
+  m_animB_Hash: 0
+  m_animC_Hash: 0
+  m_animEvents: {fileID: 0}
+  m_transform: {fileID: 4000012010139738}
+  m_view: {fileID: 4108601119429992}
 --- !u!114 &114000013907561372
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -580,6 +603,7 @@ MonoBehaviour:
   m_energy: 10
   m_energyDrainSec: 1
   m_energyRecoverSec: 1
+  m_machine: {fileID: 0}
   m_brainResource: {fileID: 11400000, guid: 49187d524b36743a7ba28d0b7c3542f6, type: 2}
   m_railSeparation:
     min: 0.5

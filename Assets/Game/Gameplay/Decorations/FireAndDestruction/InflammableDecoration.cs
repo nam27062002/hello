@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class InflammableDecoration : MonoBehaviour, ISpawnable, IBroadcastListener {
+public class InflammableDecoration : ISpawnable, IBroadcastListener {
 
 	private enum State {
 		Respawn = 0,
@@ -187,7 +187,7 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable, IBroadcastListen
 		m_fireNodeSetup.Build(m_boxelSize);
 	}
 
-	public void Spawn(ISpawner _spawner) {
+	override public void Spawn(ISpawner _spawner) {
 		enabled = true;
 
 		m_view.SetActive(true);
@@ -288,7 +288,7 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable, IBroadcastListen
 	}
 
 	// Update is called once per frame
-	public void CustomUpdate() {		
+	override public void CustomUpdate() {		
 		if (m_initialized) {
 			if (m_state != m_nextState) {
 				ChangeState();

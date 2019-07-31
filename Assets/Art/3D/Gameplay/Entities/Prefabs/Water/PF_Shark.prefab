@@ -343,6 +343,7 @@ MonoBehaviour:
   m_animA: latch
   m_animB: 
   m_animC: 
+  m_materialChangeExceptions: []
   m_useFreezeParticle: 0
   m_freezeParticleScale: 1
   m_useMoveAnimInLove: 0
@@ -558,6 +559,18 @@ MonoBehaviour:
   m_onPanicAudio: 
   m_idleAudio: 
   m_skins: []
+  m_entity: {fileID: 114168270129130040}
+  m_animator: {fileID: 95984148908879516}
+  m_isAnimatorAvailable: 0
+  m_renderers:
+  - {fileID: 137098451421752486}
+  m_specialAnimations: 000000
+  m_animA_Hash: 1195109557
+  m_animB_Hash: 0
+  m_animC_Hash: 0
+  m_animEvents: {fileID: 114991122988181176}
+  m_transform: {fileID: 4632062000381718}
+  m_view: {fileID: 4217521503990998}
 --- !u!114 &114035738121445826
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -619,6 +632,7 @@ MonoBehaviour:
   m_energy: 20
   m_energyDrainSec: 1.25
   m_energyRecoverSec: 1
+  m_machine: {fileID: 0}
   m_brainResource: {fileID: 11400000, guid: 8b5af2942e113474ab478d8d8fe9e787, type: 2}
   m_railSeparation:
     min: 0.5
@@ -643,6 +657,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_tags: 16384
+  m_otherSpawnables:
+  - {fileID: 114156331741684732}
+  - {fileID: 114035738121445826}
+  - {fileID: 114007192816854492}
+  - {fileID: 114479050322305628}
+  m_otherSpawnablesCount: 4
+  m_pilot: {fileID: 114156331741684732}
+  m_machine: {fileID: 114035738121445826}
+  m_viewControl: {fileID: 114007192816854492}
+  m_equip: {fileID: 0}
   m_sku: Shark
   m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1

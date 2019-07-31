@@ -44,11 +44,15 @@ public class ParticleManager : UbiBCN.SingletonMonoBehaviour<ParticleManager> {
 	//---------------------------------------------------------------//
 	//-- Static Methods ---------------------------------------------//
 	//---------------------------------------------------------------//
-
+        
 	public static void EnableBloodOverride(string _newBlood) {
 		instance.m_overrideBlood = true;
 		instance.m_overrideBloodName = _newBlood;
 	}
+
+    public static bool IsBloodOverrided() {
+        return instance.m_overrideBlood;
+    }
 
 	public static void DisableBloodOverride() {
 		instance.m_overrideBlood = false;
@@ -97,6 +101,13 @@ public class ParticleManager : UbiBCN.SingletonMonoBehaviour<ParticleManager> {
 	/// </summary>
 	public static void Clear() { 
 		instance.__Clear();
+	}
+
+	/// <summary>
+	/// Will clear all unused particles on all pools.
+	/// </summary>
+	public static void ClearUnsued(){
+		instance.__ClearUnsued();
 	}
 
 
@@ -308,6 +319,16 @@ public class ParticleManager : UbiBCN.SingletonMonoBehaviour<ParticleManager> {
 		m_pools.Clear();
 		m_iterator.Clear();
 	}
+
+	private void __ClearUnsued() {
+		foreach(KeyValuePair<string, PoolContainer> pair in m_pools) {
+			PoolContainer pc = pair.Value;
+			if (pc.pool != null) {
+				pc.pool.ClearFreeInstances();
+			}
+		}
+	}
+
 
 	#region utils
 	/// <summary>

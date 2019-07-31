@@ -114,6 +114,7 @@ MonoBehaviour:
   m_animA: 
   m_animB: 
   m_animC: 
+  m_materialChangeExceptions: []
   m_useFreezeParticle: 0
   m_freezeParticleScale: 1
   m_useMoveAnimInLove: 0
@@ -329,6 +330,18 @@ MonoBehaviour:
   m_onPanicAudio: hd_villager_scream
   m_idleAudio: 
   m_skins: []
+  m_entity: {fileID: 11484900}
+  m_animator: {fileID: 95894060133086202}
+  m_isAnimatorAvailable: 0
+  m_renderers:
+  - {fileID: 137328027620066410}
+  m_specialAnimations: 000000
+  m_animA_Hash: 0
+  m_animB_Hash: 0
+  m_animC_Hash: 0
+  m_animEvents: {fileID: 0}
+  m_transform: {fileID: 475722}
+  m_view: {fileID: 4071626489474182}
 --- !u!114 &11484900
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -341,6 +354,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_tags: 32
+  m_otherSpawnables:
+  - {fileID: 114725765332829656}
+  - {fileID: 114253485604361224}
+  - {fileID: 11459890}
+  m_otherSpawnablesCount: 3
+  m_pilot: {fileID: 114725765332829656}
+  m_machine: {fileID: 114253485604361224}
+  m_viewControl: {fileID: 11459890}
+  m_equip: {fileID: 0}
   m_sku: BoatFisher
   m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 0
@@ -599,6 +621,7 @@ MonoBehaviour:
   m_energy: 1
   m_energyDrainSec: 1
   m_energyRecoverSec: 1
+  m_machine: {fileID: 0}
   m_brainResource: {fileID: 0}
   m_railSeparation:
     min: 0.5

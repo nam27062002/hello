@@ -281,6 +281,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_tags: 8196
+  m_otherSpawnables:
+  - {fileID: 114708923210515910}
+  - {fileID: 114785092751622880}
+  - {fileID: 114893824462528586}
+  m_otherSpawnablesCount: 3
+  m_pilot: {fileID: 114785092751622880}
+  m_machine: {fileID: 114708923210515910}
+  m_viewControl: {fileID: 114893824462528586}
+  m_equip: {fileID: 0}
   m_sku: Firefly
   m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1
@@ -364,6 +373,7 @@ MonoBehaviour:
   m_energy: 20
   m_energyDrainSec: 0.5
   m_energyRecoverSec: 0.25
+  m_machine: {fileID: 0}
   m_brainResource: {fileID: 11400000, guid: 69a9c327f2e964f61acf3fc4381d0af5, type: 2}
   m_railSeparation:
     min: 0.5
@@ -398,6 +408,7 @@ MonoBehaviour:
   m_animA: 
   m_animB: 
   m_animC: 
+  m_materialChangeExceptions: []
   m_useFreezeParticle: 0
   m_freezeParticleScale: 1
   m_useMoveAnimInLove: 0
@@ -613,6 +624,19 @@ MonoBehaviour:
   m_onPanicAudio: hd_firefly_alert
   m_idleAudio: 
   m_skins: []
+  m_entity: {fileID: 114480319162760304}
+  m_animator: {fileID: 95580911794399438}
+  m_isAnimatorAvailable: 0
+  m_renderers:
+  - {fileID: 23264773047060842}
+  - {fileID: 137144813604888970}
+  m_specialAnimations: 000000
+  m_animA_Hash: 0
+  m_animB_Hash: 0
+  m_animC_Hash: 0
+  m_animEvents: {fileID: 0}
+  m_transform: {fileID: 4576517970062970}
+  m_view: {fileID: 4775861699099362}
 --- !u!135 &135269624675854434
 SphereCollider:
   m_ObjectHideFlags: 1

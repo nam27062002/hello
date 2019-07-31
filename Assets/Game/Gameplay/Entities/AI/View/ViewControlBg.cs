@@ -2,7 +2,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-public class ViewControlBg : MonoBehaviour, ISpawnable {
+public class ViewControlBg : ISpawnable {
 
 	[Serializable]
 	public class ParticleData {
@@ -59,7 +59,7 @@ public class ViewControlBg : MonoBehaviour, ISpawnable {
 	}
 	//
 
-	public virtual void Spawn(ISpawner _spawner) {
+	override public void Spawn(ISpawner _spawner) {
 		m_scared = false;
 		m_panic = false;
 		m_attack = false;
@@ -67,7 +67,7 @@ public class ViewControlBg : MonoBehaviour, ISpawnable {
 		m_animator.speed = 1f;
 	}
 
-	public virtual void CustomUpdate() {
+	override public void CustomUpdate() {
 		if (m_hasNavigationLayer) {
 			m_currentBlendX = Util.MoveTowardsWithDamping(m_currentBlendX, m_desiredBlendX, 3f * Time.deltaTime, 0.2f);
 			m_animator.SetFloat( GameConstants.Animator.DIR_X , m_currentBlendX);
