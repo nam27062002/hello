@@ -37,7 +37,7 @@ public class UIAspectRatioInitializer : MonoBehaviour {
 	/// <summary>
 	/// Initialization.
 	/// </summary>
-	private void Awake() {
+	private void Start() {
 		Apply();
 	}
 
