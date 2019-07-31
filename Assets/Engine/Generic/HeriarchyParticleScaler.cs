@@ -30,7 +30,7 @@ public class HeriarchyParticleScaler : MonoBehaviour
 	{
 		public float m_gravityModifierMultiplier;
 		public float m_minGravityModifier;
-		public float m_startSpeedMultiplier;
+		// public float m_startSpeedMultiplier;
 		public ParticleSystem m_psystem;
 	}
 	protected PSDataRegistry m_originalData = new PSDataRegistry();
@@ -82,7 +82,7 @@ public class HeriarchyParticleScaler : MonoBehaviour
 				m_originalData.m_minGravityModifier = mainModule.gravityModifier.constantMin;
 			}break;
 		}
-		m_originalData.m_startSpeedMultiplier = mainModule.startSpeedMultiplier;
+		// m_originalData.m_startSpeedMultiplier = mainModule.startSpeedMultiplier;
 		m_originalData.m_psystem = ps;
 	}
 
@@ -115,7 +115,7 @@ public class HeriarchyParticleScaler : MonoBehaviour
 				Debug.LogError("Not Supported");
 			}break;
 		}
-		mainModule.startSpeedMultiplier = data.m_startSpeedMultiplier;       
+		// mainModule.startSpeedMultiplier = data.m_startSpeedMultiplier;       
     }
 
     void OnEnable()

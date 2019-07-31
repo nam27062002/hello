@@ -46,10 +46,13 @@ public class ScaleEquipableParticle : MonoBehaviour {
 	public void Setup( Transform _tr )
 	{
 		ParticleScaler scaler = GetComponentInChildren<ParticleScaler>();
-		scaler.m_scaleOrigin = ParticleScaler.ScaleOrigin.TRANSFORM_SCALE;
-		scaler.m_whenScale = ParticleScaler.WhenScale.ENABLE;
-		scaler.m_transform = _tr;
-		scaler.DoScale();
+		if ( scaler != null )
+		{
+			scaler.m_scaleOrigin = ParticleScaler.ScaleOrigin.TRANSFORM_SCALE;
+			scaler.m_whenScale = ParticleScaler.WhenScale.ENABLE;
+			scaler.m_transform = _tr;
+			scaler.DoScale();
+		}
 	}
 
 }
