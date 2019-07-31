@@ -44,11 +44,15 @@ public class ParticleManager : UbiBCN.SingletonMonoBehaviour<ParticleManager> {
 	//---------------------------------------------------------------//
 	//-- Static Methods ---------------------------------------------//
 	//---------------------------------------------------------------//
-
+        
 	public static void EnableBloodOverride(string _newBlood) {
 		instance.m_overrideBlood = true;
 		instance.m_overrideBloodName = _newBlood;
 	}
+
+    public static bool IsBloodOverrided() {
+        return instance.m_overrideBlood;
+    }
 
 	public static void DisableBloodOverride() {
 		instance.m_overrideBlood = false;
