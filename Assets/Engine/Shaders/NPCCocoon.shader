@@ -45,6 +45,7 @@ Shader "Hungry Dragon/NPC/NPC Cocoon"
 			#pragma multi_compile LOW_DETAIL_ON MEDIUM_DETAIL_ON HI_DETAIL_ON
 			#pragma multi_compile __ FREEZE
 			#pragma multi_compile __ TINT
+            #pragma multi_compile __ NIGHT
 
 
 //			#pragma multi_compile __ NORMALMAP

@@ -864,6 +864,7 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
             Shader.DisableKeyword(SHADERS_KEY_LOW);
 
             Shader.EnableKeyword(Shaders_CurrentKey);
+            Shader.EnableKeyword("NIGHT");
             Shaders_WarmUpVariantCollection(quality);
         }
     }

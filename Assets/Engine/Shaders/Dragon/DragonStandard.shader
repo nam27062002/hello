@@ -111,6 +111,7 @@ Shader "Hungry Dragon/Dragon/Dragon standard" {
 			#pragma vertex vert
 			#pragma fragment frag
 			#pragma multi_compile LOW_DETAIL_ON MEDIUM_DETAIL_ON HI_DETAIL_ON
+            #pragma multi_compile __ NIGHT
 
 			#pragma shader_feature  __ SILHOUETTE
 			#pragma shader_feature  __ NORMALMAP
