@@ -651,13 +651,34 @@ public class DragonDataSpecial : IDragonData {
 		return ret;
 	}
 
-	//------------------------------------------------------------------------//
-	// PERSISTENCE															  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Reset persistence values. Make sure any new value is added to this method as well.
-	/// </summary>
-	public override void ResetLoadedData() {
+    /// <summary>
+    /// Get the first definition (before any upgrade) of a special dragon's tier .
+    /// </summary>
+    /// <returns>The requested special dragon tier definition.</returns>
+    /// <param name="_specialDragonSku">Special dragon whose tier definition we want.</param>
+    public static DefinitionNode GetBaseDragonTierDef(string _specialDragonSku)
+    {
+        List<DefinitionNode> defs = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.SPECIAL_DRAGON_TIERS, "specialDragon", _specialDragonSku);
+
+        // Sort tier definitions by the unlocking level
+        DefinitionsManager.SharedInstance.SortByProperty(ref defs, "upgradeLevelToUnlock", DefinitionsManager.SortType.NUMERIC);
+        
+        if (defs.Count > 0)
+        {
+            // Return the first occurrence
+            return defs[0];
+        }
+
+        return null;
+    }
+
+    //------------------------------------------------------------------------//
+    // PERSISTENCE															  //
+    //------------------------------------------------------------------------//
+    /// <summary>
+    /// Reset persistence values. Make sure any new value is added to this method as well.
+    /// </summary>
+    public override void ResetLoadedData() {
 		// Parent
 		base.ResetLoadedData();
 

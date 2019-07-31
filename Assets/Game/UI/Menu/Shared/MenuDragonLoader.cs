@@ -244,7 +244,7 @@ public class MenuDragonLoader : MonoBehaviour {
             if ( def.Get("type") == "special" )
             {
                 // TODO: Change this and use a proper tier
-                DefinitionNode specialTierDef = DragonDataSpecial.GetDragonTierDef(_sku, DragonTier.TIER_1);
+                DefinitionNode specialTierDef = DragonDataSpecial.GetBaseDragonTierDef(_sku);
                 m_loadingPrefabName = specialTierDef.GetAsString(prefabColumn);
             }
             else
