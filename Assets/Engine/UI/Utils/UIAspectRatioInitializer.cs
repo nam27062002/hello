@@ -16,6 +16,7 @@ using UnityEngine.UI;
 /// <summary>
 /// Simple component to initialize an AspectRatioFitter with an Image's original aspect ratio.
 /// </summary>
+[ExecuteInEditMode]
 public class UIAspectRatioInitializer : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
@@ -27,6 +28,7 @@ public class UIAspectRatioInitializer : MonoBehaviour {
 	// Exposed References
 	[SerializeField] private AspectRatioFitter m_target = null;
 	[SerializeField] private Image m_referenceImage = null;
+	[Delayed]
     [SerializeField] private float m_minAspectRatio = 0;
 	
 	//------------------------------------------------------------------------//
@@ -37,6 +39,16 @@ public class UIAspectRatioInitializer : MonoBehaviour {
 	/// </summary>
 	private void Awake() {
 		Apply();
+	}
+
+	/// <summary>
+	/// Called every frame.
+	/// </summary>
+	private void Update() {
+		// Only while editing
+		if(!Application.isPlaying) {
+			Apply();
+		}
 	}
 
 	//------------------------------------------------------------------------//
@@ -70,9 +82,9 @@ public class UIAspectRatioInitializer : MonoBehaviour {
 			rt.anchorMax = GameConstants.Vector2.center;
 
 			// Maximum height of the image within this canvas resolution
-			CanvasScaler canvasScaler = GetComponentInParent<CanvasScaler>();
-			float canvasW = canvasScaler.referenceResolution.y * screenAR;
-			float maxH = canvasW / m_minAspectRatio;
+			Canvas canvas = GetComponentInParent<Canvas>();
+			RectTransform canvasRt = canvas.transform as RectTransform;
+			float maxH = canvasRt.sizeDelta.x / m_minAspectRatio;
 			rt.sizeDelta = new Vector2(
 				maxH * spriteAR,	// Keep original image AR
 				maxH
