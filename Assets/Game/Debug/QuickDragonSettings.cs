@@ -103,4 +103,19 @@ public class QuickDragonSettings : MonoBehaviour {
 	{
 		DebugSettings.hitStopEnabled = _value;
 	}
+
+
+    public void ToggleNight(bool _value)
+    {
+        if (_value)
+        {
+            Shader.EnableKeyword("NIGHT");
+        }
+        else
+        {
+            Shader.DisableKeyword("NIGHT");
+        }
+    }
+
+
 }
