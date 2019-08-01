@@ -31,12 +31,16 @@ public class HDCP2Manager
 
     private UnityAction<bool> m_onPlayPromoDone;
 
+	private int NumPromosFailedSoFar = 0;
+
     public void Initialise()
     {
         if (!IsInitialised() && CanBeInitialised())
         {
             if (FeatureSettingsManager.IsDebugEnabled)
                 Log("INIT CP2......");				          
+
+			NumPromosFailedSoFar = 0;
 
             m_listener = new CP2Listener();
             CP2Manager.SharedInstance.SetListener(m_listener);
@@ -110,7 +114,9 @@ public class HDCP2Manager
     /// <returns></returns>
     private bool IsInterstitialAvailable()
     {
-		return FeatureSettingsManager.instance.IsCP2InterstitialEnabled() && IsInitialised() && m_state == EState.None;               
+		return FeatureSettingsManager.instance.IsCP2InterstitialEnabled() && IsInitialised() && m_state == EState.None && 
+			//CP2Manager.SharedInstance.CanShowPromo(CrossPromo.PromoType.INTERSTITIAL);               
+			NumPromosFailedSoFar < 2;
     }
 
     private bool CanUserPlayInterstitial()
@@ -143,7 +149,9 @@ public class HDCP2Manager
         TrackingPersistenceSystem trackingSystem = HDTrackingManager.Instance.TrackingPersistenceSystem;
         bool ftuxPassed = trackingSystem != null && trackingSystem.GameRoundCount >= 3;
 
-        return "IsInterstitialAvailable = " + IsInterstitialAvailable() + " CP2InterstitialEnabled = " + FeatureSettingsManager.instance.IsCP2InterstitialEnabled() + " Inititalized = " + IsInitialised() + " state = " + m_state +
+		return "IsInterstitialAvailable = " + IsInterstitialAvailable() + 
+			//" CanShowPromo = " + CP2Manager.SharedInstance.CanShowPromo(CrossPromo.PromoType.INTERSTITIAL) + 
+			" CP2InterstitialEnabled = " + FeatureSettingsManager.instance.IsCP2InterstitialEnabled() + " Inititalized = " + IsInitialised() + " state = " + m_state +
             " CanUserPlayInterstitial = " + CanUserPlayInterstitial() + " timeToWait = " + GetUserRestrictionTimeToWait() + " ftuxPassed= " + ftuxPassed +
             " minRoundsSoFar = " + HDTrackingManager.Instance.Session_GameRoundCount + " minRoundsRequired = " + FeatureSettingsManager.instance.GetCP2InterstitialMinRounds();
     }
@@ -164,7 +172,7 @@ public class HDCP2Manager
         {
             Log("Can't play CP2 interstitial because it's not available: cp2Enabled = " + FeatureSettingsManager.instance.IsCP2Enabled() + 
                 " cp2InterstitialEnabled = " +  FeatureSettingsManager.instance.IsCP2InterstitialEnabled() + " initialised = " + IsInitialised() + 
-                " state = " + m_state);
+				" state = " + m_state + " numPromosFailedSoFar = " + NumPromosFailedSoFar);
         }
     }
 
@@ -190,6 +198,11 @@ public class HDCP2Manager
         {
             Log("OnPlayPromo success = " + success);
         }
+
+		if (!success) 
+		{
+			NumPromosFailedSoFar++;
+		}
 
         SetState(EState.None);
         if (m_onPlayPromoDone != null)
