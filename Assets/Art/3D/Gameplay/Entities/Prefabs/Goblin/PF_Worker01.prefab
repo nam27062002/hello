@@ -741,6 +741,14 @@ MonoBehaviour:
     position: {x: 0, y: -0.09, z: -0.04}
     scale: {x: 1.5, y: 1, z: 1.5}
     rotation: {x: -14.67, y: 0, z: 0}
+  - equipablePrefabName: PF_Scissors_Hat
+    toDisableOnEquip:
+    - {fileID: 1416473837642006}
+    probability: 1
+    season: halloween
+    position: {x: 0, y: -0.09, z: -0.04}
+    scale: {x: 1.5, y: 1, z: 1.5}
+    rotation: {x: -14.67, y: 0, z: 0}
 --- !u!114 &114421048350009022
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -824,6 +832,7 @@ MonoBehaviour:
   m_animA: 
   m_animB: 
   m_animC: 
+  m_materialChangeExceptions: []
   m_useFreezeParticle: 1
   m_freezeParticleScale: 2
   m_useMoveAnimInLove: 0
