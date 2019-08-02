@@ -222,11 +222,10 @@ public class MenuDragonSpecialInfo : MonoBehaviour {
     /// <param name="_data">The sku of the unlocked dragon.</param>
     private void OnDragonAcquired(IDragonData _data)
     {
-        // If the unlocked dragon is the selected one
-        if (_data.sku == m_dragonData.sku)
+        if (_data.sku != null)
         {
             // Refresh after some delay to let the animation finish
-            Refresh(m_dragonData.sku, 0.25f);
+            Refresh(_data.sku, 0.25f);
         }
     }
 
