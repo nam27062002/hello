@@ -22,6 +22,9 @@ using DG.Tweening;
 public class Transition {
 	[HideEnumValues(true, true)] public MenuScreen destination = MenuScreen.NONE;
 
+	[Tooltip("Will override any other setup")]
+	public bool showOverlay = false;
+
 	public BezierCurve path = null;
 	public string initialPathPoint = "";
 	public string finalPathPoint = "";
@@ -71,6 +74,7 @@ public class MenuTransitionManager : MonoBehaviour {
 		get { return m_dynamicPath; }
 	}
 
+	[SerializeField] private MenuTransitionOverlay m_overlay = null;
 
 	[Separator("Default Transition Setup")]
 	[SerializeField] private float m_defaultTransitionDuration = 0.5f;
@@ -117,6 +121,11 @@ public class MenuTransitionManager : MonoBehaviour {
 		get { return m_transitionAllowed; }
 	}
 
+	private bool m_isTransitioning = false;
+	public bool isTransitioning {
+		get { return m_isTransitioning; }
+	}
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -153,6 +162,9 @@ public class MenuTransitionManager : MonoBehaviour {
 				GoToScreen(MenuScreen.PLAY, false);
 			}
 		}
+
+		// Make sure overlay is hidden as well
+		m_overlay.Stop();
 	}
 
 	//------------------------------------------------------------------------//
@@ -207,6 +219,7 @@ public class MenuTransitionManager : MonoBehaviour {
 
 		// Notify game a screen transition has just happen and animation is about to start
 		Messenger.Broadcast<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_START, m_prevScreen, m_currentScreen);
+		m_isTransitioning = true;
 
 		// Prevent any transition during a safety period (to avoid breaking the UI if tapping 2 buttons for example)
 		m_transitionAllowed = false;
@@ -222,11 +235,19 @@ public class MenuTransitionManager : MonoBehaviour {
 			float duration = t.overrideDuration ? t.duration : m_defaultTransitionDuration;
 			Ease ease = t.overrideEase ? t.ease : m_defaultTransitionEase;
 
+			// If using the overlay, override duration
+			if(t.showOverlay) duration = m_overlay.transitionDuration;
+
 			// UI
 			PerformUITransition(fromScreenData, toScreenData, duration);
 
 			// Camera
 			PerformCameraTransition(fromScreenData, toScreenData, t, duration, ease);
+
+			// Overlay
+			if(t.showOverlay) {
+				m_overlay.Play();
+			}
 
 			// Lock input to prevent weird flow cases when interrupting a screen transition
 			// See https://mdc-tomcat-jira100.ubisoft.org/jira/browse/HDK-620
@@ -242,6 +263,7 @@ public class MenuTransitionManager : MonoBehaviour {
 			PerformCameraTransition(fromScreenData, toScreenData);
 
 			// No animation, instantly notify game the screen transition has been completed
+			m_isTransitioning = false;
 			Messenger.Broadcast<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_END, m_prevScreen, m_currentScreen);
 		}
 	}
@@ -328,13 +350,25 @@ public class MenuTransitionManager : MonoBehaviour {
 	/// <param name="_duration">Duration, negative for no animation.</param>
 	/// <param name="_ease">Ease function.</param>
 	private void PerformCameraTransition(ScreenData _fromScreenData, ScreenData _toScreenData, Transition _t = null, float _duration = -1f, Ease _ease = Ease.InOutCubic) {
-		// Animated transition?
-		if(_t == null || _duration <= 0f) {
+		// A) Using overlay: instant camera swap after some delay
+		if(_t != null && _t.showOverlay) {
+			UbiBCN.CoroutineManager.DelayedCall(
+				() => {
+					_toScreenData.cameraSetup.changePosition = true;
+					_toScreenData.cameraSetup.Apply(m_camera);
+				}, _duration / 2f	// Right at the middle of the overlay transition so we don't see the swap!
+			);
+		}
+
+		// B) Duration <= 0 or no transition defined: Instant camera change
+		else if(_t == null || _duration <= 0f) {
 			// No! Go straight to the new screen
 			_toScreenData.cameraSetup.changePosition = true;
 			_toScreenData.cameraSetup.Apply(m_camera);
-		} else {
-			// Yes! Animated transition!
+		}
+
+		// C) Normal, animated transition
+		else {
 			// Lerp path (if defined)
 			bool usePath = _t.path != null;
 			if(usePath) {
@@ -465,6 +499,7 @@ public class MenuTransitionManager : MonoBehaviour {
 		}
 
 		// Notify game the screen transition has been completed
+		m_isTransitioning = false;
 		Messenger.Broadcast<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_END, m_prevScreen, m_currentScreen);
 	}
 

@@ -176,6 +176,9 @@ public class LabDragonSelectionScene : MenuScreenScene {
 	/// It is assumed that SelectCameraSnapPoint() has been previously called.
 	/// </summary>
 	public void RefreshCamera() {
+		// Don't if a screen transition is ongoing
+		if(InstanceManager.menuSceneController.transitionManager.isTransitioning) return;
+
 		// Lerp position as well
 		TweenParams tweenParams = new TweenParams().SetEase(Ease.OutQuad);
 		m_labScreenData.cameraSetup.changePosition = true;
