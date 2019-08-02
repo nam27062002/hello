@@ -235,9 +235,8 @@ public class CPServerTab : MonoBehaviour {
     }
 
     public void OnButton6()
-    {
-        //HDCP2Manager.Instance.PlayInterstitial(false, OnIntersitialDone);        
-        PopupAdBlocker.LaunchCp2Interstitial(OnCp2IntersitialDone);
+    {		
+		HDCP2Manager.Instance.PlayInterstitial(false, OnCp2IntersitialDone);                
     }
 
     private void OnCp2IntersitialDone(bool success)

@@ -55,9 +55,7 @@ public class ParticleScaler : MonoBehaviour
 		public Vector3 m_boxShapeSize;
 
 		// Velocity Over Lifetime
-		public float m_velocityOverLifetimeX;
-		public float m_velocityOverLifetimeY;
-		public float m_velocityOverLifetimeZ;
+		public float m_velocityOverLifetime;
 
 		// Limit Velocity Over Lifetime
 		public float m_limitVelocityOverLifetimeX;
@@ -225,9 +223,7 @@ public class ParticleScaler : MonoBehaviour
 		}
 
 		ParticleSystem.VelocityOverLifetimeModule velocityOverLifetime = ps.velocityOverLifetime;
-		data.m_velocityOverLifetimeX = velocityOverLifetime.xMultiplier;
-		data.m_velocityOverLifetimeY = velocityOverLifetime.yMultiplier;
-		data.m_velocityOverLifetimeZ = velocityOverLifetime.zMultiplier;
+		data.m_velocityOverLifetime = velocityOverLifetime.speedModifierMultiplier;
 
 		ParticleSystem.LimitVelocityOverLifetimeModule limitVelocityOverLifetime = ps.limitVelocityOverLifetime;
 		if ( limitVelocityOverLifetime.separateAxes ) 
@@ -394,9 +390,7 @@ public class ParticleScaler : MonoBehaviour
             }
 
             ParticleSystem.VelocityOverLifetimeModule velocityOverLifetime = ps.velocityOverLifetime;
-            velocityOverLifetime.xMultiplier = data.m_velocityOverLifetimeX;
-            velocityOverLifetime.yMultiplier = data.m_velocityOverLifetimeY;
-            velocityOverLifetime.zMultiplier = data.m_velocityOverLifetimeZ;
+            velocityOverLifetime.speedModifierMultiplier = data.m_velocityOverLifetime;
 
             ParticleSystem.LimitVelocityOverLifetimeModule limitVelocityOverLifetime = ps.limitVelocityOverLifetime;
             if (limitVelocityOverLifetime.separateAxes)
@@ -609,9 +603,7 @@ public class ParticleScaler : MonoBehaviour
             }
 
             ParticleSystem.VelocityOverLifetimeModule velocityOverLifetime = ps.velocityOverLifetime;
-            velocityOverLifetime.xMultiplier *= scale;
-            velocityOverLifetime.yMultiplier *= scale;
-            velocityOverLifetime.zMultiplier *= scale;
+            velocityOverLifetime.speedModifierMultiplier *= scale;
 
             ParticleSystem.LimitVelocityOverLifetimeModule limitVelocityOverLifetime = ps.limitVelocityOverLifetime;
             if (limitVelocityOverLifetime.separateAxes)

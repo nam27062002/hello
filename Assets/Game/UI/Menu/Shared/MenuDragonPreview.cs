@@ -116,19 +116,21 @@ public class MenuDragonPreview : MonoBehaviour {
 	public int altAnimationsMaxLevel{ get{ return m_altAnimationsMaxLevel; }set{ m_altAnimationsMaxLevel = value; } }
 
     public ParticleControl[] m_extraParticles;
-    
 
-	//------------------------------------------------------------------//
-	// GENERIC METHODS													//
-	//------------------------------------------------------------------//
-	
-	void Start(){
+
+    //------------------------------------------------------------------//
+    // GENERIC METHODS													//
+    //------------------------------------------------------------------//
+    private void Awake()
+    {
         m_animator = GetComponentInChildren<Animator>();
         m_renderers = GetComponentsInChildren<Renderer>();
         m_materials = new Dictionary<int, List<Material>>();
 
-        if (m_renderers != null) {
-            for (int i = 0; i < m_renderers.Length; i++) {
+        if (m_renderers != null)
+        {
+            for (int i = 0; i < m_renderers.Length; i++)
+            {
                 Renderer renderer = m_renderers[i];
                 Material[] materials = renderer.sharedMaterials;
 
@@ -140,6 +142,11 @@ public class MenuDragonPreview : MonoBehaviour {
         }
 
         m_count = m_altAnimConfigs.Count;
+    }
+
+
+    void Start(){
+
 
 		NumLoopsBehaviour[] behaviours = m_animator.GetBehaviours<NumLoopsBehaviour>();
 		int behavioursCount = behaviours.Length;
@@ -208,18 +215,21 @@ public class MenuDragonPreview : MonoBehaviour {
 
 	public void SetFresnelColor( Color col )
 	{
-		for( int i = 0; i<m_renderers.Length; i++ )
-		{
-			Material[] mats = m_renderers[i].materials;
-			for( int j = 0;j<mats.Length; j++ )
-			{
-				string shaderName = mats[j].shader.name;
-				if ( shaderName.Contains("Dragon standard"))
-				{
-					mats[j].SetColor("_FresnelColor", col);
-				}
-			}
-		}
+        if (m_renderers != null )
+        {
+            for (int i = 0; i < m_renderers.Length; i++)
+            {
+                Material[] mats = m_renderers[i].materials;
+                for (int j = 0; j < mats.Length; j++)
+                {
+                    string shaderName = mats[j].shader.name;
+                    if (shaderName.Contains("Dragon standard"))
+                    {
+                        mats[j].SetColor("_FresnelColor", col);
+                    }
+                }
+            }
+        }
 	}
 
 	public void Update()
