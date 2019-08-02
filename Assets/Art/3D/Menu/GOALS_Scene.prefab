@@ -834,6 +834,22 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 1
   m_IsActive: 1
+--- !u!1 &1462394839167284
+GameObject:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4967693350242318}
+  - component: {fileID: 114415396151991772}
+  m_Layer: 0
+  m_Name: LabLeaguesSnapPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!1 &1462539701030250
 GameObject:
   m_ObjectHideFlags: 1
@@ -3016,6 +3032,19 @@ Transform:
   m_Father: {fileID: 4829950367045162}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 20.977001, y: -240.333, z: 368.264}
+--- !u!4 &4967693350242318
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1462394839167284}
+  m_LocalRotation: {x: 0.02094243, y: -0.0000000037252907, z: 9.313227e-10, w: 0.9997807}
+  m_LocalPosition: {x: -158.67175, y: -535.1767, z: 68.93515}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4984294277935578}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 16.532001, y: -2.0210001, z: 3.4080002}
 --- !u!4 &4974541594103074
 Transform:
   m_ObjectHideFlags: 1
@@ -3041,6 +3070,7 @@ Transform:
   m_Children:
   - {fileID: 4689775488775782}
   - {fileID: 4095527641152946}
+  - {fileID: 4967693350242318}
   m_Father: {fileID: 4097948156382986}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -5845,6 +5875,31 @@ MonoBehaviour:
     pointId: GLOBAL_EVENTS
   - curve: {fileID: 0}
     pointId: GLOBAL_EVENTS
+--- !u!114 &114415396151991772
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1462394839167284}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 32ff496381399492a9aae003c352473a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  changeRotation: 1
+  changeFov: 1
+  fov: 35
+  changeNear: 1
+  near: 1
+  changeFar: 1
+  far: 300
+  darkenScreen: 0
+  darkScreenDistance: 50
+  darkScreenColor: {r: 0, g: 0, b: 0, a: 0.8}
+  darkScreenRenderQueue: 3030
+  livePreview: 1
+  drawGizmos: 1
+  gizmoColor: {r: 0.034482718, g: 1, b: 0, a: 0.49803922}
 --- !u!114 &114443089948647976
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5881,6 +5936,7 @@ MonoBehaviour:
   m_targetAnimator: {fileID: 0}
   m_checkSelectedDragon: 0
   m_hideForDragons: 0
+  m_showOnlyForType: 2
   m_targetDragonSku: 
   m_showIfShadow: 0
   m_showIfLocked: 0
@@ -5888,7 +5944,7 @@ MonoBehaviour:
   m_showIfOwned: 1
   m_checkScreens: 1
   m_mode: 0
-  m_targetScreens: 020000000400000003000000
+  m_targetScreens: 02000000040000000300000014000000
   m_hideDelay: 0.5
   m_showDelay: 0
   m_restartShowAnimation: 0
@@ -5906,6 +5962,7 @@ MonoBehaviour:
   m_targetAnimator: {fileID: 0}
   m_checkSelectedDragon: 0
   m_hideForDragons: 0
+  m_showOnlyForType: 2
   m_targetDragonSku: 
   m_showIfShadow: 0
   m_showIfLocked: 0
@@ -5913,7 +5970,7 @@ MonoBehaviour:
   m_showIfOwned: 1
   m_checkScreens: 1
   m_mode: 0
-  m_targetScreens: 0200000004000000
+  m_targetScreens: 020000000400000014000000
   m_hideDelay: 0.5
   m_showDelay: 0
   m_restartShowAnimation: 0
@@ -5949,6 +6006,7 @@ MonoBehaviour:
   m_targetAnimator: {fileID: 0}
   m_checkSelectedDragon: 0
   m_hideForDragons: 0
+  m_showOnlyForType: 2
   m_targetDragonSku: 
   m_showIfShadow: 0
   m_showIfLocked: 0
@@ -5956,7 +6014,7 @@ MonoBehaviour:
   m_showIfOwned: 1
   m_checkScreens: 1
   m_mode: 0
-  m_targetScreens: 020000000300000004000000
+  m_targetScreens: 02000000030000000400000014000000
   m_hideDelay: 0.5
   m_showDelay: 0
   m_restartShowAnimation: 0

@@ -446,7 +446,6 @@ GameObject:
   - component: {fileID: 222379393933135458}
   - component: {fileID: 114293560264884990}
   - component: {fileID: 114200125514530534}
-  - component: {fileID: 114165950835508176}
   - component: {fileID: 95384096695889800}
   - component: {fileID: 114729517982041736}
   - component: {fileID: 114792418157115374}
@@ -1315,7 +1314,7 @@ MonoBehaviour:
   m_showIfOwned: 1
   m_checkScreens: 1
   m_mode: 0
-  m_targetScreens: 020000000300000004000000
+  m_targetScreens: 02000000140000000400000003000000
   m_hideDelay: 0
   m_showDelay: 0
   m_restartShowAnimation: 0
@@ -1684,18 +1683,6 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
---- !u!114 &114165950835508176
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1368191497332528}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b14aa7aba6897447d947373a65bfb333, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_targetScreen: 20
 --- !u!114 &114200125514530534
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1746,8 +1733,8 @@ MonoBehaviour:
           m_StringArgument: hd_folder
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 114165950835508176}
-        m_MethodName: OnNavigationButton
+      - m_Target: {fileID: 114104705504500072}
+        m_MethodName: OnLeaguesButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -8402,7 +8389,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 445.595, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 200}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!224 &224125415722501378
@@ -9289,7 +9276,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 725.605, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 200}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!224 &224755969147172016

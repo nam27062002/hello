@@ -245,12 +245,36 @@ public class GoalsScreenController : MonoBehaviour {
 		}
 	}
 
-	/// <summary>
-	/// The current menu screen has changed (animation starts now).
-	/// </summary>
-	/// <param name="_from">Source screen.</param>
-	/// <param name="_to">Target screen.</param>
-	private void OnTransitionStarted(MenuScreen _from, MenuScreen _to) {
+    /// <summary>
+    /// Leagues button has been pressed.
+    /// </summary>
+    public void OnLeaguesButton()
+    {
+        // Check tutorial!
+        int remainingRuns = GameSettings.ENABLE_LAB_AT_RUN - UsersManager.currentUser.gamesPlayed;
+        if (UsersManager.currentUser.gamesPlayed < GameSettings.ENABLE_LAB_AT_RUN)
+        {
+            // Show error message
+            string tid = remainingRuns == 1 ? "TID_MORE_RUNS_REQUIRED" : "TID_MORE_RUNS_REQUIRED_PLURAL";
+            UIFeedbackText.CreateAndLaunch(
+                LocalizationManager.SharedInstance.Localize(tid, remainingRuns.ToString()),
+                new Vector2(0.5f, 0.25f),
+                this.GetComponentInParent<Canvas>().transform as RectTransform
+            );
+        }
+        else
+        {
+            // Go to leagues screen
+            InstanceManager.menuSceneController.GoToScreen(MenuScreen.LAB_LEAGUES);
+        }
+    }
+
+    /// <summary>
+    /// The current menu screen has changed (animation starts now).
+    /// </summary>
+    /// <param name="_from">Source screen.</param>
+    /// <param name="_to">Target screen.</param>
+    private void OnTransitionStarted(MenuScreen _from, MenuScreen _to) {
 		// If the new screen is any of our screens of interest, select the matching button!
 		switch(_to) {
 			case MenuScreen.MISSIONS:		m_buttons.SelectButton((int)Buttons.MISSIONS);	break;
