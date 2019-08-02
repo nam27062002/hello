@@ -59,6 +59,8 @@ public class MenuTransitionManager : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
+	// Exposed
+	[Separator("Scene References")]
 	[SerializeField] private Camera m_camera = null;
 	new public Camera camera {
 		get { return m_camera; }
@@ -69,7 +71,8 @@ public class MenuTransitionManager : MonoBehaviour {
 		get { return m_dynamicPath; }
 	}
 
-	[Space]
+
+	[Separator("Default Transition Setup")]
 	[SerializeField] private float m_defaultTransitionDuration = 0.5f;
 	[SerializeField] private Ease m_defaultTransitionEase = Ease.InOutCubic;
 	[SerializeField] 
@@ -79,10 +82,18 @@ public class MenuTransitionManager : MonoBehaviour {
 		"The more strength, the less the original curve is respected.")]
 	private float m_dynamicPathStrength = 1f;
 
-	[Space]
+	[Separator("Transition Definitions")]
 	[SerializeField] private ScreenData[] m_screens = new ScreenData[(int)MenuScreen.COUNT];
+	public ScreenData[] screens {
+		get { return m_screens; }
+	}
 
-	// Internal
+	// Screen navigation history
+	private List<MenuScreen> m_screenHistory = new List<MenuScreen>();  // Used to implement the Back() functionality
+	public List<MenuScreen> screenHistory {
+		get { return m_screenHistory; }
+	}
+
 	private MenuScreen m_prevScreen = MenuScreen.NONE;
 	public MenuScreen prevScreen {
 		get { return m_prevScreen; }
@@ -99,12 +110,6 @@ public class MenuTransitionManager : MonoBehaviour {
 	// Camera animation control
 	private Tweener m_cameraTween = null;
 	private float m_cameraTweenDelta = 0f;
-
-	// Screen navigation history
-	private List<MenuScreen> m_screenHistory = new List<MenuScreen>();	// Used to implement the Back() functionality
-	public List<MenuScreen> screenHistory {
-		get { return m_screenHistory; }
-	}
 
 	// Transition protection
 	private bool m_transitionAllowed = true;
@@ -205,7 +210,7 @@ public class MenuTransitionManager : MonoBehaviour {
 
 		// Prevent any transition during a safety period (to avoid breaking the UI if tapping 2 buttons for example)
 		m_transitionAllowed = false;
-		UbiBCN.CoroutineManager.DelayedCall(() => { m_transitionAllowed = true; }, TRANSITION_SAFETY_PERIOD);
+		UbiBCN.CoroutineManager.DelayedCall(OnTransitionSafetyPeriodFinished, TRANSITION_SAFETY_PERIOD);
 
 		// Perform transition
 		// Do we have a valid transition data from current screen to target screen?
@@ -461,5 +466,13 @@ public class MenuTransitionManager : MonoBehaviour {
 
 		// Notify game the screen transition has been completed
 		Messenger.Broadcast<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_END, m_prevScreen, m_currentScreen);
+	}
+
+	/// <summary>
+	/// The safety period before allowing more transitions has finished.
+	/// </summary>
+	private void OnTransitionSafetyPeriodFinished() {
+		// Transitions allowed again
+		m_transitionAllowed = true;
 	}
 }
