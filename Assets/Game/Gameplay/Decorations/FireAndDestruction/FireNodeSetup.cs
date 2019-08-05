@@ -5,7 +5,7 @@ public class FireNodeSetup {
 
 	private int m_boxelSize = 2;
 
-	private Transform	  m_parent;
+    private Transform m_transform;
 	private List<Vector3> m_vertices;
 	private Bounds 	  	  m_bounds;
 
@@ -14,14 +14,14 @@ public class FireNodeSetup {
 
 
 	// Use this for initialization
-	public void Init(Transform _parent) {
-		m_parent = _parent;
+	public void Init(Transform _t) {
 		m_bounds = new Bounds();
 		m_vertices = new List<Vector3>();
+        m_transform = _t;
 
-		m_bounds.center = _parent.position;
+        m_bounds.center = _t.position;
 
-		Transform view = _parent.Find("view");
+		Transform view = _t.Find("view");
 		Renderer[] renderers = view.GetComponentsInChildren<Renderer>();
 
 		for (int i = 0; i < renderers.Length; ++i) {
@@ -46,7 +46,7 @@ public class FireNodeSetup {
 		m_boxels = null;
 	}
 	
-	public void Build(int _boxelSize) {
+	public List<FireNode> Build(int _boxelSize) {
 		m_boxelSize = _boxelSize;
 		m_boxels = null;
 
@@ -73,7 +73,7 @@ public class FireNodeSetup {
 
 		EnableBoxels();
 		DisableInternalBoxels();
-		BuildFireNodes();
+		return BuildFireNodes();
 	}
 
 	private void EnableBoxels() {
@@ -120,40 +120,48 @@ public class FireNodeSetup {
 		}
 	}
 
-	private void BuildFireNodes() {
-		Transform fireNodes = m_parent.transform.Find("FireNodes");
+	private List<FireNode> BuildFireNodes() {
+        List<FireNode> fireNodes = new List<FireNode>();
+        Transform oldFireNodes = m_transform.Find("FireNodes");
 
-		if (fireNodes != null) {
-			fireNodes.parent = null;
-			GameObject.DestroyImmediate(fireNodes.gameObject);
-		}
+        if (oldFireNodes != null) {
+            oldFireNodes.parent = null;
+            int oldFireNodeCount = oldFireNodes.childCount;
+            for (int i = 0; i < oldFireNodeCount; ++i) {
+                Transform oldFireNode = oldFireNodes.GetChild(i);
+                FireNode fireNode = new FireNode {
+                    localPosition = oldFireNode.position - m_transform.position,
+                    scale = oldFireNode.localScale.x
+                };
+                fireNodes.Add(fireNode);
+            }
 
-		GameObject obj = new GameObject("FireNodes");
-		obj.transform.SetParent(m_parent.transform, false);
-		fireNodes = obj.transform;
+            Object.DestroyImmediate(oldFireNodes.gameObject);
+        } else {
+            for (int x = 0; x < m_size.x; x++) {
+                for (int y = 0; y < m_size.y; y++) {
+                    for (int z = 0; z < m_size.z; z++) {
+                        if (m_boxels[x, y, z].Count > 0) {
+                            List<Vector3> boxel = m_boxels[x, y, z];
 
-		
-		for (int x = 0; x < m_size.x; x++) {
-			for (int y = 0; y < m_size.y; y++) {
-				for (int z = 0; z < m_size.z; z++) {
-					if (m_boxels[x, y, z].Count > 0) {
-						List<Vector3> boxel = m_boxels[x, y, z];
+                            Vector3 position = Vector3.zero;
+                            for (int i = 0; i < boxel.Count; i++) {
+                                position += boxel[i];
+                            }
+                            position /= boxel.Count;
 
-						Vector3 position = Vector3.zero;
-						for (int i = 0; i < boxel.Count; i++) {
-							position += boxel[i];
-						}
-						position /= boxel.Count;
+                            FireNode fireNode = new FireNode {
+                                localPosition = position - m_transform.position
+                            };
+                            fireNodes.Add(fireNode);
+                        }
+                    }
+                }
+            }
+        }
 
-						GameObject fireNodeObj = new GameObject("FireNode");
-						fireNodeObj.transform.position = position;
-						fireNodeObj.transform.SetParent(fireNodes, true);
-						fireNodeObj.AddComponent<FireNode>();
-					}
-				}
-			}
-		}
-	}
+        return fireNodes;
+    }
 
 	private Vector3 GetBoxelCenter(int _x, int _y, int _z) {
 		Vector3 offset = new Vector3(_x, _y, _z);

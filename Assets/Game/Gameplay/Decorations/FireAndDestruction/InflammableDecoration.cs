@@ -35,6 +35,9 @@ public class InflammableDecoration : ISpawnable, IBroadcastListener {
     public OnBurnDelegate onBurn;
     //------
 
+    [SerializeField] private List<FireNode> m_fireNodes;
+    public List<FireNode> fireNodes { get { return m_fireNodes; } set { m_fireNodes = value; } }
+    
     private Transform m_transform;
 
     private FireNodeSetup m_fireNodeSetup;
@@ -43,9 +46,7 @@ public class InflammableDecoration : ISpawnable, IBroadcastListener {
 	private GameObject m_viewBurned;
 
 	private BoxCollider m_collider;
-
-	private FireNode[] m_fireNodes;
-
+    
 	private AutoSpawnBehaviour m_autoSpawner;
 	private DestructibleDecoration m_destructibleBehaviour;
 	protected DeviceOperatorSpawner[] m_operatorSpawner;
@@ -91,8 +92,7 @@ public class InflammableDecoration : ISpawnable, IBroadcastListener {
         
         // Subscribe to external events
         Broadcaster.AddListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
-        Broadcaster.AddListener(BroadcastEventType.GAME_AREA_ENTER, this);
-        
+        Broadcaster.AddListener(BroadcastEventType.GAME_AREA_ENTER, this);        
 	}
 
 	/// <summary>
@@ -100,7 +100,7 @@ public class InflammableDecoration : ISpawnable, IBroadcastListener {
 	/// </summary>
 	private void OnDisable() {
         if (m_fireNodes != null) {
-            for (int i = 0; i < m_fireNodes.Length; i++) {
+            for (int i = 0; i < m_fireNodes.Count; i++) {
                 m_fireNodes[i].Disable();
             }
         }
@@ -134,8 +134,7 @@ public class InflammableDecoration : ISpawnable, IBroadcastListener {
 
         if (zone == ZoneManager.Zone.None) {
             Destroy(this);
-        } else {
-            m_fireNodes = m_transform.GetComponentsInChildren<FireNode>(true);
+        } else {            
             m_view = m_transform.Find("view").gameObject;
             m_viewBurned = m_transform.Find("view_burned").gameObject;
 
@@ -166,7 +165,7 @@ public class InflammableDecoration : ISpawnable, IBroadcastListener {
             m_destructibleBehaviour = GetComponent<DestructibleDecoration>();
 
 
-            for (int i = 0; i < m_fireNodes.Length; i++) {
+            for (int i = 0; i < m_fireNodes.Count; i++) {
                 m_fireNodes[i].Init(this, m_entity, m_burnParticle, m_feedbackParticle, m_feedbackParticleMatchDirection, m_hitRadius);
                 if (!gameObject.activeInHierarchy) {
                     m_fireNodes[i].Disable();
@@ -183,8 +182,8 @@ public class InflammableDecoration : ISpawnable, IBroadcastListener {
 			m_fireNodeSetup = new FireNodeSetup();
 		}
 
-		m_fireNodeSetup.Init(m_transform);
-		m_fireNodeSetup.Build(m_boxelSize);
+		m_fireNodeSetup.Init(transform);
+		m_fireNodes = m_fireNodeSetup.Build(m_boxelSize);
 	}
 
 	override public void Spawn(ISpawner _spawner) {
@@ -196,7 +195,7 @@ public class InflammableDecoration : ISpawnable, IBroadcastListener {
         }
         m_viewBurned.SetActive(false);
 
-		for (int i = 0; i < m_fireNodes.Length; i++) {
+		for (int i = 0; i < m_fireNodes.Count; i++) {
 			m_fireNodes[i].Reset();
 		}
 
@@ -261,16 +260,16 @@ public class InflammableDecoration : ISpawnable, IBroadcastListener {
                 if (onBurn != null)
                     onBurn();
 
-				for (int i = 0; i < m_fireNodes.Length; ++i) {
+				for (int i = 0; i < m_fireNodes.Count; ++i) {
 					if (i % 2 == 0) {
 						FireNode n = m_fireNodes[i];
-						GameObject ex = m_explosionProcHandler.Spawn(null, n.transform.position);
+						GameObject ex = m_explosionProcHandler.Spawn(null, n.position);
 						if (ex != null) {
-							ex.transform.localScale = n.transform.localScale * 1.0f;
+							ex.transform.localScale = GameConstants.Vector3.one * n.scale;
 							ex.GetComponent<ExplosionProcController>().Explode(i * 0.015f, n.colorType); //delay
 						}
 
-						m_disintegrateParticle.Spawn(n.transform.position + m_disintegrateParticle.offset);
+						m_disintegrateParticle.Spawn(n.position + m_disintegrateParticle.offset);
 					}
 				}
 
@@ -297,8 +296,8 @@ public class InflammableDecoration : ISpawnable, IBroadcastListener {
 			switch (m_state) {
 				case State.Burning: {
 						bool allNodesBurning = true;
-                        int max = m_fireNodes.Length;
-						for (int i = 0; i < m_fireNodes.Length && allNodesBurning; ++i) {
+                        int max = m_fireNodes.Count;
+						for (int i = 0; i < max && allNodesBurning; ++i) {
 							allNodesBurning = allNodesBurning && m_fireNodes[i].IsBurning();
 						}
 
@@ -308,37 +307,41 @@ public class InflammableDecoration : ISpawnable, IBroadcastListener {
 						}
 					} break;
 
-				case State.Extinguish:
-					// Advance dissolve!
-					if (!m_useAnimator && m_ashMaterial != null) {
-						m_ashMaterial.SetFloat("_BurnLevel", m_timer.GetDelta() * 3.0f);
-					}
+				case State.Extinguish: {
+                        // Advance dissolve!
+                        if (!m_useAnimator && m_ashMaterial != null) {
+                            m_ashMaterial.SetFloat("_BurnLevel", m_timer.GetDelta() * 3.0f);
+                        }
 
-					if (m_timer.IsFinished()) {
-						bool extinguished = true;
-						for (int i = 0; i < m_fireNodes.Length; ++i) {
-							if (!m_fireNodes[i].IsExtinguished()) {
-								if (!m_fireNodes[i].IsExtinguishing()) {
-									m_fireNodes[i].Extinguish();
-								}
-								extinguished = false;
-							}
-						}
+                        if (m_timer.IsFinished()) {
+                            bool extinguished = true;
+                            int max = m_fireNodes.Count;
+                            for (int i = 0; i < max; ++i) {
+                                if (!m_fireNodes[i].IsExtinguished()) {
+                                    if (!m_fireNodes[i].IsExtinguishing()) {
+                                        m_fireNodes[i].Extinguish();
+                                    }
+                                    extinguished = false;
+                                }
+                            }
 
-						if (extinguished) {
-							Destroy();
-						}						
-					}
-					break;
+                            if (extinguished) {
+                                Destroy();
+                            }
+                        }
+                    }
+                    break;
 
-				case State.Explode:
-					for (int i = 0; i < m_fireNodes.Length; ++i) {
-						m_fireNodes[i].Explode();
-					}
-					if (m_timer.IsFinished()) {
-						Destroy();
-					}
-					break;
+				case State.Explode: {
+                        int max = m_fireNodes.Count;
+                        for (int i = 0; i < max; ++i) {
+                            m_fireNodes[i].Explode();
+                        }
+                        if (m_timer.IsFinished()) {
+                            Destroy();
+                        }
+                    }
+                    break;
 			}
 		}
 	}
@@ -431,9 +434,8 @@ public class InflammableDecoration : ISpawnable, IBroadcastListener {
     //----------------------------------------------------------------------------------------
     void OnDrawGizmosSelected() {
 		if (m_fireNodes != null) {
-			Gizmos.color = Color.magenta;
-			for (int i = 0; i < m_fireNodes.Length; i++) {
-				Gizmos.DrawSphere(m_fireNodes[i].transform.position, 0.25f);
+			for (int i = 0; i < m_fireNodes.Count; i++) {
+                m_fireNodes[i].OnDrawGizmosSelected(this);
 			}
 		}
 
