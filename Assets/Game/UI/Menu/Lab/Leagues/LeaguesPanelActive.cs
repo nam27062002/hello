@@ -278,7 +278,7 @@ public class LeaguesPanelActive : LeaguesScreenPanel {
 		// 3D Trophy Preview
 		// Make sure 3D scene is still loaded!
 		if(InstanceManager.menuSceneController != null) {
-			ScreenData leaguesScreenData = InstanceManager.menuSceneController.GetScreenData(MenuScreen.LAB_LEAGUES);
+			ScreenData leaguesScreenData = InstanceManager.menuSceneController.GetScreenData(MenuScreen.LEAGUES);
 			if(leaguesScreenData != null) {
 				LabLeaguesScene sceneController = leaguesScreenData.scene3d as LabLeaguesScene;
 				if(sceneController != null) {

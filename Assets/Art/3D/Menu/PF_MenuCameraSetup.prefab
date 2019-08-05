@@ -450,8 +450,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1781636983171874}
-  m_LocalRotation: {x: 0.032506917, y: -0, z: -0, w: 0.99947155}
-  m_LocalPosition: {x: 156.1, y: -666.64545, z: 25.954979}
+  m_LocalRotation: {x: 0.053431146, y: -0.000000003753596, z: 8.097327e-10, w: 0.9985715}
+  m_LocalPosition: {x: -158.27, y: -532.64166, z: 73.19231}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4899149457982194}
@@ -572,8 +572,8 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 4
-  far clip plane: 1500
+  near clip plane: 1
+  far clip plane: 300
   field of view: 35
   orthographic: 0
   orthographic size: 5
@@ -679,6 +679,7 @@ MonoBehaviour:
   m_targetAnimator: {fileID: 114038105219992030}
   m_checkSelectedDragon: 0
   m_hideForDragons: 0
+  m_showOnlyForType: 2
   m_targetDragonSku: 
   m_showIfShadow: 0
   m_showIfLocked: 0
@@ -704,6 +705,7 @@ MonoBehaviour:
   m_targetAnimator: {fileID: 114784452774620076}
   m_checkSelectedDragon: 0
   m_hideForDragons: 0
+  m_showOnlyForType: 2
   m_targetDragonSku: 
   m_showIfShadow: 0
   m_showIfLocked: 0
@@ -818,20 +820,20 @@ MonoBehaviour:
   - m_name: DRAGON_SELECTION
     m_handleStyle: 1
     m_locked: 0
-    m_position: {x: 29.85891, y: -180.33804, z: 24.885399}
-    m_handle1: {x: -34.885303, y: -87.52894, z: -56.02449}
+    m_position: {x: 126.940445, y: -180.33804, z: 24.885399}
+    m_handle1: {x: -66.92221, y: -87.52894, z: -56.02449}
     m_handle2: {x: 0, y: 0, z: 0}
   - m_name: 
     m_handleStyle: 0
     m_locked: 0
     m_position: {x: -75.854126, y: -445.57724, z: -144.88577}
-    m_handle1: {x: 57.22687, y: 93.344635, z: -5.3767824}
-    m_handle2: {x: -57.22687, y: -93.344635, z: 5.3767824}
+    m_handle1: {x: 87.03924, y: 87.62042, z: -5.04706}
+    m_handle2: {x: -87.03924, y: -87.62042, z: 5.04706}
   - m_name: TOURNAMENTS_INFO
     m_handleStyle: 1
     m_locked: 0
-    m_position: {x: -254, y: -643.3496, z: 51.55552}
-    m_handle1: {x: 58.78814, y: 65.264885, z: -64.82562}
+    m_position: {x: -333, y: -643.3496, z: 51.55552}
+    m_handle1: {x: 84.85814, y: 65.264885, z: -64.82562}
     m_handle2: {x: 0, y: 0, z: 0}
   m_resolution: 30
   _close: 0
@@ -856,15 +858,15 @@ MonoBehaviour:
   - m_name: DRAGON_SELECTION
     m_handleStyle: 1
     m_locked: 0
-    m_position: {x: 39.85891, y: -180.33804, z: 30.885399}
-    m_handle1: {x: 1.3968579, y: -9.806689, z: -6.411394}
+    m_position: {x: 136.94044, y: -180.33804, z: 30.885399}
+    m_handle1: {x: -30.64005, y: -9.806689, z: -6.411394}
     m_handle2: {x: 0, y: 0, z: 0}
   - m_name: 
     m_handleStyle: 0
     m_locked: 0
     m_position: {x: 44.091812, y: -210.05528, z: 11.456931}
-    m_handle1: {x: -4.2079787, y: 10.506525, z: 3.3367913}
-    m_handle2: {x: 4.2079787, y: -10.506525, z: -3.3367913}
+    m_handle1: {x: -0.27832773, y: 31.263788, z: 9.929139}
+    m_handle2: {x: 0.27832773, y: -31.263788, z: -9.929139}
   - m_name: 
     m_handleStyle: 0
     m_locked: 0
@@ -875,13 +877,13 @@ MonoBehaviour:
     m_handleStyle: 0
     m_locked: 0
     m_position: {x: 301.0514, y: -653.79395, z: -43.894688}
-    m_handle1: {x: -21.775635, y: 4.192322, z: -18.358562}
-    m_handle2: {x: 21.775635, y: -4.192322, z: 18.358562}
+    m_handle1: {x: -53.00019, y: 71.40553, z: -22.104956}
+    m_handle2: {x: 53.00019, y: -71.40553, z: 22.104956}
   - m_name: REWARDS
     m_handleStyle: 1
     m_locked: 0
     m_position: {x: 316.1, y: -666.64545, z: 25.954979}
-    m_handle1: {x: 5.6019897, y: 4.240967, z: -23.050385}
+    m_handle1: {x: -4.966043, y: 4.240996, z: -23.050392}
     m_handle2: {x: 0, y: 0, z: 0}
   m_resolution: 30
   _close: 0
@@ -925,13 +927,13 @@ MonoBehaviour:
     m_handleStyle: 0
     m_locked: 0
     m_position: {x: 0, y: -90, z: -6}
-    m_handle1: {x: -8.24647, y: 146.60614, z: 11.215464}
-    m_handle2: {x: 8.24647, y: -146.60614, z: -11.215464}
+    m_handle1: {x: -34.15615, y: 142.83247, z: 10.926776}
+    m_handle2: {x: 34.15615, y: -142.83247, z: -10.926776}
   - m_name: DRAGON_SELECTION
     m_handleStyle: 1
     m_locked: 0
-    m_position: {x: 29.85891, y: -180.33804, z: 24.885399}
-    m_handle1: {x: -9.85344, y: 29.811556, z: -10.192182}
+    m_position: {x: 126.940445, y: -180.33804, z: 24.885399}
+    m_handle1: {x: -41.89035, y: 29.811556, z: -10.192182}
     m_handle2: {x: 0, y: 0, z: 0}
   m_resolution: 30
   _close: 0
@@ -946,7 +948,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e221437f2b7a14963b673d7339357cc5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_fogBlendMode: 0
   m_defaultAreaFog:
     m_fogGradient:
       serializedVersion: 2
@@ -1001,15 +1002,15 @@ MonoBehaviour:
   - m_name: LAB_DRAGON_SELECTION
     m_handleStyle: 1
     m_locked: 0
-    m_position: {x: -241.5057, y: -656.5453, z: 62.705437}
-    m_handle1: {x: 69.75936, y: 29.621288, z: -102.247826}
+    m_position: {x: -320.5057, y: -656.5453, z: 62.705437}
+    m_handle1: {x: 95.82936, y: 29.621288, z: -102.247826}
     m_handle2: {x: 0, y: 0, z: 0}
   - m_name: 
     m_handleStyle: 0
     m_locked: 0
     m_position: {x: -30.113708, y: -566.7838, z: -247.13644}
-    m_handle1: {x: -126.86544, y: 2.3399339, z: 9.904126}
-    m_handle2: {x: 126.86544, y: -2.3399339, z: -9.904126}
+    m_handle1: {x: -142.88097, y: 2.303076, z: 9.748119}
+    m_handle2: {x: 142.88097, y: -2.303076, z: -9.748119}
   - m_name: REWARDS
     m_handleStyle: 1
     m_locked: 0
@@ -1046,24 +1047,24 @@ MonoBehaviour:
     m_handleStyle: 0
     m_locked: 0
     m_position: {x: -75.854126, y: -304.71558, z: -223.92848}
-    m_handle1: {x: 56.738934, y: 220.96901, z: -11.509853}
-    m_handle2: {x: -56.738934, y: -220.96901, z: 11.509853}
+    m_handle1: {x: 72.78959, y: 216.22653, z: -11.262828}
+    m_handle2: {x: -72.78959, y: -216.22653, z: 11.262828}
   - m_name: TOURNAMENTS_INFO
     m_handleStyle: 0
     m_locked: 0
-    m_position: {x: -254, y: -643.3496, z: 51.55552}
-    m_handle1: {x: 58.145218, y: 111.69169, z: -91.39265}
-    m_handle2: {x: -58.145218, y: -111.69169, z: 91.39265}
+    m_position: {x: -333, y: -643.3496, z: 51.55552}
+    m_handle1: {x: 84.2494, y: 111.76611, z: -91.453545}
+    m_handle2: {x: -84.2494, y: -111.76611, z: 91.453545}
   - m_name: DRAGON_SETUP
     m_handleStyle: 0
     m_locked: 0
-    m_position: {x: -252.20001, y: -643.46, z: 53.251926}
+    m_position: {x: -331.2, y: -643.46, z: 53.251926}
     m_handle1: {x: -0.593996, y: 0.03643616, z: -0.55981445}
     m_handle2: {x: 0.593996, y: -0.03643616, z: 0.55981445}
   - m_name: DRAGON_SELECTION
     m_handleStyle: 1
     m_locked: 0
-    m_position: {x: -252.20001, y: -643.46, z: 53.251926}
+    m_position: {x: -331.2, y: -643.46, z: 53.251926}
     m_handle1: {x: -0, y: -0, z: -0}
     m_handle2: {x: 0, y: 0, z: 0}
   m_resolution: 30
@@ -1111,20 +1112,26 @@ MonoBehaviour:
     m_handleStyle: 0
     m_locked: 0
     m_position: {x: 1, y: -537.5435, z: 148.6232}
-    m_handle1: {x: -1.193636, y: -1.3128483, z: 17.7791}
-    m_handle2: {x: 1.193636, y: 1.3128483, z: -17.7791}
+    m_handle1: {x: -1.9269922, y: -1.3893907, z: 17.708782}
+    m_handle2: {x: 1.9269922, y: 1.3893907, z: -17.708782}
+  - m_name: LEAGUES
+    m_handleStyle: 0
+    m_locked: 0
+    m_position: {x: 1.8058319, y: -532.6329, z: 73.2111}
+    m_handle1: {x: -0.0032459802, y: -1.6205995, z: 24.887407}
+    m_handle2: {x: 0.0032459802, y: 1.6205995, z: -24.887407}
   - m_name: MISSIONS
     m_handleStyle: 0
     m_locked: 0
     m_position: {x: 1.0186462, y: -528.23413, z: 5.659733}
-    m_handle1: {x: -1.4307897, y: 0.19419196, z: 47.255814}
-    m_handle2: {x: 1.4307897, y: -0.19419196, z: -47.255814}
+    m_handle1: {x: -0.84767103, y: 0.69969493, z: 22.31362}
+    m_handle2: {x: 0.84767103, y: -0.69969493, z: -22.31362}
   - m_name: 
     m_handleStyle: 0
     m_locked: 0
     m_position: {x: 9.08429, y: -538.64075, z: -118.382965}
-    m_handle1: {x: -8.39682, y: 9.422607, z: 35.459473}
-    m_handle2: {x: 8.39682, y: -9.422607, z: -35.459473}
+    m_handle1: {x: -18.66327, y: 9.422633, z: 35.459473}
+    m_handle2: {x: 18.66327, y: -9.422633, z: -35.459473}
   - m_name: 
     m_handleStyle: 0
     m_locked: 0
@@ -1166,20 +1173,20 @@ MonoBehaviour:
   - m_name: DRAGON_SELECTION
     m_handleStyle: 1
     m_locked: 0
-    m_position: {x: 29.85891, y: -180.33804, z: 24.885399}
-    m_handle1: {x: -34.885303, y: -96.875496, z: -57.228848}
+    m_position: {x: 126.940445, y: -180.33804, z: 24.885399}
+    m_handle1: {x: -66.92221, y: -96.875496, z: -57.228848}
     m_handle2: {x: 0, y: 0, z: 0}
   - m_name: 
     m_handleStyle: 0
     m_locked: 0
     m_position: {x: -75.854126, y: -473.90015, z: -148.53535}
-    m_handle1: {x: 58.184948, y: 102.10651, z: -8.109225}
-    m_handle2: {x: -58.184948, y: -102.10651, z: 8.109225}
+    m_handle1: {x: 89.49476, y: 95.24732, z: -7.564474}
+    m_handle2: {x: -89.49476, y: -95.24732, z: 7.564474}
   - m_name: LAB_DRAGON_SELECTION
     m_handleStyle: 1
     m_locked: 0
-    m_position: {x: -241.5057, y: -656.5453, z: 62.705437}
-    m_handle1: {x: 54.665024, y: 60.2729, z: -69.709465}
+    m_position: {x: -320.5057, y: -656.5453, z: 62.705437}
+    m_handle1: {x: 80.73502, y: 60.2729, z: -69.709465}
     m_handle2: {x: 0, y: 0, z: 0}
   m_resolution: 30
   _close: 0
@@ -1256,15 +1263,15 @@ MonoBehaviour:
   - m_name: DRAGON_SELECTION
     m_handleStyle: 1
     m_locked: 0
-    m_position: {x: 39.85891, y: -180.33804, z: 30.885399}
-    m_handle1: {x: -13.15344, y: -48.7816, z: -13.169607}
+    m_position: {x: 136.94044, y: -180.33804, z: 30.885399}
+    m_handle1: {x: -45.19035, y: -48.7816, z: -13.169607}
     m_handle2: {x: 0, y: 0, z: 0}
   - m_name: 
     m_handleStyle: 0
     m_locked: 0
     m_position: {x: 0, y: -328.16107, z: -9.022501}
-    m_handle1: {x: 6.8816695, y: 50.94152, z: 9.148793}
-    m_handle2: {x: -6.8816695, y: -50.94152, z: -9.148793}
+    m_handle1: {x: 28.166626, y: 60.68853, z: 10.899297}
+    m_handle2: {x: -28.166626, y: -60.68853, z: -10.899297}
   - m_name: 
     m_handleStyle: 0
     m_locked: 0
@@ -1275,14 +1282,20 @@ MonoBehaviour:
     m_handleStyle: 0
     m_locked: 0
     m_position: {x: 1.0186462, y: -528.23413, z: 5.659733}
-    m_handle1: {x: -0.10843062, y: 6.7389755, z: -18.512142}
-    m_handle2: {x: 0.10843062, y: -6.7389755, z: 18.512142}
+    m_handle1: {x: -0.28413913, y: 10.142032, z: -16.887373}
+    m_handle2: {x: 0.28413913, y: -10.142032, z: 16.887373}
+  - m_name: LEAGUES
+    m_handleStyle: 0
+    m_locked: 0
+    m_position: {x: 1.6036072, y: -532.6324, z: 73.20314}
+    m_handle1: {x: 0.0029072296, y: 1.4514737, z: -22.290157}
+    m_handle2: {x: -0.0029072296, y: -1.4514737, z: 22.290157}
   - m_name: GLOBAL_EVENTS
     m_handleStyle: 0
     m_locked: 0
     m_position: {x: 1, y: -537.5435, z: 148.6232}
-    m_handle1: {x: 3.1584058, y: 3.4738462, z: -47.04417}
-    m_handle2: {x: -3.1584058, y: -3.4738462, z: 47.04417}
+    m_handle1: {x: 2.6511312, y: 1.9398291, z: -24.724854}
+    m_handle2: {x: -2.6511312, y: -1.9398291, z: 24.724854}
   - m_name: CHESTS
     m_handleStyle: 1
     m_locked: 0

@@ -66,7 +66,7 @@ public class LabButton : MonoBehaviour {
 		}
 
 		// Check required number of runs
-		bool toggle = (UsersManager.currentUser.gamesPlayed >= GameSettings.ENABLE_LAB_AT_RUN);
+		bool toggle = (UsersManager.currentUser.gamesPlayed >= GameSettings.ENABLE_LEAGUES_AT_RUN);
 
 		// If a dragon of the required tier is acquired before completing the minimum amount of runs (via HC), toggle anyways
 		if(DragonManager.biggestOwnedDragon.tier >= DragonDataSpecial.MIN_TIER_TO_UNLOCK) {
@@ -145,7 +145,7 @@ public class LabButton : MonoBehaviour {
 		// If not allowed, show feedback and return
 		if(!m_toggle) {
 			// Show error message
-			int remainingRuns = GameSettings.ENABLE_LAB_AT_RUN - UsersManager.currentUser.gamesPlayed;
+			int remainingRuns = GameSettings.ENABLE_LEAGUES_AT_RUN - UsersManager.currentUser.gamesPlayed;
 			string tid = remainingRuns == 1 ? "TID_MORE_RUNS_REQUIRED" : "TID_MORE_RUNS_REQUIRED_PLURAL";
 			UIFeedbackText.CreateAndLaunch(
 				LocalizationManager.SharedInstance.Localize(tid, remainingRuns.ToString()),

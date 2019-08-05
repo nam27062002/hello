@@ -191,7 +191,7 @@ public class LabGoalsBar : MonoBehaviour {
 	private void OnTransitionStarted(MenuScreen _from, MenuScreen _to) {
 		// If the new screen is any of our screens of interest, select the matching button!
 		switch(_to) {
-			case MenuScreen.LAB_LEAGUES:	m_buttons.SelectButton((int)Buttons.LEAGUES);	break;
+			case MenuScreen.LEAGUES:	m_buttons.SelectButton((int)Buttons.LEAGUES);	break;
 			case MenuScreen.LAB_MISSIONS:	m_buttons.SelectButton((int)Buttons.MISSIONS);	break;
 		}
 	}

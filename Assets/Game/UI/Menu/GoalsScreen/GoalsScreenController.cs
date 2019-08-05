@@ -29,7 +29,8 @@ public class GoalsScreenController : MonoBehaviour {
 	public enum Buttons {
 		MISSIONS,
 		GLOBAL_EVENTS,
-		CHESTS
+		CHESTS,
+        LEAGUES
 	}
 
 	//------------------------------------------------------------------------//
@@ -251,8 +252,8 @@ public class GoalsScreenController : MonoBehaviour {
     public void OnLeaguesButton()
     {
         // Check tutorial!
-        int remainingRuns = GameSettings.ENABLE_LAB_AT_RUN - UsersManager.currentUser.gamesPlayed;
-        if (UsersManager.currentUser.gamesPlayed < GameSettings.ENABLE_LAB_AT_RUN)
+        int remainingRuns = GameSettings.ENABLE_LEAGUES_AT_RUN - UsersManager.currentUser.gamesPlayed;
+        if (UsersManager.currentUser.gamesPlayed < GameSettings.ENABLE_LEAGUES_AT_RUN)
         {
             // Show error message
             string tid = remainingRuns == 1 ? "TID_MORE_RUNS_REQUIRED" : "TID_MORE_RUNS_REQUIRED_PLURAL";
@@ -265,7 +266,7 @@ public class GoalsScreenController : MonoBehaviour {
         else
         {
             // Go to leagues screen
-            InstanceManager.menuSceneController.GoToScreen(MenuScreen.LAB_LEAGUES);
+            InstanceManager.menuSceneController.GoToScreen(MenuScreen.LEAGUES);
         }
     }
 
@@ -280,6 +281,7 @@ public class GoalsScreenController : MonoBehaviour {
 			case MenuScreen.MISSIONS:		m_buttons.SelectButton((int)Buttons.MISSIONS);	break;
 			case MenuScreen.CHESTS:			m_buttons.SelectButton((int)Buttons.CHESTS);	break;
 			case MenuScreen.GLOBAL_EVENTS:	m_buttons.SelectButton((int)Buttons.GLOBAL_EVENTS);	break;
-		}
+            case MenuScreen.LEAGUES:        m_buttons.SelectButton((int)Buttons.LEAGUES); break;
+        }
 	}
 }

@@ -216,11 +216,11 @@ public class LabDragonSelectionScreen : MonoBehaviour {
 
 		// If the season has finished, go to the league screen
 		MenuScreen prevScreen = InstanceManager.menuSceneController.transitionManager.prevScreen;
-		if (prevScreen != MenuScreen.LAB_LEAGUES && prevScreen != MenuScreen.LAB_MISSIONS) {
+		if (prevScreen != MenuScreen.LEAGUES && prevScreen != MenuScreen.LAB_MISSIONS) {
 			if (HDLiveDataManager.league.season.state == HDSeasonData.State.PENDING_REWARDS) {
 				// Clear popups and go to leagues screen
 				PopupManager.Clear(true);
-                InstanceManager.menuSceneController.GoToScreen(MenuScreen.LAB_LEAGUES, true);
+                InstanceManager.menuSceneController.GoToScreen(MenuScreen.LEAGUES, true);
             }
         }
     }
@@ -274,7 +274,7 @@ public class LabDragonSelectionScreen : MonoBehaviour {
 		// Go to the special missions screen
 		// If the leagues tutorial has not yet been triggered, go to the leagues screen instead
 		if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.LEAGUES_INFO)) {
-			InstanceManager.menuSceneController.GoToScreen(MenuScreen.LAB_LEAGUES);
+			InstanceManager.menuSceneController.GoToScreen(MenuScreen.LEAGUES);
 		} else {
 			InstanceManager.menuSceneController.GoToScreen(MenuScreen.LAB_MISSIONS);
 		}
