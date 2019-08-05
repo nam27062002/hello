@@ -2,84 +2,84 @@
 using System.Collections.Generic;
 
 namespace AI {
-	public interface IMachine : IMotion {
+	public abstract class IMachine : ISpawnable, IMotion {
 
-		Vector3 	eye			{ get; }
-		Vector3 	target		{ get; }
-		Vector3 	upVector	{ get; set; }
-		Transform 	enemy 		{ get; } 
-		bool 		isPetTarget	{ get; set; }
+		public abstract Quaternion orientation 	{ get; set; }
+		public abstract Vector3 position 		{ get; set; }
+		public abstract Vector3 direction 		{ get; }
+		public abstract Vector3 groundDirection { get; }
+		public abstract Vector3 velocity 		{ get; }
+		public abstract Vector3 angularVelocity { get; }
 
-		// Monobehaviour methods
-		T GetComponent<T>();
-		T[] GetComponentsInChildren<T>();
-		Transform transform 	{ get; }
-		GameObject gameObject 	{ get; }
+		public abstract Vector3 	eye			{ get; }
+		public abstract Vector3 	target		{ get; }
+		public abstract Vector3 	upVector	{ get; set; }
+		public abstract Transform 	enemy 		{ get; } 
+		public bool 	isPetTarget	{ get; set; }
 
-		float lastFallDistance 	{ get; }
-		bool isKinematic 		{ get; set; }
+		public abstract float lastFallDistance 	{ get; }
+		public bool isKinematic 		{ get; set; }
 			
 		//
-		void Spawn(ISpawner _spawner);
-		void Activate();
-		void Deactivate(float duration, UnityEngine.Events.UnityAction _action);
+		public abstract void Activate();
+		public abstract void Deactivate(float duration, UnityEngine.Events.UnityAction _action);
 
 
 		// Internal connections
-		void SetSignal(Signals.Type _signal, bool _activated);
-		void SetSignal(Signals.Type _signal, bool _activated, ref object[] _params);
-		bool GetSignal(Signals.Type _signal);
-		object[] GetSignalParams(Signals.Type _signal);
+		public abstract void SetSignal(Signals.Type _signal, bool _activated);
+		public abstract void SetSignal(Signals.Type _signal, bool _activated, ref object[] _params);
+		public abstract bool GetSignal(Signals.Type _signal);
+		public abstract object[] GetSignalParams(Signals.Type _signal);
 
-		void OnTrigger(string _trigger, object[] _param = null);
+		public abstract void OnTrigger(string _trigger, object[] _param = null);
 
-		void DisableSensor(float _seconds);
+		public abstract void DisableSensor(float _seconds);
 
-		void UseGravity(bool _value);
-		void CheckCollisions(bool _value);
-		void FaceDirection(bool _value);
-		bool IsFacingDirection();
-		bool IsInFreeFall();
-		bool HasCorpse();
+		public abstract void UseGravity(bool _value);
+		public abstract void CheckCollisions(bool _value);
+		public abstract void FaceDirection(bool _value);
+		public abstract bool IsFacingDirection();
+		public abstract bool IsInFreeFall();
+		public abstract bool HasCorpse();
 
 		// Group membership -> for collective behaviours
-		void	EnterGroup(ref Group _group);
-		Group 	GetGroup();
-		void	LeaveGroup();
+		public abstract void	EnterGroup(ref Group _group);
+		public abstract Group 	GetGroup();
+		public abstract void	LeaveGroup();
 
-		void ReceiveDamage(float _damage);
+		public abstract void ReceiveDamage(float _damage);
 
-		void EnterDevice(bool _isCage);
-		void LeaveDevice(bool _isCage);
+		public abstract void EnterDevice(bool _isCage);
+		public abstract void LeaveDevice(bool _isCage);
 
-		void Drown();
+		public abstract void Drown();
 
-		bool CanBeBitten();
-		float biteResistance { get; }
-		HoldPreyPoint[] holdPreyPoints { get; }
+		public abstract bool CanBeBitten();
+		public abstract float biteResistance { get; }
+		public abstract HoldPreyPoint[] holdPreyPoints { get; }
 
-		void Bite();
-		void BeginSwallowed(Transform _transform, bool rewardPlayer, IEntity.Type _source);
-		void EndSwallowed(Transform _transform);
-		void BiteAndHold();
-		void ReleaseHold();
+		public abstract void Bite();
+		public abstract void BeginSwallowed(Transform _transform, bool rewardPlayer, IEntity.Type _source);
+		public abstract void EndSwallowed(Transform _transform);
+		public abstract void BiteAndHold();
+		public abstract void ReleaseHold();
 
-		Quaternion GetDyingFixRot();
+		public abstract Quaternion GetDyingFixRot();
 
-		bool Burn(Transform _transform, IEntity.Type _source, bool instant = false, FireColorSetupManager.FireColorType fireColorType = FireColorSetupManager.FireColorType.RED );
+		public abstract bool Burn(Transform _transform, IEntity.Type _source, bool instant = false, FireColorSetupManager.FireColorType fireColorType = FireColorSetupManager.FireColorType.RED );
 
-		bool Smash( IEntity.Type _source );
+		public abstract bool Smash( IEntity.Type _source );
 
-		void SetVelocity(Vector3 _v);
-		void AddExternalForce(Vector3 _f);
+		public abstract void SetVelocity(Vector3 _v);
+		public abstract void AddExternalForce(Vector3 _f);
 
-		bool IsDead();
-		bool IsDying();
-        bool IsStunned();
-        bool IsInLove();
-        bool IsBubbled();
+		public abstract bool IsDead();
+		public abstract bool IsDying();
+        public abstract bool IsStunned();
+        public abstract bool IsInLove();
+        public abstract bool IsBubbled();
 
-		void CustomFixedUpdate();
+		public abstract void CustomFixedUpdate();
 
 	}
 }

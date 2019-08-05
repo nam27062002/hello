@@ -617,6 +617,18 @@ MonoBehaviour:
   m_onPanicAudio: hd_bakerwoman_alert
   m_idleAudio: 
   m_skins: []
+  m_entity: {fileID: 114324290003092222}
+  m_animator: {fileID: 95524577509114612}
+  m_isAnimatorAvailable: 0
+  m_renderers:
+  - {fileID: 137272264718027350}
+  m_specialAnimations: 000000
+  m_animA_Hash: 0
+  m_animB_Hash: 0
+  m_animC_Hash: 0
+  m_animEvents: {fileID: 114879576795764984}
+  m_transform: {fileID: 4069122865960606}
+  m_view: {fileID: 4487031804406150}
 --- !u!114 &114208371613414950
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -658,6 +670,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_tags: 32
+  m_otherSpawnables:
+  - {fileID: 114731166678089918}
+  - {fileID: 114423549668357976}
+  - {fileID: 114042048743257310}
+  m_otherSpawnablesCount: 3
+  m_pilot: {fileID: 114731166678089918}
+  m_machine: {fileID: 114423549668357976}
+  m_viewControl: {fileID: 114042048743257310}
+  m_equip: {fileID: 114368725262741708}
   m_sku: Villager02
   m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1
@@ -793,6 +814,7 @@ MonoBehaviour:
   m_energy: 10
   m_energyDrainSec: 1
   m_energyRecoverSec: 1
+  m_machine: {fileID: 0}
   m_brainResource: {fileID: 11400000, guid: 07aa01537e9ca4a1989b4cc7ba3be1cd, type: 2}
   m_railSeparation:
     min: 2

@@ -121,6 +121,7 @@ MonoBehaviour:
   m_animA: 
   m_animB: 
   m_animC: 
+  m_materialChangeExceptions: []
   m_useFreezeParticle: 0
   m_freezeParticleScale: 1
   m_useMoveAnimInLove: 0
@@ -336,6 +337,18 @@ MonoBehaviour:
   m_onPanicAudio: 
   m_idleAudio: 
   m_skins: []
+  m_entity: {fileID: 11490718}
+  m_animator: {fileID: 95454988329872498}
+  m_isAnimatorAvailable: 0
+  m_renderers:
+  - {fileID: 137607101259231810}
+  m_specialAnimations: 000000
+  m_animA_Hash: 0
+  m_animB_Hash: 0
+  m_animC_Hash: 0
+  m_animEvents: {fileID: 114354355982622366}
+  m_transform: {fileID: 464592}
+  m_view: {fileID: 4681999894945946}
 --- !u!114 &11429734
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -351,6 +364,7 @@ MonoBehaviour:
   m_energy: 10
   m_energyDrainSec: 1
   m_energyRecoverSec: 1
+  m_machine: {fileID: 0}
   m_brainResource: {fileID: 11400000, guid: 776837644347f4fd1b6fb6868af723eb, type: 2}
   m_railSeparation:
     min: 2
@@ -395,6 +409,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_tags: 16
+  m_otherSpawnables:
+  - {fileID: 11429734}
+  - {fileID: 114759142306896002}
+  - {fileID: 11425356}
+  m_otherSpawnablesCount: 3
+  m_pilot: {fileID: 11429734}
+  m_machine: {fileID: 114759142306896002}
+  m_viewControl: {fileID: 11425356}
+  m_equip: {fileID: 114587541539021336}
   m_sku: Driller
   m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1

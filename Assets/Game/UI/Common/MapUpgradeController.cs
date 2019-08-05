@@ -178,7 +178,7 @@ public class MapUpgradeController : MonoBehaviour, IBroadcastListener {
 		if(isUnlocked) return;
 
 		// Show video ad!
-		PopupAdBlocker.Launch(true, GameAds.EAdPurpose.UPGRADE_MAP, OnVideoRewardCallback);
+		PopupAdBlocker.LaunchAd(true, GameAds.EAdPurpose.UPGRADE_MAP, OnVideoRewardCallback);
 	}
 
 	void OnVideoRewardCallback(bool done){

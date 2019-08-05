@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class HDCP2Manager
 {
@@ -28,7 +29,9 @@ public class HDCP2Manager
 
     private CP2Listener m_listener = null;
 
-    private Action<bool> m_onPlayPromoDone;
+    private UnityAction<bool> m_onPlayPromoDone;
+
+	private int NumPromosFailedSoFar = 0;
 
     public void Initialise()
     {
@@ -36,6 +39,8 @@ public class HDCP2Manager
         {
             if (FeatureSettingsManager.IsDebugEnabled)
                 Log("INIT CP2......");				          
+
+			NumPromosFailedSoFar = 0;
 
             m_listener = new CP2Listener();
             CP2Manager.SharedInstance.SetListener(m_listener);
@@ -109,7 +114,9 @@ public class HDCP2Manager
     /// <returns></returns>
     private bool IsInterstitialAvailable()
     {
-		return FeatureSettingsManager.instance.IsCP2InterstitialEnabled() && IsInitialised() && m_state == EState.None;               
+		return FeatureSettingsManager.instance.IsCP2InterstitialEnabled() && IsInitialised() && m_state == EState.None && 
+			//CP2Manager.SharedInstance.CanShowPromo(CrossPromo.PromoType.INTERSTITIAL);               
+			NumPromosFailedSoFar < 2;
     }
 
     private bool CanUserPlayInterstitial()
@@ -142,7 +149,9 @@ public class HDCP2Manager
         TrackingPersistenceSystem trackingSystem = HDTrackingManager.Instance.TrackingPersistenceSystem;
         bool ftuxPassed = trackingSystem != null && trackingSystem.GameRoundCount >= 3;
 
-        return "IsInterstitialAvailable = " + IsInterstitialAvailable() + " CP2InterstitialEnabled = " + FeatureSettingsManager.instance.IsCP2InterstitialEnabled() + " Inititalized = " + IsInitialised() + " state = " + m_state +
+		return "IsInterstitialAvailable = " + IsInterstitialAvailable() + 
+			//" CanShowPromo = " + CP2Manager.SharedInstance.CanShowPromo(CrossPromo.PromoType.INTERSTITIAL) + 
+			" CP2InterstitialEnabled = " + FeatureSettingsManager.instance.IsCP2InterstitialEnabled() + " Inititalized = " + IsInitialised() + " state = " + m_state +
             " CanUserPlayInterstitial = " + CanUserPlayInterstitial() + " timeToWait = " + GetUserRestrictionTimeToWait() + " ftuxPassed= " + ftuxPassed +
             " minRoundsSoFar = " + HDTrackingManager.Instance.Session_GameRoundCount + " minRoundsRequired = " + FeatureSettingsManager.instance.GetCP2InterstitialMinRounds();
     }
@@ -163,12 +172,12 @@ public class HDCP2Manager
         {
             Log("Can't play CP2 interstitial because it's not available: cp2Enabled = " + FeatureSettingsManager.instance.IsCP2Enabled() + 
                 " cp2InterstitialEnabled = " +  FeatureSettingsManager.instance.IsCP2InterstitialEnabled() + " initialised = " + IsInitialised() + 
-                " state = " + m_state);
+				" state = " + m_state + " numPromosFailedSoFar = " + NumPromosFailedSoFar);
         }
     }
 
     private void PlayPromo(CrossPromo.PromoType promoType, Action<bool> onDone)
-    {
+    {        
         if (FeatureSettingsManager.IsDebugEnabled)
         {
 			Log("Playing promo " + promoType.ToString() + " listener is not null = " + (m_listener != null));
@@ -185,7 +194,22 @@ public class HDCP2Manager
 
     private void OnPlayPromo(bool success)
     {
+        if (FeatureSettingsManager.IsDebugEnabled)
+        {
+            Log("OnPlayPromo success = " + success);
+        }
+
+		if (!success) 
+		{
+			NumPromosFailedSoFar++;
+		}
+
         SetState(EState.None);
+        if (m_onPlayPromoDone != null)
+        {
+            m_onPlayPromoDone(success);
+            m_onPlayPromoDone = null;
+        }
     }
 
     private void OnRestrictedPlayPromo(bool success)
@@ -214,8 +238,10 @@ public class HDCP2Manager
     /// Plays a cp2 interstitial if there's one available.
     /// </summary>
     /// <param name="checkRestrictionPerUser">Whether or not user's restrictions should be checked too</param>
-    public void PlayInterstitial(bool checkRestrictionPerUser)
+    public void PlayInterstitial(bool checkRestrictionPerUser, UnityAction<bool> onDone)
     {
+        m_onPlayPromoDone = onDone;
+
         if (checkRestrictionPerUser)
         {
             if (CanUserPlayInterstitial())
@@ -224,7 +250,7 @@ public class HDCP2Manager
             }
             else if (FeatureSettingsManager.IsDebugEnabled)
             {
-
+                OnPlayPromo(false);
                 Log("Can't play CP2 interstitial because of user's restriction. The user has to wait " + GetUserRestrictionTimeToWait() + " seconds more");
             }
         }

@@ -436,7 +436,8 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager>, IBr
 	/// </summary>
 	/// <param name="_spawner">The spawner to be removed.</param>
 	public void Unregister(ISpawner _spawner, bool _removeFromTree) {
-        if (m_spawners.Contains(_spawner))
+        // if (m_spawners.Contains(_spawner))
+		if (m_spawners.Remove(_spawner))
         {
             // resave _spanwer info
             if (m_spanwersData.ContainsKey(_spawner.GetSpawnerID())) {
@@ -449,8 +450,7 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager>, IBr
                     m_spanwersData.Add(_spawner.GetSpawnerID(), data);
                 }
             }
-
-            m_spawners.Remove(_spawner);
+            
             if (m_spawnersTreeNear != null && _removeFromTree) {
                 if (_spawner.transform.position.z < FAR_LAYER_Z) {
                     m_spawnersTreeNear.Remove(_spawner);

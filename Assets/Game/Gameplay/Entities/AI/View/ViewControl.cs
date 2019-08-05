@@ -7,7 +7,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 
-public class ViewControl : MonoBehaviour, IViewControl, ISpawnable, IBroadcastListener {
+public class ViewControl : IViewControl, IBroadcastListener {
 
     public static bool sm_allowGoldenMaterial = true;
 
@@ -71,7 +71,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable, IBroadcastLi
     [SeparatorAttribute("Freeze Particle")]
     [SerializeField] private bool m_useFreezeParticle = false;
     [SerializeField] private float m_freezeParticleScale = 1.0f;
-    public float freezeParticleScale { get { return m_freezeParticleScale; } }
+    override public float freezeParticleScale { get { return m_freezeParticleScale; } }
 
     [SeparatorAttribute("In Love")]
     [SerializeField] private bool m_useMoveAnimInLove = false;
@@ -125,13 +125,17 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable, IBroadcastLi
 
 
 	//-----------------------------------------------
+	[SerializeField]
 	protected Entity m_entity;
+	[SerializeField]
 	protected Animator m_animator;
 	protected float m_animatorSpeed;
+	[SerializeField]
 	protected bool m_isAnimatorAvailable;
 	protected float m_disableAnimatorTimer;
 
-	private List<Renderer> m_renderers;
+	[SerializeField]
+	private Renderer[] m_renderers;
     private List<Material[]> m_rendererMaterials;
 
     private Dictionary<int, List<Material>> m_materials;
@@ -141,10 +145,10 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable, IBroadcastLi
 
 
 	private int m_vertexCount;
-	public int vertexCount { get { return m_vertexCount; } }
+	override public int vertexCount { get { return m_vertexCount; } }
 
 	private int m_rendererCount;
-	public int rendererCount { get { return m_rendererCount; } }
+	override public int rendererCount { get { return m_rendererCount; } }
 
 	protected bool m_boost;
 	protected bool m_scared;
@@ -174,13 +178,18 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable, IBroadcastLi
 	private float m_currentBlendX;
 	private float m_currentBlendY;
 
+	[SerializeField]
 	private bool[] m_specialAnimations;
+	[SerializeField]
 	private int m_animA_Hash;
+	[SerializeField]
 	private int m_animB_Hash;
+	[SerializeField]
 	private int m_animC_Hash;
 
+	[SerializeField]
 	protected PreyAnimationEvents m_animEvents;
-	public PreyAnimationEvents animationEvents { get { return m_animEvents; } }
+	override public PreyAnimationEvents animationEvents { get { return m_animEvents; } }
 
 	private static int ATTACK_HASH = Animator.StringToHash("Attack");
     // private const int ATTACK_HASH = Animator.StringToHash("Attack");
@@ -209,10 +218,12 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable, IBroadcastLi
 
 
 
+	[SerializeField]
     private Transform m_transform;
 
 	private ulong m_id;
 	private Transform m_viewManagerTransform;
+	[SerializeField]
 	private Transform m_view;
 	// local backup
 	private Vector3 m_viewPosition;
@@ -237,10 +248,6 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable, IBroadcastLi
         if (sm_goldenInloveMaterial == null) sm_goldenInloveMaterial = new Material(Resources.Load("Game/Materials/NPC_GoldenInlove") as Material);
 		//---------------------------- 
 
-		m_entity = GetComponent<Entity>();
-		m_transform = transform;
-		m_view = m_transform.FindObjectRecursive("view").transform;
-		m_animator = m_view.GetComponent<Animator>();
 		if (m_animator != null) {
 			m_isAnimatorAvailable = true;
 			m_animator.logWarnings = false;
@@ -252,7 +259,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable, IBroadcastLi
 			m_animatorCullingMode = AnimatorCullingMode.CullCompletely;
 		}
 
-		m_animEvents = m_transform.FindComponentRecursive<PreyAnimationEvents>();
+		
 		if (m_animEvents != null) {
 			m_animEvents.onAttackStart += animEventsOnAttackStart;
 			m_animEvents.onAttackEnd += animEventsOnAttackEnd;
@@ -270,49 +277,43 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable, IBroadcastLi
         m_vertexCount = 0;
 		m_rendererCount = 0;
 
-		m_renderers = new List<Renderer>();
-		Renderer[] renderers = GetComponentsInChildren<Renderer>();
+		Renderer[] renderers = m_renderers;
 		
 		if (renderers != null) {
 			int renderersCount = renderers.Length;
 			for (int i = 0; i < renderersCount; i++) {
 				Renderer renderer = renderers[i];
+				Material[] materials = renderer.sharedMaterials;
+
+				// Stores the materials of this renderer in a dictionary for direct access//
+				int renderID = renderer.GetInstanceID();
+				m_materials[renderID] = new List<Material>();
+				m_materialsFrozen[renderID] = new List<Material>();
+				m_materialsInlove[renderID] = new List<Material>();
 				
-				if (!m_materialChangeExceptions.Contains(renderer)) {
-					Material[] materials = renderer.sharedMaterials;
-					m_renderers.Add(renderer);
+				for (int m = 0; m < materials.Length; ++m) {
+					Material mat = materials[m];
+					if (m_showDamageFeedback) mat = new Material(materials[m]);
 
-					// Stores the materials of this renderer in a dictionary for direct access//
-					int renderID = renderer.GetInstanceID();
-					m_materials[renderID] = new List<Material>();
-					m_materialsFrozen[renderID] = new List<Material>();
-					m_materialsInlove[renderID] = new List<Material>();
-					
-					for (int m = 0; m < materials.Length; ++m) {
-						Material mat = materials[m];
-						if (m_showDamageFeedback) mat = new Material(materials[m]);
-
-						if (mat != null) {
-							m_materialList.Add(mat);
-						}
-						
-						m_materials[renderID].Add(mat);
-						if ( mat != null ){
-							m_materialsFrozen[renderID].Add(FrozenMaterialManager.GetFrozenMaterialFor(mat));
-							m_materialsInlove[renderID].Add(InloveMaterialManager.GetInloveMaterialFor(mat));
-						}else{
-							m_materialsFrozen[renderID].Add(null);
-							m_materialsInlove[renderID].Add(null);
-						}
-
-						materials[m] = null; // remove all materials to avoid instantiation.
+					if (mat != null) {
+						m_materialList.Add(mat);
 					}
-					renderer.sharedMaterials = materials;
-					m_rendererMaterials.Add(materials);
-				}
-            }
+					
+					m_materials[renderID].Add(mat);
+					if ( mat != null ){
+						m_materialsFrozen[renderID].Add(FrozenMaterialManager.GetFrozenMaterialFor(mat));
+						m_materialsInlove[renderID].Add(InloveMaterialManager.GetInloveMaterialFor(mat));
+					}else{
+						m_materialsFrozen[renderID].Add(null);
+						m_materialsInlove[renderID].Add(null);
+					}
 
-			m_rendererCount = m_renderers.Count;
+					materials[m] = null; // remove all materials to avoid instantiation.
+				}
+				renderer.sharedMaterials = materials;
+				m_rendererMaterials.Add(materials);
+            }
+			m_rendererCount = m_renderers.Length;
         }
 
 		if (!string.IsNullOrEmpty(m_corpseAsset)) {
@@ -341,10 +342,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable, IBroadcastLi
 			m_useFrozenParticle = false;
 		}
 
-		m_specialAnimations = new bool[(int)SpecialAnims.Count];
-		m_animA_Hash = UnityEngine.Animator.StringToHash(m_animA);
-		m_animB_Hash = UnityEngine.Animator.StringToHash(m_animB);
-		m_animC_Hash = UnityEngine.Animator.StringToHash(m_animC);
+		
 
 		m_fireParticles = new Transform[Mathf.Max(1, m_firePoints.Length)];
 		m_fireParticlesParents = new Transform[m_fireParticles.Length];
@@ -378,6 +376,30 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable, IBroadcastLi
 		SentViewToManager();
 		#endif
     }
+
+	[ContextMenu("Get References")]
+	public void GetReferences()
+	{
+		m_entity = GetComponent<Entity>();
+		m_transform = transform;
+		m_view = m_transform.FindObjectRecursive("view").transform;
+		m_animator = m_view.GetComponent<Animator>();
+		m_animEvents = m_transform.FindComponentRecursive<PreyAnimationEvents>();
+		List<Renderer> renderers = new List<Renderer>(GetComponentsInChildren<Renderer>());
+		for (int i = renderers.Count-1; i>=0; i--)
+		{
+			if (m_materialChangeExceptions.Contains(renderers[i])) {
+				renderers.RemoveAt( i );
+			}
+		}
+		m_renderers = renderers.ToArray();
+		
+
+		m_specialAnimations = new bool[(int)SpecialAnims.Count];
+		m_animA_Hash = UnityEngine.Animator.StringToHash(m_animA);
+		m_animB_Hash = UnityEngine.Animator.StringToHash(m_animB);
+		m_animC_Hash = UnityEngine.Animator.StringToHash(m_animC);
+	}
 
 	void SentViewToManager() {
 		if (m_isAnimatorAvailable) {
@@ -454,7 +476,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable, IBroadcastLi
 	}
 	//
 
-	public virtual void Spawn(ISpawner _spawner) {
+	override public void Spawn(ISpawner _spawner) {
 		#if DETACH_VIEW_ON_DISABLE
 		GetViewFromManager();
 		#endif
@@ -548,7 +570,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable, IBroadcastLi
     }
 
 
-    public virtual void PreDisable() {
+    override public void PreDisable() {
 		for (int i = 0; i < m_fireParticles.Length; ++i) {
 			if (m_fireParticles[i] != null) {
 				if (((m_firePoints.Length == 0) && (m_fireParticles[i].parent == m_transform)) ||
@@ -714,7 +736,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable, IBroadcastLi
 		CheckMaterialType(IsEntityGolden(), dragonBreath.IsFuryOn(), dragonBreath.type);
 	}
 
-	public void ForceGolden(){
+	override public void ForceGolden(){
 		RefreshMaterialType();
 	}
 
@@ -725,7 +747,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable, IBroadcastLi
     	}
     }
 
-    public virtual void CustomUpdate() {
+    override public void CustomUpdate() {
 		if (m_isAnimatorAvailable) {
 			if (m_disableAnimatorTimer > 0) {
 				m_disableAnimatorTimer -= Time.deltaTime;
@@ -1273,7 +1295,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable, IBroadcastLi
 	/// Freezing the specified freezeLevel. 0 -> no freezing, 1 -> completely frozen
 	/// </summary>
 	/// <param name="freezeLevel">Freeze level.</param>
-	public void Freezing( float freezeLevel ){
+	override public void Freezing( float freezeLevel ){
         if ((m_freezingLevel <= 0 && freezeLevel > 0) || (m_freezingLevel > 0 && freezeLevel <= 0)) {
             m_freezingLevel = freezeLevel;
             RefreshMaterialType();

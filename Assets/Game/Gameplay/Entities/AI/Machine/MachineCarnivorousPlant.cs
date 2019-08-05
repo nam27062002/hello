@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 
 namespace AI {
-	public class MachineCarnivorousPlant : MonoBehaviour, IMachine, ISpawnable {
+	public class MachineCarnivorousPlant : IMachine {
 		[SerializeField] protected MachineSensor m_sensor = new MachineSensor();
 		[SerializeField] protected MachineInflammable m_inflammable = new MachineInflammable();
 		[SerializeField] protected MachineEdible m_edible = new MachineEdible();
@@ -23,11 +23,11 @@ namespace AI {
 
 		private Signals m_signals;
 
-		public Vector3 eye		{ get { return m_eye.position; } }
-		public Vector3 target	{ get { return Vector3.zero; } }
-		public Vector3 upVector { get { return m_upVector; } set {} }
+		override public Vector3 eye		{ get { return m_eye.position; } }
+		override public Vector3 target	{ get { return Vector3.zero; } }
+		override public Vector3 upVector { get { return m_upVector; } set {} }
 
-		public Transform enemy { 
+		override public Transform enemy { 
 			get {
 				if (m_sensor != null && (GetSignal(Signals.Type.Warning) || GetSignal(Signals.Type.Danger))) {
 					return m_sensor.enemy;
@@ -38,17 +38,17 @@ namespace AI {
 		}
 
 		public bool isPetTarget 		{ get { return false; } set {} }
-		public float lastFallDistance 	{ get { return 0f; } }
+		override public float lastFallDistance 	{ get { return 0f; } }
 		public bool isKinematic 		{ get { return false; } set {} }
 
-		public Quaternion orientation 	{ get { return m_transform.rotation; } set { m_transform.rotation = value; } }
-		public Vector3 position			{ get { return m_transform.position; } set { m_transform.position = value; } }
-		public Vector3 direction 		{ get { return Vector3.zero; } }
-		public Vector3 groundDirection	{ get { return Vector3.right; } }
-		public Vector3 velocity			{ get { return Vector3.zero; } }
-		public Vector3 angularVelocity	{ get { return Vector3.zero; } }
+		override public Quaternion orientation 	{ get { return m_transform.rotation; } set { m_transform.rotation = value; } }
+		override public Vector3 position			{ get { return m_transform.position; } set { m_transform.position = value; } }
+		override public Vector3 direction 		{ get { return Vector3.zero; } }
+		override public Vector3 groundDirection	{ get { return Vector3.right; } }
+		override public Vector3 velocity			{ get { return Vector3.zero; } }
+		override public Vector3 angularVelocity	{ get { return Vector3.zero; } }
 
-		public HoldPreyPoint[] holdPreyPoints { get{ return null; } }
+		override public HoldPreyPoint[] holdPreyPoints { get{ return null; } }
 
 		protected void Awake() {
 			m_transform = transform;
@@ -89,7 +89,7 @@ namespace AI {
 
 
 
-		public void Spawn(ISpawner _spawner) {
+		override public void Spawn(ISpawner _spawner) {
 			m_signals.Init();
 			m_sensor.Init();
 			m_edible.Init();
@@ -106,19 +106,19 @@ namespace AI {
 			m_transform.rotation = Quaternion.LookRotation(Vector3.forward, m_upVector);
 		}
 
-		public void Activate() {
+		override public void Activate() {
 			gameObject.SetActive(true);
 			if (m_deactivateCallback != null)
 				m_deactivateCallback();
 		}
 
-		public void Deactivate( float duration, UnityEngine.Events.UnityAction _action) {
+		override public void Deactivate( float duration, UnityEngine.Events.UnityAction _action) {
 			gameObject.SetActive(false);
 			m_deactivateCallback = _action;
 			Invoke("Activate", duration);
 		}
 
-		public void OnTrigger(string _trigger, object[] _param = null) {
+		override public void OnTrigger(string _trigger, object[] _param = null) {
 			if (_trigger == SignalTriggers.OnDestroyed) {
 				m_entity.Disable(true);
 			} else if ( _trigger == SignalTriggers.OnBurning ){
@@ -126,30 +126,30 @@ namespace AI {
 			}
 		}
 
-		public void SetSignal(Signals.Type _signal, bool _activated) {
+		override public void SetSignal(Signals.Type _signal, bool _activated) {
 			m_signals.SetValue(_signal, _activated);
 		}
 
-		public void SetSignal(Signals.Type _signal, bool _activated, ref object[] _params) {
+		override public void SetSignal(Signals.Type _signal, bool _activated, ref object[] _params) {
 			m_signals.SetValue(_signal, _activated, ref _params);
 		}
 
-		public bool GetSignal(Signals.Type _signal) {
+		override public bool GetSignal(Signals.Type _signal) {
 			if (m_signals != null)
 				return m_signals.GetValue(_signal);
 
 			return false;
 		}
 
-		public object[] GetSignalParams(Signals.Type _signal) {
+		override public object[] GetSignalParams(Signals.Type _signal) {
 			return m_signals.GetParams(_signal);
 		}
 
-		public void DisableSensor(float _seconds) {
+		override public void DisableSensor(float _seconds) {
 			m_sensor.Disable(_seconds);
 		}
 
-		public bool Burn(Transform _transform, IEntity.Type _source, bool instant = false, FireColorSetupManager.FireColorType fireColorType = FireColorSetupManager.FireColorType.RED) {
+		override public bool Burn(Transform _transform, IEntity.Type _source, bool instant = false, FireColorSetupManager.FireColorType fireColorType = FireColorSetupManager.FireColorType.RED) {
 			if (m_inflammable != null && !IsDead()) {
 				if (!GetSignal(Signals.Type.Burning)) {
 					ReceiveDamage(9999f);
@@ -160,7 +160,7 @@ namespace AI {
 			return false;
 		}
 
-		public bool Smash( IEntity.Type _source ) {
+		override public bool Smash( IEntity.Type _source ) {
 			if ( !IsDead() && !IsDying() )
 			{
 				SetSignal(Signals.Type.Destroyed, true);
@@ -173,15 +173,15 @@ namespace AI {
 			return false;
 		}
 
-		public bool IsDead() {
+		override public bool IsDead() {
 			return m_entity.health <= 0 || m_signals.GetValue(Signals.Type.Destroyed);
 		}
 
-		public bool IsDying() {
+		override public bool IsDying() {
 			return GetSignal(AI.Signals.Type.Chewing) || GetSignal(AI.Signals.Type.Burning);
 		}
 
-		public void CustomUpdate() {
+		override public void CustomUpdate() {
 			m_inflammable.Update();
 
 			if (IsDying() || IsDead()) {
@@ -251,7 +251,7 @@ namespace AI {
 		}
 
 
-		public virtual bool CanBeBitten() {
+		override public bool CanBeBitten() {
 			if (!enabled)
 				return false;
 			if ( IsDead() || IsDying() )
@@ -260,60 +260,60 @@ namespace AI {
 			return true;
 		}
 
-		public float biteResistance { get { return m_edible.biteResistance; } }
+		override public float biteResistance { get { return m_edible.biteResistance; } }
 
-		public void Bite() {
+		override public void Bite() {
 			if (!IsDead()) {
 				m_edible.Bite();
 			}
 		}
 
-		public bool HasCorpse() {
+		override public bool HasCorpse() {
 			if (m_viewControl != null) {
 				return m_viewControl.HasCorpseAsset();
 			}
 			return false;
 		}
 
-		public void BeginSwallowed(Transform _transform, bool _rewardsPlayer, IEntity.Type _source) {
+		override public void BeginSwallowed(Transform _transform, bool _rewardsPlayer, IEntity.Type _source) {
 			m_viewControl.Bite();
 			m_edible.BeingSwallowed(_transform, _rewardsPlayer, _source);
 		}
 
-		public void EndSwallowed(Transform _transform){
+		override public void EndSwallowed(Transform _transform){
 			m_edible.EndSwallowed(_transform);
 		}
 
 		/**************************************************************************************************************/
 
-		public virtual void CheckCollisions(bool _value) {}
-		public virtual void FaceDirection(bool _value) {}
-		public void ReceiveDamage(float _damage) {}
+		override public void CheckCollisions(bool _value) {}
+		override public void FaceDirection(bool _value) {}
+		override public void ReceiveDamage(float _damage) {}
 
-		public virtual void UseGravity(bool _value) { }
-		public virtual bool IsFacingDirection() { return false; }
-		public virtual bool IsInFreeFall() { return false; }
+		override public void UseGravity(bool _value) { }
+		override public bool IsFacingDirection() { return false; }
+		override public bool IsInFreeFall() { return false; }
 		public bool IsFreezing(){ return false; }
-        public bool IsStunned() { return false; }        
-        public bool IsInLove() { return false; }
-        public bool IsBubbled() { return false; }
+        override public bool IsStunned() { return false; }        
+        override public bool IsInLove() { return false; }
+        override public bool IsBubbled() { return false; }
 
-        public void CustomFixedUpdate(){}
+        override public void CustomFixedUpdate(){}
 
-		public void AddExternalForce(Vector3 force) {}
-		public Quaternion GetDyingFixRot() { return Quaternion.identity; }
-		public void SetVelocity(Vector3 _v) {}
-		public void BiteAndHold() {}
-		public void ReleaseHold() {}
+		override public void AddExternalForce(Vector3 force) {}
+		override public Quaternion GetDyingFixRot() { return Quaternion.identity; }
+		override public void SetVelocity(Vector3 _v) {}
+		override public void BiteAndHold() {}
+		override public void ReleaseHold() {}
 
-		public void Drown() {}
+		override public void Drown() {}
 
-		public void	EnterGroup(ref Group _group) {}
-		public Group GetGroup() {return null;}
-		public void LeaveGroup() {}
+		override public void	EnterGroup(ref Group _group) {}
+		override public Group GetGroup() {return null;}
+		override public void LeaveGroup() {}
 
-		public void EnterDevice(bool _isCage) {}
-		public void LeaveDevice(bool _isCage) {}
+		override public void EnterDevice(bool _isCage) {}
+		override public void LeaveDevice(bool _isCage) {}
 
 	}
 }

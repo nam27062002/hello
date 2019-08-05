@@ -50,6 +50,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_tags: 73728
+  m_otherSpawnables:
+  - {fileID: 11474244}
+  - {fileID: 114459538183732310}
+  - {fileID: 114560590118873264}
+  m_otherSpawnablesCount: 3
+  m_pilot: {fileID: 11474244}
+  m_machine: {fileID: 114459538183732310}
+  m_viewControl: {fileID: 114560590118873264}
+  m_equip: {fileID: 0}
   m_sku: HermitCrabBlueBig
   m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1
@@ -68,6 +77,7 @@ MonoBehaviour:
   m_energy: 10
   m_energyDrainSec: 1
   m_energyRecoverSec: 1
+  m_machine: {fileID: 0}
   m_brainResource: {fileID: 11400000, guid: 149e4273dfd374fb6882be1ff3ae96bc, type: 2}
   m_railSeparation:
     min: 0.5
@@ -477,6 +487,7 @@ MonoBehaviour:
   m_animA: 
   m_animB: 
   m_animC: 
+  m_materialChangeExceptions: []
   m_useFreezeParticle: 0
   m_freezeParticleScale: 1
   m_useMoveAnimInLove: 0
@@ -692,6 +703,18 @@ MonoBehaviour:
   m_onPanicAudio: 
   m_idleAudio: 
   m_skins: []
+  m_entity: {fileID: 11439598}
+  m_animator: {fileID: 95126564407115204}
+  m_isAnimatorAvailable: 0
+  m_renderers:
+  - {fileID: 137569482222946232}
+  m_specialAnimations: 000000
+  m_animA_Hash: 0
+  m_animB_Hash: 0
+  m_animC_Hash: 0
+  m_animEvents: {fileID: 0}
+  m_transform: {fileID: 409022}
+  m_view: {fileID: 4915195938049758}
 --- !u!114 &114817881197580430
 MonoBehaviour:
   m_ObjectHideFlags: 1

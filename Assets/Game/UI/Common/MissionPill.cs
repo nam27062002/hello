@@ -461,7 +461,7 @@ public class MissionPill : MonoBehaviour, IBroadcastListener {
 		}
 
 		// Show video ad!
-		PopupAdBlocker.Launch(true, GameAds.EAdPurpose.REMOVE_MISSION, OnVideoRewardCallback);
+		PopupAdBlocker.LaunchAd(true, GameAds.EAdPurpose.REMOVE_MISSION, OnVideoRewardCallback);
 	}
 
 	void OnVideoRewardCallback( bool done )
@@ -526,7 +526,7 @@ public class MissionPill : MonoBehaviour, IBroadcastListener {
 
 		// Show Ad!
 		if(canSkipWithAd) {
-			PopupAdBlocker.Launch(true, GameAds.EAdPurpose.SKIP_MISSION_COOLDOWN, OnSkipTimeAdClosed);
+			PopupAdBlocker.LaunchAd(true, GameAds.EAdPurpose.SKIP_MISSION_COOLDOWN, OnSkipTimeAdClosed);
 		}
 	}
 

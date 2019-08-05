@@ -309,6 +309,18 @@ MonoBehaviour:
   m_onPanicAudio: hd_villager_scream
   m_idleAudio: 
   m_skins: []
+  m_entity: {fileID: 11471222}
+  m_animator: {fileID: 95801931469992356}
+  m_isAnimatorAvailable: 0
+  m_renderers:
+  - {fileID: 137886286827509840}
+  m_specialAnimations: 000000
+  m_animA_Hash: 0
+  m_animB_Hash: 0
+  m_animC_Hash: 0
+  m_animEvents: {fileID: 114083143893177194}
+  m_transform: {fileID: 411742}
+  m_view: {fileID: 4203723236398658}
 --- !u!114 &11428002
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -349,6 +361,7 @@ MonoBehaviour:
   m_energy: 10
   m_energyDrainSec: 1
   m_energyRecoverSec: 1
+  m_machine: {fileID: 0}
   m_brainResource: {fileID: 11400000, guid: af593a7751e074e42b7091f92be97d92, type: 2}
   m_railSeparation:
     min: 2
@@ -368,6 +381,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_tags: 32
+  m_otherSpawnables:
+  - {fileID: 11453012}
+  - {fileID: 114304424817110602}
+  - {fileID: 11419496}
+  m_otherSpawnablesCount: 3
+  m_pilot: {fileID: 11453012}
+  m_machine: {fileID: 114304424817110602}
+  m_viewControl: {fileID: 11419496}
+  m_equip: {fileID: 114413910190616646}
   m_sku: Villager01
   m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1
