@@ -118,7 +118,7 @@ Shader "Hungry Dragon/Dragon/Dragon standard" {
 			#pragma shader_feature  __ FRESNEL
 			#pragma shader_feature  __ CUTOFF
 			#pragma shader_feature  __ DOUBLESIDED
-//			#pragma shader_feature  __ OPAQUEALPHA
+			#pragma shader_feature  __ OPAQUEALPHA
 			#pragma shader_feature  __ OPAQUEFRESNEL
 			#pragma shader_feature  __ BLENDFRESNEL
 			#pragma shader_feature  __ OPAQUESPECULAR
