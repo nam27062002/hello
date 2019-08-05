@@ -166,10 +166,14 @@ public class LoadingSceneController : SceneController {
 
     GDPRListener m_gdprListener = new GDPRListener();
 
-    //------------------------------------------------------------------//
-    // MEMBERS															//
-    //------------------------------------------------------------------//
-    // References
+	//------------------------------------------------------------------//
+	// MEMBERS															//
+	//------------------------------------------------------------------//
+	// References
+	[SerializeField] private Text m_userIdTxt = null;
+	[SerializeField] private Text m_versionTxt = null;
+
+	[Space]
 	[SerializeField] private TextMeshProUGUI m_loadingTxt = null;
 	[SerializeField] private Slider m_loadingBar = null;
 
@@ -607,6 +611,11 @@ public class LoadingSceneController : SceneController {
 
     private void SetState(State state)
     {
+		// Update user ID every time we change state, regardless of the state (in case it has changed)
+		m_userIdTxt.text = GameSessionManager.SharedInstance.GetUID();
+		m_versionTxt.text = GameSettings.internalVersion.ToString();
+
+		// Debug
         if (FeatureSettingsManager.IsDebugEnabled)
         {
             float deltaTime = Time.timeSinceLevelLoad - m_stateDuration;
