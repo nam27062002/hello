@@ -627,8 +627,20 @@ public class MenuDragonScreenController : MonoBehaviour {
 			}
 		}
 
-		// Go to target screen
-		InstanceManager.menuSceneController.GoToScreen(nextScreen);
+        // If the season has finished, go to the league screen
+        // This screen has more prioritary than Quests screen
+        if (UsersManager.currentUser.gamesPlayed >= GameSettings.ENABLE_LEAGUES_AT_RUN)
+        {
+            if (HDLiveDataManager.league.season.state == HDSeasonData.State.PENDING_REWARDS)
+            {
+                Debug.Log("There is a League reward pending");
+                nextScreen = MenuScreen.LEAGUES;
+            }
+        }
+
+
+        // Go to target screen
+        InstanceManager.menuSceneController.GoToScreen(nextScreen);
 
 		// Tutorial tracking
 		if (!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.MISSIONS_INFO)) {
