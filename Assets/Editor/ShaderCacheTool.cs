@@ -33,7 +33,8 @@ public class ShaderCacheTool : EditorWindow {
         "HI_DETAIL_ON"
     };
 
-    private static string shaderCacheSource = "shader_cache_source.txt";
+    //    private static string shaderCacheSource = "shader_cache_source.txt";
+    private static string materialDatabase = "material_database.txt";
     private static string shaderCacheExcludeList = "shader_cache_exclude_list.txt";
 
     private static string logFile = "shader_cache.log";
@@ -50,6 +51,22 @@ public class ShaderCacheTool : EditorWindow {
             return false;
         }
     }
+
+    private static bool ResetMaterialDatabase()
+    {
+        try
+        {
+            File.Delete(materialDatabase);
+            return true;
+        }
+        catch (IOException)
+        {
+            return false;
+        }
+    }
+
+
+
     private static void Log(object msg)
     {
         try
@@ -62,6 +79,11 @@ public class ShaderCacheTool : EditorWindow {
         {
             Debug.Log("Exception :" + e);
         }
+    }
+
+    private static void insertMaterialDatabase(Material mat)
+    {
+
     }
 
     private class ShaderContent
@@ -83,55 +105,6 @@ public class ShaderCacheTool : EditorWindow {
 
     private static Dictionary<string, ShaderContent> m_shaderValidKeywords = new Dictionary<string, ShaderContent>();
 
-/*
-    private static bool addVariantRecursive(ShaderVariantCollection svc, Shader shader, PassType type, List<string> keywords, List<string> currentVariant, int level)
-    {
-        if (level >= keywords.Count) return false;
-
-
-        string lightMode = "";
-        if (type == (PassType)(-1))
-        {
-            Material m = new Material(shader);
-            lightMode = getLightMode(m);    //m.GetTag("LightMode", false, "Normal");
-
-            try
-            {
-                type = (PassType)Enum.Parse(typeof(PassType), lightMode, true);
-            }
-            catch (ArgumentException)
-            {
-                Log(lightMode + " is not a valid light mode.");
-                return false;
-            }
-
-        }
-
-        string[] variantTokens = keywords[level].Split(' ');
-
-        for (int c = 0; c < variantTokens.Length; c++)
-        {
-            string currentVariantToken = variantTokens[c];
-            if (currentVariantToken != "_")
-            {
-                currentVariant.Add(currentVariantToken);
-            }
-
-            addVariantRecursive(svc, shader, type, keywords, currentVariant, level + 1);
-
-            ShaderVariantCollection.ShaderVariant sv;
-            sv.keywords = currentVariant.ToArray();
-            sv.passType = type;
-            sv.shader = shader;
-            DebugVariant(shader, lightMode, sv.keywords, svc.Add(sv));
-
-            currentVariant.Remove(currentVariantToken);
-
-        }
-        return true;
-    }
-
-*/
 
     private static bool addVariant(ShaderVariantCollection svc, Shader shader, PassType type, List<string> keywords)
     {
@@ -169,76 +142,7 @@ public class ShaderCacheTool : EditorWindow {
         return false;
     }
 
-    /*
-    [MenuItem("Tools/Create shader caches recursive")]
-    static void CreateShaderCachesRecursive()
-    {
-        OpenLogFile();
-        string[] csline = File.ReadAllLines(shaderCacheSource);
-        if (csline == null)
-        {
-            Log("Unable to find shader cache source file.");
-            return;
-        }
-
-        for (int quality = 0; quality < qualityVariants.Length; quality++)
-        {
-            ShaderVariantCollection svc = new ShaderVariantCollection();
-
-            int idx = 0;
-            Shader shader = null;
-            List<string> keywords = new List<string>();
-            List<string> currentVariant = new List<string>();
-
-            while (idx < csline.Length)
-            {
-                if (csline[idx].Length > 0)
-                {
-                    if (csline[idx][0] == 'S')
-                    {
-                        if (shader != null)
-                        {
-                            addVariantRecursive(svc, shader, (PassType)(-1), keywords, currentVariant, 0);
-                            shader = null;
-                        }
-                        keywords.Clear();
-                        keywords.Add(qualityVariants[quality]);
-
-                        string shaderName = csline[idx].Substring(2);
-
-                        shader = Shader.Find(shaderName);
-                        if (shader == null)
-                        {
-                            Log("Unable to find shader: " + shaderName);
-                            return;
-                        }
-
-                    }
-                    else if (csline[idx][0] == 'V')
-                    {
-                        string keywordVariation = csline[idx].Substring(2);
-                        keywords.Add(keywordVariation);
-                    }
-                }
-
-                idx++;
-            }
-
-            if (shader != null)
-            {
-                addVariantRecursive(svc, shader, (PassType)(-1), keywords, currentVariant, 0);
-                shader = null;
-            }
-
-            string svcName = "SVC_" + qualityVariants[quality] + ".shadervariants";
-            AssetDatabase.CreateAsset(svc, "Assets/Misc/ShaderVariantCollections/" + svcName);
-
-        }
-
-    }
-*/
-
-
+    
     private static char[] splitChars = new[] { ' ', '=', '{', '}', '"' };
     private static ShaderContent getShaderContent(Shader shader)
     {
@@ -332,7 +236,7 @@ public class ShaderCacheTool : EditorWindow {
         return sc;
     }
 
-    private static string[] stripMaterialKeywords(Material mat, out ShaderContent sc)
+    private static string[] stripMaterialKeywords(Material mat, out ShaderContent sc, bool modifyMaterial = false)
     {
         Shader shader = mat.shader;
 
@@ -352,7 +256,16 @@ public class ShaderCacheTool : EditorWindow {
                 Log("Stripped keyword: " + kw);
             }
         }
-        return strippedKeywords.ToArray();
+
+        string[] newKeywordList = strippedKeywords.ToArray();
+
+        if (modifyMaterial)
+        {
+            mat.shaderKeywords = newKeywordList;
+            EditorUtility.SetDirty(mat);
+        }
+
+        return newKeywordList;
     }
     private static string getLightMode(Material m)
     {
