@@ -259,7 +259,7 @@ public class ShaderCacheTool : EditorWindow {
 
         string[] newKeywordList = strippedKeywords.ToArray();
 
-        if (modifyMaterial)
+        if (modifyMaterial && (newKeywordList.Length != mat.shaderKeywords.Length))
         {
             mat.shaderKeywords = newKeywordList;
             EditorUtility.SetDirty(mat);
@@ -299,7 +299,7 @@ public class ShaderCacheTool : EditorWindow {
                 ShaderContent sc;               
                 ShaderVariantCollection.ShaderVariant sv;
 
-                string[] strippedKeywords = stripMaterialKeywords(m, out sc);
+                string[] strippedKeywords = stripMaterialKeywords(m, out sc, true);
 //                string lightMode = getLightMode(m);// m.GetTag("LightMode", false, "Normal");
                 try
                 {
