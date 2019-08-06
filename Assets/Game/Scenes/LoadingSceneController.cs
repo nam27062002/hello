@@ -232,6 +232,9 @@ public class LoadingSceneController : SceneController {
     override protected void Awake() {        		
         // Call parent
 		base.Awake();
+
+        // We need to update the user id label when the user logs in 
+        Messenger.AddListener<bool>(MessengerEvents.LOGGED, OnLoggedIn);
     }    
     
     private void CustomAwake()
@@ -264,12 +267,14 @@ public class LoadingSceneController : SceneController {
 		m_downloadablesHandle = null;
 		m_assetsDownloadFlow.InitWithHandle(null);
     }
+   
+    /// <summary>
+    /// First update.
+    /// </summary>
+    void Start() {                
+        UpdateUserIdTxt();
+        m_versionTxt.text = GameSettings.internalVersion.ToString();
 
-	/// <summary>
-	/// First update.
-	/// </summary>
-	void Start() { 
-    
         CustomAwake();                       
         // Load menu scene
         //GameFlow.GoToMenu();
@@ -365,6 +370,16 @@ public class LoadingSceneController : SceneController {
             	SetState(State.WAITING_FOR_RULES);
             }			
         #endif
+    }
+
+    private void OnLoggedIn(bool logged)
+    {
+        UpdateUserIdTxt();
+    }
+
+    private void UpdateUserIdTxt()
+    {
+        m_userIdTxt.text = GameServerManager.SharedInstance.GetLatestUID();
     }
 
     public static void SetSavedLanguage()
@@ -607,14 +622,12 @@ public class LoadingSceneController : SceneController {
 	/// </summary>
 	override protected void OnDestroy() {
 		base.OnDestroy();
-	}
+
+        Messenger.RemoveListener<bool>(MessengerEvents.LOGGED, OnLoggedIn);
+    }
 
     private void SetState(State state)
-    {
-		// Update user ID every time we change state, regardless of the state (in case it has changed)
-		m_userIdTxt.text = GameSessionManager.SharedInstance.GetUID();
-		m_versionTxt.text = GameSettings.internalVersion.ToString();
-
+    {		
 		// Debug
         if (FeatureSettingsManager.IsDebugEnabled)
         {
