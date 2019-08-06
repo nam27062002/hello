@@ -140,8 +140,14 @@ public class ShaderCacheTool : EditorWindow {
         return false;
     }
 
+    private static bool checkUnderscore(string token)
+    {
+        token = token.Replace("_", "");
+        return token.Length > 0;
+    }
     
-    private static char[] splitChars = new[] { ' ', '=', '{', '}', '"' };
+    private static char[] splitChars = new[] { ' ', '=', '{', '}', '"', '\t'};
+//    char[] delimiterChars = { ' ', ',', '.', ':', '\t' };
     private static ShaderContent getShaderContent(Shader shader)
     {
         ShaderContent sc = new ShaderContent();
@@ -188,11 +194,11 @@ public class ShaderCacheTool : EditorWindow {
                 if (pos >= 0)
                 {
                     string kwpack = line.Substring(pos + off);
-                    string[] kwl = kwpack.Split(' ');
+                    string[] kwl = kwpack.Split(splitChars);
 
                     for (int c = 0; c < kwl.Length; c++)
                     {
-                        if (kwl[c].Length > 0 && kwl[c][0] != '_')
+                        if (kwl[c].Length > 0 && checkUnderscore(kwl[c]))
                         {
                             vkeywords.Add(kwl[c]);
                         }
@@ -305,8 +311,9 @@ public class ShaderCacheTool : EditorWindow {
                 }
                 catch (ArgumentException)
                 {
-                    Log(sc.lightmode + " is not a valid light mode.");
-                    continue;
+                    sv.passType = PassType.Normal;
+//                    Log(sc.lightmode + " is not a valid light mode.");
+//                   continue;
                 }
 
 
