@@ -484,19 +484,19 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 	}
 
 	/// <summary>
-	/// Checks the lab unlock popup.
+	/// Checks the leagues unlock popup.
 	/// </summary>
-	private void CheckLabUnlock() {
-		// Only in the right screen
-		// [AOC] The lab unlock popup can also appear in the Lab, but let the screen control it in that case, since there shouln't be conflicts with other popups
-		if(m_currentScreen != MenuScreen.DRAGON_SELECTION) return;
+	private void CheckLeaguesUnlock() {
 
-		// Can we show the popup?
-		PopupController popup = null;
-		if(PopupLabUnlocked.Check()) {
-			popup = PopupManager.LoadPopup(PopupLabUnlocked.PATH);
-			PopupLabUnlocked labPopup = popup.GetComponent<PopupLabUnlocked>();
-			labPopup.Init(m_currentScreen);
+        // Show it only in the goals section (showing missions by default)
+        if (m_currentScreen != MenuScreen.MISSIONS) return;
+
+        // Can we show the popup?
+        PopupController popup = null;
+		if(PopupLeaguesUnlocked.Check()) {
+			popup = PopupManager.LoadPopup(PopupLeaguesUnlocked.PATH);
+            PopupLeaguesUnlocked leaguesPopup = popup.GetComponent<PopupLeaguesUnlocked>();
+            leaguesPopup.Init(m_currentScreen);
 			PopupManager.EnqueuePopup(popup);
 		}
 
@@ -614,7 +614,7 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 		CheckPreRegRewards();
 		CheckShark();
 		CheckAnimojiTutorial();
-		CheckLabUnlock();
+		CheckLeaguesUnlock();
 		CheckRating();
 		CheckSurvey();
 		CheckSilentNotification();

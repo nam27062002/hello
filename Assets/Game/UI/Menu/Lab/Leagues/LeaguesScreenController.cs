@@ -294,15 +294,19 @@ public class LeaguesScreenController : MonoBehaviour {
         m_darkScreen.ForceSet(m_panels[(int)_panel].darkBackground, false);
 
         // If showing the ACTIVE panel for the first time, trigger the tutorial
-        if (m_activePanel == Panel.ACTIVE_SEASON && !UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.LEAGUES_INFO)) {
+
+        // [JOM] This shouldn´t happen, because the tutorial is triggered in the main dragon selection screen 
+        // when the leagues are available for the first time. But we leave the code, just in case.
+        if (!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.LEAGUES_INFO) && m_activePanel == Panel.ACTIVE_SEASON) {
+
             // Open popup!
-            PopupManager.OpenPopupInstant(PopupInfoLeagues.PATH);
+            PopupManager.OpenPopupInstant(PopupLeaguesUnlocked.PATH);
 
             // Mark tutorial step as completed
             UsersManager.currentUser.SetTutorialStepCompleted(TutorialStep.LEAGUES_INFO, true);
 
             // Tracking!
-            string popupName = System.IO.Path.GetFileNameWithoutExtension(PopupInfoLeagues.PATH);
+            string popupName = System.IO.Path.GetFileNameWithoutExtension(PopupLeaguesUnlocked.PATH);
             HDTrackingManager.Instance.Notify_InfoPopup(popupName, "automatic");
         }
     }

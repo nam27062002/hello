@@ -11,6 +11,7 @@ public class HDLeagueData : IComparableWithOperators<HDLeagueData> {
 	private readonly string m_trophyPrefab;
     private readonly string m_tidName;
     private readonly string m_description;
+    private readonly DragonTier m_minimumTier;
 
     private readonly int    m_order;
 
@@ -38,8 +39,13 @@ public class HDLeagueData : IComparableWithOperators<HDLeagueData> {
 		m_trophyPrefab = _def.Get("trophyPrefab");
         m_description = _def.Get("tidDesc");
 
+        // Minimum tier definition. Get Tier enum from tier sku.
+        DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinitionByVariable(DefinitionsCategory.DRAGON_TIERS, 
+                                                                                        "sku", _def.Get("minimumTier"));
+        m_minimumTier = DragonTierGlobals.GetFromInt(def.GetAsInt("order"));
+
+
         m_order = _def.GetAsInt("order");
-        //
 
         m_leaderboard = new HDLeagueLeaderboard(m_sku);
     }
@@ -110,6 +116,7 @@ public class HDLeagueData : IComparableWithOperators<HDLeagueData> {
     public string sku           { get { return m_sku; } }
     public string icon          { get { return m_icon; } }
 	public string trophyPrefab  { get { return m_trophyPrefab; } }
+    public DragonTier minimumTier   { get { return m_minimumTier; } }
 
     public int    order         { get { return m_order; } }
 
