@@ -57,7 +57,6 @@ Shader "Hungry Dragon/Dragon/Dragon standard" {
 		[Enum(UnityEngine.Rendering.BlendMode)] _SrcBlend("SrcBlend", Float) = 1.0 //"One"
 		[Enum(UnityEngine.Rendering.BlendMode)] _DstBlend("DestBlend", Float) = 0.0 //"Zero"
 		[Enum(Opaque, 0, CutOff, 1, Transparent, 2)] _BlendMode("Blend mode", Float) = 0.0
-//		[HideInInspector] _ZWrite("__zw", Float) = 1.0
 		[Toggle] _ZWrite("__zw", Float) = 1.0
 
 		_StencilMask("Stencil Mask", int) = 10
@@ -127,6 +126,7 @@ Shader "Hungry Dragon/Dragon/Dragon standard" {
 			#pragma shader_feature	__ VERTEXOFFSETY
 			#pragma shader_feature	__ VERTEXOFFSETZ
 			#pragma shader_feature	__ DIFFUSE_AS_SPECULARMASK
+            #pragma shader_feature  __ _ZWRITE_ON
 
 			#pragma shader_feature SELFILLUMINATE_NORMAL SELFILLUMINATE_AUTOINNERLIGHT SELFILLUMINATE_BLINKLIGHTS SELFILLUMINATE_EMISSIVE
 			#pragma shader_feature FXLAYER_NONE FXLAYER_REFLECTION FXLAYER_FIRE FXLAYER_DISSOLVE FXLAYER_COLORIZE
