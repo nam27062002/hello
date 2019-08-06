@@ -166,10 +166,14 @@ public class LoadingSceneController : SceneController {
 
     GDPRListener m_gdprListener = new GDPRListener();
 
-    //------------------------------------------------------------------//
-    // MEMBERS															//
-    //------------------------------------------------------------------//
-    // References
+	//------------------------------------------------------------------//
+	// MEMBERS															//
+	//------------------------------------------------------------------//
+	// References
+	[SerializeField] private Text m_userIdTxt = null;
+	[SerializeField] private Text m_versionTxt = null;
+
+	[Space]
 	[SerializeField] private TextMeshProUGUI m_loadingTxt = null;
 	[SerializeField] private Slider m_loadingBar = null;
 
@@ -228,6 +232,9 @@ public class LoadingSceneController : SceneController {
     override protected void Awake() {        		
         // Call parent
 		base.Awake();
+
+        // We need to update the user id label when the user logs in 
+        Messenger.AddListener<bool>(MessengerEvents.LOGGED, OnLoggedIn);
     }    
     
     private void CustomAwake()
@@ -260,12 +267,14 @@ public class LoadingSceneController : SceneController {
 		m_downloadablesHandle = null;
 		m_assetsDownloadFlow.InitWithHandle(null);
     }
+   
+    /// <summary>
+    /// First update.
+    /// </summary>
+    void Start() {                
+        UpdateUserIdTxt();
+        m_versionTxt.text = GameSettings.internalVersion.ToString();
 
-	/// <summary>
-	/// First update.
-	/// </summary>
-	void Start() { 
-    
         CustomAwake();                       
         // Load menu scene
         //GameFlow.GoToMenu();
@@ -361,6 +370,16 @@ public class LoadingSceneController : SceneController {
             	SetState(State.WAITING_FOR_RULES);
             }			
         #endif
+    }
+
+    private void OnLoggedIn(bool logged)
+    {
+        UpdateUserIdTxt();
+    }
+
+    private void UpdateUserIdTxt()
+    {
+        m_userIdTxt.text = GameServerManager.SharedInstance.GetLatestUID();
     }
 
     public static void SetSavedLanguage()
@@ -603,10 +622,13 @@ public class LoadingSceneController : SceneController {
 	/// </summary>
 	override protected void OnDestroy() {
 		base.OnDestroy();
-	}
+
+        Messenger.RemoveListener<bool>(MessengerEvents.LOGGED, OnLoggedIn);
+    }
 
     private void SetState(State state)
-    {
+    {		
+		// Debug
         if (FeatureSettingsManager.IsDebugEnabled)
         {
             float deltaTime = Time.timeSinceLevelLoad - m_stateDuration;

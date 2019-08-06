@@ -114,13 +114,13 @@ public class LockEffectMenu : MonoBehaviour {
 
     void setFreezeMaterial(Material mat)
     {
-        mat.EnableKeyword("FRESNEL");
-        mat.EnableKeyword("FREEZE");
-        mat.EnableKeyword("MATCAP");
-        mat.SetColor("_FresnelColor", new Color(114.0f / 255.0f, 248.0f / 255.0f, 255.0f / 255.0f, 255.0f / 255.0f));
-        mat.SetColor("_FresnelColor2", new Color(186.0f / 255.0f, 144.0f / 255.0f, 255.0f / 255.0f, 255.0f / 255.0f));
-        mat.SetFloat("_FresnelPower", 0.91f);
-        mat.SetColor("_GoldColor", new Color(179.0f / 255.0f, 250.0f / 255.0f, 254.0f / 255.0f, 64.0f / 255.0f));
+        mat.EnableKeyword(GameConstants.Materials.Keyword.FRESNEL);
+        mat.EnableKeyword(GameConstants.Materials.Keyword.FREEZE);
+        mat.EnableKeyword(GameConstants.Materials.Keyword.MATCAP);
+        mat.SetColor(GameConstants.Materials.Property.FRESNEL_COLOR, new Color(114.0f / 255.0f, 248.0f / 255.0f, 255.0f / 255.0f, 255.0f / 255.0f));
+        mat.SetColor(GameConstants.Materials.Property.FRESNEL_COLOR_2, new Color(186.0f / 255.0f, 144.0f / 255.0f, 255.0f / 255.0f, 255.0f / 255.0f));
+        mat.SetFloat(GameConstants.Materials.Property.FRESNEL_POWER, 0.91f);
+        mat.SetColor(GameConstants.Materials.Property.GOLD_COLOR, new Color(179.0f / 255.0f, 250.0f / 255.0f, 254.0f / 255.0f, 64.0f / 255.0f));
     }
 
 }

@@ -26,14 +26,14 @@ public class FogAreaEditor : Editor {
 			FogManager manager = FindObjectOfType<FogManager>();
 			if ( manager != null )
 			{
-				Shader.SetGlobalFloat( GameConstants.Material.FOG_START, manager.m_defaultAreaFog.m_fogStart);
-				Shader.SetGlobalFloat( GameConstants.Material.FOG_END, manager.m_defaultAreaFog.m_fogEnd);
+				Shader.SetGlobalFloat( GameConstants.Materials.Property.FOG_START, manager.m_defaultAreaFog.m_fogStart);
+				Shader.SetGlobalFloat( GameConstants.Materials.Property.FOG_END, manager.m_defaultAreaFog.m_fogEnd);
 				if ( manager.m_defaultAreaFog.texture == null )
 				{
 					manager.m_defaultAreaFog.CreateTexture();
 					manager.m_defaultAreaFog.RefreshTexture();
 				}
-				Shader.SetGlobalTexture( GameConstants.Material.FOG_TEXTURE, manager.m_defaultAreaFog.texture);
+				Shader.SetGlobalTexture( GameConstants.Materials.Property.FOG_TEXTURE, manager.m_defaultAreaFog.texture);
 			}
 		}
 	}
