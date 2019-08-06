@@ -25,7 +25,6 @@ using Object = UnityEngine.Object;
 /// </summary>
 public class ShaderCacheTool : EditorWindow {
 
-
     private static string[] qualityVariants =
     {
         "LOW_DETAIL_ON",
@@ -33,7 +32,6 @@ public class ShaderCacheTool : EditorWindow {
         "HI_DETAIL_ON"
     };
 
-    //    private static string shaderCacheSource = "shader_cache_source.txt";
     private static string materialDatabase = "material_database.txt";
     private static string shaderCacheExcludeList = "shader_cache_exclude_list.txt";
 
