@@ -18,8 +18,10 @@ public class IEntityEditor : Editor {
 		if ( !Application.isPlaying )
 		{
 			IEntity ientity  = target as IEntity;
-			if ( ientity != null )
-				ientity.GetReferences();
+            if (ientity != null) {
+                ientity.GetReferences();
+                ientity.gameObject.SetActive(false);
+            }            
 		}
 	}
 
