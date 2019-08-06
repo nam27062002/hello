@@ -105,9 +105,9 @@ public class FogArea : MonoBehaviour, IBroadcastListener
 
 		if (!Application.isPlaying )
 		{
-			Shader.SetGlobalFloat( GameConstants.Material.FOG_START, m_attributes.m_fogStart);
-			Shader.SetGlobalFloat( GameConstants.Material.FOG_END, m_attributes.m_fogEnd);
-			Shader.SetGlobalTexture( GameConstants.Material.FOG_TEXTURE, m_attributes.texture);
+			Shader.SetGlobalFloat( GameConstants.Materials.Property.FOG_START, m_attributes.m_fogStart);
+			Shader.SetGlobalFloat( GameConstants.Materials.Property.FOG_END, m_attributes.m_fogEnd);
+			Shader.SetGlobalTexture( GameConstants.Materials.Property.FOG_TEXTURE, m_attributes.texture);
 		}
 	}
 

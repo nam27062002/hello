@@ -55,7 +55,7 @@ public class PetParcaeViewControl : ViewControl {
         if (m_rampT < 1f) {
             m_rampT += Time.deltaTime * 0.5f;
             for (int i = 0; i < m_materialList.Count; ++i) {
-                m_materialList[i].SetFloat(GameConstants.Material.COLOR_RAMP_AMOUNT, m_rampT);
+                m_materialList[i].SetFloat(GameConstants.Materials.Property.COLOR_RAMP_AMOUNT, m_rampT);
             }
         }
     }
@@ -93,10 +93,10 @@ public class PetParcaeViewControl : ViewControl {
 
         // update materials
         for (int i = 0; i < m_materialList.Count; ++i) {
-            m_materialList[i].SetFloat(GameConstants.Material.COLOR_RAMP_ID_0, m_rampIndexA);
-            m_materialList[i].SetFloat(GameConstants.Material.COLOR_RAMP_ID_1, m_rampIndexB);
-            m_materialList[i].SetFloat(GameConstants.Material.COLOR_RAMP_AMOUNT, m_rampT);
-            m_materialList[i].SetColor(GameConstants.Material.FRESNEL_COLOR, m_fresnelColor);
+            m_materialList[i].SetFloat(GameConstants.Materials.Property.COLOR_RAMP_ID_0, m_rampIndexA);
+            m_materialList[i].SetFloat(GameConstants.Materials.Property.COLOR_RAMP_ID_1, m_rampIndexB);
+            m_materialList[i].SetFloat(GameConstants.Materials.Property.COLOR_RAMP_AMOUNT, m_rampT);
+            m_materialList[i].SetColor(GameConstants.Materials.Property.FRESNEL_COLOR, m_fresnelColor);
         }
 
         m_applyColor = false;

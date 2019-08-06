@@ -35,11 +35,11 @@ public class FrozenMaterialManager : Singleton<FrozenMaterialManager> {
 	private Material CreateFrozenVersionOf(Material _source) {
 		Material frozenMat = new Material(_source);
 
-		frozenMat.EnableKeyword("FREEZE");
-		frozenMat.SetColor("_FresnelColor", new Color(114.0f / 255.0f, 248.0f / 255.0f, 255.0f / 255.0f, 255.0f / 255.0f));
-		frozenMat.SetColor("_FresnelColor2", new Color(186.0f / 255.0f, 144.0f / 255.0f, 255.0f / 255.0f, 255.0f / 255.0f));
-		frozenMat.SetFloat("_FresnelPower", 0.91f);
-		frozenMat.SetColor("_GoldColor", new Color(179.0f / 255.0f, 250.0f / 255.0f, 254.0f / 255.0f, 64.0f / 255.0f));
+		frozenMat.EnableKeyword(GameConstants.Materials.Keyword.FREEZE);
+		frozenMat.SetColor(GameConstants.Materials.Property.FRESNEL_COLOR, new Color(114.0f / 255.0f, 248.0f / 255.0f, 255.0f / 255.0f, 255.0f / 255.0f));
+		frozenMat.SetColor(GameConstants.Materials.Property.FRESNEL_COLOR_2, new Color(186.0f / 255.0f, 144.0f / 255.0f, 255.0f / 255.0f, 255.0f / 255.0f));
+		frozenMat.SetFloat(GameConstants.Materials.Property.FRESNEL_POWER, 0.91f);
+		frozenMat.SetColor(GameConstants.Materials.Property.GOLD_COLOR, new Color(179.0f / 255.0f, 250.0f / 255.0f, 254.0f / 255.0f, 64.0f / 255.0f));
 
 		return frozenMat;
 	}
