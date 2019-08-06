@@ -164,7 +164,7 @@ public class CustomParticleSystem : MonoBehaviour
 #endif
 
         m_particleMaterialInstance = new Material(m_particleMaterial);
-        m_particleMaterialInstance.EnableKeyword("CUSTOMPARTICLESYSTEM");
+        m_particleMaterialInstance.EnableKeyword(GameConstants.Materials.Keyword.CUSTOM_PARTICLE_SYSTEM);
 
         for (int c = 0; c < m_MaxParticles; c++)
         {

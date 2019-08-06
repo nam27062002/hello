@@ -6,7 +6,6 @@ using System.Collections.Generic;
 [CanEditMultipleObjects]
 public class InflammableDecorationEditor : Editor {	
 	static private bool m_editFireNodes;
-	static private List<Transform> m_fireNodes;
 	static private List<GameObject> m_fireParticles;
 
 	private InflammableDecoration m_component;
@@ -19,7 +18,6 @@ public class InflammableDecorationEditor : Editor {
 
 	void OnEnable() {
 		m_editFireNodes = false;
-		m_fireNodes = new List<Transform>();
 		m_fireParticles = new List<GameObject>();
 	}
 
@@ -27,64 +25,74 @@ public class InflammableDecorationEditor : Editor {
 		SetFireNodesData();
 	}
 
-	public override void OnInspectorGUI() {
-		DrawDefaultInspector();
+    public override void OnInspectorGUI() {
+        DrawDefaultInspector();
 
-		EditorGUILayoutExt.Separator(new SeparatorAttribute("Fire Nodes Setup"));
+        EditorGUILayoutExt.Separator(new SeparatorAttribute("Fire Nodes Setup"));
 
-		if (GUILayout.Button("Build")) {
-			if (m_editFireNodes == true) {
-				SetFireNodesData();
-				m_editFireNodes = false;
-			}
-			m_component.SetupFireNodes();
-		}
+        if (GUILayout.Button("Build")) {
+            if (m_editFireNodes == true) {
+                SetFireNodesData();
+                m_editFireNodes = false;
+            }
+            m_component.SetupFireNodes();
+        }
 
-		if (m_editFireNodes == false) {
-			if (GUILayout.Button("Show")) {
-				GetFireNodesData();
-				m_editFireNodes = true;
-			}
-		} else {
-			if (GUILayout.Button("Hide")) {
-				SetFireNodesData();
-				m_editFireNodes = false;
-			}
-		}
-	}
+        if (m_editFireNodes == false) {
+            if (GUILayout.Button("Show")) {
+                GetFireNodesData();
+                m_editFireNodes = true;
+            }
+        } else {
+            if (GUILayout.Button("Hide")) {
+                SetFireNodesData();
+                m_editFireNodes = false;
+            }
+        }
+    }
 
-	void OnSceneGUI() {
-		for (int i = 0; i < m_fireNodes.Count; i++) {
-			switch (Tools.current) {
-				case Tool.Move:		 m_fireNodes[i].position = Handles.PositionHandle(m_fireNodes[i].position, m_fireNodes[i].rotation);								break;
-				case Tool.Scale:	 m_fireNodes[i].localScale = Handles.ScaleHandle(m_fireNodes[i].localScale, m_fireNodes[i].position, m_fireNodes[i].rotation, 1.5f);break;
-			}
-			m_fireParticles[i].transform.position = m_fireNodes[i].position;
-			m_fireParticles[i].transform.localScale = m_fireNodes[i].localScale;
-			//m_fireParticles[i].transform.CopyFrom(m_fireNodes[i]);
-			//m_fireParticles[i].GetComponent<ParticleSystem>().Simulate(1f, true);
-		}
+
+    void OnSceneGUI() {
+        List<FireNode> fireNodes = m_component.fireNodes;
+        
+        for (int i = 0; i < fireNodes.Count; ++i) {
+            FireNode fireNode = fireNodes[i];
+            Vector3 position = m_component.transform.TransformPoint(fireNode.localPosition);
+            Vector3 scale = GameConstants.Vector3.one * fireNode.scale;
+            switch (Tools.current) {
+                case Tool.Move: position = Handles.PositionHandle(position, m_component.transform.rotation); break;
+                case Tool.Scale: scale = Handles.ScaleHandle(scale, position, m_component.transform.rotation, 1f); break;
+            }
+
+            fireNode.localPosition = m_component.transform.InverseTransformPoint(position);
+            fireNode.scale = scale.x;
+
+            if (i < m_fireParticles.Count) {
+                m_fireParticles[i].transform.position = position;
+                m_fireParticles[i].transform.localScale = scale;
+            }
+        }
+
+        m_component.fireNodes = fireNodes;
 	}
 
 	private void GetFireNodesData() {
-		GameObject prefab = (GameObject)Resources.Load("Particles/Master/PF_FireProc");
+        HDAddressablesManager.Instance.Initialize();
+        GameObject prefab = HDAddressablesManager.Instance.LoadAsset<GameObject>("PF_FireProc", "Master");
 
-		FireNode[] nodes = m_component.transform.GetComponentsInChildren<FireNode>();
-		for (int i = 0; i < nodes.Length; i++) {
-			m_fireNodes.Add(nodes[i].transform);
-
+        List<FireNode> fireNodes = m_component.fireNodes;
+        for (int i = 0; i < fireNodes.Count; i++) {			
 			m_fireParticles.Add(Instantiate(prefab));
-			m_fireParticles[i].transform.CopyFrom(m_fireNodes[i]);
-			m_fireParticles[i].hideFlags = HideFlags.HideAndDontSave;
+			m_fireParticles[i].transform.position = m_component.transform.TransformPoint(fireNodes[i].localPosition);
+            m_fireParticles[i].hideFlags = HideFlags.HideAndDontSave;
 			//m_fireParticles[i].GetComponent<ParticleSystem>().Simulate(1f, true);
 		}
 	}
 
 	private void SetFireNodesData() {		
 		for (int i = 0; i < m_fireParticles.Count; i++) {
-			GameObject.DestroyImmediate(m_fireParticles[i]);
+			Object.DestroyImmediate(m_fireParticles[i]);
 		}
 		m_fireParticles.Clear();
-		m_fireNodes.Clear();
 	}
 }

@@ -232,6 +232,13 @@ public class GameServerManager {
     public virtual bool IsLoggedIn() { return false; }
     public virtual void OnLogOut() { }
 
+    /// <summary>
+    /// Returns the most recent user ID in our server known by the client. Every time the client logs in our server the user ID is cached so that the client can have
+    /// this information in offline mode or right after the game is launched.
+    /// </summary>
+    /// <returns>Returns the user ID in our server if the user is logged, otherwise it returns the user ID when the user last logged in our server.</returns>
+    public virtual string GetLatestUID() { return "";  }
+
     //------------------------------------------------------------------------//
     // CUSTOMIZER															  //
     //------------------------------------------------------------------------//
