@@ -51,15 +51,23 @@ public class LabStatUpgrader : MonoBehaviour {
 	[SerializeField] private Image m_progressBar = null;
 	[Comment("Children will be considered separators. If more separators are needed, last child will be clone as many times as neede.")]
 	[SerializeField] private CircularLayout m_separatorsContainer = null;
-	[Space]
-	[SerializeField] private Image[] m_icons = new Image[0];
-    [SerializeField] private TextMeshProUGUI m_counterText = null;
+    [Space]
+    [SerializeField] private Image[] m_icons = new Image [0];
+    [SerializeField] private TextMeshProUGUI m_valueText = null;
     [SerializeField] private Localizer m_priceText = null;
-	[SerializeField] private NumberTextAnimator m_valueText = null;
 	[SerializeField] private RectTransform m_feedbackAnchor = null;
 
-	// Internal data
-	private DragonDataSpecial m_dragonData = null;
+    // Visibility
+    [Space]
+    [SerializeField] private GameObject m_maxedGroup;
+    [SerializeField] private GameObject m_maxButton;
+    [SerializeField] private GameObject m_activeGroup;
+    [SerializeField] private GameObject m_upgradeButton;
+    
+    
+
+    // Internal data
+    private DragonDataSpecial m_dragonData = null;
 	private DragonStatData m_statData = null;
 
 	// Internal references
@@ -97,10 +105,6 @@ public class LabStatUpgrader : MonoBehaviour {
 			m_separatorPrefab = m_separators.Last();
 		}
 
-		// Custom value formatting
-		if(m_valueText != null) {
-			m_valueText.CustomTextSetter = OnSetValueText;
-		}
 
         // Cache showHideAnimator
         m_showHide = GetComponent<ShowHideAnimator>();
@@ -163,9 +167,11 @@ public class LabStatUpgrader : MonoBehaviour {
 
 		// Stat icon
 		Sprite iconSprite = Resources.Load<Sprite>(UIConstants.DRAGON_STATS_ICONS_PATH + m_statData.def.GetAsString("icon"));
-		for(int i = 0; i < m_icons.Length; ++i) {
-			m_icons[i].sprite = iconSprite;
-		}
+        for (int i=0;i<m_icons.Length;i++)
+        {
+            m_icons[i].sprite = iconSprite;
+        }
+
 
 		// Initialize progress bar separators
 		if(m_separatorsContainer != null) {
@@ -231,114 +237,37 @@ public class LabStatUpgrader : MonoBehaviour {
 			}
 		}
 
-		// Refresh value text
-		if(m_valueText != null) {
-			switch(MODE) {
-				case Mode.PERCENTAGE_BONUS: {
-					// [AOC] Because number animator only works with longs, convert to 100 to have double digit precision.
-					//       The custom text formatter will properly display the percentage amount
-					long longValue = (long)Mathf.RoundToInt(m_statData.value * 100f);
-					m_valueText.SetValue(longValue, _animate);
-				} break;
-
-				case Mode.ABSOLUTE_VALUE: {
-					float value = 0f;
-					switch(m_stat) {
-						case DragonDataSpecial.Stat.HEALTH: value = m_dragonData.maxHealth; break;
-						case DragonDataSpecial.Stat.SPEED: value = m_dragonData.maxSpeed * 10f; break;
-						case DragonDataSpecial.Stat.ENERGY: value = m_dragonData.baseEnergy; break;
-					}
-					long longValue = (long)Mathf.RoundToInt(value);
-					m_valueText.SetValue(longValue, _animate);
-				} break;
-
-				case Mode.LEVEL_PROGRESSION: {
-					long longValue = (long)m_statData.level;
-					m_valueText.SetValue(longValue, false);		// [AOC] We're going 1 by 1, so animating looks super-weird
-				} break;
-			}
-		}
-
         // Counter text
-        if (m_counterText != null)
+        if (m_valueText != null)
         {
-            m_counterText.text = m_dragonData.GetStat(m_stat).level + "/" + m_dragonData.GetStat(m_stat).maxLevel;
+            m_valueText.text = m_dragonData.GetStat(m_stat).level + "/" + m_dragonData.GetStat(m_stat).maxLevel;
         }
+
+
+        // Refresh items visibility depending if the stat has reached its maximum level
+        bool statMaxed = m_dragonData.GetStat(m_stat).IsMaxed();
+
+        m_upgradeButton.SetActive(!statMaxed);
+        m_activeGroup.SetActive(!statMaxed);
+        
+        m_maxedGroup.SetActive(statMaxed);
+        m_maxButton.SetActive(statMaxed);
 
 
         // Refresh upgrade price
         Price upgradePrice = m_dragonData.GetNextUpgradePrice();
 
         if (m_priceText != null && upgradePrice != null)
-            {
-            switch (MODE)
-            {
-                case Mode.PERCENTAGE_BONUS:
-                    {
-                        m_formattedStepValue = StringUtils.MultiplierToPercentageIncrease(m_statData.valueStep + 1, true);
-
-                        m_priceText.text.text = UIConstants.GetIconString(
-                            upgradePrice.Amount.ToString(),
-                            UIConstants.GetCurrencyIcon(upgradePrice.Currency),
-                            UIConstants.IconAlignment.LEFT
-                        );
-                    }
-                    break;
-
-                case Mode.ABSOLUTE_VALUE:
-                    {
-                        float baseValue = 0f;
-                        switch (m_stat)
-                        {
-                            case DragonDataSpecial.Stat.HEALTH: baseValue = m_dragonData.specialTierDef.GetAsFloat("health"); break;
-                            case DragonDataSpecial.Stat.SPEED: baseValue = m_dragonData.specialTierDef.GetAsFloat("force") * 10f; break;
-                            case DragonDataSpecial.Stat.ENERGY: baseValue = m_dragonData.specialTierDef.GetAsFloat("energyBase"); break;
-                        }
-                        long longValue = (long)Mathf.RoundToInt(baseValue * m_statData.valueStep);
-                        m_formattedStepValue = "+" + StringUtils.FormatNumber(longValue);
-
-                        m_priceText.text.text = UIConstants.GetIconString(
-                            upgradePrice.Amount.ToString(),
-                            UIConstants.GetCurrencyIcon(upgradePrice.Currency),
-                            UIConstants.IconAlignment.LEFT
-                        );
-                    }
-                    break;
-
-                case Mode.LEVEL_PROGRESSION:
-                    {
-                        m_formattedStepValue = string.Empty;
-
-                        // Disable localizer and just show the price
-                        m_priceText.enabled = false;
-                        m_priceText.text.text = UIConstants.GetIconString(
-                            upgradePrice.Amount.ToString(),
-                            UIConstants.GetCurrencyIcon(upgradePrice.Currency),
-                            UIConstants.IconAlignment.LEFT
-                        );
-                    }
-                    break;
-            }
+        {
+            // Disable localizer and just show the price
+            m_priceText.enabled = false;
+            m_priceText.text.text = UIConstants.GetIconString(
+                upgradePrice.Amount.ToString(),
+                UIConstants.GetCurrencyIcon(upgradePrice.Currency),
+                UIConstants.IconAlignment.LEFT
+            );
         }
 
-		// Change animation state
-		if(m_stateAnimator != null) {
-			// Figure out state for this dragon/stat combo
-			AnimState state = AnimState.READY;
-
-			// Is it maxed out?
-			if(m_statData.level == m_statData.maxLevel) {
-				state = AnimState.MAXED;
-			}
-
-			// Is it locked? (don't check if maxed out)
-			else if(!m_dragonData.CanUpgradeStats()) {
-				state = AnimState.LOCKED;
-			}
-
-			// Apply!
-			m_stateAnimator.SetInteger(ANIM_STATE_PARAM_ID, (int)state);
-		}
 	}
 
 	//------------------------------------------------------------------------//

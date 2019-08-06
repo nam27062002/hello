@@ -86,13 +86,23 @@ public class DragonStatData {
 		return valueRange.Lerp(progress);
 	}
 
-	//------------------------------------------------------------------------//
-	// PERSISTENCE															  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Reset persistence values. Make sure any new value is added to this method as well.
-	/// </summary>
-	public void ResetLoadedData() {
+    /// <summary>
+    /// Is the stat at its maximum value?
+    /// </summary>
+    public bool IsMaxed ()
+    {
+        return (level  >= maxLevel);
+    }
+
+
+
+    //------------------------------------------------------------------------//
+    // PERSISTENCE															  //
+    //------------------------------------------------------------------------//
+    /// <summary>
+    /// Reset persistence values. Make sure any new value is added to this method as well.
+    /// </summary>
+    public void ResetLoadedData() {
 		// Level
 		level = 0;
 	}
