@@ -129,10 +129,15 @@ public class PopupSettingsSupportTab : MonoBehaviour {
 		if(Application.internetReachability != NetworkReachability.NotReachable) {
             string iso = LocalizationManager.SharedInstance.Culture.Name;
             string caletyISO = MiscUtils.StandardISOToCaletyISO(iso);
-            CSTSManager.SharedInstance.OpenView(caletyISO, false);
+
+            TrackingPersistenceSystem trackingPersistence = HDTrackingManager.Instance.TrackingPersistenceSystem;
+            int totalPurchases = (trackingPersistence == null) ? 0 : trackingPersistence.TotalPurchases;
+            bool isPayer = totalPurchases > 0;
+            CSTSManager.SharedInstance.OpenView("92192eadf22f6aafe6fadd926945ae60", 0, 0, 0, 0, true, true, caletyISO, isPayer);
             HDTrackingManager.Instance.Notify_CustomerSupportRequested();
 
-            ControlPanel.Log("[CSTS] iso = " + iso + " caletyISO = " + caletyISO);
+            if (FeatureSettingsManager.IsDebugEnabled)
+                ControlPanel.Log("[CSTS] iso = " + iso + " caletyISO = " + caletyISO + " payer = " + isPayer);
 		} else {
 			string str = LocalizationManager.SharedInstance.Localize("TID_GEN_NO_CONNECTION");
 			UIFeedbackText.CreateAndLaunch(str, new Vector2(0.5f, 0.5f), GetComponentInParent<Canvas>().transform as RectTransform);
