@@ -126,6 +126,12 @@ public abstract class  CaptureTool : MonoBehaviour {
 	/// First update call.
 	/// </summary>
 	protected virtual void Start() {
+		// If definitions are not loaded, do it now
+		if(!ContentManager.ready) {
+			ContentManager.InitContent(true, false);
+		}
+		HDAddressablesManager.Instance.Initialize();
+
 		// Initialize path input text
 		m_pathInput.text = GetSaveDirPath();
 		m_pathInput.onEndEdit.AddListener(OnPathChanged);

@@ -48,12 +48,6 @@ public class MissionIconsCaptureTool : CaptureTool {
 		// Call parent
 		base.Start();
 
-		// If definitions are not loaded, do it now
-		if(!ContentManager.ready){
-			ContentManager.InitContent(true, false);
-		}
-		HDAddressablesManager.Instance.Initialize();
-
 		// Same for localization
 		LocalizationManager.SharedInstance.SetLanguage("lang_english");
 
