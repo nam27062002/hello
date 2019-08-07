@@ -371,7 +371,7 @@ GameObject:
   - component: {fileID: 114439960513274264}
   - component: {fileID: 114540423777700376}
   - component: {fileID: 114425406398562322}
-  - component: {fileID: 114103699078546536}
+  - component: {fileID: 114554910853479768}
   - component: {fileID: 114213163797026430}
   - component: {fileID: 54849086178129956}
   m_Layer: 22
@@ -834,8 +834,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1940952026633020}
-  m_LocalRotation: {x: -0.060685735, y: 0.9090197, z: 0.36194518, w: 0.19747435}
-  m_LocalPosition: {x: -0.6982384, y: -2.15, z: -2.1294537}
+  m_LocalRotation: {x: -0.1305262, y: 0, z: 0, w: 0.9914449}
+  m_LocalPosition: {x: 0, y: -2.05, z: 0}
   m_LocalScale: {x: 1.5, y: 1.5, z: 1.5}
   m_Children:
   - {fileID: 4131726106574452}
@@ -907,13 +907,13 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1208446770225628}
-  m_LocalRotation: {x: 0.5858014, y: -0, z: -0, w: 0.8104546}
-  m_LocalPosition: {x: 0.48545837, y: 4.33, z: 0.00027692318}
+  m_LocalRotation: {x: 0.7035808, y: 3.0748737e-10, z: 3.0748737e-10, w: 0.7106153}
+  m_LocalPosition: {x: 1.83, y: 5.35, z: 0.65}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4301875238917868}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 71.719, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: -152.616, y: 8.446991, z: -0.0009765625}
 --- !u!4 &4719845752417594
 Transform:
   m_ObjectHideFlags: 1
@@ -994,7 +994,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1618991526583932}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -262.997, y: 4.007, z: 0.15587234}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4165416808774574}
@@ -1157,57 +1157,6 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
---- !u!114 &114103699078546536
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1618991526583932}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3085e02792f6243cc9d8323aba91b804, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_affectedByDragonTrample: 0
-  m_enableSensor: 0
-  m_sensor:
-    m_senseFire: 1
-    m_sightRadius: 0
-    m_maxRadius: 0
-    m_minRadius: 0
-    m_hysteresisOffset: 0
-    m_senseAbove: 1
-    m_senseBelow: 1
-    m_sensorOffset: {x: 0, y: 0, z: 0}
-    m_radiusOffset:
-      min: 0.9
-      max: 1.1
-    m_senseDelay:
-      min: 0.25
-      max: 1.25
-  m_edible:
-    m_rotateToMouth: 0
-  m_inflammable:
-    m_burningTime: 0
-    m_canBeDissolved: 1
-    m_ashExceptions: []
-    m_disableOnBurn: []
-  m_onSpawnSound: 
-  m_airMotion:
-    m_mass: 1
-    m_defaultUpVector: 0
-    m_orientationSpeed: 300
-    m_useAngularVelocity: 0
-    m_dragonStyleRotation: 0
-    m_faceDirection: 0
-    m_rollRotation: 0
-    m_rollAngle: 35
-    m_limitHorizontalRotation: 1
-    m_faceLeftAngle: 175
-    m_faceRightAngle: 5
-    m_limitVerticalRotation: 0
-    m_faceUpAngle: 320
-    m_faceDownAngle: 40
 --- !u!114 &114213163797026430
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1478,10 +1427,10 @@ MonoBehaviour:
   m_railSeparation:
     min: 0.5
     max: 1
-  m_useSpawnerRotation: 0
+  m_useSpawnerRotation: 1
   m_serializedJson: '[{"boostSpeed":20,"panicSpeed":25,"faceDirectionOnBoost":true,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"speed":9,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false}]'
   m_databaseKey: PF_Ground_Zombie 1
-  m_updateMachinePos: 1
+  m_updateMachinePos: 0
   m_updateMachineRot: 0
 --- !u!114 &114439960513274264
 MonoBehaviour:
@@ -1497,11 +1446,11 @@ MonoBehaviour:
   m_tags: 2050
   m_otherSpawnables:
   - {fileID: 114425406398562322}
-  - {fileID: 114103699078546536}
+  - {fileID: 114554910853479768}
   - {fileID: 114213163797026430}
   m_otherSpawnablesCount: 3
   m_pilot: {fileID: 114425406398562322}
-  m_machine: {fileID: 114103699078546536}
+  m_machine: {fileID: 114554910853479768}
   m_viewControl: {fileID: 114213163797026430}
   m_equip: {fileID: 0}
   m_sku: Ground_Zombie
@@ -1521,6 +1470,42 @@ MonoBehaviour:
   offset: {x: -0.009662867, y: 0.3461734}
   radius: 0.5577011
   color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
+--- !u!114 &114554910853479768
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1618991526583932}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 91e40970ac8a0488ab7347acde654093, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_affectedByDragonTrample: 0
+  m_enableSensor: 0
+  m_sensor:
+    m_senseFire: 1
+    m_sightRadius: 0
+    m_maxRadius: 0
+    m_minRadius: 0
+    m_hysteresisOffset: 0
+    m_senseAbove: 1
+    m_senseBelow: 1
+    m_sensorOffset: {x: 0, y: 0, z: 0}
+    m_radiusOffset:
+      min: 0.9
+      max: 1.1
+    m_senseDelay:
+      min: 0.25
+      max: 1.25
+  m_edible:
+    m_rotateToMouth: 0
+  m_inflammable:
+    m_burningTime: 0
+    m_canBeDissolved: 1
+    m_ashExceptions: []
+    m_disableOnBurn: []
+  m_onSpawnSound: 
 --- !u!114 &114611903501287676
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1532,7 +1517,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9aae6699537414c7ab185eeaef226fe0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_parentName: Rabbit_Tail
+  m_parentName: Human_Head
   m_parentRoot: {fileID: 4861198911436830}
   m_worldPositionStays: 1
   m_resetScale: 0
