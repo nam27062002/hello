@@ -5,20 +5,25 @@ using UnityEngine;
 public class LabDragonBarElement : MonoBehaviour {
     public enum State {
         LOCKED = 0,
-        AVAILABLE,
-        OWNED
+        OWNED = 1
     }
 
-
     //---[Published Attributes]-------------------------------------------------
+    [Separator("Lock")]
+    [SerializeField] private GameObject m_lockedGroup;
+    [SerializeField] private GameObject m_unlockedGroup;
+    
+
     [Separator("State Control")]
-    [SerializeField] private Animator m_animator = null;
+    [SerializeField] protected State m_state;
 
     [Separator("Bar")]
     [SerializeField] private RectTransform m_scaleTransform = null;
 
 
     //---[Attributes]-----------------------------------------------------------
+    protected int m_unlockLevel;
+
     private RectTransform __transform;
     private RectTransform m_transform {
         get {
@@ -29,8 +34,6 @@ public class LabDragonBarElement : MonoBehaviour {
         }
     }
 
-    protected State m_state;
-
 
     //---[Generic Methods]------------------------------------------------------
     private void Awake() {
@@ -40,7 +43,6 @@ public class LabDragonBarElement : MonoBehaviour {
     }
 
     protected virtual void OnEnable() {
-        m_animator.SetInteger(GameConstants.Animator.STATE, (int)m_state);
     }
 
 	protected virtual void OnDisable() {
@@ -73,15 +75,9 @@ public class LabDragonBarElement : MonoBehaviour {
     public void SetState(State _state) {
         m_state = _state;
 
-        m_animator.SetInteger(GameConstants.Animator.STATE, (int)m_state);
-
         switch(_state) {
             case State.LOCKED:
             OnLocked();
-            break;
-
-            case State.AVAILABLE:
-            OnAvailable();
             break;
 
             case State.OWNED:
@@ -90,17 +86,28 @@ public class LabDragonBarElement : MonoBehaviour {
         }
     }
 
+    public void SetUnlockLevel(int _level)
+    {
+        m_unlockLevel = _level;
+    }
 
-    //---[Abstract/Virtual Methods]---------------------------------------------
-    protected virtual void OnLocked()   {}
-    protected virtual void OnAvailable(){}
-    protected virtual void OnOwned()    {}
 
+    private void OnLocked()   {
 
-    //---[Abstract/Virtual Methods]---------------------------------------------
-    private void OnDrawGizmosSelected() {
-        if (m_animator != null) {
-            m_animator.Update(1f);
+        m_lockedGroup.SetActive(true);
+        if (m_unlockedGroup != null)
+        {
+            m_unlockedGroup.SetActive(false);
         }
     }
+
+    private void OnOwned()    {
+
+        m_lockedGroup.SetActive(false);
+        if (m_unlockedGroup != null)
+        {
+            m_unlockedGroup.SetActive(true);
+        }
+    }
+
 }

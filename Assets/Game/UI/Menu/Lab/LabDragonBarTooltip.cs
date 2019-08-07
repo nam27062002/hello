@@ -23,7 +23,6 @@ public class LabDragonBarTooltip : UITooltipMultidirectional {
 	// Exposed references
 	[Separator("LabDragonBarTooltip")]
 	[SerializeField] private TextMeshProUGUI m_unlockLevelText = null;
-	[SerializeField] private TextMeshProUGUI m_requiredTierText = null;
 	
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //
@@ -48,25 +47,6 @@ public class LabDragonBarTooltip : UITooltipMultidirectional {
 		);
 	}
 
-	/// <summary>
-	/// Initialize the required tier data.
-	/// Call it right after the Init().
-	/// </summary>
-	/// <param name="_tier">Tier where the element is unlocked.</param>
-	/// <param name="_tierReached">Has the tier been reached?</param>
-	public void SetRequiredTier(DragonTier _tier, bool _tierReached) {
-		// Check textfield
-		if(m_requiredTierText == null) return;
-
-		// Don't show if tier has been reached
-		m_requiredTierText.gameObject.SetActive(!_tierReached);
-
-		// Set text
-		m_requiredTierText.text = LocalizationManager.SharedInstance.Localize(
-			"TID_LAB_TOOLTIP_UNLOCK_TIER",
-			UIConstants.GetSpriteTag(UIConstants.GetDragonTierIcon(_tier))
-		);
-	}
 
 	/// <summary>
     /// Initialize the tooltip with the given texts and icon.
@@ -85,8 +65,5 @@ public class LabDragonBarTooltip : UITooltipMultidirectional {
 			m_unlockLevelText.gameObject.SetActive(false);
 		}
 
-		if(m_requiredTierText != null) {
-			m_requiredTierText.gameObject.SetActive(false);
-		}
 	}
 }

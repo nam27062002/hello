@@ -46,8 +46,6 @@ public class LabStatUpgrader : MonoBehaviour {
 	[HideEnumValues(false, true)]
 	[SerializeField] private DragonDataSpecial.Stat m_stat = DragonDataSpecial.Stat.HEALTH;
 	[Space]
-	[SerializeField] private Animator m_stateAnimator = null;
-	[Space]
 	[SerializeField] private Image m_progressBar = null;
 	[Comment("Children will be considered separators. If more separators are needed, last child will be clone as many times as neede.")]
 	[SerializeField] private CircularLayout m_separatorsContainer = null;
@@ -255,7 +253,7 @@ public class LabStatUpgrader : MonoBehaviour {
 
 
         // Refresh upgrade price
-        Price upgradePrice = m_dragonData.GetNextUpgradePrice();
+        Price upgradePrice = m_dragonData.GetNextStatUpgradePrice(m_stat);
 
         if (m_priceText != null && upgradePrice != null)
         {
@@ -303,7 +301,7 @@ public class LabStatUpgrader : MonoBehaviour {
         }
 
         // Get the price of the current upgrade
-        Price upgradePrice = m_dragonData.GetNextUpgradePrice();
+        Price upgradePrice = m_dragonData.GetNextStatUpgradePrice(m_stat);
 
         // Launch transaction
         if (upgradePrice != null)

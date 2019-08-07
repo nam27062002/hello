@@ -124,14 +124,8 @@ public class DragonPowerUpgrader : MonoBehaviour {
         if (m_priceText != null)
         {
 
-            Price upgradePrice = m_dragonData.GetNextUpgradePrice();
-
-            // Get the list of all upgrades. Find the next one.
-            List<DefinitionNode> upgrades = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.SPECIAL_DRAGON_UPGRADES);
-            DefinitionNode nextUpgrade = upgrades[m_dragonData.Level];
-
-            int priceSC = nextUpgrade.GetAsInt("priceSC");
-            int priceHC = nextUpgrade.GetAsInt("priceHC");
+            // Find the price of the next power upgrade 
+            Price upgradePrice = m_dragonData.GetNextPowerUpgradePrice();
 
             // Disable localizer and just show the price
             m_priceText.enabled = false;
@@ -180,7 +174,7 @@ public class DragonPowerUpgrader : MonoBehaviour {
         }
 
         // Get the price of the current upgrade
-        Price upgradePrice = m_dragonData.GetNextUpgradePrice();
+        Price upgradePrice = m_dragonData.GetNextPowerUpgradePrice();
 
         // Launch transaction
         if (upgradePrice != null)

@@ -302,11 +302,13 @@ public class DragonDataSpecial : IDragonData {
 		m_statUpgradePriceCoefB = _def.GetAsLong("priceCoefB", 1);
 
         // Upgrades
-        m_upgrades = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.SPECIAL_DRAGON_UPGRADES);
+        m_upgrades = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.SPECIAL_DRAGON_STATS_UPGRADES);
         DefinitionsManager.SharedInstance.SortByProperty(ref m_upgrades, "order", DefinitionsManager.SortType.NUMERIC);
 
-        // Max level is defined by the upgrades table
-        m_maxLevel = m_upgrades.Count;
+        // Max level = total of stats levelUps plus power levelUps 
+        int statsLevelUp = 3 * m_upgrades.Count;
+        int powerLevelUp = m_specialPowerDefsByOrder.Count - 1;
+        m_maxLevel = statsLevelUp + powerLevelUp + 1; // Plus 1 (initial level is 0)
 
         // Type
         m_type = Type.SPECIAL;
@@ -397,16 +399,20 @@ public class DragonDataSpecial : IDragonData {
 
 
     /// <summary>
-    /// Get the cost (in SC or HC) of upgrading this dragon (both a stat upgrade or acquiring new power).
+    /// Get the cost (in SC or HC) of upgrading a stat in this dragon 
     /// </summary>
     /// <returns>The upgrade price in the proper currency.</returns>
-    public Price GetNextUpgradePrice ()
+    /// <param name="_stat">The stat to upgrade</param>
+    public Price GetNextStatUpgradePrice (Stat _stat)
     {
-        // If the max level has been reached return null
-        if (m_level == MaxLevel) return null;
+        // Get current stat level
+        int statLevel = m_stats[(int)_stat].level;
+
+        // Make sure this upgrade exists in the content table
+        if (statLevel >= m_upgrades.Count) return null;
 
         // Take the upgrade that corresponds the next level 
-        DefinitionNode nextUpgrade = m_upgrades[m_level];
+        DefinitionNode nextUpgrade = m_upgrades[statLevel];
 
         int priceSC = nextUpgrade.GetAsInt("priceSC");
         int priceHC = nextUpgrade.GetAsInt("priceHC");
@@ -429,13 +435,47 @@ public class DragonDataSpecial : IDragonData {
     }
 
 
-	/// <summary>
-	/// Check whether this dragon can upgrade stats or not.
-	/// Depends on biggest unlocked tier on normal progression.
-	/// Doesn't check individual stats max level (use each stat's data for that), just if all stats are maxed.
-	/// </summary>
-	/// <returns>Whether this dragon can upgrade stats or not.</returns>
-	public bool CanUpgradeStats() {
+    /// <summary>
+    /// Get the cost (in SC or HC) of upgrading a power in this dragon 
+    /// </summary>
+    /// <returns>The upgrade price in the proper currency.</returns>
+    /// <param name="_dragonLevel">The level of the dragon where this powerup is accquired</param>
+    public Price GetNextPowerUpgradePrice()
+    {
+        // Make sure there is a power upgrade in the next level
+        DefinitionNode nextPower = m_specialPowerDefsByOrder.Find(d => d.GetAsInt("upgradeLevelToUnlock") == (m_level + 1) );
+
+        // No power, ciao!
+        if (nextPower == null) return null;
+
+
+        int priceSC = nextPower.GetAsInt("priceSC");
+        int priceHC = nextPower.GetAsInt("priceHC");
+
+        if (priceSC > 0)
+        {
+            // Soft currency
+            return new Price(priceSC, UserProfile.Currency.SOFT);
+        }
+
+        if (priceHC > 0)
+        {
+            // Hard currency
+            return new Price(priceHC, UserProfile.Currency.HARD);
+        }
+
+        // [JOM] For now the upgrades will be only paid in SC and HC. No more golden fragments.
+
+        return null;
+    }
+
+    /// <summary>
+    /// Check whether this dragon can upgrade stats or not.
+    /// Depends on biggest unlocked tier on normal progression.
+    /// Doesn't check individual stats max level (use each stat's data for that), just if all stats are maxed.
+    /// </summary>
+    /// <returns>Whether this dragon can upgrade stats or not.</returns>
+    public bool CanUpgradeStats() {
 		// Never if all stats are maxed!
 		if(allStatsMaxed) return false;
 

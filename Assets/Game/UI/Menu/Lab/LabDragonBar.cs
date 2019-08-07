@@ -18,7 +18,7 @@ public class LabDragonBar : MonoBehaviour {
     [SerializeField] private AnimationCurve m_positionLevelsCurve = null;
     [SerializeField] private float m_positionCurveScale = 10f;
 
-    [Separator("debug")]
+    [Separator("Debug")]
     [SerializeField] private int m_debugMaxLevel = 30;
     [SerializeField] private int[] m_debugLevelTier = { 0, 10, 20, 30 };
     [SerializeField] private int[] m_debugLevelSkill = { 5, 15, 25 };
@@ -35,6 +35,7 @@ public class LabDragonBar : MonoBehaviour {
 
     private int m_maxLevel;
     private int[] m_levelSkill;
+    private int[] m_levelTier;
     private int m_currentLevel;
     private int[] m_unlockClassicTier;
     private int m_maxTierUnlocked;
@@ -75,12 +76,12 @@ public class LabDragonBar : MonoBehaviour {
 
         // tier data
         List<DefinitionNode> tierDefs = _dragonData.specialTierDefsByOrder;
-        //m_levelTier = new int[tierDefs.Count];
-        m_unlockClassicTier = new int[tierDefs.Count];
-        for (int i = 0; i < tierDefs.Count; ++i)
+        m_levelTier = new int[tierDefs.Count - 1];
+
+        // Skip the base level (0)
+        for (int i = 1; i < tierDefs.Count; i++)
         {
-            //m_levelTier[i] = tierDefs[i].GetAsInt("upgradeLevelToUnlock");
-            m_unlockClassicTier[i] = (int)IDragonData.SkuToTier(tierDefs[i].GetAsString("mainProgressionRestriction"));
+            m_levelTier[i - 1] = tierDefs[i].GetAsInt("upgradeLevelToUnlock");
         }
 
         //skills
@@ -90,6 +91,7 @@ public class LabDragonBar : MonoBehaviour {
         {
             m_levelSkill[i] = m_definitionSkill[i].GetAsInt("upgradeLevelToUnlock");
         }
+
 
         SetLevel(_dragonData.Level);
         m_maxTierUnlocked = (int)DragonManager.biggestOwnedDragon.tier;
@@ -126,7 +128,7 @@ public class LabDragonBar : MonoBehaviour {
             }
         }
 
-        /*if (m_levelTier.Length > m_tierElements.Count) {
+        if (m_levelTier.Length > m_tierElements.Count) {
             for (int i = m_tierElements.Count; i < m_levelTier.Length; ++i) {
                 GameObject go = Instantiate(m_elementTierPrefab);
                 LabDragonBarTierElement tierElement = go.GetComponent<LabDragonBarTierElement>();
@@ -134,7 +136,7 @@ public class LabDragonBar : MonoBehaviour {
                 go.transform.SetParent(m_content.transform, false);
                 m_tierElements.Add(tierElement);
             }
-        }*/
+        }
 
         //Hide everything
         if (m_skillTooltip != null) {
@@ -187,10 +189,16 @@ public class LabDragonBar : MonoBehaviour {
         // sum up the space reserved for Tier icons
         float tiersWidth = 0f;
 
+        for (int i = 0; i < m_levelTier.Length; ++i)
+        {
+            float scale = m_scaleTiersCurve.Evaluate((float)m_levelTier[i] / m_maxLevel);
+            float width = m_tierElements[0].GetWidth() * scale;
 
+            tiersWidth += width + m_blankSpace;
+        }
 
-        // sum up the space reserved levels and skills
-        float levelCount = (m_maxLevel );
+        // sum up the space reserved for levels 
+        float levelCount = (m_maxLevel - m_skillElements.Count - m_tierElements.Count);
 
         // get the width of each level slot
         float levelWidth = (contentWidth - tiersWidth - m_blankSpace * levelCount) / levelCount;
@@ -215,21 +223,30 @@ public class LabDragonBar : MonoBehaviour {
             if (i <= m_currentLevel) {
                 elementState = LabDragonBarElement.State.OWNED;
             } else {
-                if (m_unlockClassicTier[m_tierElementIndex] <= m_maxTierUnlocked) {
-                    elementState = LabDragonBarElement.State.AVAILABLE;
-                } else {
-                    elementState = LabDragonBarElement.State.LOCKED;
-                }
+                elementState = LabDragonBarElement.State.LOCKED;
             }
 
-            if (m_levelSkill.IndexOf(i) >= 0) {
+            if (m_levelTier.IndexOf(i) >= 0)
+            {
+                // this level is a Tier icon
+                scaleFactor = m_scaleTiersCurve.Evaluate((float)i / m_maxLevel);
+                posY = m_levelElements[0].GetHeight() * m_scaleLevelsCurve.Evaluate((float)i / m_maxLevel) * 0.5f;
+
+                element = m_tierElements[m_tierElementIndex];
+                element.SetGlobalScale(scaleFactor, scaleFactor);
+
+                (element as LabDragonBarTierElement).SetUnlockLevel(i);
+
+                m_tierElementIndex++;
+            }
+            else if (m_levelSkill.IndexOf(i) >= 0) {
                 // this is a level with a skill
                 scaleFactor = levelScale;
 
                 element = m_skillElements[m_skillElementIndex];
                 element.SetLocalScale(scaleFactor, 1f);
 
-				(element as LabDragonBarSkillElement).SetUnlockInfo(i, (DragonTier)(m_tierElementIndex + 1));
+				(element as LabDragonBarSkillElement).SetUnlockLevel(i);
 
                 m_skillElementIndex++;
             } else {
@@ -250,6 +267,8 @@ public class LabDragonBar : MonoBehaviour {
             deltaX += (width + m_blankSpace) * 0.5f;
 
             element.gameObject.SetActive(true);
+
+            // Update the element look
             element.SetState(elementState);
 
             m_sortedElements.Add(element);
@@ -261,7 +280,8 @@ public class LabDragonBar : MonoBehaviour {
     public void BuildUsingDebugValues() {
         m_maxLevel = m_debugMaxLevel;
         m_levelSkill = m_debugLevelSkill;
-		SetLevel(m_debugCurrentLevel);
+        m_levelTier = m_debugLevelTier;
+        SetLevel(m_debugCurrentLevel);
         m_unlockClassicTier = new int[] {1, 2, 3, 4};
 
         m_maxTierUnlocked = m_debugMaxTierUnlocked;

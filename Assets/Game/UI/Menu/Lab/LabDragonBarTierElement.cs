@@ -1,11 +1,8 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class LabDragonBarTierElement : LabDragonBarLockedElement {
-    [Separator("Tier icons")]
-    [SerializeField] private Sprite[] m_tierIconSprites;
-
-    [SerializeField] private Image m_icon;
+public class LabDragonBarTierElement : LabDragonBarElement {
+    [Separator("Tier")]
 	[SerializeField] private ParticleSystem m_unlockFX = null;
 
 	private LabDragonBarTooltip m_tooltip;
@@ -30,7 +27,6 @@ public class LabDragonBarTierElement : LabDragonBarLockedElement {
 
     public void SetTier(int _index) {
 		m_tier = (DragonTier)(_index + 1);
-        m_icon.sprite = m_tierIconSprites[_index];
     }
 
 	public void SetTooltip(LabDragonBarTooltip _tooltip) {
@@ -46,14 +42,9 @@ public class LabDragonBarTierElement : LabDragonBarLockedElement {
 			string.Empty
 		);
 
-		m_tooltip.SetRequiredTier(
-			m_requiredTier,
-			m_state != State.LOCKED
-		);
-
 		m_tooltip.SetUnlockLevel(
 			m_unlockLevel,
-			m_state == State.AVAILABLE || m_state == State.OWNED
+			m_state == State.OWNED
 		);
 	}
 
