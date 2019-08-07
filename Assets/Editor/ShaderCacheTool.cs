@@ -32,10 +32,10 @@ public class ShaderCacheTool : EditorWindow {
         "HI_DETAIL_ON"
     };
 
-    private static string materialDatabase = "material_database.txt";
-    private static string shaderCacheExcludeList = "shader_cache_exclude_list.txt";
+    private const string materialDatabase = "material_database.txt";
+    private const string shaderCacheExcludeList = "shader_cache_exclude_list.txt";
 
-    private static string logFile = "shader_cache.log";
+    private const string logFile = "shader_cache.log";
 
     private static bool OpenLogFile()
     {
@@ -50,6 +50,21 @@ public class ShaderCacheTool : EditorWindow {
         }
     }
 
+    private static void Log(object msg, string lf = logFile)
+    {
+        try
+        {
+            StreamWriter swl = File.AppendText(lf);
+            swl.WriteLine(msg);
+            swl.Close();
+        }
+        catch (Exception e)
+        {
+            Debug.Log("Exception :" + e);
+        }
+    }
+
+
     private static bool ResetMaterialDatabase()
     {
         try
@@ -63,25 +78,19 @@ public class ShaderCacheTool : EditorWindow {
         }
     }
 
-
-
-    private static void Log(object msg)
-    {
-        try
-        {
-            StreamWriter swl = File.AppendText(logFile);
-            swl.WriteLine(msg);
-            swl.Close();
-        }
-        catch (Exception e)
-        {
-            Debug.Log("Exception :" + e);
-        }
-    }
-
     private static void insertMaterialDatabase(Material mat)
     {
-
+        Log("-------------------------------------------------------------------------------------------------------------------------------------------------------------", materialDatabase);
+        Log("Material:   " + mat.name, materialDatabase);
+        Log("Shader:     " + mat.shader.name, materialDatabase);
+        Log("LightMode:  " + mat.GetTag("LightMode", false), materialDatabase);
+        string kw = "";
+        string[] keywords = mat.shaderKeywords;
+        for (int c = 0; c < keywords.Length; c++)
+        {
+            kw += keywords[c] + " ";
+        }
+        Log("Keywords:   " + kw, materialDatabase);
     }
 
     private class ShaderContent
@@ -103,7 +112,9 @@ public class ShaderCacheTool : EditorWindow {
 
     private static Dictionary<string, ShaderContent> m_shaderValidKeywords = new Dictionary<string, ShaderContent>();
 
+    private static List<Material> m_sortedMaterialList = new List<Material>();
 
+/*
     private static bool addVariant(ShaderVariantCollection svc, Shader shader, PassType type, List<string> keywords)
     {
         ShaderVariantCollection.ShaderVariant sv;
@@ -112,7 +123,7 @@ public class ShaderCacheTool : EditorWindow {
         sv.shader = shader;
         return svc.Add(sv);
     }
-
+*/
     private static void DebugVariant(Shader shader, string lightMode, string[] keywords, bool succes)
     {
         string kw = "";
@@ -286,6 +297,7 @@ public class ShaderCacheTool : EditorWindow {
         AssetFinder.FindAssetInContent<Material>(Directory.GetCurrentDirectory() + "\\Assets", out materialList);
         m_shaderValidKeywords.Clear();
 
+
         loadShaderCacheExcludeList();
 
         List<string> keywords = new List<string>();
@@ -293,6 +305,7 @@ public class ShaderCacheTool : EditorWindow {
         for (int quality = 0; quality < qualityVariants.Length; quality++)
         {
             ShaderVariantCollection svc = new ShaderVariantCollection();
+            m_sortedMaterialList.Clear();
 
             for (int c = 0; c < materialList.Length; c++)
             {
@@ -323,12 +336,35 @@ public class ShaderCacheTool : EditorWindow {
                 sv.keywords = keywords.ToArray();
                 sv.shader = m.shader;
 
+                m_sortedMaterialList.Add(m);
+
                 DebugVariant(sv.shader, sc.lightmode, sv.keywords, svc.Add(sv));
+
                 EditorUtility.DisplayProgressBar("Stripping shader caches", "Processing materials", (float)(c + quality * materialList.Length) / ((float)materialList.Length * 3.0f));
 
             }
             string svcName = "SVC_" + qualityVariants[quality] + ".shadervariants";
             AssetDatabase.CreateAsset(svc, "Assets/Misc/ShaderVariantCollections/" + svcName);
+        }
+
+
+        for (int c = 0; c < m_sortedMaterialList.Count - 1; c++)
+        {
+            for (int d = c + 1; d < m_sortedMaterialList.Count; d++)
+            {
+                Material m1 = m_sortedMaterialList[c];
+                Material m2 = m_sortedMaterialList[d];
+                if (string.Compare(m2.name, m1.name) < 0)
+                {
+                    m_sortedMaterialList[c] = m2;
+                    m_sortedMaterialList[d] = m1;
+
+                }
+            }
+        }
+        foreach (Material m in m_sortedMaterialList)
+        {
+            insertMaterialDatabase(m);
         }
 
 
