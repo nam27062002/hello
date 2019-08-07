@@ -362,6 +362,11 @@ public class ShaderCacheTool : EditorWindow {
                 }
             }
         }
+
+        ResetMaterialDatabase();
+        Log("-------------------------------------------------------------------------------------------------------------------------------------------------------------", materialDatabase);
+        Log("HD ver: " + GameSettings.internalVersion.ToString(), materialDatabase);
+
         foreach (Material m in m_sortedMaterialList)
         {
             insertMaterialDatabase(m);
