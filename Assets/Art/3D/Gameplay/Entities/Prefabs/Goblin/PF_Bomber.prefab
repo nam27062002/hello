@@ -38,7 +38,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &186582
 GameObject:
   m_ObjectHideFlags: 0
@@ -143,6 +143,7 @@ MonoBehaviour:
   m_animA: 
   m_animB: 
   m_animC: 
+  m_materialChangeExceptions: []
   m_useFreezeParticle: 0
   m_freezeParticleScale: 1
   m_useMoveAnimInLove: 0
@@ -358,6 +359,23 @@ MonoBehaviour:
   m_onPanicAudio: hd_goblin_alert
   m_idleAudio: 
   m_skins: []
+  m_entity: {fileID: 11470568}
+  m_animator: {fileID: 95215739456643256}
+  m_isAnimatorAvailable: 0
+  m_renderers:
+  - {fileID: 137820824761668126}
+  - {fileID: 23403669608973268}
+  - {fileID: 23397653997407562}
+  - {fileID: 23756763920536274}
+  - {fileID: 23200329618039878}
+  - {fileID: 23847583527041136}
+  m_specialAnimations: 000000
+  m_animA_Hash: 0
+  m_animB_Hash: 0
+  m_animC_Hash: 0
+  m_animEvents: {fileID: 114576757677917674}
+  m_transform: {fileID: 462874}
+  m_view: {fileID: 4718923390727862}
 --- !u!114 &11470568
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -370,6 +388,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_tags: 16
+  m_otherSpawnables:
+  - {fileID: 114073425911615532}
+  - {fileID: 114685406883081938}
+  - {fileID: 11421066}
+  m_otherSpawnablesCount: 3
+  m_pilot: {fileID: 114073425911615532}
+  m_machine: {fileID: 114685406883081938}
+  m_viewControl: {fileID: 11421066}
+  m_equip: {fileID: 0}
   m_sku: Bomber
   m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1
@@ -954,6 +981,7 @@ MonoBehaviour:
   m_energy: 10
   m_energyDrainSec: 1
   m_energyRecoverSec: 1
+  m_machine: {fileID: 0}
   m_brainResource: {fileID: 11400000, guid: 51430fe07f0e141f99deacb67d7c126c, type: 2}
   m_railSeparation:
     min: 0.5

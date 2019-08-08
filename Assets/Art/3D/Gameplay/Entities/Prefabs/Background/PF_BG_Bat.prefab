@@ -30,7 +30,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1325746868939702
 GameObject:
   m_ObjectHideFlags: 0
@@ -97,7 +97,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1248841674399082}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 21.36}
+  m_LocalPosition: {x: -315.1848, y: 5.9724894, z: -1.9044203}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4151952462839934}
@@ -148,6 +148,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_tags: 0
+  m_otherSpawnables:
+  - {fileID: 114992737755484292}
+  - {fileID: 114557981018259724}
+  - {fileID: 114453511955768722}
+  m_otherSpawnablesCount: 3
+  m_pilot: {fileID: 114992737755484292}
+  m_machine: {fileID: 114557981018259724}
+  m_viewControl: {fileID: 114453511955768722}
+  m_equip: {fileID: 0}
 --- !u!114 &114453511955768722
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -386,6 +395,18 @@ MonoBehaviour:
   m_onPanicAudio: 
   m_idleAudio: 
   m_skins: []
+  m_entity: {fileID: 0}
+  m_animator: {fileID: 95764698694427460}
+  m_isAnimatorAvailable: 0
+  m_renderers:
+  - {fileID: 137184038443672662}
+  m_specialAnimations: 000000
+  m_animA_Hash: 0
+  m_animB_Hash: 0
+  m_animC_Hash: 0
+  m_animEvents: {fileID: 0}
+  m_transform: {fileID: 4398054069080064}
+  m_view: {fileID: 4151952462839934}
 --- !u!114 &114557981018259724
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -428,6 +449,7 @@ MonoBehaviour:
   m_energy: 10
   m_energyDrainSec: 1
   m_energyRecoverSec: 1
+  m_machine: {fileID: 0}
   m_brainResource: {fileID: 11400000, guid: 17be5771a8e654a079d3db7f077859e6, type: 2}
   m_railSeparation:
     min: 0.5

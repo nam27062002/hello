@@ -22,14 +22,14 @@ public class MenuDragonBirdView : MonoBehaviour {
 	{
 		m_renderer.enabled = true;
 		if ( m_prepareForBurning )
-			m_ashMaterial.SetFloat( GameConstants.Material.ASH_LEVEL , 0);
+			m_ashMaterial.SetFloat( GameConstants.Materials.Property.ASH_LEVEL , 0);
 		m_renderer.material = m_originalMaterial;
 	}
 
 	void Burn()
 	{
 		m_renderer.enabled = true;
-		m_ashMaterial.SetFloat( GameConstants.Material.ASH_LEVEL , 0);
+		m_ashMaterial.SetFloat( GameConstants.Materials.Property.ASH_LEVEL , 0);
 		// Swap material
 		m_renderer.material = m_ashMaterial;
 		// Burn
@@ -42,10 +42,10 @@ public class MenuDragonBirdView : MonoBehaviour {
 		while( m_timer < DISINTEGRATE_TIME )
 		{
 			m_timer += Time.deltaTime;
-			m_ashMaterial.SetFloat( GameConstants.Material.ASH_LEVEL, m_timer / DISINTEGRATE_TIME);
+			m_ashMaterial.SetFloat( GameConstants.Materials.Property.ASH_LEVEL, m_timer / DISINTEGRATE_TIME);
 			yield return null;
 		}
-		m_ashMaterial.SetFloat( GameConstants.Material.ASH_LEVEL , 1);
+		m_ashMaterial.SetFloat( GameConstants.Materials.Property.ASH_LEVEL , 1);
 		m_renderer.enabled = false;
 	}
 

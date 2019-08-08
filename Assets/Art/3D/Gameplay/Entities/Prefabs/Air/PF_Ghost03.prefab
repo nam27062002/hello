@@ -32,7 +32,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1687841853255914
 GameObject:
   m_ObjectHideFlags: 0
@@ -376,6 +376,18 @@ MonoBehaviour:
   m_onPanicAudio: 
   m_idleAudio: hd_ghost_idle
   m_skins: []
+  m_entity: {fileID: 114790596522833880}
+  m_animator: {fileID: 95110950070644918}
+  m_isAnimatorAvailable: 0
+  m_renderers:
+  - {fileID: 137186948102242768}
+  m_specialAnimations: 000000
+  m_animA_Hash: 0
+  m_animB_Hash: 0
+  m_animC_Hash: 0
+  m_animEvents: {fileID: 0}
+  m_transform: {fileID: 4658928853664522}
+  m_view: {fileID: 4008400807698740}
 --- !u!114 &114656578000673320
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -456,6 +468,7 @@ MonoBehaviour:
   m_energy: 10
   m_energyDrainSec: 1
   m_energyRecoverSec: 1
+  m_machine: {fileID: 0}
   m_brainResource: {fileID: 11400000, guid: 8abf7adf253e448d7bb15e811b8dcad7, type: 2}
   m_railSeparation:
     min: 0.5
@@ -480,6 +493,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_tags: 8
+  m_otherSpawnables:
+  - {fileID: 114735516776990068}
+  - {fileID: 114311415021949368}
+  - {fileID: 114771277628690562}
+  m_otherSpawnablesCount: 3
+  m_pilot: {fileID: 114771277628690562}
+  m_machine: {fileID: 114735516776990068}
+  m_viewControl: {fileID: 114311415021949368}
+  m_equip: {fileID: 0}
   m_sku: Ghost03
   m_hideNeedTierMessage: 1
   m_dieOutsideFrustum: 1

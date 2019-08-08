@@ -263,6 +263,12 @@ public class CPServerTab : MonoBehaviour {
         Crashlytics.Crash();
     }
 
+    public void OnCrashlyticsRecordException()
+    {
+        Output("Crashlytics: record exception");
+        Fabric.Crashlytics.Crashlytics.RecordCustomException("Crashlytics", "Record custom exception test", "");
+    }
+
     private void OnIntersitialDone( bool success )
     {
         string msg = "OnInterstitialDone success = " + success;

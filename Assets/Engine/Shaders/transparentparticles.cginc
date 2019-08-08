@@ -1,23 +1,23 @@
-// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
 // Upgrade NOTE: excluded shader from DX11; has structs without semantics (struct v2f members _LightmapIntensity)
 //#pragma exclude_renderers d3d11
 
 struct appdata_t {
 	float4 vertex : POSITION;
 	fixed4 color : COLOR;
-	float4 texcoord : TEXCOORD0;
+	half4 texcoord : TEXCOORD0;
 };
 
 struct v2f {
 	float4 vertex : SV_POSITION;
 	fixed4 color : COLOR;
-	float2 texcoord : TEXCOORD0;
+	half2 texcoord : TEXCOORD0;
 #if defined(EXTENDED_PARTICLES)
-	float2 particledata : TEXCOORD1;
+	half2 particledata : TEXCOORD1;
 #endif	//EXTENDED_PARTICLES
 
 #if defined(NOISE_TEXTURE) || defined(FLOWMAP)
-	float2 noiseuv : TEXCOORD2;
+	half2 noiseuv : TEXCOORD2;
 #endif	//NOISE_TEXTURE || FLOWMAP
 };
 
@@ -111,25 +111,24 @@ v2f vert(appdata_t v)
 fixed4 frag(v2f i) : COLOR
 {
 	fixed4 tex;
-	//fixed4 tex = fixed4(1.0, 1.0, 1.0, 1.0);// tex2D(_MainTex, i.texcoord);
 	fixed4 col;
 
 #ifdef EXTENDED_PARTICLES
 
 #if defined(APPLY_RGB_COLOR_VERTEX)
-	float4 vcolor = i.color;
+	fixed4 vcolor = i.color;
 #else	//APPLY_RGB_COLOR_VERTEX
-	float4 vcolor = float4(1.0, 1.0, 1.0, i.color.w);
+	fixed4 vcolor = float4(1.0, 1.0, 1.0, i.color.w);
 #endif	//APPLY_RGB_COLOR_VERTEX
 
-	float nEmission = 1.0;
-	float nAlpha = 1.0;
-	float nDissolve = 1.0;
+	fixed nEmission = 1.0;
+	fixed nAlpha = 1.0;
+	fixed nDissolve = 1.0;
 
 
 #if defined(NOISE_TEXTURE)
 	tex = tex2D(_MainTex, i.texcoord);
-	float3 noise = tex2D(_NoiseTex, i.noiseuv);
+	fixed3 noise = tex2D(_NoiseTex, i.noiseuv);
 
 #if defined(NOISE_TEXTURE_EMISSION)
 	nEmission = noise.x;
@@ -147,16 +146,16 @@ fixed4 frag(v2f i) : COLOR
 	
 //#endif	//NOISE_TEXTURE
 #elif defined(FLOWMAP)
-	float2 off = (tex2D(_NoiseTex, i.noiseuv).xy * 2.0f - 1.0f) * _NoisePanning.y;
+	fixed2 off = (tex2D(_NoiseTex, i.noiseuv).xy * 2.0f - 1.0f) * _NoisePanning.y;
 //	float2 off = float2(1.0, 0.0);
-	float time = _Time.y * _NoisePanning.x;
-	float phase0 = frac(time * 0.5f + 0.5f);
-	float phase1 = frac(time * 0.5f + 1.0f);
+	half time = _Time.y * _NoisePanning.x;
+	half phase0 = frac(time * 0.5f + 0.5f);
+	half phase1 = frac(time * 0.5f + 1.0f);
 
 	tex = tex2D(_MainTex, i.texcoord + off * phase0);
 	fixed4 tex2 = tex2D(_MainTex, i.texcoord + off * phase1);
 
-	float flowLerp = abs((0.5f - phase0) / 0.5f);
+	half flowLerp = abs((0.5f - phase0) / 0.5f);
 
 	tex = lerp(tex, tex2, flowLerp);
 //	tex = fixed4(1.0, 0.0, 0.0, 1.0);
@@ -169,10 +168,10 @@ fixed4 frag(v2f i) : COLOR
 #if defined(DISSOLVE_ENABLED)
 
 #if defined(DISSOLVE_VERTEXCOLORALFA)
-	float ramp = -1.0 + (i.color.w * 2.0);
+	fixed ramp = -1.0 + (i.color.w * 2.0);
 	col.a = clamp(tex.g * smoothstep(_DissolveStep.x, _DissolveStep.y, (tex.b + ramp) * nDissolve) * _OpacitySaturation * nAlpha, 0.0, 1.0);
 #else
-	float ramp = -1.0 + (i.particledata.x * 2.0);
+	fixed ramp = -1.0 + (i.particledata.x * 2.0);
 	col.a = clamp(tex.g * smoothstep(_DissolveStep.x, _DissolveStep.y, (tex.b + ramp) * nDissolve) * _OpacitySaturation * vcolor.w * nAlpha, 0.0, 1.0);
 #endif
 
@@ -181,7 +180,7 @@ fixed4 frag(v2f i) : COLOR
 #endif	//DISSOLVE_ENABLED
 
 #if !defined(COLOR_TINT)
-	float lerpValue = clamp(tex.r * i.particledata.y * _ColorMultiplier * nEmission, 0.0, 1.0);
+	half lerpValue = clamp(tex.r * i.particledata.y * _ColorMultiplier * nEmission, 0.0, 1.0);
 #endif
 
 #ifdef BLENDMODE_ALPHABLEND
@@ -220,7 +219,7 @@ fixed4 frag(v2f i) : COLOR
 
 #ifdef BLENDMODE_ADDITIVEALPHABLEND
 	tex *= _TintColor;
-	float luminance = clamp(dot(tex, float4(0.2126, 0.7152, 0.0722, 0.0)) * tex.a * _ABOffset, 0.0, 1.0);
+	half luminance = clamp(dot(tex, float4(0.2126, 0.7152, 0.0722, 0.0)) * tex.a * _ABOffset, 0.0, 1.0);
 	fixed4 one = fixed4(1, 1, 1, 1);
 	col = lerp(2.0 * (i.color * tex), one - 2.0 * (one - i.color) * (one - tex), luminance);
 

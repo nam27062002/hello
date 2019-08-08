@@ -51,7 +51,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1004135730720378
 GameObject:
   m_ObjectHideFlags: 0
@@ -522,6 +522,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_tags: 518
+  m_otherSpawnables:
+  - {fileID: 114081387238307734}
+  - {fileID: 114000011653825936}
+  - {fileID: 114000012425715312}
+  - {fileID: 114000010733057202}
+  - {fileID: 114449419822361122}
+  m_otherSpawnablesCount: 5
+  m_pilot: {fileID: 114000011653825936}
+  m_machine: {fileID: 114081387238307734}
+  m_viewControl: {fileID: 114000012425715312}
+  m_equip: {fileID: 114751560426740068}
   m_sku: EnemyTier0
   m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1
@@ -540,6 +551,7 @@ MonoBehaviour:
   m_energy: 10
   m_energyDrainSec: 1
   m_energyRecoverSec: 1
+  m_machine: {fileID: 0}
   m_brainResource: {fileID: 11400000, guid: d95e4279165be4a26a70cb1fa716b06f, type: 2}
   m_railSeparation:
     min: 0.5
@@ -804,6 +816,19 @@ MonoBehaviour:
   m_onPanicAudio: 
   m_idleAudio: 
   m_skins: []
+  m_entity: {fileID: 114000011541247252}
+  m_animator: {fileID: 95887641257998504}
+  m_isAnimatorAvailable: 0
+  m_renderers:
+  - {fileID: 137814010693299716}
+  - {fileID: 137475330991372098}
+  m_specialAnimations: 000000
+  m_animA_Hash: 363092969
+  m_animB_Hash: 0
+  m_animC_Hash: 0
+  m_animEvents: {fileID: 114254353516753420}
+  m_transform: {fileID: 4000014232033856}
+  m_view: {fileID: 4849854715229246}
 --- !u!114 &114081387238307734
 MonoBehaviour:
   m_ObjectHideFlags: 1

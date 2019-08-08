@@ -123,6 +123,14 @@ public class Pool {
 		m_notFreeObjects.Clear();
 		m_returnObjects.Clear();
 	}
+
+	/// Will destroy all free instances
+	public void ClearFreeInstances(){
+		while(m_freeObjects.Count > 0) {
+			GameObject go = m_freeObjects.Dequeue();
+			GameObject.Destroy(go);
+		}
+	}
 	
 	public GameObject Get(bool _activate) {			
 		if (m_freeObjects.Count <= 0 && m_canGrow) {

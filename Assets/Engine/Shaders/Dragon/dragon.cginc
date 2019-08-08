@@ -1,4 +1,4 @@
-
+﻿
 struct appdata_t {
 	float4 vertex : POSITION;
 	float2 texcoord : TEXCOORD0;
@@ -13,14 +13,14 @@ struct v2f {
 	float4 vertex : SV_POSITION;
 	half2 texcoord : TEXCOORD0;
 //	float3 vLight : COLOR;
-	float3 normalWorld : NORMAL;
+	half3 normalWorld : NORMAL;
 #ifdef NORMALMAP
-	float3 tangentWorld : TEXCOORD2;
-	float3 binormalWorld : TEXCOORD4;
+	half3 tangentWorld : TEXCOORD2;
+	half3 binormalWorld : TEXCOORD4;
 #endif
-	fixed3 viewDir : TEXCOORD5;
+	half3 viewDir : TEXCOORD5;
 #if defined(FXLAYER_FIRE) || defined(FXLAYER_DISSOLVE) || defined(VERTEXOFFSET)
-	fixed2 screenPos : TEXCOORD1;
+	half2 screenPos : TEXCOORD1;
 #endif
 };
 
@@ -108,12 +108,12 @@ v2f vert(appdata_t v)
 	v2f o;
 
 #if defined(VERTEXOFFSET)
-	float smooth = v.color.r;		//smoothstep(0.7, -0.0, v.vertex.z);
+	fixed smooth = v.color.r;		//smoothstep(0.7, -0.0, v.vertex.z);
 //	v.vertex.xyz += v.normal * sin(v.vertex.x * 3.0 + _Time.y * 5.0) * 0.2 * smooth;
 
-	float wave = sin((_Time.y * _VOSpeed) + v.vertex.y + v.vertex.x) * smooth * _VOAmplitude;
+	half wave = sin((_Time.y * _VOSpeed) + v.vertex.y + v.vertex.x) * smooth * _VOAmplitude;
 
-	float4 axis = float4(
+	half4 axis = float4(
 #if defined(VERTEXOFFSETX)
 		1.0,
 #else
@@ -143,13 +143,13 @@ v2f vert(appdata_t v)
 	o.texcoord = TRANSFORM_TEX(v.texcoord, _MainTex);
 
 	// Normal
-	float3 normal = UnityObjectToWorldNormal(v.normal);
+	half3 normal = UnityObjectToWorldNormal(v.normal);
 
 	// Light Probes
 //	o.vLight = ShadeSH9(float4(normal, 1.0));
 
 	// Half View - See: Blinn-Phong
-	float3 viewDirection = normalize(_WorldSpaceCameraPos - mul(unity_ObjectToWorld, v.vertex).xyz);
+	half3 viewDirection = normalize(_WorldSpaceCameraPos - mul(unity_ObjectToWorld, v.vertex).xyz);
 	o.viewDir = viewDirection;
 
 	// To calculate tangent world
@@ -162,13 +162,8 @@ v2f vert(appdata_t v)
 #endif
 
 #ifdef DOUBLESIDED
-	float s = sign(dot(o.normalWorld, o.viewDir));
+	half s = sign(dot(o.normalWorld, o.viewDir));
 	o.normalWorld *= s;
-
-//#ifdef NORMALMAP
-//	o.tangentWorld *= s;
-//	o.binormalWorld *= s;
-//#endif
 
 #endif
 
@@ -196,17 +191,17 @@ fixed4 frag(v2f i) : SV_Target
 #endif
 
 #ifdef NORMALMAP
-	float3 encodedNormal = UnpackNormal(tex2D(_BumpMap, i.texcoord));
+	half3 encodedNormal = UnpackNormal(tex2D(_BumpMap, i.texcoord));
 	encodedNormal.z *= _NormalStrenght;
-	float3x3 local2WorldTranspose = float3x3(i.tangentWorld, i.binormalWorld, i.normalWorld);
-	float3 normalDirection = normalize(mul(encodedNormal, local2WorldTranspose));
+	half3x3 local2WorldTranspose = float3x3(i.tangentWorld, i.binormalWorld, i.normalWorld);
+	half3 normalDirection = normalize(mul(encodedNormal, local2WorldTranspose));
 
 #else
-	float3 normalDirection = i.normalWorld;
+	half3 normalDirection = i.normalWorld;
 #endif
 
-	float3 light0Direction = normalize(_WorldSpaceLightPos0.xyz);
-	float3 light1Direction = normalize(_SecondLightDir.xyz);
+	half3 light0Direction = normalize(_WorldSpaceLightPos0.xyz);
+	half3 light1Direction = normalize(_SecondLightDir.xyz);
 	// normalDirection = i.normal;
 	fixed4 diffuse = max(0,dot(normalDirection, light0Direction)) * _LightColor0;
 	diffuse += max(0, dot(normalDirection, light1Direction)) * _SecondLightColor;
@@ -214,20 +209,20 @@ fixed4 frag(v2f i) : SV_Target
 
 #ifdef SPECULAR
 	// Specular
-	float3 halfDir = normalize(i.viewDir + light0Direction);
+	half3 halfDir = normalize(i.viewDir + light0Direction);
 
 #ifdef DIFFUSE_AS_SPECULARMASK
-	float specMsk = dot(main.xyz, float3(0.3, 0.59, 0.11));
+	fixed specMsk = dot(main.xyz, float3(0.3, 0.59, 0.11));
 #else
-	float specMsk = detail.g;
+	fixed specMsk = detail.g;
 #endif
 
-	float specularLight = pow(max(dot(normalDirection, halfDir), 0), _SpecExponent) * specMsk;
+	half specularLight = pow(max(dot(normalDirection, halfDir), 0), _SpecExponent) * specMsk;
 	halfDir = normalize(i.viewDir + light1Direction);
 	specularLight += pow(max(dot(normalDirection, halfDir), 0), _SpecExponent) * specMsk;
 
 #else
-	float specularLight = 0.0;
+	half specularLight = 0.0;
 
 #endif
 
@@ -245,7 +240,7 @@ fixed4 frag(v2f i) : SV_Target
 //	fixed specMask = 0.2126 * reflection.r + 0.7152 * reflection.g + 0.0722 * reflection.b;
 //	float ref = specMask * _ReflectionAmount * detail.b;
 
-	float ref = _ReflectionAmount * detail.b;
+	fixed ref = _ReflectionAmount * detail.b;
 
 	col = (1.0 - ref) * main + ref * reflection;
 
@@ -256,7 +251,7 @@ fixed4 frag(v2f i) : SV_Target
 	fixed4 intensity = tex2D(_FireMap, (i.screenPos.xy + half2(_Time.y * _FireSpeed, 0.25)));
 	intensity *= tex2D(_FireMap, (i.screenPos.xy + float2(_Time.y * _FireSpeed * 0.5, -0.25)));// +pow(i.uv.y, 3.0);
 
-	float fireMask = _FireAmount * detail.b;
+	fixed fireMask = _FireAmount * detail.b;
 	col = lerp(main, intensity, fireMask); // lerp(fixed4(1.0, 0.0, 0.0, 1.0), fixed4(1.0, 1.0, 0.0, 1.0), intensity);
 
 #elif defined (FXLAYER_DISSOLVE)
@@ -309,7 +304,7 @@ fixed4 frag(v2f i) : SV_Target
 
 // Fresnel
 #ifdef FRESNEL
-	float fresnel = clamp(pow(max(1.0 - dot(i.viewDir, normalDirection), 0.0), _Fresnel), 0.0, 1.0);
+	half fresnel = clamp(pow(max(1.0 - dot(i.viewDir, normalDirection), 0.0), _Fresnel), 0.0, 1.0);
 #ifdef BLENDFRESNEL
 	col.xyz = lerp(col.xyz, _FresnelColor.xyz, fresnel * _FresnelColor.w);
 #else
@@ -328,7 +323,7 @@ fixed4 frag(v2f i) : SV_Target
 
 #else	// OPAQUEALPHA
 //	col.w = 0.0f;
-	float opaqueLight = 0.0;
+	half opaqueLight = 0.0;
 #if defined(FRESNEL) && defined(OPAQUEFRESNEL)
 	opaqueLight = fresnel;
 //	col.w += fresnel;

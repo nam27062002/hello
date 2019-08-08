@@ -76,6 +76,8 @@ public class TransitionEditor : ExtendedPropertyDrawer {
 			// Aux vars
 			int baseDepth = _property.depth;
 			int processedProps = 0;
+			SerializedProperty showOverlayProp = m_rootProperty.FindPropertyRelative("showOverlay");
+			bool showOverlay = showOverlayProp.boolValue;
 
 			// Set indentation
 			EditorGUI.indentLevel++;
@@ -87,133 +89,145 @@ public class TransitionEditor : ExtendedPropertyDrawer {
 
 				// Duration: Enabled?
 				if(_property.name == "overrideDuration") {
-					// Prefix label
-					Rect labelPos = new Rect(m_pos);
-					labelPos.width = EditorGUIUtility.labelWidth;
-					EditorGUI.PrefixLabel(labelPos, new GUIContent(_property.displayName));
+					// Don't show if using overlay
+					if(!showOverlay) {
+						// Prefix label
+						Rect labelPos = new Rect(m_pos);
+						labelPos.width = EditorGUIUtility.labelWidth;
+						EditorGUI.PrefixLabel(labelPos, new GUIContent(_property.displayName));
 
-					// Reset indent for the content
-					indentBackup = EditorGUI.indentLevel;
-					EditorGUI.indentLevel = 0;
+						// Reset indent for the content
+						indentBackup = EditorGUI.indentLevel;
+						EditorGUI.indentLevel = 0;
 
-					// Toggle
-					float toggleWidth = EditorStyles.toggle.CalcSize(GUIContent.none).x;
-					Rect togglePos = new Rect(m_pos);
-					togglePos.x = labelPos.x + labelPos.width;
-					togglePos.width = toggleWidth;
-					_property.boolValue = EditorGUI.Toggle(togglePos, _property.boolValue);
+						// Toggle
+						float toggleWidth = EditorStyles.toggle.CalcSize(GUIContent.none).x;
+						Rect togglePos = new Rect(m_pos);
+						togglePos.x = labelPos.x + labelPos.width;
+						togglePos.width = toggleWidth;
+						_property.boolValue = EditorGUI.Toggle(togglePos, _property.boolValue);
 
-					// Disable group and value selector
-					EditorGUI.BeginDisabledGroup(!_property.boolValue); {
-						Rect valuePos = new Rect(m_pos);
-						valuePos.x = togglePos.x + togglePos.width;
-						valuePos.width = m_pos.width - togglePos.width - labelPos.width;
-						SerializedProperty valueProp = m_rootProperty.FindPropertyRelative("duration");
-						EditorGUI.PropertyField(valuePos, valueProp, GUIContent.none, true);
-					} EditorGUI.EndDisabledGroup();
+						// Disable group and value selector
+						EditorGUI.BeginDisabledGroup(!_property.boolValue); {
+							Rect valuePos = new Rect(m_pos);
+							valuePos.x = togglePos.x + togglePos.width;
+							valuePos.width = m_pos.width - togglePos.width - labelPos.width;
+							SerializedProperty valueProp = m_rootProperty.FindPropertyRelative("duration");
+							EditorGUI.PropertyField(valuePos, valueProp, GUIContent.none, true);
+						} EditorGUI.EndDisabledGroup();
 
-					// Restore indentation and advance line
-					EditorGUI.indentLevel = indentBackup;
-					AdvancePos();
+						// Restore indentation and advance line
+						EditorGUI.indentLevel = indentBackup;
+						AdvancePos();
+					}
 				}
 
 				// Duration: Enabled?
 				else if(_property.name == "overrideEase") {
-					// Prefix label
-					Rect labelPos = new Rect(m_pos);
-					labelPos.width = EditorGUIUtility.labelWidth;
-					EditorGUI.PrefixLabel(labelPos, new GUIContent(_property.displayName));
+					// Don't show if using overlay
+					if(!showOverlay) {
+						// Prefix label
+						Rect labelPos = new Rect(m_pos);
+						labelPos.width = EditorGUIUtility.labelWidth;
+						EditorGUI.PrefixLabel(labelPos, new GUIContent(_property.displayName));
 
-					// Reset indent for the content
-					indentBackup = EditorGUI.indentLevel;
-					EditorGUI.indentLevel = 0;
+						// Reset indent for the content
+						indentBackup = EditorGUI.indentLevel;
+						EditorGUI.indentLevel = 0;
 
-					// Toggle
-					float toggleWidth = EditorStyles.toggle.CalcSize(GUIContent.none).x;
-					Rect togglePos = new Rect(m_pos);
-					togglePos.x = labelPos.x + labelPos.width;
-					togglePos.width = toggleWidth;
-					_property.boolValue = EditorGUI.Toggle(togglePos, _property.boolValue);
+						// Toggle
+						float toggleWidth = EditorStyles.toggle.CalcSize(GUIContent.none).x;
+						Rect togglePos = new Rect(m_pos);
+						togglePos.x = labelPos.x + labelPos.width;
+						togglePos.width = toggleWidth;
+						_property.boolValue = EditorGUI.Toggle(togglePos, _property.boolValue);
 
-					// Disable group and value selector
-					EditorGUI.BeginDisabledGroup(!_property.boolValue); {
-						Rect valuePos = new Rect(m_pos);
-						valuePos.x = togglePos.x + togglePos.width;
-						valuePos.width = m_pos.width - togglePos.width - labelPos.width;
-						SerializedProperty valueProp = m_rootProperty.FindPropertyRelative("ease");
+						// Disable group and value selector
+						EditorGUI.BeginDisabledGroup(!_property.boolValue); {
+							Rect valuePos = new Rect(m_pos);
+							valuePos.x = togglePos.x + togglePos.width;
+							valuePos.width = m_pos.width - togglePos.width - labelPos.width;
+							SerializedProperty valueProp = m_rootProperty.FindPropertyRelative("ease");
 
-						// [AOC] Use enum field rather than property field because in this case we don't want to see the curve preview provided by the Ease custom property drawer
-						//EditorGUI.PropertyField(valuePos, valueProp, GUIContent.none, true);
-						valueProp.enumValueIndex = (int)(Ease)EditorGUI.EnumPopup(valuePos, GUIContent.none, (Ease)System.Enum.GetValues(typeof(Ease)).GetValue(valueProp.enumValueIndex));
-					} EditorGUI.EndDisabledGroup();
+							// [AOC] Use enum field rather than property field because in this case we don't want to see the curve preview provided by the Ease custom property drawer
+							//EditorGUI.PropertyField(valuePos, valueProp, GUIContent.none, true);
+							valueProp.enumValueIndex = (int)(Ease)EditorGUI.EnumPopup(valuePos, GUIContent.none, (Ease)System.Enum.GetValues(typeof(Ease)).GetValue(valueProp.enumValueIndex));
+						} EditorGUI.EndDisabledGroup();
 
-					// Restore indentation and advance line
-					EditorGUI.indentLevel = indentBackup;
-					AdvancePos();
+						// Restore indentation and advance line
+						EditorGUI.indentLevel = indentBackup;
+						AdvancePos();
+					}
 				}
 
 				// Path intial and final points: 
 				// - Don't show if path not defined
 				// - Show a list of points to choose
-				else if(_property.name == "initialPathPoint"
-				|| _property.name == "finalPathPoint") {
-					// Indented
-					EditorGUI.indentLevel++;
+				else if((_property.name == "initialPathPoint"
+				|| _property.name == "finalPathPoint")) {
+					// Don't show if using overlay
+					if(!showOverlay) {
+						// Indented
+						EditorGUI.indentLevel++;
 
-					// Get path property
-					SerializedProperty pathProp = m_rootProperty.FindPropertyRelative("path");
+						// Get path property
+						SerializedProperty pathProp = m_rootProperty.FindPropertyRelative("path");
 
-					// Don't display initial/final points if path is not assigned
-					BezierCurve path = (BezierCurve)pathProp.objectReferenceValue;
-					if(path != null) {
-						// Let the player choose between all the named points in the curve
-						int selectedIdx = -1;
-						List<string> optionsList = new List<string>();
-						for(int i = 0; i < path.points.Count; ++i) {
-							// Skip points with no custom name
-							if(!string.IsNullOrEmpty(path.points[i].name)) {
-								// Add option
-								optionsList.Add(path.points[i].name);
+						// Don't display initial/final points if path is not assigned
+						BezierCurve path = (BezierCurve)pathProp.objectReferenceValue;
+						if(path != null) {
+							// Let the player choose between all the named points in the curve
+							int selectedIdx = -1;
+							List<string> optionsList = new List<string>();
+							for(int i = 0; i < path.points.Count; ++i) {
+								// Skip points with no custom name
+								if(!string.IsNullOrEmpty(path.points[i].name)) {
+									// Add option
+									optionsList.Add(path.points[i].name);
 
-								// Is it the current selected value?
-								if(string.Equals(path.points[i].name, _property.stringValue)) {
-									selectedIdx = optionsList.Count - 1;
+									// Is it the current selected value?
+									if(string.Equals(path.points[i].name, _property.stringValue)) {
+										selectedIdx = optionsList.Count - 1;
+									}
 								}
 							}
-						}
 
-						// If the curve has no named points, show an error message instead
-						if(optionsList.Count == 0) {
-							// Error message
-							Rect pos = EditorGUI.PrefixLabel(m_pos, processedProps, new GUIContent(_property.displayName));
-							EditorGUI.HelpBox(pos, "Selected curve has no NAMED control points!", MessageType.Error);
-						} else {
-							// Display the list and store new value
-							m_pos.height = EditorStyles.popup.lineHeight + 5;	// [AOC] Default popup field height + some margin
-							int newSelectedIdx = EditorGUI.Popup(m_pos, _property.displayName, selectedIdx, optionsList.ToArray());
-							if(selectedIdx != newSelectedIdx) {
-								_property.stringValue = optionsList[newSelectedIdx];
+							// If the curve has no named points, show an error message instead
+							if(optionsList.Count == 0) {
+								// Error message
+								Rect pos = EditorGUI.PrefixLabel(m_pos, processedProps, new GUIContent(_property.displayName));
+								EditorGUI.HelpBox(pos, "Selected curve has no NAMED control points!", MessageType.Error);
+							} else {
+								// Display the list and store new value
+								m_pos.height = EditorStyles.popup.lineHeight + 5;   // [AOC] Default popup field height + some margin
+								int newSelectedIdx = EditorGUI.Popup(m_pos, _property.displayName, selectedIdx, optionsList.ToArray());
+								if(selectedIdx != newSelectedIdx) {
+									_property.stringValue = optionsList[newSelectedIdx];
+								}
 							}
-						}
-						AdvancePos();
+							AdvancePos();
 
-						// Indented
-						EditorGUI.indentLevel--;
+							// Indented
+							EditorGUI.indentLevel--;
+						}
 					}
 				}
 
 				// Path: remark that it's optional
 				else if(_property.name == "path") {
-					// Add comment
-					// [AOC] Compute required height to draw the text using our custom box style with the current inspector window width
-					GUIContent content = new GUIContent("If path is not defined, camera position will be linearly interpolated between snap points\n" +
-					                                    "Override duration to <= 0 to move instantly to target snap point.");
-					m_pos.height = CustomEditorStyles.commentLabelLeft.CalcHeight(content, Screen.width - 35f);   // Screen.width gives us the size of the current inspector window. Unfortunately it doesn't compute the internal margins of the window, so try to compensate with a hardcoded value :P
-					EditorGUI.LabelField(m_pos, content, CustomEditorStyles.commentLabelLeft);
-					AdvancePos();
+					// Don't show if using overlay
+					if(!showOverlay) {
+						// Add comment
+						// [AOC] Compute required height to draw the text using our custom box style with the current inspector window width
+						GUIContent content = new GUIContent("If path is not defined, camera position will be linearly interpolated between snap points\n" +
+														"Override duration to <= 0 to move instantly to target snap point.");
+						m_pos.height = CustomEditorStyles.commentLabelLeft.CalcHeight(content, Screen.width - 35f);   // Screen.width gives us the size of the current inspector window. Unfortunately it doesn't compute the internal margins of the window, so try to compensate with a hardcoded value :P
+						EditorGUI.LabelField(m_pos, content, CustomEditorStyles.commentLabelLeft);
+						AdvancePos();
 
-					// Draw path property
-					DrawAndAdvance(_property, _property.displayName + " (optional)");
+						// Draw path property
+						DrawAndAdvance(_property, _property.displayName + " (optional)");
+					}
 				}
 
 				// Properties to skip (already processed under other properties

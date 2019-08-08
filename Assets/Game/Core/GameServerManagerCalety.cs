@@ -270,6 +270,8 @@ public class GameServerManagerCalety : GameServerManager {
 #endif
 
         kServerConfig.m_strApplicationParole = "avefusilmagnifica";
+        // Avoid Messages. We never Flush so it was stacking
+        kServerConfig.m_bUseMessagingTracking = false;
 
         kServerConfig.m_iConnectTimeOut = 6000;
         kServerConfig.m_iReadTimeOut = 6000;
@@ -351,6 +353,8 @@ public class GameServerManagerCalety : GameServerManager {
     #endregion
 
     #region login
+    private const string PREFS_LATEST_UID = "latestUID";
+
     private enum ELoginState
     {
         LoggingIn,
@@ -358,7 +362,33 @@ public class GameServerManagerCalety : GameServerManager {
         NotLoggedIn
     };
 
-    private ELoginState Login_State { get; set; }               
+    private ELoginState m_loginState;
+    private ELoginState Login_State
+    {
+        get { return m_loginState; }
+        set
+        {
+            if (m_loginState != value)
+            {
+                m_loginState = value;
+
+                switch (m_loginState)
+                {
+                    case ELoginState.LoggedIn:
+                        // Updates the user id cached if it's different
+                        if (GameSessionManager.SharedInstance.IsLogged())
+                        {
+                            string uID = GameSessionManager.SharedInstance.GetUID();
+                            if (uID != GetLatestUIDFromCache())
+                            {
+                                SetLatestUIDFromCache(uID);
+                            }
+                        }
+                        break;
+                }
+            }
+        }
+    }               
 
     private Queue<ServerCallback> Login_Callbacks { get; set; }
 
@@ -458,7 +488,34 @@ public class GameServerManagerCalety : GameServerManager {
         {
             Login_State = ELoginState.NotLoggedIn;
         }
-    }  
+    }    
+
+    private string GetLatestUIDFromCache()
+    {
+        return Prefs.GetStringPlayer(PREFS_LATEST_UID);
+    }
+
+    private void SetLatestUIDFromCache(string value)
+    {
+        Prefs.SetStringPlayer(PREFS_LATEST_UID, value);
+    }
+
+    /// <summary>
+    /// Returns the most recent user ID in our server known by the client. Every time the client logs in our server the user ID is cached so that the client can have
+    /// this information in offline mode or right after the game is launched.
+    /// </summary>
+    /// <returns>Returns the user ID in our server if the user is logged, otherwise it returns the user ID when the user last logged in our server.</returns>
+    public override string GetLatestUID()
+    {
+        if (GameSessionManager.SharedInstance.IsLogged())
+        {
+            return GameSessionManager.SharedInstance.GetUID();
+        }
+        else
+        {
+            return GetLatestUIDFromCache();
+        }
+    }
     #endregion
 
     /// <summary>

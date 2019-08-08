@@ -2,7 +2,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-public class ViewControlCarnivorousPlant : MonoBehaviour, IViewControl, ISpawnable, IBroadcastListener {
+public class ViewControlCarnivorousPlant : IViewControl, IBroadcastListener {
     private Entity m_entity;
     private Animator m_animator;
 
@@ -15,12 +15,12 @@ public class ViewControlCarnivorousPlant : MonoBehaviour, IViewControl, ISpawnab
     private ViewControl.MaterialType m_materialType = ViewControl.MaterialType.NONE;
 
     private int m_vertexCount;
-	public int vertexCount { get { return m_vertexCount; } }
+	override public int vertexCount { get { return m_vertexCount; } }
 
 	private int m_rendererCount;
-	public int rendererCount { get { return m_rendererCount; } }
+	override public int rendererCount { get { return m_rendererCount; } }
 
-    public float freezeParticleScale { get { return 1f; } }
+    override public float freezeParticleScale { get { return 1f; } }
 
     [SerializeField] protected string m_onAttackAudio;
 	private AudioObject m_onAttackAudioAO;
@@ -30,7 +30,7 @@ public class ViewControlCarnivorousPlant : MonoBehaviour, IViewControl, ISpawnab
 	private ParticleHandler m_corpseHandler;
 
 	protected PreyAnimationEvents m_animEvents;
-	public PreyAnimationEvents animationEvents { get { return m_animEvents; } }
+	override public PreyAnimationEvents animationEvents { get { return m_animEvents; } }
 
     Transform m_transform;
     private float m_freezingLevel = 0;
@@ -113,7 +113,7 @@ public class ViewControlCarnivorousPlant : MonoBehaviour, IViewControl, ISpawnab
 		}
 	}
 
-	public void Spawn(ISpawner _spawner) {
+	override public void Spawn(ISpawner _spawner) {
         m_materialType = ViewControl.MaterialType.NONE;
         DragonBreathBehaviour dragonBreath = InstanceManager.player.breathBehaviour;
         CheckMaterialType(false, dragonBreath.IsFuryOn(), dragonBreath.type);
@@ -124,7 +124,7 @@ public class ViewControlCarnivorousPlant : MonoBehaviour, IViewControl, ISpawnab
         Broadcaster.RemoveListener(BroadcastEventType.FURY_RUSH_TOGGLED, this);
     }
 
-    public void PreDisable() {
+    override public void PreDisable() {
     	RemoveAudioParent( ref m_onAttackAudioAO );
     }
 
@@ -205,7 +205,7 @@ public class ViewControlCarnivorousPlant : MonoBehaviour, IViewControl, ISpawnab
         }
     }
 
-    public void CustomUpdate() { }
+    override public void CustomUpdate() { }
 
 
 	public void Attack(bool _attack) { 
@@ -235,7 +235,7 @@ public class ViewControlCarnivorousPlant : MonoBehaviour, IViewControl, ISpawnab
 		}
 	}
     
-     public void Freezing( float freezeLevel ){
+     override public void Freezing( float freezeLevel ){
         if ((m_freezingLevel <= 0 && freezeLevel > 0) || (m_freezingLevel > 0 && freezeLevel <= 0)) {
             m_freezingLevel = freezeLevel;
             RefreshMaterialType();
@@ -250,7 +250,7 @@ public class ViewControlCarnivorousPlant : MonoBehaviour, IViewControl, ISpawnab
 
 	public void Aim(float _blendFactor) { m_animator.SetFloat(GameConstants.Animator.AIM, _blendFactor); }
 
-	public void ForceGolden(){}
+	override public void ForceGolden(){}
 
 
 	// Queries

@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class LinearMotion : Initializable, ISpawnable {
+public class LinearMotion : ISpawnable {
 
     [SerializeField] private Vector3 m_direction = GameConstants.Vector3.right;
 	[SerializeField] private float m_speed = 1;
@@ -15,18 +15,13 @@ public class LinearMotion : Initializable, ISpawnable {
         m_transform = transform;
         m_originalPostion = m_transform.position;
 	}
-	
-	public override void Initialize() {		
+
+	override public void Spawn(ISpawner _spawner) {
 		m_time = 0f;
 		m_originalPostion = m_transform.position;
 	}
 
-	public void Spawn(ISpawner _spawner) {
-		m_time = 0f;
-		m_originalPostion = m_transform.position;
-	}
-
-	public void CustomUpdate() {}
+	override public void CustomUpdate() {}
 
 
 	// Update is called once per frame

@@ -30,7 +30,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1472693859828716
 GameObject:
   m_ObjectHideFlags: 0
@@ -320,6 +320,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_tags: 1024
+  m_otherSpawnables:
+  - {fileID: 114426787062319742}
+  - {fileID: 114253968045504370}
+  - {fileID: 114914056017712410}
+  m_otherSpawnablesCount: 3
+  m_pilot: {fileID: 114426787062319742}
+  m_machine: {fileID: 114253968045504370}
+  m_viewControl: {fileID: 114914056017712410}
+  m_equip: {fileID: 0}
   m_sku: Anniversary1_Cake_Piece
   m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1
@@ -339,6 +348,7 @@ MonoBehaviour:
   m_energy: 10
   m_energyDrainSec: 1
   m_energyRecoverSec: 1
+  m_machine: {fileID: 0}
   m_brainResource: {fileID: 0}
   m_railSeparation:
     min: 0.5
@@ -589,6 +599,18 @@ MonoBehaviour:
   m_onPanicAudio: 
   m_idleAudio: 
   m_skins: []
+  m_entity: {fileID: 114329266818014192}
+  m_animator: {fileID: 0}
+  m_isAnimatorAvailable: 0
+  m_renderers:
+  - {fileID: 23579239666815636}
+  m_specialAnimations: 000000
+  m_animA_Hash: 0
+  m_animB_Hash: 0
+  m_animC_Hash: 0
+  m_animEvents: {fileID: 0}
+  m_transform: {fileID: 4000010793146780}
+  m_view: {fileID: 4692774276776710}
 --- !u!114 &114994660708033772
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -644,6 +666,9 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
+  targetIsSelf: 1
+  targetGO: {fileID: 0}
+  tweenTargetIsTargetGO: 1
   delay: 0
   duration: 1
   easeType: 7

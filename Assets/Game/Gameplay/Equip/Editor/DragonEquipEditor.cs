@@ -52,5 +52,14 @@ public class DragonEquipEditor : Editor {
 			m_target.dragonSku = m_disguiseDragons[ m_selectedDisguise ];
 			m_target.EquipDisguise( m_disguiseOptions[ m_selectedDisguise ] );
 		}
+
+		if ( Application.isPlaying )
+		{
+			if ( GUILayout.Button("Reload Pets" ))
+			{
+				m_target.UnequipAllPets();
+				m_target.EquipPets(HDLiveDataManager.tournament.isActive);
+			}
+		}
     }
 }

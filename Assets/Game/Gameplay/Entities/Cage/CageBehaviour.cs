@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System;
 
-public class CageBehaviour : MonoBehaviour, ISpawnable {
+public class CageBehaviour : ISpawnable {
 
     //-----------------------------------------------
     // Properties
@@ -58,7 +58,7 @@ public class CageBehaviour : MonoBehaviour, ISpawnable {
         m_currentHits = new Hit();
     }
 
-    public void Spawn(ISpawner _spawner) {
+    override public void Spawn(ISpawner _spawner) {
         DragonPlayer player = InstanceManager.player;
         m_tier = player.GetTierWhenBreaking();
 
@@ -84,7 +84,7 @@ public class CageBehaviour : MonoBehaviour, ISpawnable {
     }
 
     // Update is called once per frame
-    public void CustomUpdate() {
+    override public void CustomUpdate() {
         m_waitTimer -= Time.deltaTime;
 
         if (m_prisonerSpawner.AreAllDead()) {

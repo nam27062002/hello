@@ -31,7 +31,7 @@ public class CagePart : MonoBehaviour {
 
 		Color tint = Color.white;
 		for (int i = 0; i < m_materials.Count; i++) {			
-			m_materials[i].SetColor( GameConstants.Material.TINT , tint);
+			m_materials[i].SetColor( GameConstants.Materials.Property.TINT , tint);
 		}
 
 		m_time = m_fadeTime;
@@ -48,7 +48,7 @@ public class CagePart : MonoBehaviour {
 				Color tint = Color.white;
 				tint.a = m_time / m_fadeTime;
 				for (int i = 0; i < m_materials.Count; i++) {
-					m_materials[i].SetColor( GameConstants.Material.TINT , tint);
+					m_materials[i].SetColor( GameConstants.Materials.Property.TINT , tint);
 				}
 			}
 		}

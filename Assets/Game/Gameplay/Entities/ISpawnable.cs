@@ -1,4 +1,6 @@
-﻿public interface ISpawnable {
-	void Spawn(ISpawner _spawner);
-	void CustomUpdate();
+﻿using UnityEngine;
+
+public abstract class ISpawnable : MonoBehaviour {
+	public abstract void Spawn(ISpawner _spawner);
+	public abstract void CustomUpdate();
 }

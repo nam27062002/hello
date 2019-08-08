@@ -155,10 +155,10 @@ public class HungryLetterUiContainer : MonoBehaviour
 						anims[i].CreateTween();
 					}break;
 					*/
-					case DG.Tweening.Core.DOTweenAnimationType.Rotate:
+					case DOTweenAnimation.AnimationType.Rotate:
 					{
 						anims[i].endValueTransform = to;
-						anims[i].targetType = DG.Tweening.Core.TargetType.Transform;
+						anims[i].targetType = DOTweenAnimation.TargetType.Transform;
 						anims[i].CreateTween();
 					}break;
 					/*

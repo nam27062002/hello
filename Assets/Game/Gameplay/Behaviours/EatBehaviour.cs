@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-public abstract class EatBehaviour : MonoBehaviour, ISpawnable {
+public abstract class EatBehaviour : ISpawnable {
 	protected class PreyData {		
 		public float absorbTimer;
 		public float eatingAnimationTimer;
@@ -208,7 +208,7 @@ public abstract class EatBehaviour : MonoBehaviour, ISpawnable {
         }
     }
 
-	public void Spawn(ISpawner _spawner) {
+	override public void Spawn(ISpawner _spawner) {
 		if (m_mouth == null) {
 			MouthCache();
 		}
@@ -320,7 +320,7 @@ public abstract class EatBehaviour : MonoBehaviour, ISpawnable {
 	}
 
 
-	public void CustomUpdate() {}
+	override public void CustomUpdate() {}
 
 	// Update is called once per frame
 	protected virtual void Update() 

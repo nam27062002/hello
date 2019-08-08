@@ -64,7 +64,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &4489794447229776
 Transform:
   m_ObjectHideFlags: 1
@@ -441,6 +441,18 @@ MonoBehaviour:
   m_onPanicAudio: 
   m_idleAudio: hd_ghost_idle
   m_skins: []
+  m_entity: {fileID: 114705935973668186}
+  m_animator: {fileID: 95405669203971400}
+  m_isAnimatorAvailable: 0
+  m_renderers:
+  - {fileID: 137894083323412016}
+  m_specialAnimations: 000000
+  m_animA_Hash: 0
+  m_animB_Hash: 0
+  m_animC_Hash: 0
+  m_animEvents: {fileID: 0}
+  m_transform: {fileID: 4817761504735950}
+  m_view: {fileID: 4489794447229776}
 --- !u!114 &114705935973668186
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -453,6 +465,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_tags: 8
+  m_otherSpawnables:
+  - {fileID: 114553221343271634}
+  - {fileID: 114696740973721862}
+  - {fileID: 114719402969299000}
+  m_otherSpawnablesCount: 3
+  m_pilot: {fileID: 114719402969299000}
+  m_machine: {fileID: 114553221343271634}
+  m_viewControl: {fileID: 114696740973721862}
+  m_equip: {fileID: 0}
   m_sku: Ghost02
   m_hideNeedTierMessage: 1
   m_dieOutsideFrustum: 1
@@ -471,6 +492,7 @@ MonoBehaviour:
   m_energy: 10
   m_energyDrainSec: 1
   m_energyRecoverSec: 1
+  m_machine: {fileID: 0}
   m_brainResource: {fileID: 11400000, guid: 8abf7adf253e448d7bb15e811b8dcad7, type: 2}
   m_railSeparation:
     min: 0.5

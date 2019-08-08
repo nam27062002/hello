@@ -1180,11 +1180,11 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         Log(">> Time.fixedDeltaTime:" + Time.fixedDeltaTime);
 
         if (IsLightmapEnabled) {
-            Shader.EnableKeyword("FORCE_LIGHTMAP");
+            Shader.EnableKeyword(GameConstants.Materials.Keyword.FORCE_LIGHTMAP);
         }
         else
         {
-            Shader.DisableKeyword("FORCE_LIGHTMAP");
+            Shader.DisableKeyword(GameConstants.Materials.Keyword.FORCE_LIGHTMAP);
         }
 
         if (Camera.main != null)

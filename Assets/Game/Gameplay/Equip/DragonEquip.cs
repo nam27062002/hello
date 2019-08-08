@@ -58,21 +58,25 @@ public class DragonEquip : MonoBehaviour {
 
 	private List<Renderer> m_renderers = new List<Renderer>();
 	private Dictionary<int, List<Material>> m_materials = new Dictionary<int, List<Material>>();
+    
+    private bool m_initAtStart;
+    private bool m_initAtStartUseTournament;
+    private bool m_arePetsVisible;
 
 
-
-	//------------------------------------------------------------------------//
-	// GENERIC METHODS														  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Initialization.
-	/// </summary>
-	private void Awake() {
+    //------------------------------------------------------------------------//
+    // GENERIC METHODS														  //
+    //------------------------------------------------------------------------//
+    /// <summary>
+    /// Initialization.
+    /// </summary>
+    private void Awake() {
 		//-------------------------------------
 		if (sm_silhouetteMaterial == null) 	sm_silhouetteMaterial  = new Material(Resources.Load("Game/Materials/DragonSilhouette") as Material);
-		//-------------------------------------
+        //-------------------------------------
 
-		Init();
+        m_initAtStart = false;
+        Init();
 
 		// Equip current disguise
 		if (m_equipOnAwake){
@@ -92,10 +96,28 @@ public class DragonEquip : MonoBehaviour {
 		}
 	}
 
-	public void CacheRenderesAndMaterials()
+    private void Start() {
+        if (m_initAtStart) {
+            Init();
+            EquipDisguise(m_dragonDisguiseSku);
+            EquipPets(m_initAtStartUseTournament);
+            TogglePets(m_arePetsVisible, false);
+
+            m_initAtStart = false;
+        }
+    }
+
+    public void InitAtStart(string _disguiseSku, bool _isTournament, bool _arePetsVisible) {
+        m_initAtStart = true;
+        m_dragonDisguiseSku = _disguiseSku;
+        m_initAtStartUseTournament = _isTournament;
+        m_arePetsVisible = _arePetsVisible;
+    }
+
+    public void CacheRenderesAndMaterials()
 	{
 		m_renderers.Clear();
-		Transform view = transform.Find("view");
+		Transform view = transform.FindTransformRecursive("view");
 		if (view != null) {
 			Renderer[] renderers = view.GetComponentsInChildren<Renderer>();
 			m_materials.Clear();
@@ -531,6 +553,14 @@ public class DragonEquip : MonoBehaviour {
                 }
 			}
 			m_renderers[i].materials = materials.ToArray();
+		}
+	}
+
+	public void UnequipAllPets()
+	{
+		for (int i = (int)Equipable.AttachPoint.Pet_1; i <= (int)Equipable.AttachPoint.Pet_5; i++)
+		{
+			EquipPet( "", i-(int)Equipable.AttachPoint.Pet_1 );
 		}
 	}
 

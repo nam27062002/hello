@@ -50,7 +50,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1855147944166138
 GameObject:
   m_ObjectHideFlags: 0
@@ -227,6 +227,7 @@ MonoBehaviour:
   m_animA: special
   m_animB: 
   m_animC: 
+  m_materialChangeExceptions: []
   m_useFreezeParticle: 0
   m_freezeParticleScale: 1
   m_useMoveAnimInLove: 0
@@ -442,6 +443,18 @@ MonoBehaviour:
   m_onPanicAudio: 
   m_idleAudio: 
   m_skins: []
+  m_entity: {fileID: 0}
+  m_animator: {fileID: 95257733066350498}
+  m_isAnimatorAvailable: 0
+  m_renderers:
+  - {fileID: 137742871225893454}
+  m_specialAnimations: 000000
+  m_animA_Hash: 1282097123
+  m_animB_Hash: 0
+  m_animC_Hash: 0
+  m_animEvents: {fileID: 0}
+  m_transform: {fileID: 4112472829813288}
+  m_view: {fileID: 4860165690546018}
 --- !u!114 &114118655288258188
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -468,6 +481,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_tags: 0
+  m_otherSpawnables:
+  - {fileID: 114949607214512362}
+  - {fileID: 114694907140911444}
+  - {fileID: 114113651879358194}
+  m_otherSpawnablesCount: 3
+  m_pilot: {fileID: 114949607214512362}
+  m_machine: {fileID: 114694907140911444}
+  m_viewControl: {fileID: 114113651879358194}
+  m_equip: {fileID: 0}
   m_sku: pet_66
 --- !u!114 &114602552159026162
 MonoBehaviour:
@@ -549,6 +571,7 @@ MonoBehaviour:
   m_energy: 10
   m_energyDrainSec: 1
   m_energyRecoverSec: 1
+  m_machine: {fileID: 0}
   m_brainResource: {fileID: 11400000, guid: d25507686b7444e42b8aea64e6674876, type: 2}
   m_railSeparation:
     min: 0.5

@@ -144,7 +144,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1777732362977226
 GameObject:
   m_ObjectHideFlags: 0
@@ -490,6 +490,7 @@ MonoBehaviour:
   m_animA: 
   m_animB: 
   m_animC: 
+  m_materialChangeExceptions: []
   m_useFreezeParticle: 0
   m_freezeParticleScale: 1
   m_useMoveAnimInLove: 0
@@ -705,6 +706,18 @@ MonoBehaviour:
   m_onPanicAudio: hd_bakerwoman_alert
   m_idleAudio: 
   m_skins: []
+  m_entity: {fileID: 114526452027008260}
+  m_animator: {fileID: 95887155613552922}
+  m_isAnimatorAvailable: 0
+  m_renderers:
+  - {fileID: 137259429701569730}
+  m_specialAnimations: 000000
+  m_animA_Hash: 0
+  m_animB_Hash: 0
+  m_animC_Hash: 0
+  m_animEvents: {fileID: 114694793108057558}
+  m_transform: {fileID: 4290480130951530}
+  m_view: {fileID: 4309074123632474}
 --- !u!114 &114438069369298314
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -749,6 +762,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_tags: 32
+  m_otherSpawnables:
+  - {fileID: 114839441366076818}
+  - {fileID: 114203504851852862}
+  - {fileID: 114236850252259874}
+  m_otherSpawnablesCount: 3
+  m_pilot: {fileID: 114839441366076818}
+  m_machine: {fileID: 114203504851852862}
+  m_viewControl: {fileID: 114236850252259874}
+  m_equip: {fileID: 114528125028711378}
   m_sku: Villager02
   m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1
@@ -797,6 +819,7 @@ MonoBehaviour:
   m_energy: 10
   m_energyDrainSec: 1
   m_energyRecoverSec: 1
+  m_machine: {fileID: 0}
   m_brainResource: {fileID: 11400000, guid: af593a7751e074e42b7091f92be97d92, type: 2}
   m_railSeparation:
     min: 2
