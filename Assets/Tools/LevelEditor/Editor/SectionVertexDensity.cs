@@ -119,6 +119,34 @@ namespace LevelEditor
             m_hierarchyLevel = 1;
         }
 
+        void optimizeRenderers(TransformNode root)
+        {
+            if (root.m_Node != null)
+            {
+                MeshRenderer rend = root.m_Node.GetComponent<MeshRenderer>();
+                if (rend != null)
+                {
+                    rend.lightProbeUsage = UnityEngine.Rendering.LightProbeUsage.Off;
+                    rend.motionVectorGenerationMode = MotionVectorGenerationMode.ForceNoMotion;
+                    if (rend.allowOcclusionWhenDynamic)
+                    {
+                        Debug.Log(rend.gameObject.name + ": allowOcclusionWhenDynamic = true ");
+                    }
+                    if (rend.reflectionProbeUsage != UnityEngine.Rendering.ReflectionProbeUsage.Off)
+                    {
+                        Debug.Log(rend.gameObject.name + ": reflectionProbeUsage = " + rend.reflectionProbeUsage.ToString());
+                    }
+                    rend.reflectionProbeUsage = UnityEngine.Rendering.ReflectionProbeUsage.Off;
+                    rend.allowOcclusionWhenDynamic = false;
+                    EditorUtility.SetDirty(root.m_Node.gameObject);
+                }
+            }
+
+            for (int c = 0; c < root.m_Childs.Count; c++)
+            {
+                optimizeRenderers(root.m_Childs[c]);
+            }
+        }
 
         int getNodeVertexDensityAtLevel(TransformNode node, int currentLevel, int level, List<NodeDensity> results)
         {
@@ -234,7 +262,11 @@ namespace LevelEditor
 
                 if (m_nodeList.Count > 0)
                 {
-                    
+                    if (GUILayout.Button("Optimize renderers"))
+                    {
+                        optimizeRenderers(m_nodeList[0]);
+                    }
+
                     GUILayout.Label("Total transform nodes with mesh filter: " + m_nodeList.Count);
                     GUILayout.Label("Total vertex in scene: " + m_totalVertex);
                     GUILayout.Label("Total polygon in scene: " + m_totalPolygons);
