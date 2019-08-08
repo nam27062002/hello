@@ -77,11 +77,6 @@ public class SimpleDevice : ISpawnable, IBroadcastListener {
 					return;
 				}
 			} else {
-				// check respawn conditions
-				if (m_operatorSpawner.IsRespawing() && m_operatorSpawner.CanRespawn()) {
-					m_operatorSpawner.Respawn();
-				}
-
 				if (!m_operatorSpawner.IsOperatorDead()) {				
 					m_operatorAvailable = true;
 					OnOperatorSpawned();
