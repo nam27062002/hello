@@ -48,53 +48,66 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner, IBroadcastListener {
 
 	private GameCamera m_newCamera;
 
-	//-----------------------------------------------
-	// Methods
-	//-----------------------------------------------
-	void Start() {
-		m_spawnConditions = GetComponent<SpawnerConditions>();
-        m_components = GetComponents<ISpawnable>();
+    private bool m_hasToDoStart = true;
+    //-----------------------------------------------
+    // Methods
+    //-----------------------------------------------
+#if UNITY_EDITOR
+    void Start() {
+        if (m_hasToDoStart) {
+            DoStart();
+        }
+    }
+#endif
 
-        // Subscribe to external events
-        Broadcaster.AddListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
-        Broadcaster.AddListener(BroadcastEventType.GAME_AREA_ENTER, this);
+    public void DoStart() {
+        if (m_hasToDoStart) {
+            m_hasToDoStart = false;
 
-        if (m_spawnConditions == null || m_spawnConditions.IsAvailable()) {
+            m_spawnConditions = GetComponent<SpawnerConditions>();
+            m_components = GetComponents<ISpawnable>();
 
-            ZoneManager.Zone zone = InstanceManager.zoneManager.GetZone(transform.position.z);
-            if (zone == ZoneManager.Zone.None) {
-                Destroy(this);
-            } else {
-                SpawnerManager.instance.Register(this, true);
+            // Subscribe to external events
+            Broadcaster.AddListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
+            Broadcaster.AddListener(BroadcastEventType.GAME_AREA_ENTER, this);
 
-                m_newCamera = Camera.main.GetComponent<GameCamera>();
-                m_gameSceneController = InstanceManager.gameSceneControllerBase;
+            if (m_spawnConditions == null || m_spawnConditions.IsAvailable()) {
 
-                GameObject view = transform.Find("view").gameObject;
-                Renderer[] renderers = view.GetComponentsInChildren<Renderer>();
-
-                if (renderers.Length > 0) {
-                    m_bounds = renderers[0].bounds;
-                    for (int i = 1; i < renderers.Length; ++i) {
-                        m_bounds.Encapsulate(renderers[i].bounds);
-                    }
+                ZoneManager.Zone zone = InstanceManager.zoneManager.GetZone(transform.position.z);
+                if (zone == ZoneManager.Zone.None) {
+                    Destroy(this);
                 } else {
-                    m_bounds = new Bounds(transform.position, GameConstants.Vector3.one);
+                    SpawnerManager.instance.Register(this, true);
+
+                    m_newCamera = Camera.main.GetComponent<GameCamera>();
+                    m_gameSceneController = InstanceManager.gameSceneControllerBase;
+
+                    GameObject view = transform.Find("view").gameObject;
+                    Renderer[] renderers = view.GetComponentsInChildren<Renderer>();
+
+                    if (renderers.Length > 0) {
+                        m_bounds = renderers[0].bounds;
+                        for (int i = 1; i < renderers.Length; ++i) {
+                            m_bounds.Encapsulate(renderers[i].bounds);
+                        }
+                    } else {
+                        m_bounds = new Bounds(transform.position, GameConstants.Vector3.one);
+                    }
+
+                    Vector2 position = (Vector2)m_bounds.min;
+                    Vector2 size = (Vector2)m_bounds.size;
+                    Vector2 extraSize = size * (transform.position.z * 2f) / 100f; // we have to increase the size due to z depth
+
+                    m_rect = new Rect(position - extraSize * 0.5f, size + extraSize);
+
+                    m_respawnCount = 0;
                 }
-
-                Vector2 position = (Vector2)m_bounds.min;
-                Vector2 size = (Vector2)m_bounds.size;
-                Vector2 extraSize = size * (transform.position.z * 2f) / 100f; // we have to increase the size due to z depth
-
-                m_rect = new Rect(position - extraSize * 0.5f, size + extraSize);
-
-                m_respawnCount = 0;
+                return;
             }
-			return;
-		}
 
-		// we are not goin to use this spawner, lets destroy it
-		Destroy(gameObject);
+            // we are not goin to use this spawner, lets destroy it
+            Destroy(gameObject);
+        }
 	}
 
     public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
