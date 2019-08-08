@@ -126,8 +126,10 @@ namespace LevelEditor
                 MeshRenderer rend = root.m_Node.GetComponent<MeshRenderer>();
                 if (rend != null)
                 {
-                    rend.lightProbeUsage = UnityEngine.Rendering.LightProbeUsage.Off;
-                    rend.motionVectorGenerationMode = MotionVectorGenerationMode.ForceNoMotion;
+
+
+//                    rend.lightProbeUsage = UnityEngine.Rendering.LightProbeUsage.Off;
+//                    rend.motionVectorGenerationMode = MotionVectorGenerationMode.ForceNoMotion;
                     if (rend.allowOcclusionWhenDynamic)
                     {
                         Debug.Log(rend.gameObject.name + ": allowOcclusionWhenDynamic = true ");
@@ -136,9 +138,32 @@ namespace LevelEditor
                     {
                         Debug.Log(rend.gameObject.name + ": reflectionProbeUsage = " + rend.reflectionProbeUsage.ToString());
                     }
-                    rend.reflectionProbeUsage = UnityEngine.Rendering.ReflectionProbeUsage.Off;
-                    rend.allowOcclusionWhenDynamic = false;
-                    EditorUtility.SetDirty(root.m_Node.gameObject);
+//                    rend.reflectionProbeUsage = UnityEngine.Rendering.ReflectionProbeUsage.Off;
+//                    rend.allowOcclusionWhenDynamic = false;
+//                     EditorUtility.SetDirty(rend);
+
+
+                    SerializedObject so = new SerializedObject(rend);
+                    so.Update();
+
+                    SerializedProperty sp;
+
+                    sp = so.FindProperty("m_DynamicOccludee");
+                    sp.boolValue = false;
+                    sp = so.FindProperty("m_MotionVectors");
+                    sp.enumValueIndex = (int)MotionVectorGenerationMode.ForceNoMotion;
+                    sp = so.FindProperty("m_LightProbeUsage");
+                    sp.intValue = (int)UnityEngine.Rendering.LightProbeUsage.Off;
+                    sp = so.FindProperty("m_ReflectionProbeUsage");
+                    sp.intValue = (int)UnityEngine.Rendering.ReflectionProbeUsage.Off;
+
+                    so.ApplyModifiedProperties();
+/*
+                    while (sp.Next(false))
+                    {
+                        Debug.Log("Property name: " + sp.name + " type: " + sp.propertyType.ToString());
+                    }
+ */                 
                 }
             }
 
@@ -265,6 +290,14 @@ namespace LevelEditor
                     if (GUILayout.Button("Optimize renderers"))
                     {
                         optimizeRenderers(m_nodeList[0]);
+                        for (int i = 0; i < UnityEngine.SceneManagement.SceneManager.sceneCount; i++)
+                        {
+                            Scene s = UnityEngine.SceneManagement.SceneManager.GetSceneAt(i);
+                            if (s.isLoaded)
+                            {
+                                EditorSceneManager.MarkSceneDirty(s);
+                            }
+                        }
                     }
 
                     GUILayout.Label("Total transform nodes with mesh filter: " + m_nodeList.Count);
