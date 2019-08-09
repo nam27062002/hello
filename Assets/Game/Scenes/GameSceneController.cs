@@ -59,8 +59,6 @@ public class GameSceneController : GameSceneControllerBase {
         get { return m_uiRoot; }
     }
 
-	[SerializeField] private ShowHideAnimator m_gameUIAnimator = null;
-
 	// Countdown
     public float countdown {
 		get {
