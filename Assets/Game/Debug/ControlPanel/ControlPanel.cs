@@ -47,7 +47,7 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
 		get { return instance.m_fpsCounter; }
 	}
 
-    [SerializeField] private GameObject m_statsCounter;
+	[SerializeField] private GameObject m_statsCounter;
     public static GameObject statsCounter
     {
         get { return instance.m_statsCounter; }
@@ -131,7 +131,14 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
 	float[] m_DeltaTimes;
 	int m_DeltaIndex;
 
-    private static int MAX_INTEGER_AS_STRING = 150;
+	// FPS Recording
+	[SerializeField] private CPFpsRecorder m_fpsRecorder;
+	public static CPFpsRecorder fpsRecorder {
+		get { return instance.m_fpsRecorder; }
+	}
+
+	// Int to String
+	private static int MAX_INTEGER_AS_STRING = 150;
     private static string[] integerAsStrings;
     private static string NEGATIVE_STRING_AS_STRING = "-";
 
