@@ -91,8 +91,6 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner, IBroadcastListener {
                 m_rect = new Rect(position - extraSize * 0.5f, size + extraSize);
 
                 m_respawnCount = 0;
-
-                EntityManager.instance.RegisterDecoration(m_decoration);
             }
 			return;
 		}
@@ -132,7 +130,7 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner, IBroadcastListener {
 	/// A new level was loaded.
 	/// </summary>
 	private void OnLevelLoaded() {
-		bool disable = m_spawnConditions != null && !m_spawnConditions.IsReadyToSpawn(0f, 0f);
+        /*bool disable = m_spawnConditions != null && !m_spawnConditions.IsReadyToSpawn(0f, 0f);
 		if (disable) {
 			m_respawnCount = 0;
 			m_state = State.Respawning;
@@ -140,8 +138,11 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner, IBroadcastListener {
 		} else {
 			m_respawnCount = 1;
 			m_state = State.Idle;
-		}
-	}
+		}*/
+        m_respawnCount = 0;
+        m_state = State.Respawning;
+        gameObject.SetActive(false);
+    }
 
 	public void Initialize() {
 		m_state = State.Idle;
@@ -164,6 +165,7 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner, IBroadcastListener {
 	}
 
     public void StartRespawn() {
+        EntityManager.instance.UnregisterDecoration(m_decoration);
         m_respawnCount++;
 
 		if (m_maxSpawns > 0 && m_respawnCount > m_maxSpawns) {
@@ -208,10 +210,7 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner, IBroadcastListener {
 												 RewardManager.xp + m_gameSceneController.progressionOffsetXP))
 			{
 				if (m_gameSceneController.elapsedSeconds > m_respawnTime) {
-					bool isInsideActivationArea = m_newCamera.IsInsideCameraFrustrum(m_bounds);
-					if (!isInsideActivationArea) {
-						return true;
-					}
+					return true;					
 				}
 			}
 		}
@@ -225,7 +224,9 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner, IBroadcastListener {
 	}
 
 	private void Spawn() {
-		if (m_respawnCount == 0) {
+        EntityManager.instance.RegisterDecoration(m_decoration);
+
+        if (m_respawnCount == 0) {
 			gameObject.SetActive(true);
 		}
 		
