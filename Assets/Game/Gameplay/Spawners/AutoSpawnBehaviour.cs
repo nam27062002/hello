@@ -55,12 +55,13 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner, IBroadcastListener {
 	void Start() {
 		m_spawnConditions = GetComponent<SpawnerConditions>();
         m_decoration = GetComponent<Decoration>();
-        m_components = GetComponents<ISpawnable>();
+
         // Subscribe to external events
         Broadcaster.AddListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
         Broadcaster.AddListener(BroadcastEventType.GAME_AREA_ENTER, this);
         
-        if (m_spawnConditions == null || m_spawnConditions.IsAvailable()) {
+        if (m_spawnConditions == null || m_spawnConditions.IsAvailable()) {            
+            m_components = GetComponents<ISpawnable>();
 
             ZoneManager.Zone zone = InstanceManager.zoneManager.GetZone(transform.position.z);
             if (zone == ZoneManager.Zone.None) {
