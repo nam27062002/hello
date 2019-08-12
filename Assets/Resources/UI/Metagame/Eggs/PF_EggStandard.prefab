@@ -176,6 +176,7 @@ GameObject:
   - component: {fileID: 4305172774263232}
   - component: {fileID: 198032843144523286}
   - component: {fileID: 199615455989267866}
+  - component: {fileID: 114657713234830572}
   m_Layer: 0
   m_Name: Glow
   m_TagString: Untagged
@@ -1099,6 +1100,7 @@ GameObject:
   - component: {fileID: 4513869562812800}
   - component: {fileID: 198689018476999912}
   - component: {fileID: 199640021740729652}
+  - component: {fileID: 114431323286738734}
   m_Layer: 0
   m_Name: Sparks
   m_TagString: Untagged
@@ -2241,6 +2243,34 @@ MonoBehaviour:
   m_scaleLifetime: 0
   m_scaleAllChildren: 1
   m_whenScale: 0
+--- !u!114 &114431323286738734
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1995290476675816}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3128bd630f39645c4a1e03d94b7008f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_transform: {fileID: 0}
+  m_resetFirst: 1
+  m_whenScale: 0
+--- !u!114 &114657713234830572
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1029532360149792}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3128bd630f39645c4a1e03d94b7008f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_transform: {fileID: 0}
+  m_resetFirst: 1
+  m_whenScale: 0
 --- !u!137 &137844118377950766
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1
@@ -2445,7 +2475,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 615730075
+  randomSeed: -1642024634
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -5812,7 +5842,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 0
-  randomSeed: -252118840
+  randomSeed: 556505938
   InitialModule:
     serializedVersion: 3
     enabled: 1
