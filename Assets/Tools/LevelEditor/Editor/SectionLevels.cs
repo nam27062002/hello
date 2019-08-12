@@ -771,6 +771,10 @@ namespace LevelEditor {
                     {
                         areaScenes.Clear();
                         areaScenes = def.GetAsList<string>("area" + areaIndex);
+							// Seasonal
+						List<string> seasonal = def.GetAsList<string>("area" + areaIndex + "_seasonal");
+						areaScenes.AddRange( seasonal );
+
                         _continue = false;
                         for (int i = 0; i < areaScenes.Count; i++)
                         {

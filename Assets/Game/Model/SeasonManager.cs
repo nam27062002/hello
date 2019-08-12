@@ -111,6 +111,11 @@ public class SeasonManager : Singleton<SeasonManager> {
 			} break;
 		}
 	}
+
+	public static bool IsSeasonActive()
+	{
+		return activeSeason != NO_SEASON_SKU;
+	}
     
     public static bool IsNewYear()
     {
