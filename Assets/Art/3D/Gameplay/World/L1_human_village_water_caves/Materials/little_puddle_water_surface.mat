@@ -8,198 +8,101 @@ Material:
   m_PrefabInternal: {fileID: 0}
   m_Name: little_puddle_water_surface
   m_Shader: {fileID: 4800000, guid: 62f29fed744f19741ba5139c5b3aeb5a, type: 3}
-  m_ShaderKeywords: _EMISSION
+  m_ShaderKeywords: 
   m_LightmapFlags: 1
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
   stringTagMap: {}
+  disabledShaderPasses: []
   m_SavedProperties:
-    serializedVersion: 2
+    serializedVersion: 3
     m_TexEnvs:
-    - first:
-        name: _BlendTex
-      second:
+    - _BlendTex:
         m_Texture: {fileID: 2800000, guid: 3fab1a5b9ef83e64c9aa056fda127683, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - first:
-        name: _BumpMap
-      second:
+    - _BumpMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - first:
-        name: _DetailAlbedoMap
-      second:
+    - _DetailAlbedoMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - first:
-        name: _DetailMask
-      second:
+    - _DetailMask:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - first:
-        name: _DetailNormalMap
-      second:
+    - _DetailNormalMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - first:
-        name: _DetailTex
-      second:
+    - _DetailTex:
         m_Texture: {fileID: 2800000, guid: 3fab1a5b9ef83e64c9aa056fda127683, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - first:
-        name: _EmissionMap
-      second:
+    - _EmissionMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - first:
-        name: _MainTex
-      second:
+    - _MainTex:
         m_Texture: {fileID: 2800000, guid: 6744c5b41790509438512bf68995890c, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - first:
-        name: _MetallicGlossMap
-      second:
+    - _MetallicGlossMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - first:
-        name: _OcclusionMap
-      second:
+    - _OcclusionMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - first:
-        name: _ParallaxMap
-      second:
+    - _ParallaxMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - first:
-        name: _SecondTex
-      second:
+    - _SecondTex:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
-    - first:
-        name: _BumpScale
-      second: 1
-    - first:
-        name: _CausticFar
-      second: 1
-    - first:
-        name: _CausticNear
-      second: 0
-    - first:
-        name: _Cutoff
-      second: 0.5
-    - first:
-        name: _DetailNormalMapScale
-      second: 1
-    - first:
-        name: _DstBlend
-      second: 0
-    - first:
-        name: _Far
-      second: 500
-    - first:
-        name: _FixedTransp
-      second: 0
-    - first:
-        name: _FogFar
-      second: 1
-    - first:
-        name: _FogNear
-      second: 0
-    - first:
-        name: _GlossMapScale
-      second: 1
-    - first:
-        name: _Glossiness
-      second: 0.5
-    - first:
-        name: _GlossyReflections
-      second: 1
-    - first:
-        name: _Metallic
-      second: 0
-    - first:
-        name: _Mode
-      second: 0
-    - first:
-        name: _Near
-      second: 200
-    - first:
-        name: _OcclusionStrength
-      second: 1
-    - first:
-        name: _Parallax
-      second: 0.02
-    - first:
-        name: _SmoothnessTextureChannel
-      second: 0
-    - first:
-        name: _SpecularHighlights
-      second: 1
-    - first:
-        name: _SpeedX1
-      second: 1
-    - first:
-        name: _SpeedX2
-      second: 1
-    - first:
-        name: _SpeedY1
-      second: 1
-    - first:
-        name: _SpeedY2
-      second: 1
-    - first:
-        name: _SrcBlend
-      second: 1
-    - first:
-        name: _StartTime
-      second: 0
-    - first:
-        name: _StencilMask
-      second: 10
-    - first:
-        name: _UVSec
-      second: 0
-    - first:
-        name: _WaterSpeed
-      second: 0.5
-    - first:
-        name: _WaveAmplitude
-      second: 50
-    - first:
-        name: _WaveRadius
-      second: 0.15
-    - first:
-        name: _Width
-      second: 2000
-    - first:
-        name: _ZWrite
-      second: 1
+    - _BumpScale: 1
+    - _CausticFar: 1
+    - _CausticNear: 0
+    - _Cutoff: 0.5
+    - _DetailNormalMapScale: 1
+    - _DstBlend: 0
+    - _Far: 500
+    - _FixedTransp: 0
+    - _FogFar: 1
+    - _FogNear: 0
+    - _GlossMapScale: 1
+    - _Glossiness: 0.5
+    - _GlossyReflections: 1
+    - _Metallic: 0
+    - _Mode: 0
+    - _Near: 200
+    - _OcclusionStrength: 1
+    - _Parallax: 0.02
+    - _SmoothnessTextureChannel: 0
+    - _SpecularHighlights: 1
+    - _SpeedX1: 1
+    - _SpeedX2: 1
+    - _SpeedY1: 1
+    - _SpeedY2: 1
+    - _SrcBlend: 1
+    - _StartTime: 0
+    - _StencilMask: 10
+    - _UVSec: 0
+    - _WaterSpeed: 0.5
+    - _WaveAmplitude: 50
+    - _WaveRadius: 0.15
+    - _Width: 2000
+    - _ZWrite: 1
     m_Colors:
-    - first:
-        name: _Color
-      second: {r: 0.25980547, g: 1, b: 1, a: 1}
-    - first:
-        name: _ColorBack
-      second: {r: 1, g: 0, b: 0, a: 1}
-    - first:
-        name: _ColorFront
-      second: {r: 1, g: 0, b: 0, a: 1}
-    - first:
-        name: _EmissionColor
-      second: {r: 0, g: 0, b: 0, a: 1}
-    - first:
-        name: _StartPosition
-      second: {r: 0, g: 0, b: 0, a: 0}
+    - _Color: {r: 0.25980547, g: 1, b: 1, a: 1}
+    - _ColorBack: {r: 1, g: 0, b: 0, a: 1}
+    - _ColorFront: {r: 1, g: 0, b: 0, a: 1}
+    - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _StartPosition: {r: 0, g: 0, b: 0, a: 0}

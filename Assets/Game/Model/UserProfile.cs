@@ -1646,7 +1646,7 @@ public class UserProfile : UserPersistenceSystem
         // Because We cach dragon's price on a variable we need to refresh the value
         foreach(KeyValuePair<string, IDragonData> pair in m_dragonsBySku) {
             pair.Value.RefreshPrice();
-            
+            pair.Value.RefreshShadowRevealUnlock();
         }
     }
 

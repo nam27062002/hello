@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 /// <summary>
 /// This class is responsible for handling the tab dedicated to show all settings which values depend on the device quality in the control panel
@@ -30,6 +31,7 @@ public class CPQualitySettings : MonoBehaviour
         Quality_Setup();
         Profile_Setup();
         Device_Setup();
+        Audio_Setup();
     }
 
     void Update()
@@ -319,6 +321,9 @@ public class CPQualitySettings : MonoBehaviour
     public TextMeshProUGUI m_deviceFrequency;
     public TextMeshProUGUI m_shaderLevel;
 
+    public InputField m_audioVirtualVoices;
+    public InputField m_audioRealVoices;
+
     private void Quality_Setup()
     {
         if (m_cpuCores != null)
@@ -497,6 +502,21 @@ public class CPQualitySettings : MonoBehaviour
 
             m_deviceDropDown.value = index;
         }
+    }
+
+    private void Audio_Setup()
+    {
+        AudioConfiguration config = AudioSettings.GetConfiguration();
+        m_audioVirtualVoices.text = config.numVirtualVoices.ToString();
+        m_audioRealVoices.text = config.numRealVoices.ToString();
+    }
+
+    public void OnAudioVoicesSetup()
+    {
+        var config = AudioSettings.GetConfiguration();
+        config.numVirtualVoices = int.Parse(m_audioVirtualVoices.text);
+        config.numRealVoices = int.Parse( m_audioRealVoices.text );
+        AudioSettings.Reset(config);
     }
 
     public void Device_SetOption(int option)

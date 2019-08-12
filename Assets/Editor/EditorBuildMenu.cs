@@ -31,6 +31,13 @@ public class EditorBuildMenu : MonoBehaviour
         string buildTargetAsString = buildTarget.ToString();
         string path = EditorUtility.SaveFilePanel("Build " + buildTargetAsString, "Builds", "", "");
 
+        // If the user hit Cancel then the building process is interrupted
+        if (string.IsNullOrEmpty(path))
+        {
+            Debug.Log("Build canceled");
+            return;
+        }
+
 #if UNITY_ANDROID
         if (buildTarget == BuildTarget.Android)
         {			

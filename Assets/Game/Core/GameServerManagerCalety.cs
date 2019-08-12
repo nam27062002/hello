@@ -270,6 +270,8 @@ public class GameServerManagerCalety : GameServerManager {
 #endif
 
         kServerConfig.m_strApplicationParole = "avefusilmagnifica";
+        // Avoid Messages. We never Flush so it was stacking
+        kServerConfig.m_bUseMessagingTracking = false;
 
         kServerConfig.m_iConnectTimeOut = 6000;
         kServerConfig.m_iReadTimeOut = 6000;
