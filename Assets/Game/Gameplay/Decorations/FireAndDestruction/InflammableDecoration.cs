@@ -109,9 +109,6 @@ public class InflammableDecoration : ISpawnable, IBroadcastListener {
     protected void OnDestroy() {
         ReturnAshMaterial();
 
-		if ( EntityManager.instance != null )
-			EntityManager.instance.UnregisterDecoration(m_entity);
-
         // Unsubscribe from external events
         Broadcaster.RemoveListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
         Broadcaster.RemoveListener(BroadcastEventType.GAME_AREA_ENTER, this);
@@ -353,8 +350,6 @@ public class InflammableDecoration : ISpawnable, IBroadcastListener {
 
 			m_burnSource = _source;
             m_extingishColor = _fireColorType;
-						
-			EntityManager.instance.RegisterDecoration(m_entity);			
 		}
 	}
 
@@ -366,8 +361,6 @@ public class InflammableDecoration : ISpawnable, IBroadcastListener {
 		if (m_autoSpawner) m_autoSpawner.StartRespawn();
         ReturnAshMaterial();
 		m_state = m_nextState = State.Respawn;
-
-		EntityManager.instance.UnregisterDecoration(m_entity);
 	}
 
 	private void ResetViewMaterials() {

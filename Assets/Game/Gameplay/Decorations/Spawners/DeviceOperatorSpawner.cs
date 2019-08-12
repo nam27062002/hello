@@ -233,7 +233,7 @@ public class DeviceOperatorSpawner : AbstractSpawner {
 	//-------------------------------------------------------------------
 	void OnDrawGizmosSelected() {
 		Gizmos.color = Colors.WithAlpha(Colors.paleGreen, 0.5f);
-		Gizmos.DrawCube(transform.position, m_rect.size);
+		Gizmos.DrawCube(transform.position + (Vector3)m_rect.position, m_rect.size);
 
 		if (m_spawnAtTransform != null) {
 			Gizmos.color = Colors.lime;

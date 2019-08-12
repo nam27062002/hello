@@ -13,7 +13,7 @@ public class SimpleDevice : ISpawnable, IBroadcastListener {
 	protected bool m_enabled;
 
 
-	void Awake() {
+    protected virtual void Awake() {
 		m_autoSpawner = GetComponent<AutoSpawnBehaviour>();
 		m_operatorSpawner = GetComponent<DeviceOperatorSpawner>();
 		m_inflammable = GetComponent<InflammableDecoration>();
@@ -58,8 +58,7 @@ public class SimpleDevice : ISpawnable, IBroadcastListener {
     }
 
     // Update is called once per frame
-    override public void CustomUpdate() { } // Not used at the moment
-    void Update () {
+    override public void CustomUpdate() { 
 		if (m_enabled) {
 			if (m_inflammable.IsBurning() 
 			|| 	m_autoSpawner.state == AutoSpawnBehaviour.State.Respawning) {	// if respawning we wait
