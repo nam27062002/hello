@@ -56,6 +56,8 @@ namespace LevelEditor
         int m_hierarchyLevel;
         NodeDensity[] m_nodeDensity = null;
 
+        List<GameObject> m_missingRenderers = new List<GameObject>();
+
         public struct NodeDensity
         {
             public TransformNode node;
@@ -78,6 +80,12 @@ namespace LevelEditor
                 }
             }
 
+            Renderer rend = go.GetComponent<Renderer>();
+            if (rend != null && (rend.material == null || mFilter == null || mFilter.sharedMesh == null))
+            {
+                m_missingRenderers.Add(rend.gameObject);
+            }
+
             foreach (Transform tr in go.transform)
             {
                 checkGameObjectHierarchy(root, tr.gameObject);
@@ -87,6 +95,7 @@ namespace LevelEditor
         void gatherHierarchyTree()
         {
             m_nodeList.Clear();
+            m_missingRenderers.Clear();
             TransformNode root = new TransformNode(null);
             m_nodeList.Add(root);
 
@@ -126,8 +135,6 @@ namespace LevelEditor
                 MeshRenderer rend = root.m_Node.GetComponent<MeshRenderer>();
                 if (rend != null)
                 {
-
-
 //                    rend.lightProbeUsage = UnityEngine.Rendering.LightProbeUsage.Off;
 //                    rend.motionVectorGenerationMode = MotionVectorGenerationMode.ForceNoMotion;
                     if (rend.allowOcclusionWhenDynamic)
@@ -258,7 +265,7 @@ namespace LevelEditor
         }
 
         Vector2 scrollPos = Vector2.zero;
-
+        Vector2 scrollPos2 = Vector2.zero;
         /// <summary>
         /// Draw the section.
         /// </summary>
@@ -300,37 +307,82 @@ namespace LevelEditor
                         }
                     }
 
-                    GUILayout.Label("Total transform nodes with mesh filter: " + m_nodeList.Count);
-                    GUILayout.Label("Total vertex in scene: " + m_totalVertex);
-                    GUILayout.Label("Total polygon in scene: " + m_totalPolygons);
-                    EditorGUI.BeginChangeCheck();
-                    m_hierarchyLevel = EditorGUILayout.IntField("Hierarchy level: ", m_hierarchyLevel);
-                    if (EditorGUI.EndChangeCheck())
+                    GUI.backgroundColor = Colors.gray;
+                    folded = Prefs.GetBoolEditor("LevelEditor.SectionVertexDensity.GrowthList.folded", false);
+                    if (GUILayout.Button((folded ? "►" : "▼") + "Growth list", LevelEditorWindow.styles.sectionHeaderStyle, GUILayout.ExpandWidth(true)))
                     {
-                        m_nodeDensity = getVertexDensityAtLevel(m_hierarchyLevel);
+                        folded = !folded;
+                        Prefs.SetBoolEditor("LevelEditor.SectionVertexDensity.GrowthList.folded", folded);
                     }
-                    if (m_nodeDensity != null)
+
+                    if (!folded)
                     {
-                        GUILayout.Label(m_nodeDensity.Length.ToString() + " nodes at level " + m_hierarchyLevel);
-                        EditorGUILayout.Separator();
-                        scrollPos = GUILayout.BeginScrollView(scrollPos);
-                        int nodeCount = m_nodeDensity.Length > 100 ? 100 : m_nodeDensity.Length;
-                        EditorGUILayout.BeginVertical();
-                        for (int c = 0; c < nodeCount; c++)
+                        GUI.backgroundColor = Colors.paleGreen;
+                        GUILayout.Label("Total transform nodes with mesh filter: " + m_nodeList.Count);
+                        GUILayout.Label("Total vertex in scene: " + m_totalVertex);
+                        GUILayout.Label("Total polygon in scene: " + m_totalPolygons);
+                        EditorGUI.BeginChangeCheck();
+                        m_hierarchyLevel = EditorGUILayout.IntField("Hierarchy level: ", m_hierarchyLevel);
+                        if (EditorGUI.EndChangeCheck())
                         {
-                            if (m_nodeDensity[c].node.m_Node != null)
+                            m_nodeDensity = getVertexDensityAtLevel(m_hierarchyLevel);
+                        }
+                        if (m_nodeDensity != null)
+                        {
+                            GUILayout.Label(m_nodeDensity.Length.ToString() + " nodes at level " + m_hierarchyLevel);
+                            EditorGUILayout.Separator();
+                            scrollPos = GUILayout.BeginScrollView(scrollPos);
+                            int nodeCount = m_nodeDensity.Length > 100 ? 100 : m_nodeDensity.Length;
+                            EditorGUILayout.BeginVertical();
+                            for (int c = 0; c < nodeCount; c++)
                             {
-                                EditorGUILayout.BeginHorizontal();
-                                if(GUILayout.Button(m_nodeDensity[c].node.m_Node.gameObject.name))
+                                if (m_nodeDensity[c].node.m_Node != null)
                                 {
-                                    Selection.activeGameObject = m_nodeDensity[c].node.m_Node.gameObject;
+                                    EditorGUILayout.BeginHorizontal();
+                                    if (GUILayout.Button(m_nodeDensity[c].node.m_Node.gameObject.name))
+                                    {
+                                        Selection.activeGameObject = m_nodeDensity[c].node.m_Node.gameObject;
+                                    }
+                                    GUILayout.Label(" vertex: " + m_nodeDensity[c].numvertex);
+                                    EditorGUILayout.EndHorizontal();
                                 }
-                                GUILayout.Label(" vertex: " + m_nodeDensity[c].numvertex);
-                                EditorGUILayout.EndHorizontal();
                             }
+                            EditorGUILayout.EndVertical();
+                            GUILayout.EndScrollView();
+                        }
+                    }
+
+                    GUI.backgroundColor = Colors.gray;
+                    folded = Prefs.GetBoolEditor("LevelEditor.SectionVertexDensity.MissingRenderers.folded", false);
+                    if (GUILayout.Button((folded ? "►" : "▼") + "Missing renderers", LevelEditorWindow.styles.sectionHeaderStyle, GUILayout.ExpandWidth(true)))
+                    {
+                        folded = !folded;
+                        Prefs.SetBoolEditor("LevelEditor.SectionVertexDensity.MissingRenderers.folded", folded);
+                    }
+
+                    if (!folded)
+                    {
+                        GUI.backgroundColor = Colors.paleGreen;
+                        EditorGUILayout.BeginVertical();
+                        if (m_missingRenderers.Count > 0)
+                        {
+                            GUILayout.Label("Missing renderers: " + m_missingRenderers.Count);
+                            EditorGUILayout.Separator();
+                            scrollPos2 = GUILayout.BeginScrollView(scrollPos2);
+
+                            int nodeCount = m_missingRenderers.Count > 100 ? 100 : m_missingRenderers.Count;
+
+                            for (int c = 0; c < nodeCount; c++)
+                            {
+                                if (GUILayout.Button(m_missingRenderers[c].name))
+                                {
+                                    Selection.activeGameObject = m_missingRenderers[c];
+                                }
+                            }
+
+                            GUILayout.EndScrollView();
                         }
                         EditorGUILayout.EndVertical();
-                        GUILayout.EndScrollView();
                     }
                 }
             }
