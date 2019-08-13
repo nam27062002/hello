@@ -306,6 +306,13 @@ public class MenuSceneController : SceneController {
 		}
 	}
 
+	public void GoToGameNoUI() {
+		if(!GameSceneManager.isLoading) {
+			LoadingScreen.Toggle(true, false);
+			FlowManager.GoToGameNoUI();
+		}
+	}
+
 	/// <summary>
 	/// The selected dragon has changed.
 	/// </summary>

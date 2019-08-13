@@ -18,16 +18,16 @@ public class UIGameEntitySpawn : MonoBehaviour{
         GameObject go = Resources.Load<GameObject>( "UI/" + m_prefab);
         if ( go != null )
         {
-            m_instance = Instantiate(go, InstanceManager.gameHUD.m_miscGroup.transform) as GameObject;
-            if ( m_instance != null && m_startDeactivated )
-            {
-                m_instance.SetActive( false );
-            }
-            UIGameEntitySignaler signaler = m_instance.GetComponent<UIGameEntitySignaler>();
-            if ( signaler != null )
-            {
-                signaler.m_following = m_follow;
-            }
+			if(InstanceManager.gameHUD != null) {
+				m_instance = Instantiate(go, InstanceManager.gameHUD.m_miscGroup.transform) as GameObject;
+				if(m_instance != null && m_startDeactivated) {
+					m_instance.SetActive(false);
+				}
+				UIGameEntitySignaler signaler = m_instance.GetComponent<UIGameEntitySignaler>();
+				if(signaler != null) {
+					signaler.m_following = m_follow;
+				}
+			}
         }
     }
 }
