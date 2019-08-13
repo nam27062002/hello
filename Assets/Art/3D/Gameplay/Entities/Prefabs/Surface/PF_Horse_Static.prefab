@@ -652,14 +652,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f45dfbaed20447daa07123ab6b7cd80, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_inventory:
-  - equipablePrefabName: PF_Party_Hat
-    toDisableOnEquip: []
-    probability: 1
-    season: Anniversary1
-    position: {x: 0, y: 0.17, z: 0.11}
-    scale: {x: 0.5, y: 0.5, z: 0.5}
-    rotation: {x: 18.38, y: 0, z: 2.9}
+  m_seasonalItems:
+  - season: Anniversary1
+    groups:
+    - name: import
+      probability: 1
+      items:
+      - equipablePrefabName: PF_Party_Hat
+        probability: 1
+        toDisableOnEquip: []
+        position: {x: 0, y: 0.17, z: 0.11}
+        scale: {x: 0.5, y: 0.5, z: 0.5}
+        rotation: {x: 18.38, y: 0, z: 2.9}
 --- !u!136 &136000011044019352
 CapsuleCollider:
   m_ObjectHideFlags: 1

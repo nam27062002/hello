@@ -709,54 +709,68 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f45dfbaed20447daa07123ab6b7cd80, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_inventory:
-  - equipablePrefabName: PF_Leprechaun_Hat_Goblin
-    toDisableOnEquip:
-    - {fileID: 1416473837642006}
-    probability: 1
-    season: patricks
-    position: {x: 0, y: 0, z: 0}
-    scale: {x: 1, y: 1, z: 1}
-    rotation: {x: 0, y: 0, z: 0}
-  - equipablePrefabName: PF_Tinfoilhat_goblin
-    toDisableOnEquip:
-    - {fileID: 1416473837642006}
-    probability: 1
-    season: ufoDay
-    position: {x: 0, y: 0, z: 0}
-    scale: {x: 1, y: 1, z: 1}
-    rotation: {x: 0, y: 0, z: 0}
-  - equipablePrefabName: PF_AlienMask_goblin
-    toDisableOnEquip: []
-    probability: 0
-    season: ufoDay
-    position: {x: 0, y: 0, z: 0}
-    scale: {x: 1, y: 1, z: 1}
-    rotation: {x: 0, y: 0, z: 0}
-  - equipablePrefabName: PF_Party_Hat
-    toDisableOnEquip:
-    - {fileID: 1416473837642006}
-    probability: 1
-    season: Anniversary1
-    position: {x: 0, y: -0.09, z: -0.04}
-    scale: {x: 1.5, y: 1, z: 1.5}
-    rotation: {x: -14.67, y: 0, z: 0}
-  - equipablePrefabName: PF_Scissors_Hat
-    toDisableOnEquip:
-    - {fileID: 1416473837642006}
-    probability: 1
-    season: halloween
-    position: {x: 0, y: -0.09, z: -0.04}
-    scale: {x: 1.5, y: 1, z: 1.5}
-    rotation: {x: -14.67, y: 0, z: 0}
-  - equipablePrefabName: PF_Frank_mask
-    toDisableOnEquip:
-    - {fileID: 1416473837642006}
-    probability: 1
-    season: halloween
-    position: {x: 0, y: -0.07, z: 0.3}
-    scale: {x: 1.5, y: 1.5, z: 1.5}
-    rotation: {x: -14.67, y: 0, z: 0}
+  m_seasonalItems:
+  - season: patricks
+    groups:
+    - name: import
+      probability: 1
+      items:
+      - equipablePrefabName: PF_Leprechaun_Hat_Goblin
+        probability: 1
+        toDisableOnEquip:
+        - {fileID: 1416473837642006}
+        position: {x: -0.004266739, y: 0.005710721, z: -0.008978516}
+        scale: {x: 1, y: 1, z: 0.9105625}
+        rotation: {x: -0, y: 0, z: 0}
+  - season: ufoDay
+    groups:
+    - name: import
+      probability: 1
+      items:
+      - equipablePrefabName: PF_AlienMask_goblin
+        probability: 0
+        toDisableOnEquip: []
+        position: {x: 0, y: 0, z: 0}
+        scale: {x: 1, y: 1, z: 1}
+        rotation: {x: 0, y: 0, z: 0}
+      - equipablePrefabName: PF_Tinfoilhat_goblin
+        probability: 1
+        toDisableOnEquip:
+        - {fileID: 1416473837642006}
+        position: {x: 0, y: 0, z: 0}
+        scale: {x: 1, y: 1, z: 1}
+        rotation: {x: 0, y: 0, z: 0}
+  - season: Anniversary1
+    groups:
+    - name: import
+      probability: 1
+      items:
+      - equipablePrefabName: PF_Party_Hat
+        probability: 1
+        toDisableOnEquip:
+        - {fileID: 1416473837642006}
+        position: {x: 0, y: -0.09, z: -0.04}
+        scale: {x: 1.5, y: 1, z: 1.5}
+        rotation: {x: -14.67, y: 0, z: 0}
+  - season: halloween
+    groups:
+    - name: import
+      probability: 1
+      items:
+      - equipablePrefabName: PF_Frank_mask
+        probability: 0.5
+        toDisableOnEquip:
+        - {fileID: 1416473837642006}
+        position: {x: 0, y: -0.07, z: 0.3}
+        scale: {x: 1.5, y: 1.5, z: 1.5}
+        rotation: {x: -14.67, y: 0, z: 0}
+      - equipablePrefabName: PF_Scissors_Hat
+        probability: 0.5
+        toDisableOnEquip:
+        - {fileID: 1416473837642006}
+        position: {x: 0, y: -0.09, z: -0.04}
+        scale: {x: 1.5, y: 1, z: 1.5}
+        rotation: {x: -14.67, y: 0, z: 0}
 --- !u!114 &114421048350009022
 MonoBehaviour:
   m_ObjectHideFlags: 1
