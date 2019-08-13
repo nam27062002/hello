@@ -42,25 +42,12 @@ public class EntityEquipEditor : Editor {
             for (int s = 0; s < m_target.seasonalItems.Count; ++s) {
                 // sort groups
                 List<EntityEquip.WeightedGroup> groups = m_target.seasonalItems[s].groups;
-
-                float probFactor = 0;
-                for (int g = 0; g < groups.Count; ++g) {
-                    probFactor += groups[g].probability;
-                }
-
-                if (probFactor > 0f) {
-                    probFactor = 1f / probFactor;
-                    for (int g = 0; g < groups.Count; ++g) {
-                        groups[g].probability *= probFactor;
-                    }
-
-                    groups.Sort(new EntityEquip.CompareWeightedGroup());
-                }
-
+                groups.Sort(new EntityEquip.CompareWeightedGroup());
+              
                 for (int g = 0; g < groups.Count; ++g) {
                     List<EntityEquip.WeightedItem> items = groups[g].items;
 
-                    probFactor = 0;
+                    float probFactor = 0;
                     for (int i = 0; i < items.Count; ++i) {
                         probFactor += items[i].probability;
                     }

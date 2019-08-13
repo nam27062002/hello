@@ -68,12 +68,10 @@ public class EntityEquip : MonoBehaviour {
         }
 
         foreach (Seasons season in m_seasonalItems) {
-            if (season.season.Equals(SeasonManager.activeSeason)) {
-                float groupProbability = 0f;
-                float groupRND = UnityEngine.Random.Range(0f, 1f);
+            if (season.season.Equals(SeasonManager.activeSeason)) {                
                 foreach (WeightedGroup group in season.groups) {
-                    groupProbability += group.probability;
-                    if (groupRND <= groupProbability) {
+                    float groupRND = UnityEngine.Random.Range(0f, 1f);
+                    if (groupRND <= group.probability) {
                         float itemProbability = 0f;
                         float itemRND = UnityEngine.Random.Range(0f, 1f);
                         foreach (WeightedItem item in group.items) {
