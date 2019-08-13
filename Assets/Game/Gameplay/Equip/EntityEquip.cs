@@ -2,26 +2,60 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EntityEquip : MonoBehaviour {
-
+public class EntityEquip : MonoBehaviour {   
+    //------------------------------------------------------------
     [Serializable]
-    public class Item {
+    public class WeightedItem {
         public string equipablePrefabName;
-        public GameObject[] toDisableOnEquip = new GameObject[0];
+        [Range(0f, 1f)] public float probability = 1f;
 
-        [Separator]
-        [Range(0f, 1f)]public float probability = 1f;
-        [SeasonList]
-        public string season = "";
+        public List<GameObject> toDisableOnEquip = new List<GameObject>();
 
         [Separator]
         public Vector3 position = GameConstants.Vector3.zero;
         public Vector3 scale = GameConstants.Vector3.one;
         public Vector3 rotation = GameConstants.Vector3.zero;
     }
+    public class CompareWeightedItem : IComparer<WeightedItem> {
+        public int Compare(WeightedItem _l, WeightedItem _r) {
+            if (_l.probability > _r.probability) {
+                return 1;
+            } else if (_l.probability < _r.probability) {
+                return -1;
+            }
 
-    [SerializeField] private Item[] m_inventory = new Item[0];
-    public Item[] inventory { get { return m_inventory; } }
+            return 0;
+        }
+    }
+
+    [Serializable]
+    public class WeightedGroup {
+        public string name;
+        [Range(0f, 1f)] public float probability = 1f;
+        public List<WeightedItem> items = new List<WeightedItem>();
+    }
+    public class CompareWeightedGroup : IComparer<WeightedGroup> {
+        public int Compare(WeightedGroup _l, WeightedGroup _r) {
+            if (_l.probability > _r.probability) {
+                return 1;
+            } else if (_l.probability < _r.probability) {
+                return -1;
+            }
+
+            return 0;
+        }
+    }
+
+    [Serializable]
+    public class Seasons {
+        [SeasonList] public string season;
+        public List<WeightedGroup> groups = new List<WeightedGroup>();
+    }
+
+    [SerializeField] private List<Seasons> m_seasonalItems = new List<Seasons>();
+    public List<Seasons> seasonalItems { get { return m_seasonalItems; } set { m_seasonalItems = value; } }
+    //------------------------------------------------------------
+
 
     private AttachPoint[] m_attachPoints = new AttachPoint[(int)Equipable.AttachPoint.Count];
     private List<string> m_equippedSkus = new List<string>();
@@ -33,31 +67,39 @@ public class EntityEquip : MonoBehaviour {
             m_attachPoints[(int)points[i].point] = points[i];
         }
 
-        //This should happen before all the other scripts
-        //Equip time
-        for (int i = 0; i < m_inventory.Length; ++i) {
-            Item item = m_inventory[i];
+        foreach (Seasons season in m_seasonalItems) {
+            if (season.season.Equals(SeasonManager.activeSeason)) {                
+                foreach (WeightedGroup group in season.groups) {
+                    float groupRND = UnityEngine.Random.Range(0f, 1f);
+                    if (groupRND <= group.probability) {
+                        float itemProbability = 0f;
+                        float itemRND = UnityEngine.Random.Range(0f, 1f);
+                        foreach (WeightedItem item in group.items) {
+                            itemProbability += item.probability;
+                            if (itemRND <= itemProbability) {
+                                //this entity must wear this item!
+                                GameObject prefabObj = HDAddressablesManager.Instance.LoadAsset<GameObject>(item.equipablePrefabName);
 
-            float rnd = UnityEngine.Random.Range(0f, 1f);
-            if (rnd <= item.probability) {
-                if (string.IsNullOrEmpty(item.season) || item.season.Equals(SeasonManager.activeSeason)) {
-                    //this entity must wear this item!
-                    GameObject prefabObj = HDAddressablesManager.Instance.LoadAsset<GameObject>(item.equipablePrefabName);
+                                GameObject objInstance = Instantiate<GameObject>(prefabObj);
+                                Equipable equipable = objInstance.GetComponent<Equipable>();
 
-                    GameObject objInstance = Instantiate<GameObject>(prefabObj);
-                    Equipable equipable = objInstance.GetComponent<Equipable>();
-
-                    int attackPointIdx = (int)equipable.attachPoint;
-                    if (equipable != null && attackPointIdx < m_attachPoints.Length && m_attachPoints[attackPointIdx] != null) {
-                        if (m_attachPoints[attackPointIdx].item == null) {
-                            m_attachPoints[attackPointIdx].EquipAccessory(equipable, item.position, item.scale, item.rotation);
-                            m_equippedSkus.Add(equipable.sku);
-                            for (int j = 0; j < item.toDisableOnEquip.Length; ++j) {
-                                item.toDisableOnEquip[j].SetActive(false);
+                                int attackPointIdx = (int)equipable.attachPoint;
+                                if (equipable != null && attackPointIdx < m_attachPoints.Length && m_attachPoints[attackPointIdx] != null) {
+                                    if (m_attachPoints[attackPointIdx].item == null) {
+                                        m_attachPoints[attackPointIdx].EquipAccessory(equipable, item.position, item.scale, item.rotation);
+                                        m_equippedSkus.Add(equipable.sku);
+                                        for (int j = 0; j < item.toDisableOnEquip.Count; ++j) {
+                                            item.toDisableOnEquip[j].SetActive(false);
+                                        }
+                                    }
+                                }
+                                break;
                             }
                         }
+                        break;
                     }
                 }
+                break;
             }
         }
     }

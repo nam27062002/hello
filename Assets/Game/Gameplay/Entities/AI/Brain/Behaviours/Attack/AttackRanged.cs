@@ -17,7 +17,7 @@ namespace AI {
 			
 			private GameObject m_projectile;
 			private Transform m_projectileSpawnPoint;
-			private ViewControl m_viewControl;
+			
 
 			private PoolHandler m_poolHandler;
 
@@ -40,9 +40,7 @@ namespace AI {
                 // create a projectile from resources (by name) and save it into pool
                 Broadcaster.AddListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
 				Broadcaster.AddListener(BroadcastEventType.GAME_AREA_ENTER, this);
-
-				m_viewControl = m_pilot.GetComponent<ViewControl>();
-
+                
 				base.OnInitialise();
 			}
 
@@ -73,7 +71,7 @@ namespace AI {
 				base.StartAttack();
 				if (m_data.forceFaceToShoot && m_viewControl != null) {
 					// Tell view position to attack
-					m_viewControl.attackTargetPosition = m_facingTarget;
+					(m_viewControl as ViewControl).attackTargetPosition = m_facingTarget;
 				}
 			}
 
