@@ -90,10 +90,7 @@ public class DeviceOperatorSpawner : AbstractSpawner {
         if (m_autoSpawner.state == AutoSpawnBehaviour.State.Idle) {
             if (IsOperatorDead()) {
 				if (m_gameSceneController.elapsedSeconds > m_respawnTime) {
-					if (m_newCamera != null) {
-						return  m_newCamera.IsInsideActivationMaxArea(m_spawnAtTransform.position)
-                            && !m_newCamera.IsInsideActivationMinArea(m_spawnAtTransform.position);
-					}
+                    return true;
 				}
             }
         }
@@ -233,7 +230,7 @@ public class DeviceOperatorSpawner : AbstractSpawner {
 	//-------------------------------------------------------------------
 	void OnDrawGizmosSelected() {
 		Gizmos.color = Colors.WithAlpha(Colors.paleGreen, 0.5f);
-		Gizmos.DrawCube(transform.position, m_rect.size);
+		Gizmos.DrawCube(transform.position + (Vector3)m_rect.position, m_rect.size);
 
 		if (m_spawnAtTransform != null) {
 			Gizmos.color = Colors.lime;
