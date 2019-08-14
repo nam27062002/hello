@@ -808,6 +808,7 @@ GameObject:
   - component: {fileID: 4883900126479166}
   - component: {fileID: 198306165339141404}
   - component: {fileID: 199551741116061874}
+  - component: {fileID: 114629183716764108}
   m_Layer: 0
   m_Name: Glow
   m_TagString: Untagged
@@ -975,6 +976,7 @@ GameObject:
   - component: {fileID: 4551009073818520}
   - component: {fileID: 198503937476151138}
   - component: {fileID: 199360911800784942}
+  - component: {fileID: 114326520990703056}
   m_Layer: 0
   m_Name: Sparks
   m_TagString: Untagged
@@ -2241,6 +2243,34 @@ MonoBehaviour:
     targets:
     - root: {fileID: 4863669226501862}
       resource: UI/Metagame/Eggs/Decos/PF_Egg_valentines_decor
+--- !u!114 &114326520990703056
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1859305427920508}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3128bd630f39645c4a1e03d94b7008f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_transform: {fileID: 0}
+  m_resetFirst: 1
+  m_whenScale: 0
+--- !u!114 &114629183716764108
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1657158097367268}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3128bd630f39645c4a1e03d94b7008f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_transform: {fileID: 0}
+  m_resetFirst: 1
+  m_whenScale: 0
 --- !u!137 &137418423409999524
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1
@@ -2445,7 +2475,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 1152289862
+  randomSeed: -1881388926
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -5806,7 +5836,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -343450343
+  randomSeed: -1864259265
   InitialModule:
     serializedVersion: 3
     enabled: 1
