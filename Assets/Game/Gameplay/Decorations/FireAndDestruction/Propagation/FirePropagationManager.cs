@@ -112,9 +112,11 @@ public class FirePropagationManager : UbiBCN.SingletonMonoBehaviour<FirePropagat
 		m_fireNodes.Clear();
 		m_burningFireNodes.Clear();
 
-		m_cullingGroup.onStateChanged -= CullingStateChange;
-		m_cullingGroup.Dispose();
-		m_cullingGroup = null;
+		if(m_cullingGroup != null) {
+			m_cullingGroup.onStateChanged -= CullingStateChange;
+			m_cullingGroup.Dispose();
+			m_cullingGroup = null;
+		}
 	}
 
 	public static void Insert(IFireNode _fireNode) {
