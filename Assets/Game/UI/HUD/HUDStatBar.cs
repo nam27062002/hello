@@ -20,7 +20,7 @@ using TMPro;
 /// <summary>
 /// Simple controller for a health bar in the debug hud.
 /// </summary>
-public class HUDStatBar : MonoBehaviour, IBroadcastListener {
+public class HUDStatBar : IHUDWidget, IBroadcastListener {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
@@ -48,6 +48,12 @@ public class HUDStatBar : MonoBehaviour, IBroadcastListener {
         public UIGradient_OLD gradient = null;
         public Color color1 = Color.white;
         public Color color2 = Color.white;
+	}
+
+	public override float UPDATE_INTERVAL {
+		get {
+			return 0.1f;
+		}
 	}
 
 	//------------------------------------------------------------------//
@@ -267,7 +273,7 @@ public class HUDStatBar : MonoBehaviour, IBroadcastListener {
     /// <summary>
     /// Keep values updated
     /// </summary>
-    private void Update() {
+    public override void PeriodicUpdate() {
 		if (m_ready) {
 			// Only if player is alive
 			if(InstanceManager.player != null) {

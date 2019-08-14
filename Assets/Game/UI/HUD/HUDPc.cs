@@ -17,7 +17,7 @@ using TMPro;
 /// Simple controller to update a textfield with the current amount of PC of the player.
 /// </summary>
 [RequireComponent(typeof(CanvasGroup))]
-public class HUDPc : HudWidget {
+public class HUDPc : IHUDCounter {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
@@ -35,7 +35,7 @@ public class HUDPc : HudWidget {
 	/// Initialization.
 	/// </summary>
 	protected override void Awake() {
-        base.Awake();
+		base.Awake();
 		m_canvasGroup = GetComponent<CanvasGroup>();
 	}
 
@@ -43,26 +43,32 @@ public class HUDPc : HudWidget {
 	/// First update call.
 	/// </summary>
 	protected override void Start() {
-        base.Start();
+		base.Start();
 		// Start hidden
-		m_canvasGroup.alpha = 0f;		
+		m_canvasGroup.alpha = 0f;
 	}
-	
+
 	/// <summary>
 	/// The spawner has been enabled.
 	/// </summary>
-	private void OnEnable() {
+	protected override void OnEnable() {
+		// Call parent
+		base.OnEnable();
+
 		// Subscribe to external events
 		Messenger.AddListener<Reward, Transform>(MessengerEvents.REWARD_APPLIED, OnRewardApplied);
 		Messenger.AddListener(MessengerEvents.UI_INGAME_PC_FEEDBACK_END, OnPCFeedbackEnd);
-		Messenger.AddListener<DamageType, Transform>(MessengerEvents.PLAYER_KO, OnPlayerKo);	// Show during revive
+		Messenger.AddListener<DamageType, Transform>(MessengerEvents.PLAYER_KO, OnPlayerKo);    // Show during revive
 		Messenger.AddListener<DragonPlayer.ReviveReason>(MessengerEvents.PLAYER_REVIVE, OnPlayerRevive);
 	}
-	
+
 	/// <summary>
 	/// The spawner has been disabled.
 	/// </summary>
-	private void OnDisable() {
+	protected override void OnDisable() {
+		// Call parent
+		base.OnDisable();
+
 		// Unsubscribe from external events
 		Messenger.RemoveListener<Reward, Transform>(MessengerEvents.REWARD_APPLIED, OnRewardApplied);
 		Messenger.RemoveListener(MessengerEvents.UI_INGAME_PC_FEEDBACK_END, OnPCFeedbackEnd);
@@ -70,24 +76,24 @@ public class HUDPc : HudWidget {
 		Messenger.RemoveListener<DragonPlayer.ReviveReason>(MessengerEvents.PLAYER_REVIVE, OnPlayerRevive);
 	}
 
-    protected override void Update() {
-        base.Update();
+	public override void PeriodicUpdate() {
+		base.PeriodicUpdate();
 
-		if (m_timer > 0) {
+		if(m_timer > 0) {
 			m_timer -= Time.unscaledDeltaTime;
-			if (m_timer <= 0) {
+			if(m_timer <= 0) {
 				// Fade out
 				Toggle(false);
 			}
 		}
 	}
 
-    //------------------------------------------------------------------//
-    // INTERNAL UTILS													//
-    //------------------------------------------------------------------//   
-    protected override string GetValueAsString() {
+	//------------------------------------------------------------------//
+	// INTERNAL UTILS													//
+	//------------------------------------------------------------------//   
+	protected override string GetValueAsString() {
 		return UIConstants.GetIconString(Value, UIConstants.IconType.PC, UIConstants.IconAlignment.RIGHT);
-    }
+	}
 
 	/// <summary>
 	/// Trigger8
@@ -102,22 +108,22 @@ public class HUDPc : HudWidget {
 
 		// Launch animation!
 		m_canvasGroup.DOFade(targetAlpha, 2f)
-			.SetSpeedBased(true)	// Speed based because we are not necessarily at alpha 0
-			.SetUpdate(UpdateType.Normal, true);	// Not affected by slow motion
+			.SetSpeedBased(true)    // Speed based because we are not necessarily at alpha 0
+			.SetUpdate(UpdateType.Normal, true);    // Not affected by slow motion
 
 		// Clear timer if hiding
 		if(!_show) m_timer = 0;
 	}
 
-    //------------------------------------------------------------------//
-    // CALLBACKS														//
-    //------------------------------------------------------------------//
-    /// <summary>
-    /// A reward has been applied, show feedback for it.
-    /// </summary>
-    /// <param name="_reward">The reward that has been applied.</param>
-    /// <param name="_entity">The entity that triggered the reward. Can be null.</param>
-    private void OnRewardApplied(Reward _reward, Transform _entity) {
+	//------------------------------------------------------------------//
+	// CALLBACKS														//
+	//------------------------------------------------------------------//
+	/// <summary>
+	/// A reward has been applied, show feedback for it.
+	/// </summary>
+	/// <param name="_reward">The reward that has been applied.</param>
+	/// <param name="_entity">The entity that triggered the reward. Can be null.</param>
+	private void OnRewardApplied(Reward _reward, Transform _entity) {
 		// We only care about pc rewards
 		if(_reward.pc > 0) {
 			// Set value before reward (the actual value will be applied on the PCFeedbackEnd callback)
@@ -145,7 +151,7 @@ public class HUDPc : HudWidget {
 
 		// Fade in
 		Toggle(true);
-		m_timer = 5f;	// Sync with the HUD Revive settings
+		m_timer = 5f;   // Sync with the HUD Revive settings
 	}
 
 	/// <summary>

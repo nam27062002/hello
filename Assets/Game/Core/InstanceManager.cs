@@ -122,6 +122,15 @@ public class InstanceManager : UbiBCN.SingletonMonoBehaviour<InstanceManager> {
 	};
 
 	//------------------------------------------------------------------//
+	// SHARED															//
+	//------------------------------------------------------------------//
+	// Global manager to centralize HUD updates
+	private HUDManager m_hudManager = new HUDManager();
+	public static HUDManager hudManager {
+		get { return instance.m_hudManager; }
+	}
+
+	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
 
@@ -138,12 +147,23 @@ public class InstanceManager : UbiBCN.SingletonMonoBehaviour<InstanceManager> {
 	}
 
 	/// <summary>
+	/// Called every frame.
+	/// </summary>
+	private void Update() {
+		// Propagate
+		m_hudManager.Update();
+	}
+
+	/// <summary>
 	/// Destructor.
 	/// </summary>
 	override protected void OnDestroy() {
 		// Clear all references
 		m_sceneController = null;
 		m_player = null;
+
+		m_hudManager.OnDestroy();
+		m_hudManager = null;
 
 		// Call parent
 		base.OnDestroy();

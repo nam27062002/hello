@@ -7,12 +7,18 @@ using TMPro;
 /// <summary>
 /// Simple controller to store common stuff among different hud widgets showing a piece of data.
 /// </summary>
-public abstract class HudWidget : MonoBehaviour
+public abstract class IHUDCounter : IHUDWidget
 {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
-	protected const float MINIMUM_ANIM_INTERVAL = 0f;	// Seconds, minimum time without updating before triggering the animation again
+	protected const float MINIMUM_ANIM_INTERVAL = 0f;   // Seconds, minimum time without updating before triggering the animation again
+	public override float UPDATE_INTERVAL {
+		get {
+			// [AOC] TODO!! Depend on quality setting?
+			return 0.25f;
+		}
+	}
 
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
@@ -50,7 +56,7 @@ public abstract class HudWidget : MonoBehaviour
         PrintValue();
     }
 
-    protected virtual void Update()
+    public override void PeriodicUpdate()
     {
         if (NeedsToPrintValue)
         {
