@@ -7,6 +7,7 @@ public class EntityEquip : MonoBehaviour {
     [Serializable]
     public class WeightedItem {
         public string equipablePrefabName;
+        public bool defaultItemLOW = false;
         [Range(0f, 1f)] public float probability = 1f;
 
         public List<GameObject> toDisableOnEquip = new List<GameObject>();
@@ -68,38 +69,61 @@ public class EntityEquip : MonoBehaviour {
         }
 
         foreach (Seasons season in m_seasonalItems) {
-            if (season.season.Equals(SeasonManager.activeSeason)) {                
-                foreach (WeightedGroup group in season.groups) {
-                    float groupRND = UnityEngine.Random.Range(0f, 1f);
-                    if (groupRND <= group.probability) {
-                        float itemProbability = 0f;
-                        float itemRND = UnityEngine.Random.Range(0f, 1f);
-                        foreach (WeightedItem item in group.items) {
-                            itemProbability += item.probability;
-                            if (itemRND <= itemProbability) {
-                                //this entity must wear this item!
-                                GameObject prefabObj = HDAddressablesManager.Instance.LoadAsset<GameObject>(item.equipablePrefabName);
-
-                                GameObject objInstance = Instantiate<GameObject>(prefabObj);
-                                Equipable equipable = objInstance.GetComponent<Equipable>();
-
-                                int attackPointIdx = (int)equipable.attachPoint;
-                                if (equipable != null && attackPointIdx < m_attachPoints.Length && m_attachPoints[attackPointIdx] != null) {
-                                    if (m_attachPoints[attackPointIdx].item == null) {
-                                        m_attachPoints[attackPointIdx].EquipAccessory(equipable, item.position, item.scale, item.rotation);
-                                        m_equippedSkus.Add(equipable.sku);
-                                        for (int j = 0; j < item.toDisableOnEquip.Count; ++j) {
-                                            item.toDisableOnEquip[j].SetActive(false);
-                                        }
+            if (season.season.Equals(SeasonManager.activeSeason)) {
+                //let's check quality level
+                if (FeatureSettingsManager.instance.LevelsLOD < FeatureSettings.ELevel4Values.mid) {
+                    foreach (WeightedGroup group in season.groups) {
+                        float groupRND = UnityEngine.Random.Range(0f, 1f);
+                        if (groupRND <= group.probability) {
+                            if (group.items.Count > 0) {
+                                int defaultItemIndex = 0;
+                                for (int i = 0; i < group.items.Count; ++i) {
+                                    if (group.items[i].defaultItemLOW) {
+                                        defaultItemIndex = i;
+                                        break;
                                     }
                                 }
-                                break;
+                                EquipItem(group.items[defaultItemIndex]);
                             }
+                            break;
                         }
-                        break;
+                    }
+               } else {
+                    foreach (WeightedGroup group in season.groups) {
+                        float groupRND = UnityEngine.Random.Range(0f, 1f);
+                        if (groupRND <= group.probability) {
+                            float itemProbability = 0f;
+                            float itemRND = UnityEngine.Random.Range(0f, 1f);
+                            foreach (WeightedItem item in group.items) {
+                                itemProbability += item.probability;
+                                if (itemRND <= itemProbability) {
+                                    EquipItem(item);
+                                    break;
+                                }
+                            }                            
+                        }
                     }
                 }
                 break;
+            }           
+        }
+    }
+
+    private void EquipItem(WeightedItem _item) {
+        //this entity must wear this item!
+        GameObject prefabObj = HDAddressablesManager.Instance.LoadAsset<GameObject>(_item.equipablePrefabName);
+
+        GameObject objInstance = Instantiate<GameObject>(prefabObj);
+        Equipable equipable = objInstance.GetComponent<Equipable>();
+
+        int attackPointIdx = (int)equipable.attachPoint;
+        if (equipable != null && attackPointIdx < m_attachPoints.Length && m_attachPoints[attackPointIdx] != null) {
+            if (m_attachPoints[attackPointIdx].item == null) {
+                m_attachPoints[attackPointIdx].EquipAccessory(equipable, _item.position, _item.scale, _item.rotation);
+                m_equippedSkus.Add(equipable.sku);
+                for (int j = 0; j < _item.toDisableOnEquip.Count; ++j) {
+                    _item.toDisableOnEquip[j].SetActive(false);
+                }
             }
         }
     }
