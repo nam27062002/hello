@@ -67,39 +67,77 @@ public class PopupSettings : MonoBehaviour {
 
 	public void CS_Init()
 	{
-
-		string country = "es";
-		if (
-			ServerManager.SharedInstance.GetServerAuthBConfig() != null &&
-			ServerManager.SharedInstance.GetServerAuthBConfig()["country"] != null)
-		{
-			country = ServerManager.SharedInstance.GetServerAuthBConfig()["country"].ToString().Replace("\"", "");
-		}
+        string country = CS_GetCountry();		
 
 		CaletySettings settingsInstance = (CaletySettings)Resources.Load("CaletySettings");
-
 		if (settingsInstance != null)
 		{
-
-			CSTSManager.ECSTSEnvironment kEnv = CSTSManager.ECSTSEnvironment.E_CSTS_DEV;
-			if (settingsInstance.m_iBuildEnvironmentSelected == (int)CaletyConstants.eBuildEnvironments.BUILD_PRODUCTION)
-			{
-				kEnv = CSTSManager.ECSTSEnvironment.E_CSTS_PROD;
-				Debug.LogError("init CALETY");
-			}
-
-			CSTSManager.CSTSConfig kCSTSConfig = new CSTSManager.CSTSConfig();
-			kCSTSConfig.m_eEnvironment = kEnv;
-			kCSTSConfig.m_strCSTSId = "92192eadf22f6aafe6fadd926945ae60";// "cd6a617edf97d768067ac38e295f651c";
-			kCSTSConfig.m_strInGamePlayerID = GameSessionManager.SharedInstance.GetUID();
-			kCSTSConfig.m_strCountry = country;
-			kCSTSConfig.m_bIsAutoDestroyable = true;
-			kCSTSConfig.m_bUseNavigationBar = true;
-			kCSTSConfig.m_kViewRect = new Vector4(0.0f, 0.0f, 0.0f, 0.0f);
-
-			CSTSManager.SharedInstance.Initialise(kCSTSConfig);
+            CSTSManager.ECSTSEnvironment kEnv = CS_GetEnvironment(settingsInstance);			
+            CSTSManager.SharedInstance.Initialise(kEnv, country);
 		}
-	}
+	}    
+
+    private static string CS_GetCountry()
+    {
+        string country = "es";
+        if (
+            ServerManager.SharedInstance.GetServerAuthBConfig() != null &&
+            ServerManager.SharedInstance.GetServerAuthBConfig()["country"] != null)
+        {
+            country = ServerManager.SharedInstance.GetServerAuthBConfig()["country"].ToString().Replace("\"", "");
+        }
+
+        return country;
+    }
+
+    private static CSTSManager.ECSTSEnvironment CS_GetEnvironment(CaletySettings settingsInstance)
+    {
+        CSTSManager.ECSTSEnvironment kEnv = CSTSManager.ECSTSEnvironment.E_CSTS_DEV;
+        if (settingsInstance == null)
+        {
+            settingsInstance = (CaletySettings)Resources.Load("CaletySettings");
+            if (settingsInstance != null)
+            {
+                if (settingsInstance.m_iBuildEnvironmentSelected == (int)CaletyConstants.eBuildEnvironments.BUILD_PRODUCTION)
+                {
+                    kEnv = CSTSManager.ECSTSEnvironment.E_CSTS_PROD;
+                }
+            }
+        }
+
+        return kEnv;
+    }
+
+    public static string CS_GetDebugInfo()
+    {
+        return "country = " + CS_GetCountry() + " env = " + CS_GetEnvironment(null); 
+    }
+
+    public static void CS_OpenPopup()
+    {
+        string iso = LocalizationManager.SharedInstance.Culture.Name;
+        string caletyISO = MiscUtils.StandardISOToCaletyISO(iso);
+
+        TrackingPersistenceSystem trackingPersistence = HDTrackingManager.Instance.TrackingPersistenceSystem;
+        int totalPurchases = (trackingPersistence == null) ? 0 : trackingPersistence.TotalPurchases;
+        bool isPayer = totalPurchases > 0;
+        CS_OpenPopup(caletyISO, isPayer, true);        
+    }
+
+    public static void CS_OpenPopup(string caletyISO, bool isPayer, bool track)
+    {
+        CSTSManager.SharedInstance.OpenView("92192eadf22f6aafe6fadd926945ae60", 0, 0, 0, 0, true, true, caletyISO, isPayer);
+
+        if (track)
+        {
+            HDTrackingManager.Instance.Notify_CustomerSupportRequested();
+        }
+
+        if (FeatureSettingsManager.IsDebugEnabled)
+        {
+            ControlPanel.Log("[CSTS] caletyISO = " + caletyISO + " payer = " + isPayer);
+        }
+    }
 
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
