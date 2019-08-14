@@ -841,6 +841,7 @@ MonoBehaviour:
       probability: 1
       items:
       - equipablePrefabName: PF_Leprechaun_Hat_Villager
+        defaultItemLOW: 0
         probability: 1
         toDisableOnEquip: []
         position: {x: 0, y: 0, z: 0}
@@ -852,12 +853,14 @@ MonoBehaviour:
       probability: 1
       items:
       - equipablePrefabName: PF_Tinfoilhat_villager
+        defaultItemLOW: 0
         probability: 0
         toDisableOnEquip: []
         position: {x: 0, y: 0, z: 0}
         scale: {x: 1, y: 1, z: 1}
         rotation: {x: 0, y: 0, z: 0}
       - equipablePrefabName: PF_AlienMask_villager
+        defaultItemLOW: 0
         probability: 1
         toDisableOnEquip: []
         position: {x: 0, y: 0, z: 0}
@@ -869,6 +872,7 @@ MonoBehaviour:
       probability: 1
       items:
       - equipablePrefabName: PF_Party_Hat
+        defaultItemLOW: 0
         probability: 1
         toDisableOnEquip: []
         position: {x: 0, y: 0, z: -0.06}
@@ -876,28 +880,32 @@ MonoBehaviour:
         rotation: {x: -22.08, y: 0, z: 13.59}
   - season: halloween
     groups:
-    - name: import
+    - name: Hat
       probability: 1
       items:
-      - equipablePrefabName: PF_Saw_Hat
-        probability: 0.25
-        toDisableOnEquip: []
-        position: {x: 0, y: 0, z: -0.06}
-        scale: {x: 0.8, y: 0.7, z: 0.8}
-        rotation: {x: -22.08, y: 0, z: 13.59}
-      - equipablePrefabName: PF_Scissors_Hat
-        probability: 0.25
-        toDisableOnEquip: []
-        position: {x: 0, y: 0, z: -0.06}
-        scale: {x: 0.8, y: 0.7, z: 0.8}
-        rotation: {x: -22.08, y: 0, z: 13.59}
       - equipablePrefabName: PF_Axe_Hat
+        defaultItemLOW: 0
         probability: 0.25
         toDisableOnEquip: []
         position: {x: 0, y: 0, z: -0.06}
         scale: {x: 0.8, y: 0.7, z: 0.8}
         rotation: {x: -22.08, y: 0, z: 13.59}
       - equipablePrefabName: PF_Pitchfork_Hat
+        defaultItemLOW: 0
+        probability: 0.25
+        toDisableOnEquip: []
+        position: {x: 0, y: 0, z: -0.06}
+        scale: {x: 0.8, y: 0.7, z: 0.8}
+        rotation: {x: -22.08, y: 0, z: 13.59}
+      - equipablePrefabName: PF_Saw_Hat
+        defaultItemLOW: 0
+        probability: 0.25
+        toDisableOnEquip: []
+        position: {x: 0, y: 0, z: -0.06}
+        scale: {x: 0.8, y: 0.7, z: 0.8}
+        rotation: {x: -22.08, y: 0, z: 13.59}
+      - equipablePrefabName: PF_Scissors_Hat
+        defaultItemLOW: 0
         probability: 0.25
         toDisableOnEquip: []
         position: {x: 0, y: 0, z: -0.06}

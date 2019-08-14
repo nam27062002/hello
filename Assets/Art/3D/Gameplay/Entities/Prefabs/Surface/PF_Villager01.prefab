@@ -819,6 +819,7 @@ MonoBehaviour:
       probability: 1
       items:
       - equipablePrefabName: PF_Leprechaun_Hat_Villager
+        defaultItemLOW: 0
         probability: 1
         toDisableOnEquip: []
         position: {x: 0, y: 0, z: 0}
@@ -830,12 +831,14 @@ MonoBehaviour:
       probability: 1
       items:
       - equipablePrefabName: PF_AlienMask_villager
+        defaultItemLOW: 0
         probability: 0
         toDisableOnEquip: []
         position: {x: 0, y: 0, z: 0}
         scale: {x: 1, y: 1, z: 1}
         rotation: {x: 0, y: 0, z: 0}
       - equipablePrefabName: PF_Tinfoilhat_villager
+        defaultItemLOW: 0
         probability: 1
         toDisableOnEquip: []
         position: {x: 0, y: 0, z: 0}
@@ -847,6 +850,7 @@ MonoBehaviour:
       probability: 1
       items:
       - equipablePrefabName: PF_Party_Hat
+        defaultItemLOW: 0
         probability: 1
         toDisableOnEquip: []
         position: {x: 0, y: 0.01, z: -0.04}
@@ -854,10 +858,11 @@ MonoBehaviour:
         rotation: {x: -10.11, y: 0, z: 12.07}
   - season: halloween
     groups:
-    - name: import
+    - name: Hat
       probability: 1
       items:
       - equipablePrefabName: PF_Axe_Hat
+        defaultItemLOW: 0
         probability: 1
         toDisableOnEquip: []
         position: {x: 0.1, y: 0.15, z: 0}
