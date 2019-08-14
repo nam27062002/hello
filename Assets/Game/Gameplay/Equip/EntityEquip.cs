@@ -74,7 +74,8 @@ public class EntityEquip : MonoBehaviour {
                 if (FeatureSettingsManager.instance.LevelsLOD < FeatureSettings.ELevel4Values.mid) {
                     foreach (WeightedGroup group in season.groups) {
                         float groupRND = UnityEngine.Random.Range(0f, 1f);
-                        if (groupRND <= group.probability) {
+                        float probability = 1f / season.groups.Count;
+                        if (groupRND <= probability) {
                             if (group.items.Count > 0) {
                                 int defaultItemIndex = 0;
                                 for (int i = 0; i < group.items.Count; ++i) {
