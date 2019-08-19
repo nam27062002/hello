@@ -67,11 +67,8 @@ public class AdProviderIronSource : AdProvider
         // Get/Add Component (HSEIronSourceEngine)
         mIronSourceEngine = go.GetComponent<HSEIronSourceEngine>();
         if (mIronSourceEngine == null)
-        {
-            if (FeatureSettingsManager.IsDebugEnabled)
-            {
-                Log("IronSource:: ... AdProviderIronSource() started");
-            }
+        {            
+            Log("IronSource:: ... AdProviderIronSource() started");            
 
             mIronSourceEngine = go.AddComponent<HSEIronSourceEngine>();
             mIronSourceEngine.Init(appId, this, consentRestriction);
@@ -113,20 +110,17 @@ public class AdProviderIronSource : AdProvider
     }
 
 	public override void ShowDebugInfo() 
-	{
-		if (FeatureSettingsManager.IsDebugEnabled) 
+	{		
+		if (mIronSourceEngine == null) 
 		{
-			if (mIronSourceEngine == null) 
-			{
-				Log("Engine step: mIronSourceEngine is null");
-			} 
-			else 
-			{
-				Log("Engine step: " + mIronSourceEngine.GetEngineStep ());
-				Log("Rewarded status: " + mIronSourceEngine.GetRewardedStatus ());
-				Log("Interstitial status: " + mIronSourceEngine.GetInterstitialStatus ());
-			}
-		}
+			Log("Engine step: mIronSourceEngine is null");
+		} 
+		else 
+		{
+			Log("Engine step: " + mIronSourceEngine.GetEngineStep ());
+			Log("Rewarded status: " + mIronSourceEngine.GetRewardedStatus ());
+			Log("Interstitial status: " + mIronSourceEngine.GetInterstitialStatus ());
+		}		
 	}
 
     // ==================================================== //
@@ -198,11 +192,8 @@ public class AdProviderIronSource : AdProvider
 
 
         public void Init(string appId, AdProvider adProvider, bool consentRestriction)
-        {
-            if (FeatureSettingsManager.IsDebugEnabled)
-            {
-                Log("IronSource::: Init...");
-            }
+        {            
+            Log("IronSource::: Init...");            
 
             mAdProvider = adProvider;            
 
@@ -217,11 +208,8 @@ public class AdProviderIronSource : AdProvider
 
             //			IronSource.Agent.setUserId ("uniqueUserId");
             IronSource.Agent.init(appId, IronSourceAdUnits.REWARDED_VIDEO, IronSourceAdUnits.INTERSTITIAL);
-
-            if (FeatureSettingsManager.IsDebugEnabled)
-            {
-                Log("IronSource::: Init... DONE! (using AppId: " + appId + ")");
-            }            
+            
+            Log("IronSource::: Init... DONE! (using AppId: " + appId + ")");                        
 
             SetStep(EStep.WaittingInternet);
         }
@@ -266,12 +254,9 @@ public class AdProviderIronSource : AdProvider
 		}
 
         private void SetStep(EStep newStep)
-        {
-            if (FeatureSettingsManager.IsDebugEnabled)
-            {
-                Log("IronSource::: -----------------------");
-                Log("IronSource::: ... NewStep: " + newStep);
-            }
+        {            
+            Log("IronSource::: -----------------------");
+            Log("IronSource::: ... NewStep: " + newStep);            
 
             mStep = newStep;
             mStepStartedAt = DateTime.Now;
@@ -284,9 +269,8 @@ public class AdProviderIronSource : AdProvider
                     mWaitingReward = false;
 
                     mPlaybackResult = PlaybackResult.NONE;
-                            
-                    if (FeatureSettingsManager.IsDebugEnabled)
-                        Log("IronSource::: ... ... ... Playing " + mTryingToPlayAd.Type);                                                                   
+                                                
+                    Log("IronSource::: ... ... ... Playing " + mTryingToPlayAd.Type);                                                                   
 
 #if UNITY_ANDROID
                     // Start a timeout to skip an infinity-loop when IronSource tries to start a videoAd
@@ -318,16 +302,15 @@ public class AdProviderIronSource : AdProvider
             //			yield return new WaitForSecondsRealtime(5f);
 
             if (!mTimeout_appWasPaused && currentPlayVideoAdCount == mPlayVideoAdCount && mStep == EStep.PlayingVideo && mPlaybackResult == PlaybackResult.NONE)
-            {
-                if (FeatureSettingsManager.IsDebugEnabled)
-                    Log("IronSource::: ---> ... ... Playing TIMEOUT");
+            {                
+                Log("IronSource::: ---> ... ... Playing TIMEOUT");
                 NotifyPlaybackResult(PlaybackResult.FAILED);
             }
         }
 
 
         private void LogicUpdate()
-        {
+        {            
             switch (mStep)
             {
                 case EStep.WaittingInternet:
@@ -446,9 +429,8 @@ public class AdProviderIronSource : AdProvider
                     if (mPlaybackResult != PlaybackResult.NONE)
                     {
                         mPlayVideoAdCount++;
-
-                        if (FeatureSettingsManager.IsDebugEnabled)
-                            Log("IronSource::: ... ... ... Played  " + mTryingToPlayAd.Type + ": " + mPlaybackResult);
+                        
+                        Log("IronSource::: ... ... ... Played  " + mTryingToPlayAd.Type + ": " + mPlaybackResult);
 
                         if (mTryingToPlayAd.Type == AdType.V4VC)
                         {
@@ -522,7 +504,7 @@ public class AdProviderIronSource : AdProvider
 
         void OnEnable()
         {
-            Debug.Log("AdProviderIronSourceCallbacks enabled");
+            Log("AdProviderIronSourceCallbacks enabled");
 
             //  Register listerners
             IronSourceEvents.onInterstitialAdReadyEvent += InterstitialAdReadyEvent;
@@ -546,7 +528,7 @@ public class AdProviderIronSource : AdProvider
 
         void OnDisable()
         {
-            Debug.Log("AdProviderIronSourceCallbacks disable");
+            Log("AdProviderIronSourceCallbacks disable");
 
             //  UnRegister listerners
             IronSourceEvents.onInterstitialAdReadyEvent -= InterstitialAdReadyEvent;
@@ -571,53 +553,46 @@ public class AdProviderIronSource : AdProvider
 #region Interstitial IronSource callbacks
 
         void InterstitialAdReadyEvent()
-        {
-            if (FeatureSettingsManager.IsDebugEnabled)
-                Log("IronSource:: --> Interstitial Loaded");
+        {            
+            Log("IronSource:: --> Interstitial Loaded");
 
             //			NotifyCachingResult(CachingResult.VIDEO_AD_LOADED, AdType.Interstitial);
         }
 
         void InterstitialAdLoadFailedEvent(IronSourceError error)
-        {
-            if (FeatureSettingsManager.IsDebugEnabled)
-                Log("IronSource:: --> Interstitial FAILED: " + error);
+        {            
+            Log("IronSource:: --> Interstitial FAILED: " + error);
 
             //			NotifyCachingResult(CachingResult.VIDEO_AD_NOT_FOUND, AdType.Interstitial);
         }
 
         void InterstitialAdShowSucceededEvent()
-        {
-            if (FeatureSettingsManager.IsDebugEnabled)
-				Log("IronSource:: --> Interstitial AdShowSucceededEvent: Ad window opened successfully");				           
+        {            
+			Log("IronSource:: --> Interstitial AdShowSucceededEvent: Ad window opened successfully");				           
         }
 
         void InterstitialAdShowFailedEvent(IronSourceError error)
-        {
-            if (FeatureSettingsManager.IsDebugEnabled)
-                Log("IronSource:: --> Interstitial PLAY-Back FAILED: " + error);
+        {        
+            Log("IronSource:: --> Interstitial PLAY-Back FAILED: " + error);
 
             NotifyPlaybackResult(PlaybackResult.FAILED);
         }
 
         void InterstitialAdClickedEvent()
-        {
-            if (FeatureSettingsManager.IsDebugEnabled)
-                Log("IronSource: --> Interstitial Ad Clicked Event");
+        {            
+            Log("IronSource: --> Interstitial Ad Clicked Event");
         }
 
         void InterstitialAdOpenedEvent()
-        {
-            if (FeatureSettingsManager.IsDebugEnabled)
-                Log("IronSource: --> Interstitial Ad Opened Event");
+        {            
+            Log("IronSource: --> Interstitial Ad Opened Event");
             if (mAdProvider.onVideoAdOpen != null)
                 mAdProvider.onVideoAdOpen();
         }
 
         void InterstitialAdClosedEvent()
-        {
-            if (FeatureSettingsManager.IsDebugEnabled)
-                Log("IronSource: --> Interstitial Ad Closed Event");
+        {            
+            Log("IronSource: --> Interstitial Ad Closed Event");
             if (mAdProvider.onVideoAdClosed!= null)
                 mAdProvider.onVideoAdClosed();
 
@@ -625,18 +600,16 @@ public class AdProviderIronSource : AdProvider
         }
 
         void InterstitialAdRewardedEvent()
-        {
-            if (FeatureSettingsManager.IsDebugEnabled)
-                Log("IronSource: --> Interstitial Ad Rewarded Event");
+        {            
+            Log("IronSource: --> Interstitial Ad Rewarded Event");
         }
 #endregion
 
 #region Rewarded IronSource callbacks
 
         void RewardedVideoAvailabilityChangedEvent(bool canShowAd)
-        {
-            if (FeatureSettingsManager.IsDebugEnabled)
-                Log("IronSource: --> I got RewardedVideoAvailabilityChangedEvent, value = " + canShowAd);
+        {            
+            Log("IronSource: --> I got RewardedVideoAvailabilityChangedEvent, value = " + canShowAd);
         }
 
         void RewardedVideoAdOpenedEvent()
@@ -645,21 +618,19 @@ public class AdProviderIronSource : AdProvider
             mWaitingReward = false;
             if (mAdProvider.onVideoAdOpen != null)
                 mAdProvider.onVideoAdOpen();
-            if (FeatureSettingsManager.IsDebugEnabled)
-                Log("IronSource: --> I got RewardedVideoAdOpenedEvent");
+            
+            Log("IronSource: --> I got RewardedVideoAdOpenedEvent");
         }
 
         void RewardedVideoAdRewardedEvent(IronSourcePlacement ssp)
         {
-            mRewardAvailable = true;
-            if (FeatureSettingsManager.IsDebugEnabled)
-                Log("IronSource: --> I got RewardedVideoAdRewardedEvent, amount = " + ssp.getRewardAmount() + " name = " + ssp.getRewardName());
+            mRewardAvailable = true;            
+            Log("IronSource: --> I got RewardedVideoAdRewardedEvent, amount = " + ssp.getRewardAmount() + " name = " + ssp.getRewardName());
         }
 
         void RewardedVideoAdClosedEvent()
-        {
-            if (FeatureSettingsManager.IsDebugEnabled)
-                Log("IronSource: --> I got RewardedVideoAdClosedEvent");
+        {            
+            Log("IronSource: --> I got RewardedVideoAdClosedEvent");
             if (mAdProvider.onVideoAdClosed!= null)
                 mAdProvider.onVideoAdClosed();
             if (mRewardAvailable)
@@ -675,29 +646,24 @@ public class AdProviderIronSource : AdProvider
         }
 
         void RewardedVideoAdStartedEvent()
-        {
-            if (FeatureSettingsManager.IsDebugEnabled)
-                Log("IronSource: --> Rewarded VideoAd Started Event");
+        {            
+            Log("IronSource: --> Rewarded VideoAd Started Event");
         }
 
         void RewardedVideoAdEndedEvent()
-        {
-            if (FeatureSettingsManager.IsDebugEnabled)
-                Log("IronSource: --> Rewarded video closed");
+        {            
+            Log("IronSource: --> Rewarded video closed");
         }
 
         void RewardedVideoAdShowFailedEvent(IronSourceError error)
-        {
-            if (FeatureSettingsManager.IsDebugEnabled)
-                Log("IronSource:: --> Failed To Play rewarded video: " + error);
-
+        {            
+            Log("IronSource:: --> Failed To Play rewarded video: " + error);
             NotifyPlaybackResult(PlaybackResult.FAILED);
         }
 
         void RewardedVideoAdClickedEvent(IronSourcePlacement ssp)
-        {
-            if (FeatureSettingsManager.IsDebugEnabled)
-                Log("IronSource: --> Rewarded VideoAd Clicked Event");
+        {            
+            Log("IronSource: --> Rewarded VideoAd Clicked Event");
         }
 #endregion
 
