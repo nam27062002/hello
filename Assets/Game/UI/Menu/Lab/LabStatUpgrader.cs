@@ -54,6 +54,8 @@ public class LabStatUpgrader : MonoBehaviour {
     [SerializeField] private TextMeshProUGUI m_valueText = null;
     [SerializeField] private Localizer m_priceText = null;
 	[SerializeField] private RectTransform m_feedbackAnchor = null;
+    [SerializeField] private ShowHideAnimator m_showHide = null;
+
 
     // Visibility
     [Space]
@@ -71,7 +73,7 @@ public class LabStatUpgrader : MonoBehaviour {
 	// Internal references
 	private GameObject m_separatorPrefab = null;
 	private List<GameObject> m_separators = new List<GameObject>();
-    private ShowHideAnimator m_showHide = null;
+
 
 	// Other internal vars
 	private string m_formattedStepValue = "";
@@ -104,8 +106,7 @@ public class LabStatUpgrader : MonoBehaviour {
 		}
 
 
-        // Cache showHideAnimator
-        m_showHide = GetComponent<ShowHideAnimator>();
+
 
         // Subscribe to external events
         Messenger.AddListener<DragonDataSpecial>(MessengerEvents.SPECIAL_DRAGON_LEVEL_UPGRADED, OnDragonLevelUpgraded);

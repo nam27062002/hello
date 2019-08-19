@@ -27,10 +27,11 @@ public class DragonPowerUpgrader : MonoBehaviour {
     [SerializeField] private Image m_icon = null;
     [SerializeField] private Localizer m_priceText = null;
     [SerializeField] private RectTransform m_feedbackAnchor = null;
+    [SerializeField] private ShowHideAnimator m_showHide = null;
 
     // Internal data
     private DragonDataSpecial m_dragonData = null;
-    private ShowHideAnimator m_showHide = null;
+
 
     // Internal references
 
@@ -44,8 +45,6 @@ public class DragonPowerUpgrader : MonoBehaviour {
 	/// </summary>
 	private void Awake()
     {
-        // Cache showHideAnimator
-        m_showHide = GetComponent<ShowHideAnimator>();
 
         // Subscribe to external events
         Messenger.AddListener<DragonDataSpecial>(MessengerEvents.SPECIAL_DRAGON_LEVEL_UPGRADED, OnDragonLevelUpgraded);
@@ -99,25 +98,21 @@ public class DragonPowerUpgrader : MonoBehaviour {
 	/// <param name="_animate">Trigger animations?</param>
 	public void Refresh(bool _animate)
     {
+
         // Nothing to do if either dragon or stat data are not valid
         if (m_dragonData == null) return;
 
-
         // Hide button if the next upgrade doesn´t unlock a new power
-        if (m_showHide != null)
+        if (m_dragonData.IsUnlockingNewPower())
         {
-            if (m_dragonData.IsUnlockingNewPower())
-            {
-                Debug.Log("Show power upgrader");
-                gameObject.SetActive(true);
-            }
-            else
-            {
-                Debug.Log("Hide power upgrader");
-                gameObject.SetActive(false);
-                return;
-            }
+            m_showHide.Show(true);
         }
+        else
+        {
+            m_showHide.Hide(true);
+            return;
+        }
+
 
 
         // Refresh upgrade price
@@ -139,6 +134,15 @@ public class DragonPowerUpgrader : MonoBehaviour {
                 );
             }
 
+        }
+
+        // Get the next power definition
+        DefinitionNode nextPower = m_dragonData.GetNextPowerUpgrade();
+
+        // Refresh power icon
+        if (m_icon != null)
+        {
+            m_icon.sprite = Resources.Load<Sprite>(UIConstants.POWER_ICONS_PATH + nextPower.Get("icon"));
         }
 
     }

@@ -204,7 +204,7 @@ public class MenuDragonPaginator : TabSystem {
             screenIndex = m_tabButtons.Count - 1;
         }
 
-		GoToScreen(screenIndex, NavigationScreen.AnimType.NONE);
+        GoToScreen(screenIndex, NavigationScreen.AnimType.NONE);
 	}
 
 	private void OnDragonTeased(IDragonData _data) {

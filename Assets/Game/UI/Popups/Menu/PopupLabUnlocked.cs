@@ -59,9 +59,7 @@ public class PopupLabUnlocked : MonoBehaviour {
 		}
 
 		// Don't if a dragon of the required tier is not yet owned
-		if(DragonManager.biggestOwnedDragon.tier < DragonDataSpecial.MIN_TIER_TO_UNLOCK) {
-			return false;
-		}
+
 
 		// All checks passed! Popup must be displayed
 		return true;

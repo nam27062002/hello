@@ -68,10 +68,6 @@ public class LabButton : MonoBehaviour {
 		// Check required number of runs
 		bool toggle = (UsersManager.currentUser.gamesPlayed >= GameSettings.ENABLE_LEAGUES_AT_RUN);
 
-		// If a dragon of the required tier is acquired before completing the minimum amount of runs (via HC), toggle anyways
-		if(DragonManager.biggestOwnedDragon.tier >= DragonDataSpecial.MIN_TIER_TO_UNLOCK) {
-			toggle = true;
-		}
 
 		// Requires a Selectable component
 		if(m_target != null) {

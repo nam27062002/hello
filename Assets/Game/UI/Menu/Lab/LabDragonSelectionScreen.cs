@@ -65,14 +65,8 @@ public class LabDragonSelectionScreen : MonoBehaviour {
 	private void Awake() {
 		// Initialize unlock info text
 		if(m_unlockInfoText != null) {
-			DefinitionNode unlockTierDef = DefinitionsManager.SharedInstance.GetDefinition(
-				DefinitionsCategory.DRAGON_TIERS, IDragonData.TierToSku(DragonDataSpecial.MIN_TIER_TO_UNLOCK)
-			);
 
-			m_unlockInfoText.Localize(
-				m_unlockInfoText.tid,
-				UIConstants.GetSpriteTag(unlockTierDef.GetAsString("icon"))
-			);
+
 		}
 
 		// Initialize 3D scene

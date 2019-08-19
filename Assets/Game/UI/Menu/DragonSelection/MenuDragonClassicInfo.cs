@@ -1,8 +1,8 @@
-// MenuDragonSpecialLevelBar.cs
+// MenuDragonLevelBar.cs
 // Hungry Dragon
 // 
-// Created by J.M.Olea on 22/07/2019.
-// Copyright (c) 2019 Ubisoft. All rights reserved.
+// Created by Alger Ortín Castellví on 18/11/2015.
+// Copyright (c) 2015 Ubisoft. All rights reserved.
 
 //----------------------------------------------------------------------------//
 // INCLUDES																	  //
@@ -14,22 +14,16 @@ using UnityEngine;
 // CLASSES																	  //
 //----------------------------------------------------------------------------//
 /// <summary>
-/// 
+/// Simple controller for a dragon level bar in the menu.
 /// </summary>
-public class MenuDragonSpecialInfo : MenuDragonInfo {
+public class MenuDragonClassicInfo : MenuDragonInfo {
     //------------------------------------------------------------------------//
-    // CONSTANTS															  //
-    //------------------------------------------------------------------------//
-
-    //------------------------------------------------------------------------//
-    // MEMBERS AND PROPERTIES												  //
+    // PROPERTIES															  //
     //------------------------------------------------------------------------//
 
 
-    [SerializeField] private LabDragonBar m_specialDragonLevelBar;
+    [SerializeField] DragonXPBar m_xpBar;
 
-    [SerializeField] private LabStatUpgrader[] m_stats = new LabStatUpgrader[0];
-    [SerializeField] private DragonPowerUpgrader m_powerUpgrade;
 
     //------------------------------------------------------------------------//
     // GENERIC METHODS														  //
@@ -37,27 +31,31 @@ public class MenuDragonSpecialInfo : MenuDragonInfo {
 
     // Implemented in parent class
 
+
     //------------------------------------------------------------------------//
-    // OTHER METHODS														  //
+    // INTERNAL METHODS														  //
     //------------------------------------------------------------------------//
 
 
+
+
+    /// <summary>
+    /// Update all fields with given dragon data
+    /// </summary>
+    /// <param name="_data">Dragon data.</param>
+    /// <param name="_force">If true forces the refresh, even if the dragon has not changed since the las refresh</param>
     protected override void Refresh(IDragonData _data, bool _force = false)
     {
 
         // Check params
         if (_data == null) return;
 
-        // Only show special dragons
         // Only show classic dragons bar
-       if ( !(_data is DragonDataSpecial) ) return;
-
-        DragonDataSpecial specialData = _data as DragonDataSpecial;
-
+        if (!(_data is DragonDataClassic)) return;
 
 
         // Things to update only when target dragon has changed
-        if (m_dragonData != specialData || _force)
+        if (m_dragonData != _data || _force)
         {
 
             // Dragon Name
@@ -65,8 +63,8 @@ public class MenuDragonSpecialInfo : MenuDragonInfo {
             {
                 switch (_data.GetLockState())
                 {
-                    case DragonDataSpecial.LockState.SHADOW:
-                    case DragonDataSpecial.LockState.REVEAL:
+                    case DragonDataClassic.LockState.SHADOW:
+                    case DragonDataClassic.LockState.REVEAL:
                         m_dragonNameText.Localize("TID_SELECT_DRAGON_UNKNOWN_NAME");
                         break;
                     default:
@@ -76,45 +74,34 @@ public class MenuDragonSpecialInfo : MenuDragonInfo {
             }
 
 
-
-            // Dragon Description
+            // Description
             if (m_dragonDescText != null)
             {
-                // Description. Remove it when the player owns the dragon.
-                m_dragonDescText.gameObject.SetActive(!specialData.isOwned);
+                // Remove it when the player owns the dragon.
+                m_dragonDescText.gameObject.SetActive(!_data.isOwned);
 
                 m_dragonDescText.Localize(_data.def.GetAsString("tidDesc"));
             }
 
+
             // XPBar
-            if (m_specialDragonLevelBar != null)
+            if (m_xpBar != null)
             {
-                if (specialData.isOwned)
+                if (_data.isOwned)
                 {
                     // Show it only in owned dragons
-                    m_specialDragonLevelBar.gameObject.SetActive(true);
-                    m_specialDragonLevelBar.BuildFromDragonData(specialData);
+                    m_xpBar.gameObject.SetActive(true);
+                    m_xpBar.Refresh(_data as DragonDataClassic);
                 }
                 else
                 {
-                    m_specialDragonLevelBar.gameObject.SetActive(false);
+                    m_xpBar.gameObject.SetActive(false);
                 }
-
+                
             }
-
-
-            // Upgrade buttons
-            for (int i = 0; i < m_stats.Length; ++i)
-            {
-                m_stats[i].InitFromData(specialData);
-            }
-
-            // Upgrade powerup button
-            m_powerUpgrade.InitFromData(specialData);
 
             // Store new dragon data
-            m_dragonData = specialData;
-
+            m_dragonData = _data;
         }
     }
 
@@ -122,7 +109,5 @@ public class MenuDragonSpecialInfo : MenuDragonInfo {
     //------------------------------------------------------------------------//
     // CALLBACKS															  //
     //------------------------------------------------------------------------//
-
     // Implemented in parent class
-
 }

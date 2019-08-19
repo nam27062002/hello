@@ -24,9 +24,6 @@ public class DragonDataSpecial : IDragonData {
 	//------------------------------------------------------------------------//
 	public const string TYPE_CODE = "special";
 
-	// [AOC] TODO!! Move to content
-	public static readonly DragonTier MIN_TIER_TO_UNLOCK = DragonTier.TIER_1;
-
 	public enum Stat {
 		HEALTH = 0,
 		SPEED,
@@ -307,7 +304,7 @@ public class DragonDataSpecial : IDragonData {
 
         // Max level = total of stats levelUps plus power levelUps 
         int statsLevelUp = 3 * m_upgrades.Count;
-        int powerLevelUp = m_specialPowerDefsByOrder.Count - 1;
+        int powerLevelUp = m_specialPowerDefsByOrder.Count;
         m_maxLevel = statsLevelUp + powerLevelUp + 1; // Plus 1 (initial level is 0)
 
         // Type
@@ -377,12 +374,26 @@ public class DragonDataSpecial : IDragonData {
 			}
 		}
 
-		// c) Is dragon locked?
-		// Dragon is considered locked if minimum tier for special dragons hasn't been unlocked yet
-		if(DragonManager.biggestOwnedDragon.tier < MIN_TIER_TO_UNLOCK) return LockState.LOCKED;
+        // c) If the last classic dragon is maxed, then is available via SC
+        DragonDataClassic lastClassic = DragonManager.biggestOwnedDragon as DragonDataClassic;
+        if (lastClassic != null && lastClassic.progression.isMaxed) {
+            return LockState.AVAILABLE;
+        }
 
-		// d) Dragon available for to purchase with SC
-		return LockState.AVAILABLE;
+        // d) If the minimum required classic dragon is owned, then is available via HC
+        string unlockFromDragon = def.Get("unlockFromDragon");
+        if (unlockFromDragon != null)
+        {
+            IDragonData requiredDragon = DragonManager.GetDragonData(unlockFromDragon);
+
+            if (DragonManager.biggestOwnedDragon.tier >= requiredDragon.tier)
+            {
+                return LockState.AVAILABLE;
+            }
+        }
+
+		// e) Dragon locked
+		return LockState.LOCKED_UNAVAILABLE;
 	}
 
 	//------------------------------------------------------------------------//
@@ -436,18 +447,16 @@ public class DragonDataSpecial : IDragonData {
 
 
     /// <summary>
-    /// Get the cost (in SC or HC) of upgrading a power in this dragon 
+    /// Get the cost (in SC or HC) of upgrading the next power in this dragon 
     /// </summary>
     /// <returns>The upgrade price in the proper currency.</returns>
     /// <param name="_dragonLevel">The level of the dragon where this powerup is accquired</param>
     public Price GetNextPowerUpgradePrice()
     {
-        // Make sure there is a power upgrade in the next level
-        DefinitionNode nextPower = m_specialPowerDefsByOrder.Find(d => d.GetAsInt("upgradeLevelToUnlock") == (m_level + 1) );
 
-        // No power, ciao!
+        DefinitionNode nextPower = GetNextPowerUpgrade();
+
         if (nextPower == null) return null;
-
 
         int priceSC = nextPower.GetAsInt("priceSC");
         int priceHC = nextPower.GetAsInt("priceHC");
@@ -468,6 +477,23 @@ public class DragonDataSpecial : IDragonData {
 
         return null;
     }
+
+
+    /// <summary>
+    /// Get the next power upgrade based on the current level of the dragon
+    /// </summary>
+    /// <returns>The upgrade price in the proper currency.</returns>
+    public DefinitionNode GetNextPowerUpgrade ()
+    {
+        // Make sure there is a power upgrade in the next level
+        DefinitionNode nextPower = m_specialPowerDefsByOrder.Find(d => d.GetAsInt("upgradeLevelToUnlock") > m_level);
+
+        // No more powers, ciao!
+        if (nextPower == null) return null;
+
+        return nextPower;
+    }
+
 
     /// <summary>
     /// Check whether this dragon can upgrade stats or not.
