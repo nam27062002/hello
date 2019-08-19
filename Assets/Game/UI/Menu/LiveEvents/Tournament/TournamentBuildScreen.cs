@@ -251,7 +251,7 @@ public class TournamentBuildScreen : MonoBehaviour {
 		}
 
 
-		if (Application.internetReachability == NetworkReachability.NotReachable || !GameServerManager.SharedInstance.IsLoggedIn()) {
+		if (DeviceUtilsManager.SharedInstance.internetReachability == NetworkReachability.NotReachable || !GameServerManager.SharedInstance.IsLoggedIn()) {
 			SendFeedback("TID_GEN_NO_CONNECTION");
 		} 
 		/*

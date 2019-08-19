@@ -17,7 +17,7 @@ public class GameAds : UbiBCN.SingletonMonoBehaviour<GameAds> {
     };
 
 	public static bool adsAvailable {
-		get { return Application.internetReachability != NetworkReachability.NotReachable
+		get { return DeviceUtilsManager.SharedInstance.internetReachability != NetworkReachability.NotReachable
                   && FeatureSettingsManager.AreAdsEnabled && DebugSettings.areAdsEnabled;
 		}
 	}

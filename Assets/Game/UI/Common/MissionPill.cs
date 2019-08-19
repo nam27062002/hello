@@ -309,7 +309,7 @@ public class MissionPill : MonoBehaviour, IBroadcastListener {
 		bool ret = false;
         if ( FeatureSettingsManager.AreAdsEnabled && checkVideoIsReady ) 
         {
-			if ( MopubAdsManager.SharedInstance.IsRewardedReady() || Application.internetReachability != NetworkReachability.NotReachable )	
+			if ( MopubAdsManager.SharedInstance.IsRewardedReady() || DeviceUtilsManager.SharedInstance.internetReachability != NetworkReachability.NotReachable )	
 			{
 				ret = true;
 			}
@@ -450,7 +450,7 @@ public class MissionPill : MonoBehaviour, IBroadcastListener {
 		if(m_mission == null) return;
 
 		// Ignore if offline
-		if(Application.internetReachability == NetworkReachability.NotReachable) {
+		if(DeviceUtilsManager.SharedInstance.internetReachability == NetworkReachability.NotReachable) {
 			// Show some feedback
 			UIFeedbackText.CreateAndLaunch(
 				LocalizationManager.SharedInstance.Localize("TID_AD_ERROR"), 

@@ -420,7 +420,7 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 	public static ErrorCode CanContribute() {
 		// Check for debugging overrides
 		// We must be online!
-		if(CPGlobalEventsTest.networkCheck && Application.internetReachability == NetworkReachability.NotReachable) return ErrorCode.OFFLINE;
+		if(CPGlobalEventsTest.networkCheck && DeviceUtilsManager.SharedInstance.internetReachability == NetworkReachability.NotReachable) return ErrorCode.OFFLINE;
 
 		// Manager must be properly setup
 		if(!IsReady()) return ErrorCode.NOT_INITIALIZED;
@@ -442,7 +442,7 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 
 	public static bool Connected() {
 		bool ret = false;	
-		if ((CPGlobalEventsTest.networkCheck && Application.internetReachability != NetworkReachability.NotReachable) &&
+		if ((CPGlobalEventsTest.networkCheck && DeviceUtilsManager.SharedInstance.internetReachability != NetworkReachability.NotReachable) &&
 			(CPGlobalEventsTest.loginCheck   && GameSessionManager.SharedInstance.IsLogged())) {
 			ret = true;
 		}

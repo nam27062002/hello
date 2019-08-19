@@ -239,7 +239,7 @@ public abstract class IPopupShopPill : MonoBehaviour {
 			case UserProfile.Currency.REAL: {
 					// Do a first quick check on Internet connectivity
 					Log("Quick connectivity check");
-					if(Application.internetReachability == NetworkReachability.NotReachable) {
+					if(DeviceUtilsManager.SharedInstance.internetReachability == NetworkReachability.NotReachable) {
 						// We have no internet connectivity, finalize the IAP
 						Log("No internet connectivity, finalize the IAP");
 						EndPurchase(false);

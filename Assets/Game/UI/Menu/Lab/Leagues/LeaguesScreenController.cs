@@ -190,7 +190,7 @@ public class LeaguesScreenController : MonoBehaviour {
         LeaguesPanelError errorPanel = m_panels[(int)Panel.ERROR] as LeaguesPanelError;
 
         // Check internet connectivity first
-        if (Application.internetReachability == NetworkReachability.NotReachable || !GameSessionManager.SharedInstance.IsLogged()) {
+        if (DeviceUtilsManager.SharedInstance.internetReachability == NetworkReachability.NotReachable || !GameSessionManager.SharedInstance.IsLogged()) {
             targetPanel = Panel.ERROR;
             errorPanel.SetErrorGroup(LeaguesPanelError.ErrorGroup.NETWORK);
         } else {

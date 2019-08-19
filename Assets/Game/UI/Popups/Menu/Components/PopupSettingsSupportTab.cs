@@ -126,7 +126,7 @@ public class PopupSettingsSupportTab : MonoBehaviour {
 	/// </summary>
 	public void OpenCustomerSupport() {
 		//CSTSManager.SharedInstance.OpenView(TranslationsManager.Instance.ISO.ToString(), PersistenceManager.Instance.IsPayer);
-		if(Application.internetReachability != NetworkReachability.NotReachable) {
+		if(DeviceUtilsManager.SharedInstance.internetReachability != NetworkReachability.NotReachable) {
             PopupSettings.CS_OpenPopup();
         } else {
 			string str = LocalizationManager.SharedInstance.Localize("TID_GEN_NO_CONNECTION");
