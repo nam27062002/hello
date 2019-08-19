@@ -350,10 +350,8 @@ public class AdProviderIronSource : AdProvider
 #if !UNITY_EDITOR
                             if (IronSource.Agent.isRewardedVideoAvailable())
                             {
-                                mStateRewarded = EState.Loaded;
-
-                                if (FeatureSettingsManager.IsDebugEnabled)
-                                    Log("IronSource::: ... ... Loaded  " + "(Rewarded)");
+                                mStateRewarded = EState.Loaded;                               
+                                Log("IronSource::: ... ... Loaded  " + "(Rewarded)");
                             }
 #endif
                         }
@@ -372,9 +370,8 @@ public class AdProviderIronSource : AdProvider
 #if !UNITY_EDITOR
                                 if (IronSource.Agent.isInterstitialReady())
                                 {
-                                    mStateInterstitial = EState.Loaded;
-                                    if (FeatureSettingsManager.IsDebugEnabled)
-                                        Log("IronSource::: ... ... Loaded  " + "(Interstitial)");
+                                    mStateInterstitial = EState.Loaded;                                   
+                                    Log("IronSource::: ... ... Loaded  " + "(Interstitial)");
 
                                     mInterstitialCachingTry = 1;
                                 }
@@ -389,18 +386,16 @@ public class AdProviderIronSource : AdProvider
                             mStateRewarded = EState.Caching;
                             mlastRewardedReadyCheckAt = DateTime.Now;
                             mlastRewardedCachingCheckAt = DateTime.Now;
-
-                            if (FeatureSettingsManager.IsDebugEnabled)
-                                Log("IronSource::: ... ... Caching...  " + "(Rewarded)");
+						                            
+                            Log("IronSource::: ... ... Caching...  " + "(Rewarded)");
                         }
                         else if (mStateInterstitial == EState.Waitting)
                         {
                             mStateInterstitial = EState.Caching;
                             mlastInterstitialReadyCheckAt = DateTime.Now;
                             mlastInterstitialCachingCheckAt = DateTime.Now;
-
-                            if (FeatureSettingsManager.IsDebugEnabled)
-                                Log("IronSource::: ... ... Caching...  " + "(Interstitial)");
+						                            
+                            Log("IronSource::: ... ... Caching...  " + "(Interstitial)");
 
                             IronSource.Agent.loadInterstitial();
                         }
