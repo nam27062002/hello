@@ -77,7 +77,6 @@ Shader "Hungry Dragon/Scenary/Scenary Standard"
 		[Enum(UnityEngine.Rendering.BlendMode)] _DstBlend("DestBlend", Float) = 0.0 //"Zero"
 		[Enum(Opaque, 0, Transparent, 1, CutOff, 2)] _BlendMode("Blend mode", Float) = 0.0
 		[Enum(SingleSided, 0, DoubleSided, 1)] _DoubleSided("Double sided", Float) = 0.0
-//		[HideInInspector] _ZWrite("__zw", Float) = 1.0
 		[Toggle] _ZWrite("__zw", Float) = 1.0
 
 
@@ -110,6 +109,7 @@ Shader "Hungry Dragon/Scenary/Scenary Standard"
 //				#pragma shader_feature __ REFLECTIVE
 				#pragma shader_feature __ WAVE_EMISSION
 				#pragma shader_feature _ TINT
+                #pragma shader_feature  __ _ZWRITE_ON
 
 				#pragma shader_feature VERTEXCOLOR_NONE VERTEXCOLOR_OVERLAY VERTEXCOLOR_ADDITIVE VERTEXCOLOR_MODULATE
 //				#pragma shader_feature EMISSIVE_NONE EMISSIVE_BLINK EMISSIVE_REFLECTIVE EMISSIVE_LIGHTMAPCONTRAST

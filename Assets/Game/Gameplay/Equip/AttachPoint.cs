@@ -32,6 +32,7 @@ public class AttachPoint : MonoBehaviour {
 
 	public void EquipPet(Equipable _pet) {
 		m_item = _pet;
+		m_item.gameObject.SetActive(true);
         _pet.attachPoint = point;
 		// m_item.transform.position = transform.position;
 
