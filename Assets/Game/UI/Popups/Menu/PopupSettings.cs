@@ -132,11 +132,8 @@ public class PopupSettings : MonoBehaviour {
         {
             HDTrackingManager.Instance.Notify_CustomerSupportRequested();
         }
-
-        if (FeatureSettingsManager.IsDebugEnabled)
-        {
-            ControlPanel.Log("[CSTS] caletyISO = " + caletyISO + " payer = " + isPayer);
-        }
+        
+        ControlPanel.Log("[CSTS] caletyISO = " + caletyISO + " payer = " + isPayer);        
     }
 
 	//------------------------------------------------------------------------//
