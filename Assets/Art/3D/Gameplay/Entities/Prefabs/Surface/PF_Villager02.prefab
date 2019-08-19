@@ -47,7 +47,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 174524}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -24.967, y: 0, z: 0}
+  m_LocalPosition: {x: 64.53041, y: -30.975422, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4181682221393044}
@@ -389,7 +389,7 @@ MonoBehaviour:
   m_pilot: {fileID: 11453012}
   m_machine: {fileID: 114304424817110602}
   m_viewControl: {fileID: 11419496}
-  m_equip: {fileID: 0}
+  m_equip: {fileID: 114070868201385050}
   m_sku: Villager02
   m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1
@@ -759,7 +759,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f45dfbaed20447daa07123ab6b7cd80, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_seasonalItems: []
+  m_seasonalItems:
+  - season: halloween
+    groups:
+    - name: Mask
+      probability: 1
+      items:
+      - equipablePrefabName: PF_vampire_mask
+        defaultItemLOW: 1
+        probability: 1
+        toDisableOnEquip: []
+        position: {x: 0, y: -0.20316195, z: 0.13989767}
+        scale: {x: 1.2, y: 1.2, z: 1.2}
+        rotation: {x: 0, y: 0, z: 0}
 --- !u!114 &114110598257745900
 MonoBehaviour:
   m_ObjectHideFlags: 1
