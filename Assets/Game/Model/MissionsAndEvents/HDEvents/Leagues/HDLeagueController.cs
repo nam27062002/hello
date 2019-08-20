@@ -75,7 +75,7 @@ public class HDLeagueController : HDLiveDataController {
         bool isFinishPending = m_isFinishPending;
 
         if (isFinishPending
-        &&  Application.internetReachability != NetworkReachability.NotReachable 
+        && DeviceUtilsManager.SharedInstance.internetReachability != NetworkReachability.NotReachable 
         &&  GameSessionManager.SharedInstance.IsLogged()) {
             m_season.RequestFinalize();
             HDLiveDataManager.instance.ForceRequestLeagues(true);

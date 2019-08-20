@@ -4,7 +4,13 @@
 // Created by David Germade on 30th August 2016.
 // Copyright (c) 2016 Ubisoft. All rights reserved.
 
+#if DEBUG && !DISABLE_LOGS
+#define ENABLE_LOGS
+#endif
+
+
 using System;
+using System.Diagnostics;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -168,7 +174,7 @@ public class PopupSettingsSaveTab : MonoBehaviour
 	public void OnGooglePlayLogIn(){
 		if (!ApplicationManager.instance.GameCenter_IsAuthenticated()){
 
-            if (Application.internetReachability == NetworkReachability.NotReachable)
+            if (DeviceUtilsManager.SharedInstance.internetReachability == NetworkReachability.NotReachable)
             {                
                 UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_GEN_NO_CONNECTION"), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
             }
@@ -310,17 +316,15 @@ public class PopupSettingsSaveTab : MonoBehaviour
         {
             CloseLoadingPopup();         
             if (Model_SocialIsLoggedIn())
-            {
-                if (FeatureSettingsManager.IsDebugEnabled)
-                    Log("LOGIN SUCCESSFUL");
+            {                
+                Log("LOGIN SUCCESSFUL");
 
                 // Invalidades User_LastState in order to make sure user's information will be recalculated
                 User_LastState = EState.None;                                
             }
             else
-            {
-                if (FeatureSettingsManager.IsDebugEnabled)
-                    Log("LOGIN FAILED");                
+            {                
+                Log("LOGIN FAILED");                
             }
 
             RefreshView();
@@ -339,9 +343,8 @@ public class PopupSettingsSaveTab : MonoBehaviour
         {
             PersistenceFacade.Popups_OpenLogoutWarning(Model_SaveIsCloudSaveEnabled(),
                 delegate ()
-                {
-                    if (FeatureSettingsManager.IsDebugEnabled)
-                        Log("LOGGING OUT... ");
+                {                    
+                    Log("LOGGING OUT... ");
 
                     //OpenLoadingPopup();                    
                     PersistenceFacade.instance.CloudDriver.Logout();
@@ -350,7 +353,7 @@ public class PopupSettingsSaveTab : MonoBehaviour
                 null
             );                                
         }
-        else if (FeatureSettingsManager.IsDebugEnabled)
+        else 
         {
             LogError("LOGIN: Not logged in to " ); 
         }        
@@ -707,11 +710,22 @@ public class PopupSettingsSaveTab : MonoBehaviour
 
     #region log
     private static string LOG_CHANNEL = "[SAVE_TAB]";
+
+    #if ENABLE_LOGS
+    [Conditional("DEBUG")]
+    #else
+    [Conditional("FALSE")]
+    #endif
     private void Log(string message)
     {
         Debug.Log(LOG_CHANNEL + message);        
     }
 
+    #if ENABLE_LOGS
+    [Conditional("DEBUG")]
+    #else
+    [Conditional("FALSE")]
+    #endif
     private void LogError(string message)
     {
         Debug.LogError(LOG_CHANNEL + message);

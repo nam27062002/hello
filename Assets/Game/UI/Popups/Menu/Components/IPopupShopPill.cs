@@ -7,11 +7,14 @@
 //----------------------------------------------------------------------------//
 // PREPROCESSOR																  //
 //----------------------------------------------------------------------------//
-#define LOG_ENABLED
+#if DEBUG && !DISABLE_LOGS
+#define ENABLE_LOGS
+#endif
 
 //----------------------------------------------------------------------------//
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
+using System.Diagnostics;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
@@ -236,7 +239,7 @@ public abstract class IPopupShopPill : MonoBehaviour {
 			case UserProfile.Currency.REAL: {
 					// Do a first quick check on Internet connectivity
 					Log("Quick connectivity check");
-					if(Application.internetReachability == NetworkReachability.NotReachable) {
+					if(DeviceUtilsManager.SharedInstance.internetReachability == NetworkReachability.NotReachable) {
 						// We have no internet connectivity, finalize the IAP
 						Log("No internet connectivity, finalize the IAP");
 						EndPurchase(false);
@@ -377,18 +380,19 @@ public abstract class IPopupShopPill : MonoBehaviour {
 		}
 	}
 
-	//------------------------------------------------------------------------//
-	// DEBUG METHODS														  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Print something on the console / control panel log.
-	/// </summary>
-	/// <param name="_message">Message to be printed.</param>
-	private void Log(string _message) {
-#if LOG_ENABLED
-		// Debug enabled?
-		if(!FeatureSettingsManager.IsDebugEnabled) return;
+    //------------------------------------------------------------------------//
+    // DEBUG METHODS														  //
+    //------------------------------------------------------------------------//
+    /// <summary>
+    /// Print something on the console / control panel log.
+    /// </summary>
+    /// <param name="_message">Message to be printed.</param>
+    #if ENABLE_LOGS
+    [Conditional("DEBUG")]
+    #else
+    [Conditional("FALSE")]
+    #endif
+    private void Log(string _message) {
 		ControlPanel.Log("[ShopPill]" + _message, ControlPanel.ELogChannel.Store);
-#endif
 	}
 }

@@ -7,7 +7,9 @@
 //----------------------------------------------------------------------------//
 // PREPROCESSOR																  //
 //----------------------------------------------------------------------------//
-#define LOG_ENABLED
+#if DEBUG && !DISABLE_LOGS
+#define ENABLE_LOGS
+#endif
 
 //----------------------------------------------------------------------------//
 // INCLUDES																	  //
@@ -15,6 +17,7 @@
 using UnityEngine;
 using UnityEngine.Events;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -732,18 +735,21 @@ public class ResourcesFlow : IBroadcastListener {
 		Cancel();	// Cancel flow
 	}
 
-	//------------------------------------------------------------------------//
-	// DEBUG METHODS														  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Print something on the console / control panel log.
-	/// </summary>
-	/// <param name="_message">Message to be printed.</param>
-	private void Log(string _message) {
-#if LOG_ENABLED
-		// Debug enabled?
-		if(!FeatureSettingsManager.IsDebugEnabled) return;
+    //------------------------------------------------------------------------//
+    // DEBUG METHODS														  //
+    //------------------------------------------------------------------------//
+
+    /// <summary>
+    /// Print something on the console / control panel log.
+    /// </summary>
+    /// <param name="_message">Message to be printed.</param>
+    #if ENABLE_LOGS
+    [Conditional("DEBUG")]
+    #else
+    [Conditional("FALSE")]
+    #endif
+    private void Log(string _message) {
+		// Debug enabled?		
 		ControlPanel.Log("[ResourcesFlow]" + _message, ControlPanel.ELogChannel.Store);
-#endif
 	}
 }

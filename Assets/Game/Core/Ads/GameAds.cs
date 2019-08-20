@@ -17,7 +17,7 @@ public class GameAds : UbiBCN.SingletonMonoBehaviour<GameAds> {
     };
 
 	public static bool adsAvailable {
-		get { return Application.internetReachability != NetworkReachability.NotReachable
+		get { return DeviceUtilsManager.SharedInstance.internetReachability != NetworkReachability.NotReachable
                   && FeatureSettingsManager.AreAdsEnabled && DebugSettings.areAdsEnabled;
 		}
 	}
@@ -89,9 +89,8 @@ public class GameAds : UbiBCN.SingletonMonoBehaviour<GameAds> {
 	public void ShowInterstitial(OnPlayVideoCallback callback)
 	{
 		// If ads are not available, return immediately
-		if(!adsAvailable) {
-            if (FeatureSettingsManager.IsDebugEnabled)
-                AdProvider.Log("ShowInterstitial can't be performed because there's no ad available");
+		if(!adsAvailable) {            
+            AdProvider.Log("ShowInterstitial can't be performed because there's no ad available");
 
             // Notify of the error
             if (callback != null) {
@@ -101,9 +100,8 @@ public class GameAds : UbiBCN.SingletonMonoBehaviour<GameAds> {
 		}
 
         m_onInterstitialCallback = callback;
-
-		if (FeatureSettingsManager.IsDebugEnabled)
-			AdProvider.Log("ShowInterstitial processing...");
+		
+	    AdProvider.Log("ShowInterstitial processing...");
 
         AdProvider adProvider = GetAdProvider();        
         CurrentAdPurpose = EAdPurpose.INTERSTITIAL;
@@ -115,9 +113,8 @@ public class GameAds : UbiBCN.SingletonMonoBehaviour<GameAds> {
 	}	
 
     private void onShowInterstitial(bool giveReward, int duration, string msg)
-    {
-        if (FeatureSettingsManager.IsDebugEnabled)
-            AdProvider.Log("onShowInterstitial success = " +giveReward + " duration = " + duration + " msg = " + msg);
+    {        
+        AdProvider.Log("onShowInterstitial success = " +giveReward + " duration = " + duration + " msg = " + msg);
 
         HDTrackingManager.Instance.Notify_AdFinished(false, Track_EAdPurposeToAdType(CurrentAdPurpose), giveReward, false, duration, GetAdProvider().GetId());
 
@@ -135,9 +132,8 @@ public class GameAds : UbiBCN.SingletonMonoBehaviour<GameAds> {
 	public void ShowRewarded(EAdPurpose adPurpose, OnPlayVideoCallback callback)
 	{
 		// If ads are not available, return immediately
-		if(!adsAvailable) {
-            if (FeatureSettingsManager.IsDebugEnabled)
-                AdProvider.Log("ShowRewarded can't be performed because there's no ad available");
+		if(!adsAvailable) {            
+            AdProvider.Log("ShowRewarded can't be performed because there's no ad available");
 
             // Notify of the error
             if (callback != null) {
@@ -154,9 +150,8 @@ public class GameAds : UbiBCN.SingletonMonoBehaviour<GameAds> {
 
 		// Ad has been requested is tracked
         HDTrackingManager.Instance.Notify_AdStarted(true, Track_EAdPurposeToAdType(adPurpose), Track_EAdPurposeToRewardType(adPurpose), true, adProvider.GetId());
-
-        if (FeatureSettingsManager.IsDebugEnabled)
-            AdProvider.Log("ShowRewarded processing...");
+        
+        AdProvider.Log("ShowRewarded processing...");
 
         // Request Ad
         adProvider.ShowRewarded(OnShowRewarded);		
@@ -164,8 +159,7 @@ public class GameAds : UbiBCN.SingletonMonoBehaviour<GameAds> {
 
     private void OnShowRewarded(bool giveReward, int duration, string msg)
     {
-        if (FeatureSettingsManager.IsDebugEnabled)
-            AdProvider.Log("onShowRewarded success = " + giveReward + " duration = " + duration + " msg = " + msg);
+        AdProvider.Log("onShowRewarded success = " + giveReward + " duration = " + duration + " msg = " + msg);
 
         HDTrackingManager.Instance.Notify_AdFinished(true, Track_EAdPurposeToAdType(CurrentAdPurpose), giveReward, false, duration, GetAdProvider().GetId());
 

@@ -146,7 +146,7 @@ public class MapUpgradeController : MonoBehaviour, IBroadcastListener {
 
 			// Ad revive - turn off when offline
 			if(m_unlockWithAddBtn != null) {
-                m_unlockWithAddBtn.SetActive(Application.internetReachability != NetworkReachability.NotReachable && FeatureSettingsManager.AreAdsEnabled);
+                m_unlockWithAddBtn.SetActive(DeviceUtilsManager.SharedInstance.internetReachability != NetworkReachability.NotReachable && FeatureSettingsManager.AreAdsEnabled);
 			}
 		} else {
 			// Timer
