@@ -235,6 +235,7 @@ public abstract class IDragonData : IUISelectorItem {
 		m_sku = m_def.sku;
 
         RefreshPrice();
+		RefreshShadowRevealUnlock();
 
 		string shadowFromDragonsData = m_def.GetAsString("shadowFromDragon");
 		if(!string.IsNullOrEmpty(shadowFromDragonsData)) {
@@ -350,6 +351,34 @@ public abstract class IDragonData : IUISelectorItem {
         m_priceSC = m_def.GetAsLong("unlockPriceCoins");
         m_pricePC = m_def.GetAsLong("unlockPricePC");
     }
+
+	/// <summary>
+    /// Refreshs the original shadow reveal and unlock from info
+    /// </summary>
+	public void RefreshShadowRevealUnlock()
+	{
+		string shadowFromDragonsData = m_def.GetAsString("shadowFromDragon");
+		m_shadowFromDragons.Clear();
+		if(!string.IsNullOrEmpty(shadowFromDragonsData)) {
+			m_shadowFromDragons.AddRange(shadowFromDragonsData.Split(';'));
+		}
+		m_teased = m_shadowFromDragons.Count == 0;
+
+		string revealFromDragonsData = m_def.GetAsString("revealFromDragon");
+		m_revealFromDragons.Clear();
+		if(!string.IsNullOrEmpty(revealFromDragonsData)) {
+			m_revealFromDragons.AddRange(revealFromDragonsData.Split(';'));
+		}
+		m_revealed = m_revealFromDragons.Count == 0;
+
+		string unlockFromDragonsData = m_def.GetAsString("unlockFromDragon");
+		m_unlockFromDragons.Clear();
+		if(!string.IsNullOrEmpty(unlockFromDragonsData)) {
+			m_unlockFromDragons.AddRange(unlockFromDragonsData.Split(';'));
+		}
+		m_unlockAvailable = m_unlockFromDragons.Count == 0;
+	}
+
 
 	/// <summary>
 	/// Get the price once the modifiers have been applied.

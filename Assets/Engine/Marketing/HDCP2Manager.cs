@@ -1,4 +1,9 @@
-﻿using System;
+﻿#if DEBUG && !DISABLE_LOGS
+#define ENABLE_LOGS
+#endif
+
+using System;
+using System.Diagnostics;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -36,9 +41,8 @@ public class HDCP2Manager
     public void Initialise()
     {
         if (!IsInitialised() && CanBeInitialised())
-        {
-            if (FeatureSettingsManager.IsDebugEnabled)
-                Log("INIT CP2......");				          
+        {            
+            Log("INIT CP2......");				          
 
 			NumPromosFailedSoFar = 0;
 
@@ -90,10 +94,8 @@ public class HDCP2Manager
                 int apiLevel = clazz.GetStatic<int>("SDK_INT");
 
                 if (apiLevel < 19)
-                {
-                    if (FeatureSettingsManager.IsDebugEnabled)
-                        ControlPanel.Log("CP2 can't be initialized because apiLevel (" + apiLevel + ") is lower than 19");
-
+                {                    
+                    Log("CP2 can't be initialized because apiLevel (" + apiLevel + ") is lower than 19");
                     returnValue = false;
                 }
             }
@@ -168,7 +170,7 @@ public class HDCP2Manager
                 onDone(true);
 #endif
         }
-        else if (FeatureSettingsManager.IsDebugEnabled)
+        else 
         {
             Log("Can't play CP2 interstitial because it's not available: cp2Enabled = " + FeatureSettingsManager.instance.IsCP2Enabled() + 
                 " cp2InterstitialEnabled = " +  FeatureSettingsManager.instance.IsCP2InterstitialEnabled() + " initialised = " + IsInitialised() + 
@@ -177,11 +179,8 @@ public class HDCP2Manager
     }
 
     private void PlayPromo(CrossPromo.PromoType promoType, Action<bool> onDone)
-    {        
-        if (FeatureSettingsManager.IsDebugEnabled)
-        {
-			Log("Playing promo " + promoType.ToString() + " listener is not null = " + (m_listener != null));
-        }
+    {                
+	    Log("Playing promo " + promoType.ToString() + " listener is not null = " + (m_listener != null));        
 
         SetState(EState.PlayingPromo);
         if (m_listener != null)
@@ -193,11 +192,8 @@ public class HDCP2Manager
     }
 
     private void OnPlayPromo(bool success)
-    {
-        if (FeatureSettingsManager.IsDebugEnabled)
-        {
-            Log("OnPlayPromo success = " + success);
-        }
+    {        
+        Log("OnPlayPromo success = " + success);        
 
 		if (!success) 
 		{
@@ -266,21 +262,18 @@ public class HDCP2Manager
         public Action<bool> m_onPlayPromo;        
 
         public override void onInGameLocation(string strURL)
-        {
-            if (FeatureSettingsManager.IsDebugEnabled)
-                Log("CP2Listener onInGameLocation: url = " + strURL);            
+        {            
+            Log("CP2Listener onInGameLocation: url = " + strURL);            
         }
 
         public override void onTrackingCallback(string strURL, string strType, string strPromoID)
-        {
-            if (FeatureSettingsManager.IsDebugEnabled)
-                Log("CP2Listener onTrackingCallback: " + strURL + " " + strType + " " + strPromoID);            
+        {            
+            Log("CP2Listener onTrackingCallback: " + strURL + " " + strType + " " + strPromoID);            
         }
 
         public override void onDownloadDelegate(bool bSuccess, string strMessage)
-        {
-            if (FeatureSettingsManager.IsDebugEnabled)
-                Log("CP2Listener onDownloadDelegate: " + bSuccess + " " + strMessage);            
+        {            
+            Log("CP2Listener onDownloadDelegate: " + bSuccess + " " + strMessage);            
         }
 
         public override void onCompletionCallback(CrossPromo.CrossPromoInstance kPromo, string strAction)
@@ -289,20 +282,17 @@ public class HDCP2Manager
             if (success)
             {
                 if (kPromo.isThereContentToDisplay)
-                {
-                    if (FeatureSettingsManager.IsDebugEnabled)
-                        Log("CP2Listener onCompletionCallback Content to display: " + strAction);                    
+                {                    
+                    Log("CP2Listener onCompletionCallback Content to display: " + strAction);                    
                 }
                 else
-                {
-                    if (FeatureSettingsManager.IsDebugEnabled)
-                        Log("CP2Listener onCompletionCallback Finished: " + strAction);                    
+                {                    
+                    Log("CP2Listener onCompletionCallback Finished: " + strAction);                    
                 }
             }
             else
-            {                
-                    if (FeatureSettingsManager.IsDebugEnabled)
-                        Log("CP2Listener onCompletionCallback: " + kPromo.errorMessage);
+            {                                    
+                Log("CP2Listener onCompletionCallback: " + kPromo.errorMessage);
             }
                             
             if (m_onPlayPromo != null)
@@ -314,6 +304,11 @@ public class HDCP2Manager
     #endregion
 
     #region debug
+#if ENABLE_LOGS
+    [Conditional("DEBUG")]
+#else
+    [Conditional("FALSE")]
+#endif
     private static void Log(string msg)
     {
         ControlPanel.Log(msg, ControlPanel.ELogChannel.CP2);

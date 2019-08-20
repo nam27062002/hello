@@ -87,12 +87,8 @@ public class CPStats : MonoBehaviour {
     {
         if (m_DeviceTokenLabel != null && NotificationsManager.SharedInstance != null)
         {            
-            m_DeviceTokenLabel.text = "Device Token: \n" + DeviceToken;
-
-            if (FeatureSettingsManager.IsDebugEnabled)
-            {
-                Debug.Log("Device Token: " + DeviceToken);
-            }
+            m_DeviceTokenLabel.text = "Device Token: \n" + DeviceToken;            
+            Debug.Log("Device Token: " + DeviceToken);            
         }
     }
 

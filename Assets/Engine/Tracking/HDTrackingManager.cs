@@ -3,7 +3,12 @@
 /// </summary>
 /// 
 
+#if DEBUG && !DISABLE_LOGS
+#define ENABLE_LOGS
+#endif
+
 using System.Collections.Generic;
+using System.Diagnostics;
 using UnityEngine;
 
 public class HDTrackingManager
@@ -682,6 +687,11 @@ public class HDTrackingManager
     private const string LOG_CHANNEL = "[HDTrackingManager] ";
     private const string LOG_CHANNEL_COLOR = "<color=cyan>" + LOG_CHANNEL;
 
+#if ENABLE_LOGS
+    [Conditional("DEBUG")]
+#else
+    [Conditional("FALSE")]
+#endif
     public static void Log(string msg)
     {        
         if (LOG_USE_COLOR)
@@ -694,6 +704,11 @@ public class HDTrackingManager
         }
     }
 
+#if ENABLE_LOGS
+    [Conditional("DEBUG")]
+#else
+    [Conditional("FALSE")]
+#endif
     public static void LogError(string msg)
     {
         Debug.LogError(LOG_CHANNEL + msg);

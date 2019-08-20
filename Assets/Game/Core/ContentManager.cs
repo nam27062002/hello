@@ -1,5 +1,10 @@
-﻿using UnityEngine;
+﻿#if DEBUG && !DISABLE_LOGS
+#define ENABLE_LOGS
+#endif
+
+using UnityEngine;
 using System.Collections.Generic;
+using System.Diagnostics;
 public class ContentManager  
 {
     //////////////////////////////////////////////////////////////////////////
@@ -7,15 +12,13 @@ public class ContentManager
     private class ContentDeltaDelegate : ContentDeltaManager.ContentDeltaListener
     {        
         public override void onContentDeltaInitialised(bool bWasSuccessful)
-        {            
-            if (FeatureSettingsManager.IsDebugEnabled)
-                Log("onContentDeltaInitialised: succeded: " + bWasSuccessful);
+        {                        
+            Log("onContentDeltaInitialised: succeded: " + bWasSuccessful);
         }
 
         public override void onContentDeltaAllDownloaded(bool bWasSuccessful, long iDownloadedSize)
-        {
-            if (FeatureSettingsManager.IsDebugEnabled)            
-                Log("onContentDeltaAllDownloaded: succeded: " + bWasSuccessful);
+        {            
+            Log("onContentDeltaAllDownloaded: succeded: " + bWasSuccessful);
 
             if (bWasSuccessful)
             {
@@ -41,9 +44,8 @@ public class ContentManager
         }
 
         public override void onContentReady()
-        {
-            if (FeatureSettingsManager.IsDebugEnabled)
-                Log("OnContentReady" );
+        {            
+            Log("OnContentReady" );
 
             OnContentReady();
         }
@@ -341,8 +343,13 @@ public class ContentManager
 
 #region log
     private const bool LOG_USE_COLOR = false;
-    private const string LOG_CHANNEL = "[ContentManager] ";    
+    private const string LOG_CHANNEL = "[ContentManager] ";
 
+#if ENABLE_LOGS
+    [Conditional("DEBUG")]
+#else
+    [Conditional("FALSE")]
+#endif
     public static void Log(string msg)
     {
         msg = LOG_CHANNEL + msg;
@@ -354,6 +361,11 @@ public class ContentManager
         Debug.Log(msg);        
     }
 
+#if ENABLE_LOGS
+    [Conditional("DEBUG")]
+#else
+    [Conditional("FALSE")]
+#endif
     public static void LogError(string msg)
     {
         Debug.LogError(LOG_CHANNEL + msg);
