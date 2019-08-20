@@ -20,25 +20,42 @@ using UnityEngine;
 /// <see cref="https://youtu.be/64uOVmQ5R1k?t=20m16s"/>
 /// </summary>
 public class FlowManager : UbiBCN.SingletonMonoBehaviour<FlowManager> {
-	//------------------------------------------------------------------//
-	// CONSTANTS														//
-	//------------------------------------------------------------------//
+    //------------------------------------------------------------------//
+    // CONSTANTS														//
+    //------------------------------------------------------------------//
 
-	//------------------------------------------------------------------//
-	// MEMBERS															//
-	//------------------------------------------------------------------//
+    //------------------------------------------------------------------//
+    // MEMBERS															//
+    //------------------------------------------------------------------//
+    private bool m_isInGameScene = false;
 
-	//------------------------------------------------------------------//
-	// PROPERTIES														//
-	//------------------------------------------------------------------//
+    //------------------------------------------------------------------//
+    // PROPERTIES														//
+    //------------------------------------------------------------------//
 
-	//------------------------------------------------------------------//
-	// GENERIC METHODS													//
-	//------------------------------------------------------------------//
-	/// <summary>
-	/// Switch to a different scene. Nothing happens if given scene is the same as active one.
-	/// </summary>
-	private void SwitchScene(string _nextScene) {
+    //------------------------------------------------------------------//
+    // GENERIC METHODS													//
+    //------------------------------------------------------------------//
+    protected void Awake()
+    {
+        Messenger.AddListener<string>(MessengerEvents.SCENE_LOADED, OnSceneLoaded);
+    }
+
+    protected override void OnDestroy()
+    {
+        Messenger.RemoveListener<string>(MessengerEvents.SCENE_LOADED, OnSceneLoaded);
+    }
+
+    private void OnSceneLoaded(string _currentScene)
+    {
+        // This value is stored because IsInGameScene() is called evey tick and the comparison GameSceneManager.currentScene == GameSceneController.NAME turned out to be expensive when profiling (0.3ms in Samsung S4)
+        m_isInGameScene = _currentScene == GameSceneController.NAME;        
+    }
+
+    /// <summary>
+    /// Switch to a different scene. Nothing happens if given scene is the same as active one.
+    /// </summary>
+    private void SwitchScene(string _nextScene) {
 		// Skip if target scene has already been set
 		if(GameSceneManager.nextScene == _nextScene) return;
 
@@ -97,7 +114,7 @@ public class FlowManager : UbiBCN.SingletonMonoBehaviour<FlowManager> {
     public static void GoToProfilerLoadScenesScene()
     {
 		instance.SwitchScene(ProfilerLoadScenesController.NAME);
-    }
+    }    
 
     /// <summary>
     /// Returns whether or not the flow is in the game scene and it has been completely loaded
@@ -105,7 +122,7 @@ public class FlowManager : UbiBCN.SingletonMonoBehaviour<FlowManager> {
     /// <returns></returns>
     public static bool IsInGameScene()
     {
-        return GameSceneManager.currentScene == GameSceneController.NAME && !GameSceneManager.isLoading;
+        return instance.m_isInGameScene && !GameSceneManager.isLoading;
     }
 
 	/// <summary>
@@ -135,6 +152,6 @@ public class FlowManager : UbiBCN.SingletonMonoBehaviour<FlowManager> {
         // Change to the loading scene. This change might be needed from the LoadingSceneController itself because of the save game flow (for exaple when clicking of update the game version
         // from the editor)
         GameSceneManager.SwitchScene(LoadingSceneController.NAME, "", true);                
-    }
+    }   
 }
 
