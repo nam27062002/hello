@@ -93,7 +93,14 @@ public class MenuDragonSpecialInfo : MenuDragonInfo {
                 {
                     // Show it only in owned dragons
                     m_specialDragonLevelBar.gameObject.SetActive(true);
-                    m_specialDragonLevelBar.BuildFromDragonData(specialData);
+
+                    // Wait 1 frame for the Awake method to finish
+                    UbiBCN.CoroutineManager.DelayedCallByFrames(
+                        () =>
+                        {
+                            m_specialDragonLevelBar.BuildFromDragonData(specialData);
+                        }, 1);
+
                 }
                 else
                 {
