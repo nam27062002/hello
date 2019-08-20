@@ -282,15 +282,16 @@ public class DragonDataClassic : IDragonData {
 		return LockState.AVAILABLE;
 	}
 
-	//------------------------------------------------------------------------//
-	// STATS METHODS														  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Compute the max health at a specific level.
-	/// </summary>
-	/// <returns>The dragon max health at the given level.</returns>
-	/// <param name="_level">The level at which we want to know the max health value.</param>
-	public float GetMaxHealthAtLevel(int _level) {
+
+    //------------------------------------------------------------------------//
+    // STATS METHODS														  //
+    //------------------------------------------------------------------------//
+    /// <summary>
+    /// Compute the max health at a specific level.
+    /// </summary>
+    /// <returns>The dragon max health at the given level.</returns>
+    /// <param name="_level">The level at which we want to know the max health value.</param>
+    public float GetMaxHealthAtLevel(int _level) {
 		float levelDelta = Mathf.InverseLerp(0, progression.maxLevel, _level);
 		return m_healthRange.Lerp(levelDelta);
 	}

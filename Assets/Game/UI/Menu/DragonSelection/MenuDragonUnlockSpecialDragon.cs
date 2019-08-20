@@ -97,6 +97,12 @@ public class MenuDragonUnlockSpecialDragon : MonoBehaviour {
     /// <param name="_animate">Whether to trigger animations or not.</param>
     public void Refresh(IDragonData _data, bool _animate)
     {
+        // Shouldn't be showing classic dragons
+        if (!(_data is DragonDataSpecial))
+        {
+            return;
+        }
+
         // Stop any pending coroutines
         if (m_delayedShowCoroutine != null)
         {
@@ -150,7 +156,7 @@ public class MenuDragonUnlockSpecialDragon : MonoBehaviour {
 
         // Update hc unlock button
         // Display?
-        show = MenuDragonUnlockClassicDragon.CheckUnlockWithPC(_data);
+        show = CheckUnlockWithPC(_data);
         Toggle(m_hcRoot, show);
 
         // Refresh info
@@ -162,7 +168,7 @@ public class MenuDragonUnlockSpecialDragon : MonoBehaviour {
 
         // Update sc unlock button
         // Display?
-        show = MenuDragonUnlockClassicDragon.CheckUnlockWithSC(_data);
+        show = CheckUnlockWithSC(_data);
         Toggle(m_scRoot, show);
 
         // Refresh info
@@ -271,6 +277,39 @@ public class MenuDragonUnlockSpecialDragon : MonoBehaviour {
                 );
             }
         }
+    }
+
+    /// <summary>
+	/// Checks whether the given dragon can be unlocked with PC.
+	/// </summary>
+	/// <returns>Whether the given dragon can be unlocked with PC.</returns>
+	/// <param name="_data">Dragon to evaluate.</param>
+	public static bool CheckUnlockWithPC(IDragonData _data)
+    {
+        // If owned, cannot be unlocked again
+        if (_data.isOwned) return false;
+
+        // Check if the requirements for this dragon are met
+        bool availableViaHC = ( (_data as DragonDataSpecial).IsAvailableViaHC() == true);
+        
+        // If there is a discount for this dragon, show even when unavailable
+        bool isDiscounted = _data.HasPriceModifier(UserProfile.Currency.HARD);
+
+        return availableViaHC || isDiscounted;
+    }
+
+
+    /// <summary>
+    /// Checks whether the given dragon can be unlocked with SC.
+    /// </summary>
+    /// <returns>Whether the given dragon can be unlocked with SC.</returns>
+    /// <param name="_data">Dragon to evaluate.</param>
+    public static bool CheckUnlockWithSC(IDragonData _data)
+    {
+        // If owned, cannot be unlocked again
+        if (_data.isOwned) return false;
+
+        return ((_data as DragonDataSpecial).IsAvailableViaSC() == true);
     }
 
     //------------------------------------------------------------------------//

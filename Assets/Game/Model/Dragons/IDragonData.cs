@@ -89,7 +89,7 @@ public abstract class IDragonData : IUISelectorItem {
 	public bool isRevealed { get { return m_revealed; } }
 	public bool isUnlockAvailable { get { return m_unlockAvailable; } }
 
-	protected List<string> m_shadowFromDragons = new List<string>();
+    protected List<string> m_shadowFromDragons = new List<string>();
 	public List<string> shadowFromDragons {
 		get { return m_shadowFromDragons; }
 	}
@@ -221,14 +221,15 @@ public abstract class IDragonData : IUISelectorItem {
 	/// <returns>The lock state for this dragon.</returns>
 	public abstract LockState GetLockState();
 
-	//------------------------------------------------------------------------//
-	// PUBLIC METHODS														  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Initialization using a definition. Should be called immediately after the constructor.
-	/// </summary>
-	/// <param name="_def">The definition of this dragon.</param>
-	public virtual void Init(DefinitionNode _def) {
+
+    //------------------------------------------------------------------------//
+    // PUBLIC METHODS														  //
+    //------------------------------------------------------------------------//
+    /// <summary>
+    /// Initialization using a definition. Should be called immediately after the constructor.
+    /// </summary>
+    /// <param name="_def">The definition of this dragon.</param>
+    public virtual void Init(DefinitionNode _def) {
 		// Store definition
 		m_def = _def;
 		m_sku = m_def.sku;

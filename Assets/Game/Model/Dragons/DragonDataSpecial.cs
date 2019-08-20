@@ -375,36 +375,73 @@ public class DragonDataSpecial : IDragonData {
 		}
 
         // c) If the last classic dragon is maxed, then is available via SC
-        DragonDataClassic lastClassic = DragonManager.biggestOwnedDragon as DragonDataClassic;
-        if (lastClassic != null && lastClassic.progression.isMaxed) {
+        // d) If the minimum required classic dragon is owned, then is available via HC
+        if (IsAvailableViaSC() || IsAvailableViaHC())
+        { 
             return LockState.AVAILABLE;
         }
 
-        // d) If the minimum required classic dragon is owned, then is available via HC
+		// e) Dragon locked
+		return LockState.LOCKED_UNAVAILABLE;
+
+	}
+
+
+    /// <summary>
+	/// Whether the dragon is unlockable using SC
+	/// </summary>
+	/// <returns>True if is unlockable</returns>
+    public bool IsAvailableViaSC()
+    {
+        // If the biggest classic dragon is maxed, then the special dragons are available via SC
+
+        // Find the largest classic dragon 
+        List<IDragonData> classicDragons = DragonManager.GetDragonsByOrder(Type.CLASSIC);
+        DragonDataClassic lastClassic = classicDragons [classicDragons.Count - 1] as DragonDataClassic;
+
+        // Is it owned and maxed?
+        if (lastClassic != null && lastClassic.isOwned && lastClassic.progression.isMaxed)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    /// <summary>
+    /// Whether the dragon is unlockable using HC
+    /// </summary>
+    /// <returns>True if is unlockable</returns>
+    public bool IsAvailableViaHC()
+    {
+        // If the minimum required classic dragon is owned, then is available via HC
+
+        // Required dragon is stored in the content
         string unlockFromDragon = def.Get("unlockFromDragon");
         if (unlockFromDragon != null)
         {
             IDragonData requiredDragon = DragonManager.GetDragonData(unlockFromDragon);
 
+            // If the player owns the required dragon or a superior one, then the special dragon is available via HC
             if (DragonManager.biggestOwnedDragon.tier >= requiredDragon.tier)
             {
-                return LockState.AVAILABLE;
+                return true;
             }
         }
 
-		// e) Dragon locked
-		return LockState.LOCKED_UNAVAILABLE;
-	}
+        return false;
 
-	//------------------------------------------------------------------------//
-	// OTHER METHODS														  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Get the data corresponding to a specific stat.
-	/// </summary>
-	/// <returns>The stat data.</returns>
-	/// <param name="_stat">Stat to be obtained.</param>
-	public DragonStatData GetStat(Stat _stat) {
+    }
+
+    //------------------------------------------------------------------------//
+    // OTHER METHODS														  //
+    //------------------------------------------------------------------------//
+    /// <summary>
+    /// Get the data corresponding to a specific stat.
+    /// </summary>
+    /// <returns>The stat data.</returns>
+    /// <param name="_stat">Stat to be obtained.</param>
+    public DragonStatData GetStat(Stat _stat) {
 		return m_stats[(int)_stat];
 	}
 
