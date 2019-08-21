@@ -63,18 +63,15 @@ public class MenuDragonUnlockSpecialDragon : MonoBehaviour {
         Toggle(m_hcRoot, false);
         Toggle(m_scRoot, false);
         Toggle(m_unavailableRoot, false);
-        Refresh(InstanceManager.menuSceneController.selectedDragonData, false);
-    }
-
-    /// <summary>
-    /// First update
-    /// </summary>
-    private void Start() {
+        
         // Subscribe to external events
         Messenger.AddListener<string>(MessengerEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
         Messenger.AddListener<IDragonData>(MessengerEvents.DRAGON_ACQUIRED, OnDragonAcquired);
         Messenger.AddListener<IDragonData>(MessengerEvents.MODIFIER_ECONOMY_DRAGON_PRICE_CHANGED, OnModifierChanged);
-	}
+
+        Refresh(InstanceManager.menuSceneController.selectedDragonData, false);
+    }
+
 
 	/// <summary>
 	/// Destructor

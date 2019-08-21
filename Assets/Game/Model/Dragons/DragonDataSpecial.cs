@@ -310,7 +310,7 @@ public class DragonDataSpecial : IDragonData {
         // Max level = total of stats levelUps plus power levelUps 
         int statsLevelUp = 3 * m_upgrades.Count;
         int powerLevelUp = m_specialPowerDefsByOrder.Count;
-        m_maxLevel = statsLevelUp + powerLevelUp + 1; // Plus 1 (initial level is 0)
+        m_maxLevel = statsLevelUp + powerLevelUp; 
 
         // Type
         m_type = Type.SPECIAL;

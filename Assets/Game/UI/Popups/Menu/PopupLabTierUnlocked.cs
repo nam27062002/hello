@@ -43,7 +43,7 @@ public class PopupLabTierUnlocked : MonoBehaviour {
 		// Description
 		if(m_tierDescText != null) {
 			// Can equip <TID_COLOR_PET>%U0 %U1<TID_END_COLOR> and get a <TID_COLOR_PET>%U2<TID_END_COLOR> multiplier during <TID_COLOR_FIRERUSH><TID_FIRE_RUSH><TID_END_COLOR>
-			int numPets = _specialTierDef.GetAsInt("petsSlotAvailable");
+			int numPets = _specialTierDef.GetAsInt("petsSlotsAvailable");
 			m_tierDescText.Localize(
 				"TID_SPECIAL_DRAGON_INFO_TIER_DESCRIPTION",
 				StringUtils.FormatNumber(numPets),
