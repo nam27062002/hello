@@ -14,13 +14,13 @@ namespace AI {
 		public class PursuitEntityTarget : StateComponent {
 
 			[StateTransitionTrigger]
-			private static string OnCollisionDetected = "onCollisionDetected";
+			private static readonly int onCollisionDetected = UnityEngine.Animator.StringToHash("onCollisionDetected");
 
 			[StateTransitionTrigger]
-			private static string OnEnemyOutOfSight = "onEnemyOutOfSight";
+			private static readonly int onEnemyOutOfSight = UnityEngine.Animator.StringToHash("onEnemyOutOfSight");
 
 			[StateTransitionTrigger]
-			private static string OnChaseTimeOut = "onChaseTimeout";
+			private static readonly int onChaseTimeOut = UnityEngine.Animator.StringToHash("onChaseTimeout");
 
 
 			protected PursuitEntityTargetData m_data;
@@ -104,7 +104,7 @@ namespace AI {
 						if (collision != null) {
 							if (collision.collider.gameObject.layer == LayerMask.NameToLayer("ground")) {	
 								// We go back
-								Transition(OnCollisionDetected);
+								Transition(onCollisionDetected);
 								return;
 							}
 						}
@@ -120,7 +120,7 @@ namespace AI {
 
 						m_timer += Time.deltaTime;
 						if (m_timer >= m_data.chaseTimeout) {							
-							Transition(OnChaseTimeOut);
+							Transition(onChaseTimeOut);
 						} else {
 							// if not eating check chase timeout
 							Vector3 pos;
@@ -138,7 +138,7 @@ namespace AI {
 						}
 					}
 				} else {					
-					Transition(OnEnemyOutOfSight);
+					Transition(onEnemyOutOfSight);
 				}
 			}
 		}

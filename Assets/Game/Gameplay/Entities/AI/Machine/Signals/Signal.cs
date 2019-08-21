@@ -4,36 +4,36 @@ using System;
 namespace AI {
 
 	public class SignalTriggers {
-		[StateTransitionTrigger] public static string OnLeaderPromoted 		= "onLeaderPromoted";
-		[StateTransitionTrigger] public static string OnLeaderDemoted 		= "onLeaderDemoted";
-		[StateTransitionTrigger] public static string OnIsHungry 			= "onIsHungry";
-		[StateTransitionTrigger] public static string OnNotHungry 			= "onNotHungry";
-		[StateTransitionTrigger] public static string OnAlert 				= "onAlert";
-		[StateTransitionTrigger] public static string OnIgnoreAll 			= "onIgnoreAll";
-		[StateTransitionTrigger] public static string OnWarning 			= "onWarning";
-		[StateTransitionTrigger] public static string OnCalm 				= "onCalm";
-		[StateTransitionTrigger] public static string OnDanger 				= "onDanger";
-		[StateTransitionTrigger] public static string OnSafe 				= "onSafe";
-		[StateTransitionTrigger] public static string OnCritical			= "onCritical";
-		[StateTransitionTrigger] public static string OnPanic 				= "onPanic";
-		[StateTransitionTrigger] public static string OnRecoverFromPanic 	= "onRecoverFromPanic";
-		[StateTransitionTrigger] public static string OnCollisionEnter 		= "onCollisionEnter";
-		[StateTransitionTrigger] public static string OnTriggerEnter 		= "onTriggerEnter";
-		[StateTransitionTrigger] public static string OnTriggerExit 		= "onTriggerExit";
-		[StateTransitionTrigger] public static string OnBurning 			= "onBurning";
-		[StateTransitionTrigger] public static string OnChewing 			= "onChewing";
-		[StateTransitionTrigger] public static string OnDestroyed 			= "onDestroyed";
-		[StateTransitionTrigger] public static string OnFallDown 			= "onFallDown";
-		[StateTransitionTrigger] public static string OnGround				= "OnGround";
-        [StateTransitionTrigger] public static string OnWaterEnter          = "onWaterEnter";
-        [StateTransitionTrigger] public static string OnWaterExit           = "onWaterExit";
-        [StateTransitionTrigger] public static string OnLockedInCage		= "onLockedInCage";
-		[StateTransitionTrigger] public static string OnUnlockedFromCage	= "onUnlockedFromCage";
-		[StateTransitionTrigger] public static string OnInvulnerable		= "onInvulnerable";
-		[StateTransitionTrigger] public static string OnVulnerable			= "onVulnerable";
-	}
-
-	public class Signals {
+		[StateTransitionTrigger] public static int onLeaderPromoted    = UnityEngine.Animator.StringToHash("onLeaderPromoted");
+		[StateTransitionTrigger] public static int onLeaderDemoted     = UnityEngine.Animator.StringToHash("onLeaderDemoted");
+        [StateTransitionTrigger] public static int onIsHungry 		    = UnityEngine.Animator.StringToHash("onIsHungry");
+        [StateTransitionTrigger] public static int onNotHungry 	    = UnityEngine.Animator.StringToHash("onNotHungry");
+        [StateTransitionTrigger] public static int onAlert             = UnityEngine.Animator.StringToHash("onAlert");
+        [StateTransitionTrigger] public static int onIgnoreAll 	    = UnityEngine.Animator.StringToHash("onIgnoreAll");
+        [StateTransitionTrigger] public static int onWarning 		    = UnityEngine.Animator.StringToHash("onWarning");
+        [StateTransitionTrigger] public static int onCalm 			    = UnityEngine.Animator.StringToHash("onCalm");
+        [StateTransitionTrigger] public static int onDanger 		    = UnityEngine.Animator.StringToHash("onDanger");
+        [StateTransitionTrigger] public static int onSafe 			    = UnityEngine.Animator.StringToHash("onSafe");
+        [StateTransitionTrigger] public static int onCritical		    = UnityEngine.Animator.StringToHash("onCritical");
+        [StateTransitionTrigger] public static int onPanic 		    = UnityEngine.Animator.StringToHash("onPanic");
+        [StateTransitionTrigger] public static int onRecoverFromPanic  = UnityEngine.Animator.StringToHash("onRecoverFromPanic");
+        [StateTransitionTrigger] public static int onCollisionEnter    = UnityEngine.Animator.StringToHash("onCollisionEnter");
+        [StateTransitionTrigger] public static int onTriggerEnter 	    = UnityEngine.Animator.StringToHash("onTriggerEnter");
+        [StateTransitionTrigger] public static int onTriggerExit 	    = UnityEngine.Animator.StringToHash("onTriggerExit");
+        [StateTransitionTrigger] public static int onBurning 		    = UnityEngine.Animator.StringToHash("onBurning");
+        [StateTransitionTrigger] public static int onChewing 		    = UnityEngine.Animator.StringToHash("onChewing");
+        [StateTransitionTrigger] public static int onDestroyed 	    = UnityEngine.Animator.StringToHash("onDestroyed");
+        [StateTransitionTrigger] public static int onFallDown 		    = UnityEngine.Animator.StringToHash("onFallDown");
+        [StateTransitionTrigger] public static int OnGround		    = UnityEngine.Animator.StringToHash("OnGround");
+        [StateTransitionTrigger] public static int onWaterEnter        = UnityEngine.Animator.StringToHash("onWaterEnter");
+        [StateTransitionTrigger] public static int onWaterExit         = UnityEngine.Animator.StringToHash("onWaterExit");
+        [StateTransitionTrigger] public static int onLockedInCage	    = UnityEngine.Animator.StringToHash("onLockedInCage");
+        [StateTransitionTrigger] public static int onUnlockedFromCage  = UnityEngine.Animator.StringToHash("onUnlockedFromCage");
+        [StateTransitionTrigger] public static int onInvulnerable	    = UnityEngine.Animator.StringToHash("onInvulnerable");
+        [StateTransitionTrigger] public static int onVulnerable        = UnityEngine.Animator.StringToHash("onVulnerable");
+    }                                                                                                       
+        
+    public class Signals {
 		//---------------------------------
 		[Flags]
 		public enum Type {
@@ -83,8 +83,8 @@ namespace AI {
 
 
 		private Signals.Type	m_value;
-		private Dictionary<Signals.Type, string> 	m_onEnableTrigger;
-		private Dictionary<Signals.Type, string> 	m_onDisableTrigger;
+		private Dictionary<Signals.Type, int> 	m_onEnableTrigger;
+		private Dictionary<Signals.Type, int> 	m_onDisableTrigger;
 		private Dictionary<Signals.Type, object[]>  m_params;
 
 		private IMachine m_machine;
@@ -94,11 +94,11 @@ namespace AI {
 		public Signals(IMachine _machine) {
 			m_value 			= Type.None;
 			TypeComparer comparer = new TypeComparer();
-			m_onEnableTrigger 	= new Dictionary<Signals.Type, string>( comparer );
-			m_onDisableTrigger 	= new Dictionary<Signals.Type, string>( comparer );
+			m_onEnableTrigger 	= new Dictionary<Signals.Type, int>( comparer );
+			m_onDisableTrigger 	= new Dictionary<Signals.Type, int>( comparer );
 			m_params			= new Dictionary<Signals.Type, object[]>( comparer );
-
-			m_machine = _machine;
+            
+            m_machine = _machine;
 		}
 
 		public void Init() {
@@ -136,12 +136,12 @@ namespace AI {
 			return m_params[_signal];
 		}
 
-		public void SetOnEnableTrigger(Type _signal, string _trigger) {
-			m_onEnableTrigger[_signal] = _trigger;
+		public void SetOnEnableTrigger(Type _signal, int _triggerHash) {
+			m_onEnableTrigger[_signal] = _triggerHash;
 		}
 
-		public void SetOnDisableTrigger(Type _signal, string _trigger) {
-			m_onDisableTrigger[_signal] = _trigger;
+		public void SetOnDisableTrigger(Type _signal, int _triggerHash) {
+			m_onDisableTrigger[_signal] = _triggerHash;
 		}
 
 		private void OnEnable(Type _signal) {

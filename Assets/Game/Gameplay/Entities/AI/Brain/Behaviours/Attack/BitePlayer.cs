@@ -8,7 +8,7 @@ namespace AI {
 		public class BitePlayer : StateComponent {
 
 			[StateTransitionTrigger]
-			private static string OnPlayerBitted = "onPlayerBitted";
+			private static int onPlayerBitted = UnityEngine.Animator.StringToHash("onPlayerBitted");
 
 			private EatBehaviour m_eatBehaviour;
 			private bool m_bit = false;
@@ -37,7 +37,7 @@ namespace AI {
 
 			protected override void OnUpdate() {
 				if (m_bit)	{
-					Transition(OnPlayerBitted);
+					Transition(onPlayerBitted);
 					m_bit = false;
 					return;
 				}

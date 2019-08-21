@@ -100,7 +100,7 @@ namespace AI {
 
 
 		//----------------------------------------------------------------------------------------------------------------------//
-		override public void OnTrigger(string _trigger, object[] _param = null) {}
+		override public void OnTrigger(int _triggerHash, object[] _param = null) {}
 		override public void DisableSensor(float _seconds) {}
 		override public  void CheckCollisions(bool _value) {}
 		override public  void FaceDirection(bool _value) {}

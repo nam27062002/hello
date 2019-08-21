@@ -7,10 +7,10 @@ namespace AI {
 		public class AttackTactics : StateComponent {
 
 			[StateTransitionTrigger]
-			private static string OnEnemyInSight = "onEnemyInSight";
+			private static int onEnemyInSight = UnityEngine.Animator.StringToHash("onEnemyInSight");
 
 			[StateTransitionTrigger]
-			private static string OnEnemyInRange = "onEnemyInRange";
+			private static int onEnemyInRange = UnityEngine.Animator.StringToHash("onEnemyInRange");
 
 
 			private float m_shutdownSensorTime;
@@ -45,9 +45,9 @@ namespace AI {
 					m_timer -= Time.deltaTime;
 				} else {
 					if (m_machine.GetSignal(Signals.Type.Danger)) {
-						Transition(OnEnemyInRange);
+						Transition(onEnemyInRange);
 					} else if (m_machine.GetSignal(Signals.Type.Warning)) {
-						Transition(OnEnemyInSight);
+						Transition(onEnemyInSight);
 					}
 				}
 			}

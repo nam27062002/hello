@@ -7,7 +7,7 @@ namespace AI {
 		public class PetLeavePlayer : StateComponent {
 
 			[StateTransitionTrigger]
-			public const string onOutOfScreen = "onOutOfScreen";
+			public static readonly int onOutOfScreen = UnityEngine.Animator.StringToHash("onOutOfScreen");
 
 			private SphereCollider m_collider;
 			private float m_speed;

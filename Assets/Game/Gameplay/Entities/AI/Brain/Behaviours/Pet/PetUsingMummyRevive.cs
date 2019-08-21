@@ -8,9 +8,9 @@ namespace AI {
 		public class PetUsingMummyRevive : StateComponent {
 
 			[StateTransitionTrigger]
-			public const string onMummyReviveDone = "onMummyReviveDone";
+			public static readonly int onMummyReviveDone = UnityEngine.Animator.StringToHash("onMummyReviveDone");
 
-			float m_timer;
+            float m_timer;
 			protected override void OnEnter(State _oldState, object[] _param)
 			{
 				m_pilot.Stop();
