@@ -51,6 +51,10 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner, IBroadcastListener {
 	//-----------------------------------------------
 	// Methods
 	//-----------------------------------------------
+    void Awake() {
+        Destroy(gameObject);
+    }
+
 	void Start() {
 		m_spawnConditions = GetComponent<SpawnerConditions>();
         m_components = GetComponents<ISpawnable>();

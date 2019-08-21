@@ -17,13 +17,13 @@ namespace AI {
         public class PetChaseTarget : StateComponent {
 
             [StateTransitionTrigger]
-            private static string OnCollisionDetected = "onCollisionDetected";
+            private static readonly int onCollisionDetected = UnityEngine.Animator.StringToHash("onCollisionDetected");
 
             [StateTransitionTrigger]
-            private static string OnChaseTimeOut = "onChaseTimeout";
+            private static readonly int onChaseTimeOut = UnityEngine.Animator.StringToHash("onChaseTimeout");
 
             [StateTransitionTrigger]
-            private static string OnEnemyOutOfSight = "onEnemyOutOfSight";
+            private static readonly int onEnemyOutOfSight = UnityEngine.Animator.StringToHash("onEnemyOutOfSight");
 
             protected Transform m_target;
             protected AI.IMachine m_targetMachine;
@@ -123,7 +123,7 @@ namespace AI {
                             if (collision.collider.gameObject.layer == LayerMask.NameToLayer("ground")) {
                                 // We go back
                                 m_transitionParam[0] = m_cooldown.GetRandom();
-                                Transition(OnCollisionDetected, m_transitionParam);
+                                Transition(onCollisionDetected, m_transitionParam);
                                 return;
                             }
                         }
@@ -136,7 +136,7 @@ namespace AI {
                     m_timer += Time.deltaTime;
                     if (m_timer >= m_chaseTimeout) {
                         m_transitionParam[0] = m_cooldown.GetRandom();
-                        Transition(OnChaseTimeOut, m_transitionParam);
+                        Transition(onChaseTimeOut, m_transitionParam);
                     } else {
                         Vector3 pos;
                         // Chase
@@ -155,7 +155,7 @@ namespace AI {
                     }
                 } else {
                     m_transitionParam[0] = m_cooldown.GetRandom();
-                    Transition(OnEnemyOutOfSight, m_transitionParam);
+                    Transition(onEnemyOutOfSight, m_transitionParam);
                 }
             }
 		}

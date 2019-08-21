@@ -31,10 +31,7 @@ namespace AI {
 
 		protected virtual void Start() {
 			m_perpendicularAvoid = false;
-
-			m_collisionCheckPool = NextCollisionCheckID % CollisionCheckPools;
-			NextCollisionCheckID++;
-
+            
 			m_lastImpulse = GameConstants.Vector3.zero;
 			m_seek = GameConstants.Vector3.zero;
 		}
@@ -42,24 +39,26 @@ namespace AI {
 		public override void Spawn(ISpawner _spawner) {
 			base.Spawn(_spawner);
 
-			m_collisionAvoidFactor = 0f;
+            m_collisionCheckPool = NextCollisionCheckID % CollisionCheckPools;
+            NextCollisionCheckID++;
+
+            m_collisionAvoidFactor = 0f;
 			m_collisionNormal = GameConstants.Vector3.up;
 		}
 
 		public override void CustomUpdate() {
-			base.CustomUpdate();
+            base.CustomUpdate();
 
-			// calculate impulse to reach our target
-			m_lastImpulse = m_impulse;
+            // calculate impulse to reach our target
+            m_lastImpulse = m_impulse;
 			m_impulse = GameConstants.Vector3.zero;
 
-			if (speed > 0.01f) {
-				
+			if (speed > 0.01f) {				
 				if (IsActionPressed(Action.Latching)) {
 					m_direction = m_targetRotation * GameConstants.Vector3.forward;
 				} else {
-					Vector3 v = m_target - m_machine.position;
-
+                    Vector3 v = m_target - m_machine.position;
+                    
 					if (m_slowDown) { // this machine will slow down its movement when arriving to its detination
 						v = v.normalized * Mathf.Min(moveSpeed, v.magnitude * 2);
 						Util.MoveTowardsVector3WithDamping(ref m_seek, ref v, 32f * Time.deltaTime, 8.0f);
@@ -73,9 +72,10 @@ namespace AI {
 					}
 					#if UNITY_EDITOR
 					Debug.DrawLine(m_machine.position, m_machine.position + m_seek, Color.green);
-					#endif
+                    #endif
 
-					Vector3 flee = GameConstants.Vector3.zero;
+
+                    Vector3 flee = GameConstants.Vector3.zero;
 					if (IsActionPressed(Action.Avoid)) {
 						Transform enemy = m_machine.enemy;
 						if (enemy != null) {
@@ -86,7 +86,7 @@ namespace AI {
 							float distAttSqr = m_avoidDistanceAttenuation * m_avoidDistanceAttenuation;
 
 							v.Normalize();
-							if (distSqr > distAttSqr) {								
+							if (distSqr > distAttSqr) {
 								v *= distAttSqr / distSqr;
 							} else {
 								if (m_machine.GetSignal(Signals.Type.Critical)) {
@@ -103,60 +103,49 @@ namespace AI {
 					}
 
 
-					float seekMagnitude = m_seek.magnitude;
-					float fleeMagnitude = flee.magnitude;
+                    // add seek and flee vectors
+                    if (IsActionPressed(Action.Avoid)) {
+                        float dot = Vector3.Dot(m_seek, flee);
+                        m_perpendicularAvoid = dot < 0f;
 
-					// add seek and flee vectors
-					if (IsActionPressed(Action.Avoid)) {
-						float dot = Vector3.Dot(m_seek.normalized, flee.normalized);
-						if (dot <= DOT_START) {
-							m_perpendicularAvoid = true;
-						} else if (dot > DOT_END) {
-							m_perpendicularAvoid = false;
-						}
-
-						if (m_perpendicularAvoid) {
+                        if (m_perpendicularAvoid) {
 							m_impulse.x = -flee.y;
 							m_impulse.y = flee.x;
 							m_impulse.z = flee.z;
 						} else {
 							m_impulse = m_seek + flee;
 						}
-						m_impulse = m_impulse.normalized * (Mathf.Max(seekMagnitude, fleeMagnitude));
 					} else {
 						m_impulse = m_seek;
 					}
 
-					// check near collisions 7
-					if (m_avoidCollisions || m_avoidWater) {
+                    // check near collisions 7
+                    if (m_avoidCollisions || m_avoidWater) {
 						AvoidCollisions();
-					//	m_impulse = m_impulse.normalized * (Mathf.Max(seekMagnitude, fleeMagnitude));
 					}
 
-					if (IsActionPressed(Action.Avoid)) {
+                    if (IsActionPressed(Action.Avoid)) {
 						float lerpFactor = (IsActionPressed(Action.Boost))? 4f : 2f;
 						m_impulse = Vector3.Lerp(m_lastImpulse, Vector3.ClampMagnitude(m_impulse, speed), Time.smoothDeltaTime * lerpFactor);
 					} else {
 						m_impulse = Vector3.ClampMagnitude(m_impulse, speed);
 					}
 
-					m_impulse += m_externalImpulse;
+                    m_impulse += m_externalImpulse;
 
 					if (!m_directionForced && !m_stunned) {// behaviours are overriding the actual direction of this machine
-						if (m_impulse != GameConstants.Vector3.zero) {
-							m_direction = m_impulse.normalized;
-						}
+						m_direction = m_impulse.normalized;
 					}
 					#if UNITY_EDITOR
 					Debug.DrawLine(m_machine.position, m_machine.position + m_impulse, Color.white);
-					#endif
-				}
+                    #endif
+                }
 			} else {
 				m_seek = GameConstants.Vector3.zero;
 			}
 
 			m_externalImpulse = GameConstants.Vector3.zero;
-		}
+        }
 
 		private void AvoidCollisions() {
 			// 1- ray cast in the same direction where we are flying
@@ -191,14 +180,10 @@ namespace AI {
 			}
 
 			if (m_collisionAvoidFactor > 1f) {
-				float dot = Vector3.Dot(m_impulse.normalized, m_collisionNormal);
-				if (dot <= DOT_START) {
-					m_perpendicularAvoid = true;
-				} else if (dot > DOT_END) {
-					m_perpendicularAvoid = false;
-				}
+                float dot = Vector3.Dot(m_impulse, m_collisionNormal);
+                m_perpendicularAvoid = dot < 0f;
 
-				if (m_perpendicularAvoid) {
+                if (m_perpendicularAvoid) {
 					m_impulse.x = -m_impulse.y;
 					m_impulse.y = m_impulse.x;					
 				} else {

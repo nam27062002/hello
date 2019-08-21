@@ -10,7 +10,7 @@ namespace AI {
 
 				float dX = Mathf.Abs(m_machine.position.x - m_pilot.homePosition.x);
 				if (dX < 2f) {
-					Transition(OnBackAtHome);
+					Transition(onBackAtHome);
 				}
 			}
 		}

@@ -12,10 +12,10 @@ namespace AI {
 		public class PetDecideAction : StateComponent {
 
 			[StateTransitionTrigger]
-			private static string OnDefaultAction = "onDefaultAction";
+			private static readonly int onDefaultAction = UnityEngine.Animator.StringToHash("onDefaultAction");
 
 			[StateTransitionTrigger]
-			private static string OnTimedAction = "onTimedAction";
+			private static readonly int onTimedAction = UnityEngine.Animator.StringToHash("onTimedAction");
 
 
 			protected PetDecideActionData m_data;
@@ -43,13 +43,13 @@ namespace AI {
 				if ( m_timer <= Time.time )
 				{
 					// Seond Action
-					Transition( OnTimedAction, param);
+					Transition(onTimedAction, param);
 					m_timer =  Time.time + m_data.m_timeSecondAction.GetRandom();
 				}
 				else
 				{
 					// Default action
-					Transition( OnDefaultAction, param);
+					Transition(onDefaultAction, param);
 				}
 
 			}
