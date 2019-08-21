@@ -40,8 +40,8 @@ public class LabDragonBar : MonoBehaviour {
     private int[] m_unlockClassicTier;
     private int m_maxTierUnlocked;
 
-    private List<DefinitionNode> m_definitionSkill;
-
+    private List<DefinitionNode> m_skillsDefinitions;
+    private List<DefinitionNode> m_tiersDefinitions;
 
 
     //------------------------------------------------------------------------//
@@ -75,21 +75,21 @@ public class LabDragonBar : MonoBehaviour {
         m_maxLevel = _dragonData.MaxLevel;
 
         // tier data
-        List<DefinitionNode> tierDefs = _dragonData.specialTierDefsByOrder;
-        m_levelTier = new int[tierDefs.Count - 1];
+        m_tiersDefinitions = _dragonData.specialTierDefsByOrder;
+        m_levelTier = new int[m_tiersDefinitions.Count - 1];
 
         // Skip the base level (0)
-        for (int i = 1; i < tierDefs.Count; i++)
+        for (int i = 1; i < m_tiersDefinitions.Count; i++)
         {
-            m_levelTier[i - 1] = tierDefs[i].GetAsInt("upgradeLevelToUnlock");
+            m_levelTier[i - 1] = m_tiersDefinitions[i].GetAsInt("upgradeLevelToUnlock");
         }
 
         //skills
-        m_definitionSkill = _dragonData.specialPowerDefsByOrder;
-        m_levelSkill = new int[m_definitionSkill.Count];
-        for (int i = 0; i < m_definitionSkill.Count; ++i)
+        m_skillsDefinitions = _dragonData.specialPowerDefsByOrder;
+        m_levelSkill = new int[m_skillsDefinitions.Count];
+        for (int i = 0; i < m_skillsDefinitions.Count; ++i)
         {
-            m_levelSkill[i] = m_definitionSkill[i].GetAsInt("upgradeLevelToUnlock");
+            m_levelSkill[i] = m_skillsDefinitions[i].GetAsInt("upgradeLevelToUnlock");
         }
 
 
@@ -132,7 +132,7 @@ public class LabDragonBar : MonoBehaviour {
             for (int i = m_tierElements.Count; i < m_levelTier.Length; ++i) {
                 GameObject go = Instantiate(m_elementTierPrefab);
                 LabDragonBarTierElement tierElement = go.GetComponent<LabDragonBarTierElement>();
-                tierElement.SetTier(i);
+                tierElement.SetTier(m_tiersDefinitions[i + 1]); // Plus 1 because tier 0 is the starting tier
                 go.transform.SetParent(m_content.transform, false);
                 m_tierElements.Add(tierElement);
             }
@@ -153,8 +153,8 @@ public class LabDragonBar : MonoBehaviour {
         }
 
         for (int i = 0; i < m_skillElements.Count; ++i) {
-            if (i < m_definitionSkill.Count) {
-                m_skillElements[i].SetDefinition(m_definitionSkill[i]);
+            if (i < m_skillsDefinitions.Count) {
+                m_skillElements[i].SetDefinition(m_skillsDefinitions[i]);
             }
             m_skillElements[i].SetTooltip(m_skillTooltip);
             m_skillElements[i].gameObject.SetActive(false);
@@ -286,7 +286,7 @@ public class LabDragonBar : MonoBehaviour {
 
         m_maxTierUnlocked = m_debugMaxTierUnlocked;
 
-        m_definitionSkill = new List<DefinitionNode>(3);
+        m_skillsDefinitions = new List<DefinitionNode>(3);
 
         CreateElements();
         ArrangeElements();

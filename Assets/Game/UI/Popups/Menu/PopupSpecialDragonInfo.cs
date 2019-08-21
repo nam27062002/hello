@@ -53,7 +53,7 @@ public class PopupSpecialDragonInfo : PopupDragonInfo {
 		// Gather all the data
 		List<UpgradeData> upgradesData = new List<UpgradeData>();
 
-		// Tier upgrades
+		// Tier upgrades (they only upgrade the pets slots capacity, the tier remains same)
 		List<DefinitionNode> specialTierDefs = dragonData.specialTierDefsByOrder;
 		for(int i = 0; i < specialTierDefs.Count; ++i) {
 			UpgradeData data = new UpgradeData();
@@ -66,11 +66,10 @@ public class PopupSpecialDragonInfo : PopupDragonInfo {
 
 			// Description
 			// Can equip <TID_COLOR_PET>%U0 %U1<TID_END_COLOR> and get a <TID_COLOR_PET>%U2<TID_END_COLOR> multiplier during <TID_COLOR_FIRERUSH><TID_FIRE_RUSH><TID_END_COLOR>
-			int numPets = tierDef.GetAsInt("maxPetEquipped");
-			data.description = LocalizationManager.SharedInstance.Localize("TID_SPECIAL_DRAGON_INFO_TIER_DESCRIPTION",
+			int numPets = specialTierDefs[i].GetAsInt("petsSlotsAvailable");
+            data.description = LocalizationManager.SharedInstance.Localize("TID_SPECIAL_DRAGON_INFO_TIER_DESCRIPTION",
 				StringUtils.FormatNumber(numPets),
-			    (numPets > 1 ? LocalizationManager.SharedInstance.Localize("TID_PET_PLURAL") : LocalizationManager.SharedInstance.Localize("TID_PET")), // Singular/Plural
-			    "x" + StringUtils.FormatNumber(specialTierDefs[i].GetAsFloat("furyScoreMultiplier", 2), 0)
+			    ( numPets > 1 ? LocalizationManager.SharedInstance.Localize("TID_PET_PLURAL") : LocalizationManager.SharedInstance.Localize("TID_PET") )
 			);
 
 			// Icon

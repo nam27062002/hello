@@ -30,7 +30,6 @@ public class MenuDragonPaginator : TabSystem {
 	// Exposed setup
 	[SerializeField] private GameObject m_buttonPrefab = null;
 	[SerializeField] private Tab m_dummyTab = null;
-    [SerializeField] private Sprite m_labIcon = null;
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -61,40 +60,34 @@ public class MenuDragonPaginator : TabSystem {
 
 			// Add a listener to the button to select the first dragon of that tier whenever the button is pressed
 			SelectableButton tierButton = newInstanceObj.GetComponent<SelectableButton>();
-			DragonTier tier = (DragonTier)i;	// Can't use "i" directly with a lambda expression http://stackoverflow.com/questions/3168375/using-the-iterator-variable-of-foreach-loop-in-a-lambda-expression-why-fails
-			tierButton.button.onClick.AddListener(
-				() => { OnTierButtonClick(tier); }	// Way to add a listener with parameters (basically call a delegate function without parameters which in turn will call our actual callback with the desired parameter)
-			);
 
-			// Save button as one of the tab buttons and add a dummy associated tab
-			m_tabButtons.Add(tierButton);
-			m_screens.Add(m_dummyTab);
-		}
-
-        // Add the special dragons button
-        {
-            // Create a new instance of the prefab as a child of this object
-            // Will be auto-positioned by the Layout component
-            GameObject newInstanceObj = GameObject.Instantiate<GameObject>(m_buttonPrefab);
-            newInstanceObj.transform.SetParent(this.transform, false);
-
-            // Load the icon corresponding to the target tier
-            Image tierIcon = newInstanceObj.GetComponent<Image>();
-            if (tierIcon != null)
+            if ( i < tierDefs.Count - 1)
             {
-                tierIcon.sprite = m_labIcon;
-            }
+                
+                // Classic dragons tiers (XS, S, M, L, XL, XXL)
+                DragonTier tier = (DragonTier)i;    // Can't use "i" directly with a lambda expression http://stackoverflow.com/questions/3168375/using-the-iterator-variable-of-foreach-loop-in-a-lambda-expression-why-fails
+                tierButton.button.onClick.AddListener(
+                    () => { OnTierButtonClick(tier); }  // Way to add a listener with parameters (basically call a delegate function without parameters which in turn will call our actual callback with the desired parameter)
+                );
 
-            // Add a listener to the button to select the first dragon of that tier whenever the button is pressed
-            SelectableButton tierButton = newInstanceObj.GetComponent<SelectableButton>();
-            tierButton.button.onClick.AddListener(
-                () => { OnLabButtonClick(); }  // Way to add a listener with parameters (basically call a delegate function without parameters which in turn will call our actual callback with the desired parameter)
-            );
+            } else
+            {
+                
+                // The last button is for special dragons (star icon)
+                tierButton.button.onClick.AddListener(
+                    () => {
+                        OnSpecialDragonsClick();
+                    }
+                );
+
+            }
 
             // Save button as one of the tab buttons and add a dummy associated tab
             m_tabButtons.Add(tierButton);
-            m_screens.Add(m_dummyTab);
-        }
+			m_screens.Add(m_dummyTab);
+		}
+
+        
     }
 
 	public void OnTierButtonClickTest() {
@@ -232,9 +225,9 @@ public class MenuDragonPaginator : TabSystem {
 	}
 
     /// <summary>
-    /// Lab button pressed. Select the first special dragon.
+    /// Special dragons button pressed. Select the first special dragon.
     /// </summary>
-    public void OnLabButtonClick()
+    public void OnSpecialDragonsClick()
     {
         // Select first dragon of the lab
         List<IDragonData> dragons = DragonManager.GetDragonsByOrder(IDragonData.Type.SPECIAL);

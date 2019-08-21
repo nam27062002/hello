@@ -6,7 +6,7 @@ public class LabDragonBarTierElement : LabDragonBarElement {
 	[SerializeField] private ParticleSystem m_unlockFX = null;
 
 	private LabDragonBarTooltip m_tooltip;
-	private DragonTier m_tier = DragonTier.COUNT;
+    private DefinitionNode m_def;
 
 	protected override void OnEnable() {
 		// Call parent
@@ -25,20 +25,29 @@ public class LabDragonBarTierElement : LabDragonBarElement {
 		Messenger.RemoveListener<DragonDataSpecial>(MessengerEvents.SPECIAL_DRAGON_LEVEL_UPGRADED, OnLevelUpgraded);
 	}
 
-    public void SetTier(int _index) {
-		m_tier = (DragonTier)(_index + 1);
+    
+    public void SetTier(DefinitionNode _tier) {
+        m_def = _tier;
     }
 
-	public void SetTooltip(LabDragonBarTooltip _tooltip) {
+    public void SetTooltip(LabDragonBarTooltip _tooltip) {
 		UITooltipTrigger trigger = GetComponent<UITooltipTrigger>();
 		trigger.tooltip = _tooltip;
 		m_tooltip = _tooltip;
 	}
 
 	public void OnTooltipOpen() {
-		m_tooltip.Init(
+
+        
+        int numPets = m_def.GetAsInt("petsSlotsAvailable");
+        string description = LocalizationManager.SharedInstance.Localize("TID_SPECIAL_DRAGON_INFO_TIER_DESCRIPTION",
+            StringUtils.FormatNumber(numPets),
+            (numPets > 1 ? LocalizationManager.SharedInstance.Localize("TID_PET_PLURAL") : LocalizationManager.SharedInstance.Localize("TID_PET"))
+			);
+            
+        m_tooltip.Init(
 			string.Empty,
-			string.Empty,
+            description,
 			string.Empty
 		);
 
@@ -50,7 +59,7 @@ public class LabDragonBarTierElement : LabDragonBarElement {
 
 	private void OnLevelUpgraded(DragonDataSpecial _dragonData) {
 		// Unlocked tier matches the one represented by this element?
-		if(m_tier == _dragonData.tier) {
+		if(m_def.GetAsInt("upgradeLevelToUnlock") == (int)_dragonData.Level) {
 			// Show some VFX
 			if(m_unlockFX != null) {
 				m_unlockFX.Play();
