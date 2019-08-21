@@ -19,7 +19,7 @@ using TMPro;
 /// <summary>
 /// Standalone widget to control the logic of upgrading a Special Dragon's Stat.
 /// </summary>
-public class LabStatUpgrader : MonoBehaviour {
+public class SpecialStatUpgrader : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//

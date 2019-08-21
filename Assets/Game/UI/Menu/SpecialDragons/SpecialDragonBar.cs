@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class LabDragonBar : MonoBehaviour {
+public class SpecialDragonBar : MonoBehaviour {
 
     [SerializeField] private GameObject m_elementLevelPrefab = null;
     [SerializeField] private GameObject m_elementSkillPrefab = null;
@@ -9,8 +9,8 @@ public class LabDragonBar : MonoBehaviour {
 	[Space]
     [SerializeField] private RectTransform m_content = null;
 	[SerializeField] private Localizer m_levelText = null;
-	[SerializeField] private LabDragonBarTooltip m_skillTooltip = null;
-	[SerializeField] private LabDragonBarTooltip m_tierTooltip = null;
+	[SerializeField] private SpecialDragonBarTooltip m_skillTooltip = null;
+	[SerializeField] private SpecialDragonBarTooltip m_tierTooltip = null;
 	[Space]
     [SerializeField] private float m_blankSpace = 5f;
     [SerializeField] private AnimationCurve m_scaleTiersCurve = null;
@@ -27,11 +27,11 @@ public class LabDragonBar : MonoBehaviour {
     [SerializeField] private int m_debugMaxTierUnlocked = 3;
 
 
-    private List<LabDragonBarElement> m_levelElements = new List<LabDragonBarElement>();
-    private List<LabDragonBarTierElement> m_tierElements = new List<LabDragonBarTierElement>();
-    private List<LabDragonBarSkillElement> m_skillElements = new List<LabDragonBarSkillElement>();
+    private List<SpecialDragonBarElement> m_levelElements = new List<SpecialDragonBarElement>();
+    private List<SpecialDragonBarTierElement> m_tierElements = new List<SpecialDragonBarTierElement>();
+    private List<SpecialDragonBarSkillElement> m_skillElements = new List<SpecialDragonBarSkillElement>();
 
-    private List<LabDragonBarElement> m_sortedElements = new List<LabDragonBarElement>();
+    private List<SpecialDragonBarElement> m_sortedElements = new List<SpecialDragonBarElement>();
 
     private int m_maxLevel;
     private int[] m_levelSkill;
@@ -116,7 +116,7 @@ public class LabDragonBar : MonoBehaviour {
             for (int i = m_levelElements.Count; i < levelElementsCount; ++i) {
                 GameObject go = Instantiate(m_elementLevelPrefab);
                 go.transform.SetParent(m_content.transform, false);
-                m_levelElements.Add(go.GetComponent<LabDragonBarElement>());
+                m_levelElements.Add(go.GetComponent<SpecialDragonBarElement>());
             }
         }
 
@@ -124,14 +124,14 @@ public class LabDragonBar : MonoBehaviour {
             for (int i = m_skillElements.Count; i < m_levelSkill.Length; ++i) {
                 GameObject go = Instantiate(m_elementSkillPrefab);
                 go.transform.SetParent(m_content.transform, false);
-				m_skillElements.Add(go.GetComponent<LabDragonBarSkillElement>());
+				m_skillElements.Add(go.GetComponent<SpecialDragonBarSkillElement>());
             }
         }
 
         if (m_levelTier.Length > m_tierElements.Count) {
             for (int i = m_tierElements.Count; i < m_levelTier.Length; ++i) {
                 GameObject go = Instantiate(m_elementTierPrefab);
-                LabDragonBarTierElement tierElement = go.GetComponent<LabDragonBarTierElement>();
+                SpecialDragonBarTierElement tierElement = go.GetComponent<SpecialDragonBarTierElement>();
                 tierElement.SetTier(m_tiersDefinitions[i + 1]); // Plus 1 because tier 0 is the starting tier
                 go.transform.SetParent(m_content.transform, false);
                 m_tierElements.Add(tierElement);
@@ -215,15 +215,15 @@ public class LabDragonBar : MonoBehaviour {
         int m_skillElementIndex = 0;
 
         for (int i = 0; i < m_maxLevel; ++i) {
-            LabDragonBarElement.State elementState;
-            LabDragonBarElement element;
+            SpecialDragonBarElement.State elementState;
+            SpecialDragonBarElement element;
             float scaleFactor = 1f;
             float posY = 0f;
 
             if (i <= m_currentLevel) {
-                elementState = LabDragonBarElement.State.OWNED;
+                elementState = SpecialDragonBarElement.State.OWNED;
             } else {
-                elementState = LabDragonBarElement.State.LOCKED;
+                elementState = SpecialDragonBarElement.State.LOCKED;
             }
 
             if (m_levelTier.IndexOf(i) >= 0)
@@ -235,7 +235,7 @@ public class LabDragonBar : MonoBehaviour {
                 element = m_tierElements[m_tierElementIndex];
                 element.SetGlobalScale(scaleFactor, scaleFactor);
 
-                (element as LabDragonBarTierElement).SetUnlockLevel(i);
+                (element as SpecialDragonBarTierElement).SetUnlockLevel(i);
 
                 m_tierElementIndex++;
             }
@@ -246,7 +246,7 @@ public class LabDragonBar : MonoBehaviour {
                 element = m_skillElements[m_skillElementIndex];
                 element.SetLocalScale(scaleFactor, 1f);
 
-				(element as LabDragonBarSkillElement).SetUnlockLevel(i);
+				(element as SpecialDragonBarSkillElement).SetUnlockLevel(i);
 
                 m_skillElementIndex++;
             } else {
@@ -295,7 +295,7 @@ public class LabDragonBar : MonoBehaviour {
     public void AddLevel() {
 		SetLevel(m_currentLevel + 1);
         if (m_currentLevel < m_maxLevel) {
-            m_sortedElements[m_currentLevel].SetState(LabDragonBarElement.State.OWNED);
+            m_sortedElements[m_currentLevel].SetState(SpecialDragonBarElement.State.OWNED);
         }
     }
 

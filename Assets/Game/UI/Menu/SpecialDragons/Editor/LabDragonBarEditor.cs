@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEditor;
 
 
-[CustomEditor(typeof(LabDragonBar))]
+[CustomEditor(typeof(SpecialDragonBar))]
 public class LabDragonBarEditor : Editor {
     	
     public override void OnInspectorGUI() {
@@ -12,7 +12,7 @@ public class LabDragonBarEditor : Editor {
 
         EditorGUILayoutExt.Separator(new SeparatorAttribute("Exp Bar Simulator"));
 
-        LabDragonBar xpBar = target as LabDragonBar;
+        SpecialDragonBar xpBar = target as SpecialDragonBar;
         if (GUILayout.Button("Build")) {
             xpBar.BuildUsingDebugValues();
         }

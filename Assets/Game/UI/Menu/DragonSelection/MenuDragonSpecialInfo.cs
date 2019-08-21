@@ -26,9 +26,9 @@ public class MenuDragonSpecialInfo : MenuDragonInfo {
     //------------------------------------------------------------------------//
 
 
-    [SerializeField] private LabDragonBar m_specialDragonLevelBar;
+    [SerializeField] private SpecialDragonBar m_specialDragonLevelBar;
 
-    [SerializeField] private LabStatUpgrader[] m_stats = new LabStatUpgrader[0];
+    [SerializeField] private SpecialStatUpgrader[] m_stats = new SpecialStatUpgrader[0];
     [SerializeField] private DragonPowerUpgrader m_powerUpgrade;
 
     //------------------------------------------------------------------------//

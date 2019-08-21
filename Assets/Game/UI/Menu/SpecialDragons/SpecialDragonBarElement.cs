@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class LabDragonBarElement : MonoBehaviour {
+public class SpecialDragonBarElement : MonoBehaviour {
     public enum State {
         LOCKED = 0,
         OWNED = 1

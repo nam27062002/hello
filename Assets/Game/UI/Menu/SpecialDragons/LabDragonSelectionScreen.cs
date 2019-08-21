@@ -33,9 +33,9 @@ public class LabDragonSelectionScreen : MonoBehaviour {
 	[Space]
 	[SerializeField] private Localizer m_unlockInfoText = null;
 	[Space]
-    [SerializeField] private LabDragonBar m_dragonExpBar = null;
+    [SerializeField] private SpecialDragonBar m_dragonExpBar = null;
     [SerializeField] private Localizer m_upgradeLockedInfoText = null;
-	[SerializeField] private LabStatUpgrader[] m_stats = new LabStatUpgrader[0];
+	[SerializeField] private SpecialStatUpgrader[] m_stats = new SpecialStatUpgrader[0];
 	[Space]
 	[SerializeField] private GameObject m_loadingUI = null;
 	[SerializeField] private AssetsDownloadFlow m_assetsDownloadFlow = null;

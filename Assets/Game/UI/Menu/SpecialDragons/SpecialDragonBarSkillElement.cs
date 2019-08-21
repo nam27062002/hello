@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class LabDragonBarSkillElement : LabDragonBarElement
+public class SpecialDragonBarSkillElement : SpecialDragonBarElement
 {
 
     [Separator("Skill")]
@@ -13,7 +13,7 @@ public class LabDragonBarSkillElement : LabDragonBarElement
 
 
     private DefinitionNode m_def;
-	private LabDragonBarTooltip m_tooltip;
+	private SpecialDragonBarTooltip m_tooltip;
 	private UITooltipTrigger m_trigger;
 
 	protected override void OnEnable() {
@@ -42,7 +42,7 @@ public class LabDragonBarSkillElement : LabDragonBarElement
         }
     }
 
-	public void SetTooltip(LabDragonBarTooltip _tooltip) {
+	public void SetTooltip(SpecialDragonBarTooltip _tooltip) {
 		m_trigger = GetComponent<UITooltipTrigger>();
         m_trigger.tooltip = _tooltip;
         m_tooltip = _tooltip;

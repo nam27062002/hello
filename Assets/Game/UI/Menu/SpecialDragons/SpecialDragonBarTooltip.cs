@@ -16,7 +16,7 @@ using TMPro;
 /// <summary>
 /// Specialization of the generic UI Tooltip for the Lab Dragon Bar.
 /// </summary>
-public class LabDragonBarTooltip : UITooltipMultidirectional {
+public class SpecialDragonBarTooltip : UITooltipMultidirectional {
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//

@@ -1,11 +1,11 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class LabDragonBarTierElement : LabDragonBarElement {
+public class SpecialDragonBarTierElement : SpecialDragonBarElement {
     [Separator("Tier")]
 	[SerializeField] private ParticleSystem m_unlockFX = null;
 
-	private LabDragonBarTooltip m_tooltip;
+	private SpecialDragonBarTooltip m_tooltip;
     private DefinitionNode m_def;
 
 	protected override void OnEnable() {
@@ -30,7 +30,7 @@ public class LabDragonBarTierElement : LabDragonBarElement {
         m_def = _tier;
     }
 
-    public void SetTooltip(LabDragonBarTooltip _tooltip) {
+    public void SetTooltip(SpecialDragonBarTooltip _tooltip) {
 		UITooltipTrigger trigger = GetComponent<UITooltipTrigger>();
 		trigger.tooltip = _tooltip;
 		m_tooltip = _tooltip;
