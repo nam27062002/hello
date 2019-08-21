@@ -69,8 +69,9 @@ public class PopupSpecialDragonInfo : PopupDragonInfo {
 			int numPets = specialTierDefs[i].GetAsInt("petsSlotsAvailable");
             data.description = LocalizationManager.SharedInstance.Localize("TID_SPECIAL_DRAGON_INFO_TIER_DESCRIPTION",
 				StringUtils.FormatNumber(numPets),
-			    ( numPets > 1 ? LocalizationManager.SharedInstance.Localize("TID_PET_PLURAL") : LocalizationManager.SharedInstance.Localize("TID_PET") )
-			);
+                (numPets > 1 ? LocalizationManager.SharedInstance.Localize("TID_PET_PLURAL") : LocalizationManager.SharedInstance.Localize("TID_PET")), // Singular/Plural
+                "x" + StringUtils.FormatNumber(specialTierDefs[i].GetAsFloat("furyScoreMultiplier", 2), 0)
+            );
 
 			// Icon
 			data.icon = ResourcesExt.LoadFromSpritesheet(UIConstants.UI_SPRITESHEET_PATH, tierDef.GetAsString("icon"));

@@ -48,6 +48,11 @@ public class DragonDataSpecial : IDragonData {
         get { return m_maxLevel; }
     }
 
+    public bool IsMaxed
+    {
+        get { return m_maxLevel == m_level; }
+    }
+
     // Stats
     private DragonStatData[] m_stats = new DragonStatData[(int)Stat.COUNT];
 	private long m_statUpgradePriceBase = 0;
@@ -393,18 +398,30 @@ public class DragonDataSpecial : IDragonData {
 	/// <returns>True if is unlockable</returns>
     public bool IsAvailableViaSC()
     {
-        // If the biggest classic dragon is maxed, then the special dragons are available via SC
+        // If the previous dragon is maxed, then the dragon is available via SC
+        IDragonData previous = DragonManager.GetPreviousDragonData(sku);
 
-        // Find the largest classic dragon 
-        List<IDragonData> classicDragons = DragonManager.GetDragonsByOrder(Type.CLASSIC);
-        DragonDataClassic lastClassic = classicDragons [classicDragons.Count - 1] as DragonDataClassic;
-
-        // Is it owned and maxed?
-        if (lastClassic != null && lastClassic.isOwned && lastClassic.progression.isMaxed)
+        // Is it owned ?
+        if (previous != null && previous.isOwned)
         {
-            return true;
+            // Has reached maximum level?
+            switch (previous.type)
+            {
+                case Type.CLASSIC:
+                    {
+                        return (previous as DragonDataClassic).progression.isMaxed;
+                        break;
+                    }
+                    
+                case Type.SPECIAL:
+                    {
+                        return (previous as DragonDataSpecial).IsMaxed;
+                        break;
+                    }
+            }
         }
 
+        // Not owned:
         return false;
     }
 
