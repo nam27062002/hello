@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System;
 
 namespace AI {
-	namespace Behaviour {
+    namespace Behaviour {
         public enum TargetPriority {
             Any = 0,
             SmallestTier,
@@ -12,92 +12,90 @@ namespace AI {
         };
 
 
-		[System.Serializable]
+        [System.Serializable]
         public class PetSearchTaggedTargetData : StateComponentData {
             public IEntity.Tag tag = 0;
             public IEntity.Tag ignoreTag = 0;
             [Tooltip("Max tier this pet will consider target.")]
-			public DragonTier maxValidTier = DragonTier.TIER_4;
-			[Tooltip("Min tier this pet will consider target.")]
-			public DragonTier minValidTier = DragonTier.TIER_0;
-            public TargetPriority priority = TargetPriority.Any; 
-			public CheckType checkType;
+            public DragonTier maxValidTier = DragonTier.TIER_4;
+            [Tooltip("Min tier this pet will consider target.")]
+            public DragonTier minValidTier = DragonTier.TIER_0;
+            public TargetPriority priority = TargetPriority.Any;
+            public CheckType checkType;
             public Signals.Type ignoreSignal = Signals.Type.None;
             public float dragonSizeRangeMultiplier = 10;
-			public Range m_shutdownRange = new Range(10,20);
-		}
+            public Range m_shutdownRange = new Range(10, 20);
+        }
 
         [CreateAssetMenu(menuName = "Behaviour/Pet/Search Tagged Target")]
-		public class PetSearchTaggedTarget : StateComponent {
+        public class PetSearchTaggedTarget : StateComponent {
 
-			[StateTransitionTrigger]
-			private static string onEnemyTargeted = "onEnemyTargeted";
+            [StateTransitionTrigger]
+            private static readonly int onEnemyTargeted = UnityEngine.Animator.StringToHash("onEnemyTargeted");
 
-			private float m_shutdownSensorTime;
-			private float m_timer;
-			private object[] m_transitionParam;
+            private float m_shutdownSensorTime;
+            private float m_timer;
+            private object[] m_transitionParam;
 
-			private Entity[] m_checkEntities = new Entity[50];
-			private int m_numCheckEntities = 0;
+            private Entity[] m_checkEntities = new Entity[50];
+            private int m_numCheckEntities = 0;
 
-			DragonPlayer m_owner;
-			float m_range;
-			MachineSensor m_sensor;
+            DragonPlayer m_owner;
+            float m_range;
+            MachineSensor m_sensor;
 
             private PetSearchTaggedTargetData m_data;
-			EatBehaviour m_eatBehaviour;
+            EatBehaviour m_eatBehaviour;
 
 
-			public override StateComponentData CreateData() {
+            public override StateComponentData CreateData() {
                 return new PetSearchTaggedTargetData();
-			}
+            }
 
-			public override System.Type GetDataType() {
+            public override System.Type GetDataType() {
                 return typeof(PetSearchTaggedTargetData);
-			}
+            }
 
-			protected override void OnInitialise() {
-				m_timer = 0f;
-				m_shutdownSensorTime = 0f;
+            protected override void OnInitialise() {
+                m_timer = 0f;
+                m_shutdownSensorTime = 0f;
 
-				m_transitionParam = new object[1];
+                m_transitionParam = new object[1];
 
-				m_eatBehaviour = m_pilot.GetComponent<EatBehaviour>();
+                m_eatBehaviour = m_pilot.GetComponent<EatBehaviour>();
 
-				base.OnInitialise();
+                base.OnInitialise();
 
-				m_owner = InstanceManager.player;
+                m_owner = InstanceManager.player;
                 m_data = m_pilot.GetComponentData<PetSearchTaggedTargetData>();
-				m_range = m_owner.data.maxScale * m_data.dragonSizeRangeMultiplier;
+                m_range = m_owner.data.maxScale * m_data.dragonSizeRangeMultiplier;
 
-				m_sensor = (m_machine as Machine).sensor;
-			}
+                m_sensor = (m_machine as Machine).sensor;
+            }
 
-			// The first element in _param must contain the amount of time without detecting an enemy
-			protected override void OnEnter(State _oldState, object[] _param) {
-				m_shutdownSensorTime = m_data.m_shutdownRange.GetRandom();
-				if (m_shutdownSensorTime > 0f) {
-					m_timer = m_shutdownSensorTime;
-				} else {
-					m_timer = 0f;
-				}
-			}
+            // The first element in _param must contain the amount of time without detecting an enemy
+            protected override void OnEnter(State _oldState, object[] _param) {
+                m_shutdownSensorTime = m_data.m_shutdownRange.GetRandom();
+                if (m_shutdownSensorTime > 0f) {
+                    m_timer = m_shutdownSensorTime;
+                } else {
+                    m_timer = 0f;
+                }
+            }
 
-			protected override void OnUpdate() {
-				if (m_timer > 0f) {
-					m_timer -= Time.deltaTime;
-				} else {
-					Vector3 centerPos = m_owner.transform.position;
+            protected override void OnUpdate() {
+                if (m_timer > 0f) {
+                    m_timer -= Time.deltaTime;
+                } else {
+                    Vector3 centerPos = m_owner.transform.position;
 
                     Entity target = null;
 
-					m_numCheckEntities = EntityManager.instance.GetOverlapingEntities( centerPos , m_range, m_checkEntities);
-					for (int e = 0; e < m_numCheckEntities; e++) 
-					{
-						Entity entity = m_checkEntities[e];
-						Machine machine = entity.GetComponent<Machine>();
-						if (machine != null && !machine.IsDying() && !machine.IsDead() && machine.CanBeBitten() && !machine.isPetTarget )
-						{
+                    m_numCheckEntities = EntityManager.instance.GetOverlapingEntities(centerPos, m_range, m_checkEntities);
+                    for (int e = 0; e < m_numCheckEntities; e++) {
+                        Entity entity = m_checkEntities[e];
+                        Machine machine = entity.GetComponent<Machine>();
+                        if (machine != null && !machine.IsDying() && !machine.IsDead() && machine.CanBeBitten() && !machine.isPetTarget) {
                             if (entity.HasTag(m_data.tag) && !entity.HasTag(m_data.ignoreTag)) {
                                 bool isViable = false;
                                 switch (m_data.checkType) {
@@ -146,8 +144,8 @@ namespace AI {
                                     }
                                 }
                             }
-						}
-					}
+                        }
+                    }
 
                     if (target != null) {
                         // Check if closed? Not for the moment
@@ -159,8 +157,8 @@ namespace AI {
                         m_machine.SetSignal(Signals.Type.Warning, true);
                         Transition(onEnemyTargeted, m_transitionParam);
                     }
-				}
-			}
-		}
-	}
+                }
+            }
+        }
+    }
 }

@@ -54,7 +54,7 @@ namespace AI {
 		override public void Activate() {}
 		override public void Deactivate( float duration, UnityEngine.Events.UnityAction _action) {}
 
-		override public void OnTrigger(string _trigger, object[] _param = null) {}
+		override public void OnTrigger(int _triggerHash, object[] _param = null) {}
 			
 		// Update is called once per frame
 		override public void SetSignal(Signals.Type _signal, bool _activated) {

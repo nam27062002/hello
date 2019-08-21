@@ -1,4 +1,8 @@
-﻿using System.IO;
+﻿#if DEBUG && !DISABLE_LOGS
+#define ENABLE_LOGS
+#endif
+
+using System.IO;
 using SimpleJSON;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,7 +40,11 @@ public class HDAddressablesManager : AddressablesManager
     {
         LastSceneId = null;
 
-        Logger logger = (FeatureSettingsManager.IsDebugEnabled) ? new CPLogger(ControlPanel.ELogChannel.Addressables) : null;
+#if ENABLE_LOGS
+        Logger logger = new CPLogger(ControlPanel.ELogChannel.Addressables);
+#else
+        Logger logger = null;
+#endif
 
         // Addressables catalog     
         string catalogAsText = GetAddressablesFileText("addressablesCatalog", true);
@@ -762,11 +770,8 @@ public class Ingame_SwitchAreaHandle
     {
         Downloadables.Handle returnValue = null;
         if (m_downloadableHandles == null)
-        {
-            if (FeatureSettingsManager.IsDebugEnabled)
-            {
-                LogError("You need to call HDADdressablesManager.Instance.Initialise() before calling this method");
-            }
+        {            
+            LogError("You need to call HDADdressablesManager.Instance.Initialise() before calling this method");            
         }
         else
         {

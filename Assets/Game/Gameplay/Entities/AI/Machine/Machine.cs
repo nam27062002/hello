@@ -117,49 +117,49 @@ namespace AI {
 			m_signals = new Signals(this);
 			m_signals.Init();
 
-			m_signals.SetOnEnableTrigger(Signals.Type.Leader, SignalTriggers.OnLeaderPromoted);
-			m_signals.SetOnDisableTrigger(Signals.Type.Leader, SignalTriggers.OnLeaderDemoted);
+			m_signals.SetOnEnableTrigger(Signals.Type.Leader, SignalTriggers.onLeaderPromoted);
+			m_signals.SetOnDisableTrigger(Signals.Type.Leader, SignalTriggers.onLeaderDemoted);
 
-			m_signals.SetOnEnableTrigger(Signals.Type.Hungry, SignalTriggers.OnIsHungry);	
-			m_signals.SetOnDisableTrigger(Signals.Type.Hungry, SignalTriggers.OnNotHungry);
+			m_signals.SetOnEnableTrigger(Signals.Type.Hungry, SignalTriggers.onIsHungry);	
+			m_signals.SetOnDisableTrigger(Signals.Type.Hungry, SignalTriggers.onNotHungry);
 
-			m_signals.SetOnEnableTrigger(Signals.Type.Alert, SignalTriggers.OnAlert);
-			m_signals.SetOnDisableTrigger(Signals.Type.Alert, SignalTriggers.OnIgnoreAll);
+			m_signals.SetOnEnableTrigger(Signals.Type.Alert, SignalTriggers.onAlert);
+			m_signals.SetOnDisableTrigger(Signals.Type.Alert, SignalTriggers.onIgnoreAll);
 
-			m_signals.SetOnEnableTrigger(Signals.Type.Warning, SignalTriggers.OnWarning);	
-			m_signals.SetOnDisableTrigger(Signals.Type.Warning, SignalTriggers.OnCalm);		
+			m_signals.SetOnEnableTrigger(Signals.Type.Warning, SignalTriggers.onWarning);	
+			m_signals.SetOnDisableTrigger(Signals.Type.Warning, SignalTriggers.onCalm);		
 
-			m_signals.SetOnEnableTrigger(Signals.Type.Danger, SignalTriggers.OnDanger);
-			m_signals.SetOnDisableTrigger(Signals.Type.Danger, SignalTriggers.OnSafe);
+			m_signals.SetOnEnableTrigger(Signals.Type.Danger, SignalTriggers.onDanger);
+			m_signals.SetOnDisableTrigger(Signals.Type.Danger, SignalTriggers.onSafe);
 
-			m_signals.SetOnEnableTrigger(Signals.Type.Critical, SignalTriggers.OnCritical);
+			m_signals.SetOnEnableTrigger(Signals.Type.Critical, SignalTriggers.onCritical);
 
-			m_signals.SetOnEnableTrigger(Signals.Type.Panic, SignalTriggers.OnPanic);
-			m_signals.SetOnDisableTrigger(Signals.Type.Panic, SignalTriggers.OnRecoverFromPanic);
+			m_signals.SetOnEnableTrigger(Signals.Type.Panic, SignalTriggers.onPanic);
+			m_signals.SetOnDisableTrigger(Signals.Type.Panic, SignalTriggers.onRecoverFromPanic);
 
-			m_signals.SetOnEnableTrigger(Signals.Type.Burning, SignalTriggers.OnBurning);
+			m_signals.SetOnEnableTrigger(Signals.Type.Burning, SignalTriggers.onBurning);
 
-			m_signals.SetOnEnableTrigger(Signals.Type.Chewing, SignalTriggers.OnChewing);
+			m_signals.SetOnEnableTrigger(Signals.Type.Chewing, SignalTriggers.onChewing);
 
-			m_signals.SetOnEnableTrigger(Signals.Type.Destroyed, SignalTriggers.OnDestroyed);
+			m_signals.SetOnEnableTrigger(Signals.Type.Destroyed, SignalTriggers.onDestroyed);
 
-			m_signals.SetOnEnableTrigger(Signals.Type.FallDown, SignalTriggers.OnFallDown);
+			m_signals.SetOnEnableTrigger(Signals.Type.FallDown, SignalTriggers.onFallDown);
 			m_signals.SetOnDisableTrigger(Signals.Type.FallDown, SignalTriggers.OnGround);
 
-			m_signals.SetOnEnableTrigger(Signals.Type.LockedInCage, SignalTriggers.OnLockedInCage);
-			m_signals.SetOnDisableTrigger(Signals.Type.LockedInCage, SignalTriggers.OnUnlockedFromCage);
+			m_signals.SetOnEnableTrigger(Signals.Type.LockedInCage, SignalTriggers.onLockedInCage);
+			m_signals.SetOnDisableTrigger(Signals.Type.LockedInCage, SignalTriggers.onUnlockedFromCage);
 
-			m_signals.SetOnEnableTrigger(Signals.Type.Invulnerable, SignalTriggers.OnInvulnerable);
-			m_signals.SetOnDisableTrigger(Signals.Type.Invulnerable, SignalTriggers.OnVulnerable);
+			m_signals.SetOnEnableTrigger(Signals.Type.Invulnerable, SignalTriggers.onInvulnerable);
+			m_signals.SetOnDisableTrigger(Signals.Type.Invulnerable, SignalTriggers.onVulnerable);
 
-			m_signals.SetOnEnableTrigger(Signals.Type.InvulnerableBite, SignalTriggers.OnInvulnerable);
-			m_signals.SetOnDisableTrigger(Signals.Type.InvulnerableBite, SignalTriggers.OnVulnerable);
+			m_signals.SetOnEnableTrigger(Signals.Type.InvulnerableBite, SignalTriggers.onInvulnerable);
+			m_signals.SetOnDisableTrigger(Signals.Type.InvulnerableBite, SignalTriggers.onVulnerable);
 
-			m_signals.SetOnEnableTrigger(Signals.Type.InvulnerableFire, SignalTriggers.OnInvulnerable);
-			m_signals.SetOnDisableTrigger(Signals.Type.InvulnerableFire, SignalTriggers.OnVulnerable);
+			m_signals.SetOnEnableTrigger(Signals.Type.InvulnerableFire, SignalTriggers.onInvulnerable);
+			m_signals.SetOnDisableTrigger(Signals.Type.InvulnerableFire, SignalTriggers.onVulnerable);
 
-            m_signals.SetOnEnableTrigger(Signals.Type.InWater, SignalTriggers.OnWaterEnter);
-            m_signals.SetOnDisableTrigger(Signals.Type.InWater, SignalTriggers.OnWaterExit);
+            m_signals.SetOnEnableTrigger(Signals.Type.InWater, SignalTriggers.onWaterEnter);
+            m_signals.SetOnDisableTrigger(Signals.Type.InWater, SignalTriggers.onWaterExit);
 
             m_collisionParams = new object[1];
 			m_triggerParams = new object[1];
@@ -210,21 +210,21 @@ namespace AI {
 				m_deactivateCallback();
 		}
 
-		override public void OnTrigger(string _trigger, object[] _param = null) {
+		override public void OnTrigger(int _trigger, object[] _param = null) {
 			if (m_pilot != null) {
 				m_pilot.OnTrigger(_trigger, _param);
 			}
 
-			if (_trigger == SignalTriggers.OnDestroyed) {
+			if (_trigger == SignalTriggers.onDestroyed) {
 				m_viewControl.Die(m_signals.GetValue(Signals.Type.Chewing), m_signals.GetValue(Signals.Type.Burning));
 				if (m_motion != null) m_motion.Stop();
 				if (m_collider != null) m_collider.enabled = false;
 				m_entity.Disable(true);
-			} else if (_trigger == SignalTriggers.OnBurning) {
+			} else if (_trigger == SignalTriggers.onBurning) {
 				m_viewControl.Burn(m_inflammable.burningTime, m_inflammable.burnedColor);
 				if (m_motion != null) m_motion.Stop();
 				if (m_collider != null) m_collider.enabled = false;
-			} else if (_trigger == SignalTriggers.OnInvulnerable || _trigger == SignalTriggers.OnVulnerable) {
+			} else if (_trigger == SignalTriggers.onInvulnerable || _trigger == SignalTriggers.onVulnerable) {
 				allowEdible = !(m_signals.GetValue(Signals.Type.Invulnerable) || m_signals.GetValue(Signals.Type.InvulnerableBite));
 				allowBurnable = !(m_signals.GetValue(Signals.Type.Invulnerable) || m_signals.GetValue(Signals.Type.InvulnerableFire));
 			}
@@ -234,7 +234,7 @@ namespace AI {
 		// Physics Collisions and Triggers
 		protected virtual void OnCollisionEnter(Collision _collision) {
 			m_collisionParams[0] = _collision;
-			OnTrigger(SignalTriggers.OnCollisionEnter, m_collisionParams);
+			OnTrigger(SignalTriggers.onCollisionEnter, m_collisionParams);
 			SetSignal(Signals.Type.Collision, true, ref m_collisionParams);
 
 			if (m_motion != null) {
@@ -266,7 +266,7 @@ namespace AI {
 			OnTriggerStay(_other);
 
 			m_triggerParams[0] = _other.gameObject;
-			OnTrigger(SignalTriggers.OnTriggerEnter, m_triggerParams);
+			OnTrigger(SignalTriggers.onTriggerEnter, m_triggerParams);
 			SetSignal(Signals.Type.Trigger, true, ref m_triggerParams);
 
 			if (_other.CompareTag("Water")) {
@@ -283,7 +283,7 @@ namespace AI {
 
 			SetSignal(Signals.Type.Trigger, false);
             m_triggerParams[0] = _other.gameObject;
-			OnTrigger(SignalTriggers.OnTriggerExit, m_triggerParams);
+			OnTrigger(SignalTriggers.onTriggerExit, m_triggerParams);
 
 			if (_other.CompareTag("Water")) {
 				SetSignal(Signals.Type.InWater, false);
@@ -320,11 +320,11 @@ namespace AI {
 		//-----------------------------------------------------------
 
 		// Update is called once per frame
-		override public void CustomUpdate() {			
-			if (!IsDead()) {
+		override public void CustomUpdate() {            
+            if (!IsDead()) {
                 CheckStun();
                 CheckInLove();
-
+                
                 if (m_stunned <= 0 && !m_bubbled) {
                     if (m_willPlaySpawnSound) {
                         if (m_entity.isOnScreen) {
@@ -335,10 +335,9 @@ namespace AI {
 
                     if (m_enableSensor) m_sensor.Update();
                     if (m_motion != null) m_motion.Update();
-
-
+                    
                     //forward special actions
-                    if (m_pilot != null) {
+                    if (m_pilot != null) {                        
                         m_viewControl.Scared(m_pilot.IsActionPressed(Pilot.Action.Scared));
 
                         m_viewControl.SpecialAnimation(ViewControl.SpecialAnims.A, m_pilot.IsActionPressed(Pilot.Action.Button_A));
@@ -348,12 +347,12 @@ namespace AI {
                         m_viewControl.ShowExclamationMark(m_pilot.IsActionPressed(Pilot.Action.ExclamationMark));
                     }
                 }
-			}
-			m_inflammable.Update();
-		}
+            }
+            m_inflammable.Update();
+        }
 
 		override public void CustomFixedUpdate() {
-			if (!IsDead()) {
+            if (!IsDead()) {
 				if (m_motion != null) {
 
 					m_motion.externalVelocity = m_externalForces;
@@ -364,15 +363,15 @@ namespace AI {
                     }
 				}
 			}
-		}
+        }
 
 		protected virtual void LateUpdate() {
-			if (!IsDead()) {
+            if (!IsDead()) {
 				if (m_motion != null) {
 					m_motion.LateUpdate();
 				}
 			}
-		}
+        }
 
 		override public void AddExternalForce(Vector3 force) {
 			m_externalForces += force;

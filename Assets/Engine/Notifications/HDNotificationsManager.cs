@@ -44,9 +44,8 @@ public class HDNotificationsManager : UbiBCN.SingletonMonoBehaviour<HDNotificati
     
                 int notificationsEnabled = PlayerPrefs.GetInt(HD_NOTIFICATIONS, 1);
                 NotificationsManager.SharedInstance.SetNotificationsEnabled(notificationsEnabled > 0);
-    
-                if (FeatureSettingsManager.IsDebugEnabled)
-                    Log("Notifications enabled = " + GetNotificationsEnabled());
+                    
+                Log("Notifications enabled = " + GetNotificationsEnabled());
             }
         }
     }

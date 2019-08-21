@@ -14,7 +14,7 @@ namespace AI {
 		public class BirdIdle : StateComponent {
 
 			[StateTransitionTrigger]
-			protected static string OnMove = "onMove";
+			protected static int onMove = UnityEngine.Animator.StringToHash("onMove");
 
 			private enum IdleState {
 				GoToRestPoint = 0,
@@ -81,7 +81,7 @@ namespace AI {
 						m_idleState = IdleState.GoToRestPoint;
 					}
 				} else {
-					Transition(OnMove);
+					Transition(onMove);
 				}
 			}
 

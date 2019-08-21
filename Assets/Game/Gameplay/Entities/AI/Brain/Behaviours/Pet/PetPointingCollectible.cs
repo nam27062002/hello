@@ -16,13 +16,13 @@ namespace AI {
 		public class PetPointingCollectible : StateComponent {
 
 			[StateTransitionTrigger]
-			private static string OnTooFarPointing = "onTooFarPointing";
+			private static readonly int onTooFarPointing = UnityEngine.Animator.StringToHash("onTooFarPointing");
 
-			[StateTransitionTrigger]
-			private static string OnCollected = "onCollected";
+            [StateTransitionTrigger]
+			private static readonly int onCollected = UnityEngine.Animator.StringToHash("onCollected");
 
 
-			float m_playerDistance;
+            float m_playerDistance;
 			float m_closeRange;
 			float m_farRange;
 
@@ -98,17 +98,17 @@ namespace AI {
 				if ( egg )
 				{
 					if ( egg.collected )
-						Transition(OnCollected);
+						Transition(onCollected);
 				}
 				else if ( chest )
 				{
 					if (chest.chestData.collected )
-						Transition(OnCollected);
+						Transition(onCollected);
 				}
 				else if ( letter )
 				{
 					if (InstanceManager.hungryLettersManager.IsLetterCollected( letter.letter))
-						Transition(OnCollected);
+						Transition(onCollected);
 				}
 
 
@@ -124,7 +124,7 @@ namespace AI {
 				else if ( sqrMagnitude > m_farRange )
 				{
 					// Stop pointing
-					Transition(OnTooFarPointing);
+					Transition(onTooFarPointing);
 				}
 				else
 				{

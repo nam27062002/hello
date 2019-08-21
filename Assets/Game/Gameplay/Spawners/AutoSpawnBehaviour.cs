@@ -52,7 +52,7 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner, IBroadcastListener {
 	//-----------------------------------------------
 	// Methods
 	//-----------------------------------------------
-	void Start() {
+    void Start() {
 		m_spawnConditions = GetComponent<SpawnerConditions>();
         m_decoration = GetComponent<Decoration>();
 

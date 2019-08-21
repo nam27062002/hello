@@ -12,10 +12,10 @@ namespace AI {
 		public class HomeSenseDragon : StateComponent {		
 			
 			[StateTransitionTrigger]
-			protected static string OnBackAtHome = "onBackAtHome";
+			protected static readonly int onBackAtHome = UnityEngine.Animator.StringToHash("onBackAtHome");
 
 
-			private HomeSenseDragonData m_data;
+            private HomeSenseDragonData m_data;
 
 
 			public override StateComponentData CreateData() {
@@ -39,7 +39,7 @@ namespace AI {
 
 				float dSqr = (m_machine.position - m_pilot.homePosition).sqrMagnitude;
 				if (dSqr < 3f) {
-					Transition(OnBackAtHome);
+					Transition(onBackAtHome);
 				}
 			}
 		}

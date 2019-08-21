@@ -22,7 +22,7 @@ namespace AI {
 		public class PetSearchCollectibleTarget : StateComponent {
 
 			[StateTransitionTrigger]
-			private static string OnCollectibleInRange = "onCollectibleInRange";
+			private static readonly int onCollectibleInRange = UnityEngine.Animator.StringToHash("onCollectibleInRange");
 
 			private float m_shutdownSensorTime;
 			private float m_timer;
@@ -83,7 +83,7 @@ namespace AI {
 						if (distance.sqrMagnitude < m_range)
 						{
 							m_transitionParam[0] = closestCollectible;
-							Transition(OnCollectibleInRange, m_transitionParam);
+							Transition(onCollectibleInRange, m_transitionParam);
 						}
 					}
 				}

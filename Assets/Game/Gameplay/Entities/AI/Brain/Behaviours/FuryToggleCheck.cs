@@ -7,12 +7,12 @@ namespace AI {
 		public class FuryToggleCheck : StateComponent, IBroadcastListener {
 			
 			[StateTransitionTrigger]
-			protected static string OnFuryOn = "onFuryOn";
-			[StateTransitionTrigger]
-			protected static string OnFuryOff = "onFuryOff";
+			protected static readonly int onFuryOn = UnityEngine.Animator.StringToHash("onFuryOn");
+            [StateTransitionTrigger]
+			protected static readonly int onFuryOff = UnityEngine.Animator.StringToHash("onFuryOff");
 
 
-			protected override void OnEnter(State oldState, object[] param) {
+            protected override void OnEnter(State oldState, object[] param) {
                 Broadcaster.AddListener(BroadcastEventType.FURY_RUSH_TOGGLED, this);
 			}
 
@@ -33,8 +33,8 @@ namespace AI {
             }
 
 			private void OnFuryToggled(bool toggle, DragonBreathBehaviour.Type type) {
-				if (toggle) Transition(OnFuryOn);
-				else		Transition(OnFuryOff);
+				if (toggle) Transition(onFuryOn);
+				else		Transition(onFuryOff);
 			}
 		}
 	}
