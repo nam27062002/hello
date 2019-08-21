@@ -113,8 +113,8 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner, IBroadcastListener {
     
     void OnDestroy() {
 		if (ApplicationManager.IsAlive) {
-            if (EntityManager.instance != null)
-                EntityManager.instance.UnregisterDecoration(m_decoration);
+            if (DecorationManager.instance != null)
+                DecorationManager.instance.UnregisterDecoration(m_decoration);
 
             if (SpawnerManager.isInstanceCreated) {
 				SpawnerManager.instance.Unregister (this, true);
@@ -165,7 +165,7 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner, IBroadcastListener {
 	}
 
     public void StartRespawn() {
-        EntityManager.instance.UnregisterDecoration(m_decoration);
+        DecorationManager.instance.UnregisterDecoration(m_decoration);
         m_respawnCount++;
 
 		if (m_maxSpawns > 0 && m_respawnCount > m_maxSpawns) {
@@ -224,7 +224,7 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner, IBroadcastListener {
 	}
 
 	private void Spawn() {
-        EntityManager.instance.RegisterDecoration(m_decoration);
+        DecorationManager.instance.RegisterDecoration(m_decoration);
 
         if (m_respawnCount == 0) {
 			gameObject.SetActive(true);

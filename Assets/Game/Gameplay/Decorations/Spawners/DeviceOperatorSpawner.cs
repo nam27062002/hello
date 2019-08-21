@@ -45,7 +45,7 @@ public class DeviceOperatorSpawner : AbstractSpawner {
 
 	protected override void OnDestroy() {
 		base.OnDestroy();
-		if (ApplicationManager.IsAlive && InstanceManager.gameSceneController != null && InstanceManager.gameSceneController.state <= GameSceneController.EStates.RUNNING) {
+		if (ApplicationManager.IsAlive) {
 			ForceRemoveEntities();
 		}
 	}
@@ -70,7 +70,7 @@ public class DeviceOperatorSpawner : AbstractSpawner {
 
         // Progressive respawn disabled because it respawns only one instance and it's triggered by Catapult which is not prepared to loop until Respawn returns true
         UseProgressiveRespawn = false;        
-        UseSpawnManagerTree = false;        
+        UseSpawnManagerTree = true;
         RegisterInSpawnerManager();        
 
         m_newCamera = Camera.main.GetComponent<GameCamera>();
