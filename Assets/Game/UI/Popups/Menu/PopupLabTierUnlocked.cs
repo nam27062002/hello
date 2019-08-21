@@ -29,8 +29,6 @@ public class PopupLabTierUnlocked : MonoBehaviour {
 	[SerializeField] private Localizer m_tierDescText = null;
 	[SerializeField] private Image m_tierIcon = null;
 
-	// Internal
-	private DefinitionNode m_tierDef = null;
 
 	//------------------------------------------------------------------------//
 	// PUBLIC METHODS														  //
@@ -41,13 +39,11 @@ public class PopupLabTierUnlocked : MonoBehaviour {
 	/// <param name="_tierDef">Definition of the tier.</param>
 	/// <param name="_specialTierDef">Definition of the special tier.</param>
 	public void Init(DefinitionNode _tierDef, DefinitionNode _specialTierDef) {
-		// Store params
-		m_tierDef = _tierDef;
 
 		// Description
 		if(m_tierDescText != null) {
 			// Can equip <TID_COLOR_PET>%U0 %U1<TID_END_COLOR> and get a <TID_COLOR_PET>%U2<TID_END_COLOR> multiplier during <TID_COLOR_FIRERUSH><TID_FIRE_RUSH><TID_END_COLOR>
-			int numPets = _tierDef.GetAsInt("maxPetEquipped");
+			int numPets = _specialTierDef.GetAsInt("petsSlotAvailable");
 			m_tierDescText.Localize(
 				"TID_SPECIAL_DRAGON_INFO_TIER_DESCRIPTION",
 				StringUtils.FormatNumber(numPets),
@@ -66,16 +62,7 @@ public class PopupLabTierUnlocked : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
-	/// <summary>
-	/// New prey info button has been pressed.
-	/// </summary>
-	public void OnPreyInfoButton() {
-		// Show new prey info popup (a simplified version of the DragonInfoPopup)
-		PopupController popup = PopupManager.LoadPopup(PopupTierPreyInfo.PATH);
-		PopupTierPreyInfo preyInfoPopup = popup.GetComponent<PopupTierPreyInfo>();
-		preyInfoPopup.Init(IDragonData.SkuToTier(m_tierDef.sku));
-		popup.Open();
-	}
+
 
 	/// <summary>
 	/// The popup has just been closed.

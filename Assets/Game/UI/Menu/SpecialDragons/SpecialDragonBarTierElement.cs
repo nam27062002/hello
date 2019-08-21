@@ -78,7 +78,7 @@ public class SpecialDragonBarTierElement : SpecialDragonBarElement {
 					PopupController popup = PopupManager.LoadPopup(PopupLabTierUnlocked.PATH);
 					if(popup != null) {
 						PopupLabTierUnlocked tierUnlockedPopup = popup.GetComponent<PopupLabTierUnlocked>();
-						tierUnlockedPopup.Init(_dragonData.tierDef, _dragonData.specialTierDef);
+						tierUnlockedPopup.Init(_dragonData.tierDef, m_def);
 						popup.Open();
 					}
 
