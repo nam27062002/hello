@@ -216,7 +216,7 @@ public class GameSceneController : GameSceneControllerBase {
 	/// <summary>
 	/// Called every frame.
 	/// </summary>
-	private void Update() {
+	override protected void Update() {
 		// Skip if paused
 		if(m_paused) return;        
 
@@ -296,6 +296,8 @@ public class GameSceneController : GameSceneControllerBase {
 			} break;
 				
 			case EStates.RUNNING: {
+                base.Update();
+
 				// Update running time
 				if (m_freezeElapsedSeconds <= 0 && !m_switchingArea)
 					m_elapsedSeconds += Time.deltaTime;				

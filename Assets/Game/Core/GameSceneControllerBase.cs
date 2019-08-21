@@ -78,8 +78,25 @@ public class GameSceneControllerBase : SceneController, IBroadcastListener {
 		Messenger.RemoveListener(MessengerEvents.GAME_STARTED, OnGameStarted);
 		Broadcaster.RemoveListener(BroadcastEventType.GAME_ENDED, this);
 	}
-    
-    
+
+    protected virtual void Update() {
+        SpawnerManager.instance.Update();
+        EntityManager.instance.Update();
+        DecorationManager.instance.Update();
+        FirePropagationManager.instance.Update();
+        BubbledEntitySystem.instance.Update();
+        MachineInflammableManager.instance.Update();
+    }
+
+    private void FixedUpdate() {
+        EntityManager.instance.FixedUpdate();
+    }
+
+    private void LateUpdate() {
+        EntityManager.instance.LateUpdate();
+    }
+
+
     public virtual void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
     {
         switch( eventType )

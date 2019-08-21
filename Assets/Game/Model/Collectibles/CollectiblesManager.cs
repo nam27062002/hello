@@ -19,7 +19,7 @@ using System.Linq;
 /// <summary>
 /// Global manager for collectible items in the game.
 /// </summary>
-public class CollectiblesManager : UbiBCN.SingletonMonoBehaviour<CollectiblesManager> {
+public class CollectiblesManager : Singleton<CollectiblesManager> {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
@@ -40,15 +40,6 @@ public class CollectiblesManager : UbiBCN.SingletonMonoBehaviour<CollectiblesMan
 	private bool m_key = false;
 
 
-	//------------------------------------------------------------------//
-	// GENERIC METHODS													//
-	//------------------------------------------------------------------//
-	/// <summary>
-	/// Initialization.
-	/// </summary>
-	public void Awake() {
-		
-	}
 
 	//------------------------------------------------------------------//
 	// PUBLIC STATIC METHODS											//

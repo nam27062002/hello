@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager>, IBroadcastListener
+public class EntityManager : Singleton<EntityManager>, IBroadcastListener
 {
     private List<Pet> m_pets;
     private List<Entity> m_entities;
@@ -55,8 +55,7 @@ public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager>, IBroa
     private bool m_updateEnabled;
 
 
-    void Awake()
-    {
+    protected override void OnCreateInstance() {
         m_pets = new List<Pet>();
         m_entities = new List<Entity>();
         m_entitiesBg = new List<EntityBg>();
@@ -72,9 +71,7 @@ public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager>, IBroa
         Broadcaster.AddListener(BroadcastEventType.GAME_ENDED, this);
     }
 
-    override protected void OnDestroy()
-    {
-        base.OnDestroy();
+    protected override void OnDestroyInstance() {
         Broadcaster.RemoveListener(BroadcastEventType.GAME_ENDED, this);
         Broadcaster.RemoveListener(BroadcastEventType.GAME_AREA_EXIT, this);
         Broadcaster.RemoveListener(BroadcastEventType.GAME_AREA_ENTER, this);
@@ -378,7 +375,7 @@ public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager>, IBroa
         return numResults;
     }
 
-    void Update()
+    public void Update()
 	{
         if (m_updateEnabled) {
             int i;
@@ -421,7 +418,7 @@ public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager>, IBroa
         }
     }
 
-    void FixedUpdate()
+    public void FixedUpdate()
     {
         if (m_updateEnabled) {
             int i;
@@ -449,7 +446,7 @@ public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager>, IBroa
         }
     }
 
-    void LateUpdate()
+    public void LateUpdate()
     {
         if (m_updateEnabled) {
             GameCamera camera = InstanceManager.gameCamera;

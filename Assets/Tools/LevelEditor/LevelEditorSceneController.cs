@@ -188,16 +188,18 @@ namespace LevelEditor {
                 }break;
             }
         }
-    
 
-		/// <summary>
-		/// Called every frame.
-		/// </summary>
-		private void Update() {
+
+        /// <summary>
+        /// Called every frame.
+        /// </summary>
+        override protected void Update() {
 			if (!m_started) {
 				if ( InstanceManager.player != null )
 					StartGame();
 			} else {
+                base.Update();
+
 				// Update running time
 				m_elapsedSeconds += Time.deltaTime;
 
