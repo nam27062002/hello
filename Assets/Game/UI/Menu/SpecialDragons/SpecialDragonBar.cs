@@ -214,13 +214,14 @@ public class SpecialDragonBar : MonoBehaviour {
         int m_levelElementIndex = 0;
         int m_skillElementIndex = 0;
 
-        for (int i = 0; i < m_maxLevel; ++i) {
+        
+        for (int i = 1; i <= m_maxLevel; ++i) {
             SpecialDragonBarElement.State elementState;
             SpecialDragonBarElement element;
             float scaleFactor = 1f;
             float posY = 0f;
 
-            if (i <= m_currentLevel) {
+            if (i <= m_currentLevel ) { 
                 elementState = SpecialDragonBarElement.State.OWNED;
             } else {
                 elementState = SpecialDragonBarElement.State.LOCKED;
@@ -295,7 +296,8 @@ public class SpecialDragonBar : MonoBehaviour {
     public void AddLevel() {
 		SetLevel(m_currentLevel + 1);
         if (m_currentLevel < m_maxLevel) {
-            m_sortedElements[m_currentLevel].SetState(SpecialDragonBarElement.State.OWNED);
+            // The level 1 element is in the position 0 of the array
+            m_sortedElements[m_currentLevel - 1].SetState(SpecialDragonBarElement.State.OWNED);
         }
     }
 
