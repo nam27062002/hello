@@ -42,14 +42,15 @@ public class MenuDragonSpecialPower : MonoBehaviour {
             EnablePowerLevel(i, i <= dataSpecial.powerLevel);
         }
 
-        UpdateTierSize(dataSpecial);
     }
 
     private void OnEnable() {
+        Messenger.AddListener<DragonDataSpecial>(MessengerEvents.SPECIAL_DRAGON_POWER_UPGRADED, OnPowerUpgrade);
         Messenger.AddListener<DragonDataSpecial>(MessengerEvents.SPECIAL_DRAGON_LEVEL_UPGRADED, OnLevelUpgraded);
 	}
 
     private void OnDisable() {
+        Messenger.RemoveListener<DragonDataSpecial>(MessengerEvents.SPECIAL_DRAGON_POWER_UPGRADED, OnPowerUpgrade);
         Messenger.RemoveListener<DragonDataSpecial>(MessengerEvents.SPECIAL_DRAGON_LEVEL_UPGRADED, OnLevelUpgraded);
     }
     
@@ -77,8 +78,6 @@ public class MenuDragonSpecialPower : MonoBehaviour {
             // Update powers if needed
             EnablePowerLevel(_data.powerLevel, true);
 
-            // Update the size if needed
-            UpdateTierSize(_data);
         }
     }
 
@@ -137,11 +136,5 @@ public class MenuDragonSpecialPower : MonoBehaviour {
         }
     }
 
-    private void UpdateTierSize(DragonDataSpecial _data) {
-        if (enabled) {
-            if (_data.sku == m_dragonPreview.sku && InstanceManager.menuSceneController != null) {  // Only on the menu
-                transform.localScale = GameConstants.Vector3.one * _data.scaleMenu;
-            }
-        }
-    }
+
 }
