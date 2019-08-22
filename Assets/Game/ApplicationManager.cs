@@ -584,6 +584,13 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
                     HDNotificationsManager.instance.ScheduleNewDailyReward (timeToNotification);
                 }
             }
+
+            DefinitionNode gameSettingsDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, "gameSettings");
+            int minutesToReengage = gameSettingsDef.GetAsInt("notificationComeBackTimer", 2000);
+            int secondsToReengage = minutesToReengage * 60;
+            if ( secondsToReengage > 0 )
+                HDNotificationsManager.instance.ScheduleReengagementNotification(secondsToReengage);
+
 			// [AOC] TODO!!
         }
     }
@@ -593,6 +600,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 		HDNotificationsManager.instance.CancelNewMissionsNotification();
 		HDNotificationsManager.instance.CancelNewChestsNotification();
 		HDNotificationsManager.instance.CancelDailyRewardNotification();
+        HDNotificationsManager.instance.CancelReengagementNotification();
     }
 
     #region game
