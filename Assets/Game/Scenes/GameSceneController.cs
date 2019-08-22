@@ -25,7 +25,7 @@ public class GameSceneController : GameSceneControllerBase {
 	//------------------------------------------------------------------//
 	public const string NAME = "SC_Game";
 	public const float INITIAL_DELAY = 1f;	// Seconds. Initial delay before actually start the loading. Useful to give time to initialize and load assets for the loading screen.
-	public const float COUNTDOWN = 3.5f;	// Seconds. This countdown is used as a safety net if the intro animation does not end or does not send the proper event
+	public const float COUNTDOWN = 2.5f;	// Seconds. This countdown is used as a safety net if the intro animation does not end or does not send the proper event
 	public const float MIN_LOADING_TIME = 1f;	// Seconds, to avoid loading screen flickering303
 
 	public enum EStates {
@@ -139,8 +139,7 @@ public class GameSceneController : GameSceneControllerBase {
         Screen.sleepTimeout = SleepTimeout.NeverSleep;        
 
         // Check whether the tutorial popup must be displayed
-        if (!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.FIRST_RUN)
-            || DebugSettings.isPlayTest)
+        if (!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.FIRST_RUN))
         {
             // Tracking
             string popupName = System.IO.Path.GetFileNameWithoutExtension(PopupTutorialControls.PATH);
@@ -151,33 +150,24 @@ public class GameSceneController : GameSceneControllerBase {
         }
 
         // Load the dragon
-		// DEBUG: Special dragon testing
-        if ( DebugSettings.useSpecialDragon )
-        {
+        // DEBUG: Special dragon testing
+        if (DebugSettings.useSpecialDragon) {
             // Hola soy special SPECIAAAAAAL
-			// [AOC] xDDDDDDDD
+            // [AOC] xDDDDDDDD
             string dragon = DebugSettings.Prefs_GetStringPlayer(DebugSettings.SPECIAL_DRAGON_SKU, "dragon_helicopter");
             DragonTier dragonTier = ( DragonTier )DebugSettings.specialDragonTier;
             int powerLevel = DebugSettings.specialDragonPowerLevel;
             int hpBoost = DebugSettings.specialDragonHpBoostLevel;
             int speedBoost = DebugSettings.specialDragonSpeedBoostLevel;
             int energyBoost = DebugSettings.specialDragonEnergyBoostLevel;
-            DragonManager.LoadSpecialDragon_DEBUG(dragon, dragonTier, powerLevel, hpBoost, speedBoost, energyBoost);
-            
-        }
-        else
-        {
-            if ( HDLiveDataManager.tournament.isActive)
-            {
-				DragonManager.LoadDragon(HDLiveDataManager.tournament.tournamentData.tournamentDef.dragonData);
+            DragonManager.LoadSpecialDragon_DEBUG(dragon, dragonTier, powerLevel, hpBoost, speedBoost, energyBoost);                    
+        } else {
+            if (HDLiveDataManager.tournament.isActive) {
+                DragonManager.LoadDragon(HDLiveDataManager.tournament.tournamentData.tournamentDef.dragonData);
+            } else {
+                DragonManager.LoadDragon(DragonManager.currentDragon.sku);	// currentDragon Will automatically select between classic and special dragons depending on active mode
             }
-            else
-            {
-				DragonManager.LoadDragon(DragonManager.currentDragon.sku);	// currentDragon Will automatically select between classic and special dragons depending on active mode
-            }
-
         }
-        
 		
 		Messenger.AddListener(MessengerEvents.GAME_COUNTDOWN_ENDED, CountDownEnded);
         Messenger.AddListener<float>(MessengerEvents.PLAYER_LEAVING_AREA, OnPlayerLeavingArea);
@@ -238,9 +228,8 @@ public class GameSceneController : GameSceneControllerBase {
 		else if (Input.GetKeyDown(KeyCode.I))
 		{
 			// Check if in editor!
-			bool usingEditor = false;
-			InstanceManager.player.StartIntroMovement( usingEditor );
-			InstanceManager.gameCamera.StartIntro( usingEditor );
+            SpawnPlayer(false);
+			
 			LevelEditor.LevelTypeSpawners sp = FindObjectOfType<LevelEditor.LevelTypeSpawners>();
 			if ( sp != null )
 				sp.IntroSpawn(InstanceManager.player.data.def.sku);
@@ -516,20 +505,23 @@ public class GameSceneController : GameSceneControllerBase {
 
 				// Build Pools
 				PoolManager.Build();
-
-				// Init game camera
-				InstanceManager.gameCamera.Init();
+				
+                if (HDLiveDataManager.tournament.isActive) {
+                    HDTournamentDefinition tournamentDef = HDLiveDataManager.tournament.tournamentData.tournamentDef;
+                    progressionOffsetSeconds = tournamentDef.m_goal.m_progressionSeconds;
+    			    progressionOffsetXP = tournamentDef.m_goal.m_progressionXP;
+                } else {
+                    progressionOffsetSeconds = 0f;
+    			    progressionOffsetXP = 0;
+                }
 
                 // Dispatch game event
                 Broadcaster.Broadcast(BroadcastEventType.GAME_LEVEL_LOADED);
 
 				// Enable dragon back and put it in the spawn point
-				// Don't make it playable until the countdown ends
-				InstanceManager.player.playable = false;
-				InstanceManager.player.gameObject.SetActive(true);
-				// InstanceManager.player.MoveToSpawnPoint();
-				InstanceManager.player.StartIntroMovement();
-
+				// Don't make it playable until the countdown ends				
+                SpawnPlayer(false);
+  				
 				// Spawn collectibles
 				CollectiblesManager.OnLevelLoaded();
 
@@ -586,6 +578,12 @@ public class GameSceneController : GameSceneControllerBase {
 
                 PoolManager.PreBuild();
                 ParticleManager.Clear();
+                string bloodOverride = SeasonManager.GetBloodParticlesName();
+                if (string.IsNullOrEmpty(bloodOverride)) {
+                    ParticleManager.DisableBloodOverride();
+                } else {
+                    ParticleManager.EnableBloodOverride(bloodOverride);
+                }
 				ParticleManager.PreBuild();
 
 				// Initialize minimum loading time as well

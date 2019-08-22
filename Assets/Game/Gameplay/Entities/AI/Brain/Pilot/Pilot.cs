@@ -3,7 +3,7 @@ using System.Collections;
 using System;
 
 namespace AI {
-	public abstract class Pilot : MonoBehaviour, ISpawnable {
+	public abstract class Pilot : ISpawnable {
 		
 		[Flags]
 		public enum Action {
@@ -146,7 +146,7 @@ namespace AI {
 
 		public virtual void BrainExit() {}
 
-		public virtual void OnTrigger(string _trigger, object[] _param = null) {}
+		public virtual void OnTrigger(int _trigger, object[] _param = null) {}
 
 		// all the movement will be offset to follow a specific rail
 		public void SetRail(int _rail, int _total) {
@@ -215,9 +215,9 @@ namespace AI {
 			m_externalImpulse += _externalImpulse;
 		}
 
-		public virtual void Spawn(ISpawner _spawner) {}
+		override public void Spawn(ISpawner _spawner) {}
 
-		public virtual void CustomUpdate() {
+		override public void CustomUpdate() {
         
 			if (m_boostAvailable && IsActionPressed(Action.Boost)) {
 				m_currentSpeed = Mathf.Lerp(m_currentSpeed, m_boostSpeed, Time.deltaTime * m_blendSpeedFactor);

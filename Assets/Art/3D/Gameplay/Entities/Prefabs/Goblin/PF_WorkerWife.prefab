@@ -127,7 +127,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1627276137108976
 GameObject:
   m_ObjectHideFlags: 1
@@ -477,6 +477,7 @@ MonoBehaviour:
   m_energy: 10
   m_energyDrainSec: 1
   m_energyRecoverSec: 1
+  m_machine: {fileID: 0}
   m_brainResource: {fileID: 11400000, guid: af593a7751e074e42b7091f92be97d92, type: 2}
   m_railSeparation:
     min: 2
@@ -538,6 +539,7 @@ MonoBehaviour:
   m_animA: 
   m_animB: 
   m_animC: 
+  m_materialChangeExceptions: []
   m_useFreezeParticle: 1
   m_freezeParticleScale: 2
   m_useMoveAnimInLove: 0
@@ -753,6 +755,20 @@ MonoBehaviour:
   m_onPanicAudio: hd_goblin_alert
   m_idleAudio: 
   m_skins: []
+  m_entity: {fileID: 114846358836696692}
+  m_animator: {fileID: 95004685703215056}
+  m_isAnimatorAvailable: 0
+  m_renderers:
+  - {fileID: 137960296833774324}
+  - {fileID: 23981275952178172}
+  - {fileID: 23181487340803174}
+  m_specialAnimations: 000000
+  m_animA_Hash: 0
+  m_animB_Hash: 0
+  m_animC_Hash: 0
+  m_animEvents: {fileID: 114954367080836474}
+  m_transform: {fileID: 4614016359034676}
+  m_view: {fileID: 4577251424114982}
 --- !u!114 &114605296464184414
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -793,6 +809,7 @@ MonoBehaviour:
     m_mass: 2.5
     m_defaultUpVector: 0
     m_orientationSpeed: 120
+    m_useAngularVelocity: 0
     m_faceDirection: 0
     m_limitHorizontalRotation: 0
     m_faceLeftAngle: -90
@@ -841,6 +858,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_tags: 16
+  m_otherSpawnables:
+  - {fileID: 114086359858152718}
+  - {fileID: 114605296464184414}
+  - {fileID: 114552819647547628}
+  m_otherSpawnablesCount: 3
+  m_pilot: {fileID: 114086359858152718}
+  m_machine: {fileID: 114605296464184414}
+  m_viewControl: {fileID: 114552819647547628}
+  m_equip: {fileID: 0}
   m_sku: Worker
   m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1

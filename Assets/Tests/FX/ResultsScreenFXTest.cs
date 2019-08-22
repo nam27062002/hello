@@ -64,7 +64,7 @@ public class ResultsScreenFXTest : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	void Awake() {
-		m_pool = new Pool(m_prefab, this.transform.parent, 10, true, true, true);
+		m_pool = new Pool(m_prefab, m_prefab.name, null, this.transform.parent, 10, true, true, true);
 	}
 
 	/// <summary>

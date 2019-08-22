@@ -16,6 +16,9 @@ public class Pool {
 		get { return m_prefab; }
 	}
 
+	private string m_addressableID;
+	private string m_addressableVariant;
+
 	private Queue<GameObject> m_freeObjects;
 	private HashSet<GameObject> m_notFreeObjects;
 	private Queue<GameObject> m_returnObjects;
@@ -34,8 +37,10 @@ public class Pool {
 	//-----------------------------------------------
 	// Methods
 	//-----------------------------------------------
-	public Pool(GameObject _prefab, Transform _parent, int _initSize, bool _canGrow, bool _createContainer, bool _temporary) {		
+	public Pool(GameObject _prefab, string _addressablesID, string _addressableVariant, Transform _parent, int _initSize, bool _canGrow, bool _createContainer, bool _temporary) {		
 		m_prefab = _prefab;
+		m_addressableID = _addressablesID;
+		m_addressableVariant = _addressableVariant;
 
 		// Create a new container or use parent transform as a container?
 		m_dontDestroyContainer = !_createContainer;
@@ -118,6 +123,14 @@ public class Pool {
 		m_notFreeObjects.Clear();
 		m_returnObjects.Clear();
 	}
+
+	/// Will destroy all free instances
+	public void ClearFreeInstances(){
+		while(m_freeObjects.Count > 0) {
+			GameObject go = m_freeObjects.Dequeue();
+			GameObject.Destroy(go);
+		}
+	}
 	
 	public GameObject Get(bool _activate) {			
 		if (m_freeObjects.Count <= 0 && m_canGrow) {
@@ -147,7 +160,7 @@ public class Pool {
 		}
 	}
 
-	public int NumFreeObjects(){
+	public int NumFreeObjects() {
 		return m_freeObjects.Count;
 	}
 
@@ -208,9 +221,22 @@ public class Pool {
             inst.SetActive(false);
             return inst;
         } catch(System.Exception e) {
-            string msg = "[Pool][Instantiate][" + m_containerObj.name + "]" + " m_prefab:" + m_prefab;
-            Debug.LogError(msg);
-            throw new System.Exception(msg + "\n" + e);
+			string method = "[Pool][Instantiate]";
+            string msg = "[" + m_addressableID + "]" + " m_prefab: " + m_prefab;
+            
+			List<string> dependenyIds = HDAddressablesManager.Instance.GetDependencyIds(m_addressableID, m_addressableVariant);
+            
+			if (dependenyIds != null) {
+				foreach (string ab in dependenyIds) {
+					msg += " ["+ab+"] available:" + AssetBundlesManager.Instance.IsAssetBundleAvailable(ab) +
+								" | loaded:" + AssetBundlesManager.Instance.IsAssetBundleLoaded(ab);
+				}
+			}
+			#if UNITY_EDITOR
+			Debug.LogError(method+msg);
+			#endif
+			Fabric.Crashlytics.Crashlytics.RecordCustomException(method, msg, e.StackTrace);
+            return null;
         }
 	}
 };

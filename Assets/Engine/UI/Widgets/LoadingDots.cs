@@ -40,6 +40,9 @@ public class LoadingDots : MonoBehaviour {
 	[SerializeField] private bool m_ignoreTimeScale = true;
 	[SerializeField] private Ease m_easeIn = Ease.Linear;
 	[SerializeField] private Ease m_easeOut = Ease.Linear;
+	[Separator]
+	[Comment("Toggle only for instances that are frequently enabled/disabled")]
+	[SerializeField] private bool m_cacheSequence = false;
 
 	// Internal
 	private Sequence m_sequence = null;
@@ -51,24 +54,22 @@ public class LoadingDots : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	private void Awake() {
-		// Create sequence for the first time
-		CreateSequence();
-	}
-
-	/// <summary>
-	/// First update call.
-	/// </summary>
-	private void Start() {
-
+		// If caching sequence, create it now
+		if(m_cacheSequence) {
+			CreateSequence();
+		}
 	}
 
 	/// <summary>
 	/// Component has been enabled.
 	/// </summary>
 	private void OnEnable() {
+		// Create sequence if not already done
 		if(m_sequence == null) {
 			CreateSequence();
 		}
+
+		// Restart sequence
 		m_sequence.Restart();
 	}
 
@@ -76,32 +77,28 @@ public class LoadingDots : MonoBehaviour {
 	/// Component has been disabled.
 	/// </summary>
 	private void OnDisable() {
+		// Pause/Destroy sequence (depending on cache flag)
 		if(m_sequence != null) {
-			m_sequence.Pause();
+			if(m_cacheSequence) {
+				m_sequence.Pause();
+			} else {
+				DestroySequence();
+			}
 		}
-	}
-
-	/// <summary>
-	/// Called every frame
-	/// </summary>
-	private void Update() {
-
 	}
 
 	/// <summary>
 	/// Destructor.
 	/// </summary>
 	private void OnDestroy() {
-		if(m_sequence != null) {
-			m_sequence.Kill(true);
-			m_sequence = null;
-		}
+		DestroySequence();
 	}
 
 	/// <summary>
 	/// A value has changed on the inspector.
 	/// </summary>
 	private void OnValidate() {
+		// Re-create sequence to see changes in real-time
 		if(isActiveAndEnabled && Application.isPlaying) {
 			CreateSequence();
 		}
@@ -115,11 +112,7 @@ public class LoadingDots : MonoBehaviour {
 	/// </summary>
 	private void CreateSequence() {
 		// If the sequence is already created, kill it
-		if(m_sequence != null) {
-			m_sequence.Complete();	// Make sure sequence is at its end-state to restore object's default values so the new sequence can take them
-			m_sequence.Kill();
-			m_sequence = null;
-		}
+		DestroySequence();
 
 		// Create a new sequence
 		m_sequence = DOTween.Sequence()
@@ -157,6 +150,17 @@ public class LoadingDots : MonoBehaviour {
 
 		// Launch sequence
 		m_sequence.Restart();
+	}
+
+	/// <summary>
+	/// Destroy the sequence.
+	/// </summary>
+	private void DestroySequence() {
+		if(m_sequence != null) {
+			m_sequence.Complete();  // Make sure sequence is at its end-state to restore object's default values so the new sequence can take them
+			m_sequence.Kill();
+			m_sequence = null;
+		}
 	}
 
 	//------------------------------------------------------------------------//

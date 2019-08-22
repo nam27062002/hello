@@ -26,6 +26,7 @@ public class HUDTournamentScore : HudWidget {
 	private TrackerBase m_tracker;
 	private long m_targetScore = 0;
 	private HDTournamentDefinition.TournamentGoal.TournamentMode m_mode = HDTournamentDefinition.TournamentGoal.TournamentMode.NORMAL;
+	private HDTournamentDefinition m_tournamentDef = null;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -38,17 +39,17 @@ public class HUDTournamentScore : HudWidget {
 		if ( SceneController.mode == SceneController.Mode.TOURNAMENT )
 		{
 			HDTournamentData _data = HDLiveDataManager.tournament.data as HDTournamentData;
-			HDTournamentDefinition _def = _data.definition as HDTournamentDefinition;
+			m_tournamentDef = _data.definition as HDTournamentDefinition;
 
-			m_mode = _def.m_goal.m_mode;
-			if ( ( m_mode == HDTournamentDefinition.TournamentGoal.TournamentMode.NORMAL && _def.m_goal.m_type == "survive_time" ) || _def.m_goal.m_type == "score")
+			m_mode = m_tournamentDef.m_goal.m_mode;
+			if ( ( m_mode == HDTournamentDefinition.TournamentGoal.TournamentMode.NORMAL && m_tournamentDef.m_goal.m_type == "survive_time" ) || m_tournamentDef.m_goal.m_type == "score")
 			{
 				gameObject.SetActive(false);
 			}
 			else
 			{
 				m_lastScorePrinted = 0;	
-				m_targetScore = _def.m_goal.m_targetAmount;
+				m_targetScore = m_tournamentDef.m_goal.m_targetAmount;
 				m_tracker = HDLiveDataManager.tournament.m_tracker;
 
                 // We used to update the icon here depending on the quest objective
@@ -81,13 +82,25 @@ public class HUDTournamentScore : HudWidget {
 
 	protected override string GetValueAsString() {
 		string ret = "";
-		if ( m_mode == HDTournamentDefinition.TournamentGoal.TournamentMode.TIME_ATTACK ){
+		if(m_mode == HDTournamentDefinition.TournamentGoal.TournamentMode.TIME_ATTACK) {
+			// Show the target score for time attack tournaments
 			ret = m_lastScorePrinted + "/" + m_targetScore;
-		}else{
+		} else if(m_tournamentDef.m_goal.m_type == "birthday_stay_mode_time") {
+			// Special format for "stay mode" trackers
+			ret = m_tracker.FormatValue(m_lastScorePrinted);
+		} else {
+			// Default behaviour
 			ret = m_lastScorePrinted + "";
 		}
 		return ret;
     }
+
+	protected override float GetMinimumAnimInterval() {
+		if(m_tournamentDef.m_goal.m_type == "birthday_stay_mode_time") {
+			return 1.1f;
+		}
+		return 0.25f;
+	}
 
 	//------------------------------------------------------------------//
 	// INTERNAL UTILS													//

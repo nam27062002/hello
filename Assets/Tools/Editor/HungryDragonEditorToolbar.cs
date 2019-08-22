@@ -38,6 +38,7 @@ public class HungryDragonEditorToolbar : EditorWindow {
 		DISGUISES_CAPTURE_TOOL = 0,
 		PETS_CAPTURE_TOOL,
 		SPAWNERS_CAPTURE_TOOL,
+		LIVE_EVENT_ICONS_CAPTURE_TOOL,
 		UI_TOOLS_SCENE,
 		COLOR_RAMP_EDITOR,
 
@@ -89,9 +90,10 @@ public class HungryDragonEditorToolbar : EditorWindow {
 		// Reload all icons
 		m_icons.Clear();
 		string[] iconPaths = new string[] {
-			"Assets/Tools/UITools/CaptureTool/icon_camera_disguises.png",
-			"Assets/Tools/UITools/CaptureTool/icon_camera_pets.png",
+			"Assets/Tools/UITools/CaptureTool/icon_camera_red.png",
+			"Assets/Tools/UITools/CaptureTool/icon_camera_green.png",
 			"Assets/Tools/UITools/CaptureTool/icon_camera_yellow.png",
+			"Assets/Tools/UITools/CaptureTool/icon_camera_blue.png",
 			"Assets/Tools/UITools/grid.png",
 			"Assets/Tools/UITools/ColorRampEditor/icon_color_ramp_editor.png"
 		};
@@ -186,23 +188,22 @@ public class HungryDragonEditorToolbar : EditorWindow {
 
 			// UI Disguises Capture Tool
 			if(GUILayout.Button(new GUIContent(m_icons[(int)Icons.DISGUISES_CAPTURE_TOOL], "UI Disguises Capture Tool"), EditorStyles.toolbarButton, GUILayout.Width(BUTTON_SIZE))) {
-				HungryDragonEditorMenu.OpenScene("Assets/Tools/UITools/SC_DisguisesCaptureTool.unity", true);
+				HungryDragonEditorMenu.OpenDisguisesCaptureTool();
 			}
 
 			// UI Pets Capture Tool
 			if(GUILayout.Button(new GUIContent(m_icons[(int)Icons.PETS_CAPTURE_TOOL], "UI Pets Capture Tool"), EditorStyles.toolbarButton, GUILayout.Width(BUTTON_SIZE))) {
-				HungryDragonEditorMenu.OpenScene("Assets/Tools/UITools/SC_PetsCaptureTool.unity", true);
+				HungryDragonEditorMenu.OpenPetsCaptureTool();
 			}
 
 			// UI Spawners Capture Tool
 			if(GUILayout.Button(new GUIContent(m_icons[(int)Icons.SPAWNERS_CAPTURE_TOOL], "UI Spawners Capture Tool"), EditorStyles.toolbarButton, GUILayout.Width(BUTTON_SIZE))) {
-				HungryDragonEditorMenu.OpenScene("Assets/Tools/UITools/SC_SpawnersCaptureTool.unity", true);
+				HungryDragonEditorMenu.OpenSpawnersCaptureTool();
 			}
 
-			// Egg Test Scene
-			if(GUILayout.Button(new GUIContent("00", "Eggs Test Scene"), EditorStyles.toolbarButton, GUILayout.Width(BUTTON_SIZE))) {
-				//HungryDragonEditorMenu.OpenScene("Assets/Art/3D/Metagame/Eggs/3D_Egg_001/SC_EggTest.unity", true);
-				HungryDragonEditorMenu.OpenScene("Assets/Tests/SC_NewEggTest.unity", true);
+			// Live Event Icons Capture Tool
+			if(GUILayout.Button(new GUIContent(m_icons[(int)Icons.LIVE_EVENT_ICONS_CAPTURE_TOOL], "Live Event Icons Capture Tool"), EditorStyles.toolbarButton, GUILayout.Width(BUTTON_SIZE))) {
+				HungryDragonEditorMenu.OpenLiveEventIconsCaptureTool();
 			}
 
 			// Add a separator
@@ -266,6 +267,12 @@ public class HungryDragonEditorToolbar : EditorWindow {
 			// Ease Preview Tool
 			if(GUILayout.Button(new GUIContent("EZ", "Ease Preview Tool"), EditorStyles.toolbarButton, GUILayout.Width(BUTTON_SIZE))) {
 				HungryDragonEditorMenu.EasePreviewToolWindow();
+			}
+
+			// Egg Test Scene
+			if(GUILayout.Button(new GUIContent("00", "Eggs Test Scene"), EditorStyles.toolbarButton, GUILayout.Width(BUTTON_SIZE))) {
+				//HungryDragonEditorMenu.OpenScene("Assets/Art/3D/Metagame/Eggs/3D_Egg_001/SC_EggTest.unity", true);
+				HungryDragonEditorMenu.OpenScene("Assets/Tests/SC_NewEggTest.unity", true);
 			}
 
 			// Add a separator

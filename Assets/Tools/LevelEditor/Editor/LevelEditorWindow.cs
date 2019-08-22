@@ -11,7 +11,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEditor;
 using UnityEditor.SceneManagement;
-using System.IO;
+using System.Collections;
 using System.Collections.Generic;
 
 //----------------------------------------------------------------------//
@@ -44,7 +44,8 @@ namespace LevelEditor {
 			new SectionLevels(),
 			new SectionSimulation(),
 			new SectionDragonSpawn(),
-			new SectionLevelEditorConfig()
+			new SectionLevelEditorConfig(),
+            new SectionVertexDensity()
 		};
 
 		// Styles
@@ -53,11 +54,12 @@ namespace LevelEditor {
 		// Level control
 		private string m_sceneName = "";
 
-		//------------------------------------------------------------------//
-		// PROPERTIES														//
-		//------------------------------------------------------------------//
-		// Windows instance
-		private static LevelEditorWindow m_instance = null;
+
+        //------------------------------------------------------------------//
+        // PROPERTIES														//
+        //------------------------------------------------------------------//
+        // Windows instance
+        private static LevelEditorWindow m_instance = null;
 		public static LevelEditorWindow instance {
 			get {
 				if(m_instance == null) {
@@ -72,6 +74,7 @@ namespace LevelEditor {
 		public static SectionSimulation sectionSimulation { get { return instance.m_sections[1] as SectionSimulation; }}
 		public static SectionDragonSpawn sectionDragonSpawn { get { return instance.m_sections[2] as SectionDragonSpawn; }}
 		public static SectionLevelEditorConfig sectionParticleManager { get { return instance.m_sections[3] as SectionLevelEditorConfig; }}
+        public static SectionVertexDensity sectionVertexDensity {  get { return instance.m_sections[4] as SectionVertexDensity; } }
 
 		// Styles shortcut
 		public static Styles styles { get { return instance.m_styles; }}
@@ -95,6 +98,10 @@ namespace LevelEditor {
 			ContentManager.InitContent(true, false);
 
 			// We must detect when application goes to play mode and back, so subscribe to the event
+			EditorSceneManager.sceneLoaded += OnSceneLoaded;
+			EditorSceneManager.sceneUnloaded += OnSceneUnloadedClosed;
+			EditorSceneManager.sceneOpened += OnSceneOpened;
+			EditorSceneManager.sceneClosed += OnSceneUnloadedClosed;
 			EditorApplication.playmodeStateChanged += OnPlayModeChanged;
 
 			// Make sure we parse the scene properly the first time
@@ -112,11 +119,18 @@ namespace LevelEditor {
 			CloseLevelEditorScene();
 
 			// Unsubscribe from the event
+			EditorSceneManager.sceneLoaded -= OnSceneLoaded;
+			EditorSceneManager.sceneUnloaded -= OnSceneUnloadedClosed;
+			EditorSceneManager.sceneOpened -= OnSceneOpened;
+			EditorSceneManager.sceneClosed -= OnSceneUnloadedClosed;
 			EditorApplication.playmodeStateChanged -= OnPlayModeChanged;
 
 			// Clear instance reference
 			m_instance = null;
 		}
+
+
+		float delayedInitTimer = 0f;
 
 		/// <summary>
 		/// Called 100 times per second on all visible windows.
@@ -126,6 +140,13 @@ namespace LevelEditor {
 			if(EditorSceneManager.GetActiveScene().name != m_sceneName) {
 				m_sceneName = EditorSceneManager.GetActiveScene().name;
 				Init();
+			}
+
+			if (delayedInitTimer > 0f) {
+				delayedInitTimer -= Time.deltaTime;
+				if (delayedInitTimer <= 0f) {
+					Init();
+				}
 			}
 		}
 
@@ -289,6 +310,9 @@ namespace LevelEditor {
 
 				// Simulation section
 				sectionSimulation.OnGUI();
+
+                // Vertex density section
+                sectionVertexDensity.OnGUI();
 			} EditorGUILayoutExt.EndVerticalSafe();
 		}
 
@@ -365,6 +389,18 @@ namespace LevelEditor {
 		//------------------------------------------------------------------//
 		// CALLBACKS														//
 		//------------------------------------------------------------------//
+		public void OnSceneLoaded(Scene scene, LoadSceneMode mode) {
+			delayedInitTimer = 1f;
+		}
+
+		public void OnSceneOpened(Scene _scene, OpenSceneMode _mode) {
+			delayedInitTimer = 1f;
+		}
+		
+		public void OnSceneUnloadedClosed(Scene _scene) {
+			delayedInitTimer = 1f;
+		}
+
 		/// <summary>
 		/// The application is being played or stopped.
 		/// </summary>

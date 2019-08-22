@@ -58,7 +58,7 @@ namespace AI
 			OnRemove();
 		}
 
-		public void Enter(State _oldState, object[] _param)
+		public void Enter(State _oldState, object[] _param = null)
 		{
 			OnEnter(_oldState, _param);
 		}
@@ -76,14 +76,14 @@ namespace AI
 		public virtual StateComponentData CreateData() { return null; }
 		public virtual System.Type GetDataType() { return null; }
 
-		protected void Transition(string transitionID, params object[] param)
+		protected void Transition(int transitionID, object[] param = null)
 		{
 			m_stateMachine.Transition(transitionID, state, param);
 		}
 
 		protected virtual void OnInitialise(){}
 		protected virtual void OnRemove(){}
-		protected virtual void OnEnter(State _oldState, object[] _param){}
+		protected virtual void OnEnter(State _oldState, object[] _param = null){}
 		protected virtual void OnExit(State _newState){}
 		protected virtual void OnUpdate(){}
 

@@ -104,11 +104,8 @@ public class PersistenceLocalDriver
 
             // Checks if it's a valid one, if so then it
             if (SavePaths_IsAValidLoadState(Data.LoadState))            
-            {
-                if (FeatureSettingsManager.IsDebugEnabled)
-                {
-                    PersistenceFacade.Log("File at index " + currentIndex + " with path " + savePath + " has been loaded with state " + Data.LoadState);
-                }
+            {                                
+                PersistenceFacade.Log("File at index " + currentIndex + " with path " + savePath + " has been loaded with state " + Data.LoadState);                
 
                 if (currentIndex != latestIndex)
                 {
@@ -121,9 +118,8 @@ public class PersistenceLocalDriver
                 break;
             }
             else
-            {                
-                if (FeatureSettingsManager.IsDebugEnabled)
-                    PersistenceFacade.LogWarning("File at index " + currentIndex + " with path " + savePath + " is not valid: " + Data.LoadState);
+            {                                
+                PersistenceFacade.LogWarning("File at index " + currentIndex + " with path " + savePath + " is not valid: " + Data.LoadState);
 
                 // Updates the index for the next iteration
                 currentIndex = SavePaths_GetPreviousIndexToIndex(currentIndex);
@@ -237,17 +233,13 @@ public class PersistenceLocalDriver
                 if (SavePaths_Verify(savePath))
                 {
                     // Since the file has been loaded successfully we can consider it the latest valid one
-                    SavePaths_LatestIndex = index;
-
-                    if (FeatureSettingsManager.IsDebugEnabled)
-                        PersistenceFacade.Log("Local persistence successfully saved to " + savePath + " with state = " + Data.SaveState);
+                    SavePaths_LatestIndex = index;                    
+                    PersistenceFacade.Log("Local persistence successfully saved to " + savePath + " with state = " + Data.SaveState);
                 }
                 else
                 {
-                    Data.SaveState = PersistenceStates.ESaveState.Corrupted;
-
-                    if (FeatureSettingsManager.IsDebugEnabled)
-                        PersistenceFacade.LogError("Error when saving local persistence to " + savePath + " LoadState = " + SavePaths_Data.LoadState);                    
+                    Data.SaveState = PersistenceStates.ESaveState.Corrupted;                    
+                    PersistenceFacade.LogError("Error when saving local persistence to " + savePath + " LoadState = " + SavePaths_Data.LoadState);                    
                 }
             }            
         }

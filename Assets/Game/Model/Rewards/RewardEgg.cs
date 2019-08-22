@@ -272,7 +272,7 @@ namespace Metagame {
 		/// </summary>
 		/// <returns>A <see cref="System.String"/> that represents the current <see cref="Metagame.RewardEgg"/>.</returns>
 		override public string ToString() {
-			return m_reward.sku + (m_reward.WillBeReplaced() ? " (d)" : "");
+			return m_reward == null ? base.ToString() : m_reward.sku + (m_reward.WillBeReplaced() ? " (d)" : "");
 		}
 
 		/// <summary>

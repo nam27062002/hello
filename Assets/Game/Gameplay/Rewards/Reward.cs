@@ -1,7 +1,7 @@
 ﻿
 [System.Serializable]
 public struct Reward  {
-	public int score;
+	public float score;
 
 	[Separator("", 7)]
 	public float coins;

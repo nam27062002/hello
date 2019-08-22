@@ -35,7 +35,12 @@ GameObject:
   m_Component:
   - component: {fileID: 4000014104046800}
   - component: {fileID: 65000013761798366}
-  m_Layer: 27
+  - component: {fileID: 65438550092763696}
+  - component: {fileID: 65297206677591414}
+  - component: {fileID: 65503668943887684}
+  - component: {fileID: 65257527435177938}
+  - component: {fileID: 65877061657849944}
+  m_Layer: 9
   m_Name: collisions
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -109,7 +114,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1000013696462740
 GameObject:
   m_ObjectHideFlags: 1
@@ -918,7 +923,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000012592393062}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 94.99986, y: 16.724037, z: -14.118107}
+  m_LocalPosition: {x: -3.8563771, y: 0.27996084, z: -14.118107}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4000013145674594}
@@ -1098,7 +1103,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1760980541435762}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -2.5800023, z: 0}
+  m_LocalPosition: {x: 0, y: -1.83, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4000014271832320}
@@ -1674,7 +1679,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1530767084324750}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -2.671, z: 0}
+  m_LocalPosition: {x: 0, y: -1.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4000014271832320}
@@ -3117,6 +3122,66 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1.9, y: 0.2, z: 1.9}
   m_Center: {x: 0, y: 0.03, z: 0}
+--- !u!65 &65257527435177938
+BoxCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000011125894626}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 2, y: 4, z: 0.25}
+  m_Center: {x: 0, y: 2, z: -1}
+--- !u!65 &65297206677591414
+BoxCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000011125894626}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.25, y: 4, z: 2}
+  m_Center: {x: -1, y: 2, z: 0}
+--- !u!65 &65438550092763696
+BoxCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000011125894626}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.25, y: 4, z: 2}
+  m_Center: {x: 1, y: 2, z: 0}
+--- !u!65 &65503668943887684
+BoxCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000011125894626}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 2, y: 4, z: 0.25}
+  m_Center: {x: 0, y: 2, z: 1}
+--- !u!65 &65877061657849944
+BoxCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000011125894626}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1.9, y: 0.2, z: 1.9}
+  m_Center: {x: 0, y: 4, z: 0}
 --- !u!114 &114000010195696722
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3155,17 +3220,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_hitsPerTier:
     m_valueList:
-    - count: 0
-      needBoost: 0
     - count: 3
-      needBoost: 0
-    - count: 2
       needBoost: 0
     - count: 2
       needBoost: 0
     - count: 1
       needBoost: 0
-    m_keyList: 0000000001000000020000000300000004000000
+    - count: 1
+      needBoost: 0
+    - count: 1
+      needBoost: 0
+    - count: 1
+      needBoost: 0
+    m_keyList: 000000000100000002000000030000000400000005000000
   m_colliderHolder: {fileID: 1000011125894626}
   m_view: {fileID: 1000013696462740}
   m_viewDestroyed:
@@ -3297,6 +3364,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_tags: 64
+  m_otherSpawnables:
+  - {fileID: 114000011716460492}
+  m_otherSpawnablesCount: 1
+  m_pilot: {fileID: 0}
+  m_machine: {fileID: 0}
+  m_viewControl: {fileID: 0}
+  m_equip: {fileID: 0}
+  m_disableDelay: 270
 --- !u!114 &114643981114982816
 MonoBehaviour:
   m_ObjectHideFlags: 1

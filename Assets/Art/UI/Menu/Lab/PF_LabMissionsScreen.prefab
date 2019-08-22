@@ -893,7 +893,6 @@ GameObject:
   - component: {fileID: 95025909669215542}
   - component: {fileID: 114059658718844556}
   - component: {fileID: 114002263530499506}
-  - component: {fileID: 114916929160033482}
   m_Layer: 5
   m_Name: ButtonRemoveMission
   m_TagString: Untagged
@@ -1099,7 +1098,6 @@ GameObject:
   - component: {fileID: 95669215069091408}
   - component: {fileID: 114669954390896152}
   - component: {fileID: 114380420176210336}
-  - component: {fileID: 114045154177116306}
   m_Layer: 5
   m_Name: ButtonRemoveMission
   m_TagString: Untagged
@@ -2353,7 +2351,6 @@ GameObject:
   - component: {fileID: 95166827423093716}
   - component: {fileID: 114963787344125848}
   - component: {fileID: 114490388904829084}
-  - component: {fileID: 114737881386916886}
   m_Layer: 5
   m_Name: ButtonRemoveMission
   m_TagString: Untagged
@@ -4734,18 +4731,6 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
---- !u!114 &114045154177116306
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1281262358414392}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 96c7270d3c6a14b07a1bba2ab41b15fa, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_activeDuringPlaytest: 0
 --- !u!114 &114045930127526292
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6516,7 +6501,7 @@ MonoBehaviour:
   autoPlay: 1
   useTargetAsV3: 0
   endValueFloat: 0
-  endValueV3: {x: 0, y: 10, z: 0}
+  endValueV3: {x: 6, y: 0, z: 0}
   endValueV2: {x: 0, y: 0}
   endValueColor: {r: 1, g: 1, b: 1, a: 1}
   endValueString: 
@@ -7625,7 +7610,7 @@ MonoBehaviour:
   autoPlay: 1
   useTargetAsV3: 0
   endValueFloat: 0
-  endValueV3: {x: 0, y: 10, z: 0}
+  endValueV3: {x: 6, y: 0, z: 0}
   endValueV2: {x: 0, y: 0}
   endValueColor: {r: 1, g: 1, b: 1, a: 1}
   endValueString: 
@@ -9172,6 +9157,11 @@ MonoBehaviour:
   m_3dIcon: {fileID: 114357711065667262}
   m_defaultImage: {fileID: 114004376419675812}
   m_iconSKU: 
+  OnLoadFinished:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
 --- !u!114 &114444891274353448
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -9410,6 +9400,11 @@ MonoBehaviour:
   m_3dIcon: {fileID: 114227077146171948}
   m_defaultImage: {fileID: 114539309221943904}
   m_iconSKU: 
+  OnLoadFinished:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
 --- !u!114 &114480001529604032
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -10496,6 +10491,11 @@ MonoBehaviour:
   m_3dIcon: {fileID: 114578634669483200}
   m_defaultImage: {fileID: 114086935920295976}
   m_iconSKU: 
+  OnLoadFinished:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
 --- !u!114 &114578470244271144
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -12190,18 +12190,6 @@ MonoBehaviour:
   - {fileID: 0}
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!114 &114737881386916886
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1518687377895480}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 96c7270d3c6a14b07a1bba2ab41b15fa, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_activeDuringPlaytest: 0
 --- !u!114 &114738690466457780
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -14482,18 +14470,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_audioId: 
---- !u!114 &114916929160033482
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1236067704623064}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 96c7270d3c6a14b07a1bba2ab41b15fa, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_activeDuringPlaytest: 0
 --- !u!114 &114919727887289692
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -14714,7 +14690,7 @@ MonoBehaviour:
   autoPlay: 1
   useTargetAsV3: 0
   endValueFloat: 0
-  endValueV3: {x: 0, y: 10, z: 0}
+  endValueV3: {x: 6, y: 0, z: 0}
   endValueV2: {x: 0, y: 0}
   endValueColor: {r: 1, g: 1, b: 1, a: 1}
   endValueString: 

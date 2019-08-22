@@ -27,7 +27,7 @@ public class PopupTransaction : MonoBehaviour {
         if (m_amountText != null) {
 
             UIConstants.IconType iconType = UIConstants.GetCurrencyIcon(currency);            
-            if (iconType == UIConstants.IconType.NONE && FeatureSettingsManager.IsDebugEnabled) {
+            if (iconType == UIConstants.IconType.NONE) {
                 Debug.LogWarning("Currency " + currency.ToString() + " not supported by PopupTransaction");
             }
                         

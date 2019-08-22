@@ -8,13 +8,14 @@ namespace AI {
 		public class PetCheckFarFarAway : StateComponent {
 
 			[StateTransitionTrigger]
-    		public const string onTooFarAway = "onTooFarAway";
+            private static readonly int onTooFarAway = UnityEngine.Animator.StringToHash("onTooFarAway");
 
-			DragonPlayer m_owner;
+            DragonPlayer m_owner;
 			protected const float m_reallyFarDistance = 35.0f;		// TODO: confirm this is off-screen
 			protected const float m_minDistanceToAppear = 20.0f; //For the pet to respawn in front of the shark instead of behind
 
 			private float m_approxSize;
+			protected static object[] m_transitionParam = new object[]{0};
 			
 
 			protected override void OnInitialise() {
@@ -51,7 +52,7 @@ namespace AI {
                         m_pilot.transform.position = ownerPos + (delta * minDistanceToAppear);
                     }
 
-		            Transition(onTooFarAway, 0);
+		            Transition(onTooFarAway, m_transitionParam);
 
 		        }
 			}

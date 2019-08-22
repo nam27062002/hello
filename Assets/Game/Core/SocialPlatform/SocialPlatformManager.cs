@@ -1,7 +1,12 @@
-﻿using UnityEngine;
+﻿#if DEBUG && !DISABLE_LOGS
+#define ENABLE_LOGS
+#endif
+
+using UnityEngine;
 using SimpleJSON;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 public class SocialPlatformManager : MonoBehaviour
 {
 	// Singleton ///////////////////////////////////////////////////////////
@@ -245,17 +250,24 @@ public class SocialPlatformManager : MonoBehaviour
     
     public bool IsLoggedIn()
     {
-        return m_socialUtils.IsLoggedIn();
+        if (m_socialUtils != null)
+            return m_socialUtils.IsLoggedIn();
+
+        return false;
     }
 
 	public bool IsLogInTimeoutEnabled()
 	{
-		return m_socialUtils.IsLogInTimeoutEnabled();
+        if (m_socialUtils != null)
+		    return m_socialUtils.IsLogInTimeoutEnabled();
+
+        return false;
 	}
 
 	public void OnLogInTimeout()
 	{
-		m_socialUtils.OnLogInTimeout();
+        if (m_socialUtils != null)
+		    m_socialUtils.OnLogInTimeout();
 	}
 
     public void Logout()
@@ -269,9 +281,8 @@ public class SocialPlatformManager : MonoBehaviour
         // this login flow to stay waiting forever
         isAppInit = false;
 
-        string socialId = PersistenceFacade.instance.LocalDriver.Prefs_SocialId;
-        if (FeatureSettingsManager.IsDebugEnabled)
-            Log("LOGGING IN... isSilent = " + isSilent + " isAppInit = " + isAppInit + " alreadyLoggedIn = " + IsLoggedIn() + " SocialId = " + socialId);
+        string socialId = PersistenceFacade.instance.LocalDriver.Prefs_SocialId;        
+        Log("LOGGING IN... isSilent = " + isSilent + " isAppInit = " + isAppInit + " alreadyLoggedIn = " + IsLoggedIn() + " SocialId = " + socialId);
 
         Login_Discard();
 
@@ -345,9 +356,8 @@ public class SocialPlatformManager : MonoBehaviour
     }    
 
     private void Login_OnLoggedInHelper(bool logged)
-    {
-        if (FeatureSettingsManager.IsDebugEnabled)
-            Log("(LOGGING) onLogged " + logged);
+    {        
+        Log("(LOGGING) onLogged " + logged);
 
         Messenger.RemoveListener<bool>(MessengerEvents.SOCIAL_LOGGED, Login_OnLoggedInHelper);
         Login_OnLoggedIn(logged);
@@ -377,25 +387,20 @@ public class SocialPlatformManager : MonoBehaviour
     }
 
     private void Login_OnMergeSucceeded()
-    {
-        if (FeatureSettingsManager.IsDebugEnabled)
-            Log("(LOGGING) MERGE SUCCEEDED!");
-
+    {        
+        Log("(LOGGING) MERGE SUCCEEDED!");
         Login_MergeState = ELoginMergeState.Succeeded;
     }
 
     private void Login_OnMergeFailed()
-    {
-        if (FeatureSettingsManager.IsDebugEnabled)
-            Log("(LOGGING) MERGE FAILED!");
-
+    {        
+        Log("(LOGGING) MERGE FAILED!");
         Login_MergeState = ELoginMergeState.Failed;
     }
 
     private void Login_OnMergeShowPopupNeeded(CaletyConstants.PopupMergeType eType, JSONNode kLocalAccount, JSONNode kCloudAccount)
-    {
-        if (FeatureSettingsManager.IsDebugEnabled)
-            Log("(LOGGING) MERGE POPUP NEEDED! eType = " + eType + " kCloudAccount = " + kCloudAccount);
+    {        
+        Log("(LOGGING) MERGE POPUP NEEDED! eType = " + eType + " kCloudAccount = " + kCloudAccount);
 
         switch (eType)
         {
@@ -434,7 +439,7 @@ public class SocialPlatformManager : MonoBehaviour
             persistenceAsJson = PersistenceUtils.GetDefaultDataFromProfile();
         }
 
-        if (FeatureSettingsManager.IsDebugEnabled && persistenceBrokenFromServer)
+        if (persistenceBrokenFromServer)
             LogError("Persistence Broken from server");
 
         Login_MergePersistence = persistenceAsJson.ToString();
@@ -478,9 +483,8 @@ public class SocialPlatformManager : MonoBehaviour
     }
 
     private void Login_PerformDone(ELoginResult result)
-    {
-        if (FeatureSettingsManager.IsDebugEnabled)
-            Log("(LOGGING) DONE! " + result);
+    {        
+        Log("(LOGGING) DONE! " + result);
 
         if (Login_OnDone != null)
         {
@@ -516,11 +520,22 @@ public class SocialPlatformManager : MonoBehaviour
     }
 
     private const string LOG_CHANNEL = "[Social] ";
+
+    #if ENABLE_LOGS
+    [Conditional("DEBUG")]
+    #else
+    [Conditional("FALSE")]
+    #endif
     public static void Log(string msg)
     {
         Debug.Log(LOG_CHANNEL + msg);
     }
 
+    #if ENABLE_LOGS
+    [Conditional("DEBUG")]
+    #else
+    [Conditional("FALSE")]
+    #endif
     public static void LogError(string msg)
     {
         Debug.LogError(LOG_CHANNEL + msg);

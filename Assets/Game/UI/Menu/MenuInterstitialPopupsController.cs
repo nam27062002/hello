@@ -257,7 +257,7 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
     IEnumerator LaunchInterstitial() {
 		SetFlag(StateFlag.POPUP_DISPLAYED, true);
         yield return new WaitForSeconds(0.25f);
-        PopupAdBlocker.Launch(false, GameAds.EAdPurpose.INTERSTITIAL, OnInterstitialAdEnded);
+        PopupAdBlocker.LaunchAd(false, GameAds.EAdPurpose.INTERSTITIAL, OnInterstitialAdEnded);
 	}
 
 	/// <summary>
@@ -275,9 +275,9 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 
         bool checkUserRestriction = true;
         if (HDCP2Manager.Instance.CanPlayInterstitial(checkUserRestriction)) {
-            HDCP2Manager.Instance.PlayInterstitial(checkUserRestriction);
+            PopupAdBlocker.LaunchCp2Interstitial(null);            
         }
-    }
+    }    
 
     /// <summary>
     /// Checks whether the Rating popup must be opened or not and does it.

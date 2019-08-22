@@ -192,27 +192,31 @@ namespace InControl
 			var touchCount = Input.touchCount;
 			for (var i = 0; i < touchCount; ++i)
 			{
-				var touch = Input.GetTouch( i );
+				try {
+					var touch = Input.GetTouch(i);
 
-				if (touch.type == UnityEngine.TouchType.Indirect)
-				{
-					continue;
-				}
+					if (touch.type == UnityEngine.TouchType.Indirect)
+					{
+						continue;
+					}
 
-				bool released;
-				bool pressed;
-				var pointer = GetTouchPointerEventData( touch, out pressed, out released );
+					bool released;
+					bool pressed;
+					var pointer = GetTouchPointerEventData( touch, out pressed, out released );
 
-				ProcessTouchPress( pointer, pressed, released );
+					ProcessTouchPress( pointer, pressed, released );
 
-				if (!released)
-				{
-					ProcessMove( pointer );
-					ProcessDrag( pointer );
-				}
-				else
-				{
-					RemovePointerData( pointer );
+					if (!released)
+					{
+						ProcessMove( pointer );
+						ProcessDrag( pointer );
+					}
+					else
+					{
+						RemovePointerData( pointer );
+					}
+				} catch (System.Exception) {
+					return i > 0;
 				}
 			}
 

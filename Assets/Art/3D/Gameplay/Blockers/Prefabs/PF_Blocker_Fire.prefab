@@ -99,22 +99,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!1 &1266318335996826
-GameObject:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 5
-  m_Component:
-  - component: {fileID: 4596976824971370}
-  - component: {fileID: 114297873669273722}
-  m_Layer: 0
-  m_Name: FireNode
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
 --- !u!1 &1307272416319592
 GameObject:
   m_ObjectHideFlags: 1
@@ -267,21 +251,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!1 &1678163771558076
-GameObject:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 5
-  m_Component:
-  - component: {fileID: 4459502114536184}
-  m_Layer: 0
-  m_Name: FireNodes
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
 --- !u!1 &1691245515973134
 GameObject:
   m_ObjectHideFlags: 1
@@ -312,38 +281,6 @@ GameObject:
   - component: {fileID: 65192850223872522}
   m_Layer: 11
   m_Name: CrystalIceBlocker4
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!1 &1744291790144612
-GameObject:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 5
-  m_Component:
-  - component: {fileID: 4629550316725776}
-  - component: {fileID: 114400842781906742}
-  m_Layer: 0
-  m_Name: FireNode
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!1 &1879995127456206
-GameObject:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 5
-  m_Component:
-  - component: {fileID: 4634320356527602}
-  - component: {fileID: 114141598664107602}
-  m_Layer: 0
-  m_Name: FireNode
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -534,9 +471,9 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1480434399171710}
-  m_LocalRotation: {x: -0.15551433, y: 0.98752046, z: -0.0038927179, w: -0.024567347}
-  m_LocalPosition: {x: 0, y: 6.619999, z: 0}
-  m_LocalScale: {x: 7.8524327, y: 10.38962, z: 2.0006564}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4494356427812926}
   m_Father: {fileID: 4906404528764924}
@@ -568,22 +505,6 @@ Transform:
   m_Father: {fileID: 4225981433546592}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!4 &4459502114536184
-Transform:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1678163771558076}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 6.62, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children:
-  - {fileID: 4596976824971370}
-  - {fileID: 4629550316725776}
-  - {fileID: 4634320356527602}
-  m_Father: {fileID: 4906404528764924}
-  m_RootOrder: 3
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4467359148121964
 Transform:
   m_ObjectHideFlags: 1
@@ -604,8 +525,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1950032439097276}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 0, y: 7, z: 0}
+  m_LocalScale: {x: 30, y: 40, z: 1}
   m_Children: []
   m_Father: {fileID: 4386012589169948}
   m_RootOrder: 0
@@ -624,45 +545,6 @@ Transform:
   m_Father: {fileID: 4255178230152262}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: -97.63, y: 0, z: 0}
---- !u!4 &4596976824971370
-Transform:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1266318335996826}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 5.188568, y: 3.8095121, z: -5.975917}
-  m_LocalScale: {x: 1.6748579, y: 1.6748583, z: 1.6748583}
-  m_Children: []
-  m_Father: {fileID: 4459502114536184}
-  m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!4 &4629550316725776
-Transform:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1744291790144612}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -3.4142456, y: -2.2000017, z: -3.9174347}
-  m_LocalScale: {x: 2.267161, y: 2.2671614, z: 2.2671614}
-  m_Children: []
-  m_Father: {fileID: 4459502114536184}
-  m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!4 &4634320356527602
-Transform:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1879995127456206}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.3999939, y: 18.000004, z: -5.975917}
-  m_LocalScale: {x: 1.67486, y: 1.67486, z: 1.67486}
-  m_Children: []
-  m_Father: {fileID: 4459502114536184}
-  m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4832899987712100
 Transform:
   m_ObjectHideFlags: 1
@@ -683,13 +565,12 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1189587967232188}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -7.2316647, y: 19.213137, z: -30.04177}
-  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
+  m_LocalPosition: {x: -26.46, y: -11.1, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4225981433546592}
   - {fileID: 4379388850869538}
   - {fileID: 4386012589169948}
-  - {fileID: 4459502114536184}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 180, y: 180, z: 167.679}
@@ -1218,28 +1099,6 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
---- !u!114 &114141598664107602
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1879995127456206}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 05556bd7fa6ea4d279f0a95d4cdb872a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &114297873669273722
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1266318335996826}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 05556bd7fa6ea4d279f0a95d4cdb872a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &114301869855550984
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1269,18 +1128,7 @@ MonoBehaviour:
   m_type: 3
   m_prefabPath: 
   m_rotateWithObject: 0
-  m_zoomCompensation: 1
---- !u!114 &114400842781906742
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1744291790144612}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 05556bd7fa6ea4d279f0a95d4cdb872a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_zoomCompensation: 0
 --- !u!114 &114445072889786704
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1415,6 +1263,13 @@ MonoBehaviour:
   m_viewScripts: []
   m_boxelSize: 10
   m_hitRadius: 2
+  m_fireNodes:
+  - localPosition: {x: 5.188568, y: 10.429512, z: -5.975917}
+    scale: 1.6748579
+  - localPosition: {x: -3.4142456, y: 4.419998, z: -3.9174347}
+    scale: 2.267161
+  - localPosition: {x: -0.3999939, y: 24.620003, z: -5.975917}
+    scale: 1.67486
 --- !u!114 &114738833036250298
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1438,6 +1293,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_tags: 0
+  m_otherSpawnables:
+  - {fileID: 114445072889786704}
+  m_otherSpawnablesCount: 1
+  m_pilot: {fileID: 0}
+  m_machine: {fileID: 0}
+  m_viewControl: {fileID: 0}
+  m_equip: {fileID: 0}
   m_sku: deco_medium
   m_tier: 2
   m_disintegrable: 0

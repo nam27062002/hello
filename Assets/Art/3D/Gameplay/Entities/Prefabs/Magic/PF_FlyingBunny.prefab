@@ -48,7 +48,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1905133565276108
 GameObject:
   m_ObjectHideFlags: 0
@@ -160,6 +160,7 @@ MonoBehaviour:
   m_animA: 
   m_animB: 
   m_animC: 
+  m_materialChangeExceptions: []
   m_useFreezeParticle: 1
   m_freezeParticleScale: 2
   m_useMoveAnimInLove: 0
@@ -375,6 +376,18 @@ MonoBehaviour:
   m_onPanicAudio: 
   m_idleAudio: hd_flyingbunny_idle
   m_skins: []
+  m_entity: {fileID: 114439960513274264}
+  m_animator: {fileID: 95116579572971294}
+  m_isAnimatorAvailable: 0
+  m_renderers:
+  - {fileID: 137888311362855024}
+  m_specialAnimations: 000000
+  m_animA_Hash: 0
+  m_animB_Hash: 0
+  m_animC_Hash: 0
+  m_animEvents: {fileID: 0}
+  m_transform: {fileID: 4861198911436830}
+  m_view: {fileID: 4545190579502262}
 --- !u!114 &114439960513274264
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -387,6 +400,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_tags: 2054
+  m_otherSpawnables:
+  - {fileID: 114574327875713962}
+  - {fileID: 114489530295956190}
+  - {fileID: 114213163797026430}
+  m_otherSpawnablesCount: 3
+  m_pilot: {fileID: 114489530295956190}
+  m_machine: {fileID: 114574327875713962}
+  m_viewControl: {fileID: 114213163797026430}
+  m_equip: {fileID: 0}
   m_sku: FlyingBunny
   m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1
@@ -405,6 +427,7 @@ MonoBehaviour:
   m_energy: 0.3
   m_energyDrainSec: 0.7
   m_energyRecoverSec: 0.025
+  m_machine: {fileID: 0}
   m_brainResource: {fileID: 11400000, guid: fcba6844efb2f4ff6b18023d9b2856d4, type: 2}
   m_railSeparation:
     min: 0.5

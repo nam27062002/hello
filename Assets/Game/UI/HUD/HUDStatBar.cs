@@ -556,6 +556,7 @@ public class HUDStatBar : MonoBehaviour, IBroadcastListener {
 		switch (m_type) {
 			case Type.Health: 	return InstanceManager.player.data.statsBarRatio;// .GetAsFloat("statsBarRatio");
 			case Type.Energy:	return 0.01f;//return InstanceManager.player.data.def.GetAsFloat("statsBarRatio");
+			case Type.Shield: 	return 0.002f;
 		}
 		return 0.01f;
 	}
@@ -654,7 +655,9 @@ public class HUDStatBar : MonoBehaviour, IBroadcastListener {
 			}break;
             case Type.Shield:
             {
-                
+                float fraction = Mathf.Clamp01(GetBaseValue() * GetSizePerUnit());
+				size.x = fraction * m_maxScreenSize;
+				rectTransform.sizeDelta = size;
             }break;
 		}
 

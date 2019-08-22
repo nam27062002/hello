@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+// KEEP EVENTS ORDER AS IT IS TO AVOID EDITOR CHANGING VALUES
 public enum BroadcastEventType
 {
+    /////// DO NOT ADD NEW EVENTS OF MODIFY ///////
     // Popups Management
     POPUP_CREATED,          // param: PopupManagementInfo
     POPUP_OPENED,           // param: PopupManagementInfo
@@ -12,11 +14,6 @@ public enum BroadcastEventType
     
     // Egg management events
     EGG_STATE_CHANGED,          // params: Egg _egg, Egg.State _from, Egg.State _to
-    // EGG_INCUBATION_STARTED,     // params: Egg _egg
-    // EGG_INCUBATION_ENDED,       // params: Egg _egg
-    // EGG_TAP,                    // params: EggController _egg, int _tapCount    // [AOC] Triggered when opening an egg
-    // EGG_OPENED,                 // params: Egg _egg     // [AOC] Triggered when any egg is opened and its reward collected, whether it is the one in the incubator or one purchased from the shop
-
     
     // Rules and localization
     LANGUAGE_CHANGED,       // no params
@@ -34,7 +31,7 @@ public enum BroadcastEventType
     // UI events
     UI_MAP_ZOOM_CHANGED,        // param: UIMapZoomChanged
     UI_MAP_EXPIRED,				// no params
-    
+
     GAME_LEVEL_LOADED,
     GAME_AREA_ENTER,
     GAME_AREA_EXIT,
@@ -43,13 +40,22 @@ public enum BroadcastEventType
     BOOST_TOGGLED,              // params: ToggleParam
     SPECIAL_POWER_TOGGLED,      // params: ToggleParam
 
-    GAME_PAUSED,                // params: ToggleParam
-
 	// Debug
 	DEBUG_REFRESH_DAILY_REWARDS,    // no params
     
     SHIELD_HIT,
     
+    POOL_MANAGER_READY,
+    GAME_PAUSED,                // params: ToggleParam
+
+    /////// NEW EVENTS HERE!!! ///////
+
+    // EGG_INCUBATION_STARTED,     // params: Egg _egg
+    // EGG_INCUBATION_ENDED,       // params: Egg _egg
+    // EGG_TAP,                    // params: EggController _egg, int _tapCount    // [AOC] Triggered when opening an egg
+    // EGG_OPENED,                 // params: Egg _egg     // [AOC] Triggered when any egg is opened and its reward collected, whether it is the one in the incubator or one purchased from the shop
+
+
     COUNT,
 }
 

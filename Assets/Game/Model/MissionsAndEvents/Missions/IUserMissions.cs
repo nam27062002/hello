@@ -205,7 +205,8 @@ public abstract class IUserMissions {
 			typeDefs = typeDefs.FindAll(
 				(DefinitionNode _def) => { 
 					return (_def.GetAsInt("minTier") <= (int)maxTierUnlocked)	// Ignore mission types meant for bigger tiers
-						&& (_def.GetAsInt("maxTier") >= (int)maxTierUnlocked)	// Ignore mission types meant for lower tiers
+						&& (_def.GetAsInt("maxTier") >= (int)maxTierUnlocked)   // Ignore mission types meant for lower tiers
+						&& (_def.GetAsFloat("weight") > 0f)                     // Ignore mission types with no weight
 						&& (!typesToIgnore.Contains(_def.sku));					// Prevent repetition
 				}
 			);
@@ -238,9 +239,10 @@ public abstract class IUserMissions {
 						// Filter out missions based on current max dragon tier unlocked
                         missionDefs = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(m_defMissionCategory, "type", selectedTypeDef.sku);
 						missionDefs = missionDefs.FindAll(
-							(DefinitionNode _def) => { 
-								return (_def.GetAsInt("minTier") <= (int)maxTierUnlocked)	// Ignore missions meant for bigger tiers
-									&& (_def.GetAsInt("maxTier") >= (int)maxTierUnlocked);	// Ignore missions meant for lower tiers
+							(DefinitionNode _def) => {
+								return (_def.GetAsInt("minTier") <= (int)maxTierUnlocked)   // Ignore missions meant for bigger tiers
+									&& (_def.GetAsInt("maxTier") >= (int)maxTierUnlocked)   // Ignore missions meant for lower tiers
+									&& (_def.GetAsFloat("weight") > 0f);					// Ignore missions with no weight
 							}
 						);
 
@@ -258,6 +260,13 @@ public abstract class IUserMissions {
 					}
 				}
 			}
+
+			// Just in case, if no type could be selected, reuse last type
+			if(selectedTypeDef == null) {
+				Debug.LogError(Color.red.Tag("NO MISSION TYPE COULD BE SELECTED!! REUSING LAST SELECTED MISSION TYPE"));
+				Mission currentMission = GetMission(_difficulty);
+				selectedTypeDef = currentMission.typeDef;
+			}
 			Debug.Log("\tSelected Type: <color=yellow>" + selectedTypeDef.sku + "</color>");
 
 			// 4. Select a random mission based on weight (as we just did with the mission type)
@@ -267,12 +276,14 @@ public abstract class IUserMissions {
 			for(int i = 0; i < missionDefs.Count; i++) {
 				weightsArray.Add(missionDefs[i].GetAsFloat("weight"));
 				totalWeight += weightsArray[i];
+				Debug.Log(Colors.magenta.Tag("Added mission " + missionDefs[i].sku + " | " + weightsArray.Last() + " | " + totalWeight));
 			}
 
 			// 4.2. Select a random value [0..totalWeight]
 			// Iterate through elements until the selected value is reached
 			// This should match weighted probability distribution
 			targetValue = UnityEngine.Random.Range(0f, totalWeight);
+			Debug.Log(Colors.magenta.Tag("Target Value: " + targetValue));
 			for(int i = 0; i < missionDefs.Count; i++) {
 				targetValue -= weightsArray[i];
 				if(targetValue <= 0f) {
@@ -280,6 +291,14 @@ public abstract class IUserMissions {
 					selectedMissionDef = missionDefs[i];
 					break;	// No need to keep looping
 				}
+			}
+
+			// Just in case, if no mission could be selected, reuse last type
+			if(selectedMissionDef == null) {
+				Debug.LogError(Color.red.Tag("NO MISSION COULD BE SELECTED!! REUSING LAST SELECTED MISSION"));
+				Mission currentMission = GetMission(_difficulty);
+				selectedTypeDef = currentMission.typeDef;
+				selectedMissionDef = currentMission.def;
 			}
 			Debug.Log("\tSelected Mission: <color=yellow>" + selectedMissionDef.sku + "</color>");
 		}

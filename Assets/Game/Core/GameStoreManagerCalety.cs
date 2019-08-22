@@ -1,6 +1,11 @@
-﻿using System;
+﻿#if DEBUG && !DISABLE_LOGS
+#define ENABLE_LOGS
+#endif
+
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using UnityEngine;
 using SimpleJSON;
 
@@ -62,23 +67,22 @@ public class GameStoreManagerCalety : GameStoreManager
 		{
             string purchaseSkuTriggered = m_manager.GetPurchaseSkuTriggeredByUser();
 
-            if (FeatureSettingsManager.IsDebugEnabled)
+#if ENABLE_LOGS                  
+            string msg = "onPurchaseCompleted sku = " + sku + " purchaseSkuTriggeredByUser = " + purchaseSkuTriggered + " strTransactionID = " + strTransactionID + " strPlatformOrderID = " + strPlatformOrderID + " receipt = ";
+            if (kReceiptJSON == null)
             {
-                string msg = "onPurchaseCompleted sku = " + sku + " purchaseSkuTriggeredByUser = " + purchaseSkuTriggered + " strTransactionID = " + strTransactionID + " strPlatformOrderID = " + strPlatformOrderID + " receipt = ";
-                if (kReceiptJSON == null)
-                {
-                    msg += "null";
-                }
-                else
-                {
-                    msg +=  kReceiptJSON.ToString();
-                }
-
-                Log(msg);
+                msg += "null";
+            }
+            else
+            {
+                msg +=  kReceiptJSON.ToString();
             }
 
-            // If the user hasn't triggered this purchase then it means that this purchase is being resumed from a purchase that was interrupted in a previous session
-            if (string.IsNullOrEmpty(purchaseSkuTriggered) || purchaseSkuTriggered != sku)
+            Log(msg);
+#endif            
+
+                // If the user hasn't triggered this purchase then it means that this purchase is being resumed from a purchase that was interrupted in a previous session
+                if (string.IsNullOrEmpty(purchaseSkuTriggered) || purchaseSkuTriggered != sku)
             {
                 // We need to urge to request for pending transactions
 				Log("Pending transactions are urged because of an interrupted IAP");
@@ -100,11 +104,8 @@ public class GameStoreManagerCalety : GameStoreManager
                 };
 
                 System.Action<bool> onConfirmDone = delegate (bool success)
-                {
-                    if (FeatureSettingsManager.IsDebugEnabled)
-                    {
-                        Log("Server confirmation for purchase " + sku + " received with success = " + success);
-                    }
+                {                    
+                    Log("Server confirmation for purchase " + sku + " received with success = " + success);                  
 
                     if (needsServerConfirmation)
                     {
@@ -133,9 +134,8 @@ public class GameStoreManagerCalety : GameStoreManager
         public override void onPurchaseCancelled(string sku, string strTransactionID) 
 		{
             string purchaseSkuTriggered = m_manager.GetPurchaseSkuTriggeredByUser();
-
-            if (FeatureSettingsManager.IsDebugEnabled)
-                Log("onPurchaseCancelled sku completed " + sku + " purchaseSkuTriggeredByUser = " + purchaseSkuTriggered);
+            
+            Log("onPurchaseCancelled sku completed " + sku + " purchaseSkuTriggeredByUser = " + purchaseSkuTriggered);
 
 			Messenger.Broadcast<string>(MessengerEvents.PURCHASE_CANCELLED, purchaseSkuTriggered);
 
@@ -145,9 +145,8 @@ public class GameStoreManagerCalety : GameStoreManager
 		public override void onPurchaseFailed(string sku, string strTransactionID) 
 		{
             string purchaseSkuTriggered = m_manager.GetPurchaseSkuTriggeredByUser();
-
-            if (FeatureSettingsManager.IsDebugEnabled)
-				Log("onPurchaseFailed sku completed = " + sku + " purchaseSkuTriggeredByUser = " + purchaseSkuTriggered + " transactionID = " + strTransactionID);
+            
+    		Log("onPurchaseFailed sku completed = " + sku + " purchaseSkuTriggeredByUser = " + purchaseSkuTriggered + " transactionID = " + strTransactionID);
 
 			Messenger.Broadcast<string>(MessengerEvents.PURCHASE_FAILED, purchaseSkuTriggered);
 
@@ -155,9 +154,8 @@ public class GameStoreManagerCalety : GameStoreManager
         }
 
 		public override void onStoreIsReady() 
-		{
-            if (FeatureSettingsManager.IsDebugEnabled)
-                Log("onStoreIsReady");
+		{            
+            Log("onStoreIsReady");
 
 			m_isReady = true;
             OnInitialiseStoreDone();
@@ -186,9 +184,8 @@ public class GameStoreManagerCalety : GameStoreManager
 	    */
 
         public override void onStoreIosInitFail(int errorCode)
-        {
-            if (FeatureSettingsManager.IsDebugEnabled)
-                Log("onStoreIosInitFail errorCode = " + errorCode);
+        {         
+            Log("onStoreIosInitFail errorCode = " + errorCode);
 
             m_hasInitFailed = true;
             OnInitialiseStoreDone();
@@ -275,9 +272,8 @@ public class GameStoreManagerCalety : GameStoreManager
     }
 
     private void TryToSolveInitializeProblems()
-    {
-		if (FeatureSettingsManager.IsDebugEnabled)
-			Log("TryToSolveInitializedProblems isReady = " + IsReady() + " HasInitFailed = " + m_storeListener.HasInitFailed());
+    {		
+		Log("TryToSolveInitializedProblems isReady = " + IsReady() + " HasInitFailed = " + m_storeListener.HasInitFailed());
 		
         // Checks if there was an initialize problem
         if (!IsReady() && m_storeListener.HasInitFailed())
@@ -481,23 +477,36 @@ public class GameStoreManagerCalety : GameStoreManager
     }
 
     #region log
+
+#if ENABLE_LOGS
+    [Conditional("DEBUG")]
+#else
+    [Conditional("FALSE")]
+#endif
     private static void Log(string msg)
-    {
-		if(!FeatureSettingsManager.IsDebugEnabled) return;
+    {	
         msg = "[GameStoreManagerCalety]" + msg;
         ControlPanel.Log(msg, ControlPanel.ELogChannel.Store);
     }
 
+#if ENABLE_LOGS
+    [Conditional("DEBUG")]
+#else
+    [Conditional("FALSE")]
+#endif
     private static void LogError(string msg)
-    {
-		if(!FeatureSettingsManager.IsDebugEnabled) return;
+    {	
 		msg = "[GameStoreManagerCalety]" + msg;
         ControlPanel.LogError(msg, ControlPanel.ELogChannel.Store);
     }
 
+#if ENABLE_LOGS
+    [Conditional("DEBUG")]
+#else
+    [Conditional("FALSE")]
+#endif
     private static void LogWarning(string msg)
-    {
-		if(!FeatureSettingsManager.IsDebugEnabled) return;
+    {		
 		msg = "[GameStoreManagerCalety]" + msg;
         ControlPanel.LogWarning(msg, ControlPanel.ELogChannel.Store);
     }

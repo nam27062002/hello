@@ -319,6 +319,23 @@ public class DragonPlayer : MonoBehaviour, IBroadcastListener {
         m_form = Form.NORMAL;
 	}
 
+	public void RemovePowerUps()
+	{
+		m_healthBonus = 0;
+		SetHealthBonus( m_healthBonus );
+		m_energyBonus = 0;
+		SetBoostBonus( m_energyBonus );
+		
+		m_freeRevives = 0;
+		m_tierIncreaseBreak = 0;
+		m_mummyPowerStacks = 0;
+
+		m_shield.Clear();
+		m_shieldTimers.Clear();
+
+		m_dragonHeatlhBehaviour.RemovePowerUps();
+	}
+
 	void OnDestroy()
 	{
 		// Unsubscribe from external events
@@ -679,61 +696,7 @@ public class DragonPlayer : MonoBehaviour, IBroadcastListener {
 		}
 		return null;
 	}
-
-	/// <summary>
-	/// Moves this dragon to its default spawn point in the current level.
-	/// If there is no specific spawn point for this dragon's id, move it to the
-	/// default spawn point for all dragons.
-	/// If there is no level loaded or no spawn points could be found, dragon stays
-	/// at its current position.
-	/// Uses GameObject.Find, so don't abuse it!
-	/// </summary>
-	/// <param name="_levelEditor">Try to use the level editor's spawn point?</param>
-	public void MoveToSpawnPoint(bool _levelEditor) {
-		// Use level editor's spawn point or try to use specific's dragon spawn point?
-		GameObject spawnPointObj = null;
-		if(_levelEditor) {
-			spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME + "_" + LevelEditor.LevelTypeSpawners.LEVEL_EDITOR_SPAWN_POINT_NAME);
-			if ( spawnPointObj == null )
-				spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME + "_" + data.def.sku);
-		} else {
-			spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME + "_" + data.def.sku);
-		}
-
-		// If we couldn't find a valid spawn point, try to find a generic one
-		if(spawnPointObj == null) {
-			spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME);
-		}
-
-		// Move to position
-		if(spawnPointObj != null) {
-			m_dragonMotion.MoveToSpawnPosition(spawnPointObj.transform.position);
-		}
-	}
-
-	public void StartIntroMovement( bool useLevelEditor = false )
-	{
-        if(m_dragonEatBehaviour != null)
-		    m_dragonEatBehaviour.enabled = true;
-		GameObject spawnPointObj = null;
-		if(useLevelEditor) {
-			spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME + "_" + LevelEditor.LevelTypeSpawners.LEVEL_EDITOR_SPAWN_POINT_NAME);
-			if ( spawnPointObj == null )
-				spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME + "_" + data.def.sku);
-		} else {
-			spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME + "_" + data.def.sku);
-		}
-		// If we couldn't find a valid spawn point, try to find a generic one
-		if(spawnPointObj == null) {
-			spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME);
-		}
-
-		if(spawnPointObj != null)
-		{
-			Vector3 introPos = spawnPointObj.transform.position;
-			m_dragonMotion.StartIntroMovement(introPos);
-		}
-	}
+	
 
 	//------------------------------------------------------------------//
 	// GETTERS															//

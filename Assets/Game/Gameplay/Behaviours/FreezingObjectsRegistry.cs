@@ -177,50 +177,53 @@ public class FreezingObjectsRegistry : MonoBehaviour, IBroadcastListener
         max = m_entities.Count;
         m_toFreeze.Clear();
         m_toKill.Clear();
-        for (int i = max-1; i >=0 ; i--)
+        if ( m_registry.Count > 0 )
         {
-            Registry freezing = Overlaps((CircleAreaBounds)m_entities[i].circleArea.bounds);
-            if ( freezing != null )
+            for (int i = max-1; i >=0; i--)
             {
-                // Check if tier pass
-                Entity entity = m_entities[i];
-                bool isValid = false;
-                switch( freezing.m_checkType )
+                Registry freezing = Overlaps((CircleAreaBounds)m_entities[i].circleArea.bounds);
+                if ( freezing != null )
                 {
-                    case FreezingCheckType.NONE:
+                    // Check if tier pass
+                    Entity entity = m_entities[i];
+                    bool isValid = false;
+                    switch( freezing.m_checkType )
                     {
-                        isValid = true;
-                    }break;
-                    case FreezingCheckType.EAT:
-                    {
-                        isValid = entity.IsEdible( freezing.m_dragonTier) || entity.CanBeHolded( freezing.m_dragonTier );
-                    }break;
-                    case FreezingCheckType.BURN:
-                    {
-                        isValid = entity.IsBurnable(freezing.m_dragonTier);
-                    }break;
-                }
-
-                if ( isValid )
-                {
-                    m_toFreeze.Add( m_entities[i] );
-                    if ( m_killOnFrozen )
-                    {
-                        // Check random
-                        if (m_entities[i].edibleFromTier < DragonTier.COUNT)
+                        case FreezingCheckType.NONE:
                         {
-                            m_toKill.Add( Random.Range(0, 100) < m_killTiers[ (int)m_entities[i].edibleFromTier ] );
-                        }else{
+                            isValid = true;
+                        }break;
+                        case FreezingCheckType.EAT:
+                        {
+                            isValid = entity.IsEdible( freezing.m_dragonTier) || entity.CanBeHolded( freezing.m_dragonTier );
+                        }break;
+                        case FreezingCheckType.BURN:
+                        {
+                            isValid = entity.IsBurnable(freezing.m_dragonTier);
+                        }break;
+                    }
+
+                    if ( isValid )
+                    {
+                        m_toFreeze.Add( m_entities[i] );
+                        if ( m_killOnFrozen )
+                        {
+                            // Check random
+                            if (m_entities[i].edibleFromTier < DragonTier.COUNT)
+                            {
+                                m_toKill.Add( Random.Range(0, 100) < m_killTiers[ (int)m_entities[i].edibleFromTier ] );
+                            }else{
+                                m_toKill.Add(false);
+                            }
+                        }
+                        else
+                        {
                             m_toKill.Add(false);
                         }
+                        m_entities.RemoveAt( i );
                     }
-                    else
-                    {
-                        m_toKill.Add(false);
-                    }
-                    m_entities.RemoveAt( i );
-                }
-            }   
+                }   
+            }
         }
         
         max = m_freezingEntities.Count;

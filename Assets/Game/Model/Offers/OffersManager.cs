@@ -4,7 +4,12 @@
 // Created by Alger Ortín Castellví on 20/02/2018.
 // Copyright (c) 2018 Ubisoft. All rights reserved.
 
+#if DEBUG && !DISABLE_LOGS
+#define ENABLE_LOGS
+#endif
+
 //#define LOG
+//#define LOG_PACKS
 
 //----------------------------------------------------------------------------//
 // INCLUDES																	  //
@@ -13,6 +18,7 @@ using UnityEngine;
 using System;
 using System.Linq;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -130,24 +136,26 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 			if(offerDefs[i].GetAsBool("enabled", false)) {
                 //lets check if player has all the bundles required to view this offer
                 if (instance.IsOfferAvailable(newPack)) {
+					Log("ADDING OFFER PACK {0}", Color.green, newPack.def.sku);
                     instance.m_allEnabledOffers.Add(newPack);
-                }
+
+					// If rotational, store to the rotational collection as well
+					if(newPack.type == OfferPack.Type.ROTATIONAL) {
+						instance.m_allEnabledRotationalOffers.Add(newPack as OfferPackRotational);
+					}
+                } else {
+					Log("OFFER PACK {0} CAN'T BE ADDED!", Color.red, newPack.def.sku);
+				}
 			}
 
-            switch( newPack.type ) {
-                case OfferPack.Type.ROTATIONAL:{
-                    // If rotational, store to the rotational collection
-                    instance.m_allEnabledRotationalOffers.Add(newPack as OfferPackRotational);
-                }break;
-                case OfferPack.Type.PUSHED:{
-                    // Only if there is a customization on experiment
-                    if (needsCleaning)
-                    {
-                        validCustomIds.Add( OffersManager.GenerateTrackingOfferName( offerDefs[i] ) );
-                    }
-                    
-                }break;
-            }
+
+			// If pushed, check whether it needs to be cleaned
+			if(newPack.type == OfferPack.Type.PUSHED) {
+				// Only if there is a customization on experiment
+				if(needsCleaning) {
+					validCustomIds.Add(OffersManager.GenerateTrackingOfferName(offerDefs[i]));
+				}
+			}
 		}
 
 		// Refresh active and featured offers
@@ -170,6 +178,8 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 	/// </summary>
 	/// <param name="_forceActiveRefresh">Force a refresh of the active offers list.</param>
 	private void Refresh(bool _forceActiveRefresh) {
+		Log("REFRESH {0}", Colors.magenta, _forceActiveRefresh);
+
 		// Aux vars
 		OfferPack pack = null;
 		bool dirty = false;
@@ -184,6 +194,7 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 			if(pack.UpdateState() || _forceActiveRefresh) {
 				// Yes!
 				dirty = true;
+				Log("PACK UPDATED: {0} | {1}", Colors.magenta, pack.def.sku, pack.state);
 
 				// Update lists
 				UpdateCollections(pack);
@@ -196,6 +207,7 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 
 		// Remove expired offers (they won't be active anymore, no need to update them)
 		for(int i = 0; i < m_offersToRemove.Count; ++i) {
+			Log("---> REMOVING ", Color.red, m_offersToRemove[i].def.sku);
 			m_allEnabledOffers.Remove(m_offersToRemove[i]);
 			if(m_offersToRemove[i].type == OfferPack.Type.ROTATIONAL) {
 				m_allEnabledRotationalOffers.Remove(m_offersToRemove[i] as OfferPackRotational);
@@ -243,16 +255,19 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
         for (int i = 0; i < max; i++){
             history.Enqueue( rotationalOffers[i]["sku"]);
         }
-        
+
+        // Crashlytics was reporting a Null reference, protect it just in case
+		int rotationalActiveOffers = settings != null ? settings.rotationalActiveOffers : 1;
+		
 		// Do we need to activate a new rotational pack?
-		while(m_activeRotationalOffers.Count < settings.rotationalActiveOffers && loopCount < maxLoops) {
-			Log(Colors.orange.Tag("Rotational offers required: {0} active"), m_activeRotationalOffers.Count);
+		while( m_activeRotationalOffers.Count < rotationalActiveOffers && loopCount < maxLoops) {
+			Log("Rotational offers required: {0} active", Colors.orange, m_activeRotationalOffers.Count);
 			UpdateRotationalHistory(null);	// Make sure rotational history has the proper size
-			LogRotationalHistory();
+			// [AOC] TODO!!!!!!! Local history variable is not updated!
 #if LOG
 			TrackingPersistenceSystem trackingPersistence = HDTrackingManager.Instance.TrackingPersistenceSystem;
 			int totalPurchases = trackingPersistence == null ? 0 : trackingPersistence.TotalPurchases;
-			Log(Colors.silver.Tag("Total Purchases {0}"), totalPurchases);
+			Log("Total Purchases {0}", Colors.silver, totalPurchases);
 #endif
 
 			// Select a new pack!
@@ -288,7 +303,7 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 				if(rotationalPack.CheckExpiration(false)) continue;
 
 				// Everything ok, add to the candidates pool!
-				Log(Colors.lime.Tag("    Candidate is Good! {0}"), rotationalPack.def.sku);
+				Log("    Candidate is Good! {0}", Colors.lime, rotationalPack.def.sku);
 				pool.Add(rotationalPack);
 			}
 
@@ -316,7 +331,7 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 
 			// Activate new pack and add it to collections
 			rotationalPack.Activate();
-			Log("Activating pack {0}", rotationalPack.def.sku);
+			Log("ACTIVATING pack {0}", Color.green, rotationalPack.def.sku);
 			UpdateCollections(rotationalPack);
 			UpdateRotationalHistory(rotationalPack);
 
@@ -332,6 +347,11 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 		return dirty;
 	}
 
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <returns></returns>
+	/// <param name="_newPack"></param>
     private bool IsOfferAvailable(OfferPack _newPack) {
         List<OfferPackItem> items = _newPack.items;
 
@@ -418,7 +438,7 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 
 		// Debug
 		Log("Rotational history updated with pack {0}", (_offer == null ? "NULL" : _offer.def.sku));
-		LogRotationalHistory();
+		LogRotationalHistory(ref history);
 	}
 
 	/// <summary>
@@ -520,45 +540,118 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
     /// </summary>
     /// <param name="_msg">Message to be logged. Can have replacements like string.Format method would have.</param>
     /// <param name="_replacements">Replacements, to be used as string.Format method.</param>
-    private static void Log(string _msg, params object[] _replacements) {
+#if ENABLE_LOGS
+    [Conditional("DEBUG")]
+#else
+    [Conditional("FALSE")]
+#endif
+    public static void Log(string _msg, params object[] _replacements) {
 #if LOG
 		if(!FeatureSettingsManager.IsDebugEnabled) return;
 		ControlPanel.Log(string.Format(_msg, _replacements), ControlPanel.ELogChannel.Offers);
 #endif
 	}
 
-	/// <summary>
-	/// Do a report on current collections state.
-	/// </summary>
-	private void LogCollections() {
+    /// <summary>
+    /// Log into the console (if enabled).
+    /// </summary>
+    /// <param name="_msg">Message to be logged. Can have replacements like string.Format method would have.</param>
+    /// <param name="_color">Message color.</param>
+    /// <param name="_replacements">Replacements, to be used as string.Format method.</param>
+#if ENABLE_LOGS
+    [Conditional("DEBUG")]
+#else
+    [Conditional("FALSE")]
+#endif
+    public static void Log(string _msg, Color _color, params object[] _replacements) {
 #if LOG
-		if(!FeatureSettingsManager.IsDebugEnabled) return;
-		Log(
-			"Collections:\n" +
-			"    All: " + m_activeOffers.Count + "\n" +
-			"    All Enabled: " + m_activeOffers.Count + "\n" +
-			"    Active: " + m_activeOffers.Count + "\n" +
-			"\n" +
-			"    All Rotational Enabled: " + m_activeOffers.Count + "\n" +
-			"    Active Rotational: " + m_activeOffers.Count + "\n" +
-			"\n" +
-			"    To Remove: " + m_offersToRemove.Count
-		);
+		Log(_color.Tag(_msg), _replacements);
 #endif
 	}
 
-	/// <summary>
-	/// Do a report on current rotational history state.
-	/// </summary>
-	private void LogRotationalHistory() {
+    /// <summary>
+    /// Log into the console (if enabled).
+    /// Checks LOG_PACKS flag.
+    /// </summary>
+    /// <param name="_msg">Message to be logged. Can have replacements like string.Format method would have.</param>
+    /// <param name="_color">Message color.</param>
+    /// <param name="_replacements">Replacements, to be used as string.Format method.</param>
+#if ENABLE_LOGS
+    [Conditional("DEBUG")]
+#else
+    [Conditional("FALSE")]
+#endif
+    public static void LogPack(string _msg, Color _color, params object[] _replacements) {
+#if LOG_PACKS
+		if(!FeatureSettingsManager.IsDebugEnabled) return;
+		ControlPanel.Log(string.Format(_color.Tag(_msg), _replacements), ControlPanel.ELogChannel.Offers);
+#endif
+	}
+
+    /// <summary>
+    /// Do a report on current collections state.
+    /// </summary>
+#if ENABLE_LOGS
+    [Conditional("DEBUG")]
+#else
+    [Conditional("FALSE")]
+#endif
+    private void LogCollections() {
 #if LOG
 		if(!FeatureSettingsManager.IsDebugEnabled) return;
-		Queue<string> history = UsersManager.currentUser.offerPacksRotationalHistory;
-		string str = "Rotational History (" + history.Count + "):\n";
-		foreach(string s in history) {
-			str += "    " + s + "\n";
+		string str = "Collections:\n";
+
+		AppendCollection(ref str, m_allOffers, "All");
+		AppendCollection(ref str, m_allEnabledOffers, "All Enabled");
+		AppendCollection(ref str, m_activeOffers, "Active");
+
+		str += "\n";
+		AppendCollection(ref str, m_allEnabledRotationalOffers, "All Rotational Enabled");
+		AppendCollection(ref str, m_activeRotationalOffers, "Active Rotational");
+
+		str += "\n";
+		AppendCollection(ref str, m_offersToRemove, "To Remove");
+
+		Log(str);
+#endif
+	}
+
+#if LOG
+	/// <summary>
+	/// Appends the given collection to the target log string.
+	/// </summary>
+	/// <param name="_str">String.</param>
+	/// <param name="_collection">Collection.</param>
+	/// <param name="_collectionName">Name of the collection.</param>
+	private void AppendCollection<T>(ref string _str, List<T> _collection, string _collectionName) where T : OfferPack{
+		_str += "\t" + _collectionName + ": " + _collection.Count + "\n";
+		foreach(OfferPack pack in _collection) {
+			_str += "\t\t" + pack.def.sku + "\n";
+		}
+	}
+#endif
+
+    /// <summary>
+    /// Do a report on current rotational history state.
+    /// </summary>
+#if ENABLE_LOGS
+    [Conditional("DEBUG")]
+#else
+    [Conditional("FALSE")]
+#endif
+    private void LogRotationalHistory(ref List<SimpleJSON.JSONClass> _history) {
+#if LOG
+		if(!FeatureSettingsManager.IsDebugEnabled) return;
+
+		string str = "Rotational History (" + _history.Count + "):";
+		foreach(SimpleJSON.JSONClass s in _history) {
+			str += "    " + s["sku"] + "\n";
 		}
 		Log(str);
+
+		foreach(SimpleJSON.JSONClass s in _history) {
+			Debug.Log("    " + s.ToString());
+		}
 #endif
 	}
 }

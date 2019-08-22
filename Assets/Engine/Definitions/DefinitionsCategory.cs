@@ -72,6 +72,8 @@ public class DefinitionsCategory
 	// Game
 	public const string SCORE_MULTIPLIERS = "SCORE_MULTIPLIERS";
 	public const string SURVIVAL_BONUS = "SURVIVAL_BONUS";
+	public const string LEVEL_SPAWN_POINTS = "LEVEL_SPAWN_POINTS";
+	public const string LEVEL_PROGRESSION = "LEVEL_PROGRESSION";
 
 	// Metagame
 	public const string EGGS = "EGGS";	
@@ -86,6 +88,7 @@ public class DefinitionsCategory
 	public const string LIVE_EVENTS_MODIFIERS = "LIVE_EVENTS_MODIFIERS";
     public const string LEAGUES = "LEAGUES";
 	public const string DAILY_REWARDS = "DAILY_REWARDS";
+    public const string DAILY_REWARD_MODIFIERS = "DAILY_REWARD_MODIFIERS";
 
 	// Disguises
 	public const string DISGUISES = "DISGUISES";

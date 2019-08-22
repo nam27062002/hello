@@ -16,7 +16,7 @@ namespace AI
 		
 		public override void OnInspectorGUI()
 		{
-			serializedObject.UpdateIfDirtyOrScript();
+			serializedObject.UpdateIfRequiredOrScript();
 			
 			StateMachine stateMachine = target as StateMachine;
 			State[] states = TypeUtil.GetPrivateVar<State[]>(stateMachine, "m_states");
@@ -219,7 +219,7 @@ namespace AI
 			{
 				if(fi.GetCustomAttributes(typeof(StateTransitionTrigger), true).Length > 0)
 				{
-					transList.Add((string)fi.GetValue(null));
+					transList.Add((string)fi.Name);
 				}
 			}
 			if(type.BaseType != typeof(System.Object))

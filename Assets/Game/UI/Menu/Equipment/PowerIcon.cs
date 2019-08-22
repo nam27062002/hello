@@ -18,7 +18,7 @@ using TMPro;
 /// <summary>
 /// Simple controller for a disguise power icon.
 /// </summary>
-public class PowerIcon : MonoBehaviour {
+public class PowerIcon : MonoBehaviour, IBroadcastListener {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -49,8 +49,14 @@ public class PowerIcon : MonoBehaviour {
 	[Space]
 	[SerializeField][Range(0, 1)] private float m_tooltipArrowOffset = 0.5f;
 
-	// Data
-	private DefinitionNode m_powerDef = null;
+    [Separator("Levels")]
+    [Tooltip("Optional")] [SerializeField] private int m_level = 0;
+    [Tooltip("Optional")] [SerializeField] private List<Image> m_arrows = null;
+    [Tooltip("Optional")] [SerializeField] private List<Color> m_arrowColors = null;
+
+
+    // Data
+    private DefinitionNode m_powerDef = null;
 	public DefinitionNode powerDef {
 		get { return m_powerDef; }
 	}
@@ -75,6 +81,21 @@ public class PowerIcon : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Component has been enabled.
+	/// </summary>
+	private void OnEnable() {
+		// Subscribe to external events
+		Broadcaster.AddListener(BroadcastEventType.LANGUAGE_CHANGED, this);
+	}
+
+	/// <summary>
+	/// Component has been disabled.
+	/// </summary>
+	private void OnDisable() {
+		// Unsubscribe from external events
+		Broadcaster.RemoveListener(BroadcastEventType.LANGUAGE_CHANGED, this);
+	}
 
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //
@@ -125,19 +146,11 @@ public class PowerIcon : MonoBehaviour {
 				m_powerIcon.sprite = Resources.Load<Sprite>(UIConstants.POWER_ICONS_PATH + _powerDef.GetAsString("icon"));
 			}
 
-			// Name
-			if(m_nameText != null) {
-				m_nameText.Localize(_powerDef.Get("tidName"));
-			}
+            // Level arrows
+            RefreshArrows();
 
-			// Short description
-			if(m_shortDescriptionText != null) {
-                if (m_mode == Mode.SPECIAL_DRAGON) {
-                    m_shortDescriptionText.text = _powerDef.GetLocalized("tidDescShort");
-                } else {
-                    m_shortDescriptionText.text = DragonPowerUp.GetDescription(_powerDef, true, m_mode == Mode.PET);	// Custom formatting depending on powerup type, already localized
-                }
-			}
+			// Texts
+			RefreshTexts();
 
 			// Lock
 			SetLocked(_locked);
@@ -156,35 +169,105 @@ public class PowerIcon : MonoBehaviour {
 		if(m_powerIcon != null) m_powerIcon.color = _locked ? Color.gray : Color.white;
 	}
 
-	//------------------------------------------------------------------------//
-	// CALLBACKS															  //
-	//------------------------------------------------------------------------//
 	/// <summary>
-	/// A tooltip is about to be opened.
-	/// If the trigger is attached to this power icon, initialize tooltip with this
-	/// button's power def.
-	/// Link it via the inspector.
+	/// Initialize the short description textfield.
 	/// </summary>
-	/// <param name="_tooltip">The tooltip about to be opened.</param>
-	/// <param name="_trigger">The button which triggered the event.</param>
-	public void OnTooltipOpen(UITooltip _tooltip, UITooltipTrigger _trigger) {
+	private void RefreshTexts() {
+		// Power name
+		if(m_nameText != null) {
+			if(m_powerDef != null) {
+				m_nameText.Localize(m_powerDef.Get("tidName"));
+			} else {
+				m_nameText.Localize(string.Empty);
+			}
+		}
+
+		// Short description
+		if(m_shortDescriptionText != null) {
+			if(m_powerDef == null) {
+				m_shortDescriptionText.text = string.Empty;
+			} else if(m_mode == Mode.SPECIAL_DRAGON) {
+				m_shortDescriptionText.text = m_powerDef.GetLocalized("tidDescShort");
+			} else {
+				m_shortDescriptionText.text = DragonPowerUp.GetDescription(m_powerDef, true, m_mode == Mode.PET);    // Custom formatting depending on powerup type, already localized
+			}
+		}
+	}
+
+    /// <summary>
+	/// Initialize the small arrow icons that indicate the level of the power up
+	/// </summary>
+	private void RefreshArrows()
+    {
+        m_level = m_powerDef.GetAsInt("level");
+
+        if (m_arrows != null)
+        {
+            for (int i = 0; i < m_arrows.Count; i++)
+            {
+                // Show an amount of arrows according to the powerup level
+                m_arrows[i].gameObject.SetActive(i < m_level);
+
+                if (m_arrowColors != null && m_arrowColors[m_level - 1] != null)
+                {
+                    if (m_level > 0)
+                    {
+                        // Color the arrows according to the level
+                        m_arrows[i].color = m_arrowColors[m_level - 1];
+                    }
+                }
+
+            }
+        }
+
+    }
+
+    //------------------------------------------------------------------------//
+    // CALLBACKS															  //
+    //------------------------------------------------------------------------//
+    /// <summary>
+    /// A tooltip is about to be opened.
+    /// If the trigger is attached to this power icon, initialize tooltip with this
+    /// button's power def.
+    /// Link it via the inspector.
+    /// </summary>
+    /// <param name="_tooltip">The tooltip about to be opened.</param>
+    /// <param name="_trigger">The button which triggered the event.</param>
+    public void OnTooltipOpen(UITooltip _tooltip, UITooltipTrigger _trigger) {
 		// Make sure the trigger that opened the tooltip is linked to this icon
 		if(_trigger != trigger) return;
 
-		// Tooltip will take care of the rest
-		PowerTooltip powerTooltip = _tooltip.GetComponent<PowerTooltip>();
-		if(powerTooltip != null) {
-			// Initialize
-			powerTooltip.InitFromDefinition(m_powerDef, m_mode);
+        if (!_tooltip is PowerTooltip) return;
 
-			// Set lock state
-			powerTooltip.SetLocked(m_lockIcon != null && m_lockIcon.activeSelf);	// Use lock icon visibility to determine whether power is locked or not
+        PowerTooltip powerTooltip = (PowerTooltip)_tooltip;
+
+		// Tooltip will take care of the rest
+		if(powerTooltip != null) {
+            // Initialize
+            powerTooltip.InitFromDefinition(m_powerDef, m_mode);
+
+            // Set lock state
+            powerTooltip.SetLocked(m_lockIcon != null && m_lockIcon.activeSelf);	// Use lock icon visibility to determine whether power is locked or not
 		}
 
-		// Set arrow offset to make it point to this icon
-		_tooltip.SetArrowOffset(m_tooltipArrowOffset);
+        // Set arrow offset to make it point to this icon
+        powerTooltip.SetArrowOffset(m_tooltipArrowOffset);
 	}
 
+	/// <summary>
+	/// An event has been broadcasted.
+	/// </summary>
+	/// <param name="_eventType">Event type.</param>
+	/// <param name="_broadcastEventInfo">Event data.</param>
+	public void OnBroadcastSignal(BroadcastEventType _eventType, BroadcastEventInfo _broadcastEventInfo) {
+		switch(_eventType) {
+			// Language has been changed!
+			case BroadcastEventType.LANGUAGE_CHANGED: {
+				// Refresh some texts
+				RefreshTexts();
+			} break;
+		}
+	}
 	//------------------------------------------------------------------------//
 	// STATIC UTILS METHODS													  //
 	//------------------------------------------------------------------------//

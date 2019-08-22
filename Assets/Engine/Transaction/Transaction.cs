@@ -235,11 +235,8 @@ public class Transaction
                         rewardToAdd = CreateRewardCurrency(currency, amount);
 
                         if (rewardToAdd == null)
-                        {
-                            if (FeatureSettingsManager.IsDebugEnabled)
-                            {
-                                TransactionManager.LogWarning("No support to translate currency type " + currency + " into Metaga.Reward");
-                            }
+                        {                                                     
+                            TransactionManager.LogWarning("No support to translate currency type " + currency + " into Metaga.Reward");                            
                         }
                         else
                         {
@@ -354,9 +351,8 @@ public class Transaction
     public bool Perform(EPerformType performType)
     {		
         bool canPerform = CanPerform();
-
-		if(FeatureSettingsManager.IsDebugEnabled)
-			TransactionManager.Log("Trying to perform transaction " + ToJSON().ToString() + " canPerform = " + canPerform);
+		
+        TransactionManager.Log("Trying to perform transaction " + ToJSON().ToString() + " canPerform = " + canPerform);
 
         if (canPerform)
         {
@@ -373,7 +369,7 @@ public class Transaction
 
             SetHasBeenPerformed(true);
         }
-        else if (FeatureSettingsManager.IsDebugEnabled)
+        else
         {
             TransactionManager.LogWarning("Transaction can't be performed");
         }
@@ -475,9 +471,8 @@ public class Transaction
     }    
 
     private void AddRewardCurrency(UserProfile.Currency currency, Metagame.Reward reward)
-    {
-		if(FeatureSettingsManager.IsDebugEnabled)
-			TransactionManager.Log("Add Currency " + currency.ToString());
+    {		
+		TransactionManager.Log("Add Currency " + currency.ToString());
 		
         if (m_rewardCurrencies == null)
         {
@@ -500,9 +495,8 @@ public class Transaction
     }
 
     private ItemData CreateRewardItemData(string sku, string type, long amount)
-    {
-		if(FeatureSettingsManager.IsDebugEnabled)
-			TransactionManager.Log("CreateRewardItemData sku = " + sku + " type = " + type + " amount = " + amount);
+    {		
+	    TransactionManager.Log("CreateRewardItemData sku = " + sku + " type = " + type + " amount = " + amount);
 		
         string source = GetSource();        
         Metagame.Reward.Data data = new Metagame.Reward.Data();

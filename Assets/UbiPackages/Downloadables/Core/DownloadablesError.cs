@@ -33,6 +33,7 @@ namespace Downloadables
                                                                     // hasn't been unlocked yet
             Internal_Download_Disabled,                             // This error arises when downloading is not enabled, typically because high performance is required, for example
                                                                     // while the user is playing
+            Internal_Download_Aborted,                              // This error arises when downloading is aborted, typically because the user quits the application
             Other = 400                                             // Any other error
         };
 

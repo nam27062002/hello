@@ -31,9 +31,10 @@ public class ResultsScreenStepTournamentCoins : ResultsScreenSequenceStep {
 	[Space]
 	[SerializeField] private NumberTextAnimator m_coinsCounter = null;
 	[SerializeField] private NumberTextAnimator m_pcCounter = null;
+	[SerializeField] private NumberTextAnimator m_gfCounter = null;
 
 	// Internal
-	private CurrencyTransferFX m_coinsFX = null;
+	private ParticlesTrailFX m_coinsFX = null;
 
 	//------------------------------------------------------------------------//
 	// ResultsScreenStep IMPLEMENTATION										  //
@@ -53,6 +54,7 @@ public class ResultsScreenStepTournamentCoins : ResultsScreenSequenceStep {
 		// Init currency counters
 		m_coinsCounter.SetValue(m_controller.totalCoins, false);
 		m_pcCounter.SetValue(m_controller.totalPc, false);
+		m_gfCounter.SetValue(m_controller.totalGf, false);
 
 		// Update total coins
 		m_controller.totalCoins += m_controller.coins;
@@ -87,8 +89,8 @@ public class ResultsScreenStepTournamentCoins : ResultsScreenSequenceStep {
 
 		// Show nice FX! (unless skipped)
 		if(!m_skipped) {
-			m_coinsFX = CurrencyTransferFX.LoadAndLaunch(
-				CurrencyTransferFX.COINS,
+			m_coinsFX = ParticlesTrailFX.LoadAndLaunch(
+				ParticlesTrailFX.COINS,
 				this.GetComponentInParent<Canvas>().transform,
 				m_coinsSpawnPoint.position + new Vector3(0f, 0f, -0.5f),		// Offset Z so the coins don't collide with the UI elements
 				m_coinsCounter.transform.position + new Vector3(0f, 0f, -0.5f)

@@ -32,7 +32,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1205679371355484
 GameObject:
   m_ObjectHideFlags: 0
@@ -288,6 +288,7 @@ MonoBehaviour:
   m_animA: 
   m_animB: 
   m_animC: 
+  m_materialChangeExceptions: []
   m_useFreezeParticle: 0
   m_freezeParticleScale: 1
   m_useMoveAnimInLove: 0
@@ -503,6 +504,19 @@ MonoBehaviour:
   m_onPanicAudio: 
   m_idleAudio: 
   m_skins: []
+  m_entity: {fileID: 114527551952028504}
+  m_animator: {fileID: 95194285102632090}
+  m_isAnimatorAvailable: 0
+  m_renderers:
+  - {fileID: 137962498482154698}
+  - {fileID: 23195831007773482}
+  m_specialAnimations: 000000
+  m_animA_Hash: 0
+  m_animB_Hash: 0
+  m_animC_Hash: 0
+  m_animEvents: {fileID: 0}
+  m_transform: {fileID: 4028783832582230}
+  m_view: {fileID: 4230085724061396}
 --- !u!114 &114527551952028504
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -515,6 +529,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_tags: 73728
+  m_otherSpawnables:
+  - {fileID: 114651533864783942}
+  - {fileID: 114748150797745322}
+  - {fileID: 114447121286668648}
+  m_otherSpawnablesCount: 3
+  m_pilot: {fileID: 114651533864783942}
+  m_machine: {fileID: 114748150797745322}
+  m_viewControl: {fileID: 114447121286668648}
+  m_equip: {fileID: 0}
   m_sku: HermitCrabBlueSmallTurret
   m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1
@@ -533,6 +556,7 @@ MonoBehaviour:
   m_energy: 10
   m_energyDrainSec: 1
   m_energyRecoverSec: 1
+  m_machine: {fileID: 0}
   m_brainResource: {fileID: 11400000, guid: 16121a6cd74dc40f4825858dc43fcf5a, type: 2}
   m_railSeparation:
     min: 0.5

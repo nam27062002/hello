@@ -28,10 +28,18 @@ public class PetShortInfo : MonoBehaviour {
 	// Exposed references
 	[SerializeField] private Localizer m_nameText = null;
 	[SerializeField] private TextMeshProUGUI m_powerDescText = null;
-	
+	[SerializeField] private UISpriteAddressablesLoader m_iconLoader = null;
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
+	public void Awake() {
+		// If icon loader was not initialized, try to retrieve it automatically
+		if(m_iconLoader == null) {
+			m_iconLoader = GetComponentInChildren<UISpriteAddressablesLoader>();
+		}
+	}
+
 	/// <summary>
 	/// Initialize with a pet definition.
 	/// </summary>
@@ -41,9 +49,8 @@ public class PetShortInfo : MonoBehaviour {
 		if(_petDef == null) return;
 
         // The icon is now loaded asynchronously from the catalog
-        UISpriteAddressablesLoader iconLoader = GetComponent<UISpriteAddressablesLoader>();
-		if(iconLoader != null) {
-            iconLoader.LoadAsync(_petDef.Get("icon"));
+		if(m_iconLoader != null) {
+			m_iconLoader.LoadAsync(_petDef.Get("icon"));
 		}
 
 		// Name

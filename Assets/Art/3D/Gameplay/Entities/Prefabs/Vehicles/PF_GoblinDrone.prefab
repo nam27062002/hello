@@ -170,7 +170,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1856881004881892
 GameObject:
   m_ObjectHideFlags: 0
@@ -417,6 +417,7 @@ MonoBehaviour:
   m_energy: 10
   m_energyDrainSec: 1
   m_energyRecoverSec: 1
+  m_machine: {fileID: 0}
   m_brainResource: {fileID: 11400000, guid: 76249abb0153d4c23b8ab79dc0b01918, type: 2}
   m_railSeparation:
     min: 0.5
@@ -469,6 +470,7 @@ MonoBehaviour:
     m_mass: 1
     m_defaultUpVector: 0
     m_orientationSpeed: 20
+    m_useAngularVelocity: 0
     m_dragonStyleRotation: 0
     m_faceDirection: 0
     m_rollRotation: 0
@@ -491,6 +493,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_tags: 64
+  m_otherSpawnables:
+  - {fileID: 114043121378977230}
+  - {fileID: 114239330813787764}
+  - {fileID: 114637707101380934}
+  m_otherSpawnablesCount: 3
+  m_pilot: {fileID: 114043121378977230}
+  m_machine: {fileID: 114239330813787764}
+  m_viewControl: {fileID: 114637707101380934}
+  m_equip: {fileID: 0}
   m_sku: GoblinDrone
   m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1
@@ -519,6 +530,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 32ee45223b4af4374bf6c562470c1498, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_activation: 0
+  m_damage: 1
   m_timeBetweenHits: 0.5
   m_damageType: 9
   m_knockback: 0
@@ -547,6 +560,10 @@ MonoBehaviour:
   m_animA: 
   m_animB: 
   m_animC: 
+  m_materialChangeExceptions: []
+  m_useFreezeParticle: 0
+  m_freezeParticleScale: 1
+  m_useMoveAnimInLove: 0
   m_exclamationTransform: {fileID: 0}
   m_speedToWaterSplash: 0
   m_waterSplashParticle:
@@ -759,6 +776,18 @@ MonoBehaviour:
   m_onPanicAudio: 
   m_idleAudio: 
   m_skins: []
+  m_entity: {fileID: 114392678289561248}
+  m_animator: {fileID: 95090171213628036}
+  m_isAnimatorAvailable: 0
+  m_renderers:
+  - {fileID: 137942118794740010}
+  m_specialAnimations: 000000
+  m_animA_Hash: 0
+  m_animB_Hash: 0
+  m_animC_Hash: 0
+  m_animEvents: {fileID: 0}
+  m_transform: {fileID: 4257128042092074}
+  m_view: {fileID: 4012497656067864}
   m_headRotationSpeed: 3
   m_helixRotationSpeed: 1600
   m_head: {fileID: 4402319604612638}

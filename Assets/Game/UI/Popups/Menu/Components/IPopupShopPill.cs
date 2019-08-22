@@ -7,11 +7,14 @@
 //----------------------------------------------------------------------------//
 // PREPROCESSOR																  //
 //----------------------------------------------------------------------------//
-#define LOG_ENABLED
+#if DEBUG && !DISABLE_LOGS
+#define ENABLE_LOGS
+#endif
 
 //----------------------------------------------------------------------------//
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
+using System.Diagnostics;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
@@ -119,8 +122,8 @@ public abstract class IPopupShopPill : MonoBehaviour {
 		// Track
 		m_transactionInProgress = true;
 
-        // Track
-        HDTrackingManager.Instance.Notify_StoreItemView(m_def.sku);
+		// Track
+		HDTrackingManager.Instance.Notify_StoreItemView(m_def.sku);
 
 		// Notify heirs
 		OnPurchaseStarted();
@@ -224,31 +227,32 @@ public abstract class IPopupShopPill : MonoBehaviour {
 		// Depends on currency
 		switch(m_currency) {
 			case UserProfile.Currency.HARD: {
-				// Make sure we have enough and adjust new balance
-				// Resources flow makes it easy for us!
-				ResourcesFlow purchaseFlow = new ResourcesFlow(this.GetType().Name);
-				purchaseFlow.forceConfirmation = true;  // [AOC] For currency packs always request confirmation (UMR compliance)
-				purchaseFlow.OnFinished.AddListener(OnResourcesFlowFinished);
-				purchaseFlow.Begin((long)m_price, UserProfile.Currency.HARD, GetTrackingId(), def);
-			} break;
+					// Make sure we have enough and adjust new balance
+					// Resources flow makes it easy for us!
+					ResourcesFlow purchaseFlow = new ResourcesFlow(this.GetType().Name);
+					purchaseFlow.confirmationPopupBehaviour = ResourcesFlow.ConfirmationPopupBehaviour.FORCE;  // [AOC] For currency packs always request confirmation (UMR compliance)
+					purchaseFlow.OnFinished.AddListener(OnResourcesFlowFinished);
+					purchaseFlow.Begin((long)m_price, UserProfile.Currency.HARD, GetTrackingId(), def);
+				}
+				break;
 
 			case UserProfile.Currency.REAL: {
-				// Do a first quick check on Internet connectivity
-				Log("Quick connectivity check");
-				if(Application.internetReachability == NetworkReachability.NotReachable) {
-					// We have no internet connectivity, finalize the IAP
-					Log("No internet connectivity, finalize the IAP");
-					EndPurchase(false);
-					UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_GEN_NO_CONNECTION"), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
-				} else {
-					// Start real money transaction flow!
-					Log("Internet connectivity OK, start real money transaction flow!");
+					// Do a first quick check on Internet connectivity
+					Log("Quick connectivity check");
+					if(Application.internetReachability == NetworkReachability.NotReachable) {
+						// We have no internet connectivity, finalize the IAP
+						Log("No internet connectivity, finalize the IAP");
+						EndPurchase(false);
+						UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_GEN_NO_CONNECTION"), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
+					} else {
+						// Start real money transaction flow!
+						Log("Internet connectivity OK, start real money transaction flow!");
 
-					// Open loading popup to block all the UI while the transaction is in progress
-					Log("Opening Loading Popup!");
-					m_loadingPopupController = PopupManager.PopupLoading_Open();
+						// Open loading popup to block all the UI while the transaction is in progress
+						Log("Opening Loading Popup!");
+						m_loadingPopupController = PopupManager.PopupLoading_Open();
 
-					// Check connection to the store
+						// Check connection to the store
 #if UNITY_EDITOR
 					// [AOC] Editor override
 					// Simulate some delay
@@ -256,17 +260,19 @@ public abstract class IPopupShopPill : MonoBehaviour {
 						OnConnectionCheckFinished(null);
 					}, 3f);
 #else
-					GameServerManager.SharedInstance.CheckConnection(OnConnectionCheckFinished);
+						GameServerManager.SharedInstance.CheckConnection(OnConnectionCheckFinished);
 #endif
-                }
-			} break;
+					}
+				}
+				break;
 
 			default: {
-				EndPurchase(false);
-			} break;
+					EndPurchase(false);
+				}
+				break;
 		}
 	}
-    
+
 	/// <summary>
 	/// Connection to the store has been checked.
 	/// </summary>
@@ -276,13 +282,13 @@ public abstract class IPopupShopPill : MonoBehaviour {
 		if(_connectionError == null) {
 			// No error! Proceed with the IAP flow
 			Log("OnConnectionCheckFinished: No Error! Proceed with IAP flow");
-            if(GameStoreManager.SharedInstance.IsInitializing()) {
+			if(GameStoreManager.SharedInstance.IsInitializing()) {
 				Log("Store not yet initialized. Waiting...");
-                GameStoreManager.SharedInstance.WaitForInitialization(RequestIAP);
-            } else {
-                RequestIAP();
-            }			
-        } else {
+				GameStoreManager.SharedInstance.WaitForInitialization(RequestIAP);
+			} else {
+				RequestIAP();
+			}
+		} else {
 			// There was a connection error with the store, finalize the IAP
 			Log("There was a connection error with the store, finalize the IAP");
 			EndPurchase(false);
@@ -293,41 +299,36 @@ public abstract class IPopupShopPill : MonoBehaviour {
 	/// <summary>
 	/// 
 	/// </summary>
-    private void RequestIAP()
-    {                
-        if (GameStoreManager.SharedInstance.CanMakePayment())
-        {
-            // Player can perform the payment, continue with the IAP flow
-            Log("Player can perform the payment, continue with the IAP flow");
-            TrackIAPEvents(true);  // Start listening to GameStoreManager events
-            GameStoreManager.SharedInstance.Buy(GetIAPSku());
-        }        
-        else
-        {
-            // Player can't make payment, finalize the IAP
-            Log("Player can't make payment, finalize the IAP");
+	private void RequestIAP() {
+		if(GameStoreManager.SharedInstance.CanMakePayment()) {
+			// Player can perform the payment, continue with the IAP flow
+			Log("Player can perform the payment, continue with the IAP flow");
+			TrackIAPEvents(true);  // Start listening to GameStoreManager events
+			GameStoreManager.SharedInstance.Buy(GetIAPSku());
+		} else {
+			// Player can't make payment, finalize the IAP
+			Log("Player can't make payment, finalize the IAP");
 			EndPurchase(false);
 
-            string msg = null;
-            float duration = -1f;
+			string msg = null;
+			float duration = -1f;
 
-            {               
+			{
 #if UNITY_ANDROID
                 msg = LocalizationManager.SharedInstance.Localize("TID_CHECK_PAYMENT_METHOD", LocalizationManager.SharedInstance.Localize("TID_PAYMENT_METHOD_GOOGLE"));                
                 // Longer time is given to this feedback because the text is long
                 duration = 4f;
 #else
-                msg = LocalizationManager.SharedInstance.Localize("TID_CANNOT_PAY");                
+				msg = LocalizationManager.SharedInstance.Localize("TID_CANNOT_PAY");
 #endif
-            }
+			}
 
-            UIFeedbackText feedbackText = UIFeedbackText.CreateAndLaunch(msg, new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
-            if (duration > 0)
-            {
-                feedbackText.duration = duration;
-            }
-        }
-    }
+			UIFeedbackText feedbackText = UIFeedbackText.CreateAndLaunch(msg, new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
+			if(duration > 0) {
+				feedbackText.duration = duration;
+			}
+		}
+	}
 
 	/// <summary>
 	/// Real money transaction has succeeded.
@@ -377,20 +378,21 @@ public abstract class IPopupShopPill : MonoBehaviour {
 			Log("Finishing resources flow transaction " + _flow.name);
 			EndPurchase(_flow.successful);
 		}
-	}    
+	}
 
-	//------------------------------------------------------------------------//
-	// DEBUG METHODS														  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Print something on the console / control panel log.
-	/// </summary>
-	/// <param name="_message">Message to be printed.</param>
-	private void Log(string _message) {
-#if LOG_ENABLED
-		// Debug enabled?
-		if(!FeatureSettingsManager.IsDebugEnabled) return;
+    //------------------------------------------------------------------------//
+    // DEBUG METHODS														  //
+    //------------------------------------------------------------------------//
+    /// <summary>
+    /// Print something on the console / control panel log.
+    /// </summary>
+    /// <param name="_message">Message to be printed.</param>
+    #if ENABLE_LOGS
+    [Conditional("DEBUG")]
+    #else
+    [Conditional("FALSE")]
+    #endif
+    private void Log(string _message) {
 		ControlPanel.Log("[ShopPill]" + _message, ControlPanel.ELogChannel.Store);
-#endif
 	}
 }

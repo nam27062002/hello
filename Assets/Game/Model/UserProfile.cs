@@ -28,6 +28,8 @@ public class UserProfile : UserPersistenceSystem
     //------------------------------------------------------------------------//
     // CONSTANTS															  //
     //------------------------------------------------------------------------//
+
+	/////// Currency Enum ///////
 	public enum Currency {
 		NONE = -1,
 
@@ -39,6 +41,22 @@ public class UserProfile : UserPersistenceSystem
 
 		COUNT
 	};
+
+   	// COMPARER. Use this on all your Dictionaries
+    public struct CurrencyComparer : IEqualityComparer<Currency>
+    {
+        public bool Equals(Currency b1, Currency b2)
+        {
+            return b1 == b2;
+        }
+        public int GetHashCode(Currency bx)
+        {
+            return (int)bx;
+        }
+    }
+
+    public static CurrencyComparer s_currencyComparerComparer = new CurrencyComparer();
+	////////////////////////////
 
 	public class CurrencyData {
 
@@ -802,6 +820,7 @@ public class UserProfile : UserPersistenceSystem
 		#if UNITY_EDITOR
 		JsonFormatter fmt = new JsonFormatter();
 		Debug.Log("<color=cyan>SAVING USER PROFILE:</color> " + fmt.PrettyPrint(json.ToString()));
+		Debug.Log(json.ToString());
 		#endif
     }
 
@@ -895,9 +914,8 @@ public class UserProfile : UserPersistenceSystem
             int count = Enum.GetValues(typeof(ESocialState)).Length;
             string value = profile["socialState"];
             int index = SocialStatesAsString.IndexOf(value);
-            if (index == -1) {
-                if (FeatureSettingsManager.IsDebugEnabled) 
-                    Debug.LogError("USER_PROFILE: " + value + " is not a valid ESocialState");                
+            if (index == -1) {                
+                Debug.LogError("USER_PROFILE: " + value + " is not a valid ESocialState");                
             } else {
                 SocialState = (ESocialState)index;
             }
@@ -1627,7 +1645,7 @@ public class UserProfile : UserPersistenceSystem
         // Because We cach dragon's price on a variable we need to refresh the value
         foreach(KeyValuePair<string, IDragonData> pair in m_dragonsBySku) {
             pair.Value.RefreshPrice();
-            
+            pair.Value.RefreshShadowRevealUnlock();
         }
     }
 

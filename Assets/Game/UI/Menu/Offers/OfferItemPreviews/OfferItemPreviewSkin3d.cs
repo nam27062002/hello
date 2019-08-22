@@ -22,7 +22,10 @@ public class OfferItemPreviewSkin3d : IOfferItemPreview {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	
+	public override OfferItemPrefabs.PrefabType type {
+		get { return OfferItemPrefabs.PrefabType.PREVIEW_3D; }
+	}
+
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//

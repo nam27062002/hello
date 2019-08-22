@@ -343,6 +343,11 @@ if [ "$VERSION_CODE_PARAMS" != "" ]; then
     eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.SetVersionCode ${VERSION_CODE_PARAMS}"
 fi
 
+
+print_builder "Updating version number..."
+eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.updateVersionNumbers"
+
+
 eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.OutputBundleIdentifier"
 PACKAGE_NAME="$(cat bundleIdentifier.txt)"
 rm -f "bundleIdentifier.txt"
@@ -441,7 +446,7 @@ if $UPLOAD;then
   SMB_MOUNT_DIR="server"
   if [ -d "$SMB_MOUNT_DIR" ]; then
     set +e  # Dont exit script on error (in case the server is not actually mounted but the directory exists anyway)
-    umount "${SMB_MOUNT_DIR}"
+    diskutil unmount "${SMB_MOUNT_DIR}"
     rmdir "${SMB_MOUNT_DIR}"
     set -e
   fi
@@ -491,7 +496,7 @@ if $UPLOAD;then
   fi
 
   # Unmount server and remove tmp folder
-  umount "${SMB_MOUNT_DIR}"
+  diskutil unmount "${SMB_MOUNT_DIR}"
   rmdir "${SMB_MOUNT_DIR}"
 fi
 

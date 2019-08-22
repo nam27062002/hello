@@ -181,7 +181,7 @@ public class MapMarker : MonoBehaviour, IBroadcastListener {
 	protected virtual void UpdatePosition() {
 		Transform t = GetMarkerTransform();
 		t.localPosition = Vector3.zero;
-		t.position = t.position + new Vector3(0f, 0f, UIConstants.MAP_MARKERS_DEPTH);
+		t.position = t.position + GameConstants.Vector3.forward * UIConstants.MAP_MARKERS_DEPTH;
 	}
 
 	/// <summary>

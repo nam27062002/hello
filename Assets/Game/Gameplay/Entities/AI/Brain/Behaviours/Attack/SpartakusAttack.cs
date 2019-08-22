@@ -16,13 +16,13 @@ namespace AI {
 		[CreateAssetMenu(menuName = "Behaviour/Attack/Spartakus Attack")]
 		public class SpartakusAttack : StateComponent {
 			[StateTransitionTrigger]
-			private static string OnDizzyRecover = "onDizzyRecover";
+			private static readonly int onDizzyRecover = UnityEngine.Animator.StringToHash("onDizzyRecover");
 
-			[StateTransitionTrigger]
-			private static string OnOutOfRange = "onOutOfRange";
+            [StateTransitionTrigger]
+			private static readonly int onOutOfRange = UnityEngine.Animator.StringToHash("onOutOfRange");
 
-			//-----------------------------------------------------
-			private enum AttackState {
+            //-----------------------------------------------------
+            private enum AttackState {
 				Idle = 0,
 				Attack,
 				Dizzy	
@@ -58,7 +58,7 @@ namespace AI {
 				m_meleeWeapon.enabled = false;
 			}
 
-			protected override void OnEnter(State oldState, object[] param) {
+			protected override void OnEnter(State _oldState, object[] _param) {
 				m_animEvents.onJumpImpulse   += new SpartakusAnimationEvents.OnJumpImpulseDelegate(Jump);
                 m_animEvents.onJumpFallDown  += new SpartakusAnimationEvents.OnJumpFallDownDelegate(FallDown);
                 m_animEvents.onJumpReception += new SpartakusAnimationEvents.OnJumpReceptionDelegate(EndAttack);
@@ -144,7 +144,7 @@ namespace AI {
 					if (m_machine.GetSignal(Signals.Type.Danger)) {
 						m_attackState = AttackState.Idle;
 					} else {
-						Transition(OnOutOfRange);
+						Transition(onOutOfRange);
 					}
 				} else {
 					m_pilot.PressAction(Pilot.Action.Button_B);
@@ -157,7 +157,7 @@ namespace AI {
 
 			private void DizzyRecover() {
 				m_machine.DisableSensor(m_data.retreatTime);
-				Transition(OnDizzyRecover);
+				Transition(onDizzyRecover);
 			}
 		}
 	}

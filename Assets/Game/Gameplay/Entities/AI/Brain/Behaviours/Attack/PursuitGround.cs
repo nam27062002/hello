@@ -2,148 +2,148 @@
 using System.Collections;
 
 namespace AI {
-	namespace Behaviour {
-		[System.Serializable]
-		public class PursuitGroundData : StateComponentData {
-			public float speed;
-			public float arrivalRadius = 1f;
-			public string attackPoint;
-			public bool hasGuardState = false;
-			public bool moveAwayOnCritical = true;
-		}
+    namespace Behaviour {
+        [System.Serializable]
+        public class PursuitGroundData : StateComponentData {
+            public float speed;
+            public float arrivalRadius = 1f;
+            public string attackPoint;
+            public bool hasGuardState = false;
+            public bool moveAwayOnCritical = true;
+        }
 
-		[CreateAssetMenu(menuName = "Behaviour/Attack/Pursuit Ground")]
-		public class PursuitGround : StateComponent {
+        [CreateAssetMenu(menuName = "Behaviour/Attack/Pursuit Ground")]
+        public class PursuitGround : StateComponent {
 
-			[StateTransitionTrigger]
-			private static string OnEnemyInRange = "onEnemyInRange";
+            [StateTransitionTrigger]
+            private static readonly int onEnemyInRange = UnityEngine.Animator.StringToHash("onEnemyInRange");
 
-			[StateTransitionTrigger]
-			private static string OnEnemyInGuardArea = "onEnemyInGuardArea";
+            [StateTransitionTrigger]
+            private static readonly int onEnemyInGuardArea = UnityEngine.Animator.StringToHash("onEnemyInGuardArea");
 
-			[StateTransitionTrigger]
-			private static string OnEnemyOutOfSight = "onEnemyOutOfSight";
-
-
-			private enum PursuitState {
-				Move_Towards = 0,
-				Move_Away
-			};
+            [StateTransitionTrigger]
+            private static readonly int onEnemyOutOfSight = UnityEngine.Animator.StringToHash("onEnemyOutOfSight");
 
 
-			protected PursuitGroundData m_data;
-			protected Transform m_target;
+            private enum PursuitState {
+                Move_Towards = 0,
+                Move_Away
+            };
 
-			private PursuitState m_pursuitState;
-			private object[] m_transitionParam;
 
-			public override StateComponentData CreateData() {
-				return new PursuitData();
-			}
+            protected PursuitGroundData m_data;
+            protected Transform m_target;
 
-			public override System.Type GetDataType() {
-				return typeof(PursuitGroundData);
-			}
+            private PursuitState m_pursuitState;
+            private object[] m_transitionParam;
 
-			protected override void OnInitialise() {
-				m_data = m_pilot.GetComponentData<PursuitGroundData>();
+            public override StateComponentData CreateData() {
+                return new PursuitData();
+            }
 
-				m_machine.SetSignal(Signals.Type.Alert, true);
-				m_transitionParam = new object[1];
-				m_target = null;
-			}
+            public override System.Type GetDataType() {
+                return typeof(PursuitGroundData);
+            }
 
-			protected override void OnEnter(State oldState, object[] param) {
-				m_pilot.Stop();
-				m_pilot.SlowDown(true);
+            protected override void OnInitialise() {
+                m_data = m_pilot.GetComponentData<PursuitGroundData>();
 
-				m_target = null;
+                m_machine.SetSignal(Signals.Type.Alert, true);
+                m_transitionParam = new object[1];
+                m_target = null;
+            }
 
-				if (m_machine.enemy != null) {
-					m_target = m_machine.enemy.FindTransformRecursive(m_data.attackPoint);
-					if (m_target == null) {
-						m_target = m_machine.enemy;
-					}
-				}
+            protected override void OnEnter(State oldState, object[] param) {
+                m_pilot.Stop();
+                m_pilot.SlowDown(true);
 
-				m_pursuitState = PursuitState.Move_Towards;
-			}
+                m_target = null;
 
-			protected override void OnUpdate() {
-				if (!m_machine.GetSignal(Signals.Type.Warning)) {
-					m_target = null;
-				}
-									
-				if (m_target != null) {
-					if (m_pursuitState == PursuitState.Move_Towards) {
-						if (m_data.moveAwayOnCritical && m_machine.GetSignal(Signals.Type.Critical)) {
-							ChangeState(PursuitState.Move_Away);
-						} else {
-							bool onGuardArea = false;
+                if (m_machine.enemy != null) {
+                    m_target = m_machine.enemy.FindTransformRecursive(m_data.attackPoint);
+                    if (m_target == null) {
+                        m_target = m_machine.enemy;
+                    }
+                }
 
-							if (m_machine.GetSignal(Signals.Type.Danger)) {
-								if (m_target.position.x < m_machine.position.x) m_pilot.SetDirection(Vector3.left, true);
-								else 											m_pilot.SetDirection(Vector3.right, true);
-								m_transitionParam[0] = m_target;
+                m_pursuitState = PursuitState.Move_Towards;
+            }
 
-								m_pilot.Stop();
-								Transition(OnEnemyInRange, m_transitionParam);
-							} else {
-								if (m_data.hasGuardState) {
-									float m = Mathf.Abs(m_machine.position.x - m_target.position.x);
-									onGuardArea = m <= 2f;
-								}
+            protected override void OnUpdate() {
+                if (!m_machine.GetSignal(Signals.Type.Warning)) {
+                    m_target = null;
+                }
 
-								if (onGuardArea) {
-									if (m_target.position.x < m_machine.position.x) m_pilot.SetDirection(Vector3.left, true);
-									else 											m_pilot.SetDirection(Vector3.right, true);
-									m_transitionParam[0] = m_target;
-								
-									m_pilot.Stop();
-									Transition(OnEnemyInGuardArea, m_transitionParam);
-								} else {
-									m_pilot.SetMoveSpeed(m_data.speed, false);
+                if (m_target != null) {
+                    if (m_pursuitState == PursuitState.Move_Towards) {
+                        if (m_data.moveAwayOnCritical && m_machine.GetSignal(Signals.Type.Critical)) {
+                            ChangeState(PursuitState.Move_Away);
+                        } else {
+                            bool onGuardArea = false;
 
-									Vector3 direction = m_machine.groundDirection;
-									direction.z = 0f;
+                            if (m_machine.GetSignal(Signals.Type.Danger)) {
+                                if (m_target.position.x < m_machine.position.x) m_pilot.SetDirection(Vector3.left, true);
+                                else m_pilot.SetDirection(Vector3.right, true);
+                                m_transitionParam[0] = m_target;
 
-									if (m_target.position.x < m_machine.position.x) {
-										direction *= -1;
-									}
+                                m_pilot.Stop();
+                                Transition(onEnemyInRange, m_transitionParam);
+                            } else {
+                                if (m_data.hasGuardState) {
+                                    float m = Mathf.Abs(m_machine.position.x - m_target.position.x);
+                                    onGuardArea = m <= 2f;
+                                }
 
-									Vector3 target = m_machine.position + direction * m_data.speed;
-									m_pilot.GoTo(target);
-								}
-							}
-						}
-					} else if (m_pursuitState == PursuitState.Move_Away) {
-						if (m_machine.GetSignal(Signals.Type.Critical)) {
-							m_pilot.SetMoveSpeed(m_data.speed, false);
+                                if (onGuardArea) {
+                                    if (m_target.position.x < m_machine.position.x) m_pilot.SetDirection(Vector3.left, true);
+                                    else m_pilot.SetDirection(Vector3.right, true);
+                                    m_transitionParam[0] = m_target;
 
-							// Player is inside our Critical area and we can't attack it from here, me should move back a bit
-							Vector3 direction = m_machine.groundDirection;
-							direction.z = 0f;
+                                    m_pilot.Stop();
+                                    Transition(onEnemyInGuardArea, m_transitionParam);
+                                } else {
+                                    m_pilot.SetMoveSpeed(m_data.speed, false);
 
-							if (m_target.position.x > m_machine.position.x) {
-								direction *= -1;
-							}
+                                    Vector3 direction = m_machine.groundDirection;
+                                    direction.z = 0f;
 
-							Vector3 target = m_machine.position + direction * m_data.speed;
-							m_pilot.GoTo(target);
-						} else {
-							ChangeState(PursuitState.Move_Towards);
-						}
-					}
-				} else {
-					Transition(OnEnemyOutOfSight);
-				}
-			}
+                                    if (m_target.position.x < m_machine.position.x) {
+                                        direction *= -1;
+                                    }
 
-			private void ChangeState(PursuitState _newState) {
-				if (_newState != m_pursuitState) {
-					m_pursuitState = _newState;
-				}
-			}
-		}
-	}
+                                    Vector3 target = m_machine.position + direction * m_data.speed;
+                                    m_pilot.GoTo(target);
+                                }
+                            }
+                        }
+                    } else if (m_pursuitState == PursuitState.Move_Away) {
+                        if (m_machine.GetSignal(Signals.Type.Critical)) {
+                            m_pilot.SetMoveSpeed(m_data.speed, false);
+
+                            // Player is inside our Critical area and we can't attack it from here, me should move back a bit
+                            Vector3 direction = m_machine.groundDirection;
+                            direction.z = 0f;
+
+                            if (m_target.position.x > m_machine.position.x) {
+                                direction *= -1;
+                            }
+
+                            Vector3 target = m_machine.position + direction * m_data.speed;
+                            m_pilot.GoTo(target);
+                        } else {
+                            ChangeState(PursuitState.Move_Towards);
+                        }
+                    }
+                } else {
+                    Transition(onEnemyOutOfSight);
+                }
+            }
+
+            private void ChangeState(PursuitState _newState) {
+                if (_newState != m_pursuitState) {
+                    m_pursuitState = _newState;
+                }
+            }
+        }
+    }
 }

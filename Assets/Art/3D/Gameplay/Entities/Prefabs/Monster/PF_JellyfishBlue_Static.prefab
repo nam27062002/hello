@@ -21,7 +21,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &443304
 Transform:
   m_ObjectHideFlags: 1
@@ -59,6 +59,7 @@ MonoBehaviour:
   m_animA: 
   m_animB: 
   m_animC: 
+  m_materialChangeExceptions: []
   m_useFreezeParticle: 0
   m_freezeParticleScale: 1
   m_useMoveAnimInLove: 0
@@ -274,6 +275,19 @@ MonoBehaviour:
   m_onPanicAudio: 
   m_idleAudio: hd_ghost_idle
   m_skins: []
+  m_entity: {fileID: 11410284}
+  m_animator: {fileID: 0}
+  m_isAnimatorAvailable: 0
+  m_renderers:
+  - {fileID: 23263387633209552}
+  - {fileID: 23103573652005148}
+  m_specialAnimations: 000000
+  m_animA_Hash: 0
+  m_animB_Hash: 0
+  m_animC_Hash: 0
+  m_animEvents: {fileID: 0}
+  m_transform: {fileID: 443304}
+  m_view: {fileID: 4029790738156382}
 --- !u!114 &11410284
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -286,6 +300,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_tags: 8204
+  m_otherSpawnables:
+  - {fileID: 114388696739840102}
+  - {fileID: 11400102}
+  - {fileID: 114487487468086076}
+  m_otherSpawnablesCount: 3
+  m_pilot: {fileID: 114487487468086076}
+  m_machine: {fileID: 114388696739840102}
+  m_viewControl: {fileID: 11400102}
+  m_equip: {fileID: 0}
   m_sku: JellyfishBlue
   m_hideNeedTierMessage: 1
   m_dieOutsideFrustum: 1
@@ -523,6 +546,7 @@ MonoBehaviour:
   m_energy: 10
   m_energyDrainSec: 1
   m_energyRecoverSec: 1
+  m_machine: {fileID: 0}
   m_brainResource: {fileID: 11400000, guid: 590111f57a62ae1448c942fac85818f0, type: 2}
   m_railSeparation:
     min: 0.5

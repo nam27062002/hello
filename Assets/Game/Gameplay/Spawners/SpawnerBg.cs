@@ -187,7 +187,7 @@ public class SpawnerBg : AbstractSpawner {
         spawning.transform.localScale = Vector3.one * m_scale.GetRandom();
     }
 
-	protected override void OnMachineSpawned(AI.IMachine machine) {
+	protected override void OnMachineSpawned(AI.IMachine machine, uint index) {
         if (m_groupController)
             machine.EnterGroup(ref m_groupController.flock);
     }

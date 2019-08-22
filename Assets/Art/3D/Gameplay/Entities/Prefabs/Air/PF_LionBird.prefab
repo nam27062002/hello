@@ -15,14 +15,13 @@ GameObject:
   - component: {fileID: 11497242}
   - component: {fileID: 54000013900218966}
   - component: {fileID: 136617037725372644}
-  - component: {fileID: 135090624159108870}
   m_Layer: 25
   m_Name: PF_LionBird
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &418736
 Transform:
   m_ObjectHideFlags: 1
@@ -30,11 +29,12 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 117248}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -843.4659, y: -111.01663, z: 0}
+  m_LocalPosition: {x: -200.72432, y: 100.07013, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4354625165897010}
   - {fileID: 4188827436941556}
+  - {fileID: 4143057983000942}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -64,6 +64,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_tags: 6
+  m_otherSpawnables:
+  - {fileID: 114430354054751308}
+  - {fileID: 11481972}
+  - {fileID: 11497242}
+  m_otherSpawnablesCount: 3
+  m_pilot: {fileID: 11481972}
+  m_machine: {fileID: 114430354054751308}
+  m_viewControl: {fileID: 11497242}
+  m_equip: {fileID: 0}
   m_sku: LionBird
   m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1
@@ -82,13 +91,14 @@ MonoBehaviour:
   m_energy: 10
   m_energyDrainSec: 1
   m_energyRecoverSec: 1
+  m_machine: {fileID: 0}
   m_brainResource: {fileID: 11400000, guid: 741f4b4c67304434589847a34aba0015, type: 2}
   m_railSeparation:
     min: 0.5
     max: 1
   m_useSpawnerRotation: 0
   m_serializedJson: '[{"speed":1,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"damage":5,"type":9,"delay":1.5,"dataType":"AI.Behaviour.AttackPassiveData","editorFolded":false}]'
-  m_databaseKey: PF_LionBird
+  m_databaseKey: PF_LionBird (1)
   m_preciseDestArrival: 1
   m_avoidDistanceAttenuation: 3.5
   m_avoidCollisions: 1
@@ -116,6 +126,7 @@ MonoBehaviour:
   m_animA: 
   m_animB: 
   m_animC: 
+  m_materialChangeExceptions: []
   m_useFreezeParticle: 0
   m_freezeParticleScale: 1
   m_useMoveAnimInLove: 0
@@ -331,6 +342,18 @@ MonoBehaviour:
   m_onPanicAudio: 
   m_idleAudio: 
   m_skins: []
+  m_entity: {fileID: 11467872}
+  m_animator: {fileID: 95309343808173750}
+  m_isAnimatorAvailable: 0
+  m_renderers:
+  - {fileID: 137932971197983090}
+  m_specialAnimations: 000000
+  m_animA_Hash: 0
+  m_animB_Hash: 0
+  m_animC_Hash: 0
+  m_animEvents: {fileID: 0}
+  m_transform: {fileID: 418736}
+  m_view: {fileID: 4354625165897010}
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
@@ -353,6 +376,23 @@ GameObject:
   - component: {fileID: 114814969195438744}
   m_Layer: 25
   m_Name: LightningSparks
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!1 &1491207404562772
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4143057983000942}
+  - component: {fileID: 135649283122156884}
+  - component: {fileID: 54574891370802306}
+  m_Layer: 25
+  m_Name: colliders
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -390,6 +430,19 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!4 &4143057983000942
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1491207404562772}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 418736}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4188827436941556
 Transform:
   m_ObjectHideFlags: 1
@@ -442,6 +495,21 @@ Rigidbody:
   m_AngularDrag: 0
   m_UseGravity: 0
   m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
+--- !u!54 &54574891370802306
+Rigidbody:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1491207404562772}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 0
+  m_IsKinematic: 1
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
@@ -566,12 +634,12 @@ MonoBehaviour:
     offset: {x: 0, y: 0, z: 0}
     scale: 1
     orientate: 0
---- !u!135 &135090624159108870
+--- !u!135 &135649283122156884
 SphereCollider:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 117248}
+  m_GameObject: {fileID: 1491207404562772}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1

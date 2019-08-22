@@ -1,4 +1,9 @@
+#if DEBUG && !DISABLE_LOGS
+#define ENABLE_LOGS
+#endif
+
 using System;
+using System.Diagnostics;
 using System.Globalization;
 
 public class PersistenceFacade : IBroadcastListener
@@ -101,9 +106,8 @@ public class PersistenceFacade : IBroadcastListener
         Sync_IsSyncing = true;
 
         Action onLoadDone = delegate()
-		{
-            if (FeatureSettingsManager.IsDebugEnabled)
-                Log("SYNC: Loading  local DONE! " + LocalData.LoadState);           
+		{            
+            Log("SYNC: Loading  local DONE! " + LocalData.LoadState);           
 
 			// If local persistence is corrupted then we'll try to override it with cloud persistence if the user has ever logged in the social network
 			if (LocalData.LoadState == PersistenceStates.ELoadState.Corrupted)
@@ -151,9 +155,8 @@ public class PersistenceFacade : IBroadcastListener
                 }                
 			}
 			else
-			{
-                if (FeatureSettingsManager.IsDebugEnabled)
-                    Log("Ready lo load local persistence in game ");
+			{                
+                Log("Ready lo load local persistence in game ");
 
                 Config.LocalDriver.IsLoadedInGame = true;
 
@@ -182,9 +185,8 @@ public class PersistenceFacade : IBroadcastListener
                 }
 			}			
 		};
-
-        if (FeatureSettingsManager.IsDebugEnabled)
-            Log("SYNC: Loading local...");
+        
+        Log("SYNC: Loading local...");
 
 		Config.LocalDriver.Load(onLoadDone);
 	}
@@ -247,14 +249,12 @@ public class PersistenceFacade : IBroadcastListener
     private void Sync_OnDone(PersistenceStates.ESyncResult result, Action onDone)
 	{
         Sync_IsSyncing = false;
-
-        if (FeatureSettingsManager.IsDebugEnabled)
-            PersistenceFacade.Log("(SYNCER) Sync_OnDone result = " + result);
+        
+        Log("(SYNCER) Sync_OnDone result = " + result);
 
         if (result == PersistenceStates.ESyncResult.NeedsToReload)
-		{
-            if (FeatureSettingsManager.IsDebugEnabled)
-                PersistenceFacade.Log("(SYNCER) RELOADS THE APP TO LOAD CLOUD PERSISTENCE");
+		{        
+            Log("(SYNCER) RELOADS THE APP TO LOAD CLOUD PERSISTENCE");
 
             ApplicationManager.instance.NeedsToRestartFlow = true;
         } 
@@ -399,9 +399,8 @@ public class PersistenceFacade : IBroadcastListener
     /// Opens a popup to make the user wait until the response of a request related to persistence is received
     /// </summary>
     public static void Popups_OpenLoadingPopup()
-    {
-        if (FeatureSettingsManager.IsDebugEnabled)
-            Log("Popups_OpenLoadingPopup canOpen = " + (!Popups_IsLoadingPopupOpen()));
+    {        
+        Log("Popups_OpenLoadingPopup canOpen = " + (!Popups_IsLoadingPopupOpen()));
 
         if (!Popups_IsLoadingPopupOpen())
         {			
@@ -410,9 +409,8 @@ public class PersistenceFacade : IBroadcastListener
     }
 
     public static void Popups_CloseLoadingPopup()
-    {
-        if (FeatureSettingsManager.IsDebugEnabled)
-            Log("Popups_CloseLoadingPopup IsOpen = " + Popups_IsLoadingPopupOpen());
+    {        
+        Log("Popups_CloseLoadingPopup IsOpen = " + Popups_IsLoadingPopupOpen());
 
         if (Popups_IsLoadingPopupOpen())
         {			
@@ -421,9 +419,8 @@ public class PersistenceFacade : IBroadcastListener
     }
 	
     private static void Popups_OnPopupClosed(PopupController popup)
-    {
-        if (FeatureSettingsManager.IsDebugEnabled)
-            Log("Popups_OnPopupClosed canClose = " + (popup == Popups_LoadingPopup));
+    {        
+        Log("Popups_OnPopupClosed canClose = " + (popup == Popups_LoadingPopup));
 
         if (popup == Popups_LoadingPopup)
         {
@@ -814,6 +811,11 @@ public class PersistenceFacade : IBroadcastListener
     private const string LOG_CHANNEL = "[Persistence] ";    
     private const string LOG_CHANNEL_COLOR = "<color=cyan>" + LOG_CHANNEL;
 
+    #if ENABLE_LOGS
+    [Conditional("DEBUG")]
+    #else
+    [Conditional("FALSE")]
+    #endif
     public static void Log(string msg)
     {
         if (LOG_USE_COLOR)
@@ -828,12 +830,22 @@ public class PersistenceFacade : IBroadcastListener
         ControlPanel.Log(msg);
     }
 
+    #if ENABLE_LOGS
+    [Conditional("DEBUG")]
+    #else
+    [Conditional("FALSE")]
+    #endif
     public static void LogError(string msg)
     {
         ControlPanel.LogError(LOG_CHANNEL + msg);
     }
 
-	public static void LogWarning(string msg)
+    #if ENABLE_LOGS
+    [Conditional("DEBUG")]
+    #else
+    [Conditional("FALSE")]
+    #endif
+    public static void LogWarning(string msg)
     {
         ControlPanel.LogWarning(LOG_CHANNEL + msg);
     }

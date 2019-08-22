@@ -9,11 +9,17 @@ using TMPro;
 /// </summary>
 public abstract class HudWidget : MonoBehaviour
 {
-    //------------------------------------------------------------------//
-    // PROPERTIES														//
-    //------------------------------------------------------------------//
-    [SerializeField]protected TextMeshProUGUI m_valueTxt;
+	//------------------------------------------------------------------//
+	// CONSTANTS														//
+	//------------------------------------------------------------------//
+	protected const float MINIMUM_ANIM_INTERVAL = 0f;	// Seconds, minimum time without updating before triggering the animation again
+
+	//------------------------------------------------------------------//
+	// PROPERTIES														//
+	//------------------------------------------------------------------//
+	[SerializeField]protected TextMeshProUGUI m_valueTxt;
     protected Animator m_anim;
+	private float m_lastAnimTimestamp = 0f;
 
     //------------------------------------------------------------------//
     // GENERIC METHODS													//
@@ -99,14 +105,25 @@ public abstract class HudWidget : MonoBehaviour
 
     private void PlayAnim()
     {
-        if (m_anim != null)
-            PlayAnimExtended();
+		NeedsToPlayAnim = false;
 
-        NeedsToPlayAnim = false;
-    }
+		if(m_anim != null) {
+			// Has enough time passed?
+			if(Time.realtimeSinceStartup - m_lastAnimTimestamp >= GetMinimumAnimInterval()) {
+				PlayAnimExtended();
+			}
+		}
+
+		// Reset timer
+		m_lastAnimTimestamp = Time.realtimeSinceStartup;
+	}
 
     protected virtual void PlayAnimExtended()
     {
 		m_anim.SetTrigger( GameConstants.Animator.START );
     }
+
+	protected virtual float GetMinimumAnimInterval() {
+		return MINIMUM_ANIM_INTERVAL;
+	}
 }

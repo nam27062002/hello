@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------------//
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Events;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -52,6 +53,9 @@ public class BaseIcon : MonoBehaviour {
     private bool isLoadFinished;
     public bool IsLoadFinished
     { get { return isLoadFinished; } }
+
+	// Events
+	public UnityEvent OnLoadFinished = new UnityEvent();
 
     //------------------------------------------------------------------------//
     // GENERIC METHODS														  //
@@ -109,6 +113,8 @@ public class BaseIcon : MonoBehaviour {
                 // Load the sprite. The sprite name is the icon definition sku
                 m_2dIcon.sprite = Resources.Load<Sprite>(UIConstants.MISSION_ICONS_PATH + iconDef.GetAsString("asset"));
 
+				isLoadFinished = true;
+				OnLoadFinished.Invoke();
             }
             else
             {
@@ -140,9 +146,10 @@ public class BaseIcon : MonoBehaviour {
             if (HDAddressablesManager.Instance.IsResourceAvailable(assetId) )
             {
 
-                // Load the 3d model asynchronously
+				// Load the 3d model asynchronously
+				isLoadFinished = false;
                 AddressablesOp op = m_3dIcon.LoadAsync(iconDef.GetAsString("asset"));
-                op.OnDone = OnLoadFinished;
+                op.OnDone = OnAddressablesLoadFinished;
 
             }
             else
@@ -188,11 +195,11 @@ public class BaseIcon : MonoBehaviour {
     }
 
     // Asynchronous load callback when the asset is successfully loaded
-    private void OnLoadFinished(AddressablesOp op)
+    private void OnAddressablesLoadFinished(AddressablesOp op)
     {
 
         isLoadFinished = true;
-
-    }
+		OnLoadFinished.Invoke();
+	}
 
 }

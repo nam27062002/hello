@@ -58,48 +58,66 @@ public class DragonEquip : MonoBehaviour {
 
 	private List<Renderer> m_renderers = new List<Renderer>();
 	private Dictionary<int, List<Material>> m_materials = new Dictionary<int, List<Material>>();
+    
+    private bool m_initAtStart;
+    private bool m_initAtStartUseTournament;
+    private bool m_arePetsVisible;
 
 
-
-	//------------------------------------------------------------------------//
-	// GENERIC METHODS														  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Initialization.
-	/// </summary>
-	private void Awake() {
+    //------------------------------------------------------------------------//
+    // GENERIC METHODS														  //
+    //------------------------------------------------------------------------//
+    /// <summary>
+    /// Initialization.
+    /// </summary>
+    private void Awake() {
 		//-------------------------------------
 		if (sm_silhouetteMaterial == null) 	sm_silhouetteMaterial  = new Material(Resources.Load("Game/Materials/DragonSilhouette") as Material);
-		//-------------------------------------
+        //-------------------------------------
 
-		Init();
+        m_initAtStart = false;
+        Init();
 
 		// Equip current disguise
 		if (m_equipOnAwake){
-			if ( m_menuMode )
-			{
+			if (m_menuMode) {
+				//EquipPets(SceneController.mode == SceneController.Mode.TOURNAMENT);
 				EquipDisguise(UsersManager.currentUser.GetEquipedDisguise(m_dragonSku));
-			}
-			else
-			{
+			} else {				
 				// Check if tournament/build active
-                if ( HDLiveDataManager.tournament.isActive )
-				{
+                if (HDLiveDataManager.tournament.isActive) {
+					EquipPets(true);
 					EquipDisguise(HDLiveDataManager.tournament.tournamentData.tournamentDef.dragonData.disguise);
-				}
-				else
-				{
+				} else {
+					EquipPets(false);
 					EquipDisguise(UsersManager.currentUser.GetEquipedDisguise(m_dragonSku));
 				}
-
 			}
 		}
 	}
 
-	public void CacheRenderesAndMaterials()
+    private void Start() {
+        if (m_initAtStart) {
+            Init();
+            EquipDisguise(m_dragonDisguiseSku);
+            EquipPets(m_initAtStartUseTournament);
+            TogglePets(m_arePetsVisible, false);
+
+            m_initAtStart = false;
+        }
+    }
+
+    public void InitAtStart(string _disguiseSku, bool _isTournament, bool _arePetsVisible) {
+        m_initAtStart = true;
+        m_dragonDisguiseSku = _disguiseSku;
+        m_initAtStartUseTournament = _isTournament;
+        m_arePetsVisible = _arePetsVisible;
+    }
+
+    public void CacheRenderesAndMaterials()
 	{
 		m_renderers.Clear();
-		Transform view = transform.Find("view");
+		Transform view = transform.FindTransformRecursive("view");
 		if (view != null) {
 			Renderer[] renderers = view.GetComponentsInChildren<Renderer>();
 			m_materials.Clear();
@@ -162,22 +180,6 @@ public class DragonEquip : MonoBehaviour {
 		}
 	}
 
-	private void Start() {
-		// Equip current pets loadout
-		if (m_equipPets) {
-			List<string> pets = UsersManager.currentUser.GetEquipedPets(m_dragonSku);
-
-            if (SceneController.mode == SceneController.Mode.TOURNAMENT) {
-                pets = HDLiveDataManager.tournament.tournamentData.tournamentDef.dragonData.pets;
-            } else {
-                pets = UsersManager.currentUser.GetEquipedPets(m_dragonSku);
-            }
-
-			for(int i = 0; i < pets.Count; i++) {
-				EquipPet(pets[i], i);
-			}
-		}
-	}
 
 	/// <summary>
 	/// The component has been enabled.
@@ -227,6 +229,22 @@ public class DragonEquip : MonoBehaviour {
 			if ( i > (int) Equipable.AttachPoint.Pet_5 && m_attachPoints[i] != null)
 			{
 				m_attachPoints[i].Unequip(true);
+			}
+		}
+	}
+
+	public void EquipPets(bool _useTournamentPets) {
+		if (m_equipPets) {
+			List<string> pets = UsersManager.currentUser.GetEquipedPets(m_dragonSku);
+
+			if (_useTournamentPets) {
+				pets = HDLiveDataManager.tournament.tournamentData.tournamentDef.dragonData.pets;
+			} else {
+				pets = UsersManager.currentUser.GetEquipedPets(m_dragonSku);
+			}
+
+			for(int i = 0; i < pets.Count; i++) {
+				EquipPet(pets[i], i);
 			}
 		}
 	}
@@ -535,6 +553,14 @@ public class DragonEquip : MonoBehaviour {
                 }
 			}
 			m_renderers[i].materials = materials.ToArray();
+		}
+	}
+
+	public void UnequipAllPets()
+	{
+		for (int i = (int)Equipable.AttachPoint.Pet_1; i <= (int)Equipable.AttachPoint.Pet_5; i++)
+		{
+			EquipPet( "", i-(int)Equipable.AttachPoint.Pet_1 );
 		}
 	}
 

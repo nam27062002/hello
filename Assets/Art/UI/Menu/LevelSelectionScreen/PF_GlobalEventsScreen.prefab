@@ -850,6 +850,7 @@ GameObject:
   - component: {fileID: 222531590438235474}
   - component: {fileID: 114992568445050262}
   - component: {fileID: 114270074325296862}
+  - component: {fileID: 114765379649611794}
   m_Layer: 5
   m_Name: RewardIcon
   m_TagString: Untagged
@@ -1363,6 +1364,7 @@ GameObject:
   - component: {fileID: 222894023721059350}
   - component: {fileID: 114610955591327502}
   - component: {fileID: 114423969571552116}
+  - component: {fileID: 114336665995834520}
   m_Layer: 5
   m_Name: RewardIcon
   m_TagString: Untagged
@@ -1432,6 +1434,7 @@ GameObject:
   - component: {fileID: 222048537998470446}
   - component: {fileID: 114402242619600254}
   - component: {fileID: 114050881944081758}
+  - component: {fileID: 114743458692144574}
   m_Layer: 5
   m_Name: RewardIcon
   m_TagString: Untagged
@@ -2959,6 +2962,7 @@ GameObject:
   - component: {fileID: 222889506722456250}
   - component: {fileID: 114310497948924206}
   - component: {fileID: 114455956336975812}
+  - component: {fileID: 114415813759501770}
   m_Layer: 5
   m_Name: RewardIcon
   m_TagString: Untagged
@@ -4693,7 +4697,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_icon: {fileID: 114310497948924206}
-  m_iconLoader: {fileID: 0}
+  m_iconLoader: {fileID: 114415813759501770}
   m_rewardText: {fileID: 114189018707704862}
   m_showNameForEggsAndPets: 1
   m_showNameForCurrencies: 0
@@ -7015,6 +7019,21 @@ MonoBehaviour:
   m_tid: TID_LIVEOPS_OPEN_STORE_URL
   m_caseType: 1
   m_replacements: []
+--- !u!114 &114336665995834520
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1469360281406078}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 285cd8cfbf6c84d2fab86d95b9d993fc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_assetId: 
+  m_loadOnAwake: 0
+  m_image: {fileID: 114610955591327502}
+  m_loadingPrefab: {fileID: 0}
 --- !u!114 &114349627454027280
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -7138,7 +7157,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_icon: {fileID: 114402242619600254}
-  m_iconLoader: {fileID: 0}
+  m_iconLoader: {fileID: 114743458692144574}
   m_rewardText: {fileID: 114616824083782722}
   m_showNameForEggsAndPets: 1
   m_showNameForCurrencies: 0
@@ -7455,7 +7474,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_icon: {fileID: 114610955591327502}
-  m_iconLoader: {fileID: 0}
+  m_iconLoader: {fileID: 114336665995834520}
   m_rewardText: {fileID: 114885415088858050}
   m_showNameForEggsAndPets: 1
   m_showNameForCurrencies: 0
@@ -7463,6 +7482,21 @@ MonoBehaviour:
   m_powerIcon: {fileID: 0}
   m_targetText: {fileID: 114157904013955576}
   m_tick: {fileID: 114265267981068030}
+--- !u!114 &114415813759501770
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1965518450553944}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 285cd8cfbf6c84d2fab86d95b9d993fc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_assetId: 
+  m_loadOnAwake: 0
+  m_image: {fileID: 114310497948924206}
+  m_loadingPrefab: {fileID: 0}
 --- !u!114 &114417909101614266
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -9826,7 +9860,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_icon: {fileID: 114992568445050262}
-  m_iconLoader: {fileID: 0}
+  m_iconLoader: {fileID: 114765379649611794}
   m_rewardText: {fileID: 114973067606649272}
   m_showNameForEggsAndPets: 1
   m_showNameForCurrencies: 0
@@ -10442,6 +10476,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_audioId: 
+--- !u!114 &114743458692144574
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1484610591505268}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 285cd8cfbf6c84d2fab86d95b9d993fc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_assetId: 
+  m_loadOnAwake: 0
+  m_image: {fileID: 114402242619600254}
+  m_loadingPrefab: {fileID: 0}
 --- !u!114 &114753888543744442
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -10505,6 +10554,21 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
+--- !u!114 &114765379649611794
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1280206241389376}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 285cd8cfbf6c84d2fab86d95b9d993fc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_assetId: 
+  m_loadOnAwake: 0
+  m_image: {fileID: 114992568445050262}
+  m_loadingPrefab: {fileID: 0}
 --- !u!114 &114765865771015104
 MonoBehaviour:
   m_ObjectHideFlags: 1

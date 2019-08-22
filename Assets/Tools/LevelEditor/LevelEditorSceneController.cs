@@ -59,10 +59,12 @@ namespace LevelEditor {
 			// Initialize fake profile for the level editor
             UsersManager.CreateInstance();
 
+
 			DragonManager.SetupUser(UsersManager.currentUser);
             MissionManager.SetupUser(UsersManager.currentUser);
             EggManager.SetupUser(UsersManager.currentUser);
             ChestManager.SetupUser(UsersManager.currentUser);
+
             GameStoreManager.SharedInstance.Initialize();
 
             PersistenceFacade.instance.Reset();            
@@ -75,6 +77,28 @@ namespace LevelEditor {
 			}
 
             PoolManager.instance.poolLimits = PoolManager.PoolLimits.Unlimited;
+
+			// Prepare pets
+			System.Collections.Generic.List<string> equipedPets = UsersManager.currentUser.GetEquipedPets(LevelEditor.settings.testDragon);
+			for (int i = 0; i < equipedPets.Count; i++)
+			{
+				UsersManager.currentUser.UnequipPet(LevelEditor.settings.testDragon, equipedPets[i]);
+			}
+			// Set pets
+			// Unlock all pets
+			System.Collections.Generic.List<DefinitionNode> petDefs = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.PETS);
+			for(int i = 0; i < petDefs.Count; i++) {
+				UsersManager.currentUser.petCollection.UnlockPet(petDefs[i].sku);
+			}
+
+			for (int i = 0; i < LevelEditor.settings.testPets.Length; i++)
+			{
+				string petSku = LevelEditor.settings.testPets[i];
+				if ( !string.IsNullOrEmpty(petSku) && petSku != "none" )
+				{
+					UsersManager.currentUser.EquipPet(LevelEditor.settings.testDragon, petSku);
+				}
+			}
 
             // Load the dragon
             DragonManager.LoadDragon(LevelEditor.settings.testDragon);
@@ -178,10 +202,9 @@ namespace LevelEditor {
 				m_elapsedSeconds += Time.deltaTime;
 
 				if (Input.GetKeyDown(KeyCode.I))
-				{
-					bool usingEditor = true;
-					InstanceManager.player.StartIntroMovement( usingEditor );
-					InstanceManager.gameCamera.StartIntro( usingEditor );
+				{					
+					SpawnPlayer(true);
+					
 					LevelTypeSpawners sp = FindObjectOfType<LevelTypeSpawners>();
 					if ( sp != null )
 						sp.IntroSpawn(InstanceManager.player.data.def.sku);
@@ -215,29 +238,34 @@ namespace LevelEditor {
 		private void StartGame() {
 			LevelManager.SetCurrentLevel(LevelEditor.settings.levelSku);
 
+			string bloodOverride = SeasonManager.GetBloodParticlesName();
+			if (string.IsNullOrEmpty(bloodOverride)) {
+				ParticleManager.DisableBloodOverride();
+			} else {
+				ParticleManager.EnableBloodOverride(bloodOverride);
+			}
 			ParticleManager.PreBuild();
 			PoolManager.Build();
 
+			// Setup progression offset based on spawn position
+			progressionOffsetSeconds = float.Parse(LevelEditor.settings.progressionOffsetSeconds);
+			progressionOffsetXP = int.Parse(LevelEditor.settings.progressionOffsetXP);
+
 			// Reset dragon stats
 			InstanceManager.player.ResetStats(false);
-
+			
+			Vector3 startPos = GameConstants.Vector3.zero;
+			// Setup spawn position
 			if (LevelEditor.settings.spawnAtCameraPos) {
-				Vector3 startPos = mainCamera.transform.position;
+				startPos = mainCamera.transform.position;
 				startPos.z = 0f;
 				InstanceManager.player.transform.position = startPos;
+				InstanceManager.player.playable = true;
+				InstanceManager.gameCamera.Init(startPos);
 			} else {
-				// Put player in position and make it playable
-				InstanceManager.player.MoveToSpawnPoint(true);
-				if ( LevelEditor.settings.useIntro )
-				{
-					InstanceManager.player.StartIntroMovement( true );	
-				}
-			}
-			InstanceManager.player.playable = true;
-
-			// Init game camera
-			InstanceManager.gameCamera.Init();
-
+				SpawnPlayer(true);
+			}			
+			
 			// Instantiate map prefab
 			InitLevelMap();
 

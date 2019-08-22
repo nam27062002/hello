@@ -81,7 +81,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &4397797685203690
 Transform:
   m_ObjectHideFlags: 1
@@ -191,6 +191,7 @@ MonoBehaviour:
   m_animA: 
   m_animB: 
   m_animC: 
+  m_materialChangeExceptions: []
   m_useFreezeParticle: 1
   m_freezeParticleScale: 1
   m_useMoveAnimInLove: 0
@@ -406,6 +407,18 @@ MonoBehaviour:
   m_onPanicAudio: 
   m_idleAudio: hd_fairy_idle
   m_skins: []
+  m_entity: {fileID: 114889369581921186}
+  m_animator: {fileID: 95954473834795172}
+  m_isAnimatorAvailable: 0
+  m_renderers:
+  - {fileID: 137398252941822246}
+  m_specialAnimations: 000000
+  m_animA_Hash: 0
+  m_animB_Hash: 0
+  m_animC_Hash: 0
+  m_animEvents: {fileID: 0}
+  m_transform: {fileID: 4397797685203690}
+  m_view: {fileID: 4508106183156954}
 --- !u!114 &114283385816298482
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -502,6 +515,7 @@ MonoBehaviour:
   m_energy: 2.5
   m_energyDrainSec: 1.25
   m_energyRecoverSec: 0.25
+  m_machine: {fileID: 0}
   m_brainResource: {fileID: 11400000, guid: fcba6844efb2f4ff6b18023d9b2856d4, type: 2}
   m_railSeparation:
     min: 0.5
@@ -579,6 +593,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_tags: 2054
+  m_otherSpawnables:
+  - {fileID: 114407436216258652}
+  - {fileID: 114010865017618348}
+  - {fileID: 114663098774664204}
+  m_otherSpawnablesCount: 3
+  m_pilot: {fileID: 114663098774664204}
+  m_machine: {fileID: 114407436216258652}
+  m_viewControl: {fileID: 114010865017618348}
+  m_equip: {fileID: 0}
   m_sku: FairySmall
   m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1

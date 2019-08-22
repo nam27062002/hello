@@ -41,6 +41,11 @@ public class DragonPowerUp : MonoBehaviour {
 
 	void Start() 
 	{
+		ApplyPowerups();
+	}
+
+	public void ApplyPowerups()
+	{
 		InstanceManager.APPLY_DRAGON_MODIFIERS();
 
 		CPModifiers.ApplyDragonMods();
@@ -104,9 +109,18 @@ public class DragonPowerUp : MonoBehaviour {
 		}
 	}
 
+	public void ResetPowerUps()
+	{
+		InstanceManager.player.RemovePowerUps();
+		Entity.RemovePowerUps();
+		Broadcaster.Broadcast(BroadcastEventType.APPLY_ENTITY_POWERUPS);
+
+		ApplyPowerups();
+	}
+
 	void SetPowerUp( string powerUpSku, bool _fromPet )
 	{
-		DragonPlayer player = GetComponent<DragonPlayer>();
+		DragonPlayer player = InstanceManager.player;
 		DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, powerUpSku);
 
 		if ( def != null )
@@ -374,6 +388,8 @@ public class DragonPowerUp : MonoBehaviour {
 			} break;
 
 			//TONI
+			//We need to get all parameters for each single powerup. Combined powers could be a combination of 3 powers. As we can have just 2 parameters by power, a powerup that
+			//combines 3 powers is a combination of a 'normal' power and a combined power of 2
 			case "combined":
 			{
 				DefinitionNode powerUp1 = DefinitionsManager.SharedInstance.GetDefinition (DefinitionsCategory.POWERUPS, _powerDef.GetAsString ("param1"));
@@ -498,12 +514,12 @@ public class DragonPowerUp : MonoBehaviour {
 			case "vacuum":
 			case "prey_hp_boost":
             case "drop_present":
+			case "food_increase":			
             {
 				return UIConstants.PET_CATEGORY_EAT;
 			} break;
 
 			// Health
-			case "food_increase":
 			case "hp_increase":
 			{
 				return UIConstants.PET_CATEGORY_HEALTH;
@@ -567,7 +583,8 @@ public class DragonPowerUp : MonoBehaviour {
 			case "tranformGold":
 			case "shoot_horns":
 			case "kill":
-			case "mummy":			
+			case "mummy":	
+			case "transform_ice_cream":
 			{
 				return UIConstants.PET_CATEGORY_SPECIAL;
 			} break;
