@@ -19,7 +19,7 @@ public class DecorationManager : Singleton<DecorationManager>, IBroadcastListene
         get { return m_overlapingMethod; }
         set { m_overlapingMethod = value; }
     }
-        
+
     private bool m_updateEnabled;
 
 
@@ -106,5 +106,6 @@ public class DecorationManager : Singleton<DecorationManager>, IBroadcastListene
             m_entitiesVisibility = value;
         }
     }
+    // Check if alive and not dying prior to force golden
     #endregion
 }
