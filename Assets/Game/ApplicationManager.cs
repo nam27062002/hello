@@ -589,7 +589,20 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
             int minutesToReengage = gameSettingsDef.GetAsInt("notificationComeBackTimer", 2000);
             int secondsToReengage = minutesToReengage * 60;
             if ( secondsToReengage > 0 )
+            {
+                System.DateTime dateTime = System.DateTime.Now.AddSeconds( secondsToReengage );
+                if ( dateTime.Hour >= 22 || dateTime.Hour <= 9 )
+                {
+                    // Adjust to avoid midnight timmings
+                    System.DateTime fixedDateTime = dateTime;
+                    fixedDateTime = fixedDateTime.AddHours( 11 );   // forbidden 11 hours, from 22:00 to 9:00
+                    fixedDateTime = fixedDateTime.AddHours( 9 - fixedDateTime.Hour );   // Remove excess
+                    secondsToReengage = (int)(fixedDateTime - System.DateTime.Now).TotalSeconds;
+                }
+                
                 HDNotificationsManager.instance.ScheduleReengagementNotification(secondsToReengage);
+            }
+                
 
 			// [AOC] TODO!!
         }
