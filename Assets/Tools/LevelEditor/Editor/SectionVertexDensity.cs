@@ -58,6 +58,8 @@ namespace LevelEditor
 
         List<GameObject> m_missingRenderers = new List<GameObject>();
 
+        private Dictionary<string, Material> sceneMaterials = new Dictionary<string, Material>();
+
         public struct NodeDensity
         {
             public TransformNode node;
@@ -81,9 +83,13 @@ namespace LevelEditor
             }
 
             Renderer rend = go.GetComponent<Renderer>();
-            if (rend != null && (rend.material == null || mFilter == null || mFilter.sharedMesh == null))
+            if (rend != null && (rend.sharedMaterial == null || mFilter == null || mFilter.sharedMesh == null))
             {
-                m_missingRenderers.Add(rend.gameObject);
+                ParticleSystem ps = go.GetComponent<ParticleSystem>();
+                if (ps == null) //not a particle system
+                {
+                    m_missingRenderers.Add(rend.gameObject);
+                }
             }
 
             foreach (Transform tr in go.transform)
@@ -102,7 +108,7 @@ namespace LevelEditor
             for (int i = 0; i < UnityEngine.SceneManagement.SceneManager.sceneCount; i++)
             {
                 Scene s = UnityEngine.SceneManagement.SceneManager.GetSceneAt(i);
-                if (s.isLoaded)
+                if (s.isLoaded && !s.name.Contains("SC_LevelEditor"))
                 {
                     GameObject[] allGameObjects = s.GetRootGameObjects();
                     for (int j = 0; j < allGameObjects.Length; j++)
@@ -165,12 +171,27 @@ namespace LevelEditor
                     sp.intValue = (int)UnityEngine.Rendering.ReflectionProbeUsage.Off;
 
                     so.ApplyModifiedProperties();
+
+                    StaticEditorFlags staticFlags = GameObjectUtility.GetStaticEditorFlags(root.m_Node.gameObject);
+                    staticFlags |= StaticEditorFlags.BatchingStatic;
+                    GameObjectUtility.SetStaticEditorFlags(root.m_Node.gameObject, staticFlags);
+
 /*
-                    while (sp.Next(false))
+                    for (int c = 0; c < rend.sharedMaterials.Length; c++)
                     {
-                        Debug.Log("Property name: " + sp.name + " type: " + sp.propertyType.ToString());
+                        Material mat = rend.sharedMaterials[c];
+                        if (sceneMaterials.ContainsKey(mat.name))
+                        {
+                            mat = sceneMaterials[mat.name];
+                        }
+                        else
+                        {
+                            sceneMaterials[mat.name] = mat;
+                        }
+                        rend.materials[c] = null;
+                        rend.sharedMaterials[c] = mat;
                     }
- */                 
+*/
                 }
             }
 
@@ -296,6 +317,7 @@ namespace LevelEditor
                 {
                     if (GUILayout.Button("Optimize renderers"))
                     {
+                        sceneMaterials.Clear();
                         optimizeRenderers(m_nodeList[0]);
                         for (int i = 0; i < UnityEngine.SceneManagement.SceneManager.sceneCount; i++)
                         {
@@ -367,6 +389,32 @@ namespace LevelEditor
                         if (m_missingRenderers.Count > 0)
                         {
                             GUILayout.Label("Missing renderers: " + m_missingRenderers.Count);
+                            if (GUILayout.Button("Remove missing renderers"))
+                            {
+                                for (int c = 0; c < m_missingRenderers.Count; c++)
+                                {
+                                    if (m_missingRenderers[c].transform.childCount > 0)
+                                    {
+                                        Debug.Log("GameObject: " + m_missingRenderers[c].name + " child count: " + m_missingRenderers[c].transform.childCount);
+                                    }
+                                    else
+                                    {
+                                        Object.DestroyImmediate(m_missingRenderers[c]);
+                                    }
+                                }
+
+                                m_missingRenderers.Clear();
+
+                                for (int i = 0; i < UnityEngine.SceneManagement.SceneManager.sceneCount; i++)
+                                {
+                                    Scene s = UnityEngine.SceneManagement.SceneManager.GetSceneAt(i);
+                                    if (s.isLoaded)
+                                    {
+                                        EditorSceneManager.MarkSceneDirty(s);
+                                    }
+                                }
+
+                            }
                             EditorGUILayout.Separator();
                             scrollPos2 = GUILayout.BeginScrollView(scrollPos2);
 
