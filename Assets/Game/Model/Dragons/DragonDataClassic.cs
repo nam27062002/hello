@@ -326,6 +326,26 @@ public class DragonDataClassic : IDragonData {
 		return m_scaleRange.Lerp(levelDelta) + m_scaleOffset;
 	}
 
+    /// <summary>
+    /// Load the pets persistence.
+    /// </summary>
+    /// <param name="_dragonPersistenceData">Dragon persistence data.</param>
+    protected override void LoadPets(SimpleJSON.JSONNode _dragonPersistenceData)
+    {
+        // We must have all the slots, enforce list's size
+        m_pets.Resize(m_tierDef.GetAsInt("maxPetEquipped", 0), string.Empty);
+        if (_dragonPersistenceData.ContainsKey("pets"))
+        {
+            SimpleJSON.JSONArray equip = _dragonPersistenceData["pets"].AsArray;
+            for (int i = 0; i < equip.Count && i < m_pets.Count; i++)
+            {
+                m_pets[i] = equip[i];
+            }
+        }
+    }
+
+
+
 	//------------------------------------------------------------------//
 	// PERSISTENCE														//
 	//------------------------------------------------------------------//
@@ -364,4 +384,5 @@ public class DragonDataClassic : IDragonData {
 		_data.Add("xp", progression.xp.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
 		_data.Add("level", progression.level.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
 	}
+
 }

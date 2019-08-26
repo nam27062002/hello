@@ -295,14 +295,16 @@ public class DragonDataSpecial : IDragonData {
         DefinitionsManager.SharedInstance.SortByProperty(ref m_specialPowerDefsByOrder, "upgradeLevelToUnlock", DefinitionsManager.SortType.NUMERIC);
 
         m_pets = new List<string>();
-		//TONI
-        //SetTier(DragonTier.TIER_1);		// [AOC] Special dragons start at tier S!
-		SetTier(DragonTier.TIER_6);
-		//TONI
-		InitStats();
+        RefreshSpecialTier();
 
-		// Eco vars
-		m_statUpgradePriceBase = _def.GetAsLong("stepPrice", 0);
+        // Tier will be initialized once, and wont change anymore (special dragons are always tier_6)
+        SetTier(DragonTier.TIER_6);
+
+        InitStats();
+
+
+        // Eco vars
+        m_statUpgradePriceBase = _def.GetAsLong("stepPrice", 0);
 		m_statUpgradePriceCoefA = _def.GetAsLong("priceCoefA", 1);
 		m_statUpgradePriceCoefB = _def.GetAsLong("priceCoefB", 1);
 
@@ -583,9 +585,10 @@ public class DragonDataSpecial : IDragonData {
 
         // Increase dragon level
         m_level++;
-		//TONI
-		SetTier(DragonTier.TIER_6);
-		//TONI
+
+        // Check if the dragon reached the next special tier
+        RefreshSpecialTier();
+
 		// Notify listeners
 		Messenger.Broadcast<DragonDataSpecial>(MessengerEvents.SPECIAL_DRAGON_LEVEL_UPGRADED, this);
 
@@ -614,6 +617,9 @@ public class DragonDataSpecial : IDragonData {
         // Increase dragon level
         m_level++;
         Messenger.Broadcast<DragonDataSpecial>(MessengerEvents.SPECIAL_DRAGON_LEVEL_UPGRADED, this);
+
+        // Check if the dragon reached the next special tier
+        RefreshSpecialTier();
 
         // Refresh power and tier
         RefreshPowerLevel();
@@ -645,19 +651,27 @@ public class DragonDataSpecial : IDragonData {
 	/// </summary>
 	/// <param name="_def">New tier definition.</param>
 	public void SetTier(DefinitionNode _def) {
+
 		m_tierDef = _def;
 		m_tier = (DragonTier)_def.GetAsInt("order");
 
-		//TONI
-		//m_specialTierDef = GetDragonTierDef(m_def.sku, m_tier);
-		m_specialTierDef = GetDragonTierDefLevel(m_def.sku, m_tier, m_level, m_maxLevel);
-		//TONI
-		// Enforce pets list size to number of slots
-		m_pets.Resize(m_tierDef.GetAsInt("maxPetEquipped", 0), string.Empty);
-
-		m_disguise = GetDefaultDisguise(m_def.sku).sku;
+        m_disguise = GetDefaultDisguise(m_def.sku).sku;
 		m_persistentDisguise = m_disguise;
+
 	}
+
+
+    /// <summary>
+    /// Update the special tier definition based on the current level of the dragon
+    /// </summary>
+    public void RefreshSpecialTier ()
+    {
+        // Update the special tier definition
+        m_specialTierDef = GetSpecialTierDefByLevel(m_def.sku, m_level);
+
+        // Enforce pets list size to number of slots
+        m_pets.Resize(m_specialTierDef.GetAsInt("petsSlotsAvailable", 1), string.Empty);
+    }
 
 	
     
@@ -703,29 +717,7 @@ public class DragonDataSpecial : IDragonData {
     }
 
 
-
-	/// <summary>
-	/// Update this dragon's tier based on current dragon level.
-	/// </summary>
-	public void RefreshTier() {
-		// Get dragon's current level
-
-		// Check Tier definitions for this dragon
-        string biggestTierSku = "tier_0";
-		for(int i = 0; i < m_specialTierDefsByOrder.Count; ++i) {
-			if(m_specialTierDefsByOrder[i].GetAsInt("upgradeLevelToUnlock") <= m_level) {
-				biggestTierSku = m_specialTierDefsByOrder[i].Get("tier");
-			}
-		}
-        DefinitionNode biggestTierDefNode = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGON_TIERS, biggestTierSku);
-
-		// Save new tier
-		if(biggestTierDefNode != null) {
-			SetTier(biggestTierDefNode);
-		}
-	}
-
-    
+   
     public void RefreshDisguise(){
         // Get dragon's current level
 
@@ -777,23 +769,35 @@ public class DragonDataSpecial : IDragonData {
 		}
 		return ret;
 	}
-	//TONI
-	public static DefinitionNode GetDragonTierDefLevel(string _specialDragonSku, DragonTier _tier, int _level, int _maxLevel) {
-		DefinitionNode ret = null;
-		string tierSku = TierToSku(_tier);
+
+
+    /// <summary>
+    /// Returns the special tier definition based on the level of the dragon
+    /// </summary>
+    /// <param name="_specialDragonSku">Special dragon whose tier definition we want.</param>
+	/// <param name="_level">Current level of the dragon</param>
+    public static DefinitionNode GetSpecialTierDefByLevel(string _specialDragonSku, int _level) {
+
 		List<DefinitionNode> defs = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.SPECIAL_DRAGON_TIERS, "specialDragon", _specialDragonSku);
-		int max = defs.Count;
 		int levelReq;
-		for(int i = 0; i < max && ret == null; i++) {
-			levelReq = defs [i].GetAsInt ("upgradeLevelToUnlock");
-			if(levelReq > _level)
-				ret = defs[i-1];
+
+        // Iterate all special tiers
+        for (int i = defs.Count - 1; i >= 0; i--)
+        {
+            levelReq = defs[i].GetAsInt("upgradeLevelToUnlock");
+            
+            // Has reached the required level for this tier?
+            if (_level >= levelReq)
+            {
+                return defs[i];
+            }
 		}
-		if (_level == _maxLevel)
-			ret = defs [max - 1];
-		return ret;
+
+        // Shouldn't happen but just in case, return the starting tier
+        return defs[0];
+
 	}
-	//TONI
+
 
     /// <summary>
     /// Get the first definition (before any upgrade) of a special dragon's tier .
@@ -814,6 +818,25 @@ public class DragonDataSpecial : IDragonData {
         }
 
         return null;
+    }
+
+    /// <summary>
+    /// Load the pets persistence.
+    /// </summary>
+    /// <param name="_dragonPersistenceData">Dragon persistence data.</param>
+    protected override void LoadPets(SimpleJSON.JSONNode _dragonPersistenceData)
+    {
+        // Enforce pets list size to number of slots
+        m_pets.Resize(m_specialTierDef.GetAsInt("petsSlotsAvailable", 1), string.Empty);
+
+        if (_dragonPersistenceData.ContainsKey("pets"))
+        {
+            SimpleJSON.JSONArray equip = _dragonPersistenceData["pets"].AsArray;
+            for (int i = 0; i < equip.Count && i < m_pets.Count; i++)
+            {
+                m_pets[i] = equip[i];
+            }
+        }
     }
 
     //------------------------------------------------------------------------//
@@ -875,7 +898,7 @@ public class DragonDataSpecial : IDragonData {
         RefreshPowerLevel();
 
 		// Tier - Based on level, so just do a refresh
-		RefreshTier();
+		RefreshSpecialTier();
 
         // Disguise - Based on level, so just do a refresh
         RefreshDisguise();

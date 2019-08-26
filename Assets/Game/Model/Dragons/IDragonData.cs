@@ -477,20 +477,15 @@ public abstract class IDragonData : IUISelectorItem {
 		}
 	}
 
-	/// <summary>
-	/// Load the pets persistence.
-	/// </summary>
-	/// <param name="_dragonPersistenceData">Dragon persistence data.</param>
-	protected void LoadPets(SimpleJSON.JSONNode _dragonPersistenceData) {
-		// We must have all the slots, enforce list's size
-		m_pets.Resize(m_tierDef.GetAsInt("maxPetEquipped", 0), string.Empty);
-		if(_dragonPersistenceData.ContainsKey("pets")) {
-			SimpleJSON.JSONArray equip = _dragonPersistenceData["pets"].AsArray;
-			for(int i = 0; i < equip.Count && i < m_pets.Count; i++) {
-				m_pets[i] = equip[i];
-			}
-		}
-	}
+    /// <summary>
+    /// Load the pets persistence.
+    /// </summary>
+    /// <param name="_dragonPersistenceData">Dragon persistence data.</param>
+    protected virtual void LoadPets(SimpleJSON.JSONNode _dragonPersistenceData)
+    {
+    }
+
+
 
 	/// <summary>
 	/// Create and return a persistence save data object initialized with the data.
@@ -590,8 +585,10 @@ public abstract class IDragonData : IUISelectorItem {
 			// Powers (depends on stat upgrades)
 			specialData.RefreshPowerLevel();
 
-			// Tier (depends on stat upgrades)
-			specialData.RefreshTier();
+            // Tier wont change for legendary dragons (always tier_6)
+
+			// Special Tier (depends on stat upgrades)
+			specialData.RefreshSpecialTier();
 
 			// Skin (depends on stat upgrades)
             specialData.RefreshDisguise();
