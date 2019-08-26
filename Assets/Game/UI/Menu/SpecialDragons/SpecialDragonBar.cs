@@ -295,7 +295,7 @@ public class SpecialDragonBar : MonoBehaviour {
 
     public void AddLevel() {
 		SetLevel(m_currentLevel + 1);
-        if (m_currentLevel < m_maxLevel) {
+        if (m_currentLevel <= m_maxLevel) {
             // The level 1 element is in the position 0 of the array
             m_sortedElements[m_currentLevel - 1].SetState(SpecialDragonBarElement.State.OWNED);
         }

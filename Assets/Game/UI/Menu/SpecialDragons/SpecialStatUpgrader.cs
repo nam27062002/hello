@@ -105,9 +105,6 @@ public class SpecialStatUpgrader : MonoBehaviour {
 			m_separatorPrefab = m_separators.Last();
 		}
 
-
-
-
         // Subscribe to external events
         Messenger.AddListener<DragonDataSpecial>(MessengerEvents.SPECIAL_DRAGON_LEVEL_UPGRADED, OnDragonLevelUpgraded);
 
@@ -118,6 +115,13 @@ public class SpecialStatUpgrader : MonoBehaviour {
             1
         );
 
+    }
+
+
+    public void OnDestroy()
+    {
+        // Subscribe to external events
+        Messenger.RemoveListener<DragonDataSpecial>(MessengerEvents.SPECIAL_DRAGON_LEVEL_UPGRADED, OnDragonLevelUpgraded);
     }
 
 

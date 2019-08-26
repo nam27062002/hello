@@ -57,6 +57,11 @@ public class DragonPowerUpgrader : MonoBehaviour {
         );
     }
 
+    public void OnDestroy()
+    {
+        // Subscribe to external events
+        Messenger.RemoveListener<DragonDataSpecial>(MessengerEvents.SPECIAL_DRAGON_LEVEL_UPGRADED, OnDragonLevelUpgraded);
+    }
 
     public void OnShowPreAnimation()
     {
