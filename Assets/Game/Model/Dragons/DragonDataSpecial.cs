@@ -295,7 +295,10 @@ public class DragonDataSpecial : IDragonData {
         DefinitionsManager.SharedInstance.SortByProperty(ref m_specialPowerDefsByOrder, "upgradeLevelToUnlock", DefinitionsManager.SortType.NUMERIC);
 
         m_pets = new List<string>();
-        SetTier(DragonTier.TIER_1);		// [AOC] Special dragons start at tier S!
+		//TONI
+        //SetTier(DragonTier.TIER_1);		// [AOC] Special dragons start at tier S!
+		SetTier(DragonTier.TIER_6);
+		//TONI
 		InitStats();
 
 		// Eco vars
@@ -580,7 +583,9 @@ public class DragonDataSpecial : IDragonData {
 
         // Increase dragon level
         m_level++;
-
+		//TONI
+		SetTier(DragonTier.TIER_6);
+		//TONI
 		// Notify listeners
 		Messenger.Broadcast<DragonDataSpecial>(MessengerEvents.SPECIAL_DRAGON_LEVEL_UPGRADED, this);
 
@@ -643,8 +648,10 @@ public class DragonDataSpecial : IDragonData {
 		m_tierDef = _def;
 		m_tier = (DragonTier)_def.GetAsInt("order");
 
-		m_specialTierDef = GetDragonTierDef(m_def.sku, m_tier);
-
+		//TONI
+		//m_specialTierDef = GetDragonTierDef(m_def.sku, m_tier);
+		m_specialTierDef = GetDragonTierDefLevel(m_def.sku, m_tier, m_level, m_maxLevel);
+		//TONI
 		// Enforce pets list size to number of slots
 		m_pets.Resize(m_tierDef.GetAsInt("maxPetEquipped", 0), string.Empty);
 
@@ -710,8 +717,8 @@ public class DragonDataSpecial : IDragonData {
 				biggestTierSku = m_specialTierDefsByOrder[i].Get("tier");
 			}
 		}
-        
         DefinitionNode biggestTierDefNode = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGON_TIERS, biggestTierSku);
+
 		// Save new tier
 		if(biggestTierDefNode != null) {
 			SetTier(biggestTierDefNode);
@@ -770,6 +777,23 @@ public class DragonDataSpecial : IDragonData {
 		}
 		return ret;
 	}
+	//TONI
+	public static DefinitionNode GetDragonTierDefLevel(string _specialDragonSku, DragonTier _tier, int _level, int _maxLevel) {
+		DefinitionNode ret = null;
+		string tierSku = TierToSku(_tier);
+		List<DefinitionNode> defs = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.SPECIAL_DRAGON_TIERS, "specialDragon", _specialDragonSku);
+		int max = defs.Count;
+		int levelReq;
+		for(int i = 0; i < max && ret == null; i++) {
+			levelReq = defs [i].GetAsInt ("upgradeLevelToUnlock");
+			if(levelReq > _level)
+				ret = defs[i-1];
+		}
+		if (_level == _maxLevel)
+			ret = defs [max - 1];
+		return ret;
+	}
+	//TONI
 
     /// <summary>
     /// Get the first definition (before any upgrade) of a special dragon's tier .
