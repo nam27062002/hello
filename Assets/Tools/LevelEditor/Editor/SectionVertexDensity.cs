@@ -58,6 +58,8 @@ namespace LevelEditor
 
         List<GameObject> m_missingRenderers = new List<GameObject>();
 
+        private Dictionary<string, Material> sceneMaterials = new Dictionary<string, Material>();
+
         public struct NodeDensity
         {
             public TransformNode node;
@@ -81,7 +83,7 @@ namespace LevelEditor
             }
 
             Renderer rend = go.GetComponent<Renderer>();
-            if (rend != null && (rend.material == null || mFilter == null || mFilter.sharedMesh == null))
+            if (rend != null && (rend.sharedMaterial == null || mFilter == null || mFilter.sharedMesh == null))
             {
                 ParticleSystem ps = go.GetComponent<ParticleSystem>();
                 if (ps == null) //not a particle system
@@ -169,12 +171,27 @@ namespace LevelEditor
                     sp.intValue = (int)UnityEngine.Rendering.ReflectionProbeUsage.Off;
 
                     so.ApplyModifiedProperties();
+
+                    StaticEditorFlags staticFlags = GameObjectUtility.GetStaticEditorFlags(root.m_Node.gameObject);
+                    staticFlags |= StaticEditorFlags.BatchingStatic;
+                    GameObjectUtility.SetStaticEditorFlags(root.m_Node.gameObject, staticFlags);
+
 /*
-                    while (sp.Next(false))
+                    for (int c = 0; c < rend.sharedMaterials.Length; c++)
                     {
-                        Debug.Log("Property name: " + sp.name + " type: " + sp.propertyType.ToString());
+                        Material mat = rend.sharedMaterials[c];
+                        if (sceneMaterials.ContainsKey(mat.name))
+                        {
+                            mat = sceneMaterials[mat.name];
+                        }
+                        else
+                        {
+                            sceneMaterials[mat.name] = mat;
+                        }
+                        rend.materials[c] = null;
+                        rend.sharedMaterials[c] = mat;
                     }
- */                 
+*/
                 }
             }
 
@@ -300,6 +317,7 @@ namespace LevelEditor
                 {
                     if (GUILayout.Button("Optimize renderers"))
                     {
+                        sceneMaterials.Clear();
                         optimizeRenderers(m_nodeList[0]);
                         for (int i = 0; i < UnityEngine.SceneManagement.SceneManager.sceneCount; i++)
                         {
