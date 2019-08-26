@@ -331,15 +331,36 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
             //PersistencePrefs.Clear();
         }
 #endif
+		UnityEngine.Profiling.Profiler.BeginSample("ApplicationManager.Update()");
 
         Language_Update();
 
+		UnityEngine.Profiling.Profiler.BeginSample("PersistenceFacade.Update()");
         PersistenceFacade.instance.Update();
+		UnityEngine.Profiling.Profiler.EndSample();
+
+		UnityEngine.Profiling.Profiler.BeginSample("HDTrackingManager.Update()");
         HDTrackingManager.Instance.Update();
+		UnityEngine.Profiling.Profiler.EndSample();
+
+		UnityEngine.Profiling.Profiler.BeginSample("HDCustomizerManager.Update()");
         HDCustomizerManager.instance.Update();        
+		UnityEngine.Profiling.Profiler.EndSample();
+
+		UnityEngine.Profiling.Profiler.BeginSample("GameServerManager.Update()");
 		GameServerManager.SharedInstance.Update();
+		UnityEngine.Profiling.Profiler.EndSample();
+
+		UnityEngine.Profiling.Profiler.BeginSample("HDAddressablesManager.Update()");
         HDAddressablesManager.Instance.Update();
+		UnityEngine.Profiling.Profiler.EndSample();
+
+		UnityEngine.Profiling.Profiler.BeginSample("GameStoreManager.Update()");
         GameStoreManager.SharedInstance.Update();
+		UnityEngine.Profiling.Profiler.EndSample();
+
+		UnityEngine.Profiling.Profiler.EndSample();
+
 
         if (NeedsToRestartFlow)
         {
