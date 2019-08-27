@@ -49,13 +49,12 @@ public class HDNotificationsManager : UbiBCN.SingletonMonoBehaviour<HDNotificati
             }
         }
     }
-
+#if UNITY_IOS
     public void Update()
     {
-#if UNITY_IOS
 		CheckRemoteNotifications();
-#endif
     }
+#endif
 
 #if UNITY_IOS
 	private void CheckRemoteNotifications() {

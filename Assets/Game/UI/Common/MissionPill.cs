@@ -307,12 +307,9 @@ public class MissionPill : MonoBehaviour, IBroadcastListener {
         }
 
 		bool ret = false;
-        if ( FeatureSettingsManager.AreAdsEnabled && checkVideoIsReady ) 
+        if ( checkVideoIsReady && GameAds.adsAvailable) 
         {
-			if ( MopubAdsManager.SharedInstance.IsRewardedReady() || DeviceUtilsManager.SharedInstance.internetReachability != NetworkReachability.NotReachable )	
-			{
-				ret = true;
-			}
+			ret = true;
         }
        
 		return ret;
