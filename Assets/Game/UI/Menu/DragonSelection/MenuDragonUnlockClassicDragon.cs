@@ -168,9 +168,19 @@ public class MenuDragonUnlockClassicDragon : MonoBehaviour {
 				// Get list of dragons required to unlock and compose a string with their names
 				string separator = LocalizationManager.SharedInstance.Localize("TID_GEN_LIST_SEPARATOR");
 				StringBuilder sb = new StringBuilder();
+				IDragonData unlockDragonData = null;
 				for(int i = 0; i < _data.unlockFromDragons.Count; ++i) {
+					// Get data for pre-requisite dragon
+					unlockDragonData = DragonManager.GetDragonData(_data.unlockFromDragons[i]);
+
+					// Attach separator if more than one
 					if(i > 0) sb.Append(", ");
-					sb.Append(DragonManager.GetDragonData(_data.unlockFromDragons[i]).def.GetLocalized("tidName"));
+
+					// [AOC] Use dragon's tier color
+					//		 We're don't use Colors.Tag to avoid creating a new StringBuilder
+					sb.Append(Colors.OPEN_TAG).Append(UIConstants.GetDragonTierColor(unlockDragonData.tier).ToHexString("#")).Append(">");
+					sb.Append(unlockDragonData.def.GetLocalized("tidName"));
+					sb.Append(Colors.CLOSE_TAG);
 				}
 
 				// Set text
