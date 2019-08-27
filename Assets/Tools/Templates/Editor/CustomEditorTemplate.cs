@@ -59,21 +59,18 @@ public class MonoBehaviourTemplateEditor : Editor {
 		// Update the serialized object - always do this in the beginning of OnInspectorGUI.
 		serializedObject.Update();
 
+		// Unity's "script" property - draw disabled
+		EditorGUI.BeginDisabledGroup(true);
+		EditorGUILayout.PropertyField(serializedObject.FindProperty("m_Script"), true);
+		EditorGUI.EndDisabledGroup();
+
 		// Loop through all serialized properties and work with special ones
 		SerializedProperty p = serializedObject.GetIterator();
 		p.Next(true);	// To get first element
 		do {
 			// Properties requiring special treatment
-			// Unity's "script" property
-			if(p.name == "m_Script") {
-				// Draw the property, disabled
-				EditorGUI.BeginDisabledGroup(true);
-				EditorGUILayout.PropertyField(p, true);
-				EditorGUI.EndDisabledGroup();
-			}
-
 			// Properties we don't want to show
-			else if(p.name == "m_ObjectHideFlags") {
+			if(p.name == "m_ObjectHideFlags" || p.name == "m_Script") {
 				// Do nothing
 			}
 

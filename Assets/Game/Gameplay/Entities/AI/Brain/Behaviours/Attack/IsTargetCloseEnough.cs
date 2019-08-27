@@ -8,7 +8,7 @@ namespace AI {
 		public class IsTargetCloseEnough : StateComponent {
 			
 			[StateTransitionTrigger]
-			private static string OnCloseEnough = "onCloseEnough";
+			private static readonly int onCloseEnough = UnityEngine.Animator.StringToHash("onCloseEnough");
 
 			[System.Serializable]
 			public class IsTargetCloseEnoughData : StateComponentData {
@@ -49,13 +49,13 @@ namespace AI {
 					float d = (circle.center - m_machine.position).sqrMagnitude - (circle.radius * circle.radius);
 					if ( d < m_distance )
 					{
-						Transition(OnCloseEnough);
+						Transition(onCloseEnough);
 					}
 				}else if ( m_target ){
 					float d = (m_target.position - m_machine.position).sqrMagnitude;
 					if ( d < m_distance )
 					{
-						Transition(OnCloseEnough);
+						Transition(onCloseEnough);
 					}
 				}
 			}

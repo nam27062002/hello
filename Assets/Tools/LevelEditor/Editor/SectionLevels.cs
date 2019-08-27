@@ -697,8 +697,7 @@ namespace LevelEditor {
             }
             else
             {
-                sku = m_levelsSkuList[id > 2 ? 0 : id];
-
+                sku = m_levelsSkuList[id >= firstArea ? 0 : id];
             }
 
             // Store level data of the new level

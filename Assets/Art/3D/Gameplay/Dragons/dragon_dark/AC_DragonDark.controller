@@ -208,7 +208,7 @@ AnimatorController:
     m_Motions:
     - serializedVersion: 2
       m_State: {fileID: 110212384}
-      m_Motion: {fileID: 7400000, guid: ab74c74b745f240fda269fe2fa871827, type: 2}
+      m_Motion: {fileID: 7400000, guid: ac4d245aa02a24cb5ab2de2c600702f4, type: 3}
     - serializedVersion: 2
       m_State: {fileID: 110268428}
       m_Motion: {fileID: 7400000, guid: ecd5d5627a0264aa28fa7bf1d588b312, type: 3}
@@ -220,10 +220,10 @@ AnimatorController:
       m_Motion: {fileID: 7400000, guid: 7e177014d23d148339a4aca1b2f6f1bd, type: 3}
     - serializedVersion: 2
       m_State: {fileID: 1102000010725522132}
-      m_Motion: {fileID: 7400000, guid: b167f96ff4c07474eb6f272b6f6a77c7, type: 2}
+      m_Motion: {fileID: 7400002, guid: ac4d245aa02a24cb5ab2de2c600702f4, type: 3}
     - serializedVersion: 2
       m_State: {fileID: 1102864088356646350}
-      m_Motion: {fileID: 7400000, guid: d9738d5d252124844abadc933eb9f0d4, type: 3}
+      m_Motion: {fileID: 7400002, guid: d9738d5d252124844abadc933eb9f0d4, type: 3}
     m_Behaviours: []
     m_BlendingMode: 1
     m_SyncedLayerIndex: 4
@@ -294,7 +294,7 @@ BlendTree:
     m_DirectBlendParameter: height
     m_Mirror: 0
   - serializedVersion: 2
-    m_Motion: {fileID: 7400000, guid: 61c0af048ea814e9eb0d2e6558659815, type: 3}
+    m_Motion: {fileID: 7400002, guid: 61c0af048ea814e9eb0d2e6558659815, type: 3}
     m_Threshold: 0.125
     m_Position: {x: -1, y: 0}
     m_TimeScale: 1
@@ -1980,18 +1980,18 @@ AnimatorStateMachine:
   - {fileID: 1101000010604481186}
   m_EntryTransitions: []
   m_StateMachineTransitions:
-  - first: {fileID: 110744362}
-    second:
-    - {fileID: 110929258}
-    - {fileID: 110942138}
-    - {fileID: 1109881904104509242}
-    - {fileID: 1109431719525935950}
   - first: {fileID: 110773352}
     second:
     - {fileID: 110951316}
     - {fileID: 110915420}
     - {fileID: 1109695044031442812}
     - {fileID: 1109048660016361472}
+  - first: {fileID: 110744362}
+    second:
+    - {fileID: 110929258}
+    - {fileID: 110942138}
+    - {fileID: 1109881904104509242}
+    - {fileID: 1109431719525935950}
   - first: {fileID: 1107209423932037938}
     second:
     - {fileID: 1109301021957201322}
@@ -3716,7 +3716,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 7400000, guid: d9738d5d252124844abadc933eb9f0d4, type: 3}
+  m_Motion: {fileID: 7400002, guid: d9738d5d252124844abadc933eb9f0d4, type: 3}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 

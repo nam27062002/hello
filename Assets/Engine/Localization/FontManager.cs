@@ -295,7 +295,7 @@ public class FontManager : UbiBCN.SingletonMonoBehaviour<FontManager>, IBroadcas
                 // Register default material to the shared materials cache
                 string materialID = GetMaterialIDFromName(fontName, fnt.material.name);
                 sharedMaterialsCache[materialID] = fnt.material;
-            } else if (FeatureSettingsManager.IsDebugEnabled) {
+            } else  {
                 // TODO: Notify metrics/ crashlytics fontName is null becaue it's not supposed to   
                 Debug.LogWarning("Font " + fontName + " is null but it's not supposed to");
             }

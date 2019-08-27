@@ -126,7 +126,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1379198441135332
 GameObject:
   m_ObjectHideFlags: 1
@@ -1035,6 +1035,7 @@ MonoBehaviour:
     m_mass: 1
     m_defaultUpVector: 0
     m_orientationSpeed: 35
+    m_useAngularVelocity: 0
     m_dragonStyleRotation: 0
     m_faceDirection: 1
     m_rollRotation: 1
@@ -1057,7 +1058,9 @@ MonoBehaviour:
       needBoost: 1
     - count: 1
       needBoost: 0
-    m_keyList: 0000000001000000020000000300000004000000
+    - count: 1
+      needBoost: 0
+    m_keyList: 000000000100000002000000030000000400000005000000
   m_ground:
   - {fileID: 65921364670197034}
 --- !u!114 &114330321222012006
@@ -1127,6 +1130,7 @@ MonoBehaviour:
   m_animA: 
   m_animB: 
   m_animC: 
+  m_materialChangeExceptions: []
   m_useFreezeParticle: 0
   m_freezeParticleScale: 1
   m_useMoveAnimInLove: 0
@@ -1355,6 +1359,20 @@ MonoBehaviour:
   m_onPanicAudio: 
   m_idleAudio: hd_goblinboat
   m_skins: []
+  m_entity: {fileID: 114520682280250640}
+  m_animator: {fileID: 0}
+  m_isAnimatorAvailable: 0
+  m_renderers:
+  - {fileID: 23710523203532696}
+  - {fileID: 23882840267505090}
+  - {fileID: 23270006215949498}
+  m_specialAnimations: 000000
+  m_animA_Hash: 0
+  m_animB_Hash: 0
+  m_animC_Hash: 0
+  m_animEvents: {fileID: 0}
+  m_transform: {fileID: 4237865716205722}
+  m_view: {fileID: 4420026824488478}
 --- !u!114 &114520682280250640
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1367,6 +1385,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_tags: 64
+  m_otherSpawnables:
+  - {fileID: 114685739159417038}
+  - {fileID: 114256234119139888}
+  - {fileID: 114474965724746028}
+  m_otherSpawnablesCount: 3
+  m_pilot: {fileID: 114685739159417038}
+  m_machine: {fileID: 114256234119139888}
+  m_viewControl: {fileID: 114474965724746028}
+  m_equip: {fileID: 0}
   m_sku: GoblinBoat
   m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1
@@ -1385,6 +1412,7 @@ MonoBehaviour:
   m_energy: 10
   m_energyDrainSec: 1
   m_energyRecoverSec: 1
+  m_machine: {fileID: 0}
   m_brainResource: {fileID: 0}
   m_railSeparation:
     min: 0.5

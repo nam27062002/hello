@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 
 namespace AI {
-	public class MachineBg : MonoBehaviour, IMachine, ISpawnable {		
+	public class MachineBg : IMachine {		
 		/**************/
 		/*			  */
 		/**************/
@@ -13,22 +13,22 @@ namespace AI {
 
 		private Group m_group; // this will be a reference
 
-		public virtual Quaternion orientation 	{ get { return transform.rotation; } set { transform.rotation = value; } }
-		public Vector3 position { 	get { if (m_enableMotion && m_motion != null) return m_motion.position; else return transform.position; } 
+		override public Quaternion orientation 	{ get { return transform.rotation; } set { transform.rotation = value; } }
+		override public Vector3 position { 	get { if (m_enableMotion && m_motion != null) return m_motion.position; else return transform.position; } 
 									set { if (m_enableMotion && m_motion != null) m_motion.position = value; else transform.position = value; } 
 		}
 
-		public Vector3 eye 				{ get { return transform.position; } }
-		public Vector3 target			{ get { return m_pilot.target; } }
-		public Vector3 direction 		{ get { if (m_enableMotion && m_motion != null) return m_motion.direction; else return Vector3.zero; } }
-		public Vector3 groundDirection 	{ get { return Vector3.zero; } }
-		public Vector3 upVector  		{ get { if (m_enableMotion && m_motion != null) return m_motion.upVector; else return Vector3.up; } set { if (m_motion != null) m_motion.upVector = value; } }
-		public Vector3 velocity			{ get { if (m_enableMotion && m_motion != null) return m_motion.velocity; else return Vector3.zero;} }
-		public Vector3 angularVelocity	{ get { if (m_enableMotion && m_motion != null) return m_motion.angularVelocity; else return Vector3.zero;} }
+		override public Vector3 eye 				{ get { return transform.position; } }
+		override public Vector3 target			{ get { return m_pilot.target; } }
+		override public Vector3 direction 		{ get { if (m_enableMotion && m_motion != null) return m_motion.direction; else return Vector3.zero; } }
+		override public Vector3 groundDirection 	{ get { return Vector3.zero; } }
+		override public Vector3 upVector  		{ get { if (m_enableMotion && m_motion != null) return m_motion.upVector; else return Vector3.up; } set { if (m_motion != null) m_motion.upVector = value; } }
+		override public Vector3 velocity			{ get { if (m_enableMotion && m_motion != null) return m_motion.velocity; else return Vector3.zero;} }
+		override public Vector3 angularVelocity	{ get { if (m_enableMotion && m_motion != null) return m_motion.angularVelocity; else return Vector3.zero;} }
 
-		public float lastFallDistance { get { return 0; } }
+		override public float lastFallDistance { get { return 0; } }
 		public bool isKinematic{ get { return false; } set { } }
-		public Transform enemy { get { return null; } set { } }
+		override public Transform enemy { get { return null; } }
 		public bool isPetTarget{ get { return false;} set { } }
 
 		//---------------------------------------------------------------------------------
@@ -43,14 +43,14 @@ namespace AI {
 			LeaveGroup();
 		}
 
-		public void Spawn(ISpawner _spawner) {
+		override public void Spawn(ISpawner _spawner) {
 			m_motion.Init();
 		}
 
-		public void Activate() {}
-		public void Deactivate( float duration, UnityEngine.Events.UnityAction _action) {}
+		override public void Activate() {}
+		override public void Deactivate( float duration, UnityEngine.Events.UnityAction _action) {}
 
-		public void OnTrigger(string _trigger, object[] _param = null) {
+		override public void OnTrigger(int _trigger, object[] _param = null) {
 			if (m_pilot != null) {
 				m_pilot.OnTrigger(_trigger);
 			}
@@ -59,7 +59,7 @@ namespace AI {
 		// Physics Collisions and Triggers
 
 		void OnCollisionEnter(Collision _collision) {
-			OnTrigger(SignalTriggers.OnCollisionEnter);
+			OnTrigger(SignalTriggers.onCollisionEnter);
 		}
 
 
@@ -73,59 +73,59 @@ namespace AI {
 		//
 
 		// Update is called once per frame
-		public virtual void CustomUpdate() {
+		override public void CustomUpdate() {
 			if (m_enableMotion) m_motion.Update();
 		}
 
-		public virtual void CustomFixedUpdate() {
+		override public void CustomFixedUpdate() {
 			if (m_enableMotion) m_motion.FixedUpdate();
 		}
 
-		public void SetSignal(Signals.Type _signal, bool _activated) {
+		override public void SetSignal(Signals.Type _signal, bool _activated) {
 
 		}
 
-		public void SetSignal(Signals.Type _signal, bool _activated, ref object[] _params) {
+		override public void SetSignal(Signals.Type _signal, bool _activated, ref object[] _params) {
 			
 		}
 
-		public bool GetSignal(Signals.Type _signal) {
+		override public bool GetSignal(Signals.Type _signal) {
 			return false;
 		}
 
-		public object[] GetSignalParams(Signals.Type _signal) {
+		override public object[] GetSignalParams(Signals.Type _signal) {
 			return null;
 		}
 
-		public void DisableSensor(float _seconds) {}
+		override public void DisableSensor(float _seconds) {}
 
-		public void UseGravity(bool _value) {}
+		override public void UseGravity(bool _value) {}
 
-		public void CheckCollisions(bool _value) {}
+		override public void CheckCollisions(bool _value) {}
 
-		public void FaceDirection(bool _value) {
+		override public void FaceDirection(bool _value) {
 			if (m_motion != null) {
 				m_motion.faceDirection = _value;
 			}
 		}
 
-		public bool IsFacingDirection() {
+		override public bool IsFacingDirection() {
 			if (m_motion != null) {
 				return m_motion.faceDirection;
 			}
 			return false;
 		}
 
-		public bool IsInFreeFall() { 
+		override public bool IsInFreeFall() { 
 			return false; 
 		}
 
-		public bool HasCorpse() {
+		override public bool HasCorpse() {
 			return false;
 		}
 
 		// Group membership -> for collective behaviours
-		public void	EnterGroup(ref Group _group) {
+		override public void EnterGroup(ref Group _group) {
 			if (m_group != _group) {
 				if (m_group != null) {
 					LeaveGroup();
@@ -136,11 +136,11 @@ namespace AI {
 			}
 		}
 
-		public Group GetGroup() {
+		override public Group GetGroup() {
 			return m_group;
 		}
 
-		public void LeaveGroup() {
+		override public void LeaveGroup() {
 			if (m_group != null) {
 				m_group.Leave(this);
 				m_group = null;
@@ -152,57 +152,57 @@ namespace AI {
 		}
 
 		// External interactions
-		public void EnterDevice(bool _isCage) {}
-		public void LeaveDevice(bool _isCage) {}
+		override public void EnterDevice(bool _isCage) {}
+		override public void LeaveDevice(bool _isCage) {}
 
-		public void ReceiveDamage(float _damage) {}
+		override public void ReceiveDamage(float _damage) {}
 
-		public bool IsDead() { return false; }
+		override public bool IsDead() { return false; }
 
-		public bool IsDying() { return false; }
+		override public bool IsDying() { return false; }
 
 		public bool IsFreezing() { return false; }
-        public bool IsStunned() { return false; }
-        public bool IsInLove() { return false; }
-        public bool IsBubbled() { return false; }
+        override public bool IsStunned() { return false; }
+        override public bool IsInLove() { return false; }
+        override public bool IsBubbled() { return false; }
 
-        public void Drown() { }
+        override public void Drown() { }
 
-		public bool CanBeBitten() { return false; }
+		override public bool CanBeBitten() { return false; }
 
-		public float biteResistance { get { return 0; }}
+		override public float biteResistance { get { return 0; }}
 
-		public void Bite() { }
+		override public void Bite() { }
 
-		public void BeginSwallowed(Transform _transform, bool _rewardPlayer, IEntity.Type _source) { }
+		override public void BeginSwallowed(Transform _transform, bool _rewardPlayer, IEntity.Type _source) { }
 
-		public void EndSwallowed(Transform _transform) { }
+		override public void EndSwallowed(Transform _transform) { }
 
-		public HoldPreyPoint[] holdPreyPoints { get { return null; } }
+		override public HoldPreyPoint[] holdPreyPoints { get { return null; } }
 
-		public void BiteAndHold() { }
+		override public void BiteAndHold() { }
 
-		public void ReleaseHold() { }
+		override public void ReleaseHold() { }
 
-		public Quaternion GetDyingFixRot() {
+		override public Quaternion GetDyingFixRot() {
 			return Quaternion.identity;
 		}
 
-		public virtual bool Burn(Transform _transform, IEntity.Type _source, bool instant = false, FireColorSetupManager.FireColorType fireColorType = FireColorSetupManager.FireColorType.RED) {
+		override public bool Burn(Transform _transform, IEntity.Type _source, bool instant = false, FireColorSetupManager.FireColorType fireColorType = FireColorSetupManager.FireColorType.RED) {
 			return false;
 		}
 
-		public bool Smash( IEntity.Type _source ){
+		override public bool Smash( IEntity.Type _source ){
 			return false;
 		}
 
-		public void SetVelocity(Vector3 _v) {
+		override public void SetVelocity(Vector3 _v) {
 			if (m_motion != null) {
 				m_motion.SetVelocity(_v);
 			}
 		}
 
-		public void AddExternalForce(Vector3 _f) {}
+		override public void AddExternalForce(Vector3 _f) {}
 
 		// Debug
 		void OnDrawGizmosSelected() {}

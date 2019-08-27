@@ -1,5 +1,10 @@
-﻿using UnityEngine;
+﻿#if DEBUG && !DISABLE_LOGS
+#define ENABLE_LOGS
+#endif
+
+using UnityEngine;
 using System.Collections.Generic;
+using System.Diagnostics;
 public class ContentManager  
 {
     //////////////////////////////////////////////////////////////////////////
@@ -7,15 +12,13 @@ public class ContentManager
     private class ContentDeltaDelegate : ContentDeltaManager.ContentDeltaListener
     {        
         public override void onContentDeltaInitialised(bool bWasSuccessful)
-        {            
-            if (FeatureSettingsManager.IsDebugEnabled)
-                Log("onContentDeltaInitialised: succeded: " + bWasSuccessful);
+        {                        
+            Log("onContentDeltaInitialised: succeded: " + bWasSuccessful);
         }
 
         public override void onContentDeltaAllDownloaded(bool bWasSuccessful, long iDownloadedSize)
-        {
-            if (FeatureSettingsManager.IsDebugEnabled)            
-                Log("onContentDeltaAllDownloaded: succeded: " + bWasSuccessful);
+        {            
+            Log("onContentDeltaAllDownloaded: succeded: " + bWasSuccessful);
 
             if (bWasSuccessful)
             {
@@ -41,9 +44,8 @@ public class ContentManager
         }
 
         public override void onContentReady()
-        {
-            if (FeatureSettingsManager.IsDebugEnabled)
-                Log("OnContentReady" );
+        {            
+            Log("OnContentReady" );
 
             OnContentReady();
         }
@@ -157,9 +159,9 @@ public class ContentManager
         kDefinitionFiles.Add(DefinitionsCategory.PARTICLE_MANAGER_SETTINGS_LEVEL_0_AREA1, new string[] { "Rules/PM_level_0_area1", "Rules/PM_level_0_common" });
         kDefinitionFiles.Add(DefinitionsCategory.PARTICLE_MANAGER_SETTINGS_LEVEL_0_AREA2, new string[] { "Rules/PM_level_0_area2", "Rules/PM_level_0_common" });
         kDefinitionFiles.Add(DefinitionsCategory.PARTICLE_MANAGER_SETTINGS_LEVEL_0_AREA3, new string[] { "Rules/PM_level_0_area3", "Rules/PM_level_0_common" });
-		kDefinitionFiles.Add(DefinitionsCategory.POOL_MANAGER_SETTINGS_LEVEL_0_AREA2, new string[] { "Rules/NPC_Pools_level_0_area2" });
-		kDefinitionFiles.Add(DefinitionsCategory.POOL_MANAGER_SETTINGS_LEVEL_0_AREA1, new string[] { "Rules/NPC_Pools_level_0_area1" });
-		kDefinitionFiles.Add(DefinitionsCategory.POOL_MANAGER_SETTINGS_LEVEL_0_AREA3, new string[] { "Rules/NPC_Pools_level_0_area3" });
+		kDefinitionFiles.Add(DefinitionsCategory.POOL_MANAGER_SETTINGS_LEVEL_0_AREA2, new string[] { "Rules/NPC_Pools_level_0_area2", "Rules/NPC_Pools_level_0_common" });
+		kDefinitionFiles.Add(DefinitionsCategory.POOL_MANAGER_SETTINGS_LEVEL_0_AREA1, new string[] { "Rules/NPC_Pools_level_0_area1", "Rules/NPC_Pools_level_0_common" });
+		kDefinitionFiles.Add(DefinitionsCategory.POOL_MANAGER_SETTINGS_LEVEL_0_AREA3, new string[] { "Rules/NPC_Pools_level_0_area3", "Rules/NPC_Pools_level_0_common" });
 
         // kDefinitionFiles.Add(DefinitionsCategory.SETTINGS, );
 
@@ -214,8 +216,9 @@ public class ContentManager
         kDefinitionFiles.Add(DefinitionsCategory.RARITIES, new string[] { "Rules/rarityDefinitions" });
         kDefinitionFiles.Add(DefinitionsCategory.HUNGRY_LETTERS, new string[] { "Rules/hungryLettersDefinitions" });
 		kDefinitionFiles.Add(DefinitionsCategory.DAILY_REWARDS, new string[] { "Rules/dailyRewardsDefinitions" });
+        kDefinitionFiles.Add(DefinitionsCategory.DAILY_REWARD_MODIFIERS, new string[] { "Rules/dailyRewardsDragonModifiersDefinitions" });
 
-            // Interstitials
+        // Interstitials
         // kDefinitionFiles.Add(DefinitionsCategory.INTERSTITIALS_PROFILES, new string[] { "Rules/interstitialAdsProfilesDefinitions" });
         kDefinitionFiles.Add(DefinitionsCategory.INTERSTITIALS_SETUP, new string[] { "Rules/interstitialAdsSettingsDefinitions" });    
 
@@ -339,8 +342,13 @@ public class ContentManager
 
 #region log
     private const bool LOG_USE_COLOR = false;
-    private const string LOG_CHANNEL = "[ContentManager] ";    
+    private const string LOG_CHANNEL = "[ContentManager] ";
 
+#if ENABLE_LOGS
+    [Conditional("DEBUG")]
+#else
+    [Conditional("FALSE")]
+#endif
     public static void Log(string msg)
     {
         msg = LOG_CHANNEL + msg;
@@ -352,6 +360,11 @@ public class ContentManager
         Debug.Log(msg);        
     }
 
+#if ENABLE_LOGS
+    [Conditional("DEBUG")]
+#else
+    [Conditional("FALSE")]
+#endif
     public static void LogError(string msg)
     {
         Debug.LogError(LOG_CHANNEL + msg);

@@ -29,7 +29,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1742581188199660
 GameObject:
   m_ObjectHideFlags: 1
@@ -201,6 +201,9 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
+  targetIsSelf: 1
+  targetGO: {fileID: 0}
+  tweenTargetIsTargetGO: 1
   delay: 0
   duration: 1
   easeType: 7
@@ -345,6 +348,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_tags: 1024
+  m_otherSpawnables:
+  - {fileID: 114506315795934254}
+  - {fileID: 114725951615741424}
+  m_otherSpawnablesCount: 2
+  m_pilot: {fileID: 0}
+  m_machine: {fileID: 114506315795934254}
+  m_viewControl: {fileID: 114725951615741424}
+  m_equip: {fileID: 0}
   m_sku: PreSummer_02_watermelon
   m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1

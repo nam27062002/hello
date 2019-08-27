@@ -104,6 +104,33 @@ namespace LevelEditor {
 						}
 					} EditorGUILayoutExt.EndHorizontalSafe();
 
+
+					EditorGUILayout.BeginHorizontal(); {
+						// Label
+						GUILayout.Label("Test Pets:");
+
+						// Dragon selector
+						List<string> optionsList = new List<string>();
+						optionsList.Add("none");
+						optionsList.AddRange(DefinitionsManager.SharedInstance.GetSkuList(DefinitionsCategory.PETS));
+					
+						string[] options = optionsList.ToArray();
+						int petsLimit = 5;
+						for (int i = 0; i < petsLimit; i++)
+						{
+							int oldIdx = ArrayUtility.IndexOf<string>(options, LevelEditor.settings.testPets[i]);
+							int newIdx = EditorGUILayout.Popup(Mathf.Max(oldIdx, 0), options);	// Select first pet, empty string
+							if(oldIdx != newIdx) {
+								LevelEditor.settings.testPets[i] = options[newIdx];
+								EditorUtility.SetDirty(LevelEditor.settings);
+								AssetDatabase.SaveAssets();
+							}
+						}
+
+						
+					} EditorGUILayoutExt.EndHorizontalSafe();
+
+
 					GUI.enabled = !playing;
 					EditorGUILayout.BeginHorizontal(); {
 						// Label

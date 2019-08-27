@@ -39,6 +39,10 @@ public class WASDController : MonoBehaviour {
 	[Space]
 	[Tooltip("Hold to rotate rather than move")]
 	public KeyCode m_rotationModifierKey = KeyCode.LeftShift;
+	public bool m_rotateByDefault = false;
+
+	private Vector3 m_originalPos = Vector3.one;
+	private Quaternion m_originalRot = Quaternion.identity;
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -47,7 +51,8 @@ public class WASDController : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	private void Awake() {
-
+		m_originalPos = this.transform.localPosition;
+		m_originalRot = this.transform.localRotation;
 	}
 
 	/// <summary>
@@ -75,6 +80,8 @@ public class WASDController : MonoBehaviour {
 	/// Called every frame
 	/// </summary>
 	private void Update() {
+		if(!this.isActiveAndEnabled) return;
+
 		Vector3 offset = Vector3.zero;
 
 		if(Input.GetKey(m_forwardKey)) {
@@ -99,7 +106,8 @@ public class WASDController : MonoBehaviour {
 		}
 
 		// Apply transform
-		if(Input.GetKey(m_rotationModifierKey)) {
+		bool rotateKey = Input.GetKey(m_rotationModifierKey);
+		if((m_rotateByDefault && !rotateKey) || (!m_rotateByDefault && rotateKey)) {
 			// To make rotation more intuitive, switch axis around
 			offset = offset * m_rotationSpeed;
 			this.transform.Rotate(
@@ -124,6 +132,13 @@ public class WASDController : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //
 	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Reset position and rotation to original ones.
+	/// </summary>
+	public void Reset() {
+		this.transform.localRotation = m_originalRot;
+		this.transform.localPosition = m_originalPos;
+	}
 
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //

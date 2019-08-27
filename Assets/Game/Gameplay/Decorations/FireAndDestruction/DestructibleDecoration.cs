@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class DestructibleDecoration : MonoBehaviour, ISpawnable, IBroadcastListener {
+public class DestructibleDecoration : ISpawnable, IBroadcastListener {
 
 	private enum InteractionType {
 		Collision = 0,
@@ -153,7 +153,7 @@ public class DestructibleDecoration : MonoBehaviour, ISpawnable, IBroadcastListe
 		m_dragonHealth = InstanceManager.player.dragonHealthBehaviour;
 	}
 
-	public void Spawn(ISpawner _spawner) {
+	override public void Spawn(ISpawner _spawner) {
 		enabled = true;
 
 		m_view.SetActive(true);
@@ -170,7 +170,7 @@ public class DestructibleDecoration : MonoBehaviour, ISpawnable, IBroadcastListe
 		m_collider.enabled = true;
 	}
 
-	public void CustomUpdate() {}
+	override public void CustomUpdate() {}
 
 	void OnCollisionEnter(Collision _other) {
 		if (enabled && m_spawned) {

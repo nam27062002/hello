@@ -74,10 +74,8 @@ public class UserPersistenceSystem : PersistenceSystem
             iapPurchaseMade = GetBool("IapPurchaseMade");            
         }
         catch (Exception e)
-        {
-			if (FeatureSettingsManager.IsDebugEnabled)
-            	PersistenceFacade.LogError("UserPersistenceSystem (Load) :: Exception - " + e);
-
+        {			
+            PersistenceFacade.LogError("UserPersistenceSystem (Load) :: Exception - " + e);
             throw new CorruptedSaveException(e);
         }        
     }

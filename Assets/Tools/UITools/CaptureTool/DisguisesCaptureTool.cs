@@ -51,11 +51,6 @@ public class DisguisesCaptureTool : CaptureTool {
 		// Call parent
 		base.Start();
 
-		// If definitions are not loaded, do it now
-		if(!ContentManager.ready){
-			ContentManager.InitContent(true, false);
-		}
-
 		// Initialize dragon dropdown
 		List<string> dragonSkuList = DefinitionsManager.SharedInstance.GetSkuList(DefinitionsCategory.DRAGONS);
 		m_dragonSkuDropdown.ClearOptions();

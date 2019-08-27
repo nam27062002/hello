@@ -4,10 +4,10 @@ using System.Collections.Generic;
 // This is a Quadtree! a Quadtree full of fires
 public class FirePropagationManager : UbiBCN.SingletonMonoBehaviour<FirePropagationManager>, IBroadcastListener {
 	
-	private QuadTree<FireNode> m_fireNodesTree;
-    private HashSet<FireNode> m_selectedFireNodes = new HashSet<FireNode>();
-    private List<FireNode> m_fireNodes;
-	private List<FireNode> m_burningFireNodes;
+	private QuadTree<IFireNode> m_fireNodesTree;
+    private HashSet<IFireNode> m_selectedFireNodes = new HashSet<IFireNode>();
+    private List<IFireNode> m_fireNodes;
+	private List<IFireNode> m_burningFireNodes;
 	private AudioSource m_fireNodeAudio = null;
 
 	private BoundingSphere[] m_boundigSpheres;
@@ -15,9 +15,9 @@ public class FirePropagationManager : UbiBCN.SingletonMonoBehaviour<FirePropagat
     private CullingGroup m_cullingGroup;
 
 	void Awake() {
-		m_fireNodesTree = new QuadTree<FireNode>(-1600f, -600f, 2600f, 1400f);
-		m_fireNodes = new List<FireNode>();
-		m_burningFireNodes = new List<FireNode>();
+		m_fireNodesTree = new QuadTree<IFireNode>(-1600f, -600f, 2600f, 1400f);
+		m_fireNodes = new List<IFireNode>();
+		m_burningFireNodes = new List<IFireNode>();
 
 		m_boundigSpheres = new BoundingSphere[1000];
 
@@ -86,7 +86,7 @@ public class FirePropagationManager : UbiBCN.SingletonMonoBehaviour<FirePropagat
 		if(data != null) {
 			bounds = data.bounds;
 		}
-		m_fireNodesTree = new QuadTree<FireNode>(bounds.x, bounds.y, bounds.width, bounds.height);
+		m_fireNodesTree = new QuadTree<IFireNode>(bounds.x, bounds.y, bounds.width, bounds.height);
 		for(int i = 0; i < m_fireNodes.Count; i++) {
 			m_fireNodesTree.Insert(m_fireNodes[i]);
 		}
@@ -117,7 +117,7 @@ public class FirePropagationManager : UbiBCN.SingletonMonoBehaviour<FirePropagat
 		m_cullingGroup = null;
 	}
 
-	public static void Insert(FireNode _fireNode) {
+	public static void Insert(IFireNode _fireNode) {
 		instance.m_fireNodes.Add(_fireNode);
 
 		if (instance.m_fireNodes.Count < instance.m_boundigSpheres.Length) {
@@ -131,11 +131,11 @@ public class FirePropagationManager : UbiBCN.SingletonMonoBehaviour<FirePropagat
 		if (instance.m_fireNodesTree != null) instance.m_fireNodesTree.Insert(_fireNode);
 	}
 
-	public static void RegisterBurningNode(FireNode _fireNode) {
+	public static void RegisterBurningNode(IFireNode _fireNode) {
 		instance.m_burningFireNodes.Add(_fireNode);
 	}
 
-	public static void UnregisterBurningNode(FireNode _fireNode) {
+	public static void UnregisterBurningNode(IFireNode _fireNode) {
         if (instance != null) {
             instance.m_burningFireNodes.Remove(_fireNode);
         }
@@ -180,14 +180,12 @@ public class FirePropagationManager : UbiBCN.SingletonMonoBehaviour<FirePropagat
 
 	public delegate bool CheckMethod( CircleAreaBounds _fireNodeBounds );
 
-
-
     public void FireUpNodes(Rect _rectArea, CheckMethod _checkMethod, DragonTier _tier, DragonBreathBehaviour.Type _breathType, Vector3 _direction, IEntity.Type _source, FireColorSetupManager.FireColorType _colorType = FireColorSetupManager.FireColorType.RED)	
     {
         if ( m_fireNodesTree != null && _checkMethod != null)
         {
             m_fireNodesTree.GetHashSetInRange(_rectArea, ref m_selectedFireNodes);
-            foreach (FireNode fireNode in m_selectedFireNodes) {
+            foreach (IFireNode fireNode in m_selectedFireNodes) {
     			if (fireNode != null && _checkMethod(fireNode.area)) {
     				fireNode.Burn(_direction, true, _tier, _breathType, _source, _colorType);
     			}

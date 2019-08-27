@@ -12,10 +12,10 @@ namespace AI {
 		public class OnGround : StateComponent {
 			
 			[StateTransitionTrigger]
-			private static string OnRecover = "onRecover";
+			private static readonly int onRecover = UnityEngine.Animator.StringToHash("onRecover");
 
 
-			private OnGroundData m_data;
+            private OnGroundData m_data;
 			private PreyAnimationEvents m_animEvents;
 
 			private float m_timer;
@@ -69,7 +69,7 @@ namespace AI {
 			}
 
 			private void OnStandUp() {
-				Transition(OnRecover);
+				Transition(onRecover);
 			}
 		}
 	}

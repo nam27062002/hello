@@ -64,6 +64,7 @@ public class PoolManager : UbiBCN.SingletonMonoBehaviour<PoolManager> {
 	public static void PreBuild() {
         Clear(true);
 		instance.GetPoolSizesForCurrentArea();
+		Broadcaster.Broadcast(BroadcastEventType.POOL_MANAGER_READY);
 	}
 
 	public static void Build() { 

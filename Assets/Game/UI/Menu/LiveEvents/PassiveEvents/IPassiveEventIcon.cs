@@ -44,6 +44,9 @@ public abstract class IPassiveEventIcon : MonoBehaviour {
 	protected virtual void Awake() {
 		// Get tournament manager
 		m_passiveEventManager = GetEventManager();
+
+		// Start hidden
+		m_rootAnim.ForceHide(false);
 	}
 
 	/// <summary>

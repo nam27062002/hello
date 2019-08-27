@@ -50,7 +50,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1020786767613046
 GameObject:
   m_ObjectHideFlags: 1
@@ -432,6 +432,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_tags: 518
+  m_otherSpawnables:
+  - {fileID: 114943426174982768}
+  - {fileID: 114000011653825936}
+  - {fileID: 114000012425715312}
+  - {fileID: 114000010733057202}
+  - {fileID: 114574968240998206}
+  m_otherSpawnablesCount: 5
+  m_pilot: {fileID: 114000011653825936}
+  m_machine: {fileID: 114943426174982768}
+  m_viewControl: {fileID: 114000012425715312}
+  m_equip: {fileID: 0}
   m_sku: EnemyTier5
   m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1
@@ -450,6 +461,7 @@ MonoBehaviour:
   m_energy: 10
   m_energyDrainSec: 1
   m_energyRecoverSec: 1
+  m_machine: {fileID: 0}
   m_brainResource: {fileID: 11400000, guid: d95e4279165be4a26a70cb1fa716b06f, type: 2}
   m_railSeparation:
     min: 0.5
@@ -498,6 +510,7 @@ MonoBehaviour:
   m_animA: eatHold
   m_animB: 
   m_animC: 
+  m_materialChangeExceptions: []
   m_useFreezeParticle: 0
   m_freezeParticleScale: 1
   m_useMoveAnimInLove: 0
@@ -713,6 +726,19 @@ MonoBehaviour:
   m_onPanicAudio: 
   m_idleAudio: 
   m_skins: []
+  m_entity: {fileID: 114000011541247252}
+  m_animator: {fileID: 95580597446025970}
+  m_isAnimatorAvailable: 0
+  m_renderers:
+  - {fileID: 137267673887256072}
+  - {fileID: 137637130669765456}
+  m_specialAnimations: 000000
+  m_animA_Hash: 363092969
+  m_animB_Hash: 0
+  m_animC_Hash: 0
+  m_animEvents: {fileID: 114440134585038658}
+  m_transform: {fileID: 4000014232033856}
+  m_view: {fileID: 4576003836605554}
 --- !u!114 &114440134585038658
 MonoBehaviour:
   m_ObjectHideFlags: 1

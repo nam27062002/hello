@@ -44,9 +44,8 @@ public class HDNotificationsManager : UbiBCN.SingletonMonoBehaviour<HDNotificati
     
                 int notificationsEnabled = PlayerPrefs.GetInt(HD_NOTIFICATIONS, 1);
                 NotificationsManager.SharedInstance.SetNotificationsEnabled(notificationsEnabled > 0);
-    
-                if (FeatureSettingsManager.IsDebugEnabled)
-                    Log("Notifications enabled = " + GetNotificationsEnabled());
+                    
+                Log("Notifications enabled = " + GetNotificationsEnabled());
             }
         }
     }
@@ -62,30 +61,48 @@ public class HDNotificationsManager : UbiBCN.SingletonMonoBehaviour<HDNotificati
 	private void CheckRemoteNotifications() {
 		if ( UnityEngine.iOS.NotificationServices.remoteNotificationCount > 0)
 		{
-			ControlPanel.Log(LOG_CHANNEL + "================= ");
-			ControlPanel.Log(LOG_CHANNEL + " Number Of remote notificaions: " + UnityEngine.iOS.NotificationServices.remoteNotificationCount);
-			int max = UnityEngine.iOS.NotificationServices.remoteNotificationCount;
+            bool debugEnabled = FeatureSettingsManager.IsDebugEnabled;
+            if (debugEnabled)
+            {
+			     ControlPanel.Log(LOG_CHANNEL + "================= ");
+			     ControlPanel.Log(LOG_CHANNEL + " Number Of remote notificaions: " + UnityEngine.iOS.NotificationServices.remoteNotificationCount);
+			}
+
+            int max = UnityEngine.iOS.NotificationServices.remoteNotificationCount;
 			for (int i = 0; i < max; i++)
 			{
 				UnityEngine.iOS.RemoteNotification notification = UnityEngine.iOS.NotificationServices.remoteNotifications[i];
-				ControlPanel.Log(LOG_CHANNEL + " Body:" + notification.alertBody);
-				ControlPanel.Log(LOG_CHANNEL + " Sound:" + notification.soundName);
-				ControlPanel.Log(LOG_CHANNEL + " BadgeNumber:" + notification.applicationIconBadgeNumber);
-				ControlPanel.Log(LOG_CHANNEL + " Has Action:" + notification.hasAction);
-				ControlPanel.Log(LOG_CHANNEL + " UserInfo Size:" + notification.userInfo.Count);
-				foreach (System.Collections.DictionaryEntry entry in notification.userInfo)
-				{
-					ControlPanel.Log(LOG_CHANNEL + " \t\t entry: " + entry.Key + " value:" + entry.Value);    
-				}
+				
+                if (debugEnabled)
+                {
+                    ControlPanel.Log(LOG_CHANNEL + " Body:" + notification.alertBody);
+    				ControlPanel.Log(LOG_CHANNEL + " Sound:" + notification.soundName);
+    				ControlPanel.Log(LOG_CHANNEL + " BadgeNumber:" + notification.applicationIconBadgeNumber);
+    				ControlPanel.Log(LOG_CHANNEL + " Has Action:" + notification.hasAction);
+    				ControlPanel.Log(LOG_CHANNEL + " UserInfo Size:" + notification.userInfo.Count);
+    				foreach (System.Collections.DictionaryEntry entry in notification.userInfo)
+    				{
+    					ControlPanel.Log(LOG_CHANNEL + " \t\t entry: " + entry.Key + " value:" + entry.Value);    
+    				}
+                }
 
 				// if notification is silent save a flag for the game to know
 				if ( IsNotificationSilent( notification ) )
 				{
-					ControlPanel.Log( LOG_CHANNEL + "Is Silent Notification");  
+                    if (debugEnabled)
+                    {
+					   ControlPanel.Log( LOG_CHANNEL + "Is Silent Notification");  
+                    }
+
 					PlayerPrefs.SetInt(SILENT_FLAG, 1);
 				}
 			}
-			ControlPanel.Log(LOG_CHANNEL + "================= ");
+
+            if (debugEnabled)
+            {
+			     ControlPanel.Log(LOG_CHANNEL + "================= ");
+            }
+            
 			UnityEngine.iOS.NotificationServices.ClearRemoteNotifications();
 		}
 	}	
@@ -167,6 +184,7 @@ public class HDNotificationsManager : UbiBCN.SingletonMonoBehaviour<HDNotificati
     private const string SKU_NEW_MISSIONS = "sku.not.02";
     private const string SKU_NEW_CHESTS = "sku.not.03";
 	private const string SKU_DAILY_REWARD = "sku.not.04";
+    private const string SKU_REENGAGEMENT = "sku.not.14";
 
     private const string DEFAULT_ACTION = "Action";
 
@@ -213,6 +231,14 @@ public class HDNotificationsManager : UbiBCN.SingletonMonoBehaviour<HDNotificati
 	public void CancelDailyRewardNotification() {
 		CancelNotification(SKU_DAILY_REWARD);
 	}
+
+    public void ScheduleReengagementNotification(int seconds) {
+		ScheduleNotificationFromSku(SKU_REENGAGEMENT, DEFAULT_ACTION, seconds);
+	}
+
+    public void CancelReengagementNotification(  ){
+        CancelNotification(SKU_REENGAGEMENT);
+    }
 #endregion
 
 

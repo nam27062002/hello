@@ -14,10 +14,10 @@ namespace AI {
 		public class WanderPath : StateComponent {
 
 			[StateTransitionTrigger]
-			private static string OnRest = "onRest";
+			private static readonly int onRest = UnityEngine.Animator.StringToHash("onRest");
 
 
-			private WanderPathData m_data;
+            private WanderPathData m_data;
 
 
 			private PathController m_path;
@@ -66,7 +66,7 @@ namespace AI {
 				m_timer -= Time.deltaTime;
 
 				if (m_data.timeToIdle.max > 0f && m_timer <= 0f) {
-					Transition(OnRest);
+					Transition(onRest);
 				} else {
 					float m = (m_machine.position - m_target).sqrMagnitude;
                     float d = m_path.radius;

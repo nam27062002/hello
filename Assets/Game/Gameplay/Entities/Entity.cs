@@ -10,7 +10,7 @@ public class Entity : IEntity, IBroadcastListener {
 	//-----------------------------------------------
 	// Exposed to inspector
 	[EntitySkuList]
-	[SerializeField] private string m_sku;
+	[SerializeField] protected string m_sku;
 	public override string sku { get { return m_sku; } }
 
 	[SerializeField] private bool m_hideNeedTierMessage = false;
@@ -31,9 +31,9 @@ public class Entity : IEntity, IBroadcastListener {
 	protected CircleArea2D m_bounds;
 	public override CircleArea2D circleArea { get{ return m_bounds; } }
 
-	private Reward m_reward;
+	protected Reward m_reward;
 	public Reward reward { get { return m_reward; }}
-	public override int score { get { return m_reward.score; } }
+	public override float score { get { return m_reward.score; } }
 
 	private float m_goldenChance = 0f;
 	public float goldenChance { get { return m_goldenChance; }}
@@ -124,57 +124,55 @@ public class Entity : IEntity, IBroadcastListener {
     }
     
 
-	private void InitFromDef() {
+	protected void InitFromDef() {
 		// Get the definition
 		m_def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.ENTITIES, sku);
 
-		// Cache some frequently accessed values from the definition for faster access
-		// Reward
-		// m_reward.score = m_def.GetAsInt("rewardScore");
-		// m_reward.coins = m_def.GetAsInt("rewardCoins");
-		// m_reward.xp = m_def.GetAsFloat("rewardXp");
+		if (m_def != null) {
+			// Cache some frequently accessed values from the definition for faster access
+			m_goldenChance = m_def.GetAsFloat("goldenChance");
+			if (sm_goldenModifier && m_goldenChance > 0)
+				m_goldenChance = 1f;
 
-		m_reward.pc = m_def.GetAsInt("rewardPC");
-		m_reward.health = m_def.GetAsFloat("rewardHealth");
-		m_reward.energy = m_def.GetAsFloat("rewardEnergy");
-		m_reward.fury = m_def.GetAsFloat("rewardFury", 0);
+			m_pcChance = m_def.GetAsFloat("pcChance");
 
-		m_reward.origin = m_def.Get("sku");
-		m_reward.category = m_def.Get("category");
+			m_isBurnable = m_def.GetAsBool("isBurnable");
+			m_burnableFromTier = DragonTierGlobals.GetFromInt(m_def.GetAsInt("burnableFromTier"));
 
-        OnRewardCreated();
+			m_isEdible = m_def.GetAsBool("isEdible");
+			m_edibleFromTier = DragonTierGlobals.GetFromInt(m_def.GetAsInt("edibleFromTier"));
 
+			m_canBeGrabbed = m_def.GetAsBool("canBeGrabed", false);
+			m_grabFromTier = DragonTierGlobals.GetFromInt(m_def.GetAsInt("grabFromTier"));
 
-        // Simple data
-        m_goldenChance = m_def.GetAsFloat("goldenChance");
-		if (sm_goldenModifier && m_goldenChance > 0)
-			m_goldenChance = 1f;
+			m_canBeLatchedOn = m_def.GetAsBool("canBeLatchedOn", false);
+			m_latchFromTier = DragonTierGlobals.GetFromInt(m_def.GetAsInt("latchOnFromTier"));
 
-		m_pcChance = m_def.GetAsFloat("pcChance");
+			BuildRewardFromDef(m_def);
 
-		m_isBurnable = m_def.GetAsBool("isBurnable");
-		m_burnableFromTier = DragonTierGlobals.GetFromInt(m_def.GetAsInt("burnableFromTier"));
+			// Feedback data
+			m_feedbackData.InitFromDef(m_def);			
+		}
+	}
 
-		m_isEdible = m_def.GetAsBool("isEdible");
-		m_edibleFromTier = DragonTierGlobals.GetFromInt(m_def.GetAsInt("edibleFromTier"));
+	protected void BuildRewardFromDef(DefinitionNode _node) {
+		m_reward.pc = _node.GetAsInt("rewardPC");
+		m_reward.health = _node.GetAsFloat("rewardHealth");
+		m_reward.energy = _node.GetAsFloat("rewardEnergy");
+		m_reward.fury = _node.GetAsFloat("rewardFury", 0);
 
-		m_canBeGrabbed = m_def.GetAsBool("canBeGrabed", false);
-		m_grabFromTier = DragonTierGlobals.GetFromInt(m_def.GetAsInt("grabFromTier"));
+		m_reward.origin = _node.Get("sku");
+		m_reward.category = _node.Get("category");
 
-		m_canBeLatchedOn = m_def.GetAsBool("canBeLatchedOn", false);
-		m_latchFromTier = DragonTierGlobals.GetFromInt(m_def.GetAsInt("latchOnFromTier"));
+		OnRewardCreated();
 
-        m_maxHealth = m_def.GetAsFloat("maxHealth", 1);
-        if (InstanceManager.player != null) {
-            m_maxHealth *= (1f + (m_def.GetAsFloat("healthScalePerDragonTier", 0f) * (int)InstanceManager.player.data.tier));
-        }
-
-        // Feedback data
-        m_feedbackData.InitFromDef(m_def);
+		m_maxHealth = _node.GetAsFloat("maxHealth", 1);
+		if (InstanceManager.player != null) {
+			m_maxHealth *= (1f + (_node.GetAsFloat("healthScalePerDragonTier", 0f) * (int)InstanceManager.player.data.tier));
+		}
 
 		ApplyPowerUpMultipliers();
-	}
-	
+	}	
 
 	override public void Spawn(ISpawner _spawner) {        
         base.Spawn(_spawner);
@@ -260,7 +258,7 @@ public class Entity : IEntity, IBroadcastListener {
     /// <param name="_burnt">Set to <c>true</c> if the cause of the death was fire - affects the reward.</param>
     public override Reward GetOnKillReward(DyingReason _reason) {
 		// Create a copy of the base rewards and tune them
-		Reward newReward = reward;	// Since it's a struct, this creates a new copy rather than being a reference
+		Reward newReward = m_reward;	// Since it's a struct, this creates a new copy rather than being a reference
 
 		// Give coins? True if the entity was golden or has been burnt
 		if(!m_isGolden && !InstanceManager.player.breathBehaviour.IsFuryOn()) {
@@ -423,7 +421,7 @@ public class Entity : IEntity, IBroadcastListener {
 	void ApplyPowerUpMultipliers()
 	{
 		m_reward.score = m_def.GetAsInt("rewardScore");
-		m_reward.score += Mathf.FloorToInt((m_reward.score * m_powerUpScoreMultiplier) / 100.0f);
+		m_reward.score += ((m_reward.score * m_powerUpScoreMultiplier) / 100.0f);
 
 		m_reward.coins = m_def.GetAsInt("rewardCoins");
 		m_reward.coins += ((m_reward.coins * m_powerUpSCMultiplier) / 100.0f);
@@ -454,5 +452,14 @@ public class Entity : IEntity, IBroadcastListener {
 
 	public static void SetGoldenModifier(bool _value) {
 		sm_goldenModifier = _value;
+	}
+
+	public static void RemovePowerUps()
+	{
+		m_powerUpSCMultiplier = 0;
+		m_powerUpScoreMultiplier = 0;
+		m_powerUpXpMultiplier = 0;
+		sm_goldenModifier = false;
+
 	}
 }

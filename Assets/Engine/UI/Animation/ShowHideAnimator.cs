@@ -4,9 +4,17 @@
 // Created by Alger Ortín Castellví on 26/02/2016.
 // Copyright (c) 2016 Ubisoft. All rights reserved.
 
+//----------------------------------------------------------------------------//
+// PREPROCESSOR																  //
+//----------------------------------------------------------------------------//
+#if DEBUG && !DISABLE_LOGS
+#define ENABLE_LOGS
+#endif
+
 //----------------------------------------------------------------------//
 // INCLUDES																//
 //----------------------------------------------------------------------//
+using System.Diagnostics;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
@@ -934,17 +942,20 @@ public class ShowHideAnimator : MonoBehaviour {
 		DoHidePostProcessing();
 	}
 
-	//------------------------------------------------------------------//
-	// DEBUG															//
-	//------------------------------------------------------------------//
-	/// <summary>
-	/// Check the debug conditions and log given text if matching.
-	/// </summary>
-	/// <param name="_target">Target object.</param>
-	/// <param name="_text">Text.</param>
-	public static void DebugLog(Object _target, string _text) {
-		if(!FeatureSettingsManager.IsDebugEnabled) return;
-		if(!DEBUG_ENABLED) return;
+    //------------------------------------------------------------------//
+    // DEBUG															//
+    //------------------------------------------------------------------//
+    /// <summary>
+    /// Check the debug conditions and log given text if matching.
+    /// </summary>
+    /// <param name="_target">Target object.</param>
+    /// <param name="_text">Text.</param>
+    #if ENABLE_LOGS
+    [Conditional("DEBUG")]
+    #else
+    [Conditional("FALSE")]
+    #endif
+    public static void DebugLog(Object _target, string _text) {		
 		if(_target == null || _target.name != DEBUG_TARGET) return;
 		ControlPanel.Log(_text);
 	}

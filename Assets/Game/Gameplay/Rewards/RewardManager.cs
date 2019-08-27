@@ -71,6 +71,7 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager>, IBroa
 	// Basic rewards
 	// Exposed for easier debugging
 	[SerializeField] private ObscuredLong m_score = 0;
+	private ObscuredFloat m_scorePrecision = 0f;
 	public static long score { 
 		get { return instance.m_score; }
 	}
@@ -417,6 +418,7 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager>, IBroa
 	public static void Reset() {
 		// Score
 		instance.m_score = 0;
+		instance.m_scorePrecision = 0;
 		instance.m_coins = 0;
 		instance.m_coinsPrecision = 0;
 		instance.m_pc = 0;
@@ -529,8 +531,9 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager>, IBroa
 	private void ApplyReward(Reward _reward, Transform _entity) {
 		// Score
 		// Apply multiplier
-		_reward.score = (int)(_reward.score * currentScoreMultiplier);
-		instance.m_score += _reward.score;
+		_reward.score = (_reward.score * currentScoreMultiplier);
+		instance.m_scorePrecision += _reward.score;
+		instance.m_score = (long)instance.m_scorePrecision;
 
 		// Coins
 		long deltaCoins = instance.m_coins;
@@ -737,7 +740,7 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager>, IBroa
 	}
 
 	private void OnBurned(Transform _t, IEntity _e, Reward _reward) {
-		_reward.coins = (int)(_reward.coins * m_burnCoinsMultiplier);
+		_reward.coins = (_reward.coins * m_burnCoinsMultiplier);
 		OnKill(_t, _e, _reward );
 	}
 

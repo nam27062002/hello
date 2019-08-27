@@ -49,12 +49,12 @@ public class PowerTooltip : UITooltip
 	/// <summary>
 	/// Initialization.
 	/// </summary>
-	private void Awake() {
+	new private void Awake() {
 		// Check required fields
 		Debug.Assert(m_powerIcon != null, "Required field!");
 
         // Start hidden
-        animator.ForceHide(false);
+        if(animator != null) animator.ForceHide(false);
     }
 
 	//------------------------------------------------------------------------//

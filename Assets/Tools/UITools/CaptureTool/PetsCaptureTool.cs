@@ -50,11 +50,6 @@ public class PetsCaptureTool : CaptureTool {
 		// Call parent
 		base.Start();
 
-		// If definitions are not loaded, do it now
-		if(!ContentManager.ready){
-			ContentManager.InitContent(true, false);
-		}
-
 		// Same for localization
 		LocalizationManager.SharedInstance.SetLanguage("lang_english");
 

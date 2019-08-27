@@ -15,9 +15,9 @@ namespace AI {
 		public class PetSearchCageTarget : StateComponent {
 
 			[StateTransitionTrigger]
-			private static string OnCageInRange = "onCageInRange";
+			private static readonly int onCageInRange = UnityEngine.Animator.StringToHash("onCageInRange");
 
-			private float m_shutdownSensorTime;
+            private float m_shutdownSensorTime;
 			private float m_timer;
 			private object[] m_transitionParam;
 
@@ -88,7 +88,7 @@ namespace AI {
 						if (!cage.behaviour.broken && IsReachable( cage.behaviour.centerTarget ))
 						{
 							m_transitionParam[0] = cage.behaviour.centerTarget;
-							Transition(OnCageInRange, m_transitionParam);
+							Transition(onCageInRange, m_transitionParam);
 						}
 					}
 				}

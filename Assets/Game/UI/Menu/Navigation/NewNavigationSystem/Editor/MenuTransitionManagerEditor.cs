@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------------//
 using UnityEngine;
 using UnityEditor;
+using System.Text;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -67,22 +68,24 @@ public class MenuTransitionManagerEditor : Editor {
 		// Update the serialized object - always do this in the beginning of OnInspectorGUI.
 		serializedObject.Update();
 
+		// Unity's "script" property - draw disabled
+		EditorGUI.BeginDisabledGroup(true);
+		EditorGUILayout.PropertyField(serializedObject.FindProperty("m_Script"), true);
+		EditorGUI.EndDisabledGroup();
+
+		// Debug tools
+		EditorGUILayoutExt.Separator("DEBUG");
+		if(GUILayout.Button("DUMP TRANSITIONS", GUILayout.Height(30f))) {
+			DumpTransitions();
+		}
+
 		// Loop through all serialized properties and work with special ones
 		SerializedProperty p = serializedObject.GetIterator();
 		p.Next(true);	// To get first element
 		do {
 			// Properties requiring special treatment
-			// Unity's "script" property
-			if(p.name == "m_Script") {
-				// Draw the property, disabled
-				bool wasEnabled = GUI.enabled;
-				GUI.enabled = false;
-				EditorGUILayout.PropertyField(p, true);
-				GUI.enabled = wasEnabled;
-			}
-
 			// Properties we don't want to show
-			else if(p.name == "m_ObjectHideFlags") {
+			if(p.name == "m_ObjectHideFlags" || p.name == "m_Script") {
 				// Do nothing
 			}
 
@@ -129,5 +132,36 @@ public class MenuTransitionManagerEditor : Editor {
 	/// </summary>
 	public void OnSceneGUI() {
 		// Scene-related stuff
+	}
+
+	//------------------------------------------------------------------------//
+	// DEBUG																  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Print all transitions defined.
+	/// </summary>
+	private void DumpTransitions() {
+		// [AOC] FEEL FREE TO CUSTOMIZE PRINTED INFO
+		StringBuilder sb = new StringBuilder();
+		sb.AppendLine(Colors.magenta.Tag("Transitions with overriden duration:"));
+
+		// Go through all screens
+		for(int i = 0; i < m_targetMenuTransitionManager.screens.Length; ++i) {
+			// Get screen data
+			ScreenData data = m_targetMenuTransitionManager.screens[i];
+			sb.AppendLine(data.screenId.ToString());
+
+			// Go through all transitions defined for this screen
+			foreach(Transition t in data.transitions) {
+				// Only print if duration is overriden
+				if(t.overrideDuration) {
+					sb.Append("\t").Append(t.destination.ToString()).AppendLine();
+					sb.Append("\t\t").Append(t.duration).AppendLine();
+				}
+			}
+		}
+
+		// Print!
+		Debug.Log(sb.ToString());
 	}
 }

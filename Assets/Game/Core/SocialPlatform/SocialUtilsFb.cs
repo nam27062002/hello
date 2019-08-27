@@ -135,10 +135,8 @@ public class SocialUtilsFb : SocialUtils
             });
         }
         else
-        {
-            if (FeatureSettingsManager.IsDebugEnabled)
-                LogError("(GetProfileInfo) :: FB not initiliazed or logged in!");
-
+        {            
+            LogError("(GetProfileInfo) :: FB not initiliazed or logged in!");
             onGetProfileInfo(null);
         }
     }
@@ -146,9 +144,8 @@ public class SocialUtilsFb : SocialUtils
     protected override void ExtendedGetProfilePicture(string socialID, string storagePath, Action<bool> onGetProfilePicture, int width = 256, int height = 256)
     {
         string url = string.Format("/{0}/picture?width={1}&height={2}&redirect=false&type=normal", socialID, width, height);
-
-        if (FeatureSettingsManager.IsDebugEnabled)
-            LogWarning("SocialUtilsFb :: (GetProfilePicture) gettint URL " + url);
+        
+        LogWarning("SocialUtilsFb :: (GetProfilePicture) gettint URL " + url);
 
         FB.API(url, HttpMethod.GET, delegate (IGraphResult result)
         {
@@ -161,9 +158,8 @@ public class SocialUtilsFb : SocialUtils
                     if (pictureInfo != null)
                     {                        
                         if (pictureInfo.ContainsKey("url") && (!pictureInfo.ContainsKey("is_silhouette") || !(bool)pictureInfo["is_silhouette"]))
-                        {
-                            if (FeatureSettingsManager.IsDebugEnabled)
-                                Log("SocialUtilsFb :: (GetProfilePicture) Profile image " + pictureInfo["url"] + " requested");                           
+                        {                            
+                            Log("SocialUtilsFb :: (GetProfilePicture) Profile image " + pictureInfo["url"] + " requested");                           
 
                             UnityEngine.Events.UnityAction<bool, string, long> onThisDone = delegate(bool success,  string key, long size)
                             {
@@ -175,34 +171,27 @@ public class SocialUtilsFb : SocialUtils
                         else
                         {                            
                             FileUtils.RemoveFileInDeviceStorage(storagePath, CaletyConstants.DESKTOP_DEVICE_STORAGE_PATH_SIMULATED);                            
-
-                            if (FeatureSettingsManager.IsDebugEnabled)
+                            
                             Log("SocialUtilsFb :: (GetProfilePicture) Invalid image!");
 
                             onGetProfilePicture(true);
                         }
                     }
                     else
-                    {
-                        if (FeatureSettingsManager.IsDebugEnabled)
-                            LogWarning("SocialUtilsFb :: (GetProfilePicture) Invalid json response: " + result.RawResult);
-
+                    {                        
+                        LogWarning("SocialUtilsFb :: (GetProfilePicture) Invalid json response: " + result.RawResult);
                         onGetProfilePicture(true);
                     }
                 }
                 else
-                {
-                    if (FeatureSettingsManager.IsDebugEnabled)
-                        LogWarning("SocialUtilsFb :: (GetProfilePicture) Invalid json response: " + result.RawResult);
-
+                {                    
+                    LogWarning("SocialUtilsFb :: (GetProfilePicture) Invalid json response: " + result.RawResult);
                     onGetProfilePicture(true);
                 }
             }
             else
-            {
-                if (FeatureSettingsManager.IsDebugEnabled)
-                    LogWarning("SocialUtilsFb :: (GetProfilePicture) Error getting facebook profile picture: " + (result.Error != null ? result.Error : "NONE"));
-
+            {                
+                LogWarning("SocialUtilsFb :: (GetProfilePicture) Error getting facebook profile picture: " + (result.Error != null ? result.Error : "NONE"));
                 onGetProfilePicture(true);
             }
         });

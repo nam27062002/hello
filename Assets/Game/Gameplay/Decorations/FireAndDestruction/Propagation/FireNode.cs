@@ -2,7 +2,16 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class FireNode : MonoBehaviour, IQuadTreeItem {
+public interface IFireNode : IQuadTreeItem {
+	BoundingSphere boundingSphere { get; }
+	CircleAreaBounds area { get; }
+	void UpdateLogic();
+	void SetEffectVisibility(bool _visible);
+	void Burn(Vector2 _direction, bool _dragonBreath, DragonTier _tier, DragonBreathBehaviour.Type _breathType, IEntity.Type _source, FireColorSetupManager.FireColorType _fireColorType);
+}
+
+[System.Serializable]
+public class FireNode : IFireNode {
 	private enum State {
 		Idle = 0,
 		Spreading,
@@ -12,10 +21,14 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 		Extinguished
 	};
 
-	private Decoration m_decoration;
-	private InflammableDecoration m_parent;
-	private Transform m_transform;
+    public Vector3 position { get { return m_parentTransform.TransformPoint(localPosition); } }
+    public Vector3 localPosition;
+    public float scale;
 
+	private Decoration m_decoration;
+    private Transform m_parentTransform;
+	private InflammableDecoration m_parent;
+	
 	private ParticleData m_feedbackParticle;
 	private ParticleData m_burnParticle;
 	private FireProcController m_fireSprite;
@@ -51,17 +64,7 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 	private State m_nextState;
 
 
-
-	// Use this for initialization
-	void Awake() {
-		m_transform = transform;
-		m_boundingSphere = new BoundingSphere(m_transform.position, 8f * m_transform.localScale.x);
-	}
-
-	void Start() {
-		gameObject.SetActive(false);
-	}
-
+       
 	void OnDestroy() {
 		if (ApplicationManager.IsAlive) {
 			FirePropagationManager.UnregisterBurningNode (this);
@@ -71,8 +74,9 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 	public void Init(InflammableDecoration _parent, Decoration _decoration, ParticleData _burnParticle, ParticleData _feedbackParticle, bool _feedbackParticleMatchDirection, float _hitRadius) {		
 		m_decoration = _decoration;
 		m_parent = _parent;
+        m_parentTransform = _parent.transform;
 
-		m_burnParticle = _burnParticle;
+        m_burnParticle = _burnParticle;
 		m_feedbackParticle = _feedbackParticle;
 
 		m_feedbackParticleMatchDirection = _feedbackParticleMatchDirection;
@@ -80,10 +84,11 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 
 		Reset();
 
-		m_rect = new Rect((Vector2)m_transform.position - Vector2.one * m_hitRadius, Vector2.one * m_hitRadius * 2f);
-		m_area = new CircleAreaBounds(m_transform.position, m_hitRadius);
+        m_rect = new Rect((Vector2)position - Vector2.one * m_hitRadius, Vector2.one * m_hitRadius * 2f);
+		m_area = new CircleAreaBounds(position, m_hitRadius);
+        m_boundingSphere = new BoundingSphere(position, 8f * scale);
 
-		FirePropagationManager.Insert(this);
+        FirePropagationManager.Insert(this);
 	}
 
 	public void Reset() {
@@ -93,7 +98,7 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 		m_nextState = m_state;
 
 		if (m_neighbours == null) {
-			FindNeighbours();
+			FindNeighbours(m_parent);
 		}
 		SetNeighboursDistance();
 
@@ -140,7 +145,7 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 			} else {
 				// Dragon can't burn this thing, so lets put a few feedback particles
 				if (_dragonBreath && m_timer <= 0f) {
-					GameObject hitParticle = m_feedbackParticle.Spawn(m_transform.position);
+					GameObject hitParticle = m_feedbackParticle.Spawn(position);
 					if (hitParticle != null && m_feedbackParticleMatchDirection) {
 						Vector3 angle = (_direction.x < 0)? Vector3.down : Vector3.up;
 
@@ -261,12 +266,12 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 		// Not used at the moment
 		// FirePropagationManager.PlayBurnAudio();
 		if (m_fireSprite == null) {
-			GameObject go = m_burnParticle.Spawn(m_transform.position);
+			GameObject go = m_burnParticle.Spawn(position);
 
 			if (go != null) {
 				m_fireSprite = go.GetComponent<FireProcController>();
 				m_fireSprite.m_colorSelector.m_fireType = m_colorType;
-				m_fireSprite.transform.localScale = m_transform.localScale * Random.Range(0.9f, 1.1f);
+				m_fireSprite.transform.localScale = GameConstants.Vector3.one * scale * Random.Range(0.9f, 1.1f);
 
 				if (m_state == State.Spreading) {
 					m_fireSprite.SetPower(m_powerTimer * 6f);				
@@ -287,12 +292,12 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 		m_fireSprite = null;
 	}
 
-	private void FindNeighbours() {
+	private void FindNeighbours(InflammableDecoration _parent) {
 		m_neighbours = new List<FireNode>();
 		m_neihboursFireResistance = new List<float>();
-		FireNode[] nodes = m_transform.parent.GetComponentsInChildren<FireNode>(true);
-		
-		for (int i = 0; i < nodes.Length; i++) {
+		List<FireNode> nodes = _parent.fireNodes;
+
+        for (int i = 0; i < nodes.Count; i++) {
 			if (nodes[i] != null && nodes[i] != this) {
 				m_neighbours.Add(nodes[i]);
 				m_neihboursFireResistance.Add(0);
@@ -302,28 +307,19 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 
 	private void SetNeighboursDistance() {
 		for (int i = 0; i < m_neighbours.Count; i++) {
-			m_neihboursFireResistance[i] = Vector3.SqrMagnitude(m_transform.position - m_neighbours[i].transform.position);
+			m_neihboursFireResistance[i] = Vector3.SqrMagnitude(localPosition - m_neighbours[i].localPosition);
 		}
 	}
 
 
 	//------------------------------------------------------------------------------
-	public void OnDrawGizmosSelected() {
-		Gizmos.color = Colors.WithAlpha(Colors.magenta, 0.5f);
-		Gizmos.DrawSphere(transform.position, 0.5f);
+	public void OnDrawGizmosSelected(InflammableDecoration _parent) {
+        Vector3 debugPosition = _parent.transform.TransformPoint(localPosition);
+
+        Gizmos.color = Colors.WithAlpha(Colors.magenta, 0.5f);
+		Gizmos.DrawSphere(debugPosition, 0.5f);
 
 		Gizmos.color = Colors.fuchsia;
-		Gizmos.DrawWireSphere(transform.position, m_hitRadius);
-	
-		if (m_transform == null) {
-			m_transform = transform;
-		}
-
-		FindNeighbours();
-		
-		for (int i = 0; i < m_neighbours.Count; i++) {
-			Gizmos.color = Colors.WithAlpha(Colors.magenta, 0.15f);
-			Gizmos.DrawSphere(m_neighbours[i].transform.position, 0.5f);
-		}
+		Gizmos.DrawWireSphere(debugPosition, m_hitRadius);	
 	}
 }

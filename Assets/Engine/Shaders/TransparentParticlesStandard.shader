@@ -20,6 +20,7 @@ Shader "Hungry Dragon/Particles/Transparent particles standard"
 		[Toggle(COLOR_TINT)] _EnableColorTint("Enable color tint", Float) = 0
 		[Toggle(APPLY_RGB_COLOR_VERTEX)] _EnableColorVertex("Enable color vertex", Float) = 0
 		[Toggle(DISSOLVE_ENABLED)] _EnableAlphaDissolve("Dissolve", Float) = 0.0
+		[Toggle(DISSOLVE_VERTEXCOLORALFA)] _EnableDissolveVertexColorAlpha("Dissolve through vertex color alpha", Float) = 0.0
 			
 		_DissolveStep("DissolveStep.xy", Vector) = (0.0, 1.0, 0.0, 0.0)
 
@@ -70,6 +71,7 @@ Shader "Hungry Dragon/Particles/Transparent particles standard"
 				#pragma shader_feature _ AUTOMATICPANNING
 				#pragma shader_feature _ EXTENDED_PARTICLES
 				#pragma shader_feature _ DISSOLVE_ENABLED
+				#pragma shader_feature _ DISSOLVE_VERTEXCOLORALFA
 				#pragma shader_feature _ COLOR_RAMP
 				#pragma shader_feature _ COLOR_TINT
 				#pragma shader_feature _ APPLY_RGB_COLOR_VERTEX

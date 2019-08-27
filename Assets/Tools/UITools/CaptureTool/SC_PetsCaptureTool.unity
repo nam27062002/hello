@@ -315,7 +315,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 480, y: -1086.4258}
+  m_AnchoredPosition: {x: 480, y: -1086}
   m_SizeDelta: {x: 960, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &71185808
@@ -1279,6 +1279,45 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a8e40bc0f188741ec85c749c34469a45, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_particleData:
+    name: 
+    path: 
+    changeStartColor: 0
+    startColor: {r: 1, g: 1, b: 1, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
+    changeColorOvertime: 0
+    colorOvertime:
+      serializedVersion: 2
+      key0: {r: 1, g: 1, b: 1, a: 1}
+      key1: {r: 1, g: 1, b: 1, a: 1}
+      key2: {r: 0, g: 0, b: 0, a: 0}
+      key3: {r: 0, g: 0, b: 0, a: 0}
+      key4: {r: 0, g: 0, b: 0, a: 0}
+      key5: {r: 0, g: 0, b: 0, a: 0}
+      key6: {r: 0, g: 0, b: 0, a: 0}
+      key7: {r: 0, g: 0, b: 0, a: 0}
+      ctime0: 0
+      ctime1: 65535
+      ctime2: 0
+      ctime3: 0
+      ctime4: 0
+      ctime5: 0
+      ctime6: 0
+      ctime7: 0
+      atime0: 0
+      atime1: 65535
+      atime2: 0
+      atime3: 0
+      atime4: 0
+      atime5: 0
+      atime6: 0
+      atime7: 0
+      m_Mode: 0
+      m_NumColorKeys: 2
+      m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
+    scale: 1
+    orientate: 0
 --- !u!95 &173954297
 Animator:
   serializedVersion: 3
@@ -1745,6 +1784,7 @@ MonoBehaviour:
   m_petsDropdown: {fileID: 113370853}
   m_petLoader: {fileID: 416908975}
   m_dragControl: {fileID: 1074642856}
+  filename: 
 --- !u!4 &270611538
 Transform:
   m_ObjectHideFlags: 0
@@ -1853,6 +1893,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_attachPoint: 0
+  m_sku: 
   m_showOnResults: 1
 --- !u!1 &291113057
 GameObject:
@@ -2356,6 +2397,11 @@ MonoBehaviour:
   m_allowAltAnimations: 1
   m_altAnimationsMaxLevel: 10
   m_loadAsync: 0
+  OnCompleteLoad:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: MenuDragonLoader+MenuDragonLoaderEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
   m_placeholderDragonSku: dragon_classic
 --- !u!4 &416908974
 Transform:
@@ -2388,6 +2434,11 @@ MonoBehaviour:
   m_showRarityGlow: 0
   m_resetScale: 1
   m_keepLayers: 0
+  OnLoadingComplete:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: MenuPetLoader+MenuPetLoaderEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
 --- !u!1 &427570042
 GameObject:
   m_ObjectHideFlags: 0
@@ -2788,7 +2839,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 480, y: -1446.4258}
+  m_AnchoredPosition: {x: 480, y: -1446}
   m_SizeDelta: {x: 960, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &509585790
@@ -2836,6 +2887,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 287131079}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!135 &509585793
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -4431,7 +4483,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 480, y: -1206.4258}
+  m_AnchoredPosition: {x: 480, y: -1206}
   m_SizeDelta: {x: 960, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &887999807
@@ -4718,7 +4770,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 480, y: -966.4258}
+  m_AnchoredPosition: {x: 480, y: -966}
   m_SizeDelta: {x: 960, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1021537520
@@ -5732,7 +5784,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 20.000244, y: 20.000061}
+  m_AnchoredPosition: {x: 20, y: 20}
   m_SizeDelta: {x: 150, y: 150}
   m_Pivot: {x: 0, y: 0}
 --- !u!114 &1250340251
@@ -6451,7 +6503,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 480, y: -1326.4258}
+  m_AnchoredPosition: {x: 480, y: -1326}
   m_SizeDelta: {x: 960, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1419785767

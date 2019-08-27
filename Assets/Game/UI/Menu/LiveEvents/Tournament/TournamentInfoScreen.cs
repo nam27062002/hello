@@ -261,7 +261,7 @@ public class TournamentInfoScreen : MonoBehaviour, IBroadcastListener {
         }
 
         // Get all the dependencies needed for the current skin (otherwise the dragon skin looks fuchsia)
-        AddressablesBatchHandle handle = HDAddressablesManager.Instance.GetHandleForDragonDisguise(m_definition.m_build.dragon);
+        AddressablesBatchHandle handle = HDAddressablesManager.Instance.GetHandleForDragonDisguise(m_definition.dragonData);
         List<string> dependencyIds = handle.DependencyIds;
 
         // Make sure all the dragon resources are being loaded

@@ -11,10 +11,10 @@ namespace AI {
 		public class GuardOutOfRange : StateComponent {
 
 			[StateTransitionTrigger]
-			private static string OnEnemyInRange = "onEnemyInRange";
+			private static readonly int onEnemyInRange = UnityEngine.Animator.StringToHash("onEnemyInRange");
 
 			[StateTransitionTrigger]
-			private static string OnPursuitEnemy = "onPursuitEnemy";
+			private static readonly int onPursuitEnemy = UnityEngine.Animator.StringToHash("onPursuitEnemy");
 
 
 
@@ -55,15 +55,15 @@ namespace AI {
 
 			protected override void OnUpdate() {
 				if (m_machine.GetSignal(Signals.Type.Danger)) {
-					Transition(OnEnemyInRange);
+					Transition(onEnemyInRange);
 				} else {
 					if (m_target != null) {					
 						float m = Mathf.Abs(m_machine.position.x - m_target.position.x);
 						if (m > 2f) {
-							Transition(OnPursuitEnemy/*, m_transitionParam*/);
+							Transition(onPursuitEnemy/*, m_transitionParam*/);
 						}
 					} else {
-						Transition(OnPursuitEnemy);
+						Transition(onPursuitEnemy);
 					}
 				}
 			}

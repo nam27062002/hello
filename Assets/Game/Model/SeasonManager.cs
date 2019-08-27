@@ -160,4 +160,16 @@ public class SeasonManager : Singleton<SeasonManager> {
         ret = ret || IsNewYear() || IsChineseNewYear();
         return ret;
     }
+
+	public static string GetBloodParticlesName() 
+	{
+		DefinitionNode activeSeasonDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SEASONS, activeSeason);
+
+		// If selected season wasn't found, reset cheat
+		if(activeSeasonDef == null) {
+			return null;
+		} else {
+			return activeSeasonDef.GetAsString("bloodParticles", null);
+		}
+	}
 }

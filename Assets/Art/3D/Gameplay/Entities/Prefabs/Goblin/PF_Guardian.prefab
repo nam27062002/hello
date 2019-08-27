@@ -131,7 +131,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1294410279286012
 GameObject:
   m_ObjectHideFlags: 0
@@ -1160,6 +1160,7 @@ MonoBehaviour:
   m_animA: guard
   m_animB: turn attack
   m_animC: 
+  m_materialChangeExceptions: []
   m_useFreezeParticle: 0
   m_freezeParticleScale: 1
   m_useMoveAnimInLove: 0
@@ -1380,6 +1381,18 @@ MonoBehaviour:
   m_onPanicAudio: 
   m_idleAudio: hd_miner_guardian_idle
   m_skins: []
+  m_entity: {fileID: 114883298474649214}
+  m_animator: {fileID: 95843342249831436}
+  m_isAnimatorAvailable: 0
+  m_renderers:
+  - {fileID: 137374747960183022}
+  m_specialAnimations: 000000
+  m_animA_Hash: -1357769780
+  m_animB_Hash: 395784863
+  m_animC_Hash: 0
+  m_animEvents: {fileID: 114582411339996702}
+  m_transform: {fileID: 4889497157332238}
+  m_view: {fileID: 4083921625881402}
   m_attackAudios:
   - hd_miner_guardian_turn
   - hd_miner_guardian_attack
@@ -1448,7 +1461,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1481a8fd1eb264508b749aceca994767, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_tags: 16
+  m_tags: 80
+  m_otherSpawnables:
+  - {fileID: 114942837333358150}
+  - {fileID: 114605653605623280}
+  - {fileID: 114755393446273384}
+  m_otherSpawnablesCount: 3
+  m_pilot: {fileID: 114942837333358150}
+  m_machine: {fileID: 114605653605623280}
+  m_viewControl: {fileID: 114755393446273384}
+  m_equip: {fileID: 0}
   m_sku: Guardian
   m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1
@@ -1551,6 +1573,7 @@ MonoBehaviour:
   m_energy: 10
   m_energyDrainSec: 1
   m_energyRecoverSec: 1
+  m_machine: {fileID: 0}
   m_brainResource: {fileID: 11400000, guid: 3cd87b86bb6114016ac1664f93dfbd8a, type: 2}
   m_railSeparation:
     min: 2

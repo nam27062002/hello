@@ -581,6 +581,24 @@ public static class GameObjectExt {
 		return _obj.transform.GetFirstComponentInChildren<T>();
 	}
 
+	/// <summary>
+	/// Compose and get the full hierarchy path of a specific component.
+	/// Use for debug purposes.
+	/// </summary>
+	/// <param name="_c">The component whose path will be composed.</param>
+	/// <returns>Full path from the hierarchy root.</returns>
+	public static string GetHierarchyPath(this Component _c) {
+		Transform t = _c.transform;
+		string path = _c.name;
+		int i = 0;
+		while(t.parent != null && i < 50) {
+			t = t.parent;
+			path = t.name + "/" + path;
+			++i;
+		}
+		return path;
+	}
+
 	//------------------------------------------------------------------//
 	// TRUE STATIC METHODS												//
 	//------------------------------------------------------------------//

@@ -17,7 +17,7 @@ namespace AI {
 		public class PetSearchShootAreaTarget : StateComponent {
 
 			[StateTransitionTrigger]
-			private static string onEnemyTargeted = "onEnemyTargeted";
+			private static readonly int onEnemyTargeted = UnityEngine.Animator.StringToHash("onEnemyTargeted");
 
 			private float m_shutdownSensorTime;
 			private float m_timer;

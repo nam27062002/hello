@@ -24,7 +24,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &424588
 Transform:
   m_ObjectHideFlags: 1
@@ -1253,6 +1253,7 @@ MonoBehaviour:
   m_animA: 
   m_animB: 
   m_animC: 
+  m_materialChangeExceptions: []
   m_useFreezeParticle: 0
   m_freezeParticleScale: 1
   m_useMoveAnimInLove: 0
@@ -1468,6 +1469,19 @@ MonoBehaviour:
   m_onPanicAudio: 
   m_idleAudio: 
   m_skins: []
+  m_entity: {fileID: 0}
+  m_animator: {fileID: 95075870471990736}
+  m_isAnimatorAvailable: 0
+  m_renderers:
+  - {fileID: 137434593604295236}
+  - {fileID: 23932379296023248}
+  m_specialAnimations: 000000
+  m_animA_Hash: 0
+  m_animB_Hash: 0
+  m_animC_Hash: 0
+  m_animEvents: {fileID: 0}
+  m_transform: {fileID: 424588}
+  m_view: {fileID: 4992416363820154}
 --- !u!114 &114000011716939334
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1483,13 +1497,14 @@ MonoBehaviour:
   m_energy: 10
   m_energyDrainSec: 1
   m_energyRecoverSec: 1
+  m_machine: {fileID: 0}
   m_brainResource: {fileID: 11400000, guid: 550b5677d4a794d71b31727a72933cc6, type: 2}
   m_railSeparation:
     min: 0.5
     max: 1
   m_useSpawnerRotation: 0
   m_serializedJson: '[{"petWanderSku":"common","dataType":"AI.Behaviour.WanderPlayerData","editorFolded":false},{"petSeachEntitySku":"common","dataType":"AI.Behaviour.PetSearchEntityTargetData","editorFolded":false},{"petChaseSku":"common","checkCanBeBitten":true,"dataType":"AI.Behaviour.PetChaseTargetData","editorFolded":false}]'
-  m_databaseKey: PF_PetFroggy_Richi_GAME_13
+  m_databaseKey: PF_PetFroggy_v5_13
   m_preciseDestArrival: 0
   m_avoidDistanceAttenuation: 0
   m_avoidCollisions: 0
@@ -1622,6 +1637,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_tags: 0
+  m_otherSpawnables:
+  - {fileID: 114000011716939334}
+  - {fileID: 114630669737764882}
+  - {fileID: 114000011637225726}
+  - {fileID: 114000013147041998}
+  m_otherSpawnablesCount: 4
+  m_pilot: {fileID: 114000011716939334}
+  m_machine: {fileID: 114630669737764882}
+  m_viewControl: {fileID: 114000011637225726}
+  m_equip: {fileID: 0}
   m_sku: pet_13
 --- !u!114 &114412865161881838
 MonoBehaviour:

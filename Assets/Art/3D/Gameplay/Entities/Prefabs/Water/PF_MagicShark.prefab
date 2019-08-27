@@ -507,7 +507,7 @@ Animator:
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 33310ecad56bb495aabb3c4d6967ab61, type: 3}
   m_Controller: {fileID: 9100000, guid: f8eb5f5b632334052925849569b663ac, type: 2}
-  m_CullingMode: 1
+  m_CullingMode: 2
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
@@ -659,6 +659,7 @@ MonoBehaviour:
   m_energy: 20
   m_energyDrainSec: 1.25
   m_energyRecoverSec: 1
+  m_machine: {fileID: 0}
   m_brainResource: {fileID: 11400000, guid: 8b5af2942e113474ab478d8d8fe9e787, type: 2}
   m_railSeparation:
     min: 0.5
@@ -693,6 +694,7 @@ MonoBehaviour:
   m_animA: latch
   m_animB: 
   m_animC: 
+  m_materialChangeExceptions: []
   m_useFreezeParticle: 0
   m_freezeParticleScale: 1
   m_useMoveAnimInLove: 0
@@ -908,6 +910,20 @@ MonoBehaviour:
   m_onPanicAudio: 
   m_idleAudio: 
   m_skins: []
+  m_entity: {fileID: 114865837737215932}
+  m_animator: {fileID: 95662813370362310}
+  m_isAnimatorAvailable: 0
+  m_renderers:
+  - {fileID: 23040086047638962}
+  - {fileID: 23334628386552916}
+  - {fileID: 137424222974183600}
+  m_specialAnimations: 000000
+  m_animA_Hash: 1195109557
+  m_animB_Hash: 0
+  m_animC_Hash: 0
+  m_animEvents: {fileID: 114573989428777998}
+  m_transform: {fileID: 4170473899046606}
+  m_view: {fileID: 4516273358035970}
 --- !u!114 &114417837900786550
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1079,6 +1095,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_tags: 16384
+  m_otherSpawnables:
+  - {fileID: 114297654000619600}
+  - {fileID: 114762415619802314}
+  - {fileID: 114302170369657314}
+  - {fileID: 114290380252968346}
+  m_otherSpawnablesCount: 4
+  m_pilot: {fileID: 114297654000619600}
+  m_machine: {fileID: 114762415619802314}
+  m_viewControl: {fileID: 114302170369657314}
+  m_equip: {fileID: 0}
   m_sku: Shark
   m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1

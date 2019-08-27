@@ -12,10 +12,10 @@ namespace AI {
 		public class Home : StateComponent {		
 			
 			[StateTransitionTrigger]
-			protected static string OnBackAtHome = "onBackAtHome";
+			protected static readonly int onBackAtHome = UnityEngine.Animator.StringToHash("onBackAtHome");
 
 
-			private HomeData m_data;
+            private HomeData m_data;
 			private bool m_alertRestoreValue;
 			private Group m_group;
 
@@ -55,7 +55,7 @@ namespace AI {
 
 				float dSqr = (m_machine.position - m_pilot.homePosition).sqrMagnitude;
 				if (dSqr < 2f * 2f) {
-					Transition(OnBackAtHome);
+					Transition(onBackAtHome);
 				}
 			}
 		}

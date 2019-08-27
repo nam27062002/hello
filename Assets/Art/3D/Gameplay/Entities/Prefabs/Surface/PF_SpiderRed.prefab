@@ -54,7 +54,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &409022
 Transform:
   m_ObjectHideFlags: 1
@@ -122,6 +122,7 @@ MonoBehaviour:
   m_animA: hang
   m_animB: 
   m_animC: 
+  m_materialChangeExceptions: []
   m_useFreezeParticle: 0
   m_freezeParticleScale: 1
   m_useMoveAnimInLove: 0
@@ -337,6 +338,19 @@ MonoBehaviour:
   m_onPanicAudio: 
   m_idleAudio: 
   m_skins: []
+  m_entity: {fileID: 11439598}
+  m_animator: {fileID: 95392382813721458}
+  m_isAnimatorAvailable: 0
+  m_renderers:
+  - {fileID: 137899740718622248}
+  - {fileID: 23414844932892948}
+  m_specialAnimations: 000000
+  m_animA_Hash: -1100278987
+  m_animB_Hash: 0
+  m_animC_Hash: 0
+  m_animEvents: {fileID: 114453260970635032}
+  m_transform: {fileID: 409022}
+  m_view: {fileID: 4453726023306270}
   m_web: {fileID: 114420917392468162}
   m_spinneret: {fileID: 485126}
   m_onAttackParticle:
@@ -407,6 +421,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_tags: 73728
+  m_otherSpawnables:
+  - {fileID: 11474244}
+  - {fileID: 114111363036002830}
+  - {fileID: 11409804}
+  m_otherSpawnablesCount: 3
+  m_pilot: {fileID: 11474244}
+  m_machine: {fileID: 114111363036002830}
+  m_viewControl: {fileID: 11409804}
+  m_equip: {fileID: 0}
   m_sku: SpiderRed
   m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1
@@ -421,6 +444,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 32ee45223b4af4374bf6c562470c1498, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_activation: 0
+  m_damage: 1
   m_timeBetweenHits: 0.5
   m_damageType: 0
   m_knockback: 0
@@ -458,6 +483,7 @@ MonoBehaviour:
   m_energy: 10
   m_energyDrainSec: 1
   m_energyRecoverSec: 1
+  m_machine: {fileID: 0}
   m_brainResource: {fileID: 11400000, guid: b4eb82ab3429a4adb899460c45432a77, type: 2}
   m_railSeparation:
     min: 0.5
@@ -871,6 +897,7 @@ MonoBehaviour:
     m_mass: 2.5
     m_defaultUpVector: 0
     m_orientationSpeed: 120
+    m_useAngularVelocity: 0
     m_limitHorizontalRotation: 0
     m_faceLeftAngle: -90
     m_faceRightAngle: 90

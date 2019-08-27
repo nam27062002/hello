@@ -204,7 +204,7 @@ public class ResultsScreenStepGlobalEvent : ResultsScreenStep {
 
 				// FX anim
 				if(m_scoreTransferFXFrom != null && m_scoreTransferFXTo != null) {
-					CurrencyTransferFX scoreTransferFX = CurrencyTransferFX.LoadAndLaunch(
+					ParticlesTrailFX scoreTransferFX = ParticlesTrailFX.LoadAndLaunch(
 						"UI/FX/PF_ScoreTransferFX",
 						this.GetComponentInParent<Canvas>().transform,
 						m_scoreTransferFXFrom.position + new Vector3(0f, 0f, -0.5f),		// Offset Z so the coins don't collide with the UI elements

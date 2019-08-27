@@ -1,4 +1,4 @@
-// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
 // Upgrade NOTE: excluded shader from DX11; has structs without semantics (struct v2f members _LightmapIntensity)
 #pragma exclude_renderers d3d11
 
@@ -20,35 +20,35 @@ struct appdata_t
 //#define EMISSIVE_LIGHTMAPCONTRAST
 struct v2f {
 	float4 vertex : SV_POSITION;
-	float2 texcoord : TEXCOORD0;
+	half2 texcoord : TEXCOORD0;
 
 #if defined(LIGHTMAP_ON) && defined(FORCE_LIGHTMAP)
-	float2 lmap : TEXCOORD1;
+	half2 lmap : TEXCOORD1;
 #endif	
 
 #ifdef BLEND_TEXTURE	
-	float2 texcoord2 : TEXCOORD2;
+	half2 texcoord2 : TEXCOORD2;
 #endif
 
 #ifdef EMISSIVE_REFLECTIVE
 	float3 reflectionData : TEXCOORD4;
 #endif
 
-	float4 color : COLOR;
+	fixed4 color : COLOR;
 
 #ifdef FOG	
 	HG_FOG_COORDS(3)
 #endif
 
-	float3 normalWorld : NORMAL;
+	half3 normalWorld : NORMAL;
 
 #ifdef NORMALMAP
-	float3 tangentWorld : TANGENT;
-	float3 binormalWorld : TEXCOORD5;
+	half3 tangentWorld : TANGENT;
+	half3 binormalWorld : TEXCOORD5;
 #endif
 
 #ifdef SPECULAR
-	float3 halfDir : TEXCOORD6;
+	half3 halfDir : TEXCOORD6;
 #endif	
 
 };
@@ -120,8 +120,8 @@ uniform float _LightmapContrastPhase;
 
 //Used by plants, simulates wind movement
 #if defined(CUSTOM_VERTEXPOSITION)
-float _SpeedWave;
-float _Amplitude;
+uniform float _SpeedWave;
+uniform float _Amplitude;
 float4 getCustomVertexPosition(inout appdata_t v)
 {
 	float hMult = v.vertex.y;
@@ -137,10 +137,10 @@ float4 getCustomVertexPosition(inout appdata_t v)
 
 //used by automatic blend to blend grass and stone from up to down
 #if defined(CUSTOM_VERTEXCOLOR)
-float4 getCustomVertexColor(inout appdata_t v)
+fixed4 getCustomVertexColor(inout appdata_t v)
 {
 	//					return float4(v.color.xyz, 1.0 - dot(mul(float4(v.normal,0), unity_WorldToObject).xyz, float3(0,1,0)));
-	return float4(v.color.xyz, 1.0 - dot(UnityObjectToWorldNormal(v.normal), float3(0, 1, 0)));
+	return fixed4(v.color.xyz, 1.0 - dot(UnityObjectToWorldNormal(v.normal), float3(0, 1, 0)));
 }
 #endif
 
@@ -189,10 +189,10 @@ v2f vert (appdata_t v)
 #endif
 
 #ifdef NORMALMAP																		// To calculate tangent world
-	float4x4 modelMatrix = unity_ObjectToWorld;
-	float4x4 modelMatrixInverse = unity_WorldToObject;
+//	float4x4 modelMatrix = unity_ObjectToWorld;
+//	float4x4 modelMatrixInverse = unity_WorldToObject;
 	o.normalWorld = UnityObjectToWorldNormal(v.normal);
-	o.tangentWorld = normalize(mul(modelMatrix, float4(v.tangent.xyz, 0.0)).xyz);
+	o.tangentWorld = normalize(mul(unity_ObjectToWorld, float4(v.tangent.xyz, 0.0)).xyz);
 	o.binormalWorld = normalize(cross(o.normalWorld, o.tangentWorld) * v.tangent.w); // tangent.w is specific to Unity
 #else
 	o.normalWorld = UnityObjectToWorldNormal(v.normal);
@@ -201,8 +201,8 @@ v2f vert (appdata_t v)
 #ifdef SPECULAR
 //	fixed3 worldPos = mul(unity_ObjectToWorld, v.vertex);
 	// Half View - See: Blinn-Phong
-	float3 viewDirection = normalize(_WorldSpaceCameraPos - worldPos.xyz);
-	float3 lightDirection = normalize(_SpecularDir.rgb);
+	half3 viewDirection = normalize(_WorldSpaceCameraPos - worldPos.xyz);
+	half3 lightDirection = normalize(_SpecularDir.rgb);
 	o.halfDir = normalize(lightDirection + viewDirection);	
 #endif
 
@@ -225,14 +225,14 @@ fixed4 frag (v2f i) : SV_Target
 	clip(col.a - _CutOff);
 #endif
 
-	float diffuseAlpha = col.w;
+	fixed diffuseAlpha = col.w;
 	
 #ifdef BLEND_TEXTURE
 	fixed4 col2 = tex2D(_SecondTexture, i.texcoord2);	// Color
 #ifdef ADDITIVE_BLEND			//Used in fog_tirilla_background to see night sky stars
 	col += col2 * (1.0 - i.color.a);
 #else
-	float l = saturate( col.a + ( (i.color.a * 2) - 1 ) );
+	fixed l = saturate( col.a + ( (i.color.a * 2) - 1 ) );
 	col = lerp( col2, col, l);
 #endif
 
@@ -243,7 +243,7 @@ fixed4 frag (v2f i) : SV_Target
 	// Sof Light with vertex color 
 	// http://www.deepskycolors.com/archive/2010/04/21/formulas-for-Photoshop-blending-modes.html
 	// https://en.wikipedia.org/wiki/Relative_luminance
-	float luminance = step(0.5, 0.2126 * col.r + 0.7152 * col.g + 0.0722 * col.b);
+	fixed luminance = step(0.5, 0.2126 * col.r + 0.7152 * col.g + 0.0722 * col.b);
 	fixed4 one = fixed4(1, 1, 1, 1);
 	col = (2.0 * i.color * col) * (1.0 - luminance) + (one - 2.0 * (one - i.color) * (one - col)) * luminance;
 
@@ -255,12 +255,10 @@ fixed4 frag (v2f i) : SV_Target
 #endif	
 
 #if defined(EMISSIVE_REFLECTIVE)
-	float c = cos(_Time.y * 4.0 + i.reflectionData.x * 4.0 + i.reflectionData.y * 4.0);
-	float s = sin(_Time.y * 4.0 + i.reflectionData.x * 4.0 + i.reflectionData.y * 4.0);
-	float2 uvc = i.reflectionData.xy + float2(s, c) * 0.09;
-//	fixed4 mc = tex2D(_ReflectionMap, uvc) * _ReflectionColor * 3.0;
-	fixed4 mc = tex2D(_ReflectionMap, uvc) * 3.0;
-//	col = lerp(col, mc, _ReflectionAmount * i.reflectionData.z);
+	half c = cos(_Time.y * 4.0 + i.reflectionData.x * 4.0 + i.reflectionData.y * 4.0);
+	half s = sin(_Time.y * 4.0 + i.reflectionData.x * 4.0 + i.reflectionData.y * 4.0);
+	half2 uvc = i.reflectionData.xy + float2(s, c) * 0.09;
+	half4 mc = tex2D(_ReflectionMap, uvc) * 3.0;
 	col += mc * _ReflectionAmount * i.reflectionData.z;
 #endif
 
@@ -284,12 +282,12 @@ fixed4 frag (v2f i) : SV_Target
 
 
 #if defined(NORMALMAP)
-	float4 encodedNormal = tex2D(_NormalTex, i.texcoord);
-	float3 localCoords = float3(2.0 * encodedNormal.xy - float2(1.0, 1.0), 1.0 / _NormalStrength);
-	float3x3 local2WorldTranspose = float3x3(i.tangentWorld, i.binormalWorld, i.normalWorld);
-	float3 normalDirection = normalize(mul(localCoords, local2WorldTranspose));
+	half4 encodedNormal = tex2D(_NormalTex, i.texcoord);
+	half3 localCoords = float3(2.0 * encodedNormal.xy - float2(1.0, 1.0), 1.0 / _NormalStrength);
+	half3x3 local2WorldTranspose = half3x3(i.tangentWorld, i.binormalWorld, i.normalWorld);
+	half3 normalDirection = normalize(mul(localCoords, local2WorldTranspose));
 #else
-	float3 normalDirection = i.normalWorld;
+	half3 normalDirection = i.normalWorld;
 #endif
 
 #ifdef SPECULAR
@@ -313,9 +311,9 @@ fixed4 frag (v2f i) : SV_Target
 #if defined(EMISSIVE_BLINK) || defined(EMISSIVE_CUSTOM) || defined(EMISSIVE_COLOR)
 
 #if defined(WAVE_EMISSION)
-	float intensity = (1.0 + sin((_Time.y * _BlinkTimeMultiplier) + i.vertex.x * _WaveEmission)) * _EmissivePower * diffuseAlpha;
+	half intensity = (1.0 + sin((_Time.y * _BlinkTimeMultiplier) + i.vertex.x * _WaveEmission)) * _EmissivePower * diffuseAlpha;
 #else 
-	float intensity = (1.0 + sin(_Time.y * _BlinkTimeMultiplier)) * _EmissivePower * diffuseAlpha;
+	half intensity = (1.0 + sin(_Time.y * _BlinkTimeMultiplier)) * _EmissivePower * diffuseAlpha;
 
 #endif
 

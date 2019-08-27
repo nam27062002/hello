@@ -22,7 +22,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &490524
 Transform:
   m_ObjectHideFlags: 1
@@ -50,6 +50,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_tags: 6
+  m_otherSpawnables:
+  - {fileID: 114716784683227552}
+  - {fileID: 11472354}
+  - {fileID: 114868545797217678}
+  m_otherSpawnablesCount: 3
+  m_pilot: {fileID: 11472354}
+  m_machine: {fileID: 114716784683227552}
+  m_viewControl: {fileID: 114868545797217678}
+  m_equip: {fileID: 0}
   m_sku: Razorback
   m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1
@@ -82,6 +91,7 @@ MonoBehaviour:
   m_energy: 4
   m_energyDrainSec: 1
   m_energyRecoverSec: 0.25
+  m_machine: {fileID: 0}
   m_brainResource: {fileID: 11400000, guid: 1cda0a716f0fdff4dbceb9069bca3fc8, type: 2}
   m_railSeparation:
     min: 0.5
@@ -343,6 +353,7 @@ MonoBehaviour:
   m_animA: throwFlour
   m_animB: 
   m_animC: 
+  m_materialChangeExceptions: []
   m_useFreezeParticle: 0
   m_freezeParticleScale: 1
   m_useMoveAnimInLove: 0
@@ -558,6 +569,18 @@ MonoBehaviour:
   m_onPanicAudio: 
   m_idleAudio: hd_razorback_idle
   m_skins: []
+  m_entity: {fileID: 11426814}
+  m_animator: {fileID: 95093078366219960}
+  m_isAnimatorAvailable: 0
+  m_renderers:
+  - {fileID: 137722631890301094}
+  m_specialAnimations: 000000
+  m_animA_Hash: 2008288604
+  m_animB_Hash: 0
+  m_animC_Hash: 0
+  m_animEvents: {fileID: 0}
+  m_transform: {fileID: 490524}
+  m_view: {fileID: 4503713848385084}
   m_flourParticles:
     name: PS_InkSmoke
     path: 

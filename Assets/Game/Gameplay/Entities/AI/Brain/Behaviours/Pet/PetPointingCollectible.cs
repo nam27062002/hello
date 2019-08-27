@@ -16,13 +16,13 @@ namespace AI {
 		public class PetPointingCollectible : StateComponent {
 
 			[StateTransitionTrigger]
-			private static string OnTooFarPointing = "onTooFarPointing";
+			private static readonly int onTooFarPointing = UnityEngine.Animator.StringToHash("onTooFarPointing");
 
-			[StateTransitionTrigger]
-			private static string OnCollected = "onCollected";
+            [StateTransitionTrigger]
+			private static readonly int onCollected = UnityEngine.Animator.StringToHash("onCollected");
 
 
-			float m_playerDistance;
+            float m_playerDistance;
 			float m_closeRange;
 			float m_farRange;
 
@@ -33,7 +33,6 @@ namespace AI {
 			CollectibleEgg egg = null;
 			CollectibleChest chest = null;
 			HungryLetter letter = null;
-			HungryLettersManager m_lettersManager;
 
 			PetPointingCollectibleTargetData m_data;
 			float m_speed;
@@ -63,9 +62,7 @@ namespace AI {
 
 				m_farRange = maxLevelScale * m_data.m_farRangeMultiplier;
 				m_farRange = m_farRange * m_farRange;
-
-				m_lettersManager = FindObjectOfType<HungryLettersManager>();
-
+                
 				m_speed = InstanceManager.player.dragonMotion.absoluteMaxSpeed * m_data.m_speedMultiplier;
                 m_visualCue = m_pilot.GetComponent<UIGameEntitySpawn>();
 
@@ -101,17 +98,17 @@ namespace AI {
 				if ( egg )
 				{
 					if ( egg.collected )
-						Transition(OnCollected);
+						Transition(onCollected);
 				}
 				else if ( chest )
 				{
 					if (chest.chestData.collected )
-						Transition(OnCollected);
+						Transition(onCollected);
 				}
 				else if ( letter )
 				{
-					if (m_lettersManager.IsLetterCollected( letter.letter))
-						Transition(OnCollected);
+					if (InstanceManager.hungryLettersManager.IsLetterCollected( letter.letter))
+						Transition(onCollected);
 				}
 
 
@@ -127,7 +124,7 @@ namespace AI {
 				else if ( sqrMagnitude > m_farRange )
 				{
 					// Stop pointing
-					Transition(OnTooFarPointing);
+					Transition(onTooFarPointing);
 				}
 				else
 				{
