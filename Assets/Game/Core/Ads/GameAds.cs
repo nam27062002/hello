@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GameAds : UbiBCN.SingletonMonoBehaviour<GameAds> {
+public class GameAds : Singleton<GameAds> {
 
     public enum EAdPurpose
     {

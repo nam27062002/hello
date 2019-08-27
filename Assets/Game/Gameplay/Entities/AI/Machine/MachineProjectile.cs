@@ -178,7 +178,7 @@ namespace AI {
 		override public void AddExternalForce(Vector3 _f) {}
 
 		override public void CustomUpdate(){}
-
 		override public void CustomFixedUpdate(){}
-	}
+        public override void CustomLateUpdate() { }
+    }
 }

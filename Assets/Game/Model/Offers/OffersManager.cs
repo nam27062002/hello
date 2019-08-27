@@ -26,7 +26,7 @@ using System.Diagnostics;
 /// <summary>
 /// Global manager for offer packs.
 /// </summary>
-public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
+public class OffersManager : Singleton<OffersManager> {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -70,23 +70,26 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 		}
 	}
 
-	//------------------------------------------------------------------------//
-	// GENERIC METHODS														  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// First update loop.
-	/// </summary>
-	private void Start() {
+    public bool enabled;
+
+    //------------------------------------------------------------------------//
+    // GENERIC METHODS														  //
+    //------------------------------------------------------------------------//
+    /// <summary>
+    /// First update loop.
+    /// </summary>
+    protected override void OnCreateInstance() {
         m_timer = 0;
-	}
+        enabled = true;
+    }
 
 	/// <summary>
 	/// Update loop.
 	/// </summary>
-	private void Update() {
+	public void Update() {
 		// Refresh offers periodically for better performance
 		// Only if allowed
-		if(m_autoRefreshEnabled) {
+		if(enabled && m_autoRefreshEnabled) {
 			if(m_timer <= 0) {
 				m_timer = settings != null ? settings.refreshFrequency : 1f;	// Crashlytics was reporting a Null reference, protect it just in case
 				Refresh(false);

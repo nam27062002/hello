@@ -18,10 +18,9 @@ namespace AI {
 			}
 
 			protected FollowLeaderData m_data;
-
 			private Group m_group;
 
-			private Vector3 m_offset;
+			private float m_offsetSQRMagnitude;
 			private FollowState m_followState;
 
 
@@ -35,12 +34,12 @@ namespace AI {
 
 			protected override void OnInitialise() {
 				m_data = m_pilot.GetComponentData<FollowLeaderData>();
-			}
+            }
 
-			protected override void OnEnter(State _oldState, object[] _param) {				                
-				m_pilot.SlowDown(false);
-			
-				m_group = m_machine.GetGroup();
+			protected override void OnEnter(State _oldState, object[] _param) {
+                m_group = m_machine.GetGroup();
+                m_offsetSQRMagnitude = m_group.GetOffset(m_machine, 1f).sqrMagnitude;
+                m_pilot.SlowDown(false);							
 				m_followState = FollowState.CatchUp;
 			}
 
@@ -65,7 +64,6 @@ namespace AI {
 
 								m_pilot.SetMoveSpeed(Mathf.Min(m_data.catchUpSpeed, m_data.speed * speedFactor));
 								m_pilot.GoTo(leader.target);
-								//m_pilot.GoTo(leader.position);
 
 								if (speedFactor <= 1f) {
 									m_pilot.SlowDown(true);
@@ -89,12 +87,10 @@ namespace AI {
 				} else {
 					Group g = m_machine.GetGroup();
 					IMachine leader = g.leader;
-					Vector3 offset = g.GetOffset(m_pilot.m_machine, 1f);
-
-					//float dSqr = (leader.position - m_machine.position).sqrMagnitude;
+                    					
 					float dSqr = (leader.target - m_machine.position).sqrMagnitude;
-					if (offset.sqrMagnitude > 0f)
-						return dSqr / offset.sqrMagnitude;
+					if (m_offsetSQRMagnitude > 0f)
+						return dSqr / m_offsetSQRMagnitude;
 					else 
 						return 1f;
 				}

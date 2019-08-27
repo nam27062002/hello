@@ -14,8 +14,6 @@ namespace AI {
 		public class Flock : StateComponent {
 
 			private FlockData m_data;
-
-			private float m_updateOffsetTimer;
 			private Vector3 m_offset;
 			private float m_phase;
 
@@ -44,9 +42,7 @@ namespace AI {
 				m_machine.position = m_pilot.homePosition + m_offset;
 			}
 
-			protected override void OnEnter(State oldState, object[] param) {				
-				m_updateOffsetTimer = 0f;
-
+			protected override void OnEnter(State _oldState, object[] _param) { 
 				Group group = m_machine.GetGroup();
 
 				if (group != null && group.HasOffsets()) {
@@ -58,32 +54,21 @@ namespace AI {
 					m_phase = 0f;
 				}
 
-
 				m_changeFormationOrientation = group != null && (group.formation == Group.Formation.Triangle);
 			}
 
 			protected override void OnUpdate() {
                 Group group = m_machine.GetGroup();
 
-				// Every few seconds we change the leader of this flock
-				if (group != null) {					
-					m_updateOffsetTimer -= Time.deltaTime;
-					if (m_updateOffsetTimer <= 0f) {
-						m_offset = group.GetOffset(m_pilot.m_machine, m_data.separation);
-						m_updateOffsetTimer = 2.5f;
-					}
-				}
-
 				if (m_changeFormationOrientation) {
 					if (m_machine.GetSignal(Signals.Type.Leader)) {
 						group.UpdateRotation(m_pilot.direction);
 					}
-					m_offset = group.GetOffset(m_pilot.m_machine, m_data.separation);
 				}
 
 				// add variation to movement
-				Vector3 offset = m_offset;
-				if (/*!m_machine.GetSignal(Signals.Type.Leader) &&*/ m_data.amplitude > 0) {					
+				Vector3 offset = group.GetRotation() * m_offset;
+				if (m_data.amplitude > 0) {					
 					offset += m_data.amplitude * Mathf.Cos(m_data.frequency * Time.timeSinceLevelLoad + m_phase) * m_machine.upVector;
 				}
 

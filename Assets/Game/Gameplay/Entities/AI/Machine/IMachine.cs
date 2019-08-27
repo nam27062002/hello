@@ -80,6 +80,6 @@ namespace AI {
         public abstract bool IsBubbled();
 
 		public abstract void CustomFixedUpdate();
-
-	}
+        public abstract void CustomLateUpdate();
+    }
 }

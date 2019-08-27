@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System;
 
-public class HDNotificationsManager : UbiBCN.SingletonMonoBehaviour<HDNotificationsManager>
+public class HDNotificationsManager : Singleton<HDNotificationsManager>
 {
     private const string HD_NOTIFICATIONS = "HD_NOTIFICATIONS";
     public const string SILENT_FLAG = "Notifications.Silent";

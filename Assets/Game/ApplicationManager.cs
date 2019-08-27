@@ -341,6 +341,16 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         HDAddressablesManager.Instance.Update();
         GameStoreManager.SharedInstance.Update();
 
+        ChestManager.instance.Update();
+        OffersManager.instance.Update();
+        HDNotificationsManager.instance.Update();
+        TransactionManager.instance.Update();
+        BackButtonManager.instance.Update();
+        MissionManager.instance.Update();
+        RewardManager.instance.Update();
+        GameSceneManager.instance.Update();
+        EggManager.instance.Update();
+
         if (NeedsToRestartFlow)
         {
             NeedsToRestartFlow = false;

@@ -56,11 +56,11 @@ namespace AI {
 		private bool m_willPlaySpawnSound;
 
 		override public Quaternion orientation 	{ get { return m_transform.rotation; } set { m_transform.rotation = value; } }
-		override public Vector3 position			{ get { return m_transform.position; } set { m_transform.position = value; } }
+		override public Vector3 position		{ get { return m_transform.position; } set { m_transform.position = value; } }
 		override public Vector3 direction 		{ get { return Vector3.zero; } }
 		override public Vector3 groundDirection	{ get { return Vector3.right; } }
 		override public Vector3 upVector 		{ get { return Vector3.up; } set {} }
-		override public Vector3 velocity			{ get { return Vector3.zero; } }
+		override public Vector3 velocity		{ get { return Vector3.zero; } }
 		override public Vector3 angularVelocity	{ get { return Vector3.zero; } }
 		override public float lastFallDistance 	{ get { return 0f; } }
 		public virtual bool isKinematic 		{ get { return false; } set { } }
@@ -365,7 +365,7 @@ namespace AI {
 			}
         }
 
-		protected virtual void LateUpdate() {
+		public override void CustomLateUpdate() {
             if (!IsDead()) {
 				if (m_motion != null) {
 					m_motion.LateUpdate();

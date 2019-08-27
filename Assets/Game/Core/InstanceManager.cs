@@ -18,7 +18,7 @@ using UnityEngine.Collections;
 /// Singleton class, work with it via its static methods only.
 /// <see cref="https://youtu.be/64uOVmQ5R1k?t=20m16s"/>
 /// </summary>
-public class InstanceManager : UbiBCN.SingletonMonoBehaviour<InstanceManager> {
+public class InstanceManager : Singleton<InstanceManager> {
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
@@ -121,12 +121,12 @@ public class InstanceManager : UbiBCN.SingletonMonoBehaviour<InstanceManager> {
 		COUNT = 4
 	};
 
-	//------------------------------------------------------------------//
-	// GENERIC METHODS													//
-	//------------------------------------------------------------------//
+    //------------------------------------------------------------------//
+    // GENERIC METHODS													//
+    //------------------------------------------------------------------//
 
-	void Awake(){
-		m_masterMixer = Resources.Load<UnityEngine.Audio.AudioMixer>("audio/MasterMixer");
+    protected override void OnCreateInstance() {
+        m_masterMixer = Resources.Load<UnityEngine.Audio.AudioMixer>("audio/MasterMixer");
 
 		// Save Groups!
 		m_masterMixerGroups = new UnityEngine.Audio.AudioMixerGroup[ (int)MIXER_GROUP.COUNT ];
@@ -137,16 +137,13 @@ public class InstanceManager : UbiBCN.SingletonMonoBehaviour<InstanceManager> {
 
 	}
 
-	/// <summary>
-	/// Destructor.
-	/// </summary>
-	override protected void OnDestroy() {
-		// Clear all references
-		m_sceneController = null;
+    /// <summary>
+    /// Destructor.
+    /// </summary>
+    protected override void OnDestroyInstance() {        
+        // Clear all references
+        m_sceneController = null;
 		m_player = null;
-
-		// Call parent
-		base.OnDestroy();
 	}
 
 	//------------------------------------------------------------------//

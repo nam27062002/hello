@@ -81,7 +81,10 @@ namespace AI {
 			if (m_enableMotion) m_motion.FixedUpdate();
 		}
 
-		override public void SetSignal(Signals.Type _signal, bool _activated) {
+        public override void CustomLateUpdate() { }
+
+
+        override public void SetSignal(Signals.Type _signal, bool _activated) {
 
 		}
 

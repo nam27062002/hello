@@ -19,7 +19,7 @@ using UnityEngine;
 /// Singleton class, work with it via its static methods only.
 /// <see cref="https://youtu.be/64uOVmQ5R1k?t=20m16s"/>
 /// </summary>
-public class FlowManager : UbiBCN.SingletonMonoBehaviour<FlowManager> {
+public class FlowManager : Singleton<FlowManager> {
     //------------------------------------------------------------------//
     // CONSTANTS														//
     //------------------------------------------------------------------//
@@ -36,13 +36,11 @@ public class FlowManager : UbiBCN.SingletonMonoBehaviour<FlowManager> {
     //------------------------------------------------------------------//
     // GENERIC METHODS													//
     //------------------------------------------------------------------//
-    protected void Awake()
-    {
+    protected override void OnCreateInstance() {
         Messenger.AddListener<string>(MessengerEvents.SCENE_LOADED, OnSceneLoaded);
     }
 
-    protected override void OnDestroy()
-    {
+    protected override void OnDestroyInstance() {        
         Messenger.RemoveListener<string>(MessengerEvents.SCENE_LOADED, OnSceneLoaded);
     }
 

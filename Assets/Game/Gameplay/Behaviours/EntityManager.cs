@@ -378,43 +378,64 @@ public class EntityManager : Singleton<EntityManager>, IBroadcastListener
     public void Update()
 	{
         if (m_updateEnabled) {
+            UnityEngine.Profiling.Profiler.BeginSample("[EntityManager] Update");
             int i;
             int count;
             float delta = Time.deltaTime;
 
+            UnityEngine.Profiling.Profiler.BeginSample("[EntityManager] Pets");
             count = m_pets.Count - 1;
             for (i = count; i >= 0; i--) {
                 m_pets[i].CustomUpdate();
             }
+            UnityEngine.Profiling.Profiler.EndSample();
 
             if (m_entities != null) {
+                UnityEngine.Profiling.Profiler.BeginSample("[EntityManager] Entities");
                 count = m_entities.Count - 1;
-                // for (i = 0; i < count; ++i)
                 for (i = count; i >= 0; i--) {
+                    UnityEngine.Profiling.Profiler.BeginSample(m_entities[i].name);
                     m_entities[i].CustomUpdate();
+                    UnityEngine.Profiling.Profiler.EndSample();
                 }
 
                 count = m_entitiesBg.Count - 1;
-                // for (i = 0; i < count; ++i)
                 for (i = count; i >= 0; i--) {
+                    UnityEngine.Profiling.Profiler.BeginSample(m_entitiesBg[i].name);
                     m_entitiesBg[i].CustomUpdate();
+                    UnityEngine.Profiling.Profiler.EndSample();
                 }
 
                 count = m_cages.Count - 1;
-                // for (i = 0; i < count; ++i)
                 for (i = count; i >= 0; i--) {
+                    UnityEngine.Profiling.Profiler.BeginSample(m_cages[i].name);
                     m_cages[i].CustomUpdate();
+                    UnityEngine.Profiling.Profiler.EndSample();
                 }
+                UnityEngine.Profiling.Profiler.EndSample();
             }
 
 
+            UnityEngine.Profiling.Profiler.BeginSample("[EntityManager] Freezing Objects");
             FreezingObjectsRegistry.instance.CustomUpdate();
+            UnityEngine.Profiling.Profiler.EndSample();
+
+            UnityEngine.Profiling.Profiler.EndSample();
 
 #if UNITY_EDITOR
             if (Input.GetKey(KeyCode.G)) {
                 ForceOnScreenEntitiesGolden();
             }
 #endif
+        }
+    }
+
+    private void ThreadedEntityUpdate() {
+        int count = m_entities.Count - 1;        
+        for (int i = count; i >= 0; i--) {
+            UnityEngine.Profiling.Profiler.BeginSample("[EntityManager] " + m_entities[i].name);
+            m_entities[i].CustomUpdate();
+            UnityEngine.Profiling.Profiler.EndSample();
         }
     }
 
@@ -457,6 +478,8 @@ public class EntityManager : Singleton<EntityManager>, IBroadcastListener
                 for (i = count - 1; i > -1; i--) {
                     if (m_entities[i].CanDieOutsideFrustrum() && camera.IsInsideDeactivationArea(m_entities[i].machine.position)) {
                         m_entities[i].Disable(false);
+                    } else {
+                        m_entities[i].CustomLateUpdate();
                     }
                 }
 
@@ -465,6 +488,8 @@ public class EntityManager : Singleton<EntityManager>, IBroadcastListener
                 for (i = count - 1; i > -1; i--) {
                     if (m_entitiesBg[i].CanDieOutsideFrustrum() && camera.IsInsideBackgroundDeactivationArea(m_entitiesBg[i].machine.position)) {
                         m_entitiesBg[i].Disable(false);
+                    } else {
+                        m_entitiesBg[i].CustomLateUpdate();
                     }
                 }
 
@@ -474,6 +499,8 @@ public class EntityManager : Singleton<EntityManager>, IBroadcastListener
                     if (m_cages[i].CanDieOutsideFrustrum() && camera.IsInsideDeactivationArea(m_cages[i].transform.position)) //cages don't have machine
                     {
                         m_cages[i].Disable(false);
+                    } else {
+                        m_cages[i].CustomLateUpdate();
                     }
                 }
             }

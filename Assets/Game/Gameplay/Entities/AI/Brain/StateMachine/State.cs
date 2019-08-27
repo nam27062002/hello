@@ -24,27 +24,28 @@ namespace AI
 			m_name = name;
 		}
 
-		public void Initialise(StateMachine stateMachine, ref List<StateComponent> sharedComponents)
+        public void Instantiate(ref List<StateComponent> sharedComponents) {
+            m_componentInstances = new StateComponent[m_componentAssets.Length];
+
+            for (int i = 0; i < m_componentAssets.Length; i++) {
+                bool newInstance = false;
+                // if we have found this component in the shared list, use the shared instance instead of instantiating a new one
+                StateComponent comp = sharedComponents.Find(x => x.GetType().Equals(m_componentAssets[i].GetType()));
+                if (comp == null) {
+                    comp = Object.Instantiate(m_componentAssets[i]);
+                    newInstance = true;
+                }
+                m_componentInstances[i] = comp;
+
+                if (comp.sharedBetweenStates && newInstance) {
+                    sharedComponents.Add(comp);
+                }
+            }
+        }
+
+
+        public void Initialise(StateMachine stateMachine)
 		{
-			m_componentInstances = new StateComponent[m_componentAssets.Length];
-			for(int i = 0; i < m_componentAssets.Length; i++)
-			{
-				bool newInstance = false;
-				// if we have found this component in the shared list, use the shared instance instead of instantiating a new one
-				StateComponent comp = sharedComponents.Find( x => x.GetType().Equals(m_componentAssets[i].GetType()) );
-				if(comp == null)
-				{
-					comp = Object.Instantiate(m_componentAssets[i]);
-					newInstance = true;
-				}
-				m_componentInstances[i] = comp;
-
-				if(comp.sharedBetweenStates && newInstance)
-				{
-					sharedComponents.Add(comp);
-				}
-	        }
-
 			for(int i = 0; i < m_componentInstances.Length; i++)
 			{
 				m_componentInstances[i].Initialise(stateMachine, this);

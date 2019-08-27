@@ -122,8 +122,9 @@ namespace AI {
         override public bool IsInLove() { return false; }
         override public bool IsBubbled() { return false; }
         override public void CustomFixedUpdate(){}
+        public override void CustomLateUpdate(){}
 
-		override public bool Burn(Transform _transform, IEntity.Type _source, bool instant = false, FireColorSetupManager.FireColorType fireColorType = FireColorSetupManager.FireColorType.RED) { return false; }
+        override public bool Burn(Transform _transform, IEntity.Type _source, bool instant = false, FireColorSetupManager.FireColorType fireColorType = FireColorSetupManager.FireColorType.RED) { return false; }
 		override public bool Smash(IEntity.Type _source) { return false; }
 		override public void AddExternalForce(Vector3 force) {}
 		override public Quaternion GetDyingFixRot() { return Quaternion.identity; }

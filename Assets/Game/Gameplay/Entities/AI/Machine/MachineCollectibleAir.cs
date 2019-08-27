@@ -139,10 +139,16 @@ namespace AI {
 				m_airMotion.FixedUpdate();
 			}
 		}
+        
+        public override void CustomLateUpdate() {
+            if (!IsDead()) {
+                m_airMotion.LateUpdate();
+            }
+        }
 
-		//---------------------------------------------------------------
+        //---------------------------------------------------------------
 
-		override public void OnTrigger(int _triggerHash, object[] _param = null) {}
+        override public void OnTrigger(int _triggerHash, object[] _param = null) {}
 		override public void DisableSensor(float _seconds) {}
 		override public void CheckCollisions(bool _value) {}
 		override public void FaceDirection(bool _value) {}
