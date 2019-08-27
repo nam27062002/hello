@@ -26,7 +26,9 @@ public class PopupSpecialDragonInfo : PopupDragonInfo {
 		public int unlockLevel = -1;
 		public string description = string.Empty;
 		public Sprite icon = null;
-	}
+        public string leftIconFoot;
+        public string rightIconFoot;
+    }
 
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
@@ -67,17 +69,20 @@ public class PopupSpecialDragonInfo : PopupDragonInfo {
 			// Description
 			// Can equip <TID_COLOR_PET>%U0 %U1<TID_END_COLOR> and get a <TID_COLOR_PET>%U2<TID_END_COLOR> multiplier during <TID_COLOR_FIRERUSH><TID_FIRE_RUSH><TID_END_COLOR>
 			int numPets = specialTierDefs[i].GetAsInt("petsSlotsAvailable");
+            string fireMultiplier = "x" + StringUtils.FormatNumber(specialTierDefs[i].GetAsFloat("furyScoreMultiplier", 2), 0);
+
             data.description = LocalizationManager.SharedInstance.Localize("TID_SPECIAL_DRAGON_INFO_TIER_DESCRIPTION",
 				StringUtils.FormatNumber(numPets),
                 (numPets > 1 ? LocalizationManager.SharedInstance.Localize("TID_PET_PLURAL") : LocalizationManager.SharedInstance.Localize("TID_PET")), // Singular/Plural
-                "x" + StringUtils.FormatNumber(specialTierDefs[i].GetAsFloat("furyScoreMultiplier", 2), 0)
+                fireMultiplier
             );
 
-			// Icon
-			data.icon = ResourcesExt.LoadFromSpritesheet(UIConstants.UI_SPRITESHEET_PATH, tierDef.GetAsString("icon"));
+            // Icons foot text
+            data.leftIconFoot = numPets.ToString(); // Pets amount
+            data.rightIconFoot = fireMultiplier; // Fire multiplier
 
-			// Push to list!
-			upgradesData.Add(data);
+            // Push to list!
+            upgradesData.Add(data);
 		}
 
 		// Power upgrades
@@ -132,6 +137,17 @@ public class PopupSpecialDragonInfo : PopupDragonInfo {
 			if(element.icon != null) {
 				element.icon.sprite = upgradesData[i].icon;
 			}
-		}
+
+            // Icon foot
+            if(element.leftIconFoot != null)
+            {
+                element.leftIconFoot.text = upgradesData[i].leftIconFoot;
+            }
+
+            if (element.rightIconFoot != null)
+            {
+                element.rightIconFoot.text = upgradesData[i].rightIconFoot;
+            }
+        }
 	}
 }
