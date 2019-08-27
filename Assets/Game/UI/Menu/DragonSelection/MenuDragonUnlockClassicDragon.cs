@@ -178,9 +178,9 @@ public class MenuDragonUnlockClassicDragon : MonoBehaviour {
 
 					// [AOC] Use dragon's tier color
 					//		 We're don't use Colors.Tag to avoid creating a new StringBuilder
-					sb.Append(Colors.OPEN_TAG).Append(UIConstants.GetDragonTierColor(unlockDragonData.tier).ToHexString("#")).Append(">");
+					sb.Append("<color=").Append(UIConstants.GetDragonTierColor(unlockDragonData.tier).ToHexString("#")).Append(">");
 					sb.Append(unlockDragonData.def.GetLocalized("tidName"));
-					sb.Append(Colors.CLOSE_TAG);
+					sb.Append("</color>");
 				}
 
 				// Set text
