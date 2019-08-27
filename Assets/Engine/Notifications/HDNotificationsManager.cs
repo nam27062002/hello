@@ -44,9 +44,8 @@ public class HDNotificationsManager : UbiBCN.SingletonMonoBehaviour<HDNotificati
     
                 int notificationsEnabled = PlayerPrefs.GetInt(HD_NOTIFICATIONS, 1);
                 NotificationsManager.SharedInstance.SetNotificationsEnabled(notificationsEnabled > 0);
-    
-                if (FeatureSettingsManager.IsDebugEnabled)
-                    Log("Notifications enabled = " + GetNotificationsEnabled());
+                    
+                Log("Notifications enabled = " + GetNotificationsEnabled());
             }
         }
     }
@@ -185,6 +184,7 @@ public class HDNotificationsManager : UbiBCN.SingletonMonoBehaviour<HDNotificati
     private const string SKU_NEW_MISSIONS = "sku.not.02";
     private const string SKU_NEW_CHESTS = "sku.not.03";
 	private const string SKU_DAILY_REWARD = "sku.not.04";
+    private const string SKU_REENGAGEMENT = "sku.not.14";
 
     private const string DEFAULT_ACTION = "Action";
 
@@ -231,6 +231,14 @@ public class HDNotificationsManager : UbiBCN.SingletonMonoBehaviour<HDNotificati
 	public void CancelDailyRewardNotification() {
 		CancelNotification(SKU_DAILY_REWARD);
 	}
+
+    public void ScheduleReengagementNotification(int seconds) {
+		ScheduleNotificationFromSku(SKU_REENGAGEMENT, DEFAULT_ACTION, seconds);
+	}
+
+    public void CancelReengagementNotification(  ){
+        CancelNotification(SKU_REENGAGEMENT);
+    }
 #endregion
 
 

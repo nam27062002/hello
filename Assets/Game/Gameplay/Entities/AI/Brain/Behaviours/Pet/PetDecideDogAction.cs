@@ -12,7 +12,7 @@ namespace AI {
 		public class PetDecideDogAction : StateComponent {
 
 			[StateTransitionTrigger]
-			private static string OnTimedAction = "onTimedAction";
+			private static int onTimedAction = UnityEngine.Animator.StringToHash("onTimedAction");
 
 
 			protected PetDecideDogActionData m_data;
@@ -40,14 +40,10 @@ namespace AI {
 				if ( m_timer <= Time.time && m_spawner.CanRespawn())
 				{
 					// Seond Action
-					Transition( OnTimedAction );
+					Transition( onTimedAction );
 					m_timer =  Time.time + m_data.m_timeSecondAction.GetRandom();
 				}
 			}
-
-
-
-
 		}
 	}
 }

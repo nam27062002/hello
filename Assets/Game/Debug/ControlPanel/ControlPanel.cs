@@ -4,12 +4,17 @@
 // Created by Alger Ortín Castellví on 26/11/2015.
 // Copyright (c) 2015 Ubisoft. All rights reserved.
 
+#if DEBUG && !DISABLE_LOGS
+#define ENABLE_LOGS
+#endif
+
 //----------------------------------------------------------------------//
 // INCLUDES																//
 //----------------------------------------------------------------------//
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
+using System.Diagnostics;
 using TMPro;
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -469,26 +474,35 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
     public static string COLOR_ERROR = Colors.ToHexString(Color.red, "#", false);
     public static string COLOR_WARNING = Colors.ToHexString(Color.yellow, "#", false);
 
+#if ENABLE_LOGS
+    [Conditional("DEBUG")]
+#else
+    [Conditional("FALSE")]
+#endif
     public static void LogError(string text, ELogChannel channel=ELogChannel.General)
     {
-        LogToCPConsole(text, channel, COLOR_ERROR);
-        if (FeatureSettingsManager.IsDebugEnabled)
-        {
-            text = Log_GetChannelPrefix(channel) + text;
-            Debug.LogError(text);
-        }
+        LogToCPConsole(text, channel, COLOR_ERROR);        
+        text = Log_GetChannelPrefix(channel) + text;
+        Debug.LogError(text);        
     }
 
+#if ENABLE_LOGS
+    [Conditional("DEBUG")]
+#else
+    [Conditional("FALSE")]
+#endif
     public static void LogWarning(string text, ELogChannel channel = ELogChannel.General)
     {
-        LogToCPConsole(text, channel, COLOR_WARNING);
-        if (FeatureSettingsManager.IsDebugEnabled)
-        {
-            text = Log_GetChannelPrefix(channel) + text;
-            Debug.LogWarning(text);
-        }
+        LogToCPConsole(text, channel, COLOR_WARNING);        
+        text = Log_GetChannelPrefix(channel) + text;
+        Debug.LogWarning(text);        
     }
 
+#if ENABLE_LOGS
+    [Conditional("DEBUG")]
+#else
+    [Conditional("FALSE")]
+#endif
     public static void Log(string text, ELogChannel channel=ELogChannel.General, bool logToCPConsole=true, bool logToUnityConsole=true) {        
         if (logToCPConsole) {
             LogToCPConsole(text, channel);
@@ -514,32 +528,30 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
 
     private static void LogToUnityConsole(string text, ELogChannel channel=ELogChannel.General)
     {
-        // It's logged to Unity console too
-        if (FeatureSettingsManager.IsDebugEnabled) {
-            text = Log_GetChannelPrefix(channel) + text;
+        // It's logged to Unity console too        
+        text = Log_GetChannelPrefix(channel) + text;
 
 #if UNITY_EDITOR
-            string color = Log_GetChannelColor(channel);
-            if (!string.IsNullOrEmpty(color))
-            {   
-				// [AOC] Unfortunately, color is not properly displayed in the Unity Console if the text has more than one line break
-				//		 Workaround it by just coloring the first line
+        string color = Log_GetChannelColor(channel);
+        if (!string.IsNullOrEmpty(color))
+        {   
+			// [AOC] Unfortunately, color is not properly displayed in the Unity Console if the text has more than one line break
+			//		 Workaround it by just coloring the first line
 
-				// Insert opening tag
-				text = text.Insert(0, "<color=" + color + ">");
+			// Insert opening tag
+			text = text.Insert(0, "<color=" + color + ">");
 
-				// Insert closing tag right before the first line break, or at the end if no line breaks are found
-				int idx = text.IndexOf('\n');
-				if(idx > 0) {
-					text = text.Insert(idx, "</color>");
-				} else {
-					text = text + "</color>";
-				}
-            }            
+			// Insert closing tag right before the first line break, or at the end if no line breaks are found
+			int idx = text.IndexOf('\n');
+			if(idx > 0) {
+				text = text.Insert(idx, "</color>");
+			} else {
+				text = text + "</color>";
+			}
+        }            
 #endif
 
-            Debug.Log(text);
-        }
+        Debug.Log(text);        
     }
 
 	/// <summary>

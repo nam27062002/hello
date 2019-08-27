@@ -4,6 +4,10 @@
 // Created by Alger Ortín Castellví on 20/02/2018.
 // Copyright (c) 2018 Ubisoft. All rights reserved.
 
+#if DEBUG && !DISABLE_LOGS
+#define ENABLE_LOGS
+#endif
+
 //#define LOG
 //#define LOG_PACKS
 
@@ -14,6 +18,7 @@ using UnityEngine;
 using System;
 using System.Linq;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -535,6 +540,11 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
     /// </summary>
     /// <param name="_msg">Message to be logged. Can have replacements like string.Format method would have.</param>
     /// <param name="_replacements">Replacements, to be used as string.Format method.</param>
+#if ENABLE_LOGS
+    [Conditional("DEBUG")]
+#else
+    [Conditional("FALSE")]
+#endif
     public static void Log(string _msg, params object[] _replacements) {
 #if LOG
 		if(!FeatureSettingsManager.IsDebugEnabled) return;
@@ -542,36 +552,51 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 #endif
 	}
 
-	/// <summary>
-	/// Log into the console (if enabled).
-	/// </summary>
-	/// <param name="_msg">Message to be logged. Can have replacements like string.Format method would have.</param>
-	/// <param name="_color">Message color.</param>
-	/// <param name="_replacements">Replacements, to be used as string.Format method.</param>
-	public static void Log(string _msg, Color _color, params object[] _replacements) {
+    /// <summary>
+    /// Log into the console (if enabled).
+    /// </summary>
+    /// <param name="_msg">Message to be logged. Can have replacements like string.Format method would have.</param>
+    /// <param name="_color">Message color.</param>
+    /// <param name="_replacements">Replacements, to be used as string.Format method.</param>
+#if ENABLE_LOGS
+    [Conditional("DEBUG")]
+#else
+    [Conditional("FALSE")]
+#endif
+    public static void Log(string _msg, Color _color, params object[] _replacements) {
 #if LOG
 		Log(_color.Tag(_msg), _replacements);
 #endif
 	}
 
-	/// <summary>
-	/// Log into the console (if enabled).
-	/// Checks LOG_PACKS flag.
-	/// </summary>
-	/// <param name="_msg">Message to be logged. Can have replacements like string.Format method would have.</param>
-	/// <param name="_color">Message color.</param>
-	/// <param name="_replacements">Replacements, to be used as string.Format method.</param>
-	public static void LogPack(string _msg, Color _color, params object[] _replacements) {
+    /// <summary>
+    /// Log into the console (if enabled).
+    /// Checks LOG_PACKS flag.
+    /// </summary>
+    /// <param name="_msg">Message to be logged. Can have replacements like string.Format method would have.</param>
+    /// <param name="_color">Message color.</param>
+    /// <param name="_replacements">Replacements, to be used as string.Format method.</param>
+#if ENABLE_LOGS
+    [Conditional("DEBUG")]
+#else
+    [Conditional("FALSE")]
+#endif
+    public static void LogPack(string _msg, Color _color, params object[] _replacements) {
 #if LOG_PACKS
 		if(!FeatureSettingsManager.IsDebugEnabled) return;
 		ControlPanel.Log(string.Format(_color.Tag(_msg), _replacements), ControlPanel.ELogChannel.Offers);
 #endif
 	}
 
-	/// <summary>
-	/// Do a report on current collections state.
-	/// </summary>
-	private void LogCollections() {
+    /// <summary>
+    /// Do a report on current collections state.
+    /// </summary>
+#if ENABLE_LOGS
+    [Conditional("DEBUG")]
+#else
+    [Conditional("FALSE")]
+#endif
+    private void LogCollections() {
 #if LOG
 		if(!FeatureSettingsManager.IsDebugEnabled) return;
 		string str = "Collections:\n";
@@ -606,10 +631,15 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 	}
 #endif
 
-	/// <summary>
-	/// Do a report on current rotational history state.
-	/// </summary>
-	private void LogRotationalHistory(ref List<SimpleJSON.JSONClass> _history) {
+    /// <summary>
+    /// Do a report on current rotational history state.
+    /// </summary>
+#if ENABLE_LOGS
+    [Conditional("DEBUG")]
+#else
+    [Conditional("FALSE")]
+#endif
+    private void LogRotationalHistory(ref List<SimpleJSON.JSONClass> _history) {
 #if LOG
 		if(!FeatureSettingsManager.IsDebugEnabled) return;
 

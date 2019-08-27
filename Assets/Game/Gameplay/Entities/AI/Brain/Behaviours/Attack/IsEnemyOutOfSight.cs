@@ -7,7 +7,7 @@ namespace AI {
 		public class IsEnemyOutOfSight : StateComponent {
 			
 			[StateTransitionTrigger]
-			private static string OnEnemyOutSight = "onEnemyOutSight";
+			private static readonly int onEnemyOutSight = UnityEngine.Animator.StringToHash("onEnemyOutSight");
 
 
 			// The first element in _param must contain the amount of time without detecting an enemy
@@ -17,7 +17,7 @@ namespace AI {
 
 			protected override void OnUpdate() {				
 				if (!m_machine.GetSignal(Signals.Type.Warning)) {
-					Transition(OnEnemyOutSight);
+					Transition(onEnemyOutSight);
 				}
 			}
 		}

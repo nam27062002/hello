@@ -6,23 +6,23 @@ namespace AI {
 		public class AttackSelectorRangedMelee : StateComponent {
 
 			[StateTransitionTrigger]
-			private static string OnRanged = "onRanged";
+			private static readonly int onRanged = UnityEngine.Animator.StringToHash("onRanged");
 
-			[StateTransitionTrigger]
-			private static string OnMelee = "onMelee";
+            [StateTransitionTrigger]
+			private static readonly int onMelee = UnityEngine.Animator.StringToHash("onMelee");
 
-			[StateTransitionTrigger]
-			private static string OnEnemyOutOfSight = "onEnemyOutOfSight";
+            [StateTransitionTrigger]
+			private static readonly int onEnemyOutOfSight = UnityEngine.Animator.StringToHash("onEnemyOutOfSight");
 
 
 
-			protected override void OnUpdate() {
+            protected override void OnUpdate() {
 				if (m_machine.GetSignal(Signals.Type.Critical)) {
-					Transition(OnMelee);
+					Transition(onMelee);
 				} else if (m_machine.GetSignal(Signals.Type.Danger)) {
-					Transition(OnRanged);
+					Transition(onRanged);
 				} else {
-					Transition(OnEnemyOutOfSight);
+					Transition(onEnemyOutOfSight);
 				}
 			}
 		}

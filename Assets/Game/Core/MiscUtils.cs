@@ -37,9 +37,8 @@ public class MiscUtils {
 #elif UNITY_ANDROID
         Application.OpenURL("market://details?id=" + appId);
 #endif
-
-		if (FeatureSettingsManager.IsDebugEnabled)
-			Debug.Log("Open store url " + url);
+		
+    	Debug.Log("Open store url " + url);
 		
 		if (!string.IsNullOrEmpty (url)) 
 		{

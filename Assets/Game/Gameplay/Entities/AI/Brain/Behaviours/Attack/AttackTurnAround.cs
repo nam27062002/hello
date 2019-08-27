@@ -14,7 +14,7 @@ namespace AI {
 		public class AttackTurnAround : StateComponent {
 
 			[StateTransitionTrigger]
-			private static string OnTurnAroundEnd = "onTurnAroundEnd";
+			private static int onTurnAroundEnd = UnityEngine.Animator.StringToHash("onTurnAroundEnd");
 
 
 			private Entity m_entity;
@@ -99,7 +99,7 @@ namespace AI {
 				OnDisableWeapon();
 				m_machine.orientation = m_machine.orientation * Quaternion.AngleAxis(180f, Vector3.up);
 				m_pilot.SetDirection(m_machine.orientation * Vector3.forward, true);
-				Transition(OnTurnAroundEnd);
+				Transition(onTurnAroundEnd);
 			}
 		}
 	}

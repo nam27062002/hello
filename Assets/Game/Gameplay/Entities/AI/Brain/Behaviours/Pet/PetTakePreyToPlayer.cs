@@ -24,9 +24,9 @@ namespace AI {
 			}
 
 			[StateTransitionTrigger]
-			private static string OnPreyReleased = "OnPreyReleased";
+			private static readonly int OnPreyReleased = UnityEngine.Animator.StringToHash("OnPreyReleased");
 
-			PetTakePreyToPlayerData m_data;
+            PetTakePreyToPlayerData m_data;
 			float m_speed;
 			float m_frontDistance;
 			EatBehaviour m_eatBehaviour;

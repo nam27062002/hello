@@ -15,7 +15,7 @@ namespace AI {
 		public class PetPlayerInfiniteBoost : StateComponent {
 
 			[StateTransitionTrigger]
-			private static string OnBoostFinished = "onBoostFinished";
+			private static readonly int onBoostFinished = UnityEngine.Animator.StringToHash("onBoostFinished");
 
 			DragonBoostBehaviour m_playerBoost;
 			PetPlayerInfiniteBoostData m_data;
@@ -57,7 +57,7 @@ namespace AI {
 				m_timer -= Time.deltaTime;
 				if ( m_timer <= 0 )	
 				{
-					Transition( OnBoostFinished );
+					Transition(onBoostFinished );
 				}
 			}
 

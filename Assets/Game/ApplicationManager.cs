@@ -4,9 +4,14 @@
 // Created by David Germade on 24/08/2016.
 // Copyright (c) 2015 Ubisoft. All rights reserved.
 
+#if DEBUG && !DISABLE_LOGS
+#define ENABLE_LOGS
+#endif
+
 using SimpleJSON;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using UnityEngine;
 /// <summary>
 /// This class is responsible for handling stuff related to the whole application in a high level. For example if an analytics event has to be sent when the application is paused or resumed
@@ -380,9 +385,8 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
     // It has to be an IEnumerator to increase unsent events chances of being sent
     public IEnumerator OnApplicationPause(bool pause)
-    {        
-        if (FeatureSettingsManager.IsDebugEnabled)
-            Debug.Log("OnApplicationPause " + pause);
+    {                
+        Debug.Log("OnApplicationPause " + pause);
 
         // Unsent events shouldn't be stored when the game is getting paused because the procedure might take longer than the time that the OS concedes and if the procedure
         // doesn't finish then events can get lost (HDK-1897)
@@ -580,6 +584,26 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
                     HDNotificationsManager.instance.ScheduleNewDailyReward (timeToNotification);
                 }
             }
+
+            DefinitionNode gameSettingsDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, "gameSettings");
+            int minutesToReengage = gameSettingsDef.GetAsInt("notificationComeBackTimer", 2000);
+            int secondsToReengage = minutesToReengage * 60;
+            if ( secondsToReengage > 0 )
+            {
+                System.DateTime dateTime = System.DateTime.Now.AddSeconds( secondsToReengage );
+                if ( dateTime.Hour >= 22 || dateTime.Hour <= 9 )
+                {
+                    // Adjust to avoid midnight timmings
+                    System.DateTime fixedDateTime = dateTime;
+                    fixedDateTime = fixedDateTime.AddHours( 11 );   // forbidden 11 hours, from 22:00 to 9:00
+                    fixedDateTime = fixedDateTime.AddHours( 9 - fixedDateTime.Hour );   // Remove excess
+                    secondsToReengage = (int)(fixedDateTime - System.DateTime.Now).TotalSeconds;
+                }
+                
+                HDNotificationsManager.instance.ScheduleReengagementNotification(secondsToReengage);
+            }
+                
+
 			// [AOC] TODO!!
         }
     }
@@ -589,6 +613,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 		HDNotificationsManager.instance.CancelNewMissionsNotification();
 		HDNotificationsManager.instance.CancelNewChestsNotification();
 		HDNotificationsManager.instance.CancelDailyRewardNotification();
+        HDNotificationsManager.instance.CancelReengagementNotification();
     }
 
     #region game
@@ -815,11 +840,8 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     private class GameCenterListener : GameCenterManager.GameCenterListenerBase
     {
         public override void onAuthenticationFinished()
-        {
-            if (FeatureSettingsManager.IsDebugEnabled)
-            {
-                ControlPanel.Log("onAuthenticationFinished", ControlPanel.ELogChannel.GameCenter);
-            }            
+        {            
+            ControlPanel.Log("onAuthenticationFinished", ControlPanel.ELogChannel.GameCenter);                        
 
 #if UNITY_ANDROID
 			// On android if player login we make sure it will try at start again
@@ -832,21 +854,15 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         }
 
         public override void onAuthenticationFailed()
-        {
-            if (FeatureSettingsManager.IsDebugEnabled)
-            {
-                ControlPanel.Log("onAuthenticationFailed", ControlPanel.ELogChannel.GameCenter);
-            }
+        {            
+            ControlPanel.Log("onAuthenticationFailed", ControlPanel.ELogChannel.GameCenter);            
              
 			Messenger.Broadcast(MessengerEvents.GOOGLE_PLAY_AUTH_FAILED);
         }
 
         public override void onAuthenticationCancelled()
-        {
-            if (FeatureSettingsManager.IsDebugEnabled)
-            {
-                ControlPanel.Log("onAuthenticationCancelled", ControlPanel.ELogChannel.GameCenter);
-            }
+        {            
+            ControlPanel.Log("onAuthenticationCancelled", ControlPanel.ELogChannel.GameCenter);            
 
 #if UNITY_ANDROID
 			// On android if player cancells the authentication we will not ask again
@@ -856,11 +872,8 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         }
 
         public override void onUnauthenticated()
-        {
-            if (FeatureSettingsManager.IsDebugEnabled)
-            {
-                ControlPanel.Log("onUnauthenticated", ControlPanel.ELogChannel.GameCenter);
-            }
+        {            
+            ControlPanel.Log("onUnauthenticated", ControlPanel.ELogChannel.GameCenter);            
 
 #if UNITY_ANDROID
             // On android if player logs out we will not ask again
@@ -871,30 +884,21 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         }
 
         public override void onGetToken(JSONNode kTokenDataJSON)
-        {
-            if (FeatureSettingsManager.IsDebugEnabled)
-            {
-                ControlPanel.Log("onGetToken: " + kTokenDataJSON.ToString() +
-                " userID = " + GameCenterManager.SharedInstance.GetUserId() +
-                " userName = " + GameCenterManager.SharedInstance.GetUserName(), 
-                ControlPanel.ELogChannel.GameCenter);
-            }
+        {            
+            ControlPanel.Log("onGetToken: " + kTokenDataJSON.ToString() +
+            " userID = " + GameCenterManager.SharedInstance.GetUserId() +
+            " userName = " + GameCenterManager.SharedInstance.GetUserName(), 
+            ControlPanel.ELogChannel.GameCenter);            
         }
 
         public override void onNotAuthenticatedException()
-        {
-            if (FeatureSettingsManager.IsDebugEnabled)
-            {
-                ControlPanel.Log("onNotAuthenticatedException", ControlPanel.ELogChannel.GameCenter);
-            }
+        {            
+            ControlPanel.Log("onNotAuthenticatedException", ControlPanel.ELogChannel.GameCenter);            
         }
 
         public override void onGetAchievementsInfo(Dictionary<string, GameCenterManager.GameCenterAchievement> kAchievementsInfo)
-        {
-            if (FeatureSettingsManager.IsDebugEnabled)
-            {
-                ControlPanel.Log("onGetAchievementsInfo", ControlPanel.ELogChannel.GameCenter);
-            }
+        {            
+            ControlPanel.Log("onGetAchievementsInfo", ControlPanel.ELogChannel.GameCenter);            
 
             foreach (KeyValuePair<string, GameCenterManager.GameCenterAchievement> kEntry in kAchievementsInfo)
             {
@@ -904,11 +908,8 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
             }
         }
         public override void onGetLeaderboardScore(string strLeaderboardSKU, int iScore, int iRank)
-        {
-            if (FeatureSettingsManager.IsDebugEnabled)
-            {
-                ControlPanel.Log("onGetLeaderboardScore " + strLeaderboardSKU + " : " + iScore + " , " + iRank, ControlPanel.ELogChannel.GameCenter);
-            }
+        {            
+            ControlPanel.Log("onGetLeaderboardScore " + strLeaderboardSKU + " : " + iScore + " , " + iRank, ControlPanel.ELogChannel.GameCenter);            
         }
     }
     private GameCenterListener m_gameCenterListener = null;
@@ -1002,10 +1003,8 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     {
         string appId = Apps_GetAppIdInStore(app);
         if (string.IsNullOrEmpty(appId))
-        {
-            if (FeatureSettingsManager.IsDebugEnabled)            
-                LogError("No appId found for app " + app.ToString());
-            
+        {                      
+            LogError("No appId found for app " + app.ToString());            
         }
         else
         {			
@@ -1070,11 +1069,8 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
                 if (timeSinceLastException >= EXCEPTION_TIME_BETWEEN_REPORTS)
                 {
                     m_exceptionLatestTimestamp = Time.realtimeSinceStartup;
-
-                    if (FeatureSettingsManager.IsDebugEnabled)
-                    {
-                        Log("OnUnhandledException logString = " + logString + " stackTrace = " + stackTrace + " type = " + type.ToString());
-                    }
+                    
+                    Log("OnUnhandledException logString = " + logString + " stackTrace = " + stackTrace + " type = " + type.ToString());                    
                  
                     HDTrackingManager.Instance.Notify_Crash((type == LogType.Exception), type.ToString(), logString);
                 }
@@ -1531,18 +1527,34 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     }
 
     private const string LOG_CHANNEL = "[ApplicationManager]";
+
+    #if ENABLE_LOGS
+    [Conditional("DEBUG")]
+#else
+    [Conditional("FALSE")]
+#endif
     private static void Log(string msg)
     {
         msg = LOG_CHANNEL + msg;
         Debug.Log(msg);
     }
 
+#if ENABLE_LOGS
+    [Conditional("DEBUG")]
+#else
+    [Conditional("FALSE")]
+#endif
     private static void LogWarning(string msg)
     {
         msg = LOG_CHANNEL + msg;
         Debug.LogWarning(msg);
     }
 
+#if ENABLE_LOGS
+    [Conditional("DEBUG")]
+#else
+    [Conditional("FALSE")]
+#endif
     private static void LogError(string msg)
     {
         msg = LOG_CHANNEL + msg;

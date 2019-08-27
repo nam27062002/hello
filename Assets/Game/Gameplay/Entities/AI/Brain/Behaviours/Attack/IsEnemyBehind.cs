@@ -8,10 +8,10 @@ namespace AI {
 		public class IsEnemyBehind : StateComponent {
 			
 			[StateTransitionTrigger]
-			private static string OnTurnAround = "onTurnAround";
+			private static readonly int onTurnAround = UnityEngine.Animator.StringToHash("onTurnAround");
 
 			[StateTransitionTrigger]
-			private static string OnKeepDirection = "onKeepDirection";
+			private static readonly int onKeepDirection = UnityEngine.Animator.StringToHash("onKeepDirection");
 
 
 			private DragonMotion m_dragon;
@@ -27,9 +27,9 @@ namespace AI {
 
 				float dot = Vector3.Dot(m_machine.direction, machineToDragon);
 				if (dot < -0.5f) {
-					Transition(OnTurnAround);
+					Transition(onTurnAround);
 				} else {
-					Transition(OnKeepDirection);
+					Transition(onKeepDirection);
 				}
 			}
 		}

@@ -23,12 +23,12 @@ namespace AI {
 		public class PetSearchEntityTarget : StateComponent {
 
 			[StateTransitionTrigger]
-			private static string OnEnemyInRange = "onEnemyInRange";
+			private static readonly int onEnemyInRange = UnityEngine.Animator.StringToHash("onEnemyInRange");
 
-			[StateTransitionTrigger]
-			private static string OnEnemyInRangeNoEat = "onEnemyInRangeNoEat";
+            [StateTransitionTrigger]
+			private static readonly int onEnemyInRangeNoEat = UnityEngine.Animator.StringToHash("onEnemyInRangeNoEat");
 
-			private float m_shutdownSensorTime;
+            private float m_shutdownSensorTime;
 			private float m_timer;
 			private DragonTier m_eaterTier;
 			private object[] m_transitionParam;
@@ -148,7 +148,7 @@ namespace AI {
 										if (IsReachable( entity ))
 										{
 											m_transitionParam[0] = entity.transform;
-											Transition( OnEnemyInRangeNoEat, m_transitionParam);
+											Transition( onEnemyInRangeNoEat, m_transitionParam);
 											done = true;
 										}
 									}
@@ -157,7 +157,7 @@ namespace AI {
 										if (IsReachable( entity ))
 										{
 											m_transitionParam[0] = entity.transform;
-											Transition( OnEnemyInRange, m_transitionParam);
+											Transition( onEnemyInRange, m_transitionParam);
 											done = true;
 										}
 									}
@@ -182,7 +182,7 @@ namespace AI {
 								{
 									// Check if closed? Not for the moment
 									m_transitionParam[0] = entity.transform;
-									Transition( OnEnemyInRange, m_transitionParam);
+									Transition( onEnemyInRange, m_transitionParam);
 								}
 							}
 						}
