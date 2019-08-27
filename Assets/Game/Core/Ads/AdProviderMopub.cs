@@ -18,11 +18,8 @@ public class AdProviderMopub : AdProvider
     {
         if (useAgeProtection)
         {
-            // No Ad units for < 13 users have been proveded for Mopub (Mopub stopped being deprecated right before age protection was supported)
-            if (FeatureSettingsManager.IsDebugEnabled)
-            {
-                LogError("No unit ads when age protection is enabled haven't been provided.");
-            }
+            // No Ad units for < 13 users have been proveded for Mopub (Mopub stopped being deprecated right before age protection was supported)            
+            LogError("No unit ads when age protection is enabled haven't been provided.");            
         }
         else
         {

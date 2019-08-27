@@ -13,10 +13,10 @@ namespace AI {
 		public class Idle : StateComponent {
 			
 			[StateTransitionTrigger]
-			protected static string OnMove = "onMove";
+			protected static readonly int onMove = UnityEngine.Animator.StringToHash("onMove");
 
 
-			protected IdleData m_data;
+            protected IdleData m_data;
 
 			protected float m_timer;
 
@@ -52,7 +52,7 @@ namespace AI {
 				if (m_data.restTime.max > 0f) { 
 					m_timer -= Time.deltaTime;
 					if (m_timer <= 0f) {
-						Transition(OnMove);
+						Transition(onMove);
 					}
 				}
 			}

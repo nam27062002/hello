@@ -133,9 +133,8 @@ public class PersistenceCloudDriver
 			return mSyncerStep;
 		}
 		set 
-		{
-            if (FeatureSettingsManager.IsDebugEnabled)
-                PersistenceFacade.Log("(SYNCER) CLOUD " + mSyncerStep.ToString() + " ->  " + value.ToString());
+		{            
+            PersistenceFacade.Log("(SYNCER) CLOUD " + mSyncerStep.ToString() + " ->  " + value.ToString());
 
             mSyncerStep = value;
 
@@ -196,9 +195,8 @@ public class PersistenceCloudDriver
     }
 
 	public void Sync(bool isSilent, bool isAppInit, Action<PersistenceStates.ESyncResult, PersistenceStates.ESyncResultDetail> onDone)
-	{
-        if (FeatureSettingsManager.IsDebugEnabled)
-            PersistenceFacade.Log("(SYNC) CLOUD STARTED...");
+	{        
+        PersistenceFacade.Log("(SYNC) CLOUD STARTED...");
 
         Syncer_Reset();
 		Upload_IsAllowed = false;
@@ -348,9 +346,8 @@ public class PersistenceCloudDriver
         PersistenceStates.ELoadState cloudState = Data.LoadState;
 
         if (localState == PersistenceStates.ELoadState.OK && cloudState == PersistenceStates.ELoadState.OK)
-        {
-            if (FeatureSettingsManager.IsDebugEnabled)
-                PersistenceFacade.Log("(Syncer_Sync) :: local:Ok Cloud:Ok");
+        {            
+            PersistenceFacade.Log("(Syncer_Sync) :: local:Ok Cloud:Ok");
 
             PersistenceStates.EConflictState conflictState = Syncer_Comparator.Compare(LocalDriver.Data, Data);
 
@@ -365,9 +362,8 @@ public class PersistenceCloudDriver
             Syncer_ProcessConflictState(conflictState);
         }
         else if (localState == PersistenceStates.ELoadState.OK && cloudState == PersistenceStates.ELoadState.Corrupted)
-        {
-            if (FeatureSettingsManager.IsDebugEnabled)
-                PersistenceFacade.Log("(Syncer_Sync) :: local:Ok Cloud:Corrupted");
+        {            
+            PersistenceFacade.Log("(Syncer_Sync) :: local:Ok Cloud:Corrupted");
             
             Action onContinue = delegate ()
             {                
@@ -383,9 +379,8 @@ public class PersistenceCloudDriver
             PersistenceFacade.Popup_OpenCloudCorrupted(onContinue, onOverride);
         }
         else if (localState == PersistenceStates.ELoadState.Corrupted && cloudState == PersistenceStates.ELoadState.OK)
-        {
-            if (FeatureSettingsManager.IsDebugEnabled)
-                PersistenceFacade.Log("(Syncer_Sync) :: local:Corrupted Cloud:Ok");
+        {            
+            PersistenceFacade.Log("(Syncer_Sync) :: local:Corrupted Cloud:Ok");
 
             Action onSyncWithCloud = delegate ()
             {
@@ -396,9 +391,8 @@ public class PersistenceCloudDriver
             PersistenceFacade.Popups_OpenLoadLocalCorruptedButCloudOkError(onSyncWithCloud);            
         }
         else if (localState == PersistenceStates.ELoadState.Corrupted && cloudState == PersistenceStates.ELoadState.Corrupted)
-        {
-            if (FeatureSettingsManager.IsDebugEnabled)
-                PersistenceFacade.Log("(Syncer_Sync) :: local:Corrupted Cloud:Corrupted");
+        {            
+            PersistenceFacade.Log("(Syncer_Sync) :: local:Corrupted Cloud:Corrupted");
 
             Action onReset = delegate ()
             {
@@ -415,9 +409,8 @@ public class PersistenceCloudDriver
             PersistenceFacade.Popup_OpenLocalAndCloudCorrupted(onReset);
         }
         else
-        {
-            if (FeatureSettingsManager.IsDebugEnabled)
-                PersistenceFacade.Log("(Syncer_Sync) :: case not supported");
+        {            
+            PersistenceFacade.Log("(Syncer_Sync) :: case not supported");
 
             Syncer_PerformDone(PersistenceStates.ESyncResult.ErrorSyncing, PersistenceStates.ESyncResultDetail.None);
         }
@@ -478,9 +471,8 @@ public class PersistenceCloudDriver
             PersistenceFacade.Popup_OpenMergeConflictBothCorrupted(onError);
         }
         else
-        {
-            if (FeatureSettingsManager.IsDebugEnabled)            
-                PersistenceFacade.Log("(Syncer_Sync) :: case not supported");
+        {                    
+            PersistenceFacade.Log("(Syncer_Sync) :: case not supported");
 
             // Dismiss
             Syncer_OnMergeConflictUseLocal();
@@ -496,9 +488,8 @@ public class PersistenceCloudDriver
     }
 
     private void Syncer_OnMergeConflictUseCloud()
-    {
-        if (FeatureSettingsManager.IsDebugEnabled)
-            PersistenceFacade.Log("(SYNCER) MERGE WITH CLOUD!!! Syncer_LogInSocialResult = " + Syncer_LogInSocialResult + " CloudData = " + ((Data == null) ? null : Data.ToString()));
+    {        
+        PersistenceFacade.Log("(SYNCER) MERGE WITH CLOUD!!! Syncer_LogInSocialResult = " + Syncer_LogInSocialResult + " CloudData = " + ((Data == null) ? null : Data.ToString()));
 
         // Calety is called to override the anonymous id so the game will log in server with the right account Id when reloading	
         switch (Syncer_LogInSocialResult)
@@ -515,9 +506,8 @@ public class PersistenceCloudDriver
                 GameSessionManager.SharedInstance.ResetAnonymousPlatformUserID();
                 break;
 
-            default:
-                if (FeatureSettingsManager.IsDebugEnabled)
-                    PersistenceFacade.LogWarning("No Syncer_LogInSocialResult " + Syncer_LogInSocialResult + " supported");
+            default:                
+                PersistenceFacade.LogWarning("No Syncer_LogInSocialResult " + Syncer_LogInSocialResult + " supported");
                 break;
         }        
 
@@ -539,9 +529,8 @@ public class PersistenceCloudDriver
     }
 
 	private void Syncer_ProcessConflictState(PersistenceStates.EConflictState conflict)
-	{
-		if (FeatureSettingsManager.IsDebugEnabled)
-			PersistenceFacade.Log("(ProcessConflictState :: " + conflict);
+	{		
+    	PersistenceFacade.Log("(ProcessConflictState :: " + conflict);
 
 		switch (conflict)
 		{
@@ -577,9 +566,8 @@ public class PersistenceCloudDriver
         switch(result)
         {
 			// Overrides local persistence with cloud persistence
-            case PersistenceStates.EConflictResult.Cloud:
-				if (FeatureSettingsManager.IsDebugEnabled)
-                	PersistenceFacade.Log("(ResolveConflict) :: Resolving conflict with cloud save!");
+            case PersistenceStates.EConflictResult.Cloud:				
+                PersistenceFacade.Log("(ResolveConflict) :: Resolving conflict with cloud save!");
 												
 				Action onDone = delegate() 
 				{
@@ -601,9 +589,8 @@ public class PersistenceCloudDriver
     }
 
 	private void Syncer_UploadLocalToCloud()
-	{
-		if (FeatureSettingsManager.IsDebugEnabled)
-			PersistenceFacade.Log("(ResolveConflict) :: Resolving conflict with local save!");
+	{		
+	    PersistenceFacade.Log("(ResolveConflict) :: Resolving conflict with local save!");
 				
 		Action<bool> onUploadDone = delegate(bool success)
 		{
@@ -625,9 +612,8 @@ public class PersistenceCloudDriver
                 }				
 			}
 			else
-			{
-				if (FeatureSettingsManager.IsDebugEnabled)
-					PersistenceFacade.LogWarning("(ResolveConflict) :: Upload failed");
+			{				
+				PersistenceFacade.LogWarning("(ResolveConflict) :: Upload failed");
 
 				Action onRetry = delegate()
 				{
@@ -647,9 +633,8 @@ public class PersistenceCloudDriver
 	}
 
 	private void Syncer_PerformDone(PersistenceStates.ESyncResult result, PersistenceStates.ESyncResultDetail resultDetail)
-	{
-        if (FeatureSettingsManager.IsDebugEnabled)
-            PersistenceFacade.Log("(SYNCER) CLOUD DONE " + result.ToString());
+	{        
+        PersistenceFacade.Log("(SYNCER) CLOUD DONE " + result.ToString());
 
         Upload_IsAllowed = result == PersistenceStates.ESyncResult.Ok;
 		IsInSync = Upload_IsAllowed;
@@ -838,21 +823,18 @@ public class PersistenceCloudDriver
 			if (success)
 			{
 				LocalDriver.UpdatesAheadOfCloud -= updatesAhead;
-
-				if (FeatureSettingsManager.IsDebugEnabled)
-					PersistenceFacade.Log("Upload load persistence completed (" + LocalDriver.UpdatesAheadOfCloud + ")");
+				
+				PersistenceFacade.Log("Upload load persistence completed (" + LocalDriver.UpdatesAheadOfCloud + ")");
 
 				if (LocalDriver.UpdatesAheadOfCloud < 0)
 				{
 					LocalDriver.UpdatesAheadOfCloud = 0;
-					if (FeatureSettingsManager.IsDebugEnabled)
-						PersistenceFacade.LogWarning("Amount of updates doesn't make sense");
+					PersistenceFacade.LogWarning("Amount of updates doesn't make sense");
 				}
 			}
 			else
-			{
-				if (FeatureSettingsManager.IsDebugEnabled)
-					PersistenceFacade.LogWarning("Upload failed");
+			{				
+				PersistenceFacade.LogWarning("Upload failed");
 			}
 
 			if (onDone != null)
@@ -860,9 +842,8 @@ public class PersistenceCloudDriver
 				onDone(success);
 			}
 		};
-
-		if (FeatureSettingsManager.IsDebugEnabled)
-			PersistenceFacade.Log("Uploading local persistence.... (" + updatesAhead + ")");
+		
+		PersistenceFacade.Log("Uploading local persistence.... (" + updatesAhead + ")");
 
 		Upload_Perform(LocalDriver.Data.ToString(), onUploadDone);
 	}
@@ -913,9 +894,8 @@ public class PersistenceCloudDriver
 					Upload();
 				}
 				else
-				{
-					if (FeatureSettingsManager.IsDebugEnabled)
-						PersistenceFacade.LogError("Not valid data. It won't be uploaded");
+				{					
+				    PersistenceFacade.LogError("Not valid data. It won't be uploaded");
 				}
 			}
 		}

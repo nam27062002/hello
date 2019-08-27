@@ -16,7 +16,7 @@ namespace AI {
 		}
 
 		public override void CustomUpdate() {
-			base.CustomUpdate();
+            base.CustomUpdate();
 
 			if (speed > 0.01f) {
 				Vector3 v = m_target - m_machine.position;	
@@ -42,8 +42,8 @@ namespace AI {
 			}
 
 			m_impulse += m_externalImpulse;
-			m_externalImpulse = GameConstants.Vector3.zero;
-		}
+			m_externalImpulse = GameConstants.Vector3.zero;            
+        }
 
 		void OnDrawGizmosSelected() {
 			Gizmos.color = Color.white;

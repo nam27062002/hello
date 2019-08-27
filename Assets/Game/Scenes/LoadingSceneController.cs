@@ -4,12 +4,17 @@
 // Created by Alger Ortín Castellví on 20/08/2015.
 // Copyright (c) 2015 Ubisoft. All rights reserved.
 
+#if DEBUG && !DISABLE_LOGS
+#define ENABLE_LOGS
+#endif
+
 //----------------------------------------------------------------------//
 // INCLUDES																//
 //----------------------------------------------------------------------//
 using UnityEngine;
 using UnityEngine.UI;
 using System;
+using System.Diagnostics;
 using TMPro;
 using System.Text.RegularExpressions;
 using System.Collections.Generic;
@@ -45,9 +50,8 @@ public class LoadingSceneController : SceneController {
 		private bool m_actionsAllowed = true;
 
         public override void onAndroidPermissionPopupNeeded (CaletyConstants.PopupConfig kPopupConfig)
-        {
-            if (FeatureSettingsManager.IsDebugEnabled)
-                LoadingSceneController.Log("onAndroidPermissionPopupNeeded: " + kPopupConfig.m_strMessage);
+        {            
+            Log("onAndroidPermissionPopupNeeded: " + kPopupConfig.m_strMessage);
 
 			IPopupMessage.Config config = IPopupMessage.GetConfig();
 			config.TextType = IPopupMessage.Config.ETextType.SYSTEM;	// [AOC] Fonts are not loaded at this point, so we must use system's dynamic font
@@ -126,8 +130,7 @@ public class LoadingSceneController : SceneController {
 
         public override void onAndroidPermissionsFinished ()
         {
-            if (FeatureSettingsManager.IsDebugEnabled)
-                LoadingSceneController.Log ("onAndroidPermissionsFinished");
+            Log ("onAndroidPermissionsFinished");
 
 			// Close popup and continue
             m_permissionsFinished = true;
@@ -464,10 +467,8 @@ public class LoadingSceneController : SceneController {
             case State.WAITING_COUNTRY_CODE:
             {
 				if (stateTimerExpired && !m_gdprListener.m_gdprAnswered)
-				{
-					if (FeatureSettingsManager.IsDebugEnabled)
-						ControlPanel.Log("WAITING_COUNTRY_CODE has expired", ControlPanel.ELogChannel.Loading);
-					
+				{					
+					ControlPanel.Log("WAITING_COUNTRY_CODE has expired", ControlPanel.ELogChannel.Loading);					
 					m_gdprListener.onGDPRInfoResponseError(404);
 				}
 
@@ -753,6 +754,7 @@ public class LoadingSceneController : SceneController {
                 FirePropagationManager.CreateInstance(true);
                 SpawnerManager.CreateInstance(true);
                 EntityManager.CreateInstance(true);
+                DecorationManager.CreateInstance(true);
                 ViewManager.CreateInstance(true);
                 BubbledEntitySystem.CreateInstance(true);
                 InstanceManager.CreateInstance(true);
@@ -827,9 +829,8 @@ public class LoadingSceneController : SceneController {
         {            
             m_startLoadFlow = false;            
             m_loadingDone = false;
-
-            if (FeatureSettingsManager.IsDebugEnabled)
-                Log("Started Loading Flow");
+            
+            Log("Started Loading Flow");
 
             Action onDone = delegate()
             {                
@@ -947,6 +948,12 @@ public class LoadingSceneController : SceneController {
 
     #region log
     private const string LOG_CHANNEL = "[LOADING] ";
+
+    #if ENABLE_LOGS
+    [Conditional("DEBUG")]
+    #else
+    [Conditional("FALSE")]
+    #endif
     public static void Log(string msg)
     {
         Debug.Log(LOG_CHANNEL + msg);

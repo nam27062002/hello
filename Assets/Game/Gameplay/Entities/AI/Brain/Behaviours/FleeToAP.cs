@@ -15,16 +15,16 @@ namespace AI {
 		public class FleeToAP : StateComponent {
 
 			[StateTransitionTrigger]
-			private static string OnActionPoint = "onActionPoint";
+			private static readonly int onActionPoint = UnityEngine.Animator.StringToHash("onActionPoint");
 
-			[StateTransitionTrigger]
-			private static string OnGoBackHome = "onGoBackHome";
+            [StateTransitionTrigger]
+			private static readonly int onGoBackHome = UnityEngine.Animator.StringToHash("onGoBackHome");
 
-			[StateTransitionTrigger]
-			private static string OnIdleAlert = "onIdleAlert";
+            [StateTransitionTrigger]
+			private static readonly int onIdleAlert = UnityEngine.Animator.StringToHash("onIdleAlert");
 
 
-			private enum FleeState {
+            private enum FleeState {
 				Flee = 0,
 				Flee_Panic,
 				Panic,
@@ -122,7 +122,7 @@ namespace AI {
 						if (action != null) {
 							m_params[0] = action;
 							if (action.id == Actions.Id.Home) {
-								Transition(OnGoBackHome);
+								Transition(onGoBackHome);
 								return;
 							} else if (action.id == Actions.Id.GoOn) {
 								ap = null;
@@ -136,7 +136,7 @@ namespace AI {
 				}
 
 				if (ap != null) {
-					Transition(OnActionPoint, m_params);
+					Transition(onActionPoint, m_params);
 				} else {
 					bool warning = m_machine.GetSignal(Signals.Type.Warning);
 					bool danger = m_machine.GetSignal(Signals.Type.Danger);
@@ -225,7 +225,7 @@ namespace AI {
 								m_panicTimer -= Time.deltaTime;
 								if (m_panicTimer <= 0) {
 									m_pilot.SetMoveSpeed(0);
-									if (m_pilot.speed < 1) Transition(OnIdleAlert);							
+									if (m_pilot.speed < 1) Transition(onIdleAlert);							
 								}
 							}
 							break;

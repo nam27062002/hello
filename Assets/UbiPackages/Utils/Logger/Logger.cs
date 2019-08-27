@@ -1,4 +1,10 @@
-﻿public class Logger
+﻿#if DEBUG && !DISABLE_LOGS
+#define ENABLE_LOGS
+#endif
+
+using System.Diagnostics;
+
+public class Logger
 {
     public enum EMessageType
     {
@@ -24,6 +30,11 @@
         return true;
     }
 
+    #if ENABLE_LOGS
+    [Conditional("DEBUG")]
+    #else
+    [Conditional("FALSE")]
+    #endif
     public void Log(string message)
     {
         if (CanLog())
@@ -36,6 +47,11 @@
     {
     }
 
+    #if ENABLE_LOGS
+    [Conditional("DEBUG")]
+    #else
+    [Conditional("FALSE")]
+    #endif
     public virtual void LogWarning(string message)
     {
         if (CanLog())
@@ -48,6 +64,11 @@
     {
     }
 
+    #if ENABLE_LOGS
+    [Conditional("DEBUG")]
+    #else
+    [Conditional("FALSE")]
+    #endif
     public void LogError(string message)
     {
         if (CanLog())

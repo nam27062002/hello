@@ -12,10 +12,10 @@ namespace AI {
 		public class GuardOutOfSight : StateComponent {
 
 			[StateTransitionTrigger]
-			private static string OnEnemyInRange = "onEnemyInRange";
+			private static int onEnemyInRange = UnityEngine.Animator.StringToHash("onEnemyInRange");
 
 			[StateTransitionTrigger]
-			private static string OnCalmDown = "onCalmDown";
+			private static readonly int onCalmDown = UnityEngine.Animator.StringToHash("onCalmDown");
 
 
 			//-----------------------------------------------------------------------
@@ -52,11 +52,11 @@ namespace AI {
 
 			protected override void OnUpdate() {
 				if (m_machine.GetSignal(Signals.Type.Danger)) {
-					Transition(OnEnemyInRange);
+					Transition(onEnemyInRange);
 				} else {
 					m_timer -= Time.deltaTime;
 					if (m_timer <= 0f) {
-						Transition(OnCalmDown);
+						Transition(onCalmDown);
 					}
 				}
 			}
