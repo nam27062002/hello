@@ -12,6 +12,7 @@ using UnityEngine.UI;
 using DG.Tweening;
 using System.Collections.Generic;
 using TMPro;
+using System;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -265,7 +266,7 @@ public class SpecialStatUpgrader : MonoBehaviour {
             // Disable localizer and just show the price
             m_priceText.enabled = false;
             m_priceText.text.text = UIConstants.GetIconString(
-                upgradePrice.Amount.ToString(),
+                StringUtils.FormatNumber(System.Convert.ToInt64(upgradePrice.Amount)),
                 UIConstants.GetCurrencyIcon(upgradePrice.Currency),
                 UIConstants.IconAlignment.LEFT
             );
