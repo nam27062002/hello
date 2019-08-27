@@ -16,7 +16,7 @@ namespace AI {
 		public class Charge : StateComponent {
 
 			[StateTransitionTrigger]
-			private static string OnChargeEnd = "onChargeEnd";
+			private static int onChargeEnd = UnityEngine.Animator.StringToHash("onChargeEnd");
 
 
 			protected ChargeData m_data;
@@ -113,7 +113,7 @@ namespace AI {
 
 				if (m < 0.5f) {
 					m_machine.DisableSensor(m_data.retreatTime);
-					Transition(OnChargeEnd);
+					Transition(onChargeEnd);
 				} else {
 					m_pilot.GoTo(m_target);
 				}

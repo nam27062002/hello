@@ -19,12 +19,19 @@ namespace AI {
 		[SerializeField] private Range m_radiusOffset = new Range(0.9f, 1.1f);
 		[SerializeField] private Range m_senseDelay = new Range(0.25f, 1.25f);
 
-		private Transform m_enemy; //enemy should be a Machine.. but dragon doesn't have this component
+        private const int CollisionCheckPools = 20;
+        private static uint NextCollisionCheckID = 0;
+
+
+        private Transform m_enemy; //enemy should be a Machine.. but dragon doesn't have this component
 		public Transform enemy { get { return m_enemy; } }
 
 		private float m_enemyRadiusSqr;
 		private RectAreaBounds m_enemyBounds;
 		private float m_senseTimer;
+
+        private uint m_collisionCheckPool; // each prey will detect collisions at different frames
+        private bool m_cachedRaycast;
 
 		private float m_sightRadiusIn 	= 0f;
 		private float m_sightRadiusOut 	= 0f;
@@ -37,9 +44,13 @@ namespace AI {
 		public MachineSensor() {}
 
 		public override void Init() {
-			float radiusOffsetFactor = m_radiusOffset.GetRandom();
+            m_collisionCheckPool = NextCollisionCheckID % CollisionCheckPools;
+            NextCollisionCheckID++;
+            m_cachedRaycast = false;
 
-			m_senseTimer = 0f;
+            float radiusOffsetFactor = m_radiusOffset.GetRandom();
+
+            m_senseTimer = 0f;
 			m_enemyRadiusSqr = 0f;
 
 			m_sightRadiusIn 	= m_sightRadius * radiusOffsetFactor;
@@ -127,7 +138,7 @@ namespace AI {
 						float maxRadiusOut = m_maxRadiusOut + fireRadius;
 						float minRadiusOut = m_minRadiusOut + fireRadius;
 
-						if (distanceSqr == 0f) {
+						if (distanceSqr < float.Epsilon) {
 							distanceSqr = DistanceSqrToEnemy();
 						}
 
@@ -144,8 +155,11 @@ namespace AI {
 						}
 
 						if (isInsideMinArea || isInsideMaxArea) {
-							// Check line cast
-                            if (Physics.Linecast(sensorPosition, m_enemy.position, GameConstants.Layers.GROUND)) {
+                            if (m_collisionCheckPool == Time.frameCount % CollisionCheckPools) {
+                                m_cachedRaycast = Physics.Linecast(sensorPosition, m_enemy.position, GameConstants.Layers.GROUND);
+                            }
+                                // Check line cast
+                            if (m_cachedRaycast) {
 								isInsideSightArea = false;
 								isInsideMaxArea = false;
 								isInsideMinArea = false;
@@ -161,10 +175,10 @@ namespace AI {
 					isInsideMinArea = false;
 				}
 
-				m_machine.SetSignal(Signals.Type.Warning, 	isInsideSightArea);
+                m_machine.SetSignal(Signals.Type.Warning, 	isInsideSightArea);
 				m_machine.SetSignal(Signals.Type.Danger, 	isInsideMaxArea);
 				m_machine.SetSignal(Signals.Type.Critical, 	isInsideMinArea);
-			}				
+            }				
 		}
 
 		public float DistanceSqrToEnemy() {

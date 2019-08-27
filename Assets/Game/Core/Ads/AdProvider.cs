@@ -1,4 +1,9 @@
-﻿using UnityEngine;
+﻿#if DEBUG && !DISABLE_LOGS
+#define ENABLE_LOGS
+#endif
+
+using UnityEngine;
+using System.Diagnostics;
 
 /// <summary>
 /// This class is responsible for hiding the ad provider implementation
@@ -102,11 +107,8 @@ public abstract class AdProvider
     protected virtual void ExtendedShowInterstitial() { }
 
     protected void OnShowInterstitial(bool videoPlayed, string msg=null)
-    {
-        if (FeatureSettingsManager.IsDebugEnabled)
-        {
-			Log("Interstitial played = " + videoPlayed + " msg = " + msg + " m_ad.Type = " + m_ad.Type);
-        }
+    {        
+	    Log("Interstitial played = " + videoPlayed + " msg = " + msg + " m_ad.Type = " + m_ad.Type);        
 
         if (m_ad.Type == AdType.Interstitial)
         {
@@ -130,11 +132,8 @@ public abstract class AdProvider
     protected virtual void ExtendedShowRewarded() { }
 
     protected void OnShowRewarded(bool videoPlayed, string msg=null)
-    {
-        if (FeatureSettingsManager.IsDebugEnabled)
-        {
-			Log("Rewarded played = " + videoPlayed + " msg = " + msg + " m_ad.Type = " + m_ad.Type);
-        }
+    {        
+		Log("Rewarded played = " + videoPlayed + " msg = " + msg + " m_ad.Type = " + m_ad.Type);        
 
         if (m_ad.Type == AdType.V4VC)
         {
@@ -153,11 +152,8 @@ public abstract class AdProvider
     }
 
     public void OnAdPlayed(Ad ad, bool videoPlayed, string msg=null)
-    {
-        if (FeatureSettingsManager.IsDebugEnabled)
-        {
-            Log("Ad type " + ad.Type + " played with success = " + videoPlayed + " msg = " + msg);
-        }
+    {        
+        Log("Ad type " + ad.Type + " played with success = " + videoPlayed + " msg = " + msg);        
 
         if (ad == m_ad)
         {
@@ -175,10 +171,15 @@ public abstract class AdProvider
 	public virtual void ShowDebugInfo() {}
 
     #region log
-    private const bool LOG_USE_COLOR = false;
+    private const bool LOG_USE_COLOR = true;
     private const string LOG_CHANNEL = "[AdProvider] ";
     private const string LOG_CHANNEL_COLOR = "<color=cyan>" + LOG_CHANNEL;
 
+#if ENABLE_LOGS
+    [Conditional("DEBUG")]
+#else
+    [Conditional("FALSE")]
+#endif
     public static void Log(string msg)
     {
         if (LOG_USE_COLOR)
@@ -191,6 +192,11 @@ public abstract class AdProvider
         }
     }
 
+#if ENABLE_LOGS
+    [Conditional("DEBUG")]
+#else
+    [Conditional("FALSE")]
+#endif
     public static void LogError(string msg)
     {
         Debug.LogError(LOG_CHANNEL + msg);

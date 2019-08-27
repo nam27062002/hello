@@ -9,7 +9,7 @@ namespace AI {
 		public class PetMummyRevive : StateComponent {
 
 			[StateTransitionTrigger]
-			public const string onStartRevive = "onStartMummyRevive";
+			public static readonly int onStartRevive = UnityEngine.Animator.StringToHash("onStartMummyRevive");
 
             PetMummyRevive(){
                 Messenger.AddListener(MessengerEvents.PLAYER_MUMMY_REVIVE, OnRevive);

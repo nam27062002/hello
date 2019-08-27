@@ -68,23 +68,23 @@ namespace AI {
 			m_signals = new Signals(this);
 			m_signals.Init();
 
-			m_signals.SetOnEnableTrigger(Signals.Type.Alert, SignalTriggers.OnAlert);
-			m_signals.SetOnDisableTrigger(Signals.Type.Alert, SignalTriggers.OnIgnoreAll);
+			m_signals.SetOnEnableTrigger(Signals.Type.Alert, SignalTriggers.onAlert);
+			m_signals.SetOnDisableTrigger(Signals.Type.Alert, SignalTriggers.onIgnoreAll);
 
-			m_signals.SetOnEnableTrigger(Signals.Type.Warning, SignalTriggers.OnWarning);	
-			m_signals.SetOnDisableTrigger(Signals.Type.Warning, SignalTriggers.OnCalm);		
+			m_signals.SetOnEnableTrigger(Signals.Type.Warning, SignalTriggers.onWarning);	
+			m_signals.SetOnDisableTrigger(Signals.Type.Warning, SignalTriggers.onCalm);		
 
-			m_signals.SetOnEnableTrigger(Signals.Type.Danger, SignalTriggers.OnDanger);
-			m_signals.SetOnDisableTrigger(Signals.Type.Danger, SignalTriggers.OnSafe);
+			m_signals.SetOnEnableTrigger(Signals.Type.Danger, SignalTriggers.onDanger);
+			m_signals.SetOnDisableTrigger(Signals.Type.Danger, SignalTriggers.onSafe);
 
-			m_signals.SetOnEnableTrigger(Signals.Type.Critical, SignalTriggers.OnCritical);
+			m_signals.SetOnEnableTrigger(Signals.Type.Critical, SignalTriggers.onCritical);
 
-			m_signals.SetOnEnableTrigger(Signals.Type.Panic, SignalTriggers.OnPanic);
-			m_signals.SetOnDisableTrigger(Signals.Type.Panic, SignalTriggers.OnRecoverFromPanic);
+			m_signals.SetOnEnableTrigger(Signals.Type.Panic, SignalTriggers.onPanic);
+			m_signals.SetOnDisableTrigger(Signals.Type.Panic, SignalTriggers.onRecoverFromPanic);
 
-			m_signals.SetOnEnableTrigger(Signals.Type.Burning, SignalTriggers.OnBurning);
+			m_signals.SetOnEnableTrigger(Signals.Type.Burning, SignalTriggers.onBurning);
 
-			m_signals.SetOnEnableTrigger(Signals.Type.Destroyed, SignalTriggers.OnDestroyed);
+			m_signals.SetOnEnableTrigger(Signals.Type.Destroyed, SignalTriggers.onDestroyed);
 		}
 
 
@@ -118,10 +118,10 @@ namespace AI {
 			Invoke("Activate", duration);
 		}
 
-		override public void OnTrigger(string _trigger, object[] _param = null) {
-			if (_trigger == SignalTriggers.OnDestroyed) {
+		override public void OnTrigger(int _triggerHash, object[] _param = null) {
+			if (_triggerHash == SignalTriggers.onDestroyed) {
 				m_entity.Disable(true);
-			} else if ( _trigger == SignalTriggers.OnBurning ){
+			} else if (_triggerHash == SignalTriggers.onBurning ){
 				m_viewControl.Burn(m_inflammable.burningTime);
 			}
 		}

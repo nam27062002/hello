@@ -1,8 +1,8 @@
 using System;
 
 namespace AI
-{
-	public class StateTransitionTrigger : Attribute
+{    
+    public class StateTransitionTrigger : Attribute
 	{
 	}
 }

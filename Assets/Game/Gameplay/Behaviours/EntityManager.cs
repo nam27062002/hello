@@ -7,9 +7,7 @@ public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager>, IBroa
     private List<Entity> m_entities;
     private List<EntityBg> m_entitiesBg;
 	private List<Cage> m_cages;
-	private List<Decoration> m_decorations;
     private List<Entity> m_searchList;
-    private List<AmbientHazard> m_ambientHazards;
     private Rect m_area;
 
 
@@ -63,9 +61,7 @@ public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager>, IBroa
         m_entities = new List<Entity>();
         m_entitiesBg = new List<EntityBg>();
 		m_cages = new List<Cage>();
-		m_decorations = new List<Decoration>();
         m_searchList = new List<Entity>();
-        m_ambientHazards = new List<AmbientHazard>();
         m_entitiesColliderMask = 1 << LayerMask.NameToLayer("AirPreys") | 1 << LayerMask.NameToLayer("WaterPreys") | 1 << LayerMask.NameToLayer("MachinePreys") | 1 << LayerMask.NameToLayer("GroundPreys") | 1 << LayerMask.NameToLayer("Mines");
 
         m_updateEnabled = false;
@@ -121,12 +117,6 @@ public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager>, IBroa
 
 	public void RegisterEntityCage(Cage _cage)			{ m_cages.Add(_cage); }
 	public void UnregisterEntityCage(Cage _cage)		{ m_cages.Remove(_cage); }
-
-	public void RegisterDecoration(Decoration _deco)	{ m_decorations.Add(_deco); }
-	public void UnregisterDecoration(Decoration _deco)	{ m_decorations.Remove(_deco); }
-
-    public void RegisterAmbientHazard(AmbientHazard _hazard)	{ m_ambientHazards.Add(_hazard); }
-	public void UnregisterAmbientHazard(AmbientHazard _hazard)	{ m_ambientHazards.Remove(_hazard); }
 
 
     public Entity[] GetEntitiesInRange2D(Vector2 _center, float _radius)
@@ -420,17 +410,6 @@ public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager>, IBroa
                 }
             }
 
-            count = m_decorations.Count - 1;
-            for (i = count; i >= 0; i--) {
-                m_decorations[i].CustomUpdate();
-            }
-
-            count = m_ambientHazards.Count-1;
-            for (i = count; i >= 0; i--)
-            {
-                m_ambientHazards[i].CustomUpdate( delta );
-            }
-
 
             FreezingObjectsRegistry.instance.CustomUpdate();
 
@@ -509,7 +488,6 @@ public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager>, IBroa
         if (m_entities != null)     { m_entities.Clear(); }
 		if (m_entitiesBg != null)   { m_entitiesBg.Clear(); }
 		if ( m_cages != null )      { m_cages.Clear(); }
-		if (m_decorations != null)  { m_decorations.Clear(); }
 	}
 
     #region debug

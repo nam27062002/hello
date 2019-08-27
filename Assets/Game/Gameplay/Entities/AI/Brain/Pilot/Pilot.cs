@@ -146,7 +146,7 @@ namespace AI {
 
 		public virtual void BrainExit() {}
 
-		public virtual void OnTrigger(string _trigger, object[] _param = null) {}
+		public virtual void OnTrigger(int _trigger, object[] _param = null) {}
 
 		// all the movement will be offset to follow a specific rail
 		public void SetRail(int _rail, int _total) {

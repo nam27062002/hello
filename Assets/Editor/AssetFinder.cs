@@ -611,6 +611,75 @@ public class AssetFinder : EditorWindow {
         Debug.Log("list length: " + meshList.Length + " meshes:" + c);
     }
 
+
+    /// <summary>
+    /// Remove unused options in prefab renderers
+    /// </summary>
+    [MenuItem("Hungry Dragon/Tools/Remove unused options in prefab renderers")]
+    public static void cleanRenderers()
+    {
+        Debug.Log("Obtaining prefab list");
+
+        //        EditorUtility.("Material keyword reset", "Obtaining Material list ...", "");
+
+        GameObject[] prefabList;
+        FindAssetInContent<GameObject>(Directory.GetCurrentDirectory() + "\\Assets", out prefabList);
+
+        float c = 0;
+        int numModified = 0;
+        
+
+        Debug.Log("Seek for renderers in prefabs:");
+        foreach (GameObject prefab in prefabList)
+        {
+            MeshRenderer[] renderers = prefab.GetComponentsInChildren<MeshRenderer>();
+            bool modified = false;
+
+            foreach(MeshRenderer rend in renderers)
+            {
+                rend.lightProbeUsage = UnityEngine.Rendering.LightProbeUsage.Off;
+                rend.motionVectorGenerationMode = MotionVectorGenerationMode.ForceNoMotion;
+                if (rend.allowOcclusionWhenDynamic)
+                {
+                    Debug.Log(rend.gameObject.name + ": allowOcclusionWhenDynamic = true ");
+                }
+                if (rend.reflectionProbeUsage != UnityEngine.Rendering.ReflectionProbeUsage.Off)
+                {
+                    Debug.Log(rend.gameObject.name + ": reflectionProbeUsage = " + rend.reflectionProbeUsage.ToString());
+                }
+                rend.reflectionProbeUsage = UnityEngine.Rendering.ReflectionProbeUsage.Off;
+                rend.allowOcclusionWhenDynamic = false;
+
+                rend.motionVectorGenerationMode = MotionVectorGenerationMode.ForceNoMotion;
+                rend.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+                rend.receiveShadows = false;
+
+                modified = true;
+            }
+
+            if (EditorUtility.DisplayCancelableProgressBar("updating prefabs", prefab.name, c / (float)prefabList.Length))
+            {
+                EditorUtility.ClearProgressBar();
+                break;
+            }
+
+            if (modified)
+            {
+                string path = AssetDatabase.GetAssetPath(prefab);
+                AssetDatabase.ImportAsset(path);
+                Debug.Log(">>> " + path);
+                numModified++;
+            }
+
+
+            c++;
+        }
+
+        EditorUtility.ClearProgressBar();
+        Debug.Log("prefab list length: " + prefabList.Length + " modified:" + numModified);
+
+    }
+
     //------------------------------------------------------------------//
     // METHODS															//
     //------------------------------------------------------------------//

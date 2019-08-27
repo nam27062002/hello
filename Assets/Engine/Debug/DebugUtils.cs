@@ -8,7 +8,10 @@
 // INCLUDES																//
 //----------------------------------------------------------------------//
 #define ENABLE_ASSERTS
-#define ENABLE_LOG
+
+#if DEBUG && !DISABLE_LOGS
+#define ENABLE_LOGS
+#endif
 
 using UnityEngine;
 using System.Collections;
@@ -105,7 +108,9 @@ public class DebugUtils {
 		return DebugUtils.Assert(_checkCondition, _message, _contextObj, true);
 	}
 
-#if !ENABLE_LOG || PRODUCTION
+#if ENABLE_LOGS
+    [Conditional("DEBUG")]
+#else
     [Conditional("FALSE")]
 #endif
     public static void LogException(System.Exception exception)
@@ -113,7 +118,9 @@ public class DebugUtils {
         UnityEngine.Debug.LogException(exception);
     }
 
-#if !ENABLE_LOG || PRODUCTION
+#if ENABLE_LOGS
+    [Conditional("DEBUG")]
+#else
     [Conditional("FALSE")]
 #endif
     public static void LogException(System.Exception exception, UnityEngine.Object context)
@@ -142,10 +149,12 @@ public class DebugUtils {
 
     }
 
-	#if !ENABLE_LOG || PRODUCTION
-	[Conditional("FALSE")]
-	#endif
-	public static void Log(string _text, UnityEngine.Object _context = null) {
+#if ENABLE_LOGS
+    [Conditional("DEBUG")]
+#else
+    [Conditional("FALSE")]
+#endif
+    public static void Log(string _text, UnityEngine.Object _context = null) {
 		// Smart string memory usage
 		StringBuilder ss = new StringBuilder();
 

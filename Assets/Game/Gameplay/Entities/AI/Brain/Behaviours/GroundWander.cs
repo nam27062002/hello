@@ -15,10 +15,10 @@ namespace AI {
 		public class GroundWander : StateComponent {
 
 			[StateTransitionTrigger]
-			private static string OnRest = "onRest";
+			private static readonly int onRest = UnityEngine.Animator.StringToHash("onRest");
 
 
-			private GroundWanderData m_data;
+            private GroundWanderData m_data;
 
 			private Vector2 m_limitMin;
 			private Vector2 m_limitMax;
@@ -44,7 +44,7 @@ namespace AI {
 				m_data = m_pilot.GetComponentData<GroundWanderData>();
 			}
 
-			protected override void OnEnter(State oldState, object[] param) {
+			protected override void OnEnter(State _oldState, object[] _param) {
 				m_limitMin.x = m_pilot.area.bounds.min.x;
 				m_limitMax.x = m_pilot.area.bounds.max.x;
 
@@ -73,7 +73,7 @@ namespace AI {
 						m_pilot.SlowDown(true);
 						float distanceToTarget = (m_pilot.target - m_machine.position).sqrMagnitude;
 						if (distanceToTarget <= 2f || distanceToTarget > m_distanceToTarget) {
-							Transition(OnRest);
+							Transition(onRest);
 						}
 						m_distanceToTarget = distanceToTarget;
 					}
@@ -99,7 +99,7 @@ namespace AI {
 
 					m_pilot.GoTo(target);
 				} else {
-					Transition(OnRest);
+					Transition(onRest);
 				}
 			}
 

@@ -63,7 +63,7 @@ namespace AI {
 			}
 
 			protected override void OnUpdate() {
-				Group group = m_machine.GetGroup();
+                Group group = m_machine.GetGroup();
 
 				// Every few seconds we change the leader of this flock
 				if (group != null) {					
@@ -88,7 +88,7 @@ namespace AI {
 				}
 
 				m_pilot.GoTo(m_pilot.target + offset);
-			}
+            }
 		}
 	}
 }
