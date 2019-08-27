@@ -83,7 +83,7 @@ Shader "Hungry Dragon/Scenary/Scenary Standard"
 	}
 
 	SubShader {
-		Tags { "RenderType"="Opaque" "Queue"="Geometry" "DisableBatching" = "True" }
+		Tags { "RenderType"="Opaque" "Queue"="Geometry"}
 		LOD 100
 		
 		Pass {		

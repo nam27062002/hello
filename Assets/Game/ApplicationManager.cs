@@ -331,15 +331,36 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
             //PersistencePrefs.Clear();
         }
 #endif
+		UnityEngine.Profiling.Profiler.BeginSample("ApplicationManager.Update()");
 
         Language_Update();
 
+		UnityEngine.Profiling.Profiler.BeginSample("PersistenceFacade.Update()");
         PersistenceFacade.instance.Update();
+		UnityEngine.Profiling.Profiler.EndSample();
+
+		UnityEngine.Profiling.Profiler.BeginSample("HDTrackingManager.Update()");
         HDTrackingManager.Instance.Update();
+		UnityEngine.Profiling.Profiler.EndSample();
+
+		UnityEngine.Profiling.Profiler.BeginSample("HDCustomizerManager.Update()");
         HDCustomizerManager.instance.Update();        
+		UnityEngine.Profiling.Profiler.EndSample();
+
+		UnityEngine.Profiling.Profiler.BeginSample("GameServerManager.Update()");
 		GameServerManager.SharedInstance.Update();
+		UnityEngine.Profiling.Profiler.EndSample();
+
+		UnityEngine.Profiling.Profiler.BeginSample("HDAddressablesManager.Update()");
         HDAddressablesManager.Instance.Update();
+		UnityEngine.Profiling.Profiler.EndSample();
+
+		UnityEngine.Profiling.Profiler.BeginSample("GameStoreManager.Update()");
         GameStoreManager.SharedInstance.Update();
+		UnityEngine.Profiling.Profiler.EndSample();
+
+		UnityEngine.Profiling.Profiler.EndSample();
+
 
         ChestManager.instance.Update();
         OffersManager.instance.Update();
@@ -594,6 +615,26 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
                     HDNotificationsManager.instance.ScheduleNewDailyReward (timeToNotification);
                 }
             }
+
+            DefinitionNode gameSettingsDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, "gameSettings");
+            int minutesToReengage = gameSettingsDef.GetAsInt("notificationComeBackTimer", 2000);
+            int secondsToReengage = minutesToReengage * 60;
+            if ( secondsToReengage > 0 )
+            {
+                System.DateTime dateTime = System.DateTime.Now.AddSeconds( secondsToReengage );
+                if ( dateTime.Hour >= 22 || dateTime.Hour <= 9 )
+                {
+                    // Adjust to avoid midnight timmings
+                    System.DateTime fixedDateTime = dateTime;
+                    fixedDateTime = fixedDateTime.AddHours( 11 );   // forbidden 11 hours, from 22:00 to 9:00
+                    fixedDateTime = fixedDateTime.AddHours( 9 - fixedDateTime.Hour );   // Remove excess
+                    secondsToReengage = (int)(fixedDateTime - System.DateTime.Now).TotalSeconds;
+                }
+                
+                HDNotificationsManager.instance.ScheduleReengagementNotification(secondsToReengage);
+            }
+                
+
 			// [AOC] TODO!!
         }
     }
@@ -603,6 +644,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 		HDNotificationsManager.instance.CancelNewMissionsNotification();
 		HDNotificationsManager.instance.CancelNewChestsNotification();
 		HDNotificationsManager.instance.CancelDailyRewardNotification();
+        HDNotificationsManager.instance.CancelReengagementNotification();
     }
 
     #region game
