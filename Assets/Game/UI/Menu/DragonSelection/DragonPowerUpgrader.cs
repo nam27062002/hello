@@ -133,7 +133,7 @@ public class DragonPowerUpgrader : MonoBehaviour {
             if (upgradePrice != null )
             {
                 m_priceText.text.text = UIConstants.GetIconString(
-                    upgradePrice.Amount.ToString(),
+                    StringUtils.FormatNumber(System.Convert.ToInt64(upgradePrice.Amount)),
                     UIConstants.GetCurrencyIcon(upgradePrice.Currency),
                     UIConstants.IconAlignment.LEFT
                 );
