@@ -616,14 +616,17 @@ public class DragonDataSpecial : IDragonData {
 
         // Increase dragon level
         m_level++;
-        Messenger.Broadcast<DragonDataSpecial>(MessengerEvents.SPECIAL_DRAGON_LEVEL_UPGRADED, this);
-
         // Check if the dragon reached the next special tier
         RefreshSpecialTier();
 
-        // Refresh power and tier
+        // Refresh Power Level
         RefreshPowerLevel();
+
+        // Refresh Disguise
         RefreshDisguise();
+
+        Messenger.Broadcast<DragonDataSpecial>(MessengerEvents.SPECIAL_DRAGON_LEVEL_UPGRADED, this);
+        
 
         // Look for upgrades and notify listeners
         if (oldPowerLevel != powerLevel)
