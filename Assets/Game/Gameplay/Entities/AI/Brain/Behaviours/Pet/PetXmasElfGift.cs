@@ -12,7 +12,7 @@ namespace AI {
 		public class PetXmasElfGift : StateComponent {
 
 			[StateTransitionTrigger]
-			private static string OnTimedAction = "onTimedAction";
+			private static readonly int onTimedAction = UnityEngine.Animator.StringToHash("onTimedAction");
 
 
 			protected PetXmasElfGiftData m_data;

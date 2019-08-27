@@ -11,10 +11,10 @@ namespace AI {
 		[CreateAssetMenu(menuName = "Behaviour/Move In Area Control")]
 		public class InAreaControl : StateComponent {
 			[StateTransitionTrigger]
-			protected static string OnOutsideArea = "onOutsideArea";
+			protected static readonly int onOutsideArea = UnityEngine.Animator.StringToHash("onOutsideArea");
 
 
-			protected InAreaControlData m_data;
+            protected InAreaControlData m_data;
 
 			private bool m_isOutside;
 			private float m_outsideTimer;
@@ -41,7 +41,7 @@ namespace AI {
 					m_outsideTimer -= Time.deltaTime;
 					if (m_outsideTimer <= 0) {
 						if (!m_pilot.area.Contains(m_machine.position)) {
-							Transition(OnOutsideArea);
+							Transition(onOutsideArea);
 						}
 						m_isOutside = false;
 					}

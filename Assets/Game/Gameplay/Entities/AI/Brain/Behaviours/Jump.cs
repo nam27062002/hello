@@ -8,12 +8,12 @@ namespace AI {
 		public class Jump : StateComponent {
 
 			[StateTransitionTrigger]
-			private static string OnJumpTop = "onJumpTop";
+			private static readonly int onJumpTop = UnityEngine.Animator.StringToHash("onJumpTop");
 
-			[StateTransitionTrigger]
-			private static string OnJumpEnd = "onJumpEnd";
+            [StateTransitionTrigger]
+			private static readonly int onJumpEnd = UnityEngine.Animator.StringToHash("onJumpEnd");
 
-			private enum JumpState {
+            private enum JumpState {
 				GoingUp = 0,
 				GoingDown,
 				OnGround
@@ -39,12 +39,12 @@ namespace AI {
 						float y = m_machine.position.y;
 						if (y < m_lastY) {
 							m_jumpState = JumpState.GoingDown;
-							Transition(OnJumpTop);
+							Transition(onJumpTop);
 						}
 						m_lastY = y;
 					}
 				} else { // jump finished
-					Transition(OnJumpEnd);
+					Transition(onJumpEnd);
 				}
 			}
 		}

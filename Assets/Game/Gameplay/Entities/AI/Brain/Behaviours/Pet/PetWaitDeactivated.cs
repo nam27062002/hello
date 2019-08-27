@@ -20,7 +20,7 @@ namespace AI {
 			}
 
 			[StateTransitionTrigger]
-			private static string OnReactivated = "OnReactivated";
+			private static readonly int OnReactivated = UnityEngine.Animator.StringToHash("OnReactivated");
 
 			PetWaitDeactivatedData m_data;
 			private float m_timer = 0;

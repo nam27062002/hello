@@ -16,7 +16,7 @@ namespace AI {
 		public class PetBubbyPower : StateComponent, IBroadcastListener {
 
 			[StateTransitionTrigger]
-			public const string onBubbyPowerEnd = "onBubbyPowerEnd";
+			public static readonly int onBubbyPowerEnd = UnityEngine.Animator.StringToHash("onBubbyPowerEnd");
 
             protected PetBubbyPowerData m_data;
             private Entity[] m_entities;

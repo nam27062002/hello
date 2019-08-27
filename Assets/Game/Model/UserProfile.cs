@@ -914,9 +914,8 @@ public class UserProfile : UserPersistenceSystem
             int count = Enum.GetValues(typeof(ESocialState)).Length;
             string value = profile["socialState"];
             int index = SocialStatesAsString.IndexOf(value);
-            if (index == -1) {
-                if (FeatureSettingsManager.IsDebugEnabled) 
-                    Debug.LogError("USER_PROFILE: " + value + " is not a valid ESocialState");                
+            if (index == -1) {                
+                Debug.LogError("USER_PROFILE: " + value + " is not a valid ESocialState");                
             } else {
                 SocialState = (ESocialState)index;
             }

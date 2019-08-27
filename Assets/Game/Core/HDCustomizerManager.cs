@@ -1,8 +1,13 @@
-﻿    // When enabled the customizer is applied when Apply() is called by the game
+﻿// When enabled the customizer is applied when Apply() is called by the game
 // When disabled the customizer is applied as soon as the response is received by server. This is Calety's original implementation.
 //#define APPLY_ON_DEMAND
 
+#if DEBUG && !DISABLE_LOGS
+#define ENABLE_LOGS
+#endif
+
 using System.Collections.Generic;
+using System.Diagnostics;
 using UnityEngine;
 using Calety.Customiser;
 using Calety.Customiser.Api;
@@ -14,34 +19,27 @@ public class HDCustomizerManager
     private class HDCustomizerListener : Calety.Customiser.CustomizerListener
     {
         public override void onCustomizationError(eCustomizerError eError, string strSKU, string strAttrib)
-        {
-            if (FeatureSettingsManager.IsDebugEnabled)
-            {
-                LogWarning("Error " + eError.ToString() + " when processing category: " + strSKU + " attribute: " + strAttrib);
-            }
+        {            
+            LogWarning("Error " + eError.ToString() + " when processing category: " + strSKU + " attribute: " + strAttrib);         
         }
 
         public override void onCustomizationStored () 
-        {
-            if (FeatureSettingsManager.IsDebugEnabled)
-            {
-                LogWarning("onCustomizationStored");
-            }
+        {            
+            LogWarning("onCustomizationStored");         
             HDCustomizerManager.instance.OnCustomizerStored();
         }
 
 
         public override void onCustomizationChangedFiles(List<string> kChangedContentFiles)
         {
-            if (FeatureSettingsManager.IsDebugEnabled)
-            {
-				string msg = "Files changed: ";
-				for(int i = 0; i < kChangedContentFiles.Count; ++i) {
-					if(i > 0) msg += ", ";
-					msg += kChangedContentFiles[i];
-				}
-				Log(msg);
-            }
+#if ENABLE_LOGS      
+			string msg = "Files changed: ";
+			for(int i = 0; i < kChangedContentFiles.Count; ++i) {
+				if(i > 0) msg += ", ";
+				msg += kChangedContentFiles[i];
+			}
+			Log(msg);            
+#endif
 
         }
 
@@ -54,27 +52,18 @@ public class HDCustomizerManager
 		}
 
         public override void onCustomizationFinished()
-        {
-            if (FeatureSettingsManager.IsDebugEnabled)
-            {
-                Log("onCustomizationFinished");
-            }
+        {            
+            Log("onCustomizationFinished");         
         }
 
         public override void onTimeToEndReceived(long iSecondsToEnd)
-        {
-            if (FeatureSettingsManager.IsDebugEnabled)
-            {
-                Log("onTimeToEndReceived " + iSecondsToEnd);
-            }
+        {            
+            Log("onTimeToEndReceived " + iSecondsToEnd);            
         }
 
         public override void onTimeToNextReceived(long iSecondsToNext)
-        {
-            if (FeatureSettingsManager.IsDebugEnabled)
-            {
-                Log("onTimeToNextReceived " + iSecondsToNext);
-            }
+        {            
+            Log("onTimeToNextReceived " + iSecondsToNext);         
         }
     }
 
@@ -230,11 +219,8 @@ public class HDCustomizerManager
 
 
     private void RequestCustomizer()
-    {        
-        if (FeatureSettingsManager.IsDebugEnabled)
-        {
-            Log("Requesting customizer...", true);
-        }
+    {                
+        Log("Requesting customizer...", true);        
 
         SetState(EState.WaitingForResponse);        
         CustomizerManager.SharedInstance.GetCustomizationsFromServer();
@@ -431,11 +417,8 @@ public class HDCustomizerManager
     public void NotifyServerDown()
     {        
         if (m_state == EState.WaitingForResponse)
-        {
-            if (FeatureSettingsManager.IsDebugEnabled)
-            {
-                Log("Customizer request cancelled because server is down at " + Time.realtimeSinceStartup);
-            }
+        {            
+            Log("Customizer request cancelled because server is down at " + Time.realtimeSinceStartup);         
 
             // We wait some time before requesting again in order to avoid spamming
             if (GetTimeToRequest() <= 0f)
@@ -461,12 +444,8 @@ public class HDCustomizerManager
 
 
     private void SetState(EState value)
-    {
-        if (FeatureSettingsManager.IsDebugEnabled)
-        {
-            Log("Change state from " + m_state + " to " + value + " at " + Time.realtimeSinceStartup, false);
-        }
-
+    {        
+        Log("Change state from " + m_state + " to " + value + " at " + Time.realtimeSinceStartup, false);     
        
         m_state = value;
         switch(m_state)
@@ -476,19 +455,35 @@ public class HDCustomizerManager
                 SetTimeToRequest(TIME_TO_WAIT_BETWEEN_REQUESTS);
             }break;
         }
-    }  
+    }
 
-#region log    
+    #region log 
+
+    #if ENABLE_LOGS
+    [Conditional("DEBUG")]
+    #else
+    [Conditional("FALSE")]
+    #endif
     public static void Log(string msg, bool logToCPConsole=false)
     {
         ControlPanel.Log(msg, ControlPanel.ELogChannel.Customizer, logToCPConsole);
     }
 
+    #if ENABLE_LOGS
+    [Conditional("DEBUG")]
+    #else
+    [Conditional("FALSE")]
+    #endif
     public static void LogWarning(string msg)
     {
         ControlPanel.LogWarning(msg, ControlPanel.ELogChannel.Customizer);
     }
 
+    #if ENABLE_LOGS
+    [Conditional("DEBUG")]
+    #else
+    [Conditional("FALSE")]
+    #endif
     public static void LogError(string msg)
     {
         ControlPanel.LogError(msg, ControlPanel.ELogChannel.Customizer);

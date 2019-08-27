@@ -14,7 +14,7 @@ namespace AI {
 		public class PetSearchBurnTarget : StateComponent {
 
 			[StateTransitionTrigger]
-			private static string OnEnemyInBurnRange = "onEnemyInBurnRange";
+			private static readonly int onEnemyInBurnRange = UnityEngine.Animator.StringToHash("onEnemyInBurnRange");
 
 			private float m_shutdownSensorTime;
 			private float m_timer;
@@ -97,7 +97,7 @@ namespace AI {
 								{
 									// Check if closed? Not for the moment
 									m_transitionParam[0] = entity.transform;
-									Transition( OnEnemyInBurnRange, m_transitionParam);
+									Transition( onEnemyInBurnRange, m_transitionParam);
 									break;
 								}
 							}

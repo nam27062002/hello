@@ -15,9 +15,9 @@ namespace AI {
 		public class LatchOnPlayer : StateComponent {
 
 			[StateTransitionTrigger]
-			private static string OnBiteFail = "onLatchFail";
+			private static readonly int onBiteFail = UnityEngine.Animator.StringToHash("onLatchFail");
 			[StateTransitionTrigger]
-			private static string OnEndLatching = "onEndLatching";
+			private static readonly int onEndLatching = UnityEngine.Animator.StringToHash("onEndLatching");
 
 			private EatBehaviour m_eatBehaviour;
 
@@ -101,7 +101,7 @@ namespace AI {
 					m_eatBehaviour.enabled = false;
 					m_holdTransform = null;
 					m_machine.DisableSensor(m_data.retreatTime.GetRandom());
-					Transition(OnEndLatching);
+					Transition(onEndLatching);
 				}
 			}
 		}

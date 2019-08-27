@@ -50,7 +50,7 @@ namespace AI {
 		override public void Activate() {}
 		override public void Deactivate( float duration, UnityEngine.Events.UnityAction _action) {}
 
-		override public void OnTrigger(string _trigger, object[] _param = null) {
+		override public void OnTrigger(int _trigger, object[] _param = null) {
 			if (m_pilot != null) {
 				m_pilot.OnTrigger(_trigger);
 			}
@@ -59,7 +59,7 @@ namespace AI {
 		// Physics Collisions and Triggers
 
 		void OnCollisionEnter(Collision _collision) {
-			OnTrigger(SignalTriggers.OnCollisionEnter);
+			OnTrigger(SignalTriggers.onCollisionEnter);
 		}
 
 

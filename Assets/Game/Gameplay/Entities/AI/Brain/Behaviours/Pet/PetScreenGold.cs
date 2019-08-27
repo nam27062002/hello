@@ -15,7 +15,7 @@ namespace AI {
 		public class PetScreenGold : StateComponent {
 
 			[StateTransitionTrigger]
-			private static string OnAnimFinished = "onAnimFinished";
+			private static readonly int onAnimFinished = UnityEngine.Animator.StringToHash("onAnimFinished");
 
 			PetScreenGoldData m_data;
 			float m_timer;
@@ -88,7 +88,7 @@ namespace AI {
 				if ( m_timer <= 0 )	
 				{
 					EntityManager.instance.ForceOnScreenEntitiesGolden();
-					Transition( OnAnimFinished );
+					Transition( onAnimFinished );
 				}
 			}
 

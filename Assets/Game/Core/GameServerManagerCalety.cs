@@ -2,11 +2,16 @@
 /// This class is responsible for implementing the <c>GameServerManager</c>interface by using Calety.
 /// </summary>
 
+#if DEBUG && !DISABLE_LOGS
+#define ENABLE_LOGS
+#endif
+
 using Calety.Server;
 using FGOL.Server;
 using SimpleJSON;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using UnityEngine;
 
 public class GameServerManagerCalety : GameServerManager {
@@ -324,10 +329,8 @@ public class GameServerManagerCalety : GameServerManager {
 
     private bool m_isProcessingConnectionLost;
 
-	protected override void InternalOnConnectionLost() {
-		if (FeatureSettingsManager.IsDebugEnabled) {
-			Log("SERVER DOWN REPORTED..... " + Commands_ToString());
-		}
+	protected override void InternalOnConnectionLost() {		
+	    Log("SERVER DOWN REPORTED..... " + Commands_ToString());		
 
         // This stuff is done only if it's not already being processed
         if (!m_isProcessingConnectionLost)
@@ -1020,9 +1023,8 @@ public class GameServerManagerCalety : GameServerManager {
 	private void Commands_ReturnCommand(Command command) {
 		command.Reset();
 
-		if(Commands_Pool.Contains(command)) {
-            if (FeatureSettingsManager.IsDebugEnabled)
-                LogError("This command is already in the pool");
+		if(Commands_Pool.Contains(command)) {            
+            LogError("This command is already in the pool");
 		} else {            
 			Commands_Pool.Enqueue(command);
 		}
@@ -1127,9 +1129,8 @@ public class GameServerManagerCalety : GameServerManager {
         
         int index = (highPriority) ? 0 : 1;
         Commands_List[index].Add(cmd);
-
-        if (FeatureSettingsManager.IsDebugEnabled)
-            Log("Command requested " + command.ToString());
+        
+        Log("Command requested " + command.ToString());
 	}		    
 
     private bool Commands_NeedsToBeLoggedIn(ECommand command)
@@ -1177,9 +1178,8 @@ public class GameServerManagerCalety : GameServerManager {
 	/// <summary>
 	/// 
 	/// </summary>
-	private void Commands_RunCommand(Command command) {
-        if (FeatureSettingsManager.IsDebugEnabled)
-            Log("RunCommand " + command.Cmd + " CurrentCommand = " + Commands_CurrentCommand.Cmd);
+	private void Commands_RunCommand(Command command) {        
+        Log("RunCommand " + command.Cmd + " CurrentCommand = " + Commands_CurrentCommand.Cmd);
         // Commands have to be executed one by one since we're not using actions on server side       
 
         //
@@ -1195,9 +1195,8 @@ public class GameServerManagerCalety : GameServerManager {
                 Commands_OnResponse(null, 408);
                 return;
             } else if (Commands_NeedsToBeLoggedIn(command.Cmd) && !IsLoggedIn()) {
-                // If the command needs to be logged in but the game is not currently logged in then an error is returned            
-                if (FeatureSettingsManager.IsDebugEnabled)                
-                    LogError("Command " + command.Cmd + " requires the user to be logged in but she's not");
+                // If the command needs to be logged in but the game is not currently logged in then an error is returned                                        
+                LogError("Command " + command.Cmd + " requires the user to be logged in but she's not");
 
                 // Unauthorized error is simulated
                 Commands_OnResponse(null, 401);
@@ -1215,18 +1214,16 @@ public class GameServerManagerCalety : GameServerManager {
                         Command_SendCommand(COMMAND_TIME);
                     } break;
 
-                case ECommand.Auth: {
-                        if (FeatureSettingsManager.IsDebugEnabled)
-                            Log("Command Auth");
+                case ECommand.Auth: {                        
+                        Log("Command Auth");
 
                         //GameSessionManager.SharedInstance.ResetAnonymousPlatformUserID();
                         GameSessionManager.SharedInstance.LogInToServer();
                     }
                     break;
 
-                case ECommand.Login: {
-                        if (FeatureSettingsManager.IsDebugEnabled)
-                            Log("Command Login");
+                case ECommand.Login: {                        
+                        Log("Command Login");
 
                         ServerManager.SharedInstance.Server_SendAuth(parameters["platformId"], parameters["platformToken"]);
                     } break;
@@ -1432,17 +1429,15 @@ public class GameServerManagerCalety : GameServerManager {
                     Command_SendCommandAsGameAction(COMMAND_CURRENCY_FLUCTUATION, data, true);
                 }
                 break;
-                default: {
-                    if (FeatureSettingsManager.IsDebugEnabled)
-                        LogWarning("Missing call to the server in GameServerManagerCalety.Commands_RunCommand() form command " + command.Cmd);
+                default: {                    
+                    LogWarning("Missing call to the server in GameServerManagerCalety.Commands_RunCommand() form command " + command.Cmd);
 
                     // An error is simulated because no information is available
                     Commands_OnResponse(null, 401);
                 } break;
             }
-		} else {
-            if (FeatureSettingsManager.IsDebugEnabled)
-                LogError("GameServerManagerCalety error: command " + command.Cmd + " can't be executed because command " + Commands_CurrentCommand.Cmd + " is still being processed.");
+		} else {            
+            LogError("GameServerManagerCalety error: command " + command.Cmd + " can't be executed because command " + Commands_CurrentCommand.Cmd + " is still being processed.");
 		}
 	}
 
@@ -1465,9 +1460,8 @@ public class GameServerManagerCalety : GameServerManager {
                 urlParams[key] = GameSessionManager.SharedInstance.GetUserToken();
             }            
         }
-
-        if (FeatureSettingsManager.IsDebugEnabled)
-            Log("Command " + commandName + " sent");
+        
+        Log("Command " + commandName + " sent");
 
         ServerManager.SharedInstance.SendCommand(commandName, urlParams, headerParams, body);
 
@@ -1513,10 +1507,8 @@ public class GameServerManagerCalety : GameServerManager {
         if (Commands_CurrentCommand == null) {
             return false;
         }
-
-        if (FeatureSettingsManager.IsDebugEnabled) {
-            Log("Command " + Commands_CurrentCommand.Cmd.ToString() + " response received");
-        }
+        
+        Log("Command " + Commands_CurrentCommand.Cmd.ToString() + " response received");
 
 		// 426 code means that there's a new version of the application available. We simulate that the response was 200 (SUCCESS) because we don't want to force the
 		// user to upgrade        
@@ -1728,14 +1720,12 @@ public class GameServerManagerCalety : GameServerManager {
 				} break;
 			}
 		} else {
-            // Server returned an error
-            if (FeatureSettingsManager.IsDebugEnabled) {
-                if (Commands_CurrentCommand != null) {
-                    LogWarning(Commands_CurrentCommand.Cmd, error);
-                } else {
-                    LogWarning(ECommand.Unknown, error);
-                }
-            }
+            // Server returned an error            
+            if (Commands_CurrentCommand != null) {
+                LogWarning(Commands_CurrentCommand.Cmd, error);
+            } else {
+                LogWarning(ECommand.Unknown, error);
+            }            
 		}
 
 		Commands_OnExecuteCommandDone(error, response);
@@ -1894,9 +1884,8 @@ public class GameServerManagerCalety : GameServerManager {
     /// <summary>
     /// Default callback from Calety's NetworkManager, will propagate the response to the command system.
     /// </summary>
-    private bool CaletyExtensions_OnCommandDefaultResponse(string strResponse, string strCmd, int iResponseCode) {
-        if (FeatureSettingsManager.IsDebugEnabled)
-            Log("Received response for command " + strCmd + ",  statusCode=" + iResponseCode);
+    private bool CaletyExtensions_OnCommandDefaultResponse(string strResponse, string strCmd, int iResponseCode) {        
+        Log("Received response for command " + strCmd + ",  statusCode=" + iResponseCode);
 
 		return Commands_OnResponse(strResponse, iResponseCode);
 	}
@@ -1971,9 +1960,8 @@ public class GameServerManagerCalety : GameServerManager {
         }
     }
 
-    private void Connection_Recover(Action onDone) {
-        if (FeatureSettingsManager.IsDebugEnabled)
-            Log("Trying to recover connection....");
+    private void Connection_Recover(Action onDone) {        
+        Log("Trying to recover connection....");
 
         Action<bool> onRecoverDone = delegate (bool success) {            
             EConnectionState state = (success) ? EConnectionState.Up : EConnectionState.Down;
@@ -1983,9 +1971,8 @@ public class GameServerManagerCalety : GameServerManager {
                 // Notifies that network is up again
                 Messenger.Broadcast(MessengerEvents.CONNECTION_RECOVERED);
             }
-
-            if (FeatureSettingsManager.IsDebugEnabled)
-                Log("Recovery connection " + ((success) ? "succeeded" : "failed"));
+            
+            Log("Recovery connection " + ((success) ? "succeeded" : "failed"));
 
             Connection_SetState(state);
 
@@ -2053,14 +2040,12 @@ public class GameServerManagerCalety : GameServerManager {
                         m_connectionIsPerformingCheck = true;
 
                         // Checks if we needs to relogin to cloud, if so then we force a sync (which also checks connection and login)
-                        if (SocialPlatformManager.SharedInstance.IsLoggedIn() && !PersistenceFacade.instance.CloudDriver.IsLoggedIn && !PersistenceFacade.instance.Sync_IsSyncing) {
-                            if (FeatureSettingsManager.IsDebugEnabled)
-                                Log("Automatic relogin performing cloud sync...");
+                        if (SocialPlatformManager.SharedInstance.IsLoggedIn() && !PersistenceFacade.instance.CloudDriver.IsLoggedIn && !PersistenceFacade.instance.Sync_IsSyncing) {                            
+                            Log("Automatic relogin performing cloud sync...");
 
                             PersistenceFacade.instance.Sync_FromReconnecting((PersistenceStates.ESyncResult result, PersistenceStates.ESyncResultDetail resultDetail) => { onDone(); });
-                        } else {
-                            if (FeatureSettingsManager.IsDebugEnabled)
-                                Log("Automatic relogin performing a ping...");
+                        } else {                            
+                            Log("Automatic relogin performing a ping...");
 
                             // We just need to check the connection because just sending a command will force network and login check
                             CheckConnection((Error error) => { onDone(); });
@@ -2083,10 +2068,12 @@ public class GameServerManagerCalety : GameServerManager {
     #region log
     private const string LOG_CHANNEL = "[GameServerManagerCalety]";
 
-	/// <summary>
-	/// 
-	/// </summary>
-	private void LogWarning(ECommand command, Error error, Exception e = null) {        
+#if ENABLE_LOGS
+    [Conditional("DEBUG")]
+#else
+    [Conditional("FALSE")]
+#endif
+    private void LogWarning(ECommand command, Error error, Exception e = null) {        
 		LogWarning(String.Format("{0} Error when sending command {1}: {2}: {3} ({4})", LOG_CHANNEL, command, error.GetType().Name, error.message, error.code));        
 		if(e != null) {
 			LogWarning(e.ToString());
@@ -2094,31 +2081,30 @@ public class GameServerManagerCalety : GameServerManager {
 
 	}
 
-	/// <summary>
-	/// 
-	/// </summary>
-	private void Log(string message) {
-		if(!FeatureSettingsManager.IsDebugEnabled) return;
-		//Debug.Log(String.Format("{0} {1}", LOG_CHANNEL, message));
-		//Debug.Log("<color=cyan>" + LOG_CHANNEL + " " + message + " at " + Time.realtimeSinceStartup + " </color>");
+#if ENABLE_LOGS
+    [Conditional("DEBUG")]
+#else
+    [Conditional("FALSE")]
+#endif
+    private void Log(string message) {		
 		ControlPanel.Log(LOG_CHANNEL + message, ControlPanel.ELogChannel.Server);
     }
 
-    /// <summary>
-    /// 
-    /// </summary>
-    private void LogWarning(string message) {
-		if(!FeatureSettingsManager.IsDebugEnabled) return;
-		//Debug.LogWarning(String.Format("{0} {1}", LOG_CHANNEL, message));            
+#if ENABLE_LOGS
+    [Conditional("DEBUG")]
+#else
+    [Conditional("FALSE")]
+#endif
+    private void LogWarning(string message) {		
 		ControlPanel.LogWarning(LOG_CHANNEL + message, ControlPanel.ELogChannel.Server);
 	}
 
-	/// <summary>
-	/// 
-	/// </summary>
-	private void LogError(string message) {
-		if(!FeatureSettingsManager.IsDebugEnabled) return;
-		//Debug.LogError(String.Format("{0} {1}", LOG_CHANNEL, message));        
+#if ENABLE_LOGS
+    [Conditional("DEBUG")]
+#else
+    [Conditional("FALSE")]
+#endif
+    private void LogError(string message) {		
 		ControlPanel.LogError(LOG_CHANNEL + message, ControlPanel.ELogChannel.Server);
 	}
 	#endregion

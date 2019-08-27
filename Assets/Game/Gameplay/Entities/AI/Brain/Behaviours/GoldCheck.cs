@@ -8,16 +8,16 @@ namespace AI {
 		public class GoldCheck : StateComponent {
 			
 			[StateTransitionTrigger]
-			protected static string IsGolden = "isGolden";
+			protected static readonly int isGolden = UnityEngine.Animator.StringToHash("isGolden");
 
 			[StateTransitionTrigger]
-			protected static string NotGolden = "notGolden";
+			protected static readonly int notGolden = UnityEngine.Animator.StringToHash("notGolden");
 
 
 			protected override void OnUpdate() {
 				Entity e = m_pilot.GetComponent<Entity>();
-				if (e.isGolden) Transition(IsGolden);
-				else 			Transition(NotGolden);				
+				if (e.isGolden) Transition(isGolden);
+				else 			Transition(notGolden);				
 			}
 		}
 	}
