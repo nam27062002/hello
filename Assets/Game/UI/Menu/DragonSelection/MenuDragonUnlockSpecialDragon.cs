@@ -198,7 +198,9 @@ public class MenuDragonUnlockSpecialDragon : MonoBehaviour {
                         // Set text
                         m_unavailableInfoText.Localize(
                             m_unavailableInfoText.tid,
-                            requiredDragon.def.GetLocalized("tidName")
+							UIConstants.GetDragonTierColor(requiredDragon.tier).Tag(
+								requiredDragon.def.GetLocalized("tidName")
+							)
                         );
                     }
                 }
