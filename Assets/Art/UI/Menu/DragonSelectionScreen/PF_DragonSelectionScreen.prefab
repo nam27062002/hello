@@ -377,6 +377,7 @@ MonoBehaviour:
   m_animator: {fileID: 0}
   m_triggerChildren: 1
   m_canBeTriggeredByParents: 1
+  m_debugDelta: 0
   OnShowPreAnimation:
     m_PersistentCalls:
       m_Calls: []
@@ -464,6 +465,7 @@ MonoBehaviour:
   m_animator: {fileID: 0}
   m_triggerChildren: 1
   m_canBeTriggeredByParents: 1
+  m_debugDelta: 0
   OnShowPreAnimation:
     m_PersistentCalls:
       m_Calls:
@@ -588,6 +590,7 @@ MonoBehaviour:
   m_animator: {fileID: 0}
   m_triggerChildren: 1
   m_canBeTriggeredByParents: 1
+  m_debugDelta: 0
   OnShowPreAnimation:
     m_PersistentCalls:
       m_Calls: []
@@ -7338,7 +7341,7 @@ GameObject:
   m_Component:
   - component: {fileID: 224024439671921880}
   - component: {fileID: 114756873035467240}
-  - component: {fileID: 114974983272966052}
+  - component: {fileID: 114010083050615882}
   m_Layer: 5
   m_Name: StatUpgrade1
   m_TagString: Untagged
@@ -8820,7 +8823,7 @@ GameObject:
   m_Component:
   - component: {fileID: 224655646452726942}
   - component: {fileID: 114259059185968592}
-  - component: {fileID: 114343719882908978}
+  - component: {fileID: 114127798296002148}
   m_Layer: 5
   m_Name: StatUpgrade1 (2)
   m_TagString: Untagged
@@ -11384,7 +11387,7 @@ GameObject:
   m_Component:
   - component: {fileID: 224809440517990648}
   - component: {fileID: 114362167993302538}
-  - component: {fileID: 114872659104927358}
+  - component: {fileID: 114720756522265714}
   m_Layer: 5
   m_Name: StatUpgrade1 (1)
   m_TagString: Untagged
@@ -14209,6 +14212,7 @@ MonoBehaviour:
   m_animator: {fileID: 0}
   m_triggerChildren: 1
   m_canBeTriggeredByParents: 1
+  m_debugDelta: 0
   OnShowPreAnimation:
     m_PersistentCalls:
       m_Calls: []
@@ -14586,6 +14590,70 @@ MonoBehaviour:
   m_transitionColor: {r: 0, g: 1, b: 0, a: 1}
   m_transitionAnimationTrigger: Selected
   m_transitionSprite: {fileID: 0}
+--- !u!114 &114010083050615882
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1529711491572792}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9634bc65078f347cf933d4c74430cb15, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_tweenType: 2
+  m_tweenDuration: 0.75
+  m_tweenValue: 1
+  m_tweenEase: 4
+  m_tweenDelay: 0.15
+  m_ignoreTimeScale: 1
+  m_showTweens: []
+  m_hideTweens: []
+  m_animator: {fileID: 0}
+  m_triggerChildren: 1
+  m_canBeTriggeredByParents: 1
+  m_debugDelta: 0
+  OnShowPreAnimation:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  OnShowPreAnimationAfterDelay:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 114050359018903340}
+        m_MethodName: OnShowPreAnimation
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  OnShowPostAnimation:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  OnHidePreAnimation:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  OnHidePostAnimation:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  OnShowCheck:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
 --- !u!114 &114010356778847272
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -16029,6 +16097,7 @@ MonoBehaviour:
   m_animator: {fileID: 0}
   m_triggerChildren: 1
   m_canBeTriggeredByParents: 1
+  m_debugDelta: 0
   OnShowPreAnimation:
     m_PersistentCalls:
       m_Calls: []
@@ -16306,6 +16375,7 @@ MonoBehaviour:
   m_animator: {fileID: 0}
   m_triggerChildren: 1
   m_canBeTriggeredByParents: 1
+  m_debugDelta: 0
   OnShowPreAnimation:
     m_PersistentCalls:
       m_Calls: []
@@ -16631,6 +16701,7 @@ MonoBehaviour:
   m_animator: {fileID: 0}
   m_triggerChildren: 1
   m_canBeTriggeredByParents: 1
+  m_debugDelta: 0
   OnShowPreAnimation:
     m_PersistentCalls:
       m_Calls: []
@@ -17105,6 +17176,7 @@ MonoBehaviour:
   m_animator: {fileID: 0}
   m_triggerChildren: 1
   m_canBeTriggeredByParents: 1
+  m_debugDelta: 0
   OnShowPreAnimation:
     m_PersistentCalls:
       m_Calls: []
@@ -17184,6 +17256,7 @@ MonoBehaviour:
   m_animator: {fileID: 0}
   m_triggerChildren: 1
   m_canBeTriggeredByParents: 1
+  m_debugDelta: 0
   OnShowPreAnimation:
     m_PersistentCalls:
       m_Calls: []
@@ -17395,16 +17468,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_tweenType: 3
-  m_tweenDuration: 1
+  m_tweenDuration: 0.75
   m_tweenValue: 150
   m_tweenEase: 24
-  m_tweenDelay: 0.3
+  m_tweenDelay: 0.15
   m_ignoreTimeScale: 1
   m_showTweens: []
   m_hideTweens: []
   m_animator: {fileID: 0}
   m_triggerChildren: 1
   m_canBeTriggeredByParents: 1
+  m_debugDelta: 0
   OnShowPreAnimation:
     m_PersistentCalls:
       m_Calls: []
@@ -17658,6 +17732,70 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &114127798296002148
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1648318017059304}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9634bc65078f347cf933d4c74430cb15, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_tweenType: 2
+  m_tweenDuration: 0.75
+  m_tweenValue: 1
+  m_tweenEase: 4
+  m_tweenDelay: 0.15
+  m_ignoreTimeScale: 1
+  m_showTweens: []
+  m_hideTweens: []
+  m_animator: {fileID: 0}
+  m_triggerChildren: 1
+  m_canBeTriggeredByParents: 1
+  m_debugDelta: 0
+  OnShowPreAnimation:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  OnShowPreAnimationAfterDelay:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 114050359018903340}
+        m_MethodName: OnShowPreAnimation
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  OnShowPostAnimation:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  OnHidePreAnimation:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  OnHidePostAnimation:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  OnShowCheck:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
 --- !u!114 &114128515854179118
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -17707,6 +17845,7 @@ MonoBehaviour:
   m_animator: {fileID: 0}
   m_triggerChildren: 1
   m_canBeTriggeredByParents: 1
+  m_debugDelta: 0
   OnShowPreAnimation:
     m_PersistentCalls:
       m_Calls: []
@@ -17759,6 +17898,7 @@ MonoBehaviour:
   m_animator: {fileID: 0}
   m_triggerChildren: 1
   m_canBeTriggeredByParents: 1
+  m_debugDelta: 0
   OnShowPreAnimation:
     m_PersistentCalls:
       m_Calls: []
@@ -18897,6 +19037,7 @@ MonoBehaviour:
   m_animator: {fileID: 0}
   m_triggerChildren: 1
   m_canBeTriggeredByParents: 1
+  m_debugDelta: 0
   OnShowPreAnimation:
     m_PersistentCalls:
       m_Calls: []
@@ -19980,6 +20121,7 @@ MonoBehaviour:
   m_animator: {fileID: 0}
   m_triggerChildren: 1
   m_canBeTriggeredByParents: 1
+  m_debugDelta: 0
   OnShowPreAnimation:
     m_PersistentCalls:
       m_Calls: []
@@ -20264,6 +20406,7 @@ MonoBehaviour:
   m_animator: {fileID: 0}
   m_triggerChildren: 1
   m_canBeTriggeredByParents: 1
+  m_debugDelta: 0
   OnShowPreAnimation:
     m_PersistentCalls:
       m_Calls: []
@@ -20541,7 +20684,7 @@ MonoBehaviour:
   m_valueText: {fileID: 114627117497132294}
   m_priceText: {fileID: 114105357714453720}
   m_feedbackAnchor: {fileID: 224782653809462464}
-  m_showHide: {fileID: 114343719882908978}
+  m_showHide: {fileID: 114127798296002148}
   m_maxedGroup: {fileID: 1271213580352490}
   m_maxButton: {fileID: 1015059991359028}
   m_activeGroup: {fileID: 1322305498860378}
@@ -20847,6 +20990,7 @@ MonoBehaviour:
   m_animator: {fileID: 0}
   m_triggerChildren: 1
   m_canBeTriggeredByParents: 1
+  m_debugDelta: 0
   OnShowPreAnimation:
     m_PersistentCalls:
       m_Calls: []
@@ -20914,6 +21058,7 @@ MonoBehaviour:
   m_animator: {fileID: 0}
   m_triggerChildren: 1
   m_canBeTriggeredByParents: 1
+  m_debugDelta: 0
   OnShowPreAnimation:
     m_PersistentCalls:
       m_Calls: []
@@ -20966,6 +21111,7 @@ MonoBehaviour:
   m_animator: {fileID: 0}
   m_triggerChildren: 1
   m_canBeTriggeredByParents: 1
+  m_debugDelta: 0
   OnShowPreAnimation:
     m_PersistentCalls:
       m_Calls: []
@@ -21927,6 +22073,7 @@ MonoBehaviour:
   m_animator: {fileID: 0}
   m_triggerChildren: 1
   m_canBeTriggeredByParents: 1
+  m_debugDelta: 0
   OnShowPreAnimation:
     m_PersistentCalls:
       m_Calls: []
@@ -22326,6 +22473,7 @@ MonoBehaviour:
   m_animator: {fileID: 0}
   m_triggerChildren: 1
   m_canBeTriggeredByParents: 1
+  m_debugDelta: 0
   OnShowPreAnimation:
     m_PersistentCalls:
       m_Calls: []
@@ -22938,6 +23086,7 @@ MonoBehaviour:
   m_animator: {fileID: 0}
   m_triggerChildren: 1
   m_canBeTriggeredByParents: 1
+  m_debugDelta: 0
   OnShowPreAnimation:
     m_PersistentCalls:
       m_Calls: []
@@ -23050,6 +23199,7 @@ MonoBehaviour:
   m_animator: {fileID: 0}
   m_triggerChildren: 1
   m_canBeTriggeredByParents: 1
+  m_debugDelta: 0
   OnShowPreAnimation:
     m_PersistentCalls:
       m_Calls: []
@@ -23520,58 +23670,6 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
---- !u!114 &114343719882908978
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1648318017059304}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9634bc65078f347cf933d4c74430cb15, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_tweenType: 0
-  m_tweenDuration: 0.25
-  m_tweenValue: 1
-  m_tweenEase: 27
-  m_tweenDelay: 0
-  m_ignoreTimeScale: 1
-  m_showTweens: []
-  m_hideTweens: []
-  m_animator: {fileID: 0}
-  m_triggerChildren: 1
-  m_canBeTriggeredByParents: 0
-  OnShowPreAnimation:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-  OnShowPreAnimationAfterDelay:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-  OnShowPostAnimation:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-  OnHidePreAnimation:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-  OnHidePostAnimation:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-  OnShowCheck:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
 --- !u!114 &114343809814723714
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -24167,7 +24265,7 @@ MonoBehaviour:
   m_valueText: {fileID: 114880867130195502}
   m_priceText: {fileID: 114599307097300116}
   m_feedbackAnchor: {fileID: 224337099908742030}
-  m_showHide: {fileID: 114872659104927358}
+  m_showHide: {fileID: 114720756522265714}
   m_maxedGroup: {fileID: 1510203727077476}
   m_maxButton: {fileID: 1089859524637408}
   m_activeGroup: {fileID: 1663476587012404}
@@ -25187,6 +25285,7 @@ MonoBehaviour:
   m_animator: {fileID: 0}
   m_triggerChildren: 1
   m_canBeTriggeredByParents: 1
+  m_debugDelta: 0
   OnShowPreAnimation:
     m_PersistentCalls:
       m_Calls: []
@@ -25239,6 +25338,7 @@ MonoBehaviour:
   m_animator: {fileID: 0}
   m_triggerChildren: 1
   m_canBeTriggeredByParents: 1
+  m_debugDelta: 0
   OnShowPreAnimation:
     m_PersistentCalls:
       m_Calls: []
@@ -25739,6 +25839,7 @@ MonoBehaviour:
   m_animator: {fileID: 0}
   m_triggerChildren: 1
   m_canBeTriggeredByParents: 1
+  m_debugDelta: 0
   OnShowPreAnimation:
     m_PersistentCalls:
       m_Calls: []
@@ -25970,6 +26071,7 @@ MonoBehaviour:
   m_animator: {fileID: 0}
   m_triggerChildren: 0
   m_canBeTriggeredByParents: 1
+  m_debugDelta: 0
   OnShowPreAnimation:
     m_PersistentCalls:
       m_Calls: []
@@ -26022,6 +26124,7 @@ MonoBehaviour:
   m_animator: {fileID: 0}
   m_triggerChildren: 1
   m_canBeTriggeredByParents: 1
+  m_debugDelta: 0
   OnShowPreAnimation:
     m_PersistentCalls:
       m_Calls: []
@@ -27036,6 +27139,7 @@ MonoBehaviour:
   m_animator: {fileID: 0}
   m_triggerChildren: 1
   m_canBeTriggeredByParents: 1
+  m_debugDelta: 0
   OnShowPreAnimation:
     m_PersistentCalls:
       m_Calls: []
@@ -27726,6 +27830,7 @@ MonoBehaviour:
   m_animator: {fileID: 0}
   m_triggerChildren: 1
   m_canBeTriggeredByParents: 1
+  m_debugDelta: 0
   OnShowPreAnimation:
     m_PersistentCalls:
       m_Calls: []
@@ -27952,6 +28057,7 @@ MonoBehaviour:
   m_animator: {fileID: 0}
   m_triggerChildren: 1
   m_canBeTriggeredByParents: 1
+  m_debugDelta: 0
   OnShowPreAnimation:
     m_PersistentCalls:
       m_Calls: []
@@ -28035,6 +28141,7 @@ MonoBehaviour:
   m_animator: {fileID: 0}
   m_triggerChildren: 1
   m_canBeTriggeredByParents: 1
+  m_debugDelta: 0
   OnShowPreAnimation:
     m_PersistentCalls:
       m_Calls: []
@@ -28943,6 +29050,7 @@ MonoBehaviour:
   m_animator: {fileID: 0}
   m_triggerChildren: 1
   m_canBeTriggeredByParents: 1
+  m_debugDelta: 0
   OnShowPreAnimation:
     m_PersistentCalls:
       m_Calls: []
@@ -29142,6 +29250,7 @@ MonoBehaviour:
   m_animator: {fileID: 0}
   m_triggerChildren: 1
   m_canBeTriggeredByParents: 1
+  m_debugDelta: 0
   OnShowPreAnimation:
     m_PersistentCalls:
       m_Calls: []
@@ -30116,6 +30225,7 @@ MonoBehaviour:
   m_animator: {fileID: 0}
   m_triggerChildren: 1
   m_canBeTriggeredByParents: 1
+  m_debugDelta: 0
   OnShowPreAnimation:
     m_PersistentCalls:
       m_Calls: []
@@ -30674,16 +30784,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_tweenType: 3
-  m_tweenDuration: 1
+  m_tweenDuration: 0.75
   m_tweenValue: 150
   m_tweenEase: 24
-  m_tweenDelay: 0.3
+  m_tweenDelay: 0.15
   m_ignoreTimeScale: 1
   m_showTweens: []
   m_hideTweens: []
   m_animator: {fileID: 0}
   m_triggerChildren: 1
   m_canBeTriggeredByParents: 1
+  m_debugDelta: 0
   OnShowPreAnimation:
     m_PersistentCalls:
       m_Calls: []
@@ -30736,6 +30847,7 @@ MonoBehaviour:
   m_animator: {fileID: 0}
   m_triggerChildren: 1
   m_canBeTriggeredByParents: 1
+  m_debugDelta: 0
   OnShowPreAnimation:
     m_PersistentCalls:
       m_Calls: []
@@ -31914,16 +32026,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_tweenType: 3
-  m_tweenDuration: 1
+  m_tweenDuration: 0.75
   m_tweenValue: 150
   m_tweenEase: 24
-  m_tweenDelay: 0.3
+  m_tweenDelay: 0.15
   m_ignoreTimeScale: 1
   m_showTweens: []
   m_hideTweens: []
   m_animator: {fileID: 0}
   m_triggerChildren: 1
   m_canBeTriggeredByParents: 1
+  m_debugDelta: 0
   OnShowPreAnimation:
     m_PersistentCalls:
       m_Calls: []
@@ -32974,6 +33087,7 @@ MonoBehaviour:
   m_animator: {fileID: 0}
   m_triggerChildren: 1
   m_canBeTriggeredByParents: 1
+  m_debugDelta: 0
   OnShowPreAnimation:
     m_PersistentCalls:
       m_Calls: []
@@ -33841,6 +33955,7 @@ MonoBehaviour:
   m_animator: {fileID: 0}
   m_triggerChildren: 1
   m_canBeTriggeredByParents: 0
+  m_debugDelta: 0
   OnShowPreAnimation:
     m_PersistentCalls:
       m_Calls: []
@@ -34076,6 +34191,7 @@ MonoBehaviour:
   m_animator: {fileID: 0}
   m_triggerChildren: 1
   m_canBeTriggeredByParents: 1
+  m_debugDelta: 0
   OnShowPreAnimation:
     m_PersistentCalls:
       m_Calls: []
@@ -34454,6 +34570,70 @@ MonoBehaviour:
     topRight: {r: 1, g: 1, b: 1, a: 1}
     bottomLeft: {r: 1, g: 0.6386555, b: 0.36764705, a: 0.291}
     bottomRight: {r: 1, g: 0.6386555, b: 0.36764705, a: 0.291}
+--- !u!114 &114720756522265714
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1829198729161610}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9634bc65078f347cf933d4c74430cb15, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_tweenType: 2
+  m_tweenDuration: 0.75
+  m_tweenValue: 1
+  m_tweenEase: 4
+  m_tweenDelay: 0.15
+  m_ignoreTimeScale: 1
+  m_showTweens: []
+  m_hideTweens: []
+  m_animator: {fileID: 0}
+  m_triggerChildren: 1
+  m_canBeTriggeredByParents: 1
+  m_debugDelta: 0
+  OnShowPreAnimation:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  OnShowPreAnimationAfterDelay:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 114050359018903340}
+        m_MethodName: OnShowPreAnimation
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  OnShowPostAnimation:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  OnHidePreAnimation:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  OnHidePostAnimation:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  OnShowCheck:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
 --- !u!114 &114721233932160770
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -35445,6 +35625,7 @@ MonoBehaviour:
   m_animator: {fileID: 0}
   m_triggerChildren: 1
   m_canBeTriggeredByParents: 1
+  m_debugDelta: 0
   OnShowPreAnimation:
     m_PersistentCalls:
       m_Calls: []
@@ -35566,6 +35747,7 @@ MonoBehaviour:
   m_animator: {fileID: 0}
   m_triggerChildren: 1
   m_canBeTriggeredByParents: 1
+  m_debugDelta: 0
   OnShowPreAnimation:
     m_PersistentCalls:
       m_Calls: []
@@ -35794,7 +35976,7 @@ MonoBehaviour:
   m_valueText: {fileID: 114721497403608310}
   m_priceText: {fileID: 114738312218197588}
   m_feedbackAnchor: {fileID: 224745518753634592}
-  m_showHide: {fileID: 114974983272966052}
+  m_showHide: {fileID: 114010083050615882}
   m_maxedGroup: {fileID: 1641331178471390}
   m_maxButton: {fileID: 1582601384239894}
   m_activeGroup: {fileID: 1244930656734238}
@@ -36814,6 +36996,7 @@ MonoBehaviour:
   m_animator: {fileID: 0}
   m_triggerChildren: 1
   m_canBeTriggeredByParents: 1
+  m_debugDelta: 0
   OnShowPreAnimation:
     m_PersistentCalls:
       m_Calls: []
@@ -37760,6 +37943,7 @@ MonoBehaviour:
   m_animator: {fileID: 0}
   m_triggerChildren: 1
   m_canBeTriggeredByParents: 1
+  m_debugDelta: 0
   OnShowPreAnimation:
     m_PersistentCalls:
       m_Calls: []
@@ -38425,16 +38609,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_tweenType: 2
-  m_tweenDuration: 0.1
+  m_tweenDuration: 0.75
   m_tweenValue: 1
-  m_tweenEase: 27
-  m_tweenDelay: 0.3
+  m_tweenEase: 4
+  m_tweenDelay: 0.15
   m_ignoreTimeScale: 1
   m_showTweens: []
   m_hideTweens: []
   m_animator: {fileID: 0}
   m_triggerChildren: 1
   m_canBeTriggeredByParents: 1
+  m_debugDelta: 0
   OnShowPreAnimation:
     m_PersistentCalls:
       m_Calls: []
@@ -38841,58 +39026,6 @@ MonoBehaviour:
   m_unlockedGroup: {fileID: 1040517099141810}
   m_state: 0
   m_scaleTransform: {fileID: 224490003602654634}
---- !u!114 &114872659104927358
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1829198729161610}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9634bc65078f347cf933d4c74430cb15, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_tweenType: 0
-  m_tweenDuration: 0.25
-  m_tweenValue: 1
-  m_tweenEase: 27
-  m_tweenDelay: 0
-  m_ignoreTimeScale: 1
-  m_showTweens: []
-  m_hideTweens: []
-  m_animator: {fileID: 0}
-  m_triggerChildren: 1
-  m_canBeTriggeredByParents: 0
-  OnShowPreAnimation:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-  OnShowPreAnimationAfterDelay:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-  OnShowPostAnimation:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-  OnHidePreAnimation:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-  OnHidePostAnimation:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-  OnShowCheck:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
 --- !u!114 &114873498427462428
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -39242,6 +39375,7 @@ MonoBehaviour:
   m_animator: {fileID: 0}
   m_triggerChildren: 1
   m_canBeTriggeredByParents: 1
+  m_debugDelta: 0
   OnShowPreAnimation:
     m_PersistentCalls:
       m_Calls: []
@@ -40075,6 +40209,7 @@ MonoBehaviour:
   m_animator: {fileID: 0}
   m_triggerChildren: 1
   m_canBeTriggeredByParents: 1
+  m_debugDelta: 0
   OnShowPreAnimation:
     m_PersistentCalls:
       m_Calls: []
@@ -40322,6 +40457,7 @@ MonoBehaviour:
   m_animator: {fileID: 0}
   m_triggerChildren: 1
   m_canBeTriggeredByParents: 1
+  m_debugDelta: 0
   OnShowPreAnimation:
     m_PersistentCalls:
       m_Calls: []
@@ -40692,6 +40828,7 @@ MonoBehaviour:
   m_animator: {fileID: 0}
   m_triggerChildren: 1
   m_canBeTriggeredByParents: 1
+  m_debugDelta: 0
   OnShowPreAnimation:
     m_PersistentCalls:
       m_Calls: []
@@ -41688,6 +41825,7 @@ MonoBehaviour:
   m_animator: {fileID: 0}
   m_triggerChildren: 1
   m_canBeTriggeredByParents: 1
+  m_debugDelta: 0
   OnShowPreAnimation:
     m_PersistentCalls:
       m_Calls: []
@@ -42035,58 +42173,6 @@ MonoBehaviour:
   - {fileID: 0}
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!114 &114974983272966052
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1529711491572792}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9634bc65078f347cf933d4c74430cb15, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_tweenType: 0
-  m_tweenDuration: 0.25
-  m_tweenValue: 1
-  m_tweenEase: 27
-  m_tweenDelay: 0
-  m_ignoreTimeScale: 1
-  m_showTweens: []
-  m_hideTweens: []
-  m_animator: {fileID: 0}
-  m_triggerChildren: 1
-  m_canBeTriggeredByParents: 0
-  OnShowPreAnimation:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-  OnShowPreAnimationAfterDelay:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-  OnShowPostAnimation:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-  OnHidePreAnimation:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-  OnHidePostAnimation:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-  OnShowCheck:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
 --- !u!114 &114975834074310394
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -42099,16 +42185,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_tweenType: 3
-  m_tweenDuration: 1
+  m_tweenDuration: 0.75
   m_tweenValue: 150
   m_tweenEase: 24
-  m_tweenDelay: 0.3
+  m_tweenDelay: 0.15
   m_ignoreTimeScale: 1
   m_showTweens: []
   m_hideTweens: []
   m_animator: {fileID: 0}
   m_triggerChildren: 1
   m_canBeTriggeredByParents: 1
+  m_debugDelta: 0
   OnShowPreAnimation:
     m_PersistentCalls:
       m_Calls: []
@@ -42344,6 +42431,7 @@ MonoBehaviour:
   m_animator: {fileID: 0}
   m_triggerChildren: 1
   m_canBeTriggeredByParents: 1
+  m_debugDelta: 0
   OnShowPreAnimation:
     m_PersistentCalls:
       m_Calls: []
@@ -73259,10 +73347,10 @@ RectTransform:
   m_Father: {fileID: 224063076254321614}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 700, y: 0}
+  m_SizeDelta: {x: 0, y: 100.88}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!224 &224265892455849200
 RectTransform:
