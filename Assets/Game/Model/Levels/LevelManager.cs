@@ -270,6 +270,16 @@ public class LevelManager : Singleton<LevelManager> {
                 m_currentAreaScenes.AddRange( seasonalAreas );
         }
 
+        // Scenes by quality level
+        string[] qualityLevels = {"_low", "_mid", "_high"};
+        int qualityIndex = (int)FeatureSettingsManager.instance.LevelsLOD;  // very_low to high
+        for( int i = 1; i<=qualityIndex; i++ )  // igore very_low, that's why we start on index 1
+        {
+            List<string> qualityScenes = def.GetAsList<string>(m_currentArea + qualityLevels[i-1]);
+            if ( qualityScenes.Count > 0 && !string.IsNullOrEmpty(qualityScenes[0]) )
+                m_currentAreaScenes.AddRange( qualityScenes );
+        }
+
         if (excludeScenes != null) {
             foreach (string scene in excludeScenes) {
                 m_currentAreaScenes.Remove(scene);
