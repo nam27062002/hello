@@ -69,6 +69,7 @@ namespace LevelEditor
 
         void checkGameObjectHierarchy(TransformNode root, GameObject go)
         {
+            bool missingMesh = true;
             MeshFilter mFilter = go.GetComponent<MeshFilter>();
             if (mFilter != null)
             {
@@ -79,11 +80,29 @@ namespace LevelEditor
                     root.m_Childs.Add(node);
                     root = node;
                     m_nodeList.Add(node);
+                    missingMesh = false;
+                }
+            }
+
+            if (missingMesh)
+            {
+                SkinnedMeshRenderer smRend = go.GetComponent<SkinnedMeshRenderer>();
+                if (smRend != null)
+                {
+                    Mesh mesh = smRend.sharedMesh;
+                    if (mesh != null)
+                    {
+                        TransformNode node = new TransformNode(go.transform, mesh.vertexCount, mesh.triangles.Length / 3);
+                        root.m_Childs.Add(node);
+                        root = node;
+                        m_nodeList.Add(node);
+                        missingMesh = false;
+                    }
                 }
             }
 
             Renderer rend = go.GetComponent<Renderer>();
-            if (rend != null && (rend.sharedMaterial == null || mFilter == null || mFilter.sharedMesh == null))
+            if (rend != null && (rend.sharedMaterial == null || missingMesh))
             {
                 ParticleSystem ps = go.GetComponent<ParticleSystem>();
                 if (ps == null) //not a particle system
