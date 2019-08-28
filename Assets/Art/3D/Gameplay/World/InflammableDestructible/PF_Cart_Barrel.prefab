@@ -24,6 +24,7 @@ GameObject:
   - component: {fileID: 114764748243441280}
   - component: {fileID: 114467839086565806}
   - component: {fileID: 65766835359179542}
+  - component: {fileID: 114504574807293020}
   m_Layer: 16
   m_Name: PF_Cart_Barrel
   m_TagString: Untagged
@@ -593,6 +594,25 @@ MonoBehaviour:
   m_onDestroyAudio: Cart_Destroyed
   m_onFeedbackAudio: 
   m_cameraShake: 0
+--- !u!114 &114504574807293020
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1040865876128716}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6eea47f5599f54e948774badb4a20f4a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_minTier: 0
+  m_maxTier: 4
+  m_checkMaxTier: 0
+  m_activationChance: 100
+  m_activationTriggers: []
+  m_activationKillTriggers: []
+  m_deactivationTriggers: []
+  m_deactivationKillTriggers: []
 --- !u!114 &114764748243441280
 MonoBehaviour:
   m_ObjectHideFlags: 1
