@@ -364,7 +364,9 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
         ChestManager.instance.Update();
         OffersManager.instance.Update();
+        #if UNITY_IOS
         HDNotificationsManager.instance.Update();
+        #endif
         TransactionManager.instance.Update();
         BackButtonManager.instance.Update();
         MissionManager.instance.Update();
@@ -514,9 +516,9 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
                     //);
                     // DGR PUSH not supported yet
                     /*
-                    #if ENABLE_PUSHWOOSH
+#if ENABLE_PUSHWOOSH
                                         PushNotificationFacade.Instance.ClearNotifications();
-                    #endif
+#endif
                     */
                 }
             }
@@ -647,7 +649,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         HDNotificationsManager.instance.CancelReengagementNotification();
     }
 
-    #region game
+#region game
     private bool Game_IsInGame { get; set; }
 
     private void Game_OnCountdownStarted()
@@ -668,9 +670,9 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     }
 
     
-    #endregion
+#endregion
 
-    #region device   
+#region device   
     // Time in seconds to wait until the device has to be updated again.
     public const float DEVICE_NEXT_UPDATE = 0.5f;
 
@@ -772,9 +774,9 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
             yield return wait;
         }
     }
-    #endregion
+#endregion
 
-    #region language
+#region language
     private string m_languageRequested;
     private bool m_languageNeedsToBeUpdated;
 
@@ -825,9 +827,9 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
             }
         }
     }
-    #endregion
+#endregion
 
-    #region memory_profiler
+#region memory_profiler
     private bool m_memoryProfilerIsEnabled = false;
     private bool MemoryProfiler_IsEnabled
     {
@@ -1021,9 +1023,9 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     	return ret;
     }
 
-    #endregion
+#endregion
 
-    #region apps
+#region apps
     public enum EApp
     {
         HungryDragon,
@@ -1077,9 +1079,9 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
         return returnValue;
     }
-    #endregion
+#endregion
 
-    #region exception    
+#region exception    
     private class HDExceptionListener : CyExceptions.ExceptionListener
     {
         /// <summary>
@@ -1108,9 +1110,9 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
             }
         }
     }    
-    #endregion
+#endregion
 
-    #region debug
+#region debug
     private bool Debug_IsPaused { get; set; }
 
     private void Debug_RestartFlow()
@@ -1559,7 +1561,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
     private const string LOG_CHANNEL = "[ApplicationManager]";
 
-    #if ENABLE_LOGS
+#if ENABLE_LOGS
     [Conditional("DEBUG")]
 #else
     [Conditional("FALSE")]
