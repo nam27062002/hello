@@ -79,6 +79,7 @@ namespace AI {
 		}
 
 		public override void Update() {
+            UnityEngine.Profiling.Profiler.BeginSample("[SENSOR]");
 			if (m_machine.GetSignal(Signals.Type.Panic)) {
 				m_machine.SetSignal(Signals.Type.Warning, true);
 				m_machine.SetSignal(Signals.Type.Danger, true);
@@ -178,8 +179,9 @@ namespace AI {
                 m_machine.SetSignal(Signals.Type.Warning, 	isInsideSightArea);
 				m_machine.SetSignal(Signals.Type.Danger, 	isInsideMaxArea);
 				m_machine.SetSignal(Signals.Type.Critical, 	isInsideMinArea);
-            }				
-		}
+            }
+            UnityEngine.Profiling.Profiler.EndSample();
+        }
 
 		public float DistanceSqrToEnemy() {
 			Vector2 vectorToPlayer = (Vector2)(m_enemy.position - sensorPosition);

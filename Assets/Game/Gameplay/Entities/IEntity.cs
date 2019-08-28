@@ -163,9 +163,7 @@ abstract public class IEntity : ISpawnable {
 
     override public void CustomUpdate() {
 		for (int i = 0; i < m_otherSpawnablesCount; i++) {
-            UnityEngine.Profiling.Profiler.BeginSample(m_otherSpawnables[i].GetType().ToString());
             m_otherSpawnables[i].CustomUpdate();
-            UnityEngine.Profiling.Profiler.EndSample();
         }
     }
 

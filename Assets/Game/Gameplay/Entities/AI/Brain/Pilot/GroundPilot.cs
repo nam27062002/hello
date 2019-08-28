@@ -15,10 +15,10 @@ namespace AI {
 			}
 		}
 
-		public override void CustomUpdate() {
+		public override void CustomUpdate() {            
             base.CustomUpdate();
 
-			if (speed > 0.01f) {
+            if (speed > 0.01f) {
 				Vector3 v = m_target - m_machine.position;	
 				v = v.normalized * speed;
 				if (m_slowDown) {

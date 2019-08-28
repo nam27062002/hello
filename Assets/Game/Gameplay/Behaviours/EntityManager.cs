@@ -377,51 +377,34 @@ public class EntityManager : Singleton<EntityManager>, IBroadcastListener
 
     public void Update()
 	{
-        if (m_updateEnabled) {
-            UnityEngine.Profiling.Profiler.BeginSample("[EntityManager] Update");
+        if (m_updateEnabled) {            
             int i;
             int count;
             float delta = Time.deltaTime;
 
-            UnityEngine.Profiling.Profiler.BeginSample("[EntityManager] Pets");
             count = m_pets.Count - 1;
             for (i = count; i >= 0; i--) {
                 m_pets[i].CustomUpdate();
             }
-            UnityEngine.Profiling.Profiler.EndSample();
-
+            
             if (m_entities != null) {
-                UnityEngine.Profiling.Profiler.BeginSample("[EntityManager] Entities");
                 count = m_entities.Count - 1;
-                for (i = count; i >= 0; i--) {
-                    UnityEngine.Profiling.Profiler.BeginSample(m_entities[i].name);
+                for (i = count; i >= 0; i--) {                    
                     m_entities[i].CustomUpdate();
-                    UnityEngine.Profiling.Profiler.EndSample();
                 }
 
                 count = m_entitiesBg.Count - 1;
                 for (i = count; i >= 0; i--) {
-                    UnityEngine.Profiling.Profiler.BeginSample(m_entitiesBg[i].name);
                     m_entitiesBg[i].CustomUpdate();
-                    UnityEngine.Profiling.Profiler.EndSample();
                 }
 
                 count = m_cages.Count - 1;
                 for (i = count; i >= 0; i--) {
-                    UnityEngine.Profiling.Profiler.BeginSample(m_cages[i].name);
                     m_cages[i].CustomUpdate();
-                    UnityEngine.Profiling.Profiler.EndSample();
                 }
-                UnityEngine.Profiling.Profiler.EndSample();
             }
-
-
-            UnityEngine.Profiling.Profiler.BeginSample("[EntityManager] Freezing Objects");
             FreezingObjectsRegistry.instance.CustomUpdate();
-            UnityEngine.Profiling.Profiler.EndSample();
-
-            UnityEngine.Profiling.Profiler.EndSample();
-
+            
 #if UNITY_EDITOR
             if (Input.GetKey(KeyCode.G)) {
                 ForceOnScreenEntitiesGolden();
@@ -433,9 +416,7 @@ public class EntityManager : Singleton<EntityManager>, IBroadcastListener
     private void ThreadedEntityUpdate() {
         int count = m_entities.Count - 1;        
         for (int i = count; i >= 0; i--) {
-            UnityEngine.Profiling.Profiler.BeginSample("[EntityManager] " + m_entities[i].name);
             m_entities[i].CustomUpdate();
-            UnityEngine.Profiling.Profiler.EndSample();
         }
     }
 

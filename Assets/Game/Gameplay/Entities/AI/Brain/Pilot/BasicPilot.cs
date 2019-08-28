@@ -7,10 +7,9 @@ namespace AI {
         [SerializeField] private bool m_updateMachineRot = false;
 
 		public override void CustomUpdate() {
-			base.CustomUpdate();
-
-			// this machine won't use impulse while moving around
-			m_impulse = Vector3.zero;
+            base.CustomUpdate();
+            // this machine won't use impulse while moving around
+            m_impulse = Vector3.zero;
 			m_externalImpulse = Vector3.zero;
 
 			if (m_updateMachinePos) {
@@ -19,7 +18,7 @@ namespace AI {
 
             if (m_updateMachineRot) {
                 m_machine.transform.rotation = Quaternion.LookRotation(m_direction + GameConstants.Vector3.back * 0.1f, m_machine.upVector);
-            }
-		}
+            }            
+        }
 	}
 }

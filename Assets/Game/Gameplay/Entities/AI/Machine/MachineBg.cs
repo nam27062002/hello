@@ -27,9 +27,9 @@ namespace AI {
 		override public Vector3 angularVelocity	{ get { if (m_enableMotion && m_motion != null) return m_motion.angularVelocity; else return Vector3.zero;} }
 
 		override public float lastFallDistance { get { return 0; } }
-		public bool isKinematic{ get { return false; } set { } }
+		override public bool isKinematic{ get { return false; } set { } }
 		override public Transform enemy { get { return null; } }
-		public bool isPetTarget{ get { return false;} set { } }
+		override public bool isPetTarget{ get { return false;} set { } }
 
 		//---------------------------------------------------------------------------------
 

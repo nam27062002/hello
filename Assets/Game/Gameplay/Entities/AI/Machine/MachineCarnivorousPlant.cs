@@ -37,9 +37,9 @@ namespace AI {
 			}
 		}
 
-		public bool isPetTarget 		{ get { return false; } set {} }
+		override public bool isPetTarget 		{ get { return false; } set {} }
 		override public float lastFallDistance 	{ get { return 0f; } }
-		public bool isKinematic 		{ get { return false; } set {} }
+		override public bool isKinematic 		{ get { return false; } set {} }
 
 		override public Quaternion orientation 	{ get { return m_transform.rotation; } set { m_transform.rotation = value; } }
 		override public Vector3 position			{ get { return m_transform.position; } set { m_transform.position = value; } }

@@ -15,10 +15,10 @@ namespace AI {
 		public abstract Vector3 	target		{ get; }
 		public abstract Vector3 	upVector	{ get; set; }
 		public abstract Transform 	enemy 		{ get; } 
-		public bool 	isPetTarget	{ get; set; }
+		public abstract bool 	isPetTarget	{ get; set; }
 
 		public abstract float lastFallDistance 	{ get; }
-		public bool isKinematic 		{ get; set; }
+		public abstract bool isKinematic 		{ get; set; }
 			
 		//
 		public abstract void Activate();

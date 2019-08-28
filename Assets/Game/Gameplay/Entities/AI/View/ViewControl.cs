@@ -687,6 +687,7 @@ public class ViewControl : IViewControl, IBroadcastListener {
     }
 
     override public void CustomUpdate() {
+        UnityEngine.Profiling.Profiler.BeginSample("ViewControl");
         if (m_isAnimatorAvailable) {
             if (m_disableAnimatorTimer > 0) {
                 m_disableAnimatorTimer -= Time.deltaTime;
@@ -732,6 +733,7 @@ public class ViewControl : IViewControl, IBroadcastListener {
             Color damageColor = m_damageColor * (m_damageFeedbackTimer / m_damageTime) + Color.white * (1f - (m_damageFeedbackTimer / m_damageTime));
             SetColorAdd(damageColor);
         }
+        UnityEngine.Profiling.Profiler.EndSample();
     }
 
     void SetColorAdd(Color _c) {
@@ -913,8 +915,10 @@ public class ViewControl : IViewControl, IBroadcastListener {
                     RemoveAudioParent(ref m_onScaredAudioAO);
                 }
             }
+
             if (m_isAnimatorAvailable)
                 m_animator.SetBool(GameConstants.Animator.SCARED, _scared);
+
         }
     }
 
