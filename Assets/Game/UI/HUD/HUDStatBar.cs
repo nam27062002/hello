@@ -50,12 +50,6 @@ public class HUDStatBar : IHUDWidget, IBroadcastListener {
         public Color color2 = Color.white;
 	}
 
-	public override float UPDATE_INTERVAL {
-		get {
-			return 0.1f;
-		}
-	}
-
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
@@ -99,7 +93,10 @@ public class HUDStatBar : IHUDWidget, IBroadcastListener {
 	/// <summary>
 	/// Initialization.
 	/// </summary>
-	private void Awake() {
+	protected override void Awake() {
+		// Call parent
+		base.Awake();
+
 		// Aux vars
 		Transform child;
 
@@ -270,10 +267,25 @@ public class HUDStatBar : IHUDWidget, IBroadcastListener {
         yield return null;
     }
 
-    /// <summary>
-    /// Keep values updated
-    /// </summary>
-    public override void PeriodicUpdate() {
+	/// <summary>
+	/// How often the widget should be updated for the given graphic quality level.
+	/// </summary>
+	/// <param name="_qualityLevel">Graphics quality level to be considered. A value in [0, MAX_PROFILE_LEVEL] if the user has ever chosen a profile, otherwise <c>-1</c>.</param>
+	/// <returns>Seconds, how often the widget should be refreshed.</returns>
+	public override float GetUpdateIntervalByQualityLevel(int _qualityLevel) {
+		if(_qualityLevel < 1) {	// Very Low
+			return 0.2f;
+		} else if(_qualityLevel < 4) {
+			return 0.1f;
+		} else {				// Very High
+			return 0.05f;
+		}
+	}
+
+	/// <summary>
+	/// Keep values updated
+	/// </summary>
+	public override void PeriodicUpdate() {
 		if (m_ready) {
 			// Only if player is alive
 			if(InstanceManager.player != null) {

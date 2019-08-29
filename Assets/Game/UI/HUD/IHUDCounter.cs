@@ -13,12 +13,6 @@ public abstract class IHUDCounter : IHUDWidget
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
 	protected const float MINIMUM_ANIM_INTERVAL = 0f;   // Seconds, minimum time without updating before triggering the animation again
-	public override float UPDATE_INTERVAL {
-		get {
-			// [AOC] TODO!! Depend on quality setting?
-			return 0.25f;
-		}
-	}
 
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
@@ -33,8 +27,11 @@ public abstract class IHUDCounter : IHUDWidget
     /// <summary>
     /// Initialization.
     /// </summary>
-    protected virtual void Awake()
+    protected override void Awake()
     {
+		// Call parent
+		base.Awake();
+
         if (m_valueTxt == null)
         {
             // Get external references
@@ -56,7 +53,22 @@ public abstract class IHUDCounter : IHUDWidget
         PrintValue();
     }
 
-    public override void PeriodicUpdate()
+	/// <summary>
+	/// How often the widget should be updated for the given graphic quality level.
+	/// </summary>
+	/// <param name="_qualityLevel">Graphics quality level to be considered. A value in [0, MAX_PROFILE_LEVEL] if the user has ever chosen a profile, otherwise <c>-1</c>.</param>
+	/// <returns>Seconds, how often the widget should be refreshed.</returns>
+	public override float GetUpdateIntervalByQualityLevel(int _qualityLevel) {
+		if(_qualityLevel < 1) { // Very Low
+			return 0.35f;
+		} else if(_qualityLevel < 4) {
+			return 0.25f;
+		} else {                // Very High
+			return 0.1f;
+		}
+	}
+
+	public override void PeriodicUpdate()
     {
         if (NeedsToPrintValue)
         {
