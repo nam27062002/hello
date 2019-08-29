@@ -613,7 +613,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1280568003522936}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -319.36633, y: -34.091103, z: 0}
+  m_LocalPosition: {x: -176.28639, y: -14.988165, z: -2.930665}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4893368449749230}
@@ -766,10 +766,23 @@ MonoBehaviour:
       probability: 1
       items:
       - equipablePrefabName: PF_Party_Hat
+        defaultItemLOW: 0
+        probability: 1
+        toDisableOnEquip: []
+        position: {x: 0.1700053, y: 0.22999954, z: 0.090000026}
+        scale: {x: 2, y: 2, z: 2}
+        rotation: {x: 3.41, y: 0, z: -14.92}
+  - season: halloween
+    groups:
+    - name: Mask
+      probability: 1
+      items:
+      - equipablePrefabName: PF_Frank_mask
+        defaultItemLOW: 1
         probability: 1
         toDisableOnEquip: []
         position: {x: 0.17, y: 0.23, z: 0.09}
-        scale: {x: 2, y: 2, z: 2}
+        scale: {x: 3, y: 3, z: 3}
         rotation: {x: 3.41, y: 0, z: -14.92}
 --- !u!114 &114447393782032622
 MonoBehaviour:
