@@ -637,24 +637,41 @@ public class AssetFinder : EditorWindow {
 
             foreach(MeshRenderer rend in renderers)
             {
-                rend.lightProbeUsage = UnityEngine.Rendering.LightProbeUsage.Off;
-                rend.motionVectorGenerationMode = MotionVectorGenerationMode.ForceNoMotion;
+                if (rend.lightProbeUsage != UnityEngine.Rendering.LightProbeUsage.Off)
+                {
+                    rend.lightProbeUsage = UnityEngine.Rendering.LightProbeUsage.Off;
+                    modified = true;
+                }
+
+                if (rend.motionVectorGenerationMode != MotionVectorGenerationMode.ForceNoMotion)
+                {
+                    rend.motionVectorGenerationMode = MotionVectorGenerationMode.ForceNoMotion;
+                    modified = true;
+                }
+
                 if (rend.allowOcclusionWhenDynamic)
                 {
-                    Debug.Log(rend.gameObject.name + ": allowOcclusionWhenDynamic = true ");
+                    rend.allowOcclusionWhenDynamic = false;
+                    modified = true;
                 }
+
                 if (rend.reflectionProbeUsage != UnityEngine.Rendering.ReflectionProbeUsage.Off)
                 {
-                    Debug.Log(rend.gameObject.name + ": reflectionProbeUsage = " + rend.reflectionProbeUsage.ToString());
+                    rend.reflectionProbeUsage = UnityEngine.Rendering.ReflectionProbeUsage.Off;
+                    modified = true;
                 }
-                rend.reflectionProbeUsage = UnityEngine.Rendering.ReflectionProbeUsage.Off;
-                rend.allowOcclusionWhenDynamic = false;
 
-                rend.motionVectorGenerationMode = MotionVectorGenerationMode.ForceNoMotion;
-                rend.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
-                rend.receiveShadows = false;
+                if (rend.shadowCastingMode != UnityEngine.Rendering.ShadowCastingMode.Off)
+                {
+                    rend.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+                    modified = true;
+                }
 
-                modified = true;
+                if (rend.receiveShadows)
+                {
+                    rend.receiveShadows = false;
+                    modified = true;
+                }
             }
 
             if (EditorUtility.DisplayCancelableProgressBar("updating prefabs", prefab.name, c / (float)prefabList.Length))
