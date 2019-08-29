@@ -109,12 +109,6 @@ public class SpecialStatUpgrader : MonoBehaviour {
         // Subscribe to external events
         Messenger.AddListener<DragonDataSpecial>(MessengerEvents.SPECIAL_DRAGON_LEVEL_UPGRADED, OnDragonLevelUpgraded);
 
-        // Make sure we're displaying the right info
-        // [AOC] Delay by one frame to do it when the object is actually enabled
-        UbiBCN.CoroutineManager.DelayedCallByFrames(
-            () => { Refresh(false); },
-            1
-        );
 
     }
 
@@ -128,9 +122,9 @@ public class SpecialStatUpgrader : MonoBehaviour {
 
     public void OnShowPreAnimation()
     {
+        // In case this is enabled by an external component, make sure the visibility is right
         Refresh(false);
     }
-
 
 
     //------------------------------------------------------------------------//
@@ -200,8 +194,6 @@ public class SpecialStatUpgrader : MonoBehaviour {
 			}
 		}
 
-		// Update visuals
-		Refresh(false);
 	}
 
 	/// <summary>
@@ -218,12 +210,20 @@ public class SpecialStatUpgrader : MonoBehaviour {
         {
             if (m_dragonData.IsUnlockingNewPower())
             {
-                m_showHide.Hide();
+                m_showHide.Hide(false);
                 return;
             }
             else
             {
-                m_showHide.Show();
+                if (_animate)
+                {
+                    m_showHide.RestartShow();
+                }
+                else
+                {
+                    m_showHide.Show(false);
+                }
+                
             }
         }
 
@@ -376,7 +376,7 @@ public class SpecialStatUpgrader : MonoBehaviour {
 	/// <param name="_stat">Target stat.</param>
 	private void OnDragonLevelUpgraded(DragonDataSpecial _dragonData) {
 		// Refresh visuals regardles of the stat (we might get locked)
-		Refresh(true);
+		Refresh(false);
 	}
 
     /// <summary>

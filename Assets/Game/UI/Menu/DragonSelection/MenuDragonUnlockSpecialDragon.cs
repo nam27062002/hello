@@ -1,18 +1,8 @@
-// MenuDragonUnlockGoldenFragments.cs
-// Hungry Dragon
-// 
-// Created by Alger Ortín Castellví on 20/11/2015.
-// Copyright (c) 2015 Ubisoft. All rights reserved.
+
 
 //----------------------------------------------------------------------------//
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
-using UnityEngine;
-using UnityEngine.UI;
-using System;
-using System.Text;
-using UnityEngine.Events;
-
 
 
 //----------------------------------------------------------------------------//
@@ -21,67 +11,9 @@ using UnityEngine.Events;
 /// <summary>
 /// Unlock the selected special dragon.
 /// </summary>
-public class MenuDragonUnlockSpecialDragon : MonoBehaviour {
+public class MenuDragonUnlockSpecialDragon : MenuDragonUnlock
+{
 
-    //------------------------------------------------------------------//
-    // CONSTANTS														//
-    //------------------------------------------------------------------//
-    public const string UNLOCK_WITH_HC_RESOURCES_FLOW_NAME = "UNLOCK_SPECIAL_DRAGON_PC";    // Unlock and acquire a locked dragon using HC
-    public const string UNLOCK_WITH_SC_RESOURCES_FLOW_NAME = "UNLOCK_SPECIAL_DRAGON_SC";    // Acquire an already unlocked dragon using SC
-
-
-
-    //------------------------------------------------------------------//
-    // PROPERTIES														//
-    //------------------------------------------------------------------//
-    // Exposed
-    [SerializeField] private UIDragonPriceSetup m_hcPriceSetup = null;
-    [SerializeField] private UIDragonPriceSetup m_scPriceSetup = null;
-    [Space]
-    [SerializeField] private Localizer m_unavailableInfoText = null;
-    [Space]
-    [SerializeField] private ShowHideAnimator m_changeAnim = null;
-    [Space]
-    [SerializeField] private GameObject m_hcRoot = null;
-    [SerializeField] private GameObject m_scRoot = null;
-    [SerializeField] private GameObject m_unavailableRoot = null;
-
-    // Internal
-    private bool m_firstEnablePassed = false;
-    private Coroutine m_delayedShowCoroutine = null;
-
-   
-    //------------------------------------------------------------------------//
-    // GENERIC METHODS														  //
-    //------------------------------------------------------------------------//
-    /// <summary>
-    /// Initialization.
-    /// </summary>
-    private void Awake()
-    {
-        // Hide all elements and then apply for the first time with current values and without animation
-        Toggle(m_hcRoot, false);
-        Toggle(m_scRoot, false);
-        Toggle(m_unavailableRoot, false);
-        
-        // Subscribe to external events
-        Messenger.AddListener<string>(MessengerEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
-        Messenger.AddListener<IDragonData>(MessengerEvents.DRAGON_ACQUIRED, OnDragonAcquired);
-        Messenger.AddListener<IDragonData>(MessengerEvents.MODIFIER_ECONOMY_DRAGON_PRICE_CHANGED, OnModifierChanged);
-
-        Refresh(InstanceManager.menuSceneController.selectedDragonData, false);
-    }
-
-
-	/// <summary>
-	/// Destructor
-	/// </summary>
-	private void OnDestroy() {
-        // Unsubscribe from external events
-        Messenger.RemoveListener<string>(MessengerEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
-        Messenger.RemoveListener<IDragonData>(MessengerEvents.DRAGON_ACQUIRED, OnDragonAcquired);
-        Messenger.RemoveListener<IDragonData>(MessengerEvents.MODIFIER_ECONOMY_DRAGON_PRICE_CHANGED, OnModifierChanged);
-    }
 
     //------------------------------------------------------------------------//
     // OTHER METHODS														  //
@@ -92,7 +24,7 @@ public class MenuDragonUnlockSpecialDragon : MonoBehaviour {
     /// </summary>
     /// <param name="_data">The data of the selected dragon.</param>
     /// <param name="_animate">Whether to trigger animations or not.</param>
-    public void Refresh(IDragonData _data, bool _animate)
+    public override void Refresh(IDragonData _data, bool _animate)
     {
         // Shouldn't be showing classic dragons
         if (!(_data is DragonDataSpecial))
@@ -100,6 +32,7 @@ public class MenuDragonUnlockSpecialDragon : MonoBehaviour {
             return;
         }
 
+        
         // Stop any pending coroutines
         if (m_delayedShowCoroutine != null)
         {
@@ -153,7 +86,7 @@ public class MenuDragonUnlockSpecialDragon : MonoBehaviour {
 
         // Update hc unlock button
         // Display?
-        show = CheckUnlockWithPC(_data);
+        show = _data.CheckUnlockWithPC();
         Toggle(m_hcRoot, show);
 
         // Refresh info
@@ -165,7 +98,7 @@ public class MenuDragonUnlockSpecialDragon : MonoBehaviour {
 
         // Update sc unlock button
         // Display?
-        show = CheckUnlockWithSC(_data);
+        show = _data.CheckUnlockWithSC();
         Toggle(m_scRoot, show);
 
         // Refresh info
@@ -179,7 +112,7 @@ public class MenuDragonUnlockSpecialDragon : MonoBehaviour {
         if (m_unavailableInfoText != null)
         {
             // Display?
-            show = MenuDragonUnlockClassicDragon.CheckUnavailable(_data);
+            show = CheckUnavailable(_data);
             Toggle(m_unavailableRoot, show);
 
             // Refresh info
@@ -208,242 +141,11 @@ public class MenuDragonUnlockSpecialDragon : MonoBehaviour {
         }
     }
 
-    /// <summary>
-	/// Unlocks and acquires the given dragon using PC.
-	/// Will check that the given dragon can actually be acquired using PC.
-	/// Will perform all needed post actions such as tracking, saving persistence, etc, but not visual feedback.
-	/// Use the <paramref name="_onSuccess"/> parameter to do so.
-	/// </summary>
-	/// <param name="_data">Data of the dragon to be unlocked.</param>
-	/// <param name="_onSuccess">Callback to be invoked when unlock was successful. </param>
-	public static void UnlockWithPC(IDragonData _data, UnityAction<ResourcesFlow> _onSuccess)
-    {
-        // Make sure the dragon we unlock is the currently selected one and that we can actually do it
-        if (MenuDragonUnlockClassicDragon.CheckUnlockWithPC(_data))
-        {
-            // Get price and start purchase flow
-            ResourcesFlow purchaseFlow = new ResourcesFlow(UNLOCK_WITH_HC_RESOURCES_FLOW_NAME);
-            purchaseFlow.OnSuccess.AddListener(OnUnlockSuccess);
-            if (_onSuccess != null) purchaseFlow.OnSuccess.AddListener(_onSuccess);
-            purchaseFlow.Begin(
-                _data.GetPriceModified(UserProfile.Currency.HARD),
-                UserProfile.Currency.HARD,
-                HDTrackingManager.EEconomyGroup.UNLOCK_DRAGON,
-                _data.def
-            );
-        }
-    }
-
-    /// <summary>
-    /// Unlocks and acquires the given dragon using SC.
-    /// Will check that the given dragon can actually be acquired using SC.
-    /// Will perform all needed post actions such as tracking, saving persistence, etc, but not visual feedback.
-    /// Use the <paramref name="_onSuccess"/> parameter to do so.
-    /// </summary>
-    /// <param name="_data">Data of the dragon to be unlocked.</param>
-    /// <param name="_onSuccess">Callback to be invoked when unlock was successful. </param>
-    public static void UnlockWithSC(IDragonData _data, UnityAction<ResourcesFlow> _onSuccess)
-    {
-        // Make sure the dragon we unlock is the currently selected one and that we can actually do it
-        if (MenuDragonUnlockClassicDragon.CheckUnlockWithSC(_data))
-        {
-            // [AOC] From 1.18 on, don't trigger the missing SC flow for dragon
-            //		 purchases (we are displaying the HC button next to it)
-            // Check whether we have enough SC
-            long priceSC = _data.GetPriceModified(UserProfile.Currency.SOFT);
-            if (priceSC > UsersManager.currentUser.coins)
-            {
-                // Not enough SC! Show a message
-                UIFeedbackText.CreateAndLaunch(
-                    LocalizationManager.SharedInstance.Localize("TID_SC_NOT_ENOUGH"),   // [AOC] TODO!! Improve text?
-                    GameConstants.Vector2.center,
-                    InstanceManager.menuSceneController.hud.transform as RectTransform,
-                    "NotEnoughSCError"
-                );
-            }
-            else
-            {
-                // There shouldn't be any problem to perform the transaction, do
-                // it via a ResourcesFlow to avoid duplicating code / missing steps
-                ResourcesFlow purchaseFlow = new ResourcesFlow(UNLOCK_WITH_SC_RESOURCES_FLOW_NAME);
-                purchaseFlow.OnSuccess.AddListener(OnUnlockSuccess);
-                if (_onSuccess != null) purchaseFlow.OnSuccess.AddListener(_onSuccess);
-                purchaseFlow.Begin(
-                    priceSC,
-                    UserProfile.Currency.SOFT,
-                    HDTrackingManager.EEconomyGroup.UNLOCK_DRAGON,
-                    _data.def
-                );
-            }
-        }
-    }
-
-    /// <summary>
-	/// Checks whether the given dragon can be unlocked with PC.
-	/// </summary>
-	/// <returns>Whether the given dragon can be unlocked with PC.</returns>
-	/// <param name="_data">Dragon to evaluate.</param>
-	public static bool CheckUnlockWithPC(IDragonData _data)
-    {
-        // If owned, cannot be unlocked again
-        if (_data.isOwned) return false;
-
-        // Check if the requirements for this dragon are met
-        bool availableViaHC = ( (_data as DragonDataSpecial).IsAvailableViaHC() == true);
-        
-        // If there is a discount for this dragon, show even when unavailable
-        bool isDiscounted = _data.HasPriceModifier(UserProfile.Currency.HARD);
-
-        return availableViaHC || isDiscounted;
-    }
-
-
-    /// <summary>
-    /// Checks whether the given dragon can be unlocked with SC.
-    /// </summary>
-    /// <returns>Whether the given dragon can be unlocked with SC.</returns>
-    /// <param name="_data">Dragon to evaluate.</param>
-    public static bool CheckUnlockWithSC(IDragonData _data)
-    {
-        // If owned, cannot be unlocked again
-        if (_data.isOwned) return false;
-
-        return ((_data as DragonDataSpecial).IsAvailableViaSC() == true);
-    }
-
-    //------------------------------------------------------------------------//
-    // INTERNAL METHODS														  //
-    //------------------------------------------------------------------------//
-    /// <summary>
-    /// Gets the price of unlocking the current selected dragon in the target currency.
-    /// </summary>
-    /// <returns>The price.</returns>
-    /// <param name="_currency">Target currency.</param>
-    private long GetPrice(UserProfile.Currency _currency) {
-		// Choos currency
-		string priceProperty = "";
-		switch(_currency) {
-			case UserProfile.Currency.SOFT: priceProperty = "unlockPriceCoins"; break;
-			case UserProfile.Currency.HARD: priceProperty = "unlockPricePC"; break;
-		}
-
-		// Get price from the definition of the currently selected dragon.
-		IDragonData dragonData = DragonManager.GetDragonData(InstanceManager.menuSceneController.selectedDragon);
-		return dragonData.def.GetAsLong(priceProperty, 0);
-	}
-
-
-
-
-    //------------------------------------------------------------------//
-    // INTERNAL UTILS													//
-    //------------------------------------------------------------------//
-    /// <summary>
-    /// Activate/deactivate a GameObject, checking its validity first.
-    /// </summary>
-    /// <param name="_target">Target GameObject.</param>
-    /// <param name="_activate">Toggle on or off?</param>
-    private void Toggle(GameObject _target, bool _activate)
-    {
-        if (_target == null) return;
-        _target.SetActive(_activate);
-    }
-
-
-   
-
-    //------------------------------------------------------------------------//
-    // CALLBACKS															  //
-    //------------------------------------------------------------------------//
-
-    /// <summary>
-    /// Selected dragon has changed.
-    /// </summary>
-    /// <param name="_dragonSku">Selected dragon sku.</param>
-    public void OnDragonSelected(string _dragonSku)
-    {
-        Refresh(DragonManager.GetDragonData(_dragonSku), true);
-    }
-
-    /// <summary>
-    /// A dragon has been acquired
-    /// </summary>
-    /// <param name="_data">The data of the acquired dragon.</param>
-    public void OnDragonAcquired(IDragonData _data)
-    {
-        Refresh(_data, true);
-    }
-
-    /// <summary>
-    /// A modifider that changes the unlock/price of a dragon has changed.
-    /// </summary>
-    /// <param name="_data">Dragon Data.</param>
-    public void OnModifierChanged(IDragonData _data)
-    {
-        if (InstanceManager.menuSceneController.selectedDragonData == _data)
-        {
-            Refresh(_data, false);
-        }
-    }
+ 
     
-    
-    /// <summary>
-	/// The unlock button has been pressed.
-	/// </summary>
-	public void OnUnlockWithPC()
-    {
-        // Use static method to unlock currently selected dragon
-        UnlockWithPC(InstanceManager.menuSceneController.selectedDragonData, OnUnlockSuccessMenuFeedback);
-    }
-
-    /// <summary>
-    /// The unlock button has been pressed.
-    /// </summary>
-    public void OnUnlockWithSC()
-    {
-        // Use static method to unlock currently selected dragon
-        UnlockWithSC(InstanceManager.menuSceneController.selectedDragonData, OnUnlockSuccessMenuFeedback);
-    }
-
-    /// <summary>
-	/// The unlock resources flow has been successful.
-	/// </summary>
-	/// <param name="_flow">The flow that triggered the event.</param>
-	private static void OnUnlockSuccess(ResourcesFlow _flow)
-    {
-        // Aux vars
-        IDragonData dragonData = DragonManager.GetDragonData(_flow.itemDef.sku);
-
-        // Just acquire target dragon!
-        dragonData.Acquire();
-
-        // Track
-        HDTrackingManager.Instance.Notify_DragonUnlocked(dragonData.def.sku, dragonData.GetOrder());
-
-        // Save persistence!
-        PersistenceFacade.instance.Save_Request();
-    }
-
-    /// <summary>
-    /// The unlock resources flow has been successful.
-    /// </summary>
-    /// <param name="_flow">The flow that triggered the event.</param>
-    private static void OnUnlockSuccessMenuFeedback(ResourcesFlow _flow)
-    {
-        // Aux vars
-        IDragonData dragonData = DragonManager.GetDragonData(_flow.itemDef.sku);
-
-        // Show a nice animation!
-        // Different animations depending on whether the unlock was done via PC or SC
-        MenuDragonScreenController screenController = InstanceManager.menuSceneController.GetScreenData(MenuScreen.DRAGON_SELECTION).ui.GetComponent<MenuDragonScreenController>();
-        if (_flow.name == UNLOCK_WITH_HC_RESOURCES_FLOW_NAME)
-        {
-            screenController.LaunchUnlockAnim(dragonData.def.sku, 0.2f, 0.1f, true);
-        }
-        else if (_flow.name == UNLOCK_WITH_SC_RESOURCES_FLOW_NAME)
-        {
-            screenController.LaunchAcquireAnim(dragonData.def.sku);
-        }
-    }
+    //------------------------------------------------------------------//
+    // CALLBACKS														//
+    //------------------------------------------------------------------//
+    // Implement in parent class
 
 }

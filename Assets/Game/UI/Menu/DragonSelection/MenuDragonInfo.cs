@@ -28,7 +28,13 @@ public class MenuDragonInfo : MonoBehaviour {
     {
         get { return m_dragonDescText; }
     }
-    
+
+    [SerializeField] protected MenuDragonUnlock m_dragonUnlock;
+    public MenuDragonUnlock dragonUnlock
+    {
+        get { return m_dragonUnlock; }
+    }
+
     // Internal
     protected IDragonData m_dragonData = null;    // Last used dragon data
 
@@ -39,7 +45,6 @@ public class MenuDragonInfo : MonoBehaviour {
     {
         // Subscribe to external events
         Messenger.AddListener<string>(MessengerEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
-        Messenger.AddListener<IDragonData>(MessengerEvents.DRAGON_ACQUIRED, OnDragonAcquired);
         Messenger.AddListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnScreenChanged);
     }
 
@@ -64,7 +69,6 @@ public class MenuDragonInfo : MonoBehaviour {
     {
         // Unsubscribe from external events
         Messenger.RemoveListener<string>(MessengerEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
-        Messenger.RemoveListener<IDragonData>(MessengerEvents.DRAGON_ACQUIRED, OnDragonAcquired);
         Messenger.RemoveListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnScreenChanged);
     }
 
@@ -84,10 +88,15 @@ public class MenuDragonInfo : MonoBehaviour {
     private void Refresh(string _sku, float _delay = -1f, bool _force = false)
     {
         // Ignore delay if disabled (coroutines can't be started with the component disabled)
-        if (isActiveAndEnabled && _delay > 0)
+        if (_delay > 0)
         {
-            // Start internal coroutine
-            StartCoroutine(RefreshDelayed(_sku, _delay, _force));
+            // Make a delayed call using the corouine manager
+            UbiBCN.CoroutineManager.DelayedCall(
+                () =>
+                {
+                    Refresh(DragonManager.GetDragonData(_sku), _force);
+                }, _delay);
+
         }
         else
         {
@@ -128,7 +137,7 @@ public class MenuDragonInfo : MonoBehaviour {
     /// <param name="_force">If true forces the refresh, even if the dragon has not changed since the las refresh</param>
 	protected virtual void Refresh(IDragonData _data, bool _force = false)
     {
-        
+        // Implemented in children
     }
 
 
@@ -142,18 +151,9 @@ public class MenuDragonInfo : MonoBehaviour {
     private void OnDragonSelected(string _sku)
     {
         // Refresh after some delay to let the animation finish
-        Refresh(_sku, 0.25f, true);
+        Refresh(_sku, 0, false);
     }
 
-    /// <summary>
-    /// A new dragon has been accquired.
-    /// </summary>
-    /// <param name="_sku">The sku of the selected dragon.</param>
-    private void OnDragonAcquired(IDragonData _dragon)
-    {
-        // Refresh after some delay to let the animation finish
-        Refresh(_dragon.sku, 1f, true);
-    }
 
 
     /// <summary>
@@ -167,9 +167,9 @@ public class MenuDragonInfo : MonoBehaviour {
         if (m_dragonData == null) return;
 
         // Refresh after some delay to let the animation finish
-        Refresh(m_dragonData.sku, 0.25f);
+        Refresh(m_dragonData.sku, 0.25f, true);
+        
     }
-
 
     /// <summary>
     /// Info button has been pressed.

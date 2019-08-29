@@ -76,7 +76,6 @@ public class MenuDragonSpecialInfo : MenuDragonInfo {
             }
 
 
-
             // Dragon Description
             if (m_dragonDescText != null)
             {
@@ -86,43 +85,69 @@ public class MenuDragonSpecialInfo : MenuDragonInfo {
                 m_dragonDescText.Localize(_data.def.GetAsString("tidDesc"));
             }
 
-            // XPBar
-            if (m_specialDragonLevelBar != null)
+            // Owned group. This items will be shown when the player owns the dragon
             {
+                // XPBar
+                if (m_specialDragonLevelBar != null)
+                    if (specialData.isOwned)
+                    {
+                        m_specialDragonLevelBar.GetComponent<ShowHideAnimator>().RestartShow();
+                        m_specialDragonLevelBar.BuildFromDragonData(specialData);
+
+                    }
+                    else
+                    {
+                        m_specialDragonLevelBar.GetComponent<ShowHideAnimator>().Hide();
+                    }
+
+                // Upgrade buttons
+                for (int i = 0; i < m_stats.Length; ++i)
+                {
+                    if (specialData.isOwned)
+                    {
+                        m_stats[i].InitFromData(specialData);
+                        m_stats[i].Refresh(true);
+                    }
+                    else
+                    {
+                        m_stats[i].GetComponent<ShowHideAnimator>().Hide(false);
+                    }
+
+                }
+
+
+                // Upgrade powerup button
                 if (specialData.isOwned)
                 {
-                    // Show it only in owned dragons
-                    m_specialDragonLevelBar.gameObject.SetActive(true);
-
-                    // Wait 1 frame for the Awake method to finish
-                    UbiBCN.CoroutineManager.DelayedCallByFrames(
-                        () =>
-                        {
-                            m_specialDragonLevelBar.BuildFromDragonData(specialData);
-                        }, 1);
-
+                    m_powerUpgrade.InitFromData(specialData);
+                    m_powerUpgrade.Refresh(true);
                 }
                 else
                 {
-                    m_specialDragonLevelBar.gameObject.SetActive(false);
+                    m_powerUpgrade.ForceGetComponent<ShowHideAnimator>().Hide(false);
                 }
-
             }
 
-
-            // Upgrade buttons
-            for (int i = 0; i < m_stats.Length; ++i)
+            // Not owned group 
             {
-                m_stats[i].InitFromData(specialData);
+
+                // Unlock buttons and message
+                if (m_dragonUnlock != null)
+                {
+                    if (!specialData.isOwned)
+                    {
+                        m_dragonUnlock.Refresh(_data, true);
+                    }
+                    else
+                    {
+                        m_dragonUnlock.Refresh(_data, false);
+                    }
+                }
             }
-
-            // Upgrade powerup button
-            m_powerUpgrade.InitFromData(specialData);
-
-            // Store new dragon data
-            m_dragonData = specialData;
-
         }
+
+        // Store new dragon data
+        m_dragonData = specialData;
     }
 
 

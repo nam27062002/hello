@@ -83,21 +83,39 @@ public class MenuDragonClassicInfo : MenuDragonInfo {
                 m_dragonDescText.Localize(_data.def.GetAsString("tidDesc"));
             }
 
-
-            // XPBar
-            if (m_xpBar != null)
+            // Owned group. This items will be shown when the player owns the dragon
             {
-                if (_data.isOwned)
+                // XPBar
+                if (m_xpBar != null)
                 {
-                    // Show it only in owned dragons
-                    m_xpBar.GetComponent<ShowHideAnimator>().ForceShow();
-                    m_xpBar.Refresh(_data as DragonDataClassic);
+                    if (_data.isOwned)
+                    {
+                        // Show it only in owned dragons
+                        m_xpBar.GetComponent<ShowHideAnimator>().ForceShow();
+                        m_xpBar.Refresh(_data as DragonDataClassic);
+                    }
+                    else
+                    {
+                        m_xpBar.GetComponent<ShowHideAnimator>().Hide();
+                    }
+
                 }
-                else
+            }
+
+            // Not owned group 
+            {
+                // Unlock buttons and message
+                if (m_dragonUnlock != null)
                 {
-                    m_xpBar.GetComponent<ShowHideAnimator>().Hide();
+                    if (!_data.isOwned)
+                    {
+                        m_dragonUnlock.Refresh(_data, true);
+                    }
+                    else
+                    {
+                        m_dragonUnlock.Refresh(_data, false);
+                    }
                 }
-                
             }
 
             // Store new dragon data

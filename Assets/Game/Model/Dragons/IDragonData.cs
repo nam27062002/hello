@@ -302,24 +302,51 @@ public abstract class IDragonData : IUISelectorItem {
 		}
 	}
 
-	//------------------------------------------------------------------------//
-	// SIMPLE SETTER/GETTER METHODS											  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// The order of this dragon.
-	/// </summary>
-	public int GetOrder() {
 
-        if (def == null) return -1;
+    /// <summary>
+    /// Checks whether the given dragon can be unlocked with PC.
+    /// </summary>
+    /// <returns>Whether the given dragon can be unlocked with PC.</returns>
+    public virtual bool CheckUnlockWithPC()
+    {
+        Debug.LogError("This method must be implements in child");
+        return false;
+    }
 
-        // Special dragons are ordered sequentially after the regular ones
-        if (type == Type.SPECIAL)
-        {
-            return def.GetAsInt("order") + DragonManager.GetDragonsCount(Type.CLASSIC);
-        }
 
-		return def.GetAsInt("order");
+    /// <summary>
+    /// Checks whether the given dragon can be unlocked with SC.
+    /// </summary>
+    /// <returns>Whether the given dragon can be unlocked with SC.</returns>
+    /// <param name="_data">Dragon to evaluate.</param>
+    public virtual bool CheckUnlockWithSC()
+    {
+        Debug.LogError("This method must be implements in child");
+        return false;
+    }
+
+
+
+
+    //------------------------------------------------------------------------//
+    // SIMPLE SETTER/GETTER METHODS											  //
+    //------------------------------------------------------------------------//
+    /// <summary>
+    /// The order of this dragon.
+    /// </summary>
+    public int GetOrder() {
+
+    if (def == null) return -1;
+
+    // Special dragons are ordered sequentially after the regular ones
+    if (type == Type.SPECIAL)
+    {
+        return def.GetAsInt("order") + DragonManager.GetDragonsCount(Type.CLASSIC);
+    }
+
+	return def.GetAsInt("order");
 	}
+
 
 	/// <summary>
 	/// Offsets the scale value.
