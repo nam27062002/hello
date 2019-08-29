@@ -52,13 +52,12 @@ namespace LevelEditor
         };
 
         List<TransformNode> m_nodeList = new List<TransformNode>();
+        int m_totalRenderers, m_totalOptimizedRenderers;
         int m_totalVertex, m_totalPolygons;
         int m_hierarchyLevel;
         NodeDensity[] m_nodeDensity = null;
 
         List<GameObject> m_missingRenderers = new List<GameObject>();
-
-        private Dictionary<string, Material> sceneMaterials = new Dictionary<string, Material>();
 
         public struct NodeDensity
         {
@@ -140,10 +139,14 @@ namespace LevelEditor
 
             m_totalVertex = 0;
             m_totalPolygons = 0;
+            m_totalRenderers = 0;
+            m_totalOptimizedRenderers = 0;
+
             foreach(TransformNode tn in m_nodeList)
             {
                 m_totalVertex += tn.m_vertex;
                 m_totalPolygons += tn.m_polygons;
+                m_totalRenderers++;
             }
 
             Debug.Log("Total transform nodes with mesh filter: " + m_nodeList.Count);
@@ -152,6 +155,7 @@ namespace LevelEditor
 
             m_hierarchyLevel = 1;
         }
+
 
         void optimizeRenderers(TransformNode root)
         {
@@ -207,6 +211,7 @@ namespace LevelEditor
                     {
                         so.ApplyModifiedProperties();
                         EditorSceneManager.MarkSceneDirty(root.m_Node.gameObject.scene);
+                        m_totalOptimizedRenderers++;
                     }
                 }
             }
@@ -303,6 +308,7 @@ namespace LevelEditor
 
         Vector2 scrollPos = Vector2.zero;
         Vector2 scrollPos2 = Vector2.zero;
+
         /// <summary>
         /// Draw the section.
         /// </summary>
@@ -333,7 +339,7 @@ namespace LevelEditor
                 {
                     if (GUILayout.Button("Optimize renderers"))
                     {
-                        sceneMaterials.Clear();
+                        m_totalOptimizedRenderers = 0;
                         optimizeRenderers(m_nodeList[0]);
 /*
                         for (int i = 0; i < UnityEngine.SceneManagement.SceneManager.sceneCount; i++)
@@ -361,6 +367,10 @@ namespace LevelEditor
                         GUILayout.Label("Total transform nodes with mesh filter: " + m_nodeList.Count);
                         GUILayout.Label("Total vertex in scene: " + m_totalVertex);
                         GUILayout.Label("Total polygon in scene: " + m_totalPolygons);
+                        EditorGUILayout.Separator();
+                        GUILayout.Label("Total renderers: " + m_totalRenderers);
+                        GUILayout.Label("Optimized renderers: " + m_totalOptimizedRenderers);
+
                         EditorGUI.BeginChangeCheck();
                         m_hierarchyLevel = EditorGUILayout.IntField("Hierarchy level: ", m_hierarchyLevel);
                         if (EditorGUI.EndChangeCheck())
