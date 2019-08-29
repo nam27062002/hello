@@ -60,7 +60,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 131698}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.457, y: 0, z: 0}
+  m_LocalPosition: {x: -218.57402, y: 94.42884, z: 4.2613244}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4532924204112608}
@@ -92,7 +92,7 @@ MonoBehaviour:
     min: 2
     max: 2.75
   m_useSpawnerRotation: 0
-  m_serializedJson: '[{"restTime":{"min":0,"max":0},"randomLookAt":true,"dataType":"AI.Behaviour.IdleData","editorFolded":false},{"speed":8,"checkDragonPositionTime":0.5,"checkForActionPointTime":0.5,"actions":{"panic":{"id":0,"active":true,"probability":1},"jump":{"id":1,"active":false,"probability":1},"goOn":{"id":2,"active":true,"probability":1},"hide":{"id":3,"active":true,"probability":1},"home":{"id":3,"active":true,"probability":1}},"dataType":"AI.Behaviour.FleeToAPData","editorFolded":false},{"standUpTime":0,"dataType":"AI.Behaviour.OnGroundData","editorFolded":false},{"dataType":"AI.Behaviour.OnActionPointData","editorFolded":false}]'
+  m_serializedJson: '[{"restTime":{"min":0,"max":0},"randomLookAt":true,"dataType":"AI.Behaviour.IdleData","editorFolded":false},{"speed":3,"checkDragonPositionTime":0.5,"checkForActionPointTime":0.5,"actions":{"panic":{"id":0,"active":true,"probability":1},"jump":{"id":1,"active":false,"probability":1},"goOn":{"id":2,"active":true,"probability":1},"hide":{"id":3,"active":true,"probability":1},"home":{"id":3,"active":true,"probability":1}},"dataType":"AI.Behaviour.FleeToAPData","editorFolded":false},{"standUpTime":0,"dataType":"AI.Behaviour.OnGroundData","editorFolded":false},{"dataType":"AI.Behaviour.OnActionPointData","editorFolded":false}]'
   m_databaseKey: PF_Villager01_Static
 --- !u!114 &11449904
 MonoBehaviour:
@@ -131,8 +131,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_isPlaceHolder: 0
-  m_walkSpeed: 2
-  m_runSpeed: 6
+  m_walkSpeed: 0.5
+  m_runSpeed: 1.5
   m_minPlaybakSpeed: 0.5
   m_maxPlaybakSpeed: 2
   m_onBoostMaxPlaybackSpeed: 0
@@ -887,30 +887,30 @@ MonoBehaviour:
         defaultItemLOW: 0
         probability: 0.25
         toDisableOnEquip: []
-        position: {x: 0, y: 0, z: -0.06}
-        scale: {x: 0.8, y: 0.7, z: 0.8}
-        rotation: {x: -22.08, y: 0, z: 13.59}
+        position: {x: 0, y: 0.16035008, z: 0.01795777}
+        scale: {x: 0.9, y: 0.7, z: 0.8}
+        rotation: {x: 354.5832, y: 350.4047, z: 331.79147}
       - equipablePrefabName: PF_Pitchfork_Hat
         defaultItemLOW: 0
         probability: 0.25
         toDisableOnEquip: []
-        position: {x: 0, y: 0, z: -0.06}
+        position: {x: -0.08641052, y: 0.042491198, z: -0.038509287}
         scale: {x: 0.8, y: 0.7, z: 0.8}
-        rotation: {x: -22.08, y: 0, z: 13.59}
+        rotation: {x: 335.52698, y: 1.0736215, z: 353.27713}
       - equipablePrefabName: PF_Saw_Hat
         defaultItemLOW: 0
         probability: 0.25
         toDisableOnEquip: []
-        position: {x: 0, y: 0, z: -0.06}
+        position: {x: 0, y: 0.073008776, z: 0.048389517}
         scale: {x: 0.8, y: 0.7, z: 0.8}
-        rotation: {x: -22.08, y: 0, z: 13.59}
+        rotation: {x: 339.55188, y: 0.3711439, z: 8.93391}
       - equipablePrefabName: PF_Scissors_Hat
         defaultItemLOW: 0
         probability: 0.25
         toDisableOnEquip: []
-        position: {x: 0, y: 0, z: -0.06}
+        position: {x: 0.09527588, y: 0.029315233, z: 0.009265505}
         scale: {x: 0.8, y: 0.7, z: 0.8}
-        rotation: {x: -22.08, y: 0, z: 13.59}
+        rotation: {x: 337.91998, y: -0.00000023033633, z: 13.589999}
 --- !u!114 &114926427436442474
 MonoBehaviour:
   m_ObjectHideFlags: 1
