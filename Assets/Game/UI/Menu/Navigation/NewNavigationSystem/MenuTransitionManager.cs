@@ -139,6 +139,11 @@ public class MenuTransitionManager : MonoBehaviour {
 			// Main screen
 			m_screens[i].ui.gameObject.SetActive(true);
 		}
+
+		// Activate transition overlay, usually disabled for editing
+		if(m_overlay != null) {
+			m_overlay.gameObject.SetActive(true);
+		}
 	}
 
 	/// <summary>
