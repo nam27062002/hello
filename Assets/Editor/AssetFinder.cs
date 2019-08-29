@@ -683,9 +683,12 @@ public class AssetFinder : EditorWindow {
             if (modified)
             {
                 string path = AssetDatabase.GetAssetPath(prefab);
-                AssetDatabase.ImportAsset(path);
-                Debug.Log(">>> " + path);
-                numModified++;
+                if (path.Contains(".prefab"))
+                {
+                    AssetDatabase.ImportAsset(path);
+                    Debug.Log(">>> " + path);
+                    numModified++;
+                }
             }
 
 
