@@ -157,60 +157,57 @@ namespace LevelEditor
         {
             if (root.m_Node != null)
             {
-                MeshRenderer rend = root.m_Node.GetComponent<MeshRenderer>();
+                Renderer rend = root.m_Node.GetComponent<Renderer>();
                 if (rend != null)
                 {
-//                    rend.lightProbeUsage = UnityEngine.Rendering.LightProbeUsage.Off;
-//                    rend.motionVectorGenerationMode = MotionVectorGenerationMode.ForceNoMotion;
-                    if (rend.allowOcclusionWhenDynamic)
-                    {
-                        Debug.Log(rend.gameObject.name + ": allowOcclusionWhenDynamic = true ");
-                    }
-                    if (rend.reflectionProbeUsage != UnityEngine.Rendering.ReflectionProbeUsage.Off)
-                    {
-                        Debug.Log(rend.gameObject.name + ": reflectionProbeUsage = " + rend.reflectionProbeUsage.ToString());
-                    }
-//                    rend.reflectionProbeUsage = UnityEngine.Rendering.ReflectionProbeUsage.Off;
-//                    rend.allowOcclusionWhenDynamic = false;
-//                     EditorUtility.SetDirty(rend);
-
-
                     SerializedObject so = new SerializedObject(rend);
                     so.Update();
 
                     SerializedProperty sp;
 
+                    bool modified = false;
+
                     sp = so.FindProperty("m_DynamicOccludee");
-                    sp.boolValue = false;
-                    sp = so.FindProperty("m_MotionVectors");
-                    sp.enumValueIndex = (int)MotionVectorGenerationMode.ForceNoMotion;
-                    sp = so.FindProperty("m_LightProbeUsage");
-                    sp.intValue = (int)UnityEngine.Rendering.LightProbeUsage.Off;
-                    sp = so.FindProperty("m_ReflectionProbeUsage");
-                    sp.intValue = (int)UnityEngine.Rendering.ReflectionProbeUsage.Off;
-
-                    so.ApplyModifiedProperties();
-
-                    StaticEditorFlags staticFlags = GameObjectUtility.GetStaticEditorFlags(root.m_Node.gameObject);
-                    staticFlags |= StaticEditorFlags.BatchingStatic;
-                    GameObjectUtility.SetStaticEditorFlags(root.m_Node.gameObject, staticFlags);
-
-/*
-                    for (int c = 0; c < rend.sharedMaterials.Length; c++)
+                    if (sp.boolValue)
                     {
-                        Material mat = rend.sharedMaterials[c];
-                        if (sceneMaterials.ContainsKey(mat.name))
-                        {
-                            mat = sceneMaterials[mat.name];
-                        }
-                        else
-                        {
-                            sceneMaterials[mat.name] = mat;
-                        }
-                        rend.materials[c] = null;
-                        rend.sharedMaterials[c] = mat;
+                        sp.boolValue = false;
+                        modified = true;
+                    }
+
+                    sp = so.FindProperty("m_MotionVectors");
+                    if (sp.enumValueIndex != (int)MotionVectorGenerationMode.ForceNoMotion)
+                    {
+                        sp.enumValueIndex = (int)MotionVectorGenerationMode.ForceNoMotion;
+                        modified = true;
+                    }
+
+                    sp = so.FindProperty("m_LightProbeUsage");
+                    if (sp.intValue != (int)UnityEngine.Rendering.LightProbeUsage.Off)
+                    {
+                        sp.intValue = (int)UnityEngine.Rendering.LightProbeUsage.Off;
+                        modified = true;
+                    }
+
+                    sp = so.FindProperty("m_ReflectionProbeUsage");
+                    if (sp.intValue != (int)UnityEngine.Rendering.ReflectionProbeUsage.Off)
+                    {
+                        sp.intValue = (int)UnityEngine.Rendering.ReflectionProbeUsage.Off;
+                        modified = true;
+                    }
+/*
+                    StaticEditorFlags staticFlags = GameObjectUtility.GetStaticEditorFlags(root.m_Node.gameObject);
+                    if (((int)staticFlags & (int)StaticEditorFlags.BatchingStatic) == 0)
+                    {
+                        staticFlags |= StaticEditorFlags.BatchingStatic;
+                        GameObjectUtility.SetStaticEditorFlags(root.m_Node.gameObject, staticFlags);
+                        modified = true;
                     }
 */
+                    if (modified)
+                    {
+                        so.ApplyModifiedProperties();
+                        EditorSceneManager.MarkSceneDirty(root.m_Node.gameObject.scene);
+                    }
                 }
             }
 
@@ -338,6 +335,7 @@ namespace LevelEditor
                     {
                         sceneMaterials.Clear();
                         optimizeRenderers(m_nodeList[0]);
+/*
                         for (int i = 0; i < UnityEngine.SceneManagement.SceneManager.sceneCount; i++)
                         {
                             Scene s = UnityEngine.SceneManagement.SceneManager.GetSceneAt(i);
@@ -346,6 +344,7 @@ namespace LevelEditor
                                 EditorSceneManager.MarkSceneDirty(s);
                             }
                         }
+*/
                     }
 
                     GUI.backgroundColor = Colors.gray;
@@ -418,12 +417,13 @@ namespace LevelEditor
                                     }
                                     else
                                     {
+                                        EditorSceneManager.MarkSceneDirty(m_missingRenderers[c].scene);
                                         Object.DestroyImmediate(m_missingRenderers[c]);
                                     }
                                 }
 
                                 m_missingRenderers.Clear();
-
+/*
                                 for (int i = 0; i < UnityEngine.SceneManagement.SceneManager.sceneCount; i++)
                                 {
                                     Scene s = UnityEngine.SceneManagement.SceneManager.GetSceneAt(i);
@@ -432,7 +432,7 @@ namespace LevelEditor
                                         EditorSceneManager.MarkSceneDirty(s);
                                     }
                                 }
-
+*/
                             }
                             EditorGUILayout.Separator();
                             scrollPos2 = GUILayout.BeginScrollView(scrollPos2);
