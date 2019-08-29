@@ -81,6 +81,7 @@ public class GameSceneControllerBase : SceneController, IBroadcastListener {
 
     protected virtual void Update() {
         SpawnerManager.instance.Update();
+        DecorationSpawnerManager.instance.Update();
         EntityManager.instance.Update();
         DecorationManager.instance.Update();
         FirePropagationManager.instance.Update();

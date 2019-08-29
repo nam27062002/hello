@@ -605,9 +605,10 @@ public class GameSceneController : GameSceneControllerBase {
 
 				// enable spawners
 				SpawnerManager.instance.EnableSpawners();
+                DecorationSpawnerManager.instance.EnableSpawners();
 
-				// Notify the game
-				Messenger.Broadcast(MessengerEvents.GAME_COUNTDOWN_STARTED);
+                // Notify the game
+                Messenger.Broadcast(MessengerEvents.GAME_COUNTDOWN_STARTED);
                 // Begin performance track
                 HDTrackingManager.Instance.Notify_StartPerformanceTracker();
             } break;

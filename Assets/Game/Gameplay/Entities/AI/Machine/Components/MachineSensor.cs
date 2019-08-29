@@ -50,7 +50,7 @@ namespace AI {
 
             float radiusOffsetFactor = m_radiusOffset.GetRandom();
 
-            m_senseTimer = 0f;
+            m_senseTimer = 0.125f * (m_collisionCheckPool % 2);
 			m_enemyRadiusSqr = 0f;
 
 			m_sightRadiusIn 	= m_sightRadius * radiusOffsetFactor;
@@ -90,37 +90,31 @@ namespace AI {
 				m_machine.SetSignal(Signals.Type.Critical, 	false);
 
 				m_senseTimer = 1f;
-			} else {
-				float distanceSqr = 0f;
-				bool isInsideSightArea = m_machine.GetSignal(Signals.Type.Warning);
-				bool isInsideMaxArea = m_machine.GetSignal(Signals.Type.Danger);
-				bool isInsideMinArea = m_machine.GetSignal(Signals.Type.Critical);
-				bool sense = false;
-
+			} else {				
 				m_senseTimer -= Time.deltaTime;
-				if (m_senseTimer <= 0f) {
-					m_senseTimer = 0f;
-				}
+				if (m_senseTimer <= 0f) {         
+                    bool isInsideSightArea = m_machine.GetSignal(Signals.Type.Warning);
+                    bool isInsideMaxArea = m_machine.GetSignal(Signals.Type.Danger);
+                    bool isInsideMinArea = m_machine.GetSignal(Signals.Type.Critical);
+                    bool sense = false;
 
-				if (m_senseAbove && m_senseBelow) {
-					sense = true;
-				} else if (m_senseAbove) {
-					sense = m_enemy.position.y > sensorPosition.y;
-				} else if (m_senseBelow) {
-					sense = m_enemy.position.y < sensorPosition.y;								
-				}
+                    if (m_senseAbove && m_senseBelow) {
+					    sense = true;
+				    } else if (m_senseAbove) {
+					    sense = m_enemy.position.y > sensorPosition.y;
+				    } else if (m_senseBelow) {
+					    sense = m_enemy.position.y < sensorPosition.y;								
+				    }
 
-				if (sense) {
-					float fireRadius = 0f;
-					if (m_senseFire) {
-						if (InstanceManager.player.IsFuryOn() ) {
-							fireRadius = InstanceManager.player.breathBehaviour.actualLength;
-						}
-					}
-
-					if (m_senseTimer <= 0) {
-						distanceSqr = DistanceSqrToEnemy();
-
+				    if (sense) {
+					    float fireRadius = 0f;
+					    if (m_senseFire) {
+						    if (InstanceManager.player.IsFuryOn() ) {
+							    fireRadius = InstanceManager.player.breathBehaviour.actualLength;
+						    }
+					    }
+                        					    
+						float distanceSqr = DistanceSqrToEnemy();
 						float sightRadiusIn =  m_sightRadiusIn + fireRadius;
 						float sightRadiusOut =  m_sightRadiusOut + fireRadius;
 
@@ -130,55 +124,57 @@ namespace AI {
 						} else if (distanceSqr > sightRadiusOut * sightRadiusOut) {
 							isInsideSightArea = false;
 							m_senseTimer = 0f;
-						}
-					}
+						}					    
 
-					if (isInsideSightArea) {
-						float maxRadiusIn  = m_maxRadiusIn + fireRadius;
-						float minRadiusIn  = m_minRadiusIn + fireRadius;
-						float maxRadiusOut = m_maxRadiusOut + fireRadius;
-						float minRadiusOut = m_minRadiusOut + fireRadius;
+					    if (isInsideSightArea) {
+						    float maxRadiusIn  = m_maxRadiusIn + fireRadius;
+						    float minRadiusIn  = m_minRadiusIn + fireRadius;
+						    float maxRadiusOut = m_maxRadiusOut + fireRadius;
+						    float minRadiusOut = m_minRadiusOut + fireRadius;
 
-						if (distanceSqr < float.Epsilon) {
-							distanceSqr = DistanceSqrToEnemy();
-						}
+						    if (distanceSqr < float.Epsilon) {
+							    distanceSqr = DistanceSqrToEnemy();
+						    }
 
-						if (distanceSqr < m_maxRadius * maxRadiusIn) {
-							// check if the dragon is inside the sense zone
-							if (distanceSqr < minRadiusIn * minRadiusIn) {
-								isInsideMinArea = true;
-							} else if (distanceSqr > minRadiusOut * minRadiusOut) {
-								isInsideMinArea = false;
-							}
-							isInsideMaxArea = true;
-						} else if (distanceSqr > maxRadiusOut * maxRadiusOut) {
-							isInsideMaxArea = false;
-						}
+						    if (distanceSqr < m_maxRadius * maxRadiusIn) {
+							    // check if the dragon is inside the sense zone
+							    if (distanceSqr < minRadiusIn * minRadiusIn) {
+								    isInsideMinArea = true;
+							    } else if (distanceSqr > minRadiusOut * minRadiusOut) {
+								    isInsideMinArea = false;
+							    }
+							    isInsideMaxArea = true;
+						    } else if (distanceSqr > maxRadiusOut * maxRadiusOut) {
+							    isInsideMaxArea = false;
+						    }
 
-						if (isInsideMinArea || isInsideMaxArea) {
-                            if (m_collisionCheckPool == Time.frameCount % CollisionCheckPools) {
-                                m_cachedRaycast = Physics.Linecast(sensorPosition, m_enemy.position, GameConstants.Layers.GROUND);
-                            }
-                                // Check line cast
-                            if (m_cachedRaycast) {
-								isInsideSightArea = false;
-								isInsideMaxArea = false;
-								isInsideMinArea = false;
-							}
-						}
-					} else {
-						isInsideMaxArea = false;
-						isInsideMinArea = false;
-					}
-				} else {
-					isInsideSightArea = false;
-					isInsideMaxArea = false;
-					isInsideMinArea = false;
-				}
+						    if (isInsideMinArea || isInsideMaxArea) {
+                                if (m_collisionCheckPool == Time.frameCount % CollisionCheckPools) {
+                                    m_cachedRaycast = Physics.Linecast(sensorPosition, m_enemy.position, GameConstants.Layers.GROUND);
+                                }
+                                    // Check line cast
+                                if (m_cachedRaycast) {
+								    isInsideSightArea = false;
+								    isInsideMaxArea = false;
+								    isInsideMinArea = false;
+							    }
+						    }
+					    } else {
+						    isInsideMaxArea = false;
+						    isInsideMinArea = false;
+					    }
+				    } else {
+					    isInsideSightArea = false;
+					    isInsideMaxArea = false;
+					    isInsideMinArea = false;
+				    }
 
-                m_machine.SetSignal(Signals.Type.Warning, 	isInsideSightArea);
-				m_machine.SetSignal(Signals.Type.Danger, 	isInsideMaxArea);
-				m_machine.SetSignal(Signals.Type.Critical, 	isInsideMinArea);
+                    m_machine.SetSignal(Signals.Type.Warning, 	isInsideSightArea);
+				    m_machine.SetSignal(Signals.Type.Danger, 	isInsideMaxArea);
+				    m_machine.SetSignal(Signals.Type.Critical, 	isInsideMinArea);
+
+                    m_senseTimer = 0.125f * (m_collisionCheckPool % 3);
+                }
             }
             UnityEngine.Profiling.Profiler.EndSample();
         }

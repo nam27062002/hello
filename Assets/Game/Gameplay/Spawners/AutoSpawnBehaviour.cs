@@ -65,7 +65,7 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner, IBroadcastListener {
             if (zone == ZoneManager.Zone.None) {
                 Destroy(this);
             } else {
-                SpawnerManager.instance.Register(this, true);
+                DecorationSpawnerManager.instance.Register(this, true);
 
                 m_newCamera = Camera.main.GetComponent<GameCamera>();
                 m_gameSceneController = InstanceManager.gameSceneControllerBase;
@@ -111,8 +111,8 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner, IBroadcastListener {
     
     void OnDestroy() {
 		if (ApplicationManager.IsAlive) {
-			if (SpawnerManager.isInstanceCreated) {
-				SpawnerManager.instance.Unregister (this, true);
+			if (DecorationSpawnerManager.isInstanceCreated) {
+                DecorationSpawnerManager.instance.Unregister (this, true);
 			}
 		}
 
@@ -126,15 +126,10 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner, IBroadcastListener {
 	/// </summary>
 	private void OnLevelLoaded() {
 		bool disable = m_spawnConditions != null && !m_spawnConditions.IsReadyToSpawn(0f, 0f);
-		if (disable) {
-			m_respawnCount = 0;
-			m_state = State.Respawning;
-			gameObject.SetActive(false);
-		} else {
-			m_respawnCount = 1;
-			m_state = State.Idle;
-		}
-	}
+        m_respawnCount = 0;
+        m_state = State.Respawning;
+        gameObject.SetActive(false);
+    }
 
 	public void Initialize() {
 		m_state = State.Idle;
@@ -142,14 +137,17 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner, IBroadcastListener {
 
     public void Clear() {
         ForceRemoveEntities();
-        gameObject.SetActive(false);
     }
 
     public List<string> GetPrefabList() {
         return null;
     }
 
-    public void ForceRemoveEntities() {}
+    public void ForceRemoveEntities() {        
+        m_respawnTime = -1;
+        m_state = State.Respawning;
+        gameObject.SetActive(false);
+    }
     public void ForceReset() {}
 
 	public void ForceGolden( IEntity entity ){
@@ -173,7 +171,7 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner, IBroadcastListener {
 			}
 
 			m_state = State.Respawning;
-		}
+        }
 	}
 
 	public bool IsRespawing() {
@@ -181,7 +179,7 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner, IBroadcastListener {
 	}
 
 	// this spawner will kill its entities if it is outside camera disable area
-	public bool MustCheckCameraBounds() 	{ return false; }
+	public bool MustCheckCameraBounds() 	{ return true; }
 	public bool IsRespawingPeriodically() 	{ return false; }
 
     public bool CanRespawn() {
@@ -201,15 +199,14 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner, IBroadcastListener {
 												 RewardManager.xp + m_gameSceneController.progressionOffsetXP))
 			{
 				if (m_gameSceneController.elapsedSeconds > m_respawnTime) {
-					bool isInsideActivationArea = m_newCamera.IsInsideCameraFrustrum(m_bounds);
-					if (!isInsideActivationArea) {
-						return true;
-					}
+					return true;				
 				}
 			}
 		}
 
-		return false;
+        gameObject.SetActive(true);
+
+        return false;
 	}
 
 	public bool Respawn() {
@@ -218,10 +215,8 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner, IBroadcastListener {
 	}
 
 	private void Spawn() {
-		if (m_respawnCount == 0) {
-			gameObject.SetActive(true);
-		}
-		
+		gameObject.SetActive(true);
+				
 		foreach (ISpawnable component in m_components) {
 			component.Spawn(this);
 		}
