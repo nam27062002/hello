@@ -32,6 +32,8 @@ public class CPListPref : CPPrefBase {
 	// MEMBERS															//
 	//------------------------------------------------------------------//
 	// References
+	[Space]
+	[InfoBox("Don't forget to connect callbacks to this component!")]
 	[SerializeField] private TextMeshProUGUI m_text;
 
 	// Internal
