@@ -91,14 +91,14 @@ namespace AI {
 						m = (m_machine.position - m_target).sqrMagnitude;
 						if (m <= d * d) {
 							m_machine.upVector = Vector3.down;
-							Transition(OnMove);;
+							Transition(onMove);
 						}
 						break;
 
 					case IdleState.Normal:
 						m_timer -= Time.deltaTime;
 						if (m_timer <= 0f || m_machine.GetSignal(Signals.Type.Danger)) {
-							Transition(OnMove);
+							Transition(onMove);
 						}
 						break;
 

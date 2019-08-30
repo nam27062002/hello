@@ -31,7 +31,7 @@ namespace AI {
 		public abstract bool GetSignal(Signals.Type _signal);
 		public abstract object[] GetSignalParams(Signals.Type _signal);
 
-		public abstract void OnTrigger(string _trigger, object[] _param = null);
+		public abstract void OnTrigger(int _triggerHash, object[] _param = null);
 
 		public abstract void DisableSensor(float _seconds);
 

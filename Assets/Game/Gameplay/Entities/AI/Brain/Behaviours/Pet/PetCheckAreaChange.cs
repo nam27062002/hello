@@ -8,10 +8,10 @@ namespace AI {
 		public class PetCheckAreaChange : StateComponent {
 
 			[StateTransitionTrigger]
-			public static string onAreaChangeStart = "onAreaChangeStart";
+			public static readonly int onAreaChangeStart = UnityEngine.Animator.StringToHash("onAreaChangeStart");
 
 			[StateTransitionTrigger]
-			public static string onAreaChangeEnd = "onAreaChangeEnd";
+			public static readonly int onAreaChangeEnd = UnityEngine.Animator.StringToHash("onAreaChangeEnd");
 
 			private MachineEatBehaviour m_eatBehaviour;
 			protected override void OnInitialise()

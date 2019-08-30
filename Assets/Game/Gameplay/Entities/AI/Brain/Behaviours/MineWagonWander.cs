@@ -18,7 +18,7 @@ namespace AI {
 		public class MineWagonWander: StateComponent {
 
 			[StateTransitionTrigger]
-			private static string OnRest = "onRest";
+			private static readonly int onRest = UnityEngine.Animator.StringToHash("onRest");
 
 			private MineWagonWanderData m_data;
 			private float m_side;

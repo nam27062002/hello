@@ -34,8 +34,8 @@ namespace AI {
 			}
 					
 			protected override void OnUpdate() {
-				// Update guide function
-				if (m_pilot.guideFunction != null || m_pilot.area != null) {
+                // Update guide function
+                if (m_pilot.guideFunction != null || m_pilot.area != null) {
 					float dsqr = (m_pilot.target - m_machine.position).sqrMagnitude;
 					float deltaDSqr = Mathf.Max(1f, m_pilot.speed * m_pilot.speed);
 
@@ -50,12 +50,12 @@ namespace AI {
 				}
 
 				base.OnUpdate();
-			}
+            }
 
 			protected override void CheckPromotion() { }
 
 			private void SelectTarget() {
-				if (m_pilot.guideFunction != null) {
+                if (m_pilot.guideFunction != null) {
 					m_target = m_pilot.guideFunction.NextPositionAtSpeed(m_pilot.speed);					
 				} else {
 					m_target = m_pilot.area.RandomInside();
@@ -68,7 +68,7 @@ namespace AI {
 				} else {
 					m_timer = 1f;
 				}
-			}
+            }
 		}
 	}
 }

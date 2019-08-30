@@ -12,7 +12,7 @@ namespace AI {
 		[CreateAssetMenu(menuName = "Behaviour/Timers/Timer Air Water")]
 		public class TimerAirWater : StateComponent {
             [StateTransitionTrigger]
-            protected static string OnTimeFinished = "onTimeFinished";
+            protected static readonly int onTimeFinished = UnityEngine.Animator.StringToHash("onTimeFinished");
 
             private TimerAirWaterData m_data;
             protected float m_timer;
@@ -39,11 +39,11 @@ namespace AI {
 
                 if (m_machine.GetSignal(Signals.Type.InWater)) {
                     if (m_timer >= m_data.waterSeconds) {
-                        Transition(OnTimeFinished);
+                        Transition(onTimeFinished);
                     }
                 } else {
                     if (m_timer >= m_data.airSeconds) {
-                        Transition(OnTimeFinished);
+                        Transition(onTimeFinished);
                     }
                 }
             }
