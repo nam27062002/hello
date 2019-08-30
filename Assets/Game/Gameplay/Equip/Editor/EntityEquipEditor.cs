@@ -108,18 +108,20 @@ public class EntityEquipEditor : Editor {
 			Equipable equipable = m_itemInstance.GetComponent<Equipable>();
 
             m_attachPointIndex = (int)equipable.attachPoint;
-			if (equipable != null && m_attachPointIndex < m_attachPoints.Length && m_attachPoints[m_attachPointIndex] != null) {
-				if (m_attachPoints[m_attachPointIndex].item == null) {
-                    foreach(GameObject go in m_items[m_selectedItem].toDisableOnEquip) {
+            if (equipable != null && m_attachPointIndex < m_attachPoints.Length && m_attachPoints[m_attachPointIndex] != null) {
+                if (m_attachPoints[m_attachPointIndex].item == null) {
+                    foreach (GameObject go in m_items[m_selectedItem].toDisableOnEquip) {
                         go.SetActive(false);
                     }
 
-					m_attachPoints[m_attachPointIndex].EquipAccessory(equipable,
+                    m_attachPoints[m_attachPointIndex].EquipAccessory(equipable,
                                                                 m_items[m_selectedItem].position,
                                                                 m_items[m_selectedItem].scale,
                                                                 m_items[m_selectedItem].rotation);
-				}
-			}
+                }
+            } else {
+                Debug.LogError("[EntityEquip] Missing AttachPoint [" + equipable.attachPoint + "] on NPC [" + m_target.name + "]");
+            }
 		}
         
         if (GUILayout.Button("Clear Items")) {
@@ -129,19 +131,21 @@ public class EntityEquipEditor : Editor {
 
     void OnSceneGUI() {
         if (m_itemInstance != null) {
-            Vector3 position = m_attachPoints[m_attachPointIndex].transform.TransformPoint(m_items[m_selectedItem].position);
+            if (m_attachPointIndex < m_attachPoints.Length && m_attachPoints[m_attachPointIndex] != null) {
+                Vector3 position = m_attachPoints[m_attachPointIndex].transform.TransformPoint(m_items[m_selectedItem].position);
 
-            switch (Tools.current) {
-                case Tool.Move: position = Handles.PositionHandle(position, m_attachPoints[m_attachPointIndex].transform.rotation); break;
-                case Tool.Scale: m_items[m_selectedItem].scale = Handles.ScaleHandle(m_items[m_selectedItem].scale, position, m_itemInstance.transform.rotation, 0.25f); break;
-                case Tool.Rotate: m_items[m_selectedItem].rotation = Handles.RotationHandle(Quaternion.Euler(m_items[m_selectedItem].rotation), position).eulerAngles; break;
+                switch (Tools.current) {
+                    case Tool.Move: position = Handles.PositionHandle(position, m_attachPoints[m_attachPointIndex].transform.rotation); break;
+                    case Tool.Scale: m_items[m_selectedItem].scale = Handles.ScaleHandle(m_items[m_selectedItem].scale, position, m_itemInstance.transform.rotation, 0.25f); break;
+                    case Tool.Rotate: m_items[m_selectedItem].rotation = Handles.RotationHandle(Quaternion.Euler(m_items[m_selectedItem].rotation), position).eulerAngles; break;
+                }
+
+                m_itemInstance.transform.localPosition = m_attachPoints[m_attachPointIndex].transform.InverseTransformPoint(position);
+                m_itemInstance.transform.localScale = m_items[m_selectedItem].scale;
+                m_itemInstance.transform.localRotation = Quaternion.Euler(m_items[m_selectedItem].rotation);
+
+                m_items[m_selectedItem].position = m_itemInstance.transform.localPosition;
             }
-                        
-            m_itemInstance.transform.localPosition = m_attachPoints[m_attachPointIndex].transform.InverseTransformPoint(position);
-            m_itemInstance.transform.localScale = m_items[m_selectedItem].scale;
-            m_itemInstance.transform.localRotation = Quaternion.Euler(m_items[m_selectedItem].rotation);
-
-            m_items[m_selectedItem].position = m_itemInstance.transform.localPosition;
         }
     }
 
