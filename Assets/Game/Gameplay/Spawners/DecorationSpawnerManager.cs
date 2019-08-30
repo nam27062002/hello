@@ -238,8 +238,7 @@ public class DecorationSpawnerManager : Singleton<DecorationSpawnerManager>, IBr
 
                 // If the spawner is in the deactivation area then its respawning stuff has to be undone as the units respawned would be destroyed anyway             
                 bool cancelSpawn = false;
-
-
+                
                 if (sp.transform.position.z < FAR_LAYER_Z) {
                     cancelSpawn = m_camera.IsInsideDeactivationArea(sp.boundingRect);
                 } else if (sp.transform.position.z < BACKGROUND_LAYER_Z) {
