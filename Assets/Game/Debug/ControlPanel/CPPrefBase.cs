@@ -23,7 +23,6 @@ public class CPPrefBase : MonoBehaviour {
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
 	// Exposed
-	[InfoBox("Don't forget to connect callbacks to this component!")]
 	[SerializeField] protected CPPropertyId m_id = new CPPropertyId();
 	public string id {
 		get { return m_id.ToString(); }
