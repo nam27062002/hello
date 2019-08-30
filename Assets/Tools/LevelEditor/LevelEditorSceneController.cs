@@ -55,8 +55,9 @@ namespace LevelEditor {
             FirePropagationManager.CreateInstance();
             BubbledEntitySystem.CreateInstance();
             SpawnerManager.CreateInstance();
+            DecorationSpawnerManager.CreateInstance();
 
-			// Initialize fake profile for the level editor
+            // Initialize fake profile for the level editor
             UsersManager.CreateInstance();
 
 
@@ -276,9 +277,10 @@ namespace LevelEditor {
 
 			// Run spawner manager
 			SpawnerManager.instance.EnableSpawners();
+            DecorationSpawnerManager.instance.EnableSpawners();
 
-			// Enable reward manager to see coins/score feedback
-			RewardManager.Reset();
+            // Enable reward manager to see coins/score feedback
+            RewardManager.Reset();
 
 			// Spawn collectibles
 			// [AOC] By designers request, let's keep all collectibles visible in the level editor
