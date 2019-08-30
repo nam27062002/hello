@@ -110,9 +110,9 @@ public class SpecialDragonBar : MonoBehaviour {
 
 
 	private void CreateElements() {
-        int levelElementsCount = m_maxLevel - m_levelSkill.Length;
+        int levelElementsCount = m_maxLevel;
 
-        if (levelElementsCount > m_levelElements.Count) {
+        if (m_levelElements.Count < levelElementsCount ) {
             for (int i = m_levelElements.Count; i < levelElementsCount; ++i) {
                 GameObject go = Instantiate(m_elementLevelPrefab);
                 go.transform.SetParent(m_content.transform, false);
@@ -120,7 +120,7 @@ public class SpecialDragonBar : MonoBehaviour {
             }
         }
 
-        if (m_levelSkill.Length > m_skillElements.Count) {
+        if (m_skillElements.Count < m_levelSkill.Length ) {
             for (int i = m_skillElements.Count; i < m_levelSkill.Length; ++i) {
                 GameObject go = Instantiate(m_elementSkillPrefab);
                 go.transform.SetParent(m_content.transform, false);
@@ -128,11 +128,16 @@ public class SpecialDragonBar : MonoBehaviour {
             }
         }
 
-        if (m_levelTier.Length > m_tierElements.Count) {
+        if (m_tierElements.Count < m_levelTier.Length ) {
             for (int i = m_tierElements.Count; i < m_levelTier.Length; ++i) {
                 GameObject go = Instantiate(m_elementTierPrefab);
                 SpecialDragonBarTierElement tierElement = go.GetComponent<SpecialDragonBarTierElement>();
-                tierElement.SetTier(m_tiersDefinitions[i + 1]); // Plus 1 because tier 0 is the starting tier
+
+                // Make sure the tierDefinitions are initialized, or it will fail in the debug mode
+                if (m_tiersDefinitions.Count >= i + 1)
+                {
+                    tierElement.SetTier(m_tiersDefinitions[i + 1]); // Plus 1 because tier 0 is the starting tier
+                }
                 go.transform.SetParent(m_content.transform, false);
                 m_tierElements.Add(tierElement);
             }
@@ -197,11 +202,21 @@ public class SpecialDragonBar : MonoBehaviour {
             tiersWidth += width + m_blankSpace;
         }
 
+        // sum up the space reserved for Powerups icons
+        float skillsWidth = 0f;
+
+        for (int i = 0; i < m_levelSkill.Length; ++i)
+        {
+            float width = m_skillElements[0].GetWidth();
+
+            skillsWidth += width + m_blankSpace;
+        }
+
         // sum up the space reserved for levels 
         float levelCount = (m_maxLevel - m_skillElements.Count - m_tierElements.Count);
 
         // get the width of each level slot
-        float levelWidth = (contentWidth - tiersWidth - m_blankSpace * levelCount) / levelCount;
+        float levelWidth = (contentWidth - tiersWidth - skillsWidth - m_blankSpace * levelCount) / levelCount;
         float levelScale = levelWidth / m_levelElements[0].GetWidth();
 
         // order all the elements. Each element has its pivot at bottom center corner
@@ -264,7 +279,7 @@ public class SpecialDragonBar : MonoBehaviour {
             float width = element.GetWidth() * scaleFactor;
 
             deltaX += (width + m_blankSpace) * 0.5f;
-            element.SetPos(deltaX, deltaY + posY + offsetY);
+            element.SetPos(deltaX + element.GetOffset().x, deltaY + posY + offsetY + element.GetOffset().y);
             deltaX += (width + m_blankSpace) * 0.5f;
 
             element.gameObject.SetActive(true);

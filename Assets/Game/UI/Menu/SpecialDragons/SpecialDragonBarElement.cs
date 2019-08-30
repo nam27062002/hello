@@ -70,6 +70,11 @@ public class SpecialDragonBarElement : MonoBehaviour {
         return m_scaleTransform.sizeDelta.y;
     }
 
+    public Vector2 GetOffset()
+    {
+        return m_scaleTransform.localPosition;
+    }
+
 
     //---[Public Methods]-------------------------------------------------------
     public void SetState(State _state) {
