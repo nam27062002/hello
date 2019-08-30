@@ -7,9 +7,9 @@ namespace AI {
 		public class EatTarget : StateComponent {
 
 			[StateTransitionTrigger]
-			private static string OnBiteFail = "onBiteFail";
+			private static readonly int onBiteFail = UnityEngine.Animator.StringToHash("onBiteFail");
 			[StateTransitionTrigger]
-			private static string OnEndEating = "onEndEating";
+			private static readonly int onEndEating = UnityEngine.Animator.StringToHash("onEndEating");
 
 			private EatBehaviour m_eatBehaviour;
 
@@ -41,13 +41,13 @@ namespace AI {
 			protected void OnBiteKillEvent(){
 				if (!m_eatBehaviour.IsEating()){
 					// It failed on eating a prey -> Return
-					Transition( OnBiteFail);
+					Transition(onBiteFail);
 				}
 				// else -> wait to finish eating, stop pursuing
 			}
 
 			protected void OnEndEatingEvent(){
-				Transition( OnEndEating);
+				Transition(onEndEating);
 			}
 
 			// Update -> Check if target still valid

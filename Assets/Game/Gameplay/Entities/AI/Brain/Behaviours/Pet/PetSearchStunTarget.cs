@@ -4,94 +4,92 @@ using System.Collections.Generic;
 using System;
 
 namespace AI {
-	namespace Behaviour {	
+    namespace Behaviour {
 
-		[System.Serializable]
-		public class PetSearchStunTargetData : StateComponentData {
-			public float dragonSizeRangeMultiplier = 10;
-			public Range m_shutdownRange = new Range(10,20);
-			[Tooltip("Coma separated list of entity skus to ignore")]
-			public string m_ignoreSkus;
+        [System.Serializable]
+        public class PetSearchStunTargetData : StateComponentData {
+            public float dragonSizeRangeMultiplier = 10;
+            public Range m_shutdownRange = new Range(10, 20);
+            [Tooltip("Coma separated list of entity skus to ignore")]
+            public string m_ignoreSkus;
             public IEntity.Tag ignoreTag = 0;
         }
 
-		[CreateAssetMenu(menuName = "Behaviour/Pet/Search Stun Target")]
-		public class PetSearchStunTarget : StateComponent {
+        [CreateAssetMenu(menuName = "Behaviour/Pet/Search Stun Target")]
+        public class PetSearchStunTarget : StateComponent {
 
-			[StateTransitionTrigger]
-			private static string onEnemyTargeted = "onEnemyTargeted";
+            [StateTransitionTrigger]
+            private static readonly int onEnemyTargeted = UnityEngine.Animator.StringToHash("onEnemyTargeted");
 
-			private float m_shutdownSensorTime;
-			private float m_timer;
-			private object[] m_transitionParam;
+            private float m_shutdownSensorTime;
+            private float m_timer;
+            private object[] m_transitionParam;
 
-			private Entity[] m_checkEntities = new Entity[50];
-			private int m_numCheckEntities = 0;
+            private Entity[] m_checkEntities = new Entity[50];
+            private int m_numCheckEntities = 0;
 
-			private int m_collidersMask;
+            private int m_collidersMask;
 
-			DragonPlayer m_owner;
-			float m_range;
-			MachineSensor m_sensor;
+            DragonPlayer m_owner;
+            float m_range;
+            MachineSensor m_sensor;
 
-			private PetSearchStunTargetData m_data;
-			string[] m_ignoreSkus;
-			int m_ignoreSkusCount;
+            private PetSearchStunTargetData m_data;
+            string[] m_ignoreSkus;
+            int m_ignoreSkusCount;
 
 
-			public override StateComponentData CreateData() {
-				return new PetSearchStunTargetData();
-			}
+            public override StateComponentData CreateData() {
+                return new PetSearchStunTargetData();
+            }
 
-			public override System.Type GetDataType() {
-				return typeof(PetSearchStunTargetData);
-			}
+            public override System.Type GetDataType() {
+                return typeof(PetSearchStunTargetData);
+            }
 
-			protected override void OnInitialise() {
-				m_timer = 0f;
-				m_shutdownSensorTime = 0f;
+            protected override void OnInitialise() {
+                m_timer = 0f;
+                m_shutdownSensorTime = 0f;
 
-				m_transitionParam = new object[1];
+                m_transitionParam = new object[1];
 
-				m_collidersMask = 1<<LayerMask.NameToLayer("Ground") | 1<<LayerMask.NameToLayer("Obstacle");
+                m_collidersMask = 1 << LayerMask.NameToLayer("Ground") | 1 << LayerMask.NameToLayer("Obstacle");
 
-				base.OnInitialise();
+                base.OnInitialise();
 
-				m_owner = InstanceManager.player;
-				m_data = m_pilot.GetComponentData<PetSearchStunTargetData>();
-				m_range = m_owner.data.maxScale * m_data.dragonSizeRangeMultiplier;
+                m_owner = InstanceManager.player;
+                m_data = m_pilot.GetComponentData<PetSearchStunTargetData>();
+                m_range = m_owner.data.maxScale * m_data.dragonSizeRangeMultiplier;
 
-				m_sensor = (m_machine as Machine).sensor;
+                m_sensor = (m_machine as Machine).sensor;
 
-				if (string.IsNullOrEmpty(m_data.m_ignoreSkus))
-				{
-					m_ignoreSkus = new string[]{};
-				}else{
-					m_ignoreSkus = m_data.m_ignoreSkus.Split(new string[] { "," }, StringSplitOptions.None);
-				}
-				m_ignoreSkusCount = m_ignoreSkus.Length;
-			}
+                if (string.IsNullOrEmpty(m_data.m_ignoreSkus)) {
+                    m_ignoreSkus = new string[] { };
+                } else {
+                    m_ignoreSkus = m_data.m_ignoreSkus.Split(new string[] { "," }, StringSplitOptions.None);
+                }
+                m_ignoreSkusCount = m_ignoreSkus.Length;
+            }
 
-			// The first element in _param must contain the amount of time without detecting an enemy
-			protected override void OnEnter(State _oldState, object[] _param) {
-				m_shutdownSensorTime = m_data.m_shutdownRange.GetRandom();
-				if (m_shutdownSensorTime > 0f) {
-					m_timer = m_shutdownSensorTime;
-				} else {
-					m_timer = 0f;
-				}
-			}
+            // The first element in _param must contain the amount of time without detecting an enemy
+            protected override void OnEnter(State _oldState, object[] _param) {
+                m_shutdownSensorTime = m_data.m_shutdownRange.GetRandom();
+                if (m_shutdownSensorTime > 0f) {
+                    m_timer = m_shutdownSensorTime;
+                } else {
+                    m_timer = 0f;
+                }
+            }
 
-			protected override void OnUpdate() {
-				if (m_timer > 0f) {
-					m_timer -= Time.deltaTime;
-				} else {
-					Vector3 centerPos = m_owner.transform.position;
+            protected override void OnUpdate() {
+                if (m_timer > 0f) {
+                    m_timer -= Time.deltaTime;
+                } else {
+                    Vector3 centerPos = m_owner.transform.position;
 
-					m_numCheckEntities = EntityManager.instance.GetOverlapingEntities( centerPos , m_range, m_checkEntities);
-					for (int e = 0; e < m_numCheckEntities; e++) 
-					{
-						Entity entity = m_checkEntities[e];
+                    m_numCheckEntities = EntityManager.instance.GetOverlapingEntities(centerPos, m_range, m_checkEntities);
+                    for (int e = 0; e < m_numCheckEntities; e++) {
+                        Entity entity = m_checkEntities[e];
                         if (!entity.HasTag(m_data.ignoreTag)) {
                             Machine machine = entity.machine as Machine;
                             if (machine != null && !machine.IsDying() && !machine.IsDead() && !machine.isPetTarget) {
@@ -128,9 +126,9 @@ namespace AI {
                                 }
                             }
                         }
-					}
-				}
-			}
-		}
-	}
+                    }
+                }
+            }
+        }
+    }
 }

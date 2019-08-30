@@ -163,7 +163,7 @@ public class AmbientHazard : MonoBehaviour, IBroadcastListener {
         Broadcaster.AddListener(BroadcastEventType.GAME_AREA_ENTER, this);
         Broadcaster.AddListener(BroadcastEventType.GAME_AREA_EXIT, this);
         Broadcaster.AddListener(BroadcastEventType.GAME_ENDED, this);
-        EntityManager.instance.RegisterAmbientHazard(this);
+        DecorationManager.instance.RegisterAmbientHazard(this);
     }
 
     /// <summary>
@@ -177,7 +177,7 @@ public class AmbientHazard : MonoBehaviour, IBroadcastListener {
         Broadcaster.RemoveListener(BroadcastEventType.GAME_ENDED, this);
 
         if ( EntityManager.instance != null )
-            EntityManager.instance.UnregisterAmbientHazard(this);
+            DecorationManager.instance.UnregisterAmbientHazard(this);
     }
 
     public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)

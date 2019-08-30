@@ -26,8 +26,8 @@ namespace AI
 		State m_current;
 		State m_previous;
 
-		Dictionary<State, Dictionary<string, State> > m_transitions = new Dictionary<State, Dictionary<string, State>>();
-		Dictionary<string, State> m_anyStateTransitions = new Dictionary<string, State>();
+		Dictionary<State, Dictionary<int, State> > m_transitions = new Dictionary<State, Dictionary<int, State>>();
+		Dictionary<int, State> m_anyStateTransitions = new Dictionary<int, State>();
 
 		State m_queuedTransition;
 		object[] m_transitionParam;
@@ -112,12 +112,12 @@ namespace AI
 			}
 	    }
 
-		public void Transition(string id, object[] param = null)
+		public void Transition(int id, object[] param = null)
 		{
 			Transition(id, m_current, param);
 		}
 
-		public void Transition(string id, State from, object[] param = null)
+		public void Transition(int id, State from, object[] param = null)
 		{
 			State to = null;
 			if(from != null && m_transitions.ContainsKey(from) && m_transitions[from].ContainsKey(id))
@@ -170,7 +170,7 @@ namespace AI
 			{
 				if(m_transitionData[i].from == -1)
 				{
-					m_anyStateTransitions.Add(m_transitionData[i].id, m_states[m_transitionData[i].to]);
+					m_anyStateTransitions.Add(UnityEngine.Animator.StringToHash(m_transitionData[i].id), m_states[m_transitionData[i].to]);
 				}
 				else
 				{
@@ -178,49 +178,15 @@ namespace AI
 					
 					if(!m_transitions.ContainsKey(from))
 					{
-						m_transitions.Add(from, new Dictionary<string, State>());
+						m_transitions.Add(from, new Dictionary<int, State>());
 					}
-					Dictionary<string, State> stateTrans = m_transitions[from];
+					Dictionary<int, State> stateTrans = m_transitions[from];
 
-					stateTrans.Add(m_transitionData[i].id, m_states[m_transitionData[i].to]);
+					stateTrans.Add(UnityEngine.Animator.StringToHash(m_transitionData[i].id), m_states[m_transitionData[i].to]);
 				}
 			}
 		}
-
-		public void OnSaveTransition()
-		{
-			int c = 0;
-			foreach(var kvp in m_transitions)
-			{
-				c += kvp.Value.Count;
-			}
-
-			m_transitionData = new TransitionData[c + m_anyStateTransitions.Count];
-
-			c = 0;
-			foreach(var kvp in m_transitions)
-			{
-				foreach(var kvp2 in kvp.Value)
-				{
-					TransitionData data = new TransitionData();
-					data.id = kvp2.Key;
-					data.from = Array.IndexOf(m_states, kvp.Key);
-					data.to = Array.IndexOf(m_states, kvp2.Value);
-
-					m_transitionData[c++] = data;
-				}
-			}
-			foreach(var kvp in m_anyStateTransitions)
-			{
-				TransitionData data = new TransitionData();
-				data.id = kvp.Key;
-				data.from = -1;
-				data.to = Array.IndexOf(m_states, kvp.Value);
-				
-				m_transitionData[c++] = data;
-			}
-		}
-
+        
 #if UNITY_EDITOR
 		public void OnGUI()
 		{

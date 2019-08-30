@@ -9,9 +9,9 @@ namespace AI {
 		public class PetUsingFreeRevive : StateComponent {
 
 			[StateTransitionTrigger]
-			public const string onFreeReviveDone = "onFreeReviveDone";
+            private static readonly int onFreeReviveDone = UnityEngine.Animator.StringToHash("onFreeReviveDone");
 
-			float m_timer;
+            float m_timer;
 			protected override void OnEnter(State _oldState, object[] _param)
 			{
 				// InstanceManager.player.ResetStats(true, DragonPlayer.ReviveReason.FREE_REVIVE_PET);	// do it on next update?

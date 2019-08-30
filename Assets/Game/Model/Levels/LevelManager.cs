@@ -58,8 +58,6 @@ public class LevelManager : Singleton<LevelManager> {
 		get { return m_currentLevelData; }
 	}
 
-	private static List<string> m_toSplitScenes = new List<string>();
-
     private static Dictionary<string, int> m_scenesLoaded = new Dictionary<string, int>();
 
 	//------------------------------------------------------------------//
@@ -115,12 +113,6 @@ public class LevelManager : Singleton<LevelManager> {
 		{
 			// Load new data
 			m_currentLevelData = GetLevelData(_sku);
-
-			m_toSplitScenes = m_currentLevelData.def.GetAsList<string>("split");
-		}
-		else
-		{
-			m_toSplitScenes.Clear();
 		}
 
 	}        
@@ -170,25 +162,8 @@ public class LevelManager : Singleton<LevelManager> {
         LevelLoader returnValue = new LevelLoader(null, _startingAreaName);
 
         // Common Scenes
-        List<string> commonScenes = def.GetAsList<string>("common");
-        for (int i = 0; i < commonScenes.Count; i++)
-        {
-            // TODO: Check if is splitted to use different name
-            string sceneName = GetRealSceneName(commonScenes[i]);
-            returnValue.AddRealSceneNameToLoad(sceneName);            
-        }
-
-        if (FeatureSettingsManager.IsWIPScenesEnabled)
-        {
-            List<string> gameplayWip = def.GetAsList<string>("gameplayWip");
-            for (int i = 0; i < gameplayWip.Count; i++)
-            {
-                // TODO: Check if is splitted to use different name
-                string sceneName = GetRealSceneName(gameplayWip[i]);
-                returnValue.AddRealSceneNameToLoad(sceneName);
-            }
-        }
-
+        List<string> commonScenes = GetCommonScenesList();
+        returnValue.AddRealSceneNameListToLoad(commonScenes);
 
         // Load area by dragon        
         m_currentArea = _startingAreaName;
@@ -270,35 +245,6 @@ public class LevelManager : Singleton<LevelManager> {
 		// #endif
 	}	        
 
-	private static string GetRealSceneName( string sceneName )
-	{
-		if (m_toSplitScenes.Contains( sceneName ))
-		{
-			switch( FeatureSettingsManager.instance.LevelsLOD )
-			{	
-				default:
-                case FeatureSettings.ELevel4Values.very_low:
-                {
-                    sceneName += "_verylow";
-                }
-                break;
-                case FeatureSettings.ELevel4Values.low:
-				{
-					sceneName += "_low";
-				}break;
-				case FeatureSettings.ELevel4Values.mid:
-				{
-					sceneName += "_medium";
-				}break;
-				case FeatureSettings.ELevel4Values.high:
-				{
-					sceneName += "_high";
-				}break;               
-            }
-		}
-		return sceneName;
-	}
-
     /// <summary>
     /// Returns a list with the name of the scenes belonging to the area passed as a parameter.
     /// </summary>    
@@ -317,6 +263,23 @@ public class LevelManager : Singleton<LevelManager> {
         m_currentArea = area;
         m_currentAreaScenes = def.GetAsList<string>(m_currentArea);
 
+        if ( SeasonManager.IsSeasonActive() )
+        {
+            List<string> seasonalAreas = def.GetAsList<string>(m_currentArea + "_seasonal");
+            if ( seasonalAreas.Count > 0 )
+                m_currentAreaScenes.AddRange( seasonalAreas );
+        }
+
+        // Scenes by quality level
+        string[] qualityLevels = {"_low", "_mid", "_high"};
+        int qualityIndex = (int)FeatureSettingsManager.instance.LevelsLOD;  // very_low to high
+        for( int i = 1; i<=qualityIndex; i++ )  // igore very_low, that's why we start on index 1
+        {
+            List<string> qualityScenes = def.GetAsList<string>(m_currentArea + qualityLevels[i-1]);
+            if ( qualityScenes.Count > 0 && !string.IsNullOrEmpty(qualityScenes[0]) )
+                m_currentAreaScenes.AddRange( qualityScenes );
+        }
+
         if (excludeScenes != null) {
             foreach (string scene in excludeScenes) {
                 m_currentAreaScenes.Remove(scene);
@@ -328,7 +291,7 @@ public class LevelManager : Singleton<LevelManager> {
         }
 
         for (int i = 0; i < m_currentAreaScenes.Count && !string.IsNullOrEmpty(m_currentAreaScenes[i]); i++) {
-            string sceneName = GetRealSceneName(m_currentAreaScenes[i]);
+            string sceneName = m_currentAreaScenes[i];
             returnValue.Add(sceneName);
         }
 
@@ -349,16 +312,29 @@ public class LevelManager : Singleton<LevelManager> {
         List<string> commonScenes = def.GetAsList<string>("common");
         for (int i = 0; i < commonScenes.Count; i++)
         {
-            string sceneName = GetRealSceneName(commonScenes[i]);
+            string sceneName = commonScenes[i];
             returnValue.Add(sceneName);
         }
+
+        /* NO SEASONAL AT THE MOMMENT
+        if ( SeasonManager.IsSeasonActive() )
+        {
+            // Load common seasonal scenes
+            List<string> common_seasonal = def.GetAsList<string>("common_seasonal");
+            for (int i = 0; i < common_seasonal.Count; i++)
+            {
+                string sceneName = common_seasonal[i];
+                returnValue.Add(sceneName);
+            }
+        }
+         */
 
 		if (FeatureSettingsManager.IsWIPScenesEnabled)
 		{
 			List<string> gameplayWip = def.GetAsList<string>("gameplayWip");
 			for (int i = 0; i < gameplayWip.Count; i++)
 	        {
-				string sceneName = GetRealSceneName(gameplayWip[i]);
+				string sceneName = gameplayWip[i];
 	            returnValue.Add(sceneName);
 	        }
 		}
@@ -370,13 +346,7 @@ public class LevelManager : Singleton<LevelManager> {
     {
         List<string> returnValue = GetCommonScenesList();
         List<string> onlyAreaScenes = GetOnlyAreaScenesList(area);
-
-        int count = onlyAreaScenes.Count;
-        for (int i = 0; i < count; i++)
-        {
-            returnValue.Add(onlyAreaScenes[i]);
-        }
-
+        returnValue.AddRange( onlyAreaScenes );
         return returnValue;
     }
 }
