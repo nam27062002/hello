@@ -771,6 +771,18 @@ namespace LevelEditor {
                     {
                         areaScenes.Clear();
                         areaScenes = def.GetAsList<string>("area" + areaIndex);
+							// Seasonal
+						List<string> seasonal = def.GetAsList<string>("area" + areaIndex + "_seasonal");
+						areaScenes.AddRange( seasonal );
+
+							// Scenes by quality level
+						string[] qualityLevels = {"_low", "_mid", "_high"};
+						for( int i = 0; i<qualityLevels.Length; i++ )
+						{
+							List<string> qualityScenes = def.GetAsList<string>("area" + areaIndex + qualityLevels[i]);
+							areaScenes.AddRange( qualityScenes );
+						}
+
                         _continue = false;
                         for (int i = 0; i < areaScenes.Count; i++)
                         {

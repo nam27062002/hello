@@ -52,13 +52,12 @@ namespace LevelEditor
         };
 
         List<TransformNode> m_nodeList = new List<TransformNode>();
+        int m_totalRenderers, m_totalOptimizedRenderers;
         int m_totalVertex, m_totalPolygons;
         int m_hierarchyLevel;
         NodeDensity[] m_nodeDensity = null;
 
         List<GameObject> m_missingRenderers = new List<GameObject>();
-
-        private Dictionary<string, Material> sceneMaterials = new Dictionary<string, Material>();
 
         public struct NodeDensity
         {
@@ -69,6 +68,7 @@ namespace LevelEditor
 
         void checkGameObjectHierarchy(TransformNode root, GameObject go)
         {
+            bool missingMesh = true;
             MeshFilter mFilter = go.GetComponent<MeshFilter>();
             if (mFilter != null)
             {
@@ -79,11 +79,29 @@ namespace LevelEditor
                     root.m_Childs.Add(node);
                     root = node;
                     m_nodeList.Add(node);
+                    missingMesh = false;
+                }
+            }
+
+            if (missingMesh)
+            {
+                SkinnedMeshRenderer smRend = go.GetComponent<SkinnedMeshRenderer>();
+                if (smRend != null)
+                {
+                    Mesh mesh = smRend.sharedMesh;
+                    if (mesh != null)
+                    {
+                        TransformNode node = new TransformNode(go.transform, mesh.vertexCount, mesh.triangles.Length / 3);
+                        root.m_Childs.Add(node);
+                        root = node;
+                        m_nodeList.Add(node);
+                        missingMesh = false;
+                    }
                 }
             }
 
             Renderer rend = go.GetComponent<Renderer>();
-            if (rend != null && (rend.sharedMaterial == null || mFilter == null || mFilter.sharedMesh == null))
+            if (rend != null && (rend.sharedMaterial == null || missingMesh))
             {
                 ParticleSystem ps = go.GetComponent<ParticleSystem>();
                 if (ps == null) //not a particle system
@@ -121,10 +139,14 @@ namespace LevelEditor
 
             m_totalVertex = 0;
             m_totalPolygons = 0;
+            m_totalRenderers = 0;
+            m_totalOptimizedRenderers = 0;
+
             foreach(TransformNode tn in m_nodeList)
             {
                 m_totalVertex += tn.m_vertex;
                 m_totalPolygons += tn.m_polygons;
+                m_totalRenderers++;
             }
 
             Debug.Log("Total transform nodes with mesh filter: " + m_nodeList.Count);
@@ -134,64 +156,63 @@ namespace LevelEditor
             m_hierarchyLevel = 1;
         }
 
+
         void optimizeRenderers(TransformNode root)
         {
             if (root.m_Node != null)
             {
-                MeshRenderer rend = root.m_Node.GetComponent<MeshRenderer>();
+                Renderer rend = root.m_Node.GetComponent<Renderer>();
                 if (rend != null)
                 {
-//                    rend.lightProbeUsage = UnityEngine.Rendering.LightProbeUsage.Off;
-//                    rend.motionVectorGenerationMode = MotionVectorGenerationMode.ForceNoMotion;
-                    if (rend.allowOcclusionWhenDynamic)
-                    {
-                        Debug.Log(rend.gameObject.name + ": allowOcclusionWhenDynamic = true ");
-                    }
-                    if (rend.reflectionProbeUsage != UnityEngine.Rendering.ReflectionProbeUsage.Off)
-                    {
-                        Debug.Log(rend.gameObject.name + ": reflectionProbeUsage = " + rend.reflectionProbeUsage.ToString());
-                    }
-//                    rend.reflectionProbeUsage = UnityEngine.Rendering.ReflectionProbeUsage.Off;
-//                    rend.allowOcclusionWhenDynamic = false;
-//                     EditorUtility.SetDirty(rend);
-
-
                     SerializedObject so = new SerializedObject(rend);
                     so.Update();
 
                     SerializedProperty sp;
 
+                    bool modified = false;
+
                     sp = so.FindProperty("m_DynamicOccludee");
-                    sp.boolValue = false;
-                    sp = so.FindProperty("m_MotionVectors");
-                    sp.enumValueIndex = (int)MotionVectorGenerationMode.ForceNoMotion;
-                    sp = so.FindProperty("m_LightProbeUsage");
-                    sp.intValue = (int)UnityEngine.Rendering.LightProbeUsage.Off;
-                    sp = so.FindProperty("m_ReflectionProbeUsage");
-                    sp.intValue = (int)UnityEngine.Rendering.ReflectionProbeUsage.Off;
-
-                    so.ApplyModifiedProperties();
-
-                    StaticEditorFlags staticFlags = GameObjectUtility.GetStaticEditorFlags(root.m_Node.gameObject);
-                    staticFlags |= StaticEditorFlags.BatchingStatic;
-                    GameObjectUtility.SetStaticEditorFlags(root.m_Node.gameObject, staticFlags);
-
-/*
-                    for (int c = 0; c < rend.sharedMaterials.Length; c++)
+                    if (sp.boolValue)
                     {
-                        Material mat = rend.sharedMaterials[c];
-                        if (sceneMaterials.ContainsKey(mat.name))
-                        {
-                            mat = sceneMaterials[mat.name];
-                        }
-                        else
-                        {
-                            sceneMaterials[mat.name] = mat;
-                        }
-                        rend.materials[c] = null;
-                        rend.sharedMaterials[c] = mat;
+                        sp.boolValue = false;
+                        modified = true;
+                    }
+
+                    sp = so.FindProperty("m_MotionVectors");
+                    if (sp.enumValueIndex != (int)MotionVectorGenerationMode.ForceNoMotion)
+                    {
+                        sp.enumValueIndex = (int)MotionVectorGenerationMode.ForceNoMotion;
+                        modified = true;
+                    }
+
+                    sp = so.FindProperty("m_LightProbeUsage");
+                    if (sp.intValue != (int)UnityEngine.Rendering.LightProbeUsage.Off)
+                    {
+                        sp.intValue = (int)UnityEngine.Rendering.LightProbeUsage.Off;
+                        modified = true;
+                    }
+
+                    sp = so.FindProperty("m_ReflectionProbeUsage");
+                    if (sp.intValue != (int)UnityEngine.Rendering.ReflectionProbeUsage.Off)
+                    {
+                        sp.intValue = (int)UnityEngine.Rendering.ReflectionProbeUsage.Off;
+                        modified = true;
+                    }
+/*
+                    StaticEditorFlags staticFlags = GameObjectUtility.GetStaticEditorFlags(root.m_Node.gameObject);
+                    if (((int)staticFlags & (int)StaticEditorFlags.BatchingStatic) == 0)
+                    {
+                        staticFlags |= StaticEditorFlags.BatchingStatic;
+                        GameObjectUtility.SetStaticEditorFlags(root.m_Node.gameObject, staticFlags);
+                        modified = true;
                     }
 */
+                    if (modified)
+                    {
+                        so.ApplyModifiedProperties();
+                        EditorSceneManager.MarkSceneDirty(root.m_Node.gameObject.scene);
+                        m_totalOptimizedRenderers++;
+                    }
                 }
             }
 
@@ -287,6 +308,7 @@ namespace LevelEditor
 
         Vector2 scrollPos = Vector2.zero;
         Vector2 scrollPos2 = Vector2.zero;
+
         /// <summary>
         /// Draw the section.
         /// </summary>
@@ -317,8 +339,9 @@ namespace LevelEditor
                 {
                     if (GUILayout.Button("Optimize renderers"))
                     {
-                        sceneMaterials.Clear();
+                        m_totalOptimizedRenderers = 0;
                         optimizeRenderers(m_nodeList[0]);
+/*
                         for (int i = 0; i < UnityEngine.SceneManagement.SceneManager.sceneCount; i++)
                         {
                             Scene s = UnityEngine.SceneManagement.SceneManager.GetSceneAt(i);
@@ -327,6 +350,7 @@ namespace LevelEditor
                                 EditorSceneManager.MarkSceneDirty(s);
                             }
                         }
+*/
                     }
 
                     GUI.backgroundColor = Colors.gray;
@@ -343,6 +367,10 @@ namespace LevelEditor
                         GUILayout.Label("Total transform nodes with mesh filter: " + m_nodeList.Count);
                         GUILayout.Label("Total vertex in scene: " + m_totalVertex);
                         GUILayout.Label("Total polygon in scene: " + m_totalPolygons);
+                        EditorGUILayout.Separator();
+                        GUILayout.Label("Total renderers: " + m_totalRenderers);
+                        GUILayout.Label("Optimized renderers: " + m_totalOptimizedRenderers);
+
                         EditorGUI.BeginChangeCheck();
                         m_hierarchyLevel = EditorGUILayout.IntField("Hierarchy level: ", m_hierarchyLevel);
                         if (EditorGUI.EndChangeCheck())
@@ -399,12 +427,13 @@ namespace LevelEditor
                                     }
                                     else
                                     {
+                                        EditorSceneManager.MarkSceneDirty(m_missingRenderers[c].scene);
                                         Object.DestroyImmediate(m_missingRenderers[c]);
                                     }
                                 }
 
                                 m_missingRenderers.Clear();
-
+/*
                                 for (int i = 0; i < UnityEngine.SceneManagement.SceneManager.sceneCount; i++)
                                 {
                                     Scene s = UnityEngine.SceneManagement.SceneManager.GetSceneAt(i);
@@ -413,7 +442,7 @@ namespace LevelEditor
                                         EditorSceneManager.MarkSceneDirty(s);
                                     }
                                 }
-
+*/
                             }
                             EditorGUILayout.Separator();
                             scrollPos2 = GUILayout.BeginScrollView(scrollPos2);
