@@ -283,6 +283,45 @@ public class DragonDataClassic : IDragonData {
 	}
 
 
+    /// <summary>
+	/// Checks whether the given dragon can be unlocked with PC.
+	/// </summary>
+	/// <returns>Whether the given dragon can be unlocked with PC.</returns>
+	/// <param name="_data">Dragon to evaluate.</param>
+	public override bool CheckUnlockWithPC()
+    {
+        // Check lock state
+        bool show = false;
+        switch (lockState)
+        {
+            case IDragonData.LockState.LOCKED:
+            case IDragonData.LockState.AVAILABLE:
+                {
+                    show = true;
+                }
+                break;
+
+            case IDragonData.LockState.LOCKED_UNAVAILABLE:
+                {
+                    show = HasPriceModifier(UserProfile.Currency.HARD);   // If there is a discount for this dragon, show even when unavailable
+                }
+                break;
+        }
+
+        return show;
+    }
+
+    /// <summary>
+    /// Checks whether the given dragon can be unlocked with SC.
+    /// </summary>
+    /// <returns>Whether the given dragon can be unlocRefreshCooldownTimersked with SC.</returns>
+    /// <param name="_data">Dragon to evaluate.</param>
+    public override bool CheckUnlockWithSC()
+    {
+        // [AOC] Discounts affect visibility?
+        return (lockState == IDragonData.LockState.AVAILABLE);
+    }
+
     //------------------------------------------------------------------------//
     // STATS METHODS														  //
     //------------------------------------------------------------------------//

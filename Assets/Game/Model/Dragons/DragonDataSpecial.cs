@@ -397,10 +397,49 @@ public class DragonDataSpecial : IDragonData {
 	}
 
 
+
     /// <summary>
-	/// Whether the dragon is unlockable using SC
-	/// </summary>
-	/// <returns>True if is unlockable</returns>
+    /// Checks whether the given dragon can be unlocked with PC.
+    /// </summary>
+    /// <returns>Whether the given dragon can be unlocked with PC.</returns>
+    /// <param name="_data">Dragon to evaluate.</param>
+    public override bool CheckUnlockWithPC()
+    {
+        // If owned, cannot be unlocked again
+        if (isOwned) return false;
+
+        // Check if the requirements for this dragon are met
+        bool availableViaHC = (IsAvailableViaHC() == true);
+
+        // If there is a discount for this dragon, show even when unavailable
+        bool isDiscounted = HasPriceModifier(UserProfile.Currency.HARD);
+
+        return availableViaHC || isDiscounted;
+    }
+
+
+    /// <summary>
+    /// Checks whether the given dragon can be unlocked with SC.
+    /// </summary>
+    /// <returns>Whether the given dragon can be unlocked with SC.</returns>
+    /// <param name="_data">Dragon to evaluate.</param>
+    public override bool CheckUnlockWithSC()
+    {
+        // If owned, cannot be unlocked again
+        if (isOwned) return false;
+
+        return (IsAvailableViaSC() == true);
+    }
+
+
+    //------------------------------------------------------------------------//
+    // OTHER METHODS														  //
+    //------------------------------------------------------------------------//
+
+    /// <summary>
+    /// Whether the dragon is unlockable using SC
+    /// </summary>
+    /// <returns>True if is unlockable</returns>
     public bool IsAvailableViaSC()
     {
         // If the previous dragon is maxed, then the dragon is available via SC
@@ -455,9 +494,6 @@ public class DragonDataSpecial : IDragonData {
 
     }
 
-    //------------------------------------------------------------------------//
-    // OTHER METHODS														  //
-    //------------------------------------------------------------------------//
     /// <summary>
     /// Get the data corresponding to a specific stat.
     /// </summary>

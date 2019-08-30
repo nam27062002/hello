@@ -93,8 +93,6 @@ public class DragonPowerUpgrader : MonoBehaviour {
             this.gameObject.SetActive(true);
         }
 
-        // Update visuals
-        Refresh(false);
     }
 
     /// <summary>
@@ -110,11 +108,11 @@ public class DragonPowerUpgrader : MonoBehaviour {
         // Hide button if the next upgrade doesn´t unlock a new power
         if (m_dragonData.IsUnlockingNewPower())
         {
-            m_showHide.Show(true);
+            m_showHide.Show(_animate);
         }
         else
         {
-            m_showHide.Hide(true);
+            m_showHide.Hide(false);
             return;
         }
 
