@@ -52,6 +52,7 @@ public class GoalsScreenController : MonoBehaviour {
 
 	HDQuestManager m_quest;
     HDLeagueController m_league;
+    HDSeasonData m_season;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -63,9 +64,10 @@ public class GoalsScreenController : MonoBehaviour {
 		// Initialize references
 		m_quest = HDLiveDataManager.quest;
         m_league = HDLiveDataManager.league;
+        m_season = HDLiveDataManager.league.season;
 
-		// Subscribe to external events.
-		Messenger.AddListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnTransitionStarted);
+        // Subscribe to external events.
+        Messenger.AddListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnTransitionStarted);
 
 		// Force a first refresh
 		if (InstanceManager.menuSceneController != null && InstanceManager.menuSceneController.transitionManager != null)
@@ -184,12 +186,25 @@ public class GoalsScreenController : MonoBehaviour {
         // League Timer - only if active
         if (m_leagueActiveGroup.activeSelf)
         {
-            /*
-            HDLeagueData league = m_league.GetLeagueData
-            HDLiveEventData evt = m_quest.data;
 
-            // Timer text
-            double remainingSeconds = System.Math.Max(0, evt.remainingTime.TotalSeconds);   // Never go negative!
+            double remainingSeconds = 0;
+            double durationSeconds = 1; // To avoid division by 0
+            if (m_season.state == HDSeasonData.State.TEASING)
+            {
+                remainingSeconds = m_season.timeToStart.TotalSeconds;
+                durationSeconds = m_season.durationTeasing.TotalSeconds;
+            }
+            else if (m_season.state == HDSeasonData.State.WAITING_RESULTS)
+            {
+                remainingSeconds = m_season.timeToResuts.TotalSeconds;
+                durationSeconds = m_season.durationWaitResults.TotalSeconds;
+            }
+            else
+            {
+                remainingSeconds = m_season.timeToEnd.TotalSeconds;
+                durationSeconds = m_season.durationWaitNewSeason.TotalSeconds;
+            }
+
             m_eventCountdownText.text = TimeUtils.FormatTime(
                 remainingSeconds,
                 TimeUtils.EFormat.ABBREVIATIONS_WITHOUT_0_VALUES,
@@ -197,15 +212,14 @@ public class GoalsScreenController : MonoBehaviour {
             );
 
             // Timer bar
-            TimeSpan totalSpan = evt.definition.m_endTimestamp - evt.definition.m_startTimestamp;
-            m_eventCountdownSlider.value = 1f - (float)(remainingSeconds / totalSpan.TotalSeconds);
+            m_eventCountdownSlider.value = 1f - (float)(remainingSeconds / durationSeconds);
 
             // If time has finished, request new data
             if (remainingSeconds <= 0)
             {
-                // GlobalEventManager.RequestCurrentEventState();
-                m_quest.UpdateStateFromTimers();
-            }*/
+                m_league = HDLiveDataManager.league;
+                m_season = m_league.season;
+            }
         }
     }
 
