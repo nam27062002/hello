@@ -33,11 +33,16 @@ public class GoalsScreenController : MonoBehaviour {
         LEAGUES
 	}
 
-	//------------------------------------------------------------------------//
-	// MEMBERS AND PROPERTIES												  //
-	//------------------------------------------------------------------------//
-	// Exposed
-	[SerializeField] private GameObject m_eventActiveGroup = null;
+    //------------------------------------------------------------------------//
+    // MEMBERS AND PROPERTIES												  //
+    //------------------------------------------------------------------------//
+    // Exposed
+    [SerializeField] private GameObject m_leagueActiveGroup = null;
+    [SerializeField] private GameObject m_leagueInactiveGroup = null;
+    [SerializeField] private TextMeshProUGUI m_leagueCountdownText = null;
+    [SerializeField] private Slider m_leagueCountdownSlider = null;
+    [Space]
+    [SerializeField] private GameObject m_eventActiveGroup = null;
 	[SerializeField] private GameObject m_eventInactiveGroup = null;
 	[SerializeField] private TextMeshProUGUI m_eventCountdownText = null;
 	[SerializeField] private Slider m_eventCountdownSlider = null;
@@ -46,6 +51,7 @@ public class GoalsScreenController : MonoBehaviour {
 	[SerializeField] private SelectableButtonGroup m_buttons = null;
 
 	HDQuestManager m_quest;
+    HDLeagueController m_league;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -56,6 +62,7 @@ public class GoalsScreenController : MonoBehaviour {
 	private void Awake() {
 		// Initialize references
 		m_quest = HDLiveDataManager.quest;
+        m_league = HDLiveDataManager.league;
 
 		// Subscribe to external events.
 		Messenger.AddListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnTransitionStarted);
@@ -78,7 +85,13 @@ public class GoalsScreenController : MonoBehaviour {
 		if(UsersManager.currentUser.gamesPlayed < GameSettings.ENABLE_QUESTS_AT_RUN) {
 			ExcludeButton(Buttons.GLOBAL_EVENTS);
 		}
-	}
+
+        // Quests
+        if (UsersManager.currentUser.gamesPlayed < GameSettings.ENABLE_LEAGUES_AT_RUN)
+        {
+            ExcludeButton(Buttons.LEAGUES);
+        }
+    }
 
 	/// <summary>
 	/// First update call.
@@ -115,24 +128,31 @@ public class GoalsScreenController : MonoBehaviour {
 		// GlobalEvent evt = GlobalEventManager.currentEvent;
 		// bool eventAvailable = evt != null && evt.isActive;
 		bool eventAvailable = m_quest.EventExists() && m_quest.IsRunning();
+        bool leagueAvailable = m_league.isActive;
 
 		// Consider tutorial as well!
 		eventAvailable &= UsersManager.currentUser.gamesPlayed >= GameSettings.ENABLE_QUESTS_AT_RUN;
+        leagueAvailable &= UsersManager.currentUser.gamesPlayed >= GameSettings.ENABLE_LEAGUES_AT_RUN;
 
 		// Does it actually change?
 		bool dirty = false;
 		dirty |= m_eventActiveGroup.activeSelf != eventAvailable;
 		dirty |= m_eventInactiveGroup.activeSelf != !eventAvailable;
+        dirty |= m_leagueActiveGroup.activeSelf != leagueAvailable;
+        dirty |= m_leagueInactiveGroup.activeSelf != !leagueAvailable;
 
-		// Apply
-		if(dirty) {
+        // Apply
+        if (dirty) {
 			m_eventActiveGroup.SetActive(eventAvailable);
 			m_eventInactiveGroup.SetActive(!eventAvailable);
 
-			// [AOC] Enabling/disabling objects while the layout is inactive makes the layout to not update properly
-			//		 Luckily for us Unity provides us with the right tools to rebuild it
-			//		 Fixes issue https://mdc-tomcat-jira100.ubisoft.org/jira/browse/HDK-690
-			if(m_buttonsLayout != null) {
+            m_leagueActiveGroup.SetActive(leagueAvailable);
+            m_leagueInactiveGroup.SetActive(!leagueAvailable);
+
+            // [AOC] Enabling/disabling objects while the layout is inactive makes the layout to not update properly
+            //		 Luckily for us Unity provides us with the right tools to rebuild it
+            //		 Fixes issue https://mdc-tomcat-jira100.ubisoft.org/jira/browse/HDK-690
+            if (m_buttonsLayout != null) {
 				LayoutRebuilder.ForceRebuildLayoutImmediate(m_buttonsLayout.transform as RectTransform);
 			}
 		}
@@ -160,7 +180,34 @@ public class GoalsScreenController : MonoBehaviour {
 				m_quest.UpdateStateFromTimers();
 			}
 		}
-	}
+
+        // League Timer - only if active
+        if (m_leagueActiveGroup.activeSelf)
+        {
+            /*
+            HDLeagueData league = m_league.GetLeagueData
+            HDLiveEventData evt = m_quest.data;
+
+            // Timer text
+            double remainingSeconds = System.Math.Max(0, evt.remainingTime.TotalSeconds);   // Never go negative!
+            m_eventCountdownText.text = TimeUtils.FormatTime(
+                remainingSeconds,
+                TimeUtils.EFormat.ABBREVIATIONS_WITHOUT_0_VALUES,
+                2
+            );
+
+            // Timer bar
+            TimeSpan totalSpan = evt.definition.m_endTimestamp - evt.definition.m_startTimestamp;
+            m_eventCountdownSlider.value = 1f - (float)(remainingSeconds / totalSpan.TotalSeconds);
+
+            // If time has finished, request new data
+            if (remainingSeconds <= 0)
+            {
+                // GlobalEventManager.RequestCurrentEventState();
+                m_quest.UpdateStateFromTimers();
+            }*/
+        }
+    }
 
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //
