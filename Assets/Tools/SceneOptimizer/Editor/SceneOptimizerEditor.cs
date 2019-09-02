@@ -6,6 +6,7 @@ using System.Collections.Generic;
 public static class SceneOptimizerEditor {
     
     public static void BatchOptimization() {
+        Dictionary<AssetImporter, string> srcDestFiles = new Dictionary<AssetImporter, string>();
         Stack<DirectoryInfo> directories = new Stack<DirectoryInfo>();
         directories.Push(new DirectoryInfo("Assets/Game/Scenes/Levels/"));
 
@@ -31,15 +32,27 @@ public static class SceneOptimizerEditor {
 
                         string dstPath = srcPath.Replace(".unity", "_OPT.unity");
                         UnityEditor.SceneManagement.EditorSceneManager.SaveScene(scene, dstPath);
+                        AssetDatabase.ImportAsset(dstPath);
 
-                        string dstFilePath = dstPath.Substring(dstPath.IndexOf(assetsToken, System.StringComparison.Ordinal));
-                        AssetImporter dstAI = AssetImporter.GetAtPath(dstFilePath);
+                        //srcDestFiles.Add(srcAI, dstPath.Substring(dstPath.IndexOf(assetsToken, System.StringComparison.Ordinal)));
+
+                        AssetImporter dstAI = AssetImporter.GetAtPath(dstPath.Substring(dstPath.IndexOf(assetsToken, System.StringComparison.Ordinal)));
                         dstAI.assetBundleName = srcAI.assetBundleName;
                         srcAI.assetBundleName = "";
                     }
                 }
             }
         }
+                
+        AssetDatabase.SaveAssets();
+        /*
+        foreach (KeyValuePair<AssetImporter, string> pair in srcDestFiles) {
+            AssetImporter dstAI = AssetImporter.GetAtPath(pair.Value);
+            dstAI.assetBundleName = pair.Key.assetBundleName;
+            pair.Key.assetBundleName = "";
+        }*/
+
+        AssetDatabase.SaveAssets();
     }
 
     private static void DoOptimize(UnityEngine.SceneManagement.Scene _scene) {
