@@ -359,10 +359,10 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         GameStoreManager.SharedInstance.Update();
         UnityEngine.Profiling.Profiler.EndSample();
 
-        UnityEngine.Profiling.Profiler.BeginSample("GameStoreManager.Update()");
+        UnityEngine.Profiling.Profiler.BeginSample("ChestManager.Update()");
         ChestManager.instance.Update();
 
-        UnityEngine.Profiling.Profiler.BeginSample("GameStoreManager.Update()");
+        UnityEngine.Profiling.Profiler.BeginSample("OffersManager.Update()");
         OffersManager.instance.Update();
         #if UNITY_IOS
         HDNotificationsManager.instance.Update();
@@ -402,7 +402,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
             FlowManager.Restart();
         }        
 
-        UnityEngine.Profiling.Profiler.BeginSample("GameStoreManager.Update()");
+        UnityEngine.Profiling.Profiler.BeginSample("Debug.Update()");
         if (FeatureSettingsManager.IsDebugEnabled)
         {
             // Boss camera effect cheat to be able to enable/disable anywhere. We want to be able to check the impact in performance of the effect so we want to have
