@@ -95,26 +95,25 @@ public class GoalsScreenController : MonoBehaviour {
         }
     }
 
-	/// <summary>
-	/// First update call.
-	/// </summary>
-	private void Start() {
-		// Program a periodic update
-		InvokeRepeating("UpdatePeriodic", 0f, COUNTDOWN_UPDATE_INTERVAL);
-	}
+
 
 	/// <summary>
 	/// Component has been enabled.
 	/// </summary>
 	private void OnEnable() {
-		// Make sure timers will be updated
-		UpdatePeriodic();
-	}
+        // Program a periodic update
+        InvokeRepeating("UpdatePeriodic", 0f, COUNTDOWN_UPDATE_INTERVAL);
+    }
 
-	/// <summary>
-	/// Default destructor.
-	/// </summary>
-	private void OnDestroy() {
+    private void OnDisable()
+    {
+        CancelInvoke("UpdatePeriodic");
+    }
+
+    /// <summary>
+    /// Default destructor.
+    /// </summary>
+    private void OnDestroy() {
 		// Unsubscribe from external events.
 		Messenger.RemoveListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnTransitionStarted);
 	}
@@ -130,26 +129,38 @@ public class GoalsScreenController : MonoBehaviour {
 		// GlobalEvent evt = GlobalEventManager.currentEvent;
 		// bool eventAvailable = evt != null && evt.isActive;
 		bool eventAvailable = m_quest.EventExists() && m_quest.IsRunning();
-        bool leagueAvailable = m_league.isActive;
 
-		// Consider tutorial as well!
-		eventAvailable &= UsersManager.currentUser.gamesPlayed >= GameSettings.ENABLE_QUESTS_AT_RUN;
-        leagueAvailable &= UsersManager.currentUser.gamesPlayed >= GameSettings.ENABLE_LEAGUES_AT_RUN;
+
+        // Leagues: Refresh visible season button based on season state
+        bool seasonAvailable = m_season.IsRunning();    // Joined or Not Joined
+        double seasonRemainingSeconds = 0;
+        if (seasonAvailable)
+        {
+            // The season might seem available event when the timer has finished because the UpdateState() hasn't been called yet
+            // Consider it as not available in that case
+            seasonRemainingSeconds = m_season.timeToClose.TotalSeconds;
+            seasonAvailable &= (seasonRemainingSeconds > 0);
+        }
+
+
+        // Consider tutorial as well!
+        eventAvailable &= UsersManager.currentUser.gamesPlayed >= GameSettings.ENABLE_QUESTS_AT_RUN;
+        seasonAvailable &= UsersManager.currentUser.gamesPlayed >= GameSettings.ENABLE_LEAGUES_AT_RUN;
 
 		// Does it actually change?
 		bool dirty = false;
 		dirty |= m_eventActiveGroup.activeSelf != eventAvailable;
 		dirty |= m_eventInactiveGroup.activeSelf != !eventAvailable;
-        dirty |= m_leagueActiveGroup.activeSelf != leagueAvailable;
-        dirty |= m_leagueInactiveGroup.activeSelf != !leagueAvailable;
+        dirty |= m_leagueActiveGroup.activeSelf != seasonAvailable;
+        dirty |= m_leagueInactiveGroup.activeSelf != !seasonAvailable;
 
         // Apply
         if (dirty) {
 			m_eventActiveGroup.SetActive(eventAvailable);
 			m_eventInactiveGroup.SetActive(!eventAvailable);
 
-            m_leagueActiveGroup.SetActive(leagueAvailable);
-            m_leagueInactiveGroup.SetActive(!leagueAvailable);
+            m_leagueActiveGroup.SetActive(seasonAvailable);
+            m_leagueInactiveGroup.SetActive(!seasonAvailable);
 
             // [AOC] Enabling/disabling objects while the layout is inactive makes the layout to not update properly
             //		 Luckily for us Unity provides us with the right tools to rebuild it
@@ -183,43 +194,19 @@ public class GoalsScreenController : MonoBehaviour {
 			}
 		}
 
-        // League Timer - only if active
-        if (m_leagueActiveGroup.activeSelf)
+        // League Timer - season is running
+        if (m_leagueActiveGroup.activeSelf )
         {
+            double durationSeconds = Math.Max (1, m_season.duration.TotalSeconds); // To avoid division by 0
 
-            double remainingSeconds = 0;
-            double durationSeconds = 1; // To avoid division by 0
-            if (m_season.state == HDSeasonData.State.TEASING)
-            {
-                remainingSeconds = m_season.timeToStart.TotalSeconds;
-                durationSeconds = m_season.durationTeasing.TotalSeconds;
-            }
-            else if (m_season.state == HDSeasonData.State.WAITING_RESULTS)
-            {
-                remainingSeconds = m_season.timeToResuts.TotalSeconds;
-                durationSeconds = m_season.durationWaitResults.TotalSeconds;
-            }
-            else
-            {
-                remainingSeconds = m_season.timeToEnd.TotalSeconds;
-                durationSeconds = m_season.durationWaitNewSeason.TotalSeconds;
-            }
-
-            m_eventCountdownText.text = TimeUtils.FormatTime(
-                remainingSeconds,
-                TimeUtils.EFormat.ABBREVIATIONS_WITHOUT_0_VALUES,
+            m_leagueCountdownText.text = TimeUtils.FormatTime(
+            seasonRemainingSeconds,
+            TimeUtils.EFormat.ABBREVIATIONS_WITHOUT_0_VALUES,
                 2
             );
 
             // Timer bar
-            m_eventCountdownSlider.value = 1f - (float)(remainingSeconds / durationSeconds);
-
-            // If time has finished, request new data
-            if (remainingSeconds <= 0)
-            {
-                m_league = HDLiveDataManager.league;
-                m_season = m_league.season;
-            }
+            m_leagueCountdownSlider.value = 1f - (float)(seasonRemainingSeconds / durationSeconds);
         }
     }
 
