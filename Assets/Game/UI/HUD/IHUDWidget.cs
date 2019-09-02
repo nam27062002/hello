@@ -60,7 +60,7 @@ public abstract class IHUDWidget : MonoBehaviour {
 	/// </summary>
 	protected virtual void OnEnable() {
 		// Self-register to the manager
-		InstanceManager.hudManager.AddWidget(this);
+		InstanceManager.gameSceneControllerBase.hudManager.AddWidget(this);
 	}
 
 	/// <summary>
@@ -68,6 +68,6 @@ public abstract class IHUDWidget : MonoBehaviour {
 	/// </summary>
 	protected virtual void OnDisable() {
 		// Self-unregister to the manager
-		InstanceManager.hudManager.RemoveWidget(this);
+		InstanceManager.gameSceneControllerBase.hudManager.RemoveWidget(this);
 	}
 }

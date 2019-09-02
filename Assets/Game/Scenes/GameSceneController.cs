@@ -214,7 +214,10 @@ public class GameSceneController : GameSceneControllerBase {
 	/// <summary>
 	/// Called every frame.
 	/// </summary>
-	private void Update() {
+	protected override void Update() {
+		// Call parent
+		base.Update();
+
 		// Skip if paused
 		if(m_paused) return;        
 
