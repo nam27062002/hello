@@ -33,10 +33,10 @@ public class SpecialDragonBar : MonoBehaviour {
 
     private List<SpecialDragonBarElement> m_sortedElements = new List<SpecialDragonBarElement>();
 
-    private int m_maxLevel;
+    private int m_maxLevel; // At this moment, maximum level is 33
     private int[] m_levelSkill;
     private int[] m_levelTier;
-    private int m_currentLevel;
+    private int m_currentLevel; // Initial level is 0
     private int[] m_unlockClassicTier;
     private int m_maxTierUnlocked;
 
@@ -324,12 +324,20 @@ public class SpecialDragonBar : MonoBehaviour {
         // Refresh visuals
         if (m_levelText != null)
         {
-            int level = m_currentLevel; //Mathf.Min(m_currentLevel, m_maxLevel - 1);	// Cap level?
-            m_levelText.Localize(
-                m_levelText.tid,
-                StringUtils.FormatNumber(level),
-                StringUtils.FormatNumber(m_maxLevel)        // If using "Level 14" format, this parameter will just be ignored
-            );
+            int level = Mathf.Min(m_currentLevel, m_maxLevel);	// Cap level?
+            if (level < m_maxLevel)
+            {
+                m_levelText.Localize(
+                    "TID_LEVEL",
+                    StringUtils.FormatNumber(level),
+                    StringUtils.FormatNumber(m_maxLevel)        // If using "Level 14" format, this parameter will just be ignored
+                );
+            }
+            else
+            {
+                // If the dragon reached the maximum level show "MAX level" instead of the number
+                m_levelText.Localize("MAX_LEVEL_TID");
+            }
         }
     }
 
