@@ -14,10 +14,10 @@ namespace AI {
 		public class Wander : StateComponent {
 
 			[StateTransitionTrigger]
-			private static string OnRest = "onRest";
+			private static readonly int onRest = UnityEngine.Animator.StringToHash("onRest");
 
 
-			private WanderData m_data;
+            private WanderData m_data;
 
 			private Vector3 m_target;
 
@@ -55,7 +55,7 @@ namespace AI {
 
 				if (m_timer <= 0f || dsqr < deltaDSqr) {
 					if (m_goToIdle) {
-						Transition(OnRest);
+						Transition(onRest);
 					} else {
 						m_goToIdle = Random.Range(0f, 1f) < m_data.idleChance; // it will stop at next target
 						m_pilot.SlowDown(m_data.alwaysSlowdown || m_goToIdle);

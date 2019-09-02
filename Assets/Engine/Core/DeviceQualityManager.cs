@@ -4,11 +4,16 @@
 // Created by David Germade
 // Copyright (c) 2016 Ubisoft. All rights reserved.
 
+#if DEBUG && !DISABLE_LOGS
+#define ENABLE_LOGS
+#endif
+
 //----------------------------------------------------------------------------//
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
 using SimpleJSON;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -161,11 +166,8 @@ public class DeviceQualityManager
     public string Profiles_RatingToProfileName(float rating, int memorySize, int gfxMemorySize)
     {
         if (memorySize < Profiles_MinMemory)
-        {
-            if (FeatureSettingsManager.IsDebugEnabled)
-            {
-                LogWarning("memory Size " + memorySize + " is lower than the minimum memory required by the game (" + Profiles_MinMemory + ")");
-            }
+        {            
+            LogWarning("memory Size " + memorySize + " is lower than the minimum memory required by the game (" + Profiles_MinMemory + ")");         
 
             // Memory size is forced to min memory. Some devices have a few bytes less than 1GB so we try our luck
             memorySize = 1024;
@@ -198,7 +200,7 @@ public class DeviceQualityManager
             }
         }
 
-        if (returnValue == null && FeatureSettingsManager.IsDebugEnabled)
+        if (returnValue == null)
         {
             LogWarning("No profile available");
         }
@@ -214,7 +216,7 @@ public class DeviceQualityManager
             returnValue = Profiles_Data[profileName].Rating;            
         }
 
-        if (returnValue < 0f && FeatureSettingsManager.IsDebugEnabled)
+        if (returnValue < 0f)
         {
             LogWarning("No profile " + profileName + " found");
         }
@@ -246,13 +248,11 @@ public class DeviceQualityManager
         if (returnValue == -1)
         {
             // The minimum is returned
-            returnValue = 0;
-
-            if (FeatureSettingsManager.IsDebugEnabled)
-                LogWarning("No profile available for memory " + memorySize);
+            returnValue = 0;            
+            LogWarning("No profile available for memory " + memorySize);
         }
 
-		Debug.Log (">>>>>>>>GetMaxProfileLevel: " + returnValue);
+	    Log (">>>>>>>>GetMaxProfileLevel: " + returnValue);
 
         return returnValue;
     }     
@@ -283,10 +283,8 @@ public class DeviceQualityManager
 
         if (returnValue == int.MaxValue)
         {
-            returnValue = 0;
-
-            if (FeatureSettingsManager.IsDebugEnabled)
-                LogWarning("No memory data loaded");
+            returnValue = 0;            
+            LogWarning("No memory data loaded");
         }
 
         return returnValue;
@@ -310,16 +308,31 @@ public class DeviceQualityManager
     #region log
     private const string PREFIX = "DeviceQualityManager:";
 
+#if ENABLE_LOGS
+    [Conditional("DEBUG")]
+#else
+    [Conditional("FALSE")]
+#endif
     public static void Log(string message)
     {
         Debug.Log(PREFIX + message);
     }
 
+#if ENABLE_LOGS
+    [Conditional("DEBUG")]
+#else
+    [Conditional("FALSE")]
+#endif
     public static void LogWarning(string message)
     {
         Debug.LogWarning(PREFIX + message);
     }
 
+#if ENABLE_LOGS
+    [Conditional("DEBUG")]
+#else
+    [Conditional("FALSE")]
+#endif
     public static void LogError(string message)
     {
         Debug.LogError(PREFIX + message);

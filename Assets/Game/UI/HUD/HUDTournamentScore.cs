@@ -18,7 +18,7 @@ using TMPro;
 /// <summary>
 /// Simple controller for a time counter in the hud.
 /// </summary>
-public class HUDTournamentScore : HudWidget {
+public class HUDTournamentScore : IHUDCounter {
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
@@ -75,8 +75,8 @@ public class HUDTournamentScore : HudWidget {
 	/// <summary>
 	/// Called every frame.
 	/// </summary>
-	override protected void Update() {
-		base.Update();
+	public override void PeriodicUpdate() {
+		base.PeriodicUpdate();
 		UpdateScore();
 	}
 

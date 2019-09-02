@@ -1,6 +1,11 @@
-﻿using SimpleJSON;
+﻿#if DEBUG && !DISABLE_LOGS
+#define ENABLE_LOGS
+#endif
+
+using SimpleJSON;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using UnityEngine;
 
 /// <summary>
@@ -32,17 +37,17 @@ public class TransactionManager : UbiBCN.SingletonMonoBehaviour<TransactionManag
                 Pending_ForceRequestTransactions();
             }            
         }
-#endif    
+#endif
     }
 
-    #region factory
+#region factory
     private Transaction Factory_GetTransaction()
     {
         return new Transaction();        
     }
-    #endregion
+#endregion
 
-    #region pending
+#region pending
     /// This region is responsible for handling pending transactions, which are transactions received from server that are pending to be applied to the user's profile. 
     /// These pending transactions could have different sources but for now they all come from customer support.    
     
@@ -138,9 +143,8 @@ public class TransactionManager : UbiBCN.SingletonMonoBehaviour<TransactionManag
     }
 
     private void Pending_RequestTransactions()
-    {
-        if (FeatureSettingsManager.IsDebugEnabled)
-            Log("Requesting pending transactions...");
+    {        
+        Log("Requesting pending transactions...");
 
         GameServerManager.SharedInstance.GetPendingTransactions(Pending_OnTransactionsResponse);        
         Pending_SetState(EState.WaitingForResponse);
@@ -153,14 +157,12 @@ public class TransactionManager : UbiBCN.SingletonMonoBehaviour<TransactionManag
         {
             m_pendingTransactions.Clear();
         }
-
-        if (FeatureSettingsManager.IsDebugEnabled)
-            Log("OnPendingTransactionResponse: " + ((response == null) ? " no response" : response.ToString()));
+        
+        Log("OnPendingTransactionResponse: " + ((response == null) ? " no response" : response.ToString()));
 
         if (error == null && response != null)
-        {            
-            if (FeatureSettingsManager.IsDebugEnabled)
-                Log("OnPendingTransactionResponse: " + response.ToString());
+        {                        
+            Log("OnPendingTransactionResponse: " + response.ToString());
 
             if (response.ContainsKey("response"))
             {
@@ -191,7 +193,7 @@ public class TransactionManager : UbiBCN.SingletonMonoBehaviour<TransactionManag
                                     {
                                         Pending_AddTransaction(transaction);                                        
                                     }
-                                    else if (FeatureSettingsManager.IsDebugEnabled)
+                                    else 
                                     {
                                         LogError("Transaction " + transactionNode.ToString() + " received from the server is not supported by the client so it's ignored");
                                     }
@@ -203,9 +205,8 @@ public class TransactionManager : UbiBCN.SingletonMonoBehaviour<TransactionManag
             }
         }
         else
-        {
-            if (FeatureSettingsManager.IsDebugEnabled)
-                LogWarning("Error when requesting pending transactions " + error.ToString());
+        {            
+            LogWarning("Error when requesting pending transactions " + error.ToString());
         }
 
         if (Pending_IsEmpty())
@@ -312,9 +313,8 @@ public class TransactionManager : UbiBCN.SingletonMonoBehaviour<TransactionManag
         {
             // Makes sure that the transaction hasn't already been given            
             if (Given_ContainsTransactionId(transaction.GetId()))
-            {
-				if (FeatureSettingsManager.IsDebugEnabled)
-					Log("Transaction with id " + transaction.GetId () + " is not performed because it had already been performed");
+            {				
+			    Log("Transaction with id " + transaction.GetId () + " is not performed because it had already been performed");
 				
                 Given_RemoveTransactionId(transaction.GetId());
             }
@@ -376,9 +376,9 @@ public class TransactionManager : UbiBCN.SingletonMonoBehaviour<TransactionManag
                }
          }
     }
-    #endregion
+#endregion
 
-    #region given
+#region given
     // This region is responsible for storing the transactions already given. These transactions are stored to prevent a pending transaction from being given more than once. In particular when
     // the user purchases something in the shop the reward is given as soon as the purchase is verified by the server, but if the flow gets interrupted then the user will get the reward through
     // a pending transaction. This given system is designed to prevent a user from getting the direct reward and the one because of a pending transaction (https://mdc-tomcat-jira100.ubisoft.org/jira/browse/HDK-3888)
@@ -399,9 +399,8 @@ public class TransactionManager : UbiBCN.SingletonMonoBehaviour<TransactionManag
         if (UsersManager.currentUser != null)
         {
             string raw = UsersManager.currentUser.GivenTransactions;
-
-			if (FeatureSettingsManager.IsDebugEnabled)
-				Log("GIVEN load raw: " + raw);
+			
+    		Log("GIVEN load raw: " + raw);
 			
             if (!string.IsNullOrEmpty(raw))
             {
@@ -434,10 +433,8 @@ public class TransactionManager : UbiBCN.SingletonMonoBehaviour<TransactionManag
                 Given_TransactionIds.Add(transactionId, true);
 
                 if (save)
-                {
-					if (FeatureSettingsManager.IsDebugEnabled)
-						Log("Transaction with id " + transactionId + " added to GIVEN");
-					
+                {					
+					Log("Transaction with id " + transactionId + " added to GIVEN");					
                     Given_Save();
                 }
             }
@@ -449,9 +446,8 @@ public class TransactionManager : UbiBCN.SingletonMonoBehaviour<TransactionManag
         if (!string.IsNullOrEmpty(transactionId))
         {
             if (Given_TransactionIds != null && Given_TransactionIds.ContainsKey(transactionId))
-            {
-				if (FeatureSettingsManager.IsDebugEnabled)
-					Log ("Transaction with id " + transactionId + " removed from GIVEN");
+            {				
+				Log ("Transaction with id " + transactionId + " removed from GIVEN");
 				
                 Given_TransactionIds.Remove(transactionId);
                 Given_Save();
@@ -489,17 +485,22 @@ public class TransactionManager : UbiBCN.SingletonMonoBehaviour<TransactionManag
         if (UsersManager.currentUser != null)
         {
             UsersManager.currentUser.GivenTransactions = Given_TransactionIdsAsString();
-
-			if (FeatureSettingsManager.IsDebugEnabled)
-				Log ("GIVEN transactions: " + UsersManager.currentUser.GivenTransactions + " saved");
+			
+			Log ("GIVEN transactions: " + UsersManager.currentUser.GivenTransactions + " saved");
 			
             PersistenceFacade.instance.Save_Request(false);
         }
     }
-    #endregion
+#endregion
 
-    #region log
+#region log
     private const string LOG_CHANNEL = "[TransactionsManager] ";
+
+#if ENABLE_LOGS
+    [Conditional("DEBUG")]
+#else
+    [Conditional("FALSE")]
+#endif
     public static void Log(string msg)
     {
         msg = LOG_CHANNEL + msg;
@@ -514,20 +515,30 @@ public class TransactionManager : UbiBCN.SingletonMonoBehaviour<TransactionManag
         Debug.Log(msg);
     }
 
+#if ENABLE_LOGS
+    [Conditional("DEBUG")]
+#else
+    [Conditional("FALSE")]
+#endif
     public static void LogWarning(string msg)
     {
         msg = LOG_CHANNEL + msg;
         Debug.LogWarning(msg);
     }
 
+#if ENABLE_LOGS
+    [Conditional("DEBUG")]
+#else
+    [Conditional("FALSE")]
+#endif
     public static void LogError(string msg)
     {
         msg = LOG_CHANNEL + msg;
         Debug.LogError(msg);
     }
-    #endregion
+#endregion
 
-    #region debug
+#region debug
     private const bool DEBUG_ENABLED = false;
     private void Debug_TestTransaction()
     {
@@ -545,5 +556,5 @@ public class TransactionManager : UbiBCN.SingletonMonoBehaviour<TransactionManag
         Log("Transaction again " + json.ToString() + " isValid = " + isValid);
         transaction.Perform(Transaction.EPerformType.Direct);        
     }   
-    #endregion
+#endregion
 }

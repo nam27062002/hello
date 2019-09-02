@@ -1,6 +1,11 @@
-﻿using System;
+﻿#if DEBUG && !DISABLE_LOGS
+#define ENABLE_LOGS
+#endif
+
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using UnityEngine;
 public abstract class SocialUtils
@@ -110,10 +115,8 @@ public abstract class SocialUtils
             string path = PROFILE_IMAGE_STORAGE_PATH;
             if (File.Exists(path))
             {
-                FileUtils.RemoveFileInDeviceStorage(path, CaletyConstants.DESKTOP_DEVICE_STORAGE_PATH_SIMULATED);                
-
-                if (FeatureSettingsManager.IsDebugEnabled)
-                    Log("Profile image deleted from " + path);
+                FileUtils.RemoveFileInDeviceStorage(path, CaletyConstants.DESKTOP_DEVICE_STORAGE_PATH_SIMULATED);                                
+                Log("Profile image deleted from " + path);
             }
         }              
         #endregion
@@ -355,7 +358,7 @@ public abstract class SocialUtils
     public void Profile_GetSimpleInfo(Action<string, Texture2D> onDone)
     {
         // Only one request should be processed
-        if (Profile_OnGetInfoDone != null && FeatureSettingsManager.IsDebugEnabled)
+        if (Profile_OnGetInfoDone != null)
             LogWarning("Only one Profile_GetInfo can be requested simmultaneously");
 
         Profile_OnGetInfoDone = onDone;
@@ -385,9 +388,8 @@ public abstract class SocialUtils
         if (IsLoggedIn())
         {
             string socialId = GetSocialID();
-
-            if (FeatureSettingsManager.IsDebugEnabled)
-                Log("Profile_LoadInfo socialId = " + socialId + " Cache.SocialId = " + Cache.SocialId);
+            
+            Log("Profile_LoadInfo socialId = " + socialId + " Cache.SocialId = " + Cache.SocialId);
 
             if (socialId != Cache.SocialId)
             {
@@ -467,9 +469,8 @@ public abstract class SocialUtils
     private void Profile_Update()
     {
         if (m_profileUpdateInfoFromPlatformReady)
-        {
-            if (FeatureSettingsManager.IsDebugEnabled)
-                Log("Profile_Update name = " + m_profileNameFromPlatform + " m_profileNeedsToReloadInfo = " + m_profileNeedsToReloadInfo);
+        {            
+            Log("Profile_Update name = " + m_profileNameFromPlatform + " m_profileNeedsToReloadInfo = " + m_profileNeedsToReloadInfo);
 
             m_profileUpdateInfoFromPlatformReady = false;
 
@@ -501,6 +502,11 @@ public abstract class SocialUtils
     private static string LOG_CHANNEL = "[SocialUtils] ";
     private static string LOG_CHANNEL_COLOR = "<color=cyan>" + LOG_CHANNEL;
 
+    #if ENABLE_LOGS
+    [Conditional("DEBUG")]
+    #else
+    [Conditional("FALSE")]
+    #endif
     public static void Log(string msg)
     {
         if (LOG_USE_COLOR)
@@ -515,11 +521,21 @@ public abstract class SocialUtils
         Debug.Log(msg);        
     }
 
+    #if ENABLE_LOGS
+    [Conditional("DEBUG")]
+    #else
+    [Conditional("FALSE")]
+    #endif
     public static void LogWarning(string msg)
     {
         Debug.LogWarning(LOG_CHANNEL + msg);
     }
 
+    #if ENABLE_LOGS
+    [Conditional("DEBUG")]
+    #else
+    [Conditional("FALSE")]
+    #endif
     public static void LogError(string msg)
     {
         Debug.LogError(LOG_CHANNEL + msg);

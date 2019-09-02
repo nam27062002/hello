@@ -53,3 +53,4 @@ project()
 
 project AddressablesUnitTests
 project AddressablesAssetsTests
+project AddressablesFoldersTests

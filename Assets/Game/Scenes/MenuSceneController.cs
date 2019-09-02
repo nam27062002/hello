@@ -108,9 +108,6 @@ public class MenuSceneController : SceneController {
 		}
 	}
 
-	// Internal
-	private bool m_wereStatsEnabled = true;
-
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -146,7 +143,6 @@ public class MenuSceneController : SceneController {
             Debug_Awake();
 
 		// [AOC] Disable Stats on the Control Panel at the menu (so annoying for developing UI!)
-		m_wereStatsEnabled = ControlPanel.instance.IsStatsEnabled;
 		ControlPanel.instance.IsStatsEnabled = false;
     }
 
@@ -194,7 +190,7 @@ public class MenuSceneController : SceneController {
         if (ApplicationManager.IsAlive) {
             // Restore stats on the control panel
             if (ControlPanel.instance != null)
-                ControlPanel.instance.IsStatsEnabled = m_wereStatsEnabled;
+                ControlPanel.instance.IsStatsEnabled = DebugSettings.showStats;
 
             Application.lowMemory -= OnLowMemory;
             base.OnDestroy();
@@ -303,6 +299,13 @@ public class MenuSceneController : SceneController {
 			// Go to game!
 			// [AOC] No need to block the button, the GameFlow already controls spamming
 			FlowManager.GoToGame();
+		}
+	}
+
+	public void GoToGameNoUI() {
+		if(!GameSceneManager.isLoading) {
+			LoadingScreen.Toggle(true, false);
+			FlowManager.GoToGameNoUI();
 		}
 	}
 

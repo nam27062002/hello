@@ -18,14 +18,14 @@ namespace AI {
 
 		public abstract class Attack : StateComponent {
 			[StateTransitionTrigger]
-			private static string OnMaxAttacks = "onMaxAttacks";
+			private static int onMaxAttacks = UnityEngine.Animator.StringToHash("onMaxAttacks");
 
-			[StateTransitionTrigger]
-			private static string OnOutOfRange = "onOutOfRange";
+            [StateTransitionTrigger]
+			private static int onOutOfRange = UnityEngine.Animator.StringToHash("onOutOfRange");
 
 
 
-			protected AttackData m_data;
+            protected AttackData m_data;
 
 			private bool m_onAttachProjectileEventDone;
 			private bool m_onDamageEventDone;
@@ -96,7 +96,7 @@ namespace AI {
 					if (m_onAttackEndEventDone) {
 
 						if (m_machine.enemy == null) {
-							Transition(OnOutOfRange);
+							Transition(onOutOfRange);
 						}
 						else
 						{
@@ -213,11 +213,11 @@ namespace AI {
 
 					if (m_attacksLeft > 0) {
 						if (!m_machine.GetSignal(Signals.Type.Danger)) {		
-							Transition(OnOutOfRange);
+							Transition(onOutOfRange);
 						}
 					} else {
 						m_machine.DisableSensor(m_data.retreatTime);
-						Transition(OnMaxAttacks);
+						Transition(onMaxAttacks);
 					}
 				}
 			}

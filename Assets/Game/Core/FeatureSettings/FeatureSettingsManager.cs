@@ -5,12 +5,18 @@
 // Copyright (c) 2017 Ubisoft. All rights reserved.
 
 #define FREQFORMULA
+
+#if DEBUG && !DISABLE_LOGS
+#define ENABLE_LOGS
+#endif
+
 //----------------------------------------------------------------------------//
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
 using FGOL.Server;
 using SimpleJSON;
 using System.Collections.Generic;
+using System.Diagnostics;
 using UnityEngine;
 
 //----------------------------------------------------------------------------//
@@ -145,11 +151,8 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         {
             string value = CacheServerManager.SharedInstance.GetVariable(CACHE_SERVER_QUALITY_KEY);
             serverQualitySettingsJSON = JSON.Parse(value);
-
-            if (IsDebugEnabled)
-            {
-                Log("Quality settings from server cached : " + ((serverQualitySettingsJSON == null) ? "null" : serverQualitySettingsJSON.ToString()));
-            }
+            
+            Log("Quality settings from server cached : " + ((serverQualitySettingsJSON == null) ? "null" : serverQualitySettingsJSON.ToString()));            
         }
 
         // Some game settings received from server in a previous session might be stored in cache
@@ -158,11 +161,8 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         {
             string value = CacheServerManager.SharedInstance.GetVariable(CACHE_SERVER_GAME_KEY);
             serverGameSettingsJSON = JSON.Parse(value);
-
-            if (IsDebugEnabled)
-            {
-                Log("Game settings from server cached : " + ((serverGameSettingsJSON == null) ? "null" : serverGameSettingsJSON.ToString()));
-            }
+            
+            Log("Game settings from server cached : " + ((serverGameSettingsJSON == null) ? "null" : serverGameSettingsJSON.ToString()));            
         }
 
         // The configuration received for the device from server has a bigger priority than the one retrieved from rules
@@ -414,9 +414,8 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
     private void Server_UploadQualitySettings()
     {
         string profileName = Device_CalculatedProfile;
-
-        if (IsDebugEnabled)
-            Log("Server_UploadQualitySettings profileName = " + profileName);
+        
+        Log("Server_UploadQualitySettings profileName = " + profileName);
 
         if (!string.IsNullOrEmpty(profileName))
         {
@@ -788,11 +787,8 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         {
             string value = CacheServerManager.SharedInstance.GetVariable(CACHE_SERVER_QUALITY_KEY);
             serverQualitySettingsJSON = JSON.Parse(value);
-
-            if (IsDebugEnabled)
-            {
-                Log("Quality settings from server cached : " + ((serverQualitySettingsJSON == null) ? "null" : serverQualitySettingsJSON.ToString()));
-            }
+                        
+            Log("Quality settings from server cached : " + ((serverQualitySettingsJSON == null) ? "null" : serverQualitySettingsJSON.ToString()));
         }
 
         // Some game settings received from server in a previous session might be stored in cache
@@ -801,11 +797,8 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         {
             string value = CacheServerManager.SharedInstance.GetVariable(CACHE_SERVER_GAME_KEY);
             serverGameSettingsJSON = JSON.Parse(value);
-
-            if (IsDebugEnabled)
-            {
-                Log("Game settings from server cached : " + ((serverGameSettingsJSON == null) ? "null" : serverGameSettingsJSON.ToString()));
-            }
+            
+            Log("Game settings from server cached : " + ((serverGameSettingsJSON == null) ? "null" : serverGameSettingsJSON.ToString()));
         }
 
         SetupCurrentFeatureSettings(GetDeviceFeatureSettingsAsJSON(), serverQualitySettingsJSON, serverGameSettingsJSON);
@@ -923,15 +916,14 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         string userProfileName = GetUserProfileName();
         bool hasUserProfileName = !string.IsNullOrEmpty(userProfileName);
 
-        if (IsDebugEnabled)
-        {
-            string msg = "SetupCurrentFeatureSettings: deviceSettingsJSON = ";
+#if ENABLE_LOGS        
+        string msg = "SetupCurrentFeatureSettings: deviceSettingsJSON = ";
             msg += (deviceSettingsJSON == null) ? "null" : deviceSettingsJSON.ToString();
             msg += " qualitySettingsJSON = " + ((serverQualitySettingsJSON == null) ? "null" : serverQualitySettingsJSON.ToString());
             msg += " gameSettingsJSON = " + ((serverGameSettingsJSON == null) ? "null" : serverGameSettingsJSON.ToString());
             msg += " userProfileName = " + userProfileName;
             Log(msg);
-        }
+#endif        
 
         // If no device configuration is passed then try to get the device configuration from rules        
         if (deviceSettingsJSON == null)
@@ -951,9 +943,8 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
             {
                 profileName = deviceSettingsJSON[FeatureSettings.KEY_PROFILE];
             }
-
-            if (IsDebugEnabled)
-                Log("deviceSettingsJSON.profileName = " + profileName);
+            
+            Log("deviceSettingsJSON.profileName = " + profileName);
 
             // This settings are ignored if this settings profile is not the same as the profile chosen by the user. If it's the same profile then we assume that this settings are more
             // specific than the ones defined for the whole profile
@@ -980,9 +971,8 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
             int systemMemorySize = Device_GetSystemMemorySize();
             int gfxMemorySize = Device_GetGraphicsMemorySize();
             profileName = m_deviceQualityManager.Profiles_RatingToProfileName(rating, systemMemorySize, gfxMemorySize);
-
-            if (IsDebugEnabled)
-                Log("Based on systemMemorySize = " + systemMemorySize + " rating = " + rating + " profileName is " + profileName);
+            
+            Log("Based on systemMemorySize = " + systemMemorySize + " rating = " + rating + " profileName is " + profileName);
         }
 
         Device_CalculatedProfile = profileName;
@@ -1003,9 +993,8 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
             {
                 profileName = serverQualitySettingsJSON[FeatureSettings.KEY_PROFILE];
             }
-
-            if (IsDebugEnabled)
-                Log("serverSettingsJSON profileName is " + profileName + " json = " + serverQualitySettingsJSON.ToString());
+            
+            Log("serverSettingsJSON profileName is " + profileName + " json = " + serverQualitySettingsJSON.ToString());
 
             // This settings are ignored if this settings profile is not the same as the profile chosen by the user. If it's the same profile then we assume that this settings are more
             // specific than the ones defined for the whole profile
@@ -1075,9 +1064,8 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
     }
 
     public void RestoreCurrentFeatureSettingsToDevice()
-    {
-        if (IsDebugEnabled)
-            Log("RestoreCurrentFeatureSettingsToDevice");
+    {        
+        Log("RestoreCurrentFeatureSettingsToDevice");
 
         RecalculateAndApplyProfile();
     }
@@ -1141,9 +1129,8 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         {
             CurrentQualityIndex = qualityIndex;
             QualitySettings.SetQualityLevel(CurrentQualityIndex);
-            
-            if (IsDebugEnabled)
-                Log(">> qualityLevel:" + quality.ToString() + " index = " + qualityIndex);
+                        
+            Log(">> qualityLevel:" + quality.ToString() + " index = " + qualityIndex);
         }
 #endif
         if (quality <= FeatureSettings.EQualityLevelValues.low) {
@@ -1180,11 +1167,11 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         Log(">> Time.fixedDeltaTime:" + Time.fixedDeltaTime);
 
         if (IsLightmapEnabled) {
-            Shader.EnableKeyword("FORCE_LIGHTMAP");
+            Shader.EnableKeyword(GameConstants.Materials.Keyword.FORCE_LIGHTMAP);
         }
         else
         {
-            Shader.DisableKeyword("FORCE_LIGHTMAP");
+            Shader.DisableKeyword(GameConstants.Materials.Keyword.FORCE_LIGHTMAP);
         }
 
         if (Camera.main != null)
@@ -1812,17 +1799,32 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
     #region log
     private const string PREFIX = "FeatureSettingsManager:";
 
+    #if ENABLE_LOGS
+    [Conditional("DEBUG")]
+    #else
+    [Conditional("FALSE")]
+    #endif
     public static void Log(string message)
     {        
         Debug.Log(PREFIX + message);
         //Debug.Log("<color=cyan>" + PREFIX + message + " </color>");
     }
 
+    #if ENABLE_LOGS
+    [Conditional("DEBUG")]
+    #else
+    [Conditional("FALSE")]
+    #endif
     public static void LogWarning(string message)
     {
         Debug.LogWarning(PREFIX + message);
     }
 
+    #if ENABLE_LOGS
+    [Conditional("DEBUG")]
+    #else
+    [Conditional("FALSE")]
+    #endif
     public static void LogError(string message)
     {
         Debug.LogError(PREFIX + message);

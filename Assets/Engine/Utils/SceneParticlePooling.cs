@@ -52,11 +52,8 @@ public class SceneParticlePooling : MonoBehaviour
             }
 
             if (Manager_Items.Count >= MANAGER_MAX_ITEMS)
-            {
-                if (FeatureSettingsManager.IsDebugEnabled)
-                {
-                    Debug.LogError("Too many particle systems to cull");
-                }
+            {                
+                Debug.LogError("Too many particle systems to cull");                
 
                 return;
             }

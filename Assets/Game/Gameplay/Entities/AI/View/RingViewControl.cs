@@ -30,8 +30,8 @@ public class RingViewControl : CollectibleViewControl {
 
 		//restore emissive value
 		for (int i = 0; i < m_materialList.Count; ++i) {
-			m_materialList[i].SetFloat(GameConstants.Material.EMISSIVE_POWER, 0f);
-			m_materialList[i].DisableKeyword("TINT");
+			m_materialList[i].SetFloat(GameConstants.Materials.Property.EMISSIVE_POWER, 0f);
+			m_materialList[i].DisableKeyword(GameConstants.Materials.Keyword.TINT);
 			m_materialList[i].renderQueue = 2000;
 		}
 
@@ -57,11 +57,11 @@ public class RingViewControl : CollectibleViewControl {
 				if (m_timer < 0.25f) {
 					float ep = Mathf.Lerp(0f, 2f, m_timer/0.25f);
 					for (int i = 0; i < m_materialList.Count; ++i) {
-						m_materialList[i].SetFloat(GameConstants.Material.EMISSIVE_POWER, ep);
+						m_materialList[i].SetFloat(GameConstants.Materials.Property.EMISSIVE_POWER, ep);
 					}
 				} else {
 					for (int i = 0; i < m_materialList.Count; ++i) {
-						m_materialList[i].EnableKeyword("TINT");
+						m_materialList[i].EnableKeyword(GameConstants.Materials.Keyword.TINT);
 						m_materialList[i].renderQueue = 3000;
 					}
 
@@ -80,9 +80,9 @@ public class RingViewControl : CollectibleViewControl {
 					for (int i = 0; i < m_renderers.Length; ++i) {			
 						Material[] materials = m_renderers[i].sharedMaterials;
 						for (int m = 0; m < materials.Length; m++) {
-							Color tint = materials[m].GetColor(GameConstants.Material.TINT);
+							Color tint = materials[m].GetColor(GameConstants.Materials.Property.TINT);
 							tint.a = a;
-							materials[m].SetColor(GameConstants.Material.TINT, tint);
+							materials[m].SetColor(GameConstants.Materials.Property.TINT, tint);
 						}
 						m_renderers[i].sharedMaterials = materials;
 					}

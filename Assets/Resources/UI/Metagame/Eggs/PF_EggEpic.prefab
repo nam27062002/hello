@@ -26,7 +26,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 166028}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -145.65842, y: 143.5303, z: -76.98471}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4722587922857046}
@@ -232,6 +232,7 @@ GameObject:
   - component: {fileID: 4590931801202916}
   - component: {fileID: 198024603101716470}
   - component: {fileID: 199988490192161292}
+  - component: {fileID: 114807464070863588}
   m_Layer: 0
   m_Name: Glow
   m_TagString: Untagged
@@ -294,6 +295,7 @@ GameObject:
   - component: {fileID: 4842139874392532}
   - component: {fileID: 198507444428520124}
   - component: {fileID: 199986174143874960}
+  - component: {fileID: 114823370918937514}
   m_Layer: 0
   m_Name: Glows1
   m_TagString: Untagged
@@ -432,6 +434,7 @@ GameObject:
   - component: {fileID: 4123842300429988}
   - component: {fileID: 198541767733450916}
   - component: {fileID: 199730401431811806}
+  - component: {fileID: 114063974528013612}
   m_Layer: 0
   m_Name: Sparks
   m_TagString: Untagged
@@ -1148,6 +1151,7 @@ GameObject:
   - component: {fileID: 4520781372942296}
   - component: {fileID: 198416763064588404}
   - component: {fileID: 199573899386524558}
+  - component: {fileID: 114622458953102088}
   m_Layer: 0
   m_Name: Glows2
   m_TagString: Untagged
@@ -2143,12 +2147,12 @@ MeshRenderer:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1747801663494202}
   m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
+  m_DynamicOccludee: 0
+  m_MotionVectors: 2
+  m_LightProbeUsage: 0
+  m_ReflectionProbeUsage: 0
   m_Materials:
   - {fileID: 2100000, guid: 43b0dff322485b343a2a073bfe5f2272, type: 2}
   m_StaticBatchInfo:
@@ -2177,12 +2181,12 @@ MeshRenderer:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1762739070495010}
   m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
+  m_DynamicOccludee: 0
+  m_MotionVectors: 2
+  m_LightProbeUsage: 0
+  m_ReflectionProbeUsage: 0
   m_Materials:
   - {fileID: 2100000, guid: 90efcfdb5b735db46b52eda276a56b5f, type: 2}
   m_StaticBatchInfo:
@@ -2247,6 +2251,20 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
+--- !u!114 &114063974528013612
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1299099452408444}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3128bd630f39645c4a1e03d94b7008f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_transform: {fileID: 0}
+  m_resetFirst: 1
+  m_whenScale: 0
 --- !u!114 &114547675314732774
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2315,6 +2333,48 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_reparentRoot: {fileID: 409414}
+--- !u!114 &114622458953102088
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1982202198909324}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3128bd630f39645c4a1e03d94b7008f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_transform: {fileID: 0}
+  m_resetFirst: 1
+  m_whenScale: 0
+--- !u!114 &114807464070863588
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1144124955945724}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3128bd630f39645c4a1e03d94b7008f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_transform: {fileID: 0}
+  m_resetFirst: 1
+  m_whenScale: 0
+--- !u!114 &114823370918937514
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1176399942830454}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3128bd630f39645c4a1e03d94b7008f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_transform: {fileID: 0}
+  m_resetFirst: 1
+  m_whenScale: 0
 --- !u!114 &114908444338415802
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2494,7 +2554,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 240826503
+  randomSeed: 189252476
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -5861,7 +5921,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -71382548
+  randomSeed: -1559458555
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -9222,7 +9282,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -105515994
+  randomSeed: -550714075
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -12583,7 +12643,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 382179626
+  randomSeed: 112649298
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -15944,7 +16004,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -1367542313
+  randomSeed: 705194271
   InitialModule:
     serializedVersion: 3
     enabled: 1

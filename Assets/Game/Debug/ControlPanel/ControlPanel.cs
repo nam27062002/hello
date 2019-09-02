@@ -4,12 +4,17 @@
 // Created by Alger Ortín Castellví on 26/11/2015.
 // Copyright (c) 2015 Ubisoft. All rights reserved.
 
+#if DEBUG && !DISABLE_LOGS
+#define ENABLE_LOGS
+#endif
+
 //----------------------------------------------------------------------//
 // INCLUDES																//
 //----------------------------------------------------------------------//
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
+using System.Diagnostics;
 using TMPro;
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -47,37 +52,19 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
 		get { return instance.m_fpsCounter; }
 	}
 
-    [SerializeField] private GameObject m_statsCounter;
+	[SerializeField] private GameObject m_statsCounter;
     public static GameObject statsCounter
     {
         get { return instance.m_statsCounter; }
     }
 
     private bool m_isStatsEnabled;
-    public bool IsStatsEnabled {
-        get {
-			return m_isStatsEnabled;
-        }
-
-        set {
-            m_isStatsEnabled = value;
-            m_statsCounter.SetActive(m_isStatsEnabled);
-			CheckCanvasActivation();
-        }        
-    }
+	public bool IsStatsEnabled {
+		get { return m_isStatsEnabled; }
+		set { OnDebugSettingChanged(DebugSettings.SHOW_STATS, value); }	// Use for quick override
+	}
 
 	private bool m_isFPSEnabled;
-	public bool IsFPSEnabled {
-		get {
-			return m_isFPSEnabled;
-		}
-
-		set {
-			m_isFPSEnabled = value;
-			m_fpsCounter.gameObject.SetActive(m_isFPSEnabled);
-			CheckCanvasActivation();
-		}        
-	}
 
 	[SerializeField] private TextMeshProUGUI m_memoryLabel;
 	public static TextMeshProUGUI memoryLabel {
@@ -131,7 +118,14 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
 	float[] m_DeltaTimes;
 	int m_DeltaIndex;
 
-    private static int MAX_INTEGER_AS_STRING = 150;
+	// FPS Recording
+	[SerializeField] private CPFpsRecorder m_fpsRecorder;
+	public static CPFpsRecorder fpsRecorder {
+		get { return instance.m_fpsRecorder; }
+	}
+
+	// Int to String
+	private static int MAX_INTEGER_AS_STRING = 150;
     private static string[] integerAsStrings;
     private static string NEGATIVE_STRING_AS_STRING = "-";
 
@@ -173,12 +167,16 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
     /// Initialization.
     /// </summary>
     protected void Awake() {
+		// Subscribe to external events
+		Messenger.AddListener<string, bool>(MessengerEvents.CP_BOOL_CHANGED, OnDebugSettingChanged);
+
 		// Start disabled
 		m_panel.gameObject.SetActive(false);
 		m_toggleButton.gameObject.SetActive( UnityEngine.Debug.isDebugBuild);
-        IsStatsEnabled = UnityEngine.Debug.isDebugBuild;        
-		IsFPSEnabled = UnityEngine.Debug.isDebugBuild;        
-        ShowMemoryUsage = UnityEngine.Debug.isDebugBuild;
+		OnDebugSettingChanged(DebugSettings.SHOW_STATS, DebugSettings.showStats);
+		OnDebugSettingChanged(DebugSettings.SHOW_FPS, DebugSettings.showFps);
+		OnDebugSettingChanged(DebugSettings.SHOW_FPS_RECORDER, DebugSettings.showFpsRecorder);
+		ShowMemoryUsage = UnityEngine.Debug.isDebugBuild;
         m_logicUnitsCounter.transform.parent.gameObject.SetActive(UnityEngine.Debug.isDebugBuild && ProfilerSettingsManager.ENABLED);
 
 		// Initialize tabs
@@ -210,7 +208,17 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
 		CheckCanvasActivation();
 	}
 
+	/// <summary>
+	/// Destructor.
+	/// </summary>
+	private void OnDestroy() {
+		// Unsubscribe from external events
+		Messenger.RemoveListener<string, bool>(MessengerEvents.CP_BOOL_CHANGED, OnDebugSettingChanged);
+	}
 
+	/// <summary>
+	/// Update loop.
+	/// </summary>
 	protected void Update() {
         if (FeatureSettingsManager.IsControlPanelEnabled) {
             if (Input.touchCount > 0 || Input.GetMouseButton(0)) {
@@ -338,7 +346,8 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
 	/// </summary>
 	private void CheckCanvasActivation() {
 		// Toggle both canvas and camera
-		bool active = m_isStatsEnabled || m_isFPSEnabled || m_panel.gameObject.activeSelf;
+		// Check all widgets that are permanently displayed
+		bool active = DebugSettings.showStats || DebugSettings.showFps || DebugSettings.showFpsRecorder || m_panel.gameObject.activeSelf;
 		m_canvas.gameObject.SetActive(active);
 		m_canvas.worldCamera.gameObject.SetActive(active);
 	}
@@ -376,8 +385,38 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
 		Toggle();
 	}
 
-    #region log    
-    public enum ELogChannel
+	/// <summary>
+	/// A sebug setting has been changed.
+	/// </summary>
+	/// <param name="_id">ID of the changed setting.</param>
+	/// <param name="_newValue">New value of the setting.</param>
+	private void OnDebugSettingChanged(string _id, bool _newValue) {
+		// XP bar setting?
+		switch(_id) {
+			case DebugSettings.SHOW_STATS: {
+				m_isStatsEnabled = _newValue;
+				m_statsCounter.SetActive(m_isStatsEnabled);
+				CheckCanvasActivation();
+			} break;
+
+			case DebugSettings.SHOW_FPS: {
+				m_isFPSEnabled = _newValue;
+				m_fpsCounter.gameObject.SetActive(m_isFPSEnabled);
+				CheckCanvasActivation();
+			} break;
+
+			case DebugSettings.SHOW_FPS_RECORDER: {
+				m_fpsRecorder.gameObject.SetActive(_newValue);
+				CheckCanvasActivation();
+			} break;
+		}
+	}
+
+	//------------------------------------------------------------------//
+	// LOG																//
+	//------------------------------------------------------------------//
+	#region log    
+	public enum ELogChannel
     {        
         General,
         Customizer,
@@ -462,26 +501,35 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
     public static string COLOR_ERROR = Colors.ToHexString(Color.red, "#", false);
     public static string COLOR_WARNING = Colors.ToHexString(Color.yellow, "#", false);
 
+#if ENABLE_LOGS
+    [Conditional("DEBUG")]
+#else
+    [Conditional("FALSE")]
+#endif
     public static void LogError(string text, ELogChannel channel=ELogChannel.General)
     {
-        LogToCPConsole(text, channel, COLOR_ERROR);
-        if (FeatureSettingsManager.IsDebugEnabled)
-        {
-            text = Log_GetChannelPrefix(channel) + text;
-            Debug.LogError(text);
-        }
+        LogToCPConsole(text, channel, COLOR_ERROR);        
+        text = Log_GetChannelPrefix(channel) + text;
+        Debug.LogError(text);        
     }
 
+#if ENABLE_LOGS
+    [Conditional("DEBUG")]
+#else
+    [Conditional("FALSE")]
+#endif
     public static void LogWarning(string text, ELogChannel channel = ELogChannel.General)
     {
-        LogToCPConsole(text, channel, COLOR_WARNING);
-        if (FeatureSettingsManager.IsDebugEnabled)
-        {
-            text = Log_GetChannelPrefix(channel) + text;
-            Debug.LogWarning(text);
-        }
+        LogToCPConsole(text, channel, COLOR_WARNING);        
+        text = Log_GetChannelPrefix(channel) + text;
+        Debug.LogWarning(text);        
     }
 
+#if ENABLE_LOGS
+    [Conditional("DEBUG")]
+#else
+    [Conditional("FALSE")]
+#endif
     public static void Log(string text, ELogChannel channel=ELogChannel.General, bool logToCPConsole=true, bool logToUnityConsole=true) {        
         if (logToCPConsole) {
             LogToCPConsole(text, channel);
@@ -507,32 +555,30 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
 
     private static void LogToUnityConsole(string text, ELogChannel channel=ELogChannel.General)
     {
-        // It's logged to Unity console too
-        if (FeatureSettingsManager.IsDebugEnabled) {
-            text = Log_GetChannelPrefix(channel) + text;
+        // It's logged to Unity console too        
+        text = Log_GetChannelPrefix(channel) + text;
 
 #if UNITY_EDITOR
-            string color = Log_GetChannelColor(channel);
-            if (!string.IsNullOrEmpty(color))
-            {   
-				// [AOC] Unfortunately, color is not properly displayed in the Unity Console if the text has more than one line break
-				//		 Workaround it by just coloring the first line
+        string color = Log_GetChannelColor(channel);
+        if (!string.IsNullOrEmpty(color))
+        {   
+			// [AOC] Unfortunately, color is not properly displayed in the Unity Console if the text has more than one line break
+			//		 Workaround it by just coloring the first line
 
-				// Insert opening tag
-				text = text.Insert(0, "<color=" + color + ">");
+			// Insert opening tag
+			text = text.Insert(0, "<color=" + color + ">");
 
-				// Insert closing tag right before the first line break, or at the end if no line breaks are found
-				int idx = text.IndexOf('\n');
-				if(idx > 0) {
-					text = text.Insert(idx, "</color>");
-				} else {
-					text = text + "</color>";
-				}
-            }            
+			// Insert closing tag right before the first line break, or at the end if no line breaks are found
+			int idx = text.IndexOf('\n');
+			if(idx > 0) {
+				text = text.Insert(idx, "</color>");
+			} else {
+				text = text + "</color>";
+			}
+        }            
 #endif
 
-            Debug.Log(text);
-        }
+        Debug.Log(text);        
     }
 
 	/// <summary>

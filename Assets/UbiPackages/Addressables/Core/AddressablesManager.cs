@@ -1,5 +1,6 @@
 ﻿using SimpleJSON;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using UnityEngine.SceneManagement;
 
@@ -1089,6 +1090,11 @@ public class AddressablesManager
         return sm_logger != null && sm_logger.CanLog();
     }
 
+#if ENABLE_LOGS
+    [Conditional("DEBUG")]
+#else
+    [Conditional("FALSE")]
+#endif
     public static void Log(string msg)
     {
         if (CanLog())
@@ -1097,6 +1103,11 @@ public class AddressablesManager
         }
     }
 
+#if ENABLE_LOGS
+    [Conditional("DEBUG")]
+#else
+    [Conditional("FALSE")]
+#endif
     public static void LogWarning(string msg)
     {
         if (CanLog())
@@ -1105,6 +1116,11 @@ public class AddressablesManager
         }
     }
 
+#if ENABLE_LOGS
+    [Conditional("DEBUG")]
+#else
+    [Conditional("FALSE")]
+#endif
     public static void LogError(string msg)
     {
         if (CanLog())
@@ -1113,6 +1129,11 @@ public class AddressablesManager
         }
     }
 
+#if ENABLE_LOGS
+    [Conditional("DEBUG")]
+#else
+    [Conditional("FALSE")]
+#endif
     private static void LogErrorManagerNotInitialized()
     {
         if (CanLog())
@@ -1121,6 +1142,11 @@ public class AddressablesManager
         }
     }
 
+#if ENABLE_LOGS
+    [Conditional("DEBUG")]
+#else
+    [Conditional("FALSE")]
+#endif
     private static void LogErrorIdNotFound(string id)
     {
         if (CanLog())
@@ -1129,6 +1155,11 @@ public class AddressablesManager
         }
     }
 
+#if ENABLE_LOGS
+    [Conditional("DEBUG")]
+#else
+    [Conditional("FALSE")]
+#endif
     private static void Errors_ProcessAddressablesOpError(AddressablesError error)
     {
         if (CanLog())
