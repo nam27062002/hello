@@ -1,6 +1,6 @@
 ﻿// GameSceneControllerBase.cs
 // Hungry Dragon
-// 
+//
 // Created by Marc Saña Castellví on 26/01/2016.
 // Copyright (c) 2016 Ubisoft. All rights reserved.
 
@@ -18,7 +18,7 @@ using UnityEngine;
 /// implementation of this class.
 /// </summary>
 public class GameSceneControllerBase : SceneController, IBroadcastListener {
-	
+
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
@@ -30,9 +30,9 @@ public class GameSceneControllerBase : SceneController, IBroadcastListener {
     }
 
 	private int m_progressionOffsetXP;
-	public int progressionOffsetXP { 
-		get { return m_progressionOffsetXP; } 
-		set { m_progressionOffsetXP = value; } 
+	public int progressionOffsetXP {
+		get { return m_progressionOffsetXP; }
+		set { m_progressionOffsetXP = value; }
 	}
 
 	private float m_progressionOffsetSeconds;
@@ -52,6 +52,16 @@ public class GameSceneControllerBase : SceneController, IBroadcastListener {
 		get { return m_freezeElapsedSeconds; }
 		set { m_freezeElapsedSeconds = value; }
 	}
+
+	// Auxiliar references
+	private HUDManager m_hudManager = null;
+	public HUDManager hudManager {
+		get {
+			if(m_hudManager == null) m_hudManager = new HUDManager();
+			return m_hudManager;
+		}
+	}
+
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -61,6 +71,11 @@ public class GameSceneControllerBase : SceneController, IBroadcastListener {
 	protected override void Awake() {
 		// Call parent
 		base.Awake();
+
+		// Initialize internal vars
+		if(m_hudManager == null) {
+			m_hudManager = new HUDManager();
+		}
 
 		// Subscribe to external events
 		Messenger.AddListener(MessengerEvents.GAME_STARTED, OnGameStarted);
@@ -73,6 +88,11 @@ public class GameSceneControllerBase : SceneController, IBroadcastListener {
 	protected override void OnDestroy() {
 		// Call parent
 		base.OnDestroy();
+
+		// Finalize internal vars
+		if(m_hudManager != null) {
+			m_hudManager.OnDestroy();
+		}
 
 		// Unsubscribe to external events
 		Messenger.RemoveListener(MessengerEvents.GAME_STARTED, OnGameStarted);
@@ -87,6 +107,7 @@ public class GameSceneControllerBase : SceneController, IBroadcastListener {
         FirePropagationManager.instance.Update();
         BubbledEntitySystem.instance.Update();
         MachineInflammableManager.instance.Update();
+					m_hudManager.Update();
     }
 
     private void FixedUpdate() {
@@ -108,7 +129,7 @@ public class GameSceneControllerBase : SceneController, IBroadcastListener {
             }break;
         }
     }
-    
+
 
 	public virtual bool IsLevelLoaded()
 	{
@@ -165,7 +186,7 @@ public class GameSceneControllerBase : SceneController, IBroadcastListener {
 					spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME + "_" + selectedSP);
 				}
 			}
-			
+
 			if (spawnPointObj == null) {
 				spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME + "_" + dragonSKU);
 			}
@@ -180,18 +201,18 @@ public class GameSceneControllerBase : SceneController, IBroadcastListener {
 			if (dsp != null) dsp.Spawn();
 
 			Vector3 startPos = spawnPointObj.transform.position;
-			
+
 			InstanceManager.player.gameObject.SetActive(true);
 			if (_isLevelEditor && !LevelEditor.LevelEditor.settings.useIntro) {
 				InstanceManager.player.playable = true;
-				InstanceManager.player.dragonMotion.MoveToSpawnPosition(startPos);				
+				InstanceManager.player.dragonMotion.MoveToSpawnPosition(startPos);
 			} else {
 				InstanceManager.player.playable = false;
 				InstanceManager.player.dragonMotion.StartIntroMovement(startPos);
-			}		
+			}
 			// Init game camera
 			InstanceManager.gameCamera.Init(startPos);
-		}	
+		}
 	}
 
 	//------------------------------------------------------------------------//
@@ -201,14 +222,13 @@ public class GameSceneControllerBase : SceneController, IBroadcastListener {
 	/// The game has started.
 	/// </summary>
 	protected virtual void OnGameStarted() {
-		
+
 	}
 
 	/// <summary>
 	/// The game has eneded.
 	/// </summary>
 	protected virtual void OnGameEnded() {
-		
+
 	}
 }
-

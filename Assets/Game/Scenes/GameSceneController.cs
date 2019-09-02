@@ -1,6 +1,6 @@
 // GameSceneController.cs
 // Hungry Dragon
-// 
+//
 // Created by Alger Ortín Castellví on 21/08/2015.
 // Copyright (c) 2015 Ubisoft. All rights reserved.
 
@@ -42,7 +42,7 @@ public class GameSceneController : GameSceneControllerBase {
 	bool m_switchingArea = false;
 	public bool isSwitchingArea { get { return m_switchingArea; } }
 
-	string m_nextArea = "";	
+	string m_nextArea = "";
 
     private const bool m_useSyncLoading = false;
 
@@ -51,15 +51,13 @@ public class GameSceneController : GameSceneControllerBase {
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
-	// Exposed	
+	// Exposed
 	[Space]
     [SerializeField] private GameObject m_uiRoot = null;
     public GameObject uiRoot
     {
         get { return m_uiRoot; }
     }
-
-	[SerializeField] private ShowHideAnimator m_gameUIAnimator = null;
 
 	// Countdown
     public float countdown {
@@ -71,7 +69,7 @@ public class GameSceneController : GameSceneControllerBase {
 			}
 		}
 	}
-	
+
 	// Logic state
 	private EStates m_state = EStates.INIT;
 	public EStates state {
@@ -82,11 +80,11 @@ public class GameSceneController : GameSceneControllerBase {
 	private int m_pauseStacks = 0;
 
     // Level loading
-    private LevelLoader m_levelLoader = null;    
+    private LevelLoader m_levelLoader = null;
 
 	public float levelActivationProgress {
 		get {
-			if(state == EStates.LOADING_LEVEL || state == EStates.ACTIVATING_LEVEL) {               
+			if(state == EStates.LOADING_LEVEL || state == EStates.ACTIVATING_LEVEL) {
                 if (m_levelLoader == null) return 1f;	// Shouldn't be null at this state
                 float progress = m_levelLoader.GetProgress();
                 return Mathf.Min(progress, 1f - Mathf.Max(m_timer / MIN_LOADING_TIME, 0f)); // Either progress or fake timer
@@ -96,7 +94,7 @@ public class GameSceneController : GameSceneControllerBase {
 				return 0;
 			}
 		}
-	}    
+	}
 
 	// For the tutorial
 	private bool m_startWhenLoaded = true;
@@ -136,7 +134,7 @@ public class GameSceneController : GameSceneControllerBase {
         m_mapUsageTracker = new TrackerMapUsage();
         m_specialPowerTimeTracker = new TrackerSpecialPowerTime();
 
-        Screen.sleepTimeout = SleepTimeout.NeverSleep;        
+        Screen.sleepTimeout = SleepTimeout.NeverSleep;
 
         // Check whether the tutorial popup must be displayed
         if (!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.FIRST_RUN))
@@ -160,7 +158,7 @@ public class GameSceneController : GameSceneControllerBase {
             int hpBoost = DebugSettings.specialDragonHpBoostLevel;
             int speedBoost = DebugSettings.specialDragonSpeedBoostLevel;
             int energyBoost = DebugSettings.specialDragonEnergyBoostLevel;
-            DragonManager.LoadSpecialDragon_DEBUG(dragon, dragonTier, powerLevel, hpBoost, speedBoost, energyBoost);                    
+            DragonManager.LoadSpecialDragon_DEBUG(dragon, dragonTier, powerLevel, hpBoost, speedBoost, energyBoost);
         } else {
             if (HDLiveDataManager.tournament.isActive) {
                 DragonManager.LoadDragon(HDLiveDataManager.tournament.tournamentData.tournamentDef.dragonData);
@@ -168,7 +166,7 @@ public class GameSceneController : GameSceneControllerBase {
                 DragonManager.LoadDragon(DragonManager.currentDragon.sku);	// currentDragon Will automatically select between classic and special dragons depending on active mode
             }
         }
-		
+
 		Messenger.AddListener(MessengerEvents.GAME_COUNTDOWN_ENDED, CountDownEnded);
         Messenger.AddListener<float>(MessengerEvents.PLAYER_LEAVING_AREA, OnPlayerLeavingArea);
         Messenger.AddListener(MessengerEvents.PLAYER_ENTERING_AREA, OnPlayerEnteringArea);
@@ -186,7 +184,7 @@ public class GameSceneController : GameSceneControllerBase {
 	private void Start() {
 		// Let's play!
 		StartGame();
-	}    
+	}
 
     private void OnSwitchAreaChangeState(LevelLoader.EState prevState, LevelLoader.EState nextState)
     {
@@ -212,13 +210,13 @@ public class GameSceneController : GameSceneControllerBase {
                 break;
         }
     }
-	
+
 	/// <summary>
 	/// Called every frame.
 	/// </summary>
-	override protected void Update() {
+	protected override void Update() {
 		// Skip if paused
-		if(m_paused) return;        
+		if(m_paused) return;
 
         // [AOC] Editor utility: open pause popup
         #if UNITY_EDITOR
@@ -229,7 +227,7 @@ public class GameSceneController : GameSceneControllerBase {
 		{
 			// Check if in editor!
             SpawnPlayer(false);
-			
+
 			LevelEditor.LevelTypeSpawners sp = FindObjectOfType<LevelEditor.LevelTypeSpawners>();
 			if ( sp != null )
 				sp.IntroSpawn(InstanceManager.player.data.def.sku);
@@ -273,11 +271,11 @@ public class GameSceneController : GameSceneControllerBase {
                         }
                     }
                 }
-				
+
 			} break;
 
 			// During activation, wait until all scenes have been activated
-			case EStates.ACTIVATING_LEVEL: {				
+			case EStates.ACTIVATING_LEVEL: {
 				if(m_levelLoader.IsDone()) {
 					// Change state only if allowed, otherwise it will be manually done
 					if(m_startWhenLoaded) ChangeState(EStates.COUNTDOWN);
@@ -294,13 +292,13 @@ public class GameSceneController : GameSceneControllerBase {
 					}
 				}
 			} break;
-				
+
 			case EStates.RUNNING: {
                 base.Update();
 
 				// Update running time
 				if (m_freezeElapsedSeconds <= 0 && !m_switchingArea)
-					m_elapsedSeconds += Time.deltaTime;				
+					m_elapsedSeconds += Time.deltaTime;
 
 				// Notify listeners
 				Messenger.Broadcast(MessengerEvents.GAME_UPDATED);
@@ -310,8 +308,8 @@ public class GameSceneController : GameSceneControllerBase {
 				// Show the summary popup after some delay
 				if(m_timer > 0) {
 					m_timer -= Time.deltaTime;
-					if(m_timer <= 0) {						
-                        ChangeState(EStates.SHOWING_RESULTS);                        
+					if(m_timer <= 0) {
+                        ChangeState(EStates.SHOWING_RESULTS);
 					}
 				}
 			} break;
@@ -320,7 +318,7 @@ public class GameSceneController : GameSceneControllerBase {
                 m_switchAsyncScenes.Update();
             } break;
 		}
-	}       
+	}
 
     /// <summary>
     /// Clears stuff used by the game (RUNNING state)
@@ -365,7 +363,7 @@ public class GameSceneController : GameSceneControllerBase {
     {
         base.OnBroadcastSignal(eventType, broadcastEventInfo);
     }
-        
+
 	//------------------------------------------------------------------//
 	// FLOW CONTROL														//
 	//------------------------------------------------------------------//
@@ -390,9 +388,9 @@ public class GameSceneController : GameSceneControllerBase {
 
 		// Reset rewards
 		RewardManager.Reset();
-		
+
 		// [AOC] TODO!! Reset game stats
-		
+
 		// Change state
 		ChangeState(EStates.DELAY);
 	}
@@ -400,7 +398,7 @@ public class GameSceneController : GameSceneControllerBase {
     /// <summary>
     /// End the current game. Wont reset the stats so they can be used.
     /// <param name="_quitGame">Whether or not the game is ended because the user has quit.</param>
-    public void EndGame(bool _quitGame) {    
+    public void EndGame(bool _quitGame) {
         //
         // Tracking
         //
@@ -445,7 +443,7 @@ public class GameSceneController : GameSceneControllerBase {
                     InstanceManager.timeScaleController.Pause();
 					Screen.sleepTimeout = SleepTimeout.SystemSetting;
 
-                    //Stop Performance tracking 
+                    //Stop Performance tracking
                     HDTrackingManagerImp.Instance.Notify_StopPerformanceTracker();
 					// Notify the game
                     m_pauseParam.value = true;
@@ -471,7 +469,7 @@ public class GameSceneController : GameSceneControllerBase {
 					// Notify the game
                     m_pauseParam.value = false;
                     Broadcaster.Broadcast(BroadcastEventType.GAME_PAUSED, m_pauseParam);
-                    //Start Performance tracking 
+                    //Start Performance tracking
                     HDTrackingManagerImp.Instance.Notify_StartPerformanceTracker();
 
                     Input.multiTouchEnabled = true;
@@ -493,7 +491,7 @@ public class GameSceneController : GameSceneControllerBase {
 	private void ChangeState(EStates _newState) {
 		// Ignore if already in this state
 		if(m_state == _newState) return;
-		
+
 		// Actions to perform when leaving the current state
 		switch(m_state) {
 			case EStates.LOADING_LEVEL: {
@@ -507,7 +505,7 @@ public class GameSceneController : GameSceneControllerBase {
 
 				// Build Pools
 				PoolManager.Build();
-				
+
                 if (HDLiveDataManager.tournament.isActive) {
                     HDTournamentDefinition tournamentDef = HDLiveDataManager.tournament.tournamentData.tournamentDef;
                     progressionOffsetSeconds = tournamentDef.m_goal.m_progressionSeconds;
@@ -521,9 +519,9 @@ public class GameSceneController : GameSceneControllerBase {
                 Broadcaster.Broadcast(BroadcastEventType.GAME_LEVEL_LOADED);
 
 				// Enable dragon back and put it in the spawn point
-				// Don't make it playable until the countdown ends				
+				// Don't make it playable until the countdown ends
                 SpawnPlayer(false);
-  				
+
 				// Spawn collectibles
 				CollectiblesManager.OnLevelLoaded();
 
@@ -535,7 +533,7 @@ public class GameSceneController : GameSceneControllerBase {
 			} break;
 
 			case EStates.COUNTDOWN: {
-				if (UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.FIRST_RUN) 
+				if (UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.FIRST_RUN)
 					&&  !UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.SECOND_RUN)) {
 					HDTrackingManager.Instance.Notify_Funnel_FirstUX(FunnelData_FirstUX.Steps._11_load_is_done);
 				}
@@ -549,7 +547,7 @@ public class GameSceneController : GameSceneControllerBase {
                 Messenger.RemoveListener(MessengerEvents.PLAYER_DIED, OnPlayerDied);
 			} break;
 		}
-		
+
 		// Actions to perform when entering the new state
 		switch(_newState) {
 			case EStates.DELAY: {
@@ -570,12 +568,12 @@ public class GameSceneController : GameSceneControllerBase {
                     if (string.IsNullOrEmpty(tournamentDef.m_goal.m_area)) {
                         m_levelLoader = LevelManager.LoadLevelForDragon(tournamentDef.dragonData.sku);
                     } else {
-                        m_levelLoader = LevelManager.LoadLevel(tournamentDef.m_goal.m_area);  
+                        m_levelLoader = LevelManager.LoadLevel(tournamentDef.m_goal.m_area);
                     }
                 } else {
                     m_levelLoader = LevelManager.LoadLevelForDragon(DragonManager.currentDragon.sku);
                 }
-                
+
                 m_levelLoader.Perform(m_useSyncLoading);
 
                 PoolManager.PreBuild();
@@ -592,7 +590,7 @@ public class GameSceneController : GameSceneControllerBase {
 				m_timer = MIN_LOADING_TIME;
 			} break;
 
-			case EStates.ACTIVATING_LEVEL: {                
+			case EStates.ACTIVATING_LEVEL: {
                 if (!m_useSyncLoading) {
                     m_levelLoader.ActivateNextAreaScenes();
                 }
@@ -612,7 +610,7 @@ public class GameSceneController : GameSceneControllerBase {
                 // Begin performance track
                 HDTrackingManager.Instance.Notify_StartPerformanceTracker();
             } break;
-				
+
 			case EStates.RUNNING: {
                 // Subscribe to external events
                 Messenger.AddListener<DamageType, Transform>(MessengerEvents.PLAYER_KO, OnPlayerKO);
@@ -630,7 +628,7 @@ public class GameSceneController : GameSceneControllerBase {
 				InstanceManager.player.playable = false;
 
                 // The time of the play session that has just finished is accumulated to the total amount of time played by the user so far
-                UsersManager.currentUser.timePlayed += (int)m_elapsedSeconds;                    
+                UsersManager.currentUser.timePlayed += (int)m_elapsedSeconds;
 			} break;
 
             case EStates.SHOWING_RESULTS: {
@@ -662,11 +660,11 @@ public class GameSceneController : GameSceneControllerBase {
                 GameObject[] gos = thisScene.GetRootGameObjects();
                 if (gos != null) {
                     GameObject mainCameraGO = (mainCamera != null) ? mainCamera.gameObject : null;
-                  
+
                     int count = gos.Length;
-                    for (int i = 0; i < count; i++) {                        
+                    for (int i = 0; i < count; i++) {
                         if (gos[i] != gameObject && gos[i] != mainCameraGO && gos[i] != uiRoot && gos[i] != InstanceManager.player.gameObject ) {
-                            Destroy(gos[i]);                                                                                     
+                            Destroy(gos[i]);
                         }
                     }
                 }
@@ -684,18 +682,18 @@ public class GameSceneController : GameSceneControllerBase {
                         i++;
 					}
                 }
-                                                                     
+
                 List<string> scenesToLoad = new List<string>();
                 scenesToLoad.Add(ResultsScreenController.NAME);
 
                 List<string> dependencyIdsToUnload = HDAddressablesManager.Instance.GetAssetBundlesGroupDependencyIds((LevelManager.currentArea));
-                AddressablesBatchHandle batchHandle = HDAddressablesManager.Instance.GetAddressablesAreaBatchHandle(ResultsScreenController.NAME);                
-                m_switchAsyncScenes.Perform(scenesToUnload, scenesToLoad, true, dependencyIdsToUnload, batchHandle.DependencyIds, OnResultsSceneLoaded, OnScenesUnloaded);                                               
+                AddressablesBatchHandle batchHandle = HDAddressablesManager.Instance.GetAddressablesAreaBatchHandle(ResultsScreenController.NAME);
+                m_switchAsyncScenes.Perform(scenesToUnload, scenesToLoad, true, dependencyIdsToUnload, batchHandle.DependencyIds, OnResultsSceneLoaded, OnScenesUnloaded);
 
                 HDAddressablesManager.Instance.Ingame_NotifyLevelUnloaded();
             } break;
         }
-		
+
 		// Store new state
 		m_state = _newState;
 	}
@@ -752,7 +750,7 @@ public class GameSceneController : GameSceneControllerBase {
     /// </summary>
     private void OnPlayerDied() {
 		// End game
-		EndGame(false);        
+		EndGame(false);
 
 		// Add some delay to the summary popup
 		m_timer = 0.5f;
@@ -777,13 +775,13 @@ public class GameSceneController : GameSceneControllerBase {
             HDTrackingManagerImp.Instance.Notify_StopPerformanceTracker();
 			Broadcaster.Broadcast(BroadcastEventType.GAME_AREA_EXIT);
 			m_switchingArea = true;
-			m_nextArea = _nextArea;			
+			m_nextArea = _nextArea;
 
 			// Disable everything?
 			LevelManager.DisableCurrentArea();
 
             m_levelLoader = LevelManager.SwitchArea(m_nextArea);
-            m_levelLoader.Perform(m_useSyncLoading, OnSwitchAreaChangeState);            
+            m_levelLoader.Perform(m_useSyncLoading, OnSwitchAreaChangeState);
         }
     }
 
@@ -803,7 +801,7 @@ public class GameSceneController : GameSceneControllerBase {
                     if (progression != null) {
                         dragonXp = (int)progression.xp;
                     }
-    
+
                     dragonProgress = UsersManager.currentUser.GetDragonProgress(dragonData);
                 }
                 else if ( dragonData.type == IDragonData.Type.SPECIAL )
@@ -823,8 +821,8 @@ public class GameSceneController : GameSceneControllerBase {
 		m_mapUsageTracker.InitValue(0);
         m_mapUsageTracker.enabled = true;
         m_specialPowerTimeTracker.InitValue(0);
-        m_specialPowerTimeTracker.enabled = true;		
-        
+        m_specialPowerTimeTracker.enabled = true;
+
         if (isSpecial)
         {
             HDLeagueData leagueData = HDLiveDataManager.league.season.currentLeague;
@@ -853,25 +851,25 @@ public class GameSceneController : GameSceneControllerBase {
     }
 
     private void Track_RoundEnd() {
-        
+
         int timePlayed = (int)elapsedSeconds;
         int score = (int)RewardManager.score;
-        
+
         int dragonXp = 0;
         int dragonProgress = 0;
-        
+
         bool isSpecial = false;
         if (InstanceManager.player != null) {
             IDragonData dragonData = InstanceManager.player.data;
 			if (dragonData != null)
             {
-                if (dragonData.type == IDragonData.Type.CLASSIC) 
+                if (dragonData.type == IDragonData.Type.CLASSIC)
                 {
                     DragonProgression progression = (dragonData as DragonDataClassic).progression;
                     if (progression != null) {
                         dragonXp = (int)progression.xp;
                     }
-    
+
                     dragonProgress = UsersManager.currentUser.GetDragonProgress(dragonData);
                 }
                 else if (dragonData.type == IDragonData.Type.SPECIAL)
@@ -880,11 +878,11 @@ public class GameSceneController : GameSceneControllerBase {
                 }
             }
         }
-        
+
         int eggsFound = (CollectiblesManager.egg != null && CollectiblesManager.egg.collected) ? 1 : 0;
 
         if ( isSpecial )
-        { 
+        {
             DragonDataSpecial dragonDataSpecial = InstanceManager.player.data as DragonDataSpecial;
             int labHp = dragonDataSpecial.GetStat(DragonDataSpecial.Stat.HEALTH).level;
             int labSpeed = dragonDataSpecial.GetStat(DragonDataSpecial.Stat.HEALTH).level;
@@ -894,10 +892,10 @@ public class GameSceneController : GameSceneControllerBase {
             string league = (leagueData != null) ? leagueData.sku : "";
             float powerTime = m_specialPowerTimeTracker.currentValue;
             // If special dragon
-            HDTrackingManager.Instance.Notify_LabGameEnd(dragonDataSpecial.sku,  labHp, labSpeed, labBoost, powerLevel, 
+            HDTrackingManager.Instance.Notify_LabGameEnd(dragonDataSpecial.sku,  labHp, labSpeed, labBoost, powerLevel,
                                 timePlayed, score, eggsFound,
                                 RewardManager.maxScoreMultiplier, RewardManager.maxBaseScoreMultiplier, RewardManager.furyFireRushAmount, RewardManager.furySuperFireRushAmount,
-                                RewardManager.paidReviveCount, RewardManager.freeReviveCount, (int)RewardManager.coins, (int)RewardManager.pc, 
+                                RewardManager.paidReviveCount, RewardManager.freeReviveCount, (int)RewardManager.coins, (int)RewardManager.pc,
                                 powerTime, (int)m_mapUsageTracker.currentValue, league);
         }
         else
@@ -910,7 +908,7 @@ public class GameSceneController : GameSceneControllerBase {
                     chestsFound++;
                 }
             }
-        
+
             HDTrackingManager.Instance.Notify_RoundEnd(dragonXp, (int)RewardManager.xp, dragonProgress, timePlayed, score, chestsFound, eggsFound,
                         RewardManager.maxScoreMultiplier, RewardManager.maxBaseScoreMultiplier, RewardManager.furyFireRushAmount, RewardManager.furySuperFireRushAmount,
                         RewardManager.paidReviveCount, RewardManager.freeReviveCount, (int)RewardManager.coins, (int)RewardManager.pc, m_boostTimeTracker.currentValue, (int)m_mapUsageTracker.currentValue);
@@ -919,8 +917,8 @@ public class GameSceneController : GameSceneControllerBase {
         m_boostTimeTracker.enabled = false;
         m_mapUsageTracker.enabled = false;
         m_specialPowerTimeTracker.enabled = false;
-        
-        
+
+
         // Automatic connection system is enabled again since performance is not a constraint anymore
         GameServerManager.SharedInstance.Connection_SetIsCheckEnabled(true);
     }
@@ -965,7 +963,7 @@ public class GameSceneController : GameSceneControllerBase {
 		while (!done)
 		{
 			done = true;
-			for( int i = 0; i<operations.Length; i++ )	
+			for( int i = 0; i<operations.Length; i++ )
 			{
 				done = done && operations[i].progress >= 0.9f;
 			}
@@ -974,7 +972,7 @@ public class GameSceneController : GameSceneControllerBase {
 				yield return null;
 			}
 		}
-		for( int i = 0; i<operations.Length; i++ )	
+		for( int i = 0; i<operations.Length; i++ )
 		{
 			operations[i].allowSceneActivation = true;
 		}

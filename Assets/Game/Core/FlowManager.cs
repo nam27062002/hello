@@ -96,7 +96,16 @@ public class FlowManager : Singleton<FlowManager> {
         instance.SwitchScene(GameSceneController.NAME);
 	}
 
-    /// <summary>
+	/// <summary>
+	/// Navigate to the game scene.
+	/// </summary>
+	public static void GoToGameNoUI() {
+		HDTrackingManager.Instance.GoToGame();
+		OffersManager.instance.enabled = false;
+		instance.SwitchScene("SC_Game_NoUI");
+	}
+
+	/// <summary>
 	/// Navigate to the results scene.
 	/// </summary>
 	public static void GoToResults() {

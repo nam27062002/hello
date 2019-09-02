@@ -1,6 +1,6 @@
 // LevelEditorSceneController.cs
 // Hungry Dragon
-// 
+//
 // Created by Alger Ortín Castellví on 29/09/2015.
 // Copyright (c) 2015 Ubisoft. All rights reserved.
 
@@ -16,7 +16,7 @@ using System.Collections;
 namespace LevelEditor {
 	/// <summary>
 	/// Scene controller for the level editor scene.
-	/// Simplified version of the game scene controller for 
+	/// Simplified version of the game scene controller for
 	/// </summary>
 	public class LevelEditorSceneController : GameSceneControllerBase {
 		//------------------------------------------------------------------//
@@ -68,9 +68,9 @@ namespace LevelEditor {
 
             GameStoreManager.SharedInstance.Initialize();
 
-            PersistenceFacade.instance.Reset();            
+            PersistenceFacade.instance.Reset();
             PersistenceFacade.instance.Sync_FromLaunchApplication(null);
-            
+
 			if (LevelEditor.settings.poolLimit == "unlimited") {
 				ParticleManager.instance.poolLimits = ParticleManager.PoolLimits.Unlimited;
 			} else {
@@ -111,7 +111,7 @@ namespace LevelEditor {
 
             // Call parent
             base.Awake();
-		
+
 		}
 
 		/// <summary>
@@ -164,7 +164,7 @@ namespace LevelEditor {
 			Broadcaster.AddListener(BroadcastEventType.POPUP_CLOSED, this);
 			Messenger.AddListener<DamageType, Transform>(MessengerEvents.PLAYER_KO, OnPlayerKo);
 		}
-		
+
 		/// <summary>
 		/// Component disabled.
 		/// </summary>
@@ -205,9 +205,9 @@ namespace LevelEditor {
 				m_elapsedSeconds += Time.deltaTime;
 
 				if (Input.GetKeyDown(KeyCode.I))
-				{					
+				{
 					SpawnPlayer(true);
-					
+
 					LevelTypeSpawners sp = FindObjectOfType<LevelTypeSpawners>();
 					if ( sp != null )
 						sp.IntroSpawn(InstanceManager.player.data.def.sku);
@@ -256,7 +256,7 @@ namespace LevelEditor {
 
 			// Reset dragon stats
 			InstanceManager.player.ResetStats(false);
-			
+
 			Vector3 startPos = GameConstants.Vector3.zero;
 			// Setup spawn position
 			if (LevelEditor.settings.spawnAtCameraPos) {
@@ -267,8 +267,8 @@ namespace LevelEditor {
 				InstanceManager.gameCamera.Init(startPos);
 			} else {
 				SpawnPlayer(true);
-			}			
-			
+			}
+
 			// Instantiate map prefab
 			InitLevelMap();
 

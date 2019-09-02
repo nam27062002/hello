@@ -61,7 +61,9 @@ public class EditorAddressablesManager
     {
         Debug.Log("Clearing addressables...");        
         EditorFileUtils.DeleteFileOrDirectory(EditorAssetBundlesManager.DOWNLOADABLES_FOLDER + "/" + target.ToString());
-        ClearResourcesGenerated();
+
+        MoveGeneratedResourcesToOriginalUbication();
+        
         EditorFileUtils.DeleteFileOrDirectory(EditorFileUtils.PathCombine(m_assetBundlesLocalDestinationPath, target.ToString()));
         EditorFileUtils.DeleteFileOrDirectory(ADDRESSABLES_PLAYER_ASSET_BUNDLES_PATH);
 
@@ -83,17 +85,43 @@ public class EditorAddressablesManager
         Debug.Log("Customizing editor catalog...");
     }
 
+    private List<string> GetDefineSymbolsPerPlatform(BuildTarget target)
+    {
+        List<string> returnValue = null;
+        if (target == BuildTarget.iOS || target == BuildTarget.Android)
+        {
+            BuildTargetGroup targetGroup = (target == BuildTarget.Android) ? BuildTargetGroup.Android : BuildTargetGroup.iOS;
+            string defineSymbols = PlayerSettings.GetScriptingDefineSymbolsForGroup(targetGroup);
+            if (!string.IsNullOrEmpty(defineSymbols))
+            {
+                returnValue = new List<string>();
+
+                string[] tokens = defineSymbols.Split(';');
+                int count = tokens.Length;
+                for (int i = 0; i < count; i++)
+                {
+                    returnValue.Add(tokens[i].Trim());
+                }
+            }
+        }
+
+        return returnValue;
+    }
+
     public void GeneratePlayerCatalogForAllPlatforms()
     {
         // Player addressables catalog is generated for both platforms so the game will work on both platforms in Editor and AllInResources modes, which are the modes that can work without generating 
         // asset bundles, which makes development easier.       
         BuildTarget target = EditorUserBuildSettings.activeBuildTarget;
-        BuildTarget otherTarget = (target == BuildTarget.iOS) ? BuildTarget.Android : BuildTarget.iOS;
-        GeneratePlayerCatalog(otherTarget, false);
-        GeneratePlayerCatalog(target, true);
+        BuildTarget otherTarget = (target == BuildTarget.iOS) ? BuildTarget.Android : BuildTarget.iOS;        
+
+        GeneratePlayerCatalog(otherTarget, false, GetDefineSymbolsPerPlatform(otherTarget));
+
+        // We don't want the assets to change when building in Editor mode in order to avoid confusion when committing changes
+        GeneratePlayerCatalog(target, AddressablesManager.Mode != AddressablesManager.EMode.Editor, GetDefineSymbolsPerPlatform(target));
     }
     
-    public void GeneratePlayerCatalog(BuildTarget target, bool changeAssets)
+    private void GeneratePlayerCatalog(BuildTarget target, bool changeAssets, List<string> defineSymbols)
     {
         Debug.Log("Generating player catalog for " + target.ToString() + "...");
 
@@ -106,7 +134,7 @@ public class EditorAddressablesManager
         EditorFileUtils.CreateDirectory(m_localDestinationPath);                
         EditorFileUtils.CreateDirectory(GetGeneratedAddressablesCatalogFolder(target));        
 
-        BuildCatalog(filePath, AddressablesTypes.EProviderMode.AsCatalog, target, changeAssets);
+        BuildCatalog(filePath, AddressablesTypes.EProviderMode.AsCatalog, target, changeAssets, defineSymbols);
     }
 
 	private static string ASSETS_LUT_FOLDER_NAME = "AssetsLUT";
@@ -268,8 +296,9 @@ public class EditorAddressablesManager
         return editorCatalog;
     }
 
-    private void BuildCatalog(string playerCatalogPath, AddressablesTypes.EProviderMode providerMode, BuildTarget target, bool changeAssets)
+    private void BuildCatalog(string playerCatalogPath, AddressablesTypes.EProviderMode providerMode, BuildTarget target, bool changeAssets, List<string> defineSymbols)
     {
+        Debug.Log("Generating player catalog for platform " + target.ToString() + " with the following define symbols: " + UbiListUtils.GetListAsString(defineSymbols));
         AssetDatabase.RemoveUnusedAssetBundleNames();
 
         ClearResourcesGenerated();
@@ -287,7 +316,7 @@ public class EditorAddressablesManager
             playerCatalog.ClearEntries();            
 
             // Loops through all entries to configure actual assets according to their location and provider mode
-            List<AddressablesCatalogEntry> entries = editorCatalog.GetEntries();
+            List<AddressablesCatalogEntry> entries = editorCatalog.GetEntriesFilteredByDefineSymbols(defineSymbols);
             List<string> scenesToAdd = new List<string>();
             List<string> scenesToRemove = new List<string>();
             AddressablesCatalogEntry entry;
@@ -296,9 +325,12 @@ public class EditorAddressablesManager
             {                
                 if (ProcessEntry(entries[i], scenesToAdd, scenesToRemove, target, changeAssets))
                 {
-                    entry = new AddressablesCatalogEntry();
-                    entry.Load(entries[i].ToJSON());                    
-                    playerCatalog.AddEntry(entry);                    
+                    if (entries[i].AddToCatalogPlayer)
+                    {
+                        entry = new AddressablesCatalogEntry();
+                        entry.Load(entries[i].ToJSON());
+                        playerCatalog.AddEntry(entry);
+                    }
                 }
             }            
 
@@ -637,25 +669,26 @@ public class EditorAddressablesManager
                         string resourcesPath = path.Replace("Assets/Resources/", "");
                         entry.AssetName = EditorFileUtils.GetPathWithoutExtension(resourcesPath);
                     }
-                    else if (moveToGenerated)
+                    else
                     {                        
                         string token = "Assets/";
                         if (path.StartsWith(token))
                         {
                             string pathFromResources = path.Substring(token.Length);                            
-                            string resourcesPath = token + RESOURCES_GENERATED_FOLDER + "/" + pathFromResources;                            
-
-                            // Moves the file
-                            Move(path, resourcesPath);
-
-                            // Moves the meta
-                            path += ".meta";
-                            resourcesPath += ".meta";
-
-							Move(path, resourcesPath);                           
-
-                            // Moves the meta
+                            string resourcesPath = token + RESOURCES_GENERATED_FOLDER + "/" + pathFromResources;
                             entry.AssetName = GENERATED_FOLDER + "/" + EditorFileUtils.GetPathWithoutExtension(pathFromResources);
+
+                            if (moveToGenerated)
+                            {
+                                // Moves the file
+                                Move(path, resourcesPath);
+
+                                // Moves the meta
+                                path += ".meta";
+                                resourcesPath += ".meta";
+
+                                Move(path, resourcesPath);
+                            }                            
                         }
                         else
                         {
