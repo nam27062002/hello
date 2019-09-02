@@ -43,8 +43,16 @@ public class AddressablesCatalogEntry
         get { return m_assetBundleName; }
         set { m_assetBundleName = value; }
     }
-    
-    public string AssetName { get; set; }       
+
+    private string m_assetName;
+    public string AssetName
+    {
+        get { return m_assetName; }
+        set
+        {
+            m_assetName = value;
+        }
+    }       
 
     private const string ATT_ID = "id";
     private const string ATT_VARIANT = "variant";
@@ -56,6 +64,8 @@ public class AddressablesCatalogEntry
     private const string ATT_GUID = "guid";
     private const string ATT_PLATFORM = "platform";
     private const string ATT_GENERATED_BY_SCRIPT = "generatedByScript";
+    private const string ATT_DEFINE_SYMBOL = "defineSymbol";
+    private const string ATT_ADD_TO_CATALOG_PLAYER = "addToCatalogPlayer";
 
     private string m_guid;
     public string GUID
@@ -84,17 +94,31 @@ public class AddressablesCatalogEntry
         get { return m_generatedByScript; }
     }
 
+    private string m_defineSymbol = null;
+    public string DefineSymbol
+    {
+        get { return m_defineSymbol; }
+    }
+
+    private bool m_addToCatalogPlayer = true;
+    public bool AddToCatalogPlayer
+    {
+        get { return m_addToCatalogPlayer; }
+    }
+
     public AddressablesCatalogEntry(bool editorMode) : this()
     {
         m_editorMode = editorMode;        
     }
 
-    public AddressablesCatalogEntry(string id, string variant, string gui, bool editorMode, bool generatedByScript) : this() {
+    public AddressablesCatalogEntry(string id, string variant, string gui, bool editorMode, bool generatedByScript, string defineSymbol = null, bool addToCatalogPlayer = true) : this() {
         Id = id;
         Variant = variant;
         GUID = gui;
         m_editorMode = editorMode;
-        m_generatedByScript = generatedByScript;      
+        m_generatedByScript = generatedByScript;
+        m_defineSymbol = defineSymbol;
+        m_addToCatalogPlayer = addToCatalogPlayer;
     }
 #endif
 
@@ -113,6 +137,8 @@ public class AddressablesCatalogEntry
 #if UNITY_EDITOR
         GUID = null;
         m_generatedByScript = false;
+        m_defineSymbol = null;
+        m_addToCatalogPlayer = true;
 #endif
     }
 
@@ -178,6 +204,26 @@ public class AddressablesCatalogEntry
             {
                 m_generatedByScript = false;
             }
+
+            att = ATT_DEFINE_SYMBOL;
+            if (data.ContainsKey(att))
+            {
+                m_defineSymbol = data[ATT_DEFINE_SYMBOL];
+            }
+            else
+            {
+                m_defineSymbol = null;
+            }
+
+            att = ATT_ADD_TO_CATALOG_PLAYER;
+            if (data.ContainsKey(att))
+            {
+                m_addToCatalogPlayer = data[ATT_ADD_TO_CATALOG_PLAYER].AsBool;
+            }
+            else
+            {
+                m_addToCatalogPlayer = false;
+            }            
 #endif
 
             // Asset Bundle name            
@@ -227,6 +273,8 @@ public class AddressablesCatalogEntry
             }
 
             AddToJSON(data, ATT_GENERATED_BY_SCRIPT, GeneratedByScript.ToString());
+            AddToJSON(data, ATT_DEFINE_SYMBOL, DefineSymbol);
+            AddToJSON(data, ATT_ADD_TO_CATALOG_PLAYER, AddToCatalogPlayer.ToString());
         }
 #endif
         if (needsToAddAssetBundleName)

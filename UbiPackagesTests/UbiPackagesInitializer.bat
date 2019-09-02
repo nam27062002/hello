@@ -11,6 +11,7 @@ setlocal EnableDelayedExpansion
 
 call :project AddressablesUnitTests
 call :project AddressablesAssetsTests
+call :project AddressablesFoldersTests
 goto :finish
 
 :project
