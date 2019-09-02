@@ -335,44 +335,64 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
         Language_Update();
 
-		UnityEngine.Profiling.Profiler.BeginSample("PersistenceFacade.Update()");
+        UnityEngine.Profiling.Profiler.BeginSample("PersistenceFacade.Update()");
         PersistenceFacade.instance.Update();
-		UnityEngine.Profiling.Profiler.EndSample();
+        UnityEngine.Profiling.Profiler.EndSample();
 
-		UnityEngine.Profiling.Profiler.BeginSample("HDTrackingManager.Update()");
+        UnityEngine.Profiling.Profiler.BeginSample("HDTrackingManager.Update()");
         HDTrackingManager.Instance.Update();
-		UnityEngine.Profiling.Profiler.EndSample();
+        UnityEngine.Profiling.Profiler.EndSample();
 
-		UnityEngine.Profiling.Profiler.BeginSample("HDCustomizerManager.Update()");
+        UnityEngine.Profiling.Profiler.BeginSample("HDCustomizerManager.Update()");
         HDCustomizerManager.instance.Update();        
-		UnityEngine.Profiling.Profiler.EndSample();
+        UnityEngine.Profiling.Profiler.EndSample();
 
-		UnityEngine.Profiling.Profiler.BeginSample("GameServerManager.Update()");
-		GameServerManager.SharedInstance.Update();
-		UnityEngine.Profiling.Profiler.EndSample();
+        UnityEngine.Profiling.Profiler.BeginSample("GameServerManager.Update()");
+        GameServerManager.SharedInstance.Update();
+        UnityEngine.Profiling.Profiler.EndSample();
 
-		UnityEngine.Profiling.Profiler.BeginSample("HDAddressablesManager.Update()");
+        UnityEngine.Profiling.Profiler.BeginSample("HDAddressablesManager.Update()");
         HDAddressablesManager.Instance.Update();
-		UnityEngine.Profiling.Profiler.EndSample();
+        UnityEngine.Profiling.Profiler.EndSample();
 
-		UnityEngine.Profiling.Profiler.BeginSample("GameStoreManager.Update()");
+        UnityEngine.Profiling.Profiler.BeginSample("GameStoreManager.Update()");
         GameStoreManager.SharedInstance.Update();
-		UnityEngine.Profiling.Profiler.EndSample();
+        UnityEngine.Profiling.Profiler.EndSample();
 
-		UnityEngine.Profiling.Profiler.EndSample();
-
-
+        UnityEngine.Profiling.Profiler.BeginSample("GameStoreManager.Update()");
         ChestManager.instance.Update();
+
+        UnityEngine.Profiling.Profiler.BeginSample("GameStoreManager.Update()");
         OffersManager.instance.Update();
         #if UNITY_IOS
         HDNotificationsManager.instance.Update();
         #endif
+
+        UnityEngine.Profiling.Profiler.BeginSample("TransactionManager.Update()");
         TransactionManager.instance.Update();
+        UnityEngine.Profiling.Profiler.EndSample();
+
+
+        UnityEngine.Profiling.Profiler.BeginSample("BackButtonManager.Update()");
         BackButtonManager.instance.Update();
+        UnityEngine.Profiling.Profiler.EndSample();
+
+        UnityEngine.Profiling.Profiler.BeginSample("MissionManager.Update()");
         MissionManager.instance.Update();
+        UnityEngine.Profiling.Profiler.EndSample();
+
+        UnityEngine.Profiling.Profiler.BeginSample("RewardManager.Update()");
         RewardManager.instance.Update();
+        UnityEngine.Profiling.Profiler.EndSample(); 
+
+        UnityEngine.Profiling.Profiler.BeginSample("GameSceneManager.Update()");
         GameSceneManager.instance.Update();
+        UnityEngine.Profiling.Profiler.EndSample();
+
+        UnityEngine.Profiling.Profiler.BeginSample("EggManager.Update()");
         EggManager.instance.Update();
+        UnityEngine.Profiling.Profiler.EndSample();
+
 
         if (NeedsToRestartFlow)
         {
@@ -382,6 +402,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
             FlowManager.Restart();
         }        
 
+        UnityEngine.Profiling.Profiler.BeginSample("GameStoreManager.Update()");
         if (FeatureSettingsManager.IsDebugEnabled)
         {
             // Boss camera effect cheat to be able to enable/disable anywhere. We want to be able to check the impact in performance of the effect so we want to have
@@ -412,6 +433,10 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
                 }
             }
         }
+        UnityEngine.Profiling.Profiler.EndSample();
+
+
+        UnityEngine.Profiling.Profiler.EndSample();
     }
 
     private long LastPauseTime { get; set; }
