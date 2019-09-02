@@ -198,6 +198,10 @@ public static class EditorAutomaticAddressables {
         // AR (only for iOS)
         GetEntriesFromDirectory(new DirectoryInfo("Assets/PlatformResources/iOS/AR/Animojis/"), false, entries, bundlesSet, instanciableTypes, BuildTarget.iOS);
 
+        // You can also add assets that are supposed to be loaded from Resources
+        // Example: This added all assets in Assets/Art/R folder and its subfolders. Since we pass false to _addLastFolder directory the name of the asset will be used as id in Addressables catalog.
+        //GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/R"), false, entries, bundlesSet, instanciableTypes, BuildTarget.NoTarget, AddressablesTypes.ELocationType.Resources);
+
         _entries = entries;
         _bundles = bundlesSet.ToList();
     }
@@ -221,7 +225,7 @@ public static class EditorAutomaticAddressables {
             AssetImporter ai = AssetImporter.GetAtPath(filePath);
             if (ai != null) {
                 string assetBundle = ai.assetBundleName;
-                if (!string.IsNullOrEmpty(assetBundle)) {
+                if (locationType == AddressablesTypes.ELocationType.Resources || locationType == AddressablesTypes.ELocationType.AssetBundles && !string.IsNullOrEmpty(assetBundle)) {                 
                     bool createEntry = false;
 
                     if (_entries != null) {
@@ -251,7 +255,7 @@ public static class EditorAutomaticAddressables {
                         }
 
                         AddressablesCatalogEntry entry = new AddressablesCatalogEntry(id, variant, AssetDatabase.AssetPathToGUID(filePath), true, true, defineSymbol, addToCatalogPlayer) {
-                            LocationType = AddressablesTypes.ELocationType.AssetBundles,
+                            LocationType = locationType,
                             AssetName = assetName,
                             AssetBundleName = assetBundle,
                             Platform = platformAsString                                                        
