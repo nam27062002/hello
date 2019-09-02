@@ -12,6 +12,7 @@ public class HDEditorAssetBundlesMenu : MonoBehaviour
     private const string MENU_AUTO_GENERATE = ROOT_MENU + "Auto Generate/";
     private const string MENU_AUTO_GENERATE_NPCS = MENU_AUTO_GENERATE + "Auto Generate NPCs Asset Bundles";
     private const string MENU_AUTO_GENERATE_PARTICLES = MENU_AUTO_GENERATE + "Auto Generate Particles Asset Bundles";
+    private const string MENU_AUTO_PROCESS_SCENES = MENU_AUTO_GENERATE + "Auto Process scenes";
 
     private const string MENU_DRAGONS_ASSIGN_BUNDLES =ROOT_MENU + "Dragons/Auto Assign Dragon Bundles";
 
@@ -139,6 +140,12 @@ public class HDEditorAssetBundlesMenu : MonoBehaviour
         foreach (Transform t in _t) {
             FindISpawner(t, ref _list);
         }
+    }
+
+
+    [MenuItem(MENU_AUTO_PROCESS_SCENES, false, 54)]
+    public static void ProcessScenes() {
+        SceneOptimizerEditor.BatchOptimization();
     }
 
     [MenuItem(MENU_DRAGONS_ASSIGN_BUNDLES, false, 54)]
