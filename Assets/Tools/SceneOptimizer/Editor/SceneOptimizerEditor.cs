@@ -26,18 +26,21 @@ public static class SceneOptimizerEditor {
                     string srcFilePath = srcPath.Substring(srcPath.IndexOf(assetsToken, System.StringComparison.Ordinal));
                     AssetImporter srcAI = AssetImporter.GetAtPath(srcFilePath);
                     if (!string.IsNullOrEmpty(srcAI.assetBundleName)) {
-                        UnityEngine.SceneManagement.Scene scene = UnityEditor.SceneManagement.EditorSceneManager.OpenScene(srcPath, UnityEditor.SceneManagement.OpenSceneMode.Single);
-                        DoOptimize(scene);
+                        try {
+                            UnityEngine.SceneManagement.Scene scene = UnityEditor.SceneManagement.EditorSceneManager.OpenScene(srcPath, UnityEditor.SceneManagement.OpenSceneMode.Single);
+                            DoOptimize(scene);
 
-                        string dstPath = srcPath.Replace(".unity", "_OPT.unity");
-                        UnityEditor.SceneManagement.EditorSceneManager.SaveScene(scene, dstPath);
+                            string dstPath = srcPath.Replace("/Game/", "/Editor/Addressables/generated/");
+                            UnityEditor.SceneManagement.EditorSceneManager.SaveScene(scene, dstPath);
 
-                        string dstFilePath = dstPath.Substring(dstPath.IndexOf(assetsToken, System.StringComparison.Ordinal));
-                        AssetDatabase.ImportAsset(dstFilePath, ImportAssetOptions.ForceSynchronousImport);
+                            string dstFilePath = dstPath.Substring(dstPath.IndexOf(assetsToken, System.StringComparison.Ordinal));
+                            AssetDatabase.ImportAsset(dstFilePath, ImportAssetOptions.ForceSynchronousImport);
 
-                        AssetImporter dstAI = AssetImporter.GetAtPath(dstFilePath);
-                        dstAI.assetBundleName = srcAI.assetBundleName;
-                        srcAI.assetBundleName = "";
+                            AssetImporter dstAI = AssetImporter.GetAtPath(dstFilePath);
+                            dstAI.assetBundleName = srcAI.assetBundleName;
+                        } catch(System.Exception _e) {
+                            Debug.LogError("[SceneOptimizerEditor] " + file.Name + " > " + _e.StackTrace);
+                        }
                     }
                 }
             }
