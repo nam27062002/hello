@@ -100,9 +100,9 @@ public class SpecialDragonBarSkillElement : SpecialDragonBarElement
 			// Open info popup (after some delay)
 			UbiBCN.CoroutineManager.DelayedCall(
 				() => {
-					PopupController popup = PopupManager.LoadPopup(PopupLabSkillUnlocked.PATH);
+					PopupController popup = PopupManager.LoadPopup(PopupSpecialDragonSkillUnlocked.PATH);
 					if(popup != null) {
-						PopupLabSkillUnlocked skillUnlockedPopup = popup.GetComponent<PopupLabSkillUnlocked>();
+						PopupSpecialDragonSkillUnlocked skillUnlockedPopup = popup.GetComponent<PopupSpecialDragonSkillUnlocked>();
 						skillUnlockedPopup.Init(m_def);
 						popup.Open();
 					}

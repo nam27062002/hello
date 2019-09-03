@@ -16,11 +16,11 @@ using UnityEngine.UI;
 /// Tiers info popup.
 /// </summary>
 [RequireComponent(typeof(PopupController))]
-public class PopupLabSkillUnlocked : MonoBehaviour {
+public class PopupSpecialDragonSkillUnlocked : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	public const string PATH = "UI/Popups/Menu/PF_PopupLabSkillUnlocked";
+	public const string PATH = "UI/Popups/Menu/PF_PopupSpecialDragonSkillUnlocked";
 
 	//------------------------------------------------------------------------//
 	// MEMBERS														 		  //

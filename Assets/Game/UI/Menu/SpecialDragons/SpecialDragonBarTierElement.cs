@@ -75,9 +75,9 @@ public class SpecialDragonBarTierElement : SpecialDragonBarElement {
 			// Open info popup (after some delay)
 			UbiBCN.CoroutineManager.DelayedCall(
 				() => {
-					PopupController popup = PopupManager.LoadPopup(PopupLabTierUnlocked.PATH);
+					PopupController popup = PopupManager.LoadPopup(PopupSpecialDragonTierUnlocked.PATH);
 					if(popup != null) {
-						PopupLabTierUnlocked tierUnlockedPopup = popup.GetComponent<PopupLabTierUnlocked>();
+						PopupSpecialDragonTierUnlocked tierUnlockedPopup = popup.GetComponent<PopupSpecialDragonTierUnlocked>();
 						tierUnlockedPopup.Init(_dragonData.tierDef, m_def);
 						popup.Open();
 					}
