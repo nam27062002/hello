@@ -6,9 +6,12 @@ using System.Collections.Generic;
 public static class SceneOptimizerEditor {
     
     public static void BatchOptimization() {
-        Stack<DirectoryInfo> directories = new Stack<DirectoryInfo>();
+		//clean old folder
+		EditorFileUtils.DeleteFileOrDirectory("Assets/Editor/Addressables/generated/Scenes");
+		
+		Stack <DirectoryInfo> directories = new Stack<DirectoryInfo>();
         directories.Push(new DirectoryInfo("Assets/Game/Scenes/Levels/"));
-
+        
         while (directories.Count > 0) {
             DirectoryInfo current = directories.Pop();
             DirectoryInfo[] children = current.GetDirectories();
