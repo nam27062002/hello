@@ -108,6 +108,11 @@ public class EditorAddressablesManager
         return returnValue;
     }
 
+    public void PostProcessScenes()
+    {
+        SceneOptimizerEditor.BatchOptimization();
+    }
+
     public void GeneratePlayerCatalogForAllPlatforms()
     {
         // Player addressables catalog is generated for both platforms so the game will work on both platforms in Editor and AllInResources modes, which are the modes that can work without generating 
@@ -247,6 +252,7 @@ public class EditorAddressablesManager
         BuildTarget target = EditorUserBuildSettings.activeBuildTarget;
         ClearBuild(target);
         CustomizeEditorCatalog();
+        PostProcessScenes();
         GeneratePlayerCatalogForAllPlatforms();        
 
         if (AddressablesManager.Mode_NeedsAssetBundles())
