@@ -222,6 +222,15 @@ public class PopupShopOffersPill : IPopupShopPill {
 			m_previousPrice = m_price;
 		}
 
+#if DEBUG && false
+		Debug.Log(Colors.yellow.Tag(
+			"Valid Discount: " + validDiscount + "\n"
+			+ "Previous Price: " + m_previousPrice + "\n"
+			+ "Price: " + m_price + "\n"
+			+ "Store Ready: " + storeReady
+		));
+#endif
+
 		// Buttons
 		if(m_priceButtonGroup != null) {
 			// Show?
