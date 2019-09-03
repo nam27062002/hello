@@ -46,9 +46,9 @@ public class PopupLabUnlocked : MonoBehaviour {
 	/// <returns>Must the popup be displayed?</returns>
 	public static bool Check() {
 		// Don't if already displayed
-		if(UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.LAB_UNLOCKED)) {
+		/*if(UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.LAB_UNLOCKED)) {
 			return false;
-		}
+		}*/
 
 		// Always if a special dragon is already owned! (probably purchased via offer pack)
 		List<IDragonData> specialDragons = DragonManager.GetDragonsByOrder(IDragonData.Type.SPECIAL);
@@ -118,7 +118,7 @@ public class PopupLabUnlocked : MonoBehaviour {
 
 		// Mark tutorial as completed
 		// [AOC] Do it now to make sure that no one triggers the popup again!
-		UsersManager.currentUser.SetTutorialStepCompleted(TutorialStep.LAB_UNLOCKED, true);
+		//UsersManager.currentUser.SetTutorialStepCompleted(TutorialStep.LAB_UNLOCKED, true);
 
 		// [AOC] TODO!! Tracking?
 	}

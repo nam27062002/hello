@@ -336,7 +336,7 @@ public class SpecialDragonBar : MonoBehaviour {
             else
             {
                 // If the dragon reached the maximum level show "MAX level" instead of the number
-                m_levelText.Localize("MAX_LEVEL_TID");
+                m_levelText.Localize("TID_MAX_LEVEL");
             }
         }
     }

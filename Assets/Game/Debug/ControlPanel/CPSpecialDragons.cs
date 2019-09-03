@@ -124,11 +124,4 @@ public class CPSpecialDragons : MonoBehaviour {
 		}
 	}
 
-	public void OnResetLabIntroPopup() {
-		Prefs.SetBoolPlayer(PopupLabIntro.DISPLAYED_KEY, false);
-	}
-
-	public void OnResetLabUnlockedPopup() {
-		UsersManager.currentUser.SetTutorialStepCompleted(TutorialStep.LAB_UNLOCKED, false);
-	}
 }

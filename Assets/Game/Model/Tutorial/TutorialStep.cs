@@ -65,7 +65,7 @@ public enum TutorialStep {
 
 	PRE_REG_REWARDS				= 1 << 22,
 
-	LAB_UNLOCKED				= 1 << 23,
+	SPECIAL_DRAGONS_UNLOCKED	= 1 << 23,
 	LEAGUES_INFO				= 1 << 24,
 
 	// [AOC] Max 32 values (try inheriting from long if more are needed)

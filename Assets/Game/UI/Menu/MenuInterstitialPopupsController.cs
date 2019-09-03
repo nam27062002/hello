@@ -483,6 +483,7 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 		SetFlag(StateFlag.POPUP_DISPLAYED, true);
 	}
 
+
 	/// <summary>
 	/// Checks the leagues unlock popup.
 	/// </summary>
@@ -506,10 +507,37 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 		}
 	}
 
-	/// <summary>
-	/// Checks the daily rewards popup.
+
+    /// <summary>
+	/// Checks the leagues dragons popup.
 	/// </summary>
-	private void CheckDailyRewards() {
+	private void CheckLegendaryDragonsUnlock()
+    {
+
+        // Show it only in the dragon selection section
+        if (m_currentScreen != MenuScreen.DRAGON_SELECTION) return;
+
+        // Can we show the popup?
+        PopupController popup = null;
+        if (PopupSpecialDragonsUnlocked.Check())
+        {
+            popup = PopupManager.LoadPopup(PopupSpecialDragonsUnlocked.PATH);
+            PopupSpecialDragonsUnlocked specialsPopup = popup.GetComponent<PopupSpecialDragonsUnlocked>();
+            specialsPopup.Init(m_currentScreen);
+            PopupManager.EnqueuePopup(popup);
+        }
+
+        // Set flag
+        if (popup != null)
+        {
+            SetFlag(StateFlag.POPUP_DISPLAYED, true);
+        }
+    }
+
+    /// <summary>
+    /// Checks the daily rewards popup.
+    /// </summary>
+    private void CheckDailyRewards() {
 		// Never if feature not enabled
 		if(!FeatureSettingsManager.IsDailyRewardsEnabled()) return;
 
@@ -614,7 +642,8 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 		CheckPreRegRewards();
 		CheckShark();
 		CheckAnimojiTutorial();
-		CheckLeaguesUnlock();
+        CheckLegendaryDragonsUnlock();
+        CheckLeaguesUnlock();
 		CheckRating();
 		CheckSurvey();
 		CheckSilentNotification();

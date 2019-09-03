@@ -175,9 +175,9 @@ public class LabDragonSelectionScreen : MonoBehaviour {
 	public void OnShowPreAnimation() {
 
 		// Trigger intro popup?
-		if(!Prefs.GetBoolPlayer(PopupLabIntro.DISPLAYED_KEY)) {
-			PopupManager.EnqueuePopup(PopupLabIntro.PATH);
-		}
+		/*if(!Prefs.GetBoolPlayer(PopupSpecialDragonsUnlocked.DISPLAYED_KEY)) {
+			PopupManager.EnqueuePopup(PopupSpecialDragonsUnlocked.PATH);
+		}*/
 
 		// Trigger lab unlocked popup?
 		if(PopupLabUnlocked.Check()) {
