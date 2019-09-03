@@ -40,10 +40,14 @@ public class DisguisesScreenController : MonoBehaviour {
 	[Space]
 	[SerializeField] private CurrencyButton m_SCButton = null;
 	[SerializeField] private CurrencyButton m_PCButton = null;
+	[SerializeField] private AnimatedButton m_offerButton = null;
 	[SerializeField] private AnimatedButton m_equipButton = null;
 
 	[Space]
 	[SerializeField] private Localizer m_lockText = null;
+
+	[Space]
+	[SerializeField] private PopupShopOffersPill m_offerPill = null;
 
 	// Setup
 	private string m_initialSkin = string.Empty;	// String to be selected upon entering the screen. Will be resetted every time the screen is reloaded.
@@ -64,6 +68,7 @@ public class DisguisesScreenController : MonoBehaviour {
 	// Other data
 	private IDragonData m_dragonData = null;
 	private Wardrobe m_wardrobe = null;
+	private OfferPack m_linkedOffer = null;
 
 	// Internal references
 	private NavigationShowHideAnimator m_animator = null;
@@ -124,6 +129,7 @@ public class DisguisesScreenController : MonoBehaviour {
 		// Subscribe to purchase buttons
 		m_SCButton.button.onClick.AddListener(OnPurchaseDisguiseButton);
 		m_PCButton.button.onClick.AddListener(OnPurchaseDisguiseButton);
+		m_offerButton.button.onClick.AddListener(OnOfferButton);
 		m_equipButton.button.onClick.AddListener(OnEquipButton);
 	}
 
@@ -163,6 +169,22 @@ public class DisguisesScreenController : MonoBehaviour {
 	}
 
 	/// <summary>
+	/// Called at regular intervals.
+	/// </summary>
+	private void PeriodicRefresh() {
+		// Nothing if not enabled
+		if(!this.isActiveAndEnabled) return;
+
+		// Refresh offer pill
+		m_offerPill.RefreshTimer();
+
+		// If invalid pack or pack has expired, refresh buttons
+		if(m_linkedOffer == null || !m_linkedOffer.isActive) {
+			Refresh();
+		}
+	}
+
+	/// <summary>
 	/// Component has been disabled.
 	/// </summary>
 	private void OnDisable() {
@@ -197,6 +219,9 @@ public class DisguisesScreenController : MonoBehaviour {
 		// Aux vars
 		MenuSceneController menuController = InstanceManager.menuSceneController;
 
+		// Reset internal vars
+		m_linkedOffer = null;
+
 		// Store current dragon
 		m_dragonData = DragonManager.GetDragonData(menuController.selectedDragon);
 
@@ -221,6 +246,7 @@ public class DisguisesScreenController : MonoBehaviour {
 		if(m_lockText != null) m_lockText.GetComponent<ShowHideAnimator>().ForceHide(false);
 		if(m_SCButton != null) m_SCButton.animator.ForceHide(false);
 		if(m_PCButton != null) m_PCButton.animator.ForceHide(false);
+		if(m_offerButton != null) m_offerButton.animator.ForceHide(false);
 		if(m_equipButton != null) m_equipButton.animator.ForceHide(false);
 
 		// Initialize pills
@@ -230,7 +256,6 @@ public class DisguisesScreenController : MonoBehaviour {
 		DisguisePill initialPill = null;
 		for (int i = 0; i < m_pills.Length; i++) {
 			if (i < defList.Count) {
-
 				// Init pill
 				DefinitionNode def = defList[i];
 				m_pills[i].Load(def, m_wardrobe.GetSkinState(def.sku));
@@ -275,9 +300,8 @@ public class DisguisesScreenController : MonoBehaviour {
 	}
 
 	/// <summary>
-	/// Setup the screen with the data of the currently selected dragon.
+	/// Leave the screen ready to be hidden.
 	/// </summary>
-	/// <param name="_initialDisguiseSku">The disguise to focus. If it's from a different dragon than the current one, the target dragon will be selected. Leave empty to load current setup.</param>
 	public void FinalizeScreen() {
 		// Restore equiped disguise on target dragon
 		bool newEquip = false;
@@ -296,6 +320,9 @@ public class DisguisesScreenController : MonoBehaviour {
 
 		// Hide header
 		m_title.GetComponent<ShowHideAnimator>().Hide();
+
+		// Stop repeating refresh
+		CancelInvoke("PeriodicRefresh");
 	}
 
 	/// <summary>
@@ -319,6 +346,16 @@ public class DisguisesScreenController : MonoBehaviour {
 
 		// Everything ok!
 		return true;
+	}
+
+	/// <summary>
+	/// Refresh visuals keeping current selected pill.
+	/// </summary>
+	private void Refresh() {
+		// Just re-select current skin
+		DisguisePill pill = m_selectedPill;
+		m_selectedPill = null;
+		OnPillClicked(pill);
 	}
 
 	//------------------------------------------------------------------------//
@@ -391,31 +428,47 @@ public class DisguisesScreenController : MonoBehaviour {
 		string powerSku = _pill.def.GetAsString("powerup");
 		DefinitionNode powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, powerSku);
 
-
 		// If no power, hide the power icon
 		// Refresh data
 		m_powerIcon.InitFromDefinition(powerDef, false);	// [AOC] Powers are not locked anymore
+
 		// Show
 		// Force the animation to be launched
 		m_powerSlotAnim.RestartShow();
-
 
 		// Refresh the lock info
 		if(m_lockText != null) {
 			ShowHideAnimator anim = m_lockText.GetComponent<ShowHideAnimator>();
 			if(_pill.locked) {
-				m_lockText.Localize("TID_DISGUISES_UNLOCK_INFO", StringUtils.FormatNumber(_pill.def.GetAsInt("unlockLevel") + 1), m_dragonData.def.GetLocalized("tidName"));	// Reach level %U0 on %U1 to unlock!
+				// Locked by season or by level?
+				if(_pill.seasonDef != null) {
+					m_lockText.Localize("TID_DISGUISES_UNLOCK_INFO_SEASON", _pill.seasonDef.GetLocalized("tidName"));    // Only available in %U0!
+				} else {
+					m_lockText.Localize("TID_DISGUISES_UNLOCK_INFO", StringUtils.FormatNumber(_pill.def.GetAsInt("unlockLevel") + 1), m_dragonData.def.GetLocalized("tidName"));    // Reach level %U0 on %U1 to unlock!
+				}
+
 				anim.RestartShow();	// Restart animation
 			} else {
 				anim.Hide();
 			}
 		}
 
-		// Refresh visuals
+		// Gather some data from the skin
 		float priceSC = _pill.def.GetAsFloat("priceSC");
 		float pricePC = _pill.def.GetAsFloat("priceHC");
 		bool isPC = pricePC > priceSC;
 
+		m_linkedOffer = null;
+		foreach(OfferPack offer in OffersManager.activeOffers) {
+			foreach(OfferPackItem item in offer.items) {
+				if(item.sku == _pill.def.sku) {
+					m_linkedOffer = offer;
+					break;
+				}
+			}
+		}
+
+		// Refresh buttons
 		// SC button
 		if(m_SCButton != null) {
 			// Show button?
@@ -425,7 +478,7 @@ public class DisguisesScreenController : MonoBehaviour {
 				m_SCButton.SetAmount(priceSC, UserProfile.Currency.SOFT);
 				m_SCButton.animator.RestartShow();
 			} else {
-				m_SCButton.animator.Hide();
+				m_SCButton.animator.Hide(false);
 			}
 		}
 
@@ -438,7 +491,22 @@ public class DisguisesScreenController : MonoBehaviour {
 				m_PCButton.SetAmount(pricePC, UserProfile.Currency.HARD);
 				m_PCButton.animator.RestartShow();
 			} else {
-				m_PCButton.animator.Hide();
+				m_PCButton.animator.Hide(false);
+			}
+		}
+
+		// Offer button
+		if(m_offerButton != null) {
+			// Show button?
+			// Only if skin is neither owned nor locked, and there is an active offer pack selling this skin
+			if(m_linkedOffer != null && !_pill.owned && !_pill.locked) {
+				// Init offer pill and program periodic update
+				m_offerPill.InitFromOfferPack(m_linkedOffer);
+				InvokeRepeating("PeriodicRefresh", 0f, 1f);
+				m_offerButton.animator.RestartShow();
+			} else {
+				CancelInvoke("PeriodicRefresh");
+				m_offerButton.animator.Hide(false);
 			}
 		}
 
@@ -465,7 +533,7 @@ public class DisguisesScreenController : MonoBehaviour {
 				if(_pill.owned && _pill != m_equippedPill) {
 					m_equipButton.animator.RestartShow();
 				} else {
-					m_equipButton.animator.Hide();
+					m_equipButton.animator.Hide(false);
 				}
 			}
 		}
@@ -510,11 +578,9 @@ public class DisguisesScreenController : MonoBehaviour {
 				// Change selected pill state
 				m_selectedPill.SetState(Wardrobe.SkinState.OWNED);
 
-                // Show some nice FX
-                // Let's re-select the skin for now
-                DisguisePill pill = m_selectedPill;
-				m_selectedPill = null;
-				OnPillClicked(pill);
+				// Show some nice FX
+				// Let's re-select the skin for now
+				Refresh();
 
 				// Immediately equip it if auto_equip is not enabled!
 				if(!DebugSettings.menuDisguisesAutoEquip) {
@@ -533,6 +599,17 @@ public class DisguisesScreenController : MonoBehaviour {
 		} else {
 			purchaseFlow.Begin(priceSC, UserProfile.Currency.SOFT, HDTrackingManager.EEconomyGroup.ACQUIRE_DISGUISE, m_selectedPill.def);
 		}
+	}
+
+	/// <summary>
+	/// Offer button has been pressed.
+	/// </summary>
+	public void OnOfferButton() {
+		// Open the featured offer popup with the skin's offer
+		if(m_linkedOffer == null) return;
+		PopupController popup = PopupManager.LoadPopup(PopupFeaturedOffer.PATH);
+		popup.GetComponent<PopupFeaturedOffer>().InitFromOfferPack(m_linkedOffer);
+		popup.Open();
 	}
 
 	/// <summary>
