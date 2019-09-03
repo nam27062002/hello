@@ -30,8 +30,13 @@ public static class SceneOptimizerEditor {
                             UnityEngine.SceneManagement.Scene scene = UnityEditor.SceneManagement.EditorSceneManager.OpenScene(srcPath, UnityEditor.SceneManagement.OpenSceneMode.Single);
                             DoOptimize(scene);
 
-                            string dstPath = srcPath.Replace("/Game/", "/Editor/Addressables/generated/");
-                            UnityEditor.SceneManagement.EditorSceneManager.SaveScene(scene, dstPath);
+							string dstPath = srcPath.Substring(0, srcPath.IndexOf(assetsToken, System.StringComparison.Ordinal + 1));
+                            dstPath +=  assetsToken +
+										"Editor" + Path.DirectorySeparatorChar +
+                                        "Addressables" + Path.DirectorySeparatorChar +
+                                        "generated" + Path.DirectorySeparatorChar +
+                                        "Scenes" + Path.DirectorySeparatorChar + file.Name;
+							UnityEditor.SceneManagement.EditorSceneManager.SaveScene(scene, dstPath);
 
                             string dstFilePath = dstPath.Substring(dstPath.IndexOf(assetsToken, System.StringComparison.Ordinal));
                             AssetDatabase.ImportAsset(dstFilePath, ImportAssetOptions.ForceSynchronousImport);
