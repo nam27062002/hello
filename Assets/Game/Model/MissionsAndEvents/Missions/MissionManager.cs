@@ -351,11 +351,6 @@ public class MissionManager : UbiBCN.SingletonMonoBehaviour<MissionManager>, IBr
                 m_user.userSpecialMissions.EnableTracker(false);
                 break;
 
-                case SceneController.Mode.SPECIAL_DRAGONS:
-                m_user.userMissions.EnableTracker(false);
-                m_user.userSpecialMissions.EnableTracker(true);
-                break;
-
                 case SceneController.Mode.TOURNAMENT:
                 m_user.userMissions.EnableTracker(false);
                 m_user.userSpecialMissions.EnableTracker(false);

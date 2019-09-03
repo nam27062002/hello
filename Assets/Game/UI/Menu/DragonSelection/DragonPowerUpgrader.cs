@@ -170,8 +170,8 @@ public class DragonPowerUpgrader : MonoBehaviour {
         if (!allContentHandle.IsAvailable())
         {
             // Get the download flow from the parent lab screen
-            AssetsDownloadFlow assetsDownloadFlow = InstanceManager.menuSceneController.GetScreenData(MenuScreen.LAB_DRAGON_SELECTION).
-                                                        ui.GetComponent<LabDragonSelectionScreen>().assetsDownloadFlow;
+            AssetsDownloadFlow assetsDownloadFlow = InstanceManager.menuSceneController.GetScreenData(MenuScreen.DRAGON_SELECTION).
+                                                        ui.GetComponent<MenuDragonScreenController>().assetsDownloadFlow;
 
             assetsDownloadFlow.InitWithHandle(allContentHandle);
             PopupAssetsDownloadFlow popup = assetsDownloadFlow.OpenPopupByState(PopupAssetsDownloadFlow.PopupType.ANY,

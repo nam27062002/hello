@@ -382,8 +382,8 @@ public class PopupCustomizer : MonoBehaviour {
 
 						// Initialize the pets screen
 						MenuTransitionManager screensController = InstanceManager.menuSceneController.transitionManager;
-						MenuScreen targetPetScreen = InstanceManager.menuSceneController.GetPetScreenForCurrentMode();	// [AOC] Different pet screen if the current dragon is a special one
-						PetsScreenController petScreen = screensController.GetScreenData(targetPetScreen).ui.GetComponent<PetsScreenController>();
+						MenuScreen targetPetScreen = MenuScreen.PETS;
+                                PetsScreenController petScreen = screensController.GetScreenData(targetPetScreen).ui.GetComponent<PetsScreenController>();
 
 						// Navigate to a specific pet?
 						if(tokens.Length > 1) {

@@ -45,7 +45,7 @@ public class UserSpecialMissions : UserMissions {
     }
 
 	protected override Metagame.Reward BuildReward(Mission.Difficulty _difficulty, DefinitionNode _dragonModifierDef) {
-        long amount = (long)MissionManager.GetMaxRewardPerDifficulty(SceneController.Mode.SPECIAL_DRAGONS, _difficulty);
+        long amount = (long)MissionManager.GetMaxRewardPerDifficulty(_difficulty);
         Metagame.Reward reward = new Metagame.RewardGoldenFragments(amount, Metagame.Reward.Rarity.COMMON, HDTrackingManager.EEconomyGroup.LAB_REWARD_MISSION, "");
         reward.bonusPercentage = MissionManager.powerUpGFMultiplier;
 

@@ -136,8 +136,11 @@ public class MenuTransitionManager : MonoBehaviour {
 		// Activate all screens during one single frame to make sure everything is properly initialized
 		// Target screen will be selected on the Start() call
 		for(int i = 0; i < m_screens.Length; ++i) {
-			// Main screen
-			m_screens[i].ui.gameObject.SetActive(true);
+            // Main screen
+            if (m_screens[i].ui != null)
+            {
+                m_screens[i].ui.gameObject.SetActive(true);
+            }
 		}
 
 		// Activate transition overlay, usually disabled for editing
@@ -152,8 +155,11 @@ public class MenuTransitionManager : MonoBehaviour {
 	private void Start() {
 		// Hide all screens
 		for(int i = 0; i < m_screens.Length; ++i) {
-			if ( (int)m_currentScreen != i )
-				m_screens[i].ui.Hide(NavigationScreen.AnimType.NONE);
+            if ((int)m_currentScreen != i)
+                if (m_screens[i].ui != null)
+                {
+                    m_screens[i].ui.Hide(NavigationScreen.AnimType.NONE);
+                }
 		}
 
 		// Set initial screen

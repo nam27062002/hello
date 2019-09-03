@@ -39,9 +39,9 @@ public enum MenuScreen {
 
 	ANIMOJI,
 
-	LAB_DRAGON_SELECTION,
-	LAB_MISSIONS,
-	LAB_PETS,
+	EMPTY_0, // We cannot remove elements, so we just leave them empty
+    EMPTY_1,
+    EMPTY_2,
 	LEAGUES,
 	LEAGUES_REWARD,
 

@@ -5,7 +5,7 @@ using UnityEditor;
 
 
 [CustomEditor(typeof(SpecialDragonBar))]
-public class LabDragonBarEditor : Editor {
+public class SpecialDragonBarEditor : Editor {
     	
     public override void OnInspectorGUI() {
         DrawDefaultInspector();

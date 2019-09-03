@@ -509,14 +509,10 @@ public class RewardSceneController : MenuScreenScene {
 		// If we're in the right mode, make it the selected dragon
 		IDragonData dragonData = DragonManager.GetDragonData(_dragonReward.sku);
 		if(dragonData != null) {
-			// Tell the dragon selection screen for that dragon's type to make it the selected one next time we go there
-			if(dragonData is DragonDataSpecial) {
-				LabDragonSelectionScreen dragonSelectionScreen = InstanceManager.menuSceneController.GetScreenData(MenuScreen.LAB_DRAGON_SELECTION).ui.GetComponent<LabDragonSelectionScreen>();
-				dragonSelectionScreen.pendingToSelectDragon = _dragonReward.sku;
-			} else {
-				MenuDragonScreenController dragonSelectionScreen = InstanceManager.menuSceneController.GetScreenData(MenuScreen.DRAGON_SELECTION).ui.GetComponent<MenuDragonScreenController>();
-				dragonSelectionScreen.pendingToSelectDragon = _dragonReward.sku;
-			}
+			// Tell the dragon selection screen for that dragon to make it the selected one next time we go there
+			MenuDragonScreenController dragonSelectionScreen = InstanceManager.menuSceneController.GetScreenData(MenuScreen.DRAGON_SELECTION).ui.GetComponent<MenuDragonScreenController>();
+			dragonSelectionScreen.pendingToSelectDragon = _dragonReward.sku;
+			
 		}
 
 		// Initialize skin view
