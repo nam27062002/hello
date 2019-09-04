@@ -121,23 +121,29 @@ public class PopupShopOffersPill : IPopupShopPill {
 		}
 
 		// Pack name
-		m_packNameText.Localize(m_pack.def.GetAsString("tidName"));
-		m_packNameText.text.enableVertexGradient = true;
-		m_packNameText.text.colorGradient = Gradient4ToVertexGradient(gradientSetup.titleGradient);
+		if(m_packNameText != null) {
+			m_packNameText.Localize(m_pack.def.GetAsString("tidName"));
+			m_packNameText.text.enableVertexGradient = true;
+			m_packNameText.text.colorGradient = Gradient4ToVertexGradient(gradientSetup.titleGradient);
+		}
 
 		// Timer
-		m_remainingTimeText.gameObject.SetActive(m_pack.isTimed);	// Don't show if offer is not timed
-		RefreshTimer();
+		if(m_remainingTimeText != null) {
+			m_remainingTimeText.gameObject.SetActive(m_pack.isTimed);   // Don't show if offer is not timed
+			RefreshTimer();
+		}
 
 		// Discount
 		// Don't show if no discount is applied
-		m_discountText.gameObject.SetActive(validDiscount);
-		if(validDiscount) {
-			m_discountText.text.colorGradient = Gradient4ToVertexGradient(gradientSetup.discountGradient);
-			m_discountText.Localize(
-				"TID_OFFER_DISCOUNT_PERCENTAGE",
-				StringUtils.FormatNumber(m_discount * 100f, 0)
-			);
+		if(m_discountText != null) {
+			m_discountText.gameObject.SetActive(validDiscount);
+			if(validDiscount) {
+				m_discountText.text.colorGradient = Gradient4ToVertexGradient(gradientSetup.discountGradient);
+				m_discountText.Localize(
+					"TID_OFFER_DISCOUNT_PERCENTAGE",
+					StringUtils.FormatNumber(m_discount * 100f, 0)
+				);
+			}
 		}
 
 		// Featured highlight
@@ -216,6 +222,15 @@ public class PopupShopOffersPill : IPopupShopPill {
 			m_previousPrice = m_price;
 		}
 
+#if DEBUG && false
+		Debug.Log(Colors.yellow.Tag(
+			"Valid Discount: " + validDiscount + "\n"
+			+ "Previous Price: " + m_previousPrice + "\n"
+			+ "Price: " + m_price + "\n"
+			+ "Store Ready: " + storeReady
+		));
+#endif
+
 		// Buttons
 		if(m_priceButtonGroup != null) {
 			// Show?
@@ -225,45 +240,49 @@ public class PopupShopOffersPill : IPopupShopPill {
 			if(storeReady) {
 				// Price Text
 				string localizedPrice = GetLocalizedIAPPrice(m_price);
-				m_priceText.text = localizedPrice;
+				if(m_priceText != null) {
+					m_priceText.text = localizedPrice;
+				}
 
 				// Original price
-				// Don't show if there is no valid discount
-				m_previousPriceText.gameObject.SetActive(validDiscount);
-				if(validDiscount) {
-					// [AOC] This gets quite tricky. We will try to keep the format of the 
-					//		 localized price (given by the store), but replacing the actual amount.
-					// Supported cases: "$150" "150€" "$ 150" "150 €"
-					string localizedPreviousPrice = StringUtils.FormatNumber(m_previousPrice, 2);
-					string currencySymbol = (productInfo != null) ? productInfo.m_strCurrencySymbol : "$";
+				if(m_previousPriceText != null) {
+					// Don't show if there is no valid discount
+					m_previousPriceText.gameObject.SetActive(validDiscount);
+					if(validDiscount) {
+						// [AOC] This gets quite tricky. We will try to keep the format of the 
+						//		 localized price (given by the store), but replacing the actual amount.
+						// Supported cases: "$150" "150€" "$ 150" "150 €"
+						string localizedPreviousPrice = StringUtils.FormatNumber(m_previousPrice, 2);
+						string currencySymbol = (productInfo != null) ? productInfo.m_strCurrencySymbol : "$";
 
-					// a) "$150"
-					if(localizedPrice.StartsWith(currencySymbol, StringComparison.InvariantCultureIgnoreCase)) {
-						localizedPreviousPrice = currencySymbol + localizedPreviousPrice;
+						// a) "$150"
+						if(localizedPrice.StartsWith(currencySymbol, StringComparison.InvariantCultureIgnoreCase)) {
+							localizedPreviousPrice = currencySymbol + localizedPreviousPrice;
+						}
+
+						// b) "$ 150"
+						else if(localizedPrice.StartsWith(currencySymbol + " ", StringComparison.InvariantCultureIgnoreCase)) {
+							localizedPreviousPrice = currencySymbol + " " + localizedPreviousPrice;
+						}
+
+						// c) "150€"
+						else if(localizedPrice.EndsWith(currencySymbol, StringComparison.InvariantCultureIgnoreCase)) {
+							localizedPreviousPrice = localizedPreviousPrice + currencySymbol;
+						}
+
+						// d) "150 €"
+						else if(localizedPrice.EndsWith(" " + currencySymbol, StringComparison.InvariantCultureIgnoreCase)) {
+							localizedPreviousPrice = localizedPreviousPrice + " " + currencySymbol;
+						}
+
+						// e) Anything else
+						else {
+							// Show just the formatted number - nothing to do
+						}
+
+						// Done! Set text
+						m_previousPriceText.text = localizedPreviousPrice;
 					}
-
-					// b) "$ 150"
-					else if(localizedPrice.StartsWith(currencySymbol + " ", StringComparison.InvariantCultureIgnoreCase)) {
-						localizedPreviousPrice = currencySymbol + " " + localizedPreviousPrice;
-					}
-
-					// c) "150€"
-					else if(localizedPrice.EndsWith(currencySymbol, StringComparison.InvariantCultureIgnoreCase)) {
-						localizedPreviousPrice = localizedPreviousPrice + currencySymbol;
-					}
-
-					// d) "150 €"
-					else if(localizedPrice.EndsWith(" " + currencySymbol, StringComparison.InvariantCultureIgnoreCase)) {
-						localizedPreviousPrice = localizedPreviousPrice + " " + currencySymbol;
-					}
-
-					// e) Anything else
-					else {
-						// Show just the formatted number - nothing to do
-					}
-
-					// Done! Set text
-					m_previousPriceText.text = localizedPreviousPrice;
 				}
 			}
 		}
@@ -277,6 +296,7 @@ public class PopupShopOffersPill : IPopupShopPill {
 		// Skip if no target offer or target offer is not timed
 		if(m_pack == null) return;
 		if(!m_pack.isTimed) return;
+		if(m_remainingTimeText == null) return;
 
 		// If pack is active, update text
 		if(m_pack.isActive) {

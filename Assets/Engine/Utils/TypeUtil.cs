@@ -263,9 +263,9 @@ public static class TypeUtil {
 	static object ChangeType(object _value, System.Type _type) {
 		// From HSX
 		if(_type.IsEnum) {
-			return System.Convert.ChangeType(System.Enum.Parse(_type, _value as string), _type);
+			return System.Convert.ChangeType(System.Enum.Parse(_type, _value as string), _type, System.Globalization.CultureInfo.InvariantCulture);
 		} else {
-			return System.Convert.ChangeType(_value, _type);
+			return System.Convert.ChangeType(_value, _type, System.Globalization.CultureInfo.InvariantCulture);
 		}
 	}
 

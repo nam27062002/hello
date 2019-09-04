@@ -129,8 +129,14 @@ public class EditorFileUtils
     
     public static int GetFilesAmount(string path)
     {
-        string[] files = Directory.GetFiles(path);
-        return (files == null) ? 0 : files.Length;
+        int returnValue = 0;
+        if (Exists(path))
+        {
+            string[] files = Directory.GetFiles(path);
+            returnValue = (files == null) ? 0 : files.Length;
+        }
+
+        return returnValue;
     } 
 
     /// <summary>

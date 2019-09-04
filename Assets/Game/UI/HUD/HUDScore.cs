@@ -18,7 +18,7 @@ using TMPro;
 /// <summary>
 /// Simple controller for a score counter in the hud.
 /// </summary>
-public class HUDScore : HudWidget {	
+public class HUDScore : IHUDCounter {	
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//		
@@ -41,7 +41,10 @@ public class HUDScore : HudWidget {
 	/// <summary>
 	/// The spawner has been enabled.
 	/// </summary>
-	private void OnEnable() {
+	protected override void OnEnable() {
+		// Call parent
+		base.OnEnable();
+
 		// Subscribe to external events
 		Messenger.AddListener<Reward, Transform>(MessengerEvents.REWARD_APPLIED, OnRewardApplied);
 	}
@@ -49,7 +52,10 @@ public class HUDScore : HudWidget {
 	/// <summary>
 	/// The spawner has been disabled.
 	/// </summary>
-	private void OnDisable() {
+	protected override void OnDisable() {
+		// Call parent
+		base.OnDisable();
+
 		// Unsubscribe from external events
 		Messenger.RemoveListener<Reward, Transform>(MessengerEvents.REWARD_APPLIED, OnRewardApplied);
 	}

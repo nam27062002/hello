@@ -44,10 +44,14 @@ public class DisguisePill : MonoBehaviour, IPointerClickHandler {
     [SerializeField] private Image m_icon = null;
     public Image icon { get { return m_icon; } }
     [SerializeField] private Localizer m_infoText;
-    [SerializeField] private RectTransform m_lockIconAnim;
+    [SerializeField] private GameObject m_lockIcon;
+	[Space]
     [SerializeField] private ShowHideAnimator m_equippedFrame;
     [SerializeField] private DOTweenAnimation m_equippedFX;
     [Space]
+	[SerializeField] private Image m_seasonalIcon = null;
+	[SerializeField] private GameObject m_seasonalIconRoot = null;
+	[Space]
     [SerializeField] private Transform m_notificationAnchor = null;
 	[Space]
 	[SerializeField] private Color m_equippedTextColor = Color.white;
@@ -66,14 +70,34 @@ public class DisguisePill : MonoBehaviour, IPointerClickHandler {
 		get { return m_def; }
 	}
 
+	private IDragonData m_dragonData = null;
+	public IDragonData dragonData {
+		get { return m_dragonData; }
+	}
+
+	private DefinitionNode m_seasonDef = null;
+	public DefinitionNode seasonDef {
+		get { return m_seasonDef; }
+	}
+
 	// State
 	private Wardrobe.SkinState m_state = Wardrobe.SkinState.LOCKED;
-	public Wardrobe.SkinState state { get { return m_state; }}
-	public bool owned { get { return m_state == Wardrobe.SkinState.OWNED; }}
-	public bool locked { get { return m_state == Wardrobe.SkinState.LOCKED; }}
+	public Wardrobe.SkinState state {
+		get { return m_state; }
+	}
+
+	public bool owned {
+		get { return m_state == Wardrobe.SkinState.OWNED; }
+	}
+
+	public bool locked {
+		get { return m_state == Wardrobe.SkinState.LOCKED; }
+	}
 
 	private bool m_equipped = false;
-	public bool equipped { get { return m_equipped; }}
+	public bool equipped {
+		get { return m_equipped; }
+	}
 
 	// References
 	private ScrollRectSnapPoint m_snapPoint = null;
@@ -116,7 +140,6 @@ public class DisguisePill : MonoBehaviour, IPointerClickHandler {
     //------------------------------------------------------------------------//
     // METHODS														          //
     //------------------------------------------------------------------------//
-
     /// <summary>
     /// Initialize the pill with the given skin definition, state and preview image.
     /// </summary>
@@ -125,7 +148,9 @@ public class DisguisePill : MonoBehaviour, IPointerClickHandler {
     public void Load(DefinitionNode _def, Wardrobe.SkinState _state) {
 		// Store data
 		m_def = _def;
+		m_dragonData = DragonManager.GetDragonData(_def.GetAsString("dragonSku"));
 		m_state = _state;
+		m_seasonDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SEASONS, m_def.GetAsString("associatedSeason", SeasonManager.NO_SEASON_SKU));
 
 		// Equipped status - start unequipped
 		m_equipped = false;
@@ -164,12 +189,12 @@ public class DisguisePill : MonoBehaviour, IPointerClickHandler {
 			m_colorFX.brightness = m_shadowEffect.brightness;
 			m_colorFX.saturation = m_shadowEffect.saturation;
 			m_colorFX.contrast   = m_shadowEffect.contrast;
-			m_lockIconAnim.gameObject.SetActive(true);
+			m_lockIcon.SetActive(m_seasonDef == null);  // Except for seasonal skins!
 		} else {
 			m_colorFX.brightness = 0f;
 			m_colorFX.saturation = 0f; 
 			m_colorFX.contrast   = 0f;
-			m_lockIconAnim.gameObject.SetActive(false);
+			m_lockIcon.SetActive(false);
 		}
 
 		// "New" notification
@@ -179,8 +204,16 @@ public class DisguisePill : MonoBehaviour, IPointerClickHandler {
 		} else if(isNew) {
 			// Need to instantiate a notification?
 			GameObject prefab = Resources.Load<GameObject>(NOTIFICATION_PREFAB_PATH);
-			m_newNotification = GameObject.Instantiate<GameObject>(prefab, m_notificationAnchor, false).GetComponent<UINotification>();
+			m_newNotification = Instantiate<GameObject>(prefab, m_notificationAnchor, false).GetComponent<UINotification>();
 			m_newNotification.Show();
+		}
+
+		// Season icon
+		if(m_seasonDef != null) {
+			m_seasonalIconRoot.SetActive(true);
+			m_seasonalIcon.sprite = Resources.Load<Sprite>(UIConstants.SEASON_ICONS_PATH + m_seasonDef.Get("icon"));
+		} else {
+			m_seasonalIconRoot.SetActive(false);
 		}
 
 		// Texts
@@ -215,8 +248,13 @@ public class DisguisePill : MonoBehaviour, IPointerClickHandler {
 		// Check by priority
 		if(m_state == Wardrobe.SkinState.LOCKED) {
 			// Locked, can't be neither owned nor equipped
-			m_infoText.Localize("TID_LEVEL", (m_def.GetAsInt("unlockLevel") + 1).ToString());
-			m_infoText.text.color = m_lockedTextColor;
+			// Locked by season or by level?
+			if(m_seasonDef != null) {
+				m_infoText.Localize(string.Empty);
+			} else {
+				m_infoText.Localize("TID_LEVEL", (m_def.GetAsInt("unlockLevel") + 1).ToString());
+				m_infoText.text.color = m_lockedTextColor;
+			}
 		} else if(m_state == Wardrobe.SkinState.OWNED) {
 			// Can't be equipped if it's not owned!
 			if(m_equipped) {

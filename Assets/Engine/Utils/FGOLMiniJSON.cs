@@ -1,9 +1,39 @@
-﻿using System;
+﻿/*
+ * Copyright (c) 2013 Calvin Rien
+ *
+ * Based on the JSON parser by Patrick van Bergen
+ * http://techblog.procurios.nl/k/618/news/view/14605/14863/How-do-I-write-my-own-parser-for-JSON.html
+ *
+ * Simplified it so that it doesn't throw exceptions
+ * and can be used in Unity iPhone with maximum code stripping.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+ * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+ * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+ * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+ * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Text;
 using UnityEngine;
+using UnityEngine.Profiling;
 
 namespace FGOLMiniJSON
 {
@@ -82,6 +112,26 @@ namespace FGOLMiniJSON
             return Parser.Parse(json);
         }
 
+        public static object Deserialize(TextReader json)
+        {
+            try
+            {
+                Profiler.BeginSample("Deserialize");
+
+				// save the string for debug information
+                if (json == null)
+                {
+                    return null;
+                }
+
+                return Parser.Parse(json);
+            }
+            finally
+            {
+                Profiler.EndSample();
+            }
+        }
+
         sealed class Parser : IDisposable
         {
             const string WORD_BREAK = "{}[],:\"";
@@ -107,16 +157,29 @@ namespace FGOLMiniJSON
                 NULL
             };
 
-            StringReader json;
+            TextReader json;
 
             Parser(string jsonString)
             {
                 json = new StringReader(jsonString);
             }
 
+            Parser(TextReader textReader)
+            {
+                json = textReader;
+            }
+
             public static object Parse(string jsonString)
             {
                 using (var instance = new Parser(jsonString))
+                {
+                    return instance.ParseValue();
+                }
+            }
+
+            public static object Parse(TextReader stringReader)
+            {
+                using (var instance = new Parser(stringReader))
                 {
                     return instance.ParseValue();
                 }
@@ -318,7 +381,7 @@ namespace FGOLMiniJSON
                 }
 
                 double parsedDouble;
-                Double.TryParse(number, out parsedDouble);
+                Double.TryParse(number, System.Globalization.NumberStyles.Any, CultureInfo.InvariantCulture, out parsedDouble);
                 return parsedDouble;
             }
 
@@ -594,7 +657,7 @@ namespace FGOLMiniJSON
                 // Previously floats and doubles lost precision too.
                 if (value is float)
                 {
-                    builder.Append(((float)value).ToString("R"));
+                    builder.Append(((float)value).ToString("R", CultureInfo.InvariantCulture));
                 }
                 else if (value is int
                   || value is uint
@@ -610,7 +673,7 @@ namespace FGOLMiniJSON
                 else if (value is double
                   || value is decimal)
                 {
-                    builder.Append(Convert.ToDouble(value).ToString("R"));
+                    builder.Append(Convert.ToDouble(value).ToString("R", CultureInfo.InvariantCulture));
                 }
                 else
                 {
