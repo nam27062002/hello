@@ -108,11 +108,19 @@ public abstract class IPopupShopPill : MonoBehaviour {
 	/// <param name="_referencePriceDollars">The price to be used if the App Store can't be reached or can't find the requested product.</param>
 	protected string GetLocalizedIAPPrice(float _referencePriceDollars) {
 		// Price is localized by the store api, if available
+		string localizedPrice = string.Empty;
 		if(GameStoreManager.SharedInstance.IsReady()) {
-			return GameStoreManager.SharedInstance.GetLocalisedPrice(GetIAPSku());
-		} else {
-			return "$" + StringUtils.FormatNumber(_referencePriceDollars, 2);
+			localizedPrice = GameStoreManager.SharedInstance.GetLocalisedPrice(GetIAPSku());
 		}
+
+#if DEBUG
+		// If store was not initialized or iap can't be localized, use reference price as placeholder
+		if(string.IsNullOrEmpty(localizedPrice)) {
+			localizedPrice = "$" + StringUtils.FormatNumber(_referencePriceDollars, 2);
+		}
+#endif
+
+		return localizedPrice;
 	}
 
 	/// <summary>
