@@ -20,6 +20,7 @@ public class ProfilerControlPanelController : MonoBehaviour
     private const int MAX_NUM_ENTITIES = 200;
     private const int NUM_ENTITIES_PERIOD = 10;
 
+	[Space]
     public GameObject m_prefabOption;
 
     void Awake()
@@ -89,11 +90,10 @@ public class ProfilerControlPanelController : MonoBehaviour
 
                     if (m_prefabOption != null)
                     {
-                        Transform thisParent = transform;
                         GameObject prefabOption = (GameObject)Instantiate(m_prefabOption);
                         if (prefabOption != null)
                         {
-                            prefabOption.transform.SetParent(thisParent);
+                            prefabOption.transform.SetParent(m_prefabOption.transform.parent);
                             prefabOption.transform.SetLocalScale(1f);
                             prefabOption.SetActive(true);
 
@@ -104,6 +104,8 @@ public class ProfilerControlPanelController : MonoBehaviour
                         }
                     }
                 }
+
+				if(m_prefabOption != null) m_prefabOption.SetActive(false);
             }
         }
 
@@ -135,8 +137,6 @@ public class ProfilerControlPanelController : MonoBehaviour
         }
 
         Checkpoints_Start();
-        Stats_Start();
-        FPS_Start();
     }
 
     void OnEnable()
@@ -383,6 +383,7 @@ public class ProfilerControlPanelController : MonoBehaviour
 		new Vector3(-736, 107),
     };
 
+	[Space]
     public TMP_Dropdown m_checkpoints;
 
     private void Checkpoints_Start()
@@ -425,47 +426,6 @@ public class ProfilerControlPanelController : MonoBehaviour
             {
                 camera.useOcclusionCulling = newValue;
             }
-        }
-    }
-    #endregion
-
-    #region stats
-    public Toggle m_statsToggle;
-
-    private void Stats_Start()
-    {
-        if (m_statsToggle != null && ControlPanel.instance != null)
-        {
-            m_statsToggle.isOn = ControlPanel.instance.IsStatsEnabled;
-        }
-    }
-
-    public void Stats_OnChangedValue(bool newValue)
-    {
-        if (ControlPanel.instance != null)
-        {
-            ControlPanel.instance.IsStatsEnabled = m_statsToggle.isOn;
-        }
-    }
-    #endregion
-
-    #region fps
-    public Toggle m_fpsToggle;
-
-    private void FPS_Start()
-    {
-        if (m_fpsToggle != null && ControlPanel.instance != null)
-        {
-            m_fpsToggle.isOn = ControlPanel.instance.IsFPSEnabled;
-        }
-    }
-
-    public void FPS_OnChangedValue(bool newValue)
-    {
-        if (ControlPanel.instance != null)
-        {
-            ControlPanel.instance.IsFPSEnabled = newValue;
-//            ControlPanel.instance.IsFPSEnabled = m_fpsToggle.isOn;
         }
     }
     #endregion
@@ -553,7 +513,7 @@ public class ProfilerControlPanelController : MonoBehaviour
     {
         if (mSceneGoToMemoryText != null)
         {
-            /*mSceneGoToMemoryText.transform.parent.gameObject.SetActive(false);
+            mSceneGoToMemoryText.transform.parent.gameObject.SetActive(false);
             if (GameSceneManager.nextScene == ProfilerMemoryController.NAME)
             {
                 mSceneGoToMemoryText.text = "Go To Menu";
@@ -561,17 +521,19 @@ public class ProfilerControlPanelController : MonoBehaviour
             else
             {
                 mSceneGoToMemoryText.text = "Go To Memory Scene";
-            }*/
-            mSceneGoToMemoryText.text = "Send Notif";
+            }
         }
     }
 
     public void Scene_OnGoToMemorySceneClicked()
     {
-        //ApplicationManager.instance.Debug_ToggleProfilerMemoryScene();
-        //ApplicationManager.instance.Debug_ToggleProfilerLoadScenesScene();
-        ApplicationManager.instance.Debug_ScheduleNotification();
+        ApplicationManager.instance.Debug_ToggleProfilerMemoryScene();
+        ApplicationManager.instance.Debug_ToggleProfilerLoadScenesScene();
     }
+
+	public void OnSendNotification() {
+		ApplicationManager.instance.Debug_ScheduleNotification();
+	}
     #endregion
 
     #region game_scene
@@ -654,6 +616,7 @@ public class ProfilerControlPanelController : MonoBehaviour
 
     #region layers
 
+	[Space]
     public TMP_Dropdown m_layersHoldersDropdown;
     private List<ProfilerLayers> m_layersHolders;
     public GameObject m_layerPrefab;
@@ -759,8 +722,10 @@ public class ProfilerControlPanelController : MonoBehaviour
 
                 m_layersGOs.Add(go);
                 m_layersGOsToggles.Add(toggle);
-            }            
-        }
+            }
+			m_layerPrefab.SetActive(false);
+
+		}
     }
 
     private void Layers_DestroyLayersUI()
