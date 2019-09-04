@@ -188,6 +188,9 @@ public class EditorAddressablesManager
         }
 
         AssetDatabase.Refresh();
+
+		// Regenerate InitReferences.prefab to update assetsLUT reference
+		Startup.ReloadInitReferences();
     }
 
     public void CopyGeneratedFilesToPlayer(BuildTarget target)
