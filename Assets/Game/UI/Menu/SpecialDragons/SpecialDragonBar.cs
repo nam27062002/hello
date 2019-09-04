@@ -37,8 +37,6 @@ public class SpecialDragonBar : MonoBehaviour {
     private int[] m_levelSkill;
     private int[] m_levelTier;
     private int m_currentLevel; // Initial level is 0
-    private int[] m_unlockClassicTier;
-    private int m_maxTierUnlocked;
 
     private List<DefinitionNode> m_skillsDefinitions;
     private List<DefinitionNode> m_tiersDefinitions;
@@ -94,7 +92,6 @@ public class SpecialDragonBar : MonoBehaviour {
 
 
         SetLevel(_dragonData.Level);
-        m_maxTierUnlocked = (int)DragonManager.biggestOwnedDragon.tier;
 
         CreateElements();
         ArrangeElements();
@@ -298,9 +295,6 @@ public class SpecialDragonBar : MonoBehaviour {
         m_levelSkill = m_debugLevelSkill;
         m_levelTier = m_debugLevelTier;
         SetLevel(m_debugCurrentLevel);
-        m_unlockClassicTier = new int[] {1, 2, 3, 4};
-
-        m_maxTierUnlocked = m_debugMaxTierUnlocked;
 
         m_skillsDefinitions = new List<DefinitionNode>(3);
 

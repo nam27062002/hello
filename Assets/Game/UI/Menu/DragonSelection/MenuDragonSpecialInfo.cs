@@ -173,4 +173,6 @@ public class MenuDragonSpecialInfo : MenuDragonInfo {
         PopupSpecialDragonInfo popup = PopupManager.OpenPopupInstant(PopupSpecialDragonInfo.PATH).GetComponent<PopupSpecialDragonInfo>();
         popup.Init(m_dragonData);
     }
+
+
 }

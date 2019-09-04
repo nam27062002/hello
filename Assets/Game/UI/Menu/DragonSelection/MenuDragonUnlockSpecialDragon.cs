@@ -124,18 +124,13 @@ public class MenuDragonUnlockSpecialDragon : MenuDragonUnlock
                 {
                     IDragonData requiredDragon = DragonManager.GetDragonData(unlockFromDragon);
 
-                    // If the player doesnt have this dragon or any bigger, show the unavailable text
-                    if (DragonManager.biggestOwnedDragon.tier < requiredDragon.tier)
-                    {
-
-                        // Set text
-                        m_unavailableInfoText.Localize(
-                            m_unavailableInfoText.tid,
-							UIConstants.GetDragonTierColor(requiredDragon.tier).Tag(
-								requiredDragon.def.GetLocalized("tidName")
-							)
-                        );
-                    }
+                    // Set text
+                    m_unavailableInfoText.Localize(
+                        m_unavailableInfoText.tid,
+						UIConstants.GetDragonTierColor(requiredDragon.tier).Tag(
+							requiredDragon.def.GetLocalized("tidName")
+						)
+                    );
                 }
             }
         }
