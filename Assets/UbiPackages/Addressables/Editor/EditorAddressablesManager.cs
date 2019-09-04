@@ -244,8 +244,54 @@ public class EditorAddressablesManager
 
     public void BuildAssetBundles(BuildTarget platform)
     {
+        // Untags the original scenes so they won't be included in any asset bundles as their optimized versions are the ones that must be used
+        Dictionary<string, string>  originalAssetBundleNamesPerPath = UnTagOriginalScenes();
+
+        // Build asset bundles
         EditorAssetBundlesManager.BuildAssetBundles(platform);
-    }    
+
+        // Undoes the change
+        AssetImporter assetImporter;
+        foreach (KeyValuePair<string, string> pair in originalAssetBundleNamesPerPath)
+        {
+            assetImporter = AssetImporter.GetAtPath(pair.Key);
+            if (assetImporter != null)
+            {
+                assetImporter.assetBundleName = pair.Value;
+                assetImporter.SaveAndReimport();
+            }
+        }        
+    }
+
+    private Dictionary<string, string> UnTagOriginalScenes()
+    {
+        Dictionary<string, string> returnValue = new Dictionary<string, string>();
+
+        AddressablesCatalog editorCatalog = GetEditorCatalog(true);
+        List<AddressablesCatalogEntry> entries = editorCatalog.GetEntries();
+        int count = entries.Count;
+        AddressablesCatalogEntry entry;
+        AssetImporter assetImporter;
+        string path;
+        
+        for (int i = 0; i < count; i++)
+        {
+            entry = entries[i];
+            path = entry.GetPath();
+            if (EditorFileUtils.IsAScenePath(path))
+            {
+                assetImporter = AssetImporter.GetAtPath(path);
+                if (assetImporter != null && assetImporter.assetBundleName != null)
+                {
+                    returnValue.Add(path, assetImporter.assetBundleName);
+                    assetImporter.assetBundleName = null;
+                    assetImporter.SaveAndReimport();
+                }
+            }
+        }
+
+        return returnValue;
+    }
 
     public void BuildForTargetPlatform()
     {
