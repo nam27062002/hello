@@ -5,9 +5,11 @@ using System.Collections.Generic;
 
 public static class SceneOptimizerEditor {
     
+    public static string PATH = "Assets/Editor/Addressables/generated/Scenes";
+
     public static void BatchOptimization() {
 		//clean old folder
-		EditorFileUtils.DeleteFileOrDirectory("Assets/Editor/Addressables/generated/Scenes");
+		EditorFileUtils.DeleteFileOrDirectory(PATH);
 		
 		Stack <DirectoryInfo> directories = new Stack<DirectoryInfo>();
         directories.Push(new DirectoryInfo("Assets/Game/Scenes/Levels/"));
@@ -129,6 +131,16 @@ public static class SceneOptimizerEditor {
             sc.autoSpawners = autoSpawners;
             sc.actionPoints = actionPoints;
         }
+    }   
+
+    public static string GetGeneratedGUID(string sceneName)
+    {        
+        if (!sceneName.EndsWith(".unity")) {
+            sceneName += ".unity";
+        }
+
+        string path = PATH + "/" + sceneName;
+        return AssetDatabase.AssetPathToGUID(path);        
     }
 }
  
