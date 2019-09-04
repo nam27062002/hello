@@ -18,15 +18,41 @@ using UnityEngine.UI;
 /// </summary>
 public class CPBoolPref : CPPrefBase {
 	//------------------------------------------------------------------//
+	// CONSTANTS														//
+	//------------------------------------------------------------------//
+	public enum DefaultValuePolicy {
+		NONE,
+		ONLY_FOR_DEBUG_BUILD
+	}
+
+	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//
 	// Exposed setup
 	[Space]
 	[SerializeField] private bool m_defaultValue = false;
+	protected bool defaultValue {
+		get {
+			switch(m_defaultValuePolicy) {
+				case DefaultValuePolicy.NONE: {
+					return m_defaultValue;
+				} break;
+
+				case DefaultValuePolicy.ONLY_FOR_DEBUG_BUILD: {
+					return m_defaultValue && UnityEngine.Debug.isDebugBuild;
+				} break;
+			}
+			return m_defaultValue;
+		}
+	}
+
 	[SerializeField] private Toggle m_toggle;
 	public Toggle toggle {
 		get { return m_toggle; }
 	}
+
+	[Space]
+	[SerializeField] protected DefaultValuePolicy m_defaultValuePolicy = DefaultValuePolicy.NONE;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -57,7 +83,7 @@ public class CPBoolPref : CPPrefBase {
 	/// </summary>
 	override public void Refresh() {
 		base.Refresh();
-		m_toggle.isOn = Prefs.GetBoolPlayer(id, m_defaultValue);
+		m_toggle.isOn = Prefs.GetBoolPlayer(id, defaultValue);
 	}
 
 	//------------------------------------------------------------------//

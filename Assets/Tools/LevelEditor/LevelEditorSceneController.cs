@@ -188,7 +188,10 @@ namespace LevelEditor {
 		/// <summary>
 		/// Called every frame.
 		/// </summary>
-		private void Update() {
+		protected override void Update() {
+			// Call parent
+			base.Update();
+
 			if (!m_started) {
 				if ( InstanceManager.player != null )
 					StartGame();

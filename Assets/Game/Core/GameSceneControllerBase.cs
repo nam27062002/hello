@@ -52,6 +52,16 @@ public class GameSceneControllerBase : SceneController, IBroadcastListener {
 		get { return m_freezeElapsedSeconds; }
 		set { m_freezeElapsedSeconds = value; }
 	}
+
+	// Auxiliar references
+	private HUDManager m_hudManager = null;
+	public HUDManager hudManager {
+		get {
+			if(m_hudManager == null) m_hudManager = new HUDManager();
+			return m_hudManager;
+		}
+	}
+
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -61,6 +71,11 @@ public class GameSceneControllerBase : SceneController, IBroadcastListener {
 	protected override void Awake() {
 		// Call parent
 		base.Awake();
+
+		// Initialize internal vars
+		if(m_hudManager == null) {
+			m_hudManager = new HUDManager();
+		}
 
 		// Subscribe to external events
 		Messenger.AddListener(MessengerEvents.GAME_STARTED, OnGameStarted);
@@ -74,13 +89,28 @@ public class GameSceneControllerBase : SceneController, IBroadcastListener {
 		// Call parent
 		base.OnDestroy();
 
+		// Finalize internal vars
+		if(m_hudManager != null) {
+			m_hudManager.OnDestroy();
+		}
+
 		// Unsubscribe to external events
 		Messenger.RemoveListener(MessengerEvents.GAME_STARTED, OnGameStarted);
 		Broadcaster.RemoveListener(BroadcastEventType.GAME_ENDED, this);
 	}
-    
-    
-    public virtual void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+
+	/// <summary>
+	/// Called every frame.
+	/// </summary>
+	protected virtual void Update() {
+		// Skip if paused
+		if(m_paused) return;
+
+		// Propagate
+		m_hudManager.Update();
+	}
+
+	public virtual void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
     {
         switch( eventType )
         {

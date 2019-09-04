@@ -98,7 +98,9 @@ public class TouchControlsDPad : TouchControls {
 
 		// [AOC] Init some math aux vars
 		CanvasScaler parentCanvasScaler = m_dPadRectTransform.GetComponentInParent<CanvasScaler>();
-		m_radiusToCheck = (m_dPadRectTransform.rect.width * 0.45f) * Screen.width / parentCanvasScaler.referenceResolution.x;	// Half width of the D-Pad applying the ratio between the retina-ref resolution our canvas is using and the actual screen size
+		if(parentCanvasScaler != null) {
+			m_radiusToCheck = (m_dPadRectTransform.rect.width * 0.45f) * Screen.width / parentCanvasScaler.referenceResolution.x;   // Half width of the D-Pad applying the ratio between the retina-ref resolution our canvas is using and the actual screen size
+		}
 		m_boostRadiusToCheck = m_radiusToCheck * 1.2f;
 
 		// [AOC] Load current setup

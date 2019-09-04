@@ -37,8 +37,11 @@ public class DebugSettings : SingletonScriptableObject<DebugSettings> {
     public const string RESOLUTION_FACTOR                       = "RESOLUTION_FACTOR";
     public const string SHOW_SPEED						        = "SHOW_SPEED";
     private const string SHOW_ALL_COLLECTIBLES					= "SHOW_ALL_COLLECTIBLES";
+	public const string SHOW_STATS								= "SHOW_STATS";
+	public const string SHOW_FPS								= "SHOW_FPS";
+	public const string SHOW_FPS_RECORDER						= "SHOW_FPS_RECORDER";
 
-    public const string VERTICAL_ORIENTATION		 		    = "VERTICAL_ORIENTATION";
+	public const string VERTICAL_ORIENTATION		 		    = "VERTICAL_ORIENTATION";
     private const string SIMULATED_SPECIAL_DEVICE				= "SIMULATED_SPECIAL_DEVICE";
 
     public const string INGAME_HUD						        = "INGAME_HUD";
@@ -405,9 +408,24 @@ public class DebugSettings : SingletonScriptableObject<DebugSettings> {
     public static bool showXpBar {
         get { return Prefs_GetBoolPlayer(SHOW_XP_BAR); }
         set { Prefs_SetBoolPlayer(SHOW_XP_BAR, value); }
-    }    
+    }
 
-    public static bool menuDisguisesAutoEquip {
+	public static bool showStats {
+		get { return Prefs_GetBoolPlayer(SHOW_STATS, UnityEngine.Debug.isDebugBuild); }
+		set { Prefs_SetBoolPlayer(SHOW_STATS, value); }
+	}
+
+	public static bool showFps {
+		get { return Prefs_GetBoolPlayer(SHOW_FPS, UnityEngine.Debug.isDebugBuild); }
+		set { Prefs_SetBoolPlayer(SHOW_FPS, value); }
+	}
+
+	public static bool showFpsRecorder {
+		get { return Prefs_GetBoolPlayer(SHOW_FPS_RECORDER); }
+		set { Prefs_SetBoolPlayer(SHOW_FPS_RECORDER, value); }
+	}
+
+	public static bool menuDisguisesAutoEquip {
         get { return Prefs_GetBoolPlayer(MENU_DISGUISES_AUTO_EQUIP, true); }
         set { Prefs_SetBoolPlayer(MENU_DISGUISES_AUTO_EQUIP, value); }
     }    

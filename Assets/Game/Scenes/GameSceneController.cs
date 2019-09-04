@@ -59,8 +59,6 @@ public class GameSceneController : GameSceneControllerBase {
         get { return m_uiRoot; }
     }
 
-	[SerializeField] private ShowHideAnimator m_gameUIAnimator = null;
-
 	// Countdown
     public float countdown {
 		get {
@@ -216,7 +214,10 @@ public class GameSceneController : GameSceneControllerBase {
 	/// <summary>
 	/// Called every frame.
 	/// </summary>
-	private void Update() {
+	protected override void Update() {
+		// Call parent
+		base.Update();
+
 		// Skip if paused
 		if(m_paused) return;        
 
