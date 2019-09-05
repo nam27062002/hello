@@ -25,7 +25,7 @@ public class UserSpecialMissions : UserMissions {
     // INTERNAL METHODS                                                 //
     //------------------------------------------------------------------//
     protected override DragonTier GetMaxTierUnlocked() {
-        return DragonManager.maxSpecialDragonTierUnlocked;
+        return DragonManager.biggestOwnedDragon.tier;
     }
 
     protected override bool IsMissionLocked(Mission.Difficulty _difficulty) {
@@ -33,7 +33,7 @@ public class UserSpecialMissions : UserMissions {
     }
     
     protected override DefinitionNode GetDragonModifierDef() {
-        return DefinitionsManager.SharedInstance.GetDefinitionByVariable(DefinitionsCategory.MISSION_SPECIAL_MODIFIERS, "tier", IDragonData.TierToSku(DragonManager.maxSpecialDragonTierUnlocked));
+        return DefinitionsManager.SharedInstance.GetDefinitionByVariable(DefinitionsCategory.MISSION_SPECIAL_MODIFIERS, "tier", IDragonData.TierToSku(GetMaxTierUnlocked()));
     }
 
     protected override DefinitionNode GetForcedDragonModifierDef(string _sku) {
@@ -41,7 +41,7 @@ public class UserSpecialMissions : UserMissions {
     }
 
     protected override float ComputeRemovePCCostModifier() {
-        return (float)DragonManager.maxSpecialDragonTierUnlocked;
+        return (float)GetMaxTierUnlocked();
     }
 
 	protected override Metagame.Reward BuildReward(Mission.Difficulty _difficulty, DefinitionNode _dragonModifierDef) {

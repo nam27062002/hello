@@ -673,6 +673,18 @@ public abstract class IDragonData : IUISelectorItem {
 	}
 
 	/// <summary>
+	/// Sort method by dragon order.
+	/// </summary>
+	/// <param name="_d1">First dragon to compare.</param>
+	/// <param name="_d2">Second dragon to compare.</param>
+	/// <returns>Whether _d1 should go before or after _d2 based on their "order" field.</returns>
+	public static int CompareByOrder(IDragonData _d1, IDragonData _d2) {
+		int order1 = _d1.GetOrder();
+		int order2 = _d2.GetOrder();
+		return order1.CompareTo(order2);
+	}
+
+	/// <summary>
 	/// Obtain the sku of a given Dragon Tier.
 	/// </summary>
 	/// <returns>The sku matching the requested tier.</returns>
