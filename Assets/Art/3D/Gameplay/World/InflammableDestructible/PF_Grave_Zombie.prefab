@@ -24,11 +24,9 @@ GameObject:
   - component: {fileID: 114992818780780646}
   - component: {fileID: 114334971929187996}
   - component: {fileID: 65818591349814066}
-  - component: {fileID: 114110059762697432}
-  - component: {fileID: 114624631424517100}
   - component: {fileID: 114797543062328024}
   m_Layer: 16
-  m_Name: PF_Grave_Zombie_FINAL
+  m_Name: PF_Grave_Zombie
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -94,7 +92,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4243577439774844}
   m_Layer: 0
-  m_Name: zombie
+  m_Name: zombieTOSPAWNER
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -305,30 +303,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 2, y: 3, z: 2}
   m_Center: {x: 0, y: 1.34, z: 0}
---- !u!114 &114110059762697432
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1020295184804294}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 106676838ac4d4f99abbdcf3e29b5edb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_rect:
-    serializedVersion: 2
-    x: 0
-    y: 1.14
-    width: 3.98
-    height: 4.79
-  m_entityPrefabStr: Seasonal/PF_Ground_Zombie
-  m_spawnTime:
-    min: 10
-    max: 10
-  m_spawnAtTransform: {fileID: 4243577439774844}
-  m_mustBeChild: 0
-  m_lookAtVector: 3
 --- !u!114 &114334971929187996
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -425,17 +399,6 @@ MonoBehaviour:
   m_onDestroyAudio: Barrel_Destroyed
   m_onFeedbackAudio: 
   m_cameraShake: 0
---- !u!114 &114624631424517100
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1020295184804294}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 82bb6a56804744031834a69b378577e5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &114727393306319252
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -451,8 +414,7 @@ MonoBehaviour:
   m_otherSpawnables:
   - {fileID: 114992818780780646}
   - {fileID: 114334971929187996}
-  - {fileID: 114624631424517100}
-  m_otherSpawnablesCount: 3
+  m_otherSpawnablesCount: 2
   m_pilot: {fileID: 0}
   m_machine: {fileID: 0}
   m_viewControl: {fileID: 0}
