@@ -26,13 +26,19 @@ public class MenuDragonUnlock : MonoBehaviour {
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
 	public const string UNLOCK_WITH_HC_RESOURCES_FLOW_NAME = "UNLOCK_DRAGON_HC";	// Unlock and acquire a locked dragon using HC
-	public const string UNLOCK_WITH_SC_RESOURCES_FLOW_NAME = "UNLOCK_DRAGON_SC";	// Acquire an already unlocked dragon using SC
+	public const string UNLOCK_WITH_SC_RESOURCES_FLOW_NAME = "UNLOCK_DRAGON_SC";    // Acquire an already unlocked dragon using SC
 
-	//------------------------------------------------------------------//
-	// PROPERTIES														//
-	//------------------------------------------------------------------//
-	// Exposed
-	[SerializeField] protected UIDragonPriceSetup m_hcPriceSetup = null;
+
+    //------------------------------------------------------------------//
+    // PROPERTIES														//
+    //------------------------------------------------------------------//
+    
+
+    //------------------------------------------------------------------//
+    // PROPERTIES														//
+    //------------------------------------------------------------------//
+    // Exposed
+    [SerializeField] protected UIDragonPriceSetup m_hcPriceSetup = null;
 	[SerializeField] protected UIDragonPriceSetup m_scPriceSetup = null;
 	[Space]
 	[SerializeField] protected Localizer m_unavailableInfoText = null;
@@ -42,6 +48,10 @@ public class MenuDragonUnlock : MonoBehaviour {
 	[SerializeField] protected GameObject m_hcRoot = null;
 	[SerializeField] protected GameObject m_scRoot = null;
 	[SerializeField] protected GameObject m_unavailableRoot = null;
+    
+    //Events
+    [SerializeField] protected UnityEvent OnUnlockViaPCSuccessEvent = new UnityEvent();
+    [SerializeField] protected UnityEvent OnUnlockViaSCSuccessEvent = new UnityEvent();
 
     // Internal
     protected bool m_firstEnablePassed = false;
@@ -240,22 +250,42 @@ public class MenuDragonUnlock : MonoBehaviour {
 	/// </summary>
 	public void OnUnlockWithPC() {
 		// Use static method to unlock currently selected dragon
-		UnlockWithPC(InstanceManager.menuSceneController.selectedDragonData, OnUnlockSuccessMenuFeedback);
+		UnlockWithPC(InstanceManager.menuSceneController.selectedDragonData, OnUnlockViaPCSuccess);
 	}
 
-	/// <summary>
-	/// The unlock button has been pressed.
-	/// </summary>
-	public void OnUnlockWithSC() {
+    /// <summary>
+    /// The dragon has been successfully unlocked with PC
+    /// Method created to bypass the static methods, so it can call the event defined in the inspector
+    /// </summary>
+    public void OnUnlockViaPCSuccess (ResourcesFlow _flow)
+    {
+        OnUnlockSuccessMenuFeedback(_flow);
+        OnUnlockViaPCSuccessEvent.Invoke();
+    }
+
+    /// <summary>
+    /// The unlock button has been pressed.
+    /// </summary>
+    public void OnUnlockWithSC() {
 		// Use static method to unlock currently selected dragon
-		UnlockWithSC(InstanceManager.menuSceneController.selectedDragonData, OnUnlockSuccessMenuFeedback);
+		UnlockWithSC(InstanceManager.menuSceneController.selectedDragonData, OnUnlockViaSCSuccess);
 	}
 
-	/// <summary>
-	/// The unlock resources flow has been successful.
-	/// </summary>
-	/// <param name="_flow">The flow that triggered the event.</param>
-	protected static void OnUnlockSuccess(ResourcesFlow _flow) {
+    /// <summary>
+    /// The dragon has been successfully unlocked with SC
+    /// /// Method created to bypass the static methods, so it can call the event defined in the inspector
+    /// </summary>
+    public void OnUnlockViaSCSuccess(ResourcesFlow _flow)
+    {
+        OnUnlockSuccessMenuFeedback(_flow);
+        OnUnlockViaSCSuccessEvent.Invoke();
+    }
+
+    /// <summary>
+    /// The unlock resources flow has been successful.
+    /// </summary>
+    /// <param name="_flow">The flow that triggered the event.</param>
+    protected static void OnUnlockSuccess(ResourcesFlow _flow) {
 		// Aux vars
 		IDragonData dragonData = DragonManager.GetDragonData(_flow.itemDef.sku);
 
@@ -280,10 +310,15 @@ public class MenuDragonUnlock : MonoBehaviour {
 		// Show a nice animation!
 		// Different animations depending on whether the unlock was done via PC or SC
 		MenuDragonScreenController screenController = InstanceManager.menuSceneController.GetScreenData(MenuScreen.DRAGON_SELECTION).ui.GetComponent<MenuDragonScreenController>();
-		if(_flow.name == UNLOCK_WITH_HC_RESOURCES_FLOW_NAME) {
+		if(_flow.name == UNLOCK_WITH_HC_RESOURCES_FLOW_NAME)
+        {
 			screenController.LaunchUnlockAnim(dragonData.def.sku, 0.2f, 0.1f, true);
-		} else if(_flow.name == UNLOCK_WITH_SC_RESOURCES_FLOW_NAME) {
+		}
+        else if(_flow.name == UNLOCK_WITH_SC_RESOURCES_FLOW_NAME)
+        {
 			screenController.LaunchAcquireAnim(dragonData.def.sku);
+
+            // In case of the special dragons, refresh the buttons to show the proper 
 		}
 	}
 }

@@ -140,6 +140,15 @@ public class MenuDragonInfo : MonoBehaviour {
         // Implemented in children
     }
 
+    /// <summary>
+    /// Refresh the fields with the current dragon
+    /// </summary>
+    public void Refresh()
+    {
+        // Force update, even if the dragon didnt change
+        Refresh(DragonManager.CurrentDragon, true);
+    }
+
 
     //------------------------------------------------------------------------//
     // CALLBACKS															  //
@@ -153,7 +162,6 @@ public class MenuDragonInfo : MonoBehaviour {
         // Refresh after some delay to let the animation finish
         Refresh(_sku, 0, false);
     }
-
 
 
     /// <summary>

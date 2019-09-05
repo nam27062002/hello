@@ -10364,7 +10364,7 @@ Animator:
   m_GameObject: {fileID: 1818377703160734}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 22100000, guid: 3d0ccbc4389854509acf15954d61992f, type: 2}
+  m_Controller: {fileID: 22100000, guid: 7cd8bb118fa9f43739f98bfd803f383b, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -11682,6 +11682,16 @@ MonoBehaviour:
   m_hcRoot: {fileID: 1458571492024086}
   m_scRoot: {fileID: 1363558720148116}
   m_unavailableRoot: {fileID: 1284177439389388}
+  OnUnlockViaPCSuccessEvent:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  OnUnlockViaSCSuccessEvent:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
 --- !u!114 &114037785591164010
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -12126,7 +12136,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_tweenType: 1
-  m_tweenDuration: 0
+  m_tweenDuration: 0.5
   m_tweenValue: 2.5
   m_tweenEase: 9
   m_tweenDelay: 0
@@ -13027,6 +13037,27 @@ MonoBehaviour:
   m_hcRoot: {fileID: 1215613709978722}
   m_scRoot: {fileID: 1207556845848040}
   m_unavailableRoot: {fileID: 1199749521525318}
+  OnUnlockViaPCSuccessEvent:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  OnUnlockViaSCSuccessEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 114337126568261366}
+        m_MethodName: Refresh
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
 --- !u!114 &114112856367553192
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -20543,7 +20574,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_tweenType: 2
-  m_tweenDuration: 0.25
+  m_tweenDuration: 0.3
   m_tweenValue: 0
   m_tweenEase: 4
   m_tweenDelay: 0.15
@@ -22301,7 +22332,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_tweenType: 2
-  m_tweenDuration: 0.25
+  m_tweenDuration: 0.3
   m_tweenValue: 0
   m_tweenEase: 4
   m_tweenDelay: 0.15
@@ -42363,10 +42394,10 @@ RectTransform:
   m_Father: {fileID: 224063076254321614}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 700, y: 0}
+  m_SizeDelta: {x: 0, y: 100.88}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!224 &224265404917795578
 RectTransform:
@@ -48927,10 +48958,10 @@ RectTransform:
   m_Father: {fileID: 224825249711696842}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 700, y: 0}
+  m_SizeDelta: {x: 0, y: 100.88}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!224 &224935592312502096
 RectTransform:
