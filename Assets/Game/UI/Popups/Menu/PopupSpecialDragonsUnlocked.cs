@@ -66,6 +66,7 @@ public class PopupSpecialDragonsUnlocked : MonoBehaviour
         return false;
     }
 
+
     /// <summary>
     /// Initialize this popup
     /// </summary>
@@ -75,4 +76,18 @@ public class PopupSpecialDragonsUnlocked : MonoBehaviour
     }
 
 
+    /// <summary>
+    /// The buton "Show me" has been clicked
+    /// </summary>
+    public void OnShowMeClicked ()
+    {
+        
+        // Scroll to the first special dragon
+        List<IDragonData> dragons = DragonManager.GetDragonsByOrder(IDragonData.Type.SPECIAL);
+        InstanceManager.menuSceneController.SetSelectedDragon(dragons[0].sku);
+
+        // Close the popup
+        GetComponent<PopupController>().Close(true);
+
+    }
 }
