@@ -1124,21 +1124,24 @@ public class DragonDataSpecial : IDragonData
     /// <param name="">.</param>
     public void UpdateSpecialDragonsLevel()
     {
-        int m_level = m_stats[0].level + m_stats[0].level + m_stats[0].level;
-        int increment = 0;
+        m_level = m_stats[0].level + m_stats[0].level + m_stats[0].level;
 
+        int increment = 0;
         if (m_level > 5)
         {
             increment++;
+
+            if (m_level > 15)
+            {
+                increment++;
+
+                if (m_level > 25)
+                {
+                    increment++;
+                }
+            }
         }
-        if (m_level > 15)
-        {
-            increment++;
-        }
-        if (m_level > 25)
-        {
-            increment++;
-        }
+
 
         // Add this levels to compensate the new 3 power up levels added to the progression
         m_level += increment;
