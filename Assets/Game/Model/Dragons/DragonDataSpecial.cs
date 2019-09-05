@@ -485,10 +485,9 @@ public class DragonDataSpecial : IDragonData {
 
         // Condition B) If the minimum required classic dragon is owned, then is available via HC
         // Minimum required dragon is stored in the content
-        string unlockFromDragon = def.Get("unlockFromDragon");
-        if (unlockFromDragon != null)
+        if (m_unlockFromDragon != null)
         {
-            IDragonData requiredDragon = DragonManager.GetDragonData(unlockFromDragon);
+            IDragonData requiredDragon = DragonManager.GetDragonData(m_unlockFromDragon);
 
             // If the player owns the required dragon or a superior one, then the special dragon is available via HC
             if (DragonManager.biggestOwnedDragon.GetOrder() >= requiredDragon.GetOrder())

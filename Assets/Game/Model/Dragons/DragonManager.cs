@@ -38,6 +38,7 @@ public class DragonManager : UbiBCN.SingletonMonoBehaviour<DragonManager> {
 	// Use GetDragonsBy* methods to access them
 	private List<IDragonData> m_classicDragonsByOrder = null;
 	private List<IDragonData> m_specialDragonsByOrder = null;
+	private List<IDragonData> m_allDragonsByOrder = null;
 
 	// Shortcut to get the data of the currently selected dragon
 	// [AOC] Adding support for different dragon types and game modes
@@ -52,17 +53,16 @@ public class DragonManager : UbiBCN.SingletonMonoBehaviour<DragonManager> {
         return (m_instance.m_classicDragonsByOrder != null && order > -1 && order < m_instance.m_classicDragonsByOrder.Count) ? m_instance.m_classicDragonsByOrder[order] : null;
     }
 
-    // Shortcut to get the data of the biggest owned dragon (classic ones) (following progression order)
+    // Shortcut to get the data of the biggest owned dragon (classic+special ones) (following progression order)
     // Null if there are no dragons owned (should never happen)
-    // [AOC] CLASSIC ONLY
     public static IDragonData biggestOwnedDragon {
 		get {
 			// Reverse-iterate all the dragons by order and find the biggest one owned
-			for(int i = instance.m_classicDragonsByOrder.Count - 1; i >= 0; i--) {
+			for(int i = instance.m_allDragonsByOrder.Count - 1; i >= 0; i--) {
 				// Is it owned?
-				if(instance.m_classicDragonsByOrder[i].isOwned) {
+				if(instance.m_allDragonsByOrder[i].isOwned) {
 					// Yes! Return dragon
-					return instance.m_classicDragonsByOrder[i];
+					return instance.m_allDragonsByOrder[i];
 				}
 			}
 
@@ -70,20 +70,6 @@ public class DragonManager : UbiBCN.SingletonMonoBehaviour<DragonManager> {
 			return null;
 		}
 	}
-
-    public static DragonTier maxSpecialDragonTierUnlocked {
-        get {
-			// Iterate all special dragons and find the one with the biggest tier
-            DragonTier maxTier = DragonTier.TIER_0; // Specials start at tier 1, but we'll return 0 if the user doesn't own a dragon.
-			for(int i = 0; i < instance.m_specialDragonsByOrder.Count; ++i) {
-				// Only owned dragons, of course
-				if(instance.m_specialDragonsByOrder[i].isOwned) {
-					maxTier = (DragonTier)Mathf.Max((int)maxTier, (int)instance.m_specialDragonsByOrder[i].tier);
-				}
-			}
-			return maxTier;
-        }
-    }
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -96,6 +82,7 @@ public class DragonManager : UbiBCN.SingletonMonoBehaviour<DragonManager> {
 		m_dragonsBySku = null;
 		m_classicDragonsByOrder = new List<IDragonData>();
 		m_specialDragonsByOrder = new List<IDragonData>();
+		m_allDragonsByOrder = new List<IDragonData>();
 	}
 
 	//------------------------------------------------------------------//
@@ -210,13 +197,11 @@ public class DragonManager : UbiBCN.SingletonMonoBehaviour<DragonManager> {
 	public static List<IDragonData> GetDragonsByOrder(IDragonData.Type _type, bool _createNewList = false) {
 		List<IDragonData> matchingDragonsByOrder = null;
 		switch(_type) {
-			case IDragonData.Type.CLASSIC: matchingDragonsByOrder = instance.m_classicDragonsByOrder; break;
+			case IDragonData.Type.CLASSIC:	matchingDragonsByOrder = instance.m_classicDragonsByOrder;	break;
 
-            case IDragonData.Type.SPECIAL: matchingDragonsByOrder = instance.m_specialDragonsByOrder; break;
+            case IDragonData.Type.SPECIAL:	matchingDragonsByOrder = instance.m_specialDragonsByOrder;	break;
 
-            case IDragonData.Type.ALL:  matchingDragonsByOrder = new List<IDragonData>();
-                                        matchingDragonsByOrder.AddRange(instance.m_classicDragonsByOrder);
-                                        matchingDragonsByOrder.AddRange(instance.m_specialDragonsByOrder); break;
+            case IDragonData.Type.ALL:		matchingDragonsByOrder = instance.m_allDragonsByOrder;		break;
 		}
 
 		if(_createNewList && matchingDragonsByOrder != null) {
@@ -281,7 +266,7 @@ public class DragonManager : UbiBCN.SingletonMonoBehaviour<DragonManager> {
         {
             case IDragonData.Type.CLASSIC: return instance.m_classicDragonsByOrder.Count; 
             case IDragonData.Type.SPECIAL: return instance.m_specialDragonsByOrder.Count; 
-            case IDragonData.Type.ALL: return instance.m_classicDragonsByOrder.Count + instance.m_specialDragonsByOrder.Count; 
+            case IDragonData.Type.ALL: return instance.m_allDragonsByOrder.Count; 
         }
 
         // Error
@@ -336,16 +321,21 @@ public class DragonManager : UbiBCN.SingletonMonoBehaviour<DragonManager> {
     /// <param name="user">User.</param>
     public static void SetupUser( UserProfile user)
 	{
+		// Store user and dragons dictionary
 		instance.m_user = user;
 		instance.m_dragonsBySku = user.dragonsBySku;
+		instance.m_allDragonsByOrder.Clear();
 
 		// Initialize ordered list
 		// Classic dragons
+		IDragonData dragonData = null;
 		List<DefinitionNode> defs = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.DRAGONS, "type", DragonDataClassic.TYPE_CODE);
 		DefinitionsManager.SharedInstance.SortByProperty(ref defs, "order", DefinitionsManager.SortType.NUMERIC);
 		instance.m_classicDragonsByOrder.Clear();
 		for(int i = 0; i < defs.Count; i++) {
-			instance.m_classicDragonsByOrder.Add(instance.m_dragonsBySku[defs[i].sku]);
+			dragonData = instance.m_dragonsBySku[defs[i].sku];
+			instance.m_classicDragonsByOrder.Add(dragonData);
+			instance.m_allDragonsByOrder.Add(dragonData);
 		}
 
 		// Special dragons
@@ -353,8 +343,13 @@ public class DragonManager : UbiBCN.SingletonMonoBehaviour<DragonManager> {
 		DefinitionsManager.SharedInstance.SortByProperty(ref defs, "order", DefinitionsManager.SortType.NUMERIC);
 		instance.m_specialDragonsByOrder.Clear();
 		for(int i = 0; i < defs.Count; i++) {
-			instance.m_specialDragonsByOrder.Add(instance.m_dragonsBySku[defs[i].sku]);
+			dragonData = instance.m_dragonsBySku[defs[i].sku];
+			instance.m_specialDragonsByOrder.Add(dragonData);
+			instance.m_allDragonsByOrder.Add(dragonData);
 		}
+
+		// All dragons - make sure order is right
+		instance.m_allDragonsByOrder.Sort(IDragonData.CompareByOrder);
 	}
 
 	/// <summary>

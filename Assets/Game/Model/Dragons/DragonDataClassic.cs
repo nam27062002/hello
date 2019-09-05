@@ -260,14 +260,9 @@ public class DragonDataClassic : IDragonData {
 			if(!(dragons[order - 1] as DragonDataClassic).progression.isMaxLevel) {
 				// Can the dragon be acquired?
 				if(!m_unlockAvailable) {
-					bool canBeUnlocked = true;
-
-					// Check all required dragons are owned
-					for(int i = 0; i < m_unlockFromDragons.Count; ++i) {
-						canBeUnlocked = canBeUnlocked && DragonManager.IsDragonOwned(m_unlockFromDragons[i]);
-					}
-
-					if(canBeUnlocked) {
+					// Check if the required dragon is owned (or a biggest one)
+					int biggestOwned = DragonManager.biggestOwnedDragon.GetOrder();
+					if(biggestOwned >= DragonManager.GetDragonData(m_unlockFromDragon).GetOrder()) {
 						m_unlockAvailable = true;	// No need to check again in this run
 						return LockState.LOCKED;
 					} else {
@@ -291,24 +286,24 @@ public class DragonDataClassic : IDragonData {
 	public override bool CheckUnlockWithPC()
     {
         // Check lock state
-        bool show = false;
+        bool canBeUnlocked = false;
         switch (lockState)
         {
             case IDragonData.LockState.LOCKED:
             case IDragonData.LockState.AVAILABLE:
                 {
-                    show = true;
+                    canBeUnlocked = true;
                 }
                 break;
 
             case IDragonData.LockState.LOCKED_UNAVAILABLE:
                 {
-                    show = HasPriceModifier(UserProfile.Currency.HARD);   // If there is a discount for this dragon, show even when unavailable
+                    canBeUnlocked = HasPriceModifier(UserProfile.Currency.HARD);   // If there is a discount for this dragon, show even when unavailable
                 }
                 break;
         }
 
-        return show;
+        return canBeUnlocked;
     }
 
     /// <summary>

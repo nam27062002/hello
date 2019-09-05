@@ -106,23 +106,15 @@ public class MenuDragonUnlockClassicDragon : MenuDragonUnlock
 
 			// Refresh info
 			if(show) {
-				// Get list of dragons required to unlock and compose a string with their names
-				string separator = LocalizationManager.SharedInstance.Localize("TID_GEN_LIST_SEPARATOR");
+				// Get data of the dragon required to unlock and compose a string with its name
 				StringBuilder sb = new StringBuilder();
-				IDragonData unlockDragonData = null;
-				for(int i = 0; i < _data.unlockFromDragons.Count; ++i) {
-					// Get data for pre-requisite dragon
-					unlockDragonData = DragonManager.GetDragonData(_data.unlockFromDragons[i]);
-
-					// Attach separator if more than one
-					if(i > 0) sb.Append(", ");
-
-					// [AOC] Use dragon's tier color
-					//		 We're don't use Colors.Tag to avoid creating a new StringBuilder
-					sb.Append("<color=").Append(UIConstants.GetDragonTierColor(unlockDragonData.tier).ToHexString("#")).Append(">");
-					sb.Append(unlockDragonData.def.GetLocalized("tidName"));
-					sb.Append("</color>");
-				}
+				IDragonData unlockDragonData = DragonManager.GetDragonData(_data.unlockFromDragon);
+				
+				// [AOC] Use dragon's tier color
+				//		 We're don't use Colors.Tag to avoid creating a new StringBuilder
+				sb.Append("<color=").Append(UIConstants.GetDragonTierColor(unlockDragonData.tier).ToHexString("#")).Append(">");
+				sb.Append(unlockDragonData.def.GetLocalized("tidName"));
+				sb.Append("</color>");
 
 				// Set text
 				m_unavailableInfoText.Localize(
@@ -132,10 +124,6 @@ public class MenuDragonUnlockClassicDragon : MenuDragonUnlock
 			}
 		}
 	}
-
-    
-
-	
 
 	//------------------------------------------------------------------//
 	// CALLBACKS														//
