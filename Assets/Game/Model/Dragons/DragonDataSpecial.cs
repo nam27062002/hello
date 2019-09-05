@@ -1124,7 +1124,7 @@ public class DragonDataSpecial : IDragonData
     /// <param name="">.</param>
     public void UpdateSpecialDragonsLevel()
     {
-        m_level = m_stats[0].level + m_stats[0].level + m_stats[0].level;
+        m_level = m_stats[0].level + m_stats[1].level + m_stats[2].level;
 
         int increment = 0;
         if (m_level > 5)
