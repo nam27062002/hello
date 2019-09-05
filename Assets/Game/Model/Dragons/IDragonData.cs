@@ -99,9 +99,9 @@ public abstract class IDragonData : IUISelectorItem {
 		get { return m_revealFromDragons; } 
 	}
 
-	protected List<string> m_unlockFromDragons = new List<string>();
-	public List<string> unlockFromDragons {
-		get { return m_unlockFromDragons; }
+	protected string m_unlockFromDragon = "";
+	public string unlockFromDragon {
+		get { return m_unlockFromDragon; }
 	}
 
 	// Pets
@@ -249,11 +249,8 @@ public abstract class IDragonData : IUISelectorItem {
 		}
 		m_revealed = m_revealFromDragons.Count == 0;
 
-		string unlockFromDragonsData = m_def.GetAsString("unlockFromDragon");
-		if(!string.IsNullOrEmpty(unlockFromDragonsData)) {
-			m_unlockFromDragons.AddRange(unlockFromDragonsData.Split(';'));
-		}
-		m_unlockAvailable = m_unlockFromDragons.Count == 0;
+		m_unlockFromDragon = m_def.GetAsString("unlockFromDragon", string.Empty);
+		m_unlockAvailable = string.IsNullOrEmpty(m_unlockFromDragon);
 
 		// Items
 		m_disguise = GetDefaultDisguise(_def.sku).sku;
@@ -398,12 +395,8 @@ public abstract class IDragonData : IUISelectorItem {
 		}
 		m_revealed = m_revealFromDragons.Count == 0;
 
-		string unlockFromDragonsData = m_def.GetAsString("unlockFromDragon");
-		m_unlockFromDragons.Clear();
-		if(!string.IsNullOrEmpty(unlockFromDragonsData)) {
-			m_unlockFromDragons.AddRange(unlockFromDragonsData.Split(';'));
-		}
-		m_unlockAvailable = m_unlockFromDragons.Count == 0;
+		m_unlockFromDragon = m_def.GetAsString("unlockFromDragon", string.Empty);
+		m_unlockAvailable = string.IsNullOrEmpty(m_unlockFromDragon);
 	}
 
 
@@ -460,7 +453,7 @@ public abstract class IDragonData : IUISelectorItem {
 		m_owned = false;
 		m_teased = m_shadowFromDragons.Count == 0;
 		m_revealed = m_revealFromDragons.Count == 0;
-		m_unlockAvailable = m_unlockFromDragons.Count == 0;
+		m_unlockAvailable = string.IsNullOrEmpty(m_unlockFromDragon);
 
 		m_disguise = m_def != null ? GetDefaultDisguise(m_def.sku).sku : "";
 		m_persistentDisguise = m_disguise;
