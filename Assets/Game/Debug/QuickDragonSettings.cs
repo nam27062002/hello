@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-using System.Collections;
+using System.Collections.Generic;
 using TMPro;
 
 public class QuickDragonSettings : MonoBehaviour {
@@ -9,8 +9,13 @@ public class QuickDragonSettings : MonoBehaviour {
 	public Slider m_sliderMass;
 	public Slider m_sliderFricction;
 	public Slider m_sliderGravity;
-	public TMP_Dropdown m_eatTypeDropDown;	
-	private DragonMotion m_motion;
+	public TMP_Dropdown m_eatTypeDropDown;
+    public TMP_Dropdown m_spawnAreas;
+    public TMP_Dropdown m_spawnPoints;
+    private DragonMotion m_motion;
+
+    private List<string> m_areas;
+    private List<List<string>> m_points;
 
 	void OnEnable()
 	{
@@ -29,8 +34,31 @@ public class QuickDragonSettings : MonoBehaviour {
 			}
 			m_sliderGravity.value = m_motion.m_dragonGravityModifier;
 
-		}	
-	}
+		}
+
+        m_areas = new List<string>();
+        m_points = new List<List<string>>();
+        List<DefinitionNode> spawnPoints = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.LEVEL_SPAWN_POINTS);
+        foreach (DefinitionNode spawnPoint in spawnPoints) {
+            string area = spawnPoint.Get("area");
+            System.Predicate<string> match = s => s.Equals(area);
+            int index = m_areas.FindIndex(match);
+            if (index < 0) {
+                index = m_areas.Count;
+                m_areas.Add(area);
+                m_points.Add(new List<string>());
+            }
+
+            m_points[index].Add(spawnPoint.sku);
+        }
+
+        m_spawnAreas.ClearOptions();
+        m_spawnAreas.AddOptions(m_areas);
+        m_spawnAreas.value = 0;
+        m_spawnPoints.ClearOptions();
+        m_spawnPoints.AddOptions(m_points[0]);
+        m_spawnPoints.value = 0;
+    }
 	
 	public void SetDragonAcceleration(float _size) 
 	{
@@ -84,6 +112,20 @@ public class QuickDragonSettings : MonoBehaviour {
 		DebugSettings.spawnChance100 = _value;
 	}
 
+
+    public void SetOverridePlayerSpawn(bool _value) {
+
+    }
+
+    public void OnAreaChange(int _value) {
+        m_spawnPoints.value = 0;
+        m_spawnPoints.ClearOptions();
+        m_spawnPoints.AddOptions(m_points[_value]);
+    }
+
+    public void OnPointChange(int _value) {
+
+    }
 
 	public void Toggle60FPS( bool _value )
 	{
