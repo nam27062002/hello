@@ -18,19 +18,21 @@ using System.Collections.Generic;
 /// Dragon data implementation for the Special Dragons.
 /// </summary>
 [Serializable]
-public class DragonDataSpecial : IDragonData {
-	//------------------------------------------------------------------------//
-	// CONSTANTS															  //
-	//------------------------------------------------------------------------//
-	public const string TYPE_CODE = "special";
+public class DragonDataSpecial : IDragonData
+{
+    //------------------------------------------------------------------------//
+    // CONSTANTS															  //
+    //------------------------------------------------------------------------//
+    public const string TYPE_CODE = "special";
 
-	public enum Stat {
-		HEALTH = 0,
-		SPEED,
-		ENERGY,
+    public enum Stat
+    {
+        HEALTH = 0,
+        SPEED,
+        ENERGY,
 
-		COUNT
-	}
+        COUNT
+    }
 
     //------------------------------------------------------------------------//
     // MEMBERS AND PROPERTIES												  //
@@ -55,209 +57,261 @@ public class DragonDataSpecial : IDragonData {
 
     // Stats
     private DragonStatData[] m_stats = new DragonStatData[(int)Stat.COUNT];
-	private long m_statUpgradePriceBase = 0;
-	private long m_statUpgradePriceCoefA = 0;
-	private long m_statUpgradePriceCoefB = 0;
+    private long m_statUpgradePriceBase = 0;
+    private long m_statUpgradePriceCoefA = 0;
+    private long m_statUpgradePriceCoefB = 0;
     private List<DefinitionNode> m_upgrades;
 
-    public bool allStatsMaxed {
-		get {
-			for(int i = 0; i < m_stats.Length; ++i) {
-				if(m_stats[i].level < m_stats[i].maxLevel) {
-					return false;	// No need to keep checking
-				}
-			}
-			return true;
-		}
-	}
+    public bool allStatsMaxed
+    {
+        get
+        {
+            for (int i = 0; i < m_stats.Length; ++i)
+            {
+                if (m_stats[i].level < m_stats[i].maxLevel)
+                {
+                    return false;   // No need to keep checking
+                }
+            }
+            return true;
+        }
+    }
 
-	// Tier
-	private DefinitionNode m_specialTierDef = null;
-	public DefinitionNode specialTierDef {
-		get { return m_specialTierDef; }
-	}
+    // Tier
+    private DefinitionNode m_specialTierDef = null;
+    public DefinitionNode specialTierDef
+    {
+        get { return m_specialTierDef; }
+    }
 
-	private List<DefinitionNode> m_specialTierDefsByOrder = null;
-	public List<DefinitionNode> specialTierDefsByOrder {
-		get { return m_specialTierDefsByOrder; }
-	}
+    private List<DefinitionNode> m_specialTierDefsByOrder = null;
+    public List<DefinitionNode> specialTierDefsByOrder
+    {
+        get { return m_specialTierDefsByOrder; }
+    }
 
     private List<DefinitionNode> m_specialPowerDefsByOrder = null;
-    public List<DefinitionNode> specialPowerDefsByOrder {
+    public List<DefinitionNode> specialPowerDefsByOrder
+    {
         get { return m_specialPowerDefsByOrder; }
     }
 
-	// Power
-	public int powerLevel = 0;
-	public DefinitionNode biggestPowerDef {
-		get {
-			if(powerLevel == 0) return null;
-			return m_specialPowerDefsByOrder[powerLevel - 1]; 
-		}
-	}
-
-	//------------------------------------------------------------------------//
-	// PARENT OVERRIDE PROPERTIES											  //
-	//------------------------------------------------------------------------//
-	// Stats - ranges to interpolate between min level and max level
-	#region Base Stats
-	public override float maxHealth {
-		get {
-            float baseValue = m_specialTierDef.GetAsFloat("health");
-            return  baseValue +  baseValue * (GetStat(Stat.HEALTH).value);
+    // Power
+    public int powerLevel = 0;
+    public DefinitionNode biggestPowerDef
+    {
+        get
+        {
+            if (powerLevel == 0) return null;
+            return m_specialPowerDefsByOrder[powerLevel - 1];
         }
-	}
+    }
 
-	public override float maxForce {
-		get {
+    //------------------------------------------------------------------------//
+    // PARENT OVERRIDE PROPERTIES											  //
+    //------------------------------------------------------------------------//
+    // Stats - ranges to interpolate between min level and max level
+    #region Base Stats
+    public override float maxHealth
+    {
+        get
+        {
+            float baseValue = m_specialTierDef.GetAsFloat("health");
+            return baseValue + baseValue * (GetStat(Stat.HEALTH).value);
+        }
+    }
+
+    public override float maxForce
+    {
+        get
+        {
             float baseValue = m_specialTierDef.GetAsFloat("force");
             return baseValue + baseValue * (GetStat(Stat.SPEED).value);
         }
-	}
+    }
 
-	public override float maxEatSpeedFactor {
-		get { return m_specialTierDef.GetAsFloat("eatSpeedFactor"); }
-	}
+    public override float maxEatSpeedFactor
+    {
+        get { return m_specialTierDef.GetAsFloat("eatSpeedFactor"); }
+    }
 
-	public override float baseEnergy {
-		get {
+    public override float baseEnergy
+    {
+        get
+        {
             float baseValue = m_specialTierDef.GetAsFloat("energyBase");
-            return baseValue + baseValue * (GetStat(Stat.ENERGY).value); 
+            return baseValue + baseValue * (GetStat(Stat.ENERGY).value);
         }
-	}
-	#endregion
+    }
+    #endregion
 
-	// Scale
-	#region Scale
-	public override float scale {
-		get { return m_specialTierDef.GetAsFloat("scale") + m_scaleOffset; }
-	}
+    // Scale
+    #region Scale
+    public override float scale
+    {
+        get { return m_specialTierDef.GetAsFloat("scale") + m_scaleOffset; }
+    }
 
-    public float scaleMenu {
+    public float scaleMenu
+    {
         get { return m_specialTierDef.GetAsFloat("scaleMenu", 1f); }
     }
 
-	public override float minScale {
-		// [AOC] TODO!!
-		get { return 1f; }
-	}
-
-	public override float maxScale {
-		// [AOC] TODO!!
-		get { return 1f; }
-	}
-	#endregion
-
-	// Fury
-	#region Fury
-	public override float furyMax{ 
-        get{ return m_specialTierDef.GetAsFloat("furyMax"); }
-    }
-    public override float furyBaseDuration{ 
-        get{ return m_specialTierDef.GetAsFloat("furyBaseDuration"); }
-    }
-    public override float furyScoreMultiplier{ 
-        get{ return m_specialTierDef.GetAsFloat("furyScoreMultiplier", 2); }
-    }
-    public override float furyBaseLength{ 
-        get{ return m_specialTierDef.GetAsFloat("furyBaseLength"); }
-    }
-	#endregion
-
-	// Movement
-	#region Movement
-	public override float mass{ 
-        get{ return m_specialTierDef.GetAsFloat("mass"); }
-    }
-    public override float friction{ 
-        get{ return m_specialTierDef.GetAsFloat("friction"); }
-    }
-    public override float gravityModifier{ 
-        get{ return m_specialTierDef.GetAsFloat("gravityModifier"); }
-    }
-    public override float airGravityModifier{ 
-        get{ return m_specialTierDef.GetAsFloat("airGravityModifier"); }
-    }
-    public override float waterGravityModifier{ 
-        get{ return m_specialTierDef.GetAsFloat("waterGravityModifier"); }
-    }
-    public override float boostMultiplier{ 
-        get{ return m_specialTierDef.GetAsFloat("boostMultiplier"); }
+    public override float minScale
+    {
+        // [AOC] TODO!!
+        get { return 1f; }
     }
 
-    public override float defaultSize{
-        get{ return m_specialTierDef.GetAsFloat("defaultSize"); }
-    } 
-    public override float cameraFrameWidthModifier{ 
-        get{ return m_specialTierDef.GetAsFloat("cameraFrameWidthModifier"); }
+    public override float maxScale
+    {
+        // [AOC] TODO!!
+        get { return 1f; }
     }
-    
-    public override float healthDrain{ 
-        get { return m_specialTierDef.GetAsFloat("healthDrain"); } 
-    }
-    public override float healthDrainAmpPerSecond{ 
-        get { return m_specialTierDef.GetAsFloat("healthDrainAmpPerSecond"); } 
-    }
-    public override float sessionStartHealthDrainTime{ 
-        get { return m_specialTierDef.GetAsFloat("sessionStartHealthDrainTime"); } 
-    }
-    public override float sessionStartHealthDrainModifier{ 
-        get { return m_specialTierDef.GetAsFloat("sessionStartHealthDrainModifier"); } 
-    }
-    public override float healthDrainSpacePlus{ 
-        get { return m_specialTierDef.GetAsFloat("healthDrainSpacePlus"); } 
-    }
-    public override float damageAnimationThreshold{ 
-        get { return m_specialTierDef.GetAsFloat("damageAnimationThreshold"); } 
-    }
-    public override float dotAnimationThreshold{ 
-        get { return m_specialTierDef.GetAsFloat("dotAnimationThreshold"); } 
-    }
-	#endregion
+    #endregion
 
-	// Energy
-	#region Other Parent Properties
-	public override float energyDrain{ 
-        get { return m_specialTierDef.GetAsFloat("energyDrain"); } 
+    // Fury
+    #region Fury
+    public override float furyMax
+    {
+        get { return m_specialTierDef.GetAsFloat("furyMax"); }
     }
-    public override float energyRefillRate{ 
-        get { return m_specialTierDef.GetAsFloat("energyRefillRate"); } 
+    public override float furyBaseDuration
+    {
+        get { return m_specialTierDef.GetAsFloat("furyBaseDuration"); }
     }
-        
+    public override float furyScoreMultiplier
+    {
+        get { return m_specialTierDef.GetAsFloat("furyScoreMultiplier", 2); }
+    }
+    public override float furyBaseLength
+    {
+        get { return m_specialTierDef.GetAsFloat("furyBaseLength"); }
+    }
+    #endregion
+
+    // Movement
+    #region Movement
+    public override float mass
+    {
+        get { return m_specialTierDef.GetAsFloat("mass"); }
+    }
+    public override float friction
+    {
+        get { return m_specialTierDef.GetAsFloat("friction"); }
+    }
+    public override float gravityModifier
+    {
+        get { return m_specialTierDef.GetAsFloat("gravityModifier"); }
+    }
+    public override float airGravityModifier
+    {
+        get { return m_specialTierDef.GetAsFloat("airGravityModifier"); }
+    }
+    public override float waterGravityModifier
+    {
+        get { return m_specialTierDef.GetAsFloat("waterGravityModifier"); }
+    }
+    public override float boostMultiplier
+    {
+        get { return m_specialTierDef.GetAsFloat("boostMultiplier"); }
+    }
+
+    public override float defaultSize
+    {
+        get { return m_specialTierDef.GetAsFloat("defaultSize"); }
+    }
+    public override float cameraFrameWidthModifier
+    {
+        get { return m_specialTierDef.GetAsFloat("cameraFrameWidthModifier"); }
+    }
+
+    public override float healthDrain
+    {
+        get { return m_specialTierDef.GetAsFloat("healthDrain"); }
+    }
+    public override float healthDrainAmpPerSecond
+    {
+        get { return m_specialTierDef.GetAsFloat("healthDrainAmpPerSecond"); }
+    }
+    public override float sessionStartHealthDrainTime
+    {
+        get { return m_specialTierDef.GetAsFloat("sessionStartHealthDrainTime"); }
+    }
+    public override float sessionStartHealthDrainModifier
+    {
+        get { return m_specialTierDef.GetAsFloat("sessionStartHealthDrainModifier"); }
+    }
+    public override float healthDrainSpacePlus
+    {
+        get { return m_specialTierDef.GetAsFloat("healthDrainSpacePlus"); }
+    }
+    public override float damageAnimationThreshold
+    {
+        get { return m_specialTierDef.GetAsFloat("damageAnimationThreshold"); }
+    }
+    public override float dotAnimationThreshold
+    {
+        get { return m_specialTierDef.GetAsFloat("dotAnimationThreshold"); }
+    }
+    #endregion
+
+    // Energy
+    #region Other Parent Properties
+    public override float energyDrain
+    {
+        get { return m_specialTierDef.GetAsFloat("energyDrain"); }
+    }
+    public override float energyRefillRate
+    {
+        get { return m_specialTierDef.GetAsFloat("energyRefillRate"); }
+    }
+
     // Misc
-    public override float statsBarRatio{ 
-        get { return m_specialTierDef.GetAsFloat("statsBarRatio"); } 
+    public override float statsBarRatio
+    {
+        get { return m_specialTierDef.GetAsFloat("statsBarRatio"); }
     }
-    
-    public override float petScale{ 
-        get{ return m_specialTierDef.GetAsFloat("petScale"); } 
+
+    public override float petScale
+    {
+        get { return m_specialTierDef.GetAsFloat("petScale"); }
     }
-    
-     // Super Size
-    public override float superSizeUpMultiplier{ 
-        get{ return m_specialTierDef.GetAsFloat("sizeUpMultiplier", 2); }
-    }    
-    public override float superSpeedUpMultiplier{
-        get{ return m_specialTierDef.GetAsFloat("speedUpMultiplier", 2); }
-    }    
-    public override float superBiteUpMultiplier{ 
-        get{ return m_specialTierDef.GetAsFloat("biteUpMultiplier", 2); }
-    }    
-    public override bool superInvincible{ 
-        get{ return m_specialTierDef.GetAsBool("invincible", true); }
-    }    
-    public override bool superInfiniteBoost{
-        get{ return m_specialTierDef.GetAsBool("infiniteBoost", true); }
-    }    
-    public override bool superEatEverything{ 
-        get{ return m_specialTierDef.GetAsBool("eatEverything", true); }
-    }    
-    public override float superModeDuration{ 
-        get{ return m_specialTierDef.GetAsFloat("modeDuration", 10); }
+
+    // Super Size
+    public override float superSizeUpMultiplier
+    {
+        get { return m_specialTierDef.GetAsFloat("sizeUpMultiplier", 2); }
     }
-    
-    public override string gamePrefab {
-        get{
+    public override float superSpeedUpMultiplier
+    {
+        get { return m_specialTierDef.GetAsFloat("speedUpMultiplier", 2); }
+    }
+    public override float superBiteUpMultiplier
+    {
+        get { return m_specialTierDef.GetAsFloat("biteUpMultiplier", 2); }
+    }
+    public override bool superInvincible
+    {
+        get { return m_specialTierDef.GetAsBool("invincible", true); }
+    }
+    public override bool superInfiniteBoost
+    {
+        get { return m_specialTierDef.GetAsBool("infiniteBoost", true); }
+    }
+    public override bool superEatEverything
+    {
+        get { return m_specialTierDef.GetAsBool("eatEverything", true); }
+    }
+    public override float superModeDuration
+    {
+        get { return m_specialTierDef.GetAsFloat("modeDuration", 10); }
+    }
+
+    public override string gamePrefab
+    {
+        get
+        {
             return m_specialTierDef.GetAsString("gamePrefab");
         }
     }
@@ -272,24 +326,25 @@ public class DragonDataSpecial : IDragonData {
         for (int i = 0; i < (int)Stat.COUNT; i++)
         {
             m_stats[i] = new DragonStatData();
-			m_stats[i].parentDragon = this;
+            m_stats[i].parentDragon = this;
         }
     }
 
-	//------------------------------------------------------------------------//
-	// PARENT OVERRIDE METHODS												  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Initialization using a definition. Should be called immediately after the constructor.
-	/// </summary>
-	/// <param name="_def">The definition of this dragon.</param>
-	public override void Init(DefinitionNode _def) {
-		// Call parent
-		base.Init(_def);
+    //------------------------------------------------------------------------//
+    // PARENT OVERRIDE METHODS												  //
+    //------------------------------------------------------------------------//
+    /// <summary>
+    /// Initialization using a definition. Should be called immediately after the constructor.
+    /// </summary>
+    /// <param name="_def">The definition of this dragon.</param>
+    public override void Init(DefinitionNode _def)
+    {
+        // Call parent
+        base.Init(_def);
 
-		// Init tier definitions
-		m_specialTierDefsByOrder = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.SPECIAL_DRAGON_TIERS, "specialDragon", m_def.sku);
-		DefinitionsManager.SharedInstance.SortByProperty(ref m_specialTierDefsByOrder, "upgradeLevelToUnlock", DefinitionsManager.SortType.NUMERIC);
+        // Init tier definitions
+        m_specialTierDefsByOrder = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.SPECIAL_DRAGON_TIERS, "specialDragon", m_def.sku);
+        DefinitionsManager.SharedInstance.SortByProperty(ref m_specialTierDefsByOrder, "upgradeLevelToUnlock", DefinitionsManager.SortType.NUMERIC);
 
         m_specialPowerDefsByOrder = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.SPECIAL_DRAGON_POWERS, "specialDragon", m_def.sku);
         DefinitionsManager.SharedInstance.SortByProperty(ref m_specialPowerDefsByOrder, "upgradeLevelToUnlock", DefinitionsManager.SortType.NUMERIC);
@@ -305,8 +360,8 @@ public class DragonDataSpecial : IDragonData {
 
         // Eco vars
         m_statUpgradePriceBase = _def.GetAsLong("stepPrice", 0);
-		m_statUpgradePriceCoefA = _def.GetAsLong("priceCoefA", 1);
-		m_statUpgradePriceCoefB = _def.GetAsLong("priceCoefB", 1);
+        m_statUpgradePriceCoefA = _def.GetAsLong("priceCoefA", 1);
+        m_statUpgradePriceCoefB = _def.GetAsLong("priceCoefB", 1);
 
         // Upgrades
         m_upgrades = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.SPECIAL_DRAGON_STATS_UPGRADES);
@@ -315,86 +370,96 @@ public class DragonDataSpecial : IDragonData {
         // Max level = total of stats levelUps plus power levelUps 
         int statsLevelUp = 3 * m_upgrades.Count;
         int powerLevelUp = m_specialPowerDefsByOrder.Count;
-        m_maxLevel = statsLevelUp + powerLevelUp; 
+        m_maxLevel = statsLevelUp + powerLevelUp;
 
         // Type
         m_type = Type.SPECIAL;
-	}
-    
-	/// <summary>
-	/// Initialize stats data from the current dragon definition.
-	/// </summary>
-    private void InitStats()
-    {
-		if(m_def == null) return;
-
-		DragonStatData healthStat = GetStat(Stat.HEALTH);
-		healthStat.maxLevel = m_def.GetAsInt("hpBonusSteps", 10);
-		healthStat.valueRange = m_def.GetAsRange("hpBonus");
-        healthStat.valueRange *= 0.01f;
-		healthStat.def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGON_STATS, "health");
-        
-		DragonStatData speedStat = GetStat(Stat.SPEED);
-		speedStat.maxLevel = m_def.GetAsInt("speedBonusSteps", 10);
-		speedStat.valueRange = m_def.GetAsRange("speedBonus");
-        speedStat.valueRange *= 0.01f;
-		speedStat.def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGON_STATS, "speed");
-        
-		DragonStatData energyData = GetStat(Stat.ENERGY);
-		energyData.maxLevel = m_def.GetAsInt("boostBonusSteps", 10);
-		energyData.valueRange = m_def.GetAsRange("boostBonus");
-        energyData.valueRange *= 0.01f;
-		energyData.def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGON_STATS, "energy");
     }
 
-	/// <summary>
-	/// Gets the current lock state of this dragon.
-	/// </summary>
-	/// <returns>The lock state for this dragon.</returns>
-	public override LockState GetLockState() {
-		// a) Is dragon owned?
-		if(m_owned) return LockState.OWNED;
+    /// <summary>
+    /// Initialize stats data from the current dragon definition.
+    /// </summary>
+    private void InitStats()
+    {
+        if (m_def == null) return;
 
-		// b) Is dragon hidden or shadowed?
-		bool mayBeShadowed = m_revealFromDragons.Count > 0;
-		if(mayBeShadowed) {
-			if(!m_revealed) {
-				bool readyToReveal = true;
-				for(int i = 0; i < m_revealFromDragons.Count; ++i) {
-					readyToReveal = readyToReveal && DragonManager.IsDragonOwned(m_revealFromDragons[i]);
-				}
+        DragonStatData healthStat = GetStat(Stat.HEALTH);
+        healthStat.maxLevel = m_def.GetAsInt("hpBonusSteps", 10);
+        healthStat.valueRange = m_def.GetAsRange("hpBonus");
+        healthStat.valueRange *= 0.01f;
+        healthStat.def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGON_STATS, "health");
 
-				if(readyToReveal) {
-					return LockState.REVEAL;
-				} else {
-					bool mayBeHidden = m_shadowFromDragons.Count > 0;
-					if(mayBeHidden) {
-						if(!m_teased) {
-							bool redayToTease = true;
-							for(int i = 0; i < m_shadowFromDragons.Count; ++i) {
-								redayToTease = redayToTease && DragonManager.IsDragonOwned(m_shadowFromDragons[i]);
-							}
+        DragonStatData speedStat = GetStat(Stat.SPEED);
+        speedStat.maxLevel = m_def.GetAsInt("speedBonusSteps", 10);
+        speedStat.valueRange = m_def.GetAsRange("speedBonus");
+        speedStat.valueRange *= 0.01f;
+        speedStat.def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGON_STATS, "speed");
 
-							if(redayToTease) return LockState.TEASE;
-							else return LockState.HIDDEN;
-						}
-					}
-					return LockState.SHADOW;
-				}
-			}
-		}
+        DragonStatData energyData = GetStat(Stat.ENERGY);
+        energyData.maxLevel = m_def.GetAsInt("boostBonusSteps", 10);
+        energyData.valueRange = m_def.GetAsRange("boostBonus");
+        energyData.valueRange *= 0.01f;
+        energyData.def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGON_STATS, "energy");
+    }
+
+    /// <summary>
+    /// Gets the current lock state of this dragon.
+    /// </summary>
+    /// <returns>The lock state for this dragon.</returns>
+    public override LockState GetLockState()
+    {
+        // a) Is dragon owned?
+        if (m_owned) return LockState.OWNED;
+
+        // b) Is dragon hidden or shadowed?
+        bool mayBeShadowed = m_revealFromDragons.Count > 0;
+        if (mayBeShadowed)
+        {
+            if (!m_revealed)
+            {
+                bool readyToReveal = true;
+                for (int i = 0; i < m_revealFromDragons.Count; ++i)
+                {
+                    readyToReveal = readyToReveal && DragonManager.IsDragonOwned(m_revealFromDragons[i]);
+                }
+
+                if (readyToReveal)
+                {
+                    return LockState.REVEAL;
+                }
+                else
+                {
+                    bool mayBeHidden = m_shadowFromDragons.Count > 0;
+                    if (mayBeHidden)
+                    {
+                        if (!m_teased)
+                        {
+                            bool redayToTease = true;
+                            for (int i = 0; i < m_shadowFromDragons.Count; ++i)
+                            {
+                                redayToTease = redayToTease && DragonManager.IsDragonOwned(m_shadowFromDragons[i]);
+                            }
+
+                            if (redayToTease) return LockState.TEASE;
+                            else return LockState.HIDDEN;
+                        }
+                    }
+                    return LockState.SHADOW;
+                }
+            }
+        }
 
         // c) If the last classic dragon is maxed, then is available via SC
         // d) If the minimum required classic dragon is owned, then is available via HC
         if (IsAvailableViaSC() || IsAvailableViaHC())
-        { 
+        {
             return LockState.AVAILABLE;
         }
 
-		// e) Dragon locked
-		return LockState.LOCKED_UNAVAILABLE;
+        // e) Dragon locked
+        return LockState.LOCKED_UNAVAILABLE;
 
-	}
+    }
 
 
 
@@ -456,7 +521,7 @@ public class DragonDataSpecial : IDragonData {
                         return (previous as DragonDataClassic).progression.isMaxed;
                         break;
                     }
-                    
+
                 case Type.SPECIAL:
                     {
                         return (previous as DragonDataSpecial).IsMaxed;
@@ -505,9 +570,10 @@ public class DragonDataSpecial : IDragonData {
     /// </summary>
     /// <returns>The stat data.</returns>
     /// <param name="_stat">Stat to be obtained.</param>
-    public DragonStatData GetStat(Stat _stat) {
-		return m_stats[(int)_stat];
-	}
+    public DragonStatData GetStat(Stat _stat)
+    {
+        return m_stats[(int)_stat];
+    }
 
 
     /// <summary>
@@ -515,7 +581,7 @@ public class DragonDataSpecial : IDragonData {
     /// </summary>
     /// <returns>The upgrade price in the proper currency.</returns>
     /// <param name="_stat">The stat to upgrade</param>
-    public Price GetNextStatUpgradePrice (Stat _stat)
+    public Price GetNextStatUpgradePrice(Stat _stat)
     {
         // Get current stat level
         int statLevel = m_stats[(int)_stat].level;
@@ -584,7 +650,7 @@ public class DragonDataSpecial : IDragonData {
     /// Get the next power upgrade based on the current level of the dragon
     /// </summary>
     /// <returns>The upgrade price in the proper currency.</returns>
-    public DefinitionNode GetNextPowerUpgrade ()
+    public DefinitionNode GetNextPowerUpgrade()
     {
         // Make sure there is a power upgrade in the next level
         DefinitionNode nextPower = m_specialPowerDefsByOrder.Find(d => d.GetAsInt("upgradeLevelToUnlock") > m_level);
@@ -602,28 +668,30 @@ public class DragonDataSpecial : IDragonData {
     /// Doesn't check individual stats max level (use each stat's data for that), just if all stats are maxed.
     /// </summary>
     /// <returns>Whether this dragon can upgrade stats or not.</returns>
-    public bool CanUpgradeStats() {
-		// Never if all stats are maxed!
-		if(allStatsMaxed) return false;
+    public bool CanUpgradeStats()
+    {
+        // Never if all stats are maxed!
+        if (allStatsMaxed) return false;
 
-		// Nothing preventing stats upgrade
-		return true;
-	}
+        // Nothing preventing stats upgrade
+        return true;
+    }
 
-	/// <summary>
-	/// Perform a stat level up.
-	/// Will trigger SPECIAL_DRAGON_STAT_UPGRADED.
-	/// </summary>
-	/// <param name="_stat">Stat to be increased.</param>
-	public void UpgradeStat(Stat _stat) {
-		// Get stat data
-		DragonStatData statData = GetStat(_stat);
+    /// <summary>
+    /// Perform a stat level up.
+    /// Will trigger SPECIAL_DRAGON_STAT_UPGRADED.
+    /// </summary>
+    /// <param name="_stat">Stat to be increased.</param>
+    public void UpgradeStat(Stat _stat)
+    {
+        // Get stat data
+        DragonStatData statData = GetStat(_stat);
 
-		// Ignore if stat is maxed out
-		if(statData.level == statData.maxLevel) return;
+        // Ignore if stat is maxed out
+        if (statData.level == statData.maxLevel) return;
 
-		// Increase stat level
-		statData.level++;
+        // Increase stat level
+        statData.level++;
 
         // Increase dragon level
         m_level++;
@@ -631,12 +699,12 @@ public class DragonDataSpecial : IDragonData {
         // Check if the dragon reached the next special tier
         RefreshSpecialTier();
 
-		// Notify listeners
-		Messenger.Broadcast<DragonDataSpecial>(MessengerEvents.SPECIAL_DRAGON_LEVEL_UPGRADED, this);
+        // Notify listeners
+        Messenger.Broadcast<DragonDataSpecial>(MessengerEvents.SPECIAL_DRAGON_LEVEL_UPGRADED, this);
 
-		// Save persistence!
-		PersistenceFacade.instance.Save_Request(true);
-	}
+        // Save persistence!
+        PersistenceFacade.instance.Save_Request(true);
+    }
 
     /// <summary>
 	/// Perform a power up and a level up.
@@ -648,7 +716,7 @@ public class DragonDataSpecial : IDragonData {
         if (m_level == m_maxLevel) return;
 
         // Doble check if there is a power acquisition in this upgrade
-        if (! IsUnlockingNewPower())
+        if (!IsUnlockingNewPower())
         {
             Debug.LogError("Cannot acquire a new power in this level. Something went wrong."); return;
         }
@@ -668,7 +736,7 @@ public class DragonDataSpecial : IDragonData {
         RefreshDisguise();
 
         Messenger.Broadcast<DragonDataSpecial>(MessengerEvents.SPECIAL_DRAGON_LEVEL_UPGRADED, this);
-        
+
 
         // Look for upgrades and notify listeners
         if (oldPowerLevel != powerLevel)
@@ -687,29 +755,30 @@ public class DragonDataSpecial : IDragonData {
     public void SetTier(DragonTier _tier)
     {
         string tierSku = TierToSku(_tier);
-		DefinitionNode tierDefinition = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGON_TIERS, tierSku);
-		SetTier(tierDefinition);
+        DefinitionNode tierDefinition = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGON_TIERS, tierSku);
+        SetTier(tierDefinition);
     }
 
-	/// <summary>
-	/// Set the tier of this dragon. No checks performed or events triggered.
-	/// </summary>
-	/// <param name="_def">New tier definition.</param>
-	public void SetTier(DefinitionNode _def) {
+    /// <summary>
+    /// Set the tier of this dragon. No checks performed or events triggered.
+    /// </summary>
+    /// <param name="_def">New tier definition.</param>
+    public void SetTier(DefinitionNode _def)
+    {
 
-		m_tierDef = _def;
-		m_tier = (DragonTier)_def.GetAsInt("order");
+        m_tierDef = _def;
+        m_tier = (DragonTier)_def.GetAsInt("order");
 
         m_disguise = GetDefaultDisguise(m_def.sku).sku;
-		m_persistentDisguise = m_disguise;
+        m_persistentDisguise = m_disguise;
 
-	}
+    }
 
 
     /// <summary>
     /// Update the special tier definition based on the current level of the dragon
     /// </summary>
-    public void RefreshSpecialTier ()
+    public void RefreshSpecialTier()
     {
         // Update the special tier definition
         m_specialTierDef = GetSpecialTierDefByLevel(m_def.sku, m_level);
@@ -718,21 +787,21 @@ public class DragonDataSpecial : IDragonData {
         m_pets.Resize(m_specialTierDef.GetAsInt("petsSlotsAvailable", 1), string.Empty);
     }
 
-	
-    
-	/// <summary>
-	/// Update this dragon's power level based on current dragon level.
-	/// </summary>
-	public void RefreshPowerLevel()
+
+
+    /// <summary>
+    /// Update this dragon's power level based on current dragon level.
+    /// </summary>
+    public void RefreshPowerLevel()
     {
-		// Reset power level
+        // Reset power level
         powerLevel = 0;
 
-		// Check Special Dragon power definitions
+        // Check Special Dragon power definitions
         int max = m_specialPowerDefsByOrder.Count;
         for (int i = 0; i < max; i++)
         {
-            if (m_specialPowerDefsByOrder[i].GetAsInt("upgradeLevelToUnlock") <= m_level )
+            if (m_specialPowerDefsByOrder[i].GetAsInt("upgradeLevelToUnlock") <= m_level)
             {
                 powerLevel++;
             }
@@ -751,7 +820,7 @@ public class DragonDataSpecial : IDragonData {
         for (int i = 0; i < max; i++)
         {
             // Is next level unlockin a power?
-            if (m_level + 1 == m_specialPowerDefsByOrder[i].GetAsInt("upgradeLevelToUnlock") )
+            if (m_level + 1 == m_specialPowerDefsByOrder[i].GetAsInt("upgradeLevelToUnlock"))
             {
                 return true;
             }
@@ -762,8 +831,9 @@ public class DragonDataSpecial : IDragonData {
     }
 
 
-   
-    public void RefreshDisguise(){
+
+    public void RefreshDisguise()
+    {
         // Get dragon's current level
 
         // Get disguises
@@ -775,45 +845,47 @@ public class DragonDataSpecial : IDragonData {
         for (int i = 0; i < skinDefs.Count; i++)
         {
             int testLevel = skinDefs[i].GetAsInt("unlockLevel");
-            if ( testLevel <= m_level && unlockLevel < testLevel)
+            if (testLevel <= m_level && unlockLevel < testLevel)
             {
                 testLevel = unlockLevel;
                 definition = skinDefs[i];
             }
         }
 
-        if ( definition != null )
+        if (definition != null)
         {
             m_disguise = m_persistentDisguise = definition.sku;
         }
         else
         {
             m_disguise = m_persistentDisguise = "";
-        }   
+        }
 
     }
-    
 
-	//------------------------------------------------------------------------//
-	// STATIC UTILS															  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Get the definition of a special dragon's tier.
-	/// </summary>
-	/// <returns>The requested special dragon tier definition.</returns>
-	/// <param name="_specialDragonSku">Special dragon whose tier definition we want.</param>
-	/// <param name="_tier">Requested tier.</param>
-	public static DefinitionNode GetDragonTierDef(string _specialDragonSku, DragonTier _tier) {
-		DefinitionNode ret = null;
-		string tierSku = TierToSku(_tier);
-		List<DefinitionNode> defs = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.SPECIAL_DRAGON_TIERS, "specialDragon", _specialDragonSku);
-		int max = defs.Count;
-		for(int i = 0; i < max && ret == null; i++) {
-			if(defs[i].Get("tier").Equals(tierSku))
-				ret = defs[i];
-		}
-		return ret;
-	}
+
+    //------------------------------------------------------------------------//
+    // STATIC UTILS															  //
+    //------------------------------------------------------------------------//
+    /// <summary>
+    /// Get the definition of a special dragon's tier.
+    /// </summary>
+    /// <returns>The requested special dragon tier definition.</returns>
+    /// <param name="_specialDragonSku">Special dragon whose tier definition we want.</param>
+    /// <param name="_tier">Requested tier.</param>
+    public static DefinitionNode GetDragonTierDef(string _specialDragonSku, DragonTier _tier)
+    {
+        DefinitionNode ret = null;
+        string tierSku = TierToSku(_tier);
+        List<DefinitionNode> defs = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.SPECIAL_DRAGON_TIERS, "specialDragon", _specialDragonSku);
+        int max = defs.Count;
+        for (int i = 0; i < max && ret == null; i++)
+        {
+            if (defs[i].Get("tier").Equals(tierSku))
+                ret = defs[i];
+        }
+        return ret;
+    }
 
 
     /// <summary>
@@ -821,27 +893,28 @@ public class DragonDataSpecial : IDragonData {
     /// </summary>
     /// <param name="_specialDragonSku">Special dragon whose tier definition we want.</param>
 	/// <param name="_level">Current level of the dragon</param>
-    public static DefinitionNode GetSpecialTierDefByLevel(string _specialDragonSku, int _level) {
+    public static DefinitionNode GetSpecialTierDefByLevel(string _specialDragonSku, int _level)
+    {
 
-		List<DefinitionNode> defs = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.SPECIAL_DRAGON_TIERS, "specialDragon", _specialDragonSku);
-		int levelReq;
+        List<DefinitionNode> defs = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.SPECIAL_DRAGON_TIERS, "specialDragon", _specialDragonSku);
+        int levelReq;
 
         // Iterate all special tiers
         for (int i = defs.Count - 1; i >= 0; i--)
         {
             levelReq = defs[i].GetAsInt("upgradeLevelToUnlock");
-            
+
             // Has reached the required level for this tier?
             if (_level >= levelReq)
             {
                 return defs[i];
             }
-		}
+        }
 
         // Shouldn't happen but just in case, return the starting tier
         return defs[0];
 
-	}
+    }
 
 
     /// <summary>
@@ -855,7 +928,7 @@ public class DragonDataSpecial : IDragonData {
 
         // Sort tier definitions by the unlocking level
         DefinitionsManager.SharedInstance.SortByProperty(ref defs, "upgradeLevelToUnlock", DefinitionsManager.SortType.NUMERIC);
-        
+
         if (defs.Count > 0)
         {
             // Return the first occurrence
@@ -890,41 +963,47 @@ public class DragonDataSpecial : IDragonData {
     /// <summary>
     /// Reset persistence values. Make sure any new value is added to this method as well.
     /// </summary>
-    public override void ResetLoadedData() {
-		// Parent
-		base.ResetLoadedData();
+    public override void ResetLoadedData()
+    {
+        // Parent
+        base.ResetLoadedData();
 
-		// Custom data
-		// Stats
-		for(int i = 0; i < m_stats.Length; ++i) {
-			m_stats[i].level = 0;
-		}
+        // Custom data
+        // Stats
+        for (int i = 0; i < m_stats.Length; ++i)
+        {
+            m_stats[i].level = 0;
+        }
 
         // Level
         m_level = 0;
-	}
+    }
 
-	/// <summary>
-	/// Load state from a persistence object.
-	/// </summary>
-	/// <param name="_data">The data object loaded from persistence.</param>
-	public override void Load(SimpleJSON.JSONNode _data) {
-		// Parent
-		base.Load(_data);
+    /// <summary>
+    /// Load state from a persistence object.
+    /// </summary>
+    /// <param name="_data">The data object loaded from persistence.</param>
+    public override void Load(SimpleJSON.JSONNode _data)
+    {
+        // Parent
+        base.Load(_data);
 
-		// Custom data
-		// Stats
-		SimpleJSON.JSONArray statsData = null;
-		if(_data.ContainsKey("stats")) {
-			statsData = _data["stats"].AsArray;
-		}
+        // Custom data
+        // Stats
+        SimpleJSON.JSONArray statsData = null;
+        if (_data.ContainsKey("stats"))
+        {
+            statsData = _data["stats"].AsArray;
+        }
 
-		int statsDataCount = statsData == null ? 0 : statsData.Count;
-		for(int i = 0; i < m_stats.Length; ++i) {
-			if(i < statsData.Count) {
-				m_stats[i].Load(statsData[i]);
-			}
-		}
+        int statsDataCount = statsData == null ? 0 : statsData.Count;
+        for (int i = 0; i < m_stats.Length; ++i)
+        {
+            if (i < statsData.Count)
+            {
+                m_stats[i].Load(statsData[i]);
+            }
+        }
 
         // Level 
         if (_data.ContainsKey("level"))
@@ -936,39 +1015,132 @@ public class DragonDataSpecial : IDragonData {
             // Do some data migration from old model to the new one
             // Check confluence
             // https://mdc-web-tomcat17.ubisoft.org/confluence/display/ubm/%5BHD%5D+Legendary+Dragons+-+Design+2.0
+
+            UpdateSpecialDragonsStats();
+            UpdateSpecialDragonsLevel();
         }
 
 
         // Power level - Based on level, so just do a refresh
         RefreshPowerLevel();
 
-		// Tier - Based on level, so just do a refresh
-		RefreshSpecialTier();
+        // Tier - Based on level, so just do a refresh
+        RefreshSpecialTier();
 
         // Disguise - Based on level, so just do a refresh
         RefreshDisguise();
 
-		// By changing tier, pet slots might change, so reload pets (the base already did it)
-		LoadPets(_data);
-	}
+        // By changing tier, pet slots might change, so reload pets (the base already did it)
+        LoadPets(_data);
+    }
 
-	/// <summary>
-	/// Fill a persistence save data object with the current data for this dragon.
-	/// </summary>
-	/// <param name="_data">Data object to be filled.</param>
-	protected override void Save(ref SimpleJSON.JSONClass _data) {
-		// Parent
-		base.Save(ref _data);
+    /// <summary>
+    /// Fill a persistence save data object with the current data for this dragon.
+    /// </summary>
+    /// <param name="_data">Data object to be filled.</param>
+    protected override void Save(ref SimpleJSON.JSONClass _data)
+    {
+        // Parent
+        base.Save(ref _data);
 
-		// Custom data
-		// Stats
-		SimpleJSON.JSONArray statsData = new SimpleJSON.JSONArray();
-		for(int i = 0; i < m_stats.Length; ++i) {
-			statsData.Add(m_stats[i].Save());
-		}
-		_data.Add("stats", statsData);
+        // Custom data
+        // Stats
+        SimpleJSON.JSONArray statsData = new SimpleJSON.JSONArray();
+        for (int i = 0; i < m_stats.Length; ++i)
+        {
+            statsData.Add(m_stats[i].Save());
+        }
+        _data.Add("stats", statsData);
 
         // Level
         _data.Add("level", m_level);
-	}
+    }
+
+    /// <summary>
+    /// Updates the special dragon level/stats persistence
+    /// https://mdc-web-tomcat17.ubisoft.org/confluence/display/ubm/%5BHD%5D+Legendary+Dragons+-+Design+2.0
+    /// </summary>
+    /// <param name="">.</param>
+    public void UpdateSpecialDragonsStats()
+    {
+        // Was the player already at the max level?
+        int oldMaxLevel = 30;
+        if (m_stats[0].level + m_stats[1].level + m_stats[2].level >= oldMaxLevel)
+        {
+            // Set all stats to its max
+            m_stats[0].level = m_stats[0].maxLevel;
+            m_stats[1].level = m_stats[1].maxLevel;
+            m_stats[2].level = m_stats[2].maxLevel;
+            return;
+        }
+        else
+        {
+            int acc = 0;
+            if (m_stats[0].level > 10)
+            {
+                acc += m_stats[0].level - 10;
+                m_stats[0].level = 10;
+            }
+            // Else the old value remains
+
+            if (m_stats[1].level > 10)
+            {
+                acc += m_stats[1].level - 10;
+                m_stats[1].level = 10;
+            }
+            // Else the old value remains
+
+
+            if (m_stats[2].level > 10)
+            {
+                acc += m_stats[2].level - 10;
+                m_stats[2].level = 10;
+            }
+            // Else the old value remains
+
+            // Distribute acc between the three stats while they are under 10
+            bool atLeastOneUpgraded = true;
+            while (atLeastOneUpgraded)
+            {
+                atLeastOneUpgraded = false;
+                for (int i = 0; i <= 2; i++)
+                {
+                    if (m_stats[i].level < 10 && acc > 0)
+                    {
+                        m_stats[i].level++;
+                        acc--;
+                        atLeastOneUpgraded = true;
+                    }
+                }
+            }
+        }
+    }
+
+
+    /// <summary>
+    /// Updates the special dragon level/stats persistence
+    /// https://mdc-web-tomcat17.ubisoft.org/confluence/display/ubm/%5BHD%5D+Legendary+Dragons+-+Design+2.0
+    /// </summary>
+    /// <param name="">.</param>
+    public void UpdateSpecialDragonsLevel()
+    {
+        int m_level = m_stats[0].level + m_stats[0].level + m_stats[0].level;
+        int increment = 0;
+
+        if (m_level > 5)
+        {
+            increment++;
+        }
+        if (m_level > 15)
+        {
+            increment++;
+        }
+        if (m_level > 25)
+        {
+            increment++;
+        }
+
+        // Add this levels to compensate the new 3 power up levels added to the progression
+        m_level += increment;
+    }
 }
