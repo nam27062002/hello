@@ -488,9 +488,12 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 	/// Checks the leagues unlock popup.
 	/// </summary>
 	private void CheckLeaguesUnlock() {
-
-        // Show it only in the goals section (showing missions by default)
-        if (m_currentScreen != MenuScreen.MISSIONS) return;
+		// Show it only in the goals section (showing missions by default)
+		if(m_currentScreen != MenuScreen.MISSIONS
+		&& m_currentScreen != MenuScreen.GLOBAL_EVENTS
+		&& m_currentScreen != MenuScreen.LEAGUES) {
+			return;
+		}
 
         // Can we show the popup?
         PopupController popup = null;

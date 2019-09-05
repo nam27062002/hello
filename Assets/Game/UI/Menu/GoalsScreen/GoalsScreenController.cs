@@ -28,9 +28,9 @@ public class GoalsScreenController : MonoBehaviour {
 
 	public enum Buttons {
 		MISSIONS,
+        LEAGUES,
 		GLOBAL_EVENTS,
-		CHESTS,
-        LEAGUES
+		CHESTS
 	}
 
     //------------------------------------------------------------------------//
