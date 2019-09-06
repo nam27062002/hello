@@ -27,7 +27,9 @@ public class MenuDragonSpecialInfo : MenuDragonInfo {
 
 
     [SerializeField] private SpecialDragonBar m_specialDragonLevelBar;
+    [Separator]
 
+    [SerializeField] private NavigationShowHideAnimator m_upgradeGroup;
     [SerializeField] private SpecialStatUpgrader[] m_stats = new SpecialStatUpgrader[0];
     [SerializeField] private DragonPowerUpgrader m_powerUpgrade;
 
@@ -87,6 +89,8 @@ public class MenuDragonSpecialInfo : MenuDragonInfo {
 
             // Owned group. This items will be shown when the player owns the dragon
             {
+
+
                 // XPBar
                 if (m_specialDragonLevelBar != null)
                     if (specialData.isOwned)
@@ -99,6 +103,9 @@ public class MenuDragonSpecialInfo : MenuDragonInfo {
                     {
                         m_specialDragonLevelBar.GetComponent<ShowHideAnimator>().Hide();
                     }
+
+                // Show the upgrades group
+                m_upgradeGroup.Show(true);
 
                 // Upgrade buttons
                 for (int i = 0; i < m_stats.Length; ++i)
