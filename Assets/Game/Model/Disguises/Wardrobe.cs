@@ -120,7 +120,7 @@ public class Wardrobe : IBroadcastListener
 						// Yes!! Check other unlock conditions
 
 						// If it's a seasonal skin, check the season as well!
-						string seasonSku = skinDefs[i].GetAsString("associatedSeason");
+						string seasonSku = skinDefs[i].GetAsString("unlockSeason");
 						if(!string.IsNullOrEmpty(seasonSku)) {
 							// Is season active?
 							if(SeasonManager.activeSeason == seasonSku) {
@@ -159,7 +159,7 @@ public class Wardrobe : IBroadcastListener
 			if(oldState == SkinState.OWNED) continue;
 
 			// Ignore if the skin is not seasonal
-			string seasonSku = skinDefs[i].GetAsString("associatedSeason");
+			string seasonSku = skinDefs[i].GetAsString("unlockSeason");
 			if(string.IsNullOrEmpty(seasonSku)) continue;
 
 			// If associated season doesn't match active season, skin is locked
@@ -260,7 +260,7 @@ public class Wardrobe : IBroadcastListener
 	/// <param name="_skinDef">The skin to be checked.</param>
 	/// <returns>Whether the skin is linked to a season or not.</returns>
 	public static bool IsSeasonalSkin(DefinitionNode _skinDef) {
-		return !string.IsNullOrEmpty(_skinDef.GetAsString("associatedSeason"));
+		return !string.IsNullOrEmpty(_skinDef.GetAsString("unlockSeason"));
 	}
 
 	//------------------------------------------------------------------//
