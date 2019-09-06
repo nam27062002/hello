@@ -1127,15 +1127,15 @@ public class DragonDataSpecial : IDragonData
         m_level = m_stats[0].level + m_stats[1].level + m_stats[2].level;
 
         int increment = 0;
-        if (m_level > 5)
+        if (m_level >= 5)
         {
             increment++;
 
-            if (m_level > 15)
+            if (m_level >= 15)
             {
                 increment++;
 
-                if (m_level > 25)
+                if (m_level >= 25)
                 {
                     increment++;
                 }
