@@ -114,17 +114,20 @@ public class QuickDragonSettings : MonoBehaviour {
 
 
     public void SetOverridePlayerSpawn(bool _value) {
-
+        DebugSettings.overrideSpawnPoint = _value;
     }
 
     public void OnAreaChange(int _value) {
         m_spawnPoints.value = 0;
         m_spawnPoints.ClearOptions();
         m_spawnPoints.AddOptions(m_points[_value]);
+
+        DebugSettings.spawnArea = m_areas[_value];
+        DebugSettings.spawnPoint = m_points[_value][0];
     }
 
     public void OnPointChange(int _value) {
-
+        DebugSettings.spawnPoint = m_points[m_spawnAreas.value][_value];
     }
 
 	public void Toggle60FPS( bool _value )
