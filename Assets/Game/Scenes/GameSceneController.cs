@@ -564,7 +564,9 @@ public class GameSceneController : GameSceneControllerBase {
 				// Start loading current level
 				LevelManager.SetCurrentLevel(UsersManager.currentUser.currentLevel);
 
-                if (HDLiveDataManager.tournament.isActive) {
+                if (DebugSettings.overrideSpawnPoint) {
+                    m_levelLoader = LevelManager.LoadLevel(DebugSettings.spawnArea);
+                } else if (HDLiveDataManager.tournament.isActive) {
                     HDTournamentDefinition tournamentDef = HDLiveDataManager.tournament.tournamentData.tournamentDef;
                     if (string.IsNullOrEmpty(tournamentDef.m_goal.m_area)) {
                         m_levelLoader = LevelManager.LoadLevelForDragon(tournamentDef.dragonData.sku);

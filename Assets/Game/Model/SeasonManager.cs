@@ -55,6 +55,7 @@ public class SeasonManager : Singleton<SeasonManager> {
 	/// Refresh current season taking ControlPanel in account.
 	/// </summary>
 	public void RefreshActiveSeason() {
+		string oldSeason = m_activeSeason;
 		string forcedSeasonSku = CPSeasonSelector.forcedSeasonSku;
 		switch(forcedSeasonSku) {
 			// Default behaviour
@@ -109,6 +110,14 @@ public class SeasonManager : Singleton<SeasonManager> {
 					m_activeSeason = activeSeasonDef.sku;
 				}
 			} break;
+		}
+
+		// Broadcast event
+		if(oldSeason != m_activeSeason) {
+			SeasonChangedEventInfo eventInfo = new SeasonChangedEventInfo();
+			eventInfo.oldSeasonSku = oldSeason;
+			eventInfo.newSeasonSku = m_activeSeason;
+			Broadcaster.Broadcast(BroadcastEventType.SEASON_CHANGED, eventInfo);
 		}
 	}
 
