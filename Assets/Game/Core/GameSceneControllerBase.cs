@@ -178,9 +178,11 @@ public class GameSceneControllerBase : SceneController, IBroadcastListener {
 				}
 			}
 		} else {
-			// maybe we are inside a tournament
-			if (HDLiveDataManager.tournament.isActive) {
-				HDTournamentDefinition tournamentDef = HDLiveDataManager.tournament.tournamentData.tournamentDef;
+            if (DebugSettings.overrideSpawnPoint) {
+                spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME + "_" + DebugSettings.spawnPoint);
+            } else if (HDLiveDataManager.tournament.isActive) {
+                // maybe we are inside a tournament
+                HDTournamentDefinition tournamentDef = HDLiveDataManager.tournament.tournamentData.tournamentDef;
 				string selectedSP = tournamentDef.m_goal.m_spawnPoint;
 				if (!string.IsNullOrEmpty(selectedSP)) {
 					spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME + "_" + selectedSP);

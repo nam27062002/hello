@@ -797,11 +797,11 @@ public class UserProfile : UserPersistenceSystem
 
         string jsonAsString = m_persistenceData.ToString();
         if (jsonAsString != null)
-        {   
+        {
 			#if UNITY_EDITOR
-			JsonFormatter fmt = new JsonFormatter();
-			Debug.Log("<color=cyan>LOADING USER PROFILE:</color> " + fmt.PrettyPrint(jsonAsString));
+			PrintJsonString(jsonAsString, "<color=cyan>LOADING USER PROFILE:</color>\n");
 			#endif
+
 			JSONNode json = JSON.Parse(jsonAsString);
             Load(json);
         }       
@@ -818,20 +818,46 @@ public class UserProfile : UserPersistenceSystem
 		m_persistenceData.Merge(json.ToString(), false);
 
 		#if UNITY_EDITOR
-		JsonFormatter fmt = new JsonFormatter();
-		Debug.Log("<color=cyan>SAVING USER PROFILE:</color> " + fmt.PrettyPrint(json.ToString()));
-		Debug.Log(json.ToString());
+		PrintJsonString(json.ToString(), "<color=cyan>SAVING USER PROFILE:</color>\n");
 		#endif
-    }
+	}
+
+#if UNITY_EDITOR
+	private void PrintJsonString(string _jsonString, string _header) {
+		// Pretty print the json
+		JsonFormatter fmt = new JsonFormatter();
+		string printStr = fmt.PrettyPrint(_jsonString);
+
+		// Because the Unity console has a character limit per log, split it into several logs
+		int CHAR_LIMIT = 10000; // [AOC] Done by manually testing - actual limit is 16297, but we need to add some extra room for the call stack
+		int idx = 0;
+		int substrLength = 0;
+		int loopLimit = 10;
+		while(idx < printStr.Length && loopLimit > 0) {
+			if(idx == 0) {
+				substrLength = Mathf.Min(CHAR_LIMIT - _header.Length, printStr.Length - _header.Length - idx);   // Allow some room for the header
+				Debug.Log(_header + printStr.Substring(idx, substrLength));    
+			} else {
+				substrLength = Mathf.Min(CHAR_LIMIT, printStr.Length - idx);
+				Debug.Log(printStr.Substring(idx, substrLength));
+			}
+			idx += substrLength;
+			loopLimit--;
+		}
+
+		// Print non-pretty json as well for those who like it hardcore
+		Debug.Log(_jsonString);
+	}
+#endif
 
 	//------------------------------------------------------------------------//
 	// PERSISTENCE LOAD METHODS												  //
 	//------------------------------------------------------------------------//   
-    /// <summary>
-    /// Load state from a json object.
-    /// </summary>
-    /// <param name="_data">The data object loaded from persistence.</param>
-    private void Load(SimpleJSON.JSONNode _data) {
+	/// <summary>
+	/// Load state from a json object.
+	/// </summary>
+	/// <param name="_data">The data object loaded from persistence.</param>
+	private void Load(SimpleJSON.JSONNode _data) {
 		// Aux vars
 		string key;
 
