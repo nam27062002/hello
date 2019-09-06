@@ -21,7 +21,7 @@ public class PopupSpecialDragonsUnlocked : MonoBehaviour
     //------------------------------------------------------------------------//
     // CONSTANTS															  //
     //------------------------------------------------------------------------//
-    public const string PATH = "UI/Popups/Tutorial/PF_PopupInfoLegendaryDragon";
+    public const string PATH = "UI/Popups/Menu/PF_PopupSpecialDragonsUnlocked";
 
     //------------------------------------------------------------------------//
     // CALLBACKS															  //
