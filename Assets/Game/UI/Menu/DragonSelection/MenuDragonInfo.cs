@@ -160,7 +160,7 @@ public class MenuDragonInfo : MonoBehaviour {
     private void OnDragonSelected(string _sku)
     {
         // Refresh after some delay to let the animation finish
-        Refresh(_sku, 0, false);
+        Refresh(_sku, 0, true);
     }
 
 

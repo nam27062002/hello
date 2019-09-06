@@ -317,6 +317,17 @@ public class DragonDataClassic : IDragonData {
         return (lockState == IDragonData.LockState.AVAILABLE);
     }
 
+    /// <summary>
+    /// Reset all level / xp progression of the dragon
+    /// </summary>
+    public override void ResetProgression()
+    {
+        base.ResetProgression();
+
+        // Remove XP progression
+        progression.InitFromDef(m_def);
+    }
+
     //------------------------------------------------------------------------//
     // STATS METHODS														  //
     //------------------------------------------------------------------------//

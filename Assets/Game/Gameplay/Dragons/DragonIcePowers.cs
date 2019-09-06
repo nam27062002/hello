@@ -36,7 +36,7 @@ public class DragonIcePowers : MonoBehaviour {
         
         
         DragonDataSpecial dataSpecial = InstanceManager.player.data as DragonDataSpecial;
-        m_powerLevel = dataSpecial.powerLevel;
+        m_powerLevel = dataSpecial.m_powerLevel;
         m_frozenRegistry.m_dragonTier = dataSpecial.tier;
         
         // Radius scale

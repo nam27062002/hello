@@ -39,7 +39,7 @@ public class MenuDragonSpecialPower : MonoBehaviour {
         }
 
         for (int i = 0; i < m_elementsPerPowerLevel.Count; ++i) {
-            EnablePowerLevel(i, i <= dataSpecial.powerLevel);
+            EnablePowerLevel(i, i <= dataSpecial.m_powerLevel);
         }
 
     }
@@ -76,7 +76,7 @@ public class MenuDragonSpecialPower : MonoBehaviour {
             }
 
             // Update powers if needed
-            EnablePowerLevel(_data.powerLevel, true);
+            EnablePowerLevel(_data.m_powerLevel, true);
 
         }
     }
@@ -102,7 +102,7 @@ public class MenuDragonSpecialPower : MonoBehaviour {
         if (enabled) {
             if (_data.sku == m_dragonPreview.sku)
             {
-                EnablePowerLevel(_data.powerLevel, true);
+                EnablePowerLevel(_data.m_powerLevel, true);
             }
         }
     }

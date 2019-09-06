@@ -323,15 +323,32 @@ public abstract class IDragonData : IUISelectorItem {
     }
 
 
-
-
-    //------------------------------------------------------------------------//
-    // SIMPLE SETTER/GETTER METHODS											  //
-    //------------------------------------------------------------------------//
     /// <summary>
-    /// The order of this dragon.
+    /// Reset all level / xp progression of the dragon
     /// </summary>
-    public int GetOrder() {
+    public virtual void ResetProgression()
+    {
+        m_gamesPlayed = 0;
+
+        // Reset pets
+        m_pets = new List<string>();
+
+        // Reset disguises
+        m_disguise = GetDefaultDisguise(m_def.sku).sku;
+        m_persistentDisguise = m_disguise;
+        
+
+        //Level progression reset in the children implementation
+    }
+
+
+//------------------------------------------------------------------------//
+// SIMPLE SETTER/GETTER METHODS											  //
+//------------------------------------------------------------------------//
+/// <summary>
+/// The order of this dragon.
+/// </summary>
+public int GetOrder() {
 
     if (def == null) return -1;
 

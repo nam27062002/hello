@@ -97,13 +97,14 @@ public class DragonDataSpecial : IDragonData
     }
 
     // Power
-    public int powerLevel = 0;
+    public int m_powerLevel = 0;
+
     public DefinitionNode biggestPowerDef
     {
         get
         {
-            if (powerLevel == 0) return null;
-            return m_specialPowerDefsByOrder[powerLevel - 1];
+            if (m_powerLevel == 0) return null;
+            return m_specialPowerDefsByOrder[m_powerLevel - 1];
         }
     }
 
@@ -497,6 +498,29 @@ public class DragonDataSpecial : IDragonData
     }
 
 
+    /// <summary>
+    /// Reset all level progression of the dragon
+    /// </summary>
+    public override void ResetProgression()
+    {
+        base.ResetProgression();
+
+        // Remove level progression
+        m_level = 0;
+        
+        // Remove upgrades
+        foreach (DragonStatData stat in m_stats)
+        {
+            stat.level = 0;
+        }
+
+        // Remove power
+        m_powerLevel = 0;
+
+    }
+
+
+
     //------------------------------------------------------------------------//
     // OTHER METHODS														  //
     //------------------------------------------------------------------------//
@@ -722,7 +746,7 @@ public class DragonDataSpecial : IDragonData
         }
 
         // Cache current values to detect upgrades
-        int oldPowerLevel = powerLevel;
+        int oldPowerLevel = m_powerLevel;
 
         // Increase dragon level
         m_level++;
@@ -739,7 +763,7 @@ public class DragonDataSpecial : IDragonData
 
 
         // Look for upgrades and notify listeners
-        if (oldPowerLevel != powerLevel)
+        if (oldPowerLevel != m_powerLevel)
         {
             Messenger.Broadcast<DragonDataSpecial>(MessengerEvents.SPECIAL_DRAGON_POWER_UPGRADED, this);
         }
@@ -795,7 +819,7 @@ public class DragonDataSpecial : IDragonData
     public void RefreshPowerLevel()
     {
         // Reset power level
-        powerLevel = 0;
+        m_powerLevel = 0;
 
         // Check Special Dragon power definitions
         int max = m_specialPowerDefsByOrder.Count;
@@ -803,7 +827,7 @@ public class DragonDataSpecial : IDragonData
         {
             if (m_specialPowerDefsByOrder[i].GetAsInt("upgradeLevelToUnlock") <= m_level)
             {
-                powerLevel++;
+                m_powerLevel++;
             }
         }
     }
