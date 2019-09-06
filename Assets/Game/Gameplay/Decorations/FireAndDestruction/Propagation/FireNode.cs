@@ -245,7 +245,7 @@ public class FireNode : IFireNode {
 
 			case State.Extinguish:
 				m_powerTimer = 0f;
-				m_timer = 6f;
+				m_timer = 1f;
 				break;
 		}
 
@@ -274,10 +274,12 @@ public class FireNode : IFireNode {
 				m_fireSprite.transform.localScale = GameConstants.Vector3.one * scale * Random.Range(0.9f, 1.1f);
 
 				if (m_state == State.Spreading) {
-					m_fireSprite.SetPower(m_powerTimer * 6f);				
+                    m_fireSprite.SetPower(m_powerTimer * 6f);
 				} else if (m_state == State.Extinguish) {
 					m_fireSprite.SetPower(6f + (m_powerTimer * (-6f)));
-				}
+				} else {
+                    m_fireSprite.SetPower(0f);
+                }
 			}
 		}
 	}

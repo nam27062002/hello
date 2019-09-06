@@ -29,9 +29,9 @@ namespace AI {
 
 		override public float lastFallDistance { get { return 0; } }
 
-		public bool isKinematic	{ get { return false; } set { } }
+		override public bool isKinematic	{ get { return false; } set { } }
 		override public Transform enemy  { get { return null; } }
-		public bool isPetTarget { get { return false;}  set { } }
+		override public bool isPetTarget { get { return false;}  set { } }
 
 
 		//---------------------------------------------------------------------------------
@@ -178,7 +178,7 @@ namespace AI {
 		override public void AddExternalForce(Vector3 _f) {}
 
 		override public void CustomUpdate(){}
-
 		override public void CustomFixedUpdate(){}
-	}
+        public override void CustomLateUpdate() { }
+    }
 }

@@ -19,7 +19,7 @@ using System.Linq;
 /// <summary>
 /// Global manager of chests.
 /// </summary>
-public class ChestManager : UbiBCN.SingletonMonoBehaviour<ChestManager> {
+public class ChestManager : Singleton<ChestManager> {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
@@ -90,13 +90,6 @@ public class ChestManager : UbiBCN.SingletonMonoBehaviour<ChestManager> {
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
-	/// <summary>
-	/// Initialization.
-	/// </summary>
-	public void Awake() {
-		
-	}
-
 	/// <summary>
 	/// Called every frame.
 	/// </summary>

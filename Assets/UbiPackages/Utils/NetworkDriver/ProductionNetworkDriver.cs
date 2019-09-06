@@ -7,7 +7,7 @@ public class ProductionNetworkDriver : NetworkDriver
     {
         get
         {
-            return Application.internetReachability;
+            return DeviceUtilsManager.SharedInstance.internetReachability;
         }        
     }
 

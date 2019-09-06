@@ -47,8 +47,9 @@ namespace AI {
 		}
 
 		public override void CustomUpdate() {
+            UnityEngine.Profiling.Profiler.BeginSample("[AIR PILOT]");
             base.CustomUpdate();
-
+                        
             // calculate impulse to reach our target
             m_lastImpulse = m_impulse;
 			m_impulse = GameConstants.Vector3.zero;
@@ -145,6 +146,7 @@ namespace AI {
 			}
 
 			m_externalImpulse = GameConstants.Vector3.zero;
+            UnityEngine.Profiling.Profiler.EndSample();
         }
 
 		private void AvoidCollisions() {

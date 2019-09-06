@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-public class DecorationManager : UbiBCN.SingletonMonoBehaviour<DecorationManager>, IBroadcastListener
+public class DecorationManager : Singleton<DecorationManager>, IBroadcastListener
 {
     private List<Decoration> m_decorations;
     private List<AmbientHazard> m_ambientHazards;
@@ -19,13 +19,11 @@ public class DecorationManager : UbiBCN.SingletonMonoBehaviour<DecorationManager
         get { return m_overlapingMethod; }
         set { m_overlapingMethod = value; }
     }
-    private Collider[] m_checkEntityColliders = new Collider[50];
-    
+
     private bool m_updateEnabled;
 
 
-    void Awake()
-    {
+    protected override void OnCreateInstance() {
         m_decorations = new List<Decoration>();
         m_ambientHazards = new List<AmbientHazard>();
         
@@ -37,9 +35,7 @@ public class DecorationManager : UbiBCN.SingletonMonoBehaviour<DecorationManager
         Broadcaster.AddListener(BroadcastEventType.GAME_ENDED, this);
     }
 
-    override protected void OnDestroy()
-    {
-        base.OnDestroy();
+    protected override void OnDestroyInstance() {
         Broadcaster.RemoveListener(BroadcastEventType.GAME_ENDED, this);
         Broadcaster.RemoveListener(BroadcastEventType.GAME_AREA_EXIT, this);
         Broadcaster.RemoveListener(BroadcastEventType.GAME_AREA_ENTER, this);
@@ -73,7 +69,7 @@ public class DecorationManager : UbiBCN.SingletonMonoBehaviour<DecorationManager
 
 
 
-    void Update()
+    public void Update()
 	{
         if (m_updateEnabled) {
             int i;
@@ -101,10 +97,8 @@ public class DecorationManager : UbiBCN.SingletonMonoBehaviour<DecorationManager
 
     #region debug
     private bool m_entitiesVisibility = true;
-    public bool Debug_EntitiesVisibility 
-    {
-        get
-        {
+    public bool Debug_EntitiesVisibility {
+        get {
             return m_entitiesVisibility;
         }
 
@@ -112,23 +106,6 @@ public class DecorationManager : UbiBCN.SingletonMonoBehaviour<DecorationManager
             m_entitiesVisibility = value;
         }
     }
-
-    private void Debug_SetEntityVisible(IEntity e, bool value)
-    {
-        if (e != null)
-        {
-            Transform child;
-            Transform t = e.transform;
-            int count = t.childCount;
-            for (int i = 0; i < count; ++i)
-            {
-                child = t.GetChild(i);
-                child.gameObject.SetActive(value);
-            }
-        }
-    }
-    
     // Check if alive and not dying prior to force golden
-
     #endregion
 }

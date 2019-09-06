@@ -17,7 +17,7 @@ using System.Collections.Generic;
 /// Global manager of dragons. Stores current state of all dragons in the game
 /// (level, stats, upgrades, etc).
 /// </summary>
-public class DragonManager : UbiBCN.SingletonMonoBehaviour<DragonManager> {
+public class DragonManager : Singleton<DragonManager> {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
@@ -101,15 +101,15 @@ public class DragonManager : UbiBCN.SingletonMonoBehaviour<DragonManager> {
         }
     }
 
-	//------------------------------------------------------------------//
-	// GENERIC METHODS													//
-	//------------------------------------------------------------------//
-	/// <summary>
-	/// Initialization.
-	/// </summary>
-	protected void Awake() {
-		// Create a dragon data object for every known dragon definition
-		m_dragonsBySku = null;
+    //------------------------------------------------------------------//
+    // GENERIC METHODS													//
+    //------------------------------------------------------------------//
+    /// <summary>
+    /// Initialization.
+    /// </summary>
+    protected override void OnCreateInstance() {        
+        // Create a dragon data object for every known dragon definition
+        m_dragonsBySku = null;
 		m_classicDragonsByOrder = new List<IDragonData>();
 		m_specialDragonsByOrder = new List<IDragonData>();
 	}
@@ -307,7 +307,7 @@ public class DragonManager : UbiBCN.SingletonMonoBehaviour<DragonManager> {
 		// Destroy any previously created player
 		GameObject playerObj = GameObject.Find(GameSettings.playerName);
 		if(playerObj != null) {
-			DestroyImmediate(playerObj);
+			Object.DestroyImmediate(playerObj);
 			playerObj = null;
 		}
 
@@ -317,9 +317,9 @@ public class DragonManager : UbiBCN.SingletonMonoBehaviour<DragonManager> {
 		Debug.Assert(prefabObj != null, "The prefab defined to dragon " + _data.sku + " couldn't be found");
 
 		// Create a new instance - will automatically be added to the InstanceManager.player property
-		playerObj = Instantiate<GameObject>(prefabObj);
-		playerObj.name = GameSettings.playerName;
-	}
+		playerObj = Object.Instantiate<GameObject>(prefabObj);
+        playerObj.name = GameSettings.playerName;
+    }
 
 
     /// <summary>

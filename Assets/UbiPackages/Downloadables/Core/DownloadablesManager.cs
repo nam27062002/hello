@@ -181,7 +181,9 @@ namespace Downloadables
         /// Current downloading speed 
         /// </summary>
         private float m_speed;
-        
+
+        private float m_nextUpdateAt;
+
         public Manager(Config config, NetworkDriver network, DiskDriver diskDriver, Disk.OnIssue onDiskIssueCallbak, Tracker tracker, Logger logger)
         {
             if (config == null)
@@ -221,6 +223,7 @@ namespace Downloadables
             Catalog_Reset();
             m_downloader.Reset();
             SetSpeed(0f);
+            m_nextUpdateAt = 0f;
         }        
 
         public void Initialize(JSONNode catalogJSON, Dictionary<string, CatalogGroup> groups)
@@ -521,15 +524,20 @@ namespace Downloadables
         {         
             if (IsInitialized && IsEnabled)
             {
-                m_downloader.Update();
-                m_disk.Update();
-                m_cleaner.Update();
-                Catalog_Update();
-                Groups_Update();
+                if (Time.realtimeSinceStartup >= m_nextUpdateAt)
+                {
+                    m_nextUpdateAt = Time.realtimeSinceStartup + 1f;
+
+                    m_downloader.Update();
+                    m_disk.Update();
+                    m_cleaner.Update();
+                    Catalog_Update();
+                    Groups_Update();
 
 #if USE_DUMPER
-                m_dumper.Update();
-#endif           
+                    m_dumper.Update();
+#endif
+                } 
             }
         }               
 

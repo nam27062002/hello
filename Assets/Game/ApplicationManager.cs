@@ -331,15 +331,77 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
             //PersistencePrefs.Clear();
         }
 #endif
+		UnityEngine.Profiling.Profiler.BeginSample("ApplicationManager.Update()");
 
+		UnityEngine.Profiling.Profiler.BeginSample("Language.Update()");
         Language_Update();
+		UnityEngine.Profiling.Profiler.EndSample();
 
+
+        UnityEngine.Profiling.Profiler.BeginSample("PersistenceFacade.Update()");
         PersistenceFacade.instance.Update();
+        UnityEngine.Profiling.Profiler.EndSample();
+
+        UnityEngine.Profiling.Profiler.BeginSample("HDTrackingManager.Update()");
         HDTrackingManager.Instance.Update();
+        UnityEngine.Profiling.Profiler.EndSample();
+
+        UnityEngine.Profiling.Profiler.BeginSample("HDCustomizerManager.Update()");
         HDCustomizerManager.instance.Update();        
-		GameServerManager.SharedInstance.Update();
+        UnityEngine.Profiling.Profiler.EndSample();
+
+        UnityEngine.Profiling.Profiler.BeginSample("GameServerManager.Update()");
+        GameServerManager.SharedInstance.Update();
+        UnityEngine.Profiling.Profiler.EndSample();
+
+        UnityEngine.Profiling.Profiler.BeginSample("HDAddressablesManager.Update()");
         HDAddressablesManager.Instance.Update();
+        UnityEngine.Profiling.Profiler.EndSample();
+
+        UnityEngine.Profiling.Profiler.BeginSample("GameStoreManager.Update()");
         GameStoreManager.SharedInstance.Update();
+        UnityEngine.Profiling.Profiler.EndSample();
+
+        UnityEngine.Profiling.Profiler.BeginSample("ChestManager.Update()");
+        ChestManager.instance.Update();
+		UnityEngine.Profiling.Profiler.EndSample();
+
+        UnityEngine.Profiling.Profiler.BeginSample("OffersManager.Update()");
+        OffersManager.instance.Update();
+		UnityEngine.Profiling.Profiler.EndSample();
+
+        #if UNITY_IOS
+		UnityEngine.Profiling.Profiler.BeginSample("HDNotificationsManager.Update()");
+        HDNotificationsManager.instance.Update();
+		UnityEngine.Profiling.Profiler.EndSample();
+	
+        #endif
+
+        UnityEngine.Profiling.Profiler.BeginSample("TransactionManager.Update()");
+        TransactionManager.instance.Update();
+        UnityEngine.Profiling.Profiler.EndSample();
+
+
+        UnityEngine.Profiling.Profiler.BeginSample("BackButtonManager.Update()");
+        BackButtonManager.instance.Update();
+        UnityEngine.Profiling.Profiler.EndSample();
+
+        UnityEngine.Profiling.Profiler.BeginSample("MissionManager.Update()");
+        MissionManager.instance.Update();
+        UnityEngine.Profiling.Profiler.EndSample();
+
+        UnityEngine.Profiling.Profiler.BeginSample("RewardManager.Update()");
+        RewardManager.instance.Update();
+        UnityEngine.Profiling.Profiler.EndSample(); 
+
+        UnityEngine.Profiling.Profiler.BeginSample("GameSceneManager.Update()");
+        GameSceneManager.instance.Update();
+        UnityEngine.Profiling.Profiler.EndSample();
+
+        UnityEngine.Profiling.Profiler.BeginSample("EggManager.Update()");
+        EggManager.instance.Update();
+        UnityEngine.Profiling.Profiler.EndSample();
+
 
         if (NeedsToRestartFlow)
         {
@@ -349,6 +411,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
             FlowManager.Restart();
         }        
 
+        UnityEngine.Profiling.Profiler.BeginSample("Debug.Update()");
         if (FeatureSettingsManager.IsDebugEnabled)
         {
             // Boss camera effect cheat to be able to enable/disable anywhere. We want to be able to check the impact in performance of the effect so we want to have
@@ -379,6 +442,10 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
                 }
             }
         }
+        UnityEngine.Profiling.Profiler.EndSample();
+
+
+        UnityEngine.Profiling.Profiler.EndSample();
     }
 
     private long LastPauseTime { get; set; }
@@ -483,9 +550,9 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
                     //);
                     // DGR PUSH not supported yet
                     /*
-                    #if ENABLE_PUSHWOOSH
+#if ENABLE_PUSHWOOSH
                                         PushNotificationFacade.Instance.ClearNotifications();
-                    #endif
+#endif
                     */
                 }
             }
@@ -616,7 +683,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         HDNotificationsManager.instance.CancelReengagementNotification();
     }
 
-    #region game
+#region game
     private bool Game_IsInGame { get; set; }
 
     private void Game_OnCountdownStarted()
@@ -637,9 +704,9 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     }
 
     
-    #endregion
+#endregion
 
-    #region device   
+#region device   
     // Time in seconds to wait until the device has to be updated again.
     public const float DEVICE_NEXT_UPDATE = 0.5f;
 
@@ -741,9 +808,9 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
             yield return wait;
         }
     }
-    #endregion
+#endregion
 
-    #region language
+#region language
     private string m_languageRequested;
     private bool m_languageNeedsToBeUpdated;
 
@@ -794,9 +861,9 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
             }
         }
     }
-    #endregion
+#endregion
 
-    #region memory_profiler
+#region memory_profiler
     private bool m_memoryProfilerIsEnabled = false;
     private bool MemoryProfiler_IsEnabled
     {
@@ -990,9 +1057,9 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     	return ret;
     }
 
-    #endregion
+#endregion
 
-    #region apps
+#region apps
     public enum EApp
     {
         HungryDragon,
@@ -1046,9 +1113,9 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
         return returnValue;
     }
-    #endregion
+#endregion
 
-    #region exception    
+#region exception    
     private class HDExceptionListener : CyExceptions.ExceptionListener
     {
         /// <summary>
@@ -1077,9 +1144,9 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
             }
         }
     }    
-    #endregion
+#endregion
 
-    #region debug
+#region debug
     private bool Debug_IsPaused { get; set; }
 
     private void Debug_RestartFlow()
@@ -1528,7 +1595,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
     private const string LOG_CHANNEL = "[ApplicationManager]";
 
-    #if ENABLE_LOGS
+#if ENABLE_LOGS
     [Conditional("DEBUG")]
 #else
     [Conditional("FALSE")]
