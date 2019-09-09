@@ -1754,6 +1754,8 @@ public class HDTrackingManagerImp : HDTrackingManager {
             string trackingSku = Translate_DragonDisguiseSkuToTrackingSku(dragonSkin);
             Track_AddParamString(e, TRACK_PARAM_DRAGON_SKIN, trackingSku);
             Track_AddParamPets(e, pets);
+			Track_AddParamBatteryLevel(e);
+			Track_AddParamControlChoice(e);
         }
         m_eventQueue.Enqueue(e);
     }
@@ -1805,6 +1807,8 @@ public class HDTrackingManagerImp : HDTrackingManager {
             Track_AddParamEggsPurchasedWithHC(e);
             Track_AddParamEggsFound(e);
             Track_AddParamEggsOpened(e);
+			Track_AddParamBatteryLevel(e);
+			Track_AddParamControlChoice(e);
         }
         m_eventQueue.Enqueue(e);
     }
@@ -2524,9 +2528,11 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private const string TRACK_PARAM_ANALYTICS_OPTION = "analytics_optin";
     private const string TRACK_PARAM_ASSET_BUNDLE = "assetBundle";
     private const string TRACK_PARAM_AVERAGE_FPS = "avgFPS";
+	private const string TRACK_PARAM_BATTERY_LEVEL = "batteryLevel";
     private const string TRACK_PARAM_BOOST_TIME = "boostTime";
     private const string TRACK_PARAM_CATEGORY = "category";
 	private const string TRACK_PARAM_CHESTS_FOUND = "chestsFound";
+	private const string TRACK_PARAM_CONTROL_CHOICE = "controlChoice";
 	private const string TRACK_PARAM_COORDINATESBL = "coordinatesBL";
 	private const string TRACK_PARAM_COORDINATESTR = "coordinatesTR";
 	private const string TRACK_PARAM_CPUFREQUENCY = "cpuFrequency";
@@ -2896,6 +2902,16 @@ public class HDTrackingManagerImp : HDTrackingManager {
             _e.data.Add(TRACK_PARAM_TOTAL_EGG_OPENED, TrackingPersistenceSystem.EggsOpened);
         }
     }
+
+	private void Track_AddParamBatteryLevel(HDTrackingEvent _e) {
+		float batteryLevel = UnityEngine.SystemInfo.batteryLevel;
+		Track_AddParamString(_e, TRACK_PARAM_BATTERY_LEVEL, batteryLevel.ToString("0.00"));
+	}
+
+	private void Track_AddParamControlChoice(HDTrackingEvent _e) {
+		string value = GameSettings.Get(GameSettings.TILT_CONTROL_ENABLED) ? "Tilt" : "Touch";
+		Track_AddParamString(_e, TRACK_PARAM_CONTROL_CHOICE, value);
+	}
 
     private void Track_AddParamString(HDTrackingEvent _e, string paramName, string value) {
         // null is not a valid value for Calety
