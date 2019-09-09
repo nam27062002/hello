@@ -365,10 +365,10 @@ public class RewardSceneController : MenuScreenScene {
 		// If the reward is a duplicate, check which alternate reward are we giving instead and switch the reward view by the replacement with a nice animation
 		RewardSetup replacementSetup = null;
 		if(_petReward.WillBeReplaced()) {
-			if (_petReward.replacement.currency == UserProfile.Currency.GOLDEN_FRAGMENTS) {
-				replacementSetup = m_goldenFragmentsRewardsSetup[(int)_petReward.rarity];
-			} else {
-				replacementSetup = m_scRewardSetup;
+			switch(_petReward.replacement.currency) {
+				case UserProfile.Currency.SOFT:	replacementSetup = m_scRewardSetup;	break;
+				case UserProfile.Currency.HARD: replacementSetup = m_hcRewardSetup;	break;
+				case UserProfile.Currency.GOLDEN_FRAGMENTS: replacementSetup = m_goldenFragmentsRewardsSetup[(int)_petReward.rarity]; break;
 			}
 		}
 
@@ -419,18 +419,30 @@ public class RewardSceneController : MenuScreenScene {
 			seq.AppendCallback(() => {
 				// Depending on replacement type, show different texts
 				string replacementInfoText = "";
-				if(_petReward.replacement.currency == UserProfile.Currency.GOLDEN_FRAGMENTS) {
-					replacementInfoText = LocalizationManager.SharedInstance.Localize(
-						"TID_EGG_REWARD_DUPLICATED_1", 
-						_petReward.def.GetLocalized("tidName"), 
-						StringUtils.FormatNumber(_petReward.replacement.amount)
-					);
-				} else if(_petReward.replacement.currency == UserProfile.Currency.SOFT) {
-					replacementInfoText = LocalizationManager.SharedInstance.Localize(
-						"TID_EGG_REWARD_DUPLICATED_2", 
-						_petReward.def.GetLocalized("tidName"), 
-						StringUtils.FormatNumber(_petReward.replacement.amount)
-					);
+				switch(_petReward.replacement.currency) {
+					case UserProfile.Currency.SOFT: {
+						replacementInfoText = LocalizationManager.SharedInstance.Localize(
+							"TID_EGG_REWARD_DUPLICATED_2",
+							_petReward.def.GetLocalized("tidName"),
+							StringUtils.FormatNumber(_petReward.replacement.amount)
+						);
+					} break;
+
+					case UserProfile.Currency.HARD: {
+						replacementInfoText = LocalizationManager.SharedInstance.Localize(
+							"TID_EGG_REWARD_DUPLICATED_3",
+							_petReward.def.GetLocalized("tidName"),
+							StringUtils.FormatNumber(_petReward.replacement.amount)
+						);
+					} break;
+
+					case UserProfile.Currency.GOLDEN_FRAGMENTS: {
+						replacementInfoText = LocalizationManager.SharedInstance.Localize(
+							"TID_EGG_REWARD_DUPLICATED_1",
+							_petReward.def.GetLocalized("tidName"),
+							StringUtils.FormatNumber(_petReward.replacement.amount)
+						);
+					} break;
 				}
 				m_rewardInfoUI.InitAndAnimate(_petReward.replacement, replacementInfoText);
 
