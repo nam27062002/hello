@@ -81,11 +81,26 @@ namespace Metagame {
 
 			// If duplicated, give alternative rewards
 			if(duplicated) {
-				string petRewardSku = "pet_" + m_def.GetAsString("rarity");
+				// Replacement reward depends on pet rarity
+				string raritySku = m_def.GetAsString("rarity");
+				string petRewardSku = "pet_" + raritySku;
 				DefinitionNode petRewardDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.EGG_REWARDS, petRewardSku);
 
-				// No! Give golden egg fragments based on rarity
-				m_replacement = Metagame.Reward.CreateTypeGoldenFragments(petRewardDef.GetAsInt("duplicateFragmentsGiven"), rarity, HDTrackingManager.EEconomyGroup.PET_DUPLICATED, m_source);				
+				// Which currency?
+				// Try with SC
+				long targetAmount = petRewardDef.GetAsLong("duplicateCoinsGiven", 0);
+				UserProfile.Currency targetCurrency = UserProfile.Currency.SOFT;
+				if(targetAmount <= 0) {
+					// Try with HC
+					targetAmount = petRewardDef.GetAsLong("duplicateGemsGiven", 0);
+					targetCurrency = UserProfile.Currency.HARD;
+
+					// Throw error if neither SC nor HC were defined
+					Debug.Assert(amount > 0, "No replacement reward defined for " + petRewardSku);
+				}
+
+				// Create reward
+				m_replacement = Metagame.Reward.CreateTypeCurrency(targetAmount, targetCurrency, SkuToRarity(raritySku), HDTrackingManager.EEconomyGroup.PET_DUPLICATED, m_source);
 			} 
 		}
 
