@@ -75,7 +75,7 @@ public class PopupGoldenFragmentConversion : MonoBehaviour {
 
 		// Store amount of gems given in return, using the formula in content
 		DefinitionNode settingsDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, "gameSettings");
-		float conversionFactor = settingsDef.GetAsFloat("goldenFragmentsToHCCoef");
+		float conversionFactor = settingsDef.GetAsFloat("goldenFragmentsToHCCoef", 0.1f);
 		m_hcAmount = (long)Mathf.Ceil((float)m_gfAmount * conversionFactor);    // Round up (always in favour of the player)
 
 		// Initialize textfields
@@ -140,7 +140,7 @@ public class PopupGoldenFragmentConversion : MonoBehaviour {
 		// Offset Z a bit so the coins don't collide with the UI elements
 		// [AOC] We're assuming that UI canvases (both main and popup) are at Z0
 		Vector3 fromWorldPos = m_currencyFXStartAnchor.transform.position;
-		Vector3 toWorldPos = m_currencyFXStartAnchor.transform.position;
+		Vector3 toWorldPos = m_currencyFXEndAnchor.transform.position;
 		fromWorldPos.z = -0.5f;
 		toWorldPos.z = -0.5f;
 		m_currencyFX = ParticlesTrailFX.LoadAndLaunch(
@@ -149,7 +149,9 @@ public class PopupGoldenFragmentConversion : MonoBehaviour {
 			fromWorldPos,
 			toWorldPos
 		);
-		m_currencyFX.totalDuration = 0.3f;
+		m_currencyFX.speed = new Range(1f, 2f);
+		m_currencyFX.rate = 40f;
+		m_currencyFX.totalDuration = 1f;
 
 		// Close popup after some delay (to give time to enjoy the VFX)
 		UbiBCN.CoroutineManager.DelayedCall(
