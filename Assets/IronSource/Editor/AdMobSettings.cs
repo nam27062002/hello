@@ -36,18 +36,10 @@ namespace IronSource.Editor
 		{
 			Debug.Log ("IronSource - Update plist for AdMob");
 
-		    CaletySettings settingsInstance = (CaletySettings)Resources.Load("CaletySettings");
-		    if(settingsInstance == null)
-		    {
-                Debug.Log("Unable to load CaletySettings in order to get AdMob application ID");
-                return;
-            }
-
-
             PlistDocument plist = new PlistDocument();
             plist.ReadFromFile(plistPath);
 
-            plist.root.SetString("GADApplicationIdentifier", settingsInstance.m_strAdMobAPPID);
+            plist.root.SetString("GADApplicationIdentifier", "ca-app-pub-4182426806332048~4152388614");
 
             plist.WriteToFile(plistPath);
 
