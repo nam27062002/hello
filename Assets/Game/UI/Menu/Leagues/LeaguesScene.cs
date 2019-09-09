@@ -16,7 +16,7 @@ using DG.Tweening;
 /// <summary>
 /// Main controller for the Lab Leagues 3D scene.
 /// </summary>
-public class LabLeaguesScene : MenuScreenScene {
+public class LeaguesScene : MenuScreenScene {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//

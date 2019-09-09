@@ -280,7 +280,7 @@ public class LeaguesPanelActive : LeaguesScreenPanel {
 		if(InstanceManager.menuSceneController != null) {
 			ScreenData leaguesScreenData = InstanceManager.menuSceneController.GetScreenData(MenuScreen.LEAGUES);
 			if(leaguesScreenData != null) {
-				LabLeaguesScene sceneController = leaguesScreenData.scene3d as LabLeaguesScene;
+				LeaguesScene sceneController = leaguesScreenData.scene3d as LeaguesScene;
 				if(sceneController != null) {
 					sceneController.LoadTrophy(leagueData);
 				}
