@@ -75,7 +75,7 @@ public class PopupGoldenFragmentConversion : MonoBehaviour {
 
 		// Store amount of gems given in return, using the formula in content
 		DefinitionNode settingsDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, "gameSettings");
-		float conversionFactor = settingsDef.GetAsFloat("goldenFragmentsToHCCoef");
+		float conversionFactor = settingsDef.GetAsFloat("goldenFragmentsToHCCoef", 0.1f);
 		m_hcAmount = (long)Mathf.Ceil((float)m_gfAmount * conversionFactor);    // Round up (always in favour of the player)
 
 		// Initialize textfields
