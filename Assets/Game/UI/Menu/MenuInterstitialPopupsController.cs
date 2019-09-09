@@ -609,6 +609,26 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 		}
 	}
 
+	/// <summary>
+	/// Checks whether the Golden Fragments Conversion popup must be displayed or not and does it.
+	/// </summary>
+	private void CheckGoldenFragmentsConversion() {
+		// Only in the right screen
+		if(m_currentScreen != MenuScreen.DRAGON_SELECTION) return;
+
+		// Can we show the popup?
+		PopupController popup = null;
+		if(PopupGoldenFragmentConversion.Check()) {
+			// Yes! Just do it, no extra initialization needed
+			popup = PopupManager.EnqueuePopup(PopupGoldenFragmentConversion.PATH);
+		}
+
+		// Set flag
+		if(popup != null) {
+			SetFlag(StateFlag.POPUP_DISPLAYED, true);
+		}
+	}
+
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
@@ -640,6 +660,7 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 		CheckPromotedIAPs();
 		CheckInterstitialAds();
 		//CheckTermsAndConditions();
+		CheckGoldenFragmentsConversion();
 		CheckCustomizerPopup();
 		CheckDailyRewards();
 		CheckPreRegRewards();
