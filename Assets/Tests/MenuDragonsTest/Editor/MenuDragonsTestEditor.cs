@@ -40,6 +40,9 @@ public class MenuDragonsTestEditor : Editor {
 	private void OnEnable() {
 		// Get target object
 		m_target = target as MenuDragonsTest;
+
+		// Subscribe to external events
+		Undo.undoRedoPerformed += OnUndoRedo;
 	}
 
 	/// <summary>
@@ -48,6 +51,9 @@ public class MenuDragonsTestEditor : Editor {
 	private void OnDisable() {
 		// Clear target object
 		m_target = null;
+
+		// Unsubscribe to external events
+		Undo.undoRedoPerformed -= OnUndoRedo;
 	}
 
 	/// <summary>
@@ -76,6 +82,9 @@ public class MenuDragonsTestEditor : Editor {
 	/// To be called from the OnGUI() method.
 	/// </summary>
 	private void DoDebugGUI() {
+		// Aux vars
+		Color defaultGUIColor = GUI.color;
+
 		// Navigation Buttons
 		EditorGUILayout.BeginHorizontal();
 		{
@@ -107,7 +116,7 @@ public class MenuDragonsTestEditor : Editor {
 				RecordUndo("Apply Curve");
 				m_target.ApplyCurve();
 			}
-			GUI.color = Color.white;
+			GUI.color = defaultGUIColor;
 		}
 		EditorGUILayout.EndHorizontal();
 
@@ -119,7 +128,6 @@ public class MenuDragonsTestEditor : Editor {
 			}
 
 			if(GUILayout.Button("Import Data ↘", GUILayout.Height(30f))) {
-				Undo.RecordObject(m_target, "Import Data");
 				Import();
 			}
 		}
@@ -156,7 +164,7 @@ public class MenuDragonsTestEditor : Editor {
 			EditorUtility.ClearProgressBar();
 		}
 		EditorGUI.EndDisabledGroup();
-		GUI.color = Color.white;
+		GUI.color = defaultGUIColor;
 	}
 
 	/// <summary>
@@ -165,7 +173,7 @@ public class MenuDragonsTestEditor : Editor {
 	/// <param name="_name">Name of the undo action.</param>
 	private void RecordUndo(string _name) {
 		// Iterate all dragons
-		List<UnityEngine.Object> toRecord = new List<UnityEngine.Object>();
+		List<Object> toRecord = new List<Object>();
 		foreach(MenuDragonsTest.DragonData dragon in m_target.m_dragons) {
 			// Record all objects that might be modified
 			toRecord.Add(dragon.preview.transform);
@@ -193,7 +201,13 @@ public class MenuDragonsTestEditor : Editor {
 		// Dragons data
 		foreach(MenuDragonsTest.DragonData dragon in m_target.m_dragons) {
 			string prefix = EXPORT_KEY + dragon.preview.sku + ".";
+
+			// Scale modifier
 			Prefs.SetFloatEditor(prefix + "ScaleModifier", dragon.scaleModifier);
+
+			// Offsets
+			PathFollower anchor = dragon.preview.GetComponentInParent<PathFollower>();
+			Prefs.SetVector3Editor(prefix + "Offset", anchor.offset);
 		}
 	}
 
@@ -207,6 +221,15 @@ public class MenuDragonsTestEditor : Editor {
 			return;
 		}
 
+		// Prepare undo
+		List<Object> toRecord = new List<Object>();
+		toRecord.Add(m_target);
+		foreach(MenuDragonsTest.DragonData dragon in m_target.m_dragons) {
+			PathFollower anchor = dragon.preview.GetComponentInParent<PathFollower>();
+			toRecord.Add(anchor);
+		}
+		Undo.RecordObjects(toRecord.ToArray(), "Import Data");
+
 		// Scale range
 		m_target.m_scaleRange = Prefs.GetRangeEditor(EXPORT_KEY + "ScaleRange", m_target.m_scaleRange);
 
@@ -216,7 +239,25 @@ public class MenuDragonsTestEditor : Editor {
 		// Dragons data
 		foreach(MenuDragonsTest.DragonData dragon in m_target.m_dragons) {
 			string prefix = EXPORT_KEY + dragon.preview.sku + ".";
+
+			// Scale modifier
 			dragon.scaleModifier = Prefs.GetFloatEditor(prefix + "ScaleModifier", dragon.scaleModifier);
+
+			// Offsets
+			PathFollower anchor = dragon.preview.GetComponentInParent<PathFollower>();
+			anchor.offset = Prefs.GetVector3Editor(prefix + "Offset", anchor.offset);
+		}
+	}
+
+	/// <summary>
+	/// An undo/redo operation has been performed.
+	/// </summary>
+	private void OnUndoRedo() {
+		// [AOC] A bit of an overkill, since this will be triggered by ANY undo/redo operation while editor is enabled, but Unity doesn't provide more tools to do it properly
+		foreach(MenuDragonsTest.DragonData dragon in m_target.m_dragons) {
+			// Mark anchors as dirty
+			PathFollower anchor = dragon.preview.GetComponentInParent<PathFollower>();
+			anchor.MarkAsDirty();
 		}
 	}
 }
