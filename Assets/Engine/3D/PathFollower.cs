@@ -290,6 +290,13 @@ public class PathFollower : MonoBehaviour {
 		}
 	}
 
+	/// <summary>
+	/// Mark as dirty to force a refresh.
+	/// </summary>
+	public void MarkAsDirty() {
+		m_dirty = true;
+	}
+
 	//------------------------------------------------------------------//
 	// INTERNAL UTILS													//
 	//------------------------------------------------------------------//
