@@ -115,7 +115,7 @@ public class PathFollower : MonoBehaviour {
 	public Vector3 offset {
 		get { return m_offset; }
 		set { 
-			m_offset = offset; 
+			m_offset = value; 
 			m_dirty = true;
 		}
 	}
