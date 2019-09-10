@@ -44,7 +44,11 @@ public class ResultsScreenStepLeagueLeaderboard : ResultsScreenSequenceStep {
 		// Neither if there is no active season!
 		if(!HDLiveDataManager.league.season.IsRunning()) return false;
 
-		return true;
+        // Leagues are available to the player?
+        if (UsersManager.currentUser.gamesPlayed < GameSettings.ENABLE_LEAGUES_AT_RUN)
+            return false;
+
+        return true;
 	}
 
 	/// <summary>
