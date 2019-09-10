@@ -150,19 +150,31 @@ public class PetScrollRect : OptimizedScrollRect<PetPill, PetPillData> {
 		}
 	}
 
-	private void SortDefinitions() {
+    private static Dictionary<string, int> sm_filterOrder = new Dictionary<string, int>();
+    private static Dictionary<string, int> sm_rarityOrder;    
+
+    private static void InitSortDefinitions()
+    {
+        if (sm_rarityOrder == null)
+        {
+            sm_rarityOrder = new Dictionary<string, int>();
+
+            // Rarity order: rarer pets first
+            sm_rarityOrder[Metagame.Reward.RarityToSku(Metagame.Reward.Rarity.EPIC)] = 0;
+            sm_rarityOrder[Metagame.Reward.RarityToSku(Metagame.Reward.Rarity.RARE)] = 1;
+            sm_rarityOrder[Metagame.Reward.RarityToSku(Metagame.Reward.Rarity.COMMON)] = 2;
+        }
+    }    
+
+    private void SortDefinitions() {
 		if(!Application.isPlaying) return;
 
-		Dictionary<string, int> filterOrder = new Dictionary<string, int>();
+        sm_filterOrder.Clear();
 		for(int i = 0; i < m_filterButtons.Length; i++) {
-			filterOrder[m_filterButtons[i].filterName] = i;
-		}
+			sm_filterOrder[m_filterButtons[i].filterName] = i;
+		}        
 
-		// Rarity order: rarer pets first
-		Dictionary<string, int> rarityOrder = new Dictionary<string, int>();
-		rarityOrder[Metagame.Reward.RarityToSku(Metagame.Reward.Rarity.EPIC)] = 0;
-		rarityOrder[Metagame.Reward.RarityToSku(Metagame.Reward.Rarity.RARE)] = 1;
-		rarityOrder[Metagame.Reward.RarityToSku(Metagame.Reward.Rarity.COMMON)] = 2;
+        InitSortDefinitions();
 
         // Put available pets (OTA asset bundle downloaded) first, then put owned pets at the beginning of the list, 
         // then sort by category (following filter buttons order) and finally by content order, 
@@ -170,15 +182,13 @@ public class PetScrollRect : OptimizedScrollRect<PetPill, PetPillData> {
         foreach (List<ScrollRectItemData<PetPillData>> items in m_filterData.Values) {
 			items.Sort((ScrollRectItemData<PetPillData> _data1, ScrollRectItemData<PetPillData> _data2) => {
 				DefinitionNode def1 = _data1.data.def;
-				DefinitionNode def2 = _data2.data.def;
+				DefinitionNode def2 = _data2.data.def;                                
 
                 // Sort by pet availability (OTA)
-                // downloaded pets first and not downloaded last
-                List<string> resource1IDs = HDAddressablesManager.Instance.GetResourceIDsForPet(def1.sku);
-                bool pet1Available = HDAddressablesManager.Instance.IsResourceListAvailable(resource1IDs);
-                List<string> resource2IDs = HDAddressablesManager.Instance.GetResourceIDsForPet(def2.sku);
-                bool pet2Available = HDAddressablesManager.Instance.IsResourceListAvailable(resource2IDs);
-
+                // downloaded pets first and not downloaded last                
+                bool pet1Available = HDAddressablesManager.Instance.AreResourcesForPetAvailable(def1.sku);
+                bool pet2Available = HDAddressablesManager.Instance.AreResourcesForPetAvailable(def2.sku);                
+                
                 if (pet1Available && !pet2Available)
                 {
                     return -1;
@@ -189,7 +199,6 @@ public class PetScrollRect : OptimizedScrollRect<PetPill, PetPillData> {
                 }
                 else
                 {
-
                     bool unlocked1 = UsersManager.currentUser.petCollection.IsPetUnlocked(def1.sku);
                     bool unlocked2 = UsersManager.currentUser.petCollection.IsPetUnlocked(def2.sku);
                     if (unlocked1 && !unlocked2)
@@ -206,8 +215,8 @@ public class PetScrollRect : OptimizedScrollRect<PetPill, PetPillData> {
                         // Sort by rarity (rarest ones first)
                         int rarityOrder1 = int.MaxValue;
                         int rarityOrder2 = int.MaxValue;
-                        rarityOrder.TryGetValue(def1.Get("rarity"), out rarityOrder1);
-                        rarityOrder.TryGetValue(def2.Get("rarity"), out rarityOrder2);
+                        sm_rarityOrder.TryGetValue(def1.Get("rarity"), out rarityOrder1);
+                        sm_rarityOrder.TryGetValue(def2.Get("rarity"), out rarityOrder2);
                         if (rarityOrder1 < rarityOrder2)
                         {
                             return -1;
@@ -222,8 +231,8 @@ public class PetScrollRect : OptimizedScrollRect<PetPill, PetPillData> {
                             // Sort by category (following filter buttons order)
                             int catOrder1 = int.MaxValue;
                             int catOrder2 = int.MaxValue;
-                            filterOrder.TryGetValue(def1.Get("category"), out catOrder1);
-                            filterOrder.TryGetValue(def2.Get("category"), out catOrder2);
+                            sm_filterOrder.TryGetValue(def1.Get("category"), out catOrder1);
+                            sm_filterOrder.TryGetValue(def2.Get("category"), out catOrder2);
                             if (catOrder1 < catOrder2)
                             {
                                 return -1;
