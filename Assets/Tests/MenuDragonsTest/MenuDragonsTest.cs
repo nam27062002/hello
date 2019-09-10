@@ -19,25 +19,31 @@ public class MenuDragonsTest : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
+	[System.Serializable]
+	public class DragonData {
+		public MenuDragonPreview preview = null;
+		public RectTransform grid = null;
+		public float scaleModifier = 1f;
+	}
 
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed
 	public PathFollower m_cameraPathFollower = null;
-	public MenuDragonPreview[] m_dragons = new MenuDragonPreview[0];
+	public DragonData[] m_dragons = new DragonData[0];
 
 	[Space]
 	public Range m_scaleRange = new Range(1f, 3f);
 	[Comment("X: [0..1] representing dragons sequence delta" + "\n" +
 			 "Y: [0..1] representing value to be applied to the Scale Range property")]
 	public AnimationCurve m_scaleCurve = new AnimationCurve();
+	public bool m_scaleByTier = false;
 
 	[Space]
 	[Comment("Ref size should be the size in screen of the smallest dragon at scale 1")]
 	public Vector2 m_gridRefSize = Vector2.zero;
 	public Gradient m_gridGradient = new Gradient();
-	public RectTransform[] m_grids = new RectTransform[0];
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -55,7 +61,7 @@ public class MenuDragonsTest : MonoBehaviour {
 		// Reload dragons using a dragon loader to see them textured and animated
 		for(int i = 0; i < m_dragons.Length; ++i) {
 			// Grab parent
-			MenuDragonPreview oldDragon = m_dragons[i];
+			MenuDragonPreview oldDragon = m_dragons[i].preview;
 			Transform parent = oldDragon.transform.parent;
 
 			// Add MenuDragonLoader component to parent
@@ -72,7 +78,7 @@ public class MenuDragonsTest : MonoBehaviour {
 			newDragon.transform.localScale = targetScale;
 
 			// Replace dragon instance in the array
-			m_dragons[i] = newDragon;
+			m_dragons[i].preview = newDragon;
 		}
 	}
 
@@ -105,21 +111,38 @@ public class MenuDragonsTest : MonoBehaviour {
 	/// Apply scale curve to all dragons.
 	/// </summary>
 	public void ApplyCurve() {
-		// Apply to dragons
+		// We need definitions to be initialized
+		if(!ContentManager.ready) {
+			ContentManager.InitContent(true, false);
+		}
+
 		int numDragons = m_dragons.Length;
 		for(int i = 0; i < numDragons; ++i) {
+			// Scaling by tier?
+			float delta = 0f;
+			if(m_scaleByTier) {
+				// Get dragon tier
+				DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, m_dragons[i].preview.sku);
+				DragonTier tier = IDragonData.SkuToTier(def.GetAsString("tier", "tier_6")); // Specials definitions don't have the tier field, so use special tier as default value
+				delta = ((float)tier)/(float)(DragonTier.COUNT - 1);
+			} else {
+				delta = (float)i / (float)(numDragons - 1);
+			}
+
 			// Do the math
-			float delta = (float)i/(float)(numDragons - 1);
 			float scaleDelta = m_scaleCurve.Evaluate(delta);
 			float scale = m_scaleRange.Lerp(scaleDelta);
 
+			// Apply modifier factor per dragon
+			scale *= m_dragons[i].scaleModifier;
+
 			// Apply to dragon
-			m_dragons[i].transform.SetLocalScale(scale);
+			m_dragons[i].preview.transform.SetLocalScale(scale);
 
 			// Update matching grid
-			if(i < m_grids.Length) {
-				m_grids[i].sizeDelta = m_gridRefSize * scale;
-				m_grids[i].GetComponent<UIColorFX>().colorMultiply = m_gridGradient.Evaluate(scaleDelta);	// Use scale delta to follow the curve
+			if(m_dragons[i].grid != null) {
+				m_dragons[i].grid.sizeDelta = m_gridRefSize * scale;
+				m_dragons[i].grid.GetComponent<UIColorFX>().colorMultiply = m_gridGradient.Evaluate(scaleDelta);	// Use scale delta to follow the curve
 			}
 		}
 	}
@@ -127,15 +150,23 @@ public class MenuDragonsTest : MonoBehaviour {
 	/// <summary>
 	/// Reset scales of both slots and dragon instances to 1.
 	/// </summary>
-	public void ResetScales() {
+	/// <param name="_applyScaleModifier">Whether the individual scale modifier for each dragon should be applied or not</param>
+	public void ResetScales(bool _applyScaleModifier) {
+		// Iterate all dragons
 		for(int i = 0; i < m_dragons.Length; ++i) {
+			// Use scale modifier?
+			float scale = 1f;
+			if(_applyScaleModifier) {
+				scale *= m_dragons[i].scaleModifier;
+			}
+
 			// Apply to dragon
-			m_dragons[i].transform.SetLocalScale(1f);
+			m_dragons[i].preview.transform.SetLocalScale(scale);
 
 			// Update matching grid
-			if(i < m_grids.Length) {
-				m_grids[i].sizeDelta = m_gridRefSize;
-				m_grids[i].GetComponent<UIColorFX>().colorMultiply = m_gridGradient.Evaluate(0f);   // Use scale delta to follow the curve
+			if(m_dragons[i].grid != null) {
+				m_dragons[i].grid.sizeDelta = m_gridRefSize;
+				m_dragons[i].grid.GetComponent<UIColorFX>().colorMultiply = m_gridGradient.Evaluate(0f);
 			}
 		}
 	}
