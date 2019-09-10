@@ -25,6 +25,18 @@ public class MenuDragonsTestEditor : Editor {
 	//------------------------------------------------------------------------//
 	private const string EXPORT_KEY = "MenuDragonsTestEditor.";
 
+	private static GUIStyle s_selectedIdxLabelStyle = null;
+	public static GUIStyle SELECTED_IDX_LABEL_STYLE {
+		get {
+			if(s_selectedIdxLabelStyle == null) {
+				s_selectedIdxLabelStyle = new GUIStyle(EditorStyles.largeLabel);
+				s_selectedIdxLabelStyle.alignment = TextAnchor.MiddleCenter;
+				s_selectedIdxLabelStyle.fontSize = 20;
+			}
+			return s_selectedIdxLabelStyle;
+		}
+	}
+
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
@@ -91,6 +103,9 @@ public class MenuDragonsTestEditor : Editor {
 			if(GUILayout.Button("←", GUILayout.Height(30f))) {
 				m_target.FocusPreviousDragon();
 			}
+
+			int selectedIdx = m_target.m_cameraPathFollower != null ? m_target.m_cameraPathFollower.snapPoint : 0;
+			GUILayout.Label(selectedIdx.ToString(), SELECTED_IDX_LABEL_STYLE, GUILayout.Width(30f), GUILayout.Height(30f));
 
 			if(GUILayout.Button("→", GUILayout.Height(30f))) {
 				m_target.FocusNextDragon();
