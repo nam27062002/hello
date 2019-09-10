@@ -91,6 +91,11 @@
 -keep class com.google.android.gms.internal.** { *; }
 -dontwarn com.google.android.gms.ads.identifier.**
 
+# -----------------------
+# AdMob
+# -----------------------
+-keep class com.google.android.gms.ads.** { *; }
+
 # share button on android
 -keep class android.support.v4.content.** { *; }
 
