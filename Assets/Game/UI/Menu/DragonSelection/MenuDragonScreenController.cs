@@ -515,11 +515,12 @@ public class MenuDragonScreenController : MonoBehaviour {
 	/// The screen is about to open.
 	/// </summary>
 	public void OnOpenPreAnimation() {
-		// Reset animating flag
-		SetAnimationFlag(false, true);
+        // Reset animating flag
+        // SetAnimationFlag(false, true); 
+        // [JOM] We commented the previous line to fix HDK-5779. Lets wait and see if we break something else...
 
-		// If a dragon was just unlocked, prepare a nice unlock animation sequence!
-		if(!string.IsNullOrEmpty(GameVars.unlockedDragonSku)) {
+        // If a dragon was just unlocked, prepare a nice unlock animation sequence!
+        if (!string.IsNullOrEmpty(GameVars.unlockedDragonSku)) {
 			// Do anim!
 			LaunchUnlockAnim(GameVars.unlockedDragonSku, m_initialDelay, m_scrollDuration, false);
 
