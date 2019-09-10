@@ -38,7 +38,7 @@ public class MenuDragonLoader : MonoBehaviour {
     // MEMBERS AND PROPERTIES											//
     //------------------------------------------------------------------//
     // Exposed setup
-    [SerializeField] private Mode m_mode = Mode.CURRENT_DRAGON;
+    [SerializeField] private Mode m_mode = Mode.MANUAL;
 	public Mode mode {
 		get { return m_mode; }
 		set {
