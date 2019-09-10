@@ -32,14 +32,17 @@ public class MenuDragonSpecialPower : MonoBehaviour {
         m_dragonPreview = GetComponent<MenuDragonPreview>();
 
         DragonDataSpecial dataSpecial = null;
-        if(SceneController.mode == SceneController.Mode.TOURNAMENT) {
-			dataSpecial = HDLiveDataManager.tournament.tournamentData.tournamentDef.dragonData as DragonDataSpecial;
-        } else {
-            dataSpecial = (DragonDataSpecial)DragonManager.GetDragonData(m_dragonPreview.sku);
-        }
+		if(DragonManager.IsReady()) {
+			if(SceneController.mode == SceneController.Mode.TOURNAMENT) {
+				dataSpecial = HDLiveDataManager.tournament.tournamentData.tournamentDef.dragonData as DragonDataSpecial;
+			} else {
+				dataSpecial = (DragonDataSpecial)DragonManager.GetDragonData(m_dragonPreview.sku);
+			}
+		}
 
+		int powerLevel = dataSpecial != null ? dataSpecial.m_powerLevel : 0;
         for (int i = 0; i < m_elementsPerPowerLevel.Count; ++i) {
-            EnablePowerLevel(i, i <= dataSpecial.m_powerLevel);
+            EnablePowerLevel(i, i <= powerLevel);
         }
 
     }
