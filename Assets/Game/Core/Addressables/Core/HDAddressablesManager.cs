@@ -854,16 +854,57 @@ public class Ingame_SwitchAreaHandle
 		return powers;
 	}
 
-	#endregion
+    #endregion
 
-	#region Asset Ids Getters
-	/// <summary>
-	/// Obtain a list of all the resources needed for a dragon.
-	/// Doesn't include equipped pets.
-	/// </summary>
-	/// <returns>The list of all the resources needed for a dragon.</returns>
-	/// <param name="_dragonSku">Dragon sku.</param>
-	public List<string> GetResourceIDsForDragon(string _dragonSku) {
+    #region Asset Ids Getters
+    /// <summary>
+    /// Dictionary containing the list of dependencies per definition sku. They're stored to save performance when looking up if the assets handled by addressables are available, which happens a lot while the user is in menu
+    /// </summary>
+    private Dictionary<string, List<string>> m_dependecyIdsPerDefSku = new Dictionary<string, List<string>>();
+
+    private void AddDependencyIdsPerDefSku(string _defSku, List<string> _dependencyIds) {        
+        if (m_dependecyIdsPerDefSku.ContainsKey(_defSku)) {
+            m_dependecyIdsPerDefSku[_defSku] = _dependencyIds;
+        } else {
+            m_dependecyIdsPerDefSku.Add(_defSku, _dependencyIds);
+        }
+    }
+
+    private bool IsDependecyIdsOfDefSkuAvailable(string _defSku) {        
+        if (m_dependecyIdsPerDefSku.ContainsKey(_defSku)) {
+            return IsDependencyListAvailable(m_dependecyIdsPerDefSku[_defSku]);
+        } else {
+            return false;
+        }        
+    }
+
+    public bool AreResourcesForDragonAvailable(string _dragonSku) {
+        if (!m_dependecyIdsPerDefSku.ContainsKey(_dragonSku)) {
+            List<string> _resourceIds = GetResourceIDsForDragon(_dragonSku);
+            List<string> _dependencyIds = GetDependencyIdsList(_resourceIds);
+            AddDependencyIdsPerDefSku(_dragonSku, _dependencyIds);            
+        }
+
+        return IsDependecyIdsOfDefSkuAvailable(_dragonSku);
+    }
+
+    public bool AreResourcesForPetAvailable(string _dragonSku) {
+        if (!m_dependecyIdsPerDefSku.ContainsKey(_dragonSku)) {
+            List<string> _resourceIds = GetResourceIDsForPet(_dragonSku);
+            List<string> _dependencyIds = GetDependencyIdsList(_resourceIds);
+            AddDependencyIdsPerDefSku(_dragonSku, _dependencyIds);
+        }
+
+        return IsDependecyIdsOfDefSkuAvailable(_dragonSku);
+    }
+
+    /// <summary>
+    /// Obtain a list of all the resources needed for a dragon.
+    /// Doesn't include equipped pets.
+    /// </summary>
+    /// <returns>The list of all the resources needed for a dragon.</returns>
+    /// <param name="_dragonSku">Dragon sku.</param>
+    public List<string> GetResourceIDsForDragon(string _dragonSku) {
 		// Aux vars
 		HashSet<string> ids = new HashSet<string>();
 		DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, _dragonSku);

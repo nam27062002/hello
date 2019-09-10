@@ -236,6 +236,25 @@ public class AddressablesManager
         }
 
         return returnValue;
+    }   
+
+    public bool IsDependencyListAvailable(List<string> dependencyIds)
+    {
+        bool returnValue = false;
+
+        if (IsInitialized())
+        {
+            if (dependencyIds != null && dependencyIds.Count > 0)
+            {
+                returnValue = m_providerFromAB.IsDependenciesListAvailable(dependencyIds);                
+            }
+            else
+            {
+                returnValue = true;
+            }             
+        }
+
+        return returnValue;
     }
 
     public List<string> GetDownloadableDependencyIds(List<string> dependencyIds)
