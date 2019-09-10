@@ -27,7 +27,7 @@ public class MenuDragonsTestEditor : Editor {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Casted target object
-	MenuDragonsTest m_targetMenuDragonsTest = null;
+	private MenuDragonsTest m_targetMenuDragonsTest = null;
 
 	//------------------------------------------------------------------------//
 	// METHODS																  //
@@ -55,10 +55,10 @@ public class MenuDragonsTestEditor : Editor {
 		// Default inspector
 		DrawDefaultInspector();
 
-		// Buttons
-		if(GUILayout.Button("Distribute!", GUILayout.Height(30f))) {
-			m_targetMenuDragonsTest.OnDistributeButton();
-		}
+		EditorGUILayoutExt.Separator();
+
+		// Debug GUI
+		DoDebugGUI(m_targetMenuDragonsTest);
 	}
 
 	/// <summary>
@@ -66,5 +66,57 @@ public class MenuDragonsTestEditor : Editor {
 	/// </summary>
 	public void OnSceneGUI() {
 		// Scene-related stuff
+	}
+
+	/// <summary>
+	/// 
+	/// </summary>
+	private static void DoDebugGUI(MenuDragonsTest _target) {
+		// Navigation Buttons
+		EditorGUILayout.BeginHorizontal();
+		{
+			if(GUILayout.Button("<-", GUILayout.Height(30f))) {
+				_target.FocusPreviousDragon();
+			}
+
+			if(GUILayout.Button("->", GUILayout.Height(30f))) {
+				_target.FocusNextDragon();
+			}
+		}
+		EditorGUILayout.EndHorizontal();
+
+		// Edition buttons
+		EditorGUILayout.BeginHorizontal();
+		{
+			GUI.color = Colors.paleYellow;
+			if(GUILayout.Button("Reset Scales", GUILayout.Height(30f))) {
+				_target.ResetScales();
+			}
+
+			GUI.color = Colors.skyBlue;
+			if(GUILayout.Button("Apply Curve", GUILayout.Height(30f))) {
+				_target.ApplyCurve();
+			}
+		}
+		EditorGUILayout.EndHorizontal();
+
+		// Save button
+		EditorGUILayout.Space();
+		GUI.color = Colors.paleGreen;
+		EditorGUI.BeginDisabledGroup(Application.isPlaying);
+		if(GUILayout.Button("SAVE PREFABS" + (Application.isPlaying ? "\n(EDIT MODE ONLY)" : ""), GUILayout.Height(30f))) {
+			foreach(MenuDragonPreview dragon in _target.m_dragons) {
+				PrefabUtility.ReplacePrefab(
+					dragon.gameObject,
+					PrefabUtility.GetPrefabParent(dragon.gameObject),
+					ReplacePrefabOptions.ConnectToPrefab
+				);
+			}
+		}
+		EditorGUI.EndDisabledGroup();
+		GUI.color = Color.white;
+
+		// Final space
+		EditorGUILayout.Space();
 	}
 }
