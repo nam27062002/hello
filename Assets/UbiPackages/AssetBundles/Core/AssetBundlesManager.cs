@@ -461,7 +461,7 @@ public class AssetBundlesManager
     /// Returns whether or not the asset bundle which id is passed as a parameter is available to be loaded,
     /// which means that either the asset bundle is local or it's remote and it has already been downloaded.
     /// </summary>  
-    public bool IsAssetBundleAvailable(string id, bool track = false)
+    public bool IsAssetBundleAvailable(string id, bool checkDisk = false, bool track = false)
     {
         bool returnValue = IsAssetBundleValid(id);
         if (returnValue)
@@ -469,7 +469,7 @@ public class AssetBundlesManager
             AssetBundleHandle handle = GetAssetBundleHandle(id);
             if (handle.IsRemote())
             {
-                returnValue = m_downloadablesManager.IsIdAvailable(id, track);
+                returnValue = m_downloadablesManager.IsIdAvailable(id, checkDisk, track);
             }
         }
 

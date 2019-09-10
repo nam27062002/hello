@@ -178,6 +178,11 @@ public class MenuDragonPreview : MonoBehaviour {
 	        t.localScale = GameConstants.Vector3.one;
 			m_dragonFlameStandardInstance = tempFire.GetComponent<FireBreathDynamic>();
 
+			// Make sure content is initialized (when using it from a test scene)
+			if(!ContentManager.ready) {
+				ContentManager.InitContent(true, false);
+			}
+
 			DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition( DefinitionsCategory.DRAGONS, m_sku);
 			float furyBaseLength = def.GetAsFloat("furyBaseLength");
 			m_dragonFlameStandardInstance.setEffectScale(furyBaseLength / 2.0f, transform.localScale.x);
