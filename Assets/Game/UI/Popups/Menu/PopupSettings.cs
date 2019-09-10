@@ -108,12 +108,30 @@ public class PopupSettings : MonoBehaviour {
 	/// Dragon info button has been pressed.
 	/// </summary>
 	public void OnDragonInfoButton() {
-		// Tracking
-		string popupName = System.IO.Path.GetFileNameWithoutExtension(PopupDragonInfo.PATH);
+
+        // Different popups depending on the type
+        IDragonData dragon = DragonManager.CurrentDragon;
+        string popupPath = string.Empty;
+        switch (dragon.type)
+        {
+            case IDragonData.Type.CLASSIC:
+                popupPath = PopupDragonInfo.PATH;
+                break;
+            case IDragonData.Type.SPECIAL:
+                popupPath = PopupSpecialDragonInfo.PATH;
+                break;
+            default:
+                Debug.LogError("Invalid type");
+                break;
+        }
+
+
+        // Tracking
+        string popupName = System.IO.Path.GetFileNameWithoutExtension(popupPath);
 		HDTrackingManager.Instance.Notify_InfoPopup(popupName, "settings");
 
-		// Open the dragon info popup and initialize it with the current dragon's data
-		PopupDragonInfo popup = PopupManager.OpenPopupInstant(PopupDragonInfo.PATH).GetComponent<PopupDragonInfo>();
+        // Open the dragon info popup and initialize it with the current dragon's data
+        PopupDragonInfo popup = PopupManager.OpenPopupInstant(popupPath).GetComponent<PopupDragonInfo>();
 		popup.Init(DragonManager.GetDragonData(InstanceManager.menuSceneController.selectedDragon));
 	}
 
