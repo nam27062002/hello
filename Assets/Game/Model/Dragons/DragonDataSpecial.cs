@@ -451,10 +451,15 @@ public class DragonDataSpecial : IDragonData
         }
 
         // c) If the last classic dragon is maxed, then is available via SC
-        // d) If the minimum required classic dragon is owned, then is available via HC
-        if (IsAvailableViaSC() || IsAvailableViaHC())
+        if (IsAvailableViaSC())
         {
             return LockState.AVAILABLE;
+        }
+
+        // d) If the minimum required classic dragon is owned, then is available via HC. Show the lock anyway.
+        if (IsAvailableViaHC())
+        {
+            return LockState.LOCKED;
         }
 
         // e) Dragon locked
