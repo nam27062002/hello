@@ -133,13 +133,7 @@ public class HDNotificationsManager : Singleton<HDNotificationsManager>
     
     		// Clear all notifications
             NotificationsManager.SharedInstance.CancelAllNotifications();
-    
-            // If enabled reschedule all notifications
-    		if (enabled){
-    			if ( UsersManager.currentUser != null && EggManager.incubatingEgg != null){
-    				EggManager.incubatingEgg.ScheduleEggNotification();
-    	        }
-            }
+            
         }
     }   
 

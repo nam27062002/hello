@@ -669,7 +669,18 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
                 
                 HDNotificationsManager.instance.ScheduleReengagementNotification(secondsToReengage);
             }
-                
+
+            // Schedule Egg Hatching notifications
+            if (EggManager.incubatingEgg != null)
+            {
+                if(EggManager.incubatingEgg.isIncubating) {
+                    int secondsToFinish =  (int)EggManager.incubatingEgg.incubationRemaining.TotalSeconds;
+                    if ( secondsToFinish > 0 )
+                    {   
+                        HDNotificationsManager.instance.ScheduleEggHatchedNotification(secondsToFinish);
+                    }
+                }
+            }
 
 			// [AOC] TODO!!
         }
@@ -681,6 +692,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 		HDNotificationsManager.instance.CancelNewChestsNotification();
 		HDNotificationsManager.instance.CancelDailyRewardNotification();
         HDNotificationsManager.instance.CancelReengagementNotification();
+        HDNotificationsManager.instance.CancelEggHatchedNotification();
     }
 
 #region game

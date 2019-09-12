@@ -206,9 +206,6 @@ public class Egg {
 
 				// Dispatch game event
 				Messenger.Broadcast<Egg>(MessengerEvents.EGG_INCUBATION_STARTED, this);
-
-				// Schedule local notification!
-				ScheduleEggNotification();
            	} break;
 
 			// Opening
@@ -224,7 +221,6 @@ public class Egg {
 				GenerateReward();
 			} break;
 			case State.READY:{
-				if(!m_testMode) HDNotificationsManager.instance.CancelEggHatchedNotification();
 			}break;
 		}
 
@@ -240,13 +236,6 @@ public class Egg {
 			if(!m_testMode) PersistenceFacade.instance.Save_Request();
 		}
 		
-	}
-
-	/// <summary>
-	/// If the egg is incubating it schedules the egg notification.
-	/// </summary>
-	public void ScheduleEggNotification(){
-		if(!m_testMode && m_state == State.INCUBATING) HDNotificationsManager.instance.ScheduleEggHatchedNotification((int)(incubationRemaining.TotalSeconds));
 	}
 
 	/// <summary>

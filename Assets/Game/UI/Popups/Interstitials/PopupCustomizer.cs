@@ -460,7 +460,7 @@ public class PopupCustomizer : MonoBehaviour {
                                     {
                                         dnaProfileId = "Not_Available";
                                     }
-                                    url += "?profileId=" + dnaProfileId;
+                                    url += "?UID=" + dnaProfileId;
                                 }
 
                                 Application.OpenURL(url);

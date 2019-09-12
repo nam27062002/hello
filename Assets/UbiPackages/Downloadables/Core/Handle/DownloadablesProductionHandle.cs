@@ -40,7 +40,7 @@ namespace Downloadables
                 int count = DownloadableIds.Count;
                 for (int i = 0; i < count && returnValue; i++)
                 {
-                    returnValue = sm_manager.IsIdAvailable(DownloadableIds[i]);                    
+                    returnValue = sm_manager.IsIdAvailable(DownloadableIds[i], true);                    
                 }
             }
 
