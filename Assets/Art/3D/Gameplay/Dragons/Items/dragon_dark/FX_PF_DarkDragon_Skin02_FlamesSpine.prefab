@@ -55,6 +55,7 @@ GameObject:
   - component: {fileID: 4578043770269106}
   - component: {fileID: 198870396043544670}
   - component: {fileID: 199215593883756522}
+  - component: {fileID: 114720498292933634}
   m_Layer: 0
   m_Name: Flames
   m_TagString: Untagged
@@ -334,6 +335,20 @@ MonoBehaviour:
   m_attachPoint: 9
   m_sku: 
   m_showOnResults: 1
+--- !u!114 &114720498292933634
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1412229331619572}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3128bd630f39645c4a1e03d94b7008f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_transform: {fileID: 4814783741796416}
+  m_resetFirst: 1
+  m_whenScale: 0
 --- !u!198 &198106782626662438
 ParticleSystem:
   m_ObjectHideFlags: 1
@@ -394,7 +409,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 0
-  randomSeed: 1110521784
+  randomSeed: -1893855553
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -3755,7 +3770,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 0
-  randomSeed: 276307469
+  randomSeed: 1467683503
   InitialModule:
     serializedVersion: 3
     enabled: 1
