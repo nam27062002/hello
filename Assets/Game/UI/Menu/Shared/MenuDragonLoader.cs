@@ -328,10 +328,13 @@ public class MenuDragonLoader : MonoBehaviour {
 		m_dragonInstance = newInstance.GetComponent<MenuDragonPreview>();
 		m_dragonInstance.SetAnim(m_anim);
 
-        // Reset scale if requiredDragonData
+        // Reset scale if required
         if (m_resetDragonScale) {
-			m_dragonInstance.transform.localScale = Vector3.one;
+			m_dragonInstance.transform.localScale = Vector3.one * m_dragonInstance.scaleModifier;
 		}
+
+		// Apply offset modifier
+		m_dragonInstance.transform.localPosition += m_dragonInstance.offsetModifier;
 
 		// Apply equipment
 		DragonEquip equip = m_dragonInstance.GetComponent<DragonEquip>();

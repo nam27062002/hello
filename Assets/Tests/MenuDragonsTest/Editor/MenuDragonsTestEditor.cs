@@ -97,11 +97,19 @@ public class MenuDragonsTestEditor : Editor {
 		// Aux vars
 		Color defaultGUIColor = GUI.color;
 
+		// Dragons Detection
+		if(GUILayout.Button("Auto-detect Dragons", GUILayout.Height(30f))) {
+			m_target.AutoDetectDragons();
+		}
+		EditorGUILayout.Space();
+
 		// Navigation Buttons
 		EditorGUILayout.BeginHorizontal();
 		{
 			if(GUILayout.Button("←", GUILayout.Height(30f))) {
 				m_target.FocusPreviousDragon();
+				GameObject targetObj = m_target.m_dragons[m_target.m_cameraPathFollower.snapPoint].gameObject;
+				EditorUtils.FocusObject(targetObj, true, true, true);
 			}
 
 			int selectedIdx = m_target.m_cameraPathFollower != null ? m_target.m_cameraPathFollower.snapPoint : 0;
@@ -109,6 +117,8 @@ public class MenuDragonsTestEditor : Editor {
 
 			if(GUILayout.Button("→", GUILayout.Height(30f))) {
 				m_target.FocusNextDragon();
+				GameObject targetObj = m_target.m_dragons[m_target.m_cameraPathFollower.snapPoint].gameObject;
+				EditorUtils.FocusObject(targetObj, true, true, true);
 			}
 		}
 		EditorGUILayout.EndHorizontal();
@@ -122,7 +132,7 @@ public class MenuDragonsTestEditor : Editor {
 			}
 
 			if(GUILayout.Button("Reset Scales To 1\nApplying Scale Modfier", GUILayout.Height(30f))) {
-				RecordUndo("Reset Scales To 1 Applying Scale Modifier");
+				RecordUndo("Reset Scales To 1 Applying Scale Offset");
 				m_target.ResetScales(true);
 			}
 
@@ -145,6 +155,10 @@ public class MenuDragonsTestEditor : Editor {
 			if(GUILayout.Button("Import Data ↘", GUILayout.Height(30f))) {
 				Import();
 			}
+
+			if(GUILayout.Button("Print Offsets", GUILayout.Height(30f))) {
+				PrintOffsets();
+			}
 		}
 		EditorGUILayout.EndHorizontal();
 
@@ -155,28 +169,7 @@ public class MenuDragonsTestEditor : Editor {
 		GUI.color = Colors.paleGreen;
 		EditorGUI.BeginDisabledGroup(Application.isPlaying);
 		if(GUILayout.Button("SAVE PREFABS" + (Application.isPlaying ? "\n(EDIT MODE ONLY)" : ""), GUILayout.Height(30f))) {
-			int processedCount = 0;
-			int totalDragons = m_target.m_dragons.Length;
-			foreach(MenuDragonsTest.DragonData dragon in m_target.m_dragons) {
-				// Show progress bar
-				processedCount++;
-				if(EditorUtility.DisplayCancelableProgressBar(
-					"Saving Dragon Prefabs...",
-					"Processing dragon " + processedCount + "/" + totalDragons + ": " + dragon.preview.sku,
-					(float)processedCount / (float)totalDragons
-				)) {
-					// Canceled!
-					break;	// Just break the loop
-				}
-
-				// Do it!
-				PrefabUtility.ReplacePrefab(
-					dragon.preview.gameObject,
-					PrefabUtility.GetPrefabParent(dragon.preview.gameObject),
-					ReplacePrefabOptions.ConnectToPrefab
-				);
-			}
-			EditorUtility.ClearProgressBar();
+			SavePrefabs();
 		}
 		EditorGUI.EndDisabledGroup();
 		GUI.color = defaultGUIColor;
@@ -189,11 +182,9 @@ public class MenuDragonsTestEditor : Editor {
 	private void RecordUndo(string _name) {
 		// Iterate all dragons
 		List<Object> toRecord = new List<Object>();
-		foreach(MenuDragonsTest.DragonData dragon in m_target.m_dragons) {
+		foreach(MenuDragonPreview dragon in m_target.m_dragons) {
 			// Record all objects that might be modified
-			toRecord.Add(dragon.preview.transform);
-			toRecord.Add(dragon.grid);
-			toRecord.Add(dragon.grid.GetComponent<UIColorFX>());
+			toRecord.Add(dragon.transform);
 		}
 
 		// Record undo
@@ -214,15 +205,14 @@ public class MenuDragonsTestEditor : Editor {
 		Prefs.SetBoolEditor(EXPORT_KEY + "ScaleByTier", m_target.m_scaleByTier);
 
 		// Dragons data
-		foreach(MenuDragonsTest.DragonData dragon in m_target.m_dragons) {
-			string prefix = EXPORT_KEY + dragon.preview.sku + ".";
+		foreach(MenuDragonPreview dragon in m_target.m_dragons) {
+			string prefix = EXPORT_KEY + dragon.sku + ".";
 
 			// Scale modifier
 			Prefs.SetFloatEditor(prefix + "ScaleModifier", dragon.scaleModifier);
 
 			// Offsets
-			PathFollower anchor = dragon.preview.GetComponentInParent<PathFollower>();
-			Prefs.SetVector3Editor(prefix + "Offset", anchor.offset);
+			Prefs.SetVector3Editor(prefix + "Offset", dragon.offsetModifier);
 		}
 	}
 
@@ -239,8 +229,8 @@ public class MenuDragonsTestEditor : Editor {
 		// Prepare undo
 		List<Object> toRecord = new List<Object>();
 		toRecord.Add(m_target);
-		foreach(MenuDragonsTest.DragonData dragon in m_target.m_dragons) {
-			PathFollower anchor = dragon.preview.GetComponentInParent<PathFollower>();
+		foreach(MenuDragonPreview dragon in m_target.m_dragons) {
+			PathFollower anchor = dragon.GetComponentInParent<PathFollower>();
 			toRecord.Add(anchor);
 		}
 		Undo.RecordObjects(toRecord.ToArray(), "Import Data");
@@ -252,16 +242,55 @@ public class MenuDragonsTestEditor : Editor {
 		m_target.m_scaleByTier = Prefs.GetBoolEditor(EXPORT_KEY + "ScaleByTier", m_target.m_scaleByTier);
 
 		// Dragons data
-		foreach(MenuDragonsTest.DragonData dragon in m_target.m_dragons) {
-			string prefix = EXPORT_KEY + dragon.preview.sku + ".";
+		foreach(MenuDragonPreview dragon in m_target.m_dragons) {
+			string prefix = EXPORT_KEY + dragon.sku + ".";
 
 			// Scale modifier
 			dragon.scaleModifier = Prefs.GetFloatEditor(prefix + "ScaleModifier", dragon.scaleModifier);
 
 			// Offsets
-			PathFollower anchor = dragon.preview.GetComponentInParent<PathFollower>();
-			anchor.offset = Prefs.GetVector3Editor(prefix + "Offset", anchor.offset);
+			dragon.offsetModifier = Prefs.GetVector3Editor(prefix + "Offset", dragon.offsetModifier);
 		}
+	}
+
+	/// <summary>
+	/// Dump anchor point offsets to console.
+	/// </summary>
+	private void PrintOffsets() {
+		string str = "";
+		foreach(MenuDragonPreview dragon in m_target.m_dragons) {
+			// Mark anchors as dirty
+			str += dragon.sku + "\t" + dragon.offsetModifier + "\n";
+		}
+		Debug.Log(str);
+	}
+
+	/// <summary>
+	/// Save current data to the dragons prefabs.
+	/// </summary>
+	private void SavePrefabs() {
+		int processedCount = 0;
+		int totalDragons = m_target.m_dragons.Length;
+		foreach(MenuDragonPreview dragon in m_target.m_dragons) {
+			// Show progress bar
+			processedCount++;
+			if(EditorUtility.DisplayCancelableProgressBar(
+				"Saving Dragon Prefabs...",
+				"Processing dragon " + processedCount + "/" + totalDragons + ": " + dragon.sku,
+				(float)processedCount / (float)totalDragons
+			)) {
+				// Canceled!
+				break;  // Just break the loop
+			}
+
+			// Do it!
+			PrefabUtility.ReplacePrefab(
+				dragon.gameObject,
+				PrefabUtility.GetPrefabParent(dragon.gameObject),
+				ReplacePrefabOptions.ConnectToPrefab
+			);
+		}
+		EditorUtility.ClearProgressBar();
 	}
 
 	/// <summary>
@@ -269,9 +298,9 @@ public class MenuDragonsTestEditor : Editor {
 	/// </summary>
 	private void OnUndoRedo() {
 		// [AOC] A bit of an overkill, since this will be triggered by ANY undo/redo operation while editor is enabled, but Unity doesn't provide more tools to do it properly
-		foreach(MenuDragonsTest.DragonData dragon in m_target.m_dragons) {
+		foreach(MenuDragonPreview dragon in m_target.m_dragons) {
 			// Mark anchors as dirty
-			PathFollower anchor = dragon.preview.GetComponentInParent<PathFollower>();
+			PathFollower anchor = dragon.GetComponentInParent<PathFollower>();
 			anchor.MarkAsDirty();
 		}
 	}

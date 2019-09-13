@@ -41,6 +41,7 @@ public class HungryDragonEditorToolbar : EditorWindow {
 		LIVE_EVENT_ICONS_CAPTURE_TOOL,
 		UI_TOOLS_SCENE,
 		COLOR_RAMP_EDITOR,
+		MENU_DRAGONS_TEST,
 
 		COUNT
 	}
@@ -95,7 +96,8 @@ public class HungryDragonEditorToolbar : EditorWindow {
 			"Assets/Tools/UITools/CaptureTool/icon_camera_yellow.png",
 			"Assets/Tools/UITools/CaptureTool/icon_camera_blue.png",
 			"Assets/Tools/UITools/grid.png",
-			"Assets/Tools/UITools/ColorRampEditor/icon_color_ramp_editor.png"
+			"Assets/Tools/UITools/ColorRampEditor/icon_color_ramp_editor.png",
+			"Assets/Tests/MenuDragonsTest/icon_menu_dragons_test.png"
 		};
 
 		for(int i = 0; i < (int)Icons.COUNT; i++) {
@@ -269,10 +271,18 @@ public class HungryDragonEditorToolbar : EditorWindow {
 				HungryDragonEditorMenu.EasePreviewToolWindow();
 			}
 
+			// Add a separator
+			GUILayout.Space(SEPARATOR_SIZE);
+
 			// Egg Test Scene
 			if(GUILayout.Button(new GUIContent("00", "Eggs Test Scene"), EditorStyles.toolbarButton, GUILayout.Width(BUTTON_SIZE))) {
 				//HungryDragonEditorMenu.OpenScene("Assets/Art/3D/Metagame/Eggs/3D_Egg_001/SC_EggTest.unity", true);
 				HungryDragonEditorMenu.OpenScene("Assets/Tests/SC_NewEggTest.unity", true);
+			}
+
+			// Menu Dragons Test Scene
+			if(GUILayout.Button(new GUIContent(m_icons[(int)Icons.MENU_DRAGONS_TEST], "Menu Dragons Test Scene"), EditorStyles.toolbarButton, GUILayout.Width(BUTTON_SIZE))) {
+				HungryDragonEditorMenu.OpenScene("Assets/Tests/MenuDragonsTest/SC_MenuDragonsTest.unity", true);
 			}
 
 			// Add a separator
