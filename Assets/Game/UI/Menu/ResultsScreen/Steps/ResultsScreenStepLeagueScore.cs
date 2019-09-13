@@ -42,9 +42,12 @@ public class ResultsScreenStepLeagueScore : ResultsScreenSequenceStep {
 	/// </summary>
 	/// <returns><c>true</c> if the step must be displayed, <c>false</c> otherwise.</returns>
 	override public bool MustBeDisplayed() {
-		// Always show for now
-		return true;
-	}
+
+        // Show only if the leagues are available
+        return HDLiveDataManager.league.season.IsRunning() && 
+               UsersManager.currentUser.gamesPlayed >= GameSettings.ENABLE_LEAGUES_AT_RUN;
+
+    }
 
 	/// <summary>
 	/// Initialize and launch this step.

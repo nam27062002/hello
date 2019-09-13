@@ -150,7 +150,7 @@ public class DragonSelectionTutorial : MonoBehaviour {
 						StopTutorial();
 
 						// Make sure we have the initial dragon selected
-						m_scroller.FocusDragon(UsersManager.currentUser.currentClassicDragon, true);
+						m_scroller.FocusDragon(UsersManager.currentUser.CurrentDragon, true);
 
 						// Show tier info popup
 						UbiBCN.CoroutineManager.DelayedCall(() => {
@@ -237,7 +237,7 @@ public class DragonSelectionTutorial : MonoBehaviour {
 		m_scroller.LoadTutorialDragonsScroll(dragonsToView + 1);	// One more to let it view 
 
 		// 3) Final delta is the current selected dragon (most of the times will be the first one)
-		DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, UsersManager.currentUser.currentClassicDragon);
+		DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, UsersManager.currentUser.CurrentDragon);
 		int menuOrder = (def == null) ? 0 : def.GetAsInt("order");
 		m_finalDelta = m_scroller.cameraAnimator.cameraPath.path.GetDelta(menuOrder);	// Taking advantadge that we have exactly one control point per dragon
 

@@ -57,10 +57,10 @@ public class ResultsScreenStepSkinUnlocked : ResultsScreenSequenceStep {
 	/// </summary>
 	override protected void DoInit() {
 		// Only for CLASSIC dragons!
-		Debug.Assert(DragonManager.currentDragon.type == IDragonData.Type.CLASSIC, "ONLY FOR CLASSIC DRAGONS!");
+		Debug.Assert(DragonManager.CurrentDragon.type == IDragonData.Type.CLASSIC, "ONLY FOR CLASSIC DRAGONS!");
 
 		// Aux vars
-	    DragonProgression progression = (DragonManager.currentDragon as DragonDataClassic).progression;
+	    DragonProgression progression = (DragonManager.CurrentDragon as DragonDataClassic).progression;
 
 		// Gather levels before and after the run
 		// Consider cheats!
@@ -92,7 +92,7 @@ public class ResultsScreenStepSkinUnlocked : ResultsScreenSequenceStep {
 		}
 
 		// Find out all skins unlocked in this run
-		List<DefinitionNode> allSkins = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.DISGUISES, "dragonSku", DragonManager.currentDragon.def.sku);
+		List<DefinitionNode> allSkins = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.DISGUISES, "dragonSku", DragonManager.CurrentDragon.def.sku);
 		DefinitionsManager.SharedInstance.SortByProperty(ref allSkins, "unlockLevel", DefinitionsManager.SortType.NUMERIC);
 		for(int i = 0; i < allSkins.Count; ++i) {
 			// Skip if unlockLevel is 0 (default skin)
@@ -205,7 +205,7 @@ public class ResultsScreenStepSkinUnlocked : ResultsScreenSequenceStep {
 			UsersManager.currentUser.wardrobe.SetSkinState(_flow.itemDef.sku, Wardrobe.SkinState.OWNED);
 
 			// Immediately equip it!
-			UsersManager.currentUser.EquipDisguise(DragonManager.currentDragon.def.sku, _flow.itemDef.sku, true);
+			UsersManager.currentUser.EquipDisguise(DragonManager.CurrentDragon.def.sku, _flow.itemDef.sku, true);
 		}
 
 		// Throw out some fireworks!

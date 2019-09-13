@@ -28,8 +28,10 @@ public class PopupSpecialDragonInfoUpgrade : MonoBehaviour {
 	public TextMeshProUGUI levelText = null;
 	public TextMeshProUGUI descriptionText = null;
 	public Image icon = null;
-	
-	//------------------------------------------------------------------------//
-	// GENERIC METHODS														  //
-	//------------------------------------------------------------------------//
+    public TextMeshProUGUI leftIconFoot;
+    public TextMeshProUGUI rightIconFoot;
+
+    //------------------------------------------------------------------------//
+    // GENERIC METHODS														  //
+    //------------------------------------------------------------------------//
 }

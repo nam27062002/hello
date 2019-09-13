@@ -129,13 +129,8 @@ namespace LevelEditor {
 
 			// Override some values in the user profile
 			DefinitionNode testDragonDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, LevelEditor.settings.testDragon);
-			if(testDragonDef.GetAsString("type") == DragonDataClassic.TYPE_CODE) {
-				UsersManager.currentUser.currentClassicDragon = testDragonDef.sku;
-				SceneController.SetMode(Mode.DEFAULT);
-			} else {
-				UsersManager.currentUser.currentSpecialDragon = testDragonDef.sku;
-				SceneController.SetMode(Mode.SPECIAL_DRAGONS);
-			}
+            UsersManager.currentUser.CurrentDragon = testDragonDef.sku;
+            SceneController.SetMode(Mode.DEFAULT);
 
             InstanceManager.player.gameObject.SetActive(true);
 

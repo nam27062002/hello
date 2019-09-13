@@ -93,7 +93,7 @@ public class PopupDragonInfoInitializer : MonoBehaviour {
 
 		// Initialize with the target dragon
 		switch(m_targetDragon) {
-			case Dragon.CURRENT:	dragonInfoPopup.Init(DragonManager.currentDragon);	break;
+			case Dragon.CURRENT:	dragonInfoPopup.Init(DragonManager.CurrentDragon);	break;
 			case Dragon.SELECTED:	dragonInfoPopup.Init(DragonManager.GetDragonData(InstanceManager.menuSceneController.selectedDragon));	break;
 			case Dragon.CUSTOM: 	dragonInfoPopup.Init(DragonManager.GetDragonData(m_dragonSku));	break;
 		}

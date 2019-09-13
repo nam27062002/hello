@@ -291,13 +291,13 @@ namespace Downloadables
             }            
         }                 
         
-        public bool IsIdAvailable(string id, bool track = false)
+        public bool IsIdAvailable(string id, bool checkDisk = false, bool track = false)
         {
             bool returnValue = false;
             if (IsInitialized)
             {
                 CatalogEntryStatus entry = Catalog_GetEntryStatus(id);
-                returnValue = (entry != null && entry.IsAvailable(true));                
+                returnValue = (entry != null && entry.IsAvailable(checkDisk));                
                 
                 if (track)
                 {
@@ -311,7 +311,7 @@ namespace Downloadables
             return returnValue;
         }
 
-        public bool IsIdsListAvailable(List<string> ids, bool track = false)
+        public bool IsIdsListAvailable(List<string> ids, bool checkDisk = false, bool track = false)
         {
             bool returnValue = true;
             if (ids != null)
@@ -320,7 +320,7 @@ namespace Downloadables
                 for (int i = 0; i < count && returnValue; i++)
                 {
                     // IsIdAvailable() must be called for every id so that the result will be tracked if it needs to
-                    returnValue = IsIdAvailable(ids[i], track) && returnValue;
+                    returnValue = IsIdAvailable(ids[i], checkDisk, track) && returnValue;
                 }
             }
 

@@ -201,6 +201,7 @@ public class TrackerBase {
 			case "survive_time":	return new TrackerSurviveTime();
 			case "zone_survive":	return new TrackerZoneSurvive(_params);
 			case "visited_zones":	return new TrackerVisitedZones();
+            case "kill_disguise":
 			case "kill":			return new TrackerKill(_params);
             case "kill_in_love":    return new TrackerKillInLove(_params);
             case "kill_stunned":    return new TrackerKillStunned(_params);

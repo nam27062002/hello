@@ -60,15 +60,7 @@ public class DragonXPBar : MonoBehaviour {
 		get { return m_levelText; }
 	}
 
-	[SerializeField] protected Localizer m_dragonNameText;
-	public Localizer dragonNameText {
-		get { return m_dragonNameText; }
-	}
 
-	[SerializeField] protected Localizer m_dragonDescText;
-	public Localizer dragonDescText {
-		get { return m_dragonDescText; }
-	}
 
 	// Bar separators prefab
 	[Separator]
@@ -78,8 +70,8 @@ public class DragonXPBar : MonoBehaviour {
     [SerializeField] protected UITooltip m_levelToolTip = null;
 
     // Internal
-    protected DragonDataClassic m_dragonData = null;	// Last used dragon data
-	protected List<DragonXPBarSeparator> m_barSeparators = new List<DragonXPBarSeparator>();
+    protected DragonDataClassic m_dragonData = null;    // Last used dragon data
+    protected List<DragonXPBarSeparator> m_barSeparators = new List<DragonXPBarSeparator>();
 	protected List<DisguiseInfo> m_disguises = new List<DisguiseInfo>();
 	
 	//------------------------------------------------------------------------//
@@ -88,7 +80,7 @@ public class DragonXPBar : MonoBehaviour {
 	/// <summary>
 	/// Initialization.
 	/// </summary>
-	virtual protected void Awake() {
+	protected virtual void Awake() {
 
         // Create, initialize and instantiate a pool of bar separators
         ResizeSeparatorsPool(SEPARATORS_POOL_SIZE);
@@ -100,9 +92,18 @@ public class DragonXPBar : MonoBehaviour {
 	/// </summary>
 	/// <param name="_sku">The sku of the dragon whose data we want to use to initialize the bar.</param>
 	/// <param name="_delay">Optional delay before refreshing the data. Useful to sync with other UI animations.</param>
-	virtual public void Refresh(string _sku, float _delay = -1f) {
-		// Ignore delay if disabled (coroutines can't be started with the component disabled)
-		if(isActiveAndEnabled && _delay > 0) {
+	public void Refresh(string _sku, float _delay = -1f) {
+
+        // Only show classic dragons bar
+        bool classic = DragonManager.GetDragonData(_sku).type == IDragonData.Type.CLASSIC;
+        gameObject.SetActive(classic);
+
+        // Nope
+        if (!classic) return;
+
+
+        // Ignore delay if disabled (coroutines can't be started with the component disabled)
+        if (isActiveAndEnabled && _delay > 0) {
 			// Start internal coroutine
 			StartCoroutine(RefreshDelayed(_sku, _delay));
 		} else {
@@ -111,13 +112,49 @@ public class DragonXPBar : MonoBehaviour {
 		}
 	}
 
-	//------------------------------------------------------------------------//
-	// INTERNAL METHODS														  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Creates and initialize as many separators as desired to the pool.
+    /// <summary>
+	/// Update all fields with given dragon data.
+	/// Heirs should call the base when overriding.
 	/// </summary>
-	private void ResizeSeparatorsPool(int _capacity) {
+	/// <param name="_data">Dragon data.</param>
+	public void Refresh(DragonDataClassic _data)
+    {
+
+        // Store new dragon data
+        m_dragonData = _data;
+
+        // XP Bar value
+        if (m_xpBar != null)
+        {
+            m_xpBar.minValue = 0;
+            m_xpBar.maxValue = 1;
+            if (m_linear)
+            {
+                float deltaPerLevel = 1f / (_data.progression.maxLevel);
+                m_xpBar.value = _data.progression.progressByLevel + Mathf.Lerp(0f, deltaPerLevel, _data.progression.progressCurrentLevel);  // [AOC] This should do it!
+            }
+            else
+            {
+                m_xpBar.value = _data.progression.progressByXp;
+            }
+        }
+
+        // Level Text
+        RefreshLevelText(_data.progression.level, _data.progression.maxLevel, false);
+
+        // Bar separators and markers
+        InitSeparators(_data);
+
+    }
+
+
+    //------------------------------------------------------------------------//
+    // INTERNAL METHODS														  //
+    //------------------------------------------------------------------------//
+    /// <summary>
+    /// Creates and initialize as many separators as desired to the pool.
+    /// </summary>
+    private void ResizeSeparatorsPool(int _capacity) {
 		// Ignore if separator is null
 		if(m_barSeparatorPrefab == null) return;
 
@@ -157,62 +194,14 @@ public class DragonXPBar : MonoBehaviour {
 		Refresh(data);
 	}
 
-	/// <summary>
-	/// Update all fields with given dragon data.
-	/// Heirs should call the base when overriding.
-	/// </summary>
-	/// <param name="_data">Dragon data.</param>
-	virtual protected void Refresh(DragonDataClassic _data) {
-		// Check params
-		if(_data == null) return;
-
-		// Bar value
-		if(m_xpBar != null) {
-			m_xpBar.minValue = 0;
-			m_xpBar.maxValue = 1;
-			if(m_linear) {
-				float deltaPerLevel = 1f/(_data.progression.maxLevel);
-				m_xpBar.value = _data.progression.progressByLevel + Mathf.Lerp(0f, deltaPerLevel, _data.progression.progressCurrentLevel);	// [AOC] This should do it!
-			} else {
-				m_xpBar.value = _data.progression.progressByXp;
-			}
-		}
-
-		// Level Text
-		RefreshLevelText(_data.progression.level, _data.progression.maxLevel, false);
-
-		// Things to update only when target dragon has changed
-		if(m_dragonData != _data) {
-			// Dragon Name
-			if(m_dragonNameText != null) {
-				switch(_data.GetLockState()) {
-					case DragonDataClassic.LockState.SHADOW:
-					case DragonDataClassic.LockState.REVEAL:
-						m_dragonNameText.Localize("TID_SELECT_DRAGON_UNKNOWN_NAME");
-						break;
-					default:
-						m_dragonNameText.Localize(_data.def.GetAsString("tidName"));
-						break;
-				}
-			}
-
-			if(m_dragonDescText != null) m_dragonDescText.Localize(_data.def.GetAsString("tidDesc"));
-			
-			// Bar separators and markers
-			InitSeparators(_data);
-
-			// Store new dragon data
-			m_dragonData = _data;
-		}
-	}
-
+	
 	/// <summary>
 	/// Refresh the level text with the given values. Optionally launch a level up animation.
 	/// </summary>
 	/// <param name="_currentLevel">Dragon's current level [0..N-1].</param>
 	/// <param name="_maxLevel">Dragon's max level [0..N-1].</param>
 	/// <param name="_animate">Whether to launch a level up animation or not.</param>
-	virtual protected void RefreshLevelText(int _currentLevel, int _maxLevel, bool _animate) {
+	protected void RefreshLevelText(int _currentLevel, int _maxLevel, bool _animate) {
 		// Ignore if level text is not defined
 		if(m_levelText == null) return;
 

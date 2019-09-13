@@ -64,7 +64,7 @@ public class ResultsScreenStepDragonUnlocked : ResultsScreenSequenceStep {
 	/// </summary>
 	override protected void DoInit() {
 		// Get next dragon's data
-		m_dragonData = DragonManager.GetNextDragonData(DragonManager.currentDragon.def.sku);
+		m_dragonData = DragonManager.GetNextDragonData(DragonManager.CurrentDragon.def.sku);
 
 		// Has next dragon been unlocked during this run?
 		// IMpossible if there is no next dragon

@@ -10,11 +10,12 @@ Set objOutputFile 		= objFSO.CreateTextFile("spawnersFlyingPig.txt", 2, true)
 
 
 Set objInputFileVillage = objFSO.OpenTextFile("..\..\Assets\Game\Scenes\Levels\Spawners\SP_Medieval_Final_Village.unity")
+Set objInputFileVillageForest = objFSO.OpenTextFile("..\..\Assets\Game\Scenes\Levels\Spawners\SP_Medieval_Final_Village_Forest.unity")
 Set objInputFileCastleMarket = objFSO.OpenTextFile("..\..\Assets\Game\Scenes\Levels\Spawners\SP_Medieval_Final_Castle_Market.unity")
 Set objInputFileCastleMines = objFSO.OpenTextFile("..\..\Assets\Game\Scenes\Levels\Spawners\SP_Medieval_Final_Castle_Mines.unity")
 Set objInputFileDark = objFSO.OpenTextFile("..\..\Assets\Game\Scenes\Levels\Spawners\SP_Medieval_Final_Dark.unity")
 Dim CountPigs
-
+	REM SCENE 1: VILLAGE + FOREST
 	CountPigs = 0
 	Do until objInputFileVillage.AtEndOfStream
 		tmpStr = objInputFileVillage.ReadLine
@@ -22,8 +23,14 @@ Dim CountPigs
 			CountPigs = CountPigs + 1
 		End if	
 	Loop
+	Do until objInputFileVillageForest.AtEndOfStream
+		tmpStr = objInputFileVillageForest.ReadLine
+		If foundStrMatch2(tmpStr,"SP_FlyingPig") = true Then
+			CountPigs = CountPigs + 1
+		End if	
+	Loop	
 	objOutputFile.Write(Cstr(CountPigs) + vbCrLf)
-	
+	REM SCENE 2: CASTLE + MINES
 	CountPigs = 0
 	Do until objInputFileCastleMarket.AtEndOfStream
 		tmpStr = objInputFileCastleMarket.ReadLine
@@ -38,7 +45,7 @@ Dim CountPigs
 		End if	
 	Loop	
 	objOutputFile.Write(Cstr(CountPigs) + vbCrLf)
-	
+	REM SCENE 3: DARK
 	CountPigs = 0
 	Do until objInputFileDark.AtEndOfStream
 		tmpStr = objInputFileDark.ReadLine

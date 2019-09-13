@@ -48,9 +48,9 @@ public class MenuDragonSelector : UISelectorTemplate<IDragonData>, IPointerClick
 		// Subscribe to events
 		OnSelectionChanged.AddListener(OnSelectedDragonChanged);
 
-        // Initialize items list
+        // Initialize items list with all the dragons
         enableEvents = false;
-        Init(DragonManager.GetDragonsByOrder(m_dragonType));
+        Init(DragonManager.GetDragonsByOrder(IDragonData.Type.ALL));
 
         // Figure out initial index
         string selectedSku = InstanceManager.menuSceneController.selectedDragon;
@@ -150,11 +150,11 @@ public class MenuDragonSelector : UISelectorTemplate<IDragonData>, IPointerClick
 			// Is it a pet?
 			// Look for pets first, since pets are children of dragons and looking for dragons will result in a false positive!
 			if(pet != null) {
-				// Yes! Go to the pet screen
-				targetScreen = InstanceManager.menuSceneController.GetPetScreenForCurrentMode();	// [AOC] Lab or regular pet screen?
+                // Yes! Go to the pet screen
+                targetScreen = MenuScreen.PETS;
 
-				// Do a fun animation on the pet!
-				pet.SetAnim(MenuPetPreview.Anim.IN);
+                // Do a fun animation on the pet!
+                pet.SetAnim(MenuPetPreview.Anim.IN);
 				break;
 			}
 

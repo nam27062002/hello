@@ -168,8 +168,7 @@ public class CollectiblesManager : UbiBCN.SingletonMonoBehaviour<CollectiblesMan
 		GameObject[] chestSpawners = GameObject.FindGameObjectsWithTag(CollectibleChest.TAG);	// Finding by tag is much faster than finding by type
 		if(chestSpawners.Length > 0) {
             // Special case: chests are disabled during FTUX, TOURNAMENT and SPECIAL DRAGONS
-			if(UsersManager.currentUser.gamesPlayed < GameSettings.ENABLE_CHESTS_AT_RUN || SceneController.mode == SceneController.Mode.TOURNAMENT
-               || SceneController.mode == SceneController.Mode.SPECIAL_DRAGONS) {
+			if(UsersManager.currentUser.gamesPlayed < GameSettings.ENABLE_CHESTS_AT_RUN || SceneController.mode == SceneController.Mode.TOURNAMENT) {
 				for(int i = 0; i < chestSpawners.Length; i++) {
 					GameObject.Destroy(chestSpawners[i]);
 				}
@@ -273,7 +272,7 @@ public class CollectiblesManager : UbiBCN.SingletonMonoBehaviour<CollectiblesMan
 			// Filter by dragon tier? (blockers, etc.)
 			List<GameObject> filteredCollectibles = new List<GameObject>();
 			if(_filterTier) {
-				DragonTier currentTier = DragonManager.IsReady() ? DragonManager.currentDragon.tier : DragonTier.TIER_0;
+				DragonTier currentTier = DragonManager.IsReady() ? DragonManager.CurrentDragon.tier : DragonTier.TIER_0;
 				filteredCollectibles = allCollectibles.Where((GameObject _go) => { 
 					T c = _go.GetComponent<T>();
 					return currentTier >= c.requiredTier && currentTier <= c.maxTier;

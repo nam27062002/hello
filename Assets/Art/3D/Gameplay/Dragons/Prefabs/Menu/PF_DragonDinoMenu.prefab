@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 11400216}
   - component: {fileID: 11487524}
   - component: {fileID: 114602270819543542}
+  - component: {fileID: 114586238800467946}
   m_Layer: 0
   m_Name: PF_DragonDinoMenu
   m_TagString: Untagged
@@ -25,9 +26,9 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 171808}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -17.50837, y: 47.036327, z: -111.06141}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1.75, y: 1.75, z: 1.75}
   m_Children:
   - {fileID: 4509106127034790}
   - {fileID: 4262756496194082}
@@ -62,27 +63,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_sku: dragon_dino
+  m_offsetModifier: {x: -1.25, y: -0.5, z: 0}
+  m_baseScaleModifier: 1
   m_altAnimConfigs:
   - m_range:
-      min: 3
-      max: 6
+      min: 4
+      max: 8
     m_allowFaceDetails: 1
-    m_loopsMin: 3
-    m_loopsMax: 4
-    m_special: 0
-    m_timeToNext: 0
-    m_isPreferedAnimation: 0
-    m_animationLevel: 0
-  - m_range:
-      min: 3
-      max: 6
-    m_allowFaceDetails: 0
     m_loopsMin: 1
     m_loopsMax: 1
-    m_special: 0
+    m_special: 1
     m_timeToNext: 0
     m_isPreferedAnimation: 0
-    m_animationLevel: 0
+    m_animationLevel: 4
   m_hasFire: 0
   m_dragonFlameStandard: {fileID: 0}
   m_bloodParticle: {fileID: 0}
@@ -2483,6 +2476,7 @@ MonoBehaviour:
     offset: {x: 0, y: 0, z: 0}
     scale: 1
     orientate: 0
+  m_toggleEventType: 17
 --- !u!114 &114130170429143548
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2591,6 +2585,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_point: 13
+--- !u!114 &114586238800467946
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 171808}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5079a9557e28740cba2dc15aa05422d4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_prefab: {fileID: 1927669451800062, guid: 835df2ea7a5e1e841a842b7ab8a5632c, type: 2}
+  m_materials:
+  - {fileID: 2100000, guid: 901275363d731470f825797afd86dcc1, type: 2}
+  - {fileID: 2100000, guid: 9176f5222aa7948898b709ffb9fca480, type: 2}
+  - {fileID: 2100000, guid: de5cff992f1244b9089de5fe5db0c597, type: 2}
+  - {fileID: 2100000, guid: a3c0b2ab375eb467b87c40a0cea2c8aa, type: 2}
+  m_AnimationName: MenuAlt0
 --- !u!114 &114602270819543542
 MonoBehaviour:
   m_ObjectHideFlags: 1
