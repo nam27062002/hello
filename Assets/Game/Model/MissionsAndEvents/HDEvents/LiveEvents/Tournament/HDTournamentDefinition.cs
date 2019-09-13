@@ -47,7 +47,7 @@ public class HDTournamentDefinition : HDLiveEventDefinition{
 
 	public HDLiveData.DragonBuild m_build = new HDLiveData.DragonBuild();
 
-	protected IDragonData m_dragonData = new DragonDataClassic();
+    protected IDragonData m_dragonData = null;
 	public IDragonData dragonData {
 		get { return m_dragonData; }
 	}
@@ -265,7 +265,7 @@ public class HDTournamentDefinition : HDLiveEventDefinition{
 		m_entrance.Clean();
 		m_leaderboard.Clean();
 		m_build.Clean();
-		m_dragonData = new DragonDataClassic();
+        m_dragonData = null;
 		m_rewards.Clear();
 	}
 

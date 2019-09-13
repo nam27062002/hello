@@ -87,14 +87,14 @@ public class PopupSharkPetReward : PopupInfoPet {
 		PopupManager.Clear(true);
 
 		// Make sure selected dragon is owned
-		InstanceManager.menuSceneController.SetSelectedDragon(DragonManager.currentDragon.def.sku);  // Current dragon is the last owned selected dragon
+		InstanceManager.menuSceneController.SetSelectedDragon(DragonManager.CurrentDragon.def.sku);  // Current dragon is the last owned selected dragon
 
 		// Move to the pets screen, focusing on the rewarded pet
 		// Add a frame of delay to make sure everyone has been notified that the selected dragon has changed
 		MenuTransitionManager screensController = InstanceManager.menuSceneController.transitionManager;
 		UbiBCN.CoroutineManager.DelayedCallByFrames(() => {
-			MenuScreen targetPetScreen = InstanceManager.menuSceneController.GetPetScreenForCurrentMode();    // [AOC] Different pet screen if the current dragon is a special one
-			PetsScreenController petScreen = screensController.GetScreenData(targetPetScreen).ui.GetComponent<PetsScreenController>();
+            MenuScreen targetPetScreen = MenuScreen.PETS;
+            PetsScreenController petScreen = screensController.GetScreenData(targetPetScreen).ui.GetComponent<PetsScreenController>();
 			petScreen.Initialize(PET_SKU);
 			screensController.GoToScreen(targetPetScreen, true);
 		}, 1);

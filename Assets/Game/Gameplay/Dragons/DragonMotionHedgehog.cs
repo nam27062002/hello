@@ -63,7 +63,7 @@ public class DragonMotionHedgehog : DragonMotion {
         m_powers = GetComponentInChildren<DragonHedgehogPowers>();
         
         DragonDataSpecial dataSpecial = InstanceManager.player.data as DragonDataSpecial;
-        m_powerLevel = dataSpecial.powerLevel;
+        m_powerLevel = dataSpecial.m_powerLevel;
         m_canSpin = false;
 			// Wait for boost config to end
 		StartCoroutine( DelayedBoostSet());

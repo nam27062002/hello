@@ -483,20 +483,24 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 		SetFlag(StateFlag.POPUP_DISPLAYED, true);
 	}
 
-	/// <summary>
-	/// Checks the lab unlock popup.
-	/// </summary>
-	private void CheckLabUnlock() {
-		// Only in the right screen
-		// [AOC] The lab unlock popup can also appear in the Lab, but let the screen control it in that case, since there shouln't be conflicts with other popups
-		if(m_currentScreen != MenuScreen.DRAGON_SELECTION) return;
 
-		// Can we show the popup?
-		PopupController popup = null;
-		if(PopupLabUnlocked.Check()) {
-			popup = PopupManager.LoadPopup(PopupLabUnlocked.PATH);
-			PopupLabUnlocked labPopup = popup.GetComponent<PopupLabUnlocked>();
-			labPopup.Init(m_currentScreen);
+	/// <summary>
+	/// Checks the leagues unlock popup.
+	/// </summary>
+	private void CheckLeaguesUnlock() {
+		// Show it only in the goals section (showing missions by default)
+		if(m_currentScreen != MenuScreen.MISSIONS
+		&& m_currentScreen != MenuScreen.GLOBAL_EVENTS
+		&& m_currentScreen != MenuScreen.LEAGUES) {
+			return;
+		}
+
+        // Can we show the popup?
+        PopupController popup = null;
+		if(PopupLeaguesUnlocked.Check()) {
+			popup = PopupManager.LoadPopup(PopupLeaguesUnlocked.PATH);
+            PopupLeaguesUnlocked leaguesPopup = popup.GetComponent<PopupLeaguesUnlocked>();
+            leaguesPopup.Init(m_currentScreen);
 			PopupManager.EnqueuePopup(popup);
 		}
 
@@ -506,10 +510,37 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 		}
 	}
 
-	/// <summary>
-	/// Checks the daily rewards popup.
+
+    /// <summary>
+	/// Checks the leagues dragons popup.
 	/// </summary>
-	private void CheckDailyRewards() {
+	private void CheckLegendaryDragonsUnlock()
+    {
+
+        // Show it only in the dragon selection section
+        if (m_currentScreen != MenuScreen.DRAGON_SELECTION) return;
+
+        // Can we show the popup?
+        PopupController popup = null;
+        if (PopupSpecialDragonsUnlocked.Check())
+        {
+            popup = PopupManager.LoadPopup(PopupSpecialDragonsUnlocked.PATH);
+            PopupSpecialDragonsUnlocked specialsPopup = popup.GetComponent<PopupSpecialDragonsUnlocked>();
+            specialsPopup.Init(m_currentScreen);
+            PopupManager.EnqueuePopup(popup);
+        }
+
+        // Set flag
+        if (popup != null)
+        {
+            SetFlag(StateFlag.POPUP_DISPLAYED, true);
+        }
+    }
+
+    /// <summary>
+    /// Checks the daily rewards popup.
+    /// </summary>
+    private void CheckDailyRewards() {
 		// Never if feature not enabled
 		if(!FeatureSettingsManager.IsDailyRewardsEnabled()) return;
 
@@ -578,6 +609,26 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 		}
 	}
 
+	/// <summary>
+	/// Checks whether the Golden Fragments Conversion popup must be displayed or not and does it.
+	/// </summary>
+	private void CheckGoldenFragmentsConversion() {
+		// Only in the right screen
+		if(m_currentScreen != MenuScreen.DRAGON_SELECTION) return;
+
+		// Can we show the popup?
+		PopupController popup = null;
+		if(PopupGoldenFragmentConversion.Check()) {
+			// Yes! Just do it, no extra initialization needed
+			popup = PopupManager.EnqueuePopup(PopupGoldenFragmentConversion.PATH);
+		}
+
+		// Set flag
+		if(popup != null) {
+			SetFlag(StateFlag.POPUP_DISPLAYED, true);
+		}
+	}
+
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
@@ -609,12 +660,14 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 		CheckPromotedIAPs();
 		CheckInterstitialAds();
 		//CheckTermsAndConditions();
+		CheckGoldenFragmentsConversion();
 		CheckCustomizerPopup();
 		CheckDailyRewards();
 		CheckPreRegRewards();
 		CheckShark();
 		CheckAnimojiTutorial();
-		CheckLabUnlock();
+        CheckLegendaryDragonsUnlock();
+        CheckLeaguesUnlock();
 		CheckRating();
 		CheckSurvey();
 		CheckSilentNotification();

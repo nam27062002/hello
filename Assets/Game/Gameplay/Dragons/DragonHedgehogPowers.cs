@@ -89,7 +89,7 @@ public class DragonHedgehogPowers : MonoBehaviour, IBroadcastListener {
         m_healthBehaviour = GetComponentInParent<DragonHealthBehaviour>();
         
         
-        m_powerLevel = dataSpecial.powerLevel;
+        m_powerLevel = dataSpecial.m_powerLevel;
         
         m_spikesLvl1.SetActive( m_powerLevel > 1 );
         m_spikesLvl2.SetActive( m_powerLevel > 2 );

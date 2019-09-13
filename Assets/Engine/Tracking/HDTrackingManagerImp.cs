@@ -1170,7 +1170,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
 
     public override void Notify_RateThisApp(ERateThisAppResult result) {
         int dragonProgression = 0;
-        IDragonData dragonData = DragonManager.currentDragon;
+        IDragonData dragonData = DragonManager.CurrentDragon;
         if (dragonData != null)
         {
             dragonProgression = UsersManager.currentUser.GetDragonProgress(dragonData);

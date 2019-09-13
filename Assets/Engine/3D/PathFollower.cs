@@ -115,7 +115,7 @@ public class PathFollower : MonoBehaviour {
 	public Vector3 offset {
 		get { return m_offset; }
 		set { 
-			m_offset = offset; 
+			m_offset = value; 
 			m_dirty = true;
 		}
 	}
@@ -288,6 +288,13 @@ public class PathFollower : MonoBehaviour {
 		if(m_tween != null && m_tween.IsPlaying()) {
 			m_tween.Pause();
 		}
+	}
+
+	/// <summary>
+	/// Mark as dirty to force a refresh.
+	/// </summary>
+	public void MarkAsDirty() {
+		m_dirty = true;
 	}
 
 	//------------------------------------------------------------------//

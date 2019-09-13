@@ -39,7 +39,8 @@ public class MenuShowConditionallyEditor : Editor {
 
 	private SerializedProperty m_checkSelectedDragonProp = null;
 	private SerializedProperty m_hideForDragonsProp = null;
-	private SerializedProperty m_targetDragonSkuProp = null;
+    private SerializedProperty m_showOnlyForType = null;
+    private SerializedProperty m_targetDragonSkuProp = null;
 	private SerializedProperty m_showIfShadowProp = null;
 	private SerializedProperty m_showIfLockedProp = null;
 	private SerializedProperty m_showIfAvailableProp = null;
@@ -69,7 +70,8 @@ public class MenuShowConditionallyEditor : Editor {
 
 		m_checkSelectedDragonProp = serializedObject.FindProperty("m_checkSelectedDragon");
 		m_hideForDragonsProp = serializedObject.FindProperty("m_hideForDragons");
-		m_targetDragonSkuProp = serializedObject.FindProperty("m_targetDragonSku");
+        m_showOnlyForType = serializedObject.FindProperty("m_showOnlyForType");
+        m_targetDragonSkuProp = serializedObject.FindProperty("m_targetDragonSku");
 		m_showIfShadowProp = serializedObject.FindProperty("m_showIfShadow");
 		m_showIfLockedProp = serializedObject.FindProperty("m_showIfLocked");
 		m_showIfAvailableProp = serializedObject.FindProperty("m_showIfAvailable");
@@ -143,13 +145,16 @@ public class MenuShowConditionallyEditor : Editor {
 			// Indent in
 			EditorGUI.indentLevel++;
 
-			// Disable the whole group if m_hideForDragons property is set to either NONE or ALL
 			EditorGUILayout.PropertyField(m_hideForDragonsProp, true);
-			EditorGUI.BeginDisabledGroup(
-				(m_hideForDragonsProp.enumValueIndex != (int)MenuShowConditionally.HideForDragons.NONE)
-				&& (m_hideForDragonsProp.enumValueIndex != (int)MenuShowConditionally.HideForDragons.ALL)
-			);
-			{
+            
+            EditorGUILayout.PropertyField(m_showOnlyForType, true);
+
+            // Disable the whole group if m_hideForDragons property is set to either NONE or ALL
+            EditorGUI.BeginDisabledGroup(
+                (m_hideForDragonsProp.enumValueIndex == (int)MenuShowConditionally.HideForDragons.ALL)
+                || (m_hideForDragonsProp.enumValueIndex == (int)MenuShowConditionally.HideForDragons.NONE)
+            );
+            {
 				// Draw all ownership properties
 				EditorGUILayout.PropertyField(m_targetDragonSkuProp, true);
 				EditorGUILayout.PropertyField(m_showIfShadowProp, true);

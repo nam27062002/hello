@@ -42,7 +42,6 @@ public class ShareScreenDragon : IShareScreen {
 	public MenuDragonLoader dragonLoader { get { return m_dragonLoader; } }
 	[Space]
 	[SerializeField] private Image m_tierIcon = null;
-	[SerializeField] private GameObject m_labIcon = null;
 	[Space]
 	[SerializeField] private GameObject m_powerGroup = null;
 	[SerializeField] private PowerIcon m_powerIcon = null;
@@ -139,18 +138,12 @@ public class ShareScreenDragon : IShareScreen {
 			}
 		}
 
-		// Tier Icon - only for classic dragons
+		// Tier Icon 
 		if(m_tierIcon != null) {
-			m_tierIcon.gameObject.SetActive(!isSpecial);
-			if(!isSpecial) {
-				m_tierIcon.sprite = ResourcesExt.LoadFromSpritesheet(UIConstants.UI_SPRITESHEET_PATH, m_dragonData.tierDef.GetAsString("icon"));
-			}
+            string sprite = m_dragonData.tierDef.GetAsString("icon");
+            m_tierIcon.sprite = ResourcesExt.LoadFromSpritesheet(UIConstants.UI_SPRITESHEET_PATH, sprite);
 		}
 
-		// Lab Icon - only for special dragons
-		if(m_labIcon != null) {
-			m_labIcon.SetActive(isSpecial);
-		}
 
 		// Power Info - Only if classic dragon and a skin is equipped
 		if(m_powerGroup != null) {

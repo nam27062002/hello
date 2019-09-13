@@ -83,9 +83,9 @@ public class ScoreFeedback : MonoBehaviour {
 	/// <param name="_score">Score amount to be displayed.</param>
 	public void SetScore(int _score) {
 		if (!m_dragonScaleCached) {
-			if (DragonManager.currentDragon != null) {
+			if (DragonManager.CurrentDragon != null) {
 				// Cache scale factor for current dragon to avoid a constant acess to the dragon definition and parsing of the value
-				m_dragonScaleFactor = DragonManager.currentDragon.def.GetAsFloat("scoreTextThresholdMultiplier", 1f);
+				m_dragonScaleFactor = DragonManager.CurrentDragon.def.GetAsFloat("scoreTextThresholdMultiplier", 1f);
 				m_dragonScaleCached = true;
 			}
 		}
