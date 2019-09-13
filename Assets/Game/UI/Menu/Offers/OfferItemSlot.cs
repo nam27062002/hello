@@ -137,6 +137,7 @@ public class OfferItemSlot : MonoBehaviour, IBroadcastListener {
 			// Instantiate preview! :)
 			if(previewPrefab != null) {
 				GameObject previewInstance = GameObject.Instantiate<GameObject>(previewPrefab);
+				previewInstance.SetActive(true);
 				m_preview = previewInstance.GetComponent<IOfferItemPreview>();
 			}
 		}
