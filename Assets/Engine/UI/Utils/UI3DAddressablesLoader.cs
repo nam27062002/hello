@@ -240,6 +240,9 @@ public class UI3DAddressablesLoader : MonoBehaviour {
             // Do it!
             m_loadedInstance = Instantiate(_prefabObj, m_container.transform, false);
             if (m_loadedInstance != null) {
+				// Make sure it's activated (the prefab might be saved disabled for faster loading)
+				m_loadedInstance.SetActive(true);
+
                 // Apply layer
                 Renderer[] renderers = m_loadedInstance.transform.GetComponentsInChildren<Renderer>(false);
                 for (int i = 0; i < renderers.Length; ++i) {
