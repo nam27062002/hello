@@ -215,8 +215,11 @@ public class RewardInfoUI : MonoBehaviour {
 
 			// Dragon
 			case Metagame.RewardDragon.TYPE_CODE: {
-				// Aux vars
-				IDragonData dragonData = DragonManager.GetDragonData(_rewardData.sku);
+                // Select the rewarded dragon
+                InstanceManager.menuSceneController.dragonSelector.SetSelectedDragon(_rewardData.sku);
+
+                // Aux vars
+                IDragonData dragonData = DragonManager.GetDragonData(_rewardData.sku);
 
 				// Initialize dragon info
 				if(m_dragonName != null) m_dragonName.Localize("TID_DRAGON_UNLOCK", dragonData.def.GetLocalized("tidName"));
