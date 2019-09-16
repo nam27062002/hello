@@ -250,9 +250,10 @@ public class ContentManager
         // Specials
         kDefinitionFiles.Add(DefinitionsCategory.SPECIAL_DRAGON_TIERS, new string[]{"Rules/specialDragonTierDefinitions"});
         kDefinitionFiles.Add(DefinitionsCategory.SPECIAL_DRAGON_POWERS, new string[]{"Rules/specialDragonPowerDefinitions"});
+        kDefinitionFiles.Add(DefinitionsCategory.SPECIAL_DRAGON_STATS_UPGRADES, new string[] {"Rules/specialDragonStatsUpgradesDefinitions"});
 
-		// UI
-		kDefinitionFiles.Add(DefinitionsCategory.SHARE_LOCATIONS, new string[] { "Rules/shareLocationDefinitions" });
+        // UI
+        kDefinitionFiles.Add(DefinitionsCategory.SHARE_LOCATIONS, new string[] { "Rules/shareLocationDefinitions" });
         kDefinitionFiles.Add(DefinitionsCategory.ICONS, new string[] { "Rules/iconDefinitions" });
 
 

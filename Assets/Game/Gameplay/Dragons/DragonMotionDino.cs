@@ -73,9 +73,43 @@ public class DragonMotionDino : DragonMotion {
         m_snapSensor = sensors.Find("SnapSensor");
         
         DragonDataSpecial dataSpecial = InstanceManager.player.data as DragonDataSpecial;
-        m_powerLevel = dataSpecial.powerLevel;
+        m_powerLevel = dataSpecial.m_powerLevel;
         m_tier = dataSpecial.tier;
-        m_walkSpeed = m_walkSpeedByTier[(int)m_tier];
+		//TONI
+        //m_walkSpeed = m_walkSpeedByTier[(int)m_tier];
+		int dinoLevel = dataSpecial.Level;
+		int order = 0;
+		string dinoSku = dataSpecial.specialTierDef.sku;
+		if (dinoSku == "dino_02")
+			order = 1; 
+		if (dinoSku == "dino_03")
+			order = 2;
+		if (dinoSku == "dino_04")
+			order = 3;	
+		switch (order) 
+		{
+		case 0:
+			{
+				m_walkSpeed = m_walkSpeedByTier [0];
+			}
+			break;
+		case 1:
+			{
+				m_walkSpeed = m_walkSpeedByTier [1];
+			}
+			break;
+		case 2:
+			{
+				m_walkSpeed = m_walkSpeedByTier [2];
+			}
+			break;
+		case 3:
+			{
+				m_walkSpeed = m_walkSpeedByTier [3];
+			}
+			break;
+		}
+		//TONI  
         UpdatePowerAreas();
         UpdateSpeedToKill();
         

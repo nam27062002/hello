@@ -146,7 +146,8 @@ public class EggManager : Singleton<EggManager> {
 			instance.m_rewardDropRate.randomState = s.Deserialize(PlayerPrefs.GetString(RANDOM_STATE_PREFS_KEY));
 		}
 	}
-    
+
+
 	/// <summary>
 	/// Monobehaviour update implementation.
 	/// </summary>

@@ -37,8 +37,8 @@ public class ShowHideAnimator : MonoBehaviour {
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
 	// Use to debug specific objects
-	public const bool DEBUG_ENABLED = false;
-	public const string DEBUG_TARGET = "ButtonUnlockWithCoins_TEST";
+	public const bool DEBUG_ENABLED = true;
+	public const string DEBUG_TARGET = "UnlockButtonsSpecial";
 
 	public enum TweenType {
 		NONE,

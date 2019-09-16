@@ -21,6 +21,7 @@ GameObject:
   - component: {fileID: 4306197159325864}
   - component: {fileID: 198412358447451466}
   - component: {fileID: 199242983288165854}
+  - component: {fileID: 114070045418208114}
   m_Layer: 0
   m_Name: Flames
   m_TagString: Untagged
@@ -350,6 +351,20 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1756821997840194}
   m_Mesh: {fileID: 4300006, guid: 824063a80745c7b4994565e850666694, type: 3}
+--- !u!114 &114070045418208114
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1026900883339052}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3128bd630f39645c4a1e03d94b7008f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_transform: {fileID: 4678305539206844}
+  m_resetFirst: 1
+  m_whenScale: 0
 --- !u!114 &114381906824731576
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -424,7 +439,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 0
-  randomSeed: 2093027513
+  randomSeed: -1854898698
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -3785,7 +3800,7 @@ ParticleSystem:
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 0
-  randomSeed: 2034242904
+  randomSeed: 1136443309
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -7146,7 +7161,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 0
-  randomSeed: -579413270
+  randomSeed: -553722482
   InitialModule:
     serializedVersion: 3
     enabled: 1

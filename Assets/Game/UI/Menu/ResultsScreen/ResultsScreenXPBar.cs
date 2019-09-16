@@ -118,10 +118,10 @@ public class ResultsScreenXPBar : DragonXPBar {
 		//		 leveled up several times during a single game, disguises unlocked, etc.)
 
 		// Only for CLASSIC dragons!
-		Debug.Assert(DragonManager.currentDragon.type == IDragonData.Type.CLASSIC, "ONLY FOR CLASSIC DRAGONS!");
+		Debug.Assert(DragonManager.CurrentDragon.type == IDragonData.Type.CLASSIC, "ONLY FOR CLASSIC DRAGONS!");
 
 		// Initialize bar with current dragon's data
-		Refresh(DragonManager.currentDragon as DragonDataClassic);
+		Refresh(DragonManager.CurrentDragon as DragonDataClassic);
 		m_deltaPerLevel = 1f/(m_dragonData.progression.maxLevel);
 
 		// Change separators to work with the aux bar rather than the main bar
@@ -130,7 +130,7 @@ public class ResultsScreenXPBar : DragonXPBar {
 		}
 
 		// Load and pose next dragon's preview
-		m_nextDragonData = DragonManager.GetNextDragonData(DragonManager.currentDragon.def.sku);
+		m_nextDragonData = DragonManager.GetNextDragonData(DragonManager.CurrentDragon.def.sku);
 		if(m_nextDragonData != null) {
             string defaultIcon = IDragonData.GetDefaultDisguise(m_nextDragonData.def.sku).Get("icon");
 			m_nextDragonIcon.sprite = HDAddressablesManager.Instance.LoadAsset<Sprite>(defaultIcon);
