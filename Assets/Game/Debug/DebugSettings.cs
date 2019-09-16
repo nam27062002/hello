@@ -215,8 +215,26 @@ public class DebugSettings : SingletonScriptableObject<DebugSettings> {
 		set { m_spawnChance100 = value;}
 	}
 
-	// Metagame cheats
-	public static bool showHiddenPets {
+    static bool m_overrideSpawnPoint = false;
+    public static bool overrideSpawnPoint {
+        get { return m_overrideSpawnPoint; }
+        set { m_overrideSpawnPoint = value; }
+    }
+
+    static string m_spawnArea = "area1";
+    public static string spawnArea {
+        get { return m_spawnArea; }
+        set { m_spawnArea = value; }
+    }
+
+    static string m_spawnPoint = "v0";
+    public static string spawnPoint {
+        get { return m_spawnPoint; }
+        set { m_spawnPoint = value; }
+    }
+
+    // Metagame cheats
+    public static bool showHiddenPets {
 		get { return Prefs_GetBoolPlayer(SHOW_HIDDEN_PETS, false); }
 		set { Prefs_SetBoolPlayer(SHOW_HIDDEN_PETS, value); }
 	}

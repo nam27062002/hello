@@ -38,7 +38,7 @@ public class MenuDragonLoader : MonoBehaviour {
     // MEMBERS AND PROPERTIES											//
     //------------------------------------------------------------------//
     // Exposed setup
-    [SerializeField] private Mode m_mode = Mode.CURRENT_DRAGON;
+    [SerializeField] private Mode m_mode = Mode.MANUAL;
 	public Mode mode {
 		get { return m_mode; }
 		set {
@@ -244,7 +244,7 @@ public class MenuDragonLoader : MonoBehaviour {
             if ( def.Get("type") == "special" )
             {
                 // TODO: Change this and use a proper tier
-                DefinitionNode specialTierDef = DragonDataSpecial.GetDragonTierDef(_sku, DragonTier.TIER_1);
+                DefinitionNode specialTierDef = DragonDataSpecial.GetBaseDragonTierDef(_sku);
                 m_loadingPrefabName = specialTierDef.GetAsString(prefabColumn);
             }
             else
@@ -328,10 +328,13 @@ public class MenuDragonLoader : MonoBehaviour {
 		m_dragonInstance = newInstance.GetComponent<MenuDragonPreview>();
 		m_dragonInstance.SetAnim(m_anim);
 
-        // Reset scale if requiredDragonData
+        // Reset scale if required
         if (m_resetDragonScale) {
-			m_dragonInstance.transform.localScale = Vector3.one;
+			m_dragonInstance.transform.localScale = Vector3.one * m_dragonInstance.scaleModifier;
 		}
+
+		// Apply offset modifier
+		m_dragonInstance.transform.localPosition += m_dragonInstance.offsetModifier;
 
 		// Apply equipment
 		DragonEquip equip = m_dragonInstance.GetComponent<DragonEquip>();
@@ -403,7 +406,7 @@ public class MenuDragonLoader : MonoBehaviour {
 		switch(m_mode) {
 			case Mode.CURRENT_DRAGON: {
 				if(Application.isPlaying) {
-					LoadDragon(DragonManager.currentDragon.sku, DragonManager.currentDragon.disguise);
+					LoadDragon(DragonManager.CurrentDragon.sku, DragonManager.CurrentDragon.disguise);
 				} else {
 					LoadDragon(m_placeholderDragonSku, string.Empty, true);
 				}

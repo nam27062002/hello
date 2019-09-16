@@ -428,11 +428,11 @@ public class RewardManager : Singleton<RewardManager>, IBroadcastListener {
 		instance.m_isHighScore = false;
 
 		// Current dragon progress
-		if(DragonManager.currentDragon != null) {
+		if(DragonManager.CurrentDragon != null) {
 			// Depends on dragon type
-			switch(DragonManager.currentDragon.type) {
+			switch(DragonManager.CurrentDragon.type) {
 				case IDragonData.Type.CLASSIC: {
-					DragonDataClassic data = DragonManager.currentDragon as DragonDataClassic;
+					DragonDataClassic data = DragonManager.CurrentDragon as DragonDataClassic;
 					instance.m_dragonInitialLevel = data.progression.level;
 					instance.m_dragonInitialLevelProgress = data.progression.progressCurrentLevel;
 				} break;
@@ -446,8 +446,8 @@ public class RewardManager : Singleton<RewardManager>, IBroadcastListener {
 
 			// Next dragon locked?
 			// [AOC] Only makes sense for CLASSIC dragons
-			IDragonData nextDragonData = DragonManager.GetNextDragonData(DragonManager.currentDragon.def.sku);
-			if(nextDragonData != null && DragonManager.currentDragon.type == IDragonData.Type.CLASSIC) {
+			IDragonData nextDragonData = DragonManager.GetNextDragonData(DragonManager.CurrentDragon.def.sku);
+			if(nextDragonData != null && DragonManager.CurrentDragon.type == IDragonData.Type.CLASSIC) {
 				instance.m_nextDragonLocked = nextDragonData.isLocked;
 			} else {
 				instance.m_nextDragonLocked = false;

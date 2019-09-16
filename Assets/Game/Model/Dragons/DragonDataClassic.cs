@@ -260,14 +260,9 @@ public class DragonDataClassic : IDragonData {
 			if(!(dragons[order - 1] as DragonDataClassic).progression.isMaxLevel) {
 				// Can the dragon be acquired?
 				if(!m_unlockAvailable) {
-					bool canBeUnlocked = true;
-
-					// Check all required dragons are owned
-					for(int i = 0; i < m_unlockFromDragons.Count; ++i) {
-						canBeUnlocked = canBeUnlocked && DragonManager.IsDragonOwned(m_unlockFromDragons[i]);
-					}
-
-					if(canBeUnlocked) {
+					// Check if the required dragon is owned (or a biggest one)
+					int biggestOwned = DragonManager.biggestOwnedDragon.GetOrder();
+					if(biggestOwned >= DragonManager.GetDragonData(m_unlockFromDragon).GetOrder()) {
 						m_unlockAvailable = true;	// No need to check again in this run
 						return LockState.LOCKED;
 					} else {
@@ -282,15 +277,66 @@ public class DragonDataClassic : IDragonData {
 		return LockState.AVAILABLE;
 	}
 
-	//------------------------------------------------------------------------//
-	// STATS METHODS														  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Compute the max health at a specific level.
+
+    /// <summary>
+	/// Checks whether the given dragon can be unlocked with PC.
 	/// </summary>
-	/// <returns>The dragon max health at the given level.</returns>
-	/// <param name="_level">The level at which we want to know the max health value.</param>
-	public float GetMaxHealthAtLevel(int _level) {
+	/// <returns>Whether the given dragon can be unlocked with PC.</returns>
+	/// <param name="_data">Dragon to evaluate.</param>
+	public override bool CheckUnlockWithPC()
+    {
+        // Check lock state
+        bool canBeUnlocked = false;
+        switch (lockState)
+        {
+            case IDragonData.LockState.LOCKED:
+            case IDragonData.LockState.AVAILABLE:
+                {
+                    canBeUnlocked = true;
+                }
+                break;
+
+            case IDragonData.LockState.LOCKED_UNAVAILABLE:
+                {
+                    canBeUnlocked = HasPriceModifier(UserProfile.Currency.HARD);   // If there is a discount for this dragon, show even when unavailable
+                }
+                break;
+        }
+
+        return canBeUnlocked;
+    }
+
+    /// <summary>
+    /// Checks whether the given dragon can be unlocked with SC.
+    /// </summary>
+    /// <returns>Whether the given dragon can be unlocRefreshCooldownTimersked with SC.</returns>
+    /// <param name="_data">Dragon to evaluate.</param>
+    public override bool CheckUnlockWithSC()
+    {
+        // [AOC] Discounts affect visibility?
+        return (lockState == IDragonData.LockState.AVAILABLE);
+    }
+
+    /// <summary>
+    /// Reset all level / xp progression of the dragon
+    /// </summary>
+    public override void ResetProgression()
+    {
+        base.ResetProgression();
+
+        // Remove XP progression
+        progression.InitFromDef(m_def);
+    }
+
+    //------------------------------------------------------------------------//
+    // STATS METHODS														  //
+    //------------------------------------------------------------------------//
+    /// <summary>
+    /// Compute the max health at a specific level.
+    /// </summary>
+    /// <returns>The dragon max health at the given level.</returns>
+    /// <param name="_level">The level at which we want to know the max health value.</param>
+    public float GetMaxHealthAtLevel(int _level) {
 		float levelDelta = Mathf.InverseLerp(0, progression.maxLevel, _level);
 		return m_healthRange.Lerp(levelDelta);
 	}
@@ -324,6 +370,26 @@ public class DragonDataClassic : IDragonData {
 		float levelDelta = Mathf.InverseLerp(0, progression.maxLevel, _level);
 		return m_scaleRange.Lerp(levelDelta) + m_scaleOffset;
 	}
+
+    /// <summary>
+    /// Load the pets persistence.
+    /// </summary>
+    /// <param name="_dragonPersistenceData">Dragon persistence data.</param>
+    protected override void LoadPets(SimpleJSON.JSONNode _dragonPersistenceData)
+    {
+        // We must have all the slots, enforce list's size
+        m_pets.Resize(m_tierDef.GetAsInt("maxPetEquipped", 0), string.Empty);
+        if (_dragonPersistenceData.ContainsKey("pets"))
+        {
+            SimpleJSON.JSONArray equip = _dragonPersistenceData["pets"].AsArray;
+            for (int i = 0; i < equip.Count && i < m_pets.Count; i++)
+            {
+                m_pets[i] = equip[i];
+            }
+        }
+    }
+
+
 
 	//------------------------------------------------------------------//
 	// PERSISTENCE														//
@@ -363,4 +429,5 @@ public class DragonDataClassic : IDragonData {
 		_data.Add("xp", progression.xp.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
 		_data.Add("level", progression.level.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
 	}
+
 }

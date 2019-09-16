@@ -378,12 +378,12 @@ public class PopupCustomizer : MonoBehaviour {
 
 					case "pets": {
 						// Make sure selected dragon is owned (requirement for opening the pets screen)
-						InstanceManager.menuSceneController.SetSelectedDragon(DragonManager.currentDragon.def.sku);	// Current dragon is the last owned selected dragon
+						InstanceManager.menuSceneController.SetSelectedDragon(DragonManager.CurrentDragon.def.sku);	// Current dragon is the last owned selected dragon
 
 						// Initialize the pets screen
 						MenuTransitionManager screensController = InstanceManager.menuSceneController.transitionManager;
-						MenuScreen targetPetScreen = InstanceManager.menuSceneController.GetPetScreenForCurrentMode();	// [AOC] Different pet screen if the current dragon is a special one
-						PetsScreenController petScreen = screensController.GetScreenData(targetPetScreen).ui.GetComponent<PetsScreenController>();
+						MenuScreen targetPetScreen = MenuScreen.PETS;
+                                PetsScreenController petScreen = screensController.GetScreenData(targetPetScreen).ui.GetComponent<PetsScreenController>();
 
 						// Navigate to a specific pet?
 						if(tokens.Length > 1) {
@@ -406,7 +406,7 @@ public class PopupCustomizer : MonoBehaviour {
 
 					case "skins": {
 						// Make sure selected dragon is owned (requirement for opening the skins screen)
-						string targetDragon = DragonManager.currentDragon.def.sku;  // Current dragon is owned for sure
+						string targetDragon = DragonManager.CurrentDragon.def.sku;  // Current dragon is owned for sure
 						InstanceManager.menuSceneController.SetSelectedDragon(targetDragon);
 
 						// Check whether all assets required for the selected dragon are available or not
@@ -448,7 +448,23 @@ public class PopupCustomizer : MonoBehaviour {
 					// Add some delay to give enough time for SFX to be played and popup to be closed before losing focus
 					UbiBCN.CoroutineManager.DelayedCall(
 						() => {
-							Application.OpenURL(tokens[0]);
+                            string url = tokens[0];
+                            if (!string.IsNullOrEmpty(url))
+                            {
+                                // If the link leads to a survey then we need to add the user's dna profile id to the url so BI can cross survey results with information such as age or country retrieved from dna
+                                // This stuff is hardcoded because it was the fastest way to carry it out, otherwise it would've involved server and Calety
+                                if (url.Contains("typeform.com"))
+                                {
+                                    string dnaProfileId = HDTrackingManager.Instance.GetDNAProfileID();
+                                    if (string.IsNullOrEmpty(dnaProfileId))
+                                    {
+                                        dnaProfileId = "Not_Available";
+                                    }
+                                    url += "?UID=" + dnaProfileId;
+                                }
+
+                                Application.OpenURL(url);
+                            }
 						}, 0.25f
 					);
 				}

@@ -6,6 +6,9 @@ public class DragonAnimationEventsMenu : MonoBehaviour {
     ParticleSystem m_particleInstance;
     public ParticleData m_particleData;
 
+    public BroadcastEventType m_toggleEventType = BroadcastEventType.BOOST_TOGGLED;
+    protected ToggleParam m_toggleParam;
+
 	public void WingsSound(){}	// To be deleted
 
 	public void WingsIdleSound(){}
@@ -97,6 +100,25 @@ public class DragonAnimationEventsMenu : MonoBehaviour {
             m_particleInstance.transform.rotation = Quaternion.LookRotation(Vector3.up);
         }
         m_particleInstance.Play();
+    }
+
+
+    public void ToggleEvent( int value )
+    {
+        if (m_toggleParam == null)
+            m_toggleParam = new ToggleParam();
+
+        if ( value > 0 )
+        {
+            m_toggleParam.value = true;
+            Broadcaster.Broadcast(BroadcastEventType.BOOST_TOGGLED, m_toggleParam);
+        }
+        else
+        {   
+            m_toggleParam.value = false;
+            Broadcaster.Broadcast(BroadcastEventType.BOOST_TOGGLED, m_toggleParam);
+        }
+        
     }
 
 }

@@ -115,10 +115,7 @@ public class ResultsScreenStepRewards : ResultsScreenSequenceStep {
 	/// Do an extra summary line for this step when in special dragons mode.
 	/// </summary>
 	public void DoSpecialDragonsSummary() {
-		// Ignore if not in special dragons mode
-		if(SceneController.mode != SceneController.Mode.SPECIAL_DRAGONS) {
-			return;
-		}
+
 
 		// Show collectibles summary :)
 		ResultsScreenStepCollectibles collectiblesStep = m_controller.GetStep(ResultsScreenController.Step.COLLECTIBLES) as ResultsScreenStepCollectibles;
@@ -131,10 +128,7 @@ public class ResultsScreenStepRewards : ResultsScreenSequenceStep {
 	/// Show the run duration in the summary
 	/// </summary>
 	override public void ShowSummary() {
-		// Only in Special Dragons mode
-		if(SceneController.mode != SceneController.Mode.SPECIAL_DRAGONS) {
-			return;
-		}
+
 
 		// Show time group
 		m_controller.summary.ShowTime(m_controller.time, false);

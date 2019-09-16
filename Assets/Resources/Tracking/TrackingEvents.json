@@ -67,7 +67,9 @@
         { "pet1": { "Status": "OK" } },
         { "pet2": { "Status": "OK" } },
         { "pet3": { "Status": "OK" } },
-        { "pet4": { "Status": "OK" } }
+        { "pet4": { "Status": "OK" } },
+        { "batteryLevel": { "Status": "OK" } },
+        { "controlChoice": { "Status": "OK" } }        
       ],
       "APIs": [
         "dna",
@@ -159,7 +161,9 @@
         { "hungryLettersNb": { "Status": "OK" } },
         { "totalEggBought": { "Status": "OK" } },
         { "totalEggFound": { "Status": "OK" } },
-        { "totalEggOpened": { "Status": "OK" } }
+        { "totalEggOpened": { "Status": "OK" } },
+        { "batteryLevel": { "Status": "OK" } },
+        { "controlChoice": { "Status": "OK" } } 
       ],
       "APIs": [
         "dna",
@@ -1667,6 +1671,14 @@
     },
     "zone": {
       "Type": "STRING:45",
+      "Values": []
+    },
+    "batteryLevel": {
+      "Type": "STRING:8",
+      "Values": []
+    },
+    "controlChoice": {
+      "Type": "STRING:8",
       "Values": []
     }
   }

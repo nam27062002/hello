@@ -1638,6 +1638,8 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 		m_impulse = GameConstants.Vector3.zero;
 		m_rbody.velocity = m_impulse;
 		m_direction = m_impulse.normalized;
+		m_desiredRotation = m_transform.rotation;
+		m_angularVelocity = GameConstants.Vector3.zero;
 	}
 
 	public virtual void AddForce(Vector3 _force, bool isDamage = true) {
