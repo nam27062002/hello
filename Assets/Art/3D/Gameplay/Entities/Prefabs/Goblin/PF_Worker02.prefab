@@ -263,7 +263,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1341144563950862}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -178.88255, y: -7.1541605, z: -47.765114}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4907008846700206}
@@ -1010,16 +1010,6 @@ MonoBehaviour:
         rotation: {x: -14.67, y: 0, z: 0}
   - season: halloween
     groups:
-    - name: Hat
-      probability: 1
-      items:
-      - equipablePrefabName: PF_Saw_Hat
-        defaultItemLOW: 0
-        probability: 1
-        toDisableOnEquip: []
-        position: {x: 0, y: -0.09, z: -0.04}
-        scale: {x: 1.5, y: 1, z: 1.5}
-        rotation: {x: -14.67, y: 0, z: 0}
     - name: Mask
       probability: 1
       items:
@@ -1027,9 +1017,19 @@ MonoBehaviour:
         defaultItemLOW: 1
         probability: 1
         toDisableOnEquip: []
-        position: {x: 0, y: -0.16, z: 0.3}
-        scale: {x: 1.5, y: 1.5, z: 1.5}
-        rotation: {x: -14.67, y: 0, z: 0}
+        position: {x: 0, y: -0.12712991, z: 0.2850116}
+        scale: {x: 1.6121806, y: 1.6121805, z: 1.6121805}
+        rotation: {x: 343.0073, y: 359.95728, z: 0.01158255}
+    - name: Hat
+      probability: 1
+      items:
+      - equipablePrefabName: PF_Saw_Hat
+        defaultItemLOW: 0
+        probability: 1
+        toDisableOnEquip: []
+        position: {x: 0.06817353, y: 0.07598317, z: 0.17113325}
+        scale: {x: 1.3138478, y: 1.313848, z: 1.313848}
+        rotation: {x: 12.033442, y: 14.140202, z: 340.42023}
 --- !u!114 &114957247840157432
 MonoBehaviour:
   m_ObjectHideFlags: 1

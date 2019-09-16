@@ -933,18 +933,25 @@ MonoBehaviour:
     - name: import
       probability: 1
       items:
-      - equipablePrefabName: PF_Scissors_Hat
-        probability: 0.5
-        toDisableOnEquip: []
-        position: {x: 0, y: 0.2, z: 0.25}
-        scale: {x: 1, y: 1, z: 1}
-        rotation: {x: 17.95, y: 0, z: 9.06}
       - equipablePrefabName: PF_Party_Hat
-        probability: 0.5
+        defaultItemLOW: 0
+        probability: 1
         toDisableOnEquip: []
-        position: {x: 0, y: 0.2, z: 0.25}
-        scale: {x: 1, y: 1, z: 1}
-        rotation: {x: 17.95, y: 0, z: 9.06}
+        position: {x: -0.037796624, y: 0.15367432, z: 0.25}
+        scale: {x: 1.4004543, y: 1.4004539, z: 1.4004539}
+        rotation: {x: 19.755804, y: 15.6343355, z: 16.144693}
+  - season: halloween
+    groups:
+    - name: import
+      probability: 1
+      items:
+      - equipablePrefabName: PF_Scissors_Hat
+        defaultItemLOW: 0
+        probability: 1
+        toDisableOnEquip: []
+        position: {x: 0, y: 0.12464209, z: 0.25}
+        scale: {x: 1.7941338, y: 1.7941344, z: 1.7941344}
+        rotation: {x: 358.70435, y: 239.08755, z: 340.00076}
 --- !u!114 &114996206121179916
 MonoBehaviour:
   m_ObjectHideFlags: 1

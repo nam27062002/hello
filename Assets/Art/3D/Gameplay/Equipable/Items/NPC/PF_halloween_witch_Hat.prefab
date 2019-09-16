@@ -11,14 +11,14 @@ Prefab:
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 1790976277049704}
   m_IsPrefabParent: 1
---- !u!1 &1171708972616236
+--- !u!1 &1122003742286118
 GameObject:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   serializedVersion: 5
   m_Component:
-  - component: {fileID: 4470415407992168}
+  - component: {fileID: 4895080114700466}
   m_Layer: 0
   m_Name: itemView
   m_TagString: Untagged
@@ -37,7 +37,7 @@ GameObject:
   - component: {fileID: 33510410688141534}
   - component: {fileID: 23766876154415286}
   m_Layer: 0
-  m_Name: hat
+  m_Name: witchhat
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -51,6 +51,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4450451491151080}
+  - component: {fileID: 114765669598533926}
   m_Layer: 0
   m_Name: PF_halloween_witch_Hat
   m_TagString: Untagged
@@ -68,22 +69,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 4470415407992168}
+  - {fileID: 4895080114700466}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!4 &4470415407992168
-Transform:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1171708972616236}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children:
-  - {fileID: 4787282144209220}
-  m_Father: {fileID: 4450451491151080}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4787282144209220
@@ -93,10 +80,24 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1444218320549638}
   m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: -2.027, z: 0}
+  m_LocalPosition: {x: 0, y: -2.043, z: -0.02}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 4470415407992168}
+  m_Father: {fileID: 4895080114700466}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: -78.727005, y: 0, z: 0}
+--- !u!4 &4895080114700466
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1122003742286118}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 4787282144209220}
+  m_Father: {fileID: 4450451491151080}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &23766876154415286
@@ -140,3 +141,17 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1444218320549638}
   m_Mesh: {fileID: 4300004, guid: 825eb770957284166bbf9d1dafdff239, type: 3}
+--- !u!114 &114765669598533926
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1790976277049704}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6cd18c69356f446dfb8aebbf457a182a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_attachPoint: 5
+  m_sku: halloween_witch_hat
+  m_showOnResults: 1
