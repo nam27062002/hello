@@ -619,7 +619,7 @@ public class HDTournamentManager : HDLiveEventManager, IBroadcastListener {
 				// Add target amount
 				return LocalizationManager.SharedInstance.Localize(
 					m_tournamentDefinition.m_goal.m_desc,
-					FormatScore(m_tournamentDefinition.m_goal.m_targetAmount)
+					StringUtils.FormatNumber(m_tournamentDefinition.m_goal.m_targetAmount)
 				);
 			} break;
 

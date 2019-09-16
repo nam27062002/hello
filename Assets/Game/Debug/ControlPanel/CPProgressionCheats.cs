@@ -225,7 +225,7 @@ public class CPProgressionCheats : MonoBehaviour {
 			if(data.isOwned) targetDragon = data;
 		} else {
 			// Not in the menu, use current dragon's data
-			targetDragon = DragonManager.currentDragon;
+			targetDragon = DragonManager.CurrentDragon;
 		}
 
 		// Disable slider if dragon cannot be changed

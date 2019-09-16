@@ -274,11 +274,29 @@ public class LoadingSceneController : SceneController {
     /// <summary>
     /// First update.
     /// </summary>
-    void Start() {                
+    void Start() {
+		// Show User ID
         UpdateUserIdTxt();
-        m_versionTxt.text = GameSettings.internalVersion.ToString();
 
-        CustomAwake();                       
+		// Show game version
+		// [AOC] Show also platform for development builds
+		m_versionTxt.text = GameSettings.internalVersion.ToString();
+		Calety.Server.ServerConfig serverConfig = ServerManager.SharedInstance.GetServerConfig();
+		if(serverConfig != null) {
+			switch(serverConfig.m_eBuildEnvironment) {
+				case CaletyConstants.eBuildEnvironments.BUILD_LOCAL:		m_versionTxt.text += " LOCAL";	break;
+				case CaletyConstants.eBuildEnvironments.BUILD_DEV:			m_versionTxt.text += " DEV";	break;
+				case CaletyConstants.eBuildEnvironments.BUILD_STAGE:		m_versionTxt.text += " STAGE";	break;
+				case CaletyConstants.eBuildEnvironments.BUILD_STAGE_QC:		m_versionTxt.text += " QC";		break;
+				case CaletyConstants.eBuildEnvironments.BUILD_INTEGRATION:	m_versionTxt.text += " INT";	break;
+
+				case CaletyConstants.eBuildEnvironments.BUILD_PRODUCTION:
+				default:
+					break;	// Don't attach anything for prod builds
+			}
+		}
+
+		CustomAwake();                       
         // Load menu scene
         //GameFlow.GoToMenu();
         // [AOC] TEMP!! Simulate loading time with a timer for now

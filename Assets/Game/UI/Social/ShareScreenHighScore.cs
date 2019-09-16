@@ -93,4 +93,12 @@ public class ShareScreenHighScore : IShareScreen {
 			m_noPetsMessage.SetActive(equippedPets == 0);
 		}
 	}
+
+	/// <summary>
+	/// Layer mask for the background render.
+	/// </summary>
+	/// <returns>The culling mask to be assigned to the camera for the background render.</returns>
+	protected override int GetBackgroundCullingMask() {
+		return LayerMask.GetMask("Ground", "Default");	// We want to capture the dragon, add the Default layer as well!
+	}
 }

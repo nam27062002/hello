@@ -32,7 +32,6 @@ public class ResultsScreenStepCollectibles : ResultsScreenSequenceStep {
 	[Space]
 	[SerializeField] private NumberTextAnimator m_coinsCounter = null;
 	[SerializeField] private NumberTextAnimator m_pcCounter = null;
-    [SerializeField] private NumberTextAnimator m_gfCounter = null;
 
 	// Internal
 	private int m_collectedChests = 0;
@@ -52,10 +51,6 @@ public class ResultsScreenStepCollectibles : ResultsScreenSequenceStep {
 		// Never during FTUX
 		if(UsersManager.currentUser.gamesPlayed < GameSettings.ENABLE_CHESTS_AT_RUN) return false;
 
-		// Never show with special dragons (but we'll use this step to hide the chests on the Init())
-		if(SceneController.mode == SceneController.Mode.SPECIAL_DRAGONS) {
-			return false;
-		}
 
 		return true;
 	}
@@ -77,13 +72,8 @@ public class ResultsScreenStepCollectibles : ResultsScreenSequenceStep {
 		InitChests();
 
 		// Initialize egg
-		if(SceneController.mode == SceneController.Mode.SPECIAL_DRAGONS) {
-			// Show egg if found
-			m_controller.scene.eggSlot.gameObject.SetActive(m_controller.eggFound);
-		} else {
-			// Start with egg hidden
-			m_controller.scene.eggSlot.gameObject.SetActive(false);
-		}
+		// Start with egg hidden
+		m_controller.scene.eggSlot.gameObject.SetActive(false);
 	}
 
 	/// <summary>
@@ -93,7 +83,6 @@ public class ResultsScreenStepCollectibles : ResultsScreenSequenceStep {
 		// Init currency counters
 		m_coinsCounter.SetValue(m_controller.totalCoins, false);
 		m_pcCounter.SetValue(m_controller.totalPc, false);
-        m_gfCounter.SetValue(m_controller.totalGf, false);
 	}
 
 	/// <summary>
@@ -103,7 +92,6 @@ public class ResultsScreenStepCollectibles : ResultsScreenSequenceStep {
 		// Instantly finish counter texts animations
 		m_coinsCounter.SetValue(m_controller.totalCoins, false);
 		m_pcCounter.SetValue(m_controller.totalPc, false);
-        m_gfCounter.SetValue(m_controller.totalGf, false);
 	}
 
 	//------------------------------------------------------------------------//
@@ -113,13 +101,6 @@ public class ResultsScreenStepCollectibles : ResultsScreenSequenceStep {
 	/// Perform all required initializations for the chest slots.
 	/// </summary>
 	private void InitChests() {
-		// In special dragon mode, don't show any chests
-		if(SceneController.mode == SceneController.Mode.SPECIAL_DRAGONS) {
-			for(int i = 0; i < m_chestSlots.Length; ++i) {
-				m_chestSlots[i].gameObject.SetActive(false);
-			}
-			return;
-		}
 
 		// How many chests?
 		int collectedAndPending = 0;
@@ -202,11 +183,6 @@ public class ResultsScreenStepCollectibles : ResultsScreenSequenceStep {
 	/// A chest has entered, show its reward if appliable.
 	/// </summary>
 	public void OnChestRewardCheck() {
-		// In special dragon mode, don't show any chests
-		if(SceneController.mode == SceneController.Mode.SPECIAL_DRAGONS) {
-			return;
-		}
-
 		// Until we've checked all the chests!
 		if(m_checkedChests >= m_chestSlots.Length) return;
 
@@ -228,11 +204,6 @@ public class ResultsScreenStepCollectibles : ResultsScreenSequenceStep {
 					m_pcCounter.SetValue(m_controller.totalPc, true);
 				} break;
 
-                case Chest.RewardType.GF: {
-                    // Update total rewarded gf and update counter
-                    m_controller.totalGf += targetChest.rewardData.amount;
-                    m_gfCounter.SetValue(m_controller.totalGf, true);
-                } break;
 			}
 
 			// Update counters
@@ -266,11 +237,6 @@ public class ResultsScreenStepCollectibles : ResultsScreenSequenceStep {
 		// Aux vars
 		int numChests = m_collectedChests;
 		int numEggs = m_controller.eggFound ? 1 : 0;
-
-		// Don't show chests in special dragon mode
-		if(SceneController.mode == SceneController.Mode.SPECIAL_DRAGONS) {
-			numChests = -1;
-		}
 
 		// Do summary!
 		m_controller.summary.ShowCollectibles(numChests, numEggs);

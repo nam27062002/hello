@@ -409,12 +409,8 @@ public class PhotoScreenController : MonoBehaviour {
 				newSnapPoint = (toScene as RewardSceneController).photoCameraSnapPoint;
 			}
 
-			// b) Lab Scene
-			else if(toScene is LabDragonSelectionScene) {
-				newSnapPoint = (toScene as LabDragonSelectionScene).photoCameraSnapPoint;
-			}
 
-			// c) Dragon Selection Scene
+			// b) Dragon Selection Scene
 			else if(toScene is DragonSelectionScene) {
 				newSnapPoint = (toScene as DragonSelectionScene).photoCameraSnapPoint;
 			}

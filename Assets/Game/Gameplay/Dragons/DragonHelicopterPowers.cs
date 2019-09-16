@@ -87,7 +87,7 @@ public class DragonHelicopterPowers : MonoBehaviour, IBroadcastListener
         m_playerBreath = InstanceManager.player.breathBehaviour;
         m_eatBehaviour = InstanceManager.player.dragonEatBehaviour;
         
-        m_powerLevel = (InstanceManager.player.data as DragonDataSpecial).powerLevel;
+        m_powerLevel = (InstanceManager.player.data as DragonDataSpecial).m_powerLevel;
         m_tier = InstanceManager.player.data.tier;
         m_animator = GetComponent<Animator>();
         

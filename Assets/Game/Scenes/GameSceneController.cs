@@ -163,7 +163,7 @@ public class GameSceneController : GameSceneControllerBase {
             if (HDLiveDataManager.tournament.isActive) {
                 DragonManager.LoadDragon(HDLiveDataManager.tournament.tournamentData.tournamentDef.dragonData);
             } else {
-                DragonManager.LoadDragon(DragonManager.currentDragon.sku);	// currentDragon Will automatically select between classic and special dragons depending on active mode
+                DragonManager.LoadDragon(DragonManager.CurrentDragon.sku);	// currentDragon Will automatically select between classic and special dragons depending on active mode
             }
         }
 		
@@ -564,7 +564,9 @@ public class GameSceneController : GameSceneControllerBase {
 				// Start loading current level
 				LevelManager.SetCurrentLevel(UsersManager.currentUser.currentLevel);
 
-                if (HDLiveDataManager.tournament.isActive) {
+                if (DebugSettings.overrideSpawnPoint) {
+                    m_levelLoader = LevelManager.LoadLevel(DebugSettings.spawnArea);
+                } else if (HDLiveDataManager.tournament.isActive) {
                     HDTournamentDefinition tournamentDef = HDLiveDataManager.tournament.tournamentData.tournamentDef;
                     if (string.IsNullOrEmpty(tournamentDef.m_goal.m_area)) {
                         m_levelLoader = LevelManager.LoadLevelForDragon(tournamentDef.dragonData.sku);
@@ -572,7 +574,7 @@ public class GameSceneController : GameSceneControllerBase {
                         m_levelLoader = LevelManager.LoadLevel(tournamentDef.m_goal.m_area);  
                     }
                 } else {
-                    m_levelLoader = LevelManager.LoadLevelForDragon(DragonManager.currentDragon.sku);
+                    m_levelLoader = LevelManager.LoadLevelForDragon(DragonManager.CurrentDragon.sku);
                 }
                 
                 m_levelLoader.Perform(m_useSyncLoading);
@@ -809,7 +811,7 @@ public class GameSceneController : GameSceneControllerBase {
                     isSpecial = true;
                     // TODO
                     DragonDataSpecial specialData = dragonData as DragonDataSpecial;
-                    dragonProgress = specialData.GetLevel();
+                    dragonProgress = specialData.Level;
                 }
                 dragonSkin = dragonData.disguise;
                 pets = dragonData.pets;
@@ -827,7 +829,7 @@ public class GameSceneController : GameSceneControllerBase {
         {
             HDLeagueData leagueData = HDLiveDataManager.league.season.currentLeague;
             DragonDataSpecial specialData = InstanceManager.player.data as DragonDataSpecial;
-            string powerLevel = "P" + specialData.powerLevel;
+            string powerLevel = "P" + specialData.m_powerLevel;
             int specialOwned = UsersManager.currentUser.GetNumOwnedSpecialDragons();
             HDTrackingManager.Instance.Notify_LabGameStart(specialData.sku,
                                                             specialData.GetStat(DragonDataSpecial.Stat.HEALTH).level,
@@ -887,7 +889,7 @@ public class GameSceneController : GameSceneControllerBase {
             int labHp = dragonDataSpecial.GetStat(DragonDataSpecial.Stat.HEALTH).level;
             int labSpeed = dragonDataSpecial.GetStat(DragonDataSpecial.Stat.HEALTH).level;
             int labBoost = dragonDataSpecial.GetStat(DragonDataSpecial.Stat.ENERGY).level;
-            string powerLevel = "P" + dragonDataSpecial.powerLevel;
+            string powerLevel = "P" + dragonDataSpecial.m_powerLevel;
             HDLeagueData leagueData = HDLiveDataManager.league.season.currentLeague;
             string league = (leagueData != null) ? leagueData.sku : "";
             float powerTime = m_specialPowerTimeTracker.currentValue;

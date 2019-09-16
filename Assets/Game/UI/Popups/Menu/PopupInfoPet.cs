@@ -311,7 +311,7 @@ public class PopupInfoPet : MonoBehaviour {
 			// If active, scroll pets screen to the current pet!
 			if(InstanceManager.menuSceneController == null) return;
 			MenuScreen currentScreen = InstanceManager.menuSceneController.currentScreen;
-			if(currentScreen != MenuScreen.PETS && currentScreen != MenuScreen.LAB_PETS) return;	// Only if we are in the pets screen!
+			if(currentScreen != MenuScreen.PETS) return;	// Only if we are in the pets screen!
 
 			// Get pets screen ref
 			PetsScreenController petsScreen = InstanceManager.menuSceneController.GetScreenData(currentScreen).ui.GetComponent<PetsScreenController>();

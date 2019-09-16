@@ -105,12 +105,6 @@ public class EggManager : UbiBCN.SingletonMonoBehaviour<EggManager> {
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
-	/// <summary>
-	/// Initialization.
-	/// </summary>
-	public void Awake() {
-		
-	}
 
 	/// <summary>
 	/// Initialize manager from definitions.
@@ -155,19 +149,6 @@ public class EggManager : UbiBCN.SingletonMonoBehaviour<EggManager> {
 		}
 	}
 
-	/// <summary>
-	/// Object enabled.
-	/// </summary>
-	public void OnEnable() {
-		// Subscribe to external events
-	}
-
-	/// <summary>
-	/// Object disabled.
-	/// </summary>
-	public void OnDisable() {
-		// Unsubscribe from external events
-	}
 
 	/// <summary>
 	/// Monobehaviour update implementation.

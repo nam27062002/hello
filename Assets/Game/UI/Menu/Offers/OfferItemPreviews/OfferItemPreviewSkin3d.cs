@@ -41,6 +41,14 @@ public class OfferItemPreviewSkin3d : IOfferItemPreview {
 	private void Awake() {
 		// Make sure dragon loader doesn't have any sku assigned
 		m_dragonLoader.dragonSku = "";
+		m_dragonLoader.onDragonLoaded += OnDragonLoaded;
+	}
+
+	/// <summary>
+	/// Destructor.
+	/// </summary>
+	private void OnDestroy() {
+		m_dragonLoader.onDragonLoaded -= OnDragonLoaded;
 	}
 
 	//------------------------------------------------------------------------//
@@ -60,9 +68,6 @@ public class OfferItemPreviewSkin3d : IOfferItemPreview {
 		} else {
 			m_dragonLoader.LoadDragon(m_def.GetAsString("dragonSku"), m_def.sku);
 		}
-
-		// Particle systems require a special initialization
-		InitParticles(m_dragonLoader.dragonInstance.gameObject);
 	}
 
 	/// <summary>
@@ -93,5 +98,17 @@ public class OfferItemPreviewSkin3d : IOfferItemPreview {
 		/*PopupController popup = PopupManager.LoadPopup(PopupInfoEggDropChance.PATH);
 		popup.GetComponent<PopupInfoEggDropChance>().Init(m_item.sku);
 		popup.Open();*/
+	}
+
+	//------------------------------------------------------------------------//
+	// CALLBACKS															  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Dragon has been loaded.
+	/// </summary>
+	/// <param name="_loader">Loader that triggered the event.</param>
+	private void OnDragonLoaded(MenuDragonLoader _loader) {
+		// Particle systems require a special initialization
+		InitParticles(m_dragonLoader.dragonInstance.gameObject);
 	}
 }

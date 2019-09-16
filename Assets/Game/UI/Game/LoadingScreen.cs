@@ -101,7 +101,7 @@ public class LoadingScreen : UbiBCN.SingletonMonoBehaviour<LoadingScreen> {
         }
         else
         {
-            currentDragon = DragonManager.currentDragon;
+            currentDragon = DragonManager.CurrentDragon;
         }
 
         return currentDragon;
