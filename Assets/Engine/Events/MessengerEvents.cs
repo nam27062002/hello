@@ -231,7 +231,7 @@ public enum MessengerEvents {
 	OFFERS_RELOADED,	// no params
 	OFFERS_CHANGED,		// no params
 	OFFER_APPLIED,		// OfferPack _pack
-    HC_PACK_ACCQUIRED,  // a HC pack was bought by the player
+    HC_PACK_ACQUIRED,  // a HC pack was bought by the player
 
 	// Live Events
 	LIVE_EVENT_STATES_UPDATED,

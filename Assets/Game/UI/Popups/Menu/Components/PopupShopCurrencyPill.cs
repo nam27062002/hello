@@ -205,20 +205,34 @@ public class PopupShopCurrencyPill : IPopupShopPill {
 	/// Invoked after a successful purchase.
 	/// </summary>
 	override protected void ApplyShopPack() {
-		// Add amount
-		// [AOC] Could be joined in a single instruction for all types, but keep it split in case we need some extra processing (i.e. tracking!)
-		switch(m_type) {
-			case UserProfile.Currency.SOFT: {
-				UsersManager.currentUser.EarnCurrency(UserProfile.Currency.SOFT, (ulong)def.GetAsLong("amount"), true, HDTrackingManager.EEconomyGroup.SHOP_EXCHANGE);
-			} break;
-
-			case UserProfile.Currency.HARD: {
-				UsersManager.currentUser.EarnCurrency(UserProfile.Currency.HARD, (ulong)def.GetAsLong("amount"), true, HDTrackingManager.EEconomyGroup.SHOP_EXCHANGE);
-
-                // Broadcast this event, so the happy hour can be activated
-                Messenger.Broadcast(MessengerEvents.HC_PACK_ACCQUIRED);
-
+        // Add amount
+        // [AOC] Could be joined in a single instruction for all types, but keep it split in case we need some extra processing (i.e. tracking!)
+        switch (m_type) {
+            case UserProfile.Currency.SOFT: {
+                    UsersManager.currentUser.EarnCurrency(UserProfile.Currency.SOFT, (ulong)def.GetAsLong("amount"), true, HDTrackingManager.EEconomyGroup.SHOP_EXCHANGE);
                 } break;
+
+            case UserProfile.Currency.HARD: {
+                    UsersManager.currentUser.EarnCurrency(UserProfile.Currency.HARD, (ulong)def.GetAsLong("amount"), true, HDTrackingManager.EEconomyGroup.SHOP_EXCHANGE);
+
+                    // Broadcast this event, so the happy hour can be activated
+                    Messenger.Broadcast(MessengerEvents.HC_PACK_ACQUIRED);
+
+                    // If shop is open, launch the happy offer popup
+                    if (PopupManager.GetOpenPopup(PopupShop.PATH) != null)
+                    {
+                        // Load the popup
+                        PopupController popup = PopupManager.LoadPopup(PopupHappyHour.PATH);
+                        PopupHappyHour popupHappyHour = popup.GetComponent<PopupHappyHour>();
+
+                        // Initialize the popup (set the discount %)
+                        popupHappyHour.Init();
+
+                        // Launch it
+                        popup.Open();
+                    }
+
+            } break;
 
 			case UserProfile.Currency.KEYS: {
 				UsersManager.currentUser.EarnCurrency(UserProfile.Currency.KEYS, (ulong)def.GetAsLong("amount"), true, HDTrackingManager.EEconomyGroup.SHOP_EXCHANGE);

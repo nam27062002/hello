@@ -28,14 +28,17 @@ public class HappyHourOffer {
     //------------------------------------------------------------------------//
     private DefinitionNode m_def;
         
-    private int m_triggerRunNumber; // Runs needed before showing the happy hour offer
+    
     private float m_offerDurationMinutes; // Total duration of a happy hour offer
 
     private float m_percentageMinExtraGems; 
     private float m_percentageMaxExtraGems;
 
     // Accumulative increment in the extra gems each time the happy hour is renewed
-    private float m_percentageExtraGemsIncrement; 
+    private float m_percentageExtraGemsIncrement;
+
+
+    // PROPERTIES
 
     private DateTime m_expirationTime = DateTime.MinValue; // Timestamp when the offer will finish
     public DateTime ExpirationTime
@@ -63,8 +66,27 @@ public class HappyHourOffer {
     }
 
 
+    private bool m_pendingPopup = false; // Wheter the popup was already shown or is still pending in the queue
+    public bool PendingPopup
+    {   get
+        {
+            return m_pendingPopup;
+        }
+        set
+        {
+            m_pendingPopup = value;
+        }
+    }
 
 
+
+    private int m_triggerRunNumber; // Runs needed before showing the happy hour offer
+    public int TriggerRunNumber
+    {   get
+        {
+            return m_triggerRunNumber;
+        }
+    }
 
     //------------------------------------------------------------------------//
     // STATIC   															  //
@@ -109,7 +131,12 @@ public class HappyHourOffer {
     /// <summary>
     /// Default constructor.
     /// </summary>
-    private HappyHourOffer() { }
+    private HappyHourOffer() {
+
+        // Subscribe to events
+        Messenger.AddListener(MessengerEvents.HC_PACK_ACQUIRED, OnHcPackAccquired);
+
+    }
 
 
     /// <summary>
@@ -120,8 +147,6 @@ public class HappyHourOffer {
 
         m_def = _def;
 
-        // Subscribe to events
-        Messenger.AddListener(MessengerEvents.HC_PACK_ACCQUIRED, OnHcPackAccquired);
 
         // Initialize values from definition
         m_triggerRunNumber = m_def.GetAsInt("triggerRunNumber");
@@ -174,6 +199,10 @@ public class HappyHourOffer {
 
             // Save in persistence
             Save();
+
+            // Try to show the happy hour popup
+            m_pendingPopup = true;
+
         }
 
     }

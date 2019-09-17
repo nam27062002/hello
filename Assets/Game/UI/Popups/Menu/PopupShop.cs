@@ -199,13 +199,13 @@ public class PopupShop : MonoBehaviour {
 
     public void Update()
     {
-        // Refresh offers periodically for better performance
-        if (m_timer <= 0)
-        {
-            m_timer = 1f; // Refresh every second
-            Refresh();
-        }
-        m_timer -= Time.deltaTime;
+            // Refresh offers periodically for better performance
+            if (m_timer <= 0)
+            {
+                m_timer = 1f; // Refresh every second
+                Refresh();
+            }
+            m_timer -= Time.deltaTime;
     }
 
     private void Refresh ()
