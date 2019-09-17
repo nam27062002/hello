@@ -154,6 +154,10 @@ public class PopupDailyRewards : MonoBehaviour, IBroadcastListener {
 				case Metagame.RewardPet.TYPE_CODE: {
 					// Program the reward flow, will be triggered once the popup is closed
 					m_rewardsFlowPending = true;
+
+                    // Clear the queue of pending popups so they dont interrupt the flow
+                    PopupManager.ClearQueue();
+
 				} break;
 
 				default: {

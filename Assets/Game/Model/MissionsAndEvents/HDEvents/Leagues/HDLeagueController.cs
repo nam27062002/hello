@@ -137,6 +137,32 @@ public class HDLeagueController : HDLiveDataController {
 		}
     }
 
+
+    /// <summary>
+    /// Get the minimum tier required to show the leagues
+    /// If the user doesnt own a dragon with that size, we hide the leagues button
+    /// </summary>
+    public DragonTier GetMinimumTierToShowLeagues()
+    {
+
+        DragonTier minimum = DragonTierGlobals.LAST_TIER;
+
+        foreach (HDLeagueData league in m_leagues)
+        {
+            // Find the lowest minimum tier in all the leagues
+            if (league.minimumTier < minimum)
+            {
+                minimum = league.minimumTier;
+            }
+        }
+
+        return minimum;
+
+    }
+
+
+
+
     private void OnRequestAllLeaguesData(FGOL.Server.Error _error, GameServerManager.ServerResponse _response) {
         HDLiveDataManager.ResponseLog("[Leagues] All leagues Data", _error, _response);
 

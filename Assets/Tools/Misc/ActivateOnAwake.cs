@@ -31,11 +31,17 @@ public class ActivateOnAwake : MonoBehaviour {
 	private void Awake() {
 		// Just do it! :D
 		for(int i = 0; i < m_toActivateOnAwake.Length; i++) {
-			m_toActivateOnAwake[i].SetActive(true);
+            if (m_toActivateOnAwake[i] != null)
+            {
+                m_toActivateOnAwake[i].SetActive(true);
+            }
 		}
 
 		for(int i = 0; i < m_toDeactivateOnAwake.Length; i++) {
-			m_toDeactivateOnAwake[i].SetActive(false);
+            if (m_toDeactivateOnAwake[i] != null)
+            {
+                m_toDeactivateOnAwake[i].SetActive(false);
+            }
 		}
 	}
 }

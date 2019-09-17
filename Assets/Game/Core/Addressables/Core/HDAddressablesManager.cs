@@ -1047,7 +1047,7 @@ public class Ingame_SwitchAreaHandle
         }
         else
         {
-            dragon = DragonManager.currentDragon;
+            dragon = DragonManager.CurrentDragon;
         }
         return dragon;
     }

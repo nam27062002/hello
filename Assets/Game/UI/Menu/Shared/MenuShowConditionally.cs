@@ -77,7 +77,10 @@ public class MenuShowConditionally : MonoBehaviour {
 	[Comment("<color=orange>PER DRAGON ORDER:</color> Higher priority than ownership status (unless set to IGNORE)")]
 	[SerializeField] private HideForDragons m_hideForDragons = HideForDragons.IGNORE;
 
-	[Comment("<color=orange>PER DRAGON OWNERSHIP:</color> Ownership of the target dragon", 5f)]
+    [Comment("<color=orange>PER TYPE:</color>")]
+    [SerializeField] private IDragonData.Type m_showOnlyForType = IDragonData.Type.ALL;
+
+    [Comment("<color=orange>PER DRAGON OWNERSHIP:</color> Ownership of the target dragon", 5f)]
 	[Comment("Leave target dragon sku empty to use the current <color=green>selected</color> dragon on the menu as target.")]
 	[SkuList(DefinitionsCategory.DRAGONS, true)]
 	[SerializeField] private string m_targetDragonSku = "";
@@ -245,6 +248,13 @@ public class MenuShowConditionally : MonoBehaviour {
 			case HideForDragons.ALL:	show = false;	break;	// Force hiding
 			case HideForDragons.NONE:	show = true;	break;	// Force showing
 		}
+
+        // Dragon type
+        switch (m_showOnlyForType)
+        {
+            case IDragonData.Type.ALL: break; // Nothing to change
+            default: show &= (m_showOnlyForType == dragon.type); break; // Classic or special?
+        }
 
 		return show;
 	}
