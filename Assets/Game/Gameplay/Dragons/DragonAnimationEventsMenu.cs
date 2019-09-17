@@ -60,22 +60,45 @@ public class DragonAnimationEventsMenu : MonoBehaviour {
     // This function is called by Results_intro of the helicopter
     public void TurnOffPropulsors()
     {
-        DeactivateFlame("Leg_r");
-        DeactivateFlame("Leg_l");
-        DeactivateFlame("Arm_r");
-        DeactivateFlame("Arm_l");
+        ToggleParticle("Leg_r", false);
+        ToggleParticle("Leg_l", false);
+        ToggleParticle("Arm_r", false);
+        ToggleParticle("Arm_l", false);
     }
+
+    public void TurnOnPropulsors()
+    {
+        ToggleParticle("Leg_r", true);
+        ToggleParticle("Leg_l", true);
+        ToggleParticle("Arm_r", true);
+        ToggleParticle("Arm_l", true);
+    }
+
     
-    protected void DeactivateFlame( string childName )
+    protected void ToggleParticle( string childName, bool active )
     {
         Transform tr = transform.FindTransformRecursive(childName);
         if ( tr != null )
         {
             ParticleSystem ps = tr.GetComponentInChildren<ParticleSystem>();
             if (ps != null)
-                ps.Stop();
+            {
+                if ( active ) ps.Play();
+                else ps.Stop();
+            }
+                
         }
         
+    }
+
+    public void DeactivateParticle(string particleName )
+    {
+        ToggleParticle(particleName, false);
+    }
+
+    public void ActivateParticle( string particleName)
+    {
+        ToggleParticle(particleName, true);
     }
     
     public void PlayExtraParticle(int index)
