@@ -94,6 +94,10 @@ public class CurvedTextEditor : Editor {
 			}
 
 			else if(p.name == m_useCustomReferenceSizeProp.name) {
+				// Comment
+				EditorGUILayout.Space();
+				GUILayout.Label("Use custom reference size if you want the curvature to be fixed, otherwise the curvature will depend on the text width.", CustomEditorStyles.commentLabelLeft);
+
 				// Toggle and put custom reference size in the same line
 				EditorGUILayout.BeginHorizontal(); {
 					p.boolValue = GUILayout.Toggle(p.boolValue, GUIContent.none, GUILayout.Width(10f));
@@ -120,7 +124,8 @@ public class CurvedTextEditor : Editor {
 
 		// For some reason Curved Text aren't refreshing so well in edit mode :(
 		// Put a button to force a refresh
-		if(GUILayout.Button("Refresh")) {
+		EditorGUILayout.Space();
+		if(GUILayout.Button("Refresh", GUILayout.Height(30f))) {
 			EditorUtility.SetDirty(m_targetCurvedText.text);
 		}
 	}

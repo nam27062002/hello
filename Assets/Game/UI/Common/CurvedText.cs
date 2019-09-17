@@ -35,8 +35,10 @@ public class CurvedText : MonoBehaviour {
 	);
 	[SerializeField] private float m_curveScale = 1f;
 
+	[Space]
 	[Range(0f, 1f)]
 	[SerializeField] private float m_verticalPivot = 0.5f;
+	[SerializeField] private float m_verticalOffset = 0f;
 
 	[SerializeField] private bool m_useCustomReferenceSize = false;
 	[SerializeField] private float m_customReferenceSize = 200f;
@@ -178,6 +180,10 @@ public class CurvedText : MonoBehaviour {
 			float x1Delta = x0Delta + 0.01f;
 			float y1Delta = m_curve.Evaluate(x1Delta);
 			Vector3 p1 = new Vector2(boundsX.Lerp(x1Delta), y1Delta * correctedCurveScale);
+
+			// Apply vertical offset to both points
+			p0.y += m_verticalOffset;
+			p1.y += m_verticalOffset;
 
 			// Compute the angle of rotation using tangent
 			Vector3 tangent = p1 - p0;
