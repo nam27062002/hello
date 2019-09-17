@@ -111,7 +111,8 @@ public class DefinitionsCategory
 	// Economy
 	public const string SHOP_PACKS = "SHOP_PACKS";
 	public const string OFFER_PACKS = "OFFER_PACKS";
-	public const string CURRENCY_TIERS = "CURRENCY_TIERS";
+    public const string HAPPY_HOUR = "HAPPY_HOUR";
+    public const string CURRENCY_TIERS = "CURRENCY_TIERS";
 
 	// UI
 	public const string SHARE_LOCATIONS = "SHARE_LOCATIONS";

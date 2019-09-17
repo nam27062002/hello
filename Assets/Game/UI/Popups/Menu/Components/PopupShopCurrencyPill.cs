@@ -214,7 +214,11 @@ public class PopupShopCurrencyPill : IPopupShopPill {
 
 			case UserProfile.Currency.HARD: {
 				UsersManager.currentUser.EarnCurrency(UserProfile.Currency.HARD, (ulong)def.GetAsLong("amount"), true, HDTrackingManager.EEconomyGroup.SHOP_EXCHANGE);
-			} break;
+
+                // Broadcast this event, so the happy hour can be activated
+                Messenger.Broadcast(MessengerEvents.HC_PACK_ACCQUIRED);
+
+                } break;
 
 			case UserProfile.Currency.KEYS: {
 				UsersManager.currentUser.EarnCurrency(UserProfile.Currency.KEYS, (ulong)def.GetAsLong("amount"), true, HDTrackingManager.EEconomyGroup.SHOP_EXCHANGE);
