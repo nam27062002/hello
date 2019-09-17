@@ -178,9 +178,12 @@ public class PopupShopCurrencyPill : IPopupShopPill {
             {
                 happyHourActive = true;
 
-                // Show amount before the happy hour offer
-                m_amountBeforeOffer.gameObject.SetActive(true);
-                m_amountBeforeOffer.text = UIConstants.GetIconString(m_def.GetAsInt("amount"), m_type, UIConstants.IconAlignment.LEFT);
+                if (m_amountBeforeOffer != null)
+                {
+                    // Show amount before the happy hour offer
+                    m_amountBeforeOffer.gameObject.SetActive(true);
+                    m_amountBeforeOffer.text = UIConstants.GetIconString(m_def.GetAsInt("amount"), m_type, UIConstants.IconAlignment.LEFT);
+                }
 
                 // Set new extra bonus
                 float bonusAmount = OffersManager.instance.happyHour.ExtraGemsFactor;
