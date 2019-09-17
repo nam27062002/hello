@@ -10,7 +10,7 @@ public class SpecialBackgroundTransition : MonoBehaviour
 	protected Color m_initialColor;
 	public List< Renderer > m_clouds = new List<Renderer>();
 	public Renderer m_background;
-	const float TRANSITION_DURATION = 0.25f;
+	public float m_transitionDuration = 0.25f;
 	public Vector4 m_showMoonPosition;
 	public Vector4 m_hideMoonPosition;
 
@@ -53,14 +53,14 @@ public class SpecialBackgroundTransition : MonoBehaviour
 	{
 		m_showingSpecial = true;
 		StartCoroutine(CloudsToColor( m_cloudsColor ));
-		StartCoroutine( MoveMoonTo(m_showMoonPosition) );
+		StartCoroutine( MoveMoon( m_hideMoonPosition, m_showMoonPosition) );
 	}
 
 	void HideSpecial()
 	{
 		m_showingSpecial = false;
 		StartCoroutine(CloudsToColor( m_initialColor ));
-		StartCoroutine( MoveMoonTo(m_hideMoonPosition) );
+		StartCoroutine( MoveMoon(m_showMoonPosition, m_hideMoonPosition) );
 	}
 
 	IEnumerator CloudsToColor( Color _color )
@@ -70,11 +70,11 @@ public class SpecialBackgroundTransition : MonoBehaviour
 			float time = 0;
 			Color c = m_clouds[0].material.GetColor( "_Tint" );
 			Color startC = c;
-			while( time < TRANSITION_DURATION )
+			while( time < m_transitionDuration)
 			{
 				yield return null;	
 				time += Time.deltaTime;
-				c = Color.Lerp(startC, _color, time / TRANSITION_DURATION );
+				c = Color.Lerp(startC, _color, time / m_transitionDuration);
 				for (int i = 0; i < m_clouds.Count; i++)
 				{
 					m_clouds[i].material.SetColor("_Tint", c);
@@ -83,16 +83,15 @@ public class SpecialBackgroundTransition : MonoBehaviour
 		}
 	}
 
-	IEnumerator MoveMoonTo( Vector4 endValue )
+	IEnumerator MoveMoon( Vector4 startValue, Vector4 endValue )
 	{
 		float time = 0;
-		Vector4 startValue = m_background.material.GetVector("_MoonOffset");
 		Vector4 value = startValue;
-		while( time < TRANSITION_DURATION )
+		while( time < m_transitionDuration)
 		{
 			yield return null;
 			time += Time.deltaTime;
-			value = Vector4.Lerp( startValue, endValue, time / TRANSITION_DURATION );
+			value = Vector4.Lerp( startValue, endValue, time / m_transitionDuration);
 			m_background.material.SetVector( "_MoonOffset", value );
 		}
 	}

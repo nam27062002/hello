@@ -7019,8 +7019,8 @@ MonoBehaviour:
   m_attributes:
     m_fogGradient:
       serializedVersion: 2
-      key0: {r: 0.9647059, g: 0.09803922, b: 0.09803922, a: 1}
-      key1: {r: 0.9647059, g: 0.09803922, b: 0.09803922, a: 1}
+      key0: {r: 0, g: 0, b: 0, a: 1}
+      key1: {r: 0.09531791, g: 0.10598001, b: 0.31617647, a: 1}
       key2: {r: 1, g: 1, b: 1, a: 1}
       key3: {r: 0, g: 0, b: 0, a: 0}
       key4: {r: 0, g: 0, b: 0, a: 0}
@@ -7036,7 +7036,7 @@ MonoBehaviour:
       ctime6: 0
       ctime7: 0
       atime0: 0
-      atime1: 1157
+      atime1: 34294
       atime2: 65535
       atime3: 0
       atime4: 0
@@ -7047,12 +7047,12 @@ MonoBehaviour:
       m_NumColorKeys: 2
       m_NumAlphaKeys: 3
     m_fogStart: 0
-    m_fogEnd: 0
+    m_fogEnd: 1000
   m_isFireFog: 0
   m_drawInside: 0
   m_startScale: {x: 0, y: 0, z: 0}
-  m_enterTransitionDuration: 0.25
-  m_exitTransitionDuration: 0.25
+  m_enterTransitionDuration: 0.45
+  m_exitTransitionDuration: 0.45
 --- !u!114 &114683530420179216
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -7946,7 +7946,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 75dfd866fedca44c88ef0eb4ec19f284, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_cloudsColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+  m_cloudsColor: {r: 0.3254902, g: 0.34509805, b: 0.7294118, a: 1}
   m_clouds:
   - {fileID: 23355492387775628}
   - {fileID: 0}
@@ -7973,8 +7973,9 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   m_background: {fileID: 0}
-  m_showMoonPosition: {x: -2.53, y: 1, z: 0, w: 0}
-  m_hideMoonPosition: {x: -2.53, y: 2, z: 0, w: 0}
+  m_transitionDuration: 0.3
+  m_showMoonPosition: {x: -2.53, y: 1.4, z: 0, w: 0}
+  m_hideMoonPosition: {x: -2.53, y: 3, z: 0, w: 0}
 --- !u!114 &114982162911095300
 MonoBehaviour:
   m_ObjectHideFlags: 1

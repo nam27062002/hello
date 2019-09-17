@@ -62,6 +62,19 @@ public class EntityEquip : MonoBehaviour {
         }
     }
 
+    public Renderer[] EquipedRenderers()
+    {
+        List<Renderer> rends = new List<Renderer>();    
+        for (int i = 0; i < m_attachPoints.Length; i++)
+        {
+            if ( m_attachPoints[i] != null && m_attachPoints[i].item != null )
+            {
+                rends.AddRange( m_attachPoints[i].item.GetComponentsInChildren<Renderer>(true) );
+            }
+        }
+        return rends.ToArray();  
+    }
+
     public bool HasSomethingEquiped() {
         return m_equippedSkus.Count > 0;
     }
