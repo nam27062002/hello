@@ -76,12 +76,14 @@ namespace LevelEditor
 
         List<TransformNode> m_nodeList = new List<TransformNode>();
         int m_totalRenderers, m_totalOptimizedRenderers;
-        int m_lightmapStaticRenderers, m_batchingStaticRenderers;
+//        int m_lightmapStaticRenderers, m_batchingStaticRenderers;
         int m_totalVertex, m_totalPolygons;
         int m_hierarchyLevel;
         NodeDensity[] m_nodeDensity = null;
 
         List<GameObject> m_missingRenderers = new List<GameObject>();
+        List<GameObject> m_batchingStaticRenderers = new List<GameObject>();
+        List<GameObject> m_lightmapStaticRenderers = new List<GameObject>();
 
         public struct NodeDensity
         {
@@ -165,16 +167,16 @@ namespace LevelEditor
 
         void checkStaticRenderers()
         {
-            m_lightmapStaticRenderers = 0;
-            m_batchingStaticRenderers = 0;
+            m_lightmapStaticRenderers.Clear();
+            m_batchingStaticRenderers.Clear();
 
             foreach (TransformNode tn in m_nodeList)
             {
                 if ((tn.m_staticFlags & StaticEditorFlags.LightmapStatic) != 0)
-                    m_lightmapStaticRenderers++;
+                    m_lightmapStaticRenderers.Add(tn.m_Node.gameObject);
 
                 if ((tn.m_staticFlags & StaticEditorFlags.BatchingStatic) != 0)
-                    m_batchingStaticRenderers++;
+                    m_batchingStaticRenderers.Add(tn.m_Node.gameObject);
             }
         }
 
@@ -284,10 +286,6 @@ namespace LevelEditor
                             EditorSceneManager.MarkSceneDirty(node.m_Node.gameObject.scene);
                             modifiedObjects++;
                         }
-                        else
-                        {
-                            m_lightmapStaticRenderers++;
-                        }
                     }
                 }
             }
@@ -383,6 +381,8 @@ namespace LevelEditor
 
         Vector2 scrollPos = Vector2.zero;
         Vector2 scrollPos2 = Vector2.zero;
+        Vector2 scrollPos3 = Vector2.zero;
+        Vector2 scrollPos4 = Vector2.zero;
 
         /// <summary>
         /// Draw the section.
@@ -413,21 +413,23 @@ namespace LevelEditor
                 if (m_nodeList.Count > 0)
                 {
                     GUI.backgroundColor = Colors.lime;
+                    GUILayout.BeginHorizontal();
                     if (GUILayout.Button("Optimize renderers"))
                     {
                         optimizeRenderers();
                     }
 
-                    bool setBatchingStatic = m_batchingStaticRenderers < (m_totalRenderers / 2);
-                    if (GUILayout.Button(setBatchingStatic ? "Set Batching static": "Clear Batching static"))
+                    bool setBatchingStatic = m_batchingStaticRenderers.Count < (m_totalRenderers / 2);
+                    if (GUILayout.Button(setBatchingStatic ? "Set Batching static" : "Clear Batching static"))
                     {
                         setStaticRenderers(false, setBatchingStatic);
                     }
-                    bool setLightmapStatic = m_lightmapStaticRenderers < (m_totalRenderers / 2);
+                    bool setLightmapStatic = m_lightmapStaticRenderers.Count < (m_totalRenderers / 2);
                     if (GUILayout.Button(setLightmapStatic ? "Set lightmap static" : "Clear lightmap static"))
                     {
                         setStaticRenderers(true, setLightmapStatic);
                     }
+                    GUILayout.EndVertical();
 
                     GUILayout.Label("Total transform nodes with mesh: " + m_nodeList.Count);
                     GUILayout.Label("Total vertex in scene: " + m_totalVertex);
@@ -435,8 +437,8 @@ namespace LevelEditor
                     EditorGUILayout.Separator();
                     GUILayout.Label("Total renderers: " + m_totalRenderers);
                     GUILayout.Label("Optimizable renderers: " + m_totalOptimizedRenderers);
-                    GUILayout.Label("Batching static renderers: " + m_batchingStaticRenderers);
-                    GUILayout.Label("Lightmap static renderers: " + m_lightmapStaticRenderers);
+                    GUILayout.Label("Batching static renderers: " + m_batchingStaticRenderers.Count);
+                    GUILayout.Label("Lightmap static renderers: " + m_lightmapStaticRenderers.Count);
 
                     GUI.backgroundColor = Colors.gray;
                     folded = Prefs.GetBoolEditor("LevelEditor.SectionVertexDensity.NodeListDensity.folded", false);
@@ -468,7 +470,7 @@ namespace LevelEditor
                                 if (m_nodeDensity[c].node.m_Node != null)
                                 {
                                     EditorGUILayout.BeginHorizontal();
-                                    if (GUILayout.Button(m_nodeDensity[c].node.m_Node.gameObject.name))
+                                    if (GUILayout.Button(m_nodeDensity[c].node.m_Node.gameObject.name, GUILayout.Width(250.0f)))
                                     {
                                         Selection.activeGameObject = m_nodeDensity[c].node.m_Node.gameObject;
                                     }
@@ -512,21 +514,12 @@ namespace LevelEditor
                                 }
 
                                 m_missingRenderers.Clear();
-/*
-                                for (int i = 0; i < UnityEngine.SceneManagement.SceneManager.sceneCount; i++)
-                                {
-                                    Scene s = UnityEngine.SceneManagement.SceneManager.GetSceneAt(i);
-                                    if (s.isLoaded)
-                                    {
-                                        EditorSceneManager.MarkSceneDirty(s);
-                                    }
-                                }
-*/
                             }
+
                             EditorGUILayout.Separator();
                             scrollPos2 = GUILayout.BeginScrollView(scrollPos2);
 
-                            int nodeCount = m_missingRenderers.Count > 100 ? 100 : m_missingRenderers.Count;
+                            int nodeCount = (m_missingRenderers.Count > 100) ? 100 : m_missingRenderers.Count;
 
                             for (int c = 0; c < nodeCount; c++)
                             {
@@ -540,8 +533,71 @@ namespace LevelEditor
                         }
                         EditorGUILayout.EndVertical();
                     }
+
+                    GUI.backgroundColor = Colors.gray;
+                    folded = Prefs.GetBoolEditor("LevelEditor.SectionVertexDensity.BatchingStaticRenderers.folded", false);
+                    if (GUILayout.Button((folded ? "►" : "▼") + "Batching static renderers", LevelEditorWindow.styles.sectionHeaderStyle, GUILayout.ExpandWidth(true)))
+                    {
+                        folded = !folded;
+                        Prefs.SetBoolEditor("LevelEditor.SectionVertexDensity.BatchingStaticRenderers.folded", folded);
+                    }
+
+                    if (!folded)
+                    {
+                        GUI.backgroundColor = Colors.paleYellow;
+                        EditorGUILayout.BeginVertical();
+                        if (m_batchingStaticRenderers.Count > 0)
+                        {
+                            scrollPos3 = GUILayout.BeginScrollView(scrollPos3);
+
+                            int nodeCount = (m_batchingStaticRenderers.Count > 100) ? 100 : m_batchingStaticRenderers.Count;
+
+                            for (int c = 0; c < nodeCount; c++)
+                            {
+                                if (GUILayout.Button(m_batchingStaticRenderers[c].name))
+                                {
+                                    Selection.activeGameObject = m_batchingStaticRenderers[c];
+                                }
+                            }
+
+                            GUILayout.EndScrollView();
+                        }
+                        EditorGUILayout.EndVertical();
+                    }
+
+                    GUI.backgroundColor = Colors.gray;
+                    folded = Prefs.GetBoolEditor("LevelEditor.SectionVertexDensity.LightmapStaticRenderers.folded", false);
+                    if (GUILayout.Button((folded ? "►" : "▼") + "Lightmap static renderers", LevelEditorWindow.styles.sectionHeaderStyle, GUILayout.ExpandWidth(true)))
+                    {
+                        folded = !folded;
+                        Prefs.SetBoolEditor("LevelEditor.SectionVertexDensity.LightmapStaticRenderers.folded", folded);
+                    }
+
+                    if (!folded)
+                    {
+                        GUI.backgroundColor = Colors.paleYellow;
+                        EditorGUILayout.BeginVertical();
+                        if (m_lightmapStaticRenderers.Count > 0)
+                        {
+                            scrollPos4 = GUILayout.BeginScrollView(scrollPos4);
+
+                            int nodeCount = (m_lightmapStaticRenderers.Count > 100) ? 100 : m_lightmapStaticRenderers.Count;
+
+                            for (int c = 0; c < nodeCount; c++)
+                            {
+                                if (GUILayout.Button(m_lightmapStaticRenderers[c].name))
+                                {
+                                    Selection.activeGameObject = m_lightmapStaticRenderers[c];
+                                }
+                            }
+
+                            GUILayout.EndScrollView();
+                        }
+                        EditorGUILayout.EndVertical();
+                    }
                 }
             }
         }
     }
 }
+

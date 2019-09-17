@@ -276,6 +276,22 @@ public class ViewControl : IViewControl, IBroadcastListener {
         m_vertexCount = 0;
         m_rendererCount = 0;
 
+        // Add equiped stuff to the renderers list
+        if (m_entity != null && m_entity.equip != null && m_entity.equip.HasSomethingEquiped()){
+            Renderer[] moreRenderers = m_entity.equip.EquipedRenderers();
+            int moreRenderersLength = moreRenderers.Length;
+            int initialLength = m_renderers.Length; 
+            int totalSize = moreRenderersLength + initialLength;
+            Renderer[] newRenderesList = new Renderer[totalSize];
+            for (int i = 0; i < initialLength; i++){
+                newRenderesList[i] = m_renderers[i];
+            }
+            for (int i = 0; i < moreRenderersLength; i++){
+                newRenderesList[ initialLength + i] = moreRenderers[i];
+            }
+            m_renderers = newRenderesList;
+        }
+
         Renderer[] renderers = m_renderers;
 
         if (renderers != null) {
