@@ -413,6 +413,7 @@ namespace LevelEditor
                 if (m_nodeList.Count > 0)
                 {
                     GUI.backgroundColor = Colors.lime;
+                    GUILayout.BeginHorizontal();
                     if (GUILayout.Button("Optimize renderers"))
                     {
                         optimizeRenderers();
@@ -428,6 +429,7 @@ namespace LevelEditor
                     {
                         setStaticRenderers(true, setLightmapStatic);
                     }
+                    GUILayout.EndVertical();
 
                     GUILayout.Label("Total transform nodes with mesh: " + m_nodeList.Count);
                     GUILayout.Label("Total vertex in scene: " + m_totalVertex);
