@@ -41,8 +41,11 @@ public class PopupShopCurrencyPill : IPopupShopPill {
 	[Space]
 	[SerializeField] private GameObject m_bestValueObj = null;
 
-	// Public
-	private UserProfile.Currency m_type = UserProfile.Currency.NONE;
+    [Space]
+    [SerializeField] private TextMeshProUGUI m_amountBeforeOffer = null;
+
+    // Public
+    private UserProfile.Currency m_type = UserProfile.Currency.NONE;
 	public UserProfile.Currency type {
 		get { return m_type; }
 	}
@@ -52,6 +55,7 @@ public class PopupShopCurrencyPill : IPopupShopPill {
 	private static int s_loadingTaskPriority = 0;
 
 	private bool m_waitingForPrice = false;
+    private bool happyHourActive = false;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -81,6 +85,9 @@ public class PopupShopCurrencyPill : IPopupShopPill {
 				RefreshPrice();
 			}
 		}
+
+        Refresh();
+
 	}
 
 	//------------------------------------------------------------------------//
@@ -159,6 +166,51 @@ public class PopupShopCurrencyPill : IPopupShopPill {
 			m_priceButtons.SetAmount(m_price, m_currency);
 		}
 	}
+
+    public void Refresh()
+    {
+        // In case is gem pack
+        if (m_type == UserProfile.Currency.HARD)
+        {
+
+            // In case there is a happy hour active
+            if (OffersManager.instance.happyHour != null && OffersManager.instance.happyHour.IsActive())
+            {
+                happyHourActive = true;
+
+                // Show amount before the happy hour offer
+                m_amountBeforeOffer.gameObject.SetActive(true);
+                m_amountBeforeOffer.text = UIConstants.GetIconString(m_def.GetAsInt("amount"), m_type, UIConstants.IconAlignment.LEFT);
+
+                // Set new extra bonus
+                float bonusAmount = OffersManager.instance.happyHour.ExtraGemsFactor;
+                m_bonusAmountText.gameObject.SetActive(bonusAmount > 0f);
+                m_bonusAmountText.Localize("TID_SHOP_BONUS_AMOUNT", StringUtils.MultiplierToPercentage(bonusAmount));	// 15% extra
+
+                // Set total amount of gems
+                float newAmount = m_def.GetAsFloat("amount") * (1f + bonusAmount);
+                m_amountText.text = UIConstants.GetIconString((int)newAmount, m_type, UIConstants.IconAlignment.LEFT);
+
+            }
+            else
+            {
+                if (happyHourActive)
+                {
+                    // Only enter here once, when the happy hour finishes
+                    happyHourActive = false;
+
+                    // Restore the original offer values
+                    InitFromDef(m_def);
+
+                    // Hide the "old amount" text
+                    m_amountBeforeOffer.gameObject.SetActive(false);
+
+                }
+
+            }
+
+        }
+    }
 
 	//------------------------------------------------------------------------//
 	// IPopupShopPill IMPLEMENTATION										  //
