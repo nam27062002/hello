@@ -21,7 +21,7 @@ public class PopupSpecialDragonInfo : PopupDragonInfo {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	new public const string PATH = "UI/Popups/Menu/PF_PopupSpecialDragonInfo_NEW";
+	new public const string PATH = "UI/Popups/Menu/PF_PopupSpecialDragonInfo";
 
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
