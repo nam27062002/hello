@@ -67,7 +67,10 @@ namespace AI {
 				}
 
 				// add variation to movement
-				Vector3 offset = group.GetRotation() * m_offset;
+				Vector3 offset = m_offset;
+				if (group != null)
+					offset = group.GetRotation() * m_offset;
+					
 				if (m_data.amplitude > 0) {					
 					offset += m_data.amplitude * Mathf.Cos(m_data.frequency * Time.timeSinceLevelLoad + m_phase) * m_machine.upVector;
 				}
