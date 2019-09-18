@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SpecialBackgroundTransition : MonoBehaviour 
+public class SpecialBackgrounds : MonoBehaviour 
 {
+	public GameObject m_initialFog;
+	public GameObject m_initialSpecialFog;
 	bool m_showingSpecial = false;
 
 	public Color m_cloudsColor = Color.grey;
@@ -17,12 +19,33 @@ public class SpecialBackgroundTransition : MonoBehaviour
 	void Awake () 
 	{
 		Messenger.AddListener<string>(MessengerEvents.MENU_DRAGON_SELECTED, OnDragonSelected);	
+		Messenger.AddListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnScreenChanged);
 		m_initialColor = m_clouds[0].material.GetColor("_Tint");
 	}
 
 	void OnDestroy()
 	{
 		Messenger.RemoveListener<string>(MessengerEvents.MENU_DRAGON_SELECTED, OnDragonSelected);	
+		Messenger.RemoveListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnScreenChanged);
+	}
+
+	private void OnScreenChanged(MenuScreen _from, MenuScreen _to) {
+		if ( _to == MenuScreen.PLAY )
+		{
+			IDragonData selectedDragonData = DragonManager.GetDragonData(UsersManager.currentUser.CurrentDragon);
+			if ( selectedDragonData.type == IDragonData.Type.SPECIAL)
+			{
+				m_initialSpecialFog.SetActive(true);
+				m_initialFog.SetActive(false);
+			}
+			else
+			{
+				m_initialSpecialFog.SetActive(false);
+				m_initialFog.SetActive(true);
+				m_background.material.SetVector( "_MoonOffset", m_hideMoonPosition );
+
+			}
+		}
 	}
 	
 	/// <summary>
