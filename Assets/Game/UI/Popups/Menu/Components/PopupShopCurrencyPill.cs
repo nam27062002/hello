@@ -186,7 +186,7 @@ public class PopupShopCurrencyPill : IPopupShopPill {
                 }
 
                 // Set new extra bonus
-                float bonusAmount = OffersManager.instance.happyHour.ExtraGemsFactor;
+                float bonusAmount = OffersManager.instance.happyHour.extraGemsFactor;
                 m_bonusAmountText.gameObject.SetActive(bonusAmount > 0f);
                 m_bonusAmountText.Localize("TID_SHOP_BONUS_AMOUNT", StringUtils.MultiplierToPercentage(bonusAmount));	// 15% extra
 
@@ -273,18 +273,24 @@ public class PopupShopCurrencyPill : IPopupShopPill {
                     // Broadcast this event, so the happy hour can be activated
                     Messenger.Broadcast(MessengerEvents.HC_PACK_ACQUIRED);
 
-                    // If shop is open, launch the happy offer popup
+                    // The player is in the shop screen right now
                     if (PopupManager.GetOpenPopup(PopupShop.PATH) != null)
                     {
-                        // Load the popup
-                        PopupController popup = PopupManager.LoadPopup(PopupHappyHour.PATH);
-                        PopupHappyHour popupHappyHour = popup.GetComponent<PopupHappyHour>();
 
-                        // Initialize the popup (set the discount %)
-                        popupHappyHour.Init();
+                        // If the popup doesnt need te be delayed
+                        if (!OffersManager.instance.happyHour.IsPopupDelayed())
 
-                        // Launch it
-                        popup.Open();
+                        {
+                            // Load the popup
+                            PopupController popup = PopupManager.LoadPopup(PopupHappyHour.PATH);
+                            PopupHappyHour popupHappyHour = popup.GetComponent<PopupHappyHour>();
+
+                            // Initialize the popup (set the discount % values)
+                            popupHappyHour.Init();
+
+                            // And launch it
+                            popup.Open();
+                        }
                     }
 
             } break;

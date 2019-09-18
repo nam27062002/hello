@@ -28,20 +28,17 @@ public class HappyHourOffer {
     //------------------------------------------------------------------------//
     private DefinitionNode m_def;
         
-    
+    // Cached values from the definition node:
     private float m_offerDurationMinutes; // Total duration of a happy hour offer
-
     private float m_percentageMinExtraGems; 
     private float m_percentageMaxExtraGems;
+    private float m_percentageExtraGemsIncrement; // Accumulative increment in the extra gems each time the happy hour is renewed
+    private int m_triggerRunNumber;
 
-    // Accumulative increment in the extra gems each time the happy hour is renewed
-    private float m_percentageExtraGemsIncrement;
-
-
-    // PROPERTIES
+    // Current offer values:
 
     private DateTime m_expirationTime = DateTime.MinValue; // Timestamp when the offer will finish
-    public DateTime ExpirationTime
+    public DateTime expirationTime
     {   get
         {
             return m_expirationTime;
@@ -54,7 +51,7 @@ public class HappyHourOffer {
 
 
     private float m_extraGemsFactor; // The current extra gem multiplier for this offer
-    public float ExtraGemsFactor
+    public float extraGemsFactor
     {   get
         {
             return m_extraGemsFactor;
@@ -67,7 +64,7 @@ public class HappyHourOffer {
 
 
     private bool m_pendingPopup = false; // Wheter the popup was already shown or is still pending in the queue
-    public bool PendingPopup
+    public bool pendingPopup
     {   get
         {
             return m_pendingPopup;
@@ -80,13 +77,14 @@ public class HappyHourOffer {
 
 
 
-    private int m_triggerRunNumber; // Runs needed before showing the happy hour offer
-    public int TriggerRunNumber
+    private int m_triggerPopupAtRun; // Runs needed before showing the happy hour offer
+    public int triggerPopupAtRun
     {   get
         {
-            return m_triggerRunNumber;
+            return m_triggerPopupAtRun;
         }
     }
+
 
     //------------------------------------------------------------------------//
     // STATIC   															  //
@@ -148,7 +146,7 @@ public class HappyHourOffer {
         m_def = _def;
 
 
-        // Initialize values from definition
+        // Initialize definition values from definition
         m_triggerRunNumber = m_def.GetAsInt("triggerRunNumber");
         m_offerDurationMinutes = m_def.GetAsInt("happyHourTimer");
         m_percentageMinExtraGems = m_def.GetAsFloat("percentageMinExtraGems");
@@ -169,7 +167,7 @@ public class HappyHourOffer {
     /// The happy hour was activated by the player
     /// It could be already active, in that case, we extend it and increment the extra gems
     /// </summary>
-    public void Start()
+    public void StartOffer()
     {
 
         if (m_offerDurationMinutes > 0)
@@ -193,15 +191,20 @@ public class HappyHourOffer {
             }
 
 
-            // Set the expiration time of this offer
+            // Extend the expiration time of this offer
             DateTime serverTime = GameServerManager.SharedInstance.GetEstimatedServerTime();
-            ExpirationTime = serverTime.AddMinutes(m_offerDurationMinutes);
+            expirationTime = serverTime.AddMinutes(m_offerDurationMinutes);
+
+            // The popup will be delayed to be shown after X runs
+            m_triggerPopupAtRun = UsersManager.currentUser.gamesPlayed + m_triggerRunNumber;
+
+            // Try to show the happy hour popup
+            m_pendingPopup = true;
+
 
             // Save in persistence
             Save();
 
-            // Try to show the happy hour popup
-            m_pendingPopup = true;
 
         }
 
@@ -225,9 +228,43 @@ public class HappyHourOffer {
     {
         DateTime serverTime = GameServerManager.SharedInstance.GetEstimatedServerTime();
 
-        return ExpirationTime.Subtract(serverTime).TotalSeconds;
+        return expirationTime.Subtract(serverTime).TotalSeconds;
 
     }
+
+
+    /// <summary>
+    /// Finish the active happy hour and store the changes in the persistence
+    /// </summary>
+    public void EndOffer ()
+    {
+        if (IsActive())
+        {
+            ResetValues();
+            Save();
+        }
+    }
+
+
+    /// <summary>
+    /// Reset current offer values to its default
+    /// </summary>
+    public void ResetValues ()
+    {
+        m_expirationTime = DateTime.MinValue;
+        m_extraGemsFactor = 0;
+        m_pendingPopup = false;
+    }
+
+    /// <summary>
+    /// Returns false if the popup wants to be shown right after the buy
+    /// returns true if we are delaying after X runs
+    /// </summary>
+    public bool IsPopupDelayed ()
+    {
+        return m_triggerRunNumber > 0;
+    }
+
 
     /// <summary>
     /// Save happy hour offer values in the user profile
@@ -245,6 +282,8 @@ public class HappyHourOffer {
         UsersManager.currentUser.LoadHappyHour(this);
     }
 
+    
+
     //------------------------------------------------------------------------//
     // CALLBACKS															  //
     //------------------------------------------------------------------------//
@@ -254,6 +293,6 @@ public class HappyHourOffer {
     private void OnHcPackAccquired()
     {
         // Restart the happy hour timer
-        Start();
+        StartOffer();
     }
 }

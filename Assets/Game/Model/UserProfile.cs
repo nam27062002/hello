@@ -355,17 +355,9 @@ public class UserProfile : UserPersistenceSystem
 
     // Happy hour
     private DateTime m_happyHourExpirationTime;
-    public DateTime HappyHourExpirationTime {
-        get { return m_happyHourExpirationTime; }
-        set { m_happyHourExpirationTime = value; }
-    }
-
     private float m_happyHourExtraGemsRate;
-    public float HappyHourExtraGemsRate
-    {
-        get { return m_happyHourExtraGemsRate; }
-        set { m_happyHourExtraGemsRate = value; }
-    }
+    private bool m_happyHourPendingPopup;
+
 
 
     // public List<string> m_visitedZones = new List<string>();
@@ -1157,6 +1149,16 @@ public class UserProfile : UserPersistenceSystem
             m_happyHourExtraGemsRate = 0;
         }
 
+        key = "happyHourPendingPopup";
+        if (happyHour.ContainsKey(key))
+        {
+            m_happyHourPendingPopup = happyHour[key].AsBool;
+        }
+        else
+        {
+            m_happyHourPendingPopup = false;
+        }
+
 
         // Visited Zones
         key = "visitedZones";
@@ -1376,6 +1378,7 @@ public class UserProfile : UserPersistenceSystem
 
         happyHour.Add("happyHourExpirationTime", m_happyHourExpirationTime.Ticks.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
         happyHour.Add("happyHourExtraGemsRate", m_happyHourExtraGemsRate.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
+        happyHour.Add("happyHourPendingPopup", m_happyHourPendingPopup.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
 
         data.Add("happyHourOffer", happyHour);
 
@@ -2023,8 +2026,9 @@ public class UserProfile : UserPersistenceSystem
             // If the values persisted are consistent
             if (m_happyHourExpirationTime != DateTime.MinValue && m_happyHourExtraGemsRate != 0)
             {
-                _happyHour.ExpirationTime = m_happyHourExpirationTime;
-                _happyHour.ExtraGemsFactor = m_happyHourExtraGemsRate;
+                _happyHour.expirationTime = m_happyHourExpirationTime;
+                _happyHour.extraGemsFactor = m_happyHourExtraGemsRate;
+                _happyHour.pendingPopup = m_happyHourPendingPopup;
             }
         }
     }
@@ -2034,8 +2038,9 @@ public class UserProfile : UserPersistenceSystem
     {
         if (_happyHour != null)
         {
-            m_happyHourExpirationTime = _happyHour.ExpirationTime;
-            m_happyHourExtraGemsRate = _happyHour.ExtraGemsFactor;
+            m_happyHourExpirationTime = _happyHour.expirationTime;
+            m_happyHourExtraGemsRate = _happyHour.extraGemsFactor;
+            m_happyHourPendingPopup = _happyHour.pendingPopup;
         }
     }
 

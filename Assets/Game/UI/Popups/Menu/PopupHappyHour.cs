@@ -55,11 +55,11 @@ public class PopupHappyHour : MonoBehaviour {
             // Time left set in the Update method
 
             // Convert offer rate to percentage (example: .5f to +50%) 
-            string gemsPercentage = StringUtils.MultiplierToPercentage(m_happyHour.ExtraGemsFactor);
+            string gemsPercentage = StringUtils.MultiplierToPercentage(m_happyHour.extraGemsFactor);
 
             // Show texts with offer rate
             m_descriptionText.text = LocalizationManager.SharedInstance.Localize("TID_HAPPY_HOUR_POPUP_MESSAGE", gemsPercentage);
-            m_extraGemsRateText.text = gemsPercentage;
+            m_extraGemsRateText.text = LocalizationManager.SharedInstance.Localize("TID_SHOP_BONUS_AMOUNT", gemsPercentage); 
         }
 
 	}
@@ -75,7 +75,7 @@ public class PopupHappyHour : MonoBehaviour {
         if (m_happyHour != null)
         {
             // We are showing the popup, so mark the pending popup flag as false
-            m_happyHour.PendingPopup = false;
+            m_happyHour.pendingPopup = false;
         }
 
     }

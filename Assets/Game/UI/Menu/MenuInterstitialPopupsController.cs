@@ -648,11 +648,11 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
             return;
 
         // Is there a popup pending to show?
-        if (!happyHour.PendingPopup)
+        if (!happyHour.pendingPopup)
             return;
 
         // All the required runs have been played?
-        if (!UsersManager.currentUser.HasPlayedGames(happyHour.TriggerRunNumber))
+        if (!UsersManager.currentUser.HasPlayedGames(happyHour.triggerPopupAtRun))
             return;
 
         // Only in the right screen
