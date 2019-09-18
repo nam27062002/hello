@@ -46,6 +46,11 @@ public class SpecialBackgrounds : MonoBehaviour
 
 			}
 		}
+		else if ( _to == MenuScreen.DRAGON_SELECTION )
+		{
+			IDragonData selectedDragonData = DragonManager.GetDragonData(UsersManager.currentUser.CurrentDragon);
+			OnDragonSelected( selectedDragonData.type, true);
+		}
 	}
 	
 	/// <summary>
@@ -56,34 +61,56 @@ public class SpecialBackgrounds : MonoBehaviour
 		// If owned and different from profile's current dragon, update profile
 		// [AOC] Consider the newly selected dragon's type
 		IDragonData selectedDragonData = DragonManager.GetDragonData(_sku);
-		if( selectedDragonData.type == IDragonData.Type.SPECIAL ) 
+		OnDragonSelected( selectedDragonData.type );
+	}
+
+	public void OnDragonSelected( IDragonData.Type _dragonType, bool _instant = false )
+	{
+		if( _dragonType == IDragonData.Type.SPECIAL ) 
 		{
 			if (!m_showingSpecial)
 			{
-				ShowSpecialMode();
+				ShowSpecialMode(_instant);
 			}
 		}
 		else
 		{
 			if ( m_showingSpecial )
 			{
-				HideSpecial();
+				HideSpecial(_instant);
 			}
 		}
 	}
 
-	void ShowSpecialMode()
+	void ShowSpecialMode( bool _instant = false)
 	{
 		m_showingSpecial = true;
-		StartCoroutine(CloudsToColor( m_cloudsColor ));
-		StartCoroutine( MoveMoon( m_hideMoonPosition, m_showMoonPosition) );
+		if ( _instant )
+		{
+			SetCloudsColor(m_cloudsColor);
+			m_background.material.SetVector( "_MoonOffset", m_showMoonPosition );
+		}
+		else
+		{
+			StartCoroutine(CloudsToColor( m_cloudsColor ));
+			StartCoroutine(MoveMoon( m_hideMoonPosition, m_showMoonPosition) );
+		}
+		
 	}
 
-	void HideSpecial()
+	void HideSpecial( bool _instant = false )
 	{
 		m_showingSpecial = false;
-		StartCoroutine(CloudsToColor( m_initialColor ));
-		StartCoroutine( MoveMoon(m_showMoonPosition, m_hideMoonPosition) );
+		if ( _instant )
+		{
+			SetCloudsColor(m_initialColor);
+			m_background.material.SetVector( "_MoonOffset", m_hideMoonPosition );
+		}
+		else
+		{
+			StartCoroutine(CloudsToColor( m_initialColor ));
+			StartCoroutine( MoveMoon(m_showMoonPosition, m_hideMoonPosition) );
+		}
 	}
 
 	IEnumerator CloudsToColor( Color _color )
@@ -98,11 +125,16 @@ public class SpecialBackgrounds : MonoBehaviour
 				yield return null;	
 				time += Time.deltaTime;
 				c = Color.Lerp(startC, _color, time / m_transitionDuration);
-				for (int i = 0; i < m_clouds.Count; i++)
-				{
-					m_clouds[i].material.SetColor("_Tint", c);
-				}
+				SetCloudsColor(c);
 			}
+		}
+	}
+
+	public void SetCloudsColor( Color c )
+	{
+		for (int i = 0; i < m_clouds.Count; i++)
+		{
+			m_clouds[i].material.SetColor("_Tint", c);
 		}
 	}
 
