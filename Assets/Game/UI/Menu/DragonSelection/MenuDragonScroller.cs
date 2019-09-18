@@ -229,7 +229,7 @@ public class MenuDragonScroller : MonoBehaviour {
 					if(slot.dragonPreview.equip.showPets != true) {
 						slot.dragonPreview.equip.TogglePets(true, false);
 					}
-					slot.dragonPreview.allowAltAnimations = slot.currentState >= IDragonData.LockState.LOCKED;
+					slot.dragonPreview.allowAltAnimations = true;//slot.currentState >= IDragonData.LockState.LOCKED;
 				}
 			}
 		}
