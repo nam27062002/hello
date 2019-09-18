@@ -21,14 +21,7 @@ public class PopupSpecialDragonInfoUpgrade : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	public class Data {
-		public int unlockLevel = -1;
-		public string description = string.Empty;
-		public Sprite icon = null;
-		public string leftIconFoot;
-		public string rightIconFoot;
-	}
-
+	
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//

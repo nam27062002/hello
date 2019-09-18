@@ -49,6 +49,7 @@ public class PopupSpecialDragonInfo : PopupDragonInfo {
 
 		// More aux vars
 		int i = 0;
+		int j = 0;
 		int powerUpgradesCount = m_powerUpgrades.Length;
 		int tierUpgradesCount = m_tierUpgrades.Length;
 
@@ -63,35 +64,59 @@ public class PopupSpecialDragonInfo : PopupDragonInfo {
 		// Upgrade Infos
 		// Power upgrades
 		List<DefinitionNode> powerDefs = dragonData.specialPowerDefsByOrder;
-		for(i = 0; i < powerDefs.Count && i < powerUpgradesCount; ++i) {
-			m_powerUpgrades[i].gameObject.SetActive(true);
-			m_powerUpgrades[i].InitPowerUpgrade(powerDefs[i]);
-		}
-
-		// Tier upgrades
-		List<DefinitionNode> specialTierDefs = dragonData.specialTierDefsByOrder;
-		for(i = 0; i < specialTierDefs.Count && i < tierUpgradesCount; ++i) {
-			m_tierUpgrades[i].gameObject.SetActive(true);
-			m_tierUpgrades[i].InitTierUpgrade(specialTierDefs[i]);
+		for(i = 0, j = 0; i < powerDefs.Count && j < powerUpgradesCount; ++i, ++j) {
+			m_powerUpgrades[j].gameObject.SetActive(true);
+			m_powerUpgrades[j].InitPowerUpgrade(powerDefs[i]);
 		}
 
 		// Hide remaining widgets
-		for(i = powerDefs.Count; i < powerUpgradesCount; ++i) {
-			m_powerUpgrades[i].gameObject.SetActive(false);
+		for(; j < powerUpgradesCount; ++i) {
+			m_powerUpgrades[j].gameObject.SetActive(false);
 		}
 
-		for(i = specialTierDefs.Count; i < tierUpgradesCount; ++i) {
-			m_tierUpgrades[i].gameObject.SetActive(false);
+		// Tier upgrades
+		// Special case! Skip first tier, since is the default one
+		List<DefinitionNode> specialTierDefs = dragonData.specialTierDefsByOrder;
+		for(i = 1, j = 0; i < specialTierDefs.Count && j < tierUpgradesCount; ++i, ++j) {
+			m_tierUpgrades[j].gameObject.SetActive(true);
+			m_tierUpgrades[j].InitTierUpgrade(specialTierDefs[i]);
+		}
+
+		// Hide remaining widgets
+		for(; j < tierUpgradesCount; ++j) {
+			m_tierUpgrades[j].gameObject.SetActive(false);
 		}
 
 		// Put widgets into proper X position to match their unlock level
-		for(i = 0; i < powerUpgradesCount; ++i) {
+		RepositionUpgrades();
+	}
+
+	/// <summary>
+	/// Put upgrade info widgets into position.
+	/// </summary>
+	private void RepositionUpgrades() {
+		// Power upgrades
+		for(int i = 0; i < m_powerUpgrades.Length; ++i) {
 			// Get matching bar element
-			SpecialDragonBarElement barElement = m_specialDragonLevelBar.GetElementAtLevel(m_powerUpgrades[i].unlockLevel);
+			SpecialDragonBarElement barElement = m_specialDragonLevelBar.GetElementAtLevel(m_powerUpgrades[i].unlockLevel - 1); // 0-indexed
 
 			// Apply the same X position
 			// Use global position since they are at diferent hierarchy levels!
 			m_powerUpgrades[i].transform.SetPosX(barElement.transform.position.x);
+		}
+
+		// Tier upgrades
+		for(int i = 0; i < m_tierUpgrades.Length; ++i) {
+			// Get matching bar element
+			SpecialDragonBarElement barElement = m_specialDragonLevelBar.GetElementAtLevel(m_tierUpgrades[i].unlockLevel - 1);  // 0-indexed
+			if(barElement == null) {
+				Debug.Log(Color.red.Tag("NO BAR ELEMENT COULD BE FOUND FOR LEVEL " + m_tierUpgrades[i].unlockLevel));
+				break;
+			}
+
+			// Apply the same X position
+			// Use global position since they are at diferent hierarchy levels!
+			m_tierUpgrades[i].transform.SetPosX(barElement.transform.position.x);
 		}
 	}
 }
