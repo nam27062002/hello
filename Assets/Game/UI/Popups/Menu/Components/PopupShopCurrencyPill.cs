@@ -56,6 +56,7 @@ public class PopupShopCurrencyPill : IPopupShopPill {
 
 	private bool m_waitingForPrice = false;
     private bool happyHourActive = false;
+    private int amountApplied; // Keep a record of the currency amount bought
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -215,14 +216,32 @@ public class PopupShopCurrencyPill : IPopupShopPill {
         }
     }
 
-	//------------------------------------------------------------------------//
-	// IPopupShopPill IMPLEMENTATION										  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Obtain the IAP sku as defined in the App Stores.
-	/// </summary>
-	/// <returns>The IAP sku corresponding to this shop pack. Empty if not an IAP.</returns>
-	override public string GetIAPSku() {
+
+    /// <summary>
+    /// Check if there is a happy hour offer active and apply the extra amount
+    /// </summary>
+    private int ApplyHappyHourExtra (int _amount)
+    {
+        // Is there a happy hour offer?
+        HappyHourOffer happyHour = OffersManager.instance.happyHour;
+        if (happyHour.IsActive())
+        {
+            // Apply the extra gems factor
+            return Mathf.RoundToInt((_amount) * (1 + happyHour.extraGemsFactor));
+        }
+
+        return _amount;
+    }
+
+
+    //------------------------------------------------------------------------//
+    // IPopupShopPill IMPLEMENTATION										  //
+    //------------------------------------------------------------------------//
+    /// <summary>
+    /// Obtain the IAP sku as defined in the App Stores.
+    /// </summary>
+    /// <returns>The IAP sku corresponding to this shop pack. Empty if not an IAP.</returns>
+    override public string GetIAPSku() {
 		// Only for REAL money packs
 		if(m_currency != UserProfile.Currency.REAL) return string.Empty;
 
@@ -264,24 +283,17 @@ public class PopupShopCurrencyPill : IPopupShopPill {
         // [AOC] Could be joined in a single instruction for all types, but keep it split in case we need some extra processing (i.e. tracking!)
         switch (m_type) {
             case UserProfile.Currency.SOFT: {
-                    UsersManager.currentUser.EarnCurrency(UserProfile.Currency.SOFT, (ulong)def.GetAsLong("amount"), true, HDTrackingManager.EEconomyGroup.SHOP_EXCHANGE);
-                } break;
+                    amountApplied =  def.GetAsInt("amount");
+                    UsersManager.currentUser.EarnCurrency(UserProfile.Currency.SOFT, (ulong)amountApplied, true, HDTrackingManager.EEconomyGroup.SHOP_EXCHANGE);
+            } break;
 
             case UserProfile.Currency.HARD: {
 
-                    ulong amount = (ulong)def.GetAsLong("amount");
+                    // Get the proper amount after applying the happy hour
+                    amountApplied = ApplyHappyHourExtra(def.GetAsInt("amount"));
 
-
-                    // Is there a happy hour offer?
-                    HappyHourOffer happyHour = OffersManager.instance.happyHour;
-                    if (happyHour.IsActive())
-                    {
-                        // Apply the extra gems factor
-                        amount = (ulong) Mathf.RoundToInt ( (amount) * (1 + happyHour.extraGemsFactor) );
-                    }
-
-
-                    UsersManager.currentUser.EarnCurrency(UserProfile.Currency.HARD, amount, true, HDTrackingManager.EEconomyGroup.SHOP_EXCHANGE);
+                    // Add the amount to the player currencies
+                    UsersManager.currentUser.EarnCurrency(UserProfile.Currency.HARD, (ulong) amountApplied, true, HDTrackingManager.EEconomyGroup.SHOP_EXCHANGE);
 
                     // Broadcast this event, so the happy hour can be activated / extended
                     Messenger.Broadcast(MessengerEvents.HC_PACK_ACQUIRED);
@@ -291,7 +303,7 @@ public class PopupShopCurrencyPill : IPopupShopPill {
                     {
 
                         // If the popup doesnt need te be delayed
-                        if (!happyHour.IsPopupDelayed())
+                        if (!OffersManager.instance.happyHour.IsPopupDelayed())
 
                         {
                             // Load the popup
@@ -309,7 +321,8 @@ public class PopupShopCurrencyPill : IPopupShopPill {
             } break;
 
 			case UserProfile.Currency.KEYS: {
-				UsersManager.currentUser.EarnCurrency(UserProfile.Currency.KEYS, (ulong)def.GetAsLong("amount"), true, HDTrackingManager.EEconomyGroup.SHOP_EXCHANGE);
+                    amountApplied = def.GetAsInt("amount");
+                    UsersManager.currentUser.EarnCurrency(UserProfile.Currency.KEYS, (ulong)amountApplied, true, HDTrackingManager.EEconomyGroup.SHOP_EXCHANGE);
 			} break;
 		}
 
@@ -321,10 +334,11 @@ public class PopupShopCurrencyPill : IPopupShopPill {
 	/// Shows the purchase success feedback.
 	/// </summary>
 	override protected void ShowPurchaseSuccessFeedback() {
-		// Notify player
-		UINotificationShop.CreateAndLaunch(
-			UserProfile.SkuToCurrency(def.Get("type")), 
-			def.GetAsInt("amount"), 
+
+        // Notify player
+        UINotificationShop.CreateAndLaunch(
+			UserProfile.SkuToCurrency(def.Get("type")),
+            amountApplied, // Use this stored value, as the happy hour rate could have changed in the last frame
 			Vector3.down * 150f, 
 			this.GetComponentInParent<Canvas>().transform as RectTransform
 		);
