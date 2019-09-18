@@ -150,7 +150,7 @@ public class DisguisePill : MonoBehaviour, IPointerClickHandler {
 		m_def = _def;
 		m_dragonData = DragonManager.GetDragonData(_def.GetAsString("dragonSku"));
 		m_state = _state;
-		m_seasonDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SEASONS, m_def.GetAsString("associatedSeason", SeasonManager.NO_SEASON_SKU));
+		m_seasonDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SEASONS, m_def.GetAsString("unlockSeason", SeasonManager.NO_SEASON_SKU));
 
 		// Equipped status - start unequipped
 		m_equipped = false;

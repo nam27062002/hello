@@ -53,27 +53,29 @@ public class InflammableDecorationEditor : Editor {
 
 
     void OnSceneGUI() {
-        List<FireNode> fireNodes = m_component.fireNodes;
-        
-        for (int i = 0; i < fireNodes.Count; ++i) {
-            FireNode fireNode = fireNodes[i];
-            Vector3 position = m_component.transform.TransformPoint(fireNode.localPosition);
-            Vector3 scale = GameConstants.Vector3.one * fireNode.scale;
-            switch (Tools.current) {
-                case Tool.Move: position = Handles.PositionHandle(position, m_component.transform.rotation); break;
-                case Tool.Scale: scale = Handles.ScaleHandle(scale, position, m_component.transform.rotation, 1f); break;
+        if (m_editFireNodes) {
+            List<FireNode> fireNodes = m_component.fireNodes;
+
+            for (int i = 0; i < fireNodes.Count; ++i) {
+                FireNode fireNode = fireNodes[i];
+                Vector3 position = m_component.transform.TransformPoint(fireNode.localPosition);
+                Vector3 scale = GameConstants.Vector3.one * fireNode.scale;
+                switch (Tools.current) {
+                    case Tool.Move: position = Handles.PositionHandle(position, m_component.transform.rotation); break;
+                    case Tool.Scale: scale = Handles.ScaleHandle(scale, position, m_component.transform.rotation, 1f); break;
+                }
+
+                fireNode.localPosition = m_component.transform.InverseTransformPoint(position);
+                fireNode.scale = scale.x;
+
+                if (i < m_fireParticles.Count) {
+                    m_fireParticles[i].transform.position = position;
+                    m_fireParticles[i].transform.localScale = scale;
+                }
             }
 
-            fireNode.localPosition = m_component.transform.InverseTransformPoint(position);
-            fireNode.scale = scale.x;
-
-            if (i < m_fireParticles.Count) {
-                m_fireParticles[i].transform.position = position;
-                m_fireParticles[i].transform.localScale = scale;
-            }
+            m_component.fireNodes = fireNodes;
         }
-
-        m_component.fireNodes = fireNodes;
 	}
 
 	private void GetFireNodesData() {

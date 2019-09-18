@@ -55,6 +55,7 @@ Transform:
   - {fileID: 4142005352940140}
   - {fileID: 4000010642602572}
   - {fileID: 4875430558951506}
+  - {fileID: 4815256610207502}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -85,8 +86,8 @@ MonoBehaviour:
   m_isPlaceHolder: 0
   m_walkSpeed: 2
   m_runSpeed: 6
-  m_minPlaybakSpeed: 0.5
-  m_maxPlaybakSpeed: 1.5
+  m_minPlaybakSpeed: 0.1
+  m_maxPlaybakSpeed: 0.5
   m_onBoostMaxPlaybackSpeed: 0
   m_hasNavigationLayer: 0
   m_hasRotationLayer: 0
@@ -367,7 +368,7 @@ MonoBehaviour:
     min: 2
     max: 2.75
   m_useSpawnerRotation: 0
-  m_serializedJson: '[{"speed":1.5,"isWallWalking":false,"timeToIdle":{"min":15,"max":20},"timeToChangeDirection":{"min":5,"max":10},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false},{"restTime":{"min":1,"max":3},"randomLookAt":true,"dataType":"AI.Behaviour.IdleData","editorFolded":false},{"speed":11,"checkDragonPositionTime":0.5,"checkForActionPointTime":0.1,"actions":{"panic":{"id":0,"active":true,"probability":1},"jump":{"id":1,"active":false,"probability":1},"goOn":{"id":2,"active":true,"probability":1},"hide":{"id":3,"active":true,"probability":1},"home":{"id":3,"active":true,"probability":1}},"dataType":"AI.Behaviour.FleeToAPData","editorFolded":false},{"dataType":"AI.Behaviour.OnActionPointData","editorFolded":false},{"speed":1.5,"dataType":"AI.Behaviour.HomeSenseDragonData","editorFolded":false},{"speed":11,"dataType":"AI.Behaviour.HomeData","editorFolded":false}]'
+  m_serializedJson: '[{"speed":0.5,"isWallWalking":false,"timeToIdle":{"min":15,"max":20},"timeToChangeDirection":{"min":5,"max":10},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false},{"restTime":{"min":1,"max":3},"randomLookAt":true,"dataType":"AI.Behaviour.IdleData","editorFolded":true},{"speed":1.5,"checkDragonPositionTime":0.5,"checkForActionPointTime":0.1,"actions":{"panic":{"id":0,"active":true,"probability":1},"jump":{"id":1,"active":false,"probability":1},"goOn":{"id":2,"active":true,"probability":1},"hide":{"id":3,"active":true,"probability":1},"home":{"id":3,"active":true,"probability":1}},"dataType":"AI.Behaviour.FleeToAPData","editorFolded":false},{"dataType":"AI.Behaviour.OnActionPointData","editorFolded":false},{"speed":1.5,"dataType":"AI.Behaviour.HomeSenseDragonData","editorFolded":false},{"speed":11,"dataType":"AI.Behaviour.HomeData","editorFolded":false}]'
   m_databaseKey: PF_Villager01
 --- !u!114 &11471222
 MonoBehaviour:
@@ -530,6 +531,22 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!1 &1965843604310298
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4815256610207502}
+  - component: {fileID: 114211565747479994}
+  m_Layer: 16
+  m_Name: HallowSmoke
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!1 &1977996782636406
 GameObject:
   m_ObjectHideFlags: 1
@@ -595,7 +612,7 @@ Transform:
   m_GameObject: {fileID: 1411532690009236}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: -1.7, z: 0}
-  m_LocalScale: {x: 1.5, y: 1.5, z: 1.5}
+  m_LocalScale: {x: 2, y: 2, z: 2}
   m_Children:
   - {fileID: 4577670641581256}
   - {fileID: 4246835577879918}
@@ -641,6 +658,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 4203723236398658}
   m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &4815256610207502
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1965843604310298}
+  m_LocalRotation: {x: 0.50000006, y: -0.5, z: -0.4999999, w: 0.5}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 411742}
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4822424930857924
 Transform:
@@ -744,6 +774,59 @@ MonoBehaviour:
   m_worldPositionStays: 1
   m_resetScale: 0
   m_when: 0
+--- !u!114 &114211565747479994
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1965843604310298}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4ed6093cd7fb4c21b212d932617ed46, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_activationMode: 0
+  m_parent: {fileID: 4246835577879918}
+  m_view: {fileID: 0}
+  m_particleDatas:
+  - name: FX_PF_ZombieSmoke
+    path: 
+    changeStartColor: 0
+    startColor: {r: 0, g: 0, b: 0, a: 0}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
+    changeColorOvertime: 0
+    colorOvertime:
+      serializedVersion: 2
+      key0: {r: 0, g: 0, b: 0, a: 0}
+      key1: {r: 0, g: 0, b: 0, a: 0}
+      key2: {r: 0, g: 0, b: 0, a: 0}
+      key3: {r: 0, g: 0, b: 0, a: 0}
+      key4: {r: 0, g: 0, b: 0, a: 0}
+      key5: {r: 0, g: 0, b: 0, a: 0}
+      key6: {r: 0, g: 0, b: 0, a: 0}
+      key7: {r: 0, g: 0, b: 0, a: 0}
+      ctime0: 0
+      ctime1: 65535
+      ctime2: 0
+      ctime3: 0
+      ctime4: 0
+      ctime5: 0
+      ctime6: 0
+      ctime7: 0
+      atime0: 0
+      atime1: 65535
+      atime2: 0
+      atime3: 0
+      atime4: 0
+      atime5: 0
+      atime6: 0
+      atime7: 0
+      m_Mode: 0
+      m_NumColorKeys: 2
+      m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
+    scale: 1
+    orientate: 0
 --- !u!114 &114304424817110602
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -812,35 +895,62 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f45dfbaed20447daa07123ab6b7cd80, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_inventory:
-  - equipablePrefabName: PF_Leprechaun_Hat_Villager
-    toDisableOnEquip: []
-    probability: 1
-    season: patricks
-    position: {x: 0, y: 0, z: 0}
-    scale: {x: 1, y: 1, z: 1}
-    rotation: {x: 0, y: 0, z: 0}
-  - equipablePrefabName: PF_Tinfoilhat_villager
-    toDisableOnEquip: []
-    probability: 1
-    season: ufoDay
-    position: {x: 0, y: 0, z: 0}
-    scale: {x: 1, y: 1, z: 1}
-    rotation: {x: 0, y: 0, z: 0}
-  - equipablePrefabName: PF_AlienMask_villager
-    toDisableOnEquip: []
-    probability: 0
-    season: ufoDay
-    position: {x: 0, y: 0, z: 0}
-    scale: {x: 1, y: 1, z: 1}
-    rotation: {x: 0, y: 0, z: 0}
-  - equipablePrefabName: PF_Party_Hat
-    toDisableOnEquip: []
-    probability: 1
-    season: Anniversary1
-    position: {x: 0, y: 0.01, z: -0.04}
-    scale: {x: 0.7, y: 0.6, z: 0.7}
-    rotation: {x: -10.11, y: 0, z: 12.07}
+  m_seasonalItems:
+  - season: patricks
+    groups:
+    - name: import
+      probability: 1
+      items:
+      - equipablePrefabName: PF_Leprechaun_Hat_Villager
+        defaultItemLOW: 0
+        probability: 1
+        toDisableOnEquip: []
+        position: {x: 0, y: 0, z: 0}
+        scale: {x: 1, y: 1, z: 1}
+        rotation: {x: 0, y: 0, z: 0}
+  - season: ufoDay
+    groups:
+    - name: import
+      probability: 1
+      items:
+      - equipablePrefabName: PF_AlienMask_villager
+        defaultItemLOW: 0
+        probability: 0
+        toDisableOnEquip: []
+        position: {x: 0, y: 0, z: 0}
+        scale: {x: 1, y: 1, z: 1}
+        rotation: {x: 0, y: 0, z: 0}
+      - equipablePrefabName: PF_Tinfoilhat_villager
+        defaultItemLOW: 0
+        probability: 1
+        toDisableOnEquip: []
+        position: {x: 0, y: 0, z: 0}
+        scale: {x: 1, y: 1, z: 1}
+        rotation: {x: 0, y: 0, z: 0}
+  - season: Anniversary1
+    groups:
+    - name: import
+      probability: 1
+      items:
+      - equipablePrefabName: PF_Party_Hat
+        defaultItemLOW: 0
+        probability: 1
+        toDisableOnEquip: []
+        position: {x: 0, y: 0.01, z: -0.04}
+        scale: {x: 0.7, y: 0.6, z: 0.7}
+        rotation: {x: -10.11, y: 0, z: 12.07}
+  - season: halloween
+    groups:
+    - name: Hat
+      probability: 1
+      items:
+      - equipablePrefabName: PF_Axe_Hat
+        defaultItemLOW: 0
+        probability: 1
+        toDisableOnEquip: []
+        position: {x: 0.13880296, y: 1.251683, z: 0.06757983}
+        scale: {x: 1.2, y: 1.2, z: 1.2}
+        rotation: {x: 0, y: 0, z: -28.85}
 --- !u!114 &114613880966792618
 MonoBehaviour:
   m_ObjectHideFlags: 1
