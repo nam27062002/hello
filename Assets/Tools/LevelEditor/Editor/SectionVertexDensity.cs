@@ -38,6 +38,7 @@ namespace LevelEditor
                     }
                     m_pSystem = go.GetComponent<ParticleSystem>();
                     m_staticFlags = GameObjectUtility.GetStaticEditorFlags(go);
+                    m_scale = go.transform.lossyScale.magnitude * ((m_mesh != null) ? m_mesh.bounds.size.magnitude: 1.0f);
                 }
                 else
                 {
@@ -49,6 +50,7 @@ namespace LevelEditor
                     m_pSystem = null;
                     m_vertex = 0;
                     m_polygons = 0;
+                    m_scale = 1.0f;
                     m_staticFlags = 0;
                 }
                 m_Childs = new List<TransformNode>();
@@ -70,6 +72,7 @@ namespace LevelEditor
             public ParticleSystem m_pSystem;
             public int m_vertex;
             public int m_polygons;
+            public float m_scale;
             public Transform m_Node;
             public List<TransformNode> m_Childs;
         };
@@ -84,6 +87,7 @@ namespace LevelEditor
         List<GameObject> m_missingRenderers = new List<GameObject>();
         List<GameObject> m_batchingStaticRenderers = new List<GameObject>();
         List<GameObject> m_lightmapStaticRenderers = new List<GameObject>();
+        List<TransformNode> m_minimumScaleNodes = new List<TransformNode>();
 
         public struct NodeDensity
         {
@@ -157,6 +161,21 @@ namespace LevelEditor
             optimizeRenderers(false);
 
             checkStaticRenderers();
+
+            m_minimumScaleNodes = m_nodeList;
+
+            for (int a = 0; a < m_minimumScaleNodes.Count - 1; a++)
+            {
+                for (int b = a + 1; b < m_minimumScaleNodes.Count; b++)
+                {
+                    if (m_minimumScaleNodes[a].m_scale > m_minimumScaleNodes[b].m_scale)
+                    {
+                        TransformNode tem = m_minimumScaleNodes[a];
+                        m_minimumScaleNodes[a] = m_minimumScaleNodes[b];
+                        m_minimumScaleNodes[b] = tem;
+                    }
+                }
+            }
 /*
             Debug.Log("Total transform nodes with mesh filter: " + m_nodeList.Count);
             Debug.Log("Total vertex in scene: " + m_totalVertex);
@@ -595,6 +614,38 @@ namespace LevelEditor
                         }
                         EditorGUILayout.EndVertical();
                     }
+
+                    GUI.backgroundColor = Colors.gray;
+                    folded = Prefs.GetBoolEditor("LevelEditor.SectionVertexDensity.MinimumScale.folded", false);
+                    if (GUILayout.Button((folded ? "►" : "▼") + "Minimum scale GameObject", LevelEditorWindow.styles.sectionHeaderStyle, GUILayout.ExpandWidth(true)))
+                    {
+                        folded = !folded;
+                        Prefs.SetBoolEditor("LevelEditor.SectionVertexDensity.MinimumScale.folded", folded);
+                    }
+
+                    if (!folded)
+                    {
+                        GUI.backgroundColor = Colors.paleYellow;
+                        EditorGUILayout.BeginVertical();
+                        if (m_minimumScaleNodes.Count > 0)
+                        {
+                            scrollPos4 = GUILayout.BeginScrollView(scrollPos4);
+
+                            int nodeCount = (m_minimumScaleNodes.Count > 100) ? 100 : m_minimumScaleNodes.Count;
+
+                            for (int c = 0; c < nodeCount; c++)
+                            {
+                                if (m_minimumScaleNodes[c].m_Node != null && GUILayout.Button(m_minimumScaleNodes[c].m_Node.gameObject.name))
+                                {
+                                    Selection.activeGameObject = m_minimumScaleNodes[c].m_Node.gameObject;
+                                }
+                            }
+
+                            GUILayout.EndScrollView();
+                        }
+                        EditorGUILayout.EndVertical();
+                    }
+
                 }
             }
         }
