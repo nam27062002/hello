@@ -9,6 +9,11 @@ public class SpecialDragonBarElement : MonoBehaviour {
     }
 
     //---[Published Attributes]-------------------------------------------------
+	[InfoBox("The rect transform (size and pivot) of the prefab will be used as reference to distribute and scale the elements through the bar."+
+		"\nDefine it accordingly, making the visuals of the different elements be properly aligned and spatiated." +
+		"\nThe recommended setup is pivot at the center, size representing the space you expect the element to occupy in the bar."
+	)]
+
     [Separator("Lock")]
     [SerializeField] private GameObject m_lockedGroup;
     [SerializeField] private GameObject m_unlockedGroup;
@@ -27,17 +32,17 @@ public class SpecialDragonBarElement : MonoBehaviour {
     private RectTransform __transform;
     private RectTransform m_transform {
         get {
-            if (__transform == null) {
-                __transform = GetComponent<RectTransform>();
-            }
+            InitTransform();
             return __transform;
         }
     }
 
+	private Vector2 m_size = GameConstants.Vector2.one;
+
 
     //---[Generic Methods]------------------------------------------------------
     private void Awake() {
-        __transform = GetComponent<RectTransform>();
+		InitTransform();
 
         m_state = State.LOCKED;
     }
@@ -62,17 +67,22 @@ public class SpecialDragonBarElement : MonoBehaviour {
         m_scaleTransform.localScale = new Vector2(_sx, _sy);
     }
 
+	public Vector2 GetSize() {
+		InitTransform();
+		return m_size;
+	}
+
     public float GetWidth() {
-        return m_scaleTransform.sizeDelta.x;
-    }
+		return GetSize().x;
+	}
 
     public float GetHeight() {
-        return m_scaleTransform.sizeDelta.y;
+		return GetSize().y;
     }
 
     public Vector2 GetOffset()
     {
-        return m_scaleTransform.localPosition;
+        return m_scaleTransform.anchoredPosition;
     }
 
 
@@ -96,8 +106,27 @@ public class SpecialDragonBarElement : MonoBehaviour {
         m_unlockLevel = _level;
     }
 
+	//---[Internal Methods]-------------------------------------------------------
+	private void InitTransform() {
+		if(__transform != null) return;	// No need if already done
 
-    private void OnLocked()   {
+		__transform = GetComponent<RectTransform>();
+
+		// Cache size
+		// To properly figure out the size, reset anchors
+		Vector2 minAnchorBackup = __transform.anchorMin;
+		Vector2 maxAnchorBackup = __transform.anchorMax;
+
+		__transform.anchorMin = GameConstants.Vector2.center;
+		__transform.anchorMax = GameConstants.Vector2.center;
+
+		m_size = __transform.sizeDelta;
+
+		__transform.anchorMin = minAnchorBackup;
+		__transform.anchorMax = maxAnchorBackup;
+	}
+
+	private void OnLocked()   {
 
         m_lockedGroup.SetActive(true);
         if (m_unlockedGroup != null)
