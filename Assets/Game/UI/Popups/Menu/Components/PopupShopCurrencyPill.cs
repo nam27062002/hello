@@ -268,9 +268,22 @@ public class PopupShopCurrencyPill : IPopupShopPill {
                 } break;
 
             case UserProfile.Currency.HARD: {
-                    UsersManager.currentUser.EarnCurrency(UserProfile.Currency.HARD, (ulong)def.GetAsLong("amount"), true, HDTrackingManager.EEconomyGroup.SHOP_EXCHANGE);
 
-                    // Broadcast this event, so the happy hour can be activated
+                    ulong amount = (ulong)def.GetAsLong("amount");
+
+
+                    // Is there a happy hour offer?
+                    HappyHourOffer happyHour = OffersManager.instance.happyHour;
+                    if (happyHour.IsActive())
+                    {
+                        // Apply the extra gems factor
+                        amount = (ulong) Mathf.RoundToInt ( (amount) * (1 + happyHour.extraGemsFactor) );
+                    }
+
+
+                    UsersManager.currentUser.EarnCurrency(UserProfile.Currency.HARD, amount, true, HDTrackingManager.EEconomyGroup.SHOP_EXCHANGE);
+
+                    // Broadcast this event, so the happy hour can be activated / extended
                     Messenger.Broadcast(MessengerEvents.HC_PACK_ACQUIRED);
 
                     // The player is in the shop screen right now
@@ -278,7 +291,7 @@ public class PopupShopCurrencyPill : IPopupShopPill {
                     {
 
                         // If the popup doesnt need te be delayed
-                        if (!OffersManager.instance.happyHour.IsPopupDelayed())
+                        if (!happyHour.IsPopupDelayed())
 
                         {
                             // Load the popup

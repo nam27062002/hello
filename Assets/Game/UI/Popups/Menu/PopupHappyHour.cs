@@ -70,8 +70,6 @@ public class PopupHappyHour : MonoBehaviour {
 	/// </summary>
 	private void OnEnable() {
 
-        m_happyHour = OffersManager.instance.happyHour;
-       
         if (m_happyHour != null)
         {
             // We are showing the popup, so mark the pending popup flag as false

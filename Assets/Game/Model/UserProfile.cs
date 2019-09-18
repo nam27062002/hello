@@ -356,7 +356,6 @@ public class UserProfile : UserPersistenceSystem
     // Happy hour
     private DateTime m_happyHourExpirationTime;
     private float m_happyHourExtraGemsRate;
-    private bool m_happyHourPendingPopup;
 
 
 
@@ -1149,15 +1148,6 @@ public class UserProfile : UserPersistenceSystem
             m_happyHourExtraGemsRate = 0;
         }
 
-        key = "happyHourPendingPopup";
-        if (happyHour.ContainsKey(key))
-        {
-            m_happyHourPendingPopup = happyHour[key].AsBool;
-        }
-        else
-        {
-            m_happyHourPendingPopup = false;
-        }
 
 
         // Visited Zones
@@ -1378,7 +1368,6 @@ public class UserProfile : UserPersistenceSystem
 
         happyHour.Add("happyHourExpirationTime", m_happyHourExpirationTime.Ticks.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
         happyHour.Add("happyHourExtraGemsRate", m_happyHourExtraGemsRate.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
-        happyHour.Add("happyHourPendingPopup", m_happyHourPendingPopup.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
 
         data.Add("happyHourOffer", happyHour);
 
@@ -2028,7 +2017,6 @@ public class UserProfile : UserPersistenceSystem
             {
                 _happyHour.expirationTime = m_happyHourExpirationTime;
                 _happyHour.extraGemsFactor = m_happyHourExtraGemsRate;
-                _happyHour.pendingPopup = m_happyHourPendingPopup;
             }
         }
     }
@@ -2040,7 +2028,6 @@ public class UserProfile : UserPersistenceSystem
         {
             m_happyHourExpirationTime = _happyHour.expirationTime;
             m_happyHourExtraGemsRate = _happyHour.extraGemsFactor;
-            m_happyHourPendingPopup = _happyHour.pendingPopup;
         }
     }
 
