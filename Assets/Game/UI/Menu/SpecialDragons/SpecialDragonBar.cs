@@ -190,7 +190,6 @@ public class SpecialDragonBar : MonoBehaviour {
 
         // sum up the space reserved for Tier icons
         float tiersWidth = 0f;
-
         for (int i = 0; i < m_levelTier.Length; ++i)
         {
             float scale = m_scaleTiersCurve.Evaluate((float)m_levelTier[i] / m_maxLevel);
@@ -201,7 +200,6 @@ public class SpecialDragonBar : MonoBehaviour {
 
         // sum up the space reserved for Powerups icons
         float skillsWidth = 0f;
-
         for (int i = 0; i < m_levelSkill.Length; ++i)
         {
             float width = m_skillElements[0].GetWidth();
@@ -216,9 +214,9 @@ public class SpecialDragonBar : MonoBehaviour {
         float levelWidth = (contentWidth - tiersWidth - skillsWidth - m_blankSpace * levelCount) / levelCount;
         float levelScale = levelWidth / m_levelElements[0].GetWidth();
 
-        // order all the elements. Each element has its pivot at bottom center corner
+        // order all the elements
         float deltaX = -m_content.rect.width * m_content.pivot.x;
-        float deltaY = -(m_content.rect.height * 0.5f) * m_content.pivot.y;
+		float deltaY = 0f;
 
         m_sortedElements.Clear();
 
@@ -243,7 +241,6 @@ public class SpecialDragonBar : MonoBehaviour {
             {
                 // this level is a Tier icon
                 scaleFactor = m_scaleTiersCurve.Evaluate((float)i / m_maxLevel);
-                posY = m_levelElements[0].GetHeight() * m_scaleLevelsCurve.Evaluate((float)i / m_maxLevel) * 0.5f;
 
                 element = m_tierElements[m_tierElementIndex];
                 element.SetGlobalScale(scaleFactor, scaleFactor);
@@ -254,8 +251,6 @@ public class SpecialDragonBar : MonoBehaviour {
             }
             else if (m_levelSkill.IndexOf(i) >= 0) {
                 // this is a level with a skill
-                scaleFactor = levelScale;
-
                 element = m_skillElements[m_skillElementIndex];
                 element.SetLocalScale(scaleFactor, 1f);
 
@@ -276,7 +271,10 @@ public class SpecialDragonBar : MonoBehaviour {
             float width = element.GetWidth() * scaleFactor;
 
             deltaX += (width + m_blankSpace) * 0.5f;
-            element.SetPos(deltaX + element.GetOffset().x, deltaY + posY + offsetY + element.GetOffset().y);
+			element.SetPos(
+				deltaX + element.GetOffset().x,
+				deltaY + posY + offsetY
+			);
             deltaX += (width + m_blankSpace) * 0.5f;
 
             element.gameObject.SetActive(true);
@@ -297,6 +295,7 @@ public class SpecialDragonBar : MonoBehaviour {
         SetLevel(m_debugCurrentLevel);
 
         m_skillsDefinitions = new List<DefinitionNode>(3);
+		m_tiersDefinitions = new List<DefinitionNode>(3);
 
         CreateElements();
         ArrangeElements();
@@ -335,11 +334,29 @@ public class SpecialDragonBar : MonoBehaviour {
         }
     }
 
-    //---[Callbacks]----------------------------------------------------------//
-    /// <summary>
-    /// A dragon stat has been upgraded.
-    /// </summary>
-    private void OnDragonLevelUpgraded(DragonDataSpecial _dragonData)
+	//------------------------------------------------------------------------//
+	// PUBLIC UTILS															  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Get a specific element from the bar.
+	/// </summary>
+	/// <param name="_level">The level whose element we want.</param>
+	/// <returns>The element representing level <paramref name="_level"/>. <c>null</c> if level not valid.</returns>
+	public SpecialDragonBarElement GetElementAtLevel(int _level) {
+		// Check params
+		if(_level < 0 || _level >= m_sortedElements.Count) return null;
+
+		// Just checked sorted elements
+		return m_sortedElements[_level];
+	}
+
+	//------------------------------------------------------------------------//
+	// CALLBACKS															  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// A dragon stat has been upgraded.
+	/// </summary>
+	private void OnDragonLevelUpgraded(DragonDataSpecial _dragonData)
     {
         // Let's just refresh for now
         AddLevel();

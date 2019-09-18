@@ -29,9 +29,8 @@ public class PopupDragonInfoEntitesLayoutEditor : Editor {
 	private class JsonLoaderData {
 		public string name = "";
 		public Vector2 anchoredPosition = Vector2.zero;
-		public Vector2 sizeDelta = Vector2.one;
-		public Vector3 scalerEulerAngles = Vector3.zero;
-		public UI3DScaler.FitType scalerFitType = UI3DScaler.FitType.FIT;
+		public Vector3 containerScale = Vector3.one;
+		public Vector3 containerRotationEuler = Vector3.zero;
 	}
 
 	[System.Serializable]
@@ -154,24 +153,25 @@ public class PopupDragonInfoEntitesLayoutEditor : Editor {
 		// Attach transform's info
 		// Name
 		_sb.Append('\t', _indentLevel)
-			.Append("-")
+			.Append("- ")
 			.AppendLine(_t.name);
 
 		// Loader's position
-		if(_t.name.Contains("Loader")) {
+		UI3DAddressablesLoader loader = _t.GetComponent<UI3DAddressablesLoader>();
+		if(loader != null) {
 			_sb.Append('\t', _indentLevel)
 				.Append("  anchoredPosition: ")
 				.Append(_t.anchoredPosition.ToString())
 				.AppendLine();
-
-			_sb.Append('\t', _indentLevel)
-				.Append("  sizeDelta: ")
-				.Append(_t.sizeDelta.ToString())
-				.AppendLine();
 		}
 
-		// Scaler's rotation
-		else if(_t.name.Contains("Scaler")) {
+		// Container's scale and rotation
+		else if(_t.name.Contains("Container")) {
+			_sb.Append('\t', _indentLevel)
+				.Append("  scale: ")
+				.Append(_t.localScale.ToString())
+				.AppendLine();
+
 			_sb.Append('\t', _indentLevel)
 				.Append("  localRotation: ")
 				.Append(_t.localRotation.eulerAngles.ToString())
@@ -198,7 +198,7 @@ public class PopupDragonInfoEntitesLayoutEditor : Editor {
 
 		// Add an entry for each loader child of this layout
 		// Loaders should have different names, as name will be used as key
-		UI3DLoader[] loaders = m_targetPopupDragonInfoEntitesLayout.GetComponentsInChildren<UI3DLoader>();
+		UI3DAddressablesLoader[] loaders = m_targetPopupDragonInfoEntitesLayout.GetComponentsInChildren<UI3DAddressablesLoader>();
 		for(int i = 0; i < loaders.Length; i++) {
 			// Skip if it doesn't have a valid rect transform
 			RectTransform rt = loaders[i].GetComponent<RectTransform>();
@@ -210,13 +210,12 @@ public class PopupDragonInfoEntitesLayoutEditor : Editor {
 
 			// Store transform properties
 			loaderData.anchoredPosition = rt.anchoredPosition;
-			loaderData.sizeDelta = rt.sizeDelta;
 
-			// Store nested scaler's rotation and fit type
-			UI3DScaler scaler = loaders[i].GetComponentInChildren<UI3DScaler>();
-			if(scaler != null) {
-				loaderData.scalerEulerAngles = scaler.transform.localEulerAngles;
-				loaderData.scalerFitType = scaler.fitType;
+			// Store container's scale and rotation
+			Transform container = loaders[i].container;
+			if(container != null) {
+				loaderData.containerScale = container.localScale;
+				loaderData.containerRotationEuler = container.localEulerAngles;
 			}
 
 			// Add to dictionary
@@ -248,7 +247,7 @@ public class PopupDragonInfoEntitesLayoutEditor : Editor {
 
 		// Apply! There should be an entry for every loader in the layout, by name
 		// Loaders should the same name as when the data had been stored
-		UI3DLoader[] loaders = m_targetPopupDragonInfoEntitesLayout.GetComponentsInChildren<UI3DLoader>();
+		UI3DAddressablesLoader[] loaders = m_targetPopupDragonInfoEntitesLayout.GetComponentsInChildren<UI3DAddressablesLoader>();
 		for(int i = 0; i < loaders.Length; i++) {
 			// Skip if we don't have data for this loader
 			JsonLoaderData loaderData = jsonData.loadersData.Find((_data) => _data.name == loaders[i].name);
@@ -260,17 +259,12 @@ public class PopupDragonInfoEntitesLayoutEditor : Editor {
 
 			// Restore transform properties
 			rt.anchoredPosition = loaderData.anchoredPosition;
-			rt.sizeDelta = loaderData.sizeDelta;
 
-			// Restore nested scaler's data
-			UI3DScaler scaler = loaders[i].GetComponentInChildren<UI3DScaler>();
-			if(scaler != null) {
-				// Rotation and fit type
-				scaler.transform.localEulerAngles = loaderData.scalerEulerAngles;
-				scaler.fitType = loaderData.scalerFitType;
-
-				// Refresh scaler with the new data
-				scaler.Refresh(true, true);
+			// Restore container's scale and rotation
+			Transform container = loaders[i].container;
+			if(container != null) {
+				container.localScale = loaderData.containerScale;
+				container.localEulerAngles = loaderData.containerRotationEuler;
 			}
 		}
 
