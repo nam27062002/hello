@@ -88,6 +88,13 @@ public class HappyHourOffer {
         }
     }
 
+    private string m_lastOfferSku; // Keep a track of the offer that triggered the happy hour, so it can be displayed in the popup
+    public string lastOfferSku
+    {   get
+        {
+            return m_lastOfferSku;
+        }
+    }
 
     //------------------------------------------------------------------------//
     // STATIC   															  //
@@ -135,7 +142,7 @@ public class HappyHourOffer {
     private HappyHourOffer() {
         
         // Subscribe to events
-        Messenger.AddListener<bool>(MessengerEvents.HC_PACK_ACQUIRED, OnHcPackAccquired);
+        Messenger.AddListener<bool, string>(MessengerEvents.HC_PACK_ACQUIRED, OnHcPackAccquired);
 
     }
 
@@ -145,7 +152,7 @@ public class HappyHourOffer {
     ~HappyHourOffer ()
     {
         // Unsubscribe to events
-        Messenger.RemoveListener<bool>(MessengerEvents.HC_PACK_ACQUIRED, OnHcPackAccquired);
+        Messenger.RemoveListener<bool, string>(MessengerEvents.HC_PACK_ACQUIRED, OnHcPackAccquired);
     }
 
 
@@ -310,10 +317,13 @@ public class HappyHourOffer {
     /// <summary>
     /// Called when the player buys a gem pack
     /// </summary>
-    private void OnHcPackAccquired(bool _forcePopup)
+    private void OnHcPackAccquired(bool _forcePopup, string _offerSku)
     {
         // Restart the happy hour timer
         StartOffer();
+
+        // Keep a track of the offer that triggered the popup
+        m_lastOfferSku = _offerSku;
 
         // If the popup doesnt need te be delayed
         if (_forcePopup && m_triggerRunNumber == 0)
@@ -324,7 +334,7 @@ public class HappyHourOffer {
             PopupHappyHour popupHappyHour = popup.GetComponent<PopupHappyHour>();
 
             // Initialize the popup (set the discount % values)
-            popupHappyHour.Init();
+            popupHappyHour.Init(m_lastOfferSku);
 
             // And launch it
             popup.Open();
@@ -332,6 +342,8 @@ public class HappyHourOffer {
         }
         else
         {
+
+            
 
             // Try to show the happy hour popup
             m_pendingPopup = true;

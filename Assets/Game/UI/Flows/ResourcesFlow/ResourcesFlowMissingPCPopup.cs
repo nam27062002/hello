@@ -106,7 +106,8 @@ public class ResourcesFlowMissingPCPopup : MonoBehaviour {
     {
 
         // Refresh the happy hour panel
-        if (m_happyHour != null)
+        if (m_happyHour != null &&
+            m_happyHourPanel != null && m_happyHourTimer != null)
         {
             // If show the happy hour panel only if the offer is active        
             m_happyHourPanel.SetActive(m_happyHour.IsActive());

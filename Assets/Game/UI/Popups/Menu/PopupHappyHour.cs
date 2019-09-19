@@ -34,6 +34,8 @@ public class PopupHappyHour : MonoBehaviour {
     private TextMeshProUGUI m_descriptionText;
     [SerializeField]
     private TextMeshProUGUI m_extraGemsRateText;
+    [SerializeField]
+    private PopupShopCurrencyPill m_offerToDisplay;
 
     // Internal
     private float m_timer;
@@ -45,7 +47,8 @@ public class PopupHappyHour : MonoBehaviour {
     /// <summary>
     /// Initialization.
     /// </summary>
-    public void Init() {
+    /// <param name="_lastOfferSku">Sku of the offer that will be shown in the popup</param>
+    public void Init(string _lastOfferSku) {
 
         m_happyHour = OffersManager.instance.happyHour;
 
@@ -59,7 +62,19 @@ public class PopupHappyHour : MonoBehaviour {
 
             // Show texts with offer rate
             m_descriptionText.text = LocalizationManager.SharedInstance.Localize("TID_HAPPY_HOUR_POPUP_MESSAGE", gemsPercentage);
-            m_extraGemsRateText.text = LocalizationManager.SharedInstance.Localize("TID_SHOP_BONUS_AMOUNT", gemsPercentage); 
+            //m_extraGemsRateText.text = LocalizationManager.SharedInstance.Localize("TID_SHOP_BONUS_AMOUNT", gemsPercentage); 
+
+            // Show the PC offer in the popup
+            if (! string.IsNullOrEmpty(_lastOfferSku) && m_offerToDisplay != null)
+            {
+                DefinitionNode offerDef  = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SHOP_PACKS, _lastOfferSku);
+
+                if (offerDef != null)
+                {
+                    m_offerToDisplay.InitFromDef(offerDef);
+                }
+                
+            }
         }
 
 	}
@@ -134,7 +149,36 @@ public class PopupHappyHour : MonoBehaviour {
     // OTHER METHODS														  //
     //------------------------------------------------------------------------//
 
+    /// <summary>
+    /// Open the PC shop.
+    /// </summary>
+    private void OpenPCShopPopup()
+    {
+        PopupController popup = PopupManager.LoadPopup(PopupShop.PATH);
+        PopupShop shopPopup = popup.GetComponent<PopupShop>();
+
+        // Show the gems tab
+        shopPopup.Init(PopupShop.Mode.PC_ONLY, "Happy_Hour_Popup");
+        shopPopup.closeAfterPurchase = true;
+
+        // Open the shop popup!
+        popup.Open();
+  
+    }
+
     //------------------------------------------------------------------------//
     // CALLBACKS															  //
     //------------------------------------------------------------------------//
+
+    /// <summary>
+    /// Player clicks on the SHOP button
+    /// </summary>
+    public void OnShopButton ()
+    {
+        // Close current popup
+        GetComponent<PopupController>().Close(true);
+
+        OpenPCShopPopup();
+    }
+
 }

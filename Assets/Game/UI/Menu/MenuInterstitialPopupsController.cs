@@ -663,7 +663,7 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
         PopupHappyHour popupHappyHour = popup.GetComponent<PopupHappyHour>();
 
         // Initialize the popup (set the discount %)
-        popupHappyHour.Init();
+        popupHappyHour.Init(happyHour.lastOfferSku);
 
         // Show the popup
         PopupManager.EnqueuePopup(popup);

@@ -297,9 +297,10 @@ public class PopupShopCurrencyPill : IPopupShopPill {
 
                     // Force popup if the player is in the shop screen right now
                     bool forcePopup = (PopupManager.GetOpenPopup(PopupShop.PATH) != null);
+                    string offerSku = m_def.sku;
 
                     // Broadcast this event, so the happy hour can be activated / extended
-                    Messenger.Broadcast<bool>(MessengerEvents.HC_PACK_ACQUIRED, forcePopup);
+                    Messenger.Broadcast<bool, string>(MessengerEvents.HC_PACK_ACQUIRED, forcePopup, offerSku);
 
                 } break;
 
