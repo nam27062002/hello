@@ -295,30 +295,13 @@ public class PopupShopCurrencyPill : IPopupShopPill {
                     // Add the amount to the player currencies
                     UsersManager.currentUser.EarnCurrency(UserProfile.Currency.HARD, (ulong) amountApplied, true, HDTrackingManager.EEconomyGroup.SHOP_EXCHANGE);
 
+                    // Force popup if the player is in the shop screen right now
+                    bool forcePopup = (PopupManager.GetOpenPopup(PopupShop.PATH) != null);
+
                     // Broadcast this event, so the happy hour can be activated / extended
-                    Messenger.Broadcast(MessengerEvents.HC_PACK_ACQUIRED);
+                    Messenger.Broadcast<bool>(MessengerEvents.HC_PACK_ACQUIRED, forcePopup);
 
-                    // The player is in the shop screen right now
-                    if (PopupManager.GetOpenPopup(PopupShop.PATH) != null)
-                    {
-
-                        // If the popup doesnt need te be delayed
-                        if (!OffersManager.instance.happyHour.IsPopupDelayed())
-
-                        {
-                            // Load the popup
-                            PopupController popup = PopupManager.LoadPopup(PopupHappyHour.PATH);
-                            PopupHappyHour popupHappyHour = popup.GetComponent<PopupHappyHour>();
-
-                            // Initialize the popup (set the discount % values)
-                            popupHappyHour.Init();
-
-                            // And launch it
-                            popup.Open();
-                        }
-                    }
-
-            } break;
+                } break;
 
 			case UserProfile.Currency.KEYS: {
                     amountApplied = def.GetAsInt("amount");

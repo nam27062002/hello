@@ -72,6 +72,9 @@ public class HappyHourOffer {
         set
         {
             m_pendingPopup = value;
+
+            // Save it to persistence, so the popup wont be shown again
+            Save(); 
         }
     }
 
@@ -131,9 +134,17 @@ public class HappyHourOffer {
     /// </summary>
     private HappyHourOffer() {
 
-        // Subscribe to events
-        Messenger.AddListener(MessengerEvents.HC_PACK_ACQUIRED, OnHcPackAccquired);
+       
 
+    }
+
+    /// <summary>
+    /// Destructor
+    /// </summary>
+    ~HappyHourOffer ()
+    {
+        // Subscribe to events
+        Messenger.RemoveListener<bool>(MessengerEvents.HC_PACK_ACQUIRED, OnHcPackAccquired);
     }
 
 
@@ -152,6 +163,9 @@ public class HappyHourOffer {
         m_percentageMinExtraGems = m_def.GetAsFloat("percentageMinExtraGems");
         m_percentageMaxExtraGems = m_def.GetAsFloat("percentageMaxExtraGems");
         m_percentageExtraGemsIncrement = m_def.GetAsFloat("percentageIncrement");
+
+        // Subscribe to events
+        Messenger.AddListener<bool>(MessengerEvents.HC_PACK_ACQUIRED, OnHcPackAccquired);
 
         // Persisted data (if any)
         Load();
@@ -197,14 +211,6 @@ public class HappyHourOffer {
 
             // The popup will be delayed to be shown after X runs
             m_triggerPopupAtRun = UsersManager.currentUser.gamesPlayed + m_triggerRunNumber;
-
-            // Try to show the happy hour popup
-            m_pendingPopup = true;
-
-
-            // Save in persistence
-            Save();
-
 
         }
 
@@ -290,9 +296,35 @@ public class HappyHourOffer {
     /// <summary>
     /// Called when the player buys a gem pack
     /// </summary>
-    private void OnHcPackAccquired()
+    private void OnHcPackAccquired(bool _forcePopup)
     {
         // Restart the happy hour timer
         StartOffer();
+
+        // If the popup doesnt need te be delayed
+        if (_forcePopup && m_triggerRunNumber == 0)
+        {
+
+            // Load the popup
+            PopupController popup = PopupManager.LoadPopup(PopupHappyHour.PATH);
+            PopupHappyHour popupHappyHour = popup.GetComponent<PopupHappyHour>();
+
+            // Initialize the popup (set the discount % values)
+            popupHappyHour.Init();
+
+            // And launch it
+            popup.Open();
+
+        }
+        else
+        {
+
+            // Try to show the happy hour popup
+            m_pendingPopup = true;
+
+        }
+
+        // Save in persistence
+        Save();
     }
 }
