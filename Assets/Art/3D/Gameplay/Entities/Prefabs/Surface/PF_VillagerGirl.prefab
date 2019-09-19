@@ -771,7 +771,7 @@ MonoBehaviour:
   m_machine: {fileID: 114203504851852862}
   m_viewControl: {fileID: 114236850252259874}
   m_equip: {fileID: 114528125028711378}
-  m_sku: Villager02
+  m_sku: BadJunk
   m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1
 --- !u!114 &114528125028711378
@@ -785,14 +785,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f45dfbaed20447daa07123ab6b7cd80, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_inventory:
-  - equipablePrefabName: PF_Party_Hat
-    toDisableOnEquip: []
-    probability: 1
-    season: Anniversary1
-    position: {x: 0, y: 0.22, z: 0}
-    scale: {x: 0.5, y: 0.5, z: 0.5}
-    rotation: {x: 15.06, y: 0, z: 0.77}
+  m_seasonalItems:
+  - season: Anniversary1
+    groups:
+    - name: import
+      probability: 1
+      items:
+      - equipablePrefabName: PF_Party_Hat
+        defaultItemLOW: 0
+        probability: 1
+        toDisableOnEquip: []
+        position: {x: 0, y: 0.22, z: 0}
+        scale: {x: 0.5, y: 0.5, z: 0.5}
+        rotation: {x: 15.06, y: 0, z: 0.77}
 --- !u!114 &114694793108057558
 MonoBehaviour:
   m_ObjectHideFlags: 1

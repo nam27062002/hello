@@ -30,6 +30,7 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner, IBroadcastListener {
 	private float m_respawnTime;
 	private SpawnerConditions m_spawnConditions;
 
+    private Decoration m_decoration;
     private ISpawnable[] m_components;
 
 
@@ -53,13 +54,14 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner, IBroadcastListener {
 	//-----------------------------------------------
     void Start() {
 		m_spawnConditions = GetComponent<SpawnerConditions>();
-        m_components = GetComponents<ISpawnable>();
+        m_decoration = GetComponent<Decoration>();
 
         // Subscribe to external events
         Broadcaster.AddListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
         Broadcaster.AddListener(BroadcastEventType.GAME_AREA_ENTER, this);
-
-        if (m_spawnConditions == null || m_spawnConditions.IsAvailable()) {
+        
+        if (m_spawnConditions == null || m_spawnConditions.IsAvailable()) {            
+            m_components = GetComponents<ISpawnable>();
 
             ZoneManager.Zone zone = InstanceManager.zoneManager.GetZone(transform.position.z);
             if (zone == ZoneManager.Zone.None) {
@@ -111,7 +113,10 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner, IBroadcastListener {
     
     void OnDestroy() {
 		if (ApplicationManager.IsAlive) {
-			if (SpawnerManager.isInstanceCreated) {
+            if (DecorationManager.instance != null)
+                DecorationManager.instance.UnregisterDecoration(m_decoration);
+
+            if (SpawnerManager.isInstanceCreated) {
 				SpawnerManager.instance.Unregister (this, true);
 			}
 		}
@@ -125,7 +130,7 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner, IBroadcastListener {
 	/// A new level was loaded.
 	/// </summary>
 	private void OnLevelLoaded() {
-		bool disable = m_spawnConditions != null && !m_spawnConditions.IsReadyToSpawn(0f, 0f);
+        /*bool disable = m_spawnConditions != null && !m_spawnConditions.IsReadyToSpawn(0f, 0f);
 		if (disable) {
 			m_respawnCount = 0;
 			m_state = State.Respawning;
@@ -133,8 +138,11 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner, IBroadcastListener {
 		} else {
 			m_respawnCount = 1;
 			m_state = State.Idle;
-		}
-	}
+		}*/
+        m_respawnCount = 0;
+        m_state = State.Respawning;
+        gameObject.SetActive(false);
+    }
 
 	public void Initialize() {
 		m_state = State.Idle;
@@ -157,7 +165,8 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner, IBroadcastListener {
 	}
 
     public void StartRespawn() {
-		m_respawnCount++;
+        DecorationManager.instance.UnregisterDecoration(m_decoration);
+        m_respawnCount++;
 
 		if (m_maxSpawns > 0 && m_respawnCount > m_maxSpawns) {
 			// we are not goin to use this spawner, lets destroy it
@@ -201,10 +210,7 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner, IBroadcastListener {
 												 RewardManager.xp + m_gameSceneController.progressionOffsetXP))
 			{
 				if (m_gameSceneController.elapsedSeconds > m_respawnTime) {
-					bool isInsideActivationArea = m_newCamera.IsInsideCameraFrustrum(m_bounds);
-					if (!isInsideActivationArea) {
-						return true;
-					}
+					return true;					
 				}
 			}
 		}
@@ -218,7 +224,9 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner, IBroadcastListener {
 	}
 
 	private void Spawn() {
-		if (m_respawnCount == 0) {
+        DecorationManager.instance.RegisterDecoration(m_decoration);
+
+        if (m_respawnCount == 0) {
 			gameObject.SetActive(true);
 		}
 		
@@ -229,8 +237,8 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner, IBroadcastListener {
 		for (int i = 0; i < m_ground.Length; ++i) {
 			m_ground[i].isTrigger = false;
 		}
-
-		m_state = State.Idle;
+        
+        m_state = State.Idle;
 	}
 
 	public void RemoveEntity(IEntity _entity, bool _killedByPlayer) {}
