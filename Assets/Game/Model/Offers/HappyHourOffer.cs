@@ -144,7 +144,7 @@ public class HappyHourOffer {
     /// </summary>
     ~HappyHourOffer ()
     {
-        // Subscribe to events
+        // Unsubscribe to events
         Messenger.RemoveListener<bool>(MessengerEvents.HC_PACK_ACQUIRED, OnHcPackAccquired);
     }
 
@@ -165,7 +165,7 @@ public class HappyHourOffer {
         m_percentageMaxExtraGems = m_def.GetAsFloat("percentageMaxExtraGems");
         m_percentageExtraGemsIncrement = m_def.GetAsFloat("percentageIncrement");
 
-        // Persisted data (if any)
+        // Load persisted data (if any)
         Load();
 
     }
@@ -267,6 +267,22 @@ public class HappyHourOffer {
     public bool IsPopupDelayed ()
     {
         return m_triggerRunNumber > 0;
+    }
+
+
+    /// <summary>
+    /// Returns the elapsed time for this offer from 0 to 1
+    /// 0 meaning just started, and 1 meaning offer reching the expiration date
+    /// </summary>
+    public float GetElapsedTimeNormalized ()
+    {
+
+        double offerDuration = (m_offerDurationMinutes * 60);
+        double elapsedSeconds = offerDuration - TimeLeftSecs();
+
+        // Return normalized value
+        return (float) (elapsedSeconds / offerDuration);
+
     }
 
 
