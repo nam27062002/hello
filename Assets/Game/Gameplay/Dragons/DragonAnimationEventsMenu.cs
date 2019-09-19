@@ -5,6 +5,7 @@ public class DragonAnimationEventsMenu : MonoBehaviour {
 
     ParticleSystem m_particleInstance;
     public ParticleData m_particleData;
+    public Transform m_particleAnchor;
 
     public BroadcastEventType m_toggleEventType = BroadcastEventType.BOOST_TOGGLED;
     protected ToggleParam m_toggleParam;
@@ -113,17 +114,39 @@ public class DragonAnimationEventsMenu : MonoBehaviour {
     
     public void GroundHit()
     {
+        PrepareParticle();
+        m_particleInstance.transform.rotation = Quaternion.LookRotation(Vector3.up);
+        m_particleInstance.gameObject.SetActive(true);
+        m_particleInstance.Play();
+    }
+
+    public void SpawnParticle()
+    {
+        PrepareParticle();
+        m_particleInstance.gameObject.SetActive(true);
+        m_particleInstance.Play();
+    }
+
+    void PrepareParticle()
+    {
         if (m_particleInstance == null)
         {
             GameObject go = m_particleData.CreateInstance();
             m_particleInstance = go.GetComponent<ParticleSystem>();
             SceneManager.MoveGameObjectToScene(m_particleInstance.gameObject, gameObject.scene);
-            m_particleInstance.transform.parent = transform;
-            m_particleInstance.transform.localPosition = Vector3.zero;
-            m_particleInstance.transform.rotation = Quaternion.LookRotation(Vector3.up);
+            if (m_particleAnchor != null)
+            {
+                m_particleInstance.transform.parent = m_particleAnchor;
+            }
+            else
+            {
+                m_particleInstance.transform.parent = transform;
+            }
+            m_particleInstance.transform.localPosition = GameConstants.Vector3.zero;
+            m_particleInstance.transform.localRotation = GameConstants.Quaternion.identity;
         }
-        m_particleInstance.Play();
     }
+
 
 
     public void ToggleEvent( int value )
