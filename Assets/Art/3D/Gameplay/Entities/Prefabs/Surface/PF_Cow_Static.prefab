@@ -665,12 +665,24 @@ MonoBehaviour:
         position: {x: 0, y: 0.19999993, z: 0}
         scale: {x: 0.9, y: 0.9, z: 0.9}
         rotation: {x: 3.77, y: 0, z: 7.08}
-  - season: Anniversary1
+  - season: halloween
     groups:
     - name: hat
       probability: 1
       items:
       - equipablePrefabName: PF_halloween_witch_hat
+        defaultItemLOW: 0
+        probability: 1
+        toDisableOnEquip: []
+        position: {x: 0, y: 0.19591725, z: 0}
+        scale: {x: 1.9637029, y: 1.963703, z: 1.963703}
+        rotation: {x: 3.7702363, y: 0.000011510836, z: 3.6507652}
+  - season: xmas
+    groups:
+    - name: hat
+      probability: 1
+      items:
+      - equipablePrefabName: PF_Christmas_Hat
         defaultItemLOW: 0
         probability: 1
         toDisableOnEquip: []
