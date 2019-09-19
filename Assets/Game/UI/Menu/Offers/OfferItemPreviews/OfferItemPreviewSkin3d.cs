@@ -87,7 +87,8 @@ public class OfferItemPreviewSkin3d : IOfferItemPreview {
 	/// <summary>
 	/// The info button has been pressed.
 	/// </summary>
-	override public void OnInfoButton() {
+	/// <param name="_trackingLocation">Where is this been triggered from?</param>
+	override public void OnInfoButton(string _trackingLocation) {
 		// Open info popup
 		// [AOC] TODO!!
 		UIFeedbackText.CreateAndLaunch(
