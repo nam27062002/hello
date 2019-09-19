@@ -51,7 +51,7 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 		set { instance.m_autoRefreshEnabled = value; }
 	}
 
-    private HappyHourOffer m_happyHour;
+    private HappyHourOffer m_happyHour = null;
     public HappyHourOffer happyHour {
         get { return m_happyHour; }
     }
@@ -122,7 +122,6 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 		instance.m_allEnabledRotationalOffers.Clear();
 		instance.m_activeRotationalOffers.Clear();
 		instance.m_featuredOffer = null;
-        instance.m_happyHour = null;
 
 		// Get all known offer packs
 		// Sort offers by their "order" field, so if two mutually exclusive offers (same uniqueId)
@@ -168,7 +167,10 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 		}
 
         // Create a new happy hour offer from the definitions
-        instance.m_happyHour = HappyHourOffer.CreateFromDefinition();
+        if (instance.m_happyHour == null)
+        {
+            instance.m_happyHour = HappyHourOffer.CreateFromDefinition();
+        }
 
         // Refresh active and featured offers
         instance.Refresh(true);

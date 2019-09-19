@@ -133,8 +133,9 @@ public class HappyHourOffer {
     /// Default constructor.
     /// </summary>
     private HappyHourOffer() {
-
-       
+        
+        // Subscribe to events
+        Messenger.AddListener<bool>(MessengerEvents.HC_PACK_ACQUIRED, OnHcPackAccquired);
 
     }
 
@@ -163,9 +164,6 @@ public class HappyHourOffer {
         m_percentageMinExtraGems = m_def.GetAsFloat("percentageMinExtraGems");
         m_percentageMaxExtraGems = m_def.GetAsFloat("percentageMaxExtraGems");
         m_percentageExtraGemsIncrement = m_def.GetAsFloat("percentageIncrement");
-
-        // Subscribe to events
-        Messenger.AddListener<bool>(MessengerEvents.HC_PACK_ACQUIRED, OnHcPackAccquired);
 
         // Persisted data (if any)
         Load();
