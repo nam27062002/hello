@@ -46,16 +46,17 @@ public class MenuDragonClassicInfo : MenuDragonInfo {
     /// <param name="_force">If true forces the refresh, even if the dragon has not changed since the las refresh</param>
     protected override void Refresh(IDragonData _data, bool _force = false)
     {
-
         // Check params
         if (_data == null) return;
 
         // Only show classic dragons bar
         if (!(_data is DragonDataClassic)) return;
 
+		// Aux vars
+		bool dragonChanged = m_dragonData != _data;
 
-        // Things to update only when target dragon has changed
-        if (m_dragonData != _data || _force)
+		// Things to update only when target dragon has changed
+		if (dragonChanged || _force)
         {
 
             // Dragon Name
@@ -77,10 +78,18 @@ public class MenuDragonClassicInfo : MenuDragonInfo {
             // Description
             if (m_dragonDescText != null)
             {
-                // Remove it when the player owns the dragon.
-                m_dragonDescText.gameObject.SetActive(!_data.isOwned);
-
-                m_dragonDescText.Localize(_data.def.GetAsString("tidDesc"));
+				// Remove it when the player owns the dragon.
+				bool show = !_data.isOwned;
+				if(show) {
+					m_dragonDescText.Localize(_data.def.GetAsString("tidDesc"));
+					if(dragonChanged) {
+						m_dragonDescText.GetComponent<ShowHideAnimator>().RestartShow();
+					} else {
+						m_dragonDescText.GetComponent<ShowHideAnimator>().ForceShow();
+					}
+				} else {
+					m_dragonDescText.GetComponent<ShowHideAnimator>().ForceHide();
+				}
             }
 
             // Owned group. This items will be shown when the player owns the dragon
@@ -90,9 +99,13 @@ public class MenuDragonClassicInfo : MenuDragonInfo {
                 {
                     if (_data.isOwned)
                     {
-                        // Show it only in owned dragons
-                        m_xpBar.GetComponent<ShowHideAnimator>().ForceShow();
+						// Show it only in owned dragons
                         m_xpBar.Refresh(_data as DragonDataClassic);
+						if(dragonChanged) {
+							m_xpBar.GetComponent<ShowHideAnimator>().RestartShow();
+						} else {
+							m_xpBar.GetComponent<ShowHideAnimator>().ForceShow();
+						}
                     }
                     else
                     {
@@ -134,15 +147,6 @@ public class MenuDragonClassicInfo : MenuDragonInfo {
     /// </summary>
     public override void OnInfoButton()
     {
-        // Skip if dragon data is not valid
-        if (m_dragonData == null) return;
-
-        // Tracking
-        string popupName = System.IO.Path.GetFileNameWithoutExtension(PopupDragonInfo.PATH);
-        HDTrackingManager.Instance.Notify_InfoPopup(popupName, "info_button");
-
-        // Open the dragon info popup and initialize it with the current dragon's data
-        PopupDragonInfo popup = PopupManager.OpenPopupInstant(PopupDragonInfo.PATH).GetComponent<PopupDragonInfo>();
-        popup.Init(m_dragonData);
+		PopupDragonInfo.OpenPopupForDragon(m_dragonData, "info_button");
     }
 }

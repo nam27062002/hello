@@ -206,15 +206,8 @@ public class DragonXPBar : MonoBehaviour {
 		if(m_levelText == null) return;
 
 		// Update text
-		m_levelText.Localize(
-			"TID_LEVEL_ABBR",
-			LocalizationManager.SharedInstance.Localize(
-				"TID_FRACTION", 
-				StringUtils.FormatNumber(_currentLevel + 1), 
-				StringUtils.FormatNumber(_maxLevel + 1)
-			)
-		);
-
+		MenuDragonInfo.FormatLevel(_currentLevel + 1, _maxLevel + 1, m_levelText);
+		
 		// Animate?
 		if(_animate) {
 			m_levelText.transform.DOScale(1.5f, 0.15f).SetLoops(2, LoopType.Yoyo);
