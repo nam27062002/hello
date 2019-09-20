@@ -187,8 +187,8 @@ public class MenuDragonInfo : MonoBehaviour {
 		switch(_dragonData.type) {
 			case IDragonData.Type.CLASSIC: {
 				DragonDataClassic dataClassic = _dragonData as DragonDataClassic;
-				level = dataClassic.progression.level;
-				maxLevel = dataClassic.progression.maxLevel;
+				level = dataClassic.progression.level + 1;		// For classic dragons, display levels 1-based
+				maxLevel = dataClassic.progression.maxLevel + 1;
 			} break;
 
 			case IDragonData.Type.SPECIAL: {
