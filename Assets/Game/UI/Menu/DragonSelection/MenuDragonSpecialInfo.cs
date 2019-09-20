@@ -51,15 +51,14 @@ public class MenuDragonSpecialInfo : MenuDragonInfo {
         if (_data == null) return;
 
         // Only show special dragons
-        // Only show classic dragons bar
-       if ( !(_data is DragonDataSpecial) ) return;
+		if ( !(_data is DragonDataSpecial) ) return;
 
+		// Aux vars
         DragonDataSpecial specialData = _data as DragonDataSpecial;
+		bool dragonChanged = m_dragonData != _data;
 
-
-
-        // Things to update only when target dragon has changed
-        if (m_dragonData != specialData || _force)
+		// Things to update only when target dragon has changed
+		if (dragonChanged || _force)
         {
 
             // Dragon Name
@@ -81,28 +80,32 @@ public class MenuDragonSpecialInfo : MenuDragonInfo {
             // Dragon Description
             if (m_dragonDescText != null)
             {
-                // Description. Remove it when the player owns the dragon.
-                m_dragonDescText.gameObject.SetActive(!specialData.isOwned);
+				// Description. Remove it when the player owns the dragon.
+				bool show = !specialData.isOwned;
+				if(show) {
+					m_dragonDescText.Localize(_data.def.GetAsString("tidDesc"));
+					if(dragonChanged) {
+						m_dragonDescText.GetComponent<ShowHideAnimator>().RestartShow();
+					} else {
+						m_dragonDescText.GetComponent<ShowHideAnimator>().ForceShow();
+					}
+				} else {
+					m_dragonDescText.GetComponent<ShowHideAnimator>().ForceHide();
+				}
 
-                m_dragonDescText.Localize(_data.def.GetAsString("tidDesc"));
             }
 
             // Owned group. This items will be shown when the player owns the dragon
             {
-
-
-                // XPBar
-                if (m_specialDragonLevelBar != null)
-                    if (specialData.isOwned)
-                    {
-                        m_specialDragonLevelBar.GetComponent<ShowHideAnimator>().RestartShow();
-                        m_specialDragonLevelBar.BuildFromDragonData(specialData);
-
-                    }
-                    else
-                    {
-                        m_specialDragonLevelBar.GetComponent<ShowHideAnimator>().Hide();
-                    }
+				// XPBar
+				if(m_specialDragonLevelBar != null) {
+					if(specialData.isOwned) {
+						m_specialDragonLevelBar.GetComponent<ShowHideAnimator>().RestartShow();
+						m_specialDragonLevelBar.BuildFromDragonData(specialData);
+					} else {
+						m_specialDragonLevelBar.GetComponent<ShowHideAnimator>().Hide();
+					}
+				}
 
                 // Show the upgrades group
                 m_upgradeGroup.Show(true);
