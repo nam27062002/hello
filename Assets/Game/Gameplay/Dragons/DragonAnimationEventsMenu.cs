@@ -5,6 +5,7 @@ public class DragonAnimationEventsMenu : MonoBehaviour {
 
     ParticleSystem m_particleInstance;
     public ParticleData m_particleData;
+    public Transform m_particleAnchor;
 
     public BroadcastEventType m_toggleEventType = BroadcastEventType.BOOST_TOGGLED;
     protected ToggleParam m_toggleParam;
@@ -60,22 +61,45 @@ public class DragonAnimationEventsMenu : MonoBehaviour {
     // This function is called by Results_intro of the helicopter
     public void TurnOffPropulsors()
     {
-        DeactivateFlame("Leg_r");
-        DeactivateFlame("Leg_l");
-        DeactivateFlame("Arm_r");
-        DeactivateFlame("Arm_l");
+        ToggleParticle("Leg_r", false);
+        ToggleParticle("Leg_l", false);
+        ToggleParticle("Arm_r", false);
+        ToggleParticle("Arm_l", false);
     }
+
+    public void TurnOnPropulsors()
+    {
+        ToggleParticle("Leg_r", true);
+        ToggleParticle("Leg_l", true);
+        ToggleParticle("Arm_r", true);
+        ToggleParticle("Arm_l", true);
+    }
+
     
-    protected void DeactivateFlame( string childName )
+    protected void ToggleParticle( string childName, bool active )
     {
         Transform tr = transform.FindTransformRecursive(childName);
         if ( tr != null )
         {
             ParticleSystem ps = tr.GetComponentInChildren<ParticleSystem>();
             if (ps != null)
-                ps.Stop();
+            {
+                if ( active ) ps.Play();
+                else ps.Stop();
+            }
+                
         }
         
+    }
+
+    public void DeactivateParticle(string particleName )
+    {
+        ToggleParticle(particleName, false);
+    }
+
+    public void ActivateParticle( string particleName)
+    {
+        ToggleParticle(particleName, true);
     }
     
     public void PlayExtraParticle(int index)
@@ -90,17 +114,39 @@ public class DragonAnimationEventsMenu : MonoBehaviour {
     
     public void GroundHit()
     {
+        PrepareParticle();
+        m_particleInstance.transform.rotation = Quaternion.LookRotation(Vector3.up);
+        m_particleInstance.gameObject.SetActive(true);
+        m_particleInstance.Play();
+    }
+
+    public void SpawnParticle()
+    {
+        PrepareParticle();
+        m_particleInstance.gameObject.SetActive(true);
+        m_particleInstance.Play();
+    }
+
+    void PrepareParticle()
+    {
         if (m_particleInstance == null)
         {
             GameObject go = m_particleData.CreateInstance();
             m_particleInstance = go.GetComponent<ParticleSystem>();
             SceneManager.MoveGameObjectToScene(m_particleInstance.gameObject, gameObject.scene);
-            m_particleInstance.transform.parent = transform;
-            m_particleInstance.transform.localPosition = Vector3.zero;
-            m_particleInstance.transform.rotation = Quaternion.LookRotation(Vector3.up);
+            if (m_particleAnchor != null)
+            {
+                m_particleInstance.transform.parent = m_particleAnchor;
+            }
+            else
+            {
+                m_particleInstance.transform.parent = transform;
+            }
+            m_particleInstance.transform.localPosition = GameConstants.Vector3.zero;
+            m_particleInstance.transform.localRotation = GameConstants.Quaternion.identity;
         }
-        m_particleInstance.Play();
     }
+
 
 
     public void ToggleEvent( int value )

@@ -121,7 +121,8 @@ public abstract class IOfferItemPreview : MonoBehaviour {
 	/// <summary>
 	/// The info button has been pressed.
 	/// </summary>
-	public virtual void OnInfoButton() {
+	/// <param name="_trackingLocation">Where is this been triggered from?</param>
+	public virtual void OnInfoButton(string _trackingLocation) {
 		// Nothing to do by default
 	}
 

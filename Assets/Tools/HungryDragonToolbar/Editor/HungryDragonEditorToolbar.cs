@@ -32,8 +32,9 @@ public class HungryDragonEditorToolbar : EditorWindow {
 	private const float SEPARATOR_SIZE = 10f;
 
 	private const int NUM_BUTTONS = 13;		// Update as needed
-	private const int NUM_SEPARATORS = 3;		// Update as needed
+	private const int NUM_SEPARATORS = 3;       // Update as needed
 
+	private const string ICONS_PATH = "Assets/Tools/HungryDragonToolbar/Icons/";
 	private enum Icons {
 		DISGUISES_CAPTURE_TOOL = 0,
 		PETS_CAPTURE_TOOL,
@@ -42,6 +43,7 @@ public class HungryDragonEditorToolbar : EditorWindow {
 		UI_TOOLS_SCENE,
 		COLOR_RAMP_EDITOR,
 		MENU_DRAGONS_TEST,
+		EGGS_TEST,
 
 		COUNT
 	}
@@ -91,13 +93,14 @@ public class HungryDragonEditorToolbar : EditorWindow {
 		// Reload all icons
 		m_icons.Clear();
 		string[] iconPaths = new string[] {
-			"Assets/Tools/UITools/CaptureTool/icon_camera_red.png",
-			"Assets/Tools/UITools/CaptureTool/icon_camera_green.png",
-			"Assets/Tools/UITools/CaptureTool/icon_camera_yellow.png",
-			"Assets/Tools/UITools/CaptureTool/icon_camera_blue.png",
-			"Assets/Tools/UITools/grid.png",
-			"Assets/Tools/UITools/ColorRampEditor/icon_color_ramp_editor.png",
-			"Assets/Tests/MenuDragonsTest/icon_menu_dragons_test.png"
+			ICONS_PATH + "icon_toolbar_camera_red.png",
+			ICONS_PATH + "icon_toolbar_camera_green.png",
+			ICONS_PATH + "icon_toolbar_camera_yellow.png",
+			ICONS_PATH + "icon_toolbar_camera_blue.png",
+			ICONS_PATH + "icon_toolbar_grid.png",
+			ICONS_PATH + "icon_toolbar_color_ramp_editor.png",
+			ICONS_PATH + "icon_toolbar_menu_dragons_test.png",
+			ICONS_PATH + "icon_toolbar_egg_test.png"
 		};
 
 		for(int i = 0; i < (int)Icons.COUNT; i++) {
@@ -275,8 +278,7 @@ public class HungryDragonEditorToolbar : EditorWindow {
 			GUILayout.Space(SEPARATOR_SIZE);
 
 			// Egg Test Scene
-			if(GUILayout.Button(new GUIContent("00", "Eggs Test Scene"), EditorStyles.toolbarButton, GUILayout.Width(BUTTON_SIZE))) {
-				//HungryDragonEditorMenu.OpenScene("Assets/Art/3D/Metagame/Eggs/3D_Egg_001/SC_EggTest.unity", true);
+			if(GUILayout.Button(new GUIContent(m_icons[(int)Icons.EGGS_TEST], "Eggs Test Scene"), EditorStyles.toolbarButton, GUILayout.Width(BUTTON_SIZE))) {
 				HungryDragonEditorMenu.OpenScene("Assets/Tests/SC_NewEggTest.unity", true);
 			}
 
