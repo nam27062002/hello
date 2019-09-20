@@ -519,11 +519,10 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 224579117255437908}
-  - component: {fileID: 114033552189024138}
-  - component: {fileID: 114217350857048678}
+  - component: {fileID: 114870604173104456}
   - component: {fileID: 114594932650955940}
   m_Layer: 5
-  m_Name: GemsHappyHour
+  m_Name: HappyHourIcon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -537,8 +536,6 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 224828363872135202}
-  - component: {fileID: 114604059792925018}
-  - component: {fileID: 114284944018134316}
   m_Layer: 5
   m_Name: EventButton
   m_TagString: Untagged
@@ -555,7 +552,6 @@ GameObject:
   m_Component:
   - component: {fileID: 224186805666167026}
   - component: {fileID: 222914800680257852}
-  - component: {fileID: 114905938446363832}
   - component: {fileID: 114416906195019598}
   m_Layer: 5
   m_Name: TimerText
@@ -1496,6 +1492,7 @@ GameObject:
   - component: {fileID: 224899422033228044}
   - component: {fileID: 225567431053609212}
   - component: {fileID: 114980478136025328}
+  - component: {fileID: 114945528395498486}
   m_Layer: 5
   m_Name: AnimationRoot
   m_TagString: Untagged
@@ -2352,20 +2349,6 @@ MonoBehaviour:
   m_scaleDownDuration: 1
   m_scaleUpEase: 8
   m_scaleDownEase: 30
---- !u!114 &114033552189024138
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1037606337601278}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a9252346f259f4638a435e9bfbc5ff1a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_rootAnim: {fileID: 114980478136025328}
-  m_timerText: {fileID: 114416906195019598}
-  m_modifierIcon: {fileID: 114604059792925018}
 --- !u!114 &114034288749349226
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3175,58 +3158,6 @@ MonoBehaviour:
   - {fileID: 0}
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!114 &114217350857048678
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1037606337601278}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: febd2f2b7cbe1426f8f9caf9884d3e94, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_tweenType: 6
-  m_tweenDuration: 0.15
-  m_tweenValue: 500
-  m_tweenEase: 27
-  m_tweenDelay: 0.15
-  m_ignoreTimeScale: 1
-  m_showTweens: []
-  m_hideTweens: []
-  m_animator: {fileID: 0}
-  m_triggerChildren: 1
-  m_canBeTriggeredByParents: 1
-  OnShowPreAnimation:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-  OnShowPreAnimationAfterDelay:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-  OnShowPostAnimation:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-  OnHidePreAnimation:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-  OnHidePostAnimation:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-  OnShowCheck:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
 --- !u!114 &114230379481356896
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3555,40 +3486,6 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
---- !u!114 &114284944018134316
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1040459927710566}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 63a0d607bdf0345978cc94305485a042, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_tooltip: {fileID: 0}
-  m_prefabPath: 
-  m_anchor: {fileID: 224474544891247630}
-  m_offset: {x: 100, y: 0}
-  m_keepOriginalPosition: 0
-  m_checkScreenBounds: 0
-  m_renderOnTop: 1
-  OnTooltipOpen:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 114604059792925018}
-        m_MethodName: OnTooltipOpen
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-    m_TypeName: UITooltipTrigger+TooltipEvent, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
-      PublicKeyToken=null
 --- !u!114 &114285407236069314
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3960,7 +3857,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_tid: 
+  m_tid: TID_HAPPY_HOUR_ICON_TITLE
   m_caseType: 0
   m_replacements: []
 --- !u!114 &114333097167575780
@@ -5845,7 +5742,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a1ccf5c30da243be93264797f5bc17c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_targetAnimator: {fileID: 114217350857048678}
+  m_targetAnimator: {fileID: 0}
   m_checkSelectedDragon: 0
   m_hideForDragons: 0
   m_showOnlyForType: 2
@@ -5860,21 +5757,6 @@ MonoBehaviour:
   m_hideDelay: 0
   m_showDelay: 0
   m_restartShowAnimation: 0
---- !u!114 &114604059792925018
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1040459927710566}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c787c20074afd43f69f01273a4c68150, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_icon: {fileID: 114898092440942002}
-  m_text: {fileID: 114052426741872280}
-  m_shortText: 1
-  m_tooltipArrowOffset: 0.5
 --- !u!114 &114615086946577146
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6749,6 +6631,19 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
+--- !u!114 &114870604173104456
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1037606337601278}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2e27e5a363603e148b3a80d3a783836a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_timeLeftText: {fileID: 114416906195019598}
+  m_animationRoot: {fileID: 114980478136025328}
 --- !u!114 &114878958081106640
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6888,20 +6783,6 @@ MonoBehaviour:
   m_titleText: {fileID: 0}
   m_messageText: {fileID: 0}
   m_icon: {fileID: 0}
---- !u!114 &114905938446363832
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1041033712385706}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_tid: 
-  m_caseType: 0
-  m_replacements: []
 --- !u!114 &114908564225956384
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -7063,6 +6944,58 @@ MonoBehaviour:
   - {fileID: 0}
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &114945528395498486
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1728172545526222}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 1392445389, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Navigation:
+    m_Mode: 3
+    m_SelectOnUp: {fileID: 0}
+    m_SelectOnDown: {fileID: 0}
+    m_SelectOnLeft: {fileID: 0}
+    m_SelectOnRight: {fileID: 0}
+  m_Transition: 0
+  m_Colors:
+    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
+    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
+    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_ColorMultiplier: 1
+    m_FadeDuration: 0.1
+  m_SpriteState:
+    m_HighlightedSprite: {fileID: 0}
+    m_PressedSprite: {fileID: 0}
+    m_DisabledSprite: {fileID: 0}
+  m_AnimationTriggers:
+    m_NormalTrigger: Normal
+    m_HighlightedTrigger: Highlighted
+    m_PressedTrigger: Pressed
+    m_DisabledTrigger: Disabled
+  m_Interactable: 1
+  m_TargetGraphic: {fileID: 0}
+  m_OnClick:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 114870604173104456}
+        m_MethodName: OnClick
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
+      Culture=neutral, PublicKeyToken=null
 --- !u!114 &114954953261563052
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -7261,7 +7194,7 @@ MonoBehaviour:
   targetGO: {fileID: 0}
   tweenTargetIsTargetGO: 1
   delay: 0
-  duration: 2
+  duration: 10
   easeType: 1
   easeCurve:
     serializedVersion: 2
@@ -8381,10 +8314,10 @@ RectTransform:
   m_Father: {fileID: 224373130171443222}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 170, y: -135}
+  m_SizeDelta: {x: 200, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224429786770324164
 RectTransform:
@@ -9182,18 +9115,18 @@ RectTransform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1415440352645306}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 224203290792077480}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 0.0025024414, y: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 150, y: 150}
-  m_Pivot: {x: 0, y: 1}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224976365844594512
 RectTransform:
   m_ObjectHideFlags: 1

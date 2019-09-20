@@ -62,7 +62,7 @@ public class PopupShop : MonoBehaviour {
 	[SerializeField] private TextMeshProUGUI m_offersCount;
 
     [Space]
-    [SerializeField] private GameObject m_happyHourPanel;
+    [SerializeField] private ShowHideAnimator m_happyHourPanel;
     [SerializeField] private TextMeshProUGUI m_happyHourTimer;
 
 
@@ -208,14 +208,20 @@ public class PopupShop : MonoBehaviour {
             m_timer -= Time.deltaTime;
     }
 
-    private void Refresh ()
+    public void Refresh ()
     {
 
         // Refresh the happy hour panel
         if (m_happyHour != null)
         {
-            // If show the happy hour panel only if the offer is active        
-            m_happyHourPanel.SetActive(m_happyHour.IsActive());
+            // If show the happy hour panel only if the offer is active      
+            if (m_happyHour.IsActive())
+            {
+                m_happyHourPanel.Show();
+            }else
+            {
+                m_happyHourPanel.Hide();
+            }
 
             if (m_happyHour.IsActive())
             {
