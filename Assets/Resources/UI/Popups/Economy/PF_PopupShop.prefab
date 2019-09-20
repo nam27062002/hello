@@ -912,6 +912,7 @@ GameObject:
   - component: {fileID: 114607687044064454}
   - component: {fileID: 114776165614897128}
   - component: {fileID: 114887939442639998}
+  - component: {fileID: 114406088521054966}
   m_Layer: 5
   m_Name: HappyHourPanel
   m_TagString: Untagged
@@ -3539,6 +3540,58 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &114406088521054966
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1363878271887330}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9634bc65078f347cf933d4c74430cb15, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_tweenType: 4
+  m_tweenDuration: 0.25
+  m_tweenValue: 50
+  m_tweenEase: 1
+  m_tweenDelay: 0
+  m_ignoreTimeScale: 1
+  m_showTweens: []
+  m_hideTweens: []
+  m_animator: {fileID: 0}
+  m_triggerChildren: 1
+  m_canBeTriggeredByParents: 1
+  OnShowPreAnimation:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  OnShowPreAnimationAfterDelay:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  OnShowPostAnimation:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  OnHidePreAnimation:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  OnHidePostAnimation:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  OnShowCheck:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
 --- !u!114 &114423820743084276
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6615,7 +6668,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 0.0021332284, y: 0}
+  m_AnchoredPosition: {x: 0.01585896, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!224 &224114334104976628
@@ -6994,7 +7047,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 0.0021332284, y: 0}
+  m_AnchoredPosition: {x: 0.01585896, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!224 &224381674803683976
@@ -7048,7 +7101,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 0.010517752, y: 0}
+  m_AnchoredPosition: {x: 0.007982487, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!224 &224418998675967260
