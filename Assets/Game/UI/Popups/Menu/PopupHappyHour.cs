@@ -58,7 +58,7 @@ public class PopupHappyHour : MonoBehaviour {
             // Time left set in the Update method
 
             // Convert offer rate to percentage (example: .5f to +50%) 
-            string gemsPercentage = StringUtils.MultiplierToPercentage(m_happyHour.extraGemsFactor, false);
+            string gemsPercentage = StringUtils.MultiplierToPercentage(m_happyHour.extraGemsFactor);
 
             // Show texts with offer rate
             m_descriptionText.text = LocalizationManager.SharedInstance.Localize("TID_HAPPY_HOUR_POPUP_MESSAGE", gemsPercentage);
