@@ -264,10 +264,11 @@ public class OfferItemSlot : MonoBehaviour, IBroadcastListener {
 	/// <summary>
 	/// Info button has been pressed.
 	/// </summary>
-	public void OnInfoButton() {
+	/// <param name="_trackingLocation">Where is this been triggered from?</param>
+	public void OnInfoButton(string _trackingLocation) {
 		// If we have a valid preview, and this one supports info button, propagate the event
 		if(m_preview != null && m_preview.showInfoButton) {
-			m_preview.OnInfoButton();
+			m_preview.OnInfoButton(_trackingLocation);
 		}
 	}
 }

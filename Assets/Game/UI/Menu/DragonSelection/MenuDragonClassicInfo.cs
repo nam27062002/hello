@@ -46,7 +46,6 @@ public class MenuDragonClassicInfo : MenuDragonInfo {
     /// <param name="_force">If true forces the refresh, even if the dragon has not changed since the las refresh</param>
     protected override void Refresh(IDragonData _data, bool _force = false)
     {
-
         // Check params
         if (_data == null) return;
 
@@ -134,15 +133,6 @@ public class MenuDragonClassicInfo : MenuDragonInfo {
     /// </summary>
     public override void OnInfoButton()
     {
-        // Skip if dragon data is not valid
-        if (m_dragonData == null) return;
-
-        // Tracking
-        string popupName = System.IO.Path.GetFileNameWithoutExtension(PopupDragonInfo.PATH);
-        HDTrackingManager.Instance.Notify_InfoPopup(popupName, "info_button");
-
-        // Open the dragon info popup and initialize it with the current dragon's data
-        PopupDragonInfo popup = PopupManager.OpenPopupInstant(PopupDragonInfo.PATH).GetComponent<PopupDragonInfo>();
-        popup.Init(m_dragonData);
+		PopupDragonInfo.OpenPopupForDragon(m_dragonData, "info_button");
     }
 }

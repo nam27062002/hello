@@ -61,7 +61,7 @@ public class DecorationManager : Singleton<DecorationManager>, IBroadcastListene
 
 
 
-	public void RegisterDecoration(Decoration _deco)	{ m_decorations.Add(_deco); }
+	public void RegisterDecoration(Decoration _deco) { m_decorations.Add(_deco); }
 	public void UnregisterDecoration(Decoration _deco)	{ m_decorations.Remove(_deco); }
 
     public void RegisterAmbientHazard(AmbientHazard _hazard)	{ m_ambientHazards.Add(_hazard); }

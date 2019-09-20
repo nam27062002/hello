@@ -21,7 +21,14 @@ public class SpecialDragonBarEditor : Editor {
             xpBar.DestroyElements();
         }
 
-        EditorGUILayoutExt.Separator(new SeparatorAttribute("Debug"));
+		GUI.color = Colors.paleGreen;
+		if(GUILayout.Button("Rebuild")) {
+			xpBar.DestroyElements();
+			xpBar.BuildUsingDebugValues();
+		}
+		GUI.color = Color.white;
+
+		EditorGUILayoutExt.Separator(new SeparatorAttribute("Debug"));
 
         if (GUILayout.Button("Rebuild from current dragon"))
         {
