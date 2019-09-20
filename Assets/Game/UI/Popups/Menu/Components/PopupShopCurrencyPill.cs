@@ -131,9 +131,12 @@ public class PopupShopCurrencyPill : IPopupShopPill {
 		m_amountText.text = UIConstants.GetIconString(m_def.GetAsInt("amount"), m_type, UIConstants.IconAlignment.LEFT);
 
 		// Bonus amount
-		float bonusAmount = m_def.GetAsFloat("bonusAmount");
-		m_bonusAmountText.gameObject.SetActive(bonusAmount > 0f);
-		m_bonusAmountText.Localize("TID_SHOP_BONUS_AMOUNT", StringUtils.MultiplierToPercentage(bonusAmount));   // 15% extra
+        if (m_bonusAmountText != null)
+        {
+            float bonusAmount = m_def.GetAsFloat("bonusAmount");
+            m_bonusAmountText.gameObject.SetActive(bonusAmount > 0f);
+            m_bonusAmountText.Localize("TID_SHOP_BONUS_AMOUNT", StringUtils.MultiplierToPercentage(bonusAmount));   // 15% extra
+        }
 
 		// Best value / Most popular
 		if(m_bestValueObj != null) {
@@ -149,11 +152,14 @@ public class PopupShopCurrencyPill : IPopupShopPill {
 		}
 
         // Hide all the happy hour elements
-        if (m_purpleBground != null && m_discountBadge != null)
-        {
+        if (m_purpleBground != null)
             m_purpleBground.SetActive(false);
+
+        if (m_discountBadge != null)
             m_discountBadge.SetActive(false);
-        }
+
+        if (m_amountBeforeOffer != null)
+            m_amountBeforeOffer.gameObject.SetActive(false);
 
         // Price and currency
         m_price = m_def.GetAsFloat("price");
@@ -199,6 +205,8 @@ public class PopupShopCurrencyPill : IPopupShopPill {
             {
                 happyHourActive = true;
 
+                float bonusAmount = OffersManager.instance.happyHour.extraGemsFactor;
+
                 if (m_amountBeforeOffer != null)
                 {
                     // Show amount before the happy hour offer
@@ -213,12 +221,18 @@ public class PopupShopCurrencyPill : IPopupShopPill {
                 }
 
                 // Hide the regular extra % text
-                m_bonusAmountText.gameObject.SetActive(false);
+                if (m_bonusAmountText != null)
+                {
+                    m_bonusAmountText.gameObject.SetActive(false);
+                }
+
 
                 // Instead of that, show it in a cool badge
-                float bonusAmount = OffersManager.instance.happyHour.extraGemsFactor;
-                m_discountBadge.SetActive(bonusAmount > 0f);
-                m_discountBadgeText.Localize("TID_SHOP_BONUS_AMOUNT", StringUtils.MultiplierToPercentage(bonusAmount));	// 15% extra
+                if (m_discountBadge != null)
+                {
+                    m_discountBadge.SetActive(bonusAmount > 0f);
+                    m_discountBadgeText.Localize("TID_SHOP_BONUS_AMOUNT", StringUtils.MultiplierToPercentage(bonusAmount)); // 15% extra
+                }
 
                 // Set total amount of gems
                 float newAmount = m_def.GetAsFloat("amount") * (1f + bonusAmount);

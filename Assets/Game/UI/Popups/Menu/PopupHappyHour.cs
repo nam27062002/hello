@@ -58,7 +58,7 @@ public class PopupHappyHour : MonoBehaviour {
             // Time left set in the Update method
 
             // Convert offer rate to percentage (example: .5f to +50%) 
-            string gemsPercentage = StringUtils.MultiplierToPercentage(m_happyHour.extraGemsFactor);
+            string gemsPercentage = StringUtils.MultiplierToPercentage(m_happyHour.extraGemsFactor, false);
 
             // Show texts with offer rate
             m_descriptionText.text = LocalizationManager.SharedInstance.Localize("TID_HAPPY_HOUR_POPUP_MESSAGE", gemsPercentage);
@@ -178,6 +178,12 @@ public class PopupHappyHour : MonoBehaviour {
         // Close current popup
         GetComponent<PopupController>().Close(true);
 
+
+        // If we are already in the shop do nothing
+        if (PopupManager.GetOpenPopup(PopupShop.PATH) != null)
+            return;
+
+        // Otherwise open the shop in the gems tab
         OpenPCShopPopup();
     }
 
