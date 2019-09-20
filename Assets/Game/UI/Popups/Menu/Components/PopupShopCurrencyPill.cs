@@ -42,7 +42,11 @@ public class PopupShopCurrencyPill : IPopupShopPill {
 	[SerializeField] private GameObject m_bestValueObj = null;
 
     [Space]
-    [SerializeField] private TextMeshProUGUI m_amountBeforeOffer = null;
+    [Header("Happy Hour")]
+    [SerializeField] private GameObject m_purpleBground;
+    [SerializeField] private TextMeshProUGUI m_amountBeforeOffer;
+    [SerializeField] private GameObject m_discountBadge;
+    [SerializeField] private Localizer m_discountBadgeText;
 
     // Public
     private UserProfile.Currency m_type = UserProfile.Currency.NONE;
@@ -135,8 +139,15 @@ public class PopupShopCurrencyPill : IPopupShopPill {
 			m_bestValueObj.SetActive(m_def.GetAsBool("bestValue", false));
 		}
 
-		// Price and currency
-		m_price = m_def.GetAsFloat("price");
+        // Hide all the happy hour elements
+        if (m_purpleBground != null && m_discountBadge != null)
+        {
+            m_purpleBground.SetActive(false);
+            m_discountBadge.SetActive(false);
+        }
+
+        // Price and currency
+        m_price = m_def.GetAsFloat("price");
 		m_currency = UserProfile.SkuToCurrency(m_def.Get("priceType"));
 		RefreshPrice();
 	}
@@ -186,10 +197,19 @@ public class PopupShopCurrencyPill : IPopupShopPill {
                     m_amountBeforeOffer.text = UIConstants.GetIconString(m_def.GetAsInt("amount"), m_type, UIConstants.IconAlignment.LEFT);
                 }
 
-                // Set new extra bonus
+                // Show a nice purple bground
+                if (m_purpleBground != null)
+                {
+                    m_purpleBground.SetActive(true);
+                }
+
+                // Hide the regular extra % text
+                m_bonusAmountText.gameObject.SetActive(false);
+
+                // Instead of that, show it in a cool badge
                 float bonusAmount = OffersManager.instance.happyHour.extraGemsFactor;
-                m_bonusAmountText.gameObject.SetActive(bonusAmount > 0f);
-                m_bonusAmountText.Localize("TID_SHOP_BONUS_AMOUNT", StringUtils.MultiplierToPercentage(bonusAmount));	// 15% extra
+                m_discountBadge.SetActive(bonusAmount > 0f);
+                m_discountBadgeText.Localize("TID_SHOP_BONUS_AMOUNT", StringUtils.MultiplierToPercentage(bonusAmount));	// 15% extra
 
                 // Set total amount of gems
                 float newAmount = m_def.GetAsFloat("amount") * (1f + bonusAmount);
@@ -205,14 +225,8 @@ public class PopupShopCurrencyPill : IPopupShopPill {
 
                     // Restore the original offer values
                     InitFromDef(m_def);
-
-                    // Hide the "old amount" text
-                    m_amountBeforeOffer.gameObject.SetActive(false);
-
                 }
-
             }
-
         }
     }
 
