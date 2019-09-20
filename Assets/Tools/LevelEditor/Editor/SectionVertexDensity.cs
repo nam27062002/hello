@@ -38,6 +38,7 @@ namespace LevelEditor
                     }
                     m_pSystem = go.GetComponent<ParticleSystem>();
                     m_staticFlags = GameObjectUtility.GetStaticEditorFlags(go);
+                    m_scale = go.transform.lossyScale.magnitude * ((m_mesh != null) ? m_mesh.bounds.size.magnitude: 1.0f);
                 }
                 else
                 {
@@ -49,6 +50,7 @@ namespace LevelEditor
                     m_pSystem = null;
                     m_vertex = 0;
                     m_polygons = 0;
+                    m_scale = 1.0f;
                     m_staticFlags = 0;
                 }
                 m_Childs = new List<TransformNode>();
@@ -70,20 +72,22 @@ namespace LevelEditor
             public ParticleSystem m_pSystem;
             public int m_vertex;
             public int m_polygons;
+            public float m_scale;
             public Transform m_Node;
             public List<TransformNode> m_Childs;
         };
 
-        List<TransformNode> m_nodeList = new List<TransformNode>();
+        public List<TransformNode> m_nodeList = new List<TransformNode>();
         int m_totalRenderers, m_totalOptimizedRenderers;
 //        int m_lightmapStaticRenderers, m_batchingStaticRenderers;
         int m_totalVertex, m_totalPolygons;
-        int m_hierarchyLevel;
+        public int m_hierarchyLevel;
         NodeDensity[] m_nodeDensity = null;
 
         List<GameObject> m_missingRenderers = new List<GameObject>();
         List<GameObject> m_batchingStaticRenderers = new List<GameObject>();
         List<GameObject> m_lightmapStaticRenderers = new List<GameObject>();
+        List<TransformNode> m_minimumScaleNodes = new List<TransformNode>();
 
         public struct NodeDensity
         {
@@ -157,6 +161,21 @@ namespace LevelEditor
             optimizeRenderers(false);
 
             checkStaticRenderers();
+
+            m_minimumScaleNodes = new List<TransformNode>(m_nodeList);
+
+            for (int a = 0; a < m_minimumScaleNodes.Count - 1; a++)
+            {
+                for (int b = a + 1; b < m_minimumScaleNodes.Count; b++)
+                {
+                    if (m_minimumScaleNodes[a].m_scale > m_minimumScaleNodes[b].m_scale)
+                    {
+                        TransformNode tem = m_minimumScaleNodes[a];
+                        m_minimumScaleNodes[a] = m_minimumScaleNodes[b];
+                        m_minimumScaleNodes[b] = tem;
+                    }
+                }
+            }
 /*
             Debug.Log("Total transform nodes with mesh filter: " + m_nodeList.Count);
             Debug.Log("Total vertex in scene: " + m_totalVertex);
@@ -368,6 +387,176 @@ namespace LevelEditor
             return result.ToArray();
         }
 
+        private int m_currentTab;
+
+        public delegate void TabAction(EditorTabWidget tabWidget);
+
+        public class EditorTabWidget
+        {
+            public EditorTabWidget(string tabTitle, TabAction tabAction)
+            {
+                m_tabTitle = tabTitle;
+                m_tabAction = tabAction;
+                m_scrollPos = Vector2.zero;
+            }
+            public string m_tabTitle;
+            public TabAction m_tabAction;
+            public Vector2 m_scrollPos;
+        }
+
+        private List<EditorTabWidget> m_tabWidgets = new List<EditorTabWidget>();
+
+        public void nodeListDensity(EditorTabWidget tabWidget)
+        {
+
+            GUI.backgroundColor = Colors.paleYellow;
+
+            EditorGUI.BeginChangeCheck();
+            m_hierarchyLevel = EditorGUILayout.IntField("Hierarchy level: ", m_hierarchyLevel);
+            if (EditorGUI.EndChangeCheck())
+            {
+                m_nodeDensity = getVertexDensityAtLevel(m_hierarchyLevel);
+            }
+            if (m_nodeDensity != null)
+            {
+                GUILayout.Label(m_nodeDensity.Length.ToString() + " nodes at level " + m_hierarchyLevel);
+                EditorGUILayout.Separator();
+                tabWidget.m_scrollPos = GUILayout.BeginScrollView(tabWidget.m_scrollPos);
+                int nodeCount = m_nodeDensity.Length > 100 ? 100 : m_nodeDensity.Length;
+                EditorGUILayout.BeginVertical();
+                for (int c = 0; c < nodeCount; c++)
+                {
+                    if (m_nodeDensity[c].node.m_Node != null)
+                    {
+                        EditorGUILayout.BeginHorizontal();
+                        if (GUILayout.Button(m_nodeDensity[c].node.m_Node.gameObject.name, GUILayout.Width(250.0f)))
+                        {
+                            Selection.activeGameObject = m_nodeDensity[c].node.m_Node.gameObject;
+                        }
+                        GUILayout.Label(" vertex: " + m_nodeDensity[c].numvertex);
+                        EditorGUILayout.EndHorizontal();
+                    }
+                }
+                EditorGUILayout.EndVertical();
+                GUILayout.EndScrollView();
+            }
+        }
+
+        public void missingRenderers(EditorTabWidget tabWidget)
+        {
+            GUI.backgroundColor = Colors.paleYellow;
+            EditorGUILayout.BeginVertical();
+            if (m_missingRenderers.Count > 0)
+            {
+                GUILayout.Label("Missing renderers: " + m_missingRenderers.Count);
+                if (GUILayout.Button("Remove missing renderers"))
+                {
+                    for (int c = 0; c < m_missingRenderers.Count; c++)
+                    {
+                        if (m_missingRenderers[c].transform.childCount > 0)
+                        {
+                            Debug.Log("GameObject: " + m_missingRenderers[c].name + " child count: " + m_missingRenderers[c].transform.childCount);
+                        }
+                        else
+                        {
+                            EditorSceneManager.MarkSceneDirty(m_missingRenderers[c].scene);
+                            Object.DestroyImmediate(m_missingRenderers[c]);
+                        }
+                    }
+
+                    m_missingRenderers.Clear();
+                }
+
+                EditorGUILayout.Separator();
+                tabWidget.m_scrollPos = GUILayout.BeginScrollView(tabWidget.m_scrollPos);
+
+                int nodeCount = (m_missingRenderers.Count > 100) ? 100 : m_missingRenderers.Count;
+
+                for (int c = 0; c < nodeCount; c++)
+                {
+                    if (GUILayout.Button(m_missingRenderers[c].name))
+                    {
+                        Selection.activeGameObject = m_missingRenderers[c];
+                    }
+                }
+
+                GUILayout.EndScrollView();
+            }
+            EditorGUILayout.EndVertical();
+
+        }
+
+        public void batchingStaticRenderers(EditorTabWidget tabWidget)
+        {
+            GUI.backgroundColor = Colors.paleYellow;
+            EditorGUILayout.BeginVertical();
+            if (m_batchingStaticRenderers.Count > 0)
+            {
+                tabWidget.m_scrollPos = GUILayout.BeginScrollView(tabWidget.m_scrollPos);
+
+                int nodeCount = (m_batchingStaticRenderers.Count > 100) ? 100 : m_batchingStaticRenderers.Count;
+
+                for (int c = 0; c < nodeCount; c++)
+                {
+                    if (GUILayout.Button(m_batchingStaticRenderers[c].name))
+                    {
+                        Selection.activeGameObject = m_batchingStaticRenderers[c];
+                    }
+                }
+
+                GUILayout.EndScrollView();
+            }
+            EditorGUILayout.EndVertical();
+        }
+
+        public void lightmapStaticRenderers(EditorTabWidget tabWidget)
+        {
+            GUI.backgroundColor = Colors.paleYellow;
+            EditorGUILayout.BeginVertical();
+            if (m_lightmapStaticRenderers.Count > 0)
+            {
+                tabWidget.m_scrollPos = GUILayout.BeginScrollView(tabWidget.m_scrollPos);
+
+                int nodeCount = (m_lightmapStaticRenderers.Count > 100) ? 100 : m_lightmapStaticRenderers.Count;
+
+                for (int c = 0; c < nodeCount; c++)
+                {
+                    if (GUILayout.Button(m_lightmapStaticRenderers[c].name))
+                    {
+                        Selection.activeGameObject = m_lightmapStaticRenderers[c];
+                    }
+                }
+
+                GUILayout.EndScrollView();
+            }
+            EditorGUILayout.EndVertical();
+
+        }
+
+        public void minimumScaleObjects(EditorTabWidget tabWidget)
+        {
+            GUI.backgroundColor = Colors.paleYellow;
+            EditorGUILayout.BeginVertical();
+            if (m_minimumScaleNodes.Count > 0)
+            {
+                tabWidget.m_scrollPos = GUILayout.BeginScrollView(tabWidget.m_scrollPos);
+
+                int nodeCount = (m_minimumScaleNodes.Count > 100) ? 100 : m_minimumScaleNodes.Count;
+
+                for (int c = 0; c < nodeCount; c++)
+                {
+                    if (m_minimumScaleNodes[c].m_Node != null && GUILayout.Button(m_minimumScaleNodes[c].m_Node.gameObject.name))
+                    {
+                        Selection.activeGameObject = m_minimumScaleNodes[c].m_Node.gameObject;
+                    }
+                }
+
+                GUILayout.EndScrollView();
+            }
+            EditorGUILayout.EndVertical();
+
+        }
+
 
         //--------------------------------------------------------------------//
         // INTERFACE IMPLEMENTATION											  //
@@ -377,12 +566,22 @@ namespace LevelEditor
         /// </summary>
         public void Init()
         {
+            m_tabWidgets.Clear();
+            m_tabWidgets.Add(new EditorTabWidget("Node list density", nodeListDensity));
+            m_tabWidgets.Add(new EditorTabWidget("Missing renderers", missingRenderers));
+            m_tabWidgets.Add(new EditorTabWidget("Batching static renderers", batchingStaticRenderers));
+            m_tabWidgets.Add(new EditorTabWidget("Lightmap static renderers", lightmapStaticRenderers));
+            m_tabWidgets.Add(new EditorTabWidget("Minimum scale GameObject", minimumScaleObjects));
+
+            m_currentTab = Prefs.GetIntEditor("LevelEditor.SectionVertexDensity.currentTab", 0);
         }
 
-        Vector2 scrollPos = Vector2.zero;
+    Vector2 scrollPos = Vector2.zero;
         Vector2 scrollPos2 = Vector2.zero;
         Vector2 scrollPos3 = Vector2.zero;
         Vector2 scrollPos4 = Vector2.zero;
+
+
 
         /// <summary>
         /// Draw the section.
@@ -392,6 +591,7 @@ namespace LevelEditor
         {
             // Title - encapsulate in a nice button to make it foldable
             GUI.backgroundColor = Colors.gray;
+
             bool folded = Prefs.GetBoolEditor("LevelEditor.SectionVertexDensity.folded", false);
             if (GUILayout.Button((folded ? "►" : "▼") + " Vertex density tool", LevelEditorWindow.styles.sectionHeaderStyle, GUILayout.ExpandWidth(true)))
             {
@@ -434,167 +634,28 @@ namespace LevelEditor
                     GUILayout.Label("Total transform nodes with mesh: " + m_nodeList.Count);
                     GUILayout.Label("Total vertex in scene: " + m_totalVertex);
                     GUILayout.Label("Total polygon in scene: " + m_totalPolygons);
-                    EditorGUILayout.Separator();
+ //                   EditorGUILayout.Separator();
                     GUILayout.Label("Total renderers: " + m_totalRenderers);
                     GUILayout.Label("Optimizable renderers: " + m_totalOptimizedRenderers);
                     GUILayout.Label("Batching static renderers: " + m_batchingStaticRenderers.Count);
                     GUILayout.Label("Lightmap static renderers: " + m_lightmapStaticRenderers.Count);
 
-                    GUI.backgroundColor = Colors.gray;
-                    folded = Prefs.GetBoolEditor("LevelEditor.SectionVertexDensity.NodeListDensity.folded", false);
-                    if (GUILayout.Button((folded ? "►" : "▼") + "Node list density", LevelEditorWindow.styles.sectionHeaderStyle, GUILayout.ExpandWidth(true)))
-                    {
-                        folded = !folded;
-                        Prefs.SetBoolEditor("LevelEditor.SectionVertexDensity.NodeListDensity.folded", folded);
-                    }
 
-                    if (!folded)
+                    GUILayout.BeginHorizontal();
+                    for (int c = 0; c < m_tabWidgets.Count; c++)
                     {
-                        GUI.backgroundColor = Colors.paleYellow;
-
-                        EditorGUI.BeginChangeCheck();
-                        m_hierarchyLevel = EditorGUILayout.IntField("Hierarchy level: ", m_hierarchyLevel);
-                        if (EditorGUI.EndChangeCheck())
+                        GUI.backgroundColor = m_currentTab == c ? Colors.transparentWhite : Colors.gray;
+                        if (GUILayout.Button(m_tabWidgets[c].m_tabTitle, LevelEditorWindow.styles.sectionHeaderStyle, GUILayout.ExpandWidth(true)))
                         {
-                            m_nodeDensity = getVertexDensityAtLevel(m_hierarchyLevel);
+                            m_currentTab = c;
+                            Prefs.SetIntEditor("LevelEditor.SectionVertexDensity.currentTab", m_currentTab);
                         }
-                        if (m_nodeDensity != null)
-                        {
-                            GUILayout.Label(m_nodeDensity.Length.ToString() + " nodes at level " + m_hierarchyLevel);
-                            EditorGUILayout.Separator();
-                            scrollPos = GUILayout.BeginScrollView(scrollPos);
-                            int nodeCount = m_nodeDensity.Length > 100 ? 100 : m_nodeDensity.Length;
-                            EditorGUILayout.BeginVertical();
-                            for (int c = 0; c < nodeCount; c++)
-                            {
-                                if (m_nodeDensity[c].node.m_Node != null)
-                                {
-                                    EditorGUILayout.BeginHorizontal();
-                                    if (GUILayout.Button(m_nodeDensity[c].node.m_Node.gameObject.name, GUILayout.Width(250.0f)))
-                                    {
-                                        Selection.activeGameObject = m_nodeDensity[c].node.m_Node.gameObject;
-                                    }
-                                    GUILayout.Label(" vertex: " + m_nodeDensity[c].numvertex);
-                                    EditorGUILayout.EndHorizontal();
-                                }
-                            }
-                            EditorGUILayout.EndVertical();
-                            GUILayout.EndScrollView();
-                        }
+
                     }
+                    GUILayout.EndHorizontal();
 
-                    GUI.backgroundColor = Colors.gray;
-                    folded = Prefs.GetBoolEditor("LevelEditor.SectionVertexDensity.MissingRenderers.folded", false);
-                    if (GUILayout.Button((folded ? "►" : "▼") + "Missing renderers", LevelEditorWindow.styles.sectionHeaderStyle, GUILayout.ExpandWidth(true)))
-                    {
-                        folded = !folded;
-                        Prefs.SetBoolEditor("LevelEditor.SectionVertexDensity.MissingRenderers.folded", folded);
-                    }
-
-                    if (!folded)
-                    {
-                        GUI.backgroundColor = Colors.paleYellow;
-                        EditorGUILayout.BeginVertical();
-                        if (m_missingRenderers.Count > 0)
-                        {
-                            GUILayout.Label("Missing renderers: " + m_missingRenderers.Count);
-                            if (GUILayout.Button("Remove missing renderers"))
-                            {
-                                for (int c = 0; c < m_missingRenderers.Count; c++)
-                                {
-                                    if (m_missingRenderers[c].transform.childCount > 0)
-                                    {
-                                        Debug.Log("GameObject: " + m_missingRenderers[c].name + " child count: " + m_missingRenderers[c].transform.childCount);
-                                    }
-                                    else
-                                    {
-                                        EditorSceneManager.MarkSceneDirty(m_missingRenderers[c].scene);
-                                        Object.DestroyImmediate(m_missingRenderers[c]);
-                                    }
-                                }
-
-                                m_missingRenderers.Clear();
-                            }
-
-                            EditorGUILayout.Separator();
-                            scrollPos2 = GUILayout.BeginScrollView(scrollPos2);
-
-                            int nodeCount = (m_missingRenderers.Count > 100) ? 100 : m_missingRenderers.Count;
-
-                            for (int c = 0; c < nodeCount; c++)
-                            {
-                                if (GUILayout.Button(m_missingRenderers[c].name))
-                                {
-                                    Selection.activeGameObject = m_missingRenderers[c];
-                                }
-                            }
-
-                            GUILayout.EndScrollView();
-                        }
-                        EditorGUILayout.EndVertical();
-                    }
-
-                    GUI.backgroundColor = Colors.gray;
-                    folded = Prefs.GetBoolEditor("LevelEditor.SectionVertexDensity.BatchingStaticRenderers.folded", false);
-                    if (GUILayout.Button((folded ? "►" : "▼") + "Batching static renderers", LevelEditorWindow.styles.sectionHeaderStyle, GUILayout.ExpandWidth(true)))
-                    {
-                        folded = !folded;
-                        Prefs.SetBoolEditor("LevelEditor.SectionVertexDensity.BatchingStaticRenderers.folded", folded);
-                    }
-
-                    if (!folded)
-                    {
-                        GUI.backgroundColor = Colors.paleYellow;
-                        EditorGUILayout.BeginVertical();
-                        if (m_batchingStaticRenderers.Count > 0)
-                        {
-                            scrollPos3 = GUILayout.BeginScrollView(scrollPos3);
-
-                            int nodeCount = (m_batchingStaticRenderers.Count > 100) ? 100 : m_batchingStaticRenderers.Count;
-
-                            for (int c = 0; c < nodeCount; c++)
-                            {
-                                if (GUILayout.Button(m_batchingStaticRenderers[c].name))
-                                {
-                                    Selection.activeGameObject = m_batchingStaticRenderers[c];
-                                }
-                            }
-
-                            GUILayout.EndScrollView();
-                        }
-                        EditorGUILayout.EndVertical();
-                    }
-
-                    GUI.backgroundColor = Colors.gray;
-                    folded = Prefs.GetBoolEditor("LevelEditor.SectionVertexDensity.LightmapStaticRenderers.folded", false);
-                    if (GUILayout.Button((folded ? "►" : "▼") + "Lightmap static renderers", LevelEditorWindow.styles.sectionHeaderStyle, GUILayout.ExpandWidth(true)))
-                    {
-                        folded = !folded;
-                        Prefs.SetBoolEditor("LevelEditor.SectionVertexDensity.LightmapStaticRenderers.folded", folded);
-                    }
-
-                    if (!folded)
-                    {
-                        GUI.backgroundColor = Colors.paleYellow;
-                        EditorGUILayout.BeginVertical();
-                        if (m_lightmapStaticRenderers.Count > 0)
-                        {
-                            scrollPos4 = GUILayout.BeginScrollView(scrollPos4);
-
-                            int nodeCount = (m_lightmapStaticRenderers.Count > 100) ? 100 : m_lightmapStaticRenderers.Count;
-
-                            for (int c = 0; c < nodeCount; c++)
-                            {
-                                if (GUILayout.Button(m_lightmapStaticRenderers[c].name))
-                                {
-                                    Selection.activeGameObject = m_lightmapStaticRenderers[c];
-                                }
-                            }
-
-                            GUILayout.EndScrollView();
-                        }
-                        EditorGUILayout.EndVertical();
-                    }
+                    EditorTabWidget tabWidget = m_tabWidgets[m_currentTab];
+                    tabWidget.m_tabAction(tabWidget);
                 }
             }
         }

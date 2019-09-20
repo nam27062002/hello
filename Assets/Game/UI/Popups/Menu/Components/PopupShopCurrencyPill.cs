@@ -40,6 +40,7 @@ public class PopupShopCurrencyPill : IPopupShopPill {
 
 	[Space]
 	[SerializeField] private GameObject m_bestValueObj = null;
+	[SerializeField] private Localizer m_bestValueText = null;
 
     [Space]
     [Header("Happy Hour")]
@@ -132,11 +133,19 @@ public class PopupShopCurrencyPill : IPopupShopPill {
 		// Bonus amount
 		float bonusAmount = m_def.GetAsFloat("bonusAmount");
 		m_bonusAmountText.gameObject.SetActive(bonusAmount > 0f);
-		m_bonusAmountText.Localize("TID_SHOP_BONUS_AMOUNT", StringUtils.MultiplierToPercentage(bonusAmount));	// 15% extra
+		m_bonusAmountText.Localize("TID_SHOP_BONUS_AMOUNT", StringUtils.MultiplierToPercentage(bonusAmount));   // 15% extra
 
-		// Best value
+		// Best value / Most popular
 		if(m_bestValueObj != null) {
-			m_bestValueObj.SetActive(m_def.GetAsBool("bestValue", false));
+			if(m_def.GetAsBool("bestValue", false)) {
+				m_bestValueObj.SetActive(true);
+				if(m_bestValueText != null) m_bestValueText.Localize("TID_SHOP_BEST_VALUE");
+			} else if(m_def.GetAsBool("mostPopular", false)) {
+				m_bestValueObj.SetActive(true);
+				if(m_bestValueText != null) m_bestValueText.Localize("TID_SHOP_MOST_POPULAR");
+			} else {
+				m_bestValueObj.SetActive(false);
+			}
 		}
 
         // Hide all the happy hour elements
