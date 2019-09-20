@@ -172,22 +172,45 @@ namespace Metagame {
 			return null;
 		}
 
-		public static RewardSoftCurrency CreateTypeSoftCurrency(long _amount, HDTrackingManager.EEconomyGroup _economyGroup, string _source)						{ return new RewardSoftCurrency(_amount, Rarity.COMMON, _economyGroup, _source); }
-		public static RewardHardCurrency CreateTypeHardCurrency(long _amount, HDTrackingManager.EEconomyGroup _economyGroup, string _source) 						{ return new RewardHardCurrency(_amount, Rarity.COMMON, _economyGroup, _source); }
-		public static RewardGoldenFragments CreateTypeGoldenFragments(int _amount, Rarity _rarity, HDTrackingManager.EEconomyGroup _economyGroup, string _source) 	{ return new RewardGoldenFragments(_amount, _rarity, _economyGroup, _source); }
+		// Currencies
+		public static RewardSoftCurrency CreateTypeSoftCurrency(long _amount, HDTrackingManager.EEconomyGroup _economyGroup, string _source, Rarity _rarity = Rarity.COMMON) {
+			return new RewardSoftCurrency(_amount, _rarity, _economyGroup, _source);
+		}
 
+		public static RewardHardCurrency CreateTypeHardCurrency(long _amount, HDTrackingManager.EEconomyGroup _economyGroup, string _source, Rarity _rarity = Rarity.COMMON) {
+			return new RewardHardCurrency(_amount, _rarity, _economyGroup, _source);
+		}
+
+		public static RewardGoldenFragments CreateTypeGoldenFragments(int _amount, Rarity _rarity, HDTrackingManager.EEconomyGroup _economyGroup, string _source) {
+			return new RewardGoldenFragments(_amount, _rarity, _economyGroup, _source);
+		}
+
+		public static RewardCurrency CreateTypeCurrency(long _amount, UserProfile.Currency _currency, Rarity _rarity, HDTrackingManager.EEconomyGroup _economyGroup, string _source) {
+			switch(_currency) {
+				case UserProfile.Currency.SOFT: return CreateTypeSoftCurrency(_amount, _economyGroup, _source, _rarity);
+				case UserProfile.Currency.HARD: return CreateTypeHardCurrency(_amount, _economyGroup, _source, _rarity);
+				case UserProfile.Currency.GOLDEN_FRAGMENTS: return CreateTypeGoldenFragments((int)_amount, _rarity, _economyGroup, _source);
+			}
+			return null;
+		}
+
+		// Eggs
 		public static RewardEgg CreateTypeEgg(string _sku, string _source) 				{ return new RewardEgg(_sku, _source); }
 		public static RewardMultiEgg CreateTypeMultiEgg(long _amount, string _sku, string _source) { return new RewardMultiEgg(_amount, _sku, _source); }
 
+		// Pets
 		public static RewardPet CreateTypePet(string _sku, string _source)				{ return new RewardPet(_sku, _source); }
 		public static RewardPet CreateTypePet(DefinitionNode _def, string _source)		{ return new RewardPet(_def, _source); }
 
+		// Skins
 		public static RewardSkin CreateTypeSkin(string _sku, string _source)			{ return new RewardSkin(_sku, _source); }
 		public static RewardSkin CreateTypeSkin(DefinitionNode _def, string _source)	{ return new RewardSkin(_def, _source); }
 
+		// Dragons
 		public static RewardDragon CreateTypeDragon(string _sku, string _source) 			{ return new RewardDragon(_sku, _source); }
 		public static RewardDragon CreateTypeDragon(DefinitionNode _def, string _source) 	{ return new RewardDragon(_def, _source); }
 
+		// Others
 		public static RewardMulti CreateTypeMulti(List<Data> _datas, string _source, HDTrackingManager.EEconomyGroup _economyGroup = HDTrackingManager.EEconomyGroup.UNKNOWN)	{ return new RewardMulti(_datas, _source, _economyGroup); }
 		#endregion
 

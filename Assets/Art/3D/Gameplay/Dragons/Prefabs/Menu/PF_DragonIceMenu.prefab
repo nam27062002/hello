@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 11499796}
   - component: {fileID: 11474738}
   - component: {fileID: 114729788433307666}
+  - component: {fileID: 114340153227043664}
   m_Layer: 0
   m_Name: PF_DragonIceMenu
   m_TagString: Untagged
@@ -26,8 +27,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 185464}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -2.1785994, y: 54.139, z: 75.86733}
-  m_LocalScale: {x: 2.25, y: 2.25, z: 2.25}
+  m_LocalPosition: {x: 1.27, y: 0.23, z: 0}
+  m_LocalScale: {x: 2.1000001, y: 2.1000001, z: 2.1000001}
   m_Children:
   - {fileID: 4766388478193662}
   - {fileID: 4432740452884954}
@@ -76,23 +77,25 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_sku: dragon_ice
+  m_offsetModifier: {x: 0.25, y: 0.2, z: 0}
+  m_baseScaleModifier: 1.2
   m_altAnimConfigs:
   - m_range:
       min: 3
       max: 6
     m_allowFaceDetails: 1
-    m_loopsMin: 3
-    m_loopsMax: 4
-    m_special: 0
+    m_loopsMin: 1
+    m_loopsMax: 1
+    m_special: 1
     m_timeToNext: 0
     m_isPreferedAnimation: 0
     m_animationLevel: 0
   - m_range:
-      min: 10
-      max: 20
+      min: 4
+      max: 15
     m_allowFaceDetails: 0
-    m_loopsMin: 1
-    m_loopsMax: 1
+    m_loopsMin: 3
+    m_loopsMax: 4
     m_special: 0
     m_timeToNext: 0
     m_isPreferedAnimation: 0
@@ -3097,6 +3100,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_point: 1
+--- !u!114 &114340153227043664
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 185464}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5079a9557e28740cba2dc15aa05422d4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_prefab: {fileID: 1927669451800062, guid: f2020a53f0f9b4d6eb77dcc7afb1e11d, type: 2}
+  m_materials: []
+  m_AnimationName: MenuAlt0
 --- !u!114 &114381272417152634
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3163,6 +3180,7 @@ MonoBehaviour:
     offset: {x: 0, y: 0, z: 0}
     scale: 1
     orientate: 0
+  m_toggleEventType: 17
 --- !u!114 &114539113461696338
 MonoBehaviour:
   m_ObjectHideFlags: 1

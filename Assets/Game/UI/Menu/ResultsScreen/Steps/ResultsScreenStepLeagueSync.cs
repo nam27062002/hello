@@ -75,9 +75,11 @@ public class ResultsScreenStepLeagueSync : ResultsScreenStep {
 	/// Check whether this step must be displayed or not based on the run results.
 	/// </summary>
 	/// <returns><c>true</c> if the step must be displayed, <c>false</c> otherwise.</returns>
-	override public bool MustBeDisplayed() {		
-		return HDLiveDataManager.league.season.IsRunning();
-	}
+	override public bool MustBeDisplayed() {
+        // Leagues are active and the player can already participate
+		return  HDLiveDataManager.league.season.IsRunning() &&  
+                (UsersManager.currentUser.gamesPlayed >= GameSettings.ENABLE_LEAGUES_AT_RUN);
+    }
 
 	/// <summary>
 	/// Initialize and launch this step.

@@ -203,14 +203,13 @@ public class OpenEggScreenController : MonoBehaviour {
 				// Don't show call to action button if the reward is a duplicate
 				m_callToActionButton.SetActive(false);				
 			} else {
-				// Don't show call to action button if the reward is a duplicate
 				m_callToActionText.Localize("TID_EGG_SHOW_REWARD");
-                m_callToActionButton.SetActive(SceneController.mode != SceneController.Mode.SPECIAL_DRAGONS || DragonManager.maxSpecialDragonTierUnlocked > DragonTier.TIER_0);
+                m_callToActionButton.SetActive(true);
 			}
 
 			// Don't show back button if we've completed a golden egg!
 			// Don't show either if rewarding a pet and tutorial not yet completed (force going to collection)
-            bool hideBackButton = (SceneController.mode != SceneController.Mode.SPECIAL_DRAGONS) && (!finalReward.WillBeReplaced() && !UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.EGG_REWARD));
+            bool hideBackButton =  (!finalReward.WillBeReplaced() && !UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.EGG_REWARD));
 			m_backButton.SetActive(!hideBackButton);
 
 			// Same with egg buy button
@@ -262,13 +261,13 @@ public class OpenEggScreenController : MonoBehaviour {
 		switch(m_scene.eggData.rewardData.reward.type) {
 			case Metagame.RewardPet.TYPE_CODE: {
 				// Make sure selected dragon is owned
-				InstanceManager.menuSceneController.SetSelectedDragon(DragonManager.currentDragon.def.sku);	// Current dragon is always owned
+				InstanceManager.menuSceneController.SetSelectedDragon(DragonManager.CurrentDragon.def.sku);	// Current dragon is always owned
 
 				// Go to the pets screen
 				// Add a frame of delay to make sure everyone has been notified that the selected dragon has changed
 				UbiBCN.CoroutineManager.DelayedCallByFrames(() => {
-					MenuScreen targetPetScreen = InstanceManager.menuSceneController.GetPetScreenForCurrentMode();
-					PetsScreenController petScreen = screensController.GetScreenData(targetPetScreen).ui.GetComponent<PetsScreenController>();
+					MenuScreen targetPetScreen = MenuScreen.PETS;
+                    PetsScreenController petScreen = screensController.GetScreenData(targetPetScreen).ui.GetComponent<PetsScreenController>();
 					petScreen.Initialize(m_scene.eggData.rewardData.reward.sku);
 					screensController.GoToScreen(targetPetScreen, true, false, false);	// [AOC] Don't allow going back to this screen!
 				}, 1);

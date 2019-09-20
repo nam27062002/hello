@@ -46,8 +46,40 @@ public class PopupDragonInfo : PopupTierPreyInfo {
 	protected IDragonData m_dragonData = null;
 
 	//------------------------------------------------------------------------//
-	// GENERIC METHODS														  //
+	// STATIC UTILS															  //
 	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Initializes and open the info popup with the given dragon data, taking its type in consideration.
+	/// </summary>
+	/// <param name="_dragonData">The data to be used to choose which popup to open and to initialize it.</param>
+	/// <param name="_trackingLocation">Optional, where the popup is being opened from. If empty, no tracking event will be sent.</param>
+	/// <returns>A reference to the opened popup.</returns>
+	public static PopupDragonInfo OpenPopupForDragon(IDragonData _dragonData, string _trackingLocation = null) {
+		// Check params
+		if(_dragonData == null) return null;
+
+		// Choose popup type based on dragon type
+		string popupPath = string.Empty;
+		switch(_dragonData.type) {
+			case IDragonData.Type.CLASSIC:	popupPath = PopupClassicDragonInfo.PATH;	break;
+			case IDragonData.Type.SPECIAL:	popupPath = PopupSpecialDragonInfo.PATH;	break;
+		}
+
+		// Load the chosen popup, initialize and open it
+		PopupController popup = PopupManager.LoadPopup(popupPath);
+		PopupDragonInfo infoPopup = popup.GetComponent<PopupDragonInfo>();
+		infoPopup.Init(_dragonData);
+		popup.Open();
+
+		// If defined, send tracking event
+		if(!string.IsNullOrEmpty(_trackingLocation)) {
+			string popupName = System.IO.Path.GetFileNameWithoutExtension(popupPath);
+			HDTrackingManager.Instance.Notify_InfoPopup(popupName, _trackingLocation);
+		}
+
+		// Done!
+		return infoPopup;
+	}
 
 	//------------------------------------------------------------------------//
 	// SCROLLING CONTROL													  //

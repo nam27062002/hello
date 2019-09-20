@@ -45,7 +45,7 @@ public class DeviceOperatorSpawner : AbstractSpawner {
 
 	protected override void OnDestroy() {
 		base.OnDestroy();
-		if (ApplicationManager.IsAlive && InstanceManager.gameSceneController != null && InstanceManager.gameSceneController.state <= GameSceneController.EStates.RUNNING) {
+		if (ApplicationManager.IsAlive) {
 			ForceRemoveEntities();
 		}
 	}
@@ -70,7 +70,7 @@ public class DeviceOperatorSpawner : AbstractSpawner {
 
         // Progressive respawn disabled because it respawns only one instance and it's triggered by Catapult which is not prepared to loop until Respawn returns true
         UseProgressiveRespawn = false;        
-        UseSpawnManagerTree = false;        
+        UseSpawnManagerTree = true;
         RegisterInSpawnerManager();        
 
         m_newCamera = Camera.main.GetComponent<GameCamera>();
@@ -90,9 +90,7 @@ public class DeviceOperatorSpawner : AbstractSpawner {
         if (m_autoSpawner.state == AutoSpawnBehaviour.State.Idle) {
             if (IsOperatorDead()) {
 				if (m_gameSceneController.elapsedSeconds > m_respawnTime) {
-					if (m_newCamera != null) {
-						return !m_newCamera.IsInsideActivationMinArea(m_spawnAtTransform.position);
-					}
+                    return true;
 				}
             }
         }
@@ -232,7 +230,7 @@ public class DeviceOperatorSpawner : AbstractSpawner {
 	//-------------------------------------------------------------------
 	void OnDrawGizmosSelected() {
 		Gizmos.color = Colors.WithAlpha(Colors.paleGreen, 0.5f);
-		Gizmos.DrawCube(transform.position, m_rect.size);
+		Gizmos.DrawCube(transform.position + (Vector3)m_rect.position, m_rect.size);
 
 		if (m_spawnAtTransform != null) {
 			Gizmos.color = Colors.lime;

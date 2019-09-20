@@ -72,8 +72,10 @@ public class Catapult : SimpleDevice {
 
 	private State m_state;
 
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    protected override void Awake() {
+        base.Awake();
+
 		m_transform = transform;
 		m_ammo = new GameObject[m_extraProjectiles.Length + 1];
 		m_ammoPoolHandlers = new PoolHandler[m_ammoList.Length];

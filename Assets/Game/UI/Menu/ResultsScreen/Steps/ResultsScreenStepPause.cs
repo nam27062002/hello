@@ -30,7 +30,6 @@ public class ResultsScreenStepPause : ResultsScreenSequenceStep {
 	[Space]
 	[SerializeField] private NumberTextAnimator m_coinsCounter = null;
 	[SerializeField] private NumberTextAnimator m_pcCounter = null;
-	[SerializeField] private NumberTextAnimator m_gfCounter = null;
 
 	//------------------------------------------------------------------------//
 	// ResultsScreenStep IMPLEMENTATION										  //
@@ -57,7 +56,6 @@ public class ResultsScreenStepPause : ResultsScreenSequenceStep {
 		// Init currency counters
 		m_coinsCounter.SetValue(m_controller.totalCoins, false);
 		m_pcCounter.SetValue(m_controller.totalPc, false);
-		m_gfCounter.SetValue(m_controller.totalGf, false);
 	}
 
 	/// <summary>
