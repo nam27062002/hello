@@ -117,7 +117,7 @@ public class ResourcesFlowMissingPCPopup : MonoBehaviour {
                 string timeLeft = TimeUtils.FormatTime(m_happyHour.TimeLeftSecs(), TimeUtils.EFormat.ABBREVIATIONS_WITHOUT_0_VALUES, 3);
                 if (m_happyHourTimer != null)
                 {
-                    m_happyHourTimer.text = LocalizationManager.SharedInstance.Localize("TID_REFERRAL_DAYS_LEFT", timeLeft);
+                    m_happyHourTimer.text = timeLeft;
                 }
 
             }
