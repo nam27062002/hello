@@ -24,6 +24,11 @@ public class PopupHappyHour : MonoBehaviour {
 
     new public const string PATH = "UI/Popups/Economy/PF_PopupHappyHour";
 
+    public static string ACTION_CLOSE = "close";
+    public static string ACTION_PURCHASE = "purchase";
+    public static string ACTION_MORE_OFFERS = "more offers";
+
+
     //------------------------------------------------------------------------//
     // MEMBERS AND PROPERTIES												  //
     //------------------------------------------------------------------------//
@@ -166,9 +171,41 @@ public class PopupHappyHour : MonoBehaviour {
   
     }
 
+    /// <summary>
+    /// Track the player action when buys the offer
+    /// </summary>
+    public void TrackBuyButton()
+    {
+        // Track the action
+        HDTrackingManager.Instance.Notify_CloseHappyHourPopup(m_offerToDisplay.GetIAPSku(), ACTION_PURCHASE);
+
+    }
+
+    /// <summary>
+    /// Track the player action when clicks on more offers button
+    /// </summary>
+    public void TrackShopButton()
+    {
+        // Track the action
+        HDTrackingManager.Instance.Notify_CloseHappyHourPopup(m_offerToDisplay.GetIAPSku(), ACTION_MORE_OFFERS);
+
+    }
+
+    /// <summary>
+    /// Track the player action when closing the popup
+    /// </summary>
+    public void TrackCloseButton()
+    {
+        // Track the action
+        HDTrackingManager.Instance.Notify_CloseHappyHourPopup(m_offerToDisplay.GetIAPSku(), ACTION_CLOSE);
+
+    }
+
     //------------------------------------------------------------------------//
     // CALLBACKS															  //
     //------------------------------------------------------------------------//
+
+
 
     /// <summary>
     /// Player clicks on the SHOP button
@@ -178,6 +215,8 @@ public class PopupHappyHour : MonoBehaviour {
         // Close current popup
         GetComponent<PopupController>().Close(true);
 
+        // Track this action
+        TrackShopButton();
 
         // If we are already in the shop do nothing
         if (PopupManager.GetOpenPopup(PopupShop.PATH) != null)
