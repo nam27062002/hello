@@ -284,6 +284,7 @@ public class GameSceneController : GameSceneControllerBase {
 
 			// During countdown, let's just wait
 			case EStates.COUNTDOWN: {
+                base.Update();
 				if(m_timer > 0) {
 					m_timer -= Time.deltaTime;
 					if(m_timer <= 0) {
