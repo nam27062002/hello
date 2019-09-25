@@ -41,14 +41,23 @@ public class ResourcesFlowMissingPCPopup : MonoBehaviour {
 	public UnityEvent OnRecommendedPackPurchased = new UnityEvent();
 	public UnityEvent OnGoToShop = new UnityEvent();
 	public UnityEvent OnCancel = new UnityEvent();
-	
-	//------------------------------------------------------------------------//
-	// GENERIC METHODS														  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Component has been enabled.
-	/// </summary>
-	private void OnEnable() {
+
+    // Happy hour banner
+    [Space]
+    [SerializeField] private GameObject m_happyHourPanel;
+    [SerializeField] private TextMeshProUGUI m_happyHourTimer;
+
+    // Internal
+    private float m_timer = 0;
+    private HappyHourOffer m_happyHour; // cached object
+
+    //------------------------------------------------------------------------//
+    // GENERIC METHODS														  //
+    //------------------------------------------------------------------------//
+    /// <summary>
+    /// Component has been enabled.
+    /// </summary>
+    private void OnEnable() {
 		Log("Subscribing to OnPurchaseSuccess event " + m_recommendedPackPill.GetIAPSku());
 		m_recommendedPackPill.OnPurchaseSuccess.AddListener(OnPillPurchaseSuccess);
 	}
@@ -61,26 +70,66 @@ public class ResourcesFlowMissingPCPopup : MonoBehaviour {
 		m_recommendedPackPill.OnPurchaseSuccess.RemoveListener(OnPillPurchaseSuccess);
 	}
 
-	//------------------------------------------------------------------------//
-	// OTHER METHODS														  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Initialize the popup with the given data.
-	/// </summary>
-	/// <param name="_coinsToBuy">Amount of coins to buy.</param>
-	/// <param name="_pricePC">PC price of the coins to buy.</param>
-	public void Init(DefinitionNode _recommendedPackDef) {
+    public void Update()
+    {
+        // Refresh offers periodically for better performance
+        if (m_timer <= 0)
+        {
+            m_timer = 1f; // Refresh every second
+            Refresh();
+        }
+        m_timer -= Time.deltaTime;
+    }
+
+
+    //------------------------------------------------------------------------//
+    // OTHER METHODS														  //
+    //------------------------------------------------------------------------//
+    /// <summary>
+    /// Initialize the popup with the given data.
+    /// </summary>
+    /// <param name="_coinsToBuy">Amount of coins to buy.</param>
+    /// <param name="_pricePC">PC price of the coins to buy.</param>
+    public void Init(DefinitionNode _recommendedPackDef) {
 		// Initialize recommended pack
 		m_recommendedPackPill.InitFromDef(_recommendedPackDef);
-	}
 
-	//------------------------------------------------------------------------//
-	// CALLBACKS															  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// More offers button has been pressed.
-	/// </summary>
-	public void OnMoreOffersButton() {
+        // Cache happy hour offer
+        m_happyHour = OffersManager.instance.happyHour;
+
+    }
+
+    /// <summary>
+    /// Refresh the visual elements of the popup
+    /// </summary>
+    private void Refresh()
+    {
+
+        // Refresh the happy hour panel
+        if (m_happyHour != null &&
+            m_happyHourPanel != null && m_happyHourTimer != null)
+        {
+            // If show the happy hour panel only if the offer is active        
+            m_happyHourPanel.SetActive(m_happyHour.IsActive());
+
+            if (m_happyHour.IsActive())
+            {
+                // Show time left in the proper format (1h 20m 30s)
+                string timeLeft = TimeUtils.FormatTime(m_happyHour.TimeLeftSecs(), TimeUtils.EFormat.ABBREVIATIONS_WITHOUT_0_VALUES, 3);
+                m_happyHourTimer.text = LocalizationManager.SharedInstance.Localize("TID_REFERRAL_DAYS_LEFT", timeLeft);
+
+            }
+        }
+
+    }
+
+    //------------------------------------------------------------------------//
+    // CALLBACKS															  //
+    //------------------------------------------------------------------------//
+    /// <summary>
+    /// More offers button has been pressed.
+    /// </summary>
+    public void OnMoreOffersButton() {
 		// Managed externally
 		OnGoToShop.Invoke();
 	}

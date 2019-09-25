@@ -173,7 +173,7 @@ public class HDTrackingManager
 
     protected virtual void SaveOfflineUnsentEventsExtended() {}
 
-#region notify    
+    #region notify    
     /// <summary>
     /// Called when the application starts
     /// </summary>
@@ -551,6 +551,14 @@ public class HDTrackingManager
     /// <param name="experimentName">Name of the experiment applied.</param>
     /// <param name="experimentGroup">Name of the group of the experiment applied</param>
     public virtual void Notify_ExperimentApplied(string experimentName, string experimentGroup) {}
+
+    /// <summary>
+    /// Notifies that the player closed the happy hour popup
+    /// </summary>
+    /// <param name="itemID">Id of the offer shown in the popup</param>
+    /// <param name="action">How did the player close the popup? Possible values: "close", "buy", "shop"</param>
+    public virtual void Notify_CloseHappyHourPopup(string itemID, string action) { }
+
     #endregion
 
     #region animoji

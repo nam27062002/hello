@@ -51,8 +51,14 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 		set { instance.m_autoRefreshEnabled = value; }
 	}
 
-	// Internal
-	private List<OfferPack> m_allEnabledOffers = new List<OfferPack>();	// All enabled and non-expired offer packs, regardless of type
+    private HappyHourOffer m_happyHour = null;
+    public HappyHourOffer happyHour {
+        get { return m_happyHour; }
+    }
+
+
+    // Internal
+    private List<OfferPack> m_allEnabledOffers = new List<OfferPack>();	// All enabled and non-expired offer packs, regardless of type
 	private List<OfferPack> m_allOffers = new List<OfferPack>();        // All defined offer packs, regardless of state and type
 	private List<OfferPackRotational> m_allEnabledRotationalOffers = new List<OfferPackRotational>();  // All enabled and non-expired rotational offer packs
 	private List<OfferPackRotational> m_activeRotationalOffers = new List<OfferPackRotational>();	// Currently active rotational offers
@@ -70,13 +76,15 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 		}
 	}
 
-	//------------------------------------------------------------------------//
-	// GENERIC METHODS														  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// First update loop.
-	/// </summary>
-	private void Start() {
+
+
+    //------------------------------------------------------------------------//
+    // GENERIC METHODS														  //
+    //------------------------------------------------------------------------//
+    /// <summary>
+    /// First update loop.
+    /// </summary>
+    private void Start() {
         m_timer = 0;
 	}
 
@@ -158,8 +166,14 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 			}
 		}
 
-		// Refresh active and featured offers
-		instance.Refresh(true);
+        // Create a new happy hour offer from the definitions
+        if (instance.m_happyHour == null)
+        {
+            instance.m_happyHour = HappyHourOffer.CreateFromDefinition();
+        }
+
+        // Refresh active and featured offers
+        instance.Refresh(true);
 
         // Only clean if we have a new customization/s
         if ( needsCleaning ){

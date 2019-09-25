@@ -98,7 +98,8 @@
         { "currency": { "Status": "OK" } },
         { "amountDelta": { "Status": "OK" } },
         { "amountBalance": { "Status": "OK" } },
-        { "ecoGroup": { "Status": "OK" } }
+        { "ecoGroup": { "Status": "OK" } },
+		{ "happyHour": { "Status": "OK" } }
       ],
       "APIs": [
         "dna",
@@ -763,6 +764,22 @@
         { "popupName": { "Status": "OK" } },
         { "action": { "Status": "OK" } },
         { "playerProgress": { "Status": "OK" } }
+      ],
+      "APIs": [
+        "dna",
+        "etl"
+      ]
+    },
+	"custom.happyhour.popup": {
+      "Parameters": [
+        { "sessionsCount": { "Status": "OK" } },
+        { "gameRunNb": { "Status": "OK" } },
+        { "maxXp": { "Status": "OK" } },
+        { "playerProgress": { "Status": "OK" } },
+        { "softCurrency": { "Status": "OK" } },
+        { "hardCurrency": { "Status": "OK" } },
+		{ "itemID": { "Status": "OK" } },
+        { "action": { "Status": "OK" } }
       ],
       "APIs": [
         "dna",
@@ -1680,6 +1697,10 @@
     "controlChoice": {
       "Type": "STRING:8",
       "Values": []
-    }
+    },
+	"happyHour" : {
+	  "Type": "INT:4",
+      "Values": []
+	}
   }
 }
