@@ -7,6 +7,7 @@
 //----------------------------------------------------------------------------//
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
+using System;
 using TMPro;
 using UnityEngine;
 
@@ -63,7 +64,8 @@ public class PopupHappyHour : MonoBehaviour {
             // Time left set in the Update method
 
             // Convert offer rate to percentage (example: .5f to +50%) 
-            string gemsPercentage = StringUtils.MultiplierToPercentage(m_happyHour.extraGemsFactor);
+            float percentage = m_happyHour.extraGemsFactor * 100;
+            string gemsPercentage = String.Format("{0}", Math.Round(percentage));   
 
             // Show texts with offer rate
             m_descriptionText.text = LocalizationManager.SharedInstance.Localize("TID_HAPPY_HOUR_POPUP_MESSAGE", gemsPercentage);
@@ -138,7 +140,7 @@ public class PopupHappyHour : MonoBehaviour {
             {
                 // Show time left in the proper format (1h 20m 30s)
                 string timeLeft = TimeUtils.FormatTime(m_happyHour.TimeLeftSecs(), TimeUtils.EFormat.ABBREVIATIONS_WITHOUT_0_VALUES, 3);
-                m_timeLeftText.text = LocalizationManager.SharedInstance.Localize("TID_REFERRAL_DAYS_LEFT", timeLeft);
+                m_timeLeftText.text = timeLeft;
 
             }
             else
@@ -163,7 +165,7 @@ public class PopupHappyHour : MonoBehaviour {
         PopupShop shopPopup = popup.GetComponent<PopupShop>();
 
         // Show the gems tab
-        shopPopup.Init(PopupShop.Mode.PC_ONLY, "Happy_Hour_Popup");
+        shopPopup.Init(PopupShop.Mode.DEFAULT, "Happy_Hour_Popup");
         shopPopup.closeAfterPurchase = true;
 
         // Open the shop popup!

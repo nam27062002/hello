@@ -102,7 +102,7 @@ public class HappyHourIcon : MonoBehaviour {
 
                 // Show time left in the proper format (1h 20m 30s)
                 string timeLeft = TimeUtils.FormatTime(m_happyHour.TimeLeftSecs(), TimeUtils.EFormat.ABBREVIATIONS_WITHOUT_0_VALUES, 3);
-                m_timeLeftText.text = LocalizationManager.SharedInstance.Localize("TID_REFERRAL_DAYS_LEFT", timeLeft);
+                m_timeLeftText.text = timeLeft;
             }
             else
             {
@@ -128,7 +128,7 @@ public class HappyHourIcon : MonoBehaviour {
         PopupShop shopPopup = popup.GetComponent<PopupShop>();
 
         // Show the gems tab
-        shopPopup.Init(PopupShop.Mode.PC_ONLY, "Happy_Hour_Icon");
+        shopPopup.Init(PopupShop.Mode.DEFAULT, "Happy_Hour_Icon");
         shopPopup.closeAfterPurchase = true;
 
         // Open the shop popup!

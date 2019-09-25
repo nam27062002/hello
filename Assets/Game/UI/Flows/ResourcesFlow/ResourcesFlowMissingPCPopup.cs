@@ -106,8 +106,7 @@ public class ResourcesFlowMissingPCPopup : MonoBehaviour {
     {
 
         // Refresh the happy hour panel
-        if (m_happyHour != null &&
-            m_happyHourPanel != null && m_happyHourTimer != null)
+        if (m_happyHour != null && m_happyHourPanel != null)
         {
             // If show the happy hour panel only if the offer is active        
             m_happyHourPanel.SetActive(m_happyHour.IsActive());
@@ -116,7 +115,10 @@ public class ResourcesFlowMissingPCPopup : MonoBehaviour {
             {
                 // Show time left in the proper format (1h 20m 30s)
                 string timeLeft = TimeUtils.FormatTime(m_happyHour.TimeLeftSecs(), TimeUtils.EFormat.ABBREVIATIONS_WITHOUT_0_VALUES, 3);
-                m_happyHourTimer.text = LocalizationManager.SharedInstance.Localize("TID_REFERRAL_DAYS_LEFT", timeLeft);
+                if (m_happyHourTimer != null)
+                {
+                    m_happyHourTimer.text = timeLeft;
+                }
 
             }
         }
