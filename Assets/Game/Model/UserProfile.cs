@@ -152,22 +152,16 @@ public class UserProfile : UserPersistenceSystem
 		get { return GetCurrency(Currency.KEYS); }
 	}
 
-	// Game Settings
-	private string m_currentClassicDragon;
-	public string currentClassicDragon {
-		get { return m_currentClassicDragon; }
-		set {
-            m_currentClassicDragon = value;
+    // Game Settings
+    private string m_currentDragon;
+    public string CurrentDragon
+    {
+        get { return m_currentDragon; }
+        set
+        {
+            m_currentDragon = value;
         }
-	}
-
-	private string m_currentSpecialDragon;
-	public string currentSpecialDragon {
-		get { return m_currentSpecialDragon; }
-		set {
-			m_currentSpecialDragon = value;
-		}
-	}
+    }
 
 	private string m_currentLevel;
 	public string currentLevel {
@@ -358,7 +352,13 @@ public class UserProfile : UserPersistenceSystem
     public Dictionary<OfferPack.Type, List<JSONClass>> newOfferPersistanceData {
         get{ return m_newOfferPersistanceData; }
     }
-    
+
+    // Happy hour
+    private DateTime m_happyHourExpirationTime;
+    private float m_happyHourExtraGemsRate;
+
+
+
     // public List<string> m_visitedZones = new List<string>();
     public HashSet<string> m_visitedZones = new HashSet<string>();
 	//--------------------------------------------------------------------------
@@ -394,6 +394,8 @@ public class UserProfile : UserPersistenceSystem
 
     public string GivenTransactions { get; set; }
 
+
+
     //
     // New variables here: Remember to initialize them in Reset()
     //
@@ -402,10 +404,10 @@ public class UserProfile : UserPersistenceSystem
     //------------------------------------------------------------------------//
     // GENERIC METHODS														  //
     //------------------------------------------------------------------------//
-	/// <summary>
-	/// Default constructor.
-	/// </summary>
-	public UserProfile()
+    /// <summary>
+    /// Default constructor.
+    /// </summary>
+    public UserProfile()
 	{        
     }
 
@@ -437,7 +439,7 @@ public class UserProfile : UserPersistenceSystem
         // Define some custom values
         m_currencies[(int)Currency.KEYS].max = 10;  // [AOC] TODO!! Get from content
         
-        m_currentClassicDragon = "";
+        m_currentDragon = "";
         m_currentLevel = "";
 
         m_tutorialStep = TutorialStep.ALL;   
@@ -881,14 +883,9 @@ public class UserProfile : UserPersistenceSystem
 
 		// Game settings
 		if ( profile.ContainsKey("currentDragon") )
-			m_currentClassicDragon = profile["currentDragon"];
+			m_currentDragon = profile["currentDragon"];
 		else
-			m_currentClassicDragon = "";
-
-		if(profile.ContainsKey("currentSpecialDragon"))
-			m_currentSpecialDragon = profile["currentSpecialDragon"];
-		else
-			m_currentSpecialDragon = "";
+            m_currentDragon = "";
 
 		if ( profile.ContainsKey("currentLevel") )
 			m_currentLevel = profile["currentLevel"];
@@ -1127,6 +1124,32 @@ public class UserProfile : UserPersistenceSystem
             }
         }
 
+
+        // Happy hour offer
+        SimpleJSON.JSONNode happyHour = _data["happyHourOffer"];
+
+        key = "happyHourExpirationTime";
+        if (happyHour.ContainsKey(key))
+        {
+            m_happyHourExpirationTime = new DateTime (happyHour[key].AsLong);
+        }
+        else
+        {
+            m_happyHourExpirationTime = DateTime.MinValue;
+        }
+
+        key = "happyHourExtraGemsRate";
+        if (happyHour.ContainsKey(key))
+        {
+            m_happyHourExtraGemsRate = happyHour[key].AsFloat;
+        }
+        else
+        {
+            m_happyHourExtraGemsRate = 0;
+        }
+
+
+
         // Visited Zones
         key = "visitedZones";
         m_visitedZones.Clear();
@@ -1251,8 +1274,7 @@ public class UserProfile : UserPersistenceSystem
 		profile.Add( "keys", m_currencies[(int)Currency.KEYS].Serialize());
 
 		// Game settings
-		profile.Add("currentDragon",m_currentClassicDragon);
-		profile.Add("currentSpecialDragon", m_currentSpecialDragon);
+		profile.Add("currentDragon",m_currentDragon);
 		profile.Add("currentLevel",m_currentLevel);
 		profile.Add("tutorialStep",((int)m_tutorialStep).ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
 		profile.Add("furyUsed", m_furyUsed.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
@@ -1339,7 +1361,17 @@ public class UserProfile : UserPersistenceSystem
             newOffersData.Add(OfferPack.TypeToString(t), array);
         }
         data.Add( "newOffersPacks", newOffersData);
+
         
+        // Happy hour offer
+        SimpleJSON.JSONClass happyHour = new SimpleJSON.JSONClass();
+
+        happyHour.Add("happyHourExpirationTime", m_happyHourExpirationTime.Ticks.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
+        happyHour.Add("happyHourExtraGemsRate", m_happyHourExtraGemsRate.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
+
+        data.Add("happyHourOffer", happyHour);
+
+
         // Visited Zones
         JSONArray zonesArray = new SimpleJSON.JSONArray();
         int max = m_visitedZones.Count;
@@ -1680,37 +1712,6 @@ public class UserProfile : UserPersistenceSystem
 	// DRAGONS MANAGEMENT													  //
 	//------------------------------------------------------------------------//
 	/// <summary>
-	/// Get current dragon of a given type.
-	/// </summary>
-	/// <returns>The current dragon of that type.</returns>
-	/// <param name="_type">Dragon type.</param>
-	public string GetCurrentDragon(IDragonData.Type _type) {
-		switch(_type) {
-			case IDragonData.Type.CLASSIC: return m_currentClassicDragon;
-			case IDragonData.Type.SPECIAL: return m_currentSpecialDragon;
-		}
-		return m_currentClassicDragon;
-	}
-
-	/// <summary>
-	/// Set current dragon of a given type.
-	/// Won't validate that the given dragon sku actually belongs to the given type.
-	/// </summary>
-	/// <param name="_type">Dragon type.</param>
-	/// <param name="_sku">Dragon sku.</param>
-	public void SetCurrentDragon(IDragonData.Type _type, string _sku) {
-		switch(_type) {
-			case IDragonData.Type.CLASSIC: {
-				m_currentClassicDragon = _sku;
-			} break;
-
-			case IDragonData.Type.SPECIAL: {
-				m_currentSpecialDragon = _sku;
-			} break;
-		}
-	}
-
-	/// <summary>
 	/// Gets the number OF owned dragons.
 	/// </summary>
 	/// <returns>The number owned dragons.</returns>
@@ -2002,6 +2003,33 @@ public class UserProfile : UserPersistenceSystem
         }
         
 	}
+
+
+    /// <summary>
+    /// Load persistence data corresponding to a happy hour offer if there is any.
+    /// </summary>
+    public void LoadHappyHour (HappyHourOffer _happyHour)
+    {
+        if (_happyHour != null)
+        {
+            // If the values persisted are consistent
+            if (m_happyHourExpirationTime != DateTime.MinValue && m_happyHourExtraGemsRate != 0)
+            {
+                _happyHour.expirationTime = m_happyHourExpirationTime;
+                _happyHour.extraGemsFactor = m_happyHourExtraGemsRate;
+            }
+        }
+    }
+
+
+    public void SaveHappyHour (HappyHourOffer _happyHour)
+    {
+        if (_happyHour != null)
+        {
+            m_happyHourExpirationTime = _happyHour.expirationTime;
+            m_happyHourExtraGemsRate = _happyHour.extraGemsFactor;
+        }
+    }
 
 }
 

@@ -64,7 +64,7 @@ public class ResultsScreenStepDragonUnlocked : ResultsScreenSequenceStep {
 	/// </summary>
 	override protected void DoInit() {
 		// Get next dragon's data
-		m_dragonData = DragonManager.GetNextDragonData(DragonManager.currentDragon.def.sku);
+		m_dragonData = DragonManager.GetNextDragonData(DragonManager.CurrentDragon.def.sku);
 
 		// Has next dragon been unlocked during this run?
 		// IMpossible if there is no next dragon
@@ -210,14 +210,7 @@ public class ResultsScreenStepDragonUnlocked : ResultsScreenSequenceStep {
 	/// Dragon info button has been pressed.
 	/// </summary>
 	public void OnDragonInfoButton() {
-		// Tracking
-		string popupName = System.IO.Path.GetFileNameWithoutExtension(PopupDragonInfo.PATH);
-		HDTrackingManager.Instance.Notify_InfoPopup(popupName, "info_button");
-
 		// Open the dragon info popup initialized with the unlocked dragon info
-		PopupController popup = PopupManager.LoadPopup(PopupDragonInfo.PATH);
-		PopupDragonInfo dragonInfoPopup = popup.GetComponent<PopupDragonInfo>();
-		dragonInfoPopup.Init(m_dragonData);
-		popup.Open();
+		PopupDragonInfo.OpenPopupForDragon(m_dragonData, "results");
 	}
 }

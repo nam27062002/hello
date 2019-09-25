@@ -153,7 +153,7 @@ public class ResultsSceneSetup : MonoBehaviour {
         if (SceneController.mode == SceneController.Mode.TOURNAMENT) {
             dragonData = HDLiveDataManager.tournament.tournamentData.tournamentDef.dragonData;
         } else {
-            dragonData = DragonManager.currentDragon;
+            dragonData = DragonManager.CurrentDragon;
         }
         m_dragonSlot.LoadDragon(dragonData.sku, dragonData.disguise);
         m_dragonSlot.dragonInstance.SetAnim(MenuDragonPreview.Anim.RESULTS);

@@ -50,7 +50,7 @@ public class ResultsScreenStepApplyRewards : ResultsScreenStep {
 		CollectiblesManager.Process();
 
 		// Process unlocked skins for current dragon
-		UsersManager.currentUser.wardrobe.ProcessUnlockedSkins(DragonManager.currentDragon);
+		UsersManager.currentUser.wardrobe.ProcessUnlockedSkins(DragonManager.CurrentDragon);
 
 		// Save persistence
 		PersistenceFacade.instance.Save_Request(true);

@@ -58,9 +58,10 @@ public class DefinitionsCategory
 	public const string DRAGON_STATS = "DRAGON_STATS";
     public const string SPECIAL_DRAGON_TIERS = "SPECIAL_DRAGON_TIERS";
     public const string SPECIAL_DRAGON_POWERS = "SPECIAL_DRAGON_POWERS";
+    public const string SPECIAL_DRAGON_STATS_UPGRADES = "SPECIAL_DRAGON_STATS_UPGRADES";
 
-	// Entities
-	public const string PETS 				= "PETS";
+    // Entities
+    public const string PETS 				= "PETS";
 	public const string PET_MOVEMENT 		= "PET_MOVEMENT";
 	public const string PET_CATEGORIES 		= "PET_CATEGORIES";
 	public const string ENTITIES 			= "ENTITIES";
@@ -111,7 +112,8 @@ public class DefinitionsCategory
 	// Economy
 	public const string SHOP_PACKS = "SHOP_PACKS";
 	public const string OFFER_PACKS = "OFFER_PACKS";
-	public const string CURRENCY_TIERS = "CURRENCY_TIERS";
+    public const string HAPPY_HOUR = "HAPPY_HOUR";
+    public const string CURRENCY_TIERS = "CURRENCY_TIERS";
 
 	// UI
 	public const string SHARE_LOCATIONS = "SHARE_LOCATIONS";

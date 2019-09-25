@@ -875,6 +875,7 @@ MonoBehaviour:
   - 2.25
   - 2.2
   - 2.2
+  - 2.2
 --- !u!114 &114750942391247870
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -915,14 +916,31 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f45dfbaed20447daa07123ab6b7cd80, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_inventory:
-  - equipablePrefabName: PF_Party_Hat
-    toDisableOnEquip: []
-    probability: 1
-    season: Anniversary1
-    position: {x: 0, y: 0.2, z: 0.25}
-    scale: {x: 1, y: 1, z: 1}
-    rotation: {x: 17.95, y: 0, z: 9.06}
+  m_seasonalItems:
+  - season: Anniversary1
+    groups:
+    - name: import
+      probability: 1
+      items:
+      - equipablePrefabName: PF_Party_Hat
+        defaultItemLOW: 0
+        probability: 1
+        toDisableOnEquip: []
+        position: {x: 0, y: 0.18753262, z: 0.25}
+        scale: {x: 1, y: 1, z: 1}
+        rotation: {x: 5.46552, y: 358.0172, z: 8.6552305}
+  - season: halloween
+    groups:
+    - name: import
+      probability: 1
+      items:
+      - equipablePrefabName: PF_Halloween_Witch_Hat
+        defaultItemLOW: 0
+        probability: 1
+        toDisableOnEquip: []
+        position: {x: 0, y: 0.19427176, z: 0.10978335}
+        scale: {x: 1.8509123, y: 1.8509139, z: 1.8509139}
+        rotation: {x: 17.961235, y: 357.93454, z: 0.0032568243}
 --- !u!114 &114943426174982768
 MonoBehaviour:
   m_ObjectHideFlags: 1

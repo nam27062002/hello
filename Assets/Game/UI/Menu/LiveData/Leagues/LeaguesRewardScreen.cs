@@ -154,7 +154,7 @@ public class LeaguesRewardScreen : IRewardScreen {
 				PersistenceFacade.instance.Save_Request();
 
 				// Go back to leagues screen
-				InstanceManager.menuSceneController.GoToScreen(MenuScreen.LAB_LEAGUES);
+				InstanceManager.menuSceneController.GoToScreen(MenuScreen.LEAGUES);
 			} break;
 		}
 	}

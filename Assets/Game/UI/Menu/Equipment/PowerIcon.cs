@@ -304,7 +304,7 @@ public class PowerIcon : MonoBehaviour, IBroadcastListener {
 		// Special Dragon Powers
 		if(_dragonData.type == IDragonData.Type.SPECIAL) {
 			DragonDataSpecial dataSpecial = (DragonDataSpecial)_dragonData;
-			for(int i = 1; i <= dataSpecial.powerLevel; ++i) {
+			for(int i = 1; i <= dataSpecial.m_powerLevel; ++i) {
 				powerDefs.Add(dataSpecial.specialPowerDefsByOrder[i - 1]);
 				iconModes.Add(Mode.SPECIAL_DRAGON);
 			}

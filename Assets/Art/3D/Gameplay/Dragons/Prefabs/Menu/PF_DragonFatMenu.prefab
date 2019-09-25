@@ -24,9 +24,9 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 182850}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -159.2015, y: -187.31483, z: -38.914856}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1.0166667, y: 1.0166667, z: 1.0166667}
   m_Children:
   - {fileID: 4480672736568156}
   - {fileID: 4993549884783290}
@@ -75,6 +75,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_sku: dragon_fat
+  m_offsetModifier: {x: 0, y: -0.45, z: 0}
+  m_baseScaleModifier: 1
   m_altAnimConfigs:
   - m_range:
       min: 10
@@ -1210,6 +1212,7 @@ MonoBehaviour:
     offset: {x: 0, y: 0, z: 0}
     scale: 1
     orientate: 0
+  m_toggleEventType: 17
 --- !u!114 &114814161121117204
 MonoBehaviour:
   m_ObjectHideFlags: 1

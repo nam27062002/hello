@@ -498,7 +498,7 @@ public class HDSeasonData {
         if (HDLiveDataManager.TEST_CALLS) {
             OnSetScore(null, HDLiveDataManager.CreateEmptyResponse());
         } else {
-            IDragonData dragonData = DragonManager.currentDragon;
+            IDragonData dragonData = DragonManager.CurrentDragon;
             SimpleJSON.JSONClass build = new SimpleJSON.JSONClass();
             {
                 build.Add("dragon", dragonData.sku);
@@ -521,7 +521,7 @@ public class HDSeasonData {
                     build.Add("level", classicData.progression.level);
                 } else {
                     DragonDataSpecial specialData = dragonData as DragonDataSpecial;
-                    build.Add("level", specialData.GetLevel());
+                    build.Add("level", specialData.Level);
 
                     SimpleJSON.JSONClass stats = new SimpleJSON.JSONClass();
                     {

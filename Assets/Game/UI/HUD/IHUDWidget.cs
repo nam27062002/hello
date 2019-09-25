@@ -67,7 +67,9 @@ public abstract class IHUDWidget : MonoBehaviour {
 	/// Component has been disabled.
 	/// </summary>
 	protected virtual void OnDisable() {
-		// Self-unregister to the manager
-		InstanceManager.gameSceneControllerBase.hudManager.RemoveWidget(this);
+		if (ApplicationManager.IsAlive) {
+			// Self-unregister to the manager
+			InstanceManager.gameSceneControllerBase.hudManager.RemoveWidget (this);
+		}
 	}
 }

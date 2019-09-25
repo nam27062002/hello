@@ -41,6 +41,14 @@ public class OfferItemPreviewDragon3d : IOfferItemPreview {
 	private void Awake() {
 		// Make sure dragon loader doesn't have any sku assigned
 		m_dragonLoader.dragonSku = "";
+		m_dragonLoader.onDragonLoaded += OnDragonLoaded;
+	}
+
+	/// <summary>
+	/// Destructor.
+	/// </summary>
+	private void OnDestroy() {
+		m_dragonLoader.onDragonLoaded -= OnDragonLoaded;
 	}
 
 	//------------------------------------------------------------------------//
@@ -60,9 +68,6 @@ public class OfferItemPreviewDragon3d : IOfferItemPreview {
 		} else {
 			m_dragonLoader.LoadDragon(m_def.sku, IDragonData.GetDefaultDisguise(m_def.sku).sku);
 		}
-
-		// Particle systems require a special initialization
-		InitParticles(m_dragonLoader.dragonInstance.gameObject);
 	}
 
 	/// <summary>
@@ -82,23 +87,26 @@ public class OfferItemPreviewDragon3d : IOfferItemPreview {
 	/// <summary>
 	/// The info button has been pressed.
 	/// </summary>
-	override public void OnInfoButton() {
-		// Initialize and open info popup
-		// Different popups for classic and special dragons
-		PopupController popup = null;
-		IDragonData dragonData = DragonManager.GetDragonData(m_def.sku);
-		if(dragonData.type == IDragonData.Type.CLASSIC) {
-			popup = PopupManager.LoadPopup(PopupDragonInfo.PATH);
-			popup.GetComponent<PopupDragonInfo>().Init(dragonData);
-		} else if(dragonData.type == IDragonData.Type.SPECIAL) {
-			popup = PopupManager.LoadPopup(PopupSpecialDragonInfo.PATH);
-			popup.GetComponent<PopupSpecialDragonInfo>().Init(dragonData);
-		}
+	/// <param name="_trackingLocation">Where is this been triggered from?</param>
+	override public void OnInfoButton(string _trackingLocation) {
+		// Open info popup
+		// [AOC] We haven't purchased the dragon yet, create fake data of the dragon
+		IDragonData dragonData = IDragonData.CreateFromDef(m_def);
+		PopupDragonInfo popup = PopupDragonInfo.OpenPopupForDragon(dragonData, _trackingLocation);
 
 		// Move it forward in Z so it doesn't conflict with our 3d preview!
 		popup.transform.SetLocalPosZ(-2500f);
+	}
 
-		// Open the popup!
-		popup.Open();
+	//------------------------------------------------------------------------//
+	// CALLBACKS															  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Dragon has been loaded.
+	/// </summary>
+	/// <param name="_loader">Loader that triggered the event.</param>
+	private void OnDragonLoaded(MenuDragonLoader _loader) {
+		// Particle systems require a special initialization
+		InitParticles(m_dragonLoader.dragonInstance.gameObject);
 	}
 }

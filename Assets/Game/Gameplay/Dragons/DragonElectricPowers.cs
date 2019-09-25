@@ -83,7 +83,7 @@ public class DragonElectricPowers : MonoBehaviour {
         m_timer = m_minTimerBetweenKills;
 
         DragonDataSpecial dataSpecial = InstanceManager.player.data as DragonDataSpecial;
-        m_powerLevel = dataSpecial.powerLevel;
+        m_powerLevel = dataSpecial.m_powerLevel;
 
         m_tailUp.SetActive(m_powerLevel > 0);
         m_tailDown.SetActive(m_powerLevel > 1);

@@ -84,15 +84,17 @@ public class UITooltipEditor : Editor {
 			}
 
 			// Apply prefab?
-			GameObject rootObj = PrefabUtility.FindRootGameObjectWithSameParentPrefab(m_targetUITooltip.gameObject);
-			bool wasActive = rootObj.activeSelf;
-			rootObj.SetActive(true);
-			PrefabUtility.ReplacePrefab(
-				rootObj,
-				PrefabUtility.GetPrefabParent(m_targetUITooltip.gameObject),
-				ReplacePrefabOptions.ConnectToPrefab
-			);
-			rootObj.SetActive(wasActive);
+			if(applyPrefabAfterDisablingRaycasts) {
+				GameObject rootObj = PrefabUtility.FindRootGameObjectWithSameParentPrefab(m_targetUITooltip.gameObject);
+				bool wasActive = rootObj.activeSelf;
+				rootObj.SetActive(true);
+				PrefabUtility.ReplacePrefab(
+					rootObj,
+					PrefabUtility.GetPrefabParent(m_targetUITooltip.gameObject),
+					ReplacePrefabOptions.ConnectToPrefab
+				);
+				rootObj.SetActive(wasActive);
+			}
 		}
 		GUI.color = Color.white;
 	}

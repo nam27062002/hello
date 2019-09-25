@@ -65,7 +65,12 @@ public class DecorationManager : UbiBCN.SingletonMonoBehaviour<DecorationManager
 
 
 
-	public void RegisterDecoration(Decoration _deco)	{ m_decorations.Add(_deco); }
+	public void RegisterDecoration(Decoration _deco)	{ 
+        // TODO: Check with @Marc if we can avoid this check
+        if ( !m_decorations.Contains(_deco) ){
+            m_decorations.Add(_deco); 
+        }
+    }
 	public void UnregisterDecoration(Decoration _deco)	{ m_decorations.Remove(_deco); }
 
     public void RegisterAmbientHazard(AmbientHazard _hazard)	{ m_ambientHazards.Add(_hazard); }

@@ -32,45 +32,54 @@ public class MenuDragonSpecialPower : MonoBehaviour {
         m_dragonPreview = GetComponent<MenuDragonPreview>();
 
         DragonDataSpecial dataSpecial = null;
-        if(SceneController.mode == SceneController.Mode.TOURNAMENT) {
-			dataSpecial = HDLiveDataManager.tournament.tournamentData.tournamentDef.dragonData as DragonDataSpecial;
-        } else {
-            dataSpecial = (DragonDataSpecial)DragonManager.GetDragonData(m_dragonPreview.sku);
-        }
+		if(DragonManager.IsReady()) {
+			if(SceneController.mode == SceneController.Mode.TOURNAMENT) {
+				dataSpecial = HDLiveDataManager.tournament.tournamentData.tournamentDef.dragonData as DragonDataSpecial;
+			} else {
+				dataSpecial = (DragonDataSpecial)DragonManager.GetDragonData(m_dragonPreview.sku);
+			}
+		}
 
+		int powerLevel = dataSpecial != null ? dataSpecial.m_powerLevel : 0;
         for (int i = 0; i < m_elementsPerPowerLevel.Count; ++i) {
-            EnablePowerLevel(i, i <= dataSpecial.powerLevel);
+            EnablePowerLevel(i, i <= powerLevel);
         }
 
-        OnTierUpgrade(dataSpecial);
     }
 
     private void OnEnable() {
-        Messenger.AddListener<DragonDataSpecial, DragonDataSpecial.Stat>(MessengerEvents.SPECIAL_DRAGON_STAT_UPGRADED, OnStatUpgraded);
         Messenger.AddListener<DragonDataSpecial>(MessengerEvents.SPECIAL_DRAGON_POWER_UPGRADED, OnPowerUpgrade);
-        Messenger.AddListener<DragonDataSpecial>(MessengerEvents.SPECIAL_DRAGON_TIER_UPGRADED, OnTierUpgrade);
+        Messenger.AddListener<DragonDataSpecial>(MessengerEvents.SPECIAL_DRAGON_LEVEL_UPGRADED, OnLevelUpgraded);
 	}
 
     private void OnDisable() {
-        Messenger.RemoveListener<DragonDataSpecial, DragonDataSpecial.Stat>(MessengerEvents.SPECIAL_DRAGON_STAT_UPGRADED, OnStatUpgraded);
         Messenger.RemoveListener<DragonDataSpecial>(MessengerEvents.SPECIAL_DRAGON_POWER_UPGRADED, OnPowerUpgrade);
-        Messenger.RemoveListener<DragonDataSpecial>(MessengerEvents.SPECIAL_DRAGON_TIER_UPGRADED, OnTierUpgrade);
+        Messenger.RemoveListener<DragonDataSpecial>(MessengerEvents.SPECIAL_DRAGON_LEVEL_UPGRADED, OnLevelUpgraded);
     }
     
-    private void OnStatUpgraded(DragonDataSpecial _data, DragonDataSpecial.Stat _stat) {
-        // Refresh disguise
-        if (m_dragonPreview.equip.dragonDisguiseSku != _data.disguise)
+    private void OnLevelUpgraded(DragonDataSpecial _data) {
+
+        // Only if this is the upgraded dragon
+        if (_data.sku == m_dragonPreview.sku)
         {
-            // Store the data for internal use
-            m_data = _data;
+            // Refresh disguise
+            if (m_dragonPreview.equip.dragonDisguiseSku != _data.disguise)
+            {
+                // Store the data for internal use
+                m_data = _data;
 
-            // Get all the dependencies needed for the current skin
-            AddressablesBatchHandle handle = HDAddressablesManager.Instance.GetHandleForDragonDisguise(_data);
-            List<string> dependencyIds = handle.DependencyIds;
+                // Get all the dependencies needed for the current skin
+                AddressablesBatchHandle handle = HDAddressablesManager.Instance.GetHandleForDragonDisguise(_data);
+                List<string> dependencyIds = handle.DependencyIds;
 
-            // Load de the dependencies asynchronously
-            AddressablesOp op = HDAddressablesManager.Instance.LoadDependencyIdsListAsync(dependencyIds);
-            op.OnDone = OnDisguiseLoaded;
+                // Load de the dependencies asynchronously
+                AddressablesOp op = HDAddressablesManager.Instance.LoadDependencyIdsListAsync(dependencyIds);
+                op.OnDone = OnDisguiseLoaded;
+
+            }
+
+            // Update powers if needed
+            EnablePowerLevel(_data.m_powerLevel, true);
 
         }
     }
@@ -96,7 +105,7 @@ public class MenuDragonSpecialPower : MonoBehaviour {
         if (enabled) {
             if (_data.sku == m_dragonPreview.sku)
             {
-                EnablePowerLevel(_data.powerLevel, true);
+                EnablePowerLevel(_data.m_powerLevel, true);
             }
         }
     }
@@ -130,11 +139,5 @@ public class MenuDragonSpecialPower : MonoBehaviour {
         }
     }
 
-    private void OnTierUpgrade(DragonDataSpecial _data) {
-        if (enabled) {
-            if (_data.sku == m_dragonPreview.sku && InstanceManager.menuSceneController != null) {  // Only on the menu
-                transform.localScale = GameConstants.Vector3.one * _data.scaleMenu;
-            }
-        }
-    }
+
 }

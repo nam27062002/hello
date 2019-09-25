@@ -225,7 +225,7 @@ public class CPProgressionCheats : MonoBehaviour {
 			if(data.isOwned) targetDragon = data;
 		} else {
 			// Not in the menu, use current dragon's data
-			targetDragon = DragonManager.currentDragon;
+			targetDragon = DragonManager.CurrentDragon;
 		}
 
 		// Disable slider if dragon cannot be changed
@@ -475,4 +475,12 @@ public class CPProgressionCheats : MonoBehaviour {
 	{
 		ApplicationManager.instance.Debug_TestPlayAd();
 	}
+
+    /// <summary>
+    /// Finish the current happy hour
+    /// </summary>
+    public void OnEndHappyHour()
+    {
+        OffersManager.instance.happyHour.EndOffer();
+    }
 }
