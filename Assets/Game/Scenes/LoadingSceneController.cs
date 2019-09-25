@@ -631,6 +631,11 @@ public class LoadingSceneController : SceneController {
                         }
                     }
                 }
+                
+                if (!ret)
+                {
+                    break;
+                }                
             }
         }       
 
