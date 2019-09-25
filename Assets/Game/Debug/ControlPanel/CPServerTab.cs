@@ -305,6 +305,17 @@ public class CPServerTab : MonoBehaviour {
         Fabric.Crashlytics.Crashlytics.RecordCustomException("Crashlytics", "Record custom exception test", "");
     }
 
+	public void OnOpenSurvey()
+	{
+		string profileID = HDTrackingManager.Instance.GetDNAProfileID();
+		if (string.IsNullOrEmpty(profileID))
+			profileID = "Not_Available";
+
+		string url = "https://bcndlsurvey.typeform.com/to/CEJCkl?UID=" + profileID;
+		Output("Open Survey: " + url);
+		Application.OpenURL(url);
+	}
+
     private void OnIntersitialDone( bool success )
     {
         string msg = "OnInterstitialDone success = " + success;
