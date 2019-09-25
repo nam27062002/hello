@@ -102,7 +102,7 @@ public class HappyHourIcon : MonoBehaviour {
 
                 // Show time left in the proper format (1h 20m 30s)
                 string timeLeft = TimeUtils.FormatTime(m_happyHour.TimeLeftSecs(), TimeUtils.EFormat.ABBREVIATIONS_WITHOUT_0_VALUES, 3);
-                m_timeLeftText.text = LocalizationManager.SharedInstance.Localize("TID_REFERRAL_DAYS_LEFT", timeLeft);
+                m_timeLeftText.text = timeLeft;
             }
             else
             {
