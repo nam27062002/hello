@@ -870,7 +870,7 @@ public class Ingame_SwitchAreaHandle
         }
     }
 
-    private bool IsDependecyIdsOfDefSkuAvailable(string _defSku) {        
+    private bool AreDependecyIdsOfDefSkuAvailable(string _defSku) {        
         if (m_dependecyIdsPerDefSku.ContainsKey(_defSku)) {
             return IsDependencyListAvailable(m_dependecyIdsPerDefSku[_defSku]);
         } else {
@@ -885,17 +885,17 @@ public class Ingame_SwitchAreaHandle
             AddDependencyIdsPerDefSku(_dragonSku, _dependencyIds);            
         }
 
-        return IsDependecyIdsOfDefSkuAvailable(_dragonSku);
+        return AreDependecyIdsOfDefSkuAvailable(_dragonSku);
     }
 
     public bool AreResourcesForPetAvailable(string _dragonSku) {
         if (!m_dependecyIdsPerDefSku.ContainsKey(_dragonSku)) {
-            List<string> _resourceIds = GetResourceIDsForPet(_dragonSku);
+            List<string> _resourceIds = GetResourceIDsForPet(_dragonSku);            
             List<string> _dependencyIds = GetDependencyIdsList(_resourceIds);
             AddDependencyIdsPerDefSku(_dragonSku, _dependencyIds);
         }
 
-        return IsDependecyIdsOfDefSkuAvailable(_dragonSku);
+        return AreDependecyIdsOfDefSkuAvailable(_dragonSku);
     }
 
     /// <summary>
@@ -904,7 +904,7 @@ public class Ingame_SwitchAreaHandle
     /// </summary>
     /// <returns>The list of all the resources needed for a dragon.</returns>
     /// <param name="_dragonSku">Dragon sku.</param>
-    public List<string> GetResourceIDsForDragon(string _dragonSku) {
+    private List<string> GetResourceIDsForDragon(string _dragonSku) {
 		// Aux vars
 		HashSet<string> ids = new HashSet<string>();
 		DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, _dragonSku);
@@ -943,7 +943,7 @@ public class Ingame_SwitchAreaHandle
 	/// </summary>
 	/// <returns>The list of all the resources needed for a pet.</returns>
 	/// <param name="_petSku">Pet sku.</param>
-	public List<string> GetResourceIDsForPet(string _petSku) {
+	private List<string> GetResourceIDsForPet(string _petSku) {
 		// Aux vars
 		List<string> ids = new List<string>();
 		DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PETS, _petSku);

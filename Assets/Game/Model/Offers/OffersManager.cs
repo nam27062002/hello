@@ -355,28 +355,22 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
     private bool IsOfferAvailable(OfferPack _newPack) {
         List<OfferPackItem> items = _newPack.items;
 
-        for (int i = 0; i < items.Count; ++i) {
+        bool returnValue = true;
+        for (int i = 0; i < items.Count && returnValue; ++i) {
             OfferPackItem item = items[i];
 
-            DefinitionNode def = null;
-			List<string> resourceIDs = null;
+            DefinitionNode def = null;            			
             if (item.type.Equals(Metagame.RewardPet.TYPE_CODE)) {
-				resourceIDs = HDAddressablesManager.Instance.GetResourceIDsForPet(item.sku);
+				returnValue = HDAddressablesManager.Instance.AreResourcesForPetAvailable(item.sku);
             } else if (item.type.Equals(Metagame.RewardSkin.TYPE_CODE)) {
                 def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, item.sku);
 				if(def != null) {
-					resourceIDs = HDAddressablesManager.Instance.GetResourceIDsForDragon(def.Get("dragonSku"));
+					returnValue = HDAddressablesManager.Instance.AreResourcesForDragonAvailable(def.Get("dragonSku"));
 				}
-            }
-
-            if (resourceIDs != null) {
-                if (!HDAddressablesManager.Instance.IsResourceListAvailable(resourceIDs)) {
-                    return false;
-                }
-            }
+            }            
         }
 
-        return true;
+        return returnValue;
     }
 
     /// <summary>
