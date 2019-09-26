@@ -41,14 +41,12 @@ public class ResultsScreenStepLeagueLeaderboard : ResultsScreenSequenceStep {
 		ResultsScreenStepLeagueSync syncStep = m_controller.GetStep(ResultsScreenController.Step.LEAGUE_SYNC) as ResultsScreenStepLeagueSync;
 		if(syncStep != null && syncStep.hasBeenDismissed) return false;
 
-		// Neither if there is no active season!
-		if(!HDLiveDataManager.league.season.IsRunning()) return false;
 
-        // Leagues are available to the player?
-        if (UsersManager.currentUser.gamesPlayed < GameSettings.ENABLE_LEAGUES_AT_RUN)
-            return false;
+        // Show only if the leagues are available and we have the minimum tier
+        return HDLiveDataManager.league.season.IsRunning() && 
+               UsersManager.currentUser.gamesPlayed >= GameSettings.ENABLE_LEAGUES_AT_RUN &&
+               DragonManager.CurrentDragon.tier >= HDLiveDataManager.league.GetMinimumTierToShowLeagues();
 
-        return true;
 	}
 
 	/// <summary>
