@@ -189,25 +189,24 @@ namespace AI {
 			}
 		}
 
-		public sealed override void Update() {	
-			if (m_nextState != m_state) {
+		public sealed override void Update() {
+            if (m_nextState != m_state) {
 				ChangeState();
 			}
 
-			switch (m_state) {
+            switch (m_state) {
 				case State.Free:
 					if (!m_viewControl.isHitAnimOn()) {
 						ExtendedUpdate();
 						UpdateOrientation();
 
-						m_viewControl.Move(m_pilot.speed);
+                        m_viewControl.Move(m_pilot.speed);
+                        UpdateAttack();
 
-						UpdateAttack();
-
-						if (m_viewControl.hasNavigationLayer) {
+                        if (m_viewControl.hasNavigationLayer) {
 							m_viewControl.NavigationLayer(m_direction + GameConstants.Vector3.back * 0.1f);
-						}
-					}
+						}                        
+                    }
 					break;
 
 				case State.Biting:
@@ -251,30 +250,30 @@ namespace AI {
                     break;
 			}
 
-            // Check if targeting to bend through that direction
-            if (m_attackTarget) {
-				Vector3 dir = m_attackTarget.position - position;
-				dir.Normalize();
-				m_viewControl.NavigationLayer(dir + GameConstants.Vector3.back * 0.1f);	
-			} else {
-				m_viewControl.NavigationLayer(m_direction + GameConstants.Vector3.back * 0.1f);	
-			}
+            if (m_viewControl.hasNavigationLayer) {
+                // Check if targeting to bend through that direction
+                if (m_attackTarget) {
+                    Vector3 dir = m_attackTarget.position - position;
+                    dir.Normalize();
+                    m_viewControl.NavigationLayer(dir + GameConstants.Vector3.back * 0.1f);
+                } else {
+                    m_viewControl.NavigationLayer(m_direction + GameConstants.Vector3.back * 0.1f);
+                }
+            }
 
-			m_viewControl.RotationLayer(ref m_rotation, ref m_targetRotation);
+            m_viewControl.RotationLayer(ref m_rotation, ref m_targetRotation);
+            m_viewControl.Boost(m_pilot.IsActionPressed(Pilot.Action.Boost));
 
-			m_viewControl.Boost(m_pilot.IsActionPressed(Pilot.Action.Boost));
+            //----------------------------------------------------------------------------------
+            // Debug
+            //----------------------------------------------------------------------------------
+            #if UNITY_EDITOR
+            Debug.DrawLine(position, position + m_rbody.velocity, Color.yellow);
+            #endif
+            //----------------------------------------------------------------------------------
 
-
-			//----------------------------------------------------------------------------------
-			// Debug
-			//----------------------------------------------------------------------------------
-			#if UNITY_EDITOR
-			Debug.DrawLine(position, position + m_rbody.velocity, Color.yellow);
-			#endif
-			//----------------------------------------------------------------------------------
-
-			CheckState();
-		}
+            CheckState();
+        }
 
         public sealed override void FixedUpdate() {			
 			switch (m_state) {

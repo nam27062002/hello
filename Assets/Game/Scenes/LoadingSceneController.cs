@@ -778,8 +778,7 @@ public class LoadingSceneController : SceneController {
                 FirePropagationManager.CreateInstance(true);
                 SpawnerManager.CreateInstance(true);
                 EntityManager.CreateInstance(true);
-                DecorationManager.CreateInstance(true);
-                ViewManager.CreateInstance(true);
+                DecorationManager.CreateInstance(true);                
                 BubbledEntitySystem.CreateInstance(true);
                 InstanceManager.CreateInstance(true);
 

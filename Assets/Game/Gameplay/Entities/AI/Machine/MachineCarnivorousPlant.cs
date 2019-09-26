@@ -37,9 +37,9 @@ namespace AI {
 			}
 		}
 
-		public bool isPetTarget 		{ get { return false; } set {} }
+		override public bool isPetTarget 		{ get { return false; } set {} }
 		override public float lastFallDistance 	{ get { return 0f; } }
-		public bool isKinematic 		{ get { return false; } set {} }
+		override public bool isKinematic 		{ get { return false; } set {} }
 
 		override public Quaternion orientation 	{ get { return m_transform.rotation; } set { m_transform.rotation = value; } }
 		override public Vector3 position			{ get { return m_transform.position; } set { m_transform.position = value; } }
@@ -198,7 +198,7 @@ namespace AI {
 			}
 		}
 
-		private void UpdateAim() {			
+        private void UpdateAim() {			
 			Transform target = m_sensor.enemy;
 			if (target != null) {
 				Vector3 targetDir = target.position - m_eye.position;
@@ -298,9 +298,10 @@ namespace AI {
         override public bool IsInLove() { return false; }
         override public bool IsBubbled() { return false; }
 
-        override public void CustomFixedUpdate(){}
+        override public void CustomFixedUpdate(){ }
+        public override void CustomLateUpdate() { }
 
-		override public void AddExternalForce(Vector3 force) {}
+        override public void AddExternalForce(Vector3 force) {}
 		override public Quaternion GetDyingFixRot() { return Quaternion.identity; }
 		override public void SetVelocity(Vector3 _v) {}
 		override public void BiteAndHold() {}

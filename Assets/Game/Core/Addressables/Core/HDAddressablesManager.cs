@@ -283,7 +283,7 @@ public class HDAddressablesManager : AddressablesManager
         IsDownloaderEnabled = !FlowManager.IsInGameScene();
 
 		// Downloader is disabled while the app is loading in order to let it load faster and smoother
-		IsAutomaticDownloaderEnabled = !GameSceneManager.isLoading && IsAutomaticDownloaderAllowed() && DebugSettings.isAutomaticDownloaderEnabled;
+		IsAutomaticDownloaderEnabled = !GameSceneManager.isLoading && IsAutomaticDownloaderAllowed();
 
         UpdateAddressablesAreas();
     }

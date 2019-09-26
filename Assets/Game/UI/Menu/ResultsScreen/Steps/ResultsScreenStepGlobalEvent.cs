@@ -83,7 +83,7 @@ public class ResultsScreenStepGlobalEvent : ResultsScreenStep {
 				questManager.IsRunning() && 
 				questManager.isActive &&
 				questManager.m_questData.remainingTime.TotalSeconds > 0 &&
-				Application.internetReachability != NetworkReachability.NotReachable
+                DeviceUtilsManager.SharedInstance.internetReachability != NetworkReachability.NotReachable
 		)
 		{
 			if ( questManager.GetRunScore() > 0 )
@@ -136,7 +136,7 @@ public class ResultsScreenStepGlobalEvent : ResultsScreenStep {
 	private void InitPanel(bool _animate, bool _resetValues) {
 
 		m_activePanel = Panel.ACTIVE;
-		if ( Application.internetReachability == NetworkReachability.NotReachable )
+		if (DeviceUtilsManager.SharedInstance.internetReachability == NetworkReachability.NotReachable )
 		{
 			m_activePanel = Panel.OFFLINE;
 		}

@@ -11,8 +11,9 @@ public class EditorAddressablesMenu : MonoBehaviour
     private const string ADDRESSABLES_MENU = "Tech/Addressables";
     private const string ADDRESSABLES_BUILD_MENU = ADDRESSABLES_MENU + "/Build";
     private const string ADDRESSABLES_BUILD_BY_STEPS_MENU = ADDRESSABLES_BUILD_MENU + "/" + "Build by Steps";
-    private const string ADDRESSABLES_BUILD_BY_STEPS_MENU_CLEAR = ADDRESSABLES_BUILD_BY_STEPS_MENU + "/" + "1. Clear";
-    private const string ADDRESSABLES_BUILD_BY_STEPS_MENU_CUSTOMIZE_EDTOR_CATALOG = ADDRESSABLES_BUILD_BY_STEPS_MENU + "/" + "2. Customize editor catalog";
+    private const string ADDRESSABLES_BUILD_BY_STEPS_MENU_CLEAR = ADDRESSABLES_BUILD_BY_STEPS_MENU + "/" + "0. Clear";
+    private const string ADDRESSABLES_BUILD_BY_STEPS_MENU_CUSTOMIZE_EDTOR_CATALOG = ADDRESSABLES_BUILD_BY_STEPS_MENU + "/" + "1. Customize editor catalog";
+    private const string ADDRESSABLES_BUILD_BY_STEPS_MENU_POST_PROCESS_SCENES = ADDRESSABLES_BUILD_BY_STEPS_MENU + "/" + "2. Process scenes";
     private const string ADDRESSABLES_BUILD_BY_STEPS_MENU_GENERATE_PLAYER_CATALOG = ADDRESSABLES_BUILD_BY_STEPS_MENU + "/" + "3. Generate player catalog";
     private const string ADDRESSABLES_BUILD_BY_STEPS_MENU_GENERATE_ASSET_BUNDLES = ADDRESSABLES_BUILD_BY_STEPS_MENU + "/" + "4. Generate Asset Bundles";
     private const string ADDRESSABLES_BUILD_BY_STEPS_MENU_GENERATE_ASSET_BUNDLES_CATALOG = ADDRESSABLES_BUILD_BY_STEPS_MENU + "/" + "5. Generate Asset Bundles Catalog";
@@ -64,7 +65,7 @@ public class EditorAddressablesMenu : MonoBehaviour
 		Manager.CopyPlatformAssetsLUTToResources(target);
 	}
 
-    // 1.Clear
+    // 0.Clear
     // Deletes AssetBundles/<currentPlatformName> folder, Assets/Streaming_Assets/Addressables folder, Downloadables folder
     [MenuItem(ADDRESSABLES_BUILD_BY_STEPS_MENU_CLEAR)]
     static void ClearBuild()
@@ -76,13 +77,21 @@ public class EditorAddressablesMenu : MonoBehaviour
         OnDone(ADDRESSABLES_BUILD_BY_STEPS_MENU_CLEAR);
     }    
 
-    // 2.Customize Editor Catalog
+    // 1.Customize Editor Catalog
     [MenuItem(ADDRESSABLES_BUILD_BY_STEPS_MENU_CUSTOMIZE_EDTOR_CATALOG)]
     static void CustomizeEditorCatalog()
     {
         Manager.CustomizeEditorCatalog();
         OnDone(ADDRESSABLES_BUILD_BY_STEPS_MENU_CUSTOMIZE_EDTOR_CATALOG);
-    }    
+    }
+
+    // 2.Postprocess scenes
+    [MenuItem(ADDRESSABLES_BUILD_BY_STEPS_MENU_POST_PROCESS_SCENES)]
+    static void PostProcessScenes()
+    {
+        Manager.PostProcessScenes();
+        OnDone(ADDRESSABLES_BUILD_BY_STEPS_MENU_POST_PROCESS_SCENES);
+    }
 
     // 3.Generate Player Catalog
     // Generates addressablesCatalog.json in Assets/Resources/Addressables folder

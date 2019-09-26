@@ -16,7 +16,7 @@ using System.Collections.Generic;
 /// <summary>
 /// Singleton to manage all the spawners in a level in an efficient way.
 /// </summary>
-public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager>, IBroadcastListener {
+public class SpawnerManager : Singleton<SpawnerManager>, IBroadcastListener {
     //------------------------------------------------------------------------//
     // CONSTANTS															  //
     //------------------------------------------------------------------------//
@@ -69,7 +69,7 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager>, IBr
     /// <summary>
     /// Inititalization.
     /// </summary>
-	private void Awake() {
+	protected override void OnCreateInstance() {
         m_spawners = new List<ISpawner>();
         m_spawning = new List<ISpawner>();
         m_spawningPeriodicallyWhileActive = new List<ISpawner>();
@@ -77,19 +77,7 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager>, IBr
 
         if (FeatureSettingsManager.IsDebugEnabled)
             Debug_Awake();
-    }
-
-    protected override void OnDestroy() {
-        base.OnDestroy();
-
-        if (ApplicationManager.IsAlive && FeatureSettingsManager.IsDebugEnabled)
-            Debug_OnDestroy();
-    }
-
-    /// <summary>
-    /// Component enabled.
-    /// </summary>
-    private void OnEnable() {
+  
         // Subscribe to external events
         Broadcaster.AddListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
         Broadcaster.AddListener(BroadcastEventType.GAME_AREA_ENTER, this);
@@ -98,10 +86,10 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager>, IBr
         Broadcaster.AddListener(BroadcastEventType.GAME_ENDED, this);
     }
 
-    /// <summary>
-    /// Component disabled.
-    /// </summary>
-    private void OnDisable() {
+    protected override void OnDestroyInstance() {
+        if (ApplicationManager.IsAlive && FeatureSettingsManager.IsDebugEnabled)
+            Debug_OnDestroy();
+
         // Unsubscribe from external events
         Broadcaster.RemoveListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
         Broadcaster.RemoveListener(BroadcastEventType.GAME_AREA_ENTER, this);
@@ -134,7 +122,7 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager>, IBr
     /// <summary>
     /// Called every frame.
     /// </summary>
-    private void Update() {
+    public void Update() {
         // Only if enabled!
         if (!m_enabled) return;
         if (m_spawnersTreeNear == null) return;

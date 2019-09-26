@@ -343,7 +343,7 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 
 		if(PlayerPrefs.GetInt(HDNotificationsManager.SILENT_FLAG) == 1 && !GetFlag(StateFlag.CHECKING_CONNECTION)) 
 		{
-			if(Application.internetReachability == NetworkReachability.NotReachable) {
+			if(DeviceUtilsManager.SharedInstance.internetReachability == NetworkReachability.NotReachable) {
 				ShowGoOnlinePopup();
 				PlayerPrefs.SetInt(HDNotificationsManager.SILENT_FLAG, 0);
 			} else {

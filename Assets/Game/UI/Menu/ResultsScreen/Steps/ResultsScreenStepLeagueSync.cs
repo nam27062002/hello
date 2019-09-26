@@ -123,7 +123,7 @@ public class ResultsScreenStepLeagueSync : ResultsScreenStep {
 	/// </summary>
 	private void InitErrorPanel(HDLiveDataManager.ComunicationErrorCodes _error) {
 		// Offline?
-		bool offline = Application.internetReachability == NetworkReachability.NotReachable || !GameSessionManager.SharedInstance.IsLogged();
+		bool offline = DeviceUtilsManager.SharedInstance.internetReachability == NetworkReachability.NotReachable || !GameSessionManager.SharedInstance.IsLogged();
 		if(offline || _error == HDLiveDataManager.ComunicationErrorCodes.NET_ERROR) {
 			m_titleText.Localize("TID_LEAGUES_OFFLINE_TITLE");  // Sorry! You are offline!
 			m_messageText.Localize("TID_LEAGUES_OFFLINE_MESSAGE");  // You must be online to see and participate in the Legendary Leagues!

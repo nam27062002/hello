@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 
 /// <summary>
-/// This class is responsible for loading all dependencies requried to load a game area. HD is dividen in several game areas: menu, village, castle dark. 
+/// This class is responsible for loading all dependencies required to load a game area. HD is divided in several game areas: menu, village, castle dark. 
 /// When loading a new area all dependencies required by the previous area and not required by the new area are unloaded.
 /// </summary>
 public class HDAddressablesAreaLoader : UbiAsyncOperation

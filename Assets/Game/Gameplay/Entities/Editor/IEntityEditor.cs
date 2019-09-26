@@ -20,8 +20,8 @@ public class IEntityEditor : Editor {
 			IEntity ientity  = target as IEntity;
             if (ientity != null) {
                 ientity.GetReferences();
-
-               /* if (ientity is Decoration || ientity is AnniversaryCandleDecoration) {
+                /*
+                if (ientity is Decoration || ientity is AnniversaryCandleDecoration) {
                     ientity.gameObject.SetActive(true);
                 } else {
                     ientity.gameObject.SetActive(false);

@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 
 // This is a Quadtree! a Quadtree full of fires
-public class FirePropagationManager : UbiBCN.SingletonMonoBehaviour<FirePropagationManager>, IBroadcastListener {
+public class FirePropagationManager : Singleton<FirePropagationManager>, IBroadcastListener {
 	
 	private QuadTree<IFireNode> m_fireNodesTree;
     private HashSet<IFireNode> m_selectedFireNodes = new HashSet<IFireNode>();
@@ -14,20 +14,13 @@ public class FirePropagationManager : UbiBCN.SingletonMonoBehaviour<FirePropagat
 
     private CullingGroup m_cullingGroup;
 
-	void Awake() {
-		m_fireNodesTree = new QuadTree<IFireNode>(-1600f, -600f, 2600f, 1400f);
+    protected override void OnCreateInstance() {
+        m_fireNodesTree = new QuadTree<IFireNode>(-1600f, -600f, 2600f, 1400f);
 		m_fireNodes = new List<IFireNode>();
 		m_burningFireNodes = new List<IFireNode>();
 
 		m_boundigSpheres = new BoundingSphere[1000];
 
-
-	}
-
-	/// <summary>
-	/// Component enabled.
-	/// </summary>
-	private void OnEnable() {
 		// Subscribe to external events
 		Broadcaster.AddListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
 		Broadcaster.AddListener(BroadcastEventType.GAME_AREA_ENTER, this);
@@ -35,12 +28,9 @@ public class FirePropagationManager : UbiBCN.SingletonMonoBehaviour<FirePropagat
 		Broadcaster.AddListener(BroadcastEventType.GAME_ENDED, this);
 	}
 
-	/// <summary>
-	/// Component disabled.
-	/// </summary>
-	private void OnDisable() {
-		// Unsubscribe from external events
-		Broadcaster.RemoveListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
+    protected override void OnDestroyInstance() {
+        // Unsubscribe from external events
+        Broadcaster.RemoveListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
 		Broadcaster.RemoveListener(BroadcastEventType.GAME_AREA_ENTER, this);
 		Broadcaster.RemoveListener(BroadcastEventType.GAME_AREA_EXIT, this);
 		Broadcaster.RemoveListener(BroadcastEventType.GAME_ENDED, this);
@@ -166,7 +156,7 @@ public class FirePropagationManager : UbiBCN.SingletonMonoBehaviour<FirePropagat
 		 */
 	}
 
-	void Update() {
+    public void Update() {
 		for (int i = 0; i < m_burningFireNodes.Count; i++) {
 			m_burningFireNodes[i].UpdateLogic();
 		}

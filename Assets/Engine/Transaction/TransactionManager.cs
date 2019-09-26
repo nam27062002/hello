@@ -11,7 +11,7 @@ using UnityEngine;
 /// <summary>
 /// This class is responsible for handling transactions. A transaction is the way to add something to the user's profile, typically either sc or pc
 /// </summary>
-public class TransactionManager : UbiBCN.SingletonMonoBehaviour<TransactionManager>
+public class TransactionManager : Singleton<TransactionManager>
 {    
     public void Initialise()
     {

@@ -1,6 +1,4 @@
 ﻿
-//#define DETACH_VIEW_ON_DISABLE
-
 using System;
 using UnityEngine;
 using System.Collections;
@@ -221,7 +219,7 @@ public class ViewControl : IViewControl, IBroadcastListener {
     private Transform m_transform;
 
     private ulong m_id;
-    private Transform m_viewManagerTransform;
+    
     [SerializeField]
     private Transform m_view;
     // local backup
@@ -384,12 +382,6 @@ public class ViewControl : IViewControl, IBroadcastListener {
         m_viewPosition = m_view.localPosition;
         m_viewRotation = m_view.localRotation;
         m_viewScale = m_view.localScale;
-
-        m_viewManagerTransform = ViewManager.instance.gameObject.transform;
-
-#if DETACH_VIEW_ON_DISABLE
-		SentViewToManager();
-#endif
     }
 
     [ContextMenu("Get References")]
@@ -412,28 +404,6 @@ public class ViewControl : IViewControl, IBroadcastListener {
         m_animA_Hash = UnityEngine.Animator.StringToHash(m_animA);
         m_animB_Hash = UnityEngine.Animator.StringToHash(m_animB);
         m_animC_Hash = UnityEngine.Animator.StringToHash(m_animC);
-    }
-
-    void SentViewToManager() {
-        if (m_isAnimatorAvailable) {
-            m_animator.applyRootMotion = false;
-            m_animator.cullingMode = AnimatorCullingMode.CullCompletely;
-        }
-        m_view.SetParent(m_viewManagerTransform, false);
-        m_view.position = GameConstants.Vector3.one * (30000f + (100 * m_id));
-        m_view.localScale = GameConstants.Vector3.zero;
-    }
-
-    void GetViewFromManager() {
-        m_view.SetParent(m_transform);
-        m_view.localPosition = m_viewPosition;
-        m_view.localRotation = m_viewRotation;
-        m_view.localScale = m_viewScale;
-
-        if (m_isAnimatorAvailable) {
-            m_animator.applyRootMotion = m_applyRootMotion;
-            m_animator.cullingMode = m_animatorCullingMode;
-        }
     }
 
     void Start() {
@@ -489,10 +459,6 @@ public class ViewControl : IViewControl, IBroadcastListener {
     //
 
     override public void Spawn(ISpawner _spawner) {
-#if DETACH_VIEW_ON_DISABLE
-		GetViewFromManager();
-#endif
-
         if (m_camera == null && Camera.main != null) {
             m_camera = Camera.main.GetComponent<GameCamera>();
         }
@@ -558,13 +524,6 @@ public class ViewControl : IViewControl, IBroadcastListener {
     }
 
     void OnDestroy() {
-#if DETACH_VIEW_ON_DISABLE
-		if (m_view.parent != m_transform) {
-			GameObject.Destroy(m_view.gameObject);
-			m_view = null;
-		}
-#endif
-
         Broadcaster.RemoveListener(BroadcastEventType.FURY_RUSH_TOGGLED, this);
         RemoveAudios();
     }
@@ -607,12 +566,7 @@ public class ViewControl : IViewControl, IBroadcastListener {
             m_inLoveParticleInstance = null;
         }
 
-
         RemoveAudios();
-
-#if DETACH_VIEW_ON_DISABLE
-		SentViewToManager();
-#endif
     }
 
     protected virtual void RemoveAudios() {
@@ -749,6 +703,7 @@ public class ViewControl : IViewControl, IBroadcastListener {
     }
 
     override public void CustomUpdate() {
+        UnityEngine.Profiling.Profiler.BeginSample("ViewControl");
         if (m_isAnimatorAvailable) {
             if (m_disableAnimatorTimer > 0) {
                 m_disableAnimatorTimer -= Time.deltaTime;
@@ -794,6 +749,7 @@ public class ViewControl : IViewControl, IBroadcastListener {
             Color damageColor = m_damageColor * (m_damageFeedbackTimer / m_damageTime) + Color.white * (1f - (m_damageFeedbackTimer / m_damageTime));
             SetColorAdd(damageColor);
         }
+        UnityEngine.Profiling.Profiler.EndSample();
     }
 
     void SetColorAdd(Color _c) {
@@ -975,8 +931,10 @@ public class ViewControl : IViewControl, IBroadcastListener {
                     RemoveAudioParent(ref m_onScaredAudioAO);
                 }
             }
+
             if (m_isAnimatorAvailable)
                 m_animator.SetBool(GameConstants.Animator.SCARED, _scared);
+
         }
     }
 

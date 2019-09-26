@@ -22,7 +22,7 @@ using System.Collections.Generic;
 /// The other slots are just for storage. Inventory should always be filled from 0 to N, and 
 /// eggs are automatically shifted when the egg in slot 0 is collected.
 /// </summary>
-public class EggManager : UbiBCN.SingletonMonoBehaviour<EggManager> {
+public class EggManager : Singleton<EggManager> {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
@@ -38,9 +38,8 @@ public class EggManager : UbiBCN.SingletonMonoBehaviour<EggManager> {
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
-	// Settings
-	// Serialized just for debugging, it's initialized from content
-	[SerializeField] private ProbabilitySet m_rewardDropRate = new ProbabilitySet();
+	// Settings	
+	private ProbabilitySet m_rewardDropRate = new ProbabilitySet();
 	
 
 	// Inventory
@@ -105,7 +104,6 @@ public class EggManager : UbiBCN.SingletonMonoBehaviour<EggManager> {
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
-
 	/// <summary>
 	/// Initialize manager from definitions.
 	/// Requires definitions to be loaded into the DefinitionsManager.

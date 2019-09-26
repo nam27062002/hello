@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BubbledEntitySystem : UbiBCN.SingletonMonoBehaviour<BubbledEntitySystem>, IBroadcastListener {
+public class BubbledEntitySystem : Singleton<BubbledEntitySystem>, IBroadcastListener {
     //--[Classes]------------------------------------------------------------------------------------------
     private class QueueSystem {
         private int m_count = 0;
@@ -234,11 +234,9 @@ public class BubbledEntitySystem : UbiBCN.SingletonMonoBehaviour<BubbledEntitySy
 
 
     //--[Instance methods]---------------------------------------------------------------------------------
-    private void Awake() {
+    protected override void OnCreateInstance() {
         m_loaded = false;
-    }
-
-    private void OnEnable() {
+    
         // Subscribe to external events
         Broadcaster.AddListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
         Broadcaster.AddListener(BroadcastEventType.GAME_AREA_ENTER, this);
@@ -246,7 +244,7 @@ public class BubbledEntitySystem : UbiBCN.SingletonMonoBehaviour<BubbledEntitySy
         Broadcaster.AddListener(BroadcastEventType.GAME_ENDED, this);
     }
 
-    private void OnDisable() {
+    protected override void OnDestroyInstance() {
         // Unsubscribe from external events
         Broadcaster.RemoveListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
         Broadcaster.RemoveListener(BroadcastEventType.GAME_AREA_ENTER, this);
@@ -284,7 +282,7 @@ public class BubbledEntitySystem : UbiBCN.SingletonMonoBehaviour<BubbledEntitySy
         m_queueSystem.Add(_entity, _time);
     }
 
-    private void Update() {
+    public void Update() {
         if (m_loaded) {
             for (int i = 0; i < m_deadEntities.Count; ++i) {
                 m_queueSystem.Remove(m_deadEntities[i]);

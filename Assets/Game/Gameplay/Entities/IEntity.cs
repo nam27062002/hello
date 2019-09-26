@@ -163,13 +163,17 @@ abstract public class IEntity : ISpawnable {
 
     override public void CustomUpdate() {
 		for (int i = 0; i < m_otherSpawnablesCount; i++) {
-			m_otherSpawnables[i].CustomUpdate();
-    	}
+            m_otherSpawnables[i].CustomUpdate();
+        }
     }
 
 	public virtual void CustomFixedUpdate() {
 		if (m_machine != null) m_machine.CustomFixedUpdate();
 	}
+
+    public void CustomLateUpdate() {
+        if (m_machine != null) m_machine.CustomLateUpdate();
+    }
 
     public virtual bool CanDieOutsideFrustrum() { return true; }
 	public virtual CircleArea2D circleArea 		{ get { return null; } }
