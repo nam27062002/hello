@@ -280,9 +280,8 @@ public class PetPill : ScrollRectItem<PetPillData>, IBroadcastListener {
 
 
         
-        // OTA: Check if the pet is downloaded
-        List<string> resourceIDs = HDAddressablesManager.Instance.GetResourceIDsForPet(_petDef.sku);
-        if (!HDAddressablesManager.Instance.IsResourceListAvailable(resourceIDs))
+        // OTA: Check if the pet is downloaded        
+        if (!HDAddressablesManager.Instance.AreResourcesForPetAvailable(_petDef.sku))
         {
             // Pet not downloaded, so get a handle for all the downloadable content
             m_petHandle = HDAddressablesManager.Instance.GetHandleForAllDownloadables();
