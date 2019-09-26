@@ -4,8 +4,9 @@ using System.IO;
 using System.Collections.Generic;
 
 public static class SceneOptimizerEditor {
-    
-    public static string PATH = "Assets/Editor/Addressables/generated/Scenes";
+        
+	public static string PATH = "Assets" + Path.DirectorySeparatorChar + "Game" + Path.DirectorySeparatorChar + "Scenes" + 
+		Path.DirectorySeparatorChar + "Generated";
 
     public static void BatchOptimization() {
 		//clean old folder
@@ -36,11 +37,7 @@ public static class SceneOptimizerEditor {
                             DoOptimize(scene);
 
 							string dstPath = srcPath.Substring(0, srcPath.IndexOf(assetsToken, System.StringComparison.Ordinal + 1));
-                            dstPath +=  assetsToken +
-										"Editor" + Path.DirectorySeparatorChar +
-                                        "Addressables" + Path.DirectorySeparatorChar +
-                                        "generated" + Path.DirectorySeparatorChar +
-                                        "Scenes" + Path.DirectorySeparatorChar + file.Name;
+                            dstPath +=  PATH + Path.DirectorySeparatorChar + file.Name;
 							UnityEditor.SceneManagement.EditorSceneManager.SaveScene(scene, dstPath);
 
                             string dstFilePath = dstPath.Substring(dstPath.IndexOf(assetsToken, System.StringComparison.Ordinal));
