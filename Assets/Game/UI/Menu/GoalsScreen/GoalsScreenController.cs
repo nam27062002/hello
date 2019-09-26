@@ -88,8 +88,9 @@ public class GoalsScreenController : MonoBehaviour {
 			ExcludeButton(Buttons.GLOBAL_EVENTS);
 		}
 
-        // Quests
-        if (UsersManager.currentUser.gamesPlayed < GameSettings.ENABLE_LEAGUES_AT_RUN)
+        // Leagues
+        if (UsersManager.currentUser.gamesPlayed < GameSettings.ENABLE_LEAGUES_AT_RUN ||
+            HDLiveDataManager.league.GetMinimumTierToShowLeagues() > DragonManager.biggestOwnedDragon.tier)
         {
             ExcludeButton(Buttons.LEAGUES);
         }

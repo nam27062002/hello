@@ -43,9 +43,10 @@ public class ResultsScreenStepLeagueScore : ResultsScreenSequenceStep {
 	/// <returns><c>true</c> if the step must be displayed, <c>false</c> otherwise.</returns>
 	override public bool MustBeDisplayed() {
 
-        // Show only if the leagues are available
+        // Show only if the leagues are available and we have the minimum tier
         return HDLiveDataManager.league.season.IsRunning() && 
-               UsersManager.currentUser.gamesPlayed >= GameSettings.ENABLE_LEAGUES_AT_RUN;
+               UsersManager.currentUser.gamesPlayed >= GameSettings.ENABLE_LEAGUES_AT_RUN &&
+               DragonManager.CurrentDragon.tier >= HDLiveDataManager.league.GetMinimumTierToShowLeagues();
 
     }
 
