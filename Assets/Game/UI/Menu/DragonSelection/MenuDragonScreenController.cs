@@ -516,8 +516,9 @@ public class MenuDragonScreenController : MonoBehaviour {
 	/// </summary>
 	public void OnOpenPreAnimation() {
         // Reset animating flag
-        // SetAnimationFlag(false, true); 
-        // [JOM] We commented the previous line to fix HDK-5779. Lets wait and see if we break something else...
+        SetAnimationFlag(false, true, .1f); 
+        // [JOM] Added the preivious line to fix HDK-5779. Added some delay to let the OTA popup to trigger.
+        
 
         // If a dragon was just unlocked, prepare a nice unlock animation sequence!
         if (!string.IsNullOrEmpty(GameVars.unlockedDragonSku)) {
