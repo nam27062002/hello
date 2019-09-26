@@ -51,8 +51,14 @@ public class OffersManager : Singleton<OffersManager> {
 		set { instance.m_autoRefreshEnabled = value; }
 	}
 
-	// Internal
-	private List<OfferPack> m_allEnabledOffers = new List<OfferPack>();	// All enabled and non-expired offer packs, regardless of type
+    private HappyHourOffer m_happyHour = null;
+    public HappyHourOffer happyHour {
+        get { return m_happyHour; }
+    }
+
+
+    // Internal
+    private List<OfferPack> m_allEnabledOffers = new List<OfferPack>();	// All enabled and non-expired offer packs, regardless of type
 	private List<OfferPack> m_allOffers = new List<OfferPack>();        // All defined offer packs, regardless of state and type
 	private List<OfferPackRotational> m_allEnabledRotationalOffers = new List<OfferPackRotational>();  // All enabled and non-expired rotational offer packs
 	private List<OfferPackRotational> m_activeRotationalOffers = new List<OfferPackRotational>();	// Currently active rotational offers
@@ -161,8 +167,14 @@ public class OffersManager : Singleton<OffersManager> {
 			}
 		}
 
-		// Refresh active and featured offers
-		instance.Refresh(true);
+        // Create a new happy hour offer from the definitions
+        if (instance.m_happyHour == null)
+        {
+            instance.m_happyHour = HappyHourOffer.CreateFromDefinition();
+        }
+
+        // Refresh active and featured offers
+        instance.Refresh(true);
 
         // Only clean if we have a new customization/s
         if ( needsCleaning ){
@@ -358,28 +370,22 @@ public class OffersManager : Singleton<OffersManager> {
     private bool IsOfferAvailable(OfferPack _newPack) {
         List<OfferPackItem> items = _newPack.items;
 
-        for (int i = 0; i < items.Count; ++i) {
+        bool returnValue = true;
+        for (int i = 0; i < items.Count && returnValue; ++i) {
             OfferPackItem item = items[i];
 
-            DefinitionNode def = null;
-			List<string> resourceIDs = null;
+            DefinitionNode def = null;            			
             if (item.type.Equals(Metagame.RewardPet.TYPE_CODE)) {
-				resourceIDs = HDAddressablesManager.Instance.GetResourceIDsForPet(item.sku);
+				returnValue = HDAddressablesManager.Instance.AreResourcesForPetAvailable(item.sku);
             } else if (item.type.Equals(Metagame.RewardSkin.TYPE_CODE)) {
                 def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, item.sku);
 				if(def != null) {
-					resourceIDs = HDAddressablesManager.Instance.GetResourceIDsForDragon(def.Get("dragonSku"));
+					returnValue = HDAddressablesManager.Instance.AreResourcesForDragonAvailable(def.Get("dragonSku"));
 				}
-            }
-
-            if (resourceIDs != null) {
-                if (!HDAddressablesManager.Instance.IsResourceListAvailable(resourceIDs)) {
-                    return false;
-                }
-            }
+            }            
         }
 
-        return true;
+        return returnValue;
     }
 
     /// <summary>

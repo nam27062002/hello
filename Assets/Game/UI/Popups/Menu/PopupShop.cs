@@ -61,9 +61,13 @@ public class PopupShop : MonoBehaviour {
 	[Space]
 	[SerializeField] private TextMeshProUGUI m_offersCount;
 
+    [Space]
+    [SerializeField] private ShowHideAnimator m_happyHourPanel;
+    [SerializeField] private TextMeshProUGUI m_happyHourTimer;
 
-	// Other setup parameters
-	private bool m_closeAfterPurchase = false;
+
+    // Other setup parameters
+    private bool m_closeAfterPurchase = false;
 	public bool closeAfterPurchase {
 		get { return m_closeAfterPurchase; }
 		set { m_closeAfterPurchase = value; }
@@ -84,13 +88,18 @@ public class PopupShop : MonoBehaviour {
     protected string m_openOrigin = "";
     protected bool m_trackScreenChange = false;
     protected int m_lastTrackedScreen = -1;
-	//------------------------------------------------------------------//
-	// GENERIC METHODS													//
-	//------------------------------------------------------------------//
-	/// <summary>
-	/// Initialization
-	/// </summary>
-	void Awake() {
+
+    //Internal
+    private float m_timer = 0; // Refresh timer
+    private HappyHourOffer m_happyHour;
+
+    //------------------------------------------------------------------//
+    // GENERIC METHODS													//
+    //------------------------------------------------------------------//
+    /// <summary>
+    /// Initialization
+    /// </summary>
+    void Awake() {
 		// Check required fields
 		Debug.Assert(m_tabs != null, "Missing required reference!");
 
@@ -131,10 +140,13 @@ public class PopupShop : MonoBehaviour {
 	/// <param name="_mode">Target mode.</param>
 	public void Init(Mode _mode, string _origin ) {
         m_openOrigin = _origin;
-		// Refresh pills?
+        // Refresh pills?
 
-		// Reset scroll lists and hide all tabs
-		for(int i = 0; i < (int)Tabs.COUNT; ++i) {
+        // Get the current happy hour instance
+        m_happyHour = OffersManager.instance.happyHour;
+
+        // Reset scroll lists and hide all tabs
+        for (int i = 0; i < (int)Tabs.COUNT; ++i) {
 			(m_tabs[i] as IPopupShopTab).scrollList.horizontalNormalizedPosition = 0f;
 			m_tabs[i].Hide(NavigationScreen.AnimType.NONE);
 		}
@@ -184,14 +196,52 @@ public class PopupShop : MonoBehaviour {
 		m_tabs.GoToScreen((int)goToTab);
 	}
 
-	//------------------------------------------------------------------//
-	// CALLBACKS														//
-	//------------------------------------------------------------------//
-	/// <summary
-	/// Successful purchase.
-	/// </summary>
-	/// <param name="_pill">The pill that triggered the event</param>
-	private void OnPurchaseSuccessful(IPopupShopPill _pill) {
+
+    public void Update()
+    {
+            // Refresh offers periodically for better performance
+            if (m_timer <= 0)
+            {
+                m_timer = 1f; // Refresh every second
+                Refresh();
+            }
+            m_timer -= Time.deltaTime;
+    }
+
+    public void Refresh ()
+    {
+
+        // Refresh the happy hour panel
+        if (m_happyHour != null)
+        {
+            // If show the happy hour panel only if the offer is active      
+            if (m_happyHour.IsActive())
+            {
+                m_happyHourPanel.Show();
+            }else
+            {
+                m_happyHourPanel.Hide();
+            }
+
+            if (m_happyHour.IsActive())
+            {
+                // Show time left in the proper format (1h 20m 30s)
+                string timeLeft = TimeUtils.FormatTime(m_happyHour.TimeLeftSecs(), TimeUtils.EFormat.ABBREVIATIONS_WITHOUT_0_VALUES, 3);
+                m_happyHourTimer.text = timeLeft;
+
+            }
+        }
+
+    }
+
+    //------------------------------------------------------------------//
+    // CALLBACKS														//
+    //------------------------------------------------------------------//
+    /// <summary
+    /// Successful purchase.
+    /// </summary>
+    /// <param name="_pill">The pill that triggered the event</param>
+    private void OnPurchaseSuccessful(IPopupShopPill _pill) {
 		// Add to purchased packs list
 		m_packsPurchased.Add(_pill.def);
 
