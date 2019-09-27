@@ -15,9 +15,9 @@ public class ActionPoint : MonoBehaviour, IQuadTreeItem {
 
     private bool m_hasToDoStart = true;
 
-#if UNITY_EDITOR
+#if UNITY_EDITOR || !USE_OPTIMIZED_SCENES
     void Start() {
-        if (m_hasToDoStart) {
+		if (m_hasToDoStart) {
             DoStart();
         }
     }
