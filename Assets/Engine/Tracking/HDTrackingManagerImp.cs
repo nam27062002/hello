@@ -1491,6 +1491,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
             Track_AddParamString(e, TRACK_PARAM_PROMOTION_TYPE, promotionType);
             Track_AddParamString(e, TRACK_PARAM_MONEY_CURRENCY, moneyCurrencyCode);
             Track_AddParamFloat(e, TRACK_PARAM_MONEY_IAP, moneyPrice);
+            Track_AddParamHappyHour(e);
 
             // moneyPrice in cents of dollar
             e.data.Add(TRACK_PARAM_MONEY_USD, moneyUSD);
@@ -1601,7 +1602,6 @@ public class HDTrackingManagerImp : HDTrackingManager {
             e.data.Add(TRACK_PARAM_AMOUNT_DELTA, (int)amountDelta);
             e.data.Add(TRACK_PARAM_AMOUNT_BALANCE, amountBalance);
             Track_AddParamString(e, TRACK_PARAM_ECO_GROUP, economyGroup);
-            Track_AddParamHappyHour(e);
         }
         m_eventQueue.Enqueue(e);
 
