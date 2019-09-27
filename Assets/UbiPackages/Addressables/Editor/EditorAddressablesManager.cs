@@ -250,7 +250,7 @@ public class EditorAddressablesManager
     public void BuildAssetBundles(BuildTarget platform)
     {
         // Untags the original scenes so they won't be included in any asset bundles as their optimized versions are the ones that must be used
-		if (USE_OPTIMIZED_SCENES
+		if (USE_OPTIMIZED_SCENES)
 		{
 			Dictionary<string, string>  originalAssetBundleNamesPerPath = UnTagOriginalScenes();		
 
