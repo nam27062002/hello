@@ -53,9 +53,9 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner, IBroadcastListener {
     //-----------------------------------------------
     // Methods
     //-----------------------------------------------
-#if UNITY_EDITOR
+#if UNITY_EDITOR || !USE_OPTIMIZED_SCENES
     void Start() {
-        if (m_hasToDoStart) {
+		if (m_hasToDoStart) {
             DoStart();
         }
     }
