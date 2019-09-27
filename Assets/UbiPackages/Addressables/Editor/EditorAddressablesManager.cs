@@ -12,7 +12,7 @@ using UnityEngine;
 /// This class can be extended if you need to customize its behaviour.
 /// </summary>
 public class EditorAddressablesManager
-{
+{		
     private static Logger sm_logger = new ConsoleLogger("AddressablesEditor");
     
     public static string REMOTE_ASSETS_FOLDER_NAME = "RemoteAssets";
@@ -246,9 +246,10 @@ public class EditorAddressablesManager
     }
 
     public void BuildAssetBundles(BuildTarget platform)
-    {
-        // Untags the original scenes so they won't be included in any asset bundles as their optimized versions are the ones that must be used
-        Dictionary<string, string>  originalAssetBundleNamesPerPath = UnTagOriginalScenes();
+    {        
+#if USE_OPTIMIZED_SCENES
+		// Untags the original scenes so they won't be included in any asset bundles as their optimized versions are the ones that must be used
+		Dictionary<string, string>  originalAssetBundleNamesPerPath = UnTagOriginalScenes();		
 
         // Build asset bundles
         EditorAssetBundlesManager.BuildAssetBundles(platform);
@@ -263,8 +264,12 @@ public class EditorAddressablesManager
                 assetImporter.assetBundleName = pair.Value;
                 assetImporter.SaveAndReimport();
             }
-        }        
-    }
+        }
+#else
+		// Build asset bundles
+		EditorAssetBundlesManager.BuildAssetBundles(platform);
+	}
+#endif
 
     private Dictionary<string, string> UnTagOriginalScenes()
     {
@@ -301,7 +306,11 @@ public class EditorAddressablesManager
         BuildTarget target = EditorUserBuildSettings.activeBuildTarget;
         ClearBuild(target);
         CustomizeEditorCatalog();
-        PostProcessScenes();
+
+#if USE_OPTIMIZED_SCENES
+		PostProcessScenes ();
+#endif
+
         GeneratePlayerCatalogForAllPlatforms();        
 
         if (AddressablesManager.Mode_NeedsAssetBundles())
@@ -385,16 +394,17 @@ public class EditorAddressablesManager
                 // we want the optimized version to be included in the build
                 if (EditorFileUtils.IsAScenePath(editorEntry.GetPath()))
                 {
-                    string generatedSceneGUID = SceneOptimizerEditor.GetGeneratedGUID(editorEntry.AssetName);
-                    if (!string.IsNullOrEmpty(generatedSceneGUID))
-                    {
-                        AddressablesCatalogEntry generatedSceneEntry = new AddressablesCatalogEntry();
-                        generatedSceneEntry.Load(editorEntry.ToJSON());
-                        generatedSceneEntry.GUID = generatedSceneGUID;
+					#if USE_OPTIMIZED_SCENES
+					string generatedSceneGUID = SceneOptimizerEditor.GetGeneratedGUID (editorEntry.AssetName);
+					if (!string.IsNullOrEmpty (generatedSceneGUID)) {
+						AddressablesCatalogEntry generatedSceneEntry = new AddressablesCatalogEntry ();
+						generatedSceneEntry.Load (editorEntry.ToJSON ());
+						generatedSceneEntry.GUID = generatedSceneGUID;
 
-                        // From here on we continue with generatedSceneEntry
-                        editorEntry = generatedSceneEntry;
-                    }
+						// From here on we continue with generatedSceneEntry
+						editorEntry = generatedSceneEntry;
+					}
+					#endif
                 }
 
                 if (ProcessEntry(editorEntry, scenesToAdd, scenesToRemove, target, changeAssets))
