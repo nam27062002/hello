@@ -137,6 +137,7 @@ public class HDAddressablesManager : AddressablesManager
                     break;
 
                 case CaletyConstants.eBuildEnvironments.BUILD_DEV:
+                case CaletyConstants.eBuildEnvironments.BUILD_LOCAL:
                     urlBase = "http://bcn-mb-services1.ubisoft.org/hungrydragon";
                     break;
             }
