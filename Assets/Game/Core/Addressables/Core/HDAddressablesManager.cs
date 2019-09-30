@@ -1027,6 +1027,18 @@ public class Ingame_SwitchAreaHandle
         else
         {
             resultPrefab = dragon.def.GetAsString("resultsPrefab");
+            // Take next skin into account just in case we unlock it this run
+            int initialLevel = RewardManager.dragonInitialLevel;
+            DragonProgression progression = (DragonManager.CurrentDragon as DragonDataClassic).progression;
+            int finalLevel = progression.level;
+            if ( initialLevel != finalLevel )
+            {
+                List<DefinitionNode> newSkins = UsersManager.currentUser.wardrobe.GetUnlockedSkins( DragonManager.CurrentDragon.def.sku, initialLevel, finalLevel );
+                for (int i = 0; i < newSkins.Count; i++)
+                {
+                    AddDisguiseDependencies( handle, newSkins[i], false );
+                }
+            }
         }
         handle.AddAddressable( resultPrefab );
         AddDisguiseDependencies( handle, dragon, false );
@@ -1055,7 +1067,17 @@ public class Ingame_SwitchAreaHandle
 
     private void AddDisguiseDependencies( AddressablesBatchHandle handle, IDragonData data, bool ingame = true )
     {
-        DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, data.disguise);
+        AddDisguiseDependencies( handle, data.disguise, ingame );
+    }
+
+    private void AddDisguiseDependencies( AddressablesBatchHandle handle, string disguiseSku, bool ingame = true  )
+    {
+        DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, disguiseSku);
+        AddDisguiseDependencies( handle, def, ingame );
+    }
+
+    private void AddDisguiseDependencies( AddressablesBatchHandle handle, DefinitionNode def, bool ingame = true  )
+    {
         // Materials
         string skin = def.Get("skin");
         if ( ingame )
@@ -1078,8 +1100,6 @@ public class Ingame_SwitchAreaHandle
 
         // Icon
         handle.AddAddressable( def.Get("icon") );
-
-
     }
 
     private void AddPetDependencies( AddressablesBatchHandle handle, IDragonData data )
