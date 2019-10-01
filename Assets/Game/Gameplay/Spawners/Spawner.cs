@@ -288,16 +288,16 @@ public class Spawner : AbstractSpawner {
 						}
 
 						if (hasOverrideSpawnFreq) {
-							m_spawnTime.min += m_spawnTime.min * spawnFreqPercentage / 100f;
-							m_spawnTime.max += m_spawnTime.max * spawnFreqPercentage / 100f;
+							m_spawnTime.min -= m_spawnTime.min * spawnFreqPercentage / 100f;
+							m_spawnTime.max -= m_spawnTime.max * spawnFreqPercentage / 100f;
 
 							for (int i = 0; i < m_activationTriggers.Length; ++i) {
-								m_activationTriggers[i].value += m_activationTriggers[i].value * spawnFreqPercentage / 100f;
+								m_activationTriggers[i].value -= m_activationTriggers[i].value * spawnFreqPercentage / 100f;
 							}
 
 							for (int i = 0; i < m_activationKillTriggers.Length; ++i) {
 								float value = m_activationKillTriggers[i].value;
-								value += value * spawnFreqPercentage / 100f;
+								value -= value * spawnFreqPercentage / 100f;
 								if (value < 1) {
 									value = 1;
 								}
