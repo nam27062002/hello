@@ -144,8 +144,8 @@ public class MenuDragonInfo : MonoBehaviour {
 	/// </summary>
 	/// <param name="_sku">The sku of the selected dragon.</param>
 	private void OnDragonSelected(string _sku) {
-		// Refresh after some delay to let the animation finish
-		Refresh(_sku, 0, true);
+		// Refresh after some delay in case OnScreenChanged was called at the same time
+		Refresh(_sku, .0f, true);
 	}
 
 
@@ -158,8 +158,12 @@ public class MenuDragonInfo : MonoBehaviour {
 		// If not yet initialized, get out
 		if(m_dragonData == null) return;
 
+        // [JOM] In order to fix HDK-6398, we skip this refresh when coming back from the tournament
+        // screen. The info will be updated exclusively in the OnDragonSelected call avoiding a conflict.
+        if (_from == MenuScreen.TOURNAMENT_INFO) return;
+
 		// Refresh after some delay to let the animation finish
-		Refresh(m_dragonData.sku, 0.25f, true);
+		Refresh(m_dragonData.sku, 0.15f, true);
 
 	}
 
