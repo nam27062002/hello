@@ -161,8 +161,8 @@ public class MenuDragonInfo : MonoBehaviour {
 	/// </summary>
 	/// <param name="_sku">The sku of the selected dragon.</param>
 	private void OnDragonSelected(string _sku) {
-		// Refresh after some delay to let the animation finish
-		Refresh(_sku, 0, true);
+		// Refresh after some delay in case OnScreenChanged was called at the same time
+		Refresh(_sku, .0f, true);
 	}
 
 	/// <summary>

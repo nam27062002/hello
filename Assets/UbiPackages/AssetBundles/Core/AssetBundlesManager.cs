@@ -487,7 +487,7 @@ public class AssetBundlesManager
 				for(int i = 0; i < count; i++) 
 				{
                     // IsAssetBundleAvailable() must be called for every id so that the result will be tracked if it needs to
-                    returnValue = IsAssetBundleAvailable(ids[i], track) && returnValue;
+                    returnValue = IsAssetBundleAvailable(ids[i], false, track) && returnValue;
                 }
 			}
         }
