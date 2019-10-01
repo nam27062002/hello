@@ -35,6 +35,7 @@ public class DecorationSpawnerManager : Singleton<DecorationSpawnerManager>, IBr
 
     // Internal logic
     private bool m_enabled = false;
+    private bool m_processCamera = false;
     private float m_updateTimer = 0f;
 
     // External references
@@ -123,6 +124,10 @@ public class DecorationSpawnerManager : Singleton<DecorationSpawnerManager>, IBr
         // Only if enabled!
         if (!m_enabled) return;
         if (m_spawnersTreeNear == null) return;
+
+        if (m_processCamera) {
+            ProcessSpawnersInCamera();
+        }
 
         // Get activation bounds
         // Update every frame in case camera bounds change (i.e. zoom in/out)
@@ -524,6 +529,12 @@ public class DecorationSpawnerManager : Singleton<DecorationSpawnerManager>, IBr
         }
 
         m_selectedSpawners.Clear();
+        m_processCamera = true;
+        EnableSpawners();        
+    }
+
+    private void ProcessSpawnersInCamera() {
+        m_selectedSpawners.Clear();
         m_minRectNear = m_camera.activationMinRectNear;
         m_spawnersTreeNear.GetHashSetInRange(m_minRectNear.ToRect(), ref m_selectedSpawners);
         m_spawnersTreeFar.GetHashSetInRange(m_minRectNear.ToRect(), ref m_selectedSpawners);
@@ -544,9 +555,8 @@ public class DecorationSpawnerManager : Singleton<DecorationSpawnerManager>, IBr
             }
         }
 
-        EnableSpawners();
+        m_processCamera = false;
     }
-
 
     private void OnAreaExit() {
         m_selectedSpawners.Clear();
