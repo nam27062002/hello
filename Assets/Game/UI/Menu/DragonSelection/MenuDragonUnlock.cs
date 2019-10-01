@@ -180,7 +180,7 @@ public class MenuDragonUnlock : MonoBehaviour {
     /// </summary>
     /// <param name="_data">Data of the dragon to be unlocked.</param>
     /// <param name="_onSuccess">Callback to be invoked when unlock was successful. </param>
-    public static void UnlockWithSC(IDragonData _data, UnityAction<ResourcesFlow> _onSuccess)
+    public static void UnlockWithSC(IDragonData _data, UnityAction<ResourcesFlow> _onSuccess, RectTransform _feedbackRoot)
     {
         // Make sure the dragon we unlock is the currently selected one and that we can actually do it
         if (_data.CheckUnlockWithSC())
@@ -191,13 +191,16 @@ public class MenuDragonUnlock : MonoBehaviour {
             long priceSC = _data.GetPriceModified(UserProfile.Currency.SOFT);
             if (priceSC > UsersManager.currentUser.coins)
             {
-                // Not enough SC! Show a message
-                UIFeedbackText.CreateAndLaunch(
-                    LocalizationManager.SharedInstance.Localize("TID_SC_NOT_ENOUGH"),   // [AOC] TODO!! Improve text?
-                    GameConstants.Vector2.center,
-                    InstanceManager.menuSceneController.hud.transform as RectTransform,
-                    "NotEnoughSCError"
-                );
+                if (_feedbackRoot != null)
+                {
+                    // Not enough SC! Show a message
+                    UIFeedbackText.CreateAndLaunch(
+                        LocalizationManager.SharedInstance.Localize("TID_SC_NOT_ENOUGH"),   // [AOC] TODO!! Improve text?
+                        GameConstants.Vector2.center,
+                        _feedbackRoot,
+                        "NotEnoughSCError"
+                    );
+                }
             }
             else
             {
@@ -268,7 +271,7 @@ public class MenuDragonUnlock : MonoBehaviour {
     /// </summary>
     public void OnUnlockWithSC() {
 		// Use static method to unlock currently selected dragon
-		UnlockWithSC(InstanceManager.menuSceneController.selectedDragonData, OnUnlockViaSCSuccess);
+		UnlockWithSC(InstanceManager.menuSceneController.selectedDragonData, OnUnlockViaSCSuccess, GetComponentInParent<Canvas>().transform as RectTransform);
 	}
 
     /// <summary>
