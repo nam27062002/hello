@@ -137,9 +137,8 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner, IBroadcastListener {
 	/// <summary>
 	/// A new level was loaded.
 	/// </summary>
-	private void OnLevelLoaded() {
-		bool disable = m_spawnConditions != null && !m_spawnConditions.IsReadyToSpawn(0f, 0f);
-        m_respawnCount = 0;
+	private void OnLevelLoaded() {		
+        m_respawnCount = 1;
         m_state = State.Respawning;
         gameObject.SetActive(false);
     }
