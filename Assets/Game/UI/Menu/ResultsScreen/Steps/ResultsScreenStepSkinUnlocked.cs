@@ -91,6 +91,9 @@ public class ResultsScreenStepSkinUnlocked : ResultsScreenSequenceStep {
 			return;
 		}
 
+		m_skinsToProcess = UsersManager.currentUser.wardrobe.GetUnlockedSkins( DragonManager.CurrentDragon.def.sku, initialLevel, finalLevel );
+
+		/*
 		// Find out all skins unlocked in this run
 		List<DefinitionNode> allSkins = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.DISGUISES, "dragonSku", DragonManager.CurrentDragon.def.sku);
 		DefinitionsManager.SharedInstance.SortByProperty(ref allSkins, "unlockLevel", DefinitionsManager.SortType.NUMERIC);
@@ -109,7 +112,9 @@ public class ResultsScreenStepSkinUnlocked : ResultsScreenSequenceStep {
 				m_skinsToProcess.Add(allSkins[i]);
 			}
 		}
+		*/
 
+		
 		// Reset processed skins counter
 		m_processedSkins = 0;
 	}
