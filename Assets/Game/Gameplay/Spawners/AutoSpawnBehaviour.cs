@@ -29,6 +29,8 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner, IBroadcastListener {
 	private int m_respawnCount;
 	private float m_respawnTime;
 	private SpawnerConditions m_spawnConditions;
+	private Decoration m_decoration;
+    private bool m_isDecorationRegistered;
 
     private ISpawnable[] m_components;
 
@@ -47,7 +49,7 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner, IBroadcastListener {
 	public IGuideFunction guideFunction{ get {return null;} }
 
 	private GameCamera m_newCamera;
-  private bool m_hasToDoStart = true;
+    private bool m_hasToDoStart = true;
 
 
     //-----------------------------------------------
@@ -65,6 +67,7 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner, IBroadcastListener {
         if (m_hasToDoStart) {
             m_hasToDoStart = false;
 
+			m_decoration = GetComponent<Decoration>();
             m_spawnConditions = GetComponent<SpawnerConditions>();
             m_components = GetComponents<ISpawnable>();
 
@@ -73,11 +76,11 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner, IBroadcastListener {
             Broadcaster.AddListener(BroadcastEventType.GAME_AREA_ENTER, this);
 
             if (m_spawnConditions == null || m_spawnConditions.IsAvailable()) {
-									ZoneManager.Zone zone = InstanceManager.zoneManager.GetZone(transform.position.z);
-			            if (zone == ZoneManager.Zone.None) {
-			                Destroy(this);
-			            } else {
-                DecorationSpawnerManager.instance.Register(this, true);
+				ZoneManager.Zone zone = InstanceManager.zoneManager.GetZone(transform.position.z);
+			    if (zone == ZoneManager.Zone.None) {
+			        Destroy(this);
+			    } else {
+                    DecorationSpawnerManager.instance.Register(this, true);
 
                     m_newCamera = Camera.main.GetComponent<GameCamera>();
                     m_gameSceneController = InstanceManager.gameSceneControllerBase;
@@ -123,11 +126,14 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner, IBroadcastListener {
     }
 
     void OnDestroy() {
-		if (ApplicationManager.IsAlive) {
-			if (DecorationSpawnerManager.isInstanceCreated) {
-                DecorationSpawnerManager.instance.Unregister (this, true);
-			}
-		}
+        if (ApplicationManager.IsAlive) {
+            if (DecorationSpawnerManager.isInstanceCreated) {
+                DecorationSpawnerManager.instance.Unregister(this, true);
+            }
+            if (DecorationManager.isInstanceCreated) {
+                UnregisterDecoration();
+            }
+        }
 
         // Unsubscribe from external events
         Broadcaster.RemoveListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
@@ -141,6 +147,7 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner, IBroadcastListener {
         m_respawnCount = 1;
         m_state = State.Respawning;
         gameObject.SetActive(false);
+        m_isDecorationRegistered = false;
     }
 
 	public void Initialize() {
@@ -166,7 +173,27 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner, IBroadcastListener {
 		// entity.SetGolden(Spawner.EntityGoldMode.Gold);
 	}
 
+    public void RegisterDecoration() {
+        if (m_decoration) {
+            if (!m_isDecorationRegistered) {
+                DecorationManager.instance.RegisterDecoration(m_decoration);
+                m_isDecorationRegistered = true;
+            }
+        }
+    }
+
+    private void UnregisterDecoration() {
+        if (m_decoration) {
+            if (m_isDecorationRegistered) {
+                DecorationManager.instance.UnregisterDecoration(m_decoration);
+                m_isDecorationRegistered = false;
+            }
+        }
+    }
+
     public void StartRespawn() {
+        UnregisterDecoration();
+
 		m_respawnCount++;
 
 		if (m_maxSpawns > 0 && m_respawnCount > m_maxSpawns) {
