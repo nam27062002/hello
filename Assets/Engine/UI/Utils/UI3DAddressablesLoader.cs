@@ -271,7 +271,6 @@ public class UI3DAddressablesLoader : MonoBehaviour {
 				// Process particle systems
 				ParticleSystem[] ps = m_loadedInstance.GetComponentsInChildren<ParticleSystem>();
 				for(int i = 0; i < ps.Length; ++i) {
-					Debug.Log(Color.yellow.Tag("PS: " + ps[i].name));
 					// Make sure they belong to the right layer	
 					ps[i].gameObject.SetLayer(m_container.gameObject.layer);
 				}
