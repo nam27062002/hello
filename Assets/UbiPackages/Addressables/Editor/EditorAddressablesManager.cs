@@ -266,6 +266,9 @@ public class EditorAddressablesManager
             }
         }
 #else
+		// Makes sure that generated scenes don't interfere
+		EditorFileUtils.DeleteFileOrDirectory(SceneOptimizerEditor.PATH);
+
         // Build asset bundles
         EditorAssetBundlesManager.BuildAssetBundles(platform);
 #endif
