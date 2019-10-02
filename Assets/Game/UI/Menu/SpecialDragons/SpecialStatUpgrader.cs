@@ -56,7 +56,9 @@ public class SpecialStatUpgrader : MonoBehaviour {
     [SerializeField] private Localizer m_priceText = null;
 	[SerializeField] private RectTransform m_feedbackAnchor = null;
     [SerializeField] private ShowHideAnimator m_showHide = null;
-
+	public ShowHideAnimator showHide {
+		get { return m_showHide; }
+	}
 
     // Visibility
     [Space]

@@ -49,8 +49,12 @@ public class MenuDragonClassicInfo : MenuDragonInfo {
         // Check params
         if (_data == null) return;
 
-        // Only show classic dragons bar
-        if (!(_data is DragonDataClassic)) return;
+		// Only show for classic dragons
+		bool isClassic = _data.type == IDragonData.Type.CLASSIC;
+		SetVisible(isClassic);
+
+		// Nothing else to do if not classic
+		if(!isClassic) return;
 
 		// Aux vars
 		bool dragonChanged = m_dragonData != _data;
@@ -82,13 +86,17 @@ public class MenuDragonClassicInfo : MenuDragonInfo {
 				bool show = !_data.isOwned;
 				if(show) {
 					m_dragonDescText.Localize(_data.def.GetAsString("tidDesc"));
-					if(dragonChanged) {
-						m_dragonDescText.GetComponent<ShowHideAnimator>().RestartShow();
-					} else {
-						m_dragonDescText.GetComponent<ShowHideAnimator>().ForceShow();
+
+					// Different show animation depending on whether the dragon has changed
+					if(m_dragonDescAnim != null) {
+						if(dragonChanged) {
+							m_dragonDescAnim.RestartShow();
+						} else {
+							m_dragonDescAnim.ForceShow();
+						}
 					}
-				} else {
-					m_dragonDescText.GetComponent<ShowHideAnimator>().ForceHide();
+				} else if(m_dragonDescAnim != null) {
+					m_dragonDescAnim.ForceHide();
 				}
             }
 
@@ -101,15 +109,19 @@ public class MenuDragonClassicInfo : MenuDragonInfo {
                     {
 						// Show it only in owned dragons
                         m_xpBar.Refresh(_data as DragonDataClassic);
-						if(dragonChanged) {
-							m_xpBar.GetComponent<ShowHideAnimator>().RestartShow();
-						} else {
-							m_xpBar.GetComponent<ShowHideAnimator>().ForceShow();
+
+						// Different show animation depending on whether the dragon has changed
+						if(m_xpBar.showHide != null) {
+							if(dragonChanged) {
+								m_xpBar.showHide.RestartShow();
+							} else {
+								m_xpBar.showHide.ForceShow();
+							}
 						}
                     }
-                    else
+                    else if(m_xpBar.showHide != null)
                     {
-                        m_xpBar.GetComponent<ShowHideAnimator>().Hide();
+						m_xpBar.showHide.Hide();
                     }
 
                 }
