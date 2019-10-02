@@ -198,6 +198,7 @@ public class LoadingSceneController : SceneController {
     private enum State
     {
     	NONE,        
+        WAITING_ADDRESSABLES,
         WAITING_SAVE_FACADE,
     	WAITING_SOCIAL_AUTH,
     	WAITING_ANDROID_PERMISSIONS,
@@ -451,6 +452,14 @@ public class LoadingSceneController : SceneController {
     		{
 
     		}break;
+            case State.WAITING_ADDRESSABLES:
+            {
+                timer += Time.deltaTime;
+                if ( timer >= 0.5f )    // [MALH] Temp Fix. This has to be changed for a proper function
+                {
+                    SetState( State.WAITING_SAVE_FACADE );
+                }
+            }break;
     		case State.WAITING_ANDROID_PERMISSIONS:
     		{
     			if ( m_androidPermissionsListener.m_permissionsFinished )
@@ -541,7 +550,7 @@ public class LoadingSceneController : SceneController {
             }break;
             case State.CREATING_SINGLETONS:
             {
-                SetState(State.WAITING_SAVE_FACADE);
+                SetState(State.WAITING_ADDRESSABLES);
             }
             break;
             case State.SHOWING_COUNTRY_BLACKLISTED_POPUP:
@@ -677,6 +686,10 @@ public class LoadingSceneController : SceneController {
                 // Tracking is initialised as soon as possible so very early events can be tracked. We need to wait for rules to be loaded because it could be disabled by configuration
                 HDTrackingManager.Instance.Init();
             } break;
+            case State.WAITING_ADDRESSABLES:
+            {
+                timer = 0;
+            }break;
         }
 
         m_stateTimeoutAt = 0;
@@ -806,7 +819,10 @@ public class LoadingSceneController : SceneController {
                 HDCustomizerManager.instance.Initialise();   
                 HDAddressablesManager.Instance.Initialize();                                
             } break;
-
+            case State.WAITING_ADDRESSABLES:
+            {
+                timer = 0;
+            }break;
            case State.WAITING_SAVE_FACADE:
            {
                 StartLoadFlow();	            	                                

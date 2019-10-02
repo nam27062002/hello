@@ -38,9 +38,8 @@ GameObject:
   - component: {fileID: 4153032506428362}
   - component: {fileID: 198133518184663822}
   - component: {fileID: 199613997377992296}
-  - component: {fileID: 114156956987998570}
   - component: {fileID: 114291231497443916}
-  m_Layer: 12
+  m_Layer: 5
   m_Name: FX_Stun
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -58,7 +57,7 @@ GameObject:
   - component: {fileID: 33381694185276780}
   - component: {fileID: 23295087884872692}
   - component: {fileID: 114628201998048112}
-  m_Layer: 12
+  m_Layer: 5
   m_Name: Glow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -227,7 +226,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1121096166790536}
-  m_LocalRotation: {x: 0.64947367, y: 0.030485852, z: 0.030068869, w: 0.7591775}
+  m_LocalRotation: {x: -0.00063436676, y: 0.74352777, z: 0.6687045, w: -0.00067588256}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 2.8187973, y: 2.818798, z: 2.818798}
   m_Children: []
@@ -241,7 +240,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1091094169041752}
   m_LocalRotation: {x: -0.67656976, y: -0, z: -0, w: 0.73637855}
-  m_LocalPosition: {x: 0.36, y: 1.06, z: -1.59}
+  m_LocalPosition: {x: 0.36, y: 1.32, z: -1.59}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4083322193764466}
@@ -597,24 +596,6 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 0
   m_AllowConstantClipSamplingOptimization: 1
---- !u!114 &114156956987998570
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1091094169041752}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 438cf31a59dc645398073c030faafc6e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_scaleOrigin: 2
-  m_scale: 1
-  m_transform: {fileID: 0}
-  m_resetFirst: 0
-  m_scaleLifetime: 0
-  m_scaleAllChildren: 1
-  m_whenScale: 1
 --- !u!114 &114291231497443916
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -743,8 +724,8 @@ ParticleSystem:
       m_RotationOrder: 4
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
-  scalingMode: 1
-  randomSeed: -454439238
+  scalingMode: 0
+  randomSeed: 2058510128
   InitialModule:
     serializedVersion: 3
     enabled: 1
