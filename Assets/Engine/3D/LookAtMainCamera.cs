@@ -8,7 +8,7 @@ public class LookAtMainCamera : MonoBehaviour {
 	[SerializeField] private Camera m_overrideCamera = null;
 	public Camera overrideCamera {
 		get { return m_overrideCamera; }
-		set { m_overrideCamera = value; }
+		set { m_overrideCamera = value; m_overrideCameraTransform = null; }
 	}
 
 	private Transform m_overrideCameraTransform;
