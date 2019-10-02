@@ -66,7 +66,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4294583600322812}
   - component: {fileID: 114967954255863070}
-  m_Layer: 13
+  m_Layer: 12
   m_Name: Dragon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -171,7 +171,7 @@ Transform:
   m_GameObject: {fileID: 1625694900999216}
   m_LocalRotation: {x: 0, y: 1, z: 0, w: -0.00000004371139}
   m_LocalPosition: {x: 0, y: 0.404, z: 0}
-  m_LocalScale: {x: 0.25, y: 0.25, z: 0.25}
+  m_LocalScale: {x: 0.05, y: 0.05, z: 0.05}
   m_Children: []
   m_Father: {fileID: 4040343843246024}
   m_RootOrder: 0
@@ -294,7 +294,7 @@ MonoBehaviour:
   m_mode: 2
   m_dragonSku: dragon_reptile
   m_disguiseSku: 
-  m_anim: 5
+  m_anim: 4
   m_resetDragonScale: 1
   m_showPets: 0
   m_hideResultsEquipment: 0
@@ -304,4 +304,9 @@ MonoBehaviour:
   m_allowAltAnimations: 0
   m_altAnimationsMaxLevel: 10
   m_loadAsync: 1
+  OnCompleteLoad:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: MenuDragonLoader+MenuDragonLoaderEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
   m_placeholderDragonSku: dragon_classic
