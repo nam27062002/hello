@@ -262,10 +262,34 @@ public class UI3DAddressablesLoader : MonoBehaviour {
                 // Reset position
                 m_loadedInstance.transform.localPosition = Vector3.zero;
 
+				// ?? Comments please!!
                 ViewControl vc = m_loadedInstance.GetComponent<ViewControl>();
                 if (vc != null) {
                     vc.SetMaterialType(ViewControl.MaterialType.NORMAL);
                 }
+
+				// Process particle systems
+				ParticleSystem[] ps = m_loadedInstance.GetComponentsInChildren<ParticleSystem>();
+				for(int i = 0; i < ps.Length; ++i) {
+					Debug.Log(Color.yellow.Tag("PS: " + ps[i].name));
+					// Make sure they belong to the right layer	
+					ps[i].gameObject.SetLayer(m_container.gameObject.layer);
+				}
+
+				// Process billboards
+				LookAtMainCamera[] lookAts = m_loadedInstance.GetComponentsInChildren<LookAtMainCamera>();
+				if(lookAts.Length > 0) {
+					// Apply parent canvas' render camera
+					Canvas parentCanvas = GetComponentInParent<Canvas>();
+					if(parentCanvas != null) {
+						Camera uiCamera = parentCanvas.rootCanvas.worldCamera;
+						if(uiCamera != null) {
+							for(int i = 0; i < lookAts.Length; ++i) {
+								lookAts[i].overrideCamera = uiCamera;
+							}
+						}
+					}
+				}
             }
 
             // Hide loading icon
