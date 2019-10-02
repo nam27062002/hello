@@ -71,7 +71,7 @@ public class AddressablesCatalogEntry
     public string GUID
     {
         get { return m_guid; }
-        private set { m_guid = value; }
+        set { m_guid = value; }
     }
 
     private string m_platform;
@@ -119,7 +119,12 @@ public class AddressablesCatalogEntry
         m_generatedByScript = generatedByScript;
         m_defineSymbol = defineSymbol;
         m_addToCatalogPlayer = addToCatalogPlayer;
-    }
+    }   
+    
+    public string GetPath()
+    {
+        return UnityEditor.AssetDatabase.GUIDToAssetPath(GUID);
+    }    
 #endif
 
     public AddressablesCatalogEntry()

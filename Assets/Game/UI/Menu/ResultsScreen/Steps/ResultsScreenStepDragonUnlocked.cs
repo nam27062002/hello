@@ -154,7 +154,7 @@ public class ResultsScreenStepDragonUnlocked : ResultsScreenSequenceStep {
 	/// </summary>
 	public void OnUnlockWithSC() {
 		// Let MenuDragonUnlockClassicDragon handle it
-		MenuDragonUnlockClassicDragon.UnlockWithSC(m_dragonData, OnUnlockSuccess);
+		MenuDragonUnlockClassicDragon.UnlockWithSC(m_dragonData, OnUnlockSuccess, GetComponentInParent<Canvas>().transform as RectTransform);
 	}
 
 	/// <summary>
@@ -210,14 +210,7 @@ public class ResultsScreenStepDragonUnlocked : ResultsScreenSequenceStep {
 	/// Dragon info button has been pressed.
 	/// </summary>
 	public void OnDragonInfoButton() {
-		// Tracking
-		string popupName = System.IO.Path.GetFileNameWithoutExtension(PopupDragonInfo.PATH);
-		HDTrackingManager.Instance.Notify_InfoPopup(popupName, "info_button");
-
 		// Open the dragon info popup initialized with the unlocked dragon info
-		PopupController popup = PopupManager.LoadPopup(PopupDragonInfo.PATH);
-		PopupDragonInfo dragonInfoPopup = popup.GetComponent<PopupDragonInfo>();
-		dragonInfoPopup.Init(m_dragonData);
-		popup.Open();
+		PopupDragonInfo.OpenPopupForDragon(m_dragonData, "results");
 	}
 }

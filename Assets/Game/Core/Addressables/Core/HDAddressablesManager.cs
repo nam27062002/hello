@@ -137,6 +137,7 @@ public class HDAddressablesManager : AddressablesManager
                     break;
 
                 case CaletyConstants.eBuildEnvironments.BUILD_DEV:
+                case CaletyConstants.eBuildEnvironments.BUILD_LOCAL:
                     urlBase = "http://bcn-mb-services1.ubisoft.org/hungrydragon";
                     break;
             }
@@ -283,7 +284,7 @@ public class HDAddressablesManager : AddressablesManager
         IsDownloaderEnabled = !FlowManager.IsInGameScene();
 
 		// Downloader is disabled while the app is loading in order to let it load faster and smoother
-		IsAutomaticDownloaderEnabled = !GameSceneManager.isLoading && IsAutomaticDownloaderAllowed() && DebugSettings.isAutomaticDownloaderEnabled;
+		IsAutomaticDownloaderEnabled = !GameSceneManager.isLoading && IsAutomaticDownloaderAllowed();
 
         UpdateAddressablesAreas();
     }
@@ -870,7 +871,7 @@ public class Ingame_SwitchAreaHandle
         }
     }
 
-    private bool IsDependecyIdsOfDefSkuAvailable(string _defSku) {        
+    private bool AreDependecyIdsOfDefSkuAvailable(string _defSku) {        
         if (m_dependecyIdsPerDefSku.ContainsKey(_defSku)) {
             return IsDependencyListAvailable(m_dependecyIdsPerDefSku[_defSku]);
         } else {
@@ -885,17 +886,17 @@ public class Ingame_SwitchAreaHandle
             AddDependencyIdsPerDefSku(_dragonSku, _dependencyIds);            
         }
 
-        return IsDependecyIdsOfDefSkuAvailable(_dragonSku);
+        return AreDependecyIdsOfDefSkuAvailable(_dragonSku);
     }
 
     public bool AreResourcesForPetAvailable(string _dragonSku) {
         if (!m_dependecyIdsPerDefSku.ContainsKey(_dragonSku)) {
-            List<string> _resourceIds = GetResourceIDsForPet(_dragonSku);
+            List<string> _resourceIds = GetResourceIDsForPet(_dragonSku);            
             List<string> _dependencyIds = GetDependencyIdsList(_resourceIds);
             AddDependencyIdsPerDefSku(_dragonSku, _dependencyIds);
         }
 
-        return IsDependecyIdsOfDefSkuAvailable(_dragonSku);
+        return AreDependecyIdsOfDefSkuAvailable(_dragonSku);
     }
 
     /// <summary>
@@ -904,7 +905,7 @@ public class Ingame_SwitchAreaHandle
     /// </summary>
     /// <returns>The list of all the resources needed for a dragon.</returns>
     /// <param name="_dragonSku">Dragon sku.</param>
-    public List<string> GetResourceIDsForDragon(string _dragonSku) {
+    private List<string> GetResourceIDsForDragon(string _dragonSku) {
 		// Aux vars
 		HashSet<string> ids = new HashSet<string>();
 		DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, _dragonSku);
@@ -943,7 +944,7 @@ public class Ingame_SwitchAreaHandle
 	/// </summary>
 	/// <returns>The list of all the resources needed for a pet.</returns>
 	/// <param name="_petSku">Pet sku.</param>
-	public List<string> GetResourceIDsForPet(string _petSku) {
+	private List<string> GetResourceIDsForPet(string _petSku) {
 		// Aux vars
 		List<string> ids = new List<string>();
 		DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PETS, _petSku);
@@ -1026,6 +1027,18 @@ public class Ingame_SwitchAreaHandle
         else
         {
             resultPrefab = dragon.def.GetAsString("resultsPrefab");
+            // Take next skin into account just in case we unlock it this run
+            int initialLevel = RewardManager.dragonInitialLevel;
+            DragonProgression progression = (DragonManager.CurrentDragon as DragonDataClassic).progression;
+            int finalLevel = progression.level;
+            if ( initialLevel != finalLevel )
+            {
+                List<DefinitionNode> newSkins = UsersManager.currentUser.wardrobe.GetUnlockedSkins( DragonManager.CurrentDragon.def.sku, initialLevel, finalLevel );
+                for (int i = 0; i < newSkins.Count; i++)
+                {
+                    AddDisguiseDependencies( handle, newSkins[i], false );
+                }
+            }
         }
         handle.AddAddressable( resultPrefab );
         AddDisguiseDependencies( handle, dragon, false );
@@ -1054,7 +1067,17 @@ public class Ingame_SwitchAreaHandle
 
     private void AddDisguiseDependencies( AddressablesBatchHandle handle, IDragonData data, bool ingame = true )
     {
-        DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, data.disguise);
+        AddDisguiseDependencies( handle, data.disguise, ingame );
+    }
+
+    private void AddDisguiseDependencies( AddressablesBatchHandle handle, string disguiseSku, bool ingame = true  )
+    {
+        DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, disguiseSku);
+        AddDisguiseDependencies( handle, def, ingame );
+    }
+
+    private void AddDisguiseDependencies( AddressablesBatchHandle handle, DefinitionNode def, bool ingame = true  )
+    {
         // Materials
         string skin = def.Get("skin");
         if ( ingame )
@@ -1077,8 +1100,6 @@ public class Ingame_SwitchAreaHandle
 
         // Icon
         handle.AddAddressable( def.Get("icon") );
-
-
     }
 
     private void AddPetDependencies( AddressablesBatchHandle handle, IDragonData data )

@@ -146,7 +146,7 @@ public class GameServerManager {
     protected void InternalCheckConnection(Action<Error> callback, bool highPriority = false)
     {
 		Log("Check Connection");
-        if (Application.internetReachability == NetworkReachability.NotReachable)
+        if (DeviceUtilsManager.SharedInstance.internetReachability == NetworkReachability.NotReachable)
         {
 			Log("CheckConnection : InternetReachability NotReachable");
             callback(new ClientConnectionError("InternetReachability NotReachable", ErrorCodes.ClientConnectionError));

@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-public class ActionPointManager : UbiBCN.SingletonMonoBehaviour<ActionPointManager>, IBroadcastListener {
+public class ActionPointManager : Singleton<ActionPointManager>, IBroadcastListener {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -23,29 +23,24 @@ public class ActionPointManager : UbiBCN.SingletonMonoBehaviour<ActionPointManag
 	private QuadTree<ActionPoint> m_actionPointsTree = null;
 
 
-	//------------------------------------------------------------------------//
-	// GENERIC METHODS														  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Inititalization.
-	/// </summary>
-	private void Awake() {	
-	}
+    //------------------------------------------------------------------------//
+    // GENERIC METHODS														  //
+    //------------------------------------------------------------------------//
 
-	/// <summary>
-	/// Component enabled.
-	/// </summary>
-	private void OnEnable() {
-		// Subscribe to external events
+    /// <summary>
+    /// Component enabled.
+    /// </summary>
+    protected override void OnCreateInstance() {
+        // Subscribe to external events
         Broadcaster.AddListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
 		Broadcaster.AddListener(BroadcastEventType.GAME_ENDED, this);
 	}
 
-	/// <summary>
-	/// Component disabled.
-	/// </summary>
-	private void OnDisable() {
-		// Unsubscribe from external events
+    /// <summary>
+    /// Component disabled.
+    /// </summary>
+    protected override void OnDestroyInstance() {
+        // Unsubscribe from external events
         Broadcaster.RemoveListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
 		Broadcaster.RemoveListener(BroadcastEventType.GAME_ENDED, this);
 	}

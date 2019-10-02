@@ -86,7 +86,7 @@ public class QuickDragonSettings : MonoBehaviour {
 
 	public void SetEatType(int type)
 	{
-		if (EntityManager.instance)	
+		if (EntityManager.instance != null)	
 		{
 			switch( type )
 			{

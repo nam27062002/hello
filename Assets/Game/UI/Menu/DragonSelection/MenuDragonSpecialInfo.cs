@@ -29,7 +29,6 @@ public class MenuDragonSpecialInfo : MenuDragonInfo {
     [SerializeField] private SpecialDragonBar m_specialDragonLevelBar;
     [Separator]
 
-    [SerializeField] private NavigationShowHideAnimator m_upgradeGroup;
     [SerializeField] private SpecialStatUpgrader[] m_stats = new SpecialStatUpgrader[0];
     [SerializeField] private DragonPowerUpgrader m_powerUpgrade;
 
@@ -50,16 +49,19 @@ public class MenuDragonSpecialInfo : MenuDragonInfo {
         // Check params
         if (_data == null) return;
 
-        // Only show special dragons
-        // Only show classic dragons bar
-       if ( !(_data is DragonDataSpecial) ) return;
+		// Only show for special dragons
+		bool isSpecial = _data.type == IDragonData.Type.SPECIAL;
+		SetVisible(isSpecial);
 
+		// Nothing else to do if not special
+		if(!isSpecial) return;
+
+		// Aux vars
         DragonDataSpecial specialData = _data as DragonDataSpecial;
+		bool dragonChanged = m_dragonData != _data;
 
-
-
-        // Things to update only when target dragon has changed
-        if (m_dragonData != specialData || _force)
+		// Things to update only when target dragon has changed
+		if (dragonChanged || _force)
         {
 
             // Dragon Name
@@ -81,31 +83,36 @@ public class MenuDragonSpecialInfo : MenuDragonInfo {
             // Dragon Description
             if (m_dragonDescText != null)
             {
-                // Description. Remove it when the player owns the dragon.
-                m_dragonDescText.gameObject.SetActive(!specialData.isOwned);
+				// Description. Remove it when the player owns the dragon.
+				bool show = !specialData.isOwned;
+				if(show) {
+					m_dragonDescText.Localize(_data.def.GetAsString("tidDesc"));
 
-                m_dragonDescText.Localize(_data.def.GetAsString("tidDesc"));
+					// Different show animation depending on whether the dragon has changed
+					if(m_dragonDescAnim != null) {
+						if(dragonChanged) {
+							m_dragonDescAnim.RestartShow();
+						} else {
+							m_dragonDescAnim.ForceShow();
+						}
+					}
+				} else if(m_dragonDescAnim != null) {
+					m_dragonDescAnim.ForceHide();
+				}
+
             }
 
             // Owned group. This items will be shown when the player owns the dragon
             {
-
-
-                // XPBar
-                if (m_specialDragonLevelBar != null)
-                    if (specialData.isOwned)
-                    {
-                        m_specialDragonLevelBar.GetComponent<ShowHideAnimator>().RestartShow();
-                        m_specialDragonLevelBar.BuildFromDragonData(specialData);
-
-                    }
-                    else
-                    {
-                        m_specialDragonLevelBar.GetComponent<ShowHideAnimator>().Hide();
-                    }
-
-                // Show the upgrades group
-                m_upgradeGroup.Show(true);
+				// XPBar
+				if(m_specialDragonLevelBar != null) {
+					if(specialData.isOwned) {
+						m_specialDragonLevelBar.showHide.RestartShow();
+						m_specialDragonLevelBar.BuildFromDragonData(specialData);
+					} else {
+						m_specialDragonLevelBar.showHide.Hide();
+					}
+				}
 
                 // Upgrade buttons
                 for (int i = 0; i < m_stats.Length; ++i)
@@ -117,7 +124,7 @@ public class MenuDragonSpecialInfo : MenuDragonInfo {
                     }
                     else
                     {
-                        m_stats[i].GetComponent<ShowHideAnimator>().Hide(false);
+                        m_stats[i].showHide.Hide(false);
                     }
 
                 }
@@ -131,7 +138,7 @@ public class MenuDragonSpecialInfo : MenuDragonInfo {
                 }
                 else
                 {
-                    m_powerUpgrade.ForceGetComponent<ShowHideAnimator>().Hide(false);
+                    m_powerUpgrade.showHide.Hide(false);
                 }
             }
 

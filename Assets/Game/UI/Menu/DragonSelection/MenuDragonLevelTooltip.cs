@@ -116,7 +116,7 @@ public class MenuDragonLevelTooltip : UITooltipMultidirectional
         if (m_unlockLevelText != null)
         {
             m_unlockLevelText.text = LocalizationManager.SharedInstance.Localize("TID_LAB_TOOLTIP_UNLOCK_LEVEL",
-                                                                          m_unlockLevel.ToString()
+                                                                          (m_unlockLevel + 1).ToString()	// Levels are 0-based for classic dragons, but we want to display them 1-based
                                                                           );
 
         }

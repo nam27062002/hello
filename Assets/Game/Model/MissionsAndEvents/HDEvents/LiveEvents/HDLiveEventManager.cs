@@ -148,7 +148,7 @@ public abstract class HDLiveEventManager : HDLiveDataController {
         bool isFinishPending = m_isFinishPending;
 
         if (isFinishPending
-        &&  Application.internetReachability != NetworkReachability.NotReachable
+        && DeviceUtilsManager.SharedInstance.internetReachability != NetworkReachability.NotReachable
         &&  GameSessionManager.SharedInstance.IsLogged()) {
             FinishEvent();
             HDLiveDataManager.instance.ForceRequestMyEventType(m_numericType);

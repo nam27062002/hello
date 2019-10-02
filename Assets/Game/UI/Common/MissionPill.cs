@@ -307,12 +307,9 @@ public class MissionPill : MonoBehaviour, IBroadcastListener {
         }
 
 		bool ret = false;
-        if ( FeatureSettingsManager.AreAdsEnabled && checkVideoIsReady ) 
+        if ( checkVideoIsReady && GameAds.adsAvailable) 
         {
-			if ( MopubAdsManager.SharedInstance.IsRewardedReady() || Application.internetReachability != NetworkReachability.NotReachable )	
-			{
-				ret = true;
-			}
+			ret = true;
         }
        
 		return ret;
@@ -450,7 +447,7 @@ public class MissionPill : MonoBehaviour, IBroadcastListener {
 		if(m_mission == null) return;
 
 		// Ignore if offline
-		if(Application.internetReachability == NetworkReachability.NotReachable) {
+		if(DeviceUtilsManager.SharedInstance.internetReachability == NetworkReachability.NotReachable) {
 			// Show some feedback
 			UIFeedbackText.CreateAndLaunch(
 				LocalizationManager.SharedInstance.Localize("TID_AD_ERROR"), 

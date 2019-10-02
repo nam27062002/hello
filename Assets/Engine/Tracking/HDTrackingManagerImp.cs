@@ -1210,9 +1210,16 @@ public class HDTrackingManagerImp : HDTrackingManager {
     {
         Track_ExperimentApplied(experimentName, experimentGroup);        
     }
-#endregion
 
-#region animoji
+
+    public override void Notify_CloseHappyHourPopup(string itemID, string action) {
+        Track_CloseHappyHourPopup(itemID, action);
+    }
+
+
+    #endregion
+
+    #region animoji
     private string dragon_name;
     private int recordings;
     private int duration;
@@ -1484,6 +1491,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
             Track_AddParamString(e, TRACK_PARAM_PROMOTION_TYPE, promotionType);
             Track_AddParamString(e, TRACK_PARAM_MONEY_CURRENCY, moneyCurrencyCode);
             Track_AddParamFloat(e, TRACK_PARAM_MONEY_IAP, moneyPrice);
+            Track_AddParamHappyHour(e);
 
             // moneyPrice in cents of dollar
             e.data.Add(TRACK_PARAM_MONEY_USD, moneyUSD);
@@ -1618,7 +1626,29 @@ public class HDTrackingManagerImp : HDTrackingManager {
             }
         }
     }
-    
+
+    // Track how the player is reacting to the happy hour popup
+    // possible actions = close, purchase, more offers
+    private void Track_CloseHappyHourPopup(string itemID, string action)
+    {
+        Log("Track_CloseHappyHourPopup itemID = " + itemID + ", action = " + action);
+
+        // Game event
+        HDTrackingEvent e = new HDTrackingEvent("custom.happyhour.popup");
+        {
+            Track_AddParamSessionsCount(e);
+            Track_AddParamGameRoundCount(e);
+            Track_AddParamHighestDragonXp(e);
+            Track_AddParamPlayerProgress(e);
+            Track_AddParamString(e, TRACK_PARAM_ITEM_ID, itemID);
+            Track_AddParamPlayerSC(e);
+            Track_AddParamPlayerPC(e);
+            Track_AddParamString(e, TRACK_PARAM_ACTION, action);
+        }
+        m_eventQueue.Enqueue(e);
+
+    }
+
     private bool SendRtTracking()
     {
         bool ret = true;
@@ -2573,6 +2603,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private const string TRACK_PARAM_HARD_CURRENCY = "hardCurrency";
     private const string TRACK_PARAM_HC_EARNED = "hcEarned";
     private const string TRACK_PARAM_HC_REVIVE = "hcRevive";
+    private const string TRACK_PARAM_HAPPY_HOUR = "happyHour";
     private const string TRACK_PARAM_HIGHEST_BASE_MULTIPLIER = "highestBaseMultiplier";
     private const string TRACK_PARAM_HIGHEST_MULTIPLIER = "highestMultiplier";
     private const string TRACK_PARAM_HOUSTON_TRANSACTION_ID = "houstonTransactionID";
@@ -2830,6 +2861,21 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private void Track_AddParamTotalPlaytime(HDTrackingEvent _e) {
         int value = (TrackingPersistenceSystem != null) ? TrackingPersistenceSystem.TotalPlaytime : 0;
         _e.data.Add(TRACK_PARAM_TOTAL_PLAYTIME, value);
+    }
+
+    private void Track_AddParamHappyHour(HDTrackingEvent _e)
+    {
+        // Whether the happy hour is active or not (1:true, 0:false)
+        HappyHourOffer happyHour = OffersManager.instance.happyHour;
+        int value;
+        if (happyHour == null)
+        {
+            value = 0;
+        }
+        else {
+            value = happyHour.IsActive()? 1 : 0;
+        }
+        _e.data.Add(TRACK_PARAM_HAPPY_HOUR, value);
     }
 
     private void Track_AddParamPets(HDTrackingEvent _e, List<string> pets) {

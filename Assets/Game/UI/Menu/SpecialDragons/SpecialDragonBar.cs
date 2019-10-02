@@ -6,11 +6,17 @@ public class SpecialDragonBar : MonoBehaviour {
     [SerializeField] private GameObject m_elementLevelPrefab = null;
     [SerializeField] private GameObject m_elementSkillPrefab = null;
     [SerializeField] private GameObject m_elementTierPrefab = null;
+
 	[Space]
     [SerializeField] private RectTransform m_content = null;
 	[SerializeField] private Localizer m_levelText = null;
 	[SerializeField] private SpecialDragonBarTooltip m_skillTooltip = null;
 	[SerializeField] private SpecialDragonBarTooltip m_tierTooltip = null;
+	[SerializeField] private ShowHideAnimator m_showHide = null;
+	public ShowHideAnimator showHide {
+		get { return m_showHide; }
+	}
+
 	[Space]
     [SerializeField] private float m_blankSpace = 5f;
     [SerializeField] private AnimationCurve m_scaleTiersCurve = null;
@@ -317,20 +323,11 @@ public class SpecialDragonBar : MonoBehaviour {
         // Refresh visuals
         if (m_levelText != null)
         {
-            int level = Mathf.Min(m_currentLevel, m_maxLevel);	// Cap level?
-            if (level < m_maxLevel)
-            {
-                m_levelText.Localize(
-                    "TID_LEVEL",
-                    StringUtils.FormatNumber(level),
-                    StringUtils.FormatNumber(m_maxLevel)        // If using "Level 14" format, this parameter will just be ignored
-                );
-            }
-            else
-            {
-                // If the dragon reached the maximum level show "MAX level" instead of the number
-                m_levelText.Localize("TID_MAX_LEVEL");
-            }
+			MenuDragonInfo.FormatLevel(
+				Mathf.Min(m_currentLevel, m_maxLevel),  // Cap level?
+				m_maxLevel,
+				m_levelText
+			);
         }
     }
 

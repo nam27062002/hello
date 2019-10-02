@@ -198,6 +198,7 @@ public class LoadingSceneController : SceneController {
     private enum State
     {
     	NONE,        
+        WAITING_ADDRESSABLES,
         WAITING_SAVE_FACADE,
     	WAITING_SOCIAL_AUTH,
     	WAITING_ANDROID_PERMISSIONS,
@@ -451,6 +452,14 @@ public class LoadingSceneController : SceneController {
     		{
 
     		}break;
+            case State.WAITING_ADDRESSABLES:
+            {
+                timer += Time.deltaTime;
+                if ( timer >= 0.5f )    // [MALH] Temp Fix. This has to be changed for a proper function
+                {
+                    SetState( State.WAITING_SAVE_FACADE );
+                }
+            }break;
     		case State.WAITING_ANDROID_PERMISSIONS:
     		{
     			if ( m_androidPermissionsListener.m_permissionsFinished )
@@ -541,7 +550,7 @@ public class LoadingSceneController : SceneController {
             }break;
             case State.CREATING_SINGLETONS:
             {
-                SetState(State.WAITING_SAVE_FACADE);
+                SetState(State.WAITING_ADDRESSABLES);
             }
             break;
             case State.SHOWING_COUNTRY_BLACKLISTED_POPUP:
@@ -604,8 +613,7 @@ public class LoadingSceneController : SceneController {
     private bool AllEquipedIsDownloaded()
     {
         bool ret = true;
-        // Check if all eqquiped skins or pets are downloaded
-        List<string> toCheck = new List<string>();
+        // Check if all eqquiped skins or pets are downloaded        
         Dictionary<string, IDragonData> dragons = DragonManager.dragonsBySku;
         foreach( KeyValuePair<string, IDragonData> pair in dragons )
         {
@@ -614,24 +622,31 @@ public class LoadingSceneController : SceneController {
             {
 				// Dragon bundle: only check equipped skin, we can access the menu with the rest
 				DefinitionNode skinDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, pair.Value.disguise);
-				if(skinDef != null) {
-					toCheck.Add(skinDef.GetAsString("skin") + "_body");	// All dragon skins should have a _body material - this is enough to check whether we need to download the bundle
-				} else {
-					// Shouldn't get here, but just in case - if the equipped skin is not found, use the whole dragon bundle as reference
-					toCheck.AddRange(HDAddressablesManager.Instance.GetResourceIDsForDragon(pair.Key));
+				if(skinDef != null) {					
+                    ret = HDAddressablesManager.Instance.IsResourceAvailable(skinDef.GetAsString("skin") + "_body"); // All dragon skins should have a _body material - this is enough to check whether we need to download the bundle
+                } else {
+					// Shouldn't get here, but just in case - if the equipped skin is not found, use the whole dragon bundle as reference					
+                    ret = HDAddressablesManager.Instance.AreResourcesForDragonAvailable(pair.Key);
 				}
 
-				// Equipped pets bundles: menu and ingame prefabs, portraits...
-				if(pair.Value.pets.Count > 0) {
-					for(int i = 0; i < pair.Value.pets.Count; ++i) {
-						toCheck.AddRange(HDAddressablesManager.Instance.GetResourceIDsForPet(pair.Value.pets[i]));
-					}
-				}
+                if (ret)
+                {
+                    // Equipped pets bundles: menu and ingame prefabs, portraits...
+                    if (pair.Value.pets.Count > 0)
+                    {
+                        for (int i = 0; i < pair.Value.pets.Count && ret; ++i)
+                        {
+                            ret = HDAddressablesManager.Instance.AreResourcesForPetAvailable(pair.Value.pets[i]);
+                        }
+                    }
+                }
+                
+                if (!ret)
+                {
+                    break;
+                }                
             }
-        }
-
-        if ( toCheck.Count > 0 )
-            ret = HDAddressablesManager.Instance.IsResourceListAvailable(toCheck);
+        }       
 
         return ret;
     }
@@ -671,6 +686,10 @@ public class LoadingSceneController : SceneController {
                 // Tracking is initialised as soon as possible so very early events can be tracked. We need to wait for rules to be loaded because it could be disabled by configuration
                 HDTrackingManager.Instance.Init();
             } break;
+            case State.WAITING_ADDRESSABLES:
+            {
+                timer = 0;
+            }break;
         }
 
         m_stateTimeoutAt = 0;
@@ -772,8 +791,7 @@ public class LoadingSceneController : SceneController {
                 FirePropagationManager.CreateInstance(true);
                 SpawnerManager.CreateInstance(true);
                 EntityManager.CreateInstance(true);
-                DecorationManager.CreateInstance(true);
-                ViewManager.CreateInstance(true);
+                DecorationManager.CreateInstance(true);                
                 BubbledEntitySystem.CreateInstance(true);
                 InstanceManager.CreateInstance(true);
 
@@ -801,7 +819,10 @@ public class LoadingSceneController : SceneController {
                 HDCustomizerManager.instance.Initialise();   
                 HDAddressablesManager.Instance.Initialize();                                
             } break;
-
+            case State.WAITING_ADDRESSABLES:
+            {
+                timer = 0;
+            }break;
            case State.WAITING_SAVE_FACADE:
            {
                 StartLoadFlow();	            	                                

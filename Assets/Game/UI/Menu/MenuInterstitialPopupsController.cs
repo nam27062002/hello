@@ -343,7 +343,7 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 
 		if(PlayerPrefs.GetInt(HDNotificationsManager.SILENT_FLAG) == 1 && !GetFlag(StateFlag.CHECKING_CONNECTION)) 
 		{
-			if(Application.internetReachability == NetworkReachability.NotReachable) {
+			if(DeviceUtilsManager.SharedInstance.internetReachability == NetworkReachability.NotReachable) {
 				ShowGoOnlinePopup();
 				PlayerPrefs.SetInt(HDNotificationsManager.SILENT_FLAG, 0);
 			} else {
@@ -629,15 +629,56 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 		}
 	}
 
-	//------------------------------------------------------------------------//
-	// CALLBACKS															  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// The menu has just switched from one screen to another.
-	/// </summary>
-	/// <param name="_from">Screen we're coming from.</param>
-	/// <param name="_to">Screen we're going to.</param>
-	private void OnMenuScreenChanged(MenuScreen _from, MenuScreen _to) {
+    /// <summary>
+    /// Checks if there is a happy hour popup ready to be shown
+    /// This function will only show the popup if the happy hour offer was
+    /// triggered by buying the gems from the "not enough currency" popup
+    /// </summary>
+    private void CheckHappyHourOffer()
+    {
+
+        // Check if there is a happy hour
+        if (OffersManager.instance.happyHour == null)
+            return;
+
+        HappyHourOffer happyHour = OffersManager.instance.happyHour;
+
+        // Dont show a popup if the happy hour has already finished
+        if (!happyHour.IsActive())
+            return;
+
+        // Is there a popup pending to show?
+        if (!happyHour.pendingPopup)
+            return;
+
+        // All the required runs have been played?
+        if (!UsersManager.currentUser.HasPlayedGames(happyHour.triggerPopupAtRun))
+            return;
+
+        // Only in the right screen
+        if (m_currentScreen != MenuScreen.DRAGON_SELECTION) return;
+
+        // Load the popup
+        PopupController popup = PopupManager.LoadPopup(PopupHappyHour.PATH);
+        PopupHappyHour popupHappyHour = popup.GetComponent<PopupHappyHour>();
+
+        // Initialize the popup (set the discount %)
+        popupHappyHour.Init(happyHour.lastOfferSku);
+
+        // Show the popup
+        PopupManager.EnqueuePopup(popup);
+
+    }
+
+    //------------------------------------------------------------------------//
+    // CALLBACKS															  //
+    //------------------------------------------------------------------------//
+    /// <summary>
+    /// The menu has just switched from one screen to another.
+    /// </summary>
+    /// <param name="_from">Screen we're coming from.</param>
+    /// <param name="_to">Screen we're going to.</param>
+    private void OnMenuScreenChanged(MenuScreen _from, MenuScreen _to) {
 		// Cache transition data
 		//Debug.Log("Transition ended from " + Colors.coral.Tag(_from.ToString()) + " to " + Colors.aqua.Tag(_to.ToString()));
 		m_previousScreen = _from;
@@ -674,7 +715,9 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 		CheckFeaturedOffer();
 		CheckInterstitialCP2();
 		CheckDownloadAssets();
-	}
+        CheckHappyHourOffer();
+
+    }
 
 	/// <summary>
 	/// A dragon has been acquired.

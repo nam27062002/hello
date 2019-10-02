@@ -141,16 +141,20 @@ namespace AI {
 			if (index > -1) {				
 				if (m_formation == Formation.Triangle) {
 					if (m_offsetsTriangle != null) {						
-						return m_rotation * (m_offsetsTriangle[index] * _radius);
+						return (m_offsetsTriangle[index] * _radius);
 					}
 				} else {
 		            if (m_offsetsSunflower != null) {
-						return m_rotation * (m_offsetsSunflower[index] * _radius);
+						return (m_offsetsSunflower[index] * _radius);
 		            }
 				}
 			}
 
             return Vector3.zero;
+        }
+
+        public Quaternion GetRotation() {
+            return m_rotation;
         }
 
 		public Vector3 Sunflower(int _i, int _n) {

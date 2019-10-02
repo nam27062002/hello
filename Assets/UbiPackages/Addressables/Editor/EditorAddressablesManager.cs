@@ -12,7 +12,7 @@ using UnityEngine;
 /// This class can be extended if you need to customize its behaviour.
 /// </summary>
 public class EditorAddressablesManager
-{
+{		
     private static Logger sm_logger = new ConsoleLogger("AddressablesEditor");
     
     public static string REMOTE_ASSETS_FOLDER_NAME = "RemoteAssets";
@@ -108,6 +108,11 @@ public class EditorAddressablesManager
         return returnValue;
     }
 
+    public void PostProcessScenes()
+    {
+        SceneOptimizerEditor.BatchOptimization();
+    }
+
     public void GeneratePlayerCatalogForAllPlatforms()
     {
         // Player addressables catalog is generated for both platforms so the game will work on both platforms in Editor and AllInResources modes, which are the modes that can work without generating 
@@ -183,6 +188,9 @@ public class EditorAddressablesManager
         }
 
         AssetDatabase.Refresh();
+
+		// Regenerate InitReferences.prefab to update assetsLUT reference
+		Startup.ReloadInitReferences();
     }
 
     public void CopyGeneratedFilesToPlayer(BuildTarget target)
@@ -239,14 +247,73 @@ public class EditorAddressablesManager
 
     public void BuildAssetBundles(BuildTarget platform)
     {
+#if USE_OPTIMIZED_SCENES
+		// Untags the original scenes so they won't be included in any asset bundles as their optimized versions are the ones that must be used
+		Dictionary<string, string>  originalAssetBundleNamesPerPath = UnTagOriginalScenes();		
+
+        // Build asset bundles
         EditorAssetBundlesManager.BuildAssetBundles(platform);
-    }    
+
+        // Undoes the change
+        AssetImporter assetImporter;
+        foreach (KeyValuePair<string, string> pair in originalAssetBundleNamesPerPath)
+        {
+            assetImporter = AssetImporter.GetAtPath(pair.Key);
+            if (assetImporter != null)
+            {
+                assetImporter.assetBundleName = pair.Value;
+                assetImporter.SaveAndReimport();
+            }
+        }
+#else
+		// Makes sure that generated scenes don't interfere
+		EditorFileUtils.DeleteFileOrDirectory(SceneOptimizerEditor.PATH);
+
+        // Build asset bundles
+        EditorAssetBundlesManager.BuildAssetBundles(platform);
+#endif
+    }
+
+    private Dictionary<string, string> UnTagOriginalScenes()
+    {
+        Dictionary<string, string> returnValue = new Dictionary<string, string>();
+
+        AddressablesCatalog editorCatalog = GetEditorCatalog(true);
+        List<AddressablesCatalogEntry> entries = editorCatalog.GetEntries();
+        int count = entries.Count;
+        AddressablesCatalogEntry entry;
+        AssetImporter assetImporter;
+        string path;
+        
+        for (int i = 0; i < count; i++)
+        {
+            entry = entries[i];
+            path = entry.GetPath();
+            if (EditorFileUtils.IsAScenePath(path))
+            {
+                assetImporter = AssetImporter.GetAtPath(path);
+                if (assetImporter != null && assetImporter.assetBundleName != null)
+                {
+                    returnValue.Add(path, assetImporter.assetBundleName);
+                    assetImporter.assetBundleName = null;
+                    assetImporter.SaveAndReimport();
+                }
+            }
+        }
+
+        return returnValue;
+    }
 
     public void BuildForTargetPlatform()
     {
         BuildTarget target = EditorUserBuildSettings.activeBuildTarget;
         ClearBuild(target);
         CustomizeEditorCatalog();
+
+#if USE_OPTIMIZED_SCENES
+		PostProcessScenes ();
+#endif
+
         GeneratePlayerCatalogForAllPlatforms();        
 
         if (AddressablesManager.Mode_NeedsAssetBundles())
@@ -294,7 +361,7 @@ public class EditorAddressablesManager
         }
 
         return editorCatalog;
-    }
+    }				
 
     private void BuildCatalog(string playerCatalogPath, AddressablesTypes.EProviderMode providerMode, BuildTarget target, bool changeAssets, List<string> defineSymbols)
     {
@@ -319,17 +386,44 @@ public class EditorAddressablesManager
             List<AddressablesCatalogEntry> entries = editorCatalog.GetEntriesFilteredByDefineSymbols(defineSymbols);
             List<string> scenesToAdd = new List<string>();
             List<string> scenesToRemove = new List<string>();
-            AddressablesCatalogEntry entry;
-            int count = entries.Count;
+            AddressablesCatalogEntry editorEntry;
+            AddressablesCatalogEntry playerEntry;
+            int count = entries.Count;     
+
+			#if USE_OPTIMIZED_SCENES
+			Dictionary<string, string> generatedToOriginalSceneName = new Dictionary<string, string>();
+			#endif
+
             for (int i = 0; i < count; i++)
-            {                
-                if (ProcessEntry(entries[i], scenesToAdd, scenesToRemove, target, changeAssets))
+            {
+                editorEntry = entries[i];
+
+                // For a scene we need to check if an optimized version of the scene has been generated. If so then that scene should be used instead of the original one because
+                // we want the optimized version to be included in the build
+                if (EditorFileUtils.IsAScenePath(editorEntry.GetPath()))
                 {
-                    if (entries[i].AddToCatalogPlayer)
+					#if USE_OPTIMIZED_SCENES
+					string generatedSceneGUID = SceneOptimizerEditor.GetGeneratedGUID(editorEntry.AssetName);
+					if (!string.IsNullOrEmpty(generatedSceneGUID)) {						
+						AddressablesCatalogEntry generatedSceneEntry = new AddressablesCatalogEntry ();
+						generatedSceneEntry.Load (editorEntry.ToJSON ());
+						generatedSceneEntry.GUID = generatedSceneGUID;
+
+						generatedToOriginalSceneName.Add(generatedSceneEntry.GetPath(), editorEntry.GetPath());
+
+						// From here on we continue with generatedSceneEntry
+						editorEntry = generatedSceneEntry;
+					}
+					#endif
+                }
+
+                if (ProcessEntry(editorEntry, scenesToAdd, scenesToRemove, target, changeAssets))
+                {
+                    if (editorEntry.AddToCatalogPlayer)
                     {
-                        entry = new AddressablesCatalogEntry();
-                        entry.Load(entries[i].ToJSON());
-                        playerCatalog.AddEntry(entry);
+                        playerEntry = new AddressablesCatalogEntry();
+                        playerEntry.Load(entries[i].ToJSON());
+                        playerCatalog.AddEntry(playerEntry);
                     }
                 }
             }            
@@ -338,13 +432,27 @@ public class EditorAddressablesManager
             {
                 List<EditorBuildSettingsScene> newSceneList = new List<EditorBuildSettingsScene>();
 
-                EditorBuildSettingsScene[] scenes = EditorBuildSettings.scenes;
-                count = scenes.Length;
-                string scenePath;
+				string scenePath;
+				EditorBuildSettingsScene[] scenes = EditorBuildSettings.scenes;
+
+				#if USE_OPTIMIZED_SCENES
+				// We make sure that the original scenes will be removed from the scene list to include in the build 
+				count = scenesToAdd.Count;
+				for (int i = 0; i < count; i++) 
+				{
+					scenePath = scenesToAdd[i];
+					if (SceneOptimizerEditor.IsAGeneratedScene(scenePath))
+					{
+						scenesToRemove.Add(generatedToOriginalSceneName[scenePath]);
+					}
+				}										
+				#endif
+					                
+                count = scenes.Length;                
 				bool enabled;
                 for (int i = 0; i < count; i++)
                 {
-                    scenePath = scenes[i].path;
+					scenePath = scenes[i].path;
 					if (scenesToAdd.Contains(scenePath)) 
 					{
 						enabled = true;
@@ -356,7 +464,7 @@ public class EditorAddressablesManager
 					} 
 					else 
 					{
-						enabled = scenes [i].enabled;
+						enabled = scenes[i].enabled;
 					}
 
 					scenes[i].enabled = enabled;                                        
@@ -626,8 +734,9 @@ public class EditorAddressablesManager
 
     private bool ProcessEntry(AddressablesCatalogEntry entry, List<string> scenesToAdd, List<string> scenesToRemove, BuildTarget target, bool moveToGenerated)
     {                
-        string entryPath = (entry == null) ? null : AssetDatabase.GUIDToAssetPath(entry.GUID);
-        string path = entryPath;
+        string entryPath = (entry == null) ? null : AssetDatabase.GUIDToAssetPath(entry.GUID);        
+        string path = entryPath;        
+
         bool success = !string.IsNullOrEmpty(path) && entry.IsAvailableForPlatform(target);
         
         if (success)
@@ -656,10 +765,10 @@ public class EditorAddressablesManager
                     }
                 }
 
-                if (IsScene(path))
+                if (EditorFileUtils.IsAScenePath(path))
                 {
                     List<string> list = (entry.LocationType == AddressablesTypes.ELocationType.Resources) ? scenesToAdd : scenesToRemove;
-                    list.Add(path);
+					list.Add(path);
                 }
                 else if (entry.LocationType == AddressablesTypes.ELocationType.Resources)
                 {
@@ -787,12 +896,7 @@ public class EditorAddressablesManager
         {
             InternalMoveResourcesToOriginalUbication(directories[i]);
         }
-    }
-
-    private static bool IsScene(string path)
-    {
-        return !string.IsNullOrEmpty(path) && path.IndexOf(".unity") > -1;
-    }    
+    }        
 
     public class ParseAssetBundlesOutput
     {

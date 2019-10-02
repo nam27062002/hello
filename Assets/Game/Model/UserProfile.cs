@@ -352,7 +352,13 @@ public class UserProfile : UserPersistenceSystem
     public Dictionary<OfferPack.Type, List<JSONClass>> newOfferPersistanceData {
         get{ return m_newOfferPersistanceData; }
     }
-    
+
+    // Happy hour
+    private DateTime m_happyHourExpirationTime;
+    private float m_happyHourExtraGemsRate;
+
+
+
     // public List<string> m_visitedZones = new List<string>();
     public HashSet<string> m_visitedZones = new HashSet<string>();
 	//--------------------------------------------------------------------------
@@ -388,6 +394,8 @@ public class UserProfile : UserPersistenceSystem
 
     public string GivenTransactions { get; set; }
 
+
+
     //
     // New variables here: Remember to initialize them in Reset()
     //
@@ -396,10 +404,10 @@ public class UserProfile : UserPersistenceSystem
     //------------------------------------------------------------------------//
     // GENERIC METHODS														  //
     //------------------------------------------------------------------------//
-	/// <summary>
-	/// Default constructor.
-	/// </summary>
-	public UserProfile()
+    /// <summary>
+    /// Default constructor.
+    /// </summary>
+    public UserProfile()
 	{        
     }
 
@@ -1116,6 +1124,32 @@ public class UserProfile : UserPersistenceSystem
             }
         }
 
+
+        // Happy hour offer
+        SimpleJSON.JSONNode happyHour = _data["happyHourOffer"];
+
+        key = "happyHourExpirationTime";
+        if (happyHour.ContainsKey(key))
+        {
+            m_happyHourExpirationTime = new DateTime (happyHour[key].AsLong);
+        }
+        else
+        {
+            m_happyHourExpirationTime = DateTime.MinValue;
+        }
+
+        key = "happyHourExtraGemsRate";
+        if (happyHour.ContainsKey(key))
+        {
+            m_happyHourExtraGemsRate = happyHour[key].AsFloat;
+        }
+        else
+        {
+            m_happyHourExtraGemsRate = 0;
+        }
+
+
+
         // Visited Zones
         key = "visitedZones";
         m_visitedZones.Clear();
@@ -1327,7 +1361,17 @@ public class UserProfile : UserPersistenceSystem
             newOffersData.Add(OfferPack.TypeToString(t), array);
         }
         data.Add( "newOffersPacks", newOffersData);
+
         
+        // Happy hour offer
+        SimpleJSON.JSONClass happyHour = new SimpleJSON.JSONClass();
+
+        happyHour.Add("happyHourExpirationTime", m_happyHourExpirationTime.Ticks.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
+        happyHour.Add("happyHourExtraGemsRate", m_happyHourExtraGemsRate.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
+
+        data.Add("happyHourOffer", happyHour);
+
+
         // Visited Zones
         JSONArray zonesArray = new SimpleJSON.JSONArray();
         int max = m_visitedZones.Count;
@@ -1959,6 +2003,33 @@ public class UserProfile : UserPersistenceSystem
         }
         
 	}
+
+
+    /// <summary>
+    /// Load persistence data corresponding to a happy hour offer if there is any.
+    /// </summary>
+    public void LoadHappyHour (HappyHourOffer _happyHour)
+    {
+        if (_happyHour != null)
+        {
+            // If the values persisted are consistent
+            if (m_happyHourExpirationTime != DateTime.MinValue && m_happyHourExtraGemsRate != 0)
+            {
+                _happyHour.expirationTime = m_happyHourExpirationTime;
+                _happyHour.extraGemsFactor = m_happyHourExtraGemsRate;
+            }
+        }
+    }
+
+
+    public void SaveHappyHour (HappyHourOffer _happyHour)
+    {
+        if (_happyHour != null)
+        {
+            m_happyHourExpirationTime = _happyHour.expirationTime;
+            m_happyHourExtraGemsRate = _happyHour.extraGemsFactor;
+        }
+    }
 
 }
 

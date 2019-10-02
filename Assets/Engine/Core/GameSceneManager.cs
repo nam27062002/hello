@@ -18,7 +18,7 @@ using System.Collections.Generic;
 /// Singleton class, work with it via its static methods only.
 /// <see cref="https://youtu.be/64uOVmQ5R1k?t=20m16s"/>
 /// </summary>
-public class GameSceneManager : UbiBCN.SingletonMonoBehaviour<GameSceneManager> {
+public class GameSceneManager : Singleton<GameSceneManager> {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
@@ -80,21 +80,21 @@ public class GameSceneManager : UbiBCN.SingletonMonoBehaviour<GameSceneManager> 
 		get { return sceneState != ESceneState.RUN; }
 	}
 
-	//------------------------------------------------------------------//
-	// GENERIC METHODS													//
-	//------------------------------------------------------------------//
-	/// <summary>
-	/// Initialization.
-	/// </summary>
-	protected void Awake () {
-		// [AOC] Pick current scene as initial scene and put it to run state
-		SetCurrentSceneInternal(SceneManager.GetActiveScene().name);
+    //------------------------------------------------------------------//
+    // GENERIC METHODS													//
+    //------------------------------------------------------------------//
+    /// <summary>
+    /// Initialization.
+    /// </summary>
+    protected override void OnCreateInstance() {        
+        // [AOC] Pick current scene as initial scene and put it to run state
+        SetCurrentSceneInternal(SceneManager.GetActiveScene().name);
 	}
 	
 	/// <summary>
 	/// Called every frame.
 	/// </summary>
-	protected void Update () {
+	public void Update () {
 		// Update based on current state
 		UpdateState();
 	}

@@ -199,7 +199,7 @@ public class TournamentInfoScreen : MonoBehaviour, IBroadcastListener {
 	/// </summary>
 	void UpdatePeriodic() {
         if (m_waitingNetwork) {
-            if (Application.internetReachability != NetworkReachability.NotReachable) {
+            if (DeviceUtilsManager.SharedInstance.internetReachability != NetworkReachability.NotReachable) {
                 m_tournament.RequestDefinition();
                 m_waitingNetwork = false;
             }

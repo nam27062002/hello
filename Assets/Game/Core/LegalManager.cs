@@ -2,7 +2,7 @@
 /// This class is reponsible for managing all legal stuff, such as age/consent requirements (GDPR, COPPA). 
 /// The intention is to be moving legal related stuff that is all around the game into this class.
 /// </summary>
-public class LegalManager : UbiBCN.SingletonMonoBehaviour<LegalManager>
+public class LegalManager : Singleton<LegalManager>
 {   
     public enum ETermsPolicy
     {

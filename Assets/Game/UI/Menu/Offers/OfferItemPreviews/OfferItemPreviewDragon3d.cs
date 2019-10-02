@@ -87,24 +87,15 @@ public class OfferItemPreviewDragon3d : IOfferItemPreview {
 	/// <summary>
 	/// The info button has been pressed.
 	/// </summary>
-	override public void OnInfoButton() {
-		// Initialize and open info popup
-		// Different popups for classic and special dragons
-		PopupController popup = null;
-		IDragonData dragonData = DragonManager.GetDragonData(m_def.sku);
-		if(dragonData.type == IDragonData.Type.CLASSIC) {
-			popup = PopupManager.LoadPopup(PopupDragonInfo.PATH);
-			popup.GetComponent<PopupDragonInfo>().Init(dragonData);
-		} else if(dragonData.type == IDragonData.Type.SPECIAL) {
-			popup = PopupManager.LoadPopup(PopupSpecialDragonInfo.PATH);
-			popup.GetComponent<PopupSpecialDragonInfo>().Init(dragonData);
-		}
+	/// <param name="_trackingLocation">Where is this been triggered from?</param>
+	override public void OnInfoButton(string _trackingLocation) {
+		// Open info popup
+		// [AOC] We haven't purchased the dragon yet, create fake data of the dragon
+		IDragonData dragonData = IDragonData.CreateFromDef(m_def);
+		PopupDragonInfo popup = PopupDragonInfo.OpenPopupForDragon(dragonData, _trackingLocation);
 
 		// Move it forward in Z so it doesn't conflict with our 3d preview!
 		popup.transform.SetLocalPosZ(-2500f);
-
-		// Open the popup!
-		popup.Open();
 	}
 
 	//------------------------------------------------------------------------//

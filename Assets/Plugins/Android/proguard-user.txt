@@ -1,21 +1,3 @@
--keep class bitter.jnibridge.* { *; }
--keep class com.unity3d.* { *; }
--keep class org.fmod.* { *; }
--keep class org.calety.** { *; }
--keep class com.fgol.** { *; }
--keep class com.ubisoft.** { *; }
--keep class com.appsflyer.** { *; }
-
--keep public class android.webkit.JavascriptInterface {}
-
-
--dontwarn com.vungle.**
--keep class com.vungle.** { *; }
--keep class javax.inject.*
-
--dontwarn com.google.firebase.**
--dontwarn com.google.android.gms.**
-
 
 # --------------------
 # ironSource
@@ -28,6 +10,7 @@
 -keep class com.ironsource.unity.androidbridge.** { *;}
 
 -keep class com.facebook.unity.** { *; }
+-keep class com.facebook.ads.** { *; }
 
 # --------------------
 # AdColony
@@ -88,18 +71,13 @@
 -keep class * implements com.google.gson.JsonSerializer
 -keep class * implements com.google.gson.JsonDeserializer
 # Google Android Advertising ID
+-keep class com.google.android.gms.ads.** { *; }
 -keep class com.google.android.gms.internal.** { *; }
 -dontwarn com.google.android.gms.ads.identifier.**
 
-# -----------------------
-# AdMob
-# -----------------------
--keep class com.google.android.gms.ads.** { *; }
-
-# share button on android
--keep class android.support.v4.content.** { *; }
-
-#crashlytics
+#---------------------
+# Crashlytics
+#---------------------
 -keep class com.crashlytics.android.** { *; }
 #-keep class io.fabric.unity.android.** { *; }
 #-keepclassmembers class io.fabric.unity.android.** { *; }

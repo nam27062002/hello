@@ -16,7 +16,7 @@ using System.Collections.Generic;
 /// <summary>
 /// Singleton to manage all the spawners in a level in an efficient way.
 /// </summary>
-public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager>, IBroadcastListener {
+public class SpawnerManager : Singleton<SpawnerManager>, IBroadcastListener {
     //------------------------------------------------------------------------//
     // CONSTANTS															  //
     //------------------------------------------------------------------------//
@@ -36,6 +36,7 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager>, IBr
 
     // Internal logic
     private bool m_enabled = false;
+    private bool m_processCamera = false;
     private float m_updateTimer = 0f;
 
     // External references
@@ -69,7 +70,7 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager>, IBr
     /// <summary>
     /// Inititalization.
     /// </summary>
-	private void Awake() {
+	protected override void OnCreateInstance() {
         m_spawners = new List<ISpawner>();
         m_spawning = new List<ISpawner>();
         m_spawningPeriodicallyWhileActive = new List<ISpawner>();
@@ -77,19 +78,7 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager>, IBr
 
         if (FeatureSettingsManager.IsDebugEnabled)
             Debug_Awake();
-    }
-
-    protected override void OnDestroy() {
-        base.OnDestroy();
-
-        if (ApplicationManager.IsAlive && FeatureSettingsManager.IsDebugEnabled)
-            Debug_OnDestroy();
-    }
-
-    /// <summary>
-    /// Component enabled.
-    /// </summary>
-    private void OnEnable() {
+  
         // Subscribe to external events
         Broadcaster.AddListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
         Broadcaster.AddListener(BroadcastEventType.GAME_AREA_ENTER, this);
@@ -98,10 +87,10 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager>, IBr
         Broadcaster.AddListener(BroadcastEventType.GAME_ENDED, this);
     }
 
-    /// <summary>
-    /// Component disabled.
-    /// </summary>
-    private void OnDisable() {
+    protected override void OnDestroyInstance() {
+        if (ApplicationManager.IsAlive && FeatureSettingsManager.IsDebugEnabled)
+            Debug_OnDestroy();
+
         // Unsubscribe from external events
         Broadcaster.RemoveListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
         Broadcaster.RemoveListener(BroadcastEventType.GAME_AREA_ENTER, this);
@@ -134,10 +123,15 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager>, IBr
     /// <summary>
     /// Called every frame.
     /// </summary>
-    private void Update() {
+    public void Update() {
         // Only if enabled!
         if (!m_enabled) return;
         if (m_spawnersTreeNear == null) return;
+
+        if (m_processCamera) {
+            ProcessSpawnersInCamera();
+            return;
+        }
 
         // Get activation bounds
         // Update every frame in case camera bounds change (i.e. zoom in/out)
@@ -546,6 +540,12 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager>, IBr
         }
 
         m_selectedSpawners.Clear();
+        m_processCamera = true;
+        EnableSpawners();
+    }
+
+    private void ProcessSpawnersInCamera() {
+        m_selectedSpawners.Clear();
         m_minRectNear = m_camera.activationMinRectNear;
         m_spawnersTreeNear.GetHashSetInRange(m_minRectNear.ToRect(), ref m_selectedSpawners);
         m_spawnersTreeFar.GetHashSetInRange(m_minRectNear.ToRect(), ref m_selectedSpawners);
@@ -566,9 +566,8 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager>, IBr
             }
         }
 
-        EnableSpawners();
+        m_processCamera = false;
     }
-
 
     private void OnAreaExit() {
         m_selectedSpawners.Clear();

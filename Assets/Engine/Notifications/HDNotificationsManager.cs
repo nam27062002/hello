@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System;
 
-public class HDNotificationsManager : UbiBCN.SingletonMonoBehaviour<HDNotificationsManager>
+public class HDNotificationsManager : Singleton<HDNotificationsManager>
 {
     private const string HD_NOTIFICATIONS = "HD_NOTIFICATIONS";
     public const string SILENT_FLAG = "Notifications.Silent";
@@ -49,13 +49,12 @@ public class HDNotificationsManager : UbiBCN.SingletonMonoBehaviour<HDNotificati
             }
         }
     }
-
+#if UNITY_IOS
     public void Update()
     {
-#if UNITY_IOS
 		CheckRemoteNotifications();
-#endif
     }
+#endif
 
 #if UNITY_IOS
 	private void CheckRemoteNotifications() {

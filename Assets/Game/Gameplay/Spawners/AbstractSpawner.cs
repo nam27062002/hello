@@ -49,13 +49,27 @@ public abstract class AbstractSpawner : MonoBehaviour, ISpawner
     /// </summary>
     private static System.Diagnostics.Stopwatch sm_watch;
 
-    void Start() {
-		if (m_rect.size == Vector2.zero) {
-			m_rect.size = Vector2.one * 2f;
-		}
-		m_rect.center = (Vector2)transform.position + m_rect.position;
+    private bool m_hasToDoStart = true;
 
-        OnStart();
+#if !USE_OPTIMIZED_SCENES
+    void Start() {
+        if (m_hasToDoStart) {
+            DoStart();
+        }
+    }
+#endif
+
+    public void DoStart() {
+        if (m_hasToDoStart) {
+            m_hasToDoStart = false;
+
+            if (m_rect.size == Vector2.zero) {
+                m_rect.size = Vector2.one * 2f;
+            }
+            m_rect.center = (Vector2)transform.position + m_rect.position;
+
+            OnStart();
+        }
     }
 
     protected virtual void OnDestroy() {

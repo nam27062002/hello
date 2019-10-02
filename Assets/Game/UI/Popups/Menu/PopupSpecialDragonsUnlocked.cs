@@ -56,7 +56,9 @@ public class PopupSpecialDragonsUnlocked : MonoBehaviour
         List<IDragonData> specialDragons = DragonManager.GetDragonsByOrder(IDragonData.Type.SPECIAL);
         for (int i = 0; i < specialDragons.Count; ++i)
         {
-            if (specialDragons[i].lockState == IDragonData.LockState.AVAILABLE)
+            if (specialDragons[i].lockState == IDragonData.LockState.AVAILABLE ||
+                specialDragons[i].lockState == IDragonData.LockState.LOCKED ||
+                specialDragons[i].lockState == IDragonData.LockState.OWNED)
             {
                 return true;
             }

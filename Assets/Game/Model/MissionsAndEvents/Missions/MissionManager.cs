@@ -21,7 +21,7 @@ using System.Collections.Generic;
 /// Has its own asset in the Resources/Singletons folder, all content must be
 /// initialized there.
 /// </summary>
-public class MissionManager : UbiBCN.SingletonMonoBehaviour<MissionManager>, IBroadcastListener {
+public class MissionManager : Singleton<MissionManager>, IBroadcastListener {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
@@ -68,16 +68,30 @@ public class MissionManager : UbiBCN.SingletonMonoBehaviour<MissionManager>, IBr
     private static float sm_powerUpGFMultiplier = 0f; // Soft currency modifier multiplier
     public static float powerUpGFMultiplier { get { return sm_powerUpGFMultiplier; } }
 
-	//------------------------------------------------------------------//
-	// GENERIC METHODS													//
-	//------------------------------------------------------------------//
-	/// <summary>
-	/// Initialization.
-	/// </summary>
-	private void Awake() {
+    //------------------------------------------------------------------//
+    // GENERIC METHODS													//
+    //------------------------------------------------------------------//
+    /// <summary>
+    /// Initialization.
+    /// </summary>
+    protected override void OnCreateInstance() {        
         InitFromDefinitions(ref m_missionData, DefinitionsCategory.MISSION_DIFFICULTIES);
         InitFromDefinitions(ref m_specialMissionData, DefinitionsCategory.MISSION_SPECIAL_DIFFICULTIES);
-	}
+        // Subscribe to external events
+        Messenger.AddListener<IDragonData>(MessengerEvents.DRAGON_ACQUIRED, OnDragonAcquired);
+        Messenger.AddListener(MessengerEvents.GAME_STARTED, OnGameStarted);
+        Broadcaster.AddListener(BroadcastEventType.GAME_ENDED, this);
+    }
+
+    /// <summary>
+    /// Scriptable object has been disabled.
+    /// </summary>
+    protected override void OnDestroyInstance() {        
+        // Unsubscribe from external events
+        Messenger.RemoveListener<IDragonData>(MessengerEvents.DRAGON_ACQUIRED, OnDragonAcquired);
+        Messenger.RemoveListener(MessengerEvents.GAME_STARTED, OnGameStarted);
+        Broadcaster.RemoveListener(BroadcastEventType.GAME_ENDED, this);
+    }
 
     private void InitFromDefinitions(ref Data _data, string _defCategory) {
         // Initialize internal values from content
@@ -100,27 +114,7 @@ public class MissionManager : UbiBCN.SingletonMonoBehaviour<MissionManager>, IBr
             _data.removeMissionPCCoefB = definition.GetAsFloat("removeMissionPCCoefB");
         }
     }
-
-	/// <summary>
-	/// Scriptable object has been enabled.
-	/// </summary>
-	private void OnEnable() {
-		// Subscribe to external events
-		Messenger.AddListener<IDragonData>(MessengerEvents.DRAGON_ACQUIRED, OnDragonAcquired);
-        Messenger.AddListener(MessengerEvents.GAME_STARTED, OnGameStarted);
-        Broadcaster.AddListener(BroadcastEventType.GAME_ENDED, this);
-	}
-
-	/// <summary>
-	/// Scriptable object has been disabled.
-	/// </summary>
-	private void OnDisable() {
-		// Unsubscribe from external events
-		Messenger.RemoveListener<IDragonData>(MessengerEvents.DRAGON_ACQUIRED, OnDragonAcquired);
-        Messenger.RemoveListener(MessengerEvents.GAME_STARTED, OnGameStarted);
-        Broadcaster.RemoveListener(BroadcastEventType.GAME_ENDED, this);
-	}
-
+       
     public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
     {
         switch(eventType)
@@ -135,7 +129,7 @@ public class MissionManager : UbiBCN.SingletonMonoBehaviour<MissionManager>, IBr
 	/// <summary>
 	/// Called every frame.
 	/// </summary>
-	private void Update() {
+	public void Update() {
 		bool gaming = InstanceManager.gameSceneController != null;
         if (currentModeMissions != null) 
             currentModeMissions.CheckActivation(!gaming);

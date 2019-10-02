@@ -1,6 +1,6 @@
 // LevelEditorSceneController.cs
 // Hungry Dragon
-// 
+//
 // Created by Alger Ortín Castellví on 29/09/2015.
 // Copyright (c) 2015 Ubisoft. All rights reserved.
 
@@ -16,7 +16,7 @@ using System.Collections;
 namespace LevelEditor {
 	/// <summary>
 	/// Scene controller for the level editor scene.
-	/// Simplified version of the game scene controller for 
+	/// Simplified version of the game scene controller for
 	/// </summary>
 	public class LevelEditorSceneController : GameSceneControllerBase {
 		//------------------------------------------------------------------//
@@ -55,8 +55,9 @@ namespace LevelEditor {
             FirePropagationManager.CreateInstance();
             BubbledEntitySystem.CreateInstance();
             SpawnerManager.CreateInstance();
+            DecorationSpawnerManager.CreateInstance();
 
-			// Initialize fake profile for the level editor
+            // Initialize fake profile for the level editor
             UsersManager.CreateInstance();
 
 
@@ -67,9 +68,9 @@ namespace LevelEditor {
 
             GameStoreManager.SharedInstance.Initialize();
 
-            PersistenceFacade.instance.Reset();            
+            PersistenceFacade.instance.Reset();
             PersistenceFacade.instance.Sync_FromLaunchApplication(null);
-            
+
 			if (LevelEditor.settings.poolLimit == "unlimited") {
 				ParticleManager.instance.poolLimits = ParticleManager.PoolLimits.Unlimited;
 			} else {
@@ -110,7 +111,7 @@ namespace LevelEditor {
 
             // Call parent
             base.Awake();
-		
+
 		}
 
 		/// <summary>
@@ -158,7 +159,7 @@ namespace LevelEditor {
 			Broadcaster.AddListener(BroadcastEventType.POPUP_CLOSED, this);
 			Messenger.AddListener<DamageType, Transform>(MessengerEvents.PLAYER_KO, OnPlayerKo);
 		}
-		
+
 		/// <summary>
 		/// Component disabled.
 		/// </summary>
@@ -183,26 +184,25 @@ namespace LevelEditor {
                 }break;
             }
         }
-    
 
-		/// <summary>
-		/// Called every frame.
-		/// </summary>
-		protected override void Update() {
-			// Call parent
-			base.Update();
 
+        /// <summary>
+        /// Called every frame.
+        /// </summary>
+        override protected void Update() {
 			if (!m_started) {
 				if ( InstanceManager.player != null )
 					StartGame();
 			} else {
+                base.Update();
+
 				// Update running time
 				m_elapsedSeconds += Time.deltaTime;
 
 				if (Input.GetKeyDown(KeyCode.I))
-				{					
+				{
 					SpawnPlayer(true);
-					
+
 					LevelTypeSpawners sp = FindObjectOfType<LevelTypeSpawners>();
 					if ( sp != null )
 						sp.IntroSpawn(InstanceManager.player.data.def.sku);
@@ -251,7 +251,7 @@ namespace LevelEditor {
 
 			// Reset dragon stats
 			InstanceManager.player.ResetStats(false);
-			
+
 			Vector3 startPos = GameConstants.Vector3.zero;
 			// Setup spawn position
 			if (LevelEditor.settings.spawnAtCameraPos) {
@@ -262,8 +262,8 @@ namespace LevelEditor {
 				InstanceManager.gameCamera.Init(startPos);
 			} else {
 				SpawnPlayer(true);
-			}			
-			
+			}
+
 			// Instantiate map prefab
 			InitLevelMap();
 
@@ -272,9 +272,10 @@ namespace LevelEditor {
 
 			// Run spawner manager
 			SpawnerManager.instance.EnableSpawners();
+            DecorationSpawnerManager.instance.EnableSpawners();
 
-			// Enable reward manager to see coins/score feedback
-			RewardManager.Reset();
+            // Enable reward manager to see coins/score feedback
+            RewardManager.Reset();
 
 			// Spawn collectibles
 			// [AOC] By designers request, let's keep all collectibles visible in the level editor

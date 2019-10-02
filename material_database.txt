@@ -1,5 +1,5 @@
 -------------------------------------------------------------------------------------------------------------------------------------------------------------
-HD ver: 2.0.0
+HD ver: 2.0.2
 -------------------------------------------------------------------------------------------------------------------------------------------------------------
 Material:   alen_buildboard
 Shader:     Hungry Dragon/Scenary/Scenary Standard
@@ -406,6 +406,11 @@ Shader:     Hungry Dragon/Particles/Transparent particles standard
 LightMode:  
 Keywords:   BLENDMODE_ALPHABLEND 
 -------------------------------------------------------------------------------------------------------------------------------------------------------------
+Material:   circle_diff
+Shader:     Hungry Dragon/Scenary/Scenary Standard
+LightMode:  
+Keywords:   FOG OPAQUEALPHA VERTEXCOLOR_NONE 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
 Material:   cloud_01
 Shader:     Hungry Dragon/Scenary/Scenary Standard
 LightMode:  
@@ -645,6 +650,31 @@ Material:   dragon_balrog_4_wings
 Shader:     Hungry Dragon/Dragon/Dragon standard
 LightMode:  FORWARDBASE
 Keywords:   BLENDFRESNEL CUTOFF DOUBLESIDED FRESNEL FXLAYER_NONE NORMALMAP OPAQUESPECULAR SPECULAR _ZWRITE_ON 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+Material:   dragon_balrog_5_body
+Shader:     Hungry Dragon/Dragon/Dragon standard
+LightMode:  FORWARDBASE
+Keywords:   FRESNEL FXLAYER_NONE NORMALMAP OPAQUESPECULAR SPECULAR _ZWRITE_ON 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+Material:   dragon_balrog_5_disguise
+Shader:     Hungry Dragon/Dragon/Dragon standard
+LightMode:  FORWARDBASE
+Keywords:   FRESNEL FXLAYER_NONE NORMALMAP SELFILLUMINATE_EMISSIVE SPECULAR 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+Material:   dragon_balrog_5_ingame_body
+Shader:     Hungry Dragon/Dragon/Dragon standard
+LightMode:  FORWARDBASE
+Keywords:   FRESNEL FXLAYER_NONE NORMALMAP OPAQUESPECULAR SPECULAR _ZWRITE_ON 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+Material:   dragon_balrog_5_ingame_wings
+Shader:     Hungry Dragon/Dragon/Dragon standard
+LightMode:  FORWARDBASE
+Keywords:   CUTOFF DOUBLESIDED FRESNEL FXLAYER_NONE NORMALMAP OPAQUESPECULAR SPECULAR _ZWRITE_ON 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+Material:   dragon_balrog_5_wings
+Shader:     Hungry Dragon/Dragon/Dragon standard
+LightMode:  FORWARDBASE
+Keywords:   CUTOFF DOUBLESIDED FRESNEL FXLAYER_NONE NORMALMAP OPAQUESPECULAR SPECULAR _ZWRITE_ON 
 -------------------------------------------------------------------------------------------------------------------------------------------------------------
 Material:   Dragon_bone_M
 Shader:     Hungry Dragon/Scenary/Scenary Standard
@@ -912,6 +942,31 @@ LightMode:  FORWARDBASE
 Keywords:   CUTOFF DOUBLESIDED FRESNEL NORMALMAP SPECULAR 
 -------------------------------------------------------------------------------------------------------------------------------------------------------------
 Material:   dragon_classic_4_wings
+Shader:     Hungry Dragon/Dragon/Dragon standard
+LightMode:  FORWARDBASE
+Keywords:   CUTOFF DOUBLESIDED FRESNEL NORMALMAP SPECULAR 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+Material:   dragon_classic_5_body
+Shader:     Hungry Dragon/Dragon/Dragon standard
+LightMode:  FORWARDBASE
+Keywords:   FRESNEL NORMALMAP SELFILLUMINATE_EMISSIVE SPECULAR 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+Material:   dragon_classic_5_disguise
+Shader:     Hungry Dragon/Dragon/Dragon standard
+LightMode:  FORWARDBASE
+Keywords:   FRESNEL NORMALMAP SPECULAR 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+Material:   dragon_classic_5_ingame_body
+Shader:     Hungry Dragon/Dragon/Dragon standard
+LightMode:  FORWARDBASE
+Keywords:   FRESNEL NORMALMAP SELFILLUMINATE_AUTOINNERLIGHT SPECULAR 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+Material:   dragon_classic_5_ingame_wings
+Shader:     Hungry Dragon/Dragon/Dragon standard
+LightMode:  FORWARDBASE
+Keywords:   CUTOFF DOUBLESIDED FRESNEL NORMALMAP SPECULAR 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+Material:   dragon_classic_5_wings
 Shader:     Hungry Dragon/Dragon/Dragon standard
 LightMode:  FORWARDBASE
 Keywords:   CUTOFF DOUBLESIDED FRESNEL NORMALMAP SPECULAR 
@@ -1841,6 +1896,31 @@ Shader:     Hungry Dragon/Dragon/Dragon standard
 LightMode:  FORWARDBASE
 Keywords:   CUTOFF DOUBLESIDED FRESNEL NORMALMAP SPECULAR 
 -------------------------------------------------------------------------------------------------------------------------------------------------------------
+Material:   dragon_titan_5_body
+Shader:     Hungry Dragon/Dragon/Dragon standard
+LightMode:  FORWARDBASE
+Keywords:   FRESNEL FXLAYER_REFLECTION NORMALMAP SELFILLUMINATE_NORMAL SPECULAR 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+Material:   dragon_titan_5_disguise
+Shader:     Hungry Dragon/Dragon/Dragon standard
+LightMode:  FORWARDBASE
+Keywords:   FRESNEL NORMALMAP SELFILLUMINATE_NORMAL SPECULAR 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+Material:   dragon_titan_5_ingame_body
+Shader:     Hungry Dragon/Dragon/Dragon standard
+LightMode:  FORWARDBASE
+Keywords:   FRESNEL FXLAYER_REFLECTION NORMALMAP SELFILLUMINATE_NORMAL SPECULAR 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+Material:   dragon_titan_5_ingame_wings
+Shader:     Hungry Dragon/Dragon/Dragon standard
+LightMode:  FORWARDBASE
+Keywords:   CUTOFF DOUBLESIDED FRESNEL FXLAYER_REFLECTION NORMALMAP SPECULAR 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+Material:   dragon_titan_5_wings
+Shader:     Hungry Dragon/Dragon/Dragon standard
+LightMode:  FORWARDBASE
+Keywords:   CUTOFF DOUBLESIDED FRESNEL FXLAYER_REFLECTION NORMALMAP SPECULAR 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
 Material:   DragonSilhouette
 Shader:     Hungry Dragon/StrokeSilhouette
 LightMode:  
@@ -2017,6 +2097,11 @@ LightMode:
 Keywords:   OUTLINE_ON UNDERLAY_ON 
 -------------------------------------------------------------------------------------------------------------------------------------------------------------
 Material:   FNT_Bold_Editor_Share
+Shader:     TextMeshPro/Mobile/Distance Field
+LightMode:  
+Keywords:   OUTLINE_ON UNDERLAY_ON 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+Material:   FNT_Bold_Editor_SpecialDragonLevel
 Shader:     TextMeshPro/Mobile/Distance Field
 LightMode:  
 Keywords:   OUTLINE_ON UNDERLAY_ON 
@@ -2665,6 +2750,11 @@ Material:   frogknightstatue
 Shader:     Hungry Dragon/Scenary/Scenary Standard
 LightMode:  
 Keywords:   BLEND_TEXTURE CUSTOM_VERTEXCOLOR FOG OPAQUEALPHA VERTEXCOLOR_NONE 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+Material:   FX_MT_BatsSpriteSheet
+Shader:     Hungry Dragon/Particles/Transparent particles standard
+LightMode:  
+Keywords:   BLENDMODE_ALPHABLEND 
 -------------------------------------------------------------------------------------------------------------------------------------------------------------
 Material:   FX_MT_BlizzardStorm_AlphaBlend_01
 Shader:     Hungry Dragon/Particles/Transparent particles standard
@@ -4331,6 +4421,16 @@ Shader:     Hungry Dragon/NPC/NPC Diffuse
 LightMode:  FORWARDBASE
 Keywords:   COLORMODE_NONE 
 -------------------------------------------------------------------------------------------------------------------------------------------------------------
+Material:   MT_Halloween19Hat
+Shader:     Hungry Dragon/NPC/NPC Diffuse
+LightMode:  FORWARDBASE
+Keywords:   COLORMODE_NONE 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+Material:   MT_Halloween19Mask
+Shader:     Hungry Dragon/NPC/NPC Diffuse
+LightMode:  FORWARDBASE
+Keywords:   COLORMODE_NONE 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
 Material:   MT_hay_01
 Shader:     Hungry Dragon/Scenary/Scenary Standard
 LightMode:  
@@ -4441,12 +4541,32 @@ Shader:     Hungry Dragon/NPC/NPC Diffuse Lit-Unlit Outline
 LightMode:  FORWARDBASE
 Keywords:   BLENDAXIS_X COLORMODE_COLORRAMP FRESNEL LITMODE_UNLIT 
 -------------------------------------------------------------------------------------------------------------------------------------------------------------
+Material:   MT_icon_fairy
+Shader:     Hungry Dragon/NPC/NPC Diffuse Lit-Unlit Outline
+LightMode:  FORWARDBASE
+Keywords:   BLENDAXIS_X COLORMODE_NONE FRESNEL LITMODE_UNLIT 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+Material:   MT_icon_fish
+Shader:     Hungry Dragon/NPC/NPC Diffuse Lit-Unlit Outline
+LightMode:  FORWARDBASE
+Keywords:   BLENDAXIS_X COLORMODE_NONE FRESNEL LITMODE_UNLIT 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
 Material:   MT_icon_fisherman
 Shader:     Hungry Dragon/NPC/NPC Diffuse Lit-Unlit Outline
 LightMode:  FORWARDBASE
 Keywords:   BLENDAXIS_X COLORMODE_NONE FRESNEL LITMODE_UNLIT 
 -------------------------------------------------------------------------------------------------------------------------------------------------------------
 Material:   MT_icon_football
+Shader:     Hungry Dragon/NPC/NPC Diffuse Lit-Unlit Outline
+LightMode:  FORWARDBASE
+Keywords:   BLENDAXIS_X COLORMODE_NONE FRESNEL LITMODE_UNLIT 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+Material:   MT_icon_freeze
+Shader:     Hungry Dragon/NPC/NPC Diffuse Lit-Unlit Outline
+LightMode:  FORWARDBASE
+Keywords:   BLENDAXIS_X COLORMODE_COLORRAMP FRESNEL LITMODE_UNLIT 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+Material:   MT_icon_ghost
 Shader:     Hungry Dragon/NPC/NPC Diffuse Lit-Unlit Outline
 LightMode:  FORWARDBASE
 Keywords:   BLENDAXIS_X COLORMODE_NONE FRESNEL LITMODE_UNLIT 
@@ -4486,12 +4606,27 @@ Shader:     Hungry Dragon/Particles/Transparent particles standard (Stencil)
 LightMode:  
 Keywords:   BLENDMODE_ADDITIVEALPHABLEND 
 -------------------------------------------------------------------------------------------------------------------------------------------------------------
+Material:   MT_icon_grave_zombie
+Shader:     Hungry Dragon/NPC/NPC Diffuse Lit-Unlit Outline
+LightMode:  FORWARDBASE
+Keywords:   BLENDAXIS_X COLORMODE_NONE FRESNEL LITMODE_UNLIT 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
 Material:   MT_icon_heart
 Shader:     Hungry Dragon/NPC/NPC Diffuse Lit-Unlit Outline
 LightMode:  FORWARDBASE
 Keywords:   BLENDAXIS_X COLORMODE_NONE FRESNEL LITMODE_UNLIT 
 -------------------------------------------------------------------------------------------------------------------------------------------------------------
 Material:   MT_icon_lionbird
+Shader:     Hungry Dragon/NPC/NPC Diffuse Lit-Unlit Outline
+LightMode:  FORWARDBASE
+Keywords:   BLENDAXIS_X COLORMODE_NONE FRESNEL LITMODE_UNLIT 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+Material:   MT_icon_masks_halloween
+Shader:     Hungry Dragon/NPC/NPC Diffuse Lit-Unlit Outline
+LightMode:  FORWARDBASE
+Keywords:   BLENDAXIS_X COLORMODE_NONE FRESNEL LITMODE_UNLIT 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+Material:   MT_icon_masks_halloween_witch_hat
 Shader:     Hungry Dragon/NPC/NPC Diffuse Lit-Unlit Outline
 LightMode:  FORWARDBASE
 Keywords:   BLENDAXIS_X COLORMODE_NONE FRESNEL LITMODE_UNLIT 
@@ -4567,6 +4702,11 @@ LightMode:  FORWARDBASE
 Keywords:   BLENDAXIS_X COLORMODE_NONE FRESNEL LITMODE_UNLIT 
 -------------------------------------------------------------------------------------------------------------------------------------------------------------
 Material:   MT_icon_stpatrick_hat
+Shader:     Hungry Dragon/NPC/NPC Diffuse Lit-Unlit Outline
+LightMode:  FORWARDBASE
+Keywords:   BLENDAXIS_X COLORMODE_NONE FRESNEL LITMODE_UNLIT 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+Material:   MT_icon_troll
 Shader:     Hungry Dragon/NPC/NPC Diffuse Lit-Unlit Outline
 LightMode:  FORWARDBASE
 Keywords:   BLENDAXIS_X COLORMODE_NONE FRESNEL LITMODE_UNLIT 
@@ -7590,6 +7730,11 @@ Material:   water 1
 Shader:     Hungry Dragon/Particles/Transparent particles standard
 LightMode:  
 Keywords:   BLENDMODE_ALPHABLEND EXTENDED_PARTICLES NOISEUV NOISE_TEXTURE NOISE_TEXTURE_ALPHA NOISE_TEXTURE_EMISSION 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+Material:   water_caves_stalactite_diff_001
+Shader:     Hungry Dragon/Scenary/Scenary Standard
+LightMode:  
+Keywords:   EMISSIVE_NONE FOG MAINCOLOR_TEXTURE VERTEXCOLOR_NONE _ZWRITE_ON 
 -------------------------------------------------------------------------------------------------------------------------------------------------------------
 Material:   water_fall_border_trick
 Shader:     Hungry Dragon/Waterfall

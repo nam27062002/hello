@@ -25,9 +25,9 @@ namespace AI {
 				}
 			}
 		}
-		public bool isPetTarget 		{ get { return false; } set {} }
+		override public bool isPetTarget 		{ get { return false; } set {} }
 		override public float lastFallDistance 	{ get { return 0f; } }
-		public bool isKinematic 		{ get { return false; } set {} }
+		override public bool isKinematic 		{ get { return false; } set {} }
 
 		override public Quaternion orientation 	{ get { return m_airMotion.orientation; } set { m_airMotion.orientation = value; } }
 		override public Vector3 position			{ get { return m_airMotion.position; } set { m_airMotion.position = value; } }
@@ -139,10 +139,16 @@ namespace AI {
 				m_airMotion.FixedUpdate();
 			}
 		}
+        
+        public override void CustomLateUpdate() {
+            if (!IsDead()) {
+                m_airMotion.LateUpdate();
+            }
+        }
 
-		//---------------------------------------------------------------
+        //---------------------------------------------------------------
 
-		override public void OnTrigger(int _triggerHash, object[] _param = null) {}
+        override public void OnTrigger(int _triggerHash, object[] _param = null) {}
 		override public void DisableSensor(float _seconds) {}
 		override public void CheckCollisions(bool _value) {}
 		override public void FaceDirection(bool _value) {}

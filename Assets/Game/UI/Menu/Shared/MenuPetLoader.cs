@@ -106,6 +106,7 @@ public class MenuPetLoader : MonoBehaviour {
 
 	private Camera m_uiCamera;
     private AddressablesOp m_loadingRequest = null;
+    private bool m_loadCalled = false; //Load has not been called yet
 
     public MenuPetLoaderEvent OnLoadingComplete = new MenuPetLoaderEvent();
 
@@ -195,9 +196,9 @@ public class MenuPetLoader : MonoBehaviour {
     /// </summary>
     /// <param name="_sku">The sku of the pet to be loaded</param>
     public void Load(string _sku) {
-
-        // If the pet is already loaded do nothing
-        if (m_petSku == _sku) { return; }
+        //TODO
+        // If the pet is already loaded do nothing.  If load is called for first time, go on.
+        if (m_petSku == _sku && m_loadCalled) { return; }
 
         // Unload current pet if any
         Unload();
@@ -210,6 +211,7 @@ public class MenuPetLoader : MonoBehaviour {
 
             // Update pet sku
             m_petSku = _sku;
+            m_loadCalled = true;
         }
     }
 
@@ -276,6 +278,7 @@ public class MenuPetLoader : MonoBehaviour {
 			m_petInstance = null;
 		}
 		m_petSku = "";
+        m_loadCalled = false;
 	}
 
 	//------------------------------------------------------------------//

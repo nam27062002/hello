@@ -29,7 +29,8 @@ public class SimpleDevice : ISpawnable, IBroadcastListener {
 
     override public void Spawn(ISpawner _spawner) {
         OnRespawn();
-    }
+        m_autoSpawner.RegisterDecoration();
+	}
 
 	/// <summary>
 	/// Component disabled.

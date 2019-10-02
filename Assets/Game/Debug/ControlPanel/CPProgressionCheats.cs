@@ -475,4 +475,12 @@ public class CPProgressionCheats : MonoBehaviour {
 	{
 		ApplicationManager.instance.Debug_TestPlayAd();
 	}
+
+    /// <summary>
+    /// Finish the current happy hour
+    /// </summary>
+    public void OnEndHappyHour()
+    {
+        OffersManager.instance.happyHour.EndOffer();
+    }
 }

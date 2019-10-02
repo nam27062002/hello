@@ -28,14 +28,16 @@ public class MenuDragonScreenController : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// Exposed
 	[SerializeField] private MenuDragonLockIcon m_lockIcon = null;
+	[SerializeField] private MenuDragonClassicInfo m_classicDragonInfo = null;
+	[SerializeField] private MenuDragonSpecialInfo m_specialDragonInfo = null;
 	[Space]
 	[SerializeField] private float m_initialDelay = 1f;
 	[SerializeField] private float m_scrollDuration = 1f;
 	[SerializeField] private float m_unlockAnimDuration = 1f;
 	[SerializeField] private float m_unlockAnimFinalPauseDuration = 1f;
 	[Space]
-	[SerializeField] private NavigationShowHideAnimator[] m_toHideOnUnlockAnim = null;
-    [SerializeField] private NavigationShowHideAnimator[] m_toHideOnTeaseAnim = null;
+	[SerializeField] private ShowHideAnimator[] m_toHideOnUnlockAnim = null;
+    [SerializeField] private ShowHideAnimator[] m_toHideOnTeaseAnim = null;
 	[Space]
 	[SerializeField] private AssetsDownloadFlow m_assetsDownloadFlow = null;
 	public AssetsDownloadFlow assetsDownloadFlow {
@@ -249,6 +251,16 @@ public class MenuDragonScreenController : MonoBehaviour {
 					}
 				}
 
+				// Refresh dragon infos
+				// If going to dragon unlock screen afterwards, keep them hidden
+				if(_gotoDragonUnlockScreen) {
+					m_classicDragonInfo.SetVisible(false);
+					m_specialDragonInfo.SetVisible(false);
+				} else {
+					m_classicDragonInfo.Refresh();
+					m_specialDragonInfo.Refresh();
+				}
+
 				// Restore HUD
 				InstanceManager.menuSceneController.hud.animator.ForceShow(true);
 
@@ -366,6 +378,10 @@ public class MenuDragonScreenController : MonoBehaviour {
                         m_toHideOnTeaseAnim[i].ForceShow(true);
                     }
 
+					// Refresh dragon infos
+					m_classicDragonInfo.Refresh();
+					m_specialDragonInfo.Refresh();
+
 					InstanceManager.menuSceneController.dragonSelector.OnSelectedDragonChanged(DragonManager.CurrentDragon, DragonManager.CurrentDragon);
 					InstanceManager.menuSceneController.dragonScroller.FocusDragon(DragonManager.CurrentDragon.def.sku, true);
 				}
@@ -438,6 +454,11 @@ public class MenuDragonScreenController : MonoBehaviour {
 					for(int i = 0; i < m_toHideOnTeaseAnim.Length; i++) {
 						m_toHideOnTeaseAnim[i].ForceShow(true);
 					}
+
+					// Refresh dragon infos
+					m_classicDragonInfo.Refresh();
+					m_specialDragonInfo.Refresh();
+
 					InstanceManager.menuSceneController.dragonSelector.OnSelectedDragonChanged(DragonManager.CurrentDragon, DragonManager.CurrentDragon);
 					InstanceManager.menuSceneController.dragonScroller.FocusDragon(DragonManager.CurrentDragon.def.sku, true);
 				}
@@ -516,8 +537,12 @@ public class MenuDragonScreenController : MonoBehaviour {
 	/// </summary>
 	public void OnOpenPreAnimation() {
         // Reset animating flag
-        // SetAnimationFlag(false, true); 
-        // [JOM] We commented the previous line to fix HDK-5779. Lets wait and see if we break something else...
+        SetAnimationFlag(false, true, .1f);
+		// [JOM] Added the preivious line to fix HDK-5779. Added some delay to let the OTA popup to trigger.
+
+		// Refresh dragon info
+		m_classicDragonInfo.Refresh();
+		m_specialDragonInfo.Refresh();
 
         // If a dragon was just unlocked, prepare a nice unlock animation sequence!
         if (!string.IsNullOrEmpty(GameVars.unlockedDragonSku)) {
@@ -535,8 +560,16 @@ public class MenuDragonScreenController : MonoBehaviour {
 			// Init the assets download flow. Don't show popups though, the menu interstitial popups controller will take care of it
 			m_assetsDownloadFlow.InitWithHandle(allHandle);
 		}
-
     }
+
+	/// <summary>
+	/// The screen is about to close.
+	/// </summary>
+	public void OnClosePreAnimation() {
+		// Hide dragon info
+		m_classicDragonInfo.SetVisible(false);
+		m_specialDragonInfo.SetVisible(false);
+	}
 
 	/// <summary>
 	/// The current menu screen has changed (animation starts now).

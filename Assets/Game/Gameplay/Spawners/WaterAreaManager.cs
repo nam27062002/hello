@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-public class WaterAreaManager : UbiBCN.SingletonMonoBehaviour<WaterAreaManager>, IBroadcastListener {
+public class WaterAreaManager : Singleton<WaterAreaManager>, IBroadcastListener {
 	
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
@@ -11,31 +11,23 @@ public class WaterAreaManager : UbiBCN.SingletonMonoBehaviour<WaterAreaManager>,
 	private QuadTree<WaterController> m_waterTree = null;
 
 
-	//------------------------------------------------------------------------//
-	// GENERIC METHODS														  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Inititalization.
-	/// </summary>
-	private void Awake() {
-		m_waterList = new List<WaterController>();
-	}
-
-	/// <summary>
-	/// Component enabled.
-	/// </summary>
-	private void OnEnable() {
+    //------------------------------------------------------------------------//
+    // GENERIC METHODS														  //
+    //------------------------------------------------------------------------//
+    /// <summary>
+    /// Inititalization.
+    /// </summary>
+    protected override void OnCreateInstance() {
+        m_waterList = new List<WaterController>();
+	
 		// Subscribe to external events
 		Broadcaster.AddListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
 		Broadcaster.AddListener(BroadcastEventType.GAME_ENDED, this);
 	}
 
-	/// <summary>
-	/// Component disabled.
-	/// </summary>
-	private void OnDisable() {
-		// Unsubscribe from external events
-		Broadcaster.RemoveListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
+    protected override void OnDestroyInstance() {
+        // Unsubscribe from external events
+        Broadcaster.RemoveListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
 		Broadcaster.RemoveListener(BroadcastEventType.GAME_ENDED, this);
 	}
 

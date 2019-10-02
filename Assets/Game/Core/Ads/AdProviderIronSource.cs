@@ -316,7 +316,7 @@ public class AdProviderIronSource : AdProvider
                 case EStep.WaittingInternet:
 
                     //  Make sure SDK is initialized when internet connection is enabled
-                    if (Application.internetReachability != NetworkReachability.NotReachable)
+                    if (DeviceUtilsManager.SharedInstance.internetReachability != NetworkReachability.NotReachable)
                     {
                         SetStep(EStep.Running);
                     }
@@ -339,7 +339,7 @@ public class AdProviderIronSource : AdProvider
 
                     // If Waitting timeout is over and internet is reachable find a non-cached video and try to chache it...
                     if (((DateTime.Now - mStepStartedAt).TotalSeconds >= 3)
-                    && (Application.internetReachability != NetworkReachability.NotReachable))
+                    && (DeviceUtilsManager.SharedInstance.internetReachability != NetworkReachability.NotReachable))
                     {
                         // if caching state... check if videoAd was cached (aka loaded)
                         if (mStateRewarded == EState.Caching && (DateTime.Now - mlastRewardedReadyCheckAt).TotalSeconds >= 3)
