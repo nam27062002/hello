@@ -66,14 +66,14 @@ public class AnniversaryCakePanel : MonoBehaviour, IBroadcastListener {
 	
 	protected void OnEnable() {
 		Broadcaster.AddListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
-		Messenger.AddListener<Vector3>(MessengerEvents.ANNIVERSARY_CAKE_SLICE_EATEN, OnCakeSliceEaten);
+		Broadcaster.AddListener(BroadcastEventType.HUNGRY_MODE_ENTITY_EATEN, this);
 		Messenger.AddListener(MessengerEvents.START_ALL_HUNGRY_LETTERS_COLLECTED, OnStartingLetters);
 		Messenger.AddListener<bool, DragonSuperSize.Source>(MessengerEvents.SUPER_SIZE_TOGGLE, OnSuperSizeToggle);		
 	}
 
 	protected void OnDisable() {
 		Broadcaster.RemoveListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
-		Messenger.RemoveListener<Vector3>(MessengerEvents.ANNIVERSARY_CAKE_SLICE_EATEN, OnCakeSliceEaten);	
+		Broadcaster.RemoveListener(BroadcastEventType.HUNGRY_MODE_ENTITY_EATEN, this);
 		Messenger.RemoveListener(MessengerEvents.START_ALL_HUNGRY_LETTERS_COLLECTED, OnStartingLetters);
 		Messenger.RemoveListener<bool, DragonSuperSize.Source>(MessengerEvents.SUPER_SIZE_TOGGLE, OnSuperSizeToggle);	
 	}
@@ -92,6 +92,11 @@ public class AnniversaryCakePanel : MonoBehaviour, IBroadcastListener {
 
 				ChangeState(State.EatCake);
 			} break;
+			case BroadcastEventType.HUNGRY_MODE_ENTITY_EATEN:
+			{
+				PositionEventInfo posInfo = broadcastEventInfo as PositionEventInfo;
+				OnHungryModeEntityEeaten(posInfo.position);
+			}break;
 		}
 	}
 
@@ -99,7 +104,7 @@ public class AnniversaryCakePanel : MonoBehaviour, IBroadcastListener {
 	private void Update () {
 #if UNITY_EDITOR
         if (Input.GetKeyDown(KeyCode.C)) {
-            OnCakeSliceEaten(Vector3.zero);
+            OnHungryModeEntityEeaten(Vector3.zero);
         }
 #endif
 
@@ -149,10 +154,10 @@ public class AnniversaryCakePanel : MonoBehaviour, IBroadcastListener {
 
             case State.DigestCake:
                 // Start the birthday mode
-                Debug.Log("Start birthday mode");
 
                 // Activate supersize and the "Hungry Bday" message
-                Messenger.Broadcast(MessengerEvents.ANNIVERSARY_START_BDAY_MODE);
+                Broadcaster.Broadcast(BroadcastEventType.START_COLLECTIBLE_HUNGRY_MODE);
+
 
                 if (FeatureSettingsManager.instance.LevelsLOD > FeatureSettings.ELevel4Values.low) {
                     // Activate bday mode FX (confetti and pink frame)
@@ -172,7 +177,7 @@ public class AnniversaryCakePanel : MonoBehaviour, IBroadcastListener {
 	}
 	
 
-	private void OnCakeSliceEaten(Vector3 _pos) {
+	private void OnHungryModeEntityEeaten(Vector3 _pos) {
 		if (m_state == State.EatCake) {
 			if (m_cakeSlicesEaten < m_cakeSliceCount) {
 				m_cakeSlicesEaten++;
@@ -221,7 +226,7 @@ public class AnniversaryCakePanel : MonoBehaviour, IBroadcastListener {
 
 				m_startHugeModeAtLastSlice = true;
 			}
-		} else if (_source == DragonSuperSize.Source.CAKE)
+		} else if (_source == DragonSuperSize.Source.COLLECTIBLE)
         { 
             if (!_activated) {
 				ChangeState(State.EatCake);

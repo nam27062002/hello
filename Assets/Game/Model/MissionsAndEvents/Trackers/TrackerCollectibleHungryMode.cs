@@ -16,22 +16,22 @@ using System.Collections.Generic;
 /// <summary>
 /// Tracker for killed entities.
 /// </summary>
-public class TrackerBirthdayMode : TrackerBase {
+public class TrackerCollectibleHungryMode : TrackerBase, IBroadcastListener {
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
 	/// <summary>
 	/// Default constructor.
 	/// </summary>	
-	public TrackerBirthdayMode() {
+	public TrackerCollectibleHungryMode() {
 		// Subscribe to external events
-		Messenger.AddListener(MessengerEvents.ANNIVERSARY_START_BDAY_MODE, OnBirthdayMode);
+		Broadcaster.AddListener(BroadcastEventType.START_COLLECTIBLE_HUNGRY_MODE, this);
 	}
 
 	/// <summary>
 	/// Destructor
 	/// </summary>
-	~TrackerBirthdayMode() {
+	~TrackerCollectibleHungryMode() {
 		
 	}
 
@@ -43,7 +43,7 @@ public class TrackerBirthdayMode : TrackerBase {
 	/// </summary>
 	override public void Clear() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener(MessengerEvents.ANNIVERSARY_START_BDAY_MODE, OnBirthdayMode);
+		Broadcaster.RemoveListener(BroadcastEventType.START_COLLECTIBLE_HUNGRY_MODE, this);
 
 		// Call parent
 		base.Clear();
@@ -68,7 +68,12 @@ public class TrackerBirthdayMode : TrackerBase {
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//	
-	private void OnBirthdayMode() {
+	public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+	{
+		OnCollectibleHungryMode();
+	}
+
+	private void OnCollectibleHungryMode() {
 		currentValue++;		
 	}
 }
