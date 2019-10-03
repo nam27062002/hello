@@ -209,6 +209,11 @@ namespace Downloadables
             }
         }
 
+        public bool IsInitialized()
+        {
+            return State <= EState.InQueueForDownload;
+        }
+
         public void LoadManifest(string id, JSONNode json)
         {
             Id = id;

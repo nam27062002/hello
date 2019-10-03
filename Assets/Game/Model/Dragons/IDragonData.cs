@@ -618,11 +618,13 @@ public int GetOrder() {
             specialData.GetStat(DragonDataSpecial.Stat.HEALTH).level = _build.health;
             specialData.GetStat(DragonDataSpecial.Stat.SPEED).level = _build.speed;
             specialData.GetStat(DragonDataSpecial.Stat.ENERGY).level = _build.energy;
-
+			specialData.UpdateSpecialDragonsLevel();
+			
 			// Powers (depends on stat upgrades)
 			specialData.RefreshPowerLevel();
 
             // Tier wont change for legendary dragons (always tier_6)
+			
 
 			// Special Tier (depends on stat upgrades)
 			specialData.RefreshSpecialTier();

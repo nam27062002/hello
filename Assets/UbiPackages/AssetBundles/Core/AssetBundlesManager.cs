@@ -149,6 +149,11 @@ public class AssetBundlesManager
         }
     }
 
+    public bool IsReady()
+    {
+        return m_downloadablesManager != null && m_downloadablesManager.IsReady();
+    }
+
     public Downloadables.CatalogGroup GetDownloadablesGroupFromAssetBundlesGroup(AssetBundlesGroup abGroup)
     {
         Downloadables.CatalogGroup returnValue = null;
