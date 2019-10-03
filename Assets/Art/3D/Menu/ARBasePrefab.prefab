@@ -66,7 +66,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4294583600322812}
   - component: {fileID: 114967954255863070}
-  m_Layer: 13
+  m_Layer: 12
   m_Name: Dragon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -169,9 +169,9 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1625694900999216}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: -0.00000004371139}
   m_LocalPosition: {x: 0, y: 0.404, z: 0}
-  m_LocalScale: {x: 0.25, y: 0.25, z: 0.25}
+  m_LocalScale: {x: 0.05, y: 0.05, z: 0.05}
   m_Children: []
   m_Father: {fileID: 4040343843246024}
   m_RootOrder: 0
@@ -232,12 +232,12 @@ MeshRenderer:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1805668753391710}
   m_Enabled: 1
-  m_CastShadows: 0
-  m_ReceiveShadows: 0
-  m_DynamicOccludee: 0
-  m_MotionVectors: 2
-  m_LightProbeUsage: 0
-  m_ReflectionProbeUsage: 0
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
   m_Materials:
   - {fileID: 2100000, guid: ceec0d1185e23b64989c762ea4750df3, type: 2}
   m_StaticBatchInfo:
@@ -294,7 +294,7 @@ MonoBehaviour:
   m_mode: 2
   m_dragonSku: dragon_reptile
   m_disguiseSku: 
-  m_anim: 2
+  m_anim: 4
   m_resetDragonScale: 1
   m_showPets: 0
   m_hideResultsEquipment: 0
