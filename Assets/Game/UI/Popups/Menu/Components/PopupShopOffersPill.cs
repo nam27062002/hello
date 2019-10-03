@@ -302,6 +302,9 @@ public class PopupShopOffersPill : IPopupShopPill {
         }
         else if(m_currency == UserProfile.Currency.HARD)
         {
+            // Loading placeholder
+            if (m_loadingPricePlaceholder != null) m_loadingPricePlaceholder.gameObject.SetActive(false);
+
             // Round the price, just in case. It shouldnt have decimals for this currency.
             m_price = Mathf.RoundToInt (m_def.GetAsFloat("refPrice"));
 
@@ -338,7 +341,7 @@ public class PopupShopOffersPill : IPopupShopPill {
 				.Append(TimeUtils.FormatTime(
 					System.Math.Max(0, m_pack.remainingTime.TotalSeconds), // Just in case, never go negative
 					TimeUtils.EFormat.ABBREVIATIONS,
-					4
+					2
 				))
 				.Append("</nobr>")
 				.ToString()

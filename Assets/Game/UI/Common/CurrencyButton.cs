@@ -32,16 +32,25 @@ public class CurrencyButton : AnimatedButton {
 		get { return m_amountText; }
 	}
 
+    [SerializeField] private Text m_amountTextUnity = null;     // [AOC] Alternative version for Unity textfields, useful for real-currency
+    public Text amountTextUnity
+    {
+        get { return m_amountTextUnity; }
+    }
+
+    [Space]
+
     [SerializeField] private TextMeshProUGUI m_previousAmountText = null;
     public TextMeshProUGUI previousAmountText
     {
         get { return m_previousAmountText; }
     }
 
-    [SerializeField] private Text m_amountTextUnity = null;		// [AOC] Alternative version for Unity textfields, useful for real-currency
-	public Text amountTextUnity {
-		get { return m_amountTextUnity; }
-	}
+    [SerializeField] private Text m_previousAmountTextUnity = null;     // [AOC] Alternative version for Unity textfields, useful for real-currency
+    public Text previousAmountTextTextUnity
+    {
+        get { return m_previousAmountTextUnity; }
+    }
 
     //------------------------------------------------------------------------//
     // GENERIC METHODS														  //
@@ -71,7 +80,7 @@ public class CurrencyButton : AnimatedButton {
             m_amountTextUnity.text = text;
         }
 
-        // Price before discount
+        // Price before discount (Text mesh pro component)
         if (m_previousAmountText != null)
         { 
             if (!string.IsNullOrEmpty(_previousAmountText))
@@ -84,7 +93,21 @@ public class CurrencyButton : AnimatedButton {
                 m_previousAmountText.gameObject.SetActive(false);
             }
         }
-	}
+
+        // Price before discount (unity text component)
+        if (m_previousAmountTextUnity != null)
+        {
+            if (!string.IsNullOrEmpty(_previousAmountText))
+            {
+                m_previousAmountTextUnity.gameObject.SetActive(true);
+                m_previousAmountTextUnity.text = _previousAmountText;
+            }
+            else
+            {
+                m_previousAmountTextUnity.gameObject.SetActive(false);
+            }
+        }
+    }
 
 	/// <summary>
 	/// Initialize the button with the given amount and currency.
