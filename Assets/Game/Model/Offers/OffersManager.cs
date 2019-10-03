@@ -56,14 +56,19 @@ public class OffersManager : Singleton<OffersManager> {
         get { return m_happyHour; }
     }
 
-
     // Internal
     private List<OfferPack> m_allEnabledOffers = new List<OfferPack>();	// All enabled and non-expired offer packs, regardless of type
 	private List<OfferPack> m_allOffers = new List<OfferPack>();        // All defined offer packs, regardless of state and type
-	private List<OfferPackRotational> m_allEnabledRotationalOffers = new List<OfferPackRotational>();  // All enabled and non-expired rotational offer packs
-	private List<OfferPackRotational> m_activeRotationalOffers = new List<OfferPackRotational>();	// Currently active rotational offers
 	private List<OfferPack> m_offersToRemove = new List<OfferPack>();   // Temporal list of offers to be removed from active lists
     private float m_timer = 0;
+
+	// Rotational offers
+	private List<OfferPackRotational> m_allEnabledRotationalOffers = new List<OfferPackRotational>();  // All enabled and non-expired rotational offer packs
+	private List<OfferPackRotational> m_activeRotationalOffers = new List<OfferPackRotational>();   // Currently active rotational offers
+
+	// Free offers
+	private List<OfferPackFree> m_allEnabledFreeOffers = new List<OfferPackFree>();  // All enabled and non-expired free offer packs
+	private OfferPackFree m_activeFreeOffer = null;   // Currently active free offer
 
 	// Settings
 	private OffersManagerSettings m_settings = null;
@@ -120,9 +125,14 @@ public class OffersManager : Singleton<OffersManager> {
 		instance.m_allEnabledOffers.Clear();
 		instance.m_activeOffers.Clear();
 		instance.m_offersToRemove.Clear();
+
 		instance.m_allEnabledRotationalOffers.Clear();
 		instance.m_activeRotationalOffers.Clear();
+
 		instance.m_featuredOffer = null;
+
+		instance.m_allEnabledFreeOffers.Clear();
+		instance.m_activeFreeOffer = null;
 
 		// Get all known offer packs
 		// Sort offers by their "order" field, so if two mutually exclusive offers (same uniqueId)
@@ -148,15 +158,20 @@ public class OffersManager : Singleton<OffersManager> {
 					Log("ADDING OFFER PACK {0}", Color.green, newPack.def.sku);
                     instance.m_allEnabledOffers.Add(newPack);
 
-					// If rotational, store to the rotational collection as well
-					if(newPack.type == OfferPack.Type.ROTATIONAL) {
-						instance.m_allEnabledRotationalOffers.Add(newPack as OfferPackRotational);
+					// Additional treatment based on offer type
+					switch(newPack.type) {
+						case OfferPack.Type.ROTATIONAL: {
+							instance.m_allEnabledRotationalOffers.Add(newPack as OfferPackRotational);
+						} break;
+
+						case OfferPack.Type.FREE: {
+							instance.m_allEnabledFreeOffers.Add(newPack as OfferPackFree);
+						} break;
 					}
                 } else {
 					Log("OFFER PACK {0} CAN'T BE ADDED!", Color.red, newPack.def.sku);
 				}
 			}
-
 
 			// If pushed, check whether it needs to be cleaned
 			if(newPack.type == OfferPack.Type.PUSHED) {
@@ -233,6 +248,9 @@ public class OffersManager : Singleton<OffersManager> {
 		// Do we need to activate a new rotational offer?
 		RefreshRotationals();
 
+		// Do we need to activate a new free offer?
+		RefreshFree();
+
 		// Has any offer changed its state?
 		if(dirty) {
 			// Re-sort active offers
@@ -264,15 +282,20 @@ public class OffersManager : Singleton<OffersManager> {
 		int loopCount = 0;
 		int maxLoops = 50;  // Just in case, prevent infinite loop
 		bool dirty = false;
-		List<SimpleJSON.JSONClass> rotationalOffers = UsersManager.currentUser.newOfferPersistanceData[OfferPack.Type.ROTATIONAL];
-        Queue<string> history = new Queue<string>();
-        int max = rotationalOffers.Count;
-        for (int i = 0; i < max; i++){
-            history.Enqueue( rotationalOffers[i]["sku"]);
-        }
 
         // Crashlytics was reporting a Null reference, protect it just in case
 		int rotationalActiveOffers = settings != null ? settings.rotationalActiveOffers : 1;
+
+		// Create history ONLY if we need new rotational packs - avoid unnecessary memory allocation
+		Queue<string> history = null;
+		if(m_activeRotationalOffers.Count < rotationalActiveOffers) {
+			history = new Queue<string>();
+			List<SimpleJSON.JSONClass> rotationalOffersPersistence = UsersManager.currentUser.newOfferPersistanceData[OfferPack.Type.ROTATIONAL];
+			int max = rotationalOffersPersistence.Count;
+			for(int i = 0; i < max; i++) {
+				history.Enqueue(rotationalOffersPersistence[i]["sku"]);
+			}
+		}
 		
 		// Do we need to activate a new rotational pack?
 		while( m_activeRotationalOffers.Count < rotationalActiveOffers && loopCount < maxLoops) {
@@ -363,6 +386,14 @@ public class OffersManager : Singleton<OffersManager> {
 	}
 
 	/// <summary>
+	/// Checks wehther a new free pack needs to be activated and does it. 
+	/// </summary>
+	/// <returns>Wheteher a new free pack has been activated or not.</returns>
+	private bool RefreshFree() {
+		return false;
+	}
+
+	/// <summary>
 	/// 
 	/// </summary>
 	/// <returns></returns>
@@ -398,23 +429,41 @@ public class OffersManager : Singleton<OffersManager> {
 		switch(_offer.state) {
 			case OfferPack.State.ACTIVE: {
 				m_activeOffers.Add(_offer);
-				if(_offer.type == OfferPack.Type.ROTATIONAL) {
-					m_activeRotationalOffers.Add(_offer as OfferPackRotational);
+				switch(_offer.type) {
+					case OfferPack.Type.ROTATIONAL: {
+						m_activeRotationalOffers.Add(_offer as OfferPackRotational);
+					} break;
+
+					case OfferPack.Type.FREE: {
+						m_activeFreeOffer = _offer as OfferPackFree;
+					} break;
 				}
 			} break;
 
 			case OfferPack.State.EXPIRED: {
 				m_offersToRemove.Add(_offer);
 				m_activeOffers.Remove(_offer);
-				if(_offer.type == OfferPack.Type.ROTATIONAL) {
-					m_activeRotationalOffers.Remove(_offer as OfferPackRotational);
+				switch(_offer.type) {
+					case OfferPack.Type.ROTATIONAL: {
+						m_activeRotationalOffers.Remove(_offer as OfferPackRotational);
+					} break;
+
+					case OfferPack.Type.FREE: {
+						if(m_activeFreeOffer == _offer) m_activeFreeOffer = null;
+					} break;
 				}
 			} break;
 
 			case OfferPack.State.PENDING_ACTIVATION: {
 				m_activeOffers.Remove(_offer);
-				if(_offer.type == OfferPack.Type.ROTATIONAL) {
-					m_activeRotationalOffers.Remove(_offer as OfferPackRotational);
+				switch(_offer.type) {
+					case OfferPack.Type.ROTATIONAL: {
+						m_activeRotationalOffers.Remove(_offer as OfferPackRotational);
+					} break;
+
+					case OfferPack.Type.FREE: {
+						if(m_activeFreeOffer == _offer) m_activeFreeOffer = null;
+					} break;
 				}
 			} break;
 		}
