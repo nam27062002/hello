@@ -300,7 +300,7 @@ public class PopupShopOffersPill : IPopupShopPill {
             }
             
         }
-        else if(m_currency == UserProfile.Currency.HARD)
+        else if(m_currency == UserProfile.Currency.HARD || m_currency == UserProfile.Currency.SOFT)
         {
             // Loading placeholder
             if (m_loadingPricePlaceholder != null) m_loadingPricePlaceholder.gameObject.SetActive(false);
