@@ -61,9 +61,9 @@ public abstract class IHUDCounter : IHUDWidget
 	public override float GetUpdateIntervalByQualityLevel(int _qualityLevel) {
 		if(_qualityLevel < 1) { // Very Low
 			return 0.35f;
-		} else if(_qualityLevel < 4) {
+		} else if(_qualityLevel < 3) {	// Low, Medium
 			return 0.25f;
-		} else {                // Very High
+		} else {                // High, Very High
 			return 0.1f;
 		}
 	}

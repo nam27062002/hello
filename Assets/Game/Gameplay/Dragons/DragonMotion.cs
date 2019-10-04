@@ -545,13 +545,6 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 					m_animator.SetBool(GameConstants.Animator.BOOST, false);
 					m_animator.SetBool(GameConstants.Animator.MOVE, false);
  				}break;
-				case State.Latching:
-				{
-					// Disable all ground colliders
-					int size = m_groundColliders.Length;
-					for(int i = 0; i<size; i++)
-						m_groundColliders[i].enabled = true;
-				}break;
 				case State.Dead:
 				{
 					m_animator.ResetTrigger(GameConstants.Animator.DEAD);
@@ -646,9 +639,6 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
                     }break;
 				case State.Latching:
 				{
-					int size = m_groundColliders.Length;
-					for( int i = 0; i<size; i++ )
-						m_groundColliders[i].enabled = false;
 					m_latchingTimer = 0;
 				}break;
 				case State.Dead:
@@ -881,7 +871,7 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 			if (!m_grab)	// if latching
 			{
 				m_latchingTimer += Time.deltaTime;
-				RotateToDirection( m_holdPreyTransform.forward );
+				RotateToDirection( m_holdPreyTransform.forward, true );
 				Vector3 deltaPosition = Vector3.Lerp( m_suction.position, m_holdPreyTransform.position, m_latchingTimer * 8);	// Mouth should be moving and orienting
 				// Vector3 deltaPosition = m_holdPreyTransform.position;
 				m_transform.position += deltaPosition - m_suction.position;

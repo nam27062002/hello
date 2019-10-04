@@ -53,14 +53,17 @@ public class DragonXPBar : MonoBehaviour {
 		get { return m_auxBar; }
 	}
 
+	[SerializeField] private ShowHideAnimator m_showHide = null;
+	public ShowHideAnimator showHide {
+		get { return m_showHide; }
+	}
+
 	// Textfields
 	[Separator]
 	[SerializeField] protected Localizer m_levelText;
 	public Localizer levelText {
 		get { return m_levelText; }
 	}
-
-
 
 	// Bar separators prefab
 	[Separator]

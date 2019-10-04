@@ -492,7 +492,18 @@ MonoBehaviour:
       Culture=neutral, PublicKeyToken=null
   OnHidePreAnimation:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 11498108}
+        m_MethodName: OnClosePreAnimation
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
   OnHidePostAnimation:
@@ -549,6 +560,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_lockIcon: {fileID: 114497360995486190}
+  m_classicDragonInfo: {fileID: 114575710933298764}
+  m_specialDragonInfo: {fileID: 114337126568261366}
   m_initialDelay: 0.75
   m_scrollDuration: 0.15
   m_unlockAnimDuration: 1.5
@@ -560,11 +573,11 @@ MonoBehaviour:
   - {fileID: 114857522534836530}
   - {fileID: 114986273013522640}
   - {fileID: 114749152453358756}
-  - {fileID: 114094604831219994}
   - {fileID: 114635590145362718}
   - {fileID: 114870229804871608}
+  - {fileID: 114244032775492906}
+  - {fileID: 114051909971246534}
   m_toHideOnTeaseAnim:
-  - {fileID: 114186937781811102}
   - {fileID: 114749152453358756}
   m_assetsDownloadFlow: {fileID: 114690567331245942}
 --- !u!114 &11498748
@@ -3148,8 +3161,7 @@ GameObject:
   m_Component:
   - component: {fileID: 224996718532647952}
   - component: {fileID: 114337126568261366}
-  - component: {fileID: 114061174771149882}
-  - component: {fileID: 114620673427060386}
+  - component: {fileID: 114051909971246534}
   m_Layer: 5
   m_Name: SpecialDragonInfo
   m_TagString: Untagged
@@ -3669,8 +3681,7 @@ GameObject:
   m_Component:
   - component: {fileID: 224182446256515048}
   - component: {fileID: 114575710933298764}
-  - component: {fileID: 114186937781811102}
-  - component: {fileID: 114682237368536886}
+  - component: {fileID: 114244032775492906}
   m_Layer: 5
   m_Name: ClassicDragonInfo
   m_TagString: Untagged
@@ -9547,7 +9558,6 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 224921623455372748}
-  - component: {fileID: 114094604831219994}
   m_Layer: 5
   m_Name: Upgrades
   m_TagString: Untagged
@@ -11356,6 +11366,7 @@ MonoBehaviour:
   m_linear: 1
   m_xpBar: {fileID: 114210970046096340}
   m_auxBar: {fileID: 0}
+  m_showHide: {fileID: 114986273013522640}
   m_levelText: {fileID: 114289396428388348}
   m_barSeparatorPrefab: {fileID: 1000011742153742, guid: cd28660d775b1401eae67dd2a9ff5b94,
     type: 2}
@@ -11899,6 +11910,58 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &114051909971246534
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1236259161794324}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9634bc65078f347cf933d4c74430cb15, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_tweenType: 2
+  m_tweenDuration: 0.15
+  m_tweenValue: 0
+  m_tweenEase: 6
+  m_tweenDelay: 0
+  m_ignoreTimeScale: 1
+  m_showTweens: []
+  m_hideTweens: []
+  m_animator: {fileID: 0}
+  m_triggerChildren: 1
+  m_canBeTriggeredByParents: 0
+  OnShowPreAnimation:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  OnShowPreAnimationAfterDelay:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  OnShowPostAnimation:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  OnHidePreAnimation:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  OnHidePostAnimation:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  OnShowCheck:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
 --- !u!114 &114051971800691646
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -11921,32 +11984,6 @@ MonoBehaviour:
   m_ChildForceExpandHeight: 1
   m_ChildControlWidth: 1
   m_ChildControlHeight: 1
---- !u!114 &114061174771149882
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1236259161794324}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3a1ccf5c30da243be93264797f5bc17c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_targetAnimator: {fileID: 0}
-  m_checkSelectedDragon: 1
-  m_hideForDragons: 0
-  m_showOnlyForType: 1
-  m_targetDragonSku: 
-  m_showIfShadow: 1
-  m_showIfLocked: 1
-  m_showIfAvailable: 1
-  m_showIfOwned: 1
-  m_checkScreens: 0
-  m_mode: 1
-  m_targetScreens: 
-  m_hideDelay: 0
-  m_showDelay: 0
-  m_restartShowAnimation: 0
 --- !u!114 &114061684808902896
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -12435,58 +12472,6 @@ MonoBehaviour:
   m_readyAnim: {fileID: 0}
   m_glowAnim: {fileID: 0}
   m_emptyInfoAnim: {fileID: 0}
---- !u!114 &114094604831219994
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1969739311983890}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: febd2f2b7cbe1426f8f9caf9884d3e94, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_tweenType: 1
-  m_tweenDuration: 0.25
-  m_tweenValue: 1
-  m_tweenEase: 27
-  m_tweenDelay: 0
-  m_ignoreTimeScale: 1
-  m_showTweens: []
-  m_hideTweens: []
-  m_animator: {fileID: 0}
-  m_triggerChildren: 1
-  m_canBeTriggeredByParents: 0
-  OnShowPreAnimation:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-  OnShowPreAnimationAfterDelay:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-  OnShowPostAnimation:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-  OnHidePreAnimation:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-  OnHidePostAnimation:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-  OnShowCheck:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
 --- !u!114 &114096545029252294
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -13052,7 +13037,7 @@ MonoBehaviour:
   m_hideTweens: []
   m_animator: {fileID: 0}
   m_triggerChildren: 1
-  m_canBeTriggeredByParents: 1
+  m_canBeTriggeredByParents: 0
   OnShowPreAnimation:
     m_PersistentCalls:
       m_Calls: []
@@ -14578,58 +14563,6 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
---- !u!114 &114186937781811102
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1291637380418526}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: febd2f2b7cbe1426f8f9caf9884d3e94, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_tweenType: 1
-  m_tweenDuration: 0.25
-  m_tweenValue: 0
-  m_tweenEase: 27
-  m_tweenDelay: 0
-  m_ignoreTimeScale: 1
-  m_showTweens: []
-  m_hideTweens: []
-  m_animator: {fileID: 0}
-  m_triggerChildren: 1
-  m_canBeTriggeredByParents: 1
-  OnShowPreAnimation:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-  OnShowPreAnimationAfterDelay:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-  OnShowPostAnimation:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-  OnHidePreAnimation:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-  OnHidePostAnimation:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-  OnShowCheck:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
 --- !u!114 &114190047428854216
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -15070,7 +15003,7 @@ MonoBehaviour:
   m_hideTweens: []
   m_animator: {fileID: 0}
   m_triggerChildren: 1
-  m_canBeTriggeredByParents: 1
+  m_canBeTriggeredByParents: 0
   OnShowPreAnimation:
     m_PersistentCalls:
       m_Calls: []
@@ -15636,6 +15569,58 @@ MonoBehaviour:
     topRight: {r: 0.09019608, g: 0.09411766, b: 0.7137255, a: 0.78431374}
     bottomLeft: {r: 0.015686275, g: 0, b: 0.18039216, a: 0.78431374}
     bottomRight: {r: 0.015686275, g: 0, b: 0.18039216, a: 0.78431374}
+--- !u!114 &114244032775492906
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1291637380418526}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9634bc65078f347cf933d4c74430cb15, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_tweenType: 2
+  m_tweenDuration: 0.15
+  m_tweenValue: 0
+  m_tweenEase: 6
+  m_tweenDelay: 0
+  m_ignoreTimeScale: 1
+  m_showTweens: []
+  m_hideTweens: []
+  m_animator: {fileID: 0}
+  m_triggerChildren: 1
+  m_canBeTriggeredByParents: 0
+  OnShowPreAnimation:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  OnShowPreAnimationAfterDelay:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  OnShowPostAnimation:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  OnHidePreAnimation:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  OnHidePostAnimation:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  OnShowCheck:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
 --- !u!114 &114244385945295690
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -16897,7 +16882,7 @@ MonoBehaviour:
   m_hideTweens: []
   m_animator: {fileID: 0}
   m_triggerChildren: 1
-  m_canBeTriggeredByParents: 1
+  m_canBeTriggeredByParents: 0
   OnShowPreAnimation:
     m_PersistentCalls:
       m_Calls: []
@@ -17761,7 +17746,7 @@ MonoBehaviour:
   m_hideTweens: []
   m_animator: {fileID: 0}
   m_triggerChildren: 1
-  m_canBeTriggeredByParents: 1
+  m_canBeTriggeredByParents: 0
   OnShowPreAnimation:
     m_PersistentCalls:
       m_Calls: []
@@ -18576,9 +18561,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_dragonNameText: {fileID: 114335453356635554}
   m_dragonDescText: {fileID: 114788961714308938}
+  m_dragonDescAnim: {fileID: 114112856367553192}
   m_dragonUnlock: {fileID: 114111025771439690}
+  m_showHide: {fileID: 114051909971246534}
   m_specialDragonLevelBar: {fileID: 114503402131097050}
-  m_upgradeGroup: {fileID: 114094604831219994}
+  m_upgradeGroup: {fileID: 0}
   m_stats:
   - {fileID: 114714547073215666}
   - {fileID: 114311426140848204}
@@ -22435,6 +22422,7 @@ MonoBehaviour:
   m_levelText: {fileID: 114072439924371276}
   m_skillTooltip: {fileID: 114146508072616150}
   m_tierTooltip: {fileID: 114307352129575802}
+  m_showHide: {fileID: 114857522534836530}
   m_blankSpace: -10
   m_scaleTiersCurve:
     serializedVersion: 2
@@ -23379,7 +23367,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_dragonNameText: {fileID: 114377370249670248}
   m_dragonDescText: {fileID: 114319269902790262}
+  m_dragonDescAnim: {fileID: 114308901884051788}
   m_dragonUnlock: {fileID: 114037463624761574}
+  m_showHide: {fileID: 114244032775492906}
   m_xpBar: {fileID: 114019844809864896}
 --- !u!114 &114576239153120194
 MonoBehaviour:
@@ -23751,8 +23741,8 @@ MonoBehaviour:
   m_showTweens: []
   m_hideTweens: []
   m_animator: {fileID: 0}
-  m_triggerChildren: 1
-  m_canBeTriggeredByParents: 1
+  m_triggerChildren: 0
+  m_canBeTriggeredByParents: 0
   OnShowPreAnimation:
     m_PersistentCalls:
       m_Calls: []
@@ -24243,58 +24233,6 @@ MonoBehaviour:
   - {fileID: 0}
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!114 &114620673427060386
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1236259161794324}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: febd2f2b7cbe1426f8f9caf9884d3e94, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_tweenType: 1
-  m_tweenDuration: 0.25
-  m_tweenValue: 1
-  m_tweenEase: 27
-  m_tweenDelay: 0
-  m_ignoreTimeScale: 1
-  m_showTweens: []
-  m_hideTweens: []
-  m_animator: {fileID: 0}
-  m_triggerChildren: 1
-  m_canBeTriggeredByParents: 1
-  OnShowPreAnimation:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-  OnShowPreAnimationAfterDelay:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-  OnShowPostAnimation:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-  OnHidePreAnimation:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-  OnHidePostAnimation:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-  OnShowCheck:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
 --- !u!114 &114621861456185654
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -24677,7 +24615,7 @@ MonoBehaviour:
   m_hideTweens: []
   m_animator: {fileID: 0}
   m_triggerChildren: 1
-  m_canBeTriggeredByParents: 1
+  m_canBeTriggeredByParents: 0
   OnShowPreAnimation:
     m_PersistentCalls:
       m_Calls: []
@@ -26276,32 +26214,6 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
---- !u!114 &114682237368536886
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1291637380418526}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3a1ccf5c30da243be93264797f5bc17c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_targetAnimator: {fileID: 0}
-  m_checkSelectedDragon: 1
-  m_hideForDragons: 0
-  m_showOnlyForType: 0
-  m_targetDragonSku: 
-  m_showIfShadow: 1
-  m_showIfLocked: 1
-  m_showIfAvailable: 1
-  m_showIfOwned: 1
-  m_checkScreens: 0
-  m_mode: 1
-  m_targetScreens: 
-  m_hideDelay: 0
-  m_showDelay: 0
-  m_restartShowAnimation: 0
 --- !u!114 &114685528774445842
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -29855,7 +29767,7 @@ MonoBehaviour:
   m_hideTweens: []
   m_animator: {fileID: 0}
   m_triggerChildren: 1
-  m_canBeTriggeredByParents: 1
+  m_canBeTriggeredByParents: 0
   OnShowPreAnimation:
     m_PersistentCalls:
       m_Calls: []
@@ -31070,7 +30982,7 @@ MonoBehaviour:
   m_hideTweens: []
   m_animator: {fileID: 0}
   m_triggerChildren: 1
-  m_canBeTriggeredByParents: 1
+  m_canBeTriggeredByParents: 0
   OnShowPreAnimation:
     m_PersistentCalls:
       m_Calls: []
@@ -32555,7 +32467,7 @@ MonoBehaviour:
   m_hideTweens: []
   m_animator: {fileID: 0}
   m_triggerChildren: 1
-  m_canBeTriggeredByParents: 1
+  m_canBeTriggeredByParents: 0
   OnShowPreAnimation:
     m_PersistentCalls:
       m_Calls: []
@@ -33789,8 +33701,8 @@ MonoBehaviour:
   m_showTweens: []
   m_hideTweens: []
   m_animator: {fileID: 0}
-  m_triggerChildren: 1
-  m_canBeTriggeredByParents: 1
+  m_triggerChildren: 0
+  m_canBeTriggeredByParents: 0
   OnShowPreAnimation:
     m_PersistentCalls:
       m_Calls: []
@@ -34235,7 +34147,7 @@ MonoBehaviour:
   m_hideTweens: []
   m_animator: {fileID: 0}
   m_triggerChildren: 1
-  m_canBeTriggeredByParents: 1
+  m_canBeTriggeredByParents: 0
   OnShowPreAnimation:
     m_PersistentCalls:
       m_Calls: []

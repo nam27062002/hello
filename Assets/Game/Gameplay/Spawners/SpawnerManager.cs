@@ -36,6 +36,7 @@ public class SpawnerManager : Singleton<SpawnerManager>, IBroadcastListener {
 
     // Internal logic
     private bool m_enabled = false;
+    private bool m_processCamera = false;
     private float m_updateTimer = 0f;
 
     // External references
@@ -126,6 +127,11 @@ public class SpawnerManager : Singleton<SpawnerManager>, IBroadcastListener {
         // Only if enabled!
         if (!m_enabled) return;
         if (m_spawnersTreeNear == null) return;
+
+        if (m_processCamera) {
+            ProcessSpawnersInCamera();
+            return;
+        }
 
         // Get activation bounds
         // Update every frame in case camera bounds change (i.e. zoom in/out)
@@ -534,6 +540,12 @@ public class SpawnerManager : Singleton<SpawnerManager>, IBroadcastListener {
         }
 
         m_selectedSpawners.Clear();
+        m_processCamera = true;
+        EnableSpawners();
+    }
+
+    private void ProcessSpawnersInCamera() {
+        m_selectedSpawners.Clear();
         m_minRectNear = m_camera.activationMinRectNear;
         m_spawnersTreeNear.GetHashSetInRange(m_minRectNear.ToRect(), ref m_selectedSpawners);
         m_spawnersTreeFar.GetHashSetInRange(m_minRectNear.ToRect(), ref m_selectedSpawners);
@@ -554,9 +566,8 @@ public class SpawnerManager : Singleton<SpawnerManager>, IBroadcastListener {
             }
         }
 
-        EnableSpawners();
+        m_processCamera = false;
     }
-
 
     private void OnAreaExit() {
         m_selectedSpawners.Clear();

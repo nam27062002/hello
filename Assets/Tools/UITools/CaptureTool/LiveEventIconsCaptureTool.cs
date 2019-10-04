@@ -18,7 +18,7 @@ using System.Collections.Generic;
 /// <summary>
 /// Specialized capture tool to take snapshots of 3D mission icons.
 /// </summary>
-public class MissionIconsCaptureTool : CaptureTool {
+public class LiveEventIconsCaptureTool : CaptureTool {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//

@@ -65,6 +65,7 @@ public class MathUtils {
         return (long)ret;
 	}
 
+
 	/// <summary>
 	/// Find out the order of magnitude of the given value.
 	/// </summary>
@@ -80,14 +81,45 @@ public class MathUtils {
 	}
 
 
+    /// <summary>
+    /// Rounds the number depending on the magnitude
+    /// values from 1 to 20: No rounding.
+    /// values from 21 to 99: Round to multiples of 5.
+    /// values from 100 to 999: Round to multiples of 10.
+    /// values from 1000 to 9999: Round to multiples of 100.
+    /// values higher than 10000: Round to multiples of 5000.
+    /// </summary>
+    /// <returns>rounded value</returns>
+    /// <param name="_value">The value to be checked.</param>
+    public static long RoundByMagnitude(long _value)
+    {
+        if (_value <= 20) {
+            return _value;
+        }
 
+        switch ( (int)GetMagnitude(_value) ) {
 
-	/**
-	 * Tests intersection between a circle and a segment of another circle, given arc length.
-	 * This is only approximate.
-	 * Note: Ensure the arcCentreLine is a normalised vector
-	 */
-	public static bool TestArcVsCircle(Vector3 arcCentre, float arcAngle, float arcRadius, Vector3 arcCentreLine, Vector3 circleCentre, float circleRadius)
+            case 100:
+                return (Snap(_value, 5));
+                break;
+            case 1000:
+                return (Snap(_value, 10));
+                break;
+            case 10000:
+                return (Snap(_value, 100));
+                break;
+            default:
+                return (Snap(_value, 5000));
+                break;
+        }
+    }
+
+    /**
+        * Tests intersection between a circle and a segment of another circle, given arc length.
+        * This is only approximate.
+        * Note: Ensure the arcCentreLine is a normalised vector
+        */
+    public static bool TestArcVsCircle(Vector3 arcCentre, float arcAngle, float arcRadius, Vector3 arcCentreLine, Vector3 circleCentre, float circleRadius)
 	{
 		Vector3 disp = circleCentre - arcCentre;
 		if(disp.sqrMagnitude <= (arcRadius + circleRadius) * (arcRadius + circleRadius))

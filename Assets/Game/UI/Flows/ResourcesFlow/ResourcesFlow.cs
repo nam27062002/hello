@@ -430,8 +430,17 @@ public class ResourcesFlow : IBroadcastListener {
 
 		// Definitions are sorted, should be easy to find the right pack!
 		for(int i = 0; i < m_pcPackDefinitions.Count; i++) {
+
+            long amount = m_pcPackDefinitions[i].GetAsLong("amount");
+
+            // Mind the happy hour offers when calculating the recommended pack
+            if (OffersManager.instance.happyHour.IsActive())
+            {
+                amount = (long) (amount * (1 + OffersManager.instance.happyHour.extraGemsFactor) );
+            }
+
 			// Is it the first pack covering our target amount?
-			if(m_pcPackDefinitions[i].GetAsLong("amount") >= _pcAmount) {
+			if(amount >= _pcAmount) {
 				// Yes!! Return it
 				return m_pcPackDefinitions[i];
 			}

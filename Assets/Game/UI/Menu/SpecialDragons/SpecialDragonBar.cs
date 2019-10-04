@@ -6,11 +6,17 @@ public class SpecialDragonBar : MonoBehaviour {
     [SerializeField] private GameObject m_elementLevelPrefab = null;
     [SerializeField] private GameObject m_elementSkillPrefab = null;
     [SerializeField] private GameObject m_elementTierPrefab = null;
+
 	[Space]
     [SerializeField] private RectTransform m_content = null;
 	[SerializeField] private Localizer m_levelText = null;
 	[SerializeField] private SpecialDragonBarTooltip m_skillTooltip = null;
 	[SerializeField] private SpecialDragonBarTooltip m_tierTooltip = null;
+	[SerializeField] private ShowHideAnimator m_showHide = null;
+	public ShowHideAnimator showHide {
+		get { return m_showHide; }
+	}
+
 	[Space]
     [SerializeField] private float m_blankSpace = 5f;
     [SerializeField] private AnimationCurve m_scaleTiersCurve = null;
