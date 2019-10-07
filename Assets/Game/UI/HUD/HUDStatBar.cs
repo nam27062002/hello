@@ -293,6 +293,9 @@ public class HUDStatBar : IHUDWidget, IBroadcastListener {
 	/// </summary>
 	public override void PeriodicUpdate() {
 		if (m_ready) {
+			// Compute delta time, considering our update interval
+			float deltaTime = Mathf.Max(UPDATE_INTERVAL, Time.unscaledDeltaTime);   // Cover cases where the frame took longer than our update interval (our the update interval is 0)
+
 			// Only if player is alive
 			if(InstanceManager.player != null) {
 				// Aux vars
@@ -313,7 +316,7 @@ public class HUDStatBar : IHUDWidget, IBroadcastListener {
 						targetSlider.maxValue = targetExtraValue;
 					}
 
-					targetValueStep = Mathf.Lerp(targetSlider.value, targetValue, UPDATE_INTERVAL);
+					targetValueStep = Mathf.Lerp(targetSlider.value, targetValue, deltaTime);
 				}
                 
 				// Set extra slider min/max
@@ -327,7 +330,7 @@ public class HUDStatBar : IHUDWidget, IBroadcastListener {
 						targetSlider.maxValue = targetExtraValue; // this is the max value with all the bonus
 					}
 
-					targetValueStep = Mathf.Lerp(targetSlider.value, targetValue, UPDATE_INTERVAL);
+					targetValueStep = Mathf.Lerp(targetSlider.value, targetValue, deltaTime);
 				}
 
 				// Set damage slider min/max
@@ -409,7 +412,7 @@ public class HUDStatBar : IHUDWidget, IBroadcastListener {
 						// Reverse case: animate when going down only and over a certain threshold
 						if(targetSlider.value > targetValue + m_damageAnimationThreshold) {
 							// Use normalized value so speed feels right for every dragon
-							targetSlider.normalizedValue -= m_damageBarSpeed * UPDATE_INTERVAL;
+							targetSlider.normalizedValue -= m_damageBarSpeed * deltaTime;
 						} else if(targetSlider.value < targetValue) {
 							targetSlider.value = targetValue;
 						}
@@ -448,7 +451,7 @@ public class HUDStatBar : IHUDWidget, IBroadcastListener {
                 {
                     bool bright = InstanceManager.player.dragonBoostBehaviour.HasEnoughEnergyToBoost() || InstanceManager.player.dragonBoostBehaviour.IsBoostActive();
                     float d = bright ? 0 : -1;
-                    m_iconColorFX.saturation = Mathf.Lerp(m_iconColorFX.saturation, d, UPDATE_INTERVAL * 10);
+                    m_iconColorFX.saturation = Mathf.Lerp(m_iconColorFX.saturation, d, deltaTime * 10);
                 }
 
 				// Invulnerability FX
@@ -469,7 +472,7 @@ public class HUDStatBar : IHUDWidget, IBroadcastListener {
 					bool applyFX = m_instantSet;
 					if(isInvulnerable) {
 						// Update delta
-						m_invulnerabilityColorDelta += m_invulnerabilityFXSpeed * m_invulnerabilityDirection * UPDATE_INTERVAL;
+						m_invulnerabilityColorDelta += m_invulnerabilityFXSpeed * m_invulnerabilityDirection * deltaTime;
 
 						// Reverse direction if needed
 						if(m_invulnerabilityColorDelta >= 1f) {
@@ -516,7 +519,7 @@ public class HUDStatBar : IHUDWidget, IBroadcastListener {
 
 			if ( m_type == Type.SuperFury)
 			{
-				m_timer -= UPDATE_INTERVAL;
+				m_timer -= deltaTime;
 				if ( m_timer <= 0 )
 				{
 					m_canvasGroup.alpha = 0;
