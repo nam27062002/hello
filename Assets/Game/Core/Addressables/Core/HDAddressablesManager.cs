@@ -137,6 +137,7 @@ public class HDAddressablesManager : AddressablesManager
                     break;
 
                 case CaletyConstants.eBuildEnvironments.BUILD_DEV:
+                case CaletyConstants.eBuildEnvironments.BUILD_LOCAL:
                     urlBase = "http://bcn-mb-services1.ubisoft.org/hungrydragon";
                     break;
             }
@@ -960,6 +961,43 @@ public class Ingame_SwitchAreaHandle
 
 		return ids;
 	}
+
+    /// <summary>
+    /// Returns the list of adderssable ids for a dragon skin
+    /// </summary>
+    /// <param name="skinSku">Sku of the dragon skin which addressable ids need to be retrieved</param>
+    /// <param name="ingame">When <c>true</c> the dragon skin used ingame is considered, otherwise the dragon skin for menu is considered instead</param>
+    /// <returns></returns>
+    public List<string> GetResourceIDsForDragonSkin(string skinSku, bool ingame) 
+    {
+        List<string> returnValue = new List<string>();
+
+        DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, skinSku);
+        if (def != null)
+        {
+            // Materials
+            string skin = def.Get("skin");
+            if (ingame)
+            {
+                returnValue.Add(skin + "_ingame_body");
+                returnValue.Add(skin + "_ingame_wings");
+            }
+            else
+            {
+                returnValue.Add(skin + "_body");
+                returnValue.Add(skin + "_wings");                
+            }
+
+            // Body Parts
+            List<string> bodyParts = def.GetAsList<string>("body_parts");
+            for (int j = 0; j < bodyParts.Count; j++)
+            {
+                returnValue.Add(bodyParts[j]);
+            }
+        }
+
+        return returnValue;
+    }
 	#endregion
 
 	#region ADDRESSABLES_BATCH_HANDLERS            
@@ -1026,6 +1064,18 @@ public class Ingame_SwitchAreaHandle
         else
         {
             resultPrefab = dragon.def.GetAsString("resultsPrefab");
+            // Take next skin into account just in case we unlock it this run
+            int initialLevel = RewardManager.dragonInitialLevel;
+            DragonProgression progression = (DragonManager.CurrentDragon as DragonDataClassic).progression;
+            int finalLevel = progression.level;
+            if ( initialLevel != finalLevel )
+            {
+                List<DefinitionNode> newSkins = UsersManager.currentUser.wardrobe.GetUnlockedSkins( DragonManager.CurrentDragon.def.sku, initialLevel, finalLevel );
+                for (int i = 0; i < newSkins.Count; i++)
+                {
+                    AddDisguiseDependencies( handle, newSkins[i], false );
+                }
+            }
         }
         handle.AddAddressable( resultPrefab );
         AddDisguiseDependencies( handle, dragon, false );
@@ -1054,31 +1104,28 @@ public class Ingame_SwitchAreaHandle
 
     private void AddDisguiseDependencies( AddressablesBatchHandle handle, IDragonData data, bool ingame = true )
     {
-        DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, data.disguise);
+        AddDisguiseDependencies( handle, data.disguise, ingame );
+    }
+
+    private void AddDisguiseDependencies( AddressablesBatchHandle handle, string disguiseSku, bool ingame = true  )
+    {
+        DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, disguiseSku);
+        AddDisguiseDependencies( handle, def, ingame );
+    }
+
+    private void AddDisguiseDependencies( AddressablesBatchHandle handle, DefinitionNode def, bool ingame = true  )
+    {
         // Materials
         string skin = def.Get("skin");
-        if ( ingame )
+        List<string> resourceIDs = GetResourceIDsForDragonSkin(skin, ingame);        
+        int count = resourceIDs.Count;
+        for (int i = 0; i < count; i++)
         {
-            handle.AddAddressable( skin + "_ingame_body" );
-            handle.AddAddressable( skin + "_ingame_wings" );
-        }
-        else
-        {
-            handle.AddAddressable( skin + "_body" );
-            handle.AddAddressable( skin + "_wings" );
-        }
-
-        // Body Parts
-        List<string> bodyParts = def.GetAsList<string>("body_parts");
-        for (int j = 0; j < bodyParts.Count; j++)
-        {
-            handle.AddAddressable(bodyParts[j]);
-        }
+            handle.AddAddressable(resourceIDs[i]);
+        }        
 
         // Icon
         handle.AddAddressable( def.Get("icon") );
-
-
     }
 
     private void AddPetDependencies( AddressablesBatchHandle handle, IDragonData data )

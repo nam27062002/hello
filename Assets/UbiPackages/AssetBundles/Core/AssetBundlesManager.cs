@@ -149,6 +149,11 @@ public class AssetBundlesManager
         }
     }
 
+    public bool IsReady()
+    {
+        return m_downloadablesManager != null && m_downloadablesManager.IsReady();
+    }
+
     public Downloadables.CatalogGroup GetDownloadablesGroupFromAssetBundlesGroup(AssetBundlesGroup abGroup)
     {
         Downloadables.CatalogGroup returnValue = null;
@@ -487,7 +492,7 @@ public class AssetBundlesManager
 				for(int i = 0; i < count; i++) 
 				{
                     // IsAssetBundleAvailable() must be called for every id so that the result will be tracked if it needs to
-                    returnValue = IsAssetBundleAvailable(ids[i], track) && returnValue;
+                    returnValue = IsAssetBundleAvailable(ids[i], false, track) && returnValue;
                 }
 			}
         }

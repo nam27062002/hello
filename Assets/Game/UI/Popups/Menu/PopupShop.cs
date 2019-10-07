@@ -31,7 +31,8 @@ public class PopupShop : MonoBehaviour {
 		DEFAULT,
 		SC_ONLY,
 		PC_ONLY,
-		OFFERS_FIRST
+		OFFERS_FIRST,
+		PC_FIRST
 	};
 
 	// Order must match tab system setup!
@@ -155,6 +156,7 @@ public class PopupShop : MonoBehaviour {
 		m_tabButtonsContainer.SetActive(
 			_mode == Mode.DEFAULT
 		 || _mode == Mode.OFFERS_FIRST
+		 || _mode == Mode.PC_FIRST
 		);
 
 		// Select initial tab
@@ -174,7 +176,8 @@ public class PopupShop : MonoBehaviour {
 				goToTab = Tabs.SC; 
 			} break;
 
-			case Mode.PC_ONLY: {
+			case Mode.PC_ONLY:
+			case Mode.PC_FIRST: {
 				goToTab = Tabs.PC;
 			} break;
 

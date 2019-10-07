@@ -43,7 +43,7 @@ public abstract class IDragonData : IUISelectorItem {
 		SHADOW,     // Player must purchase the target Dragons to reveal this dragon
 		REVEAL,     // Requirements to reveal this dragon have been completed
 		LOCKED_UNAVAILABLE,	// Dragon is revealed but can only be acquired via special offers
-		LOCKED,     // Previous tier hasn't been completed
+		LOCKED,     // Previous tier hasn't been completed but can be bought via PC
 		AVAILABLE,  // Previous tier has been completed but the dragon hasn't been purchased
 		OWNED       // Dragon has been purchased and can be used
 	}
@@ -618,11 +618,13 @@ public int GetOrder() {
             specialData.GetStat(DragonDataSpecial.Stat.HEALTH).level = _build.health;
             specialData.GetStat(DragonDataSpecial.Stat.SPEED).level = _build.speed;
             specialData.GetStat(DragonDataSpecial.Stat.ENERGY).level = _build.energy;
-
+			specialData.UpdateSpecialDragonsLevel();
+			
 			// Powers (depends on stat upgrades)
 			specialData.RefreshPowerLevel();
 
             // Tier wont change for legendary dragons (always tier_6)
+			
 
 			// Special Tier (depends on stat upgrades)
 			specialData.RefreshSpecialTier();

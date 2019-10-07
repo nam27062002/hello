@@ -94,23 +94,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 0
---- !u!1 &1515927965814298
-GameObject:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 5
-  m_Component:
-  - component: {fileID: 4745662943642422}
-  - component: {fileID: 33829196422176844}
-  - component: {fileID: 23764021789512654}
-  m_Layer: 0
-  m_Name: SonicFlamesFX
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
 --- !u!4 &4227665431016904
 Transform:
   m_ObjectHideFlags: 1
@@ -149,25 +132,11 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4227665431016904}
-  - {fileID: 4745662943642422}
   - {fileID: 4754217386431972}
   - {fileID: 4900668976163080}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: -216.627, y: -180, z: 180}
---- !u!4 &4745662943642422
-Transform:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1515927965814298}
-  m_LocalRotation: {x: 1, y: -0.00000004371139, z: -0.00000004371139, w: 1.9106855e-15}
-  m_LocalPosition: {x: 0.019, y: 0.16, z: -0.01}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 4384407297811998}
-  m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 15.77, y: -180.00002, z: -180.00002}
 --- !u!4 &4754217386431972
 Transform:
   m_ObjectHideFlags: 1
@@ -179,7 +148,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4384407297811998}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: -3.617, y: -60.122, z: -25.727001}
 --- !u!4 &4900668976163080
 Transform:
@@ -193,49 +162,8 @@ Transform:
   m_Children:
   - {fileID: 4357270635694858}
   m_Father: {fileID: 4384407297811998}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!23 &23764021789512654
-MeshRenderer:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1515927965814298}
-  m_Enabled: 1
-  m_CastShadows: 0
-  m_ReceiveShadows: 0
-  m_DynamicOccludee: 0
-  m_MotionVectors: 2
-  m_LightProbeUsage: 0
-  m_ReflectionProbeUsage: 0
-  m_Materials:
-  - {fileID: 2100000, guid: 6dda29c9028741c4db8b5cfafe7e513e, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 0
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
---- !u!33 &33829196422176844
-MeshFilter:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1515927965814298}
-  m_Mesh: {fileID: 4300012, guid: 552cbec8b94c99b4baad8e5577753175, type: 3}
 --- !u!96 &96406206738527762
 TrailRenderer:
   serializedVersion: 2
@@ -274,7 +202,7 @@ TrailRenderer:
   m_Time: 0.4
   m_Parameters:
     serializedVersion: 2
-    widthMultiplier: 4
+    widthMultiplier: 3.2
     widthCurve:
       serializedVersion: 2
       m_Curve:
@@ -367,7 +295,7 @@ TrailRenderer:
   m_Time: 0.4
   m_Parameters:
     serializedVersion: 2
-    widthMultiplier: 3
+    widthMultiplier: 3.5
     widthCurve:
       serializedVersion: 2
       m_Curve:
@@ -1071,7 +999,7 @@ ParticleSystem:
     rateOverTime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 0
+      scalar: 3
       minScalar: 6
       maxCurve:
         serializedVersion: 2
@@ -1112,7 +1040,7 @@ ParticleSystem:
     rateOverDistance:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 0.2
+      scalar: 0.3
       minScalar: 0
       maxCurve:
         serializedVersion: 2
@@ -1164,21 +1092,15 @@ ParticleSystem:
         m_Curve:
         - serializedVersion: 2
           time: 0
-          value: 0
-          inSlope: 6.886364
-          outSlope: 6.886364
-          tangentMode: 0
-        - serializedVersion: 2
-          time: 0.33476433
-          value: 0.98809433
-          inSlope: -0.058255523
-          outSlope: -0.058255523
+          value: 0.019702911
+          inSlope: 2.892217
+          outSlope: 2.892217
           tangentMode: 0
         - serializedVersion: 2
           time: 1
-          value: 0
-          inSlope: -2
-          outSlope: -2
+          value: 1
+          inSlope: -0.058255523
+          outSlope: -0.058255523
           tangentMode: 0
         m_PreInfinity: 2
         m_PostInfinity: 2
@@ -1189,20 +1111,14 @@ ParticleSystem:
         - serializedVersion: 2
           time: 0
           value: 0
-          inSlope: 10.134355
-          outSlope: 10.134355
-          tangentMode: 0
-        - serializedVersion: 2
-          time: 0.28032106
-          value: 1
-          inSlope: -0.027288256
-          outSlope: -0.027288256
+          inSlope: 2.2207625
+          outSlope: 2.2207625
           tangentMode: 0
         - serializedVersion: 2
           time: 1
-          value: 0
-          inSlope: -3.1052125
-          outSlope: -3.1052125
+          value: 1
+          inSlope: -0.027288256
+          outSlope: -0.027288256
           tangentMode: 0
         m_PreInfinity: 2
         m_PostInfinity: 2
@@ -3884,7 +3800,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -1996996662
+  randomSeed: -1806785568
   InitialModule:
     serializedVersion: 3
     enabled: 1

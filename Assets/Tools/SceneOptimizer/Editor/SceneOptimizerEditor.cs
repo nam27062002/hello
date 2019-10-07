@@ -3,10 +3,8 @@ using UnityEditor;
 using System.IO;
 using System.Collections.Generic;
 
-public static class SceneOptimizerEditor {
-        
-	public static string PATH = "Assets" + Path.DirectorySeparatorChar + "Game" + Path.DirectorySeparatorChar + "Scenes" + 
-		Path.DirectorySeparatorChar + "Generated";
+public static class SceneOptimizerEditor {        
+	public static string PATH = "Assets" + Path.DirectorySeparatorChar + "Game" + Path.DirectorySeparatorChar + "Scenes" + Path.DirectorySeparatorChar + "Generated";
 
     public static void BatchOptimization() {
 		//clean old folder
@@ -139,5 +137,10 @@ public static class SceneOptimizerEditor {
         string path = PATH + "/" + sceneName;
         return AssetDatabase.AssetPathToGUID(path);        
     }
+
+	public static bool IsAGeneratedScene(string scenePath)
+	{
+		return !string.IsNullOrEmpty(scenePath) && scenePath.Contains(SceneOptimizerEditor.PATH);
+	}
 }
  

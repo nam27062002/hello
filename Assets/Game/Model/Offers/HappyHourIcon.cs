@@ -128,7 +128,7 @@ public class HappyHourIcon : MonoBehaviour {
         PopupShop shopPopup = popup.GetComponent<PopupShop>();
 
         // Show the gems tab
-        shopPopup.Init(PopupShop.Mode.DEFAULT, "Happy_Hour_Icon");
+        shopPopup.Init(PopupShop.Mode.PC_FIRST, "Happy_Hour_Icon");
         shopPopup.closeAfterPurchase = true;
 
         // Open the shop popup!

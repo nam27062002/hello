@@ -27,7 +27,10 @@ public class LeaguesPlayerInfoTooltip : UITooltip {
 	//------------------------------------------------------------------------//
 	// Exposed references
 	[Separator("LeaguePlayerInfoTooltip")]
-	[SerializeField] private Text m_playerNameText = null;	// [AOC] Name text uses a dynamic font, so any special character should be properly displayed. On the other hand, instantiation time is increased for each pill containing non-cached characters.
+    [SerializeField] private GameObject m_playerInfoLayout = null;
+    [SerializeField] private GameObject m_updateNeededLayout = null;
+    [Space]
+    [SerializeField] private Text m_playerNameText = null;	// [AOC] Name text uses a dynamic font, so any special character should be properly displayed. On the other hand, instantiation time is increased for each pill containing non-cached characters.
 	[SerializeField] private TextMeshProUGUI m_rankText = null;
 	[Space]
 	[SerializeField] private Localizer m_dragonNameText = null;
@@ -49,6 +52,18 @@ public class LeaguesPlayerInfoTooltip : UITooltip {
     /// </summary>
     /// <param name="_playerInfo">The data used to initialize the tooltip.</param>
 	public void Init(HDLiveData.Leaderboard.Record _playerInfo) {
+
+        // TODO: Find if the player needs to download extra content to see the info panel
+        bool updateNeeded = false;
+
+        // If the player doesnt has the proper content downloaded, show a info panel
+        // asking him to download the latest version
+        m_playerInfoLayout.SetActive(!updateNeeded);
+        m_updateNeededLayout.SetActive(updateNeeded);
+
+        if (updateNeeded)
+            return;
+
 		// Aux vars
 		DefinitionNode dragonDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, _playerInfo.build.dragon);
 

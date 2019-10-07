@@ -29,10 +29,10 @@ public class CircleArea2D : MonoBehaviour, Area {
 	}
 
 	public Vector3 center { 
-		get { 
-			#if UNITY_EDITOR
-			m_transform = transform;
-			#endif
+		get {
+            if (m_transform == null) {
+                m_transform = transform;
+            }			
 			m_center = m_transform.position;
 			m_center.x += offset.x;
 			m_center.y += offset.y;

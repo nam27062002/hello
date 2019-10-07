@@ -29,7 +29,6 @@ public class MenuDragonSpecialInfo : MenuDragonInfo {
     [SerializeField] private SpecialDragonBar m_specialDragonLevelBar;
     [Separator]
 
-    [SerializeField] private NavigationShowHideAnimator m_upgradeGroup;
     [SerializeField] private SpecialStatUpgrader[] m_stats = new SpecialStatUpgrader[0];
     [SerializeField] private DragonPowerUpgrader m_powerUpgrade;
 
@@ -50,8 +49,12 @@ public class MenuDragonSpecialInfo : MenuDragonInfo {
         // Check params
         if (_data == null) return;
 
-        // Only show special dragons
-		if ( !(_data is DragonDataSpecial) ) return;
+		// Only show for special dragons
+		bool isSpecial = _data.type == IDragonData.Type.SPECIAL;
+		SetVisible(isSpecial);
+
+		// Nothing else to do if not special
+		if(!isSpecial) return;
 
 		// Aux vars
         DragonDataSpecial specialData = _data as DragonDataSpecial;
@@ -84,13 +87,17 @@ public class MenuDragonSpecialInfo : MenuDragonInfo {
 				bool show = !specialData.isOwned;
 				if(show) {
 					m_dragonDescText.Localize(_data.def.GetAsString("tidDesc"));
-					if(dragonChanged) {
-						m_dragonDescText.GetComponent<ShowHideAnimator>().RestartShow();
-					} else {
-						m_dragonDescText.GetComponent<ShowHideAnimator>().ForceShow();
+
+					// Different show animation depending on whether the dragon has changed
+					if(m_dragonDescAnim != null) {
+						if(dragonChanged) {
+							m_dragonDescAnim.RestartShow();
+						} else {
+							m_dragonDescAnim.ForceShow();
+						}
 					}
-				} else {
-					m_dragonDescText.GetComponent<ShowHideAnimator>().ForceHide();
+				} else if(m_dragonDescAnim != null) {
+					m_dragonDescAnim.ForceHide();
 				}
 
             }
@@ -100,15 +107,12 @@ public class MenuDragonSpecialInfo : MenuDragonInfo {
 				// XPBar
 				if(m_specialDragonLevelBar != null) {
 					if(specialData.isOwned) {
-						m_specialDragonLevelBar.GetComponent<ShowHideAnimator>().RestartShow();
+						m_specialDragonLevelBar.showHide.RestartShow();
 						m_specialDragonLevelBar.BuildFromDragonData(specialData);
 					} else {
-						m_specialDragonLevelBar.GetComponent<ShowHideAnimator>().Hide();
+						m_specialDragonLevelBar.showHide.Hide();
 					}
 				}
-
-                // Show the upgrades group
-                m_upgradeGroup.Show(true);
 
                 // Upgrade buttons
                 for (int i = 0; i < m_stats.Length; ++i)
@@ -120,7 +124,7 @@ public class MenuDragonSpecialInfo : MenuDragonInfo {
                     }
                     else
                     {
-                        m_stats[i].GetComponent<ShowHideAnimator>().Hide(false);
+                        m_stats[i].showHide.Hide(false);
                     }
 
                 }
@@ -134,7 +138,7 @@ public class MenuDragonSpecialInfo : MenuDragonInfo {
                 }
                 else
                 {
-                    m_powerUpgrade.ForceGetComponent<ShowHideAnimator>().Hide(false);
+                    m_powerUpgrade.showHide.Hide(false);
                 }
             }
 

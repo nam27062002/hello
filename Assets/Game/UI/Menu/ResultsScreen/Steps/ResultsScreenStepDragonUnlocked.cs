@@ -154,7 +154,7 @@ public class ResultsScreenStepDragonUnlocked : ResultsScreenSequenceStep {
 	/// </summary>
 	public void OnUnlockWithSC() {
 		// Let MenuDragonUnlockClassicDragon handle it
-		MenuDragonUnlockClassicDragon.UnlockWithSC(m_dragonData, OnUnlockSuccess);
+		MenuDragonUnlockClassicDragon.UnlockWithSC(m_dragonData, OnUnlockSuccess, GetComponentInParent<Canvas>().transform as RectTransform);
 	}
 
 	/// <summary>

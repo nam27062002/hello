@@ -155,17 +155,11 @@ public class PopupSettingsSaveTab : MonoBehaviour
 	}
 
 	public void GooglePlayAuthCancelled(){
-		if ( m_loadingPopupController != null ){
-			m_loadingPopupController.Close(true);
-			m_loadingPopupController = null;
-		}
+		RefreshGooglePlayView();
 	}
 
 	public void GooglePlayAuthFailed(){
-		if ( m_loadingPopupController != null ){
-			m_loadingPopupController.Close(true);
-			m_loadingPopupController = null;
-		}
+		RefreshGooglePlayView();
 
 		// Show generic message there was an error!
 		UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize(TID_LOGIN_ERROR), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);

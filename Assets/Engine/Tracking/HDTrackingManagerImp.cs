@@ -2447,13 +2447,13 @@ public class HDTrackingManagerImp : HDTrackingManager {
 
         // Create event
         HDTrackingEvent e = new HDTrackingEvent("custom.game.otaend");
-        {
+        {			
             Track_AddParamString(e, TRACK_PARAM_TYPE_BUILD_VERSION, Session_BuildVersion);
             Track_AddParamString(e, TRACK_PARAM_ACTION, action);
             Track_AddParamString(e, TRACK_PARAM_ASSET_BUNDLE, downloadableId);
-            Track_AddParamFloat(e, TRACK_PARAM_MB_AVAILABLE_START, GetSizeInMb(existingSizeAtStart));
-            Track_AddParamFloat(e, TRACK_PARAM_MB_AVAILABLE_END, GetSizeInMb(existingSizeAtEnd));
-            Track_AddParamFloat(e, TRACK_PARAM_SIZE, GetSizeInMb(totalSize));
+			Track_AddParamFloat(e, TRACK_PARAM_MB_AVAILABLE_START, GetSizeInMb(existingSizeAtStart), 2);
+            Track_AddParamFloat(e, TRACK_PARAM_MB_AVAILABLE_END, GetSizeInMb(existingSizeAtEnd), 2);
+            Track_AddParamFloat(e, TRACK_PARAM_SIZE, GetSizeInMb(totalSize), 2);
             Track_AddParamInt(e, TRACK_PARAM_TIME_SPENT, timeSpent);
             Track_AddParamString(e, TRACK_PARAM_NETWORK_TYPE_START, reachabilityAtStart);
             Track_AddParamString(e, TRACK_PARAM_NETWORK_TYPE_END, reachabilityAtEnd);
@@ -2985,12 +2985,18 @@ public class HDTrackingManagerImp : HDTrackingManager {
 		_e.data.Add(paramName, value);
 	}
 
-    private void Track_AddParamFloat(HDTrackingEvent _e, string paramName, float value) {
+	private void Track_AddParamFloat(HDTrackingEvent _e, string paramName, float value, int numDecimals=int.MaxValue) {
         // MAX value accepted by ETL
         const float MAX = 999999999.99f;
         if (value > MAX) {
             value = MAX;
         }
+
+		if (numDecimals < int.MaxValue) 
+		{
+			value = (float)(Math.Round((double)value, 2));
+		}
+						
         _e.data.Add(paramName, value);
     }
 
