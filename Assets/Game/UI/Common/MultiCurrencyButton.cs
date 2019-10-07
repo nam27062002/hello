@@ -41,11 +41,11 @@ public class MultiCurrencyButton : MonoBehaviour {
 	/// </summary>
 	/// <param name="_amount">The amount to be displayed.</param>
 	/// <param name="_currency">The curency to be displayed.</param>
-	public void SetAmount(string _amountText, UserProfile.Currency _currency) {
+	public void SetAmount(string _amountText, UserProfile.Currency _currency, string _previousAmountText = null) {
 		// Refresh text for the corresponding button
 		int currencyIdx = (int)_currency;
 		if(m_buttons[currencyIdx] != null) {
-			m_buttons[currencyIdx].SetAmount(_amountText, _currency);
+			m_buttons[currencyIdx].SetAmount(_amountText, _currency, _previousAmountText);
 		}
 
 		// Show/Hide buttons

@@ -47,7 +47,10 @@ public class RewardInfoUI : MonoBehaviour {
 
 	[Separator("Pet Reward")]
 	[SerializeField] private RarityTitleGroup m_petRarityTitle = null;
-	[SerializeField] private PowerIcon m_petPower = null;
+    [SerializeField] private GameObject m_petPowerLayout = null;
+    [SerializeField] private Localizer m_petPowerName = null;
+    [SerializeField] private Localizer m_petPowerDescription = null;
+    [SerializeField] private PowerIcon m_petPowerIcon = null;
 
 	[Separator("Golden Egg Fragments Reward")]
 	[SerializeField] private Localizer m_goldenFragmentTitle = null;
@@ -183,16 +186,35 @@ public class RewardInfoUI : MonoBehaviour {
 					if(loc != null) loc.Localize(_rewardData.def.Get("tidName"));	// Froggy
 				}
 
-				// Power icon - don't show if pet will be replaced
-				m_petPower.gameObject.SetActive(!_rewardData.WillBeReplaced());
-				if(!_rewardData.WillBeReplaced()) {
-					// Initialize with powers data
-					DefinitionNode powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, _rewardData.def.GetAsString("powerup"));
-					m_petPower.InitFromDefinition(powerDef, false);
-				}
+                    // Power data
+                    DefinitionNode powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, _rewardData.def.GetAsString("powerup"));
 
-				// Show share button!
-				showShareButton = !_rewardData.WillBeReplaced();
+                    // Power icon - don't show if pet will be replaced
+                    m_petPowerLayout.gameObject.SetActive(!_rewardData.WillBeReplaced());
+
+                    if (!_rewardData.WillBeReplaced())
+                    {
+                        // Power icon
+                        if (m_petPowerIcon != null)
+                        {
+                            m_petPowerIcon.InitFromDefinition(powerDef, false);
+                        }
+
+                        // Power name
+                        if (m_petPowerName != null)
+                        {
+                            m_petPowerName.Localize(powerDef.GetAsString("tidName"));
+                        }
+
+                        // Power description
+                        if (m_petPowerDescription != null)
+                        {
+                            m_petPowerDescription.Set (DragonPowerUp.GetDescription(powerDef.sku, false, true));
+                        }
+                    }
+
+                    // Show share button!
+                    showShareButton = !_rewardData.WillBeReplaced();
 			} break;
 
 			// Skin

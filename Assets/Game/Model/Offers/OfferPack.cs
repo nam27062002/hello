@@ -51,17 +51,18 @@ public class OfferPack {
         COUNT
 	}
 
-	public const int MAX_ITEMS = 3; // For now
+    public const int MAX_ITEMS = 3; // For now
 	public const Type DEFAULT_TYPE = Type.PROGRESSION;
+    public const UserProfile.Currency DEFAULT_CURRENCY = UserProfile.Currency.REAL;
 
-	#endregion
+    #endregion
 
-	//------------------------------------------------------------------------//
-	// MEMBERS AND PROPERTIES												  //
-	//------------------------------------------------------------------------//
-	#region MEMBERS AND PROPERTIES
-	// Pack setup
-	protected DefinitionNode m_def = null;
+    //------------------------------------------------------------------------//
+    // MEMBERS AND PROPERTIES												  //
+    //------------------------------------------------------------------------//
+    #region MEMBERS AND PROPERTIES
+    // Pack setup
+    protected DefinitionNode m_def = null;
 	public DefinitionNode def {
 		get { return m_def; }
 	}
@@ -71,7 +72,13 @@ public class OfferPack {
 		get { return m_type; }
 	}
 
-	protected List<OfferPackItem> m_items = new List<OfferPackItem>(MAX_ITEMS);
+    protected UserProfile.Currency m_currency = DEFAULT_CURRENCY;
+    public UserProfile.Currency currency
+    {
+        get { return m_currency; }
+    }
+
+    protected List<OfferPackItem> m_items = new List<OfferPackItem>(MAX_ITEMS);
 	public List<OfferPackItem> items {
 		get { return m_items; }
 	}
@@ -356,8 +363,11 @@ public class OfferPack {
 		// Offer Type
 		m_type = StringToType(m_def.GetAsString("type"));
 
-		// Items - limited to 3 for now
-		for(int i = 1; i <= MAX_ITEMS; ++i) {	// [1..N]
+        // Currency type
+        m_currency = StringToCurrency(m_def.GetAsString("currency"));
+
+        // Items - limited to 3 for now
+        for (int i = 1; i <= MAX_ITEMS; ++i) {	// [1..N]
 			// Create and initialize new item
 			OfferPackItem item = new OfferPackItem();
 			item.InitFromDefinition(_def, i);
@@ -459,7 +469,8 @@ public class OfferPack {
 		// General
 		SetValueIfMissing(ref _def, "uniqueId", m_uniqueId.ToString(CultureInfo.InvariantCulture));
 		SetValueIfMissing(ref _def, "type", TypeToString(DEFAULT_TYPE));
-		SetValueIfMissing(ref _def, "order", m_order.ToString(CultureInfo.InvariantCulture));
+        SetValueIfMissing(ref _def, "currency", CurrencyToString(DEFAULT_CURRENCY));
+        SetValueIfMissing(ref _def, "order", m_order.ToString(CultureInfo.InvariantCulture));
 		SetValueIfMissing(ref _def, "discount", (0).ToString(CultureInfo.InvariantCulture));
 
 		// Featuring
@@ -1050,17 +1061,50 @@ public class OfferPack {
 		}
 		return DEFAULT_TYPE;
 	}
-	#endregion
 
-	//------------------------------------------------------------------------//
-	// PERSISTENCE															  //
-	//------------------------------------------------------------------------//
-	#region PERSISTENCE
-	/// <summary>
-	/// In the particular case of the offers, we only need to persist them in specific cases.
-	/// </summary>
-	/// <returns>Whether the offer should be persisted or not.</returns>
-	public virtual bool ShouldBePersisted() {
+    /// <summary>
+    /// Convert from enum Curency to string representation.
+    /// </summary>
+    /// <returns>The string representation of the given currency.</returns>
+    /// <param name="_currency">Type to be converted.</param>
+    public static string CurrencyToString(UserProfile.Currency _currency)
+    {
+        switch (_currency)
+        {
+            case UserProfile.Currency.REAL: return "real";
+            case UserProfile.Currency.HARD: return "pc";
+            case UserProfile.Currency.SOFT: return "sc";
+        }
+        return CurrencyToString(DEFAULT_CURRENCY);
+    }
+
+
+    /// <summary>
+    /// Parse a string into a Currency.
+    /// </summary>
+    /// <returns>The currency corresponding to the given string.</returns>
+    /// <param name="_typeStr">String representation of a currency to be parsed.</param>
+    public static UserProfile.Currency StringToCurrency(string _currencyStr)
+    {
+        switch (_currencyStr)
+        {
+            case "real": return UserProfile.Currency.REAL;
+            case "pc": return UserProfile.Currency.HARD;
+            case "sc": return UserProfile.Currency.SOFT;
+        }
+        return DEFAULT_CURRENCY;
+    }
+    #endregion
+
+    //------------------------------------------------------------------------//
+    // PERSISTENCE															  //
+    //------------------------------------------------------------------------//
+    #region PERSISTENCE
+    /// <summary>
+    /// In the particular case of the offers, we only need to persist them in specific cases.
+    /// </summary>
+    /// <returns>Whether the offer should be persisted or not.</returns>
+    public virtual bool ShouldBePersisted() {
 		// Never if definition is not valid
 		if(m_def == null) return false;
 
