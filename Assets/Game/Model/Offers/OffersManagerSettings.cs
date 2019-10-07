@@ -34,6 +34,9 @@ public class OffersManagerSettings : ScriptableObject {
 	public int rotationalActiveOffers = 1;
 	public int rotationalHistorySize = 1;
 
+	[Header("Free Daily Offer")]
+	public int freeHistorySize = 2;
+
 	[Header("Offer Pack Settings")]
 	[Tooltip("Value in content representing the default value")]
 	public string emptyValue = "-";

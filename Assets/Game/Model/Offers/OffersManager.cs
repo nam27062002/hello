@@ -63,11 +63,11 @@ public class OffersManager : Singleton<OffersManager> {
     private float m_timer = 0;
 
 	// Rotational offers
-	private List<OfferPackRotational> m_allEnabledRotationalOffers = new List<OfferPackRotational>();  // All enabled and non-expired rotational offer packs
-	private List<OfferPackRotational> m_activeRotationalOffers = new List<OfferPackRotational>();   // Currently active rotational offers
+	private List<OfferPack> m_allEnabledRotationalOffers = new List<OfferPack>();  // All enabled and non-expired rotational offer packs
+	private List<OfferPack> m_activeRotationalOffers = new List<OfferPack>();   // Currently active rotational offers
 
 	// Free offers
-	private List<OfferPackFree> m_allEnabledFreeOffers = new List<OfferPackFree>();  // All enabled and non-expired free offer packs
+	private List<OfferPack> m_allEnabledFreeOffers = new List<OfferPack>();  // All enabled and non-expired free offer packs
 	private OfferPackFree m_activeFreeOffer = null;   // Currently active free offer
 
 	// Settings
@@ -161,11 +161,11 @@ public class OffersManager : Singleton<OffersManager> {
 					// Additional treatment based on offer type
 					switch(newPack.type) {
 						case OfferPack.Type.ROTATIONAL: {
-							instance.m_allEnabledRotationalOffers.Add(newPack as OfferPackRotational);
+							instance.m_allEnabledRotationalOffers.Add(newPack);
 						} break;
 
 						case OfferPack.Type.FREE: {
-							instance.m_allEnabledFreeOffers.Add(newPack as OfferPackFree);
+							instance.m_allEnabledFreeOffers.Add(newPack);
 						} break;
 					}
                 } else {
@@ -282,100 +282,59 @@ public class OffersManager : Singleton<OffersManager> {
 		int loopCount = 0;
 		int maxLoops = 50;  // Just in case, prevent infinite loop
 		bool dirty = false;
-
-        // Crashlytics was reporting a Null reference, protect it just in case
-		int rotationalActiveOffers = settings != null ? settings.rotationalActiveOffers : 1;
-
-		// Create history ONLY if we need new rotational packs - avoid unnecessary memory allocation
 		Queue<string> history = null;
-		if(m_activeRotationalOffers.Count < rotationalActiveOffers) {
-			history = new Queue<string>();
-			List<SimpleJSON.JSONClass> rotationalOffersPersistence = UsersManager.currentUser.newOfferPersistanceData[OfferPack.Type.ROTATIONAL];
-			int max = rotationalOffersPersistence.Count;
-			for(int i = 0; i < max; i++) {
-				history.Enqueue(rotationalOffersPersistence[i]["sku"]);
-			}
-		}
-		
+
+		// Crashlytics was reporting a Null reference, protect it just in case
+		int minRotationalActiveOffers = settings != null ? settings.rotationalActiveOffers : 1;
+
+		// Store reference to persistence
+		List<SimpleJSON.JSONClass> rotationalOffersPersistence = UsersManager.currentUser.newOfferPersistanceData[OfferPack.Type.ROTATIONAL];
+
 		// Do we need to activate a new rotational pack?
-		while( m_activeRotationalOffers.Count < rotationalActiveOffers && loopCount < maxLoops) {
+		while( m_activeRotationalOffers.Count < minRotationalActiveOffers && loopCount < maxLoops) {
+			// Some logging
 			Log("Rotational offers required: {0} active", Colors.orange, m_activeRotationalOffers.Count);
-			UpdateRotationalHistory(null);	// Make sure rotational history has the proper size
-			// [AOC] TODO!!!!!!! Local history variable is not updated!
 #if LOG
 			TrackingPersistenceSystem trackingPersistence = HDTrackingManager.Instance.TrackingPersistenceSystem;
 			int totalPurchases = trackingPersistence == null ? 0 : trackingPersistence.TotalPurchases;
 			Log("Total Purchases {0}", Colors.silver, totalPurchases);
 #endif
 
+			// Make sure rotational history has the proper size
+			UpdateRotationalHistory(null);
+
+			// Create a local copy of the history to be able to manipulate it
+			// Do it ONLY if we need new rotational packs - avoid unnecessary memory allocation
+			if(history == null) {
+				history = new Queue<string>();
+			} else {
+				history.Clear();
+			}
+			int max = rotationalOffersPersistence.Count;
+			for(int i = 0; i < max; i++) {
+				history.Enqueue(rotationalOffersPersistence[i]["sku"]);
+			}
+
 			// Select a new pack!
-			OfferPackRotational rotationalPack = null;
 			loopCount++;
+			OfferPackRotational newPack = PickRandomPack(
+				m_allEnabledRotationalOffers,
+				history,
+				history.Count - m_activeRotationalOffers.Count	// Don't try with active packs!
+			) as OfferPackRotational;
 
-			// Create pool from non-expired rotational offers
-			List<OfferPackRotational> pool = new List<OfferPackRotational>();
-			for(int i = 0; i < m_allEnabledRotationalOffers.Count; ++i) {
-				// Aux
-				rotationalPack = m_allEnabledRotationalOffers[i];
-				Log("    Checking {0}", rotationalPack.def.sku);
-
-				// Skip active and expired packs
-				Log("        Checking state... {0}", rotationalPack.state);
-				if(rotationalPack.state != OfferPack.State.PENDING_ACTIVATION) continue;
-
-				// Skip if pack has recently been used
-				Log("        Checking history...");
-				if(history.Contains(rotationalPack.def.sku)) continue;
-
-				// Skip if segmentation conditions are not met for this pack
-				Log("        Checking segmentation...");
-				if(!rotationalPack.CheckSegmentation()) continue;
-
-				// Skip if activation conditions are not met for this pack
-				Log("        Checking activation...");
-				if(!rotationalPack.CheckActivation()) continue;
-
-				// Also skip if for some reason the pack has expired!
-				// [AOC] TODO!! Should it be removed?
-				Log("        Checking expiration...");
-				if(rotationalPack.CheckExpiration(false)) continue;
-
-				// Everything ok, add to the candidates pool!
-				Log("    Candidate is Good! {0}", Colors.lime, rotationalPack.def.sku);
-				pool.Add(rotationalPack);
-			}
-
-			// If no selectable pack was found, stop looping
-			if(pool.Count == 0) {
-				Log("Random pool is empty, try loosen up the history ({0})", history.Count);
-
-				// Be more flexible with repeating recently used packs
-				if(history.Count > m_activeRotationalOffers.Count) {    // Don't dequeue active packs
-					history.Dequeue();
-					continue;   // Try again!
-				} else {
-					Log("Can't remove any pack from the history, no chances of selecting a new pack :(\nBreaking loop");
-					break;  // No chances of getting any pack :(
-				}
-			}
-
-			// Pick a random pack from the pool!
-			rotationalPack = pool.GetRandomValue();
-#if LOG
-			string poolStr = "";
-			foreach(OfferPack p in pool) poolStr += "    " + p.def.sku + "\n";
-			Log("Picking random pack from a pool of {0}...\n{1}", pool.Count, poolStr);
-#endif
+			// If no pack was found, break the loop
+			if(newPack == null) break;
 
 			// Activate new pack and add it to collections
-			rotationalPack.Activate();
-			Log("ACTIVATING pack {0}", Color.green, rotationalPack.def.sku);
-			UpdateCollections(rotationalPack);
-			UpdateRotationalHistory(rotationalPack);
+			newPack.Activate();
+			Log("ACTIVATING pack {0}", Color.green, newPack.def.sku);
+			UpdateCollections(newPack);
+			UpdateRotationalHistory(newPack);
 
 			// Update persistence with this pack's new state
 			// [AOC] Packs Save() is smart, only stores packs when required
-			UsersManager.currentUser.SaveOfferPack(rotationalPack);
+			UsersManager.currentUser.SaveOfferPack(newPack);
 
 			// Manager is dirty
 			dirty = true;
@@ -390,7 +349,48 @@ public class OffersManager : Singleton<OffersManager> {
 	/// </summary>
 	/// <returns>Wheteher a new free pack has been activated or not.</returns>
 	private bool RefreshFree() {
-		return false;
+		// Nothing to do if a free offer is already active
+		if(m_activeFreeOffer != null) return false;
+
+		// Some logging
+		Log("Free offer required", Colors.orange);
+
+		// Store reference to persistence
+		List<SimpleJSON.JSONClass> freeOffersPersistence = UsersManager.currentUser.newOfferPersistanceData[OfferPack.Type.FREE];
+
+		// Make sure free history has the proper size
+		UpdateFreeHistory(null);
+
+		// Create a local copy of the history to be able to manipulate it
+		// Do it ONLY if we need new rotational packs - avoid unnecessary memory allocation
+		Queue<string> history = new Queue<string>();
+		int max = freeOffersPersistence.Count;
+		for(int i = 0; i < max; i++) {
+			history.Enqueue(freeOffersPersistence[i]["sku"]);
+		}
+
+		// Select a new pack!
+		OfferPackFree newPack = PickRandomPack(
+			m_allEnabledFreeOffers,
+			history,
+			history.Count
+		) as OfferPackFree;
+
+		// If no pack was found, nothing else to do
+		if(newPack == null) return false;
+
+		// Activate new pack and add it to collections
+		newPack.Activate();
+		Log("ACTIVATING pack {0}", Color.green, newPack.def.sku);
+		UpdateCollections(newPack);
+		UpdateFreeHistory(newPack);
+
+		// Update persistence with this pack's new state
+		// [AOC] Packs Save() is smart, only stores packs when required
+		UsersManager.currentUser.SaveOfferPack(newPack);
+
+		// Done!
+		return true;
 	}
 
 	/// <summary>
@@ -496,7 +496,113 @@ public class OffersManager : Singleton<OffersManager> {
 
 		// Debug
 		Log("Rotational history updated with pack {0}", (_offer == null ? "NULL" : _offer.def.sku));
-		LogRotationalHistory(ref history);
+		LogHistory(OfferPack.Type.ROTATIONAL, ref history);
+	}
+
+	/// <summary>
+	/// Add a pack to the top of the historic of free packs to prevent repetition. 
+	/// </summary>
+	/// <param name="_offer">Pack to be added.</param>
+	private void UpdateFreeHistory(OfferPackFree _offer) {
+		// Aux vars
+		List<SimpleJSON.JSONClass> history = UsersManager.currentUser.newOfferPersistanceData[OfferPack.Type.FREE];
+
+		// If a pack needs to be added, do it now
+		if(_offer != null) {
+			history.Add(_offer.Save());
+		}
+
+		// Remove as many items as needed until the history size is right
+		int activeFreeOfferCount = m_activeFreeOffer != null ? 1 : 0;	// History contains active offers
+		int maxSize = settings.rotationalHistorySize + activeFreeOfferCount;
+		Log("Checking history size: {0} vs {1} ({2} + {3})", history.Count, maxSize, settings.freeHistorySize, activeFreeOfferCount);
+		while(history.Count > maxSize) {
+			Log("    History too big: Dequeing");
+			history.RemoveRange(maxSize, history.Count - maxSize);
+		}
+
+		// Debug
+		Log("Free history updated with pack {0}", (_offer == null ? "NULL" : _offer.def.sku));
+		LogHistory(OfferPack.Type.FREE, ref history);
+	}
+
+	/// <summary>
+	/// Pick a random, valid pack from the given pool.
+	/// </summary>
+	/// <param name="_initialPool">Pool of candidate packs.</param>
+	/// <param name="_history">History of recently used packs, including any active pack (to avoid repetition).</param>
+	/// <param name="_maxTries">Max number of attempts if no valid candidate is found. With each new attempt, the last entry in the history will be removed.</param>
+	/// <returns>The selected pack. <c>null</c> if no pack could be selected.</returns>
+	private OfferPack PickRandomPack(List<OfferPack> _initialPool, Queue<string> _history, int _maxTries) {
+		// Aux vars
+		OfferPack pack = null;
+		int poolCount = _initialPool.Count;
+
+		// Create pool from non-expired offers
+		List<OfferPack> pool = new List<OfferPack>();
+		for(int i = 0; i < poolCount; ++i) {
+			// Aux
+			pack = _initialPool[i];
+			Log("    Checking {0}", pack.def.sku);
+
+			// Check if it can be activated
+			if(!pack.CanBeActivated()) continue;
+
+			// Skip if pack has recently been used
+			Log("        Checking history...");
+			if(_history.Contains(pack.def.sku)) continue;
+
+			// Everything ok, add to the candidates pool!
+			Log("    Candidate is Good! {0}", Colors.lime, pack.def.sku);
+			pool.Add(pack);
+		}
+
+		// If at least one selectable pack was found, pick a random one from the pool
+		if(pool.Count > 0) {
+			// Pick a random pack from the pool!
+			pack = pool.GetRandomValue();
+#if LOG
+			string poolStr = "";
+			foreach(OfferPack p in pool) poolStr += "    " + p.def.sku + "\n";
+			Log("Picking random pack from a pool of {0}...\n{1}", pool.Count, poolStr);
+#endif
+		} else {
+			// If no selectable pack was found, try reusing packs in the history
+			Log("Random pool is empty, try loosen up the history ({0})", _history.Count);
+
+			// Be more flexible with repeating recently used packs
+			while(pack == null && _history.Count > 0 && _maxTries > 0) {
+				// One less try
+				--_maxTries;
+
+				// Pick last pack on the history
+				string packSku = _history.Dequeue();
+
+				// Is the pack in the pool?
+				for(int i = 0; i < poolCount; ++i) {
+					if(_initialPool[i].def.sku == packSku) {
+						pack = _initialPool[i];
+						break;
+					}
+				}
+
+				// Can the pack be activated?
+				if(pack != null) {
+					Log("    Checking {0}", packSku);
+					if(!pack.CanBeActivated()) pack = null;
+				} else {
+					Log("    Couldn't find pack {0} (from history). Trying next pack.", packSku);
+				}
+			}
+
+			// Report failure
+			if(pack == null) {
+				Log("Can't remove any more pack from the history, no chances of selecting a new pack :(\nBreaking loop", Color.red);
+			}
+		}
+
+		// Return selected pack
+		return pack;
 	}
 
 	/// <summary>
@@ -554,12 +660,28 @@ public class OffersManager : Singleton<OffersManager> {
 		}
 	}
 
-    /// <summary>
-    /// Get a offer pack defined in the definitions. It may not be enabled.
-    /// </summary>
-    /// <returns>The offer pack.</returns>
-    /// <param name="_iapSku">Offer iap sku.</param>
-    public static OfferPack GetOfferPack(string _iapSku) {
+	/// <summary>
+	/// Get a offer pack defined in the definitions. It may not be enabled.
+	/// </summary>
+	/// <returns>The offer pack.</returns>
+	/// <param name="_packSku">Offer pack sku.</param>
+	public static OfferPack GetOfferPack(string _packSku) {
+		int count = m_instance.m_allOffers.Count;
+		for(int i = 0; i < count; ++i) {
+			OfferPack pack = m_instance.m_allOffers[i];
+			if(pack.def.sku == _packSku) {
+				return pack;
+			}
+		}
+		return null;
+	}
+
+	/// <summary>
+	/// Get a offer pack defined in the definitions by its IAP. It may not be enabled.
+	/// </summary>
+	/// <returns>The offer pack.</returns>
+	/// <param name="_iapSku">Offer iap sku.</param>
+	public static OfferPack GetOfferPackByIAP(string _iapSku) {
         int count = m_instance.m_allOffers.Count;
         for (int i = 0; i < count; i++) {
             OfferPack offerPack = m_instance.m_allOffers[i];
@@ -697,11 +819,11 @@ public class OffersManager : Singleton<OffersManager> {
 #else
     [Conditional("FALSE")]
 #endif
-    private void LogRotationalHistory(ref List<SimpleJSON.JSONClass> _history) {
+    private void LogHistory(OfferPack.Type _type, ref List<SimpleJSON.JSONClass> _history) {
 #if LOG
 		if(!FeatureSettingsManager.IsDebugEnabled) return;
 
-		string str = "Rotational History (" + _history.Count + "):";
+		string str = _type.ToString() + " History (" + _history.Count + "):";
 		foreach(SimpleJSON.JSONClass s in _history) {
 			str += "    " + s["sku"] + "\n";
 		}

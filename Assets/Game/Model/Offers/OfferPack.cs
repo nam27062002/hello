@@ -777,6 +777,33 @@ public class OfferPack {
 	}
 
 	/// <summary>
+	/// Check if all conditions required to activate this pack (state, segmentation,
+	/// activation, expiration, etc) are met.
+	/// </summary>
+	/// <returns>Whether the pack can be activated or not.</returns>
+	public virtual bool CanBeActivated() {
+		// Skip active and expired packs
+		OffersManager.Log("        Checking state... {0}", this.state);
+		if(this.state != State.PENDING_ACTIVATION) return false;
+
+		// Skip if segmentation conditions are not met for this pack
+		OffersManager.Log("        Checking segmentation...");
+		if(!this.CheckSegmentation()) return false;
+
+		// Skip if activation conditions are not met for this pack
+		OffersManager.Log("        Checking activation...");
+		if(!this.CheckActivation()) return false;
+
+		// Also skip if for some reason the pack has expired!
+		// [AOC] TODO!! Should it be removed?
+		OffersManager.Log("        Checking expiration...");
+		if(this.CheckExpiration(false)) return false;
+
+		// All checks passed!
+		return true;
+	}
+
+	/// <summary>
 	/// Change the logic state of the pack.
 	/// No validation is done.
 	/// </summary>

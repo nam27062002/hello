@@ -1908,6 +1908,9 @@ public class UserProfile : UserPersistenceSystem
                             m_newOfferPersistanceData[OfferPack.Type.ROTATIONAL].Add( jSONClass );
                         }
                     }break;
+					case OfferPack.Type.FREE: {
+						// Nothing to do, didn't exist in old system
+					} break;
                 }
             }
         }
