@@ -53,23 +53,23 @@ public class LeaguesPlayerInfoTooltip : UITooltip {
     /// <param name="_playerInfo">The data used to initialize the tooltip.</param>
 	public void Init(HDLiveData.Leaderboard.Record _playerInfo) {
 
-        // TODO: Find if the player needs to download extra content to see the info panel
-        bool updateNeeded = false;
+        // Aux vars
+        DefinitionNode dragonDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, _playerInfo.build.dragon);
 
-        // If the player doesnt has the proper content downloaded, show a info panel
-        // asking him to download the latest version
+        // If the dragon doesnt exists in the content, ask the player to update the game        
+        bool updateNeeded = (dragonDef == null);
+
+        // Show a info panel asking him to download the latest version
         m_playerInfoLayout.SetActive(!updateNeeded);
         m_updateNeededLayout.SetActive(updateNeeded);
 
         if (updateNeeded)
             return;
 
-		// Aux vars
-		DefinitionNode dragonDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, _playerInfo.build.dragon);
 
-		// Init visuals
-		// Player Info
-		if(m_playerNameText != null) {
+        // Init visuals
+        // Player Info
+        if (m_playerNameText != null) {
 			m_playerNameText.text = _playerInfo.name;
 		}
 

@@ -169,6 +169,12 @@ public class HUDStatBar : IHUDWidget, IBroadcastListener {
                 Messenger.AddListener(MessengerEvents.PLAYER_MUMMY_REVIVE, OnMummyRevive);
                 RefreshIcons();
             }break;
+			case Type.Fury:
+			{
+				TextMeshProUGUI text = this.FindComponentRecursive<TextMeshProUGUI>();
+                string t = Localizer.ApplyCase(Localizer.Case.UPPER_CASE, LocalizationManager.SharedInstance.Localize(InstanceManager.player.data.tidEnergyBar));
+                text.text = t;
+			}break;
             case Type.SuperFury:
             {
                 Broadcaster.AddListener(BroadcastEventType.FURY_RUSH_TOGGLED, this);

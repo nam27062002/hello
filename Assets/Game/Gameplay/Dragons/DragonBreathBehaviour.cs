@@ -110,7 +110,11 @@ public class DragonBreathBehaviour : MonoBehaviour, IBroadcastListener {
 	private float m_checkNodeFireTime = 0.25f;
 	private float m_fireNodeTimer = 0;
 
-	protected float m_lengthPowerUpMultiplier = 0;
+	private float m_lengthPowerUpPercentage = 0;
+    protected float lengthPowerUpPercentage { get {           
+            return Mathf.Clamp(m_lengthPowerUpPercentage, -90f, 100f);
+        }
+    }
 
     protected FuryRushToggled m_furyRushToggled = new FuryRushToggled();
 
@@ -513,7 +517,7 @@ public class DragonBreathBehaviour : MonoBehaviour, IBroadcastListener {
 
 	public void AddPowerUpLengthMultiplier(float value)
     {
-		m_lengthPowerUpMultiplier += value;
+		m_lengthPowerUpPercentage += value;
     }
 
 
