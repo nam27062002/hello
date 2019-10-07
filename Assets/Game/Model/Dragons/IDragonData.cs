@@ -188,6 +188,7 @@ public abstract class IDragonData : IUISelectorItem {
     public abstract float statsBarRatio{ get; }
     public virtual string tidBoostAction { get{ return m_def.GetAsString("tidBoostAction", "TID_INGAME_HUD_BOOST"); } }
     public virtual string tidBoostReminder { get{ return m_def.GetAsString("tidBoostReminder", "TID_FEEDBACK_TUTO_HOLD_TO_BOOST"); } }
+	public virtual string tidEnergyBar { get{ return m_def.GetAsString("tidEnergyBar", "TID_INGAME_HUD_FIRERUSH"); } }
     public abstract float petScale{ get; }
     
         // supersize
@@ -618,11 +619,13 @@ public int GetOrder() {
             specialData.GetStat(DragonDataSpecial.Stat.HEALTH).level = _build.health;
             specialData.GetStat(DragonDataSpecial.Stat.SPEED).level = _build.speed;
             specialData.GetStat(DragonDataSpecial.Stat.ENERGY).level = _build.energy;
-
+			specialData.UpdateSpecialDragonsLevel();
+			
 			// Powers (depends on stat upgrades)
 			specialData.RefreshPowerLevel();
 
             // Tier wont change for legendary dragons (always tier_6)
+			
 
 			// Special Tier (depends on stat upgrades)
 			specialData.RefreshSpecialTier();
