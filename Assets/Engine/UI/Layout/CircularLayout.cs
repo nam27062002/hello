@@ -7,10 +7,7 @@
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
 using UnityEngine;
-
-#if UNITY_EDITOR
-using UnityEditor;
-#endif
+using UnityEngine.Serialization;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -34,30 +31,49 @@ public class CircularLayout : MonoBehaviour {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed
+	[Tooltip("Layout's circumference radius")]
+	[SerializeField] private float m_radius = 10f;
+	public float radius {
+		get { return m_radius; }
+		set { m_radius = value; Refresh(); }
+	}
+
+	[Tooltip("Where to start the layout's arc")]
 	[SerializeField] private Origin m_origin = Origin.TOP;
 	public Origin origin {
 		get { return m_origin; }
 		set { m_origin = value; Refresh(); }
 	}
 
-	[SerializeField] private bool m_rotateTargets = false;
-	public bool rotateTargets {
-		get { return m_rotateTargets; }
-		set { m_rotateTargets = value; Refresh(); }
-	}
-
+	[Tooltip("Direction of items distribution, following hierarchy order")]
 	[SerializeField] private bool m_clockwise = true;
 	public bool clockwise {
 		get { return m_clockwise; }
 		set { m_clockwise = value; Refresh(); }
 	}
 
+	[SerializeField] private float m_minAngle = 0f;
+	public float minAngle {
+		get { return m_minAngle; }
+		set { m_minAngle = value; Refresh(); }
+	}
+
+	[SerializeField] private float m_maxAngle = 360f;
+	public float maxAngle {
+		get { return m_maxAngle; }
+		set { m_maxAngle = value; Refresh(); }
+	}
+
+	[Tooltip("Put first item at min angle or at the slot after?\n" +
+		"Useful, for example, when doing a 0-360 layout to avoid first and last item overlapping.")]
 	[SerializeField] private bool m_skipMinAngle = false;
 	public bool skipMinAngle {
 		get { return m_skipMinAngle; }
 		set { m_skipMinAngle = value; Refresh(); }
 	}
 
+	[Tooltip("Put last item at max angle or at the slot before?\n" +
+		"Useful, for example, when doing a 0-360 layout to avoid first and last item overlapping.")]
 	[SerializeField] private bool m_skipMaxAngle = false;
 	public bool skipMaxAngle {
 		get { return m_skipMaxAngle; }
@@ -65,16 +81,19 @@ public class CircularLayout : MonoBehaviour {
 	}
 
 	[Space]
-	[SerializeField] private float m_radius = 10f;
-	public float radius {
-		get { return m_radius; }
-		set { m_radius = value; Refresh(); }
+	[FormerlySerializedAs("m_rotateTargets")]
+	[Tooltip("Rotate items so they follow the curvature?")]
+	[SerializeField] private bool m_rotateItemsTangentially = false;
+	public bool rotateItemsTangentially {
+		get { return m_rotateItemsTangentially; }
+		set { m_rotateItemsTangentially = value; Refresh(); }
 	}
 
-	[SerializeField] private Range m_angleRange = new Range(0f, 360f);
-	public Range angleRange {
-		get { return m_angleRange; }
-		set { m_angleRange = value; Refresh(); }
+	[Tooltip("Add extra rotation to each item individually")]
+	[SerializeField] private float m_itemRotationOffset = 0f;
+	public float itemRotationOffset {
+		get { return m_itemRotationOffset; }
+		set { m_itemRotationOffset = value; Refresh(); }
 	}
 
 	// Internal
@@ -166,10 +185,10 @@ public class CircularLayout : MonoBehaviour {
 			if(m_skipMinAngle) divisions += 1f;
 			if(m_skipMaxAngle) divisions += 1f;
 			if(divisions <= 0f) divisions = 1f;
-			float angleBetweenItems = m_angleRange.distance / divisions;
+			float angleBetweenItems = Mathf.Abs(m_maxAngle - m_minAngle) / divisions;
 
 			// Compute initial angle
-			float angle = m_angleRange.min;
+			float angle = m_minAngle;
 			if(m_skipMinAngle) angle += angleBetweenItems;
 
 			// Apply to each item!
@@ -188,8 +207,10 @@ public class CircularLayout : MonoBehaviour {
 				);
 
 				// Apply rotation to target item?
-				if(m_rotateTargets) {
-					m_items[i].localRotation = Quaternion.Euler(0f, 0f, correctedAngle);
+				if(m_rotateItemsTangentially) {
+					m_items[i].localRotation = Quaternion.Euler(0f, 0f, correctedAngle + m_itemRotationOffset);
+				} else {
+					m_items[i].localRotation = Quaternion.Euler(0f, 0f, m_itemRotationOffset);
 				}
 
 				// Apply offset
@@ -206,7 +227,7 @@ public class CircularLayout : MonoBehaviour {
 	/// </summary>
 	/// <returns>The corrected angle.</returns>
 	/// <param name="_angle">Angle to be corrected.</param>
-	private float CorrectAngle(float _angle) {
+	public float CorrectAngle(float _angle) {
 		// Compute actual angle
 		float targetAngle = _angle;
 
@@ -225,75 +246,4 @@ public class CircularLayout : MonoBehaviour {
 
 		return targetAngle;
 	}
-
-	//------------------------------------------------------------------------//
-	// EDITOR																  //
-	//------------------------------------------------------------------------//
-#if UNITY_EDITOR
-	/// <summary>
-	/// Editor helper.
-	/// </summary>
-	private void OnDrawGizmosSelected() {
-		// Nothing if component is not enabled
-		if(!this.isActiveAndEnabled) return;
-
-		// Set Handles matrix to this object's transform
-		RectTransform rt = this.transform as RectTransform;
-		Handles.matrix = rt.localToWorldMatrix;
-
-		// Draw angle range
-		Handles.color = Colors.WithAlpha(Colors.skyBlue, 0.25f);
-		Handles.DrawSolidArc(
-			Vector3.zero,
-			Vector3.back,
-			RotateXYDegrees(Vector3.right, CorrectAngle(m_angleRange.min)),
-			m_clockwise ? m_angleRange.distance : -m_angleRange.distance,
-			m_radius
-		);
-
-		// Draw arrow body
-		Handles.color = Color.red;
-		float arrowAngleDist = Mathf.Min(m_angleRange.distance * 0.30f, 60f);    // Xdeg or 30% of the arc if distance is less than Xdeg
-		arrowAngleDist = m_clockwise ? arrowAngleDist : -arrowAngleDist;
-		Handles.DrawWireArc(
-			Vector3.zero,
-			Vector3.back,
-			RotateXYDegrees(Vector3.right, CorrectAngle(m_angleRange.min)),
-			arrowAngleDist,
-			m_radius
-		);
-
-		// Draw arrow tip
-		float arrowAngle = CorrectAngle(m_angleRange.min + (m_clockwise ? arrowAngleDist : -arrowAngleDist));
-		Vector3 arrowTipPoint = Vector3.right * m_radius;
-		arrowTipPoint = RotateXYDegrees(arrowTipPoint, arrowAngle);
-		Handles.matrix = Handles.matrix * Matrix4x4.Translate(arrowTipPoint);
-		Handles.matrix = Handles.matrix * Matrix4x4.Rotate(Quaternion.Euler(0f, 0f, arrowAngle));
-		float arrowWingsSize = m_radius * 0.1f; // Proportional to the radius
-		Handles.DrawAAPolyLine(
-			new Vector3(1f, m_clockwise ? 1f : -1f, 0f).normalized * arrowWingsSize,
-			Vector3.zero,
-			new Vector3(-1f, m_clockwise ? 1f : -1f, 0f).normalized * arrowWingsSize
-		);
-
-		// Restore Handles matrix and color :)
-		Handles.matrix = Matrix4x4.identity;
-		Handles.color = Color.white;
-	}
-
-	/// <summary>
-	/// Rotate the given vector in the XY plane.
-	/// </summary>
-	/// <returns>The original vector rotated in the XY plane.</returns>
-	/// <param name="_v">Vector to be rotated.</param>
-	/// <param name="_angle">Angle to rotate.</param>
-	private Vector3 RotateXYDegrees(Vector3 _v, float _angle) {
-		_angle *= Mathf.Deg2Rad;
-		float sin = Mathf.Sin(_angle);
-		float cos = Mathf.Cos(_angle);
-		float x = _v.x;
-		float y = _v.y;
-		return new Vector3(x * cos - y * sin, x * sin + y * cos);
-	}
-#endif
 }
