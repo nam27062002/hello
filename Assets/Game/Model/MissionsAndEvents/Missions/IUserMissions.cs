@@ -365,8 +365,18 @@ public abstract class IUserMissions {
             }
         }
 
-		// 2.4. Apply modifier and round final value
-		targetValue = Mathf.RoundToInt(targetValue * totalModifier);
+        // 2.4. Apply modifier and round final values 
+        if (_typeDef.GetAsString("sku") == "survive_time")
+        {
+            // If the values are seconds use a special round method specific for time formatting
+            targetValue = TimeUtils.RoundSeconds(targetValue,2);
+        }
+        else
+        {
+            // Round values according to its magnitude (10,100,1000...)
+            targetValue = MathUtils.RoundByMagnitude(Mathf.RoundToInt(targetValue * totalModifier));
+        }
+        
 		targetValue = (long)Mathf.Max(targetValue, 1);	// Just in case, avoid 0 or negative values!
 		Debug.Log("\t<color=lime>Final Target Value: " + targetValue + "</color>");
 

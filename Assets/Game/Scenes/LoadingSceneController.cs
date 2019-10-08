@@ -454,8 +454,8 @@ public class LoadingSceneController : SceneController {
     		}break;
             case State.WAITING_ADDRESSABLES:
             {
-                timer += Time.deltaTime;
-                if ( timer >= 0.5f )    // [MALH] Temp Fix. This has to be changed for a proper function
+                timer += Time.deltaTime;                
+                if ( timer >= 0.5f || HDAddressablesManager.Instance.IsReady())    
                 {
                     SetState( State.WAITING_SAVE_FACADE );
                 }

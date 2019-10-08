@@ -72,7 +72,7 @@ public class FireBreathCircle : DragonBreathBehaviour {
     	if ( m_dragon )
     	{
             float furyBaseLength = m_dragon.data.furyBaseLength;
-			m_length = furyBaseLength + furyBaseLength * m_lengthPowerUpMultiplier / 100.0f;
+			m_length = furyBaseLength + furyBaseLength * lengthPowerUpPercentage / 100.0f;
 
 			m_length *= transform.localScale.x;
             

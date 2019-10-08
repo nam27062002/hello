@@ -537,7 +537,7 @@ public class MenuDragonScreenController : MonoBehaviour {
 	/// </summary>
 	public void OnOpenPreAnimation() {
         // Reset animating flag
-        SetAnimationFlag(false, true, .1f);
+        SetAnimationFlag(false, true, .05f);
 		// [JOM] Added the preivious line to fix HDK-5779. Added some delay to let the OTA popup to trigger.
 
 		// Refresh dragon info

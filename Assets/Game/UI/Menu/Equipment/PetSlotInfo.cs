@@ -60,19 +60,7 @@ public class PetSlotInfo : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Initialization.
-	/// </summary>
-	private void Awake() {
-		
-	}
 
-	/// <summary>
-	/// Called every frame
-	/// </summary>
-	private void Update() {
-		
-	}
 
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //
