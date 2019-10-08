@@ -136,7 +136,7 @@ public class MenuDragonInfo : MonoBehaviour {
 	/// </summary>
 	public void Refresh() {
 		// Force update, even if the dragon didnt change
-		Refresh(DragonManager.CurrentDragon, true);
+		Refresh(InstanceManager.menuSceneController.selectedDragonData, true);
 	}
 
 	/// <summary>

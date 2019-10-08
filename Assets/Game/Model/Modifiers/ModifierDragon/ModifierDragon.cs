@@ -21,7 +21,8 @@ public abstract class ModifierDragon : Modifier {
             case ModDragonBoostUnlimited.TARGET_CODE:   return new ModDragonBoostUnlimited(_def);
             case ModDragonFuryDuration.TARGET_CODE:		return new ModDragonFuryDuration(_def);
     		case ModDragonFuryUnlimited.TARGET_CODE: 	return new ModDragonFuryUnlimited(_def);
-    		case ModDragonInvulnerable.TARGET_CODE:		return new ModDragonInvulnerable(_def);
+            case ModDragonFurySize.TARGET_CODE:         return new ModDragonFurySize(_def);
+            case ModDragonInvulnerable.TARGET_CODE:		return new ModDragonInvulnerable(_def);
     		case ModDragonLifeDrain.TARGET_CODE:		return new ModDragonLifeDrain(_def);
     		case ModDragonLifeGain.TARGET_CODE:			return new ModDragonLifeGain(_def);
     		case ModDragonSize.TARGET_CODE: 			return new ModDragonSize(_def);

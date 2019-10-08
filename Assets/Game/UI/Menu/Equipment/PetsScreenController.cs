@@ -86,8 +86,11 @@ public class PetsScreenController : MonoBehaviour, IBroadcastListener {
 		Messenger.AddListener<string, bool>(MessengerEvents.CP_BOOL_CHANGED, OnCPBoolChanged);
 
         // OTA: Show the general download progress bar
-        Downloadables.Handle allContentHandle = HDAddressablesManager.Instance.GetHandleForAllDownloadables();
-        m_assetsDownloadFlow.InitWithHandle(allContentHandle);
+        if (m_assetsDownloadFlow != null)
+        {
+            Downloadables.Handle allContentHandle = HDAddressablesManager.Instance.GetHandleForAllDownloadables();
+            m_assetsDownloadFlow.InitWithHandle(allContentHandle);
+        }
 
     }
 

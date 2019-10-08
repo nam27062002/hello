@@ -250,7 +250,28 @@ namespace Downloadables
                 string urlBase = catalogJSON[Catalog.CATALOG_ATT_URL_BASE];
                 m_downloader.Initialize(urlBase);
             }
-        }                
+        }           
+        
+        /// <summary>
+        /// Returns whether or not the manager is ready to respond queries about the stuff that has already been downloaded
+        /// </summary>
+        /// <returns></returns>
+        public bool IsReady()
+        {            
+            if (m_catalog != null)
+            {
+                // Loops through all entries. All need to be initialized in order to consider the manager ready
+                foreach (KeyValuePair<string, CatalogEntryStatus> pair in m_catalog)
+                {
+                    if (!pair.Value.IsInitialized())
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            return true;   
+        }     
 
         private void ProcessCatalog(JSONNode catalogJSON, Dictionary<string, CatalogGroup> groups)
         {    

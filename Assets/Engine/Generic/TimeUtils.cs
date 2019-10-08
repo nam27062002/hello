@@ -78,18 +78,26 @@ public class TimeUtils {
 		"TID_GEN_TIME_SECONDS"	// EPrecision.SECONDS
 	};
 
-	//------------------------------------------------------------------//
-	// CONVERSION METHODS												//
-	//------------------------------------------------------------------//
-	/// <summary>
-	/// Retrieve the unix timestamp (milliseconds/seconds elapsed since 00:00:00 1 January 1970) given a DateTime object.
-	/// Use DateTime.UtcNow to get current unix timestamp.
-	/// <see cref="https://en.wikipedia.org/wiki/Unix_time"/>
-	/// </summary>
-	/// <returns>The unix timestamp corresponding to the given date.</returns>
-	/// <param name="_date">The date to be converted.</param>
-	/// <param name="_millis">Timestamp represented in millis or seconds?</param>
-	public static long DateToTimestamp(DateTime _date, bool _millis = true) {
+    private static readonly int[] SECONDS_IN_PRECISION_INVERTED = {
+        1,				// secs
+        60,				// mins
+		60*60,			// hours
+		60*60*24,		// days
+		60 *60*24*365	// years
+	};
+
+    //------------------------------------------------------------------//
+    // CONVERSION METHODS												//
+    //------------------------------------------------------------------//
+    /// <summary>
+    /// Retrieve the unix timestamp (milliseconds/seconds elapsed since 00:00:00 1 January 1970) given a DateTime object.
+    /// Use DateTime.UtcNow to get current unix timestamp.
+    /// <see cref="https://en.wikipedia.org/wiki/Unix_time"/>
+    /// </summary>
+    /// <returns>The unix timestamp corresponding to the given date.</returns>
+    /// <param name="_date">The date to be converted.</param>
+    /// <param name="_millis">Timestamp represented in millis or seconds?</param>
+    public static long DateToTimestamp(DateTime _date, bool _millis = true) {
 		TimeSpan ts = _date.Subtract(new DateTime(1970, 1, 1));
 		if(_millis) {
 			return (long)ts.TotalMilliseconds;
@@ -258,4 +266,61 @@ public class TimeUtils {
 		// Done! ^_^
 		return m_writer.ToString();
 	}
+
+
+    /// <summary>
+	/// This method will take and amount of seconds, separate it in units (secs, mins, hours...), take the last
+    /// specified units discarding the rest, and will convert it back to a total amount of seconds.
+    /// Will use this to round up the amount of seconds in the missions, so when the numer is formatted afterwards
+    /// it wont show a lot of units.
+    /// I.e: 3661 secs (1h 1min 1sec) can be rounded to 3600 secs (1h) if we just want to show 1 unit
+    /// or can be rounded to 3660 (1h 1min) if we want to show 2 unit
+	/// </summary>
+	/// <returns>An amount of seconds after applying the round up.</returns>
+	/// <param name="_seconds">The amount of seconds to be formatted.</param>
+	/// <param name="_amountUnits">The amount of units we will use to round up the timestamp.</param>
+    public static long RoundSeconds (long _seconds, int _amountUnits)
+    {
+        if (_amountUnits <= 0 || _seconds <= 0)
+            return 0;
+
+        // 1. Break up in smaller units
+        TimeSpan timeSpan = TimeSpan.FromSeconds(_seconds);
+        int[] units = { timeSpan.Seconds, timeSpan.Minutes, timeSpan.Hours, timeSpan.Days};
+
+        // 2. Find the last (non zero) element
+        int lastElement = -1;
+        int pointer = units.Length - 1;
+
+        while (pointer >=0 && lastElement == -1)
+        {
+            if (units [pointer] > 0)
+            {
+                lastElement = pointer;
+            }
+
+            pointer--;
+        }
+
+        if (lastElement == -1)
+            return 0;
+
+
+        // 3. Get the last N elements and discard the rest
+        int resultSecs = 0;
+        int firstElement = lastElement - (_amountUnits - 1);
+        for (int i = lastElement; i >= firstElement ; i--)
+        {
+            if (i < 0) {
+                break;
+            }
+
+            resultSecs += units[i] * SECONDS_IN_PRECISION_INVERTED[i];
+
+        }
+        
+        // Return the total amount of seconds
+        return resultSecs;        
+
+    }
 }

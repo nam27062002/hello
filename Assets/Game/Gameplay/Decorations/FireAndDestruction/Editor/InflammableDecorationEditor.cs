@@ -4,8 +4,10 @@ using System.Collections.Generic;
 
 [CustomEditor(typeof(InflammableDecoration))]
 [CanEditMultipleObjects]
-public class InflammableDecorationEditor : Editor {	
-	static private bool m_editFireNodes;
+public class InflammableDecorationEditor : Editor {
+    static private string FIRE_PREFAB = "Assets/Art/3D/Gameplay/Particles/Master/PF_FireProc.prefab";
+
+    static private bool m_editFireNodes;
 	static private List<GameObject> m_fireParticles;
 
 	private InflammableDecoration m_component;
@@ -30,7 +32,8 @@ public class InflammableDecorationEditor : Editor {
 
         EditorGUILayoutExt.Separator(new SeparatorAttribute("Fire Nodes Setup"));
 
-        if (GUILayout.Button("Build")) {
+        EditorGUILayout.TextArea("Create a list of fire nodes from mesh and boxel size.");
+        if (GUILayout.Button("Auto Build")) {
             if (m_editFireNodes == true) {
                 SetFireNodesData();
                 m_editFireNodes = false;
@@ -38,6 +41,7 @@ public class InflammableDecorationEditor : Editor {
             m_component.SetupFireNodes();
         }
 
+        EditorGUILayout.TextArea("Effect used:\n" + FIRE_PREFAB);
         if (m_editFireNodes == false) {
             if (GUILayout.Button("Show")) {
                 GetFireNodesData();
@@ -61,8 +65,8 @@ public class InflammableDecorationEditor : Editor {
                 Vector3 position = m_component.transform.TransformPoint(fireNode.localPosition);
                 Vector3 scale = GameConstants.Vector3.one * fireNode.scale;
                 switch (Tools.current) {
-                    case Tool.Move: position = Handles.PositionHandle(position, m_component.transform.rotation); break;
                     case Tool.Scale: scale = Handles.ScaleHandle(scale, position, m_component.transform.rotation, 1f); break;
+                    default: position = Handles.PositionHandle(position, m_component.transform.rotation); break;
                 }
 
                 fireNode.localPosition = m_component.transform.InverseTransformPoint(position);
@@ -70,7 +74,7 @@ public class InflammableDecorationEditor : Editor {
 
                 if (i < m_fireParticles.Count) {
                     m_fireParticles[i].transform.position = position;
-                    m_fireParticles[i].transform.localScale = scale;
+                    m_fireParticles[i].transform.localScale = scale;                    
                 }
             }
 
@@ -79,21 +83,24 @@ public class InflammableDecorationEditor : Editor {
 	}
 
 	private void GetFireNodesData() {
-        HDAddressablesManager.Instance.Initialize();
-        GameObject prefab = HDAddressablesManager.Instance.LoadAsset<GameObject>("PF_FireProc", "Master");
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(FIRE_PREFAB);
 
         List<FireNode> fireNodes = m_component.fireNodes;
         for (int i = 0; i < fireNodes.Count; i++) {			
 			m_fireParticles.Add(Instantiate(prefab));
-			m_fireParticles[i].transform.position = m_component.transform.TransformPoint(fireNodes[i].localPosition);
+			m_fireParticles[i].transform.position = m_component.transform.TransformPoint(m_component.transform.position +    fireNodes[i].localPosition);
             m_fireParticles[i].hideFlags = HideFlags.HideAndDontSave;
-			//m_fireParticles[i].GetComponent<ParticleSystem>().Simulate(1f, true);
-		}
+            FireProcController fpc = m_fireParticles[i].GetComponent<FireProcController>();
+            fpc.EditorSetPower(6f);
+            m_fireParticles[i].SetActive(true);            
+        }
 	}
 
 	private void SetFireNodesData() {		
 		for (int i = 0; i < m_fireParticles.Count; i++) {
-			Object.DestroyImmediate(m_fireParticles[i]);
+            FireProcController fpc = m_fireParticles[i].GetComponent<FireProcController>();
+            fpc.EditorSetPower(0f);
+            Object.DestroyImmediate(m_fireParticles[i]);
 		}
 		m_fireParticles.Clear();
 	}

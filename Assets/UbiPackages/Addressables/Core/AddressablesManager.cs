@@ -182,6 +182,11 @@ public class AddressablesManager
         return m_isInitialized;
     }
 
+    public bool IsReady()
+    {
+        return m_providerFromAB != null && m_providerFromAB.IsReady();
+    }
+
     /// <summary>
     /// Returns the list of dependencies (typically asset bundles) ids required to load the addressable with <c>id</c> as an identifier.
     /// </summary>
