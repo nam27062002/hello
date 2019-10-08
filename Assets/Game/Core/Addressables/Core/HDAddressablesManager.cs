@@ -1078,6 +1078,8 @@ public class Ingame_SwitchAreaHandle
             }
         }
         handle.AddAddressable( resultPrefab );
+        string animController = resultPrefab.Replace("PF_", "AC_");
+        handle.AddAddressable( animController );
         AddDisguiseDependencies( handle, dragon, false );
 
         // Add next dragon icon
