@@ -36,8 +36,9 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4374981661046172}
+  - component: {fileID: 114691875724976354}
   - component: {fileID: 114226482082756406}
-  - component: {fileID: 114131160806109016}
+  - component: {fileID: 114376080303351108}
   - component: {fileID: 114184522514412510}
   - component: {fileID: 114296308458707284}
   m_Layer: 22
@@ -147,29 +148,6 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1309654643220544}
   m_Mesh: {fileID: 4300018, guid: ef2f1a794983c124c8b5d847f6c1b811, type: 3}
---- !u!114 &114131160806109016
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1529475678740096}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1481a8fd1eb264508b749aceca994767, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_tags: 1024
-  m_otherSpawnables:
-  - {fileID: 114184522514412510}
-  - {fileID: 114296308458707284}
-  m_otherSpawnablesCount: 2
-  m_pilot: {fileID: 0}
-  m_machine: {fileID: 114184522514412510}
-  m_viewControl: {fileID: 114296308458707284}
-  m_equip: {fileID: 0}
-  m_sku: xmasFood
-  m_hideNeedTierMessage: 0
-  m_dieOutsideFrustum: 1
 --- !u!114 &114184522514412510
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -458,7 +436,7 @@ MonoBehaviour:
   m_onPanicAudio: 
   m_idleAudio: 
   m_skins: []
-  m_entity: {fileID: 114131160806109016}
+  m_entity: {fileID: 114691875724976354}
   m_animator: {fileID: 0}
   m_isAnimatorAvailable: 0
   m_renderers:
@@ -470,6 +448,31 @@ MonoBehaviour:
   m_animEvents: {fileID: 0}
   m_transform: {fileID: 4374981661046172}
   m_view: {fileID: 4415220899934530}
+--- !u!114 &114376080303351108
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1529475678740096}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 15a7ea52045474df5be461e18d5c4f2b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_blendSpeedFactor: 1
+  m_energy: 10
+  m_energyDrainSec: 1
+  m_energyRecoverSec: 1
+  m_machine: {fileID: 0}
+  m_brainResource: {fileID: 0}
+  m_railSeparation:
+    min: 0.5
+    max: 1
+  m_useSpawnerRotation: 0
+  m_serializedJson: '[]'
+  m_databaseKey: PF_GingerbreadManCookie
+  m_updateMachinePos: 1
+  m_updateMachineRot: 0
 --- !u!114 &114385632079688976
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -582,6 +585,31 @@ MonoBehaviour:
   optionalRotationMode: 0
   optionalScrambleMode: 0
   optionalString: 
+--- !u!114 &114691875724976354
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1529475678740096}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26323fbf3c446446d9485c1c49f860bb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_tags: 0
+  m_otherSpawnables:
+  - {fileID: 114376080303351108}
+  - {fileID: 114184522514412510}
+  - {fileID: 114296308458707284}
+  m_otherSpawnablesCount: 3
+  m_pilot: {fileID: 114376080303351108}
+  m_machine: {fileID: 114184522514412510}
+  m_viewControl: {fileID: 114296308458707284}
+  m_equip: {fileID: 0}
+  m_sku: GingerbreadManCookie
+  m_hideNeedTierMessage: 0
+  m_dieOutsideFrustum: 1
+  m_onCollectSound: hd_letter_collected
 --- !u!114 &114780203708036962
 MonoBehaviour:
   m_ObjectHideFlags: 1
