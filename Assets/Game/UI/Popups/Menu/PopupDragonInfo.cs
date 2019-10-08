@@ -25,7 +25,6 @@ public class PopupDragonInfo : PopupTierPreyInfo {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	new public const string PATH = "UI/Popups/Menu/PF_PopupDragonInfo";
 
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //

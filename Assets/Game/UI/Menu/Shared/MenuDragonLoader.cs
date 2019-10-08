@@ -254,7 +254,7 @@ public class MenuDragonLoader : MonoBehaviour {
             }
 
 			if (m_loadAsync && !forceSync && FeatureSettingsManager.MenuDragonsAsyncLoading){
-                m_asyncRequest = GetLoadDragonDependenciesOp();              
+                m_asyncRequest = GetLoadDragonDependenciesOp(_disguiseSku);              
             }
             else{
 				// Instantiate the prefab and add it as child of this object               
@@ -276,11 +276,18 @@ public class MenuDragonLoader : MonoBehaviour {
         return (HDAddressablesManager.Instance.ExistsResource(m_loadingPrefabName, null)) ? m_loadingPrefabName: "Game/Dragons/" + m_loadingPrefabName;
     }
     
-    private AddressablesOp GetLoadDragonDependenciesOp() {
+    private AddressablesOp GetLoadDragonDependenciesOp(string disguiseSku) {        
+        // Addressable ids required by disguiseSku
+        List<string> addressableIds = HDAddressablesManager.Instance.GetResourceIDsForDragonSkin(disguiseSku, false);
         string prefabAddressableSku = GetPrefabAddressableSku();
         string acAddressableSku = prefabAddressableSku.Replace("PF_", "AC_");
 
-        List<string> addressableIds = new List<string>() { prefabAddressableSku, acAddressableSku, };
+        // prefab addressable id
+        addressableIds.Add(prefabAddressableSku);
+
+        // animator controller addressable id
+        addressableIds.Add(acAddressableSku);
+        
         List<string> dependencyIds = HDAddressablesManager.Instance.GetDependencyIdsList(addressableIds);
         return HDAddressablesManager.Instance.LoadDependencyIdsListAsync(dependencyIds);
     }

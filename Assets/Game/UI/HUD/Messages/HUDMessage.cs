@@ -208,10 +208,26 @@ public class HUDMessage : MonoBehaviour, IBroadcastListener {
 	{
 		  // Deactivate all childs
         SetOthersVisible( false );
-        if ( m_type == Type.BOOST_REMINDER )
-        {
-            m_defaultText =  Localizer.ApplyCase(Localizer.Case.UPPER_CASE, LocalizationManager.SharedInstance.Localize(InstanceManager.player.data.tidBoostReminder));
-        }
+		switch( m_type ) {
+			case Type.BOOST_REMINDER: {
+				m_defaultText =  Localizer.ApplyCase(Localizer.Case.UPPER_CASE, LocalizationManager.SharedInstance.Localize(InstanceManager.player.data.tidBoostReminder));
+			}break;
+			case Type.FIRE_RUSH:
+			case Type.MEGA_FIRE_RUSH:
+			{
+				Transform tr = transform.FindTransformRecursive("TextFire");
+				if ( tr != null )
+				{
+					TextMeshProUGUI tx = tr.GetComponent<TextMeshProUGUI>();
+					if ( tx )
+					{
+						tx.text = Localizer.ApplyCase(Localizer.Case.UPPER_CASE, LocalizationManager.SharedInstance.Localize(InstanceManager.player.data.tidFire1Line));
+					}
+				}
+			}break;
+
+		}
+        
 	}
 
 	/// <summary>
