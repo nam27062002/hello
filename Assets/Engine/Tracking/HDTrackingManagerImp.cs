@@ -2726,8 +2726,12 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private void Track_SendEvent(HDTrackingEvent _e) {
         TrackingEvent tEvent = TrackingManager.SharedInstance.GetNewTrackingEvent(_e.name);
         if (tEvent != null) {
+            TrackingEvent.EParameterResult paramResult;
             foreach (KeyValuePair<string, object> pair in _e.data) {                
-                tEvent.SetParameterValue(pair.Key, Track_ProcessParam(pair.Key, pair.Value));
+                paramResult = tEvent.SetParameterValue(pair.Key, Track_ProcessParam(pair.Key, pair.Value));
+                if (paramResult != TrackingEvent.EParameterResult.E_PARAM_OK) {
+                    Debug.LogWarning("TRACKING: Parameter " + pair.Key + " not defined properly: " + paramResult);
+                }                
             }
 #if !EDITOR_MODE
             TrackingManager.SharedInstance.SendEvent(tEvent);
