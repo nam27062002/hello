@@ -77,23 +77,7 @@ public class GoalsScreenController : MonoBehaviour {
 			OnTransitionStarted( prev, current );
 		}
 
-		// Remove buttons from the selection group if they can't be selected
-		// Chests
-		if(UsersManager.currentUser.gamesPlayed < GameSettings.ENABLE_CHESTS_AT_RUN) {
-			ExcludeButton(Buttons.CHESTS);
-		}
-
-		// Quests
-		if(UsersManager.currentUser.gamesPlayed < GameSettings.ENABLE_QUESTS_AT_RUN) {
-			ExcludeButton(Buttons.GLOBAL_EVENTS);
-		}
-
-        // Leagues
-        if (UsersManager.currentUser.gamesPlayed < GameSettings.ENABLE_LEAGUES_AT_RUN ||
-            HDLiveDataManager.league.GetMinimumTierToShowLeagues() > DragonManager.biggestOwnedDragon.tier)
-        {
-            ExcludeButton(Buttons.LEAGUES);
-        }
+		
     }
 
 
@@ -102,6 +86,28 @@ public class GoalsScreenController : MonoBehaviour {
 	/// Component has been enabled.
 	/// </summary>
 	private void OnEnable() {
+
+
+        // Remove buttons from the selection group if they can't be selected
+        // Chests
+        if (UsersManager.currentUser.gamesPlayed < GameSettings.ENABLE_CHESTS_AT_RUN)
+        {
+            ExcludeButton(Buttons.CHESTS);
+        }
+
+        // Quests
+        if (UsersManager.currentUser.gamesPlayed < GameSettings.ENABLE_QUESTS_AT_RUN)
+        {
+            ExcludeButton(Buttons.GLOBAL_EVENTS);
+        }
+
+        // Leagues
+        if (UsersManager.currentUser.gamesPlayed < GameSettings.ENABLE_LEAGUES_AT_RUN ||
+            HDLiveDataManager.league.GetMinimumTierToShowLeagues() > DragonManager.biggestOwnedDragon.tier)
+        {
+            ExcludeButton(Buttons.LEAGUES);
+        }
+
         // Program a periodic update
         InvokeRepeating("UpdatePeriodic", 0f, COUNTDOWN_UPDATE_INTERVAL);
     }
@@ -308,6 +314,18 @@ public class GoalsScreenController : MonoBehaviour {
             string tid = remainingRuns == 1 ? "TID_MORE_RUNS_REQUIRED" : "TID_MORE_RUNS_REQUIRED_PLURAL";
             UIFeedbackText.CreateAndLaunch(
                 LocalizationManager.SharedInstance.Localize(tid, remainingRuns.ToString()),
+                new Vector2(0.5f, 0.25f),
+                this.GetComponentInParent<Canvas>().transform as RectTransform
+            );
+        }
+        else if (HDLiveDataManager.league.GetMinimumTierToShowLeagues() > DragonManager.biggestOwnedDragon.tier)
+        {
+            // Show error message
+            string tid = "TID_FEEDBACK_NEED_TIER_DRAGON";
+            DragonTier tier = HDLiveDataManager.league.GetMinimumTierToShowLeagues();
+            string tierName = LocalizationManager.SharedInstance.Localize("TID_DRAGON_TIER_" + (int) tier + "_NAME");
+            UIFeedbackText.CreateAndLaunch(
+                LocalizationManager.SharedInstance.Localize(tid, tierName),
                 new Vector2(0.5f, 0.25f),
                 this.GetComponentInParent<Canvas>().transform as RectTransform
             );

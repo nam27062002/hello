@@ -270,7 +270,7 @@ public class DestructibleDecoration : ISpawnable, IBroadcastListener {
             BurnedView();
         }
 
-        GameObject ps = m_destroyParticle.Spawn(m_transform.position + (m_transform.rotation * m_destroyParticle.offset));
+        GameObject ps = m_destroyParticle.Spawn(m_transform.position + (m_transform.rotation * m_destroyParticle.offset), m_transform.rotation);
 		if (ps != null) {
 			if (m_particleFaceDragonDirection) {
 				FaceDragon(ps);

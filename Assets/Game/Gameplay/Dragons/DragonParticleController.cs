@@ -142,11 +142,6 @@ public class DragonParticleController : MonoBehaviour, IBroadcastListener
 		m_waterDepth = InstanceManager.player.data.scale + m_waterDepthIncrease;
 		_transform = transform;
 
-		if ( !string.IsNullOrEmpty(m_waterEnterSplash) )
-			m_waterEnterSplashHandler = ParticleManager.CreatePool(m_waterEnterSplash, m_waterSplashFolder);
-		if ( !string.IsNullOrEmpty(m_waterExitSplash) )
-			m_waterExitSplashHandler = ParticleManager.CreatePool(m_waterExitSplash, m_waterSplashFolder);
-
 
 		m_skimmingInstance = ParticleManager.InitParticle(m_skimmingParticle, m_skimmingAnchor);
 
@@ -158,9 +153,7 @@ public class DragonParticleController : MonoBehaviour, IBroadcastListener
 		if (m_waterAirLimitParticle != null)
 			m_waterAirLimitInstance = ParticleManager.InitParticle( m_waterAirLimitParticle, m_dragonEat.mouth);
 
-		if (!string.IsNullOrEmpty(m_corpseAsset)) {
-			m_corpseHandler = ParticleManager.CreatePool(m_corpseAsset, "Corpses/");
-		}
+		CreatePoolParticles();
 		
 		if ( m_trailsParticle.IsValid() )
 		{
@@ -219,17 +212,19 @@ public class DragonParticleController : MonoBehaviour, IBroadcastListener
         {
             case BroadcastEventType.GAME_AREA_ENTER:
             {
-                OnGameAreaEnter();
+                CreatePoolParticles();
             }break;
         }
     }
-    
 
-	void OnGameAreaEnter()
+	void CreatePoolParticles()
 	{
-		if (!string.IsNullOrEmpty(m_corpseAsset)) {
+		if ( !string.IsNullOrEmpty(m_waterEnterSplash) )
+			m_waterEnterSplashHandler = ParticleManager.CreatePool(m_waterEnterSplash, m_waterSplashFolder);
+		if ( !string.IsNullOrEmpty(m_waterExitSplash) )
+			m_waterExitSplashHandler = ParticleManager.CreatePool(m_waterExitSplash, m_waterSplashFolder);
+		if (!string.IsNullOrEmpty(m_corpseAsset)) 
 			m_corpseHandler = ParticleManager.CreatePool(m_corpseAsset, "Corpses/");
-		}
 	}
 
 	void Update()

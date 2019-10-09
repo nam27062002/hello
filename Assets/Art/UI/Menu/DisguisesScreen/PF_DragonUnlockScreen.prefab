@@ -3456,7 +3456,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5d677588cf25b47fe84f2f773daf1f23, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_popupPath: UI/Popups/Menu/PF_PopupDragonInfo
+  m_popupPath: UI/Popups/Menu/PF_PopupClassicDragonInfo
   m_delay: 0
   m_trackingAction: 2
   OnPopupInit:
@@ -4120,6 +4120,16 @@ MonoBehaviour:
   m_hcRoot: {fileID: 1863604917988160}
   m_scRoot: {fileID: 1191292877336716}
   m_unavailableRoot: {fileID: 0}
+  OnUnlockViaPCSuccessEvent:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  OnUnlockViaSCSuccessEvent:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
 --- !u!114 &114517685150442164
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4660,6 +4670,7 @@ MonoBehaviour:
     m_RotationOrder: 0
   m_curveScale: 1
   m_verticalPivot: 0.5
+  m_verticalOffset: 0
   m_useCustomReferenceSize: 0
   m_customReferenceSize: 200
 --- !u!114 &114737417450839472
@@ -5317,6 +5328,7 @@ MonoBehaviour:
     m_RotationOrder: 0
   m_curveScale: 0.5
   m_verticalPivot: 0.5
+  m_verticalOffset: 0
   m_useCustomReferenceSize: 0
   m_customReferenceSize: 200
 --- !u!114 &114910430732559358

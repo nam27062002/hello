@@ -189,6 +189,7 @@ public abstract class IDragonData : IUISelectorItem {
     public virtual string tidBoostAction { get{ return m_def.GetAsString("tidBoostAction", "TID_INGAME_HUD_BOOST"); } }
     public virtual string tidBoostReminder { get{ return m_def.GetAsString("tidBoostReminder", "TID_FEEDBACK_TUTO_HOLD_TO_BOOST"); } }
 	public virtual string tidEnergyBar { get{ return m_def.GetAsString("tidEnergyBar", "TID_INGAME_HUD_FIRERUSH"); } }
+	public virtual string tidFire1Line { get{ return m_def.GetAsString("tidFire1Line", "TID_FEEDBACK_FIRE_RUSH_LINE_1"); } }
     public abstract float petScale{ get; }
     
         // supersize
