@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools" package="com.ubisoft.hungrydragon.dev" android:installLocation="auto" android:versionCode="361" android:versionName="1.26">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools" package="com.ubisoft.hungrydragon" android:installLocation="auto" android:versionCode="333" android:versionName="1.30">
   <uses-sdk android:minSdkVersion="17" android:targetSdkVersion="28" />
   <uses-feature android:glEsVersion="0x00020000" />
   <uses-feature android:name="android.software.leanback" android:required="false" />
   <supports-screens android:smallScreens="true" android:normalScreens="true" android:largeScreens="true" android:xlargeScreens="true" android:anyDensity="true" />
-  <application android:label="@string/app_name" android:icon="@mipmap/app_icon" android:isGame="true" android:theme="@style/MyTheme" android:hasCode="true" android:allowBackup="false" android:debuggable="true" android:name="io.fabric.unity.android.FabricApplication">
+  <application android:label="@string/app_name" android:icon="@mipmap/app_icon" android:isGame="true" android:theme="@style/MyTheme" android:hasCode="true" android:allowBackup="false" android:debuggable="true" android:networkSecurityConfig="@xml/network_security_config" android:name="io.fabric.unity.android.FabricApplication">
     <activity android:name="org.calety.CoreLib.Common.CyUnityActivity" android:label="@string/app_name" android:uiOptions="none" android:configChanges="orientation|keyboardHidden|screenSize" android:screenOrientation="sensorLandscape" android:clearTaskOnLaunch="false" android:launchMode="singleTask" android:resizeableActivity="false" android:supportsPictureInPicture="false">
       <meta-data android:name="unityplayer.UnityActivity" android:value="true" />
       <intent-filter>
@@ -14,13 +14,80 @@
     </activity>
     <meta-data android:name="unityplayer.SkipPermissionsDialog" android:value="true" />
     <meta-data android:name="CP2_use_dev" android:value="true" />
-    <meta-data android:name="com.google.android.gms.games.APP_ID" android:value="\u003303537151556" />
-    <meta-data android:name="com.google.android.gms.appstate.APP_ID" android:value="\u003303537151556" />
-    <meta-data android:name="com.calety.GameLib.SERVER_CLIENT_ID" android:value="\u003303537151556-k9rcgr105asnj5m82ujmhsnmro79shc4.apps.googleusercontent.com" />
+    <meta-data android:name="com.google.android.gms.games.APP_ID" android:value="\u003138106562250" />
+    <meta-data android:name="com.google.android.gms.appstate.APP_ID" android:value="\u003138106562250" />
+    <meta-data android:name="com.calety.GameLib.SERVER_CLIENT_ID" android:value="\u003138106562250-jah3tdaloanae520q9jsu5akb8er3qa8.apps.googleusercontent.com" />
     <meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />
-      %admobAPPID%
-
-  		<!-- Push/Local notifications --><receiver android:name="org.calety.GameLib.Notifications.CyNotificationReceiver" android:enabled="true"><intent-filter><action android:name="com.ubisoft.hungrydragon.dev.intent.action.PUSH_NOTIFICATION" /><action android:name="com.ubisoft.hungrydragon.dev.intent.action.LOCAL_NOTIFICATION" /><action android:name="com.ubisoft.hungrydragon.dev.intent.action.PRESSED_NOTIFICATION" /><action android:name="com.ubisoft.hungrydragon.dev.intent.action.DELETE_NOTIFICATION" /></intent-filter></receiver><service android:name="org.calety.GameLib.Notifications.CyNotificationReceiverService" /><service android:name="org.calety.GameLib.Notifications.CyNotificationReceiverJobService" android:permission="android.permission.BIND_JOB_SERVICE" /><!-- FCM Push notifications --><service android:name="org.calety.GameLib.Notifications.CyFcmListenerService"><intent-filter><action android:name="com.google.firebase.MESSAGING_EVENT" /></intent-filter></service><!-- Avoid Firebase initialization until we do it --><meta-data android:name="firebase_messaging_auto_init_enabled" android:value="false" /><meta-data android:name="firebase_analytics_collection_enabled" android:value="false" /><provider android:name="com.google.firebase.provider.FirebaseInitProvider" android:authorities="${applicationId}.firebaseinitprovider" tools:node="remove" /><receiver android:name="com.appsflyer.MultipleInstallBroadcastReceiver" android:exported="true"><intent-filter><action android:name="com.android.vending.INSTALL_REFERRER" /></intent-filter></receiver><activity android:name="org.calety.CoreLib.Utils.CyAlertDialog" android:theme="@android:style/Theme.Translucent.NoTitleBar" android:label="@string/app_name" /><activity android:name="com.sina.weibo.sdk.component.WeiboSdkBrowser" android:configChanges="keyboardHidden|orientation" android:windowSoftInputMode="adjustResize" android:exported="false"></activity><service android:name="com.sina.weibo.sdk.net.DownloadService" android:exported="false"></service><meta-data android:name="android.max_aspect" android:value="2.1" /><provider android:name="android.support.v4.content.FileProvider" android:authorities="com.ubisoft.hungrydragon.dev.provider" android:exported="false" android:grantUriPermissions="true"><meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/provider_paths" /></provider><!-- IronSource --><activity android:name="com.ironsource.sdk.controller.ControllerActivity" android:configChanges="orientation|screenSize" android:hardwareAccelerated="true" /><activity android:name="com.ironsource.sdk.controller.InterstitialActivity" android:configChanges="orientation|screenSize" android:hardwareAccelerated="true" android:theme="@android:style/Theme.Translucent" /><activity android:name="com.ironsource.sdk.controller.OpenUrlActivity" android:configChanges="orientation|screenSize" android:hardwareAccelerated="true" android:theme="@android:style/Theme.Translucent" /><!-- UnityAds --><activity android:name="com.unity3d.services.ads.adunit.AdUnitActivity" android:configChanges="fontScale|keyboard|keyboardHidden|locale|mnc|mcc|navigation|orientation|screenLayout|screenSize|smallestScreenSize|uiMode|touchscreen" android:hardwareAccelerated="true" android:theme="@android:style/Theme.NoTitleBar.Fullscreen" /><activity android:name="com.unity3d.services.ads.adunit.AdUnitTransparentActivity" android:configChanges="fontScale|keyboard|keyboardHidden|locale|mnc|mcc|navigation|orientation|screenLayout|screenSize|smallestScreenSize|uiMode|touchscreen" android:hardwareAccelerated="true" android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen" /><activity android:name="com.unity3d.services.ads.adunit.AdUnitTransparentSoftwareActivity" android:configChanges="fontScale|keyboard|keyboardHidden|locale|mnc|mcc|navigation|orientation|screenLayout|screenSize|smallestScreenSize|uiMode|touchscreen" android:hardwareAccelerated="false" android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen" /><activity android:name="com.unity3d.services.ads.adunit.AdUnitSoftwareActivity" android:configChanges="fontScale|keyboard|keyboardHidden|locale|mnc|mcc|navigation|orientation|screenLayout|screenSize|smallestScreenSize|uiMode|touchscreen" android:hardwareAccelerated="false" android:theme="@android:style/Theme.NoTitleBar.Fullscreen" /><!-- AdColony --><activity android:name="com.adcolony.sdk.AdColonyInterstitialActivity" android:configChanges="keyboardHidden|orientation|screenSize" android:hardwareAccelerated="true" /><!-- Vungle --><activity android:name="com.vungle.publisher.VideoFullScreenAdActivity" android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize" android:theme="@android:style/Theme.Translucent" /><activity android:name="com.vungle.publisher.MraidFullScreenAdActivity" android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize" android:theme="@android:style/Theme.Translucent" /><activity android:name="com.vungle.publisher.FlexViewAdActivity" android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize" android:theme="@android:style/Theme.Translucent" /><!-- AdMob --><activity android:name="com.google.android.gms.ads.AdActivity" android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize" android:theme="@android:style/Theme.Translucent" /><!-- Facebook --><activity android:name="com.facebook.ads.AudienceNetworkActivity" android:hardwareAccelerated="true" android:configChanges="keyboardHidden|orientation|screenSize" /><activity android:name="com.facebook.ads.internal.ipc.RemoteANActivity" android:configChanges="keyboardHidden|orientation|screenSize" android:exported="false" android:process=":adnw" /><service android:name="com.facebook.ads.internal.ipc.AdsProcessPriorityService" android:exported="false" /><service android:name="com.facebook.ads.internal.ipc.AdsMessengerService" android:exported="false" android:process=":adnw" /><activity android:name="com.facebook.unity.FBUnityLoginActivity" android:configChanges="fontScale|keyboard|keyboardHidden|locale|mnc|mcc|navigation|orientation|screenLayout|screenSize|smallestScreenSize|uiMode|touchscreen" android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen" /><activity android:name="com.facebook.unity.FBUnityDialogsActivity" android:configChanges="fontScale|keyboard|keyboardHidden|locale|mnc|mcc|navigation|orientation|screenLayout|screenSize|smallestScreenSize|uiMode|touchscreen" android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen" /><activity android:name="com.facebook.unity.FBUnityAppLinkActivity" android:exported="true" /><activity android:name="com.facebook.unity.FBUnityDeepLinkingActivity" android:exported="true" /><activity android:name="com.facebook.unity.FBUnityGameRequestActivity" /><activity android:name="com.facebook.unity.FBUnityCreateGameGroupActivity" /><activity android:name="com.facebook.unity.FBUnityJoinGameGroupActivity" /><meta-data android:name="com.facebook.sdk.ApplicationId" android:value="fb827853747377605" /><meta-data android:name="com.facebook.sdk.AutoLogAppEventsEnabled" android:value="false" /><meta-data android:name="com.facebook.sdk.AdvertiserIDCollectionEnabled" android:value="false" /><provider android:name="com.facebook.FacebookContentProvider" android:authorities="com.facebook.app.FacebookContentProvider827853747377605" android:exported="true" /></application>
+    <!-- Push/Local notifications -->
+    <receiver android:name="org.calety.GameLib.Notifications.CyNotificationReceiver" android:enabled="true">
+      <intent-filter>
+        <action android:name="com.ubisoft.hungrydragon.intent.action.PUSH_NOTIFICATION" />
+        <action android:name="com.ubisoft.hungrydragon.intent.action.LOCAL_NOTIFICATION" />
+        <action android:name="com.ubisoft.hungrydragon.intent.action.PRESSED_NOTIFICATION" />
+        <action android:name="com.ubisoft.hungrydragon.intent.action.DELETE_NOTIFICATION" />
+      </intent-filter>
+    </receiver>
+    <service android:name="org.calety.GameLib.Notifications.CyNotificationReceiverService" />
+    <service android:name="org.calety.GameLib.Notifications.CyNotificationReceiverJobService" android:permission="android.permission.BIND_JOB_SERVICE" />
+    <!-- FCM Push notifications -->
+    <service android:name="org.calety.GameLib.Notifications.CyFcmListenerService">
+      <intent-filter>
+        <action android:name="com.google.firebase.MESSAGING_EVENT" />
+      </intent-filter>
+    </service>
+    <!-- Avoid Firebase initialization until we do it -->
+    <meta-data android:name="firebase_messaging_auto_init_enabled" android:value="false" />
+    <meta-data android:name="firebase_analytics_collection_enabled" android:value="false" />
+    <provider android:name="com.google.firebase.provider.FirebaseInitProvider" android:authorities="${applicationId}.firebaseinitprovider" tools:node="remove" />
+    <receiver android:name="com.appsflyer.MultipleInstallBroadcastReceiver" android:exported="true">
+      <intent-filter>
+        <action android:name="com.android.vending.INSTALL_REFERRER" />
+      </intent-filter>
+    </receiver>
+    <activity android:name="org.calety.CoreLib.Utils.CyAlertDialog" android:theme="@android:style/Theme.Translucent.NoTitleBar" android:label="@string/app_name" />
+    <activity android:name="com.sina.weibo.sdk.component.WeiboSdkBrowser" android:configChanges="keyboardHidden|orientation" android:windowSoftInputMode="adjustResize" android:exported="false">
+    </activity>
+    <service android:name="com.sina.weibo.sdk.net.DownloadService" android:exported="false">
+    </service>
+    <meta-data android:name="android.max_aspect" android:value="2.1" />
+    <provider android:name="android.support.v4.content.FileProvider" android:authorities="com.ubisoft.hungrydragon.provider" android:exported="false" android:grantUriPermissions="true">
+      <meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/provider_paths" />
+    </provider>
+    <!-- IronSource -->
+    <activity android:name="com.ironsource.sdk.controller.ControllerActivity" android:configChanges="orientation|screenSize" android:hardwareAccelerated="true" />
+    <activity android:name="com.ironsource.sdk.controller.InterstitialActivity" android:configChanges="orientation|screenSize" android:hardwareAccelerated="true" android:theme="@android:style/Theme.Translucent" />
+    <activity android:name="com.ironsource.sdk.controller.OpenUrlActivity" android:configChanges="orientation|screenSize" android:hardwareAccelerated="true" android:theme="@android:style/Theme.Translucent" />
+    <!-- UnityAds -->
+    <activity android:name="com.unity3d.services.ads.adunit.AdUnitActivity" android:configChanges="fontScale|keyboard|keyboardHidden|locale|mnc|mcc|navigation|orientation|screenLayout|screenSize|smallestScreenSize|uiMode|touchscreen" android:hardwareAccelerated="true" android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
+    <activity android:name="com.unity3d.services.ads.adunit.AdUnitTransparentActivity" android:configChanges="fontScale|keyboard|keyboardHidden|locale|mnc|mcc|navigation|orientation|screenLayout|screenSize|smallestScreenSize|uiMode|touchscreen" android:hardwareAccelerated="true" android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen" />
+    <activity android:name="com.unity3d.services.ads.adunit.AdUnitTransparentSoftwareActivity" android:configChanges="fontScale|keyboard|keyboardHidden|locale|mnc|mcc|navigation|orientation|screenLayout|screenSize|smallestScreenSize|uiMode|touchscreen" android:hardwareAccelerated="false" android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen" />
+    <activity android:name="com.unity3d.services.ads.adunit.AdUnitSoftwareActivity" android:configChanges="fontScale|keyboard|keyboardHidden|locale|mnc|mcc|navigation|orientation|screenLayout|screenSize|smallestScreenSize|uiMode|touchscreen" android:hardwareAccelerated="false" android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
+    <!-- AdColony -->
+    <activity android:name="com.adcolony.sdk.AdColonyInterstitialActivity" android:configChanges="keyboardHidden|orientation|screenSize" android:hardwareAccelerated="true" />
+    <!-- Vungle -->
+    <activity android:name="com.vungle.publisher.VideoFullScreenAdActivity" android:configChanges="keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize" android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
+    <activity android:name="com.vungle.publisher.MraidFullScreenAdActivity" android:configChanges="keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize" android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen" />
+    <activity android:name="com.vungle.publisher.FlexViewAdActivity" android:configChanges="keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize" android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen" />
+    <!-- AdMob -->
+    <activity android:name="com.google.android.gms.ads.AdActivity" android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize" android:theme="@android:style/Theme.Translucent" />
+    <!-- Facebook -->
+    <activity android:name="com.facebook.ads.AudienceNetworkActivity" android:hardwareAccelerated="true" android:configChanges="keyboardHidden|orientation|screenSize" />
+    <activity android:name="com.facebook.ads.internal.ipc.RemoteANActivity" android:configChanges="keyboardHidden|orientation|screenSize" android:exported="false" android:process=":adnw" />
+    <service android:name="com.facebook.ads.internal.ipc.AdsProcessPriorityService" android:exported="false" />
+    <service android:name="com.facebook.ads.internal.ipc.AdsMessengerService" android:exported="false" android:process=":adnw" />
+    <activity android:name="com.facebook.unity.FBUnityLoginActivity" android:configChanges="fontScale|keyboard|keyboardHidden|locale|mnc|mcc|navigation|orientation|screenLayout|screenSize|smallestScreenSize|uiMode|touchscreen" android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen" />
+    <activity android:name="com.facebook.unity.FBUnityDialogsActivity" android:configChanges="fontScale|keyboard|keyboardHidden|locale|mnc|mcc|navigation|orientation|screenLayout|screenSize|smallestScreenSize|uiMode|touchscreen" android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen" />
+    <activity android:name="com.facebook.unity.FBUnityAppLinkActivity" android:exported="true" />
+    <activity android:name="com.facebook.unity.FBUnityDeepLinkingActivity" android:exported="true" />
+    <activity android:name="com.facebook.unity.FBUnityGameRequestActivity" />
+    <activity android:name="com.facebook.unity.FBUnityCreateGameGroupActivity" />
+    <activity android:name="com.facebook.unity.FBUnityJoinGameGroupActivity" />
+    <activity android:name="com.facebook.unity.AppInviteDialogActivity" />
+    <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="fb827853747377605" />
+    <meta-data android:name="com.facebook.sdk.AutoLogAppEventsEnabled" android:value="false" />
+    <meta-data android:name="com.facebook.sdk.AdvertiserIDCollectionEnabled" android:value="false" />
+    <provider android:name="com.facebook.FacebookContentProvider" android:authorities="com.facebook.app.FacebookContentProvider827853747377605" android:exported="true" />
+  </application>
   <!-- Normal permissions -->
   <uses-permission android:name="android.permission.WAKE_LOCK" />
   <uses-permission android:name="android.permission.INTERNET" />
@@ -29,4 +96,6 @@
   <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
   <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
   <uses-permission android:name="com.android.vending.BILLING" />
+  <!-- FORCE TO REMOVE THIS PERMISSIONS -->
+  <uses-permission android:name="android.permission.READ_PHONE_STATE" tools:node="remove" />
 </manifest>
