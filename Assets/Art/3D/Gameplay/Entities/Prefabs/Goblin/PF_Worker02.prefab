@@ -81,7 +81,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!1 &1388873712040722
 GameObject:
   m_ObjectHideFlags: 1
@@ -1039,7 +1039,8 @@ MonoBehaviour:
       - equipablePrefabName: PF_Christmas_Hat
         defaultItemLOW: 0
         probability: 1
-        toDisableOnEquip: []
+        toDisableOnEquip:
+        - {fileID: 1447307805725906}
         position: {x: -0.024943769, y: -0.022294879, z: -0.037179887}
         scale: {x: 1.4091359, y: 1.4091359, z: 1.4091359}
         rotation: {x: 352.5298, y: 359.23666, z: 359.6999}
