@@ -366,11 +366,17 @@ public class OfferPack {
         // Currency type
         m_currency = StringToCurrency(m_def.GetAsString("currency"));
 
-        // Items - limited to 3 for now
-        for (int i = 1; i <= MAX_ITEMS; ++i) {	// [1..N]
+		// Choose tracking group for rewards depending on offer type
+		HDTrackingManager.EEconomyGroup ecoGroup = HDTrackingManager.EEconomyGroup.SHOP_OFFER_PACK;
+		if(m_type == Type.FREE) {
+			ecoGroup = HDTrackingManager.EEconomyGroup.SHOP_AD_OFFER_PACK;
+		}
+
+		// Items - limited to 3 for now
+		for (int i = 1; i <= MAX_ITEMS; ++i) {	// [1..N]
 			// Create and initialize new item
 			OfferPackItem item = new OfferPackItem();
-			item.InitFromDefinition(_def, i);
+			item.InitFromDefinition(_def, i, ecoGroup);
 
 			// If a reward wasn't generated, the item is either not properly defined or the pack doesn't have this item, don't store it
 			if(item.reward == null) continue;
@@ -1101,6 +1107,7 @@ public class OfferPack {
             case UserProfile.Currency.REAL: return "real";
             case UserProfile.Currency.HARD: return "pc";
             case UserProfile.Currency.SOFT: return "sc";
+			case UserProfile.Currency.NONE:	return "none";
         }
         return CurrencyToString(DEFAULT_CURRENCY);
     }
@@ -1118,6 +1125,8 @@ public class OfferPack {
             case "real": return UserProfile.Currency.REAL;
             case "pc": return UserProfile.Currency.HARD;
             case "sc": return UserProfile.Currency.SOFT;
+			case "free":
+			case "none": return UserProfile.Currency.NONE;
         }
         return DEFAULT_CURRENCY;
     }

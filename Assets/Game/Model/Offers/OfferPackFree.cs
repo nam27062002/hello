@@ -109,6 +109,9 @@ public class OfferPackFree : OfferPack {
         // It's marked as applied so it will be removed next time OffersManager updates this offer
 		m_hasBeenApplied = true;
 
+		// Reset free offer cooldown timer
+		OffersManager.RestartFreeOfferCooldown();
+
 		// Parent will do the rest
         base.Apply();
     }

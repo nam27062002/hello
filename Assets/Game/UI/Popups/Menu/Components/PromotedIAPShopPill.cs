@@ -16,7 +16,7 @@ public class PromotedIAPShopPill : IPopupShopPill {
     //------------------------------------------------------------------------//
     public void InitFromSku(string _sku) {
         // maybe is an offer pack
-        m_offerPack = OffersManager.GetOfferPack(_sku);
+        m_offerPack = OffersManager.GetOfferPackByIAP(_sku);
 
         if (m_offerPack == null) {
             m_def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SHOP_PACKS, _sku);

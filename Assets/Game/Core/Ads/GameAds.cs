@@ -13,7 +13,8 @@ public class GameAds : Singleton<GameAds> {
 		SKIP_MISSION_COOLDOWN,
         EVENT_SCORE_X2,
         INTERSTITIAL,
-		DAILY_REWARD_DOUBLE
+		DAILY_REWARD_DOUBLE,
+		FREE_OFFER_PACK
     };
 
 	public static bool adsAvailable {

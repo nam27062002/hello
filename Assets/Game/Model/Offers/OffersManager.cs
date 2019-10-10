@@ -68,7 +68,19 @@ public class OffersManager : Singleton<OffersManager> {
 
 	// Free offers
 	private List<OfferPack> m_allEnabledFreeOffers = new List<OfferPack>();  // All enabled and non-expired free offer packs
+
 	private OfferPackFree m_activeFreeOffer = null;   // Currently active free offer
+	public static OfferPackFree activeFreeOffer {
+		get { return instance.m_activeFreeOffer; }
+	}
+
+	private DateTime m_freeOfferCooldownEndTime = DateTime.MinValue;
+	public static DateTime freeOfferCooldownEndTime {
+		get { return instance.m_freeOfferCooldownEndTime; }
+	}
+	public static TimeSpan freeOfferRemainingCooldown {
+		get { return GameServerManager.SharedInstance.GetEstimatedServerTime() - freeOfferCooldownEndTime; }
+	}
 
 	// Settings
 	private OffersManagerSettings m_settings = null;
@@ -246,10 +258,10 @@ public class OffersManager : Singleton<OffersManager> {
 		m_offersToRemove.Clear();
 
 		// Do we need to activate a new rotational offer?
-		RefreshRotationals();
+		dirty |= RefreshRotationals();
 
 		// Do we need to activate a new free offer?
-		RefreshFree();
+		dirty |= RefreshFree();
 
 		// Has any offer changed its state?
 		if(dirty) {
@@ -666,9 +678,9 @@ public class OffersManager : Singleton<OffersManager> {
 	/// <returns>The offer pack.</returns>
 	/// <param name="_packSku">Offer pack sku.</param>
 	public static OfferPack GetOfferPack(string _packSku) {
-		int count = m_instance.m_allOffers.Count;
+		int count = instance.m_allOffers.Count;
 		for(int i = 0; i < count; ++i) {
-			OfferPack pack = m_instance.m_allOffers[i];
+			OfferPack pack = instance.m_allOffers[i];
 			if(pack.def.sku == _packSku) {
 				return pack;
 			}
@@ -682,16 +694,21 @@ public class OffersManager : Singleton<OffersManager> {
 	/// <returns>The offer pack.</returns>
 	/// <param name="_iapSku">Offer iap sku.</param>
 	public static OfferPack GetOfferPackByIAP(string _iapSku) {
-        int count = m_instance.m_allOffers.Count;
+        int count = instance.m_allOffers.Count;
         for (int i = 0; i < count; i++) {
-            OfferPack offerPack = m_instance.m_allOffers[i];
+            OfferPack offerPack = instance.m_allOffers[i];
             if (offerPack.def.Get("iapSku") == _iapSku) {
                 return offerPack;
             }
         }
         return null;
     }
-    
+
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <param name="def"></param>
+	/// <returns></returns>
     public static string GenerateTrackingOfferName(DefinitionNode def)
     {
         string offerName = def.sku;
@@ -707,6 +724,14 @@ public class OffersManager : Singleton<OffersManager> {
         return offerName;
     }
 
+	/// <summary>
+	/// Restart the free offer cooldown timer.
+	/// </summary>
+	public static void RestartFreeOfferCooldown() {
+		DefinitionNode offerSettings = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, "offerSettings");
+		DateTime serverTime = GameServerManager.SharedInstance.GetEstimatedServerTime();
+		instance.m_freeOfferCooldownEndTime = serverTime.AddMinutes(offerSettings.GetAsDouble("freeCooldownMinutes"));
+	}
 
     //------------------------------------------------------------------------//
     // CALLBACKS															  //
@@ -833,5 +858,13 @@ public class OffersManager : Singleton<OffersManager> {
 			Debug.Log("    " + s.ToString());
 		}
 #endif
+	}
+
+	/// <summary>
+	/// For debug purposes only!
+	/// Skips the cooldown timer of the free offer.
+	/// </summary>
+	public static void DEBUG_SkipFreeOfferCooldown() {
+		instance.m_freeOfferCooldownEndTime = GameServerManager.SharedInstance.GetEstimatedServerTime();
 	}
 }
