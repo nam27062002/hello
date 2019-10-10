@@ -23,7 +23,7 @@ public class FireNode : IFireNode {
 
     public Vector3 position { get { return m_parentTransform.TransformPoint(localPosition); } }
     public Vector3 localPosition;
-    public float scale;
+    public float scale = 1f;
 
 	private Decoration m_decoration;
     private Transform m_parentTransform;
