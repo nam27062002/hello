@@ -6,17 +6,17 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: dragon_alien_0_body
+  m_Name: dragon_alien_0_ingame_wings
   m_Shader: {fileID: 4800000, guid: 2345015ac46679e4cb5817ed44c82547, type: 3}
-  m_ShaderKeywords: FRESNEL FXLAYER_NONE NORMALMAP OPAQUEALPHA REFLECTIONTYPE_NORMAL
-    SELFILLUMINATE_NORMAL SPECULAR _ZWRITE_ON
+  m_ShaderKeywords: FRESNEL FXLAYER_NONE NORMALMAP REFLECTIONTYPE_NORMAL SELFILLUMINATE_NORMAL
+    SPECULAR _ZWRITE_ON
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
   stringTagMap:
-    QUEUE: Geometry
-    RenderType: Opaque
+    QUEUE: Transparent
+    RenderType: Transparent
   disabledShaderPasses: []
   m_SavedProperties:
     serializedVersion: 3
@@ -73,7 +73,7 @@ Material:
     - FXLayer: 0
     - ReflectionType: 0
     - SelfIlluminate: 0
-    - _BlendMode: 0
+    - _BlendMode: 2
     - _BumpScale: 1
     - _ColorRampAmount: 0
     - _ColorRampID0: 0
@@ -85,9 +85,9 @@ Material:
     - _DissolveLowerLimit: -1
     - _DissolveMargin: 0.1
     - _DissolveUpperLimit: 1
-    - _DstBlend: 0
+    - _DstBlend: 10
     - _EnableBlendFresnel: 0
-    - _EnableCutoff: 0
+    - _EnableCutoff: 1
     - _EnableDiffuseAsSpecMask: 0
     - _EnableDoublesided: 0
     - _EnableFresnel: 1
@@ -118,7 +118,7 @@ Material:
     - _SmoothnessTextureChannel: 0
     - _SpecExponent: 30.9
     - _SpecularHighlights: 1
-    - _SrcBlend: 1
+    - _SrcBlend: 5
     - _StencilMask: 10
     - _UVSec: 0
     - _VOAmplitude: 0.3
