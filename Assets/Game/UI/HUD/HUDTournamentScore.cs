@@ -94,7 +94,8 @@ public class HUDTournamentScore : IHUDCounter {
 		string ret = "";
 		if(m_mode == HDTournamentDefinition.TournamentGoal.TournamentMode.TIME_ATTACK) {
 			// Show the target score for time attack tournaments
-			ret = m_lastScorePrinted + "/" + m_targetScore;
+			long score = Math.Min( m_lastScorePrinted, m_targetScore );
+			ret = score + "/" + m_targetScore;
 		} else if(m_tournamentDef.m_goal.m_type == "birthday_stay_mode_time") {
 			// Special format for "stay mode" trackers
 			ret = m_tracker.FormatValue(m_lastScorePrinted);
