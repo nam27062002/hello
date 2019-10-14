@@ -8,7 +8,7 @@ Material:
   m_PrefabInternal: {fileID: 0}
   m_Name: witch_billboard_M1
   m_Shader: {fileID: 4800000, guid: 4bd59ad400e211745b4759937240dc56, type: 3}
-  m_ShaderKeywords: FOG OPAQUEALPHA SPECULAR VERTEXCOLOR_NONE
+  m_ShaderKeywords: EMISSIVE_COLOR FOG OPAQUEALPHA VERTEXCOLOR_NONE
   m_LightmapFlags: 1
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -68,11 +68,11 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
-    - Emissive: 0
+    - Emissive: 4
     - MainColor: 0
     - VertexColor: 0
     - _BlendMode: 0
-    - _BlinkTimeMultiplier: 2
+    - _BlinkTimeMultiplier: 0
     - _BumpScale: 1
     - _Cull: 2
     - _CutOff: 0.5
@@ -82,7 +82,7 @@ Material:
     - _DetailNormalMapScale: 1
     - _DoubleSided: 0
     - _DstBlend: 0
-    - _EmissivePower: 1
+    - _EmissivePower: 0.6
     - _EnableAdditiveBlend: 0
     - _EnableAutomaticBlend: 0
     - _EnableBlendTexture: 0
@@ -94,7 +94,7 @@ Material:
     - _EnableNormalMap: 0
     - _EnableNormalwAsSpecular: 0
     - _EnableOpaqueAlpha: 1
-    - _EnableSpecular: 1
+    - _EnableSpecular: 0
     - _EnableTint: 0
     - _EnableWaveEmission: 0
     - _FogEnd: 100
@@ -121,7 +121,7 @@ Material:
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _EmissiveColor: {r: 1, g: 1, b: 1, a: 1}
+    - _EmissiveColor: {r: 0.03698098, g: 0.29261714, b: 0.41911763, a: 0.256}
     - _FogColor: {r: 0, g: 0, b: 0, a: 0}
     - _Panning: {r: 0, g: 0, b: 0, a: 0}
     - _SpecularDir: {r: -0.015723178, g: 0.44024938, b: -0.89773786, a: 0}
