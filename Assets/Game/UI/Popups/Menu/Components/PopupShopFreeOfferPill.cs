@@ -87,7 +87,7 @@ public class PopupShopFreeOfferPill : PopupShopOffersPill {
 
 			// If leaving cooldown, restore text
 			if(!isOnCooldown) {
-				m_buttonText.Localize(m_buttonText.tid);
+				m_buttonText.Localize("TID_FREE_DAILY_REWARD_BUTTON");
 			}
 			
 			// Save new state
