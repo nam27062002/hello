@@ -43,6 +43,7 @@ public class LeaguesScreenController : MonoBehaviour {
     private Panel m_activePanel = Panel.ERROR;
     private HDLeagueController m_league = null;
     private HDSeasonData m_season = null;
+	private bool m_rewardsScreenPending = false;
 
     //------------------------------------------------------------------------//
     // GENERIC METHODS														  //
@@ -86,6 +87,17 @@ public class LeaguesScreenController : MonoBehaviour {
     /// Called at regular intervals.
     /// </summary>
     private void UpdatePeriodic() {
+		// [AOC] Regardless of the state, if going to the rewards screen is pending, do it when possible
+		if(m_rewardsScreenPending) {
+			MenuSceneController menu = InstanceManager.menuSceneController;
+			if(!LoadingScreen.isVisible && !menu.transitionManager.isTransitioning) {
+				InstanceManager.menuSceneController.GetScreenData(MenuScreen.LEAGUES_REWARD).ui.GetComponent<LeaguesRewardScreen>().StartFlow();
+				InstanceManager.menuSceneController.GoToScreen(MenuScreen.LEAGUES_REWARD, true);
+				m_rewardsScreenPending = false;
+				return;
+			}
+		}
+
         if (m_activePanel == Panel.LOADING) {
             switch (m_season.state) {
                 case HDSeasonData.State.TEASING:
@@ -248,10 +260,8 @@ public class LeaguesScreenController : MonoBehaviour {
                                 break;
 
                             case HDLiveData.State.VALID: {
-                                    if (!LoadingScreen.isVisible) {
-                                        InstanceManager.menuSceneController.GetScreenData(MenuScreen.LEAGUES_REWARD).ui.GetComponent<LeaguesRewardScreen>().StartFlow();
-                                        InstanceManager.menuSceneController.GoToScreen(MenuScreen.LEAGUES_REWARD, true);
-                                    }
+									targetPanel = Panel.LOADING;
+									m_rewardsScreenPending = true;	// Go to rewards screen when possible   
                                 }
                                 break;
 

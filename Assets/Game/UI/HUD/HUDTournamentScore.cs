@@ -51,7 +51,7 @@ public class HUDTournamentScore : IHUDCounter {
 				m_lastScorePrinted = 0;	
 				m_targetScore = m_tournamentDef.m_goal.m_targetAmount;
 				m_tracker = HDLiveDataManager.tournament.m_tracker;
-
+				Messenger.AddListener(MessengerEvents.GAME_STARTED, OnGameStarted);
                 // We used to update the icon here depending on the quest objective
                 // but since OTA the icon will be always the gold badge plain 2d icon. 
 
@@ -72,6 +72,16 @@ public class HUDTournamentScore : IHUDCounter {
 		UpdateScore();
 	}
 
+	void OnDestroy()
+	{
+		Messenger.RemoveListener(MessengerEvents.GAME_STARTED, OnGameStarted);
+	}
+
+	public void OnGameStarted(){
+		m_lastScorePrinted = m_tracker.currentValue;
+		PrintValue();
+
+	}
 	/// <summary>
 	/// Called every frame.
 	/// </summary>
@@ -84,7 +94,8 @@ public class HUDTournamentScore : IHUDCounter {
 		string ret = "";
 		if(m_mode == HDTournamentDefinition.TournamentGoal.TournamentMode.TIME_ATTACK) {
 			// Show the target score for time attack tournaments
-			ret = m_lastScorePrinted + "/" + m_targetScore;
+			long score = Math.Min( m_lastScorePrinted, m_targetScore );
+			ret = score + "/" + m_targetScore;
 		} else if(m_tournamentDef.m_goal.m_type == "birthday_stay_mode_time") {
 			// Special format for "stay mode" trackers
 			ret = m_tracker.FormatValue(m_lastScorePrinted);
@@ -112,8 +123,8 @@ public class HUDTournamentScore : IHUDCounter {
 
 		long _score = m_tracker.currentValue;
 		if(_score != m_lastScorePrinted) {
-			UpdateValue(_score, true); 
 			m_lastScorePrinted = _score;
+			UpdateValue(_score, true); 
 		}
 	}
 }

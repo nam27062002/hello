@@ -135,7 +135,21 @@ public class AmbientHazard : MonoBehaviour, IBroadcastListener {
         // Initialize internal references
         m_transform = transform;
         m_collider = GetComponent<Collider>();
+        
+        Broadcaster.AddListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
+        Broadcaster.AddListener(BroadcastEventType.GAME_AREA_ENTER, this);
+        Broadcaster.AddListener(BroadcastEventType.GAME_AREA_EXIT, this);
+        Broadcaster.AddListener(BroadcastEventType.GAME_ENDED, this);
+
         m_levelLoaded = false;
+    }
+
+    private void OnDestroy() {
+        // Unsubscribe from external events
+        Broadcaster.RemoveListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
+        Broadcaster.RemoveListener(BroadcastEventType.GAME_AREA_ENTER, this);
+        Broadcaster.RemoveListener(BroadcastEventType.GAME_AREA_EXIT, this);
+        Broadcaster.RemoveListener(BroadcastEventType.GAME_ENDED, this);
     }
 
     /// <summary>
@@ -159,10 +173,6 @@ public class AmbientHazard : MonoBehaviour, IBroadcastListener {
     /// </summary>
     private void OnEnable() {
         // Subscribe to external events
-        Broadcaster.AddListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
-        Broadcaster.AddListener(BroadcastEventType.GAME_AREA_ENTER, this);
-        Broadcaster.AddListener(BroadcastEventType.GAME_AREA_EXIT, this);
-        Broadcaster.AddListener(BroadcastEventType.GAME_ENDED, this);
         DecorationManager.instance.RegisterAmbientHazard(this);
     }
 
@@ -170,12 +180,6 @@ public class AmbientHazard : MonoBehaviour, IBroadcastListener {
     /// Component disabled.
     /// </summary>
     private void OnDisable() {
-        // Unsubscribe from external events
-        Broadcaster.RemoveListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
-        Broadcaster.RemoveListener(BroadcastEventType.GAME_AREA_ENTER, this);
-        Broadcaster.RemoveListener(BroadcastEventType.GAME_AREA_EXIT, this);
-        Broadcaster.RemoveListener(BroadcastEventType.GAME_ENDED, this);
-
         if ( EntityManager.instance != null )
             DecorationManager.instance.UnregisterAmbientHazard(this);
     }

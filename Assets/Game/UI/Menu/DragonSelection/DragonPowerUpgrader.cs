@@ -28,6 +28,9 @@ public class DragonPowerUpgrader : MonoBehaviour {
     [SerializeField] private Localizer m_priceText = null;
     [SerializeField] private RectTransform m_feedbackAnchor = null;
     [SerializeField] private ShowHideAnimator m_showHide = null;
+	public ShowHideAnimator showHide {
+		get { return m_showHide; }
+	}
 
     // Internal data
     private DragonDataSpecial m_dragonData = null;
@@ -108,7 +111,11 @@ public class DragonPowerUpgrader : MonoBehaviour {
         // Hide button if the next upgrade doesn´t unlock a new power
         if (m_dragonData.IsUnlockingNewPower())
         {
-            m_showHide.Show(_animate);
+			if(_animate) {
+				m_showHide.RestartShow();
+			} else {
+				m_showHide.Show(false);
+			}
         }
         else
         {

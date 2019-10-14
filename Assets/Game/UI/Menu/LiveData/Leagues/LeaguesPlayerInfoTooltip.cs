@@ -27,7 +27,10 @@ public class LeaguesPlayerInfoTooltip : UITooltip {
 	//------------------------------------------------------------------------//
 	// Exposed references
 	[Separator("LeaguePlayerInfoTooltip")]
-	[SerializeField] private Text m_playerNameText = null;	// [AOC] Name text uses a dynamic font, so any special character should be properly displayed. On the other hand, instantiation time is increased for each pill containing non-cached characters.
+    [SerializeField] private GameObject m_playerInfoLayout = null;
+    [SerializeField] private GameObject m_updateNeededLayout = null;
+    [Space]
+    [SerializeField] private Text m_playerNameText = null;	// [AOC] Name text uses a dynamic font, so any special character should be properly displayed. On the other hand, instantiation time is increased for each pill containing non-cached characters.
 	[SerializeField] private TextMeshProUGUI m_rankText = null;
 	[Space]
 	[SerializeField] private Localizer m_dragonNameText = null;
@@ -49,17 +52,37 @@ public class LeaguesPlayerInfoTooltip : UITooltip {
     /// </summary>
     /// <param name="_playerInfo">The data used to initialize the tooltip.</param>
 	public void Init(HDLiveData.Leaderboard.Record _playerInfo) {
-		// Aux vars
-		DefinitionNode dragonDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, _playerInfo.build.dragon);
 
-		// Init visuals
-		// Player Info
-		if(m_playerNameText != null) {
+        // Aux vars
+        DefinitionNode dragonDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, _playerInfo.build.dragon);
+
+        // If the dragon doesnt exists in the content, ask the player to update the game        
+        bool updateNeeded = (dragonDef == null);
+
+        // Show a info panel asking him to download the latest version
+        m_playerInfoLayout.SetActive(!updateNeeded);
+        m_updateNeededLayout.SetActive(updateNeeded);
+
+        if (updateNeeded)
+            return;
+
+
+        // Init visuals
+        // Player Info
+        if (m_playerNameText != null) {
 			m_playerNameText.text = _playerInfo.name;
 		}
 
 		if(m_rankText != null) {
-			m_rankText.text = UIUtils.FormatOrdinalNumber(_playerInfo.rank + 1, UIUtils.OrdinalSuffixFormat.SUPERSCRIPT);
+            if (LocalizationManager.SharedInstance.GetCurrentLanguageSKU() == "lang_chinese" ||
+                LocalizationManager.SharedInstance.GetCurrentLanguageSKU() == "lang_chinese_trad")
+            {
+                // In chinese the ordinal symbol is at the same height than the number [HDK-4654]
+                m_rankText.text = UIUtils.FormatOrdinalNumber(_playerInfo.rank + 1, UIUtils.OrdinalSuffixFormat.DEFAULT);
+            } else
+            {
+                m_rankText.text = UIUtils.FormatOrdinalNumber(_playerInfo.rank + 1, UIUtils.OrdinalSuffixFormat.SUPERSCRIPT);
+            }
 		}
 
 		// Dragon info

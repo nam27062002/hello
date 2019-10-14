@@ -7,6 +7,7 @@
 //----------------------------------------------------------------------//
 // INCLUDES																//
 //----------------------------------------------------------------------//
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -253,21 +254,13 @@ public class MenuDragonLoader : MonoBehaviour {
             }
 
 			if (m_loadAsync && !forceSync && FeatureSettingsManager.MenuDragonsAsyncLoading){
-                if (HDAddressablesManager.Instance.ExistsResource(m_loadingPrefabName, null)) {
-                    m_asyncRequest = HDAddressablesManager.Instance.LoadAssetAsync(m_loadingPrefabName);
-                } else {
-                    m_asyncRequest = HDAddressablesManager.Instance.LoadAssetAsync("Game/Dragons/" + m_loadingPrefabName);
-                }                
+                m_asyncRequest = GetLoadDragonDependenciesOp(_disguiseSku);              
             }
             else{
 				// Instantiate the prefab and add it as child of this object               
 				GameObject dragonPrefab = null;
 
-                if (HDAddressablesManager.Instance.ExistsResource(m_loadingPrefabName, null)) {
-                    dragonPrefab = HDAddressablesManager.Instance.LoadAsset<GameObject>(m_loadingPrefabName);
-                } else {
-                    dragonPrefab = HDAddressablesManager.Instance.LoadAsset<GameObject>("Game/Dragons/" + m_loadingPrefabName);
-                }
+                dragonPrefab = HDAddressablesManager.Instance.LoadAsset<GameObject>(GetPrefabAddressableSku());
 
                 if (dragonPrefab != null) {
 					GameObject newInstance = GameObject.Instantiate<GameObject>(dragonPrefab);                
@@ -279,7 +272,28 @@ public class MenuDragonLoader : MonoBehaviour {
 		}
 	}
 
+    private string GetPrefabAddressableSku() {
+        return (HDAddressablesManager.Instance.ExistsResource(m_loadingPrefabName, null)) ? m_loadingPrefabName: "Game/Dragons/" + m_loadingPrefabName;
+    }
+    
+    private AddressablesOp GetLoadDragonDependenciesOp(string disguiseSku) {        
+        // Addressable ids required by disguiseSku
+        List<string> addressableIds = HDAddressablesManager.Instance.GetResourceIDsForDragonSkin(disguiseSku, false);
+        string prefabAddressableSku = GetPrefabAddressableSku();
+        string acAddressableSku = prefabAddressableSku.Replace("PF_", "AC_");
+
+        // prefab addressable id
+        addressableIds.Add(prefabAddressableSku);
+
+        // animator controller addressable id
+        addressableIds.Add(acAddressableSku);
+        
+        List<string> dependencyIds = HDAddressablesManager.Instance.GetDependencyIdsList(addressableIds);
+        return HDAddressablesManager.Instance.LoadDependencyIdsListAsync(dependencyIds);
+    }
+
 	public void Reload( bool forceSync = false ){
+        Debug.Log("MenuDragonLoader.Reload(): m_dragonSku = " + m_dragonSku + " m_disguiseSku = " + m_disguiseSku);
 		LoadDragon( m_dragonSku, m_disguiseSku, forceSync );
 	}
 
@@ -287,7 +301,7 @@ public class MenuDragonLoader : MonoBehaviour {
 	{
 		if ( m_asyncRequest != null && m_asyncRequest.isDone)
 		{
-            GameObject go = m_asyncRequest.GetAsset<GameObject>();
+            GameObject go = HDAddressablesManager.Instance.LoadAsset<GameObject>(GetPrefabAddressableSku());
             GameObject newInstance = GameObject.Instantiate<GameObject>( go );
                         
             ConfigureInstance( newInstance );
@@ -318,6 +332,8 @@ public class MenuDragonLoader : MonoBehaviour {
         newInstance.transform.SetParent(this.transform, false);
 		newInstance.transform.localPosition = Vector3.zero;
 		newInstance.transform.localRotation = Quaternion.identity;
+
+        Debug.Log("MenuDragonLoader.ConfigureInstance() : GameObject.name = " + newInstance.name + " m_loadingPrefabName = " + m_loadingPrefabName + " animator.runtimeAnimatorController = " + ((animator.runtimeAnimatorController != null) ? animator.runtimeAnimatorController.name: "null"));
 
 		// Keep layers?
 		if(!m_keepLayers) {

@@ -56,7 +56,9 @@ public class SpecialStatUpgrader : MonoBehaviour {
     [SerializeField] private Localizer m_priceText = null;
 	[SerializeField] private RectTransform m_feedbackAnchor = null;
     [SerializeField] private ShowHideAnimator m_showHide = null;
-
+	public ShowHideAnimator showHide {
+		get { return m_showHide; }
+	}
 
     // Visibility
     [Space]
@@ -231,7 +233,7 @@ public class SpecialStatUpgrader : MonoBehaviour {
 		if(m_progressBar != null) {
 			// [AOC] Match separator's circular layout min and max angles
 			float from = m_progressBar.fillAmount;
-			float targetAngle = m_separatorsContainer.angleRange.Lerp(m_statData.progress);
+			float targetAngle = Mathf.Lerp(m_separatorsContainer.minAngle, m_separatorsContainer.maxAngle, m_statData.progress);
 			float fillAmount = Mathf.InverseLerp(0f, 360f, targetAngle);
 			if(_animate) {
 				m_progressBar.DOKill();

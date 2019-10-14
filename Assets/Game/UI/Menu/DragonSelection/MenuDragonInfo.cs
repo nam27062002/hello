@@ -23,6 +23,7 @@ public class MenuDragonInfo : MonoBehaviour {
 	}
 
 	[SerializeField] protected Localizer m_dragonDescText;
+	[SerializeField] protected ShowHideAnimator m_dragonDescAnim;
 	public Localizer dragonDescText {
 		get { return m_dragonDescText; }
 	}
@@ -30,6 +31,11 @@ public class MenuDragonInfo : MonoBehaviour {
 	[SerializeField] protected MenuDragonUnlock m_dragonUnlock;
 	public MenuDragonUnlock dragonUnlock {
 		get { return m_dragonUnlock; }
+	}
+
+	[SerializeField] protected ShowHideAnimator m_showHide = null;
+	public ShowHideAnimator showHide {
+		get { return m_showHide; }
 	}
 
 	// Internal
@@ -41,7 +47,6 @@ public class MenuDragonInfo : MonoBehaviour {
 	private void Awake() {
 		// Subscribe to external events
 		Messenger.AddListener<string>(MessengerEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
-		Messenger.AddListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnScreenChanged);
 	}
 
 	/// <summary>
@@ -64,7 +69,6 @@ public class MenuDragonInfo : MonoBehaviour {
 	private void OnDestroy() {
 		// Unsubscribe from external events
 		Messenger.RemoveListener<string>(MessengerEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
-		Messenger.RemoveListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnScreenChanged);
 	}
 
 
@@ -132,7 +136,20 @@ public class MenuDragonInfo : MonoBehaviour {
 	/// </summary>
 	public void Refresh() {
 		// Force update, even if the dragon didnt change
-		Refresh(DragonManager.CurrentDragon, true);
+		Refresh(InstanceManager.menuSceneController.selectedDragonData, true);
+	}
+
+	/// <summary>
+	/// Shows/Hides the whole group. If hiding, disables the Game Object as well.
+	/// </summary>
+	/// <param name="_show">Whether to show or hide the dragon info group.</param>
+	public virtual void SetVisible(bool _show) {
+		// Use show/hide animator if possible
+		if(m_showHide != null) {
+			m_showHide.ForceSet(_show);
+		} else {
+			this.gameObject.SetActive(_show);
+		}
 	}
 
 
@@ -144,23 +161,8 @@ public class MenuDragonInfo : MonoBehaviour {
 	/// </summary>
 	/// <param name="_sku">The sku of the selected dragon.</param>
 	private void OnDragonSelected(string _sku) {
-		// Refresh after some delay to let the animation finish
-		Refresh(_sku, 0, true);
-	}
-
-
-	/// <summary>
-	/// The screen has changed
-	/// </summary>
-	/// <param name="_from">The source screen</param>
-	/// <param name="_to">The destination screen</param>
-	public void OnScreenChanged(MenuScreen _from, MenuScreen _to) {
-		// If not yet initialized, get out
-		if(m_dragonData == null) return;
-
-		// Refresh after some delay to let the animation finish
-		Refresh(m_dragonData.sku, 0.25f, true);
-
+		// Refresh after some delay in case OnScreenChanged was called at the same time
+		Refresh(_sku, .0f, true);
 	}
 
 	/// <summary>

@@ -429,7 +429,7 @@ public class FireLightning : DragonBreathBehaviour {
     	if ( m_dragon )
     	{
 			float furyBaseLength = m_dragon.data.def.GetAsFloat("furyBaseLength");
-			m_length = furyBaseLength + furyBaseLength * m_lengthPowerUpMultiplier / 100.0f;
+			m_length = furyBaseLength + furyBaseLength * lengthPowerUpPercentage / 100.0f;
 			m_length *= transform.localScale.x;
 		}
     }

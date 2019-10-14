@@ -50,8 +50,7 @@ public class DecorationManager : Singleton<DecorationManager>, IBroadcastListene
             case BroadcastEventType.GAME_AREA_ENTER:    m_updateEnabled = true; break;
             case BroadcastEventType.GAME_AREA_EXIT:
                 {
-                    FreezingObjectsRegistry.instance.ClearEntities();
-                    FreezingObjectsRegistry.instance.ClearScalings();
+
                     m_updateEnabled = false;
                 }
                 break;
