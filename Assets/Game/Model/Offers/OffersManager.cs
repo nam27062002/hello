@@ -74,13 +74,19 @@ public class OffersManager : Singleton<OffersManager> {
 		get { return instance.m_activeFreeOffer; }
 	}
 
-	private DateTime m_freeOfferCooldownEndTime = DateTime.MinValue;
 	public static DateTime freeOfferCooldownEndTime {
-		get { return instance.m_freeOfferCooldownEndTime; }
+		get { return UsersManager.currentUser.freeOfferCooldownEndTime; }
 	}
+
 	public static TimeSpan freeOfferRemainingCooldown {
 		get { return freeOfferCooldownEndTime - GameServerManager.SharedInstance.GetEstimatedServerTime(); }
 	}
+
+	public static bool isFreeOfferOnCooldown {
+		get { return freeOfferRemainingCooldown.TotalSeconds > 0; }
+	} 
+
+	private bool m_freeOfferNeedsSorting = false;	// While on cooldown, the free offer will always be placed last. Keep a flag to re-calculate order once the cooldown has finished.
 
 	// Settings
 	private OffersManagerSettings m_settings = null;
@@ -730,7 +736,7 @@ public class OffersManager : Singleton<OffersManager> {
 	public static void RestartFreeOfferCooldown() {
 		DefinitionNode offerSettings = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, "offerSettings");
 		DateTime serverTime = GameServerManager.SharedInstance.GetEstimatedServerTime();
-		instance.m_freeOfferCooldownEndTime = serverTime.AddMinutes(offerSettings.GetAsDouble("freeCooldownMinutes"));
+		UsersManager.currentUser.freeOfferCooldownEndTime = serverTime.AddMinutes(offerSettings.GetAsDouble("freeCooldownMinutes"));
 	}
 
     //------------------------------------------------------------------------//
@@ -865,6 +871,6 @@ public class OffersManager : Singleton<OffersManager> {
 	/// Skips the cooldown timer of the free offer.
 	/// </summary>
 	public static void DEBUG_SkipFreeOfferCooldown() {
-		instance.m_freeOfferCooldownEndTime = GameServerManager.SharedInstance.GetEstimatedServerTime();
+		UsersManager.currentUser.freeOfferCooldownEndTime = GameServerManager.SharedInstance.GetEstimatedServerTime();
 	}
 }

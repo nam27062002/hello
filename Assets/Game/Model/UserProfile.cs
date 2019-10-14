@@ -353,11 +353,14 @@ public class UserProfile : UserPersistenceSystem
         get{ return m_newOfferPersistanceData; }
     }
 
+	public DateTime freeOfferCooldownEndTime {
+		get;
+		set;
+	}
+
     // Happy hour
     private DateTime m_happyHourExpirationTime;
     private float m_happyHourExtraGemsRate;
-
-
 
     // public List<string> m_visitedZones = new List<string>();
     public HashSet<string> m_visitedZones = new HashSet<string>();
@@ -1124,6 +1127,12 @@ public class UserProfile : UserPersistenceSystem
             }
         }
 
+		key = "freeOfferCooldownEndTime";
+		if(_data.ContainsKey(key)) {
+			freeOfferCooldownEndTime = new DateTime(_data[key].AsLong);
+		} else {
+			freeOfferCooldownEndTime = DateTime.MinValue;
+		} 
 
         // Happy hour offer
         SimpleJSON.JSONNode happyHour = _data["happyHourOffer"];
@@ -1361,6 +1370,7 @@ public class UserProfile : UserPersistenceSystem
             newOffersData.Add(OfferPack.TypeToString(t), array);
         }
         data.Add( "newOffersPacks", newOffersData);
+		data.Add("freeOfferCooldownEndTime", freeOfferCooldownEndTime.Ticks.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
 
         
         // Happy hour offer
