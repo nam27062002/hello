@@ -477,6 +477,7 @@ public class OfferPack {
 		SetValueIfMissing(ref _def, "type", TypeToString(DEFAULT_TYPE));
         SetValueIfMissing(ref _def, "currency", CurrencyToString(DEFAULT_CURRENCY));
         SetValueIfMissing(ref _def, "order", m_order.ToString(CultureInfo.InvariantCulture));
+		SetValueIfMissing(ref _def, "refPrice", (0).ToString(CultureInfo.InvariantCulture));
 		SetValueIfMissing(ref _def, "discount", (0).ToString(CultureInfo.InvariantCulture));
 
 		// Featuring
@@ -978,6 +979,9 @@ public class OfferPack {
 			case Type.ROTATIONAL: {
 				newPack = new OfferPackRotational();
 			} break;
+			case Type.FREE: {
+				newPack = new OfferPackFree();
+			} break;
 			default: {
 				newPack = new OfferPack();
 			} break;
@@ -1077,6 +1081,7 @@ public class OfferPack {
 			case Type.PROGRESSION: 	return "progression";
 			case Type.PUSHED: 		return "push";
 			case Type.ROTATIONAL: 	return "rotational";
+			case Type.FREE:			return "free";
 		}
 		return TypeToString(DEFAULT_TYPE);
 	}
@@ -1091,6 +1096,7 @@ public class OfferPack {
 			case "progression": return Type.PROGRESSION;
 			case "push":		return Type.PUSHED;
 			case "rotational":	return Type.ROTATIONAL;
+			case "free":		return Type.FREE;
 		}
 		return DEFAULT_TYPE;
 	}
