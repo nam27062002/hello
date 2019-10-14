@@ -128,7 +128,7 @@ public class MenuHUD : MonoBehaviour {
 	/// </summary>
 	public void RefreshOffersNotifications() {
 		// Free offer notification: Show only if free offer is available
-		bool freeOfferAvailable = OffersManager.activeFreeOffer != null && OffersManager.freeOfferRemainingCooldown.TotalSeconds <= 0f;
+		bool freeOfferAvailable = OffersManager.activeFreeOffer != null && !OffersManager.isFreeOfferOnCooldown;
 		if(m_freeOfferNotification != null) {
 			m_freeOfferNotification.Set(freeOfferAvailable);
 		}
