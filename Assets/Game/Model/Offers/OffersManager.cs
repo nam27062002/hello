@@ -79,7 +79,7 @@ public class OffersManager : Singleton<OffersManager> {
 		get { return instance.m_freeOfferCooldownEndTime; }
 	}
 	public static TimeSpan freeOfferRemainingCooldown {
-		get { return GameServerManager.SharedInstance.GetEstimatedServerTime() - freeOfferCooldownEndTime; }
+		get { return freeOfferCooldownEndTime - GameServerManager.SharedInstance.GetEstimatedServerTime(); }
 	}
 
 	// Settings
