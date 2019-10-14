@@ -149,7 +149,8 @@ public class ContentManager
             "Rules/gameSettings",
             "Rules/dragonSettings",
             "Rules/initialSettings",
-            "Rules/missingRessourcesVariablesDefinitions"
+            "Rules/missingRessourcesVariablesDefinitions",
+			"Rules/offerSettings"
         });
 
 		kDefinitionFiles.Add(DefinitionsCategory.SEASONS, new string[] { "Rules/seasonsDefinitions" });
