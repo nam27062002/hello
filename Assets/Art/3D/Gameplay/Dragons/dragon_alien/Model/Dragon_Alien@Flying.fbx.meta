@@ -121,6 +121,9 @@ ModelImporter:
     100230: wing_03_finger_02_RT_JT
     100232: wing_03_finger_end_LF_JT
     100234: wing_03_finger_end_RT_JT
+    100236: Fire_Dummy
+    100238: SuctionPoint
+    100240: SwallowPoint
     400000: arm_LF_JT
     400002: arm_RT_JT
     400004: breastbone_01_JT
@@ -239,6 +242,9 @@ ModelImporter:
     400230: wing_03_finger_02_RT_JT
     400232: wing_03_finger_end_LF_JT
     400234: wing_03_finger_end_RT_JT
+    400236: Fire_Dummy
+    400238: SuctionPoint
+    400240: SwallowPoint
     7400000: Flying
     9500000: //RootNode
   externalObjects: {}
@@ -267,7 +273,42 @@ ModelImporter:
     animationWrapMode: 0
     extraExposedTransformPaths: []
     extraUserProperties: []
-    clipAnimations: []
+    clipAnimations:
+    - serializedVersion: 16
+      name: Flying
+      takeName: Flying
+      firstFrame: 0
+      lastFrame: 25
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events:
+      - time: 0.5278224
+        functionName: WingsFlyingSound
+        data: 
+        objectReferenceParameter: {instanceID: 0}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
     isReadable: 0
   meshes:
     lODScreenPercentages: []
