@@ -40,14 +40,16 @@ public class GameAds : Singleton<GameAds> {
     {
         if (m_adProvider == null)
         {
-#if MOPUB_SDK_ENABLED
+#if UNITY_EDITOR
+			m_adProvider = new AdProviderDummy();
+#elif MOPUB_SDK_ENABLED
             m_adProvider = new AdProviderMopub();
 #elif IRONSOURCE_SDK_ENABLED
-            m_adProvider = new AdProviderIronSource();
+			m_adProvider = new AdProviderIronSource();
 #else
             m_adProvider = new AdProviderDummy();
 #endif
-            m_adProvider.onVideoAdOpen += onVideoOpen;
+			m_adProvider.onVideoAdOpen += onVideoOpen;
             m_adProvider.onVideoAdClosed += onVideoClosed;
         }
 
