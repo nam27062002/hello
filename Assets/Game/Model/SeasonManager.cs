@@ -162,7 +162,7 @@ public class SeasonManager : Singleton<SeasonManager> {
         */
         
         System.DateTime dateTime = System.DateTime.Now;
-        ret = dateTime.Month == 2 && dateTime.Day >= 4 && dateTime.Day <= 10;
+        ret = dateTime.Month == 1 && dateTime.Day >= 22 && dateTime.Day <= 27;
         return ret;
         
     }
