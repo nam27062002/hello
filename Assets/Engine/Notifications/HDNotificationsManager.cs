@@ -180,6 +180,7 @@ public class HDNotificationsManager : Singleton<HDNotificationsManager>
     private const string SKU_NEW_CHESTS = "sku.not.03";
 	private const string SKU_DAILY_REWARD = "sku.not.04";
     private const string SKU_REENGAGEMENT = "sku.not.14";
+	private const string SKU_FREE_OFFER = "sku.not.15";
 
     private const string DEFAULT_ACTION = "Action";
 
@@ -225,8 +226,13 @@ public class HDNotificationsManager : Singleton<HDNotificationsManager>
 		CancelNotification(SKU_DAILY_REWARD);
 	}
 
+	// Free Offer
+	public void ScheduleNewFreeOffer(int seconds) {
+		ScheduleNotificationFromSku(SKU_FREE_OFFER, DEFAULT_ACTION, seconds);
 	}
 
+	public void CancelFreeOfferNotification() {
+		CancelNotification(SKU_FREE_OFFER);
 	}
 
 	// Reengagement

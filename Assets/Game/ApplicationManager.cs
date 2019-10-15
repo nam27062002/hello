@@ -652,6 +652,15 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
                 }
             }
 
+			// Free Offer
+			// Only when on cooldown
+			if(OffersManager.isFreeOfferOnCooldown) {
+				// Avoid notification during night
+				DateTime endTimeLocal = DateTime.Now.Add(OffersManager.freeOfferRemainingCooldown);
+				endTimeLocal = HDNotificationsManager.AvoidSilentHours(endTimeLocal);
+				int remainingSeconds = (int)(endTimeLocal - DateTime.Now).TotalSeconds;
+				HDNotificationsManager.instance.ScheduleNewFreeOffer(remainingSeconds);
+			}
             DefinitionNode gameSettingsDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, "gameSettings");
             int minutesToReengage = gameSettingsDef.GetAsInt("notificationComeBackTimer", 2000);
             int secondsToReengage = minutesToReengage * 60;
@@ -691,6 +700,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 		HDNotificationsManager.instance.CancelNewMissionsNotification();
 		HDNotificationsManager.instance.CancelNewChestsNotification();
 		HDNotificationsManager.instance.CancelDailyRewardNotification();
+		HDNotificationsManager.instance.CancelFreeOfferNotification();
         HDNotificationsManager.instance.CancelReengagementNotification();
         HDNotificationsManager.instance.CancelEggHatchedNotification();
     }
