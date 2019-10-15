@@ -94,7 +94,8 @@ public class OffersManager : Singleton<OffersManager> {
 	public static OffersManagerSettings settings {
 		get { 
 			if(instance.m_settings == null) {
-				instance.m_settings = Resources.Load<OffersManagerSettings>(OffersManagerSettings.PATH);
+				instance.m_settings = new OffersManagerSettings();
+				instance.m_settings.InitFromDefinitions();
 			}
 			return instance.m_settings;
 		}
@@ -138,6 +139,9 @@ public class OffersManager : Singleton<OffersManager> {
 
 		// Aux vars
 		DateTime serverTime = GameServerManager.SharedInstance.GetEstimatedServerTime();
+
+		// Reload settings
+		settings.InitFromDefinitions();
 
         // Clear current offers cache
         instance.m_allOffers.Clear();
@@ -779,9 +783,8 @@ public class OffersManager : Singleton<OffersManager> {
 	/// Restart the free offer cooldown timer.
 	/// </summary>
 	public static void RestartFreeOfferCooldown() {
-		DefinitionNode offerSettings = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, "offerSettings");
 		DateTime serverTime = GameServerManager.SharedInstance.GetEstimatedServerTime();
-		UsersManager.currentUser.freeOfferCooldownEndTime = serverTime.AddMinutes(offerSettings.GetAsDouble("freeCooldownMinutes"));
+		UsersManager.currentUser.freeOfferCooldownEndTime = serverTime.AddMinutes(settings.freeCooldownMinutes);
 		instance.m_freeOfferNeedsSorting = true;
 	}
 
