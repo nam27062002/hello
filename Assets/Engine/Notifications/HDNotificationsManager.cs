@@ -237,11 +237,34 @@ public class HDNotificationsManager : Singleton<HDNotificationsManager>
     public void CancelReengagementNotification(  ){
         CancelNotification(SKU_REENGAGEMENT);
     }
-#endregion
+	#endregion
 
+	#region utils
+	/// <summary>
+	/// Adjust given date time to avoid silent hours.
+	/// The date time will be moved forward to the first non-silent hour possible.
+	/// </summary>
+	/// <param name="_dateTime">Date time to be adjusted.</param>
+	/// <returns>Adjusted date time.</returns>
+	public static DateTime AvoidSilentHours(DateTime _dateTime) {
+		// Add hour by hour until condition is met
+		bool adjusted = false;
+		while(_dateTime.Hour >= HDNotificationsManager.SILENCE_START_HOUR || _dateTime.Hour < HDNotificationsManager.SILENCE_END_HOUR) {
+			_dateTime = _dateTime.AddHours(1);
+			adjusted = true;
+		}
 
-#region log
-    private const string LOG_CHANNEL = "[HDNotificationsManager]";
+		// Round to hour
+		if(adjusted) {
+			_dateTime = new DateTime(_dateTime.Year, _dateTime.Month, _dateTime.Day, _dateTime.Hour, 0, 0, 0, _dateTime.Kind);
+		}
+
+		return _dateTime;
+	}
+	#endregion
+
+	#region log
+	private const string LOG_CHANNEL = "[HDNotificationsManager]";
     private void Log(string msg)
     {
         msg = LOG_CHANNEL + msg;
