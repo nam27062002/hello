@@ -77,11 +77,24 @@ public class MissionObjective : TrackingObjectiveBase, IBroadcastListener {
 		}else{
 			_params = new List<string>();
 		}
-		 
 
-		// Use parent's initializer
-		Init(
-			TrackerBase.CreateTracker(_typeDef.sku, _params ),		// Create the tracker based on mission type
+        // Parse zones definition (if any)
+        List<string> _zones = new List<string>();
+        string check = _missionDef.GetAsString("zones", null);
+        if (!string.IsNullOrEmpty(check))
+        {
+            _zones = _missionDef.GetAsList<string>("zones");
+        }
+        else
+        {
+            _zones = new List<string>();
+        }
+
+
+
+        // Use parent's initializer
+        Init(
+			TrackerBase.CreateTracker(_typeDef.sku, _params, _zones ),		// Create the tracker based on mission type
 			_targetValue,
 			_typeDef,
 			tidDesc,

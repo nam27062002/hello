@@ -192,7 +192,7 @@ public class TrackerBase {
 	/// <returns>A new tracker. <c>null</c> if the type was not recognized.</returns>
 	/// <param name="_typeSku">The type of tracker to be created. Typically a sku from the MissionTypesDefinitions table.</param>
 	/// <param name="_params">Optional parameters to be passed to the tracker. Depend on tracker's type.</param>
-	public static TrackerBase CreateTracker(string _typeSku, List<string> _params = null) {
+	public static TrackerBase CreateTracker(string _typeSku, List<string> _params = null, List<string> _zones = null) {
 		// Create a new objective based on mission type
 		switch(_typeSku) {
 			default: return null;
@@ -202,7 +202,7 @@ public class TrackerBase {
 			case "zone_survive":	return new TrackerZoneSurvive(_params);
 			case "visited_zones":	return new TrackerVisitedZones();
             case "kill_disguise":
-			case "kill":			return new TrackerKill(_params);
+			case "kill":			return new TrackerKill(_params, _zones);
             case "kill_in_love":    return new TrackerKillInLove(_params);
             case "kill_stunned":    return new TrackerKillStunned(_params);
             case "kill_frozen":     return new TrackerKillFrozen(_params);
