@@ -30,6 +30,7 @@ public class OffersManager : Singleton<OffersManager> {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
+	private const string FREE_FTUX_PACK_SKU = "AdOfferFtux";
 
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
@@ -394,17 +395,28 @@ public class OffersManager : Singleton<OffersManager> {
 		// Create a local copy of the history to be able to manipulate it
 		// Do it ONLY if we need new rotational packs - avoid unnecessary memory allocation
 		Queue<string> history = new Queue<string>();
-		int max = freeOffersPersistence.Count;
-		for(int i = 0; i < max; i++) {
+		int historySize = freeOffersPersistence.Count;
+		for(int i = 0; i < historySize; i++) {
 			history.Enqueue(freeOffersPersistence[i]["sku"]);
 		}
 
 		// Select a new pack!
-		OfferPackFree newPack = PickRandomPack(
-			m_allEnabledFreeOffers,
-			history,
-			history.Count
-		) as OfferPackFree;
+		// Special case for FTUX
+		OfferPackFree newPack = null;
+		if(historySize == 0) {
+			// Pick a specific pack
+			newPack = GetOfferPack(FREE_FTUX_PACK_SKU) as OfferPackFree;
+		}
+
+		// If it's not the FTUX or for some reason the FTUX pack doesn't exist, pick a random one
+		if(newPack == null) {
+			// Pick a random pack
+			newPack = PickRandomPack(
+				m_allEnabledFreeOffers,
+				history,
+				history.Count
+			) as OfferPackFree;
+		}
 
 		// If no pack was found, nothing else to do
 		if(newPack == null) return false;
