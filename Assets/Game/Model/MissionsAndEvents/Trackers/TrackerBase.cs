@@ -211,7 +211,9 @@ public class TrackerBase {
 			case "distance":		return new TrackerDistance();
 			case "dive":			return new TrackerDiveDistance();
 			case "dive_time":		return new TrackerDiveTime();
-			case "fire_rush":		return new TrackerFireRush();
+            case "space":           return new TrackerSpaceDistance();
+            case "space_time":      return new TrackerSpaceTime();
+            case "fire_rush":		return new TrackerFireRush();
 			case "destroy":			return new TrackerDestroy(_params);
 			case "kill_or_destroy":	return new TrackerKillOrDestroy(_params);
 			case "unlock_dragon":	return new TrackerUnlockDragon(_params);
