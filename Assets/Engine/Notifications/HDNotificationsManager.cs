@@ -170,10 +170,12 @@ public class HDNotificationsManager : Singleton<HDNotificationsManager>
         }
     }
 
-#region game
-    // Add here the game related code
+	#region game
+	// Add here the game related code
+	public const int SILENCE_START_HOUR = 23;
+	public const int SILENCE_END_HOUR = 8;
 
-    private const string SKU_EGG_HATCHED = "sku.not.01";
+	private const string SKU_EGG_HATCHED = "sku.not.01";
     private const string SKU_NEW_MISSIONS = "sku.not.02";
     private const string SKU_NEW_CHESTS = "sku.not.03";
 	private const string SKU_DAILY_REWARD = "sku.not.04";
@@ -181,6 +183,7 @@ public class HDNotificationsManager : Singleton<HDNotificationsManager>
 
     private const string DEFAULT_ACTION = "Action";
 
+	// Eggs
     public void ScheduleEggHatchedNotification(int seconds)
     {
         ScheduleNotificationFromSku(SKU_EGG_HATCHED, DEFAULT_ACTION, seconds);
@@ -191,6 +194,7 @@ public class HDNotificationsManager : Singleton<HDNotificationsManager>
         CancelNotification(SKU_EGG_HATCHED);
     }
 
+	// Missions
     public void ScheduleNewMissionsNotification(int seconds)
     {
         ScheduleNotificationFromSku(SKU_NEW_MISSIONS, DEFAULT_ACTION, seconds);
@@ -201,30 +205,31 @@ public class HDNotificationsManager : Singleton<HDNotificationsManager>
         CancelNotification(SKU_NEW_MISSIONS);
     }
 
+	// Chests
     public void ScheduleNewChestsNotification(int seconds)
     {
         ScheduleNotificationFromSku(SKU_NEW_CHESTS, DEFAULT_ACTION, seconds);
     }
-    
-    public void ScheduleNewDailyReward(int seconds)
+
+	public void CancelNewChestsNotification() {
+		CancelNotification(SKU_NEW_CHESTS);
+	}
+
+	// Daily Reward
+	public void ScheduleNewDailyReward(int seconds)
     {
         ScheduleNotificationFromSku(SKU_DAILY_REWARD, DEFAULT_ACTION, seconds);
     }
-    
-
-    public void CancelNewChestsNotification()
-    {
-        CancelNotification(SKU_NEW_CHESTS);
-    }
-
-	public void ScheduleDailyRewardNotification(int seconds) {
-		ScheduleNotificationFromSku(SKU_DAILY_REWARD, DEFAULT_ACTION, seconds);
-	}
 
 	public void CancelDailyRewardNotification() {
 		CancelNotification(SKU_DAILY_REWARD);
 	}
 
+	}
+
+	}
+
+	// Reengagement
     public void ScheduleReengagementNotification(int seconds) {
 		ScheduleNotificationFromSku(SKU_REENGAGEMENT, DEFAULT_ACTION, seconds);
 	}
