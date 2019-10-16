@@ -151,22 +151,6 @@ public class UI3DAddressablesLoaderEditor : Editor {
 		}
 		EditorGUILayout.EndHorizontal();
 
-		EditorGUILayout.Space();
-		if(GUILayout.Button("LOAD NOW", GUILayout.Height(50f))) {
-			m_targetUI3DLoader.Load();
-		}
-
-		if(GUILayout.Button("LOAD PLACEHOLDER", GUILayout.Height(50f))) {
-			GameObject newInstance = m_targetUI3DLoader.Load();
-			if(newInstance != null) {
-				// Destroy as soon as awaken (this is meant to be used in edit mode)
-				newInstance.AddComponent<DestroyInSeconds>().lifeTime = 0f;
-
-				// Rename
-				newInstance.gameObject.name = "PLACEHOLDER";
-			}
-		}
-
 		// Apply changes to the serialized object - always do this in the end of OnInspectorGUI.
 		serializedObject.ApplyModifiedProperties();
 	}
