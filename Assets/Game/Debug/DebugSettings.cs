@@ -94,6 +94,12 @@ public class DebugSettings : SingletonScriptableObject<DebugSettings> {
     public const string AB_AUTOMATIC_DOWNLOADER                 = "AB_AUTOMATIC_DOWNLOADER";
     public const string ADS_ENABLED                             = "ADS_ENABLED";
 
+    // Camera settings Cheats
+    public const string ALLOW_ZOOM_ON_BOOST                      = "ALLOW_ZOOM_ON_BOOST";
+    public const string ALLOW_ZOOM_ON_FURY                       = "ALLOW_ZOOM_ON_FURY";
+    public const string ALLOW_ZOOM_ON_SPACE                      = "ALLOW_ZOOM_ON_SPACE";
+    public const string ALLOW_CAMERALOOK_ROTATION                = "ALLOW_CAMERALOOK_ROTATION";
+
     //------------------------------------------------------------------//
     // PROPERTIES														//
     //------------------------------------------------------------------//
@@ -188,6 +194,26 @@ public class DebugSettings : SingletonScriptableObject<DebugSettings> {
 	public static bool slowPowerUp {
 		get { return Prefs_GetBoolPlayer(DRAGON_SLOW_POWER_UP, false); }
 		set { Prefs_SetBoolPlayer(DRAGON_SLOW_POWER_UP, value); }
+	}
+
+    public static bool allowCameraZoomOnBoost {
+		get { return Prefs_GetBoolPlayer(ALLOW_ZOOM_ON_BOOST, true); }
+		set { Prefs_SetBoolPlayer(ALLOW_ZOOM_ON_BOOST, value); }
+	}
+
+    public static bool allowCameraZoomOnFire {
+		get { return Prefs_GetBoolPlayer(ALLOW_ZOOM_ON_FURY, true); }
+		set { Prefs_SetBoolPlayer(ALLOW_ZOOM_ON_FURY, value); }
+	}
+
+    public static bool allowCameraZoomOnSpace {
+		get { return Prefs_GetBoolPlayer(ALLOW_ZOOM_ON_SPACE, true); }
+		set { Prefs_SetBoolPlayer(ALLOW_ZOOM_ON_SPACE, value); }
+	}
+
+    public static bool allowCameraRotation {
+		get { return Prefs_GetBoolPlayer(ALLOW_CAMERALOOK_ROTATION, true); }
+		set { Prefs_SetBoolPlayer(ALLOW_CAMERALOOK_ROTATION, value); }
 	}
 
 	static bool m_hitStopEnabled = true;
