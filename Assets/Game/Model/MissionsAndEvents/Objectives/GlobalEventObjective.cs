@@ -64,23 +64,14 @@ public class GlobalEventObjective : TrackingObjectiveBase, IBroadcastListener {
 			parameters.AddRange(splitResult);
 		}
 
-
-        // Parse zones definition (if any)
-        List<string> zones = new List<string>();
-        if (_data.ContainsKey("zones"))
-        {
-            string zonesString = _data["zones"];
-            string[] splitResult = zonesString.Split(new string[] { ";" }, StringSplitOptions.None);
-            zones.AddRange(splitResult);
-        }
-
+        string zone = _data["zone"];
 
         // Get icon
         m_icon = _data["icon"];
 
 		// Use parent's initializer
 		Init(
-			TrackerBase.CreateTracker(m_typeDef.sku, parameters, zones),		// Create the tracker based on goal type
+			TrackerBase.CreateTracker(m_typeDef.sku, parameters, zone),		// Create the tracker based on goal type
 			_data["amount"].AsLong,
 			m_typeDef,
 			_data["tidDesc"]

@@ -52,8 +52,9 @@ public class MissionPill : MonoBehaviour, IBroadcastListener {
 	[SerializeField] private Localizer m_removeCostText = null;
 	[SerializeField] private GameObject m_removeFreeButton = null;
 	[SerializeField] private GameObject m_removePaidButton = null;
-	[Space]
-	[SerializeField] private Localizer m_targetAreaText = null;
+    [Space]
+    [SerializeField] private GameObject m_targetZone = null;
+	[SerializeField] private Localizer m_targetZoneText = null;
 	[SerializeField] private Localizer m_targetDragonText = null;
 	
 	[Separator("Cooldown State")]
@@ -193,6 +194,9 @@ public class MissionPill : MonoBehaviour, IBroadcastListener {
 		// Shared mission difficulty text
 		RefreshDifficulty(m_difficultyText, true);
 
+        // Refresh zone
+        RefreshZone(m_targetZone, m_targetZoneText, mission.objective.zone);
+
         mission.updated = false;
 	}
 
@@ -239,9 +243,8 @@ public class MissionPill : MonoBehaviour, IBroadcastListener {
 
                
 		// Where
-		// [AOC] TODO!! Feature not yet implemented, use a fixed text for now
-		if(m_targetAreaText != null) {
-			m_targetAreaText.Localize("TID_MISSIONS_WHERE_ANY_LEVEL");
+		if(m_targetZoneText != null) {
+            m_targetZoneText.Localize("TID_MISSIONS_WHERE_ANY_LEVEL");
 		}
 
 		// With
@@ -417,27 +420,58 @@ public class MissionPill : MonoBehaviour, IBroadcastListener {
 		}
 	}
 
-	//------------------------------------------------------------------//
-	// CALLBACKS														//
-	//------------------------------------------------------------------//
-	/// <summary>
-	/// Callback for the remove mission button.
-	/// </summary>
-	public void OnRemoveMission() {
-		// Ignore if mission not initialized
-		if(m_mission == null) return;
 
-		// Start purchase flow
-		ResourcesFlow purchaseFlow = new ResourcesFlow("REMOVE_MISSION");
-		purchaseFlow.OnSuccess.AddListener(
-			(ResourcesFlow _flow) => {
-				// Just do it
-				HDTrackingManager.Instance.Notify_Missions(m_mission, HDTrackingManager.EActionsMission.skip_pay);
-				MissionManager.RemoveMission(m_missionDifficulty);
-                PersistenceFacade.instance.Save_Request();
-            }
-		);
-		purchaseFlow.Begin((long)m_mission.removeCostPC, UserProfile.Currency.HARD, HDTrackingManager.EEconomyGroup.REMOVE_MISSION, m_mission.def);
+    /// <summary>
+    /// Refreshes the zone info
+    /// </summary>
+    /// <param name="_targetZone">Zone info group</param>
+    /// <param name="_targetZoneText">Localizer of the zone</param>
+    /// <param name="_zoneSku">Sku of the zone as defined in zoneTriggersDefinitions</param>
+    private void RefreshZone(GameObject _targetZone, Localizer _targetZoneText, string _zoneSku)
+    {
+        // Safety check
+        if (_targetZone == null || _targetZoneText == null || string.IsNullOrEmpty(_zoneSku))
+            return;
+
+        // Try to find the zone in the content
+        DefinitionNode zoneDef = DefinitionsManager.SharedInstance.GetDefinitionByVariable(DefinitionsCategory.ZONE_TRIGGERS, "sku", _zoneSku);
+
+        if (zoneDef == null)
+        {
+            _targetZone.SetActive(false);
+        }else
+        {
+            // Show the localized name of the zone
+            _targetZone.SetActive(true);
+            _targetZoneText.Localize(zoneDef.GetAsString("tidName"));
+        }
+
+        return;
+
+    }
+
+
+    //------------------------------------------------------------------//
+    // CALLBACKS														//
+    //------------------------------------------------------------------//
+    /// <summary>
+    /// Callback for the remove mission button.
+    /// </summary>
+    public void OnRemoveMission() {
+	// Ignore if mission not initialized
+	if(m_mission == null) return;
+
+	// Start purchase flow
+	ResourcesFlow purchaseFlow = new ResourcesFlow("REMOVE_MISSION");
+	purchaseFlow.OnSuccess.AddListener(
+		(ResourcesFlow _flow) => {
+			// Just do it
+			HDTrackingManager.Instance.Notify_Missions(m_mission, HDTrackingManager.EActionsMission.skip_pay);
+			MissionManager.RemoveMission(m_missionDifficulty);
+            PersistenceFacade.instance.Save_Request();
+        }
+	);
+	purchaseFlow.Begin((long)m_mission.removeCostPC, UserProfile.Currency.HARD, HDTrackingManager.EEconomyGroup.REMOVE_MISSION, m_mission.def);
 	}
 
 	/// <summary>
