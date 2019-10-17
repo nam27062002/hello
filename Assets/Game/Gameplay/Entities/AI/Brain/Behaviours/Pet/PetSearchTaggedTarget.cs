@@ -16,12 +16,10 @@ namespace AI {
         public class PetSearchTaggedTargetData : StateComponentData {
             public IEntity.Tag tag = 0;
             public IEntity.Tag ignoreTag = 0;
-            /*
             [Tooltip("Max tier this pet will consider target.")]
             public DragonTier maxValidTier = DragonTier.TIER_4;
             [Tooltip("Min tier this pet will consider target.")]
             public DragonTier minValidTier = DragonTier.TIER_0;
-            */
             public TargetPriority priority = TargetPriority.Any;
             public CheckType checkType;
             public Signals.Type ignoreSignal = Signals.Type.None;
@@ -48,7 +46,6 @@ namespace AI {
 
             private PetSearchTaggedTargetData m_data;
             EatBehaviour m_eatBehaviour;
-            DragonTier m_playerTier;
 
 
             public override StateComponentData CreateData() {
@@ -70,12 +67,10 @@ namespace AI {
                 base.OnInitialise();
 
                 m_owner = InstanceManager.player;
-
                 m_data = m_pilot.GetComponentData<PetSearchTaggedTargetData>();
                 m_range = m_owner.data.maxScale * m_data.dragonSizeRangeMultiplier;
 
                 m_sensor = (m_machine as Machine).sensor;
-                m_playerTier = InstanceManager.player.data.tier;
             }
 
             // The first element in _param must contain the amount of time without detecting an enemy
@@ -105,7 +100,7 @@ namespace AI {
                                 bool isViable = false;
                                 switch (m_data.checkType) {
                                     case CheckType.Edible: {
-                                            if (entity.IsEdible(m_playerTier) ) {
+                                            if (entity.IsEdible(m_data.maxValidTier) && entity.edibleFromTier >= m_data.minValidTier) {
                                                 if (m_eatBehaviour == null) {
                                                     isViable = true;
                                                 } else {
@@ -118,7 +113,7 @@ namespace AI {
                                         }
                                         break;
                                     case CheckType.Burnable: {
-                                            isViable = entity.IsBurnable(m_playerTier);
+                                            isViable = entity.burnableFromTier >= m_data.minValidTier && entity.burnableFromTier <= m_data.maxValidTier;
                                         }
                                         break;
                                 }

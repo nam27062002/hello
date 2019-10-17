@@ -10,7 +10,7 @@ public class PetCupidoProjectile : PetProjectile {
 	protected override void DealDamage() 
     {
         Entity entity = m_hitCollider.GetComponent<Entity>();
-        if (entity != null && entity.machine != null && entity.IsEdible(InstanceManager.player.data.tier)) 
+        if (entity != null && entity.machine != null) 
         {
             AI.Machine enittyMachine = entity.machine as AI.Machine;
             enittyMachine.InLove(m_inLoveDuration);    
@@ -31,7 +31,7 @@ public class PetCupidoProjectile : PetProjectile {
                     validTarget = m_checkEntities[i].HasTag(m_entityTags) && !m_checkEntities[i].HasTag(m_ignoreEntityTags);
                 }
 
-                if (validTarget && entityMachine != null && !entityMachine.IsDying() && !entityMachine.IsDead() && m_checkEntities[i].IsEdible( InstanceManager.player.data.tier )) {
+                if (validTarget && entityMachine != null && !entityMachine.IsDying() && !entityMachine.IsDead()) {
                     entityMachine.InLove(m_inLoveDuration);
                 }
             }
