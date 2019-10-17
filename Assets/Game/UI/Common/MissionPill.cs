@@ -241,11 +241,6 @@ public class MissionPill : MonoBehaviour, IBroadcastListener {
         m_missionIcon.gameObject.SetActive(true);
 
 
-               
-		// Where
-		if(m_targetZoneText != null) {
-            m_targetZoneText.Localize("TID_MISSIONS_WHERE_ANY_LEVEL");
-		}
 
 		// With
 		// [AOC] TODO!! Feature not yet implemented, use a fixed text for now
@@ -430,19 +425,24 @@ public class MissionPill : MonoBehaviour, IBroadcastListener {
     private void RefreshZone(GameObject _targetZone, Localizer _targetZoneText, string _zoneSku)
     {
         // Safety check
-        if (_targetZone == null || _targetZoneText == null || string.IsNullOrEmpty(_zoneSku))
+        if (_targetZone == null || _targetZoneText == null)
             return;
 
         // Try to find the zone in the content
         DefinitionNode zoneDef = DefinitionsManager.SharedInstance.GetDefinitionByVariable(DefinitionsCategory.ZONE_TRIGGERS, "sku", _zoneSku);
 
-        if (zoneDef == null)
+        _targetZone.SetActive(true);
+        _targetZoneText.gameObject.SetActive(true);
+
+        if (string.IsNullOrEmpty(_zoneSku))
         {
-            _targetZone.SetActive(false);
-        }else
+            // Where
+            _targetZoneText.Localize("TID_MISSIONS_WHERE_ANY_LEVEL");
+
+        }
+        else
         {
             // Show the localized name of the zone
-            _targetZone.SetActive(true);
             _targetZoneText.Localize(zoneDef.GetAsString("tidName"));
         }
 
