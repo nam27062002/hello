@@ -21,7 +21,7 @@ public class TrackerKill : TrackerBase {
 	// MEMBERS																  //
 	//------------------------------------------------------------------------//
 	private List<string> m_targetSkus = null;
-    private List<string> m_zones = null;
+    private List<string> m_zoneTriggers = null;
     private bool m_enteredTargetZone = false;
 
     //------------------------------------------------------------------------//
@@ -32,16 +32,22 @@ public class TrackerKill : TrackerBase {
     /// </summary>
     /// <param name="_targetSkus">Skus of the target entities to be considered.</param>
     /// <param name="_zones">Ids of the targeted zones. If empty, there is no zone restriction.</param>
-    public TrackerKill(List<string> _targetSkus, List<string> _zones = null) {
+    public TrackerKill(List<string> _targetSkus, string _zoneSku = null) {
 		// Store target Skus list
 		m_targetSkus = _targetSkus;
 		Debug.Assert(m_targetSkus != null);
 
         // Zones parameter is optional
-        if (_zones != null && _zones.Count > 0)
+        if (!string.IsNullOrEmpty(_zoneSku)) 
         {
-            m_zones = _zones;
-            Messenger.AddListener<bool, ZoneTrigger>(MessengerEvents.MISSION_ZONE, OnZone);
+            // Get all the triggers of this zone
+            m_zoneTriggers = GetZoneTriggers(_zoneSku);
+
+            if (m_zoneTriggers != null && m_zoneTriggers.Count > 0)
+            {
+                Messenger.AddListener<bool, ZoneTrigger>(MessengerEvents.MISSION_ZONE, OnZone);
+            }
+            
         }
         
 
@@ -58,19 +64,21 @@ public class TrackerKill : TrackerBase {
 		
 	}
 
-	//------------------------------------------------------------------------//
-	// PARENT OVERRIDES														  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Finalizer method. Leave the tracker ready for garbage collection.
-	/// </summary>
-	override public void Clear() {
+
+
+    //------------------------------------------------------------------------//
+    // PARENT OVERRIDES														  //
+    //------------------------------------------------------------------------//
+    /// <summary>
+    /// Finalizer method. Leave the tracker ready for garbage collection.
+    /// </summary>
+    override public void Clear() {
 		// Unsubscribe from external events
 		Messenger.RemoveListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_EATEN, OnKill);
 		Messenger.RemoveListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_BURNED, OnKill);
 		Messenger.RemoveListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_DESTROYED, OnKill);
 
-        if (m_zones != null)
+        if (m_zoneTriggers != null && m_zoneTriggers.Count > 0)
         {
             Messenger.AddListener<bool, ZoneTrigger>(MessengerEvents.MISSION_ZONE, OnZone);
         }
@@ -112,7 +120,7 @@ public class TrackerKill : TrackerBase {
 			if(_e != null) {
 				if(m_targetSkus.Contains(_e.sku)) {
                     // Do we need to check the zone?
-                    if (m_zones != null && m_zones.Count>0)
+                    if (m_zoneTriggers != null && m_zoneTriggers.Count>0)
                     {
                         // Restricted to a target zone
                         if (m_enteredTargetZone)
@@ -136,7 +144,7 @@ public class TrackerKill : TrackerBase {
     /// </summary>
     private void OnZone(bool isEntering, ZoneTrigger zone)
     {
-        if (m_zones.Contains(zone.m_zoneId))
+        if (m_zoneTriggers.Contains(zone.m_zoneId))
         {
             m_enteredTargetZone = isEntering;
         }
