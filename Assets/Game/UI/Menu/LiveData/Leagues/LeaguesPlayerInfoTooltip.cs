@@ -74,7 +74,15 @@ public class LeaguesPlayerInfoTooltip : UITooltip {
 		}
 
 		if(m_rankText != null) {
-			m_rankText.text = UIUtils.FormatOrdinalNumber(_playerInfo.rank + 1, UIUtils.OrdinalSuffixFormat.SUPERSCRIPT);
+            if (LocalizationManager.SharedInstance.GetCurrentLanguageSKU() == "lang_chinese" ||
+                LocalizationManager.SharedInstance.GetCurrentLanguageSKU() == "lang_chinese_trad")
+            {
+                // In chinese the ordinal symbol is at the same height than the number [HDK-4654]
+                m_rankText.text = UIUtils.FormatOrdinalNumber(_playerInfo.rank + 1, UIUtils.OrdinalSuffixFormat.DEFAULT);
+            } else
+            {
+                m_rankText.text = UIUtils.FormatOrdinalNumber(_playerInfo.rank + 1, UIUtils.OrdinalSuffixFormat.SUPERSCRIPT);
+            }
 		}
 
 		// Dragon info

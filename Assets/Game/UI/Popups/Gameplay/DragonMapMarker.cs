@@ -133,11 +133,7 @@ public class DragonMapMarker : MonoBehaviour {
 			m_iconRoot.rotation = Quaternion.identity;
 
 			// Compute rotation angle
-			// Correct range
-			float angle = Vector3.Angle(diff, Vector3.right);
-			if(diff.y < 0) {
-				angle = -angle;
-			}
+			float angle = Vector3.SignedAngle(Vector3.down, diff, Vector3.forward);
 
 			// Apply rotation
 			m_arrowPivot.rotation = Quaternion.AngleAxis(angle, Vector3.forward);

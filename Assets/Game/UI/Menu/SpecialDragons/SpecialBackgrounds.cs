@@ -51,6 +51,15 @@ public class SpecialBackgrounds : MonoBehaviour
 			IDragonData selectedDragonData = DragonManager.GetDragonData(UsersManager.currentUser.CurrentDragon);
 			OnDragonSelected( selectedDragonData.type, true);
 		}
+        else
+        {
+            // Return to default color (so the clouds in other screens are white again)
+            if (m_showingSpecial)
+            {
+                HideSpecial(false);
+            }
+
+        }
 	}
 	
 	/// <summary>

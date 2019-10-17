@@ -681,7 +681,7 @@ public class HUDMessage : MonoBehaviour, IBroadcastListener {
 	{
 
         // Not very efficient, but only called once after the mission.
-        BaseIcon objectiveIcon = gameObject.GetComponentInChildren<BaseIcon>();
+        BaseIcon objectiveIcon = gameObject.GetComponentInChildren<BaseIcon>(true);
         
 		if (objectiveIcon != null )
 		{

@@ -358,6 +358,7 @@ public class HDTournamentManager : HDLiveEventManager, IBroadcastListener {
 			{
 				if ( m_runningGoal.m_seconds <= InstanceManager.gameSceneController.elapsedSeconds )
 				{
+					m_tracker.enabled = false;
 					// End game!
 					if (InstanceManager.gameSceneController != null && !InstanceManager.gameSceneController.isSwitchingArea )
 					{
@@ -373,6 +374,7 @@ public class HDTournamentManager : HDLiveEventManager, IBroadcastListener {
 			{
 				if ( m_tracker != null && m_tracker.currentValue >= m_runningGoal.m_targetAmount )
 				{
+					m_tracker.enabled = false;
 					m_runWasValid = true;
 					// End Game!
 					if (InstanceManager.gameSceneController != null && !InstanceManager.gameSceneController.isSwitchingArea )
