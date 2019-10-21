@@ -296,6 +296,11 @@ public class DragonMotionDino : DragonMotion {
                     m_impulse.y = -9.81f * m_freeFallGravityMultiplier * delta;
                 RotateToGround( m_direction );
                 SnapToGround();
+                if ( m_stomping )
+                {
+                    m_stomping = false;
+                    m_animator.SetBool(GameConstants.Animator.GROUND_STOMP, m_stomping);
+                }
             }
             else
             {
@@ -368,6 +373,11 @@ public class DragonMotionDino : DragonMotion {
                     m_impulse.y += -9.81f * m_freeFallGravityMultiplier * delta;
                     RotateToGround( m_direction );
                     SnapToGround();
+                    if ( m_stomping )
+                    {
+                        m_stomping = false;
+                        m_animator.SetBool(GameConstants.Animator.GROUND_STOMP, m_stomping);
+                    }
                 }
                 else
                 {
