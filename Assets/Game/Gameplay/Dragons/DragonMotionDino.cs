@@ -474,10 +474,12 @@ public class DragonMotionDino : DragonMotion {
         if (!m_grounded)
         {
             // m_waitStomp = false;
+            m_rbody.constraints = RigidbodyConstraints.FreezePositionZ;
             m_rbody.ResetCenterOfMass();
         }
         else
         {
+            m_rbody.constraints = RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezeRotation;
             m_rbody.centerOfMass = m_transform.InverseTransformPoint( m_groundSensor.position );
         }
 

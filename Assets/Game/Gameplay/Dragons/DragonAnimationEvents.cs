@@ -37,8 +37,11 @@ public class DragonAnimationEvents : MonoBehaviour, IBroadcastListener {
 
 	public string m_enterWaterSound;
 	public string m_enterWaterWithSplashSound;
+	private bool m_enterWaterSoundPlaying = false;
+
 	public string m_exitWaterSound;
 	public string m_exitWaterWithSplashSound;
+	private bool m_exitWaterSoundPlaying = false;
 
 	public string m_skimmingSound;
 	private AudioObject m_skimmingSoundAO;
@@ -83,8 +86,11 @@ public class DragonAnimationEvents : MonoBehaviour, IBroadcastListener {
 
     protected bool m_mutedWindSounds = false;
 
+	protected Transform m_transform;
+
 	void Awake()
 	{
+		m_transform = transform;
 		m_insideWaterSnapshot = InstanceManager.masterMixer.FindSnapshot("Underwater");
 	}
 
@@ -237,6 +243,7 @@ public class DragonAnimationEvents : MonoBehaviour, IBroadcastListener {
 
 	void OnWindsSoundCompleted( AudioObject ao )
 	{
+		ao.completelyPlayedDelegate = null;
 		m_wingsWindSoundAO = null;
 	}
 
@@ -316,6 +323,7 @@ public class DragonAnimationEvents : MonoBehaviour, IBroadcastListener {
 
 	void OnWigsIdleCompleted( AudioObject ao )
 	{
+		ao.completelyPlayedDelegate = null;
 		m_wingsIdleSoundAO = null;
 	}
 
@@ -338,6 +346,7 @@ public class DragonAnimationEvents : MonoBehaviour, IBroadcastListener {
 
 	void OnWingsFlyingSoundCompleted( AudioObject ao )
 	{
+		ao.completelyPlayedDelegate = null;
 		m_wingsFlyingSoundAO = null;
 	}
 
@@ -361,6 +370,7 @@ public class DragonAnimationEvents : MonoBehaviour, IBroadcastListener {
 
 	void OnWingsStrongFlapSoundCompleted( AudioObject ao )
 	{
+		ao.completelyPlayedDelegate = null;
 		m_wingsStrongFlapAO = null;
 	}
 
@@ -457,14 +467,27 @@ public class DragonAnimationEvents : MonoBehaviour, IBroadcastListener {
 		MuteWindSounds();
 		m_checkWaterSnapshot = true;
 		m_startWaterMovementY = transform.position.y;
-		if ( withSplash )
+
+		if (!m_enterWaterSoundPlaying)
 		{
-			PlaySound(m_enterWaterWithSplashSound);
+			string soundId = m_enterWaterSound;
+			if ( withSplash )
+			{
+				soundId = m_enterWaterWithSplashSound;
+			}
+			if ( !string.IsNullOrEmpty(soundId) )
+			{
+				m_enterWaterSoundPlaying = true;
+				AudioObject ao = AudioController.Play(soundId, m_transform);
+				ao.completelyPlayedDelegate = OnEnterWaterSoundCompleted;
+			}
 		}
-		else
-		{
-			PlaySound(m_enterWaterSound);
-		}
+	}
+
+	protected void OnEnterWaterSoundCompleted( AudioObject ao )
+	{
+		ao.completelyPlayedDelegate = null;
+		m_enterWaterSoundPlaying = false;
 	}
 
 	public void OnExitWater( bool withSplash )
@@ -474,15 +497,27 @@ public class DragonAnimationEvents : MonoBehaviour, IBroadcastListener {
 			InstanceManager.musicController.UnregisterSnapshot(m_insideWaterSnapshot);	
 		m_checkWaterSnapshot = false;
 
-		if (withSplash )
+		if ( !m_exitWaterSoundPlaying )
 		{
-			PlaySound(m_exitWaterWithSplashSound);
-		}
-		else
-		{
-			PlaySound(m_exitWaterSound);
-		}
+			string soundId = m_exitWaterSound;
+			if (withSplash )
+			{
+				soundId = m_exitWaterWithSplashSound;
+			}
+			if ( !string.IsNullOrEmpty(soundId) )
+			{
+				m_exitWaterSoundPlaying = true;
+				AudioObject ao = AudioController.Play(soundId, m_transform);
+				ao.completelyPlayedDelegate = OnExitWaterSoundCompleted;
+			}
 
+		}
+	}
+
+	void OnExitWaterSoundCompleted( AudioObject ao )
+	{
+		ao.completelyPlayedDelegate = null;
+		m_exitWaterSoundPlaying = false;
 	}
 
 	public void StartedSkimming()
@@ -505,7 +540,7 @@ public class DragonAnimationEvents : MonoBehaviour, IBroadcastListener {
 	protected void PlaySound( string audioId )
 	{
 		if ( !string.IsNullOrEmpty(audioId) )
-			AudioController.Play( audioId, transform );
+			AudioController.Play( audioId, m_transform );
 	}
 
 	public void OnEnterOuterSpace()

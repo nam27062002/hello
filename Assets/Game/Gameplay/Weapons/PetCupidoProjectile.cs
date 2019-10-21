@@ -10,16 +10,22 @@ public class PetCupidoProjectile : PetProjectile {
 	protected override void DealDamage() 
     {
         Entity entity = m_hitCollider.GetComponent<Entity>();
+        
         if (entity != null && entity.machine != null) 
         {
-            AI.Machine enittyMachine = entity.machine as AI.Machine;
-            enittyMachine.InLove(m_inLoveDuration);    
+            DragonTier tier = InstanceManager.player.data.tier;
+            if ( entity.IsEdible( tier ) || entity.CanBeGrabbed( tier ) )
+            {
+                AI.Machine enittyMachine = entity.machine as AI.Machine;
+                enittyMachine.InLove(m_inLoveDuration);    
+            }
         }
     }
     
     protected override void DealExplosiveDamage( bool _dealDamage )
     {
         int max = EntityManager.instance.GetEntitiesInRange2DNonAlloc(m_transform.position, m_radius, m_checkEntities);
+        DragonTier tier = InstanceManager.player.data.tier;
         for (int i = 0; i < max; i++) 
         {
             if (m_checkEntities[i].machine != null)
@@ -32,7 +38,11 @@ public class PetCupidoProjectile : PetProjectile {
                 }
 
                 if (validTarget && entityMachine != null && !entityMachine.IsDying() && !entityMachine.IsDead()) {
-                    entityMachine.InLove(m_inLoveDuration);
+                    if ( m_checkEntities[i].IsEdible( tier ) || m_checkEntities[i].CanBeGrabbed( tier ) )
+                    {
+                        entityMachine.InLove(m_inLoveDuration);
+                    }
+                    
                 }
             }
         }
