@@ -158,7 +158,8 @@ public class LeaguesPlayerInfoTooltip : UITooltip {
 			}
 		}
 
-		// Pets
+        // Pets
+        int petsAmount = 0;
 		for(int i = 0; i < m_petSlots.Length; ++i) {
 			// Skip if invalid
 			if(m_petSlots[i] == null) continue;
@@ -179,11 +180,13 @@ public class LeaguesPlayerInfoTooltip : UITooltip {
 			// Initialize pet slot
 			m_petSlots[i].InitWithPet(petDef);
 			m_petSlots[i].gameObject.SetActive(true);
-		}
+            petsAmount++;
+
+        }
 
 		// No pets error message
 		if(m_noPetsMessage != null) {
-			m_noPetsMessage.SetActive(_playerInfo.build.pets.Count == 0);
+			m_noPetsMessage.SetActive(petsAmount == 0);
 		}
 	}
 }
