@@ -1,7 +1,7 @@
-﻿// TrackerDestroy.cs
+﻿// TrackerBurn.cs
 // Hungry Dragon
 // 
-// Created by Alger Ortín Castellví on 09/05/2017.
+// Created by Alger Ortín Castellví on 21/03/2017.
 // Copyright (c) 2017 Ubisoft. All rights reserved.
 
 //----------------------------------------------------------------------------//
@@ -14,9 +14,9 @@ using System.Collections.Generic;
 // CLASSES																	  //
 //----------------------------------------------------------------------------//
 /// <summary>
-/// Tracker for destroyed entities.
+/// Tracker for burned entities.
 /// </summary>
-public class TrackerKillEquipped : TrackerBase {
+public class TrackerFreeze : TrackerBase {
 	//------------------------------------------------------------------------//
 	// MEMBERS																  //
 	//------------------------------------------------------------------------//
@@ -29,15 +29,21 @@ public class TrackerKillEquipped : TrackerBase {
 	/// Default constructor.
 	/// </summary>
 	/// <param name="_targetSkus">Skus of the target entities to be considered.</param>
-	public TrackerKillEquipped(List<string> _targetSkus) {
+	public TrackerFreeze(List<string> _targetSkus) {
 		// Store target Skus list
 		m_targetSkus = _targetSkus;
 		Debug.Assert(m_targetSkus != null);
 
-        // Subscribe to external events
-        Messenger.AddListener<Transform, IEntity, Reward, KillType>(MessengerEvents.ENTITY_KILLED, OnDestroy);
+		// Subscribe to external events
+		Messenger.AddListener<Transform, IEntity, Reward, KillType>(MessengerEvents.ENTITY_KILLED, OnKill);
 	}
 
+	/// <summary>
+	/// Destructor
+	/// </summary>
+	~TrackerFreeze() {
+
+	}
 
 	//------------------------------------------------------------------------//
 	// PARENT OVERRIDES														  //
@@ -46,9 +52,8 @@ public class TrackerKillEquipped : TrackerBase {
 	/// Finalizer method. Leave the tracker ready for garbage collection.
 	/// </summary>
 	override public void Clear() {
-        // Unsubscribe from external events
-        Messenger.RemoveListener<Transform, IEntity, Reward, KillType>(MessengerEvents.ENTITY_KILLED, OnDestroy);
-
+		// Unsubscribe from external events
+		Messenger.RemoveListener<Transform, IEntity, Reward, KillType>(MessengerEvents.ENTITY_KILLED, OnKill);
 
 		// Call parent
 		base.Clear();
@@ -74,30 +79,31 @@ public class TrackerKillEquipped : TrackerBase {
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
 	/// <summary>
-	/// An entity has been killed.
+	/// An entity has been burned.
 	/// </summary>
-	/// <param name="_e">The source entity, optional.</param>
+	/// <param name="_entity">The source entity, optional.</param>
 	/// <param name="_reward">The reward given.</param>
-	private void OnDestroy(Transform _t, IEntity _e, Reward _reward, KillType _type) {		
-		if (_e != null && (_e.onDieStatus.source == IEntity.Type.PLAYER || _e.onDieStatus.source == IEntity.Type.PET)){
-            // Check if has something equipped
-            if (_e.equip != null && _e.equip.HasSomethingEquiped()) {
-    			// Count automatically if we don't have any type filter
-    			if (m_targetSkus.Count == 0) {
-    				currentValue++;
-    			} else {
-                    bool found = false;
+	private void OnKill(Transform _t, IEntity _e, Reward _reward, KillType _type) {
 
-                    for (int i = 0; i < m_targetSkus.Count && !found; ++i) {
-                        found = _e.equip.HasEquipped(m_targetSkus[i]);
-                    }
-
-                    // Is it one of the target types?
-                    if (found) {
-    					currentValue++;
-    				}
-    			}
+        if (_type == KillType.FROZEN)
+        {
+            // Count automatically if we don't have any type filter
+            if (m_targetSkus.Count == 0)
+            {
+                currentValue++;
             }
-		}
+            else
+            {
+                // Is it one of the target types?			
+                if (_e != null)
+                {
+                    if (m_targetSkus.Contains(_e.sku))
+                    {
+                        // Found!
+                        currentValue++;
+                    }
+                }
+            }
+        }
 	}
 }
