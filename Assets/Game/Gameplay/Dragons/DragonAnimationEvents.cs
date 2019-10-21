@@ -18,6 +18,7 @@ public class DragonAnimationEvents : MonoBehaviour, IBroadcastListener {
 
 	public string m_wingsWindSound;
 	private AudioObject m_wingsWindSoundAO;
+	protected int m_turboValues = 0;
 
 	public string m_wingsStrongFlap;
 	private AudioObject m_wingsStrongFlapAO;
@@ -227,18 +228,22 @@ public class DragonAnimationEvents : MonoBehaviour, IBroadcastListener {
 
 	public void TurboLoopStart()
 	{
-		if ( m_particleController )
-			m_particleController.ActivateTrails();
-		if ( !string.IsNullOrEmpty(m_wingsWindSound))
+		if (m_turboValues == 0)
 		{
-			m_wingsWindSoundAO = AudioController.Play( m_wingsWindSound, transform);
-			if ( m_wingsWindSoundAO != null )
-            {
-                if (m_mutedWindSounds)
-                    m_wingsWindSoundAO.volume = 0;
-				m_wingsWindSoundAO.completelyPlayedDelegate = OnWindsSoundCompleted;
-            }
+			if ( m_particleController )
+				m_particleController.ActivateTrails();
+			if ( !string.IsNullOrEmpty(m_wingsWindSound))
+			{
+				m_wingsWindSoundAO = AudioController.Play( m_wingsWindSound, transform);
+				if ( m_wingsWindSoundAO != null )
+				{
+					if (m_mutedWindSounds)
+						m_wingsWindSoundAO.volume = 0;
+					m_wingsWindSoundAO.completelyPlayedDelegate = OnWindsSoundCompleted;
+				}
+			}
 		}
+		m_turboValues++;
 	}
 
 	void OnWindsSoundCompleted( AudioObject ao )
@@ -249,13 +254,18 @@ public class DragonAnimationEvents : MonoBehaviour, IBroadcastListener {
 
 	public void TurboLoopEnd()
 	{
-		if ( m_particleController )
-			m_particleController.DeactivateTrails();
-		if (m_wingsWindSoundAO != null && m_wingsWindSoundAO.IsPlaying())
+		m_turboValues--;
+		if ( m_turboValues <= 0 )
 		{
-			m_wingsWindSoundAO.Stop();
-			m_wingsWindSoundAO = null;
+			if ( m_particleController )
+				m_particleController.DeactivateTrails();
+			if (m_wingsWindSoundAO != null && m_wingsWindSoundAO.IsPlaying())
+			{
+				m_wingsWindSoundAO.Stop();
+				m_wingsWindSoundAO = null;
+			}
 		}
+		
 	}
 
 	public void IdleStart()
@@ -435,6 +445,8 @@ public class DragonAnimationEvents : MonoBehaviour, IBroadcastListener {
 	private void MuteWindSounds()
 	{
         m_mutedWindSounds = true;
+		AudioItem item = AudioController.GetAudioItem( m_wingsWindSound );
+		if ( item != null ) item.Volume = 0;
 		if (m_wingsWindSoundAO != null && m_wingsWindSoundAO.IsPlaying())
 			m_wingsWindSoundAO.volume = 0;
 		if (m_wingsIdleSoundAO != null && m_wingsIdleSoundAO.IsPlaying())
@@ -450,6 +462,8 @@ public class DragonAnimationEvents : MonoBehaviour, IBroadcastListener {
 	private void UnmuteWindSounds()
 	{
         m_mutedWindSounds = false;
+		AudioItem item = AudioController.GetAudioItem( m_wingsWindSound );
+		if ( item != null ) item.Volume = 1;
 		if (m_wingsWindSoundAO != null && m_wingsWindSoundAO.IsPlaying())
 			m_wingsWindSoundAO.volume = m_wingsWindSoundAO.audioItem.Volume;
 		if (m_wingsIdleSoundAO != null && m_wingsIdleSoundAO.IsPlaying())
