@@ -158,6 +158,7 @@ public class DragonMotionDino : DragonMotion {
                 }
                 AfterFixedUpdate();
             }break;
+
             case State.Dead:
                 {
                     if ( m_previousState == State.InsideWater || m_insideWater)
@@ -177,6 +178,31 @@ public class DragonMotionDino : DragonMotion {
                     }
                     AfterFixedUpdate();
                 }break;
+            case State.OuterSpace:
+			case State.ExitingSpace:
+		    {
+                if ( m_grounded )
+                {
+                    CustomSpaceMovement(Time.fixedDeltaTime);
+                }
+                else
+                {
+                    if (m_stomping)
+                    { 
+                        m_stomping = false;
+                        m_animator.SetBool(GameConstants.Animator.GROUND_STOMP, m_stomping);
+                    }
+                    
+                    UpdateSpaceMovement(Time.fixedDeltaTime);
+                    CustomCheckGround(out m_raycastHit);
+                    if ( m_belowSnapSensor && !GroundAngleBiggerThan( m_lastGroundHitNormal, m_maxWalkAngle ))
+                    {
+                        // Ground it
+                        SetGrounded(true);
+                    }
+                }
+                AfterFixedUpdate();
+			}break;
             default:
             {
                 base.FixedUpdate();
@@ -330,6 +356,7 @@ public class DragonMotionDino : DragonMotion {
         Vector3 impulse = Vector3.zero;
         m_controls.GetImpulse(1, ref impulse);
 
+        // if no impulse go to idle
         if (impulse == GameConstants.Vector3.zero)
         {
             ChangeState(State.Idle);
@@ -406,6 +433,102 @@ public class DragonMotionDino : DragonMotion {
             ApplyExternalForce();
             m_rbody.velocity = m_impulse;
         }
+    }
+
+
+
+    protected void CustomSpaceMovement(float delta)
+    {
+        // Ground movement
+        m_startParabolicPosition.y = m_transform.position.y;
+
+        Vector3 impulse = Vector3.zero;
+        m_controls.GetImpulse(1, ref impulse);
+        if (impulse == GameConstants.Vector3.zero)
+        {
+            // ChangeState(State.Idle);
+            // impulse = m_direction;
+            m_animator.SetBool(GameConstants.Animator.MOVE, false);
+            CustomIdleMovement(delta);
+        }
+        else
+        {
+            m_animator.SetBool(GameConstants.Animator.MOVE, true);
+            CustomCheckGround( out m_raycastHit );
+
+            if ( m_boost.IsBoostActive() && Vector3.Dot( m_lastGroundHitNormal, impulse) > 0 )
+            {
+                // Despegar
+                SetGrounded(false);
+
+                // Start Space Movement!
+                UpdateSpaceMovement(Time.fixedDeltaTime);
+            }
+            else
+            {
+                if ( m_height < 90 && !GroundAngleBiggerThan( m_lastGroundHitNormal, m_maxWalkAngle ))
+                {
+                    if ( m_belowSnapSensor )
+                    { 
+                        Vector3 dir = m_lastGroundHitNormal;
+                        dir.NormalizedXY();
+                        if ( impulse.x < 0 )
+                        {
+                            dir = dir.RotateXYDegrees(90);
+                        }
+                        else
+                        {
+                            dir = dir.RotateXYDegrees(-90);
+                        }
+                        m_direction = dir;   
+                        
+                        if ( m_boost.IsBoostActive() )
+                        {
+                            m_impulse = m_direction * m_walkSpeed * m_walkBoostMultiplier;
+                        }
+                        else
+                        {
+                            m_impulse = m_direction * m_walkSpeed;
+                        }
+                        
+                        m_impulse.y += -9.81f * m_freeFallGravityMultiplier * delta;
+                        RotateToGround( m_direction );
+                        SnapToGround();
+                        if ( m_stomping )
+                        {
+                            m_stomping = false;
+                            m_animator.SetBool(GameConstants.Animator.GROUND_STOMP, m_stomping);
+                        }
+                    }
+                    else
+                    {
+                        // Space Movement
+                        SetGrounded(false);
+                        UpdateSpaceMovement(Time.fixedDeltaTime);
+
+                        // Check if it will ground stomp
+                        CheckGroundStomp();
+                    }
+                }
+                else
+                {
+                    // Space Movement!
+                    SetGrounded(false);
+                    UpdateSpaceMovement(Time.fixedDeltaTime);
+
+                    if ( m_stomping )
+                    {
+                        m_stomping = false;
+                        m_animator.SetBool(GameConstants.Animator.GROUND_STOMP, m_stomping);
+                    }
+                }
+                
+                // m_desiredRotation = m_transform.rotation;
+                ApplyExternalForce();
+                m_rbody.velocity = m_impulse;
+            }
+        }
+        
     }
     
     protected void ComputeFreeFallImpulse(float delta)
