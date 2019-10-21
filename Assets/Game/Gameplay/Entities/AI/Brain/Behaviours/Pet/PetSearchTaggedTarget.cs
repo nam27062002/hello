@@ -18,10 +18,9 @@ namespace AI {
             public IEntity.Tag ignoreTag = 0;
             [Tooltip("Max tier this pet will consider target.")]
             public DragonTier maxValidTier = DragonTier.TIER_4;
-            [Tooltip("Min tier this pet will consider target.")]
-            public DragonTier minValidTier = DragonTier.TIER_0;
             public TargetPriority priority = TargetPriority.Any;
             public CheckType checkType;
+            public bool checkTypeWithPlayerTier = false;
             public Signals.Type ignoreSignal = Signals.Type.None;
             public float dragonSizeRangeMultiplier = 10;
             public Range m_shutdownRange = new Range(10, 20);
@@ -46,6 +45,7 @@ namespace AI {
 
             private PetSearchTaggedTargetData m_data;
             EatBehaviour m_eatBehaviour;
+            DragonTier m_playerTier;
 
 
             public override StateComponentData CreateData() {
@@ -71,6 +71,8 @@ namespace AI {
                 m_range = m_owner.data.maxScale * m_data.dragonSizeRangeMultiplier;
 
                 m_sensor = (m_machine as Machine).sensor;
+
+                m_playerTier = InstanceManager.player.data.tier;
             }
 
             // The first element in _param must contain the amount of time without detecting an enemy
@@ -100,20 +102,29 @@ namespace AI {
                                 bool isViable = false;
                                 switch (m_data.checkType) {
                                     case CheckType.Edible: {
-                                            if (entity.IsEdible(m_data.maxValidTier) && entity.edibleFromTier >= m_data.minValidTier) {
-                                                if (m_eatBehaviour == null) {
-                                                    isViable = true;
-                                                } else {
-                                                    EatBehaviour.SpecialEatAction specialAction = m_eatBehaviour.GetSpecialEatAction(entity.sku);
-                                                    if (specialAction != EatBehaviour.SpecialEatAction.CannotEat) {
-                                                        isViable = true;
-                                                    }
-                                                }
+                                            if ( m_data.checkTypeWithPlayerTier )
+                                            {
+                                                isViable = entity.IsEdible( m_playerTier ) || entity.CanBeGrabbed( m_playerTier );
+                                            } else {
+                                                isViable = entity.IsEdible(m_data.maxValidTier);
+                                            }
+
+                                            if ( isViable && m_eatBehaviour != null )
+                                            {
+                                                EatBehaviour.SpecialEatAction specialAction = m_eatBehaviour.GetSpecialEatAction(entity.sku);
+                                                isViable = specialAction != EatBehaviour.SpecialEatAction.CannotEat;
                                             }
                                         }
                                         break;
                                     case CheckType.Burnable: {
-                                            isViable = entity.burnableFromTier >= m_data.minValidTier && entity.burnableFromTier <= m_data.maxValidTier;
+                                            if ( m_data.checkTypeWithPlayerTier )
+                                            {
+                                                isViable = entity.burnableFromTier <= m_playerTier;
+                                            }
+                                            else
+                                            {
+                                                isViable = entity.burnableFromTier <= m_data.maxValidTier;
+                                            }
                                         }
                                         break;
                                 }
