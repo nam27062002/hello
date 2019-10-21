@@ -34,10 +34,8 @@ public class TrackerKillEquipped : TrackerBase {
 		m_targetSkus = _targetSkus;
 		Debug.Assert(m_targetSkus != null);
 
-		// Subscribe to external events
-		Messenger.AddListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_EATEN, OnDestroy);
-		Messenger.AddListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_BURNED, OnDestroy);
-		Messenger.AddListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_DESTROYED, OnDestroy);
+        // Subscribe to external events
+        Messenger.AddListener<Transform, IEntity, Reward, KillType>(MessengerEvents.ENTITY_KILLED, OnDestroy);
 	}
 
 
@@ -48,10 +46,8 @@ public class TrackerKillEquipped : TrackerBase {
 	/// Finalizer method. Leave the tracker ready for garbage collection.
 	/// </summary>
 	override public void Clear() {
-		// Unsubscribe from external events
-		Messenger.RemoveListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_EATEN, OnDestroy);
-		Messenger.RemoveListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_BURNED, OnDestroy);
-		Messenger.RemoveListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_DESTROYED, OnDestroy);
+        // Unsubscribe from external events
+        Messenger.RemoveListener<Transform, IEntity, Reward, KillType>(MessengerEvents.ENTITY_KILLED, OnDestroy);
 
 
 		// Call parent
@@ -82,7 +78,7 @@ public class TrackerKillEquipped : TrackerBase {
 	/// </summary>
 	/// <param name="_e">The source entity, optional.</param>
 	/// <param name="_reward">The reward given.</param>
-	private void OnDestroy(Transform _t, IEntity _e, Reward _reward) {		
+	private void OnDestroy(Transform _t, IEntity _e, Reward _reward, KillType _type) {		
 		if (_e != null && (_e.onDieStatus.source == IEntity.Type.PLAYER || _e.onDieStatus.source == IEntity.Type.PET)){
             // Check if in love
             if (_e.equip != null && _e.equip.HasSomethingEquiped()) {

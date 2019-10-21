@@ -243,7 +243,7 @@ public class InflammableDecoration : ISpawnable, IBroadcastListener {
 				m_entity.onDieStatus.source = m_burnSource;
 				m_entity.onDieStatus.reason = IEntity.DyingReason.BURNED;
 
-				Messenger.Broadcast<Transform, IEntity, Reward>(MessengerEvents.ENTITY_BURNED, m_transform, m_entity, m_entity.reward);
+				Messenger.Broadcast<Transform, IEntity, Reward, KillType>(MessengerEvents.ENTITY_KILLED, m_transform, m_entity, m_entity.reward, KillType.BURN);
 
 				break;
 
@@ -274,9 +274,10 @@ public class InflammableDecoration : ISpawnable, IBroadcastListener {
 				m_entity.onDieStatus.source = m_burnSource;
 				m_entity.onDieStatus.reason = IEntity.DyingReason.BURNED;
 
-				Messenger.Broadcast<Transform, IEntity, Reward>(MessengerEvents.ENTITY_BURNED, m_transform, m_entity, m_entity.reward);
+                Messenger.Broadcast<Transform, IEntity, Reward, KillType>(MessengerEvents.ENTITY_KILLED, m_transform, m_entity, m_entity.reward, KillType.BURN);
 
-				m_timer.Start(250f);
+
+                m_timer.Start(250f);
 				break;
 		}
 

@@ -35,7 +35,7 @@ public class TrackerBurn : TrackerBase {
 		Debug.Assert(m_targetSkus != null);
 
 		// Subscribe to external events
-		Messenger.AddListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_BURNED, OnBurn);
+		Messenger.AddListener<Transform, IEntity, Reward, KillType>(MessengerEvents.ENTITY_KILLED, OnKill);
 	}
 
 	/// <summary>
@@ -53,7 +53,7 @@ public class TrackerBurn : TrackerBase {
 	/// </summary>
 	override public void Clear() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_BURNED, OnBurn);
+		Messenger.RemoveListener<Transform, IEntity, Reward, KillType>(MessengerEvents.ENTITY_KILLED, OnKill);
 
 		// Call parent
 		base.Clear();
@@ -83,18 +83,27 @@ public class TrackerBurn : TrackerBase {
 	/// </summary>
 	/// <param name="_entity">The source entity, optional.</param>
 	/// <param name="_reward">The reward given.</param>
-	private void OnBurn(Transform _t, IEntity _e, Reward _reward) {
-		// Count automatically if we don't have any type filter
-		if(m_targetSkus.Count == 0) {
-			currentValue++;
-		} else {
-			// Is it one of the target types?			
-			if(_e != null) {
-				if(m_targetSkus.Contains(_e.sku)) {
-					// Found!
-					currentValue++;
-				}
-			}
-		}
+	private void OnKill(Transform _t, IEntity _e, Reward _reward, KillType _type) {
+
+        if (_type == KillType.BURN)
+        {
+            // Count automatically if we don't have any type filter
+            if (m_targetSkus.Count == 0)
+            {
+                currentValue++;
+            }
+            else
+            {
+                // Is it one of the target types?			
+                if (_e != null)
+                {
+                    if (m_targetSkus.Contains(_e.sku))
+                    {
+                        // Found!
+                        currentValue++;
+                    }
+                }
+            }
+        }
 	}
 }

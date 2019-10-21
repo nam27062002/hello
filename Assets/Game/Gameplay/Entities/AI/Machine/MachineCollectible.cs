@@ -54,9 +54,9 @@ namespace AI {
 					m_entity.onDieStatus.reason = IEntity.DyingReason.EATEN;
 
 					// Dispatch global event
-					Messenger.Broadcast<Transform, IEntity, Reward>(MessengerEvents.ENTITY_BURNED, m_transform, m_entity, reward);
+                    Messenger.Broadcast<Transform, IEntity, Reward, KillType>(MessengerEvents.ENTITY_KILLED, m_transform, m_entity, reward, KillType.BURN);
 
-					m_viewControl.Collect();
+                    m_viewControl.Collect();
 
                     (m_entity as CollectibleEntity).dieOutsideFrustum = false;
 					m_isCollected = true;

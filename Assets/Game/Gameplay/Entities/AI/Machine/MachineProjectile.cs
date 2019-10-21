@@ -166,7 +166,7 @@ namespace AI {
 				m_entity.onDieStatus.reason = IEntity.DyingReason.DESTROYED;
 				SetSignal(Signals.Type.Destroyed, true);
 				Reward reward = m_entity.GetOnKillReward(IEntity.DyingReason.DESTROYED);
-				Messenger.Broadcast<Transform, IEntity, Reward>(MessengerEvents.ENTITY_BURNED, transform, m_entity, reward);
+                Messenger.Broadcast<Transform, IEntity, Reward, KillType>(MessengerEvents.ENTITY_KILLED, transform, m_entity, reward, KillType.BURN);
 				return true;
 			}
 			return false;

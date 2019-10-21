@@ -284,9 +284,7 @@ public class RewardManager : Singleton<RewardManager>, IBroadcastListener {
         InitFromDef();
 
 		// Subscribe to external events
-		Messenger.AddListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_EATEN, OnKill);
-		Messenger.AddListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_BURNED, OnBurned);
-		Messenger.AddListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_DESTROYED, OnKill);
+		Messenger.AddListener<Transform, IEntity, Reward, KillType>(MessengerEvents.ENTITY_KILLED, OnKill);
 		Messenger.AddListener<Transform, IEntity, Reward>(MessengerEvents.FLOCK_EATEN, OnFlockEaten);
 		Messenger.AddListener<Transform, IEntity, Reward>(MessengerEvents.STAR_COMBO, OnFlockEaten);
 		Messenger.AddListener<Reward>(MessengerEvents.LETTER_COLLECTED, OnLetterCollected);
@@ -309,9 +307,7 @@ public class RewardManager : Singleton<RewardManager>, IBroadcastListener {
     /// </summary>
     protected override void OnDestroyInstance() {
         // Unsubscribe from external events
-        Messenger.RemoveListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_EATEN, OnKill);
-		Messenger.RemoveListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_BURNED, OnBurned);
-		Messenger.RemoveListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_DESTROYED, OnKill);
+        Messenger.RemoveListener<Transform, IEntity, Reward, KillType>(MessengerEvents.ENTITY_KILLED, OnKill);
 		Messenger.RemoveListener<Transform, IEntity, Reward>(MessengerEvents.FLOCK_EATEN, OnFlockEaten);
 		Messenger.RemoveListener<Transform, IEntity, Reward>(MessengerEvents.STAR_COMBO, OnFlockEaten);
 		Messenger.RemoveListener<Reward>(MessengerEvents.LETTER_COLLECTED, OnLetterCollected);
@@ -694,7 +690,12 @@ public class RewardManager : Singleton<RewardManager>, IBroadcastListener {
 	/// </summary>
 	/// <param name="_entity">The entity that has been killed.</param>
 	/// <param name="_reward">The reward linked to this event.</param>
-	private void OnKill(Transform _t, IEntity _e, Reward _reward) {
+	private void OnKill(Transform _t, IEntity _e, Reward _reward, KillType _type) {
+
+        if (_type == KillType.BURN)
+        {
+            _reward.coins = (_reward.coins * m_burnCoinsMultiplier);
+        }
 
 		if (!string.IsNullOrEmpty(_reward.origin))
 		{
@@ -731,10 +732,7 @@ public class RewardManager : Singleton<RewardManager>, IBroadcastListener {
 		UpdateScoreMultiplier();
 	}
 
-	private void OnBurned(Transform _t, IEntity _e, Reward _reward) {
-		_reward.coins = (_reward.coins * m_burnCoinsMultiplier);
-		OnKill(_t, _e, _reward );
-	}
+
 
 	private void OnFlockEaten(Transform _t, IEntity _e, Reward _reward) {
 		// Add the reward

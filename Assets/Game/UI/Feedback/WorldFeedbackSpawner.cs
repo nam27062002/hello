@@ -146,9 +146,7 @@ public class WorldFeedbackSpawner : MonoBehaviour, IBroadcastListener {
 
 		if ( m_particlesFeedbackEnabled )
 		{
-			Messenger.AddListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_EATEN, OnEaten);
-			Messenger.AddListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_BURNED, OnBurned);
-			Messenger.AddListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_DESTROYED, OnDestroyed);
+			Messenger.AddListener<Transform, IEntity, Reward, KillType>(MessengerEvents.ENTITY_KILLED, OnKill);
 			Messenger.AddListener<Transform, IEntity, Reward>(MessengerEvents.FLOCK_EATEN, OnFlockEaten);
 			Messenger.AddListener<Transform, IEntity, Reward>(MessengerEvents.STAR_COMBO, OnStarCombo);
             Messenger.AddListener<Vector3>(MessengerEvents.ANNIVERSARY_CAKE_SLICE_EATEN, OnEatCake);
@@ -170,9 +168,7 @@ public class WorldFeedbackSpawner : MonoBehaviour, IBroadcastListener {
 
 		if ( m_particlesFeedbackEnabled )
 		{
-			Messenger.RemoveListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_EATEN, OnEaten);
-			Messenger.RemoveListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_BURNED, OnBurned);
-			Messenger.RemoveListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_DESTROYED, OnDestroyed);
+			Messenger.RemoveListener<Transform, IEntity, Reward, KillType>(MessengerEvents.ENTITY_KILLED, OnKill);
 			Messenger.RemoveListener<Transform, IEntity, Reward>(MessengerEvents.FLOCK_EATEN, OnFlockEaten);
 			Messenger.RemoveListener<Transform, IEntity, Reward>(MessengerEvents.STAR_COMBO, OnStarCombo);
             Messenger.RemoveListener<Vector3>(MessengerEvents.ANNIVERSARY_CAKE_SLICE_EATEN, OnEatCake);
@@ -318,31 +314,29 @@ public class WorldFeedbackSpawner : MonoBehaviour, IBroadcastListener {
 	}
 
 	/// <summary>
-	/// An entity has been eaten.
+	/// An entity has been killed.
 	/// </summary>
 	/// <param name="_entity">The eaten entity.</param>
 	/// <param name="_reward">The reward given. Won't be used.</param>
-	private void OnEaten(Transform _t, IEntity _e, Reward _reward) {
-		SpawnKillFeedback(FeedbackData.Type.EAT, _t, _e);
+	private void OnKill(Transform _t, IEntity _e, Reward _reward, KillType _type) {
+
+        switch (_type)
+        {
+            case KillType.EATEN:
+                SpawnKillFeedback(FeedbackData.Type.EAT, _t, _e);
+                break;
+
+            case KillType.BURN:
+                SpawnKillFeedback(FeedbackData.Type.BURN, _t, _e);
+                break;
+
+            case KillType.HIT:
+                SpawnKillFeedback(FeedbackData.Type.DESTROY, _t, _e);
+                break;
+        }
+		
 	}
 
-	/// <summary>
-	/// An entity has been burned.
-	/// </summary>
-	/// <param name="_entity">The burned entity.</param>
-	/// <param name="_reward">The reward given. Won't be used.</param>
-	private void OnBurned(Transform _t, IEntity _e, Reward _reward) {
-		SpawnKillFeedback(FeedbackData.Type.BURN, _t, _e);
-	}
-
-	/// <summary>
-	/// An entity has been destroyed.
-	/// </summary>
-	/// <param name="_entity">The destroyed entity.</param>
-	/// <param name="_reward">The reward given. Won't be used.</param>
-	private void OnDestroyed(Transform _t, IEntity _e, Reward _reward) {
-		SpawnKillFeedback(FeedbackData.Type.DESTROY, _t, _e);
-	}
 		
 	/// <summary>
 	/// A full flock has been eaten.
