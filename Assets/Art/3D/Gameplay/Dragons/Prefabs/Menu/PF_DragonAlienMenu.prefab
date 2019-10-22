@@ -77,7 +77,17 @@ MonoBehaviour:
   m_sku: dragon_alien
   m_offsetModifier: {x: 0, y: -0.66, z: 0}
   m_baseScaleModifier: 1.1
-  m_altAnimConfigs: []
+  m_altAnimConfigs:
+  - m_range:
+      min: 20
+      max: 30
+    m_allowFaceDetails: 1
+    m_loopsMin: 0
+    m_loopsMax: 0
+    m_special: 0
+    m_timeToNext: 0
+    m_isPreferedAnimation: 0
+    m_animationLevel: 0
   m_hasFire: 0
   m_dragonFlameStandard: {fileID: 0}
   m_bloodParticle: {fileID: 0}
@@ -4355,7 +4365,7 @@ Animator:
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 5b336d44cc8cdf14aa35954b76dc0f21, type: 3}
   m_Controller: {fileID: 0}
-  m_CullingMode: 1
+  m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
