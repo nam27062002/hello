@@ -235,6 +235,12 @@ public class PopupTierPreyInfo : MonoBehaviour {
 			lookAtMainCameraComponents[i].overrideCamera = PopupManager.canvas.worldCamera;
 		}
 
+		// Disable all colliders, we don't want the physics moving stuff around
+		Collider[] colliders = _loader.loadedInstance.GetComponentsInChildren<Collider>();
+		for(int i = 0; i < colliders.Length; i++) {
+			colliders[i].enabled = false;
+		}
+
 		// Make all animators within the prefab work with unscaled time so the popup works properly even with the game paused
 		Animator[] animators = _loader.loadedInstance.GetComponentsInChildren<Animator>();
 		for(int i = 0; i < animators.Length; i++) {

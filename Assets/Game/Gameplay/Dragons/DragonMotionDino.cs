@@ -296,6 +296,11 @@ public class DragonMotionDino : DragonMotion {
                     m_impulse.y = -9.81f * m_freeFallGravityMultiplier * delta;
                 RotateToGround( m_direction );
                 SnapToGround();
+                if ( m_stomping )
+                {
+                    m_stomping = false;
+                    m_animator.SetBool(GameConstants.Animator.GROUND_STOMP, m_stomping);
+                }
             }
             else
             {
@@ -368,6 +373,11 @@ public class DragonMotionDino : DragonMotion {
                     m_impulse.y += -9.81f * m_freeFallGravityMultiplier * delta;
                     RotateToGround( m_direction );
                     SnapToGround();
+                    if ( m_stomping )
+                    {
+                        m_stomping = false;
+                        m_animator.SetBool(GameConstants.Animator.GROUND_STOMP, m_stomping);
+                    }
                 }
                 else
                 {
@@ -474,10 +484,12 @@ public class DragonMotionDino : DragonMotion {
         if (!m_grounded)
         {
             // m_waitStomp = false;
+            m_rbody.constraints = RigidbodyConstraints.FreezePositionZ;
             m_rbody.ResetCenterOfMass();
         }
         else
         {
+            m_rbody.constraints = RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezeRotation;
             m_rbody.centerOfMass = m_transform.InverseTransformPoint( m_groundSensor.position );
         }
 

@@ -41,7 +41,7 @@ public class ScenePicker : Editor {
 	//------------------------------------------------------------------------//
 	// Editor flags
 	private static bool ENABLED {
-		get { return EditorPrefs.GetBool("ScenePicker.ENABLED", true); }
+		get { return EditorPrefs.GetBool("ScenePicker.ENABLED", false); }
 		set { EditorPrefs.SetBool("ScenePicker.ENABLED", value); }
 	}
 
