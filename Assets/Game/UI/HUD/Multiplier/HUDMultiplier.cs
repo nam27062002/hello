@@ -106,7 +106,7 @@ public class HUDMultiplier : IHUDCounter {
 			m_progressFill.rectTransform.localScale = scale;
 		}
 
-		if(m_progressFillText != null) {
+		if(m_progressFillText != null && m_fontMaterial != null) {
 			// The fill texture is setup in a way that the top half is transparent and the bottom half is tinted
 			// When empty (value 0), map the top half to the text mesh
 			// When full (value 1), map the bottom half to the text mesh
