@@ -37,8 +37,8 @@ public class ShowHideAnimator : MonoBehaviour {
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
 	// Use to debug specific objects
-	public const bool DEBUG_ENABLED = true;
-	public const string DEBUG_TARGET = "UnlockButtonsSpecial";
+	public const bool DEBUG_ENABLED = false;
+	public const string DEBUG_TARGET = "ClassicDragonInfo";
 
 	public enum TweenType {
 		NONE,
@@ -165,6 +165,9 @@ public class ShowHideAnimator : MonoBehaviour {
 	private float m_delayTimer = 0f;
 	private bool m_delaying = false;
 
+    // [JOM] Since OnComplete is failing we manually check if the hide animation is finished (ñapa)
+    private bool m_isHiding = false;
+
 	// Since visibility is linked to object's being active, we cannot trust in initializing it properly on the Awake call (since Awake is not called for disabled objects)
 	// Forced to do this workaround
 	protected State m_state = State.INIT;
@@ -251,7 +254,18 @@ public class ShowHideAnimator : MonoBehaviour {
 				m_delaying = false;
 			}
 		}
-	}
+
+        // We dont trust onComplete callback, so lets do a manual check
+        if (m_isHiding)
+        {
+            if (delta == 0)
+            {
+                // The animation is finished
+                OnSequenceCompleted();
+            }
+        }
+
+    }
 
 	/// <summary>
 	/// Destructor.
@@ -473,11 +487,11 @@ public class ShowHideAnimator : MonoBehaviour {
 		// Create new sequence
 		m_sequence = DOTween.Sequence()
 			.SetAutoKill(false)
-			.OnStepComplete(() => { OnSequenceCompleted(); })
-			.SetUpdate(UpdateType.Normal, m_ignoreTimeScale);
+			.SetUpdate(UpdateType.Normal, m_ignoreTimeScale)
+            .OnStepComplete(() => { OnSequenceCompleted(); });
 
-		// Shared parameters
-		TweenParams tweenParams = new TweenParams()
+        // Shared parameters
+        TweenParams tweenParams = new TweenParams()
 			.SetEase(m_tweenEase);
 
 		// [AOC] Elastic and back easing functions don't work well with a Fade animation, so tweak the fade duration for those easing functions
@@ -678,8 +692,11 @@ public class ShowHideAnimator : MonoBehaviour {
 		// Trigger the animation!
 		LaunchHideAnimation(_animate);
 
-		// If configured, look for all children containing a ShowHideAnimator component and trigger it!
-		if(_propagateToChildren && m_triggerChildren) {
+        // We dont trust onComplete event, so lets check manually
+        m_isHiding = true;
+
+        // If configured, look for all children containing a ShowHideAnimator component and trigger it!
+        if (_propagateToChildren && m_triggerChildren) {
 			ShowHideAnimator[] animators = GetComponentsInChildren<ShowHideAnimator>(false);	// Exclude inactive ones - if they're inactive we probably don't want to show them!
 			for(int i = 0; i < animators.Length; i++) {
 				// Skip ourselves
@@ -901,13 +918,17 @@ public class ShowHideAnimator : MonoBehaviour {
 	/// Won't be called when animation is interrupted.
 	/// </summary>
 	protected virtual void OnSequenceCompleted() {
-		// Which animation has finished?
-		DebugLog(this, visible ? Color.green.Tag("DO_SHOW_POSTPROCESSING") : Color.red.Tag("DO_HIDE_POSTPROCESSING"));
+
+        m_isHiding = false;
+
+        // Which animation has finished?
+        DebugLog(this, visible ? Color.green.Tag("DO_SHOW_POSTPROCESSING") : Color.red.Tag("DO_HIDE_POSTPROCESSING"));
 		if(visible) {
 			DoShowPostProcessing();
 		} else {
-			DoHidePostProcessing();
-		}
+            DoHidePostProcessing();
+            
+        }
 	}
 
 	/// <summary>
