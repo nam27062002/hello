@@ -79,7 +79,7 @@ public class DragonManager : Singleton<DragonManager> {
 	/// </summary>
 	protected override void OnCreateInstance() {    
 		// Create a dragon data object for every known dragon definition
-		m_dragonsBySku = null;
+		m_dragonsBySku = new Dictionary<string, IDragonData>();
 		m_classicDragonsByOrder = new List<IDragonData>();
 		m_specialDragonsByOrder = new List<IDragonData>();
 		m_allDragonsByOrder = new List<IDragonData>();
