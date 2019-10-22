@@ -264,7 +264,7 @@ public class HUDMessage : MonoBehaviour, IBroadcastListener {
 			case Type.BOOST_SPACE:			Messenger.AddListener(MessengerEvents.BOOST_SPACE, OnBoostSky); break;
 			case Type.TIMES_UP:				Messenger.AddListener(MessengerEvents.TIMES_UP, ShowCallback); break;
 			case Type.TARGET_REACHED:		Messenger.AddListener(MessengerEvents.TARGET_REACHED, ShowObjCompleted); break;
-            case Type.HAPPY_BIRTHDAY:       Messenger.AddListener(MessengerEvents.ANNIVERSARY_START_BDAY_MODE, OnStartBirthdayMode); break;
+            case Type.HAPPY_BIRTHDAY:       Broadcaster.AddListener( BroadcastEventType.START_COLLECTIBLE_HUNGRY_MODE,this); break;
 
         }
 
@@ -319,7 +319,7 @@ public class HUDMessage : MonoBehaviour, IBroadcastListener {
 			case Type.BOOST_SPACE:			Messenger.RemoveListener(MessengerEvents.BOOST_SPACE, OnBoostSky); break;
 			case Type.TIMES_UP:				Messenger.RemoveListener(MessengerEvents.TIMES_UP, ShowCallback); break;
 			case Type.TARGET_REACHED:		Messenger.RemoveListener(MessengerEvents.TARGET_REACHED, ShowObjCompleted); break;
-            case Type.HAPPY_BIRTHDAY:       Messenger.RemoveListener(MessengerEvents.ANNIVERSARY_START_BDAY_MODE, OnStartBirthdayMode); break;
+            case Type.HAPPY_BIRTHDAY:       Broadcaster.RemoveListener(BroadcastEventType.START_COLLECTIBLE_HUNGRY_MODE, this); break;
         }
 
 		switch(m_hideMode) {
@@ -341,6 +341,10 @@ public class HUDMessage : MonoBehaviour, IBroadcastListener {
                 ToggleParam toggleParam = (ToggleParam)broadcastEventInfo;
                 OnBoostToggled(toggleParam.value); 
             }break;
+			case BroadcastEventType.START_COLLECTIBLE_HUNGRY_MODE:
+			{
+				OnStartBirthdayMode();
+			}break;
         }
     }
     

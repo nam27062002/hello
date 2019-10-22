@@ -719,7 +719,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f45dfbaed20447daa07123ab6b7cd80, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_seasonalItems: []
+  m_seasonalItems:
+  - season: xmas
+    groups:
+    - name: Hat
+      probability: 1
+      items:
+      - equipablePrefabName: PF_Christmas_Hat
+        defaultItemLOW: 0
+        probability: 1
+        toDisableOnEquip: []
+        position: {x: 0, y: 0.6327226, z: 0}
+        scale: {x: 0.77368295, y: 0.77368295, z: 0.77368295}
+        rotation: {x: -0, y: 0, z: 0}
 --- !u!114 &114610092557284400
 MonoBehaviour:
   m_ObjectHideFlags: 1
