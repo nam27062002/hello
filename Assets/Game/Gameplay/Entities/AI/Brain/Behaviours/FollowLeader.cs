@@ -38,8 +38,16 @@ namespace AI {
 
 			protected override void OnEnter(State _oldState, object[] _param) {
                 m_group = m_machine.GetGroup();
-                m_offsetSQRMagnitude = m_group.GetOffset(m_machine, 1f).sqrMagnitude;
-                m_pilot.SlowDown(false);							
+
+				// m_group may be null, for example for a prey that belongs to a flock that has just been spawned in a pet's mouth
+				// and it hasn't had the chance to join a group. 
+				// This is just a workaround. A better approach would be to assign a specific state that doesn't have FollowLeader
+				// as a StateComponent to a prey that only needs to stay in a pet's mouth
+				if (m_group != null) {
+					m_offsetSQRMagnitude = m_group.GetOffset (m_machine, 1f).sqrMagnitude;
+				}
+
+				m_pilot.SlowDown(false);							
 				m_followState = FollowState.CatchUp;
 			}
 

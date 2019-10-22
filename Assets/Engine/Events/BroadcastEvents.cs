@@ -50,7 +50,11 @@ public enum BroadcastEventType
 
 	SEASON_CHANGED,				// params: oldSeasonSku, newSeasonSku
 
+    HUNGRY_MODE_ENTITY_EATEN,   // params: PositionEventInfo
+    START_COLLECTIBLE_HUNGRY_MODE,
+
     /////// NEW EVENTS HERE!!! ///////
+    
 
     // EGG_INCUBATION_STARTED,     // params: Egg _egg
     // EGG_INCUBATION_ENDED,       // params: Egg _egg
@@ -104,4 +108,8 @@ public class ShieldHit : BroadcastEventInfo
 public class SeasonChangedEventInfo : BroadcastEventInfo {
 	public string oldSeasonSku = "";
 	public string newSeasonSku = "";
+}
+
+public class PositionEventInfo : BroadcastEventInfo {
+	public Vector3 position;
 }
