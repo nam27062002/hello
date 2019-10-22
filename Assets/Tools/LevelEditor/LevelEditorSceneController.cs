@@ -268,6 +268,7 @@ namespace LevelEditor {
 			InitLevelMap();
 
 			// Simulate level loaded
+			DecorationManager.CreateInstance(false);
 			Broadcaster.Broadcast(BroadcastEventType.GAME_LEVEL_LOADED);
 
 			// Run spawner manager
