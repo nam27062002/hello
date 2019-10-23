@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DragonSuperSize : MonoBehaviour {
+public class DragonSuperSize : MonoBehaviour, IBroadcastListener {
 
 	public enum Source {
 		NONE = -1,
 		LETTERS = 0,
-		CAKE
+		COLLECTIBLE
 	}
 
 	protected DragonPlayer m_dragon;
@@ -61,15 +61,27 @@ public class DragonSuperSize : MonoBehaviour {
 
 		Messenger.AddListener(MessengerEvents.EARLY_ALL_HUNGRY_LETTERS_COLLECTED, OnEarlyLetters);
 		Messenger.AddListener(MessengerEvents.ALL_HUNGRY_LETTERS_COLLECTED, OnLettersCollected);
-		Messenger.AddListener(MessengerEvents.ANNIVERSARY_START_BDAY_MODE, OnCakeEaten);
+		Broadcaster.AddListener(BroadcastEventType.START_COLLECTIBLE_HUNGRY_MODE, this);
 	}
 
 	void OnDestroy()
 	{
 		Messenger.RemoveListener(MessengerEvents.EARLY_ALL_HUNGRY_LETTERS_COLLECTED, OnEarlyLetters);
 		Messenger.RemoveListener(MessengerEvents.ALL_HUNGRY_LETTERS_COLLECTED, OnLettersCollected);
-		Messenger.RemoveListener(MessengerEvents.ANNIVERSARY_START_BDAY_MODE, OnCakeEaten);
+		Broadcaster.RemoveListener(BroadcastEventType.START_COLLECTIBLE_HUNGRY_MODE, this);
 	}
+
+	public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+	{
+		switch( eventType )		
+		{
+			case BroadcastEventType.START_COLLECTIBLE_HUNGRY_MODE:
+			{
+				OnCakeEaten();
+			}break;
+		}
+	}
+
 	
 	// Update is called once per frame
 	void Update () 
@@ -147,7 +159,7 @@ public class DragonSuperSize : MonoBehaviour {
 
 	void OnCakeEaten() 
 	{
-		m_source = Source.CAKE;
+		m_source = Source.COLLECTIBLE;
 		StartSuperSize();		
 	}
 }

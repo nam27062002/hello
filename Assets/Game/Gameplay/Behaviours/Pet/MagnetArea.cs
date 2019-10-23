@@ -29,7 +29,7 @@ public class MagnetArea : MonoBehaviour {
 				AI.IMachine machine = prey.machine;
 				if (machine != null) {
 					Vector3 dir = pos - machine.position;
-					machine.AddExternalForce( dir.normalized * m_magnetForce );
+					machine.AddExternalForce( dir.normalized * Mathf.Min(m_magnetForce, dir.sqrMagnitude) );
 				}
 			}
 		}

@@ -41,8 +41,7 @@ public class SpecialDragonBarTierElement : SpecialDragonBarElement {
         
         int numPets = m_def.GetAsInt("petsSlotsAvailable");
         string description = LocalizationManager.SharedInstance.Localize("TID_SPECIAL_DRAGON_INFO_TIER_DESCRIPTION",
-            StringUtils.FormatNumber(numPets),
-            (numPets > 1 ? LocalizationManager.SharedInstance.Localize("TID_PET_PLURAL") : LocalizationManager.SharedInstance.Localize("TID_PET")), // Singular/Plural
+            "x" + StringUtils.FormatNumber(numPets),
             "x" + StringUtils.FormatNumber(m_def.GetAsFloat("furyScoreMultiplier", 2), 0)
         );
 

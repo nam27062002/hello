@@ -139,7 +139,7 @@ public class UI3DAddressablesLoaderEditor : Editor {
 				GameObject newInstance = m_targetUI3DLoader.Load();
 				if(newInstance != null) {
 					// Destroy as soon as awaken (this is meant to be used in edit mode)
-					newInstance.AddComponent<DestroyInSeconds>().lifeTime = 0f;
+					newInstance.AddComponent<SelfDestroy>().seconds = 0f;
 
 					// Rename
 					newInstance.gameObject.name = "PLACEHOLDER";
@@ -151,22 +151,6 @@ public class UI3DAddressablesLoaderEditor : Editor {
 		}
 		EditorGUILayout.EndHorizontal();
 
-		EditorGUILayout.Space();
-		if(GUILayout.Button("LOAD NOW", GUILayout.Height(50f))) {
-			m_targetUI3DLoader.Load();
-		}
-
-		if(GUILayout.Button("LOAD PLACEHOLDER", GUILayout.Height(50f))) {
-			GameObject newInstance = m_targetUI3DLoader.Load();
-			if(newInstance != null) {
-				// Destroy as soon as awaken (this is meant to be used in edit mode)
-				newInstance.AddComponent<DestroyInSeconds>().lifeTime = 0f;
-
-				// Rename
-				newInstance.gameObject.name = "PLACEHOLDER";
-			}
-		}
-
 		// Apply changes to the serialized object - always do this in the end of OnInspectorGUI.
 		serializedObject.ApplyModifiedProperties();
 	}
@@ -176,5 +160,32 @@ public class UI3DAddressablesLoaderEditor : Editor {
 	/// </summary>
 	public void OnSceneGUI() {
 		// Scene-related stuff
+	}
+
+	/// <summary>
+	/// Draw gizmos.
+	/// </summary>
+	/// <param name="_target"></param>
+	/// <param name="_gizmo"></param>
+	[DrawGizmo(GizmoType.Active | GizmoType.InSelectionHierarchy)]
+	public static void DoGizmos(UI3DAddressablesLoader _target, GizmoType _gizmo) {
+		// Color and matrix
+		Gizmos.color = Colors.WithAlpha(Color.red, 0.25f);
+		Gizmos.matrix = _target.transform.localToWorldMatrix;
+
+		// If target doesn't have a rect transform, just draw a cube
+		RectTransform rt = _target.transform as RectTransform;
+		if(rt != null) {
+			// Correct pivot (DrawCube's 0,0 is the center whereas graphic's 0,0 is bot-left)
+			Vector2 pivotCorrection = new Vector2(rt.pivot.x - 0.5f, rt.pivot.y - 0.5f);  // Pivot from [0..1] to [-0.5..0.5]
+			Vector2 cubePos = new Vector2(rt.rect.width * (-pivotCorrection.x), rt.rect.height * (-pivotCorrection.y));
+			Gizmos.DrawCube(new Vector3(cubePos.x, cubePos.y, 0f), new Vector3(rt.rect.width, rt.rect.height, 1f));
+		} else {
+			Gizmos.DrawCube(Vector3.zero, Vector3.one);
+		}
+
+		// Restore matrix and color
+		Gizmos.matrix = Matrix4x4.identity;
+		Gizmos.color = Colors.white;
 	}
 }

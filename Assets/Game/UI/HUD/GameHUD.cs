@@ -28,7 +28,14 @@ public class GameHUD : MonoBehaviour {
     public GameObject m_miscGroup;
     public Animator m_fireRushGroup;
 
+	[Space]
+	public Component[] m_toAutoDestroy = new Component[0];
+	[Min(0)]
+	public int m_autoDestroyDelayFrames = 1;
+
+	private bool m_gameStarted = false;
 	private bool m_paused = false;
+
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -40,20 +47,16 @@ public class GameHUD : MonoBehaviour {
             Debug_Awake();
         InstanceManager.gameHUD = this;
         Messenger.AddListener<DragonPlayer.ReviveReason>(MessengerEvents.PLAYER_REVIVE, OnRevive);
+		Messenger.AddListener(MessengerEvents.GAME_STARTED, OnGameStarted);
     }
-    /*
-    // Check back button on Android
-	void Update(){
-
-    }
-    */
 
     void OnDestroy() {
         if (ApplicationManager.IsAlive && FeatureSettingsManager.IsDebugEnabled)
             Debug_OnDestroy();
         InstanceManager.gameHUD = null;
         Messenger.RemoveListener<DragonPlayer.ReviveReason>(MessengerEvents.PLAYER_REVIVE, OnRevive);
-    }    
+		Messenger.RemoveListener(MessengerEvents.GAME_STARTED, OnGameStarted);
+	}    
 
     public bool CanPause(){		
     	if (!m_paused){
@@ -70,7 +73,20 @@ public class GameHUD : MonoBehaviour {
     }
 
     private void Update() {
-        if (!m_paused) {
+		// Check for auto-destruction components
+		if(m_gameStarted && m_autoDestroyDelayFrames >= 0) {
+			m_autoDestroyDelayFrames--;
+			if(m_autoDestroyDelayFrames <= 0) {
+				m_autoDestroyDelayFrames = -1;  // Don't trigger again
+				for(int i = 0; i < m_toAutoDestroy.Length; ++i) {
+					Destroy(m_toAutoDestroy[i]);
+					m_toAutoDestroy[i] = null;
+				}
+			}
+		}
+
+		// Update input
+		if (!m_paused) {
             InputDevice device = InputManager.ActiveDevice;
 
             if (device != null && device.IsActive) {
@@ -153,6 +169,10 @@ public class GameHUD : MonoBehaviour {
 		// Prevent adding callback twice!
 		popupController.OnClosePostAnimation.RemoveListener(Unpause);
 		popupController.OnClosePostAnimation.AddListener(Unpause);
+	}
+
+	void OnGameStarted() {
+		m_gameStarted = true;
 	}
 
     void OnRevive(DragonPlayer.ReviveReason _reason) {
