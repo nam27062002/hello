@@ -94,7 +94,7 @@ public class PrefabLoaderEditor : Editor {
 			m_targetPrefabLoader.Reload();
 			if(m_targetPrefabLoader.loadedInstance != null) {
 				// Destroy as soon as awaken (this is meant to be used in edit mode)
-				m_targetPrefabLoader.loadedInstance.AddComponent<DestroyInSeconds>().lifeTime = 0f;
+				m_targetPrefabLoader.loadedInstance.AddComponent<SelfDestroy>().seconds = 0f;
 
 				// Rename
 				m_targetPrefabLoader.loadedInstance.name = "PLACEHOLDER";

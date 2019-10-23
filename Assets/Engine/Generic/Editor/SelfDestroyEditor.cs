@@ -1,8 +1,8 @@
-﻿// UI3DLoaderEditor.cs
+// SelfDestroyEditor.cs
 // Hungry Dragon
 // 
-// Created by Alger Ortín Castellví on 13/03/2017.
-// Copyright (c) 2017 Ubisoft. All rights reserved.
+// Created by Alger Ortín Castellví on 23/10/2019.
+// Copyright (c) 2019 Ubisoft. All rights reserved.
 
 //----------------------------------------------------------------------------//
 // INCLUDES																	  //
@@ -14,21 +14,20 @@ using UnityEditor;
 // CLASSES																	  //
 //----------------------------------------------------------------------------//
 /// <summary>
-/// Custom editor for the UI3DLoader class.
+/// Custom editor for the SelfDestroy class.
 /// </summary>
-[CustomEditor(typeof(UI3DLoader), true)]	// True to be used by heir classes as well
+[CustomEditor(typeof(SelfDestroy), true)]	// True to be used by heir classes as well
 [CanEditMultipleObjects]
-public class UI3DLoaderEditor : Editor {
+public class SelfDestroyEditor : Editor {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	private const float BUTTON_HEIGHT = 25f;
 
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Casted target object
-	UI3DLoader m_targetUI3DLoader = null;
+	SelfDestroy m_targetSelfDestroy = null;
 
 	//------------------------------------------------------------------------//
 	// METHODS																  //
@@ -38,7 +37,7 @@ public class UI3DLoaderEditor : Editor {
 	/// </summary>
 	private void OnEnable() {
 		// Get target object
-		m_targetUI3DLoader = target as UI3DLoader;
+		m_targetSelfDestroy = target as SelfDestroy;
 	}
 
 	/// <summary>
@@ -46,7 +45,7 @@ public class UI3DLoaderEditor : Editor {
 	/// </summary>
 	private void OnDisable() {
 		// Clear target object
-		m_targetUI3DLoader = null;
+		m_targetSelfDestroy = null;
 	}
 
 	/// <summary>
@@ -60,22 +59,31 @@ public class UI3DLoaderEditor : Editor {
 		// Update the serialized object - always do this in the beginning of OnInspectorGUI.
 		serializedObject.Update();
 
+		// Unity's "script" property - draw disabled
+		EditorGUI.BeginDisabledGroup(true);
+		EditorGUILayout.PropertyField(serializedObject.FindProperty("m_Script"), true);
+		EditorGUI.EndDisabledGroup();
+
 		// Loop through all serialized properties and work with special ones
 		SerializedProperty p = serializedObject.GetIterator();
 		p.Next(true);	// To get first element
 		do {
 			// Properties requiring special treatment
-			// Unity's "script" property
-			if(p.name == "m_Script") {
-				// Draw the property, disabled
-				bool wasEnabled = GUI.enabled;
-				GUI.enabled = false;
+			if(p.name == "m_mode") {
+				// Do property
 				EditorGUILayout.PropertyField(p, true);
-				GUI.enabled = wasEnabled;
+
+				// Show either seconds or frames properties afterwards
+				if(p.enumValueIndex == (int)SelfDestroy.Mode.FRAMES) {
+					EditorGUILayout.PropertyField(serializedObject.FindProperty("m_frames"), true);
+				} else {
+					EditorGUILayout.PropertyField(serializedObject.FindProperty("m_seconds"), true);
+				}
 			}
 
 			// Properties we don't want to show
-			else if(p.name == "m_ObjectHideFlags") {
+			else if(p.name == "m_ObjectHideFlags" || p.name == "m_Script"
+			|| p.name == "m_seconds" || p.name == "m_frames") {
 				// Do nothing
 			}
 
@@ -83,57 +91,7 @@ public class UI3DLoaderEditor : Editor {
 			else {
 				EditorGUILayout.PropertyField(p, true);
 			}
-		} while(p.NextVisible(false));      // Only direct children, not grand-children (will be drawn by default if using the default EditorGUI.PropertyField)
-
-		// Tools
-		EditorGUILayout.Space();
-		EditorGUILayout.BeginHorizontal();
-		{
-			// Clear loaded egg instance
-			GUI.color = Colors.coral;
-			if(GUILayout.Button("UNLOAD", GUILayout.Height(BUTTON_HEIGHT))) {
-				m_targetUI3DLoader.Unload();
-			}
-
-			// Force loading the egg
-			GUI.color = Colors.paleGreen;
-			if(GUILayout.Button("RELOAD", GUILayout.Height(BUTTON_HEIGHT))) {
-				m_targetUI3DLoader.Load();
-			}
-
-			// Load placeholder
-			GUI.color = Colors.paleYellow;
-			if(GUILayout.Button("LOAD PLACEHOLDER", GUILayout.Height(BUTTON_HEIGHT))) {
-				GameObject newInstance = m_targetUI3DLoader.Load();
-				if(newInstance != null) {
-					// Destroy as soon as awaken (this is meant to be used in edit mode)
-					newInstance.AddComponent<SelfDestroy>().seconds = 0f;
-
-					// Rename
-					newInstance.gameObject.name = "PLACEHOLDER";
-				}
-			}
-
-			// Reset color
-			GUI.color = Color.white;
-		}
-		EditorGUILayout.EndHorizontal();
-
-		EditorGUILayout.Space();
-		if(GUILayout.Button("LOAD NOW", GUILayout.Height(50f))) {
-			m_targetUI3DLoader.Load();
-		}
-
-		if(GUILayout.Button("LOAD PLACEHOLDER", GUILayout.Height(50f))) {
-			GameObject newInstance = m_targetUI3DLoader.Load();
-			if(newInstance != null) {
-				// Destroy as soon as awaken (this is meant to be used in edit mode)
-				newInstance.AddComponent<SelfDestroy>().seconds = 0f;
-
-				// Rename
-				newInstance.gameObject.name = "PLACEHOLDER";
-			}
-		}
+		} while(p.NextVisible(false));		// Only direct children, not grand-children (will be drawn by default if using the default EditorGUI.PropertyField)
 
 		// Apply changes to the serialized object - always do this in the end of OnInspectorGUI.
 		serializedObject.ApplyModifiedProperties();
