@@ -146,6 +146,7 @@ public class HDNotificationsManager : Singleton<HDNotificationsManager>
             if (def != null)
             {
                 body = LocalizationManager.SharedInstance.Localize(def.Get("tidName"));
+				body = EmojiManager.ReplaceEmojis(body);		// Replace emoji tags! 
             }
 
             ScheduleNotification(strSKU, body, "Action", iTimeLeft);
