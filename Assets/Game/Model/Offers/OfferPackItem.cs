@@ -88,7 +88,8 @@ public class OfferPackItem {
 	/// </summary>
 	/// <param name="_def">Def.</param>
 	/// <param name="_itemIdx">Index of the item within the pack (1..N)</param>
-	public void InitFromDefinition(DefinitionNode _def, int _itemIdx) {
+	/// <param name="_ecoGroup">Group ID used for tracking when the reward is collected.</param>
+	public void InitFromDefinition(DefinitionNode _def, int _itemIdx, HDTrackingManager.EEconomyGroup _ecoGroup) {
 		// Aux vars
 		string prefix = GetPrefix(_itemIdx);
 
@@ -115,7 +116,7 @@ public class OfferPackItem {
 		rewardData.amount = _def.GetAsLong(prefix + "Amount", 1);
 		m_reward = Metagame.Reward.CreateFromData(
 			rewardData,
-			HDTrackingManager.EEconomyGroup.SHOP_OFFER_PACK,
+			_ecoGroup,
 			""
 		);
 

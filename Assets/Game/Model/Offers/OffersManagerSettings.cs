@@ -16,25 +16,54 @@ using System;
 /// <summary>
 /// Exposed setup for the OffersManager and OfferPack classes.
 /// </summary>
-public class OffersManagerSettings : ScriptableObject {
+public class OffersManagerSettings {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	public const string PATH = "Singletons/OffersManagerSettings";
-	
+	public const string SKU = "offerSettings";
+
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
-	// Offers Manager Settings
-	[Header("General Settings")]
-	[Tooltip("Seconds")]
+	// Content
+	public DefinitionNode def = null;
+
+	// General Settings
 	public float refreshFrequency = 1f;
 
-	[Header("Rotational Offers")]
+	// Rotational Offers
 	public int rotationalActiveOffers = 1;
 	public int rotationalHistorySize = 1;
 
-	[Header("Offer Pack Settings")]
-	[Tooltip("Value in content representing the default value")]
-	public string emptyValue = "-";
+	// Free Daily Offer
+	public int freeHistorySize = 2;
+	public int freeCooldownMinutes = 360;
+
+	// Offer Pack Settings
+	public string emptyValue = "-"; // Value in content representing the default value
+
+	//------------------------------------------------------------------------//
+	// METHODS																  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Initialize the settings object.
+	/// </summary>
+	public void InitFromDefinitions() {
+		// Make sure content manager is ready
+		Debug.Assert(ContentManager.ready, "ERROR: Trying to initialize offer manager settings but content is not ready yet!");
+
+		// Gather definition
+		def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, SKU);
+
+		// Cache data
+		refreshFrequency = def.GetAsFloat("refreshFrequency", refreshFrequency);
+
+		rotationalActiveOffers = def.GetAsInt("rotationalActiveOffers", rotationalActiveOffers);
+		rotationalHistorySize = def.GetAsInt("rotationalHistorySize", rotationalHistorySize);
+
+		freeHistorySize = def.GetAsInt("freeHistorySize", freeHistorySize);
+		freeCooldownMinutes = def.GetAsInt("freeCooldownMinutes", freeCooldownMinutes);
+
+		emptyValue = def.GetAsString("emptyValue", emptyValue);
+	}
 }
