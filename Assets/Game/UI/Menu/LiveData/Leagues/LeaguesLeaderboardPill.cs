@@ -145,8 +145,8 @@ LeaguesLeaderboardPill : ScrollRectItem<LeaguesLeaderboardPillData> {
 
         } else
         {
-            // Something failed, do not show any icon
-            m_dragonIconLoader.IsVisible = false;
+            // Something failed, show the default fail icon (question mark icon)
+            m_dragonIconLoader.LoadAsync(null);
         }
 
 

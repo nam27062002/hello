@@ -721,7 +721,11 @@ public class GameCamera : MonoBehaviour, IBroadcastListener
 						m_extraTargetDisplacement = Vector3.Lerp( m_extraTargetDisplacement, GameConstants.Vector3.zero, Time.deltaTime * 2);
 				}
 				targetPosition += m_extraTargetDisplacement;
-				UpdateTrackAheadVector(m_targetMachine);
+				if ( AllowRotation() ){
+					UpdateTrackAheadVector(m_targetMachine);
+				}else{
+					m_trackAheadVector = Vector3.zero;
+				}
 			}
 		}else{
 			m_introTimer -= Time.deltaTime;
@@ -799,42 +803,38 @@ public class GameCamera : MonoBehaviour, IBroadcastListener
 		{
             bool hasBoss = HasBoss();
 
-
             if ( m_megaFirePrewarmTimer > 0 )
             {
             	float delta = 1.0f - m_megaFirePrewarmTimer / m_megaFirePrewarmDuration;
-				frameWidth = m_megaFireZoomMultiplier.Evaluate( delta ) * m_frameWidthFury;
-				// Time.timeScale = m_megaFireTimescaleMultiplier.Evaluate( delta );
-            	m_megaFirePrewarmTimer -= Time.unscaledDeltaTime;
-                /*
-				if (m_megaFirePrewarmTimer <= 0 )
+				float frameValue = m_frameWidthDefault;
+				if (AllowZoomOnFury())
 				{
-					Time.timeScale = 1;
+					frameValue = m_frameWidthFury;
 				}
-                */
+				frameWidth = m_megaFireZoomMultiplier.Evaluate( delta ) * frameValue;
+            	m_megaFirePrewarmTimer -= Time.unscaledDeltaTime;
             }
             else
             {
-				if (m_targetMachine != null)
-		        {
-							if(!hasBoss)
-						 {
-				 if (targetPosition.y > DragonMotion.SpaceStart)
-				 {
-					 frameWidth = m_frameWidthSpace;
-				 }
-				 else if ( m_fury )
-							 {
-								 frameWidth = m_frameWidthFury;
-							 }
-							 else
-							 {
-					 //frameWidth = Mathf.Lerp(m_frameWidthDefault, m_frameWidthBoost, m_targetMachine.howFast);
-							//TONI: Testing, instead of linear, cubic interpolation.
-							frameWidth = m_frameWidthDefault + ((m_frameWidthBoost - m_frameWidthDefault) * m_targetMachine.howFast * m_targetMachine.howFast * m_targetMachine.howFast);
-				 }
-						 }
-		        }
+                if (m_targetMachine != null)
+                {
+                    if (!hasBoss)
+                    {
+						frameWidth = m_frameWidthDefault;
+                        if (targetPosition.y > DragonMotion.SpaceStart && AllowZoomOnSpace())
+                        {
+                            frameWidth = m_frameWidthSpace;
+                        }
+                        else if (m_fury && AllowZoomOnFury())
+                        {
+							frameWidth = m_frameWidthFury;	
+                        }
+                        else if (AllowZoomOnBoost())
+                        {
+							frameWidth = m_frameWidthDefault + ((m_frameWidthBoost - m_frameWidthDefault) * m_targetMachine.howFast * m_targetMachine.howFast * m_targetMachine.howFast);	
+                        }
+                    }
+                }
 				frameWidth += m_frameWidthIncrement;
 				if(m_hasSlowmo)
 				{
@@ -862,6 +862,31 @@ public class GameCamera : MonoBehaviour, IBroadcastListener
 		DebugDraw.DrawBounds2D(m_screenWorldBounds);
 #endif
 	}
+
+	/// Tells if the camera can zoom out because of speed/boost
+	bool AllowZoomOnBoost()
+	{
+		return DebugSettings.allowCameraZoomOnBoost;
+	}
+
+	/// Tells if the camera can zoom out because of fire rush
+	bool AllowZoomOnFury()
+	{
+		return DebugSettings.allowCameraZoomOnFire;
+	}
+
+	/// Tells if the camera can zoom on space
+	bool AllowZoomOnSpace()
+	{
+		return DebugSettings.allowCameraZoomOnSpace;
+	}
+
+	/// Tells if the camera can rotate 
+	bool AllowRotation()
+	{
+		return DebugSettings.allowCameraRotation;
+	}
+
 
 	// Also called DampIIR (wiki search ...)
 	float Damping(float src, float dst, float dt, float factor)
