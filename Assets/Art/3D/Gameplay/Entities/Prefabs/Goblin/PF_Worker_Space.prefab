@@ -844,7 +844,7 @@ MonoBehaviour:
   m_machine: {fileID: 114580821540808066}
   m_viewControl: {fileID: 114332602744461252}
   m_equip: {fileID: 114938725114124872}
-  m_sku: Worker
+  m_sku: Worker_Space
   m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1
 --- !u!114 &114725236173651624
@@ -920,16 +920,6 @@ MonoBehaviour:
         rotation: {x: -14.67, y: 0, z: 0}
   - season: halloween
     groups:
-    - name: Mask
-      probability: 1
-      items:
-      - equipablePrefabName: PF_Frank_mask
-        defaultItemLOW: 1
-        probability: 1
-        toDisableOnEquip: []
-        position: {x: 0, y: -0.07000017, z: 0.3000002}
-        scale: {x: 1.5, y: 1.5, z: 1.5}
-        rotation: {x: 350.4822, y: 0, z: 0}
     - name: Hat
       probability: 1
       items:
@@ -940,6 +930,16 @@ MonoBehaviour:
         position: {x: -0.0000019073486, y: -0.09000003, z: -0.04000011}
         scale: {x: 1.5, y: 1, z: 1.5}
         rotation: {x: -14.67, y: 0, z: 0}
+    - name: Mask
+      probability: 1
+      items:
+      - equipablePrefabName: PF_Frank_mask
+        defaultItemLOW: 1
+        probability: 1
+        toDisableOnEquip: []
+        position: {x: 0, y: -0.07000017, z: 0.3000002}
+        scale: {x: 1.5, y: 1.5, z: 1.5}
+        rotation: {x: 350.4822, y: 0, z: 0}
   - season: xmas
     groups:
     - name: Hat
