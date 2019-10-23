@@ -11,10 +11,12 @@
 
 public enum KillType
 {
+    NONE,
     EATEN,
     BURN,
     FROZEN,
     ELECTRIFIED,
-    HIT,
+    SMASHED,
     SHOT
+    
 }

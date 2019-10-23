@@ -85,7 +85,7 @@ public class TrackerSmash : TrackerBase {
 	/// <param name="_reward">The reward given.</param>
 	private void OnKill(Transform _t, IEntity _e, Reward _reward, KillType _type) {
 
-        if (_type == KillType.HIT)
+        if (_type == KillType.SMASHED)
         {
             // Count automatically if we don't have any type filter
             if (m_targetSkus.Count == 0)

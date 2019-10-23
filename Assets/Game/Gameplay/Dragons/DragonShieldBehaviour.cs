@@ -68,7 +68,7 @@ public class DragonShieldBehaviour : MonoBehaviour {
 
                 break;
 
-            case KillType.HIT:
+            case KillType.SMASHED:
                 if (_reward.health >= 0)
                 {
                     if (FreezingObjectsRegistry.instance.IsFreezing(_entity))

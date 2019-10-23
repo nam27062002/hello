@@ -191,7 +191,7 @@ namespace AI {
 			return Quaternion.identity;
 		}
 
-		override public bool Burn(Transform _transform, IEntity.Type _source, bool instant = false, FireColorSetupManager.FireColorType fireColorType = FireColorSetupManager.FireColorType.RED) {
+		override public bool Burn(Transform _transform, IEntity.Type _source, bool _electricDamage = false, bool _instant = false, FireColorSetupManager.FireColorType fireColorType = FireColorSetupManager.FireColorType.RED) {
 			return false;
 		}
 

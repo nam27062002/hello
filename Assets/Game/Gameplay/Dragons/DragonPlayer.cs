@@ -677,7 +677,7 @@ public class DragonPlayer : MonoBehaviour, IBroadcastListener {
 	}
 
 	private void OnEntityDestroyed(Transform _t, IEntity _e, Reward _reward, KillType _type) {
-        if (_type == KillType.HIT)
+        if (_type == KillType.SMASHED)
         {
             if (_reward.health >= 0)
             {

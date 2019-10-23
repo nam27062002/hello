@@ -330,7 +330,7 @@ public class WorldFeedbackSpawner : MonoBehaviour, IBroadcastListener {
                 SpawnKillFeedback(FeedbackData.Type.BURN, _t, _e);
                 break;
 
-            case KillType.HIT:
+            case KillType.SMASHED:
                 SpawnKillFeedback(FeedbackData.Type.DESTROY, _t, _e);
                 break;
         }

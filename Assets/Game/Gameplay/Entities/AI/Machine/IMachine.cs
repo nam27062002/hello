@@ -66,7 +66,7 @@ namespace AI {
 
 		public abstract Quaternion GetDyingFixRot();
 
-		public abstract bool Burn(Transform _transform, IEntity.Type _source, bool instant = false, FireColorSetupManager.FireColorType fireColorType = FireColorSetupManager.FireColorType.RED );
+		public abstract bool Burn(Transform _transform, IEntity.Type _source, bool _electricDamage = false, bool _instant = false, FireColorSetupManager.FireColorType fireColorType = FireColorSetupManager.FireColorType.RED );
 
 		public abstract bool Smash( IEntity.Type _source );
 

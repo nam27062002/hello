@@ -85,7 +85,7 @@ public class TrackerDestroy : TrackerBase {
 	/// <param name="_reward">The reward given.</param>
 	private void OnDestroy(Transform _t, IEntity _e, Reward _reward, KillType _type) {
 
-        if (_type == KillType.BURN || _type == KillType.HIT)
+        if (_type == KillType.BURN || _type == KillType.SMASHED)
         {
 
             if (_e != null && (_e.onDieStatus.source == IEntity.Type.PLAYER || _e.onDieStatus.source == IEntity.Type.PET))

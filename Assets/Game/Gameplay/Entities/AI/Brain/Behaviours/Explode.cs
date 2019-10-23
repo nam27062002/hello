@@ -74,7 +74,7 @@ namespace AI {
 				Reward reward = m_entity.reward;
 				reward.SetNoReward();
 
-                Messenger.Broadcast<Transform, IEntity, Reward, KillType>(MessengerEvents.ENTITY_KILLED, m_machine.transform, m_entity, reward, KillType.HIT);
+                Messenger.Broadcast<Transform, IEntity, Reward, KillType>(MessengerEvents.ENTITY_KILLED, m_machine.transform, m_entity, reward, KillType.SMASHED);
                 
                 if ( playerTriggeredExplosion && !m_machine.IsDying())
                 {

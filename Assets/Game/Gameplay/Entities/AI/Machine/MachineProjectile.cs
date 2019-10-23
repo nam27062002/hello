@@ -149,7 +149,7 @@ namespace AI {
 		}
 
 		// Being burned
-		override public bool Burn(Transform _transform, IEntity.Type _source, bool instant = false, FireColorSetupManager.FireColorType fireColorType = FireColorSetupManager.FireColorType.RED) {
+		override public bool Burn(Transform _transform, IEntity.Type _source, bool _electricDamage = false, bool _instant = false, FireColorSetupManager.FireColorType fireColorType = FireColorSetupManager.FireColorType.RED) {
 			if (!IsDying()) {
 				m_dyingReason = IEntity.DyingReason.BURNED;
 				SetSignal(Signals.Type.Destroyed, true);
@@ -166,7 +166,7 @@ namespace AI {
 				m_entity.onDieStatus.reason = IEntity.DyingReason.DESTROYED;
 				SetSignal(Signals.Type.Destroyed, true);
 				Reward reward = m_entity.GetOnKillReward(IEntity.DyingReason.DESTROYED);
-                Messenger.Broadcast<Transform, IEntity, Reward, KillType>(MessengerEvents.ENTITY_KILLED, transform, m_entity, reward, KillType.BURN);
+                Messenger.Broadcast<Transform, IEntity, Reward, KillType>(MessengerEvents.ENTITY_KILLED, transform, m_entity, reward, KillType.SHOT);
 				return true;
 			}
 			return false;

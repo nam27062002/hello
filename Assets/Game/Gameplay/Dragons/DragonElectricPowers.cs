@@ -143,7 +143,7 @@ public class DragonElectricPowers : MonoBehaviour {
                                         AI.IMachine blastMachine = blastEntity.machine;
                                         if (blastMachine != null) {
                                             // Launch Lightning!
-                                            blastMachine.Burn(transform, m_type);
+                                            blastMachine.Burn(transform, m_type, true);
                                         }
                                     }
                                 }
@@ -156,7 +156,7 @@ public class DragonElectricPowers : MonoBehaviour {
                                 if (chain1_entity != null) {
                                     // Burn chain 1 entity
                                     AI.IMachine chain1_machine = chain1_entity.machine;
-                                    chain1_machine.Burn(transform, IEntity.Type.PLAYER);
+                                    chain1_machine.Burn(transform, IEntity.Type.PLAYER, true);
                                     Vector3 entity1Pos = chain1_machine.position;
                                     if (chain1_entity.circleArea != null)
                                         entity1Pos = chain1_entity.circleArea.center;
@@ -168,7 +168,7 @@ public class DragonElectricPowers : MonoBehaviour {
                                         Entity chain2_entity = GetFirstBurnableEntity((Vector2)entity1Pos, chainRadiusCheck);
                                         if (chain2_entity != null) {
                                             AI.IMachine chain2_machine = chain2_entity.machine;
-                                            chain2_machine.Burn(transform, IEntity.Type.PLAYER);
+                                            chain2_machine.Burn(transform, IEntity.Type.PLAYER, true);
                                             Vector3 entity2Pos = chain1_machine.position;
                                             if (chain2_entity.circleArea != null)
                                                 entity2Pos = chain2_entity.circleArea.center;
