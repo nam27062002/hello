@@ -192,9 +192,9 @@ public class DragonHelicopterPowers : MonoBehaviour, IBroadcastListener
                         circleCenter.z = 0;
                         if (MathUtils.TestArcVsCircle( arcOrigin, m_machinegunAngle, m_machinegunDistance, dir, circleCenter, entity.circleArea.radius))
                         {
-                            // Kill!
+                            // Kill! Despite we are shooting the machine gun, we treat it like a bite
                             entity.machine.Bite();
-                            entity.machine.BeginSwallowed(entity.transform, true, IEntity.Type.PLAYER);//( m_mouth );
+                            entity.machine.BeginSwallowed(entity.transform, true, IEntity.Type.PLAYER, KillType.SHOT); // Specify the kill type
                             entity.machine.EndSwallowed(entity.transform);
                         }
                     }

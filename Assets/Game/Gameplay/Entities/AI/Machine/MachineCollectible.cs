@@ -134,7 +134,7 @@ namespace AI {
 		override public void EndSwallowed(Transform _transform){}
 		override public void Bite() {}
 		override public void Drown() {}
-		override public void BeginSwallowed(Transform _transform, bool _rewardsPlayer, IEntity.Type _source) {}
+		override public void BeginSwallowed(Transform _transform, bool _rewardsPlayer, IEntity.Type _source, KillType _killType) {}
 
 
 		override public void	EnterGroup(ref Group _group) {}

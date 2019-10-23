@@ -595,10 +595,10 @@ namespace AI {
 			}
 		}
 
-		override public void BeginSwallowed(Transform _transform, bool _rewardsPlayer, IEntity.Type _source) {
+		override public void BeginSwallowed(Transform _transform, bool _rewardsPlayer, IEntity.Type _source, KillType _killType) {
             if (allowEdible) {
                 m_viewControl.BeginSwallowed(_transform);
-                m_edible.BeingSwallowed(_transform, _rewardsPlayer, _source);
+                m_edible.BeingSwallowed(_transform, _rewardsPlayer, _source, _killType);
             }
 		}
 

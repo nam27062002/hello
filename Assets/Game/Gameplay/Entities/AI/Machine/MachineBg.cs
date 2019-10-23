@@ -177,7 +177,7 @@ namespace AI {
 
 		override public void Bite() { }
 
-		override public void BeginSwallowed(Transform _transform, bool _rewardPlayer, IEntity.Type _source) { }
+		override public void BeginSwallowed(Transform _transform, bool _rewardPlayer, IEntity.Type _source, KillType _killType) { }
 
 		override public void EndSwallowed(Transform _transform) { }
 

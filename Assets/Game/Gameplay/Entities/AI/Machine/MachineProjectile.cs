@@ -130,8 +130,8 @@ namespace AI {
 			}
 		}
 
-		override public void BeginSwallowed(Transform _transform, bool _rewardPlayer, IEntity.Type _source) {
-			m_edible.BeingSwallowed(_transform, _rewardPlayer, _source); 
+		override public void BeginSwallowed(Transform _transform, bool _rewardPlayer, IEntity.Type _source, KillType _killType) {
+			m_edible.BeingSwallowed(_transform, _rewardPlayer, _source, _killType); 
 		}
 
 		override public void EndSwallowed(Transform _transform) {
@@ -166,7 +166,7 @@ namespace AI {
 				m_entity.onDieStatus.reason = IEntity.DyingReason.DESTROYED;
 				SetSignal(Signals.Type.Destroyed, true);
 				Reward reward = m_entity.GetOnKillReward(IEntity.DyingReason.DESTROYED);
-                Messenger.Broadcast<Transform, IEntity, Reward, KillType>(MessengerEvents.ENTITY_KILLED, transform, m_entity, reward, KillType.SHOT);
+                Messenger.Broadcast<Transform, IEntity, Reward, KillType>(MessengerEvents.ENTITY_KILLED, transform, m_entity, reward, KillType.EATEN);
 				return true;
 			}
 			return false;

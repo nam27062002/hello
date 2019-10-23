@@ -275,9 +275,9 @@ namespace AI {
 			return false;
 		}
 
-		override public void BeginSwallowed(Transform _transform, bool _rewardsPlayer, IEntity.Type _source) {
+		override public void BeginSwallowed(Transform _transform, bool _rewardsPlayer, IEntity.Type _source, KillType _killType) {
 			m_viewControl.Bite();
-			m_edible.BeingSwallowed(_transform, _rewardsPlayer, _source);
+			m_edible.BeingSwallowed(_transform, _rewardsPlayer, _source, _killType);
 		}
 
 		override public void EndSwallowed(Transform _transform){
