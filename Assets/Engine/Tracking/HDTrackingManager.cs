@@ -67,6 +67,7 @@ public class HDTrackingManager
 		SHOP_PC_PACK,
 		SHOP_COINS_PACK,
 		SHOP_OFFER_PACK,
+		SHOP_AD_OFFER_PACK,				// Ad used to obtain an offer pack of type "free"
         SHOP_PROMOTED_IAP,
 		SHOP_KEYS_PACK,
         NOT_ENOUGH_RESOURCES,
