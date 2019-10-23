@@ -33,7 +33,9 @@ public class GameHUD : MonoBehaviour {
 	[Min(0)]
 	public int m_autoDestroyDelayFrames = 1;
 
+	private bool m_gameStarted = false;
 	private bool m_paused = false;
+
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -45,6 +47,7 @@ public class GameHUD : MonoBehaviour {
             Debug_Awake();
         InstanceManager.gameHUD = this;
         Messenger.AddListener<DragonPlayer.ReviveReason>(MessengerEvents.PLAYER_REVIVE, OnRevive);
+		Messenger.AddListener(MessengerEvents.GAME_STARTED, OnGameStarted);
     }
 
     void OnDestroy() {
@@ -52,7 +55,8 @@ public class GameHUD : MonoBehaviour {
             Debug_OnDestroy();
         InstanceManager.gameHUD = null;
         Messenger.RemoveListener<DragonPlayer.ReviveReason>(MessengerEvents.PLAYER_REVIVE, OnRevive);
-    }    
+		Messenger.RemoveListener(MessengerEvents.GAME_STARTED, OnGameStarted);
+	}    
 
     public bool CanPause(){		
     	if (!m_paused){
@@ -70,7 +74,7 @@ public class GameHUD : MonoBehaviour {
 
     private void Update() {
 		// Check for auto-destruction components
-		if(m_autoDestroyDelayFrames >= 0) {
+		if(m_gameStarted && m_autoDestroyDelayFrames >= 0) {
 			m_autoDestroyDelayFrames--;
 			if(m_autoDestroyDelayFrames <= 0) {
 				m_autoDestroyDelayFrames = -1;  // Don't trigger again
@@ -165,6 +169,10 @@ public class GameHUD : MonoBehaviour {
 		// Prevent adding callback twice!
 		popupController.OnClosePostAnimation.RemoveListener(Unpause);
 		popupController.OnClosePostAnimation.AddListener(Unpause);
+	}
+
+	void OnGameStarted() {
+		m_gameStarted = true;
 	}
 
     void OnRevive(DragonPlayer.ReviveReason _reason) {
