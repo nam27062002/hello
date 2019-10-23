@@ -437,7 +437,7 @@ public class MissionPill : MonoBehaviour, IBroadcastListener {
         if (string.IsNullOrEmpty(_zoneSku))
         {
             // Where
-            _targetZoneText.Localize("TID_MISSIONS_WHERE_ANY_LEVEL");
+            _targetZoneText.Localize("TID_MISSIONS_ALL_MAP");
 
         }
         else
