@@ -348,7 +348,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         UnityEngine.Profiling.Profiler.EndSample();
 
         UnityEngine.Profiling.Profiler.BeginSample("HDCustomizerManager.Update()");
-        HDCustomizerManager.instance.Update();        
+        if(!Game_IsInGame) HDCustomizerManager.instance.Update();        
         UnityEngine.Profiling.Profiler.EndSample();
 
         UnityEngine.Profiling.Profiler.BeginSample("GameServerManager.Update()");
@@ -364,18 +364,17 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         UnityEngine.Profiling.Profiler.EndSample();
 
         UnityEngine.Profiling.Profiler.BeginSample("ChestManager.Update()");
-        ChestManager.instance.Update();
+		if(!Game_IsInGame) ChestManager.instance.Update();
 		UnityEngine.Profiling.Profiler.EndSample();
 
         UnityEngine.Profiling.Profiler.BeginSample("OffersManager.Update()");
-        OffersManager.instance.Update();
+		if(!Game_IsInGame) OffersManager.instance.Update();
 		UnityEngine.Profiling.Profiler.EndSample();
 
         #if UNITY_IOS
 		UnityEngine.Profiling.Profiler.BeginSample("HDNotificationsManager.Update()");
-        HDNotificationsManager.instance.Update();
+		if(!Game_IsInGame) HDNotificationsManager.instance.Update();
 		UnityEngine.Profiling.Profiler.EndSample();
-	
         #endif
 
         UnityEngine.Profiling.Profiler.BeginSample("TransactionManager.Update()");
@@ -388,11 +387,11 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         UnityEngine.Profiling.Profiler.EndSample();
 
         UnityEngine.Profiling.Profiler.BeginSample("MissionManager.Update()");
-        MissionManager.instance.Update();
+		MissionManager.instance.Update();
         UnityEngine.Profiling.Profiler.EndSample();
 
         UnityEngine.Profiling.Profiler.BeginSample("RewardManager.Update()");
-        RewardManager.instance.Update();
+		if(Game_IsInGame) RewardManager.instance.Update();
         UnityEngine.Profiling.Profiler.EndSample(); 
 
         UnityEngine.Profiling.Profiler.BeginSample("GameSceneManager.Update()");
@@ -400,7 +399,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         UnityEngine.Profiling.Profiler.EndSample();
 
         UnityEngine.Profiling.Profiler.BeginSample("EggManager.Update()");
-        EggManager.instance.Update();
+		if(!Game_IsInGame) EggManager.instance.Update();
         UnityEngine.Profiling.Profiler.EndSample();
 
 
