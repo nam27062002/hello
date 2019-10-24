@@ -1118,8 +1118,7 @@ public class Ingame_SwitchAreaHandle
     private void AddDisguiseDependencies( AddressablesBatchHandle handle, DefinitionNode def, bool ingame = true  )
     {
         // Materials
-        string skin = def.Get("skin");
-        List<string> resourceIDs = GetResourceIDsForDragonSkin(skin, ingame);        
+        List<string> resourceIDs = GetResourceIDsForDragonSkin(def.sku, ingame);        
         int count = resourceIDs.Count;
         for (int i = 0; i < count; i++)
         {

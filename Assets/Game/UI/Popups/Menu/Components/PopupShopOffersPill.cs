@@ -32,38 +32,38 @@ public class PopupShopOffersPill : IPopupShopPill {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed
-	[SerializeField] private OfferItemSlot[] m_itemSlots = null;
+	[SerializeField] protected OfferItemSlot[] m_itemSlots = null;
 
 	[Space]
-	[SerializeField] private Localizer m_packNameText = null;
-	[SerializeField] private Localizer m_discountText = null;
-	[SerializeField] private Localizer m_remainingTimeText = null;
+	[SerializeField] protected Localizer m_packNameText = null;
+	[SerializeField] protected Localizer m_discountText = null;
+	[SerializeField] protected Localizer m_remainingTimeText = null;
 
 	[Space]
-	//[SerializeField] private Text m_priceText = null;
-	//[SerializeField] private Text m_previousPriceText = null;
-	[SerializeField] private GameObject m_featuredHighlight = null;
+	//[SerializeField] protected Text m_priceText = null;
+	//[SerializeField] protected Text m_previousPriceText = null;
+	[SerializeField] protected GameObject m_featuredHighlight = null;
 
 	[Space]
-	[SerializeField] private MultiCurrencyButton m_priceButtonGroup = null;
-	[SerializeField] private GameObject m_loadingPricePlaceholder = null;
+	[SerializeField] protected MultiCurrencyButton m_priceButtonGroup = null;
+	[SerializeField] protected GameObject m_loadingPricePlaceholder = null;
 
 	[Separator("Optional Decorations")]
-	[SerializeField] private UIGradient m_backgroundGradient = null;
-	[SerializeField] private UIGradient m_frameGradientLeft = null;
-	[SerializeField] private UIGradient m_frameGradientRight = null;
+	[SerializeField] protected UIGradient m_backgroundGradient = null;
+	[SerializeField] protected UIGradient m_frameGradientLeft = null;
+	[SerializeField] protected UIGradient m_frameGradientRight = null;
 
 	// Public
-	private OfferPack m_pack = null;
+	protected OfferPack m_pack = null;
 	public OfferPack pack {
 		get { return m_pack; }
 	}
 
 	// Internal
-	private float m_discount = 0f;
-	private float m_previousPrice = 0f;
-	private bool m_waitingForPrice = false;
-	private StringBuilder m_sb = new StringBuilder();
+	protected float m_discount = 0f;
+	protected float m_previousPrice = 0f;
+	protected bool m_waitingForPrice = false;
+	protected StringBuilder m_sb = new StringBuilder();
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -71,7 +71,7 @@ public class PopupShopOffersPill : IPopupShopPill {
 	/// <summary>
 	/// Called every frame.
 	/// </summary>
-	private void Update() {
+	protected virtual void Update() {
 		// Waiting for price?
 		if(m_waitingForPrice) {
 			// Store initialized?
@@ -89,7 +89,7 @@ public class PopupShopOffersPill : IPopupShopPill {
 	/// Initialize the pill with a given pack's data.
 	/// </summary>
 	/// <param name="_pack">Pack.</param>
-	public void InitFromOfferPack(OfferPack _pack) {
+	public virtual void InitFromOfferPack(OfferPack _pack) {
 		// Store new pack
 		m_pack = _pack;
 		m_def = null;
@@ -188,7 +188,7 @@ public class PopupShopOffersPill : IPopupShopPill {
 	/// <summary>
 	/// Refresh all price-related texts.
 	/// </summary>
-	private void RefreshPrice() {
+	protected virtual void RefreshPrice() {
 
         // If localized prices haven't been received from the store yet, wait for it
         bool storeReady = GameStoreManager.SharedInstance.IsReady();
@@ -326,7 +326,7 @@ public class PopupShopOffersPill : IPopupShopPill {
     /// Refresh the timer. To be called periodically.
     /// https://docs.unity3d.com/ScriptReference/MonoBehaviour.InvokeRepeating.html
     /// </summary>
-    public void RefreshTimer() {
+    public virtual void RefreshTimer() {
 		// Skip if no target offer or target offer is not timed
 		if(m_pack == null) return;
 		if(!m_pack.isTimed) return;
@@ -423,7 +423,7 @@ public class PopupShopOffersPill : IPopupShopPill {
 	/// </summary>
 	/// <returns>TMP's VertexGradient matching input Gradient4.</returns>
 	/// <param name="_gradient">Input Gradient4.</param>
-	private VertexGradient Gradient4ToVertexGradient(Gradient4 _gradient) {
+	protected VertexGradient Gradient4ToVertexGradient(Gradient4 _gradient) {
 		return new VertexGradient(
 			_gradient.topLeft,
 			_gradient.topRight,

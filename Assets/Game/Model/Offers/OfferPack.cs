@@ -47,6 +47,7 @@ public class OfferPack {
 		PROGRESSION,
 		PUSHED,
 		ROTATIONAL,
+		FREE,
         COUNT
 	}
 
@@ -365,11 +366,17 @@ public class OfferPack {
         // Currency type
         m_currency = StringToCurrency(m_def.GetAsString("currency"));
 
-        // Items - limited to 3 for now
-        for (int i = 1; i <= MAX_ITEMS; ++i) {	// [1..N]
+		// Choose tracking group for rewards depending on offer type
+		HDTrackingManager.EEconomyGroup ecoGroup = HDTrackingManager.EEconomyGroup.SHOP_OFFER_PACK;
+		if(m_type == Type.FREE) {
+			ecoGroup = HDTrackingManager.EEconomyGroup.SHOP_AD_OFFER_PACK;
+		}
+
+		// Items - limited to 3 for now
+		for (int i = 1; i <= MAX_ITEMS; ++i) {	// [1..N]
 			// Create and initialize new item
 			OfferPackItem item = new OfferPackItem();
-			item.InitFromDefinition(_def, i);
+			item.InitFromDefinition(_def, i, ecoGroup);
 
 			// If a reward wasn't generated, the item is either not properly defined or the pack doesn't have this item, don't store it
 			if(item.reward == null) continue;
@@ -470,6 +477,7 @@ public class OfferPack {
 		SetValueIfMissing(ref _def, "type", TypeToString(DEFAULT_TYPE));
         SetValueIfMissing(ref _def, "currency", CurrencyToString(DEFAULT_CURRENCY));
         SetValueIfMissing(ref _def, "order", m_order.ToString(CultureInfo.InvariantCulture));
+		SetValueIfMissing(ref _def, "refPrice", (0).ToString(CultureInfo.InvariantCulture));
 		SetValueIfMissing(ref _def, "discount", (0).ToString(CultureInfo.InvariantCulture));
 
 		// Featuring
@@ -776,6 +784,33 @@ public class OfferPack {
 	}
 
 	/// <summary>
+	/// Check if all conditions required to activate this pack (state, segmentation,
+	/// activation, expiration, etc) are met.
+	/// </summary>
+	/// <returns>Whether the pack can be activated or not.</returns>
+	public virtual bool CanBeActivated() {
+		// Skip active and expired packs
+		OffersManager.Log("        Checking state... {0}", this.state);
+		if(this.state != State.PENDING_ACTIVATION) return false;
+
+		// Skip if segmentation conditions are not met for this pack
+		OffersManager.Log("        Checking segmentation...");
+		if(!this.CheckSegmentation()) return false;
+
+		// Skip if activation conditions are not met for this pack
+		OffersManager.Log("        Checking activation...");
+		if(!this.CheckActivation()) return false;
+
+		// Also skip if for some reason the pack has expired!
+		// [AOC] TODO!! Should it be removed?
+		OffersManager.Log("        Checking expiration...");
+		if(this.CheckExpiration(false)) return false;
+
+		// All checks passed!
+		return true;
+	}
+
+	/// <summary>
 	/// Change the logic state of the pack.
 	/// No validation is done.
 	/// </summary>
@@ -944,6 +979,9 @@ public class OfferPack {
 			case Type.ROTATIONAL: {
 				newPack = new OfferPackRotational();
 			} break;
+			case Type.FREE: {
+				newPack = new OfferPackFree();
+			} break;
 			default: {
 				newPack = new OfferPack();
 			} break;
@@ -1043,6 +1081,7 @@ public class OfferPack {
 			case Type.PROGRESSION: 	return "progression";
 			case Type.PUSHED: 		return "push";
 			case Type.ROTATIONAL: 	return "rotational";
+			case Type.FREE:			return "free";
 		}
 		return TypeToString(DEFAULT_TYPE);
 	}
@@ -1057,6 +1096,7 @@ public class OfferPack {
 			case "progression": return Type.PROGRESSION;
 			case "push":		return Type.PUSHED;
 			case "rotational":	return Type.ROTATIONAL;
+			case "free":		return Type.FREE;
 		}
 		return DEFAULT_TYPE;
 	}
@@ -1073,6 +1113,7 @@ public class OfferPack {
             case UserProfile.Currency.REAL: return "real";
             case UserProfile.Currency.HARD: return "pc";
             case UserProfile.Currency.SOFT: return "sc";
+			case UserProfile.Currency.NONE:	return "none";
         }
         return CurrencyToString(DEFAULT_CURRENCY);
     }
@@ -1090,6 +1131,8 @@ public class OfferPack {
             case "real": return UserProfile.Currency.REAL;
             case "pc": return UserProfile.Currency.HARD;
             case "sc": return UserProfile.Currency.SOFT;
+			case "free":
+			case "none": return UserProfile.Currency.NONE;
         }
         return DEFAULT_CURRENCY;
     }

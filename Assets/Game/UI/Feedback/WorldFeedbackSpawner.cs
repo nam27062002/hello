@@ -33,7 +33,7 @@ public class WorldFeedbackSpawner : MonoBehaviour, IBroadcastListener {
 	[SerializeField] private GameObject m_killFeedbackPrefab = null;
 	[SerializeField] private GameObject m_flockBonusFeedbackPrefab = null;
 	[SerializeField] private GameObject m_escapedFeedbackPrefab = null;
-    [SerializeField] private ParticlesTrailFX m_cakeEatenFeedbackPrefab = null;
+    [SerializeField] private ParticlesTrailFX m_hungryCollectibleEatenFeedbackPrefab = null;
 
     [Separator("Container References")]
 	[SerializeField] private GameObject m_scoreFeedbackContainer = null;
@@ -151,8 +151,7 @@ public class WorldFeedbackSpawner : MonoBehaviour, IBroadcastListener {
 			Messenger.AddListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_DESTROYED, OnDestroyed);
 			Messenger.AddListener<Transform, IEntity, Reward>(MessengerEvents.FLOCK_EATEN, OnFlockEaten);
 			Messenger.AddListener<Transform, IEntity, Reward>(MessengerEvents.STAR_COMBO, OnStarCombo);
-            Messenger.AddListener<Vector3>(MessengerEvents.ANNIVERSARY_CAKE_SLICE_EATEN, OnEatCake);
-
+            Broadcaster.AddListener(BroadcastEventType.HUNGRY_MODE_ENTITY_EATEN, this);
             Messenger.AddListener<Transform>(MessengerEvents.ENTITY_ESCAPED, OnEscaped);
 	        
         }
@@ -175,7 +174,7 @@ public class WorldFeedbackSpawner : MonoBehaviour, IBroadcastListener {
 			Messenger.RemoveListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_DESTROYED, OnDestroyed);
 			Messenger.RemoveListener<Transform, IEntity, Reward>(MessengerEvents.FLOCK_EATEN, OnFlockEaten);
 			Messenger.RemoveListener<Transform, IEntity, Reward>(MessengerEvents.STAR_COMBO, OnStarCombo);
-            Messenger.RemoveListener<Vector3>(MessengerEvents.ANNIVERSARY_CAKE_SLICE_EATEN, OnEatCake);
+            Broadcaster.RemoveListener(BroadcastEventType.HUNGRY_MODE_ENTITY_EATEN, this);
             Messenger.RemoveListener<Transform>(MessengerEvents.ENTITY_ESCAPED, OnEscaped);
         }
 		
@@ -188,6 +187,11 @@ public class WorldFeedbackSpawner : MonoBehaviour, IBroadcastListener {
             case BroadcastEventType.GAME_ENDED:
             {
                 OnGameEnded();
+            }break;
+            case BroadcastEventType.HUNGRY_MODE_ENTITY_EATEN:
+            {
+                PositionEventInfo posEventInfo = broadcastEventInfo as PositionEventInfo;
+                OnEatHungryCollectible( posEventInfo.position );
             }break;
         }
     }
@@ -384,9 +388,9 @@ public class WorldFeedbackSpawner : MonoBehaviour, IBroadcastListener {
     /// A piece of cake has been eaten.
     /// </summary>
     /// <param name="_position">The cake pieces position.</param>
-    private void OnEatCake(Vector3 _position)
+    private void OnEatHungryCollectible(Vector3 _position)
     {
-        if (m_cakeEatenFeedbackPrefab != null)
+        if (m_hungryCollectibleEatenFeedbackPrefab != null)
         {
 
             // From the center of the screen
@@ -395,7 +399,7 @@ public class WorldFeedbackSpawner : MonoBehaviour, IBroadcastListener {
             // To the cake icon
             Vector3 sink = m_cakeCrumbsDestination.position;
 
-            ParticlesTrailFX.InstantiateAndLaunch(m_cakeEatenFeedbackPrefab.gameObject, transform, source, sink);
+            ParticlesTrailFX.InstantiateAndLaunch(m_hungryCollectibleEatenFeedbackPrefab.gameObject, transform, source, sink);
 
         }
     }   
