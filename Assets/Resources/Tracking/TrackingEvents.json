@@ -70,7 +70,7 @@
         { "pet3": { "Status": "OK" } },
         { "pet4": { "Status": "OK" } },
         { "batteryLevel": { "Status": "OK" } },
-        { "controlChoice": { "Status": "OK" } }        
+        { "controlChoice": { "Status": "OK" } }
       ],
       "APIs": [
         "dna",
@@ -165,7 +165,7 @@
         { "totalEggFound": { "Status": "OK" } },
         { "totalEggOpened": { "Status": "OK" } },
         { "batteryLevel": { "Status": "OK" } },
-        { "controlChoice": { "Status": "OK" } } 
+        { "controlChoice": { "Status": "OK" } }
       ],
       "APIs": [
         "dna",
@@ -213,7 +213,7 @@
         "etl"
       ]
     },
-	"custom.gameplay.loadgameend": {	 
+	"custom.gameplay.loadgameend": {
       "Parameters": [
         { "roundid": { "Status": "OK" } },
         { "loadingTime": { "Status": "OK" } }
@@ -306,7 +306,7 @@
         { "InGameId": { "Status": "OK" } },
         { "localTime": { "Status": "OK" } },
         { "language": { "Status": "OK" } },
-        { "connectionType": { "Status": "OK" } },        
+        { "connectionType": { "Status": "OK" } },
         { "country": { "Status": "OK" } },
         { "storeInstalled": { "Status": "OK" } },
         { "isHacker": { "Status": "OK" } },
@@ -789,6 +789,16 @@
         { "hardCurrency": { "Status": "OK" } },
 		{ "itemID": { "Status": "OK" } },
         { "action": { "Status": "OK" } }
+      ],
+      "APIs": [
+        "dna",
+        "etl"
+      ]
+    },
+	"custom.ui.button": {
+      "Parameters": [
+        { "buttonName": { "Status": "OK" } },
+        { "playerProgress": { "Status": "OK" } }
       ],
       "APIs": [
         "dna",
@@ -1710,10 +1720,14 @@
 	  "happyHour" : {
 	    "Type": "INT:4",
       "Values": []
-    },
+  	},
+  	"buttonName" : {
+  	  "Type": "STRING:32",
+        "Values": []
+  	},
     "roundid" : {
-	    "Type": "STRING:64",
+	  "Type": "STRING:64",
       "Values": []
-	  }
+	 }
   }
 }

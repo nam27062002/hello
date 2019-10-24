@@ -692,6 +692,13 @@ public class HDTrackingManager
     /// <param name="unlockType">How the map has been unlocked.</param>
     public virtual void Notify_UnlockMap(ELocation location, EUnlockType unlockType) { }
 
+
+    /// <summary>
+    /// Sent when the uses pushes a button in the UI
+    /// </summary>
+    /// <param name="_buttonName">The custom identifier of the button pressed</param>
+    public virtual void Notify_UIButton(string _buttonName) { }
+    
     #region log
     private const bool LOG_USE_COLOR = false;
     private const string LOG_CHANNEL = "[HDTrackingManager] ";
