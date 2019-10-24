@@ -220,7 +220,26 @@ public class FireBreathNew : DragonBreathBehaviour {
 					if (prey.IsBurnable(m_tier) || m_type == Type.Mega) {
 						AI.IMachine machine =  m_checkEntities[i].machine;
 						if (machine != null) {
-							machine.Burn(transform, IEntity.Type.PLAYER, false, m_type == Type.Mega, m_currentColor);
+
+                            KillType killType;
+
+                            // Special dragons deal different type of damage whith their breath
+                            switch (DragonManager.CurrentDragon.sku)
+                            {
+                                case "dragon_ice":
+                                    killType = KillType.FROZEN;
+                                    break;
+
+                                case "dragon_electric":
+                                    killType = KillType.ELECTRIFIED;
+                                    break;
+
+                                default:
+                                    killType = KillType.BURNT;
+                                    break;
+                            }
+
+                            machine.Burn(transform, IEntity.Type.PLAYER, killType, m_type == Type.Mega, m_currentColor);
 						}
 					} else {
 						// Show message saying I cannot burn it

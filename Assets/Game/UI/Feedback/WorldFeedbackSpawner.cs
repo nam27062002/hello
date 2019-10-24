@@ -326,7 +326,7 @@ public class WorldFeedbackSpawner : MonoBehaviour, IBroadcastListener {
                 SpawnKillFeedback(FeedbackData.Type.EAT, _t, _e);
                 break;
 
-            case KillType.BURN:
+            case KillType.BURNT:
                 SpawnKillFeedback(FeedbackData.Type.BURN, _t, _e);
                 break;
 

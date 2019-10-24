@@ -149,7 +149,7 @@ namespace AI {
 		}
 
 		// Being burned
-		override public bool Burn(Transform _transform, IEntity.Type _source, bool _electricDamage = false, bool _instant = false, FireColorSetupManager.FireColorType fireColorType = FireColorSetupManager.FireColorType.RED) {
+		override public bool Burn(Transform _transform, IEntity.Type _source, KillType _killType = KillType.BURNT, bool _instant = false, FireColorSetupManager.FireColorType fireColorType = FireColorSetupManager.FireColorType.RED) {
 			if (!IsDying()) {
 				m_dyingReason = IEntity.DyingReason.BURNED;
 				SetSignal(Signals.Type.Destroyed, true);

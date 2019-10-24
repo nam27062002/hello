@@ -93,8 +93,8 @@ namespace AI {
 			return false;
 		}
 
-		public override bool Burn(Transform _transform, IEntity.Type _source, bool _electricDamage = false, bool _instant = false, FireColorSetupManager.FireColorType _fireColorType = FireColorSetupManager.FireColorType.RED) {			
-			if (base.Burn(_transform, _source, _electricDamage, _instant, _fireColorType)) {				
+		public override bool Burn(Transform _transform, IEntity.Type _source, KillType _killType = KillType.BURNT, bool _instant = false, FireColorSetupManager.FireColorType _fireColorType = FireColorSetupManager.FireColorType.RED) {			
+			if (base.Burn(_transform, _source, _killType, _instant, _fireColorType)) {				
 				if (m_passengersSpawner != null) {
 					m_passengersSpawner.PassengersBurn(_source);
 				}

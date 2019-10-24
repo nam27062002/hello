@@ -14,7 +14,7 @@ using System.Collections.Generic;
 // CLASSES																	  //
 //----------------------------------------------------------------------------//
 /// <summary>
-/// Tracker for destroyed entities.
+/// Tracker entities killed while they are frozen
 /// </summary>
 public class TrackerKillFrozen : TrackerBase {
 	//------------------------------------------------------------------------//

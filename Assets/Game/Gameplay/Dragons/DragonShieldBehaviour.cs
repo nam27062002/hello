@@ -78,7 +78,7 @@ public class DragonShieldBehaviour : MonoBehaviour {
                 }
             break;
 
-            case KillType.BURN:
+            case KillType.BURNT:
                     if (_reward.health >= 0)
                     {
                         // if (FreezingObjectsRegistry.instance.IsFreezing(_e.machine)) // For the ice dragon burning is frozing

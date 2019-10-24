@@ -14,7 +14,7 @@ using System.Collections.Generic;
 // CLASSES																	  //
 //----------------------------------------------------------------------------//
 /// <summary>
-/// Tracker for burned entities.
+/// Tracker for entities killed by the ice dragon breath.
 /// </summary>
 public class TrackerFreeze : TrackerBase {
 	//------------------------------------------------------------------------//

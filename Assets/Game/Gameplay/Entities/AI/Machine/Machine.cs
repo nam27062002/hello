@@ -650,11 +650,11 @@ namespace AI {
 			return m_edible.GetDyingFixRot();
 		}
 
-		override public bool Burn(Transform _transform, IEntity.Type _source, bool _electricDamage = false, bool _instant = false, FireColorSetupManager.FireColorType fireColorType = FireColorSetupManager.FireColorType.RED) {
+		override public bool Burn(Transform _transform, IEntity.Type _source, KillType _killType = KillType.BURNT, bool _instant = false, FireColorSetupManager.FireColorType fireColorType = FireColorSetupManager.FireColorType.RED) {
 			if (allowBurnable && m_inflammable != null && !IsDead()) {
 				if (!GetSignal(Signals.Type.Burning)) {
 					ReceiveDamage(9999f);
-					m_inflammable.Burn(_transform, _source, _electricDamage, _instant, fireColorType);
+					m_inflammable.Burn(_transform, _source, _killType, _instant, fireColorType);
 				}
 				return true;
 			}

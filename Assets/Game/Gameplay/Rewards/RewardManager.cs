@@ -692,7 +692,7 @@ public class RewardManager : Singleton<RewardManager>, IBroadcastListener {
 	/// <param name="_reward">The reward linked to this event.</param>
 	private void OnKill(Transform _t, IEntity _e, Reward _reward, KillType _type) {
 
-        if (_type == KillType.BURN)
+        if (_type == KillType.BURNT)
         {
             _reward.coins = (_reward.coins * m_burnCoinsMultiplier);
         }

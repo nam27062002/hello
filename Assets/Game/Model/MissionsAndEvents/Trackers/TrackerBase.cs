@@ -219,13 +219,20 @@ public class TrackerBase {
 			case "daily_chest":		return new TrackerDailyChests();
 			case "kill_chain":		return new TrackerKillChain(_params);
 			case "critical_time":	return new TrackerCriticalTime();
-			// new missions TODO
+			
 			case "eat_gold":        return new TrackerEatGolden(_params);
 			case "eat_suicidal":    return new TrackerEatWhileActionActive(TrackerEatWhileActionActive.Actions.FreeFall, _params);
 			case "eat_spec_anim_a": return new TrackerEatWhileActionActive(TrackerEatWhileActionActive.Actions.PilotActionA, _params);
 
             case "birthday_mode_count": return new TrackerBirthdayMode();
             case "birthday_stay_mode_time":  return new TrackerBirthdayModeTime();
+
+            // new Special dragons missions:
+            case "freeze": return new TrackerFreeze(_params);
+            case "smash": return new TrackerSmash(_params);
+            case "shoot": return new TrackerShoot(_params);
+            case "electrify": return new TrackerElectrify(_params);
+
             //-----------------------------------
 
             // Collect is quite special: depending on first parameter, create one of the existing trackers

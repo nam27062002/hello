@@ -13,7 +13,7 @@ public enum KillType
 {
     NONE,
     EATEN,
-    BURN,
+    BURNT,
     FROZEN,
     ELECTRIFIED,
     SMASHED,
