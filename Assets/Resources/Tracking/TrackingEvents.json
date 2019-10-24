@@ -786,6 +786,16 @@
         "etl"
       ]
     },
+	"custom.ui.button": {
+      "Parameters": [
+        { "buttonName": { "Status": "OK" } },
+        { "playerProgress": { "Status": "OK" } }
+      ],
+      "APIs": [
+        "dna",
+        "etl"
+      ]
+    },
     "af_purchase": {
       "Parameters": [
         { "af_def_logPurchase": { "Status": "OK" } },
@@ -1700,6 +1710,10 @@
     },
 	"happyHour" : {
 	  "Type": "INT:4",
+      "Values": []
+	},
+	"buttonName" : {
+	  "Type": "STRING:32",
       "Values": []
 	}
   }

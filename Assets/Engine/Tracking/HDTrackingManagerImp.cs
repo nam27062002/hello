@@ -1364,7 +1364,17 @@ public class HDTrackingManagerImp : HDTrackingManager {
         Track_UnlockMap(ELocationToKey(location), EUnlockTypeToKey(unlockType));
     }
 
-#region track
+    /// <summary>
+    /// Sent when the uses pushes a button in the UI
+    /// </summary>
+    /// <param name="_buttonName">The custom identifier of the button pressed</param>
+    public override void Notify_UIButton(string _buttonName)
+    {
+        Track_UIButton(_buttonName);
+    }
+
+
+    #region track
     private const string TRACK_EVENT_TUTORIAL_COMPLETION = "tutorial_completion";
     private const string TRACK_EVENT_FIRST_10_RUNS_COMPLETED = "first_10_runs_completed";
 
@@ -2528,6 +2538,18 @@ public class HDTrackingManagerImp : HDTrackingManager {
         m_eventQueue.Enqueue(e);
     }
 
+    private void Track_UIButton(string _buttonName)
+    {
+        Log("Track_UIButton buttonName = " + _buttonName );
+
+        // Create event
+        HDTrackingEvent e = new HDTrackingEvent("custom.ui.button");
+        {
+            Track_AddParamString(e, TRACK_PARAM_BUTTON_NAME, _buttonName);
+            Track_AddParamPlayerProgress(e);
+        }
+        m_eventQueue.Enqueue(e);
+    }
 
     // -------------------------------------------------------------
     // Events
@@ -2560,6 +2582,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private const string TRACK_PARAM_AVERAGE_FPS = "avgFPS";
 	private const string TRACK_PARAM_BATTERY_LEVEL = "batteryLevel";
     private const string TRACK_PARAM_BOOST_TIME = "boostTime";
+    private const string TRACK_PARAM_BUTTON_NAME = "buttonName";
     private const string TRACK_PARAM_CATEGORY = "category";
 	private const string TRACK_PARAM_CHESTS_FOUND = "chestsFound";
 	private const string TRACK_PARAM_CONTROL_CHOICE = "controlChoice";
