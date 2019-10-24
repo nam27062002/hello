@@ -114,7 +114,10 @@ public class CameraSnapPointEditor : Editor {
 		EditorGUILayout.BeginHorizontal(); {
 			m_targetSnapPoint.changeFov = GUILayout.Toggle(m_targetSnapPoint.changeFov, GUIContent.none, GUILayout.Width(10f));
 			GUI.enabled = m_targetSnapPoint.changeFov;
-			m_targetSnapPoint.fov = EditorGUILayout.Slider("FOV", m_targetSnapPoint.fov, 1f, 179f);
+			EditorGUILayout.BeginVertical(); {
+				m_targetSnapPoint.fov = EditorGUILayout.Slider("FOV", m_targetSnapPoint.fov, 1f, 179f);
+				m_targetSnapPoint.fov43 = EditorGUILayout.Slider("FOV 4:3", m_targetSnapPoint.fov43, 1f, 179f);
+			} EditorGUILayoutExt.EndHorizontalSafe();
 			GUI.enabled = true;
 		} EditorGUILayoutExt.EndHorizontalSafe();
 
@@ -199,6 +202,10 @@ public class CameraSnapPointEditor : Editor {
 					m_targetSnapPoint.fov = m_targetCamera.fieldOfView;
 				}
 
+				if(GUILayout.Button("Read FOV 4:3 from Ref Camera")) {
+					m_targetSnapPoint.fov43 = m_targetCamera.fieldOfView;
+				}
+
 				if(GUILayout.Button("Read planes from Ref Camera")) {
 					m_targetSnapPoint.near = m_targetCamera.nearClipPlane;
 					m_targetSnapPoint.far = m_targetCamera.farClipPlane;
@@ -265,7 +272,7 @@ public class CameraSnapPointEditor : Editor {
 		Camera refCamera = Camera.main;
 
 		// Fov
-		float targetFov = _target.fov;
+		float targetFov = _target.GetFOV();
 		if(!_target.changeFov) {
 			targetFov = (refCamera != null) ? refCamera.fieldOfView : 60f;
 		}
