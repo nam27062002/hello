@@ -21,18 +21,35 @@ public class TrackerKill : TrackerBase {
 	// MEMBERS																  //
 	//------------------------------------------------------------------------//
 	private List<string> m_targetSkus = null;
+    private List<string> m_zoneTriggers = null;
+    private bool m_enteredTargetZone = false;
 
-	//------------------------------------------------------------------------//
-	// GENERIC METHODS														  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Default constructor.
-	/// </summary>
-	/// <param name="_targetSkus">Skus of the target entities to be considered.</param>
-	public TrackerKill(List<string> _targetSkus) {
+    //------------------------------------------------------------------------//
+    // GENERIC METHODS														  //
+    //------------------------------------------------------------------------//
+    /// <summary>
+    /// Default constructor.
+    /// </summary>
+    /// <param name="_targetSkus">Skus of the target entities to be considered.</param>
+    /// <param name="_zones">Ids of the targeted zones. If empty, there is no zone restriction.</param>
+    public TrackerKill(List<string> _targetSkus, string _zoneSku = null) {
 		// Store target Skus list
 		m_targetSkus = _targetSkus;
 		Debug.Assert(m_targetSkus != null);
+
+        // Zones parameter is optional
+        if (!string.IsNullOrEmpty(_zoneSku)) 
+        {
+            // Get all the triggers of this zone
+            m_zoneTriggers = GetZoneTriggers(_zoneSku);
+
+            if (m_zoneTriggers != null && m_zoneTriggers.Count > 0)
+            {
+                Messenger.AddListener<bool, ZoneTrigger>(MessengerEvents.MISSION_ZONE, OnZone);
+            }
+            
+        }
+        
 
 		// Subscribe to external events
 		Messenger.AddListener<Transform, IEntity, Reward, KillType>(MessengerEvents.ENTITY_KILLED, OnKill);
@@ -45,18 +62,25 @@ public class TrackerKill : TrackerBase {
 		
 	}
 
-	//------------------------------------------------------------------------//
-	// PARENT OVERRIDES														  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Finalizer method. Leave the tracker ready for garbage collection.
-	/// </summary>
-	override public void Clear() {
+
+
+    //------------------------------------------------------------------------//
+    // PARENT OVERRIDES														  //
+    //------------------------------------------------------------------------//
+    /// <summary>
+    /// Finalizer method. Leave the tracker ready for garbage collection.
+    /// </summary>
+    override public void Clear() {
 		// Unsubscribe from external events
 		Messenger.RemoveListener<Transform, IEntity, Reward, KillType>(MessengerEvents.ENTITY_KILLED, OnKill);
 
-		// Call parent
-		base.Clear();
+        if (m_zoneTriggers != null && m_zoneTriggers.Count > 0)
+        {
+            Messenger.AddListener<bool, ZoneTrigger>(MessengerEvents.MISSION_ZONE, OnZone);
+        }
+
+        // Call parent
+        base.Clear();
 	}
 
 	/// <summary>
@@ -91,10 +115,34 @@ public class TrackerKill : TrackerBase {
 			// Is it one of the target types?
 			if(_e != null) {
 				if(m_targetSkus.Contains(_e.sku)) {
-					// Found!
-					currentValue++;
+                    // Do we need to check the zone?
+                    if (m_zoneTriggers != null && m_zoneTriggers.Count>0)
+                    {
+                        // Restricted to a target zone
+                        if (m_enteredTargetZone)
+                        {
+                            currentValue++;
+                        }
+
+                    }else
+                    {
+                        // Not restricted to zones
+                        currentValue++;
+                    }
+					
 				}
 			}
 		}
 	}
+
+    /// <summary>
+    /// Call this event when the player is moving from/to another zone
+    /// </summary>
+    private void OnZone(bool isEntering, ZoneTrigger zone)
+    {
+        if (m_zoneTriggers.Contains(zone.m_zoneId))
+        {
+            m_enteredTargetZone = isEntering;
+        }
+    }
 }

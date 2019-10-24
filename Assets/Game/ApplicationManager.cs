@@ -9,6 +9,7 @@
 #endif
 
 using SimpleJSON;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -633,7 +634,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 				}
 				if (missingChests) 
 				{
-                    int moreSeconds = 9 * 60 * 60;  // 9 AM
+                    int moreSeconds = HDNotificationsManager.SILENCE_END_HOUR * 60 * 60;  // 9 AM
                     int timeToNotification = (int)ChestManager.timeToReset.TotalSeconds + moreSeconds;
                     if ( timeToNotification > 0) {
 					    HDNotificationsManager.instance.ScheduleNewChestsNotification (timeToNotification);
@@ -649,9 +650,9 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
             else
             {
                 // time to reward
-                System.DateTime midnight = UsersManager.currentUser.dailyRewards.nextCollectionTimestamp;
-                double secondsToMidnight = (midnight - System.DateTime.Now).TotalSeconds;
-                int moreSeconds = 9 * 60 * 60;  // 9 AM
+                DateTime midnight = UsersManager.currentUser.dailyRewards.nextCollectionTimestamp;
+                double secondsToMidnight = (midnight - DateTime.Now).TotalSeconds;
+                int moreSeconds = HDNotificationsManager.SILENCE_END_HOUR * 60 * 60;  // 9 AM
                 int timeToNotification = (int)secondsToMidnight + moreSeconds;
                 if ( timeToNotification > 0 )
                 {
@@ -659,21 +660,26 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
                 }
             }
 
+			// Free Offer
+			// Only when on cooldown
+			if(OffersManager.isFreeOfferOnCooldown) {
+				// Avoid notification during night
+				DateTime endTimeLocal = DateTime.Now.Add(OffersManager.freeOfferRemainingCooldown);
+				endTimeLocal = HDNotificationsManager.AvoidSilentHours(endTimeLocal);
+				int remainingSeconds = (int)(endTimeLocal - DateTime.Now).TotalSeconds;
+				HDNotificationsManager.instance.ScheduleNewFreeOffer(remainingSeconds);
+			}
+
+			// Reengagement
             DefinitionNode gameSettingsDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, "gameSettings");
             int minutesToReengage = gameSettingsDef.GetAsInt("notificationComeBackTimer", 2000);
             int secondsToReengage = minutesToReengage * 60;
             if ( secondsToReengage > 0 )
             {
-                System.DateTime dateTime = System.DateTime.Now.AddSeconds( secondsToReengage );
-                if ( dateTime.Hour >= 22 || dateTime.Hour <= 9 )
-                {
-                    // Adjust to avoid midnight timmings
-                    System.DateTime fixedDateTime = dateTime;
-                    fixedDateTime = fixedDateTime.AddHours( 11 );   // forbidden 11 hours, from 22:00 to 9:00
-                    fixedDateTime = fixedDateTime.AddHours( 9 - fixedDateTime.Hour );   // Remove excess
-                    secondsToReengage = (int)(fixedDateTime - System.DateTime.Now).TotalSeconds;
-                }
-                
+				// Avoid notification during night
+                DateTime dateTime = DateTime.Now.AddSeconds( secondsToReengage );
+				dateTime = HDNotificationsManager.AvoidSilentHours(dateTime);
+				secondsToReengage = (int)(dateTime - DateTime.Now).TotalSeconds;
                 HDNotificationsManager.instance.ScheduleReengagementNotification(secondsToReengage);
             }
 
@@ -688,8 +694,6 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
                     }
                 }
             }
-
-			// [AOC] TODO!!
         }
     }
 
@@ -698,6 +702,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 		HDNotificationsManager.instance.CancelNewMissionsNotification();
 		HDNotificationsManager.instance.CancelNewChestsNotification();
 		HDNotificationsManager.instance.CancelDailyRewardNotification();
+		HDNotificationsManager.instance.CancelFreeOfferNotification();
         HDNotificationsManager.instance.CancelReengagementNotification();
         HDNotificationsManager.instance.CancelEggHatchedNotification();
     }

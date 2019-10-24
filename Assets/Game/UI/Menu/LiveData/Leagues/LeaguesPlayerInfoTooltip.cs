@@ -159,7 +159,7 @@ public class LeaguesPlayerInfoTooltip : UITooltip {
 		}
 
         // Pets
-        int petsAmount = 0;
+        int petsCount = 0;
 		for(int i = 0; i < m_petSlots.Length; ++i) {
 			// Skip if invalid
 			if(m_petSlots[i] == null) continue;
@@ -174,19 +174,18 @@ public class LeaguesPlayerInfoTooltip : UITooltip {
 			DefinitionNode petDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PETS, _playerInfo.build.pets[i]);
 			if(petDef == null) {
 				m_petSlots[i].gameObject.SetActive(false);
-				continue;
+                continue;
 			}
 
 			// Initialize pet slot
 			m_petSlots[i].InitWithPet(petDef);
 			m_petSlots[i].gameObject.SetActive(true);
-            petsAmount++;
-
+            petsCount++;
         }
 
 		// No pets error message
 		if(m_noPetsMessage != null) {
-			m_noPetsMessage.SetActive(petsAmount == 0);
+			m_noPetsMessage.SetActive(petsCount == 0);
 		}
 	}
 }

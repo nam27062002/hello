@@ -249,7 +249,7 @@ public class HungryLettersPanel : MonoBehaviour
 
 	private void OnSuperSizeToggle(bool _activated, DragonSuperSize.Source _source)
 	{
-		if (_source == DragonSuperSize.Source.CAKE) {
+		if (_source == DragonSuperSize.Source.COLLECTIBLE) {
 			if (_activated) {
 				m_startAnimWhenLastLetterCollected = false;
 			} else {

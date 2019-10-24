@@ -203,10 +203,8 @@ public class PopupAdBlocker : MonoBehaviour {
 
 		// If the ad couldn't be displayed, show message
 		if(!_success && !m_forcedCancel) {
-            string text = GetErrorTextByAdType(m_adType);
-
             UIFeedbackText feedbackText = UIFeedbackText.CreateAndLaunch(
-				text,
+				GetErrorTextByAdType(m_adType),
 				Vector2.one * 0.5f,
 				PopupManager.canvas.transform as RectTransform
 			);

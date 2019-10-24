@@ -199,7 +199,7 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 	private Vector2 m_currentBackBend;
 
 	// Parabolic movement
-	private Vector3 m_startParabolicPosition;
+	protected Vector3 m_startParabolicPosition;
 
 	[Space]
 	[SerializeField] private float m_cloudTrailMinSpeed = 7.5f;
@@ -1331,11 +1331,8 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 		m_rbody.velocity = m_impulse;
 	}
 
-	private void UpdateSpaceMovement(float _deltaTime)
+	protected void CheckStartParabolicHeight()
 	{
-		// impulse direction
-		Vector3 impulse = GameConstants.Vector3.zero;
-		m_controls.GetImpulse(1, ref impulse);
 		if ( m_boost.IsBoostActive() )
 		{
 			if (!m_startingParabolic) {
@@ -1347,6 +1344,14 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 		{
 			m_startingParabolic = false;
 		}
+	}
+
+	protected void UpdateSpaceMovement(float _deltaTime)
+	{
+		// impulse direction
+		Vector3 impulse = GameConstants.Vector3.zero;
+		m_controls.GetImpulse(1, ref impulse);
+		CheckStartParabolicHeight();
 
 		if ( m_controls.moving )
 			m_directionWhenBoostPressed = impulse;

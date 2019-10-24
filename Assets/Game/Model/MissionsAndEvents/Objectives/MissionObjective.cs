@@ -69,7 +69,7 @@ public class MissionObjective : TrackingObjectiveBase, IBroadcastListener {
 			tidDesc = _typeDef.GetAsString("tidDescMultiRun");
 		}
 
-			// Check params in not empty before asking for a List
+		// Check params in not empty before asking for a List
 		List<string> _params;
 		string paramCheck = _missionDef.GetAsString("params", null);
 		if ( !string.IsNullOrEmpty( paramCheck ) ){
@@ -77,11 +77,14 @@ public class MissionObjective : TrackingObjectiveBase, IBroadcastListener {
 		}else{
 			_params = new List<string>();
 		}
-		 
 
-		// Use parent's initializer
-		Init(
-			TrackerBase.CreateTracker(_typeDef.sku, _params ),		// Create the tracker based on mission type
+        // Zone
+        m_zone = _missionDef.GetAsString("zone", null);
+
+
+        // Use parent's initializer
+        Init(
+			TrackerBase.CreateTracker(_typeDef.sku, _params, m_zone),		// Create the tracker based on mission type
 			_targetValue,
 			_typeDef,
 			tidDesc,
