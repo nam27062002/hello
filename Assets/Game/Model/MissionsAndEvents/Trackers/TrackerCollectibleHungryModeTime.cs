@@ -16,11 +16,11 @@ using System.Collections.Generic;
 /// <summary>
 /// Tracker for survival time.
 /// </summary>
-public class TrackerCollecitbleHungryModeTime : TrackerBaseTime {
+public class TrackerCollectibleHungryModeTime : TrackerBaseTime {
     //------------------------------------------------------------------------//
     // GENERIC METHODS														  //
     //------------------------------------------------------------------------//
-    public TrackerCollecitbleHungryModeTime() {
+    public TrackerCollectibleHungryModeTime() {
         Messenger.AddListener<bool, DragonSuperSize.Source>(MessengerEvents.SUPER_SIZE_TOGGLE, OnSuperSizeToggle);
     }
 

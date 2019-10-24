@@ -124,7 +124,7 @@ public class DragonElectricPowers : MonoBehaviour {
                     if (entity != null) {
                         AI.IMachine startingMachine = entity.machine;
                         if (startingMachine != null) {
-                            startingMachine.Burn(transform, m_type);
+                            startingMachine.Burn(transform, m_type, KillType.ELECTRIFIED);
                             Vector3 startingPos = startingMachine.position;
                             if (entity.circleArea != null)
                                 startingPos = entity.circleArea.center;
