@@ -636,11 +636,22 @@ public class HDTrackingManagerImp : HDTrackingManager {
             Track_StartPlayingMode(EPlayingMode.PVE);
         }
 
+        // This function will update Session_RoundId with a new Round Value
+        GenerateNewRoundId();
+
         // Notifies that one more round has started
-        Track_RoundStart(dragonXp, dragonProgression, dragonSkin, pets);
+        Track_RoundStart(Session_RoundId, dragonXp, dragonProgression, dragonSkin, pets);
 
         Session_NotifyRoundStart();
         //        Notify_StartPerformanceTracker();
+    }
+
+    public void GenerateNewRoundId()
+    {
+        Session_RoundsCount++;
+        int sessionNumber = TrackingPersistenceSystem.SessionCount;
+        string trackingID = TrackingPersistenceSystem.UserID;
+        Session_RoundId = trackingID +"#"+ sessionNumber +"#"+ Session_RoundsCount;
     }
 
     public override void Notify_RoundEnd(int dragonXp, int deltaXp, int dragonProgression, int timePlayed, int score, int chestsFound, int eggFound,
@@ -657,7 +668,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
         }
 
         // Last deathType, deathSource and deathCoordinates are used since this information is provided when Notify_RunEnd() is called
-        Track_RoundEnd(dragonXp, deltaXp, dragonProgression, timePlayed, score, Session_LastDeathType, Session_LastDeathSource, Session_LastDeathCoordinates,
+        Track_RoundEnd( Session_RoundId, dragonXp, deltaXp, dragonProgression, timePlayed, score, Session_LastDeathType, Session_LastDeathSource, Session_LastDeathCoordinates,
             chestsFound, eggFound, highestMultiplier, highestBaseMultiplier, furyRushNb, superFireRushNb, hcRevive, adRevive, scGained, hcGained, (int)(boostTime * 1000.0f), mapUsage);
 
         Session_NotifyRoundEnd();
@@ -674,7 +685,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
         Session_LastDeathCoordinates = deathCoordinatesAsString;
 
         // Actual track
-        Track_RunEnd(dragonXp, timePlayed, score, deathType, deathSource, deathCoordinatesAsString);
+        Track_RunEnd( Session_RoundId, dragonXp, timePlayed, score, deathType, deathSource, deathCoordinatesAsString);
     }
 
     /// <summary>
@@ -949,6 +960,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
     public override void Notify_LoadingGameplayEnd(float loading_duration) {
         HDTrackingEvent e = new HDTrackingEvent("custom.gameplay.loadGameplay");
         {
+            Track_AddParamString(e, TRACK_PARAM_ROUND_ID, Session_RoundId);
             e.data.Add(TRACK_PARAM_LOADING_TIME, (int)(loading_duration * 1000.0f));
         }
         m_eventQueue.Enqueue(e);
@@ -957,6 +969,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
     public override void Notify_LoadingAreaStart(string original_area, string destination_area) {
         HDTrackingEvent e = new HDTrackingEvent("custom.gameplay.loadArea");
         {
+            Track_AddParamString(e, TRACK_PARAM_ROUND_ID, Session_RoundId);
             Track_AddParamString(e, TRACK_PARAM_ORIGINAL_AREA, original_area);
             Track_AddParamString(e, TRACK_PARAM_NEW_AREA, destination_area);
             Track_AddParamString(e, TRACK_PARAM_ACTION, "started");
@@ -968,6 +981,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
     public override void Notify_LoadingAreaEnd(string original_area, string destination_area, float area_loading_duration) {
         HDTrackingEvent e = new HDTrackingEvent("custom.gameplay.loadArea");
         {
+            Track_AddParamString(e, TRACK_PARAM_ROUND_ID, Session_RoundId);
             Track_AddParamString(e, TRACK_PARAM_ORIGINAL_AREA, original_area);
             Track_AddParamString(e, TRACK_PARAM_NEW_AREA, destination_area);
             Track_AddParamString(e, TRACK_PARAM_ACTION, "finished");
@@ -983,7 +997,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
 
     public override void Notify_LoadingResultsEnd()
     {
-        Track_LoadingResultsEnd(Time.realtimeSinceStartup - Session_LoadingResultsStartAt);
+        Track_LoadingResultsEnd( Session_RoundId, Time.realtimeSinceStartup - Session_LoadingResultsStartAt);
     }
 
     /// <summary>
@@ -1270,8 +1284,10 @@ public class HDTrackingManagerImp : HDTrackingManager {
         if (m_playingMode == EPlayingMode.NONE) {
             Track_StartPlayingMode(EPlayingMode.PVE);
         }
+
+        GenerateNewRoundId();
         
-        Track_LabGameStart(dragonName, labHp, labSpeed, labBoost, labPower, totalSpecialDragonsUnlocked, currentLeague, pets);
+        Track_LabGameStart(Session_RoundId, dragonName, labHp, labSpeed, labBoost, labPower, totalSpecialDragonsUnlocked, currentLeague, pets);
         
         Session_NotifyRoundStart();
     }
@@ -1288,7 +1304,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
             TrackingPersistenceSystem.EggsFound += eggFound;
         }
         
-        Track_LabGameEnd(dragonName, labHp, labSpeed, labBoost, labPower, timePlayed, score, Session_LastDeathType, Session_LastDeathSource, Session_LastDeathCoordinates,
+        Track_LabGameEnd( Session_RoundId, dragonName, labHp, labSpeed, labBoost, labPower, timePlayed, score, Session_LastDeathType, Session_LastDeathSource, Session_LastDeathCoordinates,
             eggFound, highestMultiplier, highestBaseMultiplier, furyRushNb, superFireRushNb, hcRevive, adRevive, scGained, hcGained, (int)(powerTime * 1000.0f), mapUsage, currentLeague);
             
         Session_NotifyRoundEnd();
@@ -1772,9 +1788,9 @@ public class HDTrackingManagerImp : HDTrackingManager {
         m_eventQueue.Enqueue(e);
     }
 
-    private void Track_RoundStart(int dragonXp, int dragonProgression, string dragonSkin, List<string> pets) {
+    private void Track_RoundStart(string roundId, int dragonXp, int dragonProgression, string dragonSkin, List<string> pets) {
 #if ENABLE_LOGS
-        string str = "Track_RoundStart dragonXp = " + dragonXp + " dragonProgression = " + dragonProgression + " dragonSkin = " + dragonSkin;
+        string str = "Track_RoundStart roundId = " + roundId + " dragonXp = " + dragonXp + " dragonProgression = " + dragonProgression + " dragonSkin = " + dragonSkin;
         if (pets != null) {
             int count = pets.Count;
             for (int i = 0; i < count; i++) {
@@ -1787,6 +1803,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
 
         HDTrackingEvent e = new HDTrackingEvent("custom.gameplay.start");
         {
+            Track_AddParamString(e, TRACK_PARAM_ROUND_ID, roundId);
             Track_AddParamSessionsCount(e);
             Track_AddParamGameRoundCount(e);
             e.data.Add(TRACK_PARAM_XP, dragonXp);
@@ -1800,12 +1817,12 @@ public class HDTrackingManagerImp : HDTrackingManager {
         m_eventQueue.Enqueue(e);
     }
 
-    public void Track_RoundEnd(int dragonXp, int deltaXp, int dragonProgression, int timePlayed, int score,
+    public void Track_RoundEnd( string roundId, int dragonXp, int deltaXp, int dragonProgression, int timePlayed, int score,
         string deathType, string deathSource, string deathCoordinates, int chestsFound, int eggFound,
         float highestMultiplier, float highestBaseMultiplier, int furyRushNb, int superFireRushNb, int hcRevive, int adRevive,
         int scGained, int hcGained, int boostTimeMs, int mapUsage) {
         
-        Log("Track_RoundEnd dragonXp = " + dragonXp + " deltaXp = " + deltaXp + " dragonProgression = " + dragonProgression +
+        Log("Track_RoundEnd roundId = " + roundId +" dragonXp = " + dragonXp + " deltaXp = " + deltaXp + " dragonProgression = " + dragonProgression +
             " timePlayed = " + timePlayed + " score = " + score +
             " deathType = " + deathType + " deathSource = " + deathSource + " deathCoor = " + deathCoordinates +
             " chestsFound = " + chestsFound + " eggFound = " + eggFound +
@@ -1817,6 +1834,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
 
         HDTrackingEvent e = new HDTrackingEvent("custom.gameplay.end");
         {
+            Track_AddParamString(e, TRACK_PARAM_ROUND_ID, roundId);
             Track_AddParamSessionsCount(e);
             Track_AddParamGameRoundCount(e);
             Track_AddParamRunsAmount(e);
@@ -1853,12 +1871,13 @@ public class HDTrackingManagerImp : HDTrackingManager {
         m_eventQueue.Enqueue(e);
     }
 
-    private void Track_RunEnd(int dragonXp, int timePlayed, int score, string deathType, string deathSource, string deathCoordinates) {        
-        Log("Track_RunEnd dragonXp = " + dragonXp + " timePlayed = " + timePlayed + " score = " + score +
+    private void Track_RunEnd(string roundId, int dragonXp, int timePlayed, int score, string deathType, string deathSource, string deathCoordinates) {        
+        Log("Track_RunEnd roundId = " +roundId +" dragonXp = " + dragonXp + " timePlayed = " + timePlayed + " score = " + score +
             " deathType = " + deathType + " deathSource = " + deathSource + " deathCoor = " + deathCoordinates);        
 
         HDTrackingEvent e = new HDTrackingEvent("custom.gameplay.dead");
         {
+            Track_AddParamString(e, TRACK_PARAM_ROUND_ID, roundId);
             Track_AddParamSessionsCount(e);
             Track_AddParamGameRoundCount(e);
             Track_AddParamRunsAmount(e);
@@ -2139,7 +2158,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
 
     }
 
-    private void Track_LoadingResultsEnd(float durationInSeconds)
+    private void Track_LoadingResultsEnd(string roundId, float durationInSeconds)
     {
         string eName = "custom.gameplay.loadgameend";
         int timeInMilliseconds = (int)(durationInSeconds * 1000.0f);             
@@ -2148,18 +2167,20 @@ public class HDTrackingManagerImp : HDTrackingManager {
 
         HDTrackingEvent e = new HDTrackingEvent(eName);
         {
+            Track_AddParamString(e, TRACK_PARAM_ROUND_ID, roundId);
             e.data.Add(TRACK_PARAM_LOADING_TIME, timeInMilliseconds);
         }
         m_eventQueue.Enqueue(e);
     }
 
-    private void Track_PerformanceTrack(int deltaXP, int avgFPS, Vector3 positionBL, Vector3 positionTR, bool fireRush) {
+    private void Track_PerformanceTrack( string roundId, int deltaXP, int avgFPS, Vector3 positionBL, Vector3 positionTR, bool fireRush) {
         string posblasstring = Track_CoordinatesToString(positionBL);
         string postrasstring = Track_CoordinatesToString(positionTR);        
-        Log("custom.gameplay.fps: deltaXP = " + deltaXP + " avgFPS = " + avgFPS + " coordinatesBL = " + posblasstring + " coordinatesTR = " + postrasstring + " fireRush = " + fireRush);        
+        Log("custom.gameplay.fps: roundId = " +roundId+ " deltaXP = " + deltaXP + " avgFPS = " + avgFPS + " coordinatesBL = " + posblasstring + " coordinatesTR = " + postrasstring + " fireRush = " + fireRush);        
 
         HDTrackingEvent e = new HDTrackingEvent("custom.gameplay.fps");
         {
+            Track_AddParamString(e, TRACK_PARAM_ROUND_ID, roundId);
             Track_AddParamSessionsCount(e);
             Track_AddParamGameRoundCount(e);
             e.data.Add(TRACK_PARAM_DELTA_XP, deltaXP);
@@ -2311,10 +2332,10 @@ public class HDTrackingManagerImp : HDTrackingManager {
         m_eventQueue.Enqueue(e);
     }
 
-    private void Track_LabGameStart(string dragonName, int labHp, int labSpeed, int labBoost, string labPower, int totalSpecialDragonsUnlocked, string currentLeague, List<string> pets)
+    private void Track_LabGameStart(string roundId, string dragonName, int labHp, int labSpeed, int labBoost, string labPower, int totalSpecialDragonsUnlocked, string currentLeague, List<string> pets)
     {
 #if ENABLE_LOGS
-        string str = "Track_LabGameStart dragonName = " + dragonName + " labHp = " + labHp + " labSpeed = " + labSpeed + " labBoost = " + labBoost + " labPower = " + labPower + 
+        string str = "Track_LabGameStart roundId = "+ roundId +" dragonName = " + dragonName + " labHp = " + labHp + " labSpeed = " + labSpeed + " labBoost = " + labBoost + " labPower = " + labPower + 
             " totalSpecialDragonsUnlocked = " + totalSpecialDragonsUnlocked + " currentLeague = " + currentLeague;
         if (pets != null) {
             int count = pets.Count;
@@ -2328,6 +2349,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
 
         HDTrackingEvent e = new HDTrackingEvent("custom.lab.gamestart");
         {
+            Track_AddParamString(e, TRACK_PARAM_ROUND_ID, roundId);
             Track_AddParamString(e, TRACK_PARAM_DRAGON, dragonName);
             e.data.Add(TRACK_PARAM_LAB_HP, labHp);
             e.data.Add(TRACK_PARAM_LAB_SPEED, labSpeed);
@@ -2340,12 +2362,12 @@ public class HDTrackingManagerImp : HDTrackingManager {
         m_eventQueue.Enqueue(e);
     }
     
-    private void Track_LabGameEnd(string dragonName, int labHp, int labSpeed, int labBoost, string labPower, int timePlayed, int score,  
+    private void Track_LabGameEnd( string roundId, string dragonName, int labHp, int labSpeed, int labBoost, string labPower, int timePlayed, int score,  
         string deathType, string deathSource, string deathCoordinates,
         int eggFound,float highestMultiplier, float highestBaseMultiplier, int furyRushNb, int superFireRushNb, int hcRevive, int adRevive, 
         int scGained, int hcGained, int powerTimeMs, int mapUsage, string currentLeague)
     {        
-        Log("Track_LabGameEnd dragonName = " + dragonName + " labHp = " + labHp + " labSpeed = " + labSpeed + " labBoost = " + labBoost + " labPower = " + labPower +
+        Log("Track_LabGameEnd roundId = " + roundId + " dragonName = " + dragonName + " labHp = " + labHp + " labSpeed = " + labSpeed + " labBoost = " + labBoost + " labPower = " + labPower +
             " timePlayed = " + timePlayed + " score = " + score +
             " deathType = " + deathType + " deathSource = " + deathSource + " deathCoor = " + deathCoordinates +
             " eggFound = " + eggFound + " highestMultiplier = " + highestMultiplier + " highestBaseMultiplier = " + highestBaseMultiplier +
@@ -2356,6 +2378,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
 
         HDTrackingEvent e = new HDTrackingEvent("custom.lab.gameend");
         {
+            Track_AddParamString(e, TRACK_PARAM_ROUND_ID, roundId);
             Track_AddParamString(e, TRACK_PARAM_DRAGON, dragonName);
             e.data.Add(TRACK_PARAM_LAB_HP, labHp);
             e.data.Add(TRACK_PARAM_LAB_SPEED, labSpeed);
@@ -2698,6 +2721,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private const string TRACK_PARAM_RESULT = "result";
     private const string TRACK_PARAM_REWARD_TIER = "rewardTier";
     private const string TRACK_PARAM_REWARD_TYPE = "rewardType";
+    private const string TRACK_PARAM_ROUND_ID = "roundid";
     private const string TRACK_PARAM_SC_EARNED = "scEarned";
     private const string TRACK_PARAM_SCORE = "score";
     private const string TRACK_PARAM_SECTION = "section";
@@ -3132,6 +3156,16 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private bool Session_AnyRoundsStarted { get; set; }
 
     /// <summary>
+    /// Amount of rounds started by the player in this session
+    /// </summary>
+    private int Session_RoundsCount { get; set; }
+
+    /// <summary>
+    /// Last Round Id generated
+    /// </summary>
+    private string Session_RoundId  { get; set; }
+
+    /// <summary>
     /// Amount of runs played by the user in the current round so far
     /// </summary>
     private int Session_RunsAmountInCurrentRound { get; set; }
@@ -3182,6 +3216,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
         Session_IsPayingSession = false;
         Session_IsAdSession = false;
         Session_PlayTime = 0f;
+        Session_RoundsCount = 0;
         Session_RunsAmountInCurrentRound = 0;
         Session_LastDeathType = null;
         Session_LastDeathSource = null;
@@ -3328,7 +3363,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
             Debug.Log("Performance tracking enabled: " + Performance_IsTrackingEnabled + " Delay: " + Performance_TrackingDelay);
             int fps = (int)((float)m_Performance_TickCounter / Performance_TrackingDelay);
             //int radius = (int)Mathf.Max(m_Performance_TrackArea.size.x, m_Performance_TrackArea.size.y);
-            Track_PerformanceTrack((int)RewardManager.xp, fps, m_Performance_TrackArea.min, m_Performance_TrackArea.max, m_Performance_FireRush);
+            Track_PerformanceTrack( Session_RoundId, (int)RewardManager.xp, fps, m_Performance_TrackArea.min, m_Performance_TrackArea.max, m_Performance_FireRush);
             //            Track_PerformanceTrack();
 
             Reset_Performance_Tracker();

@@ -59,6 +59,7 @@
     },
     "custom.gameplay.start": {
       "Parameters": [
+        { "roundid": { "Status": "OK" } },
         { "sessionsCount": { "Status": "OK" } },
         { "gameRunNb": { "Status": "OK" } },
         { "xp": { "Status": "OK" } },
@@ -69,7 +70,7 @@
         { "pet3": { "Status": "OK" } },
         { "pet4": { "Status": "OK" } },
         { "batteryLevel": { "Status": "OK" } },
-        { "controlChoice": { "Status": "OK" } }        
+        { "controlChoice": { "Status": "OK" } }
       ],
       "APIs": [
         "dna",
@@ -132,6 +133,7 @@
     },
     "custom.gameplay.end": {
       "Parameters": [
+        { "roundid": { "Status": "OK" } },
         { "sessionsCount": { "Status": "OK" } },
         { "deathInCurrentRunNb": { "Status": "OK" } },
         { "gameRunNb": { "Status": "OK" } },
@@ -163,7 +165,7 @@
         { "totalEggFound": { "Status": "OK" } },
         { "totalEggOpened": { "Status": "OK" } },
         { "batteryLevel": { "Status": "OK" } },
-        { "controlChoice": { "Status": "OK" } } 
+        { "controlChoice": { "Status": "OK" } }
       ],
       "APIs": [
         "dna",
@@ -172,6 +174,7 @@
     },
     "custom.gameplay.dead": {
       "Parameters": [
+        { "roundid": { "Status": "OK" } },
         { "sessionsCount": { "Status": "OK" } },
         { "deathInCurrentRunNb": { "Status": "OK" } },
         { "gameRunNb": { "Status": "OK" } },
@@ -189,6 +192,7 @@
     },
     "custom.gameplay.loadArea": {
       "Parameters": [
+        { "roundid": { "Status": "OK" } },
         { "originalArea": { "Status": "OK" } },
         { "newArea": { "Status": "OK" } },
         { "action": { "Status": "OK" } },
@@ -201,6 +205,7 @@
     },
     "custom.gameplay.loadGameplay": {
       "Parameters": [
+        { "roundid": { "Status": "OK" } },
         { "loadingTime": { "Status": "OK" } }
       ],
       "APIs": [
@@ -208,8 +213,9 @@
         "etl"
       ]
     },
-	"custom.gameplay.loadgameend": {	 
+	"custom.gameplay.loadgameend": {
       "Parameters": [
+        { "roundid": { "Status": "OK" } },
         { "loadingTime": { "Status": "OK" } }
       ],
       "APIs": [
@@ -300,7 +306,7 @@
         { "InGameId": { "Status": "OK" } },
         { "localTime": { "Status": "OK" } },
         { "language": { "Status": "OK" } },
-        { "connectionType": { "Status": "OK" } },        
+        { "connectionType": { "Status": "OK" } },
         { "country": { "Status": "OK" } },
         { "storeInstalled": { "Status": "OK" } },
         { "isHacker": { "Status": "OK" } },
@@ -411,6 +417,7 @@
     },
     "custom.gameplay.fps": {
       "Parameters": [
+        { "roundid": { "Status": "OK" } },
         { "sessionsCount": { "Status": "OK" } },
         { "gameRunNb": { "Status": "OK" } },
         { "deltaXp": { "Status": "OK" } },
@@ -462,6 +469,7 @@
     },
     "custom.lab.gamestart": {
       "Parameters": [
+        { "roundid": { "Status": "OK" } },
         { "dragon": { "Status": "OK" } },
         { "labHp": { "Status": "OK" } },
         { "labSpeed": { "Status": "OK" } },
@@ -481,6 +489,7 @@
     },
     "custom.lab.gameend": {
         "Parameters": [
+            { "roundid": { "Status": "OK" } },
             { "dragon": { "Status": "OK" } },
             { "labHp": { "Status": "OK" } },
             { "labSpeed": { "Status": "OK" } },
@@ -1708,13 +1717,17 @@
       "Type": "STRING:8",
       "Values": []
     },
-	"happyHour" : {
-	  "Type": "INT:4",
+	  "happyHour" : {
+	    "Type": "INT:4",
       "Values": []
-	},
-	"buttonName" : {
-	  "Type": "STRING:32",
+  	},
+  	"buttonName" : {
+  	  "Type": "STRING:32",
+        "Values": []
+  	},
+    "roundid" : {
+	  "Type": "STRING:64",
       "Values": []
-	}
+	 }
   }
 }
