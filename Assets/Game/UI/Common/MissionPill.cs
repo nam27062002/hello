@@ -55,9 +55,12 @@ public class MissionPill : MonoBehaviour, IBroadcastListener {
     [Space]
     [SerializeField] private GameObject m_targetZone = null;
 	[SerializeField] private Localizer m_targetZoneText = null;
-	[SerializeField] private Localizer m_targetDragonText = null;
-	
-	[Separator("Cooldown State")]
+    [Space]
+    [SerializeField] private GameObject m_recommendedDragonGroup = null;
+    [SerializeField] private UISpriteAddressablesLoader m_recommendedDragonIcon = null;
+    [SerializeField] private Localizer m_recommendedDragonText = null;
+
+    [Separator("Cooldown State")]
 	[SerializeField] private GameObject m_cooldownObj = null;
 	[Space]
 	[SerializeField] private Localizer m_cooldownInfoText = null;
@@ -172,30 +175,53 @@ public class MissionPill : MonoBehaviour, IBroadcastListener {
 		Refresh();
 	}
 
-	/// <summary>
-	/// Update the pill with the data from the target mission.
-	/// </summary>
-	public void Refresh() {
-		// Make sure mission is valid
-		if(mission == null) return;
+    /// <summary>
+    /// Update the pill with the data from the target mission.
+    /// </summary>
+    public void Refresh() {
+        // Make sure mission is valid
+        if (mission == null) return;
 
-		// Select which object should be visible
-		m_cooldownObj.SetActive(m_mission.state == Mission.State.COOLDOWN || m_mission.state == Mission.State.ACTIVATION_PENDING);
-		m_activeObj.SetActive(m_mission.state == Mission.State.ACTIVE);
+        // Select which object should be visible
+        m_cooldownObj.SetActive(m_mission.state == Mission.State.COOLDOWN || m_mission.state == Mission.State.ACTIVATION_PENDING);
+        m_activeObj.SetActive(m_mission.state == Mission.State.ACTIVE);
 
-		// Update visuals
-		switch(m_mission.state) {
-			case Mission.State.COOLDOWN: 			RefreshCooldown(); 			break;
-			case Mission.State.ACTIVATION_PENDING: 	RefreshActivationPending(); break;
-			case Mission.State.ACTIVE: 				RefreshActive(); 			break;
-		}
+        // Update visuals
+        switch (m_mission.state) {
+            case Mission.State.COOLDOWN: RefreshCooldown(); break;
+            case Mission.State.ACTIVATION_PENDING: RefreshActivationPending(); break;
+            case Mission.State.ACTIVE: RefreshActive(); break;
+        }
 
-		// Shared stuff
-		// Shared mission difficulty text
-		RefreshDifficulty(m_difficultyText, true);
+        // Shared stuff
+        // Shared mission difficulty text
+        RefreshDifficulty(m_difficultyText, true);
 
         // Refresh zone
         RefreshZone(m_targetZone, m_targetZoneText, mission.objective.zone);
+
+        // Refresh recommended Dragon
+        bool showRecommendedGroup = false;
+
+        if (m_recommendedDragonGroup != null && mission.objective.recommendedDragon != null)
+        {
+                IDragonData dragon = mission.objective.recommendedDragon;
+
+                if (m_recommendedDragonIcon != null)
+                {
+                    showRecommendedGroup = true;
+
+                    // The avatar of the dragon is the icon of the default skin
+                    string dragonIcon = IDragonData.GetDefaultDisguise(dragon.sku).GetAsString("icon");
+                    m_recommendedDragonIcon.LoadAsync(dragonIcon);
+                }
+
+                if (m_recommendedDragonText != null)
+                    m_recommendedDragonText.Localize(dragon.def.GetAsString("tidName"));
+        }
+
+        m_recommendedDragonGroup.SetActive(showRecommendedGroup);
+
 
         mission.updated = false;
 	}
@@ -240,13 +266,6 @@ public class MissionPill : MonoBehaviour, IBroadcastListener {
         m_missionIcon.LoadIcon(iconSku);
         m_missionIcon.gameObject.SetActive(true);
 
-
-
-		// With
-		// [AOC] TODO!! Feature not yet implemented, use a fixed text for now
-		if(m_targetDragonText != null) {
-			m_targetDragonText.Localize("TID_MISSIONS_WITH_ANY_DRAGON");
-		}
 
 		// Difficulty
 		RefreshDifficulty(m_difficultyText, true);

@@ -81,6 +81,12 @@ public class MissionObjective : TrackingObjectiveBase, IBroadcastListener {
         // Zone
         m_zone = _missionDef.GetAsString("zone", null);
 
+        // Recommended dragon
+        string dragonSku = _missionDef.GetAsString("dragon", null);
+        if (!string.IsNullOrEmpty(dragonSku))
+        {
+            m_recommendedDragon = DragonManager.GetDragonData(dragonSku);
+        }
 
         // Use parent's initializer
         Init(
