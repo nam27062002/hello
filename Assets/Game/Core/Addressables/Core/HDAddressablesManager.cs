@@ -1066,7 +1066,7 @@ public class Ingame_SwitchAreaHandle
             resultPrefab = dragon.def.GetAsString("resultsPrefab");
             // Take next skin into account just in case we unlock it this run
             int initialLevel = RewardManager.dragonInitialLevel;
-            DragonProgression progression = (DragonManager.CurrentDragon as DragonDataClassic).progression;
+            DragonProgression progression = (dragon as DragonDataClassic).progression;
             int finalLevel = progression.level;
             if ( initialLevel != finalLevel )
             {
@@ -1118,8 +1118,7 @@ public class Ingame_SwitchAreaHandle
     private void AddDisguiseDependencies( AddressablesBatchHandle handle, DefinitionNode def, bool ingame = true  )
     {
         // Materials
-        string skin = def.Get("skin");
-        List<string> resourceIDs = GetResourceIDsForDragonSkin(skin, ingame);        
+        List<string> resourceIDs = GetResourceIDsForDragonSkin(def.sku, ingame);        
         int count = resourceIDs.Count;
         for (int i = 0; i < count; i++)
         {
