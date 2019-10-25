@@ -55,6 +55,7 @@ GameObject:
   - component: {fileID: 114000011976910314}
   - component: {fileID: 95000012412780896}
   - component: {fileID: 114000014061330322}
+  - component: {fileID: 114766316607050722}
   m_Layer: 5
   m_Name: ArrowRight
   m_TagString: Untagged
@@ -810,6 +811,7 @@ GameObject:
   - component: {fileID: 114000012475028188}
   - component: {fileID: 95000010682089204}
   - component: {fileID: 114000012851374990}
+  - component: {fileID: 114446488173758716}
   m_Layer: 5
   m_Name: ArrowLeft
   m_TagString: Untagged
@@ -5033,6 +5035,7 @@ GameObject:
   - component: {fileID: 95076259645940394}
   - component: {fileID: 114770581443374150}
   - component: {fileID: 114395882921887460}
+  - component: {fileID: 114780966403086994}
   m_Layer: 5
   m_Name: BtnInfo
   m_TagString: Untagged
@@ -5806,6 +5809,7 @@ GameObject:
   - component: {fileID: 95972406602167724}
   - component: {fileID: 114310916562218076}
   - component: {fileID: 114334693810932052}
+  - component: {fileID: 114995414567036968}
   m_Layer: 5
   m_Name: BtnInfo
   m_TagString: Untagged
@@ -21004,6 +21008,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_audioId: 
+--- !u!114 &114446488173758716
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000012548129788}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f510557f9c63d984690fd5584aee6a63, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_buttonName: menu_dragonselection_arrowleft
 --- !u!114 &114449509864575770
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -28532,7 +28548,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b8c71af7b337146e6b9fbf30dc2b2ce1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_lifeTime: 0
+  m_mode: 0
+  m_seconds: 0
+  m_frames: 0
   m_replacementPrefab: UI/Metagame/PF_Lock
 --- !u!114 &114763938657177254
 MonoBehaviour:
@@ -28561,6 +28579,18 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &114766316607050722
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 151292}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f510557f9c63d984690fd5584aee6a63, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_buttonName: menu_dragonselection_arrowright
 --- !u!114 &114766342867136792
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -28954,6 +28984,18 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &114780966403086994
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1419265472461190}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f510557f9c63d984690fd5584aee6a63, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_buttonName: menu_dragonselection_dragoninfo
 --- !u!114 &114781953365166520
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -34406,6 +34448,18 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &114995414567036968
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1519171134472306}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f510557f9c63d984690fd5584aee6a63, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_buttonName: menu_dragonselection_specialdragoninfo
 --- !u!114 &114996343910686136
 MonoBehaviour:
   m_ObjectHideFlags: 1
