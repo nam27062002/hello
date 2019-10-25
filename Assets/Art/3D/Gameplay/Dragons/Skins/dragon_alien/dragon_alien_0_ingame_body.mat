@@ -8,8 +8,8 @@ Material:
   m_PrefabInternal: {fileID: 0}
   m_Name: dragon_alien_0_ingame_body
   m_Shader: {fileID: 4800000, guid: 2345015ac46679e4cb5817ed44c82547, type: 3}
-  m_ShaderKeywords: FRESNEL FXLAYER_NONE NORMALMAP REFLECTIONTYPE_NORMAL SELFILLUMINATE_NORMAL
-    SPECULAR _ZWRITE_ON
+  m_ShaderKeywords: FRESNEL FXLAYER_REFLECTION NORMALMAP OPAQUEALPHA REFLECTIONTYPE_COLOR
+    SELFILLUMINATE_NORMAL SPECULAR _ZWRITE_ON
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -66,12 +66,12 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _ReflectionMap:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 8900000, guid: 526eef17382f158429f2491abb96d089, type: 2}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
-    - FXLayer: 0
-    - ReflectionType: 0
+    - FXLayer: 1
+    - ReflectionType: 1
     - SelfIlluminate: 0
     - _BlendMode: 0
     - _BumpScale: 1
@@ -85,9 +85,9 @@ Material:
     - _DissolveLowerLimit: -1
     - _DissolveMargin: 0.1
     - _DissolveUpperLimit: 1
-    - _DstBlend: 10
+    - _DstBlend: 0
     - _EnableBlendFresnel: 0
-    - _EnableCutoff: 1
+    - _EnableCutoff: 0
     - _EnableDiffuseAsSpecMask: 0
     - _EnableDoublesided: 0
     - _EnableFresnel: 1
@@ -102,7 +102,7 @@ Material:
     - _EnableVertexOffsetZ: 0
     - _FireAmount: 0
     - _FireSpeed: 1
-    - _Fresnel: 6.57
+    - _Fresnel: 8.9
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
@@ -114,11 +114,11 @@ Material:
     - _NormalStrenght: 1.8
     - _OcclusionStrength: 1
     - _Parallax: 0.02
-    - _ReflectionAmount: 0
+    - _ReflectionAmount: 0.455
     - _SmoothnessTextureChannel: 0
-    - _SpecExponent: 30.9
+    - _SpecExponent: 80
     - _SpecularHighlights: 1
-    - _SrcBlend: 5
+    - _SrcBlend: 1
     - _StencilMask: 10
     - _UVSec: 0
     - _VOAmplitude: 0.3
@@ -128,9 +128,9 @@ Material:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _ColorAdd: {r: 0, g: 0, b: 0, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _FresnelColor: {r: 0.18555364, g: 0.30069205, b: 0.32352942, a: 1}
+    - _FresnelColor: {r: 0, g: 0.4314909, b: 0.49264705, a: 1}
     - _InnerLightColor: {r: 1, g: 1, b: 1, a: 1}
-    - _ReflectionColor: {r: 1, g: 1, b: 1, a: 1}
-    - _SecondLightColor: {r: 0, g: 0, b: 0, a: 0}
-    - _SecondLightDir: {r: 0.023968022, g: -0.15546788, b: -0.98755014, a: 0}
+    - _ReflectionColor: {r: 0.58823526, g: 0.7955377, b: 1, a: 1}
+    - _SecondLightColor: {r: 0.29514492, g: 0.39396167, b: 0.75735295, a: 0}
+    - _SecondLightDir: {r: 0.22349767, g: 0.18159187, b: -0.95763934, a: 0}
     - _Tint: {r: 1, g: 1, b: 1, a: 1}
