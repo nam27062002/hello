@@ -76,13 +76,41 @@ public class TrackerBase {
 
 	}
 
-	//------------------------------------------------------------------------//
-	// OVERRIDE CANDIDATE METHODS											  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Finalizer method. Leave the tracker ready for garbage collection.
-	/// </summary>
-	public virtual void Clear() {
+
+    //------------------------------------------------------------------------//
+    // INTERNAL METHODS														  //
+    //------------------------------------------------------------------------//
+    /// <summary>
+    /// Find in the content all the triggers that belongs to a specific zone
+    /// </summary>
+    /// <param name="_zoneSku">The sku of the target zone</param>
+    /// <retun>Returns a list of ids of all the triggers</retun>
+    protected List<string> GetZoneTriggers(string _zoneSku)
+    {
+        if (_zoneSku == null)
+            return null;
+
+        // Find the zone definitions in the content
+        DefinitionNode zoneTriggerDef = DefinitionsManager.SharedInstance.GetDefinitionByVariable(DefinitionsCategory.ZONE_TRIGGERS, "sku", _zoneSku);
+
+        if (zoneTriggerDef == null)
+            return null;
+
+        // Parse the list of triggers separated with semicolons
+        List<string> triggers = zoneTriggerDef.GetAsList<string>("triggerList");
+
+        return triggers;
+
+    }
+
+
+    //------------------------------------------------------------------------//
+    // OVERRIDE CANDIDATE METHODS											  //
+    //------------------------------------------------------------------------//
+    /// <summary>
+    /// Finalizer method. Leave the tracker ready for garbage collection.
+    /// </summary>
+    public virtual void Clear() {
 		// Reset current value
 		m_currentValue = 0;
 
@@ -192,7 +220,7 @@ public class TrackerBase {
 	/// <returns>A new tracker. <c>null</c> if the type was not recognized.</returns>
 	/// <param name="_typeSku">The type of tracker to be created. Typically a sku from the MissionTypesDefinitions table.</param>
 	/// <param name="_params">Optional parameters to be passed to the tracker. Depend on tracker's type.</param>
-	public static TrackerBase CreateTracker(string _typeSku, List<string> _params = null) {
+	public static TrackerBase CreateTracker(string _typeSku, List<string> _params = null, string _zoneSku = null) {
 		// Create a new objective based on mission type
 		switch(_typeSku) {
 			default: return null;
@@ -202,7 +230,7 @@ public class TrackerBase {
 			case "zone_survive":	return new TrackerZoneSurvive(_params);
 			case "visited_zones":	return new TrackerVisitedZones();
             case "kill_disguise":
-			case "kill":			return new TrackerKill(_params);
+			case "kill":			return new TrackerKill(_params, _zoneSku);
             case "kill_in_love":    return new TrackerKillInLove(_params);
             case "kill_stunned":    return new TrackerKillStunned(_params);
             case "kill_frozen":     return new TrackerKillFrozen(_params);
@@ -211,7 +239,9 @@ public class TrackerBase {
 			case "distance":		return new TrackerDistance();
 			case "dive":			return new TrackerDiveDistance();
 			case "dive_time":		return new TrackerDiveTime();
-			case "fire_rush":		return new TrackerFireRush();
+            case "space":           return new TrackerSpaceDistance();
+            case "space_time":      return new TrackerSpaceTime();
+            case "fire_rush":		return new TrackerFireRush();
 			case "destroy":			return new TrackerDestroy(_params);
 			case "kill_or_destroy":	return new TrackerKillOrDestroy(_params);
 			case "unlock_dragon":	return new TrackerUnlockDragon(_params);

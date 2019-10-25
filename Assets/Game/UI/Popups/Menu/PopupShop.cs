@@ -55,8 +55,8 @@ public class PopupShop : MonoBehaviour {
 	}
 
 	[Space]
-	[SerializeField] private float m_pillAnimDelay = 0.075f;
-	[SerializeField] private float[] m_pillRotationSequence = new float[0];
+	[SerializeField] private float m_pillAnimDelay = 0.15f;
+	[SerializeField] private float m_pillAnimDelayInc = 0.075f;
 	[SerializeField] private GameObject m_tabButtonsContainer = null;
 
 	[Space]
@@ -111,27 +111,11 @@ public class PopupShop : MonoBehaviour {
 			Debug.Assert(tab != null, "Unknown tab type!");
 			tab.Init();
 
-			// Do some extra initialization on the pills
-			float totalDelay = 0f;
-			for(int j = 0; j < tab.pills.Count; ++j) {
-				// Get pill
-				IPopupShopPill pill = tab.pills[j];
+			// Do some extra initialization on the tab pills
+			InitTabPills(tab);
 
-				// Subscribe to purchase events
-				pill.OnPurchaseSuccess.AddListener(OnPurchaseSuccessful);
-
-				// Apply "random" rotation to the pill
-				if(m_pillRotationSequence.Length > 0) {
-					pill.transform.localRotation = Quaternion.Euler(0f, 0f, m_pillRotationSequence[j % m_pillRotationSequence.Length]);
-				}
-
-				// Animation!
-				ShowHideAnimator anim = pill.GetComponent<ShowHideAnimator>();
-				if(anim != null) {
-					anim.tweenDelay += totalDelay;	// Keep original anim delay
-					totalDelay += m_pillAnimDelay;
-				}
-			}
+			// Subscribe to pill list change event
+			tab.OnPillListChanged.AddListener(OnPillListChanged);
 		}
 	}
 
@@ -199,7 +183,9 @@ public class PopupShop : MonoBehaviour {
 		m_tabs.GoToScreen((int)goToTab);
 	}
 
-
+	/// <summary>
+	/// Called every frame.
+	/// </summary>
     public void Update()
     {
             // Refresh offers periodically for better performance
@@ -211,6 +197,9 @@ public class PopupShop : MonoBehaviour {
             m_timer -= Time.deltaTime;
     }
 
+	/// <summary>
+	/// Periodic refresh.
+	/// </summary>
     public void Refresh ()
     {
 
@@ -237,14 +226,47 @@ public class PopupShop : MonoBehaviour {
 
     }
 
-    //------------------------------------------------------------------//
-    // CALLBACKS														//
-    //------------------------------------------------------------------//
-    /// <summary
-    /// Successful purchase.
-    /// </summary>
-    /// <param name="_pill">The pill that triggered the event</param>
-    private void OnPurchaseSuccessful(IPopupShopPill _pill) {
+	/// <summary>
+	/// Do some extra initialization on the pills.
+	/// </summary>
+	/// <param name="_tab">The tab whose pills we want to initialize.</param>
+	private void InitTabPills(IPopupShopTab _tab) {
+		// Iterate pills
+		float totalDelay = m_pillAnimDelay;
+		int pillCount = _tab.pills.Count;
+		for(int i = 0; i < pillCount; ++i) {
+			// Get pill
+			IPopupShopPill pill = _tab.pills[i];
+
+			// Subscribe to purchase events
+			pill.OnPurchaseSuccess.RemoveListener(OnPurchaseSuccessful);	// Make sure we don't add it twice, since pills can be reused
+			pill.OnPurchaseSuccess.AddListener(OnPurchaseSuccessful);
+
+			// Add a nice sequential delay to the animation
+			ShowHideAnimator anim = pill.GetComponent<ShowHideAnimator>();
+			if(anim != null) {
+				anim.tweenDelay = totalDelay;
+				totalDelay += m_pillAnimDelayInc;
+			}
+		}
+	}
+
+	//------------------------------------------------------------------//
+	// CALLBACKS														//
+	//------------------------------------------------------------------//
+	/// <summary>
+	/// A tab's pills list has changed.
+	/// </summary>
+	/// <param name="_tab">The tab that triggered the event.</param>
+	private void OnPillListChanged(IPopupShopTab _tab) {
+		InitTabPills(_tab);
+	}
+
+	/// <summary
+	/// Successful purchase.
+	/// </summary>
+	/// <param name="_pill">The pill that triggered the event</param>
+	private void OnPurchaseSuccessful(IPopupShopPill _pill) {
 		// Add to purchased packs list
 		m_packsPurchased.Add(_pill.def);
 
@@ -281,7 +303,11 @@ public class PopupShop : MonoBehaviour {
 	public void OnClosePreAnimation() {
 		
 	}
-    
+
+	/// <summary>
+	/// Screen change happened.
+	/// </summary>
+	/// <param name="changedEventData">Event data.</param>
     public void OnScreenChanged( NavigationScreenSystem.ScreenChangedEventData changedEventData )
     {
         if (m_trackScreenChange && m_lastTrackedScreen != changedEventData.toScreenIdx )

@@ -67,6 +67,7 @@ public class HDTrackingManager
 		SHOP_PC_PACK,
 		SHOP_COINS_PACK,
 		SHOP_OFFER_PACK,
+		SHOP_AD_OFFER_PACK,				// Ad used to obtain an offer pack of type "free"
         SHOP_PROMOTED_IAP,
 		SHOP_KEYS_PACK,
         NOT_ENOUGH_RESOURCES,
@@ -691,6 +692,13 @@ public class HDTrackingManager
     /// <param name="unlockType">How the map has been unlocked.</param>
     public virtual void Notify_UnlockMap(ELocation location, EUnlockType unlockType) { }
 
+
+    /// <summary>
+    /// Sent when the uses pushes a button in the UI
+    /// </summary>
+    /// <param name="_buttonName">The custom identifier of the button pressed</param>
+    public virtual void Notify_UIButton(string _buttonName) { }
+    
     #region log
     private const bool LOG_USE_COLOR = false;
     private const string LOG_CHANNEL = "[HDTrackingManager] ";

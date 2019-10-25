@@ -7,7 +7,9 @@
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.Serialization;
+using System.Collections.Generic;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -97,7 +99,7 @@ public class CircularLayout : MonoBehaviour {
 	}
 
 	// Internal
-	private RectTransform[] m_items = null;
+	private List<RectTransform> m_items = new List<RectTransform>();
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -115,6 +117,7 @@ public class CircularLayout : MonoBehaviour {
 	/// </summary>
 	private void OnEnable() {
 		// Refresh
+		RefreshItems();
 		Refresh();
 	}
 
@@ -127,59 +130,66 @@ public class CircularLayout : MonoBehaviour {
 	}
 
 	/// <summary>
-	/// Called every frame.
+	/// The list of children of the transform of the GameObject has changed.
 	/// </summary>
-	private void Update() {
-		// Check for transform changes
-		if(transform.hasChanged) {
-			Refresh();
-			transform.hasChanged = false;
-		}
+	private void OnTransformChildrenChanged() {
+		// Refresh items!
+		RefreshItems();
+		Refresh();
 	}
 
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //
 	//------------------------------------------------------------------------//
 	/// <summary>
+	/// Refresh the list of items.
+	/// Only call when strictly needed!
+	/// </summary>
+	public void RefreshItems() {
+		// Clear current items
+		m_items.Clear();
+
+		// Iterate children looking for valid items
+		RectTransform item = null;
+		LayoutElement element = null;
+		int childCount = transform.childCount;
+		for(int i = 0; i < childCount; ++i) {
+			// Get item
+			item = transform.GetChild(i) as RectTransform;
+
+			// Ignore if it doesn't have a rect transform
+			if(item == null) continue;
+
+			// Ignore if it has a LayoutElement component telling it to ignore the layout
+			element = item.GetComponent<LayoutElement>();
+			if(element != null && element.ignoreLayout) continue;
+
+			// Item is valid! Add it to the layout
+			m_items.Add(item);
+		}
+	}
+
+	/// <summary>
 	/// Do the layout!
 	/// </summary>
-	private void Refresh() {
-		// Refresh items list
-		int childCount = transform.childCount;
-		int activeItemCount = -1;
-		if(m_items == null || m_items.Length != childCount) {
-			// New children! Repopulate array
-			m_items = new RectTransform[childCount];
-			activeItemCount = 0;
-			for(int i = 0; i < childCount; ++i) {
-				// Store new item ref
-				m_items[i] = transform.GetChild(i) as RectTransform;
-
-				// Reuse the loop to already count active items
-				if(m_items[i].gameObject.activeSelf) {
-					activeItemCount++;
-				}
-			}
-		}
-
-		// If not already done, check how many active items we have
-		if(activeItemCount < 0) {
-			activeItemCount = 0;
-			for(int i = 0; i < childCount; ++i) {
-				// If item is null, something went wrong!
-				if(m_items[i] == null) {
-					// Clear items array and force a new refresh
-					m_items = null;
-					Refresh();
-					return;
-				} else if(m_items[i].gameObject.activeSelf) {
-					activeItemCount++;
-				}
+	public void Refresh() {
+		// Check how many active items we have
+		int itemCount = m_items.Count;
+		int activeItemCount = 0;
+		for(int i = 0; i < itemCount; ++i) {
+			// If item is null, something went wrong!
+			if(m_items[i] == null) {
+				// Clear items array and force a new refresh
+				m_items = null;
+				Refresh();
+				return;
+			} else if(m_items[i].gameObject.activeSelf) {
+				activeItemCount++;
 			}
 		}
 
 		// Do it
-		if(childCount > 0) {
+		if(itemCount > 0) {
 			// Compute angle between items
 			float divisions = (float)activeItemCount - 1f;
 			if(m_skipMinAngle) divisions += 1f;
@@ -193,7 +203,7 @@ public class CircularLayout : MonoBehaviour {
 
 			// Apply to each item!
 			float correctedAngle = 0f;
-			for(int i = 0; i < childCount; ++i) {
+			for(int i = 0; i < itemCount; ++i) {
 				// Skip if item is not active
 				if(!m_items[i].gameObject.activeSelf) continue;
 

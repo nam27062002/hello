@@ -149,7 +149,8 @@ public class ContentManager
             "Rules/gameSettings",
             "Rules/dragonSettings",
             "Rules/initialSettings",
-            "Rules/missingRessourcesVariablesDefinitions"
+            "Rules/missingRessourcesVariablesDefinitions",
+			"Rules/offerSettings"
         });
 
 		kDefinitionFiles.Add(DefinitionsCategory.SEASONS, new string[] { "Rules/seasonsDefinitions" });
@@ -207,6 +208,7 @@ public class ContentManager
         kDefinitionFiles.Add(DefinitionsCategory.SURVIVAL_BONUS, new string[] { "Rules/survivalBonusDefinitions" });
         kDefinitionFiles.Add(DefinitionsCategory.LEVEL_SPAWN_POINTS, new string[] { "Rules/levelSpawnPointDefinitions" });
         kDefinitionFiles.Add(DefinitionsCategory.LEVEL_PROGRESSION, new string[] { "Rules/levelProgressionDefinitions" });
+        kDefinitionFiles.Add(DefinitionsCategory.ZONE_TRIGGERS, new string[] { "Rules/zoneTriggersDefinitions" });
 
         // Metagame
         kDefinitionFiles.Add(DefinitionsCategory.EGGS, new string[] { "Rules/eggDefinitions" });

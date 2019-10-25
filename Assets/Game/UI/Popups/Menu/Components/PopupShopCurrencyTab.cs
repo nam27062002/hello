@@ -57,6 +57,9 @@ public class PopupShopCurrencyTab : IPopupShopTab {
 
 		// Reset scroll list position
 		m_scrollList.horizontalNormalizedPosition = 0f;
+
+		// Notify listeners
+		OnPillListChanged.Invoke(this);
 	}
 
 	//------------------------------------------------------------------------//

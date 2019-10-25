@@ -38,8 +38,12 @@ public abstract class TrackingObjectiveBase {
 		set { m_tracker.currentValue = value; }
 	}
 
-	// Progress tracking
-	public bool isCompleted { 
+    // Zone
+    protected string m_zone = null;
+    public string zone { get { return m_zone; } }
+
+    // Progress tracking
+    public bool isCompleted { 
 		get { return m_tracker.currentValue >= targetValue; }
 	}
 

@@ -26,9 +26,6 @@ public class CircularLayoutEditor : Editor {
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
-	// Casted target object
-	private CircularLayout m_targetCircularLayout = null;
-
 	// Cache some properties
 	private SerializedProperty m_minAngleProp = null;
 	private SerializedProperty m_maxAngleProp = null;
@@ -45,9 +42,6 @@ public class CircularLayoutEditor : Editor {
 	/// The editor has been enabled - target object selected.
 	/// </summary>
 	private void OnEnable() {
-		// Get target object
-		m_targetCircularLayout = target as CircularLayout;
-
 		// Cache some properties
 		m_minAngleProp = serializedObject.FindProperty("m_minAngle");
 		m_maxAngleProp = serializedObject.FindProperty("m_maxAngle");
@@ -57,9 +51,6 @@ public class CircularLayoutEditor : Editor {
 	/// The editor has been disabled - target object unselected.
 	/// </summary>
 	private void OnDisable() {
-		// Clear target object
-		m_targetCircularLayout = null;
-
 		// Clear cached properties
 		m_minAngleProp = null;
 		m_maxAngleProp = null;
@@ -145,6 +136,22 @@ public class CircularLayoutEditor : Editor {
 
 		// Apply changes to the serialized object - always do this in the end of OnInspectorGUI.
 		serializedObject.ApplyModifiedProperties();
+
+		// Tools
+		EditorGUILayout.Space();
+		EditorGUILayout.BeginHorizontal();
+		{
+			// Refresh button
+			if(GUILayout.Button("REFRESH ↻", GUILayout.Height(35f))) {
+				// Apply to all selected layouts
+				for(int i = 0; i < targets.Length; ++i) {
+					(targets[i] as CircularLayout).RefreshItems();
+					(targets[i] as CircularLayout).Refresh();
+				}
+			}
+		}
+		EditorGUILayout.EndHorizontal();
+		EditorGUILayout.Space();
 	}
 
 	/// <summary>
