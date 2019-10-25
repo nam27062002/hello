@@ -6,21 +6,23 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: dragon_alien_3_disguise
+  m_Name: dragon_alien_3_ingame_body
   m_Shader: {fileID: 4800000, guid: 2345015ac46679e4cb5817ed44c82547, type: 3}
-  m_ShaderKeywords: FRESNEL FXLAYER_NONE NORMALMAP REFLECTIONTYPE_COLOR SELFILLUMINATE_NORMAL
-    SPECULAR _ZWRITE_ON
+  m_ShaderKeywords: FRESNEL FXLAYER_REFLECTION NORMALMAP OPAQUEALPHA REFLECTIONTYPE_COLOR
+    SELFILLUMINATE_NORMAL SPECULAR _ZWRITE_ON
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
-  stringTagMap: {}
+  stringTagMap:
+    QUEUE: Geometry
+    RenderType: Opaque
   disabledShaderPasses: []
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
     - _BumpMap:
-        m_Texture: {fileID: 2800000, guid: 057032c7792ab734890471ea2e3a5706, type: 3}
+        m_Texture: {fileID: 2800000, guid: 1a8cc99e69768b04c825e4fa7d2a291b, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailAlbedoMap:
@@ -36,7 +38,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailTex:
-        m_Texture: {fileID: 2800000, guid: f4fc618b344ffc64ea698d54fc6cb517, type: 3}
+        m_Texture: {fileID: 2800000, guid: 9f8659b353fdbbc429bf6e6f8adfe8a2, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _EmissionMap:
@@ -48,7 +50,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: efc4443237252b7439c8e18283cd0ec2, type: 3}
+        m_Texture: {fileID: 2800000, guid: c979e7743703ff645b9babd3373483fb, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
@@ -64,11 +66,11 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _ReflectionMap:
-        m_Texture: {fileID: 8900000, guid: 14ca732449041b64aa36929057e32ebc, type: 2}
+        m_Texture: {fileID: 8900000, guid: 526eef17382f158429f2491abb96d089, type: 2}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
-    - FXLayer: 0
+    - FXLayer: 1
     - ReflectionType: 1
     - SelfIlluminate: 0
     - _BlendMode: 0
@@ -76,7 +78,7 @@ Material:
     - _ColorRampAmount: 0
     - _ColorRampID0: 0
     - _ColorRampID1: 0
-    - _Cull: 0
+    - _Cull: 2
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
     - _DissolveAmount: 0
@@ -100,7 +102,7 @@ Material:
     - _EnableVertexOffsetZ: 0
     - _FireAmount: 0
     - _FireSpeed: 1
-    - _Fresnel: 7.93
+    - _Fresnel: 8.9
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
@@ -112,9 +114,9 @@ Material:
     - _NormalStrenght: 1
     - _OcclusionStrength: 1
     - _Parallax: 0.02
-    - _ReflectionAmount: 0
+    - _ReflectionAmount: 0.455
     - _SmoothnessTextureChannel: 0
-    - _SpecExponent: 5.6
+    - _SpecExponent: 80
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _StencilMask: 10
@@ -126,9 +128,9 @@ Material:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _ColorAdd: {r: 0, g: 0, b: 0, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _FresnelColor: {r: 0.16273789, g: 0.20824037, b: 0.31617647, a: 1}
+    - _FresnelColor: {r: 0.35294116, g: 0.20657437, b: 0.12716262, a: 1}
     - _InnerLightColor: {r: 1, g: 1, b: 1, a: 1}
-    - _ReflectionColor: {r: 1, g: 1, b: 1, a: 1}
-    - _SecondLightColor: {r: 0, g: 0, b: 0, a: 0}
-    - _SecondLightDir: {r: 0, g: 0, b: -1, a: 0}
+    - _ReflectionColor: {r: 0.58823526, g: 0.7955377, b: 1, a: 1}
+    - _SecondLightColor: {r: 0.29514492, g: 0.39396167, b: 0.75735295, a: 0}
+    - _SecondLightDir: {r: 0.22349767, g: 0.18159187, b: -0.95763934, a: 0}
     - _Tint: {r: 1, g: 1, b: 1, a: 1}
