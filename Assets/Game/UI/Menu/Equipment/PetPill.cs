@@ -65,7 +65,8 @@ public class PetPill : ScrollRectItem<PetPillData>, IBroadcastListener {
     [Space]
 	[SerializeField] private Image m_seasonalIcon = null;
 	[SerializeField] private GameObject m_seasonalIconRoot = null;
-	[Space]
+    [SerializeField] private Transform m_seasonalParticlesOrigin = null;
+    [Space]
 	[SerializeField] private GameObject[] m_rarityDecorations = new GameObject[(int)Metagame.Reward.Rarity.COUNT];
 	[SerializeField] private Gradient4[] m_rarityFrameColors = new Gradient4[(int)Metagame.Reward.Rarity.COUNT];
 	[SerializeField] private UIGradient m_rarityFrameGradient = null;
@@ -364,6 +365,26 @@ public class PetPill : ScrollRectItem<PetPillData>, IBroadcastListener {
             if (m_seasonDef != null) {
                 m_seasonalIconRoot.SetActive(true);
                 m_seasonalIcon.sprite = Resources.Load<Sprite>(UIConstants.SEASON_ICONS_PATH + m_seasonDef.Get("icon"));
+
+                // Seasonal particles FX. Show only if the season is active
+                if (targetSeason == SeasonManager.activeSeason)
+                {
+                    GameObject particlesPrefab = Resources.Load<GameObject>(UIConstants.SEASONAL_PARTICLES_PATH + m_seasonDef.Get("pillParticles"));
+                    if (particlesPrefab != null)
+                    {
+                        // Instantiate the particles prefab in the pill
+                        GameObject instance = Instantiate(particlesPrefab, m_seasonalParticlesOrigin);
+                        instance.SetActive(true);
+                    }
+                }
+                else
+                {
+                    // If this is not the active season, remove the seasonal FX
+                    // remember that we are reusing the pills in the horizontal layout
+                    m_seasonalParticlesOrigin.transform.DestroyAllChildren(true);
+
+                }
+
             }
 		}
 		m_isNotInGatcha = _petDef.GetAsBool("notInGatcha", false);
