@@ -246,17 +246,34 @@ public abstract class IUserMissions {
 							}
 						);
 
-						// If the selected type has no valid missions, remove it from the candidates list and select a new type
-						if(missionDefs.Count == 0) {
-							Debug.Log(Colors.orange.Tag("No missions found for type " + selectedTypeDef.sku + ". Choosing a new type."));
+                        // If the mission require a specific dragon and the user doesnt own it, discard it
+                        for (int j = missionDefs.Count - 1; j >=0 ; j--)    // iterate backwards to remove items
+                        {
+                            string requiredDragon = missionDefs[j].GetAsString("dragon");
+                            if ( ! string.IsNullOrEmpty(requiredDragon) ) {
+                                if (!DragonManager.IsDragonOwned(requiredDragon))
+                                {
+                                    missionDefs.RemoveAt(j);
+                                }
+                            }
+                        }
+                        
 
-							selectedTypeDef = null;
-							typeDefs.RemoveAt(i);
+                        // If the selected type has no valid missions, remove it from the candidates list and select a new type
+                        if (missionDefs.Count == 0) {
+						    Debug.Log(Colors.orange.Tag("No missions found for type " + selectedTypeDef.sku + ". Choosing a new type."));
 
-							totalWeight -= weightsArray[i];
-							weightsArray.RemoveAt(i);
+						    selectedTypeDef = null;
+						    typeDefs.RemoveAt(i);
+
+						    totalWeight -= weightsArray[i];
+						    weightsArray.RemoveAt(i);
 						}
-						break;	// Break the type selection loop
+
+
+
+
+                        break;	// Break the type selection loop
 					}
 				}
 			}
