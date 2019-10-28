@@ -1066,7 +1066,7 @@ public class Ingame_SwitchAreaHandle
             resultPrefab = dragon.def.GetAsString("resultsPrefab");
             // Take next skin into account just in case we unlock it this run
             int initialLevel = RewardManager.dragonInitialLevel;
-            DragonProgression progression = (DragonManager.CurrentDragon as DragonDataClassic).progression;
+            DragonProgression progression = (dragon as DragonDataClassic).progression;
             int finalLevel = progression.level;
             if ( initialLevel != finalLevel )
             {
