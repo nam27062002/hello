@@ -390,8 +390,8 @@ public class CPProgressionCheats : MonoBehaviour {
 		// Reset this dragon skins as well
 		List<DefinitionNode> skinDefs = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.DISGUISES, "dragonSku", _dragonData.def.sku);
 		for(int j = 0; j < skinDefs.Count; ++j) {
-			// Special case: if unlock level is 0, mark it as owned! (probably dragon's default skin)
-			if(skinDefs[j].GetAsInt("unlockLevel") <= 0) {
+			// Special case: mark dragon's default skin as owned!
+			if(Wardrobe.IsDefaultSkin(skinDefs[j])) {
 				UsersManager.currentUser.wardrobe.SetSkinState(skinDefs[j].sku, Wardrobe.SkinState.OWNED);
 			} else {
 				UsersManager.currentUser.wardrobe.SetSkinState(skinDefs[j].sku, Wardrobe.SkinState.LOCKED);
