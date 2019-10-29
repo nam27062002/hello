@@ -50,8 +50,8 @@ public class Wardrobe : IBroadcastListener
 		Dictionary<string, DefinitionNode> defs = DefinitionsManager.SharedInstance.GetDefinitions(DefinitionsCategory.DISGUISES);
 		m_disguises.Clear();
 		foreach(KeyValuePair<string, DefinitionNode> kvp in defs) {
-			// Special case: if default skin, mark it as owned!
-			if(IsDefaultSkin(kvp.Value)) {
+			// Special case: if default or special skin, mark it as owned!
+			if(IsDefaultSkin(kvp.Value) || IsSpecialSkin(kvp.Value)) {
 				m_disguises.Add(kvp.Key, SkinState.OWNED);
 			} else {
 				m_disguises.Add(kvp.Key, SkinState.LOCKED);
@@ -162,6 +162,9 @@ public class Wardrobe : IBroadcastListener
 			// Ignore if the skin is not seasonal
 			string seasonSku = skinDefs[i].GetAsString("unlockSeason");
 			if(string.IsNullOrEmpty(seasonSku)) continue;
+
+			// Ignore special dragon skins
+			if(IsSpecialSkin(skinDefs[i])) continue;
 
 			// If associated season doesn't match active season, skin is locked
 			if(seasonSku != SeasonManager.activeSeason) {
@@ -294,6 +297,17 @@ public class Wardrobe : IBroadcastListener
 		return !string.IsNullOrEmpty(_skinDef.GetAsString("unlockSeason"));
 	}
 
+	/// <summary>
+	/// Does this skin belong to a special dragon?
+	/// </summary>
+	/// <param name="_skinDef">The skin to be checked.</param>
+	/// <returns>Whether the skin belongs to a special dragon or not.</returns>
+	public static bool IsSpecialSkin(DefinitionNode _skinDef) {
+		if(_skinDef == null) return false;
+		DefinitionNode dragonDef = DefinitionsManager.SharedInstance.GetDefinition(_skinDef.GetAsString("dragonSku"));
+		return dragonDef != null && dragonDef.GetAsString("type") == "special";
+	}
+
 	//------------------------------------------------------------------//
 	// PERSISTENCE														//
 	//------------------------------------------------------------------//
@@ -324,6 +338,10 @@ public class Wardrobe : IBroadcastListener
 			foreach (KeyValuePair<string, SkinState> pair in m_disguises) {
 				// Don't store locked disguises (no need to make savefile that big!)
 				if(pair.Value == SkinState.LOCKED) continue;
+
+				// Same with special skins
+				DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, pair.Key);
+				if(IsSpecialSkin(def)) continue;
 
 				// We're reusing the old "level" field ^^
 				SimpleJSON.JSONClass dl = new SimpleJSON.JSONClass();
