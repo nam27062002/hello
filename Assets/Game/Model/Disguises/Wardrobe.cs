@@ -200,27 +200,6 @@ public class Wardrobe : IBroadcastListener
 	}
     
     /// <summary>
-    /// Gets the number owned skins.
-    /// </summary>
-    /// <returns>The number owned skins.</returns>
-    public int GetNumOwnedSkins()
-    {
-        int ret = 0;
-        if ( m_disguises != null )
-        {
-            foreach (KeyValuePair<string,SkinState> item in m_disguises)
-            {
-                if (item.Value == SkinState.OWNED)
-                {
-                    ret++;
-                }
-            }
-        }
-        return ret;
-    }
-    
-    
-    /// <summary>
     /// Gets the number of adquired skins.
     /// </summary>
     /// <returns>The number owned skins.</returns>
