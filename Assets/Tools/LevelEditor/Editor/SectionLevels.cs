@@ -314,7 +314,7 @@ namespace LevelEditor {
             }
             else
             {
-                if (m_lightmapReady)
+                if (m_lightmapReady && (activeLevels != null))
                 {
                     for (int i = 0; i < activeLevels.Count; i++)
                     {
@@ -322,6 +322,7 @@ namespace LevelEditor {
                         // Save scene to disk - will automatically overwrite any existing scene with the same name
                         EditorSceneManager.SaveScene(activeLevels[i].gameObject.scene, assetDirForCurrentMode + "/" + _name + ".unity");
                     }
+                    UnloadLevel(false);
                 }
 
                 if (m_areaID < 9)
@@ -883,13 +884,15 @@ namespace LevelEditor {
 //            if (!LevelEditorWindow.instance.m_entireLightmap)
 //            {
                 // Hide progress bar!
-                EditorUtility.ClearProgressBar();
+            EditorUtility.ClearProgressBar();
 
+            if (!LevelEditorWindow.instance.m_entireLightmap)
+            {
                 // Start with collapsed hierarchy
                 HierarchyCollapser.CollapseHierarchy();
+            }
 
-                LevelEditor.settings.selectedMode = oldMode;
-//            }
+            LevelEditor.settings.selectedMode = oldMode;
 		}
 
 		LevelEditorSettings.Mode GetModeByName( string name )
