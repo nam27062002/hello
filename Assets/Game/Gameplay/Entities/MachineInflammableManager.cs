@@ -57,6 +57,7 @@ public class MachineInflammableManager : Singleton<MachineInflammableManager>, I
                         sharedAshesMaterial = Resources.Load("Game/Materials/BurnToAshes") as Material;
                     }
                     break;
+                case FireColorSetupManager.FireColorType.PURPLE:
                 case FireColorSetupManager.FireColorType.BLUE: {
                         sharedAshesMaterial = Resources.Load("Game/Materials/BurnToAshes") as Material;
                     }
