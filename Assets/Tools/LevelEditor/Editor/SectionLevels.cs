@@ -14,6 +14,7 @@ using UnityEditor.SceneManagement;
 using System.IO;
 using System.Text;
 using System.Collections.Generic;
+using System.Collections;
 
 #pragma warning disable 0414
 
@@ -262,6 +263,7 @@ namespace LevelEditor {
 
 			removeSceneFromActiveLevels (lightScene);
             EditorSceneManager.CloseScene(lightScene, true);
+            m_lightmapReady = true;
         }
 
         void launchLightmap()
@@ -281,6 +283,7 @@ namespace LevelEditor {
             }
 
             LevelEditorWindow.instance.m_isLightmapping = true;
+            m_lightmapReady = false;
 
             LevelEditorWindow.instance.CloseLevelEditorScene();
             stripNonArtScenes();
@@ -292,7 +295,48 @@ namespace LevelEditor {
             Lightmapping.BakeAsync();
         }
 
+        private bool m_lightmapReady = false;
+        private int m_areaID;
 
+        private void launchEntireLightmap()
+        {
+            m_onlyArt = true;
+            LevelEditorWindow.instance.m_entireLightmap = true;
+            OnLoadScenesFromDefinition();
+            m_areaID = 5;
+        }
+
+        public bool updateLightmap()
+        {
+            if (LevelEditorWindow.instance.m_isLightmapping)
+            {
+                return true;
+            }
+            else
+            {
+                if (m_lightmapReady)
+                {
+                    for (int i = 0; i < activeLevels.Count; i++)
+                    {
+                        string _name = activeLevels[i].gameObject.scene.name;
+                        // Save scene to disk - will automatically overwrite any existing scene with the same name
+                        EditorSceneManager.SaveScene(activeLevels[i].gameObject.scene, assetDirForCurrentMode + "/" + _name + ".unity");
+                    }
+                }
+
+                if (m_areaID < 9)
+                {
+                    OnLoadScenesFromDefinitions(m_areaID++);
+                    launchLightmap();
+                }
+                else
+                {
+                    return false;
+//                    LevelEditorWindow.instance.m_entireLightmap = false;
+                }
+            }
+            return true;
+        }
 
 
         /// <summary>
@@ -329,20 +373,34 @@ namespace LevelEditor {
 
                     if (activeLevels != null)
                     {
-                        if (Lightmapping.isRunning)
+                        if (Lightmapping.isRunning || LevelEditorWindow.instance.m_entireLightmap)
                         {
                             if (GUILayout.Button("Cancel Lightmap"))
                             {
                                 Lightmapping.Cancel();
                                 lightMapCompleted();
+                                LevelEditorWindow.instance.m_entireLightmap = false;
                             }
                         }
                         else
                         {
-                            if (GUILayout.Button("Launch Lightmap"))
+                            GUILayout.BeginVertical();
+                            if (GUILayout.Button("Launch current lightmap"))
                             {
                                 launchLightmap();
                             }
+                            if (GUILayout.Button("Launch entire lightmap"))
+                            {
+                                launchEntireLightmap();
+                            }
+                            GUILayout.EndVertical();
+                        }
+                    }
+                    else
+                    {
+                        if (GUILayout.Button("Launch entire lightmap"))
+                        {
+                            launchEntireLightmap();
                         }
                     }
                 }
@@ -672,8 +730,11 @@ namespace LevelEditor {
             m_sceneAreas.Add(area13);
             options.Add("area13 (" + putSeparators(area13, ';') + ")");
 
-            // Show selection popup
-            SelectionPopupWindow.Show(options.ToArray(), OnLoadScenesFromDefinitions);
+            if (!LevelEditorWindow.instance.m_entireLightmap)
+            {
+                // Show selection popup
+                SelectionPopupWindow.Show(options.ToArray(), OnLoadScenesFromDefinitions);
+            }
 
 		}
 
@@ -819,13 +880,16 @@ namespace LevelEditor {
                 }
             }
 
-			// Hide progress bar!
-			EditorUtility.ClearProgressBar();
+//            if (!LevelEditorWindow.instance.m_entireLightmap)
+//            {
+                // Hide progress bar!
+                EditorUtility.ClearProgressBar();
 
-			// Start with collapsed hierarchy
-			HierarchyCollapser.CollapseHierarchy();
+                // Start with collapsed hierarchy
+                HierarchyCollapser.CollapseHierarchy();
 
-			LevelEditor.settings.selectedMode = oldMode;
+                LevelEditor.settings.selectedMode = oldMode;
+//            }
 		}
 
 		LevelEditorSettings.Mode GetModeByName( string name )
