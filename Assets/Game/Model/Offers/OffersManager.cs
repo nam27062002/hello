@@ -57,6 +57,13 @@ public class OffersManager : Singleton<OffersManager> {
         get { return m_happyHour; }
     }
 
+    private RemoveAdsOffer m_removeAdsOffer = null;
+    public RemoveAdsOffer removeAdsOffer
+    {
+        get { return removeAdsOffer; }
+    }
+
+
     // Internal
     private List<OfferPack> m_allEnabledOffers = new List<OfferPack>();	// All enabled and non-expired offer packs, regardless of type
 	private List<OfferPack> m_allOffers = new List<OfferPack>();        // All defined offer packs, regardless of state and type
@@ -210,6 +217,9 @@ public class OffersManager : Singleton<OffersManager> {
         {
             instance.m_happyHour = HappyHourOffer.CreateFromDefinition();
         }
+
+        // Check if there if the player owns the Ad Removal offer
+        instance.m_removeAdsOffer = RemoveAdsOffer.CreateFromPersistence();
 
 		// Make sure to check whether free offer is on cooldown or not and put in the right place
 		instance.m_freeOfferNeedsSorting = true;

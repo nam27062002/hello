@@ -362,6 +362,24 @@ public class UserProfile : UserPersistenceSystem
     private DateTime m_happyHourExpirationTime;
     private float m_happyHourExtraGemsRate;
 
+    // Remove ads offer
+    private RemoveAdsOffer m_removeAdsOffer;
+    public RemoveAdsOffer removeAdsOffer
+    {   get { return m_removeAdsOffer; }
+        set { m_removeAdsOffer = value; }
+    }
+
+
+    private bool m_removeAdsOfferActive;
+    private int m_easyMissionCooldownsLeft;
+    private int m_mediumMissionCooldownsLeft;
+    private int m_hardMissionCooldownsLeft;
+    private DateTime m_easyMissionCooldownTimestamp;    // Timestamp when the mission skips will be restored
+    private DateTime m_mediumMissionCooldownTimestamp;
+    private DateTime m_hardMissionCooldownTimestamp;
+    private DateTime m_mapRevealTimestamp;
+
+
     // public List<string> m_visitedZones = new List<string>();
     public HashSet<string> m_visitedZones = new HashSet<string>();
 	//--------------------------------------------------------------------------
@@ -396,6 +414,8 @@ public class UserProfile : UserPersistenceSystem
     public ESocialState SocialState { get; set; }
 
     public string GivenTransactions { get; set; }
+
+
 
 
 
@@ -488,7 +508,6 @@ public class UserProfile : UserPersistenceSystem
 
         m_achievements = new AchievementsTracker();
 
-        //
         m_eggsInventory = new Egg[EggManager.INVENTORY_SIZE];
         m_incubatingEgg = null;
         m_incubationTimeReference = 0;
@@ -523,6 +542,9 @@ public class UserProfile : UserPersistenceSystem
         SocialState = ESocialState.NeverLoggedIn;
 
         GivenTransactions = null;
+
+        // Remove Ads Offer
+        m_removeAdsOffer = new RemoveAdsOffer();
     }
 
     private void Destroy()
@@ -1158,6 +1180,13 @@ public class UserProfile : UserPersistenceSystem
         }
 
 
+        // Remove Ads offer
+        m_removeAdsOffer.InitFromDefinitions();
+        if (_data.ContainsKey("removeAds"))
+        {
+            m_removeAdsOffer.Load(_data["removeAds"]);
+        }
+
 
         // Visited Zones
         key = "visitedZones";
@@ -1381,6 +1410,8 @@ public class UserProfile : UserPersistenceSystem
 
         data.Add("happyHourOffer", happyHour);
 
+        // Remove Ads offer
+        data.Add("removeAdsOffer", m_removeAdsOffer.Save());
 
         // Visited Zones
         JSONArray zonesArray = new SimpleJSON.JSONArray();
@@ -2041,6 +2072,42 @@ public class UserProfile : UserPersistenceSystem
         {
             m_happyHourExpirationTime = _happyHour.expirationTime;
             m_happyHourExtraGemsRate = _happyHour.extraGemsFactor;
+        }
+    }
+
+    /// <summary>
+    /// Load persistence data corresponding to a ads removal offer if there is any.
+    /// </summary>
+    public void LoadRemoveAdsOffer(RemoveAdsOffer _removeAds)
+    {
+        if (_removeAds != null)
+        {
+            _removeAds.IsActive = m_removeAdsOfferActive;
+            _removeAds.easyMissionCooldownsLeft = m_easyMissionCooldownsLeft;
+            _removeAds.mediumMissionCooldownsLeft = m_mediumMissionCooldownsLeft;
+            _removeAds.hardMissionCooldownsLeft = m_hardMissionCooldownsLeft;
+            _removeAds.easyMissionCooldownTimestamp = m_easyMissionCooldownTimestamp;
+            _removeAds.mediumMissionCooldownTimestamp = m_mediumMissionCooldownTimestamp;
+            _removeAds.hardMissionCooldownTimestamp = m_hardMissionCooldownTimestamp;
+            _removeAds.mapRevealTimestamp = m_mapRevealTimestamp;
+        }
+    }
+
+    /// <summary>
+    /// Save persistence data corresponding to an ads removal offer if there is any.
+    /// </summary>
+    public void SaveRemoveAdsOffer(RemoveAdsOffer _removeAds)
+    {
+        if (_removeAds != null)
+        {
+            m_removeAdsOfferActive = _removeAds.IsActive;
+            m_easyMissionCooldownsLeft = _removeAds.easyMissionCooldownsLeft;
+            m_mediumMissionCooldownsLeft = _removeAds.mediumMissionCooldownsLeft;
+            m_hardMissionCooldownsLeft = _removeAds.hardMissionCooldownsLeft;
+            m_easyMissionCooldownTimestamp = _removeAds.easyMissionCooldownTimestamp;   
+            m_mediumMissionCooldownTimestamp = _removeAds.mediumMissionCooldownTimestamp;
+            m_hardMissionCooldownTimestamp = _removeAds.hardMissionCooldownTimestamp;
+            m_mapRevealTimestamp = _removeAds.mapRevealTimestamp;
         }
     }
 

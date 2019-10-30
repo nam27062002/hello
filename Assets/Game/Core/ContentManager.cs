@@ -249,6 +249,7 @@ public class ContentManager
 		kDefinitionFiles.Add(DefinitionsCategory.OFFER_PACKS, new string[]{"Rules/offerPacksDefinitions"});
         kDefinitionFiles.Add(DefinitionsCategory.HAPPY_HOUR, new string[] {"Rules/happyHourDefinitions"});
         kDefinitionFiles.Add(DefinitionsCategory.CURRENCY_TIERS, new string[]{"Rules/missingRessourcesTiersDefinitions"});
+        kDefinitionFiles.Add(DefinitionsCategory.REMOVE_ADS_OFFER, new string[] { "Rules/removeAdsOfferDefinitions" });
 
         // Specials
         kDefinitionFiles.Add(DefinitionsCategory.SPECIAL_DRAGON_TIERS, new string[]{"Rules/specialDragonTierDefinitions"});
