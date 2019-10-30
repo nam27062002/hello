@@ -246,7 +246,7 @@ namespace LevelEditor {
                 int levelCount = levelList.Count;
                 for (int a = 0; a < levelCount; a++)
                 {
-                    if (levelList[a].gameObject.scene.name.IndexOf("Medieval_Lighting", System.StringComparison.OrdinalIgnoreCase) >= 0)
+                    if ((levelList[a] != null) && (levelList[a].gameObject.scene.name.IndexOf("Medieval_Lighting", System.StringComparison.OrdinalIgnoreCase) >= 0))
                     {
                         return levelList[a];
                     }
@@ -322,12 +322,24 @@ namespace LevelEditor {
                         // Save scene to disk - will automatically overwrite any existing scene with the same name
                         EditorSceneManager.SaveScene(activeLevels[i].gameObject.scene, assetDirForCurrentMode + "/" + _name + ".unity");
                     }
-                    UnloadLevel(false);
+//                    UnloadLevel(false);
                 }
 
-                if (m_areaID < 9)
+                if (m_areaID <= 9)
                 {
+                    List<Level> activeLevelsBackup = activeLevels != null ? new List<Level>(activeLevels): null;
                     OnLoadScenesFromDefinitions(m_areaID++);
+
+                    if (activeLevelsBackup != null)
+                    {
+                        for (int i = 0; i < activeLevelsBackup.Count; i++)
+                        {
+                            if (activeLevelsBackup[i] == null) continue;
+                            Debug.Log("Closing scene: " + activeLevelsBackup[i].gameObject.scene.name);
+                            EditorSceneManager.CloseScene(activeLevelsBackup[i].gameObject.scene, true);
+                        }
+                    }
+
                     launchLightmap();
                 }
                 else
@@ -551,10 +563,12 @@ namespace LevelEditor {
 
 			// Close the scene containing the active level
 			for( int i = 0; i<activeLevels.Count; i++ )
-				EditorSceneManager.CloseScene(activeLevels[i].gameObject.scene, true);
-			
-			// Clear some references
-			activeLevels = null;
+            {
+                EditorSceneManager.CloseScene(activeLevels[i].gameObject.scene, true);
+            }
+
+            // Clear some references
+            activeLevels = null;
 		}
 
 		private void UnloadAllLevels()
@@ -767,7 +781,10 @@ namespace LevelEditor {
 			EditorUtility.SetDirty(LevelEditor.settings);
 			AssetDatabase.SaveAssets();
 
-			UnloadAllLevels();
+            if (!LevelEditorWindow.instance.m_entireLightmap)
+            {
+                UnloadAllLevels();
+            }
 
 			DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.LEVELS, sku);
 
