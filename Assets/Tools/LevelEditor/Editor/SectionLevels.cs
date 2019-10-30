@@ -781,7 +781,7 @@ namespace LevelEditor {
 			EditorUtility.SetDirty(LevelEditor.settings);
 			AssetDatabase.SaveAssets();
 
-            if (!LevelEditorWindow.instance.m_entireLightmap)
+//            if (!LevelEditorWindow.instance.m_entireLightmap)
             {
                 UnloadAllLevels();
             }
