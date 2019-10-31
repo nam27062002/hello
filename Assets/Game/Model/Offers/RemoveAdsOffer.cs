@@ -59,6 +59,8 @@ public class RemoveAdsOffer {
 
 
     // Getters/Setters
+    #region GettersSetters
+    
     public bool IsActive
     { get
         {
@@ -157,7 +159,7 @@ public class RemoveAdsOffer {
             m_mapRevealTimestamp = value;
         }
     }
-       
+    #endregion
 
 
     //------------------------------------------------------------------------//
@@ -183,6 +185,33 @@ public class RemoveAdsOffer {
     }
 
 
+
+
+    //------------------------------------------------------------------------//
+    // OTHER METHODS														  //
+    //------------------------------------------------------------------------//
+    
+    /// <summary>
+    /// Initialize the happy hour with the values in the definition node. 
+    /// </summary>
+    public void InitializeFromDefinition()
+    {
+        DefinitionNode def;
+        List<DefinitionNode> definitions = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.REMOVE_ADS_OFFER);
+
+        // No definition found
+        if (definitions.Count == 0)
+        {
+            Debug.LogError("Couldn't find any definition of Remove Ads offer in the content");
+            return;
+        }
+
+        // Happy hours definitions only should contain one row
+        def = definitions[0];
+
+        InitializeFromDefinition(def);
+    }
+
     /// <summary>
     /// Initialize the happy hour with the values in the definition node. 
     /// </summary>
@@ -205,11 +234,6 @@ public class RemoveAdsOffer {
         m_freeRevives = _def.GetAsInt("freeRevives"); ;
 
     }
-
-
-    //------------------------------------------------------------------------//
-    // OTHER METHODS														  //
-    //------------------------------------------------------------------------//
 
 
     //------------------------------------------------------------------//

@@ -1181,7 +1181,7 @@ public class UserProfile : UserPersistenceSystem
 
 
         // Remove Ads offer
-        m_removeAdsOffer.InitFromDefinitions();
+        m_removeAdsOffer.InitializeFromDefinition();
         if (_data.ContainsKey("removeAds"))
         {
             m_removeAdsOffer.Load(_data["removeAds"]);

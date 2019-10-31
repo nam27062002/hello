@@ -218,8 +218,6 @@ public class OffersManager : Singleton<OffersManager> {
             instance.m_happyHour = HappyHourOffer.CreateFromDefinition();
         }
 
-        // Check if there if the player owns the Ad Removal offer
-        instance.m_removeAdsOffer = RemoveAdsOffer.CreateFromPersistence();
 
 		// Make sure to check whether free offer is on cooldown or not and put in the right place
 		instance.m_freeOfferNeedsSorting = true;
