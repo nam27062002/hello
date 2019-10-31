@@ -194,8 +194,9 @@ GameObject:
   - component: {fileID: 224128040167791662}
   - component: {fileID: 222521816002137570}
   - component: {fileID: 114543105480409684}
+  - component: {fileID: 114692290984194198}
   m_Layer: 5
-  m_Name: Image
+  m_Name: Ribbon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1804,6 +1805,8 @@ MonoBehaviour:
   m_animator: {fileID: 114533277160453500}
   m_amountText: {fileID: 0}
   m_amountTextUnity: {fileID: 114447376018361002}
+  m_previousAmountText: {fileID: 0}
+  m_previousAmountTextUnity: {fileID: 0}
 --- !u!114 &114418605941541094
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2594,6 +2597,28 @@ MonoBehaviour:
   m_canvasRenderer: {fileID: 222868182614882658}
   m_TextComponent: {fileID: 114517021129141300}
   m_materialReferenceIndex: 1
+--- !u!114 &114692290984194198
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1284007221576070}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2e3eedcba421948d1ac712f3d495135f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_applyToFonts: 0
+  m_applyToImages: 1
+  m_colorMultiply: {r: 1, g: 1, b: 1, a: 1}
+  m_colorAdd: {r: 0, g: 0, b: 0, a: 0}
+  m_colorRampEnabled: 1
+  m_colorRamp: {fileID: 2800000, guid: 54a399fd614d0a843b34d4788745f066, type: 3}
+  m_alpha: 1
+  m_brightness: 0
+  m_saturation: 0
+  m_contrast: 0
+  m_lateMultiply: 0
 --- !u!114 &114700685185660268
 MonoBehaviour:
   m_ObjectHideFlags: 1
