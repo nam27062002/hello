@@ -64,7 +64,7 @@ public class TrackerBuySkins : TrackerBase {
     
     public override void RefreshCurrentValue(){
         if ( UsersManager.currentUser != null ) {
-            currentValue = UsersManager.currentUser.wardrobe.GetNumAdquiredSkins();
+            currentValue = UsersManager.currentUser.wardrobe.GetNumAcquiredSkins();
         }
     }
     
