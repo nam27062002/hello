@@ -135,6 +135,7 @@ public class PetPill : ScrollRectItem<PetPillData>, IBroadcastListener {
 	public bool m_isNotInGatcha = false;
 
 	private IDragonData m_dragonData = null;
+    private GameObject m_seasonParticlesInstance;
 
 	// Events
 	public PetPillEvent OnPillTapped = new PetPillEvent();
@@ -370,18 +371,19 @@ public class PetPill : ScrollRectItem<PetPillData>, IBroadcastListener {
                 if (targetSeason == SeasonManager.activeSeason)
                 {
                     GameObject particlesPrefab = Resources.Load<GameObject>(UIConstants.SEASONAL_PARTICLES_PATH + m_seasonDef.Get("pillParticles"));
-                    if (particlesPrefab != null)
+                    if (particlesPrefab != null && m_seasonParticlesInstance == null)
                     {
                         // Instantiate the particles prefab in the pill
-                        GameObject instance = Instantiate(particlesPrefab, m_seasonalParticlesOrigin);
-                        instance.SetActive(true);
+                        m_seasonParticlesInstance = Instantiate(particlesPrefab, m_seasonalParticlesOrigin);
+                        m_seasonParticlesInstance.SetActive(true);
                     }
                 }
                 else
                 {
                     // If this is not the active season, remove the seasonal FX
                     // remember that we are reusing the pills in the horizontal layout
-                    m_seasonalParticlesOrigin.transform.DestroyAllChildren(true);
+                    Destroy(m_seasonParticlesInstance);
+                    m_seasonParticlesInstance = null;
 
                 }
 
