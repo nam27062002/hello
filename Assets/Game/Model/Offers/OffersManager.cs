@@ -623,6 +623,7 @@ public class OffersManager : Singleton<OffersManager> {
 			Log("Random pool is empty, try loosen up the history ({0})", _history.Count);
 
 			// Be more flexible with repeating recently used packs
+			pack = null;
 			while(pack == null && _history.Count > 0 && _maxTries > 0) {
 				// One less try
 				--_maxTries;
