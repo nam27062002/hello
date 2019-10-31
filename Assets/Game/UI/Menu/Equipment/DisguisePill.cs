@@ -30,7 +30,7 @@ public class DisguisePill : MonoBehaviour, IPointerClickHandler {
 	private const string NOTIFICATION_PREFAB_PATH = "UI/Common/PF_UINotificationFlag";
 
 
-	[System.Serializable]
+    [System.Serializable]
 	private class SkinShadowEffect {
 		public float brightness = -0.8f;
 		public float saturation = -0.7f;
@@ -51,7 +51,8 @@ public class DisguisePill : MonoBehaviour, IPointerClickHandler {
     [Space]
 	[SerializeField] private Image m_seasonalIcon = null;
 	[SerializeField] private GameObject m_seasonalIconRoot = null;
-	[Space]
+    [SerializeField] private Transform m_seasonalParticlesOrigin = null;
+    [Space]
     [SerializeField] private Transform m_notificationAnchor = null;
 	[Space]
 	[SerializeField] private Color m_equippedTextColor = Color.white;
@@ -61,8 +62,9 @@ public class DisguisePill : MonoBehaviour, IPointerClickHandler {
 	[SerializeField] private SkinShadowEffect m_shadowEffect;
 	[SerializeField] private UIColorFX m_colorFX;
 
-	// Events
-	public DisguisePillEvent OnPillClicked = new DisguisePillEvent();
+
+    // Events
+    public DisguisePillEvent OnPillClicked = new DisguisePillEvent();
 
 	// Data
 	private DefinitionNode m_def;
@@ -110,10 +112,12 @@ public class DisguisePill : MonoBehaviour, IPointerClickHandler {
 		}
 	}
 
+    
     // Internal
     private static bool m_useAsycLoading = true;
     private AddressablesOp m_previewRequest = null;
     private UINotification m_newNotification = null;
+    private GameObject m_seasonParticlesInstance = null;
 
     //------------------------------------------------------------------------//
     // GENERIC METHODS														  //
@@ -209,12 +213,36 @@ public class DisguisePill : MonoBehaviour, IPointerClickHandler {
 		}
 
 		// Season icon
-		if(m_seasonDef != null) {
+		if(m_seasonDef != null ) {
+
 			m_seasonalIconRoot.SetActive(true);
 			m_seasonalIcon.sprite = Resources.Load<Sprite>(UIConstants.SEASON_ICONS_PATH + m_seasonDef.Get("icon"));
-		} else {
+
+
+            // Seasonal particles FX. Show only if the season is active
+            if (m_seasonDef.GetAsString("sku") == SeasonManager.activeSeason)
+            {
+                GameObject particlesPrefab = Resources.Load<GameObject>(UIConstants.SEASONAL_PARTICLES_PATH + m_seasonDef.Get("pillParticles"));
+                if (particlesPrefab != null && m_seasonParticlesInstance == null)
+                {
+                    // Instantiate the particles prefab in the pill
+                    m_seasonParticlesInstance = Instantiate(particlesPrefab, m_seasonalParticlesOrigin);
+                    m_seasonParticlesInstance.SetActive(true);
+
+                }
+            } else
+            {
+                // If this is not the active season, remove the seasonal FX
+                // remember that we are reusing the pills in the horizontal layout
+                Destroy(m_seasonParticlesInstance);
+                m_seasonParticlesInstance = null;
+            }
+
+        } else {
 			m_seasonalIconRoot.SetActive(false);
 		}
+
+
 
 		// Texts
 		RefreshText();
