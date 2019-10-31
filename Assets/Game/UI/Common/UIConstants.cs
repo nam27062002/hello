@@ -150,7 +150,13 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 		get { return instance.m_seasonIconsPath; }
 	}
 
-	[SerializeField] private string m_modifierIconsPath = "UI/Metagame/Powers/";
+    [SerializeField] private string m_seasonalParticlesPath = "UI/FX/Seasons/";
+    public static string SEASONAL_PARTICLES_PATH
+    {
+        get { return instance.m_seasonalParticlesPath; }
+    }
+
+    [SerializeField] private string m_modifierIconsPath = "UI/Metagame/Powers/";
 	public static string MODIFIER_ICONS_PATH {
 		get { return instance.m_modifierIconsPath; }
 	}
