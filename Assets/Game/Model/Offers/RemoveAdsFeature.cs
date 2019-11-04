@@ -21,7 +21,7 @@ using System.Collections.Generic;
 /// </summary>
 /// 
 [Serializable]
-public class RemoveAdsOffer {
+public class RemoveAdsFeature {
 
 
     //------------------------------------------------------------------------//
@@ -173,14 +173,14 @@ public class RemoveAdsOffer {
     /// <summary>
     /// Default constructor.
     /// </summary>
-    public RemoveAdsOffer()
+    public RemoveAdsFeature()
     {
     }
 
     /// <summary>
     /// Destructor
     /// </summary>
-    ~RemoveAdsOffer()
+    ~RemoveAdsFeature()
     {
     }
 
@@ -221,6 +221,7 @@ public class RemoveAdsOffer {
         m_def = _def;
 
         // Initialize definition values from definition
+        m_isActive = _def.GetAsBool("isActive");
         m_easyMissionCooldownSkips = _def.GetAsInt("easyMissionCooldownSkips");
         m_mediumMissionCooldownSkips = _def.GetAsInt("mediumMissionCooldownSkips");
         m_hardMissionCooldownSkips = _def.GetAsInt("hardMissionCooldownSkips");
@@ -236,6 +237,16 @@ public class RemoveAdsOffer {
     }
 
 
+    /// <summary>
+    /// Enables/disables the remove ads feature
+    /// </summary>
+    public void SetActive(bool active)
+    {
+        m_isActive = active;
+    }
+
+
+
     //------------------------------------------------------------------//
     // PERSISTENCE														//
     //------------------------------------------------------------------//
@@ -245,7 +256,13 @@ public class RemoveAdsOffer {
     /// <param name="_data">The data object loaded from persistence.</param>
     public void Load(SimpleJSON.JSONNode _data)
     {
-        string key = "easyMissionCooldownLeft";
+        string key = "isActive";
+        if (_data.ContainsKey(key))
+        {
+            m_isActive = _data[key].AsBool;
+        }
+
+        key = "easyMissionCooldownLeft";
         if (_data.ContainsKey(key))
         {
             m_easyMissionCooldownLeft = _data[key].AsInt;

@@ -57,8 +57,8 @@ public class OffersManager : Singleton<OffersManager> {
         get { return m_happyHour; }
     }
 
-    private RemoveAdsOffer m_removeAdsOffer = null;
-    public RemoveAdsOffer removeAdsOffer
+    private RemoveAdsFeature m_removeAdsOffer = null;
+    public RemoveAdsFeature removeAdsOffer
     {
         get { return removeAdsOffer; }
     }
@@ -197,7 +197,8 @@ public class OffersManager : Singleton<OffersManager> {
 						case OfferPack.Type.FREE: {
 							instance.m_allEnabledFreeOffers.Add(newPack);
 						} break;
-					}
+
+                    }
                 } else {
 					Log("OFFER PACK {0} CAN'T BE ADDED!", Color.red, newPack.def.sku);
 				}

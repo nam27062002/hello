@@ -362,11 +362,11 @@ public class UserProfile : UserPersistenceSystem
     private DateTime m_happyHourExpirationTime;
     private float m_happyHourExtraGemsRate;
 
-    // Remove ads offer
-    private RemoveAdsOffer m_removeAdsOffer;
-    public RemoveAdsOffer removeAdsOffer
-    {   get { return m_removeAdsOffer; }
-        set { m_removeAdsOffer = value; }
+    // Remove ads feature
+    private RemoveAdsFeature m_removeAds;
+    public RemoveAdsFeature removeAds
+    {   get { return m_removeAds; }
+        set { m_removeAds = value; }
     }
 
 
@@ -544,7 +544,7 @@ public class UserProfile : UserPersistenceSystem
         GivenTransactions = null;
 
         // Remove Ads Offer
-        m_removeAdsOffer = new RemoveAdsOffer();
+        m_removeAds = new RemoveAdsFeature();
     }
 
     private void Destroy()
@@ -1181,10 +1181,10 @@ public class UserProfile : UserPersistenceSystem
 
 
         // Remove Ads offer
-        m_removeAdsOffer.InitializeFromDefinition();
+        m_removeAds.InitializeFromDefinition();
         if (_data.ContainsKey("removeAds"))
         {
-            m_removeAdsOffer.Load(_data["removeAds"]);
+            m_removeAds.Load(_data["removeAds"]);
         }
 
 
@@ -1411,7 +1411,7 @@ public class UserProfile : UserPersistenceSystem
         data.Add("happyHourOffer", happyHour);
 
         // Remove Ads offer
-        data.Add("removeAdsOffer", m_removeAdsOffer.Save());
+        data.Add("removeAdsOffer", m_removeAds.Save());
 
         // Visited Zones
         JSONArray zonesArray = new SimpleJSON.JSONArray();
@@ -1952,6 +1952,11 @@ public class UserProfile : UserPersistenceSystem
 					case OfferPack.Type.FREE: {
 						// Nothing to do, didn't exist in old system
 					} break;
+                    case OfferPack.Type.REMOVE_ADS:
+                        {
+                            // Nothing to do, didn't exist in old system
+                        }
+                    break;
                 }
             }
         }
@@ -2078,7 +2083,7 @@ public class UserProfile : UserPersistenceSystem
     /// <summary>
     /// Load persistence data corresponding to a ads removal offer if there is any.
     /// </summary>
-    public void LoadRemoveAdsOffer(RemoveAdsOffer _removeAds)
+    public void LoadRemoveAdsOffer(RemoveAdsFeature _removeAds)
     {
         if (_removeAds != null)
         {
@@ -2096,7 +2101,7 @@ public class UserProfile : UserPersistenceSystem
     /// <summary>
     /// Save persistence data corresponding to an ads removal offer if there is any.
     /// </summary>
-    public void SaveRemoveAdsOffer(RemoveAdsOffer _removeAds)
+    public void SaveRemoveAdsOffer(RemoveAdsFeature _removeAds)
     {
         if (_removeAds != null)
         {
