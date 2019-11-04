@@ -455,7 +455,7 @@ public class LoadingSceneController : SceneController {
             case State.WAITING_ADDRESSABLES:
             {
                 timer += Time.deltaTime;                
-                if ( timer >= 0.5f || HDAddressablesManager.Instance.IsReady())    
+                if ( timer >= 1.5f || HDAddressablesManager.Instance.IsReady())    
                 {
                     SetState( State.WAITING_SAVE_FACADE );
                 }
@@ -590,10 +590,6 @@ public class LoadingSceneController : SceneController {
 		        // Once load is finished, navigate to the menu scene
 		        if (loadProgress >= 1f && !GameSceneManager.isLoading && m_loadingDone) {                    
                     HDTrackingManager.Instance.Notify_Razolytics_Funnel_Load(FunnelData_LoadRazolytics.Steps._01_03_loading_done);
-
-                    // Checks if customizer has to be applied. It has to be done here in order to maximize user's chances of getting server time, which
-                    // is important because it might decide which offers the user will see
-                    HDCustomizerManager.instance.CheckAndApply();
 
                     // Check if all equiped stuff is available or wait
                     if ( AllEquipedIsDownloaded() )
@@ -845,6 +841,10 @@ public class LoadingSceneController : SceneController {
 
             case State.DONE:
             {
+                // Checks if customizer has to be applied. It has to be done here in order to maximize user's chances of getting server time, which
+                // is important because it might decide which offers the user will see
+                HDCustomizerManager.instance.CheckAndApply();
+
                 // Loads main menu scene
                 FlowManager.GoToMenu();
             }break;
