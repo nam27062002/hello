@@ -18,7 +18,7 @@ using System.Collections.Generic;
 /// <summary>
 /// Standalone widget to control the logic of upgrading a Special Dragon's power.
 /// </summary>
-public class DragonPowerUpgrader : MonoBehaviour {
+public class SpecialPowerUpgrader : MonoBehaviour {
 
     //------------------------------------------------------------------------//
     // MEMBERS AND PROPERTIES												  //
