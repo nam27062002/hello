@@ -32,6 +32,11 @@ public class OffersManager : Singleton<OffersManager> {
 	//------------------------------------------------------------------------//
 	private const string FREE_FTUX_PACK_SKU = "AdOfferFtux";
 
+	// Debug
+#if LOG_PACKS
+	private const string LOG_PACK_SKU = "rotationalHighPayer1";
+#endif
+
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
@@ -618,6 +623,7 @@ public class OffersManager : Singleton<OffersManager> {
 			Log("Random pool is empty, try loosen up the history ({0})", _history.Count);
 
 			// Be more flexible with repeating recently used packs
+			pack = null;
 			while(pack == null && _history.Count > 0 && _maxTries > 0) {
 				// One less try
 				--_maxTries;
@@ -841,8 +847,9 @@ public class OffersManager : Singleton<OffersManager> {
 #else
     [Conditional("FALSE")]
 #endif
-    public static void LogPack(string _msg, Color _color, params object[] _replacements) {
+    public static void LogPack(OfferPack _pack, string _msg, Color _color, params object[] _replacements) {
 #if LOG_PACKS
+		if(!string.IsNullOrEmpty(LOG_PACK_SKU) && _pack.def.sku != LOG_PACK_SKU) return;
 		if(!FeatureSettingsManager.IsDebugEnabled) return;
 		ControlPanel.Log(string.Format(_color.Tag(_msg), _replacements), ControlPanel.ELogChannel.Offers);
 #endif

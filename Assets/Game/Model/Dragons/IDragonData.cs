@@ -676,14 +676,20 @@ public int GetOrder() {
     /// <param name="_dragonSku">The dragon whose default skin we want.</param>
     public static DefinitionNode GetDefaultDisguise(string _dragonSku) {
         
+		DefinitionNode ret = null;
 		// Get all the disguises for the given dragon
 		List<DefinitionNode> defList = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.DISGUISES, "dragonSku", _dragonSku);
 
-		// Sort by unlock level
-		DefinitionsManager.SharedInstance.SortByProperty(ref defList, "unlockLevel", DefinitionsManager.SortType.NUMERIC);
+		// Search unlock level is 0 and it's not a seasonal
+		int length = defList.Count;
+		for (int i = 0; i < length && ret == null; i++)
+		{
+			if ( defList[i].GetAsInt( "unlockLevel" ) <= 0 && !Wardrobe.IsSeasonalSkin( defList[i] ) )
+				ret = defList[i];
+		}
 
 		// There should always be one skin unlocked at level 0, anyway use the first one
-		return defList[0];
+		return ret;
 	}
 
 	/// <summary>
