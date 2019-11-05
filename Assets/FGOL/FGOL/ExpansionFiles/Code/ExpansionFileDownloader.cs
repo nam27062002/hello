@@ -130,6 +130,7 @@ namespace FGOL.ExpansionFiles
 
 			return false;
 #endif
+            return true;
 		}
 
 		// New state logic
