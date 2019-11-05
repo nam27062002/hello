@@ -1349,13 +1349,12 @@ public class UserProfile : UserPersistenceSystem
 		data.Add("rewards", rewardsData);
 
 		// Daily rewards
-		Debug.Log(Color.cyan.Tag("SAVING DAILY REWARDS!"));
 		JSONClass dailyRewardsData = m_dailyRewards.SaveData();
 		if(dailyRewardsData != null) {  // Can be null if the sequence was never generated
-			Debug.Log(Colors.lime.Tag("VALID DATA!\n") + new JsonFormatter().PrettyPrint(dailyRewardsData.ToString()));
+			//Debug.Log(Colors.lime.Tag("VALID DATA!\n") + new JsonFormatter().PrettyPrint(dailyRewardsData.ToString()));
 			data.Add("dailyRewards", dailyRewardsData);
 		} else {
-			Debug.Log(Colors.red.Tag("INVALID DATA!"));
+			Debug.Log(Colors.red.Tag("DAILY REWARDS: INVALID DATA!"));
 		}
 
 		// Offer packs
