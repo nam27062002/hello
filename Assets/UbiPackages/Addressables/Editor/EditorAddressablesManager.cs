@@ -174,6 +174,9 @@ public class EditorAddressablesManager
             case BuildTarget.iOS:
                 assetsLUTSource += "iOS";
                 break;
+            default:
+                assetsLUTSource += target.ToString();
+                break;
         }
 
         assetsLUTSource += ".json";

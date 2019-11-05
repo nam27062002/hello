@@ -27,16 +27,14 @@
 			
 			#include "UnityCG.cginc"
 
-			// BlobNoise (superposition of blobs in displaced-grid voronoi-cells) by Jakob Thomsen
-			// Thanks to FabriceNeyret2 for simplifying the program.
-			// License Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License.
-
 			#define PI 3.1415926
 			#define SNOWSPEED 30.0
-			#define SNOWRADIUS 0.1
+			#define SNOWRADIUS 0.01
 //			#define MANUALSCALE 
 
-			#define fragmentoption 
+
+			#define snowpass(x) (1.0 - step(sr, x))
+//			#define snowpass(x) (x)
 
 			struct appdata
 			{
@@ -58,15 +56,17 @@
 			float	_Aspect;
 			float	_Scale;
 
+			// BlobNoise (superposition of blobs in displaced-grid voronoi-cells) by Jakob Thomsen
+			// Thanks to FabriceNeyret2 for simplifying the program.
+			// License Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License.
 
 			// iq's hash function from https://www.shadertoy.com/view/MslGD8
 			float2 hash(float2 p) {
-				p = float2(dot(p, float2(6.413, -1.7445)), dot(p, float2(-9.532, 3.324)));
-//				p = float2(dot(p, float2(-2.2134, 7.74333)), dot(p, float2(4.6347, -8.723)));
+//				p = float2(dot(p, float2(6.413, -1.7445)), dot(p, float2(-9.532, 3.324)));
+				p = float2(dot(p, float2(-2.2134, 7.74333)), dot(p, float2(4.6347, -8.723)));
 				return frac(p);
-//				return cos(p2);
+//				return cos(p * 2000.0);
 			}
-
 
 			float simplegridnoise(float2 v, float t)
 			{
@@ -80,7 +80,8 @@
 						//            vec2 pos = .5 + .5 * cos( PI * (T*.7 + hash(fl+offset)));
 						float2 pos = .5 + .5 * cos(PI * hash(fl + of) + t * PI * 2.0);
 						float2 d = pos + of - fr;
-						mindist = min(mindist, length(d));
+//						mindist = min(mindist, length(d));
+						mindist = min(mindist, dot(d, d));
 					}
 				}
 
@@ -119,35 +120,35 @@
 #elif defined (MEDIUM_DETAIL_ON)
 				float sc = 10.0;
 #elif defined (HI_DETAIL_ON)
-				float sc = 10.0;
+				float sc = 15.0;
 #endif
 
 #endif
 				float sr = (sc / 30.0) * SNOWRADIUS; 
 /*
 #if defined (LOW_DETAIL_ON)
-				w += 1.0 - step(sr, simplegridnoise((uv * 10.0) + of, i.time.x));
+				w += snowpass(simplegridnoise((uv * 10.0) + of, i.time.x));
 #elif defined (MEDIUM_DETAIL_ON)
-				w += 1.0 - step(sr, simplegridnoise((uv * 10.0) + of, i.time.x));
-				w += (1.0 - step(sr, simplegridnoise((uv * 15.0) + of, i.time.x))) * 0.75;
+				w += snowpass(simplegridnoise((uv * 10.0) + of, i.time.x));
+				w += snowpass(simplegridnoise((uv * 15.0) + of, i.time.x))) * 0.75;
 #elif defined (HI_DETAIL_ON)
-				w += 1.0 - step(sr, simplegridnoise((uv * 10.0) + of, i.time.x));
-				w += (1.0 - step(sr, simplegridnoise((uv * 15.0) + of, i.time.x))) * 0.75;
-				w += (1.0 - step(sr, simplegridnoise((uv * 20.0) + of, i.time.x))) * 0.5;
+				w += snowpass(simplegridnoise((uv * 10.0) + of, i.time.x));
+				w += snowpass(simplegridnoise((uv * 15.0) + of, i.time.x)) * 0.75;
+				w += snowpass(sr, simplegridnoise((uv * 20.0) + of, i.time.x)) * 0.5;
 #endif
 */
 
 #if defined (LOW_DETAIL_ON)
-				w += 1.0 - step(sr, simplegridnoise((uv * sc * 0.7) + of, i.time.x));
-#elif defined (MEDIUM_DETAIL_ON)
-				w += 1.0 - step(sr, simplegridnoise((uv * sc * 0.7) + of, i.time.x));
-				w += (1.0 - step(sr, simplegridnoise((uv * sc) + of, i.time.x))) * 0.75;
-#elif defined (HI_DETAIL_ON)
-				w += 1.0 - step(sr, simplegridnoise((uv * sc * 0.7) + of, i.time.x));
-				w += (1.0 - step(sr, simplegridnoise((uv * sc) + of, i.time.x))) * 0.75;
-				w += (1.0 - step(sr, simplegridnoise((uv * sc * 1.3) + of, i.time.x))) * 0.5;
-#endif
+				w += snowpass(simplegridnoise((uv * sc * 0.7) + of, i.time.x));
 
+#elif defined (MEDIUM_DETAIL_ON)
+				w += snowpass(simplegridnoise((uv * sc * 0.7) + of, i.time.x));
+				w += snowpass(simplegridnoise((uv * sc) + of, i.time.x)) * 0.75;
+#elif defined (HI_DETAIL_ON)
+				w += snowpass(simplegridnoise((uv * sc * 0.7) + of, i.time.x));
+				w += snowpass(simplegridnoise((uv * sc) + of, i.time.x)) * 0.5;
+//				w += snowpass(simplegridnoise((uv * sc * 1.3) + of, i.time.x)) * 0.5;
+#endif
 				fixed4 col = fixed4(1.0, 1.0, 1.0, w * i.color.a);
 				return col;
 			}
