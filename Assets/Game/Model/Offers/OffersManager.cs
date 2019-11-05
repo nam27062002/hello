@@ -65,6 +65,8 @@ public class OffersManager : Singleton<OffersManager> {
 
     private OfferPack m_activeRemoveAdsOffer = null;
 
+    private OfferPack.State m_removeAdsOfferState = OfferPack.State.NONE;
+
 
     // Internal
     private List<OfferPack> m_allEnabledOffers = new List<OfferPack>();	// All enabled and non-expired offer packs, regardless of type
@@ -163,7 +165,7 @@ public class OffersManager : Singleton<OffersManager> {
 
 		instance.m_featuredOffer = null;
 
-        instance.m_activeRemoveAdsOffer = null;
+        instance.m_removeAdsOfferState = OfferPack.State.NONE;
 
 		instance.m_allEnabledFreeOffers.Clear();
 		instance.m_activeFreeOffer = null;
@@ -297,7 +299,7 @@ public class OffersManager : Singleton<OffersManager> {
 		// Do we need to activate a new free offer?
 		dirty |= RefreshFree();
 
-        // Do we need to activate a new free offer?
+        // Do we need to activate the remove Ads offer?
         dirty |= RefreshRemoveAds();
 
         // Has any offer changed its state?
@@ -468,18 +470,27 @@ public class OffersManager : Singleton<OffersManager> {
     /// </summary>
     private bool RefreshRemoveAds()
     {
-        if (m_activeRemoveAdsOffer == null && m_removeAdsOffer != null)
+        if (m_removeAdsOffer != null)
         {
             // Activate the offer
             ( (OfferPackRemoveAds) m_removeAdsOffer).Activate();
 
-            // Add the offer to activeOffers collection
-            UpdateCollections(m_removeAdsOffer);
+            // Check if the offer is already accquired
+            m_removeAdsOffer.UpdateState();
 
-            // Avoid activating it again
-            m_activeRemoveAdsOffer = m_removeAdsOffer;
+            // If active, add the offer to activeOffers collection
+            if (m_activeRemoveAdsOffer == null)
+            {
+                UpdateCollections(m_removeAdsOffer);
+                m_activeRemoveAdsOffer = m_removeAdsOffer;
+            }
 
-            return true;
+            // If state has changed, update the panel
+                if (m_removeAdsOfferState != m_removeAdsOffer.state)
+            {
+                m_removeAdsOfferState = m_removeAdsOffer.state;
+                return true;
+            }
         }
 
         return false;

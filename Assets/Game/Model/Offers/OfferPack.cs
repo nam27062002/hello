@@ -38,6 +38,7 @@ public class OfferPack {
 	}
 
 	public enum State {
+        NONE,
 		PENDING_ACTIVATION,
 		ACTIVE,
 		EXPIRED

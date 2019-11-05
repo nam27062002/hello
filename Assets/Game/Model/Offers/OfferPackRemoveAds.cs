@@ -24,8 +24,6 @@ public class OfferPackRemoveAds : OfferPack {
     //------------------------------------------------------------------------//
     // MEMBERS AND PROPERTIES												  //
     //------------------------------------------------------------------------//
-	// Internal
-    private bool m_hasBeenApplied = false;
 
     //------------------------------------------------------------------------//
     // GENERIC METHODS														  //
@@ -44,75 +42,95 @@ public class OfferPackRemoveAds : OfferPack {
 
 	}
 
-	//------------------------------------------------------------------------//
-	// PARENT OVERRIDES														  //
-	//------------------------------------------------------------------------//
-	/// <summary>
+    //------------------------------------------------------------------------//
+    // PARENT OVERRIDES														  //
+    //------------------------------------------------------------------------//
+    /// <summary>
 	/// Update loop. Should be called periodically from the manager.
 	/// Will look for pack's state changes.
 	/// </summary>
 	/// <returns>Whether the pack has change its state.</returns>
-	public override bool UpdateState() {
-		OffersManager.LogPack("UpdateState {0} | {1}", Colors.pink, def.sku, m_state);
+	public override bool UpdateState()
+    {
+        OffersManager.LogPack("UpdateState {0} | {1}", Colors.pink, def.sku, m_state);
 
-		// Based on pack's state
-		State oldState = m_state;
-		switch(m_state) {
-			case State.PENDING_ACTIVATION: {
-				// Do nothing, free packs can only be activated externally
-			} break;
+        // Based on pack's state
+        State oldState = m_state;
+        switch (m_state)
+        {
+            case State.PENDING_ACTIVATION:
+                {
+                    // Check for activation
+                    if (CheckActivation() && CheckSegmentation())
+                    {
+                        ChangeState(State.ACTIVE);
 
-			case State.ACTIVE: {
-				// Check for expiration by time
-				if(CheckExpirationByTime()) {
-					// Go back to pending activation state so the pack can be selected again
-					ChangeState(State.PENDING_ACTIVATION);
-				}
+                        // Just in case, check for expiration immediately after
+                        if (CheckExpiration(true))
+                        {
+                            ChangeState(State.EXPIRED);
+                        }
+                    }
 
-                // However, if it has expired for any other reason (i.e. Purchase Limit), go to the expired state or it's markes as ready to expire (typically because the user has just purchased it)
-                else if(CheckExpiration(false)) { 
-                    ChangeState(State.EXPIRED);
-				}
+                    // Packs expiring before ever being activated (i.e. dragon not owned, excluded countries, etc.)
+                    else if (CheckExpiration(true))
+                    {
+                        ChangeState(State.EXPIRED);
+                    }
+                }
+                break;
 
-				// Finally, if the pack hasn't expired by time nor conditions, but it has just been applied, put it back to pending activation state so it can be selected again
-				else if(m_hasBeenApplied) {
-					m_hasBeenApplied = false;
-					ChangeState(State.PENDING_ACTIVATION);
-				}
-			} break;
+            case State.ACTIVE:
+                {
+                    // Check for expiration
+                    if (CheckExpiration(true))
+                    {
+                        ChangeState(State.EXPIRED);
+                    }
 
-			case State.EXPIRED: {
-				// Nothing to do (expired packs can't be reactivated)
-			} break;
-		}
+                    // The pack might have gone out of segmentation range (i.e. currency balance). Check it!
+                    // [AOC] TODO!! We might wanna keep some packs until they expire even if initial segmentation is no longer valid
+                    else if (!CheckSegmentation())
+                    {
+                        ChangeState(State.PENDING_ACTIVATION);
+                    }
+                }
+                break;
 
-		// Has state changed?
-		return (oldState != m_state);
-	}
+            case State.EXPIRED:
+                {
+                    // Nothing to do (expired packs can't be reactivated)
+                }
+                break;
+        }
 
-	//------------------------------------------------------------------------//
-	// CUSTOM METHODS														  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Immediately mark this pack as active.
-	/// No checks will be performed!
-	/// </summary>
-	public void Activate() {
-		ChangeState(State.ACTIVE);
-	}
+        // Has state changed?
+        return (oldState != m_state);
+    }
 
-	/// <summary>
-	/// Apply this pack to current user.
-	/// </summary>
-    public override void Apply() {
-        // A free offer has to disappear right after the user purchases it. (FIX for https://mdc-tomcat-jira100.ubisoft.org/jira/browse/HDK-3612)
-        // It's marked as applied so it will be removed next time OffersManager updates this offer
-		m_hasBeenApplied = true;
-
+    /// <summary>
+    /// Apply this pack to current user.
+    /// </summary>
+    public override void Apply()
+    {
+  
         // Activate the ads removal feature
         UsersManager.currentUser.removeAds.SetActive(true);
 
         // Parent will do the rest
         base.Apply();
     }
+
+    //------------------------------------------------------------------------//
+    // CUSTOM METHODS														  //
+    //------------------------------------------------------------------------//
+    /// <summary>
+    /// Immediately mark this pack as active.
+    /// No checks will be performed!
+    /// </summary>
+    public void Activate() {
+		ChangeState(State.ACTIVE);
+	}
+
+
 }
