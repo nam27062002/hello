@@ -1182,9 +1182,9 @@ public class UserProfile : UserPersistenceSystem
 
         // Remove Ads offer
         m_removeAds.InitializeFromDefinition();
-        if (_data.ContainsKey("removeAds"))
+        if (_data.ContainsKey("removeAdsFeature"))
         {
-            m_removeAds.Load(_data["removeAds"]);
+            m_removeAds.Load(_data["removeAdsFeature"]);
         }
 
 
@@ -1411,7 +1411,7 @@ public class UserProfile : UserPersistenceSystem
         data.Add("happyHourOffer", happyHour);
 
         // Remove Ads offer
-        data.Add("removeAdsOffer", m_removeAds.Save());
+        data.Add("removeAdsFeature", m_removeAds.Save());
 
         // Visited Zones
         JSONArray zonesArray = new SimpleJSON.JSONArray();

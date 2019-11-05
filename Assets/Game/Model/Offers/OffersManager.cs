@@ -57,11 +57,13 @@ public class OffersManager : Singleton<OffersManager> {
         get { return m_happyHour; }
     }
 
-    private RemoveAdsFeature m_removeAdsOffer = null;
-    public RemoveAdsFeature removeAdsOffer
+    private OfferPack m_removeAdsOffer = null;
+    public OfferPack removeAdsOffer
     {
         get { return removeAdsOffer; }
     }
+
+    private OfferPack m_activeRemoveAdsOffer = null;
 
 
     // Internal
@@ -161,8 +163,11 @@ public class OffersManager : Singleton<OffersManager> {
 
 		instance.m_featuredOffer = null;
 
+        instance.m_activeRemoveAdsOffer = null;
+
 		instance.m_allEnabledFreeOffers.Clear();
 		instance.m_activeFreeOffer = null;
+
 
 		// Get all known offer packs
 		// Sort offers by their "order" field, so if two mutually exclusive offers (same uniqueId)
@@ -197,6 +202,12 @@ public class OffersManager : Singleton<OffersManager> {
 						case OfferPack.Type.FREE: {
 							instance.m_allEnabledFreeOffers.Add(newPack);
 						} break;
+
+                        case OfferPack.Type.REMOVE_ADS:
+                        {
+                            instance.m_removeAdsOffer = newPack;
+                        }
+                        break;
 
                     }
                 } else {
@@ -286,8 +297,11 @@ public class OffersManager : Singleton<OffersManager> {
 		// Do we need to activate a new free offer?
 		dirty |= RefreshFree();
 
-		// Has any offer changed its state?
-		if(dirty) {
+        // Do we need to activate a new free offer?
+        dirty |= RefreshRemoveAds();
+
+        // Has any offer changed its state?
+        if (dirty) {
 			// Re-sort active offers
 			m_activeOffers.Sort(OfferPackComparer);
 
@@ -449,11 +463,34 @@ public class OffersManager : Singleton<OffersManager> {
 		return true;
 	}
 
-	/// <summary>
-	/// 
-	/// </summary>
-	/// <returns></returns>
-	/// <param name="_newPack"></param>
+    /// <summary>
+    /// Activates the remove ads offer
+    /// </summary>
+    private bool RefreshRemoveAds()
+    {
+        if (m_activeRemoveAdsOffer == null && m_removeAdsOffer != null)
+        {
+            // Activate the offer
+            ( (OfferPackRemoveAds) m_removeAdsOffer).Activate();
+
+            // Add the offer to activeOffers collection
+            UpdateCollections(m_removeAdsOffer);
+
+            // Avoid activating it again
+            m_activeRemoveAdsOffer = m_removeAdsOffer;
+
+            return true;
+        }
+
+        return false;
+    }
+
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    /// <param name="_newPack"></param>
     private bool IsOfferAvailable(OfferPack _newPack) {
         List<OfferPackItem> items = _newPack.items;
 
@@ -463,12 +500,12 @@ public class OffersManager : Singleton<OffersManager> {
 
             DefinitionNode def = null;            			
             if (item.type.Equals(Metagame.RewardPet.TYPE_CODE)) {
-				returnValue = HDAddressablesManager.Instance.AreResourcesForPetAvailable(item.sku);
+			    returnValue = HDAddressablesManager.Instance.AreResourcesForPetAvailable(item.sku);
             } else if (item.type.Equals(Metagame.RewardSkin.TYPE_CODE)) {
                 def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, item.sku);
-				if(def != null) {
-					returnValue = HDAddressablesManager.Instance.AreResourcesForDragonAvailable(def.Get("dragonSku"));
-				}
+			    if(def != null) {
+				    returnValue = HDAddressablesManager.Instance.AreResourcesForDragonAvailable(def.Get("dragonSku"));
+			    }
             }            
         }
 

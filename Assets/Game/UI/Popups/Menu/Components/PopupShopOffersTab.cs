@@ -38,7 +38,7 @@ public class PopupShopOffersTab : IPopupShopTab {
     // Internal
     private List<PopupShopOffersPill> m_normalOfferPills = new List<PopupShopOffersPill>();
 	private PopupShopFreeOfferPill m_freeOfferPill = null;
-    private PopupShopRemoveAdsPill m_removeAdsOfferPill = null;
+    private PopupShopRemoveAdsPill m_removeAdsPill = null;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -97,7 +97,6 @@ public class PopupShopOffersTab : IPopupShopTab {
 		// Clear local collections
 		m_pills.Clear();
 		m_freeOfferPill = null;
-        m_removeAdsPillPrefab = null;
 		
 		// Call parent
 		base.Clear();

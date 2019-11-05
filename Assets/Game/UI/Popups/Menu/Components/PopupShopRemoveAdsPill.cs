@@ -54,10 +54,8 @@ public class PopupShopRemoveAdsPill : PopupShopOffersPill {
     /// </summary>
     override protected void ApplyShopPack()
     {
-        // Activate the ads removal feature
-        UsersManager.currentUser.removeAds.SetActive(true);
 
-        // Saves persistence
+        // Applies offer and saves persistence
         m_pack.Apply(); 
 
         // Close all open popups

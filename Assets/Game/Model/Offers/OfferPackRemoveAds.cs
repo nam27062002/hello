@@ -109,10 +109,10 @@ public class OfferPackRemoveAds : OfferPack {
         // It's marked as applied so it will be removed next time OffersManager updates this offer
 		m_hasBeenApplied = true;
 
-		// Reset free offer cooldown timer
-		OffersManager.RestartFreeOfferCooldown();
+        // Activate the ads removal feature
+        UsersManager.currentUser.removeAds.SetActive(true);
 
-		// Parent will do the rest
+        // Parent will do the rest
         base.Apply();
     }
 }

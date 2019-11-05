@@ -327,7 +327,8 @@ public class RemoveAdsFeature {
     /// <returns>A new data object to be stored to persistence by the PersistenceManager.</returns>
     public SimpleJSON.JSONNode Save()
     {
-        SimpleJSON.JSONArray data = new SimpleJSON.JSONArray();
+        SimpleJSON.JSONClass data = new SimpleJSON.JSONClass();
+        data.Add("isActive", m_isActive);
         data.Add("easyMissionCooldownLeft", m_easyMissionCooldownLeft);
         data.Add("mediumMissionCooldownLeft", m_mediumMissionCooldownLeft);
         data.Add("hardMissionCooldownLeft", m_hardMissionCooldownLeft);
