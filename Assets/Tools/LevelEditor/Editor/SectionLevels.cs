@@ -653,16 +653,22 @@ namespace LevelEditor {
             List<string> area = dfn.GetAsList<string>("area1");
             stripData(ref area, area12);
             stripData(ref area, area13);
+			List<string> qualityLevelScenesArea1 = GetAllQualityScenesFor( dfn, 1 );
+			area.AddRange( qualityLevelScenesArea1 );
             m_sceneAreas.Add(area);
             options.Add("area1 (" + putSeparators(area, ';') + ")");
 
             area = dfn.GetAsList<string>("area2");
             stripData(ref area, area12);
+			List<string> qualityLevelScenesArea2 = GetAllQualityScenesFor( dfn, 2 );
+			area.AddRange( qualityLevelScenesArea2 );
             m_sceneAreas.Add(area);
             options.Add("area2 (" + putSeparators(area, ';') + ")");
 
             area = dfn.GetAsList<string>("area3");
             stripData(ref area, area13);
+			List<string> qualityLevelScenesArea3 = GetAllQualityScenesFor( dfn, 3 );
+			area.AddRange( qualityLevelScenesArea3 );
             m_sceneAreas.Add(area);
             options.Add("area3 (" + putSeparators(area, ';') + ")");
 
@@ -675,6 +681,18 @@ namespace LevelEditor {
             // Show selection popup
             SelectionPopupWindow.Show(options.ToArray(), OnLoadScenesFromDefinitions);
 
+		}
+
+		public List<string> GetAllQualityScenesFor( DefinitionNode def, int areaIndex )
+		{
+			List<string> ret = new List<string>();
+			string[] qualityLevels = {"_low", "_mid", "_high"};
+			for( int i = 0; i<qualityLevels.Length; i++ )
+			{
+				List<string> qualityScenes = def.GetAsList<string>("area" + areaIndex + qualityLevels[i]);
+				ret.AddRange( qualityScenes );
+			}
+			return ret;
 		}
 
 		private void OnLoadScenesFromDefinitions( int id )
