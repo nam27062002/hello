@@ -33,6 +33,9 @@ public class ResourcesFlowMissingSCPopup : MonoBehaviour {
 	// Events
 	public UnityEvent OnAccept = new UnityEvent();
 	public UnityEvent OnCancel = new UnityEvent();
+
+	// Internal
+	private float m_antiSpamTimer = 0f;
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -54,6 +57,13 @@ public class ResourcesFlowMissingSCPopup : MonoBehaviour {
 		m_pcButton.SetAmount(_pricePC, UserProfile.Currency.HARD);
 	}
 
+	public void Update() {
+		// Update anti spam timer
+		if(m_antiSpamTimer > 0f) {
+			m_antiSpamTimer -= Time.deltaTime;
+		}
+	}
+
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
@@ -61,6 +71,12 @@ public class ResourcesFlowMissingSCPopup : MonoBehaviour {
 	/// Suggested pack button has been pressed.
 	/// </summary>
 	public void OnAcceptButton() {
+		// Prevent spamming
+		if(m_antiSpamTimer > 0f) return;
+
+		// Reset anti-spam timer
+		m_antiSpamTimer = 1f;
+
 		// Managed Externally
 		OnAccept.Invoke();
 	}
@@ -69,6 +85,12 @@ public class ResourcesFlowMissingSCPopup : MonoBehaviour {
 	/// Cancel button has been pressed.
 	/// </summary>
 	public void OnCancelButton() {
+		// Prevent spamming
+		if(m_antiSpamTimer > 0f) return;
+
+		// Reset anti-spam timer
+		m_antiSpamTimer = 1f;
+
 		// Managed Externally
 		OnCancel.Invoke();
 	}

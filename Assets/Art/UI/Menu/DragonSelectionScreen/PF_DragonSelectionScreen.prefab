@@ -1699,7 +1699,6 @@ GameObject:
   m_Component:
   - component: {fileID: 224005883108141710}
   - component: {fileID: 222637414465178474}
-  - component: {fileID: 114337527814739986}
   - component: {fileID: 114507012631775550}
   m_Layer: 5
   m_Name: Text
@@ -4645,7 +4644,6 @@ GameObject:
   m_Component:
   - component: {fileID: 224417220118622100}
   - component: {fileID: 222396767241952246}
-  - component: {fileID: 114924117419848834}
   - component: {fileID: 114964725429710198}
   m_Layer: 5
   m_Name: Text
@@ -11856,10 +11854,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7536e556f3b30d548aa504e99f070cb7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_icon: {fileID: 114817467516440632}
-  m_priceText: {fileID: 114575597373829162}
+  m_priceText: {fileID: 114921915627945216}
   m_feedbackAnchor: {fileID: 224992600504667796}
   m_showHide: {fileID: 114810106570997182}
+  m_icon: {fileID: 114817467516440632}
 --- !u!114 &114051354245269260
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -17819,6 +17817,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2644f2decfade4a728d0a7e6b7cd2549, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_priceText: {fileID: 114507012631775550}
+  m_feedbackAnchor: {fileID: 224954006205324260}
+  m_showHide: {fileID: 114939938879353772}
   m_stat: 2
   m_progressBar: {fileID: 114857733997466188}
   m_separatorsContainer: {fileID: 114692924405196214}
@@ -17826,9 +17827,6 @@ MonoBehaviour:
   - {fileID: 114855928309596186}
   - {fileID: 114051548937520756}
   m_valueText: {fileID: 114116734043868092}
-  m_priceText: {fileID: 114337527814739986}
-  m_feedbackAnchor: {fileID: 224954006205324260}
-  m_showHide: {fileID: 114939938879353772}
   m_maxedGroup: {fileID: 1240061617445182}
   m_maxButton: {fileID: 1964696950946186}
   m_activeGroup: {fileID: 1823317293588226}
@@ -18575,20 +18573,6 @@ MonoBehaviour:
   - {fileID: 114311426140848204}
   - {fileID: 114824588815616438}
   m_powerUpgrade: {fileID: 114050359018903340}
---- !u!114 &114337527814739986
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1074197372666082}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_tid: TID_LAB_STAT_UPGRADE_PRICE
-  m_caseType: 0
-  m_replacements: []
 --- !u!114 &114338264401516388
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -27242,6 +27226,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2644f2decfade4a728d0a7e6b7cd2549, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_priceText: {fileID: 114964725429710198}
+  m_feedbackAnchor: {fileID: 224292086036910730}
+  m_showHide: {fileID: 114282776167426518}
   m_stat: 0
   m_progressBar: {fileID: 114788235250631944}
   m_separatorsContainer: {fileID: 114786307539907820}
@@ -27249,9 +27236,6 @@ MonoBehaviour:
   - {fileID: 114621931485291612}
   - {fileID: 114854080775995222}
   m_valueText: {fileID: 114617038212634378}
-  m_priceText: {fileID: 114924117419848834}
-  m_feedbackAnchor: {fileID: 224292086036910730}
-  m_showHide: {fileID: 114282776167426518}
   m_maxedGroup: {fileID: 1072417890905872}
   m_maxButton: {fileID: 1242801545920342}
   m_activeGroup: {fileID: 1327748118912846}
@@ -30098,6 +30082,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2644f2decfade4a728d0a7e6b7cd2549, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_priceText: {fileID: 114247161872422920}
+  m_feedbackAnchor: {fileID: 224858377539157820}
+  m_showHide: {fileID: 114214071404902878}
   m_stat: 1
   m_progressBar: {fileID: 114596672126507016}
   m_separatorsContainer: {fileID: 114289468227276178}
@@ -30105,9 +30092,6 @@ MonoBehaviour:
   - {fileID: 114260233289515358}
   - {fileID: 114976567529728588}
   m_valueText: {fileID: 114279126564676184}
-  m_priceText: {fileID: 114025857296295436}
-  m_feedbackAnchor: {fileID: 224858377539157820}
-  m_showHide: {fileID: 114214071404902878}
   m_maxedGroup: {fileID: 1361781363055120}
   m_maxButton: {fileID: 1120620142274402}
   m_activeGroup: {fileID: 1394329809351886}
@@ -32055,20 +32039,6 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
---- !u!114 &114924117419848834
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1388661451267558}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_tid: TID_LAB_STAT_UPGRADE_PRICE
-  m_caseType: 0
-  m_replacements: []
 --- !u!114 &114925941240034960
 MonoBehaviour:
   m_ObjectHideFlags: 1
