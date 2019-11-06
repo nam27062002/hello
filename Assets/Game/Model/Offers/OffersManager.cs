@@ -415,10 +415,13 @@ public class OffersManager : Singleton<OffersManager> {
 		if(historySize == 0) {
 			// Pick a specific pack
 			newPack = GetOfferPack(FREE_FTUX_PACK_SKU) as OfferPackFree;
+
+			// Make sure it can be activated!
+			if(!newPack.CanBeActivated()) newPack = null;
 		}
 
 		// If it's not the FTUX or for some reason the FTUX pack doesn't exist, pick a random one
-		if(newPack == null) {
+		else {
 			// Pick a random pack
 			newPack = PickRandomPack(
 				m_allEnabledFreeOffers,
