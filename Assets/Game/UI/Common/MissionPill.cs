@@ -52,6 +52,7 @@ public class MissionPill : MonoBehaviour, IBroadcastListener {
 	[SerializeField] private Localizer m_removeCostText = null;
 	[SerializeField] private GameObject m_removeFreeButton = null;
 	[SerializeField] private GameObject m_removePaidButton = null;
+    [SerializeField] private GameObject m_removeNoAdsButton = null;
     [Space]
     [SerializeField] private GameObject m_targetZone = null;
 	[SerializeField] private Localizer m_targetZoneText = null;
@@ -269,13 +270,21 @@ public class MissionPill : MonoBehaviour, IBroadcastListener {
 			ftux = m_mission.def.sku.Contains("ftux");
 		}
 
+        // Do the player owns the Remove Ads offer?
+        bool removeAds = UsersManager.currentUser.removeAds.IsActive;
+
 		if(m_removeFreeButton != null) {
-			m_removeFreeButton.SetActive(!ftux && canPayWithAds);
+			m_removeFreeButton.SetActive(!ftux && canPayWithAds && !removeAds);
 		}
 
 		if(m_removePaidButton != null) {
-			m_removePaidButton.SetActive(!ftux && !canPayWithAds);
+			m_removePaidButton.SetActive(!ftux && !canPayWithAds && !removeAds);
 		}
+
+        if (m_removeNoAdsButton != null) {
+            m_removeNoAdsButton.SetActive(!ftux && removeAds);
+        }
+
 	}
 
 	/// <summary>
@@ -495,7 +504,30 @@ public class MissionPill : MonoBehaviour, IBroadcastListener {
 		PopupAdBlocker.LaunchAd(true, GameAds.EAdPurpose.REMOVE_MISSION, OnVideoRewardCallback);
 	}
 
-	void OnVideoRewardCallback( bool done )
+    /// <summary>
+    /// Callback for the remove mission button when the player owns the Remove ads feature
+    /// </summary>
+    public void OnNoAdsRemoveMission()
+    {
+        if (m_mission == null) return;
+
+        // Ignore if offline
+        if (DeviceUtilsManager.SharedInstance.internetReachability == NetworkReachability.NotReachable)
+        {
+            // Show some feedback
+            UIFeedbackText.CreateAndLaunch(
+                LocalizationManager.SharedInstance.Localize("TID_AD_ERROR"),
+                new Vector2(0.5f, 0.33f),
+                this.GetComponentInParent<Canvas>().transform as RectTransform
+            );
+            return;
+        }
+
+        // Instead of showing the ad video, we directly give the reward to the player
+        OnVideoRewardCallback(true);
+    }
+
+    void OnVideoRewardCallback( bool done )
 	{
 		if ( done )
 		{

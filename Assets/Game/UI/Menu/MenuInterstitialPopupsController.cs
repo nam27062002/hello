@@ -242,6 +242,14 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
     /// Checks the interstitial ads.
     /// </summary>
     private void CheckInterstitialAds() {
+        
+        // Do the player has the Remove ads feature?
+        if (UsersManager.currentUser.removeAds.IsActive)
+        {
+            // No ads for this user
+            return;
+        }
+
 		// If coming from a run, regardles of the destination screen
 		if(GetFlag(StateFlag.COMING_FROM_A_RUN)) {
 			if(GameAds.instance.IsValidUserForInterstitials()) {
