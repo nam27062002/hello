@@ -222,13 +222,14 @@ GameObject:
   - component: {fileID: 224081857720045722}
   - component: {fileID: 114234157598288258}
   - component: {fileID: 95822456547364754}
+  - component: {fileID: 114819751573830996}
   m_Layer: 5
   m_Name: PF_MenuTransitionOverlay
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!1 &1560707311261250
 GameObject:
   m_ObjectHideFlags: 1
@@ -908,6 +909,25 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &114819751573830996
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1450250420208446}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f996de6264cf4e73a2f19fcf80acb9f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_applyOnStart: 1
+  m_targets: []
+  m_uiTargets: []
+  m_transformTargets:
+  - target: {fileID: 224504255614472460}
+    newRenderQueue: 4100
+    graphics: 1
+    renderers: 0
 --- !u!114 &114947699637423224
 MonoBehaviour:
   m_ObjectHideFlags: 1
