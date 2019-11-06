@@ -65,8 +65,6 @@ public class OffersManager : Singleton<OffersManager> {
 
     private OfferPack m_activeRemoveAdsOffer = null;
 
-    private OfferPack.State m_removeAdsOfferState = OfferPack.State.NONE;
-
 
     // Internal
     private List<OfferPack> m_allEnabledOffers = new List<OfferPack>();	// All enabled and non-expired offer packs, regardless of type
@@ -164,8 +162,6 @@ public class OffersManager : Singleton<OffersManager> {
 		instance.m_activeRotationalOffers.Clear();
 
 		instance.m_featuredOffer = null;
-
-        instance.m_removeAdsOfferState = OfferPack.State.NONE;
 
 		instance.m_allEnabledFreeOffers.Clear();
 		instance.m_activeFreeOffer = null;
@@ -472,11 +468,8 @@ public class OffersManager : Singleton<OffersManager> {
     {
         if (m_removeAdsOffer != null)
         {
-            // Activate the offer
-            ( (OfferPackRemoveAds) m_removeAdsOffer).Activate();
-
             // Check if the offer is already accquired
-            m_removeAdsOffer.UpdateState();
+            bool stateChanged = m_removeAdsOffer.UpdateState();
 
             // If active, add the offer to activeOffers collection
             if (m_activeRemoveAdsOffer == null)
@@ -486,11 +479,7 @@ public class OffersManager : Singleton<OffersManager> {
             }
 
             // If state has changed, update the panel
-                if (m_removeAdsOfferState != m_removeAdsOffer.state)
-            {
-                m_removeAdsOfferState = m_removeAdsOffer.state;
-                return true;
-            }
+            return stateChanged;
         }
 
         return false;
