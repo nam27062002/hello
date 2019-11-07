@@ -92,7 +92,7 @@ public class DragonCorpse : MonoBehaviour {
         material.SetFloat("_DstBlend", (float)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
         //                material.renderQueue = 3000;
         material.SetFloat("_ZWrite", 1.0f);
-        material.SetFloat("_Cull", (float)UnityEngine.Rendering.CullMode.Off);
+        // material.SetFloat("_Cull", (float)UnityEngine.Rendering.CullMode.Off);
         material.EnableKeyword("CUTOFF");
         // SetKeyword(material, kw_doubleSided, true);
         material.DisableKeyword("OPAQUEALPHA");
