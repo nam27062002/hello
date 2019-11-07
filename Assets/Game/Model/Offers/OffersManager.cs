@@ -417,7 +417,9 @@ public class OffersManager : Singleton<OffersManager> {
 			newPack = GetOfferPack(FREE_FTUX_PACK_SKU) as OfferPackFree;
 
 			// Make sure it can be activated!
-			if(!newPack.CanBeActivated()) newPack = null;
+			if(newPack != null) {
+				if(!newPack.CanBeActivated()) newPack = null;
+			}
 		}
 
 		// If it's not the FTUX or for some reason the FTUX pack doesn't exist, pick a random one
