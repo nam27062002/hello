@@ -2088,9 +2088,9 @@ public class UserProfile : UserPersistenceSystem
         if (_removeAds != null)
         {
             _removeAds.IsActive = m_removeAdsOfferActive;
-            _removeAds.easyMissionCooldownsLeft = m_easyMissionCooldownsLeft;
-            _removeAds.mediumMissionCooldownsLeft = m_mediumMissionCooldownsLeft;
-            _removeAds.hardMissionCooldownsLeft = m_hardMissionCooldownsLeft;
+            _removeAds.easyMissionSkipsLeft = m_easyMissionCooldownsLeft;
+            _removeAds.mediumMissionSkipsLeft = m_mediumMissionCooldownsLeft;
+            _removeAds.hardMissionSkipsLeft = m_hardMissionCooldownsLeft;
             _removeAds.easyMissionCooldownTimestamp = m_easyMissionCooldownTimestamp;
             _removeAds.mediumMissionCooldownTimestamp = m_mediumMissionCooldownTimestamp;
             _removeAds.hardMissionCooldownTimestamp = m_hardMissionCooldownTimestamp;
@@ -2106,9 +2106,9 @@ public class UserProfile : UserPersistenceSystem
         if (_removeAds != null)
         {
             m_removeAdsOfferActive = _removeAds.IsActive;
-            m_easyMissionCooldownsLeft = _removeAds.easyMissionCooldownsLeft;
-            m_mediumMissionCooldownsLeft = _removeAds.mediumMissionCooldownsLeft;
-            m_hardMissionCooldownsLeft = _removeAds.hardMissionCooldownsLeft;
+            m_easyMissionCooldownsLeft = _removeAds.easyMissionSkipsLeft;
+            m_mediumMissionCooldownsLeft = _removeAds.mediumMissionSkipsLeft;
+            m_hardMissionCooldownsLeft = _removeAds.hardMissionSkipsLeft;
             m_easyMissionCooldownTimestamp = _removeAds.easyMissionCooldownTimestamp;   
             m_mediumMissionCooldownTimestamp = _removeAds.mediumMissionCooldownTimestamp;
             m_hardMissionCooldownTimestamp = _removeAds.hardMissionCooldownTimestamp;
