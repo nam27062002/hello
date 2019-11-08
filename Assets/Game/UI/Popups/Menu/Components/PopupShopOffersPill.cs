@@ -13,6 +13,7 @@ using UnityEngine.Events;
 
 using System;
 using System.Text;
+using System.Collections.Generic;
 
 using TMPro;
 using DG.Tweening;
@@ -65,6 +66,10 @@ public class PopupShopOffersPill : IPopupShopPill {
 	protected bool m_waitingForPrice = false;
 	protected StringBuilder m_sb = new StringBuilder();
 
+	// Used to delay some initialization avoiding coroutines
+	List<OfferPackItem> m_itemsToSet = new List<OfferPackItem>();
+	List<OfferItemSlot> m_slotsToSet = new List<OfferItemSlot>();
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -72,6 +77,18 @@ public class PopupShopOffersPill : IPopupShopPill {
 	/// Called every frame.
 	/// </summary>
 	protected virtual void Update() {
+		// Delayed Initialization to avoid weird behaviours
+		if (m_itemsToSet.Count > 0)
+		{
+			int l = m_itemsToSet.Count;
+			for (int i = 0; i < l; i++)
+			{
+				m_slotsToSet[i].InitFromItem( m_itemsToSet[i]);
+			}
+			m_itemsToSet.Clear();
+			m_slotsToSet.Clear();
+		}
+
 		// Waiting for price?
 		if(m_waitingForPrice) {
 			// Store initialized?
@@ -151,6 +168,8 @@ public class PopupShopOffersPill : IPopupShopPill {
 			m_featuredHighlight.SetActive(m_pack.featured);
 		}
 
+		m_itemsToSet.Clear();
+		m_slotsToSet.Clear();
 		// Items
 		for(int i = 0; i < m_itemSlots.Length; ++i) {
 			// Skip if no slot (i.e. single item layouts)
@@ -162,9 +181,13 @@ public class PopupShopOffersPill : IPopupShopPill {
 			slot.InitFromItem(null);
 			if(i < m_pack.items.Count) {
 				OfferPackItem item = m_pack.items[i];
+				m_itemsToSet.Add(item);
+				m_slotsToSet.Add(slot);
+				/*
 				UbiBCN.CoroutineManager.DelayedCallByFrames(() => {
 					slot.InitFromItem(item);
 				}, 1);
+				 */
 			}
 		}
 
