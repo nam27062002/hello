@@ -90,10 +90,6 @@ public class DestructibleDecoration : ISpawnable, IBroadcastListener {
             case BroadcastEventType.GAME_LEVEL_LOADED:
             case BroadcastEventType.GAME_AREA_ENTER:
             {
-                if ( gameObject.name.Contains("PF_Catapult") )
-                {
-                        Debug.Log("Hola!");
-                }
                 OnLevelLoaded();
             }break;
         }

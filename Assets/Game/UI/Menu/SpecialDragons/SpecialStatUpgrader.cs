@@ -20,7 +20,7 @@ using System;
 /// <summary>
 /// Standalone widget to control the logic of upgrading a Special Dragon's Stat.
 /// </summary>
-public class SpecialStatUpgrader : MonoBehaviour {
+public class SpecialStatUpgrader : ISpecialDragonUpgrader {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -29,16 +29,6 @@ public class SpecialStatUpgrader : MonoBehaviour {
 		LOCKED = 1,
 		MAXED = 2
 	}
-
-	private enum Mode {
-		PERCENTAGE_BONUS,
-		ABSOLUTE_VALUE,
-		LEVEL_PROGRESSION
-	}
-	private const Mode MODE = Mode.LEVEL_PROGRESSION;
-
-	private const string ANIM_STATE_PARAM_ID = "state";
-
 
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
@@ -53,13 +43,7 @@ public class SpecialStatUpgrader : MonoBehaviour {
     [Space]
     [SerializeField] private Image[] m_icons = new Image [0];
     [SerializeField] private TextMeshProUGUI m_valueText = null;
-    [SerializeField] private Localizer m_priceText = null;
-	[SerializeField] private RectTransform m_feedbackAnchor = null;
-    [SerializeField] private ShowHideAnimator m_showHide = null;
-	public ShowHideAnimator showHide {
-		get { return m_showHide; }
-	}
-
+    
     // Visibility
     [Space]
     [SerializeField] private GameObject m_maxedGroup;
@@ -67,10 +51,7 @@ public class SpecialStatUpgrader : MonoBehaviour {
     [SerializeField] private GameObject m_activeGroup;
     [SerializeField] private GameObject m_upgradeButton;
     
-    
-
     // Internal data
-    private DragonDataSpecial m_dragonData = null;
 	private DragonStatData m_statData = null;
 
 	// Internal references
@@ -96,7 +77,10 @@ public class SpecialStatUpgrader : MonoBehaviour {
 	/// <summary>
 	/// Initialization.
 	/// </summary>
-	private void Awake() {
+	protected override void Awake() {
+		// Call parent
+		base.Awake();
+
 		// Cache existing separators
 		if(m_separatorsContainer != null) {
 			int childCount = m_separatorsContainer.transform.childCount;
@@ -107,30 +91,10 @@ public class SpecialStatUpgrader : MonoBehaviour {
 			// Store last child as separator prefab
 			m_separatorPrefab = m_separators.Last();
 		}
-
-        // Subscribe to external events
-        Messenger.AddListener<DragonDataSpecial>(MessengerEvents.SPECIAL_DRAGON_LEVEL_UPGRADED, OnDragonLevelUpgraded);
-
-
     }
-
-
-    public void OnDestroy()
-    {
-        // Subscribe to external events
-        Messenger.RemoveListener<DragonDataSpecial>(MessengerEvents.SPECIAL_DRAGON_LEVEL_UPGRADED, OnDragonLevelUpgraded);
-    }
-
-
-    public void OnShowPreAnimation()
-    {
-        // In case this is enabled by an external component, make sure the visibility is right
-        Refresh(false);
-    }
-
 
     //------------------------------------------------------------------------//
-    // OTHER METHODS														  //
+    // PARENT OVERRIDES														  //
     //------------------------------------------------------------------------//
     /// <summary>
     /// Initialize with the given dragon data and stat type.
@@ -143,13 +107,11 @@ public class SpecialStatUpgrader : MonoBehaviour {
 		InitFromData(_dragonData);
 	}
 
-    
-
 	/// <summary>
 	/// Initialize with the given dragon data pre-defined stat type.
 	/// </summary>
 	/// <param name="_dragonData">Dragon data to be used.</param>
-	public void InitFromData(DragonDataSpecial _dragonData) {
+	public override void InitFromData(DragonDataSpecial _dragonData) {
 		// Store data references
 		// Check for invalid params
 		if(_dragonData == null || m_stat == DragonDataSpecial.Stat.COUNT) {
@@ -171,7 +133,6 @@ public class SpecialStatUpgrader : MonoBehaviour {
         {
             m_icons[i].sprite = iconSprite;
         }
-
 
 		// Initialize progress bar separators
 		if(m_separatorsContainer != null) {
@@ -202,7 +163,7 @@ public class SpecialStatUpgrader : MonoBehaviour {
 	/// Update visuals with current data.
 	/// </summary>
 	/// <param name="_animate">Trigger animations?</param>
-	public void Refresh(bool _animate) {
+	public override void Refresh(bool _animate) {
 		// Nothing to do if either dragon or stat data are not valid
 		if(m_dragonData == null || m_statData == null) return;
 
@@ -249,7 +210,6 @@ public class SpecialStatUpgrader : MonoBehaviour {
             m_valueText.text = m_dragonData.GetStat(m_stat).level + "/" + m_dragonData.GetStat(m_stat).maxLevel;
         }
 
-
         // Refresh items visibility depending if the stat has reached its maximum level
         bool statMaxed = m_dragonData.GetStat(m_stat).IsMaxed();
 
@@ -260,125 +220,47 @@ public class SpecialStatUpgrader : MonoBehaviour {
         m_maxButton.SetActive(statMaxed);
 
 
-        // Refresh upgrade price
-        Price upgradePrice = m_dragonData.GetNextStatUpgradePrice(m_stat);
+		// Refresh upgrade price
+		RefreshPrice();
+	}
 
-        if (m_priceText != null && upgradePrice != null)
-        {
-            // Disable localizer and just show the price
-            m_priceText.enabled = false;
-            m_priceText.text.text = UIConstants.GetIconString(
-                StringUtils.FormatNumber(System.Convert.ToInt64(upgradePrice.Amount)),
-                UIConstants.GetCurrencyIcon(upgradePrice.Currency),
-                UIConstants.IconAlignment.LEFT
-            );
-        }
+	/// <summary>
+	/// Get the price for this upgrade.
+	/// </summary>
+	/// <returns>The price of this upgrade.</returns>
+	public override Price GetPrice() {
+		return m_dragonData.GetNextStatUpgradePrice(m_stat);
+	}
 
+	/// <summary>
+	/// Check the non-generic conditions needed for this upgrader to upgrade.
+	/// </summary>
+	/// <returns>Whether the upgrader can upgrade or not.</returns>
+	public override bool CanUpgrade() {
+		// Nothing to do if either dragon or stat data are not valid
+		if(m_statData == null) return false;
+
+		// If next level is unlocking a new power, something went wrong
+		if(m_dragonData.IsUnlockingNewPower()) return false;
+
+		// All checks passed!
+		return true;
 	}
 
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
 	/// <summary>
-	/// The upgrade button has been pressed!
-	/// </summary>
-	public void OnUpgradeButton() {
-
-		// Nothing to do if either dragon or stat data are not valid
-		if(m_dragonData == null || m_statData == null) return;
-
-        // If next level is unlocking a new power, something went wrong
-        if (m_dragonData.IsUnlockingNewPower()) return;
-
-
-        // OTA: we prevent the upgrade if the asset bundles are not downloaded
-        // because some of the upgraded dragons need the downloadable content
-        Downloadables.Handle allContentHandle = HDAddressablesManager.Instance.GetHandleForAllDownloadables();
-
-        if (!allContentHandle.IsAvailable())
-        {
-            // Get the download flow from the parent lab screen
-            AssetsDownloadFlow assetsDownloadFlow = InstanceManager.menuSceneController.GetScreenData(MenuScreen.DRAGON_SELECTION).
-                                                        ui.GetComponent<MenuDragonScreenController>().assetsDownloadFlow;
-
-            assetsDownloadFlow.InitWithHandle(allContentHandle);
-            PopupAssetsDownloadFlow popup = assetsDownloadFlow.OpenPopupByState(PopupAssetsDownloadFlow.PopupType.ANY,
-                                                                                AssetsDownloadFlow.Context.PLAYER_CLICKS_ON_UPGRADE_SPECIAL);
-            // Abort the upgrade
-            return;
-        }
-
-        // Get the price of the current upgrade
-        Price upgradePrice = m_dragonData.GetNextStatUpgradePrice(m_stat);
-
-        // Launch transaction
-        if (upgradePrice != null)
-        {
-            ResourcesFlow purchaseFlow = new ResourcesFlow("UPGRADE_SPECIAL_DRAGON_STAT");
-            purchaseFlow.OnSuccess.AddListener(OnUpgradePurchaseSuccess);
-            purchaseFlow.Begin(
-                System.Convert.ToInt64(upgradePrice.Amount),
-                upgradePrice.Currency,
-                HDTrackingManager.EEconomyGroup.UNKNOWN, //HDTrackingManager.EEconomyGroup.SPECIAL_DRAGON_UPGRADE,
-                null
-            );
-        }
-	}
-
-	/// <summary>
 	/// The upgrade purchase has been successful.
 	/// </summary>
 	/// <param name="_flow">The Resources Flow that triggered the event.</param>
-	private void OnUpgradePurchaseSuccess(ResourcesFlow _flow) {
-		// Tracking
-		// [AOC] TODO!!
-		//HDTrackingManager.Instance.Notify_DragonUnlocked(dragonData.def.sku, dragonData.GetOrder());
-
-		// Show a nice feedback animation
-		switch(MODE) {
-			case Mode.PERCENTAGE_BONUS:
-			case Mode.ABSOLUTE_VALUE: {
-				// Preformatted step value
-				UIFeedbackText.CreateAndLaunch(
-					m_formattedStepValue,
-					m_feedbackAnchor,
-					GameConstants.Vector2.zero,
-					m_feedbackAnchor
-				);
-			} break;
-
-			case Mode.LEVEL_PROGRESSION: {
-				// "Level up!"
-				UIFeedbackText feedbackText = UIFeedbackText.CreateAndLaunch(
-					LocalizationManager.SharedInstance.Localize("TID_FEEDBACK_LEVEL_UP"),
-					m_feedbackAnchor,
-					GameConstants.Vector2.zero,
-					m_feedbackAnchor
-				);
-                
-                Canvas c =feedbackText.GetComponentInParent<Canvas>();
-                feedbackText.transform.SetParent(c.transform);
-                feedbackText.transform.SetAsLastSibling();    
-            
-			} break;
-		}
-
-		// Trigger SFX
-		AudioController.Play("hd_reward_golden_fragments");
+	protected override void OnUpgradePurchaseSuccess(ResourcesFlow _flow) {
+		// Let parent do its job
+		base.OnUpgradePurchaseSuccess(_flow);
 
 		// Do it
 		// Visuals will get refreshed when receiving the SPECIAL_DRAGON_STAT_UPGRADED event
 		m_dragonData.UpgradeStat(m_stat);
-	}
-
-	/// <summary>
-	/// A special dragon level has been upgraded.
-	/// </summary>
-	/// <param name="_dragonData">Target dragon data.</param>
-	/// <param name="_stat">Target stat.</param>
-	private void OnDragonLevelUpgraded(DragonDataSpecial _dragonData) {
-		// Refresh visuals regardles of the stat (we might get locked)
-		Refresh(false);
 	}
 
     /// <summary>
@@ -386,31 +268,15 @@ public class SpecialStatUpgrader : MonoBehaviour {
     /// </summary>
     /// <param name="_animator">The number animator requesting the formatting.</param>
     private void OnSetValueText(NumberTextAnimator _animator) {
-		switch(MODE) {
-			case Mode.PERCENTAGE_BONUS: {
-				// Percentage bonus format
-				// [AOC] Because number animator only works with longs, the value is converted to 100s to have double digit precision.
-				//       Format it properly
-				float value = _animator.currentValue / 100f;
-				_animator.text.text = StringUtils.MultiplierToPercentageIncrease(1f + value, true);
-			} break;
-
-			case Mode.ABSOLUTE_VALUE: {
-				_animator.text.text = StringUtils.FormatNumber(_animator.currentValue);
-			} break;
-
-			case Mode.LEVEL_PROGRESSION: {
-				if(m_statData == null) {
-					_animator.text.text = StringUtils.FormatNumber(_animator.currentValue);
-				} else {
-					// "5/30"
-					_animator.text.text = LocalizationManager.SharedInstance.Localize(
-						"TID_FRACTION",
-						StringUtils.FormatNumber(_animator.currentValue),
-						StringUtils.FormatNumber(m_statData.maxLevel)
-					);
-				}
-			} break;
+		if(m_statData == null) {
+			_animator.text.text = StringUtils.FormatNumber(_animator.currentValue);
+		} else {
+			// "5/30"
+			_animator.text.text = LocalizationManager.SharedInstance.Localize(
+				"TID_FRACTION",
+				StringUtils.FormatNumber(_animator.currentValue),
+				StringUtils.FormatNumber(m_statData.maxLevel)
+			);
 		}
 	}
 
