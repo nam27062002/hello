@@ -1319,7 +1319,6 @@ GameObject:
   - component: {fileID: 114569913802033790}
   - component: {fileID: 114701083069434074}
   - component: {fileID: 95370932147325156}
-  - component: {fileID: 114766447268676202}
   - component: {fileID: 114908564225956384}
   - component: {fileID: 114797063033399070}
   m_Layer: 5
@@ -6383,8 +6382,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 114766447268676202}
-        m_MethodName: OnNavigationButton
+      - m_Target: {fileID: 11443130}
+        m_MethodName: OnPhotoButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -6598,18 +6597,6 @@ MonoBehaviour:
         m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
---- !u!114 &114766447268676202
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1586928960962172}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b14aa7aba6897447d947373a65bfb333, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_targetScreen: 8
 --- !u!114 &114773486275525008
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -8708,10 +8695,10 @@ RectTransform:
   m_Father: {fileID: 224373130171443222}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 170, y: -135}
+  m_SizeDelta: {x: 200, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224429786770324164
 RectTransform:

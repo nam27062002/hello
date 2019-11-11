@@ -52,7 +52,7 @@ public abstract class IHUDWidget : MonoBehaviour {
 	/// </summary>
 	protected virtual void Awake() {
 		// Init update interval based on current quality settings
-		m_updateInterval = GetUpdateIntervalByQualityLevel(FeatureSettingsManager.instance.GetUserProfileLevel());
+		m_updateInterval = GetUpdateIntervalByQualityLevel(FeatureSettingsManager.instance.GetCurrentProfileLevel());
 	}
 
 	/// <summary>
