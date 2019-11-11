@@ -57,6 +57,10 @@ public class RemoveAdsFeature {
     private DateTime m_hardMissionCooldownTimestamp = DateTime.MinValue;
     private DateTime m_mapRevealTimestamp = DateTime.MinValue;      // Timestamp when the map reveal power will be restored
 
+    // Delegates
+    public delegate void RefreshPill(bool animate);
+    public RefreshPill refreshMapPill;
+
 
     // Getters/Setters
     #region GettersSetters
@@ -159,6 +163,19 @@ public class RemoveAdsFeature {
             m_mapRevealTimestamp = value;
         }
     }
+
+    public int mapRevealDurationSecs
+    {
+        get
+        {
+            return m_mapRevealDurationSecs;
+        }
+
+        set
+        {
+            m_mapRevealDurationSecs = value;
+        }
+    }
     #endregion
 
 
@@ -184,7 +201,26 @@ public class RemoveAdsFeature {
     {
     }
 
+    /// <summary>
+    /// Check if some cooldown has finished and call the delegated refreshes if needed
+    /// </summary>
+    public void Update()
+    {
+        // Will be called every frame, so dont waste time
+        if (!IsActive) return;
 
+        // Check if the map reveal feature is ready
+        if (m_mapRevealTimestamp != DateTime.MinValue && DateTime.Now > m_mapRevealTimestamp )
+        {
+            m_mapRevealTimestamp = DateTime.MinValue;
+
+            if (refreshMapPill != null)
+            {
+                // Call the map pill refresh
+                refreshMapPill(true);
+            }
+        }
+    }
 
 
     //------------------------------------------------------------------------//
@@ -242,20 +278,29 @@ public class RemoveAdsFeature {
     /// </summary>
     public void SetActive(bool active)
     {
-        m_isActive = active;
+        // If already active, do nothing.
+        if (active && m_isActive)
+            return;
 
         if (active)
         {
-            // The player just bought the offer, initialize the counters
-            InitializeCounters();
+            // The player just bought the offer, initialize the values
+            ResetValues();
         }
+
+        m_isActive = active;
     }
 
+    /// <summary>
+    /// Reset all the values of the feature
+    /// </summary>
+    private void ResetValues() {
+     
+        // Initialize values 
+        InitializeFromDefinition();
 
-    private void InitializeCounters() {
-        m_easyMissionSkipsLeft = m_easyMissionCooldownSkips;
-        m_mediumMissionSkipsLeft = m_mediumMissionCooldownSkips;
-        m_hardMissionSkipsLeft = m_hardMissionCooldownSkips;
+        // Reset cooldowns
+        m_mapRevealTimestamp = DateTime.MinValue;
     }
     
 
@@ -367,62 +412,32 @@ public class RemoveAdsFeature {
     }
 
     ///<summary>
-    /// Check if any of the cooldowns has finished
+    /// Used when the player reveals the map
     ///</summary>
-    ///<returns>Returns true if some cooldown finished</returns>
-    public bool UpdateMissionCooldown(Mission.Difficulty difficulty)
+    /// <returns>Returns false if map reveal is not ready yet</returns>
+    public bool UseMapReveal()
     {
 
-        bool cooldownEnded = false;
-        switch (difficulty)
+        if (IsMapRevealAvailable ())
         {
-            case Mission.Difficulty.EASY:
-                if (m_easyMissionCooldownTimestamp != DateTime.MinValue)
-                {
-                    // If the cooldown is finished
-                    if (DateTime.Now >= m_easyMissionCooldownTimestamp)
-                    {
-                        // Restore the skips
-                        m_easyMissionCooldownTimestamp = DateTime.MinValue;
-                        m_easyMissionSkipsLeft = m_easyMissionCooldownSkips;
-                        cooldownEnded = true;
-                    }
-                }
-                break;
-
-            case Mission.Difficulty.MEDIUM:
-                if (m_mediumMissionCooldownTimestamp != DateTime.MinValue)
-                {
-                    // If the cooldown is finished
-                    if (DateTime.Now >= m_mediumMissionCooldownTimestamp)
-                    {
-                        // Restore the skips
-                        m_mediumMissionCooldownTimestamp = DateTime.MinValue;
-                        m_mediumMissionSkipsLeft = m_mediumMissionCooldownSkips;
-                        cooldownEnded = true;
-                    }
-                }
-                break;
-
-            case Mission.Difficulty.HARD:
-                if (m_hardMissionCooldownTimestamp != DateTime.MinValue)
-                {
-                    // If the cooldown is finished
-                    if (DateTime.Now >= m_hardMissionCooldownTimestamp)
-                    {
-                        // Restore the skips
-                        m_hardMissionCooldownTimestamp = DateTime.MinValue;
-                        m_hardMissionSkipsLeft = m_hardMissionCooldownSkips;
-                        cooldownEnded = true;
-                    }
-                }
-                break;
-
-            default:
-                return false; // Shouldnt happen
+            // Initialize the map reveal cooldown
+            m_mapRevealTimestamp = DateTime.Now + new TimeSpan(0, 0, m_mapRevealCooldownSecs);
+            return true;
         }
-        
-        return cooldownEnded;
+
+        // Map reveal wasnt ready yet
+        return false;
+     
+    }
+
+    /// <summary>
+    /// Whether the map reveal feature is ready or not.
+    /// </summary>
+    /// <returns>True if ready, false if the cooldown has not finished yet</returns>
+    public bool IsMapRevealAvailable ()
+    {
+        return (m_mapRevealTimestamp == DateTime.MinValue ||
+                m_mapRevealTimestamp < DateTime.Now);
     }
 
     //------------------------------------------------------------------//

@@ -21,30 +21,40 @@ using System;
 /// Reused in both the goals screen and the in-game map popup.
 /// </summary>
 public class MapUpgradeController : MonoBehaviour, IBroadcastListener {
-	//------------------------------------------------------------------------//
-	// CONSTANTS															  //
-	//------------------------------------------------------------------------//
+    //------------------------------------------------------------------------//
+    // CONSTANTS															  //
+    //------------------------------------------------------------------------//
 
-	//------------------------------------------------------------------------//
-	// MEMBERS AND PROPERTIES												  //
-	//------------------------------------------------------------------------//
-	// Exposed references
-	[Separator("Animators")]
+    private const string TID_MAP_FREE_UNLOCK_MESSAGE = "TID_MAP_FREE_UNLOCK_MESSAGE";
+
+    //------------------------------------------------------------------------//
+    // MEMBERS AND PROPERTIES												  //
+    //------------------------------------------------------------------------//
+    // Exposed references
+    [Separator("Animators")]
 	[SerializeField] private ShowHideAnimator m_lockedGroupAnim = null;
 	[SerializeField] private ShowHideAnimator m_unlockedGroupAnim = null;
 
-	[Separator("Objects")]
+
+    [Separator("Objects")]
 	[SerializeField] private TextMeshProUGUI m_pcPriceText = null;
 	[SerializeField] private TextMeshProUGUI m_timerText = null;
-	[SerializeField] private GameObject m_unlockWithAddBtn = null;
+	[SerializeField] private GameObject m_unlockWithAdBtn = null;
+    [SerializeField] private GameObject m_unlockWithPcBtn = null;
+    [SerializeField] private GameObject m_unlockFreeBtn = null;
+    [SerializeField] private Localizer m_unlockFreeDescription = null;
 
-	// FX
-	[Separator("FX")]
+
+    // FX
+    [Separator("FX")]
 	[SerializeField] private ParticleSystem m_unlockFX = null;
 
 	// Internal
 	private long m_unlockPricePC = 0;
 	private bool m_wasUnlocked = false;	// Lock state in last frame, used to track end of timer
+
+    // Cached
+    private ShowHideAnimator m_unlockFreeBtnAnimator;
 
 	// [AOC] If the map timer runs out during the game, we let the player enjoy the unlocked map for the whole run
 	private bool isUnlocked {
@@ -60,7 +70,9 @@ public class MapUpgradeController : MonoBehaviour, IBroadcastListener {
 	private void Awake() {
 		// Subscribe to external events
 		Broadcaster.AddListener(BroadcastEventType.PROFILE_MAP_UNLOCKED, this);
-	}
+
+        m_unlockFreeBtnAnimator = m_unlockFreeBtn.GetComponent<ShowHideAnimator>();
+    }
 
 	/// <summary>
 	/// Component has been enabled.
@@ -71,6 +83,9 @@ public class MapUpgradeController : MonoBehaviour, IBroadcastListener {
 
 		// Find out unlock price
 		m_unlockPricePC = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, "gameSettings").GetAsLong("miniMapHCCost");
+
+        // Instead of using events and broadcasting, pass a delegate to the remove ads controller
+        UsersManager.currentUser.removeAds.refreshMapPill = Refresh;
 
 		// Refresh visuals!
 		Refresh(false);
@@ -100,8 +115,9 @@ public class MapUpgradeController : MonoBehaviour, IBroadcastListener {
 	/// Component has been disabled.
 	/// </summary>
 	private void OnDisable() {
-		
-	}
+        // Remove the delegate
+        UsersManager.currentUser.removeAds.refreshMapPill = null;
+    }
 
 	/// <summary>
 	/// Destructor.
@@ -144,11 +160,31 @@ public class MapUpgradeController : MonoBehaviour, IBroadcastListener {
 				m_pcPriceText.text = UIConstants.GetIconString(m_unlockPricePC, UserProfile.Currency.HARD, UIConstants.IconAlignment.LEFT);
 			}
 
-			// Ad revive - turn off when offline
-			if(m_unlockWithAddBtn != null) {
-                m_unlockWithAddBtn.SetActive(DeviceUtilsManager.SharedInstance.internetReachability != NetworkReachability.NotReachable && FeatureSettingsManager.AreAdsEnabled);
+            // Check if remove ads feature is active
+            bool removeAds = UsersManager.currentUser.removeAds.IsActive;
+
+			// Ad unlock - turn off when offline
+			if(m_unlockWithAdBtn != null) {
+                m_unlockWithAdBtn.SetActive(DeviceUtilsManager.SharedInstance.internetReachability != NetworkReachability.NotReachable && FeatureSettingsManager.AreAdsEnabled && !removeAds);
 			}
-		} else {
+
+            // Unlock map without ads
+            if (m_unlockFreeBtn != null)
+            {
+                m_unlockFreeBtnAnimator.ForceSet(removeAds && UsersManager.currentUser.removeAds.IsMapRevealAvailable(), true);
+
+                if (m_unlockFreeDescription != null)
+                {
+                    int coolDownSeconds = UsersManager.currentUser.removeAds.mapRevealDurationSecs;
+                    string cooldownFormatted = TimeUtils.FormatTime(coolDownSeconds, TimeUtils.EFormat.WORDS_WITHOUT_0_VALUES, 2);
+                    m_unlockFreeDescription.Localize(TID_MAP_FREE_UNLOCK_MESSAGE, cooldownFormatted);
+                }
+            }
+
+
+
+        }
+        else {
 			// Timer
 			RefreshTimer();
 		}
@@ -181,7 +217,25 @@ public class MapUpgradeController : MonoBehaviour, IBroadcastListener {
 		PopupAdBlocker.LaunchAd(true, GameAds.EAdPurpose.UPGRADE_MAP, OnVideoRewardCallback);
 	}
 
-	void OnVideoRewardCallback(bool done){
+
+    /// <summary>
+    /// The unlock with free button (remove ads feature) has been pressed.
+    /// </summary>
+    public void OnUnlockForFree()
+    {
+        // Ignore if map is already unlocked (probably spamming button)
+        if (isUnlocked) return;
+
+        // If map reveal is not ready, get out. 
+        if (!UsersManager.currentUser.removeAds.UseMapReveal()) return;
+
+        // Unlock the map
+        UsersManager.currentUser.UnlockMap(UsersManager.currentUser.removeAds.mapRevealDurationSecs);
+        PersistenceFacade.instance.Save_Request();
+    }
+
+
+    void OnVideoRewardCallback(bool done){
 		if ( done ){            
             UsersManager.currentUser.UnlockMap();
             PersistenceFacade.instance.Save_Request();

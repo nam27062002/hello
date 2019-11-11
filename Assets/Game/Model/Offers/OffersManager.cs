@@ -110,6 +110,7 @@ public class OffersManager : Singleton<OffersManager> {
 		}
 	}
 
+
     public bool enabled;
 
     //------------------------------------------------------------------------//
@@ -133,6 +134,10 @@ public class OffersManager : Singleton<OffersManager> {
 			if(m_timer <= 0) {
 				m_timer = settings != null ? settings.refreshFrequency : 1f;	// Crashlytics was reporting a Null reference, protect it just in case
 				Refresh(false);
+
+                // [JOM] Update the cooldowns in Remove Ads controller 
+                // Technically not an offer, but didnt find any better place for this
+               UsersManager.currentUser.removeAds.Update();
 			}
 			m_timer -= Time.deltaTime;
 		}

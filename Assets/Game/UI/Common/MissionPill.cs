@@ -445,11 +445,11 @@ public class MissionPill : MonoBehaviour, IBroadcastListener {
                     TimeUtils.FormatTime(remainingSecs, TimeUtils.EFormat.ABBREVIATIONS_WITHOUT_0_VALUES, 2)
                 );
 
-                if (UsersManager.currentUser.removeAds.UpdateMissionCooldown(m_missionDifficulty))
+                /*if (UsersManager.currentUser.removeAds.UpdateMissionCooldown(m_missionDifficulty))
                 {
                     // If some cooldown has finished, force the update in the next frame
                     mission.updated = true;
-                }
+                }*/
             }
         }
 	}

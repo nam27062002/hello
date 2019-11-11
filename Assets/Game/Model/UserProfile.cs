@@ -815,10 +815,23 @@ public class UserProfile : UserPersistenceSystem
 		Broadcaster.Broadcast(BroadcastEventType.PROFILE_MAP_UNLOCKED);
 	}
 
+    /// <summary>
+    /// Unlock the map for a specified time duration
+    /// Doesn't perform any check or currency transaction, resets timer.
+    /// Broadcasts the PROFILE_MAP_UNLOCKED event.
+    /// </summary>
+    /// <param name="seconds">Duration of the map reveal, in seconds</param>
+    public void UnlockMap(int seconds)
+    {
+        m_mapResetTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTime().AddSeconds(seconds);   // Default timer just in case
+        
+        Broadcaster.Broadcast(BroadcastEventType.PROFILE_MAP_UNLOCKED);
+    }
+
     //------------------------------------------------------------------------//
     // PUBLIC PERSISTENCE METHODS											  //
     //------------------------------------------------------------------------//   
-	public override void Load()
+    public override void Load()
     {
         base.Load();
 
