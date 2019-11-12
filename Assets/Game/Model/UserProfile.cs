@@ -2101,12 +2101,9 @@ public class UserProfile : UserPersistenceSystem
         if (_removeAds != null)
         {
             _removeAds.IsActive = m_removeAdsOfferActive;
-            _removeAds.easyMissionSkipsLeft = m_easyMissionCooldownsLeft;
-            _removeAds.mediumMissionSkipsLeft = m_mediumMissionCooldownsLeft;
-            _removeAds.hardMissionSkipsLeft = m_hardMissionCooldownsLeft;
-            _removeAds.easyMissionCooldownTimestamp = m_easyMissionCooldownTimestamp;
-            _removeAds.mediumMissionCooldownTimestamp = m_mediumMissionCooldownTimestamp;
-            _removeAds.hardMissionCooldownTimestamp = m_hardMissionCooldownTimestamp;
+            _removeAds.easyExtraMissionsLeft = m_easyMissionCooldownsLeft;
+            _removeAds.mediumExtraMissionsLeft = m_mediumMissionCooldownsLeft;
+            _removeAds.hardExtraMissionsLeft = m_hardMissionCooldownsLeft;
             _removeAds.mapRevealTimestamp = m_mapRevealTimestamp;
         }
     }
@@ -2119,12 +2116,9 @@ public class UserProfile : UserPersistenceSystem
         if (_removeAds != null)
         {
             m_removeAdsOfferActive = _removeAds.IsActive;
-            m_easyMissionCooldownsLeft = _removeAds.easyMissionSkipsLeft;
-            m_mediumMissionCooldownsLeft = _removeAds.mediumMissionSkipsLeft;
-            m_hardMissionCooldownsLeft = _removeAds.hardMissionSkipsLeft;
-            m_easyMissionCooldownTimestamp = _removeAds.easyMissionCooldownTimestamp;   
-            m_mediumMissionCooldownTimestamp = _removeAds.mediumMissionCooldownTimestamp;
-            m_hardMissionCooldownTimestamp = _removeAds.hardMissionCooldownTimestamp;
+            m_easyMissionCooldownsLeft = _removeAds.easyExtraMissionsLeft;
+            m_mediumMissionCooldownsLeft = _removeAds.mediumExtraMissionsLeft;
+            m_hardMissionCooldownsLeft = _removeAds.hardExtraMissionsLeft;
             m_mapRevealTimestamp = _removeAds.mapRevealTimestamp;
         }
     }

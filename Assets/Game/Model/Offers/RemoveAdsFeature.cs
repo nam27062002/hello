@@ -32,12 +32,12 @@ public class RemoveAdsFeature {
     private bool m_isActive = false; // Whether the player has bought this offer or not
 
     // Cached values from the definition node
-    private int m_easyMissionCooldownSkips;     // Amount of cooldown skips
-    private int m_mediumMissionCooldownSkips;
-    private int m_hardMissionCooldownSkips;
-    private int m_easyMissionCooldownTimeSecs;      // Duration of the cooldown of the skip-mission-cooldown feature
-    private int m_mediumMissionCooldownTimeSecs;
-    private int m_hardMissionCooldownTimeSecs;
+    private int m_easyExtraMissions;     // Amount of cooldown skips
+    private int m_mediumExtraMissions;
+    private int m_hardExtraMissions;
+    private float m_easyMissionCooldownMultiplier;      // Duration of the cooldown of the skip-mission-cooldown feature
+    private float m_mediumMissionCooldownMultiplier;
+    private float m_hardMissionCooldownMultiplier;
 
     private int m_mapRevealDurationSecs;
     private int m_mapRevealCooldownSecs;
@@ -45,16 +45,13 @@ public class RemoveAdsFeature {
     private int m_freeRevives;
 
 
-    // Current offer data
-    private int m_easyMissionSkipsLeft;
-    private int m_mediumMissionSkipsLeft;
-    private int m_hardMissionSkipsLeft;
+    // Current player data
+    private int m_easyExtraMissionsLeft;
+    private int m_mediumExtraMissionsLeft;
+    private int m_hardExtraMissionsLeft;
     private int m_revivesLeft;
 
     // Timers
-    private DateTime m_easyMissionCooldownTimestamp = DateTime.MinValue;    // Timestamp when the mission skips will be restored
-    private DateTime m_mediumMissionCooldownTimestamp = DateTime.MinValue;
-    private DateTime m_hardMissionCooldownTimestamp = DateTime.MinValue;
     private DateTime m_mapRevealTimestamp = DateTime.MinValue;      // Timestamp when the map reveal power will be restored
 
     // Delegates
@@ -76,36 +73,36 @@ public class RemoveAdsFeature {
         }
     }
 
-    public int easyMissionSkipsLeft
+    public int easyExtraMissionsLeft
     { get
         {
-            return m_easyMissionSkipsLeft;
+            return m_easyExtraMissionsLeft;
         }
         set
         {
-            m_easyMissionSkipsLeft = value;
+            m_easyExtraMissionsLeft = value;
         }
     }
 
-    public int mediumMissionSkipsLeft
+    public int mediumExtraMissionsLeft
     { get
         {
-            return m_mediumMissionSkipsLeft;
+            return m_mediumExtraMissionsLeft;
         }
         set
         {
-            m_mediumMissionSkipsLeft = value;
+            m_mediumExtraMissionsLeft = value;
         }
     }
 
-    public int hardMissionSkipsLeft
+    public int hardExtraMissionsLeft
     { get
         {
-            return m_hardMissionSkipsLeft;
+            return m_hardExtraMissionsLeft;
         }
         set
         {
-            m_hardMissionSkipsLeft = value;
+            m_hardExtraMissionsLeft = value;
         }
     }
 
@@ -120,38 +117,7 @@ public class RemoveAdsFeature {
         }
     }
 
-    public DateTime easyMissionCooldownTimestamp
-    { get
-        {
-            return m_easyMissionCooldownTimestamp;
-        }
-        set
-        {
-            m_easyMissionCooldownTimestamp = value;
-        }
-    }
-
-    public DateTime mediumMissionCooldownTimestamp
-    { get
-        {
-            return m_mediumMissionCooldownTimestamp;
-        }
-        set
-        {
-            m_mediumMissionCooldownTimestamp = value;
-        }
-    }
-
-    public DateTime hardMissionCooldownTimestamp
-    { get
-        {
-            return m_hardMissionCooldownTimestamp;
-        }
-        set
-        {
-            m_hardMissionCooldownTimestamp = value;
-        }
-    }
+    
 
     public DateTime mapRevealTimestamp
     { get
@@ -246,6 +212,7 @@ public class RemoveAdsFeature {
         def = definitions[0];
 
         InitializeFromDefinition(def);
+
     }
 
     /// <summary>
@@ -258,17 +225,17 @@ public class RemoveAdsFeature {
 
         // Initialize definition values from definition
         m_isActive = _def.GetAsBool("isActive");
-        m_easyMissionCooldownSkips = _def.GetAsInt("easyMissionCooldownSkips");
-        m_mediumMissionCooldownSkips = _def.GetAsInt("mediumMissionCooldownSkips");
-        m_hardMissionCooldownSkips = _def.GetAsInt("hardMissionCooldownSkips");
-        m_easyMissionCooldownTimeSecs = _def.GetAsInt("easyMissionCooldownTimeSecs");
-        m_mediumMissionCooldownTimeSecs = _def.GetAsInt("mediumMissionCooldownTimeSecs"); ;
-        m_hardMissionCooldownTimeSecs = _def.GetAsInt("hardMissionCooldownTimeSecs"); ;
+        m_easyExtraMissions = _def.GetAsInt("easyExtraMissions");
+        m_mediumExtraMissions = _def.GetAsInt("mediumExtraMissions");
+        m_hardExtraMissions = _def.GetAsInt("hardExtraMissions");
+        m_easyMissionCooldownMultiplier = _def.GetAsFloat("easyMissionCooldownMultiplier");
+        m_mediumMissionCooldownMultiplier = _def.GetAsFloat("mediumMissionCooldownMultiplier");
+        m_hardMissionCooldownMultiplier = _def.GetAsFloat("hardMissionCooldownMultiplier");
 
-        m_mapRevealDurationSecs = _def.GetAsInt("mapRevealDurationSecs"); ;
-        m_mapRevealCooldownSecs = _def.GetAsInt("mapRevealCooldownSecs"); ;
+        m_mapRevealDurationSecs = _def.GetAsInt("mapRevealDurationSecs");
+        m_mapRevealCooldownSecs = _def.GetAsInt("mapRevealCooldownSecs");
 
-        m_freeRevives = _def.GetAsInt("freeRevives"); ;
+        m_freeRevives = _def.GetAsInt("freeRevives");
 
     }
 
@@ -299,8 +266,15 @@ public class RemoveAdsFeature {
         // Initialize values 
         InitializeFromDefinition();
 
+        // Set initial values
+        m_easyExtraMissionsLeft = m_easyExtraMissions;
+        m_mediumExtraMissionsLeft = m_mediumExtraMissions;
+        m_hardExtraMissionsLeft = m_hardExtraMissions;
+
         // Reset cooldowns
         m_mapRevealTimestamp = DateTime.MinValue;
+
+
     }
     
 
@@ -309,106 +283,109 @@ public class RemoveAdsFeature {
     /// When the user owns the Remove Ads feature, has a limited amount of
     /// mission cooldown skips for each difficulty of missions.
     /// </summary>
-    /// <param name="difficulty">Difficulty of the mission</param>
+    /// <param name="_difficulty">Difficulty of the mission</param>
     /// <returns>The amount of skips available for the current mission</returns>
-    public int GetMissionCooldownSkipsLeft(Mission.Difficulty difficulty)
+    public int GetExtraMissionsLeft(Mission.Difficulty _difficulty)
     {
 
-        switch (difficulty)
+        switch (_difficulty)
         {
             case Mission.Difficulty.EASY:
-                return UsersManager.currentUser.removeAds.m_easyMissionSkipsLeft;
+                return m_easyExtraMissionsLeft;
             case Mission.Difficulty.MEDIUM:
-                return UsersManager.currentUser.removeAds.m_mediumMissionSkipsLeft;
+                return m_mediumExtraMissionsLeft;
             case Mission.Difficulty.HARD:
-                return UsersManager.currentUser.removeAds.m_hardMissionSkipsLeft;
+                return m_hardExtraMissionsLeft;
             default:    // Shouldnt happen
                 return 0;
         }
     }
 
+    
 
-    /// <summary>
-    /// When the user owns the Remove Ads feature, has a limited amount of
-    /// mission cooldown skips for each difficulty of missions.
-    /// </summary>
-    /// <param name="difficulty">Difficulty of the mission</param>
-    /// <returns>The time left in seconds to restore the skips</returns>
-    public double GetMissionCooldownSkipsTimeLeft(Mission.Difficulty difficulty)
+    ///<summary>
+    /// When the player completes a mission, he can still play some extra missions
+    /// before the cooldown. This method decrements the extra missions available counter.
+    ///</summary>
+    /// <param name="_difficulty">Difficulty of the mission</param>
+    /// <returns>Returns false if the player doesnt have any extra missions left</returns>
+    public bool UseExtraMission (Mission.Difficulty _difficulty)
     {
-
-        DateTime cooldownTimestamp;
-        switch (difficulty)
+        switch (_difficulty)
         {
             case Mission.Difficulty.EASY:
-                cooldownTimestamp = UsersManager.currentUser.removeAds.m_easyMissionCooldownTimestamp;
-                break;
+                if (m_easyExtraMissionsLeft > 0)
+                {
+                    m_easyExtraMissionsLeft --;
+                    return true;
+                }
+                return false;
             case Mission.Difficulty.MEDIUM:
-                cooldownTimestamp = UsersManager.currentUser.removeAds.m_mediumMissionCooldownTimestamp;
-                break;
+                if (m_mediumExtraMissionsLeft > 0)
+                {
+                    m_mediumExtraMissionsLeft--;
+                    return true;
+                }
+                return false;
             case Mission.Difficulty.HARD:
-                cooldownTimestamp = UsersManager.currentUser.removeAds.m_hardMissionCooldownTimestamp;
+                if (m_hardExtraMissionsLeft > 0)
+                {
+                    m_hardExtraMissionsLeft--;
+                    return true;
+                }
+                return false;
+            default:
+                Debug.LogError("Wrong mission difficulty");
+                return false; // Default case. Shouldnt happen.
                 break;
-            default:    // Shouldnt happen
-                return 0;
         }
 
-        // Remaining time to restore the skip buttons
-        TimeSpan diff = cooldownTimestamp - DateTime.Now ;
+    }
 
-        return diff.TotalSeconds;
+    
+    /// <summary>
+    /// Get the cooldown multiplier associated for this mission difficulty
+    /// </summary>
+    /// <param name="_difficulty"></param>
+    /// <returns></returns>
+    public float GetMissionCooldownMultiplier(Mission.Difficulty _difficulty)
+    {
+        switch (_difficulty)
+        {
+            case Mission.Difficulty.EASY:
+                return m_easyMissionCooldownMultiplier;
+            case Mission.Difficulty.MEDIUM:
+                return m_mediumMissionCooldownMultiplier;
+            case Mission.Difficulty.HARD:
+                return m_hardMissionCooldownMultiplier;
+            default:    // Shouldnt happen
+                return 1f;
+        }
     }
 
 
     ///<summary>
-    /// Used when the player skips the cooldown of a mission
+    /// The extra missions counter is restored to its initial value
+    /// defined in the content.
     ///</summary>
-    /// <param name="difficulty">Difficulty of the mission</param>
-    /// <returns>Returns false if the player doesnt have enough skips left</returns>
-    public bool UseSkip (Mission.Difficulty difficulty)
+    /// <param name="_difficulty">Difficulty of the mission</param>
+    public void RestoreExtraMissions(Mission.Difficulty _difficulty)
     {
-        switch (difficulty)
+        switch (_difficulty)
         {
             case Mission.Difficulty.EASY:
-                if (m_easyMissionSkipsLeft > 0)
-                {
-                    m_easyMissionSkipsLeft --;
-                    if (m_easyMissionSkipsLeft == 0)
-                    {
-                        // No more skips left. Initialize the cooldown timer.
-                        m_easyMissionCooldownTimestamp = DateTime.Now + new TimeSpan(0, 0, m_easyMissionCooldownTimeSecs);
-                    }
-                    return true;
-                }
-                return false;
+                m_easyExtraMissionsLeft = m_easyExtraMissions;
+                break;
             case Mission.Difficulty.MEDIUM:
-                if (m_mediumMissionSkipsLeft > 0)
-                {
-                    m_mediumMissionSkipsLeft--;
-                    if (m_mediumMissionSkipsLeft == 0)
-                    {
-                        // No more skips left. Initialize the cooldown timer.
-                        m_mediumMissionCooldownTimestamp = DateTime.Now + new TimeSpan(0, 0, m_mediumMissionCooldownTimeSecs);
-                    }
-                    return true;
-                }
-                return false;
+                m_mediumExtraMissionsLeft = m_mediumExtraMissions;
+                break;
             case Mission.Difficulty.HARD:
-                if (m_hardMissionSkipsLeft > 0)
-                {
-                    m_hardMissionSkipsLeft--;
-                    if (m_hardMissionSkipsLeft == 0)
-                    {
-                        // No more skips left. Initialize the cooldown timer.
-                        m_hardMissionCooldownTimestamp = DateTime.Now + new TimeSpan(0, 0, m_hardMissionCooldownTimeSecs);
-                    }
-                    return true;
-                }
-                return false;
+                m_hardExtraMissionsLeft = m_hardExtraMissions;
+                break;
+            default:
+                Debug.LogError("Wrong mission difficulty");
+                break;
         }
-
-        return false; // Default case. Shouldnt happen.
-
     }
 
     ///<summary>
@@ -458,49 +435,19 @@ public class RemoveAdsFeature {
         key = "easyMissionSkipsLeft";
         if (_data.ContainsKey(key))
         {
-            m_easyMissionSkipsLeft = _data[key].AsInt;
+            m_easyExtraMissionsLeft = _data[key].AsInt;
         }
 
         key = "mediumMissionSkipsLeft";
         if (_data.ContainsKey(key))
         {
-            m_mediumMissionSkipsLeft = _data[key].AsInt;
+            m_mediumExtraMissionsLeft = _data[key].AsInt;
         }
 
         key = "hardMissionSkipsLeft";
         if (_data.ContainsKey(key))
         {
-            m_hardMissionSkipsLeft = _data[key].AsInt;
-        }
-
-        key = "easyMissionCooldownTimestamp";
-        if (_data.ContainsKey(key))
-        {
-            m_easyMissionCooldownTimestamp = new DateTime(_data[key].AsLong);
-        }
-        else
-        {
-            m_easyMissionCooldownTimestamp = DateTime.MinValue;
-        }
-
-        key = "mediumMissionCooldownTimestamp";
-        if (_data.ContainsKey(key))
-        {
-            m_mediumMissionCooldownTimestamp = new DateTime(_data[key].AsLong);
-        }
-        else
-        {
-            m_mediumMissionCooldownTimestamp = DateTime.MinValue;
-        }
-
-        key = "hardMissionCooldownTimestamp";
-        if (_data.ContainsKey(key))
-        {
-            m_hardMissionCooldownTimestamp = new DateTime(_data[key].AsLong);
-        }
-        else
-        {
-            m_hardMissionCooldownTimestamp = DateTime.MinValue;
+            m_hardExtraMissionsLeft = _data[key].AsInt;
         }
 
         key = "mapRevealTimestamp";
@@ -522,13 +469,10 @@ public class RemoveAdsFeature {
     {
         SimpleJSON.JSONClass data = new SimpleJSON.JSONClass();
         data.Add("isActive", m_isActive);
-        data.Add("easyMissionSkipsLeft", m_easyMissionSkipsLeft);
-        data.Add("mediumMissionSkipsLeft", m_mediumMissionSkipsLeft);
-        data.Add("hardMissionSkipsLeft", m_hardMissionSkipsLeft);
+        data.Add("easyMissionSkipsLeft", m_easyExtraMissionsLeft);
+        data.Add("mediumMissionSkipsLeft", m_mediumExtraMissionsLeft);
+        data.Add("hardMissionSkipsLeft", m_hardExtraMissionsLeft);
 
-        data.Add("easyMissionCooldownTimestamp", m_easyMissionCooldownTimestamp.Ticks.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
-        data.Add("mediumMissionCooldownTimestamp", m_mediumMissionCooldownTimestamp.Ticks.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
-        data.Add("hardMissionCooldownTimestamp", m_hardMissionCooldownTimestamp.Ticks.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
         data.Add("mapRevealTimestamp", m_mapRevealTimestamp.Ticks.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
 
         return data;

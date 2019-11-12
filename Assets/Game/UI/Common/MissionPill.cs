@@ -68,8 +68,6 @@ public class MissionPill : MonoBehaviour, IBroadcastListener {
 	[SerializeField] private Slider m_cooldownBar = null;
 	[Space]
 	[SerializeField] private GameObject m_cooldownSkipFreeButton = null;
-    [SerializeField] private GameObject m_cooldownSkipNoAdsButton = null;
-    [SerializeField] private Localizer m_cooldownSkipNoAdsCooldownText = null;
     [SerializeField] private GameObject m_cooldownSkipPaidButton = null;
 
 	[Separator("Other Refs")]
@@ -86,7 +84,6 @@ public class MissionPill : MonoBehaviour, IBroadcastListener {
 
     // Cached references
     private Localizer m_cooldownSkipFreeText = null;
-    private Localizer m_cooldownSkipNoAdsText = null;
     private Localizer m_cooldownSkipPaidText = null;
 
     //------------------------------------------------------------------//
@@ -110,7 +107,6 @@ public class MissionPill : MonoBehaviour, IBroadcastListener {
 
         // Cache a reference the localizers of the cooldown buttons
         m_cooldownSkipFreeText = (m_cooldownSkipFreeButton != null)? m_cooldownSkipFreeButton.GetComponentInChildren<Localizer>():null;
-        m_cooldownSkipNoAdsText = (m_cooldownSkipNoAdsButton != null) ? m_cooldownSkipNoAdsButton.GetComponentInChildren<Localizer>():null;
         m_cooldownSkipPaidText= (m_cooldownSkipPaidButton != null) ? m_cooldownSkipPaidButton.GetComponentInChildren<Localizer>():null;
     }
 
@@ -357,13 +353,6 @@ public class MissionPill : MonoBehaviour, IBroadcastListener {
         // The player has bought the Remove Ads feature?
         bool removeAds = UsersManager.currentUser.removeAds.IsActive;
 
-        int remainingSkips = 0;
-        if (removeAds)
-        {
-            remainingSkips = UsersManager.currentUser.removeAds.GetMissionCooldownSkipsLeft(m_missionDifficulty);
-        }
-
-
         // Buttons 
         if (m_cooldownSkipFreeButton != null) {
             m_cooldownSkipFreeButton.SetActive(FeatureSettingsManager.AreAdsEnabled && !removeAds);
@@ -371,16 +360,6 @@ public class MissionPill : MonoBehaviour, IBroadcastListener {
 
         if (m_cooldownSkipPaidButton != null) {
             m_cooldownSkipPaidButton.SetActive(true);
-        }
-
-        if (m_cooldownSkipNoAdsButton != null)
-        {
-            m_cooldownSkipNoAdsButton.SetActive(removeAds && remainingSkips > 0);
-        }
-
-        // Text label "Free skips available in XX seconds"
-        if (m_cooldownSkipNoAdsCooldownText != null) {
-            m_cooldownSkipNoAdsCooldownText.gameObject.SetActive(removeAds && remainingSkips == 0);
         }
 
 
@@ -396,16 +375,6 @@ public class MissionPill : MonoBehaviour, IBroadcastListener {
 				);
 			}
 		}
-
-
-        // Skip free without ads button
-        if (remainingSkips > 0 && m_cooldownSkipNoAdsText != null && m_cooldownSkipNoAdsButton.activeSelf )
-        {
-            m_cooldownSkipNoAdsText.Localize(
-                TID_MISSIONS_SKIPS_COUNT,
-                remainingSkips.ToString()
-            );
-        }
 
     }
 
@@ -428,30 +397,7 @@ public class MissionPill : MonoBehaviour, IBroadcastListener {
 		if(m_cooldownSkipPaidText != null) {
 			m_cooldownSkipPaidText.Localize(m_cooldownSkipPaidText.tid, StringUtils.FormatNumber(m_mission.skipCostPC));
 		}
-
-
-        // Skip missions cooldown (only with Remove ads feature)
-        if (m_cooldownSkipNoAdsCooldownText != null)
-        {
-            // No more cooldown skips left
-            if (UsersManager.currentUser.removeAds.IsActive &&
-                UsersManager.currentUser.removeAds.GetMissionCooldownSkipsLeft(m_missionDifficulty) == 0)
-            {
-
-                // Show the cooldown time left properly formatted
-                double remainingSecs = UsersManager.currentUser.removeAds.GetMissionCooldownSkipsTimeLeft(m_missionDifficulty);
-                m_cooldownSkipNoAdsCooldownText.Localize(
-                    TID_MISSIONS_FREE_SKIPS_COOLDOWN,
-                    TimeUtils.FormatTime(remainingSecs, TimeUtils.EFormat.ABBREVIATIONS_WITHOUT_0_VALUES, 2)
-                );
-
-                /*if (UsersManager.currentUser.removeAds.UpdateMissionCooldown(m_missionDifficulty))
-                {
-                    // If some cooldown has finished, force the update in the next frame
-                    mission.updated = true;
-                }*/
-            }
-        }
+        
 	}
 
 	/// <summary>
@@ -667,22 +613,6 @@ public class MissionPill : MonoBehaviour, IBroadcastListener {
 			PopupAdBlocker.LaunchAd(true, GameAds.EAdPurpose.SKIP_MISSION_COOLDOWN, OnSkipTimeAdClosed);
 		}
 	}
-
-    /// <summary>
-    /// The skip mission cooldown has been pressed and the player owns the Remove Ads feature.
-    /// </summary>
-    public void OnSkipTimeWithoutAd()
-    {
-        if (m_mission == null) return;
-        
-        if (UsersManager.currentUser.removeAds.UseSkip(m_missionDifficulty)) {
-
-            // Success! Skip the mission cooldown
-            OnSkipTimeAdClosed(true);   // We reuse this method
-
-        }
-
-    }
 
 
     /// <summary>

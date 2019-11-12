@@ -44,8 +44,15 @@ public abstract class IUserMissions {
 			// Check missions in cooldown to be unlocked
 			if(m_missions[i].state == Mission.State.COOLDOWN || m_missions[i].state == Mission.State.ACTIVATION_PENDING) {
 				// Has enough time passed for this mission's difficulty?
-				if((GameServerManager.SharedInstance.GetEstimatedServerTime() - m_missions[i].cooldownStartTimestamp).TotalMinutes >= MissionManager.GetCooldownPerDifficulty((Mission.Difficulty)i)) {
+				if((GameServerManager.SharedInstance.GetEstimatedServerTime() - m_missions[i].cooldownStartTimestamp).TotalSeconds >= MissionManager.GetCooldownPerDifficulty((Mission.Difficulty)i)) {
 					// Yes!
+
+                    // If Remove Ads feature is active, restore the extra missions counters
+                    if (UsersManager.currentUser.removeAds.IsActive)
+                    {
+                        UsersManager.currentUser.removeAds.RestoreExtraMissions ( (Mission.Difficulty)i );
+                    }
+
 					// Missions can't be activated during a game, mark them as pending
 					// Are we in-game?
 					if(!canActivate) {
@@ -109,8 +116,20 @@ public abstract class IUserMissions {
 				m = GenerateNewMission((Mission.Difficulty)i);
 				m_missions[i] = m;
 
-				// Put it on cooldown
-				m.ChangeState(Mission.State.COOLDOWN);
+
+                // If the user has the Remove Ads feature active, he can play
+                // more extra missions before waiting the cooldown
+                if (UsersManager.currentUser.removeAds.IsActive &&
+                    UsersManager.currentUser.removeAds.UseExtraMission((Mission.Difficulty)i) )
+                {
+                    // Let the player play more missions
+                    m.ChangeState(Mission.State.ACTIVE);        
+                }
+                else
+                {
+                    // Put the mission in cooldown
+                    m.ChangeState(Mission.State.COOLDOWN);
+                }
 			}
 
 			// Is mission pending activation?
