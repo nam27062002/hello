@@ -158,6 +158,9 @@ public class RemoveAdsFeature {
     /// </summary>
     public RemoveAdsFeature()
     {
+
+        Messenger.AddListener(MessengerEvents.GAME_STARTED, OnGameStarted);
+
     }
 
     /// <summary>
@@ -165,6 +168,7 @@ public class RemoveAdsFeature {
     /// </summary>
     ~RemoveAdsFeature()
     {
+        Messenger.RemoveListener(MessengerEvents.GAME_STARTED, OnGameStarted);
     }
 
     /// <summary>
@@ -417,6 +421,22 @@ public class RemoveAdsFeature {
                 m_mapRevealTimestamp < DateTime.Now);
     }
 
+
+    /// <summary>
+    /// Decrement the amount of free revives. 
+    /// </summary>
+    /// <returns>Returns false if there arent any left.</returns>
+    public bool UseRevive()
+    {
+        if (m_revivesLeft > 0)
+        {
+            m_revivesLeft--;
+            return true;
+        }
+
+        return false;
+    }
+
     //------------------------------------------------------------------//
     // PERSISTENCE														//
     //------------------------------------------------------------------//
@@ -476,6 +496,14 @@ public class RemoveAdsFeature {
         data.Add("mapRevealTimestamp", m_mapRevealTimestamp.Ticks.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
 
         return data;
+    }
+
+    /// <summary>
+    /// When the game starts restore the revive counter
+    /// </summary>
+    private void OnGameStarted ()
+    {
+        m_revivesLeft = m_freeRevives;
     }
     
 }
