@@ -10,7 +10,7 @@ public class TranslateToPlayer : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		m_transform = transform;
-		m_target = InstanceManager.player.transform;
+		m_target = InstanceManager.player.dragonEatBehaviour.mouth;
 	}
 	
 	// Update is called once per frame
