@@ -180,7 +180,7 @@ public class RemoveAdsFeature {
         if (!IsActive) return;
 
         // Check if the map reveal feature is ready
-        if (m_mapRevealTimestamp != DateTime.MinValue && DateTime.Now > m_mapRevealTimestamp )
+        if (m_mapRevealTimestamp != DateTime.MinValue && GameServerManager.SharedInstance.GetEstimatedServerTime() > m_mapRevealTimestamp )
         {
             m_mapRevealTimestamp = DateTime.MinValue;
 
@@ -402,7 +402,7 @@ public class RemoveAdsFeature {
         if (IsMapRevealAvailable ())
         {
             // Initialize the map reveal cooldown
-            m_mapRevealTimestamp = DateTime.Now + new TimeSpan(0, 0, m_mapRevealCooldownSecs);
+            m_mapRevealTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTime() + new TimeSpan(0, 0, m_mapRevealCooldownSecs);
             return true;
         }
 
@@ -418,7 +418,7 @@ public class RemoveAdsFeature {
     public bool IsMapRevealAvailable ()
     {
         return (m_mapRevealTimestamp == DateTime.MinValue ||
-                m_mapRevealTimestamp < DateTime.Now);
+                m_mapRevealTimestamp < GameServerManager.SharedInstance.GetEstimatedServerTime());
     }
 
 

@@ -26,6 +26,7 @@ public class MapUpgradeController : MonoBehaviour, IBroadcastListener {
     //------------------------------------------------------------------------//
 
     private const string TID_MAP_FREE_UNLOCK_MESSAGE = "TID_MAP_FREE_UNLOCK_MESSAGE";
+    private const string TID_MAP_FREE_UNLOCK_COOLDOWN = "TID_MAP_FREE_UNLOCK_COOLDOWN";
 
     //------------------------------------------------------------------------//
     // MEMBERS AND PROPERTIES												  //
@@ -52,6 +53,7 @@ public class MapUpgradeController : MonoBehaviour, IBroadcastListener {
 	// Internal
 	private long m_unlockPricePC = 0;
 	private bool m_wasUnlocked = false;	// Lock state in last frame, used to track end of timer
+    private bool m_wasFreeUnlocked = false;	// Lock state in last frame, used to track end of timer
 
     // Cached
     private ShowHideAnimator m_unlockFreeBtnAnimator;
@@ -60,6 +62,10 @@ public class MapUpgradeController : MonoBehaviour, IBroadcastListener {
 	private bool isUnlocked {
 		get { return UsersManager.currentUser.mapUnlocked; }
 	}
+
+    private bool isFreeUnlockReady {
+        get { return UsersManager.currentUser.removeAds.IsMapRevealAvailable(); }
+    }
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -72,6 +78,7 @@ public class MapUpgradeController : MonoBehaviour, IBroadcastListener {
 		Broadcaster.AddListener(BroadcastEventType.PROFILE_MAP_UNLOCKED, this);
 
         m_unlockFreeBtnAnimator = m_unlockFreeBtn.GetComponent<ShowHideAnimator>();
+
     }
 
 	/// <summary>
@@ -84,9 +91,6 @@ public class MapUpgradeController : MonoBehaviour, IBroadcastListener {
 		// Find out unlock price
 		m_unlockPricePC = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, "gameSettings").GetAsLong("miniMapHCCost");
 
-        // Instead of using events and broadcasting, pass a delegate to the remove ads controller
-        UsersManager.currentUser.removeAds.refreshMapPill = Refresh;
-
 		// Refresh visuals!
 		Refresh(false);
 	}
@@ -95,12 +99,11 @@ public class MapUpgradeController : MonoBehaviour, IBroadcastListener {
 	/// Update loop, called every frame.
 	/// </summary>
 	private void Update() {
-		// If unlocked, refresh timer
-		if(isUnlocked) {
+        // If unlocked, refresh timer
+        if (isUnlocked) { 
 			m_wasUnlocked = true;
 			RefreshTimer();
-		}
-
+		} 
 		// First frame it's locked after the timer run out, refresh (show unlock buttons)
 		else if(m_wasUnlocked) {
 			m_wasUnlocked = false;
@@ -109,7 +112,21 @@ public class MapUpgradeController : MonoBehaviour, IBroadcastListener {
 			// Notify other UI elements
 			Broadcaster.Broadcast(BroadcastEventType.UI_MAP_EXPIRED);
 		}
-	}
+
+        // Do the same for the Remove Ads free unlock button
+        if (!isFreeUnlockReady)
+        {
+            m_wasFreeUnlocked = false;
+            RefreshFreeUnlockTimer();
+        }
+        // First frame it's locked after the timer run out, refresh 
+        else if (!m_wasFreeUnlocked)
+        {
+            m_wasFreeUnlocked = true;
+            Refresh(true);
+        }
+
+    }
 
 	/// <summary>
 	/// Component has been disabled.
@@ -153,15 +170,15 @@ public class MapUpgradeController : MonoBehaviour, IBroadcastListener {
 		if(m_lockedGroupAnim != null) m_lockedGroupAnim.ForceSet(isLocked, _animate);
 		if(m_unlockedGroupAnim != null) m_unlockedGroupAnim.ForceSet(!isLocked, _animate);
 
-		// Depending on lock state
-		if(isLocked) {
+        // Check if remove ads feature is active
+        bool removeAds = UsersManager.currentUser.removeAds.IsActive;
+
+        // Depending on lock state
+        if (isLocked) {
 			// Price tag
 			if(m_pcPriceText != null) {
 				m_pcPriceText.text = UIConstants.GetIconString(m_unlockPricePC, UserProfile.Currency.HARD, UIConstants.IconAlignment.LEFT);
 			}
-
-            // Check if remove ads feature is active
-            bool removeAds = UsersManager.currentUser.removeAds.IsActive;
 
 			// Ad unlock - turn off when offline
 			if(m_unlockWithAdBtn != null) {
@@ -172,38 +189,75 @@ public class MapUpgradeController : MonoBehaviour, IBroadcastListener {
             if (m_unlockFreeBtn != null)
             {
                 m_unlockFreeBtn.SetActive(removeAds && UsersManager.currentUser.removeAds.IsMapRevealAvailable());
+            }
 
-                if (m_unlockFreeDescription != null)
-                {
-                    int coolDownSeconds = UsersManager.currentUser.removeAds.mapRevealDurationSecs;
-                    string cooldownFormatted = TimeUtils.FormatTime(coolDownSeconds, TimeUtils.EFormat.WORDS_WITHOUT_0_VALUES, 2);
-                    m_unlockFreeDescription.Localize(TID_MAP_FREE_UNLOCK_MESSAGE, cooldownFormatted);
-
-                    m_unlockFreeDescription.gameObject.SetActive(removeAds && UsersManager.currentUser.removeAds.IsMapRevealAvailable());
-                }
+            // Unlock map with PC
+            if (m_unlockWithPcBtn != null)
+            {
+                m_unlockWithPcBtn.SetActive(!removeAds || !UsersManager.currentUser.removeAds.IsMapRevealAvailable());
             }
 
 
+            if (m_unlockFreeDescription != null)
+            {
+                // Free unlock description / free unlock cooldown timer
+                m_unlockFreeDescription.gameObject.SetActive(removeAds);
+
+                if (removeAds)
+                {
+                    
+                    if (UsersManager.currentUser.removeAds.IsMapRevealAvailable())
+                    {
+                        // The free map reveals button is visible
+                        int coolDownSeconds = UsersManager.currentUser.removeAds.mapRevealDurationSecs;
+                        string cooldownFormatted = TimeUtils.FormatTime(coolDownSeconds, TimeUtils.EFormat.WORDS_WITHOUT_0_VALUES, 2);
+                        m_unlockFreeDescription.Localize(TID_MAP_FREE_UNLOCK_MESSAGE, cooldownFormatted);
+                    }
+                    else
+                    {
+                        // The map reveal not ready, show the cooldown timer
+                        RefreshFreeUnlockTimer();
+                    }
+                }
+
+            }
 
         }
         else {
 			// Timer
 			RefreshTimer();
-		}
-	}
+        }
+
+
+    }
 
 	/// <summary>
 	/// Update the timer text.
 	/// </summary>
 	private void RefreshTimer() {
-		// Check required stuff
-		if(m_timerText == null) return;
+        // Check required stuff
+        if (m_timerText != null)
+        {
 
-		// Countdown format
-		TimeSpan timeToReset = UsersManager.currentUser.mapResetTimestamp - GameServerManager.SharedInstance.GetEstimatedServerTime();
-		double seconds = System.Math.Max(timeToReset.TotalSeconds, 0d);	// Never go negative!
-		m_timerText.text = TimeUtils.FormatTime(seconds, TimeUtils.EFormat.DIGITS, 3, TimeUtils.EPrecision.HOURS, true);
+            // Countdown format
+            TimeSpan timeToReset = UsersManager.currentUser.mapResetTimestamp - GameServerManager.SharedInstance.GetEstimatedServerTime();
+            double seconds = System.Math.Max(timeToReset.TotalSeconds, 0d); // Never go negative!
+            m_timerText.text = TimeUtils.FormatTime(seconds, TimeUtils.EFormat.DIGITS, 3, TimeUtils.EPrecision.HOURS, true);
+        }
 	}
+
+    /// <summary>
+    /// Update the free unlock cooldown
+    /// </summary>
+    private void RefreshFreeUnlockTimer ()
+    {
+        if (m_unlockFreeDescription != null)
+        {
+            TimeSpan timeToReset = UsersManager.currentUser.removeAds.mapRevealTimestamp - GameServerManager.SharedInstance.GetEstimatedServerTime();
+            string timeLeft = TimeUtils.FormatTime(timeToReset.TotalSeconds, TimeUtils.EFormat.ABBREVIATIONS_WITHOUT_0_VALUES, 1);
+            m_unlockFreeDescription.Localize(TID_MAP_FREE_UNLOCK_COOLDOWN, timeLeft);
+        }
+    }
 
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
@@ -238,10 +292,24 @@ public class MapUpgradeController : MonoBehaviour, IBroadcastListener {
 
 
     void OnVideoRewardCallback(bool done){
-		if ( done ){            
-            UsersManager.currentUser.UnlockMap();
+		if ( done ){
+
+            DefinitionNode gameSettingsDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, "gameSettings");
+            if (gameSettingsDef != null)
+            {
+                UsersManager.currentUser.UnlockMap( (int) gameSettingsDef.GetAsDouble("miniMapTimerAd") * 60 );
+                PersistenceFacade.instance.Save_Request();
+                Track_UnlockMap(HDTrackingManager.EUnlockType.video_ads);
+            }
+            else
+            {
+                UsersManager.currentUser.UnlockMap(60 * 60);
+                Debug.LogError("GameSettings not found!");
+            }
+
             PersistenceFacade.instance.Save_Request();
             Track_UnlockMap(HDTrackingManager.EUnlockType.video_ads);
+
         }
 	}
 

@@ -125,7 +125,7 @@ public class PopupDailyRewards : MonoBehaviour, IBroadcastListener {
 		// Initialize buttons
 		m_collectButton.SetActive(canCollect && !removeAds);
 		m_doubleAdButton.SetActive(canCollect && currentReward.canBeDoubled && !removeAds);
-		m_dismissButton.SetActive(!canCollect && _dismissButtonAllowed && !removeAds);
+		m_dismissButton.SetActive(!canCollect && _dismissButtonAllowed);
         m_doubleButton.SetActive(canCollect && removeAds);
     }
 
