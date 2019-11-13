@@ -171,13 +171,15 @@ public class MapUpgradeController : MonoBehaviour, IBroadcastListener {
             // Unlock map without ads
             if (m_unlockFreeBtn != null)
             {
-                m_unlockFreeBtnAnimator.ForceSet(removeAds && UsersManager.currentUser.removeAds.IsMapRevealAvailable(), true);
+                m_unlockFreeBtn.SetActive(removeAds && UsersManager.currentUser.removeAds.IsMapRevealAvailable());
 
                 if (m_unlockFreeDescription != null)
                 {
                     int coolDownSeconds = UsersManager.currentUser.removeAds.mapRevealDurationSecs;
                     string cooldownFormatted = TimeUtils.FormatTime(coolDownSeconds, TimeUtils.EFormat.WORDS_WITHOUT_0_VALUES, 2);
                     m_unlockFreeDescription.Localize(TID_MAP_FREE_UNLOCK_MESSAGE, cooldownFormatted);
+
+                    m_unlockFreeDescription.gameObject.SetActive(removeAds && UsersManager.currentUser.removeAds.IsMapRevealAvailable());
                 }
             }
 
