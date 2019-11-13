@@ -130,8 +130,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_tabs: {fileID: 114319141117994488}
-  m_pillAnimDelay: 0.075
-  m_pillRotationSequence: []
+  m_pillAnimDelay: 0.1
+  m_pillAnimDelayInc: 0.075
   m_tabButtonsContainer: {fileID: 1338270821327194}
   m_offersCount: {fileID: 114527624042734196}
   m_happyHourPanel: {fileID: 114406088521054966}
@@ -913,6 +913,7 @@ GameObject:
   - component: {fileID: 114776165614897128}
   - component: {fileID: 114887939442639998}
   - component: {fileID: 114406088521054966}
+  - component: {fileID: 114747696221052940}
   m_Layer: 5
   m_Name: HappyHourPanel
   m_TagString: Untagged
@@ -5051,6 +5052,28 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_HorizontalFit: 2
   m_VerticalFit: 0
+--- !u!114 &114747696221052940
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1363878271887330}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2e3eedcba421948d1ac712f3d495135f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_applyToFonts: 0
+  m_applyToImages: 1
+  m_colorMultiply: {r: 1, g: 1, b: 1, a: 1}
+  m_colorAdd: {r: 0, g: 0, b: 0, a: 0}
+  m_colorRampEnabled: 1
+  m_colorRamp: {fileID: 2800000, guid: 54a399fd614d0a843b34d4788745f066, type: 3}
+  m_alpha: 1
+  m_brightness: 0
+  m_saturation: 0
+  m_contrast: 0
+  m_lateMultiply: 0
 --- !u!114 &114752325707356784
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5593,6 +5616,8 @@ MonoBehaviour:
   m_scrollList: {fileID: 114984819190585936}
   m_textOffersEmpty: {fileID: 114473175624753748}
   m_offersCount: {fileID: 114527624042734196}
+  m_freeOfferPillPrefab: {fileID: 1400235556076558, guid: 8d801d247341c461aa5dbd6361f2987d,
+    type: 2}
 --- !u!114 &114867919589377800
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6668,7 +6693,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 0.009143844, y: 0}
+  m_AnchoredPosition: {x: 0.025292315, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!224 &224114334104976628
@@ -7047,7 +7072,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 0.009143844, y: 0}
+  m_AnchoredPosition: {x: 0.025292315, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!224 &224381674803683976
@@ -7101,7 +7126,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: -0.014224821, y: 0}
+  m_AnchoredPosition: {x: 0.03470603, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!224 &224418998675967260
@@ -7175,8 +7200,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -175}
-  m_SizeDelta: {x: 0, y: 650}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224466911899280090
 RectTransform:
@@ -7447,8 +7472,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -75}
-  m_SizeDelta: {x: 0, y: 450}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224695949264867366
 RectTransform:
@@ -7550,8 +7575,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 75}
-  m_SizeDelta: {x: 0, y: -450}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224779312670749840
 RectTransform:
@@ -7794,8 +7819,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -75}
-  m_SizeDelta: {x: 0, y: 450}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224970560571618020
 RectTransform:

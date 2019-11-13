@@ -139,7 +139,7 @@ public class UI3DAddressablesLoaderEditor : Editor {
 				GameObject newInstance = m_targetUI3DLoader.Load();
 				if(newInstance != null) {
 					// Destroy as soon as awaken (this is meant to be used in edit mode)
-					newInstance.AddComponent<DestroyInSeconds>().lifeTime = 0f;
+					newInstance.AddComponent<SelfDestroy>().seconds = 0f;
 
 					// Rename
 					newInstance.gameObject.name = "PLACEHOLDER";

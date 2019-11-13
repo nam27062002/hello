@@ -75,9 +75,10 @@ public class DefinitionsCategory
 	public const string SURVIVAL_BONUS = "SURVIVAL_BONUS";
 	public const string LEVEL_SPAWN_POINTS = "LEVEL_SPAWN_POINTS";
 	public const string LEVEL_PROGRESSION = "LEVEL_PROGRESSION";
+    public const string ZONE_TRIGGERS = "ZONE_TRIGGERS";
 
-	// Metagame
-	public const string EGGS = "EGGS";	
+    // Metagame
+    public const string EGGS = "EGGS";	
 	public const string EGG_REWARDS = "EGG_REWARDS";
 	public const string CHEST_REWARDS = "CHEST_REWARDS";
 	public const string PREREG_REWARDS = "PREREG_REWARDS";

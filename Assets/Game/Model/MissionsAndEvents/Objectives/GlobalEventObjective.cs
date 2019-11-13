@@ -55,6 +55,7 @@ public class GlobalEventObjective : TrackingObjectiveBase, IBroadcastListener {
 		// Gather type definition
 		m_typeDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.MISSION_TYPES, _data["type"]);
 
+
 		// Parse parameters (if any)
 		List<string> parameters = new List<string>();
 		if(_data.ContainsKey("params")) {
@@ -63,12 +64,14 @@ public class GlobalEventObjective : TrackingObjectiveBase, IBroadcastListener {
 			parameters.AddRange(splitResult);
 		}
 
-		// Get icon
-		m_icon = _data["icon"];
+        string zone = _data["zone"];
+
+        // Get icon
+        m_icon = _data["icon"];
 
 		// Use parent's initializer
 		Init(
-			TrackerBase.CreateTracker(m_typeDef.sku, parameters),		// Create the tracker based on goal type
+			TrackerBase.CreateTracker(m_typeDef.sku, parameters, zone),		// Create the tracker based on goal type
 			_data["amount"].AsLong,
 			m_typeDef,
 			_data["tidDesc"]

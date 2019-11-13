@@ -146,6 +146,7 @@ public class HDNotificationsManager : Singleton<HDNotificationsManager>
             if (def != null)
             {
                 body = LocalizationManager.SharedInstance.Localize(def.Get("tidName"));
+				body = EmojiManager.ReplaceEmojis(body);		// Replace emoji tags! 
             }
 
             ScheduleNotification(strSKU, body, "Action", iTimeLeft);
@@ -170,17 +171,21 @@ public class HDNotificationsManager : Singleton<HDNotificationsManager>
         }
     }
 
-#region game
-    // Add here the game related code
+	#region game
+	// Add here the game related code
+	public const int SILENCE_START_HOUR = 23;
+	public const int SILENCE_END_HOUR = 8;
 
-    private const string SKU_EGG_HATCHED = "sku.not.01";
+	private const string SKU_EGG_HATCHED = "sku.not.01";
     private const string SKU_NEW_MISSIONS = "sku.not.02";
     private const string SKU_NEW_CHESTS = "sku.not.03";
 	private const string SKU_DAILY_REWARD = "sku.not.04";
     private const string SKU_REENGAGEMENT = "sku.not.14";
+	private const string SKU_FREE_OFFER = "sku.not.15";
 
     private const string DEFAULT_ACTION = "Action";
 
+	// Eggs
     public void ScheduleEggHatchedNotification(int seconds)
     {
         ScheduleNotificationFromSku(SKU_EGG_HATCHED, DEFAULT_ACTION, seconds);
@@ -191,6 +196,7 @@ public class HDNotificationsManager : Singleton<HDNotificationsManager>
         CancelNotification(SKU_EGG_HATCHED);
     }
 
+	// Missions
     public void ScheduleNewMissionsNotification(int seconds)
     {
         ScheduleNotificationFromSku(SKU_NEW_MISSIONS, DEFAULT_ACTION, seconds);
@@ -201,30 +207,36 @@ public class HDNotificationsManager : Singleton<HDNotificationsManager>
         CancelNotification(SKU_NEW_MISSIONS);
     }
 
+	// Chests
     public void ScheduleNewChestsNotification(int seconds)
     {
         ScheduleNotificationFromSku(SKU_NEW_CHESTS, DEFAULT_ACTION, seconds);
     }
-    
-    public void ScheduleNewDailyReward(int seconds)
+
+	public void CancelNewChestsNotification() {
+		CancelNotification(SKU_NEW_CHESTS);
+	}
+
+	// Daily Reward
+	public void ScheduleNewDailyReward(int seconds)
     {
         ScheduleNotificationFromSku(SKU_DAILY_REWARD, DEFAULT_ACTION, seconds);
     }
-    
-
-    public void CancelNewChestsNotification()
-    {
-        CancelNotification(SKU_NEW_CHESTS);
-    }
-
-	public void ScheduleDailyRewardNotification(int seconds) {
-		ScheduleNotificationFromSku(SKU_DAILY_REWARD, DEFAULT_ACTION, seconds);
-	}
 
 	public void CancelDailyRewardNotification() {
 		CancelNotification(SKU_DAILY_REWARD);
 	}
 
+	// Free Offer
+	public void ScheduleNewFreeOffer(int seconds) {
+		ScheduleNotificationFromSku(SKU_FREE_OFFER, DEFAULT_ACTION, seconds);
+	}
+
+	public void CancelFreeOfferNotification() {
+		CancelNotification(SKU_FREE_OFFER);
+	}
+
+	// Reengagement
     public void ScheduleReengagementNotification(int seconds) {
 		ScheduleNotificationFromSku(SKU_REENGAGEMENT, DEFAULT_ACTION, seconds);
 	}
@@ -232,11 +244,34 @@ public class HDNotificationsManager : Singleton<HDNotificationsManager>
     public void CancelReengagementNotification(  ){
         CancelNotification(SKU_REENGAGEMENT);
     }
-#endregion
+	#endregion
 
+	#region utils
+	/// <summary>
+	/// Adjust given date time to avoid silent hours.
+	/// The date time will be moved forward to the first non-silent hour possible.
+	/// </summary>
+	/// <param name="_dateTime">Date time to be adjusted.</param>
+	/// <returns>Adjusted date time.</returns>
+	public static DateTime AvoidSilentHours(DateTime _dateTime) {
+		// Add hour by hour until condition is met
+		bool adjusted = false;
+		while(_dateTime.Hour >= HDNotificationsManager.SILENCE_START_HOUR || _dateTime.Hour < HDNotificationsManager.SILENCE_END_HOUR) {
+			_dateTime = _dateTime.AddHours(1);
+			adjusted = true;
+		}
 
-#region log
-    private const string LOG_CHANNEL = "[HDNotificationsManager]";
+		// Round to hour
+		if(adjusted) {
+			_dateTime = new DateTime(_dateTime.Year, _dateTime.Month, _dateTime.Day, _dateTime.Hour, 0, 0, 0, _dateTime.Kind);
+		}
+
+		return _dateTime;
+	}
+	#endregion
+
+	#region log
+	private const string LOG_CHANNEL = "[HDNotificationsManager]";
     private void Log(string msg)
     {
         msg = LOG_CHANNEL + msg;

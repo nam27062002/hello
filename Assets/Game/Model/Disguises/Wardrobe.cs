@@ -3,14 +3,13 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-public class Wardrobe : IBroadcastListener
-{
+public class Wardrobe : IBroadcastListener {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
 	public enum SkinState {
 		LOCKED = 0,
-		NEW = 1,		// Same as "AVAILABLE", but showing the "new" notification
+		NEW = 1,        // Same as "AVAILABLE", but showing the "new" notification
 		AVAILABLE = 2,
 		OWNED = 3
 	};
@@ -45,13 +44,12 @@ public class Wardrobe : IBroadcastListener
 	/// Initialize manager from definitions.
 	/// Requires definitions to be loaded into the DefinitionsManager.
 	/// </summary>
-	public void InitFromDefinitions() 
-	{
+	public void InitFromDefinitions() {
 		Dictionary<string, DefinitionNode> defs = DefinitionsManager.SharedInstance.GetDefinitions(DefinitionsCategory.DISGUISES);
 		m_disguises.Clear();
 		foreach(KeyValuePair<string, DefinitionNode> kvp in defs) {
-			// Special case: if default skin, mark it as owned!
-			if(IsDefaultSkin(kvp.Value)) {
+			// Special case: if default or special skin, mark it as owned!
+			if(IsDefaultSkin(kvp.Value) || IsSpecialSkin(kvp.Value)) {
 				m_disguises.Add(kvp.Key, SkinState.OWNED);
 			} else {
 				m_disguises.Add(kvp.Key, SkinState.LOCKED);
@@ -163,6 +161,9 @@ public class Wardrobe : IBroadcastListener
 			string seasonSku = skinDefs[i].GetAsString("unlockSeason");
 			if(string.IsNullOrEmpty(seasonSku)) continue;
 
+			// Ignore special dragon skins
+			if(IsSpecialSkin(skinDefs[i])) continue;
+
 			// If associated season doesn't match active season, skin is locked
 			if(seasonSku != SeasonManager.activeSeason) {
 				SetSkinState(skinDefs[i].sku, SkinState.LOCKED);
@@ -176,13 +177,13 @@ public class Wardrobe : IBroadcastListener
 				IDragonData dragonData = DragonManager.GetDragonData(skinDefs[i].GetAsString("dragonSku"));
 				switch(dragonData.type) {
 					case IDragonData.Type.CLASSIC: {
-						// Do we have enough level?
-						if((dragonData as DragonDataClassic).progression.level < unlockLevel) {
-							// Not enough level, skin is locked
-							SetSkinState(skinDefs[i].sku, SkinState.LOCKED);
-							continue;
-						}
-					} break;
+							// Do we have enough level?
+							if((dragonData as DragonDataClassic).progression.level < unlockLevel) {
+								// Not enough level, skin is locked
+								SetSkinState(skinDefs[i].sku, SkinState.LOCKED);
+								continue;
+							}
+						} break;
 				}
 			}
 
@@ -195,58 +196,38 @@ public class Wardrobe : IBroadcastListener
 			}
 		}
 	}
-    
-    /// <summary>
-    /// Gets the number owned skins.
-    /// </summary>
-    /// <returns>The number owned skins.</returns>
-    public int GetNumOwnedSkins()
-    {
-        int ret = 0;
-        if ( m_disguises != null )
-        {
-            foreach (KeyValuePair<string,SkinState> item in m_disguises)
-            {
-                if (item.Value == SkinState.OWNED)
-                {
-                    ret++;
-                }
-            }
-        }
-        return ret;
-    }
-    
-    
-    /// <summary>
-    /// Gets the number of adquired skins.
-    /// </summary>
-    /// <returns>The number owned skins.</returns>
-    public int GetNumAdquiredSkins()
-    {
-        int ret = 0;
-        if ( m_disguises != null )
-        {
-            foreach (KeyValuePair<string,SkinState> item in m_disguises)
-            {
-                if (item.Value == SkinState.OWNED)
-                {
-                    // Check if it's not the default
-                    DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, item.Key);
-                    if ( def != null && !IsDefaultSkin(def) )
-                    {
-                        ret++;
-                    }
-                }
-            }
-        }
-        return ret;
-    }
+
+	/// <summary>
+	/// Gets the number of acquired skins - excluding default skins and special dragons skins.
+	/// </summary>
+	/// <returns>The number acquired skins.</returns>
+	public int GetNumAcquiredSkins() {
+		int ret = 0;
+		if(m_disguises != null) {
+			foreach(KeyValuePair<string, SkinState> item in m_disguises) {
+				if(item.Value == SkinState.OWNED) {
+					// Get def
+					DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, item.Key);
+					if(def == null) continue;
+
+					// Skip if it's the default skin
+					if(IsDefaultSkin(def)) continue;
+
+					// Skip if it's a special dragon skin (automatically acquired)
+					if(IsSpecialSkin(def)) continue;
+
+					// All checks passed!
+					ret++;
+				}
+			}
+		}
+		return ret;
+	}
 
 	///
 	/// Returns unlocked skins for dragon dragonSku from [initialLevel] to [finalLevel]
 	/// 
-	public List<DefinitionNode> GetUnlockedSkins( string dragonSku, int initialLevel, int finalLevel )
-	{
+	public List<DefinitionNode> GetUnlockedSkins(string dragonSku, int initialLevel, int finalLevel) {
 		List<DefinitionNode> ret = new List<DefinitionNode>();
 		// Get aLl dragon skins
 		List<DefinitionNode> allSkins = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.DISGUISES, "dragonSku", dragonSku);
@@ -269,7 +250,7 @@ public class Wardrobe : IBroadcastListener
 		}
 		return ret;
 	}
-	
+
 
 
 	//------------------------------------------------------------------//
@@ -292,6 +273,17 @@ public class Wardrobe : IBroadcastListener
 	/// <returns>Whether the skin is linked to a season or not.</returns>
 	public static bool IsSeasonalSkin(DefinitionNode _skinDef) {
 		return !string.IsNullOrEmpty(_skinDef.GetAsString("unlockSeason"));
+	}
+
+	/// <summary>
+	/// Does this skin belong to a special dragon?
+	/// </summary>
+	/// <param name="_skinDef">The skin to be checked.</param>
+	/// <returns>Whether the skin belongs to a special dragon or not.</returns>
+	public static bool IsSpecialSkin(DefinitionNode _skinDef) {
+		if(_skinDef == null) return false;
+		DefinitionNode dragonDef = DefinitionsManager.SharedInstance.GetDefinition(_skinDef.GetAsString("dragonSku"));
+		return dragonDef != null && dragonDef.GetAsString("type") == "special";
 	}
 
 	//------------------------------------------------------------------//
@@ -324,6 +316,10 @@ public class Wardrobe : IBroadcastListener
 			foreach (KeyValuePair<string, SkinState> pair in m_disguises) {
 				// Don't store locked disguises (no need to make savefile that big!)
 				if(pair.Value == SkinState.LOCKED) continue;
+
+				// Same with special skins
+				DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, pair.Key);
+				if(IsSpecialSkin(def)) continue;
 
 				// We're reusing the old "level" field ^^
 				SimpleJSON.JSONClass dl = new SimpleJSON.JSONClass();

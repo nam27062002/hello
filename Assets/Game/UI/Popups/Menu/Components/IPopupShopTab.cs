@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------------//
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Events;
 
 using System.Collections.Generic;
 
@@ -22,7 +23,9 @@ public abstract class IPopupShopTab : Tab {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	
+	// Event Types
+	public class ShopTabEvent : UnityEvent<IPopupShopTab> { }
+
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
@@ -39,6 +42,9 @@ public abstract class IPopupShopTab : Tab {
 	public List<IPopupShopPill> pills {
 		get { return m_pills; }
 	}
+
+	// Events
+	public ShopTabEvent OnPillListChanged = new ShopTabEvent();	// To be broadcasted by heirs
 
 	//------------------------------------------------------------------------//
 	// ABSTRACT METHODS														  //
