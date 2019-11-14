@@ -23,6 +23,7 @@ public class PopupGoldenFragmentConversion : MonoBehaviour {
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
 	public const string PATH = "UI/Popups/OtherInfo/PF_PopupGoldenFragmentConversion";
+	private const long CHEATING_THRESHOLD = 10000;
 
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
@@ -56,7 +57,9 @@ public class PopupGoldenFragmentConversion : MonoBehaviour {
 	/// <returns></returns>
 	public static bool Check() {
 		// Show always if the user has any GF whatsoever
-		return UsersManager.currentUser.goldenEggFragments > 0;
+		// [AOC] Apparently it's quite cheatable, so add some anti-cheating control
+		long gfAmount = UsersManager.currentUser.goldenEggFragments;
+		return gfAmount > 0 && gfAmount < CHEATING_THRESHOLD;
 	}
 
 	//------------------------------------------------------------------------//

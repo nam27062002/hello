@@ -265,17 +265,34 @@ public abstract class IUserMissions {
 							}
 						);
 
-						// If the selected type has no valid missions, remove it from the candidates list and select a new type
-						if(missionDefs.Count == 0) {
-							Debug.Log(Colors.orange.Tag("No missions found for type " + selectedTypeDef.sku + ". Choosing a new type."));
+                        // If the mission require a specific dragon and the user doesnt own it, discard it
+                        for (int j = missionDefs.Count - 1; j >=0 ; j--)    // iterate backwards to remove items
+                        {
+                            string requiredDragon = missionDefs[j].GetAsString("dragon");
+                            if ( ! string.IsNullOrEmpty(requiredDragon) ) {
+                                if (!DragonManager.IsDragonOwned(requiredDragon))
+                                {
+                                    missionDefs.RemoveAt(j);
+                                }
+                            }
+                        }
+                        
 
-							selectedTypeDef = null;
-							typeDefs.RemoveAt(i);
+                        // If the selected type has no valid missions, remove it from the candidates list and select a new type
+                        if (missionDefs.Count == 0) {
+						    Debug.Log(Colors.orange.Tag("No missions found for type " + selectedTypeDef.sku + ". Choosing a new type."));
 
-							totalWeight -= weightsArray[i];
-							weightsArray.RemoveAt(i);
+						    selectedTypeDef = null;
+						    typeDefs.RemoveAt(i);
+
+						    totalWeight -= weightsArray[i];
+						    weightsArray.RemoveAt(i);
 						}
-						break;	// Break the type selection loop
+
+
+
+
+                        break;	// Break the type selection loop
 					}
 				}
 			}
@@ -385,15 +402,16 @@ public abstract class IUserMissions {
         }
 
         // 2.4. Apply modifier and round final values 
+        targetValue = Mathf.RoundToInt(targetValue * totalModifier);
         if (_typeDef.GetAsString("sku") == "survive_time")
         {
             // If the values are seconds use a special round method specific for time formatting
-            targetValue = TimeUtils.RoundSeconds(targetValue,2);
+            targetValue = TimeUtils.RoundSeconds(targetValue , 2);
         }
         else
         {
             // Round values according to its magnitude (10,100,1000...)
-            targetValue = MathUtils.RoundByMagnitude(Mathf.RoundToInt(targetValue * totalModifier));
+            targetValue = MathUtils.RoundByMagnitude(Mathf.RoundToInt(targetValue ));
         }
         
 		targetValue = (long)Mathf.Max(targetValue, 1);	// Just in case, avoid 0 or negative values!

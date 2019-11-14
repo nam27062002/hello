@@ -55,6 +55,13 @@ public class CPMissionGenerator : MonoBehaviour {
 	/// </summary>
 	private void OnEnable() {
 		// If not initialized, do it as soon as content is available
+		//TONI
+		List<DefinitionNode> allDragons = new List<DefinitionNode>();
+		List<DefinitionNode> specialDragons = new List<DefinitionNode>();
+		allDragons = DefinitionsManager.SharedInstance.GetDefinitionsByVariable (DefinitionsCategory.DRAGONS, "type", DragonDataClassic.TYPE_CODE);
+		specialDragons = DefinitionsManager.SharedInstance.GetDefinitionsByVariable (DefinitionsCategory.DRAGONS, "type", DragonDataSpecial.TYPE_CODE);
+		allDragons.AddRange (specialDragons);
+		//TONI
 		if(!m_init && ContentManager.ready) {
 			// Clear flag
 			m_init = true;
@@ -71,11 +78,15 @@ public class CPMissionGenerator : MonoBehaviour {
 			SetSelectedOption(m_difficultyDropdown, 0);
 
 			// 2. Dragons
-			InitDropdownFromDefs(
+			//TONI
+			//InitDropdownFromDefs(
+			//	m_ownedDragonDropdown, 
+			//	DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.DRAGONS, "type", DragonDataClassic.TYPE_CODE)
+			//);
+			InitDropdownFromDefs (
 				m_ownedDragonDropdown, 
-				DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.DRAGONS, "type", DragonDataClassic.TYPE_CODE)
-			);
-
+				allDragons);
+			//TONI
 			// 3. Mission type
 			RefreshAvailableTypes();
 

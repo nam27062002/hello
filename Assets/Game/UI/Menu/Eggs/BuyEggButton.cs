@@ -56,8 +56,10 @@ public class BuyEggButton : MonoBehaviour {
 
         if (InstanceManager.menuSceneController.transitionManager.transitionAllowed)
         {
-    		// Get price and start purchase flow
-    		DefinitionNode eggDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.EGGS, Egg.SKU_PREMIUM_EGG);
+			transactionInProgress = true;
+
+			// Get price and start purchase flow
+			DefinitionNode eggDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.EGGS, Egg.SKU_PREMIUM_EGG);
 
             // Build the purchase flow
             ResourcesFlow purchaseFlow = new ResourcesFlow("BUY_EGG");
@@ -70,8 +72,6 @@ public class BuyEggButton : MonoBehaviour {
 				HDTrackingManager.EEconomyGroup.BUY_EGG,
 				eggDef
 			);
-
-            transactionInProgress = true;
         }
 	}
 

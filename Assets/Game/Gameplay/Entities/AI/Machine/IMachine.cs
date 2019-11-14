@@ -59,14 +59,14 @@ namespace AI {
 		public abstract HoldPreyPoint[] holdPreyPoints { get; }
 
 		public abstract void Bite();
-		public abstract void BeginSwallowed(Transform _transform, bool rewardPlayer, IEntity.Type _source);
+		public abstract void BeginSwallowed(Transform _transform, bool rewardPlayer, IEntity.Type _source, KillType _killType);
 		public abstract void EndSwallowed(Transform _transform);
 		public abstract void BiteAndHold();
 		public abstract void ReleaseHold();
 
 		public abstract Quaternion GetDyingFixRot();
 
-		public abstract bool Burn(Transform _transform, IEntity.Type _source, bool instant = false, FireColorSetupManager.FireColorType fireColorType = FireColorSetupManager.FireColorType.RED );
+		public abstract bool Burn(Transform _transform, IEntity.Type _source, KillType _killType = KillType.BURNT, bool _instant = false, FireColorSetupManager.FireColorType fireColorType = FireColorSetupManager.FireColorType.RED );
 
 		public abstract bool Smash( IEntity.Type _source );
 

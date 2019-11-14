@@ -177,7 +177,7 @@ namespace AI {
 
 		override public void Bite() { }
 
-		override public void BeginSwallowed(Transform _transform, bool _rewardPlayer, IEntity.Type _source) { }
+		override public void BeginSwallowed(Transform _transform, bool _rewardPlayer, IEntity.Type _source, KillType _killType) { }
 
 		override public void EndSwallowed(Transform _transform) { }
 
@@ -191,7 +191,7 @@ namespace AI {
 			return Quaternion.identity;
 		}
 
-		override public bool Burn(Transform _transform, IEntity.Type _source, bool instant = false, FireColorSetupManager.FireColorType fireColorType = FireColorSetupManager.FireColorType.RED) {
+		override public bool Burn(Transform _transform, IEntity.Type _source, KillType _killType = KillType.BURNT, bool _instant = false, FireColorSetupManager.FireColorType fireColorType = FireColorSetupManager.FireColorType.RED) {
 			return false;
 		}
 

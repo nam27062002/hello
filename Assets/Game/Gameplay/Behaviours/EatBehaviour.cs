@@ -1156,7 +1156,7 @@ public abstract class EatBehaviour : ISpawnable {
 
 	/// On kill function over prey. Eating or holding
 	protected void StartSwallow(AI.IMachine _prey) {
-		_prey.BeginSwallowed(m_mouth, m_rewardsPlayer, m_type);//( m_mouth );
+		_prey.BeginSwallowed(m_mouth, m_rewardsPlayer, m_type, KillType.EATEN);//( m_mouth );
 	}
 
 	private void EndSwallow(AI.IMachine _prey){

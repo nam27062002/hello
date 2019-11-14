@@ -149,14 +149,15 @@ public class ARGameManager : MonoBehaviour
 #if UNITY_EDITOR_OSX
 		bForceAR = true;
 #endif
+        PermissionsManager.EPermissionStatus eCameraStatus = PermissionsManager.EPermissionStatus.E_PERMISSION_DENIED;
 
 #if (UNITY_IOS || UNITY_EDITOR_OSX)
-		PermissionsManager.EPermissionStatus eCameraStatus = PermissionsManager.SharedInstance.GetIOSPermissionStatus (PermissionsManager.EIOSPermission.Camera);
+		eCameraStatus = PermissionsManager.SharedInstance.GetIOSPermissionStatus (PermissionsManager.EIOSPermission.Camera);
 #elif UNITY_ANDROID
-		PermissionsManager.EPermissionStatus eCameraStatus = PermissionsManager.SharedInstance.GetAndroidPermissionStatus ("android.permission.CAMERA");
+		eCameraStatus = PermissionsManager.SharedInstance.GetAndroidPermissionStatus ("android.permission.CAMERA");
 #endif
 
-		Debug.Log ("onPressedButtonAR eCameraStatus: " + eCameraStatus);
+        Debug.Log ("onPressedButtonAR eCameraStatus: " + eCameraStatus);
 
 		if (bForceAR || eCameraStatus == PermissionsManager.EPermissionStatus.E_PERMISSION_GRANTED)
 		{
