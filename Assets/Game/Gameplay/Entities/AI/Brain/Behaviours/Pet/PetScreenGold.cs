@@ -8,6 +8,7 @@ namespace AI {
 		public class PetScreenGoldData : StateComponentData {
 			public string audio;
 			public string particle;
+			public string m_powerSetup = "transform_gold";
 		}
 
 
@@ -31,7 +32,22 @@ namespace AI {
 			}
 
 			protected override void OnInitialise() {
+
 				m_data = m_pilot.GetComponentData<PetScreenGoldData>();
+				
+				State st = m_stateMachine.GetState("Wander");
+				if ( st != null )
+				{
+					AI.Behaviour.TimerRanged behaviour = st.GetComponent<AI.Behaviour.TimerRanged>();
+					if ( behaviour != null )
+					{
+						DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, m_data.m_powerSetup);
+						float timed = def.GetAsFloat( "param1", 5.0f );
+						behaviour.data.seconds.Set( timed, timed );
+					}
+				}
+				
+				
 				string version = "";
 				switch(FeatureSettingsManager.instance.Particles)
 				{

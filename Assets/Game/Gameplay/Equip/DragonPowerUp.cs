@@ -331,11 +331,13 @@ public class DragonPowerUp : MonoBehaviour {
 					if ( !string.IsNullOrEmpty(powerUp2) )
 						SetPowerUp( powerUp2, _fromPet );
 				}break;
-				case "tranformGold":
+				case "transformGold":
 				{
 					if (!_fromPet )
 					{
 						m_transformGold = true;
+						m_transformGoldInterval = def.GetAsFloat("param1", 5.0f);
+						m_transformGoldTimer = m_transformGoldInterval / 2.0f;
 						this.enabled = true;
 					}
 				}break;
