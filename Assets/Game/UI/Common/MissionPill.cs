@@ -216,8 +216,11 @@ public class MissionPill : MonoBehaviour, IBroadcastListener {
         // Refresh recommended Dragon
         bool showRecommendedGroup = false;
 
-        if (m_recommendedDragonGroup != null && mission.objective.recommendedDragon != null)
+        if (m_recommendedDragonGroup != null)
+            
         {
+            if (mission.objective.recommendedDragon != null)
+            {
                 IDragonData dragon = mission.objective.recommendedDragon;
 
                 if (m_recommendedDragonIcon != null)
@@ -231,9 +234,12 @@ public class MissionPill : MonoBehaviour, IBroadcastListener {
 
                 if (m_recommendedDragonText != null)
                     m_recommendedDragonText.Localize(dragon.def.GetAsString("tidName"));
+            }
+
+            m_recommendedDragonGroup.SetActive(showRecommendedGroup);
         }
 
-        m_recommendedDragonGroup.SetActive(showRecommendedGroup);
+        
 
 
         mission.updated = false;

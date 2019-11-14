@@ -52,7 +52,7 @@ public class OfferPackRemoveAds : OfferPack {
 	/// <returns>Whether the pack has change its state.</returns>
 	public override bool UpdateState()
     {
-        OffersManager.LogPack("UpdateState {0} | {1}", Colors.pink, def.sku, m_state);
+        OffersManager.LogPack(this, "UpdateState {0} | {1}", Colors.pink, def.sku, m_state);
 
         // Based on pack's state
         State oldState = m_state;
