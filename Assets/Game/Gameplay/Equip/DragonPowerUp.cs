@@ -22,6 +22,11 @@ public class DragonPowerUp : MonoBehaviour {
 	private float m_entityXPMultiplier;
 	private float m_entityScoreMultiplier;
 
+	// Transform Gold
+	private bool m_transformGold = false;
+	private float m_transformGoldTimer = 0;
+	private float m_transformGoldInterval = 5.0f;
+
 	//------------------------------------------------------------------------//
 	// METHODS																  //
 	//------------------------------------------------------------------------//
@@ -42,6 +47,19 @@ public class DragonPowerUp : MonoBehaviour {
 	void Start() 
 	{
 		ApplyPowerups();
+	}
+
+	void Update()
+	{
+		if ( m_transformGold )
+		{
+			m_transformGoldTimer -= Time.deltaTime;
+			if ( m_transformGoldTimer <= 0 )
+			{
+				m_transformGoldTimer = m_transformGoldInterval;
+				EntityManager.instance.ForceOnScreenEntitiesGolden();
+			}
+		}
 	}
 
 	public void ApplyPowerups()
@@ -114,6 +132,9 @@ public class DragonPowerUp : MonoBehaviour {
 		InstanceManager.player.RemovePowerUps();
 		Entity.RemovePowerUps();
 		Broadcaster.Broadcast(BroadcastEventType.APPLY_ENTITY_POWERUPS);
+
+		m_transformGold = false;
+		this.enabled = false;
 
 		ApplyPowerups();
 	}
@@ -309,6 +330,14 @@ public class DragonPowerUp : MonoBehaviour {
 					string powerUp2 = def.Get("param2");
 					if ( !string.IsNullOrEmpty(powerUp2) )
 						SetPowerUp( powerUp2, _fromPet );
+				}break;
+				case "tranformGold":
+				{
+					if (!_fromPet )
+					{
+						m_transformGold = true;
+						this.enabled = true;
+					}
 				}break;
 				default:
 				{
