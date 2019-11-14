@@ -165,7 +165,7 @@ public class HUDStatBar : IHUDWidget, IBroadcastListener {
             {
                 // Check remaining lives to show more health Icons!
                 Messenger.AddListener<DamageType, Transform>(MessengerEvents.PLAYER_KO, OnPlayerKo);
-                Messenger.AddListener(MessengerEvents.PLAYER_FREE_REVIVE, OnFreeRevive);
+				Messenger.AddListener<DragonPlayer.ReviveReason>(MessengerEvents.PLAYER_REVIVE, OnFreeRevive);
                 Messenger.AddListener(MessengerEvents.PLAYER_MUMMY_REVIVE, OnMummyRevive);
                 RefreshIcons();
             }break;
@@ -204,7 +204,7 @@ public class HUDStatBar : IHUDWidget, IBroadcastListener {
             case Type.Health:
             {
                 Messenger.RemoveListener<DamageType, Transform>(MessengerEvents.PLAYER_KO, OnPlayerKo);
-                Messenger.RemoveListener(MessengerEvents.PLAYER_FREE_REVIVE, OnFreeRevive);
+				Messenger.RemoveListener<DragonPlayer.ReviveReason>(MessengerEvents.PLAYER_REVIVE, OnFreeRevive);
                 Messenger.RemoveListener(MessengerEvents.PLAYER_MUMMY_REVIVE, OnMummyRevive);
             }break;
             case Type.Energy:
@@ -597,7 +597,7 @@ public class HUDStatBar : IHUDWidget, IBroadcastListener {
         m_bars[i].gradient.color2 = m_bars[i].color2;
 	}
 
-	void OnFreeRevive()
+	void OnFreeRevive(DragonPlayer.ReviveReason reason)
 	{
         RefreshIcons( true );
 
@@ -620,10 +620,10 @@ public class HUDStatBar : IHUDWidget, IBroadcastListener {
 			case Type.Health:
 			{
 				int remainingLives = InstanceManager.player.GetReminingLives();
-				int max = Mathf.Max( m_extraIcons.Count, remainingLives);
-				for( int i = 0; i<max; i++ )
+				int max = Mathf.Max(remainingLives, m_extraIcons.Count);
+				for (int i = 0; i < max; i++)
 				{
-					while ( i >= m_extraIcons.Count )
+					if ( i >= m_extraIcons.Count )
 					{
 						// Add icon
 						// Set active false
@@ -638,21 +638,9 @@ public class HUDStatBar : IHUDWidget, IBroadcastListener {
 						extraRt.localPosition = rt.localPosition + Vector3.right * (rt.rect.width * 0.2f * (m_extraIcons.Count + 1));
 						// extraRt.offsetMax.y = 0;
 
-						Animator anim = extraIcon.GetComponent<Animator>();
-						if (anim) {
-							anim.enabled = false;
-						}
-
 						m_extraIcons.Add( extraIcon );
-
-
 					}
-				}
-				if (showAnimations && remainingLives < m_extraIcons.Count) {
-					Animator anim = m_extraIcons[remainingLives].GetComponent<Animator>();
-					if (anim) {
-						anim.enabled = true;
-					}
+					m_extraIcons[i].SetActive( i < remainingLives );
 				}
 			}break;
 		}

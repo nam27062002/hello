@@ -437,7 +437,7 @@ public class DragonParticleController : MonoBehaviour, IBroadcastListener
 				}
 			}break;
             case DragonPlayer.ReviveReason.MUMMY:
-			case DragonPlayer.ReviveReason.FREE_REVIVE_PET:
+			case DragonPlayer.ReviveReason.FREE_REVIVE_POWER:
 			{
 				
 			}break;
