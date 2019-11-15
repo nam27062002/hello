@@ -63,6 +63,7 @@ public class MissionPill : MonoBehaviour, IBroadcastListener {
     [SerializeField] private UISpriteAddressablesLoader m_recommendedDragonIcon = null;
     [SerializeField] private Localizer m_recommendedDragonText = null;
 
+
     [Separator("Cooldown State")]
 	[SerializeField] private GameObject m_cooldownObj = null;
 	[Space]
@@ -88,6 +89,7 @@ public class MissionPill : MonoBehaviour, IBroadcastListener {
     // Cached references
     private Localizer m_cooldownSkipFreeText = null;
     private Localizer m_cooldownSkipPaidText = null;
+    private DefinitionNode m_recommendedDragonDefinition = null;
 
     //------------------------------------------------------------------//
     // GENERIC METHODS													//
@@ -222,6 +224,9 @@ public class MissionPill : MonoBehaviour, IBroadcastListener {
             if (mission.objective.recommendedDragon != null)
             {
                 IDragonData dragon = mission.objective.recommendedDragon;
+
+                // Keep a cached reference for the tooltip
+                m_recommendedDragonDefinition = dragon.def;
 
                 if (m_recommendedDragonIcon != null)
                 {
@@ -715,10 +720,32 @@ public class MissionPill : MonoBehaviour, IBroadcastListener {
 		Refresh();
 	}
 
-	/// <summary>
-	/// Force a refresh.
-	/// </summary>
-	private void DEBUG_OnRefreshMissionInfo() {
+    /// <summary>
+    /// A tooltip is about to be opened.
+    /// Initialize with the recommended dragon info
+    /// Link it via the inspector.
+    /// </summary>
+    /// <param name="_tooltip">The tooltip about to be opened.</param>
+    /// <param name="_trigger">The button which triggered the event.</param>
+    public void OnRecommendedDragonTooltipOpen(UITooltip _tooltip, UITooltipTrigger _trigger)
+    {
+        
+        // Tooltip will take care of the rest
+        if (_tooltip != null)
+        {
+            // Initialize
+            ((RecommendedDragonTooltip)_tooltip).InitFromDragonDefinition(m_recommendedDragonDefinition);
+        }
+
+        // Set arrow offset to make it point to this icon
+        //powerTooltip.SetArrowOffset(m_tooltipArrowOffset);
+    }
+
+
+    /// <summary>
+    /// Force a refresh.
+    /// </summary>
+    private void DEBUG_OnRefreshMissionInfo() {
 		m_mission = MissionManager.GetMission(m_missionDifficulty);
 		Refresh();
 	}
