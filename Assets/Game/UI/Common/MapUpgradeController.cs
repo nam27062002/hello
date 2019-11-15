@@ -209,8 +209,8 @@ public class MapUpgradeController : MonoBehaviour, IBroadcastListener {
                     if (UsersManager.currentUser.removeAds.IsMapRevealAvailable())
                     {
                         // The free map reveals button is visible
-                        int coolDownSeconds = UsersManager.currentUser.removeAds.mapRevealDurationSecs;
-                        string cooldownFormatted = TimeUtils.FormatTime(coolDownSeconds, TimeUtils.EFormat.WORDS_WITHOUT_0_VALUES, 2);
+                        int coolDownSeconds = UsersManager.currentUser.removeAds.MapRevealCooldownSecs;
+                        string cooldownFormatted = TimeUtils.FormatTime(coolDownSeconds, TimeUtils.EFormat.WORDS_WITHOUT_0_VALUES, 1);
                         m_unlockFreeDescription.Localize(TID_MAP_FREE_UNLOCK_MESSAGE, cooldownFormatted);
                     }
                     else
@@ -253,6 +253,7 @@ public class MapUpgradeController : MonoBehaviour, IBroadcastListener {
     {
         if (m_unlockFreeDescription != null)
         {
+
             TimeSpan timeToReset = UsersManager.currentUser.removeAds.mapRevealTimestamp - GameServerManager.SharedInstance.GetEstimatedServerTime();
             string timeLeft = TimeUtils.FormatTime(timeToReset.TotalSeconds, TimeUtils.EFormat.ABBREVIATIONS_WITHOUT_0_VALUES, 1);
             m_unlockFreeDescription.Localize(TID_MAP_FREE_UNLOCK_COOLDOWN, timeLeft);
