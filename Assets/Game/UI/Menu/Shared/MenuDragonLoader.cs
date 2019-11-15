@@ -443,7 +443,7 @@ public class MenuDragonLoader : MonoBehaviour {
             case Mode.TOURNAMENT: {
 				if(Application.isPlaying) {
 					IDragonData dragonData = HDLiveDataManager.tournament.tournamentData.tournamentDef.dragonData;
-					LoadDragon(dragonData.sku);
+					LoadDragon(dragonData.sku, dragonData.disguise);
 				} else {
 					LoadDragon(m_placeholderDragonSku, string.Empty, true);
 				}
