@@ -574,25 +574,26 @@ public class DragonEquip : MonoBehaviour {
 		int attachPointIdx = (int)Equipable.AttachPoint.Pet_1 + _slot;
 		if(attachPointIdx < (int)Equipable.AttachPoint.Pet_1 || attachPointIdx > (int)Equipable.AttachPoint.Pet_5) return;	// [AOC] MAGIC NUMBERS!! Figure out a better way!
 		if(m_attachPoints[attachPointIdx] == null) return;
+		AttachPoint ap = m_attachPoints[attachPointIdx];
 
 		// Equip or unequip?
 		if(string.IsNullOrEmpty(_petSku)) {
 			// In the menu, trigger the animation
 			if(m_menuMode) {
 				// Launch out animation
-				if(m_attachPoints[attachPointIdx].item != null) {
-					MenuPetPreview pet = m_attachPoints[attachPointIdx].item.GetComponent<MenuPetPreview>();
+				if(ap.item != null) {
+					MenuPetPreview pet = ap.item.GetComponent<MenuPetPreview>();
 					pet.SetAnim(MenuPetPreview.Anim.OUT);
 
 					// Program a delayed destruction of the item (to give some time to see the anim)
-					GameObject.Destroy(m_attachPoints[attachPointIdx].item.gameObject, 0.3f);	// [AOC] MAGIC NUMBERS!! More or less synced with the animation
+					GameObject.Destroy(ap.item.gameObject, 0.3f);	// [AOC] MAGIC NUMBERS!! More or less synced with the animation
 				}
 
 				// Unequip
-				m_attachPoints[attachPointIdx].Unequip(false);
+				ap.Unequip(false);
 			} else {
 				// Unequip
-				m_attachPoints[attachPointIdx].Unequip(true);
+				ap.Unequip(true);
 			}
 		} else {
 			// Equip!
@@ -615,7 +616,7 @@ public class DragonEquip : MonoBehaviour {
                 // Adjust scale and parenting
                 if (m_menuMode) {
                     // In menu mode, make it a child of the dragon so it inherits scale factor
-                    newInstance.transform.SetParent(m_attachPoints[attachPointIdx].transform, false);
+                    newInstance.transform.SetParent(ap.transform, false);
                     newInstance.transform.localPosition = Vector3.zero;
                     newInstance.transform.localRotation = Quaternion.identity;
 
@@ -633,6 +634,9 @@ public class DragonEquip : MonoBehaviour {
 
                     }
 
+					// Make sure it belongs to the same layer as the dragon
+					newInstance.SetLayerRecursively(ap.gameObject.layer);
+
                     // Initialize preview and launch intro animation
                     MenuPetPreview petPreview = newInstance.GetComponent<MenuPetPreview>();
                     petPreview.sku = _petSku;
@@ -641,16 +645,16 @@ public class DragonEquip : MonoBehaviour {
                     // In game mode, adjust to dragon's scale factor
                     DragonPlayer player = GetComponent<DragonPlayer>();
                     newInstance.transform.localScale = Vector3.one * player.data.petScale;
-                    newInstance.transform.position = m_attachPoints[attachPointIdx].transform.position;
+                    newInstance.transform.position = ap.transform.position;
                     SceneManager.MoveGameObjectToScene(newInstance, gameObject.scene);
                     // newInstance.transform.localScale = Vector3.one * player.data.scale;
                 }
 
                 // Get equipable object!
-                m_attachPoints[attachPointIdx].EquipPet(newInstance.GetComponent<Equipable>());
+                ap.EquipPet(newInstance.GetComponent<Equipable>());
 
                 // Apply current pets visibility
-                m_attachPoints[attachPointIdx].gameObject.SetActive(m_showPets);
+                ap.gameObject.SetActive(m_showPets);
             }
 		}
 	}
