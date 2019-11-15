@@ -23,7 +23,7 @@ public class HUDRevive : MonoBehaviour {
     //------------------------------------------------------------------------//
     // CONSTANTS															  //
     //------------------------------------------------------------------------//
-    string TID_REVIVE_FREE = "TID_REVIVE_FREE";
+    string TID_GAME_REVIVE_FREE = "TID_GAME_REVIVE_FREE";
 
 
     //------------------------------------------------------------------------//
@@ -34,6 +34,7 @@ public class HUDRevive : MonoBehaviour {
 	[SerializeField] private TextMeshProUGUI m_pcText = null;
 	[SerializeField] private GameObject m_adsReviveButton = null;
     [SerializeField] private GameObject m_freeReviveButton = null;
+    [SerializeField] private GameObject m_pcReviveButton = null;
 
     // Other references
     [Space]
@@ -242,13 +243,16 @@ public class HUDRevive : MonoBehaviour {
                 !removeAds);
 
             // Free revives available?
+            bool freeReviveAvailable = false;
             if (removeAds)
             {
-                int revivesLeft = UsersManager.currentUser.removeAds.revivesLeft;
-                m_freeReviveButton.SetActive(revivesLeft > 0);
-                m_freeReviveButton.GetComponentInChildren<Localizer>().Localize(TID_REVIVE_FREE, revivesLeft.ToString());
+                freeReviveAvailable = UsersManager.currentUser.removeAds.revivesLeft > 0;
+                m_freeReviveButton.SetActive(freeReviveAvailable);
+                m_freeReviveButton.GetComponentInChildren<Localizer>().Localize(TID_GAME_REVIVE_FREE, freeReviveAvailable.ToString());
             }
-           
+
+            // If free revive is available, dont let the user pay gems to revive
+            m_pcReviveButton.SetActive(!freeReviveAvailable);
 
 			// Show!
 			if(m_animator != null) m_animator.Show();

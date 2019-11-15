@@ -142,6 +142,19 @@ public class RemoveAdsFeature {
             m_mapRevealDurationSecs = value;
         }
     }
+
+    public int MapRevealCooldownSecs
+    {
+        get
+        {
+            return m_mapRevealCooldownSecs;
+        }
+
+        set
+        {
+            m_mapRevealCooldownSecs = value;
+        }
+    }
     #endregion
 
 
