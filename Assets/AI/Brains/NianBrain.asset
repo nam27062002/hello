@@ -1,0 +1,122 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 476f90a6cbdac4eb69432e3a345d1c01, type: 3}
+  m_Name: NianBrain
+  m_EditorClassIdentifier: 
+  m_states:
+  - m_name: Wander
+    m_componentAssets:
+    - {fileID: 11400000, guid: 80566b1248e834f95a0ab4e9fe88b464, type: 2}
+    - {fileID: 11400000, guid: 230f52e1ad40a4246bf157c8e8ac2d66, type: 2}
+  - m_name: Idle
+    m_componentAssets:
+    - {fileID: 11400000, guid: 54603296f3e5a48fea9d81ec91327f69, type: 2}
+    - {fileID: 11400000, guid: 230f52e1ad40a4246bf157c8e8ac2d66, type: 2}
+  - m_name: Pursuit
+    m_componentAssets:
+    - {fileID: 11400000, guid: 2a0206d483a884f24ae206de699c6a34, type: 2}
+    - {fileID: 11400000, guid: 4ff482f51c1524c1cb2792d38d442b72, type: 2}
+  - m_name: Jump Dizzy Attack
+    m_componentAssets:
+    - {fileID: 11400000, guid: 95d2e0b58c6114a9c8b5e18b55390c2e, type: 2}
+  - m_name: Go Back at Home
+    m_componentAssets:
+    - {fileID: 11400000, guid: 704d9d1978a5248a79c1e6da271ef659, type: 2}
+    - {fileID: 11400000, guid: 230f52e1ad40a4246bf157c8e8ac2d66, type: 2}
+  - m_name: Guard Out Of Range
+    m_componentAssets:
+    - {fileID: 11400000, guid: 9f822a57e0f754c25bac67c6de963f75, type: 2}
+  - m_name: Guard Out Of Sight
+    m_componentAssets:
+    - {fileID: 11400000, guid: 1aa6a987737404ae78164d034163a12c, type: 2}
+  - m_name: Guard Out Of Area
+    m_componentAssets:
+    - {fileID: 11400000, guid: 1aa6a987737404ae78164d034163a12c, type: 2}
+  - m_name: Fall Down
+    m_componentAssets: []
+  - m_name: On hit ground
+    m_componentAssets:
+    - {fileID: 11400000, guid: 6020d90484daa470db6214589eaf25ff, type: 2}
+  m_transitionData:
+  - to: 1
+    id: onRest
+    from: 0
+  - to: 2
+    id: onEnemyInSight
+    from: 0
+  - to: 3
+    id: onEnemyInRange
+    from: 0
+  - to: 2
+    id: onEnemyInSight
+    from: 1
+  - to: 3
+    id: onEnemyInRange
+    from: 1
+  - to: 0
+    id: onMove
+    from: 1
+  - to: 2
+    id: onOutOfRange
+    from: 3
+  - to: 2
+    id: onDizzyRecover
+    from: 3
+  - to: 7
+    id: onOutsideArea
+    from: 2
+  - to: 6
+    id: onEnemyOutOfSight
+    from: 2
+  - to: 3
+    id: onEnemyInGuardArea
+    from: 2
+  - to: 3
+    id: onEnemyInRange
+    from: 2
+  - to: 3
+    id: onEnemyInRange
+    from: 5
+  - to: 2
+    id: onPursuitEnemy
+    from: 5
+  - to: 6
+    id: onCalm
+    from: 5
+  - to: 3
+    id: onEnemyInRange
+    from: 6
+  - to: 4
+    id: onCalmDown
+    from: 6
+  - to: 3
+    id: onEnemyInRange
+    from: 7
+  - to: 4
+    id: onCalmDown
+    from: 7
+  - to: 1
+    id: onBackAtHome
+    from: 4
+  - to: 3
+    id: onEnemyInRange
+    from: 4
+  - to: 1
+    id: onRecover
+    from: 9
+  - to: 8
+    id: onFallDown
+    from: -1
+  - to: 9
+    id: OnGround
+    from: -1
+  m_firstState_A: 0
+  m_firstState_B: 1

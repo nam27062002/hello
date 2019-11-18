@@ -35,6 +35,7 @@ namespace AI {
 		private RaycastHit[] m_raycastHits;
 
 		private bool m_onGround;
+		public bool onGround{ get{return m_onGround;} }
 		private float m_heightFromGround;
 
 		private float m_jumpStartY;
