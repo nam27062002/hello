@@ -44,6 +44,10 @@ public class BaseIcon : MonoBehaviour {
 
     [SerializeField] private string m_iconSKU;
 
+    [Space(10)]
+    [Comment("If render queue is zero, ignore it")]
+    [SerializeField] private int m_renderQueue = 0;
+
     // Keep a record of the icon type
     private bool is3DIcon;
     public bool Is3DIcon
@@ -72,7 +76,6 @@ public class BaseIcon : MonoBehaviour {
             Debug.LogError("The BaseIcon has no 2d or 3d icon field defined");
             
         }
-
     }
 
     public void LoadIcon (string _iconSku)
@@ -114,6 +117,9 @@ public class BaseIcon : MonoBehaviour {
                 m_2dIcon.sprite = Resources.Load<Sprite>(UIConstants.MISSION_ICONS_PATH + iconDef.GetAsString("asset"));
 
 				isLoadFinished = true;
+
+                ApplyRenderQueueSettings();
+
 				OnLoadFinished.Invoke();
             }
             else
@@ -199,7 +205,31 @@ public class BaseIcon : MonoBehaviour {
     {
 
         isLoadFinished = true;
-		OnLoadFinished.Invoke();
+
+        ApplyRenderQueueSettings();
+
+        OnLoadFinished.Invoke();
 	}
+
+
+    /// <summary>
+    /// Look for all the children renderers, and modify their render queue
+    /// </summary>
+    private void ApplyRenderQueueSettings()
+    {
+        if (m_renderQueue != 0)
+        {
+            if (Is3DIcon)
+            {
+                // Modify the render queue of the 3d children elements
+                RenderQueueSetter.Apply(m_3dIcon.transform, m_renderQueue, true, false);
+            }
+            else
+            {
+                // Modify the render queue of the 2d children elements
+                RenderQueueSetter.Apply(m_2dIcon.transform, m_renderQueue, false,true);
+            }
+        }
+    }
 
 }
