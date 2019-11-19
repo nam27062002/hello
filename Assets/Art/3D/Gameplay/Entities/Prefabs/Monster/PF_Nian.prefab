@@ -99,7 +99,7 @@ MonoBehaviour:
     min: 2
     max: 2.5
   m_useSpawnerRotation: 0
-  m_serializedJson: '[{"restTime":{"min":1,"max":1},"randomLookAt":false,"dataType":"AI.Behaviour.IdleData","editorFolded":false},{"speed":5.5,"isWallWalking":false,"timeToIdle":{"min":1,"max":1},"timeToChangeDirection":{"min":3,"max":3},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false},{"speed":7,"dataType":"AI.Behaviour.HomeSenseDragonData","editorFolded":false},{"speed":0,"arrivalRadius":1,"hasGuardState":false,"moveAwayOnCritical":true,"dataType":"AI.Behaviour.PursuitGroundData","editorFolded":false},{"timeBeforeBackHome":2,"dataType":"AI.Behaviour.InAreaControlData","editorFolded":false},{"dataType":"AI.Behaviour.GuardOutOfRangeData","editorFolded":true},{"guardTime":{"min":2,"max":4},"dataType":"AI.Behaviour.GuardOutOfSightData","editorFolded":true},{"standUpTime":1,"dataType":"AI.Behaviour.OnGroundData","editorFolded":true},{"jumpVelocity":15,"damage":5,"consecutiveAttacks":3,"dizzyTime":1,"retreatTime":2,"maxFacingAngle":40,"dataType":"AI.Behaviour.NianAttackData","editorFolded":false}]'
+  m_serializedJson: '[{"restTime":{"min":1,"max":1},"randomLookAt":false,"dataType":"AI.Behaviour.IdleData","editorFolded":false},{"speed":5.5,"isWallWalking":false,"timeToIdle":{"min":1,"max":1},"timeToChangeDirection":{"min":2,"max":2},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false},{"speed":7,"dataType":"AI.Behaviour.HomeSenseDragonData","editorFolded":false},{"speed":0,"arrivalRadius":1,"hasGuardState":false,"moveAwayOnCritical":true,"dataType":"AI.Behaviour.PursuitGroundData","editorFolded":false},{"timeBeforeBackHome":1,"dataType":"AI.Behaviour.InAreaControlData","editorFolded":false},{"dataType":"AI.Behaviour.GuardOutOfRangeData","editorFolded":false},{"guardTime":{"min":2,"max":2},"dataType":"AI.Behaviour.GuardOutOfSightData","editorFolded":false},{"standUpTime":1,"dataType":"AI.Behaviour.OnGroundData","editorFolded":true},{"jumpVelocity":15,"damage":5,"consecutiveAttacks":3,"dizzyTime":1,"retreatTime":1,"maxFacingAngle":40,"dataType":"AI.Behaviour.NianAttackData","editorFolded":false}]'
   m_databaseKey: PF_Nian
 --- !u!114 &11485410
 MonoBehaviour:
@@ -720,8 +720,8 @@ MonoBehaviour:
   m_enableSensor: 1
   m_sensor:
     m_senseFire: 1
-    m_sightRadius: 15
-    m_maxRadius: 12
+    m_sightRadius: 17
+    m_maxRadius: 14
     m_minRadius: 0
     m_hysteresisOffset: 0
     m_senseAbove: 1
