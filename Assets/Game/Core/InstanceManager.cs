@@ -8,7 +8,7 @@
 // INCLUDES																//
 //----------------------------------------------------------------------//
 using UnityEngine;
-using UnityEngine.Collections;
+using System.Collections;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
