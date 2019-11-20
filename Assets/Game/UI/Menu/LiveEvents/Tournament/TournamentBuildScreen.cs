@@ -15,7 +15,6 @@ public class TournamentBuildScreen : MonoBehaviour {
 	[SerializeField] private MenuDragonLoader 	m_dragonLoader = null;
 	[SerializeField] private Localizer 			m_dragonName = null;
 	[SerializeField] private Localizer 			m_dragonSkin = null;
-	[SerializeField] private PetSlot[] 			m_petSlots = null;
 	[SerializeField] private PowerIcon[] 		m_powerIcons = null;
 
 	[Separator("Tournament Info")]
@@ -81,7 +80,8 @@ public class TournamentBuildScreen : MonoBehaviour {
 		IDragonData dragonData = m_tournament.tournamentData.tournamentDef.dragonData;
 		m_dragonName.Localize(dragonData.def.Get("tidName"));
 
-		m_dragonLoader.LoadDragon(dragonData.sku, dragonData.disguise);
+		m_dragonLoader.mode = MenuDragonLoader.Mode.TOURNAMENT;	// Make sure it's in the right mode
+		m_dragonLoader.Reload();
 		DefinitionNode skinDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, dragonData.disguise);
 		if (skinDef.GetAsInt("shopOrder") > 0) { // skins
 			m_dragonSkin.Localize(skinDef.Get("tidName"));
@@ -94,22 +94,17 @@ public class TournamentBuildScreen : MonoBehaviour {
 		m_dragonPower.InitFromDefinition(powerup, false);*/
 
 		//-- Pets -----------------------------------------------------//
-		DragonEquip dragonEquip = m_dragonLoader.FindComponentRecursive<DragonEquip>();
+		/*DragonEquip dragonEquip = m_dragonLoader.FindComponentRecursive<DragonEquip>();
+		for(int i = 0; i < dragonData.pets.Count; ++i) {
+			if(i < dragonData.pets.Count) {
+				// Equip the pet
+				dragonEquip.EquipPet(dragonData.pets[i], i);
 
-		for (int i = 0; i < m_petSlots.Length; ++i) {
-			if (i < dragonData.pets.Count && !string.IsNullOrEmpty(dragonData.pets[i])) {
-				// Load pet
-				m_petSlots[i].Refresh(dragonData.pets[i], true);
-				m_petSlots[i].gameObject.SetActive(true);
-
-				// Put the pet in the proper position depending on dragon
+				// Make sure it's in the right layer
 				AttachPoint ap = dragonEquip.GetAttachPoint(Equipable.AttachPoint.Pet_1 + i);
-				m_petSlots[i].petLoader.transform.position = ap.transform.position;
-			} else {
-				// Hide slot
-				m_petSlots[i].gameObject.SetActive(false);
+				if(ap != null) ap.gameObject.SetLayerRecursively(m_dragonLoader.gameObject.layer);
 			}
-		}
+		}*/
 
 		//-- Powers ---------------------------------------------------//
 		// [AOC] PowerIcon does all the job for us!
