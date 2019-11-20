@@ -243,13 +243,11 @@ public class HUDRevive : MonoBehaviour {
                 !removeAds);
 
             // Free revives available?
-            bool freeReviveAvailable = false;
-            if (removeAds)
-            {
-                freeReviveAvailable = UsersManager.currentUser.removeAds.revivesLeft > 0;
-                m_freeReviveButton.SetActive(freeReviveAvailable);
-                m_freeReviveButton.GetComponentInChildren<Localizer>().Localize(TID_GAME_REVIVE_FREE, freeReviveAvailable.ToString());
-            }
+            bool freeReviveAvailable = removeAds && UsersManager.currentUser.removeAds.revivesLeft > 0;
+
+            // Free revive button
+            m_freeReviveButton.SetActive(freeReviveAvailable);
+            m_freeReviveButton.GetComponentInChildren<Localizer>().Localize(TID_GAME_REVIVE_FREE, freeReviveAvailable.ToString());
 
             // If free revive is available, dont let the user pay gems to revive
             m_pcReviveButton.SetActive(!freeReviveAvailable);
