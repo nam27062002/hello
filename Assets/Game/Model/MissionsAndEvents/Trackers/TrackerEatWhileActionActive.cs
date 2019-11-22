@@ -47,7 +47,7 @@ public class TrackerEatWhileActionActive : TrackerBase {
 		Debug.Assert(m_targetSkus != null);
 
 		// Subscribe to external events
-		Messenger.AddListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_EATEN, OnKill);
+		Messenger.AddListener<Transform, IEntity, Reward, KillType>(MessengerEvents.ENTITY_KILLED, OnEaten);
 	}
 
 	/// <summary>
@@ -65,7 +65,7 @@ public class TrackerEatWhileActionActive : TrackerBase {
 	/// </summary>
 	override public void Clear() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_EATEN, OnKill);
+		Messenger.RemoveListener<Transform, IEntity, Reward, KillType>(MessengerEvents.ENTITY_KILLED, OnEaten);
 
 		// Call parent
 		base.Clear();
@@ -95,30 +95,42 @@ public class TrackerEatWhileActionActive : TrackerBase {
 	/// </summary>
 	/// <param name="_entity">The source entity, optional.</param>
 	/// <param name="_reward">The reward given.</param>
-	private void OnKill(Transform _t, IEntity _e, Reward _reward) {
-		//
-		bool ok = false;
-        if (_e != null) {
-            switch (m_action) {
-                case Actions.FreeFall:     ok = _e.onDieStatus.isInFreeFall;      break;
-                case Actions.PilotActionA: ok = _e.onDieStatus.isPressed_ActionA; break;
-                case Actions.PilotActionB: ok = _e.onDieStatus.isPressed_ActionB; break;
-                case Actions.PilotActionC: ok = _e.onDieStatus.isPressed_ActionC; break;
+	private void OnEaten(Transform _t, IEntity _e, Reward _reward, KillType _type) {
+
+        if (_type == KillType.EATEN)
+        {
+
+            bool ok = false;
+            if (_e != null)
+            {
+                switch (m_action)
+                {
+                    case Actions.FreeFall: ok = _e.onDieStatus.isInFreeFall; break;
+                    case Actions.PilotActionA: ok = _e.onDieStatus.isPressed_ActionA; break;
+                    case Actions.PilotActionB: ok = _e.onDieStatus.isPressed_ActionB; break;
+                    case Actions.PilotActionC: ok = _e.onDieStatus.isPressed_ActionC; break;
+                }
+            }
+
+            if (ok)
+            {
+                // Count automatically if we don't have any type filter
+                if (m_targetSkus.Count == 0)
+                {
+                    currentValue++;
+                }
+                else
+                {
+                    if (_e != null)
+                    {
+                        if (m_targetSkus.Contains(_e.sku))
+                        {
+                            // Found!
+                            currentValue++;
+                        }
+                    }
+                }
             }
         }
-
-		if (ok) {
-			// Count automatically if we don't have any type filter
-			if(m_targetSkus.Count == 0) {
-				currentValue++;
-			} else {
-                if (_e != null) {
-                    if (m_targetSkus.Contains(_e.sku)) {
-						// Found!
-						currentValue++;
-					}
-				}
-			}
-		}
 	}
 }

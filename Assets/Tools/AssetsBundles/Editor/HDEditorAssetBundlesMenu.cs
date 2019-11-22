@@ -12,7 +12,7 @@ public class HDEditorAssetBundlesMenu : MonoBehaviour
     private const string MENU_AUTO_GENERATE = ROOT_MENU + "Auto Generate/";
     private const string MENU_AUTO_GENERATE_NPCS = MENU_AUTO_GENERATE + "Auto Generate NPCs Asset Bundles";
     private const string MENU_AUTO_GENERATE_PARTICLES = MENU_AUTO_GENERATE + "Auto Generate Particles Asset Bundles";
-
+    
     private const string MENU_DRAGONS_ASSIGN_BUNDLES =ROOT_MENU + "Dragons/Auto Assign Dragon Bundles";
 
    
@@ -141,6 +141,7 @@ public class HDEditorAssetBundlesMenu : MonoBehaviour
         }
     }
 
+    
     [MenuItem(MENU_DRAGONS_ASSIGN_BUNDLES, false, 54)]
     public static void AssgignDragonBundles()
     {
@@ -159,8 +160,7 @@ public class HDEditorAssetBundlesMenu : MonoBehaviour
                 List<string> local_materials = new List<string>();
                 List<string> icons = new List<string>();
                 List<string> local_icons = new List<string>();
-
-
+                
                 // Assign dragon stuff to a bundle
                 if ( dragonDef.Get("type") == "normal" )
                 {

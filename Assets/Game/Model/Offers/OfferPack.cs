@@ -47,20 +47,23 @@ public class OfferPack {
 		PROGRESSION,
 		PUSHED,
 		ROTATIONAL,
+		FREE,
+        REMOVE_ADS,
         COUNT
 	}
 
-	public const int MAX_ITEMS = 3; // For now
+    public const int MAX_ITEMS = 3; // For now
 	public const Type DEFAULT_TYPE = Type.PROGRESSION;
+    public const UserProfile.Currency DEFAULT_CURRENCY = UserProfile.Currency.REAL;
 
-	#endregion
+    #endregion
 
-	//------------------------------------------------------------------------//
-	// MEMBERS AND PROPERTIES												  //
-	//------------------------------------------------------------------------//
-	#region MEMBERS AND PROPERTIES
-	// Pack setup
-	protected DefinitionNode m_def = null;
+    //------------------------------------------------------------------------//
+    // MEMBERS AND PROPERTIES												  //
+    //------------------------------------------------------------------------//
+    #region MEMBERS AND PROPERTIES
+    // Pack setup
+    protected DefinitionNode m_def = null;
 	public DefinitionNode def {
 		get { return m_def; }
 	}
@@ -70,7 +73,13 @@ public class OfferPack {
 		get { return m_type; }
 	}
 
-	protected List<OfferPackItem> m_items = new List<OfferPackItem>(MAX_ITEMS);
+    protected UserProfile.Currency m_currency = DEFAULT_CURRENCY;
+    public UserProfile.Currency currency
+    {
+        get { return m_currency; }
+    }
+
+    protected List<OfferPackItem> m_items = new List<OfferPackItem>(MAX_ITEMS);
 	public List<OfferPackItem> items {
 		get { return m_items; }
 	}
@@ -216,7 +225,7 @@ public class OfferPack {
 	/// </summary>
 	/// <returns>Whether the pack has change its state.</returns>
 	public virtual bool UpdateState() {
-		OffersManager.LogPack("UpdateState {0} | {1}", Colors.pink, def.sku, m_state);
+		OffersManager.LogPack(this, "UpdateState {0} | {1}", Colors.pink, def.sku, m_state);
 
 		// Based on pack's state
 		State oldState = m_state;
@@ -355,11 +364,24 @@ public class OfferPack {
 		// Offer Type
 		m_type = StringToType(m_def.GetAsString("type"));
 
-		// Items - limited to 3 for now
-		for(int i = 1; i <= MAX_ITEMS; ++i) {	// [1..N]
+        // Currency type
+        m_currency = StringToCurrency(m_def.GetAsString("currency"));
+
+		// Choose tracking group for rewards depending on offer type
+		HDTrackingManager.EEconomyGroup ecoGroup = HDTrackingManager.EEconomyGroup.SHOP_OFFER_PACK;
+		if(m_type == Type.FREE) {
+			ecoGroup = HDTrackingManager.EEconomyGroup.SHOP_AD_OFFER_PACK;
+		}
+        else if (m_type == Type.REMOVE_ADS)
+        {
+            ecoGroup = HDTrackingManager.EEconomyGroup.SHOP_REMOVE_ADS_PACK;
+        }
+
+        // Items - limited to 3 for now
+        for (int i = 1; i <= MAX_ITEMS; ++i) {	// [1..N]
 			// Create and initialize new item
 			OfferPackItem item = new OfferPackItem();
-			item.InitFromDefinition(_def, i);
+			item.InitFromDefinition(_def, i, ecoGroup);
 
 			// If a reward wasn't generated, the item is either not properly defined or the pack doesn't have this item, don't store it
 			if(item.reward == null) continue;
@@ -458,7 +480,9 @@ public class OfferPack {
 		// General
 		SetValueIfMissing(ref _def, "uniqueId", m_uniqueId.ToString(CultureInfo.InvariantCulture));
 		SetValueIfMissing(ref _def, "type", TypeToString(DEFAULT_TYPE));
-		SetValueIfMissing(ref _def, "order", m_order.ToString(CultureInfo.InvariantCulture));
+        SetValueIfMissing(ref _def, "currency", CurrencyToString(DEFAULT_CURRENCY));
+        SetValueIfMissing(ref _def, "order", m_order.ToString(CultureInfo.InvariantCulture));
+		SetValueIfMissing(ref _def, "refPrice", (0).ToString(CultureInfo.InvariantCulture));
 		SetValueIfMissing(ref _def, "discount", (0).ToString(CultureInfo.InvariantCulture));
 
 		// Featuring
@@ -530,26 +554,26 @@ public class OfferPack {
 		UserProfile profile = UsersManager.currentUser;
 		TrackingPersistenceSystem trackingPersistence = HDTrackingManager.Instance.TrackingPersistenceSystem;
 		DateTime serverTime = GameServerManager.SharedInstance.GetEstimatedServerTime();
-		OffersManager.LogPack("CHECK ACTIVATION {0}", Colors.lime, def.sku);
+		OffersManager.LogPack(this, "CHECK ACTIVATION {0}", Colors.lime, def.sku);
 
 		// Start date
-		OffersManager.LogPack("    Start Date... {0} vs {1}", Colors.paleGreen, m_startDate, serverTime);
+		OffersManager.LogPack(this, "    Start Date... {0} vs {1}", Colors.paleGreen, m_startDate, serverTime);
 		if(serverTime < m_startDate) return false;
 
 		// Progression
-		OffersManager.LogPack("    Games Played... {0} vs {1}", Colors.paleGreen, m_gamesPlayed, profile.gamesPlayed);
+		OffersManager.LogPack(this, "    Games Played... {0} vs {1}", Colors.paleGreen, m_gamesPlayed, profile.gamesPlayed);
 		if(profile.gamesPlayed < m_gamesPlayed) return false;
 
 		int playerProgress = profile.GetPlayerProgress();
-		OffersManager.LogPack("    Min Player Progress... {0} vs {1}", Colors.paleGreen, m_progressionRange.min, playerProgress);
+		OffersManager.LogPack(this, "    Min Player Progress... {0} vs {1}", Colors.paleGreen, m_progressionRange.min, playerProgress);
 		if(playerProgress < m_progressionRange.min) return false;
 
-		OffersManager.LogPack("    Eggs Collected... {0} vs {1}", Colors.paleGreen, m_openedEggs, profile.eggsCollected);
+		OffersManager.LogPack(this, "    Eggs Collected... {0} vs {1}", Colors.paleGreen, m_openedEggs, profile.eggsCollected);
 		if(profile.eggsCollected < m_openedEggs) return false;
 
 		// Payer profile
 		int totalPurchases = (trackingPersistence == null) ? 0 : trackingPersistence.TotalPurchases;
-		OffersManager.LogPack("    Payer Type... {0} (totalPurchases {1})", Colors.paleGreen, m_payerType, totalPurchases);
+		OffersManager.LogPack(this, "    Payer Type... {0} (totalPurchases {1})", Colors.paleGreen, m_payerType, totalPurchases);
 		switch(m_payerType) {
 			case PayerType.PAYER: {
 				if(totalPurchases == 0) return false;
@@ -559,49 +583,49 @@ public class OfferPack {
 		// Min/max spent
 		float totalSpent = (trackingPersistence == null) ? 0f : trackingPersistence.TotalSpent;
 
-		OffersManager.LogPack("    Min Spent... {0} vs {1}", Colors.paleGreen, m_minSpent, totalSpent);
+		OffersManager.LogPack(this, "    Min Spent... {0} vs {1}", Colors.paleGreen, m_minSpent, totalSpent);
 		if(m_minSpent > totalSpent) return false;
 
-		OffersManager.LogPack("    Max Spent... {0} vs {1}", Colors.paleGreen, m_maxSpent, totalSpent);
+		OffersManager.LogPack(this, "    Max Spent... {0} vs {1}", Colors.paleGreen, m_maxSpent, totalSpent);
 		if(totalSpent > m_maxSpent) return false;
 
 		// Min number of purchases
-		OffersManager.LogPack("    Min Number Purchases... {0} vs {1}", Colors.paleGreen, m_minNumberOfPurchases, totalPurchases);
+		OffersManager.LogPack(this, "    Min Number Purchases... {0} vs {1}", Colors.paleGreen, m_minNumberOfPurchases, totalPurchases);
 		if(m_minNumberOfPurchases > totalPurchases) return false;
 
 		// Dragons
-		OffersManager.LogPack("    Unlocked Dragons...", Colors.paleGreen);
+		OffersManager.LogPack(this, "    Unlocked Dragons...", Colors.paleGreen);
 		for(int i = 0; i < m_dragonUnlocked.Length; ++i) {
 			if(DragonManager.GetDragonData(m_dragonUnlocked[i]).lockState <= IDragonData.LockState.LOCKED) return false;
 		}
 
-		OffersManager.LogPack("    Owned Dragons...", Colors.paleGreen);
+		OffersManager.LogPack(this, "    Owned Dragons...", Colors.paleGreen);
 		for(int i = 0; i < m_dragonOwned.Length; ++i) {
 			if(!DragonManager.IsDragonOwned(m_dragonOwned[i])) return false;
 		}
 
 		// Pets
-		OffersManager.LogPack("    Unlocked Pets... {0} vs {1}", Colors.paleGreen, m_petsOwnedCount, profile.petCollection.unlockedPetsCount);
+		OffersManager.LogPack(this, "    Unlocked Pets... {0} vs {1}", Colors.paleGreen, m_petsOwnedCount, profile.petCollection.unlockedPetsCount);
 		if(profile.petCollection.unlockedPetsCount < m_petsOwnedCount) return false;
 
-		OffersManager.LogPack("    Owned Pets...", Colors.paleGreen);
+		OffersManager.LogPack(this, "    Owned Pets...", Colors.paleGreen);
 		for(int i = 0; i < m_petsOwned.Length; ++i) {
 			if(!profile.petCollection.IsPetUnlocked(m_petsOwned[i])) return false;
 		}
 
 		// Skins
-		OffersManager.LogPack("    Unlocked Skins...", Colors.paleGreen);
+		OffersManager.LogPack(this, "    Unlocked Skins...", Colors.paleGreen);
 		for(int i = 0; i < m_skinsUnlocked.Length; ++i) {
 			if(profile.wardrobe.GetSkinState(m_skinsUnlocked[i]) == Wardrobe.SkinState.LOCKED) return false;
 		}
 
-		OffersManager.LogPack("    Owned Skins...", Colors.paleGreen);
+		OffersManager.LogPack(this, "    Owned Skins...", Colors.paleGreen);
 		for(int i = 0; i < m_skinsOwned.Length; ++i) {
 			if(profile.wardrobe.GetSkinState(m_skinsOwned[i]) != Wardrobe.SkinState.OWNED) return false;
 		}
 
 		// All checks passed!
-		OffersManager.LogPack("ACTIVATION CHECKS PASSED! {0}", Colors.lime, def.sku);
+		OffersManager.LogPack(this, "ACTIVATION CHECKS PASSED! {0}", Colors.lime, def.sku);
 		return true;
 	}
 
@@ -616,13 +640,13 @@ public class OfferPack {
 		// Order is relevant!
 		// Aux vars
 		UserProfile profile = UsersManager.currentUser;
-		OffersManager.LogPack("CHECK EXPIRATION ({0}) {1}", Colors.red, _checkTime, def.sku);
+		OffersManager.LogPack(this, "CHECK EXPIRATION ({0}) {1}", Colors.red, _checkTime, def.sku);
 
 		// Multiple packs may have the same unique ID, with the intention to make 
 		// them mutually exclusive.
 		// If another pack with the same unique ID is active, mark this one as expired!
 		// Resolves issue https://mdc-tomcat-jira100.ubisoft.org/jira/browse/HDK-2026
-		OffersManager.LogPack("    Duplicated IDs...", Colors.coral);
+		OffersManager.LogPack(this, "    Duplicated IDs...", Colors.coral);
 		for(int i = 0; i < OffersManager.activeOffers.Count; ++i) {
 			// Skip if it's ourselves
 			if(OffersManager.activeOffers[i] == this) continue;
@@ -641,18 +665,18 @@ public class OfferPack {
 
 		// Purchase limit (ignore if 0 or negative, unlimited pack)
 		if(m_purchaseLimit > 0) {
-			OffersManager.LogPack("    Purchase Limit... {0} vs {1}", Colors.coral, m_purchaseLimit, m_purchaseCount);
+			OffersManager.LogPack(this, "    Purchase Limit... {0} vs {1}", Colors.coral, m_purchaseLimit, m_purchaseCount);
 			if(m_purchaseCount >= m_purchaseLimit) return true;
 		}
 
 		// Main conditions
-		OffersManager.LogPack("    Min App Version... {0} vs {1}", Colors.coral, m_minAppVersion, GameSettings.internalVersion);
+		OffersManager.LogPack(this, "    Min App Version... {0} vs {1}", Colors.coral, m_minAppVersion, GameSettings.internalVersion);
 		if(m_minAppVersion > GameSettings.internalVersion) return true;
 
 		// Payer profile
 		TrackingPersistenceSystem trackingPersistence = HDTrackingManager.Instance.TrackingPersistenceSystem;
 		int totalPurchases = (trackingPersistence == null) ? 0 : trackingPersistence.TotalPurchases;
-		OffersManager.LogPack("    Payer Type... {0} (totalPurchases {1})", Colors.coral, m_payerType, totalPurchases);
+		OffersManager.LogPack(this, "    Payer Type... {0} (totalPurchases {1})", Colors.coral, m_payerType, totalPurchases);
 		switch(m_payerType) {
 			case PayerType.NON_PAYER: {
 				if(totalPurchases > 0) return true;
@@ -661,28 +685,28 @@ public class OfferPack {
 
 		// Max spent
 		float totalSpent = (trackingPersistence == null) ? 0f : trackingPersistence.TotalSpent;
-		OffersManager.LogPack("    Max Spent... {0} vs {1}", Colors.coral, m_maxSpent, totalSpent);
+		OffersManager.LogPack(this, "    Max Spent... {0} vs {1}", Colors.coral, m_maxSpent, totalSpent);
 		if(totalSpent > m_maxSpent) return true;
 
 		// Progression
 		int playerProgress = profile.GetPlayerProgress();
-		OffersManager.LogPack("     Max Player Progress... {0} vs {1}", Colors.coral, m_progressionRange.max, playerProgress);
+		OffersManager.LogPack(this, "     Max Player Progress... {0} vs {1}", Colors.coral, m_progressionRange.max, playerProgress);
 		if(playerProgress > m_progressionRange.max) return true;
 
 		// Dragons
-		OffersManager.LogPack("    Dragons Not Owned...", Colors.coral);
+		OffersManager.LogPack(this, "    Dragons Not Owned...", Colors.coral);
 		for(int i = 0; i < m_dragonNotOwned.Length; ++i) {
 			if(DragonManager.IsDragonOwned(m_dragonNotOwned[i])) return true;
 		}
 
 		// Pets
-		OffersManager.LogPack("    Pets Not Owned...", Colors.coral);
+		OffersManager.LogPack(this, "    Pets Not Owned...", Colors.coral);
 		for(int i = 0; i < m_petsNotOwned.Length; ++i) {
 			if(profile.petCollection.IsPetUnlocked(m_petsNotOwned[i])) return true;
 		}
 
 		// Skins
-		OffersManager.LogPack("    Skins Not Owned...", Colors.coral);
+		OffersManager.LogPack(this, "    Skins Not Owned...", Colors.coral);
 		for(int i = 0; i < m_skinsNotOwned.Length; ++i) {
 			if(profile.wardrobe.GetSkinState(m_skinsNotOwned[i]) == Wardrobe.SkinState.OWNED) return true;
 		}
@@ -690,14 +714,14 @@ public class OfferPack {
 		// Countries
 		string countryCode = DeviceUtilsManager.SharedInstance.GetDeviceCountryCode();
 
-		OffersManager.LogPack("    Countries Allowed... {0}", Colors.coral, countryCode);
+		OffersManager.LogPack(this, "    Countries Allowed... {0}", Colors.coral, countryCode);
 		if(m_countriesAllowed.Length > 0 && m_countriesAllowed.IndexOf(countryCode) < 0) return true;
 
-		OffersManager.LogPack("    Countries Excluded... {0}", Colors.coral, countryCode);
+		OffersManager.LogPack(this, "    Countries Excluded... {0}", Colors.coral, countryCode);
 		if(m_countriesExcluded.IndexOf(countryCode) >= 0) return true;
 
 		// All checks passed!
-		OffersManager.LogPack("EXPIRATION CHECKS PASSED! {0}", Colors.red, def.sku);
+		OffersManager.LogPack(this, "EXPIRATION CHECKS PASSED! {0}", Colors.red, def.sku);
 		return false;
 	}
 
@@ -707,22 +731,22 @@ public class OfferPack {
 	/// <returns>Whether this pack has expired by time or not.</returns>
 	public virtual bool CheckExpirationByTime() {
 		// Never if the offer is not timed
-		OffersManager.LogPack("    Is Timed?...", Colors.coral);
+		OffersManager.LogPack(this, "    Is Timed?...", Colors.coral);
 		if(!m_isTimed) return false;
 
 		// Get server time
 		DateTime serverTime = GameServerManager.SharedInstance.GetEstimatedServerTime();
 
 		// Global end date
-		OffersManager.LogPack("    End Date... {0} vs {1}", Colors.coral, m_endDate, serverTime);
+		OffersManager.LogPack(this, "    End Date... {0} vs {1}", Colors.coral, m_endDate, serverTime);
 		if(m_endDate > DateTime.MinValue && serverTime > m_endDate) return true;
 
 		// If active, check end timestamp (duration)
-		OffersManager.LogPack("    End Timestamp... {2} && {0} vs {1}", Colors.coral, m_endTimestamp, serverTime, isActive);
+		OffersManager.LogPack(this, "    End Timestamp... {2} && {0} vs {1}", Colors.coral, m_endTimestamp, serverTime, isActive);
 		if(isActive && serverTime > m_endTimestamp) return true;
 
 		// All checks passed!
-		OffersManager.LogPack("    Expiration By Time Checks Passed!", Colors.coral);
+		OffersManager.LogPack(this, "    Expiration By Time Checks Passed!", Colors.coral);
 		return false;
 	}
 
@@ -733,15 +757,15 @@ public class OfferPack {
 	/// </summary>
 	/// <returns>Whether this pack passes defined segmentation with current user progression.</returns>
 	public virtual bool CheckSegmentation() {
-		OffersManager.LogPack("CHECK SEGMENTATION {0}", Colors.yellow, def.sku);
+		OffersManager.LogPack(this, "CHECK SEGMENTATION {0}", Colors.yellow, def.sku);
 
 		// Progression
 		UserProfile profile = UsersManager.currentUser;
 
-		OffersManager.LogPack("    SC Balance... {0} vs {1}", Colors.paleYellow, m_scBalanceRange, profile.coins);
+		OffersManager.LogPack(this, "    SC Balance... {0} vs {1}", Colors.paleYellow, m_scBalanceRange, profile.coins);
 		if(!m_scBalanceRange.Contains((float)profile.coins)) return false;
 
-		OffersManager.LogPack("    PC Balance... {0} vs {1}", Colors.paleYellow, m_hcBalanceRange, profile.pc);
+		OffersManager.LogPack(this, "    PC Balance... {0} vs {1}", Colors.paleYellow, m_hcBalanceRange, profile.pc);
 		if(!m_hcBalanceRange.Contains((float)profile.pc)) return false;
 
 		// Time since last purchase
@@ -751,16 +775,43 @@ public class OfferPack {
 			if(totalPurchases > 0) {	// Ignore if player hasn't yet purchased
 				long serverTime = GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong() / 1000L;
 				long timeSinceLastPurchase = serverTime - trackingPersistence.LastPurchaseTimestamp;
-				OffersManager.LogPack("    Time Since Last Purchase... {0} vs {1}", Colors.paleYellow, m_secondsSinceLastPurchase, timeSinceLastPurchase);
+				OffersManager.LogPack(this, "    Time Since Last Purchase... {0} vs {1}", Colors.paleYellow, m_secondsSinceLastPurchase, timeSinceLastPurchase);
 				if(m_secondsSinceLastPurchase > timeSinceLastPurchase) return false;	// Not enough time has passed
 			} else {
-				OffersManager.LogPack("    Time Since Last Purchase... {0} vs [No Purchases]", Colors.paleYellow, m_secondsSinceLastPurchase);
+				OffersManager.LogPack(this, "    Time Since Last Purchase... {0} vs [No Purchases]", Colors.paleYellow, m_secondsSinceLastPurchase);
 				return false;
 			}
 		}
 
 		// All checks passed!
-		OffersManager.LogPack("SEGMENTATION CHECKS PASSED! {0}", Colors.yellow, def.sku);
+		OffersManager.LogPack(this, "SEGMENTATION CHECKS PASSED! {0}", Colors.yellow, def.sku);
+		return true;
+	}
+
+	/// <summary>
+	/// Check if all conditions required to activate this pack (state, segmentation,
+	/// activation, expiration, etc) are met.
+	/// </summary>
+	/// <returns>Whether the pack can be activated or not.</returns>
+	public virtual bool CanBeActivated() {
+		// Skip active and expired packs
+		OffersManager.Log("        Checking state... {0}", this.state);
+		if(this.state != State.PENDING_ACTIVATION) return false;
+
+		// Skip if segmentation conditions are not met for this pack
+		OffersManager.Log("        Checking segmentation...");
+		if(!this.CheckSegmentation()) return false;
+
+		// Skip if activation conditions are not met for this pack
+		OffersManager.Log("        Checking activation...");
+		if(!this.CheckActivation()) return false;
+
+		// Also skip if for some reason the pack has expired!
+		// [AOC] TODO!! Should it be removed?
+		OffersManager.Log("        Checking expiration...");
+		if(this.CheckExpiration(false)) return false;
+
+		// All checks passed!
 		return true;
 	}
 
@@ -820,7 +871,7 @@ public class OfferPack {
 			} break;
 		}
 
-		OffersManager.LogPack("State Changed from {0} to {1} | {2}", Colors.silver, oldState, _newState, def.sku);
+		OffersManager.LogPack(this, "State Changed from {0} to {1} | {2}", Colors.silver, oldState, _newState, def.sku);
 	}
 	#endregion
 
@@ -933,7 +984,13 @@ public class OfferPack {
 			case Type.ROTATIONAL: {
 				newPack = new OfferPackRotational();
 			} break;
-			default: {
+			case Type.FREE: {
+				newPack = new OfferPackFree();
+			} break;
+            case Type.REMOVE_ADS:
+            {   newPack = new OfferPackRemoveAds();
+            }  break;
+            default: {
 				newPack = new OfferPack();
 			} break;
 		}
@@ -1032,7 +1089,9 @@ public class OfferPack {
 			case Type.PROGRESSION: 	return "progression";
 			case Type.PUSHED: 		return "push";
 			case Type.ROTATIONAL: 	return "rotational";
-		}
+			case Type.FREE:			return "free";
+            case Type.REMOVE_ADS:   return "removeAds";
+        }
 		return TypeToString(DEFAULT_TYPE);
 	}
 
@@ -1046,20 +1105,58 @@ public class OfferPack {
 			case "progression": return Type.PROGRESSION;
 			case "push":		return Type.PUSHED;
 			case "rotational":	return Type.ROTATIONAL;
+			case "free":		return Type.FREE;
+            case "removeAds":   return Type.REMOVE_ADS;
 		}
 		return DEFAULT_TYPE;
 	}
-	#endregion
 
-	//------------------------------------------------------------------------//
-	// PERSISTENCE															  //
-	//------------------------------------------------------------------------//
-	#region PERSISTENCE
-	/// <summary>
-	/// In the particular case of the offers, we only need to persist them in specific cases.
-	/// </summary>
-	/// <returns>Whether the offer should be persisted or not.</returns>
-	public virtual bool ShouldBePersisted() {
+    /// <summary>
+    /// Convert from enum Curency to string representation.
+    /// </summary>
+    /// <returns>The string representation of the given currency.</returns>
+    /// <param name="_currency">Type to be converted.</param>
+    public static string CurrencyToString(UserProfile.Currency _currency)
+    {
+        switch (_currency)
+        {
+            case UserProfile.Currency.REAL: return "real";
+            case UserProfile.Currency.HARD: return "pc";
+            case UserProfile.Currency.SOFT: return "sc";
+			case UserProfile.Currency.NONE:	return "none";
+        }
+        return CurrencyToString(DEFAULT_CURRENCY);
+    }
+
+
+    /// <summary>
+    /// Parse a string into a Currency.
+    /// </summary>
+    /// <returns>The currency corresponding to the given string.</returns>
+    /// <param name="_typeStr">String representation of a currency to be parsed.</param>
+    public static UserProfile.Currency StringToCurrency(string _currencyStr)
+    {
+        switch (_currencyStr)
+        {
+            case "real": return UserProfile.Currency.REAL;
+            case "pc": return UserProfile.Currency.HARD;
+            case "sc": return UserProfile.Currency.SOFT;
+			case "free":
+			case "none": return UserProfile.Currency.NONE;
+        }
+        return DEFAULT_CURRENCY;
+    }
+    #endregion
+
+    //------------------------------------------------------------------------//
+    // PERSISTENCE															  //
+    //------------------------------------------------------------------------//
+    #region PERSISTENCE
+    /// <summary>
+    /// In the particular case of the offers, we only need to persist them in specific cases.
+    /// </summary>
+    /// <returns>Whether the offer should be persisted or not.</returns>
+    public virtual bool ShouldBePersisted() {
 		// Never if definition is not valid
 		if(m_def == null) return false;
 

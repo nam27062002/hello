@@ -113,7 +113,10 @@ public class DragonSelectionTutorial : MonoBehaviour {
 						// Yes! Start scrolling
 						m_state = State.RUNNING;
 						m_timer.Start(m_forwardDuration * 1000);
-					}
+
+                        // Lock all the UI input while the animation is runnin
+                        Messenger.Broadcast<bool>(MessengerEvents.UI_LOCK_INPUT, true);
+                    }
 				}
 				break;
 
@@ -150,7 +153,7 @@ public class DragonSelectionTutorial : MonoBehaviour {
 						StopTutorial();
 
 						// Make sure we have the initial dragon selected
-						m_scroller.FocusDragon(UsersManager.currentUser.currentClassicDragon, true);
+						m_scroller.FocusDragon(UsersManager.currentUser.CurrentDragon, true);
 
 						// Show tier info popup
 						UbiBCN.CoroutineManager.DelayedCall(() => {
@@ -165,8 +168,11 @@ public class DragonSelectionTutorial : MonoBehaviour {
 						// Update tutorial flag and save persistence
 						UsersManager.currentUser.SetTutorialStepCompleted(TutorialStep.DRAGON_SELECTION);
 
-						// Tracking!
-						HDTrackingManager.Instance.Notify_Funnel_FirstUX(FunnelData_FirstUX.Steps._06b_animation_done);
+                        // Unock all the UI when the animation is finished
+                        Messenger.Broadcast<bool>(MessengerEvents.UI_LOCK_INPUT, false);
+
+                        // Tracking!
+                        HDTrackingManager.Instance.Notify_Funnel_FirstUX(FunnelData_FirstUX.Steps._06b_animation_done);
 
 						PersistenceFacade.instance.Save_Request();
 					} else {
@@ -237,7 +243,7 @@ public class DragonSelectionTutorial : MonoBehaviour {
 		m_scroller.LoadTutorialDragonsScroll(dragonsToView + 1);	// One more to let it view 
 
 		// 3) Final delta is the current selected dragon (most of the times will be the first one)
-		DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, UsersManager.currentUser.currentClassicDragon);
+		DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, UsersManager.currentUser.CurrentDragon);
 		int menuOrder = (def == null) ? 0 : def.GetAsInt("order");
 		m_finalDelta = m_scroller.cameraAnimator.cameraPath.path.GetDelta(menuOrder);	// Taking advantadge that we have exactly one control point per dragon
 
@@ -246,8 +252,10 @@ public class DragonSelectionTutorial : MonoBehaviour {
 		m_forwardDuration = Mathf.Abs(m_lastDelta - m_initialDelta) * pathLength / m_forwardSpeed;
 		m_backDuration = Mathf.Abs(m_lastDelta - m_finalDelta) * pathLength / m_backSpeed;
 
-		// Toggle state!
-		m_state = State.DELAY;
+
+
+        // Toggle state!
+        m_state = State.DELAY;
 		m_scroller.cameraAnimator.delta = m_initialDelta;	// Instant scroll to initial delta (first dragon)
 		m_timer.Start(m_delay * 1000);	// Start timer with the initial delay
 	}

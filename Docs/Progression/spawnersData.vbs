@@ -26,8 +26,10 @@ For Each CurrentSpawner In SpawnersFolder.Files
 	blacklist5 = "SP_ButterflyEgg_Root.prefab"
 	blacklist6 = "SP_Easter_Bunny.prefab"
 	blacklist7 = "SP_Seasonal"
-	If Right(CurrentSpawner.Path,7) = ".prefab"  And foundStrMatch(CurrentSpawner.Path, blackList1) = false AND foundStrMatch(CurrentSpawner.Path, blackList2) = false AND foundStrMatch(CurrentSpawner.Path, blackList3) = false AND foundStrMatch(CurrentSpawner.Path, blackList4) = false AND foundStrMatch(CurrentSpawner.Path, blackList5) = false AND foundStrMatch(CurrentSpawner.Path, blackList6) = false AND foundStrMatch(CurrentSpawner.Path, blackList7) = false Then
+	blacklist8 = "SP_Ground_Zombie.prefab"
+	If Right(CurrentSpawner.Path,7) = ".prefab"  And foundStrMatch(CurrentSpawner.Path, blackList1) = false AND foundStrMatch(CurrentSpawner.Path, blackList2) = false AND foundStrMatch(CurrentSpawner.Path, blackList3) = false AND foundStrMatch(CurrentSpawner.Path, blackList4) = false AND foundStrMatch(CurrentSpawner.Path, blackList5) = false AND foundStrMatch(CurrentSpawner.Path, blackList6) = false AND foundStrMatch(CurrentSpawner.Path, blackList7) = false AND foundStrMatch(CurrentSpawner.Path, blackList8) = false Then
 		Set objInputFile = objFSO.OpenTextFile(CurrentSpawner)
+		REM Wscript.echo CurrentSpawner
 		Dim substrToFind
 		Do until objInputFile.AtEndOfStream
 			currentSpawnerInfo = spawnerInfo()
@@ -52,7 +54,7 @@ Function spawnerInfo()
 	substrToFind2 = "m_entityPrefab:"
 	substrToFind3 = "m_entityPrefabStr:"
 	If foundStrMatch(tmpStr,substrToFind) = true Or foundStrMatch(tmpStr,substrToFind2) = true Or foundStrMatch(tmpStr,substrToFind3) = true Then
-		spawner = Replace(CurrentSpawner.Path,"D:\Projects\dragon\Assets\Tools\LevelEditor\SpawnerPrefabs\","")										   
+		spawner = Replace(CurrentSpawner.Path,"D:\Projects\dragon\client\Assets\Tools\LevelEditor\SpawnerPrefabs\","")										   
 		spawner = Replace(spawner,".prefab","")
 		If foundStrMatch(tmpStr,substrToFind) = true Then
 			prefabFolder = Replace(objInputFile.ReadLine,"- name: ","")

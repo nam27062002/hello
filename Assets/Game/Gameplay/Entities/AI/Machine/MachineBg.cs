@@ -27,9 +27,9 @@ namespace AI {
 		override public Vector3 angularVelocity	{ get { if (m_enableMotion && m_motion != null) return m_motion.angularVelocity; else return Vector3.zero;} }
 
 		override public float lastFallDistance { get { return 0; } }
-		public bool isKinematic{ get { return false; } set { } }
+		override public bool isKinematic{ get { return false; } set { } }
 		override public Transform enemy { get { return null; } }
-		public bool isPetTarget{ get { return false;} set { } }
+		override public bool isPetTarget{ get { return false;} set { } }
 
 		//---------------------------------------------------------------------------------
 
@@ -81,7 +81,10 @@ namespace AI {
 			if (m_enableMotion) m_motion.FixedUpdate();
 		}
 
-		override public void SetSignal(Signals.Type _signal, bool _activated) {
+        public override void CustomLateUpdate() { }
+
+
+        override public void SetSignal(Signals.Type _signal, bool _activated) {
 
 		}
 
@@ -174,7 +177,7 @@ namespace AI {
 
 		override public void Bite() { }
 
-		override public void BeginSwallowed(Transform _transform, bool _rewardPlayer, IEntity.Type _source) { }
+		override public void BeginSwallowed(Transform _transform, bool _rewardPlayer, IEntity.Type _source, KillType _killType) { }
 
 		override public void EndSwallowed(Transform _transform) { }
 
@@ -188,7 +191,7 @@ namespace AI {
 			return Quaternion.identity;
 		}
 
-		override public bool Burn(Transform _transform, IEntity.Type _source, bool instant = false, FireColorSetupManager.FireColorType fireColorType = FireColorSetupManager.FireColorType.RED) {
+		override public bool Burn(Transform _transform, IEntity.Type _source, KillType _killType = KillType.BURNT, bool _instant = false, FireColorSetupManager.FireColorType fireColorType = FireColorSetupManager.FireColorType.RED) {
 			return false;
 		}
 

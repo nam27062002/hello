@@ -26,12 +26,14 @@ public class MissionPill : MonoBehaviour, IBroadcastListener {
 	//------------------------------------------------------------------//
 	private const string TID_SKIP_FREE = "TID_MISSIONS_SKIP_FREE";
 	private const string TID_SKIP_PARTIAL = "TID_MISSIONS_SKIP_PARTIAL";
+    private const string TID_MISSIONS_SKIPS_COUNT = "TID_MISSIONS_SKIPS_COUNT";
+    private const string TID_MISSIONS_FREE_SKIPS_COOLDOWN = "TID_MISSIONS_FREE_SKIPS_COOLDOWN";
 
-	//------------------------------------------------------------------//
-	// MEMBERS															//
-	//------------------------------------------------------------------//
-	// Setup
-	[Separator("Setup")]
+    //------------------------------------------------------------------//
+    // MEMBERS															//
+    //------------------------------------------------------------------//
+    // Setup
+    [Separator("Setup")]
 	[HideEnumValues(false, true)]
 	[SerializeField] private Mission.Difficulty m_missionDifficulty = Mission.Difficulty.EASY;
 	[SerializeField] private bool m_showProgressForSingleRunMissions = false;	// It doesn't make sense to show progress for single-run missions in the menu
@@ -52,19 +54,25 @@ public class MissionPill : MonoBehaviour, IBroadcastListener {
 	[SerializeField] private Localizer m_removeCostText = null;
 	[SerializeField] private GameObject m_removeFreeButton = null;
 	[SerializeField] private GameObject m_removePaidButton = null;
-	[Space]
-	[SerializeField] private Localizer m_targetAreaText = null;
-	[SerializeField] private Localizer m_targetDragonText = null;
-	
-	[Separator("Cooldown State")]
+    [SerializeField] private GameObject m_removeNoAdsButton = null;
+    [Space]
+    [SerializeField] private GameObject m_targetZone = null;
+	[SerializeField] private Localizer m_targetZoneText = null;
+    [Space]
+    [SerializeField] private GameObject m_recommendedDragonGroup = null;
+    [SerializeField] private UISpriteAddressablesLoader m_recommendedDragonIcon = null;
+    [SerializeField] private Localizer m_recommendedDragonText = null;
+
+
+    [Separator("Cooldown State")]
 	[SerializeField] private GameObject m_cooldownObj = null;
 	[Space]
 	[SerializeField] private Localizer m_cooldownInfoText = null;
 	[SerializeField] private TextMeshProUGUI m_cooldownTimeText = null;
 	[SerializeField] private Slider m_cooldownBar = null;
 	[Space]
-	[SerializeField] private Localizer m_cooldownSkipFreeText = null;
-	[SerializeField] private Localizer m_cooldownSkipPaidText = null;
+	[SerializeField] private GameObject m_cooldownSkipFreeButton = null;
+    [SerializeField] private GameObject m_cooldownSkipPaidButton = null;
 
 	[Separator("Other Refs")]
 	[SerializeField] private Localizer m_difficultyText = null;
@@ -78,13 +86,18 @@ public class MissionPill : MonoBehaviour, IBroadcastListener {
 		}
 	}
 
-	//------------------------------------------------------------------//
-	// GENERIC METHODS													//
-	//------------------------------------------------------------------//
-	/// <summary>
-	/// Initialization
-	/// </summary>
-	private void Awake() {
+    // Cached references
+    private Localizer m_cooldownSkipFreeText = null;
+    private Localizer m_cooldownSkipPaidText = null;
+    private DefinitionNode m_recommendedDragonDefinition = null;
+
+    //------------------------------------------------------------------//
+    // GENERIC METHODS													//
+    //------------------------------------------------------------------//
+    /// <summary>
+    /// Initialization
+    /// </summary>
+    private void Awake() {
 		// Check required references
 		Debug.Assert(m_cooldownObj != null, "Required reference!");
 		Debug.Assert(m_activeObj != null, "Required reference!");
@@ -96,7 +109,11 @@ public class MissionPill : MonoBehaviour, IBroadcastListener {
 			Messenger.AddListener(MessengerEvents.DEBUG_REFRESH_MISSION_INFO, DEBUG_OnRefreshMissionInfo);
 		}
 		Messenger.AddListener<int, HDLiveDataManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_FINISHED, OnEventFinished);
-	}
+
+        // Cache a reference the localizers of the cooldown buttons
+        m_cooldownSkipFreeText = (m_cooldownSkipFreeButton != null)? m_cooldownSkipFreeButton.GetComponentInChildren<Localizer>():null;
+        m_cooldownSkipPaidText= (m_cooldownSkipPaidButton != null) ? m_cooldownSkipPaidButton.GetComponentInChildren<Localizer>():null;
+    }
 
 	/// <summary>
 	/// Default destructor.
@@ -113,10 +130,12 @@ public class MissionPill : MonoBehaviour, IBroadcastListener {
 		}
 	}
 
-	/// <summary>
-	/// Component enabled.
-	/// </summary>
-	private void OnEnable() {
+
+
+    /// <summary>
+    /// Component enabled.
+    /// </summary>
+    private void OnEnable() {
 		// Detect hot language changes
 		Broadcaster.AddListener(BroadcastEventType.LANGUAGE_CHANGED, this);
 
@@ -171,27 +190,62 @@ public class MissionPill : MonoBehaviour, IBroadcastListener {
 		Refresh();
 	}
 
-	/// <summary>
-	/// Update the pill with the data from the target mission.
-	/// </summary>
-	public void Refresh() {
-		// Make sure mission is valid
-		if(mission == null) return;
+    /// <summary>
+    /// Update the pill with the data from the target mission.
+    /// </summary>
+    public void Refresh() {
+        // Make sure mission is valid
+        if (mission == null) return;
 
-		// Select which object should be visible
-		m_cooldownObj.SetActive(m_mission.state == Mission.State.COOLDOWN || m_mission.state == Mission.State.ACTIVATION_PENDING);
-		m_activeObj.SetActive(m_mission.state == Mission.State.ACTIVE);
+        // Select which object should be visible
+        m_cooldownObj.SetActive(m_mission.state == Mission.State.COOLDOWN || m_mission.state == Mission.State.ACTIVATION_PENDING);
+        m_activeObj.SetActive(m_mission.state == Mission.State.ACTIVE);
 
-		// Update visuals
-		switch(m_mission.state) {
-			case Mission.State.COOLDOWN: 			RefreshCooldown(); 			break;
-			case Mission.State.ACTIVATION_PENDING: 	RefreshActivationPending(); break;
-			case Mission.State.ACTIVE: 				RefreshActive(); 			break;
-		}
+        // Update visuals
+        switch (m_mission.state) {
+            case Mission.State.COOLDOWN: RefreshCooldown(); break;
+            case Mission.State.ACTIVATION_PENDING: RefreshActivationPending(); break;
+            case Mission.State.ACTIVE: RefreshActive(); break;
+        }
 
-		// Shared stuff
-		// Shared mission difficulty text
-		RefreshDifficulty(m_difficultyText, true);
+        // Shared stuff
+        // Shared mission difficulty text
+        RefreshDifficulty(m_difficultyText, true);
+
+        // Refresh zone
+        RefreshZone(m_targetZone, m_targetZoneText, mission.objective.zone);
+
+        // Refresh recommended Dragon
+        bool showRecommendedGroup = false;
+
+        if (m_recommendedDragonGroup != null)
+            
+        {
+            if (mission.objective.recommendedDragon != null)
+            {
+                IDragonData dragon = mission.objective.recommendedDragon;
+
+                // Keep a cached reference for the tooltip
+                m_recommendedDragonDefinition = dragon.def;
+
+                if (m_recommendedDragonIcon != null)
+                {
+                    showRecommendedGroup = true;
+
+                    // The avatar of the dragon is the icon of the default skin
+                    string dragonIcon = IDragonData.GetDefaultDisguise(dragon.sku).GetAsString("icon");
+                    m_recommendedDragonIcon.LoadAsync(dragonIcon);
+                }
+
+                if (m_recommendedDragonText != null)
+                    m_recommendedDragonText.Localize(dragon.def.GetAsString("tidName"));
+            }
+
+            m_recommendedDragonGroup.SetActive(showRecommendedGroup);
+        }
+
+        
+
 
         mission.updated = false;
 	}
@@ -237,19 +291,6 @@ public class MissionPill : MonoBehaviour, IBroadcastListener {
         m_missionIcon.gameObject.SetActive(true);
 
 
-               
-		// Where
-		// [AOC] TODO!! Feature not yet implemented, use a fixed text for now
-		if(m_targetAreaText != null) {
-			m_targetAreaText.Localize("TID_MISSIONS_WHERE_ANY_LEVEL");
-		}
-
-		// With
-		// [AOC] TODO!! Feature not yet implemented, use a fixed text for now
-		if(m_targetDragonText != null) {
-			m_targetDragonText.Localize("TID_MISSIONS_WITH_ANY_DRAGON");
-		}
-
 		// Difficulty
 		RefreshDifficulty(m_difficultyText, true);
 
@@ -271,13 +312,21 @@ public class MissionPill : MonoBehaviour, IBroadcastListener {
 			ftux = m_mission.def.sku.Contains("ftux");
 		}
 
+        // Do the player owns the Remove Ads offer?
+        bool removeAds = UsersManager.currentUser.removeAds.IsActive;
+
 		if(m_removeFreeButton != null) {
-			m_removeFreeButton.SetActive(!ftux && canPayWithAds);
+			m_removeFreeButton.SetActive(!ftux && canPayWithAds && !removeAds);
 		}
 
 		if(m_removePaidButton != null) {
-			m_removePaidButton.SetActive(!ftux && !canPayWithAds);
+			m_removePaidButton.SetActive(!ftux && !canPayWithAds && !removeAds);
 		}
+
+        if (m_removeNoAdsButton != null) {
+            m_removeNoAdsButton.SetActive(!ftux && removeAds);
+        }
+
 	}
 
 	/// <summary>
@@ -307,12 +356,9 @@ public class MissionPill : MonoBehaviour, IBroadcastListener {
         }
 
 		bool ret = false;
-        if ( FeatureSettingsManager.AreAdsEnabled && checkVideoIsReady ) 
+        if ( checkVideoIsReady && GameAds.adsAvailable) 
         {
-			if ( MopubAdsManager.SharedInstance.IsRewardedReady() || Application.internetReachability != NetworkReachability.NotReachable )	
-			{
-				ret = true;
-			}
+			ret = true;
         }
        
 		return ret;
@@ -334,16 +380,21 @@ public class MissionPill : MonoBehaviour, IBroadcastListener {
 		// Difficulty
 		RefreshDifficulty(m_difficultyText, true);
 
-        // TODO: A more efficient way to access the button
-        if (!FeatureSettingsManager.AreAdsEnabled) {
-            GameObject skipAdButton = m_cooldownObj.FindObjectRecursive("ButtonSkipAd");
-            if (skipAdButton != null) {
-                skipAdButton.SetActive(false);
-            }
+        // The player has bought the Remove Ads feature?
+        bool removeAds = UsersManager.currentUser.removeAds.IsActive;
+
+        // Buttons 
+        if (m_cooldownSkipFreeButton != null) {
+            m_cooldownSkipFreeButton.SetActive(FeatureSettingsManager.AreAdsEnabled && !removeAds);
         }
 
+        if (m_cooldownSkipPaidButton != null) {
+            m_cooldownSkipPaidButton.SetActive(true);
+        }
+
+
 		// Skip with ad button
-		if(m_cooldownSkipFreeText != null) {
+		if(m_cooldownSkipFreeText != null && m_cooldownSkipFreeButton.activeSelf) {
 			// If the remaining time is lower than skip time, don't put time at all
 			if(m_mission.cooldownRemaining.TotalSeconds < Mission.SECONDS_SKIPPED_WITH_AD) {
 				m_cooldownSkipFreeText.Localize(TID_SKIP_FREE);
@@ -354,7 +405,8 @@ public class MissionPill : MonoBehaviour, IBroadcastListener {
 				);
 			}
 		}
-	}
+
+    }
 
 	/// <summary>
 	/// Refresh the timers part of the cooldown. Optimized to be called every frame.
@@ -375,6 +427,7 @@ public class MissionPill : MonoBehaviour, IBroadcastListener {
 		if(m_cooldownSkipPaidText != null) {
 			m_cooldownSkipPaidText.Localize(m_cooldownSkipPaidText.tid, StringUtils.FormatNumber(m_mission.skipCostPC));
 		}
+        
 	}
 
 	/// <summary>
@@ -420,27 +473,65 @@ public class MissionPill : MonoBehaviour, IBroadcastListener {
 		}
 	}
 
-	//------------------------------------------------------------------//
-	// CALLBACKS														//
-	//------------------------------------------------------------------//
-	/// <summary>
-	/// Callback for the remove mission button.
-	/// </summary>
-	public void OnRemoveMission() {
-		// Ignore if mission not initialized
-		if(m_mission == null) return;
 
-		// Start purchase flow
-		ResourcesFlow purchaseFlow = new ResourcesFlow("REMOVE_MISSION");
-		purchaseFlow.OnSuccess.AddListener(
-			(ResourcesFlow _flow) => {
-				// Just do it
-				HDTrackingManager.Instance.Notify_Missions(m_mission, HDTrackingManager.EActionsMission.skip_pay);
-				MissionManager.RemoveMission(m_missionDifficulty);
-                PersistenceFacade.instance.Save_Request();
-            }
-		);
-		purchaseFlow.Begin((long)m_mission.removeCostPC, UserProfile.Currency.HARD, HDTrackingManager.EEconomyGroup.REMOVE_MISSION, m_mission.def);
+    /// <summary>
+    /// Refreshes the zone info
+    /// </summary>
+    /// <param name="_targetZone">Zone info group</param>
+    /// <param name="_targetZoneText">Localizer of the zone</param>
+    /// <param name="_zoneSku">Sku of the zone as defined in zoneTriggersDefinitions</param>
+    private void RefreshZone(GameObject _targetZone, Localizer _targetZoneText, string _zoneSku)
+    {
+        // Safety check
+        if (_targetZone == null || _targetZoneText == null)
+            return;
+
+        // Try to find the zone in the content
+        DefinitionNode zoneDef = DefinitionsManager.SharedInstance.GetDefinitionByVariable(DefinitionsCategory.ZONE_TRIGGERS, "sku", _zoneSku);
+
+        _targetZone.SetActive(true);
+        _targetZoneText.gameObject.SetActive(true);
+
+        if (string.IsNullOrEmpty(_zoneSku))
+        {
+            // Where
+            _targetZoneText.Localize("TID_MISSIONS_ALL_MAP");
+
+        }
+        else
+        {
+            // Show the localized name of the zone
+            _targetZoneText.Localize(zoneDef.GetAsString("tidName"));
+        }
+
+        return;
+
+    }
+
+
+
+
+    //------------------------------------------------------------------//
+    // CALLBACKS														//
+    //------------------------------------------------------------------//
+    /// <summary>
+    /// Callback for the remove mission button.
+    /// </summary>
+    public void OnRemoveMission() {
+	// Ignore if mission not initialized
+	if(m_mission == null) return;
+
+	// Start purchase flow
+	ResourcesFlow purchaseFlow = new ResourcesFlow("REMOVE_MISSION");
+	purchaseFlow.OnSuccess.AddListener(
+		(ResourcesFlow _flow) => {
+			// Just do it
+			HDTrackingManager.Instance.Notify_Missions(m_mission, HDTrackingManager.EActionsMission.skip_pay);
+			MissionManager.RemoveMission(m_missionDifficulty);
+            PersistenceFacade.instance.Save_Request();
+        }
+	);
+	purchaseFlow.Begin((long)m_mission.removeCostPC, UserProfile.Currency.HARD, HDTrackingManager.EEconomyGroup.REMOVE_MISSION, m_mission.def);
 	}
 
 	/// <summary>
@@ -450,7 +541,7 @@ public class MissionPill : MonoBehaviour, IBroadcastListener {
 		if(m_mission == null) return;
 
 		// Ignore if offline
-		if(Application.internetReachability == NetworkReachability.NotReachable) {
+		if(DeviceUtilsManager.SharedInstance.internetReachability == NetworkReachability.NotReachable) {
 			// Show some feedback
 			UIFeedbackText.CreateAndLaunch(
 				LocalizationManager.SharedInstance.Localize("TID_AD_ERROR"), 
@@ -464,7 +555,30 @@ public class MissionPill : MonoBehaviour, IBroadcastListener {
 		PopupAdBlocker.LaunchAd(true, GameAds.EAdPurpose.REMOVE_MISSION, OnVideoRewardCallback);
 	}
 
-	void OnVideoRewardCallback( bool done )
+    /// <summary>
+    /// Callback for the remove mission button when the player owns the Remove ads feature
+    /// </summary>
+    public void OnNoAdsRemoveMission()
+    {
+        if (m_mission == null) return;
+
+        // Ignore if offline
+        if (DeviceUtilsManager.SharedInstance.internetReachability == NetworkReachability.NotReachable)
+        {
+            // Show some feedback
+            UIFeedbackText.CreateAndLaunch(
+                LocalizationManager.SharedInstance.Localize("TID_AD_ERROR"),
+                new Vector2(0.5f, 0.33f),
+                this.GetComponentInParent<Canvas>().transform as RectTransform
+            );
+            return;
+        }
+
+        // Instead of showing the ad video, we directly give the reward to the player
+        OnVideoRewardCallback(true);
+    }
+
+    void OnVideoRewardCallback( bool done )
 	{
 		if ( done )
 		{
@@ -530,18 +644,19 @@ public class MissionPill : MonoBehaviour, IBroadcastListener {
 		}
 	}
 
-	/// <summary>
-	/// Ad popup has been closed.
-	/// </summary>
-	private void OnSkipTimeAdClosed(bool _success) {
-		// Do it!
-		if(_success) {
-			UsersManager.currentUser.skipMissionAdUses++;
-			MissionManager.SkipMission(m_missionDifficulty, Mission.SECONDS_SKIPPED_WITH_AD, true, false);
-	        PersistenceFacade.instance.Save_Request();
 
-			Refresh();
-		}
+    /// <summary>
+    /// Ad popup has been closed.
+    /// </summary>
+    private void OnSkipTimeAdClosed(bool _success) {
+	    // Do it!
+	    if(_success) {
+		    UsersManager.currentUser.skipMissionAdUses++;
+            MissionManager.SkipMission(m_missionDifficulty, -1f, false, true);
+            PersistenceFacade.instance.Save_Request();
+
+		    Refresh();
+	    }
     }
 
 	/// <summary>
@@ -605,10 +720,32 @@ public class MissionPill : MonoBehaviour, IBroadcastListener {
 		Refresh();
 	}
 
-	/// <summary>
-	/// Force a refresh.
-	/// </summary>
-	private void DEBUG_OnRefreshMissionInfo() {
+    /// <summary>
+    /// A tooltip is about to be opened.
+    /// Initialize with the recommended dragon info
+    /// Link it via the inspector.
+    /// </summary>
+    /// <param name="_tooltip">The tooltip about to be opened.</param>
+    /// <param name="_trigger">The button which triggered the event.</param>
+    public void OnRecommendedDragonTooltipOpen(UITooltip _tooltip, UITooltipTrigger _trigger)
+    {
+        
+        // Tooltip will take care of the rest
+        if (_tooltip != null)
+        {
+            // Initialize
+            ((RecommendedDragonTooltip)_tooltip).InitFromDragonDefinition(m_recommendedDragonDefinition);
+        }
+
+        // Set arrow offset to make it point to this icon
+        //powerTooltip.SetArrowOffset(m_tooltipArrowOffset);
+    }
+
+
+    /// <summary>
+    /// Force a refresh.
+    /// </summary>
+    private void DEBUG_OnRefreshMissionInfo() {
 		m_mission = MissionManager.GetMission(m_missionDifficulty);
 		Refresh();
 	}

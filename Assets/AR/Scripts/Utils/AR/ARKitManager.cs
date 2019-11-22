@@ -190,6 +190,8 @@ public class ARKitManager : MonoBehaviour {
 		return m_kARConfigChecker.IsSupported;
 #elif UNITY_ANDROID
 		return false;
+#else
+        return false;
 #endif
 #else
         return true;
@@ -705,10 +707,12 @@ public class ARKitManager : MonoBehaviour {
 
 	void Update ()
 	{
+#if (UNITY_ANDROID || UNITY_IOS || UNITY_EDITOR_OSX)
 		if (m_kARAnchorManager != null)
 		{
 			m_kARAnchorManager.Update ();
 		}
+
 
 		if (m_eARState == eARState.E_AR_SEARCHING_SURFACES)
 		{
@@ -785,7 +789,8 @@ public class ARKitManager : MonoBehaviour {
 #endif
 			}
 		}
-	}
+#endif
+    }
 
-	//////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////
 }

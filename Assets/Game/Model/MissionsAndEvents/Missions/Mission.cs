@@ -96,7 +96,7 @@ public class Mission {
 	// Cooldown
 	private DateTime m_cooldownStartTimestamp = new DateTime();
 	public DateTime cooldownStartTimestamp { get { return m_cooldownStartTimestamp; }}
-	public TimeSpan cooldownDuration { get { return new TimeSpan(0, MissionManager.GetCooldownPerDifficulty(difficulty), 0); }}
+	public TimeSpan cooldownDuration { get { return new TimeSpan(0, 0, MissionManager.GetCooldownPerDifficulty(difficulty)); }}
 	public TimeSpan cooldownElapsed { get { return GameServerManager.SharedInstance.GetEstimatedServerTime() - m_cooldownStartTimestamp; }}
 	public TimeSpan cooldownRemaining { get { return cooldownDuration - cooldownElapsed; }}
 	public float cooldownProgress { get { return Mathf.InverseLerp(0f, (float)cooldownDuration.TotalSeconds, (float)cooldownElapsed.TotalSeconds); }}
@@ -226,7 +226,7 @@ public class Mission {
 		// Do it!
 		m_cooldownStartTimestamp = m_cooldownStartTimestamp.AddSeconds(-_seconds);	// Simulate that cooldown started earlier than it actually did
 
-		if((GameServerManager.SharedInstance.GetEstimatedServerTime() - m_cooldownStartTimestamp).TotalMinutes >= MissionManager.GetCooldownPerDifficulty(m_difficulty)) {
+		if((GameServerManager.SharedInstance.GetEstimatedServerTime() - m_cooldownStartTimestamp).TotalSeconds >= MissionManager.GetCooldownPerDifficulty(m_difficulty)) {
 			if (_useAd || _useHC) {
 				if (m_skipTimeWithAds && m_skipTimeWithHC) {
 					HDTrackingManager.Instance.Notify_Missions(this, HDTrackingManager.EActionsMission.new_mix);

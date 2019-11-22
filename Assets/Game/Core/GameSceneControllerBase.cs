@@ -1,6 +1,6 @@
 ﻿// GameSceneControllerBase.cs
 // Hungry Dragon
-// 
+//
 // Created by Marc Saña Castellví on 26/01/2016.
 // Copyright (c) 2016 Ubisoft. All rights reserved.
 
@@ -18,7 +18,7 @@ using UnityEngine;
 /// implementation of this class.
 /// </summary>
 public class GameSceneControllerBase : SceneController, IBroadcastListener {
-	
+
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
@@ -30,9 +30,9 @@ public class GameSceneControllerBase : SceneController, IBroadcastListener {
     }
 
 	private int m_progressionOffsetXP;
-	public int progressionOffsetXP { 
-		get { return m_progressionOffsetXP; } 
-		set { m_progressionOffsetXP = value; } 
+	public int progressionOffsetXP {
+		get { return m_progressionOffsetXP; }
+		set { m_progressionOffsetXP = value; }
 	}
 
 	private float m_progressionOffsetSeconds;
@@ -99,18 +99,27 @@ public class GameSceneControllerBase : SceneController, IBroadcastListener {
 		Broadcaster.RemoveListener(BroadcastEventType.GAME_ENDED, this);
 	}
 
-	/// <summary>
-	/// Called every frame.
-	/// </summary>
-	protected virtual void Update() {
-		// Skip if paused
-		if(m_paused) return;
+    protected virtual void Update() {
+        SpawnerManager.instance.Update();
+        DecorationSpawnerManager.instance.Update();
+        EntityManager.instance.Update();
+        DecorationManager.instance.Update();
+        FirePropagationManager.instance.Update();
+        BubbledEntitySystem.instance.Update();
+        MachineInflammableManager.instance.Update();
+					m_hudManager.Update();
+    }
 
-		// Propagate
-		m_hudManager.Update();
-	}
+    private void FixedUpdate() {
+        EntityManager.instance.FixedUpdate();
+    }
 
-	public virtual void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    private void LateUpdate() {
+        EntityManager.instance.LateUpdate();
+    }
+
+
+    public virtual void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
     {
         switch( eventType )
         {
@@ -120,7 +129,7 @@ public class GameSceneControllerBase : SceneController, IBroadcastListener {
             }break;
         }
     }
-    
+
 
 	public virtual bool IsLevelLoaded()
 	{
@@ -169,15 +178,17 @@ public class GameSceneControllerBase : SceneController, IBroadcastListener {
 				}
 			}
 		} else {
-			// maybe we are inside a tournament
-			if (HDLiveDataManager.tournament.isActive) {
-				HDTournamentDefinition tournamentDef = HDLiveDataManager.tournament.tournamentData.tournamentDef;
+            if (DebugSettings.overrideSpawnPoint) {
+                spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME + "_" + DebugSettings.spawnPoint);
+            } else if (HDLiveDataManager.tournament.isActive) {
+                // maybe we are inside a tournament
+                HDTournamentDefinition tournamentDef = HDLiveDataManager.tournament.tournamentData.tournamentDef;
 				string selectedSP = tournamentDef.m_goal.m_spawnPoint;
 				if (!string.IsNullOrEmpty(selectedSP)) {
 					spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME + "_" + selectedSP);
 				}
 			}
-			
+
 			if (spawnPointObj == null) {
 				spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME + "_" + dragonSKU);
 			}
@@ -192,18 +203,18 @@ public class GameSceneControllerBase : SceneController, IBroadcastListener {
 			if (dsp != null) dsp.Spawn();
 
 			Vector3 startPos = spawnPointObj.transform.position;
-			
+
 			InstanceManager.player.gameObject.SetActive(true);
 			if (_isLevelEditor && !LevelEditor.LevelEditor.settings.useIntro) {
 				InstanceManager.player.playable = true;
-				InstanceManager.player.dragonMotion.MoveToSpawnPosition(startPos);				
+				InstanceManager.player.dragonMotion.MoveToSpawnPosition(startPos);
 			} else {
 				InstanceManager.player.playable = false;
 				InstanceManager.player.dragonMotion.StartIntroMovement(startPos);
-			}		
+			}
 			// Init game camera
 			InstanceManager.gameCamera.Init(startPos);
-		}	
+		}
 	}
 
 	//------------------------------------------------------------------------//
@@ -213,14 +224,13 @@ public class GameSceneControllerBase : SceneController, IBroadcastListener {
 	/// The game has started.
 	/// </summary>
 	protected virtual void OnGameStarted() {
-		
+
 	}
 
 	/// <summary>
 	/// The game has eneded.
 	/// </summary>
 	protected virtual void OnGameEnded() {
-		
+
 	}
 }
-

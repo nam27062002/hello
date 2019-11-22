@@ -21,6 +21,7 @@ public class HUDPc : IHUDCounter {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
+	private const long VALUE_ABBREVIATION_THRESHOLD = 99999;    // Values above this will get abbreviated
 
 	//------------------------------------------------------------------//
 	// MEMBERS															//
@@ -92,7 +93,20 @@ public class HUDPc : IHUDCounter {
 	// INTERNAL UTILS													//
 	//------------------------------------------------------------------//   
 	protected override string GetValueAsString() {
-		return UIConstants.GetIconString(Value, UIConstants.IconType.PC, UIConstants.IconAlignment.RIGHT);
+		// If value is bigger than a certain amount, use abbreviated format
+		if(Value > VALUE_ABBREVIATION_THRESHOLD) {
+			return UIConstants.GetIconString(
+				StringUtils.FormatBigNumber(Value, 2, VALUE_ABBREVIATION_THRESHOLD),
+				UIConstants.IconType.PC,
+				UIConstants.IconAlignment.RIGHT
+			);
+		} else {
+			return UIConstants.GetIconString(
+				Value,
+				UIConstants.IconType.PC,
+				UIConstants.IconAlignment.RIGHT
+			);
+		}
 	}
 
 	/// <summary>

@@ -33,6 +33,10 @@ public class UISpriteAddressablesLoader : MonoBehaviour {
         set { m_loadingPrefab = value; }
     }
 
+
+    [Tooltip ("Will show this sprite if the requested asset is not found")]
+    [SerializeField] private Sprite m_assetLoadFailedImage = null;
+
     // Internal
     private AddressablesOp m_loadingRequest = null;
     public AddressablesOp loadingRequest {
@@ -40,6 +44,7 @@ public class UISpriteAddressablesLoader : MonoBehaviour {
     }
 
     private GameObject m_loadingSymbol = null;
+
 
 
     //------------------------------------------------------------------------//
@@ -97,7 +102,19 @@ public class UISpriteAddressablesLoader : MonoBehaviour {
         m_loadingRequest = null;
 
         // Load and instantiate the prefab
-        m_image.sprite = HDAddressablesManager.Instance.LoadAsset<Sprite>(m_assetId);
+        Sprite sprite = HDAddressablesManager.Instance.LoadAsset<Sprite>(m_assetId);
+        if (sprite == null)
+        {
+            if (m_assetLoadFailedImage != null)
+            {
+                m_image.sprite = m_assetLoadFailedImage;
+            }
+            
+        } else
+        {
+            m_image.sprite = sprite;
+        }
+
         m_image.enabled = true;
     }
 
@@ -117,18 +134,23 @@ public class UISpriteAddressablesLoader : MonoBehaviour {
         m_image.enabled = false;
         m_image.sprite = null;
 
-		// If we already have an ongoing request, cancel it
-		if(m_loadingRequest != null) {
-			m_loadingRequest.Cancel();
-			m_loadingRequest = null;
-			ShowLoading(false);
-		}
+        // If we already have an ongoing request, cancel it
+        if (m_loadingRequest != null) {
+            m_loadingRequest.Cancel();
+            m_loadingRequest = null;
+            ShowLoading(false);
+        }
 
-		// We don't care if we're already loading another asset, it will be ignored once done loading
-		if(!string.IsNullOrEmpty(m_assetId)) {
-			m_loadingRequest = HDAddressablesManager.Instance.LoadAssetAsync(m_assetId);
-			ShowLoading(true);
-		}
+        // We don't care if we're already loading another asset, it will be ignored once done loading
+        if (!string.IsNullOrEmpty(m_assetId)) {
+            m_loadingRequest = HDAddressablesManager.Instance.LoadAssetAsync(m_assetId);
+            ShowLoading(true);
+        }
+        else
+        {
+            // Trying to load a null asset. Show the 'asset load failed' image if specified.
+            ShowFailImage();
+        }
 
         return m_loadingRequest;
     }
@@ -138,14 +160,22 @@ public class UISpriteAddressablesLoader : MonoBehaviour {
     /// </summary>
     private void Update() {
         if (m_loadingRequest != null) {
-            if (m_loadingRequest.isDone && m_loadingRequest.GetAsset<Sprite>() != null ) {
-                m_image.sprite = m_loadingRequest.GetAsset<Sprite>();
-                m_image.enabled = true;
-                m_loadingRequest = null;
+            if (m_loadingRequest.isDone) {
+                if (m_loadingRequest.GetAsset<Sprite>() != null)
+                {
+                    m_image.sprite = m_loadingRequest.GetAsset<Sprite>();
+                    m_image.enabled = true;
+                    m_loadingRequest = null;
 
-                // Hide the loading prefab
-                ShowLoading(false);
+                    // Hide the loading prefab
+                    ShowLoading(false);
+                }else
+                {
+                    // The load has failed
+                    ShowFailImage();
+                }
             }
+
         }
     }   
 
@@ -178,6 +208,22 @@ public class UISpriteAddressablesLoader : MonoBehaviour {
         set { if (m_image != null) m_image.enabled = value; }
     }
 
+    /// <summary>
+    /// Assumes that the load has failed. Stop the load and show the proper 'asset load failed' image.
+    /// </summary>
+    private void ShowFailImage ()
+    {
+        if (m_assetLoadFailedImage != null)
+        {
+            m_image.sprite = m_assetLoadFailedImage;
+
+            m_image.enabled = true;
+            m_loadingRequest = null;
+
+            // Hide the loading prefab
+            ShowLoading(false);
+        }
+    }
     //------------------------------------------------------------------------//
     // CALLBACKS															  //
     //------------------------------------------------------------------------//

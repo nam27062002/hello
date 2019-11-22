@@ -26,10 +26,16 @@ using System.Diagnostics;
 /// <summary>
 /// Global manager for offer packs.
 /// </summary>
-public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
+public class OffersManager : Singleton<OffersManager> {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
+	private const string FREE_FTUX_PACK_SKU = "AdOfferFtux";
+
+	// Debug
+#if LOG_PACKS
+	private const string LOG_PACK_SKU = "rotationalHighPayer1";
+#endif
 
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
@@ -51,45 +57,92 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 		set { instance.m_autoRefreshEnabled = value; }
 	}
 
-	// Internal
-	private List<OfferPack> m_allEnabledOffers = new List<OfferPack>();	// All enabled and non-expired offer packs, regardless of type
+    private HappyHourOffer m_happyHour = null;
+    public HappyHourOffer happyHour {
+        get { return m_happyHour; }
+    }
+
+    private OfferPack m_removeAdsOffer = null;
+    public OfferPack removeAdsOffer
+    {
+        get { return removeAdsOffer; }
+    }
+
+    private OfferPack m_activeRemoveAdsOffer = null;
+
+
+    // Internal
+    private List<OfferPack> m_allEnabledOffers = new List<OfferPack>();	// All enabled and non-expired offer packs, regardless of type
 	private List<OfferPack> m_allOffers = new List<OfferPack>();        // All defined offer packs, regardless of state and type
-	private List<OfferPackRotational> m_allEnabledRotationalOffers = new List<OfferPackRotational>();  // All enabled and non-expired rotational offer packs
-	private List<OfferPackRotational> m_activeRotationalOffers = new List<OfferPackRotational>();	// Currently active rotational offers
 	private List<OfferPack> m_offersToRemove = new List<OfferPack>();   // Temporal list of offers to be removed from active lists
     private float m_timer = 0;
+
+	// Rotational offers
+	private List<OfferPack> m_allEnabledRotationalOffers = new List<OfferPack>();  // All enabled and non-expired rotational offer packs
+	private List<OfferPack> m_activeRotationalOffers = new List<OfferPack>();   // Currently active rotational offers
+
+	// Free offers
+	private List<OfferPack> m_allEnabledFreeOffers = new List<OfferPack>();  // All enabled and non-expired free offer packs
+
+	private OfferPackFree m_activeFreeOffer = null;   // Currently active free offer
+	public static OfferPackFree activeFreeOffer {
+		get { return instance.m_activeFreeOffer; }
+	}
+
+	public static DateTime freeOfferCooldownEndTime {
+		get { return UsersManager.currentUser.freeOfferCooldownEndTime; }
+	}
+
+	public static TimeSpan freeOfferRemainingCooldown {
+		get { return freeOfferCooldownEndTime - GameServerManager.SharedInstance.GetEstimatedServerTime(); }
+	}
+
+	public static bool isFreeOfferOnCooldown {
+		get { return freeOfferRemainingCooldown.TotalSeconds > 0; }
+	} 
+
+	private bool m_freeOfferNeedsSorting = false;	// While on cooldown, the free offer will always be placed last. Keep a flag to re-calculate order once the cooldown has finished.
 
 	// Settings
 	private OffersManagerSettings m_settings = null;
 	public static OffersManagerSettings settings {
 		get { 
 			if(instance.m_settings == null) {
-				instance.m_settings = Resources.Load<OffersManagerSettings>(OffersManagerSettings.PATH);
+				instance.m_settings = new OffersManagerSettings();
+				instance.m_settings.InitFromDefinitions();
 			}
 			return instance.m_settings;
 		}
 	}
 
-	//------------------------------------------------------------------------//
-	// GENERIC METHODS														  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// First update loop.
-	/// </summary>
-	private void Start() {
+
+    public bool enabled;
+
+    //------------------------------------------------------------------------//
+    // GENERIC METHODS														  //
+    //------------------------------------------------------------------------//
+    /// <summary>
+    /// First update loop.
+    /// </summary>
+    protected override void OnCreateInstance() {
         m_timer = 0;
-	}
+        enabled = true;
+    }
 
 	/// <summary>
 	/// Update loop.
 	/// </summary>
-	private void Update() {
+	public void Update() {
 		// Refresh offers periodically for better performance
 		// Only if allowed
-		if(m_autoRefreshEnabled) {
+		if(enabled && m_autoRefreshEnabled) {
 			if(m_timer <= 0) {
 				m_timer = settings != null ? settings.refreshFrequency : 1f;	// Crashlytics was reporting a Null reference, protect it just in case
 				Refresh(false);
+
+                // [JOM] Update the cooldowns in Remove Ads controller 
+                // Technically not an offer, but didnt find any better place for this
+               UsersManager.currentUser.removeAds.Update();
 			}
 			m_timer -= Time.deltaTime;
 		}
@@ -106,14 +159,23 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 		// Aux vars
 		DateTime serverTime = GameServerManager.SharedInstance.GetEstimatedServerTime();
 
+		// Reload settings
+		settings.InitFromDefinitions();
+
         // Clear current offers cache
         instance.m_allOffers.Clear();
 		instance.m_allEnabledOffers.Clear();
 		instance.m_activeOffers.Clear();
 		instance.m_offersToRemove.Clear();
+
 		instance.m_allEnabledRotationalOffers.Clear();
 		instance.m_activeRotationalOffers.Clear();
+
 		instance.m_featuredOffer = null;
+
+		instance.m_allEnabledFreeOffers.Clear();
+		instance.m_activeFreeOffer = null;
+
 
 		// Get all known offer packs
 		// Sort offers by their "order" field, so if two mutually exclusive offers (same uniqueId)
@@ -139,15 +201,27 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 					Log("ADDING OFFER PACK {0}", Color.green, newPack.def.sku);
                     instance.m_allEnabledOffers.Add(newPack);
 
-					// If rotational, store to the rotational collection as well
-					if(newPack.type == OfferPack.Type.ROTATIONAL) {
-						instance.m_allEnabledRotationalOffers.Add(newPack as OfferPackRotational);
-					}
+					// Additional treatment based on offer type
+					switch(newPack.type) {
+						case OfferPack.Type.ROTATIONAL: {
+							instance.m_allEnabledRotationalOffers.Add(newPack);
+						} break;
+
+						case OfferPack.Type.FREE: {
+							instance.m_allEnabledFreeOffers.Add(newPack);
+						} break;
+
+                        case OfferPack.Type.REMOVE_ADS:
+                        {
+                            instance.m_removeAdsOffer = newPack;
+                        }
+                        break;
+
+                    }
                 } else {
 					Log("OFFER PACK {0} CAN'T BE ADDED!", Color.red, newPack.def.sku);
 				}
 			}
-
 
 			// If pushed, check whether it needs to be cleaned
 			if(newPack.type == OfferPack.Type.PUSHED) {
@@ -157,6 +231,16 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 				}
 			}
 		}
+
+        // Create a new happy hour offer from the definitions
+        if (instance.m_happyHour == null)
+        {
+            instance.m_happyHour = HappyHourOffer.CreateFromDefinition();
+        }
+
+
+		// Make sure to check whether free offer is on cooldown or not and put in the right place
+		instance.m_freeOfferNeedsSorting = true;
 
 		// Refresh active and featured offers
 		instance.Refresh(true);
@@ -216,10 +300,16 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 		m_offersToRemove.Clear();
 
 		// Do we need to activate a new rotational offer?
-		RefreshRotationals();
+		dirty |= RefreshRotationals();
 
-		// Has any offer changed its state?
-		if(dirty) {
+		// Do we need to activate a new free offer?
+		dirty |= RefreshFree();
+
+        // Do we need to activate the remove Ads offer?
+        dirty |= RefreshRemoveAds();
+
+        // Has any offer changed its state?
+        if (dirty) {
 			// Re-sort active offers
 			m_activeOffers.Sort(OfferPackComparer);
 
@@ -249,95 +339,59 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 		int loopCount = 0;
 		int maxLoops = 50;  // Just in case, prevent infinite loop
 		bool dirty = false;
-		List<SimpleJSON.JSONClass> rotationalOffers = UsersManager.currentUser.newOfferPersistanceData[OfferPack.Type.ROTATIONAL];
-        Queue<string> history = new Queue<string>();
-        int max = rotationalOffers.Count;
-        for (int i = 0; i < max; i++){
-            history.Enqueue( rotationalOffers[i]["sku"]);
-        }
+		Queue<string> history = null;
 
-        // Crashlytics was reporting a Null reference, protect it just in case
-		int rotationalActiveOffers = settings != null ? settings.rotationalActiveOffers : 1;
-		
+		// Crashlytics was reporting a Null reference, protect it just in case
+		int minRotationalActiveOffers = settings != null ? settings.rotationalActiveOffers : 1;
+
+		// Store reference to persistence
+		List<SimpleJSON.JSONClass> rotationalOffersPersistence = UsersManager.currentUser.newOfferPersistanceData[OfferPack.Type.ROTATIONAL];
+
 		// Do we need to activate a new rotational pack?
-		while( m_activeRotationalOffers.Count < rotationalActiveOffers && loopCount < maxLoops) {
+		while( m_activeRotationalOffers.Count < minRotationalActiveOffers && loopCount < maxLoops) {
+			// Some logging
 			Log("Rotational offers required: {0} active", Colors.orange, m_activeRotationalOffers.Count);
-			UpdateRotationalHistory(null);	// Make sure rotational history has the proper size
-			// [AOC] TODO!!!!!!! Local history variable is not updated!
 #if LOG
 			TrackingPersistenceSystem trackingPersistence = HDTrackingManager.Instance.TrackingPersistenceSystem;
 			int totalPurchases = trackingPersistence == null ? 0 : trackingPersistence.TotalPurchases;
 			Log("Total Purchases {0}", Colors.silver, totalPurchases);
 #endif
 
+			// Make sure rotational history has the proper size
+			UpdateRotationalHistory(null);
+
+			// Create a local copy of the history to be able to manipulate it
+			// Do it ONLY if we need new rotational packs - avoid unnecessary memory allocation
+			if(history == null) {
+				history = new Queue<string>();
+			} else {
+				history.Clear();
+			}
+			int max = rotationalOffersPersistence.Count;
+			for(int i = 0; i < max; i++) {
+				history.Enqueue(rotationalOffersPersistence[i]["sku"]);
+			}
+
 			// Select a new pack!
-			OfferPackRotational rotationalPack = null;
 			loopCount++;
+			OfferPackRotational newPack = PickRandomPack(
+				m_allEnabledRotationalOffers,
+				history,
+				history.Count - m_activeRotationalOffers.Count	// Don't try with active packs!
+			) as OfferPackRotational;
 
-			// Create pool from non-expired rotational offers
-			List<OfferPackRotational> pool = new List<OfferPackRotational>();
-			for(int i = 0; i < m_allEnabledRotationalOffers.Count; ++i) {
-				// Aux
-				rotationalPack = m_allEnabledRotationalOffers[i];
-				Log("    Checking {0}", rotationalPack.def.sku);
-
-				// Skip active and expired packs
-				Log("        Checking state... {0}", rotationalPack.state);
-				if(rotationalPack.state != OfferPack.State.PENDING_ACTIVATION) continue;
-
-				// Skip if pack has recently been used
-				Log("        Checking history...");
-				if(history.Contains(rotationalPack.def.sku)) continue;
-
-				// Skip if segmentation conditions are not met for this pack
-				Log("        Checking segmentation...");
-				if(!rotationalPack.CheckSegmentation()) continue;
-
-				// Skip if activation conditions are not met for this pack
-				Log("        Checking activation...");
-				if(!rotationalPack.CheckActivation()) continue;
-
-				// Also skip if for some reason the pack has expired!
-				// [AOC] TODO!! Should it be removed?
-				Log("        Checking expiration...");
-				if(rotationalPack.CheckExpiration(false)) continue;
-
-				// Everything ok, add to the candidates pool!
-				Log("    Candidate is Good! {0}", Colors.lime, rotationalPack.def.sku);
-				pool.Add(rotationalPack);
-			}
-
-			// If no selectable pack was found, stop looping
-			if(pool.Count == 0) {
-				Log("Random pool is empty, try loosen up the history ({0})", history.Count);
-
-				// Be more flexible with repeating recently used packs
-				if(history.Count > m_activeRotationalOffers.Count) {    // Don't dequeue active packs
-					history.Dequeue();
-					continue;   // Try again!
-				} else {
-					Log("Can't remove any pack from the history, no chances of selecting a new pack :(\nBreaking loop");
-					break;  // No chances of getting any pack :(
-				}
-			}
-
-			// Pick a random pack from the pool!
-			rotationalPack = pool.GetRandomValue();
-#if LOG
-			string poolStr = "";
-			foreach(OfferPack p in pool) poolStr += "    " + p.def.sku + "\n";
-			Log("Picking random pack from a pool of {0}...\n{1}", pool.Count, poolStr);
-#endif
+			// If no pack was found, break the loop
+			if(newPack == null) break;
 
 			// Activate new pack and add it to collections
-			rotationalPack.Activate();
-			Log("ACTIVATING pack {0}", Color.green, rotationalPack.def.sku);
-			UpdateCollections(rotationalPack);
-			UpdateRotationalHistory(rotationalPack);
+			newPack.Activate();
+			Log("ACTIVATING pack {0}", Color.green, newPack.def.sku);
+			UpdateCollections(newPack);
+			UpdateRotationalHistory(newPack);
 
 			// Update persistence with this pack's new state
 			// [AOC] Packs Save() is smart, only stores packs when required
-			UsersManager.currentUser.SaveOfferPack(rotationalPack);
+			UsersManager.currentUser.SaveOfferPack(newPack);
 
 			// Manager is dirty
 			dirty = true;
@@ -348,35 +402,129 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 	}
 
 	/// <summary>
-	/// 
+	/// Checks wehther a new free pack needs to be activated and does it. 
 	/// </summary>
-	/// <returns></returns>
-	/// <param name="_newPack"></param>
+	/// <returns>Wheteher a new free pack has been activated or not.</returns>
+	private bool RefreshFree() {
+		// If a free offer is already active, check whether the free offer needs re-sorting
+		if(m_activeFreeOffer != null) {
+			// If sorting is pending and cooldown has ended, re-sort!
+			if(m_freeOfferNeedsSorting && !isFreeOfferOnCooldown) {
+				m_freeOfferNeedsSorting = false;
+				return true;
+			}
+
+			// Nothing to do if a free offer is already active and no re-sorting is needed
+			return false;
+		}
+
+		// Some logging
+		Log("Free offer required", Colors.orange);
+
+		// Store reference to persistence
+		List<SimpleJSON.JSONClass> freeOffersPersistence = UsersManager.currentUser.newOfferPersistanceData[OfferPack.Type.FREE];
+
+		// Make sure free history has the proper size
+		UpdateFreeHistory(null);
+
+		// Create a local copy of the history to be able to manipulate it
+		// Do it ONLY if we need new rotational packs - avoid unnecessary memory allocation
+		Queue<string> history = new Queue<string>();
+		int historySize = freeOffersPersistence.Count;
+		for(int i = 0; i < historySize; i++) {
+			history.Enqueue(freeOffersPersistence[i]["sku"]);
+		}
+
+		// Select a new pack!
+		// Special case for FTUX
+		OfferPackFree newPack = null;
+		if(historySize == 0) {
+			// Pick a specific pack
+			newPack = GetOfferPack(FREE_FTUX_PACK_SKU) as OfferPackFree;
+
+			// Make sure it can be activated!
+			if(newPack != null) {
+				if(!newPack.CanBeActivated()) newPack = null;
+			}
+		}
+
+		// If it's not the FTUX or for some reason the FTUX pack doesn't exist, pick a random one
+		else {
+			// Pick a random pack
+			newPack = PickRandomPack(
+				m_allEnabledFreeOffers,
+				history,
+				history.Count
+			) as OfferPackFree;
+		}
+
+		// If no pack was found, nothing else to do
+		if(newPack == null) return false;
+
+		// Activate new pack and add it to collections
+		Log("ACTIVATING pack {0}", Color.green, newPack.def.sku);
+		newPack.Activate();
+		m_activeFreeOffer = newPack;
+		UpdateCollections(newPack);
+		UpdateFreeHistory(newPack);
+
+		// Update persistence with this pack's new state
+		// [AOC] Packs Save() is smart, only stores packs when required
+		UsersManager.currentUser.SaveOfferPack(newPack);
+
+		// Done!
+		return true;
+	}
+
+    /// <summary>
+    /// Activates the remove ads offer
+    /// </summary>
+    private bool RefreshRemoveAds()
+    {
+        if (m_removeAdsOffer != null)
+        {
+            // Check if the offer is already accquired
+            bool stateChanged = m_removeAdsOffer.UpdateState();
+
+            // If active, add the offer to activeOffers collection
+            if (m_activeRemoveAdsOffer == null)
+            {
+                UpdateCollections(m_removeAdsOffer);
+                m_activeRemoveAdsOffer = m_removeAdsOffer;
+            }
+
+            // If state has changed, update the panel
+            return stateChanged;
+        }
+
+        return false;
+    }
+
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    /// <param name="_newPack"></param>
     private bool IsOfferAvailable(OfferPack _newPack) {
         List<OfferPackItem> items = _newPack.items;
 
-        for (int i = 0; i < items.Count; ++i) {
+        bool returnValue = true;
+        for (int i = 0; i < items.Count && returnValue; ++i) {
             OfferPackItem item = items[i];
 
-            DefinitionNode def = null;
-			List<string> resourceIDs = null;
+            DefinitionNode def = null;            			
             if (item.type.Equals(Metagame.RewardPet.TYPE_CODE)) {
-				resourceIDs = HDAddressablesManager.Instance.GetResourceIDsForPet(item.sku);
+			    returnValue = HDAddressablesManager.Instance.AreResourcesForPetAvailable(item.sku);
             } else if (item.type.Equals(Metagame.RewardSkin.TYPE_CODE)) {
                 def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, item.sku);
-				if(def != null) {
-					resourceIDs = HDAddressablesManager.Instance.GetResourceIDsForDragon(def.Get("dragonSku"));
-				}
-            }
-
-            if (resourceIDs != null) {
-                if (!HDAddressablesManager.Instance.IsResourceListAvailable(resourceIDs)) {
-                    return false;
-                }
-            }
+			    if(def != null) {
+				    returnValue = HDAddressablesManager.Instance.AreResourcesForDragonAvailable(def.Get("dragonSku"));
+			    }
+            }            
         }
 
-        return true;
+        return returnValue;
     }
 
     /// <summary>
@@ -389,23 +537,41 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 		switch(_offer.state) {
 			case OfferPack.State.ACTIVE: {
 				m_activeOffers.Add(_offer);
-				if(_offer.type == OfferPack.Type.ROTATIONAL) {
-					m_activeRotationalOffers.Add(_offer as OfferPackRotational);
+				switch(_offer.type) {
+					case OfferPack.Type.ROTATIONAL: {
+						m_activeRotationalOffers.Add(_offer as OfferPackRotational);
+					} break;
+
+					case OfferPack.Type.FREE: {
+						m_activeFreeOffer = _offer as OfferPackFree;
+					} break;
 				}
 			} break;
 
 			case OfferPack.State.EXPIRED: {
 				m_offersToRemove.Add(_offer);
 				m_activeOffers.Remove(_offer);
-				if(_offer.type == OfferPack.Type.ROTATIONAL) {
-					m_activeRotationalOffers.Remove(_offer as OfferPackRotational);
+				switch(_offer.type) {
+					case OfferPack.Type.ROTATIONAL: {
+						m_activeRotationalOffers.Remove(_offer as OfferPackRotational);
+					} break;
+
+					case OfferPack.Type.FREE: {
+						if(m_activeFreeOffer == _offer) m_activeFreeOffer = null;
+					} break;
 				}
 			} break;
 
 			case OfferPack.State.PENDING_ACTIVATION: {
 				m_activeOffers.Remove(_offer);
-				if(_offer.type == OfferPack.Type.ROTATIONAL) {
-					m_activeRotationalOffers.Remove(_offer as OfferPackRotational);
+				switch(_offer.type) {
+					case OfferPack.Type.ROTATIONAL: {
+						m_activeRotationalOffers.Remove(_offer as OfferPackRotational);
+					} break;
+
+					case OfferPack.Type.FREE: {
+						if(m_activeFreeOffer == _offer) m_activeFreeOffer = null;
+					} break;
 				}
 			} break;
 		}
@@ -438,7 +604,114 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 
 		// Debug
 		Log("Rotational history updated with pack {0}", (_offer == null ? "NULL" : _offer.def.sku));
-		LogRotationalHistory(ref history);
+		LogHistory(OfferPack.Type.ROTATIONAL, ref history);
+	}
+
+	/// <summary>
+	/// Add a pack to the top of the historic of free packs to prevent repetition. 
+	/// </summary>
+	/// <param name="_offer">Pack to be added.</param>
+	private void UpdateFreeHistory(OfferPackFree _offer) {
+		// Aux vars
+		List<SimpleJSON.JSONClass> history = UsersManager.currentUser.newOfferPersistanceData[OfferPack.Type.FREE];
+
+		// If a pack needs to be added, do it now
+		if(_offer != null) {
+			history.Add(_offer.Save());
+		}
+
+		// Remove as many items as needed until the history size is right
+		int activeFreeOfferCount = m_activeFreeOffer != null ? 1 : 0;	// History contains active offers
+		int maxSize = settings.rotationalHistorySize + activeFreeOfferCount;
+		Log("Checking history size: {0} vs {1} ({2} + {3})", history.Count, maxSize, settings.freeHistorySize, activeFreeOfferCount);
+		while(history.Count > maxSize) {
+			Log("    History too big: Dequeing");
+			history.RemoveRange(maxSize, history.Count - maxSize);
+		}
+
+		// Debug
+		Log("Free history updated with pack {0}", (_offer == null ? "NULL" : _offer.def.sku));
+		LogHistory(OfferPack.Type.FREE, ref history);
+	}
+
+	/// <summary>
+	/// Pick a random, valid pack from the given pool.
+	/// </summary>
+	/// <param name="_initialPool">Pool of candidate packs.</param>
+	/// <param name="_history">History of recently used packs, including any active pack (to avoid repetition).</param>
+	/// <param name="_maxTries">Max number of attempts if no valid candidate is found. With each new attempt, the last entry in the history will be removed.</param>
+	/// <returns>The selected pack. <c>null</c> if no pack could be selected.</returns>
+	private OfferPack PickRandomPack(List<OfferPack> _initialPool, Queue<string> _history, int _maxTries) {
+		// Aux vars
+		OfferPack pack = null;
+		int poolCount = _initialPool.Count;
+
+		// Create pool from non-expired offers
+		List<OfferPack> pool = new List<OfferPack>();
+		for(int i = 0; i < poolCount; ++i) {
+			// Aux
+			pack = _initialPool[i];
+			Log("    Checking {0}", pack.def.sku);
+
+			// Check if it can be activated
+			if(!pack.CanBeActivated()) continue;
+
+			// Skip if pack has recently been used
+			Log("        Checking history...");
+			if(_history.Contains(pack.def.sku)) continue;
+
+			// Everything ok, add to the candidates pool!
+			Log("    Candidate is Good! {0}", Colors.lime, pack.def.sku);
+			pool.Add(pack);
+		}
+
+		// If at least one selectable pack was found, pick a random one from the pool
+		if(pool.Count > 0) {
+			// Pick a random pack from the pool!
+			pack = pool.GetRandomValue();
+#if LOG
+			string poolStr = "";
+			foreach(OfferPack p in pool) poolStr += "    " + p.def.sku + "\n";
+			Log("Picking random pack from a pool of {0}...\n{1}", pool.Count, poolStr);
+#endif
+		} else {
+			// If no selectable pack was found, try reusing packs in the history
+			Log("Random pool is empty, try loosen up the history ({0})", _history.Count);
+
+			// Be more flexible with repeating recently used packs
+			pack = null;
+			while(pack == null && _history.Count > 0 && _maxTries > 0) {
+				// One less try
+				--_maxTries;
+
+				// Pick last pack on the history
+				string packSku = _history.Dequeue();
+
+				// Is the pack in the pool?
+				for(int i = 0; i < poolCount; ++i) {
+					if(_initialPool[i].def.sku == packSku) {
+						pack = _initialPool[i];
+						break;
+					}
+				}
+
+				// Can the pack be activated?
+				if(pack != null) {
+					Log("    Checking {0}", packSku);
+					if(!pack.CanBeActivated()) pack = null;
+				} else {
+					Log("    Couldn't find pack {0} (from history). Trying next pack.", packSku);
+				}
+			}
+
+			// Report failure
+			if(pack == null) {
+				Log("Can't remove any more pack from the history, no chances of selecting a new pack :(\nBreaking loop", Color.red);
+			}
+		}
+
+		// Return selected pack
+		return pack;
 	}
 
 	/// <summary>
@@ -448,16 +721,36 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 	/// <param name="_p1">First pack to compare.</param>
 	/// <param name="_p2">Second pack to compare.</param>
 	private static int OfferPackComparer(OfferPack _p1, OfferPack _p2) {
+		// If free offer is on cooldown, check if either pack is the active free offer.
+		// It will always go last.
+		if(isFreeOfferOnCooldown) {
+			if(_p1 == activeFreeOffer) {
+				return 1;
+			} else if(_p2 == activeFreeOffer) {
+				return -1;
+			}
+		}
+
 		// Featured packs come first
-		if(_p1.featured && !_p2.featured) {
-			return -1;
-		} else if(!_p1.featured && _p2.featured) {
-			return 1;
+		// Unless one of the packs is free - then we skip the featured check
+		if(_p1.type != OfferPack.Type.FREE && _p2.type != OfferPack.Type.FREE) {
+			if(_p1.featured && !_p2.featured) {
+				return -1;
+			} else if(!_p1.featured && _p2.featured) {
+				return 1;
+			}
 		}
 
 		// Sort by order afterwards
 		int order = _p1.order.CompareTo(_p2.order);
 		if(order != 0) return order;
+
+		// Then by type - free offers first
+		if(_p1.type == OfferPack.Type.FREE && _p2.type != OfferPack.Type.FREE) {
+			return -1;
+		} else if(_p1.type != OfferPack.Type.FREE && _p2.type == OfferPack.Type.FREE) {
+			return 1;
+		}
 
 		// Then by discount
 		int discount = _p1.def.GetAsFloat("discount").CompareTo(_p2.def.GetAsFloat("discount"));
@@ -496,22 +789,43 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 		}
 	}
 
-    /// <summary>
-    /// Get a offer pack defined in the definitions. It may not be enabled.
-    /// </summary>
-    /// <returns>The offer pack.</returns>
-    /// <param name="_iapSku">Offer iap sku.</param>
-    public static OfferPack GetOfferPack(string _iapSku) {
-        int count = m_instance.m_allOffers.Count;
+	/// <summary>
+	/// Get a offer pack defined in the definitions. It may not be enabled.
+	/// </summary>
+	/// <returns>The offer pack.</returns>
+	/// <param name="_packSku">Offer pack sku.</param>
+	public static OfferPack GetOfferPack(string _packSku) {
+		int count = instance.m_allOffers.Count;
+		for(int i = 0; i < count; ++i) {
+			OfferPack pack = instance.m_allOffers[i];
+			if(pack.def.sku == _packSku) {
+				return pack;
+			}
+		}
+		return null;
+	}
+
+	/// <summary>
+	/// Get a offer pack defined in the definitions by its IAP. It may not be enabled.
+	/// </summary>
+	/// <returns>The offer pack.</returns>
+	/// <param name="_iapSku">Offer iap sku.</param>
+	public static OfferPack GetOfferPackByIAP(string _iapSku) {
+        int count = instance.m_allOffers.Count;
         for (int i = 0; i < count; i++) {
-            OfferPack offerPack = m_instance.m_allOffers[i];
+            OfferPack offerPack = instance.m_allOffers[i];
             if (offerPack.def.Get("iapSku") == _iapSku) {
                 return offerPack;
             }
         }
         return null;
     }
-    
+
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <param name="def"></param>
+	/// <returns></returns>
     public static string GenerateTrackingOfferName(DefinitionNode def)
     {
         string offerName = def.sku;
@@ -527,6 +841,14 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
         return offerName;
     }
 
+	/// <summary>
+	/// Restart the free offer cooldown timer.
+	/// </summary>
+	public static void RestartFreeOfferCooldown() {
+		DateTime serverTime = GameServerManager.SharedInstance.GetEstimatedServerTime();
+		UsersManager.currentUser.freeOfferCooldownEndTime = serverTime.AddMinutes(settings.freeCooldownMinutes);
+		instance.m_freeOfferNeedsSorting = true;
+	}
 
     //------------------------------------------------------------------------//
     // CALLBACKS															  //
@@ -581,8 +903,9 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 #else
     [Conditional("FALSE")]
 #endif
-    public static void LogPack(string _msg, Color _color, params object[] _replacements) {
+    public static void LogPack(OfferPack _pack, string _msg, Color _color, params object[] _replacements) {
 #if LOG_PACKS
+		if(!string.IsNullOrEmpty(LOG_PACK_SKU) && _pack.def.sku != LOG_PACK_SKU) return;
 		if(!FeatureSettingsManager.IsDebugEnabled) return;
 		ControlPanel.Log(string.Format(_color.Tag(_msg), _replacements), ControlPanel.ELogChannel.Offers);
 #endif
@@ -639,11 +962,11 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 #else
     [Conditional("FALSE")]
 #endif
-    private void LogRotationalHistory(ref List<SimpleJSON.JSONClass> _history) {
+    private void LogHistory(OfferPack.Type _type, ref List<SimpleJSON.JSONClass> _history) {
 #if LOG
 		if(!FeatureSettingsManager.IsDebugEnabled) return;
 
-		string str = "Rotational History (" + _history.Count + "):";
+		string str = _type.ToString() + " History (" + _history.Count + "):";
 		foreach(SimpleJSON.JSONClass s in _history) {
 			str += "    " + s["sku"] + "\n";
 		}
@@ -653,5 +976,13 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 			Debug.Log("    " + s.ToString());
 		}
 #endif
+	}
+
+	/// <summary>
+	/// For debug purposes only!
+	/// Skips the cooldown timer of the free offer.
+	/// </summary>
+	public static void DEBUG_SkipFreeOfferCooldown() {
+		UsersManager.currentUser.freeOfferCooldownEndTime = GameServerManager.SharedInstance.GetEstimatedServerTime();
 	}
 }

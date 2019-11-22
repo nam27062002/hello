@@ -132,7 +132,7 @@ public class ResultsScreenStepScore : ResultsScreenSequenceStep {
 		if(SceneController.mode == SceneController.Mode.TOURNAMENT) {
 			dragonData = HDLiveDataManager.tournament.tournamentData.tournamentDef.dragonData;
 		} else {
-			dragonData = DragonManager.currentDragon;
+			dragonData = DragonManager.CurrentDragon;
 		}
 
 		// Initialize and show the corresponding share screen

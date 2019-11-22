@@ -85,18 +85,19 @@ public class DragonCorpse : MonoBehaviour {
 
 
     public static void setDeathMode(Material material) {
+        material.SetFloat("_BlendMode", 1);
         material.SetOverrideTag("RenderType", "TransparentCutout");
         material.SetOverrideTag("Queue", "AlphaTest");
         material.SetFloat("_SrcBlend", (float)UnityEngine.Rendering.BlendMode.SrcAlpha);
         material.SetFloat("_DstBlend", (float)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
         //                material.renderQueue = 3000;
         material.SetFloat("_ZWrite", 1.0f);
-        material.SetFloat("_Cull", (float)UnityEngine.Rendering.CullMode.Off);
-        material.EnableKeyword(GameConstants.Materials.Keyword.CUTOFF);
-        material.EnableKeyword(GameConstants.Materials.Keyword.DOUBLESIDED);
-        //        material.SetFloat("_EnableCutoff", 1.0f);
-        //        material.SetFloat("_EnableDoublesided", 1.0f);
-        //        Debug.Log("Blend mode transparent");
+        // material.SetFloat("_Cull", (float)UnityEngine.Rendering.CullMode.Off);
+        material.EnableKeyword("CUTOFF");
+        // SetKeyword(material, kw_doubleSided, true);
+        material.DisableKeyword("OPAQUEALPHA");
+        material.SetFloat("_EnableCutoff", 1.0f);
+        material.SetFloat("_EnableDoublesided", 1.0f);
     }
 
 

@@ -181,7 +181,9 @@ namespace Downloadables
         /// Current downloading speed 
         /// </summary>
         private float m_speed;
-        
+
+        private float m_nextUpdateAt;
+
         public Manager(Config config, NetworkDriver network, DiskDriver diskDriver, Disk.OnIssue onDiskIssueCallbak, Tracker tracker, Logger logger)
         {
             if (config == null)
@@ -221,6 +223,7 @@ namespace Downloadables
             Catalog_Reset();
             m_downloader.Reset();
             SetSpeed(0f);
+            m_nextUpdateAt = 0f;
         }        
 
         public void Initialize(JSONNode catalogJSON, Dictionary<string, CatalogGroup> groups)
@@ -247,7 +250,28 @@ namespace Downloadables
                 string urlBase = catalogJSON[Catalog.CATALOG_ATT_URL_BASE];
                 m_downloader.Initialize(urlBase);
             }
-        }                
+        }           
+        
+        /// <summary>
+        /// Returns whether or not the manager is ready to respond queries about the stuff that has already been downloaded
+        /// </summary>
+        /// <returns></returns>
+        public bool IsReady()
+        {            
+            if (m_catalog != null)
+            {
+                // Loops through all entries. All need to be initialized in order to consider the manager ready
+                foreach (KeyValuePair<string, CatalogEntryStatus> pair in m_catalog)
+                {
+                    if (!pair.Value.IsInitialized())
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            return true;   
+        }     
 
         private void ProcessCatalog(JSONNode catalogJSON, Dictionary<string, CatalogGroup> groups)
         {    
@@ -291,13 +315,13 @@ namespace Downloadables
             }            
         }                 
         
-        public bool IsIdAvailable(string id, bool track = false)
+        public bool IsIdAvailable(string id, bool checkDisk = false, bool track = false)
         {
             bool returnValue = false;
             if (IsInitialized)
             {
                 CatalogEntryStatus entry = Catalog_GetEntryStatus(id);
-                returnValue = (entry != null && entry.IsAvailable(true));                
+                returnValue = (entry != null && entry.IsAvailable(checkDisk));                
                 
                 if (track)
                 {
@@ -311,7 +335,7 @@ namespace Downloadables
             return returnValue;
         }
 
-        public bool IsIdsListAvailable(List<string> ids, bool track = false)
+        public bool IsIdsListAvailable(List<string> ids, bool checkDisk = false, bool track = false)
         {
             bool returnValue = true;
             if (ids != null)
@@ -320,7 +344,7 @@ namespace Downloadables
                 for (int i = 0; i < count && returnValue; i++)
                 {
                     // IsIdAvailable() must be called for every id so that the result will be tracked if it needs to
-                    returnValue = IsIdAvailable(ids[i], track) && returnValue;
+                    returnValue = IsIdAvailable(ids[i], checkDisk, track) && returnValue;
                 }
             }
 
@@ -521,15 +545,20 @@ namespace Downloadables
         {         
             if (IsInitialized && IsEnabled)
             {
-                m_downloader.Update();
-                m_disk.Update();
-                m_cleaner.Update();
-                Catalog_Update();
-                Groups_Update();
+                if (Time.realtimeSinceStartup >= m_nextUpdateAt)
+                {
+                    m_nextUpdateAt = Time.realtimeSinceStartup + 1f;
+
+                    m_downloader.Update();
+                    m_disk.Update();
+                    m_cleaner.Update();
+                    Catalog_Update();
+                    Groups_Update();
 
 #if USE_DUMPER
-                m_dumper.Update();
-#endif           
+                    m_dumper.Update();
+#endif
+                } 
             }
         }               
 

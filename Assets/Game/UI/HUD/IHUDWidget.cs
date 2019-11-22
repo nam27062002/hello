@@ -52,7 +52,7 @@ public abstract class IHUDWidget : MonoBehaviour {
 	/// </summary>
 	protected virtual void Awake() {
 		// Init update interval based on current quality settings
-		m_updateInterval = GetUpdateIntervalByQualityLevel(FeatureSettingsManager.instance.GetUserProfileLevel());
+		m_updateInterval = GetUpdateIntervalByQualityLevel(FeatureSettingsManager.instance.GetCurrentProfileLevel());
 	}
 
 	/// <summary>
@@ -67,7 +67,9 @@ public abstract class IHUDWidget : MonoBehaviour {
 	/// Component has been disabled.
 	/// </summary>
 	protected virtual void OnDisable() {
-		// Self-unregister to the manager
-		InstanceManager.gameSceneControllerBase.hudManager.RemoveWidget(this);
+        if (ApplicationManager.IsAlive) {
+            // Self-unregister to the manager
+            InstanceManager.gameSceneControllerBase.hudManager.RemoveWidget(this);
+        }
 	}
 }

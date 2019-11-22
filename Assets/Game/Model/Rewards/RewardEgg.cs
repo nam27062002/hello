@@ -155,9 +155,8 @@ namespace Metagame {
 							string targetSeason = _petDef.GetAsString("associatedSeason", SeasonManager.NO_SEASON_SKU);
 							if(targetSeason != SeasonManager.NO_SEASON_SKU && targetSeason != SeasonManager.activeSeason) return true;
 
-							// d) Pets in remote bundles that aren't donwloaded yet
-							List<string> resourceIDs = HDAddressablesManager.Instance.GetResourceIDsForPet(_petDef.sku);
-                            if (!HDAddressablesManager.Instance.IsResourceListAvailable(resourceIDs)) return true;
+                            // d) Pets in remote bundles that aren't donwloaded yet
+                            if (!HDAddressablesManager.Instance.AreResourcesForPetAvailable(_petDef.sku)) return true;							
 
                             // Pet is valid! Don't remove it from the list
                             return false;

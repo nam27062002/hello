@@ -124,11 +124,23 @@ public class CPSpecialDragons : MonoBehaviour {
 		}
 	}
 
-	public void OnResetLabIntroPopup() {
-		Prefs.SetBoolPlayer(PopupLabIntro.DISPLAYED_KEY, false);
-	}
+    public void OnResetDragonLevel()
+    {
+        IDragonData current = DragonManager.CurrentDragon;
+        
+        if (current != null && current.type == IDragonData.Type.SPECIAL)
+        {
+            DragonDataSpecial special = current as DragonDataSpecial;
 
-	public void OnResetLabUnlockedPopup() {
-		UsersManager.currentUser.SetTutorialStepCompleted(TutorialStep.LAB_UNLOCKED, false);
-	}
+            // Reset level progression
+            special.ResetProgression();
+
+            // Save persistence
+            PersistenceFacade.instance.Save_Request(false);
+
+            // Simulate a dragon selected event so everything is refreshed
+            Messenger.Broadcast<string>(MessengerEvents.MENU_DRAGON_SELECTED, current.sku);
+        }
+    }
+
 }

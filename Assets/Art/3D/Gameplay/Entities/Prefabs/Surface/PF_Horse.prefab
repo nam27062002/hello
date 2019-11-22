@@ -22,7 +22,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &458018
 Transform:
   m_ObjectHideFlags: 1
@@ -30,7 +30,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 128698}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.716918, y: -5.0739837, z: -5.7709694}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4769810322643676}
@@ -579,14 +579,43 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f45dfbaed20447daa07123ab6b7cd80, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_inventory:
-  - equipablePrefabName: PF_Party_Hat
-    toDisableOnEquip: []
-    probability: 1
-    season: Anniversary1
-    position: {x: 0, y: 0.09, z: 0.11}
-    scale: {x: 0.5, y: 0.5, z: 0.5}
-    rotation: {x: 18.38, y: 0, z: 2.9}
+  m_seasonalItems:
+  - season: Anniversary1
+    groups:
+    - name: import
+      probability: 1
+      items:
+      - equipablePrefabName: PF_Party_Hat
+        defaultItemLOW: 0
+        probability: 1
+        toDisableOnEquip: []
+        position: {x: 0, y: 0.089999914, z: 0.110000014}
+        scale: {x: 0.5, y: 0.5, z: 0.5}
+        rotation: {x: 18.38, y: 0, z: 2.9}
+  - season: halloween
+    groups:
+    - name: Hat
+      probability: 1
+      items:
+      - equipablePrefabName: PF_Halloween_Witch_Hat
+        defaultItemLOW: 0
+        probability: 1
+        toDisableOnEquip: []
+        position: {x: -0.012103208, y: 0.1101563, z: 0.07825315}
+        scale: {x: 1.4939456, y: 1.2047956, z: 1.2047956}
+        rotation: {x: 16.295248, y: 9.549788, z: 2.500625}
+  - season: xmas
+    groups:
+    - name: Hat
+      probability: 1
+      items:
+      - equipablePrefabName: PF_Christmas_Hat
+        defaultItemLOW: 0
+        probability: 1
+        toDisableOnEquip: []
+        position: {x: -0.09423944, y: 0.042100668, z: 0.078484416}
+        scale: {x: 1.1695898, y: 1.16959, z: 1.16959}
+        rotation: {x: 16.29525, y: 9.5497875, z: 21.397867}
 --- !u!114 &114580188071679350
 MonoBehaviour:
   m_ObjectHideFlags: 1

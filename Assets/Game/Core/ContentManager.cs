@@ -149,7 +149,8 @@ public class ContentManager
             "Rules/gameSettings",
             "Rules/dragonSettings",
             "Rules/initialSettings",
-            "Rules/missingRessourcesVariablesDefinitions"
+            "Rules/missingRessourcesVariablesDefinitions",
+			"Rules/offerSettings"
         });
 
 		kDefinitionFiles.Add(DefinitionsCategory.SEASONS, new string[] { "Rules/seasonsDefinitions" });
@@ -207,6 +208,7 @@ public class ContentManager
         kDefinitionFiles.Add(DefinitionsCategory.SURVIVAL_BONUS, new string[] { "Rules/survivalBonusDefinitions" });
         kDefinitionFiles.Add(DefinitionsCategory.LEVEL_SPAWN_POINTS, new string[] { "Rules/levelSpawnPointDefinitions" });
         kDefinitionFiles.Add(DefinitionsCategory.LEVEL_PROGRESSION, new string[] { "Rules/levelProgressionDefinitions" });
+        kDefinitionFiles.Add(DefinitionsCategory.ZONE_TRIGGERS, new string[] { "Rules/zoneTriggersDefinitions" });
 
         // Metagame
         kDefinitionFiles.Add(DefinitionsCategory.EGGS, new string[] { "Rules/eggDefinitions" });
@@ -245,14 +247,17 @@ public class ContentManager
         // Economy
         kDefinitionFiles.Add(DefinitionsCategory.SHOP_PACKS, new string[]{"Rules/shopPacksDefinitions"});
 		kDefinitionFiles.Add(DefinitionsCategory.OFFER_PACKS, new string[]{"Rules/offerPacksDefinitions"});
+        kDefinitionFiles.Add(DefinitionsCategory.HAPPY_HOUR, new string[] {"Rules/happyHourDefinitions"});
         kDefinitionFiles.Add(DefinitionsCategory.CURRENCY_TIERS, new string[]{"Rules/missingRessourcesTiersDefinitions"});
+        kDefinitionFiles.Add(DefinitionsCategory.REMOVE_ADS_OFFER, new string[] { "Rules/removeAdsOfferDefinitions" });
 
         // Specials
         kDefinitionFiles.Add(DefinitionsCategory.SPECIAL_DRAGON_TIERS, new string[]{"Rules/specialDragonTierDefinitions"});
         kDefinitionFiles.Add(DefinitionsCategory.SPECIAL_DRAGON_POWERS, new string[]{"Rules/specialDragonPowerDefinitions"});
+        kDefinitionFiles.Add(DefinitionsCategory.SPECIAL_DRAGON_STATS_UPGRADES, new string[] {"Rules/specialDragonStatsUpgradesDefinitions"});
 
-		// UI
-		kDefinitionFiles.Add(DefinitionsCategory.SHARE_LOCATIONS, new string[] { "Rules/shareLocationDefinitions" });
+        // UI
+        kDefinitionFiles.Add(DefinitionsCategory.SHARE_LOCATIONS, new string[] { "Rules/shareLocationDefinitions" });
         kDefinitionFiles.Add(DefinitionsCategory.ICONS, new string[] { "Rules/iconDefinitions" });
 
 

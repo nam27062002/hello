@@ -59,6 +59,7 @@
     },
     "custom.gameplay.start": {
       "Parameters": [
+        { "roundid": { "Status": "OK" } },
         { "sessionsCount": { "Status": "OK" } },
         { "gameRunNb": { "Status": "OK" } },
         { "xp": { "Status": "OK" } },
@@ -67,7 +68,9 @@
         { "pet1": { "Status": "OK" } },
         { "pet2": { "Status": "OK" } },
         { "pet3": { "Status": "OK" } },
-        { "pet4": { "Status": "OK" } }
+        { "pet4": { "Status": "OK" } },
+        { "batteryLevel": { "Status": "OK" } },
+        { "controlChoice": { "Status": "OK" } }
       ],
       "APIs": [
         "dna",
@@ -130,6 +133,7 @@
     },
     "custom.gameplay.end": {
       "Parameters": [
+        { "roundid": { "Status": "OK" } },
         { "sessionsCount": { "Status": "OK" } },
         { "deathInCurrentRunNb": { "Status": "OK" } },
         { "gameRunNb": { "Status": "OK" } },
@@ -159,7 +163,9 @@
         { "hungryLettersNb": { "Status": "OK" } },
         { "totalEggBought": { "Status": "OK" } },
         { "totalEggFound": { "Status": "OK" } },
-        { "totalEggOpened": { "Status": "OK" } }
+        { "totalEggOpened": { "Status": "OK" } },
+        { "batteryLevel": { "Status": "OK" } },
+        { "controlChoice": { "Status": "OK" } }
       ],
       "APIs": [
         "dna",
@@ -168,6 +174,7 @@
     },
     "custom.gameplay.dead": {
       "Parameters": [
+        { "roundid": { "Status": "OK" } },
         { "sessionsCount": { "Status": "OK" } },
         { "deathInCurrentRunNb": { "Status": "OK" } },
         { "gameRunNb": { "Status": "OK" } },
@@ -185,6 +192,7 @@
     },
     "custom.gameplay.loadArea": {
       "Parameters": [
+        { "roundid": { "Status": "OK" } },
         { "originalArea": { "Status": "OK" } },
         { "newArea": { "Status": "OK" } },
         { "action": { "Status": "OK" } },
@@ -197,6 +205,7 @@
     },
     "custom.gameplay.loadGameplay": {
       "Parameters": [
+        { "roundid": { "Status": "OK" } },
         { "loadingTime": { "Status": "OK" } }
       ],
       "APIs": [
@@ -204,8 +213,9 @@
         "etl"
       ]
     },
-	"custom.gameplay.loadgameend": {	 
+	"custom.gameplay.loadgameend": {
       "Parameters": [
+        { "roundid": { "Status": "OK" } },
         { "loadingTime": { "Status": "OK" } }
       ],
       "APIs": [
@@ -225,7 +235,8 @@
         { "moneyUSD": { "Status": "OK" } },
         { "totalPurchases": { "Status": "OK" } },
         { "totalStoreVisits": { "Status": "OK" } },
-        { "triggered": { "Status": "OK" } }
+        { "triggered": { "Status": "OK" } },
+		{ "happyHour": { "Status": "OK" } }
       ],
       "APIs": [
         "dna",
@@ -295,7 +306,7 @@
         { "InGameId": { "Status": "OK" } },
         { "localTime": { "Status": "OK" } },
         { "language": { "Status": "OK" } },
-        { "connectionType": { "Status": "OK" } },        
+        { "connectionType": { "Status": "OK" } },
         { "country": { "Status": "OK" } },
         { "storeInstalled": { "Status": "OK" } },
         { "isHacker": { "Status": "OK" } },
@@ -406,6 +417,7 @@
     },
     "custom.gameplay.fps": {
       "Parameters": [
+        { "roundid": { "Status": "OK" } },
         { "sessionsCount": { "Status": "OK" } },
         { "gameRunNb": { "Status": "OK" } },
         { "deltaXp": { "Status": "OK" } },
@@ -457,6 +469,7 @@
     },
     "custom.lab.gamestart": {
       "Parameters": [
+        { "roundid": { "Status": "OK" } },
         { "dragon": { "Status": "OK" } },
         { "labHp": { "Status": "OK" } },
         { "labSpeed": { "Status": "OK" } },
@@ -476,6 +489,7 @@
     },
     "custom.lab.gameend": {
         "Parameters": [
+            { "roundid": { "Status": "OK" } },
             { "dragon": { "Status": "OK" } },
             { "labHp": { "Status": "OK" } },
             { "labSpeed": { "Status": "OK" } },
@@ -758,6 +772,32 @@
       "Parameters": [
         { "popupName": { "Status": "OK" } },
         { "action": { "Status": "OK" } },
+        { "playerProgress": { "Status": "OK" } }
+      ],
+      "APIs": [
+        "dna",
+        "etl"
+      ]
+    },
+	"custom.happyhour.popup": {
+      "Parameters": [
+        { "sessionsCount": { "Status": "OK" } },
+        { "gameRunNb": { "Status": "OK" } },
+        { "maxXp": { "Status": "OK" } },
+        { "playerProgress": { "Status": "OK" } },
+        { "softCurrency": { "Status": "OK" } },
+        { "hardCurrency": { "Status": "OK" } },
+		{ "itemID": { "Status": "OK" } },
+        { "action": { "Status": "OK" } }
+      ],
+      "APIs": [
+        "dna",
+        "etl"
+      ]
+    },
+	"custom.ui.button": {
+      "Parameters": [
+        { "buttonName": { "Status": "OK" } },
         { "playerProgress": { "Status": "OK" } }
       ],
       "APIs": [
@@ -1668,6 +1708,26 @@
     "zone": {
       "Type": "STRING:45",
       "Values": []
-    }
+    },
+    "batteryLevel": {
+      "Type": "STRING:8",
+      "Values": []
+    },
+    "controlChoice": {
+      "Type": "STRING:8",
+      "Values": []
+    },
+	  "happyHour" : {
+	    "Type": "INT:4",
+      "Values": []
+  	},
+  	"buttonName" : {
+  	  "Type": "STRING:32",
+        "Values": []
+  	},
+    "roundid" : {
+	  "Type": "STRING:64",
+      "Values": []
+	 }
   }
 }

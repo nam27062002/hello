@@ -407,7 +407,7 @@ public class HDLiveDataManager : Singleton<HDLiveDataManager> {
 
     public bool Connected() {
         bool ret = false;
-        if ((CPGlobalEventsTest.networkCheck && Application.internetReachability != NetworkReachability.NotReachable) &&
+        if ((CPGlobalEventsTest.networkCheck && DeviceUtilsManager.SharedInstance.internetReachability != NetworkReachability.NotReachable) &&
             (CPGlobalEventsTest.loginCheck && GameSessionManager.SharedInstance.IsLogged())) {
             ret = true;
         }

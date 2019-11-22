@@ -28,14 +28,16 @@ public class MenuDragonScreenController : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// Exposed
 	[SerializeField] private MenuDragonLockIcon m_lockIcon = null;
+	[SerializeField] private MenuDragonClassicInfo m_classicDragonInfo = null;
+	[SerializeField] private MenuDragonSpecialInfo m_specialDragonInfo = null;
 	[Space]
 	[SerializeField] private float m_initialDelay = 1f;
 	[SerializeField] private float m_scrollDuration = 1f;
 	[SerializeField] private float m_unlockAnimDuration = 1f;
 	[SerializeField] private float m_unlockAnimFinalPauseDuration = 1f;
 	[Space]
-	[SerializeField] private NavigationShowHideAnimator[] m_toHideOnUnlockAnim = null;
-    [SerializeField] private NavigationShowHideAnimator[] m_toHideOnTeaseAnim = null;
+	[SerializeField] private ShowHideAnimator[] m_toHideOnUnlockAnim = null;
+    [SerializeField] private ShowHideAnimator[] m_toHideOnTeaseAnim = null;
 	[Space]
 	[SerializeField] private AssetsDownloadFlow m_assetsDownloadFlow = null;
 	public AssetsDownloadFlow assetsDownloadFlow {
@@ -94,6 +96,7 @@ public class MenuDragonScreenController : MonoBehaviour {
 			m_goToScreen = MenuScreen.PENDING_REWARD;
 			return;
 		}
+
 	}
 
 	/// <summary>
@@ -101,7 +104,7 @@ public class MenuDragonScreenController : MonoBehaviour {
 	/// </summary>
 	private void OnDisable() {
 
-	}
+    }
 
 	/// <summary>
 	/// Destructor.
@@ -143,12 +146,12 @@ public class MenuDragonScreenController : MonoBehaviour {
 		// Cheat for simulating dragon unlock
 		#if UNITY_EDITOR
 		if(Input.GetKeyDown(KeyCode.U)) {
-			int order = DragonManager.currentDragon.def.GetAsInt("order");
+			int order = DragonManager.CurrentDragon.def.GetAsInt("order");
 			List<IDragonData> dragonsByOrder = DragonManager.GetDragonsByOrder(IDragonData.Type.CLASSIC);
 			if(order < dragonsByOrder.Count - 1) {	// Exclude if playing with last dragon
 				IDragonData nextDragonData = dragonsByOrder[order + 1];
 				if(nextDragonData != null) {
-					InstanceManager.menuSceneController.dragonSelector.SetSelectedDragon(DragonManager.currentDragon.def.sku);
+					InstanceManager.menuSceneController.dragonSelector.SetSelectedDragon(DragonManager.CurrentDragon.def.sku);
 					DOVirtual.DelayedCall(1f, () => { LaunchUnlockAnim(nextDragonData.def.sku, m_initialDelay, m_scrollDuration, true); });
 				}
 			}
@@ -246,6 +249,16 @@ public class MenuDragonScreenController : MonoBehaviour {
 						showConditionally[j].enabled = true;
 						showConditionally[j].OnDragonSelected(_unlockedDragonSku);
 					}
+				}
+
+				// Refresh dragon infos
+				// If going to dragon unlock screen afterwards, keep them hidden
+				if(_gotoDragonUnlockScreen) {
+					m_classicDragonInfo.SetVisible(false);
+					m_specialDragonInfo.SetVisible(false);
+				} else {
+					m_classicDragonInfo.Refresh();
+					m_specialDragonInfo.Refresh();
 				}
 
 				// Restore HUD
@@ -365,8 +378,12 @@ public class MenuDragonScreenController : MonoBehaviour {
                         m_toHideOnTeaseAnim[i].ForceShow(true);
                     }
 
-					InstanceManager.menuSceneController.dragonSelector.OnSelectedDragonChanged(DragonManager.currentDragon, DragonManager.currentDragon);
-					InstanceManager.menuSceneController.dragonScroller.FocusDragon(DragonManager.currentDragon.def.sku, true);
+					// Refresh dragon infos
+					m_classicDragonInfo.Refresh();
+					m_specialDragonInfo.Refresh();
+
+					InstanceManager.menuSceneController.dragonSelector.OnSelectedDragonChanged(DragonManager.CurrentDragon, DragonManager.CurrentDragon);
+					InstanceManager.menuSceneController.dragonScroller.FocusDragon(DragonManager.CurrentDragon.def.sku, true);
 				}
 
 				// Toggle animating mode
@@ -437,8 +454,13 @@ public class MenuDragonScreenController : MonoBehaviour {
 					for(int i = 0; i < m_toHideOnTeaseAnim.Length; i++) {
 						m_toHideOnTeaseAnim[i].ForceShow(true);
 					}
-					InstanceManager.menuSceneController.dragonSelector.OnSelectedDragonChanged(DragonManager.currentDragon, DragonManager.currentDragon);
-					InstanceManager.menuSceneController.dragonScroller.FocusDragon(DragonManager.currentDragon.def.sku, true);
+
+					// Refresh dragon infos
+					m_classicDragonInfo.Refresh();
+					m_specialDragonInfo.Refresh();
+
+					InstanceManager.menuSceneController.dragonSelector.OnSelectedDragonChanged(DragonManager.CurrentDragon, DragonManager.CurrentDragon);
+					InstanceManager.menuSceneController.dragonScroller.FocusDragon(DragonManager.CurrentDragon.def.sku, true);
 				}
 
 				// Toggle animating mode
@@ -514,11 +536,16 @@ public class MenuDragonScreenController : MonoBehaviour {
 	/// The screen is about to open.
 	/// </summary>
 	public void OnOpenPreAnimation() {
-		// Reset animating flag
-		SetAnimationFlag(false, true);
+        // Reset animating flag
+        SetAnimationFlag(false, true, .05f);
+		// [JOM] Added the preivious line to fix HDK-5779. Added some delay to let the OTA popup to trigger.
 
-		// If a dragon was just unlocked, prepare a nice unlock animation sequence!
-		if(!string.IsNullOrEmpty(GameVars.unlockedDragonSku)) {
+		// Refresh dragon info
+		m_classicDragonInfo.Refresh();
+		m_specialDragonInfo.Refresh();
+
+        // If a dragon was just unlocked, prepare a nice unlock animation sequence!
+        if (!string.IsNullOrEmpty(GameVars.unlockedDragonSku)) {
 			// Do anim!
 			LaunchUnlockAnim(GameVars.unlockedDragonSku, m_initialDelay, m_scrollDuration, false);
 
@@ -533,8 +560,16 @@ public class MenuDragonScreenController : MonoBehaviour {
 			// Init the assets download flow. Don't show popups though, the menu interstitial popups controller will take care of it
 			m_assetsDownloadFlow.InitWithHandle(allHandle);
 		}
-
     }
+
+	/// <summary>
+	/// The screen is about to close.
+	/// </summary>
+	public void OnClosePreAnimation() {
+		// Hide dragon info
+		m_classicDragonInfo.SetVisible(false);
+		m_specialDragonInfo.SetVisible(false);
+	}
 
 	/// <summary>
 	/// The current menu screen has changed (animation starts now).
@@ -593,7 +628,7 @@ public class MenuDragonScreenController : MonoBehaviour {
 		// Check whether all assets required for the current dragon are available or not
 		// [AOC] CAREFUL! Current dragon is not necessarily the selected one! Make sure we're checking the right set of assets.
 		// Get assets download handle for current dragon
-		string currentDragonSku = UsersManager.currentUser.currentClassicDragon;
+		string currentDragonSku = UsersManager.currentUser.CurrentDragon;
 		Downloadables.Handle currentDragonHandle = HDAddressablesManager.Instance.GetHandleForClassicDragon(currentDragonSku);
 		if(!currentDragonHandle.IsAvailable()) {
 			// Scroll back to current dragon
@@ -626,8 +661,20 @@ public class MenuDragonScreenController : MonoBehaviour {
 			}
 		}
 
-		// Go to target screen
-		InstanceManager.menuSceneController.GoToScreen(nextScreen);
+        // If the season has finished, go to the league screen
+        // This screen has more prioritary than Quests screen
+        if (UsersManager.currentUser.gamesPlayed >= GameSettings.ENABLE_LEAGUES_AT_RUN)
+        {
+            if (HDLiveDataManager.league.season.state == HDSeasonData.State.PENDING_REWARDS)
+            {
+                Debug.Log("There is a League reward pending");
+                nextScreen = MenuScreen.LEAGUES;
+            }
+        }
+
+
+        // Go to target screen
+        InstanceManager.menuSceneController.GoToScreen(nextScreen);
 
 		// Tutorial tracking
 		if (!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.MISSIONS_INFO)) {
@@ -660,4 +707,6 @@ public class MenuDragonScreenController : MonoBehaviour {
 		// All checks passed, go to target screen
 		InstanceManager.menuSceneController.GoToScreen(MenuScreen.SKINS);
 	}
+
+
 }

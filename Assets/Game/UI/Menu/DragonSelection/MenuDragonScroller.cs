@@ -70,6 +70,8 @@ public class MenuDragonScroller : MonoBehaviour {
 				dragonSlots[i].dragonLoader.Reload(true);
 			IDragonData data = DragonManager.GetDragonData(dragonSlots[i].dragonLoader.dragonSku);
 			int dragonIndex = data.GetOrder();
+
+
 			// Add it into the list
 			m_dragonSlots.Insert(dragonIndex, dragonSlots[i]);
 			if (dragonSlots[i].dragonLoader != null ){
@@ -141,7 +143,15 @@ public class MenuDragonScroller : MonoBehaviour {
 		// Trust that snap points are placed based on dragons' menuOrder value
 		DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, _sku);
 		if(def == null) return;
-		int menuOrder = def.GetAsInt("order");
+
+        int menuOrder = def.GetAsInt("order");
+
+        // Place the special dragons after the regular ones
+        if (def.Get("type") == "special")
+        {
+            menuOrder += DragonManager.GetDragonsCount(IDragonData.Type.CLASSIC);
+        }
+
 		if(_animate) {
 			cameraAnimator.SnapTo(menuOrder);
 		} else {
@@ -219,7 +229,7 @@ public class MenuDragonScroller : MonoBehaviour {
 					if(slot.dragonPreview.equip.showPets != true) {
 						slot.dragonPreview.equip.TogglePets(true, false);
 					}
-					slot.dragonPreview.allowAltAnimations = slot.currentState >= IDragonData.LockState.LOCKED;
+					slot.dragonPreview.allowAltAnimations = true;//slot.currentState >= IDragonData.LockState.LOCKED;
 				}
 			}
 		}
@@ -285,8 +295,8 @@ public class MenuDragonScroller : MonoBehaviour {
 		GameObject newObj = Instantiate<GameObject>(m_dragonPurchasedFX, slot.transform, false);
 
 		// Auto-destroy after the FX has finished
-		DestroyInSeconds destructor = newObj.AddComponent<DestroyInSeconds>();
-		destructor.lifeTime = 9f;	// Sync with FX duration!
+		SelfDestroy destructor = newObj.AddComponent<SelfDestroy>();
+		destructor.seconds = 9f;	// Sync with FX duration!
 	}
 
 	/// <summary>
@@ -304,8 +314,8 @@ public class MenuDragonScroller : MonoBehaviour {
 		GameObject newObj = Instantiate<GameObject>(m_disguisePurchasedFX, slot.transform, false);
 
 		// Auto-destroy after the FX has finished
-		DestroyInSeconds destructor = newObj.AddComponent<DestroyInSeconds>();
-		destructor.lifeTime = 9f;	// Sync with FX duration!
+		SelfDestroy destructor = newObj.AddComponent<SelfDestroy>();
+		destructor.seconds = 9f;	// Sync with FX duration!
 
 		// Trigger SFX
 		AudioController.Play("hd_unlock_dragon");
@@ -323,10 +333,8 @@ public class MenuDragonScroller : MonoBehaviour {
 		if(m_menuTransitionManager == null) return;
 		if(m_menuTransitionManager.currentScreenData == null) return;
 
-		// Only classic dragons
 		IDragonData dragonData = DragonManager.GetDragonData(_sku);
 		if(dragonData == null) return;
-		if(dragonData.type != IDragonData.Type.CLASSIC) return;
 
 		// Move camera to the newly selected dragon
 		// If the current menu screen is not using the dragon selection 3D scene, skip animation

@@ -72,7 +72,7 @@ public class FireBreathCircle : DragonBreathBehaviour {
     	if ( m_dragon )
     	{
             float furyBaseLength = m_dragon.data.furyBaseLength;
-			m_length = furyBaseLength + furyBaseLength * m_lengthPowerUpMultiplier / 100.0f;
+			m_length = furyBaseLength + furyBaseLength * lengthPowerUpPercentage / 100.0f;
 
 			m_length *= transform.localScale.x;
             
@@ -204,7 +204,7 @@ public class FireBreathCircle : DragonBreathBehaviour {
 					if (prey.IsBurnable(m_tier) || m_type == Type.Mega) {
 						AI.IMachine machine =  m_checkEntities[i].machine;
 						if (machine != null) {
-							machine.Burn(transform, IEntity.Type.PLAYER, m_type == Type.Mega);
+							machine.Burn(transform, IEntity.Type.PLAYER, KillType.BURNT, m_type == Type.Mega);
 						}
 					} else {
 						// Show message saying I cannot burn it

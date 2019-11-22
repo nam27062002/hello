@@ -207,8 +207,10 @@ public class ResultsScreenSummary : MonoBehaviour {
 	/// <param name="_element">The element to be displayed.</param>
 	/// <param name="_animate">Trigger animation?</param>
 	private void ShowElement(ShowHideAnimator _element, bool _animate) {
-		// Put at the end of the summary layout
-		_element.transform.parent.SetAsLastSibling();
+		// Unless element is already visible, put it at the end of the summary layout
+		if(!_element.transform.parent.gameObject.activeInHierarchy) {
+			_element.transform.parent.SetAsLastSibling();
+		}
 
 		// Activate root object
 		_element.transform.parent.gameObject.SetActive(true);

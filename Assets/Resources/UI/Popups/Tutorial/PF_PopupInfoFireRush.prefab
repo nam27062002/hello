@@ -263,7 +263,6 @@ GameObject:
   m_Component:
   - component: {fileID: 224684891337231130}
   - component: {fileID: 222408343521141376}
-  - component: {fileID: 114339160388537618}
   m_Layer: 5
   m_Name: Image
   m_TagString: Untagged
@@ -333,6 +332,7 @@ GameObject:
   - component: {fileID: 224997642319227944}
   - component: {fileID: 222955997219685106}
   - component: {fileID: 114862605459307828}
+  - component: {fileID: 114913598257042286}
   m_Layer: 5
   m_Name: Image
   m_TagString: Untagged
@@ -1722,33 +1722,6 @@ MonoBehaviour:
   m_insideImage: {fileID: 0}
   m_baseColor: {r: 0.47058827, g: 0.54509807, b: 0.09411766, a: 0.422}
   m_insideColor: {r: 0.9607844, g: 0.9803922, b: 0.5411765, a: 1}
---- !u!114 &114339160388537618
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1048503498453140}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
-  m_Color: {r: 0.89019614, g: 0.2509804, b: 0.019607844, a: 1}
-  m_RaycastTarget: 0
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
-      Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 21300000, guid: e7cbceb1708a1b641b44151383b23706, type: 3}
-  m_Type: 0
-  m_PreserveAspect: 1
-  m_FillCenter: 1
-  m_FillMethod: 4
-  m_FillAmount: 1
-  m_FillClockwise: 1
-  m_FillOrigin: 0
 --- !u!114 &114349100081075766
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2321,7 +2294,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.9686275, g: 0.7019608, b: 0.03137255, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 0
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -2336,6 +2309,28 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &114913598257042286
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1139473586384520}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2e3eedcba421948d1ac712f3d495135f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_applyToFonts: 0
+  m_applyToImages: 1
+  m_colorMultiply: {r: 1, g: 1, b: 1, a: 1}
+  m_colorAdd: {r: 0, g: 0, b: 0, a: 0}
+  m_colorRampEnabled: 1
+  m_colorRamp: {fileID: 2800000, guid: 5f402ec4b413fe74d8c36386be40c693, type: 3}
+  m_alpha: 1
+  m_brightness: 0
+  m_saturation: 0
+  m_contrast: 0
+  m_lateMultiply: 0
 --- !u!114 &114920117849806056
 MonoBehaviour:
   m_ObjectHideFlags: 1

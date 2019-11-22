@@ -51,7 +51,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!1 &1001548805525046
 GameObject:
   m_ObjectHideFlags: 1
@@ -902,14 +902,43 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f45dfbaed20447daa07123ab6b7cd80, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_inventory:
-  - equipablePrefabName: PF_Party_Hat
-    toDisableOnEquip: []
-    probability: 1
-    season: Anniversary1
-    position: {x: 0, y: 0.2, z: 0.25}
-    scale: {x: 1, y: 1, z: 1}
-    rotation: {x: 17.95, y: 0, z: 9.06}
+  m_seasonalItems:
+  - season: Anniversary1
+    groups:
+    - name: import
+      probability: 1
+      items:
+      - equipablePrefabName: PF_Party_Hat
+        defaultItemLOW: 0
+        probability: 1
+        toDisableOnEquip: []
+        position: {x: 0, y: 0.2, z: 0.25}
+        scale: {x: 1, y: 1, z: 1}
+        rotation: {x: 17.95, y: 0, z: 9.06}
+  - season: halloween
+    groups:
+    - name: import
+      probability: 1
+      items:
+      - equipablePrefabName: PF_Axe_Hat
+        defaultItemLOW: 0
+        probability: 1
+        toDisableOnEquip: []
+        position: {x: 0, y: 0.30820867, z: 0.32935905}
+        scale: {x: 1.7601703, y: 1.7601701, z: 1.7601701}
+        rotation: {x: 18.46627, y: 53.68865, z: 354.2542}
+  - season: xmas
+    groups:
+    - name: Hat
+      probability: 1
+      items:
+      - equipablePrefabName: PF_Christmas_Hat
+        defaultItemLOW: 0
+        probability: 1
+        toDisableOnEquip: []
+        position: {x: 0, y: 0.26134893, z: 0.12296742}
+        scale: {x: 1.7601703, y: 1.7601701, z: 1.7601701}
+        rotation: {x: 357.66898, y: 334.64066, z: 353.17572}
 --- !u!114 &114573904994459200
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -966,6 +995,7 @@ MonoBehaviour:
   - 1
   - 1.2
   - 1.1
+  - 1.2
   - 1.2
   - 1.2
   - 1.2

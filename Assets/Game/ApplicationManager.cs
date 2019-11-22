@@ -9,6 +9,7 @@
 #endif
 
 using SimpleJSON;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -210,6 +211,13 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         if (Input.GetKeyDown(KeyCode.A))
         {
             // ---------------------------
+            // Go to rewards
+            // ---------------------------       
+            MenuSceneController controller = GameObject.FindObjectOfType<MenuSceneController>();
+            controller.GoToScreen(MenuScreen.LEAGUES_REWARD);
+
+
+            // ---------------------------
             // Test eggs collected
             //Debug_TestEggsCollected();
             // ---------------------------       
@@ -331,15 +339,76 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
             //PersistencePrefs.Clear();
         }
 #endif
+		UnityEngine.Profiling.Profiler.BeginSample("ApplicationManager.Update()");
 
+		UnityEngine.Profiling.Profiler.BeginSample("Language.Update()");
         Language_Update();
+		UnityEngine.Profiling.Profiler.EndSample();
 
+
+        UnityEngine.Profiling.Profiler.BeginSample("PersistenceFacade.Update()");
         PersistenceFacade.instance.Update();
+        UnityEngine.Profiling.Profiler.EndSample();
+
+        UnityEngine.Profiling.Profiler.BeginSample("HDTrackingManager.Update()");
         HDTrackingManager.Instance.Update();
-        HDCustomizerManager.instance.Update();        
-		GameServerManager.SharedInstance.Update();
+        UnityEngine.Profiling.Profiler.EndSample();
+
+        UnityEngine.Profiling.Profiler.BeginSample("HDCustomizerManager.Update()");
+        if(!Game_IsInGame) HDCustomizerManager.instance.Update();        
+        UnityEngine.Profiling.Profiler.EndSample();
+
+        UnityEngine.Profiling.Profiler.BeginSample("GameServerManager.Update()");
+        GameServerManager.SharedInstance.Update();
+        UnityEngine.Profiling.Profiler.EndSample();
+
+        UnityEngine.Profiling.Profiler.BeginSample("HDAddressablesManager.Update()");
         HDAddressablesManager.Instance.Update();
+        UnityEngine.Profiling.Profiler.EndSample();
+
+        UnityEngine.Profiling.Profiler.BeginSample("GameStoreManager.Update()");
         GameStoreManager.SharedInstance.Update();
+        UnityEngine.Profiling.Profiler.EndSample();
+
+        UnityEngine.Profiling.Profiler.BeginSample("ChestManager.Update()");
+		if(!Game_IsInGame) ChestManager.instance.Update();
+		UnityEngine.Profiling.Profiler.EndSample();
+
+        UnityEngine.Profiling.Profiler.BeginSample("OffersManager.Update()");
+		if(!Game_IsInGame) OffersManager.instance.Update();
+		UnityEngine.Profiling.Profiler.EndSample();
+
+        #if UNITY_IOS
+		UnityEngine.Profiling.Profiler.BeginSample("HDNotificationsManager.Update()");
+		if(!Game_IsInGame) HDNotificationsManager.instance.Update();
+		UnityEngine.Profiling.Profiler.EndSample();
+        #endif
+
+        UnityEngine.Profiling.Profiler.BeginSample("TransactionManager.Update()");
+        TransactionManager.instance.Update();
+        UnityEngine.Profiling.Profiler.EndSample();
+
+
+        UnityEngine.Profiling.Profiler.BeginSample("BackButtonManager.Update()");
+        BackButtonManager.instance.Update();
+        UnityEngine.Profiling.Profiler.EndSample();
+
+        UnityEngine.Profiling.Profiler.BeginSample("MissionManager.Update()");
+		MissionManager.instance.Update();
+        UnityEngine.Profiling.Profiler.EndSample();
+
+        UnityEngine.Profiling.Profiler.BeginSample("RewardManager.Update()");
+		if(Game_IsInGame) RewardManager.instance.Update();
+        UnityEngine.Profiling.Profiler.EndSample(); 
+
+        UnityEngine.Profiling.Profiler.BeginSample("GameSceneManager.Update()");
+        GameSceneManager.instance.Update();
+        UnityEngine.Profiling.Profiler.EndSample();
+
+        UnityEngine.Profiling.Profiler.BeginSample("EggManager.Update()");
+		if(!Game_IsInGame) EggManager.instance.Update();
+        UnityEngine.Profiling.Profiler.EndSample();
+
 
         if (NeedsToRestartFlow)
         {
@@ -349,6 +418,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
             FlowManager.Restart();
         }        
 
+        UnityEngine.Profiling.Profiler.BeginSample("Debug.Update()");
         if (FeatureSettingsManager.IsDebugEnabled)
         {
             // Boss camera effect cheat to be able to enable/disable anywhere. We want to be able to check the impact in performance of the effect so we want to have
@@ -379,6 +449,10 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
                 }
             }
         }
+        UnityEngine.Profiling.Profiler.EndSample();
+
+
+        UnityEngine.Profiling.Profiler.EndSample();
     }
 
     private long LastPauseTime { get; set; }
@@ -483,9 +557,9 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
                     //);
                     // DGR PUSH not supported yet
                     /*
-                    #if ENABLE_PUSHWOOSH
+#if ENABLE_PUSHWOOSH
                                         PushNotificationFacade.Instance.ClearNotifications();
-                    #endif
+#endif
                     */
                 }
             }
@@ -559,7 +633,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 				}
 				if (missingChests) 
 				{
-                    int moreSeconds = 9 * 60 * 60;  // 9 AM
+                    int moreSeconds = HDNotificationsManager.SILENCE_END_HOUR * 60 * 60;  // 9 AM
                     int timeToNotification = (int)ChestManager.timeToReset.TotalSeconds + moreSeconds;
                     if ( timeToNotification > 0) {
 					    HDNotificationsManager.instance.ScheduleNewChestsNotification (timeToNotification);
@@ -575,9 +649,9 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
             else
             {
                 // time to reward
-                System.DateTime midnight = UsersManager.currentUser.dailyRewards.nextCollectionTimestamp;
-                double secondsToMidnight = (midnight - System.DateTime.Now).TotalSeconds;
-                int moreSeconds = 9 * 60 * 60;  // 9 AM
+                DateTime midnight = UsersManager.currentUser.dailyRewards.nextCollectionTimestamp;
+                double secondsToMidnight = (midnight - DateTime.Now).TotalSeconds;
+                int moreSeconds = HDNotificationsManager.SILENCE_END_HOUR * 60 * 60;  // 9 AM
                 int timeToNotification = (int)secondsToMidnight + moreSeconds;
                 if ( timeToNotification > 0 )
                 {
@@ -585,26 +659,40 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
                 }
             }
 
+			// Free Offer
+			// Only when on cooldown
+			if(OffersManager.isFreeOfferOnCooldown) {
+				// Avoid notification during night
+				DateTime endTimeLocal = DateTime.Now.Add(OffersManager.freeOfferRemainingCooldown);
+				endTimeLocal = HDNotificationsManager.AvoidSilentHours(endTimeLocal);
+				int remainingSeconds = (int)(endTimeLocal - DateTime.Now).TotalSeconds;
+				HDNotificationsManager.instance.ScheduleNewFreeOffer(remainingSeconds);
+			}
+
+			// Reengagement
             DefinitionNode gameSettingsDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, "gameSettings");
             int minutesToReengage = gameSettingsDef.GetAsInt("notificationComeBackTimer", 2000);
             int secondsToReengage = minutesToReengage * 60;
             if ( secondsToReengage > 0 )
             {
-                System.DateTime dateTime = System.DateTime.Now.AddSeconds( secondsToReengage );
-                if ( dateTime.Hour >= 22 || dateTime.Hour <= 9 )
-                {
-                    // Adjust to avoid midnight timmings
-                    System.DateTime fixedDateTime = dateTime;
-                    fixedDateTime = fixedDateTime.AddHours( 11 );   // forbidden 11 hours, from 22:00 to 9:00
-                    fixedDateTime = fixedDateTime.AddHours( 9 - fixedDateTime.Hour );   // Remove excess
-                    secondsToReengage = (int)(fixedDateTime - System.DateTime.Now).TotalSeconds;
-                }
-                
+				// Avoid notification during night
+                DateTime dateTime = DateTime.Now.AddSeconds( secondsToReengage );
+				dateTime = HDNotificationsManager.AvoidSilentHours(dateTime);
+				secondsToReengage = (int)(dateTime - DateTime.Now).TotalSeconds;
                 HDNotificationsManager.instance.ScheduleReengagementNotification(secondsToReengage);
             }
-                
 
-			// [AOC] TODO!!
+            // Schedule Egg Hatching notifications
+            if (EggManager.incubatingEgg != null)
+            {
+                if(EggManager.incubatingEgg.isIncubating) {
+                    int secondsToFinish =  (int)EggManager.incubatingEgg.incubationRemaining.TotalSeconds;
+                    if ( secondsToFinish > 0 )
+                    {   
+                        HDNotificationsManager.instance.ScheduleEggHatchedNotification(secondsToFinish);
+                    }
+                }
+            }
         }
     }
 
@@ -613,10 +701,12 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 		HDNotificationsManager.instance.CancelNewMissionsNotification();
 		HDNotificationsManager.instance.CancelNewChestsNotification();
 		HDNotificationsManager.instance.CancelDailyRewardNotification();
+		HDNotificationsManager.instance.CancelFreeOfferNotification();
         HDNotificationsManager.instance.CancelReengagementNotification();
+        HDNotificationsManager.instance.CancelEggHatchedNotification();
     }
 
-    #region game
+#region game
     private bool Game_IsInGame { get; set; }
 
     private void Game_OnCountdownStarted()
@@ -637,9 +727,9 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     }
 
     
-    #endregion
+#endregion
 
-    #region device   
+#region device   
     // Time in seconds to wait until the device has to be updated again.
     public const float DEVICE_NEXT_UPDATE = 0.5f;
 
@@ -741,9 +831,9 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
             yield return wait;
         }
     }
-    #endregion
+#endregion
 
-    #region language
+#region language
     private string m_languageRequested;
     private bool m_languageNeedsToBeUpdated;
 
@@ -794,9 +884,9 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
             }
         }
     }
-    #endregion
+#endregion
 
-    #region memory_profiler
+#region memory_profiler
     private bool m_memoryProfilerIsEnabled = false;
     private bool MemoryProfiler_IsEnabled
     {
@@ -990,9 +1080,9 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     	return ret;
     }
 
-    #endregion
+#endregion
 
-    #region apps
+#region apps
     public enum EApp
     {
         HungryDragon,
@@ -1046,9 +1136,9 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
         return returnValue;
     }
-    #endregion
+#endregion
 
-    #region exception    
+#region exception    
     private class HDExceptionListener : CyExceptions.ExceptionListener
     {
         /// <summary>
@@ -1077,9 +1167,9 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
             }
         }
     }    
-    #endregion
+#endregion
 
-    #region debug
+#region debug
     private bool Debug_IsPaused { get; set; }
 
     private void Debug_RestartFlow()
@@ -1528,7 +1618,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
     private const string LOG_CHANNEL = "[ApplicationManager]";
 
-    #if ENABLE_LOGS
+#if ENABLE_LOGS
     [Conditional("DEBUG")]
 #else
     [Conditional("FALSE")]

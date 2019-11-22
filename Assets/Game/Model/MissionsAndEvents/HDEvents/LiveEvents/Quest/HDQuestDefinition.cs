@@ -93,7 +93,10 @@ public class HDQuestDefinition : HDLiveEventDefinition {
 			JSONArray arr = _data["rewards"].AsArray;
 			for (int i = 0; i < arr.Count; i++) {
                 HDLiveData.Reward reward = new HDLiveData.Reward();
+				long defaultValue = (long)(((float)(i + 1) / (float)arr.Count) * m_goal.m_amount);  // [AOC] Just in case data is corrupt, initialize with nice default values (i.e. 25%, 50%, 75%, 100% for 4 rewards)
+				reward.target = defaultValue;
 				reward.LoadData(arr[i], HDTrackingManager.EEconomyGroup.REWARD_LIVE_EVENT, m_name);
+				if(reward.target <= 0) reward.target = defaultValue;
 
 				m_rewards.Add( reward );
 			}

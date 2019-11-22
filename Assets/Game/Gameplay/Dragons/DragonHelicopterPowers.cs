@@ -87,7 +87,7 @@ public class DragonHelicopterPowers : MonoBehaviour, IBroadcastListener
         m_playerBreath = InstanceManager.player.breathBehaviour;
         m_eatBehaviour = InstanceManager.player.dragonEatBehaviour;
         
-        m_powerLevel = (InstanceManager.player.data as DragonDataSpecial).powerLevel;
+        m_powerLevel = (InstanceManager.player.data as DragonDataSpecial).m_powerLevel;
         m_tier = InstanceManager.player.data.tier;
         m_animator = GetComponent<Animator>();
         
@@ -192,9 +192,9 @@ public class DragonHelicopterPowers : MonoBehaviour, IBroadcastListener
                         circleCenter.z = 0;
                         if (MathUtils.TestArcVsCircle( arcOrigin, m_machinegunAngle, m_machinegunDistance, dir, circleCenter, entity.circleArea.radius))
                         {
-                            // Kill!
+                            // Kill! Despite we are shooting the machine gun, we treat it like a bite
                             entity.machine.Bite();
-                            entity.machine.BeginSwallowed(entity.transform, true, IEntity.Type.PLAYER);//( m_mouth );
+                            entity.machine.BeginSwallowed(entity.transform, true, IEntity.Type.PLAYER, KillType.SHOT); // Specify the kill type
                             entity.machine.EndSwallowed(entity.transform);
                         }
                     }

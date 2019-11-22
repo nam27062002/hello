@@ -32,10 +32,11 @@ public class PopupDailyRewards : MonoBehaviour, IBroadcastListener {
 
 	[Space]
 	[SerializeField] private GameObject m_collectButton = null;
-	[SerializeField] private GameObject m_doubleButton = null;
+	[SerializeField] private GameObject m_doubleAdButton = null;
 	[SerializeField] private GameObject m_dismissButton = null;
+    [SerializeField] private GameObject m_doubleButton = null;
 
-	[Space]
+    [Space]
 	[SerializeField] private ShowHideAnimator m_currencyCounterAnim = null;
 	[SerializeField] private ProfileCurrencyCounter m_currencyCounter = null;
 	[SerializeField] private Transform m_currencyFXAnchor = null;
@@ -118,11 +119,15 @@ public class PopupDailyRewards : MonoBehaviour, IBroadcastListener {
 			m_rewardSlots[i].InitFromData(reward, i, state);
 		}
 
+        // Does the player has the Remove ads feature?
+        bool removeAds = UsersManager.currentUser.removeAds.IsActive;
+
 		// Initialize buttons
-		m_collectButton.SetActive(canCollect);
-		m_doubleButton.SetActive(canCollect && currentReward.canBeDoubled);
+		m_collectButton.SetActive(canCollect && !removeAds);
+		m_doubleAdButton.SetActive(canCollect && currentReward.canBeDoubled && !removeAds);
 		m_dismissButton.SetActive(!canCollect && _dismissButtonAllowed);
-	}
+        m_doubleButton.SetActive(canCollect && removeAds);
+    }
 
 	/// <summary>
 	/// Collects the next reward, programs the reward flow and closes the popup.
@@ -154,6 +159,10 @@ public class PopupDailyRewards : MonoBehaviour, IBroadcastListener {
 				case Metagame.RewardPet.TYPE_CODE: {
 					// Program the reward flow, will be triggered once the popup is closed
 					m_rewardsFlowPending = true;
+
+                    // Clear the queue of pending popups so they dont interrupt the flow
+                    PopupManager.ClearQueue();
+
 				} break;
 
 				default: {
@@ -272,7 +281,7 @@ public class PopupDailyRewards : MonoBehaviour, IBroadcastListener {
 	/// <summary>
 	/// The double button has been pressed.
 	/// </summary>
-	public void OnDoubleButton() {
+	public void OnDoubleAdButton() {
 		// Prevent spamming
 		if(m_rewardCollected) return;
 
@@ -312,6 +321,15 @@ public class PopupDailyRewards : MonoBehaviour, IBroadcastListener {
 		}
 	}
 
+    /// <summary>
+    /// The player collects the double reward by using the Remove Ads feature
+    /// </summary>
+    public void OnDoubleButton ()
+    {
+        // Launch the rewards flow, double reward
+        CollectNextReward(true);
+    }
+
 	//------------------------------------------------------------------------//
 	// DEBUG																  //
 	//------------------------------------------------------------------------//
@@ -347,7 +365,7 @@ public class PopupDailyRewards : MonoBehaviour, IBroadcastListener {
 
 		// Buttons
 		m_collectButton.SetActive(_canCollect);
-		m_doubleButton.SetActive(_canCollect && _canDouble);
+		m_doubleAdButton.SetActive(_canCollect && _canDouble);
 		m_dismissButton.SetActive(!_canCollect);
 	}
 

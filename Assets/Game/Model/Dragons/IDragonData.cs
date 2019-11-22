@@ -31,7 +31,8 @@ public abstract class IDragonData : IUISelectorItem {
 
 	public enum Type {
 		CLASSIC,
-		SPECIAL
+		SPECIAL,
+        ALL
 	}
 
 	// Dragons can be unlocked with coins when the previous tier is completed (all dragons in it at max level), or directly with PC.
@@ -42,7 +43,7 @@ public abstract class IDragonData : IUISelectorItem {
 		SHADOW,     // Player must purchase the target Dragons to reveal this dragon
 		REVEAL,     // Requirements to reveal this dragon have been completed
 		LOCKED_UNAVAILABLE,	// Dragon is revealed but can only be acquired via special offers
-		LOCKED,     // Previous tier hasn't been completed
+		LOCKED,     // Previous tier hasn't been completed but can be bought via PC
 		AVAILABLE,  // Previous tier has been completed but the dragon hasn't been purchased
 		OWNED       // Dragon has been purchased and can be used
 	}
@@ -88,7 +89,7 @@ public abstract class IDragonData : IUISelectorItem {
 	public bool isRevealed { get { return m_revealed; } }
 	public bool isUnlockAvailable { get { return m_unlockAvailable; } }
 
-	protected List<string> m_shadowFromDragons = new List<string>();
+    protected List<string> m_shadowFromDragons = new List<string>();
 	public List<string> shadowFromDragons {
 		get { return m_shadowFromDragons; }
 	}
@@ -98,9 +99,9 @@ public abstract class IDragonData : IUISelectorItem {
 		get { return m_revealFromDragons; } 
 	}
 
-	protected List<string> m_unlockFromDragons = new List<string>();
-	public List<string> unlockFromDragons {
-		get { return m_unlockFromDragons; }
+	protected string m_unlockFromDragon = "";
+	public string unlockFromDragon {
+		get { return m_unlockFromDragon; }
 	}
 
 	// Pets
@@ -187,6 +188,8 @@ public abstract class IDragonData : IUISelectorItem {
     public abstract float statsBarRatio{ get; }
     public virtual string tidBoostAction { get{ return m_def.GetAsString("tidBoostAction", "TID_INGAME_HUD_BOOST"); } }
     public virtual string tidBoostReminder { get{ return m_def.GetAsString("tidBoostReminder", "TID_FEEDBACK_TUTO_HOLD_TO_BOOST"); } }
+	public virtual string tidEnergyBar { get{ return m_def.GetAsString("tidEnergyBar", "TID_INGAME_HUD_FIRERUSH"); } }
+	public virtual string tidFire1Line { get{ return m_def.GetAsString("tidFire1Line", "TID_FEEDBACK_FIRE_RUSH_LINE_1"); } }
     public abstract float petScale{ get; }
     
         // supersize
@@ -220,14 +223,15 @@ public abstract class IDragonData : IUISelectorItem {
 	/// <returns>The lock state for this dragon.</returns>
 	public abstract LockState GetLockState();
 
-	//------------------------------------------------------------------------//
-	// PUBLIC METHODS														  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Initialization using a definition. Should be called immediately after the constructor.
-	/// </summary>
-	/// <param name="_def">The definition of this dragon.</param>
-	public virtual void Init(DefinitionNode _def) {
+
+    //------------------------------------------------------------------------//
+    // PUBLIC METHODS														  //
+    //------------------------------------------------------------------------//
+    /// <summary>
+    /// Initialization using a definition. Should be called immediately after the constructor.
+    /// </summary>
+    /// <param name="_def">The definition of this dragon.</param>
+    public virtual void Init(DefinitionNode _def) {
 		// Store definition
 		m_def = _def;
 		m_sku = m_def.sku;
@@ -247,11 +251,8 @@ public abstract class IDragonData : IUISelectorItem {
 		}
 		m_revealed = m_revealFromDragons.Count == 0;
 
-		string unlockFromDragonsData = m_def.GetAsString("unlockFromDragon");
-		if(!string.IsNullOrEmpty(unlockFromDragonsData)) {
-			m_unlockFromDragons.AddRange(unlockFromDragonsData.Split(';'));
-		}
-		m_unlockAvailable = m_unlockFromDragons.Count == 0;
+		m_unlockFromDragon = m_def.GetAsString("unlockFromDragon", string.Empty);
+		m_unlockAvailable = string.IsNullOrEmpty(m_unlockFromDragon);
 
 		// Items
 		m_disguise = GetDefaultDisguise(_def.sku).sku;
@@ -300,15 +301,68 @@ public abstract class IDragonData : IUISelectorItem {
 		}
 	}
 
-	//------------------------------------------------------------------------//
-	// SIMPLE SETTER/GETTER METHODS											  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// The order of this dragon.
-	/// </summary>
-	public int GetOrder() {
-		return (def == null) ? -1 : def.GetAsInt("order");
+
+    /// <summary>
+    /// Checks whether the given dragon can be unlocked with PC.
+    /// </summary>
+    /// <returns>Whether the given dragon can be unlocked with PC.</returns>
+    public virtual bool CheckUnlockWithPC()
+    {
+        Debug.LogError("This method must be implements in child");
+        return false;
+    }
+
+
+    /// <summary>
+    /// Checks whether the given dragon can be unlocked with SC.
+    /// </summary>
+    /// <returns>Whether the given dragon can be unlocked with SC.</returns>
+    /// <param name="_data">Dragon to evaluate.</param>
+    public virtual bool CheckUnlockWithSC()
+    {
+        Debug.LogError("This method must be implements in child");
+        return false;
+    }
+
+
+    /// <summary>
+    /// Reset all level / xp progression of the dragon
+    /// </summary>
+    public virtual void ResetProgression()
+    {
+        m_gamesPlayed = 0;
+
+        // Reset pets
+        m_pets = new List<string>();
+
+        // Reset disguises
+        m_disguise = GetDefaultDisguise(m_def.sku).sku;
+        m_persistentDisguise = m_disguise;
+        
+
+        //Level progression reset in the children implementation
+    }
+
+
+//------------------------------------------------------------------------//
+// SIMPLE SETTER/GETTER METHODS											  //
+//------------------------------------------------------------------------//
+/// <summary>
+/// The order of this dragon.
+/// </summary>
+public int GetOrder() {
+
+    if (def == null) return -1;
+
+    // Special dragons are ordered sequentially after the regular ones
+    if (type == Type.SPECIAL)
+    {
+        return def.GetAsInt("order") + DragonManager.GetDragonsCount(Type.CLASSIC);
+    }
+
+	return def.GetAsInt("order");
 	}
+
 
 	/// <summary>
 	/// Offsets the scale value.
@@ -360,12 +414,8 @@ public abstract class IDragonData : IUISelectorItem {
 		}
 		m_revealed = m_revealFromDragons.Count == 0;
 
-		string unlockFromDragonsData = m_def.GetAsString("unlockFromDragon");
-		m_unlockFromDragons.Clear();
-		if(!string.IsNullOrEmpty(unlockFromDragonsData)) {
-			m_unlockFromDragons.AddRange(unlockFromDragonsData.Split(';'));
-		}
-		m_unlockAvailable = m_unlockFromDragons.Count == 0;
+		m_unlockFromDragon = m_def.GetAsString("unlockFromDragon", string.Empty);
+		m_unlockAvailable = string.IsNullOrEmpty(m_unlockFromDragon);
 	}
 
 
@@ -422,7 +472,7 @@ public abstract class IDragonData : IUISelectorItem {
 		m_owned = false;
 		m_teased = m_shadowFromDragons.Count == 0;
 		m_revealed = m_revealFromDragons.Count == 0;
-		m_unlockAvailable = m_unlockFromDragons.Count == 0;
+		m_unlockAvailable = string.IsNullOrEmpty(m_unlockFromDragon);
 
 		m_disguise = m_def != null ? GetDefaultDisguise(m_def.sku).sku : "";
 		m_persistentDisguise = m_disguise;
@@ -466,20 +516,15 @@ public abstract class IDragonData : IUISelectorItem {
 		}
 	}
 
-	/// <summary>
-	/// Load the pets persistence.
-	/// </summary>
-	/// <param name="_dragonPersistenceData">Dragon persistence data.</param>
-	protected void LoadPets(SimpleJSON.JSONNode _dragonPersistenceData) {
-		// We must have all the slots, enforce list's size
-		m_pets.Resize(m_tierDef.GetAsInt("maxPetEquipped", 0), string.Empty);
-		if(_dragonPersistenceData.ContainsKey("pets")) {
-			SimpleJSON.JSONArray equip = _dragonPersistenceData["pets"].AsArray;
-			for(int i = 0; i < equip.Count && i < m_pets.Count; i++) {
-				m_pets[i] = equip[i];
-			}
-		}
-	}
+    /// <summary>
+    /// Load the pets persistence.
+    /// </summary>
+    /// <param name="_dragonPersistenceData">Dragon persistence data.</param>
+    protected virtual void LoadPets(SimpleJSON.JSONNode _dragonPersistenceData)
+    {
+    }
+
+
 
 	/// <summary>
 	/// Create and return a persistence save data object initialized with the data.
@@ -575,12 +620,16 @@ public abstract class IDragonData : IUISelectorItem {
             specialData.GetStat(DragonDataSpecial.Stat.HEALTH).level = _build.health;
             specialData.GetStat(DragonDataSpecial.Stat.SPEED).level = _build.speed;
             specialData.GetStat(DragonDataSpecial.Stat.ENERGY).level = _build.energy;
-
+			specialData.UpdateSpecialDragonsLevel();
+			
 			// Powers (depends on stat upgrades)
 			specialData.RefreshPowerLevel();
 
-			// Tier (depends on stat upgrades)
-			specialData.RefreshTier();
+            // Tier wont change for legendary dragons (always tier_6)
+			
+
+			// Special Tier (depends on stat upgrades)
+			specialData.RefreshSpecialTier();
 
 			// Skin (depends on stat upgrades)
             specialData.RefreshDisguise();
@@ -627,14 +676,32 @@ public abstract class IDragonData : IUISelectorItem {
     /// <param name="_dragonSku">The dragon whose default skin we want.</param>
     public static DefinitionNode GetDefaultDisguise(string _dragonSku) {
         
+		DefinitionNode ret = null;
 		// Get all the disguises for the given dragon
 		List<DefinitionNode> defList = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.DISGUISES, "dragonSku", _dragonSku);
 
-		// Sort by unlock level
-		DefinitionsManager.SharedInstance.SortByProperty(ref defList, "unlockLevel", DefinitionsManager.SortType.NUMERIC);
+		// Search unlock level is 0 and it's not a seasonal
+		int length = defList.Count;
+		for (int i = 0; i < length && ret == null; i++)
+		{
+			if ( defList[i].GetAsInt( "unlockLevel" ) <= 0 && !Wardrobe.IsSeasonalSkin( defList[i] ) )
+				ret = defList[i];
+		}
 
 		// There should always be one skin unlocked at level 0, anyway use the first one
-		return defList[0];
+		return ret;
+	}
+
+	/// <summary>
+	/// Sort method by dragon order.
+	/// </summary>
+	/// <param name="_d1">First dragon to compare.</param>
+	/// <param name="_d2">Second dragon to compare.</param>
+	/// <returns>Whether _d1 should go before or after _d2 based on their "order" field.</returns>
+	public static int CompareByOrder(IDragonData _d1, IDragonData _d2) {
+		int order1 = _d1.GetOrder();
+		int order2 = _d2.GetOrder();
+		return order1.CompareTo(order2);
 	}
 
 	/// <summary>

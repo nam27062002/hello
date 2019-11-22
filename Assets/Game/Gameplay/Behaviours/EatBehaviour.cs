@@ -50,6 +50,7 @@ public abstract class EatBehaviour : ISpawnable {
 	public Transform holdTransform{ get{ return m_holdTransform; } }
 	protected HoldPreyPoint m_holdPoint;
 	protected bool m_grabbingPrey = false;
+	protected Vector3 m_grabbingOriginalScale = Vector3.zero;
 	protected Transform m_grabbingPreyPreviousTransformParent = null;
 	protected bool m_advanceHold = true;
 
@@ -389,6 +390,7 @@ public abstract class EatBehaviour : ISpawnable {
 		Vector3 holdDirection = m_mouth.InverseTransformDirection(m_holdTransform.forward);
 		Vector3 holdUpDirection = m_mouth.InverseTransformDirection(m_holdTransform.up);
 		m_holdingPrey.transform.localRotation = Quaternion.Lerp( rot, Quaternion.LookRotation( -holdDirection, holdUpDirection ), Time.deltaTime * 20);
+		m_holdingPrey.transform.localScale *=  m_grabbingOriginalScale.x / m_holdingPrey.transform.lossyScale.x;
 		/*
 		Quaternion localRot = m_holdingPrey.transform.localRotation;
 		float fixRotStep = m_rotateToMouthSpeed * Time.deltaTime;
@@ -636,6 +638,7 @@ public abstract class EatBehaviour : ISpawnable {
 		{
 			m_grabbingPreyPreviousTransformParent = _prey.transform.parent;
 			_prey.transform.parent = m_mouth;
+			m_grabbingOriginalScale = _prey.transform.lossyScale;
 		}
 	}
 
@@ -1153,7 +1156,7 @@ public abstract class EatBehaviour : ISpawnable {
 
 	/// On kill function over prey. Eating or holding
 	protected void StartSwallow(AI.IMachine _prey) {
-		_prey.BeginSwallowed(m_mouth, m_rewardsPlayer, m_type);//( m_mouth );
+		_prey.BeginSwallowed(m_mouth, m_rewardsPlayer, m_type, KillType.EATEN);//( m_mouth );
 	}
 
 	private void EndSwallow(AI.IMachine _prey){

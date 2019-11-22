@@ -20,9 +20,9 @@ namespace AI {
 		override public Vector3 target					{ get { return Vector3.zero; } }
 		override public Vector3 upVector 		{ get { return Vector3.up; } set {} }
 		override public Transform enemy 					{ get { return null; } }
-		public bool isPetTarget 				{ get { return false; } set {} }
+		override public bool isPetTarget 				{ get { return false; } set {} }
 		override public float lastFallDistance 	{ get { return 0f; } }
-		public virtual bool isKinematic 		{ get { return false; } set {} }
+		override public bool isKinematic 		{ get { return false; } set {} }
 
 		override public Quaternion orientation 	{ get { return m_transform.rotation; } set { m_transform.rotation = value; } }
 		override public Vector3 position			{ get { return m_transform.position; } set { m_transform.position = value; } }
@@ -54,9 +54,9 @@ namespace AI {
 					m_entity.onDieStatus.reason = IEntity.DyingReason.EATEN;
 
 					// Dispatch global event
-					Messenger.Broadcast<Transform, IEntity, Reward>(MessengerEvents.ENTITY_BURNED, m_transform, m_entity, reward);
+                    Messenger.Broadcast<Transform, IEntity, Reward, KillType>(MessengerEvents.ENTITY_KILLED, m_transform, m_entity, reward, KillType.BURNT);
 
-					m_viewControl.Collect();
+                    m_viewControl.Collect();
 
                     (m_entity as CollectibleEntity).dieOutsideFrustum = false;
 					m_isCollected = true;
@@ -122,8 +122,9 @@ namespace AI {
         override public bool IsInLove() { return false; }
         override public bool IsBubbled() { return false; }
         override public void CustomFixedUpdate(){}
+        public override void CustomLateUpdate(){}
 
-		override public bool Burn(Transform _transform, IEntity.Type _source, bool instant = false, FireColorSetupManager.FireColorType fireColorType = FireColorSetupManager.FireColorType.RED) { return false; }
+        override public bool Burn(Transform _transform, IEntity.Type _source, KillType _killType = KillType.BURNT, bool _instant = false, FireColorSetupManager.FireColorType fireColorType = FireColorSetupManager.FireColorType.RED) { return false; }
 		override public bool Smash(IEntity.Type _source) { return false; }
 		override public void AddExternalForce(Vector3 force) {}
 		override public Quaternion GetDyingFixRot() { return Quaternion.identity; }
@@ -133,7 +134,7 @@ namespace AI {
 		override public void EndSwallowed(Transform _transform){}
 		override public void Bite() {}
 		override public void Drown() {}
-		override public void BeginSwallowed(Transform _transform, bool _rewardsPlayer, IEntity.Type _source) {}
+		override public void BeginSwallowed(Transform _transform, bool _rewardsPlayer, IEntity.Type _source, KillType _killType) {}
 
 
 		override public void	EnterGroup(ref Group _group) {}

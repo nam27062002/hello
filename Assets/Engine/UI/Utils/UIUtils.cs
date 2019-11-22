@@ -51,7 +51,7 @@ public partial class UIUtils {
 			GetOrdinalSuffixTid(_num),
 			number
 		);
-
+        
 		// If required, perform formatting transformations
 		switch(_format) {
 			case OrdinalSuffixFormat.SUPERSCRIPT: {
@@ -67,7 +67,11 @@ public partial class UIUtils {
 					ordinal = ordinal.Insert(suffixStartPos, "<sub>");  // Insert tag opening
 					ordinal += "</sub>";    // Append tag closing
 			} break;
-		}
+
+            case OrdinalSuffixFormat.DEFAULT: {
+            } break;
+
+        }
 
 		// Done!
 		return ordinal;

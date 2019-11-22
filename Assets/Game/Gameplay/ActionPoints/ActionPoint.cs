@@ -13,16 +13,26 @@ public class ActionPoint : MonoBehaviour, IQuadTreeItem {
 
 	private int m_members = 0;
 
+    private bool m_hasToDoStart = true;
 
-	void Awake() {
-		ActionPointManager.instance.Register(this);
-		m_boundingRect = new Rect(transform.position - Vector3.one * m_radius, Vector2.one * m_radius * 2f);
-	}
+#if !USE_OPTIMIZED_SCENES
+    void Start() {
+		if (m_hasToDoStart) {
+            DoStart();
+        }
+    }
+#endif
 
-	void Start() {
-		m_members = 0;
-	}
+    public void DoStart() {
+        if (m_hasToDoStart) {
+            m_hasToDoStart = false;
 
+            ActionPointManager.instance.Register(this);
+            m_boundingRect = new Rect(transform.position - Vector3.one * m_radius, Vector2.one * m_radius * 2f);
+            m_members = 0;
+        }
+    }
+    
 	public bool CanEnter() 	{ return m_members < m_capacity; }
 	public void Enter()		{ m_members++; }
 	public void Leave() 	{ m_members--; }

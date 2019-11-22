@@ -158,11 +158,18 @@ static internal class Messenger {
 		OnListenerAdding(eventType, handler);
 		eventTable[(int)eventType] = (UbiBCN.Callback<T, U, V>)eventTable[(int)eventType] + handler;
 	}
-	#endregion
-	
-	#region RemoveListener
-	//No parameters
-	static public void RemoveListener(MessengerEvents eventType, UbiBCN.Callback handler) {
+
+    //Four parameters
+    static public void AddListener<T, U, V, W>(MessengerEvents eventType, UbiBCN.Callback<T, U, V, W> handler)
+    {
+        OnListenerAdding(eventType, handler);
+        eventTable[(int)eventType] = (UbiBCN.Callback<T, U, V, W>)eventTable[(int)eventType] + handler;
+    }
+    #endregion
+
+    #region RemoveListener
+    //No parameters
+    static public void RemoveListener(MessengerEvents eventType, UbiBCN.Callback handler) {
 		OnListenerRemoving(eventType, handler);   
 		eventTable[(int)eventType] = (UbiBCN.Callback)eventTable[(int)eventType] - handler;
 	}
@@ -184,11 +191,18 @@ static internal class Messenger {
 		OnListenerRemoving(eventType, handler);
 		eventTable[(int)eventType] = (UbiBCN.Callback<T, U, V>)eventTable[(int)eventType] - handler;
 	}
-	#endregion
-	
-	#region Broadcast
-	//No parameters
-	static public void Broadcast(MessengerEvents eventType) {
+
+    //Three parameters
+    static public void RemoveListener<T, U, V, W>(MessengerEvents eventType, UbiBCN.Callback<T, U, V, W> handler)
+    {
+        OnListenerRemoving(eventType, handler);
+        eventTable[(int)eventType] = (UbiBCN.Callback<T, U, V, W>)eventTable[(int)eventType] - handler;
+    }
+    #endregion
+
+    #region Broadcast
+    //No parameters
+    static public void Broadcast(MessengerEvents eventType) {
 		#if LOG_ALL_MESSAGES || LOG_BROADCAST_MESSAGE
 		Debug.Log("MESSENGER\t" + System.DateTime.Now.ToString("hh:mm:ss.fff") + "\t\t\tInvoking \t\"" + eventType + "\"");
 		#endif
@@ -251,7 +265,28 @@ static internal class Messenger {
 		}
 		
 	}
-	#endregion
+
+    //Three parameters
+    static public void Broadcast<T, U, V, W>(MessengerEvents eventType, T arg1, U arg2, V arg3, W arg4)
+    {
+        #if LOG_ALL_MESSAGES || LOG_BROADCAST_MESSAGE
+		        Debug.Log("MESSENGER\t" + System.DateTime.Now.ToString("hh:mm:ss.fff") + "\t\t\tInvoking \t\"" + eventType + "\"");
+        #endif
+        OnBroadcasting(eventType);
+
+        UbiBCN.Callback<T, U, V, W> callback = eventTable[(int)eventType] as UbiBCN.Callback<T, U, V, W>;
+
+        if (callback != null)
+        {
+            callback(arg1, arg2, arg3, arg4);
+        }
+        else
+        {
+            // throw CreateBroadcastSignatureException(eventType);
+        }
+
+    }
+    #endregion
 }
 
 //This manager will ensure that the messenger's eventTable will be cleaned up upon loading of a new level.

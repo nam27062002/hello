@@ -29,8 +29,7 @@ public class SceneController : MonoBehaviour {
 	public enum Mode
 	{
 		DEFAULT,
-		TOURNAMENT,
-        SPECIAL_DRAGONS
+		TOURNAMENT
 	};
 	private static Mode s_mode = Mode.DEFAULT;
 	public static Mode mode {
@@ -94,10 +93,6 @@ public class SceneController : MonoBehaviour {
 				
 			} break;
 
-			case Mode.SPECIAL_DRAGONS: {
-				
-			} break;
-
 			case Mode.TOURNAMENT: {
 
 			} break;
@@ -112,23 +107,10 @@ public class SceneController : MonoBehaviour {
 			case Mode.DEFAULT: {
 				// Set selected dragon to the current classic dragon
 				if(InstanceManager.menuSceneController != null) {
-					InstanceManager.menuSceneController.SetSelectedDragon(DragonManager.currentClassicDragon.sku);
+					InstanceManager.menuSceneController.SetSelectedDragon(DragonManager.CurrentDragon.sku);
 				}
 			} break;
 
-			case Mode.SPECIAL_DRAGONS: {
-				// Set selected dragon to the current special dragon
-				if(InstanceManager.menuSceneController != null) {
-					// Current special dragon can be null if no special dragon has been unlocked yet
-					string selectedDragonSku = "";
-					if(DragonManager.currentSpecialDragon != null) {
-						selectedDragonSku = DragonManager.currentSpecialDragon.sku;
-					} else {
-						selectedDragonSku = DragonManager.GetDragonsByOrder(IDragonData.Type.SPECIAL).First().sku;	// Select first dragon
-					}
-					InstanceManager.menuSceneController.SetSelectedDragon(selectedDragonSku);
-				}
-			} break;
 
 			case Mode.TOURNAMENT: {
 
@@ -139,42 +121,6 @@ public class SceneController : MonoBehaviour {
 		Messenger.Broadcast<Mode, Mode>(MessengerEvents.GAME_MODE_CHANGED, oldMode, _newMode);
 	}
 
-	/// <summary>
-	/// Get the mode associated to a given dragon type.
-	/// </summary>
-	/// <returns>The game mode associated to <paramref name="_type"/>.</returns>
-	/// <param name="_type">Dragon type to be checked.</param>
-	public static Mode DragonTypeToMode(IDragonData.Type _type) {
-		switch(_type) {
-			case IDragonData.Type.CLASSIC: {
-				return Mode.DEFAULT;
-			} break;
-
-			case IDragonData.Type.SPECIAL: {
-				return Mode.SPECIAL_DRAGONS;
-			} break;
-		}
-		return Mode.DEFAULT;
-	}
-
-	/// <summary>
-	/// Get the dragon type associated to a given game mode.
-	/// </summary>
-	/// <returns>The dragon type associated to <paramref name="_mode"/>.</returns>
-	/// <param name="_mode">Mode to be checked.</param>
-	public static IDragonData.Type ModeToDragonType(Mode _mode) {
-		switch(_mode) {
-			case Mode.DEFAULT:
-			case Mode.TOURNAMENT: {
-				return IDragonData.Type.CLASSIC;
-			} break;
-
-			case Mode.SPECIAL_DRAGONS: {
-				return IDragonData.Type.SPECIAL;
-			} break;
-		}
-		return IDragonData.Type.CLASSIC;
-	}
 
 	//------------------------------------------------------------------------//
 	// STATIC METHODS														  //

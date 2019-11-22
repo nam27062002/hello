@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------------//
 using UnityEngine;
 using System.Collections.Generic;
+using TMPro;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -22,18 +23,15 @@ public class PopupSpecialDragonInfo : PopupDragonInfo {
 	//------------------------------------------------------------------------//
 	new public const string PATH = "UI/Popups/Menu/PF_PopupSpecialDragonInfo";
 
-	public class UpgradeData {
-		public int unlockLevel = -1;
-		public string description = string.Empty;
-		public Sprite icon = null;
-	}
-
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed
 	[Separator("Special Dragon Stuff")]
-	[SerializeField] private PopupSpecialDragonInfoUpgrade[] m_upgrades = new PopupSpecialDragonInfoUpgrade[0];
+	[SerializeField] private TextMeshProUGUI m_dragonIconLevelText = null;
+	[SerializeField] private SpecialDragonBar m_specialDragonLevelBar = null;
+	[SerializeField] private PopupSpecialDragonInfoUpgrade[] m_powerUpgrades = new PopupSpecialDragonInfoUpgrade[0];
+	[SerializeField] private PopupSpecialDragonInfoUpgrade[] m_tierUpgrades = new PopupSpecialDragonInfoUpgrade[0];
 
 	//------------------------------------------------------------------------//
 	// PARENT OVERRIDES														  //
@@ -49,89 +47,76 @@ public class PopupSpecialDragonInfo : PopupDragonInfo {
 		DragonDataSpecial dragonData = m_dragonData as DragonDataSpecial;
 		Debug.Assert(dragonData != null, "ONLY FOR SPECIAL DRAGONS!");
 
-		// Upgrade Infos
-		// Gather all the data
-		List<UpgradeData> upgradesData = new List<UpgradeData>();
+		// More aux vars
+		int i = 0;
+		int j = 0;
+		int powerUpgradesCount = m_powerUpgrades.Length;
+		int tierUpgradesCount = m_tierUpgrades.Length;
 
-		// Tier upgrades
-		List<DefinitionNode> specialTierDefs = dragonData.specialTierDefsByOrder;
-		for(int i = 0; i < specialTierDefs.Count; ++i) {
-			UpgradeData data = new UpgradeData();
-
-			// Get matching dragon tier def
-			DefinitionNode tierDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGON_TIERS, specialTierDefs[i].Get("tier"));
-
-			// Unlock level
-			data.unlockLevel = specialTierDefs[i].GetAsInt("upgradeLevelToUnlock");
-
-			// Description
-			// Can equip <TID_COLOR_PET>%U0 %U1<TID_END_COLOR> and get a <TID_COLOR_PET>%U2<TID_END_COLOR> multiplier during <TID_COLOR_FIRERUSH><TID_FIRE_RUSH><TID_END_COLOR>
-			int numPets = tierDef.GetAsInt("maxPetEquipped");
-			data.description = LocalizationManager.SharedInstance.Localize("TID_SPECIAL_DRAGON_INFO_TIER_DESCRIPTION",
-				StringUtils.FormatNumber(numPets),
-			    (numPets > 1 ? LocalizationManager.SharedInstance.Localize("TID_PET_PLURAL") : LocalizationManager.SharedInstance.Localize("TID_PET")), // Singular/Plural
-			    "x" + StringUtils.FormatNumber(specialTierDefs[i].GetAsFloat("furyScoreMultiplier", 2), 0)
-			);
-
-			// Icon
-			data.icon = ResourcesExt.LoadFromSpritesheet(UIConstants.UI_SPRITESHEET_PATH, tierDef.GetAsString("icon"));
-
-			// Push to list!
-			upgradesData.Add(data);
+		// Level text
+		if(m_dragonIconLevelText != null) {
+			m_dragonIconLevelText.text = StringUtils.FormatNumber(dragonData.Level);
 		}
 
+		// Initialize level bar
+		m_specialDragonLevelBar.BuildFromDragonData(dragonData);
+
+		// Upgrade Infos
 		// Power upgrades
 		List<DefinitionNode> powerDefs = dragonData.specialPowerDefsByOrder;
-		for(int i = 0; i < powerDefs.Count; ++i) {
-			UpgradeData data = new UpgradeData();
-
-			// Unlock level
-			data.unlockLevel = powerDefs[i].GetAsInt("upgradeLevelToUnlock");
-
-			// Description
-			data.description = powerDefs[i].GetLocalized("tidDesc");
-
-			// Icon
-			data.icon = Resources.Load<Sprite>(UIConstants.POWER_ICONS_PATH + powerDefs[i].Get("icon"));
-
-			// Push to list!
-			upgradesData.Add(data);
+		for(i = 0, j = 0; i < powerDefs.Count && j < powerUpgradesCount; ++i, ++j) {
+			m_powerUpgrades[j].gameObject.SetActive(true);
+			m_powerUpgrades[j].InitPowerUpgrade(powerDefs[i]);
 		}
 
-		// Sort upgrades by unlock level
-		upgradesData.Sort(
-			(UpgradeData _d1, UpgradeData _d2) => {
-				return _d1.unlockLevel.CompareTo(_d2.unlockLevel);
+		// Hide remaining widgets
+		for(; j < powerUpgradesCount; ++i) {
+			m_powerUpgrades[j].gameObject.SetActive(false);
+		}
+
+		// Tier upgrades
+		// Special case! Skip first tier, since is the default one
+		List<DefinitionNode> specialTierDefs = dragonData.specialTierDefsByOrder;
+		for(i = 1, j = 0; i < specialTierDefs.Count && j < tierUpgradesCount; ++i, ++j) {
+			m_tierUpgrades[j].gameObject.SetActive(true);
+			m_tierUpgrades[j].InitTierUpgrade(specialTierDefs[i]);
+		}
+
+		// Hide remaining widgets
+		for(; j < tierUpgradesCount; ++j) {
+			m_tierUpgrades[j].gameObject.SetActive(false);
+		}
+
+		// Put widgets into proper X position to match their unlock level
+		RepositionUpgrades();
+	}
+
+	/// <summary>
+	/// Put upgrade info widgets into position.
+	/// </summary>
+	private void RepositionUpgrades() {
+		// Power upgrades
+		for(int i = 0; i < m_powerUpgrades.Length; ++i) {
+			// Get matching bar element
+			SpecialDragonBarElement barElement = m_specialDragonLevelBar.GetElementAtLevel(m_powerUpgrades[i].unlockLevel - 1); // 0-indexed
+
+			// Apply the same X position
+			// Use global position since they are at diferent hierarchy levels!
+			m_powerUpgrades[i].transform.SetPosX(barElement.transform.position.x);
+		}
+
+		// Tier upgrades
+		for(int i = 0; i < m_tierUpgrades.Length; ++i) {
+			// Get matching bar element
+			SpecialDragonBarElement barElement = m_specialDragonLevelBar.GetElementAtLevel(m_tierUpgrades[i].unlockLevel - 1);  // 0-indexed
+			if(barElement == null) {
+				Debug.Log(Color.red.Tag("NO BAR ELEMENT COULD BE FOUND FOR LEVEL " + m_tierUpgrades[i].unlockLevel));
+				break;
 			}
-		);
 
-		// Initialize a UI element for each upgrade
-		int infoIdx = 0;
-		for(int i = 0; i < upgradesData.Count && infoIdx < m_upgrades.Length; ++i) {
-			// Skip if unlock level is 0
-			if(upgradesData[i].unlockLevel <= 0) continue;
-
-			// Initialize element
-			PopupSpecialDragonInfoUpgrade element = m_upgrades[infoIdx];
-			infoIdx++;
-
-			// Level
-			if(element.levelText != null) {
-				element.levelText.text = LocalizationManager.SharedInstance.Localize(
-					"TID_LEVEL",
-					StringUtils.FormatNumber(upgradesData[i].unlockLevel)
-				);
-			}
-
-			// Description
-			if(element.descriptionText != null) {
-				element.descriptionText.text = upgradesData[i].description;
-			}
-
-			// Icon
-			if(element.icon != null) {
-				element.icon.sprite = upgradesData[i].icon;
-			}
+			// Apply the same X position
+			// Use global position since they are at diferent hierarchy levels!
+			m_tierUpgrades[i].transform.SetPosX(barElement.transform.position.x);
 		}
 	}
 }

@@ -17,7 +17,7 @@ using System.Collections.Generic;
 /// <summary>
 /// Global manager to control back button handlers.
 /// </summary>
-public class BackButtonManager : UbiBCN.SingletonMonoBehaviour<BackButtonManager> {
+public class BackButtonManager : Singleton<BackButtonManager> {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -67,7 +67,7 @@ public class BackButtonManager : UbiBCN.SingletonMonoBehaviour<BackButtonManager
     /// <summary>
     /// Called every frame.
     /// </summary>
-    private void Update() {
+    public void Update() {
         // Back button pressed?
         InputDevice device = InputManager.ActiveDevice;
 

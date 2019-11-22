@@ -34,6 +34,7 @@ namespace AI {
 		public virtual bool avoidCollisions { get { return false; } set { } }
 		public virtual bool avoidWater		{ get { return false; } set { } }
 
+        private bool m_hasToInitBrain = false;
 		private StateMachine m_brain;
 		public StateMachine brain{ get{ return m_brain; } }
 
@@ -49,10 +50,20 @@ namespace AI {
 		protected bool m_slowDown;
 
 
-		//--------------------------------------------------------------------//
-		// METHODS															  //
-		//--------------------------------------------------------------------//
-		public override void Spawn(ISpawner _spawner) {
+        //--------------------------------------------------------------------//
+        // METHODS															  //
+        //--------------------------------------------------------------------//        
+        protected override void Awake() {
+            base.Awake();
+
+            if (m_brainResource != null) {
+                m_brain = UnityEngine.Object.Instantiate(m_brainResource) as StateMachine;
+                m_brain.Instantiate(gameObject);
+                m_hasToInitBrain = true;
+            }
+        }
+
+        public override void Spawn(ISpawner _spawner) {
 			Vector3 pos = m_transform.position;
 			pos.z += zOffset;
             m_transform.position = pos;
@@ -81,13 +92,13 @@ namespace AI {
 			m_slowDown = false;
 
 			// braaiiiinnn ~ ~ ~ ~ ~
-			if (m_brain == null) {
-				if (m_brainResource != null) {
-					m_brain = UnityEngine.Object.Instantiate(m_brainResource) as StateMachine;
-					m_brain.Initialise(gameObject, true);
-				}
-			} else {
-				m_brain.Reset();
+			if (m_brain != null) {
+                if (m_hasToInitBrain) {
+                    m_brain.Initialise(true);
+                    m_hasToInitBrain = false;
+                } else {
+                    m_brain.Reset();
+                }
 			}
 		}
 

@@ -17,6 +17,10 @@
     if ([self.activityType isEqualToString:UIActivityTypePostToFacebook])
         return nil;
     
+    // Do not sava an image with text only when saving to files
+    if ([self.activityType isEqualToString:@"com.apple.CloudDocsUI.AddToiCloudDrive"] && self.hasImage)
+           return nil;
+    
         // In Whatsapp if we have an image we remove the text or it will not show
     if ([self.activityType isEqualToString:@"net.whatsapp.WhatsApp.ShareExtension"] && self.hasImage)
         return nil;

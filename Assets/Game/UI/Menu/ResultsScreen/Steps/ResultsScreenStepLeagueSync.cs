@@ -75,9 +75,13 @@ public class ResultsScreenStepLeagueSync : ResultsScreenStep {
 	/// Check whether this step must be displayed or not based on the run results.
 	/// </summary>
 	/// <returns><c>true</c> if the step must be displayed, <c>false</c> otherwise.</returns>
-	override public bool MustBeDisplayed() {		
-		return HDLiveDataManager.league.season.IsRunning();
-	}
+	override public bool MustBeDisplayed() {
+
+        // Leagues are active and the player can already participate and we have the minimum tier
+        return HDLiveDataManager.league.season.IsRunning() &&
+               UsersManager.currentUser.gamesPlayed >= GameSettings.ENABLE_LEAGUES_AT_RUN &&
+               DragonManager.CurrentDragon.tier >= HDLiveDataManager.league.GetMinimumTierToShowLeagues();
+    }
 
 	/// <summary>
 	/// Initialize and launch this step.
@@ -119,7 +123,7 @@ public class ResultsScreenStepLeagueSync : ResultsScreenStep {
 	/// </summary>
 	private void InitErrorPanel(HDLiveDataManager.ComunicationErrorCodes _error) {
 		// Offline?
-		bool offline = Application.internetReachability == NetworkReachability.NotReachable || !GameSessionManager.SharedInstance.IsLogged();
+		bool offline = DeviceUtilsManager.SharedInstance.internetReachability == NetworkReachability.NotReachable || !GameSessionManager.SharedInstance.IsLogged();
 		if(offline || _error == HDLiveDataManager.ComunicationErrorCodes.NET_ERROR) {
 			m_titleText.Localize("TID_LEAGUES_OFFLINE_TITLE");  // Sorry! You are offline!
 			m_messageText.Localize("TID_LEAGUES_OFFLINE_MESSAGE");  // You must be online to see and participate in the Legendary Leagues!

@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System;
 
-public class HDNotificationsManager : UbiBCN.SingletonMonoBehaviour<HDNotificationsManager>
+public class HDNotificationsManager : Singleton<HDNotificationsManager>
 {
     private const string HD_NOTIFICATIONS = "HD_NOTIFICATIONS";
     public const string SILENT_FLAG = "Notifications.Silent";
@@ -49,13 +49,12 @@ public class HDNotificationsManager : UbiBCN.SingletonMonoBehaviour<HDNotificati
             }
         }
     }
-
+#if UNITY_IOS
     public void Update()
     {
-#if UNITY_IOS
 		CheckRemoteNotifications();
-#endif
     }
+#endif
 
 #if UNITY_IOS
 	private void CheckRemoteNotifications() {
@@ -134,13 +133,7 @@ public class HDNotificationsManager : UbiBCN.SingletonMonoBehaviour<HDNotificati
     
     		// Clear all notifications
             NotificationsManager.SharedInstance.CancelAllNotifications();
-    
-            // If enabled reschedule all notifications
-    		if (enabled){
-    			if ( UsersManager.currentUser != null && EggManager.incubatingEgg != null){
-    				EggManager.incubatingEgg.ScheduleEggNotification();
-    	        }
-            }
+            
         }
     }   
 
@@ -153,6 +146,7 @@ public class HDNotificationsManager : UbiBCN.SingletonMonoBehaviour<HDNotificati
             if (def != null)
             {
                 body = LocalizationManager.SharedInstance.Localize(def.Get("tidName"));
+				body = EmojiManager.ReplaceEmojis(body);		// Replace emoji tags! 
             }
 
             ScheduleNotification(strSKU, body, "Action", iTimeLeft);
@@ -177,17 +171,21 @@ public class HDNotificationsManager : UbiBCN.SingletonMonoBehaviour<HDNotificati
         }
     }
 
-#region game
-    // Add here the game related code
+	#region game
+	// Add here the game related code
+	public const int SILENCE_START_HOUR = 23;
+	public const int SILENCE_END_HOUR = 8;
 
-    private const string SKU_EGG_HATCHED = "sku.not.01";
+	private const string SKU_EGG_HATCHED = "sku.not.01";
     private const string SKU_NEW_MISSIONS = "sku.not.02";
     private const string SKU_NEW_CHESTS = "sku.not.03";
 	private const string SKU_DAILY_REWARD = "sku.not.04";
     private const string SKU_REENGAGEMENT = "sku.not.14";
+	private const string SKU_FREE_OFFER = "sku.not.15";
 
     private const string DEFAULT_ACTION = "Action";
 
+	// Eggs
     public void ScheduleEggHatchedNotification(int seconds)
     {
         ScheduleNotificationFromSku(SKU_EGG_HATCHED, DEFAULT_ACTION, seconds);
@@ -198,6 +196,7 @@ public class HDNotificationsManager : UbiBCN.SingletonMonoBehaviour<HDNotificati
         CancelNotification(SKU_EGG_HATCHED);
     }
 
+	// Missions
     public void ScheduleNewMissionsNotification(int seconds)
     {
         ScheduleNotificationFromSku(SKU_NEW_MISSIONS, DEFAULT_ACTION, seconds);
@@ -208,30 +207,36 @@ public class HDNotificationsManager : UbiBCN.SingletonMonoBehaviour<HDNotificati
         CancelNotification(SKU_NEW_MISSIONS);
     }
 
+	// Chests
     public void ScheduleNewChestsNotification(int seconds)
     {
         ScheduleNotificationFromSku(SKU_NEW_CHESTS, DEFAULT_ACTION, seconds);
     }
-    
-    public void ScheduleNewDailyReward(int seconds)
+
+	public void CancelNewChestsNotification() {
+		CancelNotification(SKU_NEW_CHESTS);
+	}
+
+	// Daily Reward
+	public void ScheduleNewDailyReward(int seconds)
     {
         ScheduleNotificationFromSku(SKU_DAILY_REWARD, DEFAULT_ACTION, seconds);
     }
-    
-
-    public void CancelNewChestsNotification()
-    {
-        CancelNotification(SKU_NEW_CHESTS);
-    }
-
-	public void ScheduleDailyRewardNotification(int seconds) {
-		ScheduleNotificationFromSku(SKU_DAILY_REWARD, DEFAULT_ACTION, seconds);
-	}
 
 	public void CancelDailyRewardNotification() {
 		CancelNotification(SKU_DAILY_REWARD);
 	}
 
+	// Free Offer
+	public void ScheduleNewFreeOffer(int seconds) {
+		ScheduleNotificationFromSku(SKU_FREE_OFFER, DEFAULT_ACTION, seconds);
+	}
+
+	public void CancelFreeOfferNotification() {
+		CancelNotification(SKU_FREE_OFFER);
+	}
+
+	// Reengagement
     public void ScheduleReengagementNotification(int seconds) {
 		ScheduleNotificationFromSku(SKU_REENGAGEMENT, DEFAULT_ACTION, seconds);
 	}
@@ -239,11 +244,34 @@ public class HDNotificationsManager : UbiBCN.SingletonMonoBehaviour<HDNotificati
     public void CancelReengagementNotification(  ){
         CancelNotification(SKU_REENGAGEMENT);
     }
-#endregion
+	#endregion
 
+	#region utils
+	/// <summary>
+	/// Adjust given date time to avoid silent hours.
+	/// The date time will be moved forward to the first non-silent hour possible.
+	/// </summary>
+	/// <param name="_dateTime">Date time to be adjusted.</param>
+	/// <returns>Adjusted date time.</returns>
+	public static DateTime AvoidSilentHours(DateTime _dateTime) {
+		// Add hour by hour until condition is met
+		bool adjusted = false;
+		while(_dateTime.Hour >= HDNotificationsManager.SILENCE_START_HOUR || _dateTime.Hour < HDNotificationsManager.SILENCE_END_HOUR) {
+			_dateTime = _dateTime.AddHours(1);
+			adjusted = true;
+		}
 
-#region log
-    private const string LOG_CHANNEL = "[HDNotificationsManager]";
+		// Round to hour
+		if(adjusted) {
+			_dateTime = new DateTime(_dateTime.Year, _dateTime.Month, _dateTime.Day, _dateTime.Hour, 0, 0, 0, _dateTime.Kind);
+		}
+
+		return _dateTime;
+	}
+	#endregion
+
+	#region log
+	private const string LOG_CHANNEL = "[HDNotificationsManager]";
     private void Log(string msg)
     {
         msg = LOG_CHANNEL + msg;

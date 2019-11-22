@@ -46,6 +46,7 @@ public class MenuHUD : MonoBehaviour {
 
 	[Space]
 	[SerializeField] private UINotification m_offersNotification = null;
+	[SerializeField] private UINotification m_freeOfferNotification = null;
 
 	// Internal
 	private ShowHideAnimator m_animator = null;
@@ -74,7 +75,7 @@ public class MenuHUD : MonoBehaviour {
 	/// </summary>
 	private void OnEnable() {
 		// Refresh offers notification
-		RefreshOffersNotification();
+		RefreshOffersNotifications();
 
 		// Subscribe to external events
 		Messenger.AddListener(MessengerEvents.OFFERS_CHANGED, OnOffersChanged);
@@ -125,9 +126,20 @@ public class MenuHUD : MonoBehaviour {
 	/// <summary>
 	/// Refresh offers notification visibility.
 	/// </summary>
-	public void RefreshOffersNotification() {
-		// Show only if there is at least one offer pack active
-		m_offersNotification.Set(OffersManager.activeOffers.Count > 0);
+	public void RefreshOffersNotifications() {
+		// Free offer notification: Show only if free offer is available
+		bool freeOfferAvailable = OffersManager.activeFreeOffer != null && !OffersManager.isFreeOfferOnCooldown;
+		if(m_freeOfferNotification != null) {
+			m_freeOfferNotification.Set(freeOfferAvailable);
+		}
+
+		// Offer notification: Show if free offer is not available but there are other offers
+		if(m_offersNotification != null) {
+			m_offersNotification.Set(
+				(!freeOfferAvailable || m_freeOfferNotification == null) &&	// Free offer not available (or free offer notification not defined)
+				OffersManager.activeOffers.Count > 0		// At least one active pack
+			);
+		}
 	}
 
 	//------------------------------------------------------------------//
@@ -137,6 +149,18 @@ public class MenuHUD : MonoBehaviour {
 	/// Active offers have changed.
 	/// </summary>
 	public void OnOffersChanged() {
-		RefreshOffersNotification();
+		RefreshOffersNotifications();
+	}
+
+	/// <summary>
+	/// Photo button has been pressed.
+	/// </summary>
+	public void OnPhotoButton() {
+		// Make sure selected dragon can be photographed!
+		IDragonData dragonData = InstanceManager.menuSceneController.selectedDragonData;
+		if(dragonData != null && dragonData.isOwned) {
+			// Go to target screen
+			InstanceManager.menuSceneController.GoToScreen(MenuScreen.PHOTO, true);
+		}
 	}
 }

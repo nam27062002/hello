@@ -40,6 +40,22 @@ public class MenuDragonPreview : MonoBehaviour {
 		"fly"
 	};
 
+	public enum AltAnimSpecialAction {
+		NONE,
+		BIRD,
+	};
+
+	[System.Serializable]
+	public struct AltAnimConfig {
+		public Range m_range;
+		public bool m_allowFaceDetails;
+		public int m_loopsMin;
+		public int m_loopsMax;
+		public AltAnimSpecialAction m_special;
+		public float m_timeToNext;
+		public bool m_isPreferedAnimation;  // Animation Used when we touch the dragon on dragon selection
+		public int m_animationLevel;
+	}
 
 	//------------------------------------------------------------------//
 	// MEMBERS															//
@@ -48,34 +64,30 @@ public class MenuDragonPreview : MonoBehaviour {
 	[SerializeField] private string m_sku;
 	public string sku { get { return m_sku; }}
 
-
-	private Anim m_currentAnim = Anim.IDLE;
-
-
-	// IDLE STATE CONTROL
-	public enum AltAnimSpecialAction
-	{
-		NONE,
-		BIRD,
-	};
-
-	[System.Serializable]
-	public struct AltAnimConfig
-	{
-		public Range m_range;
-		public bool m_allowFaceDetails;
-		public int m_loopsMin;
-		public int m_loopsMax;
-		public AltAnimSpecialAction m_special;
-		public float m_timeToNext;
-		public bool m_isPreferedAnimation;	// Animation Used when we touch the dragon on dragon selection
-		public int m_animationLevel;
+	// Setup
+	[Space]
+	[Comment("Modifiers to make all dragons have the same size and position when resetting their scale")]
+	[SerializeField] private Vector3 m_offsetModifier = GameConstants.Vector3.zero;
+	public Vector3 offsetModifier {
+		get { return m_offsetModifier; }
+		set { m_offsetModifier = value; }
 	}
-	public List<AltAnimConfig> m_altAnimConfigs = new List<AltAnimConfig>();
-	private int m_currentAnimIndex = -1;
-	private int m_lastAltAnim = -1;
-	private int m_count;
 
+	[SerializeField] private float m_baseScaleModifier = 1f;
+	public float scaleModifier {
+		get { return m_baseScaleModifier; }
+		set { m_baseScaleModifier = value; }
+	}
+
+	// Idle anims
+	[Space]
+	public List<AltAnimConfig> m_altAnimConfigs = new List<AltAnimConfig>();
+	
+	// VFX
+	[Space]
+	public bool m_hasFire = false;
+	public GameObject m_dragonFlameStandard = null;
+	public ParticleControl m_bloodParticle;
 
 	// Components
 	private DragonEquip m_equip = null;
@@ -99,24 +111,29 @@ public class MenuDragonPreview : MonoBehaviour {
 		}	
 	}
 
+	private Anim m_currentAnim = Anim.IDLE;
+	private int m_currentAnimIndex = -1;
+	private int m_lastAltAnim = -1;
+	private int m_altAnimCount;
+
 	private Renderer[] m_renderers;
 	private Dictionary<int, List<Material>> m_materials;
 
-
-	public bool m_hasFire = false;
-	public GameObject m_dragonFlameStandard = null;
 	private FireBreathDynamic m_dragonFlameStandardInstance = null;
 
-	public ParticleControl m_bloodParticle;
-
 	private bool m_allowAltAnimations = true;
-	public bool allowAltAnimations{ get{ return m_allowAltAnimations; }set{ m_allowAltAnimations = value; } }
+	public bool allowAltAnimations{
+		get { return m_allowAltAnimations; }
+		set { m_allowAltAnimations = value; }
+	}
 
 	private int m_altAnimationsMaxLevel = 10;
-	public int altAnimationsMaxLevel{ get{ return m_altAnimationsMaxLevel; }set{ m_altAnimationsMaxLevel = value; } }
+	public int altAnimationsMaxLevel{
+		get { return m_altAnimationsMaxLevel; }
+		set { m_altAnimationsMaxLevel = value; }
+	}
 
     public ParticleControl[] m_extraParticles;
-
 
     //------------------------------------------------------------------//
     // GENERIC METHODS													//
@@ -141,7 +158,7 @@ public class MenuDragonPreview : MonoBehaviour {
             }
         }
 
-        m_count = m_altAnimConfigs.Count;
+        m_altAnimCount = m_altAnimConfigs.Count;
     }
 
 
@@ -151,7 +168,7 @@ public class MenuDragonPreview : MonoBehaviour {
 		NumLoopsBehaviour[] behaviours = m_animator.GetBehaviours<NumLoopsBehaviour>();
 		int behavioursCount = behaviours.Length;
 
-		for( int i = 0;i<m_count; ++i ){
+		for( int i = 0;i<m_altAnimCount; ++i ){
 			AltAnimConfig item = m_altAnimConfigs[i];
 			item.m_timeToNext -= item.m_range.GetRandom();
 			m_altAnimConfigs[i] = item;
@@ -177,6 +194,11 @@ public class MenuDragonPreview : MonoBehaviour {
 	        t.localRotation = Quaternion.Euler(new Vector3(0.0f, 0.0f, 180.0f));
 	        t.localScale = GameConstants.Vector3.one;
 			m_dragonFlameStandardInstance = tempFire.GetComponent<FireBreathDynamic>();
+
+			// Make sure content is initialized (when using it from a test scene)
+			if(!ContentManager.ready) {
+				ContentManager.InitContent(true, false);
+			}
 
 			DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition( DefinitionsCategory.DRAGONS, m_sku);
 			float furyBaseLength = def.GetAsFloat("furyBaseLength");
@@ -256,7 +278,7 @@ public class MenuDragonPreview : MonoBehaviour {
 					// Count down every timer to check when to start the new alternative animation
 					if (m_allowAltAnimations)
 					{
-						for( int i = 0; i<m_count && m_currentAnimIndex < 0; ++i )
+						for( int i = 0; i<m_altAnimCount && m_currentAnimIndex < 0; ++i )
 						{
 							AltAnimConfig item = m_altAnimConfigs[i];
 							if ( item.m_animationLevel <= m_altAnimationsMaxLevel )
@@ -282,7 +304,7 @@ public class MenuDragonPreview : MonoBehaviour {
 
 	public void ForcePreferedAltAnimation()
 	{
-		for( int i = 0; i<m_count && m_currentAnimIndex < 0; ++i )
+		for( int i = 0; i<m_altAnimCount && m_currentAnimIndex < 0; ++i )
 		{
 			AltAnimConfig item = m_altAnimConfigs[i];
 			if ( item.m_isPreferedAnimation )

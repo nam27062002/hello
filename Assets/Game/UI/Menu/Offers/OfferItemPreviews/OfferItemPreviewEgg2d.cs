@@ -75,7 +75,8 @@ public class OfferItemPreviewEgg2d : IOfferItemPreview {
 	/// <summary>
 	/// The info button has been pressed.
 	/// </summary>
-	override public void OnInfoButton() {
+	/// <param name="_trackingLocation">Where is this been triggered from?</param>
+	override public void OnInfoButton(string _trackingLocation) {
 		// Intiialize info popup
 		PopupController popup = PopupManager.LoadPopup(PopupInfoEggDropChance.PATH);
 		popup.GetComponent<PopupInfoEggDropChance>().Init(m_item.sku);
@@ -85,5 +86,9 @@ public class OfferItemPreviewEgg2d : IOfferItemPreview {
 
 		// Oopen it!
 		popup.Open();
+
+		// Tracking
+		string popupName = System.IO.Path.GetFileNameWithoutExtension(PopupInfoPet.PATH_SIMPLE);
+		HDTrackingManager.Instance.Notify_InfoPopup(popupName, _trackingLocation);
 	}
 }

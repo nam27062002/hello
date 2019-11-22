@@ -33,7 +33,7 @@ public class WorldFeedbackSpawner : MonoBehaviour, IBroadcastListener {
 	[SerializeField] private GameObject m_killFeedbackPrefab = null;
 	[SerializeField] private GameObject m_flockBonusFeedbackPrefab = null;
 	[SerializeField] private GameObject m_escapedFeedbackPrefab = null;
-    [SerializeField] private ParticlesTrailFX m_cakeEatenFeedbackPrefab = null;
+    [SerializeField] private ParticlesTrailFX m_hungryCollectibleEatenFeedbackPrefab = null;
 
     [Separator("Container References")]
 	[SerializeField] private GameObject m_scoreFeedbackContainer = null;
@@ -146,13 +146,10 @@ public class WorldFeedbackSpawner : MonoBehaviour, IBroadcastListener {
 
 		if ( m_particlesFeedbackEnabled )
 		{
-			Messenger.AddListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_EATEN, OnEaten);
-			Messenger.AddListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_BURNED, OnBurned);
-			Messenger.AddListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_DESTROYED, OnDestroyed);
+			Messenger.AddListener<Transform, IEntity, Reward, KillType>(MessengerEvents.ENTITY_KILLED, OnKill);
 			Messenger.AddListener<Transform, IEntity, Reward>(MessengerEvents.FLOCK_EATEN, OnFlockEaten);
 			Messenger.AddListener<Transform, IEntity, Reward>(MessengerEvents.STAR_COMBO, OnStarCombo);
-            Messenger.AddListener<Vector3>(MessengerEvents.ANNIVERSARY_CAKE_SLICE_EATEN, OnEatCake);
-
+            Broadcaster.AddListener(BroadcastEventType.HUNGRY_MODE_ENTITY_EATEN, this);
             Messenger.AddListener<Transform>(MessengerEvents.ENTITY_ESCAPED, OnEscaped);
 	        
         }
@@ -170,12 +167,10 @@ public class WorldFeedbackSpawner : MonoBehaviour, IBroadcastListener {
 
 		if ( m_particlesFeedbackEnabled )
 		{
-			Messenger.RemoveListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_EATEN, OnEaten);
-			Messenger.RemoveListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_BURNED, OnBurned);
-			Messenger.RemoveListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_DESTROYED, OnDestroyed);
+			Messenger.RemoveListener<Transform, IEntity, Reward, KillType>(MessengerEvents.ENTITY_KILLED, OnKill);
 			Messenger.RemoveListener<Transform, IEntity, Reward>(MessengerEvents.FLOCK_EATEN, OnFlockEaten);
 			Messenger.RemoveListener<Transform, IEntity, Reward>(MessengerEvents.STAR_COMBO, OnStarCombo);
-            Messenger.RemoveListener<Vector3>(MessengerEvents.ANNIVERSARY_CAKE_SLICE_EATEN, OnEatCake);
+            Broadcaster.RemoveListener(BroadcastEventType.HUNGRY_MODE_ENTITY_EATEN, this);
             Messenger.RemoveListener<Transform>(MessengerEvents.ENTITY_ESCAPED, OnEscaped);
         }
 		
@@ -188,6 +183,11 @@ public class WorldFeedbackSpawner : MonoBehaviour, IBroadcastListener {
             case BroadcastEventType.GAME_ENDED:
             {
                 OnGameEnded();
+            }break;
+            case BroadcastEventType.HUNGRY_MODE_ENTITY_EATEN:
+            {
+                PositionEventInfo posEventInfo = broadcastEventInfo as PositionEventInfo;
+                OnEatHungryCollectible( posEventInfo.position );
             }break;
         }
     }
@@ -318,31 +318,29 @@ public class WorldFeedbackSpawner : MonoBehaviour, IBroadcastListener {
 	}
 
 	/// <summary>
-	/// An entity has been eaten.
+	/// An entity has been killed.
 	/// </summary>
 	/// <param name="_entity">The eaten entity.</param>
 	/// <param name="_reward">The reward given. Won't be used.</param>
-	private void OnEaten(Transform _t, IEntity _e, Reward _reward) {
-		SpawnKillFeedback(FeedbackData.Type.EAT, _t, _e);
+	private void OnKill(Transform _t, IEntity _e, Reward _reward, KillType _type) {
+
+        switch (_type)
+        {
+            case KillType.EATEN:
+                SpawnKillFeedback(FeedbackData.Type.EAT, _t, _e);
+                break;
+
+            case KillType.BURNT:
+                SpawnKillFeedback(FeedbackData.Type.BURN, _t, _e);
+                break;
+
+            case KillType.SMASHED:
+                SpawnKillFeedback(FeedbackData.Type.DESTROY, _t, _e);
+                break;
+        }
+		
 	}
 
-	/// <summary>
-	/// An entity has been burned.
-	/// </summary>
-	/// <param name="_entity">The burned entity.</param>
-	/// <param name="_reward">The reward given. Won't be used.</param>
-	private void OnBurned(Transform _t, IEntity _e, Reward _reward) {
-		SpawnKillFeedback(FeedbackData.Type.BURN, _t, _e);
-	}
-
-	/// <summary>
-	/// An entity has been destroyed.
-	/// </summary>
-	/// <param name="_entity">The destroyed entity.</param>
-	/// <param name="_reward">The reward given. Won't be used.</param>
-	private void OnDestroyed(Transform _t, IEntity _e, Reward _reward) {
-		SpawnKillFeedback(FeedbackData.Type.DESTROY, _t, _e);
-	}
 		
 	/// <summary>
 	/// A full flock has been eaten.
@@ -384,9 +382,9 @@ public class WorldFeedbackSpawner : MonoBehaviour, IBroadcastListener {
     /// A piece of cake has been eaten.
     /// </summary>
     /// <param name="_position">The cake pieces position.</param>
-    private void OnEatCake(Vector3 _position)
+    private void OnEatHungryCollectible(Vector3 _position)
     {
-        if (m_cakeEatenFeedbackPrefab != null)
+        if (m_hungryCollectibleEatenFeedbackPrefab != null)
         {
 
             // From the center of the screen
@@ -395,7 +393,7 @@ public class WorldFeedbackSpawner : MonoBehaviour, IBroadcastListener {
             // To the cake icon
             Vector3 sink = m_cakeCrumbsDestination.position;
 
-            ParticlesTrailFX.InstantiateAndLaunch(m_cakeEatenFeedbackPrefab.gameObject, transform, source, sink);
+            ParticlesTrailFX.InstantiateAndLaunch(m_hungryCollectibleEatenFeedbackPrefab.gameObject, transform, source, sink);
 
         }
     }   

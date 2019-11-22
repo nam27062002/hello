@@ -28,15 +28,21 @@ public class GoalsScreenController : MonoBehaviour {
 
 	public enum Buttons {
 		MISSIONS,
+        LEAGUES,
 		GLOBAL_EVENTS,
 		CHESTS
 	}
 
-	//------------------------------------------------------------------------//
-	// MEMBERS AND PROPERTIES												  //
-	//------------------------------------------------------------------------//
-	// Exposed
-	[SerializeField] private GameObject m_eventActiveGroup = null;
+    //------------------------------------------------------------------------//
+    // MEMBERS AND PROPERTIES												  //
+    //------------------------------------------------------------------------//
+    // Exposed
+    [SerializeField] private GameObject m_leagueActiveGroup = null;
+    [SerializeField] private GameObject m_leagueInactiveGroup = null;
+    [SerializeField] private TextMeshProUGUI m_leagueCountdownText = null;
+    [SerializeField] private Slider m_leagueCountdownSlider = null;
+    [Space]
+    [SerializeField] private GameObject m_eventActiveGroup = null;
 	[SerializeField] private GameObject m_eventInactiveGroup = null;
 	[SerializeField] private TextMeshProUGUI m_eventCountdownText = null;
 	[SerializeField] private Slider m_eventCountdownSlider = null;
@@ -45,6 +51,8 @@ public class GoalsScreenController : MonoBehaviour {
 	[SerializeField] private SelectableButtonGroup m_buttons = null;
 
 	HDQuestManager m_quest;
+    HDLeagueController m_league;
+    HDSeasonData m_season;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -55,9 +63,11 @@ public class GoalsScreenController : MonoBehaviour {
 	private void Awake() {
 		// Initialize references
 		m_quest = HDLiveDataManager.quest;
+        m_league = HDLiveDataManager.league;
+        m_season = HDLiveDataManager.league.season;
 
-		// Subscribe to external events.
-		Messenger.AddListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnTransitionStarted);
+        // Subscribe to external events.
+        Messenger.AddListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnTransitionStarted);
 
 		// Force a first refresh
 		if (InstanceManager.menuSceneController != null && InstanceManager.menuSceneController.transitionManager != null)
@@ -67,38 +77,50 @@ public class GoalsScreenController : MonoBehaviour {
 			OnTransitionStarted( prev, current );
 		}
 
-		// Remove buttons from the selection group if they can't be selected
-		// Chests
-		if(UsersManager.currentUser.gamesPlayed < GameSettings.ENABLE_CHESTS_AT_RUN) {
-			ExcludeButton(Buttons.CHESTS);
-		}
+		
+    }
 
-		// Quests
-		if(UsersManager.currentUser.gamesPlayed < GameSettings.ENABLE_QUESTS_AT_RUN) {
-			ExcludeButton(Buttons.GLOBAL_EVENTS);
-		}
-	}
 
-	/// <summary>
-	/// First update call.
-	/// </summary>
-	private void Start() {
-		// Program a periodic update
-		InvokeRepeating("UpdatePeriodic", 0f, COUNTDOWN_UPDATE_INTERVAL);
-	}
 
 	/// <summary>
 	/// Component has been enabled.
 	/// </summary>
 	private void OnEnable() {
-		// Make sure timers will be updated
-		UpdatePeriodic();
-	}
 
-	/// <summary>
-	/// Default destructor.
-	/// </summary>
-	private void OnDestroy() {
+
+        // Remove buttons from the selection group if they can't be selected
+        // Chests
+        if (UsersManager.currentUser.gamesPlayed < GameSettings.ENABLE_CHESTS_AT_RUN)
+        {
+            ExcludeButton(Buttons.CHESTS);
+        }
+
+        // Quests
+        if (UsersManager.currentUser.gamesPlayed < GameSettings.ENABLE_QUESTS_AT_RUN)
+        {
+            ExcludeButton(Buttons.GLOBAL_EVENTS);
+        }
+
+        // Leagues
+        if (UsersManager.currentUser.gamesPlayed < GameSettings.ENABLE_LEAGUES_AT_RUN ||
+            HDLiveDataManager.league.GetMinimumTierToShowLeagues() > DragonManager.biggestOwnedDragon.tier)
+        {
+            ExcludeButton(Buttons.LEAGUES);
+        }
+
+        // Program a periodic update
+        InvokeRepeating("UpdatePeriodic", 0f, COUNTDOWN_UPDATE_INTERVAL);
+    }
+
+    private void OnDisable()
+    {
+        CancelInvoke("UpdatePeriodic");
+    }
+
+    /// <summary>
+    /// Default destructor.
+    /// </summary>
+    private void OnDestroy() {
 		// Unsubscribe from external events.
 		Messenger.RemoveListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnTransitionStarted);
 	}
@@ -115,23 +137,42 @@ public class GoalsScreenController : MonoBehaviour {
 		// bool eventAvailable = evt != null && evt.isActive;
 		bool eventAvailable = m_quest.EventExists() && m_quest.IsRunning();
 
-		// Consider tutorial as well!
-		eventAvailable &= UsersManager.currentUser.gamesPlayed >= GameSettings.ENABLE_QUESTS_AT_RUN;
+
+        // Leagues: Refresh visible season button based on season state
+        bool seasonAvailable = m_season.IsRunning();    // Joined or Not Joined
+        double seasonRemainingSeconds = 0;
+        if (seasonAvailable)
+        {
+            // The season might seem available event when the timer has finished because the UpdateState() hasn't been called yet
+            // Consider it as not available in that case
+            seasonRemainingSeconds = m_season.timeToClose.TotalSeconds;
+            seasonAvailable &= (seasonRemainingSeconds > 0);
+        }
+
+
+        // Consider tutorial as well!
+        eventAvailable &= UsersManager.currentUser.gamesPlayed >= GameSettings.ENABLE_QUESTS_AT_RUN;
+        seasonAvailable &= UsersManager.currentUser.gamesPlayed >= GameSettings.ENABLE_LEAGUES_AT_RUN;
 
 		// Does it actually change?
 		bool dirty = false;
 		dirty |= m_eventActiveGroup.activeSelf != eventAvailable;
 		dirty |= m_eventInactiveGroup.activeSelf != !eventAvailable;
+        dirty |= m_leagueActiveGroup.activeSelf != seasonAvailable;
+        dirty |= m_leagueInactiveGroup.activeSelf != !seasonAvailable;
 
-		// Apply
-		if(dirty) {
+        // Apply
+        if (dirty) {
 			m_eventActiveGroup.SetActive(eventAvailable);
 			m_eventInactiveGroup.SetActive(!eventAvailable);
 
-			// [AOC] Enabling/disabling objects while the layout is inactive makes the layout to not update properly
-			//		 Luckily for us Unity provides us with the right tools to rebuild it
-			//		 Fixes issue https://mdc-tomcat-jira100.ubisoft.org/jira/browse/HDK-690
-			if(m_buttonsLayout != null) {
+            m_leagueActiveGroup.SetActive(seasonAvailable);
+            m_leagueInactiveGroup.SetActive(!seasonAvailable);
+
+            // [AOC] Enabling/disabling objects while the layout is inactive makes the layout to not update properly
+            //		 Luckily for us Unity provides us with the right tools to rebuild it
+            //		 Fixes issue https://mdc-tomcat-jira100.ubisoft.org/jira/browse/HDK-690
+            if (m_buttonsLayout != null) {
 				LayoutRebuilder.ForceRebuildLayoutImmediate(m_buttonsLayout.transform as RectTransform);
 			}
 		}
@@ -159,7 +200,22 @@ public class GoalsScreenController : MonoBehaviour {
 				m_quest.UpdateStateFromTimers();
 			}
 		}
-	}
+
+        // League Timer - season is running
+        if (m_leagueActiveGroup.activeSelf )
+        {
+            double durationSeconds = Math.Max (1, m_season.duration.TotalSeconds); // To avoid division by 0
+
+            m_leagueCountdownText.text = TimeUtils.FormatTime(
+            seasonRemainingSeconds,
+            TimeUtils.EFormat.ABBREVIATIONS_WITHOUT_0_VALUES,
+                2
+            );
+
+            // Timer bar
+            m_leagueCountdownSlider.value = 1f - (float)(seasonRemainingSeconds / durationSeconds);
+        }
+    }
 
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //
@@ -245,17 +301,54 @@ public class GoalsScreenController : MonoBehaviour {
 		}
 	}
 
-	/// <summary>
-	/// The current menu screen has changed (animation starts now).
-	/// </summary>
-	/// <param name="_from">Source screen.</param>
-	/// <param name="_to">Target screen.</param>
-	private void OnTransitionStarted(MenuScreen _from, MenuScreen _to) {
+    /// <summary>
+    /// Leagues button has been pressed.
+    /// </summary>
+    public void OnLeaguesButton()
+    {
+        // Check tutorial!
+        int remainingRuns = GameSettings.ENABLE_LEAGUES_AT_RUN - UsersManager.currentUser.gamesPlayed;
+        if (UsersManager.currentUser.gamesPlayed < GameSettings.ENABLE_LEAGUES_AT_RUN)
+        {
+            // Show error message
+            string tid = remainingRuns == 1 ? "TID_MORE_RUNS_REQUIRED" : "TID_MORE_RUNS_REQUIRED_PLURAL";
+            UIFeedbackText.CreateAndLaunch(
+                LocalizationManager.SharedInstance.Localize(tid, remainingRuns.ToString()),
+                new Vector2(0.5f, 0.25f),
+                this.GetComponentInParent<Canvas>().transform as RectTransform
+            );
+        }
+        else if (HDLiveDataManager.league.GetMinimumTierToShowLeagues() > DragonManager.biggestOwnedDragon.tier)
+        {
+            // Show error message
+            string tid = "TID_FEEDBACK_NEED_TIER_DRAGON";
+            DragonTier tier = HDLiveDataManager.league.GetMinimumTierToShowLeagues();
+            string tierName = LocalizationManager.SharedInstance.Localize("TID_DRAGON_TIER_" + (int) tier + "_NAME");
+            UIFeedbackText.CreateAndLaunch(
+                LocalizationManager.SharedInstance.Localize(tid, tierName),
+                new Vector2(0.5f, 0.25f),
+                this.GetComponentInParent<Canvas>().transform as RectTransform
+            );
+        }
+        else
+        {
+            // Go to leagues screen
+            InstanceManager.menuSceneController.GoToScreen(MenuScreen.LEAGUES);
+        }
+    }
+
+    /// <summary>
+    /// The current menu screen has changed (animation starts now).
+    /// </summary>
+    /// <param name="_from">Source screen.</param>
+    /// <param name="_to">Target screen.</param>
+    private void OnTransitionStarted(MenuScreen _from, MenuScreen _to) {
 		// If the new screen is any of our screens of interest, select the matching button!
 		switch(_to) {
 			case MenuScreen.MISSIONS:		m_buttons.SelectButton((int)Buttons.MISSIONS);	break;
 			case MenuScreen.CHESTS:			m_buttons.SelectButton((int)Buttons.CHESTS);	break;
 			case MenuScreen.GLOBAL_EVENTS:	m_buttons.SelectButton((int)Buttons.GLOBAL_EVENTS);	break;
-		}
+            case MenuScreen.LEAGUES:        m_buttons.SelectButton((int)Buttons.LEAGUES); break;
+        }
 	}
 }

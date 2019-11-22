@@ -8,6 +8,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 479000}
+  - component: {fileID: 114275883894684528}
   - component: {fileID: 114000011844506918}
   - component: {fileID: 11401264}
   - component: {fileID: 11408994}
@@ -366,7 +367,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1071954538713202}
   m_LocalRotation: {x: -0, y: 0.2019952, z: -0, w: 0.97938657}
-  m_LocalPosition: {x: 0.000012677921, y: 4.96, z: -0.0000041074422}
+  m_LocalPosition: {x: 0.000012677921, y: 5.47, z: -0.0000041074422}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 479000}
@@ -596,6 +597,25 @@ MonoBehaviour:
   m_sku: building_small
   m_tier: 2
   m_disintegrable: 1
+--- !u!114 &114275883894684528
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 138210}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6eea47f5599f54e948774badb4a20f4a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_minTier: 0
+  m_maxTier: 4
+  m_checkMaxTier: 0
+  m_activationChance: 100
+  m_activationTriggers: []
+  m_activationKillTriggers: []
+  m_deactivationTriggers: []
+  m_deactivationKillTriggers: []
 --- !u!114 &114600449030803380
 MonoBehaviour:
   m_ObjectHideFlags: 1

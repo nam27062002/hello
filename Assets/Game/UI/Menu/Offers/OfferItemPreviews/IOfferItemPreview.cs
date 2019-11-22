@@ -50,9 +50,25 @@ public abstract class IOfferItemPreview : MonoBehaviour {
 	protected OfferPackItem m_item = null;
 	protected DefinitionNode m_def = null;
 
+	// Coroutine pointer used to stop the coroutine when object is destroyed
+	private Coroutine m_delatedSetParentAndFit = null;
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
+
+	///
+	/// OnDestroy
+	/// We stop delayed coroutine to avoid accesing an object that was destroyed
+	void OnDestroy()
+	{
+		if (m_delatedSetParentAndFit != null)
+		{
+			StopCoroutine(m_delatedSetParentAndFit);
+			m_delatedSetParentAndFit = null;
+		}
+	}
+
 	/// <summary>
 	/// Initialize the widget with the data of a specific offer item.
 	/// </summary>
@@ -73,7 +89,8 @@ public abstract class IOfferItemPreview : MonoBehaviour {
 	/// <param name="_t">New parent!</param>
 	public virtual void SetParentAndFit(RectTransform _t) {
 		// Delay by one frame to make sure rect transforms are properly initialized
-		UbiBCN.CoroutineManager.DelayedCallByFrames(() => {
+		m_delatedSetParentAndFit = UbiBCN.CoroutineManager.DelayedCallByFrames(() => {
+			m_delatedSetParentAndFit = null;
 			this.transform.SetParent(_t, false);
 
 			float sx = _t.rect.width / Mathf.Max(rectTransform.rect.width, float.Epsilon);      // Prevent division by 0
@@ -121,7 +138,8 @@ public abstract class IOfferItemPreview : MonoBehaviour {
 	/// <summary>
 	/// The info button has been pressed.
 	/// </summary>
-	public virtual void OnInfoButton() {
+	/// <param name="_trackingLocation">Where is this been triggered from?</param>
+	public virtual void OnInfoButton(string _trackingLocation) {
 		// Nothing to do by default
 	}
 

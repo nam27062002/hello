@@ -26,7 +26,7 @@ public class CPProgressionCheats : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
-	
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -56,10 +56,10 @@ public class CPProgressionCheats : MonoBehaviour {
 	/// </summary>
 	public void OnResetProgress(bool _skipTutorial) {
 		// If not in the menu, show feedback message and return
-		if(!CheckScene()) return;        
+		if(!CheckScene()) return;
 
 		// Close control panel
-		ControlPanel.instance.Toggle();     
+		ControlPanel.instance.Toggle();
 
 		// Reset some managers
 		GlobalEventManager.ClearCurrentEvent();
@@ -68,16 +68,16 @@ public class CPProgressionCheats : MonoBehaviour {
 		OnResetAllDragons();
 		OnResetAllPets();
 
-        // Clear persistence and sets the default persistence
-        PersistenceFacade.instance.LocalDriver.OverrideWithDefault(null);
+		// Clear persistence and sets the default persistence
+		PersistenceFacade.instance.LocalDriver.OverrideWithDefault(null);
 
-        UsersManager.Reset();        
+		UsersManager.Reset();
 
 		// Backup all preferences that must be kept between resets
 		int resetProgressCount = PlayerPrefs.GetInt("RESET_PROGRESS_COUNT", 0);
 
-        // Reset all preferences
-        PlayerPrefs.DeleteAll();
+		// Reset all preferences
+		PlayerPrefs.DeleteAll();
 
 		// Restore preferences that must be kept between resets
 		PlayerPrefs.SetInt("RESET_PROGRESS_COUNT", resetProgressCount + 1);
@@ -88,8 +88,8 @@ public class CPProgressionCheats : MonoBehaviour {
 		// Initialize debug settings, they have been reset when reseting the preferences
 		DebugSettings.Init();
 
-        // Downloadables folder is deleted
-        AssetBundlesManager.Instance.DeleteAllDownloadables();
+		// Downloadables folder is deleted
+		AssetBundlesManager.Instance.DeleteAllDownloadables();
 
 		// Restart game
 		FlowManager.Restart();
@@ -110,43 +110,43 @@ public class CPProgressionCheats : MonoBehaviour {
 		// Compute amount to add
 		switch(_operation) {
 			case CPOperation.ADD: {
-				UsersManager.currentUser.EarnCurrency(_currency, (ulong)amount, false, HDTrackingManager.EEconomyGroup.CHEAT);
-			} break;
+					UsersManager.currentUser.EarnCurrency(_currency, (ulong)amount, false, HDTrackingManager.EEconomyGroup.CHEAT);
+				} break;
 
 			case CPOperation.REMOVE: {
-				UsersManager.currentUser.SpendCurrency(_currency, (ulong)amount);
-			} break;
+					UsersManager.currentUser.SpendCurrency(_currency, (ulong)amount);
+				} break;
 
 			case CPOperation.SET: {
-				// Apply the amount respecting the current free/paid ratio
-				UserProfile.CurrencyData data = UsersManager.currentUser.GetCurrencyData(_currency);
-				float ratio = data.amount > 0 ? (float)data.freeAmount/(float)data.amount : 1f;
-				UsersManager.currentUser.SetCurrency(_currency, (long)(amount * ratio), (long)(amount * (1f - ratio)));
-			} break;
+					// Apply the amount respecting the current free/paid ratio
+					UserProfile.CurrencyData data = UsersManager.currentUser.GetCurrencyData(_currency);
+					float ratio = data.amount > 0 ? (float)data.freeAmount / (float)data.amount : 1f;
+					UsersManager.currentUser.SetCurrency(_currency, (long)(amount * ratio), (long)(amount * (1f - ratio)));
+				} break;
 		}
 
-        // Save persistence
-        PersistenceFacade.instance.Save_Request(false);
-    }
+		// Save persistence
+		PersistenceFacade.instance.Save_Request(false);
+	}
 
 	/// <summary>
 	/// Specialized versions to be used as button callbacks.
 	/// </summary>
-	public void OnAddCoins() 	{ OnSetCurrency(UserProfile.Currency.SOFT, CPOperation.ADD); }
+	public void OnAddCoins() { OnSetCurrency(UserProfile.Currency.SOFT, CPOperation.ADD); }
 	public void OnRemoveCoins() { OnSetCurrency(UserProfile.Currency.SOFT, CPOperation.REMOVE); }
-	public void OnSetCoins() 	{ OnSetCurrency(UserProfile.Currency.SOFT, CPOperation.SET); }
+	public void OnSetCoins() { OnSetCurrency(UserProfile.Currency.SOFT, CPOperation.SET); }
 
-	public void OnAddPC() 		{ OnSetCurrency(UserProfile.Currency.HARD, CPOperation.ADD); }
-	public void OnRemovePC() 	{ OnSetCurrency(UserProfile.Currency.HARD, CPOperation.REMOVE); }
-	public void OnSetPC() 		{ OnSetCurrency(UserProfile.Currency.HARD, CPOperation.SET); }
+	public void OnAddPC() { OnSetCurrency(UserProfile.Currency.HARD, CPOperation.ADD); }
+	public void OnRemovePC() { OnSetCurrency(UserProfile.Currency.HARD, CPOperation.REMOVE); }
+	public void OnSetPC() { OnSetCurrency(UserProfile.Currency.HARD, CPOperation.SET); }
 
-	public void OnSetGoldenFragments() 		{ OnSetCurrency(UserProfile.Currency.GOLDEN_FRAGMENTS, CPOperation.SET); }
-	public void OnAddGoldenFragments() 		{ OnSetCurrency(UserProfile.Currency.GOLDEN_FRAGMENTS, CPOperation.ADD); }
-	public void OnRemoveGoldenFragments() 	{ OnSetCurrency(UserProfile.Currency.GOLDEN_FRAGMENTS, CPOperation.REMOVE); }
+	public void OnSetGoldenFragments() { OnSetCurrency(UserProfile.Currency.GOLDEN_FRAGMENTS, CPOperation.SET); }
+	public void OnAddGoldenFragments() { OnSetCurrency(UserProfile.Currency.GOLDEN_FRAGMENTS, CPOperation.ADD); }
+	public void OnRemoveGoldenFragments() { OnSetCurrency(UserProfile.Currency.GOLDEN_FRAGMENTS, CPOperation.REMOVE); }
 
-	public void OnAddKeys() 	{ OnSetCurrency(UserProfile.Currency.KEYS, CPOperation.ADD); }
-	public void OnRemoveKeys() 	{ OnSetCurrency(UserProfile.Currency.KEYS, CPOperation.REMOVE); }
-	public void OnSetKeys() 	{ OnSetCurrency(UserProfile.Currency.KEYS, CPOperation.SET); }
+	public void OnAddKeys() { OnSetCurrency(UserProfile.Currency.KEYS, CPOperation.ADD); }
+	public void OnRemoveKeys() { OnSetCurrency(UserProfile.Currency.KEYS, CPOperation.REMOVE); }
+	public void OnSetKeys() { OnSetCurrency(UserProfile.Currency.KEYS, CPOperation.SET); }
 
 	/// <summary>
 	/// Add xp to the currently selected dragon (if owned). Debug purposes only.
@@ -202,11 +202,11 @@ public class CPProgressionCheats : MonoBehaviour {
 			wardrobe.SetSkinState(skinDefs[i].sku, newState);
 		}
 
-        // Save persistence
-        PersistenceFacade.instance.Save_Request(false);
+		// Save persistence
+		PersistenceFacade.instance.Save_Request(false);
 
-        // Simulate a dragon selected event so everything is refreshed
-        Messenger.Broadcast<string>(MessengerEvents.MENU_DRAGON_SELECTED, selectedDragonSku);
+		// Simulate a dragon selected event so everything is refreshed
+		Messenger.Broadcast<string>(MessengerEvents.MENU_DRAGON_SELECTED, selectedDragonSku);
 	}
 
 	/// <summary>
@@ -225,7 +225,7 @@ public class CPProgressionCheats : MonoBehaviour {
 			if(data.isOwned) targetDragon = data;
 		} else {
 			// Not in the menu, use current dragon's data
-			targetDragon = DragonManager.currentDragon;
+			targetDragon = DragonManager.CurrentDragon;
 		}
 
 		// Disable slider if dragon cannot be changed
@@ -296,11 +296,11 @@ public class CPProgressionCheats : MonoBehaviour {
 			wardrobe.SetSkinState(skinDefs[i].sku, newState);
 		}
 
-        // Save persistence
-        PersistenceFacade.instance.Save_Request(false);
+		// Save persistence
+		PersistenceFacade.instance.Save_Request(false);
 
-        // Simulate a dragon selected event so everything is refreshed
-        Messenger.Broadcast<string>(MessengerEvents.MENU_DRAGON_SELECTED, selectedDragonSku);
+		// Simulate a dragon selected event so everything is refreshed
+		Messenger.Broadcast<string>(MessengerEvents.MENU_DRAGON_SELECTED, selectedDragonSku);
 	}
 
 	/// <summary>
@@ -313,64 +313,90 @@ public class CPProgressionCheats : MonoBehaviour {
 		// Add it to the inventory
 		int slotIdx = EggManager.AddEggToInventory(Egg.CreateFromSku(Egg.SKU_STANDARD_EGG));
 
-        // If successful, save persistence
-        PersistenceFacade.instance.Save_Request(false);
-    }
+		// If successful, save persistence
+		PersistenceFacade.instance.Save_Request(false);
+	}
 
 	/// <summary>
 	/// Unlock and buy all dragons.
 	/// </summary>
-    public void OnAcquireAllDragons() {
+	public void OnAcquireAllDragons() {
 		List<IDragonData> dragons = DragonManager.GetDragonsByLockState(IDragonData.LockState.ANY);
-        if (dragons != null) {
-            int i;
-            int count = dragons.Count;
-            for (i = 0; i < count; i++) {
-                if (!dragons[i].isOwned) {
-                    dragons[i].Acquire();
+		if(dragons != null) {
+			int i;
+			int count = dragons.Count;
+			for(i = 0; i < count; i++) {
+				if(!dragons[i].isOwned) {
+					dragons[i].Acquire();
 
-					if (InstanceManager.menuSceneController is MenuSceneController) {
+					if(InstanceManager.menuSceneController is MenuSceneController) {
 						MenuDragonSlot slot = InstanceManager.menuSceneController.dragonScroller.GetDragonSlot(dragons[i].def.sku);
 						slot.animator.ForceShow(false);
 					}
-                }
-            }
+				}
+			}
 
-            // Save persistence
-            PersistenceFacade.instance.Save_Request(false);
-        }
-    }
+			// Save persistence
+			PersistenceFacade.instance.Save_Request(false);
+		}
+	}
 
 	/// <summary>
 	/// Reset all the dragons.
 	/// </summary>
 	public void OnResetAllDragons() {
 		List<IDragonData> dragons = DragonManager.GetDragonsByLockState(IDragonData.LockState.ANY);
-		if (dragons != null) {
+		if(dragons != null) {
 			int i;
 			int count = dragons.Count;
-			for (i = 0; i < count; i++) {
-				// Reset dragon data
-				dragons[i].ResetLoadedData();
-
-				// Reset this dragon skins as well
-				List<DefinitionNode> skinDefs = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.DISGUISES, "dragonSku", dragons[i].def.sku);
-				for(int j = 0; j < skinDefs.Count; ++j) {
-					// Special case: if unlock level is 0, mark it as owned! (probably dragon's default skin)
-					if(skinDefs[j].GetAsInt("unlockLevel") <= 0) {
-						UsersManager.currentUser.wardrobe.SetSkinState(skinDefs[j].sku, Wardrobe.SkinState.OWNED);
-					} else {
-						UsersManager.currentUser.wardrobe.SetSkinState(skinDefs[j].sku, Wardrobe.SkinState.LOCKED);
-					}
-				}
+			for(i = 0; i < count; i++) {
+				ResetDragon(dragons[i]);
 			}
 
 			// Dragon baby is always owned
 			DragonManager.GetDragonData("dragon_baby").Acquire();
 
-            // Save persistence
-            PersistenceFacade.instance.Save_Request(false);
-        }
+			// Save persistence
+			PersistenceFacade.instance.Save_Request(false);
+		}
+	}
+
+	/// <summary>
+	/// Reset selected dragon.
+	/// </summary>
+	public void OnResetSelectedDragon() {
+		// If not in the menu, show feedback message and return
+		if(!CheckScene()) return;
+
+		// Get current selected dragon data
+		string selectedDragonSku = InstanceManager.menuSceneController.selectedDragon;
+		IDragonData data = DragonManager.GetDragonData(selectedDragonSku);
+
+		// Reset!
+		ResetDragon(data);
+
+		// Save persistence
+		PersistenceFacade.instance.Save_Request(false);
+	}
+
+	/// <summary>
+	/// Reset
+	/// </summary>
+	/// <param name="_dragonData"></param>
+	private void ResetDragon(IDragonData _dragonData) {
+		// Reset dragon data
+		_dragonData.ResetLoadedData();
+
+		// Reset this dragon skins as well
+		List<DefinitionNode> skinDefs = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.DISGUISES, "dragonSku", _dragonData.def.sku);
+		for(int j = 0; j < skinDefs.Count; ++j) {
+			// Special case: mark dragon's default skin as owned!
+			if(Wardrobe.IsDefaultSkin(skinDefs[j])) {
+				UsersManager.currentUser.wardrobe.SetSkinState(skinDefs[j].sku, Wardrobe.SkinState.OWNED);
+			} else {
+				UsersManager.currentUser.wardrobe.SetSkinState(skinDefs[j].sku, Wardrobe.SkinState.LOCKED);
+			}
+		}
 	}
 
 	/// <summary>
@@ -475,4 +501,12 @@ public class CPProgressionCheats : MonoBehaviour {
 	{
 		ApplicationManager.instance.Debug_TestPlayAd();
 	}
+
+    /// <summary>
+    /// Finish the current happy hour
+    /// </summary>
+    public void OnEndHappyHour()
+    {
+        OffersManager.instance.happyHour.EndOffer();
+    }
 }

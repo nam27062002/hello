@@ -58,9 +58,10 @@ public class DefinitionsCategory
 	public const string DRAGON_STATS = "DRAGON_STATS";
     public const string SPECIAL_DRAGON_TIERS = "SPECIAL_DRAGON_TIERS";
     public const string SPECIAL_DRAGON_POWERS = "SPECIAL_DRAGON_POWERS";
+    public const string SPECIAL_DRAGON_STATS_UPGRADES = "SPECIAL_DRAGON_STATS_UPGRADES";
 
-	// Entities
-	public const string PETS 				= "PETS";
+    // Entities
+    public const string PETS 				= "PETS";
 	public const string PET_MOVEMENT 		= "PET_MOVEMENT";
 	public const string PET_CATEGORIES 		= "PET_CATEGORIES";
 	public const string ENTITIES 			= "ENTITIES";
@@ -74,9 +75,10 @@ public class DefinitionsCategory
 	public const string SURVIVAL_BONUS = "SURVIVAL_BONUS";
 	public const string LEVEL_SPAWN_POINTS = "LEVEL_SPAWN_POINTS";
 	public const string LEVEL_PROGRESSION = "LEVEL_PROGRESSION";
+    public const string ZONE_TRIGGERS = "ZONE_TRIGGERS";
 
-	// Metagame
-	public const string EGGS = "EGGS";	
+    // Metagame
+    public const string EGGS = "EGGS";	
 	public const string EGG_REWARDS = "EGG_REWARDS";
 	public const string CHEST_REWARDS = "CHEST_REWARDS";
 	public const string PREREG_REWARDS = "PREREG_REWARDS";
@@ -111,7 +113,9 @@ public class DefinitionsCategory
 	// Economy
 	public const string SHOP_PACKS = "SHOP_PACKS";
 	public const string OFFER_PACKS = "OFFER_PACKS";
-	public const string CURRENCY_TIERS = "CURRENCY_TIERS";
+    public const string HAPPY_HOUR = "HAPPY_HOUR";
+    public const string CURRENCY_TIERS = "CURRENCY_TIERS";
+    public const string REMOVE_ADS_OFFER = "REMOVE_ADS_OFFER";
 
 	// UI
 	public const string SHARE_LOCATIONS = "SHARE_LOCATIONS";

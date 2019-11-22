@@ -199,7 +199,7 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 	private Vector2 m_currentBackBend;
 
 	// Parabolic movement
-	private Vector3 m_startParabolicPosition;
+	protected Vector3 m_startParabolicPosition;
 
 	[Space]
 	[SerializeField] private float m_cloudTrailMinSpeed = 7.5f;
@@ -545,13 +545,6 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 					m_animator.SetBool(GameConstants.Animator.BOOST, false);
 					m_animator.SetBool(GameConstants.Animator.MOVE, false);
  				}break;
-				case State.Latching:
-				{
-					// Disable all ground colliders
-					int size = m_groundColliders.Length;
-					for(int i = 0; i<size; i++)
-						m_groundColliders[i].enabled = true;
-				}break;
 				case State.Dead:
 				{
 					m_animator.ResetTrigger(GameConstants.Animator.DEAD);
@@ -646,9 +639,6 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
                     }break;
 				case State.Latching:
 				{
-					int size = m_groundColliders.Length;
-					for( int i = 0; i<size; i++ )
-						m_groundColliders[i].enabled = false;
 					m_latchingTimer = 0;
 				}break;
 				case State.Dead:
@@ -881,7 +871,7 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 			if (!m_grab)	// if latching
 			{
 				m_latchingTimer += Time.deltaTime;
-				RotateToDirection( m_holdPreyTransform.forward );
+				RotateToDirection( m_holdPreyTransform.forward, true );
 				Vector3 deltaPosition = Vector3.Lerp( m_suction.position, m_holdPreyTransform.position, m_latchingTimer * 8);	// Mouth should be moving and orienting
 				// Vector3 deltaPosition = m_holdPreyTransform.position;
 				m_transform.position += deltaPosition - m_suction.position;
@@ -1341,11 +1331,8 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 		m_rbody.velocity = m_impulse;
 	}
 
-	private void UpdateSpaceMovement(float _deltaTime)
+	protected void CheckStartParabolicHeight()
 	{
-		// impulse direction
-		Vector3 impulse = GameConstants.Vector3.zero;
-		m_controls.GetImpulse(1, ref impulse);
 		if ( m_boost.IsBoostActive() )
 		{
 			if (!m_startingParabolic) {
@@ -1357,6 +1344,14 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 		{
 			m_startingParabolic = false;
 		}
+	}
+
+	protected void UpdateSpaceMovement(float _deltaTime)
+	{
+		// impulse direction
+		Vector3 impulse = GameConstants.Vector3.zero;
+		m_controls.GetImpulse(1, ref impulse);
+		CheckStartParabolicHeight();
 
 		if ( m_controls.moving )
 			m_directionWhenBoostPressed = impulse;
@@ -1638,6 +1633,8 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 		m_impulse = GameConstants.Vector3.zero;
 		m_rbody.velocity = m_impulse;
 		m_direction = m_impulse.normalized;
+		m_desiredRotation = m_transform.rotation;
+		m_angularVelocity = GameConstants.Vector3.zero;
 	}
 
 	public virtual void AddForce(Vector3 _force, bool isDamage = true) {
@@ -1770,6 +1767,7 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
     			if ( m_impulse.y < 0 )
     			{
     				m_impulse = m_impulse * 2.0f;
+					m_rbody.velocity = m_impulse;
     			}
 
     			// Change state
@@ -1793,7 +1791,7 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
             m_waterMovement = false;
 
     		if (m_animator )
-    			m_animator.SetBool(GameConstants.Animator.BOOST, false);
+    			m_animator.SetBool(GameConstants.Animator.BOOST, m_boost.IsBoostActive());
 
     		bool createsSplash = false;
     		// Trigger particles
@@ -1994,21 +1992,26 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 	{
 		if (!m_insideWater)
 		{
-			// Check direction?
-			m_waterEnterPosition = m_transform.position;
-			m_insideWater = true;
-			// Modify Y to match real pos?
+			// if we are exiting water and moving up, what touched the water was because of the animation
+			if ( m_state != State.ExitingWater || m_rbody.velocity.y <= 0 )
+			{
+				// Check direction?
+				m_waterEnterPosition = m_transform.position;
+				m_insideWater = true;
+				// Modify Y to match real pos?
 
-			// Enable Bubbles
-			if (IsAliveState())
-			{
-				StartWaterMovement( _other );
-				m_previousState = State.InsideWater;
+				// Enable Bubbles
+				if (IsAliveState())
+				{
+					StartWaterMovement( _other );
+					m_previousState = State.InsideWater;
+				}
+				else
+				{
+					m_animator.SetBool( GameConstants.Animator.SWIM , true);
+				}
 			}
-			else
-			{
-				m_animator.SetBool( GameConstants.Animator.SWIM , true);
-			}
+			
 		}
 	}
 

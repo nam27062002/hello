@@ -20,12 +20,11 @@ public class ModGatchaPet : ModifierGatcha {
         }
 	}
 
-	public override bool isValid() { 
-		List<string> resourceIDs = new List<string>();		
+	public override bool isValid() {		
 		foreach (string sku in m_skuList) {
-			resourceIDs.AddRange(HDAddressablesManager.Instance.GetResourceIDsForPet(sku));
-		}		 
-		return HDAddressablesManager.Instance.IsResourceListAvailable(resourceIDs); 	
+            if (!HDAddressablesManager.Instance.AreResourcesForPetAvailable(sku)) return false;			
+		}
+        return true;
 	}
 
 	public override void Apply() {

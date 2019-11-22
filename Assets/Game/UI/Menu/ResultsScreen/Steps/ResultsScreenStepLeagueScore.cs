@@ -42,9 +42,13 @@ public class ResultsScreenStepLeagueScore : ResultsScreenSequenceStep {
 	/// </summary>
 	/// <returns><c>true</c> if the step must be displayed, <c>false</c> otherwise.</returns>
 	override public bool MustBeDisplayed() {
-		// Always show for now
-		return true;
-	}
+
+        // Show only if the leagues are available and we have the minimum tier
+        return HDLiveDataManager.league.season.IsRunning() && 
+               UsersManager.currentUser.gamesPlayed >= GameSettings.ENABLE_LEAGUES_AT_RUN &&
+               DragonManager.CurrentDragon.tier >= HDLiveDataManager.league.GetMinimumTierToShowLeagues();
+
+    }
 
 	/// <summary>
 	/// Initialize and launch this step.
@@ -82,11 +86,11 @@ public class ResultsScreenStepLeagueScore : ResultsScreenSequenceStep {
 		m_newHighScoreAnim.gameObject.SetActive(false);
 	}
 
-    /// <summary>
-    /// Called when skip is triggered.
-    /// </summary>
-    override protected void OnSkip() {
-		// Nothing to do for now
+	/// <summary>
+	/// Do the summary line for this step. Connect in the sequence.
+	/// </summary>
+	public void DoSummary() {
+		m_controller.summary.ShowScore(m_controller.score);
 	}
 
 	//------------------------------------------------------------------------//
@@ -102,5 +106,12 @@ public class ResultsScreenStepLeagueScore : ResultsScreenSequenceStep {
 		// Show widget and launch animation!
 		m_newHighScoreAnim.gameObject.SetActive(true);
 		m_newHighScoreAnim.Launch();
+	}
+
+	/// <summary>
+	/// Called when skip is triggered.
+	/// </summary>
+	override protected void OnSkip() {
+		// Nothing to do for now
 	}
 }

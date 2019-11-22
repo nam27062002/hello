@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager>, IBroadcastListener
+public class EntityManager : Singleton<EntityManager>, IBroadcastListener
 {
     private List<Pet> m_pets;
     private List<Entity> m_entities;
@@ -55,8 +55,7 @@ public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager>, IBroa
     private bool m_updateEnabled;
 
 
-    void Awake()
-    {
+    protected override void OnCreateInstance() {
         m_pets = new List<Pet>();
         m_entities = new List<Entity>();
         m_entitiesBg = new List<EntityBg>();
@@ -72,9 +71,7 @@ public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager>, IBroa
         Broadcaster.AddListener(BroadcastEventType.GAME_ENDED, this);
     }
 
-    override protected void OnDestroy()
-    {
-        base.OnDestroy();
+    protected override void OnDestroyInstance() {
         Broadcaster.RemoveListener(BroadcastEventType.GAME_ENDED, this);
         Broadcaster.RemoveListener(BroadcastEventType.GAME_AREA_EXIT, this);
         Broadcaster.RemoveListener(BroadcastEventType.GAME_AREA_ENTER, this);
@@ -378,9 +375,9 @@ public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager>, IBroa
         return numResults;
     }
 
-    void Update()
+    public void Update()
 	{
-        if (m_updateEnabled) {
+        if (m_updateEnabled) {            
             int i;
             int count;
             float delta = Time.deltaTime;
@@ -389,30 +386,25 @@ public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager>, IBroa
             for (i = count; i >= 0; i--) {
                 m_pets[i].CustomUpdate();
             }
-
+            
             if (m_entities != null) {
                 count = m_entities.Count - 1;
-                // for (i = 0; i < count; ++i)
-                for (i = count; i >= 0; i--) {
+                for (i = count; i >= 0; i--) {                    
                     m_entities[i].CustomUpdate();
                 }
 
                 count = m_entitiesBg.Count - 1;
-                // for (i = 0; i < count; ++i)
                 for (i = count; i >= 0; i--) {
                     m_entitiesBg[i].CustomUpdate();
                 }
 
                 count = m_cages.Count - 1;
-                // for (i = 0; i < count; ++i)
                 for (i = count; i >= 0; i--) {
                     m_cages[i].CustomUpdate();
                 }
             }
-
-
             FreezingObjectsRegistry.instance.CustomUpdate();
-
+            
 #if UNITY_EDITOR
             if (Input.GetKey(KeyCode.G)) {
                 ForceOnScreenEntitiesGolden();
@@ -421,7 +413,14 @@ public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager>, IBroa
         }
     }
 
-    void FixedUpdate()
+    private void ThreadedEntityUpdate() {
+        int count = m_entities.Count - 1;        
+        for (int i = count; i >= 0; i--) {
+            m_entities[i].CustomUpdate();
+        }
+    }
+
+    public void FixedUpdate()
     {
         if (m_updateEnabled) {
             int i;
@@ -449,7 +448,7 @@ public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager>, IBroa
         }
     }
 
-    void LateUpdate()
+    public void LateUpdate()
     {
         if (m_updateEnabled) {
             GameCamera camera = InstanceManager.gameCamera;
@@ -460,6 +459,8 @@ public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager>, IBroa
                 for (i = count - 1; i > -1; i--) {
                     if (m_entities[i].CanDieOutsideFrustrum() && camera.IsInsideDeactivationArea(m_entities[i].machine.position)) {
                         m_entities[i].Disable(false);
+                    } else {
+                        m_entities[i].CustomLateUpdate();
                     }
                 }
 
@@ -468,6 +469,8 @@ public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager>, IBroa
                 for (i = count - 1; i > -1; i--) {
                     if (m_entitiesBg[i].CanDieOutsideFrustrum() && camera.IsInsideBackgroundDeactivationArea(m_entitiesBg[i].machine.position)) {
                         m_entitiesBg[i].Disable(false);
+                    } else {
+                        m_entitiesBg[i].CustomLateUpdate();
                     }
                 }
 
@@ -477,6 +480,8 @@ public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager>, IBroa
                     if (m_cages[i].CanDieOutsideFrustrum() && camera.IsInsideDeactivationArea(m_cages[i].transform.position)) //cages don't have machine
                     {
                         m_cages[i].Disable(false);
+                    } else {
+                        m_cages[i].CustomLateUpdate();
                     }
                 }
             }

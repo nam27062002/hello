@@ -39,7 +39,7 @@ MonoBehaviour:
     m_strAppShortName: Hungry Dragon
   m_strBuildFilename: 
   m_strPVPProtoFile: 
-  m_iBuildEnvironmentSelected: 2
+  m_iBuildEnvironmentSelected: 3
   m_iSocialPlatformSelected: 1
   m_strBundleDEV: com.ubisoft.hungrydragon.dev
   m_strBundleSTAGEPROD: com.ubisoft.hungrydragon
@@ -129,12 +129,14 @@ MonoBehaviour:
   - 
   - 
   - 
-  m_strVersionIOS: 2.0
-  m_strVersionIOSCode: 357
-  m_strVersionAndroidGplay: 2.0
-  m_strVersionAndroidGplayCode: 357
-  m_strVersionAndroidAmazon: 2.0
-  m_strVersionAndroidAmazonCode: 357
+  m_bUseAdMob: 1
+  m_strAdMobAPPID: ca-app-pub-4182426806332048~8618247235
+  m_strVersionIOS: 2.4
+  m_strVersionIOSCode: 374
+  m_strVersionAndroidGplay: 2.4
+  m_strVersionAndroidGplayCode: 374
+  m_strVersionAndroidAmazon: 2.4
+  m_strVersionAndroidAmazonCode: 374
   m_biOSBitcode: 0
   m_biOSArbitraryLoads: 1
   m_biOSPushNotifications: 1
@@ -397,9 +399,7 @@ MonoBehaviour:
   - android.permission.WAKE_LOCK
   - android.permission.INTERNET
   - android.permission.ACCESS_NETWORK_STATE
-  m_kAndroidDangerousPermissions:
-  - android.permission.WRITE_EXTERNAL_STORAGE
-  - android.permission.READ_EXTERNAL_STORAGE
+  m_kAndroidDangerousPermissions: []
   m_strAndroidManifestExtraData: "<meta-data android:name=\"android.max_aspect\" android:value=\"2.1\"
     />\n<provider\n                  android:name=\"android.support.v4.content.FileProvider\"\n
     \                 android:authorities=\"%packageName%.provider\"\n                  android:exported=\"false\"\n
@@ -447,6 +447,7 @@ MonoBehaviour:
   m_bTrackingFacebookEnabled: 1
   m_bTrackingAppsFlyerEnabled: 1
   m_bTrackingDNAEnabled: 1
+  m_bCrashlyticsEnabled: 1
   m_bAddSupportsScreens: 0
   m_bSupportSmallScreens: 0
   m_bSupportNormalScreens: 0

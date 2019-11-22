@@ -56,14 +56,14 @@ namespace AI {
 		private bool m_willPlaySpawnSound;
 
 		override public Quaternion orientation 	{ get { return m_transform.rotation; } set { m_transform.rotation = value; } }
-		override public Vector3 position			{ get { return m_transform.position; } set { m_transform.position = value; } }
+		override public Vector3 position		{ get { return m_transform.position; } set { m_transform.position = value; } }
 		override public Vector3 direction 		{ get { return Vector3.zero; } }
 		override public Vector3 groundDirection	{ get { return Vector3.right; } }
 		override public Vector3 upVector 		{ get { return Vector3.up; } set {} }
-		override public Vector3 velocity			{ get { return Vector3.zero; } }
+		override public Vector3 velocity		{ get { return Vector3.zero; } }
 		override public Vector3 angularVelocity	{ get { return Vector3.zero; } }
 		override public float lastFallDistance 	{ get { return 0f; } }
-		public virtual bool isKinematic 		{ get { return false; } set { } }
+		override public bool isKinematic 		{ get { return false; } set { } }
 
 		override public Vector3 eye						{ get { if (m_enableSensor) return m_sensor.sensorPosition; else return m_transform.position; } }
 		override public Vector3 target					{ get { return m_pilot.target; } }
@@ -81,7 +81,7 @@ namespace AI {
 
 		bool m_isHolded = false;	// if machine being holded
 		bool m_isPetTarget = false;
-		public bool isPetTarget { get { return m_isPetTarget; } set { m_isPetTarget = value; } }
+		override public bool isPetTarget { get { return m_isPetTarget; } set { m_isPetTarget = value; } }
 
 		private Vector3		m_externalForces;	// Mostly for currents
 
@@ -320,12 +320,12 @@ namespace AI {
 		//-----------------------------------------------------------
 
 		// Update is called once per frame
-		override public void CustomUpdate() {            
+		override public void CustomUpdate() {
             if (!IsDead()) {
                 CheckStun();
                 CheckInLove();
-                
-                if (m_stunned <= 0 && !m_bubbled) {
+
+                if (m_stunned <= 0 && !m_bubbled) {                    
                     if (m_willPlaySpawnSound) {
                         if (m_entity.isOnScreen) {
                             PlaySound(m_onSpawnSound);
@@ -337,14 +337,12 @@ namespace AI {
                     if (m_motion != null) m_motion.Update();
                     
                     //forward special actions
-                    if (m_pilot != null) {                        
+                    if (m_pilot != null) {
                         m_viewControl.Scared(m_pilot.IsActionPressed(Pilot.Action.Scared));
-
                         m_viewControl.SpecialAnimation(ViewControl.SpecialAnims.A, m_pilot.IsActionPressed(Pilot.Action.Button_A));
                         m_viewControl.SpecialAnimation(ViewControl.SpecialAnims.B, m_pilot.IsActionPressed(Pilot.Action.Button_B));
                         m_viewControl.SpecialAnimation(ViewControl.SpecialAnims.C, m_pilot.IsActionPressed(Pilot.Action.Button_C));
-
-                        m_viewControl.ShowExclamationMark(m_pilot.IsActionPressed(Pilot.Action.ExclamationMark));
+                        m_viewControl.ShowExclamationMark(m_pilot.IsActionPressed(Pilot.Action.ExclamationMark));                        
                     }
                 }
             }
@@ -365,7 +363,7 @@ namespace AI {
 			}
         }
 
-		protected virtual void LateUpdate() {
+		public override void CustomLateUpdate() {
             if (!IsDead()) {
 				if (m_motion != null) {
 					m_motion.LateUpdate();
@@ -577,7 +575,7 @@ namespace AI {
 				m_entity.onDieStatus.reason = IEntity.DyingReason.DESTROYED;
 				
                 Reward reward = m_entity.GetOnKillReward(IEntity.DyingReason.DESTROYED);
-				Messenger.Broadcast<Transform, IEntity, Reward>(MessengerEvents.ENTITY_BURNED, m_transform, m_entity, reward);
+				Messenger.Broadcast<Transform, IEntity, Reward, KillType>(MessengerEvents.ENTITY_KILLED, m_transform, m_entity, reward, KillType.SMASHED);
 
                 if ( _source == IEntity.Type.PLAYER )
                     InstanceManager.timeScaleController.HitStop();
@@ -597,10 +595,10 @@ namespace AI {
 			}
 		}
 
-		override public void BeginSwallowed(Transform _transform, bool _rewardsPlayer, IEntity.Type _source) {
+		override public void BeginSwallowed(Transform _transform, bool _rewardsPlayer, IEntity.Type _source, KillType _killType) {
             if (allowEdible) {
                 m_viewControl.BeginSwallowed(_transform);
-                m_edible.BeingSwallowed(_transform, _rewardsPlayer, _source);
+                m_edible.BeingSwallowed(_transform, _rewardsPlayer, _source, _killType);
             }
 		}
 
@@ -652,11 +650,11 @@ namespace AI {
 			return m_edible.GetDyingFixRot();
 		}
 
-		override public bool Burn(Transform _transform, IEntity.Type _source, bool instant = false, FireColorSetupManager.FireColorType fireColorType = FireColorSetupManager.FireColorType.RED) {
+		override public bool Burn(Transform _transform, IEntity.Type _source, KillType _killType = KillType.BURNT, bool _instant = false, FireColorSetupManager.FireColorType fireColorType = FireColorSetupManager.FireColorType.RED) {
 			if (allowBurnable && m_inflammable != null && !IsDead()) {
 				if (!GetSignal(Signals.Type.Burning)) {
 					ReceiveDamage(9999f);
-					m_inflammable.Burn(_transform, _source, instant, fireColorType);
+					m_inflammable.Burn(_transform, _source, _killType, _instant, fireColorType);
 				}
 				return true;
 			}

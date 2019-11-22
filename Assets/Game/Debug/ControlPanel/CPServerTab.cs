@@ -251,6 +251,42 @@ public class CPServerTab : MonoBehaviour {
         Output("CP2Enabled = " + manager.IsCP2Enabled() + " " + HDCP2Manager.Instance.GetDebugInfo());
     }
 
+    public void OnOpenCSTS()
+    {
+        PopupSettings.CS_OpenPopup();
+        Output("Open CSTS" + PopupSettings.CS_GetDebugInfo());
+    }
+
+    public void OnOpenCSTSEnPayer()
+    {
+        PopupSettings.CS_OpenPopup("en", true, false);
+        Output("Open CSTS en Payer");
+    }
+
+    public void OnOpenCSTSEsPayer()
+    {
+        PopupSettings.CS_OpenPopup("es", true, false);
+        Output("Open CSTS es Payer");
+    }
+
+    public void OnOpenCSTSEnNonPayer()
+    {
+        PopupSettings.CS_OpenPopup("en", false, false);
+        Output("Open CSTS en Non Payer");
+    }
+
+    public void OnOpenCSTSEsNonPayer()
+    {
+        PopupSettings.CS_OpenPopup("es", false, false);
+        Output("Open CSTS es Non Payer");
+    }
+
+    public void OnDebugCSTS()
+    {        
+        FeatureSettingsManager manager = FeatureSettingsManager.instance;
+        Output(PopupSettings.CS_GetDebugInfo());
+    }
+
     public void OnCrashlyticsNonFatal()
     {
         Output("Crashlytics: non-fatal exception");
@@ -268,6 +304,17 @@ public class CPServerTab : MonoBehaviour {
         Output("Crashlytics: record exception");
         Fabric.Crashlytics.Crashlytics.RecordCustomException("Crashlytics", "Record custom exception test", "");
     }
+
+	public void OnOpenSurvey()
+	{
+		string profileID = HDTrackingManager.Instance.GetDNAProfileID();
+		if (string.IsNullOrEmpty(profileID))
+			profileID = "Not_Available";
+
+		string url = "https://bcndlsurvey.typeform.com/to/CEJCkl?UID=" + profileID;
+		Output("Open Survey: " + url);
+		Application.OpenURL(url);
+	}
 
     private void OnIntersitialDone( bool success )
     {

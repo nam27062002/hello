@@ -57,7 +57,7 @@ public class TutorialMapButton : MonoBehaviour {
 	}
 
 	private void OnDestroy() {
-		Messenger.RemoveListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_EATEN, StartAnim);
+		Messenger.RemoveListener<Transform, IEntity, Reward, KillType>(MessengerEvents.ENTITY_KILLED, OnEat);
 		Messenger.RemoveListener(MessengerEvents.GAME_STARTED, OnGameStarted);
 	}
 
@@ -77,11 +77,19 @@ public class TutorialMapButton : MonoBehaviour {
 		m_state = State.Delay;
 	}
 
-	private void StartAnim(Transform _t, IEntity _e, Reward _reward) {
+    private void OnEat (Transform _t, IEntity _e, Reward _reward, KillType _type)
+    {
+        if (_type == KillType.EATEN)
+        {
+            StartAnim();
+        }
+    }
+
+	private void StartAnim() {
 		m_timer.Start(500f);
 		m_state = State.Intro;
 
-		Messenger.RemoveListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_EATEN, StartAnim);
+		Messenger.RemoveListener<Transform, IEntity, Reward, KillType>(MessengerEvents.ENTITY_KILLED, OnEat);
 	}
 
 	private void Update() {
@@ -93,7 +101,7 @@ public class TutorialMapButton : MonoBehaviour {
 
 			if (m_timer.IsFinished()) {
 				m_state = State.Idle;
-				Messenger.AddListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_EATEN, StartAnim);
+				Messenger.AddListener<Transform, IEntity, Reward, KillType>(MessengerEvents.ENTITY_KILLED, OnEat);
 			}
 			break;
 

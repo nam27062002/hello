@@ -21,6 +21,7 @@ namespace GameConstants {
             public static readonly int COLOR = Shader.PropertyToID("_Color");
             public static readonly int INTENSITY = Shader.PropertyToID("_Intensity");
             public static readonly int ASH_LEVEL = Shader.PropertyToID("_AshLevel");
+            public static readonly int POWER = Shader.PropertyToID("_Power");
             public static readonly int EMISSIVE_POWER = Shader.PropertyToID("_EmissivePower");
             public static readonly int GOLD_COLOR = Shader.PropertyToID("_GoldColor");
 

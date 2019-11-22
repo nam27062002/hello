@@ -218,9 +218,16 @@ public class AudioCategory
                 {
                     try
                     {
-                        audioItemsDict.Add( ai.Name, ai );
+                        if (!audioItemsDict.ContainsKey(ai.Name))
+                        {
+                            audioItemsDict.Add(ai.Name, ai);
+                        }
+                        else
+                        {
+                            Debug.LogError(">>>>>> (Known iOS12.0 crash!) AudioCategory._AnalyseAudioItems: key already exists: " + ai.Name);
+                        }
                     }
-                    catch ( ArgumentException )
+                    catch ( Exception )
                     {
                         Debug.LogWarning( "Multiple audio items with name '" + ai.Name + "'", audioController);
                     }

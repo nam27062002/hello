@@ -110,7 +110,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!1 &1367185158064806
 GameObject:
   m_ObjectHideFlags: 0
@@ -376,8 +376,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1430635193173812}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 3.12, z: 4.225483}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 0, y: 0.25, z: 4.225483}
+  m_LocalScale: {x: 1, y: 2.3642082, z: 1}
   m_Children: []
   m_Father: {fileID: 4992253520031758}
   m_RootOrder: 5
@@ -480,7 +480,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1367130675427906}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -213.19164, y: 103.20128, z: 0.44023037}
+  m_LocalPosition: {x: 116.99, y: 125.21, z: 0.44023037}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4024577532912938}
@@ -731,7 +731,7 @@ MonoBehaviour:
   m_cannonEye: {fileID: 4149165339786680}
   m_armorDurabilityPerTier:
     m_valueList:
-    - count: 5
+    - count: 0
       needBoost: 1
     - count: 4
       needBoost: 1
@@ -743,7 +743,9 @@ MonoBehaviour:
       needBoost: 0
     - count: 1
       needBoost: 0
-    m_keyList: 000000000100000002000000030000000400000005000000
+    - count: 1
+      needBoost: 0
+    m_keyList: 00000000010000000200000003000000040000000500000006000000
   m_ground: []
 --- !u!114 &114695196235892670
 MonoBehaviour:

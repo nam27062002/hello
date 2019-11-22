@@ -73,9 +73,43 @@ public class DragonMotionDino : DragonMotion {
         m_snapSensor = sensors.Find("SnapSensor");
         
         DragonDataSpecial dataSpecial = InstanceManager.player.data as DragonDataSpecial;
-        m_powerLevel = dataSpecial.powerLevel;
+        m_powerLevel = dataSpecial.m_powerLevel;
         m_tier = dataSpecial.tier;
-        m_walkSpeed = m_walkSpeedByTier[(int)m_tier];
+		//TONI
+        //m_walkSpeed = m_walkSpeedByTier[(int)m_tier];
+		int dinoLevel = dataSpecial.Level;
+		int order = 0;
+		string dinoSku = dataSpecial.specialTierDef.sku;
+		if (dinoSku == "dino_02")
+			order = 1; 
+		if (dinoSku == "dino_03")
+			order = 2;
+		if (dinoSku == "dino_04")
+			order = 3;	
+		switch (order) 
+		{
+		case 0:
+			{
+				m_walkSpeed = m_walkSpeedByTier [0];
+			}
+			break;
+		case 1:
+			{
+				m_walkSpeed = m_walkSpeedByTier [1];
+			}
+			break;
+		case 2:
+			{
+				m_walkSpeed = m_walkSpeedByTier [2];
+			}
+			break;
+		case 3:
+			{
+				m_walkSpeed = m_walkSpeedByTier [3];
+			}
+			break;
+		}
+		//TONI  
         UpdatePowerAreas();
         UpdateSpeedToKill();
         
@@ -124,6 +158,7 @@ public class DragonMotionDino : DragonMotion {
                 }
                 AfterFixedUpdate();
             }break;
+
             case State.Dead:
                 {
                     if ( m_previousState == State.InsideWater || m_insideWater)
@@ -143,6 +178,31 @@ public class DragonMotionDino : DragonMotion {
                     }
                     AfterFixedUpdate();
                 }break;
+            case State.OuterSpace:
+			case State.ExitingSpace:
+		    {
+                if ( m_grounded )
+                {
+                    CustomSpaceMovement(Time.fixedDeltaTime);
+                }
+                else
+                {
+                    if (m_stomping)
+                    { 
+                        m_stomping = false;
+                        m_animator.SetBool(GameConstants.Animator.GROUND_STOMP, m_stomping);
+                    }
+                    
+                    UpdateSpaceMovement(Time.fixedDeltaTime);
+                    CustomCheckGround(out m_raycastHit);
+                    if ( m_belowSnapSensor && !GroundAngleBiggerThan( m_lastGroundHitNormal, m_maxWalkAngle ))
+                    {
+                        // Ground it
+                        SetGrounded(true);
+                    }
+                }
+                AfterFixedUpdate();
+			}break;
             default:
             {
                 base.FixedUpdate();
@@ -262,6 +322,11 @@ public class DragonMotionDino : DragonMotion {
                     m_impulse.y = -9.81f * m_freeFallGravityMultiplier * delta;
                 RotateToGround( m_direction );
                 SnapToGround();
+                if ( m_stomping )
+                {
+                    m_stomping = false;
+                    m_animator.SetBool(GameConstants.Animator.GROUND_STOMP, m_stomping);
+                }
             }
             else
             {
@@ -291,6 +356,7 @@ public class DragonMotionDino : DragonMotion {
         Vector3 impulse = Vector3.zero;
         m_controls.GetImpulse(1, ref impulse);
 
+        // if no impulse go to idle
         if (impulse == GameConstants.Vector3.zero)
         {
             ChangeState(State.Idle);
@@ -334,6 +400,11 @@ public class DragonMotionDino : DragonMotion {
                     m_impulse.y += -9.81f * m_freeFallGravityMultiplier * delta;
                     RotateToGround( m_direction );
                     SnapToGround();
+                    if ( m_stomping )
+                    {
+                        m_stomping = false;
+                        m_animator.SetBool(GameConstants.Animator.GROUND_STOMP, m_stomping);
+                    }
                 }
                 else
                 {
@@ -362,6 +433,102 @@ public class DragonMotionDino : DragonMotion {
             ApplyExternalForce();
             m_rbody.velocity = m_impulse;
         }
+    }
+
+
+
+    protected void CustomSpaceMovement(float delta)
+    {
+        // Ground movement
+        m_startParabolicPosition.y = m_transform.position.y;
+
+        Vector3 impulse = Vector3.zero;
+        m_controls.GetImpulse(1, ref impulse);
+        if (impulse == GameConstants.Vector3.zero)
+        {
+            // ChangeState(State.Idle);
+            // impulse = m_direction;
+            m_animator.SetBool(GameConstants.Animator.MOVE, false);
+            CustomIdleMovement(delta);
+        }
+        else
+        {
+            m_animator.SetBool(GameConstants.Animator.MOVE, true);
+            CustomCheckGround( out m_raycastHit );
+
+            if ( m_boost.IsBoostActive() && Vector3.Dot( m_lastGroundHitNormal, impulse) > 0 )
+            {
+                // Despegar
+                SetGrounded(false);
+
+                // Start Space Movement!
+                UpdateSpaceMovement(Time.fixedDeltaTime);
+            }
+            else
+            {
+                if ( m_height < 90 && !GroundAngleBiggerThan( m_lastGroundHitNormal, m_maxWalkAngle ))
+                {
+                    if ( m_belowSnapSensor )
+                    { 
+                        Vector3 dir = m_lastGroundHitNormal;
+                        dir.NormalizedXY();
+                        if ( impulse.x < 0 )
+                        {
+                            dir = dir.RotateXYDegrees(90);
+                        }
+                        else
+                        {
+                            dir = dir.RotateXYDegrees(-90);
+                        }
+                        m_direction = dir;   
+                        
+                        if ( m_boost.IsBoostActive() )
+                        {
+                            m_impulse = m_direction * m_walkSpeed * m_walkBoostMultiplier;
+                        }
+                        else
+                        {
+                            m_impulse = m_direction * m_walkSpeed;
+                        }
+                        
+                        m_impulse.y += -9.81f * m_freeFallGravityMultiplier * delta;
+                        RotateToGround( m_direction );
+                        SnapToGround();
+                        if ( m_stomping )
+                        {
+                            m_stomping = false;
+                            m_animator.SetBool(GameConstants.Animator.GROUND_STOMP, m_stomping);
+                        }
+                    }
+                    else
+                    {
+                        // Space Movement
+                        SetGrounded(false);
+                        UpdateSpaceMovement(Time.fixedDeltaTime);
+
+                        // Check if it will ground stomp
+                        CheckGroundStomp();
+                    }
+                }
+                else
+                {
+                    // Space Movement!
+                    SetGrounded(false);
+                    UpdateSpaceMovement(Time.fixedDeltaTime);
+
+                    if ( m_stomping )
+                    {
+                        m_stomping = false;
+                        m_animator.SetBool(GameConstants.Animator.GROUND_STOMP, m_stomping);
+                    }
+                }
+                
+                // m_desiredRotation = m_transform.rotation;
+                ApplyExternalForce();
+                m_rbody.velocity = m_impulse;
+            }
+        }
+        
     }
     
     protected void ComputeFreeFallImpulse(float delta)
@@ -440,10 +607,12 @@ public class DragonMotionDino : DragonMotion {
         if (!m_grounded)
         {
             // m_waitStomp = false;
+            m_rbody.constraints = RigidbodyConstraints.FreezePositionZ;
             m_rbody.ResetCenterOfMass();
         }
         else
         {
+            m_rbody.constraints = RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezeRotation;
             m_rbody.centerOfMass = m_transform.InverseTransformPoint( m_groundSensor.position );
         }
 

@@ -208,10 +208,26 @@ public class HUDMessage : MonoBehaviour, IBroadcastListener {
 	{
 		  // Deactivate all childs
         SetOthersVisible( false );
-        if ( m_type == Type.BOOST_REMINDER )
-        {
-            m_defaultText =  Localizer.ApplyCase(Localizer.Case.UPPER_CASE, LocalizationManager.SharedInstance.Localize(InstanceManager.player.data.tidBoostReminder));
-        }
+		switch( m_type ) {
+			case Type.BOOST_REMINDER: {
+				m_defaultText =  Localizer.ApplyCase(Localizer.Case.UPPER_CASE, LocalizationManager.SharedInstance.Localize(InstanceManager.player.data.tidBoostReminder));
+			}break;
+			case Type.FIRE_RUSH:
+			case Type.MEGA_FIRE_RUSH:
+			{
+				Transform tr = transform.FindTransformRecursive("TextFire");
+				if ( tr != null )
+				{
+					TextMeshProUGUI tx = tr.GetComponent<TextMeshProUGUI>();
+					if ( tx )
+					{
+						tx.text = Localizer.ApplyCase(Localizer.Case.UPPER_CASE, LocalizationManager.SharedInstance.Localize(InstanceManager.player.data.tidFire1Line));
+					}
+				}
+			}break;
+
+		}
+        
 	}
 
 	/// <summary>
@@ -248,7 +264,7 @@ public class HUDMessage : MonoBehaviour, IBroadcastListener {
 			case Type.BOOST_SPACE:			Messenger.AddListener(MessengerEvents.BOOST_SPACE, OnBoostSky); break;
 			case Type.TIMES_UP:				Messenger.AddListener(MessengerEvents.TIMES_UP, ShowCallback); break;
 			case Type.TARGET_REACHED:		Messenger.AddListener(MessengerEvents.TARGET_REACHED, ShowObjCompleted); break;
-            case Type.HAPPY_BIRTHDAY:       Messenger.AddListener(MessengerEvents.ANNIVERSARY_START_BDAY_MODE, OnStartBirthdayMode); break;
+            case Type.HAPPY_BIRTHDAY:       Broadcaster.AddListener( BroadcastEventType.START_COLLECTIBLE_HUNGRY_MODE,this); break;
 
         }
 
@@ -303,7 +319,7 @@ public class HUDMessage : MonoBehaviour, IBroadcastListener {
 			case Type.BOOST_SPACE:			Messenger.RemoveListener(MessengerEvents.BOOST_SPACE, OnBoostSky); break;
 			case Type.TIMES_UP:				Messenger.RemoveListener(MessengerEvents.TIMES_UP, ShowCallback); break;
 			case Type.TARGET_REACHED:		Messenger.RemoveListener(MessengerEvents.TARGET_REACHED, ShowObjCompleted); break;
-            case Type.HAPPY_BIRTHDAY:       Messenger.RemoveListener(MessengerEvents.ANNIVERSARY_START_BDAY_MODE, OnStartBirthdayMode); break;
+            case Type.HAPPY_BIRTHDAY:       Broadcaster.RemoveListener(BroadcastEventType.START_COLLECTIBLE_HUNGRY_MODE, this); break;
         }
 
 		switch(m_hideMode) {
@@ -325,6 +341,10 @@ public class HUDMessage : MonoBehaviour, IBroadcastListener {
                 ToggleParam toggleParam = (ToggleParam)broadcastEventInfo;
                 OnBoostToggled(toggleParam.value); 
             }break;
+			case BroadcastEventType.START_COLLECTIBLE_HUNGRY_MODE:
+			{
+				OnStartBirthdayMode();
+			}break;
         }
     }
     
@@ -665,7 +685,7 @@ public class HUDMessage : MonoBehaviour, IBroadcastListener {
 	{
 
         // Not very efficient, but only called once after the mission.
-        BaseIcon objectiveIcon = gameObject.GetComponentInChildren<BaseIcon>();
+        BaseIcon objectiveIcon = gameObject.GetComponentInChildren<BaseIcon>(true);
         
 		if (objectiveIcon != null )
 		{

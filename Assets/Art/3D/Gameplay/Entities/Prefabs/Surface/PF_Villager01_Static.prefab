@@ -22,7 +22,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!1 &176664
 GameObject:
   m_ObjectHideFlags: 1
@@ -60,7 +60,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 131698}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.457, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4532924204112608}
@@ -92,7 +92,7 @@ MonoBehaviour:
     min: 2
     max: 2.75
   m_useSpawnerRotation: 0
-  m_serializedJson: '[{"restTime":{"min":0,"max":0},"randomLookAt":true,"dataType":"AI.Behaviour.IdleData","editorFolded":false},{"speed":8,"checkDragonPositionTime":0.5,"checkForActionPointTime":0.5,"actions":{"panic":{"id":0,"active":true,"probability":1},"jump":{"id":1,"active":false,"probability":1},"goOn":{"id":2,"active":true,"probability":1},"hide":{"id":3,"active":true,"probability":1},"home":{"id":3,"active":true,"probability":1}},"dataType":"AI.Behaviour.FleeToAPData","editorFolded":false},{"standUpTime":0,"dataType":"AI.Behaviour.OnGroundData","editorFolded":false},{"dataType":"AI.Behaviour.OnActionPointData","editorFolded":false}]'
+  m_serializedJson: '[{"restTime":{"min":0,"max":0},"randomLookAt":true,"dataType":"AI.Behaviour.IdleData","editorFolded":false},{"speed":3,"checkDragonPositionTime":0.5,"checkForActionPointTime":0.5,"actions":{"panic":{"id":0,"active":true,"probability":1},"jump":{"id":1,"active":false,"probability":1},"goOn":{"id":2,"active":true,"probability":1},"hide":{"id":3,"active":true,"probability":1},"home":{"id":3,"active":true,"probability":1}},"dataType":"AI.Behaviour.FleeToAPData","editorFolded":false},{"standUpTime":0,"dataType":"AI.Behaviour.OnGroundData","editorFolded":false},{"dataType":"AI.Behaviour.OnActionPointData","editorFolded":false}]'
   m_databaseKey: PF_Villager01_Static
 --- !u!114 &11449904
 MonoBehaviour:
@@ -131,8 +131,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_isPlaceHolder: 0
-  m_walkSpeed: 2
-  m_runSpeed: 6
+  m_walkSpeed: 0.5
+  m_runSpeed: 1.5
   m_minPlaybakSpeed: 0.5
   m_maxPlaybakSpeed: 2
   m_onBoostMaxPlaybackSpeed: 0
@@ -834,35 +834,74 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f45dfbaed20447daa07123ab6b7cd80, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_inventory:
-  - equipablePrefabName: PF_Leprechaun_Hat_Villager
-    toDisableOnEquip: []
-    probability: 1
-    season: patricks
-    position: {x: 0, y: 0, z: 0}
-    scale: {x: 1, y: 1, z: 1}
-    rotation: {x: 0, y: 0, z: 0}
-  - equipablePrefabName: PF_Tinfoilhat_villager
-    toDisableOnEquip: []
-    probability: 0
-    season: ufoDay
-    position: {x: 0, y: 0, z: 0}
-    scale: {x: 1, y: 1, z: 1}
-    rotation: {x: 0, y: 0, z: 0}
-  - equipablePrefabName: PF_AlienMask_villager
-    toDisableOnEquip: []
-    probability: 1
-    season: ufoDay
-    position: {x: 0, y: 0, z: 0}
-    scale: {x: 1, y: 1, z: 1}
-    rotation: {x: 0, y: 0, z: 0}
-  - equipablePrefabName: PF_Party_Hat
-    toDisableOnEquip: []
-    probability: 1
-    season: Anniversary1
-    position: {x: 0, y: 0, z: -0.06}
-    scale: {x: 0.8, y: 0.7, z: 0.8}
-    rotation: {x: -22.08, y: 0, z: 13.59}
+  m_seasonalItems:
+  - season: patricks
+    groups:
+    - name: import
+      probability: 1
+      items:
+      - equipablePrefabName: PF_Leprechaun_Hat_Villager
+        defaultItemLOW: 0
+        probability: 1
+        toDisableOnEquip: []
+        position: {x: 0, y: 0, z: 0}
+        scale: {x: 1, y: 1, z: 1}
+        rotation: {x: 0, y: 0, z: 0}
+  - season: ufoDay
+    groups:
+    - name: import
+      probability: 1
+      items:
+      - equipablePrefabName: PF_AlienMask_villager
+        defaultItemLOW: 0
+        probability: 0
+        toDisableOnEquip: []
+        position: {x: 0, y: 0, z: 0}
+        scale: {x: 1, y: 1, z: 1}
+        rotation: {x: 0, y: 0, z: 0}
+      - equipablePrefabName: PF_Tinfoilhat_villager
+        defaultItemLOW: 0
+        probability: 1
+        toDisableOnEquip: []
+        position: {x: 0, y: 0, z: 0}
+        scale: {x: 1, y: 1, z: 1}
+        rotation: {x: 0, y: 0, z: 0}
+  - season: Anniversary1
+    groups:
+    - name: import
+      probability: 1
+      items:
+      - equipablePrefabName: PF_Party_Hat
+        defaultItemLOW: 0
+        probability: 1
+        toDisableOnEquip: []
+        position: {x: 0, y: 0.01, z: -0.04}
+        scale: {x: 0.7, y: 0.6, z: 0.7}
+        rotation: {x: -10.11, y: 0, z: 12.07}
+  - season: halloween
+    groups:
+    - name: Hat
+      probability: 1
+      items:
+      - equipablePrefabName: PF_Axe_Hat
+        defaultItemLOW: 0
+        probability: 1
+        toDisableOnEquip: []
+        position: {x: 0.13880296, y: 1.251683, z: 0.06757983}
+        scale: {x: 1.2, y: 1.2, z: 1.2}
+        rotation: {x: 0, y: 0, z: -28.85}
+  - season: xmas
+    groups:
+    - name: Hat
+      probability: 1
+      items:
+      - equipablePrefabName: PF_Christmas_Hat
+        defaultItemLOW: 0
+        probability: 1
+        toDisableOnEquip: []
+        position: {x: -0.03457687, y: -0.05322814, z: -0.0010790303}
+        scale: {x: 0.75400096, y: 0.75400096, z: 0.75400096}
+        rotation: {x: 340.2716, y: 359.8333, z: 0.4937762}
 --- !u!114 &114926427436442474
 MonoBehaviour:
   m_ObjectHideFlags: 1

@@ -195,7 +195,7 @@ public class UIColorFX : UIBehaviour {	// Inherit from UIBehaviour to have some 
 	/// <summary>
 	/// Component has been enabled.
 	/// </summary>
-	private void OnEnable() {
+	protected override void OnEnable() {
 		// Initialize materials
 		ApplyMaterials();
 		SetDirty();
@@ -234,7 +234,7 @@ public class UIColorFX : UIBehaviour {	// Inherit from UIBehaviour to have some 
 	/// <summary>
 	/// Component has been disabled.
 	/// </summary>
-	private void OnDisable() {
+	protected override void OnDisable() {
 		// On editor mode, destroy materials every time we unselect the object.
 		if(!Application.isPlaying) {
 			DestroyMaterials();
@@ -244,16 +244,32 @@ public class UIColorFX : UIBehaviour {	// Inherit from UIBehaviour to have some 
 	/// <summary>
 	/// Destructor.
 	/// </summary>
-	private void OnDestroy() {
+	protected override void OnDestroy() {
 		// Destroy created materials
 		DestroyMaterials();
+
+		// Get all image components and replace their material
+		if(m_applyToImages) {
+			Image[] images = GetComponentsInChildren<Image>();
+			foreach(Image img in images) {
+				img.material = null;
+			}
+		}
+
+		// Do the same with textfields
+		if(m_applyToFonts) {
+			Text[] texts = GetComponentsInChildren<Text>();
+			foreach(Text txt in texts) {
+				txt.material = null;
+			}
+		}
 	}
 
 	/// <summary>
 	/// A change has been made on the inspector.
 	/// http://docs.unity3d.com/ScriptReference/MonoBehaviour.OnValidate.html
 	/// </summary>
-	protected void OnValidate() {
+	protected override void OnValidate() {
 		// Make sure all children have the proper material (for children added after the component)
 		ApplyMaterials();
 		UpdateValues();

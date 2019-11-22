@@ -180,4 +180,9 @@ public class EditorFileUtils
             File.Move(sourcePath, destPath);
         }
     }
+
+    public static bool IsAScenePath(string path)
+    {
+        return !string.IsNullOrEmpty(path) && path.IndexOf(".unity") > -1;
+    }
 }

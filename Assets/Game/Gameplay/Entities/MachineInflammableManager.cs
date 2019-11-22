@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MachineInflammableManager : UbiBCN.SingletonMonoBehaviour<MachineInflammableManager>, IBroadcastListener {
+public class MachineInflammableManager : Singleton<MachineInflammableManager>, IBroadcastListener {
     private const float DISINTEGRATE_TIME = 1.25f;
 
     public struct AshesMaterials {
@@ -22,8 +22,7 @@ public class MachineInflammableManager : UbiBCN.SingletonMonoBehaviour<MachineIn
         instance.__Add(_machine, _fireColor);
     }
 
-    private void Awake() {
-
+    protected override void OnCreateInstance() {
         m_fireColorTyeComparer = new FireColorSetupManager.FireColorTypeComparer();
         m_ashesMats = new Dictionary<FireColorSetupManager.FireColorType, AshesMaterials>(m_fireColorTyeComparer);
         m_timers = new Dictionary<FireColorSetupManager.FireColorType, float>(m_fireColorTyeComparer);
@@ -37,6 +36,16 @@ public class MachineInflammableManager : UbiBCN.SingletonMonoBehaviour<MachineIn
             m_list_disintegrate.Add(fireColorType, new List<AI.MachineInflammable>());
             m_timers.Add(fireColorType, 0);
         }
+
+        // Subscribe to external events
+        Broadcaster.AddListener(BroadcastEventType.GAME_AREA_EXIT, this);
+        Broadcaster.AddListener(BroadcastEventType.GAME_ENDED, this);
+    }
+
+    protected override void OnDestroyInstance() {
+        // Unsubscribe from external events
+        Broadcaster.RemoveListener(BroadcastEventType.GAME_AREA_EXIT, this);
+        Broadcaster.RemoveListener(BroadcastEventType.GAME_ENDED, this);
     }
 
     public void RegisterColor(FireColorSetupManager.FireColorType _type) {
@@ -48,6 +57,7 @@ public class MachineInflammableManager : UbiBCN.SingletonMonoBehaviour<MachineIn
                         sharedAshesMaterial = Resources.Load("Game/Materials/BurnToAshes") as Material;
                     }
                     break;
+                case FireColorSetupManager.FireColorType.PURPLE:
                 case FireColorSetupManager.FireColorType.BLUE: {
                         sharedAshesMaterial = Resources.Load("Game/Materials/BurnToAshes") as Material;
                     }
@@ -67,24 +77,6 @@ public class MachineInflammableManager : UbiBCN.SingletonMonoBehaviour<MachineIn
             ashesMaterials.end.SetFloat(GameConstants.Materials.Property.ASH_LEVEL, 1f);
             m_ashesMats.Add(_type, ashesMaterials);
         }
-    }
-
-    /// <summary>
-    /// Component enabled.
-    /// </summary>
-    private void OnEnable() {
-        // Subscribe to external events
-        Broadcaster.AddListener(BroadcastEventType.GAME_AREA_EXIT, this);
-        Broadcaster.AddListener(BroadcastEventType.GAME_ENDED, this);
-    }
-
-    /// <summary>
-    /// Component disabled.
-    /// </summary>
-    private void OnDisable() {
-        // Unsubscribe from external events
-        Broadcaster.RemoveListener(BroadcastEventType.GAME_AREA_EXIT, this);
-        Broadcaster.RemoveListener(BroadcastEventType.GAME_ENDED, this);
     }
 
     public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo) {
@@ -136,10 +128,9 @@ public class MachineInflammableManager : UbiBCN.SingletonMonoBehaviour<MachineIn
     }
 
     //
-    private void Update() {
+    public void Update() {
         float dt = Time.deltaTime;
-
-
+        
         int max = (int)FireColorSetupManager.FireColorType.COUNT;
         for (int c = 0; c < max; c++) {
             FireColorSetupManager.FireColorType colorType = (FireColorSetupManager.FireColorType)c;

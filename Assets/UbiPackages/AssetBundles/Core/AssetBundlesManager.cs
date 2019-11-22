@@ -149,6 +149,11 @@ public class AssetBundlesManager
         }
     }
 
+    public bool IsReady()
+    {
+        return m_downloadablesManager != null && m_downloadablesManager.IsReady();
+    }
+
     public Downloadables.CatalogGroup GetDownloadablesGroupFromAssetBundlesGroup(AssetBundlesGroup abGroup)
     {
         Downloadables.CatalogGroup returnValue = null;
@@ -461,7 +466,7 @@ public class AssetBundlesManager
     /// Returns whether or not the asset bundle which id is passed as a parameter is available to be loaded,
     /// which means that either the asset bundle is local or it's remote and it has already been downloaded.
     /// </summary>  
-    public bool IsAssetBundleAvailable(string id, bool track = false)
+    public bool IsAssetBundleAvailable(string id, bool checkDisk = false, bool track = false)
     {
         bool returnValue = IsAssetBundleValid(id);
         if (returnValue)
@@ -469,7 +474,7 @@ public class AssetBundlesManager
             AssetBundleHandle handle = GetAssetBundleHandle(id);
             if (handle.IsRemote())
             {
-                returnValue = m_downloadablesManager.IsIdAvailable(id, track);
+                returnValue = m_downloadablesManager.IsIdAvailable(id, checkDisk, track);
             }
         }
 
@@ -487,7 +492,7 @@ public class AssetBundlesManager
 				for(int i = 0; i < count; i++) 
 				{
                     // IsAssetBundleAvailable() must be called for every id so that the result will be tracked if it needs to
-                    returnValue = IsAssetBundleAvailable(ids[i], track) && returnValue;
+                    returnValue = IsAssetBundleAvailable(ids[i], false, track) && returnValue;
                 }
 			}
         }

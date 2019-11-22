@@ -25,6 +25,8 @@ public class CameraSnapPoint : MonoBehaviour {
 	private const string DARK_SCREEN_PREFAB_PATH = "UI/Common/PF_CameraDarkScreen";
 	private const string DARK_SCREEN_NAME = "PF_CameraDarkScreen";
 
+	private const float FOV_43_THRESHOLD = 1.5f;	// Aspect Ratio threshold at which we start using the 43 FOV rather than standard FOV. Values below will trigger the 43 FOV.
+
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
@@ -35,6 +37,7 @@ public class CameraSnapPoint : MonoBehaviour {
 	// Optional Parameters
 	public bool changeFov = true;
 	public float fov = 60;
+	public float fov43 = 75f;
 
 	public bool changeNear = true;
 	public float near = 0.1f;
@@ -88,7 +91,7 @@ public class CameraSnapPoint : MonoBehaviour {
 		if(changeRotation) _cam.transform.rotation = this.transform.rotation;
 
 		// Camera params
-		if(changeFov) _cam.fieldOfView = fov;
+		if(changeFov) _cam.fieldOfView = GetFOV();
 		if(changeNear) _cam.nearClipPlane = near;
 		if(changeFar) _cam.farClipPlane = far;
 
@@ -155,7 +158,7 @@ public class CameraSnapPoint : MonoBehaviour {
 			seq.Join(DOTween.To(
 				() => { return _cam.fieldOfView; },
 				(_newValue) => { _cam.fieldOfView = _newValue; },
-				fov, _duration
+				GetFOV(), _duration
 			).SetAs(_params));
 		}
 
@@ -212,6 +215,19 @@ public class CameraSnapPoint : MonoBehaviour {
 
 		seq.Restart(true);
 		return seq;
+	}
+
+	/// <summary>
+	/// Gets the fov for this snap point, considering screen aspect ratio.
+	/// </summary>
+	/// <returns>The fov corresponding to the current aspect ratio.</returns>
+	public float GetFOV() {
+		// Check aspect ratio
+		if(UIConstants.ASPECT_RATIO < FOV_43_THRESHOLD) {
+			return fov43;
+		} else {
+			return fov;
+		}
 	}
 
 	//------------------------------------------------------------------//

@@ -209,7 +209,7 @@ public class FreezingObjectsRegistry : MonoBehaviour, IBroadcastListener
                         if ( m_killOnFrozen )
                         {
                             // Check random
-                            if (m_entities[i].edibleFromTier < DragonTier.COUNT)
+                            if (m_entities[i].edibleFromTier < DragonTier.COUNT && ((int)m_entities[i].edibleFromTier) < m_killTiers.Length)
                             {
                                 m_toKill.Add( Random.Range(0, 100) < m_killTiers[ (int)m_entities[i].edibleFromTier ] );
                             }else{

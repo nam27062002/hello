@@ -54,7 +54,7 @@ public class PopupAskSurvey : MonoBehaviour {
 		if(!Prefs.GetBoolPlayer(PREF_CHECK, true)) return null;
 
 		// Not if we don't have internet access!
-		if(Application.internetReachability == NetworkReachability.NotReachable) return null;
+		if(DeviceUtilsManager.SharedInstance.internetReachability == NetworkReachability.NotReachable) return null;
 
 		// Not if we don't have a tracking ID
 		#if !UNITY_EDITOR

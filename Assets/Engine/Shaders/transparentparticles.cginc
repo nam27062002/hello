@@ -79,8 +79,8 @@ v2f vert(appdata_t v)
 //	o.texcoord = TRANSFORM_TEX(v.texcoord + _Panning.xy * _Time.yy, _MainTex);
 	o.texcoord = TRANSFORM_TEX(v.texcoord, _MainTex) + (_Panning.xy * _Time.yy);
 
-#if defined(NOISE_TEXTURE) || defined(FLOWMAP)
-
+#ifdef EXTENDED_PARTICLES
+    
 #if defined(NOISE_TEXTURE)
 
 #if defined(NOISEUV)
@@ -89,7 +89,7 @@ v2f vert(appdata_t v)
 	o.noiseuv = TRANSFORM_TEX(v.texcoord, _MainTex) + (_NoisePanning.xy * _Time.yy);
 #endif
 
-#else	//FLOWMAP
+#elif defined(FLOWMAP)
 
 #if defined(NOISEUV)
 	o.noiseuv = TRANSFORM_TEX(v.texcoord, _NoiseTex);
@@ -97,11 +97,8 @@ v2f vert(appdata_t v)
 	o.noiseuv = TRANSFORM_TEX(v.texcoord, _MainTex);
 #endif
 
-#endif	//NOISE_TEXTURE
+#endif	//FLOWMAP
 
-#endif 	//NOISE_TEXTURE || FLOWMAP
-
-#ifdef EXTENDED_PARTICLES
 	o.particledata = v.texcoord.zw;
 #endif	//EXTENDED_PARTICLES
 	return o;

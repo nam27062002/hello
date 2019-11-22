@@ -20,21 +20,26 @@ using System.Collections.Generic;
 /// </summary>
 //[RequireComponent(typeof(Button))]
 public class MenuDragonLockButtonConditionally : MonoBehaviour {
-	//------------------------------------------------------------------------//
-	// CONSTANTS															  //
-	//------------------------------------------------------------------------//
+    //------------------------------------------------------------------------//
+    // CONSTANTS															  //
+    //------------------------------------------------------------------------//
 
-	//------------------------------------------------------------------------//
-	// MEMBERS																  //
-	//------------------------------------------------------------------------//
-	// Setup
-	[SerializeField] private bool m_lockIfShadowed = false;
+    //------------------------------------------------------------------------//
+    // MEMBERS																  //
+    //------------------------------------------------------------------------//
+    // Setup
+    [Comment("<color=orange>Lock per dragon state:</color>")]
+    [SerializeField] private bool m_lockIfShadowed = false;
 	[SerializeField] private bool m_lockIfLocked = false;
 	[SerializeField] private bool m_lockIfAvailable = false;
 	[SerializeField] private bool m_lockIfOwned = false;
 
-	// External references
-	private Button m_button = null;
+    [Comment("<color=orange>Lock per dragon type:</color>")]
+    [SerializeField] private bool m_lockIfClassic = false;
+    [SerializeField] private bool m_lockIfSpecial = false;
+
+    // External references
+    private Button m_button = null;
 	public Button button {
 		get { 
 			if(m_button == null) m_button = GetComponent<Button>();
@@ -108,8 +113,20 @@ public class MenuDragonLockButtonConditionally : MonoBehaviour {
 			case IDragonData.LockState.OWNED:				toLock = m_lockIfOwned;		break;
 		}
 
-		// Just do it
-		m_button.interactable = !toLock;
+        // Check type conditions
+        if (m_lockIfClassic)
+        {
+            toLock |= (dragon.type == IDragonData.Type.CLASSIC);
+        }
+
+        if (m_lockIfSpecial)
+        {
+            toLock |= (dragon.type == IDragonData.Type.SPECIAL);
+        }
+
+
+        // Just do it
+        m_button.interactable = !toLock;
 	}
 
 	//------------------------------------------------------------------//

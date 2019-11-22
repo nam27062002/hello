@@ -47,14 +47,20 @@ namespace AI
 			m_transitionParam = null;
 		}
 
-		public void Initialise(GameObject _go, bool enterFirstState = false) 
-		{	
-			m_gameObject = _go;	
-			
-			List<StateComponent> sharedComponents = new List<StateComponent>();
+        public void Instantiate(GameObject _go) {
+            m_gameObject = _go;
+
+            List<StateComponent> sharedComponents = new List<StateComponent>();
+            for (int i = 0; i < m_states.Length; i++) {
+                m_states[i].Instantiate(ref sharedComponents);
+            }
+        }
+
+        public void Initialise(bool enterFirstState = false) 
+		{			
 			for(int i = 0; i < m_states.Length; i++)
 			{
-				m_states[i].Initialise(this, ref sharedComponents);
+				m_states[i].Initialise(this);
 			}
 
 			if(enterFirstState && m_states.Length > 0 && m_firstState_A > -1)

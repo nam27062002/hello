@@ -67,6 +67,8 @@ public class HDTrackingManager
 		SHOP_PC_PACK,
 		SHOP_COINS_PACK,
 		SHOP_OFFER_PACK,
+        SHOP_REMOVE_ADS_PACK,
+        SHOP_AD_OFFER_PACK,				// Ad used to obtain an offer pack of type "free"
         SHOP_PROMOTED_IAP,
 		SHOP_KEYS_PACK,
         NOT_ENOUGH_RESOURCES,
@@ -97,7 +99,8 @@ public class HDTrackingManager
 		SPECIAL_DRAGON_UPGRADE,
         SPECIAL_LEAGUE,                  // When user gets rewards from special league at the end of the week
         LAB_REWARD_MISSION,              // When user gets reward from Lab Mission
-		LAB_UNLOCKED_GIFT				 // When player unlocks the lab for the first time, a gift is given
+		LAB_UNLOCKED_GIFT,				 // When player unlocks the lab for the first time, a gift is given
+		GOLDEN_FRAGMENTS_REMOVAL,		 // Golden Fragments conversion to HC
     };
 
 	public enum EFunnels
@@ -172,7 +175,7 @@ public class HDTrackingManager
 
     protected virtual void SaveOfflineUnsentEventsExtended() {}
 
-#region notify    
+    #region notify    
     /// <summary>
     /// Called when the application starts
     /// </summary>
@@ -550,6 +553,14 @@ public class HDTrackingManager
     /// <param name="experimentName">Name of the experiment applied.</param>
     /// <param name="experimentGroup">Name of the group of the experiment applied</param>
     public virtual void Notify_ExperimentApplied(string experimentName, string experimentGroup) {}
+
+    /// <summary>
+    /// Notifies that the player closed the happy hour popup
+    /// </summary>
+    /// <param name="itemID">Id of the offer shown in the popup</param>
+    /// <param name="action">How did the player close the popup? Possible values: "close", "buy", "shop"</param>
+    public virtual void Notify_CloseHappyHourPopup(string itemID, string action) { }
+
     #endregion
 
     #region animoji
@@ -682,6 +693,13 @@ public class HDTrackingManager
     /// <param name="unlockType">How the map has been unlocked.</param>
     public virtual void Notify_UnlockMap(ELocation location, EUnlockType unlockType) { }
 
+
+    /// <summary>
+    /// Sent when the uses pushes a button in the UI
+    /// </summary>
+    /// <param name="_buttonName">The custom identifier of the button pressed</param>
+    public virtual void Notify_UIButton(string _buttonName) { }
+    
     #region log
     private const bool LOG_USE_COLOR = false;
     private const string LOG_CHANNEL = "[HDTrackingManager] ";

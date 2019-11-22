@@ -113,7 +113,7 @@ public class AnniversaryCandleDecoration : IEntity, IFireNode, IBroadcastListene
 			//light up candle
 			m_effect.Spawn();
 			
-			Messenger.Broadcast<Transform, IEntity, Reward>(MessengerEvents.ENTITY_BURNED, m_transform, this, m_reward);
+			Messenger.Broadcast<Transform, IEntity, Reward, KillType>(MessengerEvents.ENTITY_KILLED, m_transform, this, m_reward, KillType.BURNT);
 
 			m_timer = m_lightUpTime;
 			m_state = State.LIGHT_UP;

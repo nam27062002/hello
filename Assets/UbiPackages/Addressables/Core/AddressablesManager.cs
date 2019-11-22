@@ -182,6 +182,11 @@ public class AddressablesManager
         return m_isInitialized;
     }
 
+    public bool IsReady()
+    {
+        return m_providerFromAB != null && m_providerFromAB.IsReady();
+    }
+
     /// <summary>
     /// Returns the list of dependencies (typically asset bundles) ids required to load the addressable with <c>id</c> as an identifier.
     /// </summary>
@@ -233,6 +238,25 @@ public class AddressablesManager
         else
         {
             Errors_ProcessManagerNotInitialized(false);
+        }
+
+        return returnValue;
+    }   
+
+    public bool IsDependencyListAvailable(List<string> dependencyIds)
+    {
+        bool returnValue = false;
+
+        if (IsInitialized())
+        {
+            if (dependencyIds != null && dependencyIds.Count > 0)
+            {
+                returnValue = m_providerFromAB.IsDependenciesListAvailable(dependencyIds);                
+            }
+            else
+            {
+                returnValue = true;
+            }             
         }
 
         return returnValue;

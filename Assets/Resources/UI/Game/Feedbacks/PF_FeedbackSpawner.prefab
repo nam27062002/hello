@@ -50,6 +50,7 @@ GameObject:
   m_Component:
   - component: {fileID: 224000012624533912}
   - component: {fileID: 114000012721696096}
+  - component: {fileID: 223416861050508622}
   m_Layer: 5
   m_Name: PF_FeedbackSpawner
   m_TagString: Untagged
@@ -108,7 +109,7 @@ MonoBehaviour:
     type: 2}
   m_escapedFeedbackPrefab: {fileID: 129384, guid: 122910a2c2306453a8202df78d42df4b,
     type: 2}
-  m_cakeEatenFeedbackPrefab: {fileID: 114807831836166762, guid: 777a2c7b8d7496e45bf24f86ee592fd4,
+  m_hungryCollectibleEatenFeedbackPrefab: {fileID: 114807831836166762, guid: 777a2c7b8d7496e45bf24f86ee592fd4,
     type: 2}
   m_scoreFeedbackContainer: {fileID: 1000011268740796}
   m_killFeedbackContainer: {fileID: 1000011025552906}
@@ -120,6 +121,26 @@ MonoBehaviour:
   m_killFeedbackMax: 5
   m_flockBonusFeedbackMax: 2
   m_escapedFeedbackMax: 2
+--- !u!223 &223416861050508622
+Canvas:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000014133422572}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_RenderMode: 2
+  m_Camera: {fileID: 0}
+  m_PlaneDistance: 100
+  m_PixelPerfect: 0
+  m_ReceivesEvents: 1
+  m_OverrideSorting: 0
+  m_OverridePixelPerfect: 0
+  m_SortingBucketNormalizedSize: 0
+  m_AdditionalShaderChannelsFlag: 1
+  m_SortingLayerID: 0
+  m_SortingOrder: 0
+  m_TargetDisplay: 0
 --- !u!224 &224000011651047658
 RectTransform:
   m_ObjectHideFlags: 1

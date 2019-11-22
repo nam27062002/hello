@@ -169,6 +169,12 @@ public class HUDStatBar : IHUDWidget, IBroadcastListener {
                 Messenger.AddListener(MessengerEvents.PLAYER_MUMMY_REVIVE, OnMummyRevive);
                 RefreshIcons();
             }break;
+			case Type.Fury:
+			{
+				TextMeshProUGUI text = this.FindComponentRecursive<TextMeshProUGUI>();
+                string t = Localizer.ApplyCase(Localizer.Case.UPPER_CASE, LocalizationManager.SharedInstance.Localize(InstanceManager.player.data.tidEnergyBar));
+                text.text = t;
+			}break;
             case Type.SuperFury:
             {
                 Broadcaster.AddListener(BroadcastEventType.FURY_RUSH_TOGGLED, this);
@@ -275,10 +281,10 @@ public class HUDStatBar : IHUDWidget, IBroadcastListener {
 	public override float GetUpdateIntervalByQualityLevel(int _qualityLevel) {
 		if(_qualityLevel < 1) {	// Very Low
 			return 0.2f;
-		} else if(_qualityLevel < 4) {
+		} else if(_qualityLevel < 3) {	// Low, Medium
 			return 0.1f;
-		} else {				// Very High
-			return 0.05f;
+		} else {				// High, Very High
+			return 0f;	// MAX
 		}
 	}
 
@@ -287,6 +293,9 @@ public class HUDStatBar : IHUDWidget, IBroadcastListener {
 	/// </summary>
 	public override void PeriodicUpdate() {
 		if (m_ready) {
+			// Compute delta time, considering our update interval
+			float deltaTime = Mathf.Max(UPDATE_INTERVAL, Time.unscaledDeltaTime);   // Cover cases where the frame took longer than our update interval (or the update interval is 0)
+
 			// Only if player is alive
 			if(InstanceManager.player != null) {
 				// Aux vars
@@ -299,39 +308,39 @@ public class HUDStatBar : IHUDWidget, IBroadcastListener {
 				// Set base slider min/max
 				targetSlider = baseBar.slider;
 				if(targetSlider != null) {
-					if(targetSlider.minValue != 0f) {
+					if(!IsEqual(targetSlider.minValue, 0f)) {
 						targetSlider.minValue = 0f;
 					}
 
-					if(targetSlider.maxValue != targetExtraValue) {
+					if(!IsEqual(targetSlider.maxValue, targetExtraValue)) {
 						targetSlider.maxValue = targetExtraValue;
 					}
 
-					targetValueStep = Mathf.Lerp(targetSlider.value, targetValue, Time.deltaTime);
+					targetValueStep = Mathf.Lerp(targetSlider.value, targetValue, deltaTime);
 				}
                 
 				// Set extra slider min/max
 				targetSlider = extraBar.slider;
 				if(targetSlider != null) {
-					if(targetSlider.minValue != 0f) {
+					if(!IsEqual(targetSlider.minValue, 0f)) {
 						targetSlider.minValue = 0f;
 					}
 
-					if(targetSlider.maxValue != targetExtraValue) {
+					if(!IsEqual(targetSlider.maxValue, targetExtraValue)) {
 						targetSlider.maxValue = targetExtraValue; // this is the max value with all the bonus
 					}
 
-					targetValueStep = Mathf.Lerp(targetSlider.value, targetValue, Time.deltaTime);
+					targetValueStep = Mathf.Lerp(targetSlider.value, targetValue, deltaTime);
 				}
 
 				// Set damage slider min/max
 				targetSlider = damageBar.slider;
 				if(targetSlider != null) {
-					if(targetSlider.minValue != 0f) {
+					if(!IsEqual(targetSlider.minValue, 0f)) {
 						targetSlider.minValue = 0f;
 					}
 
-					if(targetSlider.maxValue != targetExtraValue) {
+					if(!IsEqual(targetSlider.maxValue, targetExtraValue)) {
 						targetSlider.maxValue = targetExtraValue; // this is the max value with all the bonus
 					}
 				}
@@ -340,13 +349,13 @@ public class HUDStatBar : IHUDWidget, IBroadcastListener {
 				targetSlider = extraBar.slider;
 				if(targetSlider != null) {
 					if(m_instantSet) {
-						if(targetSlider.value != targetValue) {
+						if(!IsEqual(targetSlider.value, targetValue)) {
 							targetSlider.value = targetValue;
 						}
 					} else {
 						// If going up, animate, otherwise instant set
 						float value = (targetValue > targetSlider.value) ? targetValueStep : targetValue;                        
-						if(targetSlider.value != value) {
+						if(!IsEqual(targetSlider.value, value)) {
 							targetSlider.value = value;	
 						}
 					}
@@ -359,13 +368,13 @@ public class HUDStatBar : IHUDWidget, IBroadcastListener {
 					targetValueStep = Mathf.Min(targetValueStep, targetBaseValue);
 
 					if(m_instantSet) {
-						if(targetSlider.value != targetValue) {
+						if(!IsEqual(targetSlider.value, targetValue)) {
 							targetSlider.value = targetValue;
 						}
 					} else {
 						// If going up, animate, otherwise instant set
 						float value = (targetValue > targetSlider.value) ? targetValueStep : targetValue;
-						if(targetSlider.value != value) {
+						if(!IsEqual(targetSlider.value, value)) {
 							targetSlider.value = value;   
 						}
 					}
@@ -396,14 +405,14 @@ public class HUDStatBar : IHUDWidget, IBroadcastListener {
 					targetValue = Mathf.Max(extraBar.slider.value, baseBar.slider.value);
 
 					if(m_instantSet) {
-						if(targetSlider.value != targetValue) {
+						if(!IsEqual(targetSlider.value, targetValue)) {
 							targetSlider.value = targetValue;
 						}
 					} else {
 						// Reverse case: animate when going down only and over a certain threshold
 						if(targetSlider.value > targetValue + m_damageAnimationThreshold) {
 							// Use normalized value so speed feels right for every dragon
-							targetSlider.normalizedValue -= m_damageBarSpeed * Time.deltaTime;
+							targetSlider.normalizedValue -= m_damageBarSpeed * deltaTime;
 						} else if(targetSlider.value < targetValue) {
 							targetSlider.value = targetValue;
 						}
@@ -428,7 +437,7 @@ public class HUDStatBar : IHUDWidget, IBroadcastListener {
 
                 // Text
                 if (m_valueTxt != null &&
-				    (m_extraBarLastValue != extraBar.slider.value || m_extraBarLastMaxValue != extraBar.slider.maxValue)) {
+				    (!IsEqual(m_extraBarLastValue, extraBar.slider.value) || !IsEqual(m_extraBarLastMaxValue, extraBar.slider.maxValue))) {
 					m_extraBarLastValue = extraBar.slider.value;
 					m_extraBarLastMaxValue = extraBar.slider.maxValue;
 
@@ -442,7 +451,7 @@ public class HUDStatBar : IHUDWidget, IBroadcastListener {
                 {
                     bool bright = InstanceManager.player.dragonBoostBehaviour.HasEnoughEnergyToBoost() || InstanceManager.player.dragonBoostBehaviour.IsBoostActive();
                     float d = bright ? 0 : -1;
-                    m_iconColorFX.saturation = Mathf.Lerp(m_iconColorFX.saturation, d, Time.deltaTime * 10);
+                    m_iconColorFX.saturation = Mathf.Lerp(m_iconColorFX.saturation, d, deltaTime * 10);
                 }
 
 				// Invulnerability FX
@@ -463,7 +472,7 @@ public class HUDStatBar : IHUDWidget, IBroadcastListener {
 					bool applyFX = m_instantSet;
 					if(isInvulnerable) {
 						// Update delta
-						m_invulnerabilityColorDelta += m_invulnerabilityFXSpeed * m_invulnerabilityDirection * Time.deltaTime;
+						m_invulnerabilityColorDelta += m_invulnerabilityFXSpeed * m_invulnerabilityDirection * deltaTime;
 
 						// Reverse direction if needed
 						if(m_invulnerabilityColorDelta >= 1f) {
@@ -510,7 +519,7 @@ public class HUDStatBar : IHUDWidget, IBroadcastListener {
 
 			if ( m_type == Type.SuperFury)
 			{
-				m_timer -= Time.deltaTime;
+				m_timer -= deltaTime;
 				if ( m_timer <= 0 )
 				{
 					m_canvasGroup.alpha = 0;
@@ -735,4 +744,14 @@ public class HUDStatBar : IHUDWidget, IBroadcastListener {
             }
         }
     }
+
+	/// <summary>
+	/// Safe float comparison.
+	/// </summary>
+	/// <param name="_a"></param>
+	/// <param name="_b"></param>
+	/// <returns></returns>
+	private static bool IsEqual(float _a, float _b) {
+		return Mathf.Abs(_a - _b) < Mathf.Epsilon;
+	}
 }

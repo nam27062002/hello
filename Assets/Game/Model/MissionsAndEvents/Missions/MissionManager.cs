@@ -21,7 +21,7 @@ using System.Collections.Generic;
 /// Has its own asset in the Resources/Singletons folder, all content must be
 /// initialized there.
 /// </summary>
-public class MissionManager : UbiBCN.SingletonMonoBehaviour<MissionManager>, IBroadcastListener {
+public class MissionManager : Singleton<MissionManager>, IBroadcastListener {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
@@ -56,7 +56,6 @@ public class MissionManager : UbiBCN.SingletonMonoBehaviour<MissionManager>, IBr
             if (m_user != null) {
                 switch (SceneController.mode) {
                     case SceneController.Mode.DEFAULT:          return m_user.userMissions; 
-                    case SceneController.Mode.SPECIAL_DRAGONS:  return m_user.userSpecialMissions; 
                 }
             }
 
@@ -69,16 +68,30 @@ public class MissionManager : UbiBCN.SingletonMonoBehaviour<MissionManager>, IBr
     private static float sm_powerUpGFMultiplier = 0f; // Soft currency modifier multiplier
     public static float powerUpGFMultiplier { get { return sm_powerUpGFMultiplier; } }
 
-	//------------------------------------------------------------------//
-	// GENERIC METHODS													//
-	//------------------------------------------------------------------//
-	/// <summary>
-	/// Initialization.
-	/// </summary>
-	private void Awake() {
+    //------------------------------------------------------------------//
+    // GENERIC METHODS													//
+    //------------------------------------------------------------------//
+    /// <summary>
+    /// Initialization.
+    /// </summary>
+    protected override void OnCreateInstance() {        
         InitFromDefinitions(ref m_missionData, DefinitionsCategory.MISSION_DIFFICULTIES);
         InitFromDefinitions(ref m_specialMissionData, DefinitionsCategory.MISSION_SPECIAL_DIFFICULTIES);
-	}
+        // Subscribe to external events
+        Messenger.AddListener<IDragonData>(MessengerEvents.DRAGON_ACQUIRED, OnDragonAcquired);
+        Messenger.AddListener(MessengerEvents.GAME_STARTED, OnGameStarted);
+        Broadcaster.AddListener(BroadcastEventType.GAME_ENDED, this);
+    }
+
+    /// <summary>
+    /// Scriptable object has been disabled.
+    /// </summary>
+    protected override void OnDestroyInstance() {        
+        // Unsubscribe from external events
+        Messenger.RemoveListener<IDragonData>(MessengerEvents.DRAGON_ACQUIRED, OnDragonAcquired);
+        Messenger.RemoveListener(MessengerEvents.GAME_STARTED, OnGameStarted);
+        Broadcaster.RemoveListener(BroadcastEventType.GAME_ENDED, this);
+    }
 
     private void InitFromDefinitions(ref Data _data, string _defCategory) {
         // Initialize internal values from content
@@ -101,27 +114,7 @@ public class MissionManager : UbiBCN.SingletonMonoBehaviour<MissionManager>, IBr
             _data.removeMissionPCCoefB = definition.GetAsFloat("removeMissionPCCoefB");
         }
     }
-
-	/// <summary>
-	/// Scriptable object has been enabled.
-	/// </summary>
-	private void OnEnable() {
-		// Subscribe to external events
-		Messenger.AddListener<IDragonData>(MessengerEvents.DRAGON_ACQUIRED, OnDragonAcquired);
-        Messenger.AddListener(MessengerEvents.GAME_STARTED, OnGameStarted);
-        Broadcaster.AddListener(BroadcastEventType.GAME_ENDED, this);
-	}
-
-	/// <summary>
-	/// Scriptable object has been disabled.
-	/// </summary>
-	private void OnDisable() {
-		// Unsubscribe from external events
-		Messenger.RemoveListener<IDragonData>(MessengerEvents.DRAGON_ACQUIRED, OnDragonAcquired);
-        Messenger.RemoveListener(MessengerEvents.GAME_STARTED, OnGameStarted);
-        Broadcaster.RemoveListener(BroadcastEventType.GAME_ENDED, this);
-	}
-
+       
     public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
     {
         switch(eventType)
@@ -136,7 +129,7 @@ public class MissionManager : UbiBCN.SingletonMonoBehaviour<MissionManager>, IBr
 	/// <summary>
 	/// Called every frame.
 	/// </summary>
-	private void Update() {
+	public void Update() {
 		bool gaming = InstanceManager.gameSceneController != null;
         if (currentModeMissions != null) 
             currentModeMissions.CheckActivation(!gaming);
@@ -169,7 +162,6 @@ public class MissionManager : UbiBCN.SingletonMonoBehaviour<MissionManager>, IBr
     public static DefinitionNode GetDifficultyDef(SceneController.Mode _mode, Mission.Difficulty _difficulty) {
         switch (_mode) {
             case SceneController.Mode.DEFAULT:          return DefinitionsManager.SharedInstance.GetDefinitionByVariable(DefinitionsCategory.MISSION_DIFFICULTIES, "index", ((int)(_difficulty)).ToString());
-            case SceneController.Mode.SPECIAL_DRAGONS:  return DefinitionsManager.SharedInstance.GetDefinitionByVariable(DefinitionsCategory.MISSION_SPECIAL_DIFFICULTIES, "index", ((int)(_difficulty)).ToString());
         }
         return null;
     }
@@ -181,19 +173,32 @@ public class MissionManager : UbiBCN.SingletonMonoBehaviour<MissionManager>, IBr
     public static int GetDragonsToUnlock(SceneController.Mode _mode, Mission.Difficulty _difficulty) {
         switch (_mode) {
             case SceneController.Mode.DEFAULT:          return instance.m_missionData.dragonsToUnlock[(int)(_difficulty)];
-            case SceneController.Mode.SPECIAL_DRAGONS:  return instance.m_specialMissionData.dragonsToUnlock[(int)(_difficulty)];
         }
         return 0;
     }
+
 
     public static int GetCooldownPerDifficulty(Mission.Difficulty _difficulty) {
         return GetCooldownPerDifficulty(SceneController.mode, _difficulty);
     }
 
+    /// <summary>
+    /// Return the cooldown duration in seconds
+    /// </summary>
+    /// <param name="_mode"></param>
+    /// <param name="_difficulty"></param>
+    /// <returns></returns>
     public static int GetCooldownPerDifficulty(SceneController.Mode _mode, Mission.Difficulty _difficulty) {
+
+        // If the user has the Remove ads feature, the cooldown will be reduced
+        float multiplier = 1f;
+        if (UsersManager.currentUser.removeAds.IsActive)
+        {
+            multiplier = UsersManager.currentUser.removeAds.GetMissionCooldownMultiplier (_difficulty);
+        }
+
         switch (_mode) {
-            case SceneController.Mode.DEFAULT: return instance.m_missionData.cooldownPerDifficulty[(int)(_difficulty)];
-            case SceneController.Mode.SPECIAL_DRAGONS: return instance.m_specialMissionData.cooldownPerDifficulty[(int)(_difficulty)];
+            case SceneController.Mode.DEFAULT: return (int)(instance.m_missionData.cooldownPerDifficulty[(int)(_difficulty)] * 60 * multiplier);
         }
         return 0;
     }
@@ -205,7 +210,6 @@ public class MissionManager : UbiBCN.SingletonMonoBehaviour<MissionManager>, IBr
     public static int GetMaxRewardPerDifficulty(SceneController.Mode _mode, Mission.Difficulty _difficulty) {
         switch (_mode) {
             case SceneController.Mode.DEFAULT: return instance.m_missionData.maxRewardPerDifficulty[(int)(_difficulty)];
-            case SceneController.Mode.SPECIAL_DRAGONS: return instance.m_specialMissionData.maxRewardPerDifficulty[(int)(_difficulty)];
         }
         return 0;
     }
@@ -217,7 +221,6 @@ public class MissionManager : UbiBCN.SingletonMonoBehaviour<MissionManager>, IBr
     public static float GetRemoveMissionPCCoefA(SceneController.Mode _mode, Mission.Difficulty _difficulty) {
         switch (_mode) {
             case SceneController.Mode.DEFAULT: return instance.m_missionData.removeMissionPCCoefA;
-            case SceneController.Mode.SPECIAL_DRAGONS: return instance.m_specialMissionData.removeMissionPCCoefA;
         }
         return 0;
     }
@@ -229,7 +232,6 @@ public class MissionManager : UbiBCN.SingletonMonoBehaviour<MissionManager>, IBr
     public static float GetRemoveMissionPCCoefB(SceneController.Mode _mode, Mission.Difficulty _difficulty) {
         switch (_mode) {
             case SceneController.Mode.DEFAULT: return instance.m_missionData.removeMissionPCCoefB;
-           case SceneController.Mode.SPECIAL_DRAGONS: return instance.m_specialMissionData.removeMissionPCCoefB;
         }
         return 0;
     }
@@ -356,11 +358,6 @@ public class MissionManager : UbiBCN.SingletonMonoBehaviour<MissionManager>, IBr
                 case SceneController.Mode.DEFAULT:
                 m_user.userMissions.EnableTracker(UsersManager.currentUser.gamesPlayed >= GameSettings.ENABLE_MISSIONS_AT_RUN);
                 m_user.userSpecialMissions.EnableTracker(false);
-                break;
-
-                case SceneController.Mode.SPECIAL_DRAGONS:
-                m_user.userMissions.EnableTracker(false);
-                m_user.userSpecialMissions.EnableTracker(true);
                 break;
 
                 case SceneController.Mode.TOURNAMENT:

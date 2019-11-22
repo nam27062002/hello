@@ -97,7 +97,7 @@ public class FireBreathNew : DragonBreathBehaviour {
     	if ( m_dragon )
     	{
             float furyBaseLength = m_dragon.data.furyBaseLength;
-			m_length = furyBaseLength + furyBaseLength * m_lengthPowerUpMultiplier / 100.0f;
+			m_length = furyBaseLength + furyBaseLength * lengthPowerUpPercentage / 100.0f;
 
 			dragonFlameStandardInstance.setEffectScale(m_length / 2.0f, transform.localScale.x);
 			dragonFlameSuperInstance.setEffectScale(m_length * m_superFuryLengthMultiplier / 2.0f, transform.localScale.x);
@@ -220,7 +220,26 @@ public class FireBreathNew : DragonBreathBehaviour {
 					if (prey.IsBurnable(m_tier) || m_type == Type.Mega) {
 						AI.IMachine machine =  m_checkEntities[i].machine;
 						if (machine != null) {
-							machine.Burn(transform, IEntity.Type.PLAYER, m_type == Type.Mega, m_currentColor);
+
+                            KillType killType;
+
+                            // Special dragons deal different type of damage whith their breath
+                            switch (DragonManager.CurrentDragon.sku)
+                            {
+                                case "dragon_ice":
+                                    killType = KillType.FROZEN;
+                                    break;
+
+                                case "dragon_electric":
+                                    killType = KillType.ELECTRIFIED;
+                                    break;
+
+                                default:
+                                    killType = KillType.BURNT;
+                                    break;
+                            }
+
+                            machine.Burn(transform, IEntity.Type.PLAYER, killType, m_type == Type.Mega, m_currentColor);
 						}
 					} else {
 						// Show message saying I cannot burn it

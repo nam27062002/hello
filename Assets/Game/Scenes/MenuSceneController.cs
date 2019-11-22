@@ -59,14 +59,11 @@ public class MenuSceneController : SceneController {
 	}
 
 	// Dragon selector - responsible to set selected dragon
-	private MenuDragonSelector m_classicDragonSelector = null;
+	private MenuDragonSelector m_dragonSelector = null;
 	private MenuDragonSelector m_specialDragonSelector = null;
 	public MenuDragonSelector dragonSelector {
 		get {
-			switch(mode) {
-				case Mode.SPECIAL_DRAGONS: return m_specialDragonSelector;
-			}
-			return m_classicDragonSelector;
+			return m_dragonSelector;
 		}
 	}
 
@@ -91,10 +88,6 @@ public class MenuSceneController : SceneController {
 					return dragonScroller.GetDragonPreview(selectedDragon);
 				} break;
 				         
-				case Mode.SPECIAL_DRAGONS: {
-					LabDragonSelectionScene scene = transitionManager.GetScreenData(MenuScreen.LAB_DRAGON_SELECTION).scene3d as LabDragonSelectionScene;
-					return scene.dragonLoader.dragonInstance;
-				} break;
 			}
 			return null;
 		}
@@ -120,8 +113,7 @@ public class MenuSceneController : SceneController {
 		Application.lowMemory += OnLowMemory;
 
 		// Initialize references
-		m_classicDragonSelector = GetScreenData(MenuScreen.DRAGON_SELECTION).ui.FindComponentRecursive<MenuDragonSelector>();
-		m_specialDragonSelector = GetScreenData(MenuScreen.LAB_DRAGON_SELECTION).ui.FindComponentRecursive<MenuDragonSelector>();
+		m_dragonSelector = GetScreenData(MenuScreen.DRAGON_SELECTION).ui.FindComponentRecursive<MenuDragonSelector>();
 
 		// Initialize the selected level in a similar fashion
 		m_selectedLevel = UsersManager.currentUser.currentLevel;		// UserProfile should be loaded and initialized by now
@@ -129,7 +121,7 @@ public class MenuSceneController : SceneController {
 		// Define initial selected dragon
 		if(string.IsNullOrEmpty(GameVars.menuInitialDragon)) {
 			// Default behaviour: Last dragon used
-			m_selectedDragon = DragonManager.currentDragon.sku;
+			m_selectedDragon = DragonManager.CurrentDragon.sku;
 		} else {
 			// Forced dragon
 			//SetSelectedDragon(GameVars.menuInitialDragon);
@@ -183,6 +175,8 @@ public class MenuSceneController : SceneController {
 			OnDragonSelected("dragon_classic");
 			GoToGame();
 		}
+
+		OffersManager.InitFromDefinitions();	// Reload offers - need persistence to properly initialize offer packs rewards
 
 	}    
 
@@ -273,17 +267,6 @@ public class MenuSceneController : SceneController {
 	//------------------------------------------------------------------//
 	// UTILS															//
 	//------------------------------------------------------------------//
-	/// <summary>
-	/// Returns the right pet screen ID (PETS or LAB_PETS) based on current dragon.
-	/// </summary>
-	/// <returns>The pet screen for current dragon.</returns>
-	public MenuScreen GetPetScreenForCurrentMode() {
-		// Is the current dragon a special one?
-		if(mode == Mode.SPECIAL_DRAGONS) {
-			return MenuScreen.LAB_PETS;
-		}
-		return MenuScreen.PETS;
-	}
 
 	//------------------------------------------------------------------//
 	// CALLBACKS														//
@@ -320,9 +303,9 @@ public class MenuSceneController : SceneController {
 		// If owned and different from profile's current dragon, update profile
 		// [AOC] Consider the newly selected dragon's type
 		IDragonData selectedDragonData = DragonManager.GetDragonData(_sku);
-		if(_sku != UsersManager.currentUser.GetCurrentDragon(selectedDragonData.type) && selectedDragonData.isOwned) {
+		if(_sku != UsersManager.currentUser.CurrentDragon && selectedDragonData.isOwned) {
 			// Update profile
-			UsersManager.currentUser.SetCurrentDragon(selectedDragonData.type, _sku);
+			UsersManager.currentUser.CurrentDragon = _sku;
 
             // Save persistence
             PersistenceFacade.instance.Save_Request();
@@ -337,11 +320,8 @@ public class MenuSceneController : SceneController {
 	/// </summary>
 	/// <param name="_data">The dragon that has been unlocked.</param>
 	public void OnDragonAcquired(IDragonData _data) {
-		// If we're on the right mode, make it the current dragon
-		if(SceneController.mode == SceneController.DragonTypeToMode(_data.type)) {
-			// Just make it the current dragon
-			OnDragonSelected(_data.def.sku);
-		}
+		// Just make it the current dragon
+		OnDragonSelected(_data.def.sku);
 	}
 
     private GameObject m_uiCanvasGO;

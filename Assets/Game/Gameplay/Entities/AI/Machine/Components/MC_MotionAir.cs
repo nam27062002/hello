@@ -37,14 +37,14 @@ namespace AI {
 
 		//--------------------------------------------------
 		protected override void ExtendedUpdate() {
-			if (!m_faceDirection) {
+            if (!m_faceDirection) {
 				m_direction = (m_pilot.direction.x >= 0)? GameConstants.Vector3.right : GameConstants.Vector3.left;
 			} else if (m_pilot.IsActionPressed(Pilot.Action.Stop | Pilot.Action.Attack)) {
 				m_direction = m_pilot.direction;
 			} else {
 				m_direction = m_velocity.normalized;
 			}
-		}
+        }
 
 		protected override void ExtendedFixedUpdate() {
 			if (Math.Abs(m_mass - 1f) > Mathf.Epsilon) {
@@ -61,8 +61,8 @@ namespace AI {
 		}
 
 
-		protected override void UpdateOrientation() {
-			m_targetRotation = Quaternion.LookRotation(m_direction + GameConstants.Vector3.back * 0.1f, m_upVector);
+		protected override void UpdateOrientation() {            
+            m_targetRotation = Quaternion.LookRotation(m_direction + GameConstants.Vector3.back * 0.1f, m_upVector);
 			
 			if (!m_pilot.IsActionPressed(Pilot.Action.Stop)) {
 				if (m_dragonStyleRotation) {
@@ -107,7 +107,7 @@ namespace AI {
 				else if (m_direction.y < -0.25f) 	euler.x = Mathf.Min(m_faceDownAngle, euler.x);
 				m_targetRotation = Quaternion.Euler(euler);
 			}
-		}
+        }
 
         protected override void FaceDragon() {
             m_direction = m_dragon.position - m_machine.position;

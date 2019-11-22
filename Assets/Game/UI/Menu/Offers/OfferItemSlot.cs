@@ -11,6 +11,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 using TMPro;
+using SoftMasking;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -22,19 +23,24 @@ public class OfferItemSlot : MonoBehaviour, IBroadcastListener {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	
+
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed references
+	[SerializeField] protected bool m_allow3dPreview = false;   // [AOC] In some cases, we want to display a 3d preview when appliable (pets/eggs)
+
+	[Header("Mandatory Fields")]
 	[SerializeField] protected Transform m_previewContainer = null;
 	[SerializeField] protected TextMeshProUGUI m_text = null;
+
+	[Header("Optional Fields")]
 	[Tooltip("Optional")] [SerializeField] protected GameObject m_infoButton = null;
 	[Tooltip("Optional")] [SerializeField] protected TextMeshProUGUI m_extraInfoText = null;    // Will only be displayed for some types
 	[Tooltip("Optional")] [SerializeField] protected GameObject m_extraInfoRoot = null;    // Will only be displayed for some types
-	[Tooltip("Optional")] [SerializeField] protected Mask m_mask = null;
 	[Space]
-	[SerializeField] protected bool m_allow3dPreview = false;	// [AOC] In some cases, we want to display a 3d preview when appliable (pets/eggs)
+	[Tooltip("Optional")] [SerializeField] protected Mask m_mask = null;
+	[Tooltip("Optional")] [SerializeField] protected SoftMask m_softMask = null;
 	[Space]
 	[Tooltip("Optional")] [SerializeField] protected GameObject m_separator = null;
 
@@ -137,6 +143,7 @@ public class OfferItemSlot : MonoBehaviour, IBroadcastListener {
 			// Instantiate preview! :)
 			if(previewPrefab != null) {
 				GameObject previewInstance = GameObject.Instantiate<GameObject>(previewPrefab);
+				previewInstance.SetActive(true);
 				m_preview = previewInstance.GetComponent<IOfferItemPreview>();
 			}
 		}
@@ -227,15 +234,21 @@ public class OfferItemSlot : MonoBehaviour, IBroadcastListener {
 		}
 
 		// Mask - depends on preview type
-		if(m_mask != null) {
-			if(m_preview != null) {
-				m_mask.enabled = m_preview.enableMask;
-			} else {
-				m_mask.enabled = false;
-			}
+		bool enableMask = false;
+		if(m_preview != null) {
+			enableMask = m_preview.enableMask;
+		}
 
-			// Apply to associated mask graphic as well! (Otherwise it will be visible when mask is disabled)
-			if(m_mask.graphic != null) m_mask.graphic.enabled = m_mask.enabled;
+		// Normal mask
+		if(m_mask != null) {
+			// Apply to associated mask graphic as well (Otherwise it will be visible when mask is disabled)
+			m_mask.enabled = enableMask;
+			if(m_mask.graphic != null) m_mask.graphic.enabled = enableMask;
+		}
+
+		// Soft mask
+		if(m_softMask != null) {
+			m_softMask.enabled = enableMask;
 		}
 	}
 
@@ -263,10 +276,11 @@ public class OfferItemSlot : MonoBehaviour, IBroadcastListener {
 	/// <summary>
 	/// Info button has been pressed.
 	/// </summary>
-	public void OnInfoButton() {
+	/// <param name="_trackingLocation">Where is this been triggered from?</param>
+	public void OnInfoButton(string _trackingLocation) {
 		// If we have a valid preview, and this one supports info button, propagate the event
 		if(m_preview != null && m_preview.showInfoButton) {
-			m_preview.OnInfoButton();
+			m_preview.OnInfoButton(_trackingLocation);
 		}
 	}
 }

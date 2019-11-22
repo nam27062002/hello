@@ -108,9 +108,9 @@ public enum MessengerEvents {
 	MISSION_ZONE,   			// params: bool _inside, ZoneTrigger _zone
 
     // Entity events
-    ENTITY_EATEN,				// params: IEntity _entity, Reward _reward
-	ENTITY_BURNED,              // params: IEntity _entity, Reward _reward
-    ENTITY_DESTROYED,           // params: IEntity _entity, Reward _reward
+    _ENTITY_EATEN,				// params: IEntity _entity, Reward _reward
+	_ENTITY_BURNED,              // params: IEntity _entity, Reward _reward
+    _ENTITY_DESTROYED,           // params: IEntity _entity, Reward _reward
     BLOCKER_DESTROYED,			// no params
 	FLOCK_EATEN,                // params: IEntity _entity, Reward _reward
     STAR_COMBO,
@@ -231,6 +231,7 @@ public enum MessengerEvents {
 	OFFERS_RELOADED,	// no params
 	OFFERS_CHANGED,		// no params
 	OFFER_APPLIED,		// OfferPack _pack
+    HC_PACK_ACQUIRED,  // a HC pack was bought by the player. PARAMS: bool _showPopup: opens the happy hour popup immediately, string offerSku: the purchased offer sku
 
 	// Live Events
 	LIVE_EVENT_STATES_UPDATED,
@@ -246,14 +247,17 @@ public enum MessengerEvents {
 	TARGET_REACHED,
 
 	// Lab/Special Dragons
-	SPECIAL_DRAGON_STAT_UPGRADED,	// params: DragonDataSpecial _dragonData, DragonDataSpecial.Stat _stat
+	//SPECIAL_DRAGON_STAT_UPGRADED,	// params: DragonDataSpecial _dragonData, DragonDataSpecial.Stat _stat
 	SPECIAL_DRAGON_POWER_UPGRADED,	// params: DragonDataSpecial _dragonData
-	SPECIAL_DRAGON_TIER_UPGRADED,	// params: DragonDataSpecial _dragonData
+	//SPECIAL_DRAGON_TIER_UPGRADED,	// params: DragonDataSpecial _dragonData
+    SPECIAL_DRAGON_LEVEL_UPGRADED,	// params: DragonDataSpecial _dragonData
 
     // Modifiers
     MODIFIER_ECONOMY_DRAGON_PRICE_CHANGED,  // params: IDragonData
 
-	COUNT
+    ENTITY_KILLED,  // params: IEntity _entity, Reward _reward, KillType _type
+
+    COUNT
 }
 
 //------------------------------------------------------------------------//

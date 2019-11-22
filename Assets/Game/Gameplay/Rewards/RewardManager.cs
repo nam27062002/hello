@@ -43,7 +43,7 @@ public class SurvivalBonusData {
 /// Global rewards controller. Keeps current game score, coins earned, etc.
 /// Singleton class, access it via its static methods.
 /// </summary>
-public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager>, IBroadcastListener {
+public class RewardManager : Singleton<RewardManager>, IBroadcastListener {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
@@ -274,24 +274,17 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager>, IBroa
     // Shortcuts
     private GameSceneControllerBase m_sceneController;
 
-	//------------------------------------------------------------------//
-	// GENERIC METHODS													//
-	//------------------------------------------------------------------//
-	/// <summary>
-	/// Initialization.
-	/// </summary>
-	public void Awake() {
-		InitFromDef();
-	}
+    //------------------------------------------------------------------//
+    // GENERIC METHODS													//
+    //------------------------------------------------------------------//
+    /// <summary>
+    /// Initialization.
+    /// </summary>
+    protected override void OnCreateInstance() {
+        InitFromDef();
 
-	/// <summary>
-	/// The manager has been enabled.
-	/// </summary>
-	public void OnEnable() {
 		// Subscribe to external events
-		Messenger.AddListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_EATEN, OnKill);
-		Messenger.AddListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_BURNED, OnBurned);
-		Messenger.AddListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_DESTROYED, OnKill);
+		Messenger.AddListener<Transform, IEntity, Reward, KillType>(MessengerEvents.ENTITY_KILLED, OnKill);
 		Messenger.AddListener<Transform, IEntity, Reward>(MessengerEvents.FLOCK_EATEN, OnFlockEaten);
 		Messenger.AddListener<Transform, IEntity, Reward>(MessengerEvents.STAR_COMBO, OnFlockEaten);
 		Messenger.AddListener<Reward>(MessengerEvents.LETTER_COLLECTED, OnLetterCollected);
@@ -309,14 +302,12 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager>, IBroa
         Messenger.AddListener(MessengerEvents.SCORE_MULTIPLIER_FORCE_UP, OnForceUp);
     }
 
-	/// <summary>
-	/// The manager has been disabled.
-	/// </summary>
-	public void OnDisable() {
-		// Unsubscribe from external events
-		Messenger.RemoveListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_EATEN, OnKill);
-		Messenger.RemoveListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_BURNED, OnBurned);
-		Messenger.RemoveListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_DESTROYED, OnKill);
+    /// <summary>
+    /// The manager has been disabled.
+    /// </summary>
+    protected override void OnDestroyInstance() {
+        // Unsubscribe from external events
+        Messenger.RemoveListener<Transform, IEntity, Reward, KillType>(MessengerEvents.ENTITY_KILLED, OnKill);
 		Messenger.RemoveListener<Transform, IEntity, Reward>(MessengerEvents.FLOCK_EATEN, OnFlockEaten);
 		Messenger.RemoveListener<Transform, IEntity, Reward>(MessengerEvents.STAR_COMBO, OnFlockEaten);
 		Messenger.RemoveListener<Reward>(MessengerEvents.LETTER_COLLECTED, OnLetterCollected);
@@ -335,7 +326,7 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager>, IBroa
     }
     
     
-     public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
     {
         switch( eventType )
         {
@@ -352,13 +343,10 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager>, IBroa
     }
     
     
-
 	/// <summary>
 	/// Called every frame.
 	/// </summary>
-	private void Update() {
-        
-    
+	public void Update() {
 		// Update score multiplier (won't be called if we're in the first multiplier)
 		if(m_scoreMultiplierTimer > 0 && !m_switchingArea) {
 			// Update timer
@@ -436,11 +424,11 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager>, IBroa
 		instance.m_isHighScore = false;
 
 		// Current dragon progress
-		if(DragonManager.currentDragon != null) {
+		if(DragonManager.CurrentDragon != null) {
 			// Depends on dragon type
-			switch(DragonManager.currentDragon.type) {
+			switch(DragonManager.CurrentDragon.type) {
 				case IDragonData.Type.CLASSIC: {
-					DragonDataClassic data = DragonManager.currentDragon as DragonDataClassic;
+					DragonDataClassic data = DragonManager.CurrentDragon as DragonDataClassic;
 					instance.m_dragonInitialLevel = data.progression.level;
 					instance.m_dragonInitialLevelProgress = data.progression.progressCurrentLevel;
 				} break;
@@ -454,8 +442,8 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager>, IBroa
 
 			// Next dragon locked?
 			// [AOC] Only makes sense for CLASSIC dragons
-			IDragonData nextDragonData = DragonManager.GetNextDragonData(DragonManager.currentDragon.def.sku);
-			if(nextDragonData != null && DragonManager.currentDragon.type == IDragonData.Type.CLASSIC) {
+			IDragonData nextDragonData = DragonManager.GetNextDragonData(DragonManager.CurrentDragon.def.sku);
+			if(nextDragonData != null && DragonManager.CurrentDragon.type == IDragonData.Type.CLASSIC) {
 				instance.m_nextDragonLocked = nextDragonData.isLocked;
 			} else {
 				instance.m_nextDragonLocked = false;
@@ -702,7 +690,12 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager>, IBroa
 	/// </summary>
 	/// <param name="_entity">The entity that has been killed.</param>
 	/// <param name="_reward">The reward linked to this event.</param>
-	private void OnKill(Transform _t, IEntity _e, Reward _reward) {
+	private void OnKill(Transform _t, IEntity _e, Reward _reward, KillType _type) {
+
+        if (_type == KillType.BURNT)
+        {
+            _reward.coins = (_reward.coins * m_burnCoinsMultiplier);
+        }
 
 		if (!string.IsNullOrEmpty(_reward.origin))
 		{
@@ -739,10 +732,7 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager>, IBroa
 		UpdateScoreMultiplier();
 	}
 
-	private void OnBurned(Transform _t, IEntity _e, Reward _reward) {
-		_reward.coins = (_reward.coins * m_burnCoinsMultiplier);
-		OnKill(_t, _e, _reward );
-	}
+
 
 	private void OnFlockEaten(Transform _t, IEntity _e, Reward _reward) {
 		// Add the reward

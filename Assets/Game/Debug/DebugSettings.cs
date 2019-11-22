@@ -94,6 +94,12 @@ public class DebugSettings : SingletonScriptableObject<DebugSettings> {
     public const string AB_AUTOMATIC_DOWNLOADER                 = "AB_AUTOMATIC_DOWNLOADER";
     public const string ADS_ENABLED                             = "ADS_ENABLED";
 
+    // Camera settings Cheats
+    public const string ALLOW_ZOOM_ON_BOOST                      = "ALLOW_ZOOM_ON_BOOST";
+    public const string ALLOW_ZOOM_ON_FURY                       = "ALLOW_ZOOM_ON_FURY";
+    public const string ALLOW_ZOOM_ON_SPACE                      = "ALLOW_ZOOM_ON_SPACE";
+    public const string ALLOW_CAMERALOOK_ROTATION                = "ALLOW_CAMERALOOK_ROTATION";
+
     //------------------------------------------------------------------//
     // PROPERTIES														//
     //------------------------------------------------------------------//
@@ -190,6 +196,26 @@ public class DebugSettings : SingletonScriptableObject<DebugSettings> {
 		set { Prefs_SetBoolPlayer(DRAGON_SLOW_POWER_UP, value); }
 	}
 
+    public static bool allowCameraZoomOnBoost {
+		get { return Prefs_GetBoolPlayer(ALLOW_ZOOM_ON_BOOST, true); }
+		set { Prefs_SetBoolPlayer(ALLOW_ZOOM_ON_BOOST, value); }
+	}
+
+    public static bool allowCameraZoomOnFire {
+		get { return Prefs_GetBoolPlayer(ALLOW_ZOOM_ON_FURY, true); }
+		set { Prefs_SetBoolPlayer(ALLOW_ZOOM_ON_FURY, value); }
+	}
+
+    public static bool allowCameraZoomOnSpace {
+		get { return Prefs_GetBoolPlayer(ALLOW_ZOOM_ON_SPACE, true); }
+		set { Prefs_SetBoolPlayer(ALLOW_ZOOM_ON_SPACE, value); }
+	}
+
+    public static bool allowCameraRotation {
+		get { return Prefs_GetBoolPlayer(ALLOW_CAMERALOOK_ROTATION, true); }
+		set { Prefs_SetBoolPlayer(ALLOW_CAMERALOOK_ROTATION, value); }
+	}
+
 	static bool m_hitStopEnabled = true;
 	public static bool hitStopEnabled{
 		get { return m_hitStopEnabled; }
@@ -215,8 +241,26 @@ public class DebugSettings : SingletonScriptableObject<DebugSettings> {
 		set { m_spawnChance100 = value;}
 	}
 
-	// Metagame cheats
-	public static bool showHiddenPets {
+    static bool m_overrideSpawnPoint = false;
+    public static bool overrideSpawnPoint {
+        get { return m_overrideSpawnPoint; }
+        set { m_overrideSpawnPoint = value; }
+    }
+
+    static string m_spawnArea = "area1";
+    public static string spawnArea {
+        get { return m_spawnArea; }
+        set { m_spawnArea = value; }
+    }
+
+    static string m_spawnPoint = "v0";
+    public static string spawnPoint {
+        get { return m_spawnPoint; }
+        set { m_spawnPoint = value; }
+    }
+
+    // Metagame cheats
+    public static bool showHiddenPets {
 		get { return Prefs_GetBoolPlayer(SHOW_HIDDEN_PETS, false); }
 		set { Prefs_SetBoolPlayer(SHOW_HIDDEN_PETS, value); }
 	}

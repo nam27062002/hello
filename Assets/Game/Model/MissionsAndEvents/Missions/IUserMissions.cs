@@ -44,8 +44,15 @@ public abstract class IUserMissions {
 			// Check missions in cooldown to be unlocked
 			if(m_missions[i].state == Mission.State.COOLDOWN || m_missions[i].state == Mission.State.ACTIVATION_PENDING) {
 				// Has enough time passed for this mission's difficulty?
-				if((GameServerManager.SharedInstance.GetEstimatedServerTime() - m_missions[i].cooldownStartTimestamp).TotalMinutes >= MissionManager.GetCooldownPerDifficulty((Mission.Difficulty)i)) {
+				if((GameServerManager.SharedInstance.GetEstimatedServerTime() - m_missions[i].cooldownStartTimestamp).TotalSeconds >= MissionManager.GetCooldownPerDifficulty((Mission.Difficulty)i)) {
 					// Yes!
+
+                    // If Remove Ads feature is active, restore the extra missions counters
+                    if (UsersManager.currentUser.removeAds.IsActive)
+                    {
+                        UsersManager.currentUser.removeAds.RestoreExtraMissions ( (Mission.Difficulty)i );
+                    }
+
 					// Missions can't be activated during a game, mark them as pending
 					// Are we in-game?
 					if(!canActivate) {
@@ -109,8 +116,20 @@ public abstract class IUserMissions {
 				m = GenerateNewMission((Mission.Difficulty)i);
 				m_missions[i] = m;
 
-				// Put it on cooldown
-				m.ChangeState(Mission.State.COOLDOWN);
+
+                // If the user has the Remove Ads feature active, he can play
+                // more extra missions before waiting the cooldown
+                if (UsersManager.currentUser.removeAds.IsActive &&
+                    UsersManager.currentUser.removeAds.UseExtraMission((Mission.Difficulty)i) )
+                {
+                    // Let the player play more missions
+                    m.ChangeState(Mission.State.ACTIVE);        
+                }
+                else
+                {
+                    // Put the mission in cooldown
+                    m.ChangeState(Mission.State.COOLDOWN);
+                }
 			}
 
 			// Is mission pending activation?
@@ -246,17 +265,34 @@ public abstract class IUserMissions {
 							}
 						);
 
-						// If the selected type has no valid missions, remove it from the candidates list and select a new type
-						if(missionDefs.Count == 0) {
-							Debug.Log(Colors.orange.Tag("No missions found for type " + selectedTypeDef.sku + ". Choosing a new type."));
+                        // If the mission require a specific dragon and the user doesnt own it, discard it
+                        for (int j = missionDefs.Count - 1; j >=0 ; j--)    // iterate backwards to remove items
+                        {
+                            string requiredDragon = missionDefs[j].GetAsString("dragon");
+                            if ( ! string.IsNullOrEmpty(requiredDragon) ) {
+                                if (!DragonManager.IsDragonOwned(requiredDragon))
+                                {
+                                    missionDefs.RemoveAt(j);
+                                }
+                            }
+                        }
+                        
 
-							selectedTypeDef = null;
-							typeDefs.RemoveAt(i);
+                        // If the selected type has no valid missions, remove it from the candidates list and select a new type
+                        if (missionDefs.Count == 0) {
+						    Debug.Log(Colors.orange.Tag("No missions found for type " + selectedTypeDef.sku + ". Choosing a new type."));
 
-							totalWeight -= weightsArray[i];
-							weightsArray.RemoveAt(i);
+						    selectedTypeDef = null;
+						    typeDefs.RemoveAt(i);
+
+						    totalWeight -= weightsArray[i];
+						    weightsArray.RemoveAt(i);
 						}
-						break;	// Break the type selection loop
+
+
+
+
+                        break;	// Break the type selection loop
 					}
 				}
 			}
@@ -365,8 +401,19 @@ public abstract class IUserMissions {
             }
         }
 
-		// 2.4. Apply modifier and round final value
-		targetValue = Mathf.RoundToInt(targetValue * totalModifier);
+        // 2.4. Apply modifier and round final values 
+        targetValue = Mathf.RoundToInt(targetValue * totalModifier);
+        if (_typeDef.GetAsString("sku") == "survive_time")
+        {
+            // If the values are seconds use a special round method specific for time formatting
+            targetValue = TimeUtils.RoundSeconds(targetValue , 2);
+        }
+        else
+        {
+            // Round values according to its magnitude (10,100,1000...)
+            targetValue = MathUtils.RoundByMagnitude(Mathf.RoundToInt(targetValue ));
+        }
+        
 		targetValue = (long)Mathf.Max(targetValue, 1);	// Just in case, avoid 0 or negative values!
 		Debug.Log("\t<color=lime>Final Target Value: " + targetValue + "</color>");
 

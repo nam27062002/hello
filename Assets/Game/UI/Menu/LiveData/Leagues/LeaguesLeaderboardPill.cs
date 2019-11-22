@@ -132,7 +132,33 @@ LeaguesLeaderboardPill : ScrollRectItem<LeaguesLeaderboardPillData> {
 
         // Reward
         if (_data.reward != null) {
-            m_rewardIcon.sprite = UIConstants.GetIconSprite(UIConstants.GetCurrencyIcon(_data.reward.currency));
+
+            switch (_data.reward.type)
+            {
+                case Metagame.RewardEgg.TYPE_CODE:
+                case Metagame.RewardMultiEgg.TYPE_CODE:
+                    {
+                        // Get the egg definition
+                        DefinitionNode eggDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.EGGS, _data.reward.sku);
+                        if (eggDef != null)
+                        {
+                            m_rewardIcon.sprite = Resources.Load<Sprite>(UIConstants.EGG_ICONS_PATH + eggDef.Get("icon"));
+                        }
+
+                    }
+                    break;
+
+                case Metagame.RewardSoftCurrency.TYPE_CODE:
+                case Metagame.RewardHardCurrency.TYPE_CODE:
+                case Metagame.RewardGoldenFragments.TYPE_CODE:
+                    {
+                        // Get the icon linked to this currency
+                        m_rewardIcon.sprite = UIConstants.GetIconSprite(UIConstants.GetCurrencyIcon(_data.reward.currency));
+                    }
+                    break;
+            }
+
+            
             m_rewardText.text = StringUtils.FormatNumber(_data.reward.amount);
         }
 
@@ -145,8 +171,8 @@ LeaguesLeaderboardPill : ScrollRectItem<LeaguesLeaderboardPillData> {
 
         } else
         {
-            // Something failed, do not show any icon
-            m_dragonIconLoader.IsVisible = false;
+            // Something failed, show the default fail icon (question mark icon)
+            m_dragonIconLoader.LoadAsync(null);
         }
 
 

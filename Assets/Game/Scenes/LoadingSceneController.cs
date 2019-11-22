@@ -198,6 +198,7 @@ public class LoadingSceneController : SceneController {
     private enum State
     {
     	NONE,        
+        WAITING_ADDRESSABLES,
         WAITING_SAVE_FACADE,
     	WAITING_SOCIAL_AUTH,
     	WAITING_ANDROID_PERMISSIONS,
@@ -274,11 +275,29 @@ public class LoadingSceneController : SceneController {
     /// <summary>
     /// First update.
     /// </summary>
-    void Start() {                
+    void Start() {
+		// Show User ID
         UpdateUserIdTxt();
-        m_versionTxt.text = GameSettings.internalVersion.ToString();
 
-        CustomAwake();                       
+		// Show game version
+		// [AOC] Show also platform for development builds
+		m_versionTxt.text = GameSettings.internalVersion.ToString();
+		Calety.Server.ServerConfig serverConfig = ServerManager.SharedInstance.GetServerConfig();
+		if(serverConfig != null) {
+			switch(serverConfig.m_eBuildEnvironment) {
+				case CaletyConstants.eBuildEnvironments.BUILD_LOCAL:		m_versionTxt.text += " LOCAL";	break;
+				case CaletyConstants.eBuildEnvironments.BUILD_DEV:			m_versionTxt.text += " DEV";	break;
+				case CaletyConstants.eBuildEnvironments.BUILD_STAGE:		m_versionTxt.text += " STAGE";	break;
+				case CaletyConstants.eBuildEnvironments.BUILD_STAGE_QC:		m_versionTxt.text += " QC";		break;
+				case CaletyConstants.eBuildEnvironments.BUILD_INTEGRATION:	m_versionTxt.text += " INT";	break;
+
+				case CaletyConstants.eBuildEnvironments.BUILD_PRODUCTION:
+				default:
+					break;	// Don't attach anything for prod builds
+			}
+		}
+
+		CustomAwake();                       
         // Load menu scene
         //GameFlow.GoToMenu();
         // [AOC] TEMP!! Simulate loading time with a timer for now
@@ -433,6 +452,14 @@ public class LoadingSceneController : SceneController {
     		{
 
     		}break;
+            case State.WAITING_ADDRESSABLES:
+            {
+                timer += Time.deltaTime;                
+                if ( timer >= 1.5f || HDAddressablesManager.Instance.IsReady())    
+                {
+                    SetState( State.WAITING_SAVE_FACADE );
+                }
+            }break;
     		case State.WAITING_ANDROID_PERMISSIONS:
     		{
     			if ( m_androidPermissionsListener.m_permissionsFinished )
@@ -523,7 +550,7 @@ public class LoadingSceneController : SceneController {
             }break;
             case State.CREATING_SINGLETONS:
             {
-                SetState(State.WAITING_SAVE_FACADE);
+                SetState(State.WAITING_ADDRESSABLES);
             }
             break;
             case State.SHOWING_COUNTRY_BLACKLISTED_POPUP:
@@ -564,12 +591,8 @@ public class LoadingSceneController : SceneController {
 		        if (loadProgress >= 1f && !GameSceneManager.isLoading && m_loadingDone) {                    
                     HDTrackingManager.Instance.Notify_Razolytics_Funnel_Load(FunnelData_LoadRazolytics.Steps._01_03_loading_done);
 
-                    // Checks if customizer has to be applied. It has to be done here in order to maximize user's chances of getting server time, which
-                    // is important because it might decide which offers the user will see
-                    HDCustomizerManager.instance.CheckAndApply();
-
                     // Check if all equiped stuff is available or wait
-                    if ( AllEquipedIsDownloaded() )
+                    if ( AllEquipedIsDownloaded() && AllRewardsAreReady() )
                     {
                         SetState( State.DONE );
                     }
@@ -586,8 +609,7 @@ public class LoadingSceneController : SceneController {
     private bool AllEquipedIsDownloaded()
     {
         bool ret = true;
-        // Check if all eqquiped skins or pets are downloaded
-        List<string> toCheck = new List<string>();
+        // Check if all eqquiped skins or pets are downloaded        
         Dictionary<string, IDragonData> dragons = DragonManager.dragonsBySku;
         foreach( KeyValuePair<string, IDragonData> pair in dragons )
         {
@@ -596,24 +618,42 @@ public class LoadingSceneController : SceneController {
             {
 				// Dragon bundle: only check equipped skin, we can access the menu with the rest
 				DefinitionNode skinDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, pair.Value.disguise);
-				if(skinDef != null) {
-					toCheck.Add(skinDef.GetAsString("skin") + "_body");	// All dragon skins should have a _body material - this is enough to check whether we need to download the bundle
-				} else {
-					// Shouldn't get here, but just in case - if the equipped skin is not found, use the whole dragon bundle as reference
-					toCheck.AddRange(HDAddressablesManager.Instance.GetResourceIDsForDragon(pair.Key));
+				if(skinDef != null) {					
+                    ret = HDAddressablesManager.Instance.IsResourceAvailable(skinDef.GetAsString("skin") + "_body"); // All dragon skins should have a _body material - this is enough to check whether we need to download the bundle
+                } else {
+					// Shouldn't get here, but just in case - if the equipped skin is not found, use the whole dragon bundle as reference					
+                    ret = HDAddressablesManager.Instance.AreResourcesForDragonAvailable(pair.Key);
 				}
 
-				// Equipped pets bundles: menu and ingame prefabs, portraits...
-				if(pair.Value.pets.Count > 0) {
-					for(int i = 0; i < pair.Value.pets.Count; ++i) {
-						toCheck.AddRange(HDAddressablesManager.Instance.GetResourceIDsForPet(pair.Value.pets[i]));
-					}
-				}
+                if (ret)
+                {
+                    // Equipped pets bundles: menu and ingame prefabs, portraits...
+                    if (pair.Value.pets.Count > 0)
+                    {
+                        for (int i = 0; i < pair.Value.pets.Count && ret; ++i)
+                        {
+                            ret = HDAddressablesManager.Instance.AreResourcesForPetAvailable(pair.Value.pets[i]);
+                        }
+                    }
+                }
+                
+                if (!ret)
+                {
+                    break;
+                }                
             }
-        }
+        }       
 
-        if ( toCheck.Count > 0 )
-            ret = HDAddressablesManager.Instance.IsResourceListAvailable(toCheck);
+        return ret;
+    }
+
+    private bool AllRewardsAreReady()
+    {
+        bool ret = true;
+        foreach( Metagame.Reward item in UsersManager.currentUser.rewardStack )
+        {
+            ret = ret && HDAddressablesManager.Instance.AreResourcesForRewardAvailable(item);
+        }
 
         return ret;
     }
@@ -653,6 +693,10 @@ public class LoadingSceneController : SceneController {
                 // Tracking is initialised as soon as possible so very early events can be tracked. We need to wait for rules to be loaded because it could be disabled by configuration
                 HDTrackingManager.Instance.Init();
             } break;
+            case State.WAITING_ADDRESSABLES:
+            {
+                timer = 0;
+            }break;
         }
 
         m_stateTimeoutAt = 0;
@@ -754,8 +798,7 @@ public class LoadingSceneController : SceneController {
                 FirePropagationManager.CreateInstance(true);
                 SpawnerManager.CreateInstance(true);
                 EntityManager.CreateInstance(true);
-                DecorationManager.CreateInstance(true);
-                ViewManager.CreateInstance(true);
+                DecorationManager.CreateInstance(true);                
                 BubbledEntitySystem.CreateInstance(true);
                 InstanceManager.CreateInstance(true);
 
@@ -783,7 +826,10 @@ public class LoadingSceneController : SceneController {
                 HDCustomizerManager.instance.Initialise();   
                 HDAddressablesManager.Instance.Initialize();                                
             } break;
-
+            case State.WAITING_ADDRESSABLES:
+            {
+                timer = 0;
+            }break;
            case State.WAITING_SAVE_FACADE:
            {
                 StartLoadFlow();	            	                                
@@ -806,6 +852,10 @@ public class LoadingSceneController : SceneController {
 
             case State.DONE:
             {
+                // Checks if customizer has to be applied. It has to be done here in order to maximize user's chances of getting server time, which
+                // is important because it might decide which offers the user will see
+                HDCustomizerManager.instance.CheckAndApply();
+
                 // Loads main menu scene
                 FlowManager.GoToMenu();
             }break;
