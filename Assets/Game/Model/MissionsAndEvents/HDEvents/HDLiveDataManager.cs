@@ -138,7 +138,8 @@ public class HDLiveDataManager : Singleton<HDLiveDataManager> {
 
 #if UNITY_EDITOR
     public static bool TEST_CALLS {
-        get { return DebugSettings.useLiveEventsDebugCalls; }
+        // get { return DebugSettings.useLiveEventsDebugCalls; }
+        get { return true; }
     }
 #else
     // Do not touch!
@@ -468,5 +469,27 @@ public class HDLiveDataManager : Singleton<HDLiveDataManager> {
         m_quest.Deactivate();
         m_league.Activate();
         m_dragonDiscounts.Activate();
+    }
+
+    // You have to activate the events first to allow for Later mods activation
+    public void ApplyLaterMods()
+    {
+        // Every Activate Later Mods already checks if the event is active
+        m_tournament.ActivateLaterMods();
+        m_passive.ActivateLaterMods();
+        m_quest.ActivateLaterMods();
+        m_league.ActivateLaterMods();
+        m_dragonDiscounts.ActivateLaterMods();
+    }
+
+    // Deactivate later mods
+    public void RemoveLaterMods()
+    {
+        // Every Deactivate Later Mods already checks if the event is active
+        m_tournament.DeactivateLaterMods();
+        m_passive.DeactivateLaterMods();
+        m_quest.DeactivateLaterMods();
+        m_league.DeactivateLaterMods();
+        m_dragonDiscounts.DeactivateLaterMods();
     }
 }

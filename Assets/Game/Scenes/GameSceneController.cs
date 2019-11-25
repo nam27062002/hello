@@ -167,6 +167,7 @@ public class GameSceneController : GameSceneControllerBase {
             }
         }
 
+        HDLiveDataManager.instance.ApplyLaterMods();
 		Messenger.AddListener(MessengerEvents.GAME_COUNTDOWN_ENDED, CountDownEnded);
         Messenger.AddListener<float>(MessengerEvents.PLAYER_LEAVING_AREA, OnPlayerLeavingArea);
         Messenger.AddListener(MessengerEvents.PLAYER_ENTERING_AREA, OnPlayerEnteringArea);
@@ -341,6 +342,8 @@ public class GameSceneController : GameSceneControllerBase {
 
         // Call parent
         base.OnDestroy();
+
+        HDLiveDataManager.instance.RemoveLaterMods();
 
         CustomParticlesCulling.Manager_OnDestroy();
         Scene emptyScene = new Scene();

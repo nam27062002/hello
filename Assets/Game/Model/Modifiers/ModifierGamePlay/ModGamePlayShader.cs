@@ -14,6 +14,10 @@ public class ModGamePlayShader : ModifierGamePlay {
 		m_value = _def.GetAsString("param2");
 	}
 
+	public override bool isLateModifier(){ 
+		return true;
+	}
+
 	public override void Apply() {
 		switch( m_subType )
 		{
