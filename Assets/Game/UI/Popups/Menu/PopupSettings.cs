@@ -96,12 +96,13 @@ public class PopupSettings : MonoBehaviour {
         if (settingsInstance == null)
         {
             settingsInstance = (CaletySettings)Resources.Load("CaletySettings");
-            if (settingsInstance != null)
+        }
+
+        if (settingsInstance != null)
+        {
+            if (settingsInstance.m_iBuildEnvironmentSelected == (int)CaletyConstants.eBuildEnvironments.BUILD_PRODUCTION)
             {
-                if (settingsInstance.m_iBuildEnvironmentSelected == (int)CaletyConstants.eBuildEnvironments.BUILD_PRODUCTION)
-                {
-                    kEnv = CSTSManager.ECSTSEnvironment.E_CSTS_PROD;
-                }
+                kEnv = CSTSManager.ECSTSEnvironment.E_CSTS_PROD;
             }
         }
 
