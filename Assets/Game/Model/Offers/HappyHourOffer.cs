@@ -309,7 +309,22 @@ public class HappyHourOffer {
         UsersManager.currentUser.LoadHappyHour(this);
     }
 
-    
+    /// <summary>
+    /// Check if there is a happy hour offer active and apply the extra amount
+    /// </summary>
+    public int ApplyHappyHourExtra(int _amount)
+    {        
+        // Is there a happy hour offer?
+        HappyHourOffer happyHour = OffersManager.instance.happyHour;
+        if (happyHour.IsActive())
+        {
+            // Apply the extra gems factor
+            return Mathf.RoundToInt((_amount) * (1 + happyHour.extraGemsFactor));
+        }
+
+        return _amount;
+    }
+
 
     //------------------------------------------------------------------------//
     // CALLBACKS															  //
