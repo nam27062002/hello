@@ -251,25 +251,7 @@ public class PopupShopCurrencyPill : IPopupShopPill {
                 }
             }
         }
-    }
-
-
-    /// <summary>
-    /// Check if there is a happy hour offer active and apply the extra amount
-    /// </summary>
-    private int ApplyHappyHourExtra (int _amount)
-    {
-        // Is there a happy hour offer?
-        HappyHourOffer happyHour = OffersManager.instance.happyHour;
-        if (happyHour.IsActive())
-        {
-            // Apply the extra gems factor
-            return Mathf.RoundToInt((_amount) * (1 + happyHour.extraGemsFactor));
-        }
-
-        return _amount;
-    }
-
+    }    
 
     //------------------------------------------------------------------------//
     // IPopupShopPill IMPLEMENTATION										  //
@@ -327,7 +309,7 @@ public class PopupShopCurrencyPill : IPopupShopPill {
             case UserProfile.Currency.HARD: {
 
                     // Get the proper amount after applying the happy hour
-                    amountApplied = ApplyHappyHourExtra(def.GetAsInt("amount"));
+                    amountApplied = OffersManager.instance.happyHour.ApplyHappyHourExtra(def.GetAsInt("amount"));
 
                     // Add the amount to the player currencies
                     UsersManager.currentUser.EarnCurrency(UserProfile.Currency.HARD, (ulong) amountApplied, true, HDTrackingManager.EEconomyGroup.SHOP_EXCHANGE);
