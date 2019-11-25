@@ -89,6 +89,12 @@ public class PopupHappyHour : MonoBehaviour {
                 }
                 
             }
+        } else
+        {
+            //Shouldnt happent, but just in case. If there is not happy hour active, close the popup.
+            m_descriptionText.gameObject.SetActive(false);
+            m_offerToDisplay.gameObject.SetActive(false);
+            GetComponent<PopupController>().Close(true);
         }
 
 	}
