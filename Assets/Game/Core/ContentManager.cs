@@ -150,8 +150,8 @@ public class ContentManager
             "Rules/dragonSettings",
             "Rules/initialSettings",
             "Rules/missingRessourcesVariablesDefinitions",
-			"Rules/offerSettings"/*,
-			"Rules/ftuxSettings"*/
+			"Rules/offerSettings",
+			"Rules/ftuxSettings"
         });
 
 		kDefinitionFiles.Add(DefinitionsCategory.SEASONS, new string[] { "Rules/seasonsDefinitions" });
