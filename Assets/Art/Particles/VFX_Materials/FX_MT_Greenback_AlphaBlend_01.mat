@@ -6,20 +6,23 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: MT_water_mill_01
-  m_Shader: {fileID: 4800000, guid: 4bd59ad400e211745b4759937240dc56, type: 3}
-  m_ShaderKeywords: FOG OPAQUEALPHA VERTEXCOLOR_NONE
-  m_LightmapFlags: 5
+  m_Name: FX_MT_Greenback_AlphaBlend_01
+  m_Shader: {fileID: 4800000, guid: 02891335b31643f408fed70e86224f83, type: 3}
+  m_ShaderKeywords: BLENDMODE_ALPHABLEND EMISSIVEPOWER
+  m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
-  stringTagMap:
-    RenderType: Opaque
+  m_CustomRenderQueue: 3060
+  stringTagMap: {}
   disabledShaderPasses: []
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
     - _BumpMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ColorRamp:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
@@ -35,19 +38,23 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _DissolveTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _EmissionMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: c18a00e56a0b2ce4590161b0e5b845a5, type: 3}
+        m_Texture: {fileID: 2800000, guid: 24c2f5beb9fd4de4799afcfa3e13db1d, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _NormalTex:
+    - _NoiseTex:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
@@ -59,68 +66,53 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _ReflectionMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _SecondTexture:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
     m_Floats:
-    - Emissive: 0
-    - MainColor: 0
-    - VertexColor: 0
-    - _BlendMode: 0
-    - _BlinkTimeMultiplier: 2
+    - BlendMode: 3
+    - Dissolve: 0
+    - _ABOffset: 0
     - _BumpScale: 1
-    - _Cull: 2
-    - _CutOff: 0.5
+    - _ColorMultiplier: 1
+    - _Cull: 0
     - _Cutoff: 0.5
-    - _DarkenDistance: 20
-    - _DarkenPosition: 0
     - _DetailNormalMapScale: 1
-    - _DoubleSided: 0
-    - _DstBlend: 0
-    - _EmissionScaleUI: 0
+    - _DstBlend: 10
+    - _EmissionSaturation: 1
     - _EmissivePower: 1
-    - _EnableAdditiveBlend: 0
-    - _EnableAutomaticBlend: 0
-    - _EnableBlendTexture: 0
-    - _EnableCutoff: 0
-    - _EnableDarken: 0
-    - _EnableEmissiveBlink: 0
-    - _EnableFog: 1
-    - _EnableLightmapContrast: 0
-    - _EnableNormalMap: 0
-    - _EnableNormalwAsSpecular: 0
-    - _EnableOpaqueAlpha: 1
-    - _EnableSpecular: 0
-    - _EnableTint: 0
-    - _EnableWaveEmission: 0
-    - _FogEnd: 100
-    - _FogStart: 0
+    - _EnableAlphaDissolve: 0
+    - _EnableAutomaticPanning: 0
+    - _EnableColorRamp: 0
+    - _EnableColorTint: 0
+    - _EnableColorVertex: 0
+    - _EnableDissolveVertexColorAlpha: 0
+    - _EnableEmissivePower: 1
+    - _EnableExtendedParticles: 0
+    - _EnableFlowMap: 0
+    - _EnableNoiseTexture: 0
+    - _EnableNoiseTextureAlpha: 0
+    - _EnableNoiseTextureDissolve: 0
+    - _EnableNoiseTextureEmission: 0
+    - _EnableNoiseUV: 0
+    - _GlobalAlpha: 1
+    - _GlossMapScale: 1
     - _Glossiness: 0.5
-    - _LightmapContrastIntensity: 1.3
-    - _LightmapContrastMargin: 0.5
-    - _LightmapContrastPhase: 2
+    - _GlossyReflections: 1
     - _Metallic: 0
     - _Mode: 0
-    - _NormalStrength: 1
     - _OcclusionStrength: 1
+    - _OpacitySaturation: 1
     - _Parallax: 0.02
-    - _ReflectionAmount: 1
-    - _SpecularPower: 3
-    - _SrcBlend: 1
+    - _SmoothnessTextureChannel: 0
+    - _SpecularHighlights: 1
+    - _SrcBlend: 5
     - _UVSec: 0
-    - _WaveEmission: 0.1
+    - _ZTest: 2
     - _ZWrite: 1
     m_Colors:
+    - _BasicColor: {r: 0.5, g: 0.5, b: 0.5, a: 0.5}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _DissolveStep: {r: 0, g: 1, b: 0, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _EmissionColorUI: {r: 1, g: 1, b: 1, a: 1}
-    - _EmissiveColor: {r: 1, g: 1, b: 1, a: 1}
-    - _FogColor: {r: 0, g: 0, b: 0, a: 0}
+    - _NoisePanning: {r: 0, g: 0, b: 0, a: 0}
     - _Panning: {r: 0, g: 0, b: 0, a: 0}
-    - _SpecularDir: {r: 0, g: 0, b: -1, a: 0}
-    - _Tint: {r: 1, g: 1, b: 1, a: 1}
+    - _SaturatedColor: {r: 0.5, g: 0.5, b: 0.5, a: 0.5}
+    - _TintColor: {r: 0.5147059, g: 0.5147059, b: 0.5147059, a: 0.509}
