@@ -787,6 +787,7 @@ public class LoadingSceneController : SceneController {
 
                 // Settings and setup
                 GameSettings.CreateInstance(false);
+				GameSettings.InitFromDefinitions();
 
                 // Tech
                 GameSceneManager.CreateInstance(true);
