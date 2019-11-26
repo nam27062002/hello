@@ -443,7 +443,6 @@ public class AssetFinder : EditorWindow {
             if (prefab != null)
             {
                 string prefabName = prefab.name;
-                string prefabPath = obj.GetHierarchyPath();
                 if (activation != null || deactivation != null)
                 {
                     prefabName = prefabName + "_XP_" + ((activation != null) ? activation.value.ToString() : "0") + "_" + ((deactivation != null) ? deactivation.value.ToString() : "0");
@@ -456,7 +455,7 @@ public class AssetFinder : EditorWindow {
 				{
 					prefabName = prefabName + "_KILL_" + ((activationKill != null) ? activationKill.sku.ToString() : "None") + "-" + ((activationKill != null) ? activationKill.value.ToString() : "0") + "_" + ((deactivationKill != null) ? deactivationKill.sku.ToString() : "None") + "-" + ((deactivationKill != null) ? deactivationKill.value.ToString() : "0") ;
 				}
-				obj.gameObject.name = prefabName + "@" + prefabPath;
+				obj.gameObject.name = prefabName + "@";
 				// Inactive spawners ends with "-IN"
 				if (!obj.gameObject.activeInHierarchy)
 					obj.gameObject.name = prefabName + "-IN"; 
