@@ -113,11 +113,9 @@ public class OfferPackRemoveAds : OfferPack {
     /// </summary>
     public override void Apply()
     {
-  
-        // Activate the ads removal feature
-        UsersManager.currentUser.removeAds.SetActive(true);
 
-        // Parent will do the rest
+        // Do nothing. The remove ads featured is applied at a reward level now in RewardRemoveAds.cs
+                
         base.Apply();
     }
 

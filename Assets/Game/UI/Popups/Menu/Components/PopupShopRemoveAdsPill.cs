@@ -61,6 +61,11 @@ public class PopupShopRemoveAdsPill : PopupShopOffersPill {
         // Close all open popups
         PopupManager.Clear(true);
 
+        // Move to the rewards screen
+        PendingRewardScreen scr = InstanceManager.menuSceneController.GetScreenData(MenuScreen.PENDING_REWARD).ui.GetComponent<PendingRewardScreen>();
+        scr.StartFlow(false);   // No intro
+        InstanceManager.menuSceneController.GoToScreen(MenuScreen.PENDING_REWARD);
+
     }
 
     /// <summary>

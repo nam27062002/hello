@@ -168,6 +168,10 @@ namespace Metagame {
                 case RewardMultiEgg.TYPE_CODE: {
                     return CreateTypeMultiEgg(_data.amount, _data.sku, _source);
                 }
+
+                case RewardRemoveAds.TYPE_CODE: {
+                    return CreateTypeRemoveAds();
+                }
             }
 			return null;
 		}
@@ -209,6 +213,9 @@ namespace Metagame {
 		// Dragons
 		public static RewardDragon CreateTypeDragon(string _sku, string _source) 			{ return new RewardDragon(_sku, _source); }
 		public static RewardDragon CreateTypeDragon(DefinitionNode _def, string _source) 	{ return new RewardDragon(_def, _source); }
+        
+        // Remove ads
+        public static RewardRemoveAds CreateTypeRemoveAds ()                            { return new RewardRemoveAds();  }
 
 		// Others
 		public static RewardMulti CreateTypeMulti(List<Data> _datas, string _source, HDTrackingManager.EEconomyGroup _economyGroup = HDTrackingManager.EEconomyGroup.UNKNOWN)	{ return new RewardMulti(_datas, _source, _economyGroup); }

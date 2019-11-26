@@ -34,11 +34,13 @@ public class PopupShopFreeOfferPill : PopupShopOffersPill {
 	// Exposed references
 	[Separator("Free Offer Pill Specifics")]
 	[SerializeField] private Button m_watchAdButton = null;
-	[SerializeField] private Localizer m_buttonText = null;
+    [SerializeField] private Button m_freeButton = null;
+    [SerializeField] private Localizer m_buttonText = null;
 
 	// Internal logic
 	private bool m_isOnCooldown = false;
 	private string m_defaultButtonTID = "";
+    private bool removeAdsActive;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -99,7 +101,13 @@ public class PopupShopFreeOfferPill : PopupShopOffersPill {
 			// Set text
 			m_buttonText.Set(TimeUtils.FormatTime(remainingCooldown.TotalSeconds, TimeUtils.EFormat.DIGITS, 3));
 		}
-	}
+
+        // Show the proper buttons
+        removeAdsActive = UsersManager.currentUser.removeAds.IsActive;
+        m_freeButton.gameObject.SetActive(removeAdsActive);
+        m_watchAdButton.gameObject.SetActive(!removeAdsActive);
+
+    }
 
 	/// <summary>
 	/// Get the tracking id for transactions performed by this shop pill
@@ -118,6 +126,13 @@ public class PopupShopFreeOfferPill : PopupShopOffersPill {
 	protected override void OnPurchaseStarted() {
 		// Call parent
 		base.OnPurchaseStarted();
+
+        // If the player has remove ads offer, give him the reward directly
+        if (UsersManager.currentUser.removeAds.IsActive)
+        {
+            OnVideoRewardCallback(true);
+            return;
+        }
 
 		// Ignore if offline
 		if(DeviceUtilsManager.SharedInstance.internetReachability == NetworkReachability.NotReachable) {
