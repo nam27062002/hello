@@ -265,6 +265,7 @@ public class UIColorFX : UIBehaviour {	// Inherit from UIBehaviour to have some 
 		}
 	}
 
+#if UNITY_EDITOR
 	/// <summary>
 	/// A change has been made on the inspector.
 	/// http://docs.unity3d.com/ScriptReference/MonoBehaviour.OnValidate.html
@@ -274,6 +275,7 @@ public class UIColorFX : UIBehaviour {	// Inherit from UIBehaviour to have some 
 		ApplyMaterials();
 		UpdateValues();
 	}
+#endif
 
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //
