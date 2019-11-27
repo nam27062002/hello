@@ -284,8 +284,10 @@ public class DragonSelectionTutorial : MonoBehaviour {
 		// Show UI back
 		if(m_uiCanvasGroup != null) {
 			m_uiCanvasGroup.DOFade(1f, 0.25f);
+		}
 
-			// Restore paused particle systems
+		// Restore paused particle systems
+		if(m_pausedParticles != null) {
 			for(int i = 0; i < m_pausedParticles.Count; ++i) {
 				if(m_pausedParticles[i] != null) {
 					m_pausedParticles[i].gameObject.SetActive(true);
