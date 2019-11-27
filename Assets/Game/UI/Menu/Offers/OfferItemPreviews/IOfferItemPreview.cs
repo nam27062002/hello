@@ -129,6 +129,7 @@ public abstract class IOfferItemPreview : MonoBehaviour {
 		for(int i = 0; i < nestedPS.Length; ++i) {
 			// Aux vars
 			ParticleSystem ps = nestedPS[i];
+			if(ps == null) continue;
 
 			// Disable VFX whenever a popup is opened in top of this preview (they don't render well with a popup on top)
 			DisableOnPopup disabler = ps.gameObject.AddComponent<DisableOnPopup>();
@@ -137,7 +138,7 @@ public abstract class IOfferItemPreview : MonoBehaviour {
 			// Start particle with a couple of frames of delay to give time for the particle scalers to be applied
 			ps.gameObject.SetActive(false);
 			UbiBCN.CoroutineManager.DelayedCallByFrames(() => {
-				ps.gameObject.SetActive(true);
+				if(ps != null) ps.gameObject.SetActive(true);
 			}, 5);
 		}
 	}
