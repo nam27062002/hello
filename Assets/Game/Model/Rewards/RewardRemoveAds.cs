@@ -37,8 +37,8 @@ namespace Metagame {
         /// Default constructor.
         /// </summary>
         public RewardRemoveAds() {
-
-	    }
+            base.Init(TYPE_CODE);
+        }
 
 	    /// <summary>
 	    /// Destructor
