@@ -80,8 +80,9 @@ public class RewardSceneController : MenuScreenScene {
 	[SerializeField] private RewardSetup m_scRewardSetup = new RewardSetup();
 	[SerializeField] private RewardSetup[] m_goldenFragmentsRewardsSetup = new RewardSetup[(int)Metagame.Reward.Rarity.COUNT];
 	[SerializeField] private RewardSetup m_dragonRewardSetup = new RewardSetup();
+    [SerializeField] private RewardSetup m_removeAdsRewardSetup = new RewardSetup();
 
-	[Separator("Other VFX")]
+    [Separator("Other VFX")]
 	[SerializeField] private ParticleSystem m_goldenFragmentsSwapFX = null;
 	[SerializeField] private Transform m_tapFXPool = null;
 	[SerializeField] private Transform m_confettiAnchor = null;
@@ -611,21 +612,17 @@ public class RewardSceneController : MenuScreenScene {
     private void OpenRemoveAdsReward(Metagame.RewardRemoveAds _removeAdsReward)
     {
 
-        // TODO: Play the animation here
-        // Initialize view
         HideAllRewards();
 
-        m_currentRewardSetup = m_goldenFragmentsRewardsSetup[0];
-        
-        m_currentRewardSetup.view.SetActive(true);
-
-        SetDragTarget(m_currentRewardSetup.view.transform);
+        m_currentRewardSetup = m_removeAdsRewardSetup;
 
         // Animate
         Vector2 baseIdleVelocity = m_dragController.idleVelocity;
         Sequence seq = DOTween.Sequence();
 
         seq.AppendCallback(() => {
+            // Show UI
+            m_rewardInfoUI.InitAndAnimate(_removeAdsReward);
 
             // Trigger SFX, depends on reward tyoe
             AudioController.Play(m_currentRewardSetup.sfx);
@@ -638,6 +635,7 @@ public class RewardSceneController : MenuScreenScene {
         });
 
         seq.Append(m_currentRewardSetup.view.transform.DOScale(0f, 1f).From().SetEase(Ease.OutBack));
+
         seq.Join(DOTween.To(
             () => { return baseIdleVelocity; }, // Getter
             (Vector2 _v) => { m_dragController.idleVelocity = _v; },    // Setter
@@ -647,10 +645,8 @@ public class RewardSceneController : MenuScreenScene {
             .SetEase(Ease.OutCubic)
         );
 
+        seq.OnComplete(OnAnimationFinish);
 
-
-        // Finished
-        OnAnimationFinish();
     }
 
 
