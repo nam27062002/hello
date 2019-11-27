@@ -22,9 +22,11 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
 	public const string RATING_DRAGON = "dragon_crocodile";
+    public const string INTERSTITIALS_WATCHED = "interstitialsWatched";
 
-	// Custom flags altering the standard flow
-	[System.Flags]
+
+    // Custom flags altering the standard flow
+    [System.Flags]
 	private enum StateFlag {
 		NONE = 1 << 0,
 		NEW_DRAGON_UNLOCKED = 1 << 1,
@@ -678,6 +680,20 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 
     }
 
+    /// <summary>
+    /// If the player has watched enough interstitials
+    /// we show him a Remove ads offer popup.
+    /// </summary>
+    /// <returns>Did the player saw more than X interstitials?</returns>
+    private bool MustShowRemoveAdsPopup()
+    {
+
+        int interstitialsWatched = PlayerPrefs.GetInt(INTERSTITIALS_WATCHED);
+
+        return interstitialsWatched >= OffersManager.settings.interstitialsBeforeRemoveAdsPopup;
+
+    }
+
     //------------------------------------------------------------------------//
     // CALLBACKS															  //
     //------------------------------------------------------------------------//
@@ -761,5 +777,27 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 		if(rewardGiven) {
 			GameAds.instance.ResetIntersitialCounter();
 		}
-	}
+
+        // Increment counter
+        PlayerPrefs.SetInt(INTERSTITIALS_WATCHED, PlayerPrefs.GetInt(INTERSTITIALS_WATCHED) + 1);
+
+        // After X interstitials, show a remove ads popup
+        if ( MustShowRemoveAdsPopup() )
+        {
+            // Load the popup
+            PopupController popup = PopupManager.LoadPopup(PopupRemoveAdsOffer.PATH);
+            PopupRemoveAdsOffer popupRemoveAdsOffer = popup.GetComponent<PopupRemoveAdsOffer>();
+
+            // Initialize it with the remove ad offer (if exists)
+            popupRemoveAdsOffer.Init();
+
+            // Show the popup
+            popup.Open();
+
+            // Reset the counter
+            PlayerPrefs.SetInt(INTERSTITIALS_WATCHED, 0);
+
+        }
+
+    }
 }

@@ -42,6 +42,9 @@ public class OffersManagerSettings {
 	// Offer Pack Settings
 	public string emptyValue = "-"; // Value in content representing the default value
 
+    // Remove Ads popup
+    public int interstitialsBeforeRemoveAdsPopup = 3;
+
 	//------------------------------------------------------------------------//
 	// METHODS																  //
 	//------------------------------------------------------------------------//
@@ -64,6 +67,8 @@ public class OffersManagerSettings {
 		freeHistorySize = def.GetAsInt("freeHistorySize", freeHistorySize);
 		freeCooldownMinutes = def.GetAsInt("freeCooldownMinutes", freeCooldownMinutes);
 
-		emptyValue = def.GetAsString("emptyValue", emptyValue);
+        interstitialsBeforeRemoveAdsPopup = def.GetAsInt("interstitialsBeforeNoAdsPopup", interstitialsBeforeRemoveAdsPopup);
+
+        emptyValue = def.GetAsString("emptyValue", emptyValue);
 	}
 }

@@ -79,5 +79,18 @@ public class PopupShopRemoveAdsPill : PopupShopOffersPill {
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
-	
+	public void OnClickInfo ()
+    {
+        // Load the popup
+        PopupController popup = PopupManager.LoadPopup(PopupRemoveAdsOffer.PATH);
+        PopupRemoveAdsOffer popupRemoveAdsOffer = popup.GetComponent<PopupRemoveAdsOffer>();
+
+        // Initialize it with the remove ad offer (if exists)
+        popupRemoveAdsOffer.Init();
+
+        // Show the popup
+        popup.Open();
+    }
+
+    
 }

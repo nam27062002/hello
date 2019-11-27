@@ -47,8 +47,8 @@ public class OfferPack {
 		PROGRESSION,
 		PUSHED,
 		ROTATIONAL,
-		FREE,
         REMOVE_ADS,
+        FREE,
         COUNT
 	}
 
