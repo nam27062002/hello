@@ -8,7 +8,7 @@ Material:
   m_PrefabInternal: {fileID: 0}
   m_Name: MT_dragon_dark_5_disguise
   m_Shader: {fileID: 4800000, guid: 2345015ac46679e4cb5817ed44c82547, type: 3}
-  m_ShaderKeywords: FXLAYER_REFLECTION NORMALMAP REFLECTIONTYPE_NORMAL SELFILLUMINATE_EMISSIVE
+  m_ShaderKeywords: FRESNEL FXLAYER_REFLECTION NORMALMAP REFLECTIONTYPE_COLOR SELFILLUMINATE_EMISSIVE
     SPECULAR _ZWRITE_ON
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -69,7 +69,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Floats:
     - FXLayer: 1
-    - ReflectionType: 0
+    - ReflectionType: 1
     - SelfIlluminate: 3
     - _BlendMode: 0
     - _BumpScale: 1
@@ -88,7 +88,7 @@ Material:
     - _EnableCutoff: 0
     - _EnableDiffuseAsSpecMask: 0
     - _EnableDoublesided: 0
-    - _EnableFresnel: 0
+    - _EnableFresnel: 1
     - _EnableNormalMap: 1
     - _EnableOpaqueFresnel: 0
     - _EnableOpaqueSpecular: 0
@@ -100,19 +100,19 @@ Material:
     - _EnableVertexOffsetZ: 0
     - _FireAmount: 0
     - _FireSpeed: 1
-    - _Fresnel: 0
+    - _Fresnel: 5.65
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
-    - _InnerLightAdd: 0.96
+    - _InnerLightAdd: 0.56
     - _InnerLightWavePhase: 1
-    - _InnerLightWaveSpeed: 1
+    - _InnerLightWaveSpeed: 5.81
     - _Metallic: 0
     - _Mode: 0
     - _NormalStrenght: 1
     - _OcclusionStrength: 1
     - _Parallax: 0.02
-    - _ReflectionAmount: 0.716
+    - _ReflectionAmount: 1
     - _SmoothnessTextureChannel: 0
     - _SpecExponent: 80
     - _SpecularHighlights: 1
@@ -126,9 +126,9 @@ Material:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _ColorAdd: {r: 0, g: 0, b: 0, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _FresnelColor: {r: 1, g: 1, b: 1, a: 1}
-    - _InnerLightColor: {r: 1, g: 0.8539554, b: 0.4705882, a: 1}
-    - _ReflectionColor: {r: 0.33762836, g: 0.071042396, b: 0.53676474, a: 1}
+    - _FresnelColor: {r: 0.9705882, g: 0.7453645, b: 0.34256053, a: 1}
+    - _InnerLightColor: {r: 1, g: 0.6413793, b: 0, a: 1}
+    - _ReflectionColor: {r: 1, g: 0.7088235, b: 0.27205884, a: 1}
     - _SecondLightColor: {r: 0.1544118, g: 0.06585208, b: 0.06585208, a: 0}
-    - _SecondLightDir: {r: -0.5518669, g: 0.83393216, b: -0, a: 0}
+    - _SecondLightDir: {r: 0.7525767, g: 0.65850466, b: -0, a: 0}
     - _Tint: {r: 1, g: 1, b: 1, a: 1}
