@@ -51,7 +51,7 @@ public abstract class IOfferItemPreview : MonoBehaviour {
 	protected DefinitionNode m_def = null;
 
 	// Coroutine pointer used to stop the coroutine when object is destroyed
-	private Coroutine m_delatedSetParentAndFit = null;
+	private Coroutine m_delayedSetParentAndFit = null;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -62,10 +62,10 @@ public abstract class IOfferItemPreview : MonoBehaviour {
 	/// We stop delayed coroutine to avoid accesing an object that was destroyed
 	void OnDestroy()
 	{
-		if (m_delatedSetParentAndFit != null)
+		if (m_delayedSetParentAndFit != null)
 		{
-			StopCoroutine(m_delatedSetParentAndFit);
-			m_delatedSetParentAndFit = null;
+			StopCoroutine(m_delayedSetParentAndFit);
+			m_delayedSetParentAndFit = null;
 		}
 	}
 
@@ -89,14 +89,24 @@ public abstract class IOfferItemPreview : MonoBehaviour {
 	/// <param name="_t">New parent!</param>
 	public virtual void SetParentAndFit(RectTransform _t) {
 		// Delay by one frame to make sure rect transforms are properly initialized
-		m_delatedSetParentAndFit = UbiBCN.CoroutineManager.DelayedCallByFrames(() => {
-			m_delatedSetParentAndFit = null;
-			this.transform.SetParent(_t, false);
+		m_delayedSetParentAndFit = UbiBCN.CoroutineManager.DelayedCallByFrames(() => {
+			m_delayedSetParentAndFit = null;
 
-			float sx = _t.rect.width / Mathf.Max(rectTransform.rect.width, float.Epsilon);      // Prevent division by 0
-			float sy = _t.rect.height / Mathf.Max(rectTransform.rect.height, float.Epsilon);    // Prevent division by 0
-			float scale = (sx < sy) ? sx : sy;
-			rectTransform.localScale = new Vector3(scale, scale, scale);
+			// Add several null checks to prevent exceptions reported by Crashlytics
+			// https://console.firebase.google.com/project/hungry-dragon-45530774/crashlytics/app/android:com.ubisoft.hungrydragon/issues/5c11ba3ef8b88c29639bbaf8?time=last-seven-days&sessionId=5DDE1FF902250001769E076D6CC4452B_DNE_2_v2
+			if(_t != null) {
+				// Set parent
+				this.transform.SetParent(_t, false);
+
+				// Adjust scale
+				RectTransform rt = rectTransform;
+				if(rt != null) {
+					float sx = _t.rect.width / Mathf.Max(rt.rect.width, float.Epsilon);      // Prevent division by 0
+					float sy = _t.rect.height / Mathf.Max(rt.rect.height, float.Epsilon);    // Prevent division by 0
+					float scale = (sx < sy) ? sx : sy;
+					rt.localScale = new Vector3(scale, scale, scale);
+				}
+			}
 
 			// Scale particles as well
 			ParticleScaler scaler = this.GetComponentInChildren<ParticleScaler>();
