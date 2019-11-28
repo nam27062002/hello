@@ -92,20 +92,10 @@ public class PopupSettings : MonoBehaviour {
 
     private static CSTSManager.ECSTSEnvironment CS_GetEnvironment(CaletySettings settingsInstance)
     {
-        CSTSManager.ECSTSEnvironment kEnv = CSTSManager.ECSTSEnvironment.E_CSTS_DEV;
-        if (settingsInstance == null)
-        {
-            settingsInstance = (CaletySettings)Resources.Load("CaletySettings");
-            if (settingsInstance != null)
-            {
-                if (settingsInstance.m_iBuildEnvironmentSelected == (int)CaletyConstants.eBuildEnvironments.BUILD_PRODUCTION)
-                {
-                    kEnv = CSTSManager.ECSTSEnvironment.E_CSTS_PROD;
-                }
-            }
-        }
-
-        return kEnv;
+        // PROD should always be used when building for QC (https://mdc-tomcat-jira100.ubisoft.org/jira/browse/HDK-6937)
+        // DEV should be used only for development purposes
+        return CSTSManager.ECSTSEnvironment.E_CSTS_PROD;
+        //return CSTSManager.ECSTSEnvironment.E_CSTS_DEV;        
     }
 
     public static string CS_GetDebugInfo()

@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 5435752}
   - component: {fileID: 11462060}
   - component: {fileID: 11434888}
-  - component: {fileID: 114286997533934014}
   m_Layer: 0
   m_Name: PF_DragonBugResults
   m_TagString: Untagged
@@ -76,27 +75,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_sku: dragon_bug
-  m_altAnimConfigs:
-  - m_range:
-      min: 3
-      max: 6
-    m_allowFaceDetails: 1
-    m_loopsMin: 3
-    m_loopsMax: 4
-    m_special: 0
-    m_timeToNext: 0
-    m_isPreferedAnimation: 0
-    m_animationLevel: 0
-  - m_range:
-      min: 4
-      max: 8
-    m_allowFaceDetails: 0
-    m_loopsMin: 1
-    m_loopsMax: 1
-    m_special: 1
-    m_timeToNext: 0
-    m_isPreferedAnimation: 0
-    m_animationLevel: 4
+  m_offsetModifier: {x: 0, y: 0, z: 0}
+  m_baseScaleModifier: 1
+  m_altAnimConfigs: []
   m_hasFire: 0
   m_dragonFlameStandard: {fileID: 0}
   m_bloodParticle: {fileID: 0}
@@ -1558,6 +1539,8 @@ MonoBehaviour:
     offset: {x: 0, y: 0, z: 0}
     scale: 1
     orientate: 0
+  m_particleAnchor: {fileID: 0}
+  m_toggleEventType: 17
 --- !u!114 &114029512051229678
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1686,20 +1669,6 @@ MonoBehaviour:
   m_worldPositionStays: 1
   m_resetScale: 0
   m_when: 0
---- !u!114 &114286997533934014
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 145240}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5079a9557e28740cba2dc15aa05422d4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_prefab: {fileID: 0}
-  m_materials: []
-  m_AnimationName: MenuAlt1
 --- !u!114 &114298068997124578
 MonoBehaviour:
   m_ObjectHideFlags: 1

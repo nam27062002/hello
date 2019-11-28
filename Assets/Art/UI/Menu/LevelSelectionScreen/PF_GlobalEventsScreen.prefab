@@ -1910,6 +1910,7 @@ GameObject:
   - component: {fileID: 114158513479910652}
   - component: {fileID: 95029890641393840}
   - component: {fileID: 114825460829997562}
+  - component: {fileID: 114988829092629848}
   m_Layer: 5
   m_Name: ShareButton
   m_TagString: Untagged
@@ -4787,6 +4788,9 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
+  targetIsSelf: 1
+  targetGO: {fileID: 0}
+  tweenTargetIsTargetGO: 1
   delay: 0
   duration: 2
   easeType: 1
@@ -7034,6 +7038,7 @@ MonoBehaviour:
   m_loadOnAwake: 0
   m_image: {fileID: 114610955591327502}
   m_loadingPrefab: {fileID: 0}
+  m_assetLoadFailedImage: {fileID: 0}
 --- !u!114 &114349627454027280
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -7497,6 +7502,7 @@ MonoBehaviour:
   m_loadOnAwake: 0
   m_image: {fileID: 114310497948924206}
   m_loadingPrefab: {fileID: 0}
+  m_assetLoadFailedImage: {fileID: 0}
 --- !u!114 &114417909101614266
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -9010,6 +9016,7 @@ MonoBehaviour:
     m_RotationOrder: 0
   m_curveScale: 0.3
   m_verticalPivot: 0.5
+  m_verticalOffset: 0
   m_useCustomReferenceSize: 0
   m_customReferenceSize: 200
 --- !u!114 &114567149942257146
@@ -10491,6 +10498,7 @@ MonoBehaviour:
   m_loadOnAwake: 0
   m_image: {fileID: 114402242619600254}
   m_loadingPrefab: {fileID: 0}
+  m_assetLoadFailedImage: {fileID: 0}
 --- !u!114 &114753888543744442
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -10569,6 +10577,7 @@ MonoBehaviour:
   m_loadOnAwake: 0
   m_image: {fileID: 114992568445050262}
   m_loadingPrefab: {fileID: 0}
+  m_assetLoadFailedImage: {fileID: 0}
 --- !u!114 &114765865771015104
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -11410,6 +11419,12 @@ MonoBehaviour:
   m_3dIcon: {fileID: 114887999357247136}
   m_defaultImage: {fileID: 114991283734151278}
   m_iconSKU: 
+  m_renderQueue: 0
+  OnLoadFinished:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
 --- !u!114 &114860880277518652
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -12390,6 +12405,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_audioId: 
+--- !u!114 &114988829092629848
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1638043622466522}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d1f4c58340cd4f168bd0915c8ef8e67, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114991283734151278
 MonoBehaviour:
   m_ObjectHideFlags: 1

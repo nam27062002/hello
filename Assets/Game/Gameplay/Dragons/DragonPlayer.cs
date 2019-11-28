@@ -29,8 +29,9 @@ public class DragonPlayer : MonoBehaviour, IBroadcastListener {
 		PAYING,
 		FREE_REVIVE_PET,
         MUMMY,
-		UNKNOWN
-	};
+        UNKNOWN,
+        REMOVE_ADS
+    };
 
     public enum Form {
         NORMAL = 0,

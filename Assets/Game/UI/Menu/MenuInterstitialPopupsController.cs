@@ -242,6 +242,14 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
     /// Checks the interstitial ads.
     /// </summary>
     private void CheckInterstitialAds() {
+        
+        // Do the player has the Remove ads feature?
+        if (UsersManager.currentUser.removeAds.IsActive)
+        {
+            // No ads for this user
+            return;
+        }
+
 		// If coming from a run, regardles of the destination screen
 		if(GetFlag(StateFlag.COMING_FROM_A_RUN)) {
 			if(GameAds.instance.IsValidUserForInterstitials()) {
@@ -466,10 +474,7 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 		if(m_currentScreen != MenuScreen.DRAGON_SELECTION) return;
 
 		// Is photo feature available? (FTUX)
-		ShowOnTutorialStep photoTutorialTrigger = InstanceManager.menuSceneController.hud.photoButton.GetComponentsInParent<ShowOnTutorialStep>(true)[0];	// [AOC] GetComponentInParent<T>() doesn't include disabled objects (and the parent object can actually be inactive triggered by the same ShowOnTutorialStep component we're looking for xD), so we're forced to use GetComponentsInParent<T>(bool includeInactive)[0] instead.
-		if(photoTutorialTrigger != null) {
-			if(!photoTutorialTrigger.Check()) return;
-		}
+		if(!ShareButton.CanBeDisplayed()) return;
 
         // OTA: Are all the asset bundles downloaded?
         Downloadables.Handle allContentHandle  = HDAddressablesManager.Instance.GetHandleForAllDownloadables();

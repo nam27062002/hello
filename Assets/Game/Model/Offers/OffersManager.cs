@@ -62,6 +62,15 @@ public class OffersManager : Singleton<OffersManager> {
         get { return m_happyHour; }
     }
 
+    private OfferPack m_removeAdsOffer = null;
+    public OfferPack removeAdsOffer
+    {
+        get { return removeAdsOffer; }
+    }
+
+    private OfferPack m_activeRemoveAdsOffer = null;
+
+
     // Internal
     private List<OfferPack> m_allEnabledOffers = new List<OfferPack>();	// All enabled and non-expired offer packs, regardless of type
 	private List<OfferPack> m_allOffers = new List<OfferPack>();        // All defined offer packs, regardless of state and type
@@ -106,6 +115,7 @@ public class OffersManager : Singleton<OffersManager> {
 		}
 	}
 
+
     public bool enabled;
 
     //------------------------------------------------------------------------//
@@ -129,6 +139,10 @@ public class OffersManager : Singleton<OffersManager> {
 			if(m_timer <= 0) {
 				m_timer = settings != null ? settings.refreshFrequency : 1f;	// Crashlytics was reporting a Null reference, protect it just in case
 				Refresh(false);
+
+                // [JOM] Update the cooldowns in Remove Ads controller 
+                // Technically not an offer, but didnt find any better place for this
+               UsersManager.currentUser.removeAds.Update();
 			}
 			m_timer -= Time.deltaTime;
 		}
@@ -161,6 +175,7 @@ public class OffersManager : Singleton<OffersManager> {
 
 		instance.m_allEnabledFreeOffers.Clear();
 		instance.m_activeFreeOffer = null;
+
 
 		// Get all known offer packs
 		// Sort offers by their "order" field, so if two mutually exclusive offers (same uniqueId)
@@ -195,7 +210,14 @@ public class OffersManager : Singleton<OffersManager> {
 						case OfferPack.Type.FREE: {
 							instance.m_allEnabledFreeOffers.Add(newPack);
 						} break;
-					}
+
+                        case OfferPack.Type.REMOVE_ADS:
+                        {
+                            instance.m_removeAdsOffer = newPack;
+                        }
+                        break;
+
+                    }
                 } else {
 					Log("OFFER PACK {0} CAN'T BE ADDED!", Color.red, newPack.def.sku);
 				}
@@ -215,6 +237,7 @@ public class OffersManager : Singleton<OffersManager> {
         {
             instance.m_happyHour = HappyHourOffer.CreateFromDefinition();
         }
+
 
 		// Make sure to check whether free offer is on cooldown or not and put in the right place
 		instance.m_freeOfferNeedsSorting = true;
@@ -282,8 +305,11 @@ public class OffersManager : Singleton<OffersManager> {
 		// Do we need to activate a new free offer?
 		dirty |= RefreshFree();
 
-		// Has any offer changed its state?
-		if(dirty) {
+        // Do we need to activate the remove Ads offer?
+        dirty |= RefreshRemoveAds();
+
+        // Has any offer changed its state?
+        if (dirty) {
 			// Re-sort active offers
 			m_activeOffers.Sort(OfferPackComparer);
 
@@ -450,11 +476,36 @@ public class OffersManager : Singleton<OffersManager> {
 		return true;
 	}
 
-	/// <summary>
-	/// 
-	/// </summary>
-	/// <returns></returns>
-	/// <param name="_newPack"></param>
+    /// <summary>
+    /// Activates the remove ads offer
+    /// </summary>
+    private bool RefreshRemoveAds()
+    {
+        if (m_removeAdsOffer != null)
+        {
+            // Check if the offer is already accquired
+            bool stateChanged = m_removeAdsOffer.UpdateState();
+
+            // If active, add the offer to activeOffers collection
+            if (m_activeRemoveAdsOffer == null)
+            {
+                UpdateCollections(m_removeAdsOffer);
+                m_activeRemoveAdsOffer = m_removeAdsOffer;
+            }
+
+            // If state has changed, update the panel
+            return stateChanged;
+        }
+
+        return false;
+    }
+
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    /// <param name="_newPack"></param>
     private bool IsOfferAvailable(OfferPack _newPack) {
         List<OfferPackItem> items = _newPack.items;
 
@@ -464,12 +515,12 @@ public class OffersManager : Singleton<OffersManager> {
 
             DefinitionNode def = null;            			
             if (item.type.Equals(Metagame.RewardPet.TYPE_CODE)) {
-				returnValue = HDAddressablesManager.Instance.AreResourcesForPetAvailable(item.sku);
+			    returnValue = HDAddressablesManager.Instance.AreResourcesForPetAvailable(item.sku);
             } else if (item.type.Equals(Metagame.RewardSkin.TYPE_CODE)) {
                 def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, item.sku);
-				if(def != null) {
-					returnValue = HDAddressablesManager.Instance.AreResourcesForDragonAvailable(def.Get("dragonSku"));
-				}
+			    if(def != null) {
+				    returnValue = HDAddressablesManager.Instance.AreResourcesForDragonAvailable(def.Get("dragonSku"));
+			    }
             }            
         }
 

@@ -47,14 +47,21 @@ public class PopupHappyHour : MonoBehaviour {
     private float m_timer;
     private HappyHourOffer m_happyHour;
 
-    //------------------------------------------------------------------------//
-    // GENERIC METHODS														  //
-    //------------------------------------------------------------------------//
-    /// <summary>
-    /// Initialization.
-    /// </summary>
-    /// <param name="_lastOfferSku">Sku of the offer that will be shown in the popup</param>
-    public void Init(string _lastOfferSku) {
+	//------------------------------------------------------------------------//
+	// GENERIC METHODS														  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Initialization
+	/// </summary>
+	private void Awake() {
+		m_offerToDisplay.OnPurchaseSuccess.AddListener(OnPurchaseSucces);
+	}
+
+	/// <summary>
+	/// Initialization.
+	/// </summary>
+	/// <param name="_lastOfferSku">Sku of the offer that will be shown in the popup</param>
+	public void Init(string _lastOfferSku) {
 
         m_happyHour = OffersManager.instance.happyHour;
 
@@ -82,10 +89,15 @@ public class PopupHappyHour : MonoBehaviour {
                 }
                 
             }
+        } else
+        {
+            //Shouldnt happent, but just in case. If there is not happy hour active, close the popup.
+            m_descriptionText.gameObject.SetActive(false);
+            m_offerToDisplay.gameObject.SetActive(false);
+            GetComponent<PopupController>().Close(true);
         }
 
 	}
-
 
 	/// <summary>
 	/// Component has been enabled.
@@ -203,16 +215,23 @@ public class PopupHappyHour : MonoBehaviour {
 
     }
 
-    //------------------------------------------------------------------------//
-    // CALLBACKS															  //
-    //------------------------------------------------------------------------//
+	//------------------------------------------------------------------------//
+	// CALLBACKS															  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// The pack has been successfully purchased.
+	/// </summary>
+	/// <param name="_pill"></param>
+	private void OnPurchaseSucces(IPopupShopPill _pill) {
+		// Track and close the popup
+		TrackBuyButton();
+		GetComponent<PopupController>().Close(true);
+	}
 
-
-
-    /// <summary>
-    /// Player clicks on the SHOP button
-    /// </summary>
-    public void OnShopButton ()
+	/// <summary>
+	/// Player clicks on the SHOP button
+	/// </summary>
+	public void OnShopButton ()
     {
         // Close current popup
         GetComponent<PopupController>().Close(true);
