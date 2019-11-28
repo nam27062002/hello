@@ -327,7 +327,6 @@ public class DragonDataSpecial : IDragonData
         for (int i = 0; i < (int)Stat.COUNT; i++)
         {
             m_stats[i] = new DragonStatData();
-            m_stats[i].parentDragon = this;
         }
     }
 
