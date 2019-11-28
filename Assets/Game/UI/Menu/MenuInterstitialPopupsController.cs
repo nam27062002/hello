@@ -688,9 +688,30 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
     private bool MustShowRemoveAdsPopup()
     {
 
+        if (UsersManager.currentUser.removeAds.IsActive)
+        {
+            // This case should never happen. The user already bought the offer so cannot see interstitials. 
+            return false;
+        }
+        
         int interstitialsWatched = PlayerPrefs.GetInt(INTERSTITIALS_WATCHED);
+        int interstitialsBeforeRemoveAdsPopup = OffersManager.settings.interstitialsBeforeNoAdsPopup;
+        int interstitialsBetweenRemoveAdsPopup = OffersManager.settings.interstitialsBetweenNoAdsPopup;
 
-        return interstitialsWatched >= OffersManager.settings.interstitialsBeforeRemoveAdsPopup;
+        // Didnt watched enought interstitials
+        if (interstitialsWatched < interstitialsBeforeRemoveAdsPopup)
+            return false;
+
+        // Show first popup
+        if (interstitialsWatched == interstitialsBeforeRemoveAdsPopup)
+            return true;
+
+
+        if (interstitialsBetweenRemoveAdsPopup <= 0)
+            return false;
+
+        // Iterative popups (show every N interstitials)
+        return ((interstitialsWatched - interstitialsBeforeRemoveAdsPopup) % interstitialsBetweenRemoveAdsPopup == 0);
 
     }
 
@@ -793,9 +814,6 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 
             // Show the popup
             popup.Open();
-
-            // Reset the counter
-            PlayerPrefs.SetInt(INTERSTITIALS_WATCHED, 0);
 
         }
 
