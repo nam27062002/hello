@@ -317,10 +317,11 @@ namespace LevelEditor {
 					case PopupLevelEditorSummary.Result.FINISH: {
 						#if UNITY_EDITOR
 						UnityEditor.EditorApplication.isPlaying = false;
-						#else
-						Application.Quit();
-						#endif
-					} break;
+                        #else						
+                        DeviceUtilsManager.SharedInstance.ExitGame();
+                        #endif
+                        }
+                        break;
 
 					case PopupLevelEditorSummary.Result.REVIVE: {
 						Time.timeScale = 1f;	// Unpause

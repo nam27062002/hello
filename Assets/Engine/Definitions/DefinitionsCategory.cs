@@ -115,6 +115,7 @@ public class DefinitionsCategory
 	public const string OFFER_PACKS = "OFFER_PACKS";
     public const string HAPPY_HOUR = "HAPPY_HOUR";
     public const string CURRENCY_TIERS = "CURRENCY_TIERS";
+    public const string REMOVE_ADS_OFFER = "REMOVE_ADS_OFFER";
 
 	// UI
 	public const string SHARE_LOCATIONS = "SHARE_LOCATIONS";

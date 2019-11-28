@@ -33,10 +33,12 @@ public class PopupShopOffersTab : IPopupShopTab {
 	[SerializeField] private TextMeshProUGUI m_offersCount;
 	[Space]
 	[SerializeField] private GameObject m_freeOfferPillPrefab = null;
+    [SerializeField] private GameObject m_removeAdsPillPrefab = null;
 
-	// Internal
-	private List<PopupShopOffersPill> m_normalOfferPills = new List<PopupShopOffersPill>();
+    // Internal
+    private List<PopupShopOffersPill> m_normalOfferPills = new List<PopupShopOffersPill>();
 	private PopupShopFreeOfferPill m_freeOfferPill = null;
+    private PopupShopRemoveAdsPill m_removeAdsPill = null;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -129,8 +131,24 @@ public class PopupShopOffersTab : IPopupShopTab {
 					}
 				} break;
 
-				// Rest of offer types
-				default: {
+                case OfferPack.Type.REMOVE_ADS:
+                    {
+                        if (m_removeAdsPill == null)
+                        {
+                            // Create new instance and store it
+                            pill = InstantiatePill(m_removeAdsPillPrefab);
+                            m_removeAdsPill = pill as PopupShopRemoveAdsPill;
+                        }
+                        else
+                        {
+                            // Reuse existing pill
+                            pill = m_removeAdsPill;
+                        }
+                    }
+                    break;
+
+                // Rest of offer types
+                default: {
 					if(i >= m_normalOfferPills.Count) {
 						// Create new instance and store it
 						pill = InstantiatePill(m_pillPrefab);

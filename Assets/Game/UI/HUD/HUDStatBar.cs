@@ -294,7 +294,7 @@ public class HUDStatBar : IHUDWidget, IBroadcastListener {
 	public override void PeriodicUpdate() {
 		if (m_ready) {
 			// Compute delta time, considering our update interval
-			float deltaTime = Mathf.Max(UPDATE_INTERVAL, Time.unscaledDeltaTime);   // Cover cases where the frame took longer than our update interval (our the update interval is 0)
+			float deltaTime = Mathf.Max(UPDATE_INTERVAL, Time.unscaledDeltaTime);   // Cover cases where the frame took longer than our update interval (or the update interval is 0)
 
 			// Only if player is alive
 			if(InstanceManager.player != null) {
@@ -308,11 +308,11 @@ public class HUDStatBar : IHUDWidget, IBroadcastListener {
 				// Set base slider min/max
 				targetSlider = baseBar.slider;
 				if(targetSlider != null) {
-					if(targetSlider.minValue != 0f) {
+					if(!IsEqual(targetSlider.minValue, 0f)) {
 						targetSlider.minValue = 0f;
 					}
 
-					if(targetSlider.maxValue != targetExtraValue) {
+					if(!IsEqual(targetSlider.maxValue, targetExtraValue)) {
 						targetSlider.maxValue = targetExtraValue;
 					}
 
@@ -322,11 +322,11 @@ public class HUDStatBar : IHUDWidget, IBroadcastListener {
 				// Set extra slider min/max
 				targetSlider = extraBar.slider;
 				if(targetSlider != null) {
-					if(targetSlider.minValue != 0f) {
+					if(!IsEqual(targetSlider.minValue, 0f)) {
 						targetSlider.minValue = 0f;
 					}
 
-					if(targetSlider.maxValue != targetExtraValue) {
+					if(!IsEqual(targetSlider.maxValue, targetExtraValue)) {
 						targetSlider.maxValue = targetExtraValue; // this is the max value with all the bonus
 					}
 
@@ -336,11 +336,11 @@ public class HUDStatBar : IHUDWidget, IBroadcastListener {
 				// Set damage slider min/max
 				targetSlider = damageBar.slider;
 				if(targetSlider != null) {
-					if(targetSlider.minValue != 0f) {
+					if(!IsEqual(targetSlider.minValue, 0f)) {
 						targetSlider.minValue = 0f;
 					}
 
-					if(targetSlider.maxValue != targetExtraValue) {
+					if(!IsEqual(targetSlider.maxValue, targetExtraValue)) {
 						targetSlider.maxValue = targetExtraValue; // this is the max value with all the bonus
 					}
 				}
@@ -349,13 +349,13 @@ public class HUDStatBar : IHUDWidget, IBroadcastListener {
 				targetSlider = extraBar.slider;
 				if(targetSlider != null) {
 					if(m_instantSet) {
-						if(targetSlider.value != targetValue) {
+						if(!IsEqual(targetSlider.value, targetValue)) {
 							targetSlider.value = targetValue;
 						}
 					} else {
 						// If going up, animate, otherwise instant set
 						float value = (targetValue > targetSlider.value) ? targetValueStep : targetValue;                        
-						if(targetSlider.value != value) {
+						if(!IsEqual(targetSlider.value, value)) {
 							targetSlider.value = value;	
 						}
 					}
@@ -368,13 +368,13 @@ public class HUDStatBar : IHUDWidget, IBroadcastListener {
 					targetValueStep = Mathf.Min(targetValueStep, targetBaseValue);
 
 					if(m_instantSet) {
-						if(targetSlider.value != targetValue) {
+						if(!IsEqual(targetSlider.value, targetValue)) {
 							targetSlider.value = targetValue;
 						}
 					} else {
 						// If going up, animate, otherwise instant set
 						float value = (targetValue > targetSlider.value) ? targetValueStep : targetValue;
-						if(targetSlider.value != value) {
+						if(!IsEqual(targetSlider.value, value)) {
 							targetSlider.value = value;   
 						}
 					}
@@ -405,7 +405,7 @@ public class HUDStatBar : IHUDWidget, IBroadcastListener {
 					targetValue = Mathf.Max(extraBar.slider.value, baseBar.slider.value);
 
 					if(m_instantSet) {
-						if(targetSlider.value != targetValue) {
+						if(!IsEqual(targetSlider.value, targetValue)) {
 							targetSlider.value = targetValue;
 						}
 					} else {
@@ -437,7 +437,7 @@ public class HUDStatBar : IHUDWidget, IBroadcastListener {
 
                 // Text
                 if (m_valueTxt != null &&
-				    (m_extraBarLastValue != extraBar.slider.value || m_extraBarLastMaxValue != extraBar.slider.maxValue)) {
+				    (!IsEqual(m_extraBarLastValue, extraBar.slider.value) || !IsEqual(m_extraBarLastMaxValue, extraBar.slider.maxValue))) {
 					m_extraBarLastValue = extraBar.slider.value;
 					m_extraBarLastMaxValue = extraBar.slider.maxValue;
 
@@ -732,4 +732,14 @@ public class HUDStatBar : IHUDWidget, IBroadcastListener {
             }
         }
     }
+
+	/// <summary>
+	/// Safe float comparison.
+	/// </summary>
+	/// <param name="_a"></param>
+	/// <param name="_b"></param>
+	/// <returns></returns>
+	private static bool IsEqual(float _a, float _b) {
+		return Mathf.Abs(_a - _b) < Mathf.Epsilon;
+	}
 }

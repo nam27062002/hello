@@ -123,8 +123,18 @@ public class ResultsScreenStepTournamentSync : ResultsScreenStep {
 	/// Initialize and launch this step.
 	/// </summary>
 	override protected void DoLaunch() {
-		// Apply rewards to user profile (only tournament mode)
-		if (SceneController.mode == SceneController.Mode.TOURNAMENT) {
+
+        // If the last run wasnt valid, do not save any score
+        if ( !HDLiveDataManager.tournament.WasLastRunValid() )
+        {
+            // No! :) Go to next step
+            OnFinished.Invoke();
+            return;
+        }
+            
+
+        // Apply rewards to user profile (only tournament mode)
+        if (SceneController.mode == SceneController.Mode.TOURNAMENT) {
 			RewardManager.ApplyEndOfGameRewards();
 			PersistenceFacade.instance.Save_Request(true);
 		}

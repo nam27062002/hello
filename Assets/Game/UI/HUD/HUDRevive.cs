@@ -20,20 +20,24 @@ using TMPro;
 /// Revive logic and UI controller.
 /// </summary>
 public class HUDRevive : MonoBehaviour {
-	//------------------------------------------------------------------------//
-	// CONSTANTS															  //
-	//------------------------------------------------------------------------//
+    //------------------------------------------------------------------------//
+    // CONSTANTS															  //
+    //------------------------------------------------------------------------//
+    string TID_GAME_REVIVE_FREE = "TID_GAME_REVIVE_FREE";
 
-	//------------------------------------------------------------------------//
-	// MEMBERS AND PROPERTIES												  //
-	//------------------------------------------------------------------------//
-	// Exposed references
-	[SerializeField] private Localizer m_timerText = null;
+
+    //------------------------------------------------------------------------//
+    // MEMBERS AND PROPERTIES												  //
+    //------------------------------------------------------------------------//
+    // Exposed references
+    [SerializeField] private Localizer m_timerText = null;
 	[SerializeField] private TextMeshProUGUI m_pcText = null;
-	[SerializeField] private GameObject m_freeReviveButton = null;
+	[SerializeField] private GameObject m_adsReviveButton = null;
+    [SerializeField] private GameObject m_freeReviveButton = null;
+    [SerializeField] private GameObject m_pcReviveButton = null;
 
-	// Other references
-	[Space]
+    // Other references
+    [Space]
 	[SerializeField] private ShowHideAnimator m_animator = null;
 
 	// Exposed setup
@@ -120,7 +124,7 @@ public class HUDRevive : MonoBehaviour {
 	/// <summary>
 	/// The revive button has been clicked.
 	/// </summary>
-	public void OnRevive() {
+	public void OnRevivePC() {
 		// Make sure timer hasn't finished!
 		if(m_timer.IsFinished()) return;
 
@@ -175,14 +179,32 @@ public class HUDRevive : MonoBehaviour {
 		// Make sure timer hasn't finished!
 		if(m_timer.IsFinished()) return;
 
-		// Pause timer
-		m_timer.Stop();
 
-		// Show video ad!
-		PopupAdBlocker.LaunchAd(true, GameAds.EAdPurpose.REVIVE, OnVideoRewardCallback);
-	}
+        // Decrement the free revives counter
+        if (UsersManager.currentUser.removeAds.UseRevive())
+        {
+            // Revive the player
+            DoRevive(DragonPlayer.ReviveReason.REMOVE_ADS);
+        }
 
-	void OnVideoRewardCallback( bool done ){
+    }
+
+    /// <summary>
+    /// The free revive button has been clicked.
+    /// </summary>
+    public void OnAdRevive()
+    {
+        // Make sure timer hasn't finished!
+        if (m_timer.IsFinished()) return;
+
+        // Pause timer
+        m_timer.Stop();
+
+        // Show video ad!
+        PopupAdBlocker.LaunchAd(true, GameAds.EAdPurpose.REVIVE, OnVideoRewardCallback);
+    }
+
+    void OnVideoRewardCallback( bool done ){
 		if (done){
 			RewardManager.freeReviveCount++;
 			DoRevive( DragonPlayer.ReviveReason.AD );
@@ -199,8 +221,9 @@ public class HUDRevive : MonoBehaviour {
 		// No revive available during the tutorial! Kill the dragon after some delay
 		bool tutorialCompleted = UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.FIRST_RUN);
 
-		// Init some stuff
-		float duration = 0f;
+
+        // Init some stuff
+        float duration = 0f;
 		if(tutorialCompleted) {
 			// Timer
 			duration = m_reviveAvailableSecs;
@@ -210,8 +233,24 @@ public class HUDRevive : MonoBehaviour {
 				m_pcText.text = UIConstants.GetIconString( RewardManager.GetReviveCost(), UIConstants.IconType.PC, UIConstants.IconAlignment.LEFT);
 			}
 
-			// Free revive available?
-            m_freeReviveButton.SetActive(FeatureSettingsManager.AreAdsEnabled && m_minGamesBeforeFreeReviveAvailable <= UsersManager.currentUser.gamesPlayed && RewardManager.freeReviveCount < m_freeRevivesPerGame);
+            // Has the user the Remove Ads feature?
+            bool removeAds = UsersManager.currentUser.removeAds.IsActive;
+
+            // Ad revive available?
+            m_adsReviveButton.SetActive(FeatureSettingsManager.AreAdsEnabled && 
+                m_minGamesBeforeFreeReviveAvailable <= UsersManager.currentUser.gamesPlayed && 
+                RewardManager.freeReviveCount < m_freeRevivesPerGame &&
+                !removeAds);
+
+            // Free revives available?
+            bool freeReviveAvailable = removeAds && UsersManager.currentUser.removeAds.revivesLeft > 0;
+
+            // Free revive button
+            m_freeReviveButton.SetActive(freeReviveAvailable);
+            m_freeReviveButton.GetComponentInChildren<Localizer>().Localize(TID_GAME_REVIVE_FREE, freeReviveAvailable.ToString());
+
+            // If free revive is available, dont let the user pay gems to revive
+            m_pcReviveButton.SetActive(!freeReviveAvailable);
 
 			// Show!
 			if(m_animator != null) m_animator.Show();

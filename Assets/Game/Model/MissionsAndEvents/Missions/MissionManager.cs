@@ -177,13 +177,28 @@ public class MissionManager : Singleton<MissionManager>, IBroadcastListener {
         return 0;
     }
 
+
     public static int GetCooldownPerDifficulty(Mission.Difficulty _difficulty) {
         return GetCooldownPerDifficulty(SceneController.mode, _difficulty);
     }
 
+    /// <summary>
+    /// Return the cooldown duration in seconds
+    /// </summary>
+    /// <param name="_mode"></param>
+    /// <param name="_difficulty"></param>
+    /// <returns></returns>
     public static int GetCooldownPerDifficulty(SceneController.Mode _mode, Mission.Difficulty _difficulty) {
+
+        // If the user has the Remove ads feature, the cooldown will be reduced
+        float multiplier = 1f;
+        if (UsersManager.currentUser.removeAds.IsActive)
+        {
+            multiplier = UsersManager.currentUser.removeAds.GetMissionCooldownMultiplier (_difficulty);
+        }
+
         switch (_mode) {
-            case SceneController.Mode.DEFAULT: return instance.m_missionData.cooldownPerDifficulty[(int)(_difficulty)];
+            case SceneController.Mode.DEFAULT: return (int)(instance.m_missionData.cooldownPerDifficulty[(int)(_difficulty)] * 60 * multiplier);
         }
         return 0;
     }

@@ -48,6 +48,7 @@ public class OfferPack {
 		PUSHED,
 		ROTATIONAL,
 		FREE,
+        REMOVE_ADS,
         COUNT
 	}
 
@@ -371,9 +372,13 @@ public class OfferPack {
 		if(m_type == Type.FREE) {
 			ecoGroup = HDTrackingManager.EEconomyGroup.SHOP_AD_OFFER_PACK;
 		}
+        else if (m_type == Type.REMOVE_ADS)
+        {
+            ecoGroup = HDTrackingManager.EEconomyGroup.SHOP_REMOVE_ADS_PACK;
+        }
 
-		// Items - limited to 3 for now
-		for (int i = 1; i <= MAX_ITEMS; ++i) {	// [1..N]
+        // Items - limited to 3 for now
+        for (int i = 1; i <= MAX_ITEMS; ++i) {	// [1..N]
 			// Create and initialize new item
 			OfferPackItem item = new OfferPackItem();
 			item.InitFromDefinition(_def, i, ecoGroup);
@@ -982,7 +987,10 @@ public class OfferPack {
 			case Type.FREE: {
 				newPack = new OfferPackFree();
 			} break;
-			default: {
+            case Type.REMOVE_ADS:
+            {   newPack = new OfferPackRemoveAds();
+            }  break;
+            default: {
 				newPack = new OfferPack();
 			} break;
 		}
@@ -1082,7 +1090,8 @@ public class OfferPack {
 			case Type.PUSHED: 		return "push";
 			case Type.ROTATIONAL: 	return "rotational";
 			case Type.FREE:			return "free";
-		}
+            case Type.REMOVE_ADS:   return "removeAds";
+        }
 		return TypeToString(DEFAULT_TYPE);
 	}
 
@@ -1097,6 +1106,7 @@ public class OfferPack {
 			case "push":		return Type.PUSHED;
 			case "rotational":	return Type.ROTATIONAL;
 			case "free":		return Type.FREE;
+            case "removeAds":   return Type.REMOVE_ADS;
 		}
 		return DEFAULT_TYPE;
 	}

@@ -274,7 +274,7 @@ public class DragonBreathBehaviour : MonoBehaviour, IBroadcastListener {
 					}
 				}
 
-				if ( !m_dragon.dragonEatBehaviour.IsEating())
+				if ( !m_dragon.dragonEatBehaviour.IsEating() && m_dragon.playable)
 				{
 					if (GetMegaFireValue() >= m_superFuryMax)
 					{

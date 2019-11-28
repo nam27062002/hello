@@ -21,35 +21,51 @@ using System;
 /// Reused in both the goals screen and the in-game map popup.
 /// </summary>
 public class MapUpgradeController : MonoBehaviour, IBroadcastListener {
-	//------------------------------------------------------------------------//
-	// CONSTANTS															  //
-	//------------------------------------------------------------------------//
+    //------------------------------------------------------------------------//
+    // CONSTANTS															  //
+    //------------------------------------------------------------------------//
 
-	//------------------------------------------------------------------------//
-	// MEMBERS AND PROPERTIES												  //
-	//------------------------------------------------------------------------//
-	// Exposed references
-	[Separator("Animators")]
+    private const string TID_MAP_FREE_UNLOCK_MESSAGE = "TID_MAP_FREE_UNLOCK_MESSAGE";
+    private const string TID_MAP_FREE_UNLOCK_COOLDOWN = "TID_MAP_FREE_UNLOCK_COOLDOWN";
+
+    //------------------------------------------------------------------------//
+    // MEMBERS AND PROPERTIES												  //
+    //------------------------------------------------------------------------//
+    // Exposed references
+    [Separator("Animators")]
 	[SerializeField] private ShowHideAnimator m_lockedGroupAnim = null;
 	[SerializeField] private ShowHideAnimator m_unlockedGroupAnim = null;
 
-	[Separator("Objects")]
+
+    [Separator("Objects")]
 	[SerializeField] private TextMeshProUGUI m_pcPriceText = null;
 	[SerializeField] private TextMeshProUGUI m_timerText = null;
-	[SerializeField] private GameObject m_unlockWithAddBtn = null;
+	[SerializeField] private GameObject m_unlockWithAdBtn = null;
+    [SerializeField] private GameObject m_unlockWithPcBtn = null;
+    [SerializeField] private GameObject m_unlockFreeBtn = null;
+    [SerializeField] private Localizer m_unlockFreeDescription = null;
 
-	// FX
-	[Separator("FX")]
+
+    // FX
+    [Separator("FX")]
 	[SerializeField] private ParticleSystem m_unlockFX = null;
 
 	// Internal
 	private long m_unlockPricePC = 0;
 	private bool m_wasUnlocked = false;	// Lock state in last frame, used to track end of timer
+    private bool m_wasFreeUnlocked = false;	// Lock state in last frame, used to track end of timer
+
+    // Cached
+    private ShowHideAnimator m_unlockFreeBtnAnimator;
 
 	// [AOC] If the map timer runs out during the game, we let the player enjoy the unlocked map for the whole run
 	private bool isUnlocked {
 		get { return UsersManager.currentUser.mapUnlocked; }
 	}
+
+    private bool isFreeUnlockReady {
+        get { return UsersManager.currentUser.removeAds.IsMapRevealAvailable(); }
+    }
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -60,7 +76,10 @@ public class MapUpgradeController : MonoBehaviour, IBroadcastListener {
 	private void Awake() {
 		// Subscribe to external events
 		Broadcaster.AddListener(BroadcastEventType.PROFILE_MAP_UNLOCKED, this);
-	}
+
+        m_unlockFreeBtnAnimator = m_unlockFreeBtn.GetComponent<ShowHideAnimator>();
+
+    }
 
 	/// <summary>
 	/// Component has been enabled.
@@ -80,12 +99,11 @@ public class MapUpgradeController : MonoBehaviour, IBroadcastListener {
 	/// Update loop, called every frame.
 	/// </summary>
 	private void Update() {
-		// If unlocked, refresh timer
-		if(isUnlocked) {
+        // If unlocked, refresh timer
+        if (isUnlocked) { 
 			m_wasUnlocked = true;
 			RefreshTimer();
-		}
-
+		} 
 		// First frame it's locked after the timer run out, refresh (show unlock buttons)
 		else if(m_wasUnlocked) {
 			m_wasUnlocked = false;
@@ -94,14 +112,29 @@ public class MapUpgradeController : MonoBehaviour, IBroadcastListener {
 			// Notify other UI elements
 			Broadcaster.Broadcast(BroadcastEventType.UI_MAP_EXPIRED);
 		}
-	}
+
+        // Do the same for the Remove Ads free unlock button
+        if (!isFreeUnlockReady)
+        {
+            m_wasFreeUnlocked = false;
+            RefreshFreeUnlockTimer();
+        }
+        // First frame it's locked after the timer run out, refresh 
+        else if (!m_wasFreeUnlocked)
+        {
+            m_wasFreeUnlocked = true;
+            Refresh(true);
+        }
+
+    }
 
 	/// <summary>
 	/// Component has been disabled.
 	/// </summary>
 	private void OnDisable() {
-		
-	}
+        // Remove the delegate
+        UsersManager.currentUser.removeAds.refreshMapPill = null;
+    }
 
 	/// <summary>
 	/// Destructor.
@@ -137,35 +170,95 @@ public class MapUpgradeController : MonoBehaviour, IBroadcastListener {
 		if(m_lockedGroupAnim != null) m_lockedGroupAnim.ForceSet(isLocked, _animate);
 		if(m_unlockedGroupAnim != null) m_unlockedGroupAnim.ForceSet(!isLocked, _animate);
 
-		// Depending on lock state
-		if(isLocked) {
+        // Check if remove ads feature is active
+        bool removeAds = UsersManager.currentUser.removeAds.IsActive;
+
+        // Depending on lock state
+        if (isLocked) {
 			// Price tag
 			if(m_pcPriceText != null) {
 				m_pcPriceText.text = UIConstants.GetIconString(m_unlockPricePC, UserProfile.Currency.HARD, UIConstants.IconAlignment.LEFT);
 			}
 
-			// Ad revive - turn off when offline
-			if(m_unlockWithAddBtn != null) {
-                m_unlockWithAddBtn.SetActive(DeviceUtilsManager.SharedInstance.internetReachability != NetworkReachability.NotReachable && FeatureSettingsManager.AreAdsEnabled);
+			// Ad unlock - turn off when offline
+			if(m_unlockWithAdBtn != null) {
+                m_unlockWithAdBtn.SetActive(DeviceUtilsManager.SharedInstance.internetReachability != NetworkReachability.NotReachable && FeatureSettingsManager.AreAdsEnabled && !removeAds);
 			}
-		} else {
+
+            // Unlock map without ads
+            if (m_unlockFreeBtn != null)
+            {
+                m_unlockFreeBtn.SetActive(removeAds && UsersManager.currentUser.removeAds.IsMapRevealAvailable());
+            }
+
+            // Unlock map with PC
+            if (m_unlockWithPcBtn != null)
+            {
+                m_unlockWithPcBtn.SetActive(!removeAds || !UsersManager.currentUser.removeAds.IsMapRevealAvailable());
+            }
+
+
+            if (m_unlockFreeDescription != null)
+            {
+                // Free unlock description / free unlock cooldown timer
+                m_unlockFreeDescription.gameObject.SetActive(removeAds);
+
+                if (removeAds)
+                {
+                    
+                    if (UsersManager.currentUser.removeAds.IsMapRevealAvailable())
+                    {
+                        // The free map reveals button is visible
+                        int coolDownSeconds = UsersManager.currentUser.removeAds.MapRevealCooldownSecs;
+                        string cooldownFormatted = TimeUtils.FormatTime(coolDownSeconds, TimeUtils.EFormat.WORDS_WITHOUT_0_VALUES, 1);
+                        m_unlockFreeDescription.Localize(TID_MAP_FREE_UNLOCK_MESSAGE, cooldownFormatted);
+                    }
+                    else
+                    {
+                        // The map reveal not ready, show the cooldown timer
+                        RefreshFreeUnlockTimer();
+                    }
+                }
+
+            }
+
+        }
+        else {
 			// Timer
 			RefreshTimer();
-		}
-	}
+        }
+
+
+    }
 
 	/// <summary>
 	/// Update the timer text.
 	/// </summary>
 	private void RefreshTimer() {
-		// Check required stuff
-		if(m_timerText == null) return;
+        // Check required stuff
+        if (m_timerText != null)
+        {
 
-		// Countdown format
-		TimeSpan timeToReset = UsersManager.currentUser.mapResetTimestamp - GameServerManager.SharedInstance.GetEstimatedServerTime();
-		double seconds = System.Math.Max(timeToReset.TotalSeconds, 0d);	// Never go negative!
-		m_timerText.text = TimeUtils.FormatTime(seconds, TimeUtils.EFormat.DIGITS, 3, TimeUtils.EPrecision.HOURS, true);
+            // Countdown format
+            TimeSpan timeToReset = UsersManager.currentUser.mapResetTimestamp - GameServerManager.SharedInstance.GetEstimatedServerTime();
+            double seconds = System.Math.Max(timeToReset.TotalSeconds, 0d); // Never go negative!
+            m_timerText.text = TimeUtils.FormatTime(seconds, TimeUtils.EFormat.DIGITS, 3, TimeUtils.EPrecision.HOURS, true);
+        }
 	}
+
+    /// <summary>
+    /// Update the free unlock cooldown
+    /// </summary>
+    private void RefreshFreeUnlockTimer ()
+    {
+        if (m_unlockFreeDescription != null)
+        {
+
+            TimeSpan timeToReset = UsersManager.currentUser.removeAds.mapRevealTimestamp - GameServerManager.SharedInstance.GetEstimatedServerTime();
+            string timeLeft = TimeUtils.FormatTime(timeToReset.TotalSeconds, TimeUtils.EFormat.ABBREVIATIONS_WITHOUT_0_VALUES, 1);
+            m_unlockFreeDescription.Localize(TID_MAP_FREE_UNLOCK_COOLDOWN, timeLeft);
+        }
+    }
 
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
@@ -181,11 +274,43 @@ public class MapUpgradeController : MonoBehaviour, IBroadcastListener {
 		PopupAdBlocker.LaunchAd(true, GameAds.EAdPurpose.UPGRADE_MAP, OnVideoRewardCallback);
 	}
 
-	void OnVideoRewardCallback(bool done){
-		if ( done ){            
-            UsersManager.currentUser.UnlockMap();
+
+    /// <summary>
+    /// The unlock with free button (remove ads feature) has been pressed.
+    /// </summary>
+    public void OnUnlockForFree()
+    {
+        // Ignore if map is already unlocked (probably spamming button)
+        if (isUnlocked) return;
+
+        // If map reveal is not ready, get out. 
+        if (!UsersManager.currentUser.removeAds.UseMapReveal()) return;
+
+        // Unlock the map
+        UsersManager.currentUser.UnlockMap(UsersManager.currentUser.removeAds.mapRevealDurationSecs);
+        PersistenceFacade.instance.Save_Request();
+    }
+
+
+    void OnVideoRewardCallback(bool done){
+		if ( done ){
+
+            DefinitionNode gameSettingsDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, "gameSettings");
+            if (gameSettingsDef != null)
+            {
+                UsersManager.currentUser.UnlockMap( (int) gameSettingsDef.GetAsDouble("miniMapTimerAd") * 60 );
+                PersistenceFacade.instance.Save_Request();
+                Track_UnlockMap(HDTrackingManager.EUnlockType.video_ads);
+            }
+            else
+            {
+                UsersManager.currentUser.UnlockMap(60 * 60);
+                Debug.LogError("GameSettings not found!");
+            }
+
             PersistenceFacade.instance.Save_Request();
             Track_UnlockMap(HDTrackingManager.EUnlockType.video_ads);
+
         }
 	}
 
