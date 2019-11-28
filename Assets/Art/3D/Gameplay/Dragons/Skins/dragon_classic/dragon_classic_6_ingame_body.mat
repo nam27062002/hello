@@ -8,8 +8,7 @@ Material:
   m_PrefabInternal: {fileID: 0}
   m_Name: dragon_classic_6_ingame_body
   m_Shader: {fileID: 4800000, guid: 2345015ac46679e4cb5817ed44c82547, type: 3}
-  m_ShaderKeywords: FRESNEL FXLAYER_REFLECTION NORMALMAP SELFILLUMINATE_AUTOINNERLIGHT
-    SPECULAR
+  m_ShaderKeywords: FRESNEL FXLAYER_REFLECTION NORMALMAP SELFILLUMINATE_NORMAL SPECULAR
   m_LightmapFlags: 5
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -72,7 +71,7 @@ Material:
     m_Floats:
     - FXLayer: 1
     - ReflectionType: 0
-    - SelfIlluminate: 1
+    - SelfIlluminate: 0
     - _Alpha_as_depth: 0
     - _BlendMode: 0
     - _BumpScale: 1
@@ -106,17 +105,17 @@ Material:
     - _FireSpeed: 1
     - _Fresnel: 7.47
     - _Glossiness: 0.5
-    - _InnerLightAdd: 6.4
-    - _InnerLightWavePhase: 3
-    - _InnerLightWaveSpeed: 0
+    - _InnerLightAdd: 0.29
+    - _InnerLightWavePhase: 3.1
+    - _InnerLightWaveSpeed: 2.3
     - _Metallic: 0
     - _Mode: 0
-    - _NormalStrenght: 1
+    - _NormalStrenght: 1.8
     - _OcclusionStrength: 1
     - _Parallax: 0.02
-    - _ReflectionAmount: 0.446
+    - _ReflectionAmount: 0.798
     - _SecondLightIntensity: 0.47
-    - _SpecExponent: 31.59
+    - _SpecExponent: 80
     - _SrcBlend: 1
     - _StencilMask: 10
     - _UVSec: 0
@@ -131,7 +130,7 @@ Material:
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _EmissionColorUI: {r: 1, g: 1, b: 1, a: 1}
     - _FresnelColor: {r: 0.21604674, g: 0.25474587, b: 0.39705884, a: 1}
-    - _InnerLightColor: {r: 0, g: 0, b: 0, a: 1}
+    - _InnerLightColor: {r: 0.89705884, g: 0.6728851, b: 0.52768165, a: 1}
     - _ReflectionColor: {r: 1, g: 1, b: 1, a: 1}
     - _SecondLightColor: {r: 0.32320502, g: 0.37691548, b: 0.44852942, a: 0}
     - _SecondLightDir: {r: -0.22421417, g: 0.35565004, b: -0.9073264, a: 0}
