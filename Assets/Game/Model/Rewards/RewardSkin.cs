@@ -36,7 +36,10 @@ namespace Metagame {
 		public RewardSkin(string _sku, string _source) {
 			m_source = _source;
 			DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, _sku);
-			InitFrom(def);
+            if (def != null)
+            {
+                InitFrom(def);
+            }
 		}
 
 		/// <summary>
