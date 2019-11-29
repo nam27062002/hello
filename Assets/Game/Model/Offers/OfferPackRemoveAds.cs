@@ -104,6 +104,12 @@ public class OfferPackRemoveAds : OfferPack {
                 break;
         }
 
+        // If the user already has the offer, disable it
+        if (UsersManager.currentUser.removeAds.IsActive)
+        {
+            ChangeState(State.EXPIRED);
+        }
+
         // Has state changed?
         return (oldState != m_state);
     }

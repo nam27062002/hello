@@ -62,14 +62,6 @@ public class OffersManager : Singleton<OffersManager> {
         get { return m_happyHour; }
     }
 
-    private OfferPack m_removeAdsOffer = null;
-    public OfferPack removeAdsOffer
-    {
-        get { return removeAdsOffer; }
-    }
-
-    private OfferPack m_activeRemoveAdsOffer = null;
-
 
     // Internal
     private List<OfferPack> m_allEnabledOffers = new List<OfferPack>();	// All enabled and non-expired offer packs, regardless of type
@@ -84,7 +76,10 @@ public class OffersManager : Singleton<OffersManager> {
 	// Free offers
 	private List<OfferPack> m_allEnabledFreeOffers = new List<OfferPack>();  // All enabled and non-expired free offer packs
 
-	private OfferPackFree m_activeFreeOffer = null;   // Currently active free offer
+    // Remove ads offers
+    private List<OfferPack> m_removeAdsOffers = new List<OfferPack>();
+
+    private OfferPackFree m_activeFreeOffer = null;   // Currently active free offer
 	public static OfferPackFree activeFreeOffer {
 		get { return instance.m_activeFreeOffer; }
 	}
@@ -167,6 +162,7 @@ public class OffersManager : Singleton<OffersManager> {
 		instance.m_allEnabledOffers.Clear();
 		instance.m_activeOffers.Clear();
 		instance.m_offersToRemove.Clear();
+        instance.m_removeAdsOffers.Clear();
 
 		instance.m_allEnabledRotationalOffers.Clear();
 		instance.m_activeRotationalOffers.Clear();
@@ -204,18 +200,17 @@ public class OffersManager : Singleton<OffersManager> {
 					// Additional treatment based on offer type
 					switch(newPack.type) {
 						case OfferPack.Type.ROTATIONAL: {
-							instance.m_allEnabledRotationalOffers.Add(newPack);
+                                instance.m_allEnabledRotationalOffers.Add(newPack);
 						} break;
 
 						case OfferPack.Type.FREE: {
-							instance.m_allEnabledFreeOffers.Add(newPack);
+                                instance.m_allEnabledFreeOffers.Add(newPack);
 						} break;
 
-                        case OfferPack.Type.REMOVE_ADS:
-                        {
-                            instance.m_removeAdsOffer = newPack;
-                        }
-                        break;
+                        case OfferPack.Type.REMOVE_ADS: {
+                                // Only show this offer if the user didnt buy it before
+                                instance.m_removeAdsOffers.Add(newPack);
+                        } break;
 
                     }
                 } else {
@@ -481,23 +476,16 @@ public class OffersManager : Singleton<OffersManager> {
     /// </summary>
     private bool RefreshRemoveAds()
     {
-        if (m_removeAdsOffer != null)
+        bool stateChanged = false;
+
+        foreach (OfferPackRemoveAds offer in m_removeAdsOffers)
         {
             // Check if the offer is already accquired
-            bool stateChanged = m_removeAdsOffer.UpdateState();
-
-            // If active, add the offer to activeOffers collection
-            if (m_activeRemoveAdsOffer == null)
-            {
-                UpdateCollections(m_removeAdsOffer);
-                m_activeRemoveAdsOffer = m_removeAdsOffer;
-            }
-
-            // If state has changed, update the panel
-            return stateChanged;
+            stateChanged |= offer.UpdateState();
         }
 
-        return false;
+        // If state has changed, update the panel
+        return stateChanged;
     }
 
 
@@ -731,9 +719,18 @@ public class OffersManager : Singleton<OffersManager> {
 			}
 		}
 
-		// Featured packs come first
-		// Unless one of the packs is free - then we skip the featured check
-		if(_p1.type != OfferPack.Type.FREE && _p2.type != OfferPack.Type.FREE) {
+        // Remove ads offer comes after free offers
+        if (_p1.type == OfferPack.Type.REMOVE_ADS && _p2.type != OfferPack.Type.REMOVE_ADS)
+        {
+            return -1;
+        } else if (_p1.type != OfferPack.Type.REMOVE_ADS && _p2.type == OfferPack.Type.REMOVE_ADS)
+        {
+            return 1;
+        }
+
+        // Featured packs come first
+        // Unless one of the packs is free - then we skip the featured check
+            if (_p1.type != OfferPack.Type.FREE && _p2.type != OfferPack.Type.FREE) {
 			if(_p1.featured && !_p2.featured) {
 				return -1;
 			} else if(!_p1.featured && _p2.featured) {
