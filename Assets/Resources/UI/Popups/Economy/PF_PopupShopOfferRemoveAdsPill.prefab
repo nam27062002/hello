@@ -275,6 +275,7 @@ GameObject:
   - component: {fileID: 222742951199596692}
   - component: {fileID: 114271060685707038}
   - component: {fileID: 114227694730958040}
+  - component: {fileID: 114718790980979256}
   m_Layer: 5
   m_Name: Title
   m_TagString: Untagged
@@ -2177,7 +2178,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_text: Title
+  m_text: VIP OFFER
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8ea6cf986662c4e6f942e88850b31e64, type: 2}
   m_sharedMaterial: {fileID: 2100000, guid: 3a0143e13882843f48da7c1fdc74ce06, type: 2}
@@ -2204,7 +2205,7 @@ MonoBehaviour:
   m_outlineColor:
     serializedVersion: 2
     rgba: 4278190080
-  m_fontSize: 80
+  m_fontSize: 77.4
   m_fontSizeBase: 75
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -2244,10 +2245,10 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_textInfo:
     textComponent: {fileID: 114227694730958040}
-    characterCount: 5
+    characterCount: 9
     spriteCount: 0
-    spaceCount: 0
-    wordCount: 1
+    spaceCount: 1
+    wordCount: 2
     linkCount: 0
     lineCount: 1
     pageCount: 1
@@ -2430,7 +2431,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_tid: TID_FREE_DAILY_REWARD_NAME
+  m_tid: TID_REMOVE_ADS_REWARD_TITLE
   m_caseType: 1
   m_replacements: []
 --- !u!114 &114286239905901232
@@ -3546,6 +3547,46 @@ MonoBehaviour:
     topRight: {r: 1, g: 0.7750545, b: 0.13235295, a: 1}
     bottomLeft: {r: 1, g: 0.9953951, b: 0.5441177, a: 1}
     bottomRight: {r: 1, g: 0.9960785, b: 0.54509807, a: 1}
+--- !u!114 &114718790980979256
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1168690894379778}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57f40cd3e78c84229b0cc30131f65a6d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_curve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: 0
+      value: -1
+      inSlope: 12.016877
+      outSlope: 12.016877
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 0.5
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 1
+      value: -1
+      inSlope: -12.358341
+      outSlope: -12.358341
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 0
+  m_curveScale: 0.2
+  m_verticalPivot: 0.5
+  m_verticalOffset: 0
+  m_useCustomReferenceSize: 0
+  m_customReferenceSize: 200
 --- !u!114 &114728367670642330
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5565,8 +5606,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -5}
-  m_SizeDelta: {x: 0, y: 150}
+  m_AnchoredPosition: {x: 3.725006, y: -31.2}
+  m_SizeDelta: {x: -226.59, y: 104.13}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!224 &224196657388093294
 RectTransform:
