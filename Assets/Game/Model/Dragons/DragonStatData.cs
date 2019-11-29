@@ -31,11 +31,6 @@ public class DragonStatData {
 	public DefinitionNode def = null;
 
 	/// <summary>
-	/// Dragon whom this stat belongs to
-	/// </summary>
-	public DragonDataSpecial parentDragon = null;
-
-	/// <summary>
 	/// Level [0..N-1]
 	/// </summary>
 	public int level = 0;
