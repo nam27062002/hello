@@ -38,15 +38,15 @@ public class PopupShopOffersTab : IPopupShopTab {
     // Internal
     private List<PopupShopOffersPill> m_normalOfferPills = new List<PopupShopOffersPill>();
 	private PopupShopFreeOfferPill m_freeOfferPill = null;
-    private PopupShopRemoveAdsPill m_removeAdsPill = null;
+    private List<PopupShopRemoveAdsPill> m_removeAdsPills = new List<PopupShopRemoveAdsPill>();
 
-	//------------------------------------------------------------------------//
-	// GENERIC METHODS														  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// First update call.
-	/// </summary>
-	private void Start() {
+    //------------------------------------------------------------------------//
+    // GENERIC METHODS														  //
+    //------------------------------------------------------------------------//
+    /// <summary>
+    /// First update call.
+    /// </summary>
+    private void Start() {
 		InvokeRepeating("PeriodicRefresh", 0f, REFRESH_FREQUENCY);
 
 		// React to offers being reloaded while tab is active
@@ -133,16 +133,16 @@ public class PopupShopOffersTab : IPopupShopTab {
 
                 case OfferPack.Type.REMOVE_ADS:
                     {
-                        if (m_removeAdsPill == null)
+                        if (i >= m_removeAdsPills.Count)
                         {
                             // Create new instance and store it
                             pill = InstantiatePill(m_removeAdsPillPrefab);
-                            m_removeAdsPill = pill as PopupShopRemoveAdsPill;
+                            m_removeAdsPills.Add( (PopupShopRemoveAdsPill) pill);
                         }
                         else
                         {
                             // Reuse existing pill
-                            pill = m_removeAdsPill;
+                            pill = m_removeAdsPills[i];
                         }
                     }
                     break;
