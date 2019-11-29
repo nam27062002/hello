@@ -719,18 +719,29 @@ public class OffersManager : Singleton<OffersManager> {
 			}
 		}
 
+        // Then by type - free offers first
+        if (_p1.type == OfferPack.Type.FREE && _p2.type != OfferPack.Type.FREE)
+        {
+            return -1;
+        }
+        else if (_p1.type != OfferPack.Type.FREE && _p2.type == OfferPack.Type.FREE)
+        {
+            return 1;
+        }
+
         // Remove ads offer comes after free offers
         if (_p1.type == OfferPack.Type.REMOVE_ADS && _p2.type != OfferPack.Type.REMOVE_ADS)
         {
             return -1;
-        } else if (_p1.type != OfferPack.Type.REMOVE_ADS && _p2.type == OfferPack.Type.REMOVE_ADS)
+        }
+        else if (_p1.type != OfferPack.Type.REMOVE_ADS && _p2.type == OfferPack.Type.REMOVE_ADS)
         {
             return 1;
         }
 
         // Featured packs come first
         // Unless one of the packs is free - then we skip the featured check
-            if (_p1.type != OfferPack.Type.FREE && _p2.type != OfferPack.Type.FREE) {
+        if (_p1.type != OfferPack.Type.FREE && _p2.type != OfferPack.Type.FREE) {
 			if(_p1.featured && !_p2.featured) {
 				return -1;
 			} else if(!_p1.featured && _p2.featured) {
@@ -742,15 +753,9 @@ public class OffersManager : Singleton<OffersManager> {
 		int order = _p1.order.CompareTo(_p2.order);
 		if(order != 0) return order;
 
-		// Then by type - free offers first
-		if(_p1.type == OfferPack.Type.FREE && _p2.type != OfferPack.Type.FREE) {
-			return -1;
-		} else if(_p1.type != OfferPack.Type.FREE && _p2.type == OfferPack.Type.FREE) {
-			return 1;
-		}
 
-		// Then by discount
-		int discount = _p1.def.GetAsFloat("discount").CompareTo(_p2.def.GetAsFloat("discount"));
+        // Then by discount
+        int discount = _p1.def.GetAsFloat("discount").CompareTo(_p2.def.GetAsFloat("discount"));
 		if(discount != 0) return -discount;	// Reverse: item with greater discount goes first!
 
 		// Remaining time goes next
