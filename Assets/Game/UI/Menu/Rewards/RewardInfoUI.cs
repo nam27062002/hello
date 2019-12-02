@@ -433,4 +433,14 @@ public class RewardInfoUI : MonoBehaviour {
 			} break;
 		}
 	}
+
+    /// <summary>
+    /// Just play an SFX.
+    /// </summary>
+    /// <param name="_id"></param>
+    public void PlaySFX(string _id) {
+        if(!string.IsNullOrEmpty(_id)) {
+            AudioController.Play(_id);
+        }
+    }
 }
