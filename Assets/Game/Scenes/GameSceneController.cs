@@ -167,6 +167,7 @@ public class GameSceneController : GameSceneControllerBase {
             }
         }
 
+		CPModifiers.ApplyLaterMods();
         HDLiveDataManager.instance.ApplyLaterMods();
 		Messenger.AddListener(MessengerEvents.GAME_COUNTDOWN_ENDED, CountDownEnded);
         Messenger.AddListener<float>(MessengerEvents.PLAYER_LEAVING_AREA, OnPlayerLeavingArea);
@@ -343,6 +344,7 @@ public class GameSceneController : GameSceneControllerBase {
         // Call parent
         base.OnDestroy();
 
+        CPModifiers.RemoveLaterMods();
         HDLiveDataManager.instance.RemoveLaterMods();
 
         CustomParticlesCulling.Manager_OnDestroy();
