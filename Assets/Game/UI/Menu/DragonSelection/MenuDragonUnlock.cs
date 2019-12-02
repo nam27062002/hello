@@ -159,7 +159,7 @@ public class MenuDragonUnlock : MonoBehaviour {
 					if(unlockTier != DragonTier.COUNT) {
 						// Set text
 						m_unavailableInfoText.Localize(
-							"TID_SELECT_DRAGON_UNAVAILABLE_MESSAGE",    // Obtain %U0 to reveal this dragon's price!
+							"TID_SELECT_DRAGON_UNLOCK_BY_TIER",    // Obtain %U0 to reveal this dragon's price!
 							UIConstants.GetSpriteTag(UIConstants.GetDragonTierIcon(unlockTier)) // Use tier's icon
 						);
 					}
