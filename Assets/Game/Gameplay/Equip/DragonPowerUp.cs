@@ -26,6 +26,7 @@ public class DragonPowerUp : MonoBehaviour {
 	private bool m_transformGold = false;
 	private float m_transformGoldTimer = 0;
 	private float m_transformGoldInterval = 5.0f;
+	private DragonParticleController m_particleController;
 
 	//------------------------------------------------------------------------//
 	// METHODS																  //
@@ -58,6 +59,7 @@ public class DragonPowerUp : MonoBehaviour {
 			{
 				m_transformGoldTimer = m_transformGoldInterval;
 				EntityManager.instance.ForceOnScreenEntitiesGolden();
+				m_particleController.PlayTransformGoldParticle();
 			}
 		}
 	}
@@ -124,6 +126,13 @@ public class DragonPowerUp : MonoBehaviour {
 		{
 			Broadcaster.Broadcast(BroadcastEventType.APPLY_ENTITY_POWERUPS);
 			m_warnEntities = false;
+		}
+
+		if ( m_transformGold )
+		{
+			// Instanciate fx
+			m_particleController = GetComponentInChildren<DragonParticleController>();
+			m_particleController.PrepareTransformGoldParticle();
 		}
 	}
 
