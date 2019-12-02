@@ -290,7 +290,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 120086}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -161.09953, y: 105.092285, z: -4.654297}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 429346}
@@ -451,6 +451,7 @@ Transform:
   - {fileID: 488014}
   - {fileID: 4009912072996094}
   - {fileID: 4000012763915782}
+  - {fileID: 4169538093539226}
   m_Father: {fileID: 414586}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -708,6 +709,7 @@ MonoBehaviour:
     orientate: 0
   m_megaFireRush: PS_MegaFireCharge
   m_megaFireRushAnchor: {fileID: 0}
+  m_transformGoldAnchor: {fileID: 4169538093539226}
 --- !u!114 &11438592
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1304,6 +1306,22 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!1 &1039238833658602
+GameObject:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4169538093539226}
+  - component: {fileID: 114488081610449058}
+  m_Layer: 12
+  m_Name: TransformGold
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!1 &1043316601072714
 GameObject:
   m_ObjectHideFlags: 1
@@ -1393,7 +1411,6 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4009912072996094}
-  - component: {fileID: 114629232949719882}
   m_Layer: 12
   m_Name: VacuumAnchor
   m_TagString: Untagged
@@ -2294,7 +2311,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000010199618924}
-  m_LocalRotation: {x: -0.1638653, y: 0.74644893, z: 0.19942644, w: 0.6133444}
+  m_LocalRotation: {x: -0, y: -0.6324758, z: -0, w: 0.7745801}
   m_LocalPosition: {x: 0, y: 0, z: -1.79}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -2458,6 +2475,19 @@ Transform:
   m_Father: {fileID: 431226}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 22.461, y: 0, z: 0}
+--- !u!4 &4169538093539226
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1039238833658602}
+  m_LocalRotation: {x: -0.5767955, y: 0.5767955, z: 0.40903172, w: 0.40903172}
+  m_LocalPosition: {x: 0, y: 0.1860199, z: 0.08438349}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 490078}
+  m_RootOrder: 7
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4177940541377122
 Transform:
   m_ObjectHideFlags: 1
@@ -5506,6 +5536,22 @@ MonoBehaviour:
   m_worldPositionStays: 1
   m_resetScale: 0
   m_when: 0
+--- !u!114 &114488081610449058
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1039238833658602}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9aae6699537414c7ab185eeaef226fe0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_parentName: Dragon_Head
+  m_parentRoot: {fileID: 414586}
+  m_worldPositionStays: 1
+  m_resetScale: 0
+  m_when: 0
 --- !u!114 &114504660407680526
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5586,22 +5632,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_parentName: tail_03_JT
-  m_parentRoot: {fileID: 414586}
-  m_worldPositionStays: 1
-  m_resetScale: 0
-  m_when: 0
---- !u!114 &114629232949719882
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1073674923976676}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9aae6699537414c7ab185eeaef226fe0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_parentName: Fire_Dummy
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
   m_resetScale: 0
