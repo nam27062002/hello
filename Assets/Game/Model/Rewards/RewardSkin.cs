@@ -39,6 +39,9 @@ namespace Metagame {
             if (def != null)
             {
                 InitFrom(def);
+            } else
+            {
+                Debug.LogError("Skin definition " + _sku + " not found");
             }
 		}
 
