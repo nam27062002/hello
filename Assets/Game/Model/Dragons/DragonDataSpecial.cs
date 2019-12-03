@@ -578,15 +578,32 @@ public class DragonDataSpecial : IDragonData
 
         // Condition B) If the minimum required classic dragon is owned, then is available via HC
         // Minimum required dragon is stored in the content
-        if (m_unlockFromDragon != null)
+        if (!string.IsNullOrEmpty(m_unlockFromDragon))
         {
-            IDragonData requiredDragon = DragonManager.GetDragonData(m_unlockFromDragon);
+			// Aux vars
+			IDragonData biggestOwnedDragon = DragonManager.biggestOwnedDragon;
 
-            // If the player owns the required dragon or a superior one, then the special dragon is available via HC
-            if (DragonManager.biggestOwnedDragon.GetOrder() >= requiredDragon.GetOrder())
-            {
-                return true;
-            }
+			// Dragon condition can either be a dragon sku or a tier sku
+			// a) Dragon
+			IDragonData requiredDragon = DragonManager.GetDragonData(m_unlockFromDragon);
+			if(requiredDragon != null) {
+				// If the player owns the required dragon or a superior one, then the special dragon is available via HC
+				if(biggestOwnedDragon.GetOrder() >= requiredDragon.GetOrder()) {
+					return true;
+				}
+			}
+
+			// b) Dragon Tier
+			else {
+				// Make sure it's a tier sku
+				DragonTier unlockTier = SkuToTier(m_unlockFromDragon);
+				if(unlockTier != DragonTier.COUNT) {
+					// If biggest owned dragon is from a higher tier than the required one, dragon is available!
+					if(biggestOwnedDragon.tier >= unlockTier) {
+						return true;
+					}
+				}
+			}
         }
 
         return false;
