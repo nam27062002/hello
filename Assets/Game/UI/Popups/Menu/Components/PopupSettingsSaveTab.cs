@@ -392,6 +392,12 @@ public class PopupSettingsSaveTab : MonoBehaviour
     public void IAP_RestorePurchases()
     {
 
+        if (UsersManager.currentUser.removeAds.IsActive)
+        {
+            UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_PURCHASES_ALREADY_RESTORED"), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
+            return;
+        }
+
         // Call to the store to restore the purchases
         OpenLoadingPopup();
 
@@ -406,6 +412,16 @@ public class PopupSettingsSaveTab : MonoBehaviour
     {
         // The loading popup is still open!
         CloseLoadingPopup();
+
+        bool error = true;
+        if (error)
+        {
+            PersistenceFacade.Popups_OpenStoreErrorConnection(delegate ()
+            {
+                Log("ERROR connecting to the store... ");
+            });
+            return;
+        }
 
         // Fake a remove ads rewards and push it the rewards stack
         UsersManager.currentUser.PushReward(Metagame.Reward.CreateTypeRemoveAds());
@@ -422,6 +438,9 @@ public class PopupSettingsSaveTab : MonoBehaviour
             scr.StartFlow(false);   // No intro
             InstanceManager.menuSceneController.GoToScreen(MenuScreen.PENDING_REWARD);
 
+        } else
+        {
+            UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_NOTHING_TO_RESTORE"), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
         }
     }
 
