@@ -90,7 +90,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_blendSpeedFactor: 1
-  m_energy: 10
+  m_energy: 7
   m_energyDrainSec: 1
   m_energyRecoverSec: 1
   m_machine: {fileID: 0}
@@ -99,7 +99,7 @@ MonoBehaviour:
     min: 2
     max: 2.5
   m_useSpawnerRotation: 0
-  m_serializedJson: '[{"restTime":{"min":1,"max":1},"randomLookAt":false,"dataType":"AI.Behaviour.IdleData","editorFolded":false},{"speed":5.5,"isWallWalking":false,"timeToIdle":{"min":1,"max":1},"timeToChangeDirection":{"min":2,"max":2},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false},{"speed":7,"dataType":"AI.Behaviour.HomeSenseDragonData","editorFolded":false},{"speed":0,"arrivalRadius":1,"hasGuardState":false,"moveAwayOnCritical":true,"dataType":"AI.Behaviour.PursuitGroundData","editorFolded":false},{"timeBeforeBackHome":1,"dataType":"AI.Behaviour.InAreaControlData","editorFolded":false},{"dataType":"AI.Behaviour.GuardOutOfRangeData","editorFolded":false},{"guardTime":{"min":2,"max":2},"dataType":"AI.Behaviour.GuardOutOfSightData","editorFolded":false},{"standUpTime":1,"dataType":"AI.Behaviour.OnGroundData","editorFolded":true},{"jumpVelocity":15,"damage":5,"consecutiveAttacks":3,"dizzyTime":1,"retreatTime":1,"maxFacingAngle":40,"dataType":"AI.Behaviour.NianAttackData","editorFolded":false}]'
+  m_serializedJson: '[{"restTime":{"min":1,"max":1},"randomLookAt":false,"dataType":"AI.Behaviour.IdleData","editorFolded":false},{"speed":5.5,"isWallWalking":false,"timeToIdle":{"min":1,"max":1},"timeToChangeDirection":{"min":2,"max":2},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false},{"speed":7,"dataType":"AI.Behaviour.HomeSenseDragonData","editorFolded":false},{"speed":0,"arrivalRadius":1,"hasGuardState":false,"moveAwayOnCritical":true,"dataType":"AI.Behaviour.PursuitGroundData","editorFolded":false},{"timeBeforeBackHome":1,"dataType":"AI.Behaviour.InAreaControlData","editorFolded":false},{"dataType":"AI.Behaviour.GuardOutOfRangeData","editorFolded":false},{"guardTime":{"min":2,"max":2},"dataType":"AI.Behaviour.GuardOutOfSightData","editorFolded":false},{"standUpTime":1,"dataType":"AI.Behaviour.OnGroundData","editorFolded":true},{"jumpVelocity":12,"damage":25,"consecutiveAttacks":3,"dizzyTime":1,"retreatTime":1,"maxFacingAngle":40,"dataType":"AI.Behaviour.NianAttackData","editorFolded":false}]'
   m_databaseKey: PF_Nian
 --- !u!114 &11485410
 MonoBehaviour:
@@ -802,7 +802,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_activation: 0
-  m_damage: 1
+  m_damage: 25
   m_timeBetweenHits: 0.25
   m_damageType: 0
   m_knockback: 0
