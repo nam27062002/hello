@@ -696,6 +696,9 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 			return;
 		}
 
+		// Similarly, don't show anything if we have pending rewards!
+		if(UsersManager.currentUser.rewardStack.Count > 0) return;
+
 		// Do we come from playing? (whetever is Classic, Lab or Tournament)
 		SetFlag(StateFlag.COMING_FROM_A_RUN, _from == MenuScreen.NONE && _to != MenuScreen.PLAY);
 
