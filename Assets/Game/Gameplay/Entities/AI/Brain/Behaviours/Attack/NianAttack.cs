@@ -90,7 +90,7 @@ namespace AI {
 
 				m_machine.SetSignal(Signals.Type.InvulnerableBite, false);
 				m_pilot.ReleaseAction(Pilot.Action.Attack);
-				m_pilot.ReleaseAction(Pilot.Action.Button_B);
+				// m_pilot.ReleaseAction(Pilot.Action.Button_B);
 				m_pilot.ReleaseAction(Pilot.Action.Jump);
 
 				m_pilot.SetDirection(m_pilot.direction, false);
@@ -139,7 +139,7 @@ namespace AI {
 						if (m_timer > 0f) {
 							m_timer -= Time.deltaTime;
 							if (m_timer <= 0f) {
-								m_pilot.ReleaseAction(Pilot.Action.Button_B);
+								// m_pilot.ReleaseAction(Pilot.Action.Button_B);
 								DizzyRecover();
 							}
 						}
@@ -198,7 +198,7 @@ namespace AI {
 							Transition(onOutOfRange);
 						}
 					} else {
-						m_pilot.PressAction(Pilot.Action.Button_B);
+						// m_pilot.PressAction(Pilot.Action.Button_B);
 						m_timer = m_data.dizzyTime;
 						m_attackState = AttackState.Dizzy;
 					}
