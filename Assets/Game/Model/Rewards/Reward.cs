@@ -346,11 +346,22 @@ namespace Metagame {
 			return m_replacement != null;
 		}
 
-		/// <summary>
-		/// Return a visual representation of the reward.
-		/// </summary>
-		/// <returns>A <see cref="System.String"/> that represents the current <see cref="Metagame.Reward"/>.</returns>
-		public override string ToString() {			
+        /// <summary>
+        /// This method checks if the reward is already owned by the player. This is applicable in
+        /// non-consumable items like dragons, skins and the remove ads offer. Currency packs will be always
+        /// marked as not owned.
+        /// </summary>
+        /// <returns></returns>
+        public virtual bool IsAlreadyOwned()
+        {
+            return false;
+        }
+
+        /// <summary>
+        /// Return a visual representation of the reward.
+        /// </summary>
+        /// <returns>A <see cref="System.String"/> that represents the current <see cref="Metagame.Reward"/>.</returns>
+        public override string ToString() {			
 			return "[" + GetType() + ": " + m_amount + "]";
 		}
 

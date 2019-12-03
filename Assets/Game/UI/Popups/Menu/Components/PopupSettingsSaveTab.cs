@@ -388,6 +388,43 @@ public class PopupSettingsSaveTab : MonoBehaviour
 		}
 		Cloud_OnChangeSaveEnable();
 	}
+
+    public void IAP_RestorePurchases()
+    {
+
+        // Call to the store to restore the purchases
+        OpenLoadingPopup();
+
+        // Faking the call to the server
+        UbiBCN.CoroutineManager.DelayedCall(() => {
+            OnRestorePurchasesCompleted();
+            }, 3f);
+
+    }
+
+    private void OnRestorePurchasesCompleted()
+    {
+        // The loading popup is still open!
+        CloseLoadingPopup();
+
+        // Fake a remove ads rewards and push it the rewards stack
+        UsersManager.currentUser.PushReward(Metagame.Reward.CreateTypeRemoveAds());
+
+        if (UsersManager.currentUser.rewardStack.Count > 0)
+        {
+
+            // Return to selection screen and show peding rewards
+            // Close all open popups
+            PopupManager.Clear(true);
+
+            // Move to the rewards screen
+            PendingRewardScreen scr = InstanceManager.menuSceneController.GetScreenData(MenuScreen.PENDING_REWARD).ui.GetComponent<PendingRewardScreen>();
+            scr.StartFlow(false);   // No intro
+            InstanceManager.menuSceneController.GoToScreen(MenuScreen.PENDING_REWARD);
+
+        }
+    }
+
     #endregion
 
     #region resync

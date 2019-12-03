@@ -1887,6 +1887,11 @@ public class UserProfile : UserPersistenceSystem
 	/// </summary>
 	/// <param name="_reward">Reward to be pushed.</param>
 	public void PushReward(Metagame.Reward _reward) {
+
+        // Dont push rewards that are already owned by the user
+        if (_reward.IsAlreadyOwned())
+            return;
+
 		rewardStack.Push(_reward);
 		Debug.Log("<color=green>PUSH! " + _reward.GetType().Name + "</color>");
 		Messenger.Broadcast<Metagame.Reward>(MessengerEvents.PROFILE_REWARD_PUSHED, _reward);

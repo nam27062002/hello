@@ -30,6 +30,20 @@ namespace Metagame {
         // MEMBERS AND PROPERTIES												  //
         //------------------------------------------------------------------------//
 
+
+        /// <summary>
+        /// This method checks if the reward is already owned by the player. This is applicable in
+        /// non-consumable items like dragons, skins and the remove ads offer. Currency packs will be always
+        /// marked as not owned.
+        /// </summary>
+        /// <returns></returns>
+        public override bool IsAlreadyOwned()
+        {
+            // If remove ads is active, means that the player already bought it
+            return UsersManager.currentUser.removeAds.IsActive;
+        }
+
+
         //------------------------------------------------------------------------//
         // GENERIC METHODS														  //
         //------------------------------------------------------------------------//
