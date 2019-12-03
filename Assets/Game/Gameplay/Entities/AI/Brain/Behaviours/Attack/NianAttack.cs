@@ -39,6 +39,7 @@ namespace AI {
 			private AttackState m_attackState;
 			private MC_MotionGround mC_MotionGround;
 			private bool m_impulsed = false;
+			private ViewControl m_nianViewControl;
 
 
 			//-----------------------------------------------------
@@ -60,6 +61,8 @@ namespace AI {
 				m_meleeWeapon.enabled = false;
 
 				mC_MotionGround = (m_machine as MachineGround).groundMotion;
+				m_nianViewControl = (m_viewControl as ViewControl);
+				
 			}
 
 			protected override void OnEnter(State _oldState, object[] _param) {
@@ -108,7 +111,8 @@ namespace AI {
 							Vector3 pilotDir = m_pilot.transform.forward;
 							lookDir.y = pilotDir.y = 0;
 							float angle = Vector2.Angle( lookDir, pilotDir);
-							if (Mathf.Abs(angle) <= m_data.maxFacingAngle) {
+							m_timer -= Time.deltaTime;
+							if (Mathf.Abs(angle) <= m_data.maxFacingAngle && m_timer <= 0) {
 								StartAttack();
 							}
 							else
@@ -152,7 +156,6 @@ namespace AI {
 
 			private void Jump() {
 				m_impulsed = true;
-
 				m_meleeWeapon.enabled = true;
 
 				Vector3 direction = Vector3.right;
@@ -167,6 +170,8 @@ namespace AI {
 
             private void FallDown() {
                 m_machine.SetSignal(Signals.Type.InvulnerableBite, false);
+				m_nianViewControl.Falling(true);
+				m_pilot.ReleaseAction(Pilot.Action.Jump);
 				Vector3 direction = GameConstants.Vector3.right;
 				if ( m_machine.direction.x < 0 )
 					direction = GameConstants.Vector3.left;
@@ -174,6 +179,7 @@ namespace AI {
             }
 
 			private void EndAttack() {
+				m_pilot.ReleaseAction(Pilot.Action.Jump);
 				if ( m_attackState == AttackState.Attack )
 				{
 					m_meleeWeapon.enabled = false;
@@ -186,19 +192,17 @@ namespace AI {
 
 					if (m_attacksLeft > 0) {
 						if (m_machine.GetSignal(Signals.Type.Danger)) {
+							m_timer = 1.0f;
 							m_attackState = AttackState.Idle;
 						} else {
 							Transition(onOutOfRange);
 						}
 					} else {
 						m_pilot.PressAction(Pilot.Action.Button_B);
-						
 						m_timer = m_data.dizzyTime;
-
 						m_attackState = AttackState.Dizzy;
 					}
 				}
-				
 			}
 
 			private void DizzyRecover() {
