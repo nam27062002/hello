@@ -121,9 +121,7 @@ public class MenuDragonScreenController : MonoBehaviour {
 	private void Update() {
 		// Do we have a screen change pending?
 		MenuSceneController scene = InstanceManager.menuSceneController;
-        if(m_goToScreen != MenuScreen.NONE
-		&& scene.transitionManager.transitionAllowed
-		&& !scene.transitionManager.isTransitioning) {
+        if(m_goToScreen != MenuScreen.NONE && scene.transitionManager.transitionAllowed) {
 			// Which screen?
 			switch(m_goToScreen) {
 				case MenuScreen.EVENT_REWARD: {
