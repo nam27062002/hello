@@ -364,8 +364,14 @@ public class GameStoreManagerCalety : GameStoreManager
                 HDTrackingManager.Instance.Notify_IAPStarted();
 				Log("Requesting product " + _sku + " to the native store");
 				StoreManager.SharedInstance.RequestProduct (_sku);
-    		}
-    	}
+    		} else {
+				Log("Attempting to purchase a product with invalid SKU!");
+				m_storeListener.onPurchaseFailed(_sku, "UNKNOWN TRANSACTION ID");	// Simulate actual store behaviour to properly finalize transaction attempt
+			}
+    	} else {
+			Log("User can't make payments! Attempting to purchase " + _sku);
+			m_storeListener.onPurchaseFailed(_sku, "UNKNOWN TRANSACTION ID");	// Simulate actual store behaviour to properly finalize transaction attempt
+		}
 #endif
 	}		   
 
