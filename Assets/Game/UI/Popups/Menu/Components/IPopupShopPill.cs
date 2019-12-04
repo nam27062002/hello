@@ -286,9 +286,8 @@ public abstract class IPopupShopPill : MonoBehaviour {
 	/// <summary>
 	/// Connection to the store has been checked.
 	/// </summary>
-	void OnConnectionCheckFinished(FGOL.Server.Error _connectionError) {
+	private void OnConnectionCheckFinished(FGOL.Server.Error _connectionError) {
 		Log("OnConnectionCheckFinished: Error " + (_connectionError == null ? "NULL" : _connectionError.ToString()));
-
 		if(_connectionError == null) {
 			// No error! Proceed with the IAP flow
 			Log("OnConnectionCheckFinished: No Error! Proceed with IAP flow");
@@ -372,6 +371,13 @@ public abstract class IPopupShopPill : MonoBehaviour {
 
 			// Finalize IAP flow
 			EndPurchase(false);
+
+			// Show some feedback to the player
+			UIFeedbackText.CreateAndLaunch(
+				LocalizationManager.SharedInstance.Localize("TID_RESOURCES_FLOW_UNKNOWN_ERROR"),
+				new Vector2(0.5f, 0.5f),
+				this.GetComponentInParent<Canvas>().transform as RectTransform
+			);
 		}
 	}
 
