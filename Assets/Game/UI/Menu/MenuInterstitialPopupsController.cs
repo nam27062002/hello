@@ -25,13 +25,14 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 
 	// Custom flags altering the standard flow
 	[System.Flags]
-	private enum StateFlag {
+	public enum StateFlag {
 		NONE = 1 << 0,
 		NEW_DRAGON_UNLOCKED = 1 << 1,
 		POPUP_DISPLAYED = 1 << 2,
 		WAIT_FOR_CUSTOM_POPUP = 1 << 3,
 		CHECKING_CONNECTION = 1 << 4,
-		COMING_FROM_A_RUN = 1 << 5
+		COMING_FROM_A_RUN = 1 << 5,
+		OPEN_OFFERS_SHOP = 1 << 6
 	}
 
 	//------------------------------------------------------------------------//
@@ -100,7 +101,7 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 	/// </summary>
 	/// <param name="_flag">Flag.</param>
 	/// <param name="_value">new value for that flag.</param>
-	private void SetFlag(StateFlag _flag, bool _value) {
+	public void SetFlag(StateFlag _flag, bool _value) {
 		// Special case for NONE
 		if(_flag == StateFlag.NONE) {
 			m_stateFlags = _flag;	// Clear all flags
@@ -641,7 +642,6 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
     /// </summary>
     private void CheckHappyHourOffer()
     {
-
         // Check if there is a happy hour
         if (OffersManager.instance.happyHour == null)
             return;
@@ -673,7 +673,18 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
         // Show the popup
         PopupManager.EnqueuePopup(popup);
 
-    }
+		// Set flag
+		if(popup != null) {
+			SetFlag(StateFlag.POPUP_DISPLAYED, true);
+		}
+	}
+
+	/// <summary>
+	/// Do we need to open the offers shop?
+	/// </summary>
+	private void CheckOffersShop() {
+		// [AOC] TODO!!
+	}
 
     //------------------------------------------------------------------------//
     // CALLBACKS															  //
@@ -720,11 +731,11 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 		CheckRating();
 		CheckSurvey();
 		CheckSilentNotification();
+		CheckOffersShop();
 		CheckFeaturedOffer();
 		CheckInterstitialCP2();
 		CheckDownloadAssets();
         CheckHappyHourOffer();
-
     }
 
 	/// <summary>
