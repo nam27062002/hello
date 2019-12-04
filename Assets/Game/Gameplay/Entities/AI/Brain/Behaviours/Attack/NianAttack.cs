@@ -113,15 +113,24 @@ namespace AI {
 							// Check face to shoot
 							Vector3 lookDir = m_machine.enemy.position - m_machine.position;
 							Vector3 pilotDir = m_pilot.transform.forward;
-							lookDir.y = pilotDir.y = 0;
+							lookDir.z = pilotDir.z = 0;
 							float angle = Vector2.Angle( lookDir, pilotDir);
 							m_timer -= Time.deltaTime;
-							if (Mathf.Abs(angle) <= m_data.maxFacingAngle && m_timer <= 0) {
+							if (Mathf.Abs(angle) <= m_data.maxFacingAngle && m_timer <= 0 && m_machine.enemy.position.y > m_machine.position.y) {
 								StartAttack();
 							}
 							else
 							{
-								m_pilot.SetDirection(lookDir.normalized, true);
+								// Mix with ground direction!
+								if ( Vector3.Dot( lookDir, mC_MotionGround.groundDirection )  >= 0) 
+								{
+									m_pilot.SetDirection( mC_MotionGround.groundDirection, true);
+								}
+								else
+								{
+									m_pilot.SetDirection( -mC_MotionGround.groundDirection, true);
+								}
+								
 							}
 						}
 						break;
