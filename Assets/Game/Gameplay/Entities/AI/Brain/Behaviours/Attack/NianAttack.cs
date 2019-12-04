@@ -90,13 +90,17 @@ namespace AI {
 
 				m_machine.SetSignal(Signals.Type.InvulnerableBite, false);
 				m_pilot.ReleaseAction(Pilot.Action.Attack);
-				// m_pilot.ReleaseAction(Pilot.Action.Button_B);
 				m_pilot.ReleaseAction(Pilot.Action.Jump);
-
 				m_pilot.SetDirection(m_pilot.direction, false);
 			}
 
 			protected override void OnUpdate() {
+				if ( mC_MotionGround.state == MC_Motion.State.StandUp )
+				{
+					// Force Stand up
+					mC_MotionGround.OnStandUp();
+				}
+
 				switch (m_attackState) {
 					case AttackState.Idle:
 						// Check if out of range
@@ -139,7 +143,6 @@ namespace AI {
 						if (m_timer > 0f) {
 							m_timer -= Time.deltaTime;
 							if (m_timer <= 0f) {
-								// m_pilot.ReleaseAction(Pilot.Action.Button_B);
 								DizzyRecover();
 							}
 						}
@@ -180,32 +183,35 @@ namespace AI {
 
 			private void EndAttack() {
 				m_pilot.ReleaseAction(Pilot.Action.Jump);
-				if ( m_attackState == AttackState.Attack )
-				{
-					m_meleeWeapon.enabled = false;
-					m_pilot.Stop();
+				m_meleeWeapon.enabled = false;
+				m_pilot.Stop();
 
-					Vector3 direction = GameConstants.Vector3.right;
-					if ( m_machine.direction.x < 0 )
-						direction = GameConstants.Vector3.left;
-					m_pilot.SetDirection(direction, true);
+				Vector3 direction = GameConstants.Vector3.right;
+				if ( m_machine.direction.x < 0 )
+					direction = GameConstants.Vector3.left;
+				m_pilot.SetDirection(direction, true);
 
-					if (m_attacksLeft > 0) {
-						if (m_machine.GetSignal(Signals.Type.Danger)) {
-							m_timer = 1.0f;
-							m_attackState = AttackState.Idle;
-						} else {
-							Transition(onOutOfRange);
-						}
+				if (m_attacksLeft > 0) {
+					if (m_machine.GetSignal(Signals.Type.Danger)) {
+						m_timer = 1.0f;
+						m_attackState = AttackState.Idle;
 					} else {
-						// m_pilot.PressAction(Pilot.Action.Button_B);
-						m_timer = m_data.dizzyTime;
-						m_attackState = AttackState.Dizzy;
+						Transition(onOutOfRange);
 					}
+				} else {
+					m_timer = m_data.dizzyTime;
+					m_attackState = AttackState.Dizzy;
 				}
+
+				if ( mC_MotionGround.state == MC_Motion.State.FreeFall )
+				{
+					// Force go to idle!
+				}
+				
 			}
 
 			private void DizzyRecover() {
+
 				m_machine.DisableSensor(m_data.retreatTime);
 				Transition(onDizzyRecover);
 			}
