@@ -844,7 +844,17 @@ public class UserProfile : UserPersistenceSystem
 
 			JSONNode json = JSON.Parse(jsonAsString);
             Load(json);
-        }       
+
+
+        }
+
+        // Load Remove Ads offer from player prefs
+        m_removeAds.InitializeFromDefinition();
+        string jsonString = PlayerPrefs.GetString("removeAds");
+        if (!string.IsNullOrEmpty(jsonString))
+        {
+            m_removeAds.Load(SimpleJSON.JSON.Parse(jsonString));
+        }
     }
 
     public override void Save()
@@ -857,8 +867,17 @@ public class UserProfile : UserPersistenceSystem
         JSONNode json = ToJson();
 		m_persistenceData.Merge(json.ToString(), false);
 
-		#if UNITY_EDITOR
-		PrintJsonString(json.ToString(), "<color=cyan>SAVING USER PROFILE:</color>\n");
+        // Save remove ads in player prefs
+        SimpleJSON.JSONNode jsonNode = m_removeAds.Save();
+        if (jsonNode != null)
+        {
+            string jsonString = jsonNode.ToString();
+            PlayerPrefs.SetString("removeAds", jsonString);
+        }
+
+
+#if UNITY_EDITOR
+        PrintJsonString(json.ToString(), "<color=cyan>SAVING USER PROFILE:</color>\n");
 		#endif
 	}
 
@@ -1193,14 +1212,6 @@ public class UserProfile : UserPersistenceSystem
         }
 
 
-        // Remove Ads offer
-        m_removeAds.InitializeFromDefinition();
-        if (_data.ContainsKey("removeAdsFeature"))
-        {
-            m_removeAds.Load(_data["removeAdsFeature"]);
-        }
-
-
         // Visited Zones
         key = "visitedZones";
         m_visitedZones.Clear();
@@ -1423,7 +1434,7 @@ public class UserProfile : UserPersistenceSystem
         data.Add("happyHourOffer", happyHour);
 
         // Remove Ads offer
-        data.Add("removeAdsFeature", m_removeAds.Save());
+        //data.Add("removeAdsFeature", m_removeAds.Save());
 
         // Visited Zones
         JSONArray zonesArray = new SimpleJSON.JSONArray();
