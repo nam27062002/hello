@@ -40,11 +40,6 @@ MonoBehaviour:
   - m_name: Guard Out Of Area
     m_componentAssets:
     - {fileID: 11400000, guid: 1aa6a987737404ae78164d034163a12c, type: 2}
-  - m_name: Fall Down
-    m_componentAssets: []
-  - m_name: On hit ground
-    m_componentAssets:
-    - {fileID: 11400000, guid: 6020d90484daa470db6214589eaf25ff, type: 2}
   m_transitionData:
   - to: 1
     id: onRest
@@ -109,14 +104,5 @@ MonoBehaviour:
   - to: 3
     id: onEnemyInRange
     from: 4
-  - to: 1
-    id: onRecover
-    from: 9
-  - to: 8
-    id: onFallDown
-    from: -1
-  - to: 9
-    id: OnGround
-    from: -1
   m_firstState_A: 0
   m_firstState_B: 1

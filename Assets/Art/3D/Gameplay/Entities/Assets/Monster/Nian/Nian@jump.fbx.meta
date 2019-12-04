@@ -106,6 +106,7 @@ ModelImporter:
     7400004: jump_attack_loop
     7400006: jump_fall_loop
     7400008: jump_land
+    7400010: jump
     9500000: //RootNode
   externalObjects: {}
   materials:
@@ -137,8 +138,8 @@ ModelImporter:
     - serializedVersion: 16
       name: jump_start
       takeName: jump
-      firstFrame: 13
-      lastFrame: 48
+      firstFrame: 0
+      lastFrame: 35
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -158,7 +159,7 @@ ModelImporter:
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
       events:
-      - time: 0.5845725
+      - time: 0.69171536
         functionName: OnJumpImpulse
         data: 
         objectReferenceParameter: {instanceID: 0}
@@ -172,8 +173,8 @@ ModelImporter:
     - serializedVersion: 16
       name: jump_attack_loop
       takeName: jump
-      firstFrame: 48
-      lastFrame: 58
+      firstFrame: 36
+      lastFrame: 38
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -200,8 +201,8 @@ ModelImporter:
     - serializedVersion: 16
       name: jump_fall_loop
       takeName: jump
-      firstFrame: 67
-      lastFrame: 77
+      firstFrame: 37
+      lastFrame: 50
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -228,8 +229,8 @@ ModelImporter:
     - serializedVersion: 16
       name: jump_land
       takeName: jump
-      firstFrame: 78
-      lastFrame: 110
+      firstFrame: 51
+      lastFrame: 85
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
