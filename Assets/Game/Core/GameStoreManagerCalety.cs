@@ -68,14 +68,14 @@ public class GameStoreManagerCalety : GameStoreManager
             string purchaseSkuTriggered = m_manager.GetPurchaseSkuTriggeredByUser();
 
 #if ENABLE_LOGS                  
-            string msg = "onPurchaseCompleted sku = " + sku + " purchaseSkuTriggeredByUser = " + purchaseSkuTriggered + " strTransactionID = " + strTransactionID + " strPlatformOrderID = " + strPlatformOrderID + " receipt = ";
+            string msg = "onPurchaseCompleted: sku = " + sku + " | purchaseSkuTriggeredByUser = " + purchaseSkuTriggered + " | strTransactionID = " + strTransactionID + " | strPlatformOrderID = " + strPlatformOrderID + " | receipt = ";
             if (kReceiptJSON == null)
             {
                 msg += "null";
             }
             else
             {
-                msg +=  kReceiptJSON.ToString();
+                msg += kReceiptJSON.ToString();
             }
 
             Log(msg);
@@ -135,7 +135,7 @@ public class GameStoreManagerCalety : GameStoreManager
 		{
             string purchaseSkuTriggered = m_manager.GetPurchaseSkuTriggeredByUser();
             
-            Log("onPurchaseCancelled sku completed " + sku + " purchaseSkuTriggeredByUser = " + purchaseSkuTriggered);
+            Log("onPurchaseCancelled: sku = " + sku + " | purchaseSkuTriggeredByUser = " + purchaseSkuTriggered + " | transactionID = " + strTransactionID);
 
 			Messenger.Broadcast<string>(MessengerEvents.PURCHASE_CANCELLED, purchaseSkuTriggered);
 
@@ -146,7 +146,7 @@ public class GameStoreManagerCalety : GameStoreManager
 		{
             string purchaseSkuTriggered = m_manager.GetPurchaseSkuTriggeredByUser();
             
-    		Log("onPurchaseFailed sku completed = " + sku + " purchaseSkuTriggeredByUser = " + purchaseSkuTriggered + " transactionID = " + strTransactionID);
+    		Log("onPurchaseFailed: sku = " + sku + " | purchaseSkuTriggeredByUser = " + purchaseSkuTriggered + " | transactionID = " + strTransactionID);
 
 			Messenger.Broadcast<string>(MessengerEvents.PURCHASE_FAILED, purchaseSkuTriggered);
 
@@ -373,17 +373,17 @@ public class GameStoreManagerCalety : GameStoreManager
 			m_storeListener.onPurchaseFailed(_sku, "UNKNOWN TRANSACTION ID");	// Simulate actual store behaviour to properly finalize transaction attempt
 		}
 #endif
-	}		   
+	}
 
-    IEnumerator SimulatePurchase( string _sku)
+	IEnumerator SimulatePurchase( string _sku)
     {
 		yield return new WaitForSecondsRealtime( 0.25f );
 		// string item = GameSkuToPlatformSku( _sku );
-		 m_storeListener.onPurchaseCompleted( _sku, "", null, "");
-        //m_storeListener.onPurchaseFailed("UNKOWN", ""); // Simulate current store behaviour
-    }
+		m_storeListener.onPurchaseCompleted( _sku, "", null, "");
+		//m_storeListener.onPurchaseFailed(_sku, "UNKNOWN TRANSACTION ID"); // Simulate actual store behaviour
+	}
 
-    void OnPurchaseDone()
+	void OnPurchaseDone()
     {
         m_purchaseSkuTriggeredByUser = null;
     }
