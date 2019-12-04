@@ -109,6 +109,17 @@ public class PopupShopFreeOfferPill : PopupShopOffersPill {
 		return HDTrackingManager.EEconomyGroup.SHOP_AD_OFFER_PACK;
 	}
 
+	/// <summary>
+	/// Apply the shop pack to the current user!
+	/// Invoked after a successful purchase.
+	/// </summary>
+	override protected void ApplyShopPack() {
+		// We are going to go to the rewards screen, but we want to open the shop
+		// again once all rewards are collected so the player realizes the free offer
+		// is on cooldown and takes one more look at the rest of offers
+		// [AOC] TODO!!
+	}
+
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
