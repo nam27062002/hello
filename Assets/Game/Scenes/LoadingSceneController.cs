@@ -787,6 +787,7 @@ public class LoadingSceneController : SceneController {
 
                 // Settings and setup
                 GameSettings.CreateInstance(false);
+				GameSettings.InitFromDefinitions();
 
                 // Tech
                 GameSceneManager.CreateInstance(true);
@@ -983,10 +984,10 @@ public class LoadingSceneController : SceneController {
 
     private void UnsupportedDevice_OnQuit()
     {
-        HDTrackingManager.Instance.Notify_PopupUnsupportedDeviceAction(HDTrackingManager.EPopupUnsupportedDeviceAction.Quit);        
+        HDTrackingManager.Instance.Notify_PopupUnsupportedDeviceAction(HDTrackingManager.EPopupUnsupportedDeviceAction.Quit);
 
-        // The user quits the application
-        Application.Quit();
+        // The user quits the application        
+        DeviceUtilsManager.SharedInstance.ExitGame();
     }
 
     private void UnsupportedDevice_Continue()

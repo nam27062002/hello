@@ -22,9 +22,11 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
 	public const string RATING_DRAGON = "dragon_crocodile";
+    public const string INTERSTITIALS_WATCHED = "interstitialsWatched";
 
-	// Custom flags altering the standard flow
-	[System.Flags]
+
+    // Custom flags altering the standard flow
+    [System.Flags]
 	private enum StateFlag {
 		NONE = 1 << 0,
 		NEW_DRAGON_UNLOCKED = 1 << 1,
@@ -474,10 +476,7 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 		if(m_currentScreen != MenuScreen.DRAGON_SELECTION) return;
 
 		// Is photo feature available? (FTUX)
-		ShowOnTutorialStep photoTutorialTrigger = InstanceManager.menuSceneController.hud.photoButton.GetComponentsInParent<ShowOnTutorialStep>(true)[0];	// [AOC] GetComponentInParent<T>() doesn't include disabled objects (and the parent object can actually be inactive triggered by the same ShowOnTutorialStep component we're looking for xD), so we're forced to use GetComponentsInParent<T>(bool includeInactive)[0] instead.
-		if(photoTutorialTrigger != null) {
-			if(!photoTutorialTrigger.Check()) return;
-		}
+		if(!ShareButton.CanBeDisplayed()) return;
 
         // OTA: Are all the asset bundles downloaded?
         Downloadables.Handle allContentHandle  = HDAddressablesManager.Instance.GetHandleForAllDownloadables();
@@ -678,6 +677,41 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 
     }
 
+    /// <summary>
+    /// If the player has watched enough interstitials
+    /// we show him a Remove ads offer popup.
+    /// </summary>
+    /// <returns>Did the player saw more than X interstitials?</returns>
+    private bool MustShowRemoveAdsPopup()
+    {
+
+        if (UsersManager.currentUser.removeAds.IsActive)
+        {
+            // This case should never happen. The user already bought the offer so cannot see interstitials. 
+            return false;
+        }
+        
+        int interstitialsWatched = PlayerPrefs.GetInt(INTERSTITIALS_WATCHED);
+        int interstitialsBeforeRemoveAdsPopup = OffersManager.settings.interstitialsBeforeNoAdsPopup;
+        int interstitialsBetweenRemoveAdsPopup = OffersManager.settings.interstitialsBetweenNoAdsPopup;
+
+        // Didnt watched enought interstitials
+        if (interstitialsWatched < interstitialsBeforeRemoveAdsPopup)
+            return false;
+
+        // Show first popup
+        if (interstitialsWatched == interstitialsBeforeRemoveAdsPopup)
+            return true;
+
+
+        if (interstitialsBetweenRemoveAdsPopup <= 0)
+            return false;
+
+        // Iterative popups (show every N interstitials)
+        return ((interstitialsWatched - interstitialsBeforeRemoveAdsPopup) % interstitialsBetweenRemoveAdsPopup == 0);
+
+    }
+
     //------------------------------------------------------------------------//
     // CALLBACKS															  //
     //------------------------------------------------------------------------//
@@ -698,6 +732,9 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 			SetFlag(StateFlag.NEW_DRAGON_UNLOCKED, false);
 			return;
 		}
+
+		// Similarly, don't show anything if we have pending rewards!
+		if(UsersManager.currentUser.rewardStack.Count > 0) return;
 
 		// Do we come from playing? (whetever is Classic, Lab or Tournament)
 		SetFlag(StateFlag.COMING_FROM_A_RUN, _from == MenuScreen.NONE && _to != MenuScreen.PLAY);
@@ -761,5 +798,24 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 		if(rewardGiven) {
 			GameAds.instance.ResetIntersitialCounter();
 		}
-	}
+
+        // Increment counter
+        PlayerPrefs.SetInt(INTERSTITIALS_WATCHED, PlayerPrefs.GetInt(INTERSTITIALS_WATCHED) + 1);
+
+        // After X interstitials, show a remove ads popup
+        if ( MustShowRemoveAdsPopup() )
+        {
+            // Load the popup
+            PopupController popup = PopupManager.LoadPopup(PopupRemoveAdsOffer.PATH);
+            PopupRemoveAdsOffer popupRemoveAdsOffer = popup.GetComponent<PopupRemoveAdsOffer>();
+
+            // Initialize it with the remove ad offer (if exists)
+            popupRemoveAdsOffer.Init();
+
+            // Show the popup
+            popup.Open();
+
+        }
+
+    }
 }
