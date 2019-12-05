@@ -344,9 +344,6 @@ public class GameSceneController : GameSceneControllerBase {
         // Call parent
         base.OnDestroy();
 
-        CPModifiers.RemoveLaterMods();
-        HDLiveDataManager.instance.RemoveLaterMods();
-
         CustomParticlesCulling.Manager_OnDestroy();
         Scene emptyScene = new Scene();
         ObjectPoolController.defaultInstantiateSceme = emptyScene;
@@ -640,6 +637,9 @@ public class GameSceneController : GameSceneControllerBase {
 			} break;
 
             case EStates.SHOWING_RESULTS: {
+                CPModifiers.RemoveLaterMods();
+                HDLiveDataManager.instance.RemoveLaterMods();
+
 				if (!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.FIRST_RUN)) {
 					HDTrackingManager.Instance.Notify_Funnel_FirstUX(FunnelData_FirstUX.Steps._04_run_is_done);
 				}
