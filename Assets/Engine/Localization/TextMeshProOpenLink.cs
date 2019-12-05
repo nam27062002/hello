@@ -7,18 +7,6 @@ using UnityEngine.EventSystems;
 public class TextMeshProOpenLink : MonoBehaviour, IPointerClickHandler
 {
 
-    // Use this for initialization
-    void Start()
-    {
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-
     public void OnPointerClick(PointerEventData eventData)
     {
         TMP_Text pTextMeshPro = GetComponent<TMP_Text>();

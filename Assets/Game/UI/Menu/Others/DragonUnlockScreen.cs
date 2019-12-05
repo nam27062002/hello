@@ -40,7 +40,7 @@ public class DragonUnlockScreen : MonoBehaviour {
 	[SerializeField] private TextMeshProUGUI m_speedText = null;
 	[Space]
 	[SerializeField] private DragControlRotation m_dragController = null;
-	[SerializeField] private GameObject m_shareButton = null;
+	[SerializeField] private ShareButton m_shareButton = null;
 
 	// Internal
 
@@ -97,7 +97,7 @@ public class DragonUnlockScreen : MonoBehaviour {
 		}
 
 		// Only show photo button if the dragon is owned
-		m_shareButton.SetActive(dragonData.isOwned);
+		m_shareButton.gameObject.SetActive(dragonData.isOwned && ShareButton.CanBeDisplayed());
 
 		// Hide HUD
 		ToggleHUD(false);

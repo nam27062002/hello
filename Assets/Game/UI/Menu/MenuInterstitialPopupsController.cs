@@ -476,10 +476,7 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 		if(m_currentScreen != MenuScreen.DRAGON_SELECTION) return;
 
 		// Is photo feature available? (FTUX)
-		ShowOnTutorialStep photoTutorialTrigger = InstanceManager.menuSceneController.hud.photoButton.GetComponentsInParent<ShowOnTutorialStep>(true)[0];	// [AOC] GetComponentInParent<T>() doesn't include disabled objects (and the parent object can actually be inactive triggered by the same ShowOnTutorialStep component we're looking for xD), so we're forced to use GetComponentsInParent<T>(bool includeInactive)[0] instead.
-		if(photoTutorialTrigger != null) {
-			if(!photoTutorialTrigger.Check()) return;
-		}
+		if(!ShareButton.CanBeDisplayed()) return;
 
         // OTA: Are all the asset bundles downloaded?
         Downloadables.Handle allContentHandle  = HDAddressablesManager.Instance.GetHandleForAllDownloadables();
@@ -735,6 +732,9 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 			SetFlag(StateFlag.NEW_DRAGON_UNLOCKED, false);
 			return;
 		}
+
+		// Similarly, don't show anything if we have pending rewards!
+		if(UsersManager.currentUser.rewardStack.Count > 0) return;
 
 		// Do we come from playing? (whetever is Classic, Lab or Tournament)
 		SetFlag(StateFlag.COMING_FROM_A_RUN, _from == MenuScreen.NONE && _to != MenuScreen.PLAY);

@@ -314,10 +314,12 @@ public class MenuScreensControllerToolbar {
 					GUILayout.Space(indentationWidth);
 
 					// Button
+					EditorGUI.BeginDisabledGroup(label.text.Contains("EMPTY"));
 					if(GUILayout.Button(label)) {
 						// Save it as target screen!
 						_screenToEdit = _group.screens[i];
 					}
+					EditorGUI.EndDisabledGroup();
 				} EditorGUILayout.EndHorizontal();
 			}
 

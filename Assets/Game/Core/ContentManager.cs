@@ -150,7 +150,8 @@ public class ContentManager
             "Rules/dragonSettings",
             "Rules/initialSettings",
             "Rules/missingRessourcesVariablesDefinitions",
-			"Rules/offerSettings"
+			"Rules/offerSettings",
+			"Rules/ftuxSettings"
         });
 
 		kDefinitionFiles.Add(DefinitionsCategory.SEASONS, new string[] { "Rules/seasonsDefinitions" });
@@ -326,6 +327,7 @@ public class ContentManager
     {
         // Cached data need to be reloaded
         OffersManager.InitFromDefinitions();
+		GameSettings.InitFromDefinitions();
 
         // Update all managers 
         // dragonDefinitions.xml
