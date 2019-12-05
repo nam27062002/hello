@@ -176,6 +176,54 @@ namespace Metagame {
 			return null;
 		}
 
+
+        /// <summary>
+        /// Find the reward(s) asociated to the IAP, it will look for in the
+        /// shopPacks and offerPack definitions.
+        /// </summary>
+        /// <param name="_iapSku"></param>
+        /// <returns></returns>
+        public static List<Reward> GetRewardsFromIAP(string _iapSku)
+        {
+            List<Reward> rewards = new List<Reward>();
+
+            OfferPack offerPack = OffersManager.GetOfferPackByIAP(_iapSku);
+
+            if (offerPack == null)
+            {
+                // Then, is an standard shop pack
+                DefinitionNode m_def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SHOP_PACKS, _iapSku);
+                
+                Metagame.Reward.Data shopPack = new Metagame.Reward.Data
+                {
+                    sku = m_def.sku,
+                    typeCode = m_def.Get("type"),
+                    amount = m_def.GetAsLong("amount")
+                };
+
+                // Just in case
+                if (shopPack.typeCode == "hc")
+                    shopPack.typeCode = "pc";
+
+                rewards.Add( CreateFromData(shopPack, HDTrackingManager.EEconomyGroup.UNKNOWN, null) );
+
+            }
+            else
+            {
+                // It is an offer pack, extract all its items
+                foreach (OfferPackItem item in offerPack.items)
+                {
+                    rewards.Add(item.reward);
+                }
+
+            }
+
+            return rewards;
+
+        }
+
+
+
 		// Currencies
 		public static RewardSoftCurrency CreateTypeSoftCurrency(long _amount, HDTrackingManager.EEconomyGroup _economyGroup, string _source, Rarity _rarity = Rarity.COMMON) {
 			return new RewardSoftCurrency(_amount, _rarity, _economyGroup, _source);
