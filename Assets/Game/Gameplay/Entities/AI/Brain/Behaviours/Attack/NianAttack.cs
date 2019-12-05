@@ -58,7 +58,7 @@ namespace AI {
 				m_meleeWeapon = m_pilot.FindComponentRecursive<MeleeWeapon>();
 				m_meleeWeapon.damage = m_data.damage;
 				m_meleeWeapon.entity = m_pilot.GetComponent<Entity>();
-				m_meleeWeapon.enabled = false;
+				m_meleeWeapon.DisableWeapon();
 
 				mC_MotionGround = (m_machine as MachineGround).groundMotion;
 				m_nianViewControl = (m_viewControl as ViewControl);
@@ -81,7 +81,7 @@ namespace AI {
 			}
 
 			protected override void OnExit(State _newState) {
-				m_meleeWeapon.enabled = false;
+				m_meleeWeapon.DisableWeapon();
 
 				m_animEvents.onJumpImpulse   -= new SpartakusAnimationEvents.OnJumpImpulseDelegate(Jump);
                 m_animEvents.onJumpFallDown  -= new SpartakusAnimationEvents.OnJumpFallDownDelegate(FallDown);
@@ -168,7 +168,7 @@ namespace AI {
 
 			private void Jump() {
 				m_impulsed = true;
-				m_meleeWeapon.enabled = true;
+				m_meleeWeapon.EnableWeapon();
 
 				Vector3 direction = Vector3.right;
 				if (m_machine.enemy != null) {
@@ -192,7 +192,7 @@ namespace AI {
 
 			private void EndAttack() {
 				m_pilot.ReleaseAction(Pilot.Action.Jump);
-				m_meleeWeapon.enabled = false;
+				m_meleeWeapon.DisableWeapon();
 				m_pilot.Stop();
 
 				Vector3 direction = GameConstants.Vector3.right;
