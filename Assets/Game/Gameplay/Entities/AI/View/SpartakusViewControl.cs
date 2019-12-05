@@ -33,7 +33,8 @@ public class SpartakusViewControl : ViewControl {
 	public override void Spawn(ISpawner _spawner) {
 		base.Spawn(_spawner);
 
-		m_stars.SetActive(false);
+		if ( m_stars )
+			m_stars.SetActive(false);
 		m_timer = 0f;
 	}
 
@@ -47,7 +48,8 @@ public class SpartakusViewControl : ViewControl {
 					if ( m_onDizzyAudioAO != null )
 						m_onDizzyAudioAO.completelyPlayedDelegate = OnDizzyFinished;
 				}
-			 	m_stars.SetActive(true); 
+				if ( m_stars != null )
+			 		m_stars.SetActive(true); 
 			 }break;	// Dizzy start
 		}
 	}
@@ -97,7 +99,8 @@ public class SpartakusViewControl : ViewControl {
 		if (m_timer > 0f) {
 			m_timer -= Time.deltaTime;
 			if (m_timer <= 0f) {
-				m_stars.SetActive(false);
+				if ( m_stars != null )
+					m_stars.SetActive(false);
 				// Dizzy end
 				RemoveAudioParent( ref m_onDizzyAudioAO );
 			}
