@@ -685,7 +685,26 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 	/// Do we need to open the offers shop?
 	/// </summary>
 	private void CheckOffersShop() {
-		// [AOC] TODO!!
+		// Only if requested
+		if(!GetFlag(StateFlag.OPEN_OFFERS_SHOP)) return;
+
+		// Only in dragon selection screen
+		if(m_currentScreen != MenuScreen.DRAGON_SELECTION) return;
+
+		// If a more prioritary popup has already been opened, don't show and clear flag
+		if(PopupManager.openedPopups.Count + PopupManager.queuedPopups.Count > 0) {
+			SetFlag(StateFlag.OPEN_OFFERS_SHOP, false);
+			return;
+		}
+
+		// All checks passed! Open the shop popup at the offers tab
+		PopupController popup = PopupManager.LoadPopup(PopupShop.PATH);
+		PopupShop shop = popup.GetComponent<PopupShop>();
+		shop.Init(PopupShop.Mode.OFFERS_FIRST, "After_Offer_Rewards");
+		popup.Open();
+
+		// Reset flag
+		SetFlag(StateFlag.OPEN_OFFERS_SHOP, false);
 	}
 
     /// <summary>
@@ -768,8 +787,8 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 		CheckRating();
 		CheckSurvey();
 		CheckSilentNotification();
-		CheckOffersShop();
 		CheckFeaturedOffer();
+		CheckOffersShop();
 		CheckInterstitialCP2();
 		CheckDownloadAssets();
         CheckHappyHourOffer();
