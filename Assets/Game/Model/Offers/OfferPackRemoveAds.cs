@@ -104,6 +104,12 @@ public class OfferPackRemoveAds : OfferPack {
                 break;
         }
 
+        // If the user already has the offer, disable it
+        if (UsersManager.currentUser.removeAds.IsActive)
+        {
+            ChangeState(State.EXPIRED);
+        }
+
         // Has state changed?
         return (oldState != m_state);
     }
@@ -113,11 +119,9 @@ public class OfferPackRemoveAds : OfferPack {
     /// </summary>
     public override void Apply()
     {
-  
-        // Activate the ads removal feature
-        UsersManager.currentUser.removeAds.SetActive(true);
 
-        // Parent will do the rest
+        // Do nothing. The remove ads featured is applied at a reward level now in RewardRemoveAds.cs
+                
         base.Apply();
     }
 

@@ -397,6 +397,7 @@ public abstract class IPopupShopPill : MonoBehaviour {
 			// Finalize IAP flow
 			EndPurchase(false);
 
+		#if DEBUG
 			// Show some feedback to the player
 			UIFeedbackText feedbackText = UIFeedbackText.CreateAndLaunch(
 				LocalizationManager.SharedInstance.Localize("TID_RESOURCES_FLOW_UNKNOWN_ERROR") + "\n" + _sku + " (" + _cause + ")",
@@ -405,6 +406,7 @@ public abstract class IPopupShopPill : MonoBehaviour {
 			);
 			feedbackText.duration = 3f;
 			feedbackText.text.color = UIConstants.ERROR_MESSAGE_COLOR;
+		#endif
 		}
 	}
 

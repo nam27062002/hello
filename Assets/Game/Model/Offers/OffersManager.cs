@@ -722,41 +722,12 @@ public class OffersManager : Singleton<OffersManager> {
 	/// <param name="_p2">Second pack to compare.</param>
 	private static int OfferPackComparer(OfferPack _p1, OfferPack _p2) {
 		// If free offer is on cooldown, check if either pack is the active free offer.
-		// It will always go last.
-		/*	[AOC] Not anymore since 2.4 - rely only on the "order" field
-		if(isFreeOfferOnCooldown) {
-			if(_p1 == activeFreeOffer) {
-				return 1;
-			} else if(_p2 == activeFreeOffer) {
-				return -1;
-			}
-		}
-		*/
+		// It will always go last. <- [AOC] Not anymore since 2.4 - rely only on the "order" field
 
-		// Featured packs come first
-		// Unless one of the packs is free - then we skip the featured check
-		/*	[AOC] Not anymore since 2.4 - rely only on the "order" field
-		if(_p1.type != OfferPack.Type.FREE && _p2.type != OfferPack.Type.FREE) {
-			if(_p1.featured && !_p2.featured) {
-				return -1;
-			} else if(!_p1.featured && _p2.featured) {
-				return 1;
-			}
-		}
-		*/
 
 		// Sort by order afterwards
 		int order = _p1.order.CompareTo(_p2.order);
 		if(order != 0) return order;
-
-		// Then by type - free offers first
-		/*	[AOC] Not anymore since 2.4 - rely only on the "order" field
-		if(_p1.type == OfferPack.Type.FREE && _p2.type != OfferPack.Type.FREE) {
-			return -1;
-		} else if(_p1.type != OfferPack.Type.FREE && _p2.type == OfferPack.Type.FREE) {
-			return 1;
-		}
-		*/
 
 		// Then by discount
 		int discount = _p1.def.GetAsFloat("discount").CompareTo(_p2.def.GetAsFloat("discount"));

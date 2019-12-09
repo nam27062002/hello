@@ -23,6 +23,7 @@ public class OfferPackItem {
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
 	public static readonly string[] ITEM_TYPE_ORDER = {
+        Metagame.RewardRemoveAds.TYPE_CODE,
 		Metagame.RewardSoftCurrency.TYPE_CODE,
 		Metagame.RewardHardCurrency.TYPE_CODE,
 		Metagame.RewardGoldenFragments.TYPE_CODE,

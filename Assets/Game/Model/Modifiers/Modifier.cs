@@ -120,6 +120,9 @@ public abstract class Modifier : IModifierDefinition, IBroadcastListener {
     // ABSTRACT METHODS														  //
     //------------------------------------------------------------------------//
     public virtual bool isValid() { return true; }
+    /// This function indicates the system if it has to apply this modifier 
+    /// when switching mode(false) or later when in game (true)
+    public virtual bool isLateModifier(){ return false;}
     public abstract void Apply();
 	public abstract void Remove();
 
