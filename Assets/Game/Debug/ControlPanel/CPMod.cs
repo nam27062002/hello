@@ -29,13 +29,17 @@ public class CPMod : MonoBehaviour {
 		if (_newValue) {
 			if (m_mod is ModifierDragon) {
 				CPModifiers.CreateDragonMod(m_mod as ModifierDragon);
-			} else {
+			} else if ( m_mod.isLateModifier() ){
+				CPModifiers.AddLaterMod(m_mod);
+			}else{
 				m_mod.Apply();
 			}
 		} else {
 			if (m_mod is ModifierDragon) {
 				CPModifiers.DestroyDragonMod(m_mod as ModifierDragon);
-			} else {
+			} else if (m_mod.isLateModifier()){
+				CPModifiers.RemoveLaterMod(m_mod);
+			}else{
 				m_mod.Remove();
 			}
 		}
