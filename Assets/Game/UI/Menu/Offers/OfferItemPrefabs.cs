@@ -21,7 +21,8 @@ using System.Collections.Generic;
 [System.Serializable]
 public class ItemPrefabSetup {
 	[List(
-		Metagame.RewardSoftCurrency.TYPE_CODE,
+        Metagame.RewardRemoveAds.TYPE_CODE,
+        Metagame.RewardSoftCurrency.TYPE_CODE,
 		Metagame.RewardHardCurrency.TYPE_CODE,
 		Metagame.RewardGoldenFragments.TYPE_CODE,
 		Metagame.RewardEgg.TYPE_CODE,

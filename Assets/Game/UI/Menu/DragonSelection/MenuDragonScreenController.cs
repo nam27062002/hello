@@ -120,23 +120,24 @@ public class MenuDragonScreenController : MonoBehaviour {
 	/// </summary>
 	private void Update() {
 		// Do we have a screen change pending?
-        if(m_goToScreen != MenuScreen.NONE && InstanceManager.menuSceneController.transitionManager.transitionAllowed) {
+		MenuSceneController scene = InstanceManager.menuSceneController;
+        if(m_goToScreen != MenuScreen.NONE && scene.transitionManager.transitionAllowed) {
 			// Which screen?
 			switch(m_goToScreen) {
 				case MenuScreen.EVENT_REWARD: {
-					EventRewardScreen scr = InstanceManager.menuSceneController.GetScreenData(MenuScreen.EVENT_REWARD).ui.GetComponent<EventRewardScreen>();
+					EventRewardScreen scr = scene.GetScreenData(MenuScreen.EVENT_REWARD).ui.GetComponent<EventRewardScreen>();
 					scr.StartFlow();
 				} break;
 
 				case MenuScreen.PENDING_REWARD: {
-					PendingRewardScreen scr = InstanceManager.menuSceneController.GetScreenData(MenuScreen.PENDING_REWARD).ui.GetComponent<PendingRewardScreen>();
+					PendingRewardScreen scr = scene.GetScreenData(MenuScreen.PENDING_REWARD).ui.GetComponent<PendingRewardScreen>();
 					scr.StartFlow(true);
 				} break;
 			}
 
 			// Clear open and queued popups and go to target screen!
 			PopupManager.Clear(true);
-			InstanceManager.menuSceneController.GoToScreen(m_goToScreen);
+			scene.GoToScreen(m_goToScreen);
 
 			// Clear var
 			m_goToScreen = MenuScreen.NONE;
@@ -151,7 +152,7 @@ public class MenuDragonScreenController : MonoBehaviour {
 			if(order < dragonsByOrder.Count - 1) {	// Exclude if playing with last dragon
 				IDragonData nextDragonData = dragonsByOrder[order + 1];
 				if(nextDragonData != null) {
-					InstanceManager.menuSceneController.dragonSelector.SetSelectedDragon(DragonManager.CurrentDragon.def.sku);
+					scene.dragonSelector.SetSelectedDragon(DragonManager.CurrentDragon.def.sku);
 					DOVirtual.DelayedCall(1f, () => { LaunchUnlockAnim(nextDragonData.def.sku, m_initialDelay, m_scrollDuration, true); });
 				}
 			}
@@ -160,7 +161,7 @@ public class MenuDragonScreenController : MonoBehaviour {
 
 		//-----
 		if(!m_isAnimating) { 	// Not while animating!
-			if (!InstanceManager.menuSceneController.dragonScroller.cameraAnimator.isTweening) {
+			if (!scene.dragonScroller.cameraAnimator.isTweening) {
 				if (m_dragonToReveal != null) {
 					LaunchRevealAnim(m_dragonToReveal.def.sku);
 				} else if (m_dragonToTease != null) {

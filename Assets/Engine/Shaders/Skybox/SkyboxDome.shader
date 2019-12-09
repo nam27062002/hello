@@ -29,6 +29,7 @@ SubShader {
 	CGINCLUDE
 	#pragma multi_compile LIGHTMAP_OFF LIGHTMAP_ON
 	#pragma shader_feature __ AUTOMATIC_PANNING
+    #pragma multi_compile __ NIGHT
 	#include "UnityCG.cginc"
 	#include "../HungryDragon.cginc"
 
@@ -104,8 +105,15 @@ SubShader {
 			anim = float2(_Time.y * _PanSpeed * 0.5, 0.0f);
 			fixed4 tex2 = tex2D(_DetailTex, i.uv2 + _DetailOffset + anim);
 #else*/
-			fixed4 tex = tex2D(_MainTex, i.uv);
-			fixed4 tex2 = tex2D (_DetailTex, i.uv2);
+#if defined(NIGHT)
+            fixed4 night = fixed4(0.25, 0.25, 0.5, 1.0);
+#else
+            fixed4 night = fixed4(1.0, 1.0, 1.0, 1.0);
+#endif
+
+
+			fixed4 tex = tex2D(_MainTex, i.uv) * night;
+			fixed4 tex2 = tex2D (_DetailTex, i.uv2) * night;
 //#endif
 			fixed4 tex3 = tex2D(_MoonTex, i.uv3) * _MoonColor;
 
@@ -118,7 +126,7 @@ SubShader {
 			fixed sat = smoothstep(_SatThreshold, 1.0, 0.2126 * col.r + 0.7152 * col.g + 0.0722 * col.b);
 //			fixed satMoon = smoothstep(_SatThreshold, 1.0, 0.2126 * tex3.r + 0.7152 * tex3.g + 0.0722 * tex3.b) * 1.0;
 
-			float4 grad = lerp(_DownColor, _UpColor, i.height);
+			float4 grad = lerp(_DownColor * night, _UpColor * night, i.height);
 //			return grad;
 
 			col = lerp(grad, col, sat);
@@ -130,8 +138,8 @@ SubShader {
 			HG_APPLY_FOG(i, col);	// Fog
 
 //			col = lerp(colbackup, col, _DownColor.w);
-			col = lerp(colbackup, col, (fogCol.w * _DownColor.w));
-			col = lerp(col, colbackup, clamp(tex3.r, 0.0, 1.0) * _UpColor.w);
+			col = lerp(colbackup, col, (fogCol.w * _DownColor.w * night));
+			col = lerp(col, colbackup, clamp(tex3.r, 0.0, 1.0) * _UpColor.w * night);
 
 
 			UNITY_OPAQUE_ALPHA(col.a);	// Opaque

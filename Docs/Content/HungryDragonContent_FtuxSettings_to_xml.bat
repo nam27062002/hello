@@ -17,7 +17,7 @@ del /F /Q /S "%OUTPUT_DIR%\*"
 
 REM Run Java tool for Excel file
 echo "    Exporting %%~nf..."
-java -jar %TOOL_EXECUTABLE% "HungryDragonContent_General.xlsx" %OUTPUT_DIR%
+java -jar %TOOL_EXECUTABLE% "HungryDragonContent_FtuxSettings.xlsx" %OUTPUT_DIR%
 
 
 REM Git Auto-commit

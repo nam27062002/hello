@@ -49,6 +49,8 @@ Shader "Hungry Dragon/NPC/NPC Jelly fish"
 
 			#pragma multi_compile __ FREEZE
 			#pragma multi_compile __ TINT
+            #pragma multi_compile __ NIGHT
+
 
 			//#pragma multi_compile __ NORMALMAP
 			//#pragma multi_compile __ SPECULAR

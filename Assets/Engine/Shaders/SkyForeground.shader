@@ -42,7 +42,7 @@ Shader "Hungry Dragon/SkyForeground"
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
-//			#pragma multi_compile_fwdbase
+			#pragma multi_compile __ NIGHT
 //			#pragma glsl_no_auto_normalization
 //			#pragma fragmentoption ARB_precision_hint_fastest
 
@@ -101,7 +101,11 @@ Shader "Hungry Dragon/SkyForeground"
 				fixed4 cloudsC = lerp(_BackgroundColor, _Tint, intensity);
 
 				cloudsC.w = smoothstep(0.0, _CloudThreshold, intensity * (1.0 - pow(abs(vy - 0.5) * 2.0, _CloudPower))) * _Tint.w;
-				return cloudsC;
+#if defined(NIGHT)
+				return cloudsC * fixed4(0.25, 0.25, 0.5, 1.0);
+#else
+                return cloudsC;
+#endif
 			}
 
 			ENDCG

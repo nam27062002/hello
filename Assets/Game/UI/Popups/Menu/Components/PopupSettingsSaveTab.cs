@@ -388,6 +388,62 @@ public class PopupSettingsSaveTab : MonoBehaviour
 		}
 		Cloud_OnChangeSaveEnable();
 	}
+
+    public void IAP_RestorePurchases()
+    {
+
+        if (UsersManager.currentUser.removeAds.IsActive)
+        {
+            UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_PURCHASES_ALREADY_RESTORED"), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
+            return;
+        }
+
+        // Call to the store to restore the purchases
+        OpenLoadingPopup();
+
+        // Faking the call to the server
+        UbiBCN.CoroutineManager.DelayedCall(() => {
+            OnRestorePurchasesCompleted();
+            }, 3f);
+
+    }
+
+    private void OnRestorePurchasesCompleted()
+    {
+        // The loading popup is still open!
+        CloseLoadingPopup();
+
+        bool error = true;
+        if (error)
+        {
+            PersistenceFacade.Popups_OpenStoreErrorConnection(delegate ()
+            {
+                Log("ERROR connecting to the store... ");
+            });
+            return;
+        }
+
+        // Fake a remove ads rewards and push it the rewards stack
+        UsersManager.currentUser.PushReward(Metagame.Reward.CreateTypeRemoveAds());
+
+        if (UsersManager.currentUser.rewardStack.Count > 0)
+        {
+
+            // Return to selection screen and show peding rewards
+            // Close all open popups
+            PopupManager.Clear(true);
+
+            // Move to the rewards screen
+            PendingRewardScreen scr = InstanceManager.menuSceneController.GetScreenData(MenuScreen.PENDING_REWARD).ui.GetComponent<PendingRewardScreen>();
+            scr.StartFlow(false);   // No intro
+            InstanceManager.menuSceneController.GoToScreen(MenuScreen.PENDING_REWARD);
+
+        } else
+        {
+            UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_NOTHING_TO_RESTORE"), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
+        }
+    }
+
     #endregion
 
     #region resync

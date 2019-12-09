@@ -80,8 +80,9 @@ public class RewardSceneController : MenuScreenScene {
 	[SerializeField] private RewardSetup m_scRewardSetup = new RewardSetup();
 	[SerializeField] private RewardSetup[] m_goldenFragmentsRewardsSetup = new RewardSetup[(int)Metagame.Reward.Rarity.COUNT];
 	[SerializeField] private RewardSetup m_dragonRewardSetup = new RewardSetup();
+    [SerializeField] private RewardSetup m_removeAdsRewardSetup = new RewardSetup();
 
-	[Separator("Other VFX")]
+    [Separator("Other VFX")]
 	[SerializeField] private ParticleSystem m_goldenFragmentsSwapFX = null;
 	[SerializeField] private Transform m_tapFXPool = null;
 	[SerializeField] private Transform m_confettiAnchor = null;
@@ -292,9 +293,16 @@ public class RewardSceneController : MenuScreenScene {
 				OpenReward();	// Call ourselves to open the newly pushed rewards
 				return;	// Don't do anything else
 			}
+            
+            // No ads offer
+            else if (m_currentReward is Metagame.RewardRemoveAds)
+            {
+                m_currentReward.Collect();  
+                OpenRemoveAdsReward(m_currentReward as Metagame.RewardRemoveAds); 
+            }
 
-			// Currency
-			else {
+            // Currency
+            else {
 				m_currentReward.Collect();
 				OpenCurrencyReward(m_currentReward as Metagame.RewardCurrency);
 			}
@@ -513,6 +521,8 @@ public class RewardSceneController : MenuScreenScene {
 		seq.OnComplete(OnAnimationFinish);
 	}
 
+
+
 	/// <summary>
 	/// Start the dragon reward flow.
 	/// </summary>
@@ -594,28 +604,74 @@ public class RewardSceneController : MenuScreenScene {
 		seq.OnComplete(OnAnimationFinish);
 	}
 
-	/// <summary>
-	/// Initialize the egg view with the given egg reward data.
-	/// </summary>
-	/// <param name="_egg">The egg to be opened.</param>
-	private void InitEggView(Metagame.RewardEgg _eggReward) {
-		// Clear any active stuff
-		Clear();
 
-		// Be attentive to the egg collect event, which is managed by the egg view
-		Messenger.AddListener<Egg>(MessengerEvents.EGG_OPENED, OnEggCollected);
+    /// <summary>
+    /// Start the remove ads reward flow.
+    /// </summary>
+    /// <param name="_removeAdsReward">Skin reward.</param>
+    private void OpenRemoveAdsReward(Metagame.RewardRemoveAds _removeAdsReward)
+    {
 
-		// Create a new instance of the egg prefab
-		m_eggView = EggView.CreateFromData(_eggReward.egg);
+        HideAllRewards();
 
-		// Attach it to the 3d scene's anchor point
-		// Make sure anchor is active!
-		m_eggAnchor.gameObject.SetActive(true);
-		m_eggView.transform.SetParent(m_eggAnchor, false);
-		m_eggView.transform.position = m_eggAnchor.position;
+        m_currentRewardSetup = m_removeAdsRewardSetup;
 
-		// Launch intro as soon as possible (wait for the camera to stop moving)
-		m_eggView.gameObject.SetActive(false);
+        // Animate
+        Vector2 baseIdleVelocity = m_dragController.idleVelocity;
+        Sequence seq = DOTween.Sequence();
+
+        seq.AppendCallback(() => {
+            // Show UI
+            m_rewardInfoUI.InitAndAnimate(_removeAdsReward);
+
+            // Trigger SFX, depends on reward tyoe
+            AudioController.Play(m_currentRewardSetup.sfx);
+
+            // Show godrays
+            if (m_currentRewardSetup.godrays != null)
+            {
+                m_currentRewardSetup.godrays.gameObject.SetActive(true);
+            }
+        });
+
+        seq.Append(m_currentRewardSetup.view.transform.DOScale(0f, 1f).From().SetEase(Ease.OutBack));
+
+        seq.Join(DOTween.To(
+            () => { return baseIdleVelocity; }, // Getter
+            (Vector2 _v) => { m_dragController.idleVelocity = _v; },    // Setter
+            Vector2.Scale(baseIdleVelocity, new Vector2(100f, 1f)), // Final value
+            2f) // Duration
+            .From()
+            .SetEase(Ease.OutCubic)
+        );
+
+        seq.OnComplete(OnAnimationFinish);
+
+    }
+
+
+    /// <summary>
+    /// Initialize the egg view with the given egg reward data.
+    /// </summary>
+    /// <param name="_egg">The egg to be opened.</param>
+    private void InitEggView(Metagame.RewardEgg _eggReward) {
+	// Clear any active stuff
+	Clear();
+
+	// Be attentive to the egg collect event, which is managed by the egg view
+	Messenger.AddListener<Egg>(MessengerEvents.EGG_OPENED, OnEggCollected);
+
+	// Create a new instance of the egg prefab
+	m_eggView = EggView.CreateFromData(_eggReward.egg);
+
+	// Attach it to the 3d scene's anchor point
+	// Make sure anchor is active!
+	m_eggAnchor.gameObject.SetActive(true);
+	m_eggView.transform.SetParent(m_eggAnchor, false);
+	m_eggView.transform.position = m_eggAnchor.position;
+
+	// Launch intro as soon as possible (wait for the camera to stop moving)
+	m_eggView.gameObject.SetActive(false);
 	}
 
 	/// <summary>
@@ -637,7 +693,7 @@ public class RewardSceneController : MenuScreenScene {
 	/// <summary>
 	/// Initialize the skin reward view with the given reward data.
 	/// </summary>
-	/// <param name="_skinReward">Skin reward data.</param>
+	/// <param name="_removeAdsReward">Skin reward data.</param>
 	private void InitSkinView(Metagame.RewardSkin _skinReward) {
 		HideAllRewards();
 

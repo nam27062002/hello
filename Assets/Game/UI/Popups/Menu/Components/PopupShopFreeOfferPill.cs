@@ -34,11 +34,14 @@ public class PopupShopFreeOfferPill : PopupShopOffersPill {
 	// Exposed references
 	[Separator("Free Offer Pill Specifics")]
 	[SerializeField] private Button m_watchAdButton = null;
-	[SerializeField] private Localizer m_buttonText = null;
+    [SerializeField] private Localizer m_adButtonText = null;
+    [SerializeField] private Button m_freeButton = null;
+    [SerializeField] private Localizer m_freeButtonText = null;
 
 	// Internal logic
 	private bool m_isOnCooldown = false;
 	private string m_defaultButtonTID = "";
+    private bool removeAdsActive;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -48,7 +51,7 @@ public class PopupShopFreeOfferPill : PopupShopOffersPill {
 	/// </summary>
 	private void Awake() {
 		// Backup some values
-		m_defaultButtonTID = m_buttonText.tid;
+		m_defaultButtonTID = m_adButtonText.tid;
 	}
 
 	//------------------------------------------------------------------------//
@@ -84,11 +87,13 @@ public class PopupShopFreeOfferPill : PopupShopOffersPill {
 		if(m_isOnCooldown != isOnCooldown) {
 			// Enable/Disable button
 			m_watchAdButton.interactable = !isOnCooldown;
+            m_freeButton.interactable = !isOnCooldown;
 
 			// If leaving cooldown, restore text
 			if(!isOnCooldown) {
-				m_buttonText.Localize("TID_FREE_DAILY_REWARD_BUTTON");
-			}
+				m_adButtonText.Localize("TID_FREE_DAILY_REWARD_BUTTON");
+                m_freeButtonText.Localize("TID_FREE_DAILY_REWARD_BUTTON");
+            }
 			
 			// Save new state
 			m_isOnCooldown = isOnCooldown;
@@ -97,9 +102,16 @@ public class PopupShopFreeOfferPill : PopupShopOffersPill {
 		// If on cooldown, refresh timer
 		if(m_isOnCooldown) {
 			// Set text
-			m_buttonText.Set(TimeUtils.FormatTime(remainingCooldown.TotalSeconds, TimeUtils.EFormat.DIGITS, 3));
-		}
-	}
+			m_adButtonText.Set(TimeUtils.FormatTime(remainingCooldown.TotalSeconds, TimeUtils.EFormat.DIGITS, 3));
+            m_freeButtonText.Set(TimeUtils.FormatTime(remainingCooldown.TotalSeconds, TimeUtils.EFormat.DIGITS, 3));
+        }
+
+        // Show the proper buttons
+        removeAdsActive = UsersManager.currentUser.removeAds.IsActive;
+        m_freeButton.gameObject.SetActive(removeAdsActive);
+        m_watchAdButton.gameObject.SetActive(!removeAdsActive);
+
+    }
 
 	/// <summary>
 	/// Get the tracking id for transactions performed by this shop pill
@@ -118,6 +130,13 @@ public class PopupShopFreeOfferPill : PopupShopOffersPill {
 	protected override void OnPurchaseStarted() {
 		// Call parent
 		base.OnPurchaseStarted();
+
+        // If the player has remove ads offer, give him the reward directly
+        if (UsersManager.currentUser.removeAds.IsActive)
+        {
+            OnVideoRewardCallback(true);
+            return;
+        }
 
 		// Ignore if offline
 		if(DeviceUtilsManager.SharedInstance.internetReachability == NetworkReachability.NotReachable) {

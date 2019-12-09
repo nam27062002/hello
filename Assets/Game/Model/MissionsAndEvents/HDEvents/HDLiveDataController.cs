@@ -24,6 +24,8 @@ public abstract class HDLiveDataController {
 
     public abstract void Activate();
     public abstract void Deactivate();
+    public abstract void ActivateLaterMods();
+    public abstract void DeactivateLaterMods();
     public abstract void ApplyDragonMods();
 
     public abstract void CleanData();

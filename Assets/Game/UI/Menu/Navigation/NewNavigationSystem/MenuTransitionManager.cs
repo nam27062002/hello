@@ -234,7 +234,7 @@ public class MenuTransitionManager : MonoBehaviour {
 
 		// Prevent any transition during a safety period (to avoid breaking the UI if tapping 2 buttons for example)
 		m_transitionAllowed = false;
-		UbiBCN.CoroutineManager.DelayedCall(OnTransitionSafetyPeriodFinished, TRANSITION_SAFETY_PERIOD);
+		float safetyPeriodDuration = TRANSITION_SAFETY_PERIOD;
 
 		// Perform transition
 		// Do we have a valid transition data from current screen to target screen?
@@ -266,6 +266,9 @@ public class MenuTransitionManager : MonoBehaviour {
 
 			// Program transition end callback
 			UbiBCN.CoroutineManager.DelayedCall(OnTransitionFinished, duration, false);
+
+			// Adjust transition safety duration
+			safetyPeriodDuration = Mathf.Max(safetyPeriodDuration, duration);
 		} else {
 			// UI
 			PerformUITransition(fromScreenData, toScreenData);
@@ -277,6 +280,9 @@ public class MenuTransitionManager : MonoBehaviour {
 			m_isTransitioning = false;
 			Messenger.Broadcast<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_END, m_prevScreen, m_currentScreen);
 		}
+
+		// Allow transitions again after safety period
+		UbiBCN.CoroutineManager.DelayedCall(OnTransitionSafetyPeriodFinished, safetyPeriodDuration);
 	}
 
 	/// <summary>
