@@ -8,6 +8,7 @@ namespace AI {
 		public class PetScreenGoldData : StateComponentData {
 			public string audio;
 			public string particle;
+			public string m_powerSetup = "transform_gold";
 		}
 
 
@@ -22,6 +23,8 @@ namespace AI {
 			private GameObject m_particle;
 			private ParticleSystem m_particleSystem;
 
+			private const float STATE_DURATION = 1.0f;
+
 			public override StateComponentData CreateData() {
 				return new PetScreenGoldData();
 			}
@@ -31,7 +34,23 @@ namespace AI {
 			}
 
 			protected override void OnInitialise() {
+
 				m_data = m_pilot.GetComponentData<PetScreenGoldData>();
+				
+				State st = m_stateMachine.GetState("Wander");
+				if ( st != null )
+				{
+					AI.Behaviour.TimerRanged behaviour = st.GetComponent<AI.Behaviour.TimerRanged>();
+					if ( behaviour != null )
+					{
+						DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, m_data.m_powerSetup);
+						float timed = def.GetAsFloat( "param1", 5.0f );
+						timed -= STATE_DURATION;	// Reduce by anim duration
+						behaviour.data.seconds.Set( timed, timed );
+					}
+				}
+				
+				
 				string version = "";
 				switch(FeatureSettingsManager.instance.Particles)
 				{
@@ -68,7 +87,7 @@ namespace AI {
 
 			protected override void OnEnter(State oldState, object[] param) {
 				m_pilot.PressAction(Pilot.Action.Button_A);
-				m_timer = 1.0f;
+				m_timer = STATE_DURATION;
 				if (!string.IsNullOrEmpty(m_data.audio))
 				{
 					AudioController.Play(m_data.audio);

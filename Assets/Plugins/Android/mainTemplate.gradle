@@ -1,0 +1,151 @@
+buildscript {
+    repositories {
+        if (GradleVersion.current() >= GradleVersion.version("4.2")) {
+            jcenter()
+            google()
+        } else {
+            jcenter()
+        }
+    }
+
+    dependencies {
+        // use newer version of the plugin for newer unity/gradle versions
+        if (GradleVersion.current() < GradleVersion.version("4.0")) {
+            classpath 'com.android.tools.build:gradle:2.1.0'
+        } else if (GradleVersion.current() < GradleVersion.version("4.2")) {
+            classpath 'com.android.tools.build:gradle:2.3.3'
+        } else {
+            classpath 'com.android.tools.build:gradle:3.2.0'
+        }
+    }
+}
+
+allprojects {
+    repositories {
+        if (GradleVersion.current() >= GradleVersion.version("4.2")) {
+            jcenter()
+            google()
+        } else {
+            jcenter()
+        }
+        flatDir {
+            dirs 'libs'
+        }        
+    }
+}
+
+apply plugin: 'com.android.application'
+
+dependencies {
+    if (GradleVersion.current() >= GradleVersion.version("4.2")) {
+        implementation fileTree(dir: 'libs', include: ['*.jar'])
+    } else {
+        compile fileTree(dir: 'libs', include: ['*.jar'])
+    }
+
+    **DEPS**
+}
+
+android {
+	
+
+	compileSdkVersion **APIVERSION**
+	buildToolsVersion '**BUILDTOOLS**'
+
+//    if (GradleVersion.current() < GradleVersion.version("4.2")) {
+//        // fix complaint that 3rd party libraries (ours!) have the same package name
+//        enforceUniquePackageName false
+//    }
+
+	configurations {
+			 all*.exclude group: 'com.android.support', module: 'multidex'
+	}
+
+
+	dexOptions {
+		javaMaxHeapSize "4g"
+	}
+
+
+    defaultConfig {
+        applicationId '**APPLICATIONID**'
+        
+        minSdkVersion **MINSDKVERSION**
+        targetSdkVersion **TARGETSDKVERSION**
+
+        multiDexEnabled true
+
+        if (GradleVersion.current() >= GradleVersion.version("4.0")) {
+            ndk {
+                abiFilters **ABIFILTERS**
+            }
+        }
+    }
+
+	lintOptions {
+		checkReleaseBuilds false
+		abortOnError false
+	}
+
+	aaptOptions {
+		noCompress '.unity3d', '.ress', '.resource', '.obb'**STREAMING_ASSETS**
+	}
+
+	**SIGN**
+
+	buildTypes {
+		debug {
+ 			minifyEnabled **MINIFY_DEBUG**
+            if (GradleVersion.current() >= GradleVersion.version("4.2")) {
+                useProguard **PROGUARD_DEBUG**
+            }
+
+            // Enables resource shrinking, which is performed by the
+            // Android Gradle plugin.
+            //shrinkResources true 
+
+			proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-unity.txt', '/Users/dcampos/projects/HungryDragonAndroid/Assets/Editor/Calety/gradle-proguard.txt', '/Users/dcampos/projects/HungryDragonAndroid/Assets/Plugins/Android/proguard-user.txt'
+			multiDexKeepProguard file('/Users/dcampos/projects/HungryDragonAndroid/Assets/Editor/Calety/gradle-multidex-config.txt')
+			ndk {
+				abiFilters "armeabi", "armeabi-v7a", "arm64-v8a"
+			}
+			jniDebuggable true
+			**SIGNCONFIG**
+		}
+		release {
+ 			minifyEnabled **MINIFY_RELEASE**
+            if (GradleVersion.current() >= GradleVersion.version("4.2")) {
+                useProguard **PROGUARD_RELEASE**
+            }			
+
+            // Enables resource shrinking, which is performed by the
+            // Android Gradle plugin.
+            //shrinkResources true 
+
+			proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-unity.txt', '/Users/dcampos/projects/HungryDragonAndroid/Assets/Editor/Calety/gradle-proguard.txt', '/Users/dcampos/projects/HungryDragonAndroid/Assets/Plugins/Android/proguard-user.txt'
+			multiDexKeepProguard file('/Users/dcampos/projects/HungryDragonAndroid/Assets/Editor/Calety/gradle-multidex-config.txt')
+			ndk {
+				abiFilters "armeabi", "armeabi-v7a", "arm64-v8a"
+			}
+			**SIGNCONFIG**
+		}
+
+		**PACKAGING_OPTIONS**
+
+		bundle {
+			language {
+				enableSplit = false
+			}
+			density {
+				enableSplit = false
+			}
+			abi {
+				enableSplit = true
+			}
+		}
+	}
+
+	**SOURCE_BUILD_SETUP**
+}
+
+
