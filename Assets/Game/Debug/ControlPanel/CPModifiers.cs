@@ -5,9 +5,10 @@ using UnityEngine;
 public class CPModifiers : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	private static List<ModifierDragon> sm_dragonMods = new List<ModifierDragon>();
+	private static List<Modifier> sm_laterMods = new List<Modifier>();
 
 	public static void CreateDragonMod(ModifierDragon _mod) { sm_dragonMods.Add(_mod); }
-	public static void DestroyDragonMod(ModifierDragon _mod) { sm_dragonMods.Remove(_mod); }
+	public static void DestroyDragonMod(ModifierDragon _mod) { sm_dragonMods.Remove(_mod); }	
 
 	public static void ApplyDragonMods() {
 		for (int i = 0; i < sm_dragonMods.Count; ++i) {
@@ -17,6 +18,20 @@ public class CPModifiers : MonoBehaviour {
 	public static void RemoveDragonMods() {
 		for (int i = 0; i < sm_dragonMods.Count; ++i) {
 			sm_dragonMods[i].Remove();
+		}
+	}
+
+	public static void AddLaterMod(Modifier _mod) { sm_laterMods.Add(_mod); }
+	public static void RemoveLaterMod(Modifier _mod) { sm_laterMods.Remove(_mod); }
+
+	public static void ApplyLaterMods(){
+		for (int i = 0; i < sm_laterMods.Count; ++i) {
+			sm_laterMods[i].Apply();
+		}
+	}
+	public static void RemoveLaterMods(){
+		for (int i = 0; i < sm_laterMods.Count; ++i) {
+			sm_laterMods[i].Remove();
 		}
 	}
 	//------------------------------------------------------------------------//

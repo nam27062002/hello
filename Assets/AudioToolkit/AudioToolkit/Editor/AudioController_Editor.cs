@@ -1751,6 +1751,33 @@ public class AudioController_Editor : EditorEx
             KeepChanges();
         }    
         EditorGUILayout.EndHorizontal();
+        EditorGUILayout.BeginHorizontal();
+        if (GUILayout.Button("Remove Duplicated Audio Items"))
+        {
+            int maxi = AC.AudioCategories.Length;
+            for (int i = maxi -1 ; i >= 0; --i)
+            {
+                AudioCategory audioCategory = AC.AudioCategories[i];
+                int maxj = audioCategory.AudioItems.Length;
+                for (int j = maxj - 1; j >= 0; --j)
+                {
+                    AudioItem audioItem = audioCategory.AudioItems[j];
+                    int maxk = j;
+                    for (int k = maxk-1; k >= 0; --k)
+                    {
+                        if ( audioItem.Name == audioCategory.AudioItems[k].Name )
+                        {
+                            Debug.Log("Removing Duplicate: " + audioItem.Name);
+                            ArrayHelper.DeleteArrayElement( ref audioCategory.AudioItems, j );
+                            break;
+                        }
+                    }
+                }
+            }
+
+            KeepChanges();
+        }
+        EditorGUILayout.EndHorizontal();
         EditorGUILayout.Space();
 
         if ( EditorApplication.isPlaying )

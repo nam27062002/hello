@@ -101,13 +101,79 @@ public class MenuDragonUnlock : MonoBehaviour {
 	/// <param name="_animate">Whether to trigger animations or not.</param>
 	public virtual void Refresh(IDragonData _data, bool _animate) {	}
 
+	/// <summary>
+	/// Refresh texts and visibility to match given dragon.
+	/// Doesn't trigger any animation.
+	/// </summary>
+	/// <param name="_data">Data.</param>
+	protected virtual void RefreshInfo(IDragonData _data) {
+		// Aux vars
+		bool show = true;
 
-    /// <summary>
-    /// Checks whether the unavailable message should be displayed for the given dragon.
-    /// </summary>
-    /// <returns>Whether the given dragon is unavailable.</returns>
-    /// <param name="_data">Dragon to evaluate.</param>
-    public bool CheckUnavailable(IDragonData _data)
+		// Update hc unlock button
+		// Display?
+		show = _data.CheckUnlockWithPC();
+		Toggle(m_hcRoot, show);
+
+		// Refresh info
+		if(show && m_hcPriceSetup != null) {
+			// [AOC] UIDragonPriceSetup makes it easy for us!
+			m_hcPriceSetup.InitFromData(_data, UserProfile.Currency.HARD);
+		}
+
+		// Update sc unlock button
+		// Display?
+		show = _data.CheckUnlockWithSC();
+		Toggle(m_scRoot, show);
+
+		// Refresh info
+		if(show && m_scPriceSetup != null) {
+			// [AOC] UIDragonPriceSetup makes it easy for us!
+			m_scPriceSetup.InitFromData(_data, UserProfile.Currency.SOFT);
+		}
+
+		// Update unavailable info
+		if(m_unavailableInfoText != null) {
+			// Display?
+			show = CheckUnavailable(_data);
+			Toggle(m_unavailableRoot, show);
+
+			// Refresh info
+			if(show) {
+				// Dragon requirement can be either a specific dragon or a dragon tier
+				// a) Dragon
+				IDragonData unlockDragonData = DragonManager.GetDragonData(_data.unlockFromDragon);
+				if(unlockDragonData != null) {
+					// Set text
+					m_unavailableInfoText.Localize(
+						"TID_SELECT_DRAGON_UNAVAILABLE_MESSAGE",    // Obtain %U0 to reveal this dragon's price!
+						UIConstants.GetDragonTierColor(unlockDragonData.tier).Tag(  // [AOC] Use dragon's tier color
+							unlockDragonData.def.GetLocalized("tidName")
+						)
+					);
+				}
+
+				// b) Dragon Tier
+				else {
+					DragonTier unlockTier = IDragonData.SkuToTier(_data.unlockFromDragon);
+					if(unlockTier != DragonTier.COUNT) {
+						// Set text
+						m_unavailableInfoText.Localize(
+							"TID_SELECT_DRAGON_UNLOCK_BY_TIER",    // Obtain %U0 to reveal this dragon's price!
+							UIConstants.GetSpriteTag(UIConstants.GetDragonTierIcon(unlockTier)) // Use tier's icon
+						);
+					}
+				}
+			}
+		}
+	}
+
+	/// <summary>
+	/// Checks whether the unavailable message should be displayed for the given dragon.
+	/// </summary>
+	/// <returns>Whether the given dragon is unavailable.</returns>
+	/// <param name="_data">Dragon to evaluate.</param>
+	public bool CheckUnavailable(IDragonData _data)
     {
         // Check lock state
         bool show = false;

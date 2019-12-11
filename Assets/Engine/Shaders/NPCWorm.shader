@@ -32,6 +32,8 @@ Shader "Hungry Dragon/NPC/NPC worm"
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
+            #pragma multi_compile __ NIGHT
+
 
 			#include "UnityCG.cginc"
 			#include "Lighting.cginc"

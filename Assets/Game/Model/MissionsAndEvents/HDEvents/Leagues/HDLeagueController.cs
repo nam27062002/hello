@@ -43,6 +43,8 @@ public class HDLeagueController : HDLiveDataController {
 
     public override void Activate() {}
     public override void Deactivate() {}
+    public override void ActivateLaterMods(){}
+    public override void DeactivateLaterMods(){}
     public override void ApplyDragonMods() {}
 
     public override void CleanData() {

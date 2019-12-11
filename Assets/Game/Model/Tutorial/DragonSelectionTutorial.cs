@@ -270,14 +270,28 @@ public class DragonSelectionTutorial : MonoBehaviour {
 		// Lock all input
 		Messenger.Broadcast<bool>(MessengerEvents.UI_LOCK_INPUT, false);
 
+		// Show HUD back
+		// Do some null checks to avoid potential issues
+		// https://console.firebase.google.com/project/hungry-dragon-45530774/crashlytics/app/android:com.ubisoft.hungrydragon/issues/f18f3031ae5663897300068d6427460c?time=last-seven-days&sessionId=5DDD2D460345000146178AE590E84A81_DNE_7_v2
+		if(InstanceManager.menuSceneController != null) {
+			if(InstanceManager.menuSceneController.hud != null) {
+				if(InstanceManager.menuSceneController.hud.animator != null) {
+					InstanceManager.menuSceneController.hud.animator.ForceShow(true);
+				}
+			}
+		}
+
 		// Show UI back
-		InstanceManager.menuSceneController.hud.animator.ForceShow(true);
 		if(m_uiCanvasGroup != null) {
 			m_uiCanvasGroup.DOFade(1f, 0.25f);
+		}
 
-			// Restore paused particle systems
+		// Restore paused particle systems
+		if(m_pausedParticles != null) {
 			for(int i = 0; i < m_pausedParticles.Count; ++i) {
-				m_pausedParticles[i].gameObject.SetActive(true);
+				if(m_pausedParticles[i] != null) {
+					m_pausedParticles[i].gameObject.SetActive(true);
+				}
 			}
 			m_pausedParticles.Clear();
 		}

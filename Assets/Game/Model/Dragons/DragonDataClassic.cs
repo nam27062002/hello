@@ -255,18 +255,40 @@ public class DragonDataClassic : IDragonData {
 		// Dragon is considered locked if THE previous dragon is NOT maxed out
 		int order = GetOrder();
 		if(order > 0) {     // First dragon should always be owned
+			// Aux vars
+			IDragonData biggestOwnedDragon = DragonManager.biggestOwnedDragon;
+
 			// Check previous dragon's progression
 			List<IDragonData> dragons = DragonManager.GetDragonsByOrder(Type.CLASSIC);
 			if(!(dragons[order - 1] as DragonDataClassic).progression.isMaxLevel) {
 				// Can the dragon be acquired?
 				if(!m_unlockAvailable) {
-					// Check if the required dragon is owned (or a biggest one)
-					int biggestOwned = DragonManager.biggestOwnedDragon.GetOrder();
-					if(biggestOwned >= DragonManager.GetDragonData(m_unlockFromDragon).GetOrder()) {
-						m_unlockAvailable = true;	// No need to check again in this run
-						return LockState.LOCKED;
-					} else {
-						return LockState.LOCKED_UNAVAILABLE;
+					// Dragon condition can either be a dragon sku or a tier sku
+					// a) Dragon
+					IDragonData unlockDragonData = DragonManager.GetDragonData(m_unlockFromDragon);
+					if(unlockDragonData != null) {
+						// Check if the required dragon is owned (or a biggest one)
+						if(biggestOwnedDragon.GetOrder() >= unlockDragonData.GetOrder()) {
+							m_unlockAvailable = true;   // No need to check again in this run
+							return LockState.LOCKED;
+						} else {
+							return LockState.LOCKED_UNAVAILABLE;
+						}
+					}
+
+					// b) Dragon Tier
+					else {
+						// Make sure it's a tier sku
+						DragonTier unlockTier = SkuToTier(m_unlockFromDragon);
+						if(unlockTier != DragonTier.COUNT) {
+							// If biggest owned dragon is from a higher tier than the required one, dragon is available!
+							if(biggestOwnedDragon.tier >= unlockTier) {
+								m_unlockAvailable = true;   // No need to check again in this run
+								return LockState.LOCKED;
+							} else {
+								return LockState.LOCKED_UNAVAILABLE;
+							}
+						}
 					}
 				}
 				return LockState.LOCKED;

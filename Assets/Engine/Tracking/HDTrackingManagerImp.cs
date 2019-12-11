@@ -229,6 +229,30 @@ public class HDTrackingManagerImp : HDTrackingManager {
         string houstonTransactionID = _storeTransactionID;        
         Notify_IAPCompleted(_storeTransactionID, houstonTransactionID, _sku, promotionType, moneyCurrencyCode, moneyPrice, moneyUSD, isSpecialOffer);
 
+
+        // Is it an offer pack or a currency pack?
+        OfferPack pack = OffersManager.GetOfferPackByIAP(_sku);
+        string offerType = (pack == null) ? OFFER_TYPE_SHOP : pack.def.GetAsString("type");
+
+        // Keep a track for each item in the shop pack
+        List<Metagame.Reward> rewards = Metagame.Reward.GetRewardsFromIAP(_sku);
+        foreach (Metagame.Reward reward in rewards)
+        {
+            switch (reward.type)
+            {
+                case "sc":
+                case "pc":
+                    // track the amount of coins/gems
+                    Notify_IAPContent(_sku, houstonTransactionID, reward.type, reward.amount.ToString(), offerType);
+                    break;
+                default:
+                    // track the sku of the egg/dragon/pet/whatever
+                    Notify_IAPContent(_sku, houstonTransactionID, reward.type, reward.sku, offerType);
+                    break;
+            }
+            
+        }
+
         Session_IsNotifyOnPauseEnabled = true;
     }
 
@@ -740,7 +764,24 @@ public class HDTrackingManagerImp : HDTrackingManager {
         }
 
         Track_IAPCompleted(storeTransactionID, houstonTransactionID, itemID, promotionType, moneyCurrencyCode, moneyPrice, moneyUSD, isOffer);
+
+        // Track every item inside the offer
     }
+
+    /// <summary>
+    /// /// Called for each item acquired when buying an offer
+    /// </summary>
+    /// <param name="itemID">ID of the shop pack purchased</param>
+    /// <param name="houstonTransactionID">transaction ID returned by houston</param>
+    /// <param name="ecoGroup">Type of the item. Possible values: pc | sc | dragon | egg | pet | skin | removeAds </param>
+    /// <param name="content">The amount in case of currencies. Or the sku in dragon, eggs, disguises, removeAds.</param>
+    /// <param name="offerType">Type of offer: progression | push | rotational | shop</param>
+    /// <param name="playerProgress">Max dragon progression</param>
+    private void Notify_IAPContent(string itemID, string houstonTransactionID, string economyGroup, string content, string offerType)
+    {
+        Track_IAPContent(itemID, houstonTransactionID, economyGroup, content, offerType);
+    }
+
 
     /// <summary>
     /// Called when the user completed a purchase by using game resources (either soft currency or hard currency)
@@ -1549,6 +1590,35 @@ public class HDTrackingManagerImp : HDTrackingManager {
             Track_AddParamFloat(e, TRACK_PARAM_FB_DEF_LOGPURCHASE, moneyPrice);
         }
         m_eventQueue.Enqueue(e);
+
+    }
+
+
+    /// <summary>
+    /// /// Called for each item acquired when buying an offer
+    /// </summary>
+    /// <param name="itemID">ID of the shop pack purchased</param>
+    /// <param name="houstonTransactionID">transaction ID returned by houston</param>
+    /// <param name="ecoGroup">Type of the item. Possible values: pc | sc | dragon | egg | pet | skin | removeAds </param>
+    /// <param name="content">The amount in case of currencies. Or the sku in dragon, eggs, disguises, removeAds.</param>
+    /// <param name="offerType">Type of offer: progression | push | rotational | shop</param>
+    /// <param name="playerProgress">Max dragon progression</param>
+    private void Track_IAPContent(string itemID, string houstonTransactionID, string economyGroup, string content, string offerType )
+    {
+        Log("Track_IAPContent itemID = " + itemID + " houstonTransactionID = " + houstonTransactionID + " content = " + content +
+            " economyGroup = " + economyGroup + " offerType = " + offerType );
+
+        HDTrackingEvent e = new HDTrackingEvent("custom.player.iap.content");
+
+        Track_AddParamString(e, TRACK_PARAM_ITEM_ID, itemID);
+        Track_AddParamString(e, TRACK_PARAM_HOUSTON_TRANSACTION_ID, houstonTransactionID);
+        Track_AddParamString(e, TRACK_PARAM_ECO_GROUP, economyGroup);
+        Track_AddParamString(e, TRACK_PARAM_CONTENT, content);
+        Track_AddParamString(e, TRACK_PARAM_OFFER_TYPE, offerType);
+        Track_AddParamPlayerProgress(e);
+
+        m_eventQueue.Enqueue(e);
+
     }
 
     private void Track_PurchaseWithResourcesCompleted(string economyGroup, string itemID, int itemQuantity, string promotionType,
@@ -1631,26 +1701,6 @@ public class HDTrackingManagerImp : HDTrackingManager {
         }
         m_eventQueue.Enqueue(e);
 
-        if (SendRtTracking())
-        {
-            switch( currency )
-            {
-                case UserProfile.Currency.HARD:
-                {
-                    // Send event
-                    GameServerManager.SharedInstance.CurrencyEarned( "hc", amountBalance,  amountDelta, economyGroup, paid, CurrencyFluctuationResponse);    
-                }break;
-                case UserProfile.Currency.GOLDEN_FRAGMENTS:
-                {
-                    // Send event
-                    GameServerManager.SharedInstance.CurrencyEarned( "gf", amountBalance,  amountDelta, economyGroup, paid, CurrencyFluctuationResponse);    
-                }break;
-                 case UserProfile.Currency.SOFT:
-                {
-                    GameServerManager.SharedInstance.CurrencyEarned( "sc", amountBalance,  amountDelta, economyGroup, paid, CurrencyFluctuationResponse);    
-                }break;
-            }
-        }
     }
 
     // Track how the player is reacting to the happy hour popup
@@ -2608,7 +2658,8 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private const string TRACK_PARAM_BUTTON_NAME = "buttonName";
     private const string TRACK_PARAM_CATEGORY = "category";
 	private const string TRACK_PARAM_CHESTS_FOUND = "chestsFound";
-	private const string TRACK_PARAM_CONTROL_CHOICE = "controlChoice";
+    private const string TRACK_PARAM_CONTENT = "content";
+    private const string TRACK_PARAM_CONTROL_CHOICE = "controlChoice";
 	private const string TRACK_PARAM_COORDINATESBL = "coordinatesBL";
 	private const string TRACK_PARAM_COORDINATESTR = "coordinatesTR";
 	private const string TRACK_PARAM_CPUFREQUENCY = "cpuFrequency";
@@ -2768,6 +2819,8 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private const string TRACK_PARAM_XP = "xp";
     private const string TRACK_PARAM_YEAR_OF_BIRTH = "yearOfBirth";
     private const string TRACK_PARAM_ZONE = "zone";
+
+    private const string OFFER_TYPE_SHOP = "shop";
 
     //------------------------------------------------------------------------//
     private void Track_SendEvent(HDTrackingEvent _e) {
@@ -3254,19 +3307,43 @@ public class HDTrackingManagerImp : HDTrackingManager {
 
         if (Session_RewardsInRound != null) {
             // TrackingManager is notified with all currencies earned during the run
-            foreach (KeyValuePair<UserProfile.Currency, int> pair in Session_RewardsInRound) {
-                if (pair.Value > 0) {
-                    Track_EarnResources(economyGroupString, pair.Key, pair.Value, (int)userProfile.GetCurrency(pair.Key), false);
+
+            if (SendRtTracking())
+            {
+
+                // Track each currency
+                foreach (KeyValuePair<UserProfile.Currency, int> pair in Session_RewardsInRound)
+                {
+                    if (pair.Value > 0)
+                    {
+                        Track_EarnResources(economyGroupString, pair.Key, pair.Value, (int)userProfile.GetCurrency(pair.Key), false);
+                    }
                 }
+
+                // Send all the currencies grouped to the server to avoid spamming
+                GameServerManager.SharedInstance.CurrenciesEarned(Session_RewardsInRound, economyGroupString, false, CurrencyFluctuationResponse);
+
             }
         }
-
+        
         if (Session_RewardsInRoundPaid != null) {
             // TrackingManager is notified with all currencies earned during the run
-            foreach (KeyValuePair<UserProfile.Currency, int> pair in Session_RewardsInRoundPaid) {
-                if (pair.Value > 0) {
-                    Track_EarnResources(economyGroupString, pair.Key, pair.Value, (int)userProfile.GetCurrency(pair.Key), true);
+
+            if (SendRtTracking())
+            {
+
+                // Track each currency
+                foreach (KeyValuePair<UserProfile.Currency, int> pair in Session_RewardsInRound)
+                {
+                    if (pair.Value > 0)
+                    {
+                        Track_EarnResources(economyGroupString, pair.Key, pair.Value, (int)userProfile.GetCurrency(pair.Key), false);
+                    }
                 }
+
+                // Send all the currencies grouped to the server to avoid spamming
+                GameServerManager.SharedInstance.CurrenciesEarned(Session_RewardsInRound, economyGroupString, false, CurrencyFluctuationResponse);
+
             }
         }
     }
