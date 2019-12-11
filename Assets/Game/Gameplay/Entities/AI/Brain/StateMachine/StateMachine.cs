@@ -192,6 +192,17 @@ namespace AI
 				}
 			}
 		}
+
+		public State GetState(string stateName)
+		{
+			State ret = null;
+			for (int i = 0; i < m_states.Length && ret == null; i++)
+			{
+				if ( m_states[i].name.Equals( stateName ) )
+					ret = m_states[i];
+			}
+			return ret;
+		}
         
 #if UNITY_EDITOR
 		public void OnGUI()

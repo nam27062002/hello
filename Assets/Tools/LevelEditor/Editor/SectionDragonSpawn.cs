@@ -82,7 +82,10 @@ namespace LevelEditor {
 					bool levelLoaded = (spawnersLevel != null);
 					bool playing = EditorApplication.isPlaying;
 					string oldDragon = LevelEditor.settings.testDragon;
+					string oldSkin = LevelEditor.settings.testSkin;
+
 					string newDragon = oldDragon;
+					string newSkin = oldSkin;
 
 					List<string> availableSpawnPoints = new List<string>();
 
@@ -103,6 +106,28 @@ namespace LevelEditor {
 							AssetDatabase.SaveAssets();
 						}
 					} EditorGUILayoutExt.EndHorizontalSafe();
+
+					EditorGUILayout.BeginHorizontal(); {
+						// Label
+						GUILayout.Label("Test Skin:");	
+						// Dragon selector
+						List<DefinitionNode> defs = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.DISGUISES, "dragonSku", LevelEditor.settings.testDragon);
+						List<string> opts = new List<string>();
+						foreach(DefinitionNode n in defs)
+						{
+							opts.Add( n.sku );
+						}
+						string[] options = opts.ToArray();
+
+						int oldIdx = ArrayUtility.IndexOf<string>(options, oldSkin);
+						int newIdx = EditorGUILayout.Popup(Mathf.Max(oldIdx, 0), options);	// Select first dragon if saved dragon was not found (i.e. sku changes)
+						if(oldIdx != newIdx) {
+							newSkin = options[newIdx];
+							LevelEditor.settings.testSkin = newSkin;
+							EditorUtility.SetDirty(LevelEditor.settings);
+							AssetDatabase.SaveAssets();
+						}
+					}EditorGUILayoutExt.EndHorizontalSafe();
 
 
 					EditorGUILayout.BeginHorizontal(); {

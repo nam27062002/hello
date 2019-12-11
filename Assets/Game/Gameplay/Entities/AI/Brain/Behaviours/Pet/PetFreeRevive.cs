@@ -20,7 +20,7 @@ namespace AI {
 			}
             			
 			private bool m_executeRevive = false;
-			private float m_executingRevive = 0f;
+			private bool m_petCanRevive = true;
 
 			protected override void OnUpdate(){
 				if ( m_executeRevive ){
@@ -32,7 +32,8 @@ namespace AI {
 			void OnRevive(){
                 DragonPlayer dragon = InstanceManager.player;
                 if (dragon != null && !dragon.IsAlive()) {
-                    if (dragon.CanUseFreeRevives()) {
+                    if (dragon.CanUseFreeRevives() && m_petCanRevive) {
+						m_petCanRevive = false;
                         m_executeRevive = true;
                     }
 				}
