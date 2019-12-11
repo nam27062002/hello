@@ -94,7 +94,7 @@ namespace AI {
 				switch (m_attackState) {
 					case AttackState.Idle:
 						// Check if out of range
-						if ( m_machine.enemy == null )
+						if ( m_machine.enemy == null || mC_MotionGround.IsInFreeFall() )
 						{
 							Transition(onOutOfRange);
 						}
