@@ -106,7 +106,7 @@ namespace AI {
 							lookDir.z = pilotDir.z = 0;
 							float angle = Vector2.Angle( lookDir, pilotDir);
 							m_timer -= Time.deltaTime;
-							if (Mathf.Abs(angle) <= m_data.maxFacingAngle && m_timer <= 0 && m_machine.enemy.position.y > m_machine.position.y) {
+							if (Mathf.Abs(angle) <= m_data.maxFacingAngle && m_timer <= 0 && Vector3.Dot( lookDir, mC_MotionGround.groundNormal ) > 0) {
 								StartAttack();
 							}
 							else
@@ -181,13 +181,15 @@ namespace AI {
 				if (m_machine.enemy != null) {
 					direction = m_machine.enemy.position - m_machine.position;
 					direction.z = 0;
-					if ( direction.y <= 0.5f )
-					{
-						direction.y = 0.5f;
-					}
 					direction.Normalize();
-
 				}
+
+				if ( Vector3.Dot( mC_MotionGround.groundNormal, direction ) < 0 )
+				{
+					// Reflect
+					Vector3.Reflect(direction, mC_MotionGround.groundNormal);
+				}
+				
 				m_pilot.SetDirection(direction, true);
 				Vector3 jump = direction * m_data.jumpVelocity;
 				if (jump.y < 1)

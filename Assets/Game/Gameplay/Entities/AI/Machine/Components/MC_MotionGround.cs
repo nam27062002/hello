@@ -27,6 +27,7 @@ namespace AI {
 
 		//--------------------------------------------------
 		private Vector3 m_groundNormal;
+		public Vector3 groundNormal { get { return m_groundNormal; } }
 		private Vector3 m_groundDirection;
 		public Vector3 groundDirection { get { return m_groundDirection; } }
 
