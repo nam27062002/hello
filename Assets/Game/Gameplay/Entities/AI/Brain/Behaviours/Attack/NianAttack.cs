@@ -140,17 +140,20 @@ namespace AI {
 						}
 						break;
 				}
+
+				if ( mC_MotionGround.state == MC_Motion.State.StandUp )
+				{
+					mC_MotionGround.OnStandUp();
+				}
 			}
 
 			private void StartAttack() {
-				Debug.Log("START ATTACK");
 				m_pilot.PressAction(Pilot.Action.Jump);
 				m_machine.SetSignal(Signals.Type.InvulnerableBite, true);
 				m_attackState = AttackState.Attack;
 			}
 
 			private void Jump() {
-				Debug.Log("JUMP");
 				m_impulsed = true;
 				m_meleeWeapon.EnableWeapon();
 
