@@ -279,6 +279,7 @@ namespace AI {
 					m_viewControl.Height(0f);
 					m_onGround = true;
 					m_viewControl.Jumping(false);
+					m_viewControl.JumpDown(false);
 					Stop();
 					break;
 			}
@@ -305,7 +306,8 @@ namespace AI {
 				case SubState.Jump_Up:
 					break;
 
-				case SubState.Jump_Down:					
+				case SubState.Jump_Down:		
+					m_viewControl.JumpDown(true);
 					m_jumpUpDistance = m_machine.position.y - m_jumpStartY;
 					m_jumpStartY = m_machine.position.y;
 					break;
@@ -324,10 +326,10 @@ namespace AI {
             ContactPoint[] _contacts = _collision.contacts;
             int _count = _contacts.Length;
             for (int i = 0; i < _count; i++) {
-				Vector3 hitPoint = _contacts[i].point;
-				float error = (hitPoint - position).sqrMagnitude;
+				// Vector3 hitPoint = _contacts[i].point;
+				// float error = (hitPoint - position).sqrMagnitude;
 
-				if (error <= 0.3f) {					
+				if (_contacts[i].normal.y > 0.5f) {					
 					m_groundNormal = _contacts[i].normal;
 					m_groundDirection = Vector3.Cross(GameConstants.Vector3.back, m_groundNormal);
 
