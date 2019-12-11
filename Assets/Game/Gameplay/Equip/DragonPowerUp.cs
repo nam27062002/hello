@@ -452,6 +452,7 @@ public class DragonPowerUp : MonoBehaviour {
 			case "food_increase":
 			case "vacuum":
 			case "faster_boost":
+			case "coin_reward":
 			{
 				return _powerDef.GetLocalized(
 					fieldId, 
