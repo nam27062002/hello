@@ -243,6 +243,20 @@
         "etl"
       ]
     },
+	"custom.player.iap.content": {
+      "Parameters": [
+        { "itemID": { "Status": "OK" } },
+        { "houstonTransactionID": { "Status": "OK" } },
+        { "content": { "Status": "OK" } },
+        { "ecoGroup": { "Status": "OK" } },
+        { "offerType": { "Status": "OK" } },
+        { "playerProgress": { "Status": "OK" } }
+      ],
+      "APIs": [
+        "dna",
+        "etl"
+      ]
+    },
     "custom.eco.sink": {
       "Parameters": [
         { "sessionsCount": { "Status": "OK" } },

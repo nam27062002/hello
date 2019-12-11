@@ -52,6 +52,7 @@ namespace GameConstants {
             public static readonly string FREEZE = "FREEZE";
             public static readonly string FRESNEL = "FRESNEL";
             public static readonly string MATCAP = "MATCAP";
+            public static readonly string NIGHT = "NIGHT";
         }
     }
 }

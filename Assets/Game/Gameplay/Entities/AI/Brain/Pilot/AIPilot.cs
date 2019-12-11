@@ -9,6 +9,7 @@
 using UnityEngine;
 using System;
 using System.Collections.Generic;
+using Firebase.Crashlytics;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -206,7 +207,7 @@ namespace AI {
                 T data = (T)kvp.data;
                 return data;
             } catch {
-                Fabric.Crashlytics.Crashlytics.RecordCustomException("Pilot - GetComponentData", "Data is NULL", "NPC " + name + " has a null value on " + typeName + " behaviour.");
+                Crashlytics.Log("Pilot - GetComponentData: Data is NULL : NPC " + name + " has a null value on " + typeName + " behaviour.");
             }
             return null;
         }

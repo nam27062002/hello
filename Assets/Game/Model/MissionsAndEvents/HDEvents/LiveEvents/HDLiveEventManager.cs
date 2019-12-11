@@ -471,6 +471,28 @@ public abstract class HDLiveEventManager : HDLiveDataController {
     	}
     }
 
+    public override void ActivateLaterMods()
+    {
+        if ( m_active )
+        {
+            List<Modifier> mods = data.definition.m_laterMods;
+            for (int i = 0; i < mods.Count; i++) {
+                mods[ i ].Apply();
+            }
+        }
+    }
+
+    public override void DeactivateLaterMods()
+    {
+        if ( m_active )
+        {
+            List<Modifier> mods = data.definition.m_laterMods;
+            for (int i = 0; i < mods.Count; i++) {
+                mods[ i ].Remove();
+            }
+        }
+    }
+
     public override void ApplyDragonMods()
     {
 		List<Modifier> mods = data.definition.m_dragonMods;

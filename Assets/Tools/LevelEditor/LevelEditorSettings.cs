@@ -69,6 +69,8 @@ namespace LevelEditor {
 		[Separator("Level Settings", 20)]
 		[SkuList(DefinitionsCategory.DRAGONS)]
 		public string testDragon = "";	// Dragon with which to test the level
+		[SkuList(DefinitionsCategory.DISGUISES)]
+		public string testSkin = "";	// Dragon skin with which to test the level
 		public string[] testPets = {"","","","",""};
 		public bool useIntro = true;
 		public bool spawnAtCameraPos = false;

@@ -233,7 +233,9 @@ public class LoadingSceneController : SceneController {
     /// <summary>
     /// Initialization.
     /// </summary>
-    override protected void Awake() {        		
+    override protected void Awake() {
+        CrashlyticsInit.initialise();
+
         // Call parent
 		base.Awake();
 

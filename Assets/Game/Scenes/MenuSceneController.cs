@@ -32,6 +32,22 @@ public class MenuSceneController : SceneController {
 		get { return m_hud; }
 	}
 
+	// Screen navigation
+	[SerializeField] private MenuTransitionManager m_transitionManager = null;
+	public MenuTransitionManager transitionManager {
+		get { return m_transitionManager; }
+	}
+
+	public MenuScreen currentScreen {
+		get { return m_transitionManager.currentScreen; }
+	}
+
+	// Popups manager
+	[SerializeField] private MenuInterstitialPopupsController m_interstitialPopupsController = null;
+	public MenuInterstitialPopupsController interstitialPopupsController {
+		get { return m_interstitialPopupsController; }
+	}
+
 	// Temp vars
 	private string m_selectedDragon = "";
 	public string selectedDragon {
@@ -48,16 +64,6 @@ public class MenuSceneController : SceneController {
 	}
 
 	// Shortcuts to interesting elements of the menu
-	[SerializeField]
-	private MenuTransitionManager m_transitionManager = null;
-	public MenuTransitionManager transitionManager {
-		get { return m_transitionManager; }
-	}
-
-	public MenuScreen currentScreen {
-		get { return m_transitionManager.currentScreen; }
-	}
-
 	// Dragon selector - responsible to set selected dragon
 	private MenuDragonSelector m_dragonSelector = null;
 	private MenuDragonSelector m_specialDragonSelector = null;

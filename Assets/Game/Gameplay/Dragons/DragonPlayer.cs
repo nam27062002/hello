@@ -27,7 +27,7 @@ public class DragonPlayer : MonoBehaviour, IBroadcastListener {
 	{
 		AD,
 		PAYING,
-		FREE_REVIVE_PET,
+		FREE_REVIVE_POWER,
         MUMMY,
         UNKNOWN,
         REMOVE_ADS
@@ -602,7 +602,9 @@ public class DragonPlayer : MonoBehaviour, IBroadcastListener {
         }
         else if (CanUseFreeRevives()) {   
             Messenger.Broadcast(MessengerEvents.PLAYER_FREE_REVIVE);
-            m_freeRevives--;
+			m_freeRevives--;
+			dragonMotion.OnPetPreFreeRevive();
+			StartCoroutine(WaitForReview());
         }
         // If I have an angel pet and aura still playing
         else {
@@ -619,6 +621,12 @@ public class DragonPlayer : MonoBehaviour, IBroadcastListener {
             playable = false;
         }
     }
+
+	IEnumerator WaitForReview()
+	{
+		yield return new WaitForSeconds( 0.5f );
+		ResetStats(true, DragonPlayer.ReviveReason.FREE_REVIVE_POWER);
+	}
 
 	/// <summary>
 	/// Add/remove energy to the dragon.

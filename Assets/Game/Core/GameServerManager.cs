@@ -344,6 +344,13 @@ public class GameServerManager {
     /// <param name="onDone">On done.</param>
     public virtual void CurrencyEarned(string currency, int balance, int amount, string group, bool paid, ServerCallback onDone) { }
 
+    /// <summary>
+    /// Currency earned
+    /// </summary>
+    /// <param name="currencies">Dictionary of currencies earned</param>
+    public virtual void CurrenciesEarned(Dictionary<UserProfile.Currency, int> currencies, string economyGroup, bool paid, ServerCallback onDone) { }
+
+
     //------------------------------------------------------------------------//
     // GLOBAL EVENTS														  //
     //------------------------------------------------------------------------//

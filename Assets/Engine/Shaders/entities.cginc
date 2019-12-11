@@ -355,5 +355,10 @@ fixed4 frag(v2f i) : SV_Target
 #if defined(TINT)
 	col.a *= _Tint.a;
 #endif
-	return col;
+
+#if defined(NIGHT)
+	return col * fixed4(0.5, 0.5, 1.0, 1.0);
+#else
+    return col;
+#endif
 }
