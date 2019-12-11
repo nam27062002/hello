@@ -138,8 +138,7 @@ public class HDLiveDataManager : Singleton<HDLiveDataManager> {
 
 #if UNITY_EDITOR
     public static bool TEST_CALLS {
-        // get { return DebugSettings.useLiveEventsDebugCalls; }
-        get { return true; }
+        get { return DebugSettings.useLiveEventsDebugCalls; }
     }
 #else
     // Do not touch!
