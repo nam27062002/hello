@@ -121,6 +121,26 @@ public class PopupShopFreeOfferPill : PopupShopOffersPill {
 		return HDTrackingManager.EEconomyGroup.SHOP_AD_OFFER_PACK;
 	}
 
+	/// <summary>
+	/// Apply the shop pack to the current user!
+	/// Invoked after a successful purchase.
+	/// </summary>
+	override protected void ApplyShopPack() {
+		// We are going to go to the rewards screen as any other offer, but we want
+		// to open the shop again once all rewards are collected so the player
+		// realizes the free offer is on cooldown and takes one more look at the
+		// rest of offers
+
+		// Let parent do the hard work
+		base.ApplyShopPack();
+
+		// Make sure we are on the menu
+		if(InstanceManager.menuSceneController == null) return;
+
+		// Tell the menu controller to open the shop after the rewards screen
+		InstanceManager.menuSceneController.interstitialPopupsController.SetFlag(MenuInterstitialPopupsController.StateFlag.OPEN_OFFERS_SHOP, true);
+	}
+
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//

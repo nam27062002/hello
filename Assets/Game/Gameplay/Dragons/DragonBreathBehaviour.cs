@@ -350,7 +350,8 @@ public class DragonBreathBehaviour : MonoBehaviour, IBroadcastListener {
 
 	protected virtual void OnEntityBurned(Transform _t, IEntity _e, Reward _reward, KillType _type)
 	{
-        if (_type == KillType.BURNT)
+        // Consider also electric rush, ice breath 
+        if (_type == KillType.BURNT || _type == KillType.ELECTRIFIED || _type == KillType.FROZEN)
         {
             float healthReward = m_healthBehaviour.GetBoostedHp(_reward.origin, _reward.health);
             m_dragon.AddLife(healthReward, DamageType.NONE, _t);

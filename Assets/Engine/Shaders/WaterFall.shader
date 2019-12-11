@@ -115,8 +115,11 @@ Shader "Hungry Dragon/Waterfall"
 					col.rgb = lerp((col).rgb, fogCol.rgb, fogCol.a * intensity);
 
 					col.a *= _BackColor.a;
-
-					return col  * fixed4(0.25, 0.25, 0.5, 1.0);
+#if defined(NIGHT)
+					return col * fixed4(0.25, 0.25, 0.5, 1.0);
+#else
+					return col;
+#endif
 				}
 			ENDCG
 		}
@@ -197,7 +200,12 @@ Shader "Hungry Dragon/Waterfall"
 
 				fixed4 fcol = _BackColor;
 				fcol.a *= (1.0 - i.color.a) + saturate;
-				return fcol  * fixed4(0.25, 0.25, 0.5, 1.0);
+
+#if defined(NIGHT)
+				return col * fixed4(0.25, 0.25, 0.5, 1.0);
+#else
+				return col;
+#endif
 			}
 
 			ENDCG
