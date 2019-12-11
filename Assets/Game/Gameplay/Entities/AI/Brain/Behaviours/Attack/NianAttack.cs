@@ -162,6 +162,9 @@ namespace AI {
 				{
 					mC_MotionGround.OnStandUp();
 				}
+				if (m_machine.GetSignal(Signals.Type.InWater)) {
+					m_machine.Drown();
+				}
 			}
 
 			private void StartAttack() {
