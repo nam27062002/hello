@@ -28,7 +28,7 @@ namespace AI {
 
 				m_pilot.Stop();
 				DragonPlayer player = InstanceManager.player;
-                player.dragonMotion.OnPetPreFreeRevive();
+                // player.dragonMotion.OnPetPreFreeRevive();
 
                 float distance = player.data.maxScale * 6;
 				Vector3 dir = Vector3.back;
@@ -53,7 +53,7 @@ namespace AI {
 						m_pilot.ReleaseAction(Pilot.Action.Button_A);
 						// Hide Harp and Halo
 
-						InstanceManager.player.ResetStats(true, DragonPlayer.ReviveReason.FREE_REVIVE_PET);	// do it on next update?
+						// InstanceManager.player.ResetStats(true, DragonPlayer.ReviveReason.FREE_REVIVE_PET);	// do it on next update?
 
 						Transition(onFreeReviveDone);
 					}
