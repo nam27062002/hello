@@ -626,15 +626,16 @@ public class GameServerManagerCalety : GameServerManager {
     
     public override void CurrencySpent( string currency, int balance, int amount, string group, ServerCallback onDone)
     {
-        SendCurencyFluctuation( currency, balance, -amount, false, group, onDone );
+        SendCurrencyFluctuation( currency, balance, -amount, false, group, onDone );
     }
 
     public override void CurrencyEarned(string currency, int balance, int amount, string group, bool paid, ServerCallback onDone)
     {
-        SendCurencyFluctuation( currency, balance, amount, paid , group, onDone );
+        SendCurrencyFluctuation( currency, balance, amount, paid , group, onDone );
     }
-    
-    private void SendCurencyFluctuation(string currency, int balance, int amount, bool paid, string action, ServerCallback onDone)
+
+
+    private void SendCurrencyFluctuation(string currency, int balance, int amount, bool paid, string action, ServerCallback onDone)
     {
         JSONNode json = new JSONClass();
         json["currency"] = currency;
@@ -650,7 +651,56 @@ public class GameServerManagerCalety : GameServerManager {
 
         Commands_EnqueueCommand(ECommand.CurrencyFluctuation, parameters, onDone);
     }
-    
+
+    public override void CurrenciesEarned(Dictionary<UserProfile.Currency, int> currencies, string economyGroup, bool paid, ServerCallback onDone)
+    {
+        SendCurrenciesFluctuation(currencies, economyGroup, paid, onDone);
+    }
+
+
+    private void SendCurrenciesFluctuation(Dictionary<UserProfile.Currency, int> currencies, string economyGroup, bool paid, ServerCallback onDone)
+    {
+        UserProfile userProfile = UsersManager.currentUser;
+
+        JSONNode actionsArray = new JSONArray();
+
+        // Merge all the currencies in one request to avoid spamming the server
+        foreach (KeyValuePair< UserProfile.Currency, int> pair in currencies) {
+
+            if (pair.Value > 0)
+            {
+                string currency="";
+                switch (pair.Key)
+                {
+                    case UserProfile.Currency.HARD: currency = "hc"; break;
+                    case UserProfile.Currency.GOLDEN_FRAGMENTS: currency = "gf"; break;
+                    case UserProfile.Currency.SOFT: currency = "sc"; break;
+                }
+
+                JSONNode node = new JSONClass();
+                node["currency"] = currency;
+                node["amount"] = pair.Value;
+                node["type"] = paid ? "paid" : "free";
+                node["action"] = economyGroup;
+                node["balance"] = (int)userProfile.GetCurrency(pair.Key);
+
+                actionsArray.Add(node);
+            }
+        }
+
+        if (actionsArray.Count == 0) { return; }
+
+        JSONNode root = new JSONClass();
+        root.Add("actions", actionsArray);
+
+
+        Dictionary<string, string> parameters = new Dictionary<string, string>
+        {
+            { "body", root.ToString() }
+        };
+
+        Commands_EnqueueCommand(ECommand.CurrencyFluctuation, parameters, onDone);
+    }
 
     override public void GlobalEvent_TMPCustomizer(ServerCallback _callback) {
 		Commands_EnqueueCommand(ECommand.GlobalEvents_TMPCustomizer, null, _callback);
@@ -1059,11 +1109,9 @@ public class GameServerManagerCalety : GameServerManager {
 
                         // The command needs the user to be logged in before being processed
                         if (Commands_NeedsToBeLoggedIn(command.Cmd)) {                            
-                            switch (loginState) {
-                                case ELoginState.LoggingIn:
-                                    // This command can't be processed yet because log in process is still being processed
-                                    command = null;
-                                    break;                                
+                            if  (loginState == ELoginState.LoggingIn) { 
+                                // This command can't be processed yet because log in process is still being processed
+                                command = null;
                             }
                         }                        
                     }
