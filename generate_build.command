@@ -19,7 +19,7 @@ PROJECT_PATH="${SCRIPT_PATH}"
 PROJECT_CODE_NAME="xx"
   # git config
 BRANCH="develop"
-CALETY_BRANCH="hd/features/HD2.4-FirebaseCrashlytics"
+CALETY_BRANCH="hungrydragon"
 RESET_GIT=false
 COMMIT_CHANGES=false
 CREATE_TAG=false
