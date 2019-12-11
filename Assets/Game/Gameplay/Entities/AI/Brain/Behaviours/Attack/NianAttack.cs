@@ -94,7 +94,7 @@ namespace AI {
 				switch (m_attackState) {
 					case AttackState.Idle:
 						// Check if out of range
-						if ( m_machine.enemy == null )
+						if ( m_machine.enemy == null || mC_MotionGround.IsInFreeFall() )
 						{
 							Transition(onOutOfRange);
 						}
@@ -106,7 +106,7 @@ namespace AI {
 							lookDir.z = pilotDir.z = 0;
 							float angle = Vector2.Angle( lookDir, pilotDir);
 							m_timer -= Time.deltaTime;
-							if (Mathf.Abs(angle) <= m_data.maxFacingAngle && m_timer <= 0 && m_machine.enemy.position.y > m_machine.position.y) {
+							if (Mathf.Abs(angle) <= m_data.maxFacingAngle && m_timer <= 0 && Vector3.Dot( lookDir, mC_MotionGround.groundNormal ) > 0) {
 								StartAttack();
 							}
 							else
@@ -126,17 +126,34 @@ namespace AI {
 						break;
 
 					case AttackState.Attack:
-						if (m_impulsed && m_machine.velocity.y <= 0 )
+						if (m_machine.velocity.y <= 0 )
 						{
-							FallDown();
-							m_impulsed = false;
-							/*
-							if (mC_MotionGround.onGround)
+							if (m_impulsed )
 							{
+								FallDown();
 								m_impulsed = false;
-								EndAttack();
 							}
-							*/		
+							
+							if ( mC_MotionGround.heightFromGround < 2 )
+							{
+								Vector3 pilotDir = m_pilot.transform.forward;
+								if ( Vector3.Dot(pilotDir, mC_MotionGround.groundDirection) > 0 )
+								{
+									m_pilot.SetDirection(mC_MotionGround.groundDirection, true);	
+								}
+								else
+								{
+									m_pilot.SetDirection(-mC_MotionGround.groundDirection, true);	
+								}
+							}
+							else
+							{
+								Vector3 direction = GameConstants.Vector3.right;
+								if ( m_machine.direction.x < 0 )
+									direction = GameConstants.Vector3.left;
+								m_pilot.SetDirection(direction, true);
+							}
+							
 						}
 						break;
 				}
@@ -144,6 +161,9 @@ namespace AI {
 				if ( mC_MotionGround.state == MC_Motion.State.StandUp )
 				{
 					mC_MotionGround.OnStandUp();
+				}
+				if (m_machine.GetSignal(Signals.Type.InWater)) {
+					m_machine.Drown();
 				}
 			}
 
@@ -161,13 +181,15 @@ namespace AI {
 				if (m_machine.enemy != null) {
 					direction = m_machine.enemy.position - m_machine.position;
 					direction.z = 0;
-					if ( direction.y <= 0.5f )
-					{
-						direction.y = 0.5f;
-					}
 					direction.Normalize();
-
 				}
+
+				if ( Vector3.Dot( mC_MotionGround.groundNormal, direction ) < 0 )
+				{
+					// Reflect
+					Vector3.Reflect(direction, mC_MotionGround.groundNormal);
+				}
+				
 				m_pilot.SetDirection(direction, true);
 				Vector3 jump = direction * m_data.jumpVelocity;
 				if (jump.y < 1)
@@ -178,10 +200,7 @@ namespace AI {
             private void FallDown() {
 				
                 m_machine.SetSignal(Signals.Type.InvulnerableBite, false);
-				Vector3 direction = GameConstants.Vector3.right;
-				if ( m_machine.direction.x < 0 )
-					direction = GameConstants.Vector3.left;
-				m_pilot.SetDirection(direction, true);
+				
             }
 
 			private void EndAttack() {
