@@ -126,17 +126,34 @@ namespace AI {
 						break;
 
 					case AttackState.Attack:
-						if (m_impulsed && m_machine.velocity.y <= 0 )
+						if (m_machine.velocity.y <= 0 )
 						{
-							FallDown();
-							m_impulsed = false;
-							/*
-							if (mC_MotionGround.onGround)
+							if (m_impulsed )
 							{
+								FallDown();
 								m_impulsed = false;
-								EndAttack();
 							}
-							*/		
+							
+							if ( mC_MotionGround.heightFromGround < 2 )
+							{
+								Vector3 pilotDir = m_pilot.transform.forward;
+								if ( Vector3.Dot(pilotDir, mC_MotionGround.groundDirection) > 0 )
+								{
+									m_pilot.SetDirection(mC_MotionGround.groundDirection, true);	
+								}
+								else
+								{
+									m_pilot.SetDirection(-mC_MotionGround.groundDirection, true);	
+								}
+							}
+							else
+							{
+								Vector3 direction = GameConstants.Vector3.right;
+								if ( m_machine.direction.x < 0 )
+									direction = GameConstants.Vector3.left;
+								m_pilot.SetDirection(direction, true);
+							}
+							
 						}
 						break;
 				}
@@ -178,10 +195,7 @@ namespace AI {
             private void FallDown() {
 				
                 m_machine.SetSignal(Signals.Type.InvulnerableBite, false);
-				Vector3 direction = GameConstants.Vector3.right;
-				if ( m_machine.direction.x < 0 )
-					direction = GameConstants.Vector3.left;
-				m_pilot.SetDirection(direction, true);
+				
             }
 
 			private void EndAttack() {
