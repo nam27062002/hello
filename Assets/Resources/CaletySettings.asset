@@ -401,7 +401,7 @@ MonoBehaviour:
   - android.permission.ACCESS_NETWORK_STATE
   m_kAndroidDangerousPermissions: []
   m_strAndroidManifestExtraData: "<meta-data android:name=\"android.max_aspect\" android:value=\"2.1\"
-    />\n<provider\n                  android:name=\"android.support.v4.content.FileProvider\"\n
+    />\n<provider\n                  android:name=\"androidx.core.content.FileProvider\"\n
     \                 android:authorities=\"%packageName%.provider\"\n                  android:exported=\"false\"\n
     \                 android:grantUriPermissions=\"true\">\n                  <meta-data\n
     \                     android:name=\"android.support.FILE_PROVIDER_PATHS\"\n                      android:resource=\"@xml/provider_paths\"/>\n\n</provider>\n\n<!--
@@ -447,7 +447,7 @@ MonoBehaviour:
   m_bTrackingFacebookEnabled: 1
   m_bTrackingAppsFlyerEnabled: 1
   m_bTrackingDNAEnabled: 1
-  m_bCrashlyticsEnabled: 1
+  m_bCrashlyticsEnabled: 0
   m_bAddSupportsScreens: 0
   m_bSupportSmallScreens: 0
   m_bSupportNormalScreens: 0
