@@ -434,6 +434,7 @@ public class DragonParticleController : MonoBehaviour, IBroadcastListener
 	{
 		switch( reason )
 		{
+			case DragonPlayer.ReviveReason.FREE_REVIVE_POWER:
 			default:
 			{
 				if ( m_reviveInstance != null)
@@ -445,7 +446,6 @@ public class DragonParticleController : MonoBehaviour, IBroadcastListener
 				}
 			}break;
             case DragonPlayer.ReviveReason.MUMMY:
-			case DragonPlayer.ReviveReason.FREE_REVIVE_POWER:
 			{
 				
 			}break;
