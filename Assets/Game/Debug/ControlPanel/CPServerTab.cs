@@ -13,7 +13,7 @@ using System;
 using System.Text;
 using System.Collections;
 using TMPro;
-using Fabric.Crashlytics;
+using Firebase.Crashlytics;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -290,19 +290,19 @@ public class CPServerTab : MonoBehaviour {
     public void OnCrashlyticsNonFatal()
     {
         Output("Crashlytics: non-fatal exception");
-        Crashlytics.ThrowNonFatal();
+        Crashlytics.Log("Crashlytics: non-fatal exception");
     }
 
     public void OnCrashlyticsCrash()
     {
         Output("Crashlytics: crash");
-        Crashlytics.Crash();
+        Crashlytics.Log("Crashlytics: crash");
     }
 
     public void OnCrashlyticsRecordException()
     {
         Output("Crashlytics: record exception");
-        Fabric.Crashlytics.Crashlytics.RecordCustomException("Crashlytics", "Record custom exception test", "");
+        Crashlytics.Log("Crashlytics : Record custom exception test");
     }
 
 	public void OnOpenSurvey()

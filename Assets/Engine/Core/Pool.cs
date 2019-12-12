@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
-
+using Firebase.Crashlytics;
 
 public class Pool {
 	//-----------------------------------------------
@@ -236,7 +236,7 @@ public class Pool {
 			#if UNITY_EDITOR
 			Debug.LogError(method+msg);
 			#endif
-			Fabric.Crashlytics.Crashlytics.RecordCustomException(method, msg, e.StackTrace);
+			Crashlytics.Log(method + msg + e.StackTrace);
             return null;
         }
 	}

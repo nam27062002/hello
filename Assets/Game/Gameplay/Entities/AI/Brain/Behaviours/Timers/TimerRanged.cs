@@ -12,6 +12,7 @@ namespace AI {
 		public class TimerRanged : Timing {
 			
 			private TimerRangedData m_data;
+			public TimerRangedData data { get{ return m_data; }}
 
 
 			public override StateComponentData CreateData() {

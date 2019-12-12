@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 476f90a6cbdac4eb69432e3a345d1c01, type: 3}
+  m_Name: PetBrainShu
+  m_EditorClassIdentifier: 
+  m_states:
+  - m_name: Wander
+    m_componentAssets:
+    - {fileID: 11400000, guid: 7aa033b6c69294a3f8ba3952e042d3c8, type: 2}
+    - {fileID: 11400000, guid: 4be382d33098c471caf973f4c4b74c81, type: 2}
+    - {fileID: 11400000, guid: c03515eae1cdd49fb967d2b5bfe6fdb1, type: 2}
+    - {fileID: 11400000, guid: 3ffb588c4dcd84d13b7c9a5ec389cb92, type: 2}
+    - {fileID: 11400000, guid: dfc291e815f6340bdabfe2987471a044, type: 2}
+  - m_name: ChangingArea
+    m_componentAssets:
+    - {fileID: 11400000, guid: 7aa033b6c69294a3f8ba3952e042d3c8, type: 2}
+    - {fileID: 11400000, guid: c03515eae1cdd49fb967d2b5bfe6fdb1, type: 2}
+  m_transitionData:
+  - to: 1
+    id: onTimedAction
+    from: 0
+  m_firstState_A: 0
+  m_firstState_B: 0
