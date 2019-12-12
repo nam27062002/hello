@@ -725,6 +725,10 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
         int interstitialsBeforeRemoveAdsPopup = OffersManager.settings.interstitialsBeforeNoAdsPopup;
         int interstitialsBetweenRemoveAdsPopup = OffersManager.settings.interstitialsBetweenNoAdsPopup;
 
+        // Use negative values in the configuration to disable the popups
+        if (interstitialsBeforeRemoveAdsPopup < 0 || interstitialsBetweenRemoveAdsPopup <= 0)
+            return false;
+
         // Didnt watched enought interstitials
         if (interstitialsWatched < interstitialsBeforeRemoveAdsPopup)
             return false;
@@ -732,10 +736,6 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
         // Show first popup
         if (interstitialsWatched == interstitialsBeforeRemoveAdsPopup)
             return true;
-
-
-        if (interstitialsBetweenRemoveAdsPopup <= 0)
-            return false;
 
         // Iterative popups (show every N interstitials)
         return ((interstitialsWatched - interstitialsBeforeRemoveAdsPopup) % interstitialsBetweenRemoveAdsPopup == 0);
