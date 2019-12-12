@@ -138,7 +138,7 @@ do
         ((i++))
         PROJECT_SETTINGS_VERSION_CODE_AMZ=${!i}
 
-    elif [ "$PARAM_NAME" == "-xcworkspace"] ; then
+    elif [ "$PARAM_NAME" == "-xcworkspace" ] ; then
         XCWORKSPACE=true
 
     elif [ "$PARAM_NAME" == "-output" ] ; then
@@ -418,7 +418,7 @@ if $BUILD_IOS; then
     print_builder "Archiving"
     rm -rf "${OUTPUT_DIR}/archives/${ARCHIVE_FILE}"    # just in case
     sed -i "" "s|ProvisioningStyle = Automatic;|ProvisioningStyle = Manual;|" "${PROJECT_NAME}/project.pbxproj" # for archive to work we need it to be manual
-    
+
     if $XCWORKSPACE; then
       print_builder "XCode project type: .xcworkspace"
       xcodebuild clean archive -workspace "${PROJECT_NAME}.xcworkspace" -configuration Release -scheme "Unity-iPhone" -archivePath "${OUTPUT_DIR}/archives/${ARCHIVE_FILE}" DEVELOPMENT_TEAM="${DEVELOPMENT_TEAM}" PROVISIONING_PROFILE="${PROVISIONING_PROFILE_UUID}" CODE_SIGN_IDENTITY="${CODE_SIGN_IDENTITY}"
