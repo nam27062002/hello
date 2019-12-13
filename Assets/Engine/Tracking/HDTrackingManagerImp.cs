@@ -1701,26 +1701,6 @@ public class HDTrackingManagerImp : HDTrackingManager {
         }
         m_eventQueue.Enqueue(e);
 
-        if (SendRtTracking())
-        {
-            switch( currency )
-            {
-                case UserProfile.Currency.HARD:
-                {
-                    // Send event
-                    GameServerManager.SharedInstance.CurrencyEarned( "hc", amountBalance,  amountDelta, economyGroup, paid, CurrencyFluctuationResponse);    
-                }break;
-                case UserProfile.Currency.GOLDEN_FRAGMENTS:
-                {
-                    // Send event
-                    GameServerManager.SharedInstance.CurrencyEarned( "gf", amountBalance,  amountDelta, economyGroup, paid, CurrencyFluctuationResponse);    
-                }break;
-                 case UserProfile.Currency.SOFT:
-                {
-                    GameServerManager.SharedInstance.CurrencyEarned( "sc", amountBalance,  amountDelta, economyGroup, paid, CurrencyFluctuationResponse);    
-                }break;
-            }
-        }
     }
 
     // Track how the player is reacting to the happy hour popup
@@ -3327,19 +3307,43 @@ public class HDTrackingManagerImp : HDTrackingManager {
 
         if (Session_RewardsInRound != null) {
             // TrackingManager is notified with all currencies earned during the run
-            foreach (KeyValuePair<UserProfile.Currency, int> pair in Session_RewardsInRound) {
-                if (pair.Value > 0) {
-                    Track_EarnResources(economyGroupString, pair.Key, pair.Value, (int)userProfile.GetCurrency(pair.Key), false);
+
+            if (SendRtTracking())
+            {
+
+                // Track each currency
+                foreach (KeyValuePair<UserProfile.Currency, int> pair in Session_RewardsInRound)
+                {
+                    if (pair.Value > 0)
+                    {
+                        Track_EarnResources(economyGroupString, pair.Key, pair.Value, (int)userProfile.GetCurrency(pair.Key), false);
+                    }
                 }
+
+                // Send all the currencies grouped to the server to avoid spamming
+                GameServerManager.SharedInstance.CurrenciesEarned(Session_RewardsInRound, economyGroupString, false, CurrencyFluctuationResponse);
+
             }
         }
-
+        
         if (Session_RewardsInRoundPaid != null) {
             // TrackingManager is notified with all currencies earned during the run
-            foreach (KeyValuePair<UserProfile.Currency, int> pair in Session_RewardsInRoundPaid) {
-                if (pair.Value > 0) {
-                    Track_EarnResources(economyGroupString, pair.Key, pair.Value, (int)userProfile.GetCurrency(pair.Key), true);
+
+            if (SendRtTracking())
+            {
+
+                // Track each currency
+                foreach (KeyValuePair<UserProfile.Currency, int> pair in Session_RewardsInRound)
+                {
+                    if (pair.Value > 0)
+                    {
+                        Track_EarnResources(economyGroupString, pair.Key, pair.Value, (int)userProfile.GetCurrency(pair.Key), false);
+                    }
                 }
+
+                // Send all the currencies grouped to the server to avoid spamming
+                GameServerManager.SharedInstance.CurrenciesEarned(Session_RewardsInRound, economyGroupString, false, CurrencyFluctuationResponse);
+
             }
         }
     }

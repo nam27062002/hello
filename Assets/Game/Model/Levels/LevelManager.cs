@@ -90,7 +90,7 @@ public class LevelManager : Singleton<LevelManager> {
 		LevelData data = null;
 		if(def != null) {
 			data = Resources.Load<LevelData>(LEVEL_DATA_PATH + def.GetAsString("dataFile"));
-			Debug.Assert(m_currentLevelData != null);
+			Debug.Assert(data != null);
 			data.Init(def);
 		}
 		return data;

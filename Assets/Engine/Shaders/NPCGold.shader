@@ -31,7 +31,7 @@ Shader "Hungry Dragon/NPC/NPC Gold"
 				#pragma vertex vert
 				#pragma fragment frag
 
-                #pragma multi_compile NIGHT
+                #pragma multi_compile __ NIGHT
 
 				#include "UnityCG.cginc"
 				

@@ -78,13 +78,10 @@
 #---------------------
 # Crashlytics
 #---------------------
--keep class com.crashlytics.android.** { *; }
-#-keep class io.fabric.unity.android.** { *; }
-#-keepclassmembers class io.fabric.unity.android.** { *; }
+#-keep class com.crashlytics.android.** { *; }
 -keepattributes *Annotation*
 -keepattributes SourceFile,LineNumberTable
 -keep public class * extends java.lang.Exception
-# -keepresourcexmlelements manifest/application/meta-data@name=io.fabric.ApiKey
--keep class io.fabric.unity.android.** { *; }
--dontwarn io.fabric.unity.android.**
--keep class io.fabric.sdk.android.** { *; }
+#-keep class io.fabric.unity.android.** { *; }
+#-dontwarn io.fabric.unity.android.**
+#-keep class io.fabric.sdk.android.** { *; }

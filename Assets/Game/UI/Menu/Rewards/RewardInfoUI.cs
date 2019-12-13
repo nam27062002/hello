@@ -373,7 +373,7 @@ public class RewardInfoUI : MonoBehaviour {
 			case Metagame.RewardPet.TYPE_CODE: {
 				// [AOC] 1.14 Halloween pet needs some explanation, so let's show a popup for this one
 				if(m_reward.def.sku == PopupHalloweenPetInfo.PET_SKU && !m_reward.WillBeReplaced()) {	// Not when it's a duplicate!
-					PopupManager.OpenPopupInstant(PopupHalloweenPetInfo.PATH);
+					PopupManager.EnqueuePopup(PopupHalloweenPetInfo.PATH);
 				}
 			} break;
 		}

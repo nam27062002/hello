@@ -53,6 +53,12 @@ namespace AI {
             m_senseTimer = 0.125f * (m_collisionCheckPool % 2);
 			m_enemyRadiusSqr = 0f;
 
+			UpdateDistances( radiusOffsetFactor );
+			
+		}
+
+		protected void UpdateDistances( float radiusOffsetFactor )
+		{
 			m_sightRadiusIn 	= m_sightRadius * radiusOffsetFactor;
 			m_maxRadiusIn 		= (m_maxRadius * radiusOffsetFactor);
 			m_minRadiusIn 		= (m_minRadius * radiusOffsetFactor);
@@ -192,6 +198,10 @@ namespace AI {
 
 		// Debug
 		public override void OnDrawGizmosSelected(Transform _go) {
+#if UNITY_EDITOR
+			UpdateDistances( m_radiusOffset.GetRandom() );
+#endif
+
 			float fireRadius = 0f;
 			if (Application.isPlaying) {
 				if (m_senseFire && InstanceManager.player != null) {					
