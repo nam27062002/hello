@@ -1014,6 +1014,14 @@ public class ViewControl : IViewControl, IBroadcastListener {
         }
     }
 
+    public void JumpDown(bool _down) {
+        if (m_isAnimatorAvailable){
+            m_animator.SetBool("jump_down", _down);
+        }
+
+        
+    }
+
     public void Attack(bool _melee, bool _ranged) {
         if (m_panic)
             return;

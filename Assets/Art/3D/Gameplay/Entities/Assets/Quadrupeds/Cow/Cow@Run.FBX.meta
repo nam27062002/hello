@@ -70,6 +70,10 @@ ModelImporter:
     400062: Cow_Tail_2
     400064: Cow_Tail_3
     7400000: Run
+    7400002: JumpStart
+    7400004: JumpAttack
+    7400006: JumpFalling
+    7400008: JumpLanding
     9500000: //RootNode
   externalObjects: {}
   materials:
@@ -190,6 +194,381 @@ ModelImporter:
       maskType: 0
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: JumpStart
+      takeName: Take 001
+      firstFrame: 0
+      lastFrame: 15
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events:
+      - time: 0.23583877
+        functionName: OnJumpImpulse
+        data: 
+        objectReferenceParameter: {instanceID: 0}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      transformMask:
+      - path: 
+        weight: 1
+      - path: Cow_Hip
+        weight: 1
+      - path: Cow_Hip/Cow_Boobs
+        weight: 1
+      - path: Cow_Hip/Cow_LLeg_1
+        weight: 1
+      - path: Cow_Hip/Cow_LLeg_1/Cow_LLeg_2
+        weight: 1
+      - path: Cow_Hip/Cow_LLeg_1/Cow_LLeg_2/Cow_LLeg_3
+        weight: 1
+      - path: Cow_Hip/Cow_LLeg_1/Cow_LLeg_2/Cow_LLeg_3/Cow_LLeg_4
+        weight: 1
+      - path: Cow_Hip/Cow_RLeg_1
+        weight: 1
+      - path: Cow_Hip/Cow_RLeg_1/Cow_RLeg_2
+        weight: 1
+      - path: Cow_Hip/Cow_RLeg_1/Cow_RLeg_2/Cow_RLeg_3
+        weight: 1
+      - path: Cow_Hip/Cow_RLeg_1/Cow_RLeg_2/Cow_RLeg_3/Cow_RLeg_4
+        weight: 1
+      - path: Cow_Hip/Cow_Spine
+        weight: 1
+      - path: Cow_Hip/Cow_Spine/Cow_Chest
+        weight: 1
+      - path: Cow_Hip/Cow_Spine/Cow_Chest/Cow_LArm_1
+        weight: 1
+      - path: Cow_Hip/Cow_Spine/Cow_Chest/Cow_LArm_1/Cow_LArm_2
+        weight: 1
+      - path: Cow_Hip/Cow_Spine/Cow_Chest/Cow_LArm_1/Cow_LArm_2/Cow_LArm_3
+        weight: 1
+      - path: Cow_Hip/Cow_Spine/Cow_Chest/Cow_Neck_1
+        weight: 1
+      - path: Cow_Hip/Cow_Spine/Cow_Chest/Cow_Neck_1/Cow_Neck_2
+        weight: 1
+      - path: Cow_Hip/Cow_Spine/Cow_Chest/Cow_Neck_1/Cow_Neck_2/Cow_Head_Ctrl
+        weight: 1
+      - path: Cow_Hip/Cow_Spine/Cow_Chest/Cow_Neck_1/Cow_Neck_2/Cow_Head_Ctrl/Cow_Head
+        weight: 1
+      - path: Cow_Hip/Cow_Spine/Cow_Chest/Cow_Neck_1/Cow_Neck_2/Cow_Head_Ctrl/Cow_Head/Cow_LEar
+        weight: 1
+      - path: Cow_Hip/Cow_Spine/Cow_Chest/Cow_Neck_1/Cow_Neck_2/Cow_Head_Ctrl/Cow_Head/Cow_REar
+        weight: 1
+      - path: Cow_Hip/Cow_Spine/Cow_Chest/Cow_RArm_1
+        weight: 1
+      - path: Cow_Hip/Cow_Spine/Cow_Chest/Cow_RArm_1/Cow_RArm_2
+        weight: 1
+      - path: Cow_Hip/Cow_Spine/Cow_Chest/Cow_RArm_1/Cow_RArm_2/Cow_RArm_3
+        weight: 1
+      - path: Cow_Hip/Cow_Tail_1
+        weight: 1
+      - path: Cow_Hip/Cow_Tail_1/Cow_Tail_2
+        weight: 1
+      - path: Cow_Hip/Cow_Tail_1/Cow_Tail_2/Cow_Tail_3
+        weight: 1
+      - path: Cow_LArm_IKTarget
+        weight: 1
+      - path: Cow_LLeg_Platform
+        weight: 1
+      - path: Cow_RArm_
+        weight: 1
+      - path: Cow_RLeg_Platform
+        weight: 1
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: JumpAttack
+      takeName: Take 001
+      firstFrame: 0
+      lastFrame: 15
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: Cow_Hip
+        weight: 1
+      - path: Cow_Hip/Cow_Boobs
+        weight: 1
+      - path: Cow_Hip/Cow_LLeg_1
+        weight: 1
+      - path: Cow_Hip/Cow_LLeg_1/Cow_LLeg_2
+        weight: 1
+      - path: Cow_Hip/Cow_LLeg_1/Cow_LLeg_2/Cow_LLeg_3
+        weight: 1
+      - path: Cow_Hip/Cow_LLeg_1/Cow_LLeg_2/Cow_LLeg_3/Cow_LLeg_4
+        weight: 1
+      - path: Cow_Hip/Cow_RLeg_1
+        weight: 1
+      - path: Cow_Hip/Cow_RLeg_1/Cow_RLeg_2
+        weight: 1
+      - path: Cow_Hip/Cow_RLeg_1/Cow_RLeg_2/Cow_RLeg_3
+        weight: 1
+      - path: Cow_Hip/Cow_RLeg_1/Cow_RLeg_2/Cow_RLeg_3/Cow_RLeg_4
+        weight: 1
+      - path: Cow_Hip/Cow_Spine
+        weight: 1
+      - path: Cow_Hip/Cow_Spine/Cow_Chest
+        weight: 1
+      - path: Cow_Hip/Cow_Spine/Cow_Chest/Cow_LArm_1
+        weight: 1
+      - path: Cow_Hip/Cow_Spine/Cow_Chest/Cow_LArm_1/Cow_LArm_2
+        weight: 1
+      - path: Cow_Hip/Cow_Spine/Cow_Chest/Cow_LArm_1/Cow_LArm_2/Cow_LArm_3
+        weight: 1
+      - path: Cow_Hip/Cow_Spine/Cow_Chest/Cow_Neck_1
+        weight: 1
+      - path: Cow_Hip/Cow_Spine/Cow_Chest/Cow_Neck_1/Cow_Neck_2
+        weight: 1
+      - path: Cow_Hip/Cow_Spine/Cow_Chest/Cow_Neck_1/Cow_Neck_2/Cow_Head_Ctrl
+        weight: 1
+      - path: Cow_Hip/Cow_Spine/Cow_Chest/Cow_Neck_1/Cow_Neck_2/Cow_Head_Ctrl/Cow_Head
+        weight: 1
+      - path: Cow_Hip/Cow_Spine/Cow_Chest/Cow_Neck_1/Cow_Neck_2/Cow_Head_Ctrl/Cow_Head/Cow_LEar
+        weight: 1
+      - path: Cow_Hip/Cow_Spine/Cow_Chest/Cow_Neck_1/Cow_Neck_2/Cow_Head_Ctrl/Cow_Head/Cow_REar
+        weight: 1
+      - path: Cow_Hip/Cow_Spine/Cow_Chest/Cow_RArm_1
+        weight: 1
+      - path: Cow_Hip/Cow_Spine/Cow_Chest/Cow_RArm_1/Cow_RArm_2
+        weight: 1
+      - path: Cow_Hip/Cow_Spine/Cow_Chest/Cow_RArm_1/Cow_RArm_2/Cow_RArm_3
+        weight: 1
+      - path: Cow_Hip/Cow_Tail_1
+        weight: 1
+      - path: Cow_Hip/Cow_Tail_1/Cow_Tail_2
+        weight: 1
+      - path: Cow_Hip/Cow_Tail_1/Cow_Tail_2/Cow_Tail_3
+        weight: 1
+      - path: Cow_LArm_IKTarget
+        weight: 1
+      - path: Cow_LLeg_Platform
+        weight: 1
+      - path: Cow_RArm_
+        weight: 1
+      - path: Cow_RLeg_Platform
+        weight: 1
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: JumpFalling
+      takeName: Take 001
+      firstFrame: 0
+      lastFrame: 15
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: Cow_Hip
+        weight: 1
+      - path: Cow_Hip/Cow_Boobs
+        weight: 1
+      - path: Cow_Hip/Cow_LLeg_1
+        weight: 1
+      - path: Cow_Hip/Cow_LLeg_1/Cow_LLeg_2
+        weight: 1
+      - path: Cow_Hip/Cow_LLeg_1/Cow_LLeg_2/Cow_LLeg_3
+        weight: 1
+      - path: Cow_Hip/Cow_LLeg_1/Cow_LLeg_2/Cow_LLeg_3/Cow_LLeg_4
+        weight: 1
+      - path: Cow_Hip/Cow_RLeg_1
+        weight: 1
+      - path: Cow_Hip/Cow_RLeg_1/Cow_RLeg_2
+        weight: 1
+      - path: Cow_Hip/Cow_RLeg_1/Cow_RLeg_2/Cow_RLeg_3
+        weight: 1
+      - path: Cow_Hip/Cow_RLeg_1/Cow_RLeg_2/Cow_RLeg_3/Cow_RLeg_4
+        weight: 1
+      - path: Cow_Hip/Cow_Spine
+        weight: 1
+      - path: Cow_Hip/Cow_Spine/Cow_Chest
+        weight: 1
+      - path: Cow_Hip/Cow_Spine/Cow_Chest/Cow_LArm_1
+        weight: 1
+      - path: Cow_Hip/Cow_Spine/Cow_Chest/Cow_LArm_1/Cow_LArm_2
+        weight: 1
+      - path: Cow_Hip/Cow_Spine/Cow_Chest/Cow_LArm_1/Cow_LArm_2/Cow_LArm_3
+        weight: 1
+      - path: Cow_Hip/Cow_Spine/Cow_Chest/Cow_Neck_1
+        weight: 1
+      - path: Cow_Hip/Cow_Spine/Cow_Chest/Cow_Neck_1/Cow_Neck_2
+        weight: 1
+      - path: Cow_Hip/Cow_Spine/Cow_Chest/Cow_Neck_1/Cow_Neck_2/Cow_Head_Ctrl
+        weight: 1
+      - path: Cow_Hip/Cow_Spine/Cow_Chest/Cow_Neck_1/Cow_Neck_2/Cow_Head_Ctrl/Cow_Head
+        weight: 1
+      - path: Cow_Hip/Cow_Spine/Cow_Chest/Cow_Neck_1/Cow_Neck_2/Cow_Head_Ctrl/Cow_Head/Cow_LEar
+        weight: 1
+      - path: Cow_Hip/Cow_Spine/Cow_Chest/Cow_Neck_1/Cow_Neck_2/Cow_Head_Ctrl/Cow_Head/Cow_REar
+        weight: 1
+      - path: Cow_Hip/Cow_Spine/Cow_Chest/Cow_RArm_1
+        weight: 1
+      - path: Cow_Hip/Cow_Spine/Cow_Chest/Cow_RArm_1/Cow_RArm_2
+        weight: 1
+      - path: Cow_Hip/Cow_Spine/Cow_Chest/Cow_RArm_1/Cow_RArm_2/Cow_RArm_3
+        weight: 1
+      - path: Cow_Hip/Cow_Tail_1
+        weight: 1
+      - path: Cow_Hip/Cow_Tail_1/Cow_Tail_2
+        weight: 1
+      - path: Cow_Hip/Cow_Tail_1/Cow_Tail_2/Cow_Tail_3
+        weight: 1
+      - path: Cow_LArm_IKTarget
+        weight: 1
+      - path: Cow_LLeg_Platform
+        weight: 1
+      - path: Cow_RArm_
+        weight: 1
+      - path: Cow_RLeg_Platform
+        weight: 1
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: JumpLanding
+      takeName: Take 001
+      firstFrame: 0
+      lastFrame: 15
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: Cow_Hip
+        weight: 1
+      - path: Cow_Hip/Cow_Boobs
+        weight: 1
+      - path: Cow_Hip/Cow_LLeg_1
+        weight: 1
+      - path: Cow_Hip/Cow_LLeg_1/Cow_LLeg_2
+        weight: 1
+      - path: Cow_Hip/Cow_LLeg_1/Cow_LLeg_2/Cow_LLeg_3
+        weight: 1
+      - path: Cow_Hip/Cow_LLeg_1/Cow_LLeg_2/Cow_LLeg_3/Cow_LLeg_4
+        weight: 1
+      - path: Cow_Hip/Cow_RLeg_1
+        weight: 1
+      - path: Cow_Hip/Cow_RLeg_1/Cow_RLeg_2
+        weight: 1
+      - path: Cow_Hip/Cow_RLeg_1/Cow_RLeg_2/Cow_RLeg_3
+        weight: 1
+      - path: Cow_Hip/Cow_RLeg_1/Cow_RLeg_2/Cow_RLeg_3/Cow_RLeg_4
+        weight: 1
+      - path: Cow_Hip/Cow_Spine
+        weight: 1
+      - path: Cow_Hip/Cow_Spine/Cow_Chest
+        weight: 1
+      - path: Cow_Hip/Cow_Spine/Cow_Chest/Cow_LArm_1
+        weight: 1
+      - path: Cow_Hip/Cow_Spine/Cow_Chest/Cow_LArm_1/Cow_LArm_2
+        weight: 1
+      - path: Cow_Hip/Cow_Spine/Cow_Chest/Cow_LArm_1/Cow_LArm_2/Cow_LArm_3
+        weight: 1
+      - path: Cow_Hip/Cow_Spine/Cow_Chest/Cow_Neck_1
+        weight: 1
+      - path: Cow_Hip/Cow_Spine/Cow_Chest/Cow_Neck_1/Cow_Neck_2
+        weight: 1
+      - path: Cow_Hip/Cow_Spine/Cow_Chest/Cow_Neck_1/Cow_Neck_2/Cow_Head_Ctrl
+        weight: 1
+      - path: Cow_Hip/Cow_Spine/Cow_Chest/Cow_Neck_1/Cow_Neck_2/Cow_Head_Ctrl/Cow_Head
+        weight: 1
+      - path: Cow_Hip/Cow_Spine/Cow_Chest/Cow_Neck_1/Cow_Neck_2/Cow_Head_Ctrl/Cow_Head/Cow_LEar
+        weight: 1
+      - path: Cow_Hip/Cow_Spine/Cow_Chest/Cow_Neck_1/Cow_Neck_2/Cow_Head_Ctrl/Cow_Head/Cow_REar
+        weight: 1
+      - path: Cow_Hip/Cow_Spine/Cow_Chest/Cow_RArm_1
+        weight: 1
+      - path: Cow_Hip/Cow_Spine/Cow_Chest/Cow_RArm_1/Cow_RArm_2
+        weight: 1
+      - path: Cow_Hip/Cow_Spine/Cow_Chest/Cow_RArm_1/Cow_RArm_2/Cow_RArm_3
+        weight: 1
+      - path: Cow_Hip/Cow_Tail_1
+        weight: 1
+      - path: Cow_Hip/Cow_Tail_1/Cow_Tail_2
+        weight: 1
+      - path: Cow_Hip/Cow_Tail_1/Cow_Tail_2/Cow_Tail_3
+        weight: 1
+      - path: Cow_LArm_IKTarget
+        weight: 1
+      - path: Cow_LLeg_Platform
+        weight: 1
+      - path: Cow_RArm_
+        weight: 1
+      - path: Cow_RLeg_Platform
+        weight: 1
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
     isReadable: 1
   meshes:
     lODScreenPercentages: []
@@ -241,5 +620,5 @@ ModelImporter:
   humanoidOversampling: 1
   additionalBone: 0
   userData: 
-  assetBundleName: npc_medieval_village
+  assetBundleName: 
   assetBundleVariant: 

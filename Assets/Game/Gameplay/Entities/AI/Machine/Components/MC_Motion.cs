@@ -98,6 +98,7 @@ namespace AI {
 		protected DragonMotion m_dragon;
 
 		private State m_state;
+		public State state { get{ return m_state; } }
 		private State m_nextState;
 
 		//--------------------------------------------------
@@ -382,7 +383,7 @@ namespace AI {
 			}
 		}
 
-		private void OnStandUp() {
+		public void OnStandUp() {
 			if (m_state == State.StandUp) {
 				m_nextState = State.Free;
 			}
