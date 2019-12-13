@@ -610,8 +610,9 @@ public class DragonPowerUp : MonoBehaviour {
 			case "special":
 			case "sun":
 			case "shoot_bubble":
-			//TONI
-			case "lives":
+            case "coin_reward":
+            //TONI
+            case "lives":
 			case "dragonram":
 			case "magnet":
 			case "freeze_aura":
