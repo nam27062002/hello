@@ -233,7 +233,9 @@ public class LoadingSceneController : SceneController {
     /// <summary>
     /// Initialization.
     /// </summary>
-    override protected void Awake() {        		
+    override protected void Awake() {
+        CrashlyticsInit.initialise();
+
         // Call parent
 		base.Awake();
 
@@ -592,7 +594,7 @@ public class LoadingSceneController : SceneController {
                     HDTrackingManager.Instance.Notify_Razolytics_Funnel_Load(FunnelData_LoadRazolytics.Steps._01_03_loading_done);
 
                     // Check if all equiped stuff is available or wait
-                    if ( AllEquipedIsDownloaded() )
+                    if ( AllEquipedIsDownloaded() && AllRewardsAreReady() )
                     {
                         SetState( State.DONE );
                     }
@@ -643,6 +645,17 @@ public class LoadingSceneController : SceneController {
                 }                
             }
         }       
+
+        return ret;
+    }
+
+    private bool AllRewardsAreReady()
+    {
+        bool ret = true;
+        foreach( Metagame.Reward item in UsersManager.currentUser.rewardStack )
+        {
+            ret = ret && HDAddressablesManager.Instance.AreResourcesForRewardAvailable(item);
+        }
 
         return ret;
     }
@@ -776,6 +789,7 @@ public class LoadingSceneController : SceneController {
 
                 // Settings and setup
                 GameSettings.CreateInstance(false);
+				GameSettings.InitFromDefinitions();
 
                 // Tech
                 GameSceneManager.CreateInstance(true);

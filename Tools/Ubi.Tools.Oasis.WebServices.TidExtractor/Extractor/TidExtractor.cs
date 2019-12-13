@@ -169,6 +169,7 @@ namespace Ubi.Tools.Oasis.WebServices.XmlExtractor.Extractor
 
                 WriteSections(writer, DataContext.GetRootSections(sectionType));
 
+                
                 writer.WriteEndElement();
             }
         }
@@ -331,8 +332,18 @@ namespace Ubi.Tools.Oasis.WebServices.XmlExtractor.Extractor
                 }
             }
              * */
-
-            foreach( Control c in DataContext.MenuControls)
+            //TONI START
+            IList<Section> AllSections = DataContext.GetRootSections(SectionType.Menu);
+            string tagNameNotToSave = "NIGT";
+            int tagIdNotToSave = -1;
+            string tagName = "";
+            foreach (Section s in AllSections)
+            {
+                tagName = s.Tag;
+                if (tagName == tagNameNotToSave) tagIdNotToSave = s.SectionId;
+            }
+            //TONI END
+            foreach ( Control c in DataContext.MenuControls)
             {
                 if (DataContext.IsTranslationRequired(c.LineId, language.LanguageId))
                 {
@@ -344,8 +355,14 @@ namespace Ubi.Tools.Oasis.WebServices.XmlExtractor.Extractor
                     }
                     else
                     {
-                        _extractedTids.Add( c.Name );
-                        WriteTranslation(writer, c.LineId, language.LanguageId, c.Name);
+                        //TONI START
+                        //string str = ReplaceCharacters(c.Text);
+                        if (tagIdNotToSave != c.SectionId)
+                        {
+                            _extractedTids.Add(c.Name);
+                            WriteTranslation(writer, c.LineId, language.LanguageId, c.Name);
+                        }
+                        //TONI END
                     }
                 }
             }
@@ -363,7 +380,6 @@ namespace Ubi.Tools.Oasis.WebServices.XmlExtractor.Extractor
                 text = (string)lineTranslation.Text;
                 text = ReplaceCharacters( text );
             }
-
             writer.WriteLine( name + "=" + text);
         }
 
@@ -376,6 +392,18 @@ namespace Ubi.Tools.Oasis.WebServices.XmlExtractor.Extractor
                 writer.WriteLine(SearchLineCustomDataValue(line.LineId, "TID") + "=" + line.Text);
             }
             */
+            //TONI START
+            IList<Section> AllSections = DataContext.GetRootSections(SectionType.Menu);
+            string tagNameNotToSave = "NIGT";
+            string str = "";
+            int tagIdNotToSave = -1;
+            string tagName = "";
+            foreach (Section s in AllSections)
+            {
+                tagName = s.Tag;
+                if (tagName == tagNameNotToSave) tagIdNotToSave = s.SectionId;
+            }
+            //TONI END
             foreach (Control c in DataContext.MenuControls)
             {
                 if ( _extractedTids.Contains(c.Name) )
@@ -385,9 +413,15 @@ namespace Ubi.Tools.Oasis.WebServices.XmlExtractor.Extractor
                 }
                 else
                 {
-                    _extractedTids.Add(c.Name);
-                    string str = ReplaceCharacters(c.Text);
-                    writer.WriteLine(c.Name + "=" + str);
+                    //TONI START
+                    //string str = ReplaceCharacters(c.Text);
+                    if (tagIdNotToSave != c.SectionId)
+                    {
+                        str = ReplaceCharacters(c.Text);
+                        _extractedTids.Add(c.Name);
+                        writer.WriteLine(c.Name + "=" + str);
+                    }
+                    //TONI END
                 }
             }
             return true;

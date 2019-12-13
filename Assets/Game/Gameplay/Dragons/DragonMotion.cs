@@ -856,11 +856,15 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 
 	protected virtual void CheckOutterSpace()
 	{
-		if (!m_outterSpace && m_transform.position.y > SpaceStart){
-			OnEnterSpaceEvent();
-		}else if ( m_outterSpace && m_transform.position.y < SpaceStart ){
-			OnExitSpaceEvent();
+		if ( m_state != State.Intro )
+		{
+			if (!m_outterSpace && m_transform.position.y > SpaceStart){
+				OnEnterSpaceEvent();
+			}else if ( m_outterSpace && m_transform.position.y < SpaceStart ){
+				OnExitSpaceEvent();
+			}
 		}
+		
 	}
 
 

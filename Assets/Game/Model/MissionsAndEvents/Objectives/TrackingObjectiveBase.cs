@@ -42,6 +42,10 @@ public abstract class TrackingObjectiveBase {
     protected string m_zone = null;
     public string zone { get { return m_zone; } }
 
+    // Recommended dragon
+    protected IDragonData m_recommendedDragon = null;
+    public IDragonData recommendedDragon { get { return m_recommendedDragon; } }
+
     // Progress tracking
     public bool isCompleted { 
 		get { return m_tracker.currentValue >= targetValue; }

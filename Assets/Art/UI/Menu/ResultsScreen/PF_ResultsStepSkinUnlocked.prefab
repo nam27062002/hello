@@ -1172,6 +1172,7 @@ GameObject:
   - component: {fileID: 114832283763003050}
   - component: {fileID: 95264930807113172}
   - component: {fileID: 114603180041168598}
+  - component: {fileID: 114461039394070526}
   m_Layer: 5
   m_Name: ShareButton
   m_TagString: Untagged
@@ -1635,6 +1636,8 @@ MonoBehaviour:
   m_animator: {fileID: 0}
   m_amountText: {fileID: 114273841724305232}
   m_amountTextUnity: {fileID: 0}
+  m_previousAmountText: {fileID: 0}
+  m_previousAmountTextUnity: {fileID: 0}
 --- !u!114 &114065072192216334
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3010,6 +3013,7 @@ MonoBehaviour:
     m_RotationOrder: 0
   m_curveScale: 0.8
   m_verticalPivot: 0
+  m_verticalOffset: 0
   m_useCustomReferenceSize: 1
   m_customReferenceSize: 964
 --- !u!114 &114423353268454690
@@ -3100,6 +3104,17 @@ MonoBehaviour:
   m_saturation: 1
   m_contrast: 0.3
   m_lateMultiply: 0
+--- !u!114 &114461039394070526
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1972144711642920}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d1f4c58340cd4f168bd0915c8ef8e67, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114461150924454172
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3328,6 +3343,8 @@ MonoBehaviour:
   m_animator: {fileID: 0}
   m_amountText: {fileID: 114461150924454172}
   m_amountTextUnity: {fileID: 0}
+  m_previousAmountText: {fileID: 0}
+  m_previousAmountTextUnity: {fileID: 0}
 --- !u!114 &114520975736646944
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5618,6 +5635,7 @@ MonoBehaviour:
     m_RotationOrder: 0
   m_curveScale: 1
   m_verticalPivot: 0.5
+  m_verticalOffset: 0
   m_useCustomReferenceSize: 0
   m_customReferenceSize: 200
 --- !u!114 &114909298602485304

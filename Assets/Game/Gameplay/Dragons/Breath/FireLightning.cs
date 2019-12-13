@@ -375,7 +375,7 @@ public class FireLightning : DragonBreathBehaviour {
 			if (m_checkEntities[i].IsBurnable(m_tier) || m_type == Type.Mega) {
 				AI.IMachine machine =  m_checkEntities[i].machine;
 				if (machine != null) {					
-					machine.Burn(transform, IEntity.Type.PLAYER, m_type == Type.Mega);
+					machine.Burn(transform, IEntity.Type.PLAYER, KillType.ELECTRIFIED, m_type == Type.Mega);
 				}
 			}
 			/*

@@ -36,6 +36,8 @@ Shader "Hungry Dragon/NPC/NPC Sky bottle liquid"
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
+            #pragma multi_compile __ NIGHT
+
 
 //			#pragma multi_compile __ OPAQUEALPHA
 //			#pragma multi_compile __ FREEZE

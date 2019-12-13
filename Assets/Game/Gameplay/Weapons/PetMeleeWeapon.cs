@@ -30,7 +30,7 @@ public class PetMeleeWeapon : IMeleeWeapon {
                         if (e.IsEdible(m_tier)) {
                             if (e.machine.CanBeBitten()) {
                                 e.machine.Bite();
-                                e.machine.BeginSwallowed(m_transform, true, IEntity.Type.PET);
+                                e.machine.BeginSwallowed(m_transform, true, IEntity.Type.PET, KillType.EATEN);
                                 e.machine.EndSwallowed(m_transform);
 
                                 OnEntityKilled(e);

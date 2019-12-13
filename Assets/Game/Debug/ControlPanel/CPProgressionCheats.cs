@@ -175,31 +175,18 @@ public class CPProgressionCheats : MonoBehaviour {
 		dataClassic.progression.AddXp(amount, true);
 		UIFeedbackText.CreateAndLaunch("+" + amount, new Vector2(0.5f, 0.5f), ControlPanel.panel.parent as RectTransform, "CPFeedbackText");
 
-		// Refresh skin state for this dragon
+		// Check which skins should be unlocked (Wardrobe does all the hard work for us)
 		Wardrobe wardrobe = UsersManager.currentUser.wardrobe;
+		wardrobe.ProcessUnlockedSkins(dataClassic);
+
+		// Check which skins should be locked (can happen when removing XP)
 		List<DefinitionNode> skinDefs = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.DISGUISES, "dragonSku", data.def.sku);
 		for(int i = 0; i < skinDefs.Count; i++) {
-			// Should the skin be unlocked?
-			UsersManager.currentUser.wardrobe.ProcessUnlockedSkins(dataClassic);
-			bool unlocked = (dataClassic.progression.level >= skinDefs[i].GetAsInt("unlockLevel"));
-
-			// Apply new state based on lock status
-			Wardrobe.SkinState oldState = wardrobe.GetSkinState(skinDefs[i].sku);
-			Wardrobe.SkinState newState = Wardrobe.SkinState.LOCKED;
-			if(unlocked) {
-				// Depends on previous state
-				switch(oldState) {
-					case Wardrobe.SkinState.OWNED: newState = Wardrobe.SkinState.OWNED; break;
-					case Wardrobe.SkinState.LOCKED: newState = Wardrobe.SkinState.NEW; break;
-					case Wardrobe.SkinState.NEW: newState = Wardrobe.SkinState.NEW; break;
-					case Wardrobe.SkinState.AVAILABLE: newState = Wardrobe.SkinState.AVAILABLE; break;
-				}
-			} else {
-				newState = Wardrobe.SkinState.LOCKED;
+			// Should it be locked instead?
+			bool locked = (dataClassic.progression.level < skinDefs[i].GetAsInt("unlockLevel"));
+			if(locked) {
+				wardrobe.SetSkinState(skinDefs[i].sku, Wardrobe.SkinState.LOCKED);
 			}
-
-			// Apply new state
-			wardrobe.SetSkinState(skinDefs[i].sku, newState);
 		}
 
 		// Save persistence
@@ -269,31 +256,18 @@ public class CPProgressionCheats : MonoBehaviour {
 		DragonDataClassic dataClassic = data as DragonDataClassic;
 		dataClassic.progression.SetXp_DEBUG(_xp);
 
-		// Refresh skin state for this dragon
+		// Check which skins should be unlocked (Wardrobe does all the hard work for us)
 		Wardrobe wardrobe = UsersManager.currentUser.wardrobe;
+		wardrobe.ProcessUnlockedSkins(dataClassic);
+
+		// Check which skins should be locked (can happen when removing XP)
 		List<DefinitionNode> skinDefs = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.DISGUISES, "dragonSku", data.def.sku);
 		for(int i = 0; i < skinDefs.Count; i++) {
-			// Should the skin be unlocked?
-			UsersManager.currentUser.wardrobe.ProcessUnlockedSkins(data);
-			bool unlocked = (dataClassic.progression.level >= skinDefs[i].GetAsInt("unlockLevel"));
-
-			// Apply new state based on lock status
-			Wardrobe.SkinState oldState = wardrobe.GetSkinState(skinDefs[i].sku);
-			Wardrobe.SkinState newState = Wardrobe.SkinState.LOCKED;
-			if(unlocked) {
-				// Depends on previous state
-				switch(oldState) {
-					case Wardrobe.SkinState.OWNED: newState = Wardrobe.SkinState.OWNED; break;
-					case Wardrobe.SkinState.LOCKED: newState = Wardrobe.SkinState.NEW; break;
-					case Wardrobe.SkinState.NEW: newState = Wardrobe.SkinState.NEW; break;
-					case Wardrobe.SkinState.AVAILABLE: newState = Wardrobe.SkinState.AVAILABLE; break;
-				}
-			} else {
-				newState = Wardrobe.SkinState.LOCKED;
+			// Should it be locked instead?
+			bool locked = (dataClassic.progression.level < skinDefs[i].GetAsInt("unlockLevel"));
+			if(locked) {
+				wardrobe.SetSkinState(skinDefs[i].sku, Wardrobe.SkinState.LOCKED);
 			}
-
-			// Apply new state
-			wardrobe.SetSkinState(skinDefs[i].sku, newState);
 		}
 
 		// Save persistence

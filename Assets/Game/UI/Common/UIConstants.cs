@@ -338,7 +338,7 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 #if UNITY_IOS
 				// Is it an iPhone X?
 				else if(Device.generation >= DeviceGeneration.iPhoneX && 
-				        Device.generation < DeviceGeneration.iPhoneUnknown &&	// [AOC] HACK!! Small trick to support newest iPhones starting at iPhoneX
+				        Device.generation <= DeviceGeneration.iPhoneUnknown &&	// [AOC] HACK!! Small trick to support newest iPhones starting at iPhoneX
 				        ASPECT_RATIO > 1.5f) {		// [AOC] Make sure it's not an iPad / Tablet, where the UI resizing would create a lot of issues
 					instance.m_specialDevice = SpecialDevice.IPHONE_X;
 				}

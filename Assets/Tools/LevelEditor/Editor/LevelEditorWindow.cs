@@ -81,6 +81,7 @@ namespace LevelEditor {
 
         //is throwing lightmap?
         public bool m_isLightmapping = false;
+        public bool m_entireLightmap = false;
 
 
         //------------------------------------------------------------------//
@@ -148,13 +149,21 @@ namespace LevelEditor {
 					Init();
 				}
 			}
-		}
 
-		/// <summary>
-		/// OnInspectorUpdate is called at 10 frames per second to give the inspector a chance to update.
-		/// Called less times as if it was OnGUI/Update
-		/// </summary>
-		public void OnInspectorUpdate() {
+            if (m_entireLightmap)
+            {
+                if (!(m_sections[0] as SectionLevels).updateLightmap())
+                {
+                    m_entireLightmap = false;
+                }
+            }
+        }
+
+        /// <summary>
+        /// OnInspectorUpdate is called at 10 frames per second to give the inspector a chance to update.
+        /// Called less times as if it was OnGUI/Update
+        /// </summary>
+        public void OnInspectorUpdate() {
 			// Make sure level editor scene is open
 			OpenLevelEditorScene();
 
@@ -190,7 +199,7 @@ namespace LevelEditor {
 		public void OpenLevelEditorScene() {
 			// If editor scene was not loaded, do it
 			Scene levelEditorScene = EditorSceneManager.GetSceneByPath(EDITOR_SCENE_PATH);
-			if(!levelEditorScene.isLoaded && !m_isLightmapping) {
+			if(!levelEditorScene.isLoaded && !m_isLightmapping && !m_entireLightmap) {
 				// Close any non-editable scenes
 				CloseNonEditableScenes();
 

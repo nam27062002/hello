@@ -362,6 +362,24 @@ public class UserProfile : UserPersistenceSystem
     private DateTime m_happyHourExpirationTime;
     private float m_happyHourExtraGemsRate;
 
+    // Remove ads feature
+    private RemoveAdsFeature m_removeAds;
+    public RemoveAdsFeature removeAds
+    {   get { return m_removeAds; }
+        set { m_removeAds = value; }
+    }
+
+
+    private bool m_removeAdsOfferActive;
+    private int m_easyMissionCooldownsLeft;
+    private int m_mediumMissionCooldownsLeft;
+    private int m_hardMissionCooldownsLeft;
+    private DateTime m_easyMissionCooldownTimestamp;    // Timestamp when the mission skips will be restored
+    private DateTime m_mediumMissionCooldownTimestamp;
+    private DateTime m_hardMissionCooldownTimestamp;
+    private DateTime m_mapRevealTimestamp;
+
+
     // public List<string> m_visitedZones = new List<string>();
     public HashSet<string> m_visitedZones = new HashSet<string>();
 	//--------------------------------------------------------------------------
@@ -396,6 +414,8 @@ public class UserProfile : UserPersistenceSystem
     public ESocialState SocialState { get; set; }
 
     public string GivenTransactions { get; set; }
+
+
 
 
 
@@ -488,7 +508,6 @@ public class UserProfile : UserPersistenceSystem
 
         m_achievements = new AchievementsTracker();
 
-        //
         m_eggsInventory = new Egg[EggManager.INVENTORY_SIZE];
         m_incubatingEgg = null;
         m_incubationTimeReference = 0;
@@ -523,6 +542,9 @@ public class UserProfile : UserPersistenceSystem
         SocialState = ESocialState.NeverLoggedIn;
 
         GivenTransactions = null;
+
+        // Remove Ads Offer
+        m_removeAds = new RemoveAdsFeature();
     }
 
     private void Destroy()
@@ -793,10 +815,23 @@ public class UserProfile : UserPersistenceSystem
 		Broadcaster.Broadcast(BroadcastEventType.PROFILE_MAP_UNLOCKED);
 	}
 
+    /// <summary>
+    /// Unlock the map for a specified time duration
+    /// Doesn't perform any check or currency transaction, resets timer.
+    /// Broadcasts the PROFILE_MAP_UNLOCKED event.
+    /// </summary>
+    /// <param name="seconds">Duration of the map reveal, in seconds</param>
+    public void UnlockMap(int seconds)
+    {
+        m_mapResetTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTime().AddSeconds(seconds);   // Default timer just in case
+        
+        Broadcaster.Broadcast(BroadcastEventType.PROFILE_MAP_UNLOCKED);
+    }
+
     //------------------------------------------------------------------------//
     // PUBLIC PERSISTENCE METHODS											  //
     //------------------------------------------------------------------------//   
-	public override void Load()
+    public override void Load()
     {
         base.Load();
 
@@ -809,7 +844,17 @@ public class UserProfile : UserPersistenceSystem
 
 			JSONNode json = JSON.Parse(jsonAsString);
             Load(json);
-        }       
+
+
+        }
+
+        // Load Remove Ads offer from player prefs
+        m_removeAds.InitializeFromDefinition();
+        string jsonString = PlayerPrefs.GetString("removeAds");
+        if (!string.IsNullOrEmpty(jsonString))
+        {
+            m_removeAds.Load(SimpleJSON.JSON.Parse(jsonString));
+        }
     }
 
     public override void Save()
@@ -822,8 +867,17 @@ public class UserProfile : UserPersistenceSystem
         JSONNode json = ToJson();
 		m_persistenceData.Merge(json.ToString(), false);
 
-		#if UNITY_EDITOR
-		PrintJsonString(json.ToString(), "<color=cyan>SAVING USER PROFILE:</color>\n");
+        // Save remove ads in player prefs
+        SimpleJSON.JSONNode jsonNode = m_removeAds.Save();
+        if (jsonNode != null)
+        {
+            string jsonString = jsonNode.ToString();
+            PlayerPrefs.SetString("removeAds", jsonString);
+        }
+
+
+#if UNITY_EDITOR
+        PrintJsonString(json.ToString(), "<color=cyan>SAVING USER PROFILE:</color>\n");
 		#endif
 	}
 
@@ -1158,7 +1212,6 @@ public class UserProfile : UserPersistenceSystem
         }
 
 
-
         // Visited Zones
         key = "visitedZones";
         m_visitedZones.Clear();
@@ -1380,6 +1433,8 @@ public class UserProfile : UserPersistenceSystem
 
         data.Add("happyHourOffer", happyHour);
 
+        // Remove Ads offer
+        //data.Add("removeAdsFeature", m_removeAds.Save());
 
         // Visited Zones
         JSONArray zonesArray = new SimpleJSON.JSONArray();
@@ -1843,6 +1898,11 @@ public class UserProfile : UserPersistenceSystem
 	/// </summary>
 	/// <param name="_reward">Reward to be pushed.</param>
 	public void PushReward(Metagame.Reward _reward) {
+
+        // Dont push rewards that are already owned by the user
+        if (_reward.IsAlreadyOwned())
+            return;
+
 		rewardStack.Push(_reward);
 		Debug.Log("<color=green>PUSH! " + _reward.GetType().Name + "</color>");
 		Messenger.Broadcast<Metagame.Reward>(MessengerEvents.PROFILE_REWARD_PUSHED, _reward);
@@ -1920,6 +1980,11 @@ public class UserProfile : UserPersistenceSystem
 					case OfferPack.Type.FREE: {
 						// Nothing to do, didn't exist in old system
 					} break;
+                    case OfferPack.Type.REMOVE_ADS:
+                        {
+                            // Nothing to do, didn't exist in old system
+                        }
+                    break;
                 }
             }
         }
@@ -2040,6 +2105,36 @@ public class UserProfile : UserPersistenceSystem
         {
             m_happyHourExpirationTime = _happyHour.expirationTime;
             m_happyHourExtraGemsRate = _happyHour.extraGemsFactor;
+        }
+    }
+
+    /// <summary>
+    /// Load persistence data corresponding to a ads removal offer if there is any.
+    /// </summary>
+    public void LoadRemoveAdsOffer(RemoveAdsFeature _removeAds)
+    {
+        if (_removeAds != null)
+        {
+            _removeAds.IsActive = m_removeAdsOfferActive;
+            _removeAds.easyExtraMissionsLeft = m_easyMissionCooldownsLeft;
+            _removeAds.mediumExtraMissionsLeft = m_mediumMissionCooldownsLeft;
+            _removeAds.hardExtraMissionsLeft = m_hardMissionCooldownsLeft;
+            _removeAds.mapRevealTimestamp = m_mapRevealTimestamp;
+        }
+    }
+
+    /// <summary>
+    /// Save persistence data corresponding to an ads removal offer if there is any.
+    /// </summary>
+    public void SaveRemoveAdsOffer(RemoveAdsFeature _removeAds)
+    {
+        if (_removeAds != null)
+        {
+            m_removeAdsOfferActive = _removeAds.IsActive;
+            m_easyMissionCooldownsLeft = _removeAds.easyExtraMissionsLeft;
+            m_mediumMissionCooldownsLeft = _removeAds.mediumExtraMissionsLeft;
+            m_hardMissionCooldownsLeft = _removeAds.hardExtraMissionsLeft;
+            m_mapRevealTimestamp = _removeAds.mapRevealTimestamp;
         }
     }
 

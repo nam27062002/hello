@@ -35,7 +35,7 @@ public class TrackerEatGolden : TrackerBase {
 		Debug.Assert(m_targetSkus != null);
 
 		// Subscribe to external events
-		Messenger.AddListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_EATEN, OnKill);
+		Messenger.AddListener<Transform, IEntity, Reward, KillType>(MessengerEvents.ENTITY_KILLED, OnEaten);
 	}
 
 	/// <summary>
@@ -53,7 +53,7 @@ public class TrackerEatGolden : TrackerBase {
 	/// </summary>
 	override public void Clear() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_EATEN, OnKill);
+		Messenger.RemoveListener<Transform, IEntity, Reward, KillType>(MessengerEvents.ENTITY_KILLED, OnEaten);
 
 		// Call parent
 		base.Clear();
@@ -83,18 +83,27 @@ public class TrackerEatGolden : TrackerBase {
 	/// </summary>
 	/// <param name="_e">The source entity, optional.</param>
 	/// <param name="_reward">The reward given.</param>
-	private void OnKill(Transform _t, IEntity _e, Reward _reward) {
-		// Is it one of the target types?
-        if (_e != null && _e.isGolden && !(_e is CollectibleEntity)) {
-			// Count automatically if we don't have any type filter
-			if(m_targetSkus.Count == 0) {
-				currentValue++;
-			} else {
-				if(m_targetSkus.Contains(_e.sku)) {
-					// Found!
-					currentValue++;
-				}				
-			}
-		}
+	private void OnEaten(Transform _t, IEntity _e, Reward _reward, KillType _type) {
+
+        if (_type == KillType.EATEN)
+        {
+            // Is it one of the target types?
+            if (_e != null && _e.isGolden && !(_e is CollectibleEntity))
+            {
+                // Count automatically if we don't have any type filter
+                if (m_targetSkus.Count == 0)
+                {
+                    currentValue++;
+                }
+                else
+                {
+                    if (m_targetSkus.Contains(_e.sku))
+                    {
+                        // Found!
+                        currentValue++;
+                    }
+                }
+            }
+        }
 	}
 }

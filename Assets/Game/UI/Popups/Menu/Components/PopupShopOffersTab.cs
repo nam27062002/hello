@@ -33,18 +33,20 @@ public class PopupShopOffersTab : IPopupShopTab {
 	[SerializeField] private TextMeshProUGUI m_offersCount;
 	[Space]
 	[SerializeField] private GameObject m_freeOfferPillPrefab = null;
+    [SerializeField] private GameObject m_removeAdsPillPrefab = null;
 
-	// Internal
-	private List<PopupShopOffersPill> m_normalOfferPills = new List<PopupShopOffersPill>();
+    // Internal
+    private List<PopupShopOffersPill> m_normalOfferPills = new List<PopupShopOffersPill>();
 	private PopupShopFreeOfferPill m_freeOfferPill = null;
+    private List<PopupShopRemoveAdsPill> m_removeAdsPills = new List<PopupShopRemoveAdsPill>();
 
-	//------------------------------------------------------------------------//
-	// GENERIC METHODS														  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// First update call.
-	/// </summary>
-	private void Start() {
+    //------------------------------------------------------------------------//
+    // GENERIC METHODS														  //
+    //------------------------------------------------------------------------//
+    /// <summary>
+    /// First update call.
+    /// </summary>
+    private void Start() {
 		InvokeRepeating("PeriodicRefresh", 0f, REFRESH_FREQUENCY);
 
 		// React to offers being reloaded while tab is active
@@ -129,8 +131,24 @@ public class PopupShopOffersTab : IPopupShopTab {
 					}
 				} break;
 
-				// Rest of offer types
-				default: {
+                case OfferPack.Type.REMOVE_ADS:
+                    {
+                        if (i >= m_removeAdsPills.Count)
+                        {
+                            // Create new instance and store it
+                            pill = InstantiatePill(m_removeAdsPillPrefab);
+                            m_removeAdsPills.Add( (PopupShopRemoveAdsPill) pill);
+                        }
+                        else
+                        {
+                            // Reuse existing pill
+                            pill = m_removeAdsPills[i];
+                        }
+                    }
+                    break;
+
+                // Rest of offer types
+                default: {
 					if(i >= m_normalOfferPills.Count) {
 						// Create new instance and store it
 						pill = InstantiatePill(m_pillPrefab);

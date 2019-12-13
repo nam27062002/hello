@@ -42,13 +42,17 @@ public class OffersManagerSettings {
 	// Offer Pack Settings
 	public string emptyValue = "-"; // Value in content representing the default value
 
-	//------------------------------------------------------------------------//
-	// METHODS																  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Initialize the settings object.
-	/// </summary>
-	public void InitFromDefinitions() {
+    // Remove Ads popup
+    public int interstitialsBeforeNoAdsPopup = 1;
+    public int interstitialsBetweenNoAdsPopup = 3;
+
+    //------------------------------------------------------------------------//
+    // METHODS																  //
+    //------------------------------------------------------------------------//
+    /// <summary>
+    /// Initialize the settings object.
+    /// </summary>
+    public void InitFromDefinitions() {
 		// Make sure content manager is ready
 		Debug.Assert(ContentManager.ready, "ERROR: Trying to initialize offer manager settings but content is not ready yet!");
 
@@ -64,6 +68,9 @@ public class OffersManagerSettings {
 		freeHistorySize = def.GetAsInt("freeHistorySize", freeHistorySize);
 		freeCooldownMinutes = def.GetAsInt("freeCooldownMinutes", freeCooldownMinutes);
 
-		emptyValue = def.GetAsString("emptyValue", emptyValue);
+        interstitialsBeforeNoAdsPopup = def.GetAsInt("interstitialsBeforeNoAdsPopup", interstitialsBeforeNoAdsPopup);
+        interstitialsBetweenNoAdsPopup = def.GetAsInt("interstitialsBetweenNoAdsPopup", interstitialsBetweenNoAdsPopup);
+
+        emptyValue = def.GetAsString("emptyValue", emptyValue);
 	}
 }

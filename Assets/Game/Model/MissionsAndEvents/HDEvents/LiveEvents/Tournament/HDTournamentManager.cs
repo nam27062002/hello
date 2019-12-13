@@ -531,6 +531,10 @@ public class HDTournamentManager : HDLiveEventManager, IBroadcastListener {
 	public bool IsNewBestScore() {
 		long runScore = GetRunScore();
 		long bestScore = GetBestScore();
+
+		// [AOC] Special case: if best score is negative, it means no score was registered until now, so run score automatically is the best one
+		if(bestScore < 0) return true;
+
 		bool ret = false;
 		HDTournamentDefinition def = data.definition as HDTournamentDefinition;
 		switch ( def.m_goal.m_mode )

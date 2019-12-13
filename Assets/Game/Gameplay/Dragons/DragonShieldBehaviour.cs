@@ -35,55 +35,63 @@ public class DragonShieldBehaviour : MonoBehaviour {
         m_dragon = GetComponent<DragonPlayer>();
         m_dragonHealth = m_dragon.dragonHealthBehaviour;
         
-		Messenger.AddListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_EATEN, OnEntityEaten);
-        Messenger.AddListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_DESTROYED, OnEntityDestroyed);
-        Messenger.AddListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_BURNED, OnEntityBurned);
+		Messenger.AddListener<Transform, IEntity, Reward, KillType>(MessengerEvents.ENTITY_KILLED, OnEntityKilled);
 	}
 
     private void OnDestroy()
     {
-        Messenger.RemoveListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_EATEN, OnEntityEaten);
-        Messenger.RemoveListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_DESTROYED, OnEntityDestroyed);
-        Messenger.AddListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_BURNED, OnEntityBurned);
+        Messenger.RemoveListener<Transform, IEntity, Reward, KillType>(MessengerEvents.ENTITY_KILLED, OnEntityKilled);
     }
     
-    void OnEntityEaten(Transform t, IEntity entity, Reward reward) {
-        if (reward.health >= 0) {
-            if ( FreezingObjectsRegistry.instance.IsFreezing(entity) )
-            {
-                float h = m_dragonHealth.GetBoostedHp(reward.origin, reward.health) * m_healthShieldRewardFactor;
-                if ( h<0 )
-                {
-                    m_shieldHit.broken = m_currentShield > 0 && (h + m_currentShield <= 0);
-                    m_shieldHit.value = -h;
-                    m_shieldHit.bigHit = -h > m_maxShield * 0.1f;    
-                    Broadcaster.Broadcast(BroadcastEventType.SHIELD_HIT, m_shieldHit);
-                }
-                AddShield(h);
-                
-                
-            }
-        }
-    }
+    void OnEntityKilled(Transform _t, IEntity _entity, Reward _reward, KillType _type) {
 
-    private void OnEntityDestroyed(Transform _entity,  IEntity _e, Reward _reward) {
-        if (_reward.health >= 0) {
-            if (FreezingObjectsRegistry.instance.IsFreezing(_e))
-            {
-                AddShield(_reward.health * m_healthShieldRewardFactor);
-            }
+        switch (_type)
+        {
+            case KillType.EATEN:
+                if (_reward.health >= 0)
+                {
+                    if (FreezingObjectsRegistry.instance.IsFreezing(_entity))
+                    {
+                        float h = m_dragonHealth.GetBoostedHp(_reward.origin, _reward.health) * m_healthShieldRewardFactor;
+                        if (h < 0)
+                        {
+                            m_shieldHit.broken = m_currentShield > 0 && (h + m_currentShield <= 0);
+                            m_shieldHit.value = -h;
+                            m_shieldHit.bigHit = -h > m_maxShield * 0.1f;
+                            Broadcaster.Broadcast(BroadcastEventType.SHIELD_HIT, m_shieldHit);
+                        }
+                        AddShield(h);
+
+
+                    }
+                }
+
+                break;
+
+            case KillType.SMASHED:
+                if (_reward.health >= 0)
+                {
+                    if (FreezingObjectsRegistry.instance.IsFreezing(_entity))
+                    {
+                        AddShield(_reward.health * m_healthShieldRewardFactor);
+                    }
+                }
+            break;
+
+            case KillType.BURNT:
+                    if (_reward.health >= 0)
+                    {
+                        // if (FreezingObjectsRegistry.instance.IsFreezing(_e.machine)) // For the ice dragon burning is frozing
+                        {
+                            AddShield(_reward.health * m_healthShieldRewardFactor);
+                        }
+                    }
+            break;
         }
+
+
     }
-    
-    private void OnEntityBurned(Transform _entity,  IEntity _e, Reward _reward) {
-        if (_reward.health >= 0) {
-            // if (FreezingObjectsRegistry.instance.IsFreezing(_e.machine)) // For the ice dragon burning is frozing
-            {
-                AddShield(_reward.health * m_healthShieldRewardFactor);
-            }
-        }
-    }
-    
+       
     protected void AddShield( float _add)
     {
         m_currentShield += _add;
