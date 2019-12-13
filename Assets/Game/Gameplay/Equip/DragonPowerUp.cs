@@ -493,7 +493,9 @@ public class DragonPowerUp : MonoBehaviour {
 			case "vacuum":
 			case "faster_boost":
 			case "coin_reward":
-			{
+            case "transformGold":
+
+            {
 				return _powerDef.GetLocalized(
 					fieldId, 
 					StringUtils.FormatNumber((int)(_powerDef.GetAsFloat("param1") * multiplier)), 
@@ -610,8 +612,9 @@ public class DragonPowerUp : MonoBehaviour {
 			case "special":
 			case "sun":
 			case "shoot_bubble":
-			//TONI
-			case "lives":
+            case "coin_reward":
+            //TONI
+            case "lives":
 			case "dragonram":
 			case "magnet":
 			case "freeze_aura":
@@ -621,7 +624,7 @@ public class DragonPowerUp : MonoBehaviour {
 			case "bomb":
 			case "stun":
 			case "findBonus":
-			case "tranformGold":
+			case "transformGold":
 			case "shoot_horns":
 			case "kill":
 			case "mummy":	
