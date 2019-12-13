@@ -104,7 +104,7 @@ public class HUDStatBar : IHUDWidget, IBroadcastListener {
 		string[] barNames = { "BaseSlider", "ExtraSlider", "DamageSlider", "Background" };
 		for(int i = 0; i < (int)Bars.COUNT; i++) {
 			m_bars[i] = new BarData();
-			child = transform.Find(barNames[i]);
+			child = transform.FindTransformRecursive(barNames[i]);
 			if(child != null) {
                 m_bars[i].transform = child.transform;
 				m_bars[i].slider = child.GetComponent<Slider>();
@@ -121,7 +121,7 @@ public class HUDStatBar : IHUDWidget, IBroadcastListener {
 		m_canvasGroup = GetComponent<CanvasGroup>();
 		m_valueTxt = gameObject.FindComponentRecursive<TextMeshProUGUI>("TextValue");
 
-		child = transform.Find("InvulnerabilityGlow");
+		child = transform.FindTransformRecursive("InvulnerabilityGlow");
 		if(child != null) {
 			m_invulnerabilityGlow = child.gameObject;
 		}
@@ -132,7 +132,7 @@ public class HUDStatBar : IHUDWidget, IBroadcastListener {
 		m_areParticlesPlaying = false;
 
 
-		child = transform.Find("Icon");
+		child = transform.FindTransformRecursive("Icon");
 		if ( child )
 		{
 			m_icon = child.gameObject;
