@@ -20,6 +20,7 @@ namespace IronSource.Editor
 			if (buildTarget == BuildTarget.iOS) {
 				string projectPath = buildPath + "/Unity-iPhone.xcodeproj/project.pbxproj";
 				string dirpath = Application.dataPath + "/IronSource/Editor/";
+				string plistPath = buildPath + "/info.plist";
 				string currentNamespace = MethodBase.GetCurrentMethod().DeclaringType.Namespace;
 
 				updateProject (buildTarget, projectPath);
@@ -35,6 +36,7 @@ namespace IronSource.Editor
 						if (!String.IsNullOrEmpty (classname)) {
 							IAdapterSettings adapter = (IAdapterSettings)Activator.CreateInstance (Type.GetType (currentNamespace + "." + classname));
 							adapter.updateProject (buildTarget, projectPath);
+							adapter.updateProjectPlist(buildTarget, plistPath);
 						}
 					}
 				}
