@@ -1280,7 +1280,7 @@ GameObject:
   m_Component:
   - component: {fileID: 17405523}
   m_Layer: 0
-  m_Name: BRIDGES
+  m_Name: Rail_Cart_Bridges
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1727,6 +1727,7 @@ Transform:
   - {fileID: 1798618962}
   - {fileID: 1810543439}
   - {fileID: 1433978897}
+  - {fileID: 562319065}
   m_Father: {fileID: 1925743425}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -2094,8 +2095,8 @@ Transform:
   m_LocalPosition: {x: 489.97327, y: -235.89958, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 950664583}
-  m_RootOrder: 7
+  m_Father: {fileID: 1759141197}
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &34404029
 MeshRenderer:
@@ -2633,7 +2634,7 @@ GameObject:
   - component: {fileID: 40925633}
   - component: {fileID: 40925632}
   m_Layer: 9
-  m_Name: CollisionPolyMesh3
+  m_Name: End_Mines_Rooft
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2649,8 +2650,8 @@ Transform:
   m_LocalPosition: {x: 503.1432, y: -144.91847, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 1372678181}
-  m_RootOrder: 2
+  m_Father: {fileID: 914079865}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &40925632
 MeshRenderer:
@@ -4849,7 +4850,7 @@ GameObject:
   - component: {fileID: 78652625}
   - component: {fileID: 78652624}
   m_Layer: 9
-  m_Name: CollisionPolyMesh
+  m_Name: End_Mines_Volcan_Rock
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5538,7 +5539,7 @@ Transform:
   m_LocalPosition: {x: 374.94662, y: -191.52063, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 950664583}
+  m_Father: {fileID: 579947790}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &99027359
@@ -7095,7 +7096,7 @@ GameObject:
   - component: {fileID: 120015252}
   - component: {fileID: 120015251}
   m_Layer: 9
-  m_Name: CollisionPolyMesh
+  m_Name: Castle_Entrance
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7358,7 +7359,7 @@ GameObject:
   - component: {fileID: 124998044}
   - component: {fileID: 124998043}
   m_Layer: 9
-  m_Name: Ground left+modifications
+  m_Name: Castle_Entrance
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7374,7 +7375,7 @@ Transform:
   m_LocalPosition: {x: 21.432953, y: -161.32217, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 1925743425}
+  m_Father: {fileID: 813648766}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &124998043
@@ -7569,6 +7570,36 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 124998041}
   m_Mesh: {fileID: 868997055}
+--- !u!1 &128231374
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 128231375}
+  m_Layer: 0
+  m_Name: Rail_Cart_Upper_Area
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &128231375
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 128231374}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 526432090}
+  - {fileID: 1086981967}
+  m_Father: {fileID: 1951560673}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!43 &128735370
 Mesh:
   m_ObjectHideFlags: 0
@@ -9701,8 +9732,8 @@ Transform:
   m_LocalPosition: {x: 401.29626, y: -306.18787, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 950664583}
-  m_RootOrder: 4
+  m_Father: {fileID: 1759141197}
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &163761673
 MeshRenderer:
@@ -15357,7 +15388,7 @@ GameObject:
   - component: {fileID: 255326064}
   - component: {fileID: 255326063}
   m_Layer: 9
-  m_Name: CollisionPolyMesh
+  m_Name: Castle_Entrance
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -16768,35 +16799,6 @@ Mesh:
   m_BakedConvexCollisionMesh: 
   m_BakedTriangleCollisionMesh: 
   m_MeshOptimized: 0
---- !u!1 &267898456
-GameObject:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  serializedVersion: 5
-  m_Component:
-  - component: {fileID: 267898457}
-  m_Layer: 0
-  m_Name: Wheel area Wind
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &267898457
-Transform:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 267898456}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children:
-  - {fileID: 1317370799}
-  m_Father: {fileID: 1925743425}
-  m_RootOrder: 4
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!43 &268042007
 Mesh:
   m_ObjectHideFlags: 0
@@ -19960,7 +19962,7 @@ GameObject:
   - component: {fileID: 328855831}
   - component: {fileID: 328855830}
   m_Layer: 9
-  m_Name: CollisionPolyMesh
+  m_Name: End_Mines_Upper_Area_Rocks
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -19976,8 +19978,8 @@ Transform:
   m_LocalPosition: {x: 619.0435, y: -169.84142, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 1372678181}
-  m_RootOrder: 9
+  m_Father: {fileID: 914079865}
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &328855830
 MeshRenderer:
@@ -22110,7 +22112,7 @@ GameObject:
   - component: {fileID: 382052824}
   - component: {fileID: 382052823}
   m_Layer: 9
-  m_Name: CollisionPolyMesh
+  m_Name: End_Mines_Rooft
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -22126,8 +22128,8 @@ Transform:
   m_LocalPosition: {x: 634.8614, y: -128.0924, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 1372678181}
-  m_RootOrder: 6
+  m_Father: {fileID: 914079865}
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &382052823
 MeshRenderer:
@@ -25000,7 +25002,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1951560673}
-  m_RootOrder: 6
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &446982598
 MeshRenderer:
@@ -27274,7 +27276,7 @@ GameObject:
   - component: {fileID: 502652423}
   - component: {fileID: 502652422}
   m_Layer: 9
-  m_Name: CollisionPolyMesh
+  m_Name: End_Mines_Lower_Area_Rock
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -27290,8 +27292,8 @@ Transform:
   m_LocalPosition: {x: 545.1168, y: -322.401, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 1372678181}
-  m_RootOrder: 7
+  m_Father: {fileID: 656939892}
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &502652422
 MeshRenderer:
@@ -29078,8 +29080,8 @@ Transform:
   m_LocalPosition: {x: 332.17816, y: -148.90974, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 950664583}
-  m_RootOrder: 2
+  m_Father: {fileID: 128231375}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &526432091
 MeshRenderer:
@@ -30966,8 +30968,8 @@ Transform:
   m_LocalPosition: {x: 401.29626, y: -290.5879, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 950664583}
-  m_RootOrder: 5
+  m_Father: {fileID: 21741571}
+  m_RootOrder: 11
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &562319066
 MeshRenderer:
@@ -32025,6 +32027,37 @@ Mesh:
   m_BakedConvexCollisionMesh: 
   m_BakedTriangleCollisionMesh: 
   m_MeshOptimized: 0
+--- !u!1 &579947789
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 579947790}
+  m_Layer: 0
+  m_Name: Rail_Cart_Middle_Area
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &579947790
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 579947789}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 99027358}
+  - {fileID: 638991682}
+  - {fileID: 1190918711}
+  m_Father: {fileID: 1951560673}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &581729814
 GameObject:
   m_ObjectHideFlags: 0
@@ -33552,7 +33585,7 @@ GameObject:
   - component: {fileID: 624228701}
   - component: {fileID: 624228700}
   m_Layer: 9
-  m_Name: CollisionPolyMesh
+  m_Name: End_Mines_Volcan_Rock
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -33569,7 +33602,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1049483493}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &624228700
 MeshRenderer:
@@ -34518,8 +34551,8 @@ Transform:
   m_LocalPosition: {x: 376.9532, y: -224.41138, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 950664583}
-  m_RootOrder: 6
+  m_Father: {fileID: 579947790}
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &638991683
 MeshRenderer:
@@ -35235,7 +35268,7 @@ GameObject:
   m_Component:
   - component: {fileID: 656939892}
   m_Layer: 0
-  m_Name: Test open spaces
+  m_Name: End_Mines_Lower_Area
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -35254,6 +35287,10 @@ Transform:
   - {fileID: 1856137636}
   - {fileID: 1508905509}
   - {fileID: 1127375726}
+  - {fileID: 1317370799}
+  - {fileID: 1858737463}
+  - {fileID: 502652421}
+  - {fileID: 2080924234}
   m_Father: {fileID: 1372678181}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -35660,7 +35697,7 @@ GameObject:
   - component: {fileID: 658879590}
   - component: {fileID: 658879589}
   m_Layer: 9
-  m_Name: CollisionPolyMesh
+  m_Name: End_Mines_Volcan_Rock
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -36843,7 +36880,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1951560673}
-  m_RootOrder: 9
+  m_RootOrder: 11
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &676598961
 MeshRenderer:
@@ -39759,7 +39796,7 @@ GameObject:
   - component: {fileID: 769638573}
   - component: {fileID: 769638572}
   m_Layer: 9
-  m_Name: CollisionPolyMesh
+  m_Name: End_Mines_Volcan_Rock
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -39776,7 +39813,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1049483493}
-  m_RootOrder: 5
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &769638572
 MeshRenderer:
@@ -41840,7 +41877,7 @@ GameObject:
   m_Component:
   - component: {fileID: 813648766}
   m_Layer: 0
-  m_Name: Castle Entrance
+  m_Name: Castle_Entrance
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -41863,6 +41900,7 @@ Transform:
   - {fileID: 1713644566}
   - {fileID: 120015250}
   - {fileID: 1969542923}
+  - {fileID: 124998042}
   m_Father: {fileID: 1925743425}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -42429,7 +42467,7 @@ GameObject:
   - component: {fileID: 832358172}
   - component: {fileID: 832358171}
   m_Layer: 9
-  m_Name: CollisionPolyMesh_PIERO
+  m_Name: Castle_Entrance_Rooft
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -47200,34 +47238,6 @@ Mesh:
   m_BakedConvexCollisionMesh: 
   m_BakedTriangleCollisionMesh: 
   m_MeshOptimized: 0
---- !u!1 &903332078
-GameObject:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  serializedVersion: 5
-  m_Component:
-  - component: {fileID: 903332079}
-  m_Layer: 0
-  m_Name: test_open space
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &903332079
-Transform:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 903332078}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 1049483493}
-  m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!43 &905916830
 Mesh:
   m_ObjectHideFlags: 0
@@ -48195,7 +48205,7 @@ GameObject:
   m_Component:
   - component: {fileID: 914079865}
   m_Layer: 0
-  m_Name: XL Cave
+  m_Name: End_Mines_Upper_Area
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -48211,7 +48221,12 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
+  - {fileID: 40925631}
+  - {fileID: 1529224670}
+  - {fileID: 382052822}
   - {fileID: 1480815562}
+  - {fileID: 1231434153}
+  - {fileID: 328855829}
   m_Father: {fileID: 1372678181}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -49515,43 +49530,6 @@ Mesh:
   m_BakedConvexCollisionMesh: 
   m_BakedTriangleCollisionMesh: 
   m_MeshOptimized: 0
---- !u!1 &950664582
-GameObject:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  serializedVersion: 5
-  m_Component:
-  - component: {fileID: 950664583}
-  m_Layer: 0
-  m_Name: big parts
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &950664583
-Transform:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 950664582}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children:
-  - {fileID: 99027358}
-  - {fileID: 1062731644}
-  - {fileID: 526432090}
-  - {fileID: 1086981967}
-  - {fileID: 163761672}
-  - {fileID: 562319065}
-  - {fileID: 638991682}
-  - {fileID: 34404028}
-  - {fileID: 988753175}
-  m_Father: {fileID: 1951560673}
-  m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!43 &954250261
 Mesh:
   m_ObjectHideFlags: 0
@@ -51676,7 +51654,7 @@ GameObject:
   - component: {fileID: 988753177}
   - component: {fileID: 988753176}
   m_Layer: 9
-  m_Name: tope carrito derecha
+  m_Name: DestroyRails
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -51688,12 +51666,12 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 988753174}
-  m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
+  m_LocalRotation: {x: -0, y: 0.7071068, z: -0, w: 0.7071068}
   m_LocalPosition: {x: 405.006, y: -166.23, z: -19.18}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 950664583}
-  m_RootOrder: 8
+  m_Father: {fileID: 1951560673}
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &988753176
 MeshRenderer:
@@ -52112,7 +52090,7 @@ GameObject:
   m_Component:
   - component: {fileID: 992920407}
   m_Layer: 0
-  m_Name: left
+  m_Name: Rail_Cart_Left_Area
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -52138,7 +52116,7 @@ Transform:
   - {fileID: 2135268308}
   - {fileID: 775557786}
   m_Father: {fileID: 1951560673}
-  m_RootOrder: 1
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!43 &992985156
 Mesh:
@@ -55312,7 +55290,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1049483493}
   m_Layer: 0
-  m_Name: Wheel area volcan
+  m_Name: End_Mines_Volcan
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -55328,10 +55306,9 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 903332079}
+  - {fileID: 1207156191}
   - {fileID: 658879588}
   - {fileID: 78652623}
-  - {fileID: 1207156191}
   - {fileID: 624228699}
   - {fileID: 769638571}
   - {fileID: 1774872363}
@@ -56195,8 +56172,8 @@ Transform:
   m_LocalPosition: {x: 303.67273, y: -254.24847, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 950664583}
-  m_RootOrder: 1
+  m_Father: {fileID: 1759141197}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &1062731645
 MeshRenderer:
@@ -57307,8 +57284,8 @@ Transform:
   m_LocalPosition: {x: 332.17816, y: -144.21976, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 950664583}
-  m_RootOrder: 3
+  m_Father: {fileID: 128231375}
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &1086981968
 MeshRenderer:
@@ -57894,7 +57871,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1951560673}
-  m_RootOrder: 8
+  m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &1091832243
 MeshRenderer:
@@ -58704,7 +58681,7 @@ GameObject:
   - component: {fileID: 1127375728}
   - component: {fileID: 1127375727}
   m_Layer: 9
-  m_Name: CollisionPolyMesh2
+  m_Name: End_Mines_Lower_Area_Rock
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -61874,8 +61851,8 @@ Transform:
   m_LocalPosition: {x: 279.2434, y: -186.11072, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 1951560673}
-  m_RootOrder: 4
+  m_Father: {fileID: 579947790}
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &1190918712
 MeshRenderer:
@@ -62739,7 +62716,7 @@ GameObject:
   - component: {fileID: 1207156193}
   - component: {fileID: 1207156192}
   m_Layer: 9
-  m_Name: CollisionPolyMesh
+  m_Name: End_Mines_Volcan_Ground
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -62756,7 +62733,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1049483493}
-  m_RootOrder: 3
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &1207156192
 MeshRenderer:
@@ -63715,7 +63692,7 @@ GameObject:
   - component: {fileID: 1231434155}
   - component: {fileID: 1231434154}
   m_Layer: 9
-  m_Name: CollisionPolyMesh
+  m_Name: End_Mines_Upper_Area_Rocks
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -63731,8 +63708,8 @@ Transform:
   m_LocalPosition: {x: 566.8083, y: -165.01955, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 1372678181}
-  m_RootOrder: 5
+  m_Father: {fileID: 914079865}
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &1231434154
 MeshRenderer:
@@ -68399,7 +68376,7 @@ GameObject:
   - component: {fileID: 1317370801}
   - component: {fileID: 1317370800}
   m_Layer: 9
-  m_Name: CollisionPolyMesh
+  m_Name: End_Mines_Lower_Area_Rock
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -68415,8 +68392,8 @@ Transform:
   m_LocalPosition: {x: 458.70056, y: -318.5412, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 267898457}
-  m_RootOrder: 0
+  m_Father: {fileID: 656939892}
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &1317370800
 MeshRenderer:
@@ -72185,7 +72162,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1372678181}
   m_Layer: 0
-  m_Name: Wheel Area center
+  m_Name: End_Mines
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -72203,16 +72180,8 @@ Transform:
   m_Children:
   - {fileID: 914079865}
   - {fileID: 656939892}
-  - {fileID: 40925631}
-  - {fileID: 1529224670}
-  - {fileID: 1858737463}
-  - {fileID: 1231434153}
-  - {fileID: 382052822}
-  - {fileID: 502652421}
-  - {fileID: 2080924234}
-  - {fileID: 328855829}
   m_Father: {fileID: 1925743425}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!43 &1376980097
 Mesh:
@@ -77780,7 +77749,7 @@ GameObject:
   - component: {fileID: 1480815564}
   - component: {fileID: 1480815563}
   m_Layer: 9
-  m_Name: CollisionPolyMesh
+  m_Name: End_Mines_Upper_Area_Rocks
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -77797,7 +77766,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 914079865}
-  m_RootOrder: 0
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &1480815563
 MeshRenderer:
@@ -80034,7 +80003,7 @@ GameObject:
   - component: {fileID: 1508905511}
   - component: {fileID: 1508905510}
   m_Layer: 9
-  m_Name: CollisionPolyMesh1
+  m_Name: End_Mines_Lower_Area_Rock
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -80831,7 +80800,7 @@ GameObject:
   - component: {fileID: 1522128223}
   - component: {fileID: 1522128222}
   m_Layer: 9
-  m_Name: CollisionPolyMesh
+  m_Name: End_Mines_Volcan_Rock
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -80848,7 +80817,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1049483493}
-  m_RootOrder: 7
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &1522128222
 MeshRenderer:
@@ -81348,7 +81317,7 @@ GameObject:
   - component: {fileID: 1529224672}
   - component: {fileID: 1529224671}
   m_Layer: 9
-  m_Name: CollisionPolyMesh0
+  m_Name: End_Mines_Rooft
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -81364,8 +81333,8 @@ Transform:
   m_LocalPosition: {x: 550.78436, y: -137.82573, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 1372678181}
-  m_RootOrder: 3
+  m_Father: {fileID: 914079865}
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &1529224671
 MeshRenderer:
@@ -85348,7 +85317,7 @@ Transform:
   - {fileID: 2104235472}
   - {fileID: 1393808212}
   m_Father: {fileID: 1951560673}
-  m_RootOrder: 2
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!43 &1629399015
 Mesh:
@@ -87006,7 +86975,7 @@ GameObject:
   - component: {fileID: 1664464765}
   - component: {fileID: 1664464764}
   m_Layer: 9
-  m_Name: CollisionPolyMesh
+  m_Name: Castle_Entrance
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -88966,7 +88935,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1951560673}
-  m_RootOrder: 7
+  m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &1706657549
 MeshRenderer:
@@ -90213,7 +90182,7 @@ GameObject:
   - component: {fileID: 1713644568}
   - component: {fileID: 1713644567}
   m_Layer: 9
-  m_Name: CollisionPolyMesh
+  m_Name: Castle_Entrance
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -92785,6 +92754,37 @@ Mesh:
   m_BakedConvexCollisionMesh: 
   m_BakedTriangleCollisionMesh: 
   m_MeshOptimized: 0
+--- !u!1 &1759141196
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 1759141197}
+  m_Layer: 0
+  m_Name: Rail_Cart_Lower_Area
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1759141197
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1759141196}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 1062731644}
+  - {fileID: 163761672}
+  - {fileID: 34404028}
+  m_Father: {fileID: 1951560673}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1760601674
 GameObject:
   m_ObjectHideFlags: 0
@@ -93760,7 +93760,7 @@ GameObject:
   - component: {fileID: 1774872365}
   - component: {fileID: 1774872364}
   m_Layer: 9
-  m_Name: CollisionPolyMesh
+  m_Name: End_Mines_Volcan_Rock
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -93777,7 +93777,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1049483493}
-  m_RootOrder: 6
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &1774872364
 MeshRenderer:
@@ -98735,7 +98735,7 @@ GameObject:
   - component: {fileID: 1856137638}
   - component: {fileID: 1856137637}
   m_Layer: 9
-  m_Name: CollisionPolyMesh5
+  m_Name: End_Mines_Lower_Area_Rock
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -98902,7 +98902,7 @@ GameObject:
   - component: {fileID: 1858737465}
   - component: {fileID: 1858737464}
   m_Layer: 9
-  m_Name: CollisionPolyMesh4
+  m_Name: End_Mines_Lower_Area_Rock
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -98918,7 +98918,7 @@ Transform:
   m_LocalPosition: {x: 519.8138, y: -298.2832, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 1372678181}
+  m_Father: {fileID: 656939892}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &1858737464
@@ -101271,11 +101271,9 @@ Transform:
   - {fileID: 1483678987}
   - {fileID: 813648766}
   - {fileID: 21741571}
-  - {fileID: 1372678181}
-  - {fileID: 267898457}
-  - {fileID: 1049483493}
   - {fileID: 1951560673}
-  - {fileID: 124998042}
+  - {fileID: 1372678181}
+  - {fileID: 1049483493}
   m_Father: {fileID: 1892954542}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -102512,18 +102510,20 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 950664583}
+  - {fileID: 128231375}
+  - {fileID: 579947790}
+  - {fileID: 1759141197}
   - {fileID: 992920407}
-  - {fileID: 1627328908}
   - {fileID: 1974192760}
-  - {fileID: 1190918711}
   - {fileID: 17405523}
+  - {fileID: 1627328908}
+  - {fileID: 988753175}
   - {fileID: 446982597}
   - {fileID: 1706657548}
   - {fileID: 1091832242}
   - {fileID: 676598960}
   m_Father: {fileID: 1925743425}
-  m_RootOrder: 6
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!43 &1957190384
 Mesh:
@@ -103380,7 +103380,7 @@ GameObject:
   - component: {fileID: 1969542925}
   - component: {fileID: 1969542924}
   m_Layer: 9
-  m_Name: new
+  m_Name: Castle_Entrance
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -103884,7 +103884,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1974192760}
   m_Layer: 0
-  m_Name: right area
+  m_Name: Rail_Cart_Right_Area
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -103912,7 +103912,7 @@ Transform:
   - {fileID: 1894959403}
   - {fileID: 1575853166}
   m_Father: {fileID: 1951560673}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!43 &1975977700
 Mesh:
@@ -111344,7 +111344,7 @@ GameObject:
   - component: {fileID: 2080924236}
   - component: {fileID: 2080924235}
   m_Layer: 9
-  m_Name: CollisionPolyMesh
+  m_Name: End_Mines_Lower_Area_Rock
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -111360,8 +111360,8 @@ Transform:
   m_LocalPosition: {x: 623.9174, y: -256.2987, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 1372678181}
-  m_RootOrder: 8
+  m_Father: {fileID: 656939892}
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &2080924235
 MeshRenderer:
