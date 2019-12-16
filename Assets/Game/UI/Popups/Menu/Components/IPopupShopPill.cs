@@ -189,15 +189,15 @@ public abstract class IPopupShopPill : MonoBehaviour {
 		if(_track) {
 			Log("Subscribing to IAP events");
 			Messenger.AddListener<string, string, SimpleJSON.JSONNode>(MessengerEvents.PURCHASE_SUCCESSFUL, OnIAPSuccess);
-			Messenger.AddListener<string>(MessengerEvents.PURCHASE_ERROR, OnIAPFailed);
+			Messenger.AddListener<string>(MessengerEvents.PURCHASE_ERROR, OnIAPError);
 			Messenger.AddListener<string>(MessengerEvents.PURCHASE_FAILED, OnIAPFailed);
-			Messenger.AddListener<string>(MessengerEvents.PURCHASE_CANCELLED, OnIAPFailed);
+			Messenger.AddListener<string>(MessengerEvents.PURCHASE_CANCELLED, OnIAPCancelled);
 		} else {
 			Log("Unsubscribing from IAP events");
 			Messenger.RemoveListener<string, string, SimpleJSON.JSONNode>(MessengerEvents.PURCHASE_SUCCESSFUL, OnIAPSuccess);
-			Messenger.RemoveListener<string>(MessengerEvents.PURCHASE_ERROR, OnIAPFailed);
+			Messenger.RemoveListener<string>(MessengerEvents.PURCHASE_ERROR, OnIAPError);
 			Messenger.RemoveListener<string>(MessengerEvents.PURCHASE_FAILED, OnIAPFailed);
-			Messenger.RemoveListener<string>(MessengerEvents.PURCHASE_CANCELLED, OnIAPFailed);
+			Messenger.RemoveListener<string>(MessengerEvents.PURCHASE_CANCELLED, OnIAPCancelled);
 		}
 	}
 
@@ -286,9 +286,8 @@ public abstract class IPopupShopPill : MonoBehaviour {
 	/// <summary>
 	/// Connection to the store has been checked.
 	/// </summary>
-	void OnConnectionCheckFinished(FGOL.Server.Error _connectionError) {
+	private void OnConnectionCheckFinished(FGOL.Server.Error _connectionError) {
 		Log("OnConnectionCheckFinished: Error " + (_connectionError == null ? "NULL" : _connectionError.ToString()));
-
 		if(_connectionError == null) {
 			// No error! Proceed with the IAP flow
 			Log("OnConnectionCheckFinished: No Error! Proceed with IAP flow");
@@ -362,8 +361,33 @@ public abstract class IPopupShopPill : MonoBehaviour {
 	/// Real money transaction has failed.
 	/// </summary>
 	/// <param name="_sku">Sku of the item to be purchased.</param>
+	private void OnIAPError(string _sku) {
+		OnIAPFailed_Internal(_sku, "Error");
+	}
+
+	/// <summary>
+	/// Real money transaction has failed.
+	/// </summary>
+	/// <param name="_sku">Sku of the item to be purchased.</param>
 	private void OnIAPFailed(string _sku) {
-		Log("OnIAPFailed! " + _sku);
+		OnIAPFailed_Internal(_sku, "Failed");
+	}
+
+	/// <summary>
+	/// Real money transaction has failed.
+	/// </summary>
+	/// <param name="_sku">Sku of the item to be purchased.</param>
+	private void OnIAPCancelled(string _sku) {
+		OnIAPFailed_Internal(_sku, "Cancelled");
+	}
+
+	/// <summary>
+	/// Real money transaction has failed.
+	/// </summary>
+	/// <param name="_sku">Sku of the item to be purchased.</param>
+	/// <param name="_cause">Short description on what was the fail cause.</param>
+	private void OnIAPFailed_Internal(string _sku, string _cause) {
+		Log("OnIAPFailed! " + _sku + " (" + _cause + ")");
 
 		// Is it this one?
 		if(_sku == GetIAPSku()) {
@@ -372,6 +396,17 @@ public abstract class IPopupShopPill : MonoBehaviour {
 
 			// Finalize IAP flow
 			EndPurchase(false);
+
+		#if DEBUG
+			// Show some feedback to the player
+			UIFeedbackText feedbackText = UIFeedbackText.CreateAndLaunch(
+				LocalizationManager.SharedInstance.Localize("TID_RESOURCES_FLOW_UNKNOWN_ERROR") + "\n" + _sku + " (" + _cause + ")",
+				new Vector2(0.5f, 0.5f),
+				this.GetComponentInParent<Canvas>().transform as RectTransform
+			);
+			feedbackText.duration = 3f;
+			feedbackText.text.color = UIConstants.ERROR_MESSAGE_COLOR;
+		#endif
 		}
 	}
 

@@ -98,6 +98,7 @@ Shader "Hungry Dragon/Scenary/Scenary Standard"
 				#pragma fragment frag
 //				#pragma multi_compile_fwdbase
 				#pragma multi_compile __ BLEND_TEXTURE
+                #pragma multi_compile __ NIGHT
 				#pragma shader_feature __ ADDITIVE_BLEND
 				#pragma shader_feature __ CUSTOM_VERTEXCOLOR
 				#pragma multi_compile __ SPECULAR

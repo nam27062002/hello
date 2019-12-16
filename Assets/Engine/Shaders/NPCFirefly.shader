@@ -34,6 +34,8 @@ Shader "Hungry Dragon/NPC/NPC Firefly"
 
 			#pragma multi_compile __ FREEZE
 			#pragma multi_compile __ TINT
+            #pragma multi_compile __ NIGHT
+
 
 			#include "UnityCG.cginc"
 			#include "Lighting.cginc"

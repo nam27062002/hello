@@ -145,6 +145,7 @@ GameObject:
   - component: {fileID: 224483556762638720}
   - component: {fileID: 222621302349165374}
   - component: {fileID: 114639541296070462}
+  - component: {fileID: 114982325231917012}
   m_Layer: 5
   m_Name: BackCircle
   m_TagString: Untagged
@@ -731,6 +732,7 @@ MonoBehaviour:
     m_RotationOrder: 0
   m_curveScale: 0.15
   m_verticalPivot: 0.5
+  m_verticalOffset: 0
   m_useCustomReferenceSize: 0
   m_customReferenceSize: 200
 --- !u!114 &114060793724619140
@@ -1035,6 +1037,9 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
+  targetIsSelf: 1
+  targetGO: {fileID: 0}
+  tweenTargetIsTargetGO: 1
   delay: 0
   duration: 1
   easeType: 6
@@ -1338,6 +1343,9 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
+  targetIsSelf: 1
+  targetGO: {fileID: 0}
+  tweenTargetIsTargetGO: 1
   delay: 0
   duration: 1
   easeType: 6
@@ -1444,8 +1452,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2e3eedcba421948d1ac712f3d495135f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_applyToFonts: 0
+  m_applyToImages: 1
   m_colorMultiply: {r: 1, g: 1, b: 1, a: 1}
   m_colorAdd: {r: 0, g: 0.34148085, b: 0.5441177, a: 0}
+  m_colorRampEnabled: 0
+  m_colorRamp: {fileID: 0}
   m_alpha: 1
   m_brightness: -0.223
   m_saturation: -1
@@ -3111,6 +3123,9 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
+  targetIsSelf: 1
+  targetGO: {fileID: 0}
+  tweenTargetIsTargetGO: 1
   delay: 0
   duration: 1
   easeType: 6
@@ -3276,6 +3291,9 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
+  targetIsSelf: 1
+  targetGO: {fileID: 0}
+  tweenTargetIsTargetGO: 1
   delay: 0
   duration: 0.5
   easeType: 7
@@ -3330,6 +3348,17 @@ MonoBehaviour:
   optionalRotationMode: 0
   optionalScrambleMode: 0
   optionalString: 
+--- !u!114 &114982325231917012
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1252186212144202}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d1f4c58340cd4f168bd0915c8ef8e67, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!198 &198480113106538004
 ParticleSystem:
   m_ObjectHideFlags: 1
@@ -17679,7 +17708,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
   m_AnchoredPosition: {x: 0, y: -120}
-  m_SizeDelta: {x: 0, y: 125}
+  m_SizeDelta: {x: -1010, y: 125}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224898734366644394
 RectTransform:

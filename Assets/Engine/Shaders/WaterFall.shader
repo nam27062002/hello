@@ -39,6 +39,7 @@ Shader "Hungry Dragon/Waterfall"
 			CGPROGRAM
 				#pragma vertex vert
 				#pragma fragment frag
+                #pragma multi_compile __ NIGHT
 
 				#include "UnityCG.cginc"
 				#include "AutoLight.cginc"
@@ -114,8 +115,11 @@ Shader "Hungry Dragon/Waterfall"
 					col.rgb = lerp((col).rgb, fogCol.rgb, fogCol.a * intensity);
 
 					col.a *= _BackColor.a;
-
+#if defined(NIGHT)
+					return col * fixed4(0.25, 0.25, 0.5, 1.0);
+#else
 					return col;
+#endif
 				}
 			ENDCG
 		}
@@ -135,6 +139,7 @@ Shader "Hungry Dragon/Waterfall"
 			#pragma vertex vert
 			#pragma fragment frag
 			#pragma multi_compile_fwdbase
+            #pragma multi_compile __ NIGHT
 
 			#include "UnityCG.cginc"
 			#include "AutoLight.cginc"
@@ -195,7 +200,12 @@ Shader "Hungry Dragon/Waterfall"
 
 				fixed4 fcol = _BackColor;
 				fcol.a *= (1.0 - i.color.a) + saturate;
-				return fcol;
+
+#if defined(NIGHT)
+				return col * fixed4(0.25, 0.25, 0.5, 1.0);
+#else
+				return col;
+#endif
 			}
 
 			ENDCG

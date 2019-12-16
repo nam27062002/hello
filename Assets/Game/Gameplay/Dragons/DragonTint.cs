@@ -20,6 +20,11 @@ public class DragonTint : MonoBehaviour {
     List<Color> m_fresnelColors = new List<Color>();
     List<float> m_innerLightAddValue = new List<float>();
     List<Color> m_innerLightColors = new List<Color>();
+
+    // Particles
+    List<float> m_originalParticleOpacity = new List<float>();
+    List<Material> m_particleMaterials = new List<Material>();
+    
     float m_innerLightColorValue = 1;
 
     float m_otherColorTimer = 0;
@@ -77,6 +82,9 @@ public class DragonTint : MonoBehaviour {
         Dictionary<string, Material> joinMaterial = new Dictionary<string, Material>();
         Dictionary<string, List<Renderer>> disguiseRenderers = new Dictionary<string, List<Renderer>>();
 
+        Dictionary<string, Material> joinParticleMaterial = new Dictionary<string, Material>();
+        Dictionary<string, List<Renderer>> particleRenderers = new Dictionary<string, List<Renderer>>();
+        
 
         if (m_renderers != null)
             for (int i = 0; i < m_renderers.Length; i++) {
@@ -105,6 +113,19 @@ public class DragonTint : MonoBehaviour {
                             disguiseRenderers.Add(mat.name, new List<Renderer> { r });
                         }
 
+                    }
+
+                    m_dragonRenderers.Add(m_renderers[i]);
+                }
+                else if ( shaderName.StartsWith("Hungry Dragon/Particles/Transparent particles") )
+                {
+                    if ( !joinParticleMaterial.ContainsKey( mat.name ) )
+                        joinParticleMaterial.Add(mat.name, mat);
+
+                    if (particleRenderers.ContainsKey(mat.name)) {
+                        particleRenderers[mat.name].Add(r);
+                    } else {
+                        particleRenderers.Add(mat.name, new List<Renderer> { r });
                     }
 
                     m_dragonRenderers.Add(m_renderers[i]);
@@ -138,7 +159,14 @@ public class DragonTint : MonoBehaviour {
             AddMaterialInfo(pair1.Value);
         }
 
-
+        foreach (KeyValuePair<string, Material> pair1 in joinParticleMaterial) {
+            List<Renderer> rends = particleRenderers[pair1.Key];
+            int num = rends.Count;
+            for (int i = 0; i < num; i++) {
+                rends[i].material = pair1.Value;
+            }
+            AddParticleMaterialInfo( pair1.Value );
+        }
 
         m_materialsCount = m_materials.Count;
     }
@@ -153,6 +181,11 @@ public class DragonTint : MonoBehaviour {
 
         Material original = new Material(mat);
         m_originalMaterial.Add(original);
+    }
+
+    void AddParticleMaterialInfo( Material mat ){
+        m_particleMaterials.Add( mat );
+        m_originalParticleOpacity.Add( mat.GetFloat(GameConstants.Materials.Property.OPACITY_SATURATION) );
     }
 
     void OnEnable() {
@@ -188,6 +221,7 @@ public class DragonTint : MonoBehaviour {
         m_deathAlpha = Mathf.Clamp01(m_deathAlpha);
 
         SetColorMultiplyAlpha(m_deathAlpha);
+        SetParticlesAlpha( m_deathAlpha );
         //		SetFresnelAlpha( m_deathAlpha );
 
         // Color add
@@ -263,6 +297,12 @@ public class DragonTint : MonoBehaviour {
             m_materials[i].SetColor(GameConstants.Materials.Property.TINT, c);
         }
     }
+    void SetParticlesAlpha( float a ) {
+        int count = m_particleMaterials.Count;
+        for (int i = 0; i < count; ++i) {
+            m_particleMaterials[i].SetFloat(GameConstants.Materials.Property.OPACITY_SATURATION, m_originalParticleOpacity[i] * a );
+        }
+    }
 
     void SetFresnelAlpha(float alpha) {
         for (int i = 0; i < m_materialsCount; ++i) {
@@ -313,6 +353,11 @@ public class DragonTint : MonoBehaviour {
         // Switch back body materials
         for (int i = 0; i < m_materialsCount; ++i)
             m_materials[i].CopyPropertiesFromMaterial(m_originalMaterial[i]);
+
+        int count = m_particleMaterials.Count;
+        for (int i = 0; i < count; ++i)
+            m_particleMaterials[i].SetFloat( GameConstants.Materials.Property.OPACITY_SATURATION, m_originalParticleOpacity[i]);
+
 
         m_deathAlpha = 1;
         for (int i = 0; i < m_dragonRenderers.Count; i++) {

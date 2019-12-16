@@ -22,6 +22,12 @@ public class DragonPowerUp : MonoBehaviour {
 	private float m_entityXPMultiplier;
 	private float m_entityScoreMultiplier;
 
+	// Transform Gold
+	private bool m_transformGold = false;
+	private float m_transformGoldTimer = 0;
+	private float m_transformGoldInterval = 5.0f;
+	private DragonParticleController m_particleController;
+
 	//------------------------------------------------------------------------//
 	// METHODS																  //
 	//------------------------------------------------------------------------//
@@ -42,6 +48,20 @@ public class DragonPowerUp : MonoBehaviour {
 	void Start() 
 	{
 		ApplyPowerups();
+	}
+
+	void Update()
+	{
+		if ( m_transformGold )
+		{
+			m_transformGoldTimer -= Time.deltaTime;
+			if ( m_transformGoldTimer <= 0 )
+			{
+				m_transformGoldTimer = m_transformGoldInterval;
+				EntityManager.instance.ForceOnScreenEntitiesGolden();
+				m_particleController.PlayTransformGoldParticle();
+			}
+		}
 	}
 
 	public void ApplyPowerups()
@@ -107,6 +127,13 @@ public class DragonPowerUp : MonoBehaviour {
 			Broadcaster.Broadcast(BroadcastEventType.APPLY_ENTITY_POWERUPS);
 			m_warnEntities = false;
 		}
+
+		if ( m_transformGold )
+		{
+			// Instanciate fx
+			m_particleController = GetComponentInChildren<DragonParticleController>();
+			m_particleController.PrepareTransformGoldParticle();
+		}
 	}
 
 	public void ResetPowerUps()
@@ -114,6 +141,9 @@ public class DragonPowerUp : MonoBehaviour {
 		InstanceManager.player.RemovePowerUps();
 		Entity.RemovePowerUps();
 		Broadcaster.Broadcast(BroadcastEventType.APPLY_ENTITY_POWERUPS);
+
+		m_transformGold = false;
+		this.enabled = false;
 
 		ApplyPowerups();
 	}
@@ -310,6 +340,16 @@ public class DragonPowerUp : MonoBehaviour {
 					if ( !string.IsNullOrEmpty(powerUp2) )
 						SetPowerUp( powerUp2, _fromPet );
 				}break;
+				case "transformGold":
+				{
+					if (!_fromPet )
+					{
+						m_transformGold = true;
+						m_transformGoldInterval = def.GetAsFloat("param1", 5.0f);
+						m_transformGoldTimer = m_transformGoldInterval / 2.0f;
+						this.enabled = true;
+					}
+				}break;
 				default:
 				{
 				}break;
@@ -452,7 +492,10 @@ public class DragonPowerUp : MonoBehaviour {
 			case "food_increase":
 			case "vacuum":
 			case "faster_boost":
-			{
+			case "coin_reward":
+            case "transformGold":
+
+            {
 				return _powerDef.GetLocalized(
 					fieldId, 
 					StringUtils.FormatNumber((int)(_powerDef.GetAsFloat("param1") * multiplier)), 
@@ -569,8 +612,9 @@ public class DragonPowerUp : MonoBehaviour {
 			case "special":
 			case "sun":
 			case "shoot_bubble":
-			//TONI
-			case "lives":
+            case "coin_reward":
+            //TONI
+            case "lives":
 			case "dragonram":
 			case "magnet":
 			case "freeze_aura":
@@ -580,7 +624,7 @@ public class DragonPowerUp : MonoBehaviour {
 			case "bomb":
 			case "stun":
 			case "findBonus":
-			case "tranformGold":
+			case "transformGold":
 			case "shoot_horns":
 			case "kill":
 			case "mummy":	

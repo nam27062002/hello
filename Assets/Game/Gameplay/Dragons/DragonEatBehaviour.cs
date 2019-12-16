@@ -161,7 +161,18 @@ public class DragonEatBehaviour : EatBehaviour {
             }
             m_dragon.AddEnergy(_reward.energy);
         }
-	}
+
+        // Actually an enemy shot is considered as eaten (without the negative effects)
+        if (_type == KillType.SHOT)
+        {
+            if (_reward.health >= 0)
+            {
+                m_dragon.AddLife(m_dragonHealth.GetBoostedHp(_reward.origin, _reward.health), DamageType.NONE, _t);
+            }
+           
+            m_dragon.AddEnergy(_reward.energy);
+        }
+    }
 
 	void OnMultiplierLost()
 	{
