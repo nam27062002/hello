@@ -123,6 +123,12 @@ public class MenuDragonLoader : MonoBehaviour {
 		set { m_altAnimationsMaxLevel = value; }
 	}
 
+	[SerializeField] private bool m_refreshOnEnable = true;
+	public bool refreshOnEnable {
+		get { return m_refreshOnEnable; }
+		set { m_refreshOnEnable = value; }
+	}
+
 	public bool m_loadAsync = false;
 	private AddressablesOp m_asyncRequest = null;
     private string m_loadingPrefabName;
@@ -170,7 +176,7 @@ public class MenuDragonLoader : MonoBehaviour {
 	/// </summary>
 	private void OnEnable() {
 		// Initialize loaded dragon (unless using MANUAL mode)
-        if (m_mode != Mode.MANUAL) {         
+        if (m_mode != Mode.MANUAL && m_refreshOnEnable) {
             RefreshDragon();
         } else {
             if (m_dragonInstance != null) {
