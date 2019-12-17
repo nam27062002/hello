@@ -833,8 +833,8 @@ public class RewardSceneController : MenuScreenScene {
 		);
 
 		// Auto-destroy after the FX has finished
-		SelfDestroy destructor = newObj.AddComponent<SelfDestroy>();
-		destructor.seconds = 9f;   // Sync with FX duration!
+		// Sync with FX duration
+		newObj.AddSelfDestroyComponent(9f, SelfDestroy.Mode.SECONDS);
 
 		// Trigger SFX
 		if(_triggerSound) AudioController.Play("hd_unlock_dragon");
