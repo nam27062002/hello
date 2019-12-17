@@ -46,6 +46,9 @@ public class PopupShopCurrencyTab : IPopupShopTab {
 		// Create pills
 		DefinitionsManager.SharedInstance.SortByProperty(ref defs, "order", DefinitionsManager.SortType.NUMERIC);
 		for(int i = 0; i < defs.Count; i++) {
+			// Skip those definitions that are not enabled
+			if(!defs[i].GetAsBool("enabled", false)) continue;
+
 			// Create new instance and initialize it
 			GameObject newPillObj = GameObject.Instantiate<GameObject>(m_pillPrefab, m_scrollList.content, false);
 			PopupShopCurrencyPill newPill = newPillObj.GetComponent<PopupShopCurrencyPill>();
