@@ -168,7 +168,7 @@ public class BaseIcon : MonoBehaviour {
                 }
                 else
                 {
-                    m_defaultImage.gameObject.SetActive(true);
+                    ForceShowDefaultIcon();
                 }
 
             }
