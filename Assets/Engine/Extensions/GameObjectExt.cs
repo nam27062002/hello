@@ -168,6 +168,18 @@ public static class GameObjectExt {
 		return default(Bounds);
 	}
 
+	/// <summary>
+	/// Add a SelfDestroy component to a GameObject with parameters.
+	/// </summary>
+	/// <param name="_obj">Target object.</param>
+	/// <param name="_lifeTime">Seconds or frames depending on <paramref name="_mode"/></param>
+	/// <param name="_mode">Frames or seconds?</param>
+	/// <returns></returns>
+	public static SelfDestroy AddSelfDestroyComponent(this GameObject _obj, float _lifeTime, SelfDestroy.Mode _mode) {
+		// Just use SelfDestroy's static method
+		return SelfDestroy.AddToObject(_obj, _lifeTime, _mode);
+	}
+
 	//------------------------------------------------------------------//
 	// HIERARCHY NAVIGATION HELPERS										//
 	// Imported from Hungry Dragon										//

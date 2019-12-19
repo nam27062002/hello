@@ -29,13 +29,13 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong, readonly, nonnull) UIButton *dislikeButton;
 
 - (instancetype)initWithIdentifier:(NSString *)slotID
-                rootViewController:(nullable UIViewController *)rootViewController
+                rootViewController:(UIViewController *)rootViewController
                             adSize:(CGSize)adSize
                   withShowPosition:(BUAdSlotPosition)showPosition
              WithIsSupportDeepLink:(BOOL)isSupportDeepLink;
 
 - (instancetype)initWithIdentifier:(NSString *)slotID
-                rootViewController:(nullable UIViewController *)rootViewController
+                rootViewController:(UIViewController *)rootViewController
                             adSize:(CGSize)adSize
                   withShowPosition:(BUAdSlotPosition)showPosition
              WithIsSupportDeepLink:(BOOL)isSupportDeepLink
@@ -87,6 +87,12 @@ NS_ASSUME_NONNULL_BEGIN
  @param filterwords : the array of reasons for dislike.
  */
 - (void)bannerAdView:(BUBannerAdView *)bannerAdView dislikeWithReason:(NSArray<BUDislikeWords *> *_Nullable)filterwords;
+
+/**
+ This method is called when another controller has been closed.
+ @param interactionType : open appstore in app or open the webpage or view video ad details page.
+ */
+- (void)bannerAdViewDidCloseOtherController:(BUBannerAdView *)bannerAdView interactionType:(BUInteractionType)interactionType;
 
 @end
 

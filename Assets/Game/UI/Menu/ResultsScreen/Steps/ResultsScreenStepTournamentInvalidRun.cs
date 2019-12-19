@@ -30,6 +30,8 @@ public class ResultsScreenStepTournamentInvalidRun : ResultsScreenSequenceStep {
 	
     [SerializeField] private BaseIcon m_goalIcon;
     [SerializeField] private TextMeshProUGUI m_goalText = null;
+	[SerializeField] private TextMeshProUGUI m_countdownText = null;
+	private float m_counter = 1.0f;
 
     //------------------------------------------------------------------------//
     // ResultsScreenStep IMPLEMENTATION										  //
@@ -71,6 +73,8 @@ public class ResultsScreenStepTournamentInvalidRun : ResultsScreenSequenceStep {
             m_goalIcon.LoadIcon(iconSku);
             m_goalIcon.gameObject.SetActive(true);
         }
+		m_counter = 1.0f;
+		UpdateTimeRemaining();
     }
 
 	/// <summary>
@@ -78,6 +82,31 @@ public class ResultsScreenStepTournamentInvalidRun : ResultsScreenSequenceStep {
 	/// </summary>
 	override protected void OnSkip() {
 		// Nothing to do for now
+	}
+
+	void Update(){
+		m_counter -= Time.deltaTime;
+		if ( m_counter <= 0 ) {
+			UpdateTimeRemaining();
+			m_counter = 1.0f;
+		}
+		
+	}
+
+
+	void UpdateTimeRemaining(){
+		if ( m_countdownText != null)
+		{
+			// Update text
+			double remainingSeconds = HDLiveDataManager.tournament.data.remainingTime.TotalSeconds;
+			string timeString = TimeUtils.FormatTime(
+							System.Math.Max(0, remainingSeconds), // Just in case, never go negative
+							TimeUtils.EFormat.ABBREVIATIONS,
+							3
+						);
+			m_countdownText.text = timeString;
+		}
+		
 	}
 
 	//------------------------------------------------------------------------//

@@ -8,6 +8,10 @@
 -keep class com.ironsource.** { *;}
 -keep class com.ironsource.adapters.** { *;}
 -keep class com.ironsource.unity.androidbridge.** { *;}
+-dontwarn com.ironsource.mediationsdk.**
+-dontwarn com.ironsource.adapters.**
+-dontwarn com.moat.**
+-keep class com.moat.** { public protected private *; }
 
 -keep class com.facebook.unity.** { *; }
 -keep class com.facebook.ads.** { *; }
