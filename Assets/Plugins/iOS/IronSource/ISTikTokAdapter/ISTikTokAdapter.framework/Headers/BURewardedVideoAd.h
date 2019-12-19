@@ -6,6 +6,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "BUAdSDKDefines.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -25,7 +26,19 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)initWithSlotID:(NSString *)slotID rewardedVideoModel:(BURewardedVideoModel *)model;
 - (void)loadAdData;
+
+/**
+ Display video ad.
+ @param rootViewController : root view controller for displaying ad.
+ @return : whether it is successfully displayed.
+ */
 - (BOOL)showAdFromRootViewController:(UIViewController *)rootViewController;
+/**
+ If ritSceneType is custom, you need to pass in the values for sceneDescirbe.
+ @param ritSceneType  : optional. Identifies a custom description of the presentation scenario.
+ @param sceneDescirbe : optional. Identify the scene of presentation.
+ */
+- (BOOL)showAdFromRootViewController:(UIViewController *)rootViewController ritScene:(BURitSceneType)ritSceneType ritSceneDescribe:(NSString *_Nullable)sceneDescirbe;
 
 @end
 
@@ -42,7 +55,7 @@ NS_ASSUME_NONNULL_BEGIN
  This method is called when video ad materia failed to load.
  @param error : the reason of error
  */
-- (void)rewardedVideoAd:(BURewardedVideoAd *)rewardedVideoAd didFailWithError:(NSError *)error;
+- (void)rewardedVideoAd:(BURewardedVideoAd *)rewardedVideoAd didFailWithError:(NSError *_Nullable)error;
 
 /**
  This method is called when cached successfully.
@@ -79,7 +92,7 @@ NS_ASSUME_NONNULL_BEGIN
  This method is called when video ad play completed or an error occurred.
  @param error : the reason of error
  */
-- (void)rewardedVideoAdDidPlayFinish:(BURewardedVideoAd *)rewardedVideoAd didFailWithError:(NSError *)error;
+- (void)rewardedVideoAdDidPlayFinish:(BURewardedVideoAd *)rewardedVideoAd didFailWithError:(NSError *_Nullable)error;
 
 /**
  Server verification which is requested asynchronously is succeeded.

@@ -105,9 +105,9 @@ MonoBehaviour:
   - {fileID: 4900000, guid: b51cfb949d2074dd390f30f6b298ca38, type: 3}
   - {fileID: 4900000, guid: b51cfb949d2074dd390f30f6b298ca38, type: 3}
   - {fileID: 4900000, guid: b51cfb949d2074dd390f30f6b298ca38, type: 3}
+  - {fileID: 4900000, guid: 92be0817bb8e24f0e8aebff5d4ee7e53, type: 3}
   - {fileID: 4900000, guid: a0fd648d2c4d34e3fae7684c2821f42d, type: 3}
-  - {fileID: 4900000, guid: a0fd648d2c4d34e3fae7684c2821f42d, type: 3}
-  - {fileID: 4900000, guid: a0fd648d2c4d34e3fae7684c2821f42d, type: 3}
+  - {fileID: 4900000, guid: 92be0817bb8e24f0e8aebff5d4ee7e53, type: 3}
   m_strAndroidServerClientIDs:
   - 303537151556-k9rcgr105asnj5m82ujmhsnmro79shc4.apps.googleusercontent.com
   - 303537151556-k9rcgr105asnj5m82ujmhsnmro79shc4.apps.googleusercontent.com
@@ -131,12 +131,12 @@ MonoBehaviour:
   - 
   m_bUseAdMob: 1
   m_strAdMobAPPID: ca-app-pub-4182426806332048~8618247235
-  m_strVersionIOS: 2.6
-  m_strVersionIOSCode: 385
-  m_strVersionAndroidGplay: 2.6
-  m_strVersionAndroidGplayCode: 385
-  m_strVersionAndroidAmazon: 2.6
-  m_strVersionAndroidAmazonCode: 385
+  m_strVersionIOS: 2.5
+  m_strVersionIOSCode: 386
+  m_strVersionAndroidGplay: 2.5
+  m_strVersionAndroidGplayCode: 386
+  m_strVersionAndroidAmazon: 2.5
+  m_strVersionAndroidAmazonCode: 386
   m_biOSBitcode: 0
   m_biOSArbitraryLoads: 1
   m_biOSPushNotifications: 1
@@ -404,40 +404,7 @@ MonoBehaviour:
     />\n<provider\n                  android:name=\"androidx.core.content.FileProvider\"\n
     \                 android:authorities=\"%packageName%.provider\"\n                  android:exported=\"false\"\n
     \                 android:grantUriPermissions=\"true\">\n                  <meta-data\n
-    \                     android:name=\"android.support.FILE_PROVIDER_PATHS\"\n                      android:resource=\"@xml/provider_paths\"/>\n\n</provider>\n\n<!--
-    IronSource -->\n<activity android:name = \"com.ironsource.sdk.controller.ControllerActivity\"
-    android:configChanges=\"orientation|screenSize\" android:hardwareAccelerated=\"true\"/>\n<activity
-    android:name = \"com.ironsource.sdk.controller.InterstitialActivity\" android:configChanges=\"orientation|screenSize\"
-    android:hardwareAccelerated=\"true\" android:theme=\"@android:style/Theme.Translucent\"/>\n<activity
-    android:name=\"com.ironsource.sdk.controller.OpenUrlActivity\" android:configChanges=\"orientation|screenSize\"
-    android:hardwareAccelerated=\"true\" android:theme=\"@android:style/Theme.Translucent\"/>\n\n<!--
-    UnityAds -->\n<activity android:name=\"com.unity3d.services.ads.adunit.AdUnitActivity\"
-    android:configChanges=\"fontScale|keyboard|keyboardHidden|locale|mnc|mcc|navigation|orientation|screenLayout|screenSize|smallestScreenSize|uiMode|touchscreen\"
-    android:hardwareAccelerated=\"true\" android:theme=\"@android:style/Theme.NoTitleBar.Fullscreen\"/>\n<activity
-    android:name=\"com.unity3d.services.ads.adunit.AdUnitTransparentActivity\" android:configChanges=\"fontScale|keyboard|keyboardHidden|locale|mnc|mcc|navigation|orientation|screenLayout|screenSize|smallestScreenSize|uiMode|touchscreen\"
-    android:hardwareAccelerated=\"true\" android:theme=\"@android:style/Theme.Translucent.NoTitleBar.Fullscreen\"/>\n<activity
-    android:name=\"com.unity3d.services.ads.adunit.AdUnitTransparentSoftwareActivity\"
-    android:configChanges=\"fontScale|keyboard|keyboardHidden|locale|mnc|mcc|navigation|orientation|screenLayout|screenSize|smallestScreenSize|uiMode|touchscreen\"
-    android:hardwareAccelerated=\"false\" android:theme=\"@android:style/Theme.Translucent.NoTitleBar.Fullscreen\"/>\n<activity
-    android:name=\"com.unity3d.services.ads.adunit.AdUnitSoftwareActivity\" android:configChanges=\"fontScale|keyboard|keyboardHidden|locale|mnc|mcc|navigation|orientation|screenLayout|screenSize|smallestScreenSize|uiMode|touchscreen\"
-    android:hardwareAccelerated=\"false\" android:theme=\"@android:style/Theme.NoTitleBar.Fullscreen\"/>\n\n<!--
-    AdColony -->\n<activity android:name=\"com.adcolony.sdk.AdColonyInterstitialActivity\"
-    android:configChanges=\"keyboardHidden|orientation|screenSize\" android:hardwareAccelerated=\"true\"/>\n\n<!--
-    Vungle -->\n<activity android:name=\"com.vungle.publisher.VideoFullScreenAdActivity\"
-    android:configChanges=\"keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize\"
-    android:theme=\"@android:style/Theme.Translucent\"/>\n<activity android:name=\"com.vungle.publisher.MraidFullScreenAdActivity\"
-    android:configChanges=\"keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize\"
-    android:theme=\"@android:style/Theme.Translucent\"/>\n<activity android:name=\"com.vungle.publisher.FlexViewAdActivity\"
-    android:configChanges=\"keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize\"
-    android:theme=\"@android:style/Theme.Translucent\"/>\n\n<!-- AdMob -->\n<activity
-    android:name=\"com.google.android.gms.ads.AdActivity\" android:configChanges=\"keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize\"
-    android:theme=\"@android:style/Theme.Translucent\"/>\n\n<!-- Facebook -->\n<activity
-    android:name=\"com.facebook.ads.AudienceNetworkActivity\" android:hardwareAccelerated=\"true\"
-    android:configChanges=\"keyboardHidden|orientation|screenSize\"/>\n<activity android:name=\"com.facebook.ads.internal.ipc.RemoteANActivity\"
-    android:configChanges=\"keyboardHidden|orientation|screenSize\" android:exported=\"false\"
-    android:process=\":adnw\"/>\n<service android:name=\"com.facebook.ads.internal.ipc.AdsProcessPriorityService\"
-    android:exported=\"false\"/>\n<service android:name=\"com.facebook.ads.internal.ipc.AdsMessengerService\"
-    android:exported=\"false\" android:process=\":adnw\"/>"
+    \                     android:name=\"android.support.FILE_PROVIDER_PATHS\"\n                      android:resource=\"@xml/provider_paths\"/>\n\n</provider>"
   m_strFacebookAppID: 
   m_strFacebookDisplayName: 
   m_bDisableTrackingInUnityEditor: 0

@@ -18,21 +18,11 @@ namespace IronSource.Editor
 			string targetId = project.TargetGuidByName (PBXProject.GetUnityTargetName ());
 
 			// Required System Frameworks
-			project.AddFrameworkToProject (targetId, "StoreKit.framework", false);
-			project.AddFrameworkToProject (targetId, "MobileCoreServices.framework", false);
-			project.AddFrameworkToProject (targetId, "WebKit.framework", false);
-			project.AddFrameworkToProject (targetId, "MediaPlayer.framework", false);
-			project.AddFrameworkToProject (targetId, "CoreMedia.framework", false);
-			project.AddFrameworkToProject (targetId, "AVFoundation.framework", false);
 			project.AddFrameworkToProject (targetId, "CoreLocation.framework", false);
-			project.AddFrameworkToProject (targetId, "CoreTelephony.framework", false);
-			project.AddFrameworkToProject (targetId, "SystemConfiguration.framework", false);
-			project.AddFrameworkToProject (targetId, "Photos.framework", false);
-			project.AddFrameworkToProject (targetId, "AdSupport.framework", false);
 			project.AddFrameworkToProject (targetId, "CoreMotion.framework", false);
+			project.AddFrameworkToProject (targetId, "MediaPlayer.framework", false);
 
 			project.AddFileToBuild (targetId, project.AddFile ("usr/lib/libresolv.9.tbd", "Frameworks/libresolv.9.tbd", PBXSourceTree.Sdk));
-			project.AddFileToBuild (targetId, project.AddFile ("usr/lib/libz.tbd", "Frameworks/libz.tbd", PBXSourceTree.Sdk));
 			project.AddFileToBuild (targetId, project.AddFile ("usr/lib/libc++.tbd", "Frameworks/libc++.tbd", PBXSourceTree.Sdk));
 
 
