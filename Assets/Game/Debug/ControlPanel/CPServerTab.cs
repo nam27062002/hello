@@ -290,22 +290,23 @@ public class CPServerTab : MonoBehaviour {
     public void OnCrashlyticsNonFatal()
     {
         Output("Crashlytics: non-fatal exception");
-        Crashlytics.Log("Crashlytics: non-fatal exception");
+        CrashlyticsInit.OnCrashlyticsLogException();
+
     }
 
     public void OnCrashlyticsCrash()
     {
         Output("Crashlytics: crash");
-        Crashlytics.Log("Crashlytics: crash");
+        CrashlyticsInit.OnCrashlyticsLogException();
     }
 
     public void OnCrashlyticsRecordException()
     {
         Output("Crashlytics: record exception");
-        Crashlytics.Log("Crashlytics : Record custom exception test");
+        CrashlyticsInit.OnCrashlyticsLogException();
     }
 
-	public void OnOpenSurvey()
+    public void OnOpenSurvey()
 	{
 		string profileID = HDTrackingManager.Instance.GetDNAProfileID();
 		if (string.IsNullOrEmpty(profileID))
