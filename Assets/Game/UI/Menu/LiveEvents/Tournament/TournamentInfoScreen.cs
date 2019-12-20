@@ -264,6 +264,19 @@ public class TournamentInfoScreen : MonoBehaviour, IBroadcastListener {
         AddressablesBatchHandle handle = HDAddressablesManager.Instance.GetHandleForDragonDisguise(m_definition.dragonData);
         List<string> dependencyIds = handle.DependencyIds;
 
+        // Prepare pets
+		for(int i = 0; i < m_definition.dragonData.pets.Count; ++i) {
+            if (!string.IsNullOrEmpty( m_definition.dragonData.pets[i]) )
+            {
+                List<string> resoucesIds = HDAddressablesManager.Instance.GetResourceIDsForPet(m_definition.dragonData.pets[i]);
+                if ( resoucesIds.Count > 0 )
+                {
+                    List<string> deps = HDAddressablesManager.Instance.GetDependencyIdsList( resoucesIds ) ;
+                    UbiListUtils.AddRange(dependencyIds, deps, false, true);
+                }
+            }
+		}
+
         // Make sure all the dragon resources are being loaded
         // (If they are already loaded in memory will jump directly to the callback)
         AddressablesOp op = HDAddressablesManager.Instance.LoadDependencyIdsListAsync(dependencyIds);
