@@ -985,7 +985,7 @@ public class Ingame_SwitchAreaHandle
 	/// </summary>
 	/// <returns>The list of all the resources needed for a pet.</returns>
 	/// <param name="_petSku">Pet sku.</param>
-	private List<string> GetResourceIDsForPet(string _petSku) {
+	public List<string> GetResourceIDsForPet(string _petSku) {
 		// Aux vars
 		List<string> ids = new List<string>();
 		DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PETS, _petSku);
