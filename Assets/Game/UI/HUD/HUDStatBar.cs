@@ -58,8 +58,9 @@ public class HUDStatBar : IHUDWidget, IBroadcastListener {
 	[SerializeField] private float m_maxScreenSize = 1300f;
 	[Space]
 	[SerializeField] [Range(0f, 1f)] private float m_damageBarSpeed = 0.25f;	// %/sec
+    [SerializeField] private TextMeshProUGUI m_livesAmount;
 
-	private BarData[] m_bars = new BarData[(int)Bars.COUNT];
+    private BarData[] m_bars = new BarData[(int)Bars.COUNT];
 	private BarData baseBar { get { return m_bars[(int)Bars.BASE]; } }
 	private BarData extraBar { get { return m_bars[(int)Bars.EXTRA]; } }
 	private BarData damageBar { get { return m_bars[(int)Bars.DAMAGE]; } }
@@ -618,31 +619,22 @@ public class HUDStatBar : IHUDWidget, IBroadcastListener {
 		switch( m_type )
 		{
 			case Type.Health:
-			{
-				int remainingLives = InstanceManager.player.GetReminingLives();
-				int max = Mathf.Max(remainingLives, m_extraIcons.Count);
-				for (int i = 0; i < max; i++)
-				{
-					if ( i >= m_extraIcons.Count )
-					{
-						// Add icon
-						// Set active false
-						GameObject extraIcon = Instantiate( m_icon );
-						extraIcon.transform.parent = m_icon.transform.parent;
+            {
+                int remainingLives = InstanceManager.player.GetReminingLives();
 
-						RectTransform extraRt = extraIcon.GetComponent<RectTransform>();
-						RectTransform rt = m_icon.GetComponent<RectTransform>();
+                // Show the amount of lifes with a text next to the heart icon
+                if (remainingLives > 0)
+                {
+                    m_livesAmount.gameObject.SetActive(true);
+                    m_livesAmount.text = "x" + ( 1 + remainingLives );
+                }
+                else
+                {
+                    m_livesAmount.gameObject.SetActive(false);
+                }
 
-						extraRt.sizeDelta = rt.sizeDelta;
-						extraRt.localScale = rt.localScale;
-						extraRt.localPosition = rt.localPosition + Vector3.right * (rt.rect.width * 0.2f * (m_extraIcons.Count + 1));
-						// extraRt.offsetMax.y = 0;
-
-						m_extraIcons.Add( extraIcon );
-					}
-					m_extraIcons[i].SetActive( i < remainingLives );
-				}
-			}break;
+                break;
+            }
 		}
 	}
 
