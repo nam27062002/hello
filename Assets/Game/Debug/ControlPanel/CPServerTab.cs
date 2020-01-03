@@ -290,20 +290,20 @@ public class CPServerTab : MonoBehaviour {
     public void OnCrashlyticsNonFatal()
     {
         Output("Crashlytics: non-fatal exception");
-        CrashlyticsInit.OnCrashlyticsLogException();
+        CrashlyticsInit.LogCrashlyticsException();
 
     }
 
     public void OnCrashlyticsCrash()
     {
         Output("Crashlytics: crash");
-        CrashlyticsInit.OnCrashlyticsLogException();
+        CrashlyticsInit.LogCrashlyticsException();
     }
 
     public void OnCrashlyticsRecordException()
     {
         Output("Crashlytics: record exception");
-        CrashlyticsInit.OnCrashlyticsLogException();
+        CrashlyticsInit.LogCrashlyticsException();
     }
 
     public void OnOpenSurvey()
