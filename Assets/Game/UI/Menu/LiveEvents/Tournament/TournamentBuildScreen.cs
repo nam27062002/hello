@@ -259,8 +259,12 @@ public class TournamentBuildScreen : MonoBehaviour {
 		{
 			// Check paying
 			if (m_hasFreeEntrance) {
-				// Move to Loading Screen
-				BusyScreen.Show(this);
+
+                //Remove existig loading messages in the busy screen
+                BusyScreen.Setup(true, null);
+
+                // Then show busy screen
+                BusyScreen.Show(this);
 
 				// Prepare to wait for the callback
 				Messenger.AddListener<HDLiveDataManager.ComunicationErrorCodes, string, long>(MessengerEvents.TOURNAMENT_ENTRANCE, OnTournamentEntrance);
