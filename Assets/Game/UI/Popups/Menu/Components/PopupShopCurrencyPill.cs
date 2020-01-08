@@ -92,8 +92,14 @@ public class PopupShopCurrencyPill : IPopupShopPill {
 			}
 		}
 
-        Refresh();
+	}
 
+	/// <summary>
+	/// Invoked periodically from the owner object.
+	/// </summary>
+	public void PeriodicRefresh() {
+		// Refresh Happy Hour visuals periodically for better performance
+		RefreshHappyHour();
 	}
 
 	//------------------------------------------------------------------------//
@@ -165,6 +171,9 @@ public class PopupShopCurrencyPill : IPopupShopPill {
         m_price = m_def.GetAsFloat("price");
 		m_currency = UserProfile.SkuToCurrency(m_def.Get("priceType"));
 		RefreshPrice();
+
+		// Happy Hour visuals
+		RefreshHappyHour();
 	}
 
 	/// <summary>
@@ -194,7 +203,10 @@ public class PopupShopCurrencyPill : IPopupShopPill {
 		}
 	}
 
-    public void Refresh()
+	/// <summary>
+	/// Refresh Happy Hour visuals.
+	/// </summary>
+    private void RefreshHappyHour()
     {
         // In case is gem pack
         if (m_type == UserProfile.Currency.HARD)
