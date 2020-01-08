@@ -19,11 +19,12 @@ using UnityEngine;
 /// </summary>
 [RequireComponent(typeof(PopupController))]
 public class PopupHappyHour : MonoBehaviour {
-    //------------------------------------------------------------------------//
-    // CONSTANTS															  //
-    //------------------------------------------------------------------------//
+	//------------------------------------------------------------------------//
+	// CONSTANTS															  //
+	//------------------------------------------------------------------------//
+	private const float REFRESH_FREQUENCY = 1f; // Seconds
 
-    new public const string PATH = "UI/Popups/Economy/PF_PopupHappyHour";
+	new public const string PATH = "UI/Popups/Economy/PF_PopupHappyHour";
 
     public static string ACTION_CLOSE = "close";
     public static string ACTION_PURCHASE = "purchase";
@@ -44,7 +45,6 @@ public class PopupHappyHour : MonoBehaviour {
     private PopupShopCurrencyPill m_offerToDisplay;
 
     // Internal
-    private float m_timer;
     private HappyHourOffer m_happyHour;
 
 	//------------------------------------------------------------------------//
@@ -110,41 +110,29 @@ public class PopupHappyHour : MonoBehaviour {
             m_happyHour.pendingPopup = false;
         }
 
-    }
+		// Refresh offer pill once per second
+		InvokeRepeating("UpdatePeriodic", 0f, REFRESH_FREQUENCY);
+	}
 
 	/// <summary>
 	/// Component has been disabled.
 	/// </summary>
 	private void OnDisable() {
-
+		// Cancel periodic refresh of the offer pill
+		CancelInvoke("UpdatePeriodic");
 	}
 
-
-	/// <summary>
-	/// Destructor.
-	/// </summary>
-	private void OnDestroy() {
-
-	}
-
-    public void Update()
+    public void UpdatePeriodic()
     {
         // Refresh offers periodically for better performance
-        if (m_timer <= 0)
-        {
-            m_timer = 1f; // Refresh every second
-            Refresh();
-        }
-        m_timer -= Time.deltaTime;
+        Refresh();
     }
-
 
     /// <summary>
     /// Refresh visuals
     /// </summary>
     private void Refresh()
     {
-
         // Refresh the happy hour panel
         if (m_happyHour != null)
         {
@@ -162,6 +150,10 @@ public class PopupHappyHour : MonoBehaviour {
             }
         }
 
+		// Refresh offer
+		if(m_offerToDisplay != null) {
+			m_offerToDisplay.PeriodicRefresh();
+		}
     }
 
     //------------------------------------------------------------------------//
