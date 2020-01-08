@@ -290,14 +290,19 @@ public class CPServerTab : MonoBehaviour {
     public void OnCrashlyticsNonFatal()
     {
         Output("Crashlytics: non-fatal exception");
-        CrashlyticsInit.LogCrashlyticsException();
-
+        CrashlyticsInit.LogCrashlyticsNonFatal();
     }
 
     public void OnCrashlyticsCrash()
     {
         Output("Crashlytics: crash");
-        CrashlyticsInit.LogCrashlyticsException();
+        CrashlyticsInit.LogCrashlyticsCrash();
+    }
+
+    public void OnCrashlyticsLog()
+    {
+        Output("Crashlytics: log");
+        CrashlyticsInit.LogCrashlytics();
     }
 
     public void OnCrashlyticsRecordException()
