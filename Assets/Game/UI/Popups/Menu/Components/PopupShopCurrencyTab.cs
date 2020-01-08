@@ -22,13 +22,44 @@ public class PopupShopCurrencyTab : IPopupShopTab {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	
+	private const float REFRESH_FREQUENCY = 1f;	// Seconds
+
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed
 	[List("sc", "hc")]
 	[SerializeField] private string m_type = "sc";
+
+	//------------------------------------------------------------------------//
+	// GENERIC METHODS														  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// First update call.
+	/// </summary>
+	private void Start() {
+		InvokeRepeating("PeriodicRefresh", 0f, REFRESH_FREQUENCY);
+	}
+
+	/// <summary>
+	/// Called at regular intervals.
+	/// </summary>
+	private void PeriodicRefresh() {
+		// Nothing if not enabled
+		if(!this.isActiveAndEnabled) return;
+
+		// Propagate to pills
+		for(int i = 0; i < m_pills.Count; ++i) {
+			(m_pills[i] as PopupShopCurrencyPill).PeriodicRefresh();
+		}
+	}
+
+	/// <summary>
+	/// Destructor.
+	/// </summary>
+	private void OnDestroy() {
+		CancelInvoke("PeriodicRefresh");
+	}
 
 	//------------------------------------------------------------------------//
 	// IPopupShopTab IMPLEMENTATION											  //
