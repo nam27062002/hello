@@ -31,6 +31,8 @@ Shader "Hungry Dragon/NPC/NPC Gold"
 				#pragma vertex vert
 				#pragma fragment frag
 
+                #pragma multi_compile __ NIGHT
+
 				#include "UnityCG.cginc"
 				
 				struct v2f
@@ -57,7 +59,11 @@ Shader "Hungry Dragon/NPC/NPC Gold"
 				
 				fixed4 frag (v2f i) : COLOR
 				{
-					fixed4 mc = tex2D(_MatCap, i.cap) * _Tint;					
+#if defined(NIGHT)
+                    fixed4 mc = tex2D(_MatCap, i.cap) * _Tint * fixed4(0.5, 0.5, 1.0, 1.0);
+#else
+					fixed4 mc = tex2D(_MatCap, i.cap) * _Tint;
+#endif					
 					return mc * 3.0;
 				}
 			ENDCG

@@ -41,6 +41,7 @@ public class HDLiveEventDefinition {
 	public string m_name;
 	public EventType m_type;
 	public List<Modifier> m_dragonMods = new List<Modifier>();
+	public List<Modifier> m_laterMods = new List<Modifier>();
 	public List<Modifier> m_otherMods = new List<Modifier>();
 
 	public DateTime m_teasingTimestamp = new DateTime();
@@ -147,6 +148,7 @@ public class HDLiveEventDefinition {
 		m_name = "";
 		m_type = EventType.NONE;
 		m_dragonMods.Clear();
+		m_laterMods.Clear();
 		m_otherMods.Clear();
 
 		m_teasingTimestamp = new DateTime(1970, 1, 1);
@@ -187,7 +189,9 @@ public class HDLiveEventDefinition {
 				{
 					Modifier m = Modifier.CreateFromDefinition(modDef);
 					if (m.isValid()) {
-						if (m is ModifierDragon) {
+						if ( m.isLateModifier() ) {
+							m_laterMods.Add(m);
+						} else if (m is ModifierDragon) {
 							m_dragonMods.Add(m);
 						} else {
 							m_otherMods.Add(m);
@@ -202,7 +206,9 @@ public class HDLiveEventDefinition {
             for (int i = 0; i < _mods.Count; ++i) {
                 Modifier m = Modifier.CreateFromJson(_mods[i]);
 				if (m != null && m.isValid()) {
-					if (m is ModifierDragon) {
+					if ( m.isLateModifier() ) {
+						m_laterMods.Add(m);
+					}else if (m is ModifierDragon) {
 						m_dragonMods.Add(m);
 					} else {
 						m_otherMods.Add(m);
@@ -235,6 +241,10 @@ public class HDLiveEventDefinition {
 		SimpleJSON.JSONArray mods = new JSONArray();
         SimpleJSON.JSONArray customMods = new JSONArray();
 
+		toJsonMods( m_dragonMods, mods, customMods );
+		toJsonMods( m_laterMods, mods, customMods );
+		toJsonMods( m_otherMods, mods, customMods );
+		/*
         for (int i = 0; i < m_dragonMods.Count; i++) {
 			if(m_dragonMods[i] == null) continue;
 
@@ -258,6 +268,7 @@ public class HDLiveEventDefinition {
                 mods.Add(sku);
             }
         }
+		*/
 		ret.Add("mods", mods);
         ret.Add("customMods", customMods);
 
@@ -267,6 +278,21 @@ public class HDLiveEventDefinition {
 		ret.Add("endTimestamp", TimeUtils.DateToTimestamp( m_endTimestamp ));
 
 		return ret;
+	}
+
+	private void toJsonMods( List<Modifier> toSaveMods, SimpleJSON.JSONArray mods, SimpleJSON.JSONArray customMods  )
+	{
+		for (int i = 0; i < toSaveMods.Count; i++) {
+			if(toSaveMods[i] == null) continue;
+
+            string sku = toSaveMods[i].GetSku();
+
+            if (sku.Equals(Modifier.SKU_CUSTOM)) {
+                customMods.Add(toSaveMods[i].ToJson());
+            } else{
+                mods.Add(sku);
+            }
+		}
 	}
 
 }

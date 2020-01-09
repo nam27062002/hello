@@ -79,6 +79,9 @@ namespace LevelEditor {
 
             PoolManager.instance.poolLimits = PoolManager.PoolLimits.Unlimited;
 
+			// Prepare skin
+			UsersManager.currentUser.EquipDisguise(LevelEditor.settings.testDragon, LevelEditor.settings.testSkin, true);
+
 			// Prepare pets
 			System.Collections.Generic.List<string> equipedPets = UsersManager.currentUser.GetEquipedPets(LevelEditor.settings.testDragon);
 			for (int i = 0; i < equipedPets.Count; i++)
@@ -317,10 +320,11 @@ namespace LevelEditor {
 					case PopupLevelEditorSummary.Result.FINISH: {
 						#if UNITY_EDITOR
 						UnityEditor.EditorApplication.isPlaying = false;
-						#else
-						Application.Quit();
-						#endif
-					} break;
+                        #else						
+                        DeviceUtilsManager.SharedInstance.ExitGame();
+                        #endif
+                        }
+                        break;
 
 					case PopupLevelEditorSummary.Result.REVIVE: {
 						Time.timeScale = 1f;	// Unpause

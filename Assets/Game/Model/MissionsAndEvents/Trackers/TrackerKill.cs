@@ -52,9 +52,7 @@ public class TrackerKill : TrackerBase {
         
 
 		// Subscribe to external events
-		Messenger.AddListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_EATEN, OnKill);
-		Messenger.AddListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_BURNED, OnKill);
-		Messenger.AddListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_DESTROYED, OnKill);
+		Messenger.AddListener<Transform, IEntity, Reward, KillType>(MessengerEvents.ENTITY_KILLED, OnKill);
 	}
 
 	/// <summary>
@@ -74,9 +72,7 @@ public class TrackerKill : TrackerBase {
     /// </summary>
     override public void Clear() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_EATEN, OnKill);
-		Messenger.RemoveListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_BURNED, OnKill);
-		Messenger.RemoveListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_DESTROYED, OnKill);
+		Messenger.RemoveListener<Transform, IEntity, Reward, KillType>(MessengerEvents.ENTITY_KILLED, OnKill);
 
         if (m_zoneTriggers != null && m_zoneTriggers.Count > 0)
         {
@@ -111,7 +107,7 @@ public class TrackerKill : TrackerBase {
 	/// </summary>
 	/// <param name="_e">The source entity, optional.</param>
 	/// <param name="_reward">The reward given.</param>
-	private void OnKill(Transform _t, IEntity _e, Reward _reward) {
+	private void OnKill(Transform _t, IEntity _e, Reward _reward, KillType _type) {
 		// Count automatically if we don't have any type filter
 		if(m_targetSkus.Count == 0) {
 			currentValue++;

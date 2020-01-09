@@ -338,6 +338,11 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
 				Messenger.Broadcast<IDragonData>(MessengerEvents.DRAGON_LEVEL_UP, InstanceManager.player.data);
 			}
 		}
+
+		if(Input.GetKeyUp(KeyCode.R)) {
+			Debug.Log(Colors.orange.Tag("ADDING DEBUG REWARD!"));
+			UsersManager.currentUser.rewardStack.Push(Metagame.Reward.CreateTypeCurrency(666, UserProfile.Currency.HARD, Metagame.Reward.Rarity.COMMON, HDTrackingManager.EEconomyGroup.CHEAT, "Debug HDK-6990"));
+		}
 #endif
     }
 

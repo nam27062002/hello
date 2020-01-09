@@ -86,11 +86,11 @@ public class ResultsScreenStepLeagueScore : ResultsScreenSequenceStep {
 		m_newHighScoreAnim.gameObject.SetActive(false);
 	}
 
-    /// <summary>
-    /// Called when skip is triggered.
-    /// </summary>
-    override protected void OnSkip() {
-		// Nothing to do for now
+	/// <summary>
+	/// Do the summary line for this step. Connect in the sequence.
+	/// </summary>
+	public void DoSummary() {
+		m_controller.summary.ShowScore(m_controller.score);
 	}
 
 	//------------------------------------------------------------------------//
@@ -106,5 +106,12 @@ public class ResultsScreenStepLeagueScore : ResultsScreenSequenceStep {
 		// Show widget and launch animation!
 		m_newHighScoreAnim.gameObject.SetActive(true);
 		m_newHighScoreAnim.Launch();
+	}
+
+	/// <summary>
+	/// Called when skip is triggered.
+	/// </summary>
+	override protected void OnSkip() {
+		// Nothing to do for now
 	}
 }

@@ -115,6 +115,14 @@ public class DragonParticleController : MonoBehaviour, IBroadcastListener
 
 	private List<ParticleSystem> m_toDeactivate = new List<ParticleSystem>();
 
+	
+	// Particle used when Transform gold power up
+	[Space]
+	public Transform m_transformGoldAnchor;
+	private string m_transformGoldFx = "FX_PF_ChineseGoldBurst";
+	private ParticleSystem m_transformGoldInstance;
+	
+
 	void Start () 
 	{
 		DragonAnimationEvents dragonAnimEvents = transform.parent.GetComponentInChildren<DragonAnimationEvents>();
@@ -426,6 +434,7 @@ public class DragonParticleController : MonoBehaviour, IBroadcastListener
 	{
 		switch( reason )
 		{
+			case DragonPlayer.ReviveReason.FREE_REVIVE_POWER:
 			default:
 			{
 				if ( m_reviveInstance != null)
@@ -437,7 +446,6 @@ public class DragonParticleController : MonoBehaviour, IBroadcastListener
 				}
 			}break;
             case DragonPlayer.ReviveReason.MUMMY:
-			case DragonPlayer.ReviveReason.FREE_REVIVE_PET:
 			{
 				
 			}break;
@@ -640,4 +648,22 @@ public class DragonParticleController : MonoBehaviour, IBroadcastListener
 		}
 	}
 
+
+#region transform_gold
+	// Transform Gold Related functions
+
+	public void PrepareTransformGoldParticle()
+	{
+
+		m_transformGoldInstance = ParticleManager.InitLeveledParticle(m_transformGoldFx, m_transformGoldAnchor);
+		m_transformGoldInstance.gameObject.SetActive(true);
+
+	}
+
+	public void PlayTransformGoldParticle()
+	{		
+		m_transformGoldInstance.Play();
+	}
+
+#endregion
 }

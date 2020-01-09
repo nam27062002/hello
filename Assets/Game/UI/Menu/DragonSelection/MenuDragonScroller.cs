@@ -295,8 +295,8 @@ public class MenuDragonScroller : MonoBehaviour {
 		GameObject newObj = Instantiate<GameObject>(m_dragonPurchasedFX, slot.transform, false);
 
 		// Auto-destroy after the FX has finished
-		SelfDestroy destructor = newObj.AddComponent<SelfDestroy>();
-		destructor.seconds = 9f;	// Sync with FX duration!
+		// Sync with FX duration
+		newObj.AddSelfDestroyComponent(9f, SelfDestroy.Mode.SECONDS);
 	}
 
 	/// <summary>
@@ -314,9 +314,9 @@ public class MenuDragonScroller : MonoBehaviour {
 		GameObject newObj = Instantiate<GameObject>(m_disguisePurchasedFX, slot.transform, false);
 
 		// Auto-destroy after the FX has finished
-		SelfDestroy destructor = newObj.AddComponent<SelfDestroy>();
-		destructor.seconds = 9f;	// Sync with FX duration!
-
+		// Sync with FX duration
+		newObj.AddSelfDestroyComponent(9f, SelfDestroy.Mode.SECONDS);
+		
 		// Trigger SFX
 		AudioController.Play("hd_unlock_dragon");
 	}

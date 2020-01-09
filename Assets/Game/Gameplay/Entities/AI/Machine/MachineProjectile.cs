@@ -130,8 +130,8 @@ namespace AI {
 			}
 		}
 
-		override public void BeginSwallowed(Transform _transform, bool _rewardPlayer, IEntity.Type _source) {
-			m_edible.BeingSwallowed(_transform, _rewardPlayer, _source); 
+		override public void BeginSwallowed(Transform _transform, bool _rewardPlayer, IEntity.Type _source, KillType _killType) {
+			m_edible.BeingSwallowed(_transform, _rewardPlayer, _source, _killType); 
 		}
 
 		override public void EndSwallowed(Transform _transform) {
@@ -149,7 +149,7 @@ namespace AI {
 		}
 
 		// Being burned
-		override public bool Burn(Transform _transform, IEntity.Type _source, bool instant = false, FireColorSetupManager.FireColorType fireColorType = FireColorSetupManager.FireColorType.RED) {
+		override public bool Burn(Transform _transform, IEntity.Type _source, KillType _killType = KillType.BURNT, bool _instant = false, FireColorSetupManager.FireColorType fireColorType = FireColorSetupManager.FireColorType.RED) {
 			if (!IsDying()) {
 				m_dyingReason = IEntity.DyingReason.BURNED;
 				SetSignal(Signals.Type.Destroyed, true);
@@ -166,7 +166,7 @@ namespace AI {
 				m_entity.onDieStatus.reason = IEntity.DyingReason.DESTROYED;
 				SetSignal(Signals.Type.Destroyed, true);
 				Reward reward = m_entity.GetOnKillReward(IEntity.DyingReason.DESTROYED);
-				Messenger.Broadcast<Transform, IEntity, Reward>(MessengerEvents.ENTITY_BURNED, transform, m_entity, reward);
+                Messenger.Broadcast<Transform, IEntity, Reward, KillType>(MessengerEvents.ENTITY_KILLED, transform, m_entity, reward, KillType.EATEN);
 				return true;
 			}
 			return false;

@@ -177,7 +177,7 @@ public class DragonBreathBehaviour : MonoBehaviour, IBroadcastListener {
 
 		ExtendedStart();
 
-		Messenger.AddListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_BURNED, OnEntityBurned);
+		Messenger.AddListener<Transform, IEntity, Reward, KillType>(MessengerEvents.ENTITY_KILLED, OnEntityBurned);
 		Messenger.AddListener<Reward, Transform>(MessengerEvents.REWARD_APPLIED, OnRewardApplied);
 		Broadcaster.AddListener(BroadcastEventType.GAME_PAUSED, this);
 
@@ -212,7 +212,7 @@ public class DragonBreathBehaviour : MonoBehaviour, IBroadcastListener {
 
 	void OnDestroy()
 	{
-		Messenger.RemoveListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_BURNED, OnEntityBurned);
+		Messenger.RemoveListener<Transform, IEntity, Reward, KillType>(MessengerEvents.ENTITY_KILLED, OnEntityBurned);
 		Messenger.RemoveListener<Reward, Transform>(MessengerEvents.REWARD_APPLIED, OnRewardApplied);
 		Broadcaster.RemoveListener(BroadcastEventType.GAME_PAUSED, this);
 	}
@@ -274,7 +274,7 @@ public class DragonBreathBehaviour : MonoBehaviour, IBroadcastListener {
 					}
 				}
 
-				if ( !m_dragon.dragonEatBehaviour.IsEating())
+				if ( !m_dragon.dragonEatBehaviour.IsEating() && m_dragon.playable)
 				{
 					if (GetMegaFireValue() >= m_superFuryMax)
 					{
@@ -348,12 +348,16 @@ public class DragonBreathBehaviour : MonoBehaviour, IBroadcastListener {
     }
 
 
-	protected virtual void OnEntityBurned(Transform _t, IEntity _e, Reward _reward)
+	protected virtual void OnEntityBurned(Transform _t, IEntity _e, Reward _reward, KillType _type)
 	{
-		float healthReward = m_healthBehaviour.GetBoostedHp(_reward.origin, _reward.health);
-		m_dragon.AddLife(healthReward, DamageType.NONE, _t);
-		m_dragon.AddEnergy(_reward.energy);
-		//AddFury(reward.fury);??
+        // Consider also electric rush, ice breath 
+        if (_type == KillType.BURNT || _type == KillType.ELECTRIFIED || _type == KillType.FROZEN)
+        {
+            float healthReward = m_healthBehaviour.GetBoostedHp(_reward.origin, _reward.health);
+            m_dragon.AddLife(healthReward, DamageType.NONE, _t);
+            m_dragon.AddEnergy(_reward.energy);
+            //AddFury(reward.fury);??
+        }
 	}
 
 	protected virtual void OnRewardApplied( Reward _reward, Transform t)

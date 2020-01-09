@@ -5,6 +5,7 @@ using UnityEngine;
 namespace AI {
 	public class MachineGround : Machine {		
 		[SerializeField] protected MC_MotionGround m_groundMotion = new MC_MotionGround();
+		public MC_MotionGround groundMotion { get{return m_groundMotion;} }
 
 		public override Quaternion orientation 	{ get { return m_groundMotion.orientation; } set { m_groundMotion.orientation = value; } }
 		public override Vector3 position		{ get { return m_groundMotion.position; } set { m_groundMotion.position = value; } }

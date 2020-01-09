@@ -899,6 +899,47 @@ public class Ingame_SwitchAreaHandle
         return AreDependecyIdsOfDefSkuAvailable(_dragonSku);
     }
 
+    public bool AreResourcesForSkinAvailable(string _skinSku) {
+        if (!m_dependecyIdsPerDefSku.ContainsKey(_skinSku)) {
+            List<string> _resourceIds = GetResourceIDsForDragonSkin(_skinSku, false);
+            List<string> _dependencyIds = GetDependencyIdsList(_resourceIds);
+            AddDependencyIdsPerDefSku(_skinSku, _dependencyIds);
+        }
+
+        return AreDependecyIdsOfDefSkuAvailable(_skinSku);
+    }
+
+
+    public bool AreResourcesForRewardAvailable( Metagame.Reward _reward )
+    {
+        bool ret = true;
+        switch( _reward.type )
+        {
+            case Metagame.RewardPet.TYPE_CODE:
+            {
+                ret = AreResourcesForPetAvailable(_reward.sku);
+            }break;
+            case Metagame.RewardSkin.TYPE_CODE:
+            {
+                ret = AreResourcesForSkinAvailable( _reward.sku );
+            }break;
+            case Metagame.RewardDragon.TYPE_CODE:
+            {
+                ret = AreResourcesForDragonAvailable(_reward.sku);
+            }break;
+            case Metagame.RewardMulti.TYPE_CODE:
+            {
+                Metagame.RewardMulti multi = _reward as Metagame.RewardMulti;
+                int l = multi.rewards.Count;
+                for (int i = 0; i < l && ret; i++)
+                {
+                    ret = AreResourcesForRewardAvailable( multi.rewards[i] );
+                }
+            }break;
+        }
+        return ret;
+    }
+
     /// <summary>
     /// Obtain a list of all the resources needed for a dragon.
     /// Doesn't include equipped pets.
@@ -944,7 +985,7 @@ public class Ingame_SwitchAreaHandle
 	/// </summary>
 	/// <returns>The list of all the resources needed for a pet.</returns>
 	/// <param name="_petSku">Pet sku.</param>
-	private List<string> GetResourceIDsForPet(string _petSku) {
+	public List<string> GetResourceIDsForPet(string _petSku) {
 		// Aux vars
 		List<string> ids = new List<string>();
 		DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PETS, _petSku);

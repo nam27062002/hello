@@ -108,9 +108,9 @@ public enum MessengerEvents {
 	MISSION_ZONE,   			// params: bool _inside, ZoneTrigger _zone
 
     // Entity events
-    ENTITY_EATEN,				// params: IEntity _entity, Reward _reward
-	ENTITY_BURNED,              // params: IEntity _entity, Reward _reward
-    ENTITY_DESTROYED,           // params: IEntity _entity, Reward _reward
+    _ENTITY_EATEN,				// params: IEntity _entity, Reward _reward
+	_ENTITY_BURNED,              // params: IEntity _entity, Reward _reward
+    _ENTITY_DESTROYED,           // params: IEntity _entity, Reward _reward
     BLOCKER_DESTROYED,			// no params
 	FLOCK_EATEN,                // params: IEntity _entity, Reward _reward
     STAR_COMBO,
@@ -255,7 +255,9 @@ public enum MessengerEvents {
     // Modifiers
     MODIFIER_ECONOMY_DRAGON_PRICE_CHANGED,  // params: IDragonData
 
-	COUNT
+    ENTITY_KILLED,  // params: IEntity _entity, Reward _reward, KillType _type
+
+    COUNT
 }
 
 //------------------------------------------------------------------------//

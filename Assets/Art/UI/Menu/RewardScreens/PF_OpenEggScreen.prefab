@@ -1491,6 +1491,7 @@ GameObject:
   m_Component:
   - component: {fileID: 224652311496059722}
   - component: {fileID: 114458743291695486}
+  - component: {fileID: 114502369143395576}
   m_Layer: 5
   m_Name: ShareButtonGroup
   m_TagString: Untagged
@@ -4623,6 +4624,17 @@ MonoBehaviour:
   m_saturation: 1
   m_contrast: 0.3
   m_lateMultiply: 0
+--- !u!114 &114502369143395576
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1722871505316568}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d1f4c58340cd4f168bd0915c8ef8e67, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114535390023050518
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5006,7 +5018,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_extraInfoText: {fileID: 114365280925781260}
-  m_shareButton: {fileID: 1722871505316568}
+  m_shareButton: {fileID: 114502369143395576}
   m_typeSetups:
     m_valueList:
     - rootObj: {fileID: 1796301212362520}

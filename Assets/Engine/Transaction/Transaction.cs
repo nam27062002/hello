@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 public class Transaction
 {
+    private const string PRODUCT_ID = "product_id";
     private const string KEY_ID = "order_id";
     private const string KEY_SOURCE = "source";
     private const string KEY_ITEMS = "items";
@@ -196,6 +197,13 @@ public class Transaction
 
         if (json != null)
         {
+            string fieldId = PRODUCT_ID;
+            string productId = (json.ContainsKey(fieldId)) ? json[fieldId] : null;
+            if (!string.IsNullOrEmpty(productId))
+            {
+                DefinitionNode _def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.OFFER_PACKS, "gameSettings");
+            }
+
             SetId(json[KEY_ID]);
             SetSource(json[KEY_SOURCE]);
 
@@ -230,6 +238,15 @@ public class Transaction
                         if (currentReward != null)
                         {
                             amount += currentReward.amount;
+                        }
+
+                        // If the transaction is a purchase that was interrupted then we need to change the amount to take into consideration the happy hour because server
+                        // knows nothing about happy hours so the transaction received from server contains the value defined in content without being affected by any multipliers
+                        // Happy hour only affects currency HARD so we need to check if. It'd be nice to move this stuff somewhere else so this code didn't need to know this detail of design
+                        
+                        if (!string.IsNullOrEmpty(productId) && currency == UserProfile.Currency.HARD)
+                        {
+                            amount = OffersManager.instance.happyHour.ApplyHappyHourExtra((int)amount);
                         }
 
                         rewardToAdd = CreateRewardCurrency(currency, amount);

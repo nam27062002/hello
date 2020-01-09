@@ -149,11 +149,11 @@ namespace AI {
 			m_sensor.Disable(_seconds);
 		}
 
-		override public bool Burn(Transform _transform, IEntity.Type _source, bool instant = false, FireColorSetupManager.FireColorType fireColorType = FireColorSetupManager.FireColorType.RED) {
+		override public bool Burn(Transform _transform, IEntity.Type _source, KillType _killType = KillType.BURNT, bool _instant = false, FireColorSetupManager.FireColorType fireColorType = FireColorSetupManager.FireColorType.RED) {
 			if (m_inflammable != null && !IsDead()) {
 				if (!GetSignal(Signals.Type.Burning)) {
 					ReceiveDamage(9999f);
-					m_inflammable.Burn(_transform, _source, instant, fireColorType);
+					m_inflammable.Burn(_transform, _source, _killType, _instant, fireColorType);
 				}
 				return true;
 			}
@@ -167,7 +167,7 @@ namespace AI {
 				m_entity.onDieStatus.source = _source;
 				m_entity.onDieStatus.reason = IEntity.DyingReason.DESTROYED;
 				Reward reward = m_entity.GetOnKillReward(IEntity.DyingReason.DESTROYED);
-				Messenger.Broadcast<Transform, IEntity, Reward>(MessengerEvents.ENTITY_BURNED, m_transform, m_entity, reward);
+                Messenger.Broadcast<Transform, IEntity, Reward, KillType>(MessengerEvents.ENTITY_KILLED, m_transform, m_entity, reward, KillType.SMASHED);
 				return true;
 			}
 			return false;
@@ -275,9 +275,9 @@ namespace AI {
 			return false;
 		}
 
-		override public void BeginSwallowed(Transform _transform, bool _rewardsPlayer, IEntity.Type _source) {
+		override public void BeginSwallowed(Transform _transform, bool _rewardsPlayer, IEntity.Type _source, KillType _killType) {
 			m_viewControl.Bite();
-			m_edible.BeingSwallowed(_transform, _rewardsPlayer, _source);
+			m_edible.BeingSwallowed(_transform, _rewardsPlayer, _source, _killType);
 		}
 
 		override public void EndSwallowed(Transform _transform){

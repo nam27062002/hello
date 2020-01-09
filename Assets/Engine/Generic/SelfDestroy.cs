@@ -124,6 +124,38 @@ public class SelfDestroy : MonoBehaviour {
 	}
 
 	//------------------------------------------------------------------------//
-	// CALLBACKS															  //
+	// UTILS																  //
 	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Add a SelfDestroy component to a GameObject with parameters.
+	/// </summary>
+	/// <param name="_obj">Target object.</param>
+	/// <param name="_lifeTime">Seconds or frames depending on <paramref name="_mode"/></param>
+	/// <param name="_mode">Frames or seconds?</param>
+	/// <returns></returns>
+	public static SelfDestroy AddToObject(GameObject _obj, float _lifeTime, Mode _mode) {
+		// To avoid SelfDestroy destroying himself in the Awake call before configuring the duration, disable parent object :)
+		bool wasActive = _obj.activeSelf;
+		_obj.SetActive(false);
+
+		// Add the component
+		SelfDestroy destructor = _obj.AddComponent<SelfDestroy>();
+
+		// Configure
+		switch(_mode) {
+			case Mode.SECONDS: {
+				destructor.seconds = _lifeTime;
+			} break;
+
+			case Mode.FRAMES: {
+				destructor.frames = Mathf.RoundToInt(_lifeTime);
+			} break;
+		}
+
+		// SelfDestroy properly configured. We can now reactivate parent object.
+		_obj.SetActive(wasActive);
+
+		// Done!
+		return destructor;
+	}
 }

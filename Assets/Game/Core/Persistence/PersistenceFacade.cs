@@ -727,6 +727,8 @@ public class PersistenceFacade : IBroadcastListener
         PopupManager.PopupMessage_Open(config);                   
     }
 
+
+
 	public static void Popup_OpenCloudCorrupted(Action onContinue, Action onOverride)
 	{
         // Internal error is shown.
@@ -802,6 +804,19 @@ public class PersistenceFacade : IBroadcastListener
         config.OnConfirm = onConfirm;
         config.OnCancel = onCancel;
         config.IsButtonCloseVisible = false;
+        PopupManager.PopupMessage_Open(config);
+    }
+
+    /// <summary>
+    /// This popup is shown when there was a problem connecting to the store
+    /// </summary>    
+    public static void Popups_OpenStoreErrorConnection(Action onConfirm)
+    {
+        IPopupMessage.Config config = IPopupMessage.GetConfig();
+        config.TitleTid = "TID_ERROR_STORE_CONNECTION_NAME";
+        config.MessageTid = "TID_ERROR_STORE_CONNECTION_DESC";
+        config.ButtonMode = IPopupMessage.Config.EButtonsMode.Confirm;
+        config.OnConfirm = onConfirm;
         PopupManager.PopupMessage_Open(config);
     }
     #endregion

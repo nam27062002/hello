@@ -23,6 +23,10 @@ CALETY_BRANCH="hungrydragon"
 RESET_GIT=false
 COMMIT_CHANGES=false
 CREATE_TAG=false
+
+#XCode project type
+XCWORKSPACE=false
+
   # build config
 BUILD_ANDROID=false
 GENERATE_OBB=false
@@ -133,6 +137,9 @@ do
     elif [ "$PARAM_NAME" == "-amzVCode" ]; then
         ((i++))
         PROJECT_SETTINGS_VERSION_CODE_AMZ=${!i}
+
+    elif [ "$PARAM_NAME" == "-xcworkspace" ] ; then
+        XCWORKSPACE=true
 
     elif [ "$PARAM_NAME" == "-output" ] ; then
         ((i++))
@@ -400,7 +407,8 @@ if $BUILD_IOS; then
     ARCHIVE_FILE="${PROJECT_CODE_NAME}_${VERSION_ID}_${ENVIRONMENT}.xcarchive"
     IPA_NAME="${PROJECT_CODE_NAME}_${VERSION_ID}_${DATE}_${ENVIRONMENT}_${ADDRESSABLES_MODE}"
     IPA_FILE="${IPA_NAME}.ipa"
-    PROJECT_NAME="${OUTPUT_DIR}/xcode/Unity-iPhone.xcodeproj"
+
+    PROJECT_NAME="${OUTPUT_DIR}/xcode/Unity-iPhone"
 
     # Generate Archive
     # print_builder "Cleaning XCode build"
@@ -410,8 +418,15 @@ if $BUILD_IOS; then
 
     print_builder "Archiving"
     rm -rf "${OUTPUT_DIR}/archives/${ARCHIVE_FILE}"    # just in case
-    sed -i "" "s|ProvisioningStyle = Automatic;|ProvisioningStyle = Manual;|" "${PROJECT_NAME}/project.pbxproj" # for archive to work we need it to be manual
-    xcodebuild clean archive -project "${PROJECT_NAME}" -configuration Release -scheme "Unity-iPhone" -archivePath "${OUTPUT_DIR}/archives/${ARCHIVE_FILE}" DEVELOPMENT_TEAM="${DEVELOPMENT_TEAM}" PROVISIONING_PROFILE="${PROVISIONING_PROFILE_UUID}" CODE_SIGN_IDENTITY="${CODE_SIGN_IDENTITY}"
+    sed -i "" "s|ProvisioningStyle = Automatic;|ProvisioningStyle = Manual;|" "${PROJECT_NAME}.xcodeproj/project.pbxproj" # for archive to work we need it to be manual
+
+    if $XCWORKSPACE; then
+      print_builder "XCode project type xcworkspace"
+      xcodebuild clean archive -workspace "${PROJECT_NAME}.xcworkspace" -configuration Release -scheme "Unity-iPhone" -archivePath "${OUTPUT_DIR}/archives/${ARCHIVE_FILE}" DEVELOPMENT_TEAM="${DEVELOPMENT_TEAM}" PROVISIONING_PROFILE="${PROVISIONING_PROFILE_UUID}" CODE_SIGN_IDENTITY="${CODE_SIGN_IDENTITY}"
+    else
+      print_builder "XCode project type xcodeproj"
+      xcodebuild clean archive -project "${PROJECT_NAME}.xcodeproj" -configuration Release -scheme "Unity-iPhone" -archivePath "${OUTPUT_DIR}/archives/${ARCHIVE_FILE}" DEVELOPMENT_TEAM="${DEVELOPMENT_TEAM}" PROVISIONING_PROFILE="${PROVISIONING_PROFILE_UUID}" CODE_SIGN_IDENTITY="${CODE_SIGN_IDENTITY}"
+    fi
 
     # Generate IPA file
     print_builder "Exporting IPA"

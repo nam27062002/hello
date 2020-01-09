@@ -47,6 +47,9 @@ public class GameSettings : SingletonScriptableObject<GameSettings> {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
+	// FTUX
+	public const string FTUX_SKU = "ftuxSettings";
+
 	// Audio Settings
 	public const string SOUND_ENABLED = "GAME_SETTINGS_SOUND_ENABLED";	// bool, default true
 	public const string MUSIC_ENABLED = "GAME_SETTINGS_MUSIC_ENABLED";	// bool, default true
@@ -94,38 +97,41 @@ public class GameSettings : SingletonScriptableObject<GameSettings> {
 
 	// FTUX
 	[Separator("FTUX")]
-	[SerializeField] private int m_enableChestsAtRun = 3;
+	private int m_enableChestsAtRun = 3;
 	public static int ENABLE_CHESTS_AT_RUN { get { return instance.m_enableChestsAtRun; }}
 
-	[SerializeField] private int m_enableEggsAtRun = 2;
+	private int m_enableEggsAtRun = 2;
 	public static int ENABLE_EGGS_AT_RUN { get { return instance.m_enableEggsAtRun; }}
 
-	[SerializeField] private int m_enableMissionsAtRun = 2;
+	private int m_enableMissionsAtRun = 2;
 	public static int ENABLE_MISSIONS_AT_RUN { get { return instance.m_enableMissionsAtRun; }}
 
-	[SerializeField] private int m_enableQuestsAtRun = 3;
+	private int m_enableQuestsAtRun = 3;
 	public static int ENABLE_QUESTS_AT_RUN { get { return instance.m_enableQuestsAtRun; }}
 
-	[SerializeField] private int m_enableTournamentsAtRun = 3;
+	private int m_enableTournamentsAtRun = 3;
 	public static int ENABLE_TOURNAMENTS_AT_RUN { get { return instance.m_enableTournamentsAtRun; }}
 
-	[SerializeField] private int m_enableInterstitialPopupsAtRun = 12;
+	private int m_enableInterstitialPopupsAtRun = 12;
 	public static int ENABLE_INTERSTITIAL_POPUPS_AT_RUN { get { return instance.m_enableInterstitialPopupsAtRun; }}
 
-	[SerializeField] private int m_enableOffersPopupAtRun = 4;
+	private int m_enableOffersPopupAtRun = 4;
 	public static int ENABLE_OFFERS_POPUPS_AT_RUN { get { return instance.m_enableOffersPopupAtRun; }}
 
-	[SerializeField] private int m_enablePreRegRewardsPopupAtRun = 2;
+	private int m_enablePreRegRewardsPopupAtRun = 2;
 	public static int ENABLE_PRE_REG_REWARDS_POPUP_AT_RUN { get { return instance.m_enablePreRegRewardsPopupAtRun; }}
 
-	[SerializeField] private int m_enableSharkPetRewardPopupAtRun = 3;
+	private int m_enableSharkPetRewardPopupAtRun = 3;
 	public static int ENABLE_SHARK_PET_REWARD_POPUP_AT_RUN { get { return instance.m_enableSharkPetRewardPopupAtRun; }}
 
-	[SerializeField] private int m_enableLeaguesAtRun = 4;
+	private int m_enableLeaguesAtRun = 4;
 	public static int ENABLE_LEAGUES_AT_RUN { get { return instance.m_enableLeaguesAtRun; } }
 
-	[SerializeField] private int m_enableDailyRewardsAtRun = 2;
+	private int m_enableDailyRewardsAtRun = 2;
 	public static int ENABLE_DAILY_REWARDS_AT_RUN { get { return instance.m_enableDailyRewardsAtRun; } }
+
+	private int m_enableShareButtonsAtRun = 2;
+	public static int ENABLE_SHARE_BUTTONS_AT_RUN { get { return instance.m_enableShareButtonsAtRun; } }
 
 	// Social
 	[Separator("Social")]
@@ -240,6 +246,34 @@ public class GameSettings : SingletonScriptableObject<GameSettings> {
 
 		Set(SHOW_BIG_AMOUNT_CONFIRMATION_POPUP, Get(SHOW_BIG_AMOUNT_CONFIRMATION_POPUP));
 		Set(SHOW_EXIT_RUN_CONFIRMATION_POPUP, Get(SHOW_EXIT_RUN_CONFIRMATION_POPUP));
+	}
+
+	/// <summary>
+	/// Read some initial values from content.
+	/// To be called at the start of the application.
+	/// Content Manager needs to be ready and definitions loaded.
+	/// Call again if definitions are reloaded (i.e. customization applied).
+	/// </summary>
+	public static void InitFromDefinitions() {
+		// Make sure content manager is ready
+		Debug.Assert(ContentManager.ready, "ERROR: Trying to initialize Game Settings but content is not ready yet!");
+
+		// Gather definition
+		DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, FTUX_SKU);
+		if(def == null) return;	// Just in case
+
+		// Cache data. If not found, use default value.
+		instance.m_enableChestsAtRun = def.GetAsInt("enableChestsAtRun", instance.m_enableChestsAtRun);
+		instance.m_enableEggsAtRun = def.GetAsInt("enableEggsAtRun", instance.m_enableEggsAtRun);
+		instance.m_enableMissionsAtRun = def.GetAsInt("enableMissionsAtRun", instance.m_enableMissionsAtRun);
+		instance.m_enableQuestsAtRun = def.GetAsInt("enableQuestsAtRun", instance.m_enableQuestsAtRun);
+		instance.m_enableTournamentsAtRun = def.GetAsInt("enableTournamentsAtRun", instance.m_enableTournamentsAtRun);
+		instance.m_enableInterstitialPopupsAtRun = def.GetAsInt("enableInterstitialPopupsAtRun", instance.m_enableInterstitialPopupsAtRun);
+		instance.m_enableOffersPopupAtRun = def.GetAsInt("enableOffersPopupAtRun", instance.m_enableOffersPopupAtRun);
+		instance.m_enableSharkPetRewardPopupAtRun = def.GetAsInt("enableSharkPetRewardPopupAtRun", instance.m_enableSharkPetRewardPopupAtRun);
+		instance.m_enableLeaguesAtRun = def.GetAsInt("enableLeaguesAtRun", instance.m_enableLeaguesAtRun);
+		instance.m_enableDailyRewardsAtRun = def.GetAsInt("enableDailyRewardsAtRun", instance.m_enableDailyRewardsAtRun);
+		instance.m_enableShareButtonsAtRun = def.GetAsInt("enableShareButtonsAtRun", instance.m_enableShareButtonsAtRun);
 	}
 
 	/// <summary>

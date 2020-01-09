@@ -174,6 +174,11 @@ public class EditorAddressablesManager
             case BuildTarget.iOS:
                 assetsLUTSource += "iOS";
                 break;
+            default:
+                // By default all other platforms use "iOS" so Standalone can work without having to deal with its own assetsLUT
+                // This only works as long as Standalone doesn't need its own asset bundles
+                //assetsLUTSource += target.ToString();
+                break;
         }
 
         assetsLUTSource += ".json";

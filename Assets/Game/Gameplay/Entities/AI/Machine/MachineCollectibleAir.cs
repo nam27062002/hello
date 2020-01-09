@@ -76,7 +76,7 @@ namespace AI {
 				Reward reward = m_entity.GetOnKillReward(IEntity.DyingReason.EATEN);
 
 				// Dispatch global event
-				Messenger.Broadcast<Transform, IEntity, Reward>(MessengerEvents.ENTITY_BURNED, m_transform, m_entity, reward);
+				Messenger.Broadcast<Transform, IEntity, Reward, KillType>(MessengerEvents.ENTITY_KILLED, m_transform, m_entity, reward, KillType.BURNT);
 
 				m_entity.Disable(true);
 			}
@@ -166,7 +166,7 @@ namespace AI {
         override public bool IsInLove() { return false; }
         override public bool IsBubbled() { return false; }
 
-        override public bool Burn(Transform _transform, IEntity.Type _source, bool instant = false, FireColorSetupManager.FireColorType fireColorType = FireColorSetupManager.FireColorType.RED) { return false; }
+        override public bool Burn(Transform _transform, IEntity.Type _source, KillType _killType = KillType.BURNT, bool _instant = false, FireColorSetupManager.FireColorType fireColorType = FireColorSetupManager.FireColorType.RED) { return false; }
 		override public bool Smash(IEntity.Type _source) { return false; }
 		override public void AddExternalForce(Vector3 force) {}
 		override public Quaternion GetDyingFixRot() { return Quaternion.identity; }
@@ -176,7 +176,7 @@ namespace AI {
 		override public void EndSwallowed(Transform _transform){}
 		override public void Bite() {}
 		override public void Drown() {}
-		override public void BeginSwallowed(Transform _transform, bool _rewardsPlayer, IEntity.Type _source) {}
+		override public void BeginSwallowed(Transform _transform, bool _rewardsPlayer, IEntity.Type _source, KillType _killType) {}
 
 
 		override public void	EnterGroup(ref Group _group) {}

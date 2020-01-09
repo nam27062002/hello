@@ -22,6 +22,7 @@ public abstract class ModifierGamePlay : Modifier {
         case ModGamePlaySC.TARGET_CODE:             return new ModGamePlaySC(_def);
         case ModGamePlaySceneSelector.TARGET_CODE:  return new ModGamePlaySceneSelector(_def);
         case ModGamePlaySpawnFrequency.TARGET_CODE: return new ModGamePlaySpawnFrequency(_def);
+		case ModGamePlayShader.TARGET_CODE: 		return new ModGamePlayShader(_def);
         }
 
 		return null;

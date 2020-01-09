@@ -42,7 +42,7 @@ public class RewardInfoUI : MonoBehaviour {
 	// Exposed
 	[Separator("Shared")]
 	[SerializeField] private TextMeshProUGUI m_extraInfoText = null;
-	[SerializeField] private GameObject m_shareButton = null;
+	[SerializeField] private ShareButton m_shareButton = null;
 	[SerializeField] private RewardTypeSetupDictionary m_typeSetups = new RewardTypeSetupDictionary();
 
 	[Separator("Pet Reward")]
@@ -122,7 +122,7 @@ public class RewardInfoUI : MonoBehaviour {
 		// Start with everything hidden
 		SetRewardType(string.Empty);
 
-		if(m_shareButton != null) m_shareButton.SetActive(false);
+		if(m_shareButton != null) m_shareButton.gameObject.SetActive(false);
 	}
 
     /// <summary>
@@ -134,7 +134,7 @@ public class RewardInfoUI : MonoBehaviour {
         // Hide the share button when we open the reward screen, so if the
         // share button is enabled, it wont flash in the first frame before update
         // This fixes the bug [HDK-4805]
-        if (m_shareButton != null) m_shareButton.SetActive(false);
+        if (m_shareButton != null) m_shareButton.gameObject.SetActive(false);
 
     }
 
@@ -303,7 +303,8 @@ public class RewardInfoUI : MonoBehaviour {
 		}
 
 		// Share button
-		if(m_shareButton != null) m_shareButton.SetActive(showShareButton);
+		showShareButton &= ShareButton.CanBeDisplayed();
+		if(m_shareButton != null) m_shareButton.gameObject.SetActive(showShareButton);
 
 		// Program finish callback
 		UbiBCN.CoroutineManager.DelayedCall(OnAnimationFinished, totalAnimDuration, false);
@@ -372,7 +373,7 @@ public class RewardInfoUI : MonoBehaviour {
 			case Metagame.RewardPet.TYPE_CODE: {
 				// [AOC] 1.14 Halloween pet needs some explanation, so let's show a popup for this one
 				if(m_reward.def.sku == PopupHalloweenPetInfo.PET_SKU && !m_reward.WillBeReplaced()) {	// Not when it's a duplicate!
-					PopupManager.OpenPopupInstant(PopupHalloweenPetInfo.PATH);
+					PopupManager.EnqueuePopup(PopupHalloweenPetInfo.PATH);
 				}
 			} break;
 		}
@@ -433,4 +434,14 @@ public class RewardInfoUI : MonoBehaviour {
 			} break;
 		}
 	}
+
+    /// <summary>
+    /// Just play an SFX.
+    /// </summary>
+    /// <param name="_id"></param>
+    public void PlaySFX(string _id) {
+        if(!string.IsNullOrEmpty(_id)) {
+            AudioController.Play(_id);
+        }
+    }
 }

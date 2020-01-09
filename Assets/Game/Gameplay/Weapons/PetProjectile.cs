@@ -69,7 +69,7 @@ public class PetProjectile : Projectile
         if (entity != null && entity.IsEdible(m_tier)) {
             if (entity.machine.CanBeBitten()) {
                 entity.machine.Bite();
-                entity.machine.BeginSwallowed(m_transform, true, m_firingEntityType);
+                entity.machine.BeginSwallowed(m_transform, true, m_firingEntityType, KillType.EATEN);
                 entity.machine.EndSwallowed(m_transform);
             }
         }

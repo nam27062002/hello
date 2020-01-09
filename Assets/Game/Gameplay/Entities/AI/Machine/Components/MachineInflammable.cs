@@ -75,7 +75,7 @@ namespace AI {
 			return m_renderers;
 		}
 
-		public void Burn(Transform _transform, IEntity.Type _source, bool instant = false, FireColorSetupManager.FireColorType fireColorType = FireColorSetupManager.FireColorType.RED) {
+		public void Burn(Transform _transform, IEntity.Type _source, KillType _killType = KillType.BURNT, bool _instant = false, FireColorSetupManager.FireColorType fireColorType = FireColorSetupManager.FireColorType.RED) {
             if (m_machine.IsBubbled()) {
                 BubbledEntitySystem.RemoveEntity(m_entity);
             }
@@ -104,16 +104,23 @@ namespace AI {
 
 			// reward
 			Reward reward = m_entity.GetOnKillReward(IEntity.DyingReason.BURNED);
-			Messenger.Broadcast<Transform, IEntity, Reward>(MessengerEvents.ENTITY_BURNED, m_machine.transform, m_entity, reward);
 
-			if ( instant )
-			{
-				m_actualBurningTime = 0;
-			}
-			else
-			{
-				m_actualBurningTime = m_burningTime;
-			}
+
+            // Broadcast the death, and the cause of death
+            Messenger.Broadcast<Transform, IEntity, Reward, KillType>(MessengerEvents.ENTITY_KILLED, m_machine.transform, m_entity, reward, _killType);
+
+            // Instant burn caused by mega fire rush
+            if (_instant)
+            {
+                m_actualBurningTime = 0;
+            }
+            else
+            {
+                m_actualBurningTime = m_burningTime;
+            }
+                
+    		
+
 			m_nextState = State.Burning;
 		}
 

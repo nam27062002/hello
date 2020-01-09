@@ -27,10 +27,11 @@ public class DragonPlayer : MonoBehaviour, IBroadcastListener {
 	{
 		AD,
 		PAYING,
-		FREE_REVIVE_PET,
+		FREE_REVIVE_POWER,
         MUMMY,
-		UNKNOWN
-	};
+        UNKNOWN,
+        REMOVE_ADS
+    };
 
     public enum Form {
         NORMAL = 0,
@@ -305,7 +306,7 @@ public class DragonPlayer : MonoBehaviour, IBroadcastListener {
 		Messenger.AddListener(MessengerEvents.PLAYER_ENTERING_AREA, OnEnteringArea);
 		Messenger.AddListener<float>(MessengerEvents.PLAYER_LEAVING_AREA, OnLeavingArea);
 
-		Messenger.AddListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_DESTROYED, OnEntityDestroyed);
+		Messenger.AddListener<Transform, IEntity, Reward, KillType>(MessengerEvents.ENTITY_KILLED, OnEntityDestroyed);
 		Broadcaster.AddListener(BroadcastEventType.GAME_ENDED, this);
 		if ( ApplicationManager.instance.appMode == ApplicationManager.Mode.TEST )
 		{
@@ -344,7 +345,7 @@ public class DragonPlayer : MonoBehaviour, IBroadcastListener {
 		Messenger.RemoveListener<DragonBreathBehaviour.Type, float>(MessengerEvents.PREWARM_FURY_RUSH, OnPrewardmFuryRush);
 		Messenger.RemoveListener<float>(MessengerEvents.PLAYER_LEAVING_AREA, OnLeavingArea);
 		Messenger.RemoveListener(MessengerEvents.PLAYER_ENTERING_AREA, OnEnteringArea);
-		Messenger.RemoveListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_DESTROYED, OnEntityDestroyed);
+		Messenger.RemoveListener<Transform, IEntity, Reward, KillType>(MessengerEvents.ENTITY_KILLED, OnEntityDestroyed);
 		Broadcaster.RemoveListener(BroadcastEventType.GAME_ENDED, this);
 	}
 
@@ -601,7 +602,9 @@ public class DragonPlayer : MonoBehaviour, IBroadcastListener {
         }
         else if (CanUseFreeRevives()) {   
             Messenger.Broadcast(MessengerEvents.PLAYER_FREE_REVIVE);
-            m_freeRevives--;
+			m_freeRevives--;
+			dragonMotion.OnPetPreFreeRevive();
+			StartCoroutine(WaitForReview());
         }
         // If I have an angel pet and aura still playing
         else {
@@ -618,6 +621,12 @@ public class DragonPlayer : MonoBehaviour, IBroadcastListener {
             playable = false;
         }
     }
+
+	IEnumerator WaitForReview()
+	{
+		yield return new WaitForSeconds( 0.5f );
+		ResetStats(true, DragonPlayer.ReviveReason.FREE_REVIVE_POWER);
+	}
 
 	/// <summary>
 	/// Add/remove energy to the dragon.
@@ -676,11 +685,15 @@ public class DragonPlayer : MonoBehaviour, IBroadcastListener {
 			}
 	}
 
-	private void OnEntityDestroyed(Transform _t, IEntity _e, Reward _reward) {
-		if (_reward.health >= 0) {
-			AddLife(_reward.health, DamageType.NONE, _t);
-		}
-		AddEnergy(_reward.energy);
+	private void OnEntityDestroyed(Transform _t, IEntity _e, Reward _reward, KillType _type) {
+        if (_type == KillType.SMASHED)
+        {
+            if (_reward.health >= 0)
+            {
+                AddLife(_reward.health, DamageType.NONE, _t);
+            }
+            AddEnergy(_reward.energy);
+        }
 	}
 
 	/// <summary>

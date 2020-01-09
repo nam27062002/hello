@@ -12,11 +12,6 @@ ShaderVariantCollection:
       variants:
       - keywords: HI_DETAIL_ON
         passType: 0
-  - first: {fileID: 4800000, guid: 025775b2b3616154f9eec0261bb8a581, type: 3}
-    second:
-      variants:
-      - keywords: HI_DETAIL_ON
-        passType: 0
   - first: {fileID: 4800000, guid: 02891335b31643f408fed70e86224f83, type: 3}
     second:
       variants:
@@ -191,6 +186,12 @@ ShaderVariantCollection:
           HI_DETAIL_ON NOISE_TEXTURE NOISE_TEXTURE_ALPHA
         passType: 0
       - keywords: APPLY_RGB_COLOR_VERTEX BLENDMODE_PREMULTIPLY EXTENDED_PARTICLES
+          HI_DETAIL_ON NOISE_TEXTURE NOISE_TEXTURE_ALPHA NOISE_TEXTURE_DISSOLVE
+        passType: 0
+      - keywords: APPLY_RGB_COLOR_VERTEX BLENDMODE_PREMULTIPLY DISSOLVE_ENABLED EXTENDED_PARTICLES
+          HI_DETAIL_ON NOISE_TEXTURE NOISE_TEXTURE_ALPHA NOISE_TEXTURE_DISSOLVE
+        passType: 0
+      - keywords: APPLY_RGB_COLOR_VERTEX BLENDMODE_PREMULTIPLY EXTENDED_PARTICLES
           HI_DETAIL_ON NOISE_TEXTURE_ALPHA NOISE_TEXTURE_EMISSION
         passType: 0
       - keywords: BLENDMODE_PREMULTIPLY EXTENDED_PARTICLES HI_DETAIL_ON NOISE_TEXTURE
@@ -262,6 +263,13 @@ ShaderVariantCollection:
       - keywords: APPLY_RGB_COLOR_VERTEX BLENDMODE_PREMULTIPLY DISSOLVE_ENABLED DISSOLVE_VERTEXCOLORALFA
           EXTENDED_PARTICLES HI_DETAIL_ON
         passType: 0
+      - keywords: BLENDMODE_PREMULTIPLY DISSOLVE_ENABLED DISSOLVE_VERTEXCOLORALFA
+          EXTENDED_PARTICLES HI_DETAIL_ON NOISEUV
+        passType: 0
+      - keywords: BLENDMODE_PREMULTIPLY DISSOLVE_ENABLED DISSOLVE_VERTEXCOLORALFA
+          EXTENDED_PARTICLES HI_DETAIL_ON NOISEUV NOISE_TEXTURE NOISE_TEXTURE_ALPHA
+          NOISE_TEXTURE_EMISSION
+        passType: 0
       - keywords: BLENDMODE_PREMULTIPLY COLOR_RAMP EXTENDED_PARTICLES HI_DETAIL_ON
         passType: 0
       - keywords: APPLY_RGB_COLOR_VERTEX BLENDMODE_PREMULTIPLY COLOR_RAMP EMISSIVEPOWER
@@ -318,22 +326,12 @@ ShaderVariantCollection:
       variants:
       - keywords: HI_DETAIL_ON
         passType: 0
-  - first: {fileID: 4800000, guid: 1b62d0b1d1626d34ea157e7f2e06d54f, type: 3}
-    second:
-      variants:
-      - keywords: HI_DETAIL_ON
-        passType: 0
   - first: {fileID: 4800000, guid: 1c1d1e96ee7de4cca84f6af8cbe2b280, type: 3}
     second:
       variants:
       - keywords: HI_DETAIL_ON
         passType: 0
   - first: {fileID: 4800000, guid: 1c8e402466f5e694bbfa39823bbaafc5, type: 3}
-    second:
-      variants:
-      - keywords: HI_DETAIL_ON
-        passType: 0
-  - first: {fileID: 4800000, guid: 1e432315427554fac90b38453d9f6fed, type: 3}
     second:
       variants:
       - keywords: HI_DETAIL_ON
@@ -519,6 +517,9 @@ ShaderVariantCollection:
       - keywords: FRESNEL FXLAYER_COLORIZE HI_DETAIL_ON NORMALMAP SELFILLUMINATE_EMISSIVE
           SPECULAR _ZWRITE_ON
         passType: 4
+      - keywords: FRESNEL FXLAYER_REFLECTION HI_DETAIL_ON NORMALMAP REFLECTIONTYPE_NORMAL
+          SPECULAR
+        passType: 4
       - keywords: FRESNEL FXLAYER_REFLECTION HI_DETAIL_ON NORMALMAP OPAQUEALPHA OPAQUEFRESNEL
           REFLECTIONTYPE_NORMAL SPECULAR _ZWRITE_ON
         passType: 4
@@ -528,17 +529,11 @@ ShaderVariantCollection:
       - keywords: FRESNEL FXLAYER_NONE HI_DETAIL_ON NORMALMAP REFLECTIONTYPE_COLOR
           SELFILLUMINATE_EMISSIVE SPECULAR
         passType: 4
-      - keywords: FRESNEL FXLAYER_NONE HI_DETAIL_ON NORMALMAP REFLECTIONTYPE_COLOR
-          SELFILLUMINATE_EMISSIVE SPECULAR _ZWRITE_ON
-        passType: 4
       - keywords: FXLAYER_REFLECTION HI_DETAIL_ON NORMALMAP REFLECTIONTYPE_COLOR SELFILLUMINATE_NORMAL
           SPECULAR
         passType: 4
       - keywords: FXLAYER_REFLECTION HI_DETAIL_ON NORMALMAP REFLECTIONTYPE_COLOR SELFILLUMINATE_NORMAL
           SPECULAR _ZWRITE_ON
-        passType: 4
-      - keywords: FRESNEL FXLAYER_REFLECTION HI_DETAIL_ON NORMALMAP REFLECTIONTYPE_COLOR
-          SELFILLUMINATE_NORMAL _ZWRITE_ON
         passType: 4
       - keywords: FRESNEL FXLAYER_REFLECTION HI_DETAIL_ON NORMALMAP REFLECTIONTYPE_COLOR
           SELFILLUMINATE_NORMAL SPECULAR _ZWRITE_ON
@@ -551,6 +546,12 @@ ShaderVariantCollection:
         passType: 4
       - keywords: BLENDFRESNEL FRESNEL FXLAYER_REFLECTION HI_DETAIL_ON NORMALMAP REFLECTIONTYPE_COLOR
           SELFILLUMINATE_EMISSIVE SPECULAR
+        passType: 4
+      - keywords: BLENDFRESNEL CUTOFF FRESNEL FXLAYER_REFLECTION HI_DETAIL_ON NORMALMAP
+          REFLECTIONTYPE_COLOR SELFILLUMINATE_EMISSIVE SPECULAR
+        passType: 4
+      - keywords: FRESNEL FXLAYER_REFLECTION HI_DETAIL_ON NORMALMAP REFLECTIONTYPE_COLOR
+          SELFILLUMINATE_EMISSIVE SPECULAR _ZWRITE_ON
         passType: 4
       - keywords: FXLAYER_REFLECTION HI_DETAIL_ON NORMALMAP OPAQUEALPHA REFLECTIONTYPE_COLOR
           SELFILLUMINATE_NORMAL SPECULAR _ZWRITE_ON
@@ -785,11 +786,6 @@ ShaderVariantCollection:
       variants:
       - keywords: HI_DETAIL_ON
         passType: 0
-  - first: {fileID: 4800000, guid: 862c830f04eb50d48949b08e87ec7000, type: 3}
-    second:
-      variants:
-      - keywords: HI_DETAIL_ON
-        passType: 4
   - first: {fileID: 4800000, guid: 87e6fe19d163bc443910dc94823f7d3a, type: 3}
     second:
       variants:
@@ -840,11 +836,6 @@ ShaderVariantCollection:
       variants:
       - keywords: HI_DETAIL_ON
         passType: 0
-  - first: {fileID: 4800000, guid: c0983d60f2f7a4a20a4631b5a4a39960, type: 3}
-    second:
-      variants:
-      - keywords: HI_DETAIL_ON
-        passType: 0
   - first: {fileID: 4800000, guid: cac050e216f992d4daea2d13a5ee10f0, type: 3}
     second:
       variants:
@@ -862,11 +853,6 @@ ShaderVariantCollection:
       - keywords: HI_DETAIL_ON OUTLINE_ON UNDERLAY_ON
         passType: 0
       - keywords: HI_DETAIL_ON OUTLINE_ON UNDERLAY_INNER
-        passType: 0
-  - first: {fileID: 4800000, guid: d16f77d9dd6a34705bb518b491a7db03, type: 3}
-    second:
-      variants:
-      - keywords: HI_DETAIL_ON
         passType: 0
   - first: {fileID: 4800000, guid: d5b9852b5c005334591669d788bede8f, type: 3}
     second:
@@ -901,17 +887,47 @@ ShaderVariantCollection:
       variants:
       - keywords: HI_DETAIL_ON
         passType: 0
-  - first: {fileID: 4800000, guid: f3570630f31ec4223a549b595d8cbb53, type: 3}
-    second:
-      variants:
-      - keywords: HI_DETAIL_ON
-        passType: 0
   - first: {fileID: 4800000, guid: f5d01bbba3dd4e94a9d60ae9526d5186, type: 3}
     second:
       variants:
       - keywords: HI_DETAIL_ON
         passType: 0
   - first: {fileID: 4800000, guid: f684eb3ebc0d4b84b9e0993bc851b365, type: 3}
+    second:
+      variants:
+      - keywords: HI_DETAIL_ON
+        passType: 0
+  - first: {fileID: 4800000, guid: 1b62d0b1d1626d34ea157e7f2e06d54f, type: 3}
+    second:
+      variants:
+      - keywords: HI_DETAIL_ON
+        passType: 0
+  - first: {fileID: 4800000, guid: 862c830f04eb50d48949b08e87ec7000, type: 3}
+    second:
+      variants:
+      - keywords: HI_DETAIL_ON
+        passType: 4
+  - first: {fileID: 4800000, guid: 025775b2b3616154f9eec0261bb8a581, type: 3}
+    second:
+      variants:
+      - keywords: HI_DETAIL_ON
+        passType: 0
+  - first: {fileID: 4800000, guid: f3570630f31ec4223a549b595d8cbb53, type: 3}
+    second:
+      variants:
+      - keywords: HI_DETAIL_ON
+        passType: 0
+  - first: {fileID: 4800000, guid: c0983d60f2f7a4a20a4631b5a4a39960, type: 3}
+    second:
+      variants:
+      - keywords: HI_DETAIL_ON
+        passType: 0
+  - first: {fileID: 4800000, guid: d16f77d9dd6a34705bb518b491a7db03, type: 3}
+    second:
+      variants:
+      - keywords: HI_DETAIL_ON
+        passType: 0
+  - first: {fileID: 4800000, guid: 1e432315427554fac90b38453d9f6fed, type: 3}
     second:
       variants:
       - keywords: HI_DETAIL_ON

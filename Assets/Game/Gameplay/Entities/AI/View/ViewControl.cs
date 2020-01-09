@@ -205,6 +205,7 @@ public class ViewControl : IViewControl, IBroadcastListener {
 
     private ParticleData m_stunParticle;
     private GameObject m_stunParticleInstance;
+    public Transform m_stunAnchor;
 
     private ParticleData m_onEatenInloveParticle;
     private ParticleData m_inLoveParticle;
@@ -1014,6 +1015,14 @@ public class ViewControl : IViewControl, IBroadcastListener {
         }
     }
 
+    public void JumpDown(bool _down) {
+        if (m_isAnimatorAvailable){
+            m_animator.SetBool("jump_down", _down);
+        }
+
+        
+    }
+
     public void Attack(bool _melee, bool _ranged) {
         if (m_panic)
             return;
@@ -1281,7 +1290,12 @@ public class ViewControl : IViewControl, IBroadcastListener {
                 m_animator.enabled = false;
             // if no stunned particle -> stun
             if (m_stunParticleInstance == null) {
-                m_stunParticleInstance = m_stunParticle.Spawn(m_transform);
+                if ( m_stunAnchor != null ) {
+                    m_stunParticleInstance = m_stunParticle.Spawn(m_stunAnchor);
+                }else{
+                    m_stunParticleInstance = m_stunParticle.Spawn(m_transform);
+                }
+                    
             }
         } else {
             if (m_isAnimatorAvailable)

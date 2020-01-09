@@ -98,15 +98,24 @@ namespace AssetBundles
             {
                 IPHostEntry host;
                 string localIP = "";
-                host = Dns.GetHostEntry(Dns.GetHostName());
-                foreach (IPAddress ip in host.AddressList)
+             
+                try
                 {
-                    if (ip.AddressFamily == AddressFamily.InterNetwork)
+                    host = Dns.GetHostEntry(Dns.GetHostName());
+                    foreach (IPAddress ip in host.AddressList)
                     {
-                        localIP = ip.ToString();
-                        break;
+                        if (ip.AddressFamily == AddressFamily.InterNetwork)
+                        {
+                            localIP = ip.ToString();
+                            break;
+                        }
                     }
                 }
+                catch 
+                {
+
+                }
+                
                 downloadURL = "http://" + localIP + ":7888/";
             }
 

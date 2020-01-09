@@ -14,7 +14,7 @@ using System.Collections.Generic;
 // CLASSES																	  //
 //----------------------------------------------------------------------------//
 /// <summary>
-/// Tracker for destroyed entities.
+/// Tracker entities killed while they are frozen
 /// </summary>
 public class TrackerKillFrozen : TrackerBase {
 	//------------------------------------------------------------------------//
@@ -35,9 +35,8 @@ public class TrackerKillFrozen : TrackerBase {
 		Debug.Assert(m_targetSkus != null);
 
 		// Subscribe to external events
-		Messenger.AddListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_EATEN, OnDestroy);
-		Messenger.AddListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_BURNED, OnDestroy);
-		Messenger.AddListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_DESTROYED, OnDestroy);
+
+		Messenger.AddListener<Transform, IEntity, Reward, KillType>(MessengerEvents.ENTITY_KILLED, OnKill);
 	}
 
 
@@ -49,9 +48,7 @@ public class TrackerKillFrozen : TrackerBase {
 	/// </summary>
 	override public void Clear() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_EATEN, OnDestroy);
-		Messenger.RemoveListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_BURNED, OnDestroy);
-		Messenger.RemoveListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_DESTROYED, OnDestroy);
+		Messenger.RemoveListener<Transform, IEntity, Reward, KillType>(MessengerEvents.ENTITY_KILLED, OnKill);
 
 
 		// Call parent
@@ -82,10 +79,12 @@ public class TrackerKillFrozen : TrackerBase {
 	/// </summary>
 	/// <param name="_e">The source entity, optional.</param>
 	/// <param name="_reward">The reward given.</param>
-	private void OnDestroy(Transform _t, IEntity _e, Reward _reward) {		
-		if (_e != null && (_e.onDieStatus.source == IEntity.Type.PLAYER || _e.onDieStatus.source == IEntity.Type.PET)){
-            // Check if in love
-            if (FreezingObjectsRegistry.instance.IsFreezing( _e )) {
+	private void OnKill(Transform _t, IEntity _e, Reward _reward, KillType _type) {
+        
+        // Check if frozen
+        if (FreezingObjectsRegistry.instance.IsFreezing(_e))
+        {
+            if (_e != null && (_e.onDieStatus.source == IEntity.Type.PLAYER || _e.onDieStatus.source == IEntity.Type.PET)){
     			// Count automatically if we don't have any type filter
     			if(m_targetSkus.Count == 0) {
     				currentValue++;

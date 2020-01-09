@@ -368,6 +368,9 @@ fixed4 frag (v2f i) : SV_Target
 	col *= _Tint;
 #endif
 
+#if defined(NIGHT)
+    col *= fixed4(0.3, 0.3, 0.7, 1.0);
+#endif
 	return col;
 }
 

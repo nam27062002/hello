@@ -150,7 +150,8 @@ public class ContentManager
             "Rules/dragonSettings",
             "Rules/initialSettings",
             "Rules/missingRessourcesVariablesDefinitions",
-			"Rules/offerSettings"
+			"Rules/offerSettings",
+			"Rules/ftuxSettings"
         });
 
 		kDefinitionFiles.Add(DefinitionsCategory.SEASONS, new string[] { "Rules/seasonsDefinitions" });
@@ -249,6 +250,7 @@ public class ContentManager
 		kDefinitionFiles.Add(DefinitionsCategory.OFFER_PACKS, new string[]{"Rules/offerPacksDefinitions"});
         kDefinitionFiles.Add(DefinitionsCategory.HAPPY_HOUR, new string[] {"Rules/happyHourDefinitions"});
         kDefinitionFiles.Add(DefinitionsCategory.CURRENCY_TIERS, new string[]{"Rules/missingRessourcesTiersDefinitions"});
+        kDefinitionFiles.Add(DefinitionsCategory.REMOVE_ADS_OFFER, new string[] { "Rules/removeAdsOfferDefinitions" });
 
         // Specials
         kDefinitionFiles.Add(DefinitionsCategory.SPECIAL_DRAGON_TIERS, new string[]{"Rules/specialDragonTierDefinitions"});
@@ -325,6 +327,7 @@ public class ContentManager
     {
         // Cached data need to be reloaded
         OffersManager.InitFromDefinitions();
+		GameSettings.InitFromDefinitions();
 
         // Update all managers 
         // dragonDefinitions.xml

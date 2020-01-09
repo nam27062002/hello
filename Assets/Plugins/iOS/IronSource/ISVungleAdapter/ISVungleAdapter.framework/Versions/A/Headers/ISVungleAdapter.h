@@ -5,21 +5,14 @@
 #import <Foundation/Foundation.h>
 #import "IronSource/ISBaseAdapter+Internal.h"
 
-static NSString * const VungleAdapterVersion         = @"4.1.6";
+static NSString * const VungleAdapterVersion = @"4.1.8";
+static NSString * GitHash = @"66454182e";
 
 //System Frameworks For Vungle Adapter
 
-@import AdSupport;
-@import AudioToolbox;
-@import AVFoundation;
-@import CFNetwork;
-@import CoreGraphics;
-@import CoreMedia;
-@import MediaPlayer;
-@import QuartzCore;
+@import CoreFoundation;
+@import Foundation;
 @import StoreKit;
-@import SystemConfiguration;
-
 
 @interface ISVungleAdapter : ISBaseAdapter
 

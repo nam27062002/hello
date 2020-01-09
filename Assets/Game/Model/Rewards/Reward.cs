@@ -168,9 +168,61 @@ namespace Metagame {
                 case RewardMultiEgg.TYPE_CODE: {
                     return CreateTypeMultiEgg(_data.amount, _data.sku, _source);
                 }
+
+                case RewardRemoveAds.TYPE_CODE: {
+                    return CreateTypeRemoveAds();
+                }
             }
 			return null;
 		}
+
+
+        /// <summary>
+        /// Find the reward(s) asociated to the IAP, it will look for in the
+        /// shopPacks and offerPack definitions.
+        /// </summary>
+        /// <param name="_iapSku"></param>
+        /// <returns></returns>
+        public static List<Reward> GetRewardsFromIAP(string _iapSku)
+        {
+            List<Reward> rewards = new List<Reward>();
+
+            OfferPack offerPack = OffersManager.GetOfferPackByIAP(_iapSku);
+
+            if (offerPack == null)
+            {
+                // Then, is an standard shop pack
+                DefinitionNode m_def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SHOP_PACKS, _iapSku);
+                
+                Metagame.Reward.Data shopPack = new Metagame.Reward.Data
+                {
+                    sku = m_def.sku,
+                    typeCode = m_def.Get("type"),
+                    amount = m_def.GetAsLong("amount")
+                };
+
+                // Just in case
+                if (shopPack.typeCode == "hc")
+                    shopPack.typeCode = "pc";
+
+                rewards.Add( CreateFromData(shopPack, HDTrackingManager.EEconomyGroup.UNKNOWN, null) );
+
+            }
+            else
+            {
+                // It is an offer pack, extract all its items
+                foreach (OfferPackItem item in offerPack.items)
+                {
+                    rewards.Add(item.reward);
+                }
+
+            }
+
+            return rewards;
+
+        }
+
+
 
 		// Currencies
 		public static RewardSoftCurrency CreateTypeSoftCurrency(long _amount, HDTrackingManager.EEconomyGroup _economyGroup, string _source, Rarity _rarity = Rarity.COMMON) {
@@ -209,6 +261,9 @@ namespace Metagame {
 		// Dragons
 		public static RewardDragon CreateTypeDragon(string _sku, string _source) 			{ return new RewardDragon(_sku, _source); }
 		public static RewardDragon CreateTypeDragon(DefinitionNode _def, string _source) 	{ return new RewardDragon(_def, _source); }
+        
+        // Remove ads
+        public static RewardRemoveAds CreateTypeRemoveAds ()                            { return new RewardRemoveAds();  }
 
 		// Others
 		public static RewardMulti CreateTypeMulti(List<Data> _datas, string _source, HDTrackingManager.EEconomyGroup _economyGroup = HDTrackingManager.EEconomyGroup.UNKNOWN)	{ return new RewardMulti(_datas, _source, _economyGroup); }
@@ -339,11 +394,22 @@ namespace Metagame {
 			return m_replacement != null;
 		}
 
-		/// <summary>
-		/// Return a visual representation of the reward.
-		/// </summary>
-		/// <returns>A <see cref="System.String"/> that represents the current <see cref="Metagame.Reward"/>.</returns>
-		public override string ToString() {			
+        /// <summary>
+        /// This method checks if the reward is already owned by the player. This is applicable in
+        /// non-consumable items like dragons, skins and the remove ads offer. Currency packs will be always
+        /// marked as not owned.
+        /// </summary>
+        /// <returns></returns>
+        public virtual bool IsAlreadyOwned()
+        {
+            return false;
+        }
+
+        /// <summary>
+        /// Return a visual representation of the reward.
+        /// </summary>
+        /// <returns>A <see cref="System.String"/> that represents the current <see cref="Metagame.Reward"/>.</returns>
+        public override string ToString() {			
 			return "[" + GetType() + ": " + m_amount + "]";
 		}
 

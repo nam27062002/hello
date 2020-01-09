@@ -18,9 +18,9 @@ namespace IronSource.Editor
 			string targetId = project.TargetGuidByName (PBXProject.GetUnityTargetName ());
 
 			// Required System Frameworks
-			project.AddFrameworkToProject (targetId, "AudioToolbox.framework", false);
-			project.AddFrameworkToProject (targetId, "MediaPlayer.framework", false);
-			project.AddFrameworkToProject (targetId, "UIKit.framework", false);
+			project.AddFrameworkToProject (targetId, "CoreFoundation.framework", false);
+			project.AddFrameworkToProject (targetId, "Foundation.framework", false);
+			project.AddFrameworkToProject (targetId, "StoreKit.framework", false);
 			
 			project.AddFileToBuild (targetId, project.AddFile ("usr/lib/libz.tbd", "Frameworks/libz.tbd", PBXSourceTree.Sdk));
 			project.AddFileToBuild (targetId, project.AddFile ("usr/lib/libsqlite3.tbd", "Frameworks/libsqlite3.tbd", PBXSourceTree.Sdk));

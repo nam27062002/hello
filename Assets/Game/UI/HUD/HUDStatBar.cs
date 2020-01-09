@@ -104,7 +104,7 @@ public class HUDStatBar : IHUDWidget, IBroadcastListener {
 		string[] barNames = { "BaseSlider", "ExtraSlider", "DamageSlider", "Background" };
 		for(int i = 0; i < (int)Bars.COUNT; i++) {
 			m_bars[i] = new BarData();
-			child = transform.Find(barNames[i]);
+			child = transform.FindTransformRecursive(barNames[i]);
 			if(child != null) {
                 m_bars[i].transform = child.transform;
 				m_bars[i].slider = child.GetComponent<Slider>();
@@ -121,7 +121,7 @@ public class HUDStatBar : IHUDWidget, IBroadcastListener {
 		m_canvasGroup = GetComponent<CanvasGroup>();
 		m_valueTxt = gameObject.FindComponentRecursive<TextMeshProUGUI>("TextValue");
 
-		child = transform.Find("InvulnerabilityGlow");
+		child = transform.FindTransformRecursive("InvulnerabilityGlow");
 		if(child != null) {
 			m_invulnerabilityGlow = child.gameObject;
 		}
@@ -132,7 +132,7 @@ public class HUDStatBar : IHUDWidget, IBroadcastListener {
 		m_areParticlesPlaying = false;
 
 
-		child = transform.Find("Icon");
+		child = transform.FindTransformRecursive("Icon");
 		if ( child )
 		{
 			m_icon = child.gameObject;
@@ -165,7 +165,7 @@ public class HUDStatBar : IHUDWidget, IBroadcastListener {
             {
                 // Check remaining lives to show more health Icons!
                 Messenger.AddListener<DamageType, Transform>(MessengerEvents.PLAYER_KO, OnPlayerKo);
-                Messenger.AddListener(MessengerEvents.PLAYER_FREE_REVIVE, OnFreeRevive);
+				Messenger.AddListener<DragonPlayer.ReviveReason>(MessengerEvents.PLAYER_REVIVE, OnFreeRevive);
                 Messenger.AddListener(MessengerEvents.PLAYER_MUMMY_REVIVE, OnMummyRevive);
                 RefreshIcons();
             }break;
@@ -204,7 +204,7 @@ public class HUDStatBar : IHUDWidget, IBroadcastListener {
             case Type.Health:
             {
                 Messenger.RemoveListener<DamageType, Transform>(MessengerEvents.PLAYER_KO, OnPlayerKo);
-                Messenger.RemoveListener(MessengerEvents.PLAYER_FREE_REVIVE, OnFreeRevive);
+				Messenger.RemoveListener<DragonPlayer.ReviveReason>(MessengerEvents.PLAYER_REVIVE, OnFreeRevive);
                 Messenger.RemoveListener(MessengerEvents.PLAYER_MUMMY_REVIVE, OnMummyRevive);
             }break;
             case Type.Energy:
@@ -294,7 +294,7 @@ public class HUDStatBar : IHUDWidget, IBroadcastListener {
 	public override void PeriodicUpdate() {
 		if (m_ready) {
 			// Compute delta time, considering our update interval
-			float deltaTime = Mathf.Max(UPDATE_INTERVAL, Time.unscaledDeltaTime);   // Cover cases where the frame took longer than our update interval (our the update interval is 0)
+			float deltaTime = Mathf.Max(UPDATE_INTERVAL, Time.unscaledDeltaTime);   // Cover cases where the frame took longer than our update interval (or the update interval is 0)
 
 			// Only if player is alive
 			if(InstanceManager.player != null) {
@@ -308,11 +308,11 @@ public class HUDStatBar : IHUDWidget, IBroadcastListener {
 				// Set base slider min/max
 				targetSlider = baseBar.slider;
 				if(targetSlider != null) {
-					if(targetSlider.minValue != 0f) {
+					if(!IsEqual(targetSlider.minValue, 0f)) {
 						targetSlider.minValue = 0f;
 					}
 
-					if(targetSlider.maxValue != targetExtraValue) {
+					if(!IsEqual(targetSlider.maxValue, targetExtraValue)) {
 						targetSlider.maxValue = targetExtraValue;
 					}
 
@@ -322,11 +322,11 @@ public class HUDStatBar : IHUDWidget, IBroadcastListener {
 				// Set extra slider min/max
 				targetSlider = extraBar.slider;
 				if(targetSlider != null) {
-					if(targetSlider.minValue != 0f) {
+					if(!IsEqual(targetSlider.minValue, 0f)) {
 						targetSlider.minValue = 0f;
 					}
 
-					if(targetSlider.maxValue != targetExtraValue) {
+					if(!IsEqual(targetSlider.maxValue, targetExtraValue)) {
 						targetSlider.maxValue = targetExtraValue; // this is the max value with all the bonus
 					}
 
@@ -336,11 +336,11 @@ public class HUDStatBar : IHUDWidget, IBroadcastListener {
 				// Set damage slider min/max
 				targetSlider = damageBar.slider;
 				if(targetSlider != null) {
-					if(targetSlider.minValue != 0f) {
+					if(!IsEqual(targetSlider.minValue, 0f)) {
 						targetSlider.minValue = 0f;
 					}
 
-					if(targetSlider.maxValue != targetExtraValue) {
+					if(!IsEqual(targetSlider.maxValue, targetExtraValue)) {
 						targetSlider.maxValue = targetExtraValue; // this is the max value with all the bonus
 					}
 				}
@@ -349,13 +349,13 @@ public class HUDStatBar : IHUDWidget, IBroadcastListener {
 				targetSlider = extraBar.slider;
 				if(targetSlider != null) {
 					if(m_instantSet) {
-						if(targetSlider.value != targetValue) {
+						if(!IsEqual(targetSlider.value, targetValue)) {
 							targetSlider.value = targetValue;
 						}
 					} else {
 						// If going up, animate, otherwise instant set
 						float value = (targetValue > targetSlider.value) ? targetValueStep : targetValue;                        
-						if(targetSlider.value != value) {
+						if(!IsEqual(targetSlider.value, value)) {
 							targetSlider.value = value;	
 						}
 					}
@@ -368,13 +368,13 @@ public class HUDStatBar : IHUDWidget, IBroadcastListener {
 					targetValueStep = Mathf.Min(targetValueStep, targetBaseValue);
 
 					if(m_instantSet) {
-						if(targetSlider.value != targetValue) {
+						if(!IsEqual(targetSlider.value, targetValue)) {
 							targetSlider.value = targetValue;
 						}
 					} else {
 						// If going up, animate, otherwise instant set
 						float value = (targetValue > targetSlider.value) ? targetValueStep : targetValue;
-						if(targetSlider.value != value) {
+						if(!IsEqual(targetSlider.value, value)) {
 							targetSlider.value = value;   
 						}
 					}
@@ -405,7 +405,7 @@ public class HUDStatBar : IHUDWidget, IBroadcastListener {
 					targetValue = Mathf.Max(extraBar.slider.value, baseBar.slider.value);
 
 					if(m_instantSet) {
-						if(targetSlider.value != targetValue) {
+						if(!IsEqual(targetSlider.value, targetValue)) {
 							targetSlider.value = targetValue;
 						}
 					} else {
@@ -437,7 +437,7 @@ public class HUDStatBar : IHUDWidget, IBroadcastListener {
 
                 // Text
                 if (m_valueTxt != null &&
-				    (m_extraBarLastValue != extraBar.slider.value || m_extraBarLastMaxValue != extraBar.slider.maxValue)) {
+				    (!IsEqual(m_extraBarLastValue, extraBar.slider.value) || !IsEqual(m_extraBarLastMaxValue, extraBar.slider.maxValue))) {
 					m_extraBarLastValue = extraBar.slider.value;
 					m_extraBarLastMaxValue = extraBar.slider.maxValue;
 
@@ -597,7 +597,7 @@ public class HUDStatBar : IHUDWidget, IBroadcastListener {
         m_bars[i].gradient.color2 = m_bars[i].color2;
 	}
 
-	void OnFreeRevive()
+	void OnFreeRevive(DragonPlayer.ReviveReason reason)
 	{
         RefreshIcons( true );
 
@@ -620,10 +620,10 @@ public class HUDStatBar : IHUDWidget, IBroadcastListener {
 			case Type.Health:
 			{
 				int remainingLives = InstanceManager.player.GetReminingLives();
-				int max = Mathf.Max( m_extraIcons.Count, remainingLives);
-				for( int i = 0; i<max; i++ )
+				int max = Mathf.Max(remainingLives, m_extraIcons.Count);
+				for (int i = 0; i < max; i++)
 				{
-					while ( i >= m_extraIcons.Count )
+					if ( i >= m_extraIcons.Count )
 					{
 						// Add icon
 						// Set active false
@@ -638,21 +638,9 @@ public class HUDStatBar : IHUDWidget, IBroadcastListener {
 						extraRt.localPosition = rt.localPosition + Vector3.right * (rt.rect.width * 0.2f * (m_extraIcons.Count + 1));
 						// extraRt.offsetMax.y = 0;
 
-						Animator anim = extraIcon.GetComponent<Animator>();
-						if (anim) {
-							anim.enabled = false;
-						}
-
 						m_extraIcons.Add( extraIcon );
-
-
 					}
-				}
-				if (showAnimations && remainingLives < m_extraIcons.Count) {
-					Animator anim = m_extraIcons[remainingLives].GetComponent<Animator>();
-					if (anim) {
-						anim.enabled = true;
-					}
+					m_extraIcons[i].SetActive( i < remainingLives );
 				}
 			}break;
 		}
@@ -744,4 +732,14 @@ public class HUDStatBar : IHUDWidget, IBroadcastListener {
             }
         }
     }
+
+	/// <summary>
+	/// Safe float comparison.
+	/// </summary>
+	/// <param name="_a"></param>
+	/// <param name="_b"></param>
+	/// <returns></returns>
+	private static bool IsEqual(float _a, float _b) {
+		return Mathf.Abs(_a - _b) < Mathf.Epsilon;
+	}
 }

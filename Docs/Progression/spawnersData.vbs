@@ -54,7 +54,7 @@ Function spawnerInfo()
 	substrToFind2 = "m_entityPrefab:"
 	substrToFind3 = "m_entityPrefabStr:"
 	If foundStrMatch(tmpStr,substrToFind) = true Or foundStrMatch(tmpStr,substrToFind2) = true Or foundStrMatch(tmpStr,substrToFind3) = true Then
-		spawner = Replace(CurrentSpawner.Path,"D:\Projects\dragon\Assets\Tools\LevelEditor\SpawnerPrefabs\","")										   
+		spawner = Replace(CurrentSpawner.Path,"D:\Projects\dragon\client\Assets\Tools\LevelEditor\SpawnerPrefabs\","")										   
 		spawner = Replace(spawner,".prefab","")
 		If foundStrMatch(tmpStr,substrToFind) = true Then
 			prefabFolder = Replace(objInputFile.ReadLine,"- name: ","")
