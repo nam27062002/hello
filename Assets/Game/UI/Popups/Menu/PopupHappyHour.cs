@@ -60,8 +60,8 @@ public class PopupHappyHour : MonoBehaviour {
 	/// <summary>
 	/// Initialization.
 	/// </summary>
-	/// <param name="_lastOfferSku">Sku of the offer that will be shown in the popup</param>
-	public void Init(string _lastOfferSku) {
+	/// <param name="_lastPackDef">Definition of the pack that will be shown in the popup</param>
+	public void Init(DefinitionNode _lastPackDef) {
 
         m_happyHour = OffersManager.instance.happyHour;
 
@@ -79,16 +79,9 @@ public class PopupHappyHour : MonoBehaviour {
             //m_extraGemsRateText.text = LocalizationManager.SharedInstance.Localize("TID_SHOP_BONUS_AMOUNT", gemsPercentage); 
 
             // Show the PC offer in the popup
-            if (! string.IsNullOrEmpty(_lastOfferSku) && m_offerToDisplay != null)
-            {
-                DefinitionNode offerDef  = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SHOP_PACKS, _lastOfferSku);
-
-                if (offerDef != null)
-                {
-                    m_offerToDisplay.InitFromDef(offerDef);
-                }
-                
-            }
+			if(_lastPackDef != null && m_offerToDisplay != null) {
+				m_offerToDisplay.InitFromDef(_lastPackDef);
+			}
         } else
         {
             //Shouldnt happent, but just in case. If there is not happy hour active, close the popup.

@@ -361,6 +361,7 @@ public class UserProfile : UserPersistenceSystem
     // Happy hour
     private DateTime m_happyHourExpirationTime;
     private float m_happyHourExtraGemsRate;
+	private string m_happyHourLastPackSku;
 
     // Remove ads feature
     private RemoveAdsFeature m_removeAds;
@@ -1211,6 +1212,12 @@ public class UserProfile : UserPersistenceSystem
             m_happyHourExtraGemsRate = 0;
         }
 
+		key = "happyHourLastPackSku";
+		if(happyHour.ContainsKey(key)) {
+			m_happyHourLastPackSku = happyHour[key];
+		} else {
+			m_happyHourLastPackSku = string.Empty;
+		}
 
         // Visited Zones
         key = "visitedZones";
@@ -1430,6 +1437,11 @@ public class UserProfile : UserPersistenceSystem
 
         happyHour.Add("happyHourExpirationTime", m_happyHourExpirationTime.Ticks.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
         happyHour.Add("happyHourExtraGemsRate", m_happyHourExtraGemsRate.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
+
+		if(!string.IsNullOrEmpty(m_happyHourLastPackSku)) {
+			// No need to add it if none - more compact save file!
+			happyHour.Add("happyHourLastPackSku", m_happyHourLastPackSku);
+		}
 
         data.Add("happyHourOffer", happyHour);
 
@@ -2095,6 +2107,13 @@ public class UserProfile : UserPersistenceSystem
                 _happyHour.expirationTime = m_happyHourExpirationTime;
                 _happyHour.extraGemsFactor = m_happyHourExtraGemsRate;
             }
+
+			// Last purchased pack is not so much critical, no need for extra checks
+			if(!string.IsNullOrEmpty(m_happyHourLastPackSku)) {
+				_happyHour.lastPackDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SHOP_PACKS, m_happyHourLastPackSku);
+			} else {
+				_happyHour.lastPackDef = null;
+			}
         }
     }
 
@@ -2105,6 +2124,11 @@ public class UserProfile : UserPersistenceSystem
         {
             m_happyHourExpirationTime = _happyHour.expirationTime;
             m_happyHourExtraGemsRate = _happyHour.extraGemsFactor;
+			if(_happyHour.lastPackDef != null) {
+				m_happyHourLastPackSku = _happyHour.lastPackDef.sku;
+			} else {
+				m_happyHourLastPackSku = string.Empty;
+			}
         }
     }
 

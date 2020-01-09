@@ -60,7 +60,7 @@ public class PopupShopCurrencyPill : IPopupShopPill {
 	private static int s_loadingTaskPriority = 0;
 
 	private bool m_waitingForPrice = false;
-    private bool happyHourActive = false;
+    private bool m_happyHourActive = false;
     private int amountApplied; // Keep a record of the currency amount bought
 
 	//------------------------------------------------------------------------//
@@ -212,56 +212,52 @@ public class PopupShopCurrencyPill : IPopupShopPill {
         if (m_type == UserProfile.Currency.HARD)
         {
 
-            // In case there is a happy hour active
-            if (OffersManager.instance.happyHour != null && OffersManager.instance.happyHour.IsActive())
-            {
-                happyHourActive = true;
+			// In case there is a happy hour active
+			if(OffersManager.instance.happyHour != null) {
+				// Check whether Happy Hour applies to this pack or not
+				HappyHourOffer happyHour = OffersManager.instance.happyHour;
+				bool happyHourActive = happyHour.IsActive() && happyHour.IsPackAffected(m_def);
+				if(happyHourActive) {
+					if(m_amountBeforeOffer != null) {
+						// Show amount before the happy hour offer
+						m_amountBeforeOffer.gameObject.SetActive(true);
+						m_amountBeforeOffer.text = UIConstants.GetIconString(m_def.GetAsInt("amount"), m_type, UIConstants.IconAlignment.LEFT);
+					}
 
-                float bonusAmount = OffersManager.instance.happyHour.extraGemsFactor;
+					// Show a nice purple bground
+					if(m_purpleBground != null) {
+						m_purpleBground.SetActive(true);
+					}
 
-                if (m_amountBeforeOffer != null)
-                {
-                    // Show amount before the happy hour offer
-                    m_amountBeforeOffer.gameObject.SetActive(true);
-                    m_amountBeforeOffer.text = UIConstants.GetIconString(m_def.GetAsInt("amount"), m_type, UIConstants.IconAlignment.LEFT);
-                }
-
-                // Show a nice purple bground
-                if (m_purpleBground != null)
-                {
-                    m_purpleBground.SetActive(true);
-                }
-
-                // Hide the regular extra % text
-                if (m_bonusAmountText != null)
-                {
-                    m_bonusAmountText.gameObject.SetActive(false);
-                }
+					// Hide the regular extra % text
+					if(m_bonusAmountText != null) {
+						m_bonusAmountText.gameObject.SetActive(false);
+					}
 
 
-                // Instead of that, show it in a cool badge
-                if (m_discountBadge != null)
-                {
-                    m_discountBadge.SetActive(bonusAmount > 0f);
-                    m_discountBadgeText.Localize("TID_SHOP_BONUS_AMOUNT", StringUtils.MultiplierToPercentage(bonusAmount)); // 15% extra
-                }
+					// Instead of that, show it in a cool badge
+					float bonusAmount = OffersManager.instance.happyHour.extraGemsFactor;
+					if(m_discountBadge != null) {
+						m_discountBadge.SetActive(bonusAmount > 0f);
+						m_discountBadgeText.Localize("TID_SHOP_BONUS_AMOUNT", StringUtils.MultiplierToPercentage(bonusAmount)); // 15% extra
+					}
 
-                // Set total amount of gems
-                float newAmount = m_def.GetAsFloat("amount") * (1f + bonusAmount);
-                m_amountText.text = UIConstants.GetIconString((int)newAmount, m_type, UIConstants.IconAlignment.LEFT);
+					// Set total amount of gems
+					float newAmount = m_def.GetAsFloat("amount") * (1f + bonusAmount);
+					m_amountText.text = UIConstants.GetIconString((int)newAmount, m_type, UIConstants.IconAlignment.LEFT);
 
-            }
-            else
-            {
-                if (happyHourActive)
-                {
-                    // Only enter here once, when the happy hour finishes
-                    happyHourActive = false;
+					// Store new state
+					m_happyHourActive = happyHourActive;
+				} else {
+					// Only enter here once, when the happy hour finishes
+					if(m_happyHourActive) {
+						m_happyHourActive = happyHourActive;
 
-                    // Restore the original offer values
-                    InitFromDef(m_def);
-                }
-            }
+						// Restore the original offer values
+						InitFromDef(m_def);
+					}
+				}
+			}
         }
     }    
 
