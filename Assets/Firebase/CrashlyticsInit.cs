@@ -14,6 +14,17 @@ public static class CrashlyticsInit {
 	// Use this for initialization
 	public static void initialise() {
         isInitialized = false;
+
+#if UNITY_ANDROID
+        int androidAPILevel = PlatformUtilsAndroidImpl.GetSDKLevel();
+        if (androidAPILevel < 21)  //
+        {
+            Debug.Log("API level " + androidAPILevel + " detected. Avoiding Crashlytics init.");
+            return;
+        }
+#endif
+
+
         Firebase.FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith(task => {
             var dependencyStatus = task.Result;
             if (dependencyStatus == Firebase.DependencyStatus.Available)
