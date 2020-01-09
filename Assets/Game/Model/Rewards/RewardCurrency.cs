@@ -69,7 +69,7 @@ namespace Metagame {
 		/// <returns>The scaled SC amount.</returns>
 		/// <param name="_amount">Base SC amount to be scaled.</param>
 		public static long ScaleByMaxDragonOwned(long _amount) {
-			DefinitionNode rewardScaleFactorDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.MISSION_MODIFIERS, DragonManager.biggestOwnedDragon.def.sku);
+			DefinitionNode rewardScaleFactorDef = DefinitionsManager.SharedInstance.GetDefinitionByVariable(DefinitionsCategory.MISSION_MODIFIERS, "dragon_sku", DragonManager.biggestOwnedDragon.def.sku);
 			if(rewardScaleFactorDef != null) {
 				return Mathf.RoundToInt(((float)_amount) * rewardScaleFactorDef.GetAsFloat("missionSCRewardMultiplier"));
 			}

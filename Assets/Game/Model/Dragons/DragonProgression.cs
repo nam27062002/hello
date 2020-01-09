@@ -78,7 +78,8 @@ public class DragonProgression : SerializableClass {
 		// Get definition based on dragon sku
 		DefinitionNode progressionDef = null;
 		if(_owner != null) {
-			progressionDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGON_PROGRESSION, _owner.def.sku);
+			// progressionDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGON_PROGRESSION, _owner.def.sku);
+			progressionDef = DefinitionsManager.SharedInstance.GetDefinitionByVariable(DefinitionsCategory.DRAGON_PROGRESSION, "dragon_sku", _owner.def.sku);
 		}
 
 		// Init!
