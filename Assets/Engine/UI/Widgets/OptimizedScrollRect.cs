@@ -286,13 +286,15 @@ public class OptimizedScrollRect<T, D> : ScrollRect where T : ScrollRectItem<D> 
 			}
 		} while (screenPos < screenLimit + pillSize);
 
+        // [JOM] we were rendering an extra item out of the viewport. Doesnt seem necessary. 
+        lastItemIndex--;
 
-		// we have to show pills from _firstIndex to lastItemIndex,
-		// and return all the other pills to the pool
+        // we have to show pills from _firstIndex to lastItemIndex,
+        // and return all the other pills to the pool
 
-		// first, return all the pills not visible
-		// left side
-		int i = _firstItemIndex - 1;
+        // first, return all the pills not visible
+        // left side
+        int i = _firstItemIndex - 1;
 		while (i >= 0) {			
 			ReturnPillToPool(i);
 			i--;
