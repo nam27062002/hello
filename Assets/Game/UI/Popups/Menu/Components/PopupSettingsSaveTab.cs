@@ -47,7 +47,8 @@ public class PopupSettingsSaveTab : MonoBehaviour
 		Model_Init();
 		Social_Init();
 		Resync_Init();
-		User_Init();  
+        IAP_restore_Init();
+        User_Init();  
 		GameCenter_Init();
         Shown = false;
     }
@@ -389,60 +390,7 @@ public class PopupSettingsSaveTab : MonoBehaviour
 		Cloud_OnChangeSaveEnable();
 	}
 
-    public void IAP_RestorePurchases()
-    {
-
-        if (UsersManager.currentUser.removeAds.IsActive)
-        {
-            UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_PURCHASES_ALREADY_RESTORED"), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
-            return;
-        }
-
-        // Call to the store to restore the purchases
-        OpenLoadingPopup();
-
-        // Faking the call to the server
-        UbiBCN.CoroutineManager.DelayedCall(() => {
-            OnRestorePurchasesCompleted();
-            }, 3f);
-
-    }
-
-    private void OnRestorePurchasesCompleted()
-    {
-        // The loading popup is still open!
-        CloseLoadingPopup();
-
-        bool error = true;
-        if (error)
-        {
-            PersistenceFacade.Popups_OpenStoreErrorConnection(delegate ()
-            {
-                Log("ERROR connecting to the store... ");
-            });
-            return;
-        }
-
-        // Fake a remove ads rewards and push it the rewards stack
-        UsersManager.currentUser.PushReward(Metagame.Reward.CreateTypeRemoveAds());
-
-        if (UsersManager.currentUser.rewardStack.Count > 0)
-        {
-
-            // Return to selection screen and show peding rewards
-            // Close all open popups
-            PopupManager.Clear(true);
-
-            // Move to the rewards screen
-            PendingRewardScreen scr = InstanceManager.menuSceneController.GetScreenData(MenuScreen.PENDING_REWARD).ui.GetComponent<PendingRewardScreen>();
-            scr.StartFlow(false);   // No intro
-            InstanceManager.menuSceneController.GoToScreen(MenuScreen.PENDING_REWARD);
-
-        } else
-        {
-            UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_NOTHING_TO_RESTORE"), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
-        }
-    }
+    
 
     #endregion
 
@@ -499,10 +447,83 @@ public class PopupSettingsSaveTab : MonoBehaviour
             Resync_IsRunning = true;
             PersistenceFacade.instance.Sync_FromSettings(onDone);
         }
-    }    
+    }
     #endregion
+    
+    #region IAP_restore
 
-    #region user
+    [SerializeField]
+    private Button m_restoreIAPButton;
+
+    private void IAP_restore_Init()
+    {
+        #if UNITY_ANDROID || UNITY_EDITOR
+             m_restoreIAPButton.gameObject.SetActive(true);
+        #else
+            // We dont restore IAPs in google Play store
+            m_restoreIAPButton.gameObject.SetActive(false);
+        #endif
+    }
+
+    public void IAP_RestorePurchases()
+    {
+
+        if (UsersManager.currentUser.removeAds.IsActive)
+        {
+            UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_PURCHASES_ALREADY_RESTORED"), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
+            return;
+        }
+
+        // Call to the store to restore the purchases
+        OpenLoadingPopup();
+
+        // Faking the call to the server
+        UbiBCN.CoroutineManager.DelayedCall(() => {
+            OnRestorePurchasesCompleted();
+        }, 3f);
+
+    }
+
+    private void OnRestorePurchasesCompleted()
+    {
+        // The loading popup is still open!
+        CloseLoadingPopup();
+
+        bool error = true;
+        if (error)
+        {
+            PersistenceFacade.Popups_OpenStoreErrorConnection(delegate ()
+            {
+                Log("ERROR connecting to the store... ");
+            });
+            return;
+        }
+
+        // Fake a remove ads rewards and push it the rewards stack
+        UsersManager.currentUser.PushReward(Metagame.Reward.CreateTypeRemoveAds());
+
+        if (UsersManager.currentUser.rewardStack.Count > 0)
+        {
+
+            // Return to selection screen and show peding rewards
+            // Close all open popups
+            PopupManager.Clear(true);
+
+            // Move to the rewards screen
+            PendingRewardScreen scr = InstanceManager.menuSceneController.GetScreenData(MenuScreen.PENDING_REWARD).ui.GetComponent<PendingRewardScreen>();
+            scr.StartFlow(false);   // No intro
+            InstanceManager.menuSceneController.GoToScreen(MenuScreen.PENDING_REWARD);
+
+        }
+        else
+        {
+            UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_NOTHING_TO_RESTORE"), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
+        }
+    }
+
+#endregion
+
+#region user
 
     /// <summary>
     /// User profile GameObject to use when the user has never logged in. It encourages the user to log in
@@ -671,9 +692,9 @@ public class PopupSettingsSaveTab : MonoBehaviour
             m_userLoggedInRoot.SetActive(!string.IsNullOrEmpty(User_NameLoaded));
         }
     }
-    #endregion
+#endregion
 
-    #region model
+#region model
     private enum EState
     {        
         None,
@@ -748,39 +769,39 @@ public class PopupSettingsSaveTab : MonoBehaviour
     {
         return PersistenceFacade.instance.IsCloudSaveEnabled;
     }
-    #endregion
+#endregion
 
-    #region utils
+#region utils
     System.Collections.IEnumerator DelayedCall(float waitTime, Action callback)
     {
         yield return new WaitForSecondsRealtime(waitTime);
         callback();
     }
-    #endregion
+#endregion
 
-    #region log
+#region log
     private static string LOG_CHANNEL = "[SAVE_TAB]";
 
-    #if ENABLE_LOGS
+#if ENABLE_LOGS
     [Conditional("DEBUG")]
-    #else
+#else
     [Conditional("FALSE")]
-    #endif
+#endif
     private void Log(string message)
     {
         Debug.Log(LOG_CHANNEL + message);        
     }
 
-    #if ENABLE_LOGS
+#if ENABLE_LOGS
     [Conditional("DEBUG")]
-    #else
+#else
     [Conditional("FALSE")]
-    #endif
+#endif
     private void LogError(string message)
     {
         Debug.LogError(LOG_CHANNEL + message);
     }
-    #endregion
+#endregion
 
 	public void ForceLayoutRefresh(HorizontalOrVerticalLayoutGroup _layout) {
 		// [AOC] Enabling/disabling objects while the layout is inactive makes the layout to not update properly
