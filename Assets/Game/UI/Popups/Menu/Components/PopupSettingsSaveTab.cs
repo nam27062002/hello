@@ -503,7 +503,7 @@ public class PopupSettingsSaveTab : MonoBehaviour
             return;
         }*/
 
-		List<Reward> rewards = new List<Reward> ();
+		List<Metagame.Reward> rewards = new List<Metagame.Reward> ();
 		int count = productIds.Count;
 		for (int i = 0; i < count; i++) 
 		{
