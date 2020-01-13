@@ -1896,17 +1896,41 @@ public class UserProfile : UserPersistenceSystem
 	/// <summary>
 	/// Push a reward to the stack.
 	/// </summary>
+	/// <returns><c>true</c> if the reward has been added. <c>false</c> if the reward hasn't been added because the user already owns it and the user is allowed to own only an instance of this 
+	/// type of reward.amount, for example, removeAds is not added if the user already owns it</returns>
 	/// <param name="_reward">Reward to be pushed.</param>
-	public void PushReward(Metagame.Reward _reward) {
+	public bool PushReward(Metagame.Reward _reward) {
 
         // Dont push rewards that are already owned by the user
-        if (_reward.IsAlreadyOwned())
-            return;
+		if (_reward.IsAlreadyOwned ())
+			return false;
 
 		rewardStack.Push(_reward);
 		Debug.Log("<color=green>PUSH! " + _reward.GetType().Name + "</color>");
 		Messenger.Broadcast<Metagame.Reward>(MessengerEvents.PROFILE_REWARD_PUSHED, _reward);
+
+		return true;
 	}
+
+	/// <summary>
+	/// Push a list of rewards to the stack.
+	/// </summary>
+	/// <returns>The amount of rewards that have been added to the profile effectively. For example removeAds is not added if the user already owns it</returns>
+	/// <param name="_rewards">List of rewards to add.</param>
+	public int PushRewards(List<Metagame.Reward> _rewards) {
+		int _returnValue = 0;
+		if (_rewards != null) {
+			int count = _rewards.Count;
+			for (int i = 0; i < count; i++) {
+				if (PushReward (_rewards [i])) {
+					_returnValue++;
+				}
+			}				
+		}
+
+		return _returnValue;
+	}
+
 
 	/// <summary>
 	/// Pop a reward from the stack.
