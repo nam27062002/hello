@@ -80,7 +80,13 @@ public class SeasonTriggerInstanciator : MonoBehaviour {
                 for (int j = 0; j < length; j++)
                 {
                     SeasonalObject seasonalObject = m_seasonsData[i].targets[j];
-                    GameObject go = Instantiate(Resources.Load(seasonalObject.resource), seasonalObject.root) as GameObject;
+					Transform root = seasonalObject.root;
+					// Avoid not having root or it will stay on the scene forever
+					if ( root == null )
+					{
+						root = transform;
+					}
+                    GameObject go = Instantiate(Resources.Load(seasonalObject.resource), root) as GameObject;
                     m_onInstantiateEvent.Invoke(go);
                 }
             }
