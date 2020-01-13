@@ -198,7 +198,12 @@ public class GameStoreManagerCalety : GameStoreManager
 
 		public override void onRestorePurchasesCompleted(List<string> productIds) 
 		{ 
-			m_manager.OnRestorePurchasesCompleted(productIds);
+			m_manager.OnRestorePurchasesCompleted(null, productIds);
+		}
+
+		public override void onRestorePurchasesFailed(string error) 
+		{ 
+			m_manager.OnRestorePurchasesCompleted(error, null);
 		}
     }
 	#endregion
@@ -218,7 +223,7 @@ public class GameStoreManagerCalety : GameStoreManager
 
     private float m_waitForInitializationExpiresAt = -1f;
     private Action m_onWaitForInitializationDone;
-	private Action<List<string>> m_onRestoredPurchasesCompleted;
+	private Action<string, List<string>> m_onRestoredPurchasesCompleted;
 
     public GameStoreManagerCalety () 
 	{
@@ -458,7 +463,7 @@ public class GameStoreManagerCalety : GameStoreManager
         m_onWaitForInitializationDone = null;
     }
 
-	public override void RestorePurchases(Action<List<string>> onRestoredPurchasesCompleted)
+	public override void RestorePurchases(Action<string, List<string>> onRestoredPurchasesCompleted)
 	{
 		m_onRestoredPurchasesCompleted = onRestoredPurchasesCompleted;
 
@@ -466,18 +471,18 @@ public class GameStoreManagerCalety : GameStoreManager
 		// Faking the call to the server
 		UbiBCN.CoroutineManager.DelayedCall(() => {
 			List<string> productIds = new List<string> { "com.ubisoft.hungrydragon.remove_ads_offer" };
-			OnRestorePurchasesCompleted(productIds);
+			OnRestorePurchasesCompleted(null, productIds);
             }, 3f);
 		#else
 			StoreManager.SharedInstance.RestorePurchases();
 		#endif
 	}
 
-	public void OnRestorePurchasesCompleted(List<string> productIds)
+	public void OnRestorePurchasesCompleted(string error, List<string> productIds)
 	{
 		if (m_onRestoredPurchasesCompleted != null) 
 		{
-			m_onRestoredPurchasesCompleted(productIds);
+			m_onRestoredPurchasesCompleted(error, productIds);
 			m_onRestoredPurchasesCompleted = null;
 		}
 	}

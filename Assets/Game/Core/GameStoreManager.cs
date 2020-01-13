@@ -36,6 +36,6 @@ public class GameStoreManager
 
     public virtual bool     HavePromotedIAPs() { return false; }
     public virtual string GetNextPromotedIAP() { return ""; }
-	public virtual void RestorePurchases(System.Action<List<string>> onRestoredPurchasesCompleted) { }
+	public virtual void RestorePurchases(System.Action<string, List<string>> onRestoredPurchasesCompleted) { }
     public virtual void Update() {}
 }

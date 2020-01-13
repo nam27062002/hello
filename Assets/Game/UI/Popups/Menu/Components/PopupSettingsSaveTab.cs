@@ -505,22 +505,21 @@ public class PopupSettingsSaveTab : MonoBehaviour
     /// <summary>
     /// Callback of the restore purchases operation
     /// </summary>
+	/// <param name="error">A non null value with the error information when an error occurred when restoring purchases. A null value when everything went ok</param>
     /// <param name="productIds"></param>
-	private void OnRestorePurchasesCompleted(List<string> productIds)
+	private void OnRestorePurchasesCompleted(string error, List<string> productIds)
     {		
         // The loading popup is still open!
         CloseLoadingPopup();
 
-		/*
-        bool error = true;
-        if (error)
-        {
-            PersistenceFacade.Popups_OpenStoreErrorConnection(delegate ()
-            {
-                Log("ERROR connecting to the store... ");
-            });
-            return;
-        }*/
+		if (!string.IsNullOrEmpty(error))
+		{
+			PersistenceFacade.Popups_OpenStoreErrorConnection(delegate ()
+				{
+					Log("ERROR connecting to the store... ");
+				});
+			return;
+		}
 
 		List<Metagame.Reward> rewards = new List<Metagame.Reward> ();
 		int count = productIds.Count;
