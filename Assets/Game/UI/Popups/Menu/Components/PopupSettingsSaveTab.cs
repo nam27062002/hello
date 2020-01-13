@@ -15,6 +15,7 @@ using System.Diagnostics;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using FGOL.Server;
 
 /// <summary>
 /// This class is responsible for handling the save tab in the settings popup. This tab is used for three things:
@@ -458,7 +459,7 @@ public class PopupSettingsSaveTab : MonoBehaviour
 
     private void IAP_restore_Init()
     {
-        #if UNITY_ANDROID || UNITY_EDITOR
+        #if UNITY_IOS || UNITY_EDITOR
              m_restoreIAPButton.gameObject.SetActive(true);
         #else
             // We dont restore IAPs in google Play store
@@ -466,27 +467,45 @@ public class PopupSettingsSaveTab : MonoBehaviour
         #endif
     }
 
+    /// <summary>
+    /// The user pressed the "Restore Remove Ads" button in the SAVE tab
+    /// </summary>
     public void IAP_RestorePurchases()
     {
 
         if (UsersManager.currentUser.removeAds.IsActive)
         {
+            // The user already has the "remove ads" offer, so just show a message
             UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_PURCHASES_ALREADY_RESTORED"), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
             return;
         }
 
-        // Call to the store to restore the purchases
-        OpenLoadingPopup();
+        // Check if there's connection
+        GameServerManager.SharedInstance.CheckConnection(delegate (Error connectionError)
+        {
+            if (connectionError == null)
+            {
+                // Success!
 
-		/*
-        // Faking the call to the server
-        UbiBCN.CoroutineManager.DelayedCall(() => {
-            OnRestorePurchasesCompleted();
-        }, 3f);
-		*/
-		GameStoreManager.SharedInstance.RestorePurchases (OnRestorePurchasesCompleted);
+                // Call to the store to restore the purchases
+                OpenLoadingPopup();
+                GameStoreManager.SharedInstance.RestorePurchases(OnRestorePurchasesCompleted);
+            }
+            else
+            {
+                // Failed to find an internet connection. Show a connection error message
+                UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_GEN_NO_CONNECTION"), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
+
+            }
+        });
+
     }
 
+
+    /// <summary>
+    /// Callback of the restore purchases operation
+    /// </summary>
+    /// <param name="productIds"></param>
 	private void OnRestorePurchasesCompleted(List<string> productIds)
     {		
         // The loading popup is still open!
