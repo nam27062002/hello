@@ -195,6 +195,11 @@ public class GameStoreManagerCalety : GameStoreManager
         {
             return m_hasInitFailed;
         }
+
+		public override void onRestorePurchasesCompleted(List<string> productIds) 
+		{ 
+			m_manager.OnRestorePurchasesCompleted(productIds);
+		}
     }
 	#endregion
 
@@ -213,6 +218,7 @@ public class GameStoreManagerCalety : GameStoreManager
 
     private float m_waitForInitializationExpiresAt = -1f;
     private Action m_onWaitForInitializationDone;
+	private Action<List<string>> m_onRestoredPurchasesCompleted;
 
     public GameStoreManagerCalety () 
 	{
@@ -227,6 +233,7 @@ public class GameStoreManagerCalety : GameStoreManager
         m_isFirstInit = true;
         m_storeListener.Reset();
         ResetWaitForInitialization();
+		m_onRestoredPurchasesCompleted = null;
     }
 
 	public override void Initialize()
@@ -450,6 +457,30 @@ public class GameStoreManagerCalety : GameStoreManager
         m_waitForInitializationExpiresAt = -1f;
         m_onWaitForInitializationDone = null;
     }
+
+	public override void RestorePurchases(Action<List<string>> onRestoredPurchasesCompleted)
+	{
+		m_onRestoredPurchasesCompleted = onRestoredPurchasesCompleted;
+
+		#if UNITY_EDITOR
+		// Faking the call to the server
+		UbiBCN.CoroutineManager.DelayedCall(() => {
+			List<string> productIds = new List<string> { "com.ubisoft.hungrydragon.remove_ads_offer" };
+			OnRestorePurchasesCompleted(productIds);
+            }, 3f);
+		#else
+			StoreManager.SharedInstance.RestorePurchases();
+		#endif
+	}
+
+	public void OnRestorePurchasesCompleted(List<string> productIds)
+	{
+		if (m_onRestoredPurchasesCompleted != null) 
+		{
+			m_onRestoredPurchasesCompleted(productIds);
+			m_onRestoredPurchasesCompleted = null;
+		}
+	}
 
 #if UNITY_EDITOR
     // Time for the shope to initialize. Increase this value if you want to test what happens when trying to purchase before the shop has been initialized
