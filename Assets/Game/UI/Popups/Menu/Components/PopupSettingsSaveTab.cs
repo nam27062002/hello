@@ -10,6 +10,7 @@
 
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using UnityEngine;
 using UnityEngine.UI;
@@ -477,18 +478,21 @@ public class PopupSettingsSaveTab : MonoBehaviour
         // Call to the store to restore the purchases
         OpenLoadingPopup();
 
+		/*
         // Faking the call to the server
         UbiBCN.CoroutineManager.DelayedCall(() => {
             OnRestorePurchasesCompleted();
         }, 3f);
-
+		*/
+		GameStoreManager.SharedInstance.RestorePurchases (OnRestorePurchasesCompleted);
     }
 
-    private void OnRestorePurchasesCompleted()
-    {
+	private void OnRestorePurchasesCompleted(List<string> productIds)
+    {		
         // The loading popup is still open!
         CloseLoadingPopup();
 
+		/*
         bool error = true;
         if (error)
         {
@@ -497,12 +501,17 @@ public class PopupSettingsSaveTab : MonoBehaviour
                 Log("ERROR connecting to the store... ");
             });
             return;
-        }
+        }*/
 
-        // Fake a remove ads rewards and push it the rewards stack
-        UsersManager.currentUser.PushReward(Metagame.Reward.CreateTypeRemoveAds());
+		List<Reward> rewards = new List<Reward> ();
+		int count = productIds.Count;
+		for (int i = 0; i < count; i++) 
+		{
+			UbiListUtils.AddRange(rewards, Metagame.Reward.GetRewardsFromIAP(productIds[i]), false, true);
+		}
 
-        if (UsersManager.currentUser.rewardStack.Count > 0)
+		count = UsersManager.currentUser.PushRewards (rewards);
+		if (count > 0)
         {
 
             // Return to selection screen and show peding rewards
