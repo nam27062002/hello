@@ -224,6 +224,7 @@ public class GameStoreManagerCalety : GameStoreManager
     private float m_waitForInitializationExpiresAt = -1f;
     private Action m_onWaitForInitializationDone;
 	private Action<string, List<string>> m_onRestoredPurchasesCompleted;
+	private float m_restoredPurchasesTimeoutAt;
 
     public GameStoreManagerCalety () 
 	{
@@ -254,6 +255,7 @@ public class GameStoreManagerCalety : GameStoreManager
         }
 
         ResetWaitForInitialization();
+		m_onRestoredPurchasesCompleted = null;
 
         m_storeListener.InitialiseStore(ref m_storeSkus, false);
 
@@ -466,6 +468,7 @@ public class GameStoreManagerCalety : GameStoreManager
 	public override void RestorePurchases(Action<string, List<string>> onRestoredPurchasesCompleted)
 	{
 		m_onRestoredPurchasesCompleted = onRestoredPurchasesCompleted;
+		m_restoredPurchasesTimeoutAt = Time.unscaledTime + 12f;
 
 		#if UNITY_EDITOR
 		// Faking the call to the server
@@ -516,6 +519,11 @@ public class GameStoreManagerCalety : GameStoreManager
                 ResetWaitForInitialization();
             }            
         }
+
+		if (m_onRestoredPurchasesCompleted != null && Time.unscaledTime >= m_restoredPurchasesTimeoutAt) 
+		{
+			OnRestorePurchasesCompleted("TIMEOUT", null);
+		}
     }
 
     #region log
