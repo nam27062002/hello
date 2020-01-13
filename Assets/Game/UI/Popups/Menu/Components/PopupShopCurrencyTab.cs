@@ -12,6 +12,8 @@ using UnityEngine.UI;
 
 using System.Collections.Generic;
 
+using DG.Tweening;
+
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
 //----------------------------------------------------------------------------//
@@ -99,4 +101,26 @@ public class PopupShopCurrencyTab : IPopupShopTab {
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
+	/// <summary>
+	/// The tab is about to be displayed.
+	/// </summary>
+	public void OnTabShow() {
+		// Find first pill with Happy Hour active
+		PopupShopCurrencyPill pill = null;
+		PopupShopCurrencyPill targetPill = null;
+		for(int i = 0; i < m_pills.Count; ++i) {
+			pill = m_pills[i] as PopupShopCurrencyPill;
+			if(pill.happyHourActive) {
+				targetPill = pill;
+				break;	// Found it!
+			}
+		}
+
+		// Scroll to it!
+		if(targetPill != null) {
+			m_scrollList.DOGoToItem(targetPill.transform, 1f)
+				.SetDelay(0.5f)
+				.SetEase(Ease.OutQuad);
+		}
+	}
 }

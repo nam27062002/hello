@@ -55,12 +55,16 @@ public class PopupShopCurrencyPill : IPopupShopPill {
 		get { return m_type; }
 	}
 
+	private bool m_happyHourActive = false;
+	public bool happyHourActive {
+		get { return m_happyHourActive; }
+	}
+
 	// Internal
 	private ResourceRequest m_iconLoadTask = null;
 	private static int s_loadingTaskPriority = 0;
 
 	private bool m_waitingForPrice = false;
-    private bool m_happyHourActive = false;
     private int amountApplied; // Keep a record of the currency amount bought
 
 	//------------------------------------------------------------------------//
