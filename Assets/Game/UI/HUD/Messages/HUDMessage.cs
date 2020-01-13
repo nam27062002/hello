@@ -430,12 +430,6 @@ public class HUDMessage : MonoBehaviour, IBroadcastListener {
 	/// </summary>
 	/// <returns>Whether the message could be displayed or not (HUDMessageSystem priorities).</returns>
 	virtual public bool Show() {
-		if ( m_type == Type.MISSION_ZONE )
-		{
-			TextMeshProUGUI text = this.FindComponentRecursive<TextMeshProUGUI>();
-			Debug.Log(Color.green.Tag("HUDMESSAGE Show " + text.text + " "+ m_visible));
-		}
-		
 		// If already active, decide how to proceed
 		bool force = false;
 		if(m_visible) {
@@ -485,13 +479,7 @@ public class HUDMessage : MonoBehaviour, IBroadcastListener {
 
     public void OnHideMessage()
     {
-		if ( m_type == Type.MISSION_ZONE )
-		{
-			TextMeshProUGUI text = this.FindComponentRecursive<TextMeshProUGUI>();
-			Debug.Log(Colors.orange.Tag("HUDMESSAGE OnHideMessage " + text.text + " "+ m_visible));
-		}
-
-        if (m_hideMode == HideMode.ANIMATION)
+		if (m_hideMode == HideMode.ANIMATION)
         {
             Hide(true);
         }
@@ -508,12 +496,6 @@ public class HUDMessage : MonoBehaviour, IBroadcastListener {
 	/// Trigger the "out" animation.
 	/// </summary>
 	virtual public void Hide( bool _outDone = false ) {
-		if ( m_type == Type.MISSION_ZONE )
-		{
-			TextMeshProUGUI text = this.FindComponentRecursive<TextMeshProUGUI>();
-			Debug.Log(Colors.purple.Tag("HUDMESSAGE Hide " + text.text + " "+ m_visible));
-		}
-
 		// Skip if already inactive
 		if(!m_visible) return;
 
