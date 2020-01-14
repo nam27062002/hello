@@ -161,8 +161,18 @@ public class PopupHappyHour : MonoBehaviour {
         PopupController popup = PopupManager.LoadPopup(PopupShop.PATH);
         PopupShop shopPopup = popup.GetComponent<PopupShop>();
 
-        // Show the gems tab
-        shopPopup.Init(PopupShop.Mode.DEFAULT, "Happy_Hour_Popup");
+        // Are we playing a run at this moment?
+        if (InstanceManager.gameSceneController != null)
+        {
+            // User is playing a run. Show only PC tab.
+            shopPopup.Init(PopupShop.Mode.PC_ONLY, "Happy_Hour_Popup");
+        }
+        else
+        {
+            // Show all the tab offers
+            shopPopup.Init(PopupShop.Mode.DEFAULT, "Happy_Hour_Popup");
+        }
+
         shopPopup.closeAfterPurchase = true;
 
         // Open the shop popup!
