@@ -71,25 +71,19 @@ public class HungryLettersPanel : MonoBehaviour
 
 		// m_tween.AddOnFinished(TweenCompleted);
 		m_uiLetterContainer.Init(m_letterPlaces.Length);
-	}
 
-	protected void Start()
-	{
-		// TODO: on editor!!
-		/*
-		// register to the callbacks of the all collected letter system.
-		for(int i = 0; i < m_letterPlaces.Length; i++)
-		{
-			// m_letterPlaces[i].tweenTransform.AddOnFinished(OnAllCollectedAnimationFinished);
-		}
-		*/
-	}
+		// Start hidden
+		m_tweening = false;
+		m_presenting = false;
+		m_panelInPlace = false;
+		this.gameObject.SetActive(false);
 
-	private void OnEnable() {
+		// Subscribe to external events
 		Messenger.AddListener<bool, DragonSuperSize.Source>(MessengerEvents.SUPER_SIZE_TOGGLE, OnSuperSizeToggle);
 	}
 
-	private void OnDisable() {
+	private void OnDestroy() {
+		// Unsubscribe from external events
 		Messenger.RemoveListener<bool, DragonSuperSize.Source>(MessengerEvents.SUPER_SIZE_TOGGLE, OnSuperSizeToggle);
 	}
 
