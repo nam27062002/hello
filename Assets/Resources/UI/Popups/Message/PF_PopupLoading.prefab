@@ -144,6 +144,7 @@ GameObject:
   - component: {fileID: 224000012435028598}
   - component: {fileID: 222000013474020868}
   - component: {fileID: 114000012837194054}
+  - component: {fileID: 114662503806386150}
   - component: {fileID: 114000012634044674}
   m_Layer: 5
   m_Name: PF_LoadingIcon
@@ -426,6 +427,9 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
+  targetIsSelf: 1
+  targetGO: {fileID: 0}
+  tweenTargetIsTargetGO: 1
   delay: 0
   duration: 2
   easeType: 1
@@ -452,7 +456,7 @@ MonoBehaviour:
   id: 
   isRelative: 1
   isFrom: 0
-  isIndependentUpdate: 0
+  isIndependentUpdate: 1
   autoKill: 0
   isActive: 1
   isValid: 1
@@ -837,6 +841,20 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &114662503806386150
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000013917967486}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 40306178, guid: aa0b1eebb5db27a419fa4564bbe5c9c5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  preset: 0
+  onEnableBehaviour: 0
+  onDisableBehaviour: 0
 --- !u!114 &114874177112480822
 MonoBehaviour:
   m_ObjectHideFlags: 1
