@@ -160,6 +160,8 @@ public class HungryLettersPanel : MonoBehaviour
 		if(m_panelInPlace)
 		{
 			m_uiLetterContainer.TweenLetter();
+		} else {
+			this.gameObject.SetActive(false);
 		}
 	}
 
@@ -214,6 +216,7 @@ public class HungryLettersPanel : MonoBehaviour
 			return;
 		}
 
+		this.gameObject.SetActive(true);
 		m_tweening = true;
 		m_presenting = true;
 		DOTween.Restart( gameObject);
