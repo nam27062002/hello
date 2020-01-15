@@ -224,7 +224,7 @@ public class GameStoreManagerCalety : GameStoreManager
     private float m_waitForInitializationExpiresAt = -1f;
     private Action m_onWaitForInitializationDone;
 	private Action<string, List<string>> m_onRestoredPurchasesCompleted;
-	private float m_restoredPurchasesTimeoutAt;
+	private float m_restoredPurchasesTimeout;
 
     public GameStoreManagerCalety () 
 	{
@@ -468,7 +468,10 @@ public class GameStoreManagerCalety : GameStoreManager
 	public override void RestorePurchases(Action<string, List<string>> onRestoredPurchasesCompleted)
 	{
 		m_onRestoredPurchasesCompleted = onRestoredPurchasesCompleted;
-		m_restoredPurchasesTimeoutAt = Time.unscaledTime + 12f;
+
+		// Timeout is used instead of timestamp because we dont want to take into consideration the time that the user is dealing
+		// with the iOS store kit UI (for example entering password)
+		m_restoredPurchasesTimeout = 12f;
 
 		#if UNITY_EDITOR
 		// Faking the call to the server
@@ -520,9 +523,13 @@ public class GameStoreManagerCalety : GameStoreManager
             }            
         }
 
-		if (m_onRestoredPurchasesCompleted != null && Time.unscaledTime >= m_restoredPurchasesTimeoutAt) 
+		if (m_onRestoredPurchasesCompleted != null && Time.unscaledTime >= m_restoredPurchasesTimeout) 
 		{
-			OnRestorePurchasesCompleted("TIMEOUT", null);
+			m_restoredPurchasesTimeout -= Time.unscaledDeltaTime;
+			if (m_restoredPurchasesTimeout <= 0) 
+			{
+				OnRestorePurchasesCompleted ("TIMEOUT", null);
+			}
 		}
     }
 
