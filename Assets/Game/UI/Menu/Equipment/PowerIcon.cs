@@ -205,16 +205,16 @@ public class PowerIcon : MonoBehaviour, IBroadcastListener {
         {
             for (int i = 0; i < m_arrows.Count; i++)
             {
-                // Show an amount of arrows according to the powerup level
-                m_arrows[i].gameObject.SetActive(i < m_level);
+                // Power level = 0 means no arrows
+                bool showArrow = (i <= m_level - 1);
 
-                if (m_arrowColors != null && m_arrowColors[m_level - 1] != null)
+                // Show an amount of arrows according to the powerup level
+                m_arrows[i].gameObject.SetActive(showArrow);
+
+                if (showArrow && m_arrowColors != null && m_level > 0 && m_arrowColors[m_level-1] != null)
                 {
-                    if (m_level > 0)
-                    {
-                        // Color the arrows according to the level
-                        m_arrows[i].color = m_arrowColors[m_level - 1];
-                    }
+                    // Color the arrows according to the level
+                    m_arrows[i].color = m_arrowColors[m_level-1];
                 }
 
             }
