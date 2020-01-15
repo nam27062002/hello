@@ -469,8 +469,9 @@ public class GameStoreManagerCalety : GameStoreManager
 	{
 		m_onRestoredPurchasesCompleted = onRestoredPurchasesCompleted;
 
-		// Timeout is used instead of timestamp because we dont want to take into consideration the time that the user is dealing
-		// with the iOS store kit UI (for example entering password)
+		// Timeout is used instead of timestamp because we don¡t want to take into consideration the time that the user is dealing
+		// with the iOS store kit UI (for example entering password otherwise the user could get an error mistake even though the 
+		// purchases got restored successfully)
 		m_restoredPurchasesTimeout = 12f;
 
 		#if UNITY_EDITOR
