@@ -422,6 +422,7 @@ GameObject:
   - component: {fileID: 224291645436260924}
   - component: {fileID: 114077030896030554}
   - component: {fileID: 222204239831213010}
+  - component: {fileID: 114952209380077454}
   m_Layer: 5
   m_Name: ScrollViewHC
   m_TagString: Untagged
@@ -2045,7 +2046,18 @@ MonoBehaviour:
   m_allowMultiTouch: 0
   OnShow:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 114007752770460504}
+        m_MethodName: OnTabShow
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
   OnHide:
@@ -5976,6 +5988,22 @@ MonoBehaviour:
     m_Right: 0
     m_Top: 0
     m_Bottom: 0
+--- !u!114 &114952209380077454
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1027102887215046}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d61040ea2758d4710aace026531ff195, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  t: {fileID: 0}
+  m_scroll: {fileID: 114077030896030554}
+  m_targetHorizontalNormalizedPos: 0
+  m_duration: 1
+  m_ref: {fileID: 0}
 --- !u!114 &114954536402228204
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6695,7 +6723,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: -0.010894887, y: 0}
+  m_AnchoredPosition: {x: 0.00010070764, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!224 &224114334104976628
@@ -7074,7 +7102,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: -0.010894489, y: 0}
+  m_AnchoredPosition: {x: 0.000094635, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!224 &224381674803683976
@@ -7128,7 +7156,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: -0.0147391595, y: 0}
+  m_AnchoredPosition: {x: 0.00003263673, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!224 &224418998675967260

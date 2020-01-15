@@ -132,6 +132,7 @@ public class HUDMessage : MonoBehaviour, IBroadcastListener {
 
 	// Internal references
 	private Animator m_anim = null;
+	private TextMeshProUGUI m_rootText = null;
 
 	// Internal logic
 	protected float m_hideTimer = 0f;
@@ -171,6 +172,7 @@ public class HUDMessage : MonoBehaviour, IBroadcastListener {
 	virtual protected void Awake() {
 		// Get references
 		m_anim = GetComponent<Animator>();
+		m_rootText = GetComponent<TextMeshProUGUI>();
 
 		// Start hidden - the animator's default state should hide them
 		m_visible = false;
@@ -207,7 +209,7 @@ public class HUDMessage : MonoBehaviour, IBroadcastListener {
 	private void Start()
 	{
 		  // Deactivate all childs
-        SetOthersVisible( false );
+        SetChildrenVisibility( false );
 		switch( m_type ) {
 			case Type.BOOST_REMINDER: {
 				m_defaultText =  Localizer.ApplyCase(Localizer.Case.UPPER_CASE, LocalizationManager.SharedInstance.Localize(InstanceManager.player.data.tidBoostReminder));
@@ -272,18 +274,6 @@ public class HUDMessage : MonoBehaviour, IBroadcastListener {
 			case HideMode.TIMER:			Messenger.AddListener(MessengerEvents.GAME_STARTED, OnGameStarted);	break;
 		}
 	}
-    
-    public void SetOthersVisible( bool _visible)
-    {
-        for (int i = 0; i < transform.childCount; i++)
-        {
-            transform.GetChild(i).gameObject.SetActive(_visible);
-        }
-        TextMeshProUGUI text = GetComponent<TextMeshProUGUI>();
-        if (text != null)
-            text.enabled = _visible;
-    }
-    
 
 	/// <summary>
 	/// Component disabled.
@@ -430,12 +420,6 @@ public class HUDMessage : MonoBehaviour, IBroadcastListener {
 	/// </summary>
 	/// <returns>Whether the message could be displayed or not (HUDMessageSystem priorities).</returns>
 	virtual public bool Show() {
-		if ( m_type == Type.MISSION_ZONE )
-		{
-			TextMeshProUGUI text = this.FindComponentRecursive<TextMeshProUGUI>();
-			Debug.Log(Color.green.Tag("HUDMESSAGE Show " + text.text + " "+ m_visible));
-		}
-		
 		// If already active, decide how to proceed
 		bool force = false;
 		if(m_visible) {
@@ -462,7 +446,7 @@ public class HUDMessage : MonoBehaviour, IBroadcastListener {
 		}
 
         // Activate
-        SetOthersVisible(true);
+        SetChildrenVisibility(true);
         
         // All checks passed! Show the message
 		// Update internal state
@@ -483,15 +467,12 @@ public class HUDMessage : MonoBehaviour, IBroadcastListener {
 		return true;
 	}
 
+	/// <summary>
+	/// Toggled by the animator to tell us the message has been hidden.
+	/// </summary>
     public void OnHideMessage()
     {
-		if ( m_type == Type.MISSION_ZONE )
-		{
-			TextMeshProUGUI text = this.FindComponentRecursive<TextMeshProUGUI>();
-			Debug.Log(Colors.orange.Tag("HUDMESSAGE OnHideMessage " + text.text + " "+ m_visible));
-		}
-
-        if (m_hideMode == HideMode.ANIMATION)
+		if (m_hideMode == HideMode.ANIMATION)
         {
             Hide(true);
         }
@@ -499,7 +480,7 @@ public class HUDMessage : MonoBehaviour, IBroadcastListener {
 		if (!m_visible)
 		{
 			// Deactivate all
-        	SetOthersVisible(false);
+        	SetChildrenVisibility(false);
 		}
         
     }
@@ -508,12 +489,6 @@ public class HUDMessage : MonoBehaviour, IBroadcastListener {
 	/// Trigger the "out" animation.
 	/// </summary>
 	virtual public void Hide( bool _outDone = false ) {
-		if ( m_type == Type.MISSION_ZONE )
-		{
-			TextMeshProUGUI text = this.FindComponentRecursive<TextMeshProUGUI>();
-			Debug.Log(Colors.purple.Tag("HUDMESSAGE Hide " + text.text + " "+ m_visible));
-		}
-
 		// Skip if already inactive
 		if(!m_visible) return;
 
@@ -538,6 +513,22 @@ public class HUDMessage : MonoBehaviour, IBroadcastListener {
 		}
 
         
+	}
+
+	/// <summary>
+	/// Enable or disable all children objects so they are only drawn when needed.
+	/// </summary>
+	/// <param name="_visible">Whether to enable or disable</param>
+	public void SetChildrenVisibility(bool _visible) {
+		// Enable/Disable all nested children so they are only
+		for(int i = 0; i < transform.childCount; i++) {
+			transform.GetChild(i).gameObject.SetActive(_visible);
+		}
+
+		// Apply to text field in the root object as well!
+		if(m_rootText != null) {
+			m_rootText.enabled = _visible;
+		}
 	}
 
 	/// <summary>
