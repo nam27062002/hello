@@ -461,6 +461,9 @@ public class PopupCustomizer : MonoBehaviour {
                                         dnaProfileId = "Not_Available";
                                     }
                                     url += "?UID=" + dnaProfileId;
+
+                                    // Tracking
+                                    HDTrackingManager.Instance.Notify_PopupSurveyShown(HDTrackingManager.EPopupSurveyAction.Yes);
                                 }
 
                                 Application.OpenURL(url);
