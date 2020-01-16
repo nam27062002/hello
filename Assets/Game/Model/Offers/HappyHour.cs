@@ -136,7 +136,7 @@ public class HappyHour {
 		// Compute expiration date
 		if(m_data.triggeredByDate) {
 			// Expiration date defined directly in the happy hour definition
-			m_expirationTime = m_data.endDate;	// [AOC] TODO!! Check timezone
+			m_expirationTime = m_data.endDate;
 		} else {
 			// Expiration date based on duration
 			DateTime serverTime = GameServerManager.SharedInstance.GetEstimatedServerTime();

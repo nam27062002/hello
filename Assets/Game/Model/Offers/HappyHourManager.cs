@@ -156,7 +156,7 @@ public class HappyHourManager {
 	public void InitFromDefinitions() {
 		// Clear current data
 		m_allHappyHours.Clear();
-		m_happyHour = new HappyHour();
+		m_happyHour.Finish();
 
 		// Parse all happy hour definitions
 		List<DefinitionNode> defs = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.HAPPY_HOUR);
