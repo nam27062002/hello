@@ -1441,7 +1441,7 @@ public class UserProfile : UserPersistenceSystem
 
         
         // Happy hour
-        data.Add("happyHourOffer", m_happyHourData.ToJson());
+        data.Add("happyHour", m_happyHourData.ToJson());
 
         // Remove Ads offer
         //data.Add("removeAdsFeature", m_removeAds.Save());
