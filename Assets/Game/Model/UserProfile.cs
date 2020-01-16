@@ -358,10 +358,11 @@ public class UserProfile : UserPersistenceSystem
 		set;
 	}
 
-    // Happy hour
-    private DateTime m_happyHourExpirationTime;
-    private float m_happyHourExtraGemsRate;
-	private string m_happyHourLastPackSku;
+	// Happy hour
+	private HappyHourManager.SaveData m_happyHourData = new HappyHourManager.SaveData();
+	public HappyHourManager.SaveData happyHourData {
+		get { return m_happyHourData; }
+	}
 
     // Remove ads feature
     private RemoveAdsFeature m_removeAds;
@@ -1187,36 +1188,43 @@ public class UserProfile : UserPersistenceSystem
 			freeOfferCooldownEndTime = new DateTime(_data[key].AsLong);
 		} else {
 			freeOfferCooldownEndTime = DateTime.MinValue;
-		} 
+		}
 
-        // Happy hour offer
-        SimpleJSON.JSONNode happyHour = _data["happyHourOffer"];
+		// Happy hour offer
+		// [AOC] As of 2.6 format has changed. Add support for retrocompatibility. Can be removed at 2.8.
+		key = "happyHourOffer";
+		if(_data.ContainsKey(key)) {
+			// Pre 2.6 - Delete by 2.8
+			// Create a fake json object using the new keys
+			JSONNode oldData = _data[key];
+			JSONClass newData = new JSONClass();
 
-        key = "happyHourExpirationTime";
-        if (happyHour.ContainsKey(key))
-        {
-            m_happyHourExpirationTime = new DateTime (happyHour[key].AsLong);
-        }
-        else
-        {
-            m_happyHourExpirationTime = DateTime.MinValue;
-        }
+			key = "happyHourExpirationTime";
+			if(oldData.ContainsKey(key)) {
+				newData["expirationTime"] = oldData[key];
+			}
 
-        key = "happyHourExtraGemsRate";
-        if (happyHour.ContainsKey(key))
-        {
-            m_happyHourExtraGemsRate = happyHour[key].AsFloat;
-        }
-        else
-        {
-            m_happyHourExtraGemsRate = 0;
-        }
+			key = "happyHourExtraGemsRate";
+			if(oldData.ContainsKey(key)) {
+				newData["extraGemsFactor"] = oldData[key];
+			}
 
-		key = "happyHourLastPackSku";
-		if(happyHour.ContainsKey(key)) {
-			m_happyHourLastPackSku = happyHour[key];
+			key = "happyHourLastPackSku";
+			if(oldData.ContainsKey(key)) {
+				newData["lastPackSku"] = oldData[key];
+			}
+
+			// Inject sku
+			newData["activeSku"] = "happy_hour_local";	// Legacy system only had the local one
+
+			// Load it!
+			m_happyHourData.FromJson(newData as JSONClass);
 		} else {
-			m_happyHourLastPackSku = string.Empty;
+			// Post 2.6 - Keep it
+			key = "happyHour";
+			if(_data.ContainsKey(key)) {
+				m_happyHourData.FromJson(_data[key] as JSONClass);
+			}
 		}
 
         // Visited Zones
@@ -1432,18 +1440,8 @@ public class UserProfile : UserPersistenceSystem
 		data.Add("freeOfferCooldownEndTime", freeOfferCooldownEndTime.Ticks.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
 
         
-        // Happy hour offer
-        SimpleJSON.JSONClass happyHour = new SimpleJSON.JSONClass();
-
-        happyHour.Add("happyHourExpirationTime", m_happyHourExpirationTime.Ticks.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
-        happyHour.Add("happyHourExtraGemsRate", m_happyHourExtraGemsRate.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
-
-		if(!string.IsNullOrEmpty(m_happyHourLastPackSku)) {
-			// No need to add it if none - more compact save file!
-			happyHour.Add("happyHourLastPackSku", m_happyHourLastPackSku);
-		}
-
-        data.Add("happyHourOffer", happyHour);
+        // Happy hour
+        data.Add("happyHourOffer", m_happyHourData.ToJson());
 
         // Remove Ads offer
         //data.Add("removeAdsFeature", m_removeAds.Save());
@@ -2092,46 +2090,7 @@ public class UserProfile : UserPersistenceSystem
         }
         
 	}
-
-
-    /// <summary>
-    /// Load persistence data corresponding to a happy hour offer if there is any.
-    /// </summary>
-    public void LoadHappyHour (HappyHourOffer _happyHour)
-    {
-        if (_happyHour != null)
-        {
-            // If the values persisted are consistent
-            if (m_happyHourExpirationTime != DateTime.MinValue && m_happyHourExtraGemsRate != 0)
-            {
-                _happyHour.expirationTime = m_happyHourExpirationTime;
-                _happyHour.extraGemsFactor = m_happyHourExtraGemsRate;
-            }
-
-			// Last purchased pack is not so much critical, no need for extra checks
-			if(!string.IsNullOrEmpty(m_happyHourLastPackSku)) {
-				_happyHour.lastPackDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SHOP_PACKS, m_happyHourLastPackSku);
-			} else {
-				_happyHour.lastPackDef = null;
-			}
-        }
-    }
-
-
-    public void SaveHappyHour (HappyHourOffer _happyHour)
-    {
-        if (_happyHour != null)
-        {
-            m_happyHourExpirationTime = _happyHour.expirationTime;
-            m_happyHourExtraGemsRate = _happyHour.extraGemsFactor;
-			if(_happyHour.lastPackDef != null) {
-				m_happyHourLastPackSku = _happyHour.lastPackDef.sku;
-			} else {
-				m_happyHourLastPackSku = string.Empty;
-			}
-        }
-    }
-
+	
     /// <summary>
     /// Load persistence data corresponding to a ads removal offer if there is any.
     /// </summary>

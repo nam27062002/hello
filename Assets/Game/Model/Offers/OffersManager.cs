@@ -57,10 +57,10 @@ public class OffersManager : Singleton<OffersManager> {
 		set { instance.m_autoRefreshEnabled = value; }
 	}
 
-    private HappyHourOffer m_happyHour = null;
-    public HappyHourOffer happyHour {
-        get { return m_happyHour; }
-    }
+	private HappyHourManager m_happyHourManager = new HappyHourManager();
+	public static HappyHourManager happyHourManager {
+		get { return instance.m_happyHourManager; }
+	}
 
     private OfferPack m_removeAdsOffer = null;
     public OfferPack removeAdsOffer
@@ -142,7 +142,10 @@ public class OffersManager : Singleton<OffersManager> {
 
                 // [JOM] Update the cooldowns in Remove Ads controller 
                 // Technically not an offer, but didnt find any better place for this
-               UsersManager.currentUser.removeAds.Update();
+				UsersManager.currentUser.removeAds.Update();
+
+				// Refresh happy hour manager as well!
+				m_happyHourManager.Update();
 			}
 			m_timer -= Time.deltaTime;
 		}
@@ -232,14 +235,7 @@ public class OffersManager : Singleton<OffersManager> {
 			}
 		}
 
-        // Create a new happy hour offer from the definitions
-        if (instance.m_happyHour == null)
-        {
-            instance.m_happyHour = HappyHourOffer.CreateFromDefinition();
-        }
-
-
-		// Make sure to check whether free offer is on cooldown or not and put in the right place
+        // Make sure to check whether free offer is on cooldown or not and put in the right place
 		instance.m_freeOfferNeedsSorting = true;
 
 		// Refresh active and featured offers
@@ -250,7 +246,11 @@ public class OffersManager : Singleton<OffersManager> {
             UsersManager.currentUser.CleanOldPushedOffers(validCustomIds);
         }
 
-		// Notiy game
+		// Reload Happy Hour
+		instance.m_happyHourManager.InitFromDefinitions();
+		instance.m_happyHourManager.Load();
+
+		// Notify game
 		Messenger.Broadcast(MessengerEvents.OFFERS_RELOADED);
 	}
 

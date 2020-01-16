@@ -49,7 +49,7 @@ public class ResourcesFlowMissingPCPopup : MonoBehaviour {
     [SerializeField] private TextMeshProUGUI m_happyHourTimer;
 
     // Internal
-    private HappyHourOffer m_happyHour; // cached object
+    private HappyHour m_happyHour; // cached object
 
     //------------------------------------------------------------------------//
     // GENERIC METHODS														  //
@@ -104,7 +104,7 @@ public class ResourcesFlowMissingPCPopup : MonoBehaviour {
 		m_recommendedPackPill.InitFromDef(_recommendedPackDef);
 
         // Cache happy hour offer
-        m_happyHour = OffersManager.instance.happyHour;
+        m_happyHour = OffersManager.happyHourManager.happyHour;
     }
 
     /// <summary>

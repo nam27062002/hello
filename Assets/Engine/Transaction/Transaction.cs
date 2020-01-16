@@ -246,7 +246,7 @@ public class Transaction
                         
                         if (!string.IsNullOrEmpty(productId) && currency == UserProfile.Currency.HARD)
                         {
-                            amount = OffersManager.instance.happyHour.ApplyHappyHourExtra((int)amount);
+                            amount = OffersManager.happyHourManager.happyHour.ApplyHappyHourExtra((int)amount);
                         }
 
                         rewardToAdd = CreateRewardCurrency(currency, amount);

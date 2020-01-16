@@ -217,10 +217,10 @@ public class PopupShopCurrencyPill : IPopupShopPill {
         {
 
 			// In case there is a happy hour active
-			if(OffersManager.instance.happyHour != null) {
+			if(OffersManager.happyHourManager.happyHour != null) {
 				// Check whether Happy Hour applies to this pack or not
-				HappyHourOffer happyHour = OffersManager.instance.happyHour;
-				bool happyHourActive = happyHour.IsActive() && happyHour.IsPackAffected(m_def);
+				HappyHourManager happyHour = OffersManager.happyHourManager;
+				bool happyHourActive = happyHour.happyHour.IsActive() && happyHour.IsPackAffected(m_def);
 				if(happyHourActive) {
 					if(m_amountBeforeOffer != null) {
 						// Show amount before the happy hour offer
@@ -240,15 +240,15 @@ public class PopupShopCurrencyPill : IPopupShopPill {
 
 
 					// Instead of that, show it in a cool badge
-					float bonusAmount = OffersManager.instance.happyHour.extraGemsFactor;
+					float bonusAmount = happyHour.happyHour.extraGemsFactor;
 					if(m_discountBadge != null) {
 						m_discountBadge.SetActive(bonusAmount > 0f);
 						m_discountBadgeText.Localize("TID_SHOP_BONUS_AMOUNT", StringUtils.MultiplierToPercentage(bonusAmount)); // 15% extra
 					}
 
 					// Set total amount of gems
-					float newAmount = m_def.GetAsFloat("amount") * (1f + bonusAmount);
-					m_amountText.text = UIConstants.GetIconString((int)newAmount, m_type, UIConstants.IconAlignment.LEFT);
+					int newAmount = happyHour.happyHour.ApplyHappyHourExtra(m_def.GetAsInt("amount"));
+					m_amountText.text = UIConstants.GetIconString(newAmount, m_type, UIConstants.IconAlignment.LEFT);
 
 					// Store new state
 					m_happyHourActive = happyHourActive;
@@ -321,7 +321,7 @@ public class PopupShopCurrencyPill : IPopupShopPill {
             case UserProfile.Currency.HARD: {
 
                     // Get the proper amount after applying the happy hour
-                    amountApplied = OffersManager.instance.happyHour.ApplyHappyHourExtra(def.GetAsInt("amount"));
+                    amountApplied = OffersManager.happyHourManager.happyHour.ApplyHappyHourExtra(def.GetAsInt("amount"));
 
                     // Add the amount to the player currencies
                     UsersManager.currentUser.EarnCurrency(UserProfile.Currency.HARD, (ulong) amountApplied, true, HDTrackingManager.EEconomyGroup.SHOP_EXCHANGE);

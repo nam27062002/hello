@@ -2966,7 +2966,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private void Track_AddParamHappyHour(HDTrackingEvent _e)
     {
         // Whether the happy hour is active or not (1:true, 0:false)
-        HappyHourOffer happyHour = OffersManager.instance.happyHour;
+        HappyHour happyHour = OffersManager.happyHourManager.happyHour;
         int value;
         if (happyHour == null)
         {
