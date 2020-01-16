@@ -378,6 +378,9 @@ public class HappyHourManager {
 		if(m_lastPackDef != null) {
 			saveData.lastPackSku = m_lastPackDef.sku;
 		}
+
+		// Make sure it's saved
+		PersistenceFacade.instance.Save_Request();
 	}
 
 	/// <summary>
