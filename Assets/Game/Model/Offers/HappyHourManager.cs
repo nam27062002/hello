@@ -4,6 +4,8 @@
 // Created by Alger Ortín Castellví on 14/01/2020.
 // Copyright (c) 2020 Ubisoft. All rights reserved.
 
+//#define LOG
+
 //----------------------------------------------------------------------------//
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
@@ -156,6 +158,7 @@ public class HappyHourManager {
 	public void InitFromDefinitions() {
 		// Clear current data
 		m_allHappyHours.Clear();
+		m_enabledHappyHours.Clear();
 		m_happyHour.Finish();
 
 		// Parse all happy hour definitions
@@ -184,6 +187,7 @@ public class HappyHourManager {
 		if(m_happyHour.IsActive()) {
 			if(serverTime >= m_happyHour.expirationTime) {
 				// Expired! Clear it
+				Log(Colors.red.Tag(m_happyHour.data.def.sku + " EXPIRED"));
 				m_happyHour.Finish();
 				Save();
 			}
@@ -196,27 +200,41 @@ public class HappyHourManager {
 			for(int i = 0; i < m_enabledHappyHours.Count; ++i) {
 				// Simpler naming
 				candidateData = m_enabledHappyHours[i];
+				Log(Colors.white.Tag("Checking candidate " + candidateData.def.sku));
 
 				// Only happy hours triggered by date are eligible for time activation!
-				if(!candidateData.triggeredByDate) continue;
+				if(!candidateData.triggeredByDate) {
+					Log(Colors.orange.Tag("NOT TRIGGERED BY TIME, SKIP"));
+					continue;
+				}
 
 				// Did we reached the start date?
 				if(candidateData.startDate <= serverTime) {
 					// Make sure it's not expired
+					Log(Colors.green.Tag("START DATE REACHED"));
 					if(candidateData.endDate > serverTime) {
 						// We can't activate it if we have triggered another Happy
 						// Hour (most likely a local one) meant to finish after the start date
 						// We don't need to check for it anymore, we can actually remove it from the list!
+						Log(Colors.green.Tag("END DATE IN THE FUTURE"));
 						if(m_lastHappyHourExpirationDate > candidateData.startDate) {
 							// Remove it from the list
+							Log(Colors.red.Tag("START DATE BEFORE THE LAST EXPIRATION DATE, REMOVE"));
 							m_toRemove.Add(candidateData);
 							continue;
 						} else {
 							// Valid data! Make it the active one!
+							Log(Colors.lime.Tag("VALID DATA! MAKE IT THE ACTIVE ONE"));
 							ActivateHappyHour(candidateData);
 							break;	// No need to keep looping
 						}
+					} else {
+						// HH expired, remove it from the pool
+						Log(Colors.red.Tag("END DATE IN THE PAST (HH EXPIRED), REMOVE"));
+						m_toRemove.Add(candidateData);
 					}
+				} else {
+					Log(Colors.orange.Tag("START DATE NOT REACHED, SKIP"));
 				}
 			}
 
@@ -436,5 +454,17 @@ public class HappyHourManager {
 
 		// Save persistence
 		Save();
+	}
+
+	//------------------------------------------------------------------------//
+	// DEBUG																  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <param name="_str"></param>
+	[System.Diagnostics.Conditional("LOG")]
+	private void Log(string _str) {
+		Debug.Log(Colors.orange.Tag("[HH] ") + _str);
 	}
 }
