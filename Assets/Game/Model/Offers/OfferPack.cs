@@ -408,10 +408,10 @@ public class OfferPack {
 		m_featured = _def.GetAsBool("featured", m_featured);
 		m_frequency = _def.GetAsInt("frequency", m_frequency);
 		m_maxViews = _def.GetAsInt("maxViews", m_maxViews);
-		switch(_def.GetAsString("zone", "")) {
-			case "dragonSelection":			m_whereToShow = WhereToShow.DRAGON_SELECTION;			break;
-			case "dragonSelectionAfterRun":	m_whereToShow = WhereToShow.DRAGON_SELECTION_AFTER_RUN;	break;
-			case "playScreen":				m_whereToShow = WhereToShow.PLAY_SCREEN;				break;
+		switch(_def.GetAsString("zone", "").ToLowerInvariant()) {
+			case "dragonselection":			m_whereToShow = WhereToShow.DRAGON_SELECTION;			break;
+			case "dragonselectionafterrun":	m_whereToShow = WhereToShow.DRAGON_SELECTION_AFTER_RUN;	break;
+			case "playscreen":				m_whereToShow = WhereToShow.PLAY_SCREEN;				break;
 			default:						break;	// Already has the default value
 		}
 
@@ -426,9 +426,9 @@ public class OfferPack {
 		m_countriesAllowed = ParseArray(_def.GetAsString("countriesAllowed"));
 		m_countriesExcluded = ParseArray(_def.GetAsString("countriesExcluded"));
 		m_gamesPlayed = _def.GetAsInt("gamesPlayed", m_gamesPlayed);
-		switch(_def.GetAsString("payerType", "")) {
+		switch(_def.GetAsString("payerType", "").ToLowerInvariant()) {
 			case "payer":		m_payerType = PayerType.PAYER;			break;
-			case "nonPayer":	m_payerType = PayerType.NON_PAYER;		break;
+			case "nonpayer":	m_payerType = PayerType.NON_PAYER;		break;
 			default:			break;	// Already has the default value
 		}
 		m_minSpent = _def.GetAsFloat("minSpent", m_minSpent) * 100f; 	// Content in USD, we work in cents of USD
@@ -1101,7 +1101,7 @@ public class OfferPack {
 	/// <returns>The type corresponding to the given string.</returns>
 	/// <param name="_typeStr">String representation of a type to be parsed.</param>
 	public static Type StringToType(string _typeStr) {
-		switch(_typeStr) {
+		switch(_typeStr.ToLowerInvariant()) {
 			case "progression": return Type.PROGRESSION;
 			case "push":		return Type.PUSHED;
 			case "rotational":	return Type.ROTATIONAL;
@@ -1136,7 +1136,7 @@ public class OfferPack {
     /// <param name="_typeStr">String representation of a currency to be parsed.</param>
     public static UserProfile.Currency StringToCurrency(string _currencyStr)
     {
-        switch (_currencyStr)
+        switch (_currencyStr.ToLowerInvariant())
         {
             case "real": return UserProfile.Currency.REAL;
             case "pc": return UserProfile.Currency.HARD;
