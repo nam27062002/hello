@@ -71,6 +71,14 @@ public class PopupShopCurrencyPill : IPopupShopPill {
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
 	/// <summary>
+	/// Component has been enabled.
+	/// </summary>
+	public void OnEnable() {
+		// Refresh Happy Hour visuals immediately
+		RefreshHappyHour();
+	}
+
+	/// <summary>
 	/// Called every frame.
 	/// </summary>
 	private void Update() {
