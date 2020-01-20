@@ -8,11 +8,12 @@ Material:
   m_PrefabInternal: {fileID: 0}
   m_Name: dragon_skeleton_0_wings
   m_Shader: {fileID: 4800000, guid: 2345015ac46679e4cb5817ed44c82547, type: 3}
-  m_ShaderKeywords: CUTOFF DOUBLESIDED FRESNEL NORMALMAP SPECULAR
-  m_LightmapFlags: 5
+  m_ShaderKeywords: CUTOFF DOUBLESIDED FXLAYER_NONE NORMALMAP REFLECTIONTYPE_NORMAL
+    SELFILLUMINATE_NORMAL SPECULAR _ZWRITE_ON
+  m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: 2920
+  m_CustomRenderQueue: -1
   stringTagMap:
     QUEUE: AlphaTest
     RenderType: TransparentCutout
@@ -21,7 +22,7 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _BumpMap:
-        m_Texture: {fileID: 2800000, guid: ae72bb55be00ba544ba564fcc89675c0, type: 3}
+        m_Texture: {fileID: 2800000, guid: 62620d41ffd19b54889c7cce4c70ac13, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailAlbedoMap:
@@ -37,7 +38,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailTex:
-        m_Texture: {fileID: 2800000, guid: fb24c3eab22187b4b9e7ea9d37eaec07, type: 3}
+        m_Texture: {fileID: 2800000, guid: 41be14d5541d7634aaea125e9a310a13, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _EmissionMap:
@@ -49,7 +50,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: f39ae0f50e9a8994a8be7dfdcae2d933, type: 3}
+        m_Texture: {fileID: 2800000, guid: 4b69b101950a9384a9b97d70334fdedf, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
@@ -74,24 +75,22 @@ Material:
     - SelfIlluminate: 0
     - _BlendMode: 1
     - _BumpScale: 1
-    - _BumpStrength: 3
     - _ColorRampAmount: 0
     - _ColorRampID0: 0
     - _ColorRampID1: 0
     - _Cull: 0
-    - _Cutoff: 0.3
+    - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
     - _DissolveAmount: 0
     - _DissolveLowerLimit: -1
     - _DissolveMargin: 0.1
     - _DissolveUpperLimit: 1
     - _DstBlend: 10
-    - _EmissionScaleUI: 0
     - _EnableBlendFresnel: 0
     - _EnableCutoff: 1
     - _EnableDiffuseAsSpecMask: 0
     - _EnableDoublesided: 1
-    - _EnableFresnel: 1
+    - _EnableFresnel: 0
     - _EnableNormalMap: 1
     - _EnableOpaqueFresnel: 0
     - _EnableOpaqueSpecular: 0
@@ -103,19 +102,22 @@ Material:
     - _EnableVertexOffsetZ: 0
     - _FireAmount: 0
     - _FireSpeed: 1
-    - _Fresnel: 3.81
+    - _Fresnel: 8.87
+    - _GlossMapScale: 1
     - _Glossiness: 0.5
-    - _InnerLightAdd: 10
+    - _GlossyReflections: 1
+    - _InnerLightAdd: 0
     - _InnerLightWavePhase: 1
     - _InnerLightWaveSpeed: 1
     - _Metallic: 0
-    - _Mode: 3
-    - _NoiseValue: 0
+    - _Mode: 0
     - _NormalStrenght: 1
     - _OcclusionStrength: 1
     - _Parallax: 0.02
     - _ReflectionAmount: 0
-    - _SpecExponent: 10.05
+    - _SmoothnessTextureChannel: 0
+    - _SpecExponent: 6.92
+    - _SpecularHighlights: 1
     - _SrcBlend: 5
     - _StencilMask: 10
     - _UVSec: 0
@@ -123,15 +125,11 @@ Material:
     - _VOSpeed: 3
     - _ZWrite: 1
     m_Colors:
-    - _AmbientAdd: {r: 0, g: 0, b: 0, a: 0}
-    - _Color: {r: 0.5882353, g: 0.5882353, b: 0.5882353, a: 1}
-    - _ColorAdd: {r: 0, g: 0, b: 0, a: 1}
-    - _ColorMultiply: {r: 1, g: 1, b: 1, a: 1}
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _ColorAdd: {r: 0.051470578, g: 0, b: 0, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _EmissionColorUI: {r: 1, g: 1, b: 1, a: 1}
-    - _FresnelColor: {r: 0.38431373, g: 0.3764706, b: 0.3529412, a: 1}
-    - _InnerLightColor: {r: 1, g: 0, b: 0, a: 0.872}
-    - _NoiseColor: {r: 1, g: 1, b: 1, a: 1}
+    - _FresnelColor: {r: 1, g: 1, b: 1, a: 1}
+    - _InnerLightColor: {r: 1, g: 1, b: 1, a: 1}
     - _ReflectionColor: {r: 1, g: 1, b: 1, a: 1}
     - _SecondLightColor: {r: 0, g: 0, b: 0, a: 0}
     - _SecondLightDir: {r: 0, g: 0, b: -1, a: 0}

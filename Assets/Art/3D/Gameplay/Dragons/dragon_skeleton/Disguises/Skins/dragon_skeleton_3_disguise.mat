@@ -6,21 +6,23 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: dragon_skeleton_3_body
+  m_Name: dragon_skeleton_3_disguise
   m_Shader: {fileID: 4800000, guid: 2345015ac46679e4cb5817ed44c82547, type: 3}
-  m_ShaderKeywords: FRESNEL FXLAYER_REFLECTION NORMALMAP REFLECTIONTYPE_COLOR SELFILLUMINATE_NORMAL
-    SPECULAR _ZWRITE_ON
-  m_LightmapFlags: 4
+  m_ShaderKeywords: FRESNEL FXLAYER_NONE NORMALMAP OPAQUEALPHA OPAQUEFRESNEL SELFILLUMINATE_NORMAL
+    SPECULAR
+  m_LightmapFlags: 5
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
-  stringTagMap: {}
+  m_CustomRenderQueue: 2010
+  stringTagMap:
+    QUEUE: Geometry
+    RenderType: Opaque
   disabledShaderPasses: []
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
     - _BumpMap:
-        m_Texture: {fileID: 2800000, guid: 62620d41ffd19b54889c7cce4c70ac13, type: 3}
+        m_Texture: {fileID: 2800000, guid: 238769b3c8a89f54dbe36d20750a429f, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailAlbedoMap:
@@ -36,7 +38,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailTex:
-        m_Texture: {fileID: 2800000, guid: 41be14d5541d7634aaea125e9a310a13, type: 3}
+        m_Texture: {fileID: 2800000, guid: 4df555aa00c9b4d4a8556fe4f65cfd82, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _EmissionMap:
@@ -48,7 +50,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: bdebd0865251d214f80a31393d5a7dc5, type: 3}
+        m_Texture: {fileID: 2800000, guid: f29e6b8f991337f4a9f84ecb15f9b093, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
@@ -64,19 +66,20 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _ReflectionMap:
-        m_Texture: {fileID: 8900000, guid: 14ca732449041b64aa36929057e32ebc, type: 2}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
-    - FXLayer: 1
-    - ReflectionType: 1
+    - FXLayer: 0
+    - ReflectionType: 0
     - SelfIlluminate: 0
+    - _Alpha_as_depth: 0
     - _BlendMode: 0
     - _BumpScale: 1
     - _ColorRampAmount: 0
     - _ColorRampID0: 0
     - _ColorRampID1: 0
-    - _Cull: 0
+    - _Cull: 2
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
     - _DissolveAmount: 0
@@ -84,13 +87,14 @@ Material:
     - _DissolveMargin: 0.1
     - _DissolveUpperLimit: 1
     - _DstBlend: 0
+    - _EmissionScaleUI: 0
     - _EnableBlendFresnel: 0
     - _EnableCutoff: 0
     - _EnableDiffuseAsSpecMask: 0
     - _EnableDoublesided: 0
     - _EnableFresnel: 1
     - _EnableNormalMap: 1
-    - _EnableOpaqueFresnel: 0
+    - _EnableOpaqueFresnel: 1
     - _EnableOpaqueSpecular: 0
     - _EnableSilhouette: 0
     - _EnableSpecular: 1
@@ -100,10 +104,8 @@ Material:
     - _EnableVertexOffsetZ: 0
     - _FireAmount: 0
     - _FireSpeed: 1
-    - _Fresnel: 3.53
-    - _GlossMapScale: 1
+    - _Fresnel: 9.18
     - _Glossiness: 0.5
-    - _GlossyReflections: 1
     - _InnerLightAdd: 0
     - _InnerLightWavePhase: 1
     - _InnerLightWaveSpeed: 1
@@ -112,10 +114,8 @@ Material:
     - _NormalStrenght: 1
     - _OcclusionStrength: 1
     - _Parallax: 0.02
-    - _ReflectionAmount: 0.463
-    - _SmoothnessTextureChannel: 0
-    - _SpecExponent: 11.23
-    - _SpecularHighlights: 1
+    - _ReflectionAmount: 0
+    - _SpecExponent: 23.2
     - _SrcBlend: 1
     - _StencilMask: 10
     - _UVSec: 0
@@ -123,12 +123,15 @@ Material:
     - _VOSpeed: 3
     - _ZWrite: 1
     m_Colors:
-    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _AmbientAdd: {r: 0.14705884, g: 0.14705884, b: 0.14705884, a: 0}
+    - _Color: {r: 0.5882353, g: 0.5882353, b: 0.5882353, a: 1}
     - _ColorAdd: {r: 0, g: 0, b: 0, a: 0}
+    - _ColorMultiply: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _FresnelColor: {r: 0.2205882, g: 0.21450302, b: 0.19463666, a: 1}
+    - _EmissionColorUI: {r: 1, g: 1, b: 1, a: 1}
+    - _FresnelColor: {r: 0.08515355, g: 0.18382353, b: 0.14299457, a: 1}
     - _InnerLightColor: {r: 1, g: 1, b: 1, a: 1}
-    - _ReflectionColor: {r: 0.7941176, g: 0.6860339, b: 0.08174738, a: 1}
-    - _SecondLightColor: {r: 0, g: 0, b: 0, a: 0}
-    - _SecondLightDir: {r: 0, g: 0, b: -1, a: 0}
-    - _Tint: {r: 1, g: 1, b: 1, a: 1}
+    - _ReflectionColor: {r: 1, g: 1, b: 1, a: 1}
+    - _SecondLightColor: {r: 0.38235295, g: 0.35761246, b: 0.32050174, a: 0}
+    - _SecondLightDir: {r: 0.077727504, g: -0.4197285, b: -0.9043155, a: 0}
+    - _Tint: {r: 0.9117647, g: 0.9117647, b: 0.9117647, a: 1}
