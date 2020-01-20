@@ -1446,7 +1446,9 @@ public class UserProfile : UserPersistenceSystem
         data.Add("happyHourOffer", happyHour);
 
         // Remove Ads offer
-        //data.Add("removeAdsFeature", m_removeAds.Save());
+        // For safety reasons we store the Remove Ads feature in the player preferences
+        // but we store it also in the user profile just in case we need in the future
+        data.Add("removeAdsFeature", m_removeAds.Save());
 
         // Visited Zones
         JSONArray zonesArray = new SimpleJSON.JSONArray();
