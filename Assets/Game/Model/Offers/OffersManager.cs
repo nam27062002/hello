@@ -599,7 +599,19 @@ public class OffersManager : Singleton<OffersManager> {
 		Log("Checking history size: {0} vs {1} ({2} + {3})", history.Count, maxSize, settings.rotationalHistorySize, m_activeRotationalOffers.Count);
 		while(history.Count > maxSize) {
 			Log("    History too big: Dequeing");
-            history.RemoveRange(maxSize, history.Count - maxSize);
+
+			//  ██╗  ██╗██████╗ ██╗  ██╗  ███████╗███████╗██████╗  ██████╗ 
+			//  ██║  ██║██╔══██╗██║ ██╔╝  ╚════██║╚════██║╚════██╗██╔═████╗
+			//  ███████║██║  ██║█████╔╝█████╗ ██╔╝    ██╔╝ █████╔╝██║██╔██║
+			//  ██╔══██║██║  ██║██╔═██╗╚════╝██╔╝    ██╔╝ ██╔═══╝ ████╔╝██║
+			//  ██║  ██║██████╔╝██║  ██╗     ██║     ██║  ███████╗╚██████╔╝
+			//  ╚═╝  ╚═╝╚═════╝ ╚═╝  ╚═╝     ╚═╝     ╚═╝  ╚══════╝ ╚═════╝ 
+			//	https://mdc-tomcat-jira100.ubisoft.org/jira/browse/HDK-7220
+
+			// Old packs should be removed from the START of the list rather than the end!!!
+			// Check also with the free offer (below)
+			//history.RemoveRange(maxSize, history.Count - maxSize);
+			history.RemoveAt(0);
 		}
 
 		// Debug
@@ -626,7 +638,8 @@ public class OffersManager : Singleton<OffersManager> {
 		Log("Checking history size: {0} vs {1} ({2} + {3})", history.Count, maxSize, settings.freeHistorySize, activeFreeOfferCount);
 		while(history.Count > maxSize) {
 			Log("    History too big: Dequeing");
-			history.RemoveRange(maxSize, history.Count - maxSize);
+			//history.RemoveRange(maxSize, history.Count - maxSize);
+			history.RemoveAt(0);
 		}
 
 		// Debug
