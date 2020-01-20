@@ -8,8 +8,8 @@
 #define ENABLE_LOGS
 #endif
 
-//#define LOG
-//#define LOG_PACKS
+#define LOG
+#define LOG_PACKS
 
 //----------------------------------------------------------------------------//
 // INCLUDES																	  //
@@ -34,7 +34,7 @@ public class OffersManager : Singleton<OffersManager> {
 
 	// Debug
 #if LOG_PACKS
-	private const string LOG_PACK_SKU = "rotationalHighPayer1";
+	private const string LOG_PACK_SKU = "rotationalHighPayer9";
 #endif
 
 	//------------------------------------------------------------------------//
@@ -598,7 +598,8 @@ public class OffersManager : Singleton<OffersManager> {
 		int maxSize = settings.rotationalHistorySize + m_activeRotationalOffers.Count; // History contains active offers
 		Log("Checking history size: {0} vs {1} ({2} + {3})", history.Count, maxSize, settings.rotationalHistorySize, m_activeRotationalOffers.Count);
 		while(history.Count > maxSize) {
-			Log("    History too big: Dequeing");
+			SimpleJSON.JSONClass removedItem = history[0];
+			Log("    History too big: Dequeing " + removedItem.ToString(), Colors.cyan);
 
 			//  ██╗  ██╗██████╗ ██╗  ██╗  ███████╗███████╗██████╗  ██████╗ 
 			//  ██║  ██║██╔══██╗██║ ██╔╝  ╚════██║╚════██║╚════██╗██╔═████╗
