@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
+  m_IndirectSpecularColor: {r: 0, g: 9.62143e-40, b: 2.5606773, a: 1}
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
@@ -192,6 +192,72 @@ Prefab:
 Transform:
   m_PrefabParentObject: {fileID: 465822, guid: da8fcb7c361f66848b14a7500f1f6a57, type: 2}
   m_PrefabInternal: {fileID: 1618733}
+--- !u!1001 &2093222
+Prefab:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 497111803}
+    m_Modifications:
+    - target: {fileID: 4932551312445024, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
+      propertyPath: m_LocalPosition.x
+      value: 86.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 4932551312445024, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
+      propertyPath: m_LocalPosition.y
+      value: 240.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4932551312445024, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
+      propertyPath: m_LocalPosition.z
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4932551312445024, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4932551312445024, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4932551312445024, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4932551312445024, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4932551312445024, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
+      propertyPath: m_RootOrder
+      value: 89
+      objectReference: {fileID: 0}
+    - target: {fileID: 1913308816413266, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
+      propertyPath: m_Name
+      value: SP_WorkerSpaceWalking (48)
+      objectReference: {fileID: 0}
+    - target: {fileID: 114854378644620086, guid: 6d115e829d6065348a268e6434ad5d7f,
+        type: 2}
+      propertyPath: m_entityPrefabList.Array.data[0].name
+      value: Goblin/PF_WorkerSpaceWalking
+      objectReference: {fileID: 0}
+    - target: {fileID: 114854378644620086, guid: 6d115e829d6065348a268e6434ad5d7f,
+        type: 2}
+      propertyPath: m_rect.width
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 114854378644620086, guid: 6d115e829d6065348a268e6434ad5d7f,
+        type: 2}
+      propertyPath: m_rect.height
+      value: 15
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 100100000, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
+  m_IsPrefabParent: 0
+--- !u!4 &2093223 stripped
+Transform:
+  m_PrefabParentObject: {fileID: 4932551312445024, guid: 6d115e829d6065348a268e6434ad5d7f,
+    type: 2}
+  m_PrefabInternal: {fileID: 2093222}
 --- !u!1001 &5735811
 Prefab:
   m_ObjectHideFlags: 0
@@ -3347,7 +3413,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4932551312445024, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
       propertyPath: m_RootOrder
-      value: 89
+      value: 88
       objectReference: {fileID: 0}
     - target: {fileID: 1913308816413266, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
       propertyPath: m_Name
@@ -3357,6 +3423,16 @@ Prefab:
         type: 2}
       propertyPath: m_entityPrefabList.Array.data[0].name
       value: Goblin/PF_WorkerSpaceWalking
+      objectReference: {fileID: 0}
+    - target: {fileID: 114854378644620086, guid: 6d115e829d6065348a268e6434ad5d7f,
+        type: 2}
+      propertyPath: m_rect.width
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 114854378644620086, guid: 6d115e829d6065348a268e6434ad5d7f,
+        type: 2}
+      propertyPath: m_rect.height
+      value: 15
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
@@ -5030,7 +5106,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4932551312445024, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
       propertyPath: m_RootOrder
-      value: 84
+      value: 83
       objectReference: {fileID: 0}
     - target: {fileID: 1913308816413266, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
       propertyPath: m_Name
@@ -5857,7 +5933,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4932551312445024, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
       propertyPath: m_RootOrder
-      value: 44
+      value: 43
       objectReference: {fileID: 0}
     - target: {fileID: 1913308816413266, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
       propertyPath: m_Name
@@ -8422,7 +8498,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4932551312445024, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
       propertyPath: m_RootOrder
-      value: 47
+      value: 46
       objectReference: {fileID: 0}
     - target: {fileID: 1913308816413266, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
       propertyPath: m_Name
@@ -8625,7 +8701,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4932551312445024, guid: 5ff13bb6316f5a14bb23af9f0f7aa61f, type: 2}
       propertyPath: m_RootOrder
-      value: 51
+      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 1913308816413266, guid: 5ff13bb6316f5a14bb23af9f0f7aa61f, type: 2}
       propertyPath: m_IsActive
@@ -11540,7 +11616,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4932551312445024, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
       propertyPath: m_RootOrder
-      value: 85
+      value: 84
       objectReference: {fileID: 0}
     - target: {fileID: 1913308816413266, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
       propertyPath: m_Name
@@ -11825,7 +11901,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4932551312445024, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
       propertyPath: m_RootOrder
-      value: 88
+      value: 87
       objectReference: {fileID: 0}
     - target: {fileID: 1913308816413266, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
       propertyPath: m_Name
@@ -11835,6 +11911,16 @@ Prefab:
         type: 2}
       propertyPath: m_entityPrefabList.Array.data[0].name
       value: Goblin/PF_WorkerSpaceWalking
+      objectReference: {fileID: 0}
+    - target: {fileID: 114854378644620086, guid: 6d115e829d6065348a268e6434ad5d7f,
+        type: 2}
+      propertyPath: m_rect.width
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 114854378644620086, guid: 6d115e829d6065348a268e6434ad5d7f,
+        type: 2}
+      propertyPath: m_rect.height
+      value: 15
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
@@ -13990,16 +14076,16 @@ Transform:
   - {fileID: 1133981943}
   - {fileID: 1784191619}
   - {fileID: 641391454}
-  - {fileID: 1572053857}
+  - {fileID: 1725330466}
   - {fileID: 1460456465}
   - {fileID: 885087577}
-  - {fileID: 1725330466}
   - {fileID: 1213665421}
   - {fileID: 1400278970}
+  - {fileID: 1572053857}
   - {fileID: 967571416}
-  - {fileID: 296040070}
   - {fileID: 1353041526}
   - {fileID: 1606285193}
+  - {fileID: 296040070}
   - {fileID: 866512528}
   - {fileID: 1252973943}
   - {fileID: 2000253757}
@@ -14019,6 +14105,7 @@ Transform:
   - {fileID: 349074731}
   - {fileID: 982504992}
   - {fileID: 767701368}
+  - {fileID: 2093223}
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -14902,7 +14989,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4932551312445024, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
       propertyPath: m_RootOrder
-      value: 78
+      value: 77
       objectReference: {fileID: 0}
     - target: {fileID: 1913308816413266, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
       propertyPath: m_Name
@@ -16184,7 +16271,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4932551312445024, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
       propertyPath: m_RootOrder
-      value: 63
+      value: 62
       objectReference: {fileID: 0}
     - target: {fileID: 1913308816413266, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
       propertyPath: m_Name
@@ -17709,7 +17796,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4932551312445024, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
       propertyPath: m_RootOrder
-      value: 58
+      value: 57
       objectReference: {fileID: 0}
     - target: {fileID: 1913308816413266, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
       propertyPath: m_Name
@@ -17719,6 +17806,16 @@ Prefab:
         type: 2}
       propertyPath: m_entityPrefabList.Array.data[0].name
       value: Goblin/PF_WorkerSpaceWalking
+      objectReference: {fileID: 0}
+    - target: {fileID: 114854378644620086, guid: 6d115e829d6065348a268e6434ad5d7f,
+        type: 2}
+      propertyPath: m_rect.width
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 114854378644620086, guid: 6d115e829d6065348a268e6434ad5d7f,
+        type: 2}
+      propertyPath: m_rect.height
+      value: 15
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
@@ -18270,7 +18367,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4932551312445024, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
       propertyPath: m_RootOrder
-      value: 60
+      value: 59
       objectReference: {fileID: 0}
     - target: {fileID: 1913308816413266, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
       propertyPath: m_Name
@@ -18280,6 +18377,16 @@ Prefab:
         type: 2}
       propertyPath: m_entityPrefabList.Array.data[0].name
       value: Goblin/PF_WorkerSpaceWalking
+      objectReference: {fileID: 0}
+    - target: {fileID: 114854378644620086, guid: 6d115e829d6065348a268e6434ad5d7f,
+        type: 2}
+      propertyPath: m_rect.width
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 114854378644620086, guid: 6d115e829d6065348a268e6434ad5d7f,
+        type: 2}
+      propertyPath: m_rect.height
+      value: 15
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
@@ -20037,7 +20144,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4932551312445024, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
       propertyPath: m_RootOrder
-      value: 87
+      value: 86
       objectReference: {fileID: 0}
     - target: {fileID: 1913308816413266, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
       propertyPath: m_Name
@@ -20047,6 +20154,16 @@ Prefab:
         type: 2}
       propertyPath: m_entityPrefabList.Array.data[0].name
       value: Goblin/PF_WorkerSpaceWalking
+      objectReference: {fileID: 0}
+    - target: {fileID: 114854378644620086, guid: 6d115e829d6065348a268e6434ad5d7f,
+        type: 2}
+      propertyPath: m_rect.width
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 114854378644620086, guid: 6d115e829d6065348a268e6434ad5d7f,
+        type: 2}
+      propertyPath: m_rect.height
+      value: 15
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
@@ -22270,7 +22387,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4932551312445024, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
       propertyPath: m_RootOrder
-      value: 59
+      value: 58
       objectReference: {fileID: 0}
     - target: {fileID: 1913308816413266, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
       propertyPath: m_Name
@@ -22280,6 +22397,16 @@ Prefab:
         type: 2}
       propertyPath: m_entityPrefabList.Array.data[0].name
       value: Goblin/PF_WorkerSpaceWalking
+      objectReference: {fileID: 0}
+    - target: {fileID: 114854378644620086, guid: 6d115e829d6065348a268e6434ad5d7f,
+        type: 2}
+      propertyPath: m_rect.width
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 114854378644620086, guid: 6d115e829d6065348a268e6434ad5d7f,
+        type: 2}
+      propertyPath: m_rect.height
+      value: 15
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
@@ -26727,7 +26854,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4932551312445024, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
       propertyPath: m_RootOrder
-      value: 49
+      value: 48
       objectReference: {fileID: 0}
     - target: {fileID: 1913308816413266, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
       propertyPath: m_Name
@@ -26852,7 +26979,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4932551312445024, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
       propertyPath: m_RootOrder
-      value: 67
+      value: 66
       objectReference: {fileID: 0}
     - target: {fileID: 1913308816413266, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
       propertyPath: m_Name
@@ -31343,7 +31470,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4932551312445024, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
       propertyPath: m_RootOrder
-      value: 56
+      value: 55
       objectReference: {fileID: 0}
     - target: {fileID: 1913308816413266, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
       propertyPath: m_Name
@@ -31353,6 +31480,16 @@ Prefab:
         type: 2}
       propertyPath: m_entityPrefabList.Array.data[0].name
       value: Goblin/PF_WorkerSpaceWalking
+      objectReference: {fileID: 0}
+    - target: {fileID: 114854378644620086, guid: 6d115e829d6065348a268e6434ad5d7f,
+        type: 2}
+      propertyPath: m_rect.width
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 114854378644620086, guid: 6d115e829d6065348a268e6434ad5d7f,
+        type: 2}
+      propertyPath: m_rect.height
+      value: 15
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
@@ -31598,7 +31735,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4932551312445024, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
       propertyPath: m_RootOrder
-      value: 46
+      value: 45
       objectReference: {fileID: 0}
     - target: {fileID: 1913308816413266, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
       propertyPath: m_Name
@@ -32690,7 +32827,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4932551312445024, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
       propertyPath: m_RootOrder
-      value: 82
+      value: 81
       objectReference: {fileID: 0}
     - target: {fileID: 1913308816413266, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
       propertyPath: m_Name
@@ -33379,7 +33516,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4932551312445024, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
       propertyPath: m_RootOrder
-      value: 63
+      value: 60
       objectReference: {fileID: 0}
     - target: {fileID: 1913308816413266, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
       propertyPath: m_Name
@@ -33804,11 +33941,11 @@ Prefab:
     m_Modifications:
     - target: {fileID: 4932551312445024, guid: 5ff13bb6316f5a14bb23af9f0f7aa61f, type: 2}
       propertyPath: m_LocalPosition.x
-      value: 161
+      value: 179
       objectReference: {fileID: 0}
     - target: {fileID: 4932551312445024, guid: 5ff13bb6316f5a14bb23af9f0f7aa61f, type: 2}
       propertyPath: m_LocalPosition.y
-      value: 229.7
+      value: 218
       objectReference: {fileID: 0}
     - target: {fileID: 4932551312445024, guid: 5ff13bb6316f5a14bb23af9f0f7aa61f, type: 2}
       propertyPath: m_LocalPosition.z
@@ -34147,7 +34284,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 465822, guid: c655c3b9b843eeb4490dfee72e429bd3, type: 2}
       propertyPath: m_RootOrder
-      value: 72
+      value: 71
       objectReference: {fileID: 0}
     - target: {fileID: 11416102, guid: c655c3b9b843eeb4490dfee72e429bd3, type: 2}
       propertyPath: m_spawnTime.min
@@ -35890,7 +36027,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4932551312445024, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
       propertyPath: m_RootOrder
-      value: 52
+      value: 51
       objectReference: {fileID: 0}
     - target: {fileID: 1913308816413266, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
       propertyPath: m_Name
@@ -36512,7 +36649,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4932551312445024, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
       propertyPath: m_RootOrder
-      value: 76
+      value: 75
       objectReference: {fileID: 0}
     - target: {fileID: 1913308816413266, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
       propertyPath: m_Name
@@ -37195,7 +37332,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4932551312445024, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
       propertyPath: m_RootOrder
-      value: 75
+      value: 74
       objectReference: {fileID: 0}
     - target: {fileID: 1913308816413266, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
       propertyPath: m_Name
@@ -37576,7 +37713,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4932551312445024, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
       propertyPath: m_RootOrder
-      value: 86
+      value: 85
       objectReference: {fileID: 0}
     - target: {fileID: 1913308816413266, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
       propertyPath: m_Name
@@ -37687,7 +37824,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4932551312445024, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
       propertyPath: m_RootOrder
-      value: 69
+      value: 68
       objectReference: {fileID: 0}
     - target: {fileID: 1913308816413266, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
       propertyPath: m_Name
@@ -37697,6 +37834,16 @@ Prefab:
         type: 2}
       propertyPath: m_entityPrefabList.Array.data[0].name
       value: Goblin/PF_WorkerSpaceWalking
+      objectReference: {fileID: 0}
+    - target: {fileID: 114854378644620086, guid: 6d115e829d6065348a268e6434ad5d7f,
+        type: 2}
+      propertyPath: m_rect.width
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 114854378644620086, guid: 6d115e829d6065348a268e6434ad5d7f,
+        type: 2}
+      propertyPath: m_rect.height
+      value: 15
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
@@ -38235,7 +38382,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4932551312445024, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
       propertyPath: m_RootOrder
-      value: 66
+      value: 64
       objectReference: {fileID: 0}
     - target: {fileID: 1913308816413266, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
       propertyPath: m_Name
@@ -39850,7 +39997,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4932551312445024, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
       propertyPath: m_RootOrder
-      value: 67
+      value: 69
       objectReference: {fileID: 0}
     - target: {fileID: 1913308816413266, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
       propertyPath: m_Name
@@ -39860,6 +40007,16 @@ Prefab:
         type: 2}
       propertyPath: m_entityPrefabList.Array.data[0].name
       value: Goblin/PF_WorkerSpaceWalking
+      objectReference: {fileID: 0}
+    - target: {fileID: 114854378644620086, guid: 6d115e829d6065348a268e6434ad5d7f,
+        type: 2}
+      propertyPath: m_rect.width
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 114854378644620086, guid: 6d115e829d6065348a268e6434ad5d7f,
+        type: 2}
+      propertyPath: m_rect.height
+      value: 15
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
@@ -39901,7 +40058,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4932551312445024, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
       propertyPath: m_RootOrder
-      value: 55
+      value: 54
       objectReference: {fileID: 0}
     - target: {fileID: 1913308816413266, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
       propertyPath: m_Name
@@ -39962,7 +40119,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4932551312445024, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
       propertyPath: m_RootOrder
-      value: 62
+      value: 61
       objectReference: {fileID: 0}
     - target: {fileID: 1913308816413266, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
       propertyPath: m_Name
@@ -40467,7 +40624,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4932551312445024, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
       propertyPath: m_RootOrder
-      value: 81
+      value: 80
       objectReference: {fileID: 0}
     - target: {fileID: 1913308816413266, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
       propertyPath: m_Name
@@ -44406,7 +44563,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4932551312445024, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
       propertyPath: m_RootOrder
-      value: 48
+      value: 47
       objectReference: {fileID: 0}
     - target: {fileID: 1913308816413266, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
       propertyPath: m_Name
@@ -44457,7 +44614,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4932551312445024, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
       propertyPath: m_RootOrder
-      value: 80
+      value: 79
       objectReference: {fileID: 0}
     - target: {fileID: 1913308816413266, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
       propertyPath: m_Name
@@ -47505,7 +47662,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4932551312445024, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
       propertyPath: m_RootOrder
-      value: 74
+      value: 73
       objectReference: {fileID: 0}
     - target: {fileID: 1913308816413266, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
       propertyPath: m_Name
@@ -48357,7 +48514,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4932551312445024, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
       propertyPath: m_RootOrder
-      value: 83
+      value: 82
       objectReference: {fileID: 0}
     - target: {fileID: 1913308816413266, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
       propertyPath: m_Name
@@ -50396,7 +50553,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4932551312445024, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
       propertyPath: m_RootOrder
-      value: 53
+      value: 52
       objectReference: {fileID: 0}
     - target: {fileID: 1913308816413266, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
       propertyPath: m_Name
@@ -50406,6 +50563,16 @@ Prefab:
         type: 2}
       propertyPath: m_entityPrefabList.Array.data[0].name
       value: Goblin/PF_WorkerSpaceWalking
+      objectReference: {fileID: 0}
+    - target: {fileID: 114854378644620086, guid: 6d115e829d6065348a268e6434ad5d7f,
+        type: 2}
+      propertyPath: m_rect.width
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 114854378644620086, guid: 6d115e829d6065348a268e6434ad5d7f,
+        type: 2}
+      propertyPath: m_rect.height
+      value: 10
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
@@ -51397,6 +51564,16 @@ Prefab:
       propertyPath: m_entityPrefabList.Array.data[0].name
       value: Goblin/PF_WorkerSpaceWalking
       objectReference: {fileID: 0}
+    - target: {fileID: 114854378644620086, guid: 6d115e829d6065348a268e6434ad5d7f,
+        type: 2}
+      propertyPath: m_rect.width
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 114854378644620086, guid: 6d115e829d6065348a268e6434ad5d7f,
+        type: 2}
+      propertyPath: m_rect.height
+      value: 10
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
   m_IsPrefabParent: 0
@@ -51629,7 +51806,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4932551312445024, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
       propertyPath: m_RootOrder
-      value: 45
+      value: 44
       objectReference: {fileID: 0}
     - target: {fileID: 1913308816413266, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
       propertyPath: m_Name
@@ -52793,7 +52970,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4932551312445024, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
       propertyPath: m_RootOrder
-      value: 77
+      value: 76
       objectReference: {fileID: 0}
     - target: {fileID: 1913308816413266, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
       propertyPath: m_Name
@@ -53741,7 +53918,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4932551312445024, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
       propertyPath: m_RootOrder
-      value: 79
+      value: 78
       objectReference: {fileID: 0}
     - target: {fileID: 1913308816413266, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
       propertyPath: m_Name
@@ -53802,7 +53979,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 465822, guid: c655c3b9b843eeb4490dfee72e429bd3, type: 2}
       propertyPath: m_RootOrder
-      value: 73
+      value: 72
       objectReference: {fileID: 0}
     - target: {fileID: 11416102, guid: c655c3b9b843eeb4490dfee72e429bd3, type: 2}
       propertyPath: m_spawnTime.min
@@ -54270,7 +54447,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4932551312445024, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
       propertyPath: m_RootOrder
-      value: 60
+      value: 65
       objectReference: {fileID: 0}
     - target: {fileID: 1913308816413266, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
       propertyPath: m_Name
@@ -54280,6 +54457,16 @@ Prefab:
         type: 2}
       propertyPath: m_entityPrefabList.Array.data[0].name
       value: Goblin/PF_WorkerSpaceWalking
+      objectReference: {fileID: 0}
+    - target: {fileID: 114854378644620086, guid: 6d115e829d6065348a268e6434ad5d7f,
+        type: 2}
+      propertyPath: m_rect.width
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 114854378644620086, guid: 6d115e829d6065348a268e6434ad5d7f,
+        type: 2}
+      propertyPath: m_rect.height
+      value: 15
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
@@ -54795,7 +54982,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4932551312445024, guid: 5ff13bb6316f5a14bb23af9f0f7aa61f, type: 2}
       propertyPath: m_RootOrder
-      value: 50
+      value: 49
       objectReference: {fileID: 0}
     - target: {fileID: 1913308816413266, guid: 5ff13bb6316f5a14bb23af9f0f7aa61f, type: 2}
       propertyPath: m_IsActive
@@ -55231,7 +55418,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4932551312445024, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
       propertyPath: m_RootOrder
-      value: 54
+      value: 53
       objectReference: {fileID: 0}
     - target: {fileID: 1913308816413266, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
       propertyPath: m_Name
@@ -57586,7 +57773,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4932551312445024, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
       propertyPath: m_RootOrder
-      value: 64
+      value: 63
       objectReference: {fileID: 0}
     - target: {fileID: 1913308816413266, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
       propertyPath: m_Name
@@ -57785,7 +57972,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4932551312445024, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
       propertyPath: m_RootOrder
-      value: 57
+      value: 56
       objectReference: {fileID: 0}
     - target: {fileID: 1913308816413266, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
       propertyPath: m_Name
@@ -58417,7 +58604,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4932551312445024, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
       propertyPath: m_RootOrder
-      value: 68
+      value: 67
       objectReference: {fileID: 0}
     - target: {fileID: 1913308816413266, guid: 6d115e829d6065348a268e6434ad5d7f, type: 2}
       propertyPath: m_Name
