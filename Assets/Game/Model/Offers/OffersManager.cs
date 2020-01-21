@@ -577,8 +577,8 @@ public class OffersManager : Singleton<OffersManager> {
 		}
 
 		// Debug
-		Log("Collections updated with pack {0}", _offer.def.sku);
-		LogCollections();
+		//Log("Collections updated with pack {0}", _offer.def.sku);
+		//LogCollections();
 	}
 
 	/// <summary>
