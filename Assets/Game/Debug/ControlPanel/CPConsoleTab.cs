@@ -18,9 +18,10 @@ using TMPro;
 /// Control panel tab that shows logs
 /// </summary>
 public class CPConsoleTab : MonoBehaviour {
-    //------------------------------------------------------------------------//
-    // CONSTANTS															  //
-    //------------------------------------------------------------------------//
+	//------------------------------------------------------------------------//
+	// CONSTANTS															  //
+	//------------------------------------------------------------------------//
+	private int MAX_OUTPUT_LENGTH = 25000;	// Chars
 
     //------------------------------------------------------------------------//
     // MEMBERS AND PROPERTIES												  //
@@ -70,19 +71,26 @@ public class CPConsoleTab : MonoBehaviour {
         // Add new line and timestamp
         if (m_outputSb.Length > 0) m_outputSb.AppendLine(); // Don't add new line for the very first line
 
-        /*
+		/*
         TimeSpan t = DateTime.UtcNow.Subtract(m_startTimestamp);
         m_outputSb.AppendFormat("<color={4}>{0:D2}:{1:D2}:{2:D2}.{3:D2}", t.Hours, t.Minutes, t.Seconds, t.Milliseconds, Colors.WithAlpha(Colors.white, 0.25f).ToHexString("#"));   // [AOC] Unfortunately, this version of Mono still doesn't support TimeSpan formatting (added at .Net 4)
         m_outputSb.Append(": </color>");
         */
 
-        if (!string.IsNullOrEmpty(color))
-        {
-            m_outputSb.AppendFormat("<color={0}>", color);
-        }
+		// Need color?
+		bool colorNeeded = !string.IsNullOrEmpty(color);
+		if(colorNeeded) m_outputSb.AppendFormat("<color={0}>", color);
 
         // Add text
         m_outputSb.Append(_text);
+
+		// Close color
+		if(colorNeeded) m_outputSb.AppendFormat("</color>");
+
+		// Trim if needed
+		if(m_outputSb.Length > MAX_OUTPUT_LENGTH) {
+			m_outputSb.Remove(0, m_outputSb.Length - MAX_OUTPUT_LENGTH);
+		}
 
         // Set text
         m_outputText.text = m_outputSb.ToString();
