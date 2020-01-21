@@ -278,7 +278,16 @@ public class OffersManager : Singleton<OffersManager> {
 			if(pack.UpdateState() || _forceActiveRefresh) {
 				// Yes!
 				dirty = true;
-				Log("PACK UPDATED: {0} | {1}", Colors.magenta, pack.def.sku, pack.state);
+
+#if LOG
+				Color c = Colors.white;
+				switch(pack.state) {
+					case OfferPack.State.PENDING_ACTIVATION:	c = Colors.cyan;	break;
+					case OfferPack.State.EXPIRED:				c = Colors.red;		break;
+					case OfferPack.State.ACTIVE:				c = Colors.lime;	break;
+				}
+				Log("PACK UPDATED: {0} | {1}", c, pack.def.sku, pack.state);
+#endif
 
 				// Update lists
 				UpdateCollections(pack);
@@ -291,7 +300,7 @@ public class OffersManager : Singleton<OffersManager> {
 
 		// Remove expired offers (they won't be active anymore, no need to update them)
 		for(int i = 0; i < m_offersToRemove.Count; ++i) {
-			Log("---> REMOVING ", Color.red, m_offersToRemove[i].def.sku);
+			Log("---> REMOVING {0}", Color.red, m_offersToRemove[i].def.sku);
 			m_allEnabledOffers.Remove(m_offersToRemove[i]);
 			if(m_offersToRemove[i].type == OfferPack.Type.ROTATIONAL) {
 				m_allEnabledRotationalOffers.Remove(m_offersToRemove[i] as OfferPackRotational);
@@ -577,8 +586,8 @@ public class OffersManager : Singleton<OffersManager> {
 		}
 
 		// Debug
-		//Log("Collections updated with pack {0}", _offer.def.sku);
-		//LogCollections();
+		Log("Collections updated with pack {0}", _offer.def.sku);
+		LogCollections();
 	}
 
 	/// <summary>
@@ -915,16 +924,20 @@ public class OffersManager : Singleton<OffersManager> {
 		if(!FeatureSettingsManager.IsDebugEnabled) return;
 		string str = "Collections:\n";
 
-		AppendCollection(ref str, m_allOffers, "All");
-		AppendCollection(ref str, m_allEnabledOffers, "All Enabled");
-		AppendCollection(ref str, m_activeOffers, "Active");
+		AppendCollection(ref str, m_allOffers, "All", false);
+		AppendCollection(ref str, m_allEnabledOffers, "All Enabled", false);
+		AppendCollection(ref str, m_activeOffers, "Active", false);
 
-		str += "\n";
-		AppendCollection(ref str, m_allEnabledRotationalOffers, "All Rotational Enabled");
-		AppendCollection(ref str, m_activeRotationalOffers, "Active Rotational");
+		//str += "\n";
+		str += Colors.skyBlue.OpenTag();
+		AppendCollection(ref str, m_allEnabledRotationalOffers, "All Rotational Enabled", false);
+		AppendCollection(ref str, m_activeRotationalOffers, "Active Rotational", false);
+		str += Colors.skyBlue.CloseTag();
 
-		str += "\n";
-		AppendCollection(ref str, m_offersToRemove, "To Remove");
+		//str += "\n";
+		str += Colors.red.OpenTag();
+		AppendCollection(ref str, m_offersToRemove, "To Remove", true);
+		str += Colors.red.CloseTag();
 
 		Log(str);
 #endif
@@ -937,11 +950,13 @@ public class OffersManager : Singleton<OffersManager> {
 	/// <param name="_str">String.</param>
 	/// <param name="_collection">Collection.</param>
 	/// <param name="_collectionName">Name of the collection.</param>
-	private void AppendCollection<T>(ref string _str, List<T> _collection, string _collectionName) where T : OfferPack{
+	private void AppendCollection<T>(ref string _str, List<T> _collection, string _collectionName, bool _printList) where T : OfferPack{
 		_str += "\t" + _collectionName + ": " + _collection.Count + "\n";
-		/*foreach(OfferPack pack in _collection) {
-			_str += "\t\t" + pack.def.sku + "\n";
-		}*/
+		if(_printList) {
+			foreach(OfferPack pack in _collection) {
+				_str += "\t\t" + pack.def.sku + "\n";
+			}
+		}
 	}
 #endif
 
