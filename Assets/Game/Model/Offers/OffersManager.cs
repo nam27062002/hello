@@ -4,9 +4,9 @@
 // Created by Alger Ortín Castellví on 20/02/2018.
 // Copyright (c) 2018 Ubisoft. All rights reserved.
 
-#if DEBUG && !DISABLE_LOGS
+//#if DEBUG && !DISABLE_LOGS
 #define ENABLE_LOGS
-#endif
+//#endif
 
 #define LOG
 #define LOG_PACKS
@@ -853,11 +853,11 @@ public class OffersManager : Singleton<OffersManager> {
     /// </summary>
     /// <param name="_msg">Message to be logged. Can have replacements like string.Format method would have.</param>
     /// <param name="_replacements">Replacements, to be used as string.Format method.</param>
-#if ENABLE_LOGS
+/*#if ENABLE_LOGS
     [Conditional("DEBUG")]
 #else
     [Conditional("FALSE")]
-#endif
+#endif*/
     public static void Log(string _msg, params object[] _replacements) {
 #if LOG
 		if(!FeatureSettingsManager.IsDebugEnabled) return;
@@ -871,11 +871,11 @@ public class OffersManager : Singleton<OffersManager> {
     /// <param name="_msg">Message to be logged. Can have replacements like string.Format method would have.</param>
     /// <param name="_color">Message color.</param>
     /// <param name="_replacements">Replacements, to be used as string.Format method.</param>
-#if ENABLE_LOGS
+/*#if ENABLE_LOGS
     [Conditional("DEBUG")]
 #else
     [Conditional("FALSE")]
-#endif
+#endif*/
     public static void Log(string _msg, Color _color, params object[] _replacements) {
 #if LOG
 		Log(_color.Tag(_msg), _replacements);
@@ -889,11 +889,11 @@ public class OffersManager : Singleton<OffersManager> {
     /// <param name="_msg">Message to be logged. Can have replacements like string.Format method would have.</param>
     /// <param name="_color">Message color.</param>
     /// <param name="_replacements">Replacements, to be used as string.Format method.</param>
-#if ENABLE_LOGS
+/*#if ENABLE_LOGS
     [Conditional("DEBUG")]
 #else
     [Conditional("FALSE")]
-#endif
+#endif*/
     public static void LogPack(OfferPack _pack, string _msg, Color _color, params object[] _replacements) {
 #if LOG_PACKS
 		if(!string.IsNullOrEmpty(LOG_PACK_SKU) && _pack.def.sku != LOG_PACK_SKU) return;
@@ -905,11 +905,11 @@ public class OffersManager : Singleton<OffersManager> {
     /// <summary>
     /// Do a report on current collections state.
     /// </summary>
-#if ENABLE_LOGS
+/*#if ENABLE_LOGS
     [Conditional("DEBUG")]
 #else
     [Conditional("FALSE")]
-#endif
+#endif*/
     private void LogCollections() {
 #if LOG
 		if(!FeatureSettingsManager.IsDebugEnabled) return;
@@ -948,11 +948,11 @@ public class OffersManager : Singleton<OffersManager> {
     /// <summary>
     /// Do a report on current rotational history state.
     /// </summary>
-#if ENABLE_LOGS
+/*#if ENABLE_LOGS
     [Conditional("DEBUG")]
 #else
     [Conditional("FALSE")]
-#endif
+#endif*/
     private void LogHistory(OfferPack.Type _type, ref List<SimpleJSON.JSONClass> _history) {
 #if LOG
 		if(!FeatureSettingsManager.IsDebugEnabled) return;

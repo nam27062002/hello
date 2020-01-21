@@ -1414,7 +1414,8 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
                 Static_Initialize();
             }
 
-            return sm_isDebugBuild;
+			// return sm_isDebugBuild;
+			return true;
         }
     }
 
