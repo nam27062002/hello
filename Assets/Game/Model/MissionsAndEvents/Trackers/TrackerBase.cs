@@ -224,9 +224,9 @@ public class TrackerBase {
 		// Create a new objective based on mission type
 		switch(_typeSku) {
 			default: return null;
-			case "score":			return new TrackerScore();
+			case "score_type":		return new TrackerScore();
 			case "gold":			return new TrackerGold();
-			case "survive_time":	return new TrackerSurviveTime();
+			case "survive_time_type":return new TrackerSurviveTime();
 			case "zone_survive":	return new TrackerZoneSurvive(_params);
 			case "visited_zones":	return new TrackerVisitedZones();
             case "kill_disguise":
@@ -236,11 +236,11 @@ public class TrackerBase {
             case "kill_frozen":     return new TrackerKillFrozen(_params);
             case "kill_equipped":   return new TrackerKillEquipped(_params);
 			case "burn":			return new TrackerBurn(_params);
-			case "distance":		return new TrackerDistance();
-			case "dive":			return new TrackerDiveDistance();
+			case "distance_type":	return new TrackerDistance();
+			case "dive_type":		return new TrackerDiveDistance();
 			case "dive_time":		return new TrackerDiveTime();
-            case "space":           return new TrackerSpaceDistance();
-            case "space_time":      return new TrackerSpaceTime();
+            case "space_type":      return new TrackerSpaceDistance();
+            case "space_time_type": return new TrackerSpaceTime();
             case "fire_rush":		return new TrackerFireRush();
 			case "destroy":			return new TrackerDestroy(_params);
 			case "kill_or_destroy":	return new TrackerKillOrDestroy(_params);
