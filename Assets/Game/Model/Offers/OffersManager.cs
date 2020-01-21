@@ -262,7 +262,7 @@ public class OffersManager : Singleton<OffersManager> {
 	/// </summary>
 	/// <param name="_forceActiveRefresh">Force a refresh of the active offers list.</param>
 	private void Refresh(bool _forceActiveRefresh) {
-		Log("REFRESH {0}", Colors.magenta, _forceActiveRefresh);
+		//Log("REFRESH {0}", Colors.magenta, _forceActiveRefresh);
 
 		// Aux vars
 		OfferPack pack = null;
@@ -599,7 +599,7 @@ public class OffersManager : Singleton<OffersManager> {
 		Log("Checking history size: {0} vs {1} ({2} + {3})", history.Count, maxSize, settings.rotationalHistorySize, m_activeRotationalOffers.Count);
 		while(history.Count > maxSize) {
 			SimpleJSON.JSONClass removedItem = history[0];
-			Log("    History too big: Dequeing " + removedItem.ToString(), Colors.cyan);
+			Log("    History too big: Dequeing " + removedItem["sku"], Colors.red);
 
 			//  ██╗  ██╗██████╗ ██╗  ██╗  ███████╗███████╗██████╗  ██████╗ 
 			//  ██║  ██║██╔══██╗██║ ██╔╝  ╚════██║╚════██║╚════██╗██╔═████╗
@@ -939,9 +939,9 @@ public class OffersManager : Singleton<OffersManager> {
 	/// <param name="_collectionName">Name of the collection.</param>
 	private void AppendCollection<T>(ref string _str, List<T> _collection, string _collectionName) where T : OfferPack{
 		_str += "\t" + _collectionName + ": " + _collection.Count + "\n";
-		foreach(OfferPack pack in _collection) {
+		/*foreach(OfferPack pack in _collection) {
 			_str += "\t\t" + pack.def.sku + "\n";
-		}
+		}*/
 	}
 #endif
 
