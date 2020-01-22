@@ -9,7 +9,7 @@ Material:
   m_Name: dragon_skeleton_2_disguise
   m_Shader: {fileID: 4800000, guid: 2345015ac46679e4cb5817ed44c82547, type: 3}
   m_ShaderKeywords: FRESNEL FXLAYER_REFLECTION NORMALMAP OPAQUEALPHA OPAQUEFRESNEL
-    SELFILLUMINATE_BLINKLIGHTS SPECULAR
+    REFLECTIONTYPE_COLOR SELFILLUMINATE_BLINKLIGHTS SPECULAR
   m_LightmapFlags: 5
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -71,7 +71,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Floats:
     - FXLayer: 1
-    - ReflectionType: 0
+    - ReflectionType: 1
     - SelfIlluminate: 2
     - _Alpha_as_depth: 0
     - _BlendMode: 0
@@ -114,7 +114,7 @@ Material:
     - _NormalStrenght: 1
     - _OcclusionStrength: 1
     - _Parallax: 0.02
-    - _ReflectionAmount: 0.748
+    - _ReflectionAmount: 1
     - _SpecExponent: 80
     - _SrcBlend: 1
     - _StencilMask: 10
@@ -131,7 +131,7 @@ Material:
     - _EmissionColorUI: {r: 1, g: 1, b: 1, a: 1}
     - _FresnelColor: {r: 0.820718, g: 0.8455882, b: 0.8445591, a: 1}
     - _InnerLightColor: {r: 1, g: 0, b: 0, a: 1}
-    - _ReflectionColor: {r: 1, g: 1, b: 1, a: 1}
+    - _ReflectionColor: {r: 0.745026, g: 0.8860816, b: 0.9558824, a: 1}
     - _SecondLightColor: {r: 0.12262111, g: 0.12832598, b: 0.13235295, a: 0}
     - _SecondLightDir: {r: 0.50397897, g: 0.18792436, b: -0.8430241, a: 0}
     - _Tint: {r: 0.9117647, g: 0.9117647, b: 0.9117647, a: 1}

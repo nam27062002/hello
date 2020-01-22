@@ -8,7 +8,7 @@ Material:
   m_PrefabInternal: {fileID: 0}
   m_Name: dragon_skeleton_3_ingame_body
   m_Shader: {fileID: 4800000, guid: 2345015ac46679e4cb5817ed44c82547, type: 3}
-  m_ShaderKeywords: FRESNEL FXLAYER_REFLECTION NORMALMAP REFLECTIONTYPE_COLOR SELFILLUMINATE_NORMAL
+  m_ShaderKeywords: FRESNEL FXLAYER_REFLECTION NORMALMAP REFLECTIONTYPE_COLOR SELFILLUMINATE_BLINKLIGHTS
     SPECULAR _ZWRITE_ON
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -70,7 +70,7 @@ Material:
     m_Floats:
     - FXLayer: 1
     - ReflectionType: 1
-    - SelfIlluminate: 0
+    - SelfIlluminate: 2
     - _BlendMode: 0
     - _BumpScale: 1
     - _ColorRampAmount: 0
@@ -100,19 +100,19 @@ Material:
     - _EnableVertexOffsetZ: 0
     - _FireAmount: 0
     - _FireSpeed: 1
-    - _Fresnel: 3.53
+    - _Fresnel: 10
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
-    - _InnerLightAdd: 0
+    - _InnerLightAdd: 2.4
     - _InnerLightWavePhase: 1
-    - _InnerLightWaveSpeed: 1
+    - _InnerLightWaveSpeed: 2
     - _Metallic: 0
     - _Mode: 0
-    - _NormalStrenght: 1
+    - _NormalStrenght: 1.8
     - _OcclusionStrength: 1
     - _Parallax: 0.02
-    - _ReflectionAmount: 0.463
+    - _ReflectionAmount: 1
     - _SmoothnessTextureChannel: 0
     - _SpecExponent: 11.23
     - _SpecularHighlights: 1
@@ -126,8 +126,8 @@ Material:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _ColorAdd: {r: 0, g: 0, b: 0, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _FresnelColor: {r: 0.2205882, g: 0.21450302, b: 0.19463666, a: 1}
-    - _InnerLightColor: {r: 1, g: 1, b: 1, a: 1}
+    - _FresnelColor: {r: 0.5, g: 0.025735289, b: 0.025735289, a: 1}
+    - _InnerLightColor: {r: 1, g: 0.6, b: 0, a: 1}
     - _ReflectionColor: {r: 0.7941176, g: 0.6860339, b: 0.08174738, a: 1}
     - _SecondLightColor: {r: 0, g: 0, b: 0, a: 0}
     - _SecondLightDir: {r: 0, g: 0, b: -1, a: 0}
