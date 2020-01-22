@@ -9,7 +9,7 @@ Material:
   m_Name: dragon_skeleton_3_disguise
   m_Shader: {fileID: 4800000, guid: 2345015ac46679e4cb5817ed44c82547, type: 3}
   m_ShaderKeywords: FRESNEL FXLAYER_NONE NORMALMAP OPAQUEALPHA OPAQUEFRESNEL SELFILLUMINATE_NORMAL
-    SPECULAR
+    SPECULAR VERTEXOFFSET VERTEXOFFSETY
   m_LightmapFlags: 5
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -98,9 +98,9 @@ Material:
     - _EnableOpaqueSpecular: 0
     - _EnableSilhouette: 0
     - _EnableSpecular: 1
-    - _EnableVertexOffset: 0
+    - _EnableVertexOffset: 1
     - _EnableVertexOffsetX: 0
-    - _EnableVertexOffsetY: 0
+    - _EnableVertexOffsetY: 1
     - _EnableVertexOffsetZ: 0
     - _FireAmount: 0
     - _FireSpeed: 1
@@ -119,8 +119,8 @@ Material:
     - _SrcBlend: 1
     - _StencilMask: 10
     - _UVSec: 0
-    - _VOAmplitude: 0.3
-    - _VOSpeed: 3
+    - _VOAmplitude: 0.05
+    - _VOSpeed: 2
     - _ZWrite: 1
     m_Colors:
     - _AmbientAdd: {r: 0.14705884, g: 0.14705884, b: 0.14705884, a: 0}
