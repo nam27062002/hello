@@ -22,7 +22,7 @@ GameObject:
   - component: {fileID: 198779421135718786}
   - component: {fileID: 199797179855691778}
   m_Layer: 0
-  m_Name: Particle System (2)
+  m_Name: PS_Flames
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -174,15 +174,15 @@ ParticleSystem:
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 0
-  randomSeed: 1505401146
+  randomSeed: -764913071
   InitialModule:
     serializedVersion: 3
     enabled: 1
     startLifetime:
       serializedVersion: 2
       minMaxState: 3
-      scalar: 1.2
-      minScalar: 1
+      scalar: 0.8
+      minScalar: 0.6
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -262,9 +262,9 @@ ParticleSystem:
         m_RotationOrder: 4
     startColor:
       serializedVersion: 2
-      minMaxState: 0
-      minColor: {r: 1, g: 0.22794116, b: 0.7870181, a: 0.441}
-      maxColor: {r: 0.86206913, g: 0, b: 1, a: 0.059}
+      minMaxState: 2
+      minColor: {r: 1, g: 0.5633874, b: 0.22794116, a: 0.441}
+      maxColor: {r: 1, g: 0.23448277, b: 0.18382353, a: 0.378}
       maxGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 1}
@@ -576,7 +576,7 @@ ParticleSystem:
     gravityModifier:
       serializedVersion: 2
       minMaxState: 3
-      scalar: -1.8
+      scalar: -0.5
       minScalar: -0.3
       maxCurve:
         serializedVersion: 2
@@ -3124,7 +3124,7 @@ ParticleSystem:
     vector0_1:
       serializedVersion: 2
       minMaxState: 1
-      scalar: 0.1
+      scalar: 0.5
       minScalar: 0
       maxCurve:
         serializedVersion: 2
