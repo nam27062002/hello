@@ -1768,6 +1768,10 @@ public class UserProfile : UserPersistenceSystem
         foreach(KeyValuePair<string, IDragonData> pair in m_dragonsBySku) {
             pair.Value.RefreshPrice();
             pair.Value.RefreshShadowRevealUnlock();
+			if ( pair.Value is DragonDataClassic )
+			{
+				(pair.Value as DragonDataClassic).RefreshProgression();
+			}
         }
     }
 

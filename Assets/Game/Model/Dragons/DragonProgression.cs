@@ -91,6 +91,12 @@ public class DragonProgression : SerializableClass {
 	/// </summary>
 	/// <param name="_def">The dragon definition to be used.</param>
 	public void InitFromDef(DefinitionNode _def) {
+		RefreshDefinition( _def );
+	}
+
+	// Refresh info from definition
+	public void RefreshDefinition( DefinitionNode _def )
+	{
 		// Check params
 		if(_def == null) {
 			// Clear current data and return
@@ -108,22 +114,8 @@ public class DragonProgression : SerializableClass {
 		for(int i = 0; i < maxLevel; i++) {
 			m_levelsXp[i] = _def.GetAsFloat("xpLevel" + i);
 		}
-
-		/*
-		string strLevels = "";
-		string strLevelsXP = "";
-		for(int i = 0; i < numLevels; i++) {
-			strLevels += "[ " + i + " ]";
-			strLevelsXP += "[ " + m_levelsXp[i] + " ]";
-		}
-		string str = _def.sku + ":\n";
-		str += strLevels + "\n";
-		str += strLevelsXP + "\n";
-		str += "numLevels: " + numLevels + "\n";
-		str += "lastLevel: " + lastLevel + "\n";
-		Debug.Log(str);
-		*/
 	}
+
 
 	//------------------------------------------------------------------//
 	// PUBLIC METHODS													//
@@ -151,7 +143,7 @@ public class DragonProgression : SerializableClass {
 	/// Sets the global xp to a target delta.
 	/// </summary>
 	/// <param name="_delta">Global xp delta.</param>
-	public void SetXp_DEBUG(float _xp) {
+	public void SetXp(float _xp) {
 		// Set XP
 		m_xp = Mathf.Clamp(_xp, 0f, levelsXP[maxLevel]);
 
