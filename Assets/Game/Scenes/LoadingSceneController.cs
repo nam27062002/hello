@@ -855,13 +855,14 @@ public class LoadingSceneController : SceneController {
 
             case State.DONE:
             {
+                // Loads main menu scene
+                // We need to do this before applying the customizer in order to prevent the game from staying in the loading screen if applying the customizer throws an exception
+                FlowManager.GoToMenu();
+
                 // Checks if customizer has to be applied. It has to be done here in order to maximize user's chances of getting server time, which
                 // is important because it might decide which offers the user will see
-                HDCustomizerManager.instance.CheckAndApply();
-
-                // Loads main menu scene
-                FlowManager.GoToMenu();
-            }break;
+                HDCustomizerManager.instance.CheckAndApply();                
+            }break;                            
         }
     }
 
