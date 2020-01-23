@@ -652,7 +652,7 @@ public class MissionPill : MonoBehaviour, IBroadcastListener {
 	    // Do it!
 	    if(_success) {
 		    UsersManager.currentUser.skipMissionAdUses++;
-            MissionManager.SkipMission(m_missionDifficulty, -1f, false, true);
+            MissionManager.SkipMission(m_missionDifficulty, Mission.SECONDS_SKIPPED_WITH_AD, false, true);
             PersistenceFacade.instance.Save_Request();
 
 		    Refresh();

@@ -12,6 +12,8 @@ using UnityEngine.UI;
 
 using System.Collections.Generic;
 
+using DG.Tweening;
+
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
 //----------------------------------------------------------------------------//
@@ -22,13 +24,44 @@ public class PopupShopCurrencyTab : IPopupShopTab {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	
+	private const float REFRESH_FREQUENCY = 1f;	// Seconds
+
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed
 	[List("sc", "hc")]
 	[SerializeField] private string m_type = "sc";
+
+	//------------------------------------------------------------------------//
+	// GENERIC METHODS														  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// First update call.
+	/// </summary>
+	private void Start() {
+		InvokeRepeating("PeriodicRefresh", 0f, REFRESH_FREQUENCY);
+	}
+
+	/// <summary>
+	/// Called at regular intervals.
+	/// </summary>
+	private void PeriodicRefresh() {
+		// Nothing if not enabled
+		if(!this.isActiveAndEnabled) return;
+
+		// Propagate to pills
+		for(int i = 0; i < m_pills.Count; ++i) {
+			(m_pills[i] as PopupShopCurrencyPill).PeriodicRefresh();
+		}
+	}
+
+	/// <summary>
+	/// Destructor.
+	/// </summary>
+	private void OnDestroy() {
+		CancelInvoke("PeriodicRefresh");
+	}
 
 	//------------------------------------------------------------------------//
 	// IPopupShopTab IMPLEMENTATION											  //
@@ -68,4 +101,26 @@ public class PopupShopCurrencyTab : IPopupShopTab {
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
+	/// <summary>
+	/// The tab is about to be displayed.
+	/// </summary>
+	public void OnTabShow() {
+		// Find first pill with Happy Hour active
+		PopupShopCurrencyPill pill = null;
+		PopupShopCurrencyPill targetPill = null;
+		for(int i = 0; i < m_pills.Count; ++i) {
+			pill = m_pills[i] as PopupShopCurrencyPill;
+			if(pill.happyHourActive) {
+				targetPill = pill;
+				break;	// Found it!
+			}
+		}
+
+		// Scroll to it!
+		if(targetPill != null) {
+			m_scrollList.DOGoToItem(targetPill.transform, 1f)
+				.SetDelay(0.5f)
+				.SetEase(Ease.OutQuad);
+		}
+	}
 }

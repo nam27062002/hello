@@ -66,6 +66,9 @@ public class WorldFeedbackSpawner : MonoBehaviour, IBroadcastListener {
     //------------------------------------------------------------------//      	
     private void Awake() {
 		m_particlesFeedbackEnabled = FeatureSettingsManager.instance.IsParticlesFeedbackEnabled;
+
+        // Initialize m_offsets here just in case the callback comes before Start
+        Offsets_Init();
     }
 
     private void Start() {
@@ -127,9 +130,8 @@ public class WorldFeedbackSpawner : MonoBehaviour, IBroadcastListener {
         // Start with the 3D feedback container disabled - will be enabled on demand
         m_3dFeedbackContainer.SetActive(false);
 
-		if ( m_particlesFeedbackEnabled )
-        	Cache_Init();
-        Offsets_Init();
+        if (m_particlesFeedbackEnabled)
+            Cache_Init();
 
         if (FeatureSettingsManager.IsDebugEnabled)
             Debug_Awake();
@@ -202,10 +204,16 @@ public class WorldFeedbackSpawner : MonoBehaviour, IBroadcastListener {
         Clear();
     }
 
-    public void Clear()
+    private void Clear()
     {
         Cache_Clear();
         Offsets_Clear();
+        
+        if (gameObject.activeSelf)
+        {
+            // Disable the object, so all the listeners are unsubscribed
+            gameObject.SetActive(false);
+        }
     }
 
 	/// <summary>
@@ -404,6 +412,7 @@ public class WorldFeedbackSpawner : MonoBehaviour, IBroadcastListener {
 	}
 
     private void OnGameEnded() {
+
         Clear();
     }
 

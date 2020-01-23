@@ -361,6 +361,7 @@ public class UserProfile : UserPersistenceSystem
     // Happy hour
     private DateTime m_happyHourExpirationTime;
     private float m_happyHourExtraGemsRate;
+	private string m_happyHourLastPackSku;
 
     // Remove ads feature
     private RemoveAdsFeature m_removeAds;
@@ -1211,6 +1212,12 @@ public class UserProfile : UserPersistenceSystem
             m_happyHourExtraGemsRate = 0;
         }
 
+		key = "happyHourLastPackSku";
+		if(happyHour.ContainsKey(key)) {
+			m_happyHourLastPackSku = happyHour[key];
+		} else {
+			m_happyHourLastPackSku = string.Empty;
+		}
 
         // Visited Zones
         key = "visitedZones";
@@ -1431,10 +1438,17 @@ public class UserProfile : UserPersistenceSystem
         happyHour.Add("happyHourExpirationTime", m_happyHourExpirationTime.Ticks.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
         happyHour.Add("happyHourExtraGemsRate", m_happyHourExtraGemsRate.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
 
+		if(!string.IsNullOrEmpty(m_happyHourLastPackSku)) {
+			// No need to add it if none - more compact save file!
+			happyHour.Add("happyHourLastPackSku", m_happyHourLastPackSku);
+		}
+
         data.Add("happyHourOffer", happyHour);
 
         // Remove Ads offer
-        //data.Add("removeAdsFeature", m_removeAds.Save());
+        // For safety reasons we store the Remove Ads feature in the player preferences
+        // but we store it also in the user profile just in case we need in the future
+        data.Add("removeAdsFeature", m_removeAds.Save());
 
         // Visited Zones
         JSONArray zonesArray = new SimpleJSON.JSONArray();
@@ -1896,17 +1910,41 @@ public class UserProfile : UserPersistenceSystem
 	/// <summary>
 	/// Push a reward to the stack.
 	/// </summary>
+	/// <returns><c>true</c> if the reward has been added. <c>false</c> if the reward hasn't been added because the user already owns it and the user is allowed to own only an instance of this 
+	/// type of reward.amount, for example, removeAds is not added if the user already owns it</returns>
 	/// <param name="_reward">Reward to be pushed.</param>
-	public void PushReward(Metagame.Reward _reward) {
+	public bool PushReward(Metagame.Reward _reward) {
 
         // Dont push rewards that are already owned by the user
-        if (_reward.IsAlreadyOwned())
-            return;
+		if (_reward.IsAlreadyOwned ())
+			return false;
 
 		rewardStack.Push(_reward);
 		Debug.Log("<color=green>PUSH! " + _reward.GetType().Name + "</color>");
 		Messenger.Broadcast<Metagame.Reward>(MessengerEvents.PROFILE_REWARD_PUSHED, _reward);
+
+		return true;
 	}
+
+	/// <summary>
+	/// Push a list of rewards to the stack.
+	/// </summary>
+	/// <returns>The amount of rewards that have been added to the profile effectively. For example removeAds is not added if the user already owns it</returns>
+	/// <param name="_rewards">List of rewards to add.</param>
+	public int PushRewards(List<Metagame.Reward> _rewards) {
+		int _returnValue = 0;
+		if (_rewards != null) {
+			int count = _rewards.Count;
+			for (int i = 0; i < count; i++) {
+				if (PushReward (_rewards [i])) {
+					_returnValue++;
+				}
+			}				
+		}
+
+		return _returnValue;
+	}
+
 
 	/// <summary>
 	/// Pop a reward from the stack.
@@ -2095,6 +2133,13 @@ public class UserProfile : UserPersistenceSystem
                 _happyHour.expirationTime = m_happyHourExpirationTime;
                 _happyHour.extraGemsFactor = m_happyHourExtraGemsRate;
             }
+
+			// Last purchased pack is not so much critical, no need for extra checks
+			if(!string.IsNullOrEmpty(m_happyHourLastPackSku)) {
+				_happyHour.lastPackDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SHOP_PACKS, m_happyHourLastPackSku);
+			} else {
+				_happyHour.lastPackDef = null;
+			}
         }
     }
 
@@ -2105,6 +2150,11 @@ public class UserProfile : UserPersistenceSystem
         {
             m_happyHourExpirationTime = _happyHour.expirationTime;
             m_happyHourExtraGemsRate = _happyHour.extraGemsFactor;
+			if(_happyHour.lastPackDef != null) {
+				m_happyHourLastPackSku = _happyHour.lastPackDef.sku;
+			} else {
+				m_happyHourLastPackSku = string.Empty;
+			}
         }
     }
 

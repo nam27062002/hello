@@ -125,18 +125,7 @@ public class RewardInfoUI : MonoBehaviour {
 		if(m_shareButton != null) m_shareButton.gameObject.SetActive(false);
 	}
 
-    /// <summary>
-    /// Called when the entity is activated
-    /// </summary>
-    private void OnEnable()
-    {
 
-        // Hide the share button when we open the reward screen, so if the
-        // share button is enabled, it wont flash in the first frame before update
-        // This fixes the bug [HDK-4805]
-        if (m_shareButton != null) m_shareButton.gameObject.SetActive(false);
-
-    }
 
     //------------------------------------------------------------------------//
     // OTHER METHODS														  //

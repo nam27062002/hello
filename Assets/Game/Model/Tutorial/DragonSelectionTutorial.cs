@@ -114,8 +114,6 @@ public class DragonSelectionTutorial : MonoBehaviour {
 						m_state = State.RUNNING;
 						m_timer.Start(m_forwardDuration * 1000);
 
-                        // Lock all the UI input while the animation is runnin
-                        Messenger.Broadcast<bool>(MessengerEvents.UI_LOCK_INPUT, true);
                     }
 				}
 				break;
@@ -257,8 +255,11 @@ public class DragonSelectionTutorial : MonoBehaviour {
         // Toggle state!
         m_state = State.DELAY;
 		m_scroller.cameraAnimator.delta = m_initialDelta;	// Instant scroll to initial delta (first dragon)
-		m_timer.Start(m_delay * 1000);	// Start timer with the initial delay
-	}
+		m_timer.Start(m_delay * 1000);  // Start timer with the initial delay
+
+        // Lock all the UI input while the animation is runnin
+        Messenger.Broadcast<bool>(MessengerEvents.UI_LOCK_INPUT, true);
+    }
 
 	/// <summary>
 	/// Stops the tutorial. Doesn't update profile's persistence!
