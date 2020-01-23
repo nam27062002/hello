@@ -9,6 +9,7 @@ Material:
   m_Name: dragon_classic_6_disguise
   m_Shader: {fileID: 4800000, guid: 2345015ac46679e4cb5817ed44c82547, type: 3}
   m_ShaderKeywords: FRESNEL FXLAYER_REFLECTION NORMALMAP REFLECTIONTYPE_NORMAL SPECULAR
+    VERTEXOFFSET VERTEXOFFSETX VERTEXOFFSETY VERTEXOFFSETZ
   m_LightmapFlags: 1
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -95,10 +96,10 @@ Material:
     - _EnableOpaqueSpecular: 0
     - _EnableSilhouette: 0
     - _EnableSpecular: 1
-    - _EnableVertexOffset: 0
-    - _EnableVertexOffsetX: 0
-    - _EnableVertexOffsetY: 0
-    - _EnableVertexOffsetZ: 0
+    - _EnableVertexOffset: 1
+    - _EnableVertexOffsetX: 1
+    - _EnableVertexOffsetY: 1
+    - _EnableVertexOffsetZ: 1
     - _FireAmount: 0
     - _FireSpeed: 1
     - _Fresnel: 6.32
@@ -120,8 +121,8 @@ Material:
     - _SrcBlend: 1
     - _StencilMask: 10
     - _UVSec: 0
-    - _VOAmplitude: 0.3
-    - _VOSpeed: 3
+    - _VOAmplitude: 0.0015
+    - _VOSpeed: 4.5
     - _ZWrite: 1
     m_Colors:
     - _AmbientAdd: {r: 0, g: 0, b: 0, a: 0}
