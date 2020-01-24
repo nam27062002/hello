@@ -106,20 +106,32 @@ public class PopupShopCurrencyPill : IPopupShopPill {
 		RefreshHappyHour();
 	}
 
-	//------------------------------------------------------------------------//
-	// OTHER METHODS														  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Initialize this pill with the given def data.
-	/// </summary>
-	/// <param name="_def">Definition of the currency package.</param>
-	public void InitFromDef(DefinitionNode _def) {
+    //------------------------------------------------------------------------//
+    // OTHER METHODS														  //
+    //------------------------------------------------------------------------//
+
+    /// <summary>
+    /// Initialize this pill with the given def data.
+    /// </summary>
+    /// <param name="_def">Definition of the currency package.</param>
+    public override void InitFromOfferPack(OfferPack _offer)
+    {
+        InitFromDef(_offer.def);
+    }
+
+
+    /// <summary>
+    /// Initialize this pill with the given def data.
+    /// </summary>
+    /// <param name="_def">Definition of the currency package.</param>
+    public void InitFromDef(DefinitionNode _def) {
 		// Store new definition
 		m_def = _def;
 
 		// If null, hide this pill and return
-		this.gameObject.SetActive(_def != null);
-		if(_def == null) return;
+		this.gameObject.SetActive(m_def != null);
+		if(m_def == null) return;
+        
 
 		// Init internal vars
 		m_type = UserProfile.SkuToCurrency( m_def.Get("type") );
@@ -134,7 +146,7 @@ public class PopupShopCurrencyPill : IPopupShopPill {
 		} else {
 			s_loadingTaskPriority++;
 		}
-		m_iconLoadTask = Resources.LoadAsync<GameObject>(UIConstants.SHOP_ICONS_PATH + _def.Get("icon"));
+		m_iconLoadTask = Resources.LoadAsync<GameObject>(UIConstants.SHOP_ICONS_PATH + m_def.Get("icon"));
 		m_iconLoadTask.priority = loadingTaskPriority;
 
 		// Amount

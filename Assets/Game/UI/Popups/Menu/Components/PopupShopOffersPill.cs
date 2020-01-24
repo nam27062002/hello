@@ -106,7 +106,7 @@ public class PopupShopOffersPill : IPopupShopPill {
 	/// Initialize the pill with a given pack's data.
 	/// </summary>
 	/// <param name="_pack">Pack.</param>
-	public virtual void InitFromOfferPack(OfferPack _pack) {
+	public override void InitFromOfferPack(OfferPack _pack) {
 		// Store new pack
 		m_pack = _pack;
 		m_def = null;

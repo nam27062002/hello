@@ -97,6 +97,11 @@ public abstract class IPopupShopPill : MonoBehaviour {
 		// To be implemented by heirs if needed
 	}
 
+    public virtual void InitFromOfferPack (OfferPack _pack)
+    {
+        // To be implemented by heirs
+    }
+
 	//------------------------------------------------------------------------//
 	// INTERNAL METHODS														  //
 	//------------------------------------------------------------------------//

@@ -49,6 +49,8 @@ public class OfferPack {
 		ROTATIONAL,
         REMOVE_ADS,
         FREE,
+        SC,
+        HC,
         COUNT
 	}
 
@@ -106,11 +108,16 @@ public class OfferPack {
 		get { return m_state == State.ACTIVE; }
 	}
 
-	// Segmentation parameters
-	// See https://mdc-web-tomcat17.ubisoft.org/confluence/display/ubm/%5BHD%5D+Offers+1.0#id-[HD]Offers1.0-Segmentationdetails
+    protected string m_shopCategory;
+    public string shopCategory { 
+        get  {  return m_shopCategory;  }
+    }
 
-	// Mandatory segmentation params
-	protected Version m_minAppVersion = new Version();
+    // Segmentation parameters
+    // See https://mdc-web-tomcat17.ubisoft.org/confluence/display/ubm/%5BHD%5D+Offers+1.0#id-[HD]Offers1.0-Segmentationdetails
+
+    // Mandatory segmentation params
+    protected Version m_minAppVersion = new Version();
 	public Version minAppVersion {
 		get { return m_minAppVersion; }
 	}
@@ -199,16 +206,17 @@ public class OfferPack {
 			}
 		}
 	}
-	#endregion
 
-	//------------------------------------------------------------------------//
-	// GENERIC METHODS														  //
-	//------------------------------------------------------------------------//
-	#region GENERIC METHODS
-	/// <summary>
-	/// Default constructor.
-	/// </summary>
-	public OfferPack() {
+    #endregion
+
+    //------------------------------------------------------------------------//
+    // GENERIC METHODS														  //
+    //------------------------------------------------------------------------//
+    #region GENERIC METHODS
+    /// <summary>
+    /// Default constructor.
+    /// </summary>
+    public OfferPack() {
 		
 	}
 
@@ -397,6 +405,16 @@ public class OfferPack {
             //number as an ID.
             m_uniqueId = m_def.customizationCode.ToString() + "_" + m_def.sku;
         }
+
+        // Shop category
+        DefinitionNode shopPack = DefinitionsManager.SharedInstance.GetDefinitionByVariable(DefinitionsCategory.SHOP_PACKS, "sku", m_def.GetAsString("iapSku"));
+
+        if (shopPack == null)
+        {
+            return;
+        }
+
+        m_shopCategory = shopPack.GetAsString("shopCategory");
 
 		// Params
 		// We have just done a Reset(), so variables have the desired default values
@@ -990,6 +1008,12 @@ public class OfferPack {
             case Type.REMOVE_ADS:
             {   newPack = new OfferPackRemoveAds();
             }  break;
+            case Type.SC: {
+                newPack = new OfferPackCurrency();
+            } break;
+            case Type.HC: {
+                newPack = new OfferPackCurrency();
+            } break;
             default: {
 				newPack = new OfferPack();
 			} break;
@@ -1091,6 +1115,8 @@ public class OfferPack {
 			case Type.ROTATIONAL: 	return "rotational";
 			case Type.FREE:			return "free";
             case Type.REMOVE_ADS:   return "removeAds";
+            case Type.SC:           return "sc";
+            case Type.HC:           return "hc";
         }
 		return TypeToString(DEFAULT_TYPE);
 	}
@@ -1106,7 +1132,9 @@ public class OfferPack {
 			case "push":		return Type.PUSHED;
 			case "rotational":	return Type.ROTATIONAL;
 			case "free":		return Type.FREE;
-            case "removeAds":   return Type.REMOVE_ADS;
+            case "removeads":   return Type.REMOVE_ADS;
+            case "hc":          return Type.HC;
+            case "sc":          return Type.SC;
 		}
 		return DEFAULT_TYPE;
 	}

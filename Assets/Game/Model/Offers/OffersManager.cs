@@ -32,21 +32,24 @@ public class OffersManager : Singleton<OffersManager> {
 	//------------------------------------------------------------------------//
 	private const string FREE_FTUX_PACK_SKU = "AdOfferFtux";
 
-	// Debug
+    private const string TYPE_SC = "sc";
+    private const string TYPE_HC = "hc";
+
+    // Debug
 #if LOG_PACKS
 	private const string LOG_PACK_SKU = "rotationalHighPayer1";
 #endif
 
-	//------------------------------------------------------------------------//
-	// MEMBERS AND PROPERTIES												  //
-	//------------------------------------------------------------------------//
-	// Public
-	private List<OfferPack> m_activeOffers = new List<OfferPack>();		// All currently active offers (state ACTIVE), regardless of type
+    //------------------------------------------------------------------------//
+    // MEMBERS AND PROPERTIES												  //
+    //------------------------------------------------------------------------//
+    // Public
+    private List<OfferPack> m_activeOffers = new List<OfferPack>();		// All currently active offers (state ACTIVE), regardless of type
 	public static List<OfferPack> activeOffers {
 		get { return instance.m_activeOffers; }
 	}
 
-	private OfferPack m_featuredOffer = null;
+    private OfferPack m_featuredOffer = null;
 	public static OfferPack featuredOffer {
 		get { return instance.m_featuredOffer; }
 	}
@@ -70,6 +73,12 @@ public class OffersManager : Singleton<OffersManager> {
 
     private OfferPack m_activeRemoveAdsOffer = null;
 
+    // List of all the active categories
+    private List<ShopCategory> m_categories = new List<ShopCategory>();
+    public List<ShopCategory> activeCategories
+    {
+        get { return m_categories; }
+    }
 
     // Internal
     private List<OfferPack> m_allEnabledOffers = new List<OfferPack>();	// All enabled and non-expired offer packs, regardless of type
@@ -80,6 +89,9 @@ public class OffersManager : Singleton<OffersManager> {
 	// Rotational offers
 	private List<OfferPack> m_allEnabledRotationalOffers = new List<OfferPack>();  // All enabled and non-expired rotational offer packs
 	private List<OfferPack> m_activeRotationalOffers = new List<OfferPack>();   // Currently active rotational offers
+
+    // Currency packs
+    private List<OfferPack> m_allEnabledCurrencyPacks = new List<OfferPack>(); // All the currency packs enabled
 
 	// Free offers
 	private List<OfferPack> m_allEnabledFreeOffers = new List<OfferPack>();  // All enabled and non-expired free offer packs
@@ -114,6 +126,7 @@ public class OffersManager : Singleton<OffersManager> {
 			return instance.m_settings;
 		}
 	}
+
 
 
     public bool enabled;
@@ -171,16 +184,46 @@ public class OffersManager : Singleton<OffersManager> {
 		instance.m_allEnabledRotationalOffers.Clear();
 		instance.m_activeRotationalOffers.Clear();
 
+        instance.m_allEnabledCurrencyPacks.Clear();
+
 		instance.m_featuredOffer = null;
 
 		instance.m_allEnabledFreeOffers.Clear();
 		instance.m_activeFreeOffer = null;
 
+        instance.m_categories.Clear();
 
-		// Get all known offer packs
-		// Sort offers by their "order" field, so if two mutually exclusive offers (same uniqueId)
-		// are triggered at the same time, we can control which one shows
-		List<DefinitionNode> offerDefs = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.OFFER_PACKS);
+        // Get all the shop categories
+        List<DefinitionNode> categoriesDefs = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.SHOP_CATEGORIES);
+        DefinitionsManager.SharedInstance.SortByProperty(ref categoriesDefs, "order", DefinitionsManager.SortType.NUMERIC);
+
+        // Iterate all the categories definitions and initialize them
+        for (int i=0; i<categoriesDefs.Count; i++)
+        {
+            ShopCategory newCategory = ShopCategory.CreateFromDefinition(categoriesDefs[i]);
+
+            instance.m_categories.Add(newCategory);
+        }
+
+        // Gather all the shop packs definitions for the currency packs
+        List<DefinitionNode> defs = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.SHOP_PACKS, "type", TYPE_SC);
+        defs.AddRange (DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.SHOP_PACKS, "type", TYPE_HC) );
+
+        // Add currency packs to activeOffers, as they will be always active
+        foreach (DefinitionNode currencyDef in defs)
+        {
+            OfferPack newPack = OfferPack.CreateFromDefinition(currencyDef);
+            if (newPack != null)
+            {
+                instance.m_activeOffers.Add(newPack);
+            }
+        }
+        
+
+        // Get all known offer packs
+        // Sort offers by their "order" field, so if two mutually exclusive offers (same uniqueId)
+        // are triggered at the same time, we can control which one shows
+        List<DefinitionNode> offerDefs = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.OFFER_PACKS);
 		DefinitionsManager.SharedInstance.SortByProperty(ref offerDefs, "order", DefinitionsManager.SortType.NUMERIC);
 
         bool needsCleaning = HDCustomizerManager.instance.hasBeenApplied;
@@ -826,6 +869,17 @@ public class OffersManager : Singleton<OffersManager> {
 		UsersManager.currentUser.freeOfferCooldownEndTime = serverTime.AddMinutes(settings.freeCooldownMinutes);
 		instance.m_freeOfferNeedsSorting = true;
 	}
+
+    /// <summary>
+    /// Returns a list of active offers that belong to a shop category
+    /// </summary>
+    /// <param name="_category">Shop category</param>
+    /// <returns>List of offers sorted by order</returns>
+    public static List<OfferPack> GetOfferPacksByCategory (ShopCategory _category)
+    {
+        List<OfferPack> result = instance.m_activeOffers.Where<OfferPack>(o => o.shopCategory == _category.sku).OrderBy(o => o.order).ToList();
+        return result;
+    }
 
     //------------------------------------------------------------------------//
     // CALLBACKS															  //
