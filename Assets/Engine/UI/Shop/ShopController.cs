@@ -7,6 +7,7 @@
 //----------------------------------------------------------------------------//
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
+using DG.Tweening;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -31,6 +32,9 @@ public class ShopController : MonoBehaviour {
     // Offer categories
     [SerializeField] private Transform m_categoriesContainer;
 
+    // Horizontal Scroller
+    [SerializeField] private ScrollRect m_scrollRect;
+
     // Shortcuts
     [SerializeField] private Transform m_shortcutsContainer;
     [SerializeField] private ShopCategoryShortcut m_shortcutPrefab;
@@ -38,6 +42,8 @@ public class ShopController : MonoBehaviour {
     //Internal
     private float m_timer = 0; // Refresh timer
     private bool m_refreshed = false; // Did we perform the initial refresh?
+
+    
 
     //------------------------------------------------------------------------//
     // GENERIC METHODS														  //
@@ -47,7 +53,7 @@ public class ShopController : MonoBehaviour {
     /// </summary>
     private void Awake() {
 
-	}
+    }
 
 	/// <summary>
 	/// First update call.
@@ -86,8 +92,8 @@ public class ShopController : MonoBehaviour {
         {
             // Force unity to refresh the layout the next frame after start
             // I know, it looks awful but it makes the work
-            m_categoriesContainer.gameObject.SetActive(false);
-            m_categoriesContainer.gameObject.SetActive(true);
+            /*m_categoriesContainer.gameObject.SetActive(false);
+            m_categoriesContainer.gameObject.SetActive(true);*/
             m_refreshed = true;
         }
     }
@@ -122,14 +128,23 @@ public class ShopController : MonoBehaviour {
     /// <param name="_mode">Target mode.</param>
     public void Init(PopupShop.Mode _mode, string _origin)
     {
+        Refresh();
+    }
 
+    /// <summary>
+    /// Populate the shop with all the categories, shortcuts and offer pills
+    /// </summary>
+    public void Refresh ()
+    {
         Clear();
+
+        string lastShortcut = null;
 
         // Iterate all the active categories
         foreach (ShopCategory category in OffersManager.instance.activeCategories)
         {
             // If this cat is active 
-            if (category.enabled )
+            if (category.enabled)
             {
                 // Instantiate the shop category
                 string containerPrefabPath = SHOP_CATEGORIES_CONTAINER_PREFABS_PATH + category.containerPrefab;
@@ -146,7 +161,8 @@ public class ShopController : MonoBehaviour {
                 List<OfferPack> offers = OffersManager.GetOfferPacksByCategory(category);
 
                 // Make sure there are offers in this category
-                if (offers.Count > 0) {
+                if (offers.Count > 0)
+                {
 
                     CategoryController categoryContainer = Instantiate<CategoryController>(containerPrefab);
 
@@ -158,20 +174,41 @@ public class ShopController : MonoBehaviour {
 
 
                     // Has a shortcut in the bottom menu?
-                    if (category.shortcut)
+                    if (!string.IsNullOrEmpty(category.tidShortcut))
                     {
-                        // Instantiate a shortcut and add it to the bottom bar
-                        ShopCategoryShortcut newShortcut = Instantiate<ShopCategoryShortcut>(m_shortcutPrefab, m_shortcutsContainer);
-                        newShortcut.Initialize(category);
+                        // If two categories share a shortcut, dont create another one
+                        if (lastShortcut != category.tidShortcut)
+                        {
+                            // Instantiate a shortcut and add it to the bottom bar
+                            ShopCategoryShortcut newShortcut = Instantiate<ShopCategoryShortcut>(m_shortcutPrefab, m_shortcutsContainer);
+                            newShortcut.Initialize(category, categoryContainer.transform);
+                            
+                            // Keep an eye in the last shortcut created
+                            lastShortcut = category.tidShortcut;
+                        }
                     }
                 }
             }
         }
     }
 
-    public void Refresh ()
+    /// <summary>
+    /// Scroll the viewport to the selected category
+    /// </summary>
+    /// <param name="anchor"></param>
+    public void ScrollToItem (Transform anchor)
     {
 
+
+        if (anchor != null)
+        {
+
+            // Create a tweener to animate the scroll
+            m_scrollRect.DOGoToItem(anchor, .5f)
+            .SetEase(Ease.OutQuad);
+
+            
+        }
     }
 
     //------------------------------------------------------------------------//

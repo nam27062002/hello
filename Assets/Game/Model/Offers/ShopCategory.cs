@@ -43,12 +43,12 @@ public class ShopCategory {
         }
     }
 
-    private string m_tidName;
-    public string tidName
+    private string m_tidShortcut;
+    public string tidShortcut
     {
         get
         {
-            return m_tidName;
+            return m_tidShortcut;
         }
 
     }
@@ -68,15 +68,6 @@ public class ShopCategory {
         get
         {
             return m_order;
-        }
-    }
-
-    private bool m_shortcut;
-    public bool shortcut
-    {
-        get
-        {
-            return m_shortcut;
         }
     }
 
@@ -145,10 +136,9 @@ public class ShopCategory {
 
         // Read all the columns
         m_sku = _def.GetAsString("sku");
-        m_tidName = _def.GetAsString("tidName");
+        m_tidShortcut = _def.GetAsString("tidName");
         m_containerPrefab = _def.GetAsString("containerPrefab");
         m_order = _def.GetAsInt("order");
-        m_shortcut = _def.GetAsBool("shortcut");
         m_enabled = _def.GetAsBool("enabled");
 
     }
