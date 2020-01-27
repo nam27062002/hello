@@ -456,9 +456,6 @@ public class OfferPack {
 
 		// Purchase limit
 		m_purchaseLimit = _def.GetAsInt("purchaseLimit", m_purchaseLimit);
-
-        // Persisted data
-        UsersManager.currentUser.LoadOfferPack(this);
 	}
 
 	/// <summary>
@@ -1246,7 +1243,8 @@ public class OfferPack {
 			} break;
 
 			case State.EXPIRED: {
-				// No need to persist
+				// Yes, so we don't activate it again
+				return true;
 			} break;
 		}
 
@@ -1261,6 +1259,7 @@ public class OfferPack {
 	/// <returns>Whether the mission was successfully loaded</returns>
 	public virtual void Load(SimpleJSON.JSONClass _data) {
 		string key = "";
+		OffersManager.Log("<color=magenta>LOADING PACK</color> {0} with data {1}", this.def.sku, _data.ToString());
 
 		// State
 		key = "state";
@@ -1317,9 +1316,12 @@ public class OfferPack {
 		// State
 		data.Add("state", ((int)m_state).ToString(CultureInfo.InvariantCulture));
 
+		// Optimize by storing less info for expired packs
+		bool expired = m_state == State.EXPIRED;
+
 		// Timestamps
 		// Only store for timed offers, the rest will be activated upon loading depending on activation triggers
-		if(m_isTimed) {
+		if(m_isTimed && !expired) {
 			data.Add("activationTimestamp", m_activationTimestamp.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
 			data.Add("endTimestamp", m_endTimestamp.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
 		}
@@ -1331,7 +1333,7 @@ public class OfferPack {
 
 		// View count - only if needed
 		// Last view timestamp
-		if(m_viewsCount > 0) {
+		if(m_viewsCount > 0 && !expired) {
 			data.Add("viewCount", m_viewsCount.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
 			data.Add("lastViewTimestamp", m_lastViewTimestamp.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
 		}
@@ -1339,7 +1341,8 @@ public class OfferPack {
         if ( m_type == Type.PUSHED ){
             data.Add("customId",  OffersManager.GenerateTrackingOfferName(m_def));
         }
-        
+
+		OffersManager.Log("<color=magenta>SAVING PACK</color> {0} with data {1}", this.def.sku, data);
 
 		// Done!
 		return data;

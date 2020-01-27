@@ -68,7 +68,7 @@ public class OfferPackRotational : OfferPack {
 					ChangeState(State.PENDING_ACTIVATION);
 				}
 
-                // However, if it has expired for any other reason (i.e. Purchase Limit), go to the expired state or it's markes as ready to expire (typically because the user has just purchased it)
+                // However, if it has expired for any other reason (i.e. Purchase Limit), go to the expired state
                 else if(CheckExpiration(false)) { 
                     ChangeState(State.EXPIRED);
 				}

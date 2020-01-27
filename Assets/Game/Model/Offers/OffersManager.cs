@@ -115,8 +115,12 @@ public class OffersManager : Singleton<OffersManager> {
 		}
 	}
 
-
-    public bool enabled;
+	private bool m_initialized = false;
+	private bool m_enabled = true;
+	public bool enabled {
+		get { return m_enabled; }
+		set { m_enabled = value; }
+	}
 
     //------------------------------------------------------------------------//
     // GENERIC METHODS														  //
@@ -127,6 +131,7 @@ public class OffersManager : Singleton<OffersManager> {
     protected override void OnCreateInstance() {
         m_timer = 0;
         enabled = true;
+		m_initialized = false;
     }
 
 	/// <summary>
@@ -135,7 +140,7 @@ public class OffersManager : Singleton<OffersManager> {
 	public void Update() {
 		// Refresh offers periodically for better performance
 		// Only if allowed
-		if(enabled && m_autoRefreshEnabled) {
+		if(m_initialized && enabled && m_autoRefreshEnabled) {
 			if(m_timer <= 0) {
 				m_timer = settings != null ? settings.refreshFrequency : 1f;	// Crashlytics was reporting a Null reference, protect it just in case
 				Refresh(false);
@@ -183,23 +188,37 @@ public class OffersManager : Singleton<OffersManager> {
 		List<DefinitionNode> offerDefs = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.OFFER_PACKS);
 		DefinitionsManager.SharedInstance.SortByProperty(ref offerDefs, "order", DefinitionsManager.SortType.NUMERIC);
 
-        bool needsCleaning = HDCustomizerManager.instance.hasBeenApplied;
+		// Use the loop to clean old offers from persistence so we don't end up having a huge user profile
+        bool cleaningPushed = HDCustomizerManager.instance.hasBeenApplied;
+		List<string> validPushedCustomIds = new List<string>();
+		Dictionary<OfferPack.Type, List<string>> toClean = new Dictionary<OfferPack.Type, List<string>> {
+			{ OfferPack.Type.ROTATIONAL, new List<string>() },
+			{ OfferPack.Type.FREE, new List<string>() }
+		};
 
-        List<string> validCustomIds = new List<string>();
 		// Create data for each known offer pack definition
 		for(int i = 0; i < offerDefs.Count; ++i) {
 			// Create and initialize new pack
 			OfferPack newPack = OfferPack.CreateFromDefinition(offerDefs[i]);
 
-            // Store new pack
-            instance.m_allOffers.Add(newPack);
+			// Load persisted data
+			UsersManager.currentUser.LoadOfferPack(newPack);
+
+			// Store new pack
+			instance.m_allOffers.Add(newPack);
+
+			// If pack is expired, discard it
+			// [AOC] Let's minimize risks by keeping it in the all offers list
+			if(newPack.state == OfferPack.State.EXPIRED) {
+				Log("OFFER PACK {0} EXPIRED! Won't be added", Color.red, newPack.def.sku);
+			}
 
 			// If enabled, store to the enabled collection
-			if(offerDefs[i].GetAsBool("enabled", false)) {
+			else if(offerDefs[i].GetAsBool("enabled", false)) {
                 //lets check if player has all the bundles required to view this offer
                 if (instance.IsOfferAvailable(newPack)) {
-					Log("ADDING OFFER PACK {0}", Color.green, newPack.def.sku);
-                    instance.m_allEnabledOffers.Add(newPack);
+					Log("ADDING OFFER PACK {0} ({1})", GetDebugColorByState(newPack), newPack.def.sku, newPack.state);
+					instance.m_allEnabledOffers.Add(newPack);
 
 					// Additional treatment based on offer type
 					switch(newPack.type) {
@@ -209,6 +228,12 @@ public class OffersManager : Singleton<OffersManager> {
 
 						case OfferPack.Type.FREE: {
 							instance.m_allEnabledFreeOffers.Add(newPack);
+
+							// If active, store it as the current free offer
+							// [AOC] Shouldn't be needed since the Refresh(true) below should do the trick
+							if(newPack.state == OfferPack.State.ACTIVE) {
+								instance.m_activeFreeOffer = newPack as OfferPackFree;
+							}
 						} break;
 
                         case OfferPack.Type.REMOVE_ADS:
@@ -223,21 +248,35 @@ public class OffersManager : Singleton<OffersManager> {
 				}
 			}
 
-			// If pushed, check whether it needs to be cleaned
+			// Check whether it needs to be cleaned
+			// Pushed offers work a bit different here
 			if(newPack.type == OfferPack.Type.PUSHED) {
 				// Only if there is a customization on experiment
-				if(needsCleaning) {
-					validCustomIds.Add(OffersManager.GenerateTrackingOfferName(offerDefs[i]));
+				if(cleaningPushed) {
+					validPushedCustomIds.Add(OffersManager.GenerateTrackingOfferName(offerDefs[i]));
+				}
+			} else if(toClean.ContainsKey(newPack.type)) {
+				// Clean it if the pack is pending activation and has no purchases
+				if(newPack.state == OfferPack.State.PENDING_ACTIVATION && newPack.purchaseCount == 0) {
+					toClean[newPack.type].Add(newPack.def.sku);
 				}
 			}
 		}
 
-        // Create a new happy hour offer from the definitions
-        if (instance.m_happyHour == null)
-        {
-            instance.m_happyHour = HappyHourOffer.CreateFromDefinition();
+        // Clean offers persistence if needed
+        if ( cleaningPushed ){
+            UsersManager.currentUser.CleanOldPushedOffers(validPushedCustomIds);
         }
+		foreach(KeyValuePair<OfferPack.Type, List<string>> kvp in toClean) {
+			if(kvp.Value.Count > 0) {
+				UsersManager.currentUser.CleanOldOffers(kvp.Key, kvp.Value);
+			}
+		}
 
+		// Create a new happy hour offer from the definitions
+		if(instance.m_happyHour == null) {
+			instance.m_happyHour = HappyHourOffer.CreateFromDefinition();
+		}
 
 		// Make sure to check whether free offer is on cooldown or not and put in the right place
 		instance.m_freeOfferNeedsSorting = true;
@@ -245,10 +284,8 @@ public class OffersManager : Singleton<OffersManager> {
 		// Refresh active and featured offers
 		instance.Refresh(true);
 
-        // Only clean if we have a new customization/s
-        if ( needsCleaning ){
-            UsersManager.currentUser.CleanOldPushedOffers(validCustomIds);
-        }
+		// Done!
+		instance.m_initialized = true;
 
 		// Notiy game
 		Messenger.Broadcast(MessengerEvents.OFFERS_RELOADED);
@@ -278,16 +315,7 @@ public class OffersManager : Singleton<OffersManager> {
 			if(pack.UpdateState() || _forceActiveRefresh) {
 				// Yes!
 				dirty = true;
-
-#if LOG
-				Color c = Colors.white;
-				switch(pack.state) {
-					case OfferPack.State.PENDING_ACTIVATION:	c = Colors.cyan;	break;
-					case OfferPack.State.EXPIRED:				c = Colors.red;		break;
-					case OfferPack.State.ACTIVE:				c = Colors.lime;	break;
-				}
-				Log("PACK UPDATED: {0} | {1}", c, pack.def.sku, pack.state);
-#endif
+				Log("PACK UPDATED: {0} | {1}", GetDebugColorByState(pack), pack.def.sku, pack.state);
 
 				// Update lists
 				UpdateCollections(pack);
@@ -348,13 +376,13 @@ public class OffersManager : Singleton<OffersManager> {
 		int loopCount = 0;
 		int maxLoops = 50;  // Just in case, prevent infinite loop
 		bool dirty = false;
-		Queue<string> history = null;
+		Queue<string> tempHistory = null;
 
 		// Crashlytics was reporting a Null reference, protect it just in case
 		int minRotationalActiveOffers = settings != null ? settings.rotationalActiveOffers : 1;
 
 		// Store reference to persistence
-		List<SimpleJSON.JSONClass> rotationalOffersPersistence = UsersManager.currentUser.newOfferPersistanceData[OfferPack.Type.ROTATIONAL];
+		Queue<string> rotationalsHistory = UsersManager.currentUser.offersHistory[OfferPack.Type.ROTATIONAL];
 
 		// Do we need to activate a new rotational pack?
 		while( m_activeRotationalOffers.Count < minRotationalActiveOffers && loopCount < maxLoops) {
@@ -370,23 +398,22 @@ public class OffersManager : Singleton<OffersManager> {
 			UpdateRotationalHistory(null);
 
 			// Create a local copy of the history to be able to manipulate it
-			// Do it ONLY if we need new rotational packs - avoid unnecessary memory allocation
-			if(history == null) {
-				history = new Queue<string>();
+			// Do it ONLY if we need new rotational packs - and only once - to avoid unnecessary memory allocation
+			if(tempHistory == null) {
+				tempHistory = new Queue<string>();
 			} else {
-				history.Clear();
+				tempHistory.Clear();
 			}
-			int max = rotationalOffersPersistence.Count;
-			for(int i = 0; i < max; i++) {
-				history.Enqueue(rotationalOffersPersistence[i]["sku"]);
+			foreach(string sku in rotationalsHistory) {
+				tempHistory.Enqueue(sku);
 			}
 
 			// Select a new pack!
 			loopCount++;
 			OfferPackRotational newPack = PickRandomPack(
 				m_allEnabledRotationalOffers,
-				history,
-				history.Count - m_activeRotationalOffers.Count	// Don't try with active packs!
+				tempHistory,
+				tempHistory.Count - m_activeRotationalOffers.Count	// Don't try with active packs!
 			) as OfferPackRotational;
 
 			// If no pack was found, break the loop
@@ -399,7 +426,7 @@ public class OffersManager : Singleton<OffersManager> {
 			UpdateRotationalHistory(newPack);
 
 			// Update persistence with this pack's new state
-			// [AOC] Packs Save() is smart, only stores packs when required
+			// [AOC] UserProfile.SaveOfferPack() is smart, only stores packs when required
 			UsersManager.currentUser.SaveOfferPack(newPack);
 
 			// Manager is dirty
@@ -430,24 +457,21 @@ public class OffersManager : Singleton<OffersManager> {
 		// Some logging
 		Log("Free offer required", Colors.orange);
 
-		// Store reference to persistence
-		List<SimpleJSON.JSONClass> freeOffersPersistence = UsersManager.currentUser.newOfferPersistanceData[OfferPack.Type.FREE];
-
 		// Make sure free history has the proper size
 		UpdateFreeHistory(null);
 
 		// Create a local copy of the history to be able to manipulate it
 		// Do it ONLY if we need new rotational packs - avoid unnecessary memory allocation
-		Queue<string> history = new Queue<string>();
-		int historySize = freeOffersPersistence.Count;
-		for(int i = 0; i < historySize; i++) {
-			history.Enqueue(freeOffersPersistence[i]["sku"]);
+		Queue<string> freeHistory = UsersManager.currentUser.offersHistory[OfferPack.Type.FREE];
+		Queue<string> tempHistory = new Queue<string>();
+		foreach(string sku in freeHistory) {
+			tempHistory.Enqueue(sku);
 		}
 
 		// Select a new pack!
 		// Special case for FTUX
 		OfferPackFree newPack = null;
-		if(historySize == 0) {
+		if(freeHistory.Count == 0) {
 			// Pick a specific pack
 			newPack = GetOfferPack(FREE_FTUX_PACK_SKU) as OfferPackFree;
 
@@ -462,8 +486,8 @@ public class OffersManager : Singleton<OffersManager> {
 			// Pick a random pack
 			newPack = PickRandomPack(
 				m_allEnabledFreeOffers,
-				history,
-				history.Count
+				tempHistory,
+				tempHistory.Count
 			) as OfferPackFree;
 		}
 
@@ -478,7 +502,8 @@ public class OffersManager : Singleton<OffersManager> {
 		UpdateFreeHistory(newPack);
 
 		// Update persistence with this pack's new state
-		// [AOC] Packs Save() is smart, only stores packs when required
+		// [AOC] UserProfile.SaveOfferPack() is smart, only stores packs when required
+		Log("ATTEMPTING TO SAVE FREE OFFER {0} -> {1}", Colors.blue, newPack.def.sku, newPack.ShouldBePersisted());
 		UsersManager.currentUser.SaveOfferPack(newPack);
 
 		// Done!
@@ -596,32 +621,19 @@ public class OffersManager : Singleton<OffersManager> {
 	/// <param name="_offer">Pack to be added.</param>
 	private void UpdateRotationalHistory(OfferPackRotational _offer) {
         // Aux vars
-        List<SimpleJSON.JSONClass> history = UsersManager.currentUser.newOfferPersistanceData[OfferPack.Type.ROTATIONAL];
+        Queue<string> history = UsersManager.currentUser.offersHistory[OfferPack.Type.ROTATIONAL];
 
 		// If a pack needs to be added, do it now
 		if(_offer != null) {
-            history.Add( _offer.Save() );
+            history.Enqueue(_offer.def.sku);
 		}
 
 		// Remove as many items as needed until the history size is right
 		int maxSize = settings.rotationalHistorySize + m_activeRotationalOffers.Count; // History contains active offers
 		Log("Checking history size: {0} vs {1} ({2} + {3})", history.Count, maxSize, settings.rotationalHistorySize, m_activeRotationalOffers.Count);
 		while(history.Count > maxSize) {
-			SimpleJSON.JSONClass removedItem = history[0];
-			Log("    History too big: Dequeing " + removedItem["sku"], Colors.red);
-
-			//  ██╗  ██╗██████╗ ██╗  ██╗  ███████╗███████╗██████╗  ██████╗ 
-			//  ██║  ██║██╔══██╗██║ ██╔╝  ╚════██║╚════██║╚════██╗██╔═████╗
-			//  ███████║██║  ██║█████╔╝█████╗ ██╔╝    ██╔╝ █████╔╝██║██╔██║
-			//  ██╔══██║██║  ██║██╔═██╗╚════╝██╔╝    ██╔╝ ██╔═══╝ ████╔╝██║
-			//  ██║  ██║██████╔╝██║  ██╗     ██║     ██║  ███████╗╚██████╔╝
-			//  ╚═╝  ╚═╝╚═════╝ ╚═╝  ╚═╝     ╚═╝     ╚═╝  ╚══════╝ ╚═════╝ 
-			//	https://mdc-tomcat-jira100.ubisoft.org/jira/browse/HDK-7220
-
-			// Old packs should be removed from the START of the list rather than the end!!!
-			// Check also with the free offer (below)
-			//history.RemoveRange(maxSize, history.Count - maxSize);
-			history.RemoveAt(0);
+			Log("    History too big: Dequeing " + history.Peek(), Colors.red);
+			history.Dequeue();
 		}
 
 		// Debug
@@ -635,11 +647,11 @@ public class OffersManager : Singleton<OffersManager> {
 	/// <param name="_offer">Pack to be added.</param>
 	private void UpdateFreeHistory(OfferPackFree _offer) {
 		// Aux vars
-		List<SimpleJSON.JSONClass> history = UsersManager.currentUser.newOfferPersistanceData[OfferPack.Type.FREE];
+		Queue<string> history = UsersManager.currentUser.offersHistory[OfferPack.Type.FREE];
 
 		// If a pack needs to be added, do it now
 		if(_offer != null) {
-			history.Add(_offer.Save());
+			history.Enqueue(_offer.def.sku);
 		}
 
 		// Remove as many items as needed until the history size is right
@@ -648,8 +660,7 @@ public class OffersManager : Singleton<OffersManager> {
 		Log("Checking history size: {0} vs {1} ({2} + {3})", history.Count, maxSize, settings.freeHistorySize, activeFreeOfferCount);
 		while(history.Count > maxSize) {
 			Log("    History too big: Dequeing");
-			//history.RemoveRange(maxSize, history.Count - maxSize);
-			history.RemoveAt(0);
+			history.Dequeue();
 		}
 
 		// Debug
@@ -968,20 +979,38 @@ public class OffersManager : Singleton<OffersManager> {
 #else
     [Conditional("FALSE")]
 #endif*/
-    private void LogHistory(OfferPack.Type _type, ref List<SimpleJSON.JSONClass> _history) {
+    private void LogHistory(OfferPack.Type _type, ref Queue<string> _history) {
 #if LOG
 		if(!FeatureSettingsManager.IsDebugEnabled) return;
 
 		string str = _type.ToString() + " History (" + _history.Count + "):";
-		foreach(SimpleJSON.JSONClass s in _history) {
-			str += "    " + s["sku"] + "\n";
+		foreach(string data in _history) {
+			str += "\n    " + data;
 		}
 		Log(str);
-
-		foreach(SimpleJSON.JSONClass s in _history) {
-			Debug.Log("    " + s.ToString());
-		}
 #endif
+	}
+
+	/// <summary>
+	/// Aux method to select a debug color based on a pack's state.
+	/// </summary>
+	/// <param name="_pack"></param>
+	/// <returns></returns>
+/*#if ENABLE_LOGS
+	[Conditional("DEBUG")]
+#else
+	[Conditional("FALSE")]
+#endif*/
+	public static Color GetDebugColorByState(OfferPack _pack) {
+		Color c = Color.white;
+		if(_pack != null) {
+			switch(_pack.state) {
+				case OfferPack.State.PENDING_ACTIVATION: c = Colors.cyan; break;
+				case OfferPack.State.EXPIRED: c = Colors.red; break;
+				case OfferPack.State.ACTIVE: c = Colors.lime; break;
+			}
+		}
+		return c;
 	}
 
 	/// <summary>
