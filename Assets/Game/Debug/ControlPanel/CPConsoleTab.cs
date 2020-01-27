@@ -21,7 +21,7 @@ public class CPConsoleTab : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	private int MAX_OUTPUT_LENGTH = 25000;	// Chars
+	private int MAX_OUTPUT_LENGTH = 40000;	// Chars
 
     //------------------------------------------------------------------------//
     // MEMBERS AND PROPERTIES												  //
