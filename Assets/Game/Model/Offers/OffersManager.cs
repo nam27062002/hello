@@ -4,12 +4,12 @@
 // Created by Alger Ortín Castellví on 20/02/2018.
 // Copyright (c) 2018 Ubisoft. All rights reserved.
 
-//#if DEBUG && !DISABLE_LOGS
+#if DEBUG && !DISABLE_LOGS
 #define ENABLE_LOGS
-//#endif
+#endif
 
-#define LOG
-#define LOG_PACKS
+//#define LOG
+//#define LOG_PACKS
 
 //----------------------------------------------------------------------------//
 // INCLUDES																	  //
@@ -217,7 +217,7 @@ public class OffersManager : Singleton<OffersManager> {
 			else if(offerDefs[i].GetAsBool("enabled", false)) {
                 //lets check if player has all the bundles required to view this offer
                 if (instance.IsOfferAvailable(newPack)) {
-					Log("ADDING OFFER PACK {0} ({1})", GetDebugColorByState(newPack), newPack.def.sku, newPack.state);
+					Log("ADDING OFFER PACK {0} ({1})", DEBUG_GetColorByState(newPack), newPack.def.sku, newPack.state);
 					instance.m_allEnabledOffers.Add(newPack);
 
 					// Additional treatment based on offer type
@@ -282,6 +282,7 @@ public class OffersManager : Singleton<OffersManager> {
 		instance.m_freeOfferNeedsSorting = true;
 
 		// Refresh active and featured offers
+		Log("INITIAL REFRESH -------------------------", Colors.magenta);
 		instance.Refresh(true);
 
 		// Done!
@@ -315,7 +316,7 @@ public class OffersManager : Singleton<OffersManager> {
 			if(pack.UpdateState() || _forceActiveRefresh) {
 				// Yes!
 				dirty = true;
-				Log("PACK UPDATED: {0} | {1}", GetDebugColorByState(pack), pack.def.sku, pack.state);
+				Log("PACK UPDATED: {0} | {1}", DEBUG_GetColorByState(pack), pack.def.sku, pack.state);
 
 				// Update lists
 				UpdateCollections(pack);
@@ -873,11 +874,11 @@ public class OffersManager : Singleton<OffersManager> {
     /// </summary>
     /// <param name="_msg">Message to be logged. Can have replacements like string.Format method would have.</param>
     /// <param name="_replacements">Replacements, to be used as string.Format method.</param>
-/*#if ENABLE_LOGS
+#if ENABLE_LOGS
     [Conditional("DEBUG")]
 #else
     [Conditional("FALSE")]
-#endif*/
+#endif
     public static void Log(string _msg, params object[] _replacements) {
 #if LOG
 		if(!FeatureSettingsManager.IsDebugEnabled) return;
@@ -891,11 +892,11 @@ public class OffersManager : Singleton<OffersManager> {
     /// <param name="_msg">Message to be logged. Can have replacements like string.Format method would have.</param>
     /// <param name="_color">Message color.</param>
     /// <param name="_replacements">Replacements, to be used as string.Format method.</param>
-/*#if ENABLE_LOGS
+#if ENABLE_LOGS
     [Conditional("DEBUG")]
 #else
     [Conditional("FALSE")]
-#endif*/
+#endif
     public static void Log(string _msg, Color _color, params object[] _replacements) {
 #if LOG
 		Log(_color.Tag(_msg), _replacements);
@@ -909,11 +910,11 @@ public class OffersManager : Singleton<OffersManager> {
     /// <param name="_msg">Message to be logged. Can have replacements like string.Format method would have.</param>
     /// <param name="_color">Message color.</param>
     /// <param name="_replacements">Replacements, to be used as string.Format method.</param>
-/*#if ENABLE_LOGS
+#if ENABLE_LOGS
     [Conditional("DEBUG")]
 #else
     [Conditional("FALSE")]
-#endif*/
+#endif
     public static void LogPack(OfferPack _pack, string _msg, Color _color, params object[] _replacements) {
 #if LOG_PACKS
 		if(!string.IsNullOrEmpty(LOG_PACK_SKU) && _pack.def.sku != LOG_PACK_SKU) return;
@@ -925,11 +926,11 @@ public class OffersManager : Singleton<OffersManager> {
     /// <summary>
     /// Do a report on current collections state.
     /// </summary>
-/*#if ENABLE_LOGS
+#if ENABLE_LOGS
     [Conditional("DEBUG")]
 #else
     [Conditional("FALSE")]
-#endif*/
+#endif
     private void LogCollections() {
 #if LOG
 		if(!FeatureSettingsManager.IsDebugEnabled) return;
@@ -974,11 +975,11 @@ public class OffersManager : Singleton<OffersManager> {
     /// <summary>
     /// Do a report on current rotational history state.
     /// </summary>
-/*#if ENABLE_LOGS
+#if ENABLE_LOGS
     [Conditional("DEBUG")]
 #else
     [Conditional("FALSE")]
-#endif*/
+#endif
     private void LogHistory(OfferPack.Type _type, ref Queue<string> _history) {
 #if LOG
 		if(!FeatureSettingsManager.IsDebugEnabled) return;
@@ -996,12 +997,7 @@ public class OffersManager : Singleton<OffersManager> {
 	/// </summary>
 	/// <param name="_pack"></param>
 	/// <returns></returns>
-/*#if ENABLE_LOGS
-	[Conditional("DEBUG")]
-#else
-	[Conditional("FALSE")]
-#endif*/
-	public static Color GetDebugColorByState(OfferPack _pack) {
+	public static Color DEBUG_GetColorByState(OfferPack _pack) {
 		Color c = Color.white;
 		if(_pack != null) {
 			switch(_pack.state) {
