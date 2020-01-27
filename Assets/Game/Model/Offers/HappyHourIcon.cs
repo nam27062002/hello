@@ -17,87 +17,72 @@ using UnityEngine;
 /// 
 /// </summary>
 public class HappyHourIcon : MonoBehaviour {
-    //------------------------------------------------------------------------//
-    // CONSTANTS															  //
-    //------------------------------------------------------------------------//
+	//------------------------------------------------------------------------//
+	// CONSTANTS															  //
+	//------------------------------------------------------------------------//
+	private const float REFRESH_FREQUENCY = 1f; // Seconds
 
-    //------------------------------------------------------------------------//
-    // MEMBERS AND PROPERTIES												  //
-    //------------------------------------------------------------------------//
-    [SerializeField]
+	//------------------------------------------------------------------------//
+	// MEMBERS AND PROPERTIES												  //
+	//------------------------------------------------------------------------//
+	[SerializeField]
     private TextMeshProUGUI m_timeLeftText;
     [SerializeField]
     private ShowHideAnimator m_animationRoot;
 
     // Internal
     private HappyHourOffer m_happyHour;
-    private float m_timer;
-    private bool happyHourActive = false;
+    private bool m_happyHourActive = false;
 
 
     //------------------------------------------------------------------------//
     // GENERIC METHODS														  //
     //------------------------------------------------------------------------//
     /// <summary>
-    /// Initialization.
-    /// </summary>
-    private void Awake() {
-
-	}
-
-	/// <summary>
 	/// First update call.
 	/// </summary>
 	private void Start() {
-
+		InvokeRepeating("UpdatePeriodic", 0f, REFRESH_FREQUENCY);
         m_happyHour = OffersManager.instance.happyHour;
         m_animationRoot.Hide();
     }
 
 	/// <summary>
-	/// Called every frame.
-
+	/// Called at regular intervals.
 	/// </summary>
-	private void Update() {
-
+	private void UpdatePeriodic() {
         // Refresh offers periodically for better performance
-        if (m_timer <= 0)
-        {
-            m_timer = 1f; // Refresh every second
-            Refresh();
-        }
-        m_timer -= Time.deltaTime;
+        Refresh();
     }
 
 	/// <summary>
 	/// Destructor.
 	/// </summary>
 	private void OnDestroy() {
-
+		CancelInvoke("UpdatePeriodic");
 	}
 
-    //------------------------------------------------------------------------//
-    // OTHER METHODS														  //
-    //------------------------------------------------------------------------//
+	//------------------------------------------------------------------------//
+	// OTHER METHODS														  //
+	//------------------------------------------------------------------------//
 
-    /// <summary>
-    /// Refresh visuals
-    /// [JOM] It should be optimized to activate/deactivate this icon through events instead of polling every second
-    /// </summary>
-    private void Refresh()
+	/// <summary>
+	/// Refresh visuals
+	/// [JOM] It should be optimized to activate/deactivate this icon through events instead of polling every second
+	/// </summary>
+	private void Refresh()
     {
-
         // Refresh the happy hour panel
         if (m_happyHour != null)
         {
             if (m_happyHour.IsActive())
             {
                 // Run this code when happy hour starts
-                if (!happyHourActive)
+                if (!m_happyHourActive)
                 {
                     // Enable the icon
                     m_animationRoot.Show();
-                    happyHourActive = true;
+                    m_happyHourActive = true;
                 }
 
                 // Show time left in the proper format (1h 20m 30s)
@@ -107,12 +92,11 @@ public class HappyHourIcon : MonoBehaviour {
             else
             {
                 // Run this code when happy hour finish
-                if (happyHourActive)
+                if (m_happyHourActive)
                 {
-
                     // Disable the icon object
                     m_animationRoot.Hide();
-                    happyHourActive = false;
+                    m_happyHourActive = false;
                 }
 
             }

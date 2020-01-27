@@ -71,6 +71,8 @@ public class PopupShopOffersTab : IPopupShopTab {
 	/// Destructor.
 	/// </summary>
 	private void OnDestroy() {
+		CancelInvoke("PeriodicRefresh");
+
 		// Unsubscribe from external events
 		Messenger.RemoveListener(MessengerEvents.OFFERS_RELOADED, OnOffersReloaded);
 		Messenger.RemoveListener(MessengerEvents.OFFERS_CHANGED, OnOffersChanged);

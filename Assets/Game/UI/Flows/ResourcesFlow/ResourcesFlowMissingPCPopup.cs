@@ -30,7 +30,8 @@ public class ResourcesFlowMissingPCPopup : MonoBehaviour {
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
 	public const string PATH = "UI/Popups/Economy/PF_PopupMissingPC";
-	
+	private const float REFRESH_FREQUENCY = 1f; // Seconds
+
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
@@ -48,7 +49,6 @@ public class ResourcesFlowMissingPCPopup : MonoBehaviour {
     [SerializeField] private TextMeshProUGUI m_happyHourTimer;
 
     // Internal
-    private float m_timer = 0;
     private HappyHourOffer m_happyHour; // cached object
 
     //------------------------------------------------------------------------//
@@ -60,6 +60,9 @@ public class ResourcesFlowMissingPCPopup : MonoBehaviour {
     private void OnEnable() {
 		Log("Subscribing to OnPurchaseSuccess event " + m_recommendedPackPill.GetIAPSku());
 		m_recommendedPackPill.OnPurchaseSuccess.AddListener(OnPillPurchaseSuccess);
+
+		// Refresh happy hour once per second
+		InvokeRepeating("UpdatePeriodic", 0f, REFRESH_FREQUENCY);
 	}
 
 	/// <summary>
@@ -68,18 +71,24 @@ public class ResourcesFlowMissingPCPopup : MonoBehaviour {
 	private void OnDisable() {
 		Log("Unsubscribing from OnPurchaseSuccess event " + m_recommendedPackPill.GetIAPSku());
 		m_recommendedPackPill.OnPurchaseSuccess.RemoveListener(OnPillPurchaseSuccess);
+
+		// Cancel periodic refresh of the happy hour
+		CancelInvoke("UpdatePeriodic");
 	}
 
-    public void Update()
+	/// <summary>
+	/// Called at regular intervals.
+	/// </summary>
+    public void UpdatePeriodic()
     {
-        // Refresh offers periodically for better performance
-        if (m_timer <= 0)
-        {
-            m_timer = 1f; // Refresh every second
-            Refresh();
-        }
-        m_timer -= Time.deltaTime;
-    }
+        // Refresh happy hour periodically for better performance
+        RefreshHappyHour();
+
+		// Refresh the pill
+		if(m_recommendedPackPill != null) {
+			m_recommendedPackPill.PeriodicRefresh();
+		}
+	}
 
 
     //------------------------------------------------------------------------//
@@ -96,15 +105,13 @@ public class ResourcesFlowMissingPCPopup : MonoBehaviour {
 
         // Cache happy hour offer
         m_happyHour = OffersManager.instance.happyHour;
-
     }
 
     /// <summary>
-    /// Refresh the visual elements of the popup
+    /// Refresh the Happy Hour visuals
     /// </summary>
-    private void Refresh()
+    private void RefreshHappyHour()
     {
-
         // Refresh the happy hour panel
         if (m_happyHour != null && m_happyHourPanel != null)
         {
@@ -122,7 +129,6 @@ public class ResourcesFlowMissingPCPopup : MonoBehaviour {
 
             }
         }
-
     }
 
     //------------------------------------------------------------------------//

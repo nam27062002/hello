@@ -21,12 +21,19 @@ using System.Collections.Generic;
 /// </summary>
 [Serializable]
 public class HappyHourOffer {
-    
+	//------------------------------------------------------------------------//
+	// CONSTANTS															  //
+	//------------------------------------------------------------------------//
+	public enum AffectedPacks {
+		ALL_PACKS,
+		LAST_PACK_PURCHASED,
+		LAST_PACK_PURCHASED_AND_ABOVE
+	}
 
-    //------------------------------------------------------------------------//
-    // MEMBERS AND PROPERTIES												  //
-    //------------------------------------------------------------------------//
-    private DefinitionNode m_def;
+	//------------------------------------------------------------------------//
+	// MEMBERS AND PROPERTIES												  //
+	//------------------------------------------------------------------------//
+	private DefinitionNode m_def;
         
     // Cached values from the definition node:
     private float m_offerDurationMinutes; // Total duration of a happy hour offer
@@ -34,9 +41,8 @@ public class HappyHourOffer {
     private float m_percentageMaxExtraGems;
     private float m_percentageExtraGemsIncrement; // Accumulative increment in the extra gems each time the happy hour is renewed
     private int m_triggerRunNumber;
-
+	
     // Current offer values:
-
     private DateTime m_expirationTime = DateTime.MinValue; // Timestamp when the offer will finish
     public DateTime expirationTime
     {   get
@@ -49,7 +55,6 @@ public class HappyHourOffer {
         }
     }
 
-
     private float m_extraGemsFactor; // The current extra gem multiplier for this offer
     public float extraGemsFactor
     {   get
@@ -61,7 +66,6 @@ public class HappyHourOffer {
             m_extraGemsFactor = value;
         }
     }
-
 
     private bool m_pendingPopup = false; // Wheter the popup was already shown or is still pending in the queue
     public bool pendingPopup
@@ -78,23 +82,22 @@ public class HappyHourOffer {
         }
     }
 
-
-
     private int m_triggerPopupAtRun; // Runs needed before showing the happy hour offer
-    public int triggerPopupAtRun
-    {   get
-        {
-            return m_triggerPopupAtRun;
-        }
+    public int triggerPopupAtRun {
+		get { return m_triggerPopupAtRun; }
     }
 
-    private string m_lastOfferSku; // Keep a track of the offer that triggered the happy hour, so it can be displayed in the popup
-    public string lastOfferSku
-    {   get
-        {
-            return m_lastOfferSku;
-        }
-    }
+	private DefinitionNode m_lastPackDef = null;    // Keep a track of the pack that triggered the happy hour, so it can be displayed in the popup
+	public DefinitionNode lastPackDef {
+		get { return m_lastPackDef; }
+		set { m_lastPackDef = value; }
+	}
+
+	// Working mode
+	private AffectedPacks m_affectedPacks = AffectedPacks.ALL_PACKS;
+	public AffectedPacks affectedPacks {
+		get { return m_affectedPacks; }
+	}
 
     //------------------------------------------------------------------------//
     // STATIC   															  //
@@ -171,6 +174,12 @@ public class HappyHourOffer {
         m_percentageMinExtraGems = m_def.GetAsFloat("percentageMinExtraGems");
         m_percentageMaxExtraGems = m_def.GetAsFloat("percentageMaxExtraGems");
         m_percentageExtraGemsIncrement = m_def.GetAsFloat("percentageIncrement");
+
+		switch(m_def.GetAsString("gemsPacksAffected")) {
+			case "allPacks":					m_affectedPacks = AffectedPacks.ALL_PACKS;						break;
+			case "lastPackPurchased":			m_affectedPacks = AffectedPacks.LAST_PACK_PURCHASED;			break;
+			case "lastPackPurchasedAndAbove":	m_affectedPacks = AffectedPacks.LAST_PACK_PURCHASED_AND_ABOVE;	break;
+		}
 
         // Load persisted data (if any)
         Load();
@@ -265,6 +274,7 @@ public class HappyHourOffer {
         m_expirationTime = DateTime.MinValue;
         m_extraGemsFactor = 0;
         m_pendingPopup = false;
+		m_lastPackDef = null;
     }
 
     /// <summary>
@@ -325,31 +335,64 @@ public class HappyHourOffer {
         return _amount;
     }
 
+	/// <summary>
+	/// Check whether the given pack is affected by this Happy Hour.
+	/// No type checks will be performed, pack should be of type HC Currency.
+	/// </summary>
+	/// <param name="_packDef">The pack to be checked.</param>
+	/// <returns>Whether the given pack is affected by the current Happy Hour.</returns>
+	public bool IsPackAffected(DefinitionNode _packDef) {
+		// Check params
+		if(_packDef == null) return false;
 
-    //------------------------------------------------------------------------//
-    // CALLBACKS															  //
-    //------------------------------------------------------------------------//
-    /// <summary>
-    /// Called when the player buys a gem pack
-    /// </summary>
-    private void OnHcPackAccquired(bool _forcePopup, string _offerSku)
+		// Depends on mode
+		switch(m_affectedPacks) {
+			case AffectedPacks.ALL_PACKS: {
+				return true;
+			}
+
+			case AffectedPacks.LAST_PACK_PURCHASED: {
+				// Only if it's the same pack as the last purchased
+				if(m_lastPackDef != null) {
+					return m_lastPackDef.sku == _packDef.sku;
+				}
+			} break;
+
+			case AffectedPacks.LAST_PACK_PURCHASED_AND_ABOVE: {
+				// Use the "order" field
+				if(m_lastPackDef != null) {
+					return m_lastPackDef.GetAsInt("order") <= _packDef.GetAsInt("order");
+				}
+			} break;
+		}
+
+		// Fallback - don't apply happy hour to this pack
+		return false;
+	}
+
+	//------------------------------------------------------------------------//
+	// CALLBACKS															  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Called when the player buys a gem pack
+	/// </summary>
+	private void OnHcPackAccquired(bool _forcePopup, string _packSku)
     {
         // Restart the happy hour timer
         StartOffer();
 
-        // Keep a track of the offer that triggered the popup
-        m_lastOfferSku = _offerSku;
+        // Keep a track of the pack that triggered the popup
+        m_lastPackDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SHOP_PACKS, _packSku);
 
         // If the popup doesnt need te be delayed
         if (_forcePopup && m_triggerRunNumber == 0)
         {
-
             // Load the popup
             PopupController popup = PopupManager.LoadPopup(PopupHappyHour.PATH);
             PopupHappyHour popupHappyHour = popup.GetComponent<PopupHappyHour>();
 
             // Initialize the popup (set the discount % values)
-            popupHappyHour.Init(m_lastOfferSku);
+            popupHappyHour.Init(m_lastPackDef);
 
             // And launch it
             popup.Open();
@@ -357,12 +400,8 @@ public class HappyHourOffer {
         }
         else
         {
-
-            
-
-            // Try to show the happy hour popup
+			// Try to show the happy hour popup
             m_pendingPopup = true;
-
         }
 
         // Save in persistence
