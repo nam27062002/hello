@@ -28,6 +28,9 @@ public class ShopCategoryShortcut : MonoBehaviour {
 
     // Internal
     private ShopCategory m_category;
+    private Transform m_anchor; // Reference to the category element in the scroll list
+    private ShopController shopController;
+
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -43,8 +46,8 @@ public class ShopCategoryShortcut : MonoBehaviour {
 	/// First update call.
 	/// </summary>
 	private void Start() {
-
-	}
+        shopController = GetComponentInParent<ShopController>();
+    }
 
 	/// <summary>
 	/// Component has been enabled.
@@ -78,7 +81,12 @@ public class ShopCategoryShortcut : MonoBehaviour {
 	// OTHER METHODS														  //
 	//------------------------------------------------------------------------//
 
-    public void Initialize (ShopCategory _category)
+        /// <summary>
+        /// Initializes the shortcut element
+        /// </summary>
+        /// <param name="_category">Shop category related to this shortcut</param>
+        /// <param name="_anchor">UI element in the scroll list related to this shortcut</param>
+    public void Initialize (ShopCategory _category, Transform _anchor = null)
     {
         if (_category == null)
         {
@@ -86,10 +94,19 @@ public class ShopCategoryShortcut : MonoBehaviour {
         }
 
         m_category = _category;
-        m_text.Localize(m_category.tidName);
+        m_text.Localize(m_category.tidShortcut);
+        m_anchor = _anchor;
     }
 
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
+
+    /// <summary>
+    /// When clicking in the anchor, scroll to the related category
+    /// </summary>
+    public void OnClick ()
+    {
+        shopController.ScrollToItem(m_anchor);
+    }
 }
