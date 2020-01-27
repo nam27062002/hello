@@ -84,7 +84,13 @@ v2f vert(appdata_t v)
 #if defined(NOISE_TEXTURE)
 
 #if defined(NOISEUV)
+
+#if defined(NOISE_SCREENMAP)
+	o.noiseuv = TRANSFORM_TEX(o.vertex.xy, _NoiseTex) + (_NoisePanning.xy * _Time.yy);
+#else
 	o.noiseuv = TRANSFORM_TEX(v.texcoord, _NoiseTex) + (_NoisePanning.xy * _Time.yy);
+#endif
+
 #else
 	o.noiseuv = TRANSFORM_TEX(v.texcoord, _MainTex) + (_NoisePanning.xy * _Time.yy);
 #endif
