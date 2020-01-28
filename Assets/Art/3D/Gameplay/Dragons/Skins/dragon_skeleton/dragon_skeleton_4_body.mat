@@ -9,6 +9,7 @@ Material:
   m_Name: dragon_skeleton_4_body
   m_Shader: {fileID: 4800000, guid: 2345015ac46679e4cb5817ed44c82547, type: 3}
   m_ShaderKeywords: FRESNEL FXLAYER_REFLECTION NORMALMAP SELFILLUMINATE_EMISSIVE SPECULAR
+    VERTEXOFFSET VERTEXOFFSETX VERTEXOFFSETY VERTEXOFFSETZ
   m_LightmapFlags: 5
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -96,15 +97,15 @@ Material:
     - _EnableOpaqueSpecular: 0
     - _EnableSilhouette: 0
     - _EnableSpecular: 1
-    - _EnableVertexOffset: 0
-    - _EnableVertexOffsetX: 0
-    - _EnableVertexOffsetY: 0
-    - _EnableVertexOffsetZ: 0
+    - _EnableVertexOffset: 1
+    - _EnableVertexOffsetX: 1
+    - _EnableVertexOffsetY: 1
+    - _EnableVertexOffsetZ: 1
     - _FireAmount: 0
     - _FireSpeed: 1
     - _Fresnel: 9.67
     - _Glossiness: 0.5
-    - _InnerLightAdd: 1
+    - _InnerLightAdd: 1.28
     - _InnerLightWavePhase: 1
     - _InnerLightWaveSpeed: 2
     - _Metallic: 0
@@ -112,13 +113,13 @@ Material:
     - _NormalStrenght: 1
     - _OcclusionStrength: 1
     - _Parallax: 0.02
-    - _ReflectionAmount: 0.943
+    - _ReflectionAmount: 1
     - _SpecExponent: 80
     - _SrcBlend: 1
     - _StencilMask: 10
     - _UVSec: 0
     - _VOAmplitude: 0.3
-    - _VOSpeed: 3
+    - _VOSpeed: 6
     - _ZWrite: 1
     m_Colors:
     - _AmbientAdd: {r: 0.029411793, g: 0.029411793, b: 0.029411793, a: 0}
