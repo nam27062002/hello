@@ -33,9 +33,10 @@ public class HappyHour {
 	public class Data {
 		public DefinitionNode def = null;
 
+		public bool enabled = false;
+
 		public DateTime startDate = DateTime.MinValue;
 		public DateTime endDate = DateTime.MaxValue;
-
 		public bool triggeredByDate { get { return startDate > DateTime.MinValue; } }
 
 		public int popupTriggerRunNumber = 0;
@@ -47,6 +48,9 @@ public class HappyHour {
 		public Data(DefinitionNode _def) {
 			// Store definition object
 			def = _def;
+
+			// Enabled?
+			enabled = def.GetAsBool("enabled", false);
 
 			// Parse start date
 			if(def.Has("startDate")) {

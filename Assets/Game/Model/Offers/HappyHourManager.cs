@@ -170,7 +170,7 @@ public class HappyHourManager {
 
 			// Save it to collections
 			m_allHappyHours.Add(newData.def.sku, newData);
-			if(defs[i].GetAsBool("enabled", false)) {
+			if(newData.enabled) {
 				m_enabledHappyHours.Add(newData);
 			}
 		}
