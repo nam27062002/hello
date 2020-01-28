@@ -194,7 +194,8 @@ public class HappyHourManager {
 		}
 
 		// Otherwise check activation
-		else {
+		// Except during ftux
+		else if(UsersManager.currentUser.gamesPlayed >= GameSettings.ENABLE_TOURNAMENTS_AT_RUN) {
 			// Check all enabled happy hours looking for the one that needs to be activated
 			HappyHour.Data candidateData = null;
 			for(int i = 0; i < m_enabledHappyHours.Count; ++i) {
