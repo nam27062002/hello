@@ -366,15 +366,20 @@ public class HappyHourManager {
 
 		// Find data corresponding to stored sku
 		if(m_allHappyHours.ContainsKey(saveData.activeSku)) {
-			// Make sure values are consistent
-			if(saveData.expirationTime > DateTime.MinValue && saveData.extraGemsFactor > 0f) {
-				// Initialize happy hour with chosen data
-				m_happyHour.Activate(m_allHappyHours[saveData.activeSku]);
+			HappyHour.Data happyHourData = m_allHappyHours[saveData.activeSku];
 
-				// Override with persistence values
-				happyHour.expirationTime = saveData.expirationTime;
-				happyHour.extraGemsFactor = saveData.extraGemsFactor;
-				m_lastHappyHourExpirationDate = happyHour.expirationTime;
+			// We don't want to restore the happy hour if it is no longer enabled
+			if(happyHourData.enabled) {
+				// Make sure values are consistent
+				if(saveData.expirationTime > DateTime.MinValue && saveData.extraGemsFactor > 0f) {
+					// Initialize happy hour with chosen data
+					m_happyHour.Activate(happyHourData);
+
+					// Override with persistence values
+					m_happyHour.expirationTime = saveData.expirationTime;
+					m_happyHour.extraGemsFactor = saveData.extraGemsFactor;
+					m_lastHappyHourExpirationDate = m_happyHour.expirationTime;
+				}
 			}
 		}
 	}
