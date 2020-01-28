@@ -107,7 +107,6 @@ public class ShopCategory {
     {
         ShopCategory newCat = new ShopCategory();
 
-        // Initialize the object
         newCat.InitFromDefinition(_def);
 
         return newCat;

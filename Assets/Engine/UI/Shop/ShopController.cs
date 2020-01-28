@@ -37,13 +37,16 @@ public class ShopController : MonoBehaviour {
 
     // Shortcuts
     [SerializeField] private Transform m_shortcutsContainer;
+    [SerializeField] private List<ShopCategoryShortcut> m_shortcuts;
     [SerializeField] private ShopCategoryShortcut m_shortcutPrefab;
+
 
     //Internal
     private float m_timer = 0; // Refresh timer
     private bool m_refreshed = false; // Did we perform the initial refresh?
+    private Dictionary<string, Transform> m_anchors; // Reference to the UI elements in the shop. Used to scroll the view to the desired category.
 
-    
+
 
     //------------------------------------------------------------------------//
     // GENERIC METHODS														  //
@@ -52,7 +55,8 @@ public class ShopController : MonoBehaviour {
     /// Initialization.
     /// </summary>
     private void Awake() {
-
+        m_shortcuts = new List<ShopCategoryShortcut>();
+        m_anchors = new Dictionary<string, Transform>();
     }
 
 	/// <summary>
@@ -119,6 +123,9 @@ public class ShopController : MonoBehaviour {
         m_categoriesContainer.transform.DestroyAllChildren(true);
         m_shortcutsContainer.transform.DestroyAllChildren(true);
 
+        // Remove the shortcut references
+        m_shortcuts.Clear();
+
         m_refreshed = false;
     }
 
@@ -169,21 +176,27 @@ public class ShopController : MonoBehaviour {
                     // Add the category container to the hierarchy
                     categoryContainer.transform.SetParent(m_categoriesContainer, false);
 
-                    // Initialize the category
                     categoryContainer.Initialize(category);
 
 
                     // Has a shortcut in the bottom menu?
                     if (!string.IsNullOrEmpty(category.tidShortcut))
                     {
-                        // If two categories share a shortcut, dont create another one
+                        // If two categories share a shortcut, dont create it twice
                         if (lastShortcut != category.tidShortcut)
                         {
+
+                            // Create a new shortcut :D
+
                             // Instantiate a shortcut and add it to the bottom bar
-                            ShopCategoryShortcut newShortcut = Instantiate<ShopCategoryShortcut>(m_shortcutPrefab, m_shortcutsContainer);
-                            newShortcut.Initialize(category, categoryContainer.transform);
-                            
-                            // Keep an eye in the last shortcut created
+                            ShopCategoryShortcut newShortcut = Instantiate<ShopCategoryShortcut>(m_shortcutPrefab, m_shortcutsContainer, false);
+                            newShortcut.Initialize(category, this);
+                            m_shortcuts.Add(newShortcut);
+
+                            // Store the category container position to scroll in the future
+                            m_anchors.Add(category.sku, categoryContainer.transform);
+
+                            // Keep a record of the last shortcut created
                             lastShortcut = category.tidShortcut;
                         }
                     }
@@ -192,13 +205,32 @@ public class ShopController : MonoBehaviour {
         }
     }
 
+
+    /// <summary>
+    /// A shortcut was pressed
+    /// </summary>
+    /// <param name="_category">The category related to the shortcut</param>
+    public void OnShortcutSelected( ShopCategory _category)
+    {
+        // Deselect all shortcuts except the chosen one
+        foreach (ShopCategoryShortcut shortcut in m_shortcuts)
+        {
+            bool selectedCat = ( shortcut.category.sku == _category.sku );
+            shortcut.Select(selectedCat);
+        }
+
+        Transform categoryAnchor = m_anchors[_category.sku];
+        ScrollToItem(categoryAnchor);
+
+    }
+
+
     /// <summary>
     /// Scroll the viewport to the selected category
     /// </summary>
     /// <param name="anchor"></param>
-    public void ScrollToItem (Transform anchor)
+    private void ScrollToItem (Transform anchor)
     {
-
 
         if (anchor != null)
         {
@@ -206,7 +238,6 @@ public class ShopController : MonoBehaviour {
             // Create a tweener to animate the scroll
             m_scrollRect.DOGoToItem(anchor, .5f)
             .SetEase(Ease.OutQuad);
-
             
         }
     }

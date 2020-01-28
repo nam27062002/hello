@@ -28,17 +28,21 @@ public class ShopCategoryShortcut : MonoBehaviour {
 
     // Internal
     private ShopCategory m_category;
-    private Transform m_anchor; // Reference to the category element in the scroll list
-    private ShopController shopController;
+    public ShopCategory category
+    { get { return m_category; } }
+
+    private ShopController shopController; // Keep a reference to the parent shop
 
 
-	//------------------------------------------------------------------------//
-	// GENERIC METHODS														  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Initialization.
-	/// </summary>
-	private void Awake() {
+
+
+    //------------------------------------------------------------------------//
+    // GENERIC METHODS														  //
+    //------------------------------------------------------------------------//
+    /// <summary>
+    /// Initialization.
+    /// </summary>
+    private void Awake() {
 
 	}
 
@@ -46,36 +50,9 @@ public class ShopCategoryShortcut : MonoBehaviour {
 	/// First update call.
 	/// </summary>
 	private void Start() {
-        shopController = GetComponentInParent<ShopController>();
     }
 
-	/// <summary>
-	/// Component has been enabled.
-	/// </summary>
-	private void OnEnable() {
 
-	}
-
-	/// <summary>
-	/// Component has been disabled.
-	/// </summary>
-	private void OnDisable() {
-
-	}
-
-	/// <summary>
-	/// Called every frame.
-	/// </summary>
-	private void Update() {
-
-	}
-
-	/// <summary>
-	/// Destructor.
-	/// </summary>
-	private void OnDestroy() {
-
-	}
 
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //
@@ -85,28 +62,38 @@ public class ShopCategoryShortcut : MonoBehaviour {
         /// Initializes the shortcut element
         /// </summary>
         /// <param name="_category">Shop category related to this shortcut</param>
-        /// <param name="_anchor">UI element in the scroll list related to this shortcut</param>
-    public void Initialize (ShopCategory _category, Transform _anchor = null)
+        /// <param name="_shop">Parent shop</param>
+    public void Initialize (ShopCategory _category, ShopController _shop)
     {
-        if (_category == null)
+        if (_category == null || _shop == null)
         {
             return;
         }
 
         m_category = _category;
-        m_text.Localize(m_category.tidShortcut);
-        m_anchor = _anchor;
+        m_text.Localize(category.tidShortcut);
+        
+        shopController = _shop;
     }
 
-	//------------------------------------------------------------------------//
-	// CALLBACKS															  //
-	//------------------------------------------------------------------------//
+    /// <summary>
+    /// Select/deselect the current shortcut button and show the proper visual state
+    /// </summary>
+    /// <param name="_value"></param>
+    public void Select(bool _value)
+    {
+        GetComponent<SelectableButton>().SetSelected(_value);
+    }
+
+    //------------------------------------------------------------------------//
+    // CALLBACKS															  //
+    //------------------------------------------------------------------------//
 
     /// <summary>
     /// When clicking in the anchor, scroll to the related category
     /// </summary>
     public void OnClick ()
     {
-        shopController.ScrollToItem(m_anchor);
+        shopController.OnShortcutSelected(category);
     }
 }
