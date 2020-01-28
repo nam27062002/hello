@@ -133,6 +133,12 @@ public class GameSettings : SingletonScriptableObject<GameSettings> {
 	private int m_enableShareButtonsAtRun = 2;
 	public static int ENABLE_SHARE_BUTTONS_AT_RUN { get { return instance.m_enableShareButtonsAtRun; } }
 
+	private int m_enablePassiveEventsAtRun = 4;
+	public static int ENABLE_PASSIVE_EVENTS_AT_RUN { get { return instance.m_enablePassiveEventsAtRun; } }
+
+	private int m_enableHappyHourAtRun = 4;
+	public static int ENABLE_HAPPY_HOUR_AT_RUN { get { return instance.m_enableHappyHourAtRun; } }
+
 	// Social
 	[Separator("Social")]
 	[SerializeField] private ShareData m_shareDataIOS = new ShareData();
@@ -274,6 +280,8 @@ public class GameSettings : SingletonScriptableObject<GameSettings> {
 		instance.m_enableLeaguesAtRun = def.GetAsInt("enableLeaguesAtRun", instance.m_enableLeaguesAtRun);
 		instance.m_enableDailyRewardsAtRun = def.GetAsInt("enableDailyRewardsAtRun", instance.m_enableDailyRewardsAtRun);
 		instance.m_enableShareButtonsAtRun = def.GetAsInt("enableShareButtonsAtRun", instance.m_enableShareButtonsAtRun);
+		instance.m_enablePassiveEventsAtRun = def.GetAsInt("enablePassiveEventsAtRun", instance.m_enablePassiveEventsAtRun);
+		instance.m_enableHappyHourAtRun = def.GetAsInt("enableHappyHourAtRun", instance.m_enableHappyHourAtRun);
 	}
 
 	/// <summary>
