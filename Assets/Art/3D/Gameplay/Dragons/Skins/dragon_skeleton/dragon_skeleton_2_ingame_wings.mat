@@ -7,22 +7,26 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: dragon_skeleton_2_ingame_wings
-  m_Shader: {fileID: 4800000, guid: 2345015ac46679e4cb5817ed44c82547, type: 3}
-  m_ShaderKeywords: CUTOFF DOUBLESIDED FRESNEL FXLAYER_REFLECTION NORMALMAP REFLECTIONTYPE_COLOR
-    SELFILLUMINATE_BLINKLIGHTS SPECULAR
+  m_Shader: {fileID: 4800000, guid: 02891335b31643f408fed70e86224f83, type: 3}
+  m_ShaderKeywords: BLENDMODE_ALPHABLEND CUTOFF DOUBLESIDED EXTENDED_PARTICLES FRESNEL
+    FXLAYER_REFLECTION NOISEUV NOISE_SCREENMAP NOISE_TEXTURE NOISE_TEXTURE_ALPHA NOISE_TEXTURE_EMISSION
+    NORMALMAP REFLECTIONTYPE_COLOR SELFILLUMINATE_BLINKLIGHTS SPECULAR
   m_LightmapFlags: 5
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: 3020
+  m_CustomRenderQueue: 3070
   stringTagMap:
     QUEUE: AlphaTest
-    RenderType: TransparentCutout
   disabledShaderPasses: []
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
     - _BumpMap:
         m_Texture: {fileID: 2800000, guid: 162870ba8de28b948b944e06277d440c, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ColorRamp:
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailAlbedoMap:
@@ -57,6 +61,10 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _NoiseTex:
+        m_Texture: {fileID: 2800000, guid: 9131bda99381a0449bcd6a5a2f8c908f, type: 3}
+        m_Scale: {x: 1, y: 5}
+        m_Offset: {x: 0, y: 0}
     - _OcclusionMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -70,12 +78,15 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
+    - BlendMode: 3
     - FXLayer: 1
     - ReflectionType: 1
     - SelfIlluminate: 2
-    - _BlendMode: 1
+    - _ABOffset: 0
+    - _BlendMode: 3
     - _BumpScale: 1
     - _BumpStrength: 3
+    - _ColorMultiplier: 0.32
     - _ColorRampAmount: 0
     - _ColorRampID0: 0
     - _ColorRampID1: 0
@@ -87,15 +98,32 @@ Material:
     - _DissolveMargin: 0.1
     - _DissolveUpperLimit: 1
     - _DstBlend: 10
+    - _EmissionSaturation: 3
     - _EmissionScaleUI: 0
+    - _EmissivePower: 1
+    - _EnableAlphaDissolve: 0
+    - _EnableAutomaticPanning: 0
     - _EnableBlendFresnel: 0
+    - _EnableColorRamp: 0
+    - _EnableColorTint: 0
+    - _EnableColorVertex: 0
     - _EnableCutoff: 1
     - _EnableDiffuseAsSpecMask: 0
+    - _EnableDissolveVertexColorAlpha: 0
     - _EnableDoublesided: 1
+    - _EnableEmissivePower: 0
+    - _EnableExtendedParticles: 1
+    - _EnableFlowMap: 0
     - _EnableFresnel: 1
+    - _EnableNoiseTexture: 0
+    - _EnableNoiseTextureAlpha: 1
+    - _EnableNoiseTextureDissolve: 0
+    - _EnableNoiseTextureEmission: 1
+    - _EnableNoiseUV: 1
     - _EnableNormalMap: 1
     - _EnableOpaqueFresnel: 0
     - _EnableOpaqueSpecular: 0
+    - _EnableScreenMapNoise: 1
     - _EnableSilhouette: 0
     - _EnableSpecular: 1
     - _EnableVertexOffset: 0
@@ -105,6 +133,7 @@ Material:
     - _FireAmount: 0
     - _FireSpeed: 1
     - _Fresnel: 9.5
+    - _GlobalAlpha: 1
     - _Glossiness: 0.5
     - _InnerLightAdd: 1.2
     - _InnerLightWavePhase: 1
@@ -114,6 +143,7 @@ Material:
     - _NoiseValue: 0
     - _NormalStrenght: 1.8
     - _OcclusionStrength: 1
+    - _OpacitySaturation: 2
     - _Parallax: 0.02
     - _ReflectionAmount: 1
     - _SpecExponent: 80
@@ -122,18 +152,25 @@ Material:
     - _UVSec: 0
     - _VOAmplitude: 0.3
     - _VOSpeed: 3
+    - _ZTest: 2
     - _ZWrite: 1
     m_Colors:
     - _AmbientAdd: {r: 0, g: 0, b: 0, a: 0}
+    - _BasicColor: {r: 1, g: 0, b: 0, a: 0.5}
     - _Color: {r: 0.5882353, g: 0.5882353, b: 0.5882353, a: 1}
     - _ColorAdd: {r: 0.102941155, g: 0.028006053, b: 0.028006053, a: 0}
     - _ColorMultiply: {r: 1, g: 1, b: 1, a: 1}
+    - _DissolveStep: {r: 0, g: 1, b: 0, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _EmissionColorUI: {r: 1, g: 1, b: 1, a: 1}
     - _FresnelColor: {r: 0.24621539, g: 0.4358295, b: 0.4852941, a: 1}
     - _InnerLightColor: {r: 1, g: 0, b: 0, a: 1}
     - _NoiseColor: {r: 1, g: 1, b: 1, a: 1}
+    - _NoisePanning: {r: 0, g: -3, b: 0, a: 0}
+    - _Panning: {r: 0, g: 0, b: 0, a: 0}
     - _ReflectionColor: {r: 0.60683393, g: 0.8129937, b: 0.89705884, a: 1}
+    - _SaturatedColor: {r: 1, g: 0.69016224, b: 0.6544118, a: 0.5}
     - _SecondLightColor: {r: 0.21085638, g: 0.22080298, b: 0.28676468, a: 0}
     - _SecondLightDir: {r: 0.6569783, g: 0.7539095, b: -0, a: 0}
     - _Tint: {r: 0.5393058, g: 0.6260553, b: 0.6985294, a: 1}
+    - _TintColor: {r: 1, g: 1, b: 1, a: 0.5}
