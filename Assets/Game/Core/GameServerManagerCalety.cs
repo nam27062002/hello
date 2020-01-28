@@ -1318,7 +1318,16 @@ public class GameServerManagerCalety : GameServerManager {
                     } break;
 
                 case ECommand.PendingTransactions_Get: {
-                        Command_SendCommand(COMMAND_PENDING_TRANSACTIONS_GET);
+                        Dictionary<string, string> kParams = null;
+
+                        // If removeAds is not active then we want server to check if the user had already bought it so it can be restored
+                        if (!UsersManager.currentUser.removeAds.IsActive)
+                        {
+                            kParams = new Dictionary<string, string>();
+                            kParams["restore"] = "removeAds";
+                        }
+
+                        Command_SendCommand(COMMAND_PENDING_TRANSACTIONS_GET, kParams);
                     } break;
 
                 case ECommand.PendingTransactions_Confirm: {
