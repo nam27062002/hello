@@ -403,7 +403,7 @@ public class TrackingPersistenceSystem : PersistenceSystem
         dataInt = new CacheDataInt(key, 0);
         Cache_AddData(key, dataInt);
 
-        key = PARAM_TOTAL_PURCHASES;
+		key = PARAM_TOTAL_PURCHASES;
         dataInt = new CacheDataInt(key, 0);
         Cache_AddData(key, dataInt);
 
@@ -411,11 +411,27 @@ public class TrackingPersistenceSystem : PersistenceSystem
 		dataInt = new CacheDataInt(key, 0);
 		Cache_AddData(key, dataInt);
 
+		key = PARAM_MAX_PURCHASE_PRICE;
+		dataInt = new CacheDataInt(key, 0);
+		Cache_AddData(key, dataInt);
+
+		key = PARAM_LAST_PURCHASE_PRICE;
+		dataInt = new CacheDataInt(key, 0);
+		Cache_AddData(key, dataInt);
+
 		key = PARAM_LAST_PURCHASE_TIMESTAMP;
 		dataLong = new CacheDataLong(key, 0);
 		Cache_AddData(key, dataLong);
 
-        key = PARAM_TOTAL_STORE_VISITS;
+		key = PARAM_LAST_PURCHASE_ITEM_TYPE;
+		dataString = new CacheDataString(key, string.Empty);
+		Cache_AddData(key, dataString);
+
+		key = PARAM_LAST_PURCHASE_ITEM_CONTENT;
+		dataString = new CacheDataString(key, string.Empty);
+		Cache_AddData(key, dataString);
+
+		key = PARAM_TOTAL_STORE_VISITS;
         dataInt = new CacheDataInt(key, 0);
         Cache_AddData(key, dataInt);
 
