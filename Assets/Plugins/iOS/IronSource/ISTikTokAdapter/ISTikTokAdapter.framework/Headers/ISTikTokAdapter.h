@@ -3,26 +3,28 @@
 //  ISTikTokAdapter
 //
 //  Created by Guy Lis on 20/05/2019.
+//  Copyright © 2019 IronSource. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
 #import "IronSource/ISBaseAdapter+Internal.h"
 
-@import StoreKit;
-@import MobileCoreServices;
-@import WebKit;
-@import MediaPlayer;
-@import CoreMedia;
+static NSString * const TikTokAdapterVersion = @"4.1.2";
+static NSString * GitHash = @"66454182e";
+
+//System Frameworks For TikTok Adapter
+
+@import AdSupport;
 @import AVFoundation;
 @import CoreLocation;
-@import CoreTelephony;
-@import SystemConfiguration;
-@import Photos;
-@import AdSupport;
+@import CoreMedia;
 @import CoreMotion;
-
-static NSString * const TikTokAdapterVersion             = @"4.1.0";
-static NSString *  GitHash = @"54c9a700";
+@import CoreTelephony;
+@import MediaPlayer;
+@import MobileCoreServices;
+@import StoreKit;
+@import SystemConfiguration;
+@import WebKit;
 
 @interface ISTikTokAdapter : ISBaseAdapter
 

@@ -80,8 +80,7 @@ public class TournamentBuildScreen : MonoBehaviour {
 		IDragonData dragonData = m_tournament.tournamentData.tournamentDef.dragonData;
 		m_dragonName.Localize(dragonData.def.Get("tidName"));
 
-		m_dragonLoader.mode = MenuDragonLoader.Mode.TOURNAMENT;	// Make sure it's in the right mode
-		m_dragonLoader.Reload();
+		m_dragonLoader.RefreshDragon(true);
 		DefinitionNode skinDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, dragonData.disguise);
 		if (skinDef.GetAsInt("shopOrder") > 0) { // skins
 			m_dragonSkin.Localize(skinDef.Get("tidName"));
@@ -260,8 +259,12 @@ public class TournamentBuildScreen : MonoBehaviour {
 		{
 			// Check paying
 			if (m_hasFreeEntrance) {
-				// Move to Loading Screen
-				BusyScreen.Show(this);
+
+                //Remove existig loading messages in the busy screen
+                BusyScreen.Setup(true, null);
+
+                // Then show busy screen
+                BusyScreen.Show(this);
 
 				// Prepare to wait for the callback
 				Messenger.AddListener<HDLiveDataManager.ComunicationErrorCodes, string, long>(MessengerEvents.TOURNAMENT_ENTRANCE, OnTournamentEntrance);

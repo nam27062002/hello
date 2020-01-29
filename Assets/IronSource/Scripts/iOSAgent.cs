@@ -78,7 +78,7 @@ public class iOSAgent : IronSourceIAgent
 	private static extern void CFShowISDemandOnlyRewardedVideo (string instanceId);
 
 	[DllImport("__Internal")]
-	private static extern void CFShowISDemandOnlyRewardedVideoWithPlacementName (string instanceId, string placementName);
+	private static extern void CFLoadISDemandOnlyRewardedVideo (string instanceId);
 
 	[DllImport("__Internal")]
 	private static extern bool CFIsDemandOnlyRewardedVideoAvailable (string instanceId);
@@ -107,9 +107,6 @@ public class iOSAgent : IronSourceIAgent
 
 	[DllImport("__Internal")]
 	private static extern void CFShowISDemandOnlyInterstitial(string instanceId);
-
-	[DllImport("__Internal")]
-	private static extern void CFShowISDemandOnlyInterstitialWithPlacementName (string instanceId, string placementName);
 
 	[DllImport("__Internal")]
 	private static extern bool CFIsDemandOnlyInterstitialReady (string instanceId);
@@ -285,9 +282,9 @@ public class iOSAgent : IronSourceIAgent
 		CFShowISDemandOnlyRewardedVideo(instanceId);
 	}
 
-	public void showISDemandOnlyRewardedVideo (string instanceId, string placementName)
+	public void loadISDemandOnlyRewardedVideo (string instanceId)
 	{
-		CFShowISDemandOnlyRewardedVideoWithPlacementName(instanceId, placementName);
+		CFLoadISDemandOnlyRewardedVideo(instanceId);
 	}
 	
 	public bool isISDemandOnlyRewardedVideoAvailable (string instanceId)
@@ -332,11 +329,6 @@ public class iOSAgent : IronSourceIAgent
 	public void showISDemandOnlyInterstitial (string instanceId)
 	{
 		CFShowISDemandOnlyInterstitial(instanceId);
-	}
-
-	public void showISDemandOnlyInterstitial (string instanceId, string placementName)
-	{
-		CFShowISDemandOnlyInterstitialWithPlacementName (instanceId, placementName);
 	}
 
 	public bool isISDemandOnlyInterstitialReady (string instanceId)

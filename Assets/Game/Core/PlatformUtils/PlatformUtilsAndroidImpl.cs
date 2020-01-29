@@ -59,7 +59,7 @@ public class PlatformUtilsAndroidImpl: PlatformUtils
 
 			// Instantiate the object Uri class pointing to the file's path
 			AndroidJavaObject fileObject = new AndroidJavaObject("java.io.File", filename);
-			AndroidJavaClass fileProviderClass = new AndroidJavaClass("android.support.v4.content.FileProvider");
+			AndroidJavaClass fileProviderClass = new AndroidJavaClass("androidx.core.content.FileProvider");
 			AndroidJavaObject uriObject = fileProviderClass.CallStatic<AndroidJavaObject>("getUriForFile", currentActivity, Application.identifier + ".provider", fileObject);
 
 			// attach file

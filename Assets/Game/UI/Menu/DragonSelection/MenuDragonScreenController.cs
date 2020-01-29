@@ -561,6 +561,9 @@ public class MenuDragonScreenController : MonoBehaviour {
 			// Init the assets download flow. Don't show popups though, the menu interstitial popups controller will take care of it
 			m_assetsDownloadFlow.InitWithHandle(allHandle);
 		}
+
+        // Show the hud (just in case)
+        InstanceManager.menuSceneController.hud.animator.Show(true);
     }
 
 	/// <summary>

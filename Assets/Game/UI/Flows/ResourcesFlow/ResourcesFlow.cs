@@ -426,6 +426,15 @@ public class ResourcesFlow : IBroadcastListener {
 			// Get all PC pack definitions and sort them by PC amount given
 			m_pcPackDefinitions = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.SHOP_PACKS, "type", "hc");	// Hard currency packs only
 			DefinitionsManager.SharedInstance.SortByProperty(ref m_pcPackDefinitions, "amount", DefinitionsManager.SortType.NUMERIC);
+
+			// Remove non-enabled packs from the list
+			for(int i = m_pcPackDefinitions.Count - 1; i >= 0; --i) {	// Reverse loop cause we're removing elements from the list
+				// Is this pack enabled?
+				if(!m_pcPackDefinitions[i].GetAsBool("enabled", false)) {
+					// No! Remove it
+					m_pcPackDefinitions.RemoveAt(i);
+				}
+			}
 		}
 
 		// Definitions are sorted, should be easy to find the right pack!
@@ -434,9 +443,9 @@ public class ResourcesFlow : IBroadcastListener {
             long amount = m_pcPackDefinitions[i].GetAsLong("amount");
 
             // Mind the happy hour offers when calculating the recommended pack
-            if (OffersManager.instance.happyHour.IsActive())
+            if (OffersManager.happyHourManager.happyHour.IsActive())
             {
-                amount = (long) (amount * (1 + OffersManager.instance.happyHour.extraGemsFactor) );
+				amount = OffersManager.happyHourManager.happyHour.ApplyHappyHourExtra((int)amount);
             }
 
 			// Is it the first pack covering our target amount?

@@ -6,9 +6,10 @@ public class Transaction
     private const string KEY_ID = "order_id";
     private const string KEY_SOURCE = "source";
     private const string KEY_ITEMS = "items";
+    private const string KEY_ACTION = "action";
 
     private const string SOURCE_SHOP = "shop";
-    private const string SOURCE_CUSTOMER_SUPPORT = "crm";
+    private const string SOURCE_CUSTOMER_SUPPORT = "crm";    
 
     private static HDTrackingManager.EEconomyGroup GetEconomyGroupFromSource(string source)
     {
@@ -109,6 +110,11 @@ public class Transaction
     /// </summary>
     private string m_source;
 
+    /// <summary>
+    /// Required by server when confirming a transaction
+    /// </summary>
+    private string m_action;
+
     private bool m_isValid;
 
     private bool m_hasBeenPerformed;
@@ -146,6 +152,16 @@ public class Transaction
     {
         m_source = value;
     }
+
+    public string GetAction()
+    {
+        return m_action;
+    }
+
+    public void SetAction(string value)
+    {
+        m_action = value;
+    }    
 
     private bool IsValid()
     {
@@ -206,6 +222,7 @@ public class Transaction
 
             SetId(json[KEY_ID]);
             SetSource(json[KEY_SOURCE]);
+            SetAction(json[KEY_ACTION]);
 
             // Resources
             long amount;
@@ -246,7 +263,7 @@ public class Transaction
                         
                         if (!string.IsNullOrEmpty(productId) && currency == UserProfile.Currency.HARD)
                         {
-                            amount = OffersManager.instance.happyHour.ApplyHappyHourExtra((int)amount);
+                            amount = OffersManager.happyHourManager.happyHour.ApplyHappyHourExtra((int)amount);
                         }
 
                         rewardToAdd = CreateRewardCurrency(currency, amount);
@@ -310,6 +327,12 @@ public class Transaction
 
         value = GetSource();
         returnValue[KEY_SOURCE] = (value == null) ? "" : value;
+        
+        value = GetAction();
+        if (!string.IsNullOrEmpty(value))
+        {
+            returnValue[KEY_ACTION] = value;
+        }
 
         //
         // Currencies

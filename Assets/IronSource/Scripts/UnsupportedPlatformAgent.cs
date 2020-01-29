@@ -135,7 +135,7 @@ public class UnsupportedPlatformAgent : IronSourceIAgent
 		Debug.Log ("Unsupported Platform");
 	}
 
-	public void showISDemandOnlyRewardedVideo (string instanceId, string placementName)
+	public void loadISDemandOnlyRewardedVideo (string instanceId)
 	{
 		Debug.Log ("Unsupported Platform");
 
@@ -184,11 +184,6 @@ public class UnsupportedPlatformAgent : IronSourceIAgent
 	}
 
 	public void showISDemandOnlyInterstitial (string instanceId)
-	{
-		Debug.Log ("Unsupported Platform");
-	}
-
-	public void showISDemandOnlyInterstitial (string instanceId, string placementName)
 	{
 		Debug.Log ("Unsupported Platform");
 	}

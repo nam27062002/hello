@@ -21,6 +21,7 @@ GameObject:
   - component: {fileID: 4427259370336844}
   - component: {fileID: 198971439353379892}
   - component: {fileID: 199305635317252194}
+  - component: {fileID: 114521310651351080}
   m_Layer: 0
   m_Name: PS_RedGlow
   m_TagString: Untagged
@@ -38,6 +39,7 @@ GameObject:
   - component: {fileID: 4876986708860808}
   - component: {fileID: 198170499873837572}
   - component: {fileID: 199198042158323340}
+  - component: {fileID: 114478939092070336}
   m_Layer: 12
   m_Name: PS_DarkSparks
   m_TagString: Untagged
@@ -55,6 +57,7 @@ GameObject:
   - component: {fileID: 4369670819174758}
   - component: {fileID: 198998435881029204}
   - component: {fileID: 199219813912356650}
+  - component: {fileID: 114166575206603762}
   m_Layer: 0
   m_Name: PS_OrangeGlow
   m_TagString: Untagged
@@ -72,6 +75,7 @@ GameObject:
   - component: {fileID: 4334036411463726}
   - component: {fileID: 198527673522531172}
   - component: {fileID: 199592572736365120}
+  - component: {fileID: 114395860500799188}
   m_Layer: 12
   m_Name: PS_RedSparks
   m_TagString: Untagged
@@ -89,13 +93,14 @@ GameObject:
   - component: {fileID: 4658662623022894}
   - component: {fileID: 198824546946643190}
   - component: {fileID: 199832879510703370}
+  - component: {fileID: 114801490827117338}
   m_Layer: 0
   m_Name: FX_BarbacueMenuFlames
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &4334036411463726
 Transform:
   m_ObjectHideFlags: 1
@@ -167,6 +172,76 @@ Transform:
   m_Father: {fileID: 4658662623022894}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: -80.359, y: -80.909004, z: 81.663}
+--- !u!114 &114166575206603762
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1425700205612718}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3128bd630f39645c4a1e03d94b7008f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_transform: {fileID: 0}
+  m_resetFirst: 1
+  m_whenScale: 0
+--- !u!114 &114395860500799188
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1517685512748406}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3128bd630f39645c4a1e03d94b7008f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_transform: {fileID: 0}
+  m_resetFirst: 1
+  m_whenScale: 0
+--- !u!114 &114478939092070336
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1332252118875620}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3128bd630f39645c4a1e03d94b7008f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_transform: {fileID: 0}
+  m_resetFirst: 1
+  m_whenScale: 0
+--- !u!114 &114521310651351080
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1072718151620406}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3128bd630f39645c4a1e03d94b7008f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_transform: {fileID: 0}
+  m_resetFirst: 1
+  m_whenScale: 0
+--- !u!114 &114801490827117338
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1936941813074596}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3128bd630f39645c4a1e03d94b7008f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_transform: {fileID: 0}
+  m_resetFirst: 1
+  m_whenScale: 0
 --- !u!198 &198170499873837572
 ParticleSystem:
   m_ObjectHideFlags: 1
@@ -227,7 +302,7 @@ ParticleSystem:
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 2
-  randomSeed: 1091903644
+  randomSeed: -1740598661
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -3594,7 +3669,7 @@ ParticleSystem:
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 2
-  randomSeed: -900898203
+  randomSeed: 124059618
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -6961,7 +7036,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 1119500227
+  randomSeed: 1146203035
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -10367,7 +10442,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 1201244482
+  randomSeed: 6960029
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -13728,7 +13803,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -905300949
+  randomSeed: -860518963
   InitialModule:
     serializedVersion: 3
     enabled: 1

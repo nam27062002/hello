@@ -52,7 +52,7 @@ public class OfferPackRotational : OfferPack {
 	/// </summary>
 	/// <returns>Whether the pack has change its state.</returns>
 	public override bool UpdateState() {
-		OffersManager.LogPack(this, "UpdateState {0} | {1}", Colors.pink, def.sku, m_state);
+		//OffersManager.LogPack(this, "UpdateState {0} | {1}", Colors.pink, def.sku, m_state);
 
 		// Based on pack's state
 		State oldState = m_state;
@@ -68,7 +68,7 @@ public class OfferPackRotational : OfferPack {
 					ChangeState(State.PENDING_ACTIVATION);
 				}
 
-                // However, if it has expired for any other reason (i.e. Purchase Limit), go to the expired state or it's markes as ready to expire (typically because the user has just purchased it)
+                // However, if it has expired for any other reason (i.e. Purchase Limit), go to the expired state
                 else if(CheckExpiration(false)) { 
                     ChangeState(State.EXPIRED);
 				}

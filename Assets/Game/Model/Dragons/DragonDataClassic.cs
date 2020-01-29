@@ -215,6 +215,18 @@ public class DragonDataClassic : IDragonData {
 	}
 
 	/// <summary>
+	/// When progression content is changed this function refreshes the state of the progression
+	/// </summary>
+	/// <returns>The lock state for this dragon.</returns>
+	public void RefreshProgression()
+	{
+		float xp = m_progression.xp;
+		DefinitionNode _def = DefinitionsManager.SharedInstance.GetDefinitionByVariable(DefinitionsCategory.DRAGON_PROGRESSION, "dragonSku", def.sku);
+		m_progression.RefreshDefinition(_def);
+		m_progression.SetXp( xp );
+	}
+
+	/// <summary>
 	/// Gets the current lock state of this dragon.
 	/// </summary>
 	/// <returns>The lock state for this dragon.</returns>
