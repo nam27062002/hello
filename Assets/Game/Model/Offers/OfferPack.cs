@@ -144,11 +144,17 @@ public class OfferPack {
 	protected string[] m_countriesAllowed = new string[0];
 	protected string[] m_countriesExcluded = new string[0];
 	protected int m_gamesPlayed = 0;
+
 	protected PayerType m_payerType = PayerType.ANYONE;
-	protected float m_minSpent = 0f;
-	protected float m_maxSpent = float.MaxValue / 100f;
+	protected int m_minSpent = 0;
+	protected int m_maxSpent = int.MaxValue;
+	protected int m_maxPurchasePrice = -1;
 	protected int m_minNumberOfPurchases = 0;
+
 	protected long m_secondsSinceLastPurchase = 0;
+	protected int m_lastPurchasePrice = -1;
+	protected string m_lastPurchaseItemType = string.Empty;
+	protected string[] m_lastPurchaseItemContent = new string[0];
 
 	protected string[] m_dragonUnlocked = new string[0];
 	protected string[] m_dragonOwned = new string[0];
@@ -313,11 +319,17 @@ public class OfferPack {
 		m_countriesAllowed = new string[0];
 		m_countriesExcluded = new string[0];
 		m_gamesPlayed = 0;
+
 		m_payerType = PayerType.ANYONE;
-		m_minSpent = 0f;
-		m_maxSpent = float.MaxValue / 100f;	// We're working with cents of USD
+		m_minSpent = 0;
+		m_maxSpent = int.MaxValue;
+		m_maxPurchasePrice = -1;
 		m_minNumberOfPurchases = 0;
+
 		m_secondsSinceLastPurchase = 0;
+		m_lastPurchasePrice = -1;
+		m_lastPurchaseItemType = string.Empty;
+		m_lastPurchaseItemContent = new string[0];
 
 		m_dragonUnlocked = new string[0];
 		m_dragonOwned = new string[0];
@@ -426,15 +438,21 @@ public class OfferPack {
 		m_countriesAllowed = ParseArray(_def.GetAsString("countriesAllowed"));
 		m_countriesExcluded = ParseArray(_def.GetAsString("countriesExcluded"));
 		m_gamesPlayed = _def.GetAsInt("gamesPlayed", m_gamesPlayed);
+
 		switch(_def.GetAsString("payerType", "").ToLowerInvariant()) {
 			case "payer":		m_payerType = PayerType.PAYER;			break;
 			case "nonpayer":	m_payerType = PayerType.NON_PAYER;		break;
 			default:			break;	// Already has the default value
 		}
-		m_minSpent = _def.GetAsFloat("minSpent", m_minSpent) * 100f; 	// Content in USD, we work in cents of USD
-		m_maxSpent = _def.GetAsFloat("maxSpent", m_maxSpent) * 100f;	// Content in USD, we work in cents of USD
+		m_minSpent = USDToCents(_def.GetAsFloat("minSpent", m_minSpent / 100f));	// Content in USD (float), we work in cents of USD (int)
+		m_maxSpent = USDToCents(_def.GetAsFloat("maxSpent", m_maxSpent / 100f));	// Content in USD (float), we work in cents of USD (int)
+		m_maxPurchasePrice = USDToCents(_def.GetAsFloat("maxPurchasePrice", m_maxPurchasePrice / 100f));	// Content in USD (float), we work in cents of USD (int)
 		m_minNumberOfPurchases = _def.GetAsInt("minNumberOfPurchases", m_minNumberOfPurchases);
-		m_secondsSinceLastPurchase = _def.GetAsLong("minutesSinceLastPurchase", m_secondsSinceLastPurchase / 60L) * 60L;		// Content in minutes, we work in seconds
+
+		m_secondsSinceLastPurchase = _def.GetAsLong("minutesSinceLastPurchase", m_secondsSinceLastPurchase / 60L) * 60L;        // Content in minutes, we work in seconds
+		m_lastPurchasePrice = USDToCents(_def.GetAsFloat("lastPurchasePrice", m_lastPurchasePrice / 100f));	// Content in USD (float), we work in cents of USD (int)
+		m_lastPurchaseItemType = _def.GetAsString("lastPurchaseItemType", m_lastPurchaseItemType);
+		m_lastPurchaseItemContent = ParseArray(_def.GetAsString("lastPurchaseItemContent"));
 
 		m_dragonUnlocked = ParseArray(_def.GetAsString("dragonUnlocked"));
 		m_dragonOwned = ParseArray(_def.GetAsString("dragonOwned"));
@@ -501,11 +519,17 @@ public class OfferPack {
 		SetValueIfMissing(ref _def, "countriesAllowed", string.Join(";", m_countriesAllowed));
 		SetValueIfMissing(ref _def, "countriesExcluded", string.Join(";", m_countriesExcluded));
 		SetValueIfMissing(ref _def, "gamesPlayed", m_gamesPlayed.ToString(CultureInfo.InvariantCulture));
+
 		SetValueIfMissing(ref _def, "payerType", "");
-		SetValueIfMissing(ref _def, "minSpent", m_minSpent.ToString(CultureInfo.InvariantCulture));
-		SetValueIfMissing(ref _def, "maxSpent", m_maxSpent.ToString(CultureInfo.InvariantCulture));
+		SetValueIfMissing(ref _def, "minSpent", (m_minSpent / 100f).ToString(CultureInfo.InvariantCulture));    // Content in USD (float), we work in cents of USD (int)
+		SetValueIfMissing(ref _def, "maxSpent", (m_maxSpent / 100f).ToString(CultureInfo.InvariantCulture));    // Content in USD (float), we work in cents of USD (int)
+		SetValueIfMissing(ref _def, "maxPurchasePrice", (m_maxPurchasePrice / 100f).ToString(CultureInfo.InvariantCulture));    // Content in USD (float), we work in cents of USD (int)
 		SetValueIfMissing(ref _def, "minNumberOfPurchases", m_minNumberOfPurchases.ToString(CultureInfo.InvariantCulture));
+
 		SetValueIfMissing(ref _def, "minutesSinceLastPurchase", (m_secondsSinceLastPurchase / 60L).ToString(CultureInfo.InvariantCulture));
+		SetValueIfMissing(ref _def, "lastPurchasePrice", (m_lastPurchasePrice / 100f).ToString(CultureInfo.InvariantCulture));    // Content in USD (float), we work in cents of USD (int)
+		SetValueIfMissing(ref _def, "lastPurchaseItemType", m_lastPurchaseItemType);
+		SetValueIfMissing(ref _def, "lastPurchaseItemContent", string.Join(";", m_lastPurchaseItemContent));
 
 		SetValueIfMissing(ref _def, "dragonUnlocked", string.Join(";", m_dragonUnlocked));
 		SetValueIfMissing(ref _def, "dragonOwned", string.Join(";", m_dragonOwned));
@@ -580,18 +604,53 @@ public class OfferPack {
 			} break;
 		}
 
-		// Min/max spent
+		// Min/max/avg spent
 		float totalSpent = (trackingPersistence == null) ? 0f : trackingPersistence.TotalSpent;
-
 		OffersManager.LogPack(this, "    Min Spent... {0} vs {1}", Colors.paleGreen, m_minSpent, totalSpent);
 		if(m_minSpent > totalSpent) return false;
 
 		OffersManager.LogPack(this, "    Max Spent... {0} vs {1}", Colors.paleGreen, m_maxSpent, totalSpent);
 		if(totalSpent > m_maxSpent) return false;
 
+		if(m_maxPurchasePrice > 0) {    // Only check if needed
+			int maxPurchasePrice = (trackingPersistence == null) ? -1 : trackingPersistence.MaxPurchasePrice;
+			OffersManager.LogPack(this, "    Max Purchase Price... {0} vs {1}", Colors.paleGreen, m_maxPurchasePrice, maxPurchasePrice);
+			if(m_maxPurchasePrice != maxPurchasePrice) return false;
+		}
+
 		// Min number of purchases
 		OffersManager.LogPack(this, "    Min Number Purchases... {0} vs {1}", Colors.paleGreen, m_minNumberOfPurchases, totalPurchases);
 		if(m_minNumberOfPurchases > totalPurchases) return false;
+
+		// Last purchase info
+		if(m_lastPurchasePrice > 0) {	// Only check if needed
+			int lastPurchasePrice = (trackingPersistence == null) ? 0 : trackingPersistence.LastPurchasePrice;
+			OffersManager.LogPack(this, "    Last Purchase Price... {0} vs {1}", Colors.paleGreen, m_lastPurchasePrice, lastPurchasePrice);
+			if(m_lastPurchasePrice != lastPurchasePrice) return false;
+		}
+
+		if(!string.IsNullOrEmpty(m_lastPurchaseItemType)) { // Only check if needed
+			// Comparison will fail if tracking persistence is not valid
+			string lastPurchaseItemType = (trackingPersistence == null) ? string.Empty : trackingPersistence.LastPurchaseItemType;
+			OffersManager.LogPack(this, "    Last Purchase Item Type... {0} vs {1}", Colors.paleGreen, m_lastPurchaseItemType, lastPurchaseItemType);
+			if(m_lastPurchaseItemType.ToLowerInvariant() != lastPurchaseItemType.ToLowerInvariant()) return false;	// Minimize typos by comparing in lowercase
+
+			// Content is only checked if type matches
+			if(m_lastPurchaseItemContent.Length > 0) {  // Only check if needed
+				// No need to check tracking persistence validity, it will already have failed with the type comparison and we will not reach this point
+				// Check all possible values for an exact match - if not found, offer can't be activated
+				string lastPurchaseItemContent = trackingPersistence.LastPurchaseItemContent;
+				OffersManager.LogPack(this, "    Last Purchase Item Content... {0} vs {1}", Colors.paleGreen, m_lastPurchaseItemContent, trackingPersistence.LastPurchaseItemContent);
+				bool matchFound = false;
+				for(int i = 0; i < m_lastPurchaseItemContent.Length; ++i) {
+					if(m_lastPurchaseItemContent[i] == lastPurchaseItemContent) {
+						matchFound = true;
+						break;	// No need to keep looping
+					}
+				}
+				if(!matchFound) return false;
+			}
+		}
 
 		// Dragons
 		OffersManager.LogPack(this, "    Unlocked Dragons...", Colors.paleGreen);
@@ -1106,7 +1165,7 @@ public class OfferPack {
 			case "push":		return Type.PUSHED;
 			case "rotational":	return Type.ROTATIONAL;
 			case "free":		return Type.FREE;
-            case "removeAds":   return Type.REMOVE_ADS;
+            case "removeads":   return Type.REMOVE_ADS;
 		}
 		return DEFAULT_TYPE;
 	}
@@ -1146,17 +1205,42 @@ public class OfferPack {
         }
         return DEFAULT_CURRENCY;
     }
-    #endregion
 
-    //------------------------------------------------------------------------//
-    // PERSISTENCE															  //
-    //------------------------------------------------------------------------//
-    #region PERSISTENCE
-    /// <summary>
-    /// In the particular case of the offers, we only need to persist them in specific cases.
-    /// </summary>
-    /// <returns>Whether the offer should be persisted or not.</returns>
-    public virtual bool ShouldBePersisted() {
+	/// <summary>
+	/// Convert from USD (used in content) to cents of USD (used in internal logic).
+	/// Will be capped to int.MaxValue if needed.
+	/// </summary>
+	/// <param name="_usd">Amount in USD to be converted.</param>
+	/// <returns>The converted amount in cents of USD.</returns>
+	private static int USDToCents(float _usd) {
+		// Using double cause we can get off float limits
+		// [AOC] Have to use Round because of how the float-double conversion works: https://social.msdn.microsoft.com/Forums/vstudio/en-US/1fcf6486-807d-4dce-8aef-7fe5268b568d/convert-float-to-double?forum=csharpgeneral
+		double cents = System.Math.Round(_usd * 100d);
+
+		// Check int limits
+		// [AOC] WTF Unity doesn't have System.Math.Clamp(double, double, double) - do a manual clamp
+		int clampedCents = 0;
+		if(cents <= (double)int.MinValue) {
+			clampedCents = int.MinValue;
+		} else if(cents >= (double)int.MaxValue) {
+			clampedCents = int.MaxValue;
+		} else {
+			clampedCents = (int)cents;
+		}
+		Debug.Log(Colors.yellow.Tag(_usd + " -> " + cents + " -> " + clampedCents));
+		return clampedCents;
+	}
+	#endregion
+
+	//------------------------------------------------------------------------//
+	// PERSISTENCE															  //
+	//------------------------------------------------------------------------//
+	#region PERSISTENCE
+	/// <summary>
+	/// In the particular case of the offers, we only need to persist them in specific cases.
+	/// </summary>
+	/// <returns>Whether the offer should be persisted or not.</returns>
+	public virtual bool ShouldBePersisted() {
 		// Never if definition is not valid
 		if(m_def == null) return false;
 
