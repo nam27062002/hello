@@ -349,7 +349,7 @@ public class PopupShopOffersPill : IPopupShopPill {
     /// Refresh the timer. To be called periodically.
     /// https://docs.unity3d.com/ScriptReference/MonoBehaviour.InvokeRepeating.html
     /// </summary>
-    public virtual void RefreshTimer() {
+    public override void RefreshTimer() {
 		// Skip if no target offer or target offer is not timed
 		if(m_pack == null) return;
 		if(!m_pack.isTimed) return;

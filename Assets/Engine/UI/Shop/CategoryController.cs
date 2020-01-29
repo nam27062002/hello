@@ -35,6 +35,7 @@ public class CategoryController : MonoBehaviour {
     protected ShopCategory m_shopCategory;
     protected ShopController m_shopController;
     protected List<OfferPack> m_offers;
+    protected List<IPopupShopPill> m_offerPills;
 
     //------------------------------------------------------------------------//
     // GENERIC METHODS														  //
@@ -45,6 +46,7 @@ public class CategoryController : MonoBehaviour {
     private void Awake() {
 
         m_offers = new List<OfferPack>();
+        m_offerPills = new List<IPopupShopPill>();
 
     }
 
@@ -73,15 +75,6 @@ public class CategoryController : MonoBehaviour {
 	// OTHER METHODS														  //
 	//------------------------------------------------------------------------//
 
-    /// <summary>
-    /// Remove all the pills and the header from this container
-    /// </summary>
-    protected virtual void Clear()
-    {
-        m_pillsContainer.DestroyAllChildren(true);
-        m_offers.Clear();
-    }
-
     public virtual void Initialize (ShopCategory _shopCategory)
     {
 
@@ -92,6 +85,31 @@ public class CategoryController : MonoBehaviour {
         m_shopCategory = _shopCategory;
 
         Refresh();
+    }
+
+    /// <summary>
+    /// Refresh all the timers in this category container, and cascade it to the offer pills inside
+    /// </summary>
+    public virtual void RefreshTimers()
+    {
+
+        if (m_offerPills != null)
+        {
+            foreach (IPopupShopPill pill in m_offerPills)
+            {
+                pill.RefreshTimer();
+            }
+        }
+    }
+
+    /// <summary>
+    /// Remove all the pills and the header from this container
+    /// </summary>
+    protected virtual void Clear()
+    {
+        m_pillsContainer.DestroyAllChildren(true);
+        m_offers.Clear();
+        m_offerPills.Clear();
     }
 
     protected virtual void Refresh()
@@ -146,8 +164,9 @@ public class CategoryController : MonoBehaviour {
                     // Insert the pill in the container
                     pill.transform.SetParent(m_pillsContainer,false);
 
-                    // Keep a record of all the offers in this category
+                    // Keep a record of all the offers, and pills in this category
                     m_offers.Add(offer);
+                    m_offerPills.Add(pill);
 
                     pill.gameObject.SetActive(true);
                 }
@@ -164,6 +183,7 @@ public class CategoryController : MonoBehaviour {
     {
         return (m_offers.Count == 0);
     }
+
 
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
