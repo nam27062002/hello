@@ -937,7 +937,7 @@ GameObject:
   - component: {fileID: 114924059174360190}
   - component: {fileID: 114616906805282122}
   m_Layer: 12
-  m_Name: head
+  m_Name: head_2
   m_TagString: Untagged
   m_Icon: {fileID: 5132851093641282708, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
@@ -1604,6 +1604,23 @@ GameObject:
   m_Name: wing_finger03_LF_01_JT
   m_TagString: Untagged
   m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!1 &1799584313174096
+GameObject:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4671797727066796}
+  - component: {fileID: 114868333340936430}
+  - component: {fileID: 114079392432897486}
+  m_Layer: 12
+  m_Name: head
+  m_TagString: Untagged
+  m_Icon: {fileID: 5132851093641282708, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -3142,7 +3159,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1501187225405382}
-  m_LocalRotation: {x: -0.0012651872, y: 0.4513656, z: 0.0006399615, w: 0.89233804}
+  m_LocalRotation: {x: 0.008640021, y: 0.9911687, z: -0.10283565, w: 0.08327577}
   m_LocalPosition: {x: 0, y: 0, z: -1.79}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -3470,7 +3487,7 @@ Transform:
   - {fileID: 4540397821284596}
   - {fileID: 4957516019881470}
   - {fileID: 4848171222635536}
-  - {fileID: 4861204131474342}
+  - {fileID: 4671797727066796}
   - {fileID: 4721003686836142}
   - {fileID: 4929637423310930}
   - {fileID: 4463621922202860}
@@ -3483,8 +3500,22 @@ Transform:
   - {fileID: 4368286173141152}
   - {fileID: 4987373910931376}
   - {fileID: 4068088826992978}
+  - {fileID: 4861204131474342}
   m_Father: {fileID: 4105533916022308}
   m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &4671797727066796
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1799584313174096}
+  m_LocalRotation: {x: 0.13507706, y: 0.6940852, z: 0.13507706, w: 0.6940852}
+  m_LocalPosition: {x: 0, y: 0.4023056, z: 0.45971203}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4664459273592230}
+  m_RootOrder: 13
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4673531128156192
 Transform:
@@ -3857,7 +3888,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4664459273592230}
-  m_RootOrder: 13
+  m_RootOrder: 26
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4864060616110356
 Transform:
@@ -4254,6 +4285,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_parentName: hand_LF_JT
+  m_parentRoot: {fileID: 4105533916022308}
+  m_worldPositionStays: 1
+  m_resetScale: 0
+  m_when: 0
+--- !u!114 &114079392432897486
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1799584313174096}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9aae6699537414c7ab185eeaef226fe0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_parentName: head_JT
   m_parentRoot: {fileID: 4105533916022308}
   m_worldPositionStays: 1
   m_resetScale: 0
@@ -6461,7 +6508,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9aae6699537414c7ab185eeaef226fe0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_parentName: head_JT
+  m_parentName: Head_Dragon_JT
   m_parentRoot: {fileID: 4105533916022308}
   m_worldPositionStays: 1
   m_resetScale: 0
@@ -6782,6 +6829,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_point: 8
+--- !u!114 &114868333340936430
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1799584313174096}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ece7f0589cf74ddf97a0a63886f8499, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_point: 5
 --- !u!114 &114896307430371796
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -7048,7 +7107,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0ece7f0589cf74ddf97a0a63886f8499, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_point: 5
+  m_point: 17
 --- !u!114 &114936439433692448
 MonoBehaviour:
   m_ObjectHideFlags: 1
