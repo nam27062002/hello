@@ -30,6 +30,14 @@ namespace Metagame {
         // MEMBERS AND PROPERTIES												  //
         //------------------------------------------------------------------------//
 
+        /// <summary>
+        /// Returns whether or not the user can be given more than once instance of this type of reward
+        /// </summary>
+        /// <returns><c>true</c> if the user can own this reward only once (example: remove ads), <c>false</c> otherwise.</returns>
+        public override bool IsUnique()
+        {
+            return true;
+        }
 
         /// <summary>
         /// This method checks if the reward is already owned by the player. This is applicable in

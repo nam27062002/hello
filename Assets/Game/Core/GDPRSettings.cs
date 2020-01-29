@@ -35,12 +35,16 @@ public class GDPRSettings : SingletonScriptableObject<GDPRSettings> {
 		ALL = ~(0)      // http://stackoverflow.com/questions/7467722/how-to-set-all-bits-of-enum-flag
 	}
 
-	[Serializable]
+	[Serializable]    
 	public class CountrySetup {
-		public bool hasAgeRestriction = false;
-		public int ageRestriction = -1;
-		public bool requiresConsent = false;
-		public CountryGroup group = CountryGroup.NONE;
+        // Default value needs to meet the latest changes in GDPR requirements (https://mdc-web-tomcat17.ubisoft.org/confluence/pages/viewpage.action?pageId=610147488):        
+        // -)Extension of the GDPR consent flow WW
+        // -)Extension of the Age Gate WW, for apps defined as "Family apps" by Legal.
+        // -)Minors age defined as =< 15 y.o at WW level
+        public bool hasAgeRestriction = true;
+		public int ageRestriction = 16;
+		public bool requiresConsent = true;
+		public CountryGroup group = CountryGroup.GDPR;
 	}
 
 	[Serializable]
@@ -51,6 +55,9 @@ public class GDPRSettings : SingletonScriptableObject<GDPRSettings> {
 	//------------------------------------------------------------------------//
 	// Exposed
 	[SerializeField] private CountrySetupDictionary m_countryList = new CountrySetupDictionary();
+
+    // Although all countries share the same privacy policy we still need to use this list because some countries might need to use specific groups, for example NO_UNDERAGE_PURCHASE_INCENTIVATION
+    // for Germany
 	public static Dictionary<string, CountrySetup> countryList {
 		get { return instance.m_countryList.dict; }
 	}
@@ -67,11 +74,8 @@ public class GDPRSettings : SingletonScriptableObject<GDPRSettings> {
 	/// <returns>The setup for that country, if defined. Default setup otherwise, never null.</returns>
 	/// <param name="_countryCode">2 letter ISO 3166-1 country code. See https://ca.wikipedia.org/wiki/ISO_3166-1.</param>
 	public static CountrySetup GetSetup(string _countryCode) {
-		// Do we have a setup for this country?
-		if(countryList.ContainsKey(_countryCode)) {
-			return countryList[_countryCode];
-		}
-		return instance.m_defaultSetup;
+        // Do we have a setup for this country?
+        return (countryList.ContainsKey(_countryCode)) ? countryList[_countryCode] : instance.m_defaultSetup;
 	}
 
 	/// <summary>

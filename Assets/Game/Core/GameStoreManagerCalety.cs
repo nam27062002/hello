@@ -195,6 +195,16 @@ public class GameStoreManagerCalety : GameStoreManager
         {
             return m_hasInitFailed;
         }
+
+		public override void onRestorePurchasesCompleted(List<string> productIds) 
+		{ 
+			m_manager.OnRestorePurchasesCompleted(null, productIds);
+		}
+
+		public override void onRestorePurchasesFailed(string error) 
+		{ 
+			m_manager.OnRestorePurchasesCompleted(error, null);
+		}
     }
 	#endregion
 
@@ -213,6 +223,8 @@ public class GameStoreManagerCalety : GameStoreManager
 
     private float m_waitForInitializationExpiresAt = -1f;
     private Action m_onWaitForInitializationDone;
+	private Action<string, List<string>> m_onRestoredPurchasesCompleted;
+	private float m_restoredPurchasesTimeout;
 
     public GameStoreManagerCalety () 
 	{
@@ -227,6 +239,7 @@ public class GameStoreManagerCalety : GameStoreManager
         m_isFirstInit = true;
         m_storeListener.Reset();
         ResetWaitForInitialization();
+		m_onRestoredPurchasesCompleted = null;
     }
 
 	public override void Initialize()
@@ -242,6 +255,7 @@ public class GameStoreManagerCalety : GameStoreManager
         }
 
         ResetWaitForInitialization();
+		m_onRestoredPurchasesCompleted = null;
 
         m_storeListener.InitialiseStore(ref m_storeSkus, false);
 
@@ -451,6 +465,35 @@ public class GameStoreManagerCalety : GameStoreManager
         m_onWaitForInitializationDone = null;
     }
 
+	public override void RestorePurchases(Action<string, List<string>> onRestoredPurchasesCompleted)
+	{
+		m_onRestoredPurchasesCompleted = onRestoredPurchasesCompleted;
+
+		// Timeout is used instead of timestamp because we don¡t want to take into consideration the time that the user is dealing
+		// with the iOS store kit UI (for example entering password otherwise the user could get an error mistake even though the 
+		// purchases got restored successfully)
+		m_restoredPurchasesTimeout = 12f;
+
+		#if UNITY_EDITOR
+		// Faking the call to the server
+		UbiBCN.CoroutineManager.DelayedCall(() => {
+			List<string> productIds = new List<string> { "com.ubisoft.hungrydragon.remove_ads_offer" };
+			OnRestorePurchasesCompleted(null, productIds);
+            }, 3f);
+		#else
+			StoreManager.SharedInstance.RestorePurchases();
+		#endif
+	}
+
+	public void OnRestorePurchasesCompleted(string error, List<string> productIds)
+	{
+		if (m_onRestoredPurchasesCompleted != null) 
+		{
+			m_onRestoredPurchasesCompleted(error, productIds);
+			m_onRestoredPurchasesCompleted = null;
+		}
+	}
+
 #if UNITY_EDITOR
     // Time for the shope to initialize. Increase this value if you want to test what happens when trying to purchase before the shop has been initialized
     // 40 seconds is the time that is taking to initialize with the current amount of products (86 on January 2019) on the actual device 
@@ -480,6 +523,15 @@ public class GameStoreManagerCalety : GameStoreManager
                 ResetWaitForInitialization();
             }            
         }
+
+		if (m_onRestoredPurchasesCompleted != null && Time.unscaledTime >= m_restoredPurchasesTimeout) 
+		{
+			m_restoredPurchasesTimeout -= Time.unscaledDeltaTime;
+			if (m_restoredPurchasesTimeout <= 0) 
+			{
+				OnRestorePurchasesCompleted ("TIMEOUT", null);
+			}
+		}
     }
 
     #region log

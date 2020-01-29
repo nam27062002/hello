@@ -1165,7 +1165,10 @@ public class UserProfile : UserPersistenceSystem
 			for(int i = rewardsData.Count - 1; i >= 0 ; --i) {
 				// Create new reward with the given data
 				Metagame.Reward r = Metagame.Reward.CreateFromJson(rewardsData[i]);
-				m_rewards.Push(r);
+
+                // Makes sure that r can be pushed before pushing it in order to avoid a unique reward (such as remove_ads) from being given more than once
+                if (CanPushReward(r))
+				    m_rewards.Push(r);
 			}
 		}
 
@@ -1506,7 +1509,9 @@ public class UserProfile : UserPersistenceSystem
         data.Add("happyHourOffer", happyHour);
 
         // Remove Ads offer
-        //data.Add("removeAdsFeature", m_removeAds.Save());
+        // For safety reasons we store the Remove Ads feature in the player preferences
+        // but we store it also in the user profile just in case we need in the future
+        data.Add("removeAdsFeature", m_removeAds.Save());
 
         // Visited Zones
         JSONArray zonesArray = new SimpleJSON.JSONArray();
@@ -1840,6 +1845,10 @@ public class UserProfile : UserPersistenceSystem
         foreach(KeyValuePair<string, IDragonData> pair in m_dragonsBySku) {
             pair.Value.RefreshPrice();
             pair.Value.RefreshShadowRevealUnlock();
+			if ( pair.Value is DragonDataClassic )
+			{
+				(pair.Value as DragonDataClassic).RefreshProgression();
+			}
         }
     }
 
@@ -1965,20 +1974,72 @@ public class UserProfile : UserPersistenceSystem
 	//------------------------------------------------------------------------//
 	// REWARDS MANAGEMENT													  //
 	//------------------------------------------------------------------------//
+
+    /// <summary>
+    /// Returns whether or not a reward can be pushed to <c>m_rewards</c>, the stack of pending rewards. The requirements that a reward must meet to be allowed to be pushed to the stack are:
+    /// a)For a unique reward (the type of reward that can be given only once such as remove_ads):
+    ///     a.1)The user must not own it already
+    ///     a.2)It must not be in the stack already
+    /// b)For a non unique reward (the default type of reward): No requirements. This type of reward can be pushed with no concerns.
+    /// </summary>
+    /// <param name="_reward"></param>
+    /// <returns></returns>
+    private bool CanPushReward(Metagame.Reward _reward) {
+        bool _returnValue = true;
+        if (_reward.IsUnique()) {
+            // If the user already owns this type of reward then _reward can not be pushed
+            if (_reward.IsAlreadyOwned()) {
+                _returnValue = false;
+            } else {
+                // Loops through all the rewards already in the stack. If one already gives the type of _reward then _reward shouldn't be pushed again because it should be given only once
+                var enumerator = m_rewards.GetEnumerator();
+                while (enumerator.MoveNext() && _returnValue) {
+                    if (enumerator.Current.type == _reward.type) {
+                        _returnValue = false;
+                    }
+                }
+            }
+        }
+
+        return _returnValue;
+    }   
+
 	/// <summary>
 	/// Push a reward to the stack.
 	/// </summary>
+	/// <returns><c>true</c> if the reward has been added. <c>false</c> if the reward hasn't been added because the user already owns it and the user is allowed to own only an instance of this 
+	/// type of reward.amount, for example, removeAds is not added if the user already owns it</returns>
 	/// <param name="_reward">Reward to be pushed.</param>
-	public void PushReward(Metagame.Reward _reward) {
-
-        // Dont push rewards that are already owned by the user
-        if (_reward.IsAlreadyOwned())
-            return;
+	public bool PushReward(Metagame.Reward _reward) {        
+        if (!CanPushReward(_reward))		
+			return false;
 
 		rewardStack.Push(_reward);
 		Debug.Log("<color=green>PUSH! " + _reward.GetType().Name + "</color>");
 		Messenger.Broadcast<Metagame.Reward>(MessengerEvents.PROFILE_REWARD_PUSHED, _reward);
+
+		return true;
 	}
+
+	/// <summary>
+	/// Push a list of rewards to the stack.
+	/// </summary>
+	/// <returns>The amount of rewards that have been added to the profile effectively. For example removeAds is not added if the user already owns it</returns>
+	/// <param name="_rewards">List of rewards to add.</param>
+	public int PushRewards(List<Metagame.Reward> _rewards) {
+		int _returnValue = 0;
+		if (_rewards != null) {
+			int count = _rewards.Count;
+			for (int i = 0; i < count; i++) {
+				if (PushReward (_rewards [i])) {
+					_returnValue++;
+				}
+			}				
+		}
+
+		return _returnValue;
+	}
+
 
 	/// <summary>
 	/// Pop a reward from the stack.

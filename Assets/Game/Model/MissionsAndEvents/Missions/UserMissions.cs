@@ -73,11 +73,11 @@ public class UserMissions : IUserMissions {
     }
 
     protected override DefinitionNode GetDragonModifierDef() {
-        return DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.MISSION_MODIFIERS, DragonManager.biggestOwnedDragon.def.sku);  // Matching sku
+        return DefinitionsManager.SharedInstance.GetDefinitionByVariable(DefinitionsCategory.MISSION_MODIFIERS, "dragonSku", DragonManager.biggestOwnedDragon.def.sku);
     }
 
     protected override DefinitionNode GetForcedDragonModifierDef(string _sku) {
-        return DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.MISSION_MODIFIERS, _sku);  // Matching sku
+        return DefinitionsManager.SharedInstance.GetDefinitionByVariable(DefinitionsCategory.MISSION_MODIFIERS, "dragonSku", _sku);
     }
 
     protected override float ComputeRemovePCCostModifier() {

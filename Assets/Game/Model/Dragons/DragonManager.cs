@@ -58,7 +58,7 @@ public class DragonManager : Singleton<DragonManager> {
     public static IDragonData biggestOwnedDragon {
 		get {
 			// Reverse-iterate all the dragons by order and find the biggest one owned
-			for(int i = instance.m_allDragonsByOrder.Count - 1; i >= 0; i--) {
+			for(int i = instance.m_allDragonsByOrder.Count - 1; i >= 1; i--) {
 				// Is it owned?
 				if(instance.m_allDragonsByOrder[i].isOwned) {
 					// Yes! Return dragon
@@ -66,8 +66,8 @@ public class DragonManager : Singleton<DragonManager> {
 				}
 			}
 
-			// No dragons owned (should never happen)
-			return null;
+			// No dragons bought (so just return the baby dragon)
+			return instance.m_allDragonsByOrder[0];
 		}
 	}
 

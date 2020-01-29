@@ -1171,7 +1171,7 @@ public class OfferPack {
 			case "push":		return Type.PUSHED;
 			case "rotational":	return Type.ROTATIONAL;
 			case "free":		return Type.FREE;
-            case "removeAds":   return Type.REMOVE_ADS;
+            case "removeads":   return Type.REMOVE_ADS;
 		}
 		return DEFAULT_TYPE;
 	}

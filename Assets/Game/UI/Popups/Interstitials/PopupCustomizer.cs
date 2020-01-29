@@ -154,6 +154,9 @@ public class PopupCustomizer : MonoBehaviour {
 
 	private CanvasGroup m_menuCanvasGroup = null;
 
+    private bool m_isPopupSurvey = false;
+    private HDTrackingManager.EPopupSurveyAction m_popupSurveyAction;
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -255,7 +258,27 @@ public class PopupCustomizer : MonoBehaviour {
 				}
 			}
 		}
-	}
+
+        // Survey popup is implemented with a CRM popup. We need to know if this is a survey popup because some stuff besides just opening the url needs to be done.
+        // A CRM popup is considered the survey popup when the url contains a specific domain ("typeform.com")
+        m_isPopupSurvey = false;
+        m_popupSurveyAction = HDTrackingManager.EPopupSurveyAction.No;
+        if (m_localizedConfig != null && m_localizedConfig.m_kPopupButtons != null)
+        {
+            int count = m_localizedConfig.m_kPopupButtons.Count;
+            CaletyConstants.PopupButton button;
+            string[] tokens;
+            for (int i = 0; i < count && !m_isPopupSurvey; i++)
+            {
+                button = m_localizedConfig.m_kPopupButtons[i];
+                tokens = string.IsNullOrEmpty(button.m_strParam) ? new string[0] : button.m_strParam.Split(';');
+                if (tokens.Length > 0 && !string.IsNullOrEmpty(tokens[0]) && tokens[0].Contains("typeform.com"))
+                {
+                    m_isPopupSurvey = true;
+                }
+            }
+        }     
+    }
 
 
 	//------------------------------------------------------------------------//
@@ -265,6 +288,11 @@ public class PopupCustomizer : MonoBehaviour {
 	/// Close this popup.
 	/// </summary>
 	public void ClosePopup() {
+        if (m_isPopupSurvey)
+        {
+            HDTrackingManager.Instance.Notify_PopupSurveyShown(m_popupSurveyAction);
+        }
+
 		// Close the popup!
 		this.GetComponent<PopupController>().Close(true);
 	}
@@ -328,7 +356,7 @@ public class PopupCustomizer : MonoBehaviour {
 			m_menuCanvasGroup.DOKill(true);
 			m_menuCanvasGroup.DOFade(1f, 0.25f);
 		}
-	}
+	}    
 
 	/// <summary>
 	/// A button has been hit.
@@ -445,30 +473,36 @@ public class PopupCustomizer : MonoBehaviour {
 			case Calety.Customiser.ePopupButtonAction.OPEN_URL: {
 				// Mandatory parameter, just close popup if not defined
 				if(tokens.Length > 0) {
-					// Add some delay to give enough time for SFX to be played and popup to be closed before losing focus
-					UbiBCN.CoroutineManager.DelayedCall(
-						() => {
-                            string url = tokens[0];
-                            if (!string.IsNullOrEmpty(url))
+
+                    // This stuff has be done here instead of inside the callback called by DelayedCall because the popup is closed immediately and
+                    // m_popupSurveyAction is used by ClosePopup() function.
+                    string url = tokens[0];
+                    if (!string.IsNullOrEmpty(url))
+                    {
+                        // If the link leads to a survey then we need to add the user's dna profile id to the url so BI can cross survey results with information such as age or country retrieved from dna
+                        // This stuff is hardcoded because it was the fastest way to carry it out, otherwise it would've involved server and Calety
+                        if (m_isPopupSurvey)
+                        {
+                            string dnaProfileId = HDTrackingManager.Instance.GetDNAProfileID();
+                            if (string.IsNullOrEmpty(dnaProfileId))
                             {
-                                // If the link leads to a survey then we need to add the user's dna profile id to the url so BI can cross survey results with information such as age or country retrieved from dna
-                                // This stuff is hardcoded because it was the fastest way to carry it out, otherwise it would've involved server and Calety
-                                if (url.Contains("typeform.com"))
-                                {
-                                    string dnaProfileId = HDTrackingManager.Instance.GetDNAProfileID();
-                                    if (string.IsNullOrEmpty(dnaProfileId))
-                                    {
-                                        dnaProfileId = "Not_Available";
-                                    }
-                                    url += "?UID=" + dnaProfileId;
-
-                                    // Tracking
-                                    HDTrackingManager.Instance.Notify_PopupSurveyShown(HDTrackingManager.EPopupSurveyAction.Yes);
-                                }
-
-                                Application.OpenURL(url);
+                                dnaProfileId = "Not_Available";
                             }
-						}, 0.25f
+                            url += "?UID=" + dnaProfileId;
+
+                            // Tracking event will be sent when the popup is closed. We need to store that the user has clicked on the button that leads her to the survey
+                            m_popupSurveyAction = HDTrackingManager.EPopupSurveyAction.Yes;
+                        }
+                    }
+
+                    // Add some delay to give enough time for SFX to be played and popup to be closed before losing focus
+                    UbiBCN.CoroutineManager.DelayedCall(
+				    () => {                           
+                        if (!string.IsNullOrEmpty(url))
+                        {                           
+                            Application.OpenURL(url);
+                        }
+					}, 0.25f
 					);
 				}
 			} break;
