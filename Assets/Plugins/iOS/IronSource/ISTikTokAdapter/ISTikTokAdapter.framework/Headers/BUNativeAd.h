@@ -102,6 +102,12 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)nativeAdDidBecomeVisible:(BUNativeAd *)nativeAd;
 
 /**
+ This method is called when another controller has been closed.
+ @param interactionType : open appstore in app or open the webpage or view video ad details page.
+ */
+- (void)nativeAdDidCloseOtherController:(BUNativeAd *)nativeAd interactionType:(BUInteractionType)interactionType;
+
+/**
  This method is called when native ad is clicked.
  */
 - (void)nativeAdDidClick:(BUNativeAd *)nativeAd withView:(UIView *_Nullable)view;
@@ -111,7 +117,7 @@ NS_ASSUME_NONNULL_BEGIN
  Only used for dislikeButton in BUNativeAdRelatedView.h
  @param filterWords : reasons for dislike
  */
-- (void)nativeAd:(BUNativeAd *)nativeAd dislikeWithReason:(NSArray<BUDislikeWords *> *)filterWords;
+- (void)nativeAd:(BUNativeAd *_Nullable)nativeAd dislikeWithReason:(NSArray<BUDislikeWords *> *_Nullable)filterWords;
 @end
 
 NS_ASSUME_NONNULL_END

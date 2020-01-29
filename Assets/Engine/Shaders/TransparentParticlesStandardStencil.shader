@@ -20,7 +20,8 @@ Shader "Hungry Dragon/Particles/Transparent particles standard (Stencil)"
 		[Toggle(COLOR_TINT)] _EnableColorTint("Enable color tint", Float) = 0
 		[Toggle(APPLY_RGB_COLOR_VERTEX)] _EnableColorVertex("Enable color vertex", Float) = 0
 		[Toggle(DISSOLVE_ENABLED)] _EnableAlphaDissolve("Dissolve", Float) = 0.0
-			
+		[Toggle(DISSOLVE_VERTEXCOLORALFA)] _EnableDissolveVertexColorAlpha("Dissolve through vertex color alpha", Float) = 0.0
+
 		_DissolveStep("DissolveStep.xy", Vector) = (0.0, 1.0, 0.0, 0.0)
 
 		[Toggle(AUTOMATICPANNING)] _EnableAutomaticPanning("Enable Automatic Panning", int) = 0.0
@@ -39,6 +40,7 @@ Shader "Hungry Dragon/Particles/Transparent particles standard (Stencil)"
 		[Toggle(NOISE_TEXTURE_ALPHA)] _EnableNoiseTextureAlpha("Enable noise texture alpha", int) = 0.0
 		[Toggle(NOISE_TEXTURE_DISSOLVE)] _EnableNoiseTextureDissolve("Enable noise texture dissolve", int) = 0.0
 		[Toggle(NOISEUV)] _EnableNoiseUV("Enable noise uv channel", int) = 0.0
+		[Toggle(NOISE_SCREENMAP)] _EnableScreenMapNoise("Enable screen map noise", int) = 0.0
 
 		[Toggle(FLOWMMAP)] _EnableFlowMap("Enable flow map", int) = 0.0
 

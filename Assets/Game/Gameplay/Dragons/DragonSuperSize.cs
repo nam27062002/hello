@@ -100,13 +100,18 @@ public class DragonSuperSize : MonoBehaviour, IBroadcastListener {
 #if UNITY_EDITOR
 		if ( Input.GetKeyDown(KeyCode.H) )
 		{
+			// Find all letters
 			HungryLettersManager lettersManager = FindObjectOfType<HungryLettersManager>();
 			HungryLetter[] letters = FindObjectsOfType<HungryLetter>();
-			for( int i = 0; i<letters.Length; ++i )
-			{
-				if (!lettersManager.IsLetterCollected( letters[i].letter))
-				{
+			for(int i = 0; i < letters.Length; ++i) {
+				// If letter is not collected, do it!
+				if(!lettersManager.IsLetterCollected(letters[i].letter)) {
 					letters[i].OnLetterCollected();
+
+					// If holding shift, collect only one letter
+					if(Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)) {
+						break;	// Interrupt loop
+					}
 				}
 			}
 		}

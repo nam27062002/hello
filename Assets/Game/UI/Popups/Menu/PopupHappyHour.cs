@@ -19,11 +19,12 @@ using UnityEngine;
 /// </summary>
 [RequireComponent(typeof(PopupController))]
 public class PopupHappyHour : MonoBehaviour {
-    //------------------------------------------------------------------------//
-    // CONSTANTS															  //
-    //------------------------------------------------------------------------//
+	//------------------------------------------------------------------------//
+	// CONSTANTS															  //
+	//------------------------------------------------------------------------//
+	private const float REFRESH_FREQUENCY = 1f; // Seconds
 
-    new public const string PATH = "UI/Popups/Economy/PF_PopupHappyHour";
+	new public const string PATH = "UI/Popups/Economy/PF_PopupHappyHour";
 
     public static string ACTION_CLOSE = "close";
     public static string ACTION_PURCHASE = "purchase";
@@ -44,8 +45,7 @@ public class PopupHappyHour : MonoBehaviour {
     private PopupShopCurrencyPill m_offerToDisplay;
 
     // Internal
-    private float m_timer;
-    private HappyHourOffer m_happyHour;
+    private HappyHour m_happyHour;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -60,10 +60,10 @@ public class PopupHappyHour : MonoBehaviour {
 	/// <summary>
 	/// Initialization.
 	/// </summary>
-	/// <param name="_lastOfferSku">Sku of the offer that will be shown in the popup</param>
-	public void Init(string _lastOfferSku) {
+	/// <param name="_lastPackDef">Definition of the pack that will be shown in the popup</param>
+	public void Init(DefinitionNode _lastPackDef) {
 
-        m_happyHour = OffersManager.instance.happyHour;
+        m_happyHour = OffersManager.happyHourManager.happyHour;
 
         // If the happy hour is currently active
         if (m_happyHour != null && m_happyHour.IsActive())
@@ -79,16 +79,9 @@ public class PopupHappyHour : MonoBehaviour {
             //m_extraGemsRateText.text = LocalizationManager.SharedInstance.Localize("TID_SHOP_BONUS_AMOUNT", gemsPercentage); 
 
             // Show the PC offer in the popup
-            if (! string.IsNullOrEmpty(_lastOfferSku) && m_offerToDisplay != null)
-            {
-                DefinitionNode offerDef  = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SHOP_PACKS, _lastOfferSku);
-
-                if (offerDef != null)
-                {
-                    m_offerToDisplay.InitFromDef(offerDef);
-                }
-                
-            }
+			if(_lastPackDef != null && m_offerToDisplay != null) {
+				m_offerToDisplay.InitFromDef(_lastPackDef);
+			}
         } else
         {
             //Shouldnt happent, but just in case. If there is not happy hour active, close the popup.
@@ -104,47 +97,32 @@ public class PopupHappyHour : MonoBehaviour {
 	/// </summary>
 	private void OnEnable() {
 
-        if (m_happyHour != null)
-        {
-            // We are showing the popup, so mark the pending popup flag as false
-            m_happyHour.pendingPopup = false;
-        }
+        // We are showing the popup, so mark the pending popup flag as false
+        OffersManager.happyHourManager.pendingPopup = false;
 
-    }
+		// Refresh offer pill once per second
+		InvokeRepeating("UpdatePeriodic", 0f, REFRESH_FREQUENCY);
+	}
 
 	/// <summary>
 	/// Component has been disabled.
 	/// </summary>
 	private void OnDisable() {
-
+		// Cancel periodic refresh of the offer pill
+		CancelInvoke("UpdatePeriodic");
 	}
 
-
-	/// <summary>
-	/// Destructor.
-	/// </summary>
-	private void OnDestroy() {
-
-	}
-
-    public void Update()
+    public void UpdatePeriodic()
     {
         // Refresh offers periodically for better performance
-        if (m_timer <= 0)
-        {
-            m_timer = 1f; // Refresh every second
-            Refresh();
-        }
-        m_timer -= Time.deltaTime;
+        Refresh();
     }
-
 
     /// <summary>
     /// Refresh visuals
     /// </summary>
     private void Refresh()
     {
-
         // Refresh the happy hour panel
         if (m_happyHour != null)
         {
@@ -162,6 +140,10 @@ public class PopupHappyHour : MonoBehaviour {
             }
         }
 
+		// Refresh offer
+		if(m_offerToDisplay != null) {
+			m_offerToDisplay.PeriodicRefresh();
+		}
     }
 
     //------------------------------------------------------------------------//
@@ -176,8 +158,18 @@ public class PopupHappyHour : MonoBehaviour {
         PopupController popup = PopupManager.LoadPopup(PopupShop.PATH);
         PopupShop shopPopup = popup.GetComponent<PopupShop>();
 
-        // Show the gems tab
-        shopPopup.Init(PopupShop.Mode.DEFAULT, "Happy_Hour_Popup");
+        // Are we playing a run at this moment?
+        if (InstanceManager.gameSceneController != null)
+        {
+            // User is playing a run. Show only PC tab.
+            shopPopup.Init(PopupShop.Mode.PC_ONLY, "Happy_Hour_Popup");
+        }
+        else
+        {
+            // Show all the tab offers
+            shopPopup.Init(PopupShop.Mode.DEFAULT, "Happy_Hour_Popup");
+        }
+
         shopPopup.closeAfterPurchase = true;
 
         // Open the shop popup!

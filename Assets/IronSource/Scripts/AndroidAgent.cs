@@ -18,7 +18,7 @@ public class AndroidAgent : IronSourceIAgent
 	}
 	
 #region IronSourceIAgent implementation
-	private AndroidJavaObject getBridge ()
+	public AndroidJavaObject getBridge ()
 	{
 		if (_androidBridge == null)
 			using (var pluginClass = new AndroidJavaClass( AndroidBridge ))
@@ -158,9 +158,9 @@ public class AndroidAgent : IronSourceIAgent
 		getBridge ().Call ("showISDemandOnlyRewardedVideo",instanceId);
 	}
 
-	public void showISDemandOnlyRewardedVideo (string instanceId, string placementName)
+	public void loadISDemandOnlyRewardedVideo (string instanceId)
 	{
-		getBridge ().Call ("showISDemandOnlyRewardedVideo", instanceId, placementName);
+		getBridge ().Call ("loadISDemandOnlyRewardedVideo", instanceId);
 	}
 
 	public bool isISDemandOnlyRewardedVideoAvailable (string instanceId)
@@ -205,11 +205,6 @@ public class AndroidAgent : IronSourceIAgent
 	public void showISDemandOnlyInterstitial (string instanceId)
 	{
 		getBridge ().Call ("showISDemandOnlyInterstitial",instanceId);
-	}
-
-	public void showISDemandOnlyInterstitial (string instanceId, string placementName)
-	{
-		getBridge ().Call ("showISDemandOnlyInterstitial", instanceId, placementName);
 	}
 
 	public bool isISDemandOnlyInterstitialReady (string instanceId)

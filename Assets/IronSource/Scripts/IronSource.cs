@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System;
@@ -7,8 +7,7 @@ public class IronSource : IronSourceIAgent
 {
 	private IronSourceIAgent _platformAgent ;
 	private static IronSource _instance;
-	
-	private const string UNITY_PLUGIN_VERSION = "6.8.3.1";
+	private const string UNITY_PLUGIN_VERSION = "6.11.1";
 	public const string GENDER_MALE = "male";
 	public const string GENDER_FEMALE = "female";
 	public const string GENDER_UNKNOWN = "unknown";
@@ -16,21 +15,23 @@ public class IronSource : IronSourceIAgent
 	private IronSource ()
 	{
 		#if UNITY_EDITOR 
-		_platformAgent = new UnsupportedPlatformAgent();	
-		#elif (UNITY_IPHONE || UNITY_IOS) 
-		_platformAgent = new iOSAgent();		
-		#elif UNITY_ANDROID
+		_platformAgent = new UnsupportedPlatformAgent();
+#elif (UNITY_IPHONE || UNITY_IOS)
+		_platformAgent = new iOSAgent();
+#elif UNITY_ANDROID
 		_platformAgent = new AndroidAgent ();
 
-		#endif
-	}
+#endif
+        var type = typeof(IronSourceEvents);
+        var mgr = new GameObject("IronSourceEvents", type).GetComponent<IronSourceEvents>(); // Creates IronSourceEvents gameObject
+    }
 
-	#region IronSourceIAgent implementation
-	public static IronSource Agent {
+    #region IronSourceIAgent implementation
+    public static IronSource Agent {
 		get {
 			if (_instance == null) {
 				_instance = new IronSource ();
-			}
+            }
 			return _instance;
 		}
 	}
@@ -163,9 +164,9 @@ public class IronSource : IronSourceIAgent
 		_platformAgent.showISDemandOnlyRewardedVideo(instanceId);
 	}
 
-	public void showISDemandOnlyRewardedVideo (string instanceId, string placementName)
+	public void loadISDemandOnlyRewardedVideo (string instanceId)
 	{
-		_platformAgent.showISDemandOnlyRewardedVideo(instanceId, placementName);
+		_platformAgent.loadISDemandOnlyRewardedVideo(instanceId);
 	}
 
 	public bool isISDemandOnlyRewardedVideoAvailable (string instanceId)
@@ -210,11 +211,6 @@ public class IronSource : IronSourceIAgent
 	public void showISDemandOnlyInterstitial (string instanceId)
 	{
 		_platformAgent.showISDemandOnlyInterstitial(instanceId);
-	}
-
-	public void showISDemandOnlyInterstitial (string instanceId, string placementName)
-	{
-		_platformAgent.showISDemandOnlyInterstitial(instanceId, placementName);
 	}
 
 	public bool isISDemandOnlyInterstitialReady (string instanceId)

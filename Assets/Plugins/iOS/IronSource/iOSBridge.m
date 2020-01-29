@@ -193,10 +193,8 @@ char *const IRONSOURCE_EVENTS = "IronSourceEvents";
     [IronSource showISDemandOnlyRewardedVideo:[UIApplication sharedApplication].keyWindow.rootViewController instanceId:instanceId];
 }
 
-- (void)showISDemandOnlyRewardedVideoWithPlacement:(NSString *)placementName instanceId:(NSString *)instanceId {
-    [IronSource showISDemandOnlyRewardedVideo:[UIApplication sharedApplication].keyWindow.rootViewController
-                                    placement:placementName
-                                   instanceId:instanceId];
+- (void)loadISDemandOnlyRewardedVideo:(NSString *)instanceId {
+    [IronSource loadISDemandOnlyRewardedVideo:instanceId];
 }
 
 - (BOOL)isDemandOnlyRewardedVideoAvailable:(NSString *)instanceId {
@@ -251,21 +249,23 @@ char *const IRONSOURCE_EVENTS = "IronSourceEvents";
 
 #pragma mark Rewarded Video DemandOnly Delegate
 
-- (void)rewardedVideoHasChangedAvailability:(BOOL)available instanceId:(NSString *)instanceId {
-    NSString *availability = @"false";
-    if (available)
-        availability = @"true";
-    
-    NSArray *params = @[instanceId, availability];
-    UnitySendMessage(IRONSOURCE_EVENTS, "onRewardedVideoAvailabilityChangedDemandOnly", MakeStringCopy([self getJsonFromObj:params]));
+- (void)rewardedVideoDidLoad:(NSString *)instanceId{
+    NSArray *params = @[instanceId];
+    UnitySendMessage(IRONSOURCE_EVENTS, "onRewardedVideoAdLoadedDemandOnly", MakeStringCopy([self getJsonFromObj:params]));
 }
 
-- (void)didReceiveRewardForPlacement:(ISPlacementInfo *)placementInfo instanceId:(NSString *)instanceId {
-    NSDictionary *dict = @{@"placement_reward_amount": placementInfo.rewardAmount,
-                           @"placement_reward_name": placementInfo.rewardName,
-                           @"placement_name": placementInfo.placementName};
+- (void)rewardedVideoDidFailToLoadWithError:(NSError *)error instanceId:(NSString *)instanceId{
+    NSArray *params;
+    if (error)
+        params = @[instanceId, [self parseErrorToEvent:error]];
+    else
+        params = @[instanceId,@""];
     
-    NSArray *params = @[instanceId,dict];
+    UnitySendMessage(IRONSOURCE_EVENTS, "onRewardedVideoAdLoadFailedDemandOnly", MakeStringCopy([self getJsonFromObj:params]));
+}
+
+- (void)rewardedVideoAdRewarded:(NSString *)instanceId {
+    NSArray *params = @[instanceId];
     UnitySendMessage(IRONSOURCE_EVENTS, "onRewardedVideoAdRewardedDemandOnly", MakeStringCopy([self getJsonFromObj:params]));
 }
 
@@ -276,7 +276,7 @@ char *const IRONSOURCE_EVENTS = "IronSourceEvents";
         params = @[instanceId, [self parseErrorToEvent:error]];
     else
         params = @[instanceId,@""];
-
+    
     UnitySendMessage(IRONSOURCE_EVENTS, "onRewardedVideoAdShowFailedDemandOnly", MakeStringCopy([self getJsonFromObj:params]));
 }
 
@@ -290,12 +290,8 @@ char *const IRONSOURCE_EVENTS = "IronSourceEvents";
     UnitySendMessage(IRONSOURCE_EVENTS, "onRewardedVideoAdClosedDemandOnly", MakeStringCopy(instanceId));
 }
 
-- (void)didClickRewardedVideo:(ISPlacementInfo *)placementInfo instanceId:(NSString *)instanceId {
-    NSDictionary *dict = @{@"placement_reward_amount": placementInfo.rewardAmount,
-                           @"placement_reward_name": placementInfo.rewardName,
-                           @"placement_name": placementInfo.placementName};
-    
-    NSArray *params = @[instanceId, dict];
+- (void)rewardedVideoDidClick:(NSString *)instanceId {
+    NSArray *params = @[instanceId];
     UnitySendMessage(IRONSOURCE_EVENTS, "onRewardedVideoAdClickedDemandOnly", MakeStringCopy([self getJsonFromObj:params]));
 }
 
@@ -329,12 +325,6 @@ char *const IRONSOURCE_EVENTS = "IronSourceEvents";
 
 - (void)showISDemandOnlyInterstitial:(NSString *)instanceId {
     [IronSource showISDemandOnlyInterstitial:[UIApplication sharedApplication].keyWindow.rootViewController instanceId:instanceId];
-}
-
-- (void)showISDemandOnlyInterstitialWithPlacement:(NSString *)placementName instanceId:(NSString *)instanceId {
-    [IronSource showISDemandOnlyInterstitial:[UIApplication sharedApplication].keyWindow.rootViewController
-                                   placement:placementName
-                                  instanceId:instanceId];
 }
 
 - (BOOL)isISDemandOnlyInterstitialReady:(NSString *)instanceId {
@@ -412,7 +402,7 @@ char *const IRONSOURCE_EVENTS = "IronSourceEvents";
         parameters = @[instanceId, [self parseErrorToEvent:error]];
     else
         parameters = @[instanceId, @""];
-
+    
     UnitySendMessage(IRONSOURCE_EVENTS, "onInterstitialAdShowFailedDemandOnly", MakeStringCopy([self getJsonFromObj:parameters]));
 }
 
@@ -823,8 +813,8 @@ extern "C" {
         [[iOSBridge start] showISDemandOnlyRewardedVideo:GetStringParam(instanceId)];
     }
     
-    void CFShowISDemandOnlyRewardedVideoWithPlacementName(char * instanceId, char *placementName){
-        [[iOSBridge start] showISDemandOnlyRewardedVideoWithPlacement:GetStringParam(placementName) instanceId:GetStringParam(instanceId)];
+    void CFLoadISDemandOnlyRewardedVideo(char * instanceId) {
+        [[iOSBridge start] loadISDemandOnlyRewardedVideo:GetStringParam(instanceId)];
     }
     
     bool CFIsDemandOnlyRewardedVideoAvailable(char * instanceId) {
@@ -862,10 +852,6 @@ extern "C" {
     void CFShowISDemandOnlyInterstitial(char * instanceId) {
         [[iOSBridge start] showISDemandOnlyInterstitial:GetStringParam(instanceId)];
         
-    }
-    
-    void CFShowISDemandOnlyInterstitialWithPlacementName(char * instanceId, char * placementName) {
-        [[iOSBridge start] showISDemandOnlyInterstitialWithPlacement:GetStringParam(placementName) instanceId:GetStringParam(instanceId)];
     }
     
     bool CFIsDemandOnlyInterstitialReady(char * instanceId) {

@@ -37,6 +37,7 @@ GameObject:
   - component: {fileID: 4345094146806568}
   - component: {fileID: 198056512059993810}
   - component: {fileID: 199159320586485270}
+  - component: {fileID: 114267317327600976}
   m_Layer: 0
   m_Name: Sparks
   m_TagString: Untagged
@@ -143,6 +144,20 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1547803929192372}
   m_Mesh: {fileID: 4300014, guid: 30b7d67693a36f942a482a9bd505666f, type: 3}
+--- !u!114 &114267317327600976
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1433402688965084}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3128bd630f39645c4a1e03d94b7008f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_transform: {fileID: 0}
+  m_resetFirst: 1
+  m_whenScale: 0
 --- !u!114 &114327244993624140
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -216,8 +231,8 @@ ParticleSystem:
       m_RotationOrder: 4
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
-  scalingMode: 1
-  randomSeed: 1275472946
+  scalingMode: 0
+  randomSeed: 962897469
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -369,8 +384,8 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 3
-      scalar: 5
-      minScalar: 2
+      scalar: 4.3
+      minScalar: 1.5
       maxCurve:
         serializedVersion: 2
         m_Curve:

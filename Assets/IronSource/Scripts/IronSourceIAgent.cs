@@ -52,7 +52,7 @@ public interface IronSourceIAgent
 
 	void showISDemandOnlyRewardedVideo (string instanceId);
 
-	void showISDemandOnlyRewardedVideo (string instanceId, string placementName);
+	void loadISDemandOnlyRewardedVideo (string instanceId);
 
 	bool isISDemandOnlyRewardedVideoAvailable (string instanceId);
     
@@ -73,8 +73,6 @@ public interface IronSourceIAgent
 	void loadISDemandOnlyInterstitial (string instanceId);
 
 	void showISDemandOnlyInterstitial (string instanceId);
-
-	void showISDemandOnlyInterstitial (string instanceId, string placementName);
 
 	bool isISDemandOnlyInterstitialReady (string instanceId);
 
