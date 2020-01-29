@@ -15,8 +15,11 @@ public class TrackingPersistenceSystem : PersistenceSystem
     
 	private const string PARAM_TOTAL_STORE_VISITS = "totalStoreVisits";
 	private const string PARAM_TOTAL_PURCHASES = "totalPurchases";
-	private const string PARAM_TOTAL_SPENT = "totalSpent";	// Cents of US Dollar (USD * 100)
-	private const string PARAM_LAST_PURCHASE_TIMESTAMP = "lastPurchaseTimestamp";	// Unix timestamp (seconds since 1970)
+	private const string PARAM_TOTAL_SPENT = "totalSpent";  // Cents of US Dollar (USD * 100)
+	private const string PARAM_LAST_PURCHASE_PRICE = "lastPurchasePrice";  // Cents of US Dollar (USD * 100)
+	private const string PARAM_LAST_PURCHASE_TIMESTAMP = "lastPurchaseTimestamp";   // Unix timestamp (seconds since 1970)
+	private const string PARAM_LAST_PURCHASE_ITEM_TYPE = "lastPurchaseItemType";  // Type of the first item of the offer pack, or currency if money pack
+	private const string PARAM_LAST_PURCHASE_ITEM_CONTENT = "lastPurchaseItemContent";  // Sku of the first item of the offer pack, or amount if money pack
 
 	private const string PARAM_TOTAL_EGG_PURCHASES = "totalEggPurchases";
     private const string PARAM_TOTAL_EGGS_PURCHASED_WITH_HC = "totalEggsPurchasedWithHC";
@@ -154,6 +157,17 @@ public class TrackingPersistenceSystem : PersistenceSystem
 		}
 	}
 
+	// Cents of US Dollar (USD * 100)
+	public int LastPurchasePrice {
+		get {
+			return Cache_GetInt(PARAM_LAST_PURCHASE_PRICE);
+		}
+
+		set {
+			Cache_SetInt(PARAM_LAST_PURCHASE_PRICE, value);
+		}
+	}
+
 	// Seconds since 1970
 	public long LastPurchaseTimestamp {
 		get {
@@ -162,6 +176,28 @@ public class TrackingPersistenceSystem : PersistenceSystem
 
 		set {
 			Cache_SetLong(PARAM_LAST_PURCHASE_TIMESTAMP, value);
+		}
+	}
+
+	// Type of the first item of the offer pack, or currency if money pack
+	public string LastPurchaseItemType {
+		get {
+			return Cache_GetString(PARAM_LAST_PURCHASE_ITEM_TYPE);
+		}
+
+		set {
+			Cache_SetString(PARAM_LAST_PURCHASE_ITEM_TYPE, value);
+		}
+	}
+
+	// Sku of the first item of the offer pack, or amount if money pack
+	public string LastPurchaseItemContent {
+		get {
+			return Cache_GetString(PARAM_LAST_PURCHASE_ITEM_CONTENT);
+		}
+
+		set {
+			Cache_SetString(PARAM_LAST_PURCHASE_ITEM_CONTENT, value);
 		}
 	}
 

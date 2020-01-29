@@ -238,22 +238,29 @@ public class HDTrackingManagerImp : HDTrackingManager {
         List<Metagame.Reward> rewards = Metagame.Reward.GetRewardsFromIAP(_sku);
         foreach (Metagame.Reward reward in rewards)
         {
-            switch (reward.type)
-            {
-                case "sc":
-                case "pc":
-                    // track the amount of coins/gems
-                    Notify_IAPContent(_sku, houstonTransactionID, reward.type, reward.amount.ToString(), offerType);
-                    break;
-                default:
-                    // track the sku of the egg/dragon/pet/whatever
-                    Notify_IAPContent(_sku, houstonTransactionID, reward.type, reward.sku, offerType);
-                    break;
-            }
-            
-        }
+			Notify_IAPContent(
+				_sku,
+				houstonTransactionID,
+				reward.GetTypeForTracking(),
+				reward.GetContentForTracking(),
+				offerType
+			);
+		}
 
-        Session_IsNotifyOnPauseEnabled = true;
+		// [AOC] For clustering of future offers, store purchase content
+		if(rewards.Count > 0) {
+			Metagame.Reward firstReward = rewards[0];
+			if(firstReward == null) {
+				// Something went very wrong or we purchased unknown stuff :o
+				Debug.LogError("Unknown item purchased!! " + _sku + " | " + _storeTransactionID);
+			} else {
+				// Store reward type and content properly formatted
+				TrackingPersistenceSystem.LastPurchaseItemType = firstReward.GetTypeForTracking();
+				TrackingPersistenceSystem.LastPurchaseItemContent = firstReward.GetContentForTracking();
+			}
+		}
+
+		Session_IsNotifyOnPauseEnabled = true;
     }
 
     private void OnPurchaseFailed(string _sku) {
@@ -759,8 +766,9 @@ public class HDTrackingManagerImp : HDTrackingManager {
             }
 
             TrackingPersistenceSystem.TotalSpent += moneyUSD;
+			TrackingPersistenceSystem.LastPurchasePrice = moneyUSD;
+            TrackingPersistenceSystem.LastPurchaseTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong() / 1000L;  // Millis to Seconds
 
-            TrackingPersistenceSystem.LastPurchaseTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong() / 1000L;	// Millis to Seconds
         }
 
         Track_IAPCompleted(storeTransactionID, houstonTransactionID, itemID, promotionType, moneyCurrencyCode, moneyPrice, moneyUSD, isOffer);
