@@ -16,6 +16,7 @@ public class TrackingPersistenceSystem : PersistenceSystem
 	private const string PARAM_TOTAL_STORE_VISITS = "totalStoreVisits";
 	private const string PARAM_TOTAL_PURCHASES = "totalPurchases";
 	private const string PARAM_TOTAL_SPENT = "totalSpent";  // Cents of US Dollar (USD * 100)
+	private const string PARAM_MAX_PURCHASE_PRICE = "maxPurchasePrice";  // Cents of US Dollar (USD * 100)
 	private const string PARAM_LAST_PURCHASE_PRICE = "lastPurchasePrice";  // Cents of US Dollar (USD * 100)
 	private const string PARAM_LAST_PURCHASE_TIMESTAMP = "lastPurchaseTimestamp";   // Unix timestamp (seconds since 1970)
 	private const string PARAM_LAST_PURCHASE_ITEM_TYPE = "lastPurchaseItemType";  // Type of the first item of the offer pack, or currency if money pack
@@ -154,6 +155,17 @@ public class TrackingPersistenceSystem : PersistenceSystem
 
 		set {
 			Cache_SetInt(PARAM_TOTAL_SPENT, value);
+		}
+	}
+
+	// Cents of US Dollar (USD * 100)
+	public int MaxPurchasePrice {
+		get {
+			return Cache_GetInt(PARAM_MAX_PURCHASE_PRICE);
+		}
+
+		set {
+			Cache_SetInt(PARAM_MAX_PURCHASE_PRICE, value);
 		}
 	}
 

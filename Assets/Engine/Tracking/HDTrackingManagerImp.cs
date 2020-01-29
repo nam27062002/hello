@@ -769,11 +769,12 @@ public class HDTrackingManagerImp : HDTrackingManager {
 			TrackingPersistenceSystem.LastPurchasePrice = moneyUSD;
             TrackingPersistenceSystem.LastPurchaseTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong() / 1000L;  // Millis to Seconds
 
+			if(moneyUSD > TrackingPersistenceSystem.MaxPurchasePrice) {
+				TrackingPersistenceSystem.MaxPurchasePrice = moneyUSD;
+			}
         }
 
         Track_IAPCompleted(storeTransactionID, houstonTransactionID, itemID, promotionType, moneyCurrencyCode, moneyPrice, moneyUSD, isOffer);
-
-        // Track every item inside the offer
     }
 
     /// <summary>
