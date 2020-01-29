@@ -52,6 +52,7 @@ public class PopupShopOffersTab : IPopupShopTab {
 		// React to offers being reloaded while tab is active
 		Messenger.AddListener(MessengerEvents.OFFERS_RELOADED, OnOffersReloaded);
 		Messenger.AddListener(MessengerEvents.OFFERS_CHANGED, OnOffersChanged);
+
 	}
 
 	/// <summary>

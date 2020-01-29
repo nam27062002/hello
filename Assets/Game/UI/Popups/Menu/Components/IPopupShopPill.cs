@@ -102,16 +102,21 @@ public abstract class IPopupShopPill : MonoBehaviour {
         // To be implemented by heirs
     }
 
-	//------------------------------------------------------------------------//
-	// INTERNAL METHODS														  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Gets the localized IAP price, as returned from the App Store.
-	/// If the App Store is not reachable or the product is not found, return the given reference price instead.
-	/// </summary>
-	/// <returns>The localized IAP price.</returns>
-	/// <param name="_referencePriceDollars">The price to be used if the App Store can't be reached or can't find the requested product.</param>
-	protected string GetLocalizedIAPPrice(float _referencePriceDollars) {
+    public virtual void RefreshTimer()
+    {
+        // To be implemented by heirs
+    }
+
+    //------------------------------------------------------------------------//
+    // INTERNAL METHODS														  //
+    //------------------------------------------------------------------------//
+    /// <summary>
+    /// Gets the localized IAP price, as returned from the App Store.
+    /// If the App Store is not reachable or the product is not found, return the given reference price instead.
+    /// </summary>
+    /// <returns>The localized IAP price.</returns>
+    /// <param name="_referencePriceDollars">The price to be used if the App Store can't be reached or can't find the requested product.</param>
+    protected string GetLocalizedIAPPrice(float _referencePriceDollars) {
 		// Price is localized by the store api, if available
 		string localizedPrice = string.Empty;
 		if(GameStoreManager.SharedInstance.IsReady()) {

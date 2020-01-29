@@ -22,8 +22,9 @@ public class ShopController : MonoBehaviour {
     //------------------------------------------------------------------------//
     // CONSTANTS															  //
     //------------------------------------------------------------------------//
-    private string SHOP_CATEGORIES_CONTAINER_PREFABS_PATH = "UI/Popups/Economy/CategoryContainers/";
 
+    private string SHOP_CATEGORIES_CONTAINER_PREFABS_PATH = "UI/Popups/Economy/CategoryContainers/";
+    private const float REFRESH_FREQUENCY = 1f;	// Seconds
 
     //------------------------------------------------------------------------//
     // MEMBERS AND PROPERTIES												  //
@@ -37,14 +38,15 @@ public class ShopController : MonoBehaviour {
 
     // Shortcuts
     [SerializeField] private Transform m_shortcutsContainer;
-    
     [SerializeField] private ShopCategoryShortcut m_shortcutPrefab;
 
 
     //Internal
     private float m_timer = 0; // Refresh timer
-    private bool m_refreshed = false; // Did we perform the initial refresh?
     private bool m_scrolling = false; // The tweener scrolling animation is running
+
+    // Cache the category containers
+    private List<CategoryController> m_categoryContainers;
 
     // Shortcuts
     private List<ShopCategoryShortcut> m_shortcuts; 
@@ -65,6 +67,7 @@ public class ShopController : MonoBehaviour {
     private void Awake() {
         m_shortcuts = new List<ShopCategoryShortcut>();
         m_skuToShorcut = new Dictionary<string, ShopCategoryShortcut>();
+        m_categoryContainers = new List<CategoryController>();
     }
 
 	/// <summary>
@@ -72,7 +75,13 @@ public class ShopController : MonoBehaviour {
 	/// </summary>
 	private void Start() {
 
-	}
+        InvokeRepeating("PeriodicRefresh", 0f, REFRESH_FREQUENCY);
+
+        // React to offers being reloaded while tab is active
+        Messenger.AddListener(MessengerEvents.OFFERS_RELOADED, OnOffersReloaded);
+        Messenger.AddListener(MessengerEvents.OFFERS_CHANGED, OnOffersChanged);
+
+    }
 
 	/// <summary>
 	/// Component has been enabled.
@@ -100,14 +109,9 @@ public class ShopController : MonoBehaviour {
         }
         m_timer -= Time.deltaTime;
 
-        if (!m_refreshed)
-        {
 
-
-
-            m_refreshed = true;
-        }
     }
+
 
 	/// <summary>
 	/// Destructor.
@@ -120,6 +124,24 @@ public class ShopController : MonoBehaviour {
     // OTHER METHODS														  //
     //------------------------------------------------------------------------//
 
+
+    /// <summary>
+    /// Called at regular intervals.
+    /// </summary>
+    private void PeriodicRefresh()
+    {
+        // Nothing if not enabled
+        if (!this.isActiveAndEnabled) return;
+
+        foreach (CategoryController cat in m_categoryContainers)
+        {
+            // Propagate to categories
+            cat.RefreshTimers();
+        }
+
+    }
+
+
     /// <summary>
     /// Remove all the content of the shop
     /// </summary>
@@ -130,11 +152,13 @@ public class ShopController : MonoBehaviour {
         m_categoriesContainer.transform.DestroyAllChildren(true);
         m_shortcutsContainer.transform.DestroyAllChildren(true);
 
+        // Clean categories
+        m_categoryContainers.Clear();
+
         // Remove the shortcut references
         m_shortcuts.Clear();
         m_skuToShorcut.Clear();
 
-        m_refreshed = false;
     }
 
     /// <summary>
@@ -161,9 +185,11 @@ public class ShopController : MonoBehaviour {
             // If this cat is active 
             if (category.enabled)
             {
+
                 // Instantiate the shop category
                 string containerPrefabPath = SHOP_CATEGORIES_CONTAINER_PREFABS_PATH + category.containerPrefab;
                 CategoryController containerPrefab = Resources.Load<CategoryController>(containerPrefabPath);
+
 
                 if (containerPrefab == null)
                 {
@@ -185,6 +211,7 @@ public class ShopController : MonoBehaviour {
                     categoryContainer.transform.SetParent(m_categoriesContainer, false);
                     categoryContainer.Initialize(category);
 
+                    m_categoryContainers.Add(categoryContainer);
 
                     // Has a shortcut in the bottom menu?
                     if (!string.IsNullOrEmpty(category.tidShortcut))
@@ -281,7 +308,11 @@ public class ShopController : MonoBehaviour {
                 candidate--;
             }
         }
-        
+
+        if (candidate < 0) {
+            candidate = 0;
+        }
+
         return m_shortcuts[candidate].category;
 
     }
@@ -376,5 +407,29 @@ public class ShopController : MonoBehaviour {
 
             }
         }
+    }
+
+    /// <summary>
+    /// Offers have been reloaded.
+    /// </summary>
+    private void OnOffersReloaded()
+    {
+        // Ignore if not active
+        if (!this.isActiveAndEnabled) return;
+
+        // Refresh the shop
+        Refresh();
+    }
+
+    /// <summary>
+    /// Offers list has changed.
+    /// </summary>
+    private void OnOffersChanged()
+    {
+        // Ignore if not active
+        if (!this.isActiveAndEnabled) return;
+
+        // Refresh the shop
+        Refresh();
     }
 }
