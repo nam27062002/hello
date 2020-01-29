@@ -92,7 +92,7 @@ public class PopupShop : MonoBehaviour {
 
     //Internal
     private float m_timer = 0; // Refresh timer
-    private HappyHourOffer m_happyHour;
+    private HappyHour m_happyHour = null;
 
     //------------------------------------------------------------------//
     // GENERIC METHODS													//
@@ -128,7 +128,7 @@ public class PopupShop : MonoBehaviour {
         // Refresh pills?
 
         // Get the current happy hour instance
-        m_happyHour = OffersManager.instance.happyHour;
+        m_happyHour = OffersManager.happyHourManager.happyHour;
 
         // Reset scroll lists and hide all tabs
         for (int i = 0; i < (int)Tabs.COUNT; ++i) {
@@ -223,7 +223,6 @@ public class PopupShop : MonoBehaviour {
 
             }
         }
-
     }
 
 	/// <summary>
