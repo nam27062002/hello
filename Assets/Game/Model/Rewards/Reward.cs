@@ -95,9 +95,8 @@ namespace Metagame {
 			Data rewardData = new Data();
 
 			rewardData.typeCode = _data["type"];
-			rewardData.typeCode = rewardData.typeCode.ToLower();
 			if (rewardData.typeCode == "hc")
-				rewardData.typeCode = "pc";
+				rewardData.typeCode = RewardHardCurrency.TYPE_CODE;
 
 			if (_data.ContainsKey("sku")) {
 				rewardData.sku = _data["sku"];
@@ -108,10 +107,10 @@ namespace Metagame {
 			}
 
 			Reward newReward = CreateFromData(rewardData, _economyGroup, _source);
-
-			// In case the new reward has extra data to be parsed
-			newReward.LoadCustomJsonData(_data);
-
+			if(newReward != null) {
+				// In case the new reward has extra data to be parsed
+				newReward.LoadCustomJsonData(_data);
+			}
 			return newReward;
 		}
 
@@ -120,62 +119,58 @@ namespace Metagame {
 		/// </summary>
 		/// <returns>A reward.</returns>
 		/// <param name="_data">Data for the reward to be created.</param>
-		public static Reward CreateFromData(Data _data, HDTrackingManager.EEconomyGroup _economyGroup, string _source) {			
-			switch(_data.typeCode) {
-				// Currency rewards: pretty straight forward
-				case RewardSoftCurrency.TYPE_CODE: {
-					return CreateTypeSoftCurrency(_data.amount, _economyGroup, _source);
+		public static Reward CreateFromData(Data _data, HDTrackingManager.EEconomyGroup _economyGroup, string _source) {
+			// To make sure no ones mess up with capitals, use lowercase for comparison
+			// [AOC] For some C# random reason, can't use switch with ToLowerInvariant(), so just use a good ol' if-else festival
+			string targetType = _data.typeCode.ToLowerInvariant();
+
+			// Currency rewards: pretty straight forward
+			if(targetType == RewardSoftCurrency.TYPE_CODE.ToLowerInvariant()) {
+				return CreateTypeSoftCurrency(_data.amount, _economyGroup, _source);
+			} else if(targetType == RewardHardCurrency.TYPE_CODE.ToLowerInvariant() || targetType == "hc") {    // [AOC] "hc" just in case
+				return CreateTypeHardCurrency(_data.amount, _economyGroup, _source);
+			} else if(targetType == RewardGoldenFragments.TYPE_CODE.ToLowerInvariant()) {
+				return CreateTypeGoldenFragments((int)_data.amount, Rarity.COMMON, _economyGroup, _source);
+			}
+
+			// Egg reward: if amount is > 1, create a multi reward instead
+			else if(targetType == RewardEgg.TYPE_CODE.ToLowerInvariant()) {
+				if(_data.amount > 1) {
+					return CreateTypeMultiEgg(_data.amount, _data.sku, _source);
+				} else {
+					return CreateTypeEgg(_data.sku, _source);
 				}
+			}
 
-				case RewardHardCurrency.TYPE_CODE:
-				case "hc": {    // [AOC] Just in case
-					return CreateTypeHardCurrency(_data.amount, _economyGroup, _source);
-				}
-					
-				case RewardGoldenFragments.TYPE_CODE: {
-					return CreateTypeGoldenFragments((int)_data.amount, Rarity.COMMON, _economyGroup, _source);
-				}	
+			// Pet reward - ignoring amount (pets can only be rewarded once)
+			else if(targetType == RewardPet.TYPE_CODE.ToLowerInvariant()) {
+				return CreateTypePet(_data.sku, _source);
+			}
 
-				// Egg reward: if amount is > 1, create a multi reward instead
-				case RewardEgg.TYPE_CODE: {
-					if(_data.amount > 1) {
-						return CreateTypeMultiEgg(_data.amount, _data.sku, _source);
-					} else {
-						return CreateTypeEgg(_data.sku, _source);
-					}
-				}
+			// Skin reward - ignoring amount (skins can only be rewarded once)
+			else if(targetType == RewardSkin.TYPE_CODE.ToLowerInvariant()) {
+				return CreateTypeSkin(_data.sku, _source);
+			}
 
-                // Pet reward - ignoring amount (pets can only be rewarded once)
-				case RewardPet.TYPE_CODE: {
-					return CreateTypePet(_data.sku, _source);
-				}
+			// Dragon reward - ignoring amount (dragons can only be rewarded once)
+			else if(targetType == RewardDragon.TYPE_CODE.ToLowerInvariant()) {
+				return CreateTypeDragon(_data.sku, _source);
+			}
 
-				// Skin reward - ignoring amount (skins can only be rewarded once)
-				case RewardSkin.TYPE_CODE: {
-					return CreateTypeSkin(_data.sku, _source);
-				}
+			// Multi-rewards: Cannot be created using this method
+			else if(targetType == RewardMulti.TYPE_CODE.ToLowerInvariant()) {
+				return CreateTypeMulti(new List<Data>(), _source, _economyGroup);   // No rewards will be created, must be added afterwards via LoadCustomjsonData() or manually
+			} else if(targetType == RewardMultiEgg.TYPE_CODE.ToLowerInvariant()) {
+				return CreateTypeMultiEgg(_data.amount, _data.sku, _source);
+			}
 
-				// Dragon reward - ignoring amount (dragons can only be rewarded once)
-				case RewardDragon.TYPE_CODE: {
-					return CreateTypeDragon(_data.sku, _source);
-				}
+			// Remove Ads
+			else if(targetType == RewardRemoveAds.TYPE_CODE.ToLowerInvariant()) {
+				return CreateTypeRemoveAds();
+			}
 
-				// Multi-reward: Cannot be created using this method
-				case RewardMulti.TYPE_CODE: { 
-					return CreateTypeMulti(new List<Data>(), _source, _economyGroup);	// No rewards will be created, must be added afterwards via LoadCustomjsonData() or manually
-				}
-
-                case RewardMultiEgg.TYPE_CODE: {
-                    return CreateTypeMultiEgg(_data.amount, _data.sku, _source);
-                }
-
-                case RewardRemoveAds.TYPE_CODE: {
-                    return CreateTypeRemoveAds();
-                }
-            }
 			return null;
 		}
-
 
         /// <summary>
         /// Find the reward(s) asociated to the IAP, it will look for in the
