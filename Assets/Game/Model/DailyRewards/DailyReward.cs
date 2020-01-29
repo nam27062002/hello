@@ -107,8 +107,10 @@ public class DailyReward {
 		// is generated (i.e. Pets), use its replacement instead.
 		// This won't be the case if the reward is obtained via other means after the
 		// sequence is generated (as designed).
-		if(reward.WillBeReplaced()) {
-			reward = reward.replacement;
+		if(reward != null) {
+			if(reward.WillBeReplaced()) {
+				reward = reward.replacement;
+			}
 		}
 	}
 
@@ -128,6 +130,12 @@ public class DailyReward {
     /// </summary>
     /// <param name="_doubled">Has the reward been doubled?</param>
     public void Collect(bool _doubled) {
+		// Make sure that we actually have a valid reward
+		if(reward == null) {
+			Debug.LogError("Attempting to collect a NULL daily reward!!");
+			return;
+		}
+
 		// Double the reward?
 		// [AOC] Just in case, don't do it again if it has already been doubled!
 		if(_doubled && !this.doubled) {

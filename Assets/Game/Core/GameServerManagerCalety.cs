@@ -1318,7 +1318,24 @@ public class GameServerManagerCalety : GameServerManager {
                     } break;
 
                 case ECommand.PendingTransactions_Get: {
-                        Command_SendCommand(COMMAND_PENDING_TRANSACTIONS_GET);
+                        Dictionary<string, string> kParams = null;
+
+                        // iOS store offers a flow to restore non consumable products that the game triggers by hitting a button in settings popup.
+                        // On Android all products are consumable which means that there's no flow to restore them, that's why we come up with a system
+                        // to restore non consumable products by request them from server. 
+                        // This flow is not used on iOS to simplify casuistry and testing
+                        #if !UNITY_IOS
+                            // If the user already has removeAds then we don't need the server to check if the user had already bought it 
+                            // If the user doesn't have it then we want server to tell us if the user had already bought it (in case the user has reinstalled the app)
+                            // so it can be restored
+                            if (!UsersManager.currentUser.removeAds.IsActive)
+                            {
+                                kParams = new Dictionary<string, string>();
+                                kParams["restore"] = "removeAds"; // List of non consumable product keys separated by ;
+                            }
+                        #endif
+
+                        Command_SendCommand(COMMAND_PENDING_TRANSACTIONS_GET, kParams);
                     } break;
 
                 case ECommand.PendingTransactions_Confirm: {
