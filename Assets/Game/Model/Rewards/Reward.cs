@@ -422,6 +422,36 @@ namespace Metagame {
 			return "[" + GetType() + ": " + m_amount + "]";
 		}
 
+		//------------------------------------------------------------------------//
+		// TRACKING METHODS														  //
+		//------------------------------------------------------------------------//
+		/// <summary>
+		/// Get the reward type formatted for tracking / segmentation.
+		/// Specs are in the following page: https://mdc-web-tomcat17.ubisoft.org/confluence/pages/viewpage.action?pageId=612988594#id-[HD]15.TrackingUpdate-custom.player.iap.content
+		/// </summary>
+		/// <returns>This reward's type formatted for tracking / segmentation.</returns>
+		public string GetTypeForTracking() {
+			// Conveniently, it matches exactly the type code for each reward type
+			return this.type;
+		}
+
+		/// <summary>
+		/// Get the reward content formatted for tracking / segmentation.
+		/// Specs are in the following page: https://mdc-web-tomcat17.ubisoft.org/confluence/pages/viewpage.action?pageId=612988594#id-[HD]15.TrackingUpdate-custom.player.iap.content
+		/// </summary>
+		/// <returns>This reward's content formatted for tracking / segmentation.</returns>
+		public string GetContentForTracking() {
+			// Amount for currencies, Sku for the rest of types
+			if(this is RewardCurrency) {
+				return this.amount.ToString(System.Globalization.CultureInfo.InvariantCulture);
+			} else {
+				return this.sku;
+			}
+		}
+
+		//------------------------------------------------------------------------//
+		// PERSISTENCE METHODS													  //
+		//------------------------------------------------------------------------//
 		/// <summary>
 		/// Create and return a persistence save data json initialized with this reward's data. 
 		/// </summary>
