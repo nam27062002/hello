@@ -31,6 +31,11 @@ public class ShopCategoryShortcut : MonoBehaviour {
     public ShopCategory category
     { get { return m_category; } }
 
+    // Reference to the UI elements in the shop. Used to scroll the view to the desired category.
+    private Transform m_anchor;
+    public Transform anchor
+    { get { return m_anchor;  } }
+
     private ShopController shopController; // Keep a reference to the parent shop
 
 
@@ -63,7 +68,7 @@ public class ShopCategoryShortcut : MonoBehaviour {
         /// </summary>
         /// <param name="_category">Shop category related to this shortcut</param>
         /// <param name="_shop">Parent shop</param>
-    public void Initialize (ShopCategory _category, ShopController _shop)
+    public void Initialize (ShopCategory _category, Transform _anchor, ShopController _shop)
     {
         if (_category == null || _shop == null)
         {
@@ -71,6 +76,7 @@ public class ShopCategoryShortcut : MonoBehaviour {
         }
 
         m_category = _category;
+        m_anchor = _anchor;
         m_text.Localize(category.tidShortcut);
         
         shopController = _shop;
@@ -94,6 +100,6 @@ public class ShopCategoryShortcut : MonoBehaviour {
     /// </summary>
     public void OnClick ()
     {
-        shopController.OnShortcutSelected(category);
+        shopController.OnShortcutSelected(this);
     }
 }

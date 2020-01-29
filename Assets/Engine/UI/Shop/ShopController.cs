@@ -37,14 +37,22 @@ public class ShopController : MonoBehaviour {
 
     // Shortcuts
     [SerializeField] private Transform m_shortcutsContainer;
-    [SerializeField] private List<ShopCategoryShortcut> m_shortcuts;
+    
     [SerializeField] private ShopCategoryShortcut m_shortcutPrefab;
 
 
     //Internal
     private float m_timer = 0; // Refresh timer
     private bool m_refreshed = false; // Did we perform the initial refresh?
-    private Dictionary<string, Transform> m_anchors; // Reference to the UI elements in the shop. Used to scroll the view to the desired category.
+    private bool m_scrolling = false; // The tweener scrolling animation is running
+
+    // Shortcuts
+    private List<ShopCategoryShortcut> m_shortcuts; 
+    private Dictionary<string, ShopCategoryShortcut> m_skuToShorcut; // Cache the sku-shortcut pair to improve performance
+
+    // Keep the bounds of the current category, so we dont recalculate every time the user scrolls the shop
+    private float categoryLeftBorder, categoryRightBorder; 
+
 
 
 
@@ -56,7 +64,7 @@ public class ShopController : MonoBehaviour {
     /// </summary>
     private void Awake() {
         m_shortcuts = new List<ShopCategoryShortcut>();
-        m_anchors = new Dictionary<string, Transform>();
+        m_skuToShorcut = new Dictionary<string, ShopCategoryShortcut>();
     }
 
 	/// <summary>
@@ -94,10 +102,9 @@ public class ShopController : MonoBehaviour {
 
         if (!m_refreshed)
         {
-            // Force unity to refresh the layout the next frame after start
-            // I know, it looks awful but it makes the work
-            /*m_categoriesContainer.gameObject.SetActive(false);
-            m_categoriesContainer.gameObject.SetActive(true);*/
+
+
+
             m_refreshed = true;
         }
     }
@@ -125,6 +132,7 @@ public class ShopController : MonoBehaviour {
 
         // Remove the shortcut references
         m_shortcuts.Clear();
+        m_skuToShorcut.Clear();
 
         m_refreshed = false;
     }
@@ -175,7 +183,6 @@ public class ShopController : MonoBehaviour {
 
                     // Add the category container to the hierarchy
                     categoryContainer.transform.SetParent(m_categoriesContainer, false);
-
                     categoryContainer.Initialize(category);
 
 
@@ -190,11 +197,9 @@ public class ShopController : MonoBehaviour {
 
                             // Instantiate a shortcut and add it to the bottom bar
                             ShopCategoryShortcut newShortcut = Instantiate<ShopCategoryShortcut>(m_shortcutPrefab, m_shortcutsContainer, false);
-                            newShortcut.Initialize(category, this);
+                            newShortcut.Initialize(category, categoryContainer.transform, this);
                             m_shortcuts.Add(newShortcut);
-
-                            // Store the category container position to scroll in the future
-                            m_anchors.Add(category.sku, categoryContainer.transform);
+                            m_skuToShorcut.Add(category.sku, newShortcut);
 
                             // Keep a record of the last shortcut created
                             lastShortcut = category.tidShortcut;
@@ -207,20 +212,17 @@ public class ShopController : MonoBehaviour {
 
 
     /// <summary>
-    /// A shortcut was pressed
+    /// Highlight the selected shortcut (and deselect the rest)
     /// </summary>
-    /// <param name="_category">The category related to the shortcut</param>
-    public void OnShortcutSelected( ShopCategory _category)
+    /// <param name="_sku">SKU of the selected category</param>
+    private void SelectShortcut (ShopCategoryShortcut _sc)
     {
         // Deselect all shortcuts except the chosen one
         foreach (ShopCategoryShortcut shortcut in m_shortcuts)
         {
-            bool selectedCat = ( shortcut.category.sku == _category.sku );
+            bool selectedCat = (shortcut == _sc);
             shortcut.Select(selectedCat);
         }
-
-        Transform categoryAnchor = m_anchors[_category.sku];
-        ScrollToItem(categoryAnchor);
 
     }
 
@@ -235,14 +237,144 @@ public class ShopController : MonoBehaviour {
         if (anchor != null)
         {
 
+            m_scrolling = true;
+
             // Create a tweener to animate the scroll
-            m_scrollRect.DOGoToItem(anchor, .5f)
-            .SetEase(Ease.OutQuad);
+            // Add a little offset to avoid conflict in between categories
+            m_scrollRect.DOGoToItem(anchor, .5f, .001f)
+            .SetEase(Ease.OutQuad)
+            .OnComplete( delegate() { m_scrolling = false; } );
             
         }
+    }
+
+
+    /// <summary>
+    /// Returns the category that is located in the specified position of the scrollbar
+    /// ignore the categories that dont have a shortcut
+    /// </summary>
+    /// <param name="pos">The coordenates inside the scrollbar</param>
+    /// <returns>SKU of the category</returns>
+    private ShopCategory GetCategoryAtPosition (Vector2 _pos)
+    {
+        if (m_shortcuts.Count <= 0)
+            return null;
+
+        float posX = Mathf.Clamp01(_pos.x);
+
+
+        int candidate = m_shortcuts.Count - 1;
+
+        // Iterate all the shortcuts (from right to left)
+        for (int i = m_shortcuts.Count - 1 ; i >= 0 ; i--)
+        {
+            ShopCategoryShortcut shortcut = m_shortcuts[i];
+
+            // Get normalized position of the anchor
+            Vector2 categoryAnchor = m_scrollRect.GetNormalizedPositionForItem(shortcut.anchor, true);
+
+            if ( posX >= categoryAnchor.x )
+            {
+                break;
+            }
+            else {
+                candidate--;
+            }
+        }
+        
+        return m_shortcuts[candidate].category;
+
+    }
+
+
+    /// <summary>
+    /// Finds the horizontal bounds of the category, so wont recalculate the current category
+    /// unless the user scrolls outside of these bounds. 
+    /// </summary>
+    /// <param name="_cat">The category. Only works for categories that have a shortcut.</param>
+    private void CalculateCategoryBounds (ShopCategory _cat)
+    {
+
+        // Only works for categories that have a shortcut
+        if (! m_skuToShorcut.ContainsKey(_cat.sku) )
+            return;
+
+        // Get the related shortcut
+        ShopCategoryShortcut sc = m_skuToShorcut[_cat.sku];
+
+        int index = m_shortcuts.IndexOf(sc);
+
+        // Calculate left border of the current category
+        if (index == 0)
+        {
+            categoryLeftBorder = float.MinValue;
+        }
+        else
+        {
+            categoryLeftBorder = m_scrollRect.GetNormalizedPositionForItem(m_shortcuts[index].anchor).x;
+        }
+
+
+        // Calculate right border of the current category
+        if (index == m_shortcuts.Count - 1)
+        {
+            categoryRightBorder = float.MaxValue;
+        }
+        else
+        {
+            categoryRightBorder = m_scrollRect.GetNormalizedPositionForItem(m_shortcuts[index + 1].anchor).x;
+        }
+
     }
 
     //------------------------------------------------------------------------//
     // CALLBACKS															  //
     //------------------------------------------------------------------------//
+
+    /// <summary>
+    /// A shortcut was pressed
+    /// </summary>
+    /// <param name="_category">The category related to the shortcut</param>
+    public void OnShortcutSelected(ShopCategoryShortcut _sc)
+    {
+        m_scrolling = false;
+
+        SelectShortcut(_sc);
+
+        Transform categoryAnchor = _sc.anchor;
+        ScrollToItem(categoryAnchor);
+
+    }
+
+
+    /// <summary>
+    /// The user moved the scrolled the items in the shop. Find the category that is in the middle
+    /// of the viewport and highlight the proper shortcut in the bottom bar
+    /// </summary>
+    /// <param name="_newPos">Normalized position of the scroll view</param>
+    public void OnScrollChanged(Vector2 _newPos)
+    {
+        // Scrolling animation still running
+        if (m_scrolling) {
+            return;
+        }
+
+        // Calculate the new category position only when the user moved out of the current category bounds 
+        if (_newPos.x < categoryLeftBorder || _newPos.x > categoryRightBorder)
+        {
+            
+            // What category are we looking at now?
+            ShopCategory focusedCategory = GetCategoryAtPosition(_newPos);
+
+            if (focusedCategory != null)
+            {
+                // Recalculate the new bounds
+                CalculateCategoryBounds(focusedCategory);
+
+                // Highlight the proper shortcut
+                SelectShortcut(m_skuToShorcut[focusedCategory.sku]);
+
+            }
+        }
+    }
 }
