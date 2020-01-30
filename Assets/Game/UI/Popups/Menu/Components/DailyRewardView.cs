@@ -63,9 +63,13 @@ public class DailyRewardView : MetagameRewardView {
 	[Space]
 	[Comment("Optional depending on reward type / index:")]
 	[SerializeField] private Localizer m_dayText = null;
+	[SerializeField] private MenuDragonLoader m_dragonLoader = null;
 	[SerializeField] private MenuPetLoader m_petLoader = null;
 	[SerializeField] private MenuEggLoader m_eggLoader = null;
+	[Space]
 	[SerializeField] private UITooltipTrigger m_tooltipTrigger = null;
+	[SerializeField] private DragonInfoTooltip m_dragonTooltip = null;
+	[SerializeField] private PowerTooltip m_powerTooltip = null;
 	[Space]
 	[Comment("VFX (optional)")]
 	[SerializeField] private PrefabLoader m_currentGlowFX = null;
@@ -148,16 +152,20 @@ public class DailyRewardView : MetagameRewardView {
 		}
 
 		// Depending on reward type, toggle different objects on/off
+		bool isDragon = false;
 		bool isPet = false;
 		bool isEgg = false;
 		if(m_reward != null) {
+			isDragon = m_reward.type == Metagame.RewardDragon.TYPE_CODE;
 			isPet = m_reward.type == Metagame.RewardPet.TYPE_CODE;
 			isEgg = m_reward.type == Metagame.RewardEgg.TYPE_CODE;
 		}
 
 		// 2D Preview: Disable if a 3D preview is available
 		if(m_icon != null) {
-			if((isEgg && m_eggLoader != null) || (isPet && m_petLoader != null)) {
+			if((isDragon && m_dragonLoader!= null)
+			|| (isPet && m_petLoader != null)
+			|| (isEgg && m_eggLoader != null)) {
 				m_icon.gameObject.SetActive(false);
 			} else {
 				m_icon.gameObject.SetActive(true);
@@ -184,6 +192,21 @@ public class DailyRewardView : MetagameRewardView {
 		// 3D Previews
 		// [AOC] We must delay them because initializing the 3D views at the same time that the popup is being instantiated results in weird behaviours
 		UbiBCN.CoroutineManager.DelayedCallByFrames(() => {
+			// Dragon Loader
+			if(m_dragonLoader != null) {
+				// Activate?
+				m_dragonLoader.gameObject.SetActive(isDragon);
+
+				// Reload preview if required
+				if(_reloadPreview) {
+					if(isDragon) {
+						m_dragonLoader.LoadDragon(m_reward.sku);
+					} else {
+						m_dragonLoader.UnloadDragon();
+					}
+				}
+			}
+
 			// Pet Loader
 			if(m_petLoader != null) {
 				// Activate?
@@ -217,13 +240,28 @@ public class DailyRewardView : MetagameRewardView {
 
 		// Tooltip trigger
 		if(m_tooltipTrigger != null) {
-			// Activate? Only for pets
-			m_tooltipTrigger.gameObject.SetActive(isPet);
+			// Assign proper tooltip reference based on reward type
+			UITooltip targetTooltip = null;
+			switch(m_reward.type) {
+				case Metagame.RewardDragon.TYPE_CODE: {
+					targetTooltip = m_dragonTooltip;
+				} break;
+
+				case Metagame.RewardPet.TYPE_CODE: {
+					targetTooltip = m_powerTooltip;
+				} break;
+			}
+
+			// Activate? Only when type supports tooltip
+			m_tooltipTrigger.gameObject.SetActive(targetTooltip != null);
 
 			// Listen to events only if active
 			m_tooltipTrigger.OnTooltipOpen.RemoveListener(OnTooltipOpen);
-			if(m_tooltipTrigger.gameObject.activeSelf) {
+			if(targetTooltip != null) {
 				m_tooltipTrigger.OnTooltipOpen.AddListener(OnTooltipOpen);
+
+				// Assign target tooltip
+				m_tooltipTrigger.tooltip = targetTooltip;
 			}
 		}
 
@@ -232,7 +270,7 @@ public class DailyRewardView : MetagameRewardView {
 		//       properties (Gradient4), so we need to do that manually -_-
 		if(m_backgroundGradient != null) {
 			// Select gradient based on reward state
-			bool isSpecial = isPet || isEgg;
+			bool isSpecial = isDragon || isPet || isEgg;
 			Gradient4 targetGradient = settings.defaultGradient;
 			switch(m_state) {
 				case State.IDLE: {
@@ -270,7 +308,7 @@ public class DailyRewardView : MetagameRewardView {
 		// State animator
 		if(m_stateAnimator != null) {
 			m_stateAnimator.SetInteger("state", (int)m_state);
-			m_stateAnimator.SetBool("isSpecial", isPet || isEgg);
+			m_stateAnimator.SetBool("isSpecial", isDragon || isPet || isEgg);
 		}
 
 		// If the reward is in Current or Cooldown state, render on top so the decorations 
@@ -308,16 +346,26 @@ public class DailyRewardView : MetagameRewardView {
 	/// <param name="_trigger">The trigger opening the tooltip.</param>
 	public void OnTooltipOpen(UITooltip _tooltip, UITooltipTrigger _trigger) {
 		// Initialize with this reward's info
-		// For now only appliable to pet reward ype (other types shouldn't receive this event anyways)
-		if(m_reward.type == Metagame.RewardPet.TYPE_CODE) {
-			// Gather definition of this pet's power
-			DefinitionNode powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, m_reward.def.GetAsString("powerup"));
+		// Depends on reward type (non-supported types shouldn't receive this event anyways)
+		switch(m_reward.type) {
+			case Metagame.RewardDragon.TYPE_CODE: {
+				// Initialize tooltip
+				DragonInfoTooltip dragonTooltip = _tooltip as DragonInfoTooltip;
+				if(dragonTooltip != null) {
+					dragonTooltip.InitFromDefinition(m_reward.def);
+				}
+			} break;
 
-			// Initialize tooltip - it should have a PowerTooltip component attached
-			PowerTooltip powerTooltip = _tooltip.GetComponent<PowerTooltip>();
-			if(powerTooltip != null) {
-				powerTooltip.InitFromDefinition(powerDef, PowerIcon.Mode.PET);
-			}
+			case Metagame.RewardPet.TYPE_CODE: {
+				// Gather definition of this pet's power
+				DefinitionNode powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, m_reward.def.GetAsString("powerup"));
+
+				// Initialize tooltip - it should have a PowerTooltip component attached
+				PowerTooltip powerTooltip = _tooltip as PowerTooltip;
+				if(powerTooltip != null) {
+					powerTooltip.InitFromDefinition(powerDef, PowerIcon.Mode.PET);
+				}
+			} break;
 		}
 	}
 
