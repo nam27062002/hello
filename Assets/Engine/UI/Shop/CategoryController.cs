@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------------//
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -101,6 +102,22 @@ public class CategoryController : MonoBehaviour {
             }
         }
     }
+
+    /// <summary>
+    /// Enable/Disable all the horizontal/vertical layouts of the shop for performance reasons
+    /// </summary>
+    /// <param name="enable">True to enable, false to disable</param>
+    public void SetLayoutGroupsActive(bool enable)
+    {
+
+        GetComponent<VerticalLayoutGroup>().enabled = enable;
+        GetComponent<ContentSizeFitter>().enabled = enable;
+
+        m_pillsContainer.GetComponent<HorizontalLayoutGroup>().enabled = enable;
+        m_pillsContainer.GetComponent<ContentSizeFitter>().enabled = enable;
+        
+    }
+
 
     /// <summary>
     /// Remove all the pills and the header from this container

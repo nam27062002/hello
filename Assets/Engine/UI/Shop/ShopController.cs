@@ -53,7 +53,11 @@ public class ShopController : MonoBehaviour {
     private Dictionary<string, ShopCategoryShortcut> m_skuToShorcut; // Cache the sku-shortcut pair to improve performance
 
     // Keep the bounds of the current category, so we dont recalculate every time the user scrolls the shop
-    private float categoryLeftBorder, categoryRightBorder; 
+    private float categoryLeftBorder, categoryRightBorder;
+
+    // Performance utils
+    private bool layoutGropusActive = false;
+    private bool disableLayoutsGroupsInNextFrame = false; // If true, disable layout groups in the next update
 
 
 
@@ -87,8 +91,8 @@ public class ShopController : MonoBehaviour {
 	/// Component has been enabled.
 	/// </summary>
 	private void OnEnable() {
-
-	}
+        //SetLayoutGroupsActive(true);
+    }
 
 	/// <summary>
 	/// Component has been disabled.
@@ -101,14 +105,23 @@ public class ShopController : MonoBehaviour {
 	/// Called every frame.
 	/// </summary>
 	private void Update() {
-        // Refresh offers periodically for better performance
-        if (m_timer <= 0)
-        {
-            m_timer = 1f; // Refresh every second
-            //Refresh();
-        }
-        m_timer -= Time.deltaTime;
 
+        // Do not update if the shop is not open
+        if (!gameObject.activeInHierarchy)
+        {
+            return;
+        }
+
+        if (disableLayoutsGroupsInNextFrame)
+        {
+            SetLayoutGroupsActive(false);
+        }
+
+        // Enable the layout groups just for one frame, then disable them for better performance 
+        if ( layoutGropusActive )
+        {
+            disableLayoutsGroupsInNextFrame = true;
+        }
 
     }
 
@@ -158,6 +171,9 @@ public class ShopController : MonoBehaviour {
         // Remove the shortcut references
         m_shortcuts.Clear();
         m_skuToShorcut.Clear();
+
+        layoutGropusActive = false;
+        disableLayoutsGroupsInNextFrame = false;
 
     }
 
@@ -235,6 +251,8 @@ public class ShopController : MonoBehaviour {
                 }
             }
         }
+
+        SetLayoutGroupsActive(true);
     }
 
 
@@ -356,6 +374,25 @@ public class ShopController : MonoBehaviour {
             categoryRightBorder = m_scrollRect.GetNormalizedPositionForItem(m_shortcuts[index + 1].anchor).x;
         }
 
+    }
+
+
+    /// <summary>
+    /// Enable/Disable all the horizontal/vertical layouts of the shop for performance reasons
+    /// </summary>
+    /// <param name="enable">True to enable, false to disable</param>
+    private void SetLayoutGroupsActive (bool enable)
+    {
+        m_categoriesContainer.GetComponent<HorizontalLayoutGroup>().enabled = enable;
+        m_categoriesContainer.GetComponent<ContentSizeFitter>().enabled = enable;
+
+        layoutGropusActive = enable;
+
+        // Cascade it to categories and pills
+        foreach (CategoryController cat in m_categoryContainers)
+        {
+            cat.SetLayoutGroupsActive(enable);
+        }
     }
 
     //------------------------------------------------------------------------//
