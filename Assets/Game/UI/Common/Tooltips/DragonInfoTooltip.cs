@@ -81,7 +81,12 @@ public class DragonInfoTooltip : UITooltip {
 			DefinitionNode tierDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGON_TIERS, tierSku);
 
 			// Load icon
-			m_tierIcon.sprite = ResourcesExt.LoadFromSpritesheet(UIConstants.UI_SPRITESHEET_PATH, tierDef.Get("icon"));
+			Sprite tierSprite = ResourcesExt.LoadFromSpritesheet(UIConstants.UI_SPRITESHEET_PATH, tierDef.Get("icon"));
+			if(tierSprite != null) {
+				m_tierIcon.color = Color.white;
+				m_tierIcon.sprite = tierSprite;
+			}
+			m_icon.gameObject.SetActive(tierSprite != null);
 		}
 	}
 
