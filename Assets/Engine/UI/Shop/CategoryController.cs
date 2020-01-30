@@ -36,7 +36,11 @@ public class CategoryController : MonoBehaviour {
     protected ShopCategory m_shopCategory;
     protected ShopController m_shopController;
     protected List<OfferPack> m_offers;
+
     protected List<IPopupShopPill> m_offerPills;
+    public List<IPopupShopPill> offerPills
+        { get { return m_offerPills; } }
+
 
     //------------------------------------------------------------------------//
     // GENERIC METHODS														  //
@@ -76,7 +80,13 @@ public class CategoryController : MonoBehaviour {
 	// OTHER METHODS														  //
 	//------------------------------------------------------------------------//
 
-    public virtual void Initialize (ShopCategory _shopCategory)
+    /// <summary>
+    /// Initialize a category container
+    /// </summary>
+    /// <param name="_shopCategory">The shop category related</param>
+    /// <param name="offers">Offer packs that will be contained in this category. If null, they will be
+    /// queried from the offer manager.</param>
+    public virtual void Initialize (ShopCategory _shopCategory, List<OfferPack> offers = null)
     {
 
         /// Remove possible mockup elements saved in the prefab
@@ -85,7 +95,9 @@ public class CategoryController : MonoBehaviour {
         // Keep a reference to the shop category
         m_shopCategory = _shopCategory;
 
-        Refresh();
+        // If offers are provided, use them!
+        Refresh(offers);
+        
     }
 
     /// <summary>
@@ -129,64 +141,48 @@ public class CategoryController : MonoBehaviour {
         m_offerPills.Clear();
     }
 
-    protected virtual void Refresh()
+    protected virtual void Refresh(List<OfferPack> _offers = null)
     {
         // Remove existing content
         Clear();
 
-        PopulatePills();
+        PopulatePills(_offers);
     }
 
     /// <summary>
     /// Populate the container with all the active offers in this category
     /// </summary>
-    protected virtual void PopulatePills ()
+    /// <param name="_offers">If null, will query the offers from the offer manager</param>
+    protected virtual void PopulatePills (List<OfferPack> _offers = null)
     {
-        // Get all the offers in this category
-        List<OfferPack> offers = OffersManager.GetOfferPacksByCategory(m_shopCategory);
 
-        foreach (OfferPack offer in offers)
+        if (_offers == null)
+        {
+            // Get all the offers in this category
+            _offers = OffersManager.GetOfferPacksByCategory(m_shopCategory);
+        }
+
+        foreach (OfferPack offer in _offers)
         {
 
             // Instantiate the offer with the proper prefab
-            IPopupShopPill pill;
+            IPopupShopPill pill = InstantiatePill(offer.type);
+            
 
-                // Create new instance of prefab
-                switch (offer.type)
-                {
-                    case OfferPack.Type.FREE:
-                        {
-                            pill = Instantiate(m_freeOfferPillPrefab);
-                        }
-                        break;
+            if (pill != null)
+            {
+                // Initialize the prefab with the offer values
+                pill.InitFromOfferPack(offer);
 
-                    case OfferPack.Type.REMOVE_ADS:
-                        {
-                            pill = Instantiate(m_removeAdsPillPrefab);
-                        }
-                        break;
+                // Insert the pill in the container
+                pill.transform.SetParent(m_pillsContainer,false);
 
-                    default:
-                        {
-                            pill = Instantiate(m_offerPackPillPrefab);
-                        }
-                        break;
-                }
+                // Keep a record of all the offers, and pills in this category
+                m_offers.Add(offer);
+                m_offerPills.Add(pill);
 
-                if (pill != null)
-                {
-                    // Initialize the prefab with the offer values
-                    pill.InitFromOfferPack(offer);
-
-                    // Insert the pill in the container
-                    pill.transform.SetParent(m_pillsContainer,false);
-
-                    // Keep a record of all the offers, and pills in this category
-                    m_offers.Add(offer);
-                    m_offerPills.Add(pill);
-
-                    pill.gameObject.SetActive(true);
-                }
+                pill.gameObject.SetActive(true);
+            }
 
         }
     }
@@ -199,6 +195,41 @@ public class CategoryController : MonoBehaviour {
     public bool IsEmpty()
     {
         return (m_offers.Count == 0);
+    }
+
+    /// <summary>
+    /// Instantiate a pill of the specified type
+    /// </summary>
+    /// <param name="_type">Type of the offer pack</param>
+    /// <returns></returns>
+    public virtual IPopupShopPill InstantiatePill(OfferPack.Type _type)
+    {
+        IPopupShopPill pill;
+        
+        // Create new instance of prefab
+        switch (_type)
+        {
+            case OfferPack.Type.FREE:
+                {
+                    pill = Instantiate(m_freeOfferPillPrefab);
+                }
+                break;
+
+            case OfferPack.Type.REMOVE_ADS:
+                {
+                    pill = Instantiate(m_removeAdsPillPrefab);
+                }
+                break;
+
+            default:
+                {
+                    pill = Instantiate(m_offerPackPillPrefab);
+                }
+                break;
+        }
+
+        return pill;
+
     }
 
 

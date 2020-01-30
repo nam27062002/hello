@@ -59,67 +59,90 @@ public static class ScrollRectExt {
 		_target.velocity = Vector2.zero;
 	}
 
-	/// <summary>
-	/// Obtain the normalized position to be applied to the ScrollRect so that
-	/// the given item (assuming item belongs to the content) is centered in the
-	/// ScrollRect's viewport.
-	/// </summary>
-	/// <param name="_scroll">Target ScrollRect.</param>
-	/// <param name="_item">The item to be centered.</param>
-	/// <param name="_clampDirection">If set to true, only the directions enabled in the ScrollRect will be taken in consideration.</param>
-	/// <returns>The normalized position of the ScrollRect to be applied in order to center _item in the viewport.</returns>
-	public static Vector2 GetNormalizedPositionForItem(this ScrollRect _scroll, Transform _item, bool _clampDirection = true) {
-		// Aux vars for shorter notation
-		Rect contentRect = _scroll.content.rect;
-		Rect viewportRect = _scroll.viewport.rect;
+    /// <summary>
+    /// Obtain the normalized position to be applied to the ScrollRect so that
+    /// the given item (assuming item belongs to the content) is centered in the
+    /// ScrollRect's viewport.
+    /// </summary>
+    /// <param name="_scroll">Target ScrollRect.</param>
+    /// <param name="_item">The item to be centered.</param>
+    /// <param name="_clampDirection">If set to true, only the directions enabled in the ScrollRect will be taken in consideration.</param>
+    /// <returns>The normalized position of the ScrollRect to be applied in order to center _item in the viewport.</returns>
+    public static Vector2 GetNormalizedPositionForItem(this ScrollRect _scroll, Transform _item, bool _clampDirection = true, bool _clamp = true)
+    {
 
-		// Get item's position in scroll's viewport local space
-		Vector3 itemPos = _scroll.viewport.InverseTransformPoint(_item.position);
+        return GetNormalizedPositionForItem(_scroll, _item.position, _clampDirection, _clamp);
 
-		// Get viewport's center in viewport's local space
-		Vector3 viewportCenter = viewportRect.center;
+    }
 
-		// Compute how much we need to move the content so target item gets centered
-		Vector2 offset = new Vector2(
-			itemPos.x - viewportCenter.x,
-			itemPos.y - viewportCenter.y
-		);
 
-		// Use the normalized property of the ScrollRect rather than directly setting the content's position
-		// This way it's easier to handle conflicts with the Elastic ScrollRects
-		Vector2 hiddenSize = new Vector2(   // This works assuming there is no scale change between viewport and content
-			contentRect.width - viewportRect.width,
-			contentRect.height - viewportRect.height
-		);
+    /// <summary>
+    /// Obtain the normalized position to be applied to the ScrollRect so that
+    /// the given position (assuming item belongs to the content) is centered in the
+    /// ScrollRect's viewport.
+    /// </summary>
+    /// <param name="_scroll">Target ScrollRect.</param>
+    /// <param name="_pos">The position to be calculated</param>
+    /// <param name="_clampDirection">If set to true, only the directions enabled in the ScrollRect will be taken in consideration.</param>
+    /// <returns>The normalized position of the ScrollRect to be applied in order to center _item in the viewport.</returns>
+    public static Vector2 GetNormalizedPositionForItem(this ScrollRect _scroll, Vector2 _pos, bool _clampDirection = true, bool _clamp = true) {
+	    // Aux vars for shorter notation
+	    Rect contentRect = _scroll.content.rect;
+	    Rect viewportRect = _scroll.viewport.rect;
 
-		// Check div/0!
-		Vector2 normalizedOffset = new Vector2(
-			Mathf.Abs(hiddenSize.x) > 0f ? offset.x / hiddenSize.x : 0f,
-			Mathf.Abs(hiddenSize.y) > 0f ? offset.y / hiddenSize.y : 0f
-		);
+	    // Get item's position in scroll's viewport local space
+	    Vector3 itemPos = _scroll.viewport.InverseTransformPoint(_pos);
 
-		// Clamp direction if needed
-		if(_clampDirection) {
-			if(!_scroll.horizontal)	normalizedOffset.x = 0f;
-			if(!_scroll.vertical)	normalizedOffset.y = 0f;
-		}
+	    // Get viewport's center in viewport's local space
+	    Vector3 viewportCenter = viewportRect.center;
 
-		// Compute final position
-		Vector2 targetNormalizedPos = _scroll.normalizedPosition + normalizedOffset;
+	    // Compute how much we need to move the content so target item gets centered
+	    Vector2 offset = new Vector2(
+		    itemPos.x - viewportCenter.x,
+		    itemPos.y - viewportCenter.y
+	    );
 
-		// Clamp? Only in certain scroll modes
-		switch(_scroll.movementType) {
-			case ScrollRect.MovementType.Clamped:
-			case ScrollRect.MovementType.Elastic: {
-				targetNormalizedPos.Set(
-					Mathf.Clamp01(targetNormalizedPos.x),
-					Mathf.Clamp01(targetNormalizedPos.y)
-				);
-			} break;
-		}
+	    // Use the normalized property of the ScrollRect rather than directly setting the content's position
+	    // This way it's easier to handle conflicts with the Elastic ScrollRects
+	    Vector2 hiddenSize = new Vector2(   // This works assuming there is no scale change between viewport and content
+		    contentRect.width - viewportRect.width,
+		    contentRect.height - viewportRect.height
+	    );
 
-		// Done!
-		return targetNormalizedPos;
+	    // Check div/0!
+	    Vector2 normalizedOffset = new Vector2(
+		    Mathf.Abs(hiddenSize.x) > 0f ? offset.x / hiddenSize.x : 0f,
+		    Mathf.Abs(hiddenSize.y) > 0f ? offset.y / hiddenSize.y : 0f
+	    );
+
+	    // Clamp direction if needed
+	    if(_clampDirection) {
+		    if(!_scroll.horizontal)	normalizedOffset.x = 0f;
+		    if(!_scroll.vertical)	normalizedOffset.y = 0f;
+	    }
+
+	    // Compute final position
+	    Vector2 targetNormalizedPos = _scroll.normalizedPosition + normalizedOffset;
+
+        // Clamp? Only in certain scroll modes
+        if (_clamp)
+        {
+            switch (_scroll.movementType)
+            {
+                case ScrollRect.MovementType.Clamped:
+                case ScrollRect.MovementType.Elastic:
+                    {
+                        targetNormalizedPos.Set(
+                            Mathf.Clamp01(targetNormalizedPos.x),
+                            Mathf.Clamp01(targetNormalizedPos.y)
+                        );
+                    }
+                    break;
+            }
+        }
+
+	    // Done!
+	    return targetNormalizedPos;
 	}
 
     /// <summary>

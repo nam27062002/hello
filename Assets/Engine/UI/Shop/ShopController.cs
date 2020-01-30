@@ -44,9 +44,11 @@ public class ShopController : MonoBehaviour {
     //Internal
     private float m_timer = 0; // Refresh timer
     private bool m_scrolling = false; // The tweener scrolling animation is running
+    private bool m_hidePillsOutOfView = false; 
 
-    // Cache the category containers
+    // Cache the category containers and pills
     private List<CategoryController> m_categoryContainers;
+    private List<IPopupShopPill> m_pills;
 
     // Shortcuts
     private List<ShopCategoryShortcut> m_shortcuts; 
@@ -54,6 +56,9 @@ public class ShopController : MonoBehaviour {
 
     // Keep the bounds of the current category, so we dont recalculate every time the user scrolls the shop
     private float categoryLeftBorder, categoryRightBorder;
+
+    // Disable pills that are outside of the visible scrollable panel
+    private float normalizedViewportWidth;
 
     // Performance utils
     private bool layoutGropusActive = false;
@@ -72,6 +77,7 @@ public class ShopController : MonoBehaviour {
         m_shortcuts = new List<ShopCategoryShortcut>();
         m_skuToShorcut = new Dictionary<string, ShopCategoryShortcut>();
         m_categoryContainers = new List<CategoryController>();
+        m_pills = new List<IPopupShopPill>();
     }
 
 	/// <summary>
@@ -84,6 +90,11 @@ public class ShopController : MonoBehaviour {
         // React to offers being reloaded while tab is active
         Messenger.AddListener(MessengerEvents.OFFERS_RELOADED, OnOffersReloaded);
         Messenger.AddListener(MessengerEvents.OFFERS_CHANGED, OnOffersChanged);
+
+        // Wait a frame so the layout groups can be rendered
+        UbiBCN.CoroutineManager.DelayedCallByFrames(
+            () => { m_hidePillsOutOfView = true; }, 1
+        );
 
     }
 
@@ -168,6 +179,9 @@ public class ShopController : MonoBehaviour {
         // Clean categories
         m_categoryContainers.Clear();
 
+        // Clean pills cache
+        m_pills.Clear();
+
         // Remove the shortcut references
         m_shortcuts.Clear();
         m_skuToShorcut.Clear();
@@ -225,7 +239,9 @@ public class ShopController : MonoBehaviour {
 
                     // Add the category container to the hierarchy
                     categoryContainer.transform.SetParent(m_categoriesContainer, false);
-                    categoryContainer.Initialize(category);
+                    categoryContainer.Initialize(category, offers);
+
+                    m_pills.AddRange(categoryContainer.offerPills);
 
                     m_categoryContainers.Add(categoryContainer);
 
@@ -252,6 +268,8 @@ public class ShopController : MonoBehaviour {
             }
         }
 
+
+        // Enable layout groups just for one frame
         SetLayoutGroupsActive(true);
     }
 
@@ -395,6 +413,28 @@ public class ShopController : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Enable/disable pill that are inside/outside of the visible limits of the scrollview.
+    /// </summary>
+    /// <param name="_scrollPosition"></param>
+    private void UpdatePillsVisibility(Vector2 _scrollPosition)
+    {
+
+        // Define the width of the viewport. Out of this range, pills are disabled.
+        normalizedViewportWidth = m_scrollRect.viewport.rect.width / m_scrollRect.content.rect.width;
+
+        foreach (IPopupShopPill pill in m_pills)
+        {
+            // Is this pill inside the visible limits of the scrollview
+            Vector2 pillPosition = m_scrollRect.GetNormalizedPositionForItem(pill.transform, true, false);
+            bool visible = (Mathf.Abs(pillPosition.x - _scrollPosition.x) < normalizedViewportWidth);
+
+            // Enable/disable the pill
+            pill.gameObject.SetActive(visible);
+        }
+    }
+
+
     //------------------------------------------------------------------------//
     // CALLBACKS															  //
     //------------------------------------------------------------------------//
@@ -422,6 +462,13 @@ public class ShopController : MonoBehaviour {
     /// <param name="_newPos">Normalized position of the scroll view</param>
     public void OnScrollChanged(Vector2 _newPos)
     {
+        // Wait for the layouts groups to be rendered
+        if (m_hidePillsOutOfView)
+        {
+            // Disable pills outside of the view limits
+            UpdatePillsVisibility(_newPos);
+        }
+
         // Scrolling animation still running
         if (m_scrolling) {
             return;
@@ -444,7 +491,14 @@ public class ShopController : MonoBehaviour {
 
             }
         }
+
+
     }
+
+
+
+
+
 
     /// <summary>
     /// Offers have been reloaded.
