@@ -153,7 +153,7 @@ public class OfferPack {
 
 	protected long m_secondsSinceLastPurchase = 0;
 	protected RangeInt m_lastPurchasePrice = null;
-	protected string m_lastPurchaseItemType = string.Empty;
+	protected string[] m_lastPurchaseItemType = new string[0];
 	protected string[] m_lastPurchaseItemContent = new string[0];
 
 	protected string[] m_dragonUnlocked = new string[0];
@@ -328,7 +328,7 @@ public class OfferPack {
 
 		m_secondsSinceLastPurchase = 0;
 		m_lastPurchasePrice = null;
-		m_lastPurchaseItemType = string.Empty;
+		m_lastPurchaseItemType = new string[0];
 		m_lastPurchaseItemContent = new string[0];
 
 		m_dragonUnlocked = new string[0];
@@ -469,7 +469,7 @@ public class OfferPack {
 		} else {
 			m_lastPurchasePrice = null;
 		}
-		m_lastPurchaseItemType = _def.GetAsString("lastPurchaseItemType", m_lastPurchaseItemType);
+		m_lastPurchaseItemType = ParseArray(_def.GetAsString("lastPurchaseItemType"));
 		m_lastPurchaseItemContent = ParseArray(_def.GetAsString("lastPurchaseItemContent"));
 
 		m_dragonUnlocked = ParseArray(_def.GetAsString("dragonUnlocked"));
@@ -559,7 +559,7 @@ public class OfferPack {
 				(m_lastPurchasePrice.max / 100f).ToString(CultureInfo.InvariantCulture),
 			}));
 		}
-		SetValueIfMissing(ref _def, "lastPurchaseItemType", m_lastPurchaseItemType);
+		SetValueIfMissing(ref _def, "lastPurchaseItemType", string.Join(";", m_lastPurchaseItemType));
 		SetValueIfMissing(ref _def, "lastPurchaseItemContent", string.Join(";", m_lastPurchaseItemContent));
 
 		SetValueIfMissing(ref _def, "dragonUnlocked", string.Join(";", m_dragonUnlocked));
@@ -680,28 +680,38 @@ public class OfferPack {
 			}
 		}
 
-		if(!string.IsNullOrEmpty(m_lastPurchaseItemType)) { // Only check if needed
+		if(m_lastPurchaseItemType.Length > 0) { // Only check if needed
 			// Comparison will fail if tracking persistence is not valid
 			string lastPurchaseItemType = (trackingPersistence == null) ? string.Empty : trackingPersistence.LastPurchaseItemType;
-			if(m_lastPurchaseItemType.ToLowerInvariant() != lastPurchaseItemType.ToLowerInvariant()) {  // Minimize typos by comparing in lowercase
-				OffersManager.LogPack(this, "    Last Purchase Item Type... {0} vs {1}", Colors.paleGreen, m_lastPurchaseItemType, lastPurchaseItemType);
+			bool matchFound = false;
+			for(int i = 0; i < m_lastPurchaseItemType.Length; ++i) {
+				// Minimize typos by comparing in lowercase
+				if(m_lastPurchaseItemType[i].ToLowerInvariant() == lastPurchaseItemType.ToLowerInvariant()) {
+					matchFound = true;
+					break;	// No need to keep looping
+				}
+			}
+			if(!matchFound) {  
+				OffersManager.LogPack(this, "    Last Purchase Item Type... {0} vs {1}", Colors.paleGreen, m_lastPurchaseItemType.ToStringValues(), lastPurchaseItemType);
 				return false;
 			}
 
 			// Content is only checked if type matches
-			if(m_lastPurchaseItemContent.Length > 0) {  // Only check if needed
+			// Don't check content if more than one type was defined
+			if(m_lastPurchaseItemContent.Length > 0 && m_lastPurchaseItemType.Length == 1) {  // Only check if needed
 				// No need to check tracking persistence validity, it will already have failed with the type comparison and we will not reach this point
 				// Check all possible values for an exact match - if not found, offer can't be activated
 				string lastPurchaseItemContent = trackingPersistence.LastPurchaseItemContent;
-				bool matchFound = false;
+				matchFound = false;
 				for(int i = 0; i < m_lastPurchaseItemContent.Length; ++i) {
-					if(m_lastPurchaseItemContent[i] == lastPurchaseItemContent) {
+					// Minimize typos by comparing in lowercase
+					if(m_lastPurchaseItemContent[i].ToLowerInvariant() == lastPurchaseItemContent.ToLowerInvariant()) {
 						matchFound = true;
 						break;	// No need to keep looping
 					}
 				}
 				if(!matchFound) {
-					OffersManager.LogPack(this, "    Last Purchase Item Content... {0} vs {1}", Colors.paleGreen, m_lastPurchaseItemContent, trackingPersistence.LastPurchaseItemContent);
+					OffersManager.LogPack(this, "    Last Purchase Item Content... {0} vs {1}", Colors.paleGreen, m_lastPurchaseItemContent.ToStringValues(), trackingPersistence.LastPurchaseItemContent);
 					return false;
 				}
 			}
