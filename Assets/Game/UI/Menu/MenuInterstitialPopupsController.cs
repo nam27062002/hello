@@ -634,13 +634,13 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 	/// </summary>
 	private void CheckHappyHourOffer() {
 		// Check if there is a happy hour
-		if(OffersManager.instance.happyHour == null)
+		if(OffersManager.happyHourManager == null)
 			return;
 
-		HappyHourOffer happyHour = OffersManager.instance.happyHour;
+		HappyHourManager happyHour = OffersManager.happyHourManager;
 
 		// Dont show a popup if the happy hour has already finished
-		if(!happyHour.IsActive())
+		if(!happyHour.happyHour.IsActive())
 			return;
 
 		// Is there a popup pending to show?

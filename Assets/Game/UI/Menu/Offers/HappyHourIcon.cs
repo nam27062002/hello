@@ -31,7 +31,7 @@ public class HappyHourIcon : MonoBehaviour {
     private ShowHideAnimator m_animationRoot;
 
     // Internal
-    private HappyHourOffer m_happyHour;
+    private HappyHour m_happyHour;
     private bool m_happyHourActive = false;
 
 
@@ -43,7 +43,7 @@ public class HappyHourIcon : MonoBehaviour {
 	/// </summary>
 	private void Start() {
 		InvokeRepeating("UpdatePeriodic", 0f, REFRESH_FREQUENCY);
-        m_happyHour = OffersManager.instance.happyHour;
+        m_happyHour = OffersManager.happyHourManager.happyHour;
         m_animationRoot.Hide();
     }
 
