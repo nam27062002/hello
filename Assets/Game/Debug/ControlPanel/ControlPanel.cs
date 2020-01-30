@@ -434,7 +434,8 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
 		Server,
 		Offers,
 		Loading,
-        Addressables
+        Addressables,
+        DailyRewards
     };
     
     private static Dictionary<ELogChannel, string> sm_logChannelColors;
@@ -451,7 +452,8 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
 		Log_SetupChannel(ELogChannel.Server, "Server", Colors.teal);
 		Log_SetupChannel(ELogChannel.Offers, "Offers", Colors.gold);
 		Log_SetupChannel(ELogChannel.Loading, "Loading", Colors.darkGray);
-        Log_SetupChannel(ELogChannel.Addressables, "Addressables", Colors.lime);        
+        Log_SetupChannel(ELogChannel.Addressables, "Addressables", Colors.lime);
+        Log_SetupChannel(ELogChannel.DailyRewards, "DailyRewards", Colors.magenta);
     }
 
     private static string Log_GetChannelColor(ELogChannel channel)
@@ -506,11 +508,11 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
     public static string COLOR_ERROR = Colors.ToHexString(Color.red, "#", false);
     public static string COLOR_WARNING = Colors.ToHexString(Color.yellow, "#", false);
 
-#if ENABLE_LOGS
+/*#if ENABLE_LOGS
     [Conditional("DEBUG")]
 #else
     [Conditional("FALSE")]
-#endif
+#endif*/
     public static void LogError(string text, ELogChannel channel=ELogChannel.General)
     {
         LogToCPConsole(text, channel, COLOR_ERROR);        
@@ -518,11 +520,11 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
         Debug.LogError(text);        
     }
 
-#if ENABLE_LOGS
+/*#if ENABLE_LOGS
     [Conditional("DEBUG")]
 #else
     [Conditional("FALSE")]
-#endif
+#endif*/
     public static void LogWarning(string text, ELogChannel channel = ELogChannel.General)
     {
         LogToCPConsole(text, channel, COLOR_WARNING);        
@@ -530,11 +532,11 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
         Debug.LogWarning(text);        
     }
 
-#if ENABLE_LOGS
+/*#if ENABLE_LOGS
     [Conditional("DEBUG")]
 #else
     [Conditional("FALSE")]
-#endif
+#endif*/
     public static void Log(string text, ELogChannel channel=ELogChannel.General, bool logToCPConsole=true, bool logToUnityConsole=true) {        
         if (logToCPConsole) {
             LogToCPConsole(text, channel);

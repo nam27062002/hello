@@ -6,12 +6,17 @@
 
 //#define PLAYTEST
 
+#if DEBUG && !DISABLE_LOGS
+#define ENABLE_LOGS
+#endif
+
 //----------------------------------------------------------------------------//
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
 using UnityEngine;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -93,7 +98,8 @@ public class DailyRewardsSequence {
 		// Other vars
 		m_totalRewardIdx = 0;
 		m_nextCollectionTimestamp = DateTime.MinValue;  // Already expired so first reward can be collected
-	}
+        Log("Reset nextTimestamp = " + m_nextCollectionTimestamp);
+    }
 
 	/// <summary>
 	/// Obtain the next reward to be collected.
@@ -108,8 +114,12 @@ public class DailyRewardsSequence {
 	/// </summary>
 	/// <returns><c>true</c>, if collect next reward was caned, <c>false</c> otherwise.</returns>
 	public bool CanCollectNextReward() {
-		// Check timestamps
-		return GameServerManager.SharedInstance.GetEstimatedServerTime() >= m_nextCollectionTimestamp;
+        bool returnValue = GameServerManager.SharedInstance.GetEstimatedServerTime() >= m_nextCollectionTimestamp;
+        
+        // Check timestamps
+        Log("CanCollectNextReward = " + returnValue + " serverTime = " + GameServerManager.SharedInstance.GetEstimatedServerTime() + " nextTimestamp = " + m_nextCollectionTimestamp);
+
+        return returnValue;
 	}
 
 	/// <summary>
@@ -162,16 +172,17 @@ public class DailyRewardsSequence {
 #else
 		TimeSpan toMidnight = DateTime.Today.AddDays(1) - DateTime.Now; // Local
 		m_nextCollectionTimestamp = serverTime + toMidnight;   // Local 00:00 in server timezone
+        Log("CollectNextReward nextTimestamp = " + m_nextCollectionTimestamp);
 #endif
 
-		// Program local notification
-		// [AOC] Actually don't! It will be programmed when the application goes on pause (ApplicationManager class)
+        // Program local notification
+        // [AOC] Actually don't! It will be programmed when the application goes on pause (ApplicationManager class)
 #if PLAYTEST
 		// [AOC] DEBUG!! We'll do it just for the playtest
 		HDNotificationsManager.instance.ScheduleDailyRewardNotification();
 #endif
 
-	}
+    }
 
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //
@@ -260,7 +271,8 @@ public class DailyRewardsSequence {
 		// Collect timestamp
 		if(_data.ContainsKey("nextCollectionTimestamp")) {
 			m_nextCollectionTimestamp = DateTime.Parse(_data["nextCollectionTimestamp"], PersistenceFacade.JSON_FORMATTING_CULTURE);
-		}
+            Log("LoadData nextTimestamp = " + m_nextCollectionTimestamp);
+        }
 
 		// Rewards
 		if(_data.ContainsKey("rewards")) {
@@ -308,9 +320,10 @@ public class DailyRewardsSequence {
 
 		// Collect timestamp
 		data.Add("nextCollectionTimestamp", m_nextCollectionTimestamp.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
+        Log("SaveData nextTimestamp = " + m_nextCollectionTimestamp);
 
-		// Done!
-		return data;
+        // Done!
+        return data;
 	}
 
 	//------------------------------------------------------------------------//
@@ -346,5 +359,19 @@ public class DailyRewardsSequence {
 
 		// Set collection timestamp to current time
 		m_nextCollectionTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTime();
-	}
+        Log("DEBUG_Skip nextTimestamp = " + m_nextCollectionTimestamp);
+    }
+
+    #region log
+    private const string LOG_CHANNEL = "[DailyRewards]";
+#if ENABLE_LOGS
+    [Conditional("DEBUG")]
+#else
+    [Conditional("FALSE")]
+#endif
+    private void Log(string message)
+    {
+        ControlPanel.Log(LOG_CHANNEL + message, ControlPanel.ELogChannel.DailyRewards);
+    }
+    #endregion
 }

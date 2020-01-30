@@ -350,18 +350,24 @@ public class UserProfile : UserPersistenceSystem
 	// Offer Packs
     private Dictionary<OfferPack.Type, List<JSONClass>> m_newOfferPersistanceData = new Dictionary<OfferPack.Type, List<JSONClass>>();
     public Dictionary<OfferPack.Type, List<JSONClass>> newOfferPersistanceData {
-        get{ return m_newOfferPersistanceData; }
+        get { return m_newOfferPersistanceData; }
     }
+
+	public Dictionary<OfferPack.Type, Queue<string>> m_offersHistory = new Dictionary<OfferPack.Type, Queue<string>>();
+	public Dictionary<OfferPack.Type, Queue<string>> offersHistory {
+		get { return m_offersHistory; }
+	}
 
 	public DateTime freeOfferCooldownEndTime {
 		get;
 		set;
 	}
 
-    // Happy hour
-    private DateTime m_happyHourExpirationTime;
-    private float m_happyHourExtraGemsRate;
-	private string m_happyHourLastPackSku;
+	// Happy hour
+	private HappyHourManager.SaveData m_happyHourData = new HappyHourManager.SaveData();
+	public HappyHourManager.SaveData happyHourData {
+		get { return m_happyHourData; }
+	}
 
     // Remove ads feature
     private RemoveAdsFeature m_removeAds;
@@ -435,11 +441,17 @@ public class UserProfile : UserPersistenceSystem
 	{        
     }
 
+	/// <summary>
+	/// 
+	/// </summary>
 	~UserProfile()
 	{
         Destroy();
 	}
 
+	/// <summary>
+	/// 
+	/// </summary>
     public override void Reset()
     {        
         Destroy();
@@ -533,9 +545,10 @@ public class UserProfile : UserPersistenceSystem
 		m_dailyRewards = new DailyRewardsSequence();
 
         m_newOfferPersistanceData = new Dictionary<OfferPack.Type, List<JSONClass>>();
-        for (int i = 0; i < (int)OfferPack.Type.COUNT; i++)
-        {
+		m_offersHistory = new Dictionary<OfferPack.Type, Queue<string>>();
+        for (int i = 0; i < (int)OfferPack.Type.COUNT; i++) {
             m_newOfferPersistanceData.Add((OfferPack.Type)i, new List<JSONClass>());
+			m_offersHistory.Add((OfferPack.Type)i, new Queue<string>());
         }
 
         m_visitedZones = new HashSet<string>();
@@ -548,6 +561,9 @@ public class UserProfile : UserPersistenceSystem
         m_removeAds = new RemoveAdsFeature();
     }
 
+	/// <summary>
+	/// 
+	/// </summary>
     private void Destroy()
     {
         if (m_achievements != null)
@@ -876,13 +892,17 @@ public class UserProfile : UserPersistenceSystem
             PlayerPrefs.SetString("removeAds", jsonString);
         }
 
-
-#if UNITY_EDITOR
+		#if UNITY_EDITOR
         PrintJsonString(json.ToString(), "<color=cyan>SAVING USER PROFILE:</color>\n");
 		#endif
 	}
 
 #if UNITY_EDITOR
+	/// <summary>
+	/// Split into different logs to make sure everything is printed.
+	/// </summary>
+	/// <param name="_jsonString"></param>
+	/// <param name="_header"></param>
 	private void PrintJsonString(string _jsonString, string _header) {
 		// Pretty print the json
 		JsonFormatter fmt = new JsonFormatter();
@@ -1146,7 +1166,10 @@ public class UserProfile : UserPersistenceSystem
 			for(int i = rewardsData.Count - 1; i >= 0 ; --i) {
 				// Create new reward with the given data
 				Metagame.Reward r = Metagame.Reward.CreateFromJson(rewardsData[i]);
-				m_rewards.Push(r);
+
+                // Makes sure that r can be pushed before pushing it in order to avoid a unique reward (such as remove_ads) from being given more than once
+                if (CanPushReward(r))
+				    m_rewards.Push(r);
 			}
 		}
 
@@ -1163,7 +1186,7 @@ public class UserProfile : UserPersistenceSystem
 		}
 
 		// Offer Packs
-            // Old version. transform to offer packs v2
+        // Old version. transform to offer packs v2
         if ( _data.ContainsKey( "offerPacks" ) || _data.ContainsKey("offerPacksRotationalHistory") )
         {
             UpdateOfferPacksPersistance( _data );
@@ -1182,41 +1205,71 @@ public class UserProfile : UserPersistenceSystem
             }
         }
 
+		// Offers history
+		key = "offerPacksHistory";
+		if(_data.ContainsKey(key)) {
+			// Get data
+			JSONNode historyData = _data[key];
+
+			// Data is stored by offer type
+			int typeCount = (int)OfferPack.Type.COUNT;
+			for(int i = 0; i < typeCount; ++i) {
+				// Get key for this type and check if we have data stored
+				OfferPack.Type offerType = (OfferPack.Type)i;
+				key = OfferPack.TypeToString(offerType);
+				if(historyData.ContainsKey(key)) {
+					// History for this type is stored as an array representing a queue
+					JSONArray queueData = historyData[key].AsArray;
+					for(int j = 0; j < queueData.Count; ++j) {
+						m_offersHistory[offerType].Enqueue(queueData[j]);
+					}
+				}
+			}
+		}
+
+		// Free offer
 		key = "freeOfferCooldownEndTime";
 		if(_data.ContainsKey(key)) {
 			freeOfferCooldownEndTime = new DateTime(_data[key].AsLong);
 		} else {
 			freeOfferCooldownEndTime = DateTime.MinValue;
-		} 
+		}
 
-        // Happy hour offer
-        SimpleJSON.JSONNode happyHour = _data["happyHourOffer"];
+		// Happy hour offer
+		// [AOC] As of 2.6 format has changed. Add support for retrocompatibility. Can be removed at 2.8.
+		key = "happyHourOffer";
+		if(_data.ContainsKey(key)) {
+			// Pre 2.6 - Delete by 2.8
+			// Create a fake json object using the new keys
+			JSONNode oldData = _data[key];
+			JSONClass newData = new JSONClass();
 
-        key = "happyHourExpirationTime";
-        if (happyHour.ContainsKey(key))
-        {
-            m_happyHourExpirationTime = new DateTime (happyHour[key].AsLong);
-        }
-        else
-        {
-            m_happyHourExpirationTime = DateTime.MinValue;
-        }
+			key = "happyHourExpirationTime";
+			if(oldData.ContainsKey(key)) {
+				newData["expirationTime"] = oldData[key];
+			}
 
-        key = "happyHourExtraGemsRate";
-        if (happyHour.ContainsKey(key))
-        {
-            m_happyHourExtraGemsRate = happyHour[key].AsFloat;
-        }
-        else
-        {
-            m_happyHourExtraGemsRate = 0;
-        }
+			key = "happyHourExtraGemsRate";
+			if(oldData.ContainsKey(key)) {
+				newData["extraGemsFactor"] = oldData[key];
+			}
 
-		key = "happyHourLastPackSku";
-		if(happyHour.ContainsKey(key)) {
-			m_happyHourLastPackSku = happyHour[key];
+			key = "happyHourLastPackSku";
+			if(oldData.ContainsKey(key)) {
+				newData["lastPackSku"] = oldData[key];
+			}
+
+			// Inject sku
+			newData["activeSku"] = "happy_hour_local";	// Legacy system only had the local one
+
+			// Load it!
+			m_happyHourData.FromJson(newData as JSONClass);
 		} else {
-			m_happyHourLastPackSku = string.Empty;
+			// Post 2.6 - Keep it
+			key = "happyHour";
+			if(_data.ContainsKey(key)) {
+				m_happyHourData.FromJson(_data[key] as JSONClass);
+			}
 		}
 
         // Visited Zones
@@ -1428,22 +1481,30 @@ public class UserProfile : UserPersistenceSystem
             }
             newOffersData.Add(OfferPack.TypeToString(t), array);
         }
-        data.Add( "newOffersPacks", newOffersData);
+        data.Add("newOffersPacks", newOffersData);
+
+		// Offer history
+		JSONClass offerHistoryData = new SimpleJSON.JSONClass();
+		foreach(KeyValuePair<OfferPack.Type, Queue<string>> kvp in m_offersHistory) {
+			// No need to store this offer type if history is empty
+			if(kvp.Value.Count == 0) continue;
+
+			// Store the history for this offer type into a JSON Array
+			JSONArray arrayData = new JSONArray();
+			foreach(string offerSku in kvp.Value) {
+				arrayData.Add(offerSku);
+			}
+
+			// Save this kvp into the parent JSON object
+			offerHistoryData.Add(OfferPack.TypeToString(kvp.Key), arrayData);
+		}
+		data.Add("offerPacksHistory", offerHistoryData);
+
+		// Free offer
 		data.Add("freeOfferCooldownEndTime", freeOfferCooldownEndTime.Ticks.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
 
-        
-        // Happy hour offer
-        SimpleJSON.JSONClass happyHour = new SimpleJSON.JSONClass();
-
-        happyHour.Add("happyHourExpirationTime", m_happyHourExpirationTime.Ticks.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
-        happyHour.Add("happyHourExtraGemsRate", m_happyHourExtraGemsRate.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
-
-		if(!string.IsNullOrEmpty(m_happyHourLastPackSku)) {
-			// No need to add it if none - more compact save file!
-			happyHour.Add("happyHourLastPackSku", m_happyHourLastPackSku);
-		}
-
-        data.Add("happyHourOffer", happyHour);
+        // Happy hour
+        data.Add("happyHour", m_happyHourData.ToJson());
 
         // Remove Ads offer
         // For safety reasons we store the Remove Ads feature in the player preferences
@@ -1911,16 +1972,44 @@ public class UserProfile : UserPersistenceSystem
 	//------------------------------------------------------------------------//
 	// REWARDS MANAGEMENT													  //
 	//------------------------------------------------------------------------//
+
+    /// <summary>
+    /// Returns whether or not a reward can be pushed to <c>m_rewards</c>, the stack of pending rewards. The requirements that a reward must meet to be allowed to be pushed to the stack are:
+    /// a)For a unique reward (the type of reward that can be given only once such as remove_ads):
+    ///     a.1)The user must not own it already
+    ///     a.2)It must not be in the stack already
+    /// b)For a non unique reward (the default type of reward): No requirements. This type of reward can be pushed with no concerns.
+    /// </summary>
+    /// <param name="_reward"></param>
+    /// <returns></returns>
+    private bool CanPushReward(Metagame.Reward _reward) {
+        bool _returnValue = true;
+        if (_reward.IsUnique()) {
+            // If the user already owns this type of reward then _reward can not be pushed
+            if (_reward.IsAlreadyOwned()) {
+                _returnValue = false;
+            } else {
+                // Loops through all the rewards already in the stack. If one already gives the type of _reward then _reward shouldn't be pushed again because it should be given only once
+                var enumerator = m_rewards.GetEnumerator();
+                while (enumerator.MoveNext() && _returnValue) {
+                    if (enumerator.Current.type == _reward.type) {
+                        _returnValue = false;
+                    }
+                }
+            }
+        }
+
+        return _returnValue;
+    }   
+
 	/// <summary>
 	/// Push a reward to the stack.
 	/// </summary>
 	/// <returns><c>true</c> if the reward has been added. <c>false</c> if the reward hasn't been added because the user already owns it and the user is allowed to own only an instance of this 
 	/// type of reward.amount, for example, removeAds is not added if the user already owns it</returns>
 	/// <param name="_reward">Reward to be pushed.</param>
-	public bool PushReward(Metagame.Reward _reward) {
-
-        // Dont push rewards that are already owned by the user
-		if (_reward.IsAlreadyOwned ())
+	public bool PushReward(Metagame.Reward _reward) {        
+        if (!CanPushReward(_reward))		
 			return false;
 
 		rewardStack.Push(_reward);
@@ -2037,10 +2126,8 @@ public class UserProfile : UserPersistenceSystem
     /// </summary>
     /// <param name="currentPushIds">Current customizer identifier.</param>
     public void CleanOldPushedOffers( List<string> currentPushIds ) {
-        int max = m_newOfferPersistanceData[OfferPack.Type.PUSHED].Count;
-        DateTime serverTime = GameServerManager.SharedInstance.GetEstimatedServerTime();
         List<JSONClass> offers = m_newOfferPersistanceData[OfferPack.Type.PUSHED];
-        string customizerStr = currentPushIds.ToString();
+        int max = offers.Count;
         
         for (int i = max-1; i >= 0; i--) {
             string customId = "";
@@ -2055,47 +2142,78 @@ public class UserProfile : UserPersistenceSystem
         }
         m_newOfferPersistanceData[OfferPack.Type.PUSHED] = offers;
     }
-    
+
+	/// <summary>
+	/// Clean offers of a specific type that don't need to be persisted anymore.
+	/// </summary>
+	/// <param name="_type">The type of offers to be purged.</param>
+	/// <param name="_skusToRemove">List of offer Skus to be removed from persistence.</param>
+	public void CleanOldOffers(OfferPack.Type _type, List<string> _skusToRemove) {
+		// Gather persistence data for the target offer type
+		List<JSONClass> offersData = m_newOfferPersistanceData[_type];
+
+		// Reverse-iterate to delete all data that matches the given list IDs
+		int count = offersData.Count;
+		for(int i = count - 1; i >= 0; --i) {
+			if(offersData[i].ContainsKey("sku")) {
+				if(_skusToRemove.Contains(offersData[i]["sku"])) {
+					OffersManager.Log("OFFER PACK {0} ({1}) IS BEING CLEANED FROM PERSISTENCE", Color.red, offersData[i]["sku"], _type.ToString());
+					offersData.RemoveAt(i);
+				}
+			}
+		}
+		m_newOfferPersistanceData[_type] = offersData;
+	}
+
 	/// <summary>
 	/// Register an offer pack for persistence save.
 	/// </summary>
 	/// <param name="_offerPack">Pack to be saved.</param>
 	public void SaveOfferPack(OfferPack _pack) {
-		// Don't do it if pack shouldn't be saved
-		if(_pack == null || !_pack.ShouldBePersisted()) return;
+		// Some checks
+		if(_pack == null) return;
 
-        // Search offer just in case we have to override
-        
+		// If pack shouldn't be persisted, clear it from persistence data
+		bool shouldBePersisted = _pack.ShouldBePersisted();
+
+        // Check whether we already have data for this offer pack
         List<JSONClass> offers = m_newOfferPersistanceData[_pack.type];
         int max = offers.Count;
         bool found = false;
-        for (int i = 0; i < max && !found; i++){
-            if ( offers[i].ContainsKey("sku") && offers[i]["sku"] == _pack.def.sku ){
-                // if not a pushed offer or is pushed and same customization code, so it's exactly the same
-                if ( _pack.type != OfferPack.Type.PUSHED /*|| _pack.def.customizationCode == offers[i]["customizerId"]*/ ){
+        for(int i = 0; i < max && !found; i++) {
+            if(offers[i].ContainsKey("sku") && offers[i]["sku"] == _pack.def.sku) {
+				// If not a pushed offer, directly override existing data
+				if(_pack.type != OfferPack.Type.PUSHED) {
+					// If pack doesn't need to be persisted anymore, remove it from the data instead
+					if(shouldBePersisted) {
+						m_newOfferPersistanceData[_pack.type][i] = _pack.Save();
+					} else {
+						OffersManager.Log("OFFER PACK {0} ({1}) IS BEING CLEANED FROM PERSISTENCE", Color.red, _pack.def.sku, _pack.type.ToString());
+						m_newOfferPersistanceData[_pack.type].RemoveAt(i);	// We will interrupt the loop by setting the found flag to true, so there is no problem in removing an element at this point
+					}
                     found = true;
-                    m_newOfferPersistanceData[_pack.type][i] = _pack.Save();
                 }
-                else
-                {
-                    string customId = OffersManager.GenerateTrackingOfferName( _pack.def );
-                    string storeCustomId = "";
-                    if ( offers[i].ContainsKey("customId") )
-                    {
-                        storeCustomId = offers[i]["customId"];
-                    }
-                    if ( customId == storeCustomId )
-                    {
-                        found = true;
-                        m_newOfferPersistanceData[_pack.type][i] = _pack.Save();
-                    }
+
+				// If it's a pushed offer, check customization ID
+				else {
+					// Only if it actually needs to be persisted!
+					if(shouldBePersisted) {
+						if(offers[i].ContainsKey("customId")) {
+							string customId = OffersManager.GenerateTrackingOfferName(_pack.def);
+							if(customId == offers[i]["customId"]) {
+								m_newOfferPersistanceData[_pack.type][i] = _pack.Save();
+								found = true;
+							}
+						}
+					}
                 }
             }
         }
-        if (!found){
-            m_newOfferPersistanceData[_pack.type].Add( _pack.Save() );
+
+		// If we couldn't find existing data for this offer pack, add it!
+        if(!found && shouldBePersisted) {
+            m_newOfferPersistanceData[_pack.type].Add(_pack.Save());
         }
-		
 	}
 
 	/// <summary>
@@ -2122,46 +2240,7 @@ public class UserProfile : UserPersistenceSystem
         }
         
 	}
-
-
-    /// <summary>
-    /// Load persistence data corresponding to a happy hour offer if there is any.
-    /// </summary>
-    public void LoadHappyHour (HappyHourOffer _happyHour)
-    {
-        if (_happyHour != null)
-        {
-            // If the values persisted are consistent
-            if (m_happyHourExpirationTime != DateTime.MinValue && m_happyHourExtraGemsRate != 0)
-            {
-                _happyHour.expirationTime = m_happyHourExpirationTime;
-                _happyHour.extraGemsFactor = m_happyHourExtraGemsRate;
-            }
-
-			// Last purchased pack is not so much critical, no need for extra checks
-			if(!string.IsNullOrEmpty(m_happyHourLastPackSku)) {
-				_happyHour.lastPackDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SHOP_PACKS, m_happyHourLastPackSku);
-			} else {
-				_happyHour.lastPackDef = null;
-			}
-        }
-    }
-
-
-    public void SaveHappyHour (HappyHourOffer _happyHour)
-    {
-        if (_happyHour != null)
-        {
-            m_happyHourExpirationTime = _happyHour.expirationTime;
-            m_happyHourExtraGemsRate = _happyHour.extraGemsFactor;
-			if(_happyHour.lastPackDef != null) {
-				m_happyHourLastPackSku = _happyHour.lastPackDef.sku;
-			} else {
-				m_happyHourLastPackSku = string.Empty;
-			}
-        }
-    }
-
+	
     /// <summary>
     /// Load persistence data corresponding to a ads removal offer if there is any.
     /// </summary>

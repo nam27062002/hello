@@ -45,7 +45,7 @@ public class PopupHappyHour : MonoBehaviour {
     private PopupShopCurrencyPill m_offerToDisplay;
 
     // Internal
-    private HappyHourOffer m_happyHour;
+    private HappyHour m_happyHour;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -63,7 +63,7 @@ public class PopupHappyHour : MonoBehaviour {
 	/// <param name="_lastPackDef">Definition of the pack that will be shown in the popup</param>
 	public void Init(DefinitionNode _lastPackDef) {
 
-        m_happyHour = OffersManager.instance.happyHour;
+        m_happyHour = OffersManager.happyHourManager.happyHour;
 
         // If the happy hour is currently active
         if (m_happyHour != null && m_happyHour.IsActive())
@@ -97,11 +97,8 @@ public class PopupHappyHour : MonoBehaviour {
 	/// </summary>
 	private void OnEnable() {
 
-        if (m_happyHour != null)
-        {
-            // We are showing the popup, so mark the pending popup flag as false
-            m_happyHour.pendingPopup = false;
-        }
+        // We are showing the popup, so mark the pending popup flag as false
+        OffersManager.happyHourManager.pendingPopup = false;
 
 		// Refresh offer pill once per second
 		InvokeRepeating("UpdatePeriodic", 0f, REFRESH_FREQUENCY);
