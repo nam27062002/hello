@@ -148,12 +148,12 @@ public class OfferPack {
 	protected PayerType m_payerType = PayerType.ANYONE;
 	protected int m_minSpent = 0;
 	protected int m_maxSpent = int.MaxValue;
-	protected int m_maxPurchasePrice = -1;
+	protected RangeInt m_maxPurchasePrice = null;
 	protected int m_minNumberOfPurchases = 0;
 
 	protected long m_secondsSinceLastPurchase = 0;
-	protected int m_lastPurchasePrice = -1;
-	protected string m_lastPurchaseItemType = string.Empty;
+	protected RangeInt m_lastPurchasePrice = null;
+	protected string[] m_lastPurchaseItemType = new string[0];
 	protected string[] m_lastPurchaseItemContent = new string[0];
 
 	protected string[] m_dragonUnlocked = new string[0];
@@ -323,12 +323,12 @@ public class OfferPack {
 		m_payerType = PayerType.ANYONE;
 		m_minSpent = 0;
 		m_maxSpent = int.MaxValue;
-		m_maxPurchasePrice = -1;
+		m_maxPurchasePrice = null;
 		m_minNumberOfPurchases = 0;
 
 		m_secondsSinceLastPurchase = 0;
-		m_lastPurchasePrice = -1;
-		m_lastPurchaseItemType = string.Empty;
+		m_lastPurchasePrice = null;
+		m_lastPurchaseItemType = new string[0];
 		m_lastPurchaseItemContent = new string[0];
 
 		m_dragonUnlocked = new string[0];
@@ -445,13 +445,31 @@ public class OfferPack {
 			default:			break;	// Already has the default value
 		}
 		m_minSpent = USDToCents(_def.GetAsFloat("minSpent", m_minSpent / 100f));	// Content in USD (float), we work in cents of USD (int)
-		m_maxSpent = USDToCents(_def.GetAsFloat("maxSpent", m_maxSpent / 100f));	// Content in USD (float), we work in cents of USD (int)
-		m_maxPurchasePrice = USDToCents(_def.GetAsFloat("maxPurchasePrice", m_maxPurchasePrice / 100f));	// Content in USD (float), we work in cents of USD (int)
+		m_maxSpent = USDToCents(_def.GetAsFloat("maxSpent", m_maxSpent / 100f));    // Content in USD (float), we work in cents of USD (int)
+		Range parsedRange = ParseRange(_def, "maxPurchasePrice", null);
+		if(parsedRange != null) {
+			// Content in USD (float), we work in cents of USD (int)
+			m_maxPurchasePrice = new RangeInt(
+				USDToCents(parsedRange.min),
+				USDToCents(parsedRange.max)
+			);
+		} else {
+			m_maxPurchasePrice = null;
+		}
 		m_minNumberOfPurchases = _def.GetAsInt("minNumberOfPurchases", m_minNumberOfPurchases);
 
 		m_secondsSinceLastPurchase = _def.GetAsLong("minutesSinceLastPurchase", m_secondsSinceLastPurchase / 60L) * 60L;        // Content in minutes, we work in seconds
-		m_lastPurchasePrice = USDToCents(_def.GetAsFloat("lastPurchasePrice", m_lastPurchasePrice / 100f));	// Content in USD (float), we work in cents of USD (int)
-		m_lastPurchaseItemType = _def.GetAsString("lastPurchaseItemType", m_lastPurchaseItemType);
+		parsedRange = ParseRange(_def, "lastPurchasePrice", null);
+		if(parsedRange != null) {
+			// Content in USD (float), we work in cents of USD (int)
+			m_lastPurchasePrice = new RangeInt(
+				USDToCents(parsedRange.min),
+				USDToCents(parsedRange.max)
+			);
+		} else {
+			m_lastPurchasePrice = null;
+		}
+		m_lastPurchaseItemType = ParseArray(_def.GetAsString("lastPurchaseItemType"));
 		m_lastPurchaseItemContent = ParseArray(_def.GetAsString("lastPurchaseItemContent"));
 
 		m_dragonUnlocked = ParseArray(_def.GetAsString("dragonUnlocked"));
@@ -520,12 +538,28 @@ public class OfferPack {
 		SetValueIfMissing(ref _def, "payerType", "");
 		SetValueIfMissing(ref _def, "minSpent", (m_minSpent / 100f).ToString(CultureInfo.InvariantCulture));    // Content in USD (float), we work in cents of USD (int)
 		SetValueIfMissing(ref _def, "maxSpent", (m_maxSpent / 100f).ToString(CultureInfo.InvariantCulture));    // Content in USD (float), we work in cents of USD (int)
-		SetValueIfMissing(ref _def, "maxPurchasePrice", (m_maxPurchasePrice / 100f).ToString(CultureInfo.InvariantCulture));    // Content in USD (float), we work in cents of USD (int)
+		if(m_maxPurchasePrice == null) {
+			SetValueIfMissing(ref _def, "maxPurchasePrice", string.Empty);
+		} else {
+			SetValueIfMissing(ref _def, "maxPurchasePrice", string.Join(":", new string[] {
+				// Content in USD (float), we work in cents of USD (int)
+				(m_maxPurchasePrice.min / 100f).ToString(CultureInfo.InvariantCulture),
+				(m_maxPurchasePrice.max / 100f).ToString(CultureInfo.InvariantCulture),
+			}));
+		}
 		SetValueIfMissing(ref _def, "minNumberOfPurchases", m_minNumberOfPurchases.ToString(CultureInfo.InvariantCulture));
 
 		SetValueIfMissing(ref _def, "minutesSinceLastPurchase", (m_secondsSinceLastPurchase / 60L).ToString(CultureInfo.InvariantCulture));
-		SetValueIfMissing(ref _def, "lastPurchasePrice", (m_lastPurchasePrice / 100f).ToString(CultureInfo.InvariantCulture));    // Content in USD (float), we work in cents of USD (int)
-		SetValueIfMissing(ref _def, "lastPurchaseItemType", m_lastPurchaseItemType);
+		if(m_lastPurchasePrice == null) {
+			SetValueIfMissing(ref _def, "lastPurchasePrice", string.Empty);
+		} else {
+			SetValueIfMissing(ref _def, "lastPurchasePrice", string.Join(":", new string[] {
+				// Content in USD (float), we work in cents of USD (int)
+				(m_lastPurchasePrice.min / 100f).ToString(CultureInfo.InvariantCulture),
+				(m_lastPurchasePrice.max / 100f).ToString(CultureInfo.InvariantCulture),
+			}));
+		}
+		SetValueIfMissing(ref _def, "lastPurchaseItemType", string.Join(";", m_lastPurchaseItemType));
 		SetValueIfMissing(ref _def, "lastPurchaseItemContent", string.Join(";", m_lastPurchaseItemContent));
 
 		SetValueIfMissing(ref _def, "dragonUnlocked", string.Join(";", m_dragonUnlocked));
@@ -623,10 +657,10 @@ public class OfferPack {
 			return false;
 		}
 
-		if(m_maxPurchasePrice > 0) {    // Only check if needed
+		if(m_maxPurchasePrice != null) {    // Only check if needed
 			int maxPurchasePrice = (trackingPersistence == null) ? -1 : trackingPersistence.MaxPurchasePrice;
-			if(m_maxPurchasePrice != maxPurchasePrice) {
-				OffersManager.LogPack(this, "    Max Purchase Price... {0} vs {1}", Colors.paleGreen, m_maxPurchasePrice, maxPurchasePrice);
+			if(!m_maxPurchasePrice.Contains(maxPurchasePrice)) {
+				OffersManager.LogPack(this, "    Max Purchase Price... {0} vs {1}", Colors.paleGreen, m_maxPurchasePrice.ToString(), maxPurchasePrice);
 				return false;
 			}
 		}
@@ -638,36 +672,46 @@ public class OfferPack {
 		}
 
 		// Last purchase info
-		if(m_lastPurchasePrice > 0) {	// Only check if needed
+		if(m_lastPurchasePrice != null) {	// Only check if needed
 			int lastPurchasePrice = (trackingPersistence == null) ? 0 : trackingPersistence.LastPurchasePrice;
-			if(m_lastPurchasePrice != lastPurchasePrice) {
-				OffersManager.LogPack(this, "    Last Purchase Price... {0} vs {1}", Colors.paleGreen, m_lastPurchasePrice, lastPurchasePrice);
+			if(!m_lastPurchasePrice.Contains(lastPurchasePrice)) {
+				OffersManager.LogPack(this, "    Last Purchase Price... {0} vs {1}", Colors.paleGreen, m_lastPurchasePrice.ToString(), lastPurchasePrice);
 				return false;
 			}
 		}
 
-		if(!string.IsNullOrEmpty(m_lastPurchaseItemType)) { // Only check if needed
+		if(m_lastPurchaseItemType.Length > 0) { // Only check if needed
 			// Comparison will fail if tracking persistence is not valid
 			string lastPurchaseItemType = (trackingPersistence == null) ? string.Empty : trackingPersistence.LastPurchaseItemType;
-			if(m_lastPurchaseItemType.ToLowerInvariant() != lastPurchaseItemType.ToLowerInvariant()) {  // Minimize typos by comparing in lowercase
-				OffersManager.LogPack(this, "    Last Purchase Item Type... {0} vs {1}", Colors.paleGreen, m_lastPurchaseItemType, lastPurchaseItemType);
+			bool matchFound = false;
+			for(int i = 0; i < m_lastPurchaseItemType.Length; ++i) {
+				// Minimize typos by comparing in lowercase
+				if(m_lastPurchaseItemType[i].ToLowerInvariant() == lastPurchaseItemType.ToLowerInvariant()) {
+					matchFound = true;
+					break;	// No need to keep looping
+				}
+			}
+			if(!matchFound) {  
+				OffersManager.LogPack(this, "    Last Purchase Item Type... {0} vs {1}", Colors.paleGreen, m_lastPurchaseItemType.ToStringValues(), lastPurchaseItemType);
 				return false;
 			}
 
 			// Content is only checked if type matches
-			if(m_lastPurchaseItemContent.Length > 0) {  // Only check if needed
+			// Don't check content if more than one type was defined
+			if(m_lastPurchaseItemContent.Length > 0 && m_lastPurchaseItemType.Length == 1) {  // Only check if needed
 				// No need to check tracking persistence validity, it will already have failed with the type comparison and we will not reach this point
 				// Check all possible values for an exact match - if not found, offer can't be activated
 				string lastPurchaseItemContent = trackingPersistence.LastPurchaseItemContent;
-				bool matchFound = false;
+				matchFound = false;
 				for(int i = 0; i < m_lastPurchaseItemContent.Length; ++i) {
-					if(m_lastPurchaseItemContent[i] == lastPurchaseItemContent) {
+					// Minimize typos by comparing in lowercase
+					if(m_lastPurchaseItemContent[i].ToLowerInvariant() == lastPurchaseItemContent.ToLowerInvariant()) {
 						matchFound = true;
 						break;	// No need to keep looping
 					}
 				}
 				if(!matchFound) {
-					OffersManager.LogPack(this, "    Last Purchase Item Content... {0} vs {1}", Colors.paleGreen, m_lastPurchaseItemContent, trackingPersistence.LastPurchaseItemContent);
+					OffersManager.LogPack(this, "    Last Purchase Item Content... {0} vs {1}", Colors.paleGreen, m_lastPurchaseItemContent.ToStringValues(), trackingPersistence.LastPurchaseItemContent);
 					return false;
 				}
 			}
@@ -1160,6 +1204,30 @@ public class OfferPack {
 	}
 
 	/// <summary>
+	/// Parse a range from a DefinitionNode property.
+	/// </summary>
+	/// <param name="_def">Definition to be parsed.</param>
+	/// <param name="_propertyKey">ID of the property containing the range data.</param>
+	/// <param name="_defaultValue">Default range data if property not found or not valid.</param>
+	/// <returns>New range initialized with data parsed from the input definition-property. <paramref name="_defaultValue"/> if property not found or not valid.</returns>
+	public static Range ParseRange(DefinitionNode _def, string _propertyKey, Range _defaultValue = null) {
+		// If invalid definition, return default value
+		if(_def == null) return _defaultValue;
+
+		// If the definition doesn't have this property, default
+		if(!_def.Has(_propertyKey)) return _defaultValue;
+
+		// If property value is empty or default, return default
+		string rangeStr = _def.GetAsString(_propertyKey);
+		if(string.IsNullOrEmpty(rangeStr) || rangeStr == OffersManager.settings.emptyValue) {
+			return _defaultValue;
+		}
+
+		// All checks passed! We can proceed with the parsing
+		return ParseRange(rangeStr);
+	}
+
+	/// <summary>
 	/// Custom range parser. Do it here to avoid changing Calety -_-
 	/// </summary>
 	/// <returns>New range initialized with data parsed from the input string.</returns>
@@ -1181,6 +1249,30 @@ public class OfferPack {
 		}
 
 		return r;
+	}
+
+	/// <summary>
+	/// Parse a range from a DefinitionNode property.
+	/// </summary>
+	/// <param name="_def">Definition to be parsed.</param>
+	/// <param name="_propertyKey">ID of the property containing the range data.</param>
+	/// <param name="_defaultValue">Default range data if property not found or not valid.</param>
+	/// <returns>New range initialized with data parsed from the input definition-property. <paramref name="_defaultValue"/> if property not found or not valid.</returns>
+	public static RangeInt ParseRangeInt(DefinitionNode _def, string _propertyKey, RangeInt _defaultValue = null) {
+		// If invalid definition, return default value
+		if(_def == null) return _defaultValue;
+
+		// If the definition doesn't have this property, default
+		if(!_def.Has(_propertyKey)) return _defaultValue;
+
+		// If property value is empty or default, return default
+		string rangeStr = _def.GetAsString(_propertyKey);
+		if(string.IsNullOrEmpty(rangeStr) || rangeStr == OffersManager.settings.emptyValue) {
+			return _defaultValue;
+		}
+
+		// All checks passed! We can proceed with the parsing
+		return ParseRangeInt(rangeStr);
 	}
 
 	/// <summary>
