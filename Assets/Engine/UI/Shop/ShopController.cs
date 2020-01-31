@@ -8,6 +8,7 @@
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
 using DG.Tweening;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -44,7 +45,7 @@ public class ShopController : MonoBehaviour {
     //Internal
     private float m_timer = 0; // Refresh timer
     private bool m_scrolling = false; // The tweener scrolling animation is running
-    private bool m_hidePillsOutOfView = false; 
+
 
     // Cache the category containers and pills
     private List<CategoryController> m_categoryContainers;
@@ -53,18 +54,23 @@ public class ShopController : MonoBehaviour {
     // Shortcuts
     private List<ShopCategoryShortcut> m_shortcuts; 
     private Dictionary<string, ShopCategoryShortcut> m_skuToShorcut; // Cache the sku-shortcut pair to improve performance
+    private string m_lastShortcut;
 
     // Keep the bounds of the current category, so we dont recalculate every time the user scrolls the shop
     private float categoryLeftBorder, categoryRightBorder;
 
-    // Disable pills that are outside of the visible scrollable panel
-    private float normalizedViewportWidth;
 
-    // Performance utils
+    // Optimization #1: disable layouts after refresh
     private bool layoutGropusActive = false;
     private bool disableLayoutsGroupsInNextFrame = false; // If true, disable layout groups in the next update
 
+    // Optimization #2: Disable pills that are outside of the visible scrollable panel
+    private float normalizedViewportWidth;
+    private bool m_hidePillsOutOfView = false;
 
+    // Optimization #3: initialize one pill per frame
+    private Queue<ShopCategory> categoriesToInitialize;
+    private CategoryController catBeingInitialized;
 
 
     //------------------------------------------------------------------------//
@@ -78,6 +84,7 @@ public class ShopController : MonoBehaviour {
         m_skuToShorcut = new Dictionary<string, ShopCategoryShortcut>();
         m_categoryContainers = new List<CategoryController>();
         m_pills = new List<IPopupShopPill>();
+        categoriesToInitialize = new Queue<ShopCategory>();
     }
 
 	/// <summary>
@@ -91,26 +98,9 @@ public class ShopController : MonoBehaviour {
         Messenger.AddListener(MessengerEvents.OFFERS_RELOADED, OnOffersReloaded);
         Messenger.AddListener(MessengerEvents.OFFERS_CHANGED, OnOffersChanged);
 
-        // Wait a frame so the layout groups can be rendered
-        UbiBCN.CoroutineManager.DelayedCallByFrames(
-            () => { m_hidePillsOutOfView = true; }, 1
-        );
 
     }
 
-	/// <summary>
-	/// Component has been enabled.
-	/// </summary>
-	private void OnEnable() {
-        //SetLayoutGroupsActive(true);
-    }
-
-	/// <summary>
-	/// Component has been disabled.
-	/// </summary>
-	private void OnDisable() {
-
-	}
 
 	/// <summary>
 	/// Called every frame.
@@ -123,30 +113,117 @@ public class ShopController : MonoBehaviour {
             return;
         }
 
-        if (disableLayoutsGroupsInNextFrame)
+        // Has this category initialization already finished ?
+        if (catBeingInitialized != null && catBeingInitialized.IsFinished())
         {
-            SetLayoutGroupsActive(false);
+            // Keep a reference to the new pills created
+            m_pills.AddRange(catBeingInitialized.offerPills);
+
+            catBeingInitialized = null;
+
+            // Have all the categories been initialized?
+            if (categoriesToInitialize.Count == 0)
+            {
+                // Disable layouts for better performance
+                SetLayoutGroupsActive(false);
+
+                // At the end of initialization, user will be looking at the first category
+                if (m_shortcuts.Count > 0)
+                {
+                    CalculateCategoryBounds(m_shortcuts[0].category);
+                }
+
+                // Hide pills out the view
+                m_hidePillsOutOfView = true;
+            }
         }
 
-        // Enable the layout groups just for one frame, then disable them for better performance 
-        if ( layoutGropusActive )
+        // Initialize the next category in the queue
+        if (categoriesToInitialize.Count > 0)
         {
-            disableLayoutsGroupsInNextFrame = true;
+            if (catBeingInitialized == null)
+            {
+                ShopCategory cat = categoriesToInitialize.Dequeue();
+                catBeingInitialized = InitializeCategory(cat);
+            }
         }
-
     }
 
 
-	/// <summary>
-	/// Destructor.
-	/// </summary>
-	private void OnDestroy() {
-
-	}
 
     //------------------------------------------------------------------------//
     // OTHER METHODS														  //
     //------------------------------------------------------------------------//
+
+
+
+    /// <summary>
+    /// Remove all the content of the shop
+    /// </summary>
+    public void Clear()
+    {
+
+        Debug.Log("Clear");
+
+        // Clean the containers
+        m_categoriesContainer.transform.DestroyAllChildren(true);
+        m_shortcutsContainer.transform.DestroyAllChildren(true);
+
+        // Clean categories
+        m_categoryContainers.Clear();
+
+        // Clean pills cache
+        m_pills.Clear();
+
+        // Remove the shortcut references
+        m_shortcuts.Clear();
+        m_skuToShorcut.Clear();
+
+        categoriesToInitialize.Clear();
+
+        layoutGropusActive = false;
+        disableLayoutsGroupsInNextFrame = false;
+        m_hidePillsOutOfView = false;
+
+    }
+
+    /// <summary>
+    /// Initialize the shop with the requested mode. Should be called before opening the popup.
+    /// </summary>
+    /// <param name="_mode">Target mode.</param>
+    public void Init(PopupShop.Mode _mode, string _origin)
+    {
+        int timer = Environment.TickCount;
+
+        Refresh();
+
+        Debug.Log("Init time: " + (Environment.TickCount - timer) + " ms");
+    }
+
+    /// <summary>
+    /// Populate the shop with all the categories, shortcuts and offer pills
+    /// </summary>
+    public void Refresh ()
+    {
+        Clear();
+
+        m_lastShortcut = null;
+
+
+        // Iterate all the active categories
+        foreach (ShopCategory category in OffersManager.instance.activeCategories)
+        {
+            // If this cat is active 
+            if (category.enabled)
+            {
+                // Enqueue the categories so they are initialized one per frame
+                categoriesToInitialize.Enqueue(category);
+            }
+        }
+
+        // Enable layout groups just for one frame
+        SetLayoutGroupsActive(true);
+    }
 
 
     /// <summary>
@@ -167,110 +244,67 @@ public class ShopController : MonoBehaviour {
 
 
     /// <summary>
-    /// Remove all the content of the shop
+    /// Initialize one category and create its shortcut if needed
     /// </summary>
-    public void Clear()
+    /// <param name="_cat">Shop category</param>
+    /// <returns>Reference to the category container created</returns>
+    private CategoryController InitializeCategory (ShopCategory _cat)
     {
 
-        // Clean the containers
-        m_categoriesContainer.transform.DestroyAllChildren(true);
-        m_shortcutsContainer.transform.DestroyAllChildren(true);
+        Debug.Log("Initialize category " + _cat.sku);
 
-        // Clean categories
-        m_categoryContainers.Clear();
+        // Instantiate the shop category
+        string containerPrefabPath = SHOP_CATEGORIES_CONTAINER_PREFABS_PATH + _cat.containerPrefab;
+        CategoryController containerPrefab = Resources.Load<CategoryController>(containerPrefabPath);
 
-        // Clean pills cache
-        m_pills.Clear();
 
-        // Remove the shortcut references
-        m_shortcuts.Clear();
-        m_skuToShorcut.Clear();
-
-        layoutGropusActive = false;
-        disableLayoutsGroupsInNextFrame = false;
-
-    }
-
-    /// <summary>
-    /// Initialize the shop with the requested mode. Should be called before opening the popup.
-    /// </summary>
-    /// <param name="_mode">Target mode.</param>
-    public void Init(PopupShop.Mode _mode, string _origin)
-    {
-        Refresh();
-    }
-
-    /// <summary>
-    /// Populate the shop with all the categories, shortcuts and offer pills
-    /// </summary>
-    public void Refresh ()
-    {
-        Clear();
-
-        string lastShortcut = null;
-
-        // Iterate all the active categories
-        foreach (ShopCategory category in OffersManager.instance.activeCategories)
+        if (containerPrefab == null)
         {
-            // If this cat is active 
-            if (category.enabled)
-            {
-
-                // Instantiate the shop category
-                string containerPrefabPath = SHOP_CATEGORIES_CONTAINER_PREFABS_PATH + category.containerPrefab;
-                CategoryController containerPrefab = Resources.Load<CategoryController>(containerPrefabPath);
-
-
-                if (containerPrefab == null)
-                {
-                    // The container prefab was not found
-                    Debug.LogError("The prefab " + containerPrefabPath + " was not found in the project");
-                    continue;
-                }
-
-                // TODO: Optimize this: dont call twice to this method! (here and inside the category initialization)
-                List<OfferPack> offers = OffersManager.GetOfferPacksByCategory(category);
-
-                // Make sure there are offers in this category
-                if (offers.Count > 0)
-                {
-
-                    CategoryController categoryContainer = Instantiate<CategoryController>(containerPrefab);
-
-                    // Add the category container to the hierarchy
-                    categoryContainer.transform.SetParent(m_categoriesContainer, false);
-                    categoryContainer.Initialize(category, offers);
-
-                    m_pills.AddRange(categoryContainer.offerPills);
-
-                    m_categoryContainers.Add(categoryContainer);
-
-                    // Has a shortcut in the bottom menu?
-                    if (!string.IsNullOrEmpty(category.tidShortcut))
-                    {
-                        // If two categories share a shortcut, dont create it twice
-                        if (lastShortcut != category.tidShortcut)
-                        {
-
-                            // Create a new shortcut :D
-
-                            // Instantiate a shortcut and add it to the bottom bar
-                            ShopCategoryShortcut newShortcut = Instantiate<ShopCategoryShortcut>(m_shortcutPrefab, m_shortcutsContainer, false);
-                            newShortcut.Initialize(category, categoryContainer.transform, this);
-                            m_shortcuts.Add(newShortcut);
-                            m_skuToShorcut.Add(category.sku, newShortcut);
-
-                            // Keep a record of the last shortcut created
-                            lastShortcut = category.tidShortcut;
-                        }
-                    }
-                }
-            }
+            // The container prefab was not found
+            Debug.LogError("The prefab " + containerPrefabPath + " was not found in the project");
+            return null;
         }
 
+        // TODO: Optimize this: dont call twice to this method! (here and inside the category initialization)
+        List<OfferPack> offers = OffersManager.GetOfferPacksByCategory(_cat);
 
-        // Enable layout groups just for one frame
-        SetLayoutGroupsActive(true);
+        // Make sure there are offers in this category
+        if (offers.Count > 0)
+        {
+
+            CategoryController categoryContainer = Instantiate<CategoryController>(containerPrefab);
+
+            // Add the category container to the hierarchy
+            categoryContainer.transform.SetParent(m_categoriesContainer, false);
+            categoryContainer.Initialize(_cat, offers);
+
+            m_categoryContainers.Add(categoryContainer);
+
+            // Has a shortcut in the bottom menu?
+            if (!string.IsNullOrEmpty(_cat.tidShortcut))
+            {
+                // If two categories share a shortcut, dont create it twice
+                if (m_lastShortcut != _cat.tidShortcut)
+                {
+
+                    // Create a new shortcut :D
+
+                    // Instantiate a shortcut and add it to the bottom bar
+                    ShopCategoryShortcut newShortcut = Instantiate<ShopCategoryShortcut>(m_shortcutPrefab, m_shortcutsContainer, false);
+                    newShortcut.Initialize(_cat, categoryContainer.transform, this);
+                    m_shortcuts.Add(newShortcut);
+                    m_skuToShorcut.Add(_cat.sku, newShortcut);
+
+                    // Keep a record of the last shortcut created
+                    m_lastShortcut = _cat.tidShortcut;
+                }
+            }
+
+            return categoryContainer;
+        }
+
+        // Empty category
+        return null;
     }
 
 
@@ -318,12 +352,10 @@ public class ShopController : MonoBehaviour {
     /// </summary>
     /// <param name="pos">The coordenates inside the scrollbar</param>
     /// <returns>SKU of the category</returns>
-    private ShopCategory GetCategoryAtPosition (Vector2 _pos)
+    private ShopCategory GetCategoryAtPosition (float _posX)
     {
         if (m_shortcuts.Count <= 0)
             return null;
-
-        float posX = Mathf.Clamp01(_pos.x);
 
 
         int candidate = m_shortcuts.Count - 1;
@@ -336,7 +368,7 @@ public class ShopController : MonoBehaviour {
             // Get normalized position of the anchor
             Vector2 categoryAnchor = m_scrollRect.GetNormalizedPositionForItem(shortcut.anchor, true);
 
-            if ( posX >= categoryAnchor.x )
+            if (_posX >= categoryAnchor.x )
             {
                 break;
             }
@@ -474,12 +506,14 @@ public class ShopController : MonoBehaviour {
             return;
         }
 
+        float posX = Mathf.Clamp01(_newPos.x);
+
         // Calculate the new category position only when the user moved out of the current category bounds 
-        if (_newPos.x < categoryLeftBorder || _newPos.x > categoryRightBorder)
+        if (posX < categoryLeftBorder || posX > categoryRightBorder)
         {
-            
+
             // What category are we looking at now?
-            ShopCategory focusedCategory = GetCategoryAtPosition(_newPos);
+            ShopCategory focusedCategory = GetCategoryAtPosition(posX);
 
             if (focusedCategory != null)
             {
@@ -491,14 +525,7 @@ public class ShopController : MonoBehaviour {
 
             }
         }
-
-
     }
-
-
-
-
-
 
     /// <summary>
     /// Offers have been reloaded.

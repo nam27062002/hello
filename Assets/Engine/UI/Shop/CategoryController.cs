@@ -37,6 +37,9 @@ public class CategoryController : MonoBehaviour {
     protected ShopController m_shopController;
     protected List<OfferPack> m_offers;
 
+    // Asynch loading for better performance. Initialize one category per frame.
+    private Queue<OfferPack> pillsToInitialize;
+
     protected List<IPopupShopPill> m_offerPills;
     public List<IPopupShopPill> offerPills
         { get { return m_offerPills; } }
@@ -52,7 +55,7 @@ public class CategoryController : MonoBehaviour {
 
         m_offers = new List<OfferPack>();
         m_offerPills = new List<IPopupShopPill>();
-
+        pillsToInitialize = new Queue<OfferPack>();
     }
 
 	/// <summary>
@@ -60,14 +63,21 @@ public class CategoryController : MonoBehaviour {
 	/// </summary>
 	private void Start() {
 
-	}
+
+
+    }
 
 	/// <summary>
 	/// Called every frame.
 	/// </summary>
 	private void Update() {
 
-	}
+        // Initialize one pill each frame
+        if (pillsToInitialize.Count > 0)
+        {
+            InitializePill(pillsToInitialize.Dequeue());
+        }
+    }
 
 	/// <summary>
 	/// Destructor.
@@ -147,6 +157,7 @@ public class CategoryController : MonoBehaviour {
         m_pillsContainer.DestroyAllChildren(true);
         m_offers.Clear();
         m_offerPills.Clear();
+        pillsToInitialize.Clear();
     }
 
     protected virtual void Refresh(List<OfferPack> _offers = null)
@@ -158,7 +169,7 @@ public class CategoryController : MonoBehaviour {
     }
 
     /// <summary>
-    /// Populate the container with all the active offers in this category
+    /// Enqueue all the active offers in this category so they will be initialized progressively
     /// </summary>
     /// <param name="_offers">If null, will query the offers from the offer manager</param>
     protected virtual void PopulatePills (List<OfferPack> _offers = null)
@@ -166,33 +177,47 @@ public class CategoryController : MonoBehaviour {
 
         if (_offers == null)
         {
-            // Get all the offers in this category
+            // If offers are not provided, get them all from the offers manager
             _offers = OffersManager.GetOfferPacksByCategory(m_shopCategory);
         }
 
+        // Enqueue all the offers so they are initialized once per frame
         foreach (OfferPack offer in _offers)
         {
-
-            // Instantiate the offer with the proper prefab
-            IPopupShopPill pill = InstantiatePill(offer.type);
-            
-
-            if (pill != null)
-            {
-                // Initialize the prefab with the offer values
-                pill.InitFromOfferPack(offer);
-
-                // Insert the pill in the container
-                pill.transform.SetParent(m_pillsContainer,false);
-
-                // Keep a record of all the offers, and pills in this category
-                m_offers.Add(offer);
-                m_offerPills.Add(pill);
-
-                pill.gameObject.SetActive(true);
-            }
-
+            pillsToInitialize.Enqueue(offer);
         }
+    }
+
+
+    /// <summary>
+    /// Initialize one pill
+    /// </summary>
+    /// <param name="_offer"></param>
+    private void InitializePill (OfferPack _offer)
+    {
+        // Instantiate the offer with the proper prefab
+        IPopupShopPill pill = InstantiatePill(_offer.type);
+
+
+        if (pill != null)
+        {
+            // Initialize the prefab with the offer values
+            pill.InitFromOfferPack(_offer);
+
+            // Insert the pill in the container
+            pill.transform.SetParent(m_pillsContainer, false);
+
+            // Keep a record of all the offers, and pills in this category
+            m_offers.Add(_offer);
+            m_offerPills.Add(pill);
+
+            // Show the pill with an animation
+            if (pill.gameObject.GetComponent<ShowHideAnimator>() != null)
+            {
+                pill.gameObject.GetComponent<ShowHideAnimator>().ForceShow(true);
+            }
+        }
+
     }
 
 
@@ -203,6 +228,15 @@ public class CategoryController : MonoBehaviour {
     public bool IsEmpty()
     {
         return (m_offers.Count == 0);
+    }
+
+    /// <summary>
+    /// Returns true if the pills initialization has been completed
+    /// </summary>
+    /// <returns></returns>
+    public bool IsFinished ()
+    {
+        return (pillsToInitialize.Count == 0);
     }
 
     /// <summary>
