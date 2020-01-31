@@ -94,17 +94,31 @@ public class DailyRewardView : MetagameRewardView {
 		get { return m_state; }
 		set { m_state = value; Refresh(false); }
 	}
-	
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
 	/// <summary>
+	/// Initialization.
+	/// </summary>
+	public void Awake() {
+		// Subscribe to external events
+		if(m_dragonLoader != null) {
+			m_dragonLoader.onDragonLoaded += OnDragonLoaded;
+		}
+	}
+
+	/// <summary>
 	/// Destructor.
 	/// </summary>
 	public void OnDestroy() {
-		// Unsubscribe from external listeners
+		// Unsubscribe from external events
 		if(m_tooltipTrigger != null) {
 			m_tooltipTrigger.OnTooltipOpen.RemoveListener(OnTooltipOpen);
+		}
+
+		if(m_dragonLoader != null) {
+			m_dragonLoader.onDragonLoaded -= OnDragonLoaded;
 		}
 	}
 
@@ -366,6 +380,23 @@ public class DailyRewardView : MetagameRewardView {
 					powerTooltip.InitFromDefinition(powerDef, PowerIcon.Mode.PET);
 				}
 			} break;
+		}
+	}
+
+	/// <summary>
+	/// Dragon preview has been loaded.
+	/// </summary>
+	/// <param name="_loader">The loader that triggered the event.</param>
+	public void OnDragonLoaded(MenuDragonLoader _loader) {
+		// Remove rigidbody from the dragon so it gets properly positioned (WTF)
+		MenuDragonPreview dragonInstance = _loader.dragonInstance;
+		if(dragonInstance != null) {
+			// Destroy rigidbody
+			Rigidbody rb = dragonInstance.GetComponent<Rigidbody>();
+			if(rb != null) DestroyImmediate(rb);
+
+			// Reset position
+			dragonInstance.transform.localPosition = Vector3.zero;
 		}
 	}
 
