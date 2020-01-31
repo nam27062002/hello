@@ -121,11 +121,19 @@ public class CategoryController : MonoBehaviour {
     /// <param name="enable">True to enable, false to disable</param>
     public void SetLayoutGroupsActive(bool enable)
     {
+        HorizontalOrVerticalLayoutGroup layout;
 
-        GetComponent<VerticalLayoutGroup>().enabled = enable;
+        layout = GetComponent<VerticalLayoutGroup>();
+        if (layout != null) {
+            layout.enabled = enable;
+        }
+
+        layout = m_pillsContainer.GetComponent<HorizontalLayoutGroup>();
+        if (layout != null) {
+            layout.enabled = enable;
+        }
+
         GetComponent<ContentSizeFitter>().enabled = enable;
-
-        m_pillsContainer.GetComponent<HorizontalLayoutGroup>().enabled = enable;
         m_pillsContainer.GetComponent<ContentSizeFitter>().enabled = enable;
         
     }

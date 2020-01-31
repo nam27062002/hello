@@ -21,8 +21,8 @@ GameObject:
   - component: {fileID: 224590603294021140}
   - component: {fileID: 222069518619542078}
   - component: {fileID: 114824975474407700}
-  - component: {fileID: 114552430952135972}
   - component: {fileID: 114542344696228640}
+  - component: {fileID: 114931935338649542}
   m_Layer: 5
   m_Name: PF_BaseCategoryContainer
   m_TagString: Untagged
@@ -74,28 +74,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_HorizontalFit: 1
   m_VerticalFit: 0
---- !u!114 &114552430952135972
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1245851671682910}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: -405508275, guid: f70555f144d8491a825f0804e09c671c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Padding:
-    m_Left: 0
-    m_Right: 0
-    m_Top: 0
-    m_Bottom: 0
-  m_ChildAlignment: 0
-  m_Spacing: 20
-  m_ChildForceExpandWidth: 0
-  m_ChildForceExpandHeight: 0
-  m_ChildControlWidth: 0
-  m_ChildControlHeight: 0
 --- !u!114 &114810539380999140
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -136,6 +114,28 @@ MonoBehaviour:
     type: 2}
   m_removeAdsPillPrefab: {fileID: 114979198934820670, guid: ab3198143d9f93b46a0ad7370886dc7d,
     type: 2}
+--- !u!114 &114931935338649542
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1245851671682910}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 1297475563, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Padding:
+    m_Left: 0
+    m_Right: 0
+    m_Top: 0
+    m_Bottom: 0
+  m_ChildAlignment: 0
+  m_Spacing: 0
+  m_ChildForceExpandWidth: 1
+  m_ChildForceExpandHeight: 1
+  m_ChildControlWidth: 0
+  m_ChildControlHeight: 0
 --- !u!222 &222069518619542078
 CanvasRenderer:
   m_ObjectHideFlags: 1
