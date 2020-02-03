@@ -63,7 +63,7 @@ public class UITooltip : MonoBehaviour {
 	/// <summary>
 	/// Initialization.
 	/// </summary>
-	protected void Awake() {
+	protected virtual void Awake() {
 		// Backup some values
 		if(m_arrow != null) {
 			// Original arrow offset

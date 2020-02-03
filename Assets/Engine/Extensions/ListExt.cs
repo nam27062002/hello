@@ -8,6 +8,7 @@
 //----------------------------------------------------------------------//
 using UnityEngine;
 using System;
+using System.Text;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -233,5 +234,50 @@ public static class ListExt {
 	public static void Resize<T>(this T[] _array, int _length) {
 		// System library makes it easy for us
 		System.Array.Resize(ref _array, _length);
+	}
+
+	/// <summary>
+	/// Dump the values of an array.
+	/// </summary>
+	/// <param name="_array">The array to be printed.</param>
+	/// <param name="_singleLine">Do it in a single line or multiple lines?</param>
+	/// <returns>A string showing the items of the array.</returns>
+	public static string ToStringValues<T>(this T[] _array, bool _singleLine = true) {
+		// Use a StringBuilder to concatenate strings
+		StringBuilder sb = new StringBuilder();
+
+		// Opening bracket
+		if(_singleLine) sb.Append("[");
+
+		// Print items
+		int items = _array.Length;
+		for(int i = 0; i < items; ++i) {
+			sb.Append(_array[i].ToString());
+			if(i < items - 1) {
+				if(_singleLine) {
+					sb.Append(", ");
+				} else {
+					sb.AppendLine();
+				}
+			}
+		}
+
+		// Closing bracket
+		if(_singleLine) sb.Append("]");
+
+		// Done!
+		return sb.ToString();
+	}
+
+	/// <summary>
+	/// Dump the values of an array.
+	/// </summary>
+	/// <param name="_list">The array to be printed.</param>
+	/// <param name="_singleLine">Do it in a single line or multiple lines?</param>
+	/// <returns>A string showing the items of the array.</returns>
+	public static string ToStringValues<T>(this List<T> _list, bool _singleLine = true) {
+		// Convert the list to array and use the array version of this method
+		// Suboptimal, but this is mostly used for debug anyway so don't care much
+		return _list.ToArray<T>().ToStringValues(_singleLine);
 	}
 }
