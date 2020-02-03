@@ -190,32 +190,58 @@ public class GameServerManagerOffline : GameServerManagerCalety {
 		return TimeUtils.DateToTimestamp(_startDate.AddDays(7)).ToString(JSON_FORMAT); // Lasts 7 days
 	}
 
+    private SimpleJSON.JSONNode GetRemoveAdsTransactionAsJSON(string orderId)
+    {
+        SimpleJSON.JSONNode _transaction = new SimpleJSON.JSONClass();
+        _transaction["order_id"] = orderId;
+        _transaction["source"] = "support";
+        _transaction["action"] = "restore";
+
+        SimpleJSON.JSONArray _items = new SimpleJSON.JSONArray();
+
+        // Item egg:eggEvent:1
+        SimpleJSON.JSONNode _item = new SimpleJSON.JSONClass();
+        _item["type"] = "removeAds";
+        _item["amount"] = "1";
+        _items.Add(_item);
+
+        _transaction["items"] = _items;
+
+        return _transaction;
+    }
+
     public override void GetPendingTransactions(ServerCallback _callback) {
         // JSON response
         SimpleJSON.JSONArray _array = new SimpleJSON.JSONArray();
 
-        // T1: pc:1
-        SimpleJSON.JSONNode _transaction = new SimpleJSON.JSONClass();        
-        _transaction["order_id"] = "1";
+        int orderId = 0;
+        SimpleJSON.JSONNode _transaction;       
+
+        // T1: pc:1    
+        orderId++;
+        _transaction = new SimpleJSON.JSONClass();             
+        _transaction["order_id"] = orderId + "";
         _transaction["source"] = "support";
         _transaction[Transaction.KEY_HC] = 1;        
         _array.Add(null, _transaction);
 
         // T2: sc:100 
+        orderId++;
         _transaction = new SimpleJSON.JSONClass();
-        _transaction["order_id"] = "2";
+        _transaction["order_id"] = orderId + "";
         _transaction["source"] = "support";        
         _transaction[Transaction.KEY_SC] = 100000;
-        _array.Add(null, _transaction);        
+        _array.Add(null, _transaction);
 
-        // T3: gf:2 
+        // T3: gf:2
+        orderId++;
         _transaction = new SimpleJSON.JSONClass();
-        _transaction["order_id"] = "3";
+        _transaction["order_id"] = orderId + "";
         _transaction["source"] = "support";
         _transaction[Transaction.KEY_GF] = 2;
         _array.Add(null, _transaction);
 
-        // T3: Items
+        // T4: Items
         SimpleJSON.JSONArray _items = new SimpleJSON.JSONArray();
 
         // Item egg:eggEvent:1
@@ -240,10 +266,20 @@ public class GameServerManagerOffline : GameServerManagerCalety {
         _items.Add(_item);
 
         _transaction = new SimpleJSON.JSONClass();
-        _transaction["order_id"] = "4";
+        _transaction["order_id"] = orderId + "";
         _transaction["source"] = "support";
         _transaction["items"] = _items;
-        _array.Add(null, _transaction);                
+        _array.Add(null, _transaction);
+
+        // T4: remove ads
+        orderId++;
+        _transaction = GetRemoveAdsTransactionAsJSON(orderId + "");
+        _array.Add(null, _transaction);
+
+        // T5: remove ads. Twice so we can test that it's given only once
+        orderId++;
+        _transaction = GetRemoveAdsTransactionAsJSON(orderId + "");
+        _array.Add(null, _transaction);
 
         SimpleJSON.JSONNode _json = new SimpleJSON.JSONClass();
         _json["txs"] = _array;

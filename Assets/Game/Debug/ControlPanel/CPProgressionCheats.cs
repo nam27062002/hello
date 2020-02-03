@@ -254,7 +254,7 @@ public class CPProgressionCheats : MonoBehaviour {
 
 		// Set xp
 		DragonDataClassic dataClassic = data as DragonDataClassic;
-		dataClassic.progression.SetXp_DEBUG(_xp);
+		dataClassic.progression.SetXp(_xp);
 
 		// Check which skins should be unlocked (Wardrobe does all the hard work for us)
 		Wardrobe wardrobe = UsersManager.currentUser.wardrobe;
@@ -481,6 +481,7 @@ public class CPProgressionCheats : MonoBehaviour {
     /// </summary>
     public void OnEndHappyHour()
     {
-        OffersManager.instance.happyHour.EndOffer();
+        OffersManager.happyHourManager.happyHour.Finish();
+		OffersManager.happyHourManager.Save();
     }
 }

@@ -63,7 +63,7 @@ public class PopupShop : MonoBehaviour {
 
     //Internal
     private float m_timer = 0; // Refresh timer
-    private HappyHourOffer m_happyHour;
+    private HappyHour m_happyHour = null;
 
     //------------------------------------------------------------------//
     // GENERIC METHODS													//
@@ -81,7 +81,32 @@ public class PopupShop : MonoBehaviour {
 	/// <param name="_mode">Target mode.</param>
 	public void Init(Mode _mode, string _origin ) {
 
+
         m_shopController.Init(_mode, _origin);
+
+
+       
+	}
+
+	/// <summary>
+	/// Called every frame.
+	/// </summary>
+    public void Update()
+    {
+            // Refresh offers periodically for better performance
+            if (m_timer <= 0)
+            {
+                m_timer = 1f; // Refresh every second
+                Refresh();
+            }
+            m_timer -= Time.deltaTime;
+    }
+
+	/// <summary>
+	/// Periodic refresh.
+	/// </summary>
+    public void Refresh ()
+    {
 
     }
 
