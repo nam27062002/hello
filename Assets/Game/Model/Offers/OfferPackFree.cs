@@ -90,6 +90,21 @@ public class OfferPackFree : OfferPack {
 		return (oldState != m_state);
 	}
 
+	/// <summary>
+	/// In the particular case of the offers, we only need to persist them in specific cases.
+	/// </summary>
+	/// <returns>Whether the offer should be persisted or not.</returns>
+	public override bool ShouldBePersisted() {
+		// Never if definition is not valid
+		if(m_def == null) return false;
+
+		// For free offers, yes if active!
+		if(m_state == State.ACTIVE) return true;
+
+		// Default logic
+		return base.ShouldBePersisted();
+	}
+
 	//------------------------------------------------------------------------//
 	// CUSTOM METHODS														  //
 	//------------------------------------------------------------------------//

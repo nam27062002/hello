@@ -357,7 +357,7 @@ public class Entity : IEntity, IBroadcastListener {
                 m_checkOnScreenTimer = 0.5f;
             }
 
-			m_isEdibleByZ = m_machine.position.z <= 15f;
+			// m_isEdibleByZ = m_machine.position.z <= 15f;
         }
 	}
 

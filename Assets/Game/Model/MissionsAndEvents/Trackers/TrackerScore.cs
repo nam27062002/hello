@@ -89,8 +89,15 @@ public class TrackerScore : TrackerBase {
 	/// <param name="_reward">The reward.</param>
 	/// <param name="_entity">The source entity, optional.</param>
 	private void OnRewardApplied(Reward _reward, Transform _entity) {
-		// We only care about score rewards
-		if(_reward.score > 0) {
+
+        // In we are in the tutorial, do not register score in the mission tracker (Fix bug HDK-6347)
+        if (UsersManager.currentUser.gamesPlayed < GameSettings.ENABLE_MISSIONS_AT_RUN)
+        {
+            return;
+        }
+
+        // We only care about score rewards
+        if (_reward.score > 0) {
 			m_score += _reward.score;
 			currentValue = Mathf.FloorToInt(m_score);
 		}

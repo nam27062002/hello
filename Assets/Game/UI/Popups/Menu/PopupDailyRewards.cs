@@ -155,6 +155,7 @@ public class PopupDailyRewards : MonoBehaviour, IBroadcastListener {
 
 			// Depending on reward type, either show simple feedback or trigger rewards flow
 			switch(collectedReward.type) {
+				case Metagame.RewardDragon.TYPE_CODE:
 				case Metagame.RewardEgg.TYPE_CODE:
 				case Metagame.RewardPet.TYPE_CODE: {
 					// Program the reward flow, will be triggered once the popup is closed

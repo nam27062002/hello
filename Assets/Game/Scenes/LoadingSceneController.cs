@@ -227,6 +227,8 @@ public class LoadingSceneController : SceneController {
     
     private Downloadables.Handle m_downloadablesHandle;
 
+    private bool m_needsToLoadMenu = false;
+
     //------------------------------------------------------------------//
     // GENERIC METHODS													//
     //------------------------------------------------------------------//
@@ -305,6 +307,7 @@ public class LoadingSceneController : SceneController {
         // [AOC] TEMP!! Simulate loading time with a timer for now
         timer = 0;
         m_stateDuration = 0;
+        m_needsToLoadMenu = false;
 
         // [AOC] This is a safe place to instantiate all the singletons
         //		 Do it now so we have it under control
@@ -572,6 +575,13 @@ public class LoadingSceneController : SceneController {
             }break;
             case State.DONE:
             {
+                if (m_needsToLoadMenu)
+                {
+                    m_needsToLoadMenu = false;
+
+                   // Loads main menu scene
+                   FlowManager.GoToMenu();
+                }
             }break;        
             default:
     		{
@@ -855,13 +865,13 @@ public class LoadingSceneController : SceneController {
 
             case State.DONE:
             {
+                // We need to do this before applying the customizer in order to prevent the game from staying in the loading screen if applying the customizer throws an exception
+                m_needsToLoadMenu = true;                                        
+
                 // Checks if customizer has to be applied. It has to be done here in order to maximize user's chances of getting server time, which
                 // is important because it might decide which offers the user will see
-                HDCustomizerManager.instance.CheckAndApply();
-
-                // Loads main menu scene
-                FlowManager.GoToMenu();
-            }break;
+                HDCustomizerManager.instance.CheckAndApply();                
+            }break;                            
         }
     }
 

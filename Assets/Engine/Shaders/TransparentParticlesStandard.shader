@@ -40,6 +40,7 @@ Shader "Hungry Dragon/Particles/Transparent particles standard"
 		[Toggle(NOISE_TEXTURE_ALPHA)] _EnableNoiseTextureAlpha("Enable noise texture alpha", int) = 0.0
 		[Toggle(NOISE_TEXTURE_DISSOLVE)] _EnableNoiseTextureDissolve("Enable noise texture dissolve", int) = 0.0
 		[Toggle(NOISEUV)] _EnableNoiseUV("Enable noise uv channel", int) = 0.0
+		[Toggle(NOISE_SCREENMAP)] _EnableScreenMapNoise("Enable screen map noise", int) = 0.0
 
 		[Toggle(FLOWMMAP)] _EnableFlowMap("Enable flow map", int) = 0.0
 
@@ -81,6 +82,7 @@ Shader "Hungry Dragon/Particles/Transparent particles standard"
 				#pragma shader_feature _ NOISE_TEXTURE_ALPHA
 				#pragma shader_feature _ NOISE_TEXTURE_DISSOLVE
 				#pragma shader_feature _ NOISEUV
+				#pragma shader_feature _ NOISE_SCREENMAP
 
 				#pragma shader_feature _ FLOWMAP
 

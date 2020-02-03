@@ -17,10 +17,12 @@ using UnityEngine;
 /// Does nothing for now, used for the custom editor utilities.
 /// </summary>
 public class PopupDragonInfoEntitesLayout : MonoBehaviour {
-	//------------------------------------------------------------------------//
-	// CONSTANTS															  //
-	//------------------------------------------------------------------------//
-	
+    //------------------------------------------------------------------------//
+    // CONSTANTS															  //
+    //------------------------------------------------------------------------//
+
+    public const string FOG_PARAMETER = "FOG";
+
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
@@ -35,11 +37,31 @@ public class PopupDragonInfoEntitesLayout : MonoBehaviour {
 
 	}
 
-	//------------------------------------------------------------------------//
-	// OTHER METHODS														  //
-	//------------------------------------------------------------------------//
+    /// <summary>
+    /// Process the destructible prefabs after they have been loaded.
+    /// </summary>
+    public void ProcessDestructiblePrefab ()
+    {
+        // [JOM] With this we fix the bug HDK-6464:
+        // Set the fog parameter to disable, as this parameter is breaking the prefab in the rewards screen
 
-	//------------------------------------------------------------------------//
-	// CALLBACKS															  //
-	//------------------------------------------------------------------------//
+        foreach (MeshRenderer renderer in GetComponentsInChildren<MeshRenderer>())
+        {
+            foreach (Material material in renderer.materials)
+            {
+                if (material.IsKeywordEnabled(FOG_PARAMETER))
+                {
+                    material.DisableKeyword(FOG_PARAMETER);
+                }
+            }
+        }
+    }
+
+    //------------------------------------------------------------------------//
+    // OTHER METHODS														  //
+    //------------------------------------------------------------------------//
+
+    //------------------------------------------------------------------------//
+    // CALLBACKS															  //
+    //------------------------------------------------------------------------//
 }

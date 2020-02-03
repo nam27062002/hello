@@ -80,6 +80,7 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
         readonly public static string enableNoiseTextureText = "Enable noise texture";
         readonly public static string noiseTextureText = "Noise texture";
         readonly public static string enableNoiseUVchannelText = "Enable noise UV channel";
+        readonly public static string screenmapNoiseText = "Screen map noise";
         readonly public static string noiseTextureEmissionText = "R: Emission";
         readonly public static string noiseTextureAlphaText = "G: Alpha";
         readonly public static string noiseTextureDissolveText = "B: Dissolve";
@@ -131,6 +132,7 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
     MaterialProperty mp_enableRBGColorVertex;
     MaterialProperty mp_enableNoiseTexture;
     MaterialProperty mp_enableNoiseUVChannel;
+    MaterialProperty mp_enableScreenMapNoise;
     MaterialProperty mp_enableNoiseTextureEmission;
     MaterialProperty mp_enableNoiseTextureAlpha;
     MaterialProperty mp_enableNoiseTextureDissolve;
@@ -206,6 +208,7 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
         mp_enableNoiseTextureAlpha = FindProperty("_EnableNoiseTextureAlpha", props);
         mp_enableNoiseTextureDissolve = FindProperty("_EnableNoiseTextureDissolve", props);
         mp_enableNoiseUVChannel = FindProperty("_EnableNoiseUV", props);
+        mp_enableScreenMapNoise = FindProperty("_EnableScreenMapNoise", props);
 
         /// Enum Material PProperties
 
@@ -619,6 +622,8 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
                 materialEditor.ShaderProperty(mp_enableNoiseUVChannel, Styles.enableNoiseUVchannelText);
                 if (mp_enableNoiseUVChannel.floatValue > 0.0f)
                 {
+                    materialEditor.ShaderProperty(mp_enableScreenMapNoise, Styles.screenmapNoiseText);
+
                     materialEditor.TextureProperty(mp_noiseTex, Styles.noiseTextureText, true);
                 }
                 else

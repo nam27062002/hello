@@ -417,7 +417,8 @@ public class AssetFinder : EditorWindow {
 	}
 
 
-    [MenuItem("Hungry Dragon/Balancing/Spawners Rename Part 1")]
+    //[MenuItem("Hungry Dragon/Balancing/Spawners Rename Part 1")]
+    [MenuItem("Hungry Dragon/Balancing/Spawners Rename")]
     public static void SceneSpawnersRenamePart1()
     {
         Spawner[] spawnerList;
@@ -476,9 +477,10 @@ public class AssetFinder : EditorWindow {
 					obj.gameObject.name = prefabName + "-IN"; 
 			}
 		}
+        SceneSpawnersRenamePart2();
     }
 
-	[MenuItem("Hungry Dragon/Balancing/Spawners Rename Part 2")]
+	//[MenuItem("Hungry Dragon/Balancing/Spawners Rename Part 2")]
 	public static void SceneSpawnersRenamePart2()
 	{
 		Spawner[] spawnerList;

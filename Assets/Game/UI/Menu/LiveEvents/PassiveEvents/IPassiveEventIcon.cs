@@ -164,7 +164,7 @@ public abstract class IPassiveEventIcon : MonoBehaviour {
 	/// </summary>
 	public bool RefreshVisibility() {
 		// Never during tutorial
-		if(UsersManager.currentUser.gamesPlayed < GameSettings.ENABLE_TOURNAMENTS_AT_RUN) {
+		if(UsersManager.currentUser.gamesPlayed < GameSettings.ENABLE_PASSIVE_EVENTS_AT_RUN) {
 			m_rootAnim.ForceHide(false);
 			return false;
 		}
