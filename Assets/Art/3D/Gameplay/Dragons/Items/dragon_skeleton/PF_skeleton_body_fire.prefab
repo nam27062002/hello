@@ -37,6 +37,7 @@ GameObject:
   - component: {fileID: 4738141074898132}
   - component: {fileID: 198952571537926302}
   - component: {fileID: 199818758729806434}
+  - component: {fileID: 114500177356730018}
   m_Layer: 0
   m_Name: PS_Sparks
   m_TagString: Untagged
@@ -55,7 +56,7 @@ GameObject:
   - component: {fileID: 198489600530620370}
   - component: {fileID: 199440244975233468}
   m_Layer: 0
-  m_Name: Particle System
+  m_Name: Glow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -71,6 +72,7 @@ GameObject:
   - component: {fileID: 4642216528295568}
   - component: {fileID: 198408854070179354}
   - component: {fileID: 199367285541173574}
+  - component: {fileID: 114111547029759460}
   m_Layer: 0
   m_Name: PS_Sparks
   m_TagString: Untagged
@@ -88,6 +90,7 @@ GameObject:
   - component: {fileID: 4579909101105818}
   - component: {fileID: 198745373102121076}
   - component: {fileID: 199985847370797482}
+  - component: {fileID: 114530296901085590}
   m_Layer: 0
   m_Name: Sparks
   m_TagString: Untagged
@@ -105,6 +108,7 @@ GameObject:
   - component: {fileID: 4059445426275180}
   - component: {fileID: 198066804540059870}
   - component: {fileID: 199626480091306120}
+  - component: {fileID: 114272697832387024}
   m_Layer: 0
   m_Name: PS_Sparks
   m_TagString: Untagged
@@ -153,6 +157,7 @@ GameObject:
   - component: {fileID: 4165478850411246}
   - component: {fileID: 198490747992602324}
   - component: {fileID: 199066392221277786}
+  - component: {fileID: 114672060341629852}
   m_Layer: 0
   m_Name: Particle System
   m_TagString: Untagged
@@ -171,7 +176,7 @@ GameObject:
   - component: {fileID: 198686938183857590}
   - component: {fileID: 199332605274775612}
   m_Layer: 0
-  m_Name: Particle System (2)
+  m_Name: Glow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -251,6 +256,7 @@ GameObject:
   - component: {fileID: 4499819719975462}
   - component: {fileID: 198759736007004086}
   - component: {fileID: 199152654531501666}
+  - component: {fileID: 114539191562348540}
   m_Layer: 0
   m_Name: Particle System (1)
   m_TagString: Untagged
@@ -777,6 +783,34 @@ TrailRenderer:
     generateLightingData: 0
   m_MinVertexDistance: 0.2
   m_Autodestruct: 0
+--- !u!114 &114111547029759460
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1397496123167962}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3128bd630f39645c4a1e03d94b7008f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_transform: {fileID: 4262773726365754}
+  m_resetFirst: 1
+  m_whenScale: 0
+--- !u!114 &114272697832387024
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1450303872056456}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3128bd630f39645c4a1e03d94b7008f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_transform: {fileID: 4262773726365754}
+  m_resetFirst: 1
+  m_whenScale: 0
 --- !u!114 &114288338057793170
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -789,6 +823,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_rotationSpeed: {x: 220, y: -220, z: 195}
+--- !u!114 &114500177356730018
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1262865206394070}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3128bd630f39645c4a1e03d94b7008f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_transform: {fileID: 4262773726365754}
+  m_resetFirst: 1
+  m_whenScale: 0
 --- !u!114 &114504004267437490
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -801,6 +849,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_rotationSpeed: {x: 190, y: -380, z: 250}
+--- !u!114 &114530296901085590
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1424200933186364}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3128bd630f39645c4a1e03d94b7008f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_transform: {fileID: 4262773726365754}
+  m_resetFirst: 1
+  m_whenScale: 0
 --- !u!114 &114539109278721434
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -815,6 +877,34 @@ MonoBehaviour:
   m_attachPoint: 8
   m_sku: 
   m_showOnResults: 1
+--- !u!114 &114539191562348540
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1924223703405460}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3128bd630f39645c4a1e03d94b7008f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_transform: {fileID: 4262773726365754}
+  m_resetFirst: 1
+  m_whenScale: 0
+--- !u!114 &114672060341629852
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1505371623838364}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3128bd630f39645c4a1e03d94b7008f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_transform: {fileID: 4262773726365754}
+  m_resetFirst: 1
+  m_whenScale: 0
 --- !u!114 &114860991844122130
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -887,7 +977,7 @@ ParticleSystem:
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 0
-  randomSeed: -389035848
+  randomSeed: -2017173470
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -4254,7 +4344,7 @@ ParticleSystem:
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 0
-  randomSeed: -1613623417
+  randomSeed: -513535196
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -7621,7 +7711,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 708569812
+  randomSeed: -1706502048
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -10981,8 +11071,8 @@ ParticleSystem:
       m_RotationOrder: 4
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
-  scalingMode: 1
-  randomSeed: 1219675236
+  scalingMode: 0
+  randomSeed: -42994629
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -14349,7 +14439,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -208603660
+  randomSeed: 2131510907
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -17709,8 +17799,8 @@ ParticleSystem:
       m_RotationOrder: 4
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
-  scalingMode: 2
-  randomSeed: 1240600591
+  scalingMode: 0
+  randomSeed: -666776801
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -21121,8 +21211,8 @@ ParticleSystem:
       m_RotationOrder: 4
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
-  scalingMode: 1
-  randomSeed: 1107526744
+  scalingMode: 0
+  randomSeed: 2133970570
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -24489,7 +24579,7 @@ ParticleSystem:
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 0
-  randomSeed: 757659397
+  randomSeed: 981348865
   InitialModule:
     serializedVersion: 3
     enabled: 1
