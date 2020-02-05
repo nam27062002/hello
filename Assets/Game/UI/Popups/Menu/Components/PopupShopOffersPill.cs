@@ -28,31 +28,34 @@ public class PopupShopOffersPill : IPopupShopPill {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
+	protected enum InfoButtonMode {
+		NONE,
+		POPUP,
+		TOOLTIP
+	}
 
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed
+	[Header("Mandatory Fields")]
 	[SerializeField] protected OfferItemSlot[] m_itemSlots = null;
 
 	[Space]
+	[Header("Optional Fields")]
 	[SerializeField] protected Localizer m_packNameText = null;
 	[SerializeField] protected Localizer m_discountText = null;
 	[SerializeField] protected Localizer m_remainingTimeText = null;
+	[SerializeField] protected GameObject m_infoButton = null;
 
 	[Space]
-	//[SerializeField] protected Text m_priceText = null;
-	//[SerializeField] protected Text m_previousPriceText = null;
-	[SerializeField] protected GameObject m_featuredHighlight = null;
+	[SerializeField] private GameObject m_bannerObj = null;
+	[SerializeField] private Localizer m_bannerText = null;
 
 	[Space]
+	[Header("Price Buttons")]
 	[SerializeField] protected MultiCurrencyButton m_priceButtonGroup = null;
 	[SerializeField] protected GameObject m_loadingPricePlaceholder = null;
-
-	[Separator("Optional Decorations")]
-	[SerializeField] protected UIGradient m_backgroundGradient = null;
-	[SerializeField] protected UIGradient m_frameGradientLeft = null;
-	[SerializeField] protected UIGradient m_frameGradientRight = null;
 
 	// Public
 	protected OfferPack m_pack = null;
@@ -65,6 +68,8 @@ public class PopupShopOffersPill : IPopupShopPill {
 	protected float m_previousPrice = 0f;
 	protected bool m_waitingForPrice = false;
 	protected StringBuilder m_sb = new StringBuilder();
+
+	protected InfoButtonMode m_infoButtonMode = InfoButtonMode.NONE;
 
 	// Used to delay some initialization avoiding coroutines
 	List<OfferPackItem> m_itemsToSet = new List<OfferPackItem>();
@@ -129,19 +134,9 @@ public class PopupShopOffersPill : IPopupShopPill {
 			m_discount = Mathf.Clamp(m_discount, 0.01f, 0.99f); // [AOC] Just to be sure input discount is valid
 		}
 		
-		// Init visuals
-		OfferColorGradient gradientSetup = null;
-		if(validDiscount) {
-			gradientSetup = OfferItemPrefabs.GetGradient(m_discount);
-		} else {
-			gradientSetup = OfferItemPrefabs.GetGradient(0.9f);	// [AOC] Hardcoded!! Use high-discount colors
-		}
-
 		// Pack name
 		if(m_packNameText != null) {
 			m_packNameText.Localize(m_pack.def.GetAsString("tidName"));
-			m_packNameText.text.enableVertexGradient = true;
-			m_packNameText.text.colorGradient = Gradient4ToVertexGradient(gradientSetup.titleGradient);
 		}
 
 		// Timer
@@ -155,7 +150,6 @@ public class PopupShopOffersPill : IPopupShopPill {
 		if(m_discountText != null) {
 			m_discountText.gameObject.SetActive(validDiscount);
 			if(validDiscount) {
-				m_discountText.text.colorGradient = Gradient4ToVertexGradient(gradientSetup.discountGradient);
 				m_discountText.Localize(
 					"TID_OFFER_DISCOUNT_PERCENTAGE",
 					StringUtils.FormatNumber(m_discount * 100f, 0)
@@ -163,45 +157,62 @@ public class PopupShopOffersPill : IPopupShopPill {
 			}
 		}
 
-		// Featured highlight
-		if(m_featuredHighlight != null) {
-			m_featuredHighlight.SetActive(m_pack.featured);
+		// Banner
+		if(m_bannerObj != null) {
+			if(m_def.GetAsBool("bestValue", false)) {
+				m_bannerObj.SetActive(true);
+				if(m_bannerText != null) m_bannerText.Localize("TID_SHOP_BEST_VALUE");
+			} else if(m_def.GetAsBool("mostPopular", false)) {
+				m_bannerObj.SetActive(true);
+				if(m_bannerText != null) m_bannerText.Localize("TID_SHOP_MOST_POPULAR");
+			} else {
+				m_bannerObj.SetActive(false);
+			}
 		}
 
+		// Items
 		m_itemsToSet.Clear();
 		m_slotsToSet.Clear();
-		// Items
 		for(int i = 0; i < m_itemSlots.Length; ++i) {
 			// Skip if no slot (i.e. single item layouts)
 			OfferItemSlot slot = m_itemSlots[i];
 			if(slot == null) continue;
 
 			// Start hidden and initialize after some delay
-			// [AOC] We do this because initializing the slots at the same time that the popup is being instantiated results in weird behaviours
+			// [AOC] We do this because initializing the slots at the same time
+			//		 that the popup is being instantiated results in weird behaviours
 			slot.InitFromItem(null);
 			if(i < m_pack.items.Count) {
 				OfferPackItem item = m_pack.items[i];
 				m_itemsToSet.Add(item);
 				m_slotsToSet.Add(slot);
-				/*
-				UbiBCN.CoroutineManager.DelayedCallByFrames(() => {
-					slot.InitFromItem(item);
-				}, 1);
-				 */
 			}
 		}
 
-		// Optional decorations
-		if(m_backgroundGradient != null) {
-			m_backgroundGradient.gradient.Set(gradientSetup.pillBackgroundGradient);
-		}
+		// Info button
+		// Nothing to do if info button not defined
+		if(m_infoButton != null) {
+			// Depending on the amount and content of items, show a tooltip rather than a full popup
+			m_infoButtonMode = InfoButtonMode.POPUP;	// Popup by default
+			if(m_pack.items.Count == 1) {
+				// Only some types
+				switch(m_pack.items[0].type) {
+					// Tooltip cases
+					case Metagame.RewardEgg.TYPE_CODE: {
+						m_infoButtonMode = InfoButtonMode.TOOLTIP;
+					} break;
 
-		if(m_frameGradientLeft != null) {
-			m_frameGradientLeft.gradient.Set(gradientSetup.pillFrameGradient);
-		}
+					// None cases
+					case Metagame.RewardSoftCurrency.TYPE_CODE:
+					case Metagame.RewardHardCurrency.TYPE_CODE:
+					case Metagame.RewardGoldenFragments.TYPE_CODE: {
+						m_infoButtonMode = InfoButtonMode.NONE;
+					} break;
+				}
+			}
 
-		if(m_frameGradientRight != null) {
-			m_frameGradientRight.gradient.Set(gradientSetup.pillFrameGradient);
+			// Set button visibility
+			m_infoButton.SetActive(m_infoButtonMode != InfoButtonMode.NONE);
 		}
 
 		// Price texts
@@ -215,43 +226,36 @@ public class PopupShopOffersPill : IPopupShopPill {
 
         // If localized prices haven't been received from the store yet, wait for it
         bool storeReady = GameStoreManager.SharedInstance.IsReady();
+		if(m_currency == UserProfile.Currency.REAL) {
+			// Loading placeholder
+			if(m_loadingPricePlaceholder != null) m_loadingPricePlaceholder.gameObject.SetActive(!storeReady);
 
-        if (m_currency == UserProfile.Currency.REAL)
-        {
-            // Loading placeholder
-            if (m_loadingPricePlaceholder != null) m_loadingPricePlaceholder.gameObject.SetActive(!storeReady);
+			// Internal flag
+			m_waitingForPrice = !storeReady;
 
-            // Internal flag
-            m_waitingForPrice = !storeReady;
+			// Initialize price
+			// Get localized price
+			m_price = m_def.GetAsFloat("refPrice");
+			StoreManager.StoreProduct productInfo = null;
+			if(GameStoreManager.SharedInstance.IsReady()) {
+				productInfo = GameStoreManager.SharedInstance.GetStoreProduct(GetIAPSku());
+				if(productInfo != null) {
+					// Price is localized by the store api, if available
+					m_price = productInfo.m_fLocalisedPriceValue;
+				}
+			}
 
-            // Initialize price
-            // Get localized price
-            m_price = m_def.GetAsFloat("refPrice");
-            StoreManager.StoreProduct productInfo = null;
-            if (GameStoreManager.SharedInstance.IsReady())
-            {
-                productInfo = GameStoreManager.SharedInstance.GetStoreProduct(GetIAPSku());
-                if (productInfo != null)
-                {
-                    // Price is localized by the store api, if available
-                    m_price = productInfo.m_fLocalisedPriceValue;
-                }
-            }
+			// Compute previous price
+			bool validDiscount = m_discount > 0f;
+			if(validDiscount) {
+				m_previousPrice = m_price / (1f - m_discount);
 
-            // Compute previous price
-            bool validDiscount = m_discount > 0f;
-            if (validDiscount)
-            {
-                m_previousPrice = m_price / (1f - m_discount);
-
-                // [AOC] Beautify original price so it's more credible
-                // 		 Put the same decimal part as the actual price
-                m_previousPrice = Mathf.Floor(m_previousPrice) + (m_price - Mathf.Floor(m_price));
-            }
-            else
-            {
-                m_previousPrice = m_price;
-            }
+				// [AOC] Beautify original price so it's more credible
+				// 		 Put the same decimal part as the actual price
+				m_previousPrice = Mathf.Floor(m_previousPrice) + (m_price - Mathf.Floor(m_price));
+			} else {
+				m_previousPrice = m_price;
+			}
 
 #if DEBUG && false
 		Debug.Log(Colors.yellow.Tag(
@@ -262,85 +266,71 @@ public class PopupShopOffersPill : IPopupShopPill {
 		));
 #endif
 
+			// If store is ready, initialize textfields
+			if(storeReady) {
+				// Price Text
+				string localizedPrice = GetLocalizedIAPPrice(m_price);
 
+				// Original price
+				string localizedPreviousPrice = null;
 
-            // If store is ready, initialize textfields
-            if (storeReady)
-            {
-                // Price Text
-                string localizedPrice = GetLocalizedIAPPrice(m_price);
+				// Don't show if there is no valid discount
+				if(validDiscount) {
+					// [AOC] This gets quite tricky. We will try to keep the format of the 
+					//		 localized price (given by the store), but replacing the actual amount.
+					// Supported cases: "$150" "150€" "$ 150" "150 €"
+					localizedPreviousPrice = StringUtils.FormatNumber(m_previousPrice, 2);
+					string currencySymbol = (productInfo != null) ? productInfo.m_strCurrencySymbol : "$";
 
-                // Original price
-                string localizedPreviousPrice = null;
+					// a) "$150"
+					if(localizedPrice.StartsWith(currencySymbol, StringComparison.InvariantCultureIgnoreCase)) {
+						localizedPreviousPrice = currencySymbol + localizedPreviousPrice;
+					}
 
-                // Don't show if there is no valid discount
-                if (validDiscount)
-                {
-                    // [AOC] This gets quite tricky. We will try to keep the format of the 
-                    //		 localized price (given by the store), but replacing the actual amount.
-                    // Supported cases: "$150" "150€" "$ 150" "150 €"
-                    localizedPreviousPrice = StringUtils.FormatNumber(m_previousPrice, 2);
-                    string currencySymbol = (productInfo != null) ? productInfo.m_strCurrencySymbol : "$";
+					// b) "$ 150"
+					else if(localizedPrice.StartsWith(currencySymbol + " ", StringComparison.InvariantCultureIgnoreCase)) {
+						localizedPreviousPrice = currencySymbol + " " + localizedPreviousPrice;
+					}
 
-                    // a) "$150"
-                    if (localizedPrice.StartsWith(currencySymbol, StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        localizedPreviousPrice = currencySymbol + localizedPreviousPrice;
-                    }
+					// c) "150€"
+					else if(localizedPrice.EndsWith(currencySymbol, StringComparison.InvariantCultureIgnoreCase)) {
+						localizedPreviousPrice = localizedPreviousPrice + currencySymbol;
+					}
 
-                    // b) "$ 150"
-                    else if (localizedPrice.StartsWith(currencySymbol + " ", StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        localizedPreviousPrice = currencySymbol + " " + localizedPreviousPrice;
-                    }
+					// d) "150 €"
+					else if(localizedPrice.EndsWith(" " + currencySymbol, StringComparison.InvariantCultureIgnoreCase)) {
+						localizedPreviousPrice = localizedPreviousPrice + " " + currencySymbol;
+					}
 
-                    // c) "150€"
-                    else if (localizedPrice.EndsWith(currencySymbol, StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        localizedPreviousPrice = localizedPreviousPrice + currencySymbol;
-                    }
+					// e) Anything else
+					else {
+						// Show just the formatted number - nothing to do
+					}
 
-                    // d) "150 €"
-                    else if (localizedPrice.EndsWith(" " + currencySymbol, StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        localizedPreviousPrice = localizedPreviousPrice + " " + currencySymbol;
-                    }
+				}
 
-                    // e) Anything else
-                    else
-                    {
-                        // Show just the formatted number - nothing to do
-                    }
+				// Show the proper currency button
+				if(m_priceButtonGroup != null) {
+					m_priceButtonGroup.SetAmount(localizedPrice, m_currency, localizedPreviousPrice);
 
-                }
+				}
+			}
 
-                // Show the proper currency button
-                if (m_priceButtonGroup != null)
-                {
-                    m_priceButtonGroup.SetAmount(localizedPrice, m_currency, localizedPreviousPrice);
+		} else if(m_currency == UserProfile.Currency.HARD || m_currency == UserProfile.Currency.SOFT) {
+			// Loading placeholder
+			if(m_loadingPricePlaceholder != null) m_loadingPricePlaceholder.gameObject.SetActive(false);
 
-                }
-            }
-            
-        }
-        else if(m_currency == UserProfile.Currency.HARD || m_currency == UserProfile.Currency.SOFT)
-        {
-            // Loading placeholder
-            if (m_loadingPricePlaceholder != null) m_loadingPricePlaceholder.gameObject.SetActive(false);
+			// Round the price, just in case. It shouldnt have decimals for this currency.
+			m_price = Mathf.RoundToInt(m_def.GetAsFloat("refPrice"));
 
-            // Round the price, just in case. It shouldnt have decimals for this currency.
-            m_price = Mathf.RoundToInt (m_def.GetAsFloat("refPrice"));
+			// Show the proper currency button
+			if(m_priceButtonGroup != null) {
+				m_priceButtonGroup.SetAmount(m_price, m_currency);
+			}
+		}
 
-            // Show the proper currency button
-            if (m_priceButtonGroup != null)
-            {
-                m_priceButtonGroup.SetAmount(m_price, m_currency);
-            }
-        }
-
-
-        // Show buttons?
-        if (m_priceButtonGroup != null) {
+		// Show buttons?
+		if (m_priceButtonGroup != null) {
             m_priceButtonGroup.gameObject.SetActive(storeReady);
         }
     }
@@ -439,23 +429,50 @@ public class PopupShopOffersPill : IPopupShopPill {
 	}
 
 	//------------------------------------------------------------------------//
-	// INTERNAL UTILS														  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Convert from Gradient4 to TMP's VertexGradient.
-	/// </summary>
-	/// <returns>TMP's VertexGradient matching input Gradient4.</returns>
-	/// <param name="_gradient">Input Gradient4.</param>
-	protected VertexGradient Gradient4ToVertexGradient(Gradient4 _gradient) {
-		return new VertexGradient(
-			_gradient.topLeft,
-			_gradient.topRight,
-			_gradient.bottomLeft,
-			_gradient.bottomRight
-		);
-	}
-
-	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Info button has been pressed.
+	/// Don't call it if the pack type doesn't require info popup.
+	/// Can be override by heirs, default behaviour is opening the offer info popup.
+	/// </summary>
+	/// <param name="_trackingLocation">Where has this been triggered from?</param>
+	public virtual void OnInfoButton(string _trackingLocation) {
+		// Nothing to do if not initialized
+		if(m_pack == null) return;
+
+		// Tooltip or popup?
+		switch(m_infoButtonMode) {
+			// Popup
+			case InfoButtonMode.POPUP: {
+				// Open offer info popup
+				PopupController popup = PopupManager.LoadPopup(PopupFeaturedOffer.PATH);
+				PopupFeaturedOffer offerPopup = popup.GetComponent<PopupFeaturedOffer>();
+				offerPopup.InitFromOfferPack(m_pack);
+				popup.Open();
+
+				// If defined, send tracking event
+				if(!string.IsNullOrEmpty(_trackingLocation)) {
+					string popupName = System.IO.Path.GetFileNameWithoutExtension(PopupFeaturedOffer.PATH);
+					HDTrackingManager.Instance.Notify_InfoPopup(popupName, _trackingLocation);
+				}
+			} break;
+
+			// Tooltip
+			case InfoButtonMode.TOOLTIP: {
+					// Show different tooltips depending on first item type
+
+					UIFeedbackText feedbackText = UIFeedbackText.CreateAndLaunch("TODO!! Info tooltip", GameConstants.Vector2.center, this.GetComponentInParent<Canvas>().transform as RectTransform);
+					//		__/\\\\\\\\\\\\\\\________/\\\\\________/\\\\\\\\\\\\___________/\\\\\___________/\\\_________/\\\____
+					//		 _\///////\\\/////_______/\\\///\\\_____\/\\\////////\\\_______/\\\///\\\_______/\\\\\\\_____/\\\\\\\__
+					//		  _______\/\\\__________/\\\/__\///\\\___\/\\\______\//\\\____/\\\/__\///\\\____/\\\\\\\\\___/\\\\\\\\\_
+					//		   _______\/\\\_________/\\\______\//\\\__\/\\\_______\/\\\___/\\\______\//\\\__\//\\\\\\\___\//\\\\\\\__
+					//		    _______\/\\\________\/\\\_______\/\\\__\/\\\_______\/\\\__\/\\\_______\/\\\___\//\\\\\_____\//\\\\\___
+					//		     _______\/\\\________\//\\\______/\\\___\/\\\_______\/\\\__\//\\\______/\\\_____\//\\\_______\//\\\____
+					//		      _______\/\\\_________\///\\\__/\\\_____\/\\\_______/\\\____\///\\\__/\\\________\///_________\///_____
+					//		       _______\/\\\___________\///\\\\\/______\/\\\\\\\\\\\\/_______\///\\\\\/__________/\\\_________/\\\____
+					//		        _______\///______________\/////________\////////////___________\/////___________\///_________\///_____
+			} break;
+		}
+	}
 }

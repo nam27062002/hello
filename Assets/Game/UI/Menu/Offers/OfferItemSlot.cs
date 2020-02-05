@@ -35,28 +35,25 @@ public class OfferItemSlot : MonoBehaviour, IBroadcastListener {
 	[SerializeField] protected TextMeshProUGUI m_text = null;
 
 	[Header("Optional Fields")]
-	[Tooltip("Optional")] [SerializeField] protected GameObject m_infoButton = null;
 	[Tooltip("Optional")] [SerializeField] protected TextMeshProUGUI m_extraInfoText = null;    // Will only be displayed for some types
 	[Tooltip("Optional")] [SerializeField] protected GameObject m_extraInfoRoot = null;    // Will only be displayed for some types
-	[Space]
-	[Tooltip("Optional")] [SerializeField] protected Mask m_mask = null;
-	[Tooltip("Optional")] [SerializeField] protected SoftMask m_softMask = null;
-	[Space]
-	[Tooltip("Optional")] [SerializeField] protected GameObject m_separator = null;
-
+	
 	// Convenience properties
 	public RectTransform rectTransform {
 		get { return this.transform as RectTransform; }
 	}
 
 	// Internal
-	private OfferPackItem m_item = null;
+	protected OfferPackItem m_item = null;
 	public OfferPackItem item {
 		get { return m_item; }
 		set { InitFromItem(value); }
 	}
 
-	private IOfferItemPreview m_preview = null;
+	protected IOfferItemPreview m_preview = null;
+	public IOfferItemPreview preview {
+		get { return m_preview; }
+	}
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -68,9 +65,6 @@ public class OfferItemSlot : MonoBehaviour, IBroadcastListener {
 	private void OnEnable() {
 		// Subscribe to external events
 		Broadcaster.AddListener(BroadcastEventType.LANGUAGE_CHANGED, this);
-
-		// Update associated separator
-		if(m_separator != null) m_separator.SetActive(true);
 	}
 
 	/// <summary>
@@ -79,9 +73,6 @@ public class OfferItemSlot : MonoBehaviour, IBroadcastListener {
 	private void OnDisable() {
 		// Unsubscribe from external events
 		Broadcaster.RemoveListener(BroadcastEventType.LANGUAGE_CHANGED, this);
-
-		// Update associated separator
-		if(m_separator != null) m_separator.SetActive(false);
 	}
 
     public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
@@ -101,7 +92,8 @@ public class OfferItemSlot : MonoBehaviour, IBroadcastListener {
 	/// <summary>
 	/// Refresh the widget with the data of a specific offer item.
 	/// </summary>
-	public void InitFromItem(OfferPackItem _item) {
+	/// <param name="_item">Item to be used to initialize the slot.</param>
+	public virtual void InitFromItem(OfferPackItem _item) {
 		// Force reloading preview if item is different than the current one
 		bool reloadPreview = false;
 		if(m_item != _item) reloadPreview = true;
@@ -155,35 +147,28 @@ public class OfferItemSlot : MonoBehaviour, IBroadcastListener {
 		}
 
 		// Set text - preview will given us the text already localized and all
-		if(m_preview != null) {
-			m_text.text = m_preview.GetLocalizedDescription();
-		} else {
-			// Something went very wrong :s
-			m_text.text = "Couldn't find a preview prefab for reward type " + item.type;
-		}
-
-		// Text color based on item rarity!
-		Gradient4 rarityGradient = null;
-		if(m_item.type == Metagame.RewardPet.TYPE_CODE && m_item.reward != null) {
-			rarityGradient = UIConstants.GetRarityTextGradient(m_item.reward.rarity);
-		} else {
-			rarityGradient = UIConstants.GetRarityTextGradient(Metagame.Reward.Rarity.COMMON);
-		}
-		m_text.enableVertexGradient = true;
-		m_text.colorGradient = new VertexGradient(
-			rarityGradient.topLeft,
-			rarityGradient.topRight,
-			rarityGradient.bottomLeft,
-			rarityGradient.bottomRight
-		);
-
-		// Info button - depends on preview type
-		if(m_infoButton != null) {
+		if(m_text != null) {
 			if(m_preview != null) {
-				m_infoButton.SetActive(m_preview.showInfoButton);
+				m_text.text = m_preview.GetLocalizedDescription();
 			} else {
-				m_infoButton.SetActive(false);
+				// Something went very wrong :s
+				m_text.text = "Couldn't find a preview prefab for reward type " + item.type;
 			}
+
+			// Text color based on item rarity!
+			Gradient4 rarityGradient = null;
+			if(m_item.type == Metagame.RewardPet.TYPE_CODE && m_item.reward != null) {
+				rarityGradient = UIConstants.GetRarityTextGradient(m_item.reward.rarity);
+			} else {
+				rarityGradient = UIConstants.GetRarityTextGradient(Metagame.Reward.Rarity.COMMON);
+			}
+			m_text.enableVertexGradient = true;
+			m_text.colorGradient = new VertexGradient(
+				rarityGradient.topLeft,
+				rarityGradient.topRight,
+				rarityGradient.bottomLeft,
+				rarityGradient.bottomRight
+			);
 		}
 
 		// Extra info text - only for some types
@@ -232,24 +217,6 @@ public class OfferItemSlot : MonoBehaviour, IBroadcastListener {
 			// Set text
 			if(show) m_extraInfoText.text = text;
 		}
-
-		// Mask - depends on preview type
-		bool enableMask = false;
-		if(m_preview != null) {
-			enableMask = m_preview.enableMask;
-		}
-
-		// Normal mask
-		if(m_mask != null) {
-			// Apply to associated mask graphic as well (Otherwise it will be visible when mask is disabled)
-			m_mask.enabled = enableMask;
-			if(m_mask.graphic != null) m_mask.graphic.enabled = enableMask;
-		}
-
-		// Soft mask
-		if(m_softMask != null) {
-			m_softMask.enabled = enableMask;
-		}
 	}
 
 	/// <summary>
@@ -271,16 +238,5 @@ public class OfferItemSlot : MonoBehaviour, IBroadcastListener {
 	private void OnLanguageChanged() {
 		// Reapply current reward
 		InitFromItem(m_item);
-	}
-
-	/// <summary>
-	/// Info button has been pressed.
-	/// </summary>
-	/// <param name="_trackingLocation">Where is this been triggered from?</param>
-	public void OnInfoButton(string _trackingLocation) {
-		// If we have a valid preview, and this one supports info button, propagate the event
-		if(m_preview != null && m_preview.showInfoButton) {
-			m_preview.OnInfoButton(_trackingLocation);
-		}
 	}
 }

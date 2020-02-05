@@ -52,7 +52,7 @@ public class PopupShopCurrencyTab : IPopupShopTab {
 
 		// Propagate to pills
 		for(int i = 0; i < m_pills.Count; ++i) {
-			(m_pills[i] as PopupShopCurrencyPill).PeriodicRefresh();
+			(m_pills[i] as PopupShopCurrencyPill_OLD).PeriodicRefresh();
 		}
 	}
 
@@ -84,7 +84,7 @@ public class PopupShopCurrencyTab : IPopupShopTab {
 
 			// Create new instance and initialize it
 			GameObject newPillObj = GameObject.Instantiate<GameObject>(m_pillPrefab, m_scrollList.content, false);
-			PopupShopCurrencyPill newPill = newPillObj.GetComponent<PopupShopCurrencyPill>();
+			PopupShopCurrencyPill_OLD newPill = newPillObj.GetComponent<PopupShopCurrencyPill_OLD>();
 			newPill.InitFromDef(defs[i]);
 
 			// Store to local collection for further use
@@ -106,10 +106,10 @@ public class PopupShopCurrencyTab : IPopupShopTab {
 	/// </summary>
 	public void OnTabShow() {
 		// Find first pill with Happy Hour active
-		PopupShopCurrencyPill pill = null;
-		PopupShopCurrencyPill targetPill = null;
+		PopupShopCurrencyPill_OLD pill = null;
+		PopupShopCurrencyPill_OLD targetPill = null;
 		for(int i = 0; i < m_pills.Count; ++i) {
-			pill = m_pills[i] as PopupShopCurrencyPill;
+			pill = m_pills[i] as PopupShopCurrencyPill_OLD;
 			if(pill.happyHourActive) {
 				targetPill = pill;
 				break;	// Found it!
