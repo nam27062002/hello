@@ -62,6 +62,14 @@ public class PopupShopCurrencyPill : PopupShopOffersPill {
         }
 	}
 
+
+    public void InitFromDef(DefinitionNode _def)
+    {
+        OfferPack offer = new OfferPack();
+        offer.InitFromDefinition(_def);
+        InitFromOfferPack(offer);
+    }
+
     //------------------------------------------------------------------------//
     // IPopupShopPill IMPLEMENTATION										  //
     //------------------------------------------------------------------------//

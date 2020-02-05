@@ -73,27 +73,29 @@ public class PopupShopHCPill : PopupShopCurrencyPill {
 		RefreshHappyHour(false);
 	}
 
-	//------------------------------------------------------------------------//
-	// OTHER METHODS														  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Initialize the pill with a given pack's data.
-	/// </summary>
-	/// <param name="_pack">Pack.</param>
-	public override void InitFromOfferPack(OfferPack _pack) {
-		// Let parent do the hard work and do some extra initialization afterwards
-		base.InitFromOfferPack(_pack);
+    //------------------------------------------------------------------------//
+    // OTHER METHODS														  //
+    //------------------------------------------------------------------------//
+    /// <summary>
+    /// Initialize the pill with a given pack's data.
+    /// </summary>
+    /// <param name="_pack">Pack.</param>
+    public override void InitFromOfferPack(OfferPack _pack)
+    {
+        // Let parent do the hard work and do some extra initialization afterwards
+        base.InitFromOfferPack(_pack);
 
-		// Nothing to do if pack is not valid
-		if(m_def == null) return;
+        // Nothing to do if pack is not valid
+        if (m_def == null) return;
 
         // Hide all the happy hour elements
         if (m_happyHourBg != null)
             m_happyHourBg.SetActive(false);
 
-		// Happy Hour visuals
-		RefreshHappyHour(false);
-	}
+        // Happy Hour visuals
+        RefreshHappyHour(false);
+    }
+
 
 	/// <summary>
 	/// Refresh Happy Hour visuals.

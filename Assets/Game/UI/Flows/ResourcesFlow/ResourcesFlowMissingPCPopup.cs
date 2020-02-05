@@ -36,7 +36,7 @@ public class ResourcesFlowMissingPCPopup : MonoBehaviour {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed Members
-	[SerializeField] private PopupShopCurrencyPill_OLD m_recommendedPackPill = null;
+	[SerializeField] private PopupShopCurrencyPill m_recommendedPackPill = null;
 
 	// Events
 	public UnityEvent OnRecommendedPackPurchased = new UnityEvent();
@@ -85,7 +85,7 @@ public class ResourcesFlowMissingPCPopup : MonoBehaviour {
 
 		// Refresh the pill
 		if(m_recommendedPackPill != null) {
-			m_recommendedPackPill.PeriodicRefresh();
+			m_recommendedPackPill.RefreshTimer();
 		}
 	}
 

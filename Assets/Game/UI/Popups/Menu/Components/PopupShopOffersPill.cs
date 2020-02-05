@@ -219,10 +219,12 @@ public class PopupShopOffersPill : IPopupShopPill {
 		RefreshPrice();
 	}
 
-	/// <summary>
-	/// Refresh all price-related texts.
-	/// </summary>
-	protected virtual void RefreshPrice() {
+
+
+    /// <summary>
+    /// Refresh all price-related texts.
+    /// </summary>
+    protected virtual void RefreshPrice() {
 
         // If localized prices haven't been received from the store yet, wait for it
         bool storeReady = GameStoreManager.SharedInstance.IsReady();

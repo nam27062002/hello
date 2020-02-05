@@ -298,8 +298,8 @@ public class HappyHourManager {
 		// Nothing to do if there is no pack to be displayed
 		if(packDef == null) return null;
 
-		// Initialize the popup (set the discount % values)
-		popupHappyHour.Init(packDef);
+        // Initialize the popup (set the discount % values)
+        popupHappyHour.Init(packDef);
 
 		// And launch it
 		popup.Open();

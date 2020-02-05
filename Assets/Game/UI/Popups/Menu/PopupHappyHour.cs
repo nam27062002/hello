@@ -42,7 +42,7 @@ public class PopupHappyHour : MonoBehaviour {
 	[SerializeField]
 	private TextMeshProUGUI m_extraGemsRateText;
 	[SerializeField]
-	private PopupShopCurrencyPill_OLD m_offerToDisplay;
+	private PopupShopHCPill m_offerToDisplay;
 
 	// Internal
 	private HappyHour m_happyHour;
@@ -79,6 +79,7 @@ public class PopupHappyHour : MonoBehaviour {
 
 			// Show the PC offer in the popup
 			if(_lastPackDef != null && m_offerToDisplay != null) {
+
 				m_offerToDisplay.InitFromDef(_lastPackDef);
 			}
 		} else {
@@ -134,7 +135,7 @@ public class PopupHappyHour : MonoBehaviour {
 
 		// Refresh offer
 		if(m_offerToDisplay != null) {
-			m_offerToDisplay.PeriodicRefresh();
+			m_offerToDisplay.RefreshTimer();
 		}
 	}
 
