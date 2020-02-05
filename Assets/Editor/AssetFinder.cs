@@ -11,6 +11,7 @@ using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
 using System.IO;
+using UnityEditor.SceneManagement;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -721,12 +722,84 @@ public class AssetFinder : EditorWindow {
         Debug.Log("list length: " + meshList.Length + " meshes:" + c);
     }
 
+    /// <summary>
+    /// Remove unused options in prefab renderers
+    /// </summary>
+    [MenuItem("Hungry Dragon/Tools/Remove unused options in scene renderers")]
+    public static void cleanRenderersScene()
+    {
+        MeshRenderer[] rendererList;
+        FindAssetInScene<MeshRenderer>(out rendererList, true);
+
+        float c = 0;
+        int numModified = 0;
+
+        Debug.Log("Seek for renderers in scene:");
+            bool modified = false;
+
+        foreach (MeshRenderer rend in rendererList)
+        {
+            if (rend.lightProbeUsage != UnityEngine.Rendering.LightProbeUsage.Off)
+            {
+                rend.lightProbeUsage = UnityEngine.Rendering.LightProbeUsage.Off;
+                modified = true;
+            }
+
+            if (rend.motionVectorGenerationMode != MotionVectorGenerationMode.ForceNoMotion)
+            {
+                rend.motionVectorGenerationMode = MotionVectorGenerationMode.ForceNoMotion;
+                modified = true;
+            }
+
+            if (rend.allowOcclusionWhenDynamic)
+            {
+                rend.allowOcclusionWhenDynamic = false;
+                modified = true;
+            }
+
+            if (rend.reflectionProbeUsage != UnityEngine.Rendering.ReflectionProbeUsage.Off)
+            {
+                rend.reflectionProbeUsage = UnityEngine.Rendering.ReflectionProbeUsage.Off;
+                modified = true;
+            }
+            /*
+                            if (rend.shadowCastingMode != UnityEngine.Rendering.ShadowCastingMode.Off)
+                            {
+                                rend.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+                                modified = true;
+                            }
+
+                            if (rend.receiveShadows)
+                            {
+                                rend.receiveShadows = false;
+                                modified = true;
+                            }
+            */
+
+            if (EditorUtility.DisplayCancelableProgressBar("updating scene", rend.gameObject.name, c / (float)rendererList.Length))
+            {
+                EditorUtility.ClearProgressBar();
+                break;
+            }
+
+            if (modified)
+            {
+                EditorSceneManager.MarkSceneDirty(rend.gameObject.scene);
+            }
+            c++;
+        }
+
+        EditorUtility.ClearProgressBar();
+        Debug.Log("object list length: " + rendererList.Length + " modified:" + numModified);
+
+
+    }
 
     /// <summary>
     /// Remove unused options in prefab renderers
     /// </summary>
-    [MenuItem("Hungry Dragon/Tools/Remove unused options in prefab renderers")]
-    public static void cleanRenderers()
+    [MenuItem("Hungry Dragon/Tools/Remove unused options in prefabs")]
+    public static void cleanRenderersPrefab()
     {
         Debug.Log("Obtaining prefab list");
 
