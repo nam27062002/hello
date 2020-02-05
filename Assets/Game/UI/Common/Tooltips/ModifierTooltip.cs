@@ -26,8 +26,8 @@ public class ModifierTooltip : MonoBehaviour {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed References
-	[SerializeField] private Localizer m_nameText = null;
-	public Localizer nameText {
+	[SerializeField] private TMPro.TextMeshProUGUI m_nameText = null;
+	public TMPro.TextMeshProUGUI nameText {
 		get { return m_nameText; }
 	}
 
@@ -74,7 +74,7 @@ public class ModifierTooltip : MonoBehaviour {
 		// Name
 		if(m_nameText != null) {
 			// Already localized by the modifier definition
-			m_nameText.Set(_modDef.GetName());
+			m_nameText.text = _modDef.GetName();
 		}
 
 		// Desc
