@@ -111,6 +111,11 @@ public class PopupShopFreeOfferPill : PopupShopOffersPill {
         m_freeButton.gameObject.SetActive(removeAdsActive);
         m_watchAdButton.gameObject.SetActive(!removeAdsActive);
 
+		// Refresh info button visibility
+		if(m_infoButton != null) {
+			// Don't show while on cooldown
+			m_infoButton.SetActive(m_infoButtonMode != InfoButtonMode.NONE && !m_isOnCooldown);
+		}
     }
 
 	/// <summary>

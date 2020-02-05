@@ -108,7 +108,7 @@ public class OfferPack {
 		get { return m_state == State.ACTIVE; }
 	}
 
-    protected string m_shopCategory;
+	protected string m_shopCategory = string.Empty;
     public string shopCategory { 
         get  {  return m_shopCategory;  }
     }
@@ -419,14 +419,7 @@ public class OfferPack {
         }
 
         // Shop category
-        DefinitionNode shopPack = DefinitionsManager.SharedInstance.GetDefinitionByVariable(DefinitionsCategory.SHOP_PACKS, "sku", m_def.GetAsString("iapSku"));
-
-        if (shopPack == null)
-        {
-            return;
-        }
-
-        m_shopCategory = shopPack.GetAsString("shopCategory");
+        m_shopCategory = m_def.GetAsString("shopCategory", m_shopCategory);
 
 		// Params
 		// We have just done a Reset(), so variables have the desired default values
@@ -1359,7 +1352,6 @@ public class OfferPack {
             case "removeads":   return Type.REMOVE_ADS;
             case "hc":          return Type.HC;
             case "sc":          return Type.SC;
-
 		}
 		return DEFAULT_TYPE;
 	}
@@ -1392,6 +1384,7 @@ public class OfferPack {
         switch (_currencyStr.ToLowerInvariant())
         {
             case "real": return UserProfile.Currency.REAL;
+			case "hc":
             case "pc": return UserProfile.Currency.HARD;
             case "sc": return UserProfile.Currency.SOFT;
 			case "free":

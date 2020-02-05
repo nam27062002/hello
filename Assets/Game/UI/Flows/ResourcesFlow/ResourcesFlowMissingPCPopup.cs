@@ -36,28 +36,28 @@ public class ResourcesFlowMissingPCPopup : MonoBehaviour {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed Members
-	[SerializeField] private PopupShopCurrencyPill m_recommendedPackPill = null;
+	[SerializeField] private PopupShopCurrencyPill_OLD m_recommendedPackPill = null;
 
 	// Events
 	public UnityEvent OnRecommendedPackPurchased = new UnityEvent();
 	public UnityEvent OnGoToShop = new UnityEvent();
 	public UnityEvent OnCancel = new UnityEvent();
 
-    // Happy hour banner
-    [Space]
-    [SerializeField] private GameObject m_happyHourPanel;
-    [SerializeField] private TextMeshProUGUI m_happyHourTimer;
+	// Happy hour banner
+	[Space]
+	[SerializeField] private GameObject m_happyHourPanel;
+	[SerializeField] private TextMeshProUGUI m_happyHourTimer;
 
-    // Internal
-    private HappyHour m_happyHour; // cached object
+	// Internal
+	private HappyHour m_happyHour; // cached object
 
-    //------------------------------------------------------------------------//
-    // GENERIC METHODS														  //
-    //------------------------------------------------------------------------//
-    /// <summary>
-    /// Component has been enabled.
-    /// </summary>
-    private void OnEnable() {
+	//------------------------------------------------------------------------//
+	// GENERIC METHODS														  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Component has been enabled.
+	/// </summary>
+	private void OnEnable() {
 		Log("Subscribing to OnPurchaseSuccess event " + m_recommendedPackPill.GetIAPSku());
 		m_recommendedPackPill.OnPurchaseSuccess.AddListener(OnPillPurchaseSuccess);
 
@@ -79,10 +79,9 @@ public class ResourcesFlowMissingPCPopup : MonoBehaviour {
 	/// <summary>
 	/// Called at regular intervals.
 	/// </summary>
-    public void UpdatePeriodic()
-    {
-        // Refresh happy hour periodically for better performance
-        RefreshHappyHour();
+	public void UpdatePeriodic() {
+		// Refresh happy hour periodically for better performance
+		RefreshHappyHour();
 
 		// Refresh the pill
 		if(m_recommendedPackPill != null) {
@@ -91,53 +90,49 @@ public class ResourcesFlowMissingPCPopup : MonoBehaviour {
 	}
 
 
-    //------------------------------------------------------------------------//
-    // OTHER METHODS														  //
-    //------------------------------------------------------------------------//
-    /// <summary>
-    /// Initialize the popup with the given data.
-    /// </summary>
-    /// <param name="_coinsToBuy">Amount of coins to buy.</param>
-    /// <param name="_pricePC">PC price of the coins to buy.</param>
-    public void Init(DefinitionNode _recommendedPackDef) {
+	//------------------------------------------------------------------------//
+	// OTHER METHODS														  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Initialize the popup with the given data.
+	/// </summary>
+	/// <param name="_coinsToBuy">Amount of coins to buy.</param>
+	/// <param name="_pricePC">PC price of the coins to buy.</param>
+	public void Init(DefinitionNode _recommendedPackDef) {
 		// Initialize recommended pack
 		m_recommendedPackPill.InitFromDef(_recommendedPackDef);
 
-        // Cache happy hour offer
-        m_happyHour = OffersManager.happyHourManager.happyHour;
-    }
+		// Cache happy hour offer
+		m_happyHour = OffersManager.happyHourManager.happyHour;
+	}
 
-    /// <summary>
-    /// Refresh the Happy Hour visuals
-    /// </summary>
-    private void RefreshHappyHour()
-    {
-        // Refresh the happy hour panel
-        if (m_happyHour != null && m_happyHourPanel != null)
-        {
-            // If show the happy hour panel only if the offer is active        
-            m_happyHourPanel.SetActive(m_happyHour.IsActive());
+	/// <summary>
+	/// Refresh the Happy Hour visuals
+	/// </summary>
+	private void RefreshHappyHour() {
+		// Refresh the happy hour panel
+		if(m_happyHour != null && m_happyHourPanel != null) {
+			// If show the happy hour panel only if the offer is active        
+			m_happyHourPanel.SetActive(m_happyHour.IsActive());
 
-            if (m_happyHour.IsActive())
-            {
-                // Show time left in the proper format (1h 20m 30s)
-                string timeLeft = TimeUtils.FormatTime(m_happyHour.TimeLeftSecs(), TimeUtils.EFormat.ABBREVIATIONS_WITHOUT_0_VALUES, 3);
-                if (m_happyHourTimer != null)
-                {
-                    m_happyHourTimer.text = timeLeft;
-                }
+			if(m_happyHour.IsActive()) {
+				// Show time left in the proper format (1h 20m 30s)
+				string timeLeft = TimeUtils.FormatTime(m_happyHour.TimeLeftSecs(), TimeUtils.EFormat.ABBREVIATIONS_WITHOUT_0_VALUES, 3);
+				if(m_happyHourTimer != null) {
+					m_happyHourTimer.text = timeLeft;
+				}
 
-            }
-        }
-    }
+			}
+		}
+	}
 
-    //------------------------------------------------------------------------//
-    // CALLBACKS															  //
-    //------------------------------------------------------------------------//
-    /// <summary>
-    /// More offers button has been pressed.
-    /// </summary>
-    public void OnMoreOffersButton() {
+	//------------------------------------------------------------------------//
+	// CALLBACKS															  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// More offers button has been pressed.
+	/// </summary>
+	public void OnMoreOffersButton() {
 		// Managed externally
 		OnGoToShop.Invoke();
 	}
@@ -160,19 +155,19 @@ public class ResourcesFlowMissingPCPopup : MonoBehaviour {
 		OnRecommendedPackPurchased.Invoke();
 	}
 
-    //------------------------------------------------------------------------//
-    // DEBUG METHODS														  //
-    //------------------------------------------------------------------------//
-    /// <summary>
-    /// Print something on the console / control panel log.
-    /// </summary>
-    /// <param name="_message">Message to be printed.</param>
-    #if ENABLE_LOGS
+	//------------------------------------------------------------------------//
+	// DEBUG METHODS														  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Print something on the console / control panel log.
+	/// </summary>
+	/// <param name="_message">Message to be printed.</param>
+#if ENABLE_LOGS
     [Conditional("DEBUG")]
-    #else
-    [Conditional("FALSE")]
-    #endif
-    private void Log(string _message) {
+#else
+	[Conditional("FALSE")]
+#endif
+	private void Log(string _message) {
 		ControlPanel.Log("[MissingPCPopup]" + _message, ControlPanel.ELogChannel.Store);
 	}
 }

@@ -107,23 +107,11 @@ public class PopupShopRemoveAdsPill : PopupShopOffersPill {
             m_discount = Mathf.Clamp(m_discount, 0.01f, 0.99f); // [AOC] Just to be sure input discount is valid
         }
 
-        // Init visuals
-        OfferColorGradient gradientSetup = null;
-        if (validDiscount)
-        {
-            gradientSetup = OfferItemPrefabs.GetGradient(m_discount);
-        }
-        else
-        {
-            gradientSetup = OfferItemPrefabs.GetGradient(0.9f); // [AOC] Hardcoded!! Use high-discount colors
-        }
-
         // Pack name
         if (m_packNameText != null)
         {
             m_packNameText.Localize(m_pack.def.GetAsString("tidName"));
         }
-
 
         // Discount
         // Don't show if no discount is applied
@@ -132,28 +120,11 @@ public class PopupShopRemoveAdsPill : PopupShopOffersPill {
             m_discountText.gameObject.SetActive(validDiscount);
             if (validDiscount)
             {
-                m_discountText.text.colorGradient = Gradient4ToVertexGradient(gradientSetup.discountGradient);
                 m_discountText.Localize(
                     "TID_OFFER_DISCOUNT_PERCENTAGE",
                     StringUtils.FormatNumber(m_discount * 100f, 0)
                 );
             }
-        }
-
-        // Optional decorations
-        if (m_backgroundGradient != null)
-        {
-            m_backgroundGradient.gradient.Set(gradientSetup.pillBackgroundGradient);
-        }
-
-        if (m_frameGradientLeft != null)
-        {
-            m_frameGradientLeft.gradient.Set(gradientSetup.pillFrameGradient);
-        }
-
-        if (m_frameGradientRight != null)
-        {
-            m_frameGradientRight.gradient.Set(gradientSetup.pillFrameGradient);
         }
 
         // Price texts
@@ -163,18 +134,28 @@ public class PopupShopRemoveAdsPill : PopupShopOffersPill {
     //------------------------------------------------------------------------//
     // CALLBACKS															  //
     //------------------------------------------------------------------------//
-    public void OnClickInfo ()
-    {
-        // Load the popup
-        PopupController popup = PopupManager.LoadPopup(PopupRemoveAdsOffer.PATH);
-        PopupRemoveAdsOffer popupRemoveAdsOffer = popup.GetComponent<PopupRemoveAdsOffer>();
+    /// <summary>
+	/// Info button has been pressed.
+	/// Don't call it if the pack type doesn't require info popup.
+	/// Can be override by heirs, default behaviour is opening the offer info popup.
+	/// </summary>
+	/// <param name="_trackingLocation">Where has this been triggered from?</param>
+	public override void OnInfoButton(string _trackingLocation) {
+		// Override parent to open the RemoveAdsOffer Popup instead
+		// Load the popup
+		PopupController popup = PopupManager.LoadPopup(PopupRemoveAdsOffer.PATH);
+		PopupRemoveAdsOffer popupRemoveAdsOffer = popup.GetComponent<PopupRemoveAdsOffer>();
 
-        // Initialize it with the remove ad offer (if exists)
-        popupRemoveAdsOffer.Init();
+		// Initialize it with the remove ad offer (if exists)
+		popupRemoveAdsOffer.Init();
 
-        // Show the popup
-        popup.Open();
-    }
+		// Show the popup
+		popup.Open();
 
-    
+		// If defined, send tracking event
+		if(!string.IsNullOrEmpty(_trackingLocation)) {
+			string popupName = System.IO.Path.GetFileNameWithoutExtension(PopupRemoveAdsOffer.PATH);
+			HDTrackingManager.Instance.Notify_InfoPopup(popupName, _trackingLocation);
+		}
+	}
 }

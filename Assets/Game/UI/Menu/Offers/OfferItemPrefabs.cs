@@ -40,19 +40,6 @@ public class ItemPrefabSetup {
 }
 
 /// <summary>
-/// Auxiliar class.
-/// </summary>
-[System.Serializable]
-public class OfferColorGradient {
-	[Range(0f, 100f)]
-	public float discountThreshold = 50f;
-	public Gradient4 titleGradient = new Gradient4();
-	public Gradient4 discountGradient = new Gradient4();
-	public Gradient4 pillFrameGradient = new Gradient4();
-	public Gradient4 pillBackgroundGradient = new Gradient4();
-}
-
-/// <summary>
 /// Static scriptable object class to setup the offer item prefabs.
 /// </summary>
 //[CreateAssetMenu]
@@ -73,8 +60,6 @@ public class OfferItemPrefabs : SingletonScriptableObject<OfferItemPrefabs> {
 	// MEMBERS																  //
 	//------------------------------------------------------------------------//
 	[SerializeField] private List<ItemPrefabSetup> m_itemTypesSetup = new List<ItemPrefabSetup>();
-	[Separator]
-	[SerializeField] private List<OfferColorGradient> m_gradientsSetup = new List<OfferColorGradient>();
 
 	//------------------------------------------------------------------------//
 	// METHODS																  //
@@ -102,33 +87,5 @@ public class OfferItemPrefabs : SingletonScriptableObject<OfferItemPrefabs> {
 
 		// Something went really wrong xD
 		return null;
-	}
-
-	/// <summary>
-	/// Get the gradient corresponding to a given discount amount.
-	/// </summary>
-	/// <returns>The gradient corresponding to the given discount amount.</returns>
-	/// <param name="_discount">Discount (0..1).</param>
-	public static OfferColorGradient GetGradient(float _discount) {
-		// Convert to 0-100
-		_discount = Mathf.Abs(_discount * 100f);
-
-		// Make sure array is sorted
-		List<OfferColorGradient> sorted = new List<OfferColorGradient>();
-		sorted.AddRange(instance.m_gradientsSetup);
-		sorted.Sort(
-			(OfferColorGradient _item1, OfferColorGradient _item2) => {
-				return _item1.discountThreshold.CompareTo(_item2.discountThreshold);
-			}
-		);
-
-		// Find out threshold for this discount
-		// Reverse iterate since threshold marks the min value
-		for(int i = sorted.Count - 1; i >= 0; --i) {
-			if(_discount >= sorted[i].discountThreshold) {
-				return sorted[i];
-			}
-		}
-		return new OfferColorGradient();
 	}
 }

@@ -53,7 +53,6 @@ public abstract class IPopupShopPill : MonoBehaviour {
 
 	private PopupController m_loadingPopupController;
 	private bool m_awaitingPurchaseConfirmation = false;
-
 	private bool m_transactionInProgress = false;
 
 	//------------------------------------------------------------------------//

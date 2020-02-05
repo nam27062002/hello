@@ -30,17 +30,6 @@ public abstract class IOfferItemPreview : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
-	// Settings
-	[SerializeField] private bool m_showInfoButton = false;
-	public bool showInfoButton {
-		get { return m_showInfoButton; }
-	}
-
-	[SerializeField] private bool m_enableMask = false;
-	public bool enableMask {
-		get { return m_enableMask; }
-	}
-
 	// Convenience properties
 	public RectTransform rectTransform {
 		get { return this.transform as RectTransform; }

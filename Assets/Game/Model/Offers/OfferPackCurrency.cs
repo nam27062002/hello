@@ -52,7 +52,7 @@ public class OfferPackCurrency : OfferPack {
 	}
 
 	//------------------------------------------------------------------------//
-	// OTHER METHODS														  //
+	// PARENT OVERRIDES														  //
 	//------------------------------------------------------------------------//
 	/// <summary>
 	/// Initialize from definition.
@@ -65,23 +65,53 @@ public class OfferPackCurrency : OfferPack {
 			return;
 		}
 
-        // Reset to default values
-        Reset();
+		// Let the parent do the trick
+		// [AOC] The definitions won't contain most of the values (since it's not
+		// from the offerPackDefinitions table), but that should be ok - default
+		// values will be used instead
+		base.InitFromDefinition(_def);
 
-        // Store def
-        m_def = _def;
+		// Create a single item which will be the purchased currency
+		OfferPackItem item = new OfferPackItem();
+		HDTrackingManager.EEconomyGroup ecoGroup = HDTrackingManager.EEconomyGroup.SHOP_OFFER_PACK;
+		switch(m_type) {
+			case Type.SC:	ecoGroup = HDTrackingManager.EEconomyGroup.SHOP_COINS_PACK;	break;
+			case Type.HC:	ecoGroup = HDTrackingManager.EEconomyGroup.SHOP_PC_PACK;	break;
+		}
+		item.InitAsCurrency(
+			TypeToString(m_type),
+			_def.GetAsLong("amount"),
+			true,
+			ecoGroup
+		);
 
-        // Category
-        m_shopCategory = m_def.GetAsString("shopCategory");
+		// If a reward wasn't generated, the item is either not properly defined or the pack doesn't have this item, don't store it
+		if(item.reward != null) {
+			m_items.Add(item);
+		}
 
-        // Order
-        m_order = m_def.GetAsInt("order");
+		// Currency packs are always active
+		ChangeState(State.ACTIVE);
+	}
 
-        // Offer Type
-        m_type = StringToType(m_def.GetAsString("type"));
+	/// <summary>
+	/// Update loop. Should be called periodically from the manager.
+	/// Will look for pack's state changes.
+	/// </summary>
+	/// <returns>Whether the pack has change its state.</returns>
+	public override bool UpdateState() {
+		// Currency packs are always active
+		return false;
+	}
 
-    }
-
+	/// <summary>
+	/// In the particular case of the offers, we only need to persist them in specific cases.
+	/// </summary>
+	/// <returns>Whether the offer should be persisted or not.</returns>
+	public override bool ShouldBePersisted() {
+		// Currency packs should never be persisted
+		return false;
+	}
 
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
