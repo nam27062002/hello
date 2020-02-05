@@ -126,6 +126,34 @@ public class OfferPackItem {
 	}
 
 	/// <summary>
+	/// Initialize the item as a currency item.
+	/// </summary>
+	/// <param name="_rewardType">Type of item. Must match Metagame.Reward types.</param>
+	/// <param name="_amount">Amount to be rewarded.</param>
+	/// <param name="_featured">Is the item featured within the pack?</param>
+	/// <param name="_ecoGroup">Group ID used for tracking when the reward is collected.</param>
+	public void InitAsCurrency(string _rewardType, long _amount, bool _featured, HDTrackingManager.EEconomyGroup _ecoGroup) {
+		// Clear current data
+		Clear();
+
+		// Store type
+		m_type = _rewardType;
+
+		// Generate reward
+		Metagame.Reward.Data rewardData = new Metagame.Reward.Data();
+		rewardData.typeCode = m_type;
+		rewardData.amount = _amount;
+		m_reward = Metagame.Reward.CreateFromData(
+			rewardData,
+			_ecoGroup,
+			""
+		);
+
+		// Featured?
+		m_featured = _featured;
+	}
+
+	/// <summary>
 	/// Very custom method to make sure a definition corresponding to an offer pack 
 	/// item contains all required default values.
 	/// If a parameter is missing in the definition, it will be added with the right

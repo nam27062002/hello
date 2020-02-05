@@ -52,7 +52,7 @@ public class PopupShopCurrencyTab : IPopupShopTab {
 
 		// Propagate to pills
 		for(int i = 0; i < m_pills.Count; ++i) {
-			(m_pills[i] as PopupShopCurrencyPill).PeriodicRefresh();
+			(m_pills[i] as PopupShopCurrencyPill).RefreshTimer();
 		}
 	}
 
@@ -106,10 +106,10 @@ public class PopupShopCurrencyTab : IPopupShopTab {
 	/// </summary>
 	public void OnTabShow() {
 		// Find first pill with Happy Hour active
-		PopupShopCurrencyPill pill = null;
-		PopupShopCurrencyPill targetPill = null;
+		PopupShopHCPill pill = null;
+        PopupShopHCPill targetPill = null;
 		for(int i = 0; i < m_pills.Count; ++i) {
-			pill = m_pills[i] as PopupShopCurrencyPill;
+			pill = m_pills[i] as PopupShopHCPill;
 			if(pill.happyHourActive) {
 				targetPill = pill;
 				break;	// Found it!

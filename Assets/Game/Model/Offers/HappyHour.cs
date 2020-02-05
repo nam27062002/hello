@@ -210,11 +210,11 @@ public class HappyHour {
 	/// Apply the extra amount formula to the given base amount using this Happy Hour's current data.
 	/// </summary>
 	/// <returns>The total final amount.</returns>
-	public int ApplyHappyHourExtra(int _amount) {
+	public long ApplyHappyHourExtra(long _amount) {
 		// Only if active
 		if(!IsActive()) return _amount;
 		
 		// Apply the extra gems factor
-		return Mathf.RoundToInt((_amount) * (1 + extraGemsFactor));
+		return (long)Mathf.RoundToInt((_amount) * (1 + extraGemsFactor));
 	}
 }

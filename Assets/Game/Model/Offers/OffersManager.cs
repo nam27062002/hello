@@ -32,9 +32,6 @@ public class OffersManager : Singleton<OffersManager> {
 	//------------------------------------------------------------------------//
 	private const string FREE_FTUX_PACK_SKU = "AdOfferFtux";
 
-    private const string TYPE_SC = "sc";
-    private const string TYPE_HC = "hc";
-
     // Debug
 #if LOG_PACKS
 	private const string LOG_PACK_SKU = "rotationalHighPayer9";
@@ -90,10 +87,7 @@ public class OffersManager : Singleton<OffersManager> {
 	private List<OfferPack> m_allEnabledRotationalOffers = new List<OfferPack>();  // All enabled and non-expired rotational offer packs
 	private List<OfferPack> m_activeRotationalOffers = new List<OfferPack>();   // Currently active rotational offers
 
-    // Currency packs
-    private List<OfferPack> m_allEnabledCurrencyPacks = new List<OfferPack>(); // All the currency packs enabled
-
-	// Free offers
+    // Free offers
 	private List<OfferPack> m_allEnabledFreeOffers = new List<OfferPack>();  // All enabled and non-expired free offer packs
 
 	private OfferPackFree m_activeFreeOffer = null;   // Currently active free offer
@@ -192,9 +186,7 @@ public class OffersManager : Singleton<OffersManager> {
 		instance.m_allEnabledRotationalOffers.Clear();
 		instance.m_activeRotationalOffers.Clear();
 
-        instance.m_allEnabledCurrencyPacks.Clear();
-
-		instance.m_featuredOffer = null;
+        instance.m_featuredOffer = null;
 
 		instance.m_allEnabledFreeOffers.Clear();
 		instance.m_activeFreeOffer = null;
@@ -214,15 +206,15 @@ public class OffersManager : Singleton<OffersManager> {
         }
 
         // Gather all the shop packs definitions for the currency packs
-        List<DefinitionNode> defs = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.SHOP_PACKS, "type", TYPE_SC);
-        defs.AddRange (DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.SHOP_PACKS, "type", TYPE_HC) );
+        // Add them to activeOffers, as they will be always active
+        List<DefinitionNode> defs = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.SHOP_PACKS, "type", OfferPack.TypeToString(OfferPack.Type.SC));
+        defs.AddRange(DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.SHOP_PACKS, "type", OfferPack.TypeToString(OfferPack.Type.HC)));
+        foreach(DefinitionNode currencyDef in defs) {
+			// Skip if not enabled by content
+			if(!currencyDef.GetAsBool("enabled")) continue;
 
-        // Add currency packs to activeOffers, as they will be always active
-        foreach (DefinitionNode currencyDef in defs)
-        {
             OfferPack newPack = OfferPack.CreateFromDefinition(currencyDef);
-            if (newPack != null)
-            {
+            if(newPack != null && newPack.isActive) {
                 instance.m_activeOffers.Add(newPack);
             }
         }
