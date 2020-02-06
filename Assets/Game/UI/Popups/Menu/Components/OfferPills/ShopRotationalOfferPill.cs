@@ -23,7 +23,7 @@ using DG.Tweening;
 /// <summary>
 /// Single pill in the shop for a FREE offer pack.
 /// </summary>
-public class ShopRotationalOfferPill : PopupShopOffersPill {
+public class ShopRotationalOfferPill : ShopMonoRewardPill {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//

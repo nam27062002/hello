@@ -18,7 +18,7 @@ using TMPro;
 /// <summary>
 /// Specialization of the currency pill for HC packs.
 /// </summary>
-public class PopupShopHCPill : PopupShopCurrencyPill {
+public class ShopHCPill : ShopCurrencyPill {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -47,8 +47,8 @@ public class PopupShopHCPill : PopupShopCurrencyPill {
 	/// </summary>
 	protected void Awake() {
 		// Store casted reference to item slot
-		if(m_itemSlots.Length > 0) {
-			m_itemSlotHC = m_itemSlots[0] as OfferItemSlotHC;
+		if(m_offerItemSlot != null) {
+			m_itemSlotHC = m_offerItemSlot as OfferItemSlotHC;
 		}
 		Debug.Assert(m_itemSlotHC != null, "This pill type should have a OfferItemSlotHC as a first item slot.");
 	}

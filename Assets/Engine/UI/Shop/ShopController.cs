@@ -49,7 +49,7 @@ public class ShopController : MonoBehaviour {
 
     // Cache the category containers and pills
     private List<CategoryController> m_categoryContainers;
-    private List<IPopupShopPill> m_pills;
+    private List<IShopPill> m_pills;
 
     // Shortcuts
     private List<ShopCategoryShortcut> m_shortcuts; 
@@ -83,7 +83,7 @@ public class ShopController : MonoBehaviour {
         m_shortcuts = new List<ShopCategoryShortcut>();
         m_skuToShorcut = new Dictionary<string, ShopCategoryShortcut>();
         m_categoryContainers = new List<CategoryController>();
-        m_pills = new List<IPopupShopPill>();
+        m_pills = new List<IShopPill>();
         categoriesToInitialize = new Queue<ShopCategory>();
     }
 
@@ -455,7 +455,7 @@ public class ShopController : MonoBehaviour {
         // Define the width of the viewport. Out of this range, pills are disabled.
         normalizedViewportWidth = m_scrollRect.viewport.rect.width / m_scrollRect.content.rect.width;
 
-        foreach (IPopupShopPill pill in m_pills)
+        foreach (IShopPill pill in m_pills)
         {
             // Is this pill inside the visible limits of the scrollview
             Vector2 pillPosition = m_scrollRect.GetNormalizedPositionForItem(pill.transform, true, false);

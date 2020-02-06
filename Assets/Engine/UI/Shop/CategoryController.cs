@@ -28,9 +28,9 @@ public class CategoryController : MonoBehaviour {
 
     // Pills prefabs
     [Space]
-    [SerializeField] private IPopupShopPill m_offerPackPillPrefab = null;
-    [SerializeField] private IPopupShopPill m_freeOfferPillPrefab = null;
-    [SerializeField] private IPopupShopPill m_removeAdsPillPrefab = null;
+    [SerializeField] private IShopPill m_offerPackPillPrefab = null;
+    [SerializeField] private IShopPill m_freeOfferPillPrefab = null;
+    [SerializeField] private IShopPill m_removeAdsPillPrefab = null;
 
     // Internal
     protected ShopCategory m_shopCategory;
@@ -40,8 +40,8 @@ public class CategoryController : MonoBehaviour {
     // Asynch loading for better performance. Initialize one category per frame.
     private Queue<OfferPack> pillsToInitialize;
 
-    protected List<IPopupShopPill> m_offerPills;
-    public List<IPopupShopPill> offerPills
+    protected List<IShopPill> m_offerPills;
+    public List<IShopPill> offerPills
         { get { return m_offerPills; } }
 
 
@@ -54,7 +54,7 @@ public class CategoryController : MonoBehaviour {
     private void Awake() {
 
         m_offers = new List<OfferPack>();
-        m_offerPills = new List<IPopupShopPill>();
+        m_offerPills = new List<IShopPill>();
         pillsToInitialize = new Queue<OfferPack>();
     }
 
@@ -118,7 +118,7 @@ public class CategoryController : MonoBehaviour {
 
         if (m_offerPills != null)
         {
-            foreach (IPopupShopPill pill in m_offerPills)
+            foreach (IShopPill pill in m_offerPills)
             {
                 pill.RefreshTimer();
             }
@@ -196,7 +196,7 @@ public class CategoryController : MonoBehaviour {
     private void InitializePill (OfferPack _offer)
     {
         // Instantiate the offer with the proper prefab
-        IPopupShopPill pill = InstantiatePill(_offer.type);
+        IShopPill pill = InstantiatePill(_offer.type);
 
 
         if (pill != null)
@@ -244,9 +244,9 @@ public class CategoryController : MonoBehaviour {
     /// </summary>
     /// <param name="_type">Type of the offer pack</param>
     /// <returns></returns>
-    public virtual IPopupShopPill InstantiatePill(OfferPack.Type _type)
+    public virtual IShopPill InstantiatePill(OfferPack.Type _type)
     {
-        IPopupShopPill pill;
+        IShopPill pill;
         
         // Create new instance of prefab
         switch (_type)
