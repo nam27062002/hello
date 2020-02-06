@@ -8,9 +8,6 @@
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
 using UnityEngine;
-using UnityEngine.UI;
-
-using TMPro;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -18,7 +15,7 @@ using TMPro;
 /// <summary>
 /// Simple class to encapsulate the preview of an item.
 /// </summary>
-public class OfferItemPreviewSkin2d : IOfferItemPreview {
+public class OfferItemPreviewSkin2d : IOfferItemPreviewSkin {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -32,51 +29,19 @@ public class OfferItemPreviewSkin2d : IOfferItemPreview {
 	// Exposed
 	[SerializeField] private UISpriteAddressablesLoader m_loader = null;
 
-    //------------------------------------------------------------------------//
-    // OfferItemPreview IMPLEMENTATION										  //
-    //------------------------------------------------------------------------//
-    /// <summary>
-    /// Initialize preview with current item (m_item)
-    /// </summary>
-    protected override void InitInternal() {
-		// Item must be a skin!
-		Debug.Assert(m_item.reward is Metagame.RewardSkin, "ITEM OF THE WRONG TYPE!", this);
-
-		// Initialize image with the target skin icon
-		m_def = m_item.reward.def;
-		if(m_def != null) {			
-            m_loader.LoadAsync(m_def.Get("icon"));
-		}
-	}
-
-	/// <summary>
-	/// Gets the description of this item, already localized and formatted.
-	/// </summary>
-	/// <returns>The localized description.</returns>
-	public override string GetLocalizedDescription() {
-		if(m_def != null) {
-			return m_def.GetLocalized("tidName");
-		}
-		return LocalizationManager.SharedInstance.Localize("TID_DISGUISE");	// (shouldn't happen) use generic
-	}
-
 	//------------------------------------------------------------------------//
 	// PARENT OVERRIDES														  //
 	//------------------------------------------------------------------------//
 	/// <summary>
-	/// The info button has been pressed.
+	/// Initialize preview with current item (m_item)
 	/// </summary>
-	/// <param name="_trackingLocation">Where is this been triggered from?</param>
-	override public void OnInfoButton(string _trackingLocation) {
-		// Open info popup
-		// [AOC] TODO!!
-		UIFeedbackText.CreateAndLaunch(
-			LocalizationManager.SharedInstance.Localize("TID_GEN_COMING_SOON"),
-			GameConstants.Vector2.center,
-			GetComponentInParent<Canvas>().transform as RectTransform
-		);
-		/*PopupController popup = PopupManager.LoadPopup(PopupInfoEggDropChance.PATH);
-		popup.GetComponent<PopupInfoEggDropChance>().Init(m_item.sku);
-		popup.Open();*/
+	protected override void InitInternal() {
+		// Call parent
+		base.InitInternal();
+
+		// Initialize image with the target skin icon
+		if(m_def != null) {			
+            m_loader.LoadAsync(m_def.Get("icon"));
+		}
 	}
 }
