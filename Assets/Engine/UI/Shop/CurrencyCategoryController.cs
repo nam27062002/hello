@@ -28,8 +28,8 @@ public class CurrencyCategoryController : CategoryController
     [SerializeField] protected Transform m_headerContainer;
 
     // Pills prefabs
-    [SerializeField] private IPopupShopPill m_scPackPillPrefab = null;
-    [SerializeField] private IPopupShopPill m_hcPackPillPrefab = null;
+    [SerializeField] private IShopPill m_scPackPillPrefab = null;
+    [SerializeField] private IShopPill m_hcPackPillPrefab = null;
 
 
     //------------------------------------------------------------------------//
@@ -49,9 +49,9 @@ public class CurrencyCategoryController : CategoryController
     }
 
     
-    public override IPopupShopPill InstantiatePill(OfferPack.Type _type)
+    public override IShopPill InstantiatePill(OfferPack.Type _type)
     {
-        IPopupShopPill pill = null;
+        IShopPill pill = null;
 
         // Create new instance of prefab
         switch (_type)

@@ -36,7 +36,7 @@ public class ResourcesFlowMissingPCPopup : MonoBehaviour {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed Members
-	[SerializeField] private PopupShopCurrencyPill m_recommendedPackPill = null;
+	[SerializeField] private ShopCurrencyPill m_recommendedPackPill = null;
 
 	// Events
 	public UnityEvent OnRecommendedPackPurchased = new UnityEvent();
@@ -149,7 +149,7 @@ public class ResourcesFlowMissingPCPopup : MonoBehaviour {
 	/// The purchase flow on the pill has sucessfully ended.
 	/// </summary>
 	/// <param name="_pill">The pill that triggered the event</param>
-	private void OnPillPurchaseSuccess(IPopupShopPill _pill) {
+	private void OnPillPurchaseSuccess(IShopPill _pill) {
 		// Notify listeners
 		Log("OnPillPurchaseSuccess! " + _pill.GetIAPSku());
 		OnRecommendedPackPurchased.Invoke();

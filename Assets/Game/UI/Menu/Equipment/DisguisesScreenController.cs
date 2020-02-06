@@ -47,7 +47,7 @@ public class DisguisesScreenController : MonoBehaviour {
 	[SerializeField] private Localizer m_lockText = null;
 
 	[Space]
-	[SerializeField] private PopupShopOffersPill m_offerPill = null;
+	[SerializeField] private ShopMonoRewardPill m_offerPill = null;
 
 	// Setup
 	private string m_initialSkin = string.Empty;	// String to be selected upon entering the screen. Will be resetted every time the screen is reloaded.

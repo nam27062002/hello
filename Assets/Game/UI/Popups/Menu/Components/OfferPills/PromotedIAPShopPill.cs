@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PromotedIAPShopPill : IPopupShopPill {
+public class PromotedIAPShopPill : IShopPill {
     //------------------------------------------------------------------------//
     // MEMBERS AND PROPERTIES                                                 //
     //------------------------------------------------------------------------//

@@ -38,8 +38,8 @@ public abstract class IPopupShopTab : Tab {
 	}
 
 	// Internal
-	protected List<IPopupShopPill> m_pills = new List<IPopupShopPill>();
-	public List<IPopupShopPill> pills {
+	protected List<IShopPill> m_pills = new List<IShopPill>();
+	public List<IShopPill> pills {
 		get { return m_pills; }
 	}
 

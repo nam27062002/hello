@@ -19,7 +19,7 @@ using DG.Tweening;
 /// <summary>
 /// Single pill in the shop for a currency pack.
 /// </summary>
-public class PopupShopCurrencyPill : PopupShopOffersPill {
+public class ShopCurrencyPill : ShopMonoRewardPill {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
