@@ -28,16 +28,21 @@ public class OfferItemSlot : MonoBehaviour, IBroadcastListener {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed references
+	[Header("Settings")]
+	[SerializeField] protected Type m_type = Type.PILL_BIG;
 	[SerializeField] protected bool m_allow3dPreview = false;   // [AOC] In some cases, we want to display a 3d preview when appliable (pets/eggs)
 
 	[Header("Mandatory Fields")]
 	[SerializeField] protected Transform m_previewContainer = null;
-	[SerializeField] protected TextMeshProUGUI m_text = null;
+	[SerializeField] protected TextMeshProUGUI m_mainText = null;
+	[SerializeField] protected TextMeshProUGUI m_secondaryText = null;
+	[SerializeField] protected TextMeshProUGUI m_amountText = null;
 
 	[Header("Optional Fields")]
-	[Tooltip("Optional")] [SerializeField] protected TextMeshProUGUI m_extraInfoText = null;    // Will only be displayed for some types
-	[Tooltip("Optional")] [SerializeField] protected GameObject m_extraInfoRoot = null;    // Will only be displayed for some types
-	
+	[SerializeField] protected TextMeshProUGUI m_descriptionText = null;
+	[SerializeField] protected PowerIcon m_powerIcon = null;	// Will only be displayed for some types
+	[SerializeField] protected Image m_tierIcon = null;		// Will only be displayed for some types
+
 	// Convenience properties
 	public RectTransform rectTransform {
 		get { return this.transform as RectTransform; }
@@ -147,12 +152,12 @@ public class OfferItemSlot : MonoBehaviour, IBroadcastListener {
 		}
 
 		// Set text - preview will given us the text already localized and all
-		if(m_text != null) {
+		if(m_mainText != null) {
 			if(m_preview != null) {
-				m_text.text = m_preview.GetLocalizedDescription();
+				m_mainText.text = m_preview.GetLocalizedDescription();
 			} else {
 				// Something went very wrong :s
-				m_text.text = "Couldn't find a preview prefab for reward type " + item.type;
+				m_mainText.text = "Couldn't find a preview prefab for reward type " + item.type;
 			}
 
 			// Text color based on item rarity!
@@ -162,8 +167,8 @@ public class OfferItemSlot : MonoBehaviour, IBroadcastListener {
 			} else {
 				rarityGradient = UIConstants.GetRarityTextGradient(Metagame.Reward.Rarity.COMMON);
 			}
-			m_text.enableVertexGradient = true;
-			m_text.colorGradient = new VertexGradient(
+			m_mainText.enableVertexGradient = true;
+			m_mainText.colorGradient = new VertexGradient(
 				rarityGradient.topLeft,
 				rarityGradient.topRight,
 				rarityGradient.bottomLeft,
@@ -171,51 +176,55 @@ public class OfferItemSlot : MonoBehaviour, IBroadcastListener {
 			);
 		}
 
-		// Extra info text - only for some types
-		if(m_extraInfoText != null) {
-			string text = null;
-			switch(reward.type) {
-				// Pet
-				case Metagame.RewardPet.TYPE_CODE: {
-					// Power description
-					DefinitionNode petDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PETS, reward.sku);
-					if(petDef != null) {
-						DefinitionNode powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, petDef.Get("powerup"));
-						text = DragonPowerUp.GetDescription(powerDef, true, true);   // Custom formatting depending on powerup type, already localized
-					}
-				} break;
+		// Description and Power Icon
+		// [AOC] TODO!! All types must have description now, move it to the ItemPreview classes
+		string localizedDescription = "";
+		DefinitionNode powerDef = null;
+		PowerIcon.Mode powerIconMode = PowerIcon.Mode.PET;
+		switch(reward.type) {
+			// Pet
+			case Metagame.RewardPet.TYPE_CODE: {
+				// Power description
+				DefinitionNode petDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PETS, reward.sku);
+				if(petDef != null) {
+					powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, petDef.Get("powerup"));
+					powerIconMode = PowerIcon.Mode.PET;
+					localizedDescription = DragonPowerUp.GetDescription(powerDef, true, true);   // Custom formatting depending on powerup type, already localized
+				}
+			} break;
 
-				// Skin
-				case Metagame.RewardSkin.TYPE_CODE: {
-					// Power description
-					DefinitionNode skinDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, reward.sku);
-					if(skinDef != null) {
-						DefinitionNode powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, skinDef.Get("powerup"));
-						text = DragonPowerUp.GetDescription(powerDef, true, false);   // Custom formatting depending on powerup type, already localized
-					}
-				} break;
+			// Skin
+			case Metagame.RewardSkin.TYPE_CODE: {
+				// Power description
+				DefinitionNode skinDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, reward.sku);
+				if(skinDef != null) {
+					powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, skinDef.Get("powerup"));
+					powerIconMode = PowerIcon.Mode.SKIN;
+					localizedDescription = DragonPowerUp.GetDescription(powerDef, true, false);   // Custom formatting depending on powerup type, already localized
+				}
+			} break;
 
-				// Dragon
-				case Metagame.RewardDragon.TYPE_CODE: {
-					// Dragon description
-					text = reward.def.GetLocalized("tidDesc");
-				} break;
+			// Dragon
+			case Metagame.RewardDragon.TYPE_CODE: {
+				// Dragon description
+				localizedDescription = reward.def.GetLocalized("tidDesc");
+			} break;
 
-				default: {
-					// No extra text to be displayed :)
-				} break;
+			default: {
+				// No extra text to be displayed :)
+			} break;
+		}
+
+		if(m_descriptionText != null) {
+			m_descriptionText.text = localizedDescription;
+		}
+
+		if(m_powerIcon != null) {
+			bool show = powerDef != null;
+			m_powerIcon.gameObject.SetActive(show);
+			if(show) {
+				m_powerIcon.InitFromDefinition(powerDef, false, false, powerIconMode);
 			}
-
-			// Show?
-			bool show = (text != null);
-			if(m_extraInfoRoot != null) {
-				m_extraInfoRoot.SetActive(show);
-			} else {
-				m_extraInfoText.gameObject.SetActive(show);
-			}
-
-			// Set text
-			if(show) m_extraInfoText.text = text;
 		}
 	}
 
