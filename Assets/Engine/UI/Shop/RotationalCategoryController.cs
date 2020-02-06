@@ -26,7 +26,7 @@ public class RotationalCategoryController : CategoryController
 
 
     // Pills prefabs
-    [SerializeField] private IPopupShopPill m_rotationalPillPrefab = null;
+    [SerializeField] private IShopPill m_rotationalPillPrefab = null;
 
 
     //------------------------------------------------------------------------//
@@ -44,9 +44,9 @@ public class RotationalCategoryController : CategoryController
     }
 
     
-    public override IPopupShopPill InstantiatePill(OfferPack.Type _type)
+    public override IShopPill InstantiatePill(OfferPack.Type _type)
     {
-        IPopupShopPill pill = null;
+        IShopPill pill = null;
 
         // Create new instance of prefab
         switch (_type)

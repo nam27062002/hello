@@ -36,9 +36,9 @@ public class PopupShopOffersTab : IPopupShopTab {
     [SerializeField] private GameObject m_removeAdsPillPrefab = null;
 
     // Internal
-    private List<PopupShopOffersPill> m_normalOfferPills = new List<PopupShopOffersPill>();
-	private PopupShopFreeOfferPill m_freeOfferPill = null;
-    private List<PopupShopRemoveAdsPill> m_removeAdsPills = new List<PopupShopRemoveAdsPill>();
+    private List<ShopMonoRewardPill> m_normalOfferPills = new List<ShopMonoRewardPill>();
+	private ShopFreePill m_freeOfferPill = null;
+    private List<ShopRemoveAdsPill> m_removeAdsPills = new List<ShopRemoveAdsPill>();
 
     //------------------------------------------------------------------------//
     // GENERIC METHODS														  //
@@ -64,7 +64,7 @@ public class PopupShopOffersTab : IPopupShopTab {
 
 		// Propagate to pills
 		for(int i = 0; i < m_pills.Count; ++i) {
-			(m_pills[i] as PopupShopOffersPill).RefreshTimer();
+			(m_pills[i] as ShopMonoRewardPill).RefreshTimer();
 		}
 	}
 
@@ -116,8 +116,8 @@ public class PopupShopOffersTab : IPopupShopTab {
 		// Get list of active offer packs and create a pill for each one
 		// List should already be properly sorted
 		List<OfferPack> activeOffers = OffersManager.activeOffers;
-		List<IPopupShopPill> sortedPills = new List<IPopupShopPill>();
-		PopupShopOffersPill pill = null;
+		List<IShopPill> sortedPills = new List<IShopPill>();
+		ShopMonoRewardPill pill = null;
 		for(int i = 0; i < activeOffers.Count; ++i) {
 			// Do we need a new pill for this offer?
 			// Depends on pill type
@@ -127,7 +127,7 @@ public class PopupShopOffersTab : IPopupShopTab {
 					if(m_freeOfferPill == null) {
 						// Create new instance and store it
 						pill = InstantiatePill(m_freeOfferPillPrefab);
-						m_freeOfferPill = pill as PopupShopFreeOfferPill;
+						m_freeOfferPill = pill as ShopFreePill;
 					} else {
 						// Reuse existing pill
 						pill = m_freeOfferPill;
@@ -140,7 +140,7 @@ public class PopupShopOffersTab : IPopupShopTab {
                         {
                             // Create new instance and store it
                             pill = InstantiatePill(m_removeAdsPillPrefab);
-                            m_removeAdsPills.Add( (PopupShopRemoveAdsPill) pill);
+                            m_removeAdsPills.Add( (ShopRemoveAdsPill) pill);
                         }
                         else
                         {
@@ -179,7 +179,7 @@ public class PopupShopOffersTab : IPopupShopTab {
 
 		// Hide unused pills (if any) and add them to the end of the sorted list
 		for(int i = 0; i < m_pills.Count; ++i) {
-			pill = m_pills[i] as PopupShopOffersPill;
+			pill = m_pills[i] as ShopMonoRewardPill;
 			pill.InitFromOfferPack(null);   // This will do it
 			sortedPills.Add(pill);
 		}
@@ -204,12 +204,12 @@ public class PopupShopOffersTab : IPopupShopTab {
 	/// </summary>
 	/// <param name="_prefab">Prefab of the pill to be instantiated.</param>
 	/// <returns>The new pill instance.</returns>
-	private PopupShopOffersPill InstantiatePill(GameObject _prefab) {
+	private ShopMonoRewardPill InstantiatePill(GameObject _prefab) {
 		// Instantiate the given prefab within the scrolllist content
 		GameObject newPillObj = Instantiate<GameObject>(_prefab, m_scrollList.content, false);
 
 		// Get the pill component, add it to the pills list and return
-		PopupShopOffersPill pill = newPillObj.GetComponent<PopupShopOffersPill>();
+		ShopMonoRewardPill pill = newPillObj.GetComponent<ShopMonoRewardPill>();
 		m_pills.Add(pill);
 		return pill;
 	}

@@ -23,7 +23,7 @@ using DG.Tweening;
 /// <summary>
 /// Single pill in the shop for ads removal offer
 /// </summary>
-public class PopupShopRemoveAdsPill : PopupShopOffersPill {
+public class ShopRemoveAdsPill : ShopMonoRewardPill {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//

@@ -27,13 +27,13 @@ public class PopupFeaturedOffer : MonoBehaviour {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed
-	[SerializeField] private PopupShopOffersPill m_basicLayoutPill = null;
-	[SerializeField] private PopupShopOffersPill m_featuredLayoutPill = null;
-	[SerializeField] private PopupShopOffersPill m_singleItemLayoutPill = null;
+	[SerializeField] private ShopMonoRewardPill m_basicLayoutPill = null;
+	[SerializeField] private ShopMonoRewardPill m_featuredLayoutPill = null;
+	[SerializeField] private ShopMonoRewardPill m_singleItemLayoutPill = null;
 
 	// Internal
 	private OfferPack m_pack = null;
-	private PopupShopOffersPill m_activePill = null;
+	private ShopMonoRewardPill m_activePill = null;
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -147,7 +147,7 @@ public class PopupFeaturedOffer : MonoBehaviour {
 	/// Successful purchase.
 	/// </summary>
 	/// <param name="_pill">The pill that triggered the event</param>
-	private void OnPurchaseSuccessful(IPopupShopPill _pill) {
+	private void OnPurchaseSuccessful(IShopPill _pill) {
 		// Close popup
 		GetComponent<PopupController>().Close(true);
 	}

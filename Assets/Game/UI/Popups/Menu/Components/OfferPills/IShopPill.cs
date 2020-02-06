@@ -27,12 +27,12 @@ using DG.Tweening;
 /// <summary>
 /// Single pill in the currency shop.
 /// </summary>
-public abstract class IPopupShopPill : MonoBehaviour {
+public abstract class IShopPill : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
 	// Parametrized event
-	public class ShopPillEvent : UnityEvent<IPopupShopPill> { }
+	public class ShopPillEvent : UnityEvent<IShopPill> { }
 
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //

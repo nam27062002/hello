@@ -42,7 +42,7 @@ public class PopupHappyHour : MonoBehaviour {
 	[SerializeField]
 	private TextMeshProUGUI m_extraGemsRateText;
 	[SerializeField]
-	private PopupShopHCPill m_offerToDisplay;
+	private ShopHCPill m_offerToDisplay;
 
 	// Internal
 	private HappyHour m_happyHour;
@@ -200,7 +200,7 @@ public class PopupHappyHour : MonoBehaviour {
 	/// The pack has been successfully purchased.
 	/// </summary>
 	/// <param name="_pill"></param>
-	private void OnPurchaseSucces(IPopupShopPill _pill) {
+	private void OnPurchaseSucces(IShopPill _pill) {
 		// Track and close the popup
 		TrackBuyButton();
 		GetComponent<PopupController>().Close(true);
