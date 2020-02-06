@@ -18,7 +18,7 @@ using TMPro;
 /// <summary>
 /// Simple class to encapsulate the preview of an item.
 /// </summary>
-public class OfferItemPreviewDragon3d : IOfferItemPreview {
+public class OfferItemPreviewDragon3d : IOfferItemPreviewDragon {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -52,14 +52,14 @@ public class OfferItemPreviewDragon3d : IOfferItemPreview {
 	}
 
 	//------------------------------------------------------------------------//
-	// OfferItemPreview IMPLEMENTATION										  //
+	// PARENT OVERRIDES														  //
 	//------------------------------------------------------------------------//
 	/// <summary>
 	/// Initialize preview with current item (m_item)
 	/// </summary>
 	protected override void InitInternal() {
-		// Item must be a dragon!
-		Debug.Assert(m_item.reward is Metagame.RewardDragon, "ITEM OF THE WRONG TYPE!", this);
+		// Call parent
+		base.InitInternal();
 
 		// Initialize dragon loader with the target dragon and skin!
 		m_def = m_item.reward.def;
@@ -68,34 +68,6 @@ public class OfferItemPreviewDragon3d : IOfferItemPreview {
 		} else {
 			m_dragonLoader.LoadDragon(m_def.sku, IDragonData.GetDefaultDisguise(m_def.sku).sku);
 		}
-	}
-
-	/// <summary>
-	/// Gets the description of this item, already localized and formatted.
-	/// </summary>
-	/// <returns>The localized description.</returns>
-	public override string GetLocalizedDescription() {
-		if(m_def != null) {
-			return m_def.GetLocalized("tidName");
-		}
-		return string.Empty;    // Shouldn't happen
-	}
-
-	//------------------------------------------------------------------------//
-	// PARENT OVERRIDES														  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// The info button has been pressed.
-	/// </summary>
-	/// <param name="_trackingLocation">Where is this been triggered from?</param>
-	override public void OnInfoButton(string _trackingLocation) {
-		// Open info popup
-		// [AOC] We haven't purchased the dragon yet, create fake data of the dragon
-		IDragonData dragonData = IDragonData.CreateFromDef(m_def);
-		PopupDragonInfo popup = PopupDragonInfo.OpenPopupForDragon(dragonData, _trackingLocation);
-
-		// Move it forward in Z so it doesn't conflict with our 3d preview!
-		popup.transform.SetLocalPosZ(-2500f);
 	}
 
 	//------------------------------------------------------------------------//
