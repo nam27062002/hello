@@ -43,11 +43,11 @@ public class ItemPrefabSetup {
 /// Static scriptable object class to setup the offer item prefabs.
 /// </summary>
 //[CreateAssetMenu]
-public class OfferItemPrefabs : SingletonScriptableObject<OfferItemPrefabs> {
+public class ShopSettings : SingletonScriptableObject<ShopSettings> {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	public const string PATH = "UI/Metagame/Offers/OfferItemPrefabs";
+	public const string PATH = "UI/Metagame/Offers/ShopSettings";
 
 	public enum PrefabType {
 		PREVIEW_2D,
