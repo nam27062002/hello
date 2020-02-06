@@ -8,9 +8,6 @@
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
 using UnityEngine;
-using UnityEngine.UI;
-
-using TMPro;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -18,21 +15,15 @@ using TMPro;
 /// <summary>
 /// Simple class to encapsulate the preview of an item.
 /// </summary>
-public class OfferItemPreviewSC : IOfferItemPreview {
+public abstract class IOfferItemPreviewSC : IOfferItemPreview {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	public override ShopSettings.PrefabType type {
-		get { return m_previewType; }
-	}
-
+	
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
-	[Separator("Custom Fields")]
-	[HideEnumValues(false, true)]
-	[SerializeField] private ShopSettings.PrefabType m_previewType = ShopSettings.PrefabType.PREVIEW_2D;
-
+	
 	//------------------------------------------------------------------------//
 	// OfferItemPreview IMPLEMENTATION										  //
 	//------------------------------------------------------------------------//
@@ -42,21 +33,6 @@ public class OfferItemPreviewSC : IOfferItemPreview {
 	protected override void InitInternal() {
 		// Item must be a pet!
 		Debug.Assert(m_item.reward is Metagame.RewardSoftCurrency, "ITEM OF THE WRONG TYPE!", this);
-
-		// Load preview - 2D or 3D?
-		switch(m_previewType) {
-			case ShopSettings.PrefabType.PREVIEW_2D: {
-					// [AOC] TODO!! Load target image preview
-					// Try to compose path from the pack "order" field (unfortunately we don't know to which pack we belong to)
-				}
-				break;
-
-			case ShopSettings.PrefabType.PREVIEW_3D: {
-					// Nothing to do, preview is already instantiated
-				}
-				break;
-		}
-
 	}
 
 	/// <summary>
