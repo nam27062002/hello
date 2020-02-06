@@ -22,8 +22,8 @@ public class OfferItemPreviewPet3d : IOfferItemPreview {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	public override OfferItemPrefabs.PrefabType type {
-		get { return OfferItemPrefabs.PrefabType.PREVIEW_3D; }
+	public override ShopSettings.PrefabType type {
+		get { return ShopSettings.PrefabType.PREVIEW_3D; }
 	}
 
 	//------------------------------------------------------------------------//
@@ -31,20 +31,20 @@ public class OfferItemPreviewPet3d : IOfferItemPreview {
 	//------------------------------------------------------------------------//
 	[SerializeField] private MenuPetLoader m_petPreview = null;
 
-    //------------------------------------------------------------------------//
-    // GENERIC METHODS                                                        //
-    //------------------------------------------------------------------------//
-    protected void OnDestroy() {
-        m_petPreview.OnLoadingComplete.RemoveListener(OnLoadingComplete);
-    }
+	//------------------------------------------------------------------------//
+	// GENERIC METHODS                                                        //
+	//------------------------------------------------------------------------//
+	protected void OnDestroy() {
+		m_petPreview.OnLoadingComplete.RemoveListener(OnLoadingComplete);
+	}
 
-    //------------------------------------------------------------------------//
-    // OfferItemPreview IMPLEMENTATION										  //
-    //------------------------------------------------------------------------//
-    /// <summary>
-    /// Initialize preview with current item (m_item)
-    /// </summary>
-    protected override void InitInternal() {
+	//------------------------------------------------------------------------//
+	// OfferItemPreview IMPLEMENTATION										  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Initialize preview with current item (m_item)
+	/// </summary>
+	protected override void InitInternal() {
 		// Item must be a pet!
 		Debug.Assert(m_item != null && m_item.reward != null && m_item.reward is Metagame.RewardPet, "ITEM IS NULL OR OF THE WRONG TYPE!", this);
 
@@ -53,8 +53,8 @@ public class OfferItemPreviewPet3d : IOfferItemPreview {
 
 		// Initialize pet loader with the target pet preview!
 		m_petPreview.Load(m_item.reward.sku);
-        m_petPreview.OnLoadingComplete.AddListener(OnLoadingComplete);
-    }
+		m_petPreview.OnLoadingComplete.AddListener(OnLoadingComplete);
+	}
 
 	/// <summary>
 	/// Gets the description of this item, already localized and formatted.
@@ -64,7 +64,7 @@ public class OfferItemPreviewPet3d : IOfferItemPreview {
 		if(m_def != null) {
 			return m_def.GetLocalized("tidName");
 		}
-		return LocalizationManager.SharedInstance.Localize("TID_PET");	// (shouldn't happen) use generic
+		return LocalizationManager.SharedInstance.Localize("TID_PET");  // (shouldn't happen) use generic
 	}
 
 	//------------------------------------------------------------------------//
@@ -102,11 +102,11 @@ public class OfferItemPreviewPet3d : IOfferItemPreview {
 		HDTrackingManager.Instance.Notify_InfoPopup(popupName, _trackingLocation);
 	}
 
-    //------------------------------------------------------------------------//
-    // CALLBACKS                                                              //
-    //------------------------------------------------------------------------//
-    private void OnLoadingComplete(MenuPetLoader _loader) {
-        InitParticles(m_petPreview.petInstance.gameObject);
-        _loader.OnLoadingComplete.RemoveListener(OnLoadingComplete);
-    }
+	//------------------------------------------------------------------------//
+	// CALLBACKS                                                              //
+	//------------------------------------------------------------------------//
+	private void OnLoadingComplete(MenuPetLoader _loader) {
+		InitParticles(m_petPreview.petInstance.gameObject);
+		_loader.OnLoadingComplete.RemoveListener(OnLoadingComplete);
+	}
 }

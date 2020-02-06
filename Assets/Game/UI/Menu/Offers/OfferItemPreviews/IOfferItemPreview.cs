@@ -23,7 +23,7 @@ public abstract class IOfferItemPreview : MonoBehaviour {
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
 	// Abstract
-	public abstract OfferItemPrefabs.PrefabType type {
+	public abstract ShopSettings.PrefabType type {
 		get;
 	}
 
@@ -49,10 +49,8 @@ public abstract class IOfferItemPreview : MonoBehaviour {
 	///
 	/// OnDestroy
 	/// We stop delayed coroutine to avoid accesing an object that was destroyed
-	void OnDestroy()
-	{
-		if (m_delayedSetParentAndFit != null)
-		{
+	void OnDestroy() {
+		if(m_delayedSetParentAndFit != null) {
 			StopCoroutine(m_delayedSetParentAndFit);
 			m_delayedSetParentAndFit = null;
 		}

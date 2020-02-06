@@ -22,7 +22,7 @@ public class OfferItemPreviewSC : IOfferItemPreview {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	public override OfferItemPrefabs.PrefabType type {
+	public override ShopSettings.PrefabType type {
 		get { return m_previewType; }
 	}
 
@@ -31,7 +31,7 @@ public class OfferItemPreviewSC : IOfferItemPreview {
 	//------------------------------------------------------------------------//
 	[Separator("Custom Fields")]
 	[HideEnumValues(false, true)]
-	[SerializeField] private OfferItemPrefabs.PrefabType m_previewType = OfferItemPrefabs.PrefabType.PREVIEW_2D;
+	[SerializeField] private ShopSettings.PrefabType m_previewType = ShopSettings.PrefabType.PREVIEW_2D;
 
 	//------------------------------------------------------------------------//
 	// OfferItemPreview IMPLEMENTATION										  //
@@ -45,13 +45,13 @@ public class OfferItemPreviewSC : IOfferItemPreview {
 
 		// Load preview - 2D or 3D?
 		switch(m_previewType) {
-			case OfferItemPrefabs.PrefabType.PREVIEW_2D: {
+			case ShopSettings.PrefabType.PREVIEW_2D: {
 					// [AOC] TODO!! Load target image preview
 					// Try to compose path from the pack "order" field (unfortunately we don't know to which pack we belong to)
 				}
 				break;
 
-			case OfferItemPrefabs.PrefabType.PREVIEW_3D: {
+			case ShopSettings.PrefabType.PREVIEW_3D: {
 					// Nothing to do, preview is already instantiated
 				}
 				break;

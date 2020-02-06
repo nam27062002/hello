@@ -121,14 +121,14 @@ public class OfferItemSlot : MonoBehaviour, IBroadcastListener {
 		if(reloadPreview) {
 			// Try loading the preferred preview type
 			// If there is no preview of the preferred type, try other types untill we have a valid preview
-			OfferItemPrefabs.PrefabType preferredPreviewType = m_allow3dPreview ? OfferItemPrefabs.PrefabType.PREVIEW_3D : OfferItemPrefabs.PrefabType.PREVIEW_2D;
-			GameObject previewPrefab = OfferItemPrefabs.GetPrefab(item.type, preferredPreviewType);
+			ShopSettings.PrefabType preferredPreviewType = m_allow3dPreview ? ShopSettings.PrefabType.PREVIEW_3D : ShopSettings.PrefabType.PREVIEW_2D;
+			GameObject previewPrefab = ShopSettings.GetPrefab(item.type, preferredPreviewType);
 			if(previewPrefab == null) {
 				// Loop will stop with a valid prefab
-				for(int i = 0; i < (int)OfferItemPrefabs.PrefabType.COUNT && previewPrefab == null; ++i) {
+				for(int i = 0; i < (int)ShopSettings.PrefabType.COUNT && previewPrefab == null; ++i) {
 					// Skip preferred type (already checked)
 					if(i == (int)preferredPreviewType) continue;
-					previewPrefab = OfferItemPrefabs.GetPrefab(item.type, (OfferItemPrefabs.PrefabType)i);
+					previewPrefab = ShopSettings.GetPrefab(item.type, (ShopSettings.PrefabType)i);
 				}
 			}
 

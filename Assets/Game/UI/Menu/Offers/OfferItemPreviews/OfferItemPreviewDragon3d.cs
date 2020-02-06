@@ -22,8 +22,8 @@ public class OfferItemPreviewDragon3d : IOfferItemPreview {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	public override OfferItemPrefabs.PrefabType type {
-		get { return OfferItemPrefabs.PrefabType.PREVIEW_3D; }
+	public override ShopSettings.PrefabType type {
+		get { return ShopSettings.PrefabType.PREVIEW_3D; }
 	}
 
 	//------------------------------------------------------------------------//

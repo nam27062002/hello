@@ -22,8 +22,8 @@ public class OfferItemPreviewSkin3d : IOfferItemPreview {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	public override OfferItemPrefabs.PrefabType type {
-		get { return OfferItemPrefabs.PrefabType.PREVIEW_3D; }
+	public override ShopSettings.PrefabType type {
+		get { return ShopSettings.PrefabType.PREVIEW_3D; }
 	}
 
 	//------------------------------------------------------------------------//
@@ -78,7 +78,7 @@ public class OfferItemPreviewSkin3d : IOfferItemPreview {
 		if(m_def != null) {
 			return m_def.GetLocalized("tidName");
 		}
-		return LocalizationManager.SharedInstance.Localize("TID_DISGUISE");	// (shouldn't happen) use generic
+		return LocalizationManager.SharedInstance.Localize("TID_DISGUISE"); // (shouldn't happen) use generic
 	}
 
 	//------------------------------------------------------------------------//
