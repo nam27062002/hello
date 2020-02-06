@@ -43,7 +43,6 @@ public class OfferItemPreviewEgg2d : IOfferItemPreviewEgg {
 		base.InitInternal();
 
 		// Initialize image with the target egg icon
-		m_def = DefinitionsManager.SharedInstance.GetDefinition(m_item.sku);
 		if(m_def == null) {
 			m_image.sprite = null;
 		} else {

@@ -8,9 +8,6 @@
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
 using UnityEngine;
-using UnityEngine.UI;
-
-using TMPro;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -18,7 +15,7 @@ using TMPro;
 /// <summary>
 /// Simple class to encapsulate the preview of an item.
 /// </summary>
-public class OfferItemPreviewPet3d : IOfferItemPreview {
+public class OfferItemPreviewPet3d : IOfferItemPreviewPet {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -34,42 +31,28 @@ public class OfferItemPreviewPet3d : IOfferItemPreview {
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS                                                        //
 	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Destructor.
+	/// </summary>
 	protected void OnDestroy() {
 		m_petPreview.OnLoadingComplete.RemoveListener(OnLoadingComplete);
 	}
 
 	//------------------------------------------------------------------------//
-	// OfferItemPreview IMPLEMENTATION										  //
+	// PARENT OVERRIDES														  //
 	//------------------------------------------------------------------------//
 	/// <summary>
 	/// Initialize preview with current item (m_item)
 	/// </summary>
 	protected override void InitInternal() {
-		// Item must be a pet!
-		Debug.Assert(m_item != null && m_item.reward != null && m_item.reward is Metagame.RewardPet, "ITEM IS NULL OR OF THE WRONG TYPE!", this);
-
-		// Store definition
-		m_def = m_item.reward.def;
+		// Call parent
+		base.InitInternal();
 
 		// Initialize pet loader with the target pet preview!
 		m_petPreview.Load(m_item.reward.sku);
 		m_petPreview.OnLoadingComplete.AddListener(OnLoadingComplete);
 	}
 
-	/// <summary>
-	/// Gets the description of this item, already localized and formatted.
-	/// </summary>
-	/// <returns>The localized description.</returns>
-	public override string GetLocalizedDescription() {
-		if(m_def != null) {
-			return m_def.GetLocalized("tidName");
-		}
-		return LocalizationManager.SharedInstance.Localize("TID_PET");  // (shouldn't happen) use generic
-	}
-
-	//------------------------------------------------------------------------//
-	// PARENT OVERRIDES														  //
-	//------------------------------------------------------------------------//
 	/// <summary>
 	/// Set this preview's parent and adjust its size to fit it.
 	/// </summary>
@@ -80,26 +63,6 @@ public class OfferItemPreviewPet3d : IOfferItemPreview {
 
 		// Refresh particle scaler
 		m_petPreview.pscaler.DoScale();
-	}
-
-	/// <summary>
-	/// The info button has been pressed.
-	/// </summary>
-	/// <param name="_trackingLocation">Where is this been triggered from?</param>
-	override public void OnInfoButton(string _trackingLocation) {
-		// Intiialize info popup
-		PopupController popup = PopupManager.LoadPopup(PopupInfoPet.PATH_SIMPLE);
-		popup.GetComponent<PopupInfoPet>().Init(m_def);
-
-		// Move it forward in Z so it doesn't conflict with our 3d preview!
-		popup.transform.SetLocalPosZ(-2500f);
-
-		// Open it!
-		popup.Open();
-
-		// Tracking
-		string popupName = System.IO.Path.GetFileNameWithoutExtension(PopupInfoPet.PATH_SIMPLE);
-		HDTrackingManager.Instance.Notify_InfoPopup(popupName, _trackingLocation);
 	}
 
 	//------------------------------------------------------------------------//

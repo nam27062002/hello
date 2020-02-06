@@ -43,7 +43,6 @@ public class OfferItemPreviewDragon2d : IOfferItemPreviewDragon {
 		base.InitInternal();
 
 		// Initialize image with the target dragon icon
-		m_def = m_item.reward.def;
         if (m_def != null) {			
             string defaultIcon = IDragonData.GetDefaultDisguise(m_def.sku).Get("icon");
             m_loader.LoadAsync(defaultIcon);

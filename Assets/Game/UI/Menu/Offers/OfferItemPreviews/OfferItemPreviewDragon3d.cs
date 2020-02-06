@@ -62,7 +62,6 @@ public class OfferItemPreviewDragon3d : IOfferItemPreviewDragon {
 		base.InitInternal();
 
 		// Initialize dragon loader with the target dragon and skin!
-		m_def = m_item.reward.def;
 		if(m_def == null) {
 			m_dragonLoader.LoadDragon("");
 		} else {

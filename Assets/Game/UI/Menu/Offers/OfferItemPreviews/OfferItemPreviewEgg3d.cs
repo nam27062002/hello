@@ -43,7 +43,6 @@ public class OfferItemPreviewEgg3d : IOfferItemPreviewEgg {
 		base.InitInternal();
 
 		// Initialize loader with the target egg
-		m_def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.EGGS, m_item.sku);
 		if(m_def == null) {
 			m_eggLoader.Load("");
 		} else {
