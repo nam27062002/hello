@@ -28,7 +28,10 @@ public class OfferItemPreviewSC2d : IOfferItemPreviewSC {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed
-	[SerializeField] private Image m_image = null;
+	[SerializeField] private Transform m_iconRoot = null;
+
+	// Internal
+	private GameObject m_iconInstance = null;
 
 	//------------------------------------------------------------------------//
 	// PARENT OVERRIDES														  //
@@ -42,12 +45,17 @@ public class OfferItemPreviewSC2d : IOfferItemPreviewSC {
 
 		// Initialize image with the target egg icon
 		if(m_def == null) {
-			m_image.sprite = null;
+			if(m_iconInstance != null) Destroy(m_iconInstance);
 		} else {
 			// [AOC] TODO!! Load different icon prefabs based on pack sku
 			//				Consider also the case where the SC reward doesn't belong to a pack
-			//m_image.sprite = Resources.Load<Sprite>(UIConstants.SHOP_ICONS_PATH);
-			// Let's show the default image in the prefab in that case (and for now)
+			GameObject iconPrefab = Resources.Load<GameObject>(UIConstants.SHOP_ICONS_PATH);
+			if(iconPrefab != null) {
+				m_iconInstance = Instantiate<GameObject>(iconPrefab, m_iconRoot, false);
+			} else {
+				// Invalid prefab, let's show the default icon already in the prefab
+				// Nothing to do
+			}
 		}
 	}
 }
