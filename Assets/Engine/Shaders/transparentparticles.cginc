@@ -5,19 +5,19 @@
 struct appdata_t {
 	float4 vertex : POSITION;
 	fixed4 color : COLOR;
-	half4 texcoord : TEXCOORD0;
+	float4 texcoord : TEXCOORD0;
 };
 
 struct v2f {
 	float4 vertex : SV_POSITION;
 	fixed4 color : COLOR;
-	half2 texcoord : TEXCOORD0;
+	float2 texcoord : TEXCOORD0;
 #if defined(EXTENDED_PARTICLES)
 	half2 particledata : TEXCOORD1;
 #endif	//EXTENDED_PARTICLES
 
 #if defined(NOISE_TEXTURE) || defined(FLOWMAP)
-	half2 noiseuv : TEXCOORD2;
+	float2 noiseuv : TEXCOORD2;
 #endif	//NOISE_TEXTURE || FLOWMAP
 };
 

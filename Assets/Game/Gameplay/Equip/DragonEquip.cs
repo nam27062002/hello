@@ -284,10 +284,12 @@ public class DragonEquip : MonoBehaviour {
 		{
 			if ( !string.IsNullOrEmpty(bodyParts[i]) )
 			{
-                GameObject prefabObj = HDAddressablesManager.Instance.LoadAsset<GameObject>(bodyParts[i]);
+				GameObject prefabObj = HDAddressablesManager.Instance.LoadAsset<GameObject>(bodyParts[i]);
                 if ( prefabObj != null )
 				{
-					GameObject objInstance = Instantiate<GameObject>(prefabObj);
+					// We need to instantiate the object before placing it because the target attach point is defined in the object's Equipable component
+					// To avoid weird artifacts with trail VFX, let's instantiate it close to the dragon instance
+					GameObject objInstance = Instantiate<GameObject>(prefabObj, this.transform.position, this.transform.rotation);
 					Equipable equipable = objInstance.GetComponent<Equipable>();
 					int attackPointIdx = (int)equipable.attachPoint;
 					if ( equipable != null && attackPointIdx < m_attachPoints.Length && m_attachPoints[attackPointIdx] != null )
