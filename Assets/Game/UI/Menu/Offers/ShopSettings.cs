@@ -30,7 +30,7 @@ public class ItemPrefabSetup {
 		Metagame.RewardSkin.TYPE_CODE,
 		Metagame.RewardDragon.TYPE_CODE
 	)]
-	public string type = Metagame.RewardSoftCurrency.TYPE_CODE;
+	[HideInInspector] public string type = Metagame.RewardSoftCurrency.TYPE_CODE;
 
 	[FileList("Resources/UI/Metagame/Offers", StringUtils.PathFormat.RESOURCES_ROOT_WITHOUT_EXTENSION, "*.prefab")]
 	public string prefab2d = "";
