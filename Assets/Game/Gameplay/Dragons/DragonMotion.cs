@@ -1986,10 +1986,14 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 	private void Bounce( Vector3 inNormal )
 	{
 		m_impulse = Vector3.Reflect( m_impulse, inNormal);
-		if ( m_impulse.magnitude < absoluteMaxSpeed * 3.5f )
+		// if ( m_impulse.magnitude < absoluteMaxSpeed * 3.5f )
 		{
+			// Remote siempre con la misma fuerza que
 			m_impulse = m_impulse.normalized * absoluteMaxSpeed * 4f;
+			// Remote que depende de la velocidad de entrada o choque
+			// m_impulse = m_impulse.normalized * m_impulse.magnitude * 4f;
 		}
+		m_rbody.velocity = m_impulse;
 	}
 
 	public void OnEnterWaterEvent( Collider _other )
