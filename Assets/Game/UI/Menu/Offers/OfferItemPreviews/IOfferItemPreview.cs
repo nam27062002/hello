@@ -22,8 +22,15 @@ public abstract class IOfferItemPreview : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
+	public enum Type {
+		_2D,
+		_3D,
+
+		COUNT
+	}
+
 	// Abstract
-	public abstract ShopSettings.PrefabType type {
+	public abstract IOfferItemPreview.Type type {
 		get;
 	}
 
@@ -63,7 +70,7 @@ public abstract class IOfferItemPreview : MonoBehaviour {
 	public void InitFromItem(OfferPackItem _item) {
 		// Store new item
 		m_item = _item;
-		
+
 		Debug.Assert(m_item != null && m_item.reward != null, "ITEM NOT PROPERLY INITIALIZED", this);
 		m_def = m_item.reward.def;
 

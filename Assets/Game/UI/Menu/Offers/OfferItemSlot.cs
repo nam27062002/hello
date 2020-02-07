@@ -41,7 +41,7 @@ public class OfferItemSlot : MonoBehaviour, IBroadcastListener {
 	[Header("Optional Fields")]
 	[SerializeField] protected TextMeshProUGUI m_descriptionText = null;
 	[SerializeField] protected PowerIcon m_powerIcon = null;	// Will only be displayed for some types
-	[SerializeField] protected Image m_tierIcon = null;		// Will only be displayed for some types
+	[SerializeField] protected Image m_tierIcon = null;			// Will only be displayed for some types
 
 	// Convenience properties
 	public RectTransform rectTransform {
@@ -59,7 +59,7 @@ public class OfferItemSlot : MonoBehaviour, IBroadcastListener {
 	public IOfferItemPreview preview {
 		get { return m_preview; }
 	}
-	
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -80,16 +80,14 @@ public class OfferItemSlot : MonoBehaviour, IBroadcastListener {
 		Broadcaster.RemoveListener(BroadcastEventType.LANGUAGE_CHANGED, this);
 	}
 
-    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
-    {
-        switch( eventType )
-        {
-            case BroadcastEventType.LANGUAGE_CHANGED:
-            {
-                OnLanguageChanged();
-            }break;
-        }
-    }
+	public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo) {
+		switch(eventType) {
+			case BroadcastEventType.LANGUAGE_CHANGED: {
+					OnLanguageChanged();
+				}
+				break;
+		}
+	}
 
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //
@@ -126,14 +124,14 @@ public class OfferItemSlot : MonoBehaviour, IBroadcastListener {
 		if(reloadPreview) {
 			// Try loading the preferred preview type
 			// If there is no preview of the preferred type, try other types untill we have a valid preview
-			ShopSettings.PrefabType preferredPreviewType = m_allow3dPreview ? ShopSettings.PrefabType.PREVIEW_3D : ShopSettings.PrefabType.PREVIEW_2D;
+			IOfferItemPreview.Type preferredPreviewType = m_allow3dPreview ? IOfferItemPreview.Type._3D : IOfferItemPreview.Type._2D;
 			GameObject previewPrefab = ShopSettings.GetPrefab(item.type, preferredPreviewType);
 			if(previewPrefab == null) {
 				// Loop will stop with a valid prefab
-				for(int i = 0; i < (int)ShopSettings.PrefabType.COUNT && previewPrefab == null; ++i) {
+				for(int i = 0; i < (int)IOfferItemPreview.Type.COUNT && previewPrefab == null; ++i) {
 					// Skip preferred type (already checked)
 					if(i == (int)preferredPreviewType) continue;
-					previewPrefab = ShopSettings.GetPrefab(item.type, (ShopSettings.PrefabType)i);
+					previewPrefab = ShopSettings.GetPrefab(item.type, (IOfferItemPreview.Type)i);
 				}
 			}
 
@@ -184,35 +182,39 @@ public class OfferItemSlot : MonoBehaviour, IBroadcastListener {
 		switch(reward.type) {
 			// Pet
 			case Metagame.RewardPet.TYPE_CODE: {
-				// Power description
-				DefinitionNode petDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PETS, reward.sku);
-				if(petDef != null) {
-					powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, petDef.Get("powerup"));
-					powerIconMode = PowerIcon.Mode.PET;
-					localizedDescription = DragonPowerUp.GetDescription(powerDef, true, true);   // Custom formatting depending on powerup type, already localized
+					// Power description
+					DefinitionNode petDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PETS, reward.sku);
+					if(petDef != null) {
+						powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, petDef.Get("powerup"));
+						powerIconMode = PowerIcon.Mode.PET;
+						localizedDescription = DragonPowerUp.GetDescription(powerDef, true, true);   // Custom formatting depending on powerup type, already localized
+					}
 				}
-			} break;
+				break;
 
 			// Skin
 			case Metagame.RewardSkin.TYPE_CODE: {
-				// Power description
-				DefinitionNode skinDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, reward.sku);
-				if(skinDef != null) {
-					powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, skinDef.Get("powerup"));
-					powerIconMode = PowerIcon.Mode.SKIN;
-					localizedDescription = DragonPowerUp.GetDescription(powerDef, true, false);   // Custom formatting depending on powerup type, already localized
+					// Power description
+					DefinitionNode skinDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, reward.sku);
+					if(skinDef != null) {
+						powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, skinDef.Get("powerup"));
+						powerIconMode = PowerIcon.Mode.SKIN;
+						localizedDescription = DragonPowerUp.GetDescription(powerDef, true, false);   // Custom formatting depending on powerup type, already localized
+					}
 				}
-			} break;
+				break;
 
 			// Dragon
 			case Metagame.RewardDragon.TYPE_CODE: {
-				// Dragon description
-				localizedDescription = reward.def.GetLocalized("tidDesc");
-			} break;
+					// Dragon description
+					localizedDescription = reward.def.GetLocalized("tidDesc");
+				}
+				break;
 
 			default: {
-				// No extra text to be displayed :)
-			} break;
+					// No extra text to be displayed :)
+				}
+				break;
 		}
 
 		if(m_descriptionText != null) {

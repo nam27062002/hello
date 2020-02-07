@@ -19,8 +19,8 @@ public class OfferItemPreviewPet3d : IOfferItemPreviewPet {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	public override ShopSettings.PrefabType type {
-		get { return ShopSettings.PrefabType.PREVIEW_3D; }
+	public override Type type {
+		get { return Type._3D; }
 	}
 
 	//------------------------------------------------------------------------//

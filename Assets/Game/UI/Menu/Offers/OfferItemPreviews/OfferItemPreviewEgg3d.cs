@@ -22,8 +22,8 @@ public class OfferItemPreviewEgg3d : IOfferItemPreviewEgg {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	public override ShopSettings.PrefabType type {
-		get { return ShopSettings.PrefabType.PREVIEW_3D; }
+	public override Type type {
+		get { return Type._3D; }
 	}
 
 	//------------------------------------------------------------------------//
