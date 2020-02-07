@@ -26,12 +26,6 @@ public class CategoryController : MonoBehaviour {
 
     [SerializeField] protected Transform m_pillsContainer;
 
-    // Pills prefabs
-    [Space]
-    [SerializeField] private IShopPill m_offerPackPillPrefab = null;
-    [SerializeField] private IShopPill m_freeOfferPillPrefab = null;
-    [SerializeField] private IShopPill m_removeAdsPillPrefab = null;
-
     // Internal
     protected ShopCategory m_shopCategory;
     protected ShopController m_shopController;
@@ -247,29 +241,14 @@ public class CategoryController : MonoBehaviour {
     public virtual IShopPill InstantiatePill(OfferPack.Type _type)
     {
         IShopPill pill;
-        
+
         // Create new instance of prefab
-        switch (_type)
-        {
-            case OfferPack.Type.FREE:
-                {
-                    pill = Instantiate(m_freeOfferPillPrefab);
-                }
-                break;
+        IShopPill prefab = ShopSettings.GetPrefab(_type);
 
-            case OfferPack.Type.REMOVE_ADS:
-                {
-                    pill = Instantiate(m_removeAdsPillPrefab);
-                }
-                break;
+        Debug.Assert(prefab != null, "There is no prefab defined for offer type " + _type + " in ShopSettings");
 
-            default:
-                {
-                    pill = Instantiate(m_offerPackPillPrefab);
-                }
-                break;
-        }
-
+        pill = Instantiate<IShopPill>(prefab);
+        
         return pill;
 
     }

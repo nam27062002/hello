@@ -9,7 +9,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 10e44ee821bc1415bad9be20d48609ea, type: 3}
-  m_Name: OfferItemPrefabs
+  m_Name: ShopSettings
   m_EditorClassIdentifier: 
   m_itemTypesSetup:
   - type: sc
@@ -33,3 +33,18 @@ MonoBehaviour:
   - type: dragon
     prefab2d: UI/Metagame/Offers/PF_OfferItemPreviewDragon2d
     prefab3d: UI/Metagame/Offers/PF_OfferItemPreviewDragon3d
+  m_shopPillsSetup:
+  - offerPackType: progression
+    prefab: UI/Shop/PF_ShopOfferPackPill
+  - offerPackType: progression
+    prefab: UI/Shop/PF_ShopOfferPackPill
+  - offerPackType: rotational
+    prefab: UI/Shop/PF_ShopRotationalCellPill
+  - offerPackType: free
+    prefab: UI/Shop/PF_ShopFreePill
+  - offerPackType: removeads
+    prefab: UI/Shop/PF_ShopVIPPill
+  - offerPackType: sc
+    prefab: UI/Shop/PF_PopupShopSCPill
+  - offerPackType: hc
+    prefab: UI/Shop/PF_PopupShopPCPill

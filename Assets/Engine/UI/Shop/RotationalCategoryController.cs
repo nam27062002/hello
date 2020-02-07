@@ -25,10 +25,6 @@ public class RotationalCategoryController : CategoryController
     //------------------------------------------------------------------------//
 
 
-    // Pills prefabs
-    [SerializeField] private IShopPill m_rotationalPillPrefab = null;
-
-
     //------------------------------------------------------------------------//
     // GENERIC METHODS														  //
     //------------------------------------------------------------------------//
@@ -37,30 +33,7 @@ public class RotationalCategoryController : CategoryController
     // OTHER METHODS														  //
     //------------------------------------------------------------------------//
 
-    protected override void Clear()
-    {
-        base.Clear();
-
-    }
-
-    
-    public override IShopPill InstantiatePill(OfferPack.Type _type)
-    {
-        IShopPill pill = null;
-
-        // Create new instance of prefab
-        switch (_type)
-        {
-            case OfferPack.Type.ROTATIONAL:
-                {
-                    pill = Instantiate(m_rotationalPillPrefab);
-                }
-                break;
-        }
-
-        return pill;
-
-    }
+ 
 
 
     //------------------------------------------------------------------------//

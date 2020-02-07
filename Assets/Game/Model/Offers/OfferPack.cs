@@ -54,6 +54,15 @@ public class OfferPack {
         COUNT
 	}
 
+    public const string PROGRESSION = "progression";
+    public const string PUSH = "push";
+    public const string ROTATIONAL = "rotational";
+    public const string REMOVE_ADS = "removeads";
+    public const string FREE = "free";
+    public const string SC = "sc";
+    public const string HC = "hc";
+
+
     public const int MAX_ITEMS = 3; // For now
 	public const Type DEFAULT_TYPE = Type.PROGRESSION;
     public const UserProfile.Currency DEFAULT_CURRENCY = UserProfile.Currency.REAL;
@@ -1327,13 +1336,13 @@ public class OfferPack {
 	/// <param name="_type">Type to be converted.</param>
 	public static string TypeToString(Type _type) {
 		switch(_type) {
-			case Type.PROGRESSION: 	return "progression";
-			case Type.PUSHED: 		return "push";
-			case Type.ROTATIONAL: 	return "rotational";
-			case Type.FREE:			return "free";
-            case Type.REMOVE_ADS:   return "removeAds";
-            case Type.SC:           return "sc";
-            case Type.HC:           return "hc";
+			case Type.PROGRESSION: 	return PROGRESSION;
+			case Type.PUSHED: 		return PUSH;
+			case Type.ROTATIONAL: 	return ROTATIONAL;
+			case Type.FREE:			return FREE;
+            case Type.REMOVE_ADS:   return REMOVE_ADS;
+            case Type.SC:           return SC;
+            case Type.HC:           return HC;
         }
 		return TypeToString(DEFAULT_TYPE);
 	}
@@ -1345,13 +1354,13 @@ public class OfferPack {
 	/// <param name="_typeStr">String representation of a type to be parsed.</param>
 	public static Type StringToType(string _typeStr) {
 		switch(_typeStr.ToLowerInvariant()) {
-			case "progression": return Type.PROGRESSION;
-			case "push":		return Type.PUSHED;
-			case "rotational":	return Type.ROTATIONAL;
-			case "free":		return Type.FREE;
-            case "removeads":   return Type.REMOVE_ADS;
-            case "hc":          return Type.HC;
-            case "sc":          return Type.SC;
+			case PROGRESSION:   return Type.PROGRESSION;
+			case PUSH:		return Type.PUSHED;
+			case ROTATIONAL:	return Type.ROTATIONAL;
+			case FREE:		    return Type.FREE;
+            case REMOVE_ADS:    return Type.REMOVE_ADS;
+            case HC:            return Type.HC;
+            case SC:            return Type.SC;
 		}
 		return DEFAULT_TYPE;
 	}
