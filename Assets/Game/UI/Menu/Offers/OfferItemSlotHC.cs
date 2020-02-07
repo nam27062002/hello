@@ -71,7 +71,7 @@ public class OfferItemSlotHC : OfferItemSlot {
 		m_appliedHappyHour = _happyHour;
 
 		// We need a valid preview to be able to format texts
-		OfferItemPreviewHC previewHC = m_preview as OfferItemPreviewHC;
+		IOfferItemPreviewHC previewHC = m_preview as IOfferItemPreviewHC;
 		validHH &= m_preview != null;
 
 		// Previous amount
