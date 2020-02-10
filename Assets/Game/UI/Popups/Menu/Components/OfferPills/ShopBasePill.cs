@@ -10,7 +10,9 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -48,6 +50,8 @@ public class ShopBasePill : IShopPill {
     [SerializeField] protected MultiCurrencyButton m_priceButtonGroup = null;
     [SerializeField] protected GameObject m_loadingPricePlaceholder = null;
 
+    // Debug value
+    [SerializeField] protected TextMeshProUGUI m_debugText;
 
     // Public
     protected OfferPack m_pack = null;
@@ -61,6 +65,8 @@ public class ShopBasePill : IShopPill {
     protected float m_previousPrice = 0f;
     protected bool m_waitingForPrice = false;
     protected StringBuilder m_sb = new StringBuilder();
+
+    private ScrollRect scrollRect;
 
     protected InfoButtonMode m_infoButtonMode = InfoButtonMode.NONE;
 
@@ -82,7 +88,7 @@ public class ShopBasePill : IShopPill {
             int l = m_itemsToSet.Count;
             for (int i = 0; i < l; i++)
             {
-                m_slotsToSet[i].InitFromItem(m_itemsToSet[i]);
+                m_slotsToSet[i].InitFromItem(m_itemsToSet[i], pack.order);
             }
             m_itemsToSet.Clear();
             m_slotsToSet.Clear();
@@ -98,8 +104,18 @@ public class ShopBasePill : IShopPill {
                 RefreshPrice();
             }
         }
+
+        if (m_debugText!= null)
+        {
+            m_debugText.text = "" + scrollRect.GetRelativePositionOfItem(transform);
+
+        }
     }
 
+    public void Start()
+    {
+        scrollRect = GetComponentInParent<ScrollRect>();
+    }
     //------------------------------------------------------------------------//
     // OTHER METHODS														  //
     //------------------------------------------------------------------------//
