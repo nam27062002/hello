@@ -71,7 +71,7 @@ public class OfferItemSlotHC : OfferItemSlot {
 		m_appliedHappyHour = _happyHour;
 
 		// We need a valid preview to be able to format texts
-		OfferItemPreviewHC previewHC = m_preview as OfferItemPreviewHC;
+		IOfferItemPreviewHC previewHC = m_preview as IOfferItemPreviewHC;
 		validHH &= m_preview != null;
 
 		// Previous amount
@@ -84,21 +84,21 @@ public class OfferItemSlotHC : OfferItemSlot {
 		}
 
 		// New amount
-		if(m_text != null) {
+		if(m_mainText != null) {
 			if(validHH) {
 				// Amount with HH bonus applied
 				float bonusAmount = _happyHour.extraGemsFactor;
 				long newAmount = _happyHour.ApplyHappyHourExtra(m_item.reward.amount);
 
 				// Add some color!
-				m_text.text = m_happyHourTextColor.Tag(previewHC.FormatAmount(newAmount));
+				m_mainText.text = m_happyHourTextColor.Tag(previewHC.FormatAmount(newAmount));
 			} else {
 				// Unmodified amount
 				if(previewHC != null) {
-					m_text.text = previewHC.FormatAmount(m_item.reward.amount);
+					m_mainText.text = previewHC.FormatAmount(m_item.reward.amount);
 				} else {
 					// Fallback, we should never reach this point
-					m_text.text = StringUtils.FormatNumber(m_item.reward.amount);
+					m_mainText.text = StringUtils.FormatNumber(m_item.reward.amount);
 				}
 			}
 		}

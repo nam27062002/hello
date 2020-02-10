@@ -22,8 +22,15 @@ public abstract class IOfferItemPreview : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
+	public enum Type {
+		_2D,
+		_3D,
+
+		COUNT
+	}
+
 	// Abstract
-	public abstract ShopSettings.PrefabType type {
+	public abstract IOfferItemPreview.Type type {
 		get;
 	}
 
@@ -65,6 +72,7 @@ public abstract class IOfferItemPreview : MonoBehaviour {
 		m_item = _item;
 
 		Debug.Assert(m_item != null && m_item.reward != null, "ITEM NOT PROPERLY INITIALIZED", this);
+		m_def = m_item.reward.def;
 
 		// Call internal initializer
 		InitInternal();
@@ -141,6 +149,42 @@ public abstract class IOfferItemPreview : MonoBehaviour {
 		// Nothing to do by default
 	}
 
+	/// <summary>
+	/// Gets the amount of this item, already localized and formatted.
+	/// </summary>
+	/// <param name="_slotType">The type of slot where the item will be displayed.</param>
+	/// <returns>The localized amount. <c>null</c> if this item type doesn't have to show the amount for the given type of slot (i.e. dragon).</returns>
+	public virtual string GetLocalizedAmountText(OfferItemSlot.Type _slotType) {
+		return null;
+	}
+
+	/// <summary>
+	/// Gets the main text of this item, already localized and formatted.
+	/// </summary>
+	/// <param name="_slotType">The type of slot where the item will be displayed.</param>
+	/// <returns>The localized main text. <c>null</c> if this item type doesn't have to show main text for the given type of slot (i.e. coins).</returns>
+	public virtual string GetLocalizedMainText(OfferItemSlot.Type _slotType) {
+		return null;
+	}
+
+	/// <summary>
+	/// Gets the secondary text of this item, already localized and formatted.
+	/// </summary>
+	/// <param name="_slotType">The type of slot where the item will be displayed.</param>
+	/// <returns>The localized secondary text. <c>null</c> if this item type doesn't have to show any secondary text for the given type of slot (i.e. coins).</returns>
+	public virtual string GetLocalizedSecondaryText(OfferItemSlot.Type _slotType) {
+		return null;
+	}
+
+	/// <summary>
+	/// Gets the description of this item, already localized and formatted.
+	/// </summary>
+	/// <param name="_slotType">The type of slot where the item will be displayed.</param>
+	/// <returns>The localized description. <c>null</c> if this item type doesn't have to show any description for the given type of slot.</returns>
+	public virtual string GetLocalizedDescriptionText(OfferItemSlot.Type _slotType) {
+		return null;
+	}
+
 	//------------------------------------------------------------------------//
 	// ABSTRACT METHODS														  //
 	//------------------------------------------------------------------------//
@@ -148,10 +192,4 @@ public abstract class IOfferItemPreview : MonoBehaviour {
 	/// Initialize preview with current item (m_item)
 	/// </summary>
 	protected abstract void InitInternal();
-
-	/// <summary>
-	/// Gets the description of this item, already localized and formatted.
-	/// </summary>
-	/// <returns>The localized description.</returns>
-	public abstract string GetLocalizedDescription();
 }
