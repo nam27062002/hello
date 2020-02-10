@@ -39,6 +39,28 @@ public class ItemPrefabSetup {
 	public string prefab3d = "";
 }
 
+
+[System.Serializable]
+public class ShopPill {
+
+    [List(
+			OfferPack.PROGRESSION,
+			OfferPack.PUSH,
+			OfferPack.ROTATIONAL,
+			OfferPack.FREE,
+            OfferPack.REMOVE_ADS,
+            OfferPack.SC,
+            OfferPack.HC
+    )]
+    public string offerPackType;
+
+    [FileList("Resources/UI/Shop", StringUtils.PathFormat.RESOURCES_ROOT_WITHOUT_EXTENSION, "*.prefab")]
+    public string prefab = "";
+
+
+}
+
+
 /// <summary>
 /// Static scriptable object class to setup the offer item prefabs.
 /// </summary>
@@ -60,6 +82,8 @@ public class ShopSettings : SingletonScriptableObject<ShopSettings> {
 	// MEMBERS																  //
 	//------------------------------------------------------------------------//
 	[SerializeField] private List<ItemPrefabSetup> m_itemTypesSetup = new List<ItemPrefabSetup>();
+
+    [SerializeField] private List<ShopPill> m_shopPillsSetup = new List<ShopPill>();
 
 	//------------------------------------------------------------------------//
 	// METHODS																  //
@@ -88,4 +112,23 @@ public class ShopSettings : SingletonScriptableObject<ShopSettings> {
 		// Something went really wrong xD
 		return null;
 	}
+
+    /// <summary>
+    /// Returns the pill prefab associated to an offer pack type
+    /// </summary>
+    /// <param name="_type">Type of the offer pack</param>
+    /// <returns></returns>
+    public static IShopPill GetPrefab (OfferPack.Type _type)
+    {
+        // Find the offer pill setup
+        ShopPill pill = instance.m_shopPillsSetup.Find(p => p.offerPackType == OfferPack.TypeToString(_type));
+
+        if (pill!= null)
+        {
+            return Resources.Load<IShopPill> (pill.prefab);
+        }
+
+        return null;
+    }
+
 }

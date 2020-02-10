@@ -50,7 +50,7 @@ public class ShopHCPill : ShopCurrencyPill {
 		if(m_offerItemSlot != null) {
 			m_itemSlotHC = m_offerItemSlot as OfferItemSlotHC;
 		}
-		Debug.Assert(m_itemSlotHC != null, "This pill type should have a OfferItemSlotHC as a first item slot.");
+		Debug.Assert(m_itemSlotHC != null, "This pill type should have a OfferItemSlotHC as item slot.");
 	}
 
 	/// <summary>

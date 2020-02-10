@@ -24,7 +24,7 @@ public class ShopController : MonoBehaviour {
     // CONSTANTS															  //
     //------------------------------------------------------------------------//
 
-    private string SHOP_CATEGORIES_CONTAINER_PREFABS_PATH = "UI/Popups/Economy/CategoryContainers/";
+    private string SHOP_CATEGORIES_CONTAINER_PREFABS_PATH = "UI/Shop/CategoryContainers/";
     private const float REFRESH_FREQUENCY = 1f;	// Seconds
 
     //------------------------------------------------------------------------//
