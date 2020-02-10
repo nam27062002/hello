@@ -23,6 +23,13 @@ public class OfferItemSlot : MonoBehaviour, IBroadcastListener {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
+	// We'll use it to let the item previews decide which texts should be displayed.
+	public enum Type {
+		PILL_BIG,
+		PILL_SMALL,
+		POPUP_BIG,
+		POPUP_SMALL
+	}
 
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
@@ -34,14 +41,14 @@ public class OfferItemSlot : MonoBehaviour, IBroadcastListener {
 
 	[Header("Mandatory Fields")]
 	[SerializeField] protected Transform m_previewContainer = null;
+	
+	[Header("Optional Fields")]
 	[SerializeField] protected TextMeshProUGUI m_mainText = null;
 	[SerializeField] protected TextMeshProUGUI m_secondaryText = null;
 	[SerializeField] protected TextMeshProUGUI m_amountText = null;
-
-	[Header("Optional Fields")]
 	[SerializeField] protected TextMeshProUGUI m_descriptionText = null;
+	[Space]
 	[SerializeField] protected PowerIcon m_powerIcon = null;	// Will only be displayed for some types
-	[SerializeField] protected Image m_tierIcon = null;			// Will only be displayed for some types
 
 	// Convenience properties
 	public RectTransform rectTransform {
@@ -137,7 +144,7 @@ public class OfferItemSlot : MonoBehaviour, IBroadcastListener {
 
 			// Instantiate preview! :)
 			if(previewPrefab != null) {
-				GameObject previewInstance = GameObject.Instantiate<GameObject>(previewPrefab);
+				GameObject previewInstance = Instantiate<GameObject>(previewPrefab);
 				previewInstance.SetActive(true);
 				m_preview = previewInstance.GetComponent<IOfferItemPreview>();
 			}
@@ -147,12 +154,83 @@ public class OfferItemSlot : MonoBehaviour, IBroadcastListener {
 		if(m_preview != null) {
 			m_preview.InitFromItem(m_item);
 			m_preview.SetParentAndFit(m_previewContainer as RectTransform);
+		} else {
+			// Skip if preview is not initialized (something went very wrong :s)
+			Debug.LogError("Attempting to initialize slot for item " + m_item.sku + " but reward is null!");
 		}
 
-		// Set text - preview will given us the text already localized and all
+		// Initialize texts apart for visual clarity
+		InitTexts();
+
+		// Initialize power Icon
+		// [AOC] TODO!!
+		/*
+		if(m_powerIcon != null) {
+			bool show = powerDef != null;
+			m_powerIcon.gameObject.SetActive(show);
+			if(show) {
+				m_powerIcon.InitFromDefinition(powerDef, false, false, powerIconMode);
+			}
+		}
+		*/
+	}
+
+	/// <summary>
+	/// Initialize all texts in this slot.
+	/// </summary>
+	protected virtual void InitTexts() {
+		// [AOC] All textfields not required by the item type (that is, the preview
+		//		 returning null to the Get***Text() call) are disabled
+
+		// Skip if preview is not initialized (something went very wrong :s)
+		if(m_preview == null) return;
+
+		// Main Text
+		if(m_mainText != null) {
+			string textStr = m_preview.GetLocalizedMainText(m_type);
+			m_mainText.gameObject.SetActive(textStr != null);
+			if(textStr != null) {
+				m_mainText.text = textStr;
+			}
+		}
+
+		// Secondary Text
+		if(m_secondaryText != null) {
+			string textStr = m_preview.GetLocalizedSecondaryText(m_type);
+			m_secondaryText.gameObject.SetActive(textStr != null);
+			if(textStr != null) {
+				m_secondaryText.text = textStr;
+			}
+		}
+
+		// Amount Text
+		if(m_amountText != null) {
+			string textStr = m_preview.GetLocalizedAmountText(m_type);
+			m_amountText.gameObject.SetActive(textStr != null);
+			if(textStr != null) {
+				m_amountText.text = textStr;
+			}
+		}
+
+		// Description Text
+		if(m_descriptionText != null) {
+			string textStr = m_preview.GetLocalizedDescriptionText(m_type);
+			m_descriptionText.gameObject.SetActive(textStr != null);
+			if(textStr != null) {
+				m_descriptionText.text = textStr;
+			}
+		}
+
+		/*
+
+
+
+
+
+		// Set text - preview will give us the text already localized and all
 		if(m_mainText != null) {
 			if(m_preview != null) {
-				m_mainText.text = m_preview.GetLocalizedDescription();
+				m_mainText.text = m_preview.GetLocalizedDescriptionText();
 			} else {
 				// Something went very wrong :s
 				m_mainText.text = "Couldn't find a preview prefab for reward type " + item.type;
@@ -179,55 +257,43 @@ public class OfferItemSlot : MonoBehaviour, IBroadcastListener {
 		string localizedDescription = "";
 		DefinitionNode powerDef = null;
 		PowerIcon.Mode powerIconMode = PowerIcon.Mode.PET;
-		switch(reward.type) {
+		switch(m_item.reward.type) {
 			// Pet
 			case Metagame.RewardPet.TYPE_CODE: {
-					// Power description
-					DefinitionNode petDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PETS, reward.sku);
-					if(petDef != null) {
-						powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, petDef.Get("powerup"));
-						powerIconMode = PowerIcon.Mode.PET;
-						localizedDescription = DragonPowerUp.GetDescription(powerDef, true, true);   // Custom formatting depending on powerup type, already localized
-					}
+				// Power description
+				DefinitionNode petDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PETS, reward.sku);
+				if(petDef != null) {
+					powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, petDef.Get("powerup"));
+					powerIconMode = PowerIcon.Mode.PET;
+					localizedDescription = DragonPowerUp.GetDescription(powerDef, true, true);   // Custom formatting depending on powerup type, already localized
 				}
-				break;
+			} break;
 
 			// Skin
 			case Metagame.RewardSkin.TYPE_CODE: {
-					// Power description
-					DefinitionNode skinDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, reward.sku);
-					if(skinDef != null) {
-						powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, skinDef.Get("powerup"));
-						powerIconMode = PowerIcon.Mode.SKIN;
-						localizedDescription = DragonPowerUp.GetDescription(powerDef, true, false);   // Custom formatting depending on powerup type, already localized
-					}
+				// Power description
+				DefinitionNode skinDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, reward.sku);
+				if(skinDef != null) {
+					powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, skinDef.Get("powerup"));
+					powerIconMode = PowerIcon.Mode.SKIN;
+					localizedDescription = DragonPowerUp.GetDescription(powerDef, true, false);   // Custom formatting depending on powerup type, already localized
 				}
-				break;
+			} break;
 
 			// Dragon
 			case Metagame.RewardDragon.TYPE_CODE: {
-					// Dragon description
-					localizedDescription = reward.def.GetLocalized("tidDesc");
-				}
-				break;
+				// Dragon description
+				localizedDescription = m_item.reward.def.GetLocalized("tidDesc");
+			} break;
 
 			default: {
-					// No extra text to be displayed :)
-				}
-				break;
+				// No extra text to be displayed :)
+			} break;
 		}
 
 		if(m_descriptionText != null) {
 			m_descriptionText.text = localizedDescription;
-		}
-
-		if(m_powerIcon != null) {
-			bool show = powerDef != null;
-			m_powerIcon.gameObject.SetActive(show);
-			if(show) {
-				m_powerIcon.InitFromDefinition(powerDef, false, false, powerIconMode);
-			}
-		}
+		}*/
 	}
 
 	/// <summary>

@@ -36,14 +36,6 @@ public abstract class IOfferItemPreviewHC : IOfferItemPreview {
 	}
 
 	/// <summary>
-	/// Gets the description of this item, already localized and formatted.
-	/// </summary>
-	/// <returns>The localized description.</returns>
-	public override string GetLocalizedDescription() {
-		return FormatAmount(m_item.reward.amount);
-	}
-
-	/// <summary>
 	/// Format an amount value according to this item type.
 	/// </summary>
 	/// <param name="_amount">Amount to be formatted.</param>
@@ -53,5 +45,47 @@ public abstract class IOfferItemPreviewHC : IOfferItemPreview {
 			"TID_OFFER_ITEM_HC",    // x250
 			StringUtils.FormatBigNumber(_amount, 1, 1000)  // Don't abbreviate if lower than 1K
 		);
+	}
+
+	/// <summary>
+	/// Gets the amount of this item, already localized and formatted.
+	/// </summary>
+	/// <param name="_slotType">The type of slot where the item will be displayed.</param>
+	/// <returns>The localized amount. <c>null</c> if this item type doesn't have to show the amount for the given type of slot (i.e. dragon).</returns>
+	public override string GetLocalizedAmountText(OfferItemSlot.Type _slotType) {
+		// Show always, no matter the slot type
+		return FormatAmount(m_item.reward.amount);
+	}
+
+	/// <summary>
+	/// Gets the main text of this item, already localized and formatted.
+	/// </summary>
+	/// <param name="_slotType">The type of slot where the item will be displayed.</param>
+	/// <returns>The localized main text. <c>null</c> if this item type doesn't have to show main text for the given type of slot (i.e. coins).</returns>
+	public override string GetLocalizedMainText(OfferItemSlot.Type _slotType) {
+		// Only in popups
+		switch(_slotType) {
+			case OfferItemSlot.Type.POPUP_BIG:
+			case OfferItemSlot.Type.POPUP_SMALL: {
+				return LocalizationManager.SharedInstance.Localize("TID_HC_NAME_PLURAL");
+			} break;
+		}
+		return null;
+	}
+
+	/// <summary>
+	/// Gets the description of this item, already localized and formatted.
+	/// </summary>
+	/// <param name="_slotType">The type of slot where the item will be displayed.</param>
+	/// <returns>The localized description. <c>null</c> if this item type doesn't have to show any description for the given type of slot.</returns>
+	public override string GetLocalizedDescriptionText(OfferItemSlot.Type _slotType) {
+		// Only in popups
+		switch(_slotType) {
+			case OfferItemSlot.Type.POPUP_BIG:
+			case OfferItemSlot.Type.POPUP_SMALL: {
+				return LocalizationManager.SharedInstance.Localize("TID_OFFER_ITEM_HC_DESC");
+			} break;
+		}
+		return null;
 	}
 }
