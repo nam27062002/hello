@@ -1,16 +1,13 @@
-// OfferItemPreviewDragon2d.cs
+// OfferItemPreviewHC3d.cs
 // Hungry Dragon
 // 
-// Created by Alger Ortín Castellví on 21/11/2018.
-// Copyright (c) 2018 Ubisoft. All rights reserved.
+// Created by Alger Ortín Castellví on 06/02/2020.
+// Copyright (c) 2020 Ubisoft. All rights reserved.
 
 //----------------------------------------------------------------------------//
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
 using UnityEngine;
-using UnityEngine.UI;
-
-using TMPro;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -18,20 +15,18 @@ using TMPro;
 /// <summary>
 /// Simple class to encapsulate the preview of an item.
 /// </summary>
-public class OfferItemPreviewDragon2d : IOfferItemPreviewDragon {
+public class OfferItemPreviewHC3d : IOfferItemPreviewHC {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
 	public override Type type {
-		get { return Type._2D; }
+		get { return Type._3D; }
 	}
 
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
-	// Exposed
-	[SerializeField] private UISpriteAddressablesLoader m_loader = null;
-
+	
 	//------------------------------------------------------------------------//
 	// PARENT OVERRIDES														  //
 	//------------------------------------------------------------------------//
@@ -42,10 +37,6 @@ public class OfferItemPreviewDragon2d : IOfferItemPreviewDragon {
 		// Call parent
 		base.InitInternal();
 
-		// Initialize image with the target dragon icon
-        if (m_def != null) {			
-            string defaultIcon = IDragonData.GetDefaultDisguise(m_def.sku).Get("icon");
-            m_loader.LoadAsync(defaultIcon);
-		}
+		// [AOC] Nothing to do actually, the preview is already instantiated in the prefab
 	}
 }
