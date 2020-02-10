@@ -1,8 +1,8 @@
-// OfferItemPreviewDragon2d.cs
+// OfferItemPreviewSC2d.cs
 // Hungry Dragon
 // 
-// Created by Alger Ortín Castellví on 21/11/2018.
-// Copyright (c) 2018 Ubisoft. All rights reserved.
+// Created by Alger Ortín Castellví on 06/02/2020.
+// Copyright (c) 2020 Ubisoft. All rights reserved.
 
 //----------------------------------------------------------------------------//
 // INCLUDES																	  //
@@ -10,27 +10,28 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-using TMPro;
-
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
 //----------------------------------------------------------------------------//
 /// <summary>
 /// Simple class to encapsulate the preview of an item.
 /// </summary>
-public class OfferItemPreviewDragon2d : IOfferItemPreviewDragon {
+public class OfferItemPreviewSC2d : IOfferItemPreviewSC {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	public override Type type {
-		get { return Type._2D; }
+	public override IOfferItemPreview.Type type {
+		get { return IOfferItemPreview.Type._2D; }
 	}
 
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed
-	[SerializeField] private UISpriteAddressablesLoader m_loader = null;
+	[SerializeField] private Transform m_iconRoot = null;
+
+	// Internal
+	private GameObject m_iconInstance = null;
 
 	//------------------------------------------------------------------------//
 	// PARENT OVERRIDES														  //
@@ -42,10 +43,19 @@ public class OfferItemPreviewDragon2d : IOfferItemPreviewDragon {
 		// Call parent
 		base.InitInternal();
 
-		// Initialize image with the target dragon icon
-        if (m_def != null) {			
-            string defaultIcon = IDragonData.GetDefaultDisguise(m_def.sku).Get("icon");
-            m_loader.LoadAsync(defaultIcon);
+		// Initialize image with the target egg icon
+		if(m_def == null) {
+			if(m_iconInstance != null) Destroy(m_iconInstance);
+		} else {
+			// [AOC] TODO!! Load different icon prefabs based on pack sku
+			//				Consider also the case where the SC reward doesn't belong to a pack
+			GameObject iconPrefab = Resources.Load<GameObject>(UIConstants.SHOP_ICONS_PATH);
+			if(iconPrefab != null) {
+				m_iconInstance = Instantiate<GameObject>(iconPrefab, m_iconRoot, false);
+			} else {
+				// Invalid prefab, let's show the default icon already in the prefab
+				// Nothing to do
+			}
 		}
 	}
 }

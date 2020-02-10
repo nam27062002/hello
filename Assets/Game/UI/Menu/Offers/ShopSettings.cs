@@ -30,7 +30,7 @@ public class ItemPrefabSetup {
 		Metagame.RewardSkin.TYPE_CODE,
 		Metagame.RewardDragon.TYPE_CODE
 	)]
-	public string type = Metagame.RewardSoftCurrency.TYPE_CODE;
+	[HideInInspector] public string type = Metagame.RewardSoftCurrency.TYPE_CODE;
 
 	[FileList("Resources/UI/Metagame/Offers", StringUtils.PathFormat.RESOURCES_ROOT_WITHOUT_EXTENSION, "*.prefab")]
 	public string prefab2d = "";
@@ -70,13 +70,6 @@ public class ShopSettings : SingletonScriptableObject<ShopSettings> {
 	//------------------------------------------------------------------------//
 	public const string PATH = "UI/Metagame/Offers/ShopSettings";
 
-	public enum PrefabType {
-		PREVIEW_2D,
-		PREVIEW_3D,
-
-		COUNT
-	}
-
 	//------------------------------------------------------------------------//
 	// MEMBERS																  //
 	//------------------------------------------------------------------------//
@@ -85,22 +78,25 @@ public class ShopSettings : SingletonScriptableObject<ShopSettings> {
     [InfoBox("HC pills are defined in its category containers")]
     [SerializeField] private List<ShopPill> m_shopPillsSetup = new List<ShopPill>();
 
+
     [Tooltip ("This icons are linked to the offer order")]
     [SerializeField] private List<GameObject> m_HcIconPrefabs = new List<GameObject>();
 
     [Tooltip("This icons are linked to the offer order")]
     [SerializeField] private List<GameObject> m_ScIconPrefabs = new List<GameObject>();
 
-    //------------------------------------------------------------------------//
-    // METHODS																  //
-    //------------------------------------------------------------------------//
-    /// <summary>
-    /// Get the prefab corresponding to a item type.
-    /// </summary>
-    /// <returns>The prefab for an item preview. <c>null</c> if type not defined or prefab type not defined for the target item type.</returns>
-    /// <param name="_itemType">Item type.</param>
-    /// <param name="_prefabType">Type of prefab to be returned.</param>
-    public static GameObject GetPrefab(string _itemType, PrefabType _prefabType) {
+
+	//------------------------------------------------------------------------//
+	// METHODS																  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Get the prefab corresponding to a item type.
+	/// </summary>
+	/// <returns>The prefab for an item preview. <c>null</c> if type not defined or prefab type not defined for the target item type.</returns>
+	/// <param name="_itemType">Item type.</param>
+	/// <param name="_previewType">Type of prefab to be returned.</param>
+	public static GameObject GetPrefab(string _itemType, IOfferItemPreview.Type _previewType) {
+
 		// Find item type setup
 		ItemPrefabSetup setup = instance.m_itemTypesSetup.Find(
 			(ItemPrefabSetup _setup) => {
@@ -110,9 +106,9 @@ public class ShopSettings : SingletonScriptableObject<ShopSettings> {
 		if(setup == null) return null;
 
 		// Select the target prefab type
-		switch(_prefabType) {
-			case PrefabType.PREVIEW_2D: return Resources.Load<GameObject>(setup.prefab2d);
-			case PrefabType.PREVIEW_3D: return Resources.Load<GameObject>(setup.prefab3d);
+		switch(_previewType) {
+			case IOfferItemPreview.Type._2D: return Resources.Load<GameObject>(setup.prefab2d);
+			case IOfferItemPreview.Type._3D: return Resources.Load<GameObject>(setup.prefab3d);
 		}
 
 		// Something went really wrong xD
