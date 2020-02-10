@@ -49,8 +49,7 @@ public class ShopPill {
 			OfferPack.ROTATIONAL,
 			OfferPack.FREE,
             OfferPack.REMOVE_ADS,
-            OfferPack.SC,
-            OfferPack.HC
+            OfferPack.SC
     )]
     public string offerPackType;
 
@@ -83,18 +82,25 @@ public class ShopSettings : SingletonScriptableObject<ShopSettings> {
 	//------------------------------------------------------------------------//
 	[SerializeField] private List<ItemPrefabSetup> m_itemTypesSetup = new List<ItemPrefabSetup>();
 
+    [InfoBox("HC pills are defined in its category containers")]
     [SerializeField] private List<ShopPill> m_shopPillsSetup = new List<ShopPill>();
 
-	//------------------------------------------------------------------------//
-	// METHODS																  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Get the prefab corresponding to a item type.
-	/// </summary>
-	/// <returns>The prefab for an item preview. <c>null</c> if type not defined or prefab type not defined for the target item type.</returns>
-	/// <param name="_itemType">Item type.</param>
-	/// <param name="_prefabType">Type of prefab to be returned.</param>
-	public static GameObject GetPrefab(string _itemType, PrefabType _prefabType) {
+    [Tooltip ("This icons are linked to the offer order")]
+    [SerializeField] private List<GameObject> m_HcIconPrefabs = new List<GameObject>();
+
+    [Tooltip("This icons are linked to the offer order")]
+    [SerializeField] private List<GameObject> m_ScIconPrefabs = new List<GameObject>();
+
+    //------------------------------------------------------------------------//
+    // METHODS																  //
+    //------------------------------------------------------------------------//
+    /// <summary>
+    /// Get the prefab corresponding to a item type.
+    /// </summary>
+    /// <returns>The prefab for an item preview. <c>null</c> if type not defined or prefab type not defined for the target item type.</returns>
+    /// <param name="_itemType">Item type.</param>
+    /// <param name="_prefabType">Type of prefab to be returned.</param>
+    public static GameObject GetPrefab(string _itemType, PrefabType _prefabType) {
 		// Find item type setup
 		ItemPrefabSetup setup = instance.m_itemTypesSetup.Find(
 			(ItemPrefabSetup _setup) => {
@@ -129,6 +135,26 @@ public class ShopSettings : SingletonScriptableObject<ShopSettings> {
         }
 
         return null;
+    }
+
+    /// <summary>
+    /// Get the proper Gems pack icon based on its order
+    /// </summary>
+    /// <param name="_order"></param>
+    /// <returns></returns>
+    public static GameObject GetHcIconPrefab (int _order)
+    {
+        return instance.m_HcIconPrefabs[_order];
+    }
+
+    /// <summary>
+    /// Get the proper coins pack icon based on its order
+    /// </summary>
+    /// <param name="_order"></param>
+    /// <returns></returns>
+    public static GameObject GetScIconPrefab(int _order)
+    {
+        return instance.m_ScIconPrefabs[_order];
     }
 
 }

@@ -47,14 +47,14 @@ public class OfferItemSlot : MonoBehaviour, IBroadcastListener {
 	protected OfferPackItem m_item = null;
 	public OfferPackItem item {
 		get { return m_item; }
-		set { InitFromItem(value); }
 	}
 
 	protected IOfferItemPreview m_preview = null;
 	public IOfferItemPreview preview {
 		get { return m_preview; }
 	}
-	
+
+ 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -86,14 +86,15 @@ public class OfferItemSlot : MonoBehaviour, IBroadcastListener {
         }
     }
 
-	//------------------------------------------------------------------------//
-	// OTHER METHODS														  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Refresh the widget with the data of a specific offer item.
-	/// </summary>
-	/// <param name="_item">Item to be used to initialize the slot.</param>
-	public virtual void InitFromItem(OfferPackItem _item) {
+    //------------------------------------------------------------------------//
+    // OTHER METHODS														  //
+    //------------------------------------------------------------------------//
+    /// <summary>
+    /// Refresh the widget with the data of a specific offer item.
+    /// </summary>
+    /// <param name="_item">Item to be used to initialize the slot.</param>
+    /// <param name="_order">Used to select the proper HC or SC icon</param>
+    public virtual void InitFromItem(OfferPackItem _item, int _order = 0) {
 		// Force reloading preview if item is different than the current one
 		bool reloadPreview = false;
 		if(m_item != _item) reloadPreview = true;
@@ -222,7 +223,7 @@ public class OfferItemSlot : MonoBehaviour, IBroadcastListener {
 	/// <summary>
 	/// Destroy current preview, if any.
 	/// </summary>
-	private void ClearPreview() {
+	protected void ClearPreview() {
 		if(m_preview != null) {
 			Destroy(m_preview.gameObject);
 			m_preview = null;

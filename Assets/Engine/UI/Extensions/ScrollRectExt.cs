@@ -67,6 +67,7 @@ public static class ScrollRectExt {
     /// <param name="_scroll">Target ScrollRect.</param>
     /// <param name="_item">The item to be centered.</param>
     /// <param name="_clampDirection">If set to true, only the directions enabled in the ScrollRect will be taken in consideration.</param>
+    /// <param name="_clamp">If True clamps the final value between 0 and 1</param>
     /// <returns>The normalized position of the ScrollRect to be applied in order to center _item in the viewport.</returns>
     public static Vector2 GetNormalizedPositionForItem(this ScrollRect _scroll, Transform _item, bool _clampDirection = true, bool _clamp = true)
     {
@@ -84,6 +85,7 @@ public static class ScrollRectExt {
     /// <param name="_scroll">Target ScrollRect.</param>
     /// <param name="_pos">The position to be calculated</param>
     /// <param name="_clampDirection">If set to true, only the directions enabled in the ScrollRect will be taken in consideration.</param>
+    /// <param name="_clamp">If True clamps the final value between 0 and 1</param>
     /// <returns>The normalized position of the ScrollRect to be applied in order to center _item in the viewport.</returns>
     public static Vector2 GetNormalizedPositionForItem(this ScrollRect _scroll, Vector2 _pos, bool _clampDirection = true, bool _clamp = true) {
 	    // Aux vars for shorter notation
@@ -169,4 +171,20 @@ public static class ScrollRectExt {
 		// Done!
 		return tween;
 	}
+
+
+    /// <summary>
+    /// Returns the normalized relative position of the item in the scroll view
+    /// Ie.: 0 for the items in the left border of the screen and 1 for the items in the right border.
+    /// </summary>
+    /// <param name="_scroll"></param>
+    /// <param name="_item">The item in the scroll</param>
+    public static float GetRelativePositionOfItem (this ScrollRect _scroll, Transform _item)
+    {
+
+        Vector2 localPosition = _scroll.viewport.InverseTransformPoint(_item.position);
+        float scrollWidth = _scroll.viewport.rect.width;
+
+        return localPosition.x / scrollWidth;
+    }
 }
