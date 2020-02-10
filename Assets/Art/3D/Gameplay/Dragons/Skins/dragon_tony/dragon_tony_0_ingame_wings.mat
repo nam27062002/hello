@@ -6,15 +6,17 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: dragon_tony_0_body_ingame
+  m_Name: dragon_tony_0_ingame_wings
   m_Shader: {fileID: 4800000, guid: 2345015ac46679e4cb5817ed44c82547, type: 3}
-  m_ShaderKeywords: FRESNEL FXLAYER_NONE NORMALMAP REFLECTIONTYPE_NORMAL SELFILLUMINATE_BLINKLIGHTS
-    SPECULAR _ZWRITE_ON
+  m_ShaderKeywords: CUTOFF DOUBLESIDED FXLAYER_NONE NORMALMAP REFLECTIONTYPE_NORMAL
+    SELFILLUMINATE_NORMAL SPECULAR _ZWRITE_ON
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
-  stringTagMap: {}
+  stringTagMap:
+    QUEUE: AlphaTest
+    RenderType: TransparentCutout
   disabledShaderPasses: []
   m_SavedProperties:
     serializedVersion: 3
@@ -70,8 +72,8 @@ Material:
     m_Floats:
     - FXLayer: 0
     - ReflectionType: 0
-    - SelfIlluminate: 2
-    - _BlendMode: 0
+    - SelfIlluminate: 0
+    - _BlendMode: 1
     - _BumpScale: 1
     - _ColorRampAmount: 0
     - _ColorRampID0: 0
@@ -83,12 +85,12 @@ Material:
     - _DissolveLowerLimit: -1
     - _DissolveMargin: 0.1
     - _DissolveUpperLimit: 1
-    - _DstBlend: 0
+    - _DstBlend: 10
     - _EnableBlendFresnel: 0
-    - _EnableCutoff: 0
+    - _EnableCutoff: 1
     - _EnableDiffuseAsSpecMask: 0
-    - _EnableDoublesided: 0
-    - _EnableFresnel: 1
+    - _EnableDoublesided: 1
+    - _EnableFresnel: 0
     - _EnableNormalMap: 1
     - _EnableOpaqueFresnel: 0
     - _EnableOpaqueSpecular: 0
@@ -114,9 +116,9 @@ Material:
     - _Parallax: 0.02
     - _ReflectionAmount: 0
     - _SmoothnessTextureChannel: 0
-    - _SpecExponent: 80
+    - _SpecExponent: 120
     - _SpecularHighlights: 1
-    - _SrcBlend: 1
+    - _SrcBlend: 5
     - _StencilMask: 10
     - _UVSec: 0
     - _VOAmplitude: 0.3
@@ -129,6 +131,6 @@ Material:
     - _FresnelColor: {r: 0.44852942, g: 0.30671498, b: 0.43874913, a: 1}
     - _InnerLightColor: {r: 0.06893382, g: 0.37176707, b: 0.5514706, a: 1}
     - _ReflectionColor: {r: 1, g: 1, b: 1, a: 1}
-    - _SecondLightColor: {r: 0.06376031, g: 0.0027032858, b: 0.07352942, a: 0}
-    - _SecondLightDir: {r: 0.55703527, g: 0.83048886, b: -0, a: 0}
+    - _SecondLightColor: {r: 0.375, g: 0.375, b: 0.375, a: 0}
+    - _SecondLightDir: {r: 0.8105851, g: 0.58562094, b: -0, a: 0}
     - _Tint: {r: 1, g: 1, b: 1, a: 1}
