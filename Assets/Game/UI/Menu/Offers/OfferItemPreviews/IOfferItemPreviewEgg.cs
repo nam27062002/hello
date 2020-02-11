@@ -91,7 +91,42 @@ public abstract class IOfferItemPreviewEgg : IOfferItemPreview {
 			case OfferItemSlot.Type.POPUP_BIG:
 			case OfferItemSlot.Type.POPUP_SMALL: {
 				if(m_def != null) {
-					return m_def.GetLocalized("tidDesc");
+					// Use UIConstants StringBuilder instance to avoid allocations
+					System.Text.StringBuilder sb = UIConstants.sb;
+					sb.Length = 0;
+
+					// Start with egg description
+					sb.AppendLine(m_def.GetLocalized("tidDesc"));
+
+					// Compose a text showing the drop chance for all rarities
+					// Egg manager makes things easy for us:
+					float[] probabilities = EggManager.ComputeProbabilities(m_def);
+					for(int i = 0; i < probabilities.Length; ++i) {
+						// Skip if 0% or 100%
+						if(probabilities[i] <= float.Epsilon || probabilities[i] >= 1f) continue;
+
+						// Apply some formatting tags for nice colors and alignment
+						// Aux vars
+						Metagame.Reward.Rarity rarity = (Metagame.Reward.Rarity)i;
+						string raritySku = Metagame.Reward.RarityToSku(rarity);
+						DefinitionNode rarityDef = DefinitionsManager.SharedInstance.GetDefinition(raritySku);
+						Color rarityColor = UIConstants.GetRarityColor(rarity);
+
+						// Rarity icon
+						sb.Append("<icon name=\"icon_rarity_").Append(raritySku).Append("\">");
+
+						// Rarity name - tinted
+						sb.Append(rarityColor.Tag(rarityDef.GetLocalized("tidName")));
+
+						// Rarity chance - right aligned
+						sb.Append(" <pos=80%>").Append(StringUtils.MultiplierToPercentage(probabilities[i]));
+
+						// Done!
+						sb.AppendLine();
+					}
+
+					// Done!
+					return sb.ToString();
 				} else {
 					LocalizationManager.SharedInstance.Localize("TID_EGG_PLURAL");	// (shouldn't happen) just in case
 				}
@@ -105,8 +140,11 @@ public abstract class IOfferItemPreviewEgg : IOfferItemPreview {
 	/// </summary>
 	/// <param name="_tooltip">The tooltip to be initialized.</param>
 	public override void InitTooltip(UITooltip _tooltip) {
-		// Show rarities
-
+		// Use egg name as tooltip title, full description + drop rates as content
+		_tooltip.InitWithText(
+			GetLocalizedMainText(OfferItemSlot.Type.TOOLTIP),
+			GetLocalizedDescriptionText(OfferItemSlot.Type.TOOLTIP)
+		);
 	}
 
 	//------------------------------------------------------------------------//
