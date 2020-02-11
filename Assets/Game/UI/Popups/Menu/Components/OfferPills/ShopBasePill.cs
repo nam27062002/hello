@@ -196,41 +196,34 @@ public class ShopBasePill : IShopPill {
             }
         }
 
-        // Info button
-        // Nothing to do if info button not defined
-        if (m_infoButton != null)
-        {
-            // Depending on the amount and content of items, show a tooltip rather than a full popup
-            m_infoButtonMode = InfoButtonMode.POPUP;    // Popup by default
-            if (m_pack.items.Count == 1)
-            {
-                // Only some types
-                switch (m_pack.items[0].type)
-                {
-                    // Tooltip cases
-                    case Metagame.RewardEgg.TYPE_CODE:
-                        {
-                            m_infoButtonMode = InfoButtonMode.TOOLTIP;
-                        }
-                        break;
+		// Info button
+		// Nothing to do if info button not defined
+		if(m_infoButton != null) {
+			// Depending on the amount and content of items, show a tooltip rather than a full popup
+			m_infoButtonMode = InfoButtonMode.POPUP;    // Popup by default
+			if(m_pack.items.Count == 1) {
+				// Only some types
+				switch(m_pack.items[0].type) {
+					// Tooltip cases
+					case Metagame.RewardEgg.TYPE_CODE: {
+						m_infoButtonMode = InfoButtonMode.TOOLTIP;
+					} break;
 
-                    // None cases
-                    case Metagame.RewardSoftCurrency.TYPE_CODE:
-                    case Metagame.RewardHardCurrency.TYPE_CODE:
-                    case Metagame.RewardGoldenFragments.TYPE_CODE:
-                        {
-                            m_infoButtonMode = InfoButtonMode.NONE;
-                        }
-                        break;
-                }
-            }
+					// None cases - currency packs with just 1 item
+					case Metagame.RewardSoftCurrency.TYPE_CODE:
+					case Metagame.RewardHardCurrency.TYPE_CODE:
+					case Metagame.RewardGoldenFragments.TYPE_CODE: {
+						m_infoButtonMode = InfoButtonMode.NONE;
+					} break;
+				}
+			}
 
-            // Set button visibility
-            m_infoButton.SetActive(m_infoButtonMode != InfoButtonMode.NONE);
-        }
+			// Set button visibility
+			m_infoButton.SetActive(m_infoButtonMode != InfoButtonMode.NONE);
+		}
 
-        // Price texts
-        RefreshPrice();
+		// Price texts
+		RefreshPrice();
     }
 
     /// <summary>
@@ -475,58 +468,51 @@ public class ShopBasePill : IShopPill {
         OffersManager.autoRefreshEnabled = true;
     }
 
-    //------------------------------------------------------------------------//
-    // CALLBACKS															  //
-    //------------------------------------------------------------------------//
-    /// <summary>
-    /// Info button has been pressed.
-    /// Don't call it if the pack type doesn't require info popup.
-    /// Can be override by heirs, default behaviour is opening the offer info popup.
-    /// </summary>
-    /// <param name="_trackingLocation">Where has this been triggered from?</param>
-    public virtual void OnInfoButton(string _trackingLocation)
-    {
-        // Nothing to do if not initialized
-        if (m_pack == null) return;
+	//------------------------------------------------------------------------//
+	// CALLBACKS															  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Info button has been pressed.
+	/// Don't call it if the pack type doesn't require info popup.
+	/// Can be override by heirs, default behaviour is opening the offer info popup.
+	/// </summary>
+	/// <param name="_trackingLocation">Where has this been triggered from?</param>
+	public virtual void OnInfoButton(string _trackingLocation) {
+		// Nothing to do if not initialized
+		if(m_pack == null) return;
 
-        // Tooltip or popup?
-        switch (m_infoButtonMode)
-        {
-            // Popup
-            case InfoButtonMode.POPUP:
-                {
-                    // Open offer info popup
-                    PopupController popup = PopupManager.LoadPopup(PopupFeaturedOffer.PATH);
-                    PopupFeaturedOffer offerPopup = popup.GetComponent<PopupFeaturedOffer>();
-                    offerPopup.InitFromOfferPack(m_pack);
-                    popup.Open();
+		// Tooltip or popup?
+		switch(m_infoButtonMode) {
+			// Popup
+			case InfoButtonMode.POPUP: {
+				// Open offer info popup
+				PopupController popup = PopupManager.LoadPopup(PopupFeaturedOffer.PATH);
+				PopupFeaturedOffer offerPopup = popup.GetComponent<PopupFeaturedOffer>();
+				offerPopup.InitFromOfferPack(m_pack);
+				popup.Open();
 
-                    // If defined, send tracking event
-                    if (!string.IsNullOrEmpty(_trackingLocation))
-                    {
-                        string popupName = System.IO.Path.GetFileNameWithoutExtension(PopupFeaturedOffer.PATH);
-                        HDTrackingManager.Instance.Notify_InfoPopup(popupName, _trackingLocation);
-                    }
-                }
-                break;
+				// If defined, send tracking event
+				if(!string.IsNullOrEmpty(_trackingLocation)) {
+					string popupName = System.IO.Path.GetFileNameWithoutExtension(PopupFeaturedOffer.PATH);
+					HDTrackingManager.Instance.Notify_InfoPopup(popupName, _trackingLocation);
+				}
+			} break;
 
-            // Tooltip
-            case InfoButtonMode.TOOLTIP:
-                {
-                    // Show different tooltips depending on first item type
+			// Tooltip
+			case InfoButtonMode.TOOLTIP: {
+				// Show different tooltips depending on first item type
 
-                    UIFeedbackText feedbackText = UIFeedbackText.CreateAndLaunch("TODO!! Info tooltip", GameConstants.Vector2.center, this.GetComponentInParent<Canvas>().transform as RectTransform);
-                    //		__/\\\\\\\\\\\\\\\________/\\\\\________/\\\\\\\\\\\\___________/\\\\\___________/\\\_________/\\\____
-                    //		 _\///////\\\/////_______/\\\///\\\_____\/\\\////////\\\_______/\\\///\\\_______/\\\\\\\_____/\\\\\\\__
-                    //		  _______\/\\\__________/\\\/__\///\\\___\/\\\______\//\\\____/\\\/__\///\\\____/\\\\\\\\\___/\\\\\\\\\_
-                    //		   _______\/\\\_________/\\\______\//\\\__\/\\\_______\/\\\___/\\\______\//\\\__\//\\\\\\\___\//\\\\\\\__
-                    //		    _______\/\\\________\/\\\_______\/\\\__\/\\\_______\/\\\__\/\\\_______\/\\\___\//\\\\\_____\//\\\\\___
-                    //		     _______\/\\\________\//\\\______/\\\___\/\\\_______\/\\\__\//\\\______/\\\_____\//\\\_______\//\\\____
-                    //		      _______\/\\\_________\///\\\__/\\\_____\/\\\_______/\\\____\///\\\__/\\\________\///_________\///_____
-                    //		       _______\/\\\___________\///\\\\\/______\/\\\\\\\\\\\\/_______\///\\\\\/__________/\\\_________/\\\____
-                    //		        _______\///______________\/////________\////////////___________\/////___________\///_________\///_____
-                }
-                break;
-        }
-    }
+				UIFeedbackText feedbackText = UIFeedbackText.CreateAndLaunch("TODO!! Info tooltip", GameConstants.Vector2.center, this.GetComponentInParent<Canvas>().transform as RectTransform);
+				//		__/\\\\\\\\\\\\\\\________/\\\\\________/\\\\\\\\\\\\___________/\\\\\___________/\\\_________/\\\____
+				//		 _\///////\\\/////_______/\\\///\\\_____\/\\\////////\\\_______/\\\///\\\_______/\\\\\\\_____/\\\\\\\__
+				//		  _______\/\\\__________/\\\/__\///\\\___\/\\\______\//\\\____/\\\/__\///\\\____/\\\\\\\\\___/\\\\\\\\\_
+				//		   _______\/\\\_________/\\\______\//\\\__\/\\\_______\/\\\___/\\\______\//\\\__\//\\\\\\\___\//\\\\\\\__
+				//		    _______\/\\\________\/\\\_______\/\\\__\/\\\_______\/\\\__\/\\\_______\/\\\___\//\\\\\_____\//\\\\\___
+				//		     _______\/\\\________\//\\\______/\\\___\/\\\_______\/\\\__\//\\\______/\\\_____\//\\\_______\//\\\____
+				//		      _______\/\\\_________\///\\\__/\\\_____\/\\\_______/\\\____\///\\\__/\\\________\///_________\///_____
+				//		       _______\/\\\___________\///\\\\\/______\/\\\\\\\\\\\\/_______\///\\\\\/__________/\\\_________/\\\____
+				//		        _______\///______________\/////________\////////////___________\/////___________\///_________\///_____
+			} break;
+		}
+	}
 }
