@@ -87,15 +87,6 @@ public class OfferItemSlot : MonoBehaviour, IBroadcastListener {
 		Broadcaster.RemoveListener(BroadcastEventType.LANGUAGE_CHANGED, this);
 	}
 
-	public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo) {
-		switch(eventType) {
-			case BroadcastEventType.LANGUAGE_CHANGED: {
-					OnLanguageChanged();
-				}
-				break;
-		}
-	}
-
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //
 	//------------------------------------------------------------------------//
@@ -163,16 +154,9 @@ public class OfferItemSlot : MonoBehaviour, IBroadcastListener {
 		InitTexts();
 
 		// Initialize power Icon
-		// [AOC] TODO!!
-		/*
-		if(m_powerIcon != null) {
-			bool show = powerDef != null;
-			m_powerIcon.gameObject.SetActive(show);
-			if(show) {
-				m_powerIcon.InitFromDefinition(powerDef, false, false, powerIconMode);
-			}
+		if(m_powerIcon != null && m_preview != null) {
+			m_preview.InitPowerIcon(m_powerIcon, m_type);
 		}
-		*/
 	}
 
 	/// <summary>
@@ -220,80 +204,6 @@ public class OfferItemSlot : MonoBehaviour, IBroadcastListener {
 				m_descriptionText.text = textStr;
 			}
 		}
-
-		/*
-
-
-
-
-
-		// Set text - preview will give us the text already localized and all
-		if(m_mainText != null) {
-			if(m_preview != null) {
-				m_mainText.text = m_preview.GetLocalizedDescriptionText();
-			} else {
-				// Something went very wrong :s
-				m_mainText.text = "Couldn't find a preview prefab for reward type " + item.type;
-			}
-
-			// Text color based on item rarity!
-			Gradient4 rarityGradient = null;
-			if(m_item.type == Metagame.RewardPet.TYPE_CODE && m_item.reward != null) {
-				rarityGradient = UIConstants.GetRarityTextGradient(m_item.reward.rarity);
-			} else {
-				rarityGradient = UIConstants.GetRarityTextGradient(Metagame.Reward.Rarity.COMMON);
-			}
-			m_mainText.enableVertexGradient = true;
-			m_mainText.colorGradient = new VertexGradient(
-				rarityGradient.topLeft,
-				rarityGradient.topRight,
-				rarityGradient.bottomLeft,
-				rarityGradient.bottomRight
-			);
-		}
-
-		// Description and Power Icon
-		// [AOC] TODO!! All types must have description now, move it to the ItemPreview classes
-		string localizedDescription = "";
-		DefinitionNode powerDef = null;
-		PowerIcon.Mode powerIconMode = PowerIcon.Mode.PET;
-		switch(m_item.reward.type) {
-			// Pet
-			case Metagame.RewardPet.TYPE_CODE: {
-				// Power description
-				DefinitionNode petDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PETS, reward.sku);
-				if(petDef != null) {
-					powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, petDef.Get("powerup"));
-					powerIconMode = PowerIcon.Mode.PET;
-					localizedDescription = DragonPowerUp.GetDescription(powerDef, true, true);   // Custom formatting depending on powerup type, already localized
-				}
-			} break;
-
-			// Skin
-			case Metagame.RewardSkin.TYPE_CODE: {
-				// Power description
-				DefinitionNode skinDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, reward.sku);
-				if(skinDef != null) {
-					powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, skinDef.Get("powerup"));
-					powerIconMode = PowerIcon.Mode.SKIN;
-					localizedDescription = DragonPowerUp.GetDescription(powerDef, true, false);   // Custom formatting depending on powerup type, already localized
-				}
-			} break;
-
-			// Dragon
-			case Metagame.RewardDragon.TYPE_CODE: {
-				// Dragon description
-				localizedDescription = m_item.reward.def.GetLocalized("tidDesc");
-			} break;
-
-			default: {
-				// No extra text to be displayed :)
-			} break;
-		}
-
-		if(m_descriptionText != null) {
-			m_descriptionText.text = localizedDescription;
-		}*/
 	}
 
 	/// <summary>
@@ -309,6 +219,19 @@ public class OfferItemSlot : MonoBehaviour, IBroadcastListener {
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
+	/// <summary>
+	/// External event listener.
+	/// </summary>
+	/// <param name="eventType"></param>
+	/// <param name="broadcastEventInfo"></param>
+	public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo) {
+		switch(eventType) {
+			case BroadcastEventType.LANGUAGE_CHANGED: {
+				OnLanguageChanged();
+			} break;
+		}
+	}
+
 	/// <summary>
 	/// Localization language has changed, refresh texts.
 	/// </summary>

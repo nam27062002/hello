@@ -89,6 +89,30 @@ public abstract class IOfferItemPreviewSkin : IOfferItemPreview {
 	}
 
 	/// <summary>
+	/// Initialize the given power icon instance with data from this reward.
+	/// Will disable it item doesn't have a power assigned.
+	/// </summary>
+	/// <param name="_powerIcon">The power icon to be initialized.</param>
+	/// <param name="_slotType">The type of slot where the item will be displayed.</param>
+	public override void InitPowerIcon(PowerIcon _powerIcon, OfferItemSlot.Type _slotType) {
+		// Only in popups
+		switch(_slotType) {
+			case OfferItemSlot.Type.POPUP_BIG:
+			case OfferItemSlot.Type.POPUP_SMALL: {
+				if(m_def != null) {
+					// Get the power definition linked to this skin - PowerIcon will do the rest
+					DefinitionNode powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, m_def.Get("powerup"));
+					_powerIcon.InitFromDefinition(powerDef, false, false, PowerIcon.Mode.SKIN);
+					return;
+				}
+			} break;
+		}
+
+		// Don't show in the rest of cases
+		_powerIcon.InitFromDefinition(null, false, false);
+	}
+
+	/// <summary>
 	/// The info button has been pressed.
 	/// </summary>
 	/// <param name="_trackingLocation">Where is this been triggered from?</param>

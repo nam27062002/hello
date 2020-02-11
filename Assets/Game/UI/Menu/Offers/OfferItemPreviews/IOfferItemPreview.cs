@@ -185,6 +185,17 @@ public abstract class IOfferItemPreview : MonoBehaviour {
 		return null;
 	}
 
+	/// <summary>
+	/// Initialize the given power icon instance with data from this reward.
+	/// Will disable it item doesn't have a power assigned.
+	/// </summary>
+	/// <param name="_powerIcon">The power icon to be initialized.</param>
+	/// <param name="_slotType">The type of slot where the item will be displayed.</param>
+	public virtual void InitPowerIcon(PowerIcon _powerIcon, OfferItemSlot.Type _slotType) {
+		// Disable by default
+		_powerIcon.InitFromDefinition(null, false, false);	// This will do the trick
+	}
+
 	//------------------------------------------------------------------------//
 	// ABSTRACT METHODS														  //
 	//------------------------------------------------------------------------//
