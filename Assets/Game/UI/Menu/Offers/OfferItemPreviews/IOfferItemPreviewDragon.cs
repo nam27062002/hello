@@ -71,18 +71,4 @@ public abstract class IOfferItemPreviewDragon : IOfferItemPreview {
 		}
 		return null;
 	}
-
-	/// <summary>
-	/// The info button has been pressed.
-	/// </summary>
-	/// <param name="_trackingLocation">Where is this been triggered from?</param>
-	override public void OnInfoButton(string _trackingLocation) {
-		// Open info popup
-		// [AOC] We haven't purchased the dragon yet, create fake data of the dragon
-		IDragonData dragonData = IDragonData.CreateFromDef(m_def);
-		PopupDragonInfo popup = PopupDragonInfo.OpenPopupForDragon(dragonData, _trackingLocation);
-
-		// Move it forward in Z so it doesn't conflict with 3d previews!
-		popup.transform.SetLocalPosZ(-2500f);
-	}
 }

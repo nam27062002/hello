@@ -127,24 +127,4 @@ public abstract class IOfferItemPreviewPet : IOfferItemPreview {
 		// Don't show in the rest of cases
 		_powerIcon.InitFromDefinition(null, false, false);
 	}
-
-	/// <summary>
-	/// The info button has been pressed.
-	/// </summary>
-	/// <param name="_trackingLocation">Where is this been triggered from?</param>
-	override public void OnInfoButton(string _trackingLocation) {
-		// Initialize info popup
-		PopupController popup = PopupManager.LoadPopup(PopupInfoPet.PATH_SIMPLE);
-		popup.GetComponent<PopupInfoPet>().Init(m_def);
-
-		// Move it forward in Z so it doesn't conflict with our 3d preview!
-		popup.transform.SetLocalPosZ(-2500f);
-
-		// Open it!
-		popup.Open();
-
-		// Tracking
-		string popupName = System.IO.Path.GetFileNameWithoutExtension(PopupInfoPet.PATH_SIMPLE);
-		HDTrackingManager.Instance.Notify_InfoPopup(popupName, _trackingLocation);
-	}
 }

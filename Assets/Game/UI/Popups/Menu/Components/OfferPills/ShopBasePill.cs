@@ -388,7 +388,7 @@ public class ShopBasePill : IShopPill {
 			case InfoButtonMode.TOOLTIP: {
 				// Send tracking event
 				if(_trackInfoPopupEvent) {
-					TrackInfoPopup("PF_UITooltip"); // [AOC] TODO!! Proper tooltip name
+					TrackInfoPopup("PF_UITooltip"); // [AOC] TODO!! Proper tooltip name
 				}
 
 				UIFeedbackText feedbackText = UIFeedbackText.CreateAndLaunch("TODO!! Info tooltip", GameConstants.Vector2.center, this.GetComponentInParent<Canvas>().transform as RectTransform);
@@ -489,7 +489,7 @@ public class ShopBasePill : IShopPill {
 	public virtual void OnInfoButton() {
 		OpenInfoPopup(true);
 
-		// [AOC]TODO!! More tracking
+		// [AOC] TODO!! More tracking
 	}
 
 	/// <summary>
@@ -498,6 +498,6 @@ public class ShopBasePill : IShopPill {
 	public virtual void OnPillHit() {
 		OpenInfoPopup(true);
 
-		// [AOC]TODO!! More tracking
+		// [AOC] TODO!! More tracking
 	}
 }

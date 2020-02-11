@@ -146,30 +146,4 @@ public abstract class IOfferItemPreviewEgg : IOfferItemPreview {
 			GetLocalizedDescriptionText(OfferItemSlot.Type.TOOLTIP)
 		);
 	}
-
-	//------------------------------------------------------------------------//
-	// PARENT OVERRIDES														  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// The info button has been pressed.
-	/// </summary>
-	/// <param name="_trackingLocation">Where is this been triggered from?</param>
-	override public void OnInfoButton(string _trackingLocation) {
-		// [AOC] TODO!! Tooltip
-
-		// Intialize info popup
-		/*PopupController popup = PopupManager.LoadPopup(PopupInfoEggDropChance.PATH);
-		popup.GetComponent<PopupInfoEggDropChance>().Init(m_item.sku);
-
-		// Move it forward in Z so it doesn't conflict with our 3d preview!
-		popup.transform.SetLocalPosZ(-2500f);
-
-		// Open it!
-		popup.Open();
-
-		// Tracking
-		string popupName = System.IO.Path.GetFileNameWithoutExtension(PopupInfoPet.PATH_SIMPLE);
-		HDTrackingManager.Instance.Notify_InfoPopup(popupName, _trackingLocation);
-		*/
-	}
 }
