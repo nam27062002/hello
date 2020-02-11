@@ -2142,6 +2142,7 @@ MonoBehaviour:
   m_bannerText: {fileID: 0}
   m_priceButtonGroup: {fileID: 114650445549518458}
   m_loadingPricePlaceholder: {fileID: 1683516311857688}
+  m_debugText: {fileID: 0}
   m_offerItemSlot: {fileID: 0}
   m_buyButton: {fileID: 114146870748125816}
 --- !u!114 &114211922789233222
@@ -4281,11 +4282,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: afcef37a717cb4f0bbccfa28e12c7981, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_type: 0
   m_allow3dPreview: 0
   m_previewContainer: {fileID: 224835305408102688}
-  m_text: {fileID: 114408926076104246}
-  m_extraInfoText: {fileID: 0}
-  m_extraInfoRoot: {fileID: 0}
+  m_mainText: {fileID: 0}
+  m_secondaryText: {fileID: 0}
+  m_amountText: {fileID: 0}
+  m_descriptionText: {fileID: 0}
+  m_powerIcon: {fileID: 0}
 --- !u!114 &114716095352035142
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6457,7 +6461,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
   m_AnchoredPosition: {x: 0, y: 90}
-  m_SizeDelta: {x: 500, y: 150}
+  m_SizeDelta: {x: 475, y: 180}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224683684434595242
 RectTransform:
@@ -6735,10 +6739,10 @@ RectTransform:
   m_Father: {fileID: 224544086972418084}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: -60, y: -30}
+  m_SizeDelta: {x: 416, y: 150}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224815285966541870
 RectTransform:
