@@ -476,17 +476,20 @@ if $UPLOAD;then
   # Copy IPA
   if $BUILD_IOS; then
 
-      CURRENT_PATH="$(pwd)"
-      cd "${OUTPUT_DIR}/archives/"
-      cp -r "${ARCHIVE_FILE}/dSYMs" "dSYMs"
-      zip -r "${ARCHIVE_FILE}.zip" "dSYMs"
-      rm -rf "dSYMs"
-      cd "${CURRENT_PATH}" 
+#      CURRENT_PATH="$(pwd)"
+#      cd "${OUTPUT_DIR}/archives/"
+#      cp -r "${ARCHIVE_FILE}/dSYMs" "dSYMs"
+#      zip -r "${ARCHIVE_FILE}.zip" "dSYMs"
+#      rm -rf "dSYMs"
+#      cd "${CURRENT_PATH}"
+
+      print_builder "Uploading dSYMs to Firebase"
+      eval "${OUTPUT_DIR}/xcode/Pods/Fabric/upload-symbols -gsp ${OUTPUT_DIR}/xcode/GoogleService-Info.plist -p ios ${OUTPUT_DIR}/archives/${ARCHIVE_FILE}/dSYMs"
 
       mkdir -p "${SMB_PATH}"
       cp "${OUTPUT_DIR}/ipas/${IPA_FILE}" "${SMB_PATH}/"      
-      cp "${OUTPUT_DIR}/archives/${ARCHIVE_FILE}.zip" "${SMB_PATH}/"
-      rm "${OUTPUT_DIR}/archives/${ARCHIVE_FILE}.zip"            
+#      cp "${OUTPUT_DIR}/archives/${ARCHIVE_FILE}.zip" "${SMB_PATH}/"
+#      rm "${OUTPUT_DIR}/archives/${ARCHIVE_FILE}.zip"            
     
   fi
 
