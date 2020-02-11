@@ -483,8 +483,11 @@ if $UPLOAD;then
 #      rm -rf "dSYMs"
 #      cd "${CURRENT_PATH}"
 
-      print_builder "Uploading dSYMs to Firebase"
-      eval "${OUTPUT_DIR}/xcode/Pods/Fabric/upload-symbols -gsp ${OUTPUT_DIR}/xcode/GoogleService-Info.plist -p ios ${OUTPUT_DIR}/archives/${ARCHIVE_FILE}/dSYMs"
+      if [ "$ENVIRONMENT" == "stage_qc" -o "$ENVIRONMENT" == "production" ]; then
+        print_builder "Uploading dSYMs to Firebase"
+        eval "${OUTPUT_DIR}/xcode/Pods/Fabric/upload-symbols -gsp ${OUTPUT_DIR}/xcode/GoogleService-Info.plist -p ios ${OUTPUT_DIR}/archives/${ARCHIVE_FILE}/dSYMs"
+      fi
+
 
       mkdir -p "${SMB_PATH}"
       cp "${OUTPUT_DIR}/ipas/${IPA_FILE}" "${SMB_PATH}/"      
