@@ -142,15 +142,6 @@ public abstract class IOfferItemPreview : MonoBehaviour {
 	// OVERRIDE CANDIDATE METHODS											  //
 	//------------------------------------------------------------------------//
 	/// <summary>
-	/// The info button has been pressed.
-	/// </summary>
-	/// <param name="_trackingLocation">Where is this been triggered from?</param>
-	public virtual void OnInfoButton(string _trackingLocation) {
-		// Nothing to do by default
-		// To be implemented by heirs if needed
-	}
-
-	/// <summary>
 	/// Gets the amount of this item, already localized and formatted.
 	/// </summary>
 	/// <param name="_slotType">The type of slot where the item will be displayed.</param>

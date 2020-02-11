@@ -112,21 +112,4 @@ public abstract class IOfferItemPreviewSkin : IOfferItemPreview {
 		// Don't show in the rest of cases
 		_powerIcon.InitFromDefinition(null, false, false);
 	}
-
-	/// <summary>
-	/// The info button has been pressed.
-	/// </summary>
-	/// <param name="_trackingLocation">Where is this been triggered from?</param>
-	override public void OnInfoButton(string _trackingLocation) {
-		// Open info popup
-		// [AOC] TODO!!
-		UIFeedbackText.CreateAndLaunch(
-			LocalizationManager.SharedInstance.Localize("TID_GEN_COMING_SOON"),
-			GameConstants.Vector2.center,
-			GetComponentInParent<Canvas>().transform as RectTransform
-		);
-		/*PopupController popup = PopupManager.LoadPopup(PopupInfoEggDropChance.PATH);
-		popup.GetComponent<PopupInfoEggDropChance>().Init(m_item.sku);
-		popup.Open();*/
-	}
 }
