@@ -25,6 +25,7 @@ public class CategoryController : MonoBehaviour {
     //------------------------------------------------------------------------//
 
     [SerializeField] protected Transform m_pillsContainer;
+    [SerializeField] protected ShowHideAnimator m_header;
 
     // Internal
     protected ShopCategory m_shopCategory;
@@ -57,7 +58,11 @@ public class CategoryController : MonoBehaviour {
 	/// </summary>
 	private void Start() {
 
-
+        // Animate the ribbon header
+        if (m_header != null)
+        {
+            m_header.ForceShow(true);
+        }
 
     }
 
@@ -125,14 +130,14 @@ public class CategoryController : MonoBehaviour {
     /// <param name="enable">True to enable, false to disable</param>
     public virtual void SetLayoutGroupsActive(bool enable)
     {
-        HorizontalOrVerticalLayoutGroup layout;
+        LayoutGroup layout;
 
-        layout = GetComponent<VerticalLayoutGroup>();
+        layout = GetComponent<LayoutGroup>();
         if (layout != null) {
             layout.enabled = enable;
         }
             
-        layout = m_pillsContainer.GetComponent<HorizontalLayoutGroup>();
+        layout = m_pillsContainer.GetComponent<LayoutGroup>();
         if (layout != null) {
             layout.enabled = enable;
         }

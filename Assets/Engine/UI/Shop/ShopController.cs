@@ -62,6 +62,7 @@ public class ShopController : MonoBehaviour {
     // Keep the bounds of the current category, so we dont recalculate every time the user scrolls the shop
     private float categoryLeftBorder, categoryRightBorder;
 
+    private bool redrawLayouts = false;
 
     // Optimization #1: disable layouts after refresh
     private bool layoutGropusActive = false;
@@ -110,6 +111,14 @@ public class ShopController : MonoBehaviour {
 	/// </summary>
 	private void Update() {
 
+        /*if (redrawLayouts)
+        {
+            m_categoriesContainer.GetComponent<HorizontalLayoutGroup>().enabled = false;
+            m_categoriesContainer.GetComponent<HorizontalLayoutGroup>().enabled = true;
+
+            redrawLayouts = false;
+        }*/
+
         // Do not update if the shop is not open
         if (!gameObject.activeInHierarchy)
         {
@@ -122,25 +131,33 @@ public class ShopController : MonoBehaviour {
             // Keep a reference to the new pills created
             m_pills.AddRange(catBeingInitialized.offerPills);
 
+            // Force the category as dirty to be redrawn
+            catBeingInitialized.GetComponent<LayoutGroup>().enabled = false;
+            catBeingInitialized.GetComponent<LayoutGroup>().enabled = true;
+
+            // This category has been initialized succesfully!
             catBeingInitialized = null;
 
-            // Have all the categories been initialized?
+            // Are there some categories left to initialize?
             if (categoriesToInitialize.Count == 0)
             {
-                // Disable layouts for better performance
-                SetLayoutGroupsActive(false);
-
                 // At the end of initialization, user will be looking at the first category
                 if (m_shortcuts.Count > 0)
                 {
                     CalculateCategoryBounds(m_shortcuts[0].category);
                 }
 
-                m_categoriesContainer.GetComponent<HorizontalLayoutGroup>().enabled = false;
-                m_categoriesContainer.GetComponent<HorizontalLayoutGroup>().enabled = true;
+                redrawLayouts = true;
 
-                // Hide pills out the view
-                m_hidePillsOutOfView = true;
+                // Wait one frame
+                UbiBCN.CoroutineManager.DelayedCallByFrames(() => {                 
+                        // Disable layouts for better performance
+                        SetLayoutGroupsActive(false);
+                        // Hide pills out the view
+                        m_hidePillsOutOfView = true;
+                        UpdatePillsVisibility(m_scrollRect.normalizedPosition);
+                },1);
+
             }
         }
 
@@ -153,7 +170,6 @@ public class ShopController : MonoBehaviour {
                 catBeingInitialized = InitializeCategory(cat);
             }
         }
-
 
     }
 

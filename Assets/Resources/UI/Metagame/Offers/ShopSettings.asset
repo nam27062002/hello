@@ -18,9 +18,6 @@ MonoBehaviour:
   - type: pc
     prefab2d: UI/Metagame/Offers/PF_OfferItemPreviewHC2d
     prefab3d: 
-  - type: gf
-    prefab2d: UI/Metagame/Offers/PF_OfferItemPreviewGF2d
-    prefab3d: 
   - type: egg
     prefab2d: UI/Metagame/Offers/PF_OfferItemPreviewEgg2d
     prefab3d: UI/Metagame/Offers/PF_OfferItemPreviewEgg3d
@@ -31,6 +28,9 @@ MonoBehaviour:
     prefab2d: UI/Metagame/Offers/PF_OfferItemPreviewSkin2d
     prefab3d: UI/Metagame/Offers/PF_OfferItemPreviewSkin3d
   - type: dragon
+    prefab2d: UI/Metagame/Offers/PF_OfferItemPreviewDragon2d
+    prefab3d: UI/Metagame/Offers/PF_OfferItemPreviewDragon3d
+  - type: removeAds
     prefab2d: UI/Metagame/Offers/PF_OfferItemPreviewDragon2d
     prefab3d: UI/Metagame/Offers/PF_OfferItemPreviewDragon3d
   m_shopPillsSetup:
@@ -45,7 +45,7 @@ MonoBehaviour:
   - offerPackType: removeads
     prefab: UI/Shop/PF_ShopVIPPill
   - offerPackType: sc
-    prefab: UI/Shop/PF_PopupShopSCPill
+    prefab: UI/Shop/PF_ShopCoinPackPill
   m_HcIconPrefabs:
   - {fileID: 1974017433078970, guid: 5bec9c81405b4470ea0c54ce10aa681e, type: 2}
   - {fileID: 1974017433078970, guid: 5a8fcdf50e4dc4cf19367959b34cd1e5, type: 2}
