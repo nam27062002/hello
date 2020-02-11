@@ -62,6 +62,7 @@ public abstract class IOfferItemPreviewEgg : IOfferItemPreview {
 	public override string GetLocalizedMainText(OfferItemSlot.Type _slotType) {
 		// Only in popups
 		switch(_slotType) {
+			case OfferItemSlot.Type.TOOLTIP:
 			case OfferItemSlot.Type.POPUP_BIG:
 			case OfferItemSlot.Type.POPUP_SMALL: {
 				// Each type of egg has its own name, grab it from definition
@@ -86,6 +87,7 @@ public abstract class IOfferItemPreviewEgg : IOfferItemPreview {
 	public override string GetLocalizedDescriptionText(OfferItemSlot.Type _slotType) {
 		// Only in popups
 		switch(_slotType) {
+			case OfferItemSlot.Type.TOOLTIP:
 			case OfferItemSlot.Type.POPUP_BIG:
 			case OfferItemSlot.Type.POPUP_SMALL: {
 				if(m_def != null) {
@@ -96,6 +98,15 @@ public abstract class IOfferItemPreviewEgg : IOfferItemPreview {
 			} break;
 		}
 		return null;
+	}
+
+	/// <summary>
+	/// Initialize the given tooltip with data from this reward.
+	/// </summary>
+	/// <param name="_tooltip">The tooltip to be initialized.</param>
+	public override void InitTooltip(UITooltip _tooltip) {
+		// Show rarities
+
 	}
 
 	//------------------------------------------------------------------------//

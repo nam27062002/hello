@@ -147,6 +147,7 @@ public abstract class IOfferItemPreview : MonoBehaviour {
 	/// <param name="_trackingLocation">Where is this been triggered from?</param>
 	public virtual void OnInfoButton(string _trackingLocation) {
 		// Nothing to do by default
+		// To be implemented by heirs if needed
 	}
 
 	/// <summary>
@@ -155,6 +156,7 @@ public abstract class IOfferItemPreview : MonoBehaviour {
 	/// <param name="_slotType">The type of slot where the item will be displayed.</param>
 	/// <returns>The localized amount. <c>null</c> if this item type doesn't have to show the amount for the given type of slot (i.e. dragon).</returns>
 	public virtual string GetLocalizedAmountText(OfferItemSlot.Type _slotType) {
+		// To be implemented by heirs if needed
 		return null;
 	}
 
@@ -164,6 +166,7 @@ public abstract class IOfferItemPreview : MonoBehaviour {
 	/// <param name="_slotType">The type of slot where the item will be displayed.</param>
 	/// <returns>The localized main text. <c>null</c> if this item type doesn't have to show main text for the given type of slot (i.e. coins).</returns>
 	public virtual string GetLocalizedMainText(OfferItemSlot.Type _slotType) {
+		// To be implemented by heirs if needed
 		return null;
 	}
 
@@ -173,6 +176,7 @@ public abstract class IOfferItemPreview : MonoBehaviour {
 	/// <param name="_slotType">The type of slot where the item will be displayed.</param>
 	/// <returns>The localized secondary text. <c>null</c> if this item type doesn't have to show any secondary text for the given type of slot (i.e. coins).</returns>
 	public virtual string GetLocalizedSecondaryText(OfferItemSlot.Type _slotType) {
+		// To be implemented by heirs if needed
 		return null;
 	}
 
@@ -182,6 +186,7 @@ public abstract class IOfferItemPreview : MonoBehaviour {
 	/// <param name="_slotType">The type of slot where the item will be displayed.</param>
 	/// <returns>The localized description. <c>null</c> if this item type doesn't have to show any description for the given type of slot.</returns>
 	public virtual string GetLocalizedDescriptionText(OfferItemSlot.Type _slotType) {
+		// To be implemented by heirs if needed
 		return null;
 	}
 
@@ -192,8 +197,23 @@ public abstract class IOfferItemPreview : MonoBehaviour {
 	/// <param name="_powerIcon">The power icon to be initialized.</param>
 	/// <param name="_slotType">The type of slot where the item will be displayed.</param>
 	public virtual void InitPowerIcon(PowerIcon _powerIcon, OfferItemSlot.Type _slotType) {
+		// To be implemented by heirs if needed
 		// Disable by default
 		_powerIcon.InitFromDefinition(null, false, false);	// This will do the trick
+	}
+
+	/// <summary>
+	/// Initialize the given tooltip with data from this reward.
+	/// </summary>
+	/// <param name="_tooltip">The tooltip to be initialized.</param>
+	public virtual void InitTooltip(UITooltip _tooltip) {
+		// Default implementation - show short text
+		// Shouldn't get here anyway, since only rewards supporting tooltips should get this method invoked
+		// To be overriden by heirs if needed
+		_tooltip.InitWithText(
+			GetLocalizedMainText(OfferItemSlot.Type.TOOLTIP),
+			GetLocalizedDescriptionText(OfferItemSlot.Type.TOOLTIP)
+		);
 	}
 
 	//------------------------------------------------------------------------//

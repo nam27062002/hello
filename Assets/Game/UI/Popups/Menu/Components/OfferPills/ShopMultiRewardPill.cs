@@ -70,10 +70,6 @@ public class ShopMultiRewardPill: ShopBasePill
 
         // Find the proper layout for the amount of items in the pack
         OffersLayout layout = m_layouts[amount -1];
-
-        m_itemsToSet.Clear();
-        m_slotsToSet.Clear();
-
         for (int i = 0; i < layout.m_offerItems.Count; ++i)
         {
             // Skip if no slot (i.e. single item layouts)

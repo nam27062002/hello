@@ -131,16 +131,11 @@ public class ShopRemoveAdsPill : ShopMonoRewardPill {
         RefreshPrice();
     }
 
-    //------------------------------------------------------------------------//
-    // CALLBACKS															  //
-    //------------------------------------------------------------------------//
-    /// <summary>
-	/// Info button has been pressed.
-	/// Don't call it if the pack type doesn't require info popup.
-	/// Can be override by heirs, default behaviour is opening the offer info popup.
+	/// <summary>
+	/// Open the extended info popup for this pill.
 	/// </summary>
-	/// <param name="_trackingLocation">Where has this been triggered from?</param>
-	public override void OnInfoButton(string _trackingLocation) {
+	/// <param name="_trackInfoPopupEvent">Whether to send tracking event or not for the custom.player.infopopup event.</param>
+	protected override void OpenInfoPopup(bool _trackInfoPopupEvent) {
 		// Override parent to open the RemoveAdsOffer Popup instead
 		// Load the popup
 		PopupController popup = PopupManager.LoadPopup(PopupRemoveAdsOffer.PATH);
@@ -153,9 +148,9 @@ public class ShopRemoveAdsPill : ShopMonoRewardPill {
 		popup.Open();
 
 		// If defined, send tracking event
-		if(!string.IsNullOrEmpty(_trackingLocation)) {
+		if(_trackInfoPopupEvent) {
 			string popupName = System.IO.Path.GetFileNameWithoutExtension(PopupRemoveAdsOffer.PATH);
-			HDTrackingManager.Instance.Notify_InfoPopup(popupName, _trackingLocation);
+			TrackInfoPopup(popupName);
 		}
 	}
 }

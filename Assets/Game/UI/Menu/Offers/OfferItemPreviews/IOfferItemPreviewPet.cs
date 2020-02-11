@@ -90,6 +90,7 @@ public abstract class IOfferItemPreviewPet : IOfferItemPreview {
 	public override string GetLocalizedDescriptionText(OfferItemSlot.Type _slotType) {
 		// Only in popups - show power description
 		switch(_slotType) {
+			case OfferItemSlot.Type.TOOLTIP:
 			case OfferItemSlot.Type.POPUP_BIG:
 			case OfferItemSlot.Type.POPUP_SMALL: {
 				if(m_def != null) {

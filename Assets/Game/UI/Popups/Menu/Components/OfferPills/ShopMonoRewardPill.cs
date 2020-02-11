@@ -53,11 +53,7 @@ public class ShopMonoRewardPill : ShopBasePill {
 
         base.InitFromOfferPack(_pack);
 
-		// Items
-		m_itemsToSet.Clear();
-		m_slotsToSet.Clear();
-
-        // There is only one item to initialized in monoRewards
+		// There is only one item to initialized in monoRewards
         if (m_offerItemSlot != null)
         {
 

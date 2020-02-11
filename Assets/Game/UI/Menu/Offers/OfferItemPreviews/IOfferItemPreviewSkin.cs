@@ -75,6 +75,7 @@ public abstract class IOfferItemPreviewSkin : IOfferItemPreview {
 	public override string GetLocalizedDescriptionText(OfferItemSlot.Type _slotType) {
 		// Only in popups - show skin's power description
 		switch(_slotType) {
+			case OfferItemSlot.Type.TOOLTIP:
 			case OfferItemSlot.Type.POPUP_BIG:
 			case OfferItemSlot.Type.POPUP_SMALL: {
 				if(m_def != null) {

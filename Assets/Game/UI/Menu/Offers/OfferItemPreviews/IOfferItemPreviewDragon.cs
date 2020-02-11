@@ -59,6 +59,7 @@ public abstract class IOfferItemPreviewDragon : IOfferItemPreview {
 	public override string GetLocalizedDescriptionText(OfferItemSlot.Type _slotType) {
 		// Only in popups - show dragon description
 		switch(_slotType) {
+			case OfferItemSlot.Type.TOOLTIP:
 			case OfferItemSlot.Type.POPUP_BIG:
 			case OfferItemSlot.Type.POPUP_SMALL: {
 				if(m_def != null) {

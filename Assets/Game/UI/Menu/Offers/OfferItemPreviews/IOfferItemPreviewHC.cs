@@ -65,6 +65,7 @@ public abstract class IOfferItemPreviewHC : IOfferItemPreview {
 	public override string GetLocalizedMainText(OfferItemSlot.Type _slotType) {
 		// Only in popups
 		switch(_slotType) {
+			case OfferItemSlot.Type.TOOLTIP:
 			case OfferItemSlot.Type.POPUP_BIG:
 			case OfferItemSlot.Type.POPUP_SMALL: {
 				return LocalizationManager.SharedInstance.Localize("TID_HC_NAME_PLURAL");
@@ -81,6 +82,7 @@ public abstract class IOfferItemPreviewHC : IOfferItemPreview {
 	public override string GetLocalizedDescriptionText(OfferItemSlot.Type _slotType) {
 		// Only in popups
 		switch(_slotType) {
+			case OfferItemSlot.Type.TOOLTIP:
 			case OfferItemSlot.Type.POPUP_BIG:
 			case OfferItemSlot.Type.POPUP_SMALL: {
 				return LocalizationManager.SharedInstance.Localize("TID_OFFER_ITEM_HC_DESC");

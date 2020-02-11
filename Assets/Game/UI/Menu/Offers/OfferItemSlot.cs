@@ -28,7 +28,8 @@ public class OfferItemSlot : MonoBehaviour, IBroadcastListener {
 		PILL_BIG,
 		PILL_SMALL,
 		POPUP_BIG,
-		POPUP_SMALL
+		POPUP_SMALL,
+		TOOLTIP
 	}
 
 	//------------------------------------------------------------------------//
