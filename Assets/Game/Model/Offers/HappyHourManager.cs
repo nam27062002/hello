@@ -130,13 +130,22 @@ public class HappyHourManager {
 		get { return m_triggerPopupAtRun; }
 	}
 
-	//------------------------------------------------------------------------//
-	// GENERIC METHODS														  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Default constructor.
-	/// </summary>
-	public HappyHourManager() {
+
+
+    //------------------------------------------------------------------------//
+    // GENERIC METHODS														  //
+    //------------------------------------------------------------------------//
+
+    public bool IsActive()
+    {
+        return happyHour.IsActive();
+    }
+
+
+    /// <summary>
+    /// Default constructor.
+    /// </summary>
+    public HappyHourManager() {
 		// Subscribe to events
 		Messenger.AddListener<bool, string>(MessengerEvents.HC_PACK_ACQUIRED, OnHcPackAccquired);
 	}

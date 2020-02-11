@@ -29,7 +29,7 @@ public class ShopHCPill : ShopCurrencyPill {
 	//------------------------------------------------------------------------//
 	// Exposed
 	[Separator("HC Pill Specifics")]
-	[SerializeField] protected GameObject m_happyHourBg = null;
+	[SerializeField] protected GameObject m_happyHourButtonFx = null;
 
     // Public
     private bool m_happyHourActive = false;
@@ -90,8 +90,7 @@ public class ShopHCPill : ShopCurrencyPill {
         if (m_def == null) return;
 
         // Hide all the happy hour elements
-        if (m_happyHourBg != null)
-            m_happyHourBg.SetActive(false);
+
 
         // Happy Hour visuals
         RefreshHappyHour(false);
@@ -116,13 +115,14 @@ public class ShopHCPill : ShopCurrencyPill {
 			// Store new state
 			m_happyHourActive = hhActive;
 
-			// Show a nice purple bground
-			if(m_happyHourBg != null) {
-				m_happyHourBg.SetActive(hhActive);
+			// Add a shiny effect to the button
+			if(m_happyHourButtonFx != null) {
+                m_happyHourButtonFx.SetActive(hhActive);
 			}
 
-			// Apply to item slot
-			if(m_itemSlotHC != null) {
+
+            // Apply to item slot
+            if (m_itemSlotHC != null) {
 				m_itemSlotHC.ApplyHappyHour(hhActive ? OffersManager.happyHourManager.happyHour : null);
 			}
 

@@ -7,6 +7,7 @@
 //----------------------------------------------------------------------------//
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -40,6 +41,18 @@ public class HcCategoryController : CategoryController
     [SerializeField]
     protected Transform m_bigPillContainer;
 
+    [Separator("Happy Hour")]
+    [SerializeField]
+    protected Localizer m_timer;
+    [SerializeField]
+    protected GameObject m_happyHourBadge;
+    [SerializeField]
+    protected Localizer m_happyHourBadgeText;
+
+    // Internal
+    protected HappyHour happyHour; // Cache happy hour
+    
+
 
     //------------------------------------------------------------------------//
     // GENERIC METHODS														  //
@@ -48,6 +61,22 @@ public class HcCategoryController : CategoryController
     //------------------------------------------------------------------------//
     // OTHER METHODS														  //
     //------------------------------------------------------------------------//
+
+    /// <summary>
+    /// Initialize a category container
+    /// </summary>
+    /// <param name="_shopCategory">The shop category related</param>
+    /// <param name="offers">Offer packs that will be contained in this category. If null, they will be
+    /// queried from the offer manager.</param>
+    public override void Initialize(ShopCategory _shopCategory, List<OfferPack> offers = null)
+    {
+        base.Initialize(_shopCategory, offers);
+
+        happyHour = OffersManager.happyHourManager.happyHour;
+
+
+    }
+
 
     /// <summary>
     /// Initialize one pill
@@ -154,6 +183,46 @@ public class HcCategoryController : CategoryController
         GetComponent<ContentSizeFitter>().enabled = enable;
         m_pillsContainer.parent.GetComponent<ContentSizeFitter>().enabled = enable;
         m_pillsContainer.GetComponent<ContentSizeFitter>().enabled = enable;
+
+    }
+
+    /// <summary>
+    /// Refresh all the timers in this category container, and cascade it to the offer pills inside
+    /// </summary>
+    public override void RefreshTimers()
+    {
+
+        base.RefreshTimers();
+
+        if (m_timer != null && m_happyHourBadge != null) {
+
+            if (happyHour.IsActive())
+            {
+                // Show time left in the proper format (1h 20m 30s)
+                
+                string timeLeft = TimeUtils.FormatTime(happyHour.TimeLeftSecs(), TimeUtils.EFormat.ABBREVIATIONS_WITHOUT_0_VALUES, 3);
+                m_timer.Set(timeLeft);
+                m_timer.gameObject.SetActive(true);
+
+                // Happy hour rate
+
+                // Convert offer rate to percentage (example: .5f to +50%) 
+                float percentage = happyHour.extraGemsFactor * 100;
+                string gemsPercentage = String.Format("{0}", Math.Round(percentage));
+
+                // Show texts with offer rate
+                string badgeText = LocalizationManager.SharedInstance.Localize("TID_SHOP_BONUS_AMOUNT", gemsPercentage + "%");
+                m_happyHourBadgeText.Set(badgeText);
+
+                m_happyHourBadge.SetActive(true);
+
+            } else
+            {
+                m_timer.gameObject.SetActive(false);
+                m_happyHourBadge.SetActive(false);
+            }
+        }
+        
 
     }
 
