@@ -123,7 +123,7 @@ public class CategoryController : MonoBehaviour {
     /// Enable/Disable all the horizontal/vertical layouts of the shop for performance reasons
     /// </summary>
     /// <param name="enable">True to enable, false to disable</param>
-    public void SetLayoutGroupsActive(bool enable)
+    public virtual void SetLayoutGroupsActive(bool enable)
     {
         HorizontalOrVerticalLayoutGroup layout;
 
@@ -131,7 +131,7 @@ public class CategoryController : MonoBehaviour {
         if (layout != null) {
             layout.enabled = enable;
         }
-
+            
         layout = m_pillsContainer.GetComponent<HorizontalLayoutGroup>();
         if (layout != null) {
             layout.enabled = enable;
@@ -187,7 +187,7 @@ public class CategoryController : MonoBehaviour {
     /// Initialize one pill
     /// </summary>
     /// <param name="_offer"></param>
-    private void InitializePill (OfferPack _offer)
+    protected virtual void InitializePill (OfferPack _offer)
     {
         // Instantiate the offer with the proper prefab
         IShopPill pill = InstantiatePill(_offer.type);
@@ -238,7 +238,7 @@ public class CategoryController : MonoBehaviour {
     /// </summary>
     /// <param name="_type">Type of the offer pack</param>
     /// <returns></returns>
-    public virtual IShopPill InstantiatePill(OfferPack.Type _type)
+    private IShopPill InstantiatePill(OfferPack.Type _type)
     {
         IShopPill pill;
 

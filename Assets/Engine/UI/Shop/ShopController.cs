@@ -10,6 +10,7 @@
 using DG.Tweening;
 using System;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -41,6 +42,8 @@ public class ShopController : MonoBehaviour {
     [SerializeField] private Transform m_shortcutsContainer;
     [SerializeField] private ShopCategoryShortcut m_shortcutPrefab;
 
+    //Debug
+    [SerializeField] private TextMeshProUGUI m_debugText;
 
     //Internal
     private float m_timer = 0; // Refresh timer
@@ -133,6 +136,9 @@ public class ShopController : MonoBehaviour {
                     CalculateCategoryBounds(m_shortcuts[0].category);
                 }
 
+                m_categoriesContainer.GetComponent<HorizontalLayoutGroup>().enabled = false;
+                m_categoriesContainer.GetComponent<HorizontalLayoutGroup>().enabled = true;
+
                 // Hide pills out the view
                 m_hidePillsOutOfView = true;
             }
@@ -147,6 +153,8 @@ public class ShopController : MonoBehaviour {
                 catBeingInitialized = InitializeCategory(cat);
             }
         }
+
+
     }
 
 
@@ -457,9 +465,9 @@ public class ShopController : MonoBehaviour {
 
         foreach (IShopPill pill in m_pills)
         {
-            // Is this pill inside the visible limits of the scrollview
-            Vector2 pillPosition = m_scrollRect.GetNormalizedPositionForItem(pill.transform, true, false);
-            bool visible = (Mathf.Abs(pillPosition.x - _scrollPosition.x) < normalizedViewportWidth);
+            // Is this pill inside the visible limits of the scrollview (leave some margin)
+            float pillPositionX = m_scrollRect.GetRelativePositionOfItem(pill.transform);
+            bool visible = (pillPositionX > -0.2f && pillPositionX < 1.2f);
 
             // Enable/disable the pill
             pill.gameObject.SetActive(visible);
@@ -494,6 +502,13 @@ public class ShopController : MonoBehaviour {
     /// <param name="_newPos">Normalized position of the scroll view</param>
     public void OnScrollChanged(Vector2 _newPos)
     {
+
+        // Debug info
+        if (m_debugText != null)
+        {
+            m_debugText.text = "" +_newPos.x;
+        }
+
         // Wait for the layouts groups to be rendered
         if (m_hidePillsOutOfView)
         {
