@@ -426,6 +426,9 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 	//------------------------------------------------------------------------//
 	// Internal
 	private StringBuilder m_sb = new StringBuilder();
+	public static StringBuilder sb {
+		get { return instance.m_sb; }	// Careful with context!
+	}
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
