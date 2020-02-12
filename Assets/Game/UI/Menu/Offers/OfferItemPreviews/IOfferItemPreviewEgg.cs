@@ -109,7 +109,7 @@ public abstract class IOfferItemPreviewEgg : IOfferItemPreview {
 						// Aux vars
 						Metagame.Reward.Rarity rarity = (Metagame.Reward.Rarity)i;
 						string raritySku = Metagame.Reward.RarityToSku(rarity);
-						DefinitionNode rarityDef = DefinitionsManager.SharedInstance.GetDefinition(raritySku, DefinitionsCategory.RARITIES);
+						DefinitionNode rarityDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.RARITIES, raritySku);
 						Color rarityColor = UIConstants.GetRarityColor(rarity);
 
 						// Rarity icon
