@@ -74,6 +74,25 @@ public class ShopFreePill : ShopMonoRewardPill {
 	}
 
 	/// <summary>
+	/// Get the info button mode for this pill's pack.
+	/// </summary>
+	/// <returns>The desired button mode.</returns>
+	protected override InfoButtonMode GetInfoButtonMode() {
+		// Only for Eggs
+		InfoButtonMode mode = InfoButtonMode.NONE; // None by default with rotationals
+		if(m_pack != null && m_pack.items.Count > 0 && m_pack.items[0] != null) {
+			// Info button mode depends on pack's item type
+			switch(m_pack.items[0].type) {
+				case Metagame.RewardEgg.TYPE_CODE: {
+					mode = InfoButtonMode.TOOLTIP;
+				} break;
+			}
+		}
+
+		return mode;
+	}
+
+	/// <summary>
 	/// Refresh the timer. To be called periodically.
 	/// https://docs.unity3d.com/ScriptReference/MonoBehaviour.InvokeRepeating.html
 	/// </summary>

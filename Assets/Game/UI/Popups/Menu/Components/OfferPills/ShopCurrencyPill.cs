@@ -70,14 +70,26 @@ public class ShopCurrencyPill : ShopMonoRewardPill {
         InitFromOfferPack(offer);
     }
 
-    //------------------------------------------------------------------------//
-    // IPopupShopPill IMPLEMENTATION										  //
-    //------------------------------------------------------------------------//
-    /// <summary>
-    /// Obtain the IAP sku as defined in the App Stores.
-    /// </summary>
-    /// <returns>The IAP sku corresponding to this shop pack. Empty if not an IAP.</returns>
-    override public string GetIAPSku() {
+	//------------------------------------------------------------------------//
+	// PARENT OVERRIDES														  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Get the info button mode for this pill's pack.
+	/// </summary>
+	/// <returns>The desired button mode.</returns>
+	protected override InfoButtonMode GetInfoButtonMode() {
+		// Never for currency pills
+		return InfoButtonMode.NONE;
+	}
+
+	//------------------------------------------------------------------------//
+	// IPopupShopPill IMPLEMENTATION										  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Obtain the IAP sku as defined in the App Stores.
+	/// </summary>
+	/// <returns>The IAP sku corresponding to this shop pack. Empty if not an IAP.</returns>
+	override public string GetIAPSku() {
 		// Only for REAL money packs
 		if(m_currency != UserProfile.Currency.REAL) return string.Empty;
 
