@@ -1423,7 +1423,6 @@ public class OfferPack {
 		} else {
 			clampedCents = (int)cents;
 		}
-		Debug.Log(Colors.yellow.Tag(_usd + " -> " + cents + " -> " + clampedCents));
 		return clampedCents;
 	}
 	#endregion
