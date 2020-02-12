@@ -67,15 +67,15 @@ public class OfferItemSlotSC : OfferItemSlot {
         if (reloadPreview)
         {
             // Load the proper gem pack icon
-            GameObject previewPrefab = ShopSettings.GetScIconPrefab(_order);
+            IOfferItemPreviewSC previewPrefab = ShopSettings.GetScIconPrefab(_order);
             if (previewPrefab == null)
             {
                 Debug.LogError("No icon prefab defined for SC pack with order " + _order);
             }
             else { 
                 // Instantiate preview! :)
-                GameObject previewInstance = GameObject.Instantiate<GameObject>(previewPrefab, m_previewContainer, false);
-                previewInstance.SetActive(true);
+                m_preview  = GameObject.Instantiate<IOfferItemPreviewSC>(previewPrefab, m_previewContainer, false);
+                m_preview.gameObject.SetActive(true);
             }
         }
 

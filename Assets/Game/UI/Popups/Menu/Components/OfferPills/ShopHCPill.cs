@@ -29,7 +29,7 @@ public class ShopHCPill : ShopCurrencyPill {
 	//------------------------------------------------------------------------//
 	// Exposed
 	[Separator("HC Pill Specifics")]
-	[SerializeField] protected GameObject m_happyHourBg = null;
+	[SerializeField] protected GameObject m_happyHourButtonFx = null;
 
     // Public
     private bool m_happyHourActive = false;
@@ -43,6 +43,19 @@ public class ShopHCPill : ShopCurrencyPill {
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
+    public ShopHCPill()
+    {
+        // Subscribe to happy hour events
+        Messenger.AddListener(MessengerEvents.HAPPY_HOUR_CHANGED, RefreshHappyHour);
+    }
+
+    ~ShopHCPill()
+    {
+        // Unsubscribe to events
+        Messenger.RemoveListener(MessengerEvents.HAPPY_HOUR_CHANGED, RefreshHappyHour);
+    }
+
+
 	/// <summary>
 	/// Initialization.
 	/// </summary>
@@ -59,7 +72,7 @@ public class ShopHCPill : ShopCurrencyPill {
 	/// </summary>
 	public void OnEnable() {
 		// Refresh Happy Hour visuals immediately
-		RefreshHappyHour(true);
+		RefreshHappyHour();
 	}
 
 	/// <summary>
@@ -69,9 +82,6 @@ public class ShopHCPill : ShopCurrencyPill {
 	public override void RefreshTimer() {
 		// Let parent do its thing
 		base.RefreshTimer();
-
-		// Refresh Happy Hour visuals periodically for better performance
-		RefreshHappyHour(false);
 	}
 
     //------------------------------------------------------------------------//
@@ -89,12 +99,8 @@ public class ShopHCPill : ShopCurrencyPill {
         // Nothing to do if pack is not valid
         if (m_def == null) return;
 
-        // Hide all the happy hour elements
-        if (m_happyHourBg != null)
-            m_happyHourBg.SetActive(false);
-
         // Happy Hour visuals
-        RefreshHappyHour(false);
+        RefreshHappyHour();
     }
 
 
@@ -102,34 +108,33 @@ public class ShopHCPill : ShopCurrencyPill {
 	/// Refresh Happy Hour visuals.
 	/// </summary>
 	/// <param name="_force">Force refresh or only if state has changed?</param>
-    private void RefreshHappyHour(bool _force) {
-		// In case there is a happy hour active
-		bool hhActive = false;
+    private void RefreshHappyHour() {
+        
+        // In case there is a happy hour active
+        bool hhActive = false;
 		if(OffersManager.happyHourManager.happyHour != null) {
 			// Check whether Happy Hour applies to this pack or not
 			HappyHourManager happyHour = OffersManager.happyHourManager;
 			hhActive = happyHour.happyHour.IsActive() && happyHour.IsPackAffected(m_def);
 		}
 
-		// Do we need to refresh visuals?
-		if(hhActive != m_happyHourActive || _force) {
-			// Store new state
-			m_happyHourActive = hhActive;
+        // Add a shiny effect to the button
+        if (m_happyHourButtonFx != null)
+        {
+            m_happyHourButtonFx.SetActive(hhActive);
+        }
 
-			// Show a nice purple bground
-			if(m_happyHourBg != null) {
-				m_happyHourBg.SetActive(hhActive);
-			}
 
-			// Apply to item slot
-			if(m_itemSlotHC != null) {
-				m_itemSlotHC.ApplyHappyHour(hhActive ? OffersManager.happyHourManager.happyHour : null);
-			}
+        // Apply to item slot
+        if (m_itemSlotHC != null)
+        {
+            m_itemSlotHC.ApplyHappyHour(OffersManager.happyHourManager.happyHour);
+        }
 
-			// Hide the regular extra % text during HH
-			if(m_bonusAmountText != null) {
-				m_bonusAmountText.gameObject.SetActive(!hhActive);
-			}
+
+		// Hide the regular extra % text during HH
+		if(m_bonusAmountText != null) {
+			m_bonusAmountText.gameObject.SetActive(!hhActive);
 		}
     }
 }
