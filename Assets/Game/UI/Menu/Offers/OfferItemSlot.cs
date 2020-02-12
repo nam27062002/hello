@@ -4,11 +4,17 @@
 // Created by Alger Ortín Castellví on 15/03/2018.
 // Copyright (c) 2018 Ubisoft. All rights reserved.
 
+#if DEBUG && !DISABLE_LOGS
+#define LOG
+#endif
+
 //----------------------------------------------------------------------------//
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
 using UnityEngine;
 using UnityEngine.UI;
+
+using System.Diagnostics;
 
 using TMPro;
 using SoftMasking;
@@ -120,18 +126,22 @@ public class OfferItemSlot : MonoBehaviour, IBroadcastListener {
 		// If a preview was already created, destroy it
 		if(reloadPreview) ClearPreview();
 
+		Log("Init From Item: {0} ({1}) | {2}", Color.yellow, m_item.type, m_item.sku, reloadPreview);
+
 		// Load new preview (if required)
 		if(reloadPreview) {
 			// Try loading the preferred preview type
 			// If there is no preview of the preferred type, try other types untill we have a valid preview
 			IOfferItemPreview.Type preferredPreviewType = m_allow3dPreview ? IOfferItemPreview.Type._3D : IOfferItemPreview.Type._2D;
 			GameObject previewPrefab = ShopSettings.GetPrefab(item.type, preferredPreviewType);
+			Log("Attempting to get preview prefab of type {0}: {1}", Color.yellow, preferredPreviewType, (previewPrefab == null ? Color.red.Tag("NULL") : previewPrefab.name));
 			if(previewPrefab == null) {
 				// Loop will stop with a valid prefab
 				for(int i = 0; i < (int)IOfferItemPreview.Type.COUNT && previewPrefab == null; ++i) {
 					// Skip preferred type (already checked)
 					if(i == (int)preferredPreviewType) continue;
 					previewPrefab = ShopSettings.GetPrefab(item.type, (IOfferItemPreview.Type)i);
+					Log("\tCouldn't do it, checking type {0}...: {1}", Color.yellow, ((IOfferItemPreview.Type)i), (previewPrefab == null ? Color.red.Tag("NULL") : previewPrefab.name));
 				}
 			}
 
@@ -140,6 +150,8 @@ public class OfferItemSlot : MonoBehaviour, IBroadcastListener {
 				GameObject previewInstance = Instantiate<GameObject>(previewPrefab);
 				previewInstance.SetActive(true);
 				m_preview = previewInstance.GetComponent<IOfferItemPreview>();
+			} else {
+				Debug.LogError("Couldn't find prefab for item of type " + m_item.type + " (" + m_item.sku + ")");
 			}
 		}
 
@@ -149,7 +161,7 @@ public class OfferItemSlot : MonoBehaviour, IBroadcastListener {
 			m_preview.SetParentAndFit(m_previewContainer as RectTransform);
 		} else {
 			// Skip if preview is not initialized (something went very wrong :s)
-			Debug.LogError("Attempting to initialize slot for item " + m_item.sku + " but reward is null!");
+			Debug.LogError("Attempting to initialize slot for item " + m_item.sku + " but reward preview is null!");
 		}
 
 		// Initialize texts apart for visual clarity
@@ -240,5 +252,38 @@ public class OfferItemSlot : MonoBehaviour, IBroadcastListener {
 	private void OnLanguageChanged() {
 		// Reapply current reward
 		InitFromItem(m_item);
+	}
+
+	//------------------------------------------------------------------------//
+	// DEBUG																  //
+	//------------------------------------------------------------------------//
+	    /// <summary>
+    /// Log into the console (if enabled).
+    /// </summary>
+    /// <param name="_msg">Message to be logged. Can have replacements like string.Format method would have.</param>
+    /// <param name="_replacements">Replacements, to be used as string.Format method.</param>
+#if LOG
+    [Conditional("DEBUG")]
+#else
+    [Conditional("FALSE")]
+#endif
+    public static void Log(string _msg, params object[] _replacements) {
+		if(!FeatureSettingsManager.IsDebugEnabled) return;
+		ControlPanel.Log(string.Format(_msg, _replacements), ControlPanel.ELogChannel.Offers);
+	}
+
+    /// <summary>
+    /// Log into the console (if enabled).
+    /// </summary>
+    /// <param name="_msg">Message to be logged. Can have replacements like string.Format method would have.</param>
+    /// <param name="_color">Message color.</param>
+    /// <param name="_replacements">Replacements, to be used as string.Format method.</param>
+#if LOG
+    [Conditional("DEBUG")]
+#else
+    [Conditional("FALSE")]
+#endif
+    public static void Log(string _msg, Color _color, params object[] _replacements) {
+		Log(_color.Tag(_msg), _replacements);
 	}
 }
