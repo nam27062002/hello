@@ -127,21 +127,21 @@ public class OfferItemSlotHC : OfferItemSlot {
 		}
 
 		// New amount
-		if(m_mainText != null) {
+		if(m_amountText != null) {
 			if(validHH) {
 				// Amount with HH bonus applied
 				float bonusAmount = _happyHour.extraGemsFactor;
 				long newAmount = _happyHour.ApplyHappyHourExtra(m_item.reward.amount);
 
-				// Add some color!
-				m_mainText.text = m_happyHourTextColor.Tag(previewHC.FormatAmount(newAmount));
+                // Add some color!
+                m_amountText.text = m_happyHourTextColor.Tag(previewHC.FormatAmount(newAmount));
 			} else {
 				// Unmodified amount
 				if(previewHC != null) {
-					m_mainText.text = previewHC.FormatAmount(m_item.reward.amount);
+                    m_amountText.text = previewHC.FormatAmount(m_item.reward.amount);
 				} else {
-					// Fallback, we should never reach this point
-					m_mainText.text = StringUtils.FormatNumber(m_item.reward.amount);
+                    // Fallback, we should never reach this point
+                    m_amountText.text = StringUtils.FormatNumber(m_item.reward.amount);
 				}
 			}
 		}

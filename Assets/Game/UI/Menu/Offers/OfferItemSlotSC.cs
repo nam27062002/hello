@@ -79,7 +79,8 @@ public class OfferItemSlotSC : OfferItemSlot {
             }
         }
 
+        InitTexts();
 
-	}
+    }
 
 }
