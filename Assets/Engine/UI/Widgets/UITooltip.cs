@@ -213,6 +213,109 @@ public class UITooltip : MonoBehaviour {
 	}
 
 	//------------------------------------------------------------------------//
-	// CALLBACKS															  //
+	// STATIC UTILS															  //
 	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Do all the maths to place the given tooltip so it spawns at the given anchor.
+	/// Fairly expensive method, do not use lightly.
+	/// </summary>
+	/// <param name="_tooltip">The tooltip to be placed.</param>
+	/// <param name="_anchor">Anchor used as position reference to place the tooltip.</param>
+	/// <param name="_offset">Optional offset from the anchor.</param>
+	/// <param name="_renderOnTop">Move the tooltip as the last sibling in its container canvas.</param>
+	/// <param name="_checkScreenBounds">Whether to check going out of bounds or not.</param>
+	public static void PlaceAndShowTooltip(UITooltip _tooltip, RectTransform _anchor, Vector2 _offset, bool _renderOnTop, bool _checkScreenBounds) {
+		// Check some params
+		if(_tooltip == null) {
+			Debug.LogError("Attempting to place a NULL tooltip");
+			return;
+		}
+
+		if(_anchor == null) {
+			Debug.LogError("Attempting to place tooltip " + _tooltip.name + " but given anchor is NULL");
+			return;
+		}
+
+		// We're good to go!
+		// Aux vars
+		Canvas parentCanvas = _tooltip.GetComponentInParent<Canvas>();
+		
+		// Activate the tooltip to make sure all the layouts, textfields and dynamic sizes are updated
+		_tooltip.gameObject.SetActive(true);
+
+		// If the render on top flag is set, move the tooltip to the top of its parent canvas
+		if(_renderOnTop) {
+			_tooltip.transform.SetParent(parentCanvas.transform);
+			_tooltip.transform.SetAsLastSibling();
+		}
+
+		// Put tooltip on anchor's position
+		// Wait a frame so all the measurements are right and updated
+		UbiBCN.CoroutineManager.DelayedCallByFrames(
+			() => {
+				// Instantly unfold it for a moment to get the right measurements
+				float deltaBackup = _tooltip.animator.delta;
+				_tooltip.animator.ForceShow(false);
+
+				// Put it at the anchor's position
+				_tooltip.transform.localPosition = _anchor.parent.TransformPoint(_anchor.localPosition, _tooltip.transform.parent);
+
+				// Apply manual offset
+				_tooltip.transform.localPosition = _tooltip.transform.localPosition + new Vector3(_offset.x, _offset.y, 0f);
+
+				// Some more aux vars
+				Vector3 finalOffset = GameConstants.Vector3.zero;
+
+				// If required, make sure tooltip is not out of screen
+				if(_checkScreenBounds) {
+					// Aux vars
+					Rect canvasRect = (parentCanvas.transform as RectTransform).rect; // Canvas in local coords
+					Rect tooltipRect = (_tooltip.transform as RectTransform).rect; // Tooltip in local coords
+					tooltipRect = _tooltip.transform.TransformRect(tooltipRect, parentCanvas.transform);
+
+					// Take safe area in account
+					UISafeArea safeArea = UIConstants.safeArea;
+					canvasRect.xMin += safeArea.left;
+					canvasRect.xMax -= safeArea.right;
+					canvasRect.yMin += safeArea.bottom;
+					canvasRect.yMax -= safeArea.top;
+
+					// Check horizontal edges
+					if(tooltipRect.xMin < canvasRect.xMin) {
+						finalOffset.x = canvasRect.xMin - tooltipRect.xMin;
+					} else if(tooltipRect.xMax > canvasRect.xMax) {
+						finalOffset.x = canvasRect.xMax - tooltipRect.xMax;
+					}
+
+					// Check vertical edges
+					if(tooltipRect.yMin < canvasRect.yMin) {
+						finalOffset.y = canvasRect.yMin - tooltipRect.yMin;
+					} else if(tooltipRect.yMax > canvasRect.yMax) {
+						finalOffset.y = canvasRect.yMax - tooltipRect.yMax;
+					}
+				}
+
+				// Compute final position in tooltip's local coords and apply
+				Vector3 finalCanvasPos = _tooltip.transform.parent.TransformPoint(_tooltip.transform.localPosition, parentCanvas.transform) + finalOffset;
+				_tooltip.transform.localPosition = parentCanvas.transform.TransformPoint(finalCanvasPos, _tooltip.transform.parent);
+
+				// Apply reverse offset to arrow so it keeps pointing to the original position
+				switch(_tooltip.arrowDir) {
+					case UITooltip.ArrowDirection.HORIZONTAL: {
+						_tooltip.CorrectArrowOffset(-finalOffset.x);
+					} break;
+
+					case UITooltip.ArrowDirection.VERTICAL: {
+						_tooltip.CorrectArrowOffset(-finalOffset.y);
+					} break;
+				}
+
+				// Restore previous animation delta
+				_tooltip.animator.delta = deltaBackup;
+
+				// Just launch the animation!
+				_tooltip.animator.ForceShow();
+			}, 1
+		);
+	}
 }
