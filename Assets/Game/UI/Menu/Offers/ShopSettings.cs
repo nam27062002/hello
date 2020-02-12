@@ -24,7 +24,6 @@ public class ItemPrefabSetup {
         Metagame.RewardRemoveAds.TYPE_CODE,
         Metagame.RewardSoftCurrency.TYPE_CODE,
 		Metagame.RewardHardCurrency.TYPE_CODE,
-		Metagame.RewardGoldenFragments.TYPE_CODE,
 		Metagame.RewardEgg.TYPE_CODE,
 		Metagame.RewardPet.TYPE_CODE,
 		Metagame.RewardSkin.TYPE_CODE,
