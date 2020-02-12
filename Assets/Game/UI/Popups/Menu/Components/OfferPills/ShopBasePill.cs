@@ -183,29 +183,9 @@ public class ShopBasePill : IShopPill {
 			}
 		}
 
-		// Info button
-		// Nothing to do if info button not defined
+		// Info button - depends on offer type
+		m_infoButtonMode = GetInfoButtonMode();
 		if(m_infoButton != null) {
-			// Depending on the amount and content of items, show a tooltip rather than a full popup
-			m_infoButtonMode = InfoButtonMode.POPUP;    // Popup by default
-			if(m_pack.items.Count == 1) {
-				// Only some types
-				switch(m_pack.items[0].type) {
-					// Tooltip cases
-					case Metagame.RewardEgg.TYPE_CODE: {
-						m_infoButtonMode = InfoButtonMode.TOOLTIP;
-					} break;
-
-					// None cases - currency packs with just 1 item
-					case Metagame.RewardSoftCurrency.TYPE_CODE:
-					case Metagame.RewardHardCurrency.TYPE_CODE:
-					case Metagame.RewardGoldenFragments.TYPE_CODE: {
-						m_infoButtonMode = InfoButtonMode.NONE;
-					} break;
-				}
-			}
-
-			// Set button visibility
 			m_infoButton.SetActive(m_infoButtonMode != InfoButtonMode.NONE);
 		}
 
@@ -386,23 +366,46 @@ public class ShopBasePill : IShopPill {
 
 			// Tooltip
 			case InfoButtonMode.TOOLTIP: {
+				// Need at least 1 active slot to work
+				if(m_activeSlots.Count < 1) return;
+
+				// Open shop tooltip popup
+				// We are using a fake tooltip embedded in a popup to avoid having to depend on any UITooltipTrigger
+				PopupController popup = PopupManager.LoadPopup(PopupShopTooltip.PATH);
+				PopupShopTooltip tooltipPopup = popup.GetComponent<PopupShopTooltip>();
+				
+				// Initialize tooltip content
+				// Use the first item preview to initialize the tooltip's content
+				m_activeSlots[0].preview.InitTooltip(tooltipPopup.tooltip);
+
+				// Initialize tooltip position
+				tooltipPopup.Init(
+					m_infoButton.transform as RectTransform,
+					GameConstants.Vector2.zero
+				);
+
+				// Open the popup
+				popup.Open();
+
 				// Send tracking event
 				if(_trackInfoPopupEvent) {
-					TrackInfoPopup("PF_UITooltip"); // [AOC] TODO!! Proper tooltip name
+					string popupName = System.IO.Path.GetFileNameWithoutExtension(PopupShopTooltip.PATH);
+					TrackInfoPopup(popupName);
 				}
-
-				UIFeedbackText feedbackText = UIFeedbackText.CreateAndLaunch("TODO!! Info tooltip", GameConstants.Vector2.center, this.GetComponentInParent<Canvas>().transform as RectTransform);
-				//		__/\\\\\\\\\\\\\\\________/\\\\\________/\\\\\\\\\\\\___________/\\\\\___________/\\\_________/\\\____
-				//		 _\///////\\\/////_______/\\\///\\\_____\/\\\////////\\\_______/\\\///\\\_______/\\\\\\\_____/\\\\\\\__
-				//		  _______\/\\\__________/\\\/__\///\\\___\/\\\______\//\\\____/\\\/__\///\\\____/\\\\\\\\\___/\\\\\\\\\_
-				//		   _______\/\\\_________/\\\______\//\\\__\/\\\_______\/\\\___/\\\______\//\\\__\//\\\\\\\___\//\\\\\\\__
-				//		    _______\/\\\________\/\\\_______\/\\\__\/\\\_______\/\\\__\/\\\_______\/\\\___\//\\\\\_____\//\\\\\___
-				//		     _______\/\\\________\//\\\______/\\\___\/\\\_______\/\\\__\//\\\______/\\\_____\//\\\_______\//\\\____
-				//		      _______\/\\\_________\///\\\__/\\\_____\/\\\_______/\\\____\///\\\__/\\\________\///_________\///_____
-				//		       _______\/\\\___________\///\\\\\/______\/\\\\\\\\\\\\/_______\///\\\\\/__________/\\\_________/\\\____
-				//		        _______\///______________\/////________\////////////___________\/////___________\///_________\///_____
 			} break;
 		}
+	}
+
+	//------------------------------------------------------------------------//
+	// OVERRIDE CANDIDATES													  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Get the info button mode for this pill's pack.
+	/// </summary>
+	/// <returns>The desired button mode.</returns>
+	protected virtual InfoButtonMode GetInfoButtonMode() {
+		// Popup by default
+		return InfoButtonMode.POPUP;
 	}
 
 	//------------------------------------------------------------------------//

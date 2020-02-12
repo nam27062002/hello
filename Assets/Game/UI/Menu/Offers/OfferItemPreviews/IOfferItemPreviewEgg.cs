@@ -113,7 +113,7 @@ public abstract class IOfferItemPreviewEgg : IOfferItemPreview {
 						Color rarityColor = UIConstants.GetRarityColor(rarity);
 
 						// Rarity icon
-						sb.Append("<icon name=\"icon_rarity_").Append(raritySku).Append("\">");
+						sb.Append("<sprite name=\"icon_rarity_").Append(raritySku).Append("\">");
 
 						// Rarity name - tinted
 						sb.Append(rarityColor.Tag(rarityDef.GetLocalized("tidName")));
