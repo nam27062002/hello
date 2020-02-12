@@ -146,7 +146,11 @@ public class HappyHour {
 			DateTime serverTime = GameServerManager.SharedInstance.GetEstimatedServerTime();
 			m_expirationTime = serverTime.AddMinutes(data.def.GetAsFloat("happyHourTimer"));
 		}
-	}
+
+        // Broadcast this event
+        Messenger.Broadcast(MessengerEvents.HAPPY_HOUR_CHANGED);
+
+    }
 
 	/// <summary>
 	/// Finalize 
@@ -156,7 +160,10 @@ public class HappyHour {
 		m_data = null;
 		m_extraGemsFactor = 0f;
 		m_expirationTime = DateTime.MinValue;
-	}
+
+        // Broadcast this event
+        Messenger.Broadcast(MessengerEvents.HAPPY_HOUR_CHANGED);
+    }
 
 	/// <summary>
 	/// Is this Happy Hour active?
@@ -191,7 +198,10 @@ public class HappyHour {
 			DateTime serverTime = GameServerManager.SharedInstance.GetEstimatedServerTime();
 			m_expirationTime = serverTime.AddMinutes(data.def.GetAsFloat("happyHourTimer"));
 		}
-	}
+
+        // Broadcast this event
+        Messenger.Broadcast(MessengerEvents.HAPPY_HOUR_CHANGED);
+    }
 
 	/// <summary>
 	/// The total amount of seconds left for this happy hour.

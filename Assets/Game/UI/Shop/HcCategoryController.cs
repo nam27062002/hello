@@ -49,14 +49,25 @@ public class HcCategoryController : CategoryController
     [SerializeField]
     protected Localizer m_happyHourBadgeText;
 
-    // Internal
-    protected HappyHour happyHour; // Cache happy hour
-    
+
 
 
     //------------------------------------------------------------------------//
     // GENERIC METHODS														  //
     //------------------------------------------------------------------------//
+
+    public HcCategoryController()
+    {
+        // Subscribe to happy hour events
+        Messenger.AddListener(MessengerEvents.HAPPY_HOUR_CHANGED, RefreshHappyHour);
+    }
+
+    ~HcCategoryController()
+    {
+        // Unsubscribe to events
+        Messenger.RemoveListener(MessengerEvents.HAPPY_HOUR_CHANGED, RefreshHappyHour);
+    }
+
 
     //------------------------------------------------------------------------//
     // OTHER METHODS														  //
@@ -72,8 +83,8 @@ public class HcCategoryController : CategoryController
     {
         base.Initialize(_shopCategory, offers);
 
-        happyHour = OffersManager.happyHourManager.happyHour;
 
+        RefreshHappyHour();
 
     }
 
@@ -194,12 +205,24 @@ public class HcCategoryController : CategoryController
 
         base.RefreshTimers();
 
-        if (m_timer != null && m_happyHourBadge != null) {
+        
+        
+
+    }
+
+    /// <summary>
+    /// Update happy hour timer and badge in the header
+    /// </summary>
+    private void RefreshHappyHour ()
+    {
+        if (m_timer != null && m_happyHourBadge != null)
+        {
+            HappyHour happyHour = OffersManager.happyHourManager.happyHour;
 
             if (happyHour.IsActive())
             {
                 // Show time left in the proper format (1h 20m 30s)
-                
+
                 string timeLeft = TimeUtils.FormatTime(happyHour.TimeLeftSecs(), TimeUtils.EFormat.ABBREVIATIONS_WITHOUT_0_VALUES, 3);
                 m_timer.Set(timeLeft);
                 m_timer.gameObject.SetActive(true);
@@ -216,14 +239,13 @@ public class HcCategoryController : CategoryController
 
                 m_happyHourBadge.SetActive(true);
 
-            } else
+            }
+            else
             {
                 m_timer.gameObject.SetActive(false);
                 m_happyHourBadge.SetActive(false);
             }
         }
-        
-
     }
 
     //------------------------------------------------------------------------//
