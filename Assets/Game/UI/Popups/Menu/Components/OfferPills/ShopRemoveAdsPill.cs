@@ -113,20 +113,6 @@ public class ShopRemoveAdsPill : ShopMonoRewardPill {
             m_packNameText.Localize(m_pack.def.GetAsString("tidName"));
         }
 
-        // Discount
-        // Don't show if no discount is applied
-        if (m_discountText != null)
-        {
-            m_discountText.gameObject.SetActive(validDiscount);
-            if (validDiscount)
-            {
-                m_discountText.Localize(
-                    "TID_OFFER_DISCOUNT_PERCENTAGE",
-                    StringUtils.FormatNumber(m_discount * 100f, 0)
-                );
-            }
-        }
-
         // Price texts
         RefreshPrice();
     }
