@@ -68,6 +68,7 @@ public class ShopBasePill : IShopPill {
 	private ScrollRect scrollRect;
 
 	protected InfoButtonMode m_infoButtonMode = InfoButtonMode.NONE;
+	protected bool m_tooltipOpen = false;
 
 	// Used to delay some initialization avoiding coroutines
 	protected List<OfferPackItem> m_itemsToSet = new List<OfferPackItem>();
@@ -371,6 +372,9 @@ public class ShopBasePill : IShopPill {
 
 			// Tooltip
 			case InfoButtonMode.TOOLTIP: {
+				// Prevent spamming
+				if(m_tooltipOpen) return;
+
 				// Need at least 1 active slot to work
 				if(m_activeSlots.Count < 1) return;
 
@@ -386,11 +390,15 @@ public class ShopBasePill : IShopPill {
 				// Initialize tooltip position
 				tooltipPopup.Init(
 					m_infoButton.transform as RectTransform,
-					GameConstants.Vector2.zero
+					new Vector2(20f, 0f)
 				);
+
+				// Be aware when the tooltip is closed
+				popup.OnClose.AddListener(OnTooltipClosed);
 
 				// Open the popup
 				popup.Open();
+				m_tooltipOpen = true;
 
 				// Send tracking event
 				if(_trackInfoPopupEvent) {
@@ -507,5 +515,14 @@ public class ShopBasePill : IShopPill {
 		OpenInfoPopup(true);
 
 		// [AOC] TODO!! More tracking
+	}
+
+	/// <summary>
+	/// The tooltip popup has been closed.
+	/// </summary>
+	/// <param name="_popup"></param>
+	protected virtual void OnTooltipClosed(PopupController _popup) {
+		// Clear flag
+		m_tooltipOpen = false;
 	}
 }
