@@ -232,6 +232,7 @@ public enum MessengerEvents {
 	OFFERS_CHANGED,		// no params
 	OFFER_APPLIED,		// OfferPack _pack
     HC_PACK_ACQUIRED,  // a HC pack was bought by the player. PARAMS: bool _showPopup: opens the happy hour popup immediately, string offerSku: the purchased offer sku
+    HAPPY_HOUR_CHANGED, // a happy hour was activated/deactivated/extended. No params 
 
 	// Live Events
 	LIVE_EVENT_STATES_UPDATED,
