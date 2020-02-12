@@ -75,26 +75,26 @@ public class OfferItemSlotHC : OfferItemSlot {
         if (reloadPreview)
         {
             // Load the proper gem pack icon
-            GameObject previewPrefab = ShopSettings.GetHcIconPrefab(_order);
+            IOfferItemPreviewHC previewPrefab = ShopSettings.GetHcIconPrefab(_order);
             if (previewPrefab == null)
             {
                 Debug.LogError("No icon prefab defined for HC pack with order " + _order);
             }
-            else { 
+            else {
                 // Instantiate preview! :)
-                GameObject previewInstance = GameObject.Instantiate<GameObject>(previewPrefab, m_previewContainer, false);
-                previewInstance.SetActive(true);
+                m_preview = GameObject.Instantiate<IOfferItemPreviewHC>(previewPrefab, m_previewContainer, false);
+                m_preview.gameObject.SetActive(true);
+
             }
         }
 
-		// If given item is null, reset some data
+		// If given item is null
 		if(m_item == null) {
-			m_appliedHappyHour = null;
 			return;	// Nothing else to do
 		}
 
-		// Re-apply happy hour modifications
-		ApplyHappyHour(m_appliedHappyHour);
+        // Re-apply happy hour modifications
+        ApplyHappyHour(OffersManager.happyHourManager.happyHour);
 
 	}
 
@@ -103,6 +103,7 @@ public class OfferItemSlotHC : OfferItemSlot {
 	/// </summary>
 	/// <param name="_happyHour">The happy hour to be applied. <c>null</c> if not active or the pack this item belongs to is not affected by it.</param>
 	public void ApplyHappyHour(HappyHour _happyHour) {
+
 		// Nothing to do if item is not valid
 		if(m_item == null) return;
 

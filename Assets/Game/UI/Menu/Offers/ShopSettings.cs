@@ -80,10 +80,10 @@ public class ShopSettings : SingletonScriptableObject<ShopSettings> {
 
 
     [Tooltip ("This icons are linked to the offer order")]
-    [SerializeField] private List<GameObject> m_HcIconPrefabs = new List<GameObject>();
+    [SerializeField] private List<IOfferItemPreviewHC> m_HcIconPrefabs = new List<IOfferItemPreviewHC>();
 
     [Tooltip("This icons are linked to the offer order")]
-    [SerializeField] private List<GameObject> m_ScIconPrefabs = new List<GameObject>();
+    [SerializeField] private List<IOfferItemPreviewSC> m_ScIconPrefabs = new List<IOfferItemPreviewSC>();
 
 
 	//------------------------------------------------------------------------//
@@ -138,7 +138,7 @@ public class ShopSettings : SingletonScriptableObject<ShopSettings> {
     /// </summary>
     /// <param name="_order"></param>
     /// <returns></returns>
-    public static GameObject GetHcIconPrefab (int _order)
+    public static IOfferItemPreviewHC GetHcIconPrefab (int _order)
     {
         return instance.m_HcIconPrefabs[_order];
     }
@@ -148,7 +148,7 @@ public class ShopSettings : SingletonScriptableObject<ShopSettings> {
     /// </summary>
     /// <param name="_order"></param>
     /// <returns></returns>
-    public static GameObject GetScIconPrefab(int _order)
+    public static IOfferItemPreviewSC GetScIconPrefab(int _order)
     {
         return instance.m_ScIconPrefabs[_order];
     }
