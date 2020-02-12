@@ -20,11 +20,7 @@ public class HeriarchyParticleScaler : MonoBehaviour
 	}
 	[Space]
 	public WhenScale m_whenScale;
-
-	// Internal
-	static ParticleSystem.Particle[] m_particlesBuffer;	// [AOC] Prevent constant memory allocation by having a buffer to perform particle by particle operations. 
-                                                        // [MALH] And if we share it between all particleScalers we avoid multiple news and memory trashing :p
-
+	public bool m_applyToChildren = false;
 
 	protected class PSDataRegistry
 	{
@@ -33,8 +29,7 @@ public class HeriarchyParticleScaler : MonoBehaviour
 		// public float m_startSpeedMultiplier;
 		public ParticleSystem m_psystem;
 	}
-	protected PSDataRegistry m_originalData = new PSDataRegistry();
-
+	protected List<PSDataRegistry> m_originalData = new List<PSDataRegistry>();
 
     void Awake()
 	{
@@ -59,39 +54,51 @@ public class HeriarchyParticleScaler : MonoBehaviour
 	}
 
 	public void ReloadOriginalData() {
+		m_originalData.Clear();
 		SaveOriginalData();
 	}
 
 	void SaveOriginalData()
 	{
-		ParticleSystem particle =  GetComponent<ParticleSystem>();
-		if (particle)
-		{
-			SaveParticleData( particle );
-		}	
+		if(m_applyToChildren) {
+			ParticleSystem[] childs = gameObject.GetComponentsInChildren<ParticleSystem>(true);
+			foreach(ParticleSystem p in childs)
+				SaveParticleData(p);
+		} else {
+			ParticleSystem particle = GetComponent<ParticleSystem>();
+			if(particle) {
+				SaveParticleData(particle);
+			}
+		}
 	}
 
 	void SaveParticleData( ParticleSystem ps )
 	{
+		PSDataRegistry data = new PSDataRegistry();
 		ParticleSystem.MainModule mainModule = ps.main;
-		m_originalData.m_gravityModifierMultiplier = mainModule.gravityModifierMultiplier;
+		data.m_gravityModifierMultiplier = mainModule.gravityModifierMultiplier;
 		switch( mainModule.gravityModifier.mode )
 		{
 			case ParticleSystemCurveMode.TwoConstants:
 			{
-				m_originalData.m_minGravityModifier = mainModule.gravityModifier.constantMin;
+				data.m_minGravityModifier = mainModule.gravityModifier.constantMin;
 			}break;
 		}
-		// m_originalData.m_startSpeedMultiplier = mainModule.startSpeedMultiplier;
-		m_originalData.m_psystem = ps;
+		// data.m_startSpeedMultiplier = mainModule.startSpeedMultiplier;
+		data.m_psystem = ps;
+
+		m_originalData.Add(data);
 	}
 
-
-    void ResetOriginalData()
+	void ResetOriginalData()
 	{
-		ResetParticleData(m_originalData);
+		if(m_applyToChildren) {
+			foreach(PSDataRegistry p in m_originalData)
+				ResetParticleData(p);
+		} else {
+			if(m_originalData.Count > 0) ResetParticleData(m_originalData[0]);
+		}
 	}
-
 
 	void ResetParticleData(PSDataRegistry data)
 	{
@@ -118,7 +125,7 @@ public class HeriarchyParticleScaler : MonoBehaviour
 		// mainModule.startSpeedMultiplier = data.m_startSpeedMultiplier;       
     }
 
-    void OnEnable()
+	void OnEnable()
 	{
 		if ( m_whenScale == WhenScale.ENABLE )
 			DoScale();
@@ -149,7 +156,12 @@ public class HeriarchyParticleScaler : MonoBehaviour
 
 	void Scale( float scale )
 	{	
-		ScalePS( m_originalData, scale );
+		if(m_applyToChildren) {
+			foreach(PSDataRegistry pdata in m_originalData)
+				ScalePS(pdata, scale);
+		} else {
+			if(m_originalData.Count > 0) ScalePS(m_originalData[0], scale);
+		}
 	}
 	
 	void ScalePS(PSDataRegistry data, float scale)
@@ -180,5 +192,4 @@ public class HeriarchyParticleScaler : MonoBehaviour
             mainModule.startSpeedMultiplier *= scale;
         }
     }
-
 }

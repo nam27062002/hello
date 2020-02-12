@@ -476,18 +476,9 @@ if $UPLOAD;then
   # Copy IPA
   if $BUILD_IOS; then
 
-      CURRENT_PATH="$(pwd)"
-      cd "${OUTPUT_DIR}/archives/"
-      cp -r "${ARCHIVE_FILE}/dSYMs" "dSYMs"
-      zip -r "${ARCHIVE_FILE}.zip" "dSYMs"
-      rm -rf "dSYMs"
-      cd "${CURRENT_PATH}" 
-
       mkdir -p "${SMB_PATH}"
-      cp "${OUTPUT_DIR}/ipas/${IPA_FILE}" "${SMB_PATH}/"      
-      cp "${OUTPUT_DIR}/archives/${ARCHIVE_FILE}.zip" "${SMB_PATH}/"
-      rm "${OUTPUT_DIR}/archives/${ARCHIVE_FILE}.zip"            
-    
+      cp "${OUTPUT_DIR}/ipas/${IPA_FILE}" "${SMB_PATH}/"            
+
   fi
 
   # Copy APK
@@ -513,6 +504,15 @@ if $UPLOAD;then
   # Unmount server and remove tmp folder
   diskutil unmount "${SMB_MOUNT_DIR}"
   rmdir "${SMB_MOUNT_DIR}"
+
+  # upload dSYMs to Firebase
+  if $BUILD_IOS; then    
+      if [ "$ENVIRONMENT" == "stage_qc" -o "$ENVIRONMENT" == "production" ]; then
+        print_builder "Uploading dSYMs to Firebase"
+        eval "${OUTPUT_DIR}/xcode/Pods/Fabric/upload-symbols -gsp ${OUTPUT_DIR}/xcode/GoogleService-Info.plist -p ios ${OUTPUT_DIR}/archives/${ARCHIVE_FILE}/dSYMs"
+      fi
+  fi
+
 fi
 
 # Commit project changes
