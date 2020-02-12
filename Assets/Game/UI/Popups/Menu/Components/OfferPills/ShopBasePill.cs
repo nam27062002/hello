@@ -36,11 +36,14 @@ public class ShopBasePill : IShopPill {
 	[Space]
 	[Header("Offer pill basics")]
 	[SerializeField] protected Localizer m_packNameText = null;
-	[SerializeField] protected Localizer m_discountText = null;
 	[SerializeField] protected Localizer m_remainingTimeText = null;
 	[SerializeField] protected GameObject m_infoButton = null;
 
-	[Space]
+    [Space]
+    [SerializeField] protected GameObject m_discountObj = null;
+    [SerializeField] protected Localizer m_discountText = null;
+
+    [Space]
 	[SerializeField] private GameObject m_bannerObj = null;
 	[SerializeField] private Localizer m_bannerText = null;
 
@@ -140,8 +143,8 @@ public class ShopBasePill : IShopPill {
 		m_def = _pack.def;
 		m_currency = _pack.currency; // Since v.2.2 offers can be paid in different currencies
 
-		// Discount
-		m_discount = m_pack.def.GetAsFloat("discount", 0f);
+        // Discount
+        m_discount = m_pack.def.GetAsFloat("discount", 0f);
 		bool validDiscount = m_discount > 0f;
 		if(validDiscount) {
 			m_discount = Mathf.Clamp(m_discount, 0.01f, 0.99f); // [AOC] Just to be sure input discount is valid
@@ -158,20 +161,27 @@ public class ShopBasePill : IShopPill {
 			RefreshTimer();
 		}
 
-		// Discount
-		// Don't show if no discount is applied
-		if(m_discountText != null) {
-			m_discountText.gameObject.SetActive(validDiscount);
-			if(validDiscount) {
-				m_discountText.Localize(
-					"TID_OFFER_DISCOUNT_PERCENTAGE",
-					StringUtils.FormatNumber(m_discount * 100f, 0)
-				);
-			}
-		}
+        // Discount
+        // Don't show if no discount is applied
+        if (m_discountObj != null)
+        {
+            m_discountObj.SetActive(validDiscount);
+        }
 
-		// Banner
-		if(m_bannerObj != null) {
+        if (m_discountText != null)
+        {
+            m_discountText.gameObject.SetActive(validDiscount);
+            if (validDiscount)
+            {
+                m_discountText.Localize(
+                    "TID_OFFER_DISCOUNT_PERCENTAGE",
+                    StringUtils.FormatNumber(m_discount * 100f, 0)
+                );
+            }
+        }
+
+        // Banner
+        if (m_bannerObj != null) {
 			if(m_def.GetAsBool("bestValue", false)) {
 				m_bannerObj.SetActive(true);
 				if(m_bannerText != null) m_bannerText.Localize("TID_SHOP_BEST_VALUE");
