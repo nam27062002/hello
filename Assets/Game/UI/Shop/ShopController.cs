@@ -42,8 +42,6 @@ public class ShopController : MonoBehaviour {
     [SerializeField] private Transform m_shortcutsContainer;
     [SerializeField] private ShopCategoryShortcut m_shortcutPrefab;
 
-    //Debug
-    [SerializeField] private TextMeshProUGUI m_debugText;
 
     //Internal
     private float m_timer = 0; // Refresh timer
@@ -518,12 +516,6 @@ public class ShopController : MonoBehaviour {
     /// <param name="_newPos">Normalized position of the scroll view</param>
     public void OnScrollChanged(Vector2 _newPos)
     {
-
-        // Debug info
-        if (m_debugText != null)
-        {
-            m_debugText.text = "" +_newPos.x;
-        }
 
         // Wait for the layouts groups to be rendered
         if (m_hidePillsOutOfView)
