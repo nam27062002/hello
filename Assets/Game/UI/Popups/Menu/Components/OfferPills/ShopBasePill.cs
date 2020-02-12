@@ -52,8 +52,6 @@ public class ShopBasePill : IShopPill {
 	[SerializeField] protected MultiCurrencyButton m_priceButtonGroup = null;
 	[SerializeField] protected GameObject m_loadingPricePlaceholder = null;
 
-	// Debug value
-	[SerializeField] protected TextMeshProUGUI m_debugText;
 
 	// Public
 	protected OfferPack m_pack = null;
@@ -110,9 +108,6 @@ public class ShopBasePill : IShopPill {
 			}
 		}
 
-		if(m_debugText != null) {
-			m_debugText.text = "" + scrollRect.GetRelativePositionOfItem(transform);
-		}
 	}
 
 	//------------------------------------------------------------------------//
