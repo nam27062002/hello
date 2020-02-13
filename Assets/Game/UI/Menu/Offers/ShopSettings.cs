@@ -31,10 +31,10 @@ public class ItemPrefabSetup {
 	)]
 	[HideInInspector] public string type = Metagame.RewardSoftCurrency.TYPE_CODE;
 
-	[FileList("Resources/UI/Metagame/Offers", StringUtils.PathFormat.RESOURCES_ROOT_WITHOUT_EXTENSION, "*.prefab")]
+	[FileList("Resources/UI/Shop/ItemPreview", StringUtils.PathFormat.RESOURCES_ROOT_WITHOUT_EXTENSION, "*.prefab")]
 	public string prefab2d = "";
 
-	[FileList("Resources/UI/Metagame/Offers", StringUtils.PathFormat.RESOURCES_ROOT_WITHOUT_EXTENSION, "*.prefab")]
+	[FileList("Resources/UI/Shop/ItemPreview", StringUtils.PathFormat.RESOURCES_ROOT_WITHOUT_EXTENSION, "*.prefab")]
 	public string prefab3d = "";
 }
 
@@ -52,7 +52,7 @@ public class ShopPill {
     )]
     public string offerPackType;
 
-    [FileList("Resources/UI/Shop", StringUtils.PathFormat.RESOURCES_ROOT_WITHOUT_EXTENSION, "*.prefab")]
+    [FileList("Resources/UI/Shop/Pills", StringUtils.PathFormat.RESOURCES_ROOT_WITHOUT_EXTENSION, "*.prefab")]
     public string prefab = "";
 
 
@@ -67,7 +67,7 @@ public class ShopSettings : SingletonScriptableObject<ShopSettings> {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	public const string PATH = "UI/Metagame/Offers/ShopSettings";
+	public const string PATH = "UI/Shop";
 
 	//------------------------------------------------------------------------//
 	// MEMBERS																  //
