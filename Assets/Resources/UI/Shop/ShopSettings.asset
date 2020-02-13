@@ -13,39 +13,39 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_itemTypesSetup:
   - type: sc
-    prefab2d: UI/Metagame/Offers/PF_OfferItemPreviewSC2d
-    prefab3d: 
+    prefab2d: UI/Shop/ItemPreview/PF_OfferItemPreviewSC2d
+    prefab3d: UI/Shop/ItemPreview/PF_OfferItemPreviewSC3d
   - type: pc
-    prefab2d: UI/Metagame/Offers/PF_OfferItemPreviewHC2d
-    prefab3d: 
+    prefab2d: UI/Shop/ItemPreview/PF_OfferItemPreviewHC2d
+    prefab3d: UI/Shop/ItemPreview/PF_OfferItemPreviewHC3d
   - type: egg
-    prefab2d: UI/Metagame/Offers/PF_OfferItemPreviewEgg2d
-    prefab3d: UI/Metagame/Offers/PF_OfferItemPreviewEgg3d
+    prefab2d: UI/Shop/ItemPreview/PF_OfferItemPreviewEgg2d
+    prefab3d: UI/Shop/ItemPreview/PF_OfferItemPreviewEgg3d
   - type: pet
-    prefab2d: UI/Metagame/Offers/PF_OfferItemPreviewPet2d
-    prefab3d: UI/Metagame/Offers/PF_OfferItemPreviewPet3d
+    prefab2d: UI/Shop/ItemPreview/PF_OfferItemPreviewPet2d
+    prefab3d: UI/Shop/ItemPreview/PF_OfferItemPreviewPet3d
   - type: skin
-    prefab2d: UI/Metagame/Offers/PF_OfferItemPreviewSkin2d
-    prefab3d: UI/Metagame/Offers/PF_OfferItemPreviewSkin3d
+    prefab2d: UI/Shop/ItemPreview/PF_OfferItemPreviewSkin2d
+    prefab3d: UI/Shop/ItemPreview/PF_OfferItemPreviewSkin3d
   - type: dragon
-    prefab2d: UI/Metagame/Offers/PF_OfferItemPreviewDragon2d
-    prefab3d: UI/Metagame/Offers/PF_OfferItemPreviewDragon3d
+    prefab2d: UI/Shop/ItemPreview/PF_OfferItemPreviewDragon2d
+    prefab3d: UI/Shop/ItemPreview/PF_OfferItemPreviewDragon3d
   - type: removeAds
     prefab2d: UI/Metagame/Offers/PF_OfferItemPreviewDragon2d
     prefab3d: UI/Metagame/Offers/PF_OfferItemPreviewDragon3d
   m_shopPillsSetup:
   - offerPackType: progression
-    prefab: UI/Shop/PF_ShopOfferPackPill
+    prefab: UI/Shop/Pills/PF_ShopOfferPackPill
   - offerPackType: push
-    prefab: UI/Shop/PF_ShopOfferPackPill
+    prefab: UI/Shop/Pills/PF_ShopOfferPackPill
   - offerPackType: rotational
-    prefab: UI/Shop/PF_ShopRotationalCellPill
+    prefab: UI/Shop/Pills/PF_ShopRotationalCellPill
   - offerPackType: free
-    prefab: UI/Shop/PF_ShopFreePill
+    prefab: UI/Shop/Pills/PF_ShopFreePill
   - offerPackType: removeads
-    prefab: UI/Shop/PF_ShopVIPPill
+    prefab: UI/Shop/Pills/PF_ShopVIPPill
   - offerPackType: sc
-    prefab: UI/Shop/PF_ShopCoinPackPill
+    prefab: UI/Shop/Pills/PF_ShopCoinPackPill
   m_HcIconPrefabs:
   - {fileID: 114071161709766558, guid: 5bec9c81405b4470ea0c54ce10aa681e, type: 2}
   - {fileID: 114802098726288636, guid: 5a8fcdf50e4dc4cf19367959b34cd1e5, type: 2}
@@ -61,3 +61,4 @@ MonoBehaviour:
   - {fileID: 114406090223287396, guid: 6da4504aba5cd4d89892c8ea8fb1e87a, type: 2}
   - {fileID: 114410938975321256, guid: 89b1c97cdc81947a79a2cb47c5a32cbc, type: 2}
   - {fileID: 114239649638307554, guid: 96a70317c7e694b80bd143f81460db1b, type: 2}
+  m_shopTooltipPath: UI/Shop/PF_ShopTooltip

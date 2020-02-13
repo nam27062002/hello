@@ -67,7 +67,7 @@ public class ShopSettings : SingletonScriptableObject<ShopSettings> {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	public const string PATH = "UI/Shop";
+	public const string PATH = "UI/Shop/ShopSettings";
 
 	//------------------------------------------------------------------------//
 	// MEMBERS																  //
