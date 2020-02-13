@@ -52,7 +52,7 @@ public class ShopController : MonoBehaviour {
     //Internal
     private float m_timer = 0; // Refresh timer
     private bool m_scrolling = false; // The tweener scrolling animation is running
-
+    
 
     // Cache the category containers and pills
     private List<CategoryController> m_categoryContainers;
@@ -66,7 +66,8 @@ public class ShopController : MonoBehaviour {
     // Keep the bounds of the current category, so we dont recalculate every time the user scrolls the shop
     private float categoryLeftBorder, categoryRightBorder;
 
-    private bool redrawLayouts = false;
+    // True if all the pills have already been drawn
+    private bool shopReady = false;
 
     // Optimization #1: disable layouts after refresh
     private bool layoutGropusActive = false;
@@ -108,6 +109,7 @@ public class ShopController : MonoBehaviour {
         Messenger.AddListener(MessengerEvents.OFFERS_RELOADED, OnOffersReloaded);
         Messenger.AddListener(MessengerEvents.OFFERS_CHANGED, OnOffersChanged);
 
+        shopReady = false;
 
     }
 
@@ -147,7 +149,7 @@ public class ShopController : MonoBehaviour {
                     CalculateCategoryBounds(m_shortcuts[0].category);
                 }
 
-                redrawLayouts = true;
+                shopReady = true;
 
                 // Wait one frame
                 UbiBCN.CoroutineManager.DelayedCallByFrames(() => {                 
@@ -239,6 +241,8 @@ public class ShopController : MonoBehaviour {
     public void Refresh ()
     {
         Clear();
+
+        shopReady = false;
 
         m_lastShortcut = null;
 
@@ -569,8 +573,11 @@ public class ShopController : MonoBehaviour {
         // Ignore if not active
         if (!this.isActiveAndEnabled) return;
 
-        // Refresh the shop
-        Refresh();
+        // Refresh the shop if the shop is ready (avoid interrupting init animation bug)
+        if (shopReady)
+        {
+            Refresh();
+        }
     }
 
     /// <summary>
@@ -581,7 +588,10 @@ public class ShopController : MonoBehaviour {
         // Ignore if not active
         if (!this.isActiveAndEnabled) return;
 
-        // Refresh the shop
-        Refresh();
+        // Refresh the shop if the shop is ready (avoid interrupting init animation bug)
+        if (shopReady)
+        {
+            Refresh();
+        }
     }
 }
