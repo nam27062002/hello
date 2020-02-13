@@ -48,11 +48,12 @@ public class ShopController : MonoBehaviour {
     [SerializeField]
     private int m_framesDelayPerPill = 1;
 
+    public float m_offset = .5f;
 
     //Internal
     private float m_timer = 0; // Refresh timer
     private bool m_scrolling = false; // The tweener scrolling animation is running
-    
+    private float m_scrollViewOffset;
 
     // Cache the category containers and pills
     private List<CategoryController> m_categoryContainers;
@@ -82,7 +83,8 @@ public class ShopController : MonoBehaviour {
     private CategoryController catBeingInitialized;
 
     // Frame counter for pills initialization effect
-    public int m_frameCounter;
+    private int m_frameCounter;
+    public int frameCounter { get { return m_frameCounter; } }
 
     //------------------------------------------------------------------------//
     // GENERIC METHODS														  //
@@ -110,6 +112,7 @@ public class ShopController : MonoBehaviour {
         Messenger.AddListener(MessengerEvents.OFFERS_CHANGED, OnOffersChanged);
 
         shopReady = false;
+
 
     }
 
@@ -139,6 +142,11 @@ public class ShopController : MonoBehaviour {
 
             // This category has been initialized succesfully!
             catBeingInitialized = null;
+
+            // Recalculate half screen offset. So the category is centered at the left of the screen
+            /*normalizedViewportWidth = m_scrollRect.viewport.rect.width / m_scrollRect.content.rect.width;
+            Debug.Log("Viewport width:" + normalizedViewportWidth);
+            m_scrollViewOffset = normalizedViewportWidth / 2;*/
 
             // Are there some categories left to initialize?
             if (categoriesToInitialize.Count == 0)
@@ -374,8 +382,7 @@ public class ShopController : MonoBehaviour {
             m_scrolling = true;
 
             // Create a tweener to animate the scroll
-            // Add a little offset to avoid conflict in between categories
-            m_scrollRect.DOGoToItem(anchor, .5f, .001f)
+            m_scrollRect.DOGoToItem(anchor, .5f, m_scrollViewOffset)
             .SetEase(Ease.OutQuad)
             .OnComplete( delegate() { m_scrolling = false; } );
             
@@ -402,8 +409,10 @@ public class ShopController : MonoBehaviour {
         {
             ShopCategoryShortcut shortcut = m_shortcuts[i];
 
+
+
             // Get normalized position of the anchor
-            Vector2 categoryAnchor = m_scrollRect.GetNormalizedPositionForItem(shortcut.anchor, true);
+            Vector2 categoryAnchor = m_scrollRect.GetNormalizedPositionForItem(shortcut.anchor, true) + new Vector2 (m_scrollViewOffset,0);
 
             if (_posX >= categoryAnchor.x )
             {
@@ -447,7 +456,7 @@ public class ShopController : MonoBehaviour {
         }
         else
         {
-            categoryLeftBorder = m_scrollRect.GetNormalizedPositionForItem(m_shortcuts[index].anchor).x;
+            categoryLeftBorder = m_scrollRect.GetNormalizedPositionForItem(m_shortcuts[index].anchor).x + m_scrollViewOffset;
         }
 
 
@@ -458,7 +467,7 @@ public class ShopController : MonoBehaviour {
         }
         else
         {
-            categoryRightBorder = m_scrollRect.GetNormalizedPositionForItem(m_shortcuts[index + 1].anchor).x;
+            categoryRightBorder = m_scrollRect.GetNormalizedPositionForItem(m_shortcuts[index + 1].anchor).x + m_scrollViewOffset;
         }
 
     }
@@ -496,7 +505,8 @@ public class ShopController : MonoBehaviour {
         {
             // Is this pill inside the visible limits of the scrollview (leave some margin)
             float pillPositionX = m_scrollRect.GetRelativePositionOfItem(pill.transform);
-            bool visible = (pillPositionX > -0.2f && pillPositionX < 1.2f);
+            float safetyMargin = .2f;
+            bool visible = (pillPositionX > -safetyMargin && pillPositionX < 1 + safetyMargin);
 
             // Enable/disable the pill
             pill.gameObject.SetActive(visible);

@@ -74,7 +74,7 @@ public class CategoryController : MonoBehaviour {
 	private void Update() {
 
         // Initialize one pill every amount of frames defined in the shop controller
-        if (pillsToInitialize.Count > 0 && m_shopController.m_frameCounter == 0)
+        if (pillsToInitialize.Count > 0 && m_shopController.frameCounter == 0)
         {
             InitializePill(pillsToInitialize.Dequeue());
         }
