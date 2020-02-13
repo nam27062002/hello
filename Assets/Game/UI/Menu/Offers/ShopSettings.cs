@@ -72,18 +72,24 @@ public class ShopSettings : SingletonScriptableObject<ShopSettings> {
 	//------------------------------------------------------------------------//
 	// MEMBERS																  //
 	//------------------------------------------------------------------------//
+	[Separator("Item Types Setup")]
 	[SerializeField] private List<ItemPrefabSetup> m_itemTypesSetup = new List<ItemPrefabSetup>();
 
-    [InfoBox("HC pills are defined in its category containers")]
+	[Separator("Pill prefabs per shop category")]
+	[InfoBox("HC pills are defined in its category containers")]
     [SerializeField] private List<ShopPill> m_shopPillsSetup = new List<ShopPill>();
 
-
-    [Tooltip ("This icons are linked to the offer order")]
+	[Separator("HC Icons")]
+	[Comment("These icons are linked to the order of the pack in the shop")]
     [SerializeField] private List<IOfferItemPreviewHC> m_HcIconPrefabs = new List<IOfferItemPreviewHC>();
 
-    [Tooltip("This icons are linked to the offer order")]
+	[Separator("SC Icons")]
+    [Comment("These icons are linked to the order of the pack in the shop")]
     [SerializeField] private List<IOfferItemPreviewSC> m_ScIconPrefabs = new List<IOfferItemPreviewSC>();
 
+	[Separator("Paths")]
+	[SerializeField] private string m_shopTooltipPath = "UI/Shop/PF_ShopTooltip";
+	public static string shopTooltipPath { get { return instance.m_shopTooltipPath; }}
 
 	//------------------------------------------------------------------------//
 	// METHODS																  //
