@@ -64,6 +64,8 @@ public class CategoryController : MonoBehaviour {
             m_header.ForceShow(true);
         }
 
+        m_shopController = GetComponentInParent<ShopController>();
+
     }
 
 	/// <summary>
@@ -71,8 +73,8 @@ public class CategoryController : MonoBehaviour {
 	/// </summary>
 	private void Update() {
 
-        // Initialize one pill each frame
-        if (pillsToInitialize.Count > 0)
+        // Initialize one pill every amount of frames defined in the shop controller
+        if (pillsToInitialize.Count > 0 && m_shopController.m_frameCounter == 0)
         {
             InitializePill(pillsToInitialize.Dequeue());
         }
