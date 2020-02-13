@@ -42,6 +42,12 @@ public class ShopController : MonoBehaviour {
     [SerializeField] private Transform m_shortcutsContainer;
     [SerializeField] private ShopCategoryShortcut m_shortcutPrefab;
 
+    // Pills initialization
+    [Range(1,5)]
+    [Tooltip("Amount of frames that will take for each pill to be displayed. Creates a cool effect when opening the shop")]
+    [SerializeField]
+    private int m_framesDelayPerPill = 1;
+
 
     //Internal
     private float m_timer = 0; // Refresh timer
@@ -74,6 +80,8 @@ public class ShopController : MonoBehaviour {
     private Queue<ShopCategory> categoriesToInitialize;
     private CategoryController catBeingInitialized;
 
+    // Frame counter for pills initialization effect
+    public int m_frameCounter;
 
     //------------------------------------------------------------------------//
     // GENERIC METHODS														  //
@@ -109,19 +117,13 @@ public class ShopController : MonoBehaviour {
 	/// </summary>
 	private void Update() {
 
-        /*if (redrawLayouts)
-        {
-            m_categoriesContainer.GetComponent<HorizontalLayoutGroup>().enabled = false;
-            m_categoriesContainer.GetComponent<HorizontalLayoutGroup>().enabled = true;
-
-            redrawLayouts = false;
-        }*/
-
         // Do not update if the shop is not open
         if (!gameObject.activeInHierarchy)
         {
             return;
         }
+
+        
 
         // Has this category initialization already finished ?
         if (catBeingInitialized != null && catBeingInitialized.IsFinished())
@@ -169,6 +171,14 @@ public class ShopController : MonoBehaviour {
             }
         }
 
+
+        // Update frame counter
+        m_frameCounter--;
+        if (m_frameCounter < 0)
+        {
+            m_frameCounter = m_framesDelayPerPill;
+        }
+
     }
 
 
@@ -207,6 +217,7 @@ public class ShopController : MonoBehaviour {
         disableLayoutsGroupsInNextFrame = false;
         m_hidePillsOutOfView = false;
 
+        m_frameCounter = 0;
     }
 
     /// <summary>
