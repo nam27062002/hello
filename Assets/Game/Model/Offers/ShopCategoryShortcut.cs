@@ -57,17 +57,20 @@ public class ShopCategoryShortcut : MonoBehaviour {
 	private void Start() {
     }
 
+    public void OnEnable()
+    {
+        GetComponent<ShowHideAnimator>().ForceShow(true);
+    }
 
+    //------------------------------------------------------------------------//
+    // OTHER METHODS														  //
+    //------------------------------------------------------------------------//
 
-	//------------------------------------------------------------------------//
-	// OTHER METHODS														  //
-	//------------------------------------------------------------------------//
-
-        /// <summary>
-        /// Initializes the shortcut element
-        /// </summary>
-        /// <param name="_category">Shop category related to this shortcut</param>
-        /// <param name="_shop">Parent shop</param>
+    /// <summary>
+    /// Initializes the shortcut element
+    /// </summary>
+    /// <param name="_category">Shop category related to this shortcut</param>
+    /// <param name="_shop">Parent shop</param>
     public void Initialize (ShopCategory _category, Transform _anchor, ShopController _shop)
     {
         if (_category == null || _shop == null)

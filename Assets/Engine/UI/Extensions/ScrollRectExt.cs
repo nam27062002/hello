@@ -154,6 +154,8 @@ public static class ScrollRectExt {
     /// <param name="_item">The item to reach.</param>
     /// <param name="_duration">The duration of the tween.</param>
     /// <param name="_snapping">If <c>true</c> the tween will smoothly snap all values to integers.</param>
+    /// <param name="xOffset">Normalized X offset</param>
+    /// <param name="yOffset">Normalized Y offset</param>
     public static Tweener DOGoToItem(this ScrollRect _scroll, Transform _item, float _duration, float xOffset = 0f, float yOffset = 0f, bool _snapping = false ) {
 		// Get target normalized position
 		Vector2 targetPos = _scroll.GetNormalizedPositionForItem(_item);
@@ -165,13 +167,41 @@ public static class ScrollRectExt {
 		} else if(!_scroll.horizontal && _scroll.vertical) {
 			tween = _scroll.DOVerticalNormalizedPos(targetPos.y + yOffset, _duration);
 		} else {
-			tween = _scroll.DONormalizedPos(targetPos, _duration);
+            targetPos += new Vector2(xOffset, yOffset);
+            tween = _scroll.DONormalizedPos(targetPos, _duration);
 		}
 
 		// Done!
 		return tween;
 	}
 
+    /// <summary>
+    /// Tweens a ScrollRect's horizontal/verticalNormalizedPosition to the given normalized position (from 0 to 1).
+    /// Also stores the ScrollRect as the tween's target so it can be used for filtered operations.
+    /// </summary>
+    /// <param name="_normalizedPos">The position to reach (0 left margin, 1 right margin).</param>
+    /// <param name="_duration">The duration of the tween.</param>
+    public static Tweener DOGoToNormalizedPosition(this ScrollRect _scroll, Vector2 _normalizedPos, float _duration)
+    {
+
+        // Different tween setup depending on allowed scroll directions
+        Tweener tween = null;
+        if (_scroll.horizontal && !_scroll.vertical)
+        {
+            tween = _scroll.DOHorizontalNormalizedPos(_normalizedPos.x , _duration);
+        }
+        else if (!_scroll.horizontal && _scroll.vertical)
+        {
+            tween = _scroll.DOVerticalNormalizedPos(_normalizedPos.y , _duration);
+        }
+        else
+        {
+            tween = _scroll.DONormalizedPos(_normalizedPos, _duration);
+        }
+
+        // Done!
+        return tween;
+    }
 
     /// <summary>
     /// Returns the normalized relative position of the item in the scroll view
