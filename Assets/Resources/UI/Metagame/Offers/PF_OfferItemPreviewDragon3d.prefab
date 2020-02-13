@@ -19,11 +19,10 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 224202001645918390}
-  - component: {fileID: 222203256608233426}
-  - component: {fileID: 114632665438061680}
+  - component: {fileID: 114273468062345354}
   - component: {fileID: 114175153464961800}
   m_Layer: 5
-  m_Name: PF_OfferItemPreviewSkin3d
+  m_Name: PF_OfferItemPreviewDragon3d
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -56,8 +55,8 @@ GameObject:
   m_Component:
   - component: {fileID: 224929414034426640}
   - component: {fileID: 114868293444290136}
-  - component: {fileID: 114851474638019478}
-  - component: {fileID: 114037562474611698}
+  - component: {fileID: 114736025298279530}
+  - component: {fileID: 114983288585528716}
   m_Layer: 5
   m_Name: DragonLoader
   m_TagString: Untagged
@@ -65,58 +64,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &114037562474611698
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1735062456748474}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9634bc65078f347cf933d4c74430cb15, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_tweenType: 7
-  m_tweenDuration: 0.25
-  m_tweenValue: 0
-  m_tweenEase: 27
-  m_tweenDelay: 0
-  m_ignoreTimeScale: 1
-  m_showTweens: []
-  m_hideTweens: []
-  m_animator: {fileID: 0}
-  m_triggerChildren: 1
-  m_canBeTriggeredByParents: 1
-  OnShowPreAnimation:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-  OnShowPreAnimationAfterDelay:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-  OnShowPostAnimation:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-  OnHidePreAnimation:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-  OnHidePostAnimation:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-  OnShowCheck:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
 --- !u!114 &114175153464961800
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -135,7 +82,7 @@ MonoBehaviour:
   m_scaleLifetime: 0
   m_scaleAllChildren: 1
   m_whenScale: 3
---- !u!114 &114632665438061680
+--- !u!114 &114273468062345354
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -143,7 +90,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1368365929140142}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d6ace68a2407942789cbde60eeae8cc4, type: 3}
+  m_Script: {fileID: 11500000, guid: 7ea21b85e0a4f4c38afa5316cd9edc18, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_dragonLoader: {fileID: 114868293444290136}
@@ -162,7 +109,7 @@ MonoBehaviour:
   m_Color: {r: 1, g: 0, b: 0, a: 0.484}
   m_RaycastTarget: 1
   m_gizmoOnlyWhenSelected: 1
---- !u!114 &114851474638019478
+--- !u!114 &114736025298279530
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -259,18 +206,64 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
+--- !u!114 &114983288585528716
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1735062456748474}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9634bc65078f347cf933d4c74430cb15, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_tweenType: 7
+  m_tweenDuration: 0.25
+  m_tweenValue: 0
+  m_tweenEase: 27
+  m_tweenDelay: 0
+  m_ignoreTimeScale: 1
+  m_showTweens: []
+  m_hideTweens: []
+  m_animator: {fileID: 0}
+  m_triggerChildren: 1
+  m_canBeTriggeredByParents: 1
+  OnShowPreAnimation:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  OnShowPreAnimationAfterDelay:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  OnShowPostAnimation:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  OnHidePreAnimation:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  OnHidePostAnimation:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  OnShowCheck:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
 --- !u!222 &222164057758599138
 CanvasRenderer:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1514349217914832}
---- !u!222 &222203256608233426
-CanvasRenderer:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1368365929140142}
 --- !u!224 &224202001645918390
 RectTransform:
   m_ObjectHideFlags: 1
@@ -324,6 +317,6 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 65, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 30, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
