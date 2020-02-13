@@ -79,7 +79,16 @@ public class OfferItemSlotSC : OfferItemSlot {
             }
         }
 
-        InitTexts();
+		// Initialize preview with item data
+		if(m_preview != null) {
+			m_preview.InitFromItem(m_item);
+			m_preview.SetParentAndFit(m_previewContainer as RectTransform);
+		} else {
+			// Skip if preview is not initialized (something went very wrong :s)
+			Debug.LogError("Attempting to initialize slot for item " + m_item.sku + " but reward preview is null!");
+		}
+
+		InitTexts();
 
     }
 
