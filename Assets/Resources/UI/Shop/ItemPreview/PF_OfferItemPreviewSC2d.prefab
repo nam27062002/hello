@@ -97,7 +97,8 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 224876723531492700}
-  - component: {fileID: 114709405607051836}
+  - component: {fileID: 222378785652548598}
+  - component: {fileID: 114285057659830622}
   m_Layer: 5
   m_Name: PF_OfferItemPreviewSC2d
   m_TagString: Untagged
@@ -120,6 +121,17 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &114285057659830622
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1820730433818130}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 936162d5733cf45b58650320ade8c114, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114647308666120146
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -147,18 +159,6 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
---- !u!114 &114709405607051836
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1820730433818130}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5e997c667bc62434e9e0039dadf13309, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_iconRoot: {fileID: 224781066469432068}
 --- !u!114 &114766096790970630
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -198,6 +198,12 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1545832928748758}
+--- !u!222 &222378785652548598
+CanvasRenderer:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1820730433818130}
 --- !u!224 &224781066469432068
 RectTransform:
   m_ObjectHideFlags: 1
