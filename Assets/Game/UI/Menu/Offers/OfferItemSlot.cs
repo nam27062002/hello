@@ -5,7 +5,7 @@
 // Copyright (c) 2018 Ubisoft. All rights reserved.
 
 #if DEBUG && !DISABLE_LOGS
-#define LOG
+//#define LOG
 #endif
 
 //----------------------------------------------------------------------------//
