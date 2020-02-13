@@ -21,6 +21,7 @@ GameObject:
   - component: {fileID: 4513989659311096}
   - component: {fileID: 198779421135718786}
   - component: {fileID: 199797179855691778}
+  - component: {fileID: 114020038698266872}
   m_Layer: 0
   m_Name: PS_Flames
   m_TagString: Untagged
@@ -100,6 +101,20 @@ Transform:
   m_Father: {fileID: 4262773726365754}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &114020038698266872
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1575556156483652}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3128bd630f39645c4a1e03d94b7008f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_transform: {fileID: 4262773726365754}
+  m_resetFirst: 1
+  m_whenScale: 0
 --- !u!114 &114539109278721434
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -174,7 +189,7 @@ ParticleSystem:
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 0
-  randomSeed: 459672395
+  randomSeed: 191987881
   InitialModule:
     serializedVersion: 3
     enabled: 1
