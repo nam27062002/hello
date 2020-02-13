@@ -52,7 +52,6 @@ public class ShopBasePill : IShopPill {
 	[SerializeField] protected MultiCurrencyButton m_priceButtonGroup = null;
 	[SerializeField] protected GameObject m_loadingPricePlaceholder = null;
 
-
 	// Public
 	protected OfferPack m_pack = null;
 	public OfferPack pack {
@@ -68,7 +67,7 @@ public class ShopBasePill : IShopPill {
 	private ScrollRect scrollRect;
 
 	protected InfoButtonMode m_infoButtonMode = InfoButtonMode.NONE;
-	protected bool m_tooltipOpen = false;
+	protected ShopTooltip m_tooltip = null;
 
 	// Used to delay some initialization avoiding coroutines
 	protected List<OfferPackItem> m_itemsToSet = new List<OfferPackItem>();
@@ -109,6 +108,17 @@ public class ShopBasePill : IShopPill {
 			}
 		}
 
+	}
+
+	/// <summary>
+	/// Destructor.
+	/// </summary>
+	protected void OnDestroy() {
+		// If a tooltip was created, destroy it as well
+		if(m_tooltip != null) {
+			Destroy(m_tooltip);
+			m_tooltip = null;
+		}
 	}
 
 	//------------------------------------------------------------------------//
@@ -372,37 +382,39 @@ public class ShopBasePill : IShopPill {
 
 			// Tooltip
 			case InfoButtonMode.TOOLTIP: {
-				// Prevent spamming
-				if(m_tooltipOpen) return;
-
 				// Need at least 1 active slot to work
 				if(m_activeSlots.Count < 1) return;
 
-				// Open shop tooltip popup
-				// We are using a fake tooltip embedded in a popup to avoid having to depend on any UITooltipTrigger
-				PopupController popup = PopupManager.LoadPopup(PopupShopTooltip.PATH);
-				PopupShopTooltip tooltipPopup = popup.GetComponent<PopupShopTooltip>();
-				
+				// If tooltip instance was not yet created, do it now!
+				if(m_tooltip == null) {
+					ShopTooltip prefab = Resources.Load<ShopTooltip>(ShopSettings.shopTooltipPath);
+					Debug.Assert(prefab != null, "Couldn't find the prefab for the Shop Tooltip! " + ShopSettings.shopTooltipPath);
+					m_tooltip = Instantiate<ShopTooltip>(prefab, this.GetComponentInParent<Canvas>().transform);
+					m_tooltip.gameObject.SetActive(false);
+				}
+
+				// Just in case
+				if(m_tooltip == null) return;
+
+				// Prevent spamming
+				if(m_tooltip.isActiveAndEnabled) return;
+
 				// Initialize tooltip content
 				// Use the first item preview to initialize the tooltip's content
-				m_activeSlots[0].preview.InitTooltip(tooltipPopup.tooltip);
+				m_activeSlots[0].preview.InitTooltip(m_tooltip.tooltip);
 
 				// Initialize tooltip position
-				tooltipPopup.Init(
+				m_tooltip.Init(
 					m_infoButton.transform as RectTransform,
-					new Vector2(20f, 0f)
+					new Vector2(20f, 0f)	// [AOC] HARDCODED!!
 				);
 
-				// Be aware when the tooltip is closed
-				popup.OnClose.AddListener(OnTooltipClosed);
-
-				// Open the popup
-				popup.Open();
-				m_tooltipOpen = true;
+				// Open the tooltip
+				m_tooltip.Show();
 
 				// Send tracking event
 				if(_trackInfoPopupEvent) {
-					string popupName = System.IO.Path.GetFileNameWithoutExtension(PopupShopTooltip.PATH);
+					string popupName = System.IO.Path.GetFileNameWithoutExtension(ShopSettings.shopTooltipPath);
 					TrackInfoPopup(popupName);
 				}
 			} break;
@@ -515,14 +527,5 @@ public class ShopBasePill : IShopPill {
 		OpenInfoPopup(true);
 
 		// [AOC] TODO!! More tracking
-	}
-
-	/// <summary>
-	/// The tooltip popup has been closed.
-	/// </summary>
-	/// <param name="_popup"></param>
-	protected virtual void OnTooltipClosed(PopupController _popup) {
-		// Clear flag
-		m_tooltipOpen = false;
 	}
 }
