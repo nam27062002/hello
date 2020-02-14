@@ -57,9 +57,15 @@ public class ShopCategoryShortcut : MonoBehaviour {
 	private void Start() {
     }
 
+
     public void OnEnable()
     {
-        GetComponent<ShowHideAnimator>().ForceShow(true);
+        ShowHideAnimator sh =GetComponent<ShowHideAnimator>();
+        if (sh != null)
+        {
+            // Fade in smoothly
+            sh.ForceShow(true);
+        }
     }
 
     //------------------------------------------------------------------------//
