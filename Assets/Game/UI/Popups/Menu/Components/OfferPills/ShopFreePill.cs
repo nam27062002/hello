@@ -37,9 +37,10 @@ public class ShopFreePill : ShopMonoRewardPill {
     [SerializeField] private Localizer m_adButtonText = null;
     [SerializeField] private Button m_freeButton = null;
     [SerializeField] private Localizer m_freeButtonText = null;
+    [SerializeField] private GameObject m_noItemIcon = null;
 
-	// Internal logic
-	private bool m_isOnCooldown = false;
+    // Internal logic
+    private bool m_isOnCooldown = false;
 	private string m_defaultButtonTID = "";
     private bool removeAdsActive;
 
@@ -107,6 +108,9 @@ public class ShopFreePill : ShopMonoRewardPill {
 			// Enable/Disable button
 			m_watchAdButton.interactable = !isOnCooldown;
             m_freeButton.interactable = !isOnCooldown;
+
+            // Show question mark icon if cooldown is active
+            m_noItemIcon.SetActive(!isOnCooldown);
 
 			// If leaving cooldown, restore text
 			if(!isOnCooldown) {
