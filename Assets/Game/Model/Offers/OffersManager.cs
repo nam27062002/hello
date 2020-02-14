@@ -520,7 +520,7 @@ public class OffersManager : Singleton<OffersManager> {
 		}
 
 		// If it's not the FTUX or for some reason the FTUX pack doesn't exist, pick a random one
-		else {
+		if(newPack == null) {
 			// Pick a random pack
 			newPack = PickRandomPack(
 				m_allEnabledFreeOffers,
