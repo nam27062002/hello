@@ -333,6 +333,23 @@ public class DragonTint : MonoBehaviour {
             m_materials[i].SetColor(GameConstants.Materials.Property.INNER_LIGHT_COLOR, c);
         }
     }
+    public void SetScaleZ(bool enable)
+    {
+        if (enable)
+        {
+            for (int i = 0; i < m_materialsCount; ++i)
+            {
+                m_materials[i].EnableKeyword("VERTEXSCALEZ");
+            }
+        }
+        else
+        {
+            for (int i = 0; i < m_materialsCount; ++i)
+            {
+                m_materials[i].DisableKeyword("VERTEXSCALEZ");
+            }
+        }
+    }
 
     private void OnPlayerKo(DamageType _type, Transform _source) {
         // Switch body material to wings

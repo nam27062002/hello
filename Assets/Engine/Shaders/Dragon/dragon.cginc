@@ -54,7 +54,6 @@ uniform float4 _SecondLightColor;
 uniform float _SpecExponent;
 #endif
 
-
 #if defined(VERTEXOFFSET)
 uniform float _VOAmplitude;
 uniform float _VOSpeed;
@@ -138,8 +137,16 @@ v2f vert(appdata_t v)
 	v.vertex += axis * wave;
 
 #endif
-//	v.vertex.x *= 0.25;
+
+#if defined(VERTEXSCALEZ)
+	float4x4 m = unity_ObjectToWorld;
+	m[2].xyzw *= 0.75;
+	o.vertex = mul(UNITY_MATRIX_VP, mul(m, v.vertex));
+
+#else
 	o.vertex = UnityObjectToClipPos(v.vertex);
+#endif
+
 	o.texcoord = TRANSFORM_TEX(v.texcoord, _MainTex);
 
 	// Normal
