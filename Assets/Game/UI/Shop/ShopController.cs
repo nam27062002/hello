@@ -382,7 +382,7 @@ public class ShopController : MonoBehaviour {
             m_scrolling = true;
 
             // Create a tweener to animate the scroll
-            m_scrollRect.DOGoToItem(anchor, .5f, m_scrollViewOffset)
+            m_scrollRect.DOGoToItem(anchor, .5f, 0.01f)
             .SetEase(Ease.OutQuad)
             .OnComplete( delegate() { m_scrolling = false; } );
             
