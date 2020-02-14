@@ -8,13 +8,16 @@ Material:
   m_PrefabInternal: {fileID: 0}
   m_Name: dragon_tony_3_disguise
   m_Shader: {fileID: 4800000, guid: 2345015ac46679e4cb5817ed44c82547, type: 3}
-  m_ShaderKeywords: FRESNEL FXLAYER_REFLECTION NORMALMAP REFLECTIONTYPE_NORMAL SELFILLUMINATE_NORMAL
-    SPECULAR VERTEXOFFSET VERTEXOFFSETX VERTEXOFFSETY VERTEXOFFSETZ _ZWRITE_ON
+  m_ShaderKeywords: FXLAYER_REFLECTION NORMALMAP OPAQUEALPHA REFLECTIONTYPE_NORMAL
+    SELFILLUMINATE_NORMAL SPECULAR VERTEXOFFSET VERTEXOFFSETX VERTEXOFFSETY VERTEXOFFSETZ
+    _ZWRITE_ON
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
-  stringTagMap: {}
+  stringTagMap:
+    QUEUE: Geometry
+    RenderType: Opaque
   disabledShaderPasses: []
   m_SavedProperties:
     serializedVersion: 3
@@ -76,7 +79,7 @@ Material:
     - _ColorRampAmount: 0
     - _ColorRampID0: 0
     - _ColorRampID1: 0
-    - _Cull: 0
+    - _Cull: 2
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
     - _DissolveAmount: 0
@@ -88,7 +91,7 @@ Material:
     - _EnableCutoff: 0
     - _EnableDiffuseAsSpecMask: 0
     - _EnableDoublesided: 0
-    - _EnableFresnel: 1
+    - _EnableFresnel: 0
     - _EnableNormalMap: 1
     - _EnableOpaqueFresnel: 0
     - _EnableOpaqueSpecular: 0
@@ -104,7 +107,7 @@ Material:
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
-    - _InnerLightAdd: 1.37
+    - _InnerLightAdd: 1.17
     - _InnerLightWavePhase: 1
     - _InnerLightWaveSpeed: 2
     - _Metallic: 0
@@ -112,22 +115,22 @@ Material:
     - _NormalStrenght: 1
     - _OcclusionStrength: 1
     - _Parallax: 0.02
-    - _ReflectionAmount: 0.586
+    - _ReflectionAmount: 0.8
     - _SmoothnessTextureChannel: 0
     - _SpecExponent: 80
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _StencilMask: 10
     - _UVSec: 0
-    - _VOAmplitude: 0.1
-    - _VOSpeed: 3
+    - _VOAmplitude: 0.15
+    - _VOSpeed: 5
     - _ZWrite: 1
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _ColorAdd: {r: 0, g: 0, b: 0, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _FresnelColor: {r: 0.2794118, g: 0.2794118, b: 0.2794118, a: 1}
-    - _InnerLightColor: {r: 0.7017779, g: 0.9411765, b: 0.15224911, a: 1}
+    - _InnerLightColor: {r: 0.4044118, g: 0.95070994, b: 1, a: 1}
     - _ReflectionColor: {r: 1, g: 1, b: 1, a: 1}
     - _SecondLightColor: {r: 0, g: 0, b: 0, a: 0}
     - _SecondLightDir: {r: 0.49301264, g: 0.87002224, b: -0, a: 0}
