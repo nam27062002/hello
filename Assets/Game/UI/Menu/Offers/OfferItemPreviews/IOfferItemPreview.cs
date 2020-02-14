@@ -72,6 +72,7 @@ public abstract class IOfferItemPreview : MonoBehaviour {
 	public void InitFromItem(OfferPackItem _item, OfferItemSlot.Type _slotType) {
 		// Store new item and slot type
 		m_item = _item;
+		m_slotType = _slotType;
 
 		Debug.Assert(m_item != null && m_item.reward != null, "ITEM NOT PROPERLY INITIALIZED", this);
 		m_def = m_item.reward.def;

@@ -13,6 +13,7 @@
 //----------------------------------------------------------------------------//
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Serialization;
 
 using System.Diagnostics;
 
@@ -38,13 +39,20 @@ public class OfferItemSlot : MonoBehaviour, IBroadcastListener {
 		TOOLTIP
 	}
 
+	public enum PreviewType {
+		ALWAYS_3D,
+		ALWAYS_2D,
+		DRAGONS_2D
+	}
+
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed references
 	[Header("Settings")]
-	[SerializeField] protected Type m_type = Type.PILL_BIG;
-	[SerializeField] protected bool m_allow3dPreview = false;   // [AOC] In some cases, we want to display a 3d preview when appliable (pets/eggs)
+	[FormerlySerializedAs("m_type")]
+	[SerializeField] protected Type m_slotType = Type.PILL_BIG;
+	[SerializeField] protected PreviewType m_previewType = PreviewType.ALWAYS_3D;
 
 	[Header("Mandatory Fields")]
 	[SerializeField] protected Transform m_previewContainer = null;
@@ -131,8 +139,8 @@ public class OfferItemSlot : MonoBehaviour, IBroadcastListener {
 		// Load new preview (if required)
 		if(reloadPreview) {
 			// Try loading the preferred preview type
-			// If there is no preview of the preferred type, try other types untill we have a valid preview
-			IOfferItemPreview.Type preferredPreviewType = m_allow3dPreview ? IOfferItemPreview.Type._3D : IOfferItemPreview.Type._2D;
+			// If there is no preview of the preferred type, try other types until we have a valid preview
+			IOfferItemPreview.Type preferredPreviewType = GetPreferredPreviewType(item.type);
 			GameObject previewPrefab = ShopSettings.GetPrefab(item.type, preferredPreviewType);
 			Log("Attempting to get preview prefab of type {0}: {1}", Color.yellow, preferredPreviewType, (previewPrefab == null ? Color.red.Tag("NULL") : previewPrefab.name));
 			if(previewPrefab == null) {
@@ -157,7 +165,7 @@ public class OfferItemSlot : MonoBehaviour, IBroadcastListener {
 
 		// Initialize preview with item data
 		if(m_preview != null) {
-			m_preview.InitFromItem(m_item, m_type);
+			m_preview.InitFromItem(m_item, m_slotType);
 			m_preview.SetParentAndFit(m_previewContainer as RectTransform);
 		} else {
 			// Skip if preview is not initialized (something went very wrong :s)
@@ -169,7 +177,7 @@ public class OfferItemSlot : MonoBehaviour, IBroadcastListener {
 
 		// Initialize power Icon
 		if(m_powerIcon != null && m_preview != null) {
-			m_preview.InitPowerIcon(m_powerIcon, m_type);
+			m_preview.InitPowerIcon(m_powerIcon, m_slotType);
 		}
 	}
 
@@ -185,7 +193,7 @@ public class OfferItemSlot : MonoBehaviour, IBroadcastListener {
 
 		// Main Text
 		if(m_mainText != null) {
-			string textStr = m_preview.GetLocalizedMainText(m_type);
+			string textStr = m_preview.GetLocalizedMainText(m_slotType);
 			m_mainText.gameObject.SetActive(textStr != null);
 			if(textStr != null) {
 				m_mainText.text = textStr;
@@ -194,7 +202,7 @@ public class OfferItemSlot : MonoBehaviour, IBroadcastListener {
 
 		// Secondary Text
 		if(m_secondaryText != null) {
-			string textStr = m_preview.GetLocalizedSecondaryText(m_type);
+			string textStr = m_preview.GetLocalizedSecondaryText(m_slotType);
 			m_secondaryText.gameObject.SetActive(textStr != null);
 			if(textStr != null) {
 				m_secondaryText.text = textStr;
@@ -203,7 +211,7 @@ public class OfferItemSlot : MonoBehaviour, IBroadcastListener {
 
 		// Amount Text
 		if(m_amountText != null) {
-			string textStr = m_preview.GetLocalizedAmountText(m_type);
+			string textStr = m_preview.GetLocalizedAmountText(m_slotType);
 			m_amountText.gameObject.SetActive(textStr != null);
 			if(textStr != null) {
 				m_amountText.text = textStr;
@@ -212,12 +220,51 @@ public class OfferItemSlot : MonoBehaviour, IBroadcastListener {
 
 		// Description Text
 		if(m_descriptionText != null) {
-			string textStr = m_preview.GetLocalizedDescriptionText(m_type);
+			string textStr = m_preview.GetLocalizedDescriptionText(m_slotType);
 			m_descriptionText.gameObject.SetActive(textStr != null);
 			if(textStr != null) {
 				m_descriptionText.text = textStr;
 			}
 		}
+	}
+
+	/// <summary>
+	/// Find out which is the preferred preview type (2D or 3D) based on current
+	/// slot setup and given reward type.
+	/// </summary>
+	/// <param name="_rewardType">The reward type to be considered.</param>
+	/// <returns>The preview type to be used.</returns>
+	protected virtual IOfferItemPreview.Type GetPreferredPreviewType(string _rewardType) {
+		// 3D by default
+		IOfferItemPreview.Type preferredPreviewType = IOfferItemPreview.Type._3D;
+
+		// Check slot config
+		switch(m_previewType) {
+			case PreviewType.ALWAYS_3D: {
+				preferredPreviewType = IOfferItemPreview.Type._3D;
+			} break;
+
+			case PreviewType.ALWAYS_2D: {
+				preferredPreviewType = IOfferItemPreview.Type._2D;
+			} break;
+
+			case PreviewType.DRAGONS_2D: {
+				// Depends on item type - 2D for dragons and skins, 3D for the rest
+				switch(item.type) {
+					case Metagame.RewardDragon.TYPE_CODE:
+					case Metagame.RewardSkin.TYPE_CODE: {
+						preferredPreviewType = IOfferItemPreview.Type._2D;
+					} break;
+
+					default: {
+						preferredPreviewType = IOfferItemPreview.Type._3D;
+					} break;
+				}
+				preferredPreviewType = IOfferItemPreview.Type._3D;
+			} break;
+		}
+
+		return preferredPreviewType;
 	}
 
 	/// <summary>
