@@ -164,8 +164,8 @@ public class OfferFeaturedIcon : MonoBehaviour {
 		if(!ValidateOffer()) return;
 
 		// Show popup!
-		PopupController popup = PopupManager.LoadPopup(PopupFeaturedOffer.PATH);
-		popup.GetComponent<PopupFeaturedOffer>().InitFromOfferPack(m_targetOffer);
+		PopupController popup = PopupManager.LoadPopup(PopupShopOfferPack.PATH);
+		popup.GetComponent<PopupShopOfferPack>().InitFromOfferPack(m_targetOffer);
 		popup.Open();
 
         // Tracking

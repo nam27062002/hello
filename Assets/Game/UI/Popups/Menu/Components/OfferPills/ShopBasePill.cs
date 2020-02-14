@@ -36,7 +36,7 @@ public class ShopBasePill : IShopPill {
 	[Space]
 	[Header("Offer pill basics")]
 	[SerializeField] protected Localizer m_packNameText = null;
-	[SerializeField] protected Localizer m_remainingTimeText = null;
+	[SerializeField] protected TextMeshProUGUI m_remainingTimeText = null;
 	[SerializeField] protected GameObject m_infoButton = null;
 
     [Space]
@@ -222,8 +222,7 @@ public class ShopBasePill : IShopPill {
 		// If pack is active, update text
 		if(m_pack.isActive) {
 			m_sb.Length = 0;
-			m_remainingTimeText.Localize(
-				m_remainingTimeText.tid,
+			m_remainingTimeText.text =
 				m_sb.Append("<nobr>")
 				.Append(TimeUtils.FormatTime(
 					System.Math.Max(0, m_pack.remainingTime.TotalSeconds), // Just in case, never go negative
@@ -231,8 +230,7 @@ public class ShopBasePill : IShopPill {
 					2
 				))
 				.Append("</nobr>")
-				.ToString()
-			);
+				.ToString();
 
 			// If pack has expired, hide this pill
 		} else {
@@ -368,14 +366,14 @@ public class ShopBasePill : IShopPill {
 			// Popup
 			case InfoButtonMode.POPUP: {
 				// Open offer info popup
-				PopupController popup = PopupManager.LoadPopup(PopupFeaturedOffer.PATH);
-				PopupFeaturedOffer offerPopup = popup.GetComponent<PopupFeaturedOffer>();
+				PopupController popup = PopupManager.LoadPopup(PopupShopOfferPack.PATH);
+				PopupShopOfferPack offerPopup = popup.GetComponent<PopupShopOfferPack>();
 				offerPopup.InitFromOfferPack(m_pack);
 				popup.Open();
 
 				// Send tracking event
 				if(_trackInfoPopupEvent) {
-					string popupName = System.IO.Path.GetFileNameWithoutExtension(PopupFeaturedOffer.PATH);
+					string popupName = System.IO.Path.GetFileNameWithoutExtension(PopupShopOfferPack.PATH);
 					TrackInfoPopup(popupName);
 				}
 			} break;
