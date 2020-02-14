@@ -60,43 +60,67 @@ public class ShopMultiRewardPill: ShopBasePill
     {
         base.InitFromOfferPack(_pack);
 
-        // Items
+		// Special case if pack is null: clear all layouts
+		if(_pack == null) {
+			Clear();
+			return;
+		}
+
+		// Find out the proper layout based on the amount of items in the pack
         int amount = _pack.items.Count;
+		OffersLayout targetLayout = null;
+		for(int i = 0; i < m_layouts.Count; ++i) {
+			// Is it our target layout?
+			if(i + 1 == amount) {
+				// Yes!! Is the layout valid?
+				if(m_layouts[i].m_container != null) {
+					// Yes!! Use it
+					targetLayout = m_layouts[i];
+					for(int j = 0; j < targetLayout.m_offerItems.Count; ++j) {
+						// Skip if no slot (i.e. single item layouts)
+						OfferItemSlot slot = targetLayout.m_offerItems[j];
+						if(slot == null) continue;
 
-        if (m_layouts.Count < amount || m_layouts[amount -1 ] == null)
-        {
-            Debug.LogError("There is no layout defined for a pack with " + amount + " items");
-        }
+						// Start hidden and initialize after some delay
+						// [AOC] We do this because initializing the slots at the same time
+						//		 that the popup is being instantiated results in weird behaviours
+						slot.InitFromItem(null);
+						if(j < m_pack.items.Count) {
+							OfferPackItem item = m_pack.items[j];
+							m_itemsToSet.Add(item);
+							m_slotsToSet.Add(slot);
+						}
+					}
+				} else {
+					// No! Throw error
+					Debug.LogError("There is no layout defined for a pack with " + amount + " items");
+				}
+			}
 
-        // Find the proper layout for the amount of items in the pack
-        OffersLayout layout = m_layouts[amount -1];
-        for (int i = 0; i < layout.m_offerItems.Count; ++i)
-        {
-            // Skip if no slot (i.e. single item layouts)
-            OfferItemSlot slot = layout.m_offerItems[i];
-            if (slot == null) continue;
-
-            // Start hidden and initialize after some delay
-            // [AOC] We do this because initializing the slots at the same time
-            //		 that the popup is being instantiated results in weird behaviours
-            slot.InitFromItem(null);
-            if (i < m_pack.items.Count)
-            {
-                OfferPackItem item = m_pack.items[i];
-                m_itemsToSet.Add(item);
-                m_slotsToSet.Add(slot);
-            }
-        }
-
-        // Enable the current layout. Disable others
-        foreach (OffersLayout lay in m_layouts)
-        {
-            lay.m_container.gameObject.SetActive(lay == layout);
-        }
-
-        
+			// Only activate target layout
+			if(m_layouts[i].m_container != null) {
+				m_layouts[i].m_container.gameObject.SetActive(targetLayout == m_layouts[i]);
+			}
+		}
     }
 
+	/// <summary>
+	/// Clear all layouts and item slots.
+	/// </summary>
+	protected void Clear() {
+		for(int i = 0; i < m_layouts.Count; ++i) {
+			// Skip if layout is not valid
+			if(m_layouts[i].m_container == null) continue;
+
+			// Clear all item slots in the layout
+			for(int j = 0; j < m_layouts[i].m_offerItems.Count; ++j) {
+				m_layouts[i].m_offerItems[j].InitFromItem(null);
+			}
+
+			// Disable the layout
+			m_layouts[i].m_container.gameObject.SetActive(false);
+		}
+	}
 
     //------------------------------------------------------------------------//
     // CALLBACKS															  //

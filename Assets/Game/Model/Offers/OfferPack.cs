@@ -1109,8 +1109,8 @@ public class OfferPack {
 
 		// All checks passed!
 		// Put popup to the queue and return
-		PopupController popup = PopupManager.LoadPopup(PopupFeaturedOffer.PATH);
-		popup.GetComponent<PopupFeaturedOffer>().InitFromOfferPack(this);
+		PopupController popup = PopupManager.LoadPopup(PopupShopOfferPack.PATH);
+		popup.GetComponent<PopupShopOfferPack>().InitFromOfferPack(this);
 		PopupManager.EnqueuePopup(popup);
 		return popup;
 	}

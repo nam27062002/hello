@@ -607,8 +607,8 @@ public class DisguisesScreenController : MonoBehaviour {
 	public void OnOfferButton() {
 		// Open the featured offer popup with the skin's offer
 		if(m_linkedOffer == null) return;
-		PopupController popup = PopupManager.LoadPopup(PopupFeaturedOffer.PATH);
-		popup.GetComponent<PopupFeaturedOffer>().InitFromOfferPack(m_linkedOffer);
+		PopupController popup = PopupManager.LoadPopup(PopupShopOfferPack.PATH);
+		popup.GetComponent<PopupShopOfferPack>().InitFromOfferPack(m_linkedOffer);
 		popup.Open();
 	}
 
