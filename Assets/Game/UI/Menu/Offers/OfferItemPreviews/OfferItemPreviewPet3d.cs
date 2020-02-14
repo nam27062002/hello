@@ -27,6 +27,7 @@ public class OfferItemPreviewPet3d : IOfferItemPreviewPet {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	[SerializeField] private MenuPetLoader m_petPreview = null;
+	[SerializeField] private DragControl m_dragControl = null;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS                                                        //
@@ -51,6 +52,19 @@ public class OfferItemPreviewPet3d : IOfferItemPreviewPet {
 		// Initialize pet loader with the target pet preview!
 		m_petPreview.Load(m_item.reward.sku);
 		m_petPreview.OnLoadingComplete.AddListener(OnLoadingComplete);
+
+		// Drag control only enabled in certain types of slots
+		if(m_dragControl != null) {
+			switch(m_slotType) {
+				case OfferItemSlot.Type.POPUP_BIG: {
+					m_dragControl.gameObject.SetActive(true);
+				} break;
+
+				default: {
+					m_dragControl.gameObject.SetActive(false);
+				} break;
+			}
+		}
 	}
 
 	/// <summary>

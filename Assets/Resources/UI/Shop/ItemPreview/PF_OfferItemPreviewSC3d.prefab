@@ -37,6 +37,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4002036776861026}
   - component: {fileID: 114339172611320570}
+  - component: {fileID: 114553287340385446}
   m_Layer: 5
   m_Name: SCReward
   m_TagString: Untagged
@@ -280,6 +281,29 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7dd9d9a08931743e78026a335e9601e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &114553287340385446
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1619204174656788}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 47cb4c8fd4f7a45e481525a55b840ba2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_refPopupCount: -1
+  m_animator: {fileID: 0}
+  m_onPopupOpened:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  m_onAllPopupsClosed:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
 --- !u!224 &224876723531492700
 RectTransform:
   m_ObjectHideFlags: 1
