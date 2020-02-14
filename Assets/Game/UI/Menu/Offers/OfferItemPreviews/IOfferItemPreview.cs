@@ -45,6 +45,7 @@ public abstract class IOfferItemPreview : MonoBehaviour {
 	// Internal
 	protected OfferPackItem m_item = null;
 	protected DefinitionNode m_def = null;
+	protected OfferItemSlot.Type m_slotType = OfferItemSlot.Type.PILL_BIG;
 
 	// Coroutine pointer used to stop the coroutine when object is destroyed
 	private Coroutine m_delayedSetParentAndFit = null;
@@ -67,8 +68,9 @@ public abstract class IOfferItemPreview : MonoBehaviour {
 	/// Initialize the widget with the data of a specific offer item.
 	/// </summary>
 	/// <param name="_item">Item.</param>
-	public void InitFromItem(OfferPackItem _item) {
-		// Store new item
+	/// <param name="_slotType">The type of slot where the item will be displayed.</param>
+	public void InitFromItem(OfferPackItem _item, OfferItemSlot.Type _slotType) {
+		// Store new item and slot type
 		m_item = _item;
 
 		Debug.Assert(m_item != null && m_item.reward != null, "ITEM NOT PROPERLY INITIALIZED", this);
