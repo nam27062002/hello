@@ -31,6 +31,7 @@ public class OfferItemPreviewDragon3d : IOfferItemPreviewDragon {
 	//------------------------------------------------------------------------//
 	// Exposed
 	[SerializeField] private MenuDragonLoader m_dragonLoader = null;
+	[SerializeField] private DragControl m_dragControl = null;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -66,6 +67,19 @@ public class OfferItemPreviewDragon3d : IOfferItemPreviewDragon {
 			m_dragonLoader.LoadDragon("");
 		} else {
 			m_dragonLoader.LoadDragon(m_def.sku, IDragonData.GetDefaultDisguise(m_def.sku).sku);
+		}
+
+		// Drag control only enabled in certain types of slots
+		if(m_dragControl != null) {
+			switch(m_slotType) {
+				case OfferItemSlot.Type.POPUP_BIG: {
+					m_dragControl.gameObject.SetActive(true);
+				} break;
+
+				default: {
+					m_dragControl.gameObject.SetActive(false);
+				} break;
+			}
 		}
 	}
 
