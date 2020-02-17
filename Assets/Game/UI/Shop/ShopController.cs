@@ -154,7 +154,7 @@ public class ShopController : MonoBehaviour {
                 // At the end of initialization, user will be looking at the first category
                 if (m_shortcuts.Count > 0)
                 {
-                    CalculateCategoryBounds(m_shortcuts[0].category);
+                    CalculateCategoryBounds(m_shortcuts[0].categoryController.category);
                 }
 
                 shopReady = true;
@@ -336,7 +336,7 @@ public class ShopController : MonoBehaviour {
 
                     // Instantiate a shortcut and add it to the bottom bar
                     ShopCategoryShortcut newShortcut = Instantiate<ShopCategoryShortcut>(m_shortcutPrefab, m_shortcutsContainer, false);
-                    newShortcut.Initialize(_cat, categoryContainer.transform, this);
+                    newShortcut.Initialize(categoryContainer, this);
                     m_shortcuts.Add(newShortcut);
                     m_skuToShorcut.Add(_cat.sku, newShortcut);
 
@@ -382,7 +382,7 @@ public class ShopController : MonoBehaviour {
             m_scrolling = true;
 
             // Create a tweener to animate the scroll
-            m_scrollRect.DOGoToItem(anchor, .5f, 0.01f)
+            m_scrollRect.DOGoToItem(anchor, .5f, 0.001f)
             .SetEase(Ease.OutQuad)
             .OnComplete( delegate() { m_scrolling = false; } );
             
@@ -412,7 +412,7 @@ public class ShopController : MonoBehaviour {
 
 
             // Get normalized position of the anchor
-            Vector2 categoryAnchor = m_scrollRect.GetNormalizedPositionForItem(shortcut.anchor, true) + new Vector2 (m_scrollViewOffset,0);
+            Vector2 categoryAnchor = m_scrollRect.GetNormalizedPositionForItem(shortcut.categoryController.transform, true) + new Vector2 (m_scrollViewOffset,0);
 
             if (_posX >= categoryAnchor.x )
             {
@@ -427,7 +427,7 @@ public class ShopController : MonoBehaviour {
             candidate = 0;
         }
 
-        return m_shortcuts[candidate].category;
+        return m_shortcuts[candidate].categoryController.category;
 
     }
 
@@ -456,7 +456,7 @@ public class ShopController : MonoBehaviour {
         }
         else
         {
-            categoryLeftBorder = m_scrollRect.GetNormalizedPositionForItem(m_shortcuts[index].anchor).x + m_scrollViewOffset;
+            categoryLeftBorder = m_scrollRect.GetNormalizedPositionForItem(m_shortcuts[index].categoryController.transform).x + m_scrollViewOffset;
         }
 
 
@@ -467,7 +467,7 @@ public class ShopController : MonoBehaviour {
         }
         else
         {
-            categoryRightBorder = m_scrollRect.GetNormalizedPositionForItem(m_shortcuts[index + 1].anchor).x + m_scrollViewOffset;
+            categoryRightBorder = m_scrollRect.GetNormalizedPositionForItem(m_shortcuts[index + 1].categoryController.transform).x + m_scrollViewOffset;
         }
 
     }
@@ -528,7 +528,8 @@ public class ShopController : MonoBehaviour {
 
         SelectShortcut(_sc);
 
-        Transform categoryAnchor = _sc.anchor;
+
+        Transform categoryAnchor = _sc.categoryController.anchor;
         ScrollToItem(categoryAnchor);
 
     }

@@ -26,9 +26,14 @@ public class CategoryController : MonoBehaviour {
 
     [SerializeField] protected Transform m_pillsContainer;
     [SerializeField] protected ShowHideAnimator m_header;
+    [Tooltip("The object that will be centered when the player click in the shortcut")]
+    [SerializeField] protected Transform m_anchor;
+    public Transform anchor { get { return m_anchor;  } }
 
     // Internal
-    protected ShopCategory m_shopCategory;
+    protected ShopCategory m_category;
+    public ShopCategory category { get { return m_category;  } }
+
     protected ShopController m_shopController;
     protected List<OfferPack> m_offers;
 
@@ -104,7 +109,7 @@ public class CategoryController : MonoBehaviour {
         Clear();
 
         // Keep a reference to the shop category
-        m_shopCategory = _shopCategory;
+        m_category = _shopCategory;
 
         // If offers are provided, use them!
         Refresh(offers);
@@ -179,7 +184,7 @@ public class CategoryController : MonoBehaviour {
         if (_offers == null)
         {
             // If offers are not provided, get them all from the offers manager
-            _offers = OffersManager.GetOfferPacksByCategory(m_shopCategory);
+            _offers = OffersManager.GetOfferPacksByCategory(m_category);
         }
 
         // Enqueue all the offers so they are initialized once per frame

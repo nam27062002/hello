@@ -27,16 +27,11 @@ public class ShopCategoryShortcut : MonoBehaviour {
     [SerializeField] private Localizer m_text;
 
     // Internal
-    private ShopCategory m_category;
-    public ShopCategory category
-    { get { return m_category; } }
+    private ShopController m_shopController; // Keep a reference to the parent shop
 
-    // Reference to the UI elements in the shop. Used to scroll the view to the desired category.
-    private Transform m_anchor;
-    public Transform anchor
-    { get { return m_anchor;  } }
-
-    private ShopController shopController; // Keep a reference to the parent shop
+    private CategoryController m_categoryController;
+    public CategoryController categoryController
+    { get { return m_categoryController; } }
 
 
 
@@ -75,20 +70,19 @@ public class ShopCategoryShortcut : MonoBehaviour {
     /// <summary>
     /// Initializes the shortcut element
     /// </summary>
-    /// <param name="_category">Shop category related to this shortcut</param>
+    /// <param name="_categoryController">Category controller related to this shortcut</param>
     /// <param name="_shop">Parent shop</param>
-    public void Initialize (ShopCategory _category, Transform _anchor, ShopController _shop)
+    public void Initialize (CategoryController _categoryController, ShopController _shop)
     {
-        if (_category == null || _shop == null)
+        if (_categoryController == null || _shop == null)
         {
             return;
         }
 
-        m_category = _category;
-        m_anchor = _anchor;
-        m_text.Localize(category.tidShortcut);
+        m_categoryController = _categoryController;
+        m_text.Localize(_categoryController.category.tidShortcut);
         
-        shopController = _shop;
+        m_shopController = _shop;
     }
 
     /// <summary>
@@ -109,6 +103,6 @@ public class ShopCategoryShortcut : MonoBehaviour {
     /// </summary>
     public void OnClick ()
     {
-        shopController.OnShortcutSelected(this);
+        m_shopController.OnShortcutSelected(this);
     }
 }

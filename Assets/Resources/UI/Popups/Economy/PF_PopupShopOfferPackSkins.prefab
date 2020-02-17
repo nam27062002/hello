@@ -1567,6 +1567,7 @@ GameObject:
   - component: {fileID: 222530517251844518}
   - component: {fileID: 114252222537914278}
   - component: {fileID: 114082066838876518}
+  - component: {fileID: 114461899123597920}
   m_Layer: 5
   m_Name: TopTitle
   m_TagString: Untagged
@@ -3101,8 +3102,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: afcef37a717cb4f0bbccfa28e12c7981, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_type: 2
-  m_allow3dPreview: 1
+  m_slotType: 2
+  m_previewType: 2
   m_previewContainer: {fileID: 224822851142165300}
   m_mainText: {fileID: 114567608490201836}
   m_secondaryText: {fileID: 0}
@@ -4058,8 +4059,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: afcef37a717cb4f0bbccfa28e12c7981, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_type: 2
-  m_allow3dPreview: 1
+  m_slotType: 2
+  m_previewType: 2
   m_previewContainer: {fileID: 224120608244060136}
   m_mainText: {fileID: 114688551468978406}
   m_secondaryText: {fileID: 0}
@@ -4230,8 +4231,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: afcef37a717cb4f0bbccfa28e12c7981, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_type: 2
-  m_allow3dPreview: 1
+  m_slotType: 2
+  m_previewType: 0
   m_previewContainer: {fileID: 224892296026801500}
   m_mainText: {fileID: 114119716588975688}
   m_secondaryText: {fileID: 114457026455979274}
@@ -7690,6 +7691,20 @@ MonoBehaviour:
   - {fileID: 0}
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &114461899123597920
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1533094674257050}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_tid: 
+  m_caseType: 1
+  m_replacements: []
 --- !u!114 &114469374379586272
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -10602,8 +10617,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: afcef37a717cb4f0bbccfa28e12c7981, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_type: 2
-  m_allow3dPreview: 1
+  m_slotType: 2
+  m_previewType: 2
   m_previewContainer: {fileID: 224005307917967116}
   m_mainText: {fileID: 114935243510383524}
   m_secondaryText: {fileID: 0}
