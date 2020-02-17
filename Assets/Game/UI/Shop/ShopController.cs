@@ -89,6 +89,20 @@ public class ShopController : MonoBehaviour {
     //------------------------------------------------------------------------//
     // GENERIC METHODS														  //
     //------------------------------------------------------------------------//
+
+    public ShopController()
+    {
+        // React to offers being reloaded while tab is active
+        Messenger.AddListener(MessengerEvents.OFFERS_RELOADED, OnOffersReloaded);
+        Messenger.AddListener(MessengerEvents.OFFERS_CHANGED, OnOffersChanged);
+    }
+
+    ~ShopController()
+    {
+        Messenger.RemoveListener(MessengerEvents.OFFERS_RELOADED, OnOffersReloaded);
+        Messenger.RemoveListener(MessengerEvents.OFFERS_CHANGED, OnOffersChanged);
+    }
+
     /// <summary>
     /// Initialization.
     /// </summary>
@@ -106,14 +120,7 @@ public class ShopController : MonoBehaviour {
 	private void Start() {
 
         InvokeRepeating("PeriodicRefresh", 0f, REFRESH_FREQUENCY);
-
-        // React to offers being reloaded while tab is active
-        Messenger.AddListener(MessengerEvents.OFFERS_RELOADED, OnOffersReloaded);
-        Messenger.AddListener(MessengerEvents.OFFERS_CHANGED, OnOffersChanged);
-
         shopReady = false;
-
-
     }
 
 
