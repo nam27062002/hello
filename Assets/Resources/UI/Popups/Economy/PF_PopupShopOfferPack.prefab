@@ -871,6 +871,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 224067369635140716}
+  - component: {fileID: 114975414540862744}
   - component: {fileID: 114505301316283718}
   - component: {fileID: 225947320810948920}
   m_Layer: 5
@@ -2918,7 +2919,6 @@ GameObject:
   - component: {fileID: 95093729669853126}
   - component: {fileID: 114635435810302148}
   - component: {fileID: 114523145074358024}
-  - component: {fileID: 114611369953523776}
   - component: {fileID: 114048443002060166}
   m_Layer: 5
   m_Name: PF_PopupShopOfferPack
@@ -12617,7 +12617,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d16849d74b1d54d48a19a6a854706ca8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_rootPill: {fileID: 114611369953523776}
+  m_rootPill: {fileID: 114975414540862744}
 --- !u!114 &114524920933423416
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -13494,39 +13494,6 @@ MonoBehaviour:
   m_amountText: {fileID: 114058723683075564}
   m_descriptionText: {fileID: 114052698167756514}
   m_powerIcon: {fileID: 114830648436329326}
---- !u!114 &114611369953523776
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1609690476053676}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e248aec0fb464b94e86f7805ab8a1502, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_packNameText: {fileID: 114733315003144752}
-  m_remainingTimeText: {fileID: 114327007658814526}
-  m_infoButton: {fileID: 0}
-  m_discountObj: {fileID: 1919182236951320}
-  m_discountText: {fileID: 114049287002551880}
-  m_bannerObj: {fileID: 1588827726974132}
-  m_bannerText: {fileID: 114198401962100130}
-  m_priceButtonGroup: {fileID: 114941099732601956}
-  m_loadingPricePlaceholder: {fileID: 1016194054637794}
-  m_layouts:
-  - m_container: {fileID: 224645058100149454}
-    m_offerItems:
-    - {fileID: 114521829307437072}
-  - m_container: {fileID: 224868658194437506}
-    m_offerItems:
-    - {fileID: 114726959013505688}
-    - {fileID: 114428393080197532}
-  - m_container: {fileID: 224895333452684518}
-    m_offerItems:
-    - {fileID: 114122992436945896}
-    - {fileID: 114609496357443384}
-    - {fileID: 114756477509293530}
 --- !u!114 &114611917635993822
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -13818,7 +13785,18 @@ MonoBehaviour:
       Culture=neutral, PublicKeyToken=null
   OnOpenPostAnimation:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 114523145074358024}
+        m_MethodName: OnShowPostAnimation
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
   OnClosePreAnimation:
@@ -14520,7 +14498,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 114611369953523776}
+      - m_Target: {fileID: 0}
         m_MethodName: OnBuyButton
         m_Mode: 1
         m_Arguments:
@@ -15875,7 +15853,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 114611369953523776}
+      - m_Target: {fileID: 0}
         m_MethodName: OnBuyButton
         m_Mode: 1
         m_Arguments:
@@ -17469,6 +17447,39 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &114975414540862744
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1174062217884144}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e248aec0fb464b94e86f7805ab8a1502, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_packNameText: {fileID: 114733315003144752}
+  m_remainingTimeText: {fileID: 114327007658814526}
+  m_infoButton: {fileID: 0}
+  m_discountObj: {fileID: 1919182236951320}
+  m_discountText: {fileID: 114049287002551880}
+  m_bannerObj: {fileID: 1588827726974132}
+  m_bannerText: {fileID: 114198401962100130}
+  m_priceButtonGroup: {fileID: 114941099732601956}
+  m_loadingPricePlaceholder: {fileID: 1016194054637794}
+  m_layouts:
+  - m_container: {fileID: 224645058100149454}
+    m_offerItems:
+    - {fileID: 114521829307437072}
+  - m_container: {fileID: 224868658194437506}
+    m_offerItems:
+    - {fileID: 114726959013505688}
+    - {fileID: 114428393080197532}
+  - m_container: {fileID: 224895333452684518}
+    m_offerItems:
+    - {fileID: 114122992436945896}
+    - {fileID: 114609496357443384}
+    - {fileID: 114756477509293530}
 --- !u!114 &114976440279360190
 MonoBehaviour:
   m_ObjectHideFlags: 1
