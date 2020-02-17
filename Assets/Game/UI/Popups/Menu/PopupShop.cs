@@ -10,6 +10,7 @@
 using UnityEngine;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine.UI;
 using TMPro;
 using DG.Tweening;
@@ -22,7 +23,7 @@ using DG.Tweening;
 /// </summary>
 [RequireComponent(typeof(PopupController))]
 [RequireComponent(typeof(ShopController))]
-public class PopupShop : MonoBehaviour {
+public class PopupShop : MonoBehaviour, IBroadcastListener {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
@@ -36,13 +37,18 @@ public class PopupShop : MonoBehaviour {
 		PC_FIRST
 	};
 
+	// Hide popup's content when any of these popups are open
+	protected static readonly HashSet<string> POPUPS_TO_HIDE_CONTENT = new HashSet<string>() {
+		Path.GetFileNameWithoutExtension(PopupShopOfferPack.PATH)
+		//Path.GetFileNameWithoutExtension(PopupShopOfferPackSkins.PATH)
+	};
+
 	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//
 	// Exposed Setup
-	
     [SerializeField] private ShopController m_shopController = null;
-
+	[SerializeField] private GameObject m_contentRoot = null;
 
     // Other setup parameters
     private bool m_closeAfterPurchase = false;
@@ -71,8 +77,19 @@ public class PopupShop : MonoBehaviour {
     /// <summary>
     /// Initialization
     /// </summary>
-    void Awake() {
+    private void Awake() {
+		// Subscribe to external events
+		Broadcaster.AddListener(BroadcastEventType.POPUP_OPENED, this);
+		Broadcaster.AddListener(BroadcastEventType.POPUP_CLOSED, this);
+	}
 
+	/// <summary>
+	/// Destructor.
+	/// </summary>
+	private void OnDestroy() {
+		// Subscribe to external events
+		Broadcaster.RemoveListener(BroadcastEventType.POPUP_OPENED, this);
+		Broadcaster.RemoveListener(BroadcastEventType.POPUP_CLOSED, this);
 	}
 
 	/// <summary>
@@ -80,12 +97,7 @@ public class PopupShop : MonoBehaviour {
 	/// </summary>
 	/// <param name="_mode">Target mode.</param>
 	public void Init(Mode _mode, string _origin ) {
-
-
         m_shopController.Init(_mode, _origin);
-
-
-       
 	}
 
 	/// <summary>
@@ -109,8 +121,6 @@ public class PopupShop : MonoBehaviour {
     {
 
     }
-
-
 
 	//------------------------------------------------------------------//
 	// CALLBACKS														//
@@ -141,4 +151,38 @@ public class PopupShop : MonoBehaviour {
 		
 	}
 
+	/// <summary>
+	/// IBroadcastListener implementation.
+	/// </summary>
+	/// <param name="eventType"></param>
+	/// <param name="broadcastEventInfo"></param>
+	public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo) {
+		// Ignore if not active
+		if(!this.isActiveAndEnabled) return;
+
+		// Which event?
+		switch(eventType) {
+			case BroadcastEventType.POPUP_OPENED: {
+				// Only if content is valid
+				if(m_contentRoot != null) {
+					string popupName = (broadcastEventInfo as PopupManagementInfo).popupController.name;
+					if(POPUPS_TO_HIDE_CONTENT.Contains(popupName)) {
+						// Hide content!
+						m_contentRoot.SetActive(false);
+					}
+				}
+			} break;
+
+			case BroadcastEventType.POPUP_CLOSED: {
+				// Only if content is valid
+				if(m_contentRoot != null) {
+					string popupName = (broadcastEventInfo as PopupManagementInfo).popupController.name;
+					if(POPUPS_TO_HIDE_CONTENT.Contains(popupName)) {
+						// Restore content!
+						m_contentRoot.SetActive(true);
+					}
+				}
+			} break;
+		}
+	}
 }
