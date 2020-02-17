@@ -250,7 +250,7 @@ public class OfferItemSlot : MonoBehaviour, IBroadcastListener {
 
 			case PreviewType.DRAGONS_2D: {
 				// Depends on item type - 2D for dragons and skins, 3D for the rest
-				switch(item.type) {
+				switch(_rewardType) {
 					case Metagame.RewardDragon.TYPE_CODE:
 					case Metagame.RewardSkin.TYPE_CODE: {
 						preferredPreviewType = IOfferItemPreview.Type._2D;
@@ -260,7 +260,6 @@ public class OfferItemSlot : MonoBehaviour, IBroadcastListener {
 						preferredPreviewType = IOfferItemPreview.Type._3D;
 					} break;
 				}
-				preferredPreviewType = IOfferItemPreview.Type._3D;
 			} break;
 		}
 
