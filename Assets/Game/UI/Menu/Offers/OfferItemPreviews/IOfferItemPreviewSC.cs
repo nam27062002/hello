@@ -44,7 +44,7 @@ public abstract class IOfferItemPreviewSC : IOfferItemPreview {
 		// Show always, no matter the slot type
 		return LocalizationManager.SharedInstance.Localize(
 				"TID_OFFER_ITEM_SC",    // x250
-				StringUtils.FormatBigNumber(m_item.reward.amount, 1, 1000)  // Don't abbreviate if lower than 1K
+				UIConstants.FormatCurrency(m_item.reward.amount)
 			);
 	}
 
