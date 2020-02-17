@@ -526,4 +526,13 @@ public class ShopBasePill : IShopPill {
 
 		// [AOC] TODO!! More tracking
 	}
+
+	/// <summary>
+	/// The buy button has been press
+	/// </summary>
+	public virtual void OnBuyButtonOpenInfo() {
+		OpenInfoPopup(true);
+
+		// [AOC] TODO!! More tracking
+	}
 }
