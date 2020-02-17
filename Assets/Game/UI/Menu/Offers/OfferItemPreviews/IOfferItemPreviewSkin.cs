@@ -57,14 +57,8 @@ public abstract class IOfferItemPreviewSkin : IOfferItemPreview {
 	/// <param name="_slotType">The type of slot where the item will be displayed.</param>
 	/// <returns>The localized secondary text. <c>null</c> if this item type doesn't have to show any secondary text for the given type of slot (i.e. coins).</returns>
 	public override string GetLocalizedSecondaryText(OfferItemSlot.Type _slotType) {
-		// Always, show belonging dragon
-		if(m_def != null) {
-			DefinitionNode dragonDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, m_def.Get("dragonSku"));
-			if(dragonDef != null) {
-				return dragonDef.GetLocalized("tidName");	// [AOC] TODO!! More detailed text? i.e. "Blaze Skin", "Draconis Skin"
-			}
-		}
-		return null;	// (shouldn't happen) don't show if not valid
+		// Always, show reward type
+		return LocalizationManager.SharedInstance.Localize("TID_DISGUISE");
 	}
 
 	/// <summary>
