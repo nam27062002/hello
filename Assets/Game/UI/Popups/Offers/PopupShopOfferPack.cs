@@ -31,6 +31,7 @@ public class PopupShopOfferPack : MonoBehaviour {
 
 	// Internal
 	private OfferPack m_pack = null;
+	private int m_initializationPending = -1;
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -76,7 +77,23 @@ public class PopupShopOfferPack : MonoBehaviour {
 		if(m_pack == null) return;
 
 		// Initialize pill with target offer pack
-		m_rootPill.InitFromOfferPack(m_pack);
+		// Delay until popup is ready
+		m_initializationPending = 2;	// Delat some frames until popup is ready
+		//m_rootPill.InitFromOfferPack(m_pack);
+	}
+
+	/// <summary>
+	/// Update loop.
+	/// </summary>
+	private void Update() {
+		// Initialize visuals if needed
+		if(m_initializationPending > 0) {
+			m_initializationPending--;
+			if(m_initializationPending <= 0) {
+				m_rootPill.InitFromOfferPack(m_pack);
+				m_initializationPending = -1;
+			}
+		}
 	}
 
 	/// <summary>
