@@ -43,7 +43,7 @@ public abstract class IOfferItemPreviewHC : IOfferItemPreview {
 	public string FormatAmount(long _amount) {
 		return LocalizationManager.SharedInstance.Localize(
 			"TID_OFFER_ITEM_HC",    // x250
-			StringUtils.FormatBigNumber(_amount, 1, 1000)  // Don't abbreviate if lower than 1K
+			UIConstants.FormatCurrency(_amount)
 		);
 	}
 
