@@ -38,19 +38,21 @@ public class ShopFreePill : ShopMonoRewardPill {
     [SerializeField] private Button m_freeButton = null;
     [SerializeField] private Localizer m_freeButtonText = null;
     [SerializeField] private GameObject m_noItemIcon = null;
+    [SerializeField] private GameObject m_freeItemContainer = null;
 
     // Internal logic
     private bool m_isOnCooldown = false;
 	private string m_defaultButtonTID = "";
     private bool removeAdsActive;
+    private bool m_forceCooldownUpdate = true;
 
-	//------------------------------------------------------------------------//
-	// GENERIC METHODS														  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Initialization.
-	/// </summary>
-	private void Awake() {
+    //------------------------------------------------------------------------//
+    // GENERIC METHODS														  //
+    //------------------------------------------------------------------------//
+    /// <summary>
+    /// Initialization.
+    /// </summary>
+    private void Awake() {
 		// Backup some values
 		m_defaultButtonTID = m_adButtonText.tid;
 	}
@@ -70,8 +72,9 @@ public class ShopFreePill : ShopMonoRewardPill {
 		// Call parent
 		base.InitFromOfferPack(_pack);
 
-		// Perform a first refresh
-		RefreshTimer();
+        // Perform a first refresh
+        m_forceCooldownUpdate = true;
+        RefreshTimer();
 	}
 
 	/// <summary>
@@ -104,7 +107,7 @@ public class ShopFreePill : ShopMonoRewardPill {
 		// Has state changed?
 		TimeSpan remainingCooldown = OffersManager.freeOfferRemainingCooldown;
 		bool isOnCooldown = remainingCooldown.TotalSeconds > 0;
-		if(m_isOnCooldown != isOnCooldown) {
+		if(m_isOnCooldown != isOnCooldown || m_forceCooldownUpdate) {
 			// Enable/Disable button
 			m_watchAdButton.interactable = !isOnCooldown;
             m_freeButton.interactable = !isOnCooldown;
@@ -118,22 +121,38 @@ public class ShopFreePill : ShopMonoRewardPill {
                 m_freeButtonText.Localize("TID_FREE_DAILY_REWARD_BUTTON");
             }
 
-			
-			// Save new state
-			m_isOnCooldown = isOnCooldown;
-		}
+            // Hide/show the item
+            if (m_freeItemContainer != null)
+            {
+                if (isOnCooldown)
+                {
+                    m_freeItemContainer.SetActive(false);
+                } else
+                {
+                    m_freeItemContainer.SetActive(true);
+                }
+            }
+
+
+
+            // Refresh info button visibility
+            if (m_infoButton != null)
+            {
+                // Don't show while on cooldown
+                m_infoButton.SetActive(m_infoButtonMode != InfoButtonMode.NONE && !isOnCooldown);
+            }
+
+            // Save new state
+            m_isOnCooldown = isOnCooldown;
+
+            m_forceCooldownUpdate = false;
+        }
 
 		// If on cooldown, refresh timer
 		if(m_isOnCooldown) {
 			// Set text
 			m_adButtonText.Set(TimeUtils.FormatTime(remainingCooldown.TotalSeconds, TimeUtils.EFormat.DIGITS, 3));
             m_freeButtonText.Set(TimeUtils.FormatTime(remainingCooldown.TotalSeconds, TimeUtils.EFormat.DIGITS, 3));
-
-            // Hide the item
-            if (m_offerItemSlot != null)
-            {
-                m_offerItemSlot.InitFromItem(null);
-            }
         }
 
         // Show the proper buttons
@@ -141,13 +160,6 @@ public class ShopFreePill : ShopMonoRewardPill {
         m_freeButton.gameObject.SetActive(removeAdsActive);
         m_watchAdButton.gameObject.SetActive(!removeAdsActive);
 
-
-
-        // Refresh info button visibility
-        if (m_infoButton != null) {
-			// Don't show while on cooldown
-			m_infoButton.SetActive(m_infoButtonMode != InfoButtonMode.NONE && !m_isOnCooldown);
-		}
     }
 
 	/// <summary>
