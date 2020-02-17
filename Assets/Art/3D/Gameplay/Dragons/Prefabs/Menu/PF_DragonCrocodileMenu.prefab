@@ -8,7 +8,6 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 426264}
-  - component: {fileID: 5443936}
   - component: {fileID: 11450160}
   - component: {fileID: 11440078}
   m_Layer: 0
@@ -34,21 +33,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: -732.892, z: 0}
---- !u!54 &5443936
-Rigidbody:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 144554}
-  serializedVersion: 2
-  m_Mass: 1
-  m_Drag: 1.5
-  m_AngularDrag: 0.05
-  m_UseGravity: 0
-  m_IsKinematic: 0
-  m_Interpolate: 1
-  m_Constraints: 56
-  m_CollisionDetection: 0
 --- !u!114 &11440078
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2691,6 +2675,7 @@ MonoBehaviour:
     offset: {x: 0, y: 0, z: 0}
     scale: 1
     orientate: 0
+  m_particleAnchor: {fileID: 0}
   m_toggleEventType: 17
 --- !u!114 &114853003108411814
 MonoBehaviour:
