@@ -110,13 +110,14 @@ public class ShopFreePill : ShopMonoRewardPill {
             m_freeButton.interactable = !isOnCooldown;
 
             // Show question mark icon if cooldown is active
-            m_noItemIcon.SetActive(!isOnCooldown);
+            m_noItemIcon.SetActive(isOnCooldown);
 
-			// If leaving cooldown, restore text
-			if(!isOnCooldown) {
+            // If leaving cooldown, restore text
+            if (!isOnCooldown) {
 				m_adButtonText.Localize("TID_FREE_DAILY_REWARD_BUTTON");
                 m_freeButtonText.Localize("TID_FREE_DAILY_REWARD_BUTTON");
             }
+
 			
 			// Save new state
 			m_isOnCooldown = isOnCooldown;
@@ -127,6 +128,12 @@ public class ShopFreePill : ShopMonoRewardPill {
 			// Set text
 			m_adButtonText.Set(TimeUtils.FormatTime(remainingCooldown.TotalSeconds, TimeUtils.EFormat.DIGITS, 3));
             m_freeButtonText.Set(TimeUtils.FormatTime(remainingCooldown.TotalSeconds, TimeUtils.EFormat.DIGITS, 3));
+
+            // Hide the item
+            if (m_offerItemSlot != null)
+            {
+                m_offerItemSlot.InitFromItem(null);
+            }
         }
 
         // Show the proper buttons
@@ -134,8 +141,10 @@ public class ShopFreePill : ShopMonoRewardPill {
         m_freeButton.gameObject.SetActive(removeAdsActive);
         m_watchAdButton.gameObject.SetActive(!removeAdsActive);
 
-		// Refresh info button visibility
-		if(m_infoButton != null) {
+
+
+        // Refresh info button visibility
+        if (m_infoButton != null) {
 			// Don't show while on cooldown
 			m_infoButton.SetActive(m_infoButtonMode != InfoButtonMode.NONE && !m_isOnCooldown);
 		}

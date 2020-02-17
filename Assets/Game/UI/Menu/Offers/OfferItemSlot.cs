@@ -122,6 +122,10 @@ public class OfferItemSlot : MonoBehaviour, IBroadcastListener {
 		if(m_item == null) {
 			this.gameObject.SetActive(false);
 			if(reloadPreview) ClearPreview();
+
+            // ...and texts
+            ClearTexts();
+
 			return;
 		}
 
@@ -275,6 +279,36 @@ public class OfferItemSlot : MonoBehaviour, IBroadcastListener {
 			m_preview = null;
 		}
 	}
+
+    /// <summary>
+    /// Disable all the text fields
+    /// </summary>
+    protected void ClearTexts()
+    {
+        // Main Text
+        if (m_mainText != null)
+        {
+            m_mainText.gameObject.SetActive(false);
+        }
+
+        // Secondary Text
+        if (m_secondaryText != null)
+        {
+            m_secondaryText.gameObject.SetActive(false);
+        }
+
+        // Amount Text
+        if (m_amountText != null)
+        {
+            m_amountText.gameObject.SetActive(false);
+        }
+
+        // Description Text
+        if (m_descriptionText != null)
+        {
+            m_descriptionText.gameObject.SetActive(false);
+        }
+    }
 
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
