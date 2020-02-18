@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------------//
 using UnityEngine;
 using System;
+using System.Collections.Generic;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -80,6 +81,16 @@ public class ShopCategory {
         }
     }
 
+    // Keep a record of the offers in this category for performance reasons
+    public List<OfferPack> offers
+    {
+        get
+        { return m_offers;        }
+        set
+        { m_offers = value;        }
+    }
+
+    private List<OfferPack> m_offers;
 
     //------------------------------------------------------------------------//
     // GENERIC METHODS														  //
