@@ -31,8 +31,8 @@ public class ShopTooltip : MonoBehaviour {
 	// MEMBERS															//
 	//------------------------------------------------------------------//
 	// Exposed References
-    [SerializeField] private UITooltip m_tooltip = null;
-	public UITooltip tooltip {
+    [SerializeField] private UITooltipMultidirectional m_tooltip = null;
+	public UITooltipMultidirectional tooltip {
 		get { return m_tooltip; }
 	}
 
@@ -135,15 +135,8 @@ public class ShopTooltip : MonoBehaviour {
 				this.gameObject.SetActive(true);
 
 				// Place and open tooltip
-				// UITooltip does all the hard math for us!
-				UITooltip.PlaceAndShowTooltip(
-					m_tooltip,
-					m_anchor,
-					m_offset,
-					false,
-					false
-				);
-
+				ShowTooltip();
+				
 				// Reset timer
 				m_stateTimer = (float)m_safeFrames;
 			} break;
@@ -164,5 +157,38 @@ public class ShopTooltip : MonoBehaviour {
 
 		// Store new state
 		m_state = _newState;
+	}
+
+	/// <summary>
+	/// Perform all the required actions before opening the tooltip, and open it.
+	/// </summary>
+	private void ShowTooltip() {
+		// Show the tooltip to the left or to the right based on its position on 
+		// screen, trying to avoid going off-screen.
+
+		// Find out best direction (Multidirectional tooltip makes it easy for us)
+		UITooltipMultidirectional.ShowDirection bestDir = m_tooltip.CalculateBestDirection(
+			m_anchor.position,
+			UITooltipMultidirectional.BestDirectionOptions.HORIZONTAL_ONLY
+		);
+		m_tooltip.SetupDirection(bestDir);
+
+		// Adjust offset based on best direction
+		Vector2 offset = m_offset;
+		if(bestDir == UITooltipMultidirectional.ShowDirection.LEFT) {
+			offset.x = -Mathf.Abs(offset.x);
+		} else if(bestDir == UITooltipMultidirectional.ShowDirection.RIGHT) {
+			offset.x = Mathf.Abs(offset.x);
+		}
+
+		// Place and show the tooltip
+		// UITooltip does all the hard math for us!
+		UITooltip.PlaceAndShowTooltip(
+			m_tooltip,
+			m_anchor,
+			offset,
+			false,
+			false
+		);
 	}
 }
