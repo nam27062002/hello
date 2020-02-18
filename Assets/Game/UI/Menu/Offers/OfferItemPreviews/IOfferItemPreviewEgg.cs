@@ -62,7 +62,6 @@ public abstract class IOfferItemPreviewEgg : IOfferItemPreview {
 	public override string GetLocalizedMainText(OfferItemSlot.Type _slotType) {
 		// Only in popups
 		switch(_slotType) {
-			case OfferItemSlot.Type.TOOLTIP:
 			case OfferItemSlot.Type.POPUP_BIG:
 			case OfferItemSlot.Type.POPUP_SMALL:
 			case OfferItemSlot.Type.PILL_FREE: {
@@ -75,6 +74,15 @@ public abstract class IOfferItemPreviewEgg : IOfferItemPreview {
 				} else {
 					return LocalizationManager.SharedInstance.Localize("TID_EGG_PLURAL");   // (shouldn't happen) use generic
 				}
+			} break;
+
+			case OfferItemSlot.Type.TOOLTIP: {
+				// Show the amount in the tooltip
+				return string.Format(
+					"{0} {1}",
+					UIConstants.FormatCurrency(m_item.reward.amount),
+					GetLocalizedMainText(OfferItemSlot.Type.POPUP_BIG)		// Reuse code!!
+				);
 			} break;
 		}
 		return null;
