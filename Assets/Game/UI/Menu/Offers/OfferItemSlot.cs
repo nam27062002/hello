@@ -36,7 +36,8 @@ public class OfferItemSlot : MonoBehaviour, IBroadcastListener {
 		PILL_SMALL,
 		POPUP_BIG,
 		POPUP_SMALL,
-		TOOLTIP
+		TOOLTIP,
+		PILL_FREE
 	}
 
 	public enum PreviewType {
