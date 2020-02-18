@@ -44,11 +44,17 @@ public abstract class IOfferItemPreviewSkin : IOfferItemPreview {
 	/// <param name="_slotType">The type of slot where the item will be displayed.</param>
 	/// <returns>The localized main text. <c>null</c> if this item type doesn't have to show main text for the given type of slot (i.e. coins).</returns>
 	public override string GetLocalizedMainText(OfferItemSlot.Type _slotType) {
-		// Always, show dragon name
-		if(m_def != null) {
-			return m_def.GetLocalized("tidName");
+		// Only in popups, show skin name
+		switch(_slotType) {
+			case OfferItemSlot.Type.POPUP_BIG:
+			case OfferItemSlot.Type.POPUP_SMALL:
+			case OfferItemSlot.Type.TOOLTIP: {
+				if(m_def != null) {
+					return m_def.GetLocalized("tidName");
+				}
+			} break;
 		}
-		return LocalizationManager.SharedInstance.Localize("TID_DISGUISE");  // (shouldn't happen) use generic
+		return null;
 	}
 
 	/// <summary>
