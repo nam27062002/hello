@@ -66,6 +66,9 @@ public class ShopRemoveAdsPill : ShopMonoRewardPill {
         scr.StartFlow(false);   // No intro
         InstanceManager.menuSceneController.GoToScreen(MenuScreen.PENDING_REWARD);
 
+        // Tell the menu controller to open the shop after the rewards screen
+        InstanceManager.menuSceneController.interstitialPopupsController.SetFlag(MenuInterstitialPopupsController.StateFlag.OPEN_SHOP, true);
+
     }
 
     /// <summary>

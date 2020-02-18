@@ -122,6 +122,14 @@ public class ShopMultiRewardPill: ShopBasePill
 		}
 	}
 
+    protected override void ApplyShopPack()
+    {
+        base.ApplyShopPack();
+
+        // Tell the menu controller to open the shop after the rewards screen
+        InstanceManager.menuSceneController.interstitialPopupsController.SetFlag(MenuInterstitialPopupsController.StateFlag.OPEN_SHOP, true);
+    }
+
     //------------------------------------------------------------------------//
     // CALLBACKS															  //
     //------------------------------------------------------------------------//

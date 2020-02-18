@@ -187,7 +187,7 @@ public class ShopFreePill : ShopMonoRewardPill {
 		if(InstanceManager.menuSceneController == null) return;
 
 		// Tell the menu controller to open the shop after the rewards screen
-		InstanceManager.menuSceneController.interstitialPopupsController.SetFlag(MenuInterstitialPopupsController.StateFlag.OPEN_OFFERS_SHOP, true);
+		InstanceManager.menuSceneController.interstitialPopupsController.SetFlag(MenuInterstitialPopupsController.StateFlag.OPEN_SHOP, true);
 	}
 
 	//------------------------------------------------------------------------//
