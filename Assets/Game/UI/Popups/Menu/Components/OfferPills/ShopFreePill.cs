@@ -35,10 +35,12 @@ public class ShopFreePill : ShopMonoRewardPill {
 	[Separator("Free Offer Pill Specifics")]
 	[SerializeField] private Button m_watchAdButton = null;
     [SerializeField] private Localizer m_adButtonText = null;
-    [SerializeField] private Button m_freeButton = null;
+	[Space]
+	[SerializeField] private Button m_freeButton = null;
     [SerializeField] private Localizer m_freeButtonText = null;
-    [SerializeField] private GameObject m_noItemIcon = null;
-    [SerializeField] private GameObject m_freeItemContainer = null;
+	[Space]
+    [SerializeField] private GameObject m_cooldownRoot = null;
+    [SerializeField] private GameObject m_activeRoot = null;
 
     // Internal logic
     private bool m_isOnCooldown = false;
@@ -113,7 +115,7 @@ public class ShopFreePill : ShopMonoRewardPill {
             m_freeButton.interactable = !isOnCooldown;
 
             // Show question mark icon if cooldown is active
-            m_noItemIcon.SetActive(isOnCooldown);
+            m_cooldownRoot.SetActive(isOnCooldown);
 
             // If leaving cooldown, restore text
             if (!isOnCooldown) {
@@ -122,14 +124,14 @@ public class ShopFreePill : ShopMonoRewardPill {
             }
 
             // Hide/show the item
-            if (m_freeItemContainer != null)
+            if (m_activeRoot != null)
             {
                 if (isOnCooldown)
                 {
-                    m_freeItemContainer.SetActive(false);
+                    m_activeRoot.SetActive(false);
                 } else
                 {
-                    m_freeItemContainer.SetActive(true);
+                    m_activeRoot.SetActive(true);
                 }
             }
 

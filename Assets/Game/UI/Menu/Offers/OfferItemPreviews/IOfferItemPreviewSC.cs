@@ -58,7 +58,8 @@ public abstract class IOfferItemPreviewSC : IOfferItemPreview {
 		switch(_slotType) {
 			case OfferItemSlot.Type.TOOLTIP:
 			case OfferItemSlot.Type.POPUP_BIG:
-			case OfferItemSlot.Type.POPUP_SMALL: {
+			case OfferItemSlot.Type.POPUP_SMALL:
+			case OfferItemSlot.Type.PILL_FREE: {
 				return LocalizationManager.SharedInstance.Localize("TID_SC_NAME_PLURAL");
 			} break;
 		}
