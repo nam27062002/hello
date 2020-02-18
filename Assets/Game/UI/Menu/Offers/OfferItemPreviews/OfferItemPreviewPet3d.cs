@@ -83,7 +83,9 @@ public class OfferItemPreviewPet3d : IOfferItemPreviewPet {
 	// CALLBACKS                                                              //
 	//------------------------------------------------------------------------//
 	private void OnLoadingComplete(MenuPetLoader _loader) {
-		InitParticles(m_petPreview.petInstance.gameObject);
-		_loader.OnLoadingComplete.RemoveListener(OnLoadingComplete);
+		if(m_petPreview.petInstance != null) {
+			InitParticles(m_petPreview.petInstance.gameObject);
+			_loader.OnLoadingComplete.RemoveListener(OnLoadingComplete);
+		}
 	}
 }

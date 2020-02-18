@@ -44,11 +44,17 @@ public abstract class IOfferItemPreviewPet : IOfferItemPreview {
 	/// <param name="_slotType">The type of slot where the item will be displayed.</param>
 	/// <returns>The localized main text. <c>null</c> if this item type doesn't have to show main text for the given type of slot (i.e. coins).</returns>
 	public override string GetLocalizedMainText(OfferItemSlot.Type _slotType) {
-		// Always, show pet name
-		if(m_def != null) {
-			return m_def.GetLocalized("tidName");
+		// Only in popups, show pet name
+		switch(_slotType) {
+			case OfferItemSlot.Type.POPUP_BIG:
+			case OfferItemSlot.Type.POPUP_SMALL:
+			case OfferItemSlot.Type.TOOLTIP: {
+				if(m_def != null) {
+					return m_def.GetLocalized("tidName");
+				}
+			} break;
 		}
-		return LocalizationManager.SharedInstance.Localize("TID_PET");  // (shouldn't happen) use generic
+		return null;
 	}
 
 	/// <summary>
@@ -57,29 +63,37 @@ public abstract class IOfferItemPreviewPet : IOfferItemPreview {
 	/// <param name="_slotType">The type of slot where the item will be displayed.</param>
 	/// <returns>The localized secondary text. <c>null</c> if this item type doesn't have to show any secondary text for the given type of slot (i.e. coins).</returns>
 	public override string GetLocalizedSecondaryText(OfferItemSlot.Type _slotType) {
-		// Always, show pet rarity
-		if(m_def != null) {
-			// Show tinted rarity + icon (except common, which has no icon nor color)
-			string raritySku = m_def.Get("rarity");
-			Metagame.Reward.Rarity rarity = Metagame.Reward.SkuToRarity(raritySku);
-			DefinitionNode rarityDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.RARITIES, raritySku);
-			if(rarity != Metagame.Reward.Rarity.COMMON) {
-				// "▴Rare Pet", "♦Epic Pet"
-				string rarityIcon = string.Format("<sprite name=\"icon_rarity_{0}\">", raritySku);
-				Color rarityColor = UIConstants.GetRarityColor(rarity);
-				return LocalizationManager.SharedInstance.Localize(
-					"TID_PET_WITH_RARITY",
-					string.Format("{0}<color={1}>{2}</color>", rarityIcon, rarityColor.ToHexString(), rarityDef.GetLocalized("tidName"))
-				);
-			} else {
-				// "Common Pet"
-				return LocalizationManager.SharedInstance.Localize(
-					"TID_PET_WITH_RARITY",
-					rarityDef.GetLocalized("tidName")
-				);
-			}
+		// Nothing if def not valid
+		if(m_def == null) return null;
+
+		// Show tinted rarity + icon (except common, which has no icon nor color)
+		string localizedRarity = null;
+		string raritySku = m_def.Get("rarity");
+		Metagame.Reward.Rarity rarity = Metagame.Reward.SkuToRarity(raritySku);
+		DefinitionNode rarityDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.RARITIES, raritySku);
+		if(rarity != Metagame.Reward.Rarity.COMMON) {
+			// "▴Rare Pet", "♦Epic Pet"
+			string rarityIcon = string.Format("<sprite name=\"icon_rarity_{0}\">", raritySku);
+			Color rarityColor = UIConstants.GetRarityColor(rarity);
+			localizedRarity = string.Format("{0}<color={1}>{2}</color>", rarityIcon, rarityColor.ToHexString("#"), rarityDef.GetLocalized("tidName"));
+		} else {
+			// "Common Pet"
+			localizedRarity = rarityDef.GetLocalized("tidName");
 		}
-		return LocalizationManager.SharedInstance.Localize("TID_PET");  // (shouldn't happen) use generic
+
+		// Depends on slot type
+		switch(_slotType) {
+			// Pills: "▴Rare"
+			case OfferItemSlot.Type.PILL_BIG:
+			case OfferItemSlot.Type.PILL_SMALL: {
+				return localizedRarity;
+			} break;
+
+			// Rest (popup, tooltip): "▴Rare Pet"
+			default: {
+				return LocalizationManager.SharedInstance.Localize("TID_PET_WITH_RARITY", localizedRarity);
+			} break;
+		}
 	}
 
 	/// <summary>
