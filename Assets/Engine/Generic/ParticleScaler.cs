@@ -84,7 +84,6 @@ public class ParticleScaler : MonoBehaviour
 	}
 	protected List<PSDataRegistry> m_originalData = new List<PSDataRegistry>();
 
-
     void Awake()
 	{
 		// Save original data
@@ -265,8 +264,6 @@ public class ParticleScaler : MonoBehaviour
 
     }
 
-
-
     void ResetOriginalData()
 	{
 		if ( m_scaleAllChildren )
@@ -276,10 +273,9 @@ public class ParticleScaler : MonoBehaviour
 		}
 		else
 		{
-			ResetParticleData(m_originalData[0]);
+			if(m_originalData.Count > 0) ResetParticleData(m_originalData[0]);
 		}
 	}
-
 
 	void ResetParticleData(PSDataRegistry data)
 	{
@@ -421,7 +417,7 @@ public class ParticleScaler : MonoBehaviour
         }
     }
 
-    void OnEnable()
+	void OnEnable()
 	{
 		if ( m_whenScale == WhenScale.ENABLE )
 			DoScale();
@@ -482,11 +478,11 @@ public class ParticleScaler : MonoBehaviour
 		}
 		else
 		{
-			ScalePS( m_originalData[0], scale );
+			if(m_originalData.Count > 0) ScalePS( m_originalData[0], scale );
 		}
 
 	}
-	
+
 	void ScalePS(PSDataRegistry data, float scale)
 	{
         if (data.m_psystem != null)
