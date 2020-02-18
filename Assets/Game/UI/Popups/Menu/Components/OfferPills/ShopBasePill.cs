@@ -244,7 +244,11 @@ public class ShopBasePill : IShopPill {
 	protected virtual void RefreshPrice() {
 		// If localized prices haven't been received from the store yet, wait for it
 		bool storeReady = GameStoreManager.SharedInstance.IsReady();
-		if(m_currency == UserProfile.Currency.REAL) {
+
+
+
+
+        if (m_currency == UserProfile.Currency.REAL) {
 			// Loading placeholder
 			if(m_loadingPricePlaceholder != null) m_loadingPricePlaceholder.gameObject.SetActive(!storeReady);
 
@@ -263,17 +267,20 @@ public class ShopBasePill : IShopPill {
 				}
 			}
 
-			// Compute previous price
-			bool validDiscount = m_discount > 0f;
-			if(validDiscount) {
-				m_previousPrice = m_price / (1f - m_discount);
+            // Compute previous price
+            bool validDiscount = m_discount > 0f;
+            if (validDiscount)
+            {
+                m_previousPrice = m_price / (1f - m_discount);
 
-				// [AOC] Beautify original price so it's more credible
-				// 		 Put the same decimal part as the actual price
-				m_previousPrice = Mathf.Floor(m_previousPrice) + (m_price - Mathf.Floor(m_price));
-			} else {
-				m_previousPrice = m_price;
-			}
+                // [AOC] Beautify original price so it's more credible
+                // 		 Put the same decimal part as the actual price
+                m_previousPrice = Mathf.Floor(m_previousPrice) + (m_price - Mathf.Floor(m_price));
+            }
+            else
+            {
+                m_previousPrice = m_price;
+            }
 
 #if DEBUG && false
 		Debug.Log(Colors.yellow.Tag(
@@ -284,8 +291,8 @@ public class ShopBasePill : IShopPill {
 		));
 #endif
 
-			// If store is ready, initialize textfields
-			if(storeReady) {
+            // If store is ready, initialize textfields
+            if (storeReady) {
 				// Price Text
 				string localizedPrice = GetLocalizedIAPPrice(m_price);
 
@@ -341,9 +348,17 @@ public class ShopBasePill : IShopPill {
 			// Round the price, just in case. It shouldnt have decimals for this currency.
 			m_price = Mathf.RoundToInt(m_def.GetAsFloat("refPrice"));
 
-			// Show the proper currency button
-			if(m_priceButtonGroup != null) {
-				m_priceButtonGroup.SetAmount(m_price, m_currency);
+
+            // Compute previous price
+            bool validDiscount = m_discount > 0f;
+            if (validDiscount)
+            {
+                m_previousPrice = m_price / (1f - m_discount);
+            }
+            
+            // Show the proper currency button
+            if (m_priceButtonGroup != null) {
+				m_priceButtonGroup.SetAmount(m_price, m_currency, m_previousPrice);
 			}
 		}
 
