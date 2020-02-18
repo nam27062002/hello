@@ -70,20 +70,29 @@ public class ShopCategoryShortcut : MonoBehaviour {
     /// <summary>
     /// Initializes the shortcut element
     /// </summary>
-    /// <param name="_categoryController">Category controller related to this shortcut</param>
+    /// <param name="_titleTID">TID of the shortcut</param>
     /// <param name="_shop">Parent shop</param>
-    public void Initialize (CategoryController _categoryController, ShopController _shop)
+    public void Initialize (string _titleTID, ShopController _shop)
     {
-        if (_categoryController == null || _shop == null)
+        if (_shop == null)
         {
             return;
         }
 
-        m_categoryController = _categoryController;
-        m_text.Localize(_categoryController.category.tidShortcut);
-        
+        m_text.Localize(_titleTID);
+
         m_shopController = _shop;
     }
+
+    /// <summary>
+    /// Set the category cointainer related to the shortcut
+    /// </summary>
+    /// <param name="_categoryController">Shopcategory linked to this shortcut</param>
+    public void SetCategory(CategoryController _categoryController)
+    {
+        m_categoryController = _categoryController;
+    }
+
 
     /// <summary>
     /// Select/deselect the current shortcut button and show the proper visual state
@@ -103,6 +112,9 @@ public class ShopCategoryShortcut : MonoBehaviour {
     /// </summary>
     public void OnClick ()
     {
-        m_shopController.OnShortcutSelected(this);
+        if (m_shopController != null)
+        {
+            m_shopController.OnShortcutSelected(this);
+        }
     }
 }

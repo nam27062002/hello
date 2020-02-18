@@ -63,6 +63,7 @@ public class ShopController : MonoBehaviour {
     private List<ShopCategoryShortcut> m_shortcuts; 
     private Dictionary<string, ShopCategoryShortcut> m_skuToShorcut; // Cache the sku-shortcut pair to improve performance
     private string m_lastShortcut;
+    private ShopCategory m_lastCategory;
 
     // Keep the bounds of the current category, so we dont recalculate every time the user scrolls the shop
     private float categoryLeftBorder, categoryRightBorder;
@@ -185,7 +186,7 @@ public class ShopController : MonoBehaviour {
             if (catBeingInitialized == null)
             {
                 ShopCategory cat = categoriesToInitialize.Dequeue();
-                catBeingInitialized = InitializeCategory(cat);
+                catBeingInitialized = InitializeCategory(cat, cat.offers);
             }
         }
 
@@ -269,8 +270,19 @@ public class ShopController : MonoBehaviour {
             // If this cat is active 
             if (category.enabled)
             {
-                // Enqueue the categories so they are initialized one per frame
-                categoriesToInitialize.Enqueue(category);
+
+                // Get the offer packs that belongs to this category
+                category.offers = OffersManager.GetOfferPacksByCategory(category);
+
+                // Make sure there are offers in this category
+                if (category.offers.Count > 0)
+                {
+
+                    CreateShortcut(category);
+
+                    // Enqueue the categories so they are initialized one per frame
+                    categoriesToInitialize.Enqueue(category);
+                }
             }
         }
 
@@ -300,8 +312,9 @@ public class ShopController : MonoBehaviour {
     /// Initialize one category and create its shortcut if needed
     /// </summary>
     /// <param name="_cat">Shop category</param>
+    /// <param name="_offers">List of offers contained in this category</param>
     /// <returns>Reference to the category container created</returns>
-    private CategoryController InitializeCategory (ShopCategory _cat)
+    private CategoryController InitializeCategory (ShopCategory _cat, List<OfferPack> _offers)
     {
 
         Debug.Log("Initialize category " + _cat.sku);
@@ -318,41 +331,32 @@ public class ShopController : MonoBehaviour {
             return null;
         }
 
-        // TODO: Optimize this: dont call twice to this method! (here and inside the category initialization)
-        List<OfferPack> offers = OffersManager.GetOfferPacksByCategory(_cat);
-
         // Make sure there are offers in this category
-        if (offers.Count > 0)
+        if (_offers.Count > 0)
         {
 
             CategoryController categoryContainer = Instantiate<CategoryController>(containerPrefab);
 
             // Add the category container to the hierarchy
             categoryContainer.transform.SetParent(m_categoriesContainer, false);
-            categoryContainer.Initialize(_cat, offers);
+            categoryContainer.Initialize(_cat, _offers);
 
             m_categoryContainers.Add(categoryContainer);
 
-            // Has a shortcut in the bottom menu?
-            if (!string.IsNullOrEmpty(_cat.tidShortcut))
+
+            // Link the shortcut to the first container of the category
+            if (m_lastCategory == null || m_lastCategory != _cat)
             {
-                // If two categories share a shortcut, dont create it twice
-                if (m_lastShortcut != _cat.tidShortcut)
+                
+                if (m_skuToShorcut.ContainsKey(_cat.sku))
                 {
-
-                    // Create a new shortcut :D
-
-                    // Instantiate a shortcut and add it to the bottom bar
-                    ShopCategoryShortcut newShortcut = Instantiate<ShopCategoryShortcut>(m_shortcutPrefab, m_shortcutsContainer, false);
-                    newShortcut.Initialize(categoryContainer, this);
-                    m_shortcuts.Add(newShortcut);
-                    m_skuToShorcut.Add(_cat.sku, newShortcut);
-
-                    // Keep a record of the last shortcut created
-                    m_lastShortcut = _cat.tidShortcut;
+                    ShopCategoryShortcut sc = m_skuToShorcut[_cat.sku];
+                    sc.SetCategory(categoryContainer);
                 }
+                
             }
 
+            m_lastCategory = _cat;
             return categoryContainer;
         }
 
@@ -360,6 +364,35 @@ public class ShopController : MonoBehaviour {
         return null;
     }
 
+    /// <summary>
+    /// Create a new shortcut in the navigation bar. 
+    /// Keeps a record of the last shortcut, so it doesnt duplicate them.
+    /// </summary>
+    /// <param name="_cat">Shop category. </param>
+    private void CreateShortcut (ShopCategory _cat)
+    {
+        // Has a shortcut in the bottom menu?
+        if (!string.IsNullOrEmpty(_cat.tidShortcut))
+        {
+            // If two categories share a shortcut, dont create it twice
+            if (m_lastShortcut != _cat.tidShortcut)
+            {
+
+                // Create a new shortcut :D
+                // Instantiate a shortcut and add it to the bottom bar
+                ShopCategoryShortcut newShortcut = Instantiate<ShopCategoryShortcut>(m_shortcutPrefab, m_shortcutsContainer, false);
+
+                // Set the title of the shortcat
+                newShortcut.Initialize(_cat.tidShortcut, this);
+
+                m_shortcuts.Add(newShortcut);
+                m_skuToShorcut.Add(_cat.sku, newShortcut);
+
+                // Keep a record of the last shortcut created
+                m_lastShortcut = _cat.tidShortcut;
+            }
+        }
+    }
 
     /// <summary>
     /// Highlight the selected shortcut (and deselect the rest)
@@ -416,8 +449,6 @@ public class ShopController : MonoBehaviour {
         for (int i = m_shortcuts.Count - 1 ; i >= 0 ; i--)
         {
             ShopCategoryShortcut shortcut = m_shortcuts[i];
-
-
 
             // Get normalized position of the anchor
             Vector2 categoryAnchor = m_scrollRect.GetNormalizedPositionForItem(shortcut.categoryController.transform, true) + new Vector2 (m_scrollViewOffset,0);
@@ -532,10 +563,12 @@ public class ShopController : MonoBehaviour {
     /// <param name="_category">The category related to the shortcut</param>
     public void OnShortcutSelected(ShopCategoryShortcut _sc)
     {
+        if (_sc.categoryController == null)
+            return;
+
         m_scrolling = false;
 
         SelectShortcut(_sc);
-
 
         Transform categoryAnchor = _sc.categoryController.anchor;
         ScrollToItem(categoryAnchor);
@@ -559,7 +592,7 @@ public class ShopController : MonoBehaviour {
         }
 
         // Scrolling animation still running
-        if (m_scrolling) {
+        if (m_scrolling || !shopReady) {
             return;
         }
 
