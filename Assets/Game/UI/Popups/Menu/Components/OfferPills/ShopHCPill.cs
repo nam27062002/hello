@@ -43,18 +43,6 @@ public class ShopHCPill : ShopCurrencyPill {
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
-    public ShopHCPill()
-    {
-        // Subscribe to happy hour events
-        Messenger.AddListener(MessengerEvents.HAPPY_HOUR_CHANGED, RefreshHappyHour);
-    }
-
-    ~ShopHCPill()
-    {
-        // Unsubscribe to events
-        Messenger.RemoveListener(MessengerEvents.HAPPY_HOUR_CHANGED, RefreshHappyHour);
-    }
-
 
 	/// <summary>
 	/// Initialization.
@@ -65,12 +53,23 @@ public class ShopHCPill : ShopCurrencyPill {
 			m_itemSlotHC = m_offerItemSlot as OfferItemSlotHC;
 		}
 		Debug.Assert(m_itemSlotHC != null, "This pill type should have a OfferItemSlotHC as item slot.");
-	}
 
-	/// <summary>
-	/// Component has been enabled.
-	/// </summary>
-	public void OnEnable() {
+        // Subscribe to happy hour events
+        Messenger.AddListener(MessengerEvents.HAPPY_HOUR_CHANGED, RefreshHappyHour);
+    }
+
+    private new void OnDestroy()
+    {
+        // Unsubscribe to events
+        Messenger.RemoveListener(MessengerEvents.HAPPY_HOUR_CHANGED, RefreshHappyHour);
+    }
+
+
+
+    /// <summary>
+    /// Component has been enabled.
+    /// </summary>
+    public void OnEnable() {
 		// Refresh Happy Hour visuals immediately
 		RefreshHappyHour();
 	}
