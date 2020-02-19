@@ -21,6 +21,8 @@ using UnityEngine.UI;
 /// 
 /// </summary>
 public class ShopController : MonoBehaviour {
+
+
     //------------------------------------------------------------------------//
     // CONSTANTS															  //
     //------------------------------------------------------------------------//
@@ -48,7 +50,6 @@ public class ShopController : MonoBehaviour {
     [SerializeField]
     private int m_framesDelayPerPill = 1;
 
-    public float m_offset = .5f;
 
     //Internal
     private float m_timer = 0; // Refresh timer
@@ -115,6 +116,11 @@ public class ShopController : MonoBehaviour {
         Messenger.RemoveListener(MessengerEvents.OFFERS_CHANGED, OnOffersChanged);
     }
 
+    private void OnEnable()
+    {
+
+    }
+    
 
     /// <summary>
     /// First update call.
@@ -243,7 +249,7 @@ public class ShopController : MonoBehaviour {
     /// Initialize the shop with the requested mode. Should be called before opening the popup.
     /// </summary>
     /// <param name="_mode">Target mode.</param>
-    public void Init(PopupShop.Mode _mode, string _origin)
+    public void Init(PopupShop.Mode _mode)
     {
         int timer = Environment.TickCount;
 

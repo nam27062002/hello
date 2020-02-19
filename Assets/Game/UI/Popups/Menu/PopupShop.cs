@@ -29,16 +29,17 @@ public class PopupShop : MonoBehaviour, IBroadcastListener {
 	//------------------------------------------------------------------//
 	public const string PATH = "UI/Popups/Economy/PF_PopupShop";
 
-	public enum Mode {
-		DEFAULT,
-		SC_ONLY,
-		PC_ONLY,
-		OFFERS_FIRST,
-		PC_FIRST
-	};
+    public enum Mode
+    {
+        DEFAULT,
+        SC_ONLY,
+        PC_ONLY,
+        OFFERS_FIRST,
+        PC_FIRST
+    };
 
-	// Hide popup's content when any of these popups are open
-	protected static readonly HashSet<string> POPUPS_TO_HIDE_CONTENT = new HashSet<string>() {
+    // Hide popup's content when any of these popups are open
+    protected static readonly HashSet<string> POPUPS_TO_HIDE_CONTENT = new HashSet<string>() {
 		Path.GetFileNameWithoutExtension(PopupShopOfferPack.PATH)
 		//Path.GetFileNameWithoutExtension(PopupShopOfferPackSkins.PATH)
 	};
@@ -96,8 +97,8 @@ public class PopupShop : MonoBehaviour, IBroadcastListener {
 	/// Initialize the popup with the requested mode. Should be called before opening the popup.
 	/// </summary>
 	/// <param name="_mode">Target mode.</param>
-	public void Init(Mode _mode, string _origin ) {
-        m_shopController.Init(_mode, _origin);
+	public void Init(PopupShop.Mode _mode, String _origin) {
+        m_shopController.Init(_mode);
 	}
 
 	/// <summary>
