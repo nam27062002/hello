@@ -65,11 +65,19 @@ public abstract class IOfferItemPreviewHC : IOfferItemPreview {
 	public override string GetLocalizedMainText(OfferItemSlot.Type _slotType) {
 		// Only in popups
 		switch(_slotType) {
-			case OfferItemSlot.Type.TOOLTIP:
 			case OfferItemSlot.Type.POPUP_BIG:
 			case OfferItemSlot.Type.POPUP_SMALL:
 			case OfferItemSlot.Type.PILL_FREE: {
 				return LocalizationManager.SharedInstance.Localize("TID_HC_NAME_PLURAL");
+			} break;
+
+			case OfferItemSlot.Type.TOOLTIP: {
+				// Show the amount in the tooltip
+				return string.Format(
+					"{0} {1}",
+					UIConstants.FormatCurrency(m_item.reward.amount),
+					LocalizationManager.SharedInstance.Localize("TID_HC_NAME_PLURAL")
+				);
 			} break;
 		}
 		return null;

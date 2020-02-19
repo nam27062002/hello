@@ -54,13 +54,21 @@ public abstract class IOfferItemPreviewSC : IOfferItemPreview {
 	/// <param name="_slotType">The type of slot where the item will be displayed.</param>
 	/// <returns>The localized main text. <c>null</c> if this item type doesn't have to show main text for the given type of slot (i.e. coins).</returns>
 	public override string GetLocalizedMainText(OfferItemSlot.Type _slotType) {
-		// Only in popups
+		// Only in popups and tooltip
 		switch(_slotType) {
-			case OfferItemSlot.Type.TOOLTIP:
 			case OfferItemSlot.Type.POPUP_BIG:
 			case OfferItemSlot.Type.POPUP_SMALL:
 			case OfferItemSlot.Type.PILL_FREE: {
 				return LocalizationManager.SharedInstance.Localize("TID_SC_NAME_PLURAL");
+			} break;
+
+			case OfferItemSlot.Type.TOOLTIP: {
+				// Show the amount in the tooltip
+				return string.Format(
+					"{0} {1}",
+					UIConstants.FormatCurrency(m_item.reward.amount),
+					LocalizationManager.SharedInstance.Localize("TID_SC_NAME_PLURAL")
+				);
 			} break;
 		}
 		return null;
@@ -72,7 +80,7 @@ public abstract class IOfferItemPreviewSC : IOfferItemPreview {
 	/// <param name="_slotType">The type of slot where the item will be displayed.</param>
 	/// <returns>The localized description. <c>null</c> if this item type doesn't have to show any description for the given type of slot.</returns>
 	public override string GetLocalizedDescriptionText(OfferItemSlot.Type _slotType) {
-		// Only in popups
+		// Only in popups and tooltip
 		switch(_slotType) {
 			case OfferItemSlot.Type.TOOLTIP:
 			case OfferItemSlot.Type.POPUP_BIG:

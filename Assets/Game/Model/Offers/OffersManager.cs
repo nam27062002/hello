@@ -793,11 +793,7 @@ public class OffersManager : Singleton<OffersManager> {
 	/// <param name="_p1">First pack to compare.</param>
 	/// <param name="_p2">Second pack to compare.</param>
 	private static int OfferPackComparer(OfferPack _p1, OfferPack _p2) {
-		// If free offer is on cooldown, check if either pack is the active free offer.
-		// It will always go last. <- [AOC] Not anymore since 2.4 - rely only on the "order" field
-
-
-		// Sort by order afterwards
+		// Sort by order first
 		int order = _p1.order.CompareTo(_p2.order);
 		if(order != 0) return order;
 
@@ -906,7 +902,8 @@ public class OffersManager : Singleton<OffersManager> {
     /// <returns>List of offers sorted by order</returns>
     public static List<OfferPack> GetOfferPacksByCategory (ShopCategory _category)
     {
-        List<OfferPack> result = instance.m_activeOffers.Where<OfferPack>(o => o.shopCategory == _category.sku).OrderBy(o => o.order).ToList();
+        List<OfferPack> result = instance.m_activeOffers.Where<OfferPack>(o => o.shopCategory == _category.sku).ToList();
+		result.Sort(OfferPackComparer);
         return result;
     }
 
