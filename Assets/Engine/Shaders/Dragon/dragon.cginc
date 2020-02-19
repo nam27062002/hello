@@ -140,7 +140,7 @@ v2f vert(appdata_t v)
 
 #if defined(VERTEXSCALEZ)
 	float4x4 m = unity_ObjectToWorld;
-	m[2].xyzw *= 0.75;
+	m[2].xyzw *= 0.25;
 	o.vertex = mul(UNITY_MATRIX_VP, mul(m, v.vertex));
 
 #else
