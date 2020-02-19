@@ -1396,6 +1396,7 @@ GameObject:
   - component: {fileID: 114255946334399754}
   - component: {fileID: 95377789754420992}
   - component: {fileID: 114205724355421908}
+  - component: {fileID: 114522945017337374}
   m_Layer: 5
   m_Name: ShopButton
   m_TagString: Untagged
@@ -3358,8 +3359,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 11443130}
-        m_MethodName: OpenCurrencyShopPopup
+      - m_Target: {fileID: 114522945017337374}
+        m_MethodName: OnNavigationButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -5131,6 +5132,18 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
+--- !u!114 &114522945017337374
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1635334971863768}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b14aa7aba6897447d947373a65bfb333, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_targetScreen: 17
 --- !u!114 &114541602362352172
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5181,7 +5194,7 @@ MonoBehaviour:
   m_showIfOwned: 1
   m_checkScreens: 1
   m_mode: 1
-  m_targetScreens: 000000000800000009000000
+  m_targetScreens: 00000000080000000900000011000000
   m_hideDelay: 0
   m_showDelay: 0
   m_restartShowAnimation: 0
@@ -6659,6 +6672,7 @@ MonoBehaviour:
   m_prefabPath: 
   m_anchor: {fileID: 224204697506315210}
   m_offset: {x: 100, y: 0}
+  m_autoHide: 1
   m_keepOriginalPosition: 0
   m_checkScreenBounds: 0
   m_renderOnTop: 1
