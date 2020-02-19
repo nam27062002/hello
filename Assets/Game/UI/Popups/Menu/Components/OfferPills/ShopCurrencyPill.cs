@@ -65,7 +65,7 @@ public class ShopCurrencyPill : ShopMonoRewardPill {
 
     public void InitFromDef(DefinitionNode _def)
     {
-        OfferPack offer = new OfferPack();
+        OfferPackCurrency offer = new OfferPackCurrency();
         offer.InitFromDefinition(_def);
         InitFromOfferPack(offer);
     }

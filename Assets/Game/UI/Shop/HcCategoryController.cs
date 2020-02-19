@@ -234,7 +234,7 @@ public class HcCategoryController : CategoryController
                 string gemsPercentage = String.Format("{0}", Math.Round(percentage));
 
                 // Show texts with offer rate
-                string badgeText = LocalizationManager.SharedInstance.Localize("TID_SHOP_BONUS_AMOUNT", gemsPercentage + "%");
+                string badgeText = LocalizationManager.SharedInstance.Localize("TID_SHOP_BONUS_AMOUNT", gemsPercentage + "%"); 
                 m_happyHourBadgeText.Set(badgeText);
 
                 m_happyHourBadge.SetActive(true);

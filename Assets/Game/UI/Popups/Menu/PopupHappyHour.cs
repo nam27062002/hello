@@ -75,7 +75,7 @@ public class PopupHappyHour : MonoBehaviour {
 
 			// Show texts with offer rate
 			m_descriptionText.text = LocalizationManager.SharedInstance.Localize("TID_HAPPY_HOUR_POPUP_MESSAGE", gemsPercentage);
-			//m_extraGemsRateText.text = LocalizationManager.SharedInstance.Localize("TID_SHOP_BONUS_AMOUNT", gemsPercentage); 
+			m_extraGemsRateText.text = LocalizationManager.SharedInstance.Localize("TID_SHOP_BONUS_AMOUNT", gemsPercentage + "%"); 
 
 			// Show the PC offer in the popup
 			if(_lastPackDef != null && m_offerToDisplay != null) {
