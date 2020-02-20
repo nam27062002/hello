@@ -18,6 +18,7 @@ using System.Diagnostics;
 using UnityEngine;
 using UnityEngine.Events;
 using TMPro;
+using System;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -46,7 +47,8 @@ public class ResourcesFlowMissingPCPopup : MonoBehaviour {
 	// Happy hour banner
 	[Space]
 	[SerializeField] private GameObject m_happyHourPanel;
-	[SerializeField] private TextMeshProUGUI m_happyHourTimer;
+    [SerializeField] private TextMeshProUGUI m_happyHourBadgeText;
+    [SerializeField] private TextMeshProUGUI m_happyHourTimer;
 
 	// Internal
 	private HappyHour m_happyHour; // cached object
@@ -115,9 +117,18 @@ public class ResourcesFlowMissingPCPopup : MonoBehaviour {
 			// If show the happy hour panel only if the offer is active        
 			m_happyHourPanel.SetActive(m_happyHour.IsActive());
 
-			if(m_happyHour.IsActive()) {
-				// Show time left in the proper format (1h 20m 30s)
-				string timeLeft = TimeUtils.FormatTime(m_happyHour.TimeLeftSecs(), TimeUtils.EFormat.ABBREVIATIONS_WITHOUT_0_VALUES, 3);
+            if (m_happyHour.IsActive()) {
+
+                // Convert offer rate to percentage (example: .5f to +50%) 
+                float percentage = m_happyHour.extraGemsFactor * 100;
+                string gemsPercentage = String.Format("{0}", Math.Round(percentage));
+
+                // Show badge with extra rate
+                string badgeText = LocalizationManager.SharedInstance.Localize("TID_SHOP_BONUS_AMOUNT", gemsPercentage + "%");
+                m_happyHourBadgeText.text = badgeText;
+
+                // Show time left in the proper format (1h 20m 30s)
+                string timeLeft = TimeUtils.FormatTime(m_happyHour.TimeLeftSecs(), TimeUtils.EFormat.ABBREVIATIONS_WITHOUT_0_VALUES, 3);
 				if(m_happyHourTimer != null) {
 					m_happyHourTimer.text = timeLeft;
 				}

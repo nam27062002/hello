@@ -317,6 +317,17 @@ public class ShopController : MonoBehaviour {
         SetLayoutGroupsActive(true);
     }
 
+    /// <summary>
+    /// Scroll the viewport to the left border of the shop
+    /// </summary>
+    public void ScrollToStart ()
+    {
+        if (m_pills.Count != 0)
+        {
+            ScrollToItem(m_pills[0].transform);
+        }
+    }
+
 
     /// <summary>
     /// Called at regular intervals.
