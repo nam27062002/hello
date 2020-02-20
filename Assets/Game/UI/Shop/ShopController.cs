@@ -27,8 +27,12 @@ public class ShopController : MonoBehaviour {
     // CONSTANTS															  //
     //------------------------------------------------------------------------//
 
-    private string SHOP_CATEGORIES_CONTAINER_PREFABS_PATH = "UI/Shop/CategoryContainers/";
+    private const string SHOP_CATEGORIES_CONTAINER_PREFABS_PATH = "UI/Shop/CategoryContainers/";
     private const float REFRESH_FREQUENCY = 1f;	// Seconds
+
+    private const string OFFERS_CATEGORY_SKU = "progressionPacks";
+    private const string PC_CATEGORY_SKU = "hcPacks";
+    private const string SC_CATEGORY_SKU = "scPacks";  
 
     //------------------------------------------------------------------------//
     // MEMBERS AND PROPERTIES												  //
@@ -55,6 +59,9 @@ public class ShopController : MonoBehaviour {
     private float m_timer = 0; // Refresh timer
     private bool m_scrolling = false; // The tweener scrolling animation is running
     private float m_scrollViewOffset;
+
+    //Filtering categories
+    private string m_categoryToShow; 
 
     // Cache the category containers and pills
     private List<CategoryController> m_categoryContainers;
@@ -253,6 +260,16 @@ public class ShopController : MonoBehaviour {
     {
         int timer = Environment.TickCount;
 
+        switch (_mode)
+        {
+            case PopupShop.Mode.PC_ONLY:
+                m_categoryToShow = PC_CATEGORY_SKU;
+                break;
+            case PopupShop.Mode.SC_ONLY:
+                m_categoryToShow = SC_CATEGORY_SKU;
+                break;
+        }
+
         Refresh();
 
         Debug.Log("Init time: " + (Environment.TickCount - timer) + " ms");
@@ -273,21 +290,25 @@ public class ShopController : MonoBehaviour {
         // Iterate all the active categories
         foreach (ShopCategory category in OffersManager.instance.activeCategories)
         {
-            // If this cat is active 
-            if (category.enabled)
+            // Filtering categories if needed
+            if (m_categoryToShow == null || category.sku == m_categoryToShow)
             {
-
-                // Get the offer packs that belongs to this category
-                category.offers = OffersManager.GetOfferPacksByCategory(category);
-
-                // Make sure there are offers in this category
-                if (category.offers.Count > 0)
+                // If this cat is active
+                if (category.enabled)
                 {
 
-                    CreateShortcut(category);
+                    // Get the offer packs that belongs to this category
+                    category.offers = OffersManager.GetOfferPacksByCategory(category);
 
-                    // Enqueue the categories so they are initialized one per frame
-                    categoriesToInitialize.Enqueue(category);
+                    // Make sure there are offers in this category
+                    if (category.offers.Count > 0)
+                    {
+
+                        CreateShortcut(category);
+
+                        // Enqueue the categories so they are initialized one per frame
+                        categoriesToInitialize.Enqueue(category);
+                    }
                 }
             }
         }

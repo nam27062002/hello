@@ -39,9 +39,9 @@ public class ResourcesFlowMissingPCPopup : MonoBehaviour {
 	[SerializeField] private ShopCurrencyPill m_recommendedPackPill = null;
 
 	// Events
-	public UnityEvent OnRecommendedPackPurchased = new UnityEvent();
-	public UnityEvent OnGoToShop = new UnityEvent();
-	public UnityEvent OnCancel = new UnityEvent();
+	[System.NonSerialized] public UnityEvent OnRecommendedPackPurchased = new UnityEvent();
+    [System.NonSerialized] public UnityEvent OnGoToShop = new UnityEvent();
+    [System.NonSerialized] public UnityEvent OnCancel = new UnityEvent();
 
 	// Happy hour banner
 	[Space]
