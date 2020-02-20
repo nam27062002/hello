@@ -17,25 +17,47 @@ using UnityEngine;
 /// </summary>
 [RequireComponent(typeof(ShopController))]
 public class ShopScreenController : MonoBehaviour {
-	//------------------------------------------------------------------------//
-	// CONSTANTS															  //
-	//------------------------------------------------------------------------//
-	
-	//------------------------------------------------------------------------//
-	// MEMBERS AND PROPERTIES												  //
-	//------------------------------------------------------------------------//
-	
-	//------------------------------------------------------------------------//
-	// GENERIC METHODS														  //
-	//------------------------------------------------------------------------//
-	
-	/// <summary>
-	/// First update call.
-	/// </summary>
-	private void Start() {
-        
+    //------------------------------------------------------------------------//
+    // CONSTANTS															  //
+    //------------------------------------------------------------------------//
+
+    //------------------------------------------------------------------------//
+    // MEMBERS AND PROPERTIES												  //
+    //------------------------------------------------------------------------//
+    private MenuTransitionManager m_transitionManager;
+
+
+    //------------------------------------------------------------------------//
+    // GENERIC METHODS														  //
+    //------------------------------------------------------------------------//
+
+    /// <summary>
+    /// First update call.
+    /// </summary>
+    protected void Start()
+    {
+        // Get a reference to the navigation system, which in this particular case should be a component in the menu scene controller
+        m_transitionManager = InstanceManager.menuSceneController.transitionManager;
+        Debug.Assert(m_transitionManager != null, "Required component missing!");
+
         // Initialize the shop
         GetComponent<ShopController>().Init(PopupShop.Mode.DEFAULT);
+    }
+
+    /// <summary>
+    /// On Enabled
+    /// </summary>
+    private void OnEnable() {
+
+        if (m_transitionManager.prevScreen == MenuScreen.PENDING_REWARD)
+        {
+            // Do nothing. Let the shop to be opened in the same position that it was before the purchase.
+        }
+        else
+        {
+            // Move the scroll to the begining of the shop.
+            GetComponent<ShopController>().ScrollToStart();
+        }
 
 	}
 

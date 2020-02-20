@@ -496,7 +496,6 @@ GameObject:
   - component: {fileID: 224639419896566122}
   - component: {fileID: 222534227942691166}
   - component: {fileID: 114837670009098506}
-  - component: {fileID: 114100408433220784}
   m_Layer: 5
   m_Name: BonusAmountText
   m_TagString: Untagged
@@ -1498,20 +1497,6 @@ MonoBehaviour:
     m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: "\u20B9 400.00"
---- !u!114 &114100408433220784
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1429593710887034}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_tid: 
-  m_caseType: 1
-  m_replacements: []
 --- !u!114 &114110425173583164
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2425,7 +2410,7 @@ MonoBehaviour:
   m_priceButtonGroup: {fileID: 114344292230645150}
   m_loadingPricePlaceholder: {fileID: 1634451931980908}
   m_offerItemSlot: {fileID: 114585140213560152}
-  m_bonusAmountText: {fileID: 114100408433220784}
+  m_bonusAmountText: {fileID: 0}
   m_happyHourButtonFx: {fileID: 0}
 --- !u!114 &114459163829554188
 MonoBehaviour:
@@ -2586,6 +2571,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_recommendedPackPill: {fileID: 114442553021957060}
   m_happyHourPanel: {fileID: 1388417535065426}
+  m_happyHourBadgeText: {fileID: 114837670009098506}
   m_happyHourTimer: {fileID: 0}
 --- !u!114 &114662665945403124
 MonoBehaviour:
