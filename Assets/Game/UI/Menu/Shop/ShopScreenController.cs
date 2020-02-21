@@ -42,6 +42,8 @@ public class ShopScreenController : MonoBehaviour {
 
         // Initialize the shop
         GetComponent<ShopController>().Init(PopupShop.Mode.DEFAULT);
+
+
     }
 
     /// <summary>
@@ -59,7 +61,10 @@ public class ShopScreenController : MonoBehaviour {
             GetComponent<ShopController>().ScrollToStart();
         }
 
-	}
+        // In case the shop popup is waiting to open, cancel it
+        InstanceManager.menuSceneController.interstitialPopupsController.SetFlag(MenuInterstitialPopupsController.StateFlag.OPEN_SHOP, false);
+
+    }
 
 
 	//------------------------------------------------------------------------//
