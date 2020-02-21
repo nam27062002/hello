@@ -53,6 +53,7 @@ public class ShopMonoRewardPill : ShopBasePill {
 
         base.InitFromOfferPack(_pack);
 
+
 		// There is only one item to initialized in monoRewards
         if (m_offerItemSlot != null)
         {
@@ -61,6 +62,13 @@ public class ShopMonoRewardPill : ShopBasePill {
             // [AOC] We do this because initializing the slots at the same time
             //		 that the popup is being instantiated results in weird behaviours
             m_offerItemSlot.InitFromItem(null);
+
+            if (m_pack == null)
+            {
+                // we user m_pack = null when we want to hide the pill
+                return;
+            }
+
             if (m_pack.items !=null && m_pack.items.Count > 0 && m_pack.items[0] != null)
             {
                 OfferPackItem item = m_pack.items[0];
