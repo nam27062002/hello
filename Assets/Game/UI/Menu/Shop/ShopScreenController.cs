@@ -49,7 +49,7 @@ public class ShopScreenController : MonoBehaviour {
     /// </summary>
     private void OnEnable() {
 
-        if (m_transitionManager.prevScreen == MenuScreen.PENDING_REWARD)
+        if (m_transitionManager!= null && m_transitionManager.prevScreen == MenuScreen.PENDING_REWARD)
         {
             // Do nothing. Let the shop to be opened in the same position that it was before the purchase.
         }

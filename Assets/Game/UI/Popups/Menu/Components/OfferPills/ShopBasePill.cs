@@ -129,14 +129,16 @@ public class ShopBasePill : IShopPill {
 	/// </summary>
 	/// <param name="_pack">Pack.</param>
 	public override void InitFromOfferPack(OfferPack _pack) {
-		// Clear collections - will be filled by derived classes
-		m_itemsToSet.Clear();
+
+        // Store new pack
+        m_pack = _pack;
+        m_def = null;
+
+        // Clear collections - will be filled by derived classes
+        m_itemsToSet.Clear();
 		m_slotsToSet.Clear();
 		m_activeSlots.Clear();
 
-		// Store new pack
-		m_pack = _pack;
-		m_def = null;
 
 		// If null, or pack is not a ctive, hide this pill and return
 		if(m_pack == null || !m_pack.isActive) {
