@@ -784,7 +784,8 @@ public class PersistenceCloudDriver
     {
         get
         {
-            return PersistencePrefs.IsCloudSaveEnabled;
+			//return PersistencePrefs.IsCloudSaveEnabled;
+			return true;	// As of 2.10, cloud save is always enabled (players no longer have the toggle to disable it)
         }
 
         set
