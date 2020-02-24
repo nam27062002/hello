@@ -8,7 +8,7 @@ Material:
   m_PrefabInternal: {fileID: 0}
   m_Name: dragon_bug_1_disguise
   m_Shader: {fileID: 4800000, guid: 2345015ac46679e4cb5817ed44c82547, type: 3}
-  m_ShaderKeywords: FRESNEL NORMALMAP SPECULAR
+  m_ShaderKeywords: FRESNEL NORMALMAP SPECULAR VERTEXOFFSET VERTEXOFFSETX VERTEXOFFSETY
   m_LightmapFlags: 1
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -70,20 +70,37 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Floats:
     - FXLayer: 0
+    - ReflectionType: 0
     - SelfIlluminate: 0
     - _BlendMode: 0
     - _BumpScale: 1
+    - _ColorRampAmount: 0
+    - _ColorRampID0: 0
+    - _ColorRampID1: 0
     - _Cull: 2
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
+    - _DissolveAmount: 0
+    - _DissolveLowerLimit: -1
+    - _DissolveMargin: 0.1
+    - _DissolveUpperLimit: 1
     - _DstBlend: 0
+    - _EnableBlendFresnel: 0
     - _EnableCutoff: 0
+    - _EnableDiffuseAsSpecMask: 0
     - _EnableDoublesided: 0
     - _EnableFresnel: 1
-    - _EnableNormalMap: 0
+    - _EnableNormalMap: 1
+    - _EnableOpaqueFresnel: 0
+    - _EnableOpaqueSpecular: 0
     - _EnableSilhouette: 0
     - _EnableSpecular: 1
+    - _EnableVertexOffset: 1
+    - _EnableVertexOffsetX: 1
+    - _EnableVertexOffsetY: 1
+    - _EnableVertexOffsetZ: 0
     - _FireAmount: 0
+    - _FireSpeed: 1
     - _Fresnel: 1.41
     - _GlossMapScale: 1
     - _Glossiness: 0.5
@@ -103,6 +120,8 @@ Material:
     - _SrcBlend: 1
     - _StencilMask: 10
     - _UVSec: 0
+    - _VOAmplitude: 0.2
+    - _VOSpeed: 5
     - _ZWrite: 1
     m_Colors:
     - _AmbientAdd: {r: 0, g: 0, b: 0, a: 0}
@@ -111,6 +130,7 @@ Material:
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _FresnelColor: {r: 0.52205884, g: 0.52205884, b: 0.52205884, a: 1}
     - _InnerLightColor: {r: 0, g: 0, b: 0, a: 1}
+    - _ReflectionColor: {r: 1, g: 1, b: 1, a: 1}
     - _SecondLightColor: {r: 0.32352942, g: 0.49979714, b: 0.64705884, a: 0}
     - _SecondLightDir: {r: -11.89, g: -9.99, b: -1.73, a: -45.47}
     - _Tint: {r: 1, g: 1, b: 1, a: 1}

@@ -481,6 +481,7 @@ public class CPProgressionCheats : MonoBehaviour {
     /// </summary>
     public void OnEndHappyHour()
     {
-        OffersManager.instance.happyHour.EndOffer();
+        OffersManager.happyHourManager.happyHour.Finish();
+		OffersManager.happyHourManager.Save();
     }
 }

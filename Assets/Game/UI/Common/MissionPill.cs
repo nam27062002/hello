@@ -562,18 +562,6 @@ public class MissionPill : MonoBehaviour, IBroadcastListener {
     {
         if (m_mission == null) return;
 
-        // Ignore if offline
-        if (DeviceUtilsManager.SharedInstance.internetReachability == NetworkReachability.NotReachable)
-        {
-            // Show some feedback
-            UIFeedbackText.CreateAndLaunch(
-                LocalizationManager.SharedInstance.Localize("TID_AD_ERROR"),
-                new Vector2(0.5f, 0.33f),
-                this.GetComponentInParent<Canvas>().transform as RectTransform
-            );
-            return;
-        }
-
         // Instead of showing the ad video, we directly give the reward to the player
         OnVideoRewardCallback(true);
     }
