@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Serialization;
 using TMPro;
 using FGOL.Server;
 
@@ -26,13 +27,6 @@ using FGOL.Server;
 public class PopupSettingsSaveTab : MonoBehaviour
 {
     private const string TID_LOADING = "TID_GEN_LOADING";
-    private const string TID_CLOUD_DESC = "TID_SAVE_CLOUD_DESC";
-    private const string TID_CLOUD_DESC_LOGGED = "TID_SAVE_CLOUD_LOGGED_DESC";
-    private const string TID_SOCIAL_LOGIN_MAINMENU_INCENTIVIZED = "TID_SOCIAL_LOGIN_MAINMENU_INCENTIVIZED";
-    private const string TID_SOCIAL_PERM_MAINMENU_INCENTIVIZED = "TID_SOCIAL_PERM_MAINMENU_INCENTIVIZED";
-    private const string TID_SOCIAL_PERM_MAINMENU = "TID_SOCIAL_PERM_MAINMENU";
-    private const string TID_OPTIONS_USERPROFILE_LOG_RECEIVE = "TID_SOCIAL_USERPROFILE_LOG_RECEIVE";
-    private const string TID_OPTIONS_USERPROFILE_LOG_NETWORK = "TID_SOCIAL_USERPROFILE_LOG_NETWORK";
 
 #if UNITY_ANDROID
 	private const string TID_LOGIN_ERROR = "TID_GOOGLE_PLAY_AUTH_ERROR";
@@ -44,7 +38,13 @@ public class PopupSettingsSaveTab : MonoBehaviour
 
     private bool Shown { get; set; }
 
-    void Awake()
+	//------------------------------------------------------------------------//
+	// GENERIC METHODS														  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// 
+	/// </summary>
+	void Awake()
     {            
 		Model_Init();
 		Social_Init();
@@ -54,7 +54,10 @@ public class PopupSettingsSaveTab : MonoBehaviour
 		GameCenter_Init();
         Shown = false;
     }
-	
+
+	/// <summary>
+	/// 
+	/// </summary>
 	public void OnShow(){
         Shown = true;
 
@@ -66,6 +69,9 @@ public class PopupSettingsSaveTab : MonoBehaviour
 		Messenger.AddListener(MessengerEvents.GOOGLE_PLAY_STATE_UPDATE, RefreshGooglePlayView);
 	}
 
+	/// <summary>
+	/// 
+	/// </summary>
     public void OnHide(){
         if (Shown){
             Shown = false;
@@ -78,41 +84,62 @@ public class PopupSettingsSaveTab : MonoBehaviour
         }
     }    
 
+	/// <summary>
+	/// 
+	/// </summary>
     void OnDestroy() {
         if (Shown) {
             OnHide();
         }
     }
 
+	/// <summary>
+	/// 
+	/// </summary>
     void OnEnable()
     {        
         RefreshView();
     }            
-    
+
+	/// <summary>
+	/// 
+	/// </summary>
     private void RefreshView()
     {
         Model_Refresh();
         User_Refresh();
         Social_Refresh();
         Resync_Refresh();
-        Cloud_Refresh();
     }
 
+	/// <summary>
+	/// 
+	/// </summary>
     private bool IsLoadingPopupOpen { get; set; }
 
+	/// <summary>
+	/// 
+	/// </summary>
     private void OpenLoadingPopup()
     {
         IsLoadingPopupOpen = true;
         PersistenceFacade.Popups_OpenLoadingPopup();
     }
 
+	/// <summary>
+	/// 
+	/// </summary>
     private void CloseLoadingPopup()
     {
         IsLoadingPopupOpen = false;
         PersistenceFacade.Popups_CloseLoadingPopup();
-    }    
+    }
 
-	#region gamecenter
+	//------------------------------------------------------------------------//
+	// GAME PLATFORM SECTION												  //
+	//------------------------------------------------------------------------//
+	#region game_platform
+	[Separator("Game Platform")]
 	[SerializeField] private GameObject m_googlePlayGroup = null;
 	[SerializeField] private GameObject m_googlePlayLoginButton = null;
 	[SerializeField] private GameObject m_googlePlayLogoutButton = null;
@@ -122,6 +149,9 @@ public class PopupSettingsSaveTab : MonoBehaviour
 
 	private PopupController m_loadingPopupController = null;
 
+	/// <summary>
+	/// 
+	/// </summary>
 	private void GameCenter_Init() {
 		// Disable google play group if not available
 		#if UNITY_ANDROID
@@ -136,6 +166,9 @@ public class PopupSettingsSaveTab : MonoBehaviour
 		#endif
 	}	
 
+	/// <summary>
+	/// 
+	/// </summary>
 	public void RefreshGooglePlayView(){
 
 		#if UNITY_ANDROID
@@ -157,10 +190,16 @@ public class PopupSettingsSaveTab : MonoBehaviour
 
 	}
 
+	/// <summary>
+	/// 
+	/// </summary>
 	public void GooglePlayAuthCancelled(){
 		RefreshGooglePlayView();
 	}
 
+	/// <summary>
+	/// 
+	/// </summary>
 	public void GooglePlayAuthFailed(){
 		RefreshGooglePlayView();
 
@@ -168,6 +207,9 @@ public class PopupSettingsSaveTab : MonoBehaviour
 		UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize(TID_LOGIN_ERROR), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
 	}
 
+	/// <summary>
+	/// 
+	/// </summary>
 	public void OnGooglePlayLogIn(){
 		if (!ApplicationManager.instance.GameCenter_IsAuthenticated()){
 
@@ -196,6 +238,9 @@ public class PopupSettingsSaveTab : MonoBehaviour
 		}
 	}
 
+	/// <summary>
+	/// 
+	/// </summary>
 	public void OnGooglePlayLogOut()
 	{
 		if (ApplicationManager.instance.GameCenter_IsAuthenticated())
@@ -216,6 +261,9 @@ public class PopupSettingsSaveTab : MonoBehaviour
 		}
 	}
 
+	/// <summary>
+	/// 
+	/// </summary>
 	private void OnLogOutGooglePlay()
 	{
 		if (ApplicationManager.instance.GameCenter_IsAuthenticated())
@@ -224,6 +272,9 @@ public class PopupSettingsSaveTab : MonoBehaviour
 		}
 	}
 
+	/// <summary>
+	/// 
+	/// </summary>
 	public void OnGooglePlayAchievements(){
 		if (ApplicationManager.instance.GameCenter_IsAuthenticated()){
 			// Add some delay to give enough time for SFX to be played before losing focus
@@ -236,74 +287,62 @@ public class PopupSettingsSaveTab : MonoBehaviour
 	}
 	#endregion
 
-    #region social
-    // This region is responsible for handling social stuff
-
+	//------------------------------------------------------------------------//
+	// SOCIAL LOGIN AND CLOUD SAVE SECTION									  //
+	//------------------------------------------------------------------------//
+	#region social
+	// This region is responsible for handling social stuff
+	[Separator("Social")]
+	[SerializeField] private GameObject m_socialNotLoggedInRoot = null;
+    [SerializeField] private GameObject m_socialLoggedInRoot = null;
 	[Space]
-    [SerializeField]
-    private Button m_socialEnableBtn;
+	// User profile GameObject to use when the user has never logged in. It encourages the user to log in
+	[FormerlySerializedAs("m_userNotLoggedInRoot")]
+	[SerializeField] private GameObject m_loginRewardRoot = null;
+	[SerializeField] private Localizer m_loginRewardtext = null;
+	[SerializeField] private UISocialSetup m_logoutIcon = null;
 
-    [SerializeField]
-    private GameObject m_socialLogoutBtn;
-    
-    /// <summary>
-    /// Label below the social button describing the current connection
-    /// </summary>
-    [SerializeField]    
-    private Localizer m_socialMessageText;
-
-    private void Social_Init()
-    {        
-        m_socialMessageText.gameObject.SetActive(false);
-        m_socialEnableBtn.gameObject.SetActive(true);
-        m_socialEnableBtn.interactable = false;
-        m_socialLogoutBtn.SetActive(false);
+	/// <summary>
+	/// 
+	/// </summary>
+	private void Social_Init()
+    {
+		m_socialNotLoggedInRoot.SetActive(true);
+		m_socialLoggedInRoot.SetActive(false);
     }
 
+	/// <summary>
+	/// 
+	/// </summary>
     private void Social_Refresh()
     {        
         bool isLoggedIn = Model_SocialIsLoggedIn();
-        bool isCloudSaveEnabled = Model_SaveIsCloudSaveEnabled();        
-        if (isLoggedIn)
-        {            
-            m_socialEnableBtn.gameObject.SetActive(false);         
-            m_socialEnableBtn.interactable = isCloudSaveEnabled;                        
-            m_socialLogoutBtn.SetActive(true);
-        }
-        else
-        {
-            // not logged in to any network            
-            m_socialEnableBtn.gameObject.SetActive(true);
-            m_socialEnableBtn.interactable = true;
-            m_socialLogoutBtn.SetActive(false);
-        }
+		m_socialNotLoggedInRoot.SetActive(!isLoggedIn);
+		m_socialLoggedInRoot.SetActive(isLoggedIn);
 
-        string localizedName = SocialPlatformManager.SharedInstance.GetPlatformName();
-        if (localizedName != null)
-        {
-            m_userNotLoggedInMessageText.Localize(TID_OPTIONS_USERPROFILE_LOG_RECEIVE, localizedName);
-            m_userPreviouslyLoggedInMessageText.Localize(TID_OPTIONS_USERPROFILE_LOG_NETWORK, localizedName);
-
-            m_socialMessageText.gameObject.SetActive(true);
-
-            // if logged in and the cloud save is enabled...
-            if (Model_SocialIsLoggedIn() && Model_SaveIsCloudSaveEnabled())
-            {
-                // ... show an advice about cloud save.
-                m_socialMessageText.Localize(TID_CLOUD_DESC_LOGGED, localizedName);
-            }
-            else
-            {
-                // else use a generic string.
-                m_socialMessageText.Localize(TID_CLOUD_DESC, localizedName);
-            }            
-        }        
+		if(m_logoutIcon != null) {
+			m_logoutIcon.Refresh();
+		}
     }
 
-    /// <summary>
-    /// Callback called by the player when the user clicks on log in the social network
-    /// </summary>
-    public void Social_Login()
+	/// <summary>
+	/// Callback called by the player when the user clicks on log in the social network.
+	/// Because Unity doesn't allow button callbacks to have Enum as parameter, create
+	/// a wrapper method for each platform.
+	/// </summary>
+	public void Social_OnLoginButton_Facebook() {
+		Social_OnLoginButton(SocialUtils.EPlatform.Facebook);
+	}
+
+	public void Social_OnLoginButton_Weibo() {
+		Social_OnLoginButton(SocialUtils.EPlatform.Weibo);
+	}
+
+	public void Social_OnLoginButton_Apple() {
+		//Social_OnLoginButton(SocialUtils.EPlatform.Apple);	// [AOC] TODO!! SIWA
+	}
+
+	public void Social_OnLoginButton(SocialUtils.EPlatform _platform)
     {
         // [DGR] ANALYTICS: Not supported yet
         // HSXAnalyticsManager.Instance.loginContext = "OptionsLogin";
@@ -330,7 +369,6 @@ public class PopupSettingsSaveTab : MonoBehaviour
         PersistenceFacade.instance.Sync_FromSettings(onDone);        
     }
    
-
     /// <summary>
     /// Callback called by the player when the user clicks on log out from the social network
     /// </summary>
@@ -355,80 +393,167 @@ public class PopupSettingsSaveTab : MonoBehaviour
             LogError("LOGIN: Not logged in to " ); 
         }        
     }
-    #endregion
+	#endregion
 
-    #region cloud
-    [SerializeField]
-    private Slider m_cloudEnableSlider;
+	//------------------------------------------------------------------------//
+	// USER PROFILE SECTION													  //
+	//------------------------------------------------------------------------//
+	#region user
+	[Separator("User Info")]
+	// User profile GameObject to use when the user is logged in. It shows user's profile information
+	[FormerlySerializedAs("m_userLoggedInRoot")]
+	[SerializeField] private GameObject m_userInfoRoot = null;
+	[SerializeField] private Image m_userAvatarImage = null;
+	[SerializeField] private Image m_userAvatarPlaceholderImage = null;
+	[SerializeField] private Text m_userNameText = null;
 
-    [SerializeField]
-    private Button m_cloudEnableButton;
+	private bool User_IsAvatarLoaded { get; set; }
+	private string User_NameLoaded { get; set; }
+	private EState User_LastState { get; set; }
 
-    /// <summary>
-    /// Callback called by the player when the user clicks on enable/disable the cloud save
-    /// </summary>
-    public void Cloud_OnChangeSaveEnable()
-    {        
-        PersistenceFacade.instance.IsCloudSaveEnabled = m_cloudEnableSlider.value == 1;
-        Resync_Refresh();    
-    }   
-    
-    private void Cloud_Refresh()
-    {        
-		bool isOn = Model_SocialIsLoggedIn();
-        bool isSaveEnabled = Model_SaveIsCloudSaveEnabled();
+	/// <summary>
+	/// 
+	/// </summary>
+	private void User_Init() {
+		User_NameLoaded = null;
+		User_IsAvatarLoaded = false;
 
-		m_cloudEnableSlider.value = (isSaveEnabled && isOn) ? 1 : 0;
-        m_cloudEnableSlider.interactable = isOn;
-        m_cloudEnableButton.interactable = isOn;
-    }    
-
-	public void Cloud_OnToggle() {
-		if(m_cloudEnableSlider.value > 0) {
-			m_cloudEnableSlider.value = 0;
-		} else {
-			m_cloudEnableSlider.value = 1;
-		}
-		Cloud_OnChangeSaveEnable();
+		// Nothing is shown
+		m_loginRewardRoot.SetActive(false);
+		m_userInfoRoot.SetActive(false);
+		User_LastState = EState.None;
 	}
 
-    
+	/// <summary>
+	/// 
+	/// </summary>
+	private void User_Reset() {
+		User_Init();
+	}
 
-    #endregion
+	/// <summary>
+	/// 
+	/// </summary>
+	private void User_Refresh() {
+		if(User_LastState != Model_State) {
+			bool needsToLoadProfile = (Model_HasBeenLoaded(Model_State) && !Model_HasBeenLoaded(User_LastState)) ||
+									   SocialPlatformManager.SharedInstance.NeedsProfileInfoToBeUpdated() ||
+									   (string.IsNullOrEmpty(User_NameLoaded) && Model_State != EState.NeverLoggedIn);
 
-    #region resync
-    [SerializeField]
-    private Button m_resyncButton;
+			bool needsSocialIdToBeUpdated = SocialPlatformManager.SharedInstance.NeedsSocialIdToBeUpdated();
+
+			User_LastState = Model_State;
+
+			m_userInfoRoot.SetActive(false);
+			m_loginRewardRoot.SetActive(false);
+
+			if(needsToLoadProfile) {
+				User_LoadProfileInfo(needsSocialIdToBeUpdated);
+			}
+
+			switch(Model_State) {
+				case EState.LoggedIn:
+				case EState.LoggedInAndIncentivised:
+				case EState.PreviouslyLoggedIn:
+					User_UpdateLoggedInRoot();
+
+					if(needsSocialIdToBeUpdated) {
+						m_userAvatarImage.gameObject.SetActive(false);
+						m_userAvatarPlaceholderImage.gameObject.SetActive(true);
+					}
+				break;
+
+				case EState.NeverLoggedIn:
+					if(FeatureSettingsManager.instance.IsIncentivisedLoginEnabled()) {
+						m_loginRewardRoot.SetActive(true);
+						m_loginRewardtext.gameObject.SetActive(true);
+						PersistenceFacade.Texts_LocalizeIncentivizedSocial(m_loginRewardtext);
+					}
+				break;
+			}
+		}
+	}
+
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <param name="needsToUpdateSocialId"></param>
+	private void User_LoadProfileInfo(bool needsToUpdateSocialId) {
+		if(needsToUpdateSocialId) {
+			m_userNameText.text = LocalizationManager.SharedInstance.Get(TID_LOADING);
+		}
+
+		Action<string, Texture2D> onDone = delegate (string userName, Texture2D profileImage) {
+			User_NameLoaded = userName;
+
+			User_UpdateLoggedInRoot();
+
+			if(!string.IsNullOrEmpty(userName) && m_userNameText != null) {
+				m_userNameText.text = userName;
+			}
+
+			if(profileImage != null) {
+				User_IsAvatarLoaded = true;
+
+				Sprite sprite = Sprite.Create(profileImage, new Rect(0, 0, profileImage.width, profileImage.height), new Vector2(0.5f, 0.0f), 1.0f);
+				m_userAvatarImage.sprite = sprite;
+				m_userAvatarImage.color = Color.white;
+				m_userAvatarImage.gameObject.SetActive(true);
+				m_userAvatarPlaceholderImage.gameObject.SetActive(false);
+			} else if(!User_IsAvatarLoaded) {
+				m_userAvatarImage.gameObject.SetActive(false);
+				m_userAvatarPlaceholderImage.gameObject.SetActive(true);
+			}
+		};
+
+		// Profile picture and name are hidden until the updated information is receiveds
+		m_loginRewardRoot.SetActive(false);
+		SocialPlatformManager.SharedInstance.GetSimpleProfileInfo(onDone);
+	}
+
+	/// <summary>
+	/// 
+	/// </summary>
+	private void User_UpdateLoggedInRoot() {
+		// Picture and name are shown only if the name is valid
+		if(m_userInfoRoot != null) {
+			m_userInfoRoot.SetActive(!string.IsNullOrEmpty(User_NameLoaded));
+		}
+	}
+	#endregion
+
+	//------------------------------------------------------------------------//
+	// CLOUD SAVE RESYNC LOGIC												  //
+	//------------------------------------------------------------------------//
+	#region resync
+	[Separator("Cloud Save")]
+	[SerializeField] private Button m_resyncButton = null;	// [AOC] Could be removed since CloudSave can no longer be disabled once logged in
 
     private bool Resync_IsRunning { get; set; }
 
+	/// <summary>
+	/// 
+	/// </summary>
     private void Resync_Init()
     {
         Resync_IsRunning = false;
     }
 
+	/// <summary>
+	/// 
+	/// </summary>
     private void Cloud_Reset()
     {
         Resync_IsRunning = false;
     }
 
+	/// <summary>
+	/// 
+	/// </summary>
     private void Resync_Refresh()
     {
         m_resyncButton.interactable = Model_SaveIsCloudSaveEnabled() && Model_SocialIsLoggedIn();        
-    }
-
-    private bool Resync_IsEnabled
-    {
-        get
-        {
-            return m_resyncButton.interactable;
-        }
-
-        set
-        {
-            m_resyncButton.interactable = value;
-        }
-    }    
+    } 
 
     /// <summary>
     /// Callback called by the player when the user clicks on the Sync save data button
@@ -442,7 +567,6 @@ public class PopupSettingsSaveTab : MonoBehaviour
             {
                 CloseLoadingPopup();
                 Resync_IsRunning = false;
-                Cloud_Refresh();
                 RefreshView();                
             };
 
@@ -450,279 +574,37 @@ public class PopupSettingsSaveTab : MonoBehaviour
             PersistenceFacade.instance.Sync_FromSettings(onDone);
         }
     }
-    #endregion
-    
-    #region IAP_restore
+	#endregion
 
-    [SerializeField]
-    private Button m_restoreIAPButton;
+	//------------------------------------------------------------------------//
+	// IAP RESTORE LOGIC													  //
+	//------------------------------------------------------------------------//
+	#region IAP_restore
+	[Separator("IAP Restore")]
+	[SerializeField] private GameObject m_restoreIAP_IOSLayout = null;
+	[SerializeField] private GameObject m_restoreIAP_AndroidLayout = null;
 
+	/// <summary>
+	/// 
+	/// </summary>
     private void IAP_restore_Init()
     {
-        #if UNITY_IOS || UNITY_EDITOR
-             m_restoreIAPButton.gameObject.SetActive(true);
-        #else
-            // We dont restore IAPs in google Play store
-            m_restoreIAPButton.gameObject.SetActive(false);
-        #endif
-    }
+		// Different layouts based on platform
+#if UNITY_IOS || UNITY_EDITOR
+		m_restoreIAP_IOSLayout.SetActive(true);
+		m_restoreIAP_AndroidLayout.SetActive(false);
+#else
+		m_iOSLayout.SetActive(false);
+		m_AndroidLayout.SetActive(true);
+#endif
+	}
+	#endregion
 
-    /// <summary>
-    /// The user pressed the "Restore Remove Ads" button in the SAVE tab
-    /// </summary>
-    public void IAP_RestorePurchases()
-    {
-
-        if (UsersManager.currentUser.removeAds.IsActive)
-        {
-            // The user already has the "remove ads" offer, so just show a message
-            UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_PURCHASES_ALREADY_RESTORED"), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
-            return;
-        }
-
-        // Check if there's connection
-        GameServerManager.SharedInstance.CheckConnection(delegate (Error connectionError)
-        {
-            if (connectionError == null)
-            {
-                // Success!
-
-                // Call to the store to restore the purchases
-                OpenLoadingPopup();
-                GameStoreManager.SharedInstance.RestorePurchases(OnRestorePurchasesCompleted);
-            }
-            else
-            {
-                // Failed to find an internet connection. Show a connection error message
-                UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_GEN_NO_CONNECTION"), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
-
-            }
-        });
-
-    }
-
-
-    /// <summary>
-    /// Callback of the restore purchases operation
-    /// </summary>
-	/// <param name="error">A non null value with the error information when an error occurred when restoring purchases. A null value when everything went ok</param>
-    /// <param name="productIds"></param>
-	private void OnRestorePurchasesCompleted(string error, List<string> productIds)
-    {		
-        // The loading popup is still open!
-        CloseLoadingPopup();
-
-		if (!string.IsNullOrEmpty(error))
-		{
-			PersistenceFacade.Popups_OpenStoreErrorConnection(delegate ()
-				{
-					Log("ERROR connecting to the store... ");
-				});
-			return;
-		}
-
-		List<Metagame.Reward> rewards = new List<Metagame.Reward> ();
-		int count = productIds.Count;
-		for (int i = 0; i < count; i++) 
-		{
-			UbiListUtils.AddRange(rewards, Metagame.Reward.GetRewardsFromIAP(productIds[i]), false, true);
-		}
-
-		count = UsersManager.currentUser.PushRewards (rewards);
-		if (count > 0)
-        {
-
-            // Return to selection screen and show peding rewards
-            // Close all open popups
-            PopupManager.Clear(true);
-
-            // Move to the rewards screen
-            PendingRewardScreen scr = InstanceManager.menuSceneController.GetScreenData(MenuScreen.PENDING_REWARD).ui.GetComponent<PendingRewardScreen>();
-            scr.StartFlow(false);   // No intro
-            InstanceManager.menuSceneController.GoToScreen(MenuScreen.PENDING_REWARD);
-
-        }
-        else
-        {
-            UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_NOTHING_TO_RESTORE"), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
-        }
-    }
-
-#endregion
-
-#region user
-
-    /// <summary>
-    /// User profile GameObject to use when the user has never logged in. It encourages the user to log in
-    /// </summary>
-    [SerializeField]
-    private GameObject m_userNotLoggedInRoot;
-
-    /// <summary>
-    /// User profile GameObject to use when the user is logged in. It shows user's profile information
-    /// </summary>
-    [SerializeField]
-    private GameObject m_userLoggedInRoot;
-
-    /// <summary>
-    /// User profile GameObject to use when the user is not logged in but she logged in previously
-    /// </summary>
-    [SerializeField]
-    private GameObject m_userPreviouslyLoggedInRoot;
-
-    [SerializeField]
-    private Image m_userAvatarImage;
-
-	[SerializeField]
-	private Image m_userAvatarPlaceholderImage;
-
-    [SerializeField]
-	private Text m_userNameText;
-    
-    [SerializeField]
-    private Localizer m_userNotLoggedInMessageText;
-
-    [SerializeField]
-    private Localizer m_userNotLoggedInRewardText;
-
-    [SerializeField]
-    private Localizer m_userPreviouslyLoggedInMessageText;    
-
-    private bool User_IsAvatarLoaded { get; set; }
-
-    private string User_NameLoaded { get; set; }
-
-    private EState User_LastState { get; set; }    
-
-    private void User_Init()
-    {
-        User_NameLoaded = null;
-        User_IsAvatarLoaded = false;
-
-        // Nothing is shown
-        m_userNotLoggedInRoot.SetActive(false);
-        m_userLoggedInRoot.SetActive(false);
-        m_userPreviouslyLoggedInRoot.SetActive(false);
-        User_LastState = EState.None;
-    }
-
-    private void User_Reset()
-    {
-        User_Init();                
-    }
-    
-    private void User_Refresh()
-    {
-        if (User_LastState != Model_State)
-        {
-            bool needsToLoadProfile = (Model_HasBeenLoaded(Model_State) && !Model_HasBeenLoaded(User_LastState)) ||
-                                       SocialPlatformManager.SharedInstance.NeedsProfileInfoToBeUpdated() || 
-                                       (string.IsNullOrEmpty(User_NameLoaded) && Model_State != EState.NeverLoggedIn);
-
-            bool needsSocialIdToBeUpdated = SocialPlatformManager.SharedInstance.NeedsSocialIdToBeUpdated();
-
-            User_LastState = Model_State;
-
-            m_userLoggedInRoot.SetActive(false);
-            m_userNotLoggedInRoot.SetActive(false);
-            m_userPreviouslyLoggedInRoot.SetActive(false);            
-
-            if (needsToLoadProfile)
-            {
-                User_LoadProfileInfo(needsSocialIdToBeUpdated);
-            }
-
-            switch (Model_State)
-            {
-                case EState.LoggedIn:
-                case EState.LoggedInAndIncentivised:
-                case EState.PreviouslyLoggedIn:
-                    User_UpdateLoggedInRoot();
-
-                    if (needsSocialIdToBeUpdated)
-                    {
-                        m_userAvatarImage.gameObject.SetActive(false);
-						m_userAvatarPlaceholderImage.gameObject.SetActive(true);
-                    }
-                    //m_profileSpinner.SetActive(true);                    
-                    break;
-                
-                case EState.NeverLoggedIn:
-                    if (FeatureSettingsManager.instance.IsIncentivisedLoginEnabled())
-                    {                        
-                        m_userNotLoggedInRewardText.gameObject.SetActive(true);
-                        PersistenceFacade.Texts_LocalizeIncentivizedSocial(m_userNotLoggedInRewardText);
-                        m_userNotLoggedInMessageText.gameObject.SetActive(true);
-                        m_userNotLoggedInMessageText.Localize(TID_OPTIONS_USERPROFILE_LOG_RECEIVE, SocialPlatformManager.SharedInstance.GetPlatformName());
-                    }
-                    break;
-
-                    /*
-                case EState.PreviouslyLoggedIn:
-                    m_userPreviouslyLoggedInRoot.SetActive(true);                                        
-                    string platformName = SocialPlatformManager.SharedInstance.GetPlatformName();
-                    m_userPreviouslyLoggedInMessageText.Localize(TID_OPTIONS_USERPROFILE_LOG_NETWORK, platformName);
-                    m_socialMessageText.Localize(TID_CLOUD_DESC, platformName);
-                    break;     
-                    */           
-            }
-        }
-    }    
-
-    private void User_LoadProfileInfo(bool needsToUpdateSocialId)
-    {
-        if (needsToUpdateSocialId)
-        {
-            m_userNameText.text = LocalizationManager.SharedInstance.Get(TID_LOADING);
-        }
-
-        Action<string, Texture2D> onDone = delegate (string userName, Texture2D profileImage)
-        {
-            User_NameLoaded = userName;
-
-            User_UpdateLoggedInRoot();
-
-            if (!string.IsNullOrEmpty(userName) && m_userNameText != null)
-            {
-                m_userNameText.text = userName;
-            }
-            
-            if (profileImage != null)
-            {
-                User_IsAvatarLoaded = true;
-
-                Sprite sprite = Sprite.Create(profileImage, new Rect(0, 0, profileImage.width, profileImage.height), new Vector2(0.5f, 0.0f), 1.0f);
-                m_userAvatarImage.sprite = sprite;
-				m_userAvatarImage.color = Color.white;
-                m_userAvatarImage.gameObject.SetActive(true);
-				m_userAvatarPlaceholderImage.gameObject.SetActive(false);
-                // m_profileSpinner.SetActive(false);
-            }
-            else if (!User_IsAvatarLoaded)
-            {
-				//m_profileSpinner.SetActive(false);
-                m_userAvatarImage.gameObject.SetActive(false);
-				m_userAvatarPlaceholderImage.gameObject.SetActive(true);
-            }                            
-        };
-
-        // Profile picture and name are hidden until the updated information is receiveds
-        m_userNotLoggedInRoot.SetActive(false);
-        SocialPlatformManager.SharedInstance.GetSimpleProfileInfo(onDone);
-    }
-
-    private void User_UpdateLoggedInRoot()
-    {
-        // Picture and name are shown only if the name is valid
-        if (m_userLoggedInRoot != null)
-        {
-            m_userLoggedInRoot.SetActive(!string.IsNullOrEmpty(User_NameLoaded));
-        }
-    }
-#endregion
-
-#region model
-    private enum EState
+	//------------------------------------------------------------------------//
+	// MODEL																  //
+	//------------------------------------------------------------------------//
+	#region model
+	private enum EState
     {        
         None,
         NeverLoggedIn,
@@ -733,16 +615,27 @@ public class PopupSettingsSaveTab : MonoBehaviour
 
     private EState Model_State { get; set; }
 
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <param name="state"></param>
+	/// <returns></returns>
     private bool Model_HasBeenLoaded(EState state)
     {
         return state == EState.PreviouslyLoggedIn || state == EState.LoggedIn || state == EState.LoggedInAndIncentivised;
     }
 
+	/// <summary>
+	/// 
+	/// </summary>
     private void Model_Init()
     {
         Model_Refresh();
     }                
 
+	/// <summary>
+	/// 
+	/// </summary>
     private void Model_Refresh()
     {
         EState state = EState.NeverLoggedIn;
@@ -769,6 +662,10 @@ public class PopupSettingsSaveTab : MonoBehaviour
         Model_State = state;
     }
 
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <returns></returns>
     private bool Model_SocialIsLoggedIn()
     {
         bool returnValue = false;
@@ -792,29 +689,60 @@ public class PopupSettingsSaveTab : MonoBehaviour
         return returnValue;
     }            
 
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <returns></returns>
     private bool Model_SaveIsCloudSaveEnabled()
     {
         return PersistenceFacade.instance.IsCloudSaveEnabled;
     }
-#endregion
+	#endregion
 
-#region utils
-    System.Collections.IEnumerator DelayedCall(float waitTime, Action callback)
+	//------------------------------------------------------------------------//
+	// UTILS																  //
+	//------------------------------------------------------------------------//
+	#region utils
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <param name="waitTime"></param>
+	/// <param name="callback"></param>
+	/// <returns></returns>
+	System.Collections.IEnumerator DelayedCall(float waitTime, Action callback)
     {
         yield return new WaitForSecondsRealtime(waitTime);
         callback();
     }
-#endregion
 
-#region log
-    private static string LOG_CHANNEL = "[SAVE_TAB]";
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <param name="_layout"></param>
+	public void ForceLayoutRefresh(HorizontalOrVerticalLayoutGroup _layout) {
+		// [AOC] Enabling/disabling objects while the layout is inactive makes the layout to not update properly
+		//		 Luckily for us Unity provides us with the right tools to rebuild it
+		//		 Fixes issue https://mdc-tomcat-jira100.ubisoft.org/jira/browse/HDK-690
+		if(_layout != null) LayoutRebuilder.ForceRebuildLayoutImmediate(_layout.transform as RectTransform);
+	}
+	#endregion
 
+	//------------------------------------------------------------------------//
+	// DEBUG																  //
+	//------------------------------------------------------------------------//
+	#region log
+	private static string LOG_CHANNEL = "[SAVE_TAB]";
+
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <param name="message"></param>
 #if ENABLE_LOGS
     [Conditional("DEBUG")]
 #else
     [Conditional("FALSE")]
 #endif
-    private void Log(string message)
+    public static void Log(string message)
     {
         Debug.Log(LOG_CHANNEL + message);        
     }
@@ -824,16 +752,15 @@ public class PopupSettingsSaveTab : MonoBehaviour
 #else
     [Conditional("FALSE")]
 #endif
-    private void LogError(string message)
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <param name="message"></param>
+	public static void LogError(string message)
     {
         Debug.LogError(LOG_CHANNEL + message);
     }
 #endregion
 
-	public void ForceLayoutRefresh(HorizontalOrVerticalLayoutGroup _layout) {
-		// [AOC] Enabling/disabling objects while the layout is inactive makes the layout to not update properly
-		//		 Luckily for us Unity provides us with the right tools to rebuild it
-		//		 Fixes issue https://mdc-tomcat-jira100.ubisoft.org/jira/browse/HDK-690
-		if(_layout != null) LayoutRebuilder.ForceRebuildLayoutImmediate(_layout.transform as RectTransform);
-	}
+	
 }
