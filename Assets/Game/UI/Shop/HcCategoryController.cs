@@ -156,7 +156,7 @@ public class HcCategoryController : CategoryController
     /// <summary>
     /// Remove all the pills and the header from this container
     /// </summary>
-    protected override void Clear()
+    public override void Clear()
     {
         base.Clear();
 

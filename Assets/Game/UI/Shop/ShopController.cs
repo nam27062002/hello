@@ -78,6 +78,7 @@ public class ShopController : MonoBehaviour {
 
     // True if all the pills have already been drawn
     private bool shopReady = false;
+    private bool optimizationActive = false;
 
     // Optimization #1: disable layouts after refresh
     private bool layoutGropusActive = false;
@@ -113,14 +114,14 @@ public class ShopController : MonoBehaviour {
 
         // React to offers being reloaded 
         Messenger.AddListener(MessengerEvents.OFFERS_RELOADED, OnOffersReloaded);
-        Messenger.AddListener(MessengerEvents.OFFERS_CHANGED, OnOffersChanged);
+        Messenger.AddListener<List<OfferPack>>(MessengerEvents.OFFERS_CHANGED, OnOffersChanged);
     }
 
 
     private void OnDestroy()
     {
         Messenger.RemoveListener(MessengerEvents.OFFERS_RELOADED, OnOffersReloaded);
-        Messenger.RemoveListener(MessengerEvents.OFFERS_CHANGED, OnOffersChanged);
+        Messenger.RemoveListener<List<OfferPack>>(MessengerEvents.OFFERS_CHANGED, OnOffersChanged);
     }
 
     private void OnEnable()
@@ -150,7 +151,15 @@ public class ShopController : MonoBehaviour {
             return;
         }
 
-        
+        // When the shop is ready, turn on the optimizations
+        if (shopReady && !optimizationActive)
+        {
+            // Wait one frame
+            UbiBCN.CoroutineManager.DelayedCallByFrames(() => {
+                // Enable the performance optimization
+                SetOptimizationActive(true);
+            }, 1);
+        }
 
         // Has this category initialization already finished ?
         if (catBeingInitialized != null && catBeingInitialized.IsFinished())
@@ -165,31 +174,16 @@ public class ShopController : MonoBehaviour {
             // This category has been initialized succesfully!
             catBeingInitialized = null;
 
-            // Recalculate half screen offset. So the category is centered at the left of the screen
-            /*normalizedViewportWidth = m_scrollRect.viewport.rect.width / m_scrollRect.content.rect.width;
-            Debug.Log("Viewport width:" + normalizedViewportWidth);
-            m_scrollViewOffset = normalizedViewportWidth / 2;*/
-
             // Are there some categories left to initialize?
             if (categoriesToInitialize.Count == 0)
             {
                 // At the end of initialization, user will be looking at the first category
                 if (m_shortcuts.Count > 0)
                 {
-                    CalculateCategoryBounds(m_shortcuts[0].categoryController.category);
+                    //CalculateCategoryBounds(m_shortcuts[0].categoryController.category);
                 }
 
                 shopReady = true;
-
-                // Wait one frame
-                UbiBCN.CoroutineManager.DelayedCallByFrames(() => {                 
-                        // Disable layouts for better performance
-                        SetLayoutGroupsActive(false);
-                        // Hide pills out the view
-                        m_hidePillsOutOfView = true;
-                        UpdatePillsVisibility(m_scrollRect.normalizedPosition);
-                },1);
-
             }
         }
 
@@ -282,10 +276,11 @@ public class ShopController : MonoBehaviour {
     {
         Clear();
 
+        // Turn off optimizations while refreshing
+        SetOptimizationActive(false);
         shopReady = false;
 
         m_lastShortcut = null;
-
 
         // Iterate all the active categories
         foreach (ShopCategory category in OffersManager.instance.activeCategories)
@@ -312,10 +307,72 @@ public class ShopController : MonoBehaviour {
                 }
             }
         }
-
-        // Enable layout groups just for one frame
-        SetLayoutGroupsActive(true);
     }
+
+
+    /// <summary>
+    /// Refresh the pills inside a category
+    /// </summary>
+    /// <param name="_categorySKU">The sku of the shop category to refresh</param>
+    public void RefreshCategory(string _categorySKU)
+    {
+        shopReady = false;
+
+        ShopCategory category = OffersManager.instance.activeCategories.Find ( sc => sc.sku == _categorySKU );
+
+        // If this cat is active
+        if (category == null || ! category.enabled)
+            return;
+
+
+        // Turn off optimizations while refreshing
+        SetOptimizationActive(false);
+        shopReady = false;
+
+        // Find the category container
+        CategoryController container = m_categoryContainers.Find(c => c.category.sku == _categorySKU);
+
+        // Remove pill references
+        foreach (IShopPill pill in container.offerPills)
+        {
+            m_pills.Remove(pill);
+        }
+
+        // Get the offer packs that belongs to this category
+        List<OfferPack> offers = OffersManager.GetOfferPacksByCategory(category);
+
+        if (container == null)
+        {
+            return; // Shouldnt happen
+        }
+
+        // Make sure there are offers in this category
+        if (offers.Count > 0 )
+        {
+            container.Initialize(category, offers);
+            catBeingInitialized = container;
+
+            shopReady = false;
+        }
+        else
+        {
+            // No offers in this category, so we remove it from the shop.
+            m_categoryContainers.Remove(container);
+            m_shortcuts.Remove(m_skuToShorcut[category.sku]);
+            m_skuToShorcut.Remove(category.sku);
+
+            //Remove the container
+            GameObject.DestroyImmediate(container);
+
+            //Remove the shortcut from the bottom bar.
+            GameObject.DestroyImmediate(m_skuToShorcut[category.sku].gameObject);
+
+            shopReady = true;
+
+        }
+
+    }
+
 
     /// <summary>
     /// Scroll the viewport to the left border of the shop
@@ -590,6 +647,41 @@ public class ShopController : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Enables/Disables the performance optimization features
+    /// </summary>
+    /// <param name="_enable">True to activate it</param>
+    public void SetOptimizationActive(bool _enable)
+    {
+
+
+        if (_enable)
+        {
+            // Hide  pills out the view in this precise moment
+            UpdatePillsVisibility(m_scrollRect.normalizedPosition);
+
+            // Force layout redraw
+            m_categoriesContainer.GetComponent<HorizontalLayoutGroup>().enabled = false;
+            m_categoriesContainer.GetComponent<HorizontalLayoutGroup>().enabled = true;
+        }
+        else
+        {
+            // Show the pills that could be hidden
+            foreach(IShopPill pill in m_pills)
+            {
+                pill.gameObject.SetActive(true);
+            }
+        }
+
+        optimizationActive = _enable;
+
+        // Disable layouts for better performance
+        SetLayoutGroupsActive(!_enable);
+
+        // Hide pills out the view
+        m_hidePillsOutOfView = _enable;
+
+    }
 
     //------------------------------------------------------------------------//
     // CALLBACKS															  //
@@ -673,7 +765,7 @@ public class ShopController : MonoBehaviour {
     /// <summary>
     /// Offers list has changed.
     /// </summary>
-    private void OnOffersChanged()
+    private void OnOffersChanged(List<OfferPack> offersChanged = null)
     {
         // Ignore if not active
         if (!this.isActiveAndEnabled) return;
@@ -681,7 +773,13 @@ public class ShopController : MonoBehaviour {
         // Refresh the shop if the shop is ready (avoid interrupting init animation bug)
         if (shopReady)
         {
-            Refresh();
+            foreach (OfferPack offer in offersChanged)
+            {
+                if (offer.shopCategory != null)
+                {
+                    RefreshCategory(offer.shopCategory);
+                }
+            }
         }
     }
 }

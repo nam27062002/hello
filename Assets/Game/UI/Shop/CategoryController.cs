@@ -105,9 +105,6 @@ public class CategoryController : MonoBehaviour {
     public virtual void Initialize (ShopCategory _shopCategory, List<OfferPack> offers = null)
     {
 
-        /// Remove possible mockup elements saved in the prefab
-        Clear();
-
         // Keep a reference to the shop category
         m_category = _shopCategory;
 
@@ -158,7 +155,7 @@ public class CategoryController : MonoBehaviour {
     /// <summary>
     /// Remove all the pills and the header from this container
     /// </summary>
-    protected virtual void Clear()
+    public virtual void Clear()
     {
         m_pillsContainer.DestroyAllChildren(true);
         m_offers.Clear();

@@ -51,7 +51,7 @@ public class PopupShopOffersTab : IPopupShopTab {
 
 		// React to offers being reloaded while tab is active
 		Messenger.AddListener(MessengerEvents.OFFERS_RELOADED, OnOffersReloaded);
-		Messenger.AddListener(MessengerEvents.OFFERS_CHANGED, OnOffersChanged);
+		Messenger.AddListener<List<OfferPack>>(MessengerEvents.OFFERS_CHANGED, OnOffersChanged);
 
 	}
 
@@ -76,7 +76,7 @@ public class PopupShopOffersTab : IPopupShopTab {
 
 		// Unsubscribe from external events
 		Messenger.RemoveListener(MessengerEvents.OFFERS_RELOADED, OnOffersReloaded);
-		Messenger.RemoveListener(MessengerEvents.OFFERS_CHANGED, OnOffersChanged);
+		Messenger.RemoveListener<List<OfferPack>>(MessengerEvents.OFFERS_CHANGED, OnOffersChanged);
 	}
 
 	//------------------------------------------------------------------------//
@@ -255,7 +255,7 @@ public class PopupShopOffersTab : IPopupShopTab {
 	/// <summary>
 	/// Offers list has changed.
 	/// </summary>
-	private void OnOffersChanged() {
+	private void OnOffersChanged(List<OfferPack> offersChanged = null) {
 		// Ignore if not active
 		if(!this.isActiveAndEnabled) return;
 

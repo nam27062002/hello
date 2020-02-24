@@ -344,6 +344,8 @@ public class OffersManager : Singleton<OffersManager> {
 		bool dirty = false;
 		m_offersToRemove.Clear();
 
+        List<OfferPack> offersChanged = new List<OfferPack>();
+
 		// Iterate all offer packs looking for state changes
 		for(int i = 0; i < m_allEnabledOffers.Count; ++i) {
 			// Aux vars
@@ -361,6 +363,8 @@ public class OffersManager : Singleton<OffersManager> {
 				// Update persistence with this pack's new state
 				// [AOC] Packs Save() is smart, only stores packs when required
 				UsersManager.currentUser.SaveOfferPack(pack);
+
+                offersChanged.Add(pack);
 			}
 		}
 
@@ -371,7 +375,11 @@ public class OffersManager : Singleton<OffersManager> {
 			if(m_offersToRemove[i].type == OfferPack.Type.ROTATIONAL) {
 				m_allEnabledRotationalOffers.Remove(m_offersToRemove[i] as OfferPackRotational);
 			}
+
 		}
+
+        offersChanged.AddRange(m_offersToRemove);
+
 		m_offersToRemove.Clear();
 
 		// Do we need to activate a new rotational offer?
@@ -401,7 +409,7 @@ public class OffersManager : Singleton<OffersManager> {
 			PersistenceFacade.instance.Save_Request();
 
 			// Notify game
-			Messenger.Broadcast(MessengerEvents.OFFERS_CHANGED);
+			Messenger.Broadcast(MessengerEvents.OFFERS_CHANGED, offersChanged);
 		}
 	}
 
