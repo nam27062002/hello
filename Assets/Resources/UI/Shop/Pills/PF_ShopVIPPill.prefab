@@ -180,6 +180,7 @@ GameObject:
   - component: {fileID: 114522479336513098}
   - component: {fileID: 114689435232591008}
   - component: {fileID: 114697541959903710}
+  - component: {fileID: 114761772020145418}
   m_Layer: 5
   m_Name: Bg
   m_TagString: Untagged
@@ -229,6 +230,7 @@ GameObject:
   - component: {fileID: 114618104081995326}
   - component: {fileID: 114741103763988054}
   - component: {fileID: 95591577562792596}
+  - component: {fileID: 114439358416859826}
   m_Layer: 5
   m_Name: InfoButton
   m_TagString: Untagged
@@ -1083,6 +1085,7 @@ GameObject:
   - component: {fileID: 114146870748125816}
   - component: {fileID: 95113115802973590}
   - component: {fileID: 114211922789233222}
+  - component: {fileID: 114589404491178746}
   m_Layer: 5
   m_Name: ButtonReal
   m_TagString: Untagged
@@ -1887,6 +1890,17 @@ MonoBehaviour:
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 114589404491178746}
+        m_MethodName: Play
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: hd_popup_open
           m_BoolArgument: 0
         m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
@@ -3089,6 +3103,18 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &114439358416859826
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1134456772179368}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28e0bbef12e224ce7835342046d82316, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_audioId: 
 --- !u!114 &114441405605625762
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3738,6 +3764,18 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!114 &114589404491178746
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1741416105897324}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28e0bbef12e224ce7835342046d82316, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_audioId: 
 --- !u!114 &114613355565321354
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4341,6 +4379,17 @@ MonoBehaviour:
           m_StringArgument: offer_shop
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 114761772020145418}
+        m_MethodName: Play
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: hd_popup_open
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!114 &114716095352035142
@@ -4453,6 +4502,17 @@ MonoBehaviour:
           m_StringArgument: offer_shop
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 114439358416859826}
+        m_MethodName: Play
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: hd_popup_open
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!114 &114752613470596156
@@ -4510,6 +4570,18 @@ MonoBehaviour:
   m_canvasRenderer: {fileID: 222632725985808728}
   m_TextComponent: {fileID: 114235936134263374}
   m_materialReferenceIndex: 1
+--- !u!114 &114761772020145418
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1115879071004270}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28e0bbef12e224ce7835342046d82316, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_audioId: 
 --- !u!114 &114766011244572978
 MonoBehaviour:
   m_ObjectHideFlags: 1
