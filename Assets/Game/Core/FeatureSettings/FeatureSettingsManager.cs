@@ -1521,6 +1521,16 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
 #endif
     }
 
+	public bool IsRestoreIAPEnabled() {
+#if UNITY_EDITOR
+		return true;
+#elif UNITY_IOS
+        return true;
+#else
+        return false;	// We don't restore IAPs in Google Play store
+#endif
+	}
+
 	public static bool IsDailyRewardsEnabled() {
 		// Feel free to disable it
 		return true;
