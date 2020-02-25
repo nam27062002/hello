@@ -111,12 +111,12 @@ public class PersistenceFacade : IBroadcastListener
 
 			// Retrieves the latest social platform that the user logged in to
 			SocialUtils.EPlatform platformId = SocialUtils.KeyToEPlatform(LocalDriver.Prefs_SocialPlatformKey);
+            bool isPlatformSupported = SocialPlatformManager.SharedInstance.IsPlatformIdSupported(platformId);
 
-			// If local persistence is corrupted then we'll try to override it with cloud persistence if the user has ever logged in the social network
-			if (LocalData.LoadState == PersistenceStates.ELoadState.Corrupted)
-			{				
-				bool logInSocialEver = !string.IsNullOrEmpty(LocalDriver.Prefs_SocialId) && 
-									   SocialPlatformManager.SharedInstance.IsPlatformIdSupported(platformId);
+            // If local persistence is corrupted then we'll try to override it with cloud persistence if the user has ever logged in the social network
+            if (LocalData.LoadState == PersistenceStates.ELoadState.Corrupted)
+			{
+                bool logInSocialEver = isPlatformSupported && !string.IsNullOrEmpty(LocalDriver.Prefs_SocialId);									   
 
 				Action onReset = delegate()
 				{
@@ -180,7 +180,7 @@ public class PersistenceFacade : IBroadcastListener
                 };
 
                 // Tries to sync with cloud only if the user was logged in the social platform when she quit the app last time she played
-                if (PersistencePrefs.Social_WasLoggedInWhenQuit)
+                if (isPlatformSupported && PersistencePrefs.Social_WasLoggedInWhenQuit)
                 {                    
                     Config.CloudDriver.Sync(platformId, true, true, onSyncDone);
                 }
