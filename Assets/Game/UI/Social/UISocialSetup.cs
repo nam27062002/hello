@@ -51,7 +51,7 @@ public class UISocialSetup : MonoBehaviour
 			case SocialPlatformMode.ALL_SUPPORTED: {
 				// [AOC] TODO!! SIWA
 				//List<SocialUtils.EPlatform> supportedSocialPlatforms = SocialPlatformManager.SharedInstance.GetSupportedPlatforms();
-				SocialUtils.EPlatform loggedInSocialPlatform = SocialPlatformManager.SharedInstance.GetPlatform();
+				SocialUtils.EPlatform loggedInSocialPlatform = SocialPlatformManager.SharedInstance.CurrentPlatform_GetId();
 				List<SocialUtils.EPlatform> supportedSocialPlatforms = new List<SocialUtils.EPlatform>();
 				supportedSocialPlatforms.Add(loggedInSocialPlatform);
 
@@ -62,7 +62,7 @@ public class UISocialSetup : MonoBehaviour
 			} break;
 
 			case SocialPlatformMode.LOGGED_IN: {
-				SocialUtils.EPlatform loggedInSocialPlatform = SocialPlatformManager.SharedInstance.GetPlatform();
+				SocialUtils.EPlatform loggedInSocialPlatform = SocialPlatformManager.SharedInstance.CurrentPlatform_GetId();
 
 				Toggle(m_fbItem, loggedInSocialPlatform == SocialUtils.EPlatform.Facebook && !isUnderage);
 				Toggle(m_weiboItem, loggedInSocialPlatform == SocialUtils.EPlatform.Weibo && !isUnderage);

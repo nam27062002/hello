@@ -93,8 +93,7 @@ public class HUDCloudSyncStatus : MonoBehaviour
                         {                            
                             if (PersistenceFacade.instance.IsCloudSaveEnabled)                            
                             {
-                                PersistenceFacade.Popups_OpenLoadingPopup();
-                                PersistenceFacade.instance.Sync_FromSettings(onSyncDone);
+								Sync_FromSettings(onSyncDone);
                             }
                             else
                             {
@@ -110,11 +109,19 @@ public class HUDCloudSyncStatus : MonoBehaviour
             }
             else
             {
-                PersistenceFacade.Popups_OpenLoadingPopup();
-                PersistenceFacade.instance.Sync_FromSettings(onSyncDone);
+				Sync_FromSettings(onSyncDone);
             }
         }
     }
+
+	private void Sync_FromSettings(Action onSyncDone)
+	{
+		PersistenceFacade.Popups_OpenLoadingPopup();
+
+		// Uses the same social platform that is currently in usage since the user can not change social platforms
+		// by clicking this icon
+		PersistenceFacade.instance.Sync_FromSettings(SocialPlatformManager.SharedInstance.CurrentPlatform_GetId(), onSyncDone);
+	}
 
     private void OnSyncChange(bool synced)
     {

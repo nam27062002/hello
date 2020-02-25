@@ -109,10 +109,14 @@ public class PersistenceFacade : IBroadcastListener
 		{            
             Log("SYNC: Loading  local DONE! " + LocalData.LoadState);           
 
+			// Retrieves the latest social platform that the user logged in to
+			SocialUtils.EPlatform platformId = SocialUtils.KeyToEPlatform(LocalDriver.Prefs_SocialPlatformKey);
+
 			// If local persistence is corrupted then we'll try to override it with cloud persistence if the user has ever logged in the social network
 			if (LocalData.LoadState == PersistenceStates.ELoadState.Corrupted)
 			{				
-				bool logInSocialEver = !string.IsNullOrEmpty(LocalDriver.Prefs_SocialId);
+				bool logInSocialEver = !string.IsNullOrEmpty(LocalDriver.Prefs_SocialId) && 
+									   SocialPlatformManager.SharedInstance.IsPlatformIdSupported(platformId);
 
 				Action onReset = delegate()
 				{
@@ -146,7 +150,8 @@ public class PersistenceFacade : IBroadcastListener
 						}
 					};
 
-                    Config.CloudDriver.Sync(false, true, onConnectDone);                    
+					// Logs in to the latest platform known
+                    Config.CloudDriver.Sync(platformId, false, true, onConnectDone);                    
 				}
                 else
                 {
@@ -177,7 +182,7 @@ public class PersistenceFacade : IBroadcastListener
                 // Tries to sync with cloud only if the user was logged in the social platform when she quit the app last time she played
                 if (PersistencePrefs.Social_WasLoggedInWhenQuit)
                 {                    
-                    Config.CloudDriver.Sync(true, true, onSyncDone);
+                    Config.CloudDriver.Sync(platformId, true, true, onSyncDone);
                 }
                 else
                 {
@@ -191,7 +196,7 @@ public class PersistenceFacade : IBroadcastListener
 		Config.LocalDriver.Load(onLoadDone);
 	}
 
-	public void Sync_FromSettings(Action onDone)
+	public void Sync_FromSettings(SocialUtils.EPlatform platformId, Action onDone)
 	{
         // Check if there's already a sync being performed since only one can be performed simultaneously. this Typically happens when the sync from launching the app wasn't over yet when the game loaded so
         // the user could click on manual sync
@@ -211,7 +216,7 @@ public class PersistenceFacade : IBroadcastListener
                     Sync_OnDone(result, onDone);
                 };
 
-                Config.CloudDriver.Sync(false, false, onSyncDone);
+                Config.CloudDriver.Sync(platformId, false, false, onSyncDone);
             };
 
             Config.LocalDriver.Save(onSaveDone);
@@ -239,7 +244,9 @@ public class PersistenceFacade : IBroadcastListener
                     onDone(result, resultDetail);
                 };
 
-                Config.CloudDriver.Sync(true, false, onSyncDone);
+				// Uses the same social platform that is currently in usage since the user can not change social platforms
+				// when reconnecting
+				Config.CloudDriver.Sync(SocialPlatformManager.SharedInstance.CurrentPlatform_GetId(), true, false, onSyncDone);
             };
 
             Config.LocalDriver.Save(onSaveDone);
@@ -558,7 +565,7 @@ public class PersistenceFacade : IBroadcastListener
         IPopupMessage.Config config = IPopupMessage.GetConfig();
         config.TitleTid = "TID_SOCIAL_ERROR_CONNECTION_NAME";
         config.MessageTid = "TID_SOCIAL_ERROR_CONNECTION_DESC";
-        config.MessageParams = new string[] { SocialPlatformManager.SharedInstance.GetPlatformName() };
+		config.MessageParams = new string[] { SocialPlatformManager.SharedInstance.CurrentPlatform_GetName() };
         config.ButtonMode = IPopupMessage.Config.EButtonsMode.Confirm;
         config.OnConfirm = onConfirm;        
         PopupManager.PopupMessage_Open(config);              
@@ -585,7 +592,7 @@ public class PersistenceFacade : IBroadcastListener
         IPopupMessage.Config config = IPopupMessage.GetConfig();
         config.TitleTid = cloudSaveEnabled ? "TID_SAVE_WARN_CLOUD_LOGOUT_NAME" : "TID_SOCIAL_WARNING_LOGOUT_TITLE";
         config.MessageTid = cloudSaveEnabled ? "TID_SAVE_WARN_CLOUD_LOGOUT_DESC" : "TID_SOCIAL_WARNING_LOGOUT_DESC";
-        config.MessageParams = new string[] { SocialPlatformManager.SharedInstance.GetPlatformName() };
+		config.MessageParams = new string[] { SocialPlatformManager.SharedInstance.CurrentPlatform_GetName() };
         config.ButtonMode = IPopupMessage.Config.EButtonsMode.ConfirmAndCancel;
         config.OnConfirm = onConfirm;
         config.OnCancel = onCancel;
@@ -627,7 +634,7 @@ public class PersistenceFacade : IBroadcastListener
         IPopupMessage.Config config = IPopupMessage.GetConfig();
         config.TitleTid = "TID_SAVE_PROFILE_CONFLICT_MERGE_CHOOSE_TITLE";
         config.MessageTid = "TID_SAVE_PROFILE_CONFLICT_MERGE_CHOOSE_DESC";
-        string platformName = SocialPlatformManager.SharedInstance.GetPlatformName();
+		string platformName = SocialPlatformManager.SharedInstance.CurrentPlatform_GetName();
         config.MessageParams = new string[] { platformName, platformName };
         config.ButtonMode = IPopupMessage.Config.EButtonsMode.ConfirmAndCancel;
         config.OnConfirm = onCloud;
@@ -645,7 +652,7 @@ public class PersistenceFacade : IBroadcastListener
         if (errorCode == SYNC_GENERIC_ERROR_CODE_SYNC_ALREADY_PERFORMING)
         {
             config.MessageTid = "TID_SOCIAL_LOGIN_ERROR";
-            string platformName = SocialPlatformManager.SharedInstance.GetPlatformName();
+			string platformName = SocialPlatformManager.SharedInstance.CurrentPlatform_GetName();
             config.MessageParams = new string[] { platformName };            
         }
         else
@@ -693,7 +700,7 @@ public class PersistenceFacade : IBroadcastListener
         IPopupMessage.Config config = IPopupMessage.GetConfig();
         config.TitleTid = "TID_SAVE_PROFILE_CONFLICT_MERGE_CHOOSE_TITLE";
         config.MessageTid = "TID_SAVE_WARN_CLOUD_SWITCH_DESC";
-        string platformName = SocialPlatformManager.SharedInstance.GetPlatformName();
+		string platformName = SocialPlatformManager.SharedInstance.CurrentPlatform_GetName();
         config.MessageParams = new string[] { platformName };
         config.ButtonMode = IPopupMessage.Config.EButtonsMode.ConfirmAndCancel;
         config.OnConfirm = onConfirm;

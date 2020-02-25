@@ -91,7 +91,9 @@ public class MenuPlayScreen : MonoBehaviour {
 	public void OnConnectBtn() {        
         PersistenceFacade.Popups_OpenLoadingPopup();
 
-        PersistenceFacade.instance.Sync_FromSettings(delegate()
+		// Uses the same social platform that is currently in usage since the user can not change social platforms
+		// by clicking this icon
+		PersistenceFacade.instance.Sync_FromSettings(SocialPlatformManager.SharedInstance.CurrentPlatform_GetId(), delegate()
         {
             PersistenceFacade.Popups_CloseLoadingPopup();
             Refresh();

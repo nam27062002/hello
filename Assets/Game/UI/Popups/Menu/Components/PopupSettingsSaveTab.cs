@@ -366,7 +366,7 @@ public class PopupSettingsSaveTab : MonoBehaviour
             RefreshView();
         };
 
-        PersistenceFacade.instance.Sync_FromSettings(onDone);        
+        PersistenceFacade.instance.Sync_FromSettings(_platform, onDone);        
     }
    
     /// <summary>
@@ -437,10 +437,10 @@ public class PopupSettingsSaveTab : MonoBehaviour
 	private void User_Refresh() {
 		if(User_LastState != Model_State) {
 			bool needsToLoadProfile = (Model_HasBeenLoaded(Model_State) && !Model_HasBeenLoaded(User_LastState)) ||
-									   SocialPlatformManager.SharedInstance.NeedsProfileInfoToBeUpdated() ||
+									   SocialPlatformManager.SharedInstance.CurrentPlatform_NeedsProfileInfoToBeUpdated() ||
 									   (string.IsNullOrEmpty(User_NameLoaded) && Model_State != EState.NeverLoggedIn);
 
-			bool needsSocialIdToBeUpdated = SocialPlatformManager.SharedInstance.NeedsSocialIdToBeUpdated();
+			bool needsSocialIdToBeUpdated = SocialPlatformManager.SharedInstance.CurrentPlatform_NeedsSocialIdToBeUpdated();
 
 			User_LastState = Model_State;
 
@@ -508,7 +508,7 @@ public class PopupSettingsSaveTab : MonoBehaviour
 
 		// Profile picture and name are hidden until the updated information is receiveds
 		m_loginRewardRoot.SetActive(false);
-		SocialPlatformManager.SharedInstance.GetSimpleProfileInfo(onDone);
+		SocialPlatformManager.SharedInstance.CurrentPlatform_GetSimpleProfileInfo(onDone);
 	}
 
 	/// <summary>
@@ -571,7 +571,10 @@ public class PopupSettingsSaveTab : MonoBehaviour
             };
 
             Resync_IsRunning = true;
-            PersistenceFacade.instance.Sync_FromSettings(onDone);
+
+			// Uses the same social platform that is currently in usage since the user can not change social platforms
+			// by clicking on save sync
+			PersistenceFacade.instance.Sync_FromSettings(SocialPlatformManager.SharedInstance.CurrentPlatform_GetId(), onDone);
         }
     }
 	#endregion
