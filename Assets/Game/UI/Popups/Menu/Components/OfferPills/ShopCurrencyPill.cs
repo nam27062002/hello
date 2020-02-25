@@ -152,8 +152,9 @@ public class ShopCurrencyPill : ShopMonoRewardPill {
                 // Add the amount to the player currencies
                 UsersManager.currentUser.EarnCurrency(UserProfile.Currency.HARD, (ulong)m_amountApplied, true, HDTrackingManager.EEconomyGroup.SHOP_EXCHANGE);
 
-                // Force HH popup if the player is in the shop screen right now
-                bool forceHHPopup = (PopupManager.GetOpenPopup(PopupShop.PATH) != null);
+                // Force HH popup if the player is in the shop screen right now (popup or scene)
+                bool forceHHPopup = PopupManager.GetOpenPopup(PopupShop.PATH) != null || 
+                        InstanceManager.menuSceneController.currentScreen == MenuScreen.SHOP;
                 
                 // Broadcast this event, so the happy hour can be activated / extended
                 Messenger.Broadcast<bool, string>(MessengerEvents.HC_PACK_ACQUIRED, forceHHPopup, m_def.sku);
