@@ -94,6 +94,8 @@ public class ShopController : MonoBehaviour {
 
     // Frame counter for pills initialization effect
     private int m_frameCounter;
+
+
     public int frameCounter { get { return m_frameCounter; } }
 
     //------------------------------------------------------------------------//
@@ -117,16 +119,13 @@ public class ShopController : MonoBehaviour {
         Messenger.AddListener<List<OfferPack>>(MessengerEvents.OFFERS_CHANGED, OnOffersChanged);
     }
 
-
+    /// <summary>
+    /// Destructor
+    /// </summary>
     private void OnDestroy()
     {
         Messenger.RemoveListener(MessengerEvents.OFFERS_RELOADED, OnOffersReloaded);
         Messenger.RemoveListener<List<OfferPack>>(MessengerEvents.OFFERS_CHANGED, OnOffersChanged);
-    }
-
-    private void OnEnable()
-    {
-
     }
     
 
@@ -213,6 +212,28 @@ public class ShopController : MonoBehaviour {
     // OTHER METHODS														  //
     //------------------------------------------------------------------------//
 
+    /// <summary>
+    /// Initialize the shop with the requested mode. Should be called before opening the popup.
+    /// </summary>
+    /// <param name="_mode">Target mode.</param>
+    public void Init(PopupShop.Mode _mode)
+    {
+        int timer = Environment.TickCount;
+
+        switch (_mode)
+        {
+            case PopupShop.Mode.PC_ONLY:
+                m_categoryToShow = PC_CATEGORY_SKU;
+                break;
+            case PopupShop.Mode.SC_ONLY:
+                m_categoryToShow = SC_CATEGORY_SKU;
+                break;
+        }
+
+        Refresh();
+
+        Debug.Log("Init time: " + (Environment.TickCount - timer) + " ms");
+    }
 
 
     /// <summary>
@@ -246,31 +267,10 @@ public class ShopController : MonoBehaviour {
         m_frameCounter = 0;
     }
 
-    /// <summary>
-    /// Initialize the shop with the requested mode. Should be called before opening the popup.
-    /// </summary>
-    /// <param name="_mode">Target mode.</param>
-    public void Init(PopupShop.Mode _mode)
-    {
-        int timer = Environment.TickCount;
 
-        switch (_mode)
-        {
-            case PopupShop.Mode.PC_ONLY:
-                m_categoryToShow = PC_CATEGORY_SKU;
-                break;
-            case PopupShop.Mode.SC_ONLY:
-                m_categoryToShow = SC_CATEGORY_SKU;
-                break;
-        }
-
-        Refresh();
-
-        Debug.Log("Init time: " + (Environment.TickCount - timer) + " ms");
-    }
 
     /// <summary>
-    /// Populate the shop with all the categories, shortcuts and offer pills
+    /// Clear the shop and populate the shop with all the categories, shortcuts and offer pills
     /// </summary>
     public void Refresh ()
     {
@@ -311,17 +311,34 @@ public class ShopController : MonoBehaviour {
 
 
     /// <summary>
-    /// Refresh the pills inside a category
+    /// Called at regular intervals.
+    /// </summary>
+    private void PeriodicRefresh()
+    {
+        // Nothing if not enabled
+        if (!this.isActiveAndEnabled) return;
+
+        if (shopReady)
+        {
+            foreach (CategoryController cat in m_categoryContainers)
+            {
+                // Propagate to categories
+                cat.RefreshTimers();
+            }
+        }
+
+    }
+
+    /// <summary>
+    /// Refresh the pills inside a category. Instead of refreshing the whole shop just clear 
+    /// the category container affected and repopulate it. More performance eficient this way.
     /// </summary>
     /// <param name="_categorySKU">The sku of the shop category to refresh</param>
-    public void RefreshCategory(string _categorySKU)
+    public void RefreshCategory(ShopCategory _category)
     {
-        shopReady = false;
 
-        ShopCategory category = OffersManager.instance.activeCategories.Find ( sc => sc.sku == _categorySKU );
-
-        // If this cat is active
-        if (category == null || ! category.enabled)
+        // If this cat is inactive just return
+        if (_category == null || ! _category.enabled)
             return;
 
 
@@ -330,7 +347,11 @@ public class ShopController : MonoBehaviour {
         shopReady = false;
 
         // Find the category container
-        CategoryController container = m_categoryContainers.Find(c => c.category.sku == _categorySKU);
+        CategoryController container = m_categoryContainers.Find(c => c.category.sku == _category.sku);
+
+        // Safety check
+        if (container == null)
+            return; 
 
         // Remove pill references
         foreach (IShopPill pill in container.offerPills)
@@ -339,72 +360,39 @@ public class ShopController : MonoBehaviour {
         }
 
         // Get the offer packs that belongs to this category
-        List<OfferPack> offers = OffersManager.GetOfferPacksByCategory(category);
-
-        if (container == null)
-        {
-            return; // Shouldnt happen
-        }
+        List<OfferPack> offers = OffersManager.GetOfferPacksByCategory(_category);
 
         // Make sure there are offers in this category
         if (offers.Count > 0 )
         {
-            container.Initialize(category, offers);
+            container.Initialize(_category, offers);
             catBeingInitialized = container;
 
-            shopReady = false;
         }
         else
         {
-            // No offers in this category, so we remove it from the shop.
-            m_categoryContainers.Remove(container);
-            m_shortcuts.Remove(m_skuToShorcut[category.sku]);
-            m_skuToShorcut.Remove(category.sku);
+            // The category is now empty. Remove it from the shop:
 
             //Remove the container
             GameObject.DestroyImmediate(container);
 
             //Remove the shortcut from the bottom bar.
-            GameObject.DestroyImmediate(m_skuToShorcut[category.sku].gameObject);
+            GameObject.DestroyImmediate(m_skuToShorcut[_category.sku].gameObject);
 
+            // Remove cached references
+            m_categoryContainers.Remove(container);
+            m_shortcuts.Remove(m_skuToShorcut[_category.sku]);
+            m_skuToShorcut.Remove(_category.sku);
+
+            // Nothing else to do
             shopReady = true;
 
         }
-
     }
 
 
     /// <summary>
-    /// Scroll the viewport to the left border of the shop
-    /// </summary>
-    public void ScrollToStart ()
-    {
-        if (m_pills.Count != 0)
-        {
-            ScrollToItem(m_pills[0].transform);
-        }
-    }
-
-
-    /// <summary>
-    /// Called at regular intervals.
-    /// </summary>
-    private void PeriodicRefresh()
-    {
-        // Nothing if not enabled
-        if (!this.isActiveAndEnabled) return;
-
-        foreach (CategoryController cat in m_categoryContainers)
-        {
-            // Propagate to categories
-            cat.RefreshTimers();
-        }
-
-    }
-
-
-    /// <summary>
-    /// Initialize one category and create its shortcut if needed
+    /// Initialize one category container with offers and create its shortcut if needed
     /// </summary>
     /// <param name="_cat">Shop category</param>
     /// <param name="_offers">List of offers contained in this category</param>
@@ -459,12 +447,29 @@ public class ShopController : MonoBehaviour {
         return null;
     }
 
+
+    /// <summary>
+    /// Scroll the viewport to the left border of the shop
+    /// </summary>
+    public void ScrollToStart()
+    {
+        if (m_pills.Count != 0)
+        {
+            ScrollToItem(m_pills[0].transform);
+        }
+    }
+
+
+    //------------------------------------------------------------------------//
+    // SHORTCUTS                											  //
+    //------------------------------------------------------------------------//
+
     /// <summary>
     /// Create a new shortcut in the navigation bar. 
     /// Keeps a record of the last shortcut, so it doesnt duplicate them.
     /// </summary>
     /// <param name="_cat">Shop category. </param>
-    private void CreateShortcut (ShopCategory _cat)
+    private void CreateShortcut(ShopCategory _cat)
     {
         // Has a shortcut in the bottom menu?
         if (!string.IsNullOrEmpty(_cat.tidShortcut))
@@ -493,7 +498,7 @@ public class ShopController : MonoBehaviour {
     /// Highlight the selected shortcut (and deselect the rest)
     /// </summary>
     /// <param name="_sku">SKU of the selected category</param>
-    private void SelectShortcut (ShopCategoryShortcut _sc)
+    private void SelectShortcut(ShopCategoryShortcut _sc)
     {
         // Deselect all shortcuts except the chosen one
         foreach (ShopCategoryShortcut shortcut in m_shortcuts)
@@ -509,7 +514,7 @@ public class ShopController : MonoBehaviour {
     /// Scroll the viewport to the selected category
     /// </summary>
     /// <param name="anchor"></param>
-    private void ScrollToItem (Transform anchor)
+    private void ScrollToItem(Transform anchor)
     {
 
         if (anchor != null)
@@ -520,49 +525,9 @@ public class ShopController : MonoBehaviour {
             // Create a tweener to animate the scroll
             m_scrollRect.DOGoToItem(anchor, .5f, 0.001f)
             .SetEase(Ease.OutBack)
-            .OnComplete( delegate() { m_scrolling = false; } );
-            
+            .OnComplete(delegate () { m_scrolling = false; });
+
         }
-    }
-
-
-    /// <summary>
-    /// Returns the category that is located in the specified position of the scrollbar
-    /// ignore the categories that dont have a shortcut
-    /// </summary>
-    /// <param name="pos">The coordenates inside the scrollbar</param>
-    /// <returns>SKU of the category</returns>
-    private ShopCategory GetCategoryAtPosition (float _posX)
-    {
-        if (m_shortcuts.Count <= 0)
-            return null;
-
-
-        int candidate = m_shortcuts.Count - 1;
-
-        // Iterate all the shortcuts (from right to left)
-        for (int i = m_shortcuts.Count - 1 ; i >= 0 ; i--)
-        {
-            ShopCategoryShortcut shortcut = m_shortcuts[i];
-
-            // Get normalized position of the anchor
-            Vector2 categoryAnchor = m_scrollRect.GetNormalizedPositionForItem(shortcut.categoryController.transform, true) + new Vector2 (m_scrollViewOffset,0);
-
-            if (_posX >= categoryAnchor.x )
-            {
-                break;
-            }
-            else {
-                candidate--;
-            }
-        }
-
-        if (candidate < 0) {
-            candidate = 0;
-        }
-
-        return m_shortcuts[candidate].categoryController.category;
-
     }
 
 
@@ -606,6 +571,86 @@ public class ShopController : MonoBehaviour {
 
     }
 
+    /// <summary>
+    /// Returns the category that is located in the specified position of the scrollbar
+    /// ignore the categories that dont have a shortcut
+    /// </summary>
+    /// <param name="pos">The coordenates inside the scrollbar</param>
+    /// <returns>SKU of the category</returns>
+    private ShopCategory GetCategoryAtPosition(float _posX)
+    {
+        if (m_shortcuts.Count <= 0)
+            return null;
+
+
+        int candidate = m_shortcuts.Count - 1;
+
+        // Iterate all the shortcuts (from right to left)
+        for (int i = m_shortcuts.Count - 1; i >= 0; i--)
+        {
+            ShopCategoryShortcut shortcut = m_shortcuts[i];
+
+            // Get normalized position of the anchor
+            Vector2 categoryAnchor = m_scrollRect.GetNormalizedPositionForItem(shortcut.categoryController.transform, true) + new Vector2(m_scrollViewOffset, 0);
+
+            if (_posX >= categoryAnchor.x)
+            {
+                break;
+            }
+            else
+            {
+                candidate--;
+            }
+        }
+
+        if (candidate < 0)
+        {
+            candidate = 0;
+        }
+
+        return m_shortcuts[candidate].categoryController.category;
+
+    }
+
+
+    //------------------------------------------------------------------------//
+    // OPTIMIZATION METHODS													  //
+    //------------------------------------------------------------------------//
+
+    /// <summary>
+    /// Enables/Disables the performance optimization features
+    /// </summary>
+    /// <param name="_enable">True to activate it</param>
+    public void SetOptimizationActive(bool _enable)
+    {
+        optimizationActive = _enable;
+
+        // Disable layouts for better performance
+        SetLayoutGroupsActive(!_enable);
+
+        // Hide pills out the view
+        m_hidePillsOutOfView = _enable;
+
+        if (_enable)
+        {
+            // Hide pills that are out the view at this moment
+            UpdatePillsVisibility(m_scrollRect.normalizedPosition);
+        }
+        else
+        {
+            // Show the pills that could be hidden
+            foreach (IShopPill pill in m_pills)
+            {
+                pill.gameObject.SetActive(true);
+            }
+
+            // Force layout redraw
+            m_categoriesContainer.GetComponent<HorizontalLayoutGroup>().enabled = false;
+            m_categoriesContainer.GetComponent<HorizontalLayoutGroup>().enabled = true;
+        }
+
+    }
+
 
     /// <summary>
     /// Enable/Disable all the horizontal/vertical layouts of the shop for performance reasons
@@ -618,12 +663,13 @@ public class ShopController : MonoBehaviour {
 
         layoutGropusActive = enable;
 
-        // Cascade it to categories and pills
+        // Propagate it to categories and pills
         foreach (CategoryController cat in m_categoryContainers)
         {
             cat.SetLayoutGroupsActive(enable);
         }
     }
+
 
     /// <summary>
     /// Enable/disable pill that are inside/outside of the visible limits of the scrollview.
@@ -647,41 +693,7 @@ public class ShopController : MonoBehaviour {
         }
     }
 
-    /// <summary>
-    /// Enables/Disables the performance optimization features
-    /// </summary>
-    /// <param name="_enable">True to activate it</param>
-    public void SetOptimizationActive(bool _enable)
-    {
 
-
-        if (_enable)
-        {
-            // Hide  pills out the view in this precise moment
-            UpdatePillsVisibility(m_scrollRect.normalizedPosition);
-
-            // Force layout redraw
-            m_categoriesContainer.GetComponent<HorizontalLayoutGroup>().enabled = false;
-            m_categoriesContainer.GetComponent<HorizontalLayoutGroup>().enabled = true;
-        }
-        else
-        {
-            // Show the pills that could be hidden
-            foreach(IShopPill pill in m_pills)
-            {
-                pill.gameObject.SetActive(true);
-            }
-        }
-
-        optimizationActive = _enable;
-
-        // Disable layouts for better performance
-        SetLayoutGroupsActive(!_enable);
-
-        // Hide pills out the view
-        m_hidePillsOutOfView = _enable;
-
-    }
 
     //------------------------------------------------------------------------//
     // CALLBACKS															  //
@@ -765,6 +777,7 @@ public class ShopController : MonoBehaviour {
     /// <summary>
     /// Offers list has changed.
     /// </summary>
+    /// <param name="offersChanged">A list with the offer packs that have changed</param>
     private void OnOffersChanged(List<OfferPack> offersChanged = null)
     {
         // Ignore if not active
@@ -773,12 +786,26 @@ public class ShopController : MonoBehaviour {
         // Refresh the shop if the shop is ready (avoid interrupting init animation bug)
         if (shopReady)
         {
+
+            List<ShopCategory> categoriesAffected = new List<ShopCategory>();
+
             foreach (OfferPack offer in offersChanged)
             {
                 if (offer.shopCategory != null)
                 {
-                    RefreshCategory(offer.shopCategory);
+                    ShopCategory category = OffersManager.instance.activeCategories.Find(sc => sc.sku == offer.shopCategory);
+                    
+                    // Avoid refreshing several times the same category
+                    if (!categoriesAffected.Contains(category))
+                    {
+                        categoriesAffected.Add(category);
+                    }
                 }
+            }
+
+            foreach (ShopCategory cat in categoriesAffected)
+            {
+                RefreshCategory(cat);
             }
         }
     }

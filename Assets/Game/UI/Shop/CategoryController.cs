@@ -97,7 +97,7 @@ public class CategoryController : MonoBehaviour {
 	//------------------------------------------------------------------------//
 
     /// <summary>
-    /// Initialize a category container
+    /// Initializes a category container and populate it with offers.
     /// </summary>
     /// <param name="_shopCategory">The shop category related</param>
     /// <param name="offers">Offer packs that will be contained in this category. If null, they will be
