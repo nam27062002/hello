@@ -10,6 +10,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
 using System.Collections;
+using XTech.Utils.UnityEngine;
 using System;
 using System.Reflection;
 //using System.Runtime.InteropServices;
