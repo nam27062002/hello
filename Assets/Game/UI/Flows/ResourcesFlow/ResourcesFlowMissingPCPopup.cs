@@ -46,12 +46,14 @@ public class ResourcesFlowMissingPCPopup : MonoBehaviour {
 
 	// Happy hour banner
 	[Space]
+    [Header("Happy hour")]
 	[SerializeField] private GameObject m_happyHourPanel;
     [SerializeField] private TextMeshProUGUI m_happyHourBadgeText;
     [SerializeField] private TextMeshProUGUI m_happyHourTimer;
+    [SerializeField] private GameObject m_happyHourBackground;
 
-	// Internal
-	private HappyHour m_happyHour; // cached object
+    // Internal
+    private HappyHour m_happyHour; // cached object
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -113,9 +115,18 @@ public class ResourcesFlowMissingPCPopup : MonoBehaviour {
 	/// </summary>
 	private void RefreshHappyHour() {
 		// Refresh the happy hour panel
-		if(m_happyHour != null && m_happyHourPanel != null) {
-			// If show the happy hour panel only if the offer is active        
-			m_happyHourPanel.SetActive(m_happyHour.IsActive());
+		if(m_happyHour != null)  {
+
+            // If show the happy hour panel only if the offer is active        
+            if (m_happyHourPanel != null)
+            {
+                m_happyHourPanel.SetActive(m_happyHour.IsActive());
+            }
+
+            if (m_happyHourBackground != null)
+            {
+                m_happyHourBackground.SetActive(m_happyHour.IsActive());
+            }
 
             if (m_happyHour.IsActive()) {
 
