@@ -168,7 +168,7 @@ public class SocialPlatformManager : MonoBehaviour
 		{
 			m_platforms[platformId] = socialPlatform;
 		}
-		else if (IsPlatformIdSupported(platformId))
+		else if (socialPlatform.GetIsEnabled())
 		{
 			m_platforms.Add(platformId, socialPlatform);
 			m_supportedPlatformIds.Add(platformId);
