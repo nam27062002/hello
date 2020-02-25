@@ -302,7 +302,7 @@ public class SocialPlatformManager : MonoBehaviour
             neverLoggedIn = true;
 #endif
 
-            // If the user has never logged in then we should just marked as not loggedIn
+            // If the user has never logged in then we should just mark it as not loggedIn
             if (neverLoggedIn)
             {
                 Login_OnLoggedIn(false);
@@ -311,7 +311,7 @@ public class SocialPlatformManager : MonoBehaviour
         else
         {
             // We need to make sure that a previous incomplete merge is reseted. When a user decides to keep her local account when prompted to merge with 
-            // a different account that has also used the same social account then the user is logges out automatically and we don't want to bother the user
+            // a different account that has also used the same social account then the user is logged out automatically and we don't want to bother the user
             // with the same merge popup every time she loads the game. The remove account id that was declined is stored in order to avoid that popup from being shown 
             // again. We need to reset that variable because the user is expressing explicitly her intention to log in again
             GameSessionManager.SharedInstance.ResetSocialPlatformCancelState();
