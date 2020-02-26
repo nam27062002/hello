@@ -1515,7 +1515,7 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
 #if UNITY_EDITOR
         return true;
 #elif UNITY_IOS
-        return true;
+        return false;	// [AOC] Disabling for iOS as of 2.18, to make sure we are compliant with SIWA
 #else
         return true;
 #endif
