@@ -108,7 +108,9 @@ public class HUDCloudSyncStatus : MonoBehaviour
 	/// </summary>
 	public void RefreshState() {
 		// Is Cloud Save enabled for this player?
-		bool isEnabled = PersistenceFacade.instance.IsCloudSaveAllowed && PersistenceFacade.instance.IsCloudSaveEnabled;
+		// [AOC] IsCloudSaveAllowed returns false when unable to login with the server, so I don't think it's usable in this case
+		//bool isEnabled = PersistenceFacade.instance.IsCloudSaveAllowed && PersistenceFacade.instance.IsCloudSaveEnabled;
+		bool isEnabled = SocialPlatformManager.SharedInstance.GetIsEnabled() && PersistenceFacade.instance.IsCloudSaveEnabled;
 		if(!isEnabled) {
 			// No! Nothing else to check
 			m_state = State.CLOUD_SAVE_DISABLED;
