@@ -713,6 +713,7 @@ GameObject:
   - component: {fileID: 222137070357110314}
   - component: {fileID: 114620147431424568}
   - component: {fileID: 114252344219930210}
+  - component: {fileID: 114342308980674414}
   m_Layer: 5
   m_Name: PillHitArea
   m_TagString: Untagged
@@ -730,6 +731,7 @@ GameObject:
   - component: {fileID: 224576009048766602}
   - component: {fileID: 114521402533228178}
   - component: {fileID: 95961861106418792}
+  - component: {fileID: 114773560777725480}
   m_Layer: 5
   m_Name: ButtonFreeWithAds
   m_TagString: Untagged
@@ -1649,6 +1651,18 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &114342308980674414
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1721376704029098}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28e0bbef12e224ce7835342046d82316, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_audioId: 
 --- !u!114 &114370215470986268
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2306,6 +2320,17 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 114773560777725480}
+        m_MethodName: Play
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: UI_Buy
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!114 &114535488925037840
@@ -2680,6 +2705,17 @@ MonoBehaviour:
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: offer_shop
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 114342308980674414}
+        m_MethodName: Play
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: UI_Buy
           m_BoolArgument: 0
         m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
@@ -3076,6 +3112,18 @@ MonoBehaviour:
   - {fileID: 0}
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &114773560777725480
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1731522103507360}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28e0bbef12e224ce7835342046d82316, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_audioId: 
 --- !u!114 &114808566536130684
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4470,8 +4518,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 126.7559}
-  m_SizeDelta: {x: 520.6, y: 730}
+  m_AnchoredPosition: {x: 0, y: 114.1}
+  m_SizeDelta: {x: 520.6, y: 755.3}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224648335720387448
 RectTransform:
