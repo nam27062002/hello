@@ -214,6 +214,10 @@ public class CategoryController : MonoBehaviour {
             m_offers.Add(_offer);
             m_offerPills.Add(pill);
 
+            // If there is a callback
+            if (m_shopController.purchaseCompletedCallback != null)
+                pill.OnPurchaseSuccess.AddListener(m_shopController.purchaseCompletedCallback);
+
             // Show the pill with an animation
             if (pill.gameObject.GetComponent<ShowHideAnimator>() != null)
             {

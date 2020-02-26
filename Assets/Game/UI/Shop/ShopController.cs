@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 //----------------------------------------------------------------------------//
@@ -59,7 +60,7 @@ public class ShopController : MonoBehaviour {
     private float m_timer = 0; // Refresh timer
     private bool m_scrolling = false; // The tweener scrolling animation is running
     private float m_scrollViewOffset;
-
+    
     //Filtering categories
     private string m_categoryToShow; 
 
@@ -96,9 +97,13 @@ public class ShopController : MonoBehaviour {
     [System.NonSerialized]
     public bool useOptimization = true;
 
+
+    // Callback for successful purchases
+    private UnityAction<IShopPill> m_purchaseCompletedCallback;
+    public UnityAction<IShopPill> purchaseCompletedCallback { get { return m_purchaseCompletedCallback; } }
+
     // Frame counter for pills initialization effect
     private int m_frameCounter;
-
     public int frameCounter { get { return m_frameCounter; } }
 
     
@@ -221,7 +226,9 @@ public class ShopController : MonoBehaviour {
     /// Initialize the shop with the requested mode. Should be called before opening the popup.
     /// </summary>
     /// <param name="_mode">Target mode.</param>
-    public void Init(PopupShop.Mode _mode)
+    /// <param name="_purchaseCompletedCallback">If provided, this action will be called each time an offer in
+    /// this shop is successfully purchased</param>
+    public void Init(PopupShop.Mode _mode, UnityAction<IShopPill> _purchaseCompletedCallback = null)
     {
         int timer = Environment.TickCount;
 
@@ -234,6 +241,9 @@ public class ShopController : MonoBehaviour {
                 m_categoryToShow = SC_CATEGORY_SKU;
                 break;
         }
+
+        // In case we need to do something after the user purchases an offer
+        m_purchaseCompletedCallback = _purchaseCompletedCallback;
 
         Refresh();
 

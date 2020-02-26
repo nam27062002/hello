@@ -98,7 +98,7 @@ public class PopupShop : MonoBehaviour, IBroadcastListener {
 	/// </summary>
 	/// <param name="_mode">Target mode.</param>
 	public void Init(PopupShop.Mode _mode, String _origin) {
-        m_shopController.Init(_mode);
+        m_shopController.Init(_mode, OnPurchaseSuccessful);
 	}
 
 	/// <summary>
@@ -152,12 +152,27 @@ public class PopupShop : MonoBehaviour, IBroadcastListener {
 		
 	}
 
-	/// <summary>
-	/// IBroadcastListener implementation.
-	/// </summary>
-	/// <param name="eventType"></param>
-	/// <param name="broadcastEventInfo"></param>
-	public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo) {
+
+    /// <summary
+    /// Successful purchase.
+    /// </summary>
+    /// <param name="_pill">The pill that triggered the event</param>
+    private void OnPurchaseSuccessful(IShopPill _pill)
+    {
+        // Add to purchased packs list
+        m_packsPurchased.Add(_pill.def);
+
+        // Close popup?
+        if (m_closeAfterPurchase)
+            GetComponent<PopupController>().Close(false);
+    }
+
+    /// <summary>
+    /// IBroadcastListener implementation.
+    /// </summary>
+    /// <param name="eventType"></param>
+    /// <param name="broadcastEventInfo"></param>
+    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo) {
 		// Ignore if not active
 		if(!this.isActiveAndEnabled) return;
 
