@@ -92,11 +92,16 @@ public class ShopController : MonoBehaviour {
     private Queue<ShopCategory> categoriesToInitialize;
     private CategoryController catBeingInitialized;
 
+    // Aux var to turn optimization on/off from the inspector
+    [System.NonSerialized]
+    public bool useOptimization = true;
+
     // Frame counter for pills initialization effect
     private int m_frameCounter;
 
-
     public int frameCounter { get { return m_frameCounter; } }
+
+    
 
     //------------------------------------------------------------------------//
     // GENERIC METHODS														  //
@@ -151,7 +156,7 @@ public class ShopController : MonoBehaviour {
         }
 
         // When the shop is ready, turn on the optimizations
-        if (shopReady && !optimizationActive)
+        if (shopReady && !optimizationActive && useOptimization)
         {
             // Wait one frame
             UbiBCN.CoroutineManager.DelayedCallByFrames(() => {
@@ -625,12 +630,6 @@ public class ShopController : MonoBehaviour {
     {
         optimizationActive = _enable;
 
-        // Disable layouts for better performance
-        SetLayoutGroupsActive(!_enable);
-
-        // Hide pills out the view
-        m_hidePillsOutOfView = _enable;
-
         if (_enable)
         {
             // Hide pills that are out the view at this moment
@@ -644,10 +643,13 @@ public class ShopController : MonoBehaviour {
                 pill.gameObject.SetActive(true);
             }
 
-            // Force layout redraw
-            m_categoriesContainer.GetComponent<HorizontalLayoutGroup>().enabled = false;
-            m_categoriesContainer.GetComponent<HorizontalLayoutGroup>().enabled = true;
         }
+
+        // Disable layouts for better performance
+        SetLayoutGroupsActive(!_enable);
+
+        // Hide pills out the view
+        m_hidePillsOutOfView = _enable;
 
     }
 
@@ -658,16 +660,16 @@ public class ShopController : MonoBehaviour {
     /// <param name="enable">True to enable, false to disable</param>
     private void SetLayoutGroupsActive (bool enable)
     {
-        m_categoriesContainer.GetComponent<HorizontalLayoutGroup>().enabled = enable;
-        m_categoriesContainer.GetComponent<ContentSizeFitter>().enabled = enable;
-
-        layoutGropusActive = enable;
-
         // Propagate it to categories and pills
         foreach (CategoryController cat in m_categoryContainers)
         {
             cat.SetLayoutGroupsActive(enable);
         }
+
+        m_categoriesContainer.GetComponent<HorizontalLayoutGroup>().enabled = enable;
+        m_categoriesContainer.GetComponent<ContentSizeFitter>().enabled = enable;
+
+        layoutGropusActive = enable;
     }
 
 
