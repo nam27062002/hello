@@ -180,8 +180,8 @@ public class HUDCloudSyncStatus : MonoBehaviour
 
 		// Login Incentivise reward
 		// Is incentivised login enabled?
-		bool incentivisedLoginEnabled = FeatureSettingsManager.instance.IsIncentivisedLoginEnabled();
 		if(m_loginRewardRoot != null) {
+			bool incentivisedLoginEnabled = FeatureSettingsManager.instance.IsIncentivisedLoginEnabled();
 			m_loginRewardRoot.SetActive(m_state == State.NEVER_LOGGED_IN && incentivisedLoginEnabled);
 		}
     }
