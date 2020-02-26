@@ -8,146 +8,253 @@ using System;
 using UnityEngine;
 
 /// <summary>
-/// This class is responsible for handling the widget shown in hud in different screens to let the user know whether or not the local persistence is in sync with the cloud persistence
+/// This class is responsible for handling the widget shown in hud in different
+/// screens to let the user know whether or not the local persistence is in sync with the cloud persistence
 /// Possible states:
-/// 1)Invisible: It means that the user hasn't logged in the social platform since she installed the game.
-/// 2)Not in sync
-/// 3)In sync
+/// 1) Invisible: Cloud Save feature not available for this player (i.e. Underage)
+/// 2) Incentivise: The player hasn't logged in the social platform since she installed the game.
+/// 3) Not logged in: The player has logged in to the social platform at some point, but logged out afterwards
+/// 4) Not in sync
+/// 5) In sync
 /// </summary>
 public class HUDCloudSyncStatus : MonoBehaviour
 {
-    /// <summary>
-    /// This variable is used to disable this widget easily. It's static in order to make it accessible easily
-    /// </summary>
-    private static bool sm_clickIsEnabled = true;
-    private static bool ClickIsEnabled
+	//------------------------------------------------------------------------//
+	// CONSTANTS AND STATIC MEMBERS											  //
+	//------------------------------------------------------------------------//
+	private enum State {
+		CLOUD_SAVE_DISABLED,
+		NEVER_LOGGED_IN,
+		PREVIOUSLY_LOGGED_IN,
+		LOGGED_IN_NOT_SYNCHED,
+		LOGGED_IN_SYNCHED
+	}
+
+	//------------------------------------------------------------------------//
+	// MEMBERS AND PROPERTIES												  //
+	//------------------------------------------------------------------------//
+	[SerializeField] private GameObject m_root;
+	[SerializeField] private GameObject m_syncSuccessIcon = null;
+	[SerializeField] private GameObject m_syncFailedSprite = null;
+	[SerializeField] private GameObject m_loginRewardRoot = null;
+	[SerializeField] private Localizer m_loginRewardText = null;
+
+	private State m_state = State.NEVER_LOGGED_IN;
+	private State m_lastDisplayedState = State.NEVER_LOGGED_IN;
+
+	// Spam prevention and other control vars
+	private bool m_isPopupOpen = false;
+	private float m_spamPreventionTimer = 0f;
+	private bool IsClickEnabled {
+		get { return m_spamPreventionTimer <= 0f; }
+		set {
+			// Reset spam prevention
+			if(value) {
+				m_spamPreventionTimer = 1f;
+			} else {
+				m_spamPreventionTimer = 0f;
+			}
+		}
+	}
+
+	//------------------------------------------------------------------------//
+	// METHODS																  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Initialization.
+	/// </summary>
+	void Awake()
     {
-        get
-        {
-            return sm_clickIsEnabled;
-        }
-
-        set
-        {
-            sm_clickIsEnabled = value;
-        }
-    }
-
-    public GameObject mRoot;
-
-    private bool CloudSaveIsSynced { get; set; }
-
-    private bool CloudSaveIsEnabled { get; set; }
-
-    private bool IsPopupOpen { get; set; }
-
-    [SerializeField]
-    private GameObject m_syncSuccessSprite = null;
-
-    [SerializeField]
-    private GameObject m_syncFailedSprite = null;
-
-    void Awake()
-    {
-        // It shouldn't be visible by default
-        CloudSaveIsEnabled = false;
-        View_UpdateCloudSaveIsEnabled(true);
+		// It shouldn't be visible by default
+		m_state = State.CLOUD_SAVE_DISABLED;
+        RefreshView(true);
         
-        IsPopupOpen = false;
+		// Subscribe to external events
         Messenger.AddListener<bool>(MessengerEvents.PERSISTENCE_SYNC_CHANGED, OnSyncChange);        
 
+		// Simulate a sync status change for initialization
         OnSyncChange(PersistenceFacade.instance.Sync_IsSynced);
-    }
 
+		// Initialize some static visual elements
+		if(m_loginRewardText != null) {
+			PersistenceFacade.Texts_LocalizeIncentivizedSocial(m_loginRewardText);
+		}
+	}
+
+	/// <summary>
+	/// Destructor.
+	/// </summary>
     void OnDestroy()
     {
         Messenger.RemoveListener<bool>(MessengerEvents.PERSISTENCE_SYNC_CHANGED, OnSyncChange);
     }
 
+	/// <summary>
+	/// Called every frame.
+	/// </summary>
     void Update()
     {
-        View_UpdateCloudSaveIsEnabled(false);
+		RefreshState();
+        RefreshView(false);
+
+		// Update spam prevention
+		if(m_spamPreventionTimer > 0f) {
+			m_spamPreventionTimer -= Time.unscaledDeltaTime;
+		}
     }
 
-    /// <summary>
-    /// Called by the player when the user clicks on this widget
-    /// </summary>
-    public void OnIconClick()
-    {
-        if (ClickIsEnabled)
-        {
-            Action onSyncDone = delegate ()
-            {
-                PersistenceFacade.Popups_CloseLoadingPopup();
-            };
+	/// <summary>
+	/// 
+	/// </summary>
+	public void RefreshState() {
+		// Is Cloud Save enabled for this player?
+		bool isEnabled = PersistenceFacade.instance.IsCloudSaveAllowed && PersistenceFacade.instance.IsCloudSaveEnabled;
+		if(!isEnabled) {
+			// No! Nothing else to check
+			m_state = State.CLOUD_SAVE_DISABLED;
+			return;
+		}
 
-            if (CloudSaveIsSynced)
-            {
-                if (!IsPopupOpen)
-                {
-                    IsPopupOpen = true;
+		// Do we have a valid player profile?
+		UserProfile playerProfile = UsersManager.currentUser;
+		if(playerProfile == null) {
+			// No! Nothing else to check
+			m_state = State.NEVER_LOGGED_IN;
+			return;
+		}
 
-                    PersistenceFacade.Popups_OpenCloudSync
-                    (
-                        delegate ()
-                        {                            
-                            if (PersistenceFacade.instance.IsCloudSaveEnabled)                            
-                            {
-                                PersistenceFacade.Popups_OpenLoadingPopup();
-                                PersistenceFacade.instance.Sync_FromSettings(onSyncDone);
-                            }
-                            else
-                            {
-                                IsPopupOpen = false;
-                            }
-                        },
-                        delegate ()
-                        {
-                            IsPopupOpen = false;
-                        }
-                    );
-                }
-            }
-            else
-            {
-                PersistenceFacade.Popups_OpenLoadingPopup();
-                PersistenceFacade.instance.Sync_FromSettings(onSyncDone);
-            }
-        }
+		// Check social state
+		bool isCurrentlyLoggedIn = PersistenceFacade.instance.CloudDriver.IsLoggedIn;
+		switch(playerProfile.SocialState) {
+			case UserProfile.ESocialState.NeverLoggedIn: {
+				m_state = State.NEVER_LOGGED_IN;
+			} break;
+
+			case UserProfile.ESocialState.LoggedIn:
+			case UserProfile.ESocialState.LoggedInAndIncentivised: {
+				// Is currently logged in?
+				if(isCurrentlyLoggedIn) {
+					// Yes! Check sync status
+					if(PersistenceFacade.instance.Sync_IsSynced) {
+						m_state = State.LOGGED_IN_SYNCHED;
+					} else {
+						m_state = State.LOGGED_IN_NOT_SYNCHED;
+					}
+				} else {
+					// No!
+					m_state = State.PREVIOUSLY_LOGGED_IN;
+				}
+			} break;
+		}
+	}
+
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <param name="_force"></param>
+    private void RefreshView(bool _force) {
+		// Skip if state hasn't changed
+		if(m_state == m_lastDisplayedState && !_force) return;
+
+		// Store last displayed state
+		m_lastDisplayedState = m_state;
+
+		// Root
+		if(m_root != null) {
+			m_root.SetActive(m_state != State.CLOUD_SAVE_DISABLED);
+		}
+
+		// If disabled, nothing else to do
+		if(m_state == State.CLOUD_SAVE_DISABLED) return;
+
+		// Sync status icons
+		if(m_syncSuccessIcon != null) {
+			m_syncSuccessIcon.SetActive(m_state == State.LOGGED_IN_SYNCHED);
+		}
+
+		if(m_syncFailedSprite != null) {
+			m_syncFailedSprite.SetActive(m_state == State.LOGGED_IN_NOT_SYNCHED);
+		}
+
+		// Login Incentivise reward
+		// Is incentivised login enabled?
+		bool incentivisedLoginEnabled = FeatureSettingsManager.instance.IsIncentivisedLoginEnabled();
+		if(m_loginRewardRoot != null) {
+			m_loginRewardRoot.SetActive(m_state == State.NEVER_LOGGED_IN && incentivisedLoginEnabled);
+		}
     }
 
-    private void OnSyncChange(bool synced)
-    {
-        CloudSaveIsSynced = synced;
-        View_UpdateCloudSaveIsSynced();
-    }
+	//------------------------------------------------------------------------//
+	// CALLBACKS															  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Called by the player when the user clicks on this widget
+	/// </summary>
+	public void OnIconClick() {
+		// Avoid spamming
+		if(!IsClickEnabled) return;
+		IsClickEnabled = false;
 
-    private void View_UpdateCloudSaveIsEnabled(bool forced = false)
-    {
-        bool isEnabled = PersistenceFacade.instance.IsCloudSaveAllowed && PersistenceFacade.instance.IsCloudSaveEnabled;
+		// Depends on state
+		switch(m_state) {
+			case State.CLOUD_SAVE_DISABLED: {
+				return;	// Shouldn't happen
+			} break;
 
-        if (isEnabled != CloudSaveIsEnabled || forced)
-        {
-            CloudSaveIsEnabled = isEnabled;
+			case State.NEVER_LOGGED_IN:
+			case State.PREVIOUSLY_LOGGED_IN: {
+				// Open Settings popup at the Save tab
+				PopupController popup = PopupManager.LoadPopup(PopupSettings.PATH);
+				PopupSettings settingsPopup = popup.GetComponent<PopupSettings>();
+				settingsPopup.SetActiveTab(PopupSettings.Tab.SAVE);
+				popup.Open();
+			} break;
 
-            if (mRoot != null)
-            {
-                mRoot.gameObject.SetActive(CloudSaveIsEnabled);
-            }            
-        }
-    }
+			case State.LOGGED_IN_SYNCHED: {
+				// Show sync status popup
+				if(!m_isPopupOpen) {
+					m_isPopupOpen = true;
 
-    private void View_UpdateCloudSaveIsSynced()
-    {
-        if (CloudSaveIsSynced)
-        {
-            m_syncSuccessSprite.SetActive(true);
-            m_syncFailedSprite.SetActive(false);
-        }
-        else
-        {
-            m_syncSuccessSprite.SetActive(false);
-            m_syncFailedSprite.SetActive(true);
-        }
-    }
+					Action onConfirm = delegate () {
+						// Force a sync (if enabled)
+						if(PersistenceFacade.instance.IsCloudSaveEnabled) {
+							PersistenceFacade.Popups_OpenLoadingPopup();
+							PersistenceFacade.instance.Sync_FromSettings(OnSyncDone);
+						} else {
+							m_isPopupOpen = false;
+						}
+					};
+
+					Action onCancel = delegate () {
+						m_isPopupOpen = false;
+					};
+
+					PersistenceFacade.Popups_OpenCloudSync(onConfirm, onCancel);
+				}
+			} break;
+
+			case State.LOGGED_IN_NOT_SYNCHED: {
+				// Directly trigger the Cloud Sync flow
+				PersistenceFacade.Popups_OpenLoadingPopup();
+				PersistenceFacade.instance.Sync_FromSettings(OnSyncDone);
+			} break;
+		}
+	}
+
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <param name="synced"></param>
+	private void OnSyncChange(bool synced) {
+		// Refresh state and view
+		RefreshState();
+		RefreshView(true);
+	}
+
+	/// <summary>
+	/// Cloud sync has finishehd.
+	/// </summary>
+	private void OnSyncDone() {
+		PersistenceFacade.Popups_CloseLoadingPopup();
+	}
 }
