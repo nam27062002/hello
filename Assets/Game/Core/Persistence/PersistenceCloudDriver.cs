@@ -122,6 +122,7 @@ public class PersistenceCloudDriver
     #region syncer
     private bool Syncer_IsSilent { get; set; }
 	protected bool Syncer_IsAppInit { get; set; }
+	private SocialUtils.EPlatform Syncer_PlatformId { get; set; }
 	private SocialPlatformManager.ELoginResult Syncer_LogInSocialResult { get; set; }
 	private Action<PersistenceStates.ESyncResult, PersistenceStates.ESyncResultDetail> Syncer_OnSyncDone { get; set; }
 
@@ -188,13 +189,14 @@ public class PersistenceCloudDriver
 		Syncer_Step = ESyncSetp.None;
 		Syncer_IsAppInit = false;
 		Syncer_IsSilent = false;
+		Syncer_PlatformId = SocialUtils.EPlatform.None;
 		Syncer_OnSyncDone = null;
 		Syncer_LogInSocialResult = SocialPlatformManager.ELoginResult.Error;
         Syncer_NeedsToShowCloudOverridenPopup = false;
         Syncer_Timer = 0f;
     }
 
-	public void Sync(bool isSilent, bool isAppInit, Action<PersistenceStates.ESyncResult, PersistenceStates.ESyncResultDetail> onDone)
+	public void Sync(SocialUtils.EPlatform platformId, bool isSilent, bool isAppInit, Action<PersistenceStates.ESyncResult, PersistenceStates.ESyncResultDetail> onDone)
 	{        
         PersistenceFacade.Log("(SYNC) CLOUD STARTED...");
 
@@ -202,6 +204,7 @@ public class PersistenceCloudDriver
 		Upload_IsAllowed = false;
 
 		Syncer_OnSyncDone = onDone;
+		Syncer_PlatformId = platformId;
 		Syncer_IsSilent = isSilent;
 		Syncer_IsAppInit = isAppInit;
 		State = EState.Syncing;
@@ -518,7 +521,7 @@ public class PersistenceCloudDriver
         PersistencePrefs.Clear();
 
         // Cache is invalidated in order to make sure that the new account's information will be requested
-        SocialPlatformManager.SharedInstance.InvalidateCachedSocialInfo();
+        SocialPlatformManager.SharedInstance.CurrentPlatform_InvalidateCachedSocialInfo();
 
         Action onReset = delegate ()
         {
@@ -677,8 +680,8 @@ public class PersistenceCloudDriver
             SocialPlatformManager manager = SocialPlatformManager.SharedInstance;
             HDTrackingManager.Instance.Notify_SocialAuthentication();
 
-            string socialPlatformKey = manager.GetPlatformKey();
-            string socialId = manager.GetUserID();
+            string socialPlatformKey = manager.CurrentPlatform_GetKey();
+            string socialId = manager.CurrentPlatform_GetUserID();
 			LocalDriver.NotifyUserHasLoggedIn(socialPlatformKey, socialId, onUserLoggedIn);
 		} 
 		else
@@ -752,7 +755,7 @@ public class PersistenceCloudDriver
 
 	protected virtual void Syncer_ExtendedLogInSocial(Action<SocialPlatformManager.ELoginResult, string> onDone)
     {
-        SocialPlatformManager.SharedInstance.Login(Syncer_IsSilent, Syncer_IsAppInit, onDone);        
+        SocialPlatformManager.SharedInstance.Login(Syncer_PlatformId, Syncer_IsSilent, Syncer_IsAppInit, onDone);        
     }
 
 	protected virtual void Syncer_ExtendedGetPersistence (Action<bool> onDone)
@@ -869,12 +872,12 @@ public class PersistenceCloudDriver
 
 			// Checks for timeout after calling the social network so we don't depend on the social network, 
 			// in particular this approach lets us address HDK-1574 and HDK-2590          
-			if (SocialPlatformManager.SharedInstance.IsLogInTimeoutEnabled()) 
+			if (SocialPlatformManager.SharedInstance.CurrentPlatform_IsLogInTimeoutEnabled()) 
 			{				
 				Syncer_Timer -= Math.Min (UnityEngine.Time.deltaTime, UnityEngine.Time.maximumDeltaTime);
 				if (Syncer_Timer <= 0f) 
 				{
-					SocialPlatformManager.SharedInstance.OnLogInTimeout();
+					SocialPlatformManager.SharedInstance.CurrentPlatform_OnLogInTimeout();
 					Syncer_OnLogInSocialDone(SocialPlatformManager.ELoginResult.Error, null);
 				}					
 			}

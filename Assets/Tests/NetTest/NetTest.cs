@@ -50,7 +50,7 @@ public class NetTest : MonoBehaviour
 	{
 		m_loginButton.SetActive(false);
 		m_waitingText.SetActive(true);              
-        if (SocialPlatformManager.SharedInstance.IsLoggedIn())            
+        if (SocialPlatformManager.SharedInstance.CurrentPlatform_IsLoggedIn())            
         {
             GameServerManager.SharedInstance.Auth(
                 (Error commandError, GameServerManager.ServerResponse response) =>
@@ -82,7 +82,22 @@ public class NetTest : MonoBehaviour
 	// SOCIAL PLATFORM
 	public void SocialLogin()
 	{
-        SocialPlatformManager.SharedInstance.Login(true, true, null);                        
+		List<SocialUtils.EPlatform> platformIds = SocialPlatformManager.SharedInstance.GetSupportedPlatformIds();
+		SocialUtils.EPlatform platformId = SocialUtils.EPlatform.None;
+		int count = platformIds.Count;
+		for (int i = 0; i < count && platformId == SocialUtils.EPlatform.None; i++) 
+		{
+			platformId = platformIds[i];
+		}
+
+		if (platformId == SocialUtils.EPlatform.None) 
+		{
+			Debug.LogError("No valid social platform found");
+		} 
+		else 
+		{
+			SocialPlatformManager.SharedInstance.Login(platformId, true, true, null);                       
+		}
     }		
 
 	public void OnResetDeviceInfo()

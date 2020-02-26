@@ -1,4 +1,4 @@
-﻿// HUDCloudSyncStatus.cs
+// HUDCloudSyncStatus.cs
 // Hungry Dragon
 // 
 // Created by David Germade on 12nd September 2016.
@@ -186,6 +186,19 @@ public class HUDCloudSyncStatus : MonoBehaviour
 		}
     }
 
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <param name="onSyncDone"></param>
+	private void Sync_FromSettings(Action onSyncDone)
+	{
+		PersistenceFacade.Popups_OpenLoadingPopup();
+
+		// Uses the same social platform that is currently in usage since the user can not change social platforms
+		// by clicking this icon
+		PersistenceFacade.instance.Sync_FromSettings(SocialPlatformManager.SharedInstance.CurrentPlatform_GetId(), onSyncDone);
+	}
+
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
@@ -220,8 +233,7 @@ public class HUDCloudSyncStatus : MonoBehaviour
 					Action onConfirm = delegate () {
 						// Force a sync (if enabled)
 						if(PersistenceFacade.instance.IsCloudSaveEnabled) {
-							PersistenceFacade.Popups_OpenLoadingPopup();
-							PersistenceFacade.instance.Sync_FromSettings(OnSyncDone);
+							Sync_FromSettings(OnSyncDone);
 						} else {
 							m_isPopupOpen = false;
 						}
@@ -237,8 +249,7 @@ public class HUDCloudSyncStatus : MonoBehaviour
 
 			case State.LOGGED_IN_NOT_SYNCHED: {
 				// Directly trigger the Cloud Sync flow
-				PersistenceFacade.Popups_OpenLoadingPopup();
-				PersistenceFacade.instance.Sync_FromSettings(OnSyncDone);
+				Sync_FromSettings(OnSyncDone);
 			} break;
 		}
 	}

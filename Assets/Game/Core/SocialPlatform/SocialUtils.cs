@@ -237,7 +237,8 @@ public abstract class SocialUtils
     {
         None,
         Facebook,
-        Weibo
+        Weibo,
+        SIWA
     };
 
     private static string[] sm_platformKeys;
