@@ -46,6 +46,26 @@ public class OfferItemSlot : MonoBehaviour, IBroadcastListener {
 		DRAGONS_2D
 	}
 
+	// For performance reasons, don't use 3D previews with low-end devices
+	private static int s_minQualityLevelFor3dPreview = -1;
+	private static int MIN_QUALITY_LEVEL_FOR_3D_PREVIEW {
+		get {
+			// Is it initialized?
+			if(s_minQualityLevelFor3dPreview < 0) {
+				// Is content ready?
+				if(ContentManager.ready) {
+					DefinitionNode offerSettingsDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, "offerSettings");
+					s_minQualityLevelFor3dPreview = offerSettingsDef.GetAsInt("minQualityLevelFor3dPreview", 0);
+				} else {
+					// Not initialized but content not ready yet - return 0 but don't save it. That way we will try again next time.
+					return 0;
+				}
+			}
+
+			return s_minQualityLevelFor3dPreview;
+		}
+	}
+
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
@@ -82,17 +102,16 @@ public class OfferItemSlot : MonoBehaviour, IBroadcastListener {
 		get { return m_preview; }
 	}
 
-
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
-
 	/// <summary>
 	/// Component has been enabled.
 	/// </summary>
 	private void OnEnable() {
 		// Subscribe to external events
 		Broadcaster.AddListener(BroadcastEventType.LANGUAGE_CHANGED, this);
+		Broadcaster.AddListener(BroadcastEventType.QUALITY_PROFILE_CHANGED, this);
 	}
 
 	/// <summary>
@@ -101,6 +120,7 @@ public class OfferItemSlot : MonoBehaviour, IBroadcastListener {
 	private void OnDisable() {
 		// Unsubscribe from external events
 		Broadcaster.RemoveListener(BroadcastEventType.LANGUAGE_CHANGED, this);
+		Broadcaster.RemoveListener(BroadcastEventType.QUALITY_PROFILE_CHANGED, this);
 	}
 
 	//------------------------------------------------------------------------//
@@ -131,7 +151,7 @@ public class OfferItemSlot : MonoBehaviour, IBroadcastListener {
 		}
 
 		// Aux vars
-		Metagame.Reward reward = item.reward;
+		Metagame.Reward reward = m_item.reward;
 
 		// Activate game object
 		this.gameObject.SetActive(true);
@@ -145,15 +165,15 @@ public class OfferItemSlot : MonoBehaviour, IBroadcastListener {
 		if(reloadPreview) {
 			// Try loading the preferred preview type
 			// If there is no preview of the preferred type, try other types until we have a valid preview
-			IOfferItemPreview.Type preferredPreviewType = GetPreferredPreviewType(item.type);
-			GameObject previewPrefab = ShopSettings.GetPrefab(item.type, preferredPreviewType);
+			IOfferItemPreview.Type preferredPreviewType = GetPreferredPreviewType(m_item.type);
+			GameObject previewPrefab = ShopSettings.GetPrefab(m_item.type, preferredPreviewType);
 			Log("Attempting to get preview prefab of type {0}: {1}", Color.yellow, preferredPreviewType, (previewPrefab == null ? Color.red.Tag("NULL") : previewPrefab.name));
 			if(previewPrefab == null) {
 				// Loop will stop with a valid prefab
 				for(int i = 0; i < (int)IOfferItemPreview.Type.COUNT && previewPrefab == null; ++i) {
 					// Skip preferred type (already checked)
 					if(i == (int)preferredPreviewType) continue;
-					previewPrefab = ShopSettings.GetPrefab(item.type, (IOfferItemPreview.Type)i);
+					previewPrefab = ShopSettings.GetPrefab(m_item.type, (IOfferItemPreview.Type)i);
 					Log("\tCouldn't do it, checking type {0}...: {1}", Color.yellow, ((IOfferItemPreview.Type)i), (previewPrefab == null ? Color.red.Tag("NULL") : previewPrefab.name));
 				}
 			}
@@ -268,6 +288,15 @@ public class OfferItemSlot : MonoBehaviour, IBroadcastListener {
 			} break;
 		}
 
+		// Due to performance, override for some slot types based on quality level
+		if(preferredPreviewType == IOfferItemPreview.Type._3D && IsPill()) {
+			// Do we reach the minimum required profile quality for 3D previews?
+			if(FeatureSettingsManager.instance.GetCurrentProfileLevel() < MIN_QUALITY_LEVEL_FOR_3D_PREVIEW) {
+				// No! Override preview type
+				preferredPreviewType = IOfferItemPreview.Type._2D;
+			}
+		}
+
 		return preferredPreviewType;
 	}
 
@@ -311,6 +340,16 @@ public class OfferItemSlot : MonoBehaviour, IBroadcastListener {
         }
     }
 
+	/// <summary>
+	/// Does this slot belong to a pill?
+	/// </summary>
+	/// <returns></returns>
+	private bool IsPill() {
+		return m_slotType == Type.PILL_BIG
+			|| m_slotType == Type.PILL_FREE
+			|| m_slotType == Type.PILL_SMALL;  
+	}
+
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
@@ -323,6 +362,13 @@ public class OfferItemSlot : MonoBehaviour, IBroadcastListener {
 		switch(eventType) {
 			case BroadcastEventType.LANGUAGE_CHANGED: {
 				OnLanguageChanged();
+			} break;
+
+			case BroadcastEventType.QUALITY_PROFILE_CHANGED: {
+				// Reload item preview - do this by nullifying current item then reapplying
+				OfferPackItem currentItem = m_item;
+				m_item = null;
+				InitFromItem(currentItem);
 			} break;
 		}
 	}
