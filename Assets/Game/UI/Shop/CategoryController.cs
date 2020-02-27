@@ -256,7 +256,7 @@ public class CategoryController : MonoBehaviour {
         IShopPill pill;
 
         // Create new instance of prefab
-        IShopPill prefab = ShopSettings.GetPrefab(_type);
+        IShopPill prefab = ShopSettings.GetPillPrefab(_type);
 
         Debug.Assert(prefab != null, "There is no prefab defined for offer type " + _type + " in ShopSettings");
 

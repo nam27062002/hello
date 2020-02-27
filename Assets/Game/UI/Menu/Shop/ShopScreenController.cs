@@ -26,10 +26,36 @@ public class ShopScreenController : MonoBehaviour {
     //------------------------------------------------------------------------//
     private MenuTransitionManager m_transitionManager;
 
+    // Internal references
+    private NavigationShowHideAnimator m_animator = null;
+    public NavigationShowHideAnimator animator
+    {
+        get
+        {
+            if (m_animator == null)
+            {
+                m_animator = GetComponent<NavigationShowHideAnimator>();
+            }
+            return m_animator;
+        }
+    }
+
 
     //------------------------------------------------------------------------//
     // GENERIC METHODS														  //
     //------------------------------------------------------------------------//
+
+    private void Awake()
+    {
+        animator.OnShowPreAnimation.AddListener(OnShowPreAnimation);
+    }
+
+    private void OnDestroy()
+    {
+        animator.OnShowPreAnimation.RemoveListener(OnShowPreAnimation);
+    }
+
+
 
     /// <summary>
     /// First update call.
@@ -40,8 +66,6 @@ public class ShopScreenController : MonoBehaviour {
         m_transitionManager = InstanceManager.menuSceneController.transitionManager;
         Debug.Assert(m_transitionManager != null, "Required component missing!");
 
-        // Initialize the shop
-        GetComponent<ShopController>().Init(PopupShop.Mode.DEFAULT);
 
 
     }
@@ -67,11 +91,23 @@ public class ShopScreenController : MonoBehaviour {
     }
 
 
-	//------------------------------------------------------------------------//
-	// OTHER METHODS														  //
-	//------------------------------------------------------------------------//
+    //------------------------------------------------------------------------//
+    // OTHER METHODS														  //
+    //------------------------------------------------------------------------//
 
-	//------------------------------------------------------------------------//
-	// CALLBACKS															  //
-	//------------------------------------------------------------------------//
+    //------------------------------------------------------------------------//
+    // CALLBACKS															  //
+    //------------------------------------------------------------------------//
+
+    /// <summary>
+    /// Screen is about to be open.
+    /// </summary>
+    /// <param name="_animator">The animator that triggered the event.</param>
+    public void OnShowPreAnimation(ShowHideAnimator _animator)
+    {
+
+        // Initialize the shop
+        GetComponent<ShopController>().Init(PopupShop.Mode.DEFAULT);
+
+    }
 }
