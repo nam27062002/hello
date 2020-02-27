@@ -55,6 +55,8 @@ public class ShopController : MonoBehaviour {
     [SerializeField]
     private int m_framesDelayPerPill = 1;
 
+    [SerializeField]
+    public int m_pillsPerFrame = 10;
 
     //Internal
     private float m_timer = 0; // Refresh timer
