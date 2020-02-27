@@ -106,7 +106,8 @@ public class ShopController : MonoBehaviour {
     private int m_frameCounter;
     public int frameCounter { get { return m_frameCounter; } }
 
-    
+    // Benchmarking
+    private int timestamp;
 
     //------------------------------------------------------------------------//
     // GENERIC METHODS														  //
@@ -154,6 +155,13 @@ public class ShopController : MonoBehaviour {
 	/// </summary>
 	private void Update() {
 
+#if UNITY_EDITOR
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            Refresh();
+        }
+#endif
+
         // Do not update if the shop is not open
         if (!gameObject.activeInHierarchy)
         {
@@ -193,6 +201,10 @@ public class ShopController : MonoBehaviour {
                 }
 
                 shopReady = true;
+
+                // Benchmarking
+                int timeElapsedMs = Environment.TickCount - timestamp;
+                Debug.Log(Colors.paleYellow.Tag("Shop initialized in " + timeElapsedMs + " ms"));
             }
         }
 
@@ -236,9 +248,11 @@ public class ShopController : MonoBehaviour {
         {
             case PopupShop.Mode.PC_ONLY:
                 m_categoryToShow = PC_CATEGORY_SKU;
+                CenterItemsAndLockScroll();
                 break;
             case PopupShop.Mode.SC_ONLY:
                 m_categoryToShow = SC_CATEGORY_SKU;
+                CenterItemsAndLockScroll();
                 break;
         }
 
@@ -247,7 +261,6 @@ public class ShopController : MonoBehaviour {
 
         Refresh();
 
-        Debug.Log("Init time: " + (Environment.TickCount - timer) + " ms");
     }
 
 
@@ -256,8 +269,6 @@ public class ShopController : MonoBehaviour {
     /// </summary>
     public void Clear()
     {
-
-        Debug.Log("Clear");
 
         // Clean the containers
         m_categoriesContainer.transform.DestroyAllChildren(true);
@@ -289,6 +300,9 @@ public class ShopController : MonoBehaviour {
     /// </summary>
     public void Refresh ()
     {
+        // Benchmarking
+        timestamp = Environment.TickCount;
+
         Clear();
 
         // Turn off optimizations while refreshing
@@ -474,6 +488,20 @@ public class ShopController : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// In some cases we dont want the pills to stack in the left side, specially when we are showing only one category
+    /// So with this method we disable scrolling and make sure the items are centered in the viewport. Scrolling is disabled 
+    /// so you need to make sure that we dont have too many pills, or they will be out of the screen.
+    /// </summary>
+    private void CenterItemsAndLockScroll()
+    {
+        m_scrollRect.movementType = ScrollRect.MovementType.Unrestricted;
+        m_scrollRect.horizontal = false;
+        m_scrollRect.GetComponent<HorizontalLayoutGroup>().enabled = true;
+        m_scrollRect.GetComponent<ContentSizeFitter>().enabled = true;
+        m_scrollRect.viewport.GetComponent<HorizontalLayoutGroup>().enabled = true;
+        m_scrollRect.viewport.GetComponent<ContentSizeFitter>().enabled = true;
+    }
 
     //------------------------------------------------------------------------//
     // SHORTCUTS                											  //
