@@ -27,12 +27,7 @@ public class OfferItemPreviewHC2d : IOfferItemPreviewHC {
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
-	// Exposed
-	[SerializeField] private Transform m_iconRoot = null;
-
-	// Internal
-	private GameObject m_iconInstance = null;
-
+	
 	//------------------------------------------------------------------------//
 	// PARENT OVERRIDES														  //
 	//------------------------------------------------------------------------//
@@ -43,19 +38,6 @@ public class OfferItemPreviewHC2d : IOfferItemPreviewHC {
 		// Call parent
 		base.InitInternal();
 
-		// Initialize image with the target egg icon
-		if(m_def == null) {
-			if(m_iconInstance != null) Destroy(m_iconInstance);
-		} else {
-			// [AOC] TODO!! Load different icon prefabs based on pack sku
-			//				Consider also the case where the HC reward doesn't belong to a pack
-			GameObject iconPrefab = Resources.Load<GameObject>(UIConstants.SHOP_ICONS_PATH);
-			if(iconPrefab != null) {
-				m_iconInstance = Instantiate<GameObject>(iconPrefab, m_iconRoot, false);
-			} else {
-				// Invalid prefab, let's show the default icon already in the prefab
-				// Nothing to do
-			}
-		}
+		// Nothing to do, the image is already instantiated
 	}
 }
