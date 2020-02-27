@@ -74,6 +74,7 @@ public class ShopBasePill : IShopPill {
 	protected List<OfferItemSlot> m_slotsToSet = new List<OfferItemSlot>();
 	protected List<OfferItemSlot> m_activeSlots = new List<OfferItemSlot>();
 
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -88,26 +89,33 @@ public class ShopBasePill : IShopPill {
 	/// Called every frame.
 	/// </summary>
 	protected virtual void Update() {
-		// Delayed Initialization to avoid weird behaviours
-		if(m_itemsToSet.Count > 0) {
-			int l = m_itemsToSet.Count;
-			for(int i = 0; i < l; i++) {
-				m_slotsToSet[i].InitFromItem(m_itemsToSet[i], pack.order);
-				m_activeSlots.Add(m_slotsToSet[i]);
-			}
-			m_itemsToSet.Clear();
-			m_slotsToSet.Clear();
-		}
 
-		// Waiting for price?
-		if(m_waitingForPrice) {
-			// Store initialized?
-			if(GameStoreManager.SharedInstance.IsReady()) {
-				// Yes! Refresh prices
-				RefreshPrice();
-			}
-		}
+        if (loadPillPreview)
+        {
+            // Delayed Initialization to avoid weird behaviours
+            if (m_itemsToSet.Count > 0)
+            {
+                int l = m_itemsToSet.Count;
+                for (int i = 0; i < l; i++)
+                {
+                    m_slotsToSet[i].InitFromItem(m_itemsToSet[i], pack.order);
+                    m_activeSlots.Add(m_slotsToSet[i]);
+                }
+                m_itemsToSet.Clear();
+                m_slotsToSet.Clear();
+            }
+        }
 
+        // Waiting for price?
+        if (m_waitingForPrice)
+        {
+            // Store initialized?
+            if (GameStoreManager.SharedInstance.IsReady())
+            {
+                // Yes! Refresh prices
+                RefreshPrice();
+            }
+        }
 	}
 
 	/// <summary>
@@ -121,14 +129,22 @@ public class ShopBasePill : IShopPill {
 		}
 	}
 
-	//------------------------------------------------------------------------//
-	// OTHER METHODS														  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Initialize the pill with a given pack's data.
-	/// </summary>
-	/// <param name="_pack">Pack.</param>
-	public override void InitFromOfferPack(OfferPack _pack) {
+
+
+    public virtual void OnEnable()
+    {
+        // If the pill enters the view (is enabled) load the preview
+        loadPillPreview = true;
+    }
+
+    //------------------------------------------------------------------------//
+    // OTHER METHODS														  //
+    //------------------------------------------------------------------------//
+    /// <summary>
+    /// Initialize the pill with a given pack's data.
+    /// </summary>
+    /// <param name="_pack">Pack.</param>
+    public override void InitFromOfferPack(OfferPack _pack) {
 
         // Store new pack
         m_pack = _pack;
@@ -552,4 +568,15 @@ public class ShopBasePill : IShopPill {
 
 		// [AOC] TODO!! More tracking
 	}
+
+
+    // Method created for debugging purposes! Remove it!
+    public void LaunchChangedEvent ()
+    {
+        List<OfferPack> offers = new List<OfferPack>();
+        offers.Add(m_pack);
+
+        // Notify game
+        Messenger.Broadcast(MessengerEvents.OFFERS_CHANGED, offers);
+    }
 }

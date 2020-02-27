@@ -214,6 +214,9 @@ public class CategoryController : MonoBehaviour {
             m_offers.Add(_offer);
             m_offerPills.Add(pill);
 
+            // By default dont load the pill preview until needed
+            pill.loadPillPreview = false;
+
             // If there is a callback
             if (m_shopController.purchaseCompletedCallback != null)
                 pill.OnPurchaseSuccess.AddListener(m_shopController.purchaseCompletedCallback);

@@ -55,14 +55,21 @@ public abstract class IShopPill : MonoBehaviour {
 	private bool m_awaitingPurchaseConfirmation = false;
 	private bool m_transactionInProgress = false;
 
-	//------------------------------------------------------------------------//
-	// ABSTRACT AND VIRTUAL METHODS											  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Obtain the IAP sku as defined in the App Stores.
-	/// </summary>
-	/// <returns>The IAP sku corresponding to this shop pack. Empty if not an IAP.</returns>
-	public abstract string GetIAPSku();
+
+    // Used to load the content of the pill only when is visible
+    private bool m_loadPillPreview = true;
+    public bool loadPillPreview {
+        get { return m_loadPillPreview; }
+        set { m_loadPillPreview = value; } }
+
+    //------------------------------------------------------------------------//
+    // ABSTRACT AND VIRTUAL METHODS											  //
+    //------------------------------------------------------------------------//
+    /// <summary>
+    /// Obtain the IAP sku as defined in the App Stores.
+    /// </summary>
+    /// <returns>The IAP sku corresponding to this shop pack. Empty if not an IAP.</returns>
+    public abstract string GetIAPSku();
 
 	/// <summary>
 	/// Get the tracking id for transactions performed by this shop pill

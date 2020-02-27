@@ -188,15 +188,14 @@ public class ShopController : MonoBehaviour {
             catBeingInitialized.GetComponent<LayoutGroup>().enabled = false;
             catBeingInitialized.GetComponent<LayoutGroup>().enabled = true;
 
+
             // Benchmarking
             Debug.Log(Colors.paleYellow.Tag("Initialize category " + catBeingInitialized.category.sku + " in " + 
                 (Environment.TickCount - timestamp2) + " ms"));
             
             // This category has been initialized succesfully!
             catBeingInitialized = null;
-
-
-
+                       
             // Are there some categories left to initialize?
             if (categoriesToInitialize.Count == 0)
             {
@@ -205,6 +204,9 @@ public class ShopController : MonoBehaviour {
                 {
                     //CalculateCategoryBounds(m_shortcuts[0].categoryController.category);
                 }
+
+                // Load the previews of the items that are now in the screen
+                ShowPreviewInActivePills();
 
                 shopReady = true;
 
@@ -513,6 +515,30 @@ public class ShopController : MonoBehaviour {
     }
 
 
+    /// <summary>
+    /// Find all the pills that are visible in the scrollable viewport and 
+    /// make sure their item previews are loaded.
+    /// </summary>
+    private void ShowPreviewInActivePills()
+    {
+        // Define the width of the viewport. Out of this range, pills are disabled.
+        normalizedViewportWidth = m_scrollRect.viewport.rect.width / m_scrollRect.content.rect.width;
+
+        foreach (IShopPill pill in m_pills)
+        {
+            // Is this pill inside the visible limits of the scrollview (leave some margin)
+            float pillPositionX = m_scrollRect.GetRelativePositionOfItem(pill.transform);
+            float safetyMargin = .2f;
+            bool visible = (pillPositionX < 1 + safetyMargin && pillPositionX > -safetyMargin );
+
+            if (visible)
+            {
+                // The preview will be loaded in the next frame
+                pill.loadPillPreview = true;
+            }
+        }
+    }
+
     //------------------------------------------------------------------------//
     // SHORTCUTS                											  //
     //------------------------------------------------------------------------//
@@ -734,7 +760,6 @@ public class ShopController : MonoBehaviour {
     /// <param name="_scrollPosition"></param>
     private void UpdatePillsVisibility(Vector2 _scrollPosition)
     {
-
         // Define the width of the viewport. Out of this range, pills are disabled.
         normalizedViewportWidth = m_scrollRect.viewport.rect.width / m_scrollRect.content.rect.width;
 
@@ -748,6 +773,7 @@ public class ShopController : MonoBehaviour {
             // Enable/disable the pill
             pill.gameObject.SetActive(visible);
         }
+
     }
 
 

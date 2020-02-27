@@ -69,7 +69,10 @@ public class ShopHCPill : ShopCurrencyPill {
     /// <summary>
     /// Component has been enabled.
     /// </summary>
-    public void OnEnable() {
+    public override void OnEnable() {
+
+        base.OnEnable();
+
 		// Refresh Happy Hour visuals immediately
 		RefreshHappyHour();
 	}
