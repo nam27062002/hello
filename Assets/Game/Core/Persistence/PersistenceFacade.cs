@@ -560,6 +560,7 @@ public class PersistenceFacade : IBroadcastListener
         config.MessageTid = "TID_SOCIAL_ERROR_CONNECTION_DESC";
         config.MessageParams = new string[] { SocialPlatformManager.SharedInstance.GetPlatformName() };
         config.ButtonMode = IPopupMessage.Config.EButtonsMode.Confirm;
+        config.IsButtonCloseVisible = false;
         config.OnConfirm = onConfirm;        
         PopupManager.PopupMessage_Open(config);              
     }
