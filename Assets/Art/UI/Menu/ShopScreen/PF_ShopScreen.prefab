@@ -442,8 +442,8 @@ GameObject:
   - component: {fileID: 114218947277478840}
   - component: {fileID: 114786622828167710}
   - component: {fileID: 114226526750988316}
-  - component: {fileID: 114098721621876262}
   - component: {fileID: 114906939678917458}
+  - component: {fileID: 114053676306850478}
   m_Layer: 5
   m_Name: PF_ShopScreen
   m_TagString: Untagged
@@ -717,33 +717,7 @@ MonoBehaviour:
   m_anim: {fileID: 95664456193633000}
   m_colorWhenMinReached: {r: 1, g: 0, b: 0, a: 1}
   m_colorWhenMaxReached: {r: 0, g: 1, b: 0, a: 1}
---- !u!114 &114071005413340188
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1870576123497936}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: -1200242548, guid: f70555f144d8491a825f0804e09c671c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_ShowMaskGraphic: 0
---- !u!114 &114077728989236464
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1250247354823834}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_tid: TID_SHOP_TITLE
-  m_caseType: 1
-  m_replacements: []
---- !u!114 &114098721621876262
+--- !u!114 &114053676306850478
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -751,14 +725,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 1720004079652938}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9634bc65078f347cf933d4c74430cb15, type: 3}
+  m_Script: {fileID: 11500000, guid: febd2f2b7cbe1426f8f9caf9884d3e94, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_tweenType: 1
-  m_tweenDuration: 0
+  m_tweenDuration: 0.3
   m_tweenValue: 1
   m_tweenEase: 27
-  m_tweenDelay: 0.25
+  m_tweenDelay: 0
   m_ignoreTimeScale: 1
   m_showTweens: []
   m_hideTweens: []
@@ -795,6 +769,32 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
+--- !u!114 &114071005413340188
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1870576123497936}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1200242548, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_ShowMaskGraphic: 0
+--- !u!114 &114077728989236464
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1250247354823834}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_tid: TID_SHOP_TITLE
+  m_caseType: 1
+  m_replacements: []
 --- !u!114 &114103698898193358
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -942,7 +942,7 @@ MonoBehaviour:
   m_shortcutsContainer: {fileID: 224849864462026938}
   m_shortcutPrefab: {fileID: 114891948628873200, guid: b72b11b6d3b90484b9c0329b79553b4a,
     type: 2}
-  m_framesDelayPerPill: 2
+  m_framesDelayPerPill: 1
 --- !u!114 &114250266952963206
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2574,7 +2574,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0.0019195937, y: 0}
+  m_AnchoredPosition: {x: -0.02456301, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
 --- !u!224 &224324632296727726
