@@ -125,7 +125,7 @@ public class ShopSettings : SingletonScriptableObject<ShopSettings> {
     /// </summary>
     /// <param name="_type">Type of the offer pack</param>
     /// <returns></returns>
-    public static IShopPill GetPrefab (OfferPack.Type _type)
+    public static IShopPill GetPillPrefab (OfferPack.Type _type)
     {
         // Find the offer pill setup
         ShopPill pill = instance.m_shopPillsSetup.Find(p => p.offerPackType == OfferPack.TypeToString(_type));

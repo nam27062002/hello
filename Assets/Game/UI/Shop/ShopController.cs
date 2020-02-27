@@ -107,7 +107,7 @@ public class ShopController : MonoBehaviour {
     public int frameCounter { get { return m_frameCounter; } }
 
     // Benchmarking
-    private int timestamp;
+    private int timestamp, timestamp2;
 
     //------------------------------------------------------------------------//
     // GENERIC METHODS														  //
@@ -188,8 +188,14 @@ public class ShopController : MonoBehaviour {
             catBeingInitialized.GetComponent<LayoutGroup>().enabled = false;
             catBeingInitialized.GetComponent<LayoutGroup>().enabled = true;
 
+            // Benchmarking
+            Debug.Log(Colors.paleYellow.Tag("Initialize category " + catBeingInitialized.category.sku + " in " + 
+                (Environment.TickCount - timestamp2) + " ms"));
+            
             // This category has been initialized succesfully!
             catBeingInitialized = null;
+
+
 
             // Are there some categories left to initialize?
             if (categoriesToInitialize.Count == 0)
@@ -203,8 +209,7 @@ public class ShopController : MonoBehaviour {
                 shopReady = true;
 
                 // Benchmarking
-                int timeElapsedMs = Environment.TickCount - timestamp;
-                Debug.Log(Colors.paleYellow.Tag("Shop initialized in " + timeElapsedMs + " ms"));
+                Debug.Log(Colors.paleYellow.Tag("Shop initialized in " + (Environment.TickCount - timestamp) + " ms"));
             }
         }
 
@@ -215,6 +220,8 @@ public class ShopController : MonoBehaviour {
             {
                 ShopCategory cat = categoriesToInitialize.Dequeue();
                 catBeingInitialized = InitializeCategory(cat, cat.offers);
+
+                timestamp2 = Environment.TickCount;
             }
         }
 
@@ -305,6 +312,7 @@ public class ShopController : MonoBehaviour {
 
         Clear();
 
+
         // Turn off optimizations while refreshing
         SetOptimizationActive(false);
         shopReady = false;
@@ -336,6 +344,9 @@ public class ShopController : MonoBehaviour {
                 }
             }
         }
+
+        // Benchmarking
+        Debug.Log(Colors.paleYellow.Tag("Instantiate categories " + (Environment.TickCount - timestamp) + " ms"));
     }
 
 
@@ -429,8 +440,6 @@ public class ShopController : MonoBehaviour {
     private CategoryController InitializeCategory (ShopCategory _cat, List<OfferPack> _offers)
     {
 
-        Debug.Log("Initialize category " + _cat.sku);
-
         // Instantiate the shop category
         string containerPrefabPath = SHOP_CATEGORIES_CONTAINER_PREFABS_PATH + _cat.containerPrefab;
         CategoryController containerPrefab = Resources.Load<CategoryController>(containerPrefabPath);
@@ -502,6 +511,7 @@ public class ShopController : MonoBehaviour {
         m_scrollRect.viewport.GetComponent<HorizontalLayoutGroup>().enabled = true;
         m_scrollRect.viewport.GetComponent<ContentSizeFitter>().enabled = true;
     }
+
 
     //------------------------------------------------------------------------//
     // SHORTCUTS                											  //
@@ -666,6 +676,13 @@ public class ShopController : MonoBehaviour {
     /// <param name="_enable">True to activate it</param>
     public void SetOptimizationActive(bool _enable)
     {
+
+        if (optimizationActive == _enable)
+        {
+            // Already active/inactive
+            return;
+        }
+
         optimizationActive = _enable;
 
         if (_enable)
