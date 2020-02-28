@@ -261,7 +261,7 @@ namespace Metagame {
             if (m_reward != null) {
 				// Check again whether the reward needs to be replaced or not
 				// (i.e. we just opened an egg that has given us the same reward)
-				m_reward.CheckReplacement();
+				m_reward.CheckReplacement(true);
 				UsersManager.currentUser.PushReward(m_reward);
 			}
 		}

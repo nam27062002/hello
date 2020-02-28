@@ -60,7 +60,7 @@ namespace Metagame {
 
 			m_rarity = Reward.SkuToRarity(_def.GetAsString("rarity"));
 
-			CheckReplacement();
+			CheckReplacement(true);
 		}
 
 		/// <summary>
