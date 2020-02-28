@@ -311,12 +311,14 @@ public class TransactionManager : Singleton<TransactionManager>
     {
         if (transaction != null)
         {
+            string id = transaction.GetId();
+
             // Makes sure that the transaction hasn't already been given            
-            if (Given_ContainsTransactionId(transaction.GetId()))
+            if (Given_ContainsTransactionId(id))
             {				
-			    Log("Transaction with id " + transaction.GetId () + " is not performed because it had already been performed");
+			    Log("Transaction with id " + id + " is not performed because it had already been performed");
 				
-                Given_RemoveTransactionId(transaction.GetId());
+                Given_RemoveTransactionId(id);
             }
             else if (transaction.CanPerform())
             {
@@ -416,7 +418,8 @@ public class TransactionManager : Singleton<TransactionManager>
 
     private bool Given_ContainsTransactionId(string transactionId)
     {
-        return Given_TransactionIds != null && Given_TransactionIds.ContainsKey(transactionId);
+        // transactionId can be null for remove_ads when server is telling the client to restore remove _ads (used for Android)
+        return transactionId != null && Given_TransactionIds != null && Given_TransactionIds.ContainsKey(transactionId);
     }
 
     public void Given_AddTransactionId(string transactionId, bool save)
