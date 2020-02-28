@@ -207,6 +207,8 @@ public class CategoryController : MonoBehaviour {
         // Instantiate the offer with the proper prefab
         IShopPill pill = InstantiatePill(_offer.type);
 
+        // By default dont load the pill preview until needed
+        pill.loadPillPreview = false;
 
         if (pill != null)
         {
@@ -219,9 +221,6 @@ public class CategoryController : MonoBehaviour {
             // Keep a record of all the offers, and pills in this category
             m_offers.Add(_offer);
             m_offerPills.Add(pill);
-
-            // By default dont load the pill preview until needed
-            pill.loadPillPreview = false;
 
             // If there is a callback
             if (m_shopController.purchaseCompletedCallback != null)
