@@ -370,109 +370,6 @@ public class RewardSceneController : MenuScreenScene {
 		// Make it target of the drag controller
 		seq.AppendCallback(() => { SetDragTarget(m_currentRewardSetup.view.transform); });
 
-		// If the reward is a duplicate, check which alternate reward are we giving instead and switch the reward view by the replacement with a nice animation
-		RewardSetup replacementSetup = null;
-		if(_petReward.WillBeReplaced()) {
-			switch(_petReward.replacement.currency) {
-				case UserProfile.Currency.SOFT:	replacementSetup = m_scRewardSetup;	break;
-				case UserProfile.Currency.HARD: replacementSetup = m_hcRewardSetup;	break;
-				case UserProfile.Currency.GOLDEN_FRAGMENTS: replacementSetup = m_goldenFragmentsRewardsSetup[(int)_petReward.rarity]; break;
-			}
-		}
-
-		// Launch a nice animation
-		if(replacementSetup != null) {
-			// Reward acceleration
-			// Make it compatible with the drag controller!
-			Vector2 baseIdleVelocity = m_dragController.idleVelocity;
-			seq.Append(DOTween.To(
-				() => { return baseIdleVelocity; },	// Getter
-				(Vector2 _v) => { m_dragController.idleVelocity = _v; },	// Setter
-				Vector2.Scale(baseIdleVelocity, new Vector2(100f, 1f)),	// Final value
-				1f)	// Duration
-				.SetEase(Ease.InCubic)
-			);
-
-			// Hide UI Info
-			seq.InsertCallback(
-				seq.Duration() - 0.25f,
-				() => { m_rewardInfoUI.showHideAnimator.Hide(); }
-			);
-
-			// Show VFX to cover the swap
-			// We want it to launch a bit before doing the swap. To do so, use a combination of InserCallback() with the sequence's current duration.
-			seq.InsertCallback(seq.Duration() - 0.15f, () => {
-				TriggerFX(m_goldenFragmentsSwapFX);
-
-				// Play SFX as well!
-				AudioController.Play(replacementSetup.sfx);
-			});
-
-			// Swap
-			seq.AppendCallback(() => {
-				// Swap reward view with replacement view
-				m_currentRewardSetup.view.SetActive(false);
-				replacementSetup.view.SetActive(true);
-
-				// Hide godrays as well
-				if(m_currentRewardSetup.godrays != null) {
-					m_currentRewardSetup.godrays.gameObject.SetActive(false);
-				}
-
-				// Make it target of the drag controller
-				SetDragTarget(replacementSetup.view.transform);
-			});
-
-			// Show replacement UI info
-			seq.AppendCallback(() => {
-				// Depending on replacement type, show different texts
-				string replacementInfoText = "";
-				switch(_petReward.replacement.currency) {
-					case UserProfile.Currency.SOFT: {
-						replacementInfoText = LocalizationManager.SharedInstance.Localize(
-							"TID_EGG_REWARD_DUPLICATED_2",
-							_petReward.def.GetLocalized("tidName"),
-							StringUtils.FormatNumber(_petReward.replacement.amount)
-						);
-					} break;
-
-					case UserProfile.Currency.HARD: {
-						replacementInfoText = LocalizationManager.SharedInstance.Localize(
-							"TID_EGG_REWARD_DUPLICATED_3",
-							_petReward.def.GetLocalized("tidName"),
-							StringUtils.FormatNumber(_petReward.replacement.amount)
-						);
-					} break;
-
-					case UserProfile.Currency.GOLDEN_FRAGMENTS: {
-						replacementInfoText = LocalizationManager.SharedInstance.Localize(
-							"TID_EGG_REWARD_DUPLICATED_1",
-							_petReward.def.GetLocalized("tidName"),
-							StringUtils.FormatNumber(_petReward.replacement.amount)
-						);
-					} break;
-				}
-				m_rewardInfoUI.InitAndAnimate(_petReward.replacement, replacementInfoText);
-
-				// Show godrays
-				if(replacementSetup.godrays != null) {
-					replacementSetup.godrays.gameObject.SetActive(true);
-				}
-			});
-
-			// Replacement reward initial inertia and scale up
-			// Make it compatible with the drag controller!
-			seq.Append(replacementSetup.view.transform.DOScale(0f, 1f).From().SetEase(Ease.OutBack));
-			seq.Join(DOTween.To(
-				() => { return baseIdleVelocity; },	// Getter
-				(Vector2 _v) => { m_dragController.idleVelocity = _v; },	// Setter
-				Vector2.Scale(baseIdleVelocity, new Vector2(100f, 1f)),		// Final value
-				2f)	// Duration
-				.From()
-				.SetEase(Ease.OutCubic)
-			);
-		}
-
 		// Show reward godrays
 		// Except if duplicate! (for now)
 		if(m_petRewardSetup.godrays != null && !_petReward.WillBeReplaced()) {
@@ -482,6 +379,48 @@ public class RewardSceneController : MenuScreenScene {
 
 			// Show with some delay to sync with pet's animation
 			seq.Insert(0.15f, m_petRewardSetup.godrays.transform.DOScale(0f, 0.05f).From().SetRecyclable(true));
+		}
+
+		// If the reward is a duplicate, check which alternate reward are we giving instead and switch the reward view by the replacement with a nice animation
+		RewardSetup replacementSetup = null;
+		string replacementInfoText = "";
+		if(_petReward.WillBeReplaced()) {
+			switch(_petReward.replacement.currency) {
+				// Coins
+				case UserProfile.Currency.SOFT:	{
+					replacementSetup = m_scRewardSetup;
+					replacementInfoText = LocalizationManager.SharedInstance.Localize(
+						"TID_EGG_REWARD_DUPLICATED_2",
+						_petReward.def.GetLocalized("tidName"),
+						StringUtils.FormatNumber(_petReward.replacement.amount)
+					);
+				} break;
+
+				// Gems
+				case UserProfile.Currency.HARD: {
+					replacementSetup = m_hcRewardSetup;
+					replacementInfoText = LocalizationManager.SharedInstance.Localize(
+						"TID_EGG_REWARD_DUPLICATED_3",
+						_petReward.def.GetLocalized("tidName"),
+						StringUtils.FormatNumber(_petReward.replacement.amount)
+					);
+				} break;
+
+				// Golden egg fragments
+				case UserProfile.Currency.GOLDEN_FRAGMENTS: {
+					replacementSetup = m_goldenFragmentsRewardsSetup[(int)_petReward.rarity];
+					replacementInfoText = LocalizationManager.SharedInstance.Localize(
+						"TID_EGG_REWARD_DUPLICATED_1",
+						_petReward.def.GetLocalized("tidName"),
+						StringUtils.FormatNumber(_petReward.replacement.amount)
+					);
+				} break;
+			}
+		}
+
+		// Do some extra stuff if the reward is going to be replaced
+		if(replacementSetup != null) {
+			AppendReplacementAnim(ref seq, replacementSetup, replacementInfoText);
 		}
 
 		seq.OnComplete(OnAnimationFinish);
@@ -521,8 +460,6 @@ public class RewardSceneController : MenuScreenScene {
 		seq.OnComplete(OnAnimationFinish);
 	}
 
-
-
 	/// <summary>
 	/// Start the dragon reward flow.
 	/// </summary>
@@ -534,7 +471,6 @@ public class RewardSceneController : MenuScreenScene {
 			// Tell the dragon selection screen for that dragon to make it the selected one next time we go there
 			MenuDragonScreenController dragonSelectionScreen = InstanceManager.menuSceneController.GetScreenData(MenuScreen.DRAGON_SELECTION).ui.GetComponent<MenuDragonScreenController>();
 			dragonSelectionScreen.pendingToSelectDragon = _dragonReward.sku;
-			
 		}
 
 		// Initialize skin view
@@ -554,13 +490,18 @@ public class RewardSceneController : MenuScreenScene {
 		// Make it target of the drag controller
 		seq.AppendCallback(() => { SetDragTarget(m_currentRewardSetup.view.transform); });
 
-		// Show reward godrays
-		if(m_currentRewardSetup.godrays != null) {
+		// Show reward godrays - unless replaced
+		if(m_currentRewardSetup.godrays != null && !_dragonReward.WillBeReplaced()) {
 			// Custom color based on reward's rarity
 			m_currentRewardSetup.godrays.gameObject.SetActive(true);
 
 			// Show with some delay to sync with reward's animation
 			seq.Insert(0.15f, m_currentRewardSetup.godrays.transform.DOScale(0f, 0.05f).From().SetRecyclable(true));
+		}
+
+		// If the reward will be replaced, append the replace animation
+		if(_dragonReward.WillBeReplaced()) {
+			AppendReplacementAnim(ref seq);
 		}
 
 		seq.OnComplete(OnAnimationFinish);
@@ -603,7 +544,6 @@ public class RewardSceneController : MenuScreenScene {
 			
 		seq.OnComplete(OnAnimationFinish);
 	}
-
 
     /// <summary>
     /// Start the remove ads reward flow.
@@ -649,29 +589,28 @@ public class RewardSceneController : MenuScreenScene {
 
     }
 
-
     /// <summary>
     /// Initialize the egg view with the given egg reward data.
     /// </summary>
     /// <param name="_egg">The egg to be opened.</param>
     private void InitEggView(Metagame.RewardEgg _eggReward) {
-	// Clear any active stuff
-	Clear();
+		// Clear any active stuff
+		Clear();
 
-	// Be attentive to the egg collect event, which is managed by the egg view
-	Messenger.AddListener<Egg>(MessengerEvents.EGG_OPENED, OnEggCollected);
+		// Be attentive to the egg collect event, which is managed by the egg view
+		Messenger.AddListener<Egg>(MessengerEvents.EGG_OPENED, OnEggCollected);
 
-	// Create a new instance of the egg prefab
-	m_eggView = EggView.CreateFromData(_eggReward.egg);
+		// Create a new instance of the egg prefab
+		m_eggView = EggView.CreateFromData(_eggReward.egg);
 
-	// Attach it to the 3d scene's anchor point
-	// Make sure anchor is active!
-	m_eggAnchor.gameObject.SetActive(true);
-	m_eggView.transform.SetParent(m_eggAnchor, false);
-	m_eggView.transform.position = m_eggAnchor.position;
+		// Attach it to the 3d scene's anchor point
+		// Make sure anchor is active!
+		m_eggAnchor.gameObject.SetActive(true);
+		m_eggView.transform.SetParent(m_eggAnchor, false);
+		m_eggView.transform.position = m_eggAnchor.position;
 
-	// Launch intro as soon as possible (wait for the camera to stop moving)
-	m_eggView.gameObject.SetActive(false);
+		// Launch intro as soon as possible (wait for the camera to stop moving)
+		m_eggView.gameObject.SetActive(false);
 	}
 
 	/// <summary>
@@ -769,6 +708,144 @@ public class RewardSceneController : MenuScreenScene {
 
 		// Program reward animation
 		UbiBCN.CoroutineManager.DelayedCall(OnEggExplosionAnimFinished, 0.35f, false);
+	}
+
+	/// <summary>
+	/// Append a replacement animation to the current reward animation.
+	/// Replacement reward setup and text will be automatically chosen based on replacement reward.
+	/// No checks performed!
+	/// </summary>
+	/// <param name="_seq">The sequence to be extended.</param>
+	private void AppendReplacementAnim(ref Sequence _seq) {
+		// Make sure current reward has a replacement
+		if(m_currentReward.replacement == null) return;
+
+		// Aux vars
+		Metagame.Reward replacementReward = m_currentReward.replacement;
+
+		// Replacement name: depends on type (consumables vs non-consumables)
+		string replacementName = "";
+		switch(replacementReward.type) {
+			// Non-consumable rewards
+			case Metagame.RewardDragon.TYPE_CODE:
+			case Metagame.RewardSkin.TYPE_CODE:
+			case Metagame.RewardPet.TYPE_CODE:
+			case Metagame.RewardRemoveAds.TYPE_CODE: {
+				// i.e. "Umbra", "Captain Geckles", "Burner King"...
+				replacementName = LocalizationManager.SharedInstance.Localize(replacementReward.GetTID(false));
+			} break;
+
+			// Rest of rewards
+			default: {
+				// i.e. "300 Gems", "3 Rare Eggs", "1,200 Coins"...
+				replacementName = LocalizationManager.SharedInstance.Localize(
+					"TID_REWARD_AMOUNT",
+					StringUtils.FormatNumber(replacementReward.amount, 0),
+					LocalizationManager.SharedInstance.Localize(replacementReward.GetTID(replacementReward.amount > 1))
+				);
+			} break;
+		}
+
+		// Full replacement text
+		// %U0 already owned!\nYou get %U1 instead!
+		// Umbra already owned! You get Blaze instead! ----> Non-consumable as replacement: show name
+		// Umbra already owned! You get 3,000 Coins instead! ----> Consumable as replacement: show amount and name
+		// Coins already owned! You get 10 Gems instead! ----> Doesn't make any sense, but shouldn't actually happen because currencies and eggs are consumables and are never replaced.
+		string replacementInfoText = LocalizationManager.SharedInstance.Localize(
+			"TID_REWARD_DUPLICATED",
+			LocalizationManager.SharedInstance.Localize(m_currentReward.GetTID(m_currentReward.amount > 1)),
+			replacementName
+		);
+
+		// Choose target replacement setup
+		RewardSetup replacementSetup = null;
+		switch(m_currentReward.replacement.type) {
+			case Metagame.RewardHardCurrency.TYPE_CODE: replacementSetup = m_hcRewardSetup;	break;
+			case Metagame.RewardSoftCurrency.TYPE_CODE: replacementSetup = m_scRewardSetup; break;
+			case Metagame.RewardGoldenFragments.TYPE_CODE: replacementSetup = m_goldenFragmentsRewardsSetup.Length > 0 ? m_goldenFragmentsRewardsSetup[0] : null; break;
+			case Metagame.RewardDragon.TYPE_CODE: replacementSetup = m_dragonRewardSetup; break;
+			case Metagame.RewardSkin.TYPE_CODE: replacementSetup = m_skinRewardSetup; break;
+			case Metagame.RewardPet.TYPE_CODE: replacementSetup = m_petRewardSetup; break;
+			case Metagame.RewardRemoveAds.TYPE_CODE: replacementSetup = m_removeAdsRewardSetup; break;
+			//case Metagame.RewardEgg.TYPE_CODE: replacementSetup = m_hcRewardSetup; break;	// [AOC] TODO!!
+		}
+
+		// We have all we need! Call the parametrized version of this method
+		AppendReplacementAnim(ref _seq, replacementSetup, replacementInfoText);
+	}
+
+	/// <summary>
+	/// Append a replacement animation to the current reward animation.
+	/// Version with more custom parameters.
+	/// No checks performed!
+	/// </summary>
+	/// <param name="_seq">The sequence to be extended.</param>
+	/// <param name="_replacementSetup">The setup to be displayed with the replacement.</param>
+	/// <param name="_replacementInfoText">Extra text to be displayed with the replacement.</param>
+	private void AppendReplacementAnim(ref Sequence _seq, RewardSetup _replacementSetup, string _replacementInfoText) {
+		// Reward acceleration
+		// Make it compatible with the drag controller!
+		Vector2 baseIdleVelocity = m_dragController.idleVelocity;
+		_seq.Append(DOTween.To(
+			() => { return baseIdleVelocity; }, // Getter
+			(Vector2 _v) => { m_dragController.idleVelocity = _v; },    // Setter
+			Vector2.Scale(baseIdleVelocity, new Vector2(100f, 1f)), // Final value
+			1f) // Duration
+			.SetEase(Ease.InCubic)
+		);
+
+		// Hide UI Info
+		_seq.InsertCallback(
+			_seq.Duration() - 0.25f,
+			() => { m_rewardInfoUI.showHideAnimator.Hide(); }
+		);
+
+		// Show VFX to cover the swap
+		// We want it to launch a bit before doing the swap. To do so, use a combination of InserCallback() with the sequence's current duration.
+		_seq.InsertCallback(_seq.Duration() - 0.15f, () => {
+			TriggerFX(m_goldenFragmentsSwapFX);
+
+			// Play SFX as well!
+			AudioController.Play(_replacementSetup.sfx);
+		});
+
+		// Swap
+		_seq.AppendCallback(() => {
+			// Swap reward view with replacement view
+			m_currentRewardSetup.view.SetActive(false);
+			_replacementSetup.view.SetActive(true);
+
+			// Hide godrays as well
+			if(m_currentRewardSetup.godrays != null) {
+				m_currentRewardSetup.godrays.gameObject.SetActive(false);
+			}
+
+			// Make it target of the drag controller
+			SetDragTarget(_replacementSetup.view.transform);
+		});
+
+		// Show replacement UI info
+		_seq.AppendCallback(() => {
+			// Reward info UI does all the hard work for us
+			m_rewardInfoUI.InitAndAnimate(m_currentReward.replacement, _replacementInfoText);
+
+			// Show godrays
+			if(_replacementSetup.godrays != null) {
+				_replacementSetup.godrays.gameObject.SetActive(true);
+			}
+		});
+
+		// Replacement reward initial inertia and scale up
+		// Make it compatible with the drag controller!
+		_seq.Append(_replacementSetup.view.transform.DOScale(0f, 1f).From().SetEase(Ease.OutBack));
+		_seq.Join(DOTween.To(
+			() => { return baseIdleVelocity; }, // Getter
+			(Vector2 _v) => { m_dragController.idleVelocity = _v; },    // Setter
+			Vector2.Scale(baseIdleVelocity, new Vector2(100f, 1f)),     // Final value
+			2f) // Duration
+			.From()
+			.SetEase(Ease.OutCubic)
+		);
 	}
 
 	//------------------------------------------------------------------------//
@@ -935,3 +1012,4 @@ public class RewardSceneController : MenuScreenScene {
 		}
 	}
 }
+ 
