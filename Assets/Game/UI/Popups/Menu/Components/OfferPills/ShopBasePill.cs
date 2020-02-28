@@ -47,7 +47,9 @@ public class ShopBasePill : IShopPill {
 	[SerializeField] private GameObject m_bannerObj = null;
 	[SerializeField] private Localizer m_bannerText = null;
 
-	[Space]
+    [SerializeField] protected GameObject m_loadingIcon = null;
+
+    [Space]
 	[Header("Price Buttons")]
 	[SerializeField] protected MultiCurrencyButton m_priceButtonGroup = null;
 	[SerializeField] protected GameObject m_loadingPricePlaceholder = null;
@@ -103,6 +105,10 @@ public class ShopBasePill : IShopPill {
                 }
                 m_itemsToSet.Clear();
                 m_slotsToSet.Clear();
+
+                // Remove the loading icon
+                if (m_loadingIcon!= null)
+                    m_loadingIcon.SetActive(false);
             }
         }
 
@@ -225,7 +231,12 @@ public class ShopBasePill : IShopPill {
 
 		// Price texts
 		RefreshPrice();
-	}
+
+        // By default show a loading icon
+        if (m_loadingIcon != null)
+            m_loadingIcon.SetActive(true);
+
+    }
 
 	/// <summary>
 	/// Refresh the timer. To be called periodically.
