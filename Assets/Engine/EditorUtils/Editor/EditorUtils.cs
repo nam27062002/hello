@@ -452,6 +452,7 @@ public static class EditorUtils {
 			case SerializedPropertyType.Vector2: _prop.vector2Value = default(Vector2); break;
 			case SerializedPropertyType.Vector3: _prop.vector3Value = default(Vector3); break;
 			case SerializedPropertyType.Vector4: _prop.vector4Value = default(Vector4); break;
+			case SerializedPropertyType.ArraySize: _prop.arraySize = 0;	break;
 		}
 	}
 
@@ -478,6 +479,7 @@ public static class EditorUtils {
 			case SerializedPropertyType.Vector2: return _prop.vector2Value;
 			case SerializedPropertyType.Vector3: return _prop.vector3Value;
 			case SerializedPropertyType.Vector4: return _prop.vector4Value;
+			case SerializedPropertyType.ArraySize: return _prop.arraySize;
 		}
 		return null;
 	}
@@ -505,6 +507,34 @@ public static class EditorUtils {
 			case SerializedPropertyType.Vector2: _prop.vector2Value = (Vector2)_newValue; break;
 			case SerializedPropertyType.Vector3: _prop.vector3Value = (Vector3)_newValue; break;
 			case SerializedPropertyType.Vector4: _prop.vector4Value = (Vector4)_newValue; break;
+			case SerializedPropertyType.ArraySize: _prop.arraySize = (int)_newValue; break;
 		}
+	}
+
+	/// <summary>
+	/// Print a Serialized Property hierarchy in the screen.
+	/// </summary>
+	/// <param name="_p">The property to be printed.</param>
+	/// <param name="_depth">Current recursive depth.</param>
+	public static void PrintSerializedProperty(SerializedProperty _p, int _depth = 0) {
+		// Control infinite recursivity
+		if(_depth > 10) return;
+
+		// Create prefix
+		string prefix = "";
+		for(int i = 0; i < _depth; ++i) prefix += "\t";
+
+		// Recursively iterate through all the relative properties in the given one
+		SerializedProperty p = _p.Copy();   // Avoid modifying given param
+		p.Next(true);   // To get first element
+		do {
+			// Print!
+			Debug.Log(Color.cyan.Tag(prefix + p.name + " (" + p.propertyType + ")"));
+
+			// If generic type, do recursive call
+			if(p.propertyType == SerializedPropertyType.Generic) {
+				PrintSerializedProperty(p, _depth + 1);
+			}
+		} while(p.NextVisible(false));      // Only direct children, not grand-children
 	}
 }

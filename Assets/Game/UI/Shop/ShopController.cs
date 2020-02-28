@@ -55,6 +55,8 @@ public class ShopController : MonoBehaviour {
     [SerializeField]
     private int m_framesDelayPerPill = 1;
 
+    [SerializeField]
+    public int m_pillsPerFrame = 10;
 
     //Internal
     private float m_timer = 0; // Refresh timer
@@ -175,6 +177,10 @@ public class ShopController : MonoBehaviour {
             UbiBCN.CoroutineManager.DelayedCallByFrames(() => {
                 // Enable the performance optimization
                 SetOptimizationActive(true);
+
+                // Load the previews of the items that are now in the screen
+                ShowPreviewInActivePills();
+
             }, 1);
         }
 
@@ -205,8 +211,7 @@ public class ShopController : MonoBehaviour {
                     //CalculateCategoryBounds(m_shortcuts[0].categoryController.category);
                 }
 
-                // Load the previews of the items that are now in the screen
-                ShowPreviewInActivePills();
+
 
                 shopReady = true;
 

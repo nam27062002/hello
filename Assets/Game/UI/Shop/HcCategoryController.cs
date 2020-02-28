@@ -103,9 +103,12 @@ public class HcCategoryController : CategoryController
 
         if (pill != null)
         {
+
+            // By default dont load the pill preview until needed
+            pill.loadPillPreview = false;
+
             // Initialize the prefab with the offer values
             pill.InitFromOfferPack(_offer);
-
 
             // Insert the pill in the proper container
             if (isLarge) {
@@ -120,8 +123,6 @@ public class HcCategoryController : CategoryController
             m_offers.Add(_offer);
             m_offerPills.Add(pill);
 
-            // By default dont load the pill preview until needed
-            pill.loadPillPreview = false;
 
             // If there is a callback
             if (m_shopController.purchaseCompletedCallback != null)
