@@ -457,7 +457,6 @@ public class Builder : MonoBehaviour, UnityEditor.Build.IPreprocessBuild
 		if(settingsInstance != null){
 			CaletyModularSettings currentModularSettings = CaletyModularSettingsEditor.GetCaletyModularSettings ();
 			string environment = GetArg("-env");
-			CaletySettings clonedSettings = settingsInstance.Clone ();
 			switch( environment )
 			{
 				case "dev": settingsInstance.m_iBuildEnvironmentSelected = (int)CaletyConstants.eBuildEnvironments.BUILD_DEV;break;
