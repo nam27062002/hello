@@ -8,8 +8,8 @@ Material:
   m_PrefabInternal: {fileID: 0}
   m_Name: dragon_tony_1_wings
   m_Shader: {fileID: 4800000, guid: 2345015ac46679e4cb5817ed44c82547, type: 3}
-  m_ShaderKeywords: CUTOFF DOUBLESIDED FXLAYER_NONE NORMALMAP REFLECTIONTYPE_NORMAL
-    SELFILLUMINATE_NORMAL SPECULAR _ZWRITE_ON
+  m_ShaderKeywords: CUTOFF DOUBLESIDED FXLAYER_REFLECTION NORMALMAP REFLECTIONTYPE_NORMAL
+    SELFILLUMINATE_BLINKLIGHTS SPECULAR _ZWRITE_ON
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -66,13 +66,13 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _ReflectionMap:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 8900000, guid: 526eef17382f158429f2491abb96d089, type: 2}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
-    - FXLayer: 0
+    - FXLayer: 1
     - ReflectionType: 0
-    - SelfIlluminate: 0
+    - SelfIlluminate: 2
     - _BlendMode: 1
     - _BumpScale: 1
     - _ColorRampAmount: 0
@@ -100,23 +100,24 @@ Material:
     - _EnableVertexOffsetX: 0
     - _EnableVertexOffsetY: 0
     - _EnableVertexOffsetZ: 0
+    - _EnableVertexScaleZ: 0
     - _FireAmount: 0
     - _FireSpeed: 1
     - _Fresnel: 8
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
-    - _InnerLightAdd: 0
+    - _InnerLightAdd: 0.5
     - _InnerLightWavePhase: 1
-    - _InnerLightWaveSpeed: 2
+    - _InnerLightWaveSpeed: 1
     - _Metallic: 0
     - _Mode: 0
-    - _NormalStrenght: 1
+    - _NormalStrenght: 2
     - _OcclusionStrength: 1
     - _Parallax: 0.02
-    - _ReflectionAmount: 0
+    - _ReflectionAmount: 0.899
     - _SmoothnessTextureChannel: 0
-    - _SpecExponent: 120
+    - _SpecExponent: 226.4
     - _SpecularHighlights: 1
     - _SrcBlend: 5
     - _StencilMask: 10
@@ -129,8 +130,8 @@ Material:
     - _ColorAdd: {r: 0, g: 0, b: 0, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _FresnelColor: {r: 0.44852942, g: 0.30671498, b: 0.43874913, a: 1}
-    - _InnerLightColor: {r: 0.06893382, g: 0.37176707, b: 0.5514706, a: 1}
-    - _ReflectionColor: {r: 1, g: 1, b: 1, a: 1}
-    - _SecondLightColor: {r: 0.49264705, g: 0.06520329, b: 0.41010603, a: 0}
-    - _SecondLightDir: {r: 0.30761158, g: 0.87550974, b: -0.3726362, a: 0}
+    - _InnerLightColor: {r: 0.9338235, g: 0, b: 0.9080631, a: 1}
+    - _ReflectionColor: {r: 0.46323532, g: 0.0170307, b: 0.41399893, a: 1}
+    - _SecondLightColor: {r: 0.05449827, g: 0.36175582, b: 0.46323532, a: 0}
+    - _SecondLightDir: {r: -0.8417178, g: 0.53991777, b: -0, a: 0}
     - _Tint: {r: 1, g: 1, b: 1, a: 1}
