@@ -31,6 +31,7 @@ public class RewardSceneController : MenuScreenScene {
 
 		public virtual void Clear() {
 			if(view != null) {
+				view.transform.DOKill(false);
 				view.SetActive(false);
 			}
 			if(godrays != null) {
@@ -440,7 +441,7 @@ public class RewardSceneController : MenuScreenScene {
 		// Animate it!
 		Sequence seq = DOTween.Sequence();
 		seq.AppendInterval(0.05f);	// Initial delay
-		seq.Append(m_currentRewardSetup.view.transform.DOScale(0f, 0.5f).From().SetRecyclable(true).SetEase(Ease.OutBack));
+		seq.Append(m_currentRewardSetup.view.transform.DOScale(0f, 0.6f).From().SetRecyclable(true).SetEase(Ease.OutBack));
 
 		// Trigger UI animation
 		seq.InsertCallback(seq.Duration() - 0.15f, () => { m_rewardInfoUI.InitAndAnimate(_skinReward); });
@@ -449,12 +450,17 @@ public class RewardSceneController : MenuScreenScene {
 		seq.AppendCallback(() => { SetDragTarget(m_currentRewardSetup.view.transform); });
 
 		// Show reward godrays
-		if(m_currentRewardSetup.godrays != null) {
+		if(m_currentRewardSetup.godrays != null && !_skinReward.WillBeReplaced()) {
 			// Custom color based on reward's rarity
 			m_currentRewardSetup.godrays.gameObject.SetActive(true);
 
 			// Show with some delay to sync with reward's animation
 			seq.Insert(0.15f, m_currentRewardSetup.godrays.transform.DOScale(0f, 0.05f).From().SetRecyclable(true));
+		}
+
+		// If the reward will be replaced, append the replace animation
+		if(_skinReward.WillBeReplaced()) {
+			AppendReplacementAnim(ref seq);
 		}
 
 		seq.OnComplete(OnAnimationFinish);
@@ -473,7 +479,7 @@ public class RewardSceneController : MenuScreenScene {
 			dragonSelectionScreen.pendingToSelectDragon = _dragonReward.sku;
 		}
 
-		// Initialize skin view
+		// Initialize dragon view
 		InitDragonView(_dragonReward);
 
 		// Trigger confetti anim
@@ -482,10 +488,14 @@ public class RewardSceneController : MenuScreenScene {
 		// Animate it!
 		Sequence seq = DOTween.Sequence();
 		seq.AppendInterval(0.05f);  // Initial delay
-		seq.Append(m_currentRewardSetup.view.transform.DOScale(0f, 0.5f).From().SetRecyclable(true).SetEase(Ease.OutBack));
+		float originalScale = m_currentRewardSetup.view.transform.localScale.x;
+		m_currentRewardSetup.view.transform.SetLocalScale(0f);
+		seq.Append(m_currentRewardSetup.view.transform.DOScale(originalScale, 0.6f).SetRecyclable(true).SetEase(Ease.OutBack));
 
-		// Trigger UI animation
-		seq.InsertCallback(seq.Duration() - 0.15f, () => { m_rewardInfoUI.InitAndAnimate(_dragonReward); });
+		// Trigger UI animation - except if the reward is going to be replaced
+		if(!_dragonReward.WillBeReplaced()) {
+			seq.InsertCallback(seq.Duration() - 0.15f, () => { m_rewardInfoUI.InitAndAnimate(_dragonReward); });
+		}
 
 		// Make it target of the drag controller
 		seq.AppendCallback(() => { SetDragTarget(m_currentRewardSetup.view.transform); });
@@ -588,6 +598,28 @@ public class RewardSceneController : MenuScreenScene {
         seq.OnComplete(OnAnimationFinish);
 
     }
+
+	/// <summary>
+	/// Choose the rigth preview setup based on reward type, initializes it and
+	/// makes it the current one (hiding all the oters).
+	/// </summary>
+	/// <param name="_reward">The reward to be used for initialization.</param>
+	private void InitRewardView(Metagame.Reward _reward) {
+		// Just switch reward type and choose the right view initializer
+		switch(_reward.type) {
+			// Items
+			case Metagame.RewardEgg.TYPE_CODE: InitEggView(_reward as Metagame.RewardEgg);	break;
+			case Metagame.RewardPet.TYPE_CODE: InitPetView(_reward as Metagame.RewardPet); break;
+			case Metagame.RewardSkin.TYPE_CODE: InitSkinView(_reward as Metagame.RewardSkin); break;
+			case Metagame.RewardDragon.TYPE_CODE: InitDragonView(_reward as Metagame.RewardDragon); break;
+
+			// Currencies
+			case Metagame.RewardHardCurrency.TYPE_CODE:
+			case Metagame.RewardSoftCurrency.TYPE_CODE:
+			case Metagame.RewardGoldenFragments.TYPE_CODE:
+				InitCurrencyView(_reward as Metagame.RewardCurrency); break;
+		}
+	}
 
     /// <summary>
     /// Initialize the egg view with the given egg reward data.
@@ -783,6 +815,9 @@ public class RewardSceneController : MenuScreenScene {
 	/// <param name="_replacementSetup">The setup to be displayed with the replacement.</param>
 	/// <param name="_replacementInfoText">Extra text to be displayed with the replacement.</param>
 	private void AppendReplacementAnim(ref Sequence _seq, RewardSetup _replacementSetup, string _replacementInfoText) {
+		// Aux vars
+		Metagame.Reward replacementReward = m_currentReward.replacement;
+
 		// Reward acceleration
 		// Make it compatible with the drag controller!
 		Vector2 baseIdleVelocity = m_dragController.idleVelocity;
@@ -790,7 +825,7 @@ public class RewardSceneController : MenuScreenScene {
 			() => { return baseIdleVelocity; }, // Getter
 			(Vector2 _v) => { m_dragController.idleVelocity = _v; },    // Setter
 			Vector2.Scale(baseIdleVelocity, new Vector2(100f, 1f)), // Final value
-			1f) // Duration
+			1.5f) // Duration
 			.SetEase(Ease.InCubic)
 		);
 
@@ -811,14 +846,13 @@ public class RewardSceneController : MenuScreenScene {
 
 		// Swap
 		_seq.AppendCallback(() => {
-			// Swap reward view with replacement view
-			m_currentRewardSetup.view.SetActive(false);
-			_replacementSetup.view.SetActive(true);
-
-			// Hide godrays as well
+			// Hide current godrays
 			if(m_currentRewardSetup.godrays != null) {
 				m_currentRewardSetup.godrays.gameObject.SetActive(false);
 			}
+
+			// Swap reward view with replacement view
+			InitRewardView(replacementReward);
 
 			// Make it target of the drag controller
 			SetDragTarget(_replacementSetup.view.transform);
@@ -827,7 +861,7 @@ public class RewardSceneController : MenuScreenScene {
 		// Show replacement UI info
 		_seq.AppendCallback(() => {
 			// Reward info UI does all the hard work for us
-			m_rewardInfoUI.InitAndAnimate(m_currentReward.replacement, _replacementInfoText);
+			m_rewardInfoUI.InitAndAnimate(replacementReward, _replacementInfoText);
 
 			// Show godrays
 			if(_replacementSetup.godrays != null) {
@@ -835,9 +869,8 @@ public class RewardSceneController : MenuScreenScene {
 			}
 		});
 
-		// Replacement reward initial inertia and scale up
+		// Replacement reward initial inertia
 		// Make it compatible with the drag controller!
-		_seq.Append(_replacementSetup.view.transform.DOScale(0f, 1f).From().SetEase(Ease.OutBack));
 		_seq.Join(DOTween.To(
 			() => { return baseIdleVelocity; }, // Getter
 			(Vector2 _v) => { m_dragController.idleVelocity = _v; },    // Setter
@@ -846,6 +879,21 @@ public class RewardSceneController : MenuScreenScene {
 			.From()
 			.SetEase(Ease.OutCubic)
 		);
+
+		// Do some post-processing based on replacement reward
+		// [AOC] Don't like doing this here, since it's a method that should be only
+		//		 used for animation purposes, but don't have time for a better solution
+		switch(replacementReward.type) {
+			case Metagame.RewardDragon.TYPE_CODE: {
+				// If we're in the right mode, make it the selected dragon
+				IDragonData dragonData = DragonManager.GetDragonData(replacementReward.sku);
+				if(dragonData != null) {
+					// Tell the dragon selection screen for that dragon to make it the selected one next time we go there
+					MenuDragonScreenController dragonSelectionScreen = InstanceManager.menuSceneController.GetScreenData(MenuScreen.DRAGON_SELECTION).ui.GetComponent<MenuDragonScreenController>();
+					dragonSelectionScreen.pendingToSelectDragon = replacementReward.sku;
+				}
+			} break;
+		}
 	}
 
 	//------------------------------------------------------------------------//
