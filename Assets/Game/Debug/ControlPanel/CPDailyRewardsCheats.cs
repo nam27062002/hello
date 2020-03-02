@@ -79,6 +79,9 @@ public class CPDailyRewardsCheats : MonoBehaviour {
 		// Tell the rewards sequence
 		UsersManager.currentUser.dailyRewards.DEBUG_SetTotalRewardIdx((int)_newValue);
 
+		// Skip timer as well
+		UsersManager.currentUser.dailyRewards.DEBUG_SkipCooldownTimer();
+
 		// Save persistence
 		PersistenceFacade.instance.Save_Request();
 
