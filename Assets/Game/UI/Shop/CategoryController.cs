@@ -231,6 +231,23 @@ public class CategoryController : MonoBehaviour {
             {
                 pill.gameObject.GetComponent<ShowHideAnimator>().ForceShow(true);
             }
+
+            // Set the position of the currencies in the HUD, so the gems/coins trail FX ends there
+            if (_offer.type == OfferPack.Type.HC )
+            {
+                if (m_shopController.hcCounterPosition != null)
+                {
+                    ((ShopCurrencyPill)pill).currencyHudCounter = m_shopController.hcCounterPosition;
+                }
+            }
+            else if (_offer.type == OfferPack.Type.SC )
+            {
+                if (m_shopController.scCounterPosition != null)
+                {
+                    ((ShopCurrencyPill)pill).currencyHudCounter = m_shopController.scCounterPosition;
+                }
+            }
+
         }
 
     }

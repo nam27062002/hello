@@ -463,7 +463,9 @@ public class HappyHourManager {
 
 			// If required and allowed, instanly trigger the popup. Otherwise just mark it as pending.
 			if(_forcePopup && m_happyHour.data.popupTriggerRunNumber == 0) {
-				OpenPopup();
+
+                // Wait some time before showing the popup so the coins/gems trail FX can finish
+                UbiBCN.CoroutineManager.DelayedCall( () => OpenPopup(), 1.5f, false);
 			} else {
 				m_pendingPopup = true;
 			}
