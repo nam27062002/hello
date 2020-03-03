@@ -195,9 +195,14 @@ public class DailyRewardsSequence {
 		List<DefinitionNode> rewardDefs = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.DAILY_REWARDS);
 
 		// Store them in a dictionary using their "day" property as key
-		Dictionary<int, DefinitionNode> rewardDefsByDay = new Dictionary<int, DefinitionNode>();
+		// As of 2.8, multiple rewards can be defined for the same day, using them as replacement if the original reward is already owned (dragons, pets, skins)
+		Dictionary<int, List<DefinitionNode>> rewardDefsByDay = new Dictionary<int, List<DefinitionNode>>();
 		for(int i = 0; i < rewardDefs.Count; ++i) {
-			rewardDefsByDay[rewardDefs[i].GetAsInt("day")] = rewardDefs[i];
+			int day = rewardDefs[i].GetAsInt("day");
+			if(!rewardDefsByDay.ContainsKey(day)) {
+				rewardDefsByDay.Add(day, new List<DefinitionNode>());
+			}
+			rewardDefsByDay[day].Add(rewardDefs[i]);
 		}
 
 		// Generate rewards for the next SEQUENCE_SIZE days (totalRewardIdx to totalRewardIdx + SEQUENCE_SIZE)
@@ -216,7 +221,7 @@ public class DailyRewardsSequence {
 			}
 
 			// Initialize reward with the definition for the target day
-			m_rewards[i].InitFromDef(rewardDefsByDay[targetDay]);
+			m_rewards[i].InitFromDefs(rewardDefsByDay[targetDay]);
 		}
 	}
 
