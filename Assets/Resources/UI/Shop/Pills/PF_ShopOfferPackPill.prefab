@@ -1425,6 +1425,7 @@ GameObject:
   - component: {fileID: 224520132255317528}
   - component: {fileID: 114976280452874380}
   - component: {fileID: 114447145467952382}
+  - component: {fileID: 114490626529737838}
   m_Layer: 5
   m_Name: PF_ShopOfferPackPill
   m_TagString: Untagged
@@ -1595,12 +1596,12 @@ GameObject:
   m_Component:
   - component: {fileID: 224192246854731610}
   m_Layer: 5
-  m_Name: 'Deco '
+  m_Name: 'HDDeco '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!1 &1790831260667084
 GameObject:
   m_ObjectHideFlags: 1
@@ -5355,6 +5356,20 @@ MonoBehaviour:
   m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 0
   m_ChildControlHeight: 0
+--- !u!114 &114490626529737838
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1694397363191218}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d59a70c9f15df9d44adf3f2b072b8907, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  lowerQualityThreshold: 1
+  elementsToHide:
+  - {fileID: 1782755603711778}
 --- !u!114 &114503345983513680
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -10174,9 +10189,9 @@ RectTransform:
   m_Father: {fileID: 224099102191238516}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 113.83, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 113.83, y: -20}
   m_SizeDelta: {x: 0, y: 40.79}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224530386522966450
