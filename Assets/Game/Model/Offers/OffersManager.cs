@@ -34,7 +34,7 @@ public class OffersManager : Singleton<OffersManager> {
 
     // Debug
 #if LOG_PACKS
-	private const string LOG_PACK_SKU = "rotationalHighPayer9";
+	private const string LOG_PACK_SKU = "rotational";
 #endif
 
     //------------------------------------------------------------------------//
@@ -78,8 +78,8 @@ public class OffersManager : Singleton<OffersManager> {
     }
 
     // Internal
+	private Dictionary<string, OfferPack> m_allOffersBySku = new Dictionary<string, OfferPack>(); // All defined offer packs, regardless of state and type
     private List<OfferPack> m_allEnabledOffers = new List<OfferPack>();	// All enabled and non-expired offer packs, regardless of type
-	private List<OfferPack> m_allOffers = new List<OfferPack>();        // All defined offer packs, regardless of state and type
 	private List<OfferPack> m_offersToRemove = new List<OfferPack>();   // Temporal list of offers to be removed from active lists
     private float m_timer = 0;
 
@@ -248,14 +248,14 @@ public class OffersManager : Singleton<OffersManager> {
 			// If pack is expired, discard it
 			// [AOC] Let's minimize risks by keeping it in the all offers list
 			if(newPack.state == OfferPack.State.EXPIRED) {
-				Log("OFFER PACK {0} EXPIRED! Won't be added", Color.red, newPack.def.sku);
+				Log("InitFromDefinitions: OFFER PACK {0} EXPIRED! Won't be added", Color.red, newPack.def.sku);
 			}
 
 			// If enabled, store to the enabled collection
 			else if(offerDefs[i].GetAsBool("enabled", false)) {
                 //lets check if player has all the bundles required to view this offer
                 if (instance.IsOfferAvailable(newPack)) {
-					Log("ADDING OFFER PACK {0} ({1})", DEBUG_GetColorByState(newPack), newPack.def.sku, newPack.state);
+					Log("InitFromDefinitions: ADDING OFFER PACK {0} ({1})", DEBUG_GetColorByState(newPack), newPack.def.sku, newPack.state);
 					instance.m_allEnabledOffers.Add(newPack);
 
 					// Additional treatment based on offer type
@@ -282,7 +282,7 @@ public class OffersManager : Singleton<OffersManager> {
 
                     }
                 } else {
-					Log("OFFER PACK {0} CAN'T BE ADDED!", Color.red, newPack.def.sku);
+					Log("InitFromDefinitions: OFFER PACK {0} CAN'T BE ADDED!", Color.red, newPack.def.sku);
 				}
 			}
 
@@ -319,7 +319,7 @@ public class OffersManager : Singleton<OffersManager> {
 		instance.m_happyHourManager.Load();
 
 		// Refresh active and featured offers
-		Log("INITIAL REFRESH -------------------------", Colors.magenta);
+		Log("InitFromDefinitions: INITIAL REFRESH -------------------------", Colors.magenta);
 		instance.Refresh(true);
 
 		// Done!
@@ -337,7 +337,9 @@ public class OffersManager : Singleton<OffersManager> {
 	/// </summary>
 	/// <param name="_forceActiveRefresh">Force a refresh of the active offers list.</param>
 	private void Refresh(bool _forceActiveRefresh) {
-		//Log("REFRESH {0}", Colors.magenta, _forceActiveRefresh);
+		Log("-------------------------------------------------------------------", Colors.magenta);
+		Log("OFFERS MANAGER REFRESH {0}", Colors.magenta, _forceActiveRefresh);
+		Log("-------------------------------------------------------------------", Colors.magenta);
 
 		// Aux vars
 		OfferPack pack = null;
@@ -355,7 +357,7 @@ public class OffersManager : Singleton<OffersManager> {
 			if(pack.UpdateState() || _forceActiveRefresh) {
 				// Yes!
 				dirty = true;
-				Log("PACK UPDATED: {0} | {1}", DEBUG_GetColorByState(pack), pack.def.sku, pack.state);
+				Log("Refresh: PACK UPDATED: {0} | {1}", DEBUG_GetColorByState(pack), pack.def.sku, pack.state);
 
 				// Update lists
 				UpdateCollections(pack);
@@ -370,7 +372,7 @@ public class OffersManager : Singleton<OffersManager> {
 
 		// Remove expired offers (they won't be active anymore, no need to update them)
 		for(int i = 0; i < m_offersToRemove.Count; ++i) {
-			Log("---> REMOVING {0}", Color.red, m_offersToRemove[i].def.sku);
+			Log("Refresh: ---> REMOVING {0}", Color.red, m_offersToRemove[i].def.sku);
 			m_allEnabledOffers.Remove(m_offersToRemove[i]);
 			if(m_offersToRemove[i].type == OfferPack.Type.ROTATIONAL) {
 				m_allEnabledRotationalOffers.Remove(m_offersToRemove[i] as OfferPackRotational);
@@ -433,12 +435,7 @@ public class OffersManager : Singleton<OffersManager> {
 		// Do we need to activate a new rotational pack?
 		while( m_activeRotationalOffers.Count < minRotationalActiveOffers && loopCount < maxLoops) {
 			// Some logging
-			Log("Rotational offers required: {0} active", Colors.orange, m_activeRotationalOffers.Count);
-#if LOG
-			TrackingPersistenceSystem trackingPersistence = HDTrackingManager.Instance.TrackingPersistenceSystem;
-			int totalPurchases = trackingPersistence == null ? 0 : trackingPersistence.TotalPurchases;
-			Log("Total Purchases {0}", Colors.silver, totalPurchases);
-#endif
+			Log("RefreshRotationals: Rotational offers required: {0} active", Colors.orange, m_activeRotationalOffers.Count);
 
 			// Make sure rotational history has the proper size
 			UpdateRotationalHistory(null);
@@ -467,7 +464,7 @@ public class OffersManager : Singleton<OffersManager> {
 
 			// Activate new pack and add it to collections
 			newPack.Activate();
-			Log("ACTIVATING pack {0}", Color.green, newPack.def.sku);
+			Log("RefreshRotationals: ACTIVATING pack {0}", Color.green, newPack.def.sku);
 			UpdateCollections(newPack);
 			UpdateRotationalHistory(newPack);
 
@@ -501,7 +498,7 @@ public class OffersManager : Singleton<OffersManager> {
 		}
 
 		// Some logging
-		Log("Free offer required", Colors.orange);
+		Log("RefreshFree: Free offer required", Colors.orange);
 
 		// Make sure free history has the proper size
 		UpdateFreeHistory(null);
@@ -541,7 +538,7 @@ public class OffersManager : Singleton<OffersManager> {
 		if(newPack == null) return false;
 
 		// Activate new pack and add it to collections
-		Log("ACTIVATING pack {0}", Color.green, newPack.def.sku);
+		Log("RefreshFree: ACTIVATING pack {0}", Color.green, newPack.def.sku);
 		newPack.Activate();
 		m_activeFreeOffer = newPack;
 		UpdateCollections(newPack);
@@ -549,7 +546,7 @@ public class OffersManager : Singleton<OffersManager> {
 
 		// Update persistence with this pack's new state
 		// [AOC] UserProfile.SaveOfferPack() is smart, only stores packs when required
-		Log("ATTEMPTING TO SAVE FREE OFFER {0} -> {1}", Colors.blue, newPack.def.sku, newPack.ShouldBePersisted());
+		Log("RefreshFree: ATTEMPTING TO SAVE FREE OFFER {0} -> {1}", Colors.blue, newPack.def.sku, newPack.ShouldBePersisted());
 		UsersManager.currentUser.SaveOfferPack(newPack);
 
 		// Done!
@@ -657,7 +654,7 @@ public class OffersManager : Singleton<OffersManager> {
 		}
 
 		// Debug
-		Log("Collections updated with pack {0}", _offer.def.sku);
+		Log("UpdateCollections: Collections updated with pack {0}", _offer.def.sku);
 		LogCollections();
 	}
 
@@ -726,22 +723,35 @@ public class OffersManager : Singleton<OffersManager> {
 		OfferPack pack = null;
 		int poolCount = _initialPool.Count;
 
+		// Some logging
+#if LOG
+		string logStr = "";
+		foreach(OfferPack p in _initialPool) logStr += "    " + p.def.sku + "\n";
+		Log("PickRandomPack: Creating pool from non-expired offers...\nInitial Pool: {0}", logStr);
+#endif
+
 		// Create pool from non-expired offers
 		List<OfferPack> pool = new List<OfferPack>();
 		for(int i = 0; i < poolCount; ++i) {
 			// Aux
 			pack = _initialPool[i];
-			Log("    Checking {0}", pack.def.sku);
+			if(pack == null) continue;  // Just in case
+			Log("  PickRandomPack: {0} Checking...", pack.def.sku);
 
 			// Check if it can be activated
-			if(!pack.CanBeActivated()) continue;
+			if(!pack.CanBeActivated()) {
+				Log("  PickRandomPack: {0} Activation checks failed! Try next pack", Colors.coral, pack.def.sku);
+				continue;
+			}
 
 			// Skip if pack has recently been used
-			Log("        Checking history...");
-			if(_history.Contains(pack.def.sku)) continue;
+			if(_history.Contains(pack.def.sku)) {
+				Log("  PickRandomPack: {0} Already in the history. Try next pack", Colors.coral, pack.def.sku);
+				continue;
+			}
 
 			// Everything ok, add to the candidates pool!
-			Log("    Candidate is Good! {0}", Colors.lime, pack.def.sku);
+			Log("  PickRandomPack: {0} Candidate is Good!", Colors.paleGreen, pack.def.sku);
 			pool.Add(pack);
 		}
 
@@ -750,13 +760,17 @@ public class OffersManager : Singleton<OffersManager> {
 			// Pick a random pack from the pool!
 			pack = pool.GetRandomValue();
 #if LOG
-			string poolStr = "";
-			foreach(OfferPack p in pool) poolStr += "    " + p.def.sku + "\n";
-			Log("Picking random pack from a pool of {0}...\n{1}", pool.Count, poolStr);
+			logStr = "";
+			foreach(OfferPack p in pool) logStr += "    " + p.def.sku + "\n";
+			Log("PickRandomPack: Picking random pack from a pool of {0}...\n{1}", pool.Count, logStr);
 #endif
 		} else {
 			// If no selectable pack was found, try reusing packs in the history
-			Log("Random pool is empty, try loosen up the history ({0})", _history.Count);
+#if LOG
+			logStr = "";
+			foreach(string str in _history) logStr += "    " + str + "\n";
+			Log("PickRandomPack: Random pool is empty, try loosen up the history\nhistorySize: {0}, maxTries: {1}\n{2}", _history.Count, _maxTries, logStr);
+#endif
 
 			// Be more flexible with repeating recently used packs
 			pack = null;
@@ -779,6 +793,7 @@ public class OffersManager : Singleton<OffersManager> {
 				if(pack != null) {
 					Log("    Checking {0}", packSku);
 					if(!pack.CanBeActivated()) pack = null;
+					} else {
 				} else {
 					Log("    Couldn't find pack {0} (from history). Trying next pack.", packSku);
 				}
@@ -1025,11 +1040,11 @@ public class OffersManager : Singleton<OffersManager> {
 	}
 #endif
 
-    /// <summary>
-    /// Do a report on current rotational history state.
-    /// </summary>
+	/// <summary>
+	/// Do a report on current rotational history state.
+	/// </summary>
 #if ENABLE_LOGS
-    [Conditional("DEBUG")]
+	[Conditional("DEBUG")]
 #else
     [Conditional("FALSE")]
 #endif
