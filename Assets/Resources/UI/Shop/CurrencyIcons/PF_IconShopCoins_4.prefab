@@ -424,6 +424,7 @@ GameObject:
   m_Component:
   - component: {fileID: 224447040059408502}
   - component: {fileID: 114410938975321256}
+  - component: {fileID: 114918114879824794}
   m_Layer: 5
   m_Name: PF_IconShopCoins_4
   m_TagString: Untagged
@@ -577,7 +578,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5e997c667bc62434e9e0039dadf13309, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_iconRoot: {fileID: 224948348944233872}
 --- !u!114 &114427670862133822
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -703,7 +703,7 @@ MonoBehaviour:
     size: 60
   - sprite: {fileID: 21300000, guid: 07428bf108f41b64e98626b9b9aae053, type: 3}
     size: 90
-  m_maxAlive: 5
+  m_maxAlive: 2
   m_duration:
     min: 0.75
     max: 1.25
@@ -773,6 +773,20 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &114918114879824794
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1974017433078970}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d59a70c9f15df9d44adf3f2b072b8907, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  lowerQualityThreshold: 1
+  elementsToHide:
+  - {fileID: 1612673016039294}
 --- !u!114 &114922031921362690
 MonoBehaviour:
   m_ObjectHideFlags: 1
