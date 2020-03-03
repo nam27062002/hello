@@ -49,6 +49,12 @@ public class ShopController : MonoBehaviour {
     [SerializeField] private Transform m_shortcutsContainer;
     [SerializeField] private ShopCategoryShortcut m_shortcutPrefab;
 
+    // HUD currency anchors
+    [SerializeField] private Transform m_scCounterPosition;
+    public Transform scCounterPosition { get { return m_scCounterPosition; } }
+    [SerializeField] private Transform m_hcCounterPosition;
+    public Transform hcCounterPosition { get { return m_hcCounterPosition; } }
+
     // Pills initialization
     [Range(1,5)]
     [Tooltip("Amount of frames that will take for each pill to be displayed. Creates a cool effect when opening the shop")]

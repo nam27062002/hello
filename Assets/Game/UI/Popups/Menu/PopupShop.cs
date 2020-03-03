@@ -164,7 +164,19 @@ public class PopupShop : MonoBehaviour, IBroadcastListener {
 
         // Close popup?
         if (m_closeAfterPurchase)
-            GetComponent<PopupController>().Close(false);
+        {
+            if (_pill is ShopCurrencyPill )
+            {
+                // For currency packs wait some time before closing so the coins/gems trail FX can finish
+                UbiBCN.CoroutineManager.DelayedCall(() => GetComponent<PopupController>().Close(false) , 1.5f, false);
+            }
+            else
+            {
+                GetComponent<PopupController>().Close(false);
+            }
+            
+        }
+            
     }
 
     /// <summary>

@@ -31,18 +31,24 @@ public class ShopCurrencyPill : ShopMonoRewardPill {
 	[Separator("Currency Pill Specifics")]
 	[SerializeField] protected Localizer m_bonusAmountText = null;	// [AOC] Unused as of 2.8, but keep it just in case
 
+    [System.NonSerialized]
+    public Transform currencyHudCounter; // When buying the pack, the coins/gems trail FX will go to this position
+
 	// Internal
 	protected UserProfile.Currency m_type = UserProfile.Currency.NONE;
 	protected long m_amountApplied = 0;
 
-	//------------------------------------------------------------------------//
-	// OTHER METHODS														  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Initialize the pill with a given pack's data.
-	/// </summary>
-	/// <param name="_pack">Pack.</param>
-	public override void InitFromOfferPack(OfferPack _pack) {
+    // Internal references
+    private ParticlesTrailFX m_currencyFX = null;
+
+    //------------------------------------------------------------------------//
+    // OTHER METHODS														  //
+    //------------------------------------------------------------------------//
+    /// <summary>
+    /// Initialize the pill with a given pack's data.
+    /// </summary>
+    /// <param name="_pack">Pack.</param>
+    public override void InitFromOfferPack(OfferPack _pack) {
 		// Let parent do the hard work and do some extra initialization afterwards
 		base.InitFromOfferPack(_pack);
 
@@ -181,7 +187,29 @@ public class ShopCurrencyPill : ShopMonoRewardPill {
 			Vector3.down * 150f, 
 			this.GetComponentInParent<Canvas>().transform as RectTransform
 		);
-	}
+
+        if (currencyHudCounter != null)
+        {
+            // Currency FX
+            // Make it fly to the matching currency counter
+            Vector3 fromWorldPos = m_offerItemSlot.transform.position;
+            Vector3 toWorldPos = currencyHudCounter.position;
+
+            // Offset Z a bit so the coins don't collide with the UI elements
+            fromWorldPos.z = 0.5f;
+            toWorldPos.z -= 0.5f;
+
+            // Ready!
+            m_currencyFX = ParticlesTrailFX.LoadAndLaunch(
+                ParticlesTrailFX.GetDefaultPrefabPathForCurrency(m_type),
+                this.GetComponentInParent<Canvas>().transform,
+                fromWorldPos,
+                toWorldPos
+            );
+            m_currencyFX.totalDuration = 0.5f;
+
+        }
+    }
 
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
