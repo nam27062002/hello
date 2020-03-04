@@ -3,8 +3,9 @@
 --- !u!200 &20000000
 ShaderVariantCollection:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
   m_Name: SVC_MEDIUM_DETAIL_ON
   m_Shaders:
   - first: {fileID: 10101, guid: 0000000000000000e000000000000000, type: 0}
@@ -544,14 +545,14 @@ ShaderVariantCollection:
       - keywords: FRESNEL FXLAYER_NONE MEDIUM_DETAIL_ON NORMALMAP REFLECTIONTYPE_NORMAL
           SELFILLUMINATE_NORMAL SPECULAR _ZWRITE_ON
         passType: 4
-      - keywords: CUTOFF DOUBLESIDED FXLAYER_NONE MEDIUM_DETAIL_ON NORMALMAP REFLECTIONTYPE_NORMAL
-          SELFILLUMINATE_NORMAL SPECULAR _ZWRITE_ON
-        passType: 4
       - keywords: CUTOFF DOUBLESIDED FRESNEL FXLAYER_NONE MEDIUM_DETAIL_ON NORMALMAP
           REFLECTIONTYPE_NORMAL SELFILLUMINATE_NORMAL SPECULAR _ZWRITE_ON
         passType: 4
       - keywords: FRESNEL FXLAYER_NONE MEDIUM_DETAIL_ON NORMALMAP REFLECTIONTYPE_NORMAL
           SELFILLUMINATE_BLINKLIGHTS SPECULAR _ZWRITE_ON
+        passType: 4
+      - keywords: CUTOFF DOUBLESIDED FXLAYER_REFLECTION MEDIUM_DETAIL_ON NORMALMAP
+          REFLECTIONTYPE_NORMAL SELFILLUMINATE_BLINKLIGHTS SPECULAR _ZWRITE_ON
         passType: 4
       - keywords: FRESNEL FXLAYER_REFLECTION MEDIUM_DETAIL_ON NORMALMAP OPAQUEALPHA
           OPAQUEFRESNEL REFLECTIONTYPE_NORMAL SPECULAR _ZWRITE_ON
@@ -690,6 +691,18 @@ ShaderVariantCollection:
     second:
       variants:
       - keywords: MEDIUM_DETAIL_ON
+        passType: 4
+  - first: {fileID: 4800000, guid: 3880f73760fb52c4bba39b1167e234e7, type: 3}
+    second:
+      variants:
+      - keywords: BLENDAXIS_X COLORMODE_NONE FRESNEL LITMODE_UNLIT MEDIUM_DETAIL_ON
+        passType: 4
+      - keywords: BLENDAXIS_X COLORMODE_COLORRAMP FRESNEL LITMODE_UNLIT MEDIUM_DETAIL_ON
+        passType: 4
+      - keywords: BLENDAXIS_X COLORMODE_COLORRAMPMASKED FRESNEL LITMODE_UNLIT MEDIUM_DETAIL_ON
+        passType: 4
+      - keywords: BLENDAXIS_X COLORMODE_COLORRAMP FRESNEL LITMODE_UNLIT MEDIUM_DETAIL_ON
+          REFLECTIONMAP
         passType: 4
   - first: {fileID: 4800000, guid: 4349792d2c4d5a44684801646bdf60ca, type: 3}
     second:
@@ -847,6 +860,11 @@ ShaderVariantCollection:
         passType: 0
       - keywords: EMISSIVE_BLINK FOG MAINCOLOR_COLOR MEDIUM_DETAIL_ON OPAQUEALPHA
           VERTEXCOLOR_NONE
+        passType: 0
+  - first: {fileID: 4800000, guid: 4d4ad820f36dbc1429b53a7702b00536, type: 3}
+    second:
+      variants:
+      - keywords: BLENDMODE_ADDITIVEALPHABLEND MEDIUM_DETAIL_ON
         passType: 0
   - first: {fileID: 4800000, guid: 4e3b17cf747b2664787fab8d103d78ad, type: 3}
     second:
@@ -1030,20 +1048,3 @@ ShaderVariantCollection:
       variants:
       - keywords: MEDIUM_DETAIL_ON
         passType: 0
-  - first: {fileID: 4800000, guid: 4d4ad820f36dbc1429b53a7702b00536, type: 3}
-    second:
-      variants:
-      - keywords: BLENDMODE_ADDITIVEALPHABLEND MEDIUM_DETAIL_ON
-        passType: 0
-  - first: {fileID: 4800000, guid: 3880f73760fb52c4bba39b1167e234e7, type: 3}
-    second:
-      variants:
-      - keywords: BLENDAXIS_X COLORMODE_NONE FRESNEL LITMODE_UNLIT MEDIUM_DETAIL_ON
-        passType: 4
-      - keywords: BLENDAXIS_X COLORMODE_COLORRAMP FRESNEL LITMODE_UNLIT MEDIUM_DETAIL_ON
-        passType: 4
-      - keywords: BLENDAXIS_X COLORMODE_COLORRAMPMASKED FRESNEL LITMODE_UNLIT MEDIUM_DETAIL_ON
-        passType: 4
-      - keywords: BLENDAXIS_X COLORMODE_COLORRAMP FRESNEL LITMODE_UNLIT MEDIUM_DETAIL_ON
-          REFLECTIONMAP
-        passType: 4
