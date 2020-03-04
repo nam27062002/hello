@@ -60,27 +60,29 @@ namespace Metagame {
 
 			m_rarity = Reward.SkuToRarity(_def.GetAsString("rarity"));
 
-			CheckReplacement();
+			CheckReplacement(true);
 		}
 
 		/// <summary>
-		/// Checks whether this reward needs to be replaced and creates a replacement
+		/// Checks whether this reward needs to be replaced and optionally creates a replacement
 		/// reward if needed.
 		/// </summary>
-		override public void CheckReplacement() {
+		/// <param name="_createReplacement">Optionally create the replacement reward also. Only supported by some types.</param>
+		/// <returns>Whether this reward needs to be replaced or not.</returns>
+		public override bool CheckReplacement(bool _createReplacement) {
 			// If the pet is already owned, give special egg part or coins instead
 			bool duplicated = false;
 
 			// Cheat support
 			switch (CPGachaTest.duplicateMode) {
-				case CPGachaTest.DuplicateMode.DEFAULT: duplicated = UsersManager.currentUser.petCollection.IsPetUnlocked(m_sku); break;
+				case CPGachaTest.DuplicateMode.DEFAULT: duplicated = IsAlreadyOwned(); break;
 				case CPGachaTest.DuplicateMode.ALWAYS: 	duplicated = true; 	break;
 				case CPGachaTest.DuplicateMode.NEVER: 	duplicated = false; break;
 				case CPGachaTest.DuplicateMode.RANDOM: 	duplicated = Random.value > 0.5f; break;
 			}
 
 			// If duplicated, give alternative rewards
-			if(duplicated) {
+			if(duplicated && _createReplacement) {
 				// Replacement reward depends on pet rarity
 				string raritySku = m_def.GetAsString("rarity");
 				string petRewardSku = "pet_" + raritySku;
@@ -101,7 +103,19 @@ namespace Metagame {
 
 				// Create reward
 				m_replacement = Metagame.Reward.CreateTypeCurrency(targetAmount, targetCurrency, SkuToRarity(raritySku), HDTrackingManager.EEconomyGroup.PET_DUPLICATED, m_source);
-			} 
+			}
+
+			return duplicated;
+		}
+
+		/// <summary>
+		/// This method checks if the reward is already owned by the player. This is applicable in
+		/// non-consumable items like dragons, skins and the remove ads offer. Currency packs will be always
+		/// marked as not owned.
+		/// </summary>
+		/// <returns></returns>
+		public override bool IsAlreadyOwned() {
+			return UsersManager.currentUser.petCollection.IsPetUnlocked(m_sku);
 		}
 
 		/// <summary>
