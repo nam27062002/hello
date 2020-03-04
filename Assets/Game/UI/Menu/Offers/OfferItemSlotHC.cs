@@ -81,9 +81,12 @@ public class OfferItemSlotHC : OfferItemSlot {
                 Debug.LogError("No icon prefab defined for HC pack with order " + _order);
             }
             else {
-                // Instantiate preview! :)
-                m_preview = GameObject.Instantiate<IOfferItemPreviewHC>(previewPrefab, m_previewContainer, false);
-                m_preview.gameObject.SetActive(true);
+                if (m_previewContainer != null)
+                {
+                    // Instantiate preview! :)
+                    m_preview = GameObject.Instantiate<IOfferItemPreviewHC>(previewPrefab, m_previewContainer, false);
+                    m_preview.gameObject.SetActive(true);
+                }
 
             }
         }
