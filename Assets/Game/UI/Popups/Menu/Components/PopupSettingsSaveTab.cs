@@ -49,8 +49,7 @@ public class PopupSettingsSaveTab : MonoBehaviour
 		Model_Init();
 		Social_Init();
 		Resync_Init();
-        IAP_restore_Init();
-        User_Init();  
+        IAP_restore_Init();        
 		GameCenter_Init();
         Shown = false;
     }
@@ -107,7 +106,6 @@ public class PopupSettingsSaveTab : MonoBehaviour
     private void RefreshView()
     {
         Model_Refresh();
-        User_Refresh();
         Social_Refresh();
         Resync_Refresh();
     }
@@ -309,6 +307,7 @@ public class PopupSettingsSaveTab : MonoBehaviour
     {
 		m_socialNotLoggedInRoot.SetActive(true);
 		m_socialLoggedInRoot.SetActive(false);
+        m_loginRewardRoot.SetActive(false);
     }
 
 	/// <summary>
@@ -323,7 +322,18 @@ public class PopupSettingsSaveTab : MonoBehaviour
 		if(m_logoutIcon != null) {
 			m_logoutIcon.Refresh();
 		}
-    }
+
+        if (Model_State == EState.NeverLoggedIn && FeatureSettingsManager.instance.IsIncentivisedLoginEnabled())
+        {
+            m_loginRewardRoot.SetActive(true);
+            m_loginRewardtext.gameObject.SetActive(true);
+            PersistenceFacade.Texts_LocalizeIncentivizedSocial(m_loginRewardtext);
+        }
+        else
+        {
+            m_loginRewardRoot.SetActive(false);
+        }      
+   }
 
 	/// <summary>
 	/// Callback called by the player when the user clicks on log in the social network.
@@ -353,10 +363,7 @@ public class PopupSettingsSaveTab : MonoBehaviour
             CloseLoadingPopup();         
             if (Model_SocialIsLoggedIn())
             {                
-                Log("LOGIN SUCCESSFUL");
-
-                // Invalidades User_LastState in order to make sure user's information will be recalculated
-                User_LastState = EState.None;                                
+                Log("LOGIN SUCCESSFUL");                 
             }
             else
             {                
@@ -393,134 +400,7 @@ public class PopupSettingsSaveTab : MonoBehaviour
             LogError("LOGIN: Not logged in to " ); 
         }        
     }
-	#endregion
-
-	//------------------------------------------------------------------------//
-	// USER PROFILE SECTION													  //
-	//------------------------------------------------------------------------//
-	#region user
-	[Separator("User Info")]
-	// User profile GameObject to use when the user is logged in. It shows user's profile information
-	[FormerlySerializedAs("m_userLoggedInRoot")]
-	[SerializeField] private GameObject m_userInfoRoot = null;
-	[SerializeField] private Image m_userAvatarImage = null;
-	[SerializeField] private Image m_userAvatarPlaceholderImage = null;
-	[SerializeField] private Text m_userNameText = null;
-
-	private bool User_IsAvatarLoaded { get; set; }
-	private string User_NameLoaded { get; set; }
-	private EState User_LastState { get; set; }
-
-	/// <summary>
-	/// 
-	/// </summary>
-	private void User_Init() {
-		User_NameLoaded = null;
-		User_IsAvatarLoaded = false;
-
-		// Nothing is shown
-		m_loginRewardRoot.SetActive(false);
-		m_userInfoRoot.SetActive(false);
-		User_LastState = EState.None;
-	}
-
-	/// <summary>
-	/// 
-	/// </summary>
-	private void User_Reset() {
-		User_Init();
-	}
-
-	/// <summary>
-	/// 
-	/// </summary>
-	private void User_Refresh() {
-		if(User_LastState != Model_State) {
-			bool needsToLoadProfile = (Model_HasBeenLoaded(Model_State) && !Model_HasBeenLoaded(User_LastState)) ||
-									   SocialPlatformManager.SharedInstance.CurrentPlatform_NeedsProfileInfoToBeUpdated() ||
-									   (string.IsNullOrEmpty(User_NameLoaded) && Model_State != EState.NeverLoggedIn);
-
-			bool needsSocialIdToBeUpdated = SocialPlatformManager.SharedInstance.CurrentPlatform_NeedsSocialIdToBeUpdated();
-
-			User_LastState = Model_State;
-
-			m_userInfoRoot.SetActive(false);
-			m_loginRewardRoot.SetActive(false);
-
-			if(needsToLoadProfile) {
-				User_LoadProfileInfo(needsSocialIdToBeUpdated);
-			}
-
-			switch(Model_State) {
-				case EState.LoggedIn:
-				case EState.LoggedInAndIncentivised:
-				case EState.PreviouslyLoggedIn:
-					User_UpdateLoggedInRoot();
-
-					if(needsSocialIdToBeUpdated) {
-						m_userAvatarImage.gameObject.SetActive(false);
-						m_userAvatarPlaceholderImage.gameObject.SetActive(true);
-					}
-				break;
-
-				case EState.NeverLoggedIn:
-					if(FeatureSettingsManager.instance.IsIncentivisedLoginEnabled()) {
-						m_loginRewardRoot.SetActive(true);
-						m_loginRewardtext.gameObject.SetActive(true);
-						PersistenceFacade.Texts_LocalizeIncentivizedSocial(m_loginRewardtext);
-					}
-				break;
-			}
-		}
-	}
-
-	/// <summary>
-	/// 
-	/// </summary>
-	/// <param name="needsToUpdateSocialId"></param>
-	private void User_LoadProfileInfo(bool needsToUpdateSocialId) {
-		if(needsToUpdateSocialId) {
-			m_userNameText.text = LocalizationManager.SharedInstance.Get(TID_LOADING);
-		}
-
-		Action<string, Texture2D> onDone = delegate (string userName, Texture2D profileImage) {
-			User_NameLoaded = userName;
-
-			User_UpdateLoggedInRoot();
-
-			if(!string.IsNullOrEmpty(userName) && m_userNameText != null) {
-				m_userNameText.text = userName;
-			}
-
-			if(profileImage != null) {
-				User_IsAvatarLoaded = true;
-
-				Sprite sprite = Sprite.Create(profileImage, new Rect(0, 0, profileImage.width, profileImage.height), new Vector2(0.5f, 0.0f), 1.0f);
-				m_userAvatarImage.sprite = sprite;
-				m_userAvatarImage.color = Color.white;
-				m_userAvatarImage.gameObject.SetActive(true);
-				m_userAvatarPlaceholderImage.gameObject.SetActive(false);
-			} else if(!User_IsAvatarLoaded) {
-				m_userAvatarImage.gameObject.SetActive(false);
-				m_userAvatarPlaceholderImage.gameObject.SetActive(true);
-			}
-		};
-
-		// Profile picture and name are hidden until the updated information is receiveds
-		m_loginRewardRoot.SetActive(false);
-		SocialPlatformManager.SharedInstance.CurrentPlatform_GetSimpleProfileInfo(onDone);
-	}
-
-	/// <summary>
-	/// 
-	/// </summary>
-	private void User_UpdateLoggedInRoot() {
-		// Picture and name are shown only if the name is valid
-		if(m_userInfoRoot != null) {
-			m_userInfoRoot.SetActive(!string.IsNullOrEmpty(User_NameLoaded));
-		}
-	}
-	#endregion
+	#endregion	
 
 	//------------------------------------------------------------------------//
 	// CLOUD SAVE RESYNC LOGIC												  //
