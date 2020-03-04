@@ -48,17 +48,16 @@ public class UISocialSetup : MonoBehaviour
 				Toggle(m_appleItem, true);  // Apple is allowed for underaged players
 			} break;
 
-			case SocialPlatformMode.ALL_SUPPORTED: {
-				// [AOC] TODO!! SIWA
-				//List<SocialUtils.EPlatform> supportedSocialPlatforms = SocialPlatformManager.SharedInstance.GetSupportedPlatforms();
-				SocialUtils.EPlatform loggedInSocialPlatform = SocialPlatformManager.SharedInstance.CurrentPlatform_GetId();
+			case SocialPlatformMode.ALL_SUPPORTED: {				
+				List<SocialUtils.EPlatform> supportedSocialPlatforms = SocialPlatformManager.SharedInstance.GetSupportedPlatformIds();
+				/*SocialUtils.EPlatform loggedInSocialPlatform = SocialPlatformManager.SharedInstance.CurrentPlatform_GetId();
 				List<SocialUtils.EPlatform> supportedSocialPlatforms = new List<SocialUtils.EPlatform>();
 				supportedSocialPlatforms.Add(loggedInSocialPlatform);
+                */
 
 				Toggle(m_fbItem, supportedSocialPlatforms.Contains(SocialUtils.EPlatform.Facebook) && !isUnderage);
 				Toggle(m_weiboItem, supportedSocialPlatforms.Contains(SocialUtils.EPlatform.Weibo) && !isUnderage);
-				Toggle(m_appleItem, Application.platform == RuntimePlatform.IPhonePlayer);	// [AOC] TODO!! SIWA
-				//Toggle(m_appleItem, supportedSocialPlatforms.Contains(SocialUtils.EPlatform.Apple); // Apple is allowed for underaged players
+				Toggle(m_appleItem, supportedSocialPlatforms.Contains(SocialUtils.EPlatform.SIWA) && !isUnderage);	
 			} break;
 
 			case SocialPlatformMode.LOGGED_IN: {
@@ -66,8 +65,7 @@ public class UISocialSetup : MonoBehaviour
 
 				Toggle(m_fbItem, loggedInSocialPlatform == SocialUtils.EPlatform.Facebook && !isUnderage);
 				Toggle(m_weiboItem, loggedInSocialPlatform == SocialUtils.EPlatform.Weibo && !isUnderage);
-				Toggle(m_appleItem, false);	// [AOC] TODO!! SIWA
-				//Toggle(m_appleItem, loggedInSocialPlatform == SocialUtils.EPlatform.Apple);	// Apple is allowed for underaged players
+				Toggle(m_appleItem, loggedInSocialPlatform == SocialUtils.EPlatform.SIWA && !isUnderage);	
 			} break;
 		}
 		
