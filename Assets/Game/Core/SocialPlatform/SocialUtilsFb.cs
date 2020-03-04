@@ -107,7 +107,7 @@ public class SocialUtilsFb : SocialUtils
 
     public override void GetProfileInfoFromPlatform(Action<ProfileInfo> onGetProfileInfo)
     {
-        if (FB.IsInitialized && FB.IsLoggedIn)
+        if (FB.IsInitialized && FB.IsLoggedIn && false)
         {
             ProfileInfo profileInfo = null;
 

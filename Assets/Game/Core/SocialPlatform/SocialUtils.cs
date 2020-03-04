@@ -385,7 +385,7 @@ public abstract class SocialUtils
     {
         Profile_State = EProfileState.Loading;
 
-        if (IsLoggedIn())
+        if (IsLoggedIn() && false)
         {
             string socialId = GetSocialID();
             

@@ -1683,6 +1683,7 @@ GameObject:
   m_Component:
   - component: {fileID: 224586329144729198}
   - component: {fileID: 222405366091588832}
+  - component: {fileID: 114035393865193684}
   - component: {fileID: 114061873115712556}
   m_Layer: 5
   m_Name: PowerupNameText
@@ -2431,6 +2432,20 @@ MonoBehaviour:
   m_hideDelay: 0
   m_showDelay: 0
   m_restartShowAnimation: 0
+--- !u!114 &114035393865193684
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1872687274030022}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_tid: 
+  m_caseType: 0
+  m_replacements: []
 --- !u!114 &114042059646225552
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6409,7 +6424,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d656454f5d29fd2499c642f895f4f351, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_nameText: {fileID: 114061873115712556}
+  m_nameText: {fileID: 114035393865193684}
   m_descriptionText: {fileID: 114308586411937064}
   m_modifierIcon: {fileID: 114594694089679416}
 --- !u!114 &114718675241536410

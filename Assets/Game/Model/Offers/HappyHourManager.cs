@@ -321,9 +321,6 @@ public class HappyHourManager {
 		// Ignore if happy hour is not active
 		if(!m_happyHour.IsActive()) return false;
 
-		// If haven't yet purchased any pack, per design all packs are affected regardless of the mode
-		if(m_lastPackDef == null) return true;
-
 		// Depends on mode
 		switch(m_happyHour.affectedPacks) {
 			case HappyHour.AffectedPacks.ALL_PACKS: {
