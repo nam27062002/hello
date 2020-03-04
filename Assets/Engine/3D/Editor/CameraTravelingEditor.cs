@@ -43,21 +43,17 @@ public class CameraTravelingEditor : Editor {
     public override void OnInspectorGUI()
     {
         serializedObject.Update();
+
         EditorGUILayout.PropertyField(m_targetCamera);
+
+        EditorGUILayout.Space();
+
         EditorGUILayout.PropertyField(m_startingPosition);
         EditorGUILayout.PropertyField(m_finalPosition);
-        EditorGUILayout.Slider(m_value, 0f, 1f, "Value");
-        serializedObject.ApplyModifiedProperties();
 
         if (m_targetCamera != null)
         {
-            if (GUILayout.Button("Update camera position"))
-            {
-                // Update the camera position
-                ((CameraTraveling)serializedObject.targetObject).UpdateCameraPosition();
-            }
-
-            if (GUILayout.Button("Get starting pos from Camera"))
+            if (GUILayout.Button("Set starting pos from Camera"))
             {
                 Vector3 newPos = ((Camera)m_targetCamera.objectReferenceValue).transform.position;
                 m_startingPosition.vector3Value = newPos;
@@ -66,17 +62,29 @@ public class CameraTravelingEditor : Editor {
 
             }
 
-            if (GUILayout.Button("Get final pos from Camera"))
+            if (GUILayout.Button("Set final pos from Camera"))
             {
                 Vector3 newPos = ((Camera)m_targetCamera.objectReferenceValue).transform.position;
                 m_finalPosition.vector3Value = newPos;
 
                 serializedObject.ApplyModifiedProperties();
-
             }
-
-
         }
+
+
+        EditorGUILayout.Space();
+
+        EditorGUILayout.Slider(m_value, 0f, 1f, "Value");
+        if (m_targetCamera != null)
+        {
+            if (GUILayout.Button("Update camera pos from Value"))
+            {
+                // Update the camera position
+                ((CameraTraveling)serializedObject.targetObject).UpdateCameraPosition();
+            }
+        }
+
+        serializedObject.ApplyModifiedProperties();
 
 
     }
