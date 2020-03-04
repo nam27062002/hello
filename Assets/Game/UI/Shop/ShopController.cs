@@ -105,6 +105,8 @@ public class ShopController : MonoBehaviour {
     [System.NonSerialized]
     public bool useOptimization = true;
 
+    // Paralax effect
+    private CameraTraveling m_cameraTraveling;
 
     // Callback for successful purchases
     private UnityAction<IShopPill> m_purchaseCompletedCallback;
@@ -132,6 +134,8 @@ public class ShopController : MonoBehaviour {
         m_categoryContainers = new List<CategoryController>();
         m_pills = new List<IShopPill>();
         categoriesToInitialize = new Queue<ShopCategory>();
+
+        m_cameraTraveling = GetComponent<CameraTraveling>();
 
         // React to offers being reloaded 
         Messenger.AddListener(MessengerEvents.OFFERS_RELOADED, OnOffersReloaded);
@@ -819,6 +823,11 @@ public class ShopController : MonoBehaviour {
     /// <param name="_newPos">Normalized position of the scroll view</param>
     public void OnScrollChanged(Vector2 _newPos)
     {
+        // create a paralax effect with the 3d bground (if camera traveling exists)
+        if (m_cameraTraveling != null)
+        {
+            m_cameraTraveling.UpdateCameraPosition(m_scrollRect.horizontalNormalizedPosition);
+        }
 
         // Wait for the layouts groups to be rendered
         if (m_hidePillsOutOfView)

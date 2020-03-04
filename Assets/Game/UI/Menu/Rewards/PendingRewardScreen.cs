@@ -14,6 +14,7 @@ public class PendingRewardScreen : MonoBehaviour {
 
 	private enum Step {
 		INIT = 0,
+		INITIAL_DELAY,
 		INTRO,
 		REWARD,		// As many times as needed
 		FINISH
@@ -22,7 +23,11 @@ public class PendingRewardScreen : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
+	// Setup
+	[SerializeField] private float m_initialDelay = 0f;
+
 	// Step screens
+	[Space]
 	[SerializeField] private ShowHideAnimator m_introScreen = null;
 	[SerializeField] private ShowHideAnimator m_rewardScreen = null;
 
@@ -181,23 +186,34 @@ public class PendingRewardScreen : MonoBehaviour {
 		// Check current step to decide where to go next
 		Step oldStep = m_step;
 		Step nextStep = Step.INTRO;
-		switch(m_step) {
+		switch(oldStep) {
+			case Step.INITIAL_DELAY: {
+				// Show intro?
+				if(m_showIntro) {
+					nextStep = Step.INTRO;
+				} else {
+					nextStep = Step.REWARD;
+				}
+			} break;
+
 			case Step.INTRO: {
-    				nextStep = Step.REWARD;
-    			} break;
+    			nextStep = Step.REWARD;
+    		} break;
 
 			case Step.REWARD: {
-    				// There are still rewards to collect?
-    				if(UsersManager.currentUser.rewardStack.Count > 0) {
-                        nextStep = Step.REWARD;
-    				} else {
-    					nextStep = Step.FINISH;
-    				}
-    			} break;
+    			// Are there still rewards to collect?
+    			if(UsersManager.currentUser.rewardStack.Count > 0) {
+                    nextStep = Step.REWARD;
+    			} else {
+    				nextStep = Step.FINISH;
+    			}
+    		} break;
 
 			default: {
-				// Coming from INIT or FINISH steps: Show intro?
-				if(m_showIntro) {
+				// Coming from INIT or FINISH steps: initial delay required? Show intro?
+				if(m_initialDelay > 0f) {
+					nextStep = Step.INITIAL_DELAY;
+				} else if(m_showIntro) {
 					nextStep = Step.INTRO;
 				} else {
 					nextStep = Step.REWARD;
@@ -220,46 +236,62 @@ public class PendingRewardScreen : MonoBehaviour {
 
 		// Perform different stuff depending on new step
 		switch(nextStep) {
-			case Step.INTRO: {
-    				// Clear 3D scene
-    				m_sceneController.Clear();
+			case Step.INITIAL_DELAY: {
+    			// Clear 3D scene
+    			m_sceneController.Clear();
 
-    				// Change state after some delay
-    				UbiBCN.CoroutineManager.DelayedCall(
-    					() => { 
-    						m_state = State.IDLE;
-    					}, 
-    					0.5f
-    				);
-    			} break;
+    			// Change state after some delay
+    			UbiBCN.CoroutineManager.DelayedCall(
+    				() => { 
+						// Automatically go to next step, don't wait for user input
+    					m_state = State.IDLE;
+						AdvanceStep();
+					}, 
+    				m_initialDelay
+    			);
+    		} break;
+
+			case Step.INTRO: {
+    			// Clear 3D scene
+    			m_sceneController.Clear();
+
+    			// Change state after some delay
+    			UbiBCN.CoroutineManager.DelayedCall(
+    				() => {
+						// We will wait for user input (Tap to Continue) to advance to teh next step
+    					m_state = State.IDLE;
+    				}, 
+    				0.5f
+    			);
+    		} break;
 
 			case Step.REWARD: {
-                    if (UsersManager.currentUser.rewardStack.Count > 0) {
-                        Metagame.Reward reward = UsersManager.currentUser.rewardStack.Peek();
-                        Metagame.RewardDragon rewardDragon = reward as Metagame.RewardDragon;
-                        if (rewardDragon != null) {
-                            IDragonData dragonData = DragonManager.GetDragonData(rewardDragon.sku);
-                            m_specialDragonUnlocked = dragonData is DragonDataSpecial;
-                        }
+                if (UsersManager.currentUser.rewardStack.Count > 0) {
+                    Metagame.Reward reward = UsersManager.currentUser.rewardStack.Peek();
+                    Metagame.RewardDragon rewardDragon = reward as Metagame.RewardDragon;
+                    if (rewardDragon != null) {
+                        IDragonData dragonData = DragonManager.GetDragonData(rewardDragon.sku);
+                        m_specialDragonUnlocked = dragonData is DragonDataSpecial;
                     }
+                }
 
-                    // Tell the scene to open the next reward (should be already stacked)
-                    m_sceneController.OpenReward();
-    			} break;
+                // Tell the scene to open the next reward (should be already stacked)
+                m_sceneController.OpenReward();
+    		} break;
 
 			case Step.FINISH: {
-    				// Stop listeneing the 3D scene
-    				m_sceneController.OnAnimStarted.RemoveListener(OnSceneAnimStarted);
-    				m_sceneController.OnAnimFinished.RemoveListener(OnSceneAnimFinished);
+    			// Stop listeneing the 3D scene
+    			m_sceneController.OnAnimStarted.RemoveListener(OnSceneAnimStarted);
+    			m_sceneController.OnAnimFinished.RemoveListener(OnSceneAnimFinished);
 
-                    // Go back to previous screen
-                    if (m_specialDragonUnlocked) {
-                        HDLiveDataManager.instance.SwitchToLeague();
-                        InstanceManager.menuSceneController.GoToScreen(MenuScreen.DRAGON_SELECTION);
-                    } else {
-                        InstanceManager.menuSceneController.transitionManager.Back(true);
-                    }
-			    } break;
+                // Go back to previous screen
+                if (m_specialDragonUnlocked) {
+                    HDLiveDataManager.instance.SwitchToLeague();
+                    InstanceManager.menuSceneController.GoToScreen(MenuScreen.DRAGON_SELECTION);
+                } else {
+                    InstanceManager.menuSceneController.transitionManager.Back(true);
+                }
+			} break;
 		}
 
 		//Debug.Log("<color=green>Step changed from " + oldStep + " to " + nextStep + " (" + m_givenGlobalRewards + ")</color>");

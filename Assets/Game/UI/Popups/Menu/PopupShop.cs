@@ -23,7 +23,7 @@ using DG.Tweening;
 /// </summary>
 [RequireComponent(typeof(PopupController))]
 [RequireComponent(typeof(ShopController))]
-public class PopupShop : MonoBehaviour, IBroadcastListener {
+public class PopupShop : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
@@ -49,7 +49,6 @@ public class PopupShop : MonoBehaviour, IBroadcastListener {
 	//------------------------------------------------------------------//
 	// Exposed Setup
     [SerializeField] private ShopController m_shopController = null;
-	[SerializeField] private GameObject m_contentRoot = null;
 
     // Other setup parameters
     private bool m_closeAfterPurchase = false;
@@ -75,23 +74,6 @@ public class PopupShop : MonoBehaviour, IBroadcastListener {
     //------------------------------------------------------------------//
     // GENERIC METHODS													//
     //------------------------------------------------------------------//
-    /// <summary>
-    /// Initialization
-    /// </summary>
-    private void Awake() {
-		// Subscribe to external events
-		Broadcaster.AddListener(BroadcastEventType.POPUP_OPENED, this);
-		Broadcaster.AddListener(BroadcastEventType.POPUP_CLOSED, this);
-	}
-
-	/// <summary>
-	/// Destructor.
-	/// </summary>
-	private void OnDestroy() {
-		// Subscribe to external events
-		Broadcaster.RemoveListener(BroadcastEventType.POPUP_OPENED, this);
-		Broadcaster.RemoveListener(BroadcastEventType.POPUP_CLOSED, this);
-	}
 
 	/// <summary>
 	/// Initialize the popup with the requested mode. Should be called before opening the popup.
@@ -178,39 +160,5 @@ public class PopupShop : MonoBehaviour, IBroadcastListener {
         }
             
     }
-
-    /// <summary>
-    /// IBroadcastListener implementation.
-    /// </summary>
-    /// <param name="eventType"></param>
-    /// <param name="broadcastEventInfo"></param>
-    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo) {
-		// Ignore if not active
-		if(!this.isActiveAndEnabled) return;
-
-		// Which event?
-		switch(eventType) {
-			case BroadcastEventType.POPUP_OPENED: {
-				// Only if content is valid
-				if(m_contentRoot != null) {
-					string popupName = (broadcastEventInfo as PopupManagementInfo).popupController.name;
-					if(POPUPS_TO_HIDE_CONTENT.Contains(popupName)) {
-						// Hide content!
-						m_contentRoot.SetActive(false);
-					}
-				}
-			} break;
-
-			case BroadcastEventType.POPUP_CLOSED: {
-				// Only if content is valid
-				if(m_contentRoot != null) {
-					string popupName = (broadcastEventInfo as PopupManagementInfo).popupController.name;
-					if(POPUPS_TO_HIDE_CONTENT.Contains(popupName)) {
-						// Restore content!
-						m_contentRoot.SetActive(true);
-					}
-				}
-			} break;
-		}
-	}
+   
 }

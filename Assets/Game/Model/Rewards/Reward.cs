@@ -372,11 +372,23 @@ namespace Metagame {
 		public abstract string GetTID(bool _plural);
 
 		/// <summary>
-		/// Checks whether this reward needs to be replaced and creates a replacement
+		/// Checks whether this reward needs to be replaced and optionally creates a replacement
 		/// reward if needed.
 		/// </summary>
-		public virtual void CheckReplacement() {
+		/// <param name="_createReplacement">Optionally create the replacement reward also. Only supported by some types.</param>
+		/// <returns>Whether this reward needs to be replaced or not.</returns>
+		public virtual bool CheckReplacement(bool _createReplacement) {
 			// To be implemented by heirs if needed
+			return false;
+		}
+
+		/// <summary>
+		/// Manually define the replacement for this reward.
+		/// </summary>
+		/// <param name="_replacement">The reward used to replace this one.</param>
+		public virtual void SetReplacement(Metagame.Reward _replacement) {
+			// Just store it :P
+			m_replacement = _replacement;
 		}
 
 		/// <summary>
@@ -393,8 +405,7 @@ namespace Metagame {
         /// Returns whether or not the user can be given more than once instance of this type of reward
         /// </summary>
         /// <returns><c>true</c> if the user can own this reward only once (example: remove ads), <c>false</c> otherwise.</returns>
-        public virtual bool IsUnique()
-        {
+        public virtual bool IsUnique() {
             return false;
         }
 
@@ -404,8 +415,7 @@ namespace Metagame {
         /// marked as not owned.
         /// </summary>
         /// <returns></returns>
-        public virtual bool IsAlreadyOwned()
-        {
+        public virtual bool IsAlreadyOwned() {
             return false;
         }
 
