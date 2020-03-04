@@ -131,9 +131,12 @@ public class SocialPlatformManager : MonoBehaviour
 
 				AddSocialPlatform(platformId);
 
-				// Retrieves the current social platform: Checks that the user was logged in when she quit and if so then the
-				// latest social platform key is retrieved
-				if (PersistencePrefs.Social_WasLoggedInWhenQuit && IsPlatformKeySupported(socialPlatformKey)) 
+#if UNITY_IOS
+                AddSocialPlatform(SocialUtils.EPlatform.SIWA);
+#endif
+                // Retrieves the current social platform: Checks that the user was logged in when she quit and if so then the
+                // latest social platform key is retrieved
+                if (PersistencePrefs.Social_WasLoggedInWhenQuit && IsPlatformKeySupported(socialPlatformKey)) 
 				{
 					m_currentPlatformId = SocialUtils.KeyToEPlatform(socialPlatformKey);
 				} 
@@ -158,7 +161,11 @@ public class SocialPlatformManager : MonoBehaviour
 				socialPlatform = new SocialUtilsWeibo();
 				break;
 
-			default:
+            case SocialUtils.EPlatform.SIWA:
+                socialPlatform = new SocialUtilsSIWA();
+                break;
+
+            default:
 				socialPlatform = new SocialUtilsDummy (false, false);
 				break;
 		}
@@ -224,13 +231,7 @@ public class SocialPlatformManager : MonoBehaviour
 		}
 
 		return returnValue;
-	}
-
-	public string GetToken(SocialUtils.EPlatform platformId)
-	{
-		SocialUtils platform = GetPlatform(platformId);
-		return (platform != null) ? platform.GetAccessToken() : null;
-	}
+	}	
 
 	public string GetUserID(SocialUtils.EPlatform platformId)
 	{
@@ -322,12 +323,7 @@ public class SocialPlatformManager : MonoBehaviour
 	{
 		return GetPlatformName(m_currentPlatformId);
 	}
-
-	public string CurrentPlatform_GetToken()
-	{
-		return GetToken(m_currentPlatformId);
-	}
-
+   
 	public string CurrentPlatform_GetUserID()
 	{
 		return GetUserID(m_currentPlatformId);

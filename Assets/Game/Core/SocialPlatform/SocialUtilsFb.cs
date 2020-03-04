@@ -79,12 +79,7 @@ public class SocialUtilsFb : SocialUtils
     public override string GetSocialID()
     {
         return FacebookManager.SharedInstance.UserID;
-    }
-
-    public override string GetAccessToken()
-    {
-        return (FB.IsInitialized && FB.IsLoggedIn) ? AccessToken.CurrentAccessToken.TokenString : null;
-    }
+    }   
 
     public override string GetUserName()
     {

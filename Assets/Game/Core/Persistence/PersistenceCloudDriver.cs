@@ -331,7 +331,7 @@ public class PersistenceCloudDriver
                     Syncer_PerformDone(PersistenceStates.ESyncResult.ErrorLogging, PersistenceStates.ESyncResultDetail.Cancelled);
                 };
 
-                PersistenceFacade.Popup_OpenMergeWithADifferentAccount(onConfirm, onCancel);
+                PersistenceFacade.Popup_OpenMergeWithADifferentAccount(Syncer_PlatformId, onConfirm, onCancel);
             }
             break;            
 
@@ -379,7 +379,7 @@ public class PersistenceCloudDriver
                 Syncer_ProcessConflictState(PersistenceStates.EConflictState.UseLocal);
             };
 
-            PersistenceFacade.Popup_OpenCloudCorrupted(onContinue, onOverride);
+            PersistenceFacade.Popup_OpenCloudCorrupted(Syncer_PlatformId, onContinue, onOverride);
         }
         else if (localState == PersistenceStates.ELoadState.Corrupted && cloudState == PersistenceStates.ELoadState.OK)
         {            
@@ -437,12 +437,12 @@ public class PersistenceCloudDriver
         if (localState == PersistenceStates.ELoadState.OK && cloudState == PersistenceStates.ELoadState.OK)
         {
             // Chooses between local and cloud
-            PersistenceFacade.Popup_OpenMergeConflict(Syncer_OnMergeConflictUseLocal, Syncer_OnMergeConflictUseCloud);
+            PersistenceFacade.Popup_OpenMergeConflict(Syncer_PlatformId, Syncer_OnMergeConflictUseLocal, Syncer_OnMergeConflictUseCloud);
         }
         else if (localState == PersistenceStates.ELoadState.OK && cloudState == PersistenceStates.ELoadState.Corrupted)
         {
             // Notifies cloud is not an option so confirm to keep playing local
-            PersistenceFacade.Popup_OpenMergeConflictCloudCorrupted(Syncer_OnMergeConflictUseLocal);
+            PersistenceFacade.Popup_OpenMergeConflictCloudCorrupted(Syncer_PlatformId, Syncer_OnMergeConflictUseLocal);
         }
         else if (localState == PersistenceStates.ELoadState.Corrupted && cloudState == PersistenceStates.ELoadState.OK)
         {
@@ -450,7 +450,7 @@ public class PersistenceCloudDriver
 
             // This case shouldn't happen because there are previous checks that should avoid it. Just in case a generic sync error popup is shown
             // and the game is reloaded to make it follow a know flow.             
-            PersistenceFacade.Popup_OpenMergeConflictLocalCorrupted(onError);
+            PersistenceFacade.Popup_OpenMergeConflictLocalCorrupted(Syncer_PlatformId, onError);
         }
         else if (localState == PersistenceStates.ELoadState.Corrupted && cloudState == PersistenceStates.ELoadState.Corrupted)
         {
@@ -471,7 +471,7 @@ public class PersistenceCloudDriver
             // Neither local and cloud is an option so reset cloud
             // This case shouldn't happen because there are previous checks that should avoid it. Just in case a generic sync error popup is shown
             // and the game is reloaded to make it follow a known flow.             
-            PersistenceFacade.Popup_OpenMergeConflictBothCorrupted(onError);
+            PersistenceFacade.Popup_OpenMergeConflictBothCorrupted(Syncer_PlatformId, onError);
         }
         else
         {                    
@@ -703,7 +703,7 @@ public class PersistenceCloudDriver
 		}
 		else
 		{
-			PersistenceFacade.Popups_OpenErrorConnection(onDone);
+			PersistenceFacade.Popups_OpenErrorConnection(Syncer_PlatformId, onDone);
 		}
 	}
 

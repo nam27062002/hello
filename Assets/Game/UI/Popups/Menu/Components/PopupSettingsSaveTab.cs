@@ -339,7 +339,7 @@ public class PopupSettingsSaveTab : MonoBehaviour
 	}
 
 	public void Social_OnLoginButton_Apple() {
-		//Social_OnLoginButton(SocialUtils.EPlatform.Apple);	// [AOC] TODO!! SIWA
+        Social_OnLoginButton(SocialUtils.EPlatform.SIWA);
 	}
 
 	public void Social_OnLoginButton(SocialUtils.EPlatform _platform)

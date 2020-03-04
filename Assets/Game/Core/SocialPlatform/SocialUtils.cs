@@ -152,9 +152,7 @@ public abstract class SocialUtils
     public abstract void Init(SocialPlatformManager manager);
 
     public abstract string GetSocialID();
-
-    public abstract string GetAccessToken();
-
+   
     public abstract string GetUserName();
 
     public abstract bool IsLoggedIn();
@@ -291,7 +289,24 @@ public abstract class SocialUtils
 
     public virtual void Login(bool isAppInit)
     {
-        GameSessionManager.SharedInstance.LogInToSocialPlatform(isAppInit);
+        // Translate EPlatform into Calety social platform
+        string platform = null;
+        switch (GetPlatform())
+        {
+            case EPlatform.Facebook:
+                platform = CaletyConstants.SOCIAL_PLATFORM_FACEBOOK;
+                break;
+
+            case EPlatform.Weibo:
+                platform = CaletyConstants.SOCIAL_PLATFORM_WEIBO;
+                break;
+
+            case EPlatform.SIWA:
+                platform = CaletyConstants.SOCIAL_PLATFORM_SIWA;
+                break;            
+        }
+        
+        GameSessionManager.SharedInstance.LogInToSocialPlatform(isAppInit, platform);
     }
 
     public void OnLoggedIn()

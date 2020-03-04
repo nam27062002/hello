@@ -203,7 +203,7 @@ public class PersistenceFacade : IBroadcastListener
         if (Sync_IsSyncing)
         {
             // A popup is shown so the user gets some feedback
-            Popup_SyncAlreadyOn(onDone);
+            Popup_SyncAlreadyOn(platformId, onDone);
         }
         else
         {
@@ -560,12 +560,12 @@ public class PersistenceFacade : IBroadcastListener
     /// This popup is shown when there's no internet connection
     /// https://mdc-web-tomcat17.ubisoft.org/confluence/display/ubm/29%29No+internet+connection
     /// </summary>    
-    public static void Popups_OpenErrorConnection(Action onConfirm)
+    public static void Popups_OpenErrorConnection(SocialUtils.EPlatform platformId, Action onConfirm)
     {				
         IPopupMessage.Config config = IPopupMessage.GetConfig();
         config.TitleTid = "TID_SOCIAL_ERROR_CONNECTION_NAME";
         config.MessageTid = "TID_SOCIAL_ERROR_CONNECTION_DESC";
-		config.MessageParams = new string[] { SocialPlatformManager.SharedInstance.CurrentPlatform_GetName() };
+		config.MessageParams = new string[] { SocialPlatformManager.SharedInstance.GetPlatformName(platformId) };
         config.ButtonMode = IPopupMessage.Config.EButtonsMode.Confirm;
         config.OnConfirm = onConfirm;        
         PopupManager.PopupMessage_Open(config);              
@@ -629,12 +629,12 @@ public class PersistenceFacade : IBroadcastListener
         PopupManager.PopupMessage_Open(config);       
     }
 
-    public static void Popup_OpenMergeConflict(Action onLocal, Action onCloud)
+    public static void Popup_OpenMergeConflict(SocialUtils.EPlatform platformId, Action onLocal, Action onCloud)
     {
         IPopupMessage.Config config = IPopupMessage.GetConfig();
         config.TitleTid = "TID_SAVE_PROFILE_CONFLICT_MERGE_CHOOSE_TITLE";
         config.MessageTid = "TID_SAVE_PROFILE_CONFLICT_MERGE_CHOOSE_DESC";
-		string platformName = SocialPlatformManager.SharedInstance.CurrentPlatform_GetName();
+		string platformName = SocialPlatformManager.SharedInstance.GetPlatformName(platformId);
         config.MessageParams = new string[] { platformName, platformName };
         config.ButtonMode = IPopupMessage.Config.EButtonsMode.ConfirmAndCancel;
         config.OnConfirm = onCloud;
@@ -643,7 +643,7 @@ public class PersistenceFacade : IBroadcastListener
         PopupManager.PopupMessage_Open(config);
     }   
 
-    public static void Popup_OpenSyncGenericError(int errorCode, Action onConfirm)
+    public static void Popup_OpenSyncGenericError(SocialUtils.EPlatform platformId, int errorCode, Action onConfirm)
     {
         IPopupMessage.Config config = IPopupMessage.GetConfig();
         config.TitleTid = "TID_SAVE_ERROR_SYNC_FAILED_NAME";
@@ -652,7 +652,7 @@ public class PersistenceFacade : IBroadcastListener
         if (errorCode == SYNC_GENERIC_ERROR_CODE_SYNC_ALREADY_PERFORMING)
         {
             config.MessageTid = "TID_SOCIAL_LOGIN_ERROR";
-			string platformName = SocialPlatformManager.SharedInstance.CurrentPlatform_GetName();
+            string platformName = SocialPlatformManager.SharedInstance.GetPlatformName(platformId);
             config.MessageParams = new string[] { platformName };            
         }
         else
@@ -667,40 +667,40 @@ public class PersistenceFacade : IBroadcastListener
         PopupManager.PopupMessage_Open(config);
     }
 
-    public static void Popup_OpenMergeConflictCloudCorrupted(Action onConfirm)
+    public static void Popup_OpenMergeConflictCloudCorrupted(SocialUtils.EPlatform platformId, Action onConfirm)
     {        
         // Alternative: "You can't use this facebook account because its cloud save is corrupted."
-        Popup_OpenSyncGenericError(SYNC_GENERIC_ERROR_CODE_MERGE_CLOUD_SAVE_CORRUPTED, onConfirm);        
+        Popup_OpenSyncGenericError(platformId, SYNC_GENERIC_ERROR_CODE_MERGE_CLOUD_SAVE_CORRUPTED, onConfirm);        
     }
 
-    public static void Popup_OpenMergeConflictLocalCorrupted(Action onConfirm)
+    public static void Popup_OpenMergeConflictLocalCorrupted(SocialUtils.EPlatform platformId, Action onConfirm)
     {        
         // Local save corrupted when syncing
         // Alternative: "Your local save is corrupted, do you want to override it with the cloud save?"
-        Popup_OpenSyncGenericError(SYNC_GENERIC_ERROR_CODE_MERGE_LOCAL_SAVE_CORRUPTED, onConfirm);        
+        Popup_OpenSyncGenericError(platformId, SYNC_GENERIC_ERROR_CODE_MERGE_LOCAL_SAVE_CORRUPTED, onConfirm);        
     }
 
-    public static void Popup_OpenMergeConflictBothCorrupted(Action onConfirm)
+    public static void Popup_OpenMergeConflictBothCorrupted(SocialUtils.EPlatform platformId, Action onConfirm)
     {
         // Alternative "Both saves are corrupted, reset local save?"
-        Popup_OpenSyncGenericError(SYNC_GENERIC_ERROR_CODE_MERGE_BOTH_SAVES_CORRUPTED, onConfirm);       
+        Popup_OpenSyncGenericError(platformId, SYNC_GENERIC_ERROR_CODE_MERGE_BOTH_SAVES_CORRUPTED, onConfirm);       
     }
 
     /// <summary>
     /// Called when there was an attempt to sync while a sync is already being performed
     /// </summary>
     /// <param name="onConfirm"></param>
-    public static void Popup_SyncAlreadyOn(Action onConfirm)
+    public static void Popup_SyncAlreadyOn(SocialUtils.EPlatform platformId, Action onConfirm)
     {
-        Popup_OpenSyncGenericError(SYNC_GENERIC_ERROR_CODE_SYNC_ALREADY_PERFORMING, onConfirm);
+        Popup_OpenSyncGenericError(platformId, SYNC_GENERIC_ERROR_CODE_SYNC_ALREADY_PERFORMING, onConfirm);
     }
 
-    public static void Popup_OpenMergeWithADifferentAccount(Action onConfirm, Action onCancel)
+    public static void Popup_OpenMergeWithADifferentAccount(SocialUtils.EPlatform platformId, Action onConfirm, Action onCancel)
     {
         IPopupMessage.Config config = IPopupMessage.GetConfig();
         config.TitleTid = "TID_SAVE_PROFILE_CONFLICT_MERGE_CHOOSE_TITLE";
         config.MessageTid = "TID_SAVE_WARN_CLOUD_SWITCH_DESC";
-		string platformName = SocialPlatformManager.SharedInstance.CurrentPlatform_GetName();
+		string platformName = SocialPlatformManager.SharedInstance.GetPlatformName(platformId);
         config.MessageParams = new string[] { platformName };
         config.ButtonMode = IPopupMessage.Config.EButtonsMode.ConfirmAndCancel;
         config.OnConfirm = onConfirm;
@@ -736,10 +736,10 @@ public class PersistenceFacade : IBroadcastListener
 
 
 
-	public static void Popup_OpenCloudCorrupted(Action onContinue, Action onOverride)
+	public static void Popup_OpenCloudCorrupted(SocialUtils.EPlatform platformId, Action onContinue, Action onOverride)
 	{
         // Internal error is shown.
-        Popup_OpenSyncGenericError(SYNC_GENERIC_ERROR_CODE_SYNC_CLOUD_SAVE_CORRUPTED, onContinue);
+        Popup_OpenSyncGenericError(platformId, SYNC_GENERIC_ERROR_CODE_SYNC_CLOUD_SAVE_CORRUPTED, onContinue);
         /*            
         // Alternative: Let the user override cloud save with local save.
         // Make sure texts used by 'Popup_OpenCloudCorruptedWasOverriden()' popup stop being hardcoded when this alternative is enabled
