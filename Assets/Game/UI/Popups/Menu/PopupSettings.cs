@@ -22,11 +22,16 @@ public class PopupSettings : MonoBehaviour {
 
     public const string KEY_SETTINGS_LANGUAGE = "SETTINGS_LANGUAGE";
 
-    [SerializeField]
-    private GameObject m_saveTab;
+	public enum Tab {
+		OPTIONS = 0,
+		SAVE,
+		SUPPORT,
+		TIPS
+	}
 
-	[SerializeField]
-    private GameObject m_3dTouch;
+	[SerializeField] private TabSystem m_tabs = null;
+	[SerializeField] private GameObject m_saveTab;
+	[SerializeField] private GameObject m_3dTouch;
 
 	void Awake()
     {
@@ -64,6 +69,11 @@ public class PopupSettings : MonoBehaviour {
     {
 		HDTrackingManager.Instance.Notify_SettingsClose();
     }
+
+	public void SetActiveTab(Tab _tab) {
+		m_tabs.GoToScreen(-1, NavigationScreen.AnimType.NONE);  // [AOC] If the last open tab matches the initial tab, animation wont be triggered. Force it by doing this.
+		m_tabs.GoToScreen((int)_tab);
+	}
 
 	public void CS_Init()
 	{

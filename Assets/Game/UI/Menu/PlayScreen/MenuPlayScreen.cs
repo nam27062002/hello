@@ -24,14 +24,7 @@ public class MenuPlayScreen : MonoBehaviour {
     //------------------------------------------------------------------//
     // MEMBERS AND PROPERTIES											//
     //------------------------------------------------------------------//    
-    public GameObject m_badge;
-	public Button m_fbConnectButton;
-    public Button m_weiboConnectButton;
-
-    [SerializeField] private GameObject m_incentivizeRoot = null;
-    [SerializeField] private Localizer m_incentivizeLabelLocalizer = null; 
-
-	// Internal
+    // Internal
 	private static bool m_firstTimeMenu = true;
 	private static bool create_mods = true;
 
@@ -43,11 +36,7 @@ public class MenuPlayScreen : MonoBehaviour {
     /// </summary>
     private void Awake() 
 	{   
-        PersistenceFacade.Texts_LocalizeIncentivizedSocial(m_incentivizeLabelLocalizer);
-        
-        Refresh();
-
-		//create modifiers HERE
+        //create modifiers HERE
 		if (create_mods) {
 			InstanceManager.CREATE_MODIFIERS();
 			InstanceManager.APPLY_MODIFIERS();
@@ -60,18 +49,11 @@ public class MenuPlayScreen : MonoBehaviour {
     /// </summary>
     private void OnEnable() 
 	{
-        HDTrackingManager.Instance.Notify_MenuLoaded();        
-
-		// Check Facebook/Weibo Connect visibility        
-        Refresh();
+        HDTrackingManager.Instance.Notify_MenuLoaded();       
     }
 
 	private void Update() {
-		if (NeedsToRefresh()) {
-            Refresh();
-        }
-
-        if (m_firstTimeMenu) {
+		if (m_firstTimeMenu) {
             FeatureSettingsManager.instance.AdjustScreenResolution(FeatureSettingsManager.instance.Device_CurrentFeatureSettings);
             m_firstTimeMenu = false;
         }
@@ -87,38 +69,6 @@ public class MenuPlayScreen : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// OTHER METHODS													//
 	//------------------------------------------------------------------//
-
-	public void OnConnectBtn() {        
-        PersistenceFacade.Popups_OpenLoadingPopup();
-
-		// Uses the same social platform that is currently in usage since the user can not change social platforms
-		// by clicking this icon
-		PersistenceFacade.instance.Sync_FromSettings(SocialPlatformManager.SharedInstance.CurrentPlatform_GetId(), delegate()
-        {
-            PersistenceFacade.Popups_CloseLoadingPopup();
-            Refresh();
-        });
-    }
-
-    private bool SocialIsLoggedIn { get; set; }
-
-    private bool NeedsToRefresh()
-    {
-        return SocialIsLoggedIn != PersistenceFacade.instance.CloudDriver.IsLoggedIn;
-    }
-    
-    private void Refresh()
-    {
-        m_fbConnectButton.interactable = true;
-        m_weiboConnectButton.interactable = true;        
-
-        UserProfile.ESocialState socialState = UsersManager.currentUser.SocialState;
-        SocialIsLoggedIn = PersistenceFacade.instance.CloudDriver.IsLoggedIn;      
-
-        m_incentivizeRoot.SetActive(FeatureSettingsManager.instance.IsIncentivisedLoginEnabled() && socialState != UserProfile.ESocialState.LoggedInAndIncentivised);
-        m_badge.SetActive(SocialPlatformManager.SharedInstance.GetIsEnabled() && !SocialIsLoggedIn);
-    }    
-    
    	
     //------------------------------------------------------------------//
     // CALLBACKS														//

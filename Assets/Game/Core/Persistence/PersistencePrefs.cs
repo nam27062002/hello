@@ -204,7 +204,7 @@ public class PersistencePrefs
 
     public static bool Social_WasLoggedInWhenQuit
     {
-        get { return PlayerPrefs.GetInt(KEY_SOCIAL_LOGGED_IN_WHEN_QUIT, 1) == 1; }
+        get { return PlayerPrefs.GetInt(KEY_SOCIAL_LOGGED_IN_WHEN_QUIT, 0) == 1; }
         set { SetInt(KEY_SOCIAL_LOGGED_IN_WHEN_QUIT, (value ? 1 : 0)); }
     }
 #endregion
