@@ -22,25 +22,21 @@ public abstract class IOfferItemPreview : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
+	public enum Type {
+		_2D,
+		_3D,
+
+		COUNT
+	}
+
 	// Abstract
-	public abstract OfferItemPrefabs.PrefabType type {
+	public abstract IOfferItemPreview.Type type {
 		get;
 	}
 
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
-	// Settings
-	[SerializeField] private bool m_showInfoButton = false;
-	public bool showInfoButton {
-		get { return m_showInfoButton; }
-	}
-
-	[SerializeField] private bool m_enableMask = false;
-	public bool enableMask {
-		get { return m_enableMask; }
-	}
-
 	// Convenience properties
 	public RectTransform rectTransform {
 		get { return this.transform as RectTransform; }
@@ -49,6 +45,7 @@ public abstract class IOfferItemPreview : MonoBehaviour {
 	// Internal
 	protected OfferPackItem m_item = null;
 	protected DefinitionNode m_def = null;
+	protected OfferItemSlot.Type m_slotType = OfferItemSlot.Type.PILL_BIG;
 
 	// Coroutine pointer used to stop the coroutine when object is destroyed
 	private Coroutine m_delayedSetParentAndFit = null;
@@ -60,10 +57,8 @@ public abstract class IOfferItemPreview : MonoBehaviour {
 	///
 	/// OnDestroy
 	/// We stop delayed coroutine to avoid accesing an object that was destroyed
-	void OnDestroy()
-	{
-		if (m_delayedSetParentAndFit != null)
-		{
+	void OnDestroy() {
+		if(m_delayedSetParentAndFit != null) {
 			StopCoroutine(m_delayedSetParentAndFit);
 			m_delayedSetParentAndFit = null;
 		}
@@ -73,11 +68,14 @@ public abstract class IOfferItemPreview : MonoBehaviour {
 	/// Initialize the widget with the data of a specific offer item.
 	/// </summary>
 	/// <param name="_item">Item.</param>
-	public void InitFromItem(OfferPackItem _item) {
-		// Store new item
+	/// <param name="_slotType">The type of slot where the item will be displayed.</param>
+	public void InitFromItem(OfferPackItem _item, OfferItemSlot.Type _slotType) {
+		// Store new item and slot type
 		m_item = _item;
+		m_slotType = _slotType;
 
 		Debug.Assert(m_item != null && m_item.reward != null, "ITEM NOT PROPERLY INITIALIZED", this);
+		m_def = m_item.reward.def;
 
 		// Call internal initializer
 		InitInternal();
@@ -147,11 +145,69 @@ public abstract class IOfferItemPreview : MonoBehaviour {
 	// OVERRIDE CANDIDATE METHODS											  //
 	//------------------------------------------------------------------------//
 	/// <summary>
-	/// The info button has been pressed.
+	/// Gets the amount of this item, already localized and formatted.
 	/// </summary>
-	/// <param name="_trackingLocation">Where is this been triggered from?</param>
-	public virtual void OnInfoButton(string _trackingLocation) {
-		// Nothing to do by default
+	/// <param name="_slotType">The type of slot where the item will be displayed.</param>
+	/// <returns>The localized amount. <c>null</c> if this item type doesn't have to show the amount for the given type of slot (i.e. dragon).</returns>
+	public virtual string GetLocalizedAmountText(OfferItemSlot.Type _slotType) {
+		// To be implemented by heirs if needed
+		return null;
+	}
+
+	/// <summary>
+	/// Gets the main text of this item, already localized and formatted.
+	/// </summary>
+	/// <param name="_slotType">The type of slot where the item will be displayed.</param>
+	/// <returns>The localized main text. <c>null</c> if this item type doesn't have to show main text for the given type of slot (i.e. coins).</returns>
+	public virtual string GetLocalizedMainText(OfferItemSlot.Type _slotType) {
+		// To be implemented by heirs if needed
+		return null;
+	}
+
+	/// <summary>
+	/// Gets the secondary text of this item, already localized and formatted.
+	/// </summary>
+	/// <param name="_slotType">The type of slot where the item will be displayed.</param>
+	/// <returns>The localized secondary text. <c>null</c> if this item type doesn't have to show any secondary text for the given type of slot (i.e. coins).</returns>
+	public virtual string GetLocalizedSecondaryText(OfferItemSlot.Type _slotType) {
+		// To be implemented by heirs if needed
+		return null;
+	}
+
+	/// <summary>
+	/// Gets the description of this item, already localized and formatted.
+	/// </summary>
+	/// <param name="_slotType">The type of slot where the item will be displayed.</param>
+	/// <returns>The localized description. <c>null</c> if this item type doesn't have to show any description for the given type of slot.</returns>
+	public virtual string GetLocalizedDescriptionText(OfferItemSlot.Type _slotType) {
+		// To be implemented by heirs if needed
+		return null;
+	}
+
+	/// <summary>
+	/// Initialize the given power icon instance with data from this reward.
+	/// Will disable it item doesn't have a power assigned.
+	/// </summary>
+	/// <param name="_powerIcon">The power icon to be initialized.</param>
+	/// <param name="_slotType">The type of slot where the item will be displayed.</param>
+	public virtual void InitPowerIcon(PowerIcon _powerIcon, OfferItemSlot.Type _slotType) {
+		// To be implemented by heirs if needed
+		// Disable by default
+		_powerIcon.InitFromDefinition(null, false, false);	// This will do the trick
+	}
+
+	/// <summary>
+	/// Initialize the given tooltip with data from this reward.
+	/// </summary>
+	/// <param name="_tooltip">The tooltip to be initialized.</param>
+	public virtual void InitTooltip(UITooltip _tooltip) {
+		// Default implementation - show short text
+		// Shouldn't get here anyway, since only rewards supporting tooltips should get this method invoked
+		// To be overriden by heirs if needed
+		_tooltip.InitWithText(
+			GetLocalizedMainText(OfferItemSlot.Type.TOOLTIP),
+			GetLocalizedDescriptionText(OfferItemSlot.Type.TOOLTIP)
+		);
 	}
 
 	//------------------------------------------------------------------------//
@@ -161,10 +217,4 @@ public abstract class IOfferItemPreview : MonoBehaviour {
 	/// Initialize preview with current item (m_item)
 	/// </summary>
 	protected abstract void InitInternal();
-
-	/// <summary>
-	/// Gets the description of this item, already localized and formatted.
-	/// </summary>
-	/// <returns>The localized description.</returns>
-	public abstract string GetLocalizedDescription();
 }

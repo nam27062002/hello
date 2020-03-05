@@ -1061,6 +1061,9 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
     {
         SetupCurrentFeatureSettings(GetDeviceFeatureSettingsAsJSON(), null, null);
         AdjustScreenResolution(Device_CurrentFeatureSettings);
+
+		// Notify the rest of the game
+		Broadcaster.Broadcast(BroadcastEventType.QUALITY_PROFILE_CHANGED);
     }
 
     public void RestoreCurrentFeatureSettingsToDevice()

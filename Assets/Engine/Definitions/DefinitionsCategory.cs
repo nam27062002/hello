@@ -113,6 +113,7 @@ public class DefinitionsCategory
 	// Economy
 	public const string SHOP_PACKS = "SHOP_PACKS";
 	public const string OFFER_PACKS = "OFFER_PACKS";
+    public const string SHOP_CATEGORIES = "SHOP_CATEGORIES";
     public const string HAPPY_HOUR = "HAPPY_HOUR";
     public const string CURRENCY_TIERS = "CURRENCY_TIERS";
     public const string REMOVE_ADS_OFFER = "REMOVE_ADS_OFFER";
