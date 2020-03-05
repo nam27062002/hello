@@ -21,6 +21,7 @@ GameObject:
   - component: {fileID: 4229096359044674}
   - component: {fileID: 198545869798305900}
   - component: {fileID: 199761765204570810}
+  - component: {fileID: 114630567204318380}
   m_Layer: 12
   m_Name: PS_Flames
   m_TagString: Untagged
@@ -72,7 +73,6 @@ GameObject:
   m_Component:
   - component: {fileID: 4202981145183956}
   - component: {fileID: 114814858193261440}
-  - component: {fileID: 114346844914107536}
   m_Layer: 12
   m_Name: PF_skeleton_mouth_fire_blue
   m_TagString: Untagged
@@ -165,21 +165,21 @@ Transform:
   m_Father: {fileID: 4229096359044674}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: -90.088, y: 180, z: -180.557}
---- !u!114 &114346844914107536
+--- !u!114 &114630567204318380
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1622953139153164}
+  m_GameObject: {fileID: 1084539681477440}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3128bd630f39645c4a1e03d94b7008f6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_transform: {fileID: 0}
+  m_transform: {fileID: 4202981145183956}
   m_resetFirst: 1
   m_whenScale: 0
-  m_applyToChildren: 1
+  m_applyToChildren: 0
 --- !u!114 &114706450354075676
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -269,7 +269,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 0
-  randomSeed: -498384342
+  randomSeed: 2974352
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -3630,7 +3630,7 @@ ParticleSystem:
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 0
-  randomSeed: 1720233053
+  randomSeed: 1299011218
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -6997,7 +6997,7 @@ ParticleSystem:
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 0
-  randomSeed: -2089419616
+  randomSeed: -1526616608
   InitialModule:
     serializedVersion: 3
     enabled: 1
