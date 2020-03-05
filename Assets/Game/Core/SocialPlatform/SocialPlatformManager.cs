@@ -66,7 +66,8 @@ public class SocialPlatformManager : MonoBehaviour
 
 	public void OnSocialPlatformLogin()
 	{
-		Messenger.Broadcast<bool>(MessengerEvents.SOCIAL_LOGGED, CurrentPlatform_IsLoggedIn());        
+        Log("OnSocialPlatformLogin CurrentPlatform: " + CurrentPlatform_GetId() + " isLoggedIn: " + CurrentPlatform_IsLoggedIn());
+        Messenger.Broadcast<bool>(MessengerEvents.SOCIAL_LOGGED, CurrentPlatform_IsLoggedIn());        
     }
 
     public void OnSocialPlatformLoginFailed()
@@ -76,6 +77,7 @@ public class SocialPlatformManager : MonoBehaviour
 
     public void OnSocialPlatformLogOut()
 	{
+		SocialPlatformManager.SharedInstance.OnLogout();
 		Messenger.Broadcast<bool>(MessengerEvents.SOCIAL_LOGGED, CurrentPlatform_IsLoggedIn());
 	}
     //////////////////////////////////////////////////////////////////////////    
@@ -85,8 +87,14 @@ public class SocialPlatformManager : MonoBehaviour
 	private Dictionary<SocialUtils.EPlatform, SocialUtils> m_platforms = new Dictionary<SocialUtils.EPlatform, SocialUtils>();
 	private List<SocialUtils.EPlatform> m_supportedPlatformIds = new List<SocialUtils.EPlatform> ();
 
+	private Action m_onSocialPlatformLogout;
 
-    public void Init(bool useAgeProtection)
+	public void SetOnSocialPlatformLogout(Action value)
+	{
+		m_onSocialPlatformLogout = value;
+	}
+
+	public void Init(bool useAgeProtection)
 	{
         if (!IsInited)
         {            
@@ -108,7 +116,7 @@ public class SocialPlatformManager : MonoBehaviour
             	// In iOS we need to check the user's country to decide the social platform: either Facebook or Weibo (only in China)
 #if UNITY_IOS
             	// Checks if the user has already logged in a social platform, if so then that's the platform that the user will keep seeing
-            	platformId = SocialUtils.KeyToEPlatform(socialPlatformKey);
+            	platformId = SocialUtils.KeyToEPlatform(socialPlatformKey);                
 
             	// If no social platform has ever been used then we decide which one to show based on the country
 				if (platformId == SocialUtils.EPlatform.None)
@@ -132,7 +140,10 @@ public class SocialPlatformManager : MonoBehaviour
 				AddSocialPlatform(platformId);
 
 #if UNITY_IOS
-                AddSocialPlatform(SocialUtils.EPlatform.SIWA);
+                if (GameSessionManager.SharedInstance.SIWA_IsPlatformSupported())
+                {
+                    AddSocialPlatform(SocialUtils.EPlatform.SIWA);
+                }
 #endif
                 // Retrieves the current social platform: Checks that the user was logged in when she quit and if so then the
                 // latest social platform key is retrieved
@@ -434,9 +445,22 @@ public class SocialPlatformManager : MonoBehaviour
 	}
 
     public void Logout()
-    {
-		GameSessionManager.SharedInstance.LogOutFromSocialPlatform();
+    {		
+        SocialUtils.EPlatform platformId = CurrentPlatform_GetId();
+        Log("Logout from " + platformId + " isLoggedIn = " + IsLoggedIn(platformId));
+        if (IsLoggedIn(platformId))
+        {
+            SocialUtils platform = GetPlatform(platformId);
+            if (platform != null)
+                platform.Logout();            
+        }
     }
+
+	private void OnLogout()
+	{
+		if (m_onSocialPlatformLogout != null)
+			m_onSocialPlatformLogout();
+	}
 
 	public void Login(SocialUtils.EPlatform platformId, bool isSilent, bool isAppInit, Action<ELoginResult, string> onDone)
     {
@@ -661,7 +685,8 @@ public class SocialPlatformManager : MonoBehaviour
 
     private void Login_PerformDone(ELoginResult result)
     {        
-        Log("(LOGGING) DONE! " + result);
+        Log("(LOGGING) DONE! " + result + " isLoggedInReady = " + Login_IsLogInReady + " Login_MergeState = " + Login_MergeState + " isLoggedIn = " + CurrentPlatform_IsLoggedIn() +
+            " currentPlatform = " + CurrentPlatform_GetId());
 
         if (Login_OnDone != null)
         {

@@ -68,7 +68,8 @@ public class PersistenceCloudDriver
     public PersistenceCloudDriver()
 	{
 		string dataName = PersistencePrefs.ActiveProfileName;        
-		Data = new PersistenceData(dataName);        
+		Data = new PersistenceData(dataName);      
+		SocialPlatformManager.SharedInstance.SetOnSocialPlatformLogout(OnLogout);
 		Reset();
 	}
 
@@ -97,17 +98,20 @@ public class PersistenceCloudDriver
 
     public void Logout()
     {
-        ExtendedLogout();
+        ExtendedLogout();		       
+    }   
 
-        PersistencePrefs.Social_WasLoggedInWhenQuit = false;
+	private void OnLogout()
+	{
+		PersistencePrefs.Social_WasLoggedInWhenQuit = false;
 
-        if (State == EState.LoggedIn)
-        {
-            // Logs out
-            State = EState.NotLoggedIn;
-            IsInSync = false;
-        }
-    }        
+		if (State == EState.LoggedIn)
+		{
+			// Logs out
+			State = EState.NotLoggedIn;
+			IsInSync = false;
+		}
+	}
 
     protected virtual void ExtendedLogout()
     {
@@ -680,9 +684,12 @@ public class PersistenceCloudDriver
             SocialPlatformManager manager = SocialPlatformManager.SharedInstance;
             HDTrackingManager.Instance.Notify_SocialAuthentication();
 
-            string socialPlatformKey = manager.CurrentPlatform_GetKey();
+            string currentSocialPlatformKey = manager.CurrentPlatform_GetKey();
             string socialId = manager.CurrentPlatform_GetUserID();
-			LocalDriver.NotifyUserHasLoggedIn(socialPlatformKey, socialId, onUserLoggedIn);
+
+            SocialUtils.EPlatform platformId = manager.CurrentPlatform_GetId();
+            bool saveSocialPlatform = platformId == SocialUtils.EPlatform.Facebook || platformId == SocialUtils.EPlatform.Weibo;                       
+			LocalDriver.NotifyUserHasLoggedIn(currentSocialPlatformKey, saveSocialPlatform, socialId, onUserLoggedIn);
 		} 
 		else
 		{

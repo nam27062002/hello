@@ -49,12 +49,7 @@ public class UISocialSetup : MonoBehaviour
 			} break;
 
 			case SocialPlatformMode.ALL_SUPPORTED: {				
-				List<SocialUtils.EPlatform> supportedSocialPlatforms = SocialPlatformManager.SharedInstance.GetSupportedPlatformIds();
-				/*SocialUtils.EPlatform loggedInSocialPlatform = SocialPlatformManager.SharedInstance.CurrentPlatform_GetId();
-				List<SocialUtils.EPlatform> supportedSocialPlatforms = new List<SocialUtils.EPlatform>();
-				supportedSocialPlatforms.Add(loggedInSocialPlatform);
-                */
-
+				List<SocialUtils.EPlatform> supportedSocialPlatforms = SocialPlatformManager.SharedInstance.GetSupportedPlatformIds();				
 				Toggle(m_fbItem, supportedSocialPlatforms.Contains(SocialUtils.EPlatform.Facebook) && !isUnderage);
 				Toggle(m_weiboItem, supportedSocialPlatforms.Contains(SocialUtils.EPlatform.Weibo) && !isUnderage);
 				Toggle(m_appleItem, supportedSocialPlatforms.Contains(SocialUtils.EPlatform.SIWA) && !isUnderage);	

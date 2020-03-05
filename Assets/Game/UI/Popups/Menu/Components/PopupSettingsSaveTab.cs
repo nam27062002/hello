@@ -66,6 +66,7 @@ public class PopupSettingsSaveTab : MonoBehaviour
 		Messenger.AddListener(MessengerEvents.GOOGLE_PLAY_AUTH_FAILED, GooglePlayAuthFailed);
 		#endif
 		Messenger.AddListener(MessengerEvents.GOOGLE_PLAY_STATE_UPDATE, RefreshGooglePlayView);
+		Messenger.AddListener<bool>(MessengerEvents.SOCIAL_LOGGED, Social_OnLogInUpdated);
 	}
 
 	/// <summary>
@@ -80,6 +81,8 @@ public class PopupSettingsSaveTab : MonoBehaviour
             Messenger.RemoveListener(MessengerEvents.GOOGLE_PLAY_AUTH_FAILED, GooglePlayAuthFailed);
 #endif
             Messenger.RemoveListener(MessengerEvents.GOOGLE_PLAY_STATE_UPDATE, RefreshGooglePlayView);
+			Messenger.RemoveListener<bool>(MessengerEvents.SOCIAL_LOGGED, Social_OnLogInUpdated);
+
         }
     }    
 
@@ -310,6 +313,11 @@ public class PopupSettingsSaveTab : MonoBehaviour
         m_loginRewardRoot.SetActive(false);
     }
 
+	private void Social_OnLogInUpdated(bool logged)
+	{
+		RefreshView();
+	}
+
 	/// <summary>
 	/// 
 	/// </summary>
@@ -386,7 +394,7 @@ public class PopupSettingsSaveTab : MonoBehaviour
             PersistenceFacade.Popups_OpenLogoutWarning(Model_SaveIsCloudSaveEnabled(),
                 delegate ()
                 {                    
-                    Log("LOGGING OUT... ");
+                    Log("LOGGING OUT... ");                    
 
                     //OpenLoadingPopup();                    
                     PersistenceFacade.instance.CloudDriver.Logout();

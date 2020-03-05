@@ -287,7 +287,7 @@ public abstract class SocialUtils
         SetPlatform(platform);
     }
 
-    public virtual void Login(bool isAppInit)
+    private string EPlatformToCaletySocialPlatform(EPlatform eplatform)
     {
         // Translate EPlatform into Calety social platform
         string platform = null;
@@ -303,10 +303,24 @@ public abstract class SocialUtils
 
             case EPlatform.SIWA:
                 platform = CaletyConstants.SOCIAL_PLATFORM_SIWA;
-                break;            
+                break;
         }
-        
+
+        return platform;
+    }
+
+    public virtual void Login(bool isAppInit)
+    {
+        // Translate EPlatform into Calety social platform
+        string platform = EPlatformToCaletySocialPlatform(GetPlatform());        
         GameSessionManager.SharedInstance.LogInToSocialPlatform(isAppInit, platform);
+    }
+
+    public void Logout()
+    {
+        // Translate EPlatform into Calety social platform
+        string platform = EPlatformToCaletySocialPlatform(GetPlatform());
+        GameSessionManager.SharedInstance.LogOutFromSocialPlatform(platform);
     }
 
     public void OnLoggedIn()
