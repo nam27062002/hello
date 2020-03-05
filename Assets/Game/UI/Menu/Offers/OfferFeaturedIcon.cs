@@ -11,6 +11,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System;
+using System.Collections.Generic;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -58,7 +59,7 @@ public class OfferFeaturedIcon : MonoBehaviour {
 		// Subscribe to external events
 		m_showConditioner.targetAnimator.OnShowCheck.AddListener(OnShowCheck);
 		Messenger.AddListener(MessengerEvents.OFFERS_RELOADED, OnOffersReloaded);
-		Messenger.AddListener(MessengerEvents.OFFERS_CHANGED, OnOffersChanged);
+		Messenger.AddListener<List<OfferPack>>(MessengerEvents.OFFERS_CHANGED, OnOffersChanged);
 	}
 
 	/// <summary>
@@ -79,7 +80,7 @@ public class OfferFeaturedIcon : MonoBehaviour {
 		// Unsubscribe from external events
 		m_showConditioner.targetAnimator.OnShowCheck.RemoveListener(OnShowCheck);
 		Messenger.RemoveListener(MessengerEvents.OFFERS_RELOADED, OnOffersReloaded);
-		Messenger.RemoveListener(MessengerEvents.OFFERS_CHANGED, OnOffersChanged);
+		Messenger.RemoveListener<List<OfferPack>>(MessengerEvents.OFFERS_CHANGED, OnOffersChanged);
 	}
 
 	//------------------------------------------------------------------------//
@@ -164,8 +165,8 @@ public class OfferFeaturedIcon : MonoBehaviour {
 		if(!ValidateOffer()) return;
 
 		// Show popup!
-		PopupController popup = PopupManager.LoadPopup(PopupFeaturedOffer.PATH);
-		popup.GetComponent<PopupFeaturedOffer>().InitFromOfferPack(m_targetOffer);
+		PopupController popup = PopupManager.LoadPopup(PopupShopOfferPack.PATH);
+		popup.GetComponent<PopupShopOfferPack>().InitFromOfferPack(m_targetOffer);
 		popup.Open();
 
         // Tracking
@@ -184,7 +185,7 @@ public class OfferFeaturedIcon : MonoBehaviour {
 	/// <summary>
 	/// Offers list has changed.
 	/// </summary>
-	private void OnOffersChanged() {
+	private void OnOffersChanged(List<OfferPack> offersChanged = null) {
 		RefreshData();
 	}
 }

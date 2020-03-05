@@ -426,6 +426,9 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 	//------------------------------------------------------------------------//
 	// Internal
 	private StringBuilder m_sb = new StringBuilder();
+	public static StringBuilder sb {
+		get { return instance.m_sb; }	// Careful with context!
+	}
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -633,6 +636,16 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 			case UserProfile.Currency.KEYS:				icon = IconType.KEYS;				break;
 		}
 		return icon;
+	}
+
+	/// <summary>
+	/// Format a currency amount.
+	/// Centralized in this static metod to be consistent throughout te wole game.
+	/// </summary>
+	/// <param name="_amount">The amount to be formatted.</param>
+	/// <returns></returns>
+	public static string FormatCurrency(long _amount) {
+		return StringUtils.FormatBigNumber(_amount, 2, 10000, 1000000); // Start abbreviating at 10K, max M
 	}
 
 	/// <summary>

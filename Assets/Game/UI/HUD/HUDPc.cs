@@ -94,19 +94,11 @@ public class HUDPc : IHUDCounter {
 	//------------------------------------------------------------------//   
 	protected override string GetValueAsString() {
 		// If value is bigger than a certain amount, use abbreviated format
-		if(Value > VALUE_ABBREVIATION_THRESHOLD) {
-			return UIConstants.GetIconString(
-				StringUtils.FormatBigNumber(Value, 2, VALUE_ABBREVIATION_THRESHOLD),
-				UIConstants.IconType.PC,
-				UIConstants.IconAlignment.RIGHT
-			);
-		} else {
-			return UIConstants.GetIconString(
-				Value,
-				UIConstants.IconType.PC,
-				UIConstants.IconAlignment.RIGHT
-			);
-		}
+		return UIConstants.GetIconString(
+			UIConstants.FormatCurrency(Value),
+			UIConstants.IconType.PC,
+			UIConstants.IconAlignment.RIGHT
+		);
 	}
 
 	/// <summary>

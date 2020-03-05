@@ -44,6 +44,11 @@ public class RaycastRemoverTool : EditorWindow {
 		set { EditorPrefs.SetBool("RaycastRemoverTool.APPLY_PREFABS", value); }
 	}
 
+	private static bool PROCESS_CANVAS_GROUPS {
+		get { return EditorPrefs.GetBool("RaycastRemoverTool.PROCESS_CANVAS_GROUPS", false); }
+		set { EditorPrefs.SetBool("RaycastRemoverTool.PROCESS_CANVAS_GROUPS", value); }
+	}
+
 	// Internal
 	private Vector2 m_scrollPos = Vector2.zero;
 
@@ -56,7 +61,7 @@ public class RaycastRemoverTool : EditorWindow {
 	[MenuItem("Tools/Raycast Remover")]
 	public static void OpenWindow() {
 		// Setup window
-		instance.minSize = new Vector2(220f, 135f);
+		instance.minSize = new Vector2(220f, 150f);
 
 		// Show!
 		instance.Show();
@@ -113,6 +118,9 @@ public class RaycastRemoverTool : EditorWindow {
 			// Window Content!
 			// Apply Prefabs Toggle
 			APPLY_PREFABS = EditorGUILayout.Toggle("Apply Prefabs after", APPLY_PREFABS);
+
+			// Apply To Canvas Groups Toggle
+			PROCESS_CANVAS_GROUPS = EditorGUILayout.Toggle("Process Canvas Groups", PROCESS_CANVAS_GROUPS);
 
 			// Do we have a valid selection?
 			bool validSelection = Selection.gameObjects.Length > 0;
@@ -176,13 +184,15 @@ public class RaycastRemoverTool : EditorWindow {
 			}
 		}
 
-		// Canvas groups
-		List<CanvasGroup> groups = FindComponentsRecursive<CanvasGroup>(_obj.transform);
-		for(int i = 0; i < groups.Count; ++i) {
-			if(groups[i].blocksRaycasts) {
-				groups[i].blocksRaycasts = false;
-				_disabledCanvasGroups++;
-				_summary += "\t" + groups[i].name + " (" + groups[i].GetType().Name + ")\n";
+		// Canvas groups - only if enabled
+		if(PROCESS_CANVAS_GROUPS) {
+			List<CanvasGroup> groups = FindComponentsRecursive<CanvasGroup>(_obj.transform);
+			for(int i = 0; i < groups.Count; ++i) {
+				if(groups[i].blocksRaycasts) {
+					groups[i].blocksRaycasts = false;
+					_disabledCanvasGroups++;
+					_summary += "\t" + groups[i].name + " (" + groups[i].GetType().Name + ")\n";
+				}
 			}
 		}
 
