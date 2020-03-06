@@ -53,6 +53,12 @@ public class UITooltipTrigger : MonoBehaviour, IPointerDownHandler, IPointerUpHa
 		set { m_offset = value; }
 	}
 
+	[SerializeField] private bool m_autoHide = true;
+	public bool autoHide {
+		get { return m_autoHide; }
+		set { m_autoHide = value; }
+	}
+
 	[SerializeField] private bool m_keepOriginalPosition = false;
 	public bool keepOriginalPosition {
 		get { return m_keepOriginalPosition; }
@@ -116,6 +122,12 @@ public class UITooltipTrigger : MonoBehaviour, IPointerDownHandler, IPointerUpHa
 		// Only if active
 		if(!isActiveAndEnabled) return;
 
+		// If autohide is disabled and tooltip is on, hide it and do nothing else
+		if(!m_autoHide && m_tooltip != null && m_tooltip.animator.visible) {
+			m_tooltip.animator.ForceHide();
+			return;
+		}
+
 		// Use a predefined anchor or use our transform as spawn point?
 		RectTransform spawnTransform = null;
 		if(m_anchor != null) {
@@ -152,20 +164,30 @@ public class UITooltipTrigger : MonoBehaviour, IPointerDownHandler, IPointerUpHa
 		// Invoke event (before animation, in case anything needs to be initialized)
 		OnTooltipOpen.Invoke(m_tooltip, this);
 
-		// If the render on top flag is set, move the tooltip to the top of the parent canvas
+		// If the render on top flag is set, store original parent to restore it after animation
 		if(m_renderOnTop) {
+			// Make sure we only do this once
 			if(m_parentCanvas == null) {
 				m_parentCanvas = m_tooltip.GetComponentInParent<Canvas>();
 				m_originalTooltipParent = m_tooltip.transform.parent;
 				m_tooltip.animator.OnHidePostAnimation.AddListener(OnTooltipClosed);
 			}
-			m_tooltip.transform.SetParent(m_parentCanvas.transform);
-			m_tooltip.transform.SetAsLastSibling();
+			//TOREMOVEm_tooltip.transform.SetParent(m_parentCanvas.transform);
+			//TOREMOVEm_tooltip.transform.SetAsLastSibling();
 		}
 
 		// Unless explicitely denied, put tooltip on anchor's position
 		if(!m_keepOriginalPosition) {
-			// Activate the tooltip to make sure all the layouts, textfields and dynamic sizes are updated
+			// UITooltip does the hard math for us!
+			UITooltip.PlaceAndShowTooltip(
+				m_tooltip,
+				spawnTransform,
+				m_offset,
+				m_renderOnTop,
+				m_checkScreenBounds
+			);
+			// TOREMOVE
+			/*// Activate the tooltip to make sure all the layouts, textfields and dynamic sizes are updated
 			m_tooltip.gameObject.SetActive(true);
 
 			// Wait a frame so all the measurements are right and updated
@@ -235,7 +257,7 @@ public class UITooltipTrigger : MonoBehaviour, IPointerDownHandler, IPointerUpHa
 					// Just launch the animation!
 					m_tooltip.animator.ForceShow();
 				}, 1
-			);
+			);*/
 		}
 
 		// Keeping original position
@@ -250,6 +272,9 @@ public class UITooltipTrigger : MonoBehaviour, IPointerDownHandler, IPointerUpHa
 	/// </summary>
 	/// <param name="_eventData">Event data.</param>
 	public void OnPointerUp(PointerEventData _eventData) {
+		// Nothing to do if auto hide not enabled
+		if(!m_autoHide) return;
+
 		// Just hide the tooltip, if created
 		if(m_tooltip != null) m_tooltip.animator.Hide();
 	}
@@ -259,10 +284,17 @@ public class UITooltipTrigger : MonoBehaviour, IPointerDownHandler, IPointerUpHa
 	/// </summary>
 	/// <param name="_eventData">Event data.</param>
 	public void OnPointerExit(PointerEventData _eventData) {
+		// Nothing to do if auto hide not enabled
+		if(!m_autoHide) return;
+
 		// Just hide the tooltip, if created
 		if(m_tooltip != null) m_tooltip.animator.Hide();
 	}
 
+	/// <summary>
+	/// The tooltip has been closed.
+	/// </summary>
+	/// <param name="_anim">The animator that triggered the event.</param>
 	public void OnTooltipClosed(ShowHideAnimator _anim) {
 		// Return tooltip to its original parent
 		m_tooltip.transform.SetParent(m_originalTooltipParent);

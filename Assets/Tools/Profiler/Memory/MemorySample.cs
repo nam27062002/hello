@@ -123,10 +123,6 @@ public class MemorySample : AbstractMemorySample
                     return 1;
                 case TextureFormat.ETC2_RGBA8:
                     return 8;
-                case TextureFormat.ATC_RGB4://	 ATC (ATITC) 4 bits/pixel compressed RGB texture format.
-                    return 4;
-                case TextureFormat.ATC_RGBA8://	 ATC (ATITC) 8 bits/pixel compressed RGB texture format.
-                    return 8;
                 case TextureFormat.BGRA32://	 Format returned by iPhone camera
                     return 32;
             }
@@ -261,8 +257,8 @@ public class MemorySample : AbstractMemorySample
 			TextureFormat.PVRTC_RGB4,
 			TextureFormat.PVRTC_RGBA4,
 			TextureFormat.ETC_RGB4,
-			TextureFormat.ATC_RGB4,
-			TextureFormat.ATC_RGBA8
+			TextureFormat.ETC_RGB4,
+			TextureFormat.ETC2_RGBA8
 		};
 
 		private static bool IsACompressedFormat(TextureFormat format)

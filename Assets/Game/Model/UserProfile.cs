@@ -892,9 +892,23 @@ public class UserProfile : UserPersistenceSystem
             PlayerPrefs.SetString("removeAds", jsonString);
         }
 
-		#if UNITY_EDITOR
+#if UNITY_EDITOR
         PrintJsonString(json.ToString(), "<color=cyan>SAVING USER PROFILE:</color>\n");
-		#endif
+
+		JSONArray rotationalsArrayData = new JSONArray();
+		foreach(string offerSku in m_offersHistory[OfferPack.Type.ROTATIONAL]) {
+			rotationalsArrayData.Add(offerSku);
+		}
+
+		// ROTATIONALS DEBUG
+		/*
+			JSONClass offerHistoryData = new SimpleJSON.JSONClass();
+			offerHistoryData.Add(OfferPack.TypeToString(OfferPack.Type.ROTATIONAL), rotationalsArrayData);
+			JsonFormatter fmt = new JsonFormatter();
+			string printStr = fmt.PrettyPrint(offerHistoryData.ToString());
+			Debug.Log(Colors.yellow.Tag("--------- SAVING ROTATIONALS ---------") + "\n" + printStr);
+		*/
+#endif
 	}
 
 #if UNITY_EDITOR

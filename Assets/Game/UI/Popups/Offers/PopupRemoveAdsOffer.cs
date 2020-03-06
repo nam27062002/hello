@@ -26,7 +26,7 @@ public class PopupRemoveAdsOffer : MonoBehaviour {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed
-	[SerializeField] private PopupShopOffersPill m_singleItemLayoutPill = null;
+	[SerializeField] private ShopMonoRewardPill m_singleItemLayoutPill = null;
 
 	// Internal
 	private OfferPack m_pack = null;
@@ -131,7 +131,7 @@ public class PopupRemoveAdsOffer : MonoBehaviour {
 	/// Successful purchase.
 	/// </summary>
 	/// <param name="_pill">The pill that triggered the event</param>
-	private void OnPurchaseSuccessful(IPopupShopPill _pill) {
+	private void OnPurchaseSuccessful(IShopPill _pill) {
 		// Close popup
 		GetComponent<PopupController>().Close(true);
 	}

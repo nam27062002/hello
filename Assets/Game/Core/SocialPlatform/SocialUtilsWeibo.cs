@@ -58,12 +58,7 @@ public class SocialUtilsWeibo : SocialUtils
     {
         return WeiboManager.SharedInstance.GetAuthUserID();
     }
-
-    public override string GetAccessToken()
-    {
-        return WeiboManager.SharedInstance.GetAuthToken();
-    }
-
+   
     public override string GetUserName()
     {
         return WeiboManager.SharedInstance.GetAuthUserName();

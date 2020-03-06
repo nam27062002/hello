@@ -62,6 +62,34 @@ namespace Metagame {
 		}
 
 		/// <summary>
+		/// Checks whether this reward needs to be replaced and optionally creates a replacement
+		/// reward if needed.
+		/// </summary>
+		/// <param name="_createReplacement">Optionally create the replacement reward also. Only supported by some types.</param>
+		/// <returns>Whether this reward needs to be replaced or not.</returns>
+		public override bool CheckReplacement(bool _createReplacement) {
+			// If the dragon is already owned, give replacement instead
+			bool duplicated = IsAlreadyOwned();
+
+			// If duplicated, create alternative reward
+			if(duplicated && _createReplacement) {
+				// For dragons there is no generic replacement
+			}
+
+			return duplicated;
+		}
+
+		/// <summary>
+		/// This method checks if the reward is already owned by the player. This is applicable in
+		/// non-consumable items like dragons, skins and the remove ads offer. Currency packs will be always
+		/// marked as not owned.
+		/// </summary>
+		/// <returns></returns>
+		public override bool IsAlreadyOwned() {
+			return DragonManager.IsDragonOwned(m_sku);
+		}
+
+		/// <summary>
 		/// Implementation of the abstract Collect() method.
 		/// </summary>
 		override protected void DoCollect() {

@@ -18,9 +18,9 @@ public class HDCustomizerManager
 {
     private class HDCustomizerListener : Calety.Customiser.CustomizerListener
     {
-        public override void onCustomizationError(eCustomizerError eError, string strSKU, string strAttrib)
+		public override void onCustomizationError(eCustomizerError eError, string strCategory, string strSKU, string strAttrib)
         {            
-            LogWarning("Error " + eError.ToString() + " when processing category: " + strSKU + " attribute: " + strAttrib);         
+			LogWarning("Error " + eError.ToString() + " when processing category: " + strCategory + " sku: " + strSKU + " attribute: " + strAttrib);         
         }
 
         public override void onCustomizationStored () 

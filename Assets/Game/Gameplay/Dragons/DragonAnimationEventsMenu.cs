@@ -96,7 +96,10 @@ public class DragonAnimationEventsMenu : MonoBehaviour {
     {
         ToggleParticle(particleName, false);
     }
-
+    public void DesactivateParticle(string particleName)
+    {
+        ToggleParticle(particleName, false);
+    }
     public void ActivateParticle( string particleName)
     {
         ToggleParticle(particleName, true);

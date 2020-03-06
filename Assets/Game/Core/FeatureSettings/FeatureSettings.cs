@@ -481,7 +481,7 @@ public class FeatureSettings
 
         public static bool ParseValueFloat(string value, out float outValue)
         {
-            return float.TryParse(value, out outValue);            
+            return float.TryParse(value, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out outValue);            
         }
 
         public Data(string key, EValueType valueType, object defaultValue, string defaultValueAsString)

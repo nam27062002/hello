@@ -47,7 +47,7 @@ public class DisguisesScreenController : MonoBehaviour {
 	[SerializeField] private Localizer m_lockText = null;
 
 	[Space]
-	[SerializeField] private PopupShopOffersPill m_offerPill = null;
+	[SerializeField] private ShopMonoRewardPill m_offerPill = null;
 
 	// Setup
 	private string m_initialSkin = string.Empty;	// String to be selected upon entering the screen. Will be resetted every time the screen is reloaded.
@@ -607,8 +607,8 @@ public class DisguisesScreenController : MonoBehaviour {
 	public void OnOfferButton() {
 		// Open the featured offer popup with the skin's offer
 		if(m_linkedOffer == null) return;
-		PopupController popup = PopupManager.LoadPopup(PopupFeaturedOffer.PATH);
-		popup.GetComponent<PopupFeaturedOffer>().InitFromOfferPack(m_linkedOffer);
+		PopupController popup = PopupManager.LoadPopup(PopupShopOfferPack.PATH);
+		popup.GetComponent<PopupShopOfferPack>().InitFromOfferPack(m_linkedOffer);
 		popup.Open();
 	}
 

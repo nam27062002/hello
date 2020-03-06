@@ -39,8 +39,8 @@ public enum MenuScreen {
 
 	ANIMOJI,
 
-	EMPTY_0, // We cannot remove elements, so we just leave them empty
-    EMPTY_1,
+	SHOP,
+    EMPTY_1,  // We cannot remove elements, so we just leave them empty
     EMPTY_2,
 	LEAGUES,
 	LEAGUES_REWARD,

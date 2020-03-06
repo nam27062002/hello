@@ -83,6 +83,7 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 	protected DragonPlayer			m_dragon;
 	// DragonHealthBehaviour	m_health;
 	protected DragonControlPlayer m_controls;
+    protected DragonTint m_dragonMaterials;
 	public DragonControlPlayer control
 	{
 		get{ return m_controls; }
@@ -343,7 +344,8 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 		m_controls 			= GetComponent<DragonControlPlayer>();
 		m_animationEventController = GetComponentInChildren<DragonAnimationEvents>();
 		m_particleController = GetComponentInChildren<DragonParticleController>();
-		Transform sensors	= m_transform.Find("sensors").transform;
+        m_dragonMaterials = GetComponent<DragonTint>();
+        Transform sensors	= m_transform.Find("sensors").transform;
 		m_sensor.top 		= sensors.Find("TopSensor").transform;
 		m_sensor.bottom		= sensors.Find("BottomSensor").transform;
 
@@ -1780,6 +1782,8 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 
     		// Notify game
     		Messenger.Broadcast<bool>(MessengerEvents.UNDERWATER_TOGGLED, true);
+
+            m_dragonMaterials.SetScaleZ(true);
         }
 	}
     
@@ -1813,8 +1817,10 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 
     		// Notify game
     		Messenger.Broadcast<bool>(MessengerEvents.UNDERWATER_TOGGLED, false);
+
+            m_dragonMaterials.SetScaleZ(false);
         }
-	}
+    }
     
     protected virtual bool CanChangeStateToExitWater()
     {
