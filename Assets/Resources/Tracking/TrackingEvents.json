@@ -615,7 +615,8 @@
         { "zone": { "Status": "OK" } },
         { "playerProgress": { "Status": "OK" } },
         { "softCurrency": { "Status": "OK" } },
-        { "hardCurrency": { "Status": "OK" } }
+        { "hardCurrency": { "Status": "OK" } },
+        { "shopEntrance_ID": { "Status": "OK" } }
       ],
       "APIs": [
         "dna",
@@ -623,11 +624,27 @@
       ]
     },
     "custom.shop.view": {
+        "Parameters": [
+            { "section": { "Status": "OK" } },
+            { "playerProgress": { "Status": "OK" } },
+            { "softCurrency": { "Status": "OK" } },
+            { "hardCurrency": { "Status": "OK" } }
+        ],
+        "APIs": [
+            "dna",
+            "etl"
+        ]
+    },
+    "custom.shop.view.newshop": {
       "Parameters": [
-        { "section": { "Status": "OK" } },
+        { "central_section": { "Status": "OK" } },
+        { "central_itemID": { "Status": "OK" } },
+        { "all_section": { "Status": "OK" } },
+        { "all_itemID": { "Status": "OK" } },
         { "playerProgress": { "Status": "OK" } },
         { "softCurrency": { "Status": "OK" } },
-        { "hardCurrency": { "Status": "OK" } }
+        { "hardCurrency": { "Status": "OK" } },
+        { "shopEntrance_ID": { "Status": "OK" } }
       ],
       "APIs": [
         "dna",
@@ -635,11 +652,39 @@
       ]
     },
     "custom.shop.itemviewed": {
+        "Parameters": [
+            { "itemID": { "Status": "OK" } },
+            { "playerProgress": { "Status": "OK" } },
+            { "softCurrency": { "Status": "OK" } },
+            { "hardCurrency": { "Status": "OK" } },
+            { "shopEntrance_ID": { "Status": "OK" } }
+        ],
+        "APIs": [
+            "dna",
+            "etl"
+        ]
+    },
+    "custom.shop.order": {
+        "Parameters": [
+            { "section": { "Status": "OK" } },
+            { "position": { "Status": "OK" } },
+            { "playerProgress": { "Status": "OK" } },
+            { "softCurrency": { "Status": "OK" } },
+            { "hardCurrency": { "Status": "OK" } },
+            { "shopEntrance_ID": { "Status": "OK" } }
+        ],
+        "APIs": [
+            "dna",
+            "etl"
+        ]
+    },
+    "custom.shop.sectionclicked": {
       "Parameters": [
-        { "itemID": { "Status": "OK" } },
+        { "destination_section": { "Status": "OK" } },
         { "playerProgress": { "Status": "OK" } },
         { "softCurrency": { "Status": "OK" } },
-        { "hardCurrency": { "Status": "OK" } }
+        { "hardCurrency": { "Status": "OK" } },
+        { "shopEntrance_ID": { "Status": "OK" } }
       ],
       "APIs": [
         "dna",
@@ -732,7 +777,7 @@
       "Parameters": [
         { "day": { "Status": "OK" } },
         { "cumulativeDays": { "Status": "OK" } },
-        { "type": { "Status": "OK" } },
+        {"Type": { "Status": "OK" } },
         { "amount": { "Status": "OK" } },
         { "sku": { "Status": "OK" } },
         { "ad_viewed": { "Status": "OK" } }
@@ -1013,8 +1058,8 @@
       "Values": []
     },
     "powerTime": {
-        "Type": "INT:4",
-        "Values": []
+      "Type": "INT:4",
+      "Values": []
     },
     "mapUsedNB": {
       "Type": "INT:4",
@@ -1543,17 +1588,17 @@
     "age": {
       "Type": "INT:4",
       "Values": [],
-      "CanBeNull": true
+        "CanBeNull": true
     },
     "analytics_optin": {
       "Type": "INT:4",
       "Values": [],
-      "CanBeNull": true
+        "CanBeNull": true
     },
     "marketing_optin": {
       "Type": "INT:4",
       "Values": [],
-      "CanBeNull": true
+        "CanBeNull": true
     },
     "popup_modular_version": {
       "Type": "STRING:5",
@@ -1651,7 +1696,7 @@
       "Type": "INT:4",
       "Values": []
     },
-    "type": {
+  "Type": {
       "Type": "STRING:16",
       "Values": []
     },
@@ -1680,8 +1725,8 @@
       "Values": []
     },
     "network": {
-        "Type": "STRING:16",
-        "Values": []
+      "Type": "STRING:16",
+      "Values": []
     },
     "network_type_start": {
       "Type": "STRING:8",
@@ -1731,17 +1776,45 @@
       "Type": "STRING:8",
       "Values": []
     },
-	  "happyHour" : {
-	    "Type": "INT:4",
+    "happyHour": {
+      "Type": "INT:4",
       "Values": []
-  	},
-  	"buttonName" : {
-  	  "Type": "STRING:32",
-        "Values": []
-  	},
-    "roundid" : {
-	  "Type": "STRING:64",
+    },
+    "buttonName": {
+      "Type": "STRING:32",
       "Values": []
-	 }
+    },
+    "roundid": {
+      "Type": "STRING:64",
+      "Values": []
+    },
+    "shopEntrance_ID": {
+      "Type": "STRING:64",
+      "Values": []
+    },
+    "central_section": {
+      "Type": "STRING:32",
+      "Values": []
+    },
+    "central_itemID": {
+      "Type": "STRING:64",
+      "Values": []
+    },
+    "all_section": {
+      "Type": "STRING:256",
+      "Values": []
+    },
+    "all_itemID": {
+      "Type": "STRING:256",
+      "Values": []
+    },
+    "position": {
+      "Type": "INT:4",
+      "Values": []
+    },
+    "destination_section": {
+      "Type": "STRING:64",
+      "Values": []
+    }
   }
 }
