@@ -152,9 +152,7 @@ public abstract class SocialUtils
     public abstract void Init(SocialPlatformManager manager);
 
     public abstract string GetSocialID();
-
-    public abstract string GetAccessToken();
-
+   
     public abstract string GetUserName();
 
     public abstract bool IsLoggedIn();
@@ -237,7 +235,8 @@ public abstract class SocialUtils
     {
         None,
         Facebook,
-        Weibo
+        Weibo,
+        SIWA
     };
 
     private static string[] sm_platformKeys;
@@ -288,9 +287,40 @@ public abstract class SocialUtils
         SetPlatform(platform);
     }
 
+    private string EPlatformToCaletySocialPlatform(EPlatform eplatform)
+    {
+        // Translate EPlatform into Calety social platform
+        string platform = null;
+        switch (GetPlatform())
+        {
+            case EPlatform.Facebook:
+                platform = CaletyConstants.SOCIAL_PLATFORM_FACEBOOK;
+                break;
+
+            case EPlatform.Weibo:
+                platform = CaletyConstants.SOCIAL_PLATFORM_WEIBO;
+                break;
+
+            case EPlatform.SIWA:
+                platform = CaletyConstants.SOCIAL_PLATFORM_SIWA;
+                break;
+        }
+
+        return platform;
+    }
+
     public virtual void Login(bool isAppInit)
     {
-        GameSessionManager.SharedInstance.LogInToSocialPlatform(isAppInit);
+        // Translate EPlatform into Calety social platform
+        string platform = EPlatformToCaletySocialPlatform(GetPlatform());        
+        GameSessionManager.SharedInstance.LogInToSocialPlatform(isAppInit, platform);
+    }
+
+    public void Logout()
+    {
+        // Translate EPlatform into Calety social platform
+        string platform = EPlatformToCaletySocialPlatform(GetPlatform());
+        GameSessionManager.SharedInstance.LogOutFromSocialPlatform(platform);
     }
 
     public void OnLoggedIn()
@@ -385,7 +415,7 @@ public abstract class SocialUtils
     {
         Profile_State = EProfileState.Loading;
 
-        if (IsLoggedIn())
+        if (IsLoggedIn() && false)
         {
             string socialId = GetSocialID();
             

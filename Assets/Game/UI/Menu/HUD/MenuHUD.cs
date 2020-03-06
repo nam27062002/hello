@@ -10,6 +10,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System;
+using System.Collections.Generic;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -78,7 +79,7 @@ public class MenuHUD : MonoBehaviour {
 		RefreshOffersNotifications();
 
 		// Subscribe to external events
-		Messenger.AddListener(MessengerEvents.OFFERS_CHANGED, OnOffersChanged);
+		Messenger.AddListener<List<OfferPack>>(MessengerEvents.OFFERS_CHANGED, OnOffersChanged);
 	}
 
 	/// <summary>
@@ -86,7 +87,7 @@ public class MenuHUD : MonoBehaviour {
 	/// </summary>
 	private void OnDisable() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener(MessengerEvents.OFFERS_CHANGED, OnOffersChanged);
+		Messenger.RemoveListener<List<OfferPack>>(MessengerEvents.OFFERS_CHANGED, OnOffersChanged);
 	}
 
 	//------------------------------------------------------------------//
@@ -148,7 +149,7 @@ public class MenuHUD : MonoBehaviour {
 	/// <summary>
 	/// Active offers have changed.
 	/// </summary>
-	public void OnOffersChanged() {
+	public void OnOffersChanged(List<OfferPack> offersChanged = null) {
 		RefreshOffersNotifications();
 	}
 

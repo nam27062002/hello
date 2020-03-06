@@ -132,7 +132,6 @@ public class SeasonTriggerInstanciatorEditor : Editor {
 		serializedObject.ApplyModifiedProperties();
 	}
 
-
 	/// <summary>
 	/// Do the layout for a single season.
 	/// </summary>
@@ -161,9 +160,9 @@ public class SeasonTriggerInstanciatorEditor : Editor {
 			_listProperty.InsertArrayElementAtIndex(idx);
 			seasonProp = _listProperty.GetArrayElementAtIndex(idx);
 
-			// Set sku
-			p = seasonProp.FindPropertyRelative("sku");
-			p.stringValue = _seasonSku;
+			// When adding a new element to the array, last one is copied - reset its values
+			seasonProp.FindPropertyRelative("sku").stringValue = _seasonSku;
+			seasonProp.FindPropertyRelative("targets").arraySize = 0;
 		}
 
 		// Finally! Draw season property

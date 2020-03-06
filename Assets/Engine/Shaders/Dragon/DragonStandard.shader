@@ -78,6 +78,7 @@ Shader "Hungry Dragon/Dragon/Dragon standard" {
 		[Toggle(VERTEXOFFSETX)] _EnableVertexOffsetX("Vertex offset X", Float) = 0.0
 		[Toggle(VERTEXOFFSETY)] _EnableVertexOffsetY("Vertex offset Y", Float) = 0.0
 		[Toggle(VERTEXOFFSETZ)] _EnableVertexOffsetZ("Vertex offset Z", Float) = 0.0
+		[Toggle(VERTEXSCALEZ)] _EnableVertexScaleZ("Vertex scale Z", Float) = 0.0
 
 		/// Enum Material Properties
 		[KeywordEnum(None, Reflection, Fire, Dissolve, Colorize)] FXLayer("Additional FX layer", Float) = 0
@@ -126,6 +127,7 @@ Shader "Hungry Dragon/Dragon/Dragon standard" {
 			#pragma shader_feature	__ VERTEXOFFSETX
 			#pragma shader_feature	__ VERTEXOFFSETY
 			#pragma shader_feature	__ VERTEXOFFSETZ
+			#pragma shader_feature	__ VERTEXSCALEZ
 			#pragma shader_feature	__ DIFFUSE_AS_SPECULARMASK
             #pragma shader_feature  __ _ZWRITE_ON
 

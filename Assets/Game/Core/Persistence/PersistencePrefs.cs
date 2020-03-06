@@ -14,8 +14,11 @@ public class PersistencePrefs
     // We want the cloud save to stores per device instead of per profile
     private static string KEY_CLOUD_SAVE_ENABLED = "cloudSaveEnabled";
 
-    // Social platform used: Facebook, Weibo
+    // Social platform used: Facebook, Weibo. Legacy flag used to know whether the user has used Weibo or Facebook in order to keep using the same even though the user changes countries
     private static string KEY_SOCIAL_PLATFORM_KEY = "socialPlatform";
+
+    // Current Social platform used: Facebook, Weibo
+    private static string KEY_SOCIAL_CURRENT_PLATFORM_KEY = "currentSocialPlatform";
 
     private static string KEY_SOCIAL_ID = "socialId";
 
@@ -48,8 +51,9 @@ public class PersistencePrefs
     private static List<string> KEYS = new List<string>()
     {
         KEY_ACTIVE_PROFILE_NAME,
-        KEY_CLOUD_SAVE_ENABLED,
+        KEY_CLOUD_SAVE_ENABLED,        
         KEY_SOCIAL_PLATFORM_KEY,
+        KEY_SOCIAL_CURRENT_PLATFORM_KEY,
         KEY_SOCIAL_ID,
         KEY_SOCIAL_PROFILE_NAME,
         KEY_SOCIAL_LOGGED_IN_WHEN_QUIT,
@@ -190,6 +194,12 @@ public class PersistencePrefs
         set { SetString(KEY_SOCIAL_PLATFORM_KEY, value); }
     }
 
+    public static string Social_CurrentPlatformKey
+    {
+        get { return PlayerPrefs.GetString(KEY_SOCIAL_CURRENT_PLATFORM_KEY, null); }
+        set { SetString(KEY_SOCIAL_CURRENT_PLATFORM_KEY, value); }
+    }
+
     public static string Social_Id
     {
         get { return PlayerPrefs.GetString(KEY_SOCIAL_ID, null); }
@@ -204,7 +214,7 @@ public class PersistencePrefs
 
     public static bool Social_WasLoggedInWhenQuit
     {
-        get { return PlayerPrefs.GetInt(KEY_SOCIAL_LOGGED_IN_WHEN_QUIT, 1) == 1; }
+        get { return PlayerPrefs.GetInt(KEY_SOCIAL_LOGGED_IN_WHEN_QUIT, 0) == 1; }
         set { SetInt(KEY_SOCIAL_LOGGED_IN_WHEN_QUIT, (value ? 1 : 0)); }
     }
 #endregion

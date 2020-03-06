@@ -106,18 +106,9 @@ public class HappyHourIcon : MonoBehaviour {
     /// <summary>
     /// Open the PC shop.
     /// </summary>
-    private void OpenPCShopPopup()
+    private void GoToShopScene()
     {
-        PopupController popup = PopupManager.LoadPopup(PopupShop.PATH);
-        PopupShop shopPopup = popup.GetComponent<PopupShop>();
-
-        // Show the gems tab
-        shopPopup.Init(PopupShop.Mode.PC_FIRST, "Happy_Hour_Icon");
-        shopPopup.closeAfterPurchase = true;
-
-        // Open the shop popup!
-        popup.Open();
-
+        InstanceManager.menuSceneController.GoToScreen(MenuScreen.SHOP);
     }
 
     //------------------------------------------------------------------------//
@@ -130,6 +121,6 @@ public class HappyHourIcon : MonoBehaviour {
     public void OnClick()
     {
         // open the shop in the gems tab
-        OpenPCShopPopup();
+        GoToShopScene();
     }
 }

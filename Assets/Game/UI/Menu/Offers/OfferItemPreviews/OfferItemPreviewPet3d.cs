@@ -8,9 +8,6 @@
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
 using UnityEngine;
-using UnityEngine.UI;
-
-using TMPro;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -18,58 +15,58 @@ using TMPro;
 /// <summary>
 /// Simple class to encapsulate the preview of an item.
 /// </summary>
-public class OfferItemPreviewPet3d : IOfferItemPreview {
+public class OfferItemPreviewPet3d : IOfferItemPreviewPet {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	public override OfferItemPrefabs.PrefabType type {
-		get { return OfferItemPrefabs.PrefabType.PREVIEW_3D; }
+	public override Type type {
+		get { return Type._3D; }
 	}
 
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	[SerializeField] private MenuPetLoader m_petPreview = null;
+	[SerializeField] private DragControl m_dragControl = null;
 
-    //------------------------------------------------------------------------//
-    // GENERIC METHODS                                                        //
-    //------------------------------------------------------------------------//
-    protected void OnDestroy() {
-        m_petPreview.OnLoadingComplete.RemoveListener(OnLoadingComplete);
-    }
-
-    //------------------------------------------------------------------------//
-    // OfferItemPreview IMPLEMENTATION										  //
-    //------------------------------------------------------------------------//
-    /// <summary>
-    /// Initialize preview with current item (m_item)
-    /// </summary>
-    protected override void InitInternal() {
-		// Item must be a pet!
-		Debug.Assert(m_item != null && m_item.reward != null && m_item.reward is Metagame.RewardPet, "ITEM IS NULL OR OF THE WRONG TYPE!", this);
-
-		// Store definition
-		m_def = m_item.reward.def;
-
-		// Initialize pet loader with the target pet preview!
-		m_petPreview.Load(m_item.reward.sku);
-        m_petPreview.OnLoadingComplete.AddListener(OnLoadingComplete);
-    }
-
+	//------------------------------------------------------------------------//
+	// GENERIC METHODS                                                        //
+	//------------------------------------------------------------------------//
 	/// <summary>
-	/// Gets the description of this item, already localized and formatted.
+	/// Destructor.
 	/// </summary>
-	/// <returns>The localized description.</returns>
-	public override string GetLocalizedDescription() {
-		if(m_def != null) {
-			return m_def.GetLocalized("tidName");
-		}
-		return LocalizationManager.SharedInstance.Localize("TID_PET");	// (shouldn't happen) use generic
+	protected void OnDestroy() {
+		m_petPreview.OnLoadingComplete.RemoveListener(OnLoadingComplete);
 	}
 
 	//------------------------------------------------------------------------//
 	// PARENT OVERRIDES														  //
 	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Initialize preview with current item (m_item)
+	/// </summary>
+	protected override void InitInternal() {
+		// Call parent
+		base.InitInternal();
+
+		// Initialize pet loader with the target pet preview!
+		m_petPreview.Load(m_item.reward.sku);
+		m_petPreview.OnLoadingComplete.AddListener(OnLoadingComplete);
+
+		// Drag control only enabled in certain types of slots
+		if(m_dragControl != null) {
+			switch(m_slotType) {
+				case OfferItemSlot.Type.POPUP_BIG: {
+					m_dragControl.gameObject.SetActive(true);
+				} break;
+
+				default: {
+					m_dragControl.gameObject.SetActive(false);
+				} break;
+			}
+		}
+	}
+
 	/// <summary>
 	/// Set this preview's parent and adjust its size to fit it.
 	/// </summary>
@@ -82,31 +79,13 @@ public class OfferItemPreviewPet3d : IOfferItemPreview {
 		m_petPreview.pscaler.DoScale();
 	}
 
-	/// <summary>
-	/// The info button has been pressed.
-	/// </summary>
-	/// <param name="_trackingLocation">Where is this been triggered from?</param>
-	override public void OnInfoButton(string _trackingLocation) {
-		// Intiialize info popup
-		PopupController popup = PopupManager.LoadPopup(PopupInfoPet.PATH_SIMPLE);
-		popup.GetComponent<PopupInfoPet>().Init(m_def);
-
-		// Move it forward in Z so it doesn't conflict with our 3d preview!
-		popup.transform.SetLocalPosZ(-2500f);
-
-		// Open it!
-		popup.Open();
-
-		// Tracking
-		string popupName = System.IO.Path.GetFileNameWithoutExtension(PopupInfoPet.PATH_SIMPLE);
-		HDTrackingManager.Instance.Notify_InfoPopup(popupName, _trackingLocation);
+	//------------------------------------------------------------------------//
+	// CALLBACKS                                                              //
+	//------------------------------------------------------------------------//
+	private void OnLoadingComplete(MenuPetLoader _loader) {
+		if(m_petPreview.petInstance != null) {
+			InitParticles(m_petPreview.petInstance.gameObject);
+			_loader.OnLoadingComplete.RemoveListener(OnLoadingComplete);
+		}
 	}
-
-    //------------------------------------------------------------------------//
-    // CALLBACKS                                                              //
-    //------------------------------------------------------------------------//
-    private void OnLoadingComplete(MenuPetLoader _loader) {
-        InitParticles(m_petPreview.petInstance.gameObject);
-        _loader.OnLoadingComplete.RemoveListener(OnLoadingComplete);
-    }
 }

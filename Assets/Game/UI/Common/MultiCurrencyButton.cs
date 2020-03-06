@@ -58,11 +58,19 @@ public class MultiCurrencyButton : MonoBehaviour {
 	/// </summary>
 	/// <param name="_amount">The amount to be displayed.</param>
 	/// <param name="_currency">The curency to be displayed.</param>
-	public void SetAmount(float _amount, UserProfile.Currency _currency) {
+	public void SetAmount(float _amount, UserProfile.Currency _currency, float _previousAmount = 0f) {
 		// Format number and call the string method
 		string amountString = StringUtils.FormatNumber(_amount, 0);
-		SetAmount(amountString, _currency);
+
+        // Format previous amount (if needed)
+        bool showPrevious = _previousAmount != 0f && _previousAmount != _amount;
+        string previousString = showPrevious ? StringUtils.FormatNumber(_previousAmount, 0) : null;
+
+        SetAmount(amountString, _currency, previousString);
+
 	}
+
+
 
 	//------------------------------------------------------------------------//
 	// INTERNAL METHODS														  //

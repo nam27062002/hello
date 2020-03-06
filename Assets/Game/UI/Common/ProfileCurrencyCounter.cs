@@ -148,7 +148,12 @@ public class ProfileCurrencyCounter : MonoBehaviour {
 			case UserProfile.Currency.SOFT:
 			case UserProfile.Currency.HARD: 
             case UserProfile.Currency.GOLDEN_FRAGMENTS: {
-				m_text.text = UIConstants.GetIconString(_amount, m_currency, m_alignment);
+                // Format 100,000 to 100K
+                m_text.text = UIConstants.GetIconString(
+					UIConstants.FormatCurrency(_amount),
+					UIConstants.GetCurrencyIcon(m_currency),
+					m_alignment
+				);
 			} break;
 
 			case UserProfile.Currency.KEYS: {

@@ -85,7 +85,7 @@ GameObject:
   - component: {fileID: 4313205243540498}
   - component: {fileID: 114851330009762676}
   m_Layer: 0
-  m_Name: DragonSelection_Goals
+  m_Name: DragonSelection_Shop
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -223,6 +223,22 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!1 &1883652032175974
+GameObject:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4378816263088894}
+  - component: {fileID: 114318932954258634}
+  m_Layer: 0
+  m_Name: DragonSelection_Goals
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!1 &1973018653771490
 GameObject:
   m_ObjectHideFlags: 1
@@ -254,6 +270,7 @@ Transform:
   - {fileID: 4577102686665698}
   - {fileID: 4259427601541552}
   - {fileID: 4313205243540498}
+  - {fileID: 4378816263088894}
   - {fileID: 4377216972818528}
   - {fileID: 4376165932682144}
   m_Father: {fileID: 4773014895585714}
@@ -306,7 +323,7 @@ Transform:
   m_GameObject: {fileID: 1419870450253086}
   m_LocalRotation: {x: -0.06497947, y: -0, z: -0, w: 0.9978866}
   m_LocalPosition: {x: -160, y: -19.846054, z: -84.43132}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1, y: 0.9999999, z: 0.9999999}
   m_Children: []
   m_Father: {fileID: 4040923863046358}
   m_RootOrder: 2
@@ -322,7 +339,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4040923863046358}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4377216972818528
 Transform:
@@ -330,6 +347,19 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1292307151883200}
+  m_LocalRotation: {x: -0.06497947, y: -0, z: -0, w: 0.9978866}
+  m_LocalPosition: {x: -160, y: -19.846054, z: -84.43132}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4040923863046358}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &4378816263088894
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1883652032175974}
   m_LocalRotation: {x: -0.06497947, y: -0, z: -0, w: 0.9978866}
   m_LocalPosition: {x: -160, y: -19.846054, z: -84.43132}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -343,8 +373,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1781636983171874}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: 0.049177647, y: -0, z: -0, w: 0.99879}
+  m_LocalPosition: {x: 226.3, y: -516.5, z: -3}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4899149457982194}
@@ -353,7 +383,7 @@ Transform:
   - {fileID: 4476933005428852}
   m_Father: {fileID: 4773014895585714}
   m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 5.6380005, y: 0, z: 0}
 --- !u!4 &4476933005428852
 Transform:
   m_ObjectHideFlags: 1
@@ -453,8 +483,8 @@ Camera:
     width: 1
     height: 1
   near clip plane: 1
-  far clip plane: 1000
-  field of view: 35
+  far clip plane: 1200
+  field of view: 29
   orthographic: 0
   orthographic size: 5
   m_Depth: 0
@@ -700,15 +730,15 @@ MonoBehaviour:
   - m_name: DRAGON_SELECTION
     m_handleStyle: 1
     m_locked: 0
-    m_position: {x: 136.94044, y: -176.19603, z: 62.105927}
-    m_handle1: {x: -30.64005, y: -11.173553, z: -16.714169}
+    m_position: {x: 398.7, y: -176.19603, z: 62.105927}
+    m_handle1: {x: -117.02071, y: -11.173553, z: -16.714169}
     m_handle2: {x: 0, y: 0, z: 0}
   - m_name: 
     m_handleStyle: 0
     m_locked: 0
     m_position: {x: 44.091812, y: -210.05528, z: 11.456931}
-    m_handle1: {x: -0.294115, y: 33.589115, z: 14.652955}
-    m_handle2: {x: 0.294115, y: -33.589115, z: -14.652955}
+    m_handle1: {x: 81.50048, y: 79.143585, z: 34.52569}
+    m_handle2: {x: -81.50048, y: -79.143585, z: -34.52569}
   - m_name: 
     m_handleStyle: 0
     m_locked: 0
@@ -719,13 +749,75 @@ MonoBehaviour:
     m_handleStyle: 0
     m_locked: 0
     m_position: {x: 301.0514, y: -653.79395, z: -43.894688}
-    m_handle1: {x: -51.81811, y: 73.254395, z: -18.576206}
-    m_handle2: {x: 51.81811, y: -73.254395, z: 18.576206}
+    m_handle1: {x: -50.11098, y: 72.05149, z: -26.341446}
+    m_handle2: {x: 50.11098, y: -72.05149, z: 26.341446}
   - m_name: REWARDS
     m_handleStyle: 1
     m_locked: 0
-    m_position: {x: 293.6, y: -646.58966, z: 7.522316}
-    m_handle1: {x: 2.4589572, y: -2.377414, z: -16.967611}
+    m_position: {x: 291.5, y: -647.301, z: 32.2388}
+    m_handle1: {x: 3.1519594, y: -2.1426637, z: -25.12405}
+    m_handle2: {x: 0, y: 0, z: 0}
+  m_resolution: 30
+  _close: 0
+--- !u!114 &114318932954258634
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1883652032175974}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e8ffd229cb784280b81d0dbc6cacff2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  drawColor: {r: 0.6137934, g: 0, b: 1, a: 1}
+  lineThickness: 5
+  pointSize: 1
+  constantSize: 1
+  lockAxis: 000000
+  lockHandlersAxis: 000000
+  m_points:
+  - m_name: DRAGON_SELECTION
+    m_handleStyle: 1
+    m_locked: 0
+    m_position: {x: 398.7, y: -176.19603, z: 62.105927}
+    m_handle1: {x: -131.57101, y: -50.148464, z: -23.472382}
+    m_handle2: {x: 0, y: 0, z: 0}
+  - m_name: 
+    m_handleStyle: 0
+    m_locked: 0
+    m_position: {x: 0, y: -328.16107, z: -9.022501}
+    m_handle1: {x: 112.57889, y: 84.48283, z: 23.778147}
+    m_handle2: {x: -112.57889, y: -84.48283, z: -23.778147}
+  - m_name: 
+    m_handleStyle: 0
+    m_locked: 0
+    m_position: {x: 0, y: -475.3934, z: -22.10478}
+    m_handle1: {x: -0.25485715, y: 48.426323, z: -5.841978}
+    m_handle2: {x: 0.25485715, y: -48.426323, z: 5.841978}
+  - m_name: MISSIONS
+    m_handleStyle: 0
+    m_locked: 0
+    m_position: {x: 1.0186462, y: -521.7177, z: 14.3274765}
+    m_handle1: {x: -0.7259692, y: 7.5059, z: -17.92999}
+    m_handle2: {x: 0.7259692, y: -7.5059, z: 17.92999}
+  - m_name: LEAGUES
+    m_handleStyle: 0
+    m_locked: 0
+    m_position: {x: 5.899994, y: -536.3943, z: 123.61328}
+    m_handle1: {x: 0.0047405823, y: 4.7235746, z: -36.11613}
+    m_handle2: {x: -0.0047405823, y: -4.7235746, z: 36.11613}
+  - m_name: GLOBAL_EVENTS
+    m_handleStyle: 0
+    m_locked: 0
+    m_position: {x: 1, y: -540.29706, z: 156.38388}
+    m_handle1: {x: 2.2664766, y: 1.5619841, z: -10.660472}
+    m_handle2: {x: -2.2664766, y: -1.5619841, z: 10.660472}
+  - m_name: CHESTS
+    m_handleStyle: 1
+    m_locked: 0
+    m_position: {x: -12.089996, y: -548.7925, z: 208.23001}
+    m_handle1: {x: 4.319699, y: 2.8034894, z: -17.109224}
     m_handle2: {x: 0, y: 0, z: 0}
   m_resolution: 30
   _close: 0
@@ -769,13 +861,13 @@ MonoBehaviour:
     m_handleStyle: 0
     m_locked: 0
     m_position: {x: 0, y: -90, z: -6}
-    m_handle1: {x: -35.338604, y: 146.73029, z: 20.883642}
-    m_handle2: {x: 35.338604, y: -146.73029, z: -20.883642}
+    m_handle1: {x: -89.84442, y: 121.82794, z: 17.339375}
+    m_handle2: {x: 89.84442, y: -121.82794, z: -17.339375}
   - m_name: DRAGON_SELECTION
     m_handleStyle: 1
     m_locked: 0
-    m_position: {x: 126.940445, y: -176.19603, z: 56.105927}
-    m_handle1: {x: -41.89035, y: 28.44469, z: -20.494957}
+    m_position: {x: 388.7, y: -176.19603, z: 56.105927}
+    m_handle1: {x: -128.27101, y: 28.44469, z: -20.494957}
     m_handle2: {x: 0, y: 0, z: 0}
   m_resolution: 30
   _close: 0
@@ -872,8 +964,8 @@ MonoBehaviour:
     m_handleStyle: 0
     m_locked: 0
     m_position: {x: 5.899994, y: -536.3943, z: 123.61328}
-    m_handle1: {x: -0.0014329756, y: -1.4278393, z: 10.917126}
-    m_handle2: {x: 0.0014329756, y: 1.4278393, z: -10.917126}
+    m_handle1: {x: -0.0014329761, y: -1.4278351, z: 10.9171295}
+    m_handle2: {x: 0.0014329761, y: 1.4278351, z: -10.9171295}
   - m_name: MISSIONS
     m_handleStyle: 0
     m_locked: 0
@@ -884,8 +976,8 @@ MonoBehaviour:
     m_handleStyle: 0
     m_locked: 0
     m_position: {x: 9.08429, y: -538.64075, z: -118.382965}
-    m_handle1: {x: -19.506578, y: 10.7196, z: 38.220535}
-    m_handle2: {x: 19.506578, y: -10.7196, z: -38.220535}
+    m_handle1: {x: -19.506578, y: 10.719599, z: 38.22054}
+    m_handle2: {x: 19.506578, y: -10.719599, z: -38.22054}
   - m_name: 
     m_handleStyle: 0
     m_locked: 0
@@ -979,44 +1071,26 @@ MonoBehaviour:
   - m_name: DRAGON_SELECTION
     m_handleStyle: 1
     m_locked: 0
-    m_position: {x: 136.94044, y: -176.19603, z: 62.105927}
-    m_handle1: {x: -45.19035, y: -50.148464, z: -23.472382}
+    m_position: {x: 398.7, y: -176.19603, z: 62.105927}
+    m_handle1: {x: -27.724693, y: -33.177998, z: -21.252832}
     m_handle2: {x: 0, y: 0, z: 0}
   - m_name: 
     m_handleStyle: 0
     m_locked: 0
-    m_position: {x: 0, y: -328.16107, z: -9.022501}
-    m_handle1: {x: 28.815294, y: 62.95774, z: 17.719793}
-    m_handle2: {x: -28.815294, y: -62.95774, z: -17.719793}
+    m_position: {x: 314.6858, y: -276.7354, z: -2.296593}
+    m_handle1: {x: 15.486453, y: 43.54423, z: 13.608488}
+    m_handle2: {x: -15.486453, y: -43.54423, z: -13.608488}
   - m_name: 
     m_handleStyle: 0
     m_locked: 0
-    m_position: {x: 0, y: -475.3934, z: -22.10478}
-    m_handle1: {x: -0.25485715, y: 48.426323, z: -5.8419747}
-    m_handle2: {x: 0.25485715, y: -48.426323, z: 5.8419747}
-  - m_name: MISSIONS
-    m_handleStyle: 0
-    m_locked: 0
-    m_position: {x: 1.0186462, y: -521.7177, z: 14.3274765}
-    m_handle1: {x: -0.7259692, y: 7.5059, z: -17.92999}
-    m_handle2: {x: 0.7259692, y: -7.5059, z: 17.92999}
-  - m_name: LEAGUES
-    m_handleStyle: 0
-    m_locked: 0
-    m_position: {x: 5.899994, y: -536.3943, z: 123.61328}
-    m_handle1: {x: 0.0047405823, y: 4.7235746, z: -36.11613}
-    m_handle2: {x: -0.0047405823, y: -4.7235746, z: 36.11613}
-  - m_name: GLOBAL_EVENTS
-    m_handleStyle: 0
-    m_locked: 0
-    m_position: {x: 1, y: -540.29706, z: 156.38388}
-    m_handle1: {x: 2.2664766, y: 1.5619841, z: -10.660472}
-    m_handle2: {x: -2.2664766, y: -1.5619841, z: 10.660472}
-  - m_name: CHESTS
+    m_position: {x: 310.48062, y: -424.24802, z: -15.4155445}
+    m_handle1: {x: -14.710718, y: 46.465378, z: -3.8590477}
+    m_handle2: {x: 14.710718, y: -46.465378, z: 3.8590477}
+  - m_name: SHOP
     m_handleStyle: 1
     m_locked: 0
-    m_position: {x: -12.089996, y: -548.7925, z: 208.23001}
-    m_handle1: {x: 4.319699, y: 2.8034894, z: -17.109224}
+    m_position: {x: 386.33328, y: -503.0417, z: 16.498621}
+    m_handle1: {x: -25.03138, y: 26.001913, z: -10.531675}
     m_handle2: {x: 0, y: 0, z: 0}
   m_resolution: 30
   _close: 0

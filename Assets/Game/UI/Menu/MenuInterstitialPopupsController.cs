@@ -34,7 +34,7 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 		WAIT_FOR_CUSTOM_POPUP = 1 << 3,
 		CHECKING_CONNECTION = 1 << 4,
 		COMING_FROM_A_RUN = 1 << 5,
-		OPEN_OFFERS_SHOP = 1 << 6
+		OPEN_SHOP = 1 << 6
 	}
 
 	//------------------------------------------------------------------------//
@@ -410,8 +410,14 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 		// Nothing to show if there is no featured offer
 		if(OffersManager.featuredOffer == null) return;
 
-		// Choose a location based on current screen
-		OfferPack.WhereToShow whereToShow = OfferPack.WhereToShow.SHOP_ONLY;
+        // If a more prioritary popup has already been opened, don't show
+        if (PopupManager.openedPopups.Count + PopupManager.queuedPopups.Count > 0)
+        {
+            return;
+        }
+
+        // Choose a location based on current screen
+        OfferPack.WhereToShow whereToShow = OfferPack.WhereToShow.SHOP_ONLY;
 		switch(m_currentScreen) {
 			case MenuScreen.PLAY: {
 					whereToShow = OfferPack.WhereToShow.PLAY_SCREEN;
@@ -673,16 +679,16 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 	/// <summary>
 	/// Do we need to open the offers shop?
 	/// </summary>
-	private void CheckOffersShop() {
+	private void CheckOpenShop() {
 		// Only if requested
-		if(!GetFlag(StateFlag.OPEN_OFFERS_SHOP)) return;
+		if(!GetFlag(StateFlag.OPEN_SHOP)) return;
 
 		// Only in dragon selection screen
 		if(m_currentScreen != MenuScreen.DRAGON_SELECTION) return;
 
 		// If a more prioritary popup has already been opened, don't show and clear flag
 		if(PopupManager.openedPopups.Count + PopupManager.queuedPopups.Count > 0) {
-			SetFlag(StateFlag.OPEN_OFFERS_SHOP, false);
+			SetFlag(StateFlag.OPEN_SHOP, false);
 			return;
 		}
 
@@ -693,7 +699,7 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 		popup.Open();
 
 		// Reset flag
-		SetFlag(StateFlag.OPEN_OFFERS_SHOP, false);
+		SetFlag(StateFlag.OPEN_SHOP, false);
 	}
 
 	/// <summary>
@@ -774,8 +780,8 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 		CheckRating();
 		CheckSurvey();
 		CheckSilentNotification();
-		CheckFeaturedOffer();
-		CheckOffersShop();
+        CheckOpenShop();
+        CheckFeaturedOffer();
 		CheckInterstitialCP2();
 		CheckDownloadAssets();
 		CheckHappyHourOffer();

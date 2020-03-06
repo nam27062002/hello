@@ -40,10 +40,18 @@ public class DisguisesCaptureTool : CaptureTool {
 	private string selectedDisguiseSku {
 		get { return m_disguiseSkuDropdown.options[m_disguiseSkuDropdown.value].text; }
 	}
-	
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Initialization.
+	/// </summary>
+	protected void Awake() {
+		// Subscribe to events
+		m_dragonLoader.onDragonLoaded += OnDragonLoaded;
+	}
+
 	/// <summary>
 	/// First update call.
 	/// </summary>
@@ -79,6 +87,14 @@ public class DisguisesCaptureTool : CaptureTool {
 
 		// Call parent
 		base.OnDisable();
+	}
+
+	/// <summary>
+	/// Destructor.
+	/// </summary>
+	protected void OnDestroy() {
+		// Subscribe to events
+		m_dragonLoader.onDragonLoaded -= OnDragonLoaded;
 	}
 
 	//------------------------------------------------------------------------//
@@ -139,5 +155,18 @@ public class DisguisesCaptureTool : CaptureTool {
 	public void OnLoadButton() {
 		// Just do it
 		m_dragonLoader.LoadDragon(selectedDragonSku, selectedDisguiseSku);
+	}
+
+	/// <summary>
+	/// A dragon has been loaded.
+	/// </summary>
+	/// <param name="_loader">The loader that triggered the event.</param>
+	public void OnDragonLoaded(MenuDragonLoader _loader) {
+		// Reset preview scale, position and rotation
+		if(_loader.dragonInstance != null) {
+			_loader.dragonInstance.transform.localPosition = Vector3.zero;
+			_loader.dragonInstance.transform.localRotation = Quaternion.identity;
+			_loader.dragonInstance.transform.localScale = Vector3.one;
+		}
 	}
 }
