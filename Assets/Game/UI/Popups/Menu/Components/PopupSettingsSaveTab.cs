@@ -485,17 +485,17 @@ public class PopupSettingsSaveTab : MonoBehaviour
 		m_restoreIAP_IOSLayout.SetActive(true);
 		m_restoreIAP_AndroidLayout.SetActive(false);
 #else
-		m_iOSLayout.SetActive(false);
-		m_AndroidLayout.SetActive(true);
+		m_restoreIAP_IOSLayout.SetActive(false);
+		m_restoreIAP_AndroidLayout.SetActive(true);
 #endif
-	}
-	#endregion
+    }
+    #endregion
 
-	//------------------------------------------------------------------------//
-	// MODEL																  //
-	//------------------------------------------------------------------------//
-	#region model
-	private enum EState
+    //------------------------------------------------------------------------//
+    // MODEL																  //
+    //------------------------------------------------------------------------//
+    #region model
+    private enum EState
     {        
         None,
         NeverLoggedIn,
