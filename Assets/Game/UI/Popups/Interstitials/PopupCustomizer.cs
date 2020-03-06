@@ -310,14 +310,6 @@ public class PopupCustomizer : MonoBehaviour {
 		// If targeting a specific item, close popup after purchase
 		shopPopup.closeAfterPurchase = !string.IsNullOrEmpty(_itemSku);
 
-		// Setup initial tab
-		shopPopup.initialTab = PopupShop.Tabs.COUNT;
-		switch(_tabName) {
-			case "sc": shopPopup.initialTab = PopupShop.Tabs.SC;	break;
-			case "hc": shopPopup.initialTab = PopupShop.Tabs.PC;	break;
-			case "offers": shopPopup.initialTab = PopupShop.Tabs.OFFERS;	break;
-		}
-
 		// Open popup!
 		popup.Open();
 	}

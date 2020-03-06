@@ -248,6 +248,7 @@ public class ContentManager
         // Economy
         kDefinitionFiles.Add(DefinitionsCategory.SHOP_PACKS, new string[]{"Rules/shopPacksDefinitions"});
 		kDefinitionFiles.Add(DefinitionsCategory.OFFER_PACKS, new string[]{"Rules/offerPacksDefinitions"});
+        kDefinitionFiles.Add(DefinitionsCategory.SHOP_CATEGORIES, new string[] { "Rules/shopCategoriesDefinitions" });
         kDefinitionFiles.Add(DefinitionsCategory.HAPPY_HOUR, new string[] {"Rules/happyHourDefinitions"});
         kDefinitionFiles.Add(DefinitionsCategory.CURRENCY_TIERS, new string[]{"Rules/missingRessourcesTiersDefinitions"});
         kDefinitionFiles.Add(DefinitionsCategory.REMOVE_ADS_OFFER, new string[] { "Rules/removeAdsOfferDefinitions" });

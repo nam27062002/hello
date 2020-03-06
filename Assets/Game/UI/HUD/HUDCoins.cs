@@ -21,7 +21,6 @@ public class HUDCoins : IHUDCounter {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
-	private const long VALUE_ABBREVIATION_THRESHOLD = 99999;	// Values above this will get abbreviated
 
 	//------------------------------------------------------------------//
 	// MEMBERS															//
@@ -57,20 +56,11 @@ public class HUDCoins : IHUDCounter {
     //------------------------------------------------------------------//      
     protected override string GetValueAsString() {
 		// If value is bigger than a certain amount, use abbreviated format
-		long value = GetValue();
-		if(value > VALUE_ABBREVIATION_THRESHOLD) {
-			return UIConstants.GetIconString(
-				StringUtils.FormatBigNumber(value, 2, VALUE_ABBREVIATION_THRESHOLD),
-				UIConstants.IconType.COINS,
-				UIConstants.IconAlignment.RIGHT
-			);
-		} else {
-			return UIConstants.GetIconString(
-				value,
-				UIConstants.IconType.COINS,
-				UIConstants.IconAlignment.RIGHT
-			);
-		}
+		return UIConstants.GetIconString(
+			UIConstants.FormatCurrency(GetValue()),
+			UIConstants.IconType.COINS,
+			UIConstants.IconAlignment.RIGHT
+		);
     }
 
     private long GetValue() {

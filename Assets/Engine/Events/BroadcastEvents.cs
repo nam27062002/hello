@@ -53,16 +53,18 @@ public enum BroadcastEventType
     HUNGRY_MODE_ENTITY_EATEN,   // params: PositionEventInfo
     START_COLLECTIBLE_HUNGRY_MODE,
 
-    /////// NEW EVENTS HERE!!! ///////
-    
+	QUALITY_PROFILE_CHANGED,    // no params, current profile can be consulted at FeatureSettingsManager.instance.GetCurrentProfileLevel()
 
-    // EGG_INCUBATION_STARTED,     // params: Egg _egg
-    // EGG_INCUBATION_ENDED,       // params: Egg _egg
-    // EGG_TAP,                    // params: EggController _egg, int _tapCount    // [AOC] Triggered when opening an egg
-    // EGG_OPENED,                 // params: Egg _egg     // [AOC] Triggered when any egg is opened and its reward collected, whether it is the one in the incubator or one purchased from the shop
+	/////// NEW EVENTS HERE!!! ///////
 
 
-    COUNT,
+	// EGG_INCUBATION_STARTED,     // params: Egg _egg
+	// EGG_INCUBATION_ENDED,       // params: Egg _egg
+	// EGG_TAP,                    // params: EggController _egg, int _tapCount    // [AOC] Triggered when opening an egg
+	// EGG_OPENED,                 // params: Egg _egg     // [AOC] Triggered when any egg is opened and its reward collected, whether it is the one in the incubator or one purchased from the shop
+
+
+	COUNT,
 }
 
 public class BroadcastEventInfo

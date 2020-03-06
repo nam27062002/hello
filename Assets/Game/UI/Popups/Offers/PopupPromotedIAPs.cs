@@ -47,7 +47,7 @@ public class PopupPromotedIAPs : MonoBehaviour {
         m_pill.OnBuyButton();
     }
 
-    private void OnPurchaseError(IPopupShopPill _pill) {
+    private void OnPurchaseError(IShopPill _pill) {
         GetComponent<PopupController>().Close(true);
     }
 }

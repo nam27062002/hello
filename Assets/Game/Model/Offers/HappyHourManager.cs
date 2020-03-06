@@ -130,13 +130,22 @@ public class HappyHourManager {
 		get { return m_triggerPopupAtRun; }
 	}
 
-	//------------------------------------------------------------------------//
-	// GENERIC METHODS														  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Default constructor.
-	/// </summary>
-	public HappyHourManager() {
+
+
+    //------------------------------------------------------------------------//
+    // GENERIC METHODS														  //
+    //------------------------------------------------------------------------//
+
+    public bool IsActive()
+    {
+        return happyHour.IsActive();
+    }
+
+
+    /// <summary>
+    /// Default constructor.
+    /// </summary>
+    public HappyHourManager() {
 		// Subscribe to events
 		Messenger.AddListener<bool, string>(MessengerEvents.HC_PACK_ACQUIRED, OnHcPackAccquired);
 	}
@@ -298,8 +307,8 @@ public class HappyHourManager {
 		// Nothing to do if there is no pack to be displayed
 		if(packDef == null) return null;
 
-		// Initialize the popup (set the discount % values)
-		popupHappyHour.Init(packDef);
+        // Initialize the popup (set the discount % values)
+        popupHappyHour.Init(packDef);
 
 		// And launch it
 		popup.Open();
@@ -454,7 +463,9 @@ public class HappyHourManager {
 
 			// If required and allowed, instanly trigger the popup. Otherwise just mark it as pending.
 			if(_forcePopup && m_happyHour.data.popupTriggerRunNumber == 0) {
-				OpenPopup();
+
+                // Wait some time before showing the popup so the coins/gems trail FX can finish
+                UbiBCN.CoroutineManager.DelayedCall( () => OpenPopup(), 1.5f, false);
 			} else {
 				m_pendingPopup = true;
 			}
