@@ -26,8 +26,6 @@ public class SocialUtilsDummy : SocialUtils
 
     public override string GetSocialID() { return null; }
 
-    public override string GetAccessToken() { return null;  }
-
     public override string GetUserName() { return null; }
 
     public override bool IsLoggedIn() { return GetIsEnabled() && m_mockLoggedIn; }

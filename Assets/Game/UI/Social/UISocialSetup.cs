@@ -1,38 +1,80 @@
 ﻿using UnityEngine;
+using System.Collections.Generic;
 
 /// <summary>
 /// Used to setup UI stuff depending on the social platform in use
 /// </summary>
 public class UISocialSetup : MonoBehaviour
 {
+	public enum SocialPlatformMode {
+		ALL,
+		ALL_SUPPORTED,
+		LOGGED_IN
+	}
+
+	public SocialPlatformMode m_socialPlatformMode = SocialPlatformMode.ALL_SUPPORTED;
+	[Space]
     public GameObject m_fbItem = null;
 	public GameObject m_twitterItem = null;
 	public GameObject m_instagramItem = null;
 	public GameObject m_webItem = null;
-
+	[Space]
     public GameObject m_weiboItem = null;
 	public GameObject m_weChatItem = null;
+	[Space]
+	public GameObject m_appleItem = null;
 
 	/// <summary>
 	/// Initialization
 	/// </summary>
 	void Awake() {
-        // Enables only what needs to be enabled
+		Refresh();
+	}
 
+	/// <summary>
+	/// Toggle what needed given current environment: social platform, country and age.
+	/// </summary>
+	public void Refresh() {
+		// Enables only what needs to be enabled
 		// Aux vars
-		SocialUtils.EPlatform socialPlatform = SocialPlatformManager.SharedInstance.GetPlatform();
 		bool isChina = PlatformUtils.Instance.IsChina();
-		bool isUnderage = GDPRManager.SharedInstance.IsAgeRestrictionEnabled();	// Don't show social platforms or external links to underage players!
+		bool isUnderage = GDPRManager.SharedInstance.IsAgeRestrictionEnabled(); // Don't show social platforms or external links to underage players!
+		
+		// Social platforms
+		switch(m_socialPlatformMode) {
+			case SocialPlatformMode.ALL: {
+				Toggle(m_fbItem, !isUnderage);
+				Toggle(m_weiboItem, !isUnderage);
+				Toggle(m_appleItem, true);  // Apple is allowed for underaged players
+			} break;
 
-		Toggle(m_fbItem, socialPlatform == SocialUtils.EPlatform.Facebook && !isUnderage);
+			case SocialPlatformMode.ALL_SUPPORTED: {				
+				List<SocialUtils.EPlatform> supportedSocialPlatforms = SocialPlatformManager.SharedInstance.GetSupportedPlatformIds();				
+				Toggle(m_fbItem, supportedSocialPlatforms.Contains(SocialUtils.EPlatform.Facebook) && !isUnderage);
+				Toggle(m_weiboItem, supportedSocialPlatforms.Contains(SocialUtils.EPlatform.Weibo) && !isUnderage);
+				Toggle(m_appleItem, supportedSocialPlatforms.Contains(SocialUtils.EPlatform.SIWA) && !isUnderage);	
+			} break;
+
+			case SocialPlatformMode.LOGGED_IN: {
+				SocialUtils.EPlatform loggedInSocialPlatform = SocialPlatformManager.SharedInstance.CurrentPlatform_GetId();
+
+				Toggle(m_fbItem, loggedInSocialPlatform == SocialUtils.EPlatform.Facebook && !isUnderage);
+				Toggle(m_weiboItem, loggedInSocialPlatform == SocialUtils.EPlatform.Weibo && !isUnderage);
+				Toggle(m_appleItem, loggedInSocialPlatform == SocialUtils.EPlatform.SIWA && !isUnderage);	
+			} break;
+		}
+		
+
+		// Global items
+		Toggle(m_webItem, !isUnderage);
+
+		// Western items
 		Toggle(m_twitterItem, !isChina && !isUnderage);
 		Toggle(m_instagramItem, !isChina && !isUnderage);
 
-		Toggle(m_webItem, !isUnderage);
-
-		Toggle(m_weiboItem, socialPlatform == SocialUtils.EPlatform.Weibo && !isUnderage);
-		Toggle(m_weChatItem, isChina && !string.IsNullOrEmpty(GameSettings.WE_CHAT_URL) && !isUnderage);	// Hide it while the URL is not defined
-	}		
+		// China items
+		Toggle(m_weChatItem, isChina && !string.IsNullOrEmpty(GameSettings.WE_CHAT_URL) && !isUnderage);    // Hide it while the URL is not defined
+	}
 
 	/// <summary>
 	/// Toggle target object on/off if valid.

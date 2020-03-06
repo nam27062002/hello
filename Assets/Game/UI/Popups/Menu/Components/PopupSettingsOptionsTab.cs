@@ -32,8 +32,9 @@ public class PopupSettingsOptionsTab : MonoBehaviour {
 	[SerializeField] private TextMeshProUGUI m_graphicsQualityCurrentValueText = null;
 	[SerializeField] private GameObject[] m_graphicsQualitySeparators = new GameObject[4];
 	[Space]
-	[SerializeField] private GameObject m_bloodToggle;
-	[SerializeField] private GameObject m_gameCenterForChildrenGroup = null;
+	[SerializeField] private GameObject m_adultGroupRoot = null;
+	[SerializeField] private GameObject m_childrenGroupRoot_iOS = null;
+	[SerializeField] private GameObject m_childrenGroupRoot_Android = null;
 
 
 	private int m_graphicsMaxLevel = 4;
@@ -46,21 +47,29 @@ public class PopupSettingsOptionsTab : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	public void Awake() {
-    
 		// Toggle some components on/off if Age Restriction is enabled
 		bool ageRestriction = GDPRManager.SharedInstance.IsAgeRestrictionEnabled();
-		if(m_bloodToggle != null) {
-			m_bloodToggle.SetActive(!ageRestriction);
+
+		if(m_adultGroupRoot != null) {
+			m_adultGroupRoot.SetActive(!ageRestriction);
 		}
 
-		if(m_gameCenterForChildrenGroup != null) {
+		if(m_childrenGroupRoot_iOS != null) {
 #if UNITY_IOS
-			m_gameCenterForChildrenGroup.SetActive(ageRestriction);
+			m_childrenGroupRoot_iOS.SetActive(ageRestriction);
 #else
-			m_gameCenterForChildrenGroup.SetActive(false);
+			m_childrenGroupRoot_iOS.SetActive(false);
 #endif
 		}
-    }
+
+		if(m_childrenGroupRoot_Android != null) {
+#if UNITY_ANDROID
+			m_childrenGroupRoot_Android.SetActive(ageRestriction);
+#else
+			m_childrenGroupRoot_Android.SetActive(false);
+#endif
+		}
+	}
 
 
 	/// <summary>

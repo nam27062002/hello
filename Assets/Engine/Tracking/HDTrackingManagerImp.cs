@@ -949,7 +949,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
         if (TrackingPersistenceSystem != null && !TrackingPersistenceSystem.SocialAuthSent) {
             Action<SocialUtils.ProfileInfo> onDone = delegate (SocialUtils.ProfileInfo info) {
                 if (info != null) {
-                    string provider = SocialPlatformManager.SharedInstance.GetPlatformName();
+                    string provider = SocialPlatformManager.SharedInstance.CurrentPlatform_GetName();
                     string gender = info.Gender;
                     int birthday = info.YearOfBirth;
                     TrackingPersistenceSystem.SocialAuthSent = true;
@@ -957,7 +957,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
                 }
             };
 
-            SocialPlatformManager.SharedInstance.GetProfileInfo(onDone);
+            SocialPlatformManager.SharedInstance.CurrentPlatform_GetProfileInfo(onDone);
         }
     }
 

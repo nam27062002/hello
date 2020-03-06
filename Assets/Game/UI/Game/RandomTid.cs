@@ -16,14 +16,39 @@ public class RandomTid : MonoBehaviour {
 
     private List<string> m_tidsEnabled;
 
-	public void OnEnable()
+    private string m_PlatformName = null;
+
+    /// <summary>
+    /// Returns the name of the social platform. If several platforms are supported then only the name of the first supported platform is returned.
+    /// TODO: We should create a specific TID containing all platforms supported
+    /// </summary>
+    private string GetPlatformName()
+    {
+        if (string.IsNullOrEmpty(m_PlatformName))
+        {
+            SocialPlatformManager manager = SocialPlatformManager.SharedInstance;
+            if (manager.GetIsEnabled())
+            {
+                List<SocialUtils.EPlatform> platformIds = manager.GetSupportedPlatformIds();
+                if (platformIds.Count > 0)
+                {
+                    m_PlatformName = manager.GetPlatformName(platformIds[0]);
+                }
+            }
+        }
+
+        return m_PlatformName;
+    }
+
+    public void OnEnable()
 	{
 		if ( m_tids.Count > 0 )
 		{
             List<string> eligibleTids = new List<string>();
 
             // Tids are filtered out since some values in m_tids might not be eligible
-            bool socialIsEnabled = SocialPlatformManager.SharedInstance.GetIsEnabled();
+            string platformName = GetPlatformName();
+            bool socialIsEnabled = SocialPlatformManager.SharedInstance.GetIsEnabled() && !string.IsNullOrEmpty(platformName);
             int count = m_tids.Count;
             for (int i = 0; i < count; i++)
             {
@@ -39,7 +64,7 @@ public class RandomTid : MonoBehaviour {
             // Social tids need the social platform to be set as a parameter
             if (m_socialTids.IndexOf(newTid) > -1)
             {
-                parameters = new string[] { SocialPlatformManager.SharedInstance.GetPlatformName() };
+                parameters = new string[] { platformName };
             }
 
             GetComponent<Localizer>().Localize( newTid, parameters );
