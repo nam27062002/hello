@@ -66,157 +66,334 @@ public class SocialPlatformManager : MonoBehaviour
 
 	public void OnSocialPlatformLogin()
 	{
-		Messenger.Broadcast<bool>(MessengerEvents.SOCIAL_LOGGED, IsLoggedIn());        
+        Log("OnSocialPlatformLogin CurrentPlatform: " + CurrentPlatform_GetId() + " isLoggedIn: " + CurrentPlatform_IsLoggedIn());
+        Messenger.Broadcast<bool>(MessengerEvents.SOCIAL_LOGGED, CurrentPlatform_IsLoggedIn());        
     }
 
     public void OnSocialPlatformLoginFailed()
 	{
-		Messenger.Broadcast<bool>(MessengerEvents.SOCIAL_LOGGED, IsLoggedIn());        
+		Messenger.Broadcast<bool>(MessengerEvents.SOCIAL_LOGGED, CurrentPlatform_IsLoggedIn());        
     }
 
     public void OnSocialPlatformLogOut()
 	{
-		Messenger.Broadcast<bool>(MessengerEvents.SOCIAL_LOGGED, IsLoggedIn());
+		SocialPlatformManager.SharedInstance.OnLogout();
+		Messenger.Broadcast<bool>(MessengerEvents.SOCIAL_LOGGED, CurrentPlatform_IsLoggedIn());
 	}
     //////////////////////////////////////////////////////////////////////////    
-	    
+
     private bool IsInited { get; set; }    
 
-    private SocialUtils m_socialUtils;
+	private Dictionary<SocialUtils.EPlatform, SocialUtils> m_platforms = new Dictionary<SocialUtils.EPlatform, SocialUtils>();
+	private List<SocialUtils.EPlatform> m_supportedPlatformIds = new List<SocialUtils.EPlatform> ();
 
-    public void Init(bool useAgeProtection)
+	private Action m_onSocialPlatformLogout;
+
+	public void SetOnSocialPlatformLogout(Action value)
+	{
+		m_onSocialPlatformLogout = value;
+	}
+
+	public void Init(bool useAgeProtection)
 	{
         if (!IsInited)
         {            
             IsInited = true;
-            
+			m_platforms.Clear();
+			m_supportedPlatformIds.Clear();
+
             if (useAgeProtection)
             {
-                m_socialUtils = new SocialUtilsDummy(false, false);
+				m_currentPlatformId = SocialUtils.EPlatform.None;
+				AddSocialPlatform(SocialUtils.EPlatform.None);
             }
             else
-            {
-                SocialUtils.EPlatform socialPlatform = SocialUtils.EPlatform.Facebook;
+            {				
+				SocialUtils.EPlatform platformId = SocialUtils.EPlatform.Facebook;
 
-                // In iOS we need to check the user's country to decide the social platform: either Facebook or Weibo (only in China)
+				string socialPlatformKey = PersistenceFacade.instance.LocalDriver.Prefs_SocialPlatformKey;
+
+            	// In iOS we need to check the user's country to decide the social platform: either Facebook or Weibo (only in China)
 #if UNITY_IOS
-                // Checks if the user has already logged in a social platform, if so then that's the platform that the user will keep seeing
-                string socialPlatformKey = PersistenceFacade.instance.LocalDriver.Prefs_SocialPlatformKey;
-                socialPlatform = SocialUtils.KeyToEPlatform(socialPlatformKey);
+            	// Checks if the user has already logged in a social platform, if so then that's the platform that the user will keep seeing
+            	platformId = SocialUtils.KeyToEPlatform(socialPlatformKey);                
 
-                // If no social platform has ever been used then we decide which one to show based on the country
-                if (socialPlatform == SocialUtils.EPlatform.None)
-                {                
+            	// If no social platform has ever been used then we decide which one to show based on the country
+				if (platformId == SocialUtils.EPlatform.None)
+            	{                
                     // Weibo is shown only in China
                     if (PlatformUtils.Instance.IsChina())
                     {
-                        socialPlatform = SocialUtils.EPlatform.Weibo;
+						platformId = SocialUtils.EPlatform.Weibo;
                     }
                     else
                     {
-                        socialPlatform = SocialUtils.EPlatform.Facebook;
+						platformId = SocialUtils.EPlatform.Facebook;
                     }
-                }
+            	}
 #endif                
-                switch (socialPlatform)
+				if (platformId == SocialUtils.EPlatform.Facebook && !FacebookManager.SharedInstance.CanUseFBFeatures ()) 
+				{
+					platformId = SocialUtils.EPlatform.None;
+				}
+
+				AddSocialPlatform(platformId);
+
+#if UNITY_IOS
+                if (GameSessionManager.SharedInstance.SIWA_IsPlatformSupported())
                 {
-                    case SocialUtils.EPlatform.Facebook:
-                        if (FacebookManager.SharedInstance.CanUseFBFeatures())
-                        {
-                            m_socialUtils = new SocialUtilsFb();
-                        }
-                        else
-                        {
-                            m_socialUtils = new SocialUtilsDummy(false, false);
-                        }
-                        break;
-
-                    case SocialUtils.EPlatform.Weibo:
-                        m_socialUtils = new SocialUtilsWeibo();
-                        break;
-                }                
-            }
-
-            m_socialUtils.Init(this);            
+                    AddSocialPlatform(SocialUtils.EPlatform.SIWA);
+                }
+#endif
+                // Retrieves the current social platform: Checks that the user was logged in when she quit and if so then the
+                // latest social platform key is retrieved
+                if (PersistencePrefs.Social_WasLoggedInWhenQuit && IsPlatformKeySupported(socialPlatformKey)) 
+				{
+					m_currentPlatformId = SocialUtils.KeyToEPlatform(socialPlatformKey);
+				} 
+				else 
+				{
+					m_currentPlatformId = SocialUtils.EPlatform.None;
+				}
+            }          
         }        
-    }    
+    }   
+
+	private void AddSocialPlatform(SocialUtils.EPlatform platformId)
+	{
+		SocialUtils socialPlatform;
+		switch (platformId) 
+		{
+			case SocialUtils.EPlatform.Facebook:
+				socialPlatform = new SocialUtilsFb();
+				break;
+
+			case SocialUtils.EPlatform.Weibo:
+				socialPlatform = new SocialUtilsWeibo();
+				break;
+
+            case SocialUtils.EPlatform.SIWA:
+                socialPlatform = new SocialUtilsSIWA();
+                break;
+
+            default:
+				socialPlatform = new SocialUtilsDummy (false, false);
+				break;
+		}
+
+		socialPlatform.Init(this);  
+		if (m_platforms.ContainsKey(platformId))
+		{
+			m_platforms[platformId] = socialPlatform;
+		}
+		else if (socialPlatform.GetIsEnabled())
+		{
+			m_platforms.Add(platformId, socialPlatform);
+			m_supportedPlatformIds.Add(platformId);
+		}	
+	}
     
     public void Reset()
     {
         IsInited = false;
     }    
+		
+	public List<SocialUtils.EPlatform> GetSupportedPlatformIds()
+	{
+		return m_supportedPlatformIds;
+	}
 
-    public SocialUtils.EPlatform GetPlatform()
-    {
-        return (m_socialUtils == null) ? SocialUtils.EPlatform.None : m_socialUtils.GetPlatform();
-    }
+	public bool IsPlatformIdSupported(SocialUtils.EPlatform platformId)
+	{
+		SocialUtils platform = GetPlatform(platformId);
+		return platform != null && platform.GetIsEnabled();
+	}
 
-    public string GetPlatformKey()
-    {
-        return SocialUtils.EPlatformToKey(GetPlatform());
-    }
+	public bool IsPlatformKeySupported(string platformKey)
+	{
+		return IsPlatformIdSupported(SocialUtils.KeyToEPlatform(platformKey));
+	}
+
+	public SocialUtils GetPlatform(SocialUtils.EPlatform platformId)
+	{
+		return (m_platforms.ContainsKey(platformId)) ? m_platforms[platformId] : null;
+	}
 
     public bool GetIsEnabled()
     {
-        return (IsInited && m_socialUtils.GetIsEnabled());
+		// If there's at least one platform enabled then the manager is enabled
+		foreach (KeyValuePair<SocialUtils.EPlatform, SocialUtils> pair in m_platforms) 
+		{
+			if (pair.Value.GetIsEnabled())
+				return true;
+		}
+
+		return false;
     }
 
-    public string GetPlatformName()
+	public string GetPlatformName(SocialUtils.EPlatform platformId)
 	{
-        string tid = m_socialUtils.GetPlatformNameTID();
-        return LocalizationManager.SharedInstance.Localize(tid);     
-	}
+		string returnValue = null;
+		SocialUtils platform = GetPlatform(platformId);
+		if (platform != null) 
+		{
+			string tid = platform.GetPlatformNameTID();
+			returnValue = LocalizationManager.SharedInstance.Localize(tid);  
+		}
 
-	public string GetToken()
-	{
-        return m_socialUtils.GetAccessToken();
-    }
-
-	public string GetUserID()
-	{
-        return m_socialUtils.GetSocialID();        
+		return returnValue;
 	}	
 
-    public string GetUserName()
+	public string GetUserID(SocialUtils.EPlatform platformId)
+	{
+		SocialUtils platform = GetPlatform(platformId);
+		return (platform != null) ? platform.GetSocialID() : null;
+	}	
+
+	public string GetUserName(SocialUtils.EPlatform platformId)
+	{
+		SocialUtils platform = GetPlatform(platformId);
+		return (platform != null) ? platform.GetUserName() : null;
+	}
+
+	/// <summary>
+	/// Returns user's profile information.
+	/// </summary>
+	/// <param name=""></param>
+	public void GetProfileInfo(SocialUtils.EPlatform platformId, Action<SocialUtils.ProfileInfo> onDone)
+	{
+		SocialUtils platform = GetPlatform(m_currentPlatformId);
+		if (platform == null) 
+		{
+			if (onDone != null) 
+			{
+				onDone (null);
+			}
+		}
+		else
+		{
+			platform.GetProfileInfoFromPlatform (onDone);
+		}
+	}
+
+	/// <summary>
+	/// Returns the user's first name and her picture.
+	/// </summary>
+	/// <param name="onDone"></param>
+	public void GetSimpleProfileInfo(SocialUtils.EPlatform platformId, Action<string, Texture2D> onDone)
+	{
+		SocialUtils platform = GetPlatform(platformId);
+		if (platform == null) 
+		{
+			if (onDone != null) 
+			{
+				onDone(null, null);
+			}
+		} 
+		else 
+		{
+			platform.Profile_GetSimpleInfo(onDone);
+		}
+	}
+		
+	public bool NeedsProfileInfoToBeUpdated(SocialUtils.EPlatform platformId)
+	{
+		SocialUtils platform = GetPlatform(platformId);
+		return (platform == null) ? false : platform.Profile_NeedsInfoToBeUpdated();
+	}
+
+	public bool NeedsSocialIdToBeUpdated(SocialUtils.EPlatform platformId)
     {
-        return m_socialUtils.GetUserName();
+		SocialUtils platform = GetPlatform (platformId);
+		return (platform == null) ? false : platform.Profile_NeedsSocialIdToBeUpdated();
     }
 
-    /// <summary>
-    /// Returns user's profile information.
-    /// </summary>
-    /// <param name=""></param>
-    public void GetProfileInfo(Action<SocialUtils.ProfileInfo> onDone)
+	public void InvalidateCachedSocialInfo(SocialUtils.EPlatform platformId)
     {
-        m_socialUtils.GetProfileInfoFromPlatform(onDone);
-    }
-
-    /// <summary>
-    /// Returns the user's first name and her picture.
-    /// </summary>
-    /// <param name="onDone"></param>
-    public void GetSimpleProfileInfo(Action<string, Texture2D> onDone)
-    {
-        m_socialUtils.Profile_GetSimpleInfo(onDone);        
-    }
-
-    public bool NeedsProfileInfoToBeUpdated()
-    {
-        return m_socialUtils.Profile_NeedsInfoToBeUpdated();
-    }    
-
-    public bool NeedsSocialIdToBeUpdated()
-    {
-        return m_socialUtils.Profile_NeedsSocialIdToBeUpdated();
-    }
-
-    public void InvalidateCachedSocialInfo()
-    {
-        if (m_socialUtils != null && m_socialUtils.Cache != null)
+		SocialUtils platform = GetPlatform(platformId);
+		if (platform != null && platform.Cache != null)
         {
-            m_socialUtils.Cache.Invalidate();
+            platform.Cache.Invalidate();
         }
     }
+
+	#region current_platform
+	private SocialUtils.EPlatform m_currentPlatformId;
+
+	public SocialUtils.EPlatform CurrentPlatform_GetId()
+	{
+		return m_currentPlatformId;
+	}
+
+	public string CurrentPlatform_GetKey()
+	{
+		return SocialUtils.EPlatformToKey(CurrentPlatform_GetId());
+	}
+
+	public string CurrentPlatform_GetName()
+	{
+		return GetPlatformName(m_currentPlatformId);
+	}
+   
+	public string CurrentPlatform_GetUserID()
+	{
+		return GetUserID(m_currentPlatformId);
+	}	
+
+	public string CurrentPlatform_GetUserName()
+	{
+		return GetUserName(m_currentPlatformId);
+	}
+
+	/// <summary>
+	/// Returns user's profile information.
+	/// </summary>
+	/// <param name=""></param>
+	public void CurrentPlatform_GetProfileInfo(Action<SocialUtils.ProfileInfo> onDone)
+	{
+		GetProfileInfo(m_currentPlatformId, onDone);
+	}
+
+	/// <summary>
+	/// Returns the user's first name and her picture.
+	/// </summary>
+	/// <param name="onDone"></param>
+	public void CurrentPlatform_GetSimpleProfileInfo(Action<string, Texture2D> onDone)
+	{
+		GetSimpleProfileInfo(m_currentPlatformId, onDone);      
+	}
+
+	public bool CurrentPlatform_NeedsProfileInfoToBeUpdated()
+	{
+		return NeedsProfileInfoToBeUpdated(m_currentPlatformId);
+	} 
+
+	public bool CurrentPlatform_NeedsSocialIdToBeUpdated()
+	{
+		return NeedsSocialIdToBeUpdated(m_currentPlatformId);
+	}
+
+	public void CurrentPlatform_InvalidateCachedSocialInfo()
+	{
+		InvalidateCachedSocialInfo(m_currentPlatformId);
+	}
+
+	public bool CurrentPlatform_IsLoggedIn()
+	{
+		return IsLoggedIn(m_currentPlatformId);
+	}
+
+	public bool CurrentPlatform_IsLogInTimeoutEnabled()
+	{
+		return IsLogInTimeoutEnabled(m_currentPlatformId);
+	}
+
+	public void CurrentPlatform_OnLogInTimeout()
+	{
+		OnLogInTimeout(m_currentPlatformId);
+	}
+	#endregion
+
     //////////////////////////////////////////////////////////////////////////
 
     #region login    
@@ -248,41 +425,65 @@ public class SocialPlatformManager : MonoBehaviour
 
     private string Login_MergePersistence { get; set;  }
     
-    public bool IsLoggedIn()
+	public bool IsLoggedIn(SocialUtils.EPlatform platformId)
     {
-        if (m_socialUtils != null)
-            return m_socialUtils.IsLoggedIn();
-
-        return false;
+		SocialUtils platform = GetPlatform(platformId);
+		return platform != null && platform.IsLoggedIn();
     }
 
-	public bool IsLogInTimeoutEnabled()
+	public bool IsLogInTimeoutEnabled(SocialUtils.EPlatform platformId)
 	{
-        if (m_socialUtils != null)
-		    return m_socialUtils.IsLogInTimeoutEnabled();
-
-        return false;
+		SocialUtils platform = GetPlatform(platformId);
+		return platform != null && platform.IsLogInTimeoutEnabled();
 	}
 
-	public void OnLogInTimeout()
+	public void OnLogInTimeout(SocialUtils.EPlatform platformId)
 	{
-        if (m_socialUtils != null)
-		    m_socialUtils.OnLogInTimeout();
+		SocialUtils platform = GetPlatform(platformId);
+		if (platform != null)
+			platform.OnLogInTimeout();
 	}
 
     public void Logout()
-    {
-		GameSessionManager.SharedInstance.LogOutFromSocialPlatform();
+    {		
+        SocialUtils.EPlatform platformId = CurrentPlatform_GetId();
+        Log("Logout from " + platformId + " isLoggedIn = " + IsLoggedIn(platformId));
+        if (IsLoggedIn(platformId))
+        {
+            SocialUtils platform = GetPlatform(platformId);
+            if (platform != null)
+                platform.Logout();            
+        }
     }
 
-    public void Login(bool isSilent, bool isAppInit, Action<ELoginResult, string> onDone)
+	private void OnLogout()
+	{
+		if (m_onSocialPlatformLogout != null)
+			m_onSocialPlatformLogout();
+	}
+
+	public void Login(SocialUtils.EPlatform platformId, bool isSilent, bool isAppInit, Action<ELoginResult, string> onDone)
     {
+		if (!IsPlatformIdSupported(platformId))
+		{
+			LogError("Social login requested to an unsupported platform: " + platformId);
+
+			if (onDone != null)
+			{
+				onDone(ELoginResult.Error, null);
+			}
+
+			return;
+		}
+
+		m_currentPlatformId = platformId;
+
         // Forced to false because when Calety is called with true some flow can be performed that doesn't trigger any callback which would lead
         // this login flow to stay waiting forever
         isAppInit = false;
 
         string socialId = PersistenceFacade.instance.LocalDriver.Prefs_SocialId;        
-        Log("LOGGING IN... isSilent = " + isSilent + " isAppInit = " + isAppInit + " alreadyLoggedIn = " + IsLoggedIn() + " SocialId = " + socialId);
+        Log("LOGGING IN... currentPlatform = " + m_currentPlatformId + " isSilent = " + isSilent + " isAppInit = " + isAppInit + " alreadyLoggedIn = " + CurrentPlatform_IsLoggedIn() + " SocialId = " + socialId);
 
         Login_Discard();
 
@@ -302,7 +503,7 @@ public class SocialPlatformManager : MonoBehaviour
             neverLoggedIn = true;
 #endif
 
-            // If the user has never logged in then we should just marked as not loggedIn
+            // If the user has never logged in then we should just mark it as not loggedIn
             if (neverLoggedIn)
             {
                 Login_OnLoggedIn(false);
@@ -311,7 +512,7 @@ public class SocialPlatformManager : MonoBehaviour
         else
         {
             // We need to make sure that a previous incomplete merge is reseted. When a user decides to keep her local account when prompted to merge with 
-            // a different account that has also used the same social account then the user is logges out automatically and we don't want to bother the user
+            // a different account that has also used the same social account then the user is logged out automatically and we don't want to bother the user
             // with the same merge popup every time she loads the game. The remove account id that was declined is stored in order to avoid that popup from being shown 
             // again. We need to reset that variable because the user is expressing explicitly her intention to log in again
             GameSessionManager.SharedInstance.ResetSocialPlatformCancelState();
@@ -320,7 +521,7 @@ public class SocialPlatformManager : MonoBehaviour
         if (!Login_IsLogInReady)
         {
             Messenger.AddListener<bool>(MessengerEvents.SOCIAL_LOGGED, Login_OnLoggedInHelper);
-            m_socialUtils.Login(isAppInit);
+			GetPlatform(m_currentPlatformId).Login(isAppInit);
         }
 
         /*
@@ -447,7 +648,7 @@ public class SocialPlatformManager : MonoBehaviour
 
     private void Login_Update()
     {
-        bool isLoggedIn = IsLoggedIn();
+        bool isLoggedIn = CurrentPlatform_IsLoggedIn();
         if (Login_IsLogInReady && (Login_MergeState != ELoginMergeState.Waiting || !isLoggedIn))
         {
             if (isLoggedIn)
@@ -484,7 +685,8 @@ public class SocialPlatformManager : MonoBehaviour
 
     private void Login_PerformDone(ELoginResult result)
     {        
-        Log("(LOGGING) DONE! " + result);
+        Log("(LOGGING) DONE! " + result + " isLoggedInReady = " + Login_IsLogInReady + " Login_MergeState = " + Login_MergeState + " isLoggedIn = " + CurrentPlatform_IsLoggedIn() +
+            " currentPlatform = " + CurrentPlatform_GetId());
 
         if (Login_OnDone != null)
         {
@@ -513,10 +715,11 @@ public class SocialPlatformManager : MonoBehaviour
             Login_Update();
         }
 
-        if (m_socialUtils != null)
-        {
-            m_socialUtils.Update();
-        }
+		SocialUtils platform = GetPlatform(CurrentPlatform_GetId());
+		if (platform != null) 
+		{
+			platform.Update ();
+		}
     }
 
     private const string LOG_CHANNEL = "[Social] ";

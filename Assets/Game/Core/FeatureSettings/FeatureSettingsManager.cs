@@ -1518,11 +1518,21 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
 #if UNITY_EDITOR
         return true;
 #elif UNITY_IOS
-        return true;
+        return false;	// [AOC] Disabling for iOS as of 2.18, to make sure we are compliant with SIWA
 #else
         return true;
 #endif
     }
+
+	public bool IsRestoreIAPEnabled() {
+#if UNITY_EDITOR
+		return true;
+#elif UNITY_IOS
+        return true;
+#else
+        return false;	// We don't restore IAPs in Google Play store
+#endif
+	}
 
 	public static bool IsDailyRewardsEnabled() {
 		// Feel free to disable it

@@ -27,8 +27,7 @@ public class GlobalEventsNoActiveEventScreen : MonoBehaviour
         SetActive(m_socialInstagramButton, !isChina);
 
         // All the social stuff is hidden for kids
-        SocialUtils.EPlatform platform = SocialPlatformManager.SharedInstance.GetPlatform();
-        SetActive(m_socialRoot, platform != SocialUtils.EPlatform.None);
+        SetActive(m_socialRoot, SocialPlatformManager.SharedInstance.GetIsEnabled());
     }
 
     private void SetActive(GameObject go, bool value)

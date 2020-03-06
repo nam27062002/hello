@@ -68,7 +68,8 @@ public class PersistenceCloudDriver
     public PersistenceCloudDriver()
 	{
 		string dataName = PersistencePrefs.ActiveProfileName;        
-		Data = new PersistenceData(dataName);        
+		Data = new PersistenceData(dataName);      
+		SocialPlatformManager.SharedInstance.SetOnSocialPlatformLogout(OnLogout);
 		Reset();
 	}
 
@@ -97,17 +98,20 @@ public class PersistenceCloudDriver
 
     public void Logout()
     {
-        ExtendedLogout();
+        ExtendedLogout();		       
+    }   
 
-        PersistencePrefs.Social_WasLoggedInWhenQuit = false;
+	private void OnLogout()
+	{
+		PersistencePrefs.Social_WasLoggedInWhenQuit = false;
 
-        if (State == EState.LoggedIn)
-        {
-            // Logs out
-            State = EState.NotLoggedIn;
-            IsInSync = false;
-        }
-    }        
+		if (State == EState.LoggedIn)
+		{
+			// Logs out
+			State = EState.NotLoggedIn;
+			IsInSync = false;
+		}
+	}
 
     protected virtual void ExtendedLogout()
     {
@@ -122,6 +126,7 @@ public class PersistenceCloudDriver
     #region syncer
     private bool Syncer_IsSilent { get; set; }
 	protected bool Syncer_IsAppInit { get; set; }
+	private SocialUtils.EPlatform Syncer_PlatformId { get; set; }
 	private SocialPlatformManager.ELoginResult Syncer_LogInSocialResult { get; set; }
 	private Action<PersistenceStates.ESyncResult, PersistenceStates.ESyncResultDetail> Syncer_OnSyncDone { get; set; }
 
@@ -188,13 +193,14 @@ public class PersistenceCloudDriver
 		Syncer_Step = ESyncSetp.None;
 		Syncer_IsAppInit = false;
 		Syncer_IsSilent = false;
+		Syncer_PlatformId = SocialUtils.EPlatform.None;
 		Syncer_OnSyncDone = null;
 		Syncer_LogInSocialResult = SocialPlatformManager.ELoginResult.Error;
         Syncer_NeedsToShowCloudOverridenPopup = false;
         Syncer_Timer = 0f;
     }
 
-	public void Sync(bool isSilent, bool isAppInit, Action<PersistenceStates.ESyncResult, PersistenceStates.ESyncResultDetail> onDone)
+	public void Sync(SocialUtils.EPlatform platformId, bool isSilent, bool isAppInit, Action<PersistenceStates.ESyncResult, PersistenceStates.ESyncResultDetail> onDone)
 	{        
         PersistenceFacade.Log("(SYNC) CLOUD STARTED...");
 
@@ -202,6 +208,7 @@ public class PersistenceCloudDriver
 		Upload_IsAllowed = false;
 
 		Syncer_OnSyncDone = onDone;
+		Syncer_PlatformId = platformId;
 		Syncer_IsSilent = isSilent;
 		Syncer_IsAppInit = isAppInit;
 		State = EState.Syncing;
@@ -328,7 +335,7 @@ public class PersistenceCloudDriver
                     Syncer_PerformDone(PersistenceStates.ESyncResult.ErrorLogging, PersistenceStates.ESyncResultDetail.Cancelled);
                 };
 
-                PersistenceFacade.Popup_OpenMergeWithADifferentAccount(onConfirm, onCancel);
+                PersistenceFacade.Popup_OpenMergeWithADifferentAccount(Syncer_PlatformId, onConfirm, onCancel);
             }
             break;            
 
@@ -376,7 +383,7 @@ public class PersistenceCloudDriver
                 Syncer_ProcessConflictState(PersistenceStates.EConflictState.UseLocal);
             };
 
-            PersistenceFacade.Popup_OpenCloudCorrupted(onContinue, onOverride);
+            PersistenceFacade.Popup_OpenCloudCorrupted(Syncer_PlatformId, onContinue, onOverride);
         }
         else if (localState == PersistenceStates.ELoadState.Corrupted && cloudState == PersistenceStates.ELoadState.OK)
         {            
@@ -434,12 +441,12 @@ public class PersistenceCloudDriver
         if (localState == PersistenceStates.ELoadState.OK && cloudState == PersistenceStates.ELoadState.OK)
         {
             // Chooses between local and cloud
-            PersistenceFacade.Popup_OpenMergeConflict(Syncer_OnMergeConflictUseLocal, Syncer_OnMergeConflictUseCloud);
+            PersistenceFacade.Popup_OpenMergeConflict(Syncer_PlatformId, Syncer_OnMergeConflictUseLocal, Syncer_OnMergeConflictUseCloud);
         }
         else if (localState == PersistenceStates.ELoadState.OK && cloudState == PersistenceStates.ELoadState.Corrupted)
         {
             // Notifies cloud is not an option so confirm to keep playing local
-            PersistenceFacade.Popup_OpenMergeConflictCloudCorrupted(Syncer_OnMergeConflictUseLocal);
+            PersistenceFacade.Popup_OpenMergeConflictCloudCorrupted(Syncer_PlatformId, Syncer_OnMergeConflictUseLocal);
         }
         else if (localState == PersistenceStates.ELoadState.Corrupted && cloudState == PersistenceStates.ELoadState.OK)
         {
@@ -447,7 +454,7 @@ public class PersistenceCloudDriver
 
             // This case shouldn't happen because there are previous checks that should avoid it. Just in case a generic sync error popup is shown
             // and the game is reloaded to make it follow a know flow.             
-            PersistenceFacade.Popup_OpenMergeConflictLocalCorrupted(onError);
+            PersistenceFacade.Popup_OpenMergeConflictLocalCorrupted(Syncer_PlatformId, onError);
         }
         else if (localState == PersistenceStates.ELoadState.Corrupted && cloudState == PersistenceStates.ELoadState.Corrupted)
         {
@@ -468,7 +475,7 @@ public class PersistenceCloudDriver
             // Neither local and cloud is an option so reset cloud
             // This case shouldn't happen because there are previous checks that should avoid it. Just in case a generic sync error popup is shown
             // and the game is reloaded to make it follow a known flow.             
-            PersistenceFacade.Popup_OpenMergeConflictBothCorrupted(onError);
+            PersistenceFacade.Popup_OpenMergeConflictBothCorrupted(Syncer_PlatformId, onError);
         }
         else
         {                    
@@ -518,7 +525,7 @@ public class PersistenceCloudDriver
         PersistencePrefs.Clear();
 
         // Cache is invalidated in order to make sure that the new account's information will be requested
-        SocialPlatformManager.SharedInstance.InvalidateCachedSocialInfo();
+        SocialPlatformManager.SharedInstance.CurrentPlatform_InvalidateCachedSocialInfo();
 
         Action onReset = delegate ()
         {
@@ -677,9 +684,12 @@ public class PersistenceCloudDriver
             SocialPlatformManager manager = SocialPlatformManager.SharedInstance;
             HDTrackingManager.Instance.Notify_SocialAuthentication();
 
-            string socialPlatformKey = manager.GetPlatformKey();
-            string socialId = manager.GetUserID();
-			LocalDriver.NotifyUserHasLoggedIn(socialPlatformKey, socialId, onUserLoggedIn);
+            string currentSocialPlatformKey = manager.CurrentPlatform_GetKey();
+            string socialId = manager.CurrentPlatform_GetUserID();
+
+            SocialUtils.EPlatform platformId = manager.CurrentPlatform_GetId();
+            bool saveSocialPlatform = platformId == SocialUtils.EPlatform.Facebook || platformId == SocialUtils.EPlatform.Weibo;                       
+			LocalDriver.NotifyUserHasLoggedIn(currentSocialPlatformKey, saveSocialPlatform, socialId, onUserLoggedIn);
 		} 
 		else
 		{
@@ -700,7 +710,7 @@ public class PersistenceCloudDriver
 		}
 		else
 		{
-			PersistenceFacade.Popups_OpenErrorConnection(onDone);
+			PersistenceFacade.Popups_OpenErrorConnection(Syncer_PlatformId, onDone);
 		}
 	}
 
@@ -752,7 +762,7 @@ public class PersistenceCloudDriver
 
 	protected virtual void Syncer_ExtendedLogInSocial(Action<SocialPlatformManager.ELoginResult, string> onDone)
     {
-        SocialPlatformManager.SharedInstance.Login(Syncer_IsSilent, Syncer_IsAppInit, onDone);        
+        SocialPlatformManager.SharedInstance.Login(Syncer_PlatformId, Syncer_IsSilent, Syncer_IsAppInit, onDone);        
     }
 
 	protected virtual void Syncer_ExtendedGetPersistence (Action<bool> onDone)
@@ -784,7 +794,8 @@ public class PersistenceCloudDriver
     {
         get
         {
-            return PersistencePrefs.IsCloudSaveEnabled;
+			//return PersistencePrefs.IsCloudSaveEnabled;
+			return true;	// As of 2.10, cloud save is always enabled (players no longer have the toggle to disable it)
         }
 
         set
@@ -868,12 +879,12 @@ public class PersistenceCloudDriver
 
 			// Checks for timeout after calling the social network so we don't depend on the social network, 
 			// in particular this approach lets us address HDK-1574 and HDK-2590          
-			if (SocialPlatformManager.SharedInstance.IsLogInTimeoutEnabled()) 
+			if (SocialPlatformManager.SharedInstance.CurrentPlatform_IsLogInTimeoutEnabled()) 
 			{				
 				Syncer_Timer -= Math.Min (UnityEngine.Time.deltaTime, UnityEngine.Time.maximumDeltaTime);
 				if (Syncer_Timer <= 0f) 
 				{
-					SocialPlatformManager.SharedInstance.OnLogInTimeout();
+					SocialPlatformManager.SharedInstance.CurrentPlatform_OnLogInTimeout();
 					Syncer_OnLogInSocialDone(SocialPlatformManager.ELoginResult.Error, null);
 				}					
 			}
