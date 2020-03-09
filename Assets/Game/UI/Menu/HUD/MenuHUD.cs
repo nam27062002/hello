@@ -115,7 +115,7 @@ public class MenuHUD : MonoBehaviour {
 	/// </summary>
 	public void GoToShopScreen() {
 		// Track and do it
-		HDTrackingManager.Instance.Notify_StoreVisited(InstanceManager.menuSceneController.currentScreen.ToString());
+		InstanceManager.menuSceneController.shopScreenController.trackingOrigin = InstanceManager.menuSceneController.currentScreen.ToString();
 		InstanceManager.menuSceneController.GoToScreen(MenuScreen.SHOP);
 	}
 

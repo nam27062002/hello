@@ -732,9 +732,11 @@ public class HDTrackingManagerImp : HDTrackingManager {
     }
 
 	// [AOC] DEPRECATED!!
+	/*
     public override void Notify_StoreSection( string section) {
         Track_ShopSection( section );
     }
+	*/
 
 	/// <summary>
 	/// Notifies that the player has stopped for X seconds while viewing the shop.
@@ -755,7 +757,27 @@ public class HDTrackingManagerImp : HDTrackingManager {
         Track_ShopItemView( id );
     }
 
-    public override void Notify_IAPStarted() {
+	/// <summary>
+	/// Notify the order of a given category in the store.
+	/// </summary>
+	/// <param name="_categorySku">Category sku.</param>
+	/// <param name="_order">Order, left to right.</param>
+	public override void Notify_StoreCategoryOrder(string _categorySku, int _order) {
+		Track_ShopCategoryOrder(_categorySku, _order);
+	}
+
+	/// <summary>
+	/// Notify when the player clicks on a shortcut in the shop.
+	/// </summary>
+	/// <param name="_shortcutID">The ID of the clicked shortcut.</param>
+	public override void Notify_StoreShortcutClick(string _shortcutID) {
+		Track_ShopShortcutClick(_shortcutID);
+	}
+
+	/// <summary>
+	/// 
+	/// </summary>
+	public override void Notify_IAPStarted() {
         // The app is paused when the iap popup is shown. According to BI session closed event shouldn't be sent when the app is paused to perform an iap and
         // session started event shouldn't be sent when the app is resumed once the iap is completed
         Session_IsNotifyOnPauseEnabled = false;
@@ -1981,7 +2003,9 @@ public class HDTrackingManagerImp : HDTrackingManager {
         }
         m_eventQueue.Enqueue(e);
     }
-    
+
+	// [AOC] DEPRECATED
+	/*
     private void Track_ShopSection( string section ){        
         Log("Track_StoreSection section = " + section );
         
@@ -1994,6 +2018,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
         }
         m_eventQueue.Enqueue(e);
     }
+	*/
 
 	/// <summary>
 	/// Notifies that the player has stopped for X seconds while viewing the shop.
@@ -2027,6 +2052,10 @@ public class HDTrackingManagerImp : HDTrackingManager {
 		m_eventQueue.Enqueue(e);
 	}
 
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <param name="id"></param>
     private void Track_ShopItemView( string id ){        
         Log("Track_StoreItemView itemID = " + id );        
 
@@ -2041,7 +2070,35 @@ public class HDTrackingManagerImp : HDTrackingManager {
         m_eventQueue.Enqueue(e);
     }
 
-    private void Track_Funnel(string _event, string _step, int _stepDuration, int _totalDuration, bool _fistLoad) {        
+	/// <summary>
+	/// Notify the order of a given category in the store.
+	/// </summary>
+	/// <param name="_categorySku">Category sku.</param>
+	/// <param name="_order">Order, left to right.</param>
+	private void Track_ShopCategoryOrder(string _categorySku, int _order) {
+		Log("Track_ShopCategoryOrder: _categorySku = " + _categorySku + ", _order = " + _order);
+
+		HDTrackingEvent e = new HDTrackingEvent("custom.shop.order");
+		{
+			Track_AddParamString(e, TRACK_PARAM_SECTION, _categorySku);
+			Track_AddParamInt(e, TRACK_PARAM_POSITION, _order);
+			Track_AddParamPlayerProgress(e);
+			Track_AddParamPlayerSC(e);
+			Track_AddParamPlayerPC(e);
+			Track_AddParamShopEntranceID(e);
+		}
+		m_eventQueue.Enqueue(e);
+	}
+
+	/// <summary>
+	/// Notify when the player clicks on a shortcut in the shop.
+	/// </summary>
+	/// <param name="_shortcutID">The ID of the clicked shortcut.</param>
+	private void Track_ShopShortcutClick(string _shortcutID) {
+		// [AOC] TODO!!
+	}
+
+	private void Track_Funnel(string _event, string _step, int _stepDuration, int _totalDuration, bool _fistLoad) {        
         Log("Track_Funnel eventID = " + _event + " stepName = " + _step + " stepDuration = " + _stepDuration + " totalDuration = " + _totalDuration + " firstLoad = " + _fistLoad);        
 
         HDTrackingEvent e = new HDTrackingEvent(_event);
@@ -2835,7 +2892,8 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private const string TRACK_PARAM_SC_EARNED = "scEarned";
     private const string TRACK_PARAM_SCORE = "score";
     private const string TRACK_PARAM_SECTION = "section";
-    private const string TRACK_PARAM_SIZE = "size";
+	private const string TRACK_PARAM_POSITION = "position";
+	private const string TRACK_PARAM_SIZE = "size";
     private const string TRACK_PARAM_SOFT_CURRENCY = "softCurrency";
     private const string TRACK_PARAM_EVENT_SCORE_RUN = "scoreRun";
     private const string TRACK_PARAM_EVENT_SCORE_TOTAL = "scoreTotal";
@@ -2883,6 +2941,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
 	private const string TRACK_PARAM_SHOP_CENTRAL_ITEMS = "central_itemID";
 	private const string TRACK_PARAM_SHOP_ALL_SECTIONS = "all_section";
 	private const string TRACK_PARAM_SHOP_ALL_ITEMS = "all_itemID";
+	private const string TRACK_PARAM_SHOP_DESTINATION_SECTION = "destination_section";
 
 	private const string OFFER_TYPE_SHOP = "shop";
 

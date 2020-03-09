@@ -79,7 +79,8 @@ public class PopupShop : MonoBehaviour {
 	/// Initialize the popup with the requested mode. Should be called before opening the popup.
 	/// </summary>
 	/// <param name="_mode">Target mode.</param>
-	public void Init(PopupShop.Mode _mode, String _origin) {
+	public void Init(PopupShop.Mode _mode, string _origin) {
+		m_openOrigin = _origin;
         m_shopController.Init(_mode, OnPurchaseSuccessful);
 	}
 
@@ -117,15 +118,8 @@ public class PopupShop : MonoBehaviour {
 	/// The popup is about to be been opened.
 	/// </summary>
 	public void OnOpenPreAnimation() {
-		HDTrackingManager.Instance.Notify_StoreVisited(m_openOrigin);
-
-		/*// Track initial section
-		m_lastTrackedScreen = m_tabs.currentScreenIdx;
-		string tabName = m_tabs.GetScreen(m_tabs.currentScreenIdx).screenName;
-		HDTrackingManager.Instance.Notify_StoreSection(tabName);
-		m_trackScreenChange = true;
-		m_offersCount.text = OffersManager.activeOffers.Count.ToString();
-		*/
+		// Propagate to shop controller
+		m_shopController.OnShopEnter(m_openOrigin);
 
 		// Reset packs purchased list
 		m_packsPurchased.Clear();

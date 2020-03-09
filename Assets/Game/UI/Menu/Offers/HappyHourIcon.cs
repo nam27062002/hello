@@ -108,7 +108,7 @@ public class HappyHourIcon : MonoBehaviour {
     /// </summary>
     private void GoToShopScene()
     {
-		HDTrackingManager.Instance.Notify_StoreVisited("Happy_Hour_Icon");
+		InstanceManager.menuSceneController.shopScreenController.trackingOrigin = "Happy_Hour_Icon";
         InstanceManager.menuSceneController.GoToScreen(MenuScreen.SHOP);
     }
 

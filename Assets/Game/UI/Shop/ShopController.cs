@@ -78,9 +78,10 @@ public class ShopController : MonoBehaviour {
     private float m_scrollViewOffset;
     
     //Filtering categories
-    private string m_categoryToShow; 
+    private string m_categoryToShow;
 
-    // Cache the category containers and pills
+	// Cache the category containers and pills
+	private List<ShopCategory> m_activeCategories = new List<ShopCategory>();
     private List<CategoryController> m_categoryContainers;
     private List<IShopPill> m_pills;
 
@@ -129,6 +130,7 @@ public class ShopController : MonoBehaviour {
     private int timestamp, timestamp2;
 
 	// Tracking
+	private string m_trackingOrigin = "";	// Track from where the shop has been opened
 	private float m_trackingViewTimer = -1f;
 
     //------------------------------------------------------------------------//
@@ -238,8 +240,6 @@ public class ShopController : MonoBehaviour {
                     //CalculateCategoryBounds(m_shortcuts[0].categoryController.category);
                 }
 
-
-
                 shopReady = true;
 
                 // Benchmarking
@@ -320,7 +320,8 @@ public class ShopController : MonoBehaviour {
         m_categoriesContainer.transform.DestroyAllChildren(true);
         m_shortcutsContainer.transform.DestroyAllChildren(true);
 
-        // Clean categories
+		// Clean categories
+		m_activeCategories.Clear();
         m_categoryContainers.Clear();
 
         // Clean pills cache
@@ -378,7 +379,10 @@ public class ShopController : MonoBehaviour {
                     // Make sure there are offers in this category
                     if (category.offers.Count > 0)
                     {
+						// Store as active category
+						m_activeCategories.Add(category);
 
+						// Create shortcut if needed
                         CreateShortcut(category);
 
                         // Enqueue the categories so they are initialized one per frame
@@ -1020,9 +1024,44 @@ public class ShopController : MonoBehaviour {
 #endif
 	}
 
+	/// <summary>
+	/// Perform all required tracking upon entering the shop.
+	/// </summary>
+	private void NotifyShopEnterTracking() {
+		HDTrackingManager.Instance.Notify_StoreVisited(m_trackingOrigin);
+	}
+
+	/// <summary>
+	/// Tell the tracking manager about categories order.
+	/// </summary>
+	private void NotifyCategoryOrderTracking() {
+		// We already have the categories sorted, so just send an event for each
+		for(int i = 0; i < m_activeCategories.Count; ++i) {
+			HDTrackingManager.Instance.Notify_StoreCategoryOrder(m_activeCategories[i].def.sku, i);
+		}
+	}
+
+	/// <summary>
+	/// Tell the tracking manager when a shortcut is pressed.
+	/// </summary>
+	private void NotifyShortcutPressedTracking() {
+		// [AOC] TODO!!
+	}
+
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
+	/// <summary>
+	/// To be called whenever the shop is entered - either from the screen or the popup.
+	/// </summary>
+	/// <param name="_origin">Where do we come from? Tracking purposes.</param>
+	public void OnShopEnter(string _origin) {
+		// Tracking
+		m_trackingOrigin = _origin;
+		NotifyShopEnterTracking();
+		NotifyCategoryOrderTracking();
+	}
+
 	/// <summary>
 	/// A shortcut was pressed
 	/// </summary>

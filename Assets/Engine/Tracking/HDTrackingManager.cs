@@ -260,11 +260,14 @@ public class HDTrackingManager
     /// <param name="origin">Where the store is open.</param>
     public virtual void Notify_StoreVisited( string origin) {}
 
-    /// <summary>
-    /// Notifies the store section. When player visits a section of the store, HC, SC ...
-    /// </summary>
-    /// <param name="section">Section.</param>
-    public virtual void Notify_StoreSection( string section) {}
+	// [AOC] DEPRECATED
+	/*
+	/// <summary>
+	/// Notifies the store section. When player visits a section of the store, HC, SC ...
+	/// </summary>
+	/// <param name="section">Section.</param>
+	public virtual void Notify_StoreSection( string section) {}
+	*/
 
 	/// <summary>
 	/// Notifies that the player has stopped for X seconds while viewing the shop.
@@ -280,8 +283,23 @@ public class HDTrackingManager
     /// </summary>
     /// <param name="id">Identifier.</param>
     public virtual void Notify_StoreItemView( string id) {}
-    
 
+	/// <summary>
+	/// Notify the order of a given category in the store.
+	/// </summary>
+	/// <param name="_categorySku">Category sku.</param>
+	/// <param name="_order">Order, left to right.</param>
+	public virtual void Notify_StoreCategoryOrder(string _categorySku, int _order) { }
+
+	/// <summary>
+	/// Notify when the player clicks on a shortcut in the shop.
+	/// </summary>
+	/// <param name="_shortcutID">The ID of the clicked shortcut.</param>
+	public virtual void Notify_StoreShortcutClick(string _shortcutID) { }
+
+	/// <summary>
+	/// 
+	/// </summary>
     public virtual void Notify_IAPStarted() {}
 
     /// <summary>

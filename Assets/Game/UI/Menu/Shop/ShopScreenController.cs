@@ -40,6 +40,13 @@ public class ShopScreenController : MonoBehaviour {
         }
     }
 
+	private ShopController m_shopController = null;
+
+	// Tracking
+	private string m_trackingOrigin = "";
+	public string trackingOrigin {
+		set { m_trackingOrigin = value; } 
+	}
 
     //------------------------------------------------------------------------//
     // GENERIC METHODS														  //
@@ -48,6 +55,7 @@ public class ShopScreenController : MonoBehaviour {
     private void Awake()
     {
         animator.OnShowPreAnimation.AddListener(OnShowPreAnimation);
+		m_shopController = GetComponent<ShopController>();
     }
 
     private void OnDestroy()
@@ -82,7 +90,7 @@ public class ShopScreenController : MonoBehaviour {
         else
         {
             // Move the scroll to the begining of the shop.
-            GetComponent<ShopController>().ScrollToStart();
+            m_shopController.ScrollToStart();
         }
 
         // In case the shop popup is waiting to open, cancel it
@@ -105,9 +113,10 @@ public class ShopScreenController : MonoBehaviour {
     /// <param name="_animator">The animator that triggered the event.</param>
     public void OnShowPreAnimation(ShowHideAnimator _animator)
     {
-
         // Initialize the shop
-        GetComponent<ShopController>().Init(PopupShop.Mode.DEFAULT);
+        m_shopController.Init(PopupShop.Mode.DEFAULT);
 
+		// Propagate event
+		m_shopController.OnShopEnter(m_trackingOrigin);
     }
 }
