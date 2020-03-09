@@ -111,6 +111,15 @@ public class MenuHUD : MonoBehaviour {
 	}
 
 	/// <summary>
+	/// Go to the shop screen.
+	/// </summary>
+	public void GoToShopScreen() {
+		// Track and do it
+		HDTrackingManager.Instance.Notify_StoreVisited(InstanceManager.menuSceneController.currentScreen.ToString());
+		InstanceManager.menuSceneController.GoToScreen(MenuScreen.SHOP);
+	}
+
+	/// <summary>
 	/// Get the currency counter corresponding to a specific currency.
 	/// </summary>
 	/// <returns>The currency counter.</returns>

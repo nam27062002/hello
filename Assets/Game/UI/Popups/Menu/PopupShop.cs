@@ -117,7 +117,18 @@ public class PopupShop : MonoBehaviour {
 	/// The popup is about to be been opened.
 	/// </summary>
 	public void OnOpenPreAnimation() {
+		HDTrackingManager.Instance.Notify_StoreVisited(m_openOrigin);
 
+		/*// Track initial section
+		m_lastTrackedScreen = m_tabs.currentScreenIdx;
+		string tabName = m_tabs.GetScreen(m_tabs.currentScreenIdx).screenName;
+		HDTrackingManager.Instance.Notify_StoreSection(tabName);
+		m_trackScreenChange = true;
+		m_offersCount.text = OffersManager.activeOffers.Count.ToString();
+		*/
+
+		// Reset packs purchased list
+		m_packsPurchased.Clear();
 	}
 
 	/// <summary>

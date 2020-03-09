@@ -6462,7 +6462,6 @@ GameObject:
   - component: {fileID: 114255946334399754}
   - component: {fileID: 95377789754420992}
   - component: {fileID: 114205724355421908}
-  - component: {fileID: 114522945017337374}
   m_Layer: 5
   m_Name: ShopButton
   m_TagString: Untagged
@@ -6566,8 +6565,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 114522945017337374}
-        m_MethodName: OnNavigationButton
+      - m_Target: {fileID: 11443130}
+        m_MethodName: GoToShopScreen
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -6643,19 +6642,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_audioId: 
---- !u!114 &114522945017337374
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1635334971863768}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b14aa7aba6897447d947373a65bfb333, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_targetScreen: 17
 --- !u!1 &1646180237096818
 GameObject:
   m_ObjectHideFlags: 0
