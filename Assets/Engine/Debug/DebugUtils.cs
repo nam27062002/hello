@@ -18,6 +18,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
+using System.Linq;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -33,7 +34,15 @@ public class DebugUtils {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
-	static private int MAX_ASSERTS = 1;	// To prevent assert spamming
+	static private int MAX_ASSERTS = 1; // To prevent assert spamming
+
+	/// <summary>
+	/// Delegate signature for custom ToString method.
+	/// </summary>
+	/// <typeparam name="T">Type of formatted object.</typeparam>
+	/// <param name="_obj">Target object.</param>
+	/// <returns>String representation of _obj.</returns>
+	public delegate string ToStringFunction<T>(T _obj);
 
 	//------------------------------------------------------------------//
 	// MEMBERS															//
@@ -183,5 +192,82 @@ public class DebugUtils {
 			
 		// Log!
 		Debug.TaggedLog(timeTag, ss.ToString(), _context);
+	}
+
+	//------------------------------------------------------------------//
+	// FORMATTING														//
+	//------------------------------------------------------------------//
+	/// <summary>
+	/// Pretty format a Rect object for debugging.
+	/// </summary>
+	/// <param name="_r">The object to be formatted</param>
+	/// <returns>A string representing the given object.</returns>
+	public static string RectToString(Rect _r) {
+		return FloatToString(_r.xMin) + ", " + FloatToString(_r.xMax);
+	}
+
+	/// <summary>
+	/// Pretty format a float value for debugging.
+	/// </summary>
+	/// <param name="_value">The value to be formatted</param>
+	/// <returns>A string representing the given value.</returns>
+	public static string FloatToString(float _value) {
+		return string.Format("{0,4:D4}", (int)_value);
+	}
+
+	/// <summary>
+	/// Pretty format a list for debugging.
+	/// </summary>
+	/// <typeparam name="T">List type.</typeparam>
+	/// <param name="_list">The list to be formatted.</param>
+	/// <param name="_multiline">Do a line for each value in the list?</param>
+	/// <param name="_customToStringFunction">Optional custom function to format objects as string.</param>
+	/// <returns>A string representing the list.</returns>
+	public static string ListToString<T>(List<T> _list, bool _multiline = false, ToStringFunction<T> _customToStringFunction = null) {
+		// Aux vars
+		string str = "";
+
+		// Opening bracket
+		str += "[";
+
+		// Push values
+		for(int i = 0; i < _list.Count; ++i) {
+			// Multiline?
+			if(_multiline) {
+				str += "\n\t";
+			}
+
+			// Push value! Custom formatting?
+			if(_customToStringFunction != null) {
+				str += _customToStringFunction(_list[i]);
+			} else {
+				str += _list[i].ToString();
+			}
+
+			// Item separator - skip last item
+			if(i < _list.Count - 1) {
+				str += ",";
+				if(!_multiline) str += " ";
+			}
+		}
+
+		// Closing bracket
+		if(_multiline) str += "\n";
+		str += "]";
+
+		// Done!
+		return str;
+	}
+
+	/// <summary>
+	/// Pretty format an array for debugging.
+	/// </summary>
+	/// <typeparam name="T">List type.</typeparam>
+	/// <param name="_array">The list to be formatted.</param>
+	/// <param name="_multiline">Do a line for each value in the list?</param>
+	/// <param name="_customToStringFunction">Optional custom function to format objects as string.</param>
+	/// <returns>A string representing the list.</returns>
+	public static string ArrayToString<T>(T[] _array, bool _multiline = false, ToStringFunction<T> _customToStringFunction = null) {
+		return ListToString(_array.ToList(), _multiline, _customToStringFunction);
 	}
 }
