@@ -256,8 +256,8 @@ public class HDTrackingManager
 
     /// <summary>
     /// Called when the user opens the app store
-    // <param name="origin">Where the store is open.</param>
     /// </summary>
+    /// <param name="origin">Where the store is open.</param>
     public virtual void Notify_StoreVisited( string origin) {}
 
     /// <summary>
@@ -265,6 +265,15 @@ public class HDTrackingManager
     /// </summary>
     /// <param name="section">Section.</param>
     public virtual void Notify_StoreSection( string section) {}
+
+	/// <summary>
+	/// Notifies that the player has stopped for X seconds while viewing the shop.
+	/// </summary>
+	/// <param name="_centralSection">Category displayed in the center of the screen.</param>
+	/// <param name="_centralItems">Item or items displayed in the center of the screen.</param>
+	/// <param name="_allVisibleSections">All categories being fully displayed in the screen. Don't include categories that are only partially displayed.</param>
+	/// <param name="_allVisibleItems">All items being fully displayed in the screen. Don't include items that are only partially displayed.</param>
+	public virtual void Notify_StoreView(string _centralSection, string[] _centralItems, string[] _allVisibleSections, string[] _allVisibleItems) { }
     
     /// <summary>
     /// Notifies the store item view. When the player clicks on a button to start buying something on the store
