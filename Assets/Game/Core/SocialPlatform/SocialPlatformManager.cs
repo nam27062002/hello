@@ -139,7 +139,7 @@ public class SocialPlatformManager : MonoBehaviour
 
 				AddSocialPlatform(platformId);
 
-#if UNITY_IOS
+#if USE_SIWA && UNITY_IOS
                 if (GameSessionManager.SharedInstance.SIWA_IsPlatformSupported())
                 {
                     AddSocialPlatform(SocialUtils.EPlatform.SIWA);
