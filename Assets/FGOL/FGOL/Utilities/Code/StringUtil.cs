@@ -147,7 +147,7 @@ public static class StringUtil
 			case System.TypeCode.Single:
 			{
 				float n;
-				if(float.TryParse(s, out n))
+				if(float.TryParse(s, NumberStyles.Any, CultureInfo.InvariantCulture, out n))
 					return n;
 				return null;
 			}
