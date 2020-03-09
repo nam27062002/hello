@@ -534,7 +534,7 @@ public class ShopController : MonoBehaviour {
     /// </summary>
     public void ScrollToStart()
     {
-        if (m_pills.Count != 0)
+        if (m_pills!= null && m_pills.Count != 0)
         {
             ScrollToItem(m_pills[0].transform);
         }
