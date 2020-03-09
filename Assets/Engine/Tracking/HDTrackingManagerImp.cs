@@ -15,6 +15,7 @@ using UnityEngine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 using Calety.Tracking;
 
 public class HDTrackingManagerImp : HDTrackingManager {
@@ -719,21 +720,38 @@ public class HDTrackingManagerImp : HDTrackingManager {
         Track_RunEnd( Session_RoundId, dragonXp, timePlayed, score, deathType, deathSource, deathCoordinatesAsString);
     }
 
-    /// <summary>
-    /// Called when the user opens the app store
-    /// </summary>
-    public override void Notify_StoreVisited( string origin ) {
+	/// <summary>
+	/// Called when the user opens the app store
+	/// </summary>
+	/// <param name="origin">Where the store is open.</param>
+	public override void Notify_StoreVisited( string origin ) {
         if (TrackingPersistenceSystem != null) {
             TrackingPersistenceSystem.TotalStoreVisits++;
         }
         Track_OpenShop( origin );
     }
-    
+
+	// [AOC] DEPRECATED!!
     public override void Notify_StoreSection( string section) {
         Track_ShopSection( section );
     }
-    
-    public override void Notify_StoreItemView( string id) {
+
+	/// <summary>
+	/// Notifies that the player has stopped for X seconds while viewing the shop.
+	/// </summary>
+	/// <param name="_centralSection">Category displayed in the center of the screen.</param>
+	/// <param name="_centralItems">Item or items displayed in the center of the screen.</param>
+	/// <param name="_allVisibleSections">All categories being fully displayed in the screen. Don't include categories that are only partially displayed.</param>
+	/// <param name="_allVisibleItems">All items being fully displayed in the screen. Don't include items that are only partially displayed.</param>
+	public override void Notify_StoreView(string _centralSection, string[] _centralItems, string[] _allVisibleSections, string[] _allVisibleItems) {
+		Track_ShopView(_centralSection, _centralItems, _allVisibleSections, _allVisibleItems);
+	}
+
+	/// <summary>
+	/// Notifies the store item view. When the player clicks on a button to start buying something on the store
+	/// </summary>
+	/// <param name="id">Identifier.</param>
+	public override void Notify_StoreItemView( string id) {
         Track_ShopItemView( id );
     }
 
@@ -1959,6 +1977,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
             Track_AddParamPlayerProgress(e);
             Track_AddParamPlayerSC(e);
             Track_AddParamPlayerPC(e);
+			Track_AddParamShopEntranceID(e);
         }
         m_eventQueue.Enqueue(e);
     }
@@ -1975,7 +1994,39 @@ public class HDTrackingManagerImp : HDTrackingManager {
         }
         m_eventQueue.Enqueue(e);
     }
-    
+
+	/// <summary>
+	/// Notifies that the player has stopped for X seconds while viewing the shop.
+	/// </summary>
+	/// <param name="_centralSection">Category displayed in the center of the screen.</param>
+	/// <param name="_centralItems">Item or items displayed in the center of the screen.</param>
+	/// <param name="_allVisibleSections">All categories being fully displayed in the screen. Don't include categories that are only partially displayed.</param>
+	/// <param name="_allVisibleItems">All items being fully displayed in the screen. Don't include items that are only partially displayed.</param>
+	private void Track_ShopView(string _centralSection, string[] _centralItems, string[] _allVisibleSections, string[] _allVisibleItems) {
+#if LOG
+		string logStr = "Track_ShopView";
+		logStr += "\n\t_centralSection = " + _centralSection;
+		logStr += "\n\t_centralItems = " + DebugUtils.ArrayToString(_centralItems);
+		logStr += "\n\_allVisibleSections = " + DebugUtils.ArrayToString(_allVisibleSections);
+		logStr += "\n\_allVisibleItems = " + DebugUtils.ArrayToString(_allVisibleItems);
+		Log(logStr);
+#endif
+
+		HDTrackingEvent e = new HDTrackingEvent("custom.shop.view.newshop");
+		{
+			Track_AddParamString(e, TRACK_PARAM_SHOP_CENTRAL_SECTION, _centralSection);
+			Track_AddParamArray(e, TRACK_PARAM_SHOP_CENTRAL_ITEMS, _centralItems);
+			Track_AddParamArray(e, TRACK_PARAM_SHOP_ALL_SECTIONS, _allVisibleSections);
+			Track_AddParamArray(e, TRACK_PARAM_SHOP_ALL_ITEMS, _allVisibleItems);
+
+			Track_AddParamPlayerProgress(e);
+			Track_AddParamPlayerSC(e);
+			Track_AddParamPlayerPC(e);
+			Track_AddParamShopEntranceID(e);
+		}
+		m_eventQueue.Enqueue(e);
+	}
+
     private void Track_ShopItemView( string id ){        
         Log("Track_StoreItemView itemID = " + id );        
 
@@ -1985,11 +2036,10 @@ public class HDTrackingManagerImp : HDTrackingManager {
             Track_AddParamPlayerProgress(e);
             Track_AddParamPlayerSC(e);
             Track_AddParamPlayerPC(e);
+			Track_AddParamShopEntranceID(e);
         }
         m_eventQueue.Enqueue(e);
     }
-    
-    
 
     private void Track_Funnel(string _event, string _step, int _stepDuration, int _totalDuration, bool _fistLoad) {        
         Log("Track_Funnel eventID = " + _event + " stepName = " + _step + " stepDuration = " + _stepDuration + " totalDuration = " + _totalDuration + " firstLoad = " + _fistLoad);        
@@ -2404,7 +2454,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
         }
 
         Log(str);
-#endif        
+#endif
 
         HDTrackingEvent e = new HDTrackingEvent("custom.lab.gamestart");
         {
@@ -2710,7 +2760,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private const string TRACK_PARAM_HC_EARNED = "hcEarned";
     private const string TRACK_PARAM_HC_REVIVE = "hcRevive";
     private const string TRACK_PARAM_HAPPY_HOUR = "happyHour";
-    private const string TRACK_PARAM_HIGHEST_BASE_MULTIPLIER = "highestBaseMultiplier";
+	private const string TRACK_PARAM_HIGHEST_BASE_MULTIPLIER = "highestBaseMultiplier";
     private const string TRACK_PARAM_HIGHEST_MULTIPLIER = "highestMultiplier";
     private const string TRACK_PARAM_HOUSTON_TRANSACTION_ID = "houstonTransactionID";
     private const string TRACK_PARAM_HUNGRY_LETTERS_NB = "hungryLettersNb";
@@ -2828,8 +2878,13 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private const string TRACK_PARAM_XP = "xp";
     private const string TRACK_PARAM_YEAR_OF_BIRTH = "yearOfBirth";
     private const string TRACK_PARAM_ZONE = "zone";
+	private const string TRACK_PARAM_SHOP_ENTRANCE_ID = "shopEntrance_ID";
+	private const string TRACK_PARAM_SHOP_CENTRAL_SECTION = "central_section";
+	private const string TRACK_PARAM_SHOP_CENTRAL_ITEMS = "central_itemID";
+	private const string TRACK_PARAM_SHOP_ALL_SECTIONS = "all_section";
+	private const string TRACK_PARAM_SHOP_ALL_ITEMS = "all_itemID";
 
-    private const string OFFER_TYPE_SHOP = "shop";
+	private const string OFFER_TYPE_SHOP = "shop";
 
     //------------------------------------------------------------------------//
     private void Track_SendEvent(HDTrackingEvent _e) {
@@ -2987,6 +3042,12 @@ public class HDTrackingManagerImp : HDTrackingManager {
         _e.data.Add(TRACK_PARAM_HAPPY_HOUR, value);
     }
 
+	private void Track_AddParamShopEntranceID(HDTrackingEvent _e) {
+		int storeVisits = (TrackingPersistenceSystem != null) ? TrackingPersistenceSystem.TotalStoreVisits : 0;
+		string userId = (TrackingPersistenceSystem != null) ? TrackingPersistenceSystem.UserID : "";
+		_e.data.Add(TRACK_PARAM_SHOP_ENTRANCE_ID, userId + "_" + storeVisits);
+	}
+
     private void Track_AddParamPets(HDTrackingEvent _e, List<string> pets) {
         // 4 pets are currently supported
         string pet1 = null;
@@ -3108,6 +3169,26 @@ public class HDTrackingManagerImp : HDTrackingManager {
 						
         _e.data.Add(paramName, value);
     }
+
+	// Use a static string builder to avoid memory allocations
+	private static StringBuilder s_arrayParamSB = null;
+	private void Track_AddParamArray<T>(HDTrackingEvent _e, string _paramName, T[] _value) {
+		// If the shared string builder was not created, do it now! Otherwise just clear it.
+		if(s_arrayParamSB == null) {
+			s_arrayParamSB = new StringBuilder();
+		} else {
+			s_arrayParamSB.Length = 0;
+		}
+
+		// Format: comma + space separator
+		for(int i = 0; i < _value.Length; ++i) {
+			if(i > 0) s_arrayParamSB.Append(", ");
+			s_arrayParamSB.Append(_value[i].ToString());
+		}
+
+		// Done! Add the param to the tracking event data
+		_e.data.Add(_paramName, s_arrayParamSB.ToString());
+	}
 
     private string Track_UserCurrencyToString(UserProfile.Currency currency) {
         string returnValue = "";

@@ -4,16 +4,22 @@
 // Created by J.M.Olea on 21/01/2020.
 // Copyright (c) 2020 Ubisoft. All rights reserved.
 
+//#define LOG
+
 //----------------------------------------------------------------------------//
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
-using DG.Tweening;
-using System;
-using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
-using UnityEngine.Events;
 using UnityEngine.UI;
+using UnityEngine.Events;
+
+using System;
+using System.Linq;
+using System.Diagnostics;
+using System.Collections.Generic;
+
+using TMPro;
+using DG.Tweening;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -33,7 +39,9 @@ public class ShopController : MonoBehaviour {
 
     private const string OFFERS_CATEGORY_SKU = "progressionPacks";
     private const string PC_CATEGORY_SKU = "hcPacks";
-    private const string SC_CATEGORY_SKU = "scPacks";  
+    private const string SC_CATEGORY_SKU = "scPacks";
+
+	private const float TRACKING_VIEW_MIN_DURATION = 1f;	// Minimum time without scrolling before sending the "view" tracking events
 
     //------------------------------------------------------------------------//
     // MEMBERS AND PROPERTIES												  //
@@ -96,6 +104,7 @@ public class ShopController : MonoBehaviour {
     // Optimization #2: Disable pills that are outside of the visible scrollable panel
     private float normalizedViewportWidth;
     private bool m_hidePillsOutOfView = false;
+	private List<IShopPill> m_visiblePills = new List<IShopPill>();
 
     // Optimization #3: initialize one pill per frame
     private Queue<ShopCategory> categoriesToInitialize;
@@ -119,12 +128,12 @@ public class ShopController : MonoBehaviour {
     // Benchmarking
     private int timestamp, timestamp2;
 
+	// Tracking
+	private float m_trackingViewTimer = -1f;
+
     //------------------------------------------------------------------------//
     // GENERIC METHODS														  //
     //------------------------------------------------------------------------//
-
-
-
     /// <summary>
     /// Initialization.
     /// </summary>
@@ -150,12 +159,20 @@ public class ShopController : MonoBehaviour {
         Messenger.RemoveListener(MessengerEvents.OFFERS_RELOADED, OnOffersReloaded);
         Messenger.RemoveListener<List<OfferPack>>(MessengerEvents.OFFERS_CHANGED, OnOffersChanged);
     }
-    
 
-    /// <summary>
-    /// First update call.
-    /// </summary>
-    private void Start() {
+	/// <summary>
+	/// Component has been enabled.
+	/// </summary>
+	private void OnEnable() {
+		// Reset tracking timer
+		m_trackingViewTimer = TRACKING_VIEW_MIN_DURATION;
+	}
+
+
+	/// <summary>
+	/// First update call.
+	/// </summary>
+	private void Start() {
 
         InvokeRepeating("PeriodicRefresh", 0f, REFRESH_FREQUENCY);
         shopReady = false;
@@ -206,7 +223,7 @@ public class ShopController : MonoBehaviour {
 
 
             // Benchmarking
-            Debug.Log(Colors.paleYellow.Tag("Initialize category " + catBeingInitialized.category.sku + " in " + 
+            Log(Colors.paleYellow.Tag("Initialize category " + catBeingInitialized.category.sku + " in " + 
                 (Environment.TickCount - timestamp2) + " ms"));
             
             // This category has been initialized succesfully!
@@ -226,7 +243,7 @@ public class ShopController : MonoBehaviour {
                 shopReady = true;
 
                 // Benchmarking
-                Debug.Log(Colors.paleYellow.Tag("Shop initialized in " + (Environment.TickCount - timestamp) + " ms"));
+                Log(Colors.paleYellow.Tag("Shop initialized in " + (Environment.TickCount - timestamp) + " ms"));
             }
         }
 
@@ -250,14 +267,19 @@ public class ShopController : MonoBehaviour {
             m_frameCounter = m_framesDelayPerPill;
         }
 
+		// Tracking
+		if(m_trackingViewTimer > 0f) {
+			m_trackingViewTimer -= Time.unscaledDeltaTime;
+			if(m_trackingViewTimer <= 0f) {
+				// Notify tracking manager!
+				NotifyViewTracking();
+			}
+		}
     }
 
-
-
-    //------------------------------------------------------------------------//
+	//------------------------------------------------------------------------//
     // OTHER METHODS														  //
     //------------------------------------------------------------------------//
-
     /// <summary>
     /// Initialize the shop with the requested mode. Should be called before opening the popup.
     /// </summary>
@@ -303,7 +325,7 @@ public class ShopController : MonoBehaviour {
 
         // Clean pills cache
         m_pills.Clear();
-
+		
         // Remove the shortcut references
         m_shortcuts.Clear();
         m_skuToShorcut.Clear();
@@ -313,8 +335,9 @@ public class ShopController : MonoBehaviour {
         layoutGropusActive = false;
         disableLayoutsGroupsInNextFrame = false;
         m_hidePillsOutOfView = false;
+		m_visiblePills.Clear();
 
-        m_frameCounter = 0;
+		m_frameCounter = 0;
     }
 
 
@@ -327,8 +350,11 @@ public class ShopController : MonoBehaviour {
         // Benchmarking
         timestamp = Environment.TickCount;
 
-        Clear();
+		// Reset tracking timer
+		m_trackingViewTimer = TRACKING_VIEW_MIN_DURATION;
 
+		// Clear everything
+        Clear();
 
         // Turn off optimizations while refreshing
         SetOptimizationActive(false);
@@ -363,7 +389,7 @@ public class ShopController : MonoBehaviour {
         }
 
         // Benchmarking
-        Debug.Log(Colors.paleYellow.Tag("Instantiate categories " + (Environment.TickCount - timestamp) + " ms"));
+        Log(Colors.paleYellow.Tag("Instantiate categories " + (Environment.TickCount - timestamp) + " ms"));
     }
 
 
@@ -778,6 +804,7 @@ public class ShopController : MonoBehaviour {
         // Define the width of the viewport. Out of this range, pills are disabled.
         normalizedViewportWidth = m_scrollRect.viewport.rect.width / m_scrollRect.content.rect.width;
 
+		m_visiblePills.Clear();
         foreach (IShopPill pill in m_pills)
         {
             // Is this pill inside the visible limits of the scrollview (leave some margin)
@@ -787,21 +814,220 @@ public class ShopController : MonoBehaviour {
 
             // Enable/disable the pill
             pill.gameObject.SetActive(visible);
+
+			// Cache visible pills
+			if(visible) {
+				m_visiblePills.Add(pill);
+			}
         }
 
     }
 
+	//------------------------------------------------------------------------//
+	// TRACKING																  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Tell the tracking manager the "view" events.
+	/// </summary>
+	private void NotifyViewTracking() {
+		// Compute Viewport bounds
+		Rect viewportRect = m_scrollRect.viewport.rect; // Viewport in local coords
+		float viewportCenter = viewportRect.center.x;
+		Log(Colors.yellow.Tag("Viewport Rect: " + DebugUtils.RectToString(viewportRect)));
 
+		// Check pills to select those relevant for tracking params
+		List<IShopPill> centerPills = new List<IShopPill>();
+		List<IShopPill> fullyVisiblePills = new List<IShopPill>();
+		List<IShopPill> closestPillsToCenter = new List<IShopPill>();   // Just in case there are no pills actually in the center
+		float minDistToCenter = float.MaxValue;
+		bool centerPillFound = false;
+		IShopPill pill = null;
+		Rect pillRect = new Rect();
 
-    //------------------------------------------------------------------------//
-    // CALLBACKS															  //
-    //------------------------------------------------------------------------//
+		// We already have visible pills cached, so no need to go through all of them
+		for(int i = 0; i < m_visiblePills.Count; ++i) {
+			// Compute pill's rect in viewport coords
+			pill = m_visiblePills[i];
+			pillRect = (pill.transform as RectTransform).rect; // Pill in local coords
+			pillRect = pill.transform.TransformRect(pillRect, m_scrollRect.viewport);   // Pill in viewport coords
 
-    /// <summary>
-    /// A shortcut was pressed
-    /// </summary>
-    /// <param name="_category">The category related to the shortcut</param>
-    public void OnShortcutSelected(ShopCategoryShortcut _sc)
+			// Check pill boundaries
+			if(viewportRect.xMin < pillRect.xMin && pillRect.xMax < viewportRect.xMax) {
+				// Pill is fully in the viewport
+				fullyVisiblePills.Add(pill);
+
+				// Does it intersect the center?
+				if(pillRect.xMin < viewportCenter && viewportCenter < pillRect.xMax) {
+					// Yes!
+					centerPills.Add(pill);
+					centerPillFound = true;
+				}
+			}
+
+			// While a pill in the center is not found, look for the closest ones to it 
+			if(!centerPillFound) {
+				// Is it the closest to the center?
+				float distToCenter = Mathf.Abs(viewportCenter - pillRect.center.x);
+				if(distToCenter < minDistToCenter - float.Epsilon) {
+					// This pill is closest to the center than previous selected ones
+					minDistToCenter = distToCenter;
+					closestPillsToCenter.Clear();
+					closestPillsToCenter.Add(pill);
+				} else if(Mathf.Abs(minDistToCenter - distToCenter) < float.Epsilon) {
+					// This pill is at the same distance from the center than previous selected ones
+					closestPillsToCenter.Add(pill);
+				}
+			}
+
+			// Debugging
+#if LOG
+			Color c = Colors.red;
+			if(fullyVisiblePills.Contains(pill)) {
+				c = Colors.lime;
+			}
+			Log(c.Tag(pill.name + ": " + DebugUtils.RectToString(pillRect)));
+#endif
+		}
+
+		// Process categories
+		// Find all categories that are fully visible. If none, pick the one that takes the most of the viewport.
+		List<CategoryController> fullyVisibleCategories = new List<CategoryController>();
+		List<float> categoriesViewportCoverage = new List<float>(m_categoryContainers.Count);
+		CategoryController cat = null;
+		Rect catRect = new Rect();
+		for(int i = 0; i < m_categoryContainers.Count; ++i) {
+			// Compute category's rect in viewport coords
+			cat = m_categoryContainers[i];
+			catRect = (cat.transform as RectTransform).rect; // Pill in local coords
+			catRect = cat.transform.TransformRect(catRect, m_scrollRect.viewport);   // Pill in viewport coords
+
+			// Is the category fully within the viewport?
+			if(viewportRect.xMin < catRect.xMin && viewportRect.xMax > catRect.xMax) {
+				fullyVisibleCategories.Add(cat);
+			}
+
+			// Compute percentage of the screen covered by this category
+			// We only care about X axis, assume all categories have the same height
+			float visibleWidth = Mathf.Min(catRect.xMax, viewportRect.xMax) - Mathf.Max(catRect.xMin, viewportRect.xMin);
+			categoriesViewportCoverage.Add(visibleWidth / viewportRect.width);
+
+			// Debugging
+#if LOG
+			Color c = Colors.red;
+			if(fullyVisibleCategories.Contains(cat)) {
+				c = Colors.lime;
+			}
+			Log(c.Tag(cat.name + ": " + DebugUtils.RectToString(catRect) + " | " + Mathf.RoundToInt(categoriesViewportCoverage.Last() * 100) + "%"));
+#endif
+		}
+
+		// Debugging
+#if LOG
+		if(true) {	// To be able to fold it in the editor
+			string strLog = Colors.yellow.Tag("FULLY VISIBLE PILLS: ");
+			strLog += DebugUtils.ListToString(fullyVisiblePills, true, (IShopPill _pill) => { return _pill.def.sku; });
+			Log(strLog);
+
+			strLog = Colors.yellow.Tag("CENTER PILLS: ");
+			strLog += DebugUtils.ListToString(centerPills, true, (IShopPill _pill) => { return _pill.def.sku; });
+			Log(strLog);
+
+			strLog = Colors.yellow.OpenTag() + "CLOSEST PILLS TO CENTER: ";
+			if(centerPillFound) {
+				strLog += "\n\tNOT NEEDED";
+			} else {
+				strLog += "\n\t";
+				if(closestPillsToCenter.Count == 0) {
+					strLog += Colors.red.Tag("NONE");
+				} else {
+					strLog += DebugUtils.ListToString(centerPills);
+				}
+			}
+			strLog += Colors.yellow.CloseTag();
+			Log(strLog);
+
+			strLog = Colors.yellow.Tag("FULLY VISIBLE CATEGORIES: ");
+			strLog += DebugUtils.ListToString(fullyVisibleCategories, true, (CategoryController _c) => { return _c.category.def.sku; });
+			Log(strLog);
+
+			strLog = Colors.yellow.Tag("CATEGORY VIEWPORT %: ");
+			strLog += DebugUtils.ListToString(categoriesViewportCoverage, true, (float _value) => { return Mathf.RoundToInt(_value * 100f) + "%"; });
+			Log(strLog);
+		}
+#endif
+
+		// If pills exactly in the center were not found, use closest to center pills instead
+		if(!centerPillFound) {
+			centerPills = closestPillsToCenter;
+		}
+
+		// Find out relevant categories for tracking
+		// Central category
+		string centralCategory = "";
+		if(centerPills.Count > 0) centralCategory = centerPills[0].def.GetAsString("shopCategory"); // [AOC] If there is more than one, they typically belong to the same category, so just use first one's category
+
+		// All visible categories
+		// [AOC] TODO!! Specs say to exclude sections that appear partially, but this might result in empty value if the current category is bigger than the viewport.
+		//		 Send category covering most of the screen in such case
+		List<string> visibleCategoriesParam = new List<string>();
+		if(fullyVisibleCategories.Count > 0) {
+			for(int i = 0; i < fullyVisibleCategories.Count; ++i) {
+				visibleCategoriesParam.Add(fullyVisibleCategories[i].category.def.sku);
+			}
+		} else {
+			// Find the category covering more screen %
+			int bestCategoryIdx = -1;
+			float maxPercentage = -1f;
+			for(int i = 0; i < categoriesViewportCoverage.Count; ++i) {
+				// Is it the best category?
+				if(categoriesViewportCoverage[i] > maxPercentage) {
+					maxPercentage = categoriesViewportCoverage[i];
+					bestCategoryIdx = i;
+				}
+			}
+
+			// If we found a valid category, push it to the tracking parameter values
+			if(bestCategoryIdx >= 0) {
+				visibleCategoriesParam.Add(m_categoryContainers[bestCategoryIdx].category.def.sku);
+			}
+		}
+
+		// Format parameters in the way expected by the tracking manager
+		List<string> centerItemsParam = new List<string>();
+		for(int i = 0; i < centerPills.Count; ++i) {
+			centerItemsParam.Add(centerPills[i].def.sku);
+		}
+
+		List<string> visibleItemsParam = new List<string>();
+		for(int i = 0; i < fullyVisiblePills.Count; ++i) {
+			visibleItemsParam.Add(fullyVisiblePills[i].def.sku);
+		}
+
+		// Finally, we have all the data to send the tracking event - do it!
+		HDTrackingManager.Instance.Notify_StoreView(
+			centralCategory,
+			centerItemsParam.ToArray(),
+			visibleCategoriesParam.ToArray(),
+			visibleItemsParam.ToArray()
+		);
+
+#if LOG
+		Log(Colors.magenta.Tag("STORE VIEW:"));
+		Log(Colors.magenta.Tag("\tcentral_section: " + centralCategory));
+		Log(Colors.magenta.Tag("\tcentral_itemID: " + DebugUtils.ListToString(centerItemsParam)));
+		Log(Colors.magenta.Tag("\tall_section: " + DebugUtils.ListToString(visibleCategoriesParam)));
+		Log(Colors.magenta.Tag("\tall_itemID: " + DebugUtils.ListToString(visibleItemsParam)));
+#endif
+	}
+
+	//------------------------------------------------------------------------//
+	// CALLBACKS															  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// A shortcut was pressed
+	/// </summary>
+	/// <param name="_sc">The category related to the shortcut</param>
+	public void OnShortcutSelected(ShopCategoryShortcut _sc)
     {
         if (_sc.categoryController == null)
             return;
@@ -823,6 +1049,9 @@ public class ShopController : MonoBehaviour {
     /// <param name="_newPos">Normalized position of the scroll view</param>
     public void OnScrollChanged(Vector2 _newPos)
     {
+		// Reset tracking timer
+		m_trackingViewTimer = TRACKING_VIEW_MIN_DURATION;
+
         // create a paralax effect with the 3d bground (if camera traveling exists)
         if (m_cameraTraveling != null)
         {
@@ -912,4 +1141,20 @@ public class ShopController : MonoBehaviour {
             }
         }
     }
+
+	//------------------------------------------------------------------------//
+	// DEBUG																  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Check the debug conditions and log given text if matching.
+	/// </summary>
+	/// <param name="_text">Text to be logged.</param>
+#if LOG
+	[Conditional("DEBUG")]
+#else
+	[Conditional("FALSE")]
+#endif
+	public static void Log(string _text) {
+		Debug.Log(_text);
+	}
 }
