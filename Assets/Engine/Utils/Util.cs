@@ -7,6 +7,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 
 public static class Util
 {
@@ -929,7 +930,7 @@ public static class Util
 	public static void OverrideFloat(Dictionary<string, string> dic, string stat, ref float f)
 	{
 		if(dic.ContainsKey(stat))
-			float.TryParse(dic[stat], out f);
+			float.TryParse(dic[stat], NumberStyles.Any, CultureInfo.InvariantCulture , out f);
 	}
 
 	public static void OverrideBool(Dictionary<string, string> dic, string stat, ref bool b)

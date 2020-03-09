@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEditor;
+using System.Globalization;
 
 [CanEditMultipleObjects]
 [CustomEditor(typeof(Transform), true)]
@@ -137,12 +138,12 @@ public class TransformInspector : Editor
 		else if (greyedOut)
 		{
 			GUI.color = new Color(0.7f, 0.7f, 0.7f);
-			float.TryParse(EditorGUILayout.TextField(name, "--", opt), out newValue);
+			float.TryParse(EditorGUILayout.TextField(name, "--", opt), NumberStyles.Any, CultureInfo.InvariantCulture, out newValue);
 			GUI.color = Color.white;
 		}
 		else
 		{
-			float.TryParse(EditorGUILayout.TextField(name, "--", opt), out newValue);
+			float.TryParse(EditorGUILayout.TextField(name, "--", opt), NumberStyles.Any, CultureInfo.InvariantCulture, out newValue);
 		}
 
 		if (GUI.changed && Differs(newValue, value))
