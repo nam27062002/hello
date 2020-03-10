@@ -81,9 +81,17 @@ public class ShopBasePill : IShopPill {
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
 	/// <summary>
+	/// Component has been enabled.
+	/// </summary>
+	protected virtual void OnEnable() {
+		// If the pill enters the view (is enabled) load the preview
+		loadPillPreview = true;
+	}
+
+	/// <summary>
 	/// First update call.
 	/// </summary>
-	public void Start() {
+	protected virtual void Start() {
 		scrollRect = GetComponentInParent<ScrollRect>();
 	}
 
@@ -125,23 +133,25 @@ public class ShopBasePill : IShopPill {
 	}
 
 	/// <summary>
+	/// Component has been disabled.
+	/// </summary>
+	protected virtual void OnDisable() {
+		// For sure we don't want the tooltip visible anymore
+		if(m_tooltip != null) {
+			m_tooltip.Hide();
+		}
+	}
+
+	/// <summary>
 	/// Destructor.
 	/// </summary>
-	protected void OnDestroy() {
+	protected virtual void OnDestroy() {
 		// If a tooltip was created, destroy it as well
 		if(m_tooltip != null) {
 			Destroy(m_tooltip);
 			m_tooltip = null;
 		}
 	}
-
-
-
-    public virtual void OnEnable()
-    {
-        // If the pill enters the view (is enabled) load the preview
-        loadPillPreview = true;
-    }
 
     //------------------------------------------------------------------------//
     // OTHER METHODS														  //
