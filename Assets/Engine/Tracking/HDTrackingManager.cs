@@ -728,9 +728,9 @@ public class HDTrackingManager
     public virtual void Notify_UIButton(string _buttonName) { }
     
     #region log
-    private const bool LOG_USE_COLOR = false;
+    private const bool LOG_USE_COLOR = true;
     private const string LOG_CHANNEL = "[HDTrackingManager] ";
-    private const string LOG_CHANNEL_COLOR = "<color=cyan>" + LOG_CHANNEL;
+    private const string LOG_CHANNEL_COLOR = "<color=teal>" + LOG_CHANNEL;
 
 #if ENABLE_LOGS
     [Conditional("DEBUG")]
@@ -741,7 +741,18 @@ public class HDTrackingManager
     {        
         if (LOG_USE_COLOR)
         {
-            Debug.Log(LOG_CHANNEL_COLOR + msg + " </color>");
+			// Multiline texts don't work well with color tags in the console, so do some tricks :P
+			int idx = msg.IndexOf('\n');
+			if(idx >= 0) {
+				Debug.Log(
+					LOG_CHANNEL_COLOR +
+					msg.Substring(0, idx) +
+					"</color>" +
+					msg.Substring(idx, msg.Length - idx)
+				);
+			} else {
+				Debug.Log(LOG_CHANNEL_COLOR + msg + " </color>");
+			}
         }
         else
         {
