@@ -69,7 +69,7 @@ public class ShopHCPill : ShopCurrencyPill {
     /// <summary>
     /// Component has been enabled.
     /// </summary>
-    public override void OnEnable() {
+    protected override void OnEnable() {
 
         base.OnEnable();
 
