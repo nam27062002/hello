@@ -1044,8 +1044,10 @@ public class ShopController : MonoBehaviour {
 	/// <summary>
 	/// Tell the tracking manager when a shortcut is pressed.
 	/// </summary>
-	private void NotifyShortcutPressedTracking() {
-		// [AOC] TODO!!
+	/// <param name="_sc">The pressed shortcut.</param>
+	private void NotifyShortcutPressedTracking(ShopCategoryShortcut _sc) {
+		// Propagate to tracking manager
+		HDTrackingManager.Instance.Notify_StoreShortcutClick(_sc.id);
 	}
 
 	//------------------------------------------------------------------------//
@@ -1068,6 +1070,9 @@ public class ShopController : MonoBehaviour {
 	/// <param name="_sc">The category related to the shortcut</param>
 	public void OnShortcutSelected(ShopCategoryShortcut _sc)
     {
+		// Tracking! Even if already selected or not yet loaded
+		NotifyShortcutPressedTracking(_sc);
+
         if (_sc.categoryController == null)
             return;
 
