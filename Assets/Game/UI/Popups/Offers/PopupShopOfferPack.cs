@@ -133,7 +133,7 @@ public class PopupShopOfferPack : MonoBehaviour {
 		// Open shop popup - unless already open
 		if(PopupManager.GetOpenPopup(PopupShop.PATH) == null) {
 			PopupController shopPopup = PopupManager.LoadPopup(PopupShop.PATH);
-			shopPopup.GetComponent<PopupShop>().Init(PopupShop.Mode.OFFERS_FIRST, "Featured_Offer");
+			shopPopup.GetComponent<PopupShop>().Init(ShopController.Mode.DEFAULT, "Featured_Offer");
 			shopPopup.Open();
 		}
 	}

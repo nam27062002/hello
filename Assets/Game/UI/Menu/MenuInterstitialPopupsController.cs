@@ -695,7 +695,7 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 		// All checks passed! Open the shop popup at the offers tab
 		PopupController popup = PopupManager.LoadPopup(PopupShop.PATH);
 		PopupShop shop = popup.GetComponent<PopupShop>();
-		shop.Init(PopupShop.Mode.OFFERS_FIRST, "After_Offer_Rewards");
+		shop.Init(ShopController.Mode.DEFAULT, "After_Offer_Rewards");
 		popup.Open();
 
 		// Reset flag

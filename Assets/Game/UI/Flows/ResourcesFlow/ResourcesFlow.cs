@@ -597,7 +597,7 @@ public class ResourcesFlow : IBroadcastListener {
 		// [AOC] We could show only the packs covering the required amount
 		PopupController popup = PopupManager.LoadPopup(PopupShop.PATH);
 		PopupShop shopPopup = popup.GetComponent<PopupShop>();
-		shopPopup.Init(PopupShop.Mode.PC_ONLY, "Missing_Resources");
+		shopPopup.Init(ShopController.Mode.PC_ONLY, "Missing_Resources");
 		shopPopup.closeAfterPurchase = true;
 
 		// Wait for the popup to close

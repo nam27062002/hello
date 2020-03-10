@@ -104,7 +104,7 @@ public class MenuHUD : MonoBehaviour {
 		PopupShop shopPopup = popup.GetComponent<PopupShop>();
 		shopPopup.closeAfterPurchase = false;
         
-		shopPopup.Init(PopupShop.Mode.DEFAULT, InstanceManager.menuSceneController.currentScreen.ToString());
+		shopPopup.Init(ShopController.Mode.DEFAULT, InstanceManager.menuSceneController.currentScreen.ToString());
 
 		// Open popup!
 		popup.Open();
