@@ -63,7 +63,9 @@ public class PendingRewardScreen : MonoBehaviour {
 	/// Component has been enabled.
 	/// </summary>
 	private void OnEnable() {
-		
+
+        // Hide all the reward info elements
+        m_rewardInfo.Clear();
 	}
 
 	/// <summary>

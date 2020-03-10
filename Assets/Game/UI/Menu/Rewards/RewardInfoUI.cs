@@ -130,6 +130,19 @@ public class RewardInfoUI : MonoBehaviour {
     //------------------------------------------------------------------------//
     // OTHER METHODS														  //
     //------------------------------------------------------------------------//
+
+    /// <summary>
+    /// Hide all the reward info elements
+    /// </summary>
+    public void Clear()
+    {
+        /// Toggle everything off except the target type!
+        foreach (KeyValuePair<string, RewardTypeSetup> kvp in m_typeSetups.dict)
+        {
+            kvp.Value.rootObj.SetActive(false);
+        }
+    }
+
     /// <summary>
     /// Initialize the title with the given Egg Reward Data and launch the animation.
     /// </summary>
