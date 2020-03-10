@@ -2028,12 +2028,12 @@ public class HDTrackingManagerImp : HDTrackingManager {
 	/// <param name="_allVisibleSections">All categories being fully displayed in the screen. Don't include categories that are only partially displayed.</param>
 	/// <param name="_allVisibleItems">All items being fully displayed in the screen. Don't include items that are only partially displayed.</param>
 	private void Track_ShopView(string _centralSection, string[] _centralItems, string[] _allVisibleSections, string[] _allVisibleItems) {
-#if LOG
+#if ENABLE_LOGS
 		string logStr = "Track_ShopView";
 		logStr += "\n\t_centralSection = " + _centralSection;
 		logStr += "\n\t_centralItems = " + DebugUtils.ArrayToString(_centralItems);
-		logStr += "\n\_allVisibleSections = " + DebugUtils.ArrayToString(_allVisibleSections);
-		logStr += "\n\_allVisibleItems = " + DebugUtils.ArrayToString(_allVisibleItems);
+		logStr += "\n\t_allVisibleSections = " + DebugUtils.ArrayToString(_allVisibleSections);
+		logStr += "\n\t_allVisibleItems = " + DebugUtils.ArrayToString(_allVisibleItems);
 		Log(logStr);
 #endif
 
@@ -2095,7 +2095,17 @@ public class HDTrackingManagerImp : HDTrackingManager {
 	/// </summary>
 	/// <param name="_shortcutID">The ID of the clicked shortcut.</param>
 	private void Track_ShopShortcutClick(string _shortcutID) {
-		// [AOC] TODO!!
+		Log("Track_ShopShortcutClick: _shortcutID = " + _shortcutID);
+
+		HDTrackingEvent e = new HDTrackingEvent("custom.shop.sectionclicked");
+		{
+			Track_AddParamString(e, TRACK_PARAM_SHOP_DESTINATION_SECTION, _shortcutID);
+			Track_AddParamPlayerProgress(e);
+			Track_AddParamPlayerSC(e);
+			Track_AddParamPlayerPC(e);
+			Track_AddParamShopEntranceID(e);
+		}
+		m_eventQueue.Enqueue(e);
 	}
 
 	private void Track_Funnel(string _event, string _step, int _stepDuration, int _totalDuration, bool _fistLoad) {        
