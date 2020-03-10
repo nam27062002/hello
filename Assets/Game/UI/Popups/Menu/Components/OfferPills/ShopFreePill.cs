@@ -39,6 +39,8 @@ public class ShopFreePill : ShopMonoRewardPill {
 	[SerializeField] private Button m_freeButton = null;
     [SerializeField] private Localizer m_freeButtonText = null;
 	[Space]
+    [SerializeField] private Button m_pillHitArea = null;
+    [Space]
     [SerializeField] private GameObject m_cooldownRoot = null;
     [SerializeField] private GameObject m_activeRoot = null;
 
@@ -113,6 +115,7 @@ public class ShopFreePill : ShopMonoRewardPill {
 			// Enable/Disable button
 			m_watchAdButton.interactable = !isOnCooldown;
             m_freeButton.interactable = !isOnCooldown;
+            m_pillHitArea.interactable = !isOnCooldown;
 
             // Show question mark icon if cooldown is active
             m_cooldownRoot.SetActive(isOnCooldown);

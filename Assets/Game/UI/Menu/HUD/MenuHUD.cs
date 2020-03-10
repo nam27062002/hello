@@ -104,10 +104,19 @@ public class MenuHUD : MonoBehaviour {
 		PopupShop shopPopup = popup.GetComponent<PopupShop>();
 		shopPopup.closeAfterPurchase = false;
         
-		shopPopup.Init(PopupShop.Mode.DEFAULT, InstanceManager.menuSceneController.currentScreen.ToString());
+		shopPopup.Init(ShopController.Mode.DEFAULT, InstanceManager.menuSceneController.currentScreen.ToString());
 
 		// Open popup!
 		popup.Open();
+	}
+
+	/// <summary>
+	/// Go to the shop screen.
+	/// </summary>
+	public void GoToShopScreen() {
+		// Track and do it
+		InstanceManager.menuSceneController.shopScreenController.trackingOrigin = InstanceManager.menuSceneController.currentScreen.ToString();
+		InstanceManager.menuSceneController.GoToScreen(MenuScreen.SHOP);
 	}
 
 	/// <summary>

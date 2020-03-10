@@ -99,6 +99,17 @@ public class MenuSceneController : SceneController {
 		}
 	}
 
+	// Shortcut to the shop
+	private ShopScreenController m_shopScreenController = null;
+	public ShopScreenController shopScreenController {
+		get {
+			if(m_shopScreenController == null) {
+				m_shopScreenController = GetScreenData(MenuScreen.SHOP).ui.GetComponent<ShopScreenController>();
+			}
+			return m_shopScreenController;
+		}
+	}
+
 	// Is the camera moving around?
 	public bool isTweening {
 		get {

@@ -29,14 +29,7 @@ public class PopupShop : MonoBehaviour {
 	//------------------------------------------------------------------//
 	public const string PATH = "UI/Popups/Economy/PF_PopupShop";
 
-    public enum Mode
-    {
-        DEFAULT,
-        SC_ONLY,
-        PC_ONLY,
-        OFFERS_FIRST,
-        PC_FIRST
-    };
+
 
     // Hide popup's content when any of these popups are open
     protected static readonly HashSet<string> POPUPS_TO_HIDE_CONTENT = new HashSet<string>() {
@@ -79,7 +72,8 @@ public class PopupShop : MonoBehaviour {
 	/// Initialize the popup with the requested mode. Should be called before opening the popup.
 	/// </summary>
 	/// <param name="_mode">Target mode.</param>
-	public void Init(PopupShop.Mode _mode, String _origin) {
+	public void Init(ShopController.Mode _mode, string _origin) {
+		m_openOrigin = _origin;
         m_shopController.Init(_mode, OnPurchaseSuccessful);
 	}
 
@@ -117,7 +111,11 @@ public class PopupShop : MonoBehaviour {
 	/// The popup is about to be been opened.
 	/// </summary>
 	public void OnOpenPreAnimation() {
+		// Propagate to shop controller
+		m_shopController.OnShopEnter(m_openOrigin);
 
+		// Reset packs purchased list
+		m_packsPurchased.Clear();
 	}
 
 	/// <summary>

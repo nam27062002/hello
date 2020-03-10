@@ -71,8 +71,12 @@ public abstract class ExtendedPropertyDrawer : PropertyDrawer {
 		OnGUIImpl(_property, customLabel);
 		
 		// If total height doesn't match the height we were given to draw the property, we need to force a repaint to adjust to the new height
-		if(GetHeight(m_currentKey) != _position.height) {
-			EditorUtility.SetDirty(_property.serializedObject.targetObject);
+		if(Mathf.Abs(GetHeight(m_currentKey) - _position.height) > float.Epsilon) {
+			// [AOC] TODO!! With the new Prefab workflow, introduced in Unity 2018.3,
+			//				this is causing a constant Auto-Save of the prefab, making
+			//				the editor unusable. Find a solution for it!
+			// [AOC] Doesn't really look like it's necessary anymore
+			//EditorUtility.SetDirty(_property.serializedObject.targetObject);
 		}
 
 		// Done!

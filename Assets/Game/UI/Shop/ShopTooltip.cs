@@ -115,6 +115,13 @@ public class ShopTooltip : MonoBehaviour {
 		ChangeState(State.SAFE_FRAMES);
 	}
 
+	/// <summary>
+	/// Will hide the tooltip, no matter its state.
+	/// </summary>
+	public void Hide() {
+		ChangeState(State.CLOSING);
+	}
+
 	//------------------------------------------------------------------//
 	// INTERNAL METHODS													//
 	//------------------------------------------------------------------//
@@ -151,7 +158,6 @@ public class ShopTooltip : MonoBehaviour {
 
 				// Close the popup after some delay
 				m_stateTimer = m_tooltip.animator.tweenDuration;
-
 			} break;
 		}
 

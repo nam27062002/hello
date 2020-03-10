@@ -33,7 +33,10 @@ public class ShopCategoryShortcut : MonoBehaviour {
     public CategoryController categoryController
     { get { return m_categoryController; } }
 
-
+	private string m_id = "";
+	public string id {
+		get { return m_id; }
+	}
 
 
     //------------------------------------------------------------------------//
@@ -78,6 +81,8 @@ public class ShopCategoryShortcut : MonoBehaviour {
         {
             return;
         }
+
+		m_id = _titleTID;
 
         m_text.Localize(_titleTID);
 

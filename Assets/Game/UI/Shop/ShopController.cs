@@ -31,6 +31,19 @@ public class ShopController : MonoBehaviour {
 
 
     //------------------------------------------------------------------------//
+    // ENUM															  //
+    //------------------------------------------------------------------------//
+
+    public enum Mode
+    {
+        DEFAULT,
+        SC_ONLY,
+        PC_ONLY,
+        JUMP_TO_PC
+    };
+
+
+    //------------------------------------------------------------------------//
     // CONSTANTS															  //
     //------------------------------------------------------------------------//
 
@@ -73,14 +86,16 @@ public class ShopController : MonoBehaviour {
     public int m_pillsPerFrame = 10;
 
     //Internal
+    private Mode m_mode;    // Shop mode
     private float m_timer = 0; // Refresh timer
     private bool m_scrolling = false; // The tweener scrolling animation is running
     private float m_scrollViewOffset;
     
     //Filtering categories
-    private string m_categoryToShow; 
+    private string m_categoryToShow;
 
-    // Cache the category containers and pills
+	// Cache the category containers and pills
+	private List<ShopCategory> m_activeCategories = new List<ShopCategory>();
     private List<CategoryController> m_categoryContainers;
     private List<IShopPill> m_pills;
 
@@ -121,14 +136,12 @@ public class ShopController : MonoBehaviour {
     private UnityAction<IShopPill> m_purchaseCompletedCallback;
     public UnityAction<IShopPill> purchaseCompletedCallback { get { return m_purchaseCompletedCallback; } }
 
-    // Frame counter for pills initialization effect
-    private int m_frameCounter;
-    public int frameCounter { get { return m_frameCounter; } }
 
     // Benchmarking
     private int timestamp, timestamp2;
 
 	// Tracking
+	private string m_trackingOrigin = "";	// Track from where the shop has been opened
 	private float m_trackingViewTimer = -1f;
 
     //------------------------------------------------------------------------//
@@ -184,13 +197,6 @@ public class ShopController : MonoBehaviour {
 	/// </summary>
 	private void Update() {
 
-#if UNITY_EDITOR
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            Refresh();
-        }
-#endif
-
         // Do not update if the shop is not open
         if (!gameObject.activeInHierarchy)
         {
@@ -238,7 +244,13 @@ public class ShopController : MonoBehaviour {
                     //CalculateCategoryBounds(m_shortcuts[0].categoryController.category);
                 }
 
-
+                if (m_mode == Mode.JUMP_TO_PC)
+                {
+                    // Jump to the HC section
+                    ShopCategoryShortcut sc = m_skuToShorcut[PC_CATEGORY_SKU];
+                    if ( sc!= null )
+                        OnShortcutSelected( sc );
+                }
 
                 shopReady = true;
 
@@ -257,14 +269,6 @@ public class ShopController : MonoBehaviour {
 
                 timestamp2 = Environment.TickCount;
             }
-        }
-
-
-        // Update frame counter
-        m_frameCounter--;
-        if (m_frameCounter < 0)
-        {
-            m_frameCounter = m_framesDelayPerPill;
         }
 
 		// Tracking
@@ -286,17 +290,18 @@ public class ShopController : MonoBehaviour {
     /// <param name="_mode">Target mode.</param>
     /// <param name="_purchaseCompletedCallback">If provided, this action will be called each time an offer in
     /// this shop is successfully purchased</param>
-    public void Init(PopupShop.Mode _mode, UnityAction<IShopPill> _purchaseCompletedCallback = null)
+    public void Init(Mode _mode, UnityAction<IShopPill> _purchaseCompletedCallback = null)
     {
         int timer = Environment.TickCount;
 
-        switch (_mode)
+        m_mode = _mode;
+        switch (m_mode)
         {
-            case PopupShop.Mode.PC_ONLY:
+            case Mode.PC_ONLY:
                 m_categoryToShow = PC_CATEGORY_SKU;
                 CenterItemsAndLockScroll();
                 break;
-            case PopupShop.Mode.SC_ONLY:
+            case Mode.SC_ONLY:
                 m_categoryToShow = SC_CATEGORY_SKU;
                 CenterItemsAndLockScroll();
                 break;
@@ -320,7 +325,8 @@ public class ShopController : MonoBehaviour {
         m_categoriesContainer.transform.DestroyAllChildren(true);
         m_shortcutsContainer.transform.DestroyAllChildren(true);
 
-        // Clean categories
+		// Clean categories
+		m_activeCategories.Clear();
         m_categoryContainers.Clear();
 
         // Clean pills cache
@@ -337,7 +343,6 @@ public class ShopController : MonoBehaviour {
         m_hidePillsOutOfView = false;
 		m_visiblePills.Clear();
 
-		m_frameCounter = 0;
     }
 
 
@@ -378,7 +383,10 @@ public class ShopController : MonoBehaviour {
                     // Make sure there are offers in this category
                     if (category.offers.Count > 0)
                     {
+						// Store as active category
+						m_activeCategories.Add(category);
 
+						// Create shortcut if needed
                         CreateShortcut(category);
 
                         // Enqueue the categories so they are initialized one per frame
@@ -534,7 +542,7 @@ public class ShopController : MonoBehaviour {
     /// </summary>
     public void ScrollToStart()
     {
-        if (m_pills.Count != 0)
+        if (m_pills!= null && m_pills.Count != 0)
         {
             ScrollToItem(m_pills[0].transform);
         }
@@ -1020,15 +1028,55 @@ public class ShopController : MonoBehaviour {
 #endif
 	}
 
+	/// <summary>
+	/// Perform all required tracking upon entering the shop.
+	/// </summary>
+	private void NotifyShopEnterTracking() {
+		HDTrackingManager.Instance.Notify_StoreVisited(m_trackingOrigin);
+	}
+
+	/// <summary>
+	/// Tell the tracking manager about categories order.
+	/// </summary>
+	private void NotifyCategoryOrderTracking() {
+		// We already have the categories sorted, so just send an event for each
+		for(int i = 0; i < m_activeCategories.Count; ++i) {
+			HDTrackingManager.Instance.Notify_StoreCategoryOrder(m_activeCategories[i].def.sku, i);
+		}
+	}
+
+	/// <summary>
+	/// Tell the tracking manager when a shortcut is pressed.
+	/// </summary>
+	/// <param name="_sc">The pressed shortcut.</param>
+	private void NotifyShortcutPressedTracking(ShopCategoryShortcut _sc) {
+		// Propagate to tracking manager
+		HDTrackingManager.Instance.Notify_StoreShortcutClick(_sc.id);
+	}
+
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
+	/// <summary>
+	/// To be called whenever the shop is entered - either from the screen or the popup.
+	/// </summary>
+	/// <param name="_origin">Where do we come from? Tracking purposes.</param>
+	public void OnShopEnter(string _origin) {
+		// Tracking
+		m_trackingOrigin = _origin;
+		NotifyShopEnterTracking();
+		NotifyCategoryOrderTracking();
+	}
+
 	/// <summary>
 	/// A shortcut was pressed
 	/// </summary>
 	/// <param name="_sc">The category related to the shortcut</param>
 	public void OnShortcutSelected(ShopCategoryShortcut _sc)
     {
+		// Tracking! Even if already selected or not yet loaded
+		NotifyShortcutPressedTracking(_sc);
+
         if (_sc.categoryController == null)
             return;
 

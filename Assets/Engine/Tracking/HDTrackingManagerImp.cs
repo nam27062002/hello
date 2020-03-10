@@ -220,7 +220,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
         if (!string.IsNullOrEmpty(_sku)) {
             DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SHOP_PACKS, _sku);
             if (def != null) {
-                moneyUSD = Convert.ToInt32(def.GetAsFloat("price") * 100f);
+                moneyUSD = Convert.ToInt32(def.GetAsFloat("refPrice") * 100f);
                 isSpecialOffer = def.GetAsString("type", "").Equals("offer");
                 promotionType = def.GetAsString("promotionType");
             }
@@ -732,9 +732,11 @@ public class HDTrackingManagerImp : HDTrackingManager {
     }
 
 	// [AOC] DEPRECATED!!
+	/*
     public override void Notify_StoreSection( string section) {
         Track_ShopSection( section );
     }
+	*/
 
 	/// <summary>
 	/// Notifies that the player has stopped for X seconds while viewing the shop.
@@ -755,7 +757,27 @@ public class HDTrackingManagerImp : HDTrackingManager {
         Track_ShopItemView( id );
     }
 
-    public override void Notify_IAPStarted() {
+	/// <summary>
+	/// Notify the order of a given category in the store.
+	/// </summary>
+	/// <param name="_categorySku">Category sku.</param>
+	/// <param name="_order">Order, left to right.</param>
+	public override void Notify_StoreCategoryOrder(string _categorySku, int _order) {
+		Track_ShopCategoryOrder(_categorySku, _order);
+	}
+
+	/// <summary>
+	/// Notify when the player clicks on a shortcut in the shop.
+	/// </summary>
+	/// <param name="_shortcutID">The ID of the clicked shortcut.</param>
+	public override void Notify_StoreShortcutClick(string _shortcutID) {
+		Track_ShopShortcutClick(_shortcutID);
+	}
+
+	/// <summary>
+	/// 
+	/// </summary>
+	public override void Notify_IAPStarted() {
         // The app is paused when the iap popup is shown. According to BI session closed event shouldn't be sent when the app is paused to perform an iap and
         // session started event shouldn't be sent when the app is resumed once the iap is completed
         Session_IsNotifyOnPauseEnabled = false;
@@ -786,7 +808,6 @@ public class HDTrackingManagerImp : HDTrackingManager {
             TrackingPersistenceSystem.TotalSpent += moneyUSD;
 			TrackingPersistenceSystem.LastPurchasePrice = moneyUSD;
             TrackingPersistenceSystem.LastPurchaseTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong() / 1000L;  // Millis to Seconds
-
 			if(moneyUSD > TrackingPersistenceSystem.MaxPurchasePrice) {
 				TrackingPersistenceSystem.MaxPurchasePrice = moneyUSD;
 			}
@@ -1981,7 +2002,9 @@ public class HDTrackingManagerImp : HDTrackingManager {
         }
         m_eventQueue.Enqueue(e);
     }
-    
+
+	// [AOC] DEPRECATED
+	/*
     private void Track_ShopSection( string section ){        
         Log("Track_StoreSection section = " + section );
         
@@ -1994,6 +2017,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
         }
         m_eventQueue.Enqueue(e);
     }
+	*/
 
 	/// <summary>
 	/// Notifies that the player has stopped for X seconds while viewing the shop.
@@ -2003,12 +2027,12 @@ public class HDTrackingManagerImp : HDTrackingManager {
 	/// <param name="_allVisibleSections">All categories being fully displayed in the screen. Don't include categories that are only partially displayed.</param>
 	/// <param name="_allVisibleItems">All items being fully displayed in the screen. Don't include items that are only partially displayed.</param>
 	private void Track_ShopView(string _centralSection, string[] _centralItems, string[] _allVisibleSections, string[] _allVisibleItems) {
-#if LOG
+#if ENABLE_LOGS
 		string logStr = "Track_ShopView";
 		logStr += "\n\t_centralSection = " + _centralSection;
 		logStr += "\n\t_centralItems = " + DebugUtils.ArrayToString(_centralItems);
-		logStr += "\n\_allVisibleSections = " + DebugUtils.ArrayToString(_allVisibleSections);
-		logStr += "\n\_allVisibleItems = " + DebugUtils.ArrayToString(_allVisibleItems);
+		logStr += "\n\t_allVisibleSections = " + DebugUtils.ArrayToString(_allVisibleSections);
+		logStr += "\n\t_allVisibleItems = " + DebugUtils.ArrayToString(_allVisibleItems);
 		Log(logStr);
 #endif
 
@@ -2027,6 +2051,10 @@ public class HDTrackingManagerImp : HDTrackingManager {
 		m_eventQueue.Enqueue(e);
 	}
 
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <param name="id"></param>
     private void Track_ShopItemView( string id ){        
         Log("Track_StoreItemView itemID = " + id );        
 
@@ -2041,7 +2069,45 @@ public class HDTrackingManagerImp : HDTrackingManager {
         m_eventQueue.Enqueue(e);
     }
 
-    private void Track_Funnel(string _event, string _step, int _stepDuration, int _totalDuration, bool _fistLoad) {        
+	/// <summary>
+	/// Notify the order of a given category in the store.
+	/// </summary>
+	/// <param name="_categorySku">Category sku.</param>
+	/// <param name="_order">Order, left to right.</param>
+	private void Track_ShopCategoryOrder(string _categorySku, int _order) {
+		Log("Track_ShopCategoryOrder: _categorySku = " + _categorySku + ", _order = " + _order);
+
+		HDTrackingEvent e = new HDTrackingEvent("custom.shop.order");
+		{
+			Track_AddParamString(e, TRACK_PARAM_SECTION, _categorySku);
+			Track_AddParamInt(e, TRACK_PARAM_POSITION, _order);
+			Track_AddParamPlayerProgress(e);
+			Track_AddParamPlayerSC(e);
+			Track_AddParamPlayerPC(e);
+			Track_AddParamShopEntranceID(e);
+		}
+		m_eventQueue.Enqueue(e);
+	}
+
+	/// <summary>
+	/// Notify when the player clicks on a shortcut in the shop.
+	/// </summary>
+	/// <param name="_shortcutID">The ID of the clicked shortcut.</param>
+	private void Track_ShopShortcutClick(string _shortcutID) {
+		Log("Track_ShopShortcutClick: _shortcutID = " + _shortcutID);
+
+		HDTrackingEvent e = new HDTrackingEvent("custom.shop.sectionclicked");
+		{
+			Track_AddParamString(e, TRACK_PARAM_SHOP_DESTINATION_SECTION, _shortcutID);
+			Track_AddParamPlayerProgress(e);
+			Track_AddParamPlayerSC(e);
+			Track_AddParamPlayerPC(e);
+			Track_AddParamShopEntranceID(e);
+		}
+		m_eventQueue.Enqueue(e);
+	}
+
+	private void Track_Funnel(string _event, string _step, int _stepDuration, int _totalDuration, bool _fistLoad) {        
         Log("Track_Funnel eventID = " + _event + " stepName = " + _step + " stepDuration = " + _stepDuration + " totalDuration = " + _totalDuration + " firstLoad = " + _fistLoad);        
 
         HDTrackingEvent e = new HDTrackingEvent(_event);
@@ -2835,7 +2901,8 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private const string TRACK_PARAM_SC_EARNED = "scEarned";
     private const string TRACK_PARAM_SCORE = "score";
     private const string TRACK_PARAM_SECTION = "section";
-    private const string TRACK_PARAM_SIZE = "size";
+	private const string TRACK_PARAM_POSITION = "position";
+	private const string TRACK_PARAM_SIZE = "size";
     private const string TRACK_PARAM_SOFT_CURRENCY = "softCurrency";
     private const string TRACK_PARAM_EVENT_SCORE_RUN = "scoreRun";
     private const string TRACK_PARAM_EVENT_SCORE_TOTAL = "scoreTotal";
@@ -2883,6 +2950,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
 	private const string TRACK_PARAM_SHOP_CENTRAL_ITEMS = "central_itemID";
 	private const string TRACK_PARAM_SHOP_ALL_SECTIONS = "all_section";
 	private const string TRACK_PARAM_SHOP_ALL_ITEMS = "all_itemID";
+	private const string TRACK_PARAM_SHOP_DESTINATION_SECTION = "destination_section";
 
 	private const string OFFER_TYPE_SHOP = "shop";
 
