@@ -1268,13 +1268,13 @@ public class OfferPack {
 
 		int val = r.min;
 		if(tokens.Length > 0) {
-			int.TryParse(tokens[0], out val);
+			int.TryParse(tokens[0], NumberStyles.Any, CultureInfo.InvariantCulture, out val);
 			r.min = val;
 		}
 
 		val = r.max;
 		if(tokens.Length > 1) {
-			int.TryParse(tokens[1], out val);
+			int.TryParse(tokens[1], NumberStyles.Any, CultureInfo.InvariantCulture, out val);
 			r.max = val;
 		}
 
