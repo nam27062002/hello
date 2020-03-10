@@ -42,6 +42,10 @@ public class ShopScreenController : MonoBehaviour {
 
 	private ShopController m_shopController = null;
 
+    // Shop mode
+    private ShopController.Mode m_mode = ShopController.Mode.DEFAULT;
+    public ShopController.Mode mode { set { m_mode = value; } }
+
 	// Tracking
 	private string m_trackingOrigin = "";
 	public string trackingOrigin {
@@ -114,9 +118,12 @@ public class ShopScreenController : MonoBehaviour {
     public void OnShowPreAnimation(ShowHideAnimator _animator)
     {
         // Initialize the shop
-        m_shopController.Init(PopupShop.Mode.DEFAULT);
+        m_shopController.Init(m_mode);
 
-		// Propagate event
-		m_shopController.OnShopEnter(m_trackingOrigin);
+        // Reset mode to its default value
+        m_mode = ShopController.Mode.DEFAULT;
+
+        // Propagate event
+        m_shopController.OnShopEnter(m_trackingOrigin);
     }
 }

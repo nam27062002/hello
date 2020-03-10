@@ -31,6 +31,19 @@ public class ShopController : MonoBehaviour {
 
 
     //------------------------------------------------------------------------//
+    // ENUM															  //
+    //------------------------------------------------------------------------//
+
+    public enum Mode
+    {
+        DEFAULT,
+        SC_ONLY,
+        PC_ONLY,
+        JUMP_TO_PC
+    };
+
+
+    //------------------------------------------------------------------------//
     // CONSTANTS															  //
     //------------------------------------------------------------------------//
 
@@ -73,6 +86,7 @@ public class ShopController : MonoBehaviour {
     public int m_pillsPerFrame = 10;
 
     //Internal
+    private Mode m_mode;    // Shop mode
     private float m_timer = 0; // Refresh timer
     private bool m_scrolling = false; // The tweener scrolling animation is running
     private float m_scrollViewOffset;
@@ -122,9 +136,6 @@ public class ShopController : MonoBehaviour {
     private UnityAction<IShopPill> m_purchaseCompletedCallback;
     public UnityAction<IShopPill> purchaseCompletedCallback { get { return m_purchaseCompletedCallback; } }
 
-    // Frame counter for pills initialization effect
-    private int m_frameCounter;
-    public int frameCounter { get { return m_frameCounter; } }
 
     // Benchmarking
     private int timestamp, timestamp2;
@@ -186,13 +197,6 @@ public class ShopController : MonoBehaviour {
 	/// </summary>
 	private void Update() {
 
-#if UNITY_EDITOR
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            Refresh();
-        }
-#endif
-
         // Do not update if the shop is not open
         if (!gameObject.activeInHierarchy)
         {
@@ -240,6 +244,14 @@ public class ShopController : MonoBehaviour {
                     //CalculateCategoryBounds(m_shortcuts[0].categoryController.category);
                 }
 
+                if (m_mode == Mode.JUMP_TO_PC)
+                {
+                    // Jump to the HC section
+                    ShopCategoryShortcut sc = m_skuToShorcut[PC_CATEGORY_SKU];
+                    if ( sc!= null )
+                        OnShortcutSelected( sc );
+                }
+
                 shopReady = true;
 
                 // Benchmarking
@@ -257,14 +269,6 @@ public class ShopController : MonoBehaviour {
 
                 timestamp2 = Environment.TickCount;
             }
-        }
-
-
-        // Update frame counter
-        m_frameCounter--;
-        if (m_frameCounter < 0)
-        {
-            m_frameCounter = m_framesDelayPerPill;
         }
 
 		// Tracking
@@ -286,17 +290,18 @@ public class ShopController : MonoBehaviour {
     /// <param name="_mode">Target mode.</param>
     /// <param name="_purchaseCompletedCallback">If provided, this action will be called each time an offer in
     /// this shop is successfully purchased</param>
-    public void Init(PopupShop.Mode _mode, UnityAction<IShopPill> _purchaseCompletedCallback = null)
+    public void Init(Mode _mode, UnityAction<IShopPill> _purchaseCompletedCallback = null)
     {
         int timer = Environment.TickCount;
 
-        switch (_mode)
+        m_mode = _mode;
+        switch (m_mode)
         {
-            case PopupShop.Mode.PC_ONLY:
+            case Mode.PC_ONLY:
                 m_categoryToShow = PC_CATEGORY_SKU;
                 CenterItemsAndLockScroll();
                 break;
-            case PopupShop.Mode.SC_ONLY:
+            case Mode.SC_ONLY:
                 m_categoryToShow = SC_CATEGORY_SKU;
                 CenterItemsAndLockScroll();
                 break;
@@ -338,7 +343,6 @@ public class ShopController : MonoBehaviour {
         m_hidePillsOutOfView = false;
 		m_visiblePills.Clear();
 
-		m_frameCounter = 0;
     }
 
 

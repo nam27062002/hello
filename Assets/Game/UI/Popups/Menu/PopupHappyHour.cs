@@ -151,7 +151,7 @@ public class PopupHappyHour : MonoBehaviour {
 		PopupShop shopPopup = popup.GetComponent<PopupShop>();
 
 		// User is playing a run. Show only PC tab.
-		shopPopup.Init(PopupShop.Mode.PC_ONLY, "Happy_Hour_Popup");
+		shopPopup.Init(ShopController.Mode.PC_ONLY, "Happy_Hour_Popup");
 
 		shopPopup.closeAfterPurchase = true;
 

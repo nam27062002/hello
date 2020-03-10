@@ -220,7 +220,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
         if (!string.IsNullOrEmpty(_sku)) {
             DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SHOP_PACKS, _sku);
             if (def != null) {
-                moneyUSD = Convert.ToInt32(def.GetAsFloat("price") * 100f);
+                moneyUSD = Convert.ToInt32(def.GetAsFloat("refPrice") * 100f);
                 isSpecialOffer = def.GetAsString("type", "").Equals("offer");
                 promotionType = def.GetAsString("promotionType");
             }
@@ -808,7 +808,6 @@ public class HDTrackingManagerImp : HDTrackingManager {
             TrackingPersistenceSystem.TotalSpent += moneyUSD;
 			TrackingPersistenceSystem.LastPurchasePrice = moneyUSD;
             TrackingPersistenceSystem.LastPurchaseTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong() / 1000L;  // Millis to Seconds
-
 			if(moneyUSD > TrackingPersistenceSystem.MaxPurchasePrice) {
 				TrackingPersistenceSystem.MaxPurchasePrice = moneyUSD;
 			}
