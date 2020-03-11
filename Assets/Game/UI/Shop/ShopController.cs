@@ -27,7 +27,7 @@ using DG.Tweening;
 /// <summary>
 /// 
 /// </summary>
-public class ShopController : MonoBehaviour, IBroadcastListener
+public class ShopController : MonoBehaviour
 {
 
 
@@ -181,14 +181,6 @@ public class ShopController : MonoBehaviour, IBroadcastListener
 		// Reset tracking timer
 		m_trackingViewTimer = TRACKING_VIEW_MIN_DURATION;
 
-        // Subscribe to events
-        Broadcaster.AddListener(BroadcastEventType.QUALITY_PROFILE_CHANGED, this);
-    }
-
-    private void OnDisable()
-    {
-        // Unsubscribe to events
-        Broadcaster.RemoveListener(BroadcastEventType.QUALITY_PROFILE_CHANGED, this);
     }
 
 
@@ -1199,29 +1191,7 @@ public class ShopController : MonoBehaviour, IBroadcastListener
             }
         }
     }
-
-
-    /// <summary>
-    /// External event listener.
-    /// </summary>
-    /// <param name="eventType"></param>
-    /// <param name="broadcastEventInfo"></param>
-    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
-    {
-        switch (eventType)
-        {
-            case BroadcastEventType.QUALITY_PROFILE_CHANGED:
-                {
-                    // Re-initialize all the pills (even the inactive ones)
-                    foreach (ShopBasePill pill in m_pills)
-                    {
-                        pill.InitFromOfferPack(pill.pack);
-                    }
-
-                }
-                break;
-        }
-    }
+    
 
     //------------------------------------------------------------------------//
     // DEBUG																  //
