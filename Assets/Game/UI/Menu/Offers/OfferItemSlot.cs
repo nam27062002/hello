@@ -108,7 +108,7 @@ public class OfferItemSlot : MonoBehaviour, IBroadcastListener {
 	/// <summary>
 	/// Component has been enabled.
 	/// </summary>
-	private void OnEnable() {
+	private void Awake() {
 		// Subscribe to external events
 		Broadcaster.AddListener(BroadcastEventType.LANGUAGE_CHANGED, this);
 		Broadcaster.AddListener(BroadcastEventType.QUALITY_PROFILE_CHANGED, this);
@@ -117,7 +117,7 @@ public class OfferItemSlot : MonoBehaviour, IBroadcastListener {
 	/// <summary>
 	/// Component has been disabled.
 	/// </summary>
-	private void OnDisable() {
+	private void OnDestroy() {
 		// Unsubscribe from external events
 		Broadcaster.RemoveListener(BroadcastEventType.LANGUAGE_CHANGED, this);
 		Broadcaster.RemoveListener(BroadcastEventType.QUALITY_PROFILE_CHANGED, this);
