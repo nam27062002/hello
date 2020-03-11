@@ -76,18 +76,16 @@ public class ShopScreenController : MonoBehaviour {
     {
         // Get a reference to the navigation system, which in this particular case should be a component in the menu scene controller
         m_transitionManager = InstanceManager.menuSceneController.transitionManager;
-        Debug.Assert(m_transitionManager != null, "Required component missing!");
-
-
-
-    }
+        Debug.Assert(m_transitionManager != null, "Required component MenuTransitionManager missing!");
+		Debug.Assert(m_shopController != null, "Required component ShopController missing!");
+	}
 
     /// <summary>
     /// On Enabled
     /// </summary>
     private void OnEnable() {
 
-        if (m_transitionManager!= null && m_transitionManager.prevScreen == MenuScreen.PENDING_REWARD)
+        if (m_transitionManager != null && m_transitionManager.prevScreen == MenuScreen.PENDING_REWARD)
         {
             // Do nothing. Let the shop to be opened in the same position that it was before the purchase.
         }
