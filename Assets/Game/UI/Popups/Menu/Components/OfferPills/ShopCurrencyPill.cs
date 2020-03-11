@@ -164,9 +164,10 @@ public class ShopCurrencyPill : ShopMonoRewardPill {
                     // Make sure we are not in the middle of a run at this moment
                     if (InstanceManager.gameSceneController == null)
                     {
-                        // Force HH popup if the player is in the shop scene right now (not in the popup shop)
+                        // Force HH popup if the player is in the shop scene right now (nor in the shop/missing pc popup)
                         forceHHPopup = InstanceManager.menuSceneController.currentScreen == MenuScreen.SHOP &&
-                                        PopupManager.GetOpenPopup(PopupShop.PATH) == null;
+                                        PopupManager.GetOpenPopup(PopupShop.PATH) == null &&
+                                        PopupManager.GetOpenPopup(ResourcesFlowMissingPCPopup.PATH) == null;
                     } else
                     {
                         // We are in a run
