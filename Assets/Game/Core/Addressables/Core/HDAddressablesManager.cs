@@ -137,6 +137,7 @@ public class HDAddressablesManager : AddressablesManager
                     //urlBase = "http://hdragon-assets.s3.amazonaws.com/";
                     break;
 
+                case CaletyConstants.eBuildEnvironments.BUILD_INTEGRATION:
                 case CaletyConstants.eBuildEnvironments.BUILD_DEV:
                 case CaletyConstants.eBuildEnvironments.BUILD_LOCAL:
                     urlBase = "http://bcn-mb-services1.ubisoft.org/hungrydragon";
