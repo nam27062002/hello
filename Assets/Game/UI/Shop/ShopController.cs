@@ -27,7 +27,7 @@ using DG.Tweening;
 /// <summary>
 /// 
 /// </summary>
-public class ShopController : MonoBehaviour, IBroadcastListener
+public class ShopController : MonoBehaviour
 {
 
 
