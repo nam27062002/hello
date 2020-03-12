@@ -13,13 +13,13 @@ namespace Shop {
             ShopController shop = (ShopController)target;
             if (GUILayout.Button("Enable Optimization"))
             {
-                shop.useOptimization = true;
+                shop.m_useOptimization = true;
                 // Optimization will be applied in the next update
             }
 
             if (GUILayout.Button("Disable Optimization"))
             {
-                shop.useOptimization = false;
+                shop.m_useOptimization = false;
                 shop.SetOptimizationActive(false);
             }
         }
