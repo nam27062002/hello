@@ -113,6 +113,9 @@ public class OfferPack {
 		get { return m_state; }
 	}
 
+	protected bool m_forcedStateChangePending = false;
+	protected State m_forcedStateChange = State.PENDING_ACTIVATION;
+
 	public bool isActive {
 		get { return m_state == State.ACTIVE; }
 	}
@@ -249,43 +252,49 @@ public class OfferPack {
 	/// <returns>Whether the pack has change its state.</returns>
 	public virtual bool UpdateState() {
 		//OffersManager.LogPack(this, "UpdateState {0} ({1})", Colors.pink, m_def.sku, m_state);
-
-		// Based on pack's state
 		State oldState = m_state;
-		switch(m_state) {
-			case State.PENDING_ACTIVATION: {
-				// Check for activation
-				if(CheckActivation() && CheckSegmentation()) {
-					ChangeState(State.ACTIVE);
 
-					// Just in case, check for expiration immediately after
+		// If a state change is forced, do it
+		if(m_forcedStateChangePending) {
+			m_forcedStateChangePending = false;
+			ChangeState(m_forcedStateChange);
+		} else {
+			// Based on pack's state
+			switch(m_state) {
+				case State.PENDING_ACTIVATION: {
+					// Check for activation
+					if(CheckActivation() && CheckSegmentation()) {
+						ChangeState(State.ACTIVE);
+
+						// Just in case, check for expiration immediately after
+						if(CheckExpiration(true)) {
+							ChangeState(State.EXPIRED);
+						}
+					}
+
+					// Packs expiring before ever being activated (i.e. dragon not owned, excluded countries, etc.)
+					else if(CheckExpiration(true)) {
+						ChangeState(State.EXPIRED);
+					}
+				} break;
+
+				case State.ACTIVE: {
+					// Check for expiration
 					if(CheckExpiration(true)) {
 						ChangeState(State.EXPIRED);
 					}
-				}
 
-				// Packs expiring before ever being activated (i.e. dragon not owned, excluded countries, etc.)
-				else if(CheckExpiration(true)) {
-					ChangeState(State.EXPIRED);
-				}
-			} break;
+					// The pack might have gone out of segmentation range (i.e. currency balance). Check it!
+					// [AOC] TODO!! We might wanna keep some packs until they expire even if initial segmentation is no longer valid
+					else if(!CheckSegmentation()) {
+						ChangeState(State.PENDING_ACTIVATION);
+					}
+				} break;
 
-			case State.ACTIVE: {
-				// Check for expiration
-				if(CheckExpiration(true)) {
-					ChangeState(State.EXPIRED);
-				}
-
-				// The pack might have gone out of segmentation range (i.e. currency balance). Check it!
-				// [AOC] TODO!! We might wanna keep some packs until they expire even if initial segmentation is no longer valid
-				else if(!CheckSegmentation()) {
-					ChangeState(State.PENDING_ACTIVATION);
-				}
-			} break;
-
-			case State.EXPIRED: {
-				// Nothing to do (expired packs can't be reactivated)
-			} break;
+				case State.EXPIRED: {
+					// Nothing to do (expired packs can't be reactivated)
+				} break;
+			}
 		}
 
 		// Has state changed?
@@ -293,11 +302,19 @@ public class OfferPack {
 	}
 
 	/// <summary>
-	/// Immediately mark this pack as expired!
+	/// Change the state of this pack.
 	/// No checks will be performed.
 	/// </summary>
-	public void ForceExpiration() {
-		ChangeState(State.EXPIRED);
+	/// <param name="_newState">The state to change to.</param>
+	/// <param name="_immediate">Whether to do it right now or in the next UpdateState() call.</param>
+	public void ForceStateChange(State _newState, bool _immediate) {
+		// Immediate?
+		if(_immediate) {
+			ChangeState(State.PENDING_ACTIVATION);
+		} else {
+			m_forcedStateChangePending = true;
+			m_forcedStateChange = _newState;
+		}
 	}
 	#endregion
 

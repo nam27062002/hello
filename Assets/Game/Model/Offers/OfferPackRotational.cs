@@ -53,36 +53,42 @@ public class OfferPackRotational : OfferPack {
 	/// <returns>Whether the pack has change its state.</returns>
 	public override bool UpdateState() {
 		//OffersManager.LogPack(this, "UpdateState {0} | {1}", Colors.pink, def.sku, m_state);
-
-		// Based on pack's state
 		State oldState = m_state;
-		switch(m_state) {
-			case State.PENDING_ACTIVATION: {
-				// Do nothing, rotational packs can only be activated externally
-			} break;
 
-			case State.ACTIVE: {
-				// Check for expiration by time
-				if(CheckExpirationByTime()) {
-					// Go back to pending activation state so the pack can be selected again
-					ChangeState(State.PENDING_ACTIVATION);
-				}
+		// If a state change is forced, do it
+		if(m_forcedStateChangePending) {
+			m_forcedStateChangePending = false;
+			ChangeState(m_forcedStateChange);
+		} else {
+			// Based on pack's state
+			switch(m_state) {
+				case State.PENDING_ACTIVATION: {
+					// Do nothing, rotational packs can only be activated externally
+				} break;
 
-                // However, if it has expired for any other reason (i.e. Purchase Limit), go to the expired state
-                else if(CheckExpiration(false)) { 
-                    ChangeState(State.EXPIRED);
-				}
+				case State.ACTIVE: {
+					// Check for expiration by time
+					if(CheckExpirationByTime()) {
+						// Go back to pending activation state so the pack can be selected again
+						ChangeState(State.PENDING_ACTIVATION);
+					}
 
-				// Finally, if the pack hasn't expired by time nor conditions, but it has just been applied, put it back to pending activation state so it can be selected again
-				else if(m_hasBeenApplied) {
-					m_hasBeenApplied = false;
-					ChangeState(State.PENDING_ACTIVATION);
-				}
-			} break;
+					// However, if it has expired for any other reason (i.e. Purchase Limit), go to the expired state
+					else if(CheckExpiration(false)) { 
+						ChangeState(State.EXPIRED);
+					}
 
-			case State.EXPIRED: {
-				// Nothing to do (expired packs can't be reactivated)
-			} break;
+					// Finally, if the pack hasn't expired by time nor conditions, but it has just been applied, put it back to pending activation state so it can be selected again
+					else if(m_hasBeenApplied) {
+						m_hasBeenApplied = false;
+						ChangeState(State.PENDING_ACTIVATION);
+					}
+				} break;
+
+				case State.EXPIRED: {
+					// Nothing to do (expired packs can't be reactivated)
+				} break;
+			}
 		}
 
 		// Has state changed?
