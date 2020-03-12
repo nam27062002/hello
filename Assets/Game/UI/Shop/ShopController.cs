@@ -110,28 +110,31 @@ public class ShopController : MonoBehaviour
     private float categoryLeftBorder, categoryRightBorder;
 
     // True if all the pills have already been drawn
-    private bool shopReady = false;
-    private bool optimizationActive = false;
+    private bool m_shopReady = false;
+    private bool m_optimizationActive = false;
 
     // Optimization #1: disable layouts after refresh
-    private bool layoutGropusActive = false;
-    private bool disableLayoutsGroupsInNextFrame = false; // If true, disable layout groups in the next update
+    private bool m_layoutGropusActive = false;
+    private bool m_disableLayoutsGroupsInNextFrame = false; // If true, disable layout groups in the next update
 
     // Optimization #2: Disable pills that are outside of the visible scrollable panel
-    private float normalizedViewportWidth;
+    private float m_normalizedViewportWidth;
     private bool m_hidePillsOutOfView = false;
 	private List<IShopPill> m_visiblePills = new List<IShopPill>();
 
     // Optimization #3: initialize one pill per frame
-    private Queue<ShopCategory> categoriesToInitialize;
-    private CategoryController catBeingInitialized;
+    private Queue<ShopCategory> m_categoriesToInitialize;
+    private CategoryController m_catBeingInitialized;
 
     // Aux var to turn optimization on/off from the inspector
     [System.NonSerialized]
-    public bool useOptimization = true;
+    public bool m_useOptimization = true;
 
     // Paralax effect
     private CameraTraveling m_cameraTraveling;
+
+    // Remember scroll position
+    float m_lastScrollPos;
 
     // Callback for successful purchases
     private UnityAction<IShopPill> m_purchaseCompletedCallback;
@@ -156,7 +159,7 @@ public class ShopController : MonoBehaviour
         m_skuToShorcut = new Dictionary<string, ShopCategoryShortcut>();
         m_categoryContainers = new List<CategoryController>();
         m_pills = new List<IShopPill>();
-        categoriesToInitialize = new Queue<ShopCategory>();
+        m_categoriesToInitialize = new Queue<ShopCategory>();
 
         m_cameraTraveling = GetComponent<CameraTraveling>();
 
@@ -190,7 +193,7 @@ public class ShopController : MonoBehaviour
     private void Start() {
 
         InvokeRepeating("PeriodicRefresh", 0f, REFRESH_FREQUENCY);
-        shopReady = false;
+        m_shopReady = false;
     }
 
 
@@ -199,6 +202,14 @@ public class ShopController : MonoBehaviour
 	/// </summary>
 	private void Update() {
 
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            ShopBasePill pill = (ShopBasePill) m_pills[UnityEngine.Random.Range(0, m_pills.Count - 1)];
+            List<OfferPack> offers = new List<OfferPack>();
+            offers.Add(pill.pack);
+            OnOffersChanged(offers);
+        }
+
         // Do not update if the shop is not open
         if (!gameObject.activeInHierarchy)
         {
@@ -206,7 +217,7 @@ public class ShopController : MonoBehaviour
         }
 
         // When the shop is ready, turn on the optimizations
-        if (shopReady && !optimizationActive && useOptimization)
+        if (m_shopReady && !m_optimizationActive && m_useOptimization)
         {
             // Wait one frame
             UbiBCN.CoroutineManager.DelayedCallByFrames(() => {
@@ -220,25 +231,25 @@ public class ShopController : MonoBehaviour
         }
 
         // Has this category initialization already finished ?
-        if (catBeingInitialized != null && catBeingInitialized.IsFinished())
+        if (m_catBeingInitialized != null && m_catBeingInitialized.IsFinished())
         {
             // Keep a reference to the new pills created
-            m_pills.AddRange(catBeingInitialized.offerPills);
+            m_pills.AddRange(m_catBeingInitialized.offerPills);
 
             // Force the category as dirty to be redrawn
-            catBeingInitialized.GetComponent<LayoutGroup>().enabled = false;
-            catBeingInitialized.GetComponent<LayoutGroup>().enabled = true;
+            m_catBeingInitialized.GetComponent<LayoutGroup>().enabled = false;
+            m_catBeingInitialized.GetComponent<LayoutGroup>().enabled = true;
 
 
             // Benchmarking
-            Log(Colors.paleYellow.Tag("Initialize category " + catBeingInitialized.category.sku + " in " + 
+            Log(Colors.paleYellow.Tag("Initialize category " + m_catBeingInitialized.category.sku + " in " + 
                 (Environment.TickCount - timestamp2) + " ms"));
             
             // This category has been initialized succesfully!
-            catBeingInitialized = null;
+            m_catBeingInitialized = null;
                        
             // Are there some categories left to initialize?
-            if (categoriesToInitialize.Count == 0)
+            if (m_categoriesToInitialize.Count == 0)
             {
                 // At the end of initialization, user will be looking at the first category
                 if (m_shortcuts.Count > 0)
@@ -253,8 +264,15 @@ public class ShopController : MonoBehaviour
                     if ( sc!= null )
                         OnShortcutSelected( sc );
                 }
+                else if (m_lastScrollPos != 0)
+                {
+                    // Jump to position
+                    ScrollToPosition(m_lastScrollPos);
+                    // Reset the value so it wont scroll again in the next refresh
+                    m_lastScrollPos = 0f;
+                }
 
-                shopReady = true;
+                m_shopReady = true;
 
                 // Benchmarking
                 Log(Colors.paleYellow.Tag("Shop initialized in " + (Environment.TickCount - timestamp) + " ms"));
@@ -262,12 +280,12 @@ public class ShopController : MonoBehaviour
         }
 
         // Initialize the next category in the queue
-        if (categoriesToInitialize.Count > 0)
+        if (m_categoriesToInitialize.Count > 0)
         {
-            if (catBeingInitialized == null)
+            if (m_catBeingInitialized == null)
             {
-                ShopCategory cat = categoriesToInitialize.Dequeue();
-                catBeingInitialized = InitializeCategory(cat, cat.offers);
+                ShopCategory cat = m_categoriesToInitialize.Dequeue();
+                m_catBeingInitialized = InitializeCategory(cat, cat.offers);
 
                 timestamp2 = Environment.TickCount;
             }
@@ -338,10 +356,10 @@ public class ShopController : MonoBehaviour
         m_shortcuts.Clear();
         m_skuToShorcut.Clear();
 
-        categoriesToInitialize.Clear();
+        m_categoriesToInitialize.Clear();
 
-        layoutGropusActive = false;
-        disableLayoutsGroupsInNextFrame = false;
+        m_layoutGropusActive = false;
+        m_disableLayoutsGroupsInNextFrame = false;
         m_hidePillsOutOfView = false;
 		m_visiblePills.Clear();
 
@@ -365,7 +383,7 @@ public class ShopController : MonoBehaviour
 
         // Turn off optimizations while refreshing
         SetOptimizationActive(false);
-        shopReady = false;
+        m_shopReady = false;
 
         m_lastShortcut = null;
 
@@ -392,7 +410,7 @@ public class ShopController : MonoBehaviour
                         CreateShortcut(category);
 
                         // Enqueue the categories so they are initialized one per frame
-                        categoriesToInitialize.Enqueue(category);
+                        m_categoriesToInitialize.Enqueue(category);
                     }
                 }
             }
@@ -411,7 +429,7 @@ public class ShopController : MonoBehaviour
         // Nothing if not enabled
         if (!this.isActiveAndEnabled) return;
 
-        if (shopReady)
+        if (m_shopReady)
         {
             foreach (CategoryController cat in m_categoryContainers)
             {
@@ -437,7 +455,7 @@ public class ShopController : MonoBehaviour
 
         // Turn off optimizations while refreshing
         SetOptimizationActive(false);
-        shopReady = false;
+        m_shopReady = false;
 
         // Find the category container
         CategoryController container = m_categoryContainers.Find(c => c.category.sku == _category.sku);
@@ -459,7 +477,7 @@ public class ShopController : MonoBehaviour
         if (offers.Count > 0 )
         {
             container.Initialize(_category, offers);
-            catBeingInitialized = container;
+            m_catBeingInitialized = container;
 
         }
         else
@@ -478,7 +496,7 @@ public class ShopController : MonoBehaviour
             m_skuToShorcut.Remove(_category.sku);
 
             // Nothing else to do
-            shopReady = true;
+            m_shopReady = true;
 
         }
     }
@@ -573,7 +591,7 @@ public class ShopController : MonoBehaviour
     private void ShowPreviewInActivePills()
     {
         // Define the width of the viewport. Out of this range, pills are disabled.
-        normalizedViewportWidth = m_scrollRect.viewport.rect.width / m_scrollRect.content.rect.width;
+        m_normalizedViewportWidth = m_scrollRect.viewport.rect.width / m_scrollRect.content.rect.width;
 
         foreach (IShopPill pill in m_pills)
         {
@@ -658,6 +676,22 @@ public class ShopController : MonoBehaviour
             .OnComplete(delegate () { m_scrolling = false; });
 
         }
+    }
+
+    /// <summary>
+    /// Scroll the viewport to the position [0,1]
+    /// </summary>
+    /// <param name="anchor"></param>
+    private void ScrollToPosition(float _pos)
+    {
+        m_scrolling = true;
+
+        // Create a tweener to animate the scroll
+        m_scrollRect.DOGoToNormalizedPosition(new Vector2 (_pos,0) ,.5f)
+        .SetEase(Ease.OutBack)
+        .OnComplete(delegate () { m_scrolling = false; });
+
+
     }
 
 
@@ -754,13 +788,13 @@ public class ShopController : MonoBehaviour
     public void SetOptimizationActive(bool _enable)
     {
 
-        if (optimizationActive == _enable)
+        if (m_optimizationActive == _enable)
         {
             // Already active/inactive
             return;
         }
 
-        optimizationActive = _enable;
+        m_optimizationActive = _enable;
 
         if (_enable)
         {
@@ -801,7 +835,7 @@ public class ShopController : MonoBehaviour
         m_categoriesContainer.GetComponent<HorizontalLayoutGroup>().enabled = enable;
         m_categoriesContainer.GetComponent<ContentSizeFitter>().enabled = enable;
 
-        layoutGropusActive = enable;
+        m_layoutGropusActive = enable;
     }
 
 
@@ -812,7 +846,7 @@ public class ShopController : MonoBehaviour
     private void UpdatePillsVisibility(Vector2 _scrollPosition)
     {
         // Define the width of the viewport. Out of this range, pills are disabled.
-        normalizedViewportWidth = m_scrollRect.viewport.rect.width / m_scrollRect.content.rect.width;
+        m_normalizedViewportWidth = m_scrollRect.viewport.rect.width / m_scrollRect.content.rect.width;
 
 		m_visiblePills.Clear();
         foreach (IShopPill pill in m_pills)
@@ -1116,7 +1150,7 @@ public class ShopController : MonoBehaviour
         }
 
         // Scrolling animation still running
-        if (m_scrolling || !shopReady) {
+        if (m_scrolling || !m_shopReady) {
             return;
         }
 
@@ -1150,7 +1184,7 @@ public class ShopController : MonoBehaviour
         if (!this.isActiveAndEnabled) return;
 
         // Refresh the shop if the shop is ready (avoid interrupting init animation bug)
-        if (shopReady)
+        if (m_shopReady)
         {
             Refresh();
         }
@@ -1166,9 +1200,17 @@ public class ShopController : MonoBehaviour
         if (!this.isActiveAndEnabled) return;
 
         // Refresh the shop if the shop is ready (avoid interrupting init animation bug)
-        if (shopReady)
+        if (m_shopReady)
         {
 
+            // In order to fix https://mdc-tomcat-jira100.ubisoft.org/jira/browse/HDK-7731
+            // We will just redraw the whole shop
+            // TODO: refresh only the affected category
+            m_lastScrollPos = m_scrollRect.horizontalNormalizedPosition;
+            Refresh();
+            return;
+
+            /*
             List<ShopCategory> categoriesAffected = new List<ShopCategory>();
 
             foreach (OfferPack offer in offersChanged)
@@ -1185,10 +1227,16 @@ public class ShopController : MonoBehaviour
                 }
             }
 
-            foreach (ShopCategory cat in categoriesAffected)
+            
+            if (categoriesAffected.Count > 1)
             {
-                RefreshCategory(cat);
+                // If more than one category has changed, just redraw the whole shop
+                Refresh();
             }
+            else { 
+                // If not, just refresh the affected category
+                RefreshCategory(categoriesAffected[0]);
+            }*/
         }
     }
     
