@@ -108,7 +108,7 @@ public class OfferItemSlot : MonoBehaviour, IBroadcastListener {
 	/// <summary>
 	/// Component has been enabled.
 	/// </summary>
-	private void OnEnable() {
+	private void Awake() {
 		// Subscribe to external events
 		Broadcaster.AddListener(BroadcastEventType.LANGUAGE_CHANGED, this);
 		Broadcaster.AddListener(BroadcastEventType.QUALITY_PROFILE_CHANGED, this);
@@ -117,7 +117,7 @@ public class OfferItemSlot : MonoBehaviour, IBroadcastListener {
 	/// <summary>
 	/// Component has been disabled.
 	/// </summary>
-	private void OnDisable() {
+	private void OnDestroy() {
 		// Unsubscribe from external events
 		Broadcaster.RemoveListener(BroadcastEventType.LANGUAGE_CHANGED, this);
 		Broadcaster.RemoveListener(BroadcastEventType.QUALITY_PROFILE_CHANGED, this);
@@ -162,39 +162,45 @@ public class OfferItemSlot : MonoBehaviour, IBroadcastListener {
 		Log("Init From Item: {0} ({1}) | {2}", Color.yellow, m_item.type, m_item.sku, reloadPreview);
 
 		// Load new preview (if required)
-		if(reloadPreview) {
-			// Try loading the preferred preview type
-			// If there is no preview of the preferred type, try other types until we have a valid preview
-			IOfferItemPreview.Type preferredPreviewType = GetPreferredPreviewType(m_item.type);
-			GameObject previewPrefab = ShopSettings.GetPrefab(m_item.type, preferredPreviewType);
-			Log("Attempting to get preview prefab of type {0}: {1}", Color.yellow, preferredPreviewType, (previewPrefab == null ? Color.red.Tag("NULL") : previewPrefab.name));
-			if(previewPrefab == null) {
-				// Loop will stop with a valid prefab
-				for(int i = 0; i < (int)IOfferItemPreview.Type.COUNT && previewPrefab == null; ++i) {
-					// Skip preferred type (already checked)
-					if(i == (int)preferredPreviewType) continue;
-					previewPrefab = ShopSettings.GetPrefab(m_item.type, (IOfferItemPreview.Type)i);
-					Log("\tCouldn't do it, checking type {0}...: {1}", Color.yellow, ((IOfferItemPreview.Type)i), (previewPrefab == null ? Color.red.Tag("NULL") : previewPrefab.name));
+		if(m_previewContainer != null) {
+			if(reloadPreview) {
+				// Try loading the preferred preview type
+				// If there is no preview of the preferred type, try other types until we have a valid preview
+				IOfferItemPreview.Type preferredPreviewType = GetPreferredPreviewType(m_item.type);
+				GameObject previewPrefab = ShopSettings.GetPrefab(m_item.type, preferredPreviewType);
+				Log("Attempting to get preview prefab of type {0}: {1}", Color.yellow, preferredPreviewType, (previewPrefab == null ? Color.red.Tag("NULL") : previewPrefab.name));
+				if(previewPrefab == null) {
+					// Loop will stop with a valid prefab
+					for(int i = 0; i < (int)IOfferItemPreview.Type.COUNT && previewPrefab == null; ++i) {
+						// Skip preferred type (already checked)
+						if(i == (int)preferredPreviewType) continue;
+						previewPrefab = ShopSettings.GetPrefab(m_item.type, (IOfferItemPreview.Type)i);
+						Log("\tCouldn't do it, checking type {0}...: {1}", Color.yellow, ((IOfferItemPreview.Type)i), (previewPrefab == null ? Color.red.Tag("NULL") : previewPrefab.name));
+					}
+				}
+
+				// Instantiate preview! :)
+				if(previewPrefab != null) {
+					GameObject previewInstance = Instantiate<GameObject>(previewPrefab);
+					previewInstance.SetActive(true);
+					m_preview = previewInstance.GetComponent<IOfferItemPreview>();
+				} else {
+					Debug.LogError("Couldn't find prefab for item of type " + m_item.type + " (" + m_item.sku + ")");
 				}
 			}
 
-			// Instantiate preview! :)
-			if(previewPrefab != null) {
-				GameObject previewInstance = Instantiate<GameObject>(previewPrefab);
-				previewInstance.SetActive(true);
-				m_preview = previewInstance.GetComponent<IOfferItemPreview>();
+			// Initialize preview with item data
+			if(m_preview != null) {
+				m_preview.InitFromItem(m_item, m_slotType);
+				m_preview.SetParentAndFit(m_previewContainer as RectTransform);
 			} else {
-				Debug.LogError("Couldn't find prefab for item of type " + m_item.type + " (" + m_item.sku + ")");
+				// Skip if preview is not initialized (something went very wrong :s)
+				Debug.LogError("Attempting to initialize slot for item " + m_item.sku + " but reward preview is null!" +
+								"\n" + "order: " + _order + " | " + this.transform.GetHierarchyPath());
+#if UNITY_EDITOR
+				UnityEditor.Selection.activeObject = this.gameObject;
+#endif
 			}
-		}
-
-		// Initialize preview with item data
-		if(m_preview != null) {
-			m_preview.InitFromItem(m_item, m_slotType);
-			m_preview.SetParentAndFit(m_previewContainer as RectTransform);
-		} else {
-			// Skip if preview is not initialized (something went very wrong :s)
-			Debug.LogError("Attempting to initialize slot for item " + m_item.sku + " but reward preview is null!");
 		}
 
 		// Initialize texts apart for visual clarity

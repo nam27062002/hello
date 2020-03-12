@@ -822,7 +822,8 @@ public class OffersManager : Singleton<OffersManager> {
 	private static bool DequeueIfNotActive(ref Queue<string> _q) {
 		// Make sure we don't dequeue any active offer!
 		string dequeuedSku = _q.Dequeue();
-		if(GetOfferPack(dequeuedSku).isActive) {
+		OfferPack pack = GetOfferPack(dequeuedSku);
+		if(pack != null && pack.isActive) {	// [AOC] Pack could be null if it had a sku that is no longer in the content
 			// Enqueue it again
 			_q.Enqueue(dequeuedSku);
 			Log("    DequeueIfNotActive: Dequeued pack ({0}) was still active! Enqueue it again.", Colors.magenta, dequeuedSku);

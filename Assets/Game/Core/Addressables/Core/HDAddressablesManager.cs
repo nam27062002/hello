@@ -115,11 +115,12 @@ public class HDAddressablesManager : AddressablesManager
         Calety.Server.ServerConfig kServerConfig = ServerManager.SharedInstance.GetServerConfig();
         if (kServerConfig != null)
         {
+            urlBase = "http://hdragon-assets-s3.akamaized.net/";
             switch (kServerConfig.m_eBuildEnvironment)
             {
                 case CaletyConstants.eBuildEnvironments.BUILD_PRODUCTION:
                     //urlBase = "http://hdragon-assets.s3.amazonaws.com/";
-                    urlBase = "http://hdragon-assets-s3.akamaized.net/";
+                    //urlBase = "http://hdragon-assets-s3.akamaized.net/";
                     break;
 
                 case CaletyConstants.eBuildEnvironments.BUILD_STAGE_QC:
@@ -129,13 +130,14 @@ public class HDAddressablesManager : AddressablesManager
                     //urlBase = "http://hdragon-assets.s3.amazonaws.com/";
 
                     // Direct link to the bucket (no cache involved, which might make downloads more expensive)
-                    urlBase = "https://s3.us-east-2.amazonaws.com/hdragon-assets/";
+                    //urlBase = "https://s3.us-east-2.amazonaws.com/hdragon-assets/";
                     break;
 
                 case CaletyConstants.eBuildEnvironments.BUILD_STAGE:
-                    urlBase = "http://hdragon-assets.s3.amazonaws.com/";
+                    //urlBase = "http://hdragon-assets.s3.amazonaws.com/";
                     break;
 
+                case CaletyConstants.eBuildEnvironments.BUILD_INTEGRATION:
                 case CaletyConstants.eBuildEnvironments.BUILD_DEV:
                 case CaletyConstants.eBuildEnvironments.BUILD_LOCAL:
                     urlBase = "http://bcn-mb-services1.ubisoft.org/hungrydragon";

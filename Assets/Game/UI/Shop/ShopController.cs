@@ -27,7 +27,8 @@ using DG.Tweening;
 /// <summary>
 /// 
 /// </summary>
-public class ShopController : MonoBehaviour {
+public class ShopController : MonoBehaviour
+{
 
 
     //------------------------------------------------------------------------//
@@ -179,13 +180,14 @@ public class ShopController : MonoBehaviour {
 	private void OnEnable() {
 		// Reset tracking timer
 		m_trackingViewTimer = TRACKING_VIEW_MIN_DURATION;
-	}
+
+    }
 
 
-	/// <summary>
-	/// First update call.
-	/// </summary>
-	private void Start() {
+    /// <summary>
+    /// First update call.
+    /// </summary>
+    private void Start() {
 
         InvokeRepeating("PeriodicRefresh", 0f, REFRESH_FREQUENCY);
         shopReady = false;
@@ -1189,18 +1191,19 @@ public class ShopController : MonoBehaviour {
             }
         }
     }
+    
 
-	//------------------------------------------------------------------------//
-	// DEBUG																  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Check the debug conditions and log given text if matching.
-	/// </summary>
-	/// <param name="_text">Text to be logged.</param>
+    //------------------------------------------------------------------------//
+    // DEBUG																  //
+    //------------------------------------------------------------------------//
+    /// <summary>
+    /// Check the debug conditions and log given text if matching.
+    /// </summary>
+    /// <param name="_text">Text to be logged.</param>
 #if LOG
 	[Conditional("DEBUG")]
 #else
-	[Conditional("FALSE")]
+    [Conditional("FALSE")]
 #endif
 	public static void Log(string _text) {
 		Debug.Log(_text);
