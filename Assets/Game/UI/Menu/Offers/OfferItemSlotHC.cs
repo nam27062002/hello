@@ -71,33 +71,35 @@ public class OfferItemSlotHC : OfferItemSlot {
         // If a preview was already created, destroy it
         if (reloadPreview) ClearPreview();
 
-        // Load new preview (if required)
-        if (reloadPreview)
-        {
-            // Load the proper gem pack icon
-            IOfferItemPreviewHC previewPrefab = ShopSettings.GetHcIconPrefab(_order);
-            if (previewPrefab == null)
-            {
-                Debug.LogError("No icon prefab defined for HC pack with order " + _order);
-            }
-            else {
-                if (m_previewContainer != null)
-                {
-                    // Instantiate preview! :)
-                    m_preview = GameObject.Instantiate<IOfferItemPreviewHC>(previewPrefab, m_previewContainer, false);
-                    m_preview.gameObject.SetActive(true);
-                }
+		// Load new preview (if required)
+		if(m_previewContainer != null) {
+			if(reloadPreview) {
+				// Load the proper gem pack icon
+				IOfferItemPreviewHC previewPrefab = ShopSettings.GetHcIconPrefab(_order);
+				if(previewPrefab == null) {
+					Debug.LogError("No icon prefab defined for HC pack with order " + _order);
+				} else {
+					if(m_previewContainer != null) {
+						// Instantiate preview! :)
+						m_preview = GameObject.Instantiate<IOfferItemPreviewHC>(previewPrefab, m_previewContainer, false);
+						m_preview.gameObject.SetActive(true);
+					}
 
-            }
-        }
+				}
+			}
 
-		// Initialize preview with item data
-		if(m_preview != null) {
-			m_preview.InitFromItem(m_item, m_slotType);
-			m_preview.SetParentAndFit(m_previewContainer as RectTransform);
-		} else {
-			// Skip if preview is not initialized (something went very wrong :s)
-			Debug.LogError("Attempting to initialize slot for item " + m_item.sku + " but reward preview is null!");
+			// Initialize preview with item data
+			if(m_preview != null) {
+				m_preview.InitFromItem(m_item, m_slotType);
+				m_preview.SetParentAndFit(m_previewContainer as RectTransform);
+			} else {
+				// Skip if preview is not initialized (something went very wrong :s)
+				Debug.LogError("Attempting to initialize slot for item " + m_item.sku + " but reward preview is null!" +
+					"\n" + "order: " + _order + " | " + this.transform.GetHierarchyPath());
+#if UNITY_EDITOR
+				UnityEditor.Selection.activeObject = this.gameObject;
+#endif
+			}
 		}
 
 		// Re-apply happy hour modifications
