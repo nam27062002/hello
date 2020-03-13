@@ -1133,15 +1133,25 @@ public class ShopController : MonoBehaviour
     /// <param name="_newPos">Normalized position of the scroll view</param>
     public void OnScrollChanged(Vector2 _newPos)
     {
-		// Reset tracking timer
-		m_trackingViewTimer = TRACKING_VIEW_MIN_DURATION;
+
+
+        // Reset tracking timer
+        m_trackingViewTimer = TRACKING_VIEW_MIN_DURATION;
 
         // create a paralax effect with the 3d bground (if camera traveling exists)
         if (m_cameraTraveling != null)
         {
-            m_cameraTraveling.UpdateCameraPosition(m_scrollRect.horizontalNormalizedPosition);
+            // Avoid camera traveling when the scroll container width is lower than the viewport
+            if (m_scrollRect.content.sizeDelta.x > m_scrollRect.viewport.sizeDelta.x)
+            {
+                m_cameraTraveling.UpdateCameraPosition(m_scrollRect.horizontalNormalizedPosition);
+            }
+            else
+            {
+                m_cameraTraveling.UpdateCameraPosition(.5f);
+            }
         }
-
+        
         // Wait for the layouts groups to be rendered
         if (m_hidePillsOutOfView)
         {
@@ -1150,7 +1160,8 @@ public class ShopController : MonoBehaviour
         }
 
         // Scrolling animation still running
-        if (m_scrolling || !m_shopReady) {
+        if (m_scrolling || !m_shopReady)
+        {
             return;
         }
 
@@ -1173,6 +1184,7 @@ public class ShopController : MonoBehaviour
 
             }
         }
+        
     }
 
     /// <summary>
