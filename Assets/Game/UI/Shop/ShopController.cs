@@ -132,6 +132,7 @@ public class ShopController : MonoBehaviour
 
     // Paralax effect
     private CameraTraveling m_cameraTraveling;
+    public bool m_cameraTravelingEnabled;
 
     // Remember scroll position
     float m_lastScrollPos;
@@ -184,6 +185,14 @@ public class ShopController : MonoBehaviour
 		// Reset tracking timer
 		m_trackingViewTimer = TRACKING_VIEW_MIN_DURATION;
 
+        m_cameraTravelingEnabled = true;
+
+    }
+
+    private void OnDisable()
+    {
+        // Dont move the camera while the shop is not active
+        m_cameraTravelingEnabled = false;
     }
 
 
@@ -608,6 +617,12 @@ public class ShopController : MonoBehaviour
         }
     }
 
+    public void StopCameraTraveling()
+    {
+        m_cameraTravelingEnabled = false;
+
+    }
+
     //------------------------------------------------------------------------//
     // SHORTCUTS                											  //
     //------------------------------------------------------------------------//
@@ -866,6 +881,8 @@ public class ShopController : MonoBehaviour
         }
 
     }
+
+
 
 	//------------------------------------------------------------------------//
 	// TRACKING																  //
@@ -1139,7 +1156,7 @@ public class ShopController : MonoBehaviour
         m_trackingViewTimer = TRACKING_VIEW_MIN_DURATION;
 
         // create a paralax effect with the 3d bground (if camera traveling exists)
-        if (m_cameraTraveling != null)
+        if (m_cameraTraveling != null && m_cameraTravelingEnabled)
         {
             // Avoid camera traveling when the scroll container width is lower than the viewport
             if (m_scrollRect.content.sizeDelta.x > m_scrollRect.viewport.sizeDelta.x)
