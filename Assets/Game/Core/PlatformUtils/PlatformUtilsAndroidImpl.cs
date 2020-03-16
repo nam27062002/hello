@@ -27,11 +27,11 @@ public class PlatformUtilsAndroidImpl: PlatformUtils
 		return result != null? result: "";
 	}
 
-	public override string GetCountryCode()
+	public override string Country_GetCurrentCode()
 	{
 		if (Application.platform == RuntimePlatform.Android )
 			return AndroidGetCountryCode();
-		return "US";
+		return COUNTRY_CODE_WW_DEFAULT;
 	}
 	
 	public override void GetTokens(){}
