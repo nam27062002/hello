@@ -110,7 +110,7 @@ public class PersistenceFacade : IBroadcastListener
             Log("SYNC: Loading  local DONE! " + LocalData.LoadState);           
 
 			// Retrieves the latest social platform that the user logged in to
-			SocialUtils.EPlatform platformId = SocialUtils.KeyToEPlatform(LocalDriver.Prefs_CurrentSocialPlatformKey);
+			SocialUtils.EPlatform platformId = SocialUtils.KeyToEPlatform(LocalDriver.Prefs_SocialPlatformKey);
             bool isPlatformSupported = SocialPlatformManager.SharedInstance.IsPlatformIdSupported(platformId);
 
             // If local persistence is corrupted then we'll try to override it with cloud persistence if the user has ever logged in the social network
