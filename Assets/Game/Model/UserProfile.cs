@@ -391,6 +391,7 @@ public class UserProfile : UserPersistenceSystem
     public HashSet<string> m_visitedZones = new HashSet<string>();
 	//--------------------------------------------------------------------------
 
+    // Treat this enum values as if they were skus since they're persisted in user's profile
     public enum ESocialState
     {
         NeverLoggedIn,
@@ -1028,6 +1029,13 @@ public class UserProfile : UserPersistenceSystem
         if (profile.ContainsKey(key)) {
             int count = Enum.GetValues(typeof(ESocialState)).Length;
             string value = profile["socialState"];
+
+            // Workaround to prevent old clients from breaking after fixing a typo in the constant
+            if (value == "LoggedInAndInventivised")
+            {
+                value = ESocialState.LoggedInAndIncentivised.ToString();
+            }
+
             int index = SocialStatesAsString.IndexOf(value);
             if (index == -1) {                
                 Debug.LogError("USER_PROFILE: " + value + " is not a valid ESocialState");                
