@@ -102,6 +102,8 @@ public class OfferItemSlot : MonoBehaviour, IBroadcastListener {
 		get { return m_preview; }
 	}
 
+	protected int m_order;
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -124,14 +126,27 @@ public class OfferItemSlot : MonoBehaviour, IBroadcastListener {
 	}
 
 	//------------------------------------------------------------------------//
-    // OTHER METHODS														  //
-    //------------------------------------------------------------------------//
-    /// <summary>
-    /// Refresh the widget with the data of a specific offer item.
-    /// </summary>
-    /// <param name="_item">Item to be used to initialize the slot.</param>
-    /// <param name="_order">Used to select the proper HC or SC icon</param>
-    public virtual void InitFromItem(OfferPackItem _item, int _order = 0) {
+	// OTHER METHODS														  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Refresh the widget with the data of a specific offer item.
+	/// </summary>
+	/// <param name="_item">Item to be used to initialize the slot.</param>
+	public virtual void InitFromItem(OfferPackItem _item)
+	{
+        // If the new order is not specified, use the current value
+		InitFromItem(_item, m_order);
+	}
+
+
+	/// <summary>
+	/// Refresh the widget with the data of a specific offer item.
+	/// </summary>
+	/// <param name="_item">Item to be used to initialize the slot.</param>
+	/// <param name="_order">Used to select the proper HC or SC icon</param>
+	public virtual void InitFromItem(OfferPackItem _item, int _order) {
+		m_order = _order;
+
 		// Force reloading preview if item is different than the current one
 		bool reloadPreview = false;
 		if(m_item != _item) reloadPreview = true;

@@ -40,9 +40,14 @@ public class UIHideConditionallyByProfile : MonoBehaviour, IBroadcastListener
 
     }
 
-	//------------------------------------------------------------------------//
-	// OTHER METHODS														  //
-	//------------------------------------------------------------------------//
+    private void OnDestroy()
+    {
+        Broadcaster.RemoveListener(BroadcastEventType.QUALITY_PROFILE_CHANGED, this);
+    }
+
+    //------------------------------------------------------------------------//
+    // OTHER METHODS														  //
+    //------------------------------------------------------------------------//
 
     /// <summary>
     /// Hide/show all the elements if the profile quality of the app is lower (or equal) than the specified value
