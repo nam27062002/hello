@@ -36,12 +36,7 @@ public class ShopRotationalOfferPill : ShopMonoRewardPill {
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Initialization.
-	/// </summary>
-	private void Awake() {
 
-	}
 
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //

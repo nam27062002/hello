@@ -36,19 +36,21 @@ public class OfferItemSlotHC : OfferItemSlot {
     // Internal
     private HappyHour m_appliedHappyHour = null;
 
-    //------------------------------------------------------------------------//
-    // METHODS																  //
-    //------------------------------------------------------------------------//
-    /// <summary>
-    /// Refresh the widget with the data of a specific offer item.
-    /// </summary>
-    /// <param name="_item">Item to be used to initialize the slot.</param>
-    /// <param name="_order">Used to select the proper HC or SC icon</param>
-    public override void InitFromItem(OfferPackItem _item, int _order)
-    {
 
-        // Force reloading preview if item is different than the current one
-        bool reloadPreview = false;
+	//------------------------------------------------------------------------//
+	// METHODS																  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Refresh the widget with the data of a specific offer item.
+	/// </summary>
+	/// <param name="_item">Item to be used to initialize the slot.</param>
+	/// <param name="_order">Used to select the proper HC or SC icon</param>
+	public override void InitFromItem(OfferPackItem _item, int _order)
+    {
+		m_order = _order;
+
+		// Force reloading preview if item is different than the current one
+		bool reloadPreview = false;
         if (m_item != _item) reloadPreview = true;
 
         // Store new item
