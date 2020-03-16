@@ -627,7 +627,9 @@ public class FeatureSettings
 
         public override object GetStringAsData(string data)
         {
-            return float.Parse(data);
+            float returnValue;
+            float.TryParse(data, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out returnValue);
+            return returnValue;
         }       
     }    
     
@@ -747,7 +749,9 @@ public class FeatureSettings
 
         public override object GetStringAsData(string data)
         {
-            return float.Parse(data);            
+            float returnValue;
+            float.TryParse(data, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out returnValue);
+            return returnValue;
         }        
     }
 
