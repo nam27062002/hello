@@ -58,15 +58,17 @@ public class PopupSettingsSaveTab : MonoBehaviour
 	/// 
 	/// </summary>
 	public void OnShow(){
-        Shown = true;
+        if (!Shown) {
+            Shown = true;
 
-		#if UNITY_ANDROID
-		RefreshGooglePlayView();
-		Messenger.AddListener(MessengerEvents.GOOGLE_PLAY_AUTH_CANCELLED, GooglePlayAuthCancelled);
-		Messenger.AddListener(MessengerEvents.GOOGLE_PLAY_AUTH_FAILED, GooglePlayAuthFailed);
-		#endif
-		Messenger.AddListener(MessengerEvents.GOOGLE_PLAY_STATE_UPDATE, RefreshGooglePlayView);
-		Messenger.AddListener<bool>(MessengerEvents.SOCIAL_LOGGED, Social_OnLogInUpdated);
+#if UNITY_ANDROID
+		    RefreshGooglePlayView();
+		    Messenger.AddListener(MessengerEvents.GOOGLE_PLAY_AUTH_CANCELLED, GooglePlayAuthCancelled);
+		    Messenger.AddListener(MessengerEvents.GOOGLE_PLAY_AUTH_FAILED, GooglePlayAuthFailed);
+#endif
+            Messenger.AddListener(MessengerEvents.GOOGLE_PLAY_STATE_UPDATE, RefreshGooglePlayView);
+            Messenger.AddListener<bool>(MessengerEvents.SOCIAL_LOGGED, Social_OnLogInUpdated);
+        }
 	}
 
 	/// <summary>
