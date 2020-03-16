@@ -21,14 +21,13 @@ public class PersistenceFacadeConfigDebug : PersistenceFacadeConfig
         Launch_Local_NeverLoggedIn_Cloud_Less,                                       // tested
         Launch_Local_NeverLoggedIn_Cloud_Equal,                                      // tested
         Launch_Local_NeverLoggedIn_Cloud_Less_Error_Upload,                          // tested        
-        Launch_Local_NeverLoggedIn_Cloud_Less_Social_Account_With_Progress,          // tested
+        Launch_Local_NeverLoggedIn_Cloud_Less_Social_Account_With_Progress,          // tested  Popup shows platform name
 		Launch_Local_NeverLoggedIn_Cloud_Corrupted,                                  // tested: popups hardcoded
 		Launch_Local_NeverLoggedIn_Cloud_Corrupted_Error_Upload,                     // tested
 		Launch_Local_NeverLoggedIn_Cloud_Corrupted_Error_Merge,                      // tested
-		Launch_Local_Corrupted_Cloud_NoConnection,                                   // tested
-		Launch_Local_Corrupted_Cloud_Ok,                                             // tested
+		Launch_Local_Corrupted_Cloud_NoConnection,                                   // tested  Popup shows platform name
+        Launch_Local_Corrupted_Cloud_Ok,                                             // tested
 		Launch_Local_Corrupted_Cloud_Corrupted,                                      // tested     
-
 		Settings_Local_NeverLoggedIn_Cloud_NoConnection,                             // tested
 		Settings_Local_LoggedIn_Cloud_NoConnection,                                  // tested
 		Settings_Local_LoggedInAndIncentivised_Cloud_NoConnection,                   // tested
@@ -101,7 +100,7 @@ public class PersistenceFacadeConfigDebug : PersistenceFacadeConfig
 
 			case EUserCaseId.Launch_Local_LoggedIn_Cloud_NoConnection:
 				// A popup giving the login reward is shown to the user
-				// When accepted game loads with the persistence defined below althugh socialState has changed to LoggedIn
+				// When accepted game loads with the persistence defined below although socialState has changed to LoggedIn
 				// and the reward was added to the profile
 				LocalDriverDebug.PersistenceAsString = GetPersistence(UserProfile.ESocialState.LoggedIn, LOCAL_DRAGON_SKU);
 				CloudDriverDebug.IsConnectionEnabled = false;
@@ -183,17 +182,21 @@ public class PersistenceFacadeConfigDebug : PersistenceFacadeConfig
 			break;
 
 			case EUserCaseId.Launch_Local_NeverLoggedIn_Cloud_Corrupted:
-                // A popup notifying about corrupted cloud persistence is shown. The game continues to load in background. Two buttons:
+                // A popup notifying about corrupted cloud persistence is shown (code 4). The game continues to load in background. One button:
                 // Continue: to keep playing with local peristence. The incentivised social reward popup is show. The user is logged in the social network.
+
+                // This button is not shown anymore (Implementation of Popup_OpenCloudCorrupted() has changed)
                 // Upload: to override cloud persistence with local persistence. After clicking a new popup confirming that the cloud was overriden is shown. After this popup the incentivised social reward popup is shown
                 LocalDriverDebug.PersistenceAsString = GetPersistence(UserProfile.ESocialState.NeverLoggedIn, LOCAL_DRAGON_SKU);
 				CloudDriverDebug.PersistenceAsString = GetPersistenceCorrupted();
 			break;
 
 			case EUserCaseId.Launch_Local_NeverLoggedIn_Cloud_Corrupted_Error_Upload:
-                // A popup notifying about cloud persistence corrupted is shown. The game continues to load in background. Two buttons:
+                // A popup notifying about cloud persistence corrupted is shown (code 4). The game continues to load in background. One button:
                 // Continue: to keep playing with local peristence. The incentivised social reward popup is show.
-                // Upload: to override cloud persistence with local persistence. After clicking a new popup shows an error because coud save was inaccessible until it gets fixed. Once it's fixed coud save overriden popup is shown.
+
+                // This button is not shown anymore (Implementation of Popup_OpenCloudCorrupted() has changed)
+                // Upload: to override cloud persistence with local persistence. After clicking a new popup shows an error because cloud save was inaccessible until it gets fixed. Once it's fixed cloud save overriden popup is shown.
                 LocalDriverDebug.PersistenceAsString = GetPersistence(UserProfile.ESocialState.NeverLoggedIn, LOCAL_DRAGON_SKU);
 				CloudDriverDebug.PersistenceAsString = GetPersistenceCorrupted();
 				CloudDriverDebug.IsUploadPersistenceEnabled = false;
@@ -208,7 +211,7 @@ public class PersistenceFacadeConfigDebug : PersistenceFacadeConfig
 			break;
 
 			case EUserCaseId.Launch_Local_Corrupted_Cloud_NoConnection:
-                // A popup lettign the user know that cloud couldn't be retrieved is shown. Once closed a popup letting the user know that local persistence is corrupted is shown.
+                // A popup letting the user know that cloud couldn't be retrieved is shown. Once closed a popup letting the user know that local persistence is corrupted is shown.
 				// If the user chooses to reset local persistence then the game is loaded with the default persistence.
 				// If the user chooses to connect to cloud then a popup notifying that there's no connection is shown.
 				// When this popup is closed the popup that lets the user choose between connecting to cloud and resetting is shown again
@@ -326,6 +329,9 @@ public class PersistenceFacadeConfigDebug : PersistenceFacadeConfig
             break;
 
 			case EUserCaseId.Settings_Local_NeverLoggedIn_Cloud_Corrupted:
+                // When login button is clicked a popup notifies the user that there was an error (code 4)
+
+                // Obsolete: The flow described above is not followe anymore (Implementation of Popup_OpenCloudCorrupted() has changed)
                 // When login button is clicked a popup notifies the user that cloud persistence 
                 // is corrupted. If the user choose to ignore the problem then cloud won't be
                 // in sync and uploading local persistence will be disabled. 
@@ -337,22 +343,28 @@ public class PersistenceFacadeConfigDebug : PersistenceFacadeConfig
             break;
 
 			case EUserCaseId.Settings_Local_NeverLoggedIn_Cloud_Corrupted_Error_Upload:
-				// When login button is clicked a popup notifies the user that cloud persistence 
-				// is corrupted. When the user decides to override cloud persistence with local persistence a
-				// popup notifying an error when writing in cloud is shown until the problem is fixed
-				// or the user decides to ignore the probem.
-				// The login reward is given to the user after this popup.
-				SetupUserCaseId(EUserCaseId.Launch_Local_NeverLoggedIn_Cloud_Corrupted_Error_Upload);
+                // When login button is clicked a popup notifies the user that there was an error (code 4)
+
+                // Obsolete: The flow described above is not followe anymore (Implementation of Popup_OpenCloudCorrupted() has changed)
+                // When login button is clicked a popup notifies the user that cloud persistence 
+                // is corrupted. When the user decides to override cloud persistence with local persistence a
+                // popup notifying an error when writing in cloud is shown until the problem is fixed
+                // or the user decides to ignore the probem.
+                // The login reward is given to the user after this popup.
+                SetupUserCaseId(EUserCaseId.Launch_Local_NeverLoggedIn_Cloud_Corrupted_Error_Upload);
                 CloudDriverDebug.NeedsToIgnoreSycnFromLaunch = true;
             break;
 
 			case EUserCaseId.Settings_Local_NeverLoggedIn_Cloud_Corrupted_Error_Merge:
-				// When login button is clicked a popup notifies the user that cloud persistence 
-				// is corrupted. Local persistence can't override cloud persistence because there's a social
-				// merge to solve. This is notified to the user with a popup that let her continue playing
-				// locally, which means that the social login hasn't been completed so login reward is not given
-				// to the user.				
-				SetupUserCaseId(EUserCaseId.Launch_Local_NeverLoggedIn_Cloud_Corrupted_Error_Merge);
+                // When login button is clicked a popup notifies the user that there was an error (code 4)
+
+                // Obsolete: The flow described above is not followe anymore (Implementation of Popup_OpenCloudCorrupted() has changed)
+                // When login button is clicked a popup notifies the user that cloud persistence 
+                // is corrupted. Local persistence can't override cloud persistence because there's a social
+                // merge to solve. This is notified to the user with a popup that let her continue playing
+                // locally, which means that the social login hasn't been completed so login reward is not given
+                // to the user.				
+                SetupUserCaseId(EUserCaseId.Launch_Local_NeverLoggedIn_Cloud_Corrupted_Error_Merge);
                 CloudDriverDebug.NeedsToIgnoreSycnFromLaunch = true;
             break;
 		}

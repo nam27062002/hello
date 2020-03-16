@@ -24,41 +24,7 @@ public class SocialPlatformManager : MonoBehaviour
 			
 			return s_pInstance;
 		}
-	}
-    
-    public static SocialUtils.EPlatform GetSocialPlatform()
-    {
-        SocialUtils.EPlatform returnValue = SocialUtils.EPlatform.Facebook;
-        
-        // In iOS we need to check the user's country to decide the social platform: either Facebook or Weibo (only in China)
-#if UNITY_IOS
-            // Checks if the user has already logged in a social platform, if so then that's the platform that the user will keep seeing
-            string socialPlatformKey = PersistencePrefs.Social_PlatformKey;
-            returnValue = SocialUtils.KeyToEPlatform(socialPlatformKey);
-
-            // If no social platform has ever been used then we decide which one to show based on the country
-            if (returnValue == SocialUtils.EPlatform.None)
-            {
-                string countryCode = PlatformUtils.Instance.GetCountryCode();
-                if (countryCode != null)
-                {
-                    countryCode.ToUpper();
-                }                    
-
-                // Weibo is shown only in China
-                if (countryCode == "CN")
-                {
-                    returnValue = SocialUtils.EPlatform.Weibo;
-                }
-                else
-                {
-                    returnValue = SocialUtils.EPlatform.Facebook;
-                }
-            }
-#endif
-
-        return returnValue;
-    }
+	}        
 
 	//////////////////////////////////////////////////////////////////////////	
 
@@ -94,6 +60,25 @@ public class SocialPlatformManager : MonoBehaviour
 		m_onSocialPlatformLogout = value;
 	}
 
+    /// <summary>
+    /// Returns <c>true</c> if the social platform passed as an argument is supported by current device platform (iOS, Android) 
+    /// </summary>
+    /// <param name="platform">Social platform: (Facebook, SIWA)</param>    
+    public static bool IsSocialPlatformIdSupportedByDevicePlatform(SocialUtils.EPlatform platform)
+    {
+        bool returnValue = true;
+        if (platform == SocialUtils.EPlatform.SIWA)
+        {
+#if USE_SIWA && UNITY_IOS
+            returnValue = true;
+#else
+            returnValue = false;
+#endif
+        }
+
+        return returnValue;
+    }
+
 	public void Init(bool useAgeProtection)
 	{
         if (!IsInited)
@@ -108,30 +93,8 @@ public class SocialPlatformManager : MonoBehaviour
 				AddSocialPlatform(SocialUtils.EPlatform.None);
             }
             else
-            {				
-				SocialUtils.EPlatform platformId = SocialUtils.EPlatform.Facebook;
-
-				string socialPlatformKey = PersistenceFacade.instance.LocalDriver.Prefs_SocialPlatformKey;
-
-            	// In iOS we need to check the user's country to decide the social platform: either Facebook or Weibo (only in China)
-#if UNITY_IOS
-            	// Checks if the user has already logged in a social platform, if so then that's the platform that the user will keep seeing
-            	platformId = SocialUtils.KeyToEPlatform(socialPlatformKey);                
-
-            	// If no social platform has ever been used then we decide which one to show based on the country
-				if (platformId == SocialUtils.EPlatform.None)
-            	{                
-                    // Weibo is shown only in China
-                    if (PlatformUtils.Instance.IsChina())
-                    {
-						platformId = SocialUtils.EPlatform.Weibo;
-                    }
-                    else
-                    {
-						platformId = SocialUtils.EPlatform.Facebook;
-                    }
-            	}
-#endif                
+            {
+                SocialUtils.EPlatform platformId = FlavorManager.GetSocialPlatform();				
 				if (platformId == SocialUtils.EPlatform.Facebook && !FacebookManager.SharedInstance.CanUseFBFeatures ()) 
 				{
 					platformId = SocialUtils.EPlatform.None;
@@ -139,14 +102,18 @@ public class SocialPlatformManager : MonoBehaviour
 
 				AddSocialPlatform(platformId);
 
-#if USE_SIWA && UNITY_IOS
-                if (GameSessionManager.SharedInstance.SIWA_IsPlatformSupported())
+
+                //
+                // SIWA
+                // 
+                if (IsSocialPlatformIdSupportedByDevicePlatform(SocialUtils.EPlatform.SIWA) && GameSessionManager.SharedInstance.SIWA_IsPlatformSupported())
                 {
                     AddSocialPlatform(SocialUtils.EPlatform.SIWA);
                 }
-#endif
+
                 // Retrieves the current social platform: Checks that the user was logged in when she quit and if so then the
                 // latest social platform key is retrieved
+                string socialPlatformKey = PersistenceFacade.instance.LocalDriver.Prefs_SocialPlatformKey;
                 if (PersistencePrefs.Social_WasLoggedInWhenQuit && IsPlatformKeySupported(socialPlatformKey)) 
 				{
 					m_currentPlatformId = SocialUtils.KeyToEPlatform(socialPlatformKey);

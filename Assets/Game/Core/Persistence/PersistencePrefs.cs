@@ -14,12 +14,9 @@ public class PersistencePrefs
     // We want the cloud save to stores per device instead of per profile
     private static string KEY_CLOUD_SAVE_ENABLED = "cloudSaveEnabled";
 
-    // Social platform used: Facebook, Weibo. Legacy flag used to know whether the user has used Weibo or Facebook in order to keep using the same even though the user changes countries
+    // Social platform used: Facebook, Weibo, SIWA
     private static string KEY_SOCIAL_PLATFORM_KEY = "socialPlatform";
-
-    // Current Social platform used: Facebook, Weibo
-    private static string KEY_SOCIAL_CURRENT_PLATFORM_KEY = "currentSocialPlatform";
-
+    
     private static string KEY_SOCIAL_ID = "socialId";
 
     private static string KEY_SOCIAL_PROFILE_NAME = "socialProfileName";
@@ -48,22 +45,28 @@ public class PersistencePrefs
     // Timestamp of the latest time a cp2 interstial was played at
     private static string KEY_CP2_INTERTITIAL_LATEST_AT_ID = "cp2InterstitialLatestAt";
 
+    // Country code when the app was installed
+    private static string KEY_COUNTRY_CODE_ON_INSTALL = "countryCodeOnInstall";
+
     private static List<string> KEYS = new List<string>()
     {
         KEY_ACTIVE_PROFILE_NAME,
-        KEY_CLOUD_SAVE_ENABLED,        
-        KEY_SOCIAL_PLATFORM_KEY,
-        KEY_SOCIAL_CURRENT_PLATFORM_KEY,
+        KEY_CLOUD_SAVE_ENABLED,
+
+        // Social
+        KEY_SOCIAL_PLATFORM_KEY,        
         KEY_SOCIAL_ID,
         KEY_SOCIAL_PROFILE_NAME,
         KEY_SOCIAL_LOGGED_IN_WHEN_QUIT,
+
         KEY_SERVER_USER_ID,
         KEY_SAVEPATHS_LATEST_INDEX,
         KEY_USER_PROFILE_NAME,
         KEY_SERVER_LANGUAGE,
         KEY_LATEST_MARKETING_ID_NOTIFIED,
         KEY_MARKETING_ID,
-        KEY_CP2_INTERTITIAL_LATEST_AT_ID
+        KEY_CP2_INTERTITIAL_LATEST_AT_ID,
+        KEY_COUNTRY_CODE_ON_INSTALL
     };        
 
     public static bool IsDirty = false;
@@ -187,18 +190,25 @@ public class PersistencePrefs
         return GetLong(KEY_CP2_INTERTITIAL_LATEST_AT_ID);
     }
 
+    public static string CountryCodeOnInstall
+    {
+        get
+        {
+            return PlayerPrefs.GetString(KEY_COUNTRY_CODE_ON_INSTALL, null);
+        }
+
+        set
+        {
+            SetString(KEY_COUNTRY_CODE_ON_INSTALL, value);
+        }
+    }
+
 #region social
     public static string Social_PlatformKey
     {
         get { return PlayerPrefs.GetString(KEY_SOCIAL_PLATFORM_KEY, null); }
         set { SetString(KEY_SOCIAL_PLATFORM_KEY, value); }
-    }
-
-    public static string Social_CurrentPlatformKey
-    {
-        get { return PlayerPrefs.GetString(KEY_SOCIAL_CURRENT_PLATFORM_KEY, null); }
-        set { SetString(KEY_SOCIAL_CURRENT_PLATFORM_KEY, value); }
-    }
+    }    
 
     public static string Social_Id
     {

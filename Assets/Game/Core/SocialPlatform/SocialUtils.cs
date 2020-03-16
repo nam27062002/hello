@@ -2,6 +2,9 @@
 #define ENABLE_LOGS
 #endif
 
+// When <c>true</c> user's profile picture is requested. 
+//#define PROFILE_PICTURE_ENABLED // Commented out because it's not required by UI (settings dave popup anymore) since SIWA was implemented
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -223,10 +226,18 @@ public abstract class SocialUtils
     /// </summary>
     /// <param name="onGetProfileInfo"></param>
     public abstract void GetProfileInfoFromPlatform(Action<ProfileInfo> onGetProfileInfo);
-
+    
     protected void GetProfilePicture(string socialID, string storagePath, Action<bool> onGetProfilePicture, int width = 256, int height = 256)
     {
+#if PROFILE_PICTURE_ENABLED    
         ExtendedGetProfilePicture(socialID, storagePath, onGetProfilePicture, width, height);
+#else
+        if(onGetProfilePicture != null)
+        {
+            // Set error to true because no picture will be available
+            onGetProfilePicture(true);
+        }
+#endif
     }
 
     protected abstract void ExtendedGetProfilePicture(string socialID, string storagePath, Action<bool> onGetProfilePicture, int width = 256, int height = 256);
@@ -415,7 +426,7 @@ public abstract class SocialUtils
     {
         Profile_State = EProfileState.Loading;
 
-        if (IsLoggedIn() && false)
+        if (IsLoggedIn())
         {
             string socialId = GetSocialID();
             

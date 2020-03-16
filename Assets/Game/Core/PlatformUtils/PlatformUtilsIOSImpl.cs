@@ -11,9 +11,9 @@ public class PlatformUtilsIOSImpl : PlatformUtils
 	[DllImport("__Internal")]
 	private static extern string IOsGetCountryCode();
 	
-	public override string GetCountryCode()
+	public override string Country_GetCurrentCode()
 	{
-        string ret = "US";
+        string ret = COUNTRY_CODE_WW_DEFAULT;
 		if (Application.platform == RuntimePlatform.IPhonePlayer ){
 			ret = IOsGetCountryCode();
         }
