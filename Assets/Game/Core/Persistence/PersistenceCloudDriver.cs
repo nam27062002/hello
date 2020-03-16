@@ -680,16 +680,13 @@ public class PersistenceCloudDriver
 			{
 				LocalDriver.ProcessSocialState(onDone);                
 			};
-
-            SocialPlatformManager manager = SocialPlatformManager.SharedInstance;
+            
             HDTrackingManager.Instance.Notify_SocialAuthentication();
 
-            string currentSocialPlatformKey = manager.CurrentPlatform_GetKey();
-            string socialId = manager.CurrentPlatform_GetUserID();
-
-            SocialUtils.EPlatform platformId = manager.CurrentPlatform_GetId();
-            bool saveSocialPlatform = platformId == SocialUtils.EPlatform.Facebook || platformId == SocialUtils.EPlatform.Weibo;                       
-			LocalDriver.NotifyUserHasLoggedIn(currentSocialPlatformKey, saveSocialPlatform, socialId, onUserLoggedIn);
+            SocialUtils.EPlatform platformId = Syncer_PlatformId;
+            string currentSocialPlatformKey = SocialUtils.EPlatformToKey(platformId);
+            string socialId = SocialPlatformManager.SharedInstance.GetUserID(platformId);            
+			LocalDriver.NotifyUserHasLoggedIn(currentSocialPlatformKey, socialId, onUserLoggedIn);
 		} 
 		else
 		{
