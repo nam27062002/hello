@@ -507,7 +507,7 @@ public class TrackingPersistenceSystem : PersistenceSystem
 
         key = PARAM_SOCIAL_AUTH_SENT_LIST;
         dataString = new CacheDataString(key, "");
-        Cache_AddData(key, dataBool);
+        Cache_AddData(key, dataString);
 
         key = PARAM_TOTAL_LEGAL_VISITS;
         dataInt = new CacheDataInt(key, 0);
