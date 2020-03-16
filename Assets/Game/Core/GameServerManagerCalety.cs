@@ -281,8 +281,8 @@ public class GameServerManagerCalety : GameServerManager {
         kServerConfig.m_iConnectTimeOut = 6000;
         kServerConfig.m_iReadTimeOut = 6000;
 
-        // Social platform in Calety depends on our social platform (either Fb or Weibo), which depends on the user's country
-        SocialUtils.EPlatform socialPlatform = FlavorManager.GetSocialPlatform();
+        // Social platform in Calety depends on our social platform (either Fb or Weibo), which depends on the app's flavour
+        SocialUtils.EPlatform socialPlatform = FlavourManager.GetSocialPlatform();
         switch (socialPlatform)
         {
             case SocialUtils.EPlatform.Facebook:
