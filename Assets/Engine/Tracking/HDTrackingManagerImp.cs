@@ -984,14 +984,15 @@ public class HDTrackingManagerImp : HDTrackingManager {
     }
 
     public override void Notify_SocialAuthentication() {
+        string provider = SocialPlatformManager.SharedInstance.CurrentPlatform_GetName();
+
         // This event has to be send only once per user
-        if (TrackingPersistenceSystem != null && !TrackingPersistenceSystem.SocialAuthSent) {
+        if (TrackingPersistenceSystem != null && !TrackingPersistenceSystem.HasSocialAuthSent(provider)) {
             Action<SocialUtils.ProfileInfo> onDone = delegate (SocialUtils.ProfileInfo info) {
                 if (info != null) {
-                    string provider = SocialPlatformManager.SharedInstance.CurrentPlatform_GetName();
                     string gender = info.Gender;
                     int birthday = info.YearOfBirth;
-                    TrackingPersistenceSystem.SocialAuthSent = true;
+                    TrackingPersistenceSystem.AddSocialPlatformKeyToAuthSentList(provider);
                     Track_SocialAuthentication(provider, birthday, gender);
                 }
             };

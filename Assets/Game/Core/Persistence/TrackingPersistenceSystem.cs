@@ -29,7 +29,14 @@ public class TrackingPersistenceSystem : PersistenceSystem
     
     /// Whether or not this is the first time the game is loaded ever    
     private const string PARAM_FIRST_LOADING = "firstLoading";
+
+    // Whether or not the user has ever logged in to a social platform. This is kept for backward compatibility reasons.
+    // This used to be the variable used to know that the user had logged in when there was support for only one social platform
+    // PARAM_SOCIAL_AUTH_SENT_LIST is used instead since multiplatform support was added
     private const string PARAM_SOCIAL_AUTH_SENT = "socialAuthSent";
+
+    // List of social platform keys that the user has ever logged in. Required when social multiplatform support was added
+    private const string PARAM_SOCIAL_AUTH_SENT_LIST = "socialAuthSentList";
 
     // Amount of times the user has closed the legal popup so far
     private const string PARAM_TOTAL_LEGAL_VISITS = "totalLegalVisits";
@@ -317,7 +324,7 @@ public class TrackingPersistenceSystem : PersistenceSystem
         }
     }
 
-    public bool SocialAuthSent
+    private bool SocialAuthSent
     {
         get
         {
@@ -329,6 +336,49 @@ public class TrackingPersistenceSystem : PersistenceSystem
             Cache_SetBool(PARAM_SOCIAL_AUTH_SENT, value);
         }
     }
+
+    public bool HasSocialAuthSent(string socialPlatformKey)
+    {                
+        // Workaround for backward compatibility. PARAM_SOCIAL_AUTH_SENT was used to know whether or not the user had ever logged in
+        // to the social network before multiplatform support was implemented, so if it's enabled then we need to make sure
+        // the social network is added to PARAM_SOCIAL_AUTH_SENT_LIST, which is where this is stuff is stored after multiplatform
+        // support was included
+        if (SocialAuthSent)
+        {
+            string defaultSocialPlatformKey = SocialUtils.EPlatformToKey(FlavourManager.GetSocialPlatform());
+            AddSocialPlatformKeyToAuthSentList(defaultSocialPlatformKey);
+
+            // Set to false because persistence has already been adapted to the new format and we don't need to do it again
+            SocialAuthSent = false;
+        }
+
+        string socialPlatformList = Cache_GetString(PARAM_SOCIAL_AUTH_SENT_LIST);
+        return (string.IsNullOrEmpty(socialPlatformList)) ? false : socialPlatformList.Contains(socialPlatformKey);
+    }
+
+    public void AddSocialPlatformKeyToAuthSentList(string socialPlatformKey)
+    {
+        string socialPlatformList = Cache_GetString(PARAM_SOCIAL_AUTH_SENT_LIST);
+        bool needsToSave = true;
+
+        if (string.IsNullOrEmpty(socialPlatformList))
+        {
+            socialPlatformList = socialPlatformKey;
+        }
+        else if (socialPlatformList.Contains(socialPlatformKey))
+        {
+            needsToSave = false;
+        }
+        else
+        {
+            socialPlatformList += "," + socialPlatformKey;
+        }
+
+        if (needsToSave)
+        {
+            Cache_SetString(PARAM_SOCIAL_AUTH_SENT_LIST, socialPlatformList);
+        }
+    }    
 
     public int TotalLegalVisits
     {
@@ -453,6 +503,10 @@ public class TrackingPersistenceSystem : PersistenceSystem
 
         key = PARAM_SOCIAL_AUTH_SENT;
         dataBool = new CacheDataBool(key, false);
+        Cache_AddData(key, dataBool);
+
+        key = PARAM_SOCIAL_AUTH_SENT_LIST;
+        dataString = new CacheDataString(key, "");
         Cache_AddData(key, dataBool);
 
         key = PARAM_TOTAL_LEGAL_VISITS;
