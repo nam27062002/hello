@@ -1515,9 +1515,7 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
 
     public bool IsIncentivisedLoginEnabled()
     {
-#if UNITY_EDITOR
-        return true;
-#elif UNITY_IOS
+#if UNITY_IOS
         return false;	// [AOC] Disabling for iOS as of 2.18, to make sure we are compliant with SIWA
 #else
         return true;
