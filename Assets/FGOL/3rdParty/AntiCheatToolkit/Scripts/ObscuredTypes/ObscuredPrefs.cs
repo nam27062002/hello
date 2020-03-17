@@ -494,7 +494,7 @@ namespace CodeStage.AntiCheat.ObscuredTypes
 			}
 
 #if UNITY_EDITOR
-			if (unobscuredMode) return float.Parse(ReadUnobscured(key, defaultValue));
+			if (unobscuredMode) return float.Parse(ReadUnobscured(key, defaultValue), NumberStyles.Any, CultureInfo.InvariantCulture);
 #endif
 			string encrypted = GetEncryptedPrefsString(key, encryptedKey);
 			return encrypted == RAW_NOT_FOUND ? defaultValue : DecryptFloatValue(key, encrypted, defaultValue);
@@ -513,7 +513,7 @@ namespace CodeStage.AntiCheat.ObscuredTypes
 				string deprecatedValue = DeprecatedDecryptValue(encryptedInput);
 				if (deprecatedValue == "") return defaultValue;
 				float deprecatedResult;
-				float.TryParse(deprecatedValue, out deprecatedResult);
+				float.TryParse(deprecatedValue, NumberStyles.Any, CultureInfo.InvariantCulture, out deprecatedResult);
 				SetFloat(key, deprecatedResult);
 				return deprecatedResult;
 			}
@@ -890,8 +890,8 @@ namespace CodeStage.AntiCheat.ObscuredTypes
 				string[] values = ReadUnobscured(key, defaultValue).Split(DATA_SEPARATOR[0]);
 				float x;
 				float y;
-				float.TryParse(values[0], out x);
-				float.TryParse(values[1], out y);
+				float.TryParse(values[0], NumberStyles.Any, CultureInfo.InvariantCulture, out x);
+				float.TryParse(values[1], NumberStyles.Any, CultureInfo.InvariantCulture, out y);
 				return new Vector2(x, y);
 			}
 #endif
@@ -916,8 +916,8 @@ namespace CodeStage.AntiCheat.ObscuredTypes
 				string[] values = deprecatedValue.Split(DATA_SEPARATOR[0]);
 				float x;
 				float y;
-				float.TryParse(values[0], out x);
-				float.TryParse(values[1], out y);
+				float.TryParse(values[0], NumberStyles.Any, CultureInfo.InvariantCulture, out x);
+				float.TryParse(values[1], NumberStyles.Any, CultureInfo.InvariantCulture, out y);
 				Vector2 deprecatedResult = new Vector2(x, y);
 				SetVector2(key, deprecatedResult);
 				return deprecatedResult;
@@ -982,9 +982,9 @@ namespace CodeStage.AntiCheat.ObscuredTypes
 				float x;
 				float y;
 				float z;
-				float.TryParse(values[0], out x);
-				float.TryParse(values[1], out y);
-				float.TryParse(values[2], out z);
+				float.TryParse(values[0], NumberStyles.Any, CultureInfo.InvariantCulture, out x);
+				float.TryParse(values[1], NumberStyles.Any, CultureInfo.InvariantCulture, out y);
+				float.TryParse(values[2], NumberStyles.Any, CultureInfo.InvariantCulture, out z);
 				return new Vector3(x, y, z);
 			}
 #endif
@@ -1011,9 +1011,9 @@ namespace CodeStage.AntiCheat.ObscuredTypes
 				float x;
 				float y;
 				float z;
-				float.TryParse(values[0], out x);
-				float.TryParse(values[1], out y);
-				float.TryParse(values[2], out z);
+				float.TryParse(values[0], NumberStyles.Any, CultureInfo.InvariantCulture, out x);
+				float.TryParse(values[1], NumberStyles.Any, CultureInfo.InvariantCulture, out y);
+				float.TryParse(values[2], NumberStyles.Any, CultureInfo.InvariantCulture, out z);
 				Vector3 deprecatedResult = new Vector3(x, y, z);
 				SetVector3(key, deprecatedResult);
 				return deprecatedResult;
@@ -1080,10 +1080,10 @@ namespace CodeStage.AntiCheat.ObscuredTypes
 				float y;
 				float z;
 				float w;
-				float.TryParse(values[0], out x);
-				float.TryParse(values[1], out y);
-				float.TryParse(values[2], out z);
-				float.TryParse(values[3], out w);
+				float.TryParse(values[0], NumberStyles.Any, CultureInfo.InvariantCulture, out x);
+				float.TryParse(values[1], NumberStyles.Any, CultureInfo.InvariantCulture, out y);
+				float.TryParse(values[2], NumberStyles.Any, CultureInfo.InvariantCulture, out z);
+				float.TryParse(values[3], NumberStyles.Any, CultureInfo.InvariantCulture, out w);
 				return new Quaternion(x, y, z, w);
 			}
 #endif
@@ -1112,10 +1112,10 @@ namespace CodeStage.AntiCheat.ObscuredTypes
 				float y;
 				float z;
 				float w;
-				float.TryParse(values[0], out x);
-				float.TryParse(values[1], out y);
-				float.TryParse(values[2], out z);
-				float.TryParse(values[3], out w);
+				float.TryParse(values[0], NumberStyles.Any, CultureInfo.InvariantCulture, out x);
+				float.TryParse(values[1], NumberStyles.Any, CultureInfo.InvariantCulture, out y);
+				float.TryParse(values[2], NumberStyles.Any, CultureInfo.InvariantCulture, out z);
+				float.TryParse(values[3], NumberStyles.Any, CultureInfo.InvariantCulture, out w);
 				Quaternion deprecatedResult = new Quaternion(x, y, z, w);
 				SetQuaternion(key, deprecatedResult);
 				return deprecatedResult;
@@ -1259,10 +1259,10 @@ namespace CodeStage.AntiCheat.ObscuredTypes
 				float y;
 				float w;
 				float h;
-				float.TryParse(values[0], out x);
-				float.TryParse(values[1], out y);
-				float.TryParse(values[2], out w);
-				float.TryParse(values[3], out h);
+				float.TryParse(values[0], NumberStyles.Any, CultureInfo.InvariantCulture, out x);
+				float.TryParse(values[1], NumberStyles.Any, CultureInfo.InvariantCulture, out y);
+				float.TryParse(values[2], NumberStyles.Any, CultureInfo.InvariantCulture, out w);
+				float.TryParse(values[3], NumberStyles.Any, CultureInfo.InvariantCulture, out h);
 				return new Rect(x, y, w, h);
 			}
 #endif
@@ -1291,10 +1291,10 @@ namespace CodeStage.AntiCheat.ObscuredTypes
 				float y;
 				float w;
 				float h;
-				float.TryParse(values[0], out x);
-				float.TryParse(values[1], out y);
-				float.TryParse(values[2], out w);
-				float.TryParse(values[3], out h);
+				float.TryParse(values[0], NumberStyles.Any, CultureInfo.InvariantCulture, out x);
+				float.TryParse(values[1], NumberStyles.Any, CultureInfo.InvariantCulture, out y);
+				float.TryParse(values[2], NumberStyles.Any, CultureInfo.InvariantCulture, out w);
+				float.TryParse(values[3], NumberStyles.Any, CultureInfo.InvariantCulture, out h);
 				Rect deprecatedResult = new Rect(x, y, w, h);
 				SetRect(key, deprecatedResult);
 				return deprecatedResult;

@@ -12,6 +12,7 @@ using System.IO;
 using UnityEngine;
 using UnityEditor;
 using UnityEditor.SceneManagement;
+using System.Globalization;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -646,7 +647,7 @@ public class HungryDragonEditorMenu
                 tokens = line.Trim().Split(' ');
                 if (tokens.Length >= 3)
                 {
-                    float fileSize = float.Parse(tokens[0]);
+                    float fileSize = float.Parse(tokens[0], NumberStyles.Any, CultureInfo.InvariantCulture);
                     switch (tokens[1].Trim())
                     {
                         case "kb":

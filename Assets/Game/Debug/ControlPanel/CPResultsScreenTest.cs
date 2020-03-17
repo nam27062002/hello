@@ -11,6 +11,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System;
 using TMPro;
+using System.Globalization;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -210,7 +211,7 @@ public class CPResultsScreenTest : MonoBehaviour {
 		m_newHighScoreToggle.onValueChanged.AddListener(_toggled => newHighScore = _toggled);
 
 		m_coinsValueInput.onValueChanged.AddListener(_text => coinsValue = long.Parse(_text));
-		m_timeValueInput.onValueChanged.AddListener(_text => timeValue = float.Parse(_text));
+		m_timeValueInput.onValueChanged.AddListener(_text => timeValue = float.Parse(_text, NumberStyles.Any, CultureInfo.InvariantCulture));
 		m_survivalBonusInput.onValueChanged.AddListener(_text => survivalBonus = long.Parse(_text));
 
 		m_xpInitialDeltaSlider.minValue = 0f;

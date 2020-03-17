@@ -6,6 +6,7 @@ using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Linq;
+using System.Globalization;
 
 namespace AssetBundles
 {
@@ -194,9 +195,9 @@ namespace AssetBundles
                     }
                 }
 
-                if (float.Parse(candidate) > profileVersion)
+                if (float.Parse(candidate, NumberStyles.Any, CultureInfo.InvariantCulture) > profileVersion)
                 {
-                    profileVersion = float.Parse(candidate);
+                    profileVersion = float.Parse(candidate, NumberStyles.Any, CultureInfo.InvariantCulture);
                 }
             }
 

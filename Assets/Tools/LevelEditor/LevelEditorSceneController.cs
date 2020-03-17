@@ -250,7 +250,7 @@ namespace LevelEditor {
 			PoolManager.Build();
 
 			// Setup progression offset based on spawn position
-			progressionOffsetSeconds = float.Parse(LevelEditor.settings.progressionOffsetSeconds);
+			progressionOffsetSeconds = float.Parse(LevelEditor.settings.progressionOffsetSeconds, NumberStyles.Any, CultureInfo.InvariantCulture);
 			progressionOffsetXP = int.Parse(LevelEditor.settings.progressionOffsetXP, NumberStyles.Any, CultureInfo.InvariantCulture);
 
 			// Reset dragon stats

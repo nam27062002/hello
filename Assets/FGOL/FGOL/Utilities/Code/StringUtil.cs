@@ -34,7 +34,7 @@ public static class StringUtil
 			formattedPrice = Regex.Match(formattedPrice, "([0-9]+[.,\u066B]{0,1}[0-9]*)").Value;
 			formattedPrice = formattedPrice.Replace(",", ".");
 			formattedPrice = formattedPrice.Replace("\u066B", ".");
-			return float.Parse(formattedPrice);
+			return float.Parse(formattedPrice, NumberStyles.Any, CultureInfo.InvariantCulture);
 		} 
 		catch( Exception )
 		{
@@ -165,8 +165,8 @@ public static class StringUtil
 			string[] values = s.Split(',');
 			if(values.Length != 2)
 				return null;
-			float x = float.Parse(values[0]);
-			float y = float.Parse(values[1]);
+			float x = float.Parse(values[0], NumberStyles.Any, CultureInfo.InvariantCulture);
+			float y = float.Parse(values[1], NumberStyles.Any, CultureInfo.InvariantCulture);
 			return new Vector2(x, y);
 		}
 		
@@ -175,9 +175,9 @@ public static class StringUtil
 			string[] values = s.Split(',');
 			if(values.Length != 3)
 				return null;
-			float x = float.Parse(values[0]);
-			float y = float.Parse(values[1]);
-			float z = float.Parse(values[2]);
+			float x = float.Parse(values[0], NumberStyles.Any, CultureInfo.InvariantCulture);
+			float y = float.Parse(values[1], NumberStyles.Any, CultureInfo.InvariantCulture);
+			float z = float.Parse(values[2], NumberStyles.Any, CultureInfo.InvariantCulture);
 			return new Vector3(x, y, z);
 		}
 		
@@ -189,10 +189,10 @@ public static class StringUtil
 				return null;
 			float range = 255.0f;
 			float scale = 1.0f/range;
-			float r = float.Parse(values[0])*scale;
-			float g = float.Parse(values[1])*scale;
-			float b = float.Parse(values[2])*scale;
-			float a = (len==3) ? range : (float.Parse(values[3])*scale);
+			float r = float.Parse(values[0], NumberStyles.Any, CultureInfo.InvariantCulture) * scale;
+			float g = float.Parse(values[1], NumberStyles.Any, CultureInfo.InvariantCulture) * scale;
+			float b = float.Parse(values[2], NumberStyles.Any, CultureInfo.InvariantCulture) * scale;
+			float a = (len==3) ? range : (float.Parse(values[3], NumberStyles.Any, CultureInfo.InvariantCulture) * scale);
 			return new Color(r, g, b, a);
 		}
 		

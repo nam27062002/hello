@@ -11,6 +11,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
 using TMPro;
+using System.Globalization;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -116,7 +117,7 @@ public class CPNumericValueEditor : MonoBehaviour {
 	private void SetValue(CPOperation _operation) {
 		// Get amount from linked input field
 		float amount = 0f;
-		if(!float.TryParse(m_valueInput.text, out amount)) {
+		if(!float.TryParse(m_valueInput.text, NumberStyles.Any, CultureInfo.InvariantCulture, out amount)) {
 			ControlPanel.LaunchTextFeedback("Invalid number format!!", Color.red);
 			return;
 		}

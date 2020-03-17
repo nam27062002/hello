@@ -11,6 +11,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.Collections.Generic;
+using System.Globalization;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -126,7 +127,7 @@ public class CPMissionCheats : MonoBehaviour {
 		}
 
 		// Get amount from linked input field
-		float amount = float.Parse(m_skipInput.text);
+		float amount = float.Parse(m_skipInput.text, NumberStyles.Any, CultureInfo.InvariantCulture );
 		amount *= 60f;
 
 		// Compute amount to add
