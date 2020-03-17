@@ -337,7 +337,7 @@ public class Egg {
 		}
 
 		// Incubating timestamp
-		m_incubationEndTimestamp = DateTime.Parse(_data["incubationEndTimestamp"]);
+		m_incubationEndTimestamp = DateTime.Parse(_data["incubationEndTimestamp"], PersistenceFacade.JSON_FORMATTING_CULTURE);
 	}
 
 	/// <summary>
