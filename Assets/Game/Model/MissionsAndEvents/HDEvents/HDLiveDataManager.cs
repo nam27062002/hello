@@ -14,6 +14,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Globalization;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -176,7 +177,7 @@ public class HDLiveDataManager : Singleton<HDLiveDataManager> {
     public void LoadEventsFromCache() {
         long cacheTimestamp = 0;
         if (CacheServerManager.SharedInstance.HasKey("hdliveeventstimestamp")) {
-            long.TryParse(CacheServerManager.SharedInstance.GetVariable("hdliveeventstimestamp"), out cacheTimestamp);            
+            long.TryParse(CacheServerManager.SharedInstance.GetVariable("hdliveeventstimestamp"), NumberStyles.Any, CultureInfo.InvariantCulture, out cacheTimestamp);            
         }
 
         if (GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong() - cacheTimestamp < CACHE_TIMEOUT_MS) {

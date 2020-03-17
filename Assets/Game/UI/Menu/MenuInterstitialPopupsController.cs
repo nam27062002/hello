@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------------//
 using UnityEngine;
 using System.Collections;
+using System.Globalization;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -313,7 +314,7 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 				if(Prefs.GetBoolPlayer(Prefs.RATE_CHECK, true)) {
 					string dateStr = Prefs.GetStringPlayer(Prefs.RATE_FUTURE_DATE, System.DateTime.Now.ToString());
 					System.DateTime futureDate = System.DateTime.Now;
-					if(!System.DateTime.TryParse(dateStr, out futureDate)) {
+					if(!System.DateTime.TryParse(dateStr, CultureInfo.InvariantCulture, DateTimeStyles.None, out futureDate)) {
 						futureDate = System.DateTime.Now;
 					}
 					if(System.DateTime.Compare(System.DateTime.Now, futureDate) > 0) {

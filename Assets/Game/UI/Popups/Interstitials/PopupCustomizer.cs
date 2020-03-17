@@ -17,6 +17,7 @@ using DG.Tweening;
 using System;
 using System.IO;
 using System.Collections.Generic;
+using System.Globalization;
 
 
 //----------------------------------------------------------------------------//
@@ -553,7 +554,7 @@ public class PopupCustomizer : MonoBehaviour {
 
 				int i = layoutName.LastIndexOf("_");
 				layoutName = layoutName.Substring(i + 1);
-				layoutIndex = int.Parse(layoutName);
+				layoutIndex = int.Parse(layoutName, NumberStyles.Any, CultureInfo.InvariantCulture);
 
 				settings.Add("layoutIndex", layoutIndex);
 				settings.Add("hasCloseButton", m_closeButtonField.element != null);

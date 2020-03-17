@@ -4,6 +4,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Text;
 
@@ -237,7 +238,7 @@ namespace IronSourceJSON
 				}
 
 				double parsedDouble;
-				Double.TryParse (number, out parsedDouble);
+				Double.TryParse (number, NumberStyles.Any, CultureInfo.InvariantCulture, out parsedDouble);
 				return parsedDouble;
 			}
 

@@ -5,6 +5,7 @@
 ///   as soon as possible
 /// </summary>
 using System.Collections.Generic;
+using System.Globalization;
 using UnityEngine;
 public class PersistencePrefs
 {
@@ -124,7 +125,7 @@ public class PersistencePrefs
             string userId = ServerUserId;
             if (!string.IsNullOrEmpty(userId))
             {
-                if (!int.TryParse(userId, out returnValue))
+                if (!int.TryParse(userId, NumberStyles.Any, CultureInfo.InvariantCulture, out returnValue))
                 {
                     returnValue = 0;
                 }
@@ -252,7 +253,7 @@ public class PersistencePrefs
         string value = PlayerPrefs.GetString(key);        
         if (!string.IsNullOrEmpty(value))
         {
-            long.TryParse(value, out returnValue);
+            long.TryParse(value, NumberStyles.Any, CultureInfo.InvariantCulture, out returnValue);
         }
 
         return returnValue;

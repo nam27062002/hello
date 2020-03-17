@@ -8,6 +8,7 @@
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
 using System.Collections.Generic;
+using System.Globalization;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -105,7 +106,7 @@ public class CPProgressionCheats : MonoBehaviour {
 		// Get amount from linked input field
 		TMP_InputField input = GetComponentInChildren<TMP_InputField>();
 		if(input == null) Debug.Log("Requires a nested Input Field!");
-		long amount = long.Parse(input.text);
+		long amount = long.Parse(input.text, NumberStyles.Any, CultureInfo.InvariantCulture);
 
 		// Compute amount to add
 		switch(_operation) {

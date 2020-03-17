@@ -5,6 +5,8 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
+
 public class ContentManager  
 {
     //////////////////////////////////////////////////////////////////////////
@@ -283,7 +285,7 @@ public class ContentManager
                 kLanguagesData[iSKUIdx].m_strSKU = kEntry.Value.Get("sku");
 
                 int iOrder = 0;
-                if (int.TryParse(kEntry.Value.Get("order"), out iOrder))
+                if (int.TryParse(kEntry.Value.Get("order"), NumberStyles.Any, CultureInfo.InvariantCulture, out iOrder))
                 {
                     kLanguagesData[iSKUIdx].m_iOrder = iOrder;
                 }

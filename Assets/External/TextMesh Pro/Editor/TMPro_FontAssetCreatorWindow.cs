@@ -305,7 +305,7 @@ namespace TMPro.EditorUtilities
                 if (s1.Length == 1)
                     try
                     {
-                        unicode_list.Add(int.Parse(s1[0]));
+                        unicode_list.Add(int.Parse(s1[0], NumberStyles.Any, CultureInfo.InvariantCulture));
                     }
                     catch
                     {
@@ -313,7 +313,9 @@ namespace TMPro.EditorUtilities
                     }
                 else
                 {
-                    for (int j = int.Parse(s1[0]); j < int.Parse(s1[1]) + 1; j++)
+                    for (int j = int.Parse(s1[0], NumberStyles.Any, CultureInfo.InvariantCulture);
+                        j < int.Parse(s1[1], NumberStyles.Any, CultureInfo.InvariantCulture) + 1;
+                        j++)
                     {
                         unicode_list.Add(j);
                     }

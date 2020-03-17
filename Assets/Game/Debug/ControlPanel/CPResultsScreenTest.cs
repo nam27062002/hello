@@ -11,6 +11,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System;
 using TMPro;
+using System.Globalization;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -205,13 +206,13 @@ public class CPResultsScreenTest : MonoBehaviour {
 		m_eggModeDropdown.InitFromEnum(EGG_MODE, typeof(EggTestMode), (int)EggTestMode.RANDOM);
 		m_missionsModeDropdown.InitFromEnum(MISSIONS_MODE, typeof(MissionsTestMode), (int)MissionsTestMode.NONE);
 
-		m_scoreValueInput.onValueChanged.AddListener(_text => scoreValue = long.Parse(_text));
-		m_highScoreValueInput.onValueChanged.AddListener(_text => highScoreValue = long.Parse(_text));
+		m_scoreValueInput.onValueChanged.AddListener(_text => scoreValue = long.Parse(_text, NumberStyles.Any, CultureInfo.InvariantCulture));
+		m_highScoreValueInput.onValueChanged.AddListener(_text => highScoreValue = long.Parse(_text, NumberStyles.Any, CultureInfo.InvariantCulture));
 		m_newHighScoreToggle.onValueChanged.AddListener(_toggled => newHighScore = _toggled);
 
 		m_coinsValueInput.onValueChanged.AddListener(_text => coinsValue = long.Parse(_text));
-		m_timeValueInput.onValueChanged.AddListener(_text => timeValue = float.Parse(_text));
-		m_survivalBonusInput.onValueChanged.AddListener(_text => survivalBonus = long.Parse(_text));
+		m_timeValueInput.onValueChanged.AddListener(_text => timeValue = float.Parse(_text, NumberStyles.Any, CultureInfo.InvariantCulture));
+		m_survivalBonusInput.onValueChanged.AddListener(_text => survivalBonus = long.Parse(_text, NumberStyles.Any, CultureInfo.InvariantCulture));
 
 		m_xpInitialDeltaSlider.minValue = 0f;
 		m_xpInitialDeltaSlider.maxValue = 1f;
