@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using System.Globalization;
 
 public class CPGatchaDynamicProbabilities : MonoBehaviour {
 
@@ -26,7 +27,7 @@ public class CPGatchaDynamicProbabilities : MonoBehaviour {
 
 	//
 	public void OnSetTry(string _str) {
-		UsersManager.currentUser.openEggTriesWithoutRares = int.Parse(_str);
+		UsersManager.currentUser.openEggTriesWithoutRares = int.Parse(_str, NumberStyles.Any, CultureInfo.InvariantCulture);
 
 		UpdateProbs();
 	}

@@ -924,7 +924,7 @@ public static class Util
 	public static void OverrideInt(Dictionary<string, string> dic, string stat, ref int i)
 	{
 		if(dic.ContainsKey(stat))
-			int.TryParse(dic[stat], out i);
+			int.TryParse(dic[stat], NumberStyles.Any, CultureInfo.InvariantCulture, out i);
 	}
 	
 	public static void OverrideFloat(Dictionary<string, string> dic, string stat, ref float f)

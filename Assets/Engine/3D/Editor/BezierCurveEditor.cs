@@ -10,6 +10,7 @@
 using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
+using System.Globalization;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -845,11 +846,11 @@ public class BezierCurveEditor : Editor {
 
 		// Field 0: point idx [0..N-1]
 		int pointIdx = -1;
-		if(!int.TryParse(tokens[0], out pointIdx)) return;
+		if(!int.TryParse(tokens[0], NumberStyles.Any, CultureInfo.InvariantCulture, out pointIdx)) return;
 
 		// Field 1: handle idx [0, 1, 2]
 		int handleIdx = -1;
-		if(!int.TryParse(tokens[1], out handleIdx)) return;
+		if(!int.TryParse(tokens[1], NumberStyles.Any, CultureInfo.InvariantCulture, out handleIdx)) return;
 
 		// Field 3: focused control (we don't care)
 

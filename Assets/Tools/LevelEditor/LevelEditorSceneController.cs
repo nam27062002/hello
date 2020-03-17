@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------//
 using UnityEngine;
 using System.Collections;
+using System.Globalization;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -250,7 +251,7 @@ namespace LevelEditor {
 
 			// Setup progression offset based on spawn position
 			progressionOffsetSeconds = float.Parse(LevelEditor.settings.progressionOffsetSeconds);
-			progressionOffsetXP = int.Parse(LevelEditor.settings.progressionOffsetXP);
+			progressionOffsetXP = int.Parse(LevelEditor.settings.progressionOffsetXP, NumberStyles.Any, CultureInfo.InvariantCulture);
 
 			// Reset dragon stats
 			InstanceManager.player.ResetStats(false);

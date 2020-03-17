@@ -13,6 +13,7 @@ using System;
 using System.Text;
 using System.Collections.Generic;
 using TMPro;
+using System.Globalization;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -187,7 +188,7 @@ public class CPGachaTest : MonoBehaviour {
 	/// <returns>Async task.</returns>
 	private System.Collections.IEnumerator GachaTester() {
 		// Get number of tries from input textfield
-		int numTries = int.Parse(m_gachaTesterInput.text);
+		int numTries = int.Parse(m_gachaTesterInput.text, NumberStyles.Any, CultureInfo.InvariantCulture);
 		float seconds = 10;
 		float triesPerSecond = Mathf.Ceil((float)numTries/seconds);
 		int triesPerFrame = Mathf.CeilToInt(triesPerSecond/30f);	// Assuming we're at 30FPS

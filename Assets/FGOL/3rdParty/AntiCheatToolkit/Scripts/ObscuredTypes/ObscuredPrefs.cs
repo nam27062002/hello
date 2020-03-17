@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Text;
 using CodeStage.AntiCheat.Common;
 using CodeStage.AntiCheat.Utils;
@@ -230,7 +231,7 @@ namespace CodeStage.AntiCheat.ObscuredTypes
 			}
 
 #if UNITY_EDITOR
-			if (unobscuredMode) return int.Parse(ReadUnobscured(key, defaultValue));
+			if (unobscuredMode) return int.Parse(ReadUnobscured(key, defaultValue), NumberStyles.Any, CultureInfo.InvariantCulture);
 #endif
 			string encrypted = GetEncryptedPrefsString(key, encryptedKey);
 			return encrypted == RAW_NOT_FOUND ? defaultValue : DecryptIntValue(key, encrypted, defaultValue);
@@ -249,7 +250,7 @@ namespace CodeStage.AntiCheat.ObscuredTypes
 				string deprecatedValue = DeprecatedDecryptValue(encryptedInput);
 				if (deprecatedValue == "") return defaultValue;
 				int deprecatedResult;
-				int.TryParse(deprecatedValue, out deprecatedResult);
+				int.TryParse(deprecatedValue, NumberStyles.Any, CultureInfo.InvariantCulture, out deprecatedResult);
 				SetInt(key, deprecatedResult);
 				return deprecatedResult;
 			}
@@ -305,7 +306,7 @@ namespace CodeStage.AntiCheat.ObscuredTypes
 		public static uint GetUInt(string key, uint defaultValue)
 		{
 #if UNITY_EDITOR
-			if (unobscuredMode) return uint.Parse(ReadUnobscured(key, defaultValue));
+			if (unobscuredMode) return uint.Parse(ReadUnobscured(key, defaultValue), NumberStyles.Any, CultureInfo.InvariantCulture);
 #endif
 			string encrypted = GetEncryptedPrefsString(key, EncryptKey(key));
 			return encrypted == RAW_NOT_FOUND ? defaultValue : DecryptUIntValue(key, encrypted, defaultValue);
@@ -324,7 +325,7 @@ namespace CodeStage.AntiCheat.ObscuredTypes
 				string deprecatedValue = DeprecatedDecryptValue(encryptedInput);
 				if (deprecatedValue == "") return defaultValue;
 				uint deprecatedResult;
-				uint.TryParse(deprecatedValue, out deprecatedResult);
+				uint.TryParse(deprecatedValue, NumberStyles.Any, CultureInfo.InvariantCulture, out deprecatedResult);
 				SetUInt(key, deprecatedResult);
 				return deprecatedResult;
 			}
@@ -737,7 +738,7 @@ namespace CodeStage.AntiCheat.ObscuredTypes
 				string deprecatedValue = DeprecatedDecryptValue(encryptedInput);
 				if (deprecatedValue == "") return defaultValue;
 				int deprecatedResult;
-				int.TryParse(deprecatedValue, out deprecatedResult);
+				int.TryParse(deprecatedValue, NumberStyles.Any, CultureInfo.InvariantCulture, out deprecatedResult);
 				SetBool(key, deprecatedResult == 1);
 				return deprecatedResult == 1;
 			}
@@ -1181,7 +1182,7 @@ namespace CodeStage.AntiCheat.ObscuredTypes
 			if (unobscuredMode)
 			{
                 uint encodedColorUnobscured;
-				uint.TryParse(ReadUnobscured(key, 16777216u), out encodedColorUnobscured);
+				uint.TryParse(ReadUnobscured(key, 16777216u), NumberStyles.Any, CultureInfo.InvariantCulture, out encodedColorUnobscured);
 
 				byte aUnobscured = (byte)(encodedColorUnobscured >> 24);
 				byte rUnobscured = (byte)(encodedColorUnobscured >> 16);

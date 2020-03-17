@@ -139,7 +139,7 @@ public static class StringUtil
 			case System.TypeCode.Int32:
 			{
 				int n;
-				if(int.TryParse(s, out n))
+				if(int.TryParse(s, NumberStyles.Any, CultureInfo.InvariantCulture, out n))
 					return n;
 				return null;
 			}

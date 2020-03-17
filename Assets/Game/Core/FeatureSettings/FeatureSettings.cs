@@ -1,6 +1,7 @@
 ﻿using SimpleJSON;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 
 public class FeatureSettings
 {    
@@ -476,7 +477,7 @@ public class FeatureSettings
     {        
         public static bool ParseValueInt(string value, out int outValue)
         {
-            return int.TryParse(value, out outValue);            
+            return int.TryParse(value, NumberStyles.Any, CultureInfo.InvariantCulture, out outValue);            
         }
 
         public static bool ParseValueFloat(string value, out float outValue)
@@ -598,7 +599,7 @@ public class FeatureSettings
 
         public override object GetStringAsData(string data)
         {
-            return int.Parse(data);
+            return int.Parse(data, NumberStyles.Any, CultureInfo.InvariantCulture);
         }        
     }
 
@@ -848,7 +849,7 @@ public class FeatureSettings
 
         public override object GetStringAsData(string data)
         {
-            return int.Parse(data);            
+            return int.Parse(data, NumberStyles.Any, CultureInfo.InvariantCulture);            
         }
     }
 

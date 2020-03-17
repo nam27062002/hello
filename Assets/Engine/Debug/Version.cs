@@ -8,6 +8,7 @@
 //----------------------------------------------------------------------//
 using UnityEngine;
 using System;
+using System.Globalization;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -127,9 +128,9 @@ public class Version : IComparableWithOperators<Version> {
 
 		// Parse tokens and store them in a new Version object
 		Version v = new Version();
-		if(tokens.Length > 0) int.TryParse(tokens[0], out v.m_major);
-		if(tokens.Length > 1) int.TryParse(tokens[1], out v.m_minor);
-		if(tokens.Length > 2) int.TryParse(tokens[2], out v.m_patch);
+		if(tokens.Length > 0) int.TryParse(tokens[0], NumberStyles.Any, CultureInfo.InvariantCulture, out v.m_major);
+		if(tokens.Length > 1) int.TryParse(tokens[1], NumberStyles.Any, CultureInfo.InvariantCulture, out v.m_minor);
+		if(tokens.Length > 2) int.TryParse(tokens[2], NumberStyles.Any, CultureInfo.InvariantCulture, out v.m_patch);
 
 		return v;
 	}
