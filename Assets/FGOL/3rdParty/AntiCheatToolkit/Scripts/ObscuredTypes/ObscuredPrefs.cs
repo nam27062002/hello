@@ -569,7 +569,7 @@ namespace CodeStage.AntiCheat.ObscuredTypes
 		public static double GetDouble(string key, double defaultValue)
 		{
 #if UNITY_EDITOR
-			if (unobscuredMode) return double.Parse(ReadUnobscured(key, defaultValue));
+			if (unobscuredMode) return double.Parse(ReadUnobscured(key, defaultValue), NumberStyles.Any, CultureInfo.InvariantCulture);
 #endif
 			string encrypted = GetEncryptedPrefsString(key, EncryptKey(key));
 			return encrypted == RAW_NOT_FOUND ? defaultValue : DecryptDoubleValue(key, encrypted, defaultValue);
@@ -588,7 +588,7 @@ namespace CodeStage.AntiCheat.ObscuredTypes
 				string deprecatedValue = DeprecatedDecryptValue(encryptedInput);
 				if (deprecatedValue == "") return defaultValue;
 				double deprecatedResult;
-				double.TryParse(deprecatedValue, out deprecatedResult);
+				double.TryParse(deprecatedValue, NumberStyles.Any, CultureInfo.InvariantCulture, out deprecatedResult);
 				SetDouble(key, deprecatedResult);
 				return deprecatedResult;
 			}
