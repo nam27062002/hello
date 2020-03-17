@@ -80,7 +80,7 @@ public class CPMissionCheats : MonoBehaviour {
 		}
 
 		// Get amount from linked input field
-		long amount = long.Parse(m_valueInput.text);
+		long amount = long.Parse(m_valueInput.text, NumberStyles.Any, CultureInfo.InvariantCulture);
 
 		// Compute amount to add
 		switch(_operation) {

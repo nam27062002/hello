@@ -644,7 +644,7 @@ namespace CodeStage.AntiCheat.ObscuredTypes
 		public static long GetLong(string key, long defaultValue)
 		{
 #if UNITY_EDITOR
-			if (unobscuredMode) return long.Parse(ReadUnobscured(key, defaultValue));
+			if (unobscuredMode) return long.Parse(ReadUnobscured(key, defaultValue), NumberStyles.Any, CultureInfo.InvariantCulture);
 #endif
 			string encrypted = GetEncryptedPrefsString(key, EncryptKey(key));
 			return encrypted == RAW_NOT_FOUND ? defaultValue : DecryptLongValue(key, encrypted, defaultValue);
@@ -663,7 +663,7 @@ namespace CodeStage.AntiCheat.ObscuredTypes
 				string deprecatedValue = DeprecatedDecryptValue(encryptedInput);
 				if (deprecatedValue == "") return defaultValue;
 				long deprecatedResult;
-				long.TryParse(deprecatedValue, out deprecatedResult);
+				long.TryParse(deprecatedValue, NumberStyles.Any, CultureInfo.InvariantCulture, out deprecatedResult);
 				SetLong(key, deprecatedResult);
 				return deprecatedResult;
 			}

@@ -253,7 +253,7 @@ public class PersistencePrefs
         string value = PlayerPrefs.GetString(key);        
         if (!string.IsNullOrEmpty(value))
         {
-            long.TryParse(value, out returnValue);
+            long.TryParse(value, NumberStyles.Any, CultureInfo.InvariantCulture, out returnValue);
         }
 
         return returnValue;
