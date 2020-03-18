@@ -77,14 +77,13 @@ public class ShopController : MonoBehaviour
     [SerializeField] private Transform m_hcCounterPosition;
     public Transform hcCounterPosition { get { return m_hcCounterPosition; } }
 
-    // Pills initialization
-    [Range(1,5)]
-    [Tooltip("Amount of frames that will take for each pill to be displayed. Creates a cool effect when opening the shop")]
-    [SerializeField]
-    private int m_framesDelayPerPill = 1;
-
     [SerializeField]
     public int m_pillsPerFrame = 10;
+
+    // If false, ignore the periodic refresh and the incoming events
+    // Use it to stop updating the shop while a purchase transaction is in course.
+    private bool m_shopReady = false;
+    public bool ShopReady { get => m_shopReady; set => m_shopReady = value; }
 
     //Internal
     private Mode m_mode;    // Shop mode
@@ -109,8 +108,7 @@ public class ShopController : MonoBehaviour
     // Keep the bounds of the current category, so we dont recalculate every time the user scrolls the shop
     private float categoryLeftBorder, categoryRightBorder;
 
-    // True if all the pills have already been drawn
-    private bool m_shopReady = false;
+
     private bool m_optimizationActive = false;
 
     // Optimization #1: disable layouts after refresh
@@ -140,6 +138,8 @@ public class ShopController : MonoBehaviour
     // Callback for successful purchases
     private UnityAction<IShopPill> m_purchaseCompletedCallback;
     public UnityAction<IShopPill> purchaseCompletedCallback { get { return m_purchaseCompletedCallback; } }
+
+
 
 
     // Benchmarking
@@ -622,6 +622,7 @@ public class ShopController : MonoBehaviour
         m_cameraTravelingEnabled = false;
 
     }
+
 
     //------------------------------------------------------------------------//
     // SHORTCUTS                											  //

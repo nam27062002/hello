@@ -75,6 +75,9 @@ public class PopupShop : MonoBehaviour {
 	public void Init(ShopController.Mode _mode, string _origin) {
 		m_openOrigin = _origin;
         m_shopController.Init(_mode, OnPurchaseSuccessful);
+
+		// Leave a reference in the instance manager
+		InstanceManager.shopController = m_shopController;
 	}
 
 	/// <summary>
@@ -129,7 +132,10 @@ public class PopupShop : MonoBehaviour {
 	/// Popup is about to be closed.
 	/// </summary>
 	public void OnClosePreAnimation() {
-		
+
+		// Remove the reference in the instance manager
+		InstanceManager.shopController = null;
+
 	}
 
 
@@ -147,8 +153,9 @@ public class PopupShop : MonoBehaviour {
         {
             if (_pill is ShopCurrencyPill )
             {
-                // For currency packs wait some time before closing so the coins/gems trail FX can finish
-                UbiBCN.CoroutineManager.DelayedCall(() => GetComponent<PopupController>().Close(false) , 1.5f, false);
+				// For currency packs wait some time before closing so the coins/gems trail FX can finish
+
+				UbiBCN.CoroutineManager.DelayedCall(() => GetComponent<PopupController>().Close(true) , 1.5f, true);
             }
             else
             {
