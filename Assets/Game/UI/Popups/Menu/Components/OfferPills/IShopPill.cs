@@ -229,6 +229,14 @@ public abstract class IShopPill : MonoBehaviour {
 			Log("Closing loading popup!!");
 			m_loadingPopupController.Close(true);
 		}
+
+		// If there is a shop open
+		if (InstanceManager.shopController != null)
+		{
+			// release the shop lock
+			InstanceManager.shopController.ShopReady = true;
+		}
+
 	}
 
 	//------------------------------------------------------------------------//
@@ -279,6 +287,12 @@ public abstract class IShopPill : MonoBehaviour {
 					// Open loading popup to block all the UI while the transaction is in progress
 					Log("Opening Loading Popup!");
 					m_loadingPopupController = PopupManager.PopupLoading_Open();
+
+						// If there is a shop open, stop updating the shop until the transaction its completed
+						if (InstanceManager.shopController != null)
+						{
+							InstanceManager.shopController.ShopReady = false;
+						}
 
 					// Check connection to the store
 #if UNITY_EDITOR
