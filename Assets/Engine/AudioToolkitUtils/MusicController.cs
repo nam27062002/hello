@@ -62,7 +62,7 @@ public class MusicController : MonoBehaviour, IBroadcastListener
             AudioObject ao = m_delayedReturnObjects[i];
             ao.transform.parent = null;
             ao.completelyPlayedDelegate = null;
-            if (ao.IsPlaying() && ao.audioItem.Loop != AudioItem.LoopMode.DoNotLoop)
+            if (ao.IsPlaying() && ao.audioItem != null && ao.audioItem.Loop != AudioItem.LoopMode.DoNotLoop)
                 ao.Stop();
         }
         m_delayedReturnObjects.Clear();
