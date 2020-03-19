@@ -75,8 +75,8 @@ public class ResultsScreenStepTournamentSync : ResultsScreenStep {
 		}
 
 		// Hide both panels
-		m_busyPanel.Hide(false);
-		m_errorPanel.Hide(false);
+		if(m_busyPanel != null) m_busyPanel.Hide(false);
+		if(m_errorPanel != null) m_errorPanel.Hide(false);
 
 		// Reset flags
 		m_hasBeenDismissed = false;
@@ -149,10 +149,10 @@ public class ResultsScreenStepTournamentSync : ResultsScreenStep {
 	/// </summary>
 	private void SendScore() {
 		// Hide error screen
-		m_errorPanel.Hide();
+		if(m_errorPanel != null) m_errorPanel.Hide();
 
 		// Show busy screen
-		m_busyPanel.Show();
+		if(m_busyPanel != null) m_busyPanel.Show();
 
 		// Tell the event to register a score
 		switch (SceneController.mode) {
@@ -198,7 +198,7 @@ public class ResultsScreenStepTournamentSync : ResultsScreenStep {
 	/// <param name="_errorCode">Error code.</param>
 	private void OnTournamentScoreSent(HDLiveDataManager.ComunicationErrorCodes _errorCode) {
 		// Hide busy screen
-		m_busyPanel.Hide();
+		if(m_busyPanel != null) m_busyPanel.Hide();
 
 		// Error?
 		if(_errorCode == HDLiveDataManager.ComunicationErrorCodes.NO_ERROR) {
@@ -208,12 +208,12 @@ public class ResultsScreenStepTournamentSync : ResultsScreenStep {
                 || _errorCode == HDLiveDataManager.ComunicationErrorCodes.EVENT_NOT_FOUND
                 || _errorCode == HDLiveDataManager.ComunicationErrorCodes.EVENT_IS_NOT_VALID
                 || _errorCode == HDLiveDataManager.ComunicationErrorCodes.EVENT_TTL_EXPIRED) {
+			// Yes, event no longer valid! :/ Go to next step
             m_event.ForceFinishByError();
-            // No! :) Go to next step
-            OnFinished.Invoke();
+			OnFinished.Invoke();
         } else {
 			// Yes :( Show error screen
-			m_errorPanel.Show();
+			if(m_errorPanel != null) m_errorPanel.Show();
 		}
 	}
 
@@ -223,7 +223,7 @@ public class ResultsScreenStepTournamentSync : ResultsScreenStep {
 	/// <param name="_errorCode">Error code.</param>
 	private void OnQuestScoreSent(HDLiveDataManager.ComunicationErrorCodes _errorCode) {
 		// Hide busy screen
-		m_busyPanel.Hide();
+		if(m_busyPanel != null) m_busyPanel.Hide();
 
 		// Error?
 		if(_errorCode == HDLiveDataManager.ComunicationErrorCodes.NO_ERROR) {
@@ -233,15 +233,15 @@ public class ResultsScreenStepTournamentSync : ResultsScreenStep {
                 || _errorCode == HDLiveDataManager.ComunicationErrorCodes.EVENT_IS_NOT_VALID 
                 || _errorCode == HDLiveDataManager.ComunicationErrorCodes.EVENT_TTL_EXPIRED)
 		{
+            // Yes, event no longer valid! :/ Go to next step
             m_event.ForceFinishByError();
-            // No! :) Go to next step
             OnFinished.Invoke();
 		} else if (_errorCode == HDLiveDataManager.ComunicationErrorCodes.QUEST_IS_OVER) {
 			m_event.RequestDefinition(true);
 			OnFinished.Invoke();
 		} else {
 			// Yes :( Show error screen
-			m_errorPanel.Show();
+			if(m_errorPanel != null) m_errorPanel.Show();
 		}
 	}
 }
