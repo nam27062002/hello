@@ -35,6 +35,24 @@ public class InstanceManager : Singleton<InstanceManager> {
 		set { if(instance != null) instance.m_musicController = value; }
 	}
 
+	// Shortcut to the shop controller (can be in the screen or in a popup, in game or in the menu)
+	private ShopController m_shopController = null;
+	public static ShopController shopController
+	{
+		get	{
+			if (instance.m_shopController == null)
+			{
+				// By default find the shop in the menu scene
+				if (menuSceneController != null)
+				{
+					instance.m_shopController = menuSceneController.GetScreenData(MenuScreen.SHOP).ui.GetComponent<ShopController>();
+				}
+			}
+			return instance.m_shopController;
+		}
+		set { instance.m_shopController = value; }
+	}
+
 	//------------------------------------------------------------------//
 	// ONLY IN MENU SCENE												//
 	//------------------------------------------------------------------//
