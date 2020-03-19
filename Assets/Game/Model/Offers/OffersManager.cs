@@ -218,7 +218,6 @@ public class OffersManager : Singleton<OffersManager> {
                 instance.m_activeOffers.Add(newPack);
             }
         }
-        
 
         // Get all known offer packs
         // Sort offers by their "order" field, so if two mutually exclusive offers (same uniqueId)
@@ -270,7 +269,13 @@ public class OffersManager : Singleton<OffersManager> {
 							// If active, store it as the current free offer
 							// [AOC] Shouldn't be needed since the Refresh(true) below should do the trick
 							if(newPack.state == OfferPack.State.ACTIVE) {
-								instance.m_activeFreeOffer = newPack as OfferPackFree;
+								// If another free offer was active first, something went wrong! Change this one to PENDING_ACTIVATION.
+								// [AOC] Shouldn't happen, but we have seen some cases, so protect it just in case
+								if(instance.m_activeFreeOffer != null) {
+									instance.m_activeFreeOffer.ForceStateChange(OfferPack.State.PENDING_ACTIVATION, false);
+								} else {
+									instance.m_activeFreeOffer = newPack as OfferPackFree;
+								}
 							}
 						} break;
 
