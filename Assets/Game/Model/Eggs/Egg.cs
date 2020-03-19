@@ -349,14 +349,14 @@ public class Egg {
 		SimpleJSON.JSONClass data = new SimpleJSON.JSONClass();
 
 		// Egg sku
-		data.Add("sku",m_def.sku);
+		data.Add("sku", m_def.sku);
 
 		// State
-		data.Add("state", ((int)m_state).ToString());
-		data.Add("isNew",m_isNew.ToString());
+		data.Add("state", ((int)m_state).ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
+		data.Add("isNew", m_isNew.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
 
 		// Incubating timestamp
-		data.Add("incubationEndTimestamp", m_incubationEndTimestamp.ToString());
+		data.Add("incubationEndTimestamp", m_incubationEndTimestamp.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
 
 		return data;
 	}
