@@ -14,7 +14,10 @@ Shader "Hungry Dragon/Waterfall"
 		_WaterSpeed("Speed: ", Float) = 0.5
 		_BackColor("Back Color: ", Color) = (0.0, 0.0, 0.0, 0.0)
 		_ZLimit("Fog Z limit", Range(0.0, 0.3)) = 0.0
+        [Toggle(SPACE)] _EnableSpace("Enable space", Float) = 0
+		_SpaceIntensity("Space intensity", Range(0.0, 2.0)) = 1.0
 		_StencilMask("Stencil Mask: ", int) = 10
+
 	}
 
 	SubShader {
@@ -40,6 +43,7 @@ Shader "Hungry Dragon/Waterfall"
 				#pragma vertex vert
 				#pragma fragment frag
                 #pragma multi_compile __ NIGHT
+                #pragma shader_feature  __ SPACE
 
 				#include "UnityCG.cginc"
 				#include "AutoLight.cginc"
@@ -72,6 +76,9 @@ Shader "Hungry Dragon/Waterfall"
 				fixed4 _BackColor;
 				HG_FOG_VARIABLES
 				float _ZLimit;
+#if defined(SPACE)
+                float   _SpaceIntensity;
+#endif
 
 
 				v2f vert (appdata_t v) 
@@ -79,12 +86,17 @@ Shader "Hungry Dragon/Waterfall"
 					v2f o;
 					o.vertex = UnityObjectToClipPos(v.vertex);
 
-					float time = frac(_Time.x);
+					float time = _Time.x;//frac(_Time.x);
 					float2 anim = float2(0.0, time * _WaterSpeed * 20.0);
 
 					o.uv1 = o.uv0 = TRANSFORM_TEX(v.uv, _MainTex);
-					o.uv0 += anim;
-					o.uv1 += anim * 0.75;
+#if defined(SPACE)
+					o.uv0 += anim.yx;
+					o.uv1 += anim * 0.2;
+#else
+                    o.uv0 += anim;
+					o.uv1 += anim * 0.7;
+#endif
 					o.uv2 = TRANSFORM_TEX(v.uv2, _BlendTex) + anim * 1.5;
 
 					o.color = v.color;
@@ -103,7 +115,15 @@ Shader "Hungry Dragon/Waterfall"
 				{
 
 					fixed4 col = tex2D(_MainTex, i.uv0);
-					col += tex2D(_DetailTex, i.uv1) * 0.5f;
+#if defined(SPACE)
+                    fixed alpha = col.a;
+                    fixed4 det = tex2D(_DetailTex, i.uv1);
+					col += det;
+                    col.a *= alpha * _SpaceIntensity;
+#else
+                    col += tex2D(_DetailTex, i.uv1) * 0.5;
+#endif
+
 					fixed4 blend = tex2D(_BlendTex, i.uv2);
 					col = lerp(col, blend, i.color.w);
 
