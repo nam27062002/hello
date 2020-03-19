@@ -30,8 +30,11 @@ setlocal EnableDelayedExpansion
 @SET maxTries=10
 
 @for /l %%x in (1, 1, !maxTries!) do @(
+	@echo Looking for Calety at path %!strPathToSearch!%
 	@if exist !strPathToSearch! @(
 		@SET Calety=!strPathToSearch!
+		@echo FOUND!
+		@echo
 		@goto found
 	)
 	
@@ -54,7 +57,8 @@ setlocal EnableDelayedExpansion
 
 :finish
 
-@echo Forcing Game Project branch ...
+@REM @echo Forcing Game Project branch ...
+@echo Finishing installation...
 
 @SET CurrentFolder=%CD%
 
@@ -71,18 +75,22 @@ setlocal EnableDelayedExpansion
 @cd Assets
 
 @IF NOT EXIST Calety (
+@echo Creating link to Calety (%strPathToCaletySDK%\..\calety\Calety\UnityProject\Assets\Calety)
 MKLINK /d Calety %strPathToCaletySDK%\..\calety\Calety\UnityProject\Assets\Calety
 )
 
 cd Editor
 
 @IF NOT EXIST Calety (
+@echo Creating link to Editor\Calety (%strPathToCaletySDK%\..\..\calety\Calety\UnityProject\Assets\Editor\Calety)
 MKLINK /d Calety %strPathToCaletySDK%\..\..\calety\Calety\UnityProject\Assets\Editor\Calety
 )
 
 cd ..
 
 @IF NOT EXIST CaletyExternalPlugins (
+	@echo Creating folder CaletyExternalPlugins...
+
 	mkdir CaletyExternalPlugins
 	
 	cd CaletyExternalPlugins
@@ -96,6 +104,7 @@ cd ..
 cd CaletyExternalPlugins
 
 @IF NOT EXIST Plugins (
+@echo Creating link to CaletyExternalPlugins\Plugins (%strPathToCaletySDK%\..\..\calety\Calety\UnityProject\Assets\CaletyExternalPlugins\Plugins)
 MKLINK /d Plugins %strPathToCaletySDK%\..\..\calety\Calety\UnityProject\Assets\CaletyExternalPlugins\Plugins
 )
 
@@ -103,8 +112,11 @@ MKLINK /d Plugins %strPathToCaletySDK%\..\..\calety\Calety\UnityProject\Assets\C
 @cd ..
 
 @echo Done. Thanks for using Calety.
+@pause
 
 :finishNoCalety
+@echo Calety was not found. Make sure you have checked out the repository in git!
+@pause
 
 
 
