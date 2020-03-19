@@ -9,6 +9,10 @@
 
 setlocal EnableDelayedExpansion
 
+@REM https://www.codeproject.com/Tips/119828/Running-a-bat-file-as-administrator-Correcting-cur
+@setlocal enableextensions
+@cd /d "%~dp0"
+
 @echo.
 @echo CALETY INITIALISER
 @echo Preparing Calety framework and symbolic linkages ...
