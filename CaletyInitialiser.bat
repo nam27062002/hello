@@ -112,12 +112,14 @@ MKLINK /d Plugins %strPathToCaletySDK%\..\..\calety\Calety\UnityProject\Assets\C
 @cd ..
 
 @echo Done. Thanks for using Calety.
-@pause
+@goto pauseAndExit
 
 :finishNoCalety
 @echo Calety was not found. Make sure you have checked out the repository in git!
-@pause
+@goto pauseAndExit
 
+:pauseAndExit
+@pause
 
 
 
