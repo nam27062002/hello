@@ -29,7 +29,9 @@ public class ShopCurrencyPill : ShopMonoRewardPill {
 	//------------------------------------------------------------------------//
 	// Exposed
 	[Separator("Currency Pill Specifics")]
-	[SerializeField] protected Localizer m_bonusAmountText = null;	// [AOC] Unused as of 2.8, but keep it just in case
+	[SerializeField] protected Localizer m_bonusAmountText = null;  // [AOC] Unused as of 2.8, but keep it just in case
+
+	[SerializeField] private string m_trailSoundFx;
 
     [System.NonSerialized]
     public Transform currencyHudCounter; // When buying the pack, the coins/gems trail FX will go to this position
@@ -219,6 +221,9 @@ public class ShopCurrencyPill : ShopMonoRewardPill {
                 toWorldPos
             );
             m_currencyFX.totalDuration = 0.5f;
+
+			// Play sound FX
+			GetComponent<UbiBCN.PlaySimpleAudio>().Play(m_trailSoundFx);
 
         }
     }

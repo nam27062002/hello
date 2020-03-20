@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 114273326184938518}
   - component: {fileID: 114008533609190644}
   - component: {fileID: 114120409692389356}
+  - component: {fileID: 114224359706404324}
   m_Layer: 5
   m_Name: PF_ShopGemPackBigPill
   m_TagString: Untagged
@@ -108,6 +109,7 @@ MonoBehaviour:
   m_loadingPricePlaceholder: {fileID: 1635869910017698}
   m_offerItemSlot: {fileID: 114342213197656748}
   m_bonusAmountText: {fileID: 0}
+  m_trailSoundFx: hd_reward_gems
   m_happyHourButtonFx: {fileID: 1413744717771502}
 --- !u!114 &114120409692389356
 MonoBehaviour:
@@ -124,6 +126,19 @@ MonoBehaviour:
   lowerQualityThreshold: 1
   elementsToHide:
   - {fileID: 1462043577172662}
+--- !u!114 &114224359706404324
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1002678594874226}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28e0bbef12e224ce7835342046d82316, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_audioId: 
 --- !u!1 &1011996356406742
 GameObject:
   m_ObjectHideFlags: 0
