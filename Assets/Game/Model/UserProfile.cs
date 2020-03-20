@@ -961,7 +961,7 @@ public class UserProfile : UserPersistenceSystem
 
         if (profile.ContainsKey("timestamp"))
         {
-			m_saveTimestamp = DateTime.Parse(profile["timestamp"], PersistenceFacade.JSON_FORMATTING_CULTURE);
+			m_saveTimestamp = PersistenceUtils.SafeParse<DateTime>(profile["timestamp"]);
         }
         else
         {
@@ -1128,7 +1128,7 @@ public class UserProfile : UserPersistenceSystem
 		m_dailyRemoveMissionAdUses = 0;
 		if ( _data.ContainsKey("dailyRemoveMissionAdTimestamp") )
 		{
-			m_dailyRemoveMissionAdTimestamp = DateTime.Parse(_data["dailyRemoveMissionAdTimestamp"], PersistenceFacade.JSON_FORMATTING_CULTURE);;
+			m_dailyRemoveMissionAdTimestamp = PersistenceUtils.SafeParse<DateTime>(_data["dailyRemoveMissionAdTimestamp"]);
 
 			if ( _data.ContainsKey("dailyRemoveMissionAdUses") )
 				m_dailyRemoveMissionAdUses = _data["dailyRemoveMissionAdUses"].AsInt;
@@ -1140,7 +1140,7 @@ public class UserProfile : UserPersistenceSystem
 
 		m_skipMissionAdUses = 0;
 		if(_data.ContainsKey("skipMissionAdTimestamp")) {
-			m_skipMissionAdTimestamp = DateTime.Parse(_data["skipMissionAdTimestamp"], PersistenceFacade.JSON_FORMATTING_CULTURE);
+			m_skipMissionAdTimestamp = PersistenceUtils.SafeParse<DateTime>(_data["skipMissionAdTimestamp"]);
 			if(_data.ContainsKey("skipMissionAdUses")) {
 				m_skipMissionAdUses = _data["skipMissionAdUses"].AsInt;
 			}
@@ -1151,7 +1151,7 @@ public class UserProfile : UserPersistenceSystem
 		// Map upgrades
 		key = "mapResetTimestamp";
 		if(_data.ContainsKey(key)) {
-			m_mapResetTimestamp = DateTime.Parse(_data["mapResetTimestamp"], PersistenceFacade.JSON_FORMATTING_CULTURE);
+			m_mapResetTimestamp = PersistenceUtils.SafeParse<DateTime>(_data["mapResetTimestamp"]);
 		} else {
 			m_mapResetTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTime();	// Already expired
 		}
@@ -1357,7 +1357,7 @@ public class UserProfile : UserPersistenceSystem
 		}
 
 		// Incubator timer
-		m_incubationEndTimestamp = DateTime.Parse(_data["incubationEndTimestamp"], PersistenceFacade.JSON_FORMATTING_CULTURE);
+		m_incubationEndTimestamp = PersistenceUtils.SafeParse<DateTime>(_data["incubationEndTimestamp"]);
 
         // Eggs collected
         eggsCollected = _data["collectedAmount"].AsInt;
@@ -1393,7 +1393,7 @@ public class UserProfile : UserPersistenceSystem
 		}
 
 		// Reset timestamp
-		m_dailyChestsResetTimestamp = DateTime.Parse(_data["resetTimestamp"], PersistenceFacade.JSON_FORMATTING_CULTURE);
+		m_dailyChestsResetTimestamp = PersistenceUtils.SafeParse<DateTime>(_data["resetTimestamp"]);
 	}
 
 	//------------------------------------------------------------------------//
@@ -1409,7 +1409,7 @@ public class UserProfile : UserPersistenceSystem
 		SimpleJSON.JSONClass data = new SimpleJSON.JSONClass();
 		SimpleJSON.JSONClass profile = new SimpleJSON.JSONClass();
 
-        profile.Add("timestamp", m_saveTimestamp.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
+        profile.Add("timestamp", PersistenceUtils.SafeToString(m_saveTimestamp));
 
         // Economy
 		profile.Add( "sc", m_currencies[(int)Currency.SOFT].Serialize());
@@ -1451,13 +1451,13 @@ public class UserProfile : UserPersistenceSystem
 		data.Add("chests", SaveChestsData());
 
 		// Daily remove missions with ads
-		data.Add("dailyRemoveMissionAdTimestamp", m_dailyRemoveMissionAdTimestamp.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
+		data.Add("dailyRemoveMissionAdTimestamp", PersistenceUtils.SafeToString(m_dailyRemoveMissionAdTimestamp));
 		data.Add("dailyRemoveMissionAdUses", m_dailyRemoveMissionAdUses.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
-		data.Add("skipMissionAdTimestamp", m_skipMissionAdTimestamp.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
+		data.Add("skipMissionAdTimestamp", PersistenceUtils.SafeToString(m_skipMissionAdTimestamp));
 		data.Add("skipMissionAdUses", m_skipMissionAdUses.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
 
 		// Map upgrades
-		data.Add("mapResetTimestamp", m_mapResetTimestamp.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
+		data.Add("mapResetTimestamp", PersistenceUtils.SafeToString(m_mapResetTimestamp));
 
 		// Global Events
 		SimpleJSON.JSONArray eventsData = new SimpleJSON.JSONArray();
@@ -1581,7 +1581,7 @@ public class UserProfile : UserPersistenceSystem
 		data.Add( "incubationTimeReference", m_incubationTimeReference );
 
 		// Incubator timer
-		data.Add("incubationEndTimestamp", m_incubationEndTimestamp.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
+		data.Add("incubationEndTimestamp", PersistenceUtils.SafeToString(m_incubationEndTimestamp));
 
         // Eggs collected
 		data.Add("collectedAmount", eggsCollected.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
@@ -1610,7 +1610,7 @@ public class UserProfile : UserPersistenceSystem
 		data.Add("chests", chestsArray);
 
 		// Reset timestamp
-		data.Add("resetTimestamp", m_dailyChestsResetTimestamp.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
+		data.Add("resetTimestamp", PersistenceUtils.SafeToString(m_dailyChestsResetTimestamp));
 
 		// Done!
 		return data;

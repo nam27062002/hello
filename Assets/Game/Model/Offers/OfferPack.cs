@@ -1517,17 +1517,17 @@ public class OfferPack {
 		// Last view timestamp
 		key = "lastViewTimestamp";
 		if(_data.ContainsKey(key)) {
-			m_lastViewTimestamp = DateTime.Parse(_data[key], PersistenceFacade.JSON_FORMATTING_CULTURE);
+			m_lastViewTimestamp = PersistenceUtils.SafeParse<DateTime>(_data[key]);
 		}
 
 		// Timestamps
 		key = "activationTimestamp";
 		if(_data.ContainsKey(key)) {
-			m_activationTimestamp = DateTime.Parse(_data[key], PersistenceFacade.JSON_FORMATTING_CULTURE);
+			m_activationTimestamp = PersistenceUtils.SafeParse<DateTime>(_data[key]);
 		}
 		key = "endTimestamp";
 		if(_data.ContainsKey(key)) {
-			m_endTimestamp = DateTime.Parse(_data[key], PersistenceFacade.JSON_FORMATTING_CULTURE);
+			m_endTimestamp = PersistenceUtils.SafeParse<DateTime>(_data[key]);
 		}
 	}
 
@@ -1557,8 +1557,8 @@ public class OfferPack {
 		// Timestamps
 		// Only store for timed offers, the rest will be activated upon loading depending on activation triggers
 		if(m_isTimed && !expired) {
-			data.Add("activationTimestamp", m_activationTimestamp.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
-			data.Add("endTimestamp", m_endTimestamp.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
+			data.Add("activationTimestamp", PersistenceUtils.SafeToString(m_activationTimestamp));
+			data.Add("endTimestamp", PersistenceUtils.SafeToString(m_endTimestamp));
 		}
 
 		// Purchase count - only if needed
@@ -1570,7 +1570,7 @@ public class OfferPack {
 		// Last view timestamp
 		if(m_viewsCount > 0 && !expired) {
 			data.Add("viewCount", m_viewsCount.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
-			data.Add("lastViewTimestamp", m_lastViewTimestamp.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
+			data.Add("lastViewTimestamp", PersistenceUtils.SafeToString(m_lastViewTimestamp));
 		}
 
         if ( m_type == Type.PUSHED ){

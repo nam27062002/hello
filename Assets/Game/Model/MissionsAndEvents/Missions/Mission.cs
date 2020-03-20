@@ -334,7 +334,7 @@ public class Mission {
 		}
 
 		// Restore cooldown timestamp
-		m_cooldownStartTimestamp = DateTime.Parse(_data["cooldownStartTimestamp"], CultureInfo.InvariantCulture);
+		m_cooldownStartTimestamp = PersistenceUtils.SafeParse<DateTime>(_data["cooldownStartTimestamp"]);
 		return true;
 	}
 	
@@ -360,7 +360,7 @@ public class Mission {
 		}
 
 		// Cooldown timestamp
-		data.Add("cooldownStartTimestamp", m_cooldownStartTimestamp.ToString(CultureInfo.InvariantCulture));
+		data.Add("cooldownStartTimestamp", PersistenceUtils.SafeToString(m_cooldownStartTimestamp));
 		
 		return data;
 	}

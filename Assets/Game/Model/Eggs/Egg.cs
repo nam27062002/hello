@@ -337,7 +337,7 @@ public class Egg {
 		}
 
 		// Incubating timestamp
-		m_incubationEndTimestamp = DateTime.Parse(_data["incubationEndTimestamp"], PersistenceFacade.JSON_FORMATTING_CULTURE);
+		m_incubationEndTimestamp = PersistenceUtils.SafeParse<DateTime>(_data["incubationEndTimestamp"]);
 	}
 
 	/// <summary>
@@ -356,7 +356,7 @@ public class Egg {
 		data.Add("isNew", m_isNew.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
 
 		// Incubating timestamp
-		data.Add("incubationEndTimestamp", m_incubationEndTimestamp.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
+		data.Add("incubationEndTimestamp", PersistenceUtils.SafeToString(m_incubationEndTimestamp));
 
 		return data;
 	}
