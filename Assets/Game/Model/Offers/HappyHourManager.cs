@@ -432,8 +432,11 @@ public class HappyHourManager {
 	/// Called when the player buys a gem pack
 	/// </summary>
 	private void OnHcPackAccquired(bool _forcePopup, string _packSku) {
+		// This is redundant, but just in case. I have seen some weird stuff out there...
+		m_happyHour = OffersManager.happyHourManager.happyHour;
+
 		// Is there an active happy hour already?
-		if(m_happyHour.IsActive()) {
+		if (m_happyHour.IsActive()) {
 			// Update bonus percentage
 			m_happyHour.IncreaseExtraGemsFactor();
 		}
