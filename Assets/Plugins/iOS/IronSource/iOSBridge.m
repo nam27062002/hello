@@ -126,6 +126,10 @@ char *const IRONSOURCE_EVENTS = "IronSourceEvents";
     [IronSource setConsent:consent];
 }
 
+- (void)setMetaDataWithKey:(NSString *)key value:(NSString *)value {
+    [IronSource setMetaDataWithKey:key value:value];
+}
+
 #pragma mark Init SDK
 
 - (void)setUserId:(NSString *)userId {
@@ -733,6 +737,10 @@ extern "C" {
     
     void CFSetConsent (bool consent) {
         [[iOSBridge start] setConsent:consent];
+    }
+    
+    void CFSetMetaData (char *key, char *value) {
+        [[iOSBridge start] setMetaDataWithKey:GetStringParam(key) value:GetStringParam(value)];
     }
     
 #pragma mark Init SDK
