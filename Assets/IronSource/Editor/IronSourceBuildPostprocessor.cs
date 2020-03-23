@@ -20,7 +20,6 @@ namespace IronSource.Editor
 			if (buildTarget == BuildTarget.iOS) {
 				string projectPath = buildPath + "/Unity-iPhone.xcodeproj/project.pbxproj";
 				string dirpath = Application.dataPath + "/IronSource/Editor/";
-				string plistPath = buildPath + "/info.plist";
 				string currentNamespace = MethodBase.GetCurrentMethod().DeclaringType.Namespace;
 
 				updateProject (buildTarget, projectPath);
@@ -36,7 +35,6 @@ namespace IronSource.Editor
 						if (!String.IsNullOrEmpty (classname)) {
 							IAdapterSettings adapter = (IAdapterSettings)Activator.CreateInstance (Type.GetType (currentNamespace + "." + classname));
 							adapter.updateProject (buildTarget, projectPath);
-							adapter.updateProjectPlist(buildTarget, plistPath);
 						}
 					}
 				}
@@ -52,8 +50,13 @@ namespace IronSource.Editor
 			PBXProject project = new PBXProject ();
 			project.ReadFromString (File.ReadAllText (projectPath));
 
-			string targetId = project.TargetGuidByName (PBXProject.GetUnityTargetName ());
-
+ 			string targetId; 
+            #if UNITY_2019_3_OR_NEWER
+            targetId = project.GetUnityMainTargetGuid();
+            #else
+            targetId = project.TargetGuidByName(PBXProject.GetUnityTargetName());
+            #endif
+            
 			// Required System Frameworks
 			project.AddFrameworkToProject (targetId, "AdSupport.framework", false);
 			project.AddFrameworkToProject (targetId, "AudioToolbox.framework", false);

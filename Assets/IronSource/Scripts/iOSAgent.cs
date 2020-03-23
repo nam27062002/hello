@@ -35,6 +35,9 @@ public class iOSAgent : IronSourceIAgent
 	[DllImport("__Internal")]
 	private static extern void CFSetAdaptersDebug (bool enabled);
 
+    [DllImport("__Internal")]
+	private static extern void CFSetMetaData (string key, string value);
+
 	//******************* SDK Init *******************//
 
 	[DllImport("__Internal")]
@@ -154,7 +157,7 @@ public class iOSAgent : IronSourceIAgent
 	{	
 	}
 
-	#region IronSourceIAgent implementation
+#region IronSourceIAgent implementation
 
 	//******************* Base API *******************//
 
@@ -203,6 +206,11 @@ public class iOSAgent : IronSourceIAgent
 	 		CFSetAdaptersDebug (enabled);
 	}
 
+    public void setMetaData(string key, string value)
+	{
+	        CFSetMetaData(key, value);
+	}
+
 	//******************* SDK Init *******************//
 
 	public void setUserId (string userId)
@@ -213,18 +221,21 @@ public class iOSAgent : IronSourceIAgent
 	public void init (string appKey) 
 	{
 		CFSetPluginData ("Unity", IronSource.pluginVersion(), IronSource.unityVersion());
+		Debug.Log ("IntegrationHelper pluginVersion: " + IronSource.pluginVersion ());
 		CFInit (appKey);
 	}
 
 	public void init (string appKey, params string[] adUnits)
 	{
 		CFSetPluginData ("Unity", IronSource.pluginVersion(), IronSource.unityVersion());
+		Debug.Log ("IntegrationHelper pluginVersion: " + IronSource.pluginVersion ());
 		CFInitWithAdUnits (appKey, adUnits);
 	}
 
 	public void initISDemandOnly (string appKey, params string[] adUnits)
 	{
 		CFSetPluginData ("Unity", IronSource.pluginVersion(), IronSource.unityVersion());
+		Debug.Log ("IntegrationHelper pluginVersion: " + IronSource.pluginVersion ());		
 		CFInitISDemandOnly (appKey, adUnits);
 	}
 
@@ -401,6 +412,6 @@ public class iOSAgent : IronSourceIAgent
 		CFSetConsent(consent);
 	}
 
-	#endregion
+#endregion
 }
 #endif

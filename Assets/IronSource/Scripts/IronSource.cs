@@ -7,7 +7,7 @@ public class IronSource : IronSourceIAgent
 {
 	private IronSourceIAgent _platformAgent ;
 	private static IronSource _instance;
-	private const string UNITY_PLUGIN_VERSION = "6.11.1";
+	private const string UNITY_PLUGIN_VERSION = "6.15.0.1";
 	public const string GENDER_MALE = "male";
 	public const string GENDER_FEMALE = "female";
 	public const string GENDER_UNKNOWN = "unknown";
@@ -98,9 +98,14 @@ public class IronSource : IronSourceIAgent
 		_platformAgent.setAdaptersDebug (enabled);
 	}
 
-	//******************* SDK Init *******************//
+    public void setMetaData(string key, string value)
+    {
+        _platformAgent.setMetaData(key, value);
+    }
 
-	public void setUserId (string userId)
+    //******************* SDK Init *******************//
+
+    public void setUserId (string userId)
 	{
 		_platformAgent.setUserId (userId);
 	}

@@ -81,27 +81,35 @@ public class AndroidAgent : IronSourceIAgent
 		getBridge ().Call ("setAdaptersDebug", enabled);
 	}
 
-	//******************* SDK Init *******************//
+    public void setMetaData(string key, string value)
+    {
+        getBridge().Call("setMetaData", key, value);
+    }
 
-	public void setUserId(string userId) {
+    //******************* SDK Init *******************//
+
+    public void setUserId(string userId) {
 		getBridge ().Call ("setUserId", userId);
 	}
 
 	public void init(string appKey)
 	{
 		getBridge ().Call ("setPluginData", "Unity", IronSource.pluginVersion (), IronSource.unityVersion ());
+		Debug.Log ("IntegrationHelper pluginVersion: " + IronSource.pluginVersion ());
 		getBridge ().Call ("init", appKey);
 	}
 
 	public void init (string appKey, params string[] adUnits)
 	{
 		getBridge ().Call ("setPluginData", "Unity", IronSource.pluginVersion (), IronSource.unityVersion ());
+		Debug.Log ("IntegrationHelper pluginVersion: " + IronSource.pluginVersion ());
 		getBridge ().Call ("init", appKey, adUnits);
 	}
 
 	public void initISDemandOnly (string appKey, params string[] adUnits)
 	{
 		getBridge ().Call ("setPluginData", "Unity", IronSource.pluginVersion (), IronSource.unityVersion ());
+		Debug.Log ("IntegrationHelper pluginVersion: " + IronSource.pluginVersion ());
 		getBridge ().Call ("initISDemandOnly", appKey, adUnits);
 	}
 
