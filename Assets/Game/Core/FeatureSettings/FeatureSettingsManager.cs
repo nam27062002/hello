@@ -1218,10 +1218,13 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
                     )
                     continue;
 
-                // Empty keys or keys with "as_profile" as a value need to be ignored
-                if (!string.IsNullOrEmpty(pair.Value.Value) && pair.Value.Value != "as_content")
+                if (pair.Value != null)
                 {
-                    returnValue.Add(pair.Key, pair.Value);
+                    // Empty keys or keys with "as_profile" as a value need to be ignored
+                    if (!string.IsNullOrEmpty(pair.Value.Value) && pair.Value.Value != "as_content")
+                    {
+                        returnValue.Add(pair.Key, pair.Value);
+                    }
                 }
             }
 

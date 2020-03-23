@@ -59,22 +59,40 @@ public class CageBehaviour : ISpawnable {
     }
 
     override public void Spawn(ISpawner _spawner) {
+		// Only if spawner is valid!
+		if(_spawner == null) {
+			Debug.LogError("Attempting to Spawn a CageBehaviour with a NULL spawner.");
+			return;
+		}
+
+		// Check player's destruction tier
+		// Protect possible null player - shouldn't happen, but just in case
         DragonPlayer player = InstanceManager.player;
-        m_tier = player.GetTierWhenBreaking();
+		if(player == null) {
+			m_tier = DragonTier.COUNT - 1;	// Max Tier, if this ever happens, favor the player
+		} else {
+			m_tier = player.GetTierWhenBreaking();
+		}
 
         m_waitTimer = 0;
-        Hit originalHits = m_hitsPerTier.Get(m_tier);
-        m_currentHits.count = originalHits.count;
-        m_currentHits.needBoost = originalHits.needBoost;
 
-        m_view.SetActive(true);
+		if(m_currentHits != null) {
+			Hit originalHits = m_hitsPerTier.Get(m_tier);
+			m_currentHits.count = originalHits.count;
+			m_currentHits.needBoost = originalHits.needBoost;
+		}
+
+        if(m_view != null) m_view.SetActive(true);
         for (int i = 0; i < m_viewDestroyed.Length; i++) {
-            m_viewDestroyed[i].SetActive(false);
+            if(m_viewDestroyed != null) m_viewDestroyed[i].SetActive(false);
         }
+
         SetCollisionsEnabled(true);
 
-        m_prisonerSpawner.area = _spawner.area; // cage spawner will share the area defined to spawn the cage.
-        m_prisonerSpawner.Respawn();
+		if(m_prisonerSpawner != null) {
+			m_prisonerSpawner.area = _spawner.area; // cage spawner will share the area defined to spawn the cage.
+			m_prisonerSpawner.Respawn();
+		}
 
         m_broken = false;
     }
@@ -180,7 +198,7 @@ public class CageBehaviour : ISpawnable {
     private void SetCollisionsEnabled(bool _value) {
         Collider[] colliders = m_colliderHolder.GetComponents<Collider>();
         for (int c = 0; c < colliders.Length; c++) {
-            colliders[c].isTrigger = !_value;
+            if(colliders[c] != null) colliders[c].isTrigger = !_value;
         }
     }
 

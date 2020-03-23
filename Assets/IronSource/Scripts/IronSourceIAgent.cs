@@ -22,6 +22,8 @@ public interface IronSourceIAgent
 
 	void setAdaptersDebug(bool enabled);
 
+    void setMetaData(string key, string value);
+
 	//******************* SDK Init *******************//
 
 	void setUserId (string userId);

@@ -576,7 +576,7 @@ public class ShowHideAnimator : MonoBehaviour {
 		m_sequence.PrependCallback(() => {
 			// Only when going forward!!
 			if(!m_sequence.isBackwards) {
-				OnShowPreAnimationAfterDelay.Invoke(this); 
+				if(OnShowPreAnimationAfterDelay != null) OnShowPreAnimationAfterDelay.Invoke(this); 
 			}
 		});
 
@@ -596,7 +596,7 @@ public class ShowHideAnimator : MonoBehaviour {
 
 		// First things first: execute any external checks that might interrupt the action
 		m_checkPassed = true;
-		OnShowCheck.Invoke(this);
+		if(OnShowCheck != null) OnShowCheck.Invoke(this);
 		if(!m_checkPassed) return;
 
 		// If restarting the animation, instantly force hide state without animation
@@ -614,7 +614,7 @@ public class ShowHideAnimator : MonoBehaviour {
 		m_state = State.VISIBLE;
 
 		// In any case, make sure the object is active
-		gameObject.SetActive(true);
+		if(gameObject != null) gameObject.SetActive(true);
 
 		// ...and interactable
 		if(m_canvasGroup != null) {
@@ -626,7 +626,7 @@ public class ShowHideAnimator : MonoBehaviour {
 		if(m_isDirty) RecreateTween();
 
 		// Broadcast pre-animation event
-		OnShowPreAnimation.Invoke(this);
+		if(OnShowPreAnimation != null) OnShowPreAnimation.Invoke(this);
 
 		// Trigger the animation!
 		LaunchShowAnimation(_animate);
@@ -635,8 +635,9 @@ public class ShowHideAnimator : MonoBehaviour {
 		if(_propagateToChildren && m_triggerChildren) {
 			ShowHideAnimator[] animators = GetComponentsInChildren<ShowHideAnimator>(false);	// Exclude inactive ones - if they're inactive we probably don't want to show them!
 			for(int i = 0; i < animators.Length; i++) {
-				// Skip ourselves
+				// Skip ourselves or null
 				if(animators[i] == this) continue;
+				if(animators[i] == null) continue;
 
 				// Skip if not allowed
 				if(!animators[i].m_canBeTriggeredByParents) continue;
@@ -687,7 +688,7 @@ public class ShowHideAnimator : MonoBehaviour {
 		}
 
 		// Broadcast pre-animation event
-		OnHidePreAnimation.Invoke(this);
+		if(OnHidePreAnimation != null) OnHidePreAnimation.Invoke(this);
 
 		// Trigger the animation!
 		LaunchHideAnimation(_animate);
@@ -696,11 +697,12 @@ public class ShowHideAnimator : MonoBehaviour {
         m_isHiding = true;
 
         // If configured, look for all children containing a ShowHideAnimator component and trigger it!
-        if (_propagateToChildren && m_triggerChildren) {
+        if(_propagateToChildren && m_triggerChildren) {
 			ShowHideAnimator[] animators = GetComponentsInChildren<ShowHideAnimator>(false);	// Exclude inactive ones - if they're inactive we probably don't want to show them!
 			for(int i = 0; i < animators.Length; i++) {
-				// Skip ourselves
+				// Skip ourselves or if null
 				if(animators[i] == this) continue;
+				if(animators[i] == null) continue;
 
 				// Skip if not allowed
 				if(!animators[i].m_canBeTriggeredByParents) continue;
@@ -737,7 +739,7 @@ public class ShowHideAnimator : MonoBehaviour {
 					} else {
 						m_delayTimer = 0f;
 						m_delaying = false;
-						OnShowPreAnimationAfterDelay.Invoke(this);
+						if(OnShowPreAnimationAfterDelay != null) OnShowPreAnimationAfterDelay.Invoke(this);
 						SetAnimTrigger("show");
 					}
 				} else {
@@ -778,7 +780,7 @@ public class ShowHideAnimator : MonoBehaviour {
 					if(_animate) {
 						m_sequence.PlayForward();	// The cool thing is that if the hide animation is interrupted, the show animation will start from the interruption point
 					} else {
-						OnShowPreAnimationAfterDelay.Invoke(this); // Invoke event that would otherwise be ignored
+						if(OnShowPreAnimationAfterDelay != null) OnShowPreAnimationAfterDelay.Invoke(this); // Invoke event that would otherwise be ignored
 						m_sequence.Goto(1f);		// Instantly move to the end of the sequence
 					}
 				}
@@ -858,7 +860,7 @@ public class ShowHideAnimator : MonoBehaviour {
 	/// </summary>
 	protected virtual void DoShowPostProcessing() {
 		// Broadcast event
-		OnShowPostAnimation.Invoke(this);
+		if(OnShowPostAnimation != null) OnShowPostAnimation.Invoke(this);
 	}
 
 	/// <summary>
@@ -868,14 +870,14 @@ public class ShowHideAnimator : MonoBehaviour {
 	/// </summary>
 	protected virtual void DoHidePostProcessing() {
 		// Broadcast event
-		OnHidePostAnimation.Invoke(this);
+		if(OnHidePostAnimation != null) OnHidePostAnimation.Invoke(this);
 
 		// Debug
 		ShowHideAnimator.DebugLog(this, Colors.red.Tag("DISABLE AFTER HIDE: " + m_disableAfterHide));
 
 		// Optionally disable object after the hide animation has finished
 		if(m_disableAfterHide) {
-			gameObject.SetActive(false);
+			if(gameObject != null) gameObject.SetActive(false);
 		}
 
 		// If hidden, object should never be interactable

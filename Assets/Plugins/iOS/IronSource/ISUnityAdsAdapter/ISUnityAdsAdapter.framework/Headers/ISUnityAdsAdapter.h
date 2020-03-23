@@ -5,8 +5,8 @@
 #import <Foundation/Foundation.h>
 #import "IronSource/ISBaseAdapter+Internal.h"
 
-static NSString * const UnityAdsAdapterVersion = @"4.1.7";
-static NSString * GitHash = @"66454182e";
+static NSString * const UnityAdsAdapterVersion = @"4.3.0";
+static NSString * GitHash = @"afd904c41";
 
 //System Frameworks For UnityAds Adapter
 
