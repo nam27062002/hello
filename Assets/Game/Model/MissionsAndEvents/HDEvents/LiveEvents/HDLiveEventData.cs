@@ -124,7 +124,7 @@ public abstract class HDLiveEventData {
 	public virtual SimpleJSON.JSONClass ToJson ()
 	{
 		SimpleJSON.JSONClass ret = new SimpleJSON.JSONClass();
-		ret.Add("code", m_eventId);
+		ret.Add("code", PersistenceUtils.SafeToString(m_eventId));
 
 		string stateStr = "none";
 		switch( m_state )
@@ -173,7 +173,7 @@ public abstract class HDLiveEventData {
 		Clean();
 
 		if (_data.ContainsKey("code"))
-			m_eventId = _data["code"];
+			m_eventId = PersistenceUtils.SafeParse<int>(_data["code"]);
         if ( m_definition.m_eventId != m_eventId )
 			m_definition.Clean();
 

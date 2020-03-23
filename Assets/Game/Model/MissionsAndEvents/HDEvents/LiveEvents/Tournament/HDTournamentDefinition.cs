@@ -107,19 +107,19 @@ public class HDTournamentDefinition : HDLiveEventDefinition{
 					case "time_attack":{
 						m_mode = TournamentMode.TIME_ATTACK;
 						if ( gameMode.ContainsKey("amount") )
-							m_targetAmount = gameMode["amount"].AsLong;
+							m_targetAmount = PersistenceUtils.SafeParse<long>(gameMode["amount"]);
 					}break;
 					case "2":
 					case "time_limit":{
 						m_mode = TournamentMode.TIME_LIMIT;
 						if ( gameMode.ContainsKey("seconds") )
-							m_seconds = gameMode["seconds"].AsLong;
+							m_seconds = PersistenceUtils.SafeParse<long>(gameMode["seconds"]);
 					}break;
 					case "3":
 					case "race":{
 						m_mode = TournamentMode.RACE;
 						if ( gameMode.ContainsKey("loops") )
-							m_loops = gameMode["loops"].AsInt;
+							m_loops = PersistenceUtils.SafeParse<int>(gameMode["loops"]);
 					}break;
 					case "4":
 					case "boss":{
@@ -134,8 +134,8 @@ public class HDTournamentDefinition : HDLiveEventDefinition{
 
 				m_spawnPoint = area.GetSafe("spawnPoint", "");
 
-				m_progressionXP = area.GetSafe("xp", "0").AsInt;
-				m_progressionSeconds = area.GetSafe("time", "0").AsFloat;
+				m_progressionXP = PersistenceUtils.SafeParse<int>(area.GetSafe("xp", "0"));
+				m_progressionSeconds = PersistenceUtils.SafeParse<float>(area.GetSafe("time", "0"));
 
 				DefinitionNode spawnPointDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.LEVEL_SPAWN_POINTS, m_spawnPoint);
 				if (spawnPointDef != null) {
@@ -161,18 +161,18 @@ public class HDTournamentDefinition : HDLiveEventDefinition{
 				case TournamentMode.TIME_ATTACK:
 				{
                     gameMode.Add("type", "time_attack");
-                    gameMode.Add("amount", m_targetAmount);
+                    gameMode.Add("amount", PersistenceUtils.SafeToString(m_targetAmount));
 
 				}break;
 				case TournamentMode.TIME_LIMIT:
 				{
                     gameMode.Add("type", "time_limit");
-                    gameMode.Add("seconds", m_seconds);
+                    gameMode.Add("seconds", PersistenceUtils.SafeToString(m_seconds));
 				}break;
 				case TournamentMode.RACE:
 				{
                     gameMode.Add("type", "race");
-                    gameMode.Add("loops", m_loops);
+                    gameMode.Add("loops", PersistenceUtils.SafeToString(m_loops));
 				}break;
 				case TournamentMode.BOSS:
 				{
@@ -188,8 +188,8 @@ public class HDTournamentDefinition : HDLiveEventDefinition{
 			SimpleJSON.JSONClass area = new JSONClass();
 			{				
 				area.Add("spawnPoint", m_spawnPoint);
-				area.Add("xp", m_progressionXP);
-				area.Add("time", m_progressionSeconds);
+				area.Add("xp", PersistenceUtils.SafeToString(m_progressionXP));
+				area.Add("time", PersistenceUtils.SafeToString(m_progressionSeconds));
 			}
 			ret.Add("area", area);
 			
@@ -210,28 +210,28 @@ public class HDTournamentDefinition : HDLiveEventDefinition{
 
 		public void ParseJson(JSONNode _data) {
 			if(_data.ContainsKey("type")) {
-				type = _data["type"].AsInt;
+				type = PersistenceUtils.SafeParse<int>(_data["type"]);
 			}
 
 			if(_data.ContainsKey("segmentation")) {
-				segmentation = _data["segmentation"].AsInt;
+				segmentation = PersistenceUtils.SafeParse<int>(_data["segmentation"]);
 			}
 
 			if(_data.ContainsKey("matchmaker")) {
 				JSONClass matchmakerData = _data["matchmaker"] as JSONClass;
 				if(matchmakerData.ContainsKey("type")) {
-					matchmakerType = matchmakerData["type"].AsInt;
+					matchmakerType = PersistenceUtils.SafeParse<int>(matchmakerData["type"]);
 				}
 			}
 		}
 
 		public JSONClass ToJson() {
 			JSONClass data = new JSONClass();
-			data.Add("type", type);
-			data.Add("segmentation", segmentation);
+			data.Add("type", PersistenceUtils.SafeToString(type));
+			data.Add("segmentation", PersistenceUtils.SafeToString(segmentation));
 			{
 				JSONClass _matchmaker = new JSONClass();
-				_matchmaker.Add("type", matchmakerType);
+				_matchmaker.Add("type", PersistenceUtils.SafeToString(matchmakerType));
 				data.Add("matchmaker", _matchmaker);
 			}
 			return data;
@@ -286,11 +286,11 @@ public class HDTournamentDefinition : HDLiveEventDefinition{
 			}
 
 			if ( _entrance.ContainsKey("amount") ){
-				m_entrance.m_amount = _entrance["amount"].AsLong;
+				m_entrance.m_amount = PersistenceUtils.SafeParse<long>(_entrance["amount"]);
 			}
 
 			if ( _entrance.ContainsKey("dailyFreeTimer") ){
-				m_entrance.m_dailyFree = _entrance["dailyFreeTimer"].AsInt;
+				m_entrance.m_dailyFree = PersistenceUtils.SafeParse<int>(_entrance["dailyFreeTimer"]);
 			}
 		}
 
@@ -339,8 +339,8 @@ public class HDTournamentDefinition : HDLiveEventDefinition{
 		// Entrance
 		SimpleJSON.JSONClass _entrance = new JSONClass();
 		_entrance.Add("type", m_entrance.m_type);
-		_entrance.Add("amount", m_entrance.m_amount);
-		_entrance.Add("dailyFreeTimer", m_entrance.m_dailyFree);
+		_entrance.Add("amount", PersistenceUtils.SafeToString(m_entrance.m_amount));
+		_entrance.Add("dailyFreeTimer", PersistenceUtils.SafeToString(m_entrance.m_dailyFree));
 		ret.Add("entrance", _entrance);
 
 		// Leaderboard

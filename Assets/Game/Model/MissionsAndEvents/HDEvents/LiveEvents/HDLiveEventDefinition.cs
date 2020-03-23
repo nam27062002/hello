@@ -164,12 +164,12 @@ public class HDLiveEventDefinition {
 
 		// has this event bee cancelled?
 		if(_data.ContainsKey("refund")) {
-			m_refund = _data["refund"].AsBool;
+			m_refund = PersistenceUtils.SafeParse<bool>(_data["refund"]);
 		}
 
 		if ( _data.ContainsKey("code") )
 		{
-			m_eventId = _data["code"].AsInt;
+			m_eventId = PersistenceUtils.SafeParse<int>(_data["code"]);
 		}
 
 		if ( _data.ContainsKey("name") )
@@ -220,13 +220,13 @@ public class HDLiveEventDefinition {
 
 		// timestamps
 		if ( _data.ContainsKey("teaserTimestamp") )
-			m_teasingTimestamp = TimeUtils.TimestampToDate(_data["teaserTimestamp"].AsLong);
+			m_teasingTimestamp = TimeUtils.TimestampToDate(PersistenceUtils.SafeParse<long>(_data["teaserTimestamp"]));
 
 		if ( _data.ContainsKey("startTimestamp") )
-			m_startTimestamp = TimeUtils.TimestampToDate(_data["startTimestamp"].AsLong);
+			m_startTimestamp = TimeUtils.TimestampToDate(PersistenceUtils.SafeParse<long>(_data["startTimestamp"]));
 
 		if ( _data.ContainsKey("endTimestamp") )
-			m_endTimestamp = TimeUtils.TimestampToDate(_data["endTimestamp"].AsLong);
+			m_endTimestamp = TimeUtils.TimestampToDate(PersistenceUtils.SafeParse<long>(_data["endTimestamp"]));
 	}
 
 
@@ -234,7 +234,7 @@ public class HDLiveEventDefinition {
 	{
 		SimpleJSON.JSONClass ret = new SimpleJSON.JSONClass();
 
-		ret.Add("code", m_eventId);	
+		ret.Add("code", PersistenceUtils.SafeToString(m_eventId));	
 		ret.Add("name", m_name);
 
 		// Type?    
@@ -273,9 +273,9 @@ public class HDLiveEventDefinition {
         ret.Add("customMods", customMods);
 
         // timestamps
-        ret.Add("teaserTimestamp", TimeUtils.DateToTimestamp( m_teasingTimestamp ));
-		ret.Add("startTimestamp", TimeUtils.DateToTimestamp( m_startTimestamp ));
-		ret.Add("endTimestamp", TimeUtils.DateToTimestamp( m_endTimestamp ));
+        ret.Add("teaserTimestamp", PersistenceUtils.SafeToString(TimeUtils.DateToTimestamp( m_teasingTimestamp )));
+		ret.Add("startTimestamp", PersistenceUtils.SafeToString(TimeUtils.DateToTimestamp( m_startTimestamp )));
+		ret.Add("endTimestamp", PersistenceUtils.SafeToString(TimeUtils.DateToTimestamp( m_endTimestamp )));
 
 		return ret;
 	}
