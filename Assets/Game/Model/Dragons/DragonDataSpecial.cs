@@ -1053,7 +1053,7 @@ public class DragonDataSpecial : IDragonData
         // Level 
         if (_data.ContainsKey("level"))
         {
-            m_level = _data["level"].AsInt;
+            m_level = PersistenceUtils.SafeParse<int>(_data["level"]);
         }
         else
         {
@@ -1098,7 +1098,7 @@ public class DragonDataSpecial : IDragonData
         _data.Add("stats", statsData);
 
         // Level
-        _data.Add("level", m_level);
+        _data.Add("level", PersistenceUtils.SafeToString(m_level));
     }
 
     /// <summary>

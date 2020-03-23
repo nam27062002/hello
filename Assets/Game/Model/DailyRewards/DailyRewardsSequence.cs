@@ -270,13 +270,13 @@ public class DailyRewardsSequence {
 
 		// Current reward index
 		if(_data.ContainsKey("totalRewardIdx")) {
-			m_totalRewardIdx = _data["totalRewardIdx"];
+			m_totalRewardIdx = PersistenceUtils.SafeParse<int>(_data["totalRewardIdx"]);
 		}
 
 		// Collect timestamp
 		if(_data.ContainsKey("nextCollectionTimestamp")) {
-			m_nextCollectionTimestamp = DateTime.Parse(_data["nextCollectionTimestamp"], PersistenceFacade.JSON_FORMATTING_CULTURE);
-            Log("LoadData nextTimestamp = " + m_nextCollectionTimestamp);
+			m_nextCollectionTimestamp = PersistenceUtils.SafeParse<DateTime>(_data["nextCollectionTimestamp"]);
+			Log("LoadData nextTimestamp = " + m_nextCollectionTimestamp);
         }
 
 		// Rewards
@@ -321,11 +321,11 @@ public class DailyRewardsSequence {
 		data.Add("rewards", rewardsData);
 
 		// Current reward index
-		data.Add("totalRewardIdx", m_totalRewardIdx);
+		data.Add("totalRewardIdx", PersistenceUtils.SafeToString(m_totalRewardIdx));
 
 		// Collect timestamp
-		data.Add("nextCollectionTimestamp", m_nextCollectionTimestamp.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
-        Log("SaveData nextTimestamp = " + m_nextCollectionTimestamp);
+		data.Add("nextCollectionTimestamp", PersistenceUtils.SafeToString(m_nextCollectionTimestamp));
+		Log("SaveData nextTimestamp = " + m_nextCollectionTimestamp);
 
         // Done!
         return data;
