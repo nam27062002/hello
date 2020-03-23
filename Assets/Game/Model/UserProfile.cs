@@ -988,14 +988,14 @@ public class UserProfile : UserPersistenceSystem
 
         key = "tutorialStep";
         if (profile.ContainsKey(key)) {
-            m_tutorialStep = (TutorialStep)profile["tutorialStep"].AsInt;
+            m_tutorialStep = (TutorialStep)PersistenceUtils.SafeParse<int>(profile[key]);
         } else {
             m_tutorialStep = (TutorialStep)0;
         }
 
         key = "furyUsed";
         if (profile.ContainsKey(key)) {
-            m_furyUsed = profile[key].AsBool;
+            m_furyUsed = PersistenceUtils.SafeParse<bool>(profile[key]);
         } else {
             m_furyUsed = false;
         }        
@@ -1003,14 +1003,14 @@ public class UserProfile : UserPersistenceSystem
         // Game stats
         key = "gamesPlayed";
         if (profile.ContainsKey(key)) {
-            m_gamesPlayed = profile[key].AsInt;
+            m_gamesPlayed = PersistenceUtils.SafeParse<int>(profile[key]);
         } else {
             m_gamesPlayed = 0;
         }
 
         key = "highScore";
         if (profile.ContainsKey(key)) {
-            m_highScore = profile[key].AsLong;
+            m_highScore = PersistenceUtils.SafeParse<long>(profile[key]);
         }
         else {
             m_highScore = 0;
@@ -1018,7 +1018,7 @@ public class UserProfile : UserPersistenceSystem
 
         key = "superFuryProgression";
         if (profile.ContainsKey(key)) {
-            m_superFuryProgression = profile[key].AsInt;
+            m_superFuryProgression = PersistenceUtils.SafeParse<int>(profile[key]);
         }
         else {
             m_superFuryProgression = 0;
@@ -1131,7 +1131,7 @@ public class UserProfile : UserPersistenceSystem
 			m_dailyRemoveMissionAdTimestamp = PersistenceUtils.SafeParse<DateTime>(_data["dailyRemoveMissionAdTimestamp"]);
 
 			if ( _data.ContainsKey("dailyRemoveMissionAdUses") )
-				m_dailyRemoveMissionAdUses = _data["dailyRemoveMissionAdUses"].AsInt;
+				m_dailyRemoveMissionAdUses = PersistenceUtils.SafeParse<int>(_data["dailyRemoveMissionAdUses"]);
 		}
 		else
 		{
@@ -1142,7 +1142,7 @@ public class UserProfile : UserPersistenceSystem
 		if(_data.ContainsKey("skipMissionAdTimestamp")) {
 			m_skipMissionAdTimestamp = PersistenceUtils.SafeParse<DateTime>(_data["skipMissionAdTimestamp"]);
 			if(_data.ContainsKey("skipMissionAdUses")) {
-				m_skipMissionAdUses = _data["skipMissionAdUses"].AsInt;
+				m_skipMissionAdUses = PersistenceUtils.SafeParse<int>(_data["skipMissionAdUses"]);
 			}
 		} else {
 			m_skipMissionAdTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTime();	// Already expired
@@ -1252,7 +1252,7 @@ public class UserProfile : UserPersistenceSystem
 		// Free offer
 		key = "freeOfferCooldownEndTime";
 		if(_data.ContainsKey(key)) {
-			freeOfferCooldownEndTime = new DateTime(_data[key].AsLong);
+			freeOfferCooldownEndTime = new DateTime(PersistenceUtils.SafeParse<long>(_data[key]));
 		} else {
 			freeOfferCooldownEndTime = DateTime.MinValue;
 		}
@@ -1351,7 +1351,7 @@ public class UserProfile : UserPersistenceSystem
 		}
 
 		if ( _data.ContainsKey("incubationTimeReference") ){
-			m_incubationTimeReference = _data["incubationTimeReference"].AsLong;
+			m_incubationTimeReference = PersistenceUtils.SafeParse<long>(_data["incubationTimeReference"]);
 		}else{
 			m_incubationTimeReference = GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong();
 		}
@@ -1360,10 +1360,10 @@ public class UserProfile : UserPersistenceSystem
 		m_incubationEndTimestamp = PersistenceUtils.SafeParse<DateTime>(_data["incubationEndTimestamp"]);
 
         // Eggs collected
-        eggsCollected = _data["collectedAmount"].AsInt;
+        eggsCollected = PersistenceUtils.SafeParse<int>(_data["collectedAmount"]);
 
 		// Dynamic Probability data
-		m_openEggTriesWithoutRares = _data["openEggTriesWithoutRares"].AsInt;
+		m_openEggTriesWithoutRares = PersistenceUtils.SafeParse<int>(_data["openEggTriesWithoutRares"]);
     }
 
 	/// <summary>
@@ -1420,13 +1420,13 @@ public class UserProfile : UserPersistenceSystem
 		// Game settings
 		profile.Add("currentDragon",m_currentDragon);
 		profile.Add("currentLevel",m_currentLevel);
-		profile.Add("tutorialStep",((int)m_tutorialStep).ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
-		profile.Add("furyUsed", m_furyUsed.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
+		profile.Add("tutorialStep", PersistenceUtils.SafeToString((int)m_tutorialStep));
+		profile.Add("furyUsed", PersistenceUtils.SafeToString(m_furyUsed));
 
 		// Game stats
-		profile.Add("gamesPlayed",m_gamesPlayed.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
-		profile.Add("highScore",m_highScore.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
-		profile.Add("superFuryProgression",m_superFuryProgression.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
+		profile.Add("gamesPlayed", PersistenceUtils.SafeToString(m_gamesPlayed));
+		profile.Add("highScore", PersistenceUtils.SafeToString(m_highScore));
+		profile.Add("superFuryProgression", PersistenceUtils.SafeToString(m_superFuryProgression));
         profile.Add("socialState",SocialStatesAsString[(int)SocialState]);
 
 		data.Add("userProfile", profile);
@@ -1452,9 +1452,9 @@ public class UserProfile : UserPersistenceSystem
 
 		// Daily remove missions with ads
 		data.Add("dailyRemoveMissionAdTimestamp", PersistenceUtils.SafeToString(m_dailyRemoveMissionAdTimestamp));
-		data.Add("dailyRemoveMissionAdUses", m_dailyRemoveMissionAdUses.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
+		data.Add("dailyRemoveMissionAdUses", PersistenceUtils.SafeToString(m_dailyRemoveMissionAdUses));
 		data.Add("skipMissionAdTimestamp", PersistenceUtils.SafeToString(m_skipMissionAdTimestamp));
-		data.Add("skipMissionAdUses", m_skipMissionAdUses.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
+		data.Add("skipMissionAdUses", PersistenceUtils.SafeToString(m_skipMissionAdUses));
 
 		// Map upgrades
 		data.Add("mapResetTimestamp", PersistenceUtils.SafeToString(m_mapResetTimestamp));
@@ -1523,7 +1523,7 @@ public class UserProfile : UserPersistenceSystem
 		data.Add("offerPacksHistory", offerHistoryData);
 
 		// Free offer
-		data.Add("freeOfferCooldownEndTime", freeOfferCooldownEndTime.Ticks.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
+		data.Add("freeOfferCooldownEndTime", PersistenceUtils.SafeToString(freeOfferCooldownEndTime.Ticks));
 
         // Happy hour
         data.Add("happyHour", m_happyHourData.ToJson());
@@ -1578,16 +1578,16 @@ public class UserProfile : UserPersistenceSystem
 		}
 
 		// Incubation Time Reference
-		data.Add( "incubationTimeReference", m_incubationTimeReference );
+		data.Add( "incubationTimeReference", PersistenceUtils.SafeToString(m_incubationTimeReference));
 
 		// Incubator timer
 		data.Add("incubationEndTimestamp", PersistenceUtils.SafeToString(m_incubationEndTimestamp));
 
         // Eggs collected
-		data.Add("collectedAmount", eggsCollected.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
+		data.Add("collectedAmount", PersistenceUtils.SafeToString(eggsCollected));
 
 		// Dynamic Probability data
-		data.Add("openEggTriesWithoutRares", m_openEggTriesWithoutRares.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
+		data.Add("openEggTriesWithoutRares", PersistenceUtils.SafeToString(m_openEggTriesWithoutRares));
 
         return data;
 	}

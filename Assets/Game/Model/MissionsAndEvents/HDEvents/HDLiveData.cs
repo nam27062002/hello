@@ -26,7 +26,7 @@ namespace HDLiveData {
         /// <param name="_data">Data to be parsed.</param>
         public virtual void LoadData(SimpleJSON.JSONNode _data, HDTrackingManager.EEconomyGroup _economyGroup, string _source) {
             reward = Metagame.Reward.CreateFromJson(_data, _economyGroup, _source);
-            target = _data["target"].AsLong;
+            target = PersistenceUtils.SafeParse<long>(_data["target"]);
         }
 
         /// <summary>
@@ -35,7 +35,7 @@ namespace HDLiveData {
         /// <returns>The json.</returns>
         public virtual SimpleJSON.JSONClass SaveData() {
             SimpleJSON.JSONClass data = reward.ToJson() as SimpleJSON.JSONClass;
-            data.Add("target", target);
+            data.Add("target", PersistenceUtils.SafeToString(target));
             return data;
         }
 
@@ -130,13 +130,13 @@ namespace HDLiveData {
 
             if (_data.ContainsKey("dragon")) dragon = _data["dragon"];
             if (_data.ContainsKey("skin")) skin = _data["skin"];
-            if (_data.ContainsKey("level")) level = _data["level"].AsInt;
+            if (_data.ContainsKey("level")) level = PersistenceUtils.SafeParse<int>(_data["level"]);
 
             if (_data.ContainsKey("stats")) {
                 SimpleJSON.JSONNode stats = _data["stats"];
-                health = stats["health"].AsInt;
-                speed  = stats["speed"].AsInt;
-                energy = stats["energy"].AsInt;
+                health = PersistenceUtils.SafeParse<int>(stats["health"]);
+                speed  = PersistenceUtils.SafeParse<int>(stats["speed"]);
+                energy = PersistenceUtils.SafeParse<int>(stats["energy"]);
             }
 
             if (_data.ContainsKey("pets")) {
@@ -153,14 +153,14 @@ namespace HDLiveData {
                 if (!string.IsNullOrEmpty(dragon)) data.Add("dragon", dragon);
                 if (!string.IsNullOrEmpty(skin)) data.Add("skin", skin);
                 if (level > 0)
-                    data.Add("level", level.ToString(GameServerManager.JSON_FORMAT));
+                    data.Add("level", PersistenceUtils.SafeToString(level));
 
                 if (health > 0 || speed > 0 || energy > 0) {
                     SimpleJSON.JSONClass stats = new SimpleJSON.JSONClass();
                     {
-                        stats.Add("health", health);
-                        stats.Add("speed",  speed);
-                        stats.Add("energy", energy);
+                        stats.Add("health", PersistenceUtils.SafeToString(health));
+                        stats.Add("speed", PersistenceUtils.SafeToString(speed));
+                        stats.Add("energy", PersistenceUtils.SafeToString(energy));
                     }
                     data.Add("stats", stats);
                 }
@@ -207,7 +207,7 @@ namespace HDLiveData {
                 build.Clean();
 
                 name = _data["name"];
-                score = _data["score"].AsLong;
+                score = PersistenceUtils.SafeParse<long>(_data["score"]);
                 if (_data.ContainsKey("build"))
                     build.LoadData(_data["build"]);
             }
@@ -215,7 +215,7 @@ namespace HDLiveData {
             public SimpleJSON.JSONClass SaveData() {
                 SimpleJSON.JSONClass data = new SimpleJSON.JSONClass();
                 data.Add("name", name);
-                data.Add("score", score.ToString(GameServerManager.JSON_FORMAT));
+                data.Add("score", PersistenceUtils.SafeToString(score));
                 data.Add("build", build.SaveData());
                 return data;
             }

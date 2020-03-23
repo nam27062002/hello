@@ -48,12 +48,12 @@ public class HappyHourManager {
 
 			key = "expirationTime";
 			if(_data.ContainsKey(key)) {
-				expirationTime = new DateTime(_data[key].AsLong);
+				expirationTime = new DateTime(PersistenceUtils.SafeParse<long>(_data[key]));
 			}
 
 			key = "extraGemsFactor";
 			if(_data.ContainsKey(key)) {
-				extraGemsFactor = _data[key].AsFloat;
+				extraGemsFactor = PersistenceUtils.SafeParse<float>(_data[key]);
 			}
 
 			key = "lastPackSku";
@@ -71,8 +71,8 @@ public class HappyHourManager {
 			JSONClass data = new JSONClass();
 
 			data["activeSku"] = activeSku;
-			data["expirationTime"] = expirationTime.Ticks.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE);
-			data["extraGemsFactor"] = extraGemsFactor.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE);
+			data["expirationTime"] = PersistenceUtils.SafeToString(expirationTime.Ticks);
+			data["extraGemsFactor"] = PersistenceUtils.SafeToString(extraGemsFactor);
 
 			if(!string.IsNullOrEmpty(lastPackSku)) {	// No need to add it if none - more compact save file!
 				data["lastPackSku"] = lastPackSku;

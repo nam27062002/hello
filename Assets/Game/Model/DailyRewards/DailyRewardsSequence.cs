@@ -270,7 +270,7 @@ public class DailyRewardsSequence {
 
 		// Current reward index
 		if(_data.ContainsKey("totalRewardIdx")) {
-			m_totalRewardIdx = _data["totalRewardIdx"];
+			m_totalRewardIdx = PersistenceUtils.SafeParse<int>(_data["totalRewardIdx"]);
 		}
 
 		// Collect timestamp
@@ -321,7 +321,7 @@ public class DailyRewardsSequence {
 		data.Add("rewards", rewardsData);
 
 		// Current reward index
-		data.Add("totalRewardIdx", m_totalRewardIdx);
+		data.Add("totalRewardIdx", PersistenceUtils.SafeToString(m_totalRewardIdx));
 
 		// Collect timestamp
 		data.Add("nextCollectionTimestamp", PersistenceUtils.SafeToString(m_nextCollectionTimestamp));

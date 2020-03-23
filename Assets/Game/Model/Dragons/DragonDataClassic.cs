@@ -448,7 +448,7 @@ public class DragonDataClassic : IDragonData {
 		base.Load(_data);
 
 		// Custom data
-		progression.Load(_data["xp"].AsFloat, _data["level"].AsInt);
+		progression.Load(PersistenceUtils.SafeParse<float>(_data["xp"]), PersistenceUtils.SafeParse<int>(_data["level"]));
 	}
 
 	/// <summary>
@@ -460,8 +460,8 @@ public class DragonDataClassic : IDragonData {
 		base.Save(ref _data);
 
 		// Custom data
-		_data.Add("xp", progression.xp.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
-		_data.Add("level", progression.level.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
+		_data.Add("xp", PersistenceUtils.SafeToString(progression.xp));
+		_data.Add("level", PersistenceUtils.SafeToString(progression.level));
 	}
 
 }

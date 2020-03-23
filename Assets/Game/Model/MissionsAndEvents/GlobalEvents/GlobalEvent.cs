@@ -267,7 +267,7 @@ public partial class GlobalEvent {
 	/// <param name="_data">JSON data.</param>
 	public void InitFromJson(SimpleJSON.JSONNode _data) {
 		// Event ID
-		m_id = _data["id"].AsInt;
+		m_id = PersistenceUtils.SafeParse<int>(_data["id"]);
 		m_name = _data["name"];
 
 		// Event objective
@@ -275,9 +275,9 @@ public partial class GlobalEvent {
 		m_objective = new GlobalEventObjective(this, _data["goal"]);
 
 		// Timestamps
-		m_teasingStartTimestamp = TimeUtils.TimestampToDate(_data["teaserTimestamp"].AsLong);
-		m_startTimestamp = TimeUtils.TimestampToDate(_data["startTimestamp"].AsLong);
-		m_endTimestamp = TimeUtils.TimestampToDate(_data["endTimestamp"].AsLong);
+		m_teasingStartTimestamp = TimeUtils.TimestampToDate(PersistenceUtils.SafeParse<long>(_data["teaserTimestamp"]));
+		m_startTimestamp = TimeUtils.TimestampToDate(PersistenceUtils.SafeParse<long>(_data["startTimestamp"]));
+		m_endTimestamp = TimeUtils.TimestampToDate(PersistenceUtils.SafeParse<long>(_data["endTimestamp"]));
 
 		// Infer event's state from timestamps
 		UpdateState();
@@ -304,7 +304,7 @@ public partial class GlobalEvent {
 		m_leaderboard.Clear();
 
 		GlobalEventUserData playerEventData = UsersManager.currentUser.GetGlobalEventData(m_id);
-		playerEventData.endTimestamp = _data["endTimestamp"].AsLong;
+		playerEventData.endTimestamp = PersistenceUtils.SafeParse<long>(_data["endTimestamp"]);
 	}
 
 
@@ -315,7 +315,7 @@ public partial class GlobalEvent {
 	/// <param name="_data">Data.</param>
 	public void UpdateFromJson(SimpleJSON.JSONNode _data) {
 		// Current value
-		m_currentValue = _data["globalScore"].AsFloat;
+		m_currentValue = PersistenceUtils.SafeParse<float>(_data["globalScore"]);
 
 		// Update event state (just in case, has nothing to do with given json)
 		UpdateState();
@@ -382,7 +382,7 @@ public partial class GlobalEvent {
 		}
 
 		// Store total amount of players
-		m_totalPlayers = _data["n"].AsInt;
+		m_totalPlayers = PersistenceUtils.SafeParse<int>(_data["n"]);
 	}
 
 	/// <summary>
@@ -390,9 +390,9 @@ public partial class GlobalEvent {
 	/// </summary>
 	/// <param name="_data">Data.</param>
 	public void UpdateRewardLevelFromJson(SimpleJSON.JSONNode _data) {
-		m_rewardLevel = _data["r"].AsInt;
+		m_rewardLevel = PersistenceUtils.SafeParse<int>(_data["r"]);
 		if (_data.ContainsKey("top")) {
-			m_topContributor = _data["top"].AsBool;
+			m_topContributor = PersistenceUtils.SafeParse<bool>(_data["top"]);
 		}
 	}
 

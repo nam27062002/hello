@@ -109,13 +109,12 @@ public class GlobalEventUserData {
 	/// <param name="_data">The data object loaded from persistence.</param>
 	public void Load(SimpleJSON.JSONNode _data) {
 		// Easy
-		if(_data.ContainsKey("eventId")) eventID = _data["eventId"].AsInt;	// Event ID is optional
+		if(_data.ContainsKey("eventId")) eventID = PersistenceUtils.SafeParse<int>(_data["eventId"]);	// Event ID is optional
 		if(_data.ContainsKey("uid")) userID = _data["uid"];
-		if(_data.ContainsKey("score")) score = _data["score"].AsInt;
-		if(_data.ContainsKey("rank")) 
-			position = _data["rank"].AsInt;
-		if(_data.ContainsKey("endTimestamp")) endTimestamp = _data["endTimestamp"].AsLong;
-		if(_data.ContainsKey("rewardCollected")) rewardCollected = _data["rewardCollected"].AsBool;
+		if(_data.ContainsKey("score")) score = PersistenceUtils.SafeParse<int>(_data["score"]);
+		if(_data.ContainsKey("rank")) position = PersistenceUtils.SafeParse<int>(_data["rank"]);
+		if(_data.ContainsKey("endTimestamp")) endTimestamp = PersistenceUtils.SafeParse<long>(_data["endTimestamp"]);
+		if(_data.ContainsKey("rewardCollected")) rewardCollected = PersistenceUtils.SafeParse<bool>(_data["rewardCollected"]);
 
 		// Social info
 		if(_data.ContainsKey("name")) name = _data["name"];
@@ -130,11 +129,11 @@ public class GlobalEventUserData {
 	public SimpleJSON.JSONNode Save(bool _includeEventID, bool _includePosition = true, bool _includeRewardCollected = true) {
 		// Create a new json object for this event
 		SimpleJSON.JSONClass data = new SimpleJSON.JSONClass();
-		if(_includeEventID) data.Add("eventId", eventID.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
+		if(_includeEventID) data.Add("eventId", PersistenceUtils.SafeToString(eventID));
 		data.Add("uid", userID);
-		data.Add("score", score.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
-		if(_includePosition) data.Add("rank", position.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
-		if(_includeRewardCollected) data.Add("rewardCollected", rewardCollected);
+		data.Add("score", PersistenceUtils.SafeToString(score));
+		if(_includePosition) data.Add("rank", PersistenceUtils.SafeToString(position));
+		if(_includeRewardCollected) data.Add("rewardCollected", PersistenceUtils.SafeToString(rewardCollected));
 		return data;
 	}
 }
