@@ -936,7 +936,7 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
             // Checks if the rating has been overriden for this device
             if (deviceSettingsJSON.ContainsKey(FeatureSettings.KEY_RATING))
             {
-                rating = deviceSettingsJSON[FeatureSettings.KEY_RATING].AsFloat;
+                rating = PersistenceUtils.SafeParse<float>(deviceSettingsJSON[FeatureSettings.KEY_RATING]);
             }
 
             if (deviceSettingsJSON.ContainsKey(FeatureSettings.KEY_PROFILE))
@@ -986,7 +986,7 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
             // Checks if the rating has been overriden for this device
             if (serverQualitySettingsJSON.ContainsKey(FeatureSettings.KEY_RATING))
             {
-                rating = serverQualitySettingsJSON[FeatureSettings.KEY_RATING].AsFloat;
+                rating = PersistenceUtils.SafeParse<float>(serverQualitySettingsJSON[FeatureSettings.KEY_RATING]);
             }
 
             if (serverQualitySettingsJSON.ContainsKey(FeatureSettings.KEY_PROFILE))

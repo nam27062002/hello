@@ -328,8 +328,8 @@ public class Egg {
 		m_def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.EGGS, _data["sku"]);
 
 		// State
-		m_state = (State)_data["state"].AsInt;
-		m_isNew = _data["isNew"].AsBool;
+		m_state = (State)PersistenceUtils.SafeParse<int>(_data["state"]);
+		m_isNew = PersistenceUtils.SafeParse<bool>(_data["isNew"]);
 
 		// Special case: temporal states shouldn't be persisted (only happens in case of crash)
 		if(m_state == State.OPENING) {
@@ -337,7 +337,7 @@ public class Egg {
 		}
 
 		// Incubating timestamp
-		m_incubationEndTimestamp = DateTime.Parse(_data["incubationEndTimestamp"], PersistenceFacade.JSON_FORMATTING_CULTURE);
+		m_incubationEndTimestamp = PersistenceUtils.SafeParse<DateTime>(_data["incubationEndTimestamp"]);
 	}
 
 	/// <summary>
@@ -352,11 +352,11 @@ public class Egg {
 		data.Add("sku", m_def.sku);
 
 		// State
-		data.Add("state", ((int)m_state).ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
-		data.Add("isNew", m_isNew.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
+		data.Add("state", PersistenceUtils.SafeToString((int)m_state));
+		data.Add("isNew", PersistenceUtils.SafeToString(m_isNew));
 
 		// Incubating timestamp
-		data.Add("incubationEndTimestamp", m_incubationEndTimestamp.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
+		data.Add("incubationEndTimestamp", PersistenceUtils.SafeToString(m_incubationEndTimestamp));
 
 		return data;
 	}

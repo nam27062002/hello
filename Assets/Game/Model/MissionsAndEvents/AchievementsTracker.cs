@@ -66,8 +66,9 @@ public class AchievementsTracker {
 				string sku = node["sku"];
 				if (m_objectives.ContainsKey(sku))
 				{
-					if (node["currentValue"].AsInt > m_objectives[sku].currentValue )
-						m_objectives[sku].currentValue = node["currentValue"].AsInt;
+					int parsedValue = PersistenceUtils.SafeParse<int>(node["currentValue"]);
+					if (parsedValue > m_objectives[sku].currentValue )
+						m_objectives[sku].currentValue = parsedValue;
 				}
 				else
 				{
@@ -91,7 +92,7 @@ public class AchievementsTracker {
 		foreach(KeyValuePair<string, AchievementObjective> kEntry in m_objectives){
 			SimpleJSON.JSONClass newNode = new SimpleJSON.JSONClass();
 			newNode.Add("sku", kEntry.Value.achievementSku);
-			newNode.Add("currentValue", kEntry.Value.currentValue);
+			newNode.Add("currentValue", PersistenceUtils.SafeToString(kEntry.Value.currentValue));
 			achievements.Add( newNode );
 		}
 		return achievements;
