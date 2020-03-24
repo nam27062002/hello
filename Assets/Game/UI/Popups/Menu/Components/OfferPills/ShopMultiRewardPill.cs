@@ -44,6 +44,8 @@ public class ShopMultiRewardPill: ShopBasePill
     // The list of 3 different layouts created. Has to be filled in the inspector.
     [SerializeField] private List<OffersLayout> m_layouts;
 
+    private OffersLayout m_currentLayout;
+    public OffersLayout currentLayout { get { return m_currentLayout; } }
 
     //------------------------------------------------------------------------//
     // GENERIC METHODS														  //
@@ -68,17 +70,17 @@ public class ShopMultiRewardPill: ShopBasePill
 
 		// Find out the proper layout based on the amount of items in the pack
         int amount = _pack.items.Count;
-		OffersLayout targetLayout = null;
+
 		for(int i = 0; i < m_layouts.Count; ++i) {
 			// Is it our target layout?
 			if(i + 1 == amount) {
 				// Yes!! Is the layout valid?
 				if(m_layouts[i].m_container != null) {
 					// Yes!! Use it
-					targetLayout = m_layouts[i];
-					for(int j = 0; j < targetLayout.m_offerItems.Count; ++j) {
+					m_currentLayout = m_layouts[i];
+					for(int j = 0; j < m_currentLayout.m_offerItems.Count; ++j) {
 						// Skip if no slot (i.e. single item layouts)
-						OfferItemSlot slot = targetLayout.m_offerItems[j];
+						OfferItemSlot slot = m_currentLayout.m_offerItems[j];
 						if(slot == null) continue;
 
 						// Start hidden and initialize after some delay
@@ -99,7 +101,7 @@ public class ShopMultiRewardPill: ShopBasePill
 
 			// Only activate target layout
 			if(m_layouts[i].m_container != null) {
-				m_layouts[i].m_container.gameObject.SetActive(targetLayout == m_layouts[i]);
+				m_layouts[i].m_container.gameObject.SetActive(m_currentLayout == m_layouts[i]);
 			}
 		}
     }
