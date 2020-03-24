@@ -12,6 +12,7 @@ using UnityEngine.UI;
 using System;
 using System.Text;
 using System.Collections;
+using System.Collections.Generic;
 using TMPro;
 using Firebase.Crashlytics;
 
@@ -37,7 +38,9 @@ public class CPServerTab : MonoBehaviour {
 	[SerializeField] private TextMeshProUGUI m_trackingIdText = null;
 	[SerializeField] private TextMeshProUGUI m_DNAProfileIdText = null;
     [SerializeField] private TextMeshProUGUI m_AdUnitInfoText = null;
-    [SerializeField] private Toggle m_debugServerToggle = null;    
+    [SerializeField] private Toggle m_debugServerToggle = null;
+    [SerializeField] private TMP_Dropdown m_flavourDropDown = null;
+
 
     // Internal
     private DateTime m_startTimestamp;
@@ -60,10 +63,10 @@ public class CPServerTab : MonoBehaviour {
 		m_startTimestamp = DateTime.UtcNow;
 		OnClearConsoleButton();
 
-		//RequestNetworkOnline.CreateInstance();
-		//requestNetwork = new RequestNetworkOnline();
-
-	}
+        //RequestNetworkOnline.CreateInstance();
+        //requestNetwork = new RequestNetworkOnline();
+        Flavour_Init();
+    }
 
 	private void OnEnable()
 	{
@@ -335,4 +338,43 @@ public class CPServerTab : MonoBehaviour {
 		m_outputSb.Length = 0;
 		Output("Hungry Dragon v" + GameSettings.internalVersion + " console output");
 	}
+
+#region flavour
+    private void Flavour_Init()
+    {
+        if (m_flavourDropDown != null)
+        {
+            m_flavourDropDown.ClearOptions();
+
+            TMP_Dropdown.OptionData optionData;
+            List<TMP_Dropdown.OptionData> options = new List<TMP_Dropdown.OptionData>();
+
+            List<string> skus = FlavourManager.Instance.GetFlavourSkus();
+            int count = skus.Count;
+            for (int i = 0; i < count; i++)
+            {
+                optionData = new TMP_Dropdown.OptionData();
+                optionData.text = skus[i];
+                options.Add(optionData);                
+            }
+
+            m_flavourDropDown.AddOptions(options);
+        }
+    }
+
+    public void Flavour_OnSetOption(int optionId)
+    {
+        List<string> skus = FlavourManager.Instance.GetFlavourSkus();
+        if (optionId > -1 && optionId < skus.Count)
+        {
+            FlavourManager.Instance.SetSkuAsCurrentFlavour(skus[optionId]);
+
+            UIFeedbackText.CreateAndLaunch(
+                "Restart the game to apply the new flavour!",
+                new Vector2(0.5f, 0.5f),
+                this.GetComponentInParent<Canvas>().transform as RectTransform
+            );
+        }
+    }
+#endregion
 }

@@ -69,11 +69,7 @@ public class SocialPlatformManager : MonoBehaviour
         bool returnValue = true;
         if (platform == SocialUtils.EPlatform.SIWA)
         {
-#if USE_SIWA && UNITY_IOS
-            returnValue = true;
-#else
-            returnValue = false;
-#endif
+            returnValue = FlavourManager.Instance.GetCurrentFlavour().IsSIWAEnabled;
         }
 
         return returnValue;
@@ -95,7 +91,7 @@ public class SocialPlatformManager : MonoBehaviour
             else
             {
                 // Social platform depends on the app's flavour
-                SocialUtils.EPlatform platformId = FlavourManager.GetSocialPlatform();				
+                SocialUtils.EPlatform platformId = FlavourManager.Instance.GetCurrentFlavour().SocialPlatform;				
 				if (platformId == SocialUtils.EPlatform.Facebook && !FacebookManager.SharedInstance.CanUseFBFeatures ()) 
 				{
 					platformId = SocialUtils.EPlatform.None;
