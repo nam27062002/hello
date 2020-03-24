@@ -50,11 +50,21 @@ public class PopupShopOfferPackSkins : PopupShopOfferPack
     {
         base.Refresh();
 
-        // Clear the slot
-		bigPreview.InitFromItem(null);
+        // Scale down the dragon
+		bigPreview.GetComponent<ShowHideAnimator>().Hide(true);
 
-		// Show the item in the preview panel
-		bigPreview.InitFromItem(m_pack.items[itemIndexSelected]);
+		UbiBCN.CoroutineManager.DelayedCall(() =>
+	   {
+			// Clear the slot
+			bigPreview.InitFromItem(null);
+
+			// Show the item in the preview panel
+			bigPreview.InitFromItem(m_pack.items[itemIndexSelected]);
+
+		   // Scale up the new dragon
+		   bigPreview.GetComponent<ShowHideAnimator>().ForceShow(true);
+
+	   }, .3f);
 
 		// Select/deselect the proper tab
 		List<OfferItemSlot> slots = m_rootPill.currentLayout.m_offerItems;
