@@ -1,0 +1,147 @@
+﻿#if DEBUG && !DISABLE_LOGS
+#define ENABLE_LOGS
+#endif
+
+#define LOG_USE_COLOR
+
+using System.Diagnostics;
+using System.Collections.Generic;
+
+/// <summary>
+/// This class is responsible for managing app flavours. Following Android Studio approach (https://developer.android.com/studio/build/build-variants)
+/// for handling build variants our game can have different flavours. Only one flavour can be applied at a time.
+/// </summary>
+public class FlavourManager
+{
+    private const string FLAVOUR_SKU_DEFAULT = FlavourFactory.CATALOG_SKU_WW;
+
+    private static FlavourManager s_instance = null;
+
+    public static FlavourManager Instance
+    {
+        get
+        {
+            if (s_instance == null)
+            {
+                s_instance = new FlavourManager();
+            }
+
+            return s_instance;
+        }
+    }
+
+    private Flavour m_currentFlavour;
+
+    private FlavourFactory m_factory;
+
+    private FlavourManager()
+    {
+        m_factory = new FlavourFactory();
+    }
+
+    /// <summary>
+    /// Returns the flavour currently applied
+    /// </summary>
+    /// <returns></returns>
+    public Flavour GetCurrentFlavour()
+    {
+        if (m_currentFlavour == null)
+        {
+            m_currentFlavour = m_factory.CreateFlavour();
+            SetupCurrentFlavour();            
+        }
+
+        return m_currentFlavour;
+    }
+
+    private void SetupCurrentFlavour()
+    {
+        string countryCode = PlatformUtils.Instance.Country_GetCodeOnInstall();
+
+        // The flavour to apply depends on the country code that the device had when the user installed the game.
+        // We want the user to stick to the same flavour from installation on
+        m_factory.SetupFlavour(m_currentFlavour, countryCode);
+    }
+
+    /// <summary>
+    /// Sets <c>flavourSku</c> as the current flavour. This method should be used only as a cheat
+    /// </summary>
+    /// <param name="flavourSku"></param>
+    public void SetSkuAsCurrentFlavour(string flavourSku)
+    {
+        if (FeatureSettingsManager.AreCheatsEnabled)
+        {
+            if (m_currentFlavour != null && m_currentFlavour.Sku != flavourSku)
+            {
+                string countryCode = FlavourSkuToCountryCode(flavourSku);
+                PersistencePrefs.CountryCodeOnInstall = countryCode;
+                SetupCurrentFlavour();
+            }
+        }
+    }
+
+    private string FlavourSkuToCountryCode(string flavourSku)
+    {
+        // flavourSku is the same as the country code except for WW
+        return (string.IsNullOrEmpty(flavourSku) || flavourSku == FlavourFactory.CATALOG_SKU_WW) ? PlatformUtils.COUNTRY_CODE_WW_DEFAULT : flavourSku;
+    }
+
+    private string CountryCodeToFlavourSku(string countryCode)
+    {
+        // Just in case
+        if (!string.IsNullOrEmpty(countryCode))
+        {            
+            countryCode = countryCode.ToUpper();
+        }
+
+        return (m_factory.Catalog_ContainsSku(countryCode)) ? countryCode : FLAVOUR_SKU_DEFAULT;
+    }
+
+    public List<string> GetFlavourSkus()
+    {
+        return m_factory.Catalog_GetSkus();
+    }
+ 
+#region log
+    private const string LOG_CHANNEL = "[Flavours] ";
+    private const string LOG_CHANNEL_COLOR = "<color=teal>" + LOG_CHANNEL;
+
+#if ENABLE_LOGS
+    [Conditional("DEBUG")]
+#else
+    [Conditional("FALSE")]
+#endif
+    public static void Log(string msg)
+    {
+#if LOG_USE_COLOR
+        // Multiline texts don't work well with color tags in the console, so do some tricks :P
+        int idx = msg.IndexOf('\n');
+        if (idx >= 0)
+        {
+            Debug.Log(
+                LOG_CHANNEL_COLOR +
+                msg.Substring(0, idx) +
+                "</color>" +
+                msg.Substring(idx, msg.Length - idx)
+            );
+        }
+        else
+        {
+            Debug.Log(LOG_CHANNEL_COLOR + msg + " </color>");
+        }
+#else
+        Debug.Log(LOG_CHANNEL + msg);        
+#endif
+    }
+
+#if ENABLE_LOGS
+    [Conditional("DEBUG")]
+#else
+    [Conditional("FALSE")]
+#endif
+    public static void LogError(string msg)
+    {
+        Debug.LogError(LOG_CHANNEL + msg);
+    }
+#endregion
+}

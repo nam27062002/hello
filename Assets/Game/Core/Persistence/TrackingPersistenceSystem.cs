@@ -345,7 +345,7 @@ public class TrackingPersistenceSystem : PersistenceSystem
         // support was included
         if (SocialAuthSent)
         {
-            string defaultSocialPlatformKey = SocialUtils.EPlatformToKey(FlavourManager.GetSocialPlatform());
+            string defaultSocialPlatformKey = SocialUtils.EPlatformToKey(FlavourManager.Instance.GetCurrentFlavour().SocialPlatform);
             AddSocialPlatformKeyToAuthSentList(defaultSocialPlatformKey);
 
             // Set to false because persistence has already been adapted to the new format and we don't need to do it again
