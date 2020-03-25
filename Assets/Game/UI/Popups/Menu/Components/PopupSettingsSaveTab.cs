@@ -317,7 +317,11 @@ public class PopupSettingsSaveTab : MonoBehaviour
 
 	private void Social_OnLogInUpdated(bool logged)
 	{
-		RefreshView();
+		// Do not refresh the view until the sync is completed
+		if (!PersistenceFacade.instance.CloudDriver.IsInSync)
+		{
+			RefreshView();
+		}
 	}
 
 	/// <summary>
