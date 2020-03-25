@@ -1214,7 +1214,8 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
                 if (
                     pair.Key == "iOSGeneration" || // used for making easier to identify a device
                     pair.Key == "mngd" ||          // used on server side to identify devices that have been managed
-                    pair.Key == "comments"         // used on server to store some comments about the settings managed for a device
+                    pair.Key == "comments"  ||       // used on server to store some comments about the settings managed for a device
+                    pair.Key == "limit"            // We dont know the use, but server keeps on sendig us this param, so ignore it [JOM]
                     )
                     continue;
 

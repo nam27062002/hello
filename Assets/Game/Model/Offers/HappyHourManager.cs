@@ -281,6 +281,10 @@ public class HappyHourManager {
 	/// </summary>
 	/// <returns>The opened popup. Can be <c>null</c> if the popup couldn't be opened.</returns>
 	public PopupHappyHour OpenPopup() {
+		// Dont open the popup if we already are displaying a HH popup
+		if (PopupManager.GetOpenPopup(PopupHappyHour.PATH) != null)
+			return null;
+
 		// Load the popup
 		PopupController popup = PopupManager.LoadPopup(PopupHappyHour.PATH);
 		PopupHappyHour popupHappyHour = popup.GetComponent<PopupHappyHour>();
