@@ -91,7 +91,7 @@ Shader "Hungry Dragon/Waterfall"
 
 					o.uv1 = o.uv0 = TRANSFORM_TEX(v.uv, _MainTex);
 #if defined(SPACE)
-					o.uv0 += anim.yx;
+					o.uv0 += anim;
 					o.uv1 += anim * 0.2;
 #else
                     o.uv0 += anim;
