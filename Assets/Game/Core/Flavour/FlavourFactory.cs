@@ -11,7 +11,7 @@ public class FlavourFactory
         return new Flavour();
     }
 
-    public void SetupFlavour(Flavour flavour, string countryCode, Flavour.Setting_EDevicePlatform devicePlatform)
+    public void SetupFlavour(Flavour flavour, string countryCode, Setting_EDevicePlatform devicePlatform)
     {        
         if (!Catalog_IsInitialized())
         {
@@ -21,27 +21,39 @@ public class FlavourFactory
         string flavourSku = Catalog_GetCountryCodeToFlavourSku(countryCode, devicePlatform);
         SetupFlavourDelegate setupFlavourDelegate = Catalog_GetSetupFlavourDelegate(flavourSku);
         setupFlavourDelegate(flavour, flavourSku, devicePlatform);        
-    }    
+    }
 
-    private void Worldwide_SetupFlavour(Flavour flavour, string sku, Flavour.Setting_EDevicePlatform devicePlatform)
+    private void SetupFlavour(Flavour flavour, string sku, Setting_ESocialPlatform socialPlatform, Setting_EAddressablesVariant addressablesVariant,
+                              bool isSIWAEnabled)
     {
-         flavour.Setup(
+        flavour.Setup(
             sku: sku,
-            socialPlatform: Flavour.Setting_ESocialPlatform.Facebook,
-            addressablesVariant:Flavour.Setting_EAddressablesVariant.WW,
+            socialPlatform:Setting_ESocialPlatformToSocialUtilsEPlatform(socialPlatform),
+            addressablesVariant:Setting_EAddressablesVariantToString(addressablesVariant),
+            isSIWAEnabled:isSIWAEnabled);
+    }
+
+    private void Worldwide_SetupFlavour(Flavour flavour, string sku, Setting_EDevicePlatform devicePlatform)
+    {
+         SetupFlavour(
+            flavour:flavour,
+            sku:sku,
+            socialPlatform:Setting_ESocialPlatform.Facebook,
+            addressablesVariant:Setting_EAddressablesVariant.WW,
             isSIWAEnabled:IsSIWAEnabled(devicePlatform));
     }
 
-    private void China_SetupFlavour(Flavour flavour, string sku, Flavour.Setting_EDevicePlatform devicePlatform)
+    private void China_SetupFlavour(Flavour flavour, string sku, Setting_EDevicePlatform devicePlatform)
     {
-        flavour.Setup(
-            sku: sku,            
-            socialPlatform: Flavour.Setting_ESocialPlatform.Weibo,
-            addressablesVariant: Flavour.Setting_EAddressablesVariant.CN,
-            isSIWAEnabled: IsSIWAEnabled(devicePlatform));
+        SetupFlavour(
+            flavour:flavour,        
+            sku:sku,            
+            socialPlatform:Setting_ESocialPlatform.Weibo,
+            addressablesVariant: Setting_EAddressablesVariant.CN,
+            isSIWAEnabled:IsSIWAEnabled(devicePlatform));
     }
 
-    private bool IsSIWAEnabled(Flavour.Setting_EDevicePlatform devicePlatform)
+    private bool IsSIWAEnabled(Setting_EDevicePlatform devicePlatform)
     {       
 #if USE_SIWA        
         return devicePlatform == Flavour.Att_EDevicePlatform.iOS;
@@ -50,13 +62,13 @@ public class FlavourFactory
 #endif        
     }
 
-    #region catalog
+#region catalog
     // Flavour skus: So far "ww" is used for worldwide version and the country code for every country that requires a different flavour
     public const string CATALOG_SKU_DEFAULT = CATALOG_SKU_WW;
     public const string CATALOG_SKU_WW = "WW";
     public const string CATALOG_SKU_CHINA = PlatformUtils.COUNTRY_CODE_CHINA;   
     
-    delegate void SetupFlavourDelegate(Flavour flavour, string sku, Flavour.Setting_EDevicePlatform devicePlatform);
+    delegate void SetupFlavourDelegate(Flavour flavour, string sku, Setting_EDevicePlatform devicePlatform);
 
     private Dictionary<string, SetupFlavourDelegate> m_catalog;
     private List<string> m_catalogSkus;
@@ -76,10 +88,10 @@ public class FlavourFactory
         return m_catalog != null;
     }
 
-    private string Catalog_GetCountryCodeToFlavourSku(string countryCode, Flavour.Setting_EDevicePlatform devicePlatform)
+    private string Catalog_GetCountryCodeToFlavourSku(string countryCode, Setting_EDevicePlatform devicePlatform)
     {
         // Android only supports WW flavour
-        if (devicePlatform == Flavour.Setting_EDevicePlatform.Android)
+        if (devicePlatform == Setting_EDevicePlatform.Android)
         {
             countryCode = CATALOG_SKU_WW;
         }
@@ -119,4 +131,51 @@ public class FlavourFactory
         return m_catalogSkus;
     }
 #endregion
+
+#region setting
+    // This region is responsible for defining Setting types
+    
+    public enum Setting_ESocialPlatform
+    {
+        Facebook,
+        Weibo
+    };
+
+    private static SocialUtils.EPlatform Setting_ESocialPlatformToSocialUtilsEPlatform(Setting_ESocialPlatform value)
+    {
+        switch (value)
+        {
+            case Setting_ESocialPlatform.Facebook:
+                return SocialUtils.EPlatform.Facebook;
+
+            case Setting_ESocialPlatform.Weibo:
+                return SocialUtils.EPlatform.Weibo;
+        }
+
+        return SocialUtils.EPlatform.None;
+    }
+
+    public enum Setting_EAddressablesVariant
+    {
+        WW,
+        CN
+    };
+
+    public static Setting_EAddressablesVariant SETTING_ADDRESSABLES_VARIANT_DEFAULT = Setting_EAddressablesVariant.WW;
+    public static string SETTING_ADDRESSABLES_VARIANT_DEFAULT_SKU = Setting_EAddressablesVariantToString(SETTING_ADDRESSABLES_VARIANT_DEFAULT);
+
+    public static string Setting_EAddressablesVariantToString(Setting_EAddressablesVariant value)
+    {
+        return value.ToString();
+    }
+
+    public enum Setting_EDevicePlatform
+    {
+        iOS,
+        Android
+    };
+
+    public static string SETTING_EDEVICEPLATFORM_IOS = Setting_EDevicePlatform.iOS.ToString();
+    public static string SETTING_EDEVICEPLATFORM_ANDROID = Setting_EDevicePlatform.Android.ToString();    
+#endregion   
 }

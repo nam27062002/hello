@@ -311,9 +311,9 @@ public class HDAddressablesManager
         
         // Default flavour is used if flavourSku is not already the default one and no resouce is
         // defined for flavouredSku
-        if (addressablesVariant != Flavour.ADDRESSABLES_VARIANT_DEFAULT_SKU && !m_addressablesManager.ExistsResource(addressablesId, returnValue))
+        if (addressablesVariant != FlavourFactory.SETTING_ADDRESSABLES_VARIANT_DEFAULT_SKU && !m_addressablesManager.ExistsResource(addressablesId, returnValue))
         {
-            returnValue = Flavour_GetVariantPerFlavour(Flavour.ADDRESSABLES_VARIANT_DEFAULT_SKU, variant);
+            returnValue = Flavour_GetVariantPerFlavour(FlavourFactory.SETTING_ADDRESSABLES_VARIANT_DEFAULT_SKU, variant);
         }
 
         return returnValue;
