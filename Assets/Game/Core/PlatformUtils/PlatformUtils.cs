@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 public abstract class PlatformUtils 
 {
@@ -51,6 +52,12 @@ public abstract class PlatformUtils
 
     public const string COUNTRY_CODE_CHINA = "CN";
     public const string COUNTRY_CODE_WW_DEFAULT = "US"; // United States is used as the default country code for WW flavor
+
+    public static List<string> COUNTRY_CODES = new List<string>()
+    {
+        COUNTRY_CODE_WW_DEFAULT,
+        COUNTRY_CODE_CHINA
+    };
 
     public bool IsChina()
     {

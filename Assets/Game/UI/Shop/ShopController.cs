@@ -167,6 +167,7 @@ public class ShopController : MonoBehaviour
         // React to offers being reloaded 
         Messenger.AddListener(MessengerEvents.OFFERS_RELOADED, OnOffersReloaded);
         Messenger.AddListener<List<OfferPack>>(MessengerEvents.OFFERS_CHANGED, OnOffersChanged);
+        Messenger.AddListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_END, OnTransitionEnd);
     }
 
     /// <summary>
@@ -176,6 +177,7 @@ public class ShopController : MonoBehaviour
     {
         Messenger.RemoveListener(MessengerEvents.OFFERS_RELOADED, OnOffersReloaded);
         Messenger.RemoveListener<List<OfferPack>>(MessengerEvents.OFFERS_CHANGED, OnOffersChanged);
+        Messenger.RemoveListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_END, OnTransitionEnd);
     }
 
 	/// <summary>
@@ -338,8 +340,6 @@ public class ShopController : MonoBehaviour
 
         // In case we need to do something after the user purchases an offer
         m_purchaseCompletedCallback = _purchaseCompletedCallback;
-
-        Refresh();
 
     }
 
@@ -1269,7 +1269,24 @@ public class ShopController : MonoBehaviour
             }*/
         }
     }
-    
+
+    /// <summary>
+    /// The current menu screen has changed (animation ends now).
+    /// At this point we are just in the middle of the clouds transition
+    /// </summary>
+    /// <param name="_from">Source screen.</param>
+    /// <param name="_to">Target screen.</param>
+    private void OnTransitionEnd(MenuScreen _from, MenuScreen _to)
+    {
+        // If entering this screen
+        if (_to == MenuScreen.SHOP)
+        {
+            // Start painting the shop while the clouds transition is happening so
+            // we hide the FPS drop to the player
+            Refresh();
+        }
+    }
+
 
     //------------------------------------------------------------------------//
     // DEBUG																  //

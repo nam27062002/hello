@@ -1,118 +1,90 @@
-﻿#if UNITY_IOS
-#define FACTORY_IOS
-#endif
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 /// <summary>
 /// This class is responsible for creating a Flavour object depending on a country code and the device platform
 /// </summary>
 public class FlavourFactory
-{
+{   
     public Flavour CreateFlavour()
     {
         return new Flavour();
     }
 
-    public void SetupFlavour(Flavour flavour, string countryCode)
-    {        
-        if (!Catalog_IsInitialized())
+    public void SetupFlavourBasedOnCriteria(Flavour flavour, string countryCode, Flavour.EDevicePlatform devicePlatform)
+    {
+        string flavourSku;
+
+        // Android only supports WW flavour
+        if (devicePlatform == Flavour.EDevicePlatform.Android)
         {
-            Catalog_Initialize();
-        }
-
-        string flavourSku = Catalog_GetCountryCodeToFlavourSku(countryCode);
-        SetupFlavourDelegate setupFlavourDelegate = Catalog_GetSetupFlavourDelegate(flavourSku);
-        setupFlavourDelegate(flavour, flavourSku);        
-    }    
-
-    private void Worldwide_SetupFlavour(Flavour flavour, string sku)
-    {
-         flavour.Setup(
-            sku: sku,
-            socialPlatform:SocialUtils.EPlatform.Facebook,
-            isSIWAEnabled:IsSIWAEnabled());
-    }
-
-    private void China_SetupFlavour(Flavour flavour, string sku)
-    {
-        flavour.Setup(
-            sku: sku,
-            socialPlatform: SocialUtils.EPlatform.Weibo,
-            isSIWAEnabled: IsSIWAEnabled());
-    }
-
-    private bool IsSIWAEnabled()
-    {
-#if FACTORY_IOS && USE_SIWA
-        return true;
-#else
-        return false;
-#endif
-    }
-
-#region catalog
-    // Flavour skus: So far "ww" is used for worldwide version and the country code for every country that requires a different flavour
-    public const string CATALOG_SKU_WW = "WW";
-    public const string CATALOG_SKU_CHINA = "CN";
-    
-    delegate void SetupFlavourDelegate(Flavour flavour, string sku);
-
-    private Dictionary<string, SetupFlavourDelegate> m_catalog;
-    private List<string> m_catalogSkus;
-
-    private void Catalog_Initialize()
-    {
-        if (!Catalog_IsInitialized())
-        {
-            m_catalog = new Dictionary<string, SetupFlavourDelegate>();
-            m_catalog.Add(CATALOG_SKU_WW, Worldwide_SetupFlavour);
-
-#if FACTORY_IOS
-            m_catalog.Add(CATALOG_SKU_CHINA, China_SetupFlavour);
-#endif
-        }
-    }
-
-    private bool Catalog_IsInitialized()
-    {
-        return m_catalog != null;
-    }
-
-    private string Catalog_GetCountryCodeToFlavourSku(string countryCode)
-    {
-        if (string.IsNullOrEmpty(countryCode))
-        {
-            countryCode = CATALOG_SKU_WW;
+            flavourSku = SETTINGS_SKU_WW;
         }
         else
         {
-            countryCode = countryCode.ToUpper();
+            if (string.IsNullOrEmpty(countryCode))
+            {
+                countryCode = SETTINGS_SKU_WW;
+            }
+            else
+            {
+                countryCode = countryCode.ToUpper();
+            }
+
+            flavourSku = countryCode;
         }
 
-        return (m_catalog.ContainsKey(countryCode)) ? countryCode : CATALOG_SKU_WW;
+        Settings_SetFlavour(flavour, flavourSku, devicePlatform);                  
+    }       
+
+    private bool IsSIWAEnabled(Flavour.EDevicePlatform devicePlatform)
+    {       
+#if USE_SIWA        
+        return devicePlatform == Flavour.EDevicePlatform.iOS;
+#else
+        return false;
+#endif        
     }
 
-    private SetupFlavourDelegate Catalog_GetSetupFlavourDelegate(string flavourSku)
-    {        
-        string sku = (m_catalog.ContainsKey(flavourSku)) ? flavourSku : CATALOG_SKU_WW;
-        return m_catalog[sku];        
-    }
+#region settings
+    // Flavour skus: So far "WW" is used for worldwide version and the country code for every country that requires a different flavour    
+    public const string SETTINGS_SKU_DEFAULT = SETTINGS_SKU_WW;
+    public const string SETTINGS_SKU_WW = "WW";
+    public const string SETTINGS_SKU_CHINA = PlatformUtils.COUNTRY_CODE_CHINA;             
 
-    public bool Catalog_ContainsSku(string sku)
+    private void Settings_SetFlavour(Flavour flavour, string flavourSku, Flavour.EDevicePlatform devicePlatform)
     {
-        return !string.IsNullOrEmpty(sku) && m_catalog.ContainsKey(sku);
-    }
-
-    public List<string> Catalog_GetSkus()
-    {
-        if (m_catalogSkus == null)
+        if (flavourSku == SETTINGS_SKU_WW)
         {
-            m_catalogSkus = new List<string>(m_catalog.Keys);
+            Settings_SetFlavourWW(flavour, devicePlatform);
         }
-
-        return m_catalogSkus;
+        else if (flavourSku == SETTINGS_SKU_CHINA)
+        {
+            Settings_SetFlavourChina(flavour, devicePlatform);
+        }
+        else
+        {
+            // If there's no Flavour defined for flavourSku then the default one is returned
+            Settings_SetFlavour(flavour, SETTINGS_SKU_DEFAULT, devicePlatform);
+        }                
     }
+
+    private void Settings_SetFlavourWW(Flavour flavour, Flavour.EDevicePlatform devicePlatform)
+    {
+        flavour.Setup(
+           sku: SETTINGS_SKU_WW, 
+           socialPlatform: Flavour.ESocialPlatform.Facebook,
+           addressablesVariant: Flavour.EAddressablesVariant.WW,
+           isSIWAEnabled: IsSIWAEnabled(devicePlatform));
+    }
+
+    private void Settings_SetFlavourChina(Flavour flavour, Flavour.EDevicePlatform devicePlatform)
+    {
+        flavour.Setup(
+           sku: SETTINGS_SKU_CHINA,
+           socialPlatform: Flavour.ESocialPlatform.Weibo,
+           addressablesVariant: Flavour.EAddressablesVariant.CN,
+           isSIWAEnabled: IsSIWAEnabled(devicePlatform));
+    }    
 #endregion
 }
