@@ -11,7 +11,7 @@ public class FlavourFactory
         return new Flavour();
     }
 
-    public void SetupFlavour(Flavour flavour, string countryCode, Setting_EDevicePlatform devicePlatform)
+    public void SetupFlavourBasedOnCriteria(Flavour flavour, string countryCode, Setting_EDevicePlatform devicePlatform)
     {        
         if (!Catalog_IsInitialized())
         {

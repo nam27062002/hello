@@ -84,7 +84,7 @@ public class FlavourManager
        
         // The flavour to apply depends on the country code that the device had when the user installed the game.
         // We want the user to stick to the same flavour from installation on
-        m_factory.SetupFlavour(m_currentFlavour, countryCode, GetDevicePlatform());
+        m_factory.SetupFlavourBasedOnCriteria(m_currentFlavour, countryCode, GetDevicePlatform());
     }
 
     /// <summary>
