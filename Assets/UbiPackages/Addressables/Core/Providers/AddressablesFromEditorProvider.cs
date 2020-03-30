@@ -54,7 +54,7 @@ public class AddressablesFromEditorProvider : AddressablesProvider
     {
         if (CanLog())
         {
-            Log("LoadAsset by Editor provider " + entry.AssetName);
+            Log("LoadAsset by Editor provider " + entry.FullId);
         }
 
         return AssetDatabase.LoadAssetAtPath<T>(GetPath(entry));

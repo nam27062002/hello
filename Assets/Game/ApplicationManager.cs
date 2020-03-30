@@ -13,7 +13,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
+
 using UnityEngine;
+
 /// <summary>
 /// This class is responsible for handling stuff related to the whole application in a high level. For example if an analytics event has to be sent when the application is paused or resumed
 /// you should send that event from here. It also offers a place where to initialize stuff only once regardless the amount of times the flow leads the user to the Loading scene.
@@ -46,7 +49,12 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     public Mode appMode
     {
     	get{ return m_appMode; }
-    }    
+    }
+
+	private CultureInfo m_originalCulture = CultureInfo.CurrentCulture;
+	public CultureInfo originalCulture {
+		get { return m_originalCulture; }
+	}
 
     /// <summary>
 	/// Initialization. This method will be called only once regardless the amount of times the user is led to the Loading scene.
@@ -67,7 +75,12 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
             DebugSettings.Init();
         }
 
-        Reset();
+		// [AOC] To make sure we have a solid ToString() and Parse() systems through different platforms and locales, force it to Invariant
+		m_originalCulture = CultureInfo.CurrentCulture;	// Store original
+		CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
+		//CultureInfo.CurrentCulture = CultureInfo.CreateSpecificCulture("fr-FR");	// [AOC] For testing only!!
+
+		Reset();
 
         FGOL.Plugins.Native.NativeBinding.Instance.DontBackupDirectory(Application.persistentDataPath);                
 
@@ -128,6 +141,9 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     protected override void OnDestroy()
     {
         base.OnDestroy();
+
+		// [AOC] Restore original culture. Don't think it's needed, but just in case
+		CultureInfo.CurrentCulture = m_originalCulture;
 
         Messenger.RemoveListener(MessengerEvents.GAME_COUNTDOWN_STARTED, Game_OnCountdownStarted);
         Broadcaster.RemoveListener(BroadcastEventType.GAME_PAUSED, this);

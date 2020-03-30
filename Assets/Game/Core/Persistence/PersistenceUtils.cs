@@ -2,6 +2,10 @@
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+using System;
+using System.Globalization;
+using System.ComponentModel;
+
 public class PersistenceUtils
 {
     // Path where the data files are stored
@@ -201,4 +205,151 @@ public class PersistenceUtils
         _persistenceData.Merge(_data.ToString());
         _persistenceData.Save(SaveUtilities.GetSavePath(_profileName));
     }
+
+	//------------------------------------------------------------------------//
+	// FORMATTING UTILS														  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Format the given object into a string representation to inject into Persistence 
+	/// and Server Communication JSONs.
+	/// </summary>
+	/// <param name="_value">The object to be formatted.</param>
+	/// <returns>A string representation of the input object, safe for Persistence/Server parsing.</returns>
+	public static string SafeToString(IConvertible _value) {
+		// IConvertible interface makes it easy for us! ^^
+		return _value.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE);
+	}
+
+	/// <summary>
+	/// Parse the given string using Persistence and Server Comms formatting.
+	/// If it fails, try using device's local formatting.
+	/// </summary>
+	/// <typeparam name="T">The type we want to parse.</typeparam>
+	/// <param name="_toParse">The string to be parsed.</param>
+	/// <returns>Parsed value. Will be the default value of <typeparamref name="T"/> if parsing not successful.</returns>
+	public static T SafeParse<T>(string _toParse) where T : IConvertible {
+		// Aux vars
+		T val;
+
+		// Try first with invariant culture
+		if(TryParse<T>(_toParse, PersistenceFacade.JSON_FORMATTING_CULTURE, out val)) {
+			return val;
+		}
+
+		// Try with local culture
+		else if(TryParse<T>(_toParse, ApplicationManager.instance.originalCulture, out val)) {
+			return val;
+		}
+
+		// Couldn't parse input string, return default value for this type
+		return default(T);
+	}
+
+	/// <summary>
+	/// Generic version of the TryParse method for IConvertibles.
+	/// </summary>
+	/// <typeparam name="T">The type we want to parse.</typeparam>
+	/// <param name="_toParse">The string to be parsed.</param>
+	/// <param name="_format">Culture to be used for the parsing.</param>
+	/// <param name="_val">Parsed value. Will have the default value of <typeparamref name="T"/> if parsing not successful.</param>
+	/// <returns>Whether the parsing was successful or not.</returns>
+	public static bool TryParse<T>(string _toParse, IFormatProvider _format, out T _val) where T : IConvertible {
+		// [AOC] Because TryParse methods are not generic, have different signatures and don't implement any interface,
+		//		 there is no simpler way than going type by type and invoke the corresponding TryParse method.
+		//		 Luckily for us, the IConvertible interface makes this a bit easier for us.
+		// Based on https://stackoverflow.com/questions/10574504/how-to-use-t-tryparse-in-a-generic-method-while-t-is-either-double-or-int/10575011
+		bool success = false;
+		T parsedValue = default(T);
+		TypeCode typeCode = parsedValue.GetTypeCode();
+		switch(typeCode) {
+			// aka bool
+			case TypeCode.Boolean: {
+				success = Boolean.TryParse(_toParse, out Boolean v);
+				parsedValue = (T)Convert.ChangeType(v, typeCode);
+			} break;
+
+			// aka char
+			case TypeCode.Char: {
+				success = Char.TryParse(_toParse, out Char v);
+				parsedValue = (T)Convert.ChangeType(v, typeCode);
+			} break;
+
+			// aka sbyte
+			case TypeCode.SByte: {
+				success = SByte.TryParse(_toParse, NumberStyles.Any, _format, out SByte v);
+				parsedValue = (T)Convert.ChangeType(v, typeCode);
+			} break;
+
+			// aka byte
+			case TypeCode.Byte: {
+				success = Byte.TryParse(_toParse, NumberStyles.Any, _format, out Byte v);
+				parsedValue = (T)Convert.ChangeType(v, typeCode);
+			} break;
+
+			// aka short
+			case TypeCode.Int16: {
+				success = Int16.TryParse(_toParse, NumberStyles.Any, _format, out Int16 v);
+				parsedValue = (T)Convert.ChangeType(v, typeCode);
+			} break;
+
+			// aka ushort
+			case TypeCode.UInt16: {
+				success = UInt16.TryParse(_toParse, NumberStyles.Any, _format, out UInt16 v);
+				parsedValue = (T)Convert.ChangeType(v, typeCode);
+			} break;
+
+			// aka int
+			case TypeCode.Int32: {
+				success = Int32.TryParse(_toParse, NumberStyles.Any, _format, out Int32 v);
+				parsedValue = (T)Convert.ChangeType(v, typeCode);
+			} break;
+
+			// aka uint
+			case TypeCode.UInt32: {
+				success = UInt32.TryParse(_toParse, NumberStyles.Any, _format, out UInt32 v);
+				parsedValue = (T)Convert.ChangeType(v, typeCode);
+			} break;
+
+			// aka long
+			case TypeCode.Int64: {
+				success = Int64.TryParse(_toParse, NumberStyles.Any, _format, out Int64 v);
+				parsedValue = (T)Convert.ChangeType(v, typeCode);
+			} break;
+
+			// aka ulong
+			case TypeCode.UInt64: {
+				success = UInt64.TryParse(_toParse, NumberStyles.Any, _format, out UInt64 v);
+				parsedValue = (T)Convert.ChangeType(v, typeCode);
+			} break;
+
+			// aka float
+			case TypeCode.Single: {
+				success = Single.TryParse(_toParse, NumberStyles.Any, _format, out Single v);
+				parsedValue = (T)Convert.ChangeType(v, typeCode);
+			} break;
+
+			// aka double
+			case TypeCode.Double: {
+				success = Double.TryParse(_toParse, NumberStyles.Any, _format, out Double v);
+				parsedValue = (T)Convert.ChangeType(v, typeCode);
+			} break;
+
+			// aka decimal
+			case TypeCode.Decimal: {
+				success = Decimal.TryParse(_toParse, NumberStyles.Any, _format, out Decimal v);
+				parsedValue = (T)Convert.ChangeType(v, typeCode);
+			} break;
+
+			case TypeCode.DateTime: {
+				success = DateTime.TryParse(_toParse, _format, DateTimeStyles.None, out DateTime v);
+				parsedValue = (T)Convert.ChangeType(v, typeCode);
+			} break;
+		}
+
+		// Save parsed value to out parameter
+		_val = parsedValue;
+
+		// Done! Return success
+		return success;
+	}
 }

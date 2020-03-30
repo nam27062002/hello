@@ -109,7 +109,7 @@ public class DragonStatData {
 	public void Load(SimpleJSON.JSONNode _data) {
 		// Level
 		if(_data.ContainsKey("level")) {
-			level = _data["level"].AsInt;
+			level = PersistenceUtils.SafeParse<int>(_data["level"]);
 		} else {
 			level = 0;
 		}
@@ -124,7 +124,7 @@ public class DragonStatData {
 		SimpleJSON.JSONClass data = new SimpleJSON.JSONClass();
 
 		// Level
-		data.Add("level", level);
+		data.Add("level", PersistenceUtils.SafeToString(level));
 
 		// Done!
 		return data;

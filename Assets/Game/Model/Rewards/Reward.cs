@@ -103,7 +103,7 @@ namespace Metagame {
 			}
 
 			if (_data.ContainsKey("amount")) {
-				rewardData.amount = _data["amount"].AsLong;
+				rewardData.amount = PersistenceUtils.SafeParse<long>(_data["amount"]);
 			}
 
 			Reward newReward = CreateFromData(rewardData, _economyGroup, _source);

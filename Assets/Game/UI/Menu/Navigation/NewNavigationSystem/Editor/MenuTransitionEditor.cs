@@ -1,4 +1,4 @@
-// TransitionEditor.cs
+    // TransitionEditor.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 05/02/2018.
@@ -86,11 +86,30 @@ public class TransitionEditor : ExtendedPropertyDrawer {
 			bool loop = _property.Next(true);	// Enter to the first level of depth
 			while(loop) {
 				// Properties requiring special treatment
+				if (_property.name == "pauseDuration")
+				{
+					if (showOverlay)
+					{
+						Rect labelPos = new Rect(m_pos);
+						labelPos.width = EditorGUIUtility.labelWidth;
+						EditorGUI.PrefixLabel(labelPos, new GUIContent(_property.displayName));
 
+
+						Rect valuePos = new Rect(m_pos);
+						valuePos.x = labelPos.x + labelPos.width;
+						valuePos.width = 100;
+						SerializedProperty valueProp = m_rootProperty.FindPropertyRelative("pauseDuration");
+						EditorGUI.PropertyField(valuePos, valueProp, GUIContent.none, true);
+
+						AdvancePos();
+					}
+				}
 				// Duration: Enabled?
-				if(_property.name == "overrideDuration") {
+				else if (_property.name == "overrideDuration")
+				{
 					// Don't show if using overlay
-					if(!showOverlay) {
+					if (!showOverlay)
+					{
 						// Prefix label
 						Rect labelPos = new Rect(m_pos);
 						labelPos.width = EditorGUIUtility.labelWidth;
@@ -108,13 +127,15 @@ public class TransitionEditor : ExtendedPropertyDrawer {
 						_property.boolValue = EditorGUI.Toggle(togglePos, _property.boolValue);
 
 						// Disable group and value selector
-						EditorGUI.BeginDisabledGroup(!_property.boolValue); {
+						EditorGUI.BeginDisabledGroup(!_property.boolValue);
+						{
 							Rect valuePos = new Rect(m_pos);
 							valuePos.x = togglePos.x + togglePos.width;
 							valuePos.width = m_pos.width - togglePos.width - labelPos.width;
 							SerializedProperty valueProp = m_rootProperty.FindPropertyRelative("duration");
 							EditorGUI.PropertyField(valuePos, valueProp, GUIContent.none, true);
-						} EditorGUI.EndDisabledGroup();
+						}
+						EditorGUI.EndDisabledGroup();
 
 						// Restore indentation and advance line
 						EditorGUI.indentLevel = indentBackup;
@@ -123,9 +144,11 @@ public class TransitionEditor : ExtendedPropertyDrawer {
 				}
 
 				// Duration: Enabled?
-				else if(_property.name == "overrideEase") {
+				else if (_property.name == "overrideEase")
+				{
 					// Don't show if using overlay
-					if(!showOverlay) {
+					if (!showOverlay)
+					{
 						// Prefix label
 						Rect labelPos = new Rect(m_pos);
 						labelPos.width = EditorGUIUtility.labelWidth;
@@ -143,7 +166,8 @@ public class TransitionEditor : ExtendedPropertyDrawer {
 						_property.boolValue = EditorGUI.Toggle(togglePos, _property.boolValue);
 
 						// Disable group and value selector
-						EditorGUI.BeginDisabledGroup(!_property.boolValue); {
+						EditorGUI.BeginDisabledGroup(!_property.boolValue);
+						{
 							Rect valuePos = new Rect(m_pos);
 							valuePos.x = togglePos.x + togglePos.width;
 							valuePos.width = m_pos.width - togglePos.width - labelPos.width;
@@ -152,7 +176,8 @@ public class TransitionEditor : ExtendedPropertyDrawer {
 							// [AOC] Use enum field rather than property field because in this case we don't want to see the curve preview provided by the Ease custom property drawer
 							//EditorGUI.PropertyField(valuePos, valueProp, GUIContent.none, true);
 							valueProp.enumValueIndex = (int)(Ease)EditorGUI.EnumPopup(valuePos, GUIContent.none, (Ease)System.Enum.GetValues(typeof(Ease)).GetValue(valueProp.enumValueIndex));
-						} EditorGUI.EndDisabledGroup();
+						}
+						EditorGUI.EndDisabledGroup();
 
 						// Restore indentation and advance line
 						EditorGUI.indentLevel = indentBackup;
@@ -163,10 +188,12 @@ public class TransitionEditor : ExtendedPropertyDrawer {
 				// Path intial and final points: 
 				// - Don't show if path not defined
 				// - Show a list of points to choose
-				else if((_property.name == "initialPathPoint"
-				|| _property.name == "finalPathPoint")) {
+				else if ((_property.name == "initialPathPoint"
+				|| _property.name == "finalPathPoint"))
+				{
 					// Don't show if using overlay
-					if(!showOverlay) {
+					if (!showOverlay)
+					{
 						// Indented
 						EditorGUI.indentLevel++;
 
@@ -175,33 +202,41 @@ public class TransitionEditor : ExtendedPropertyDrawer {
 
 						// Don't display initial/final points if path is not assigned
 						BezierCurve path = (BezierCurve)pathProp.objectReferenceValue;
-						if(path != null) {
+						if (path != null)
+						{
 							// Let the player choose between all the named points in the curve
 							int selectedIdx = -1;
 							List<string> optionsList = new List<string>();
-							for(int i = 0; i < path.points.Count; ++i) {
+							for (int i = 0; i < path.points.Count; ++i)
+							{
 								// Skip points with no custom name
-								if(!string.IsNullOrEmpty(path.points[i].name)) {
+								if (!string.IsNullOrEmpty(path.points[i].name))
+								{
 									// Add option
 									optionsList.Add(path.points[i].name);
 
 									// Is it the current selected value?
-									if(string.Equals(path.points[i].name, _property.stringValue)) {
+									if (string.Equals(path.points[i].name, _property.stringValue))
+									{
 										selectedIdx = optionsList.Count - 1;
 									}
 								}
 							}
 
 							// If the curve has no named points, show an error message instead
-							if(optionsList.Count == 0) {
+							if (optionsList.Count == 0)
+							{
 								// Error message
 								Rect pos = EditorGUI.PrefixLabel(m_pos, processedProps, new GUIContent(_property.displayName));
 								EditorGUI.HelpBox(pos, "Selected curve has no NAMED control points!", MessageType.Error);
-							} else {
+							}
+							else
+							{
 								// Display the list and store new value
 								m_pos.height = EditorStyles.popup.lineHeight + 5;   // [AOC] Default popup field height + some margin
 								int newSelectedIdx = EditorGUI.Popup(m_pos, _property.displayName, selectedIdx, optionsList.ToArray());
-								if(selectedIdx != newSelectedIdx) {
+								if (selectedIdx != newSelectedIdx)
+								{
 									_property.stringValue = optionsList[newSelectedIdx];
 								}
 							}
@@ -214,9 +249,11 @@ public class TransitionEditor : ExtendedPropertyDrawer {
 				}
 
 				// Path: remark that it's optional
-				else if(_property.name == "path") {
+				else if (_property.name == "path")
+				{
 					// Don't show if using overlay
-					if(!showOverlay) {
+					if (!showOverlay)
+					{
 						// Add comment
 						// [AOC] Compute required height to draw the text using our custom box style with the current inspector window width
 						GUIContent content = new GUIContent("If path is not defined, camera position will be linearly interpolated between snap points\n" +
@@ -231,14 +268,16 @@ public class TransitionEditor : ExtendedPropertyDrawer {
 				}
 
 				// Properties to skip (already processed under other properties
-				else if(_property.name == "destination"
+				else if (_property.name == "destination"
 					 || _property.name == "duration"
-					 || _property.name == "ease") {
+					 || _property.name == "ease")
+				{
 					// Do nothing
 				}
 
 				// Default
-				else {
+				else
+				{
 					DrawAndAdvance(_property);
 				}
 

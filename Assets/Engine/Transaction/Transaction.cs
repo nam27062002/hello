@@ -248,7 +248,7 @@ public class Transaction
                     }
                     else
                     {
-                        amount = json[key].AsInt;
+                        amount = PersistenceUtils.SafeParse<int>(json[key]);
 
                         // Checks if there's already an object of this currency type
                         currentReward = GetRewardCurrency(currency);
@@ -298,7 +298,7 @@ public class Transaction
                         {
                             itemNode = itemsArray[i];
 
-                            amount = itemNode[KEY_ITEM_AMOUNT].AsInt;
+                            amount = PersistenceUtils.SafeParse<int>(itemNode[KEY_ITEM_AMOUNT]);
                             if (amount > 0)
                             {   
 								// An issue was reported (HDK-2164) caused by using multiegg reward implementation. We're fixing that issue, in the meantime we just avoid using it by
@@ -345,7 +345,7 @@ public class Transaction
                 if (entry.Value != null)
                 {
                     key = GetKeyFromCurrency(entry.Key);
-                    returnValue[key] = entry.Value.amount.ToString();
+                    returnValue[key] = PersistenceUtils.SafeToString(entry.Value.amount);
                 }
             }           
         }
@@ -368,7 +368,7 @@ public class Transaction
                         itemNode = new JSONClass();
                         itemNode[KEY_ITEM_SKU] = m_rewardItems[i].data.sku;
                         itemNode[KEY_ITEM_TYPE] = m_rewardItems[i].data.typeCode;
-                        itemNode[KEY_ITEM_AMOUNT] = m_rewardItems[i].data.amount.ToString();
+                        itemNode[KEY_ITEM_AMOUNT] = PersistenceUtils.SafeToString(m_rewardItems[i].data.amount);
 
                         items.Add(itemNode);
                     }

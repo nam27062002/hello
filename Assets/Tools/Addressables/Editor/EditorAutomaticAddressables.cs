@@ -3,8 +3,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using UnityEditor;
 using SimpleJSON;
+using UnityEditor;
 
 
 public static class EditorAutomaticAddressables {
@@ -16,10 +16,43 @@ public static class EditorAutomaticAddressables {
 
     private static string[] LOCAL_DRAGONS = { "dragon_baby", "dragon_crocodile", "dragon_reptile" };
 
+    private static Dictionary<FlavourFactory.Setting_EAddressablesVariant, string> s_flavourAddressablesVariantToAssetFolder;
+
+    private static void Flavour_Init()
+    {
+        if (s_flavourAddressablesVariantToAssetFolder == null)
+        {
+            s_flavourAddressablesVariantToAssetFolder = new Dictionary<FlavourFactory.Setting_EAddressablesVariant, string>();
+            s_flavourAddressablesVariantToAssetFolder.Add(FlavourFactory.Setting_EAddressablesVariant.WW, "");
+
+            // flavourAddressablesVariant, folder name where the assets for flavourSku are stored in
+            s_flavourAddressablesVariantToAssetFolder.Add(FlavourFactory.Setting_EAddressablesVariant.CN, "flavour_china");
+        }
+    }
+
+    public static string FlavourAddressablesVariantToAssetFolder(FlavourFactory.Setting_EAddressablesVariant flavourAddressablesVariant)
+    {
+        string returnValue = "";
+
+        Flavour_Init();
+       
+        if (s_flavourAddressablesVariantToAssetFolder.ContainsKey(flavourAddressablesVariant))
+        {
+            returnValue = s_flavourAddressablesVariantToAssetFolder[flavourAddressablesVariant];
+        }
+        else
+        {
+            Debug.LogError("No folder found for flavour addressables variant: " + flavourAddressablesVariant + " so " + flavourAddressablesVariant + " is used as asset folder");
+            returnValue = FlavourFactory.Setting_EAddressablesVariantToString(flavourAddressablesVariant);                
+        }
+
+        return returnValue;
+    }
 
     public static JSONClass BuildRestoreCatalog() {
-        List<AddressablesCatalogEntry> entryList = new List<AddressablesCatalogEntry>();
-        GetEntriesFromDirectory(new DirectoryInfo("Assets"), false, entryList, null);
+        List<AddressablesCatalogEntry> entryList;
+        List<string> bundleList;
+        GetEntriesPrefab(out entryList, out bundleList);
 
         JSONClass catalog = new JSONClass();
         {
@@ -33,23 +66,7 @@ public static class EditorAutomaticAddressables {
         }
 
         return catalog;
-    }
-
-    /*private static EditorAssetBundlesConfig GetEditorAssetBundlesConfig()
-    {
-        EditorAssetBundlesConfig returnValue = new EditorAssetBundlesConfig();
-
-        returnValue.SetAssetBundleLocation("ab_assets_castle", EditorAssetBundlesConfigEntry.ELocation.Remote, true);
-        returnValue.SetAssetBundleLocation("ab_sc_castle", EditorAssetBundlesConfigEntry.ELocation.Remote, true);
-
-        returnValue.SetAssetBundleLocation("ab_assets_village", EditorAssetBundlesConfigEntry.ELocation.Resources, true);
-        returnValue.SetAssetBundleLocation("ab_sc_village", EditorAssetBundlesConfigEntry.ELocation.Resources, true);
-
-        returnValue.SetAssetBundleLocation("ab_assets_village-castle", EditorAssetBundlesConfigEntry.ELocation.Remote, true);
-        returnValue.SetAssetBundleLocation("ab_assets_dark", EditorAssetBundlesConfigEntry.ELocation.Local, true);
-
-        return returnValue;
-    }*/
+    }  
 
     public static JSONClass BuildCatalog(bool _allBundlesLocal) {
         List<AddressablesCatalogEntry> entryList;
@@ -115,104 +132,91 @@ public static class EditorAutomaticAddressables {
                 }
 
             }
-            catalog.Add("groups", groups);
-            
-            
-            
-            
+            catalog.Add("groups", groups);                   
         }
 
         return catalog;
     }
 
 
+    private static void GetEntriesPrefab(out List<AddressablesCatalogEntry> entryList, out List<string> bundleList) {
+        entryList = new List<AddressablesCatalogEntry>();
+        bundleList = new List<string>();
 
+        Flavour_Init();
 
-    private static void GetEntriesAll(out List<AddressablesCatalogEntry> _entries, out List<string> _bundles) {
+        foreach (KeyValuePair<FlavourFactory.Setting_EAddressablesVariant, string> pair in s_flavourAddressablesVariantToAssetFolder)
+        {
+            GetFlavourEntriesPrefab(pair.Key, ref entryList, ref bundleList);
+        }        
+    }    
+
+    private static void GetFlavourEntriesPrefab(FlavourFactory.Setting_EAddressablesVariant flavourSku, ref List<AddressablesCatalogEntry> _entries, ref List<string> _bundles) {
         List<AddressablesCatalogEntry> entries = new List<AddressablesCatalogEntry>();
         HashSet<string> bundlesSet = new HashSet<string>();
 
-        GetEntriesFromDirectory(new DirectoryInfo("Assets/AI"), false, entries, bundlesSet);
-        GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/3D/Gameplay/Entities/Assets/"), false, entries, bundlesSet);
-        GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/3D/Gameplay/Entities/PrefabsMenu/"), false, entries, bundlesSet);
-        GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/Particles/"), false, entries, bundlesSet);
-        GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/VFX/"), false, entries, bundlesSet);
-        GetEntriesFromDirectory(new DirectoryInfo("Assets/Game/Scenes/Levels/"), false, entries, bundlesSet);
-        GetEntriesFromDirectory(new DirectoryInfo("Assets/" + IEntity.ENTITY_PREFABS_PATH), true, entries, bundlesSet);
-        GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/3D/Gameplay/Blockers/Prefabs/"), false, entries, bundlesSet);
-        GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/3D/Gameplay/Equipable/items/NPC/"), false, entries, bundlesSet);
-        GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/3D/Gameplay/Particles/"), false, entries, bundlesSet);
-        GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/3D/Gameplay/Projectiles/"), false, entries, bundlesSet);
-        GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/3D/Gameplay/Dragons/Prefabs/"), false, entries, bundlesSet);
-        GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/3D/Gameplay/Dragons/Skins/"), false, entries, bundlesSet);
-        GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/3D/Gameplay/Dragons/Items/"), false, entries, bundlesSet);
-        GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/UI/Metagame/Dragons/Disguises/"), false, entries, bundlesSet);
-        GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/3D/Gameplay/Pets/Prefabs/"), false, entries, bundlesSet);
-        GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/UI/Metagame/Pets/"), false, entries, bundlesSet);
-
-        // AR (only for iOS)
-        GetEntriesFromDirectory(new DirectoryInfo("Assets/PlatformResources/iOS/AR/Animojis/"), false, entries, bundlesSet, null, BuildTarget.iOS);
-
-        _entries = entries;
-        _bundles = bundlesSet.ToList();
-    }
-
-    private static void GetEntriesPrefab(out List<AddressablesCatalogEntry> _entries, out List<string> _bundles) {
-        List<AddressablesCatalogEntry> entries = new List<AddressablesCatalogEntry>();
-        HashSet<string> bundlesSet = new HashSet<string>();
-
+        string rootPath = "Assets/";
+        rootPath += FlavourAddressablesVariantToAssetFolder(flavourSku) + "/";
 
         System.Type[] instanciableTypesAnimationControllers = new System.Type[] { typeof(UnityEngine.AnimatorOverrideController),
                                                                                   typeof(UnityEditor.Animations.AnimatorController)};
-        GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/3D/Gameplay/Dragons/"), false, entries, bundlesSet, instanciableTypesAnimationControllers);
-
-
+        GetEntriesFromDirectory(flavourSku, rootPath + "Art/3D/Gameplay/Dragons/", false, entries, bundlesSet, instanciableTypesAnimationControllers);        
 
         System.Type[] instanciableTypes = new System.Type[] { typeof(UnityEngine.GameObject), typeof(UnityEditor.SceneAsset) };
-        GetEntriesFromDirectory(new DirectoryInfo("Assets/AI"), false, null, bundlesSet);
-        GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/3D/Gameplay/Entities"), false, null, bundlesSet);
-        GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/3D/Gameplay/Entities/PrefabsMenu/"), false, entries, bundlesSet, instanciableTypes);
-        GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/Particles/"), false, null, bundlesSet);
-        GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/VFX/"), false, null, bundlesSet);
-        GetEntriesFromDirectory(new DirectoryInfo("Assets/Game/Scenes/Levels/"), false, entries, bundlesSet, instanciableTypes);
-        GetEntriesFromDirectory(new DirectoryInfo("Assets/" + IEntity.ENTITY_PREFABS_PATH), true, entries, bundlesSet, instanciableTypes);
-        GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/3D/Gameplay/Blockers/Prefabs/"), false, entries, bundlesSet);
-        GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/3D/Gameplay/Equipable/items/NPC/"), false, entries, bundlesSet, instanciableTypes);
-        GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/3D/Gameplay/Particles/"), false, entries, bundlesSet, instanciableTypes);
-        GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/3D/Gameplay/Projectiles/"), false, entries, bundlesSet, instanciableTypes);
+        GetEntriesFromDirectory(flavourSku, rootPath + "AI", false, null, bundlesSet);
+        GetEntriesFromDirectory(flavourSku, rootPath + "Art/3D/Gameplay/Entities", false, null, bundlesSet);
+        GetEntriesFromDirectory(flavourSku, rootPath + "Art/3D/Gameplay/Entities/PrefabsMenu/", false, entries, bundlesSet, instanciableTypes);
+        GetEntriesFromDirectory(flavourSku, rootPath + "Art/Particles/", false, null, bundlesSet);
+        GetEntriesFromDirectory(flavourSku, rootPath + "Art/VFX/", false, null, bundlesSet);
+        GetEntriesFromDirectory(flavourSku, rootPath + "Game/Scenes/Levels/", false, entries, bundlesSet, instanciableTypes);
+        GetEntriesFromDirectory(flavourSku, rootPath + IEntity.ENTITY_PREFABS_PATH, true, entries, bundlesSet, instanciableTypes);
+        GetEntriesFromDirectory(flavourSku, rootPath + "Art/3D/Gameplay/Blockers/Prefabs/", false, entries, bundlesSet);
+        GetEntriesFromDirectory(flavourSku, rootPath + "Art/3D/Gameplay/Equipable/items/NPC/", false, entries, bundlesSet, instanciableTypes);
+        GetEntriesFromDirectory(flavourSku, rootPath + "Art/3D/Gameplay/Particles/", false, entries, bundlesSet, instanciableTypes);
+        GetEntriesFromDirectory(flavourSku, rootPath + "Art/3D/Gameplay/Projectiles/", false, entries, bundlesSet, instanciableTypes);
 
         // Add all dragon bundles to bundleSet and (prefabs and materials) to entries
         System.Type[] instanciableTypesAndMaterials = new System.Type[] { typeof(UnityEngine.GameObject), typeof(UnityEditor.SceneAsset), typeof( UnityEngine.Material ) };
-        GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/3D/Gameplay/Dragons/Prefabs/"), false, entries, bundlesSet, instanciableTypes);
-        GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/3D/Gameplay/Dragons/Skins/"), false, entries, bundlesSet, instanciableTypesAndMaterials);
-        GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/3D/Gameplay/Dragons/Items/"), false, entries, bundlesSet, instanciableTypes);
+        GetEntriesFromDirectory(flavourSku, rootPath + "Art/3D/Gameplay/Dragons/Prefabs/", false, entries, bundlesSet, instanciableTypes);
+        GetEntriesFromDirectory(flavourSku, rootPath + "Art/3D/Gameplay/Dragons/Skins/", false, entries, bundlesSet, instanciableTypesAndMaterials);
+        GetEntriesFromDirectory(flavourSku, rootPath + "Art/3D/Gameplay/Dragons/Items/", false, entries, bundlesSet, instanciableTypes);
 
            // Disguise icons
         System.Type[] instanciableTypesTextures = new System.Type[] { typeof(UnityEngine.Texture2D) };
-        GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/UI/Metagame/Dragons/Disguises/"), false, entries, bundlesSet, instanciableTypesTextures);
+        GetEntriesFromDirectory(flavourSku, rootPath + "Art/UI/Metagame/Dragons/Disguises/", false, entries, bundlesSet, instanciableTypesTextures);
 
         // Add all pets bundles
-        GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/3D/Gameplay/Pets/Prefabs/"), false, entries, bundlesSet, instanciableTypes);
-        GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/UI/Metagame/Pets/"), false, entries, bundlesSet, instanciableTypesTextures);
+        GetEntriesFromDirectory(flavourSku, rootPath + "Art/3D/Gameplay/Pets/Prefabs/", false, entries, bundlesSet, instanciableTypes);
+        GetEntriesFromDirectory(flavourSku, rootPath + "Art/UI/Metagame/Pets/", false, entries, bundlesSet, instanciableTypesTextures);
 
         // AR (only for iOS)
-        GetEntriesFromDirectory(new DirectoryInfo("Assets/PlatformResources/iOS/AR/Animojis/"), false, entries, bundlesSet, instanciableTypes, BuildTarget.iOS);
+        GetEntriesFromDirectory(flavourSku, rootPath + "PlatformResources/iOS/AR/Animojis/", false, entries, bundlesSet, instanciableTypes, BuildTarget.iOS);
 
         // You can also add assets that are supposed to be loaded from Resources
         // Example: This added all assets in Assets/Art/R folder and its subfolders. Since we pass false to _addLastFolder directory the name of the asset will be used as id in Addressables catalog.
-        //GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/R"), false, entries, bundlesSet, instanciableTypes, BuildTarget.NoTarget, AddressablesTypes.ELocationType.Resources);
+        //GetEntriesFromDirectory("Assets/Art/R", false, entries, bundlesSet, instanciableTypes, BuildTarget.NoTarget, AddressablesTypes.ELocationType.Resources);
 
-        _entries = entries;
-        _bundles = bundlesSet.ToList();
+        UbiListUtils.AddRange(_entries, entries, false, true);
+        _bundles.AddRange(bundlesSet);        
     }
 
-    private static void GetEntriesFromDirectory(DirectoryInfo _directory, bool _addLastFolder,  List<AddressablesCatalogEntry> _entries, HashSet<string> _bundles, System.Type[] _allowedTypes = null, BuildTarget platform = BuildTarget.NoTarget,
-                                                AddressablesTypes.ELocationType locationType = AddressablesTypes.ELocationType.AssetBundles, string defineSymbol = null, bool addToCatalogPlayer = true) {
+    private static void GetEntriesFromDirectory(FlavourFactory.Setting_EAddressablesVariant flavourAddressablesVariant, string _directoryPath, bool _addLastFolder, List<AddressablesCatalogEntry> _entries, HashSet<string> _bundles, System.Type[] _allowedTypes = null, BuildTarget platform = BuildTarget.NoTarget,
+                                                AddressablesTypes.ELocationType locationType = AddressablesTypes.ELocationType.AssetBundles, string defineSymbol = null, bool addToCatalogPlayer = true)
+    {
+        if (!Directory.Exists(_directoryPath))
+            return;
+
+        DirectoryInfo _directory = new DirectoryInfo(_directoryPath);
+        GetEntriesFromDirectory(flavourAddressablesVariant, _directory, _addLastFolder, _entries, _bundles, _allowedTypes, platform, locationType, defineSymbol, addToCatalogPlayer);
+    }
+
+    private static void GetEntriesFromDirectory(FlavourFactory.Setting_EAddressablesVariant flavourAddressablesVariant, DirectoryInfo _directory, bool _addLastFolder,  List<AddressablesCatalogEntry> _entries, HashSet<string> _bundles, System.Type[] _allowedTypes = null, BuildTarget platform = BuildTarget.NoTarget,
+                                                AddressablesTypes.ELocationType locationType = AddressablesTypes.ELocationType.AssetBundles, string defineSymbol = null, bool addToCatalogPlayer = true) {       
         string platformAsString = (platform == BuildTarget.NoTarget) ? null : platform.ToString();
 
         DirectoryInfo[] directories = _directory.GetDirectories();
         foreach (DirectoryInfo directory in directories) {
-            GetEntriesFromDirectory(directory, _addLastFolder, _entries, _bundles, _allowedTypes, platform, locationType, defineSymbol, addToCatalogPlayer);
+            GetEntriesFromDirectory(flavourAddressablesVariant, directory, _addLastFolder, _entries, _bundles, _allowedTypes, platform, locationType, defineSymbol, addToCatalogPlayer);
         }
 
         FileInfo[] files = _directory.GetFiles();
@@ -249,9 +253,18 @@ public static class EditorAutomaticAddressables {
                         string variant = null;
                         for (int i = 0; i < VARIANTS.Length; ++i) {
                             if (filePath.Contains(VARIANTS_PATH[i])) {
-                                variant = VARIANTS[i];
+                                variant = "" + VARIANTS[i];
                                 break;
                             }
+                        }
+
+                        if (variant == null)
+                        {
+                            variant = FlavourFactory.Setting_EAddressablesVariantToString(flavourAddressablesVariant);
+                        }
+                        else
+                        {
+                            variant = FlavourFactory.Setting_EAddressablesVariantToString(flavourAddressablesVariant) + HDAddressablesManager.FLAVOUR_VARIANT_SEPARATOR + variant;
                         }
 
                         AddressablesCatalogEntry entry = new AddressablesCatalogEntry(id, variant, AssetDatabase.AssetPathToGUID(filePath), true, true, defineSymbol, addToCatalogPlayer) {

@@ -1235,16 +1235,17 @@ public class OfferPack {
 		string[] tokens = _str.Split(':');
 		Range r = new Range(0, float.MaxValue);
 
-		float val = r.min;
+		float val;
 		if(tokens.Length > 0) {
-			float.TryParse(tokens[0], NumberStyles.Any, CultureInfo.InvariantCulture, out val);
-			r.min = val;
+			if(PersistenceUtils.TryParse<float>(tokens[0], CultureInfo.InvariantCulture, out val)) {
+				r.min = val;
+			}
 		}
 
-		val = r.max;
 		if(tokens.Length > 1) {
-			float.TryParse(tokens[1], NumberStyles.Any, CultureInfo.InvariantCulture, out val);
-			r.max = val;
+			if(PersistenceUtils.TryParse<float>(tokens[1], CultureInfo.InvariantCulture, out val)) {
+				r.max = val;
+			}
 		}
 
 		return r;
@@ -1283,16 +1284,17 @@ public class OfferPack {
 		string[] tokens = _str.Split(':');
 		RangeInt r = new RangeInt(0, int.MaxValue);
 
-		int val = r.min;
+		int val;
 		if(tokens.Length > 0) {
-			int.TryParse(tokens[0], NumberStyles.Any, CultureInfo.InvariantCulture, out val);
-			r.min = val;
+			if(PersistenceUtils.TryParse<int>(tokens[0], CultureInfo.InvariantCulture, out val)) {
+				r.min = val;
+			}
 		}
 
-		val = r.max;
 		if(tokens.Length > 1) {
-			int.TryParse(tokens[1], NumberStyles.Any, CultureInfo.InvariantCulture, out val);
-			r.max = val;
+			if(PersistenceUtils.TryParse<int>(tokens[1], CultureInfo.InvariantCulture, out val)) {
+				r.max = val;
+			}
 		}
 
 		return r;
@@ -1499,35 +1501,35 @@ public class OfferPack {
 		// State
 		key = "state";
 		if(_data.ContainsKey(key)) {
-			m_state = (State)_data[key].AsInt;
+			m_state = (State)PersistenceUtils.SafeParse<int>(_data[key]);
 		}
 
 		// Purchase count
 		key = "purchaseCount";
 		if(_data.ContainsKey(key)) {
-			m_purchaseCount = _data[key].AsInt;
+			m_purchaseCount = PersistenceUtils.SafeParse<int>(_data[key]);
 		}
 
 		// View count
 		key = "viewCount";
 		if(_data.ContainsKey(key)) {
-			m_viewsCount = _data[key].AsInt;
+			m_viewsCount = PersistenceUtils.SafeParse<int>(_data[key]);
 		}
 
 		// Last view timestamp
 		key = "lastViewTimestamp";
 		if(_data.ContainsKey(key)) {
-			m_lastViewTimestamp = DateTime.Parse(_data[key], PersistenceFacade.JSON_FORMATTING_CULTURE);
+			m_lastViewTimestamp = PersistenceUtils.SafeParse<DateTime>(_data[key]);
 		}
 
 		// Timestamps
 		key = "activationTimestamp";
 		if(_data.ContainsKey(key)) {
-			m_activationTimestamp = DateTime.Parse(_data[key], PersistenceFacade.JSON_FORMATTING_CULTURE);
+			m_activationTimestamp = PersistenceUtils.SafeParse<DateTime>(_data[key]);
 		}
 		key = "endTimestamp";
 		if(_data.ContainsKey(key)) {
-			m_endTimestamp = DateTime.Parse(_data[key], PersistenceFacade.JSON_FORMATTING_CULTURE);
+			m_endTimestamp = PersistenceUtils.SafeParse<DateTime>(_data[key]);
 		}
 	}
 
@@ -1549,7 +1551,7 @@ public class OfferPack {
 		data.Add("sku", m_def.sku);
 
 		// State
-		data.Add("state", ((int)m_state).ToString(CultureInfo.InvariantCulture));
+		data.Add("state", PersistenceUtils.SafeToString((int)m_state));
 
 		// Optimize by storing less info for expired packs
 		bool expired = m_state == State.EXPIRED;
@@ -1557,20 +1559,20 @@ public class OfferPack {
 		// Timestamps
 		// Only store for timed offers, the rest will be activated upon loading depending on activation triggers
 		if(m_isTimed && !expired) {
-			data.Add("activationTimestamp", m_activationTimestamp.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
-			data.Add("endTimestamp", m_endTimestamp.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
+			data.Add("activationTimestamp", PersistenceUtils.SafeToString(m_activationTimestamp));
+			data.Add("endTimestamp", PersistenceUtils.SafeToString(m_endTimestamp));
 		}
 
 		// Purchase count - only if needed
 		if(m_purchaseCount > 0) {
-			data.Add("purchaseCount", m_purchaseCount.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
+			data.Add("purchaseCount", PersistenceUtils.SafeToString(m_purchaseCount));
 		}
 
 		// View count - only if needed
 		// Last view timestamp
 		if(m_viewsCount > 0 && !expired) {
-			data.Add("viewCount", m_viewsCount.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
-			data.Add("lastViewTimestamp", m_lastViewTimestamp.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
+			data.Add("viewCount", PersistenceUtils.SafeToString(m_viewsCount));
+			data.Add("lastViewTimestamp", PersistenceUtils.SafeToString(m_lastViewTimestamp));
 		}
 
         if ( m_type == Type.PUSHED ){
