@@ -22,7 +22,7 @@ using Firebase.Crashlytics;
 /// <summary>
 /// All cheats/shortcuts related to server.
 /// </summary>
-public class CPServerTab : MonoBehaviour {
+public class CPTechTab : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
