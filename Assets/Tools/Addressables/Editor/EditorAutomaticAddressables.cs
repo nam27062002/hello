@@ -242,7 +242,7 @@ public static class EditorAutomaticAddressables {
                     }
 
                     if (createEntry) {
-                        string assetName = FileUtils.GetPathWithoutExtension(file.Name);
+                        string assetName = Path.GetFileNameWithoutExtension(file.Name);
                         string assetPath = Path.GetDirectoryName(filePath);
                         string id = assetName;
 
