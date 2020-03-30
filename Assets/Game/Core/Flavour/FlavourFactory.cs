@@ -20,7 +20,7 @@ public class FlavourFactory
     private bool IsSIWAEnabled(FlavourSettings.EDevicePlatform devicePlatform)
     {       
 #if USE_SIWA        
-        return devicePlatform == FlavourFactory.Setting_EDevicePlatform.iOS;
+        return devicePlatform == FlavourSettings.EDevicePlatform.iOS;
 #else
         return false;
 #endif        
