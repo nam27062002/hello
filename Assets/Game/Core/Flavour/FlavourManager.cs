@@ -59,7 +59,7 @@ public class FlavourManager
 #if UNITY_ANDROID
         devicePlatform = FlavourFactory.Setting_EDevicePlatform.Android;
 #else
-        devicePlatform = FlavourFactory.Att_EDevicePlatform.iOS;
+        devicePlatform = FlavourFactory.Setting_EDevicePlatform.iOS;
 #endif
 
 #if UNITY_EDITOR
