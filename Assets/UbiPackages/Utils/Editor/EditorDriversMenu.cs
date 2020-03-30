@@ -317,26 +317,26 @@ public class EditorDriversMenu : MonoBehaviour
     [MenuItem(DRIVERS_PLATFORM_IOS)]
     public static void Platform_SetIOS()
     {
-        Platform_SetDevicePlatformString(FlavourFactory.SETTING_EDEVICEPLATFORM_IOS);
+        Platform_SetDevicePlatformString(FlavourSettings.DEVICEPLATFORM_IOS);
     }
 
     [MenuItem(DRIVERS_PLATFORM_IOS, true)]
     public static bool Platform_SetIOSValidate()
     {
-        Menu.SetChecked(DRIVERS_PLATFORM_IOS, Platform_GetDevicePlatformAsString() == FlavourFactory.SETTING_EDEVICEPLATFORM_IOS);
+        Menu.SetChecked(DRIVERS_PLATFORM_IOS, Platform_GetDevicePlatformAsString() == FlavourSettings.DEVICEPLATFORM_IOS);
         return true;
     }
 
     [MenuItem(DRIVERS_PLATFORM_ANDROID)]
     public static void Platform_SetAndroid()
     {
-        Platform_SetDevicePlatformString(FlavourFactory.SETTING_EDEVICEPLATFORM_ANDROID);
+        Platform_SetDevicePlatformString(FlavourSettings.DEVICEPLATFORM_ANDROID);
     }
 
     [MenuItem(DRIVERS_PLATFORM_ANDROID, true)]
     public static bool Platform_SetAndroidValidate()
     {
-        Menu.SetChecked(DRIVERS_COUNTRY_ON_INSTALL_CHINA, Platform_GetDevicePlatformAsString() == FlavourFactory.SETTING_EDEVICEPLATFORM_ANDROID);
+        Menu.SetChecked(DRIVERS_COUNTRY_ON_INSTALL_CHINA, Platform_GetDevicePlatformAsString() == FlavourSettings.DEVICEPLATFORM_ANDROID);
         return true;
     }
 #endregion

@@ -46,32 +46,32 @@ public class FlavourManager
         if (m_currentFlavour == null)
         {
             m_currentFlavour = m_factory.CreateFlavour();
-            SetupCurrentFlavour();            
+            SetupCurrentFlavour();
         }
 
         return m_currentFlavour;
     }
 
-    private FlavourFactory.Setting_EDevicePlatform GetDevicePlatform()
+    private FlavourSettings.EDevicePlatform GetDevicePlatform()
     {
-        FlavourFactory.Setting_EDevicePlatform devicePlatform;
+        FlavourSettings.EDevicePlatform devicePlatform;
 
 #if UNITY_ANDROID
-        devicePlatform = FlavourFactory.Setting_EDevicePlatform.Android;
+        devicePlatform = FlavourSettings.EDevicePlatform.Android;
 #else
-        devicePlatform = FlavourFactory.Setting_EDevicePlatform.iOS;
+        devicePlatform = FlavourSettings.EDevicePlatform.iOS;
 #endif
 
 #if UNITY_EDITOR
         // Cheat to override devicePlatform. Used to be able to test flavours that depend on device platform without switching platforms
         string value = Prefs_GetDevicePlatform();
-        if (value == FlavourFactory.SETTING_EDEVICEPLATFORM_IOS)
+        if (value == FlavourSettings.DEVICEPLATFORM_IOS)
         {
-            devicePlatform = FlavourFactory.Setting_EDevicePlatform.iOS;
+            devicePlatform = FlavourSettings.EDevicePlatform.iOS;
         }
-        else if (value == FlavourFactory.SETTING_EDEVICEPLATFORM_ANDROID)
+        else if (value == FlavourSettings.DEVICEPLATFORM_ANDROID)
         {
-            devicePlatform = FlavourFactory.Setting_EDevicePlatform.Android;
+            devicePlatform = FlavourSettings.EDevicePlatform.Android;
         }
 #endif
 
@@ -81,39 +81,23 @@ public class FlavourManager
     private void SetupCurrentFlavour()
     {
         string countryCode = PlatformUtils.Instance.Country_GetCodeOnInstall();
-       
+
         // The flavour to apply depends on the country code that the device had when the user installed the game.
         // We want the user to stick to the same flavour from installation on
         m_factory.SetupFlavourBasedOnCriteria(m_currentFlavour, countryCode, GetDevicePlatform());
     }
 
     /// <summary>
-    /// Sets <c>flavourSku</c> as the current flavour. This method should be used only as a cheat
-    /// </summary>
-    /// <param name="flavourSku"></param>
-    public void SetSkuAsCurrentFlavour(string flavourSku)
+    /// Sets <c>countryCode</c> as country code at installation time and recalculates flavour. This method should be used only as a cheat
+    /// </summary>   
+    public void SetCountryCodeOnInstall(string countryCode)
     {
         if (FeatureSettingsManager.AreCheatsEnabled)
-        {
-            if (m_currentFlavour != null && m_currentFlavour.Sku != flavourSku)
-            {
-                string countryCode = FlavourSkuToCountryCode(flavourSku);
-                PersistencePrefs.CountryCodeOnInstall = countryCode;
-                SetupCurrentFlavour();
-            }
+        {                      
+            PersistencePrefs.CountryCodeOnInstall = countryCode;
+            SetupCurrentFlavour();        
         }
-    }
-
-    private string FlavourSkuToCountryCode(string flavourSku)
-    {
-        // flavourSku is the same as the country code except for WW
-        return (string.IsNullOrEmpty(flavourSku) || flavourSku == FlavourFactory.CATALOG_SKU_WW) ? PlatformUtils.COUNTRY_CODE_WW_DEFAULT : flavourSku;
     }    
-
-    public List<string> GetFlavourSkus()
-    {
-        return m_factory.Catalog_GetSkus();
-    }
 
 #region prefs
 #if UNITY_EDITOR
