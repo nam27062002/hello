@@ -52,26 +52,26 @@ public class FlavourManager
         return m_currentFlavour;
     }
 
-    private FlavourSettings.EDevicePlatform GetDevicePlatform()
+    private Flavour.EDevicePlatform GetDevicePlatform()
     {
-        FlavourSettings.EDevicePlatform devicePlatform;
+        Flavour.EDevicePlatform devicePlatform;
 
 #if UNITY_ANDROID
-        devicePlatform = FlavourSettings.EDevicePlatform.Android;
+        devicePlatform = Flavour.EDevicePlatform.Android;
 #else
-        devicePlatform = FlavourSettings.EDevicePlatform.iOS;
+        devicePlatform = Flavour.EDevicePlatform.iOS;
 #endif
 
 #if UNITY_EDITOR
         // Cheat to override devicePlatform. Used to be able to test flavours that depend on device platform without switching platforms
         string value = Prefs_GetDevicePlatform();
-        if (value == FlavourSettings.DEVICEPLATFORM_IOS)
+        if (value == Flavour.DEVICEPLATFORM_IOS)
         {
-            devicePlatform = FlavourSettings.EDevicePlatform.iOS;
+            devicePlatform = Flavour.EDevicePlatform.iOS;
         }
-        else if (value == FlavourSettings.DEVICEPLATFORM_ANDROID)
+        else if (value == Flavour.DEVICEPLATFORM_ANDROID)
         {
-            devicePlatform = FlavourSettings.EDevicePlatform.Android;
+            devicePlatform = Flavour.EDevicePlatform.Android;
         }
 #endif
 

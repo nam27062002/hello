@@ -16,21 +16,21 @@ public static class EditorAutomaticAddressables {
 
     private static string[] LOCAL_DRAGONS = { "dragon_baby", "dragon_crocodile", "dragon_reptile" };
 
-    private static Dictionary<FlavourSettings.EAddressablesVariant, string> s_flavourAddressablesVariantToAssetFolder;
+    private static Dictionary<Flavour.EAddressablesVariant, string> s_flavourAddressablesVariantToAssetFolder;
 
     private static void Flavour_Init()
     {
         if (s_flavourAddressablesVariantToAssetFolder == null)
         {
-            s_flavourAddressablesVariantToAssetFolder = new Dictionary<FlavourSettings.EAddressablesVariant, string>();
-            s_flavourAddressablesVariantToAssetFolder.Add(FlavourSettings.EAddressablesVariant.WW, "");
+            s_flavourAddressablesVariantToAssetFolder = new Dictionary<Flavour.EAddressablesVariant, string>();
+            s_flavourAddressablesVariantToAssetFolder.Add(Flavour.EAddressablesVariant.WW, "");
 
             // flavourAddressablesVariant, folder name where the assets for flavourSku are stored in
-            s_flavourAddressablesVariantToAssetFolder.Add(FlavourSettings.EAddressablesVariant.CN, "flavour_china");
+            s_flavourAddressablesVariantToAssetFolder.Add(Flavour.EAddressablesVariant.CN, "flavour_china");
         }
     }
 
-    public static string FlavourAddressablesVariantToAssetFolder(FlavourSettings.EAddressablesVariant flavourAddressablesVariant)
+    public static string FlavourAddressablesVariantToAssetFolder(Flavour.EAddressablesVariant flavourAddressablesVariant)
     {
         string returnValue = "";
 
@@ -43,7 +43,7 @@ public static class EditorAutomaticAddressables {
         else
         {
             Debug.LogError("No folder found for flavour addressables variant: " + flavourAddressablesVariant + " so " + flavourAddressablesVariant + " is used as asset folder");
-            returnValue = FlavourSettings.EAddressablesVariantToString(flavourAddressablesVariant);                
+            returnValue = Flavour.EAddressablesVariantToString(flavourAddressablesVariant);                
         }
 
         return returnValue;
@@ -145,13 +145,13 @@ public static class EditorAutomaticAddressables {
 
         Flavour_Init();
 
-        foreach (KeyValuePair<FlavourSettings.EAddressablesVariant, string> pair in s_flavourAddressablesVariantToAssetFolder)
+        foreach (KeyValuePair<Flavour.EAddressablesVariant, string> pair in s_flavourAddressablesVariantToAssetFolder)
         {
             GetFlavourEntriesPrefab(pair.Key, ref entryList, ref bundleList);
         }        
     }    
 
-    private static void GetFlavourEntriesPrefab(FlavourSettings.EAddressablesVariant flavourSku, ref List<AddressablesCatalogEntry> _entries, ref List<string> _bundles) {
+    private static void GetFlavourEntriesPrefab(Flavour.EAddressablesVariant flavourSku, ref List<AddressablesCatalogEntry> _entries, ref List<string> _bundles) {
         List<AddressablesCatalogEntry> entries = new List<AddressablesCatalogEntry>();
         HashSet<string> bundlesSet = new HashSet<string>();
 
@@ -200,7 +200,7 @@ public static class EditorAutomaticAddressables {
         _bundles.AddRange(bundlesSet);        
     }
 
-    private static void GetEntriesFromDirectory(FlavourSettings.EAddressablesVariant flavourAddressablesVariant, string _directoryPath, bool _addLastFolder, List<AddressablesCatalogEntry> _entries, HashSet<string> _bundles, System.Type[] _allowedTypes = null, BuildTarget platform = BuildTarget.NoTarget,
+    private static void GetEntriesFromDirectory(Flavour.EAddressablesVariant flavourAddressablesVariant, string _directoryPath, bool _addLastFolder, List<AddressablesCatalogEntry> _entries, HashSet<string> _bundles, System.Type[] _allowedTypes = null, BuildTarget platform = BuildTarget.NoTarget,
                                                 AddressablesTypes.ELocationType locationType = AddressablesTypes.ELocationType.AssetBundles, string defineSymbol = null, bool addToCatalogPlayer = true)
     {
         if (!Directory.Exists(_directoryPath))
@@ -210,7 +210,7 @@ public static class EditorAutomaticAddressables {
         GetEntriesFromDirectory(flavourAddressablesVariant, _directory, _addLastFolder, _entries, _bundles, _allowedTypes, platform, locationType, defineSymbol, addToCatalogPlayer);
     }
 
-    private static void GetEntriesFromDirectory(FlavourSettings.EAddressablesVariant flavourAddressablesVariant, DirectoryInfo _directory, bool _addLastFolder,  List<AddressablesCatalogEntry> _entries, HashSet<string> _bundles, System.Type[] _allowedTypes = null, BuildTarget platform = BuildTarget.NoTarget,
+    private static void GetEntriesFromDirectory(Flavour.EAddressablesVariant flavourAddressablesVariant, DirectoryInfo _directory, bool _addLastFolder,  List<AddressablesCatalogEntry> _entries, HashSet<string> _bundles, System.Type[] _allowedTypes = null, BuildTarget platform = BuildTarget.NoTarget,
                                                 AddressablesTypes.ELocationType locationType = AddressablesTypes.ELocationType.AssetBundles, string defineSymbol = null, bool addToCatalogPlayer = true) {       
         string platformAsString = (platform == BuildTarget.NoTarget) ? null : platform.ToString();
 
@@ -260,11 +260,11 @@ public static class EditorAutomaticAddressables {
 
                         if (variant == null)
                         {
-                            variant = FlavourSettings.EAddressablesVariantToString(flavourAddressablesVariant);
+                            variant = Flavour.EAddressablesVariantToString(flavourAddressablesVariant);
                         }
                         else
                         {
-                            variant = FlavourSettings.EAddressablesVariantToString(flavourAddressablesVariant) + HDAddressablesManager.FLAVOUR_VARIANT_SEPARATOR + variant;
+                            variant = Flavour.EAddressablesVariantToString(flavourAddressablesVariant) + HDAddressablesManager.FLAVOUR_VARIANT_SEPARATOR + variant;
                         }
 
                         AddressablesCatalogEntry entry = new AddressablesCatalogEntry(id, variant, AssetDatabase.AssetPathToGUID(filePath), true, true, defineSymbol, addToCatalogPlayer) {

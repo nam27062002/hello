@@ -11,33 +11,14 @@ public class FlavourFactory
         return new Flavour();
     }
 
-    public void SetupFlavourBasedOnCriteria(Flavour flavour, string countryCode, FlavourSettings.EDevicePlatform devicePlatform)
-    {               
-        FlavourSettings flavourSettings = Settings_GetCountryCodeToFlavourSettings(countryCode, devicePlatform);
-        flavourSettings.SetupFlavour(flavour, countryCode);               
-    }       
+    public void SetupFlavourBasedOnCriteria(Flavour flavour, string countryCode, Flavour.EDevicePlatform devicePlatform)
+    {
+        string flavourSku;
 
-    private bool IsSIWAEnabled(FlavourSettings.EDevicePlatform devicePlatform)
-    {       
-#if USE_SIWA        
-        return devicePlatform == FlavourFactory.Setting_EDevicePlatform.iOS;
-#else
-        return false;
-#endif        
-    }
-
-#region settings
-    // Flavour skus: So far "WW" is used for worldwide version and the country code for every country that requires a different flavour    
-    public const string SETTINGS_SKU_DEFAULT = SETTINGS_SKU_WW;
-    public const string SETTINGS_SKU_WW = "WW";
-    public const string SETTINGS_SKU_CHINA = PlatformUtils.COUNTRY_CODE_CHINA;             
-
-    private FlavourSettings Settings_GetCountryCodeToFlavourSettings(string countryCode, FlavourSettings.EDevicePlatform devicePlatform)
-    {        
         // Android only supports WW flavour
-        if (devicePlatform == FlavourSettings.EDevicePlatform.Android)
+        if (devicePlatform == Flavour.EDevicePlatform.Android)
         {
-            countryCode = SETTINGS_SKU_WW;
+            flavourSku = SETTINGS_SKU_WW;
         }
         else
         {
@@ -49,46 +30,60 @@ public class FlavourFactory
             {
                 countryCode = countryCode.ToUpper();
             }
+
+            flavourSku = countryCode;
         }
 
-        // countryCode is used as flavourSettingSku
-        return Settings_GetFlavourSettings(countryCode, devicePlatform);
+        Settings_SetFlavour(flavour, flavourSku, devicePlatform);                  
+    }       
+
+    private bool IsSIWAEnabled(Flavour.EDevicePlatform devicePlatform)
+    {       
+#if USE_SIWA        
+        return devicePlatform == Flavour.EDevicePlatform.iOS;
+#else
+        return false;
+#endif        
     }
 
-    private FlavourSettings Settings_GetFlavourSettings(string flavourSettingsSku, FlavourSettings.EDevicePlatform devicePlatform)
+#region settings
+    // Flavour skus: So far "WW" is used for worldwide version and the country code for every country that requires a different flavour    
+    public const string SETTINGS_SKU_DEFAULT = SETTINGS_SKU_WW;
+    public const string SETTINGS_SKU_WW = "WW";
+    public const string SETTINGS_SKU_CHINA = PlatformUtils.COUNTRY_CODE_CHINA;             
+
+    private void Settings_SetFlavour(Flavour flavour, string flavourSku, Flavour.EDevicePlatform devicePlatform)
     {
-        FlavourSettings returnValue = null;               
-        if (flavourSettingsSku == SETTINGS_SKU_WW)
+        if (flavourSku == SETTINGS_SKU_WW)
         {
-            returnValue = Settings_GetFlavourSettingsWW(devicePlatform);
+            Settings_SetFlavourWW(flavour, devicePlatform);
         }
-        else if (flavourSettingsSku == SETTINGS_SKU_CHINA)
+        else if (flavourSku == SETTINGS_SKU_CHINA)
         {
-            returnValue = Settings_GetFlavourSettingsChina(devicePlatform);
-        }        
-
-        // If there's no FlavourSettings defined for flavourSku then the default one is returned
-        if (returnValue == null)
-        {
-            returnValue = Settings_GetFlavourSettings(SETTINGS_SKU_DEFAULT, devicePlatform);
+            Settings_SetFlavourChina(flavour, devicePlatform);
         }
-
-        return returnValue;
+        else
+        {
+            // If there's no Flavour defined for flavourSku then the default one is returned
+            Settings_SetFlavour(flavour, SETTINGS_SKU_DEFAULT, devicePlatform);
+        }                
     }
 
-    private FlavourSettings Settings_GetFlavourSettingsWW(FlavourSettings.EDevicePlatform devicePlatform)
+    private void Settings_SetFlavourWW(Flavour flavour, Flavour.EDevicePlatform devicePlatform)
     {
-        return new FlavourSettings(
-           socialPlatform: FlavourSettings.ESocialPlatform.Facebook,
-           addressablesVariant: FlavourSettings.EAddressablesVariant.WW,
+        flavour.Setup(
+           sku: SETTINGS_SKU_WW, 
+           socialPlatform: Flavour.ESocialPlatform.Facebook,
+           addressablesVariant: Flavour.EAddressablesVariant.WW,
            isSIWAEnabled: IsSIWAEnabled(devicePlatform));
     }
 
-    private FlavourSettings Settings_GetFlavourSettingsChina(FlavourSettings.EDevicePlatform devicePlatform)
+    private void Settings_SetFlavourChina(Flavour flavour, Flavour.EDevicePlatform devicePlatform)
     {
-        return new FlavourSettings(        
-           socialPlatform: FlavourSettings.ESocialPlatform.Weibo,
-           addressablesVariant: FlavourSettings.EAddressablesVariant.CN,
+        flavour.Setup(
+           sku: SETTINGS_SKU_CHINA,
+           socialPlatform: Flavour.ESocialPlatform.Weibo,
+           addressablesVariant: Flavour.EAddressablesVariant.CN,
            isSIWAEnabled: IsSIWAEnabled(devicePlatform));
     }    
 #endregion

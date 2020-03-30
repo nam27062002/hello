@@ -91,7 +91,7 @@ public class SocialPlatformManager : MonoBehaviour
             else
             {
                 // Social platform depends on the app's flavour
-                SocialUtils.EPlatform platformId = FlavourManager.Instance.GetCurrentFlavour().SocialPlatform;				
+                SocialUtils.EPlatform platformId = FlavourManager.Instance.GetCurrentFlavour().SocialPlatformASSocialUtilsEPlatform;
 				if (platformId == SocialUtils.EPlatform.Facebook && !FacebookManager.SharedInstance.CanUseFBFeatures ()) 
 				{
 					platformId = SocialUtils.EPlatform.None;
