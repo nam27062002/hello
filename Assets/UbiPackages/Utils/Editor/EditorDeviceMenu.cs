@@ -246,39 +246,39 @@ public class EditorDeviceMenu : MonoBehaviour
     private const string DEVICE_COUNTRY_ON_INSTALL_CHINA = DEVICE_COUNTRY_ON_INSTALL_MENU + "/China";
 
     [MenuItem(DEVICE_COUNTRY_ON_INSTALL_NONE)]
-    public static void CountryAtInstall_SetNone()
+    public static void CountryOnInstall_SetNone()
     {
         PersistencePrefs.CountryCodeOnInstall = "";
     }
 
     [MenuItem(DEVICE_COUNTRY_ON_INSTALL_NONE, true)]
-    public static bool CountryAtInstall_SetNoneValidate()
+    public static bool CountryOnInstall_SetNoneValidate()
     {
         Menu.SetChecked(DEVICE_COUNTRY_ON_INSTALL_NONE, string.IsNullOrEmpty(PersistencePrefs.CountryCodeOnInstall));
         return true;
     }
 
     [MenuItem(DEVICE_COUNTRY_ON_INSTALL_WW)]
-    public static void CountryAtInstall_SetWW()
+    public static void CountryOnInstall_SetWW()
     {
         PersistencePrefs.CountryCodeOnInstall = PlatformUtils.COUNTRY_CODE_WW_DEFAULT;        
     }
 
     [MenuItem(DEVICE_COUNTRY_ON_INSTALL_WW, true)]
-    public static bool CountryAtInstall_SetWWValidate()
+    public static bool CountryOnInstall_SetWWValidate()
     {
         Menu.SetChecked(DEVICE_COUNTRY_ON_INSTALL_WW, PersistencePrefs.CountryCodeOnInstall == PlatformUtils.COUNTRY_CODE_WW_DEFAULT);
         return true;
     }
 
     [MenuItem(DEVICE_COUNTRY_ON_INSTALL_CHINA)]
-    public static void CountryAtInstall_SetChina()
+    public static void CountryOnInstall_SetChina()
     {
         PersistencePrefs.CountryCodeOnInstall = PlatformUtils.COUNTRY_CODE_CHINA;
     }
 
     [MenuItem(DEVICE_COUNTRY_ON_INSTALL_CHINA, true)]
-    public static bool CountryAtInstall_SetChinaValidate()
+    public static bool CountryOnInstall_SetChinaValidate()
     {
         Menu.SetChecked(DEVICE_COUNTRY_ON_INSTALL_CHINA, PersistencePrefs.CountryCodeOnInstall == PlatformUtils.COUNTRY_CODE_CHINA);
         return true;
@@ -310,6 +310,7 @@ public class EditorDeviceMenu : MonoBehaviour
     [MenuItem(DEVICE_PLATFORM_AS_BUILD_TARGET, true)]
     public static bool Platform_SetAsBuildTargetValidate()
     {
+        string platform = Platform_GetDevicePlatformAsString();
         Menu.SetChecked(DEVICE_PLATFORM_AS_BUILD_TARGET, string.IsNullOrEmpty(Platform_GetDevicePlatformAsString()));
         return true;
     }
@@ -336,7 +337,9 @@ public class EditorDeviceMenu : MonoBehaviour
     [MenuItem(DEVICE_PLATFORM_ANDROID, true)]
     public static bool Platform_SetAndroidValidate()
     {
-        Menu.SetChecked(DEVICE_COUNTRY_ON_INSTALL_CHINA, Platform_GetDevicePlatformAsString() == Flavour.DEVICEPLATFORM_ANDROID);
+        string devicePlatform = Platform_GetDevicePlatformAsString();
+        bool boolValue = devicePlatform == Flavour.DEVICEPLATFORM_ANDROID;
+        Menu.SetChecked(DEVICE_PLATFORM_ANDROID, Platform_GetDevicePlatformAsString() == Flavour.DEVICEPLATFORM_ANDROID);
         return true;
     }
 #endregion
