@@ -462,31 +462,31 @@ public class RemoveAdsFeature {
         string key = "isActive";
         if (_data.ContainsKey(key))
         {
-            m_isActive = _data[key].AsBool;
+            m_isActive = PersistenceUtils.SafeParse<bool>(_data[key]);
         }
 
         key = "easyMissionSkipsLeft";
         if (_data.ContainsKey(key))
         {
-            m_easyExtraMissionsLeft = _data[key].AsInt;
+            m_easyExtraMissionsLeft = PersistenceUtils.SafeParse<int>(_data[key]);
         }
 
         key = "mediumMissionSkipsLeft";
         if (_data.ContainsKey(key))
         {
-            m_mediumExtraMissionsLeft = _data[key].AsInt;
+            m_mediumExtraMissionsLeft = PersistenceUtils.SafeParse<int>(_data[key]);
         }
 
         key = "hardMissionSkipsLeft";
         if (_data.ContainsKey(key))
         {
-            m_hardExtraMissionsLeft = _data[key].AsInt;
+            m_hardExtraMissionsLeft = PersistenceUtils.SafeParse<int>(_data[key]);
         }
 
         key = "mapRevealTimestamp";
         if (_data.ContainsKey(key))
         {
-            m_mapRevealTimestamp = new DateTime(_data[key].AsLong);
+            m_mapRevealTimestamp = new DateTime(PersistenceUtils.SafeParse<long>(_data[key]));
         }
         else
         {
@@ -501,12 +501,12 @@ public class RemoveAdsFeature {
     public SimpleJSON.JSONNode Save()
     {
         SimpleJSON.JSONClass data = new SimpleJSON.JSONClass();
-        data.Add("isActive", m_isActive);
-        data.Add("easyMissionSkipsLeft", m_easyExtraMissionsLeft);
-        data.Add("mediumMissionSkipsLeft", m_mediumExtraMissionsLeft);
-        data.Add("hardMissionSkipsLeft", m_hardExtraMissionsLeft);
+        data.Add("isActive", PersistenceUtils.SafeToString(m_isActive));
+        data.Add("easyMissionSkipsLeft", PersistenceUtils.SafeToString(m_easyExtraMissionsLeft));
+        data.Add("mediumMissionSkipsLeft", PersistenceUtils.SafeToString(m_mediumExtraMissionsLeft));
+        data.Add("hardMissionSkipsLeft", PersistenceUtils.SafeToString(m_hardExtraMissionsLeft));
 
-        data.Add("mapRevealTimestamp", m_mapRevealTimestamp.Ticks.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
+        data.Add("mapRevealTimestamp", PersistenceUtils.SafeToString(m_mapRevealTimestamp.Ticks));
 
         return data;
     }

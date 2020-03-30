@@ -58,7 +58,7 @@ public partial class GlobalEvent {
 
 			// Init target percentage
 			// Target amount should be initialized from outside, knowing the global target
-			targetPercentage = _data["targetPercentage"].AsFloat;
+			targetPercentage = PersistenceUtils.SafeParse<float>(_data["targetPercentage"]);
 		}
 	};
 }

@@ -48,13 +48,13 @@ public class HDQuestDefinition : HDLiveEventDefinition {
 			// }
 
 			if ( _data.ContainsKey("amount") ){
-				m_amount = _data["amount"].AsLong;
+				m_amount = PersistenceUtils.SafeParse<long>(_data["amount"]);
 			}
 		}
 
 		public override JSONClass ToJson() {
 			JSONClass data = base.ToJson();
-			data.Add("amount", m_amount);
+			data.Add("amount", PersistenceUtils.SafeToString(m_amount));
 			return data;
 		}
 	}

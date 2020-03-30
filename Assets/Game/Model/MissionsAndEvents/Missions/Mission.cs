@@ -309,20 +309,20 @@ public class Mission {
         InitWithParams(
 			missionDef,
             typeDef,
-			_data["targetValue"].AsLong, 
-			_data["singleRun"].AsBool,
+			PersistenceUtils.SafeParse<long>(_data["targetValue"]),
+			PersistenceUtils.SafeParse<bool>(_data["singleRun"]),
             _removePCCost
 		);
 
 		// Restore state
-		m_state = (State)_data["state"].AsInt;
+		m_state = (State)PersistenceUtils.SafeParse<int>(_data["state"]);
 		if(m_state == State.ACTIVATION_PENDING) {
 			return false;	// Activation pending state should never be persisted! Return error to generate a new mission
 		}
 
 		// Restore objective
 		if(m_objective != null) {
-			m_objective.tracker.InitValue(_data["currentValue"].AsLong);
+			m_objective.tracker.InitValue(PersistenceUtils.SafeParse<long>(_data["currentValue"]));
 			m_objective.enabled = false;
 		}
 
@@ -334,7 +334,7 @@ public class Mission {
 		}
 
 		// Restore cooldown timestamp
-		m_cooldownStartTimestamp = DateTime.Parse(_data["cooldownStartTimestamp"], CultureInfo.InvariantCulture);
+		m_cooldownStartTimestamp = PersistenceUtils.SafeParse<DateTime>(_data["cooldownStartTimestamp"]);
 		return true;
 	}
 	
@@ -350,17 +350,17 @@ public class Mission {
 		if(m_def != null) data.Add("sku", m_def.sku);
 
 		// State
-		data.Add("state", ((int)m_state).ToString(CultureInfo.InvariantCulture));
+		data.Add("state", PersistenceUtils.SafeToString((int)m_state));
 
 		// Objective progress
 		if(m_objective != null) {
-			data.Add("currentValue", m_objective.currentValue.ToString(CultureInfo.InvariantCulture));
-			data.Add("targetValue", m_objective.targetValue.ToString(CultureInfo.InvariantCulture));
-			data.Add("singleRun", m_objective.singleRun.ToString(CultureInfo.InvariantCulture));
+			data.Add("currentValue", PersistenceUtils.SafeToString(m_objective.currentValue));
+			data.Add("targetValue", PersistenceUtils.SafeToString(m_objective.targetValue));
+			data.Add("singleRun", PersistenceUtils.SafeToString(m_objective.singleRun));
 		}
 
 		// Cooldown timestamp
-		data.Add("cooldownStartTimestamp", m_cooldownStartTimestamp.ToString(CultureInfo.InvariantCulture));
+		data.Add("cooldownStartTimestamp", PersistenceUtils.SafeToString(m_cooldownStartTimestamp));
 		
 		return data;
 	}

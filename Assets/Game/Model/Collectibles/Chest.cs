@@ -168,13 +168,13 @@ public class Chest {
 	/// <param name="_data">The json loaded from persistence.</param>
 	public void Load(SimpleJSON.JSONNode _data) {
 		// State
-		m_state = (State)_data["state"].AsInt;
+		m_state = (State)PersistenceUtils.SafeParse<int>(_data["state"]);
 
 		// Spawn point ID
 		m_spawnPointID = _data["spawnPointID"];
 
 		// Collection order
-		m_collectionOrder = _data["collectionOrder"].AsInt;
+		m_collectionOrder = PersistenceUtils.SafeParse<int>(_data["collectionOrder"]);
 	}
 
 	/// <summary>
@@ -186,14 +186,14 @@ public class Chest {
 		SimpleJSON.JSONClass data = new SimpleJSON.JSONClass();
 
 		// State
-		data.Add("state", ((int)m_state).ToString());
+		data.Add("state", PersistenceUtils.SafeToString((int)m_state));
 
 		// Spawn point ID
 		if(string.IsNullOrEmpty(m_spawnPointID)) m_spawnPointID = "-";	// [AOC] Apparently SimpleJson crashes when parsing an empty string in the ToString() method. Use this for now.
 		data.Add("spawnPointID", m_spawnPointID);
 
 		// Collection order
-		data.Add("collectionOrder", m_collectionOrder);
+		data.Add("collectionOrder", PersistenceUtils.SafeToString(m_collectionOrder));
 
 		// Done!
 		return data;

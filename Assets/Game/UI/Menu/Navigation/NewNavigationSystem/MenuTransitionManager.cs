@@ -24,6 +24,7 @@ public class Transition {
 
 	[Tooltip("Will override any other setup")]
 	public bool showOverlay = false;
+	public float pauseDuration = 0f;
 
 	public BezierCurve path = null;
 	public string initialPathPoint = "";
@@ -247,7 +248,11 @@ public class MenuTransitionManager : MonoBehaviour {
 			Ease ease = t.overrideEase ? t.ease : m_defaultTransitionEase;
 
 			// If using the overlay, override duration
-			if(t.showOverlay) duration = m_overlay.transitionDuration;
+			if (t.showOverlay)
+			{
+				duration = m_overlay.transitionDuration;
+				m_overlay.pauseDuration = t.pauseDuration;
+			}
 
 			// UI
 			PerformUITransition(fromScreenData, toScreenData, duration);

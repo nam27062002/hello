@@ -283,5 +283,61 @@ public class EditorDriversMenu : MonoBehaviour
         Menu.SetChecked(DRIVERS_COUNTRY_ON_INSTALL_CHINA, PersistencePrefs.CountryCodeOnInstall == PlatformUtils.COUNTRY_CODE_CHINA);
         return true;
     }
- #endregion
+#endregion
+
+#region country
+    private const string DRIVERS_PLATFORM_MENU = DRIVERS_MENU + "/Platform";
+    private const string DRIVERS_PLATFORM_AS_BUILD_TARGET = DRIVERS_PLATFORM_MENU + "/As Build Target";
+    private const string DRIVERS_PLATFORM_IOS = DRIVERS_PLATFORM_MENU + "/iOS";
+    private const string DRIVERS_PLATFORM_ANDROID = DRIVERS_PLATFORM_MENU + "/Android";    
+
+    private static string Platform_GetDevicePlatformAsString()
+    {
+        return FlavourManager.Prefs_GetDevicePlatform();
+    }
+
+    private static void Platform_SetDevicePlatformString(string value)
+    {
+        FlavourManager.Prefs_SetDevicePlatform(value);
+    }
+
+    [MenuItem(DRIVERS_PLATFORM_AS_BUILD_TARGET)]
+    public static void Platform_SetAsBuildTarget()
+    {
+        Platform_SetDevicePlatformString("");
+    }
+
+    [MenuItem(DRIVERS_PLATFORM_AS_BUILD_TARGET, true)]
+    public static bool Platform_SetAsBuildTargetValidate()
+    {
+        Menu.SetChecked(DRIVERS_PLATFORM_AS_BUILD_TARGET, string.IsNullOrEmpty(Platform_GetDevicePlatformAsString()));
+        return true;
+    }
+
+    [MenuItem(DRIVERS_PLATFORM_IOS)]
+    public static void Platform_SetIOS()
+    {
+        Platform_SetDevicePlatformString(FlavourFactory.SETTING_EDEVICEPLATFORM_IOS);
+    }
+
+    [MenuItem(DRIVERS_PLATFORM_IOS, true)]
+    public static bool Platform_SetIOSValidate()
+    {
+        Menu.SetChecked(DRIVERS_PLATFORM_IOS, Platform_GetDevicePlatformAsString() == FlavourFactory.SETTING_EDEVICEPLATFORM_IOS);
+        return true;
+    }
+
+    [MenuItem(DRIVERS_PLATFORM_ANDROID)]
+    public static void Platform_SetAndroid()
+    {
+        Platform_SetDevicePlatformString(FlavourFactory.SETTING_EDEVICEPLATFORM_ANDROID);
+    }
+
+    [MenuItem(DRIVERS_PLATFORM_ANDROID, true)]
+    public static bool Platform_SetAndroidValidate()
+    {
+        Menu.SetChecked(DRIVERS_COUNTRY_ON_INSTALL_CHINA, Platform_GetDevicePlatformAsString() == FlavourFactory.SETTING_EDEVICEPLATFORM_ANDROID);
+        return true;
+    }
+#endregion
 }

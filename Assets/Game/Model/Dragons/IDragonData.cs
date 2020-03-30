@@ -493,9 +493,9 @@ public int GetOrder() {
 		}
 
 		// Just read values from persistence object
-		m_owned = _data["owned"].AsBool;
-		m_teased = _data["teased"].AsBool;
-		m_revealed = _data["revealed"].AsBool;
+		m_owned = PersistenceUtils.SafeParse<bool>(_data["owned"]);
+		m_teased = PersistenceUtils.SafeParse<bool>(_data["teased"]);
+		m_revealed = PersistenceUtils.SafeParse<bool>(_data["revealed"]);
 
 		// Disguise
 		if(_data.ContainsKey("disguise")) {
@@ -510,7 +510,7 @@ public int GetOrder() {
 
 		// Tracking
 		if(_data.ContainsKey("gamesPlayed")) {
-			m_gamesPlayed = _data["gamesPlayed"].AsInt;
+			m_gamesPlayed = PersistenceUtils.SafeParse<int>(_data["gamesPlayed"]);
 		} else {
 			m_gamesPlayed = 0;
 		}
@@ -543,9 +543,9 @@ public int GetOrder() {
 	/// <param name="_data">Data object to be filled.</param>
 	protected virtual void Save(ref SimpleJSON.JSONClass _data) {
 		_data.Add("sku", def.sku);
-		_data.Add("owned", m_owned.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
-		_data.Add("teased", m_teased.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
-		_data.Add("revealed", m_revealed.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
+		_data.Add("owned", PersistenceUtils.SafeToString(m_owned));
+		_data.Add("teased", PersistenceUtils.SafeToString(m_teased));
+		_data.Add("revealed", PersistenceUtils.SafeToString(m_revealed));
 		_data.Add("disguise", m_persistentDisguise);
 
 
@@ -556,7 +556,7 @@ public int GetOrder() {
 		_data.Add("pets", petsData);
 
 		// Tracking
-		_data.Add("gamesPlayed", m_gamesPlayed);
+		_data.Add("gamesPlayed", PersistenceUtils.SafeToString(m_gamesPlayed));
 	}
 
 	//------------------------------------------------------------------------//

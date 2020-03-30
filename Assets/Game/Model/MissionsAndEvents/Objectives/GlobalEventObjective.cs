@@ -71,8 +71,8 @@ public class GlobalEventObjective : TrackingObjectiveBase, IBroadcastListener {
 
 		// Use parent's initializer
 		Init(
-			TrackerBase.CreateTracker(m_typeDef.sku, parameters, zone),		// Create the tracker based on goal type
-			_data["amount"].AsLong,
+			TrackerBase.CreateTracker(m_typeDef.sku, parameters, zone),     // Create the tracker based on goal type
+			PersistenceUtils.SafeParse<long>(_data["amount"]),
 			m_typeDef,
 			_data["tidDesc"]
 		);

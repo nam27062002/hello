@@ -244,8 +244,8 @@ public class DailyReward {
 		}
 
 		// State
-		if(_data.ContainsKey("collected")) collected = _data["collected"].AsBool;
-		if(_data.ContainsKey("doubled")) doubled = _data["doubled"].AsBool;
+		if(_data.ContainsKey("collected")) collected = PersistenceUtils.SafeParse<bool>(_data["collected"]);
+		if(_data.ContainsKey("doubled")) doubled = PersistenceUtils.SafeParse<bool>(_data["doubled"]);
 	}
 
 	/// <summary>
@@ -279,8 +279,8 @@ public class DailyReward {
 		}
 
 		// State
-		data.Add("collected", collected);
-		data.Add("doubled", doubled);
+		data.Add("collected", PersistenceUtils.SafeToString(collected));
+		data.Add("doubled", PersistenceUtils.SafeToString(doubled));
 
 		return data;
 	}
