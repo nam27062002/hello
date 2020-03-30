@@ -12,8 +12,8 @@ using UnityEngine.SceneManagement;
 /// <summary>
 /// This class is responsible for tayloring Addressables UbiPackage to meet Hungry Dragon needs
 /// </summary>
-public class HDAddressablesManager : AddressablesManager
-{    
+public class HDAddressablesManager
+{
     private static HDAddressablesManager sm_instance;
 
     public static HDAddressablesManager Instance
@@ -22,16 +22,24 @@ public class HDAddressablesManager : AddressablesManager
         {
             if (sm_instance == null)
             {
-                sm_instance = new HDAddressablesManager();             
+                sm_instance = new HDAddressablesManager();
             }
 
             return sm_instance;
         }
-    }    
+    }
+
+    private AddressablesManager m_addressablesManager;
 
     private HDDownloadablesTracker m_tracker;
 
     private string LastSceneId { get; set; }
+
+    private HDAddressablesManager()
+    {
+        m_addressablesManager = new AddressablesManager();
+        Flavour_Init();
+    }
 
     /// <summary>
     /// Make sure this method is called after ContentDeltaManager.OnContentDelta() was called since this method uses data from assetsLUT to create downloadables catalog.
@@ -82,11 +90,11 @@ public class HDAddressablesManager : AddressablesManager
         bool useMockDrivers = true;
 #else
         Calety.Server.ServerConfig kServerConfig = ServerManager.SharedInstance.GetServerConfig();
-	    bool useMockDrivers = (kServerConfig != null && kServerConfig.m_eBuildEnvironment != CaletyConstants.eBuildEnvironments.BUILD_PRODUCTION);                       
+        bool useMockDrivers = (kServerConfig != null && kServerConfig.m_eBuildEnvironment != CaletyConstants.eBuildEnvironments.BUILD_PRODUCTION);
 #endif
-        Initialize(catalogAsJSON, abCatalogAsJSON, downloadablesConfig, downloadablesCatalogAsJSON, useMockDrivers, m_tracker, logger);
+        m_addressablesManager.Initialize(catalogAsJSON, abCatalogAsJSON, downloadablesConfig, downloadablesCatalogAsJSON, useMockDrivers, m_tracker, logger);
 
-        InitDownloadableHandles();        
+        InitDownloadableHandles();
         InitAddressablesAreas();
     }
 
@@ -106,6 +114,22 @@ public class HDAddressablesManager : AddressablesManager
         TextAsset targetFile = Resources.Load<TextAsset>(path);
         return (targetFile == null) ? null : targetFile.text;
 #endif
+    }
+
+    public bool IsInitialized()
+    {
+        return m_addressablesManager.IsInitialized();
+    }
+
+    public bool IsReady()
+    {
+        return m_addressablesManager.IsReady();
+    }
+
+    public void Reset()
+    {
+        m_addressablesManager.Reset();
+        Flavour_Reset();
     }
 
     private string GetEnvironmentUrlBase()
@@ -223,6 +247,129 @@ public class HDAddressablesManager : AddressablesManager
         }
     }
 
+    #region flavour
+
+    public const string FLAVOUR_VARIANT_SEPARATOR = "/";
+
+    private Dictionary<string, Dictionary<string, string>> m_flavourVariants;
+
+    private void Flavour_Init()
+    {
+        m_flavourVariants = new Dictionary<string, Dictionary<string, string>>();
+    }
+
+    private void Flavour_Reset()
+    {
+        if (m_flavourVariants != null)
+        {
+            m_flavourVariants.Clear();
+        }
+    }
+
+    private string Flavour_GetVariantPerFlavour(string flavourSku, string variant)
+    {
+        string returnValue = variant;
+        
+        if (string.IsNullOrEmpty(flavourSku))
+        {
+            AddressablesManager.LogError("Flavour mustn't be empty");
+        }
+        else
+        {
+            // If variant is empty then we need to use the flavourSku as flavoured variant
+            // otherwise the flavoured variant looks like: flavourSku-variant
+            if (string.IsNullOrEmpty(variant))
+            {
+                returnValue = flavourSku;
+            }
+            else
+            {
+                // Flavoured variants are stored in order to prevent memory from being allocated every time
+                // a variant needs to be flavoured
+                if (!m_flavourVariants.ContainsKey(flavourSku))
+                {
+                    m_flavourVariants.Add(flavourSku, new Dictionary<string, string>());
+                }
+
+                Dictionary<string, string> flavourDict = m_flavourVariants[flavourSku];
+                if (!flavourDict.ContainsKey(variant))
+                {
+                    flavourDict.Add(variant, flavourSku + FLAVOUR_VARIANT_SEPARATOR + variant);
+                }
+
+                returnValue = flavourDict[variant];
+            }
+        }
+
+        return returnValue;
+    }
+
+    private string Flavour_GetVariant(string addressablesId, string variant)
+    {
+        string addressablesVariant = FlavourManager.Instance.GetCurrentFlavour().AddressablesVariant;
+        string returnValue = Flavour_GetVariantPerFlavour(addressablesVariant, variant);
+        
+        // Default flavour is used if flavourSku is not already the default one and no resouce is
+        // defined for flavouredSku
+        if (addressablesVariant != Flavour.ADDRESSABLES_VARIANT_DEFAULT_SKU && !m_addressablesManager.ExistsResource(addressablesId, returnValue))
+        {
+            returnValue = Flavour_GetVariantPerFlavour(Flavour.ADDRESSABLES_VARIANT_DEFAULT_SKU, variant);
+        }
+
+        return returnValue;
+    }
+    #endregion
+
+    public List<string> GetDependencyIds(string id, string variant = null)
+    {
+        return m_addressablesManager.GetDependencyIds(id, Flavour_GetVariant(id, variant));
+    }
+
+    public List<string> GetDependencyIdsList(List<string> ids, string variant = null)
+    {
+        List<string> returnValue = null;
+        if (ids != null)
+        {
+            returnValue = new List<string>();
+
+            // We need to loop through all ids because we can not assume that they all share the same flavoured variant
+            List<string> thisDependencies;
+            int count = ids.Count;
+            for (int i = 0; i < count; i++)
+            {
+                thisDependencies = GetDependencyIds(ids[i], variant);
+                UbiListUtils.AddRange(returnValue, thisDependencies, false, true);    
+            }
+        }
+
+        return returnValue;
+    }
+
+    public bool IsDependencyListAvailable(List<string> dependencyIds)
+    {
+        return m_addressablesManager.IsDependencyListAvailable(dependencyIds);
+    }
+
+    public AddressablesOp LoadDependencyIdsListAsync(List<string> dependencyIds)
+    {
+        return m_addressablesManager.LoadDependencyIdsListAsync(dependencyIds);
+    }
+
+    public void UnloadDependencyIdsList(List<string> dependencyIds)
+    {
+        m_addressablesManager.UnloadDependencyIdsList(dependencyIds);
+    }
+
+    public List<string> GetAssetBundlesGroupDependencyIds(string groupId)
+    {
+        return m_addressablesManager.GetAssetBundlesGroupDependencyIds(groupId);
+    }
+
+    public AddressablesOp LoadDependenciesAsync(string id, string variant = null)
+    {
+        return m_addressablesManager.LoadDependenciesAsync(id, Flavour_GetVariant(id, variant));
+    }
+
     public UbiAsyncOperation LoadDependenciesAndSceneAsync(string id, string variant = null)
     {
         if (IsInitialized())
@@ -231,17 +378,45 @@ public class HDAddressablesManager : AddressablesManager
         }
         else
         {
-            return LoadSceneAsync(id, variant, LoadSceneMode.Single);
+            return LoadSceneAsync(id, Flavour_GetVariant(id, variant), LoadSceneMode.Single);
+        }
+    }
+
+    public bool IsResourceAvailable(string id, string variant = null, bool track = false)
+    {
+        return m_addressablesManager.IsResourceAvailable(id, Flavour_GetVariant(id, variant), track);
+    }
+
+    public bool ExistsResource(string id, string variant)
+    {
+        return m_addressablesManager.ExistsResource(id, Flavour_GetVariant(id, variant));
+    }
+
+    public bool ExistsDependencyId(string dependencyId)
+    {
+        return m_addressablesManager.ExistsDependencyId(dependencyId);
+    }
+
+    public void AddResourceListDownloadableIdsToHandle(Downloadables.Handle handle, List<string> addressableIds, string variant = null)
+    {
+        if (handle != null && addressableIds != null)
+        {
+            // We need to loop through all ids because we can not assume that they all share the same flavoured variant
+            int count = addressableIds.Count;
+            for (int i = 0; i < count; i++)
+            {
+                m_addressablesManager.AddResourceDownloadableIdsToHandle(handle, addressableIds[i], Flavour_GetVariant(addressableIds[i], variant));
+            }
         }
     }
 
     // This method has been overridden in order to let the game load a scene before AddressablesManager has been initialized, typically the first loading scene, 
     // which may be called when rebooting the game
-    public override bool LoadScene(string id, string variant = null, LoadSceneMode mode = LoadSceneMode.Single)
+    public bool LoadScene(string id, string variant = null, LoadSceneMode mode = LoadSceneMode.Single)
     {
         if (IsInitialized())
         {            
-            return base.LoadScene(id, variant, mode);           
+            return m_addressablesManager.LoadScene(id, Flavour_GetVariant(id, variant), mode);           
         }
         else
         {
@@ -252,11 +427,11 @@ public class HDAddressablesManager : AddressablesManager
 
     // This method has been overridden in order to let the game load a scene before AddressablesManager has been initialized, typically the first loading scene,
     // which may be called when rebooting the game
-    public override AddressablesOp LoadSceneAsync(string id, string variant = null, LoadSceneMode mode = LoadSceneMode.Single)
+    public AddressablesOp LoadSceneAsync(string id, string variant = null, LoadSceneMode mode = LoadSceneMode.Single)
     {
         if (IsInitialized())
         {            
-            return base.LoadSceneAsync(id, variant, mode);                        
+            return m_addressablesManager.LoadSceneAsync(id, Flavour_GetVariant(id, variant), mode);                        
         }
         else
         {
@@ -266,11 +441,11 @@ public class HDAddressablesManager : AddressablesManager
         }        
     }
 
-    public override AddressablesOp UnloadSceneAsync(string id, string variant = null)
+    public AddressablesOp UnloadSceneAsync(string id, string variant = null)
     {
         if (IsInitialized())
         {
-            return base.UnloadSceneAsync(id, variant);
+            return m_addressablesManager.UnloadSceneAsync(id, Flavour_GetVariant(id, variant));
         }
         else
         {
@@ -280,13 +455,35 @@ public class HDAddressablesManager : AddressablesManager
         }
     }
 
-    protected override void ExtendedUpdate()
-    {
-        // We don't want the downloader to interfere with the ingame experience
-        IsDownloaderEnabled = !FlowManager.IsInGameScene();
+    public T LoadAsset<T>(string id, string variant = null) where T : UnityEngine.Object
+    {       
+        return m_addressablesManager.LoadAsset<T>(id, Flavour_GetVariant(id, variant));
+    }
 
-		// Downloader is disabled while the app is loading in order to let it load faster and smoother
-		IsAutomaticDownloaderEnabled = !GameSceneManager.isLoading && IsAutomaticDownloaderAllowed();
+    public object LoadAsset(string id, string variant = null)
+    {        
+        return m_addressablesManager.LoadAsset(id, Flavour_GetVariant(id, variant));
+    }
+
+    public AddressablesOp LoadAssetAsync(string id, string variant = null)
+    {        
+        return m_addressablesManager.LoadAssetAsync(id, Flavour_GetVariant(id, variant));
+    }
+
+    public void FillWithLoadedAssetBundleIdList(List<string> ids)
+    {
+        m_addressablesManager.FillWithLoadedAssetBundleIdList(ids);
+    }
+
+    public void Update()
+    {
+        m_addressablesManager.Update();
+
+        // We don't want the downloader to interfere with the ingame experience
+        m_addressablesManager.IsDownloaderEnabled = !FlowManager.IsInGameScene();
+
+        // Downloader is disabled while the app is loading in order to let it load faster and smoother
+        m_addressablesManager.IsAutomaticDownloaderEnabled = !GameSceneManager.isLoading && IsAutomaticDownloaderAllowed();
 
         UpdateAddressablesAreas();
     }
@@ -586,14 +783,14 @@ public class Ingame_SwitchAreaHandle
         // Level groups
         //
         // Area 1
-        Downloadables.Handle handle = CreateDownloadablesHandle(DOWNLOADABLE_GROUP_LEVEL_AREA_1);
+        Downloadables.Handle handle = m_addressablesManager.CreateDownloadablesHandle(DOWNLOADABLE_GROUP_LEVEL_AREA_1);
         m_downloadableHandles.Add(DOWNLOADABLE_GROUP_LEVEL_AREA_1, handle);
 
         // Areas 1 and 2
         HashSet<string> groupIds = new HashSet<string>();
         groupIds.Add(DOWNLOADABLE_GROUP_LEVEL_AREA_1);
         groupIds.Add(DOWNLOADABLE_GROUP_LEVEL_AREA_2);
-        handle = CreateDownloadablesHandle(groupIds);
+        handle = m_addressablesManager.CreateDownloadablesHandle(groupIds);
         m_downloadableHandles.Add(DOWNLOADABLE_GROUP_LEVEL_AREAS_1_2, handle);
 
         // Areas 1,2 and 3
@@ -601,7 +798,7 @@ public class Ingame_SwitchAreaHandle
         groupIds.Add(DOWNLOADABLE_GROUP_LEVEL_AREA_1);
         groupIds.Add(DOWNLOADABLE_GROUP_LEVEL_AREA_2);
         groupIds.Add(DOWNLOADABLE_GROUP_LEVEL_AREA_3);
-        handle = CreateDownloadablesHandle(groupIds);
+        handle = m_addressablesManager.CreateDownloadablesHandle(groupIds);
         m_downloadableHandles.Add(DOWNLOADABLE_GROUP_LEVEL_AREAS_1_2_3, handle);
     }
     
@@ -629,7 +826,7 @@ public class Ingame_SwitchAreaHandle
     /// <param name="_dragonSku">Classic dragon sku.</param>
     public Downloadables.Handle GetHandleForClassicDragon(string _dragonSku) {
 		// Create new handle. We will fill it with downloadable Ids based on target dragon status
-		Downloadables.Handle handle = CreateDownloadablesHandle();
+		Downloadables.Handle handle = m_addressablesManager.CreateDownloadablesHandle();
 		List<string> resourceIDs = new List<string>();
 
 		// Get target dragon info
@@ -651,7 +848,7 @@ public class Ingame_SwitchAreaHandle
 		}
 
 		// No more dependencies to be checked: Add resource IDs and return!
-		HDAddressablesManager.Instance.AddResourceListDownloadableIdsToHandle(handle, resourceIDs);
+		Instance.AddResourceListDownloadableIdsToHandle(handle, resourceIDs);
 		return handle;
 	}
 
@@ -672,7 +869,7 @@ public class Ingame_SwitchAreaHandle
 	/// <param name="_tournament">Tournament data.</param>
 	public Downloadables.Handle GetHandleForTournamentDragon(HDTournamentManager _tournament) {
 		// Create new handle. We will fill it with downloadable Ids based on target dragon status
-		Downloadables.Handle handle = CreateDownloadablesHandle();
+		Downloadables.Handle handle = m_addressablesManager.CreateDownloadablesHandle();
 		List<string> resourceIDs = new List<string>();
 
 		// Get target dragon info
@@ -705,16 +902,12 @@ public class Ingame_SwitchAreaHandle
     /// Get a handle for the specified disguise
     /// </summary>
     /// <returns>The handle for all downloadables required for that disguise.</returns>
-    /// <param name="_dragonSku">Special dragon sku.</param>
     public AddressablesBatchHandle GetHandleForDragonDisguise(IDragonData _dragonData)
     {
         AddressablesBatchHandle handle = new AddressablesBatchHandle();
         AddDisguiseDependencies(handle, _dragonData);
         return handle;
-
-
     }
-
 
     /// <summary>
     /// Get the handle for all level dowloadables required for a dragon tier and a list of equipped powers.
@@ -774,13 +967,13 @@ public class Ingame_SwitchAreaHandle
         Downloadables.Handle returnValue = null;
         if (m_downloadableHandles == null)
         {            
-            LogError("You need to call HDADdressablesManager.Instance.Initialise() before calling this method");            
+            AddressablesManager.LogError("You need to call HDADdressablesManager.Instance.Initialise() before calling this method");            
         }
         else
         {
             if (!m_downloadableHandles.TryGetValue(DOWNLOADABLE_GROUP_ALL, out returnValue))
             {
-                returnValue = CreateAllDownloadablesHandle();
+                returnValue = m_addressablesManager.CreateAllDownloadablesHandle();
                 m_downloadableHandles.Add(DOWNLOADABLE_GROUP_ALL, returnValue);
             }            
         }

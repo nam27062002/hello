@@ -459,7 +459,7 @@ public class AddressablesManager
     /// <summary>
     /// Loads asynchronously a list of dependencies (typically asset bundles).
     /// </summary>
-    /// <param name="id">List of dependency ids to load.</param>    
+    /// <param name="dependencyIds">List of dependency ids to load.</param>    
     /// <returns>Returns an <c>AddressablesOp</c> to handle the operation.</returns>
     public AddressablesOp LoadDependencyIdsListAsync(List<string> dependencyIds)
     {
@@ -726,7 +726,7 @@ public class AddressablesManager
     /// <summary>
     /// Adds the downloadable dependencies of the addressable passed as a parameter.
     /// </summary>
-    /// <param name="addressableId">Addressable id which downloadable dependencies </param>
+    /// <param name="addressableIds">Addressable id which downloadable dependencies </param>
     public void AddResourceListDownloadableIdsToHandle(Downloadables.Handle handle, List<string> addressableIds, string variant = null)
     {
         if (handle != null && addressableIds != null)

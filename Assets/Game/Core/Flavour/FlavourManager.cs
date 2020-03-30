@@ -13,8 +13,6 @@ using System.Collections.Generic;
 /// </summary>
 public class FlavourManager
 {
-    private const string FLAVOUR_SKU_DEFAULT = FlavourFactory.CATALOG_SKU_WW;
-
     private static FlavourManager s_instance = null;
 
     public static FlavourManager Instance
@@ -54,13 +52,39 @@ public class FlavourManager
         return m_currentFlavour;
     }
 
+    private Flavour.Setting_EDevicePlatform GetDevicePlatform()
+    {
+        Flavour.Setting_EDevicePlatform devicePlatform;
+
+#if UNITY_ANDROID
+        devicePlatform = Flavour.Setting_EDevicePlatform.Android;
+#else
+        devicePlatform = Flavour.Att_EDevicePlatform.iOS;
+#endif
+
+#if UNITY_EDITOR
+        // Cheat to override devicePlatform. Used to be able to test flavours that depend on device platform without switching platforms
+        string value = Prefs_GetDevicePlatform();
+        if (value == Flavour.SETTING_EDEVICEPLATFORM_IOS)
+        {
+            devicePlatform = Flavour.Setting_EDevicePlatform.iOS;
+        }
+        else if (value == Flavour.SETTING_EDEVICEPLATFORM_ANDROID)
+        {
+            devicePlatform = Flavour.Setting_EDevicePlatform.Android;
+        }
+#endif
+
+        return devicePlatform;
+    }
+
     private void SetupCurrentFlavour()
     {
         string countryCode = PlatformUtils.Instance.Country_GetCodeOnInstall();
-
+       
         // The flavour to apply depends on the country code that the device had when the user installed the game.
         // We want the user to stick to the same flavour from installation on
-        m_factory.SetupFlavour(m_currentFlavour, countryCode);
+        m_factory.SetupFlavour(m_currentFlavour, countryCode, GetDevicePlatform());
     }
 
     /// <summary>
@@ -84,24 +108,29 @@ public class FlavourManager
     {
         // flavourSku is the same as the country code except for WW
         return (string.IsNullOrEmpty(flavourSku) || flavourSku == FlavourFactory.CATALOG_SKU_WW) ? PlatformUtils.COUNTRY_CODE_WW_DEFAULT : flavourSku;
-    }
-
-    private string CountryCodeToFlavourSku(string countryCode)
-    {
-        // Just in case
-        if (!string.IsNullOrEmpty(countryCode))
-        {            
-            countryCode = countryCode.ToUpper();
-        }
-
-        return (m_factory.Catalog_ContainsSku(countryCode)) ? countryCode : FLAVOUR_SKU_DEFAULT;
-    }
+    }    
 
     public List<string> GetFlavourSkus()
     {
         return m_factory.Catalog_GetSkus();
     }
- 
+
+#region prefs
+#if UNITY_EDITOR
+    private const string PREFS_CHEAT_DEVICE_PLATFORM = "cheat.devicePlatform";
+
+    public static void Prefs_SetDevicePlatform(string value)
+    {
+        UnityEngine.PlayerPrefs.SetString(PREFS_CHEAT_DEVICE_PLATFORM, value);
+    }
+
+    public static string Prefs_GetDevicePlatform()
+    {
+        return UnityEngine.PlayerPrefs.GetString(PREFS_CHEAT_DEVICE_PLATFORM);
+    }
+#endif
+#endregion
+
 #region log
     private const string LOG_CHANNEL = "[Flavours] ";
     private const string LOG_CHANNEL_COLOR = "<color=teal>" + LOG_CHANNEL;
