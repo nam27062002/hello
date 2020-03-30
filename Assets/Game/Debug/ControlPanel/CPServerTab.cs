@@ -39,7 +39,7 @@ public class CPServerTab : MonoBehaviour {
 	[SerializeField] private TextMeshProUGUI m_DNAProfileIdText = null;
     [SerializeField] private TextMeshProUGUI m_AdUnitInfoText = null;
     [SerializeField] private Toggle m_debugServerToggle = null;
-    [SerializeField] private TMP_Dropdown m_flavourDropDown = null;
+    [SerializeField] private TMP_Dropdown m_countryDropDown = null;
 
 
     // Internal
@@ -65,7 +65,7 @@ public class CPServerTab : MonoBehaviour {
 
         //RequestNetworkOnline.CreateInstance();
         //requestNetwork = new RequestNetworkOnline();
-        Flavour_Init();
+        Countries_Init();
     }
 
 	private void OnEnable()
@@ -339,17 +339,21 @@ public class CPServerTab : MonoBehaviour {
 		Output("Hungry Dragon v" + GameSettings.internalVersion + " console output");
 	}
 
-#region flavour
-    private void Flavour_Init()
+#region countries
+    private bool Country_IsInitializing { get; set; }
+
+    private void Countries_Init()
     {
-        if (m_flavourDropDown != null)
+        Country_IsInitializing = true;
+
+        if (m_countryDropDown != null)
         {
-            m_flavourDropDown.ClearOptions();
+            m_countryDropDown.ClearOptions();
 
             TMP_Dropdown.OptionData optionData;
             List<TMP_Dropdown.OptionData> options = new List<TMP_Dropdown.OptionData>();
 
-            List<string> skus = FlavourManager.Instance.GetFlavourSkus();
+            List<string> skus = PlatformUtils.COUNTRY_CODES;
             int count = skus.Count;
             for (int i = 0; i < count; i++)
             {
@@ -358,22 +362,36 @@ public class CPServerTab : MonoBehaviour {
                 options.Add(optionData);                
             }
 
-            m_flavourDropDown.AddOptions(options);
+            m_countryDropDown.AddOptions(options);
+
+            // Sets the option corresponding to the value of the countryCode at install 
+            string countryCode = PlatformUtils.Instance.Country_GetCodeOnInstall();
+            int index = skus.IndexOf(countryCode);
+            if (index == -1)
+            {
+                index = skus.IndexOf(PlatformUtils.COUNTRY_CODE_WW_DEFAULT);
+            }
+            m_countryDropDown.value = index;
         }
+
+        Country_IsInitializing = false;
     }
 
-    public void Flavour_OnSetOption(int optionId)
+    public void Countries_OnSetOption(int optionId)
     {
-        List<string> skus = FlavourManager.Instance.GetFlavourSkus();
-        if (optionId > -1 && optionId < skus.Count)
+        if (!Country_IsInitializing)
         {
-            FlavourManager.Instance.SetSkuAsCurrentFlavour(skus[optionId]);
+            List<string> skus = PlatformUtils.COUNTRY_CODES;
+            if (optionId > -1 && optionId < skus.Count)
+            {
+                FlavourManager.Instance.SetCountryCodeOnInstall(skus[optionId]);
 
-            UIFeedbackText.CreateAndLaunch(
-                "Restart the game to apply the new flavour!",
-                new Vector2(0.5f, 0.5f),
-                this.GetComponentInParent<Canvas>().transform as RectTransform
-            );
+                UIFeedbackText.CreateAndLaunch(
+                    "Restart the game to apply the new flavour!",
+                    new Vector2(0.5f, 0.5f),
+                    this.GetComponentInParent<Canvas>().transform as RectTransform
+                );
+            }
         }
     }
 #endregion
