@@ -75,7 +75,8 @@ public class FlavourFactory
            sku: SETTINGS_SKU_WW, 
            socialPlatform: Flavour.ESocialPlatform.Facebook,
            addressablesVariant: Flavour.EAddressablesVariant.WW,
-           isSIWAEnabled: IsSIWAEnabled(devicePlatform));
+           isSIWAEnabled: IsSIWAEnabled(devicePlatform),
+           showLanguageSelector: true);
     }
 
     private void Settings_SetFlavourChina(Flavour flavour, Flavour.EDevicePlatform devicePlatform)
@@ -84,7 +85,8 @@ public class FlavourFactory
            sku: SETTINGS_SKU_CHINA,
            socialPlatform: Flavour.ESocialPlatform.Weibo,
            addressablesVariant: Flavour.EAddressablesVariant.CN,
-           isSIWAEnabled: IsSIWAEnabled(devicePlatform));
+           isSIWAEnabled: IsSIWAEnabled(devicePlatform),
+           showLanguageSelector: false);
     }    
 #endregion
 }

@@ -24,8 +24,7 @@ public class PopupSettingsOptionsTab : MonoBehaviour {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed
-	[SerializeField] private SnappingScrollRect m_languageScrollList = null;
-	[SerializeField] private ShowHideAnimator m_languageNameAnim = null;
+	[SerializeField] private GameObject m_languageSelectorGroup;
 	[Space]
 	[SerializeField] private Slider m_graphicsQualitySlider = null;
 	[SerializeField] private CanvasGroup m_graphicsQualityCanvasGroup = null;
@@ -69,6 +68,11 @@ public class PopupSettingsOptionsTab : MonoBehaviour {
 			m_childrenGroupRoot_Android.SetActive(false);
 #endif
 		}
+
+		// Hide language selection for the chinese flavour
+		bool showLanguages = FlavourManager.Instance.GetCurrentFlavour().ShowLanguageSelector;
+		m_languageSelectorGroup.SetActive(showLanguages);
+
 	}
 
 
