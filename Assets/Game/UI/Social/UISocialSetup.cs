@@ -70,11 +70,12 @@ public class UISocialSetup : MonoBehaviour
 		Toggle(m_webItem, !isUnderage);
 
 		// Western items
-		Toggle(m_twitterItem, flavour.IsTwitterEnabled && !isUnderage);
-		Toggle(m_instagramItem, flavour.IsInstagramEnabled && !isUnderage);
+		Toggle(m_twitterItem, flavour.GetSetting<bool>(Flavour.SettingKey.TWITTER_ALLOWED) && !isUnderage);
+		Toggle(m_instagramItem, flavour.GetSetting<bool>(Flavour.SettingKey.INSTAGRAM_ALLOWED) && !isUnderage);
 
 		// China items
-		Toggle(m_weChatItem, flavour.IsWeChatEnabled && !string.IsNullOrEmpty(GameSettings.WE_CHAT_URL) && !isUnderage);    // Hide it while the URL is not defined
+		Toggle(m_weChatItem, flavour.GetSetting<bool>(Flavour.SettingKey.WECHAT_ALLOWED) &&
+            !string.IsNullOrEmpty(GameSettings.WE_CHAT_URL) && !isUnderage);    // Hide it while the URL is not defined
 	}
 
 	/// <summary>

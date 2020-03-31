@@ -69,7 +69,7 @@ public class SocialPlatformManager : MonoBehaviour
         bool returnValue = true;
         if (platform == SocialUtils.EPlatform.SIWA)
         {
-            returnValue = FlavourManager.Instance.GetCurrentFlavour().IsSIWAEnabled;
+            returnValue = FlavourManager.Instance.GetCurrentFlavour().GetSetting<bool>(Flavour.SettingKey.SIWA_ALLOWED);
         }
 
         return returnValue;

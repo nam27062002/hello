@@ -24,8 +24,8 @@ public class GlobalEventsNoActiveEventScreen : MonoBehaviour
         
         SetActive(m_socialWeiboButton, flavour.SocialPlatformASSocialUtilsEPlatform == SocialUtils.EPlatform.Weibo);
         SetActive(m_socialFbButton, flavour.SocialPlatformASSocialUtilsEPlatform == SocialUtils.EPlatform.Facebook);
-        SetActive(m_socialTwitterButton, flavour.IsTwitterEnabled);
-        SetActive(m_socialInstagramButton, flavour.IsInstagramEnabled);
+        SetActive(m_socialTwitterButton, flavour.GetSetting<bool>(Flavour.SettingKey.TWITTER_ALLOWED));
+        SetActive(m_socialInstagramButton, flavour.GetSetting<bool>(Flavour.SettingKey.INSTAGRAM_ALLOWED));
 
         // All the social stuff is hidden for kids
         SetActive(m_socialRoot, SocialPlatformManager.SharedInstance.GetIsEnabled());

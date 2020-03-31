@@ -70,11 +70,11 @@ public class PopupSettingsOptionsTab : MonoBehaviour {
 		}
 
 		// Hide language selection for the chinese flavour
-		bool showLanguages = FlavourManager.Instance.GetCurrentFlavour().ShowLanguageSelector;
+		bool showLanguages = FlavourManager.Instance.GetCurrentFlavour().GetSetting<bool>(Flavour.SettingKey.SHOW_LANGUAGE_SELECTOR);
 		m_languageSelectorGroup.SetActive(showLanguages);
 
 		// Hide blood selection for the chinese flavour
-		bool showBloodSelector = FlavourManager.Instance.GetCurrentFlavour().ShowBloodSelector;
+		bool showBloodSelector = FlavourManager.Instance.GetCurrentFlavour().GetSetting<bool>(Flavour.SettingKey.BLOOD_ALLOWED);
 		m_adultGroup.SetActive(showBloodSelector);
 
 	}

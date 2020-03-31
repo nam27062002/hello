@@ -7,11 +7,24 @@
 ///
 /// </summary>
 public class Flavour 
-{    
-    public string Sku
+{
+
+
+    //------------------------------------------------------------------------//
+    // ENUMS		    													  //
+    //------------------------------------------------------------------------//
+
+    // This settings will be used by components in the editor. DO NOT REMOVE/CHANGE ORDER
+    public enum SettingKey
     {
-        get;
-        private set;
+
+        SHOW_LANGUAGE_SELECTOR,
+        BLOOD_ALLOWED,
+        INSTAGRAM_ALLOWED,
+        TWITTER_ALLOWED,
+        WECHAT_ALLOWED,
+        SIWA_ALLOWED
+
     }
 
     //
@@ -23,19 +36,35 @@ public class Flavour
         Weibo
     };
 
-    private static SocialUtils.EPlatform ESocialPlatformToSocialUtilsEPlatform(ESocialPlatform value)
+    //
+    // Addressables variant
+    //
+    public enum EAddressablesVariant
     {
-        switch (value)
-        {
-            case ESocialPlatform.Facebook:
-                return SocialUtils.EPlatform.Facebook;
+        WW,
+        CN
+    };
 
-            case ESocialPlatform.Weibo:
-                return SocialUtils.EPlatform.Weibo;
-        }
+    //
+    // Device Platform
+    public enum EDevicePlatform
+    {
+        iOS,
+        Android
+    };
 
-        return SocialUtils.EPlatform.None;
+    //------------------------------------------------------------------------//
+    // PARAMETERS & PROPERTIES                                                //
+    //------------------------------------------------------------------------//
+
+    private Dictionary<SettingKey, bool> boolSettings;
+
+    public string Sku
+    {
+        get;
+        private set;
     }
+    
 
     public SocialUtils.EPlatform SocialPlatformASSocialUtilsEPlatform
     {
@@ -51,23 +80,57 @@ public class Flavour
         private set;
     }
 
-    //
-    // Addressables variant
-    //
-    public enum EAddressablesVariant
+    
+    public EAddressablesVariant AddressablesVariant
     {
-        WW,
-        CN
-    };
+        get;
+        private set;
+    }
 
-    public static List<string> ADDRESSABLE_VARIANT_KEYS = new List<string>() 
+    public string AddressablesVariantAsString
+    {
+        get
+        {
+            return EAddressablesVariantToString(AddressablesVariant);
+        }
+    }
+
+
+   
+
+    //------------------------------------------------------------------------//
+    // STATIC   		    												  //
+    //------------------------------------------------------------------------//
+
+    public static string DEVICEPLATFORM_IOS = EDevicePlatform.iOS.ToString();
+    public static string DEVICEPLATFORM_ANDROID = EDevicePlatform.Android.ToString();
+
+    public static List<string> ADDRESSABLE_VARIANT_KEYS = new List<string>()
     {
         "WW",
         "CN"
     };
 
+
     public static EAddressablesVariant ADDRESSABLES_VARIANT_DEFAULT = EAddressablesVariant.WW;
     public static string ADDRESSABLES_VARIANT_DEFAULT_SKU = EAddressablesVariantToString(ADDRESSABLES_VARIANT_DEFAULT);
+
+
+
+    private static SocialUtils.EPlatform ESocialPlatformToSocialUtilsEPlatform(ESocialPlatform value)
+    {
+        switch (value)
+        {
+            case ESocialPlatform.Facebook:
+                return SocialUtils.EPlatform.Facebook;
+
+            case ESocialPlatform.Weibo:
+                return SocialUtils.EPlatform.Weibo;
+        }
+
+        return SocialUtils.EPlatform.None;
+    }
+
 
     public static string EAddressablesVariantToString(EAddressablesVariant value)
     {
@@ -86,79 +149,42 @@ public class Flavour
         return returnValue;
     }
 
-    public EAddressablesVariant AddressablesVariant
-    {
-        get;
-        private set;
-    }
 
-    public string AddressablesVariantAsString
+    //------------------------------------------------------------------------//
+    // METHODS  		    												  //
+    //------------------------------------------------------------------------//
+
+    public bool GetSetting<Bool> (SettingKey key)
     {
-        get
+        if (boolSettings.ContainsKey(key) )
         {
-            return EAddressablesVariantToString(AddressablesVariant);
+            return boolSettings[key];
         }
+
+        // Default
+        return false;
     }
 
-    //
-    // Device Platform
-    public enum EDevicePlatform
-    {
-        iOS,
-        Android
-    };
 
-    public bool ShowLanguageSelector
-    {
-        get;
-        private set;
-    }
-
-    public bool ShowBloodSelector
-    {
-        get;
-        private set;
-    }
-
-    public bool IsTwitterEnabled
-    {
-        get;
-        private set;
-    }
-
-    public bool IsInstagramEnabled
-    {
-        get;
-        private set;
-    }
-
-    public bool IsWeChatEnabled
-    {
-        get;
-        private set;
-    }
-
-    public static string DEVICEPLATFORM_IOS = EDevicePlatform.iOS.ToString();
-    public static string DEVICEPLATFORM_ANDROID = EDevicePlatform.Android.ToString();       
-
-    public bool IsSIWAEnabled
-    {
-        get;
-        private set;
-    }   
-    
     public void Setup(string sku, ESocialPlatform socialPlatform, EAddressablesVariant addressablesVariant,
         bool isSIWAEnabled, bool showLanguageSelector, bool showBloodSelector, bool isTwitterEnabled, bool isInstagramEnabled,
         bool isWeChatEnabled)
     {
+
         Sku = sku;
         SocialPlatform = socialPlatform;
         AddressablesVariant = addressablesVariant;
-        IsSIWAEnabled = isSIWAEnabled;
-        ShowLanguageSelector = showLanguageSelector;
-        ShowBloodSelector = showBloodSelector;
-        IsTwitterEnabled = isTwitterEnabled;
-        IsInstagramEnabled = isInstagramEnabled;
-        IsWeChatEnabled = isWeChatEnabled;
+
+        // Boolean settings
+        boolSettings = new Dictionary<SettingKey, bool>();
+
+        boolSettings.Add(SettingKey.SIWA_ALLOWED, isSIWAEnabled);
+        boolSettings.Add(SettingKey.SHOW_LANGUAGE_SELECTOR, showLanguageSelector);
+        boolSettings.Add(SettingKey.BLOOD_ALLOWED, showBloodSelector);
+        boolSettings.Add(SettingKey.TWITTER_ALLOWED, isTwitterEnabled);
+        boolSettings.Add(SettingKey.INSTAGRAM_ALLOWED, isInstagramEnabled);
+        boolSettings.Add(SettingKey.WECHAT_ALLOWED, isWeChatEnabled);
+
     }
+
 }
