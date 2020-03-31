@@ -48,9 +48,9 @@ public class FlavourFactory
 
 #region settings
     // Flavour skus: So far "WW" is used for worldwide version and the country code for every country that requires a different flavour    
-    public const string SETTINGS_SKU_DEFAULT = SETTINGS_SKU_WW;
-    public const string SETTINGS_SKU_WW = "WW";
-    public const string SETTINGS_SKU_CHINA = PlatformUtils.COUNTRY_CODE_CHINA;             
+    private const string SETTINGS_SKU_DEFAULT = SETTINGS_SKU_WW;
+    private const string SETTINGS_SKU_WW = "WW";
+    private const string SETTINGS_SKU_CHINA = PlatformUtils.COUNTRY_CODE_CHINA;             
 
     private void Settings_SetFlavour(Flavour flavour, string flavourSku, Flavour.EDevicePlatform devicePlatform)
     {
