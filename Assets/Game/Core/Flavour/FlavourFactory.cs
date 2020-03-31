@@ -77,7 +77,10 @@ public class FlavourFactory
            addressablesVariant: Flavour.EAddressablesVariant.WW,
            isSIWAEnabled: IsSIWAEnabled(devicePlatform),
            showLanguageSelector: true,
-           showBloodSelector: true);
+           showBloodSelector: true,
+           isTwitterEnabled: true,
+           isInstagramEnabled: true,
+           isWeChatEnabled: false);
     }
 
     private void Settings_SetFlavourChina(Flavour flavour, Flavour.EDevicePlatform devicePlatform)
@@ -88,7 +91,10 @@ public class FlavourFactory
            addressablesVariant: Flavour.EAddressablesVariant.CN,
            isSIWAEnabled: IsSIWAEnabled(devicePlatform),
            showLanguageSelector: false,
-           showBloodSelector: false);
+           showBloodSelector: false,
+           isTwitterEnabled: false,
+           isInstagramEnabled: false,
+           isWeChatEnabled: true);
     }    
 #endregion
 }

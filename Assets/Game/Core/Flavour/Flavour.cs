@@ -120,6 +120,24 @@ public class Flavour
         private set;
     }
 
+    public bool IsTwitterEnabled
+    {
+        get;
+        private set;
+    }
+
+    public bool IsInstagramEnabled
+    {
+        get;
+        private set;
+    }
+
+    public bool IsWeChatEnabled
+    {
+        get;
+        private set;
+    }
+
     public static string DEVICEPLATFORM_IOS = EDevicePlatform.iOS.ToString();
     public static string DEVICEPLATFORM_ANDROID = EDevicePlatform.Android.ToString();       
 
@@ -130,7 +148,8 @@ public class Flavour
     }   
     
     public void Setup(string sku, ESocialPlatform socialPlatform, EAddressablesVariant addressablesVariant,
-        bool isSIWAEnabled, bool showLanguageSelector, bool showBloodSelector)
+        bool isSIWAEnabled, bool showLanguageSelector, bool showBloodSelector, bool isTwitterEnabled, bool isInstagramEnabled,
+        bool isWeChatEnabled)
     {
         Sku = sku;
         SocialPlatform = socialPlatform;
@@ -138,5 +157,8 @@ public class Flavour
         IsSIWAEnabled = isSIWAEnabled;
         ShowLanguageSelector = showLanguageSelector;
         ShowBloodSelector = showBloodSelector;
+        IsTwitterEnabled = isTwitterEnabled;
+        IsInstagramEnabled = isInstagramEnabled;
+        IsWeChatEnabled = isWeChatEnabled;
     }
 }
