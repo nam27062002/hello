@@ -114,6 +114,12 @@ public class Flavour
         private set;
     }
 
+    public bool ShowBloodSelector
+    {
+        get;
+        private set;
+    }
+
     public static string DEVICEPLATFORM_IOS = EDevicePlatform.iOS.ToString();
     public static string DEVICEPLATFORM_ANDROID = EDevicePlatform.Android.ToString();       
 
@@ -123,12 +129,14 @@ public class Flavour
         private set;
     }   
     
-    public void Setup(string sku, ESocialPlatform socialPlatform, EAddressablesVariant addressablesVariant, bool isSIWAEnabled, bool showLanguageSelector)
+    public void Setup(string sku, ESocialPlatform socialPlatform, EAddressablesVariant addressablesVariant,
+        bool isSIWAEnabled, bool showLanguageSelector, bool showBloodSelector)
     {
         Sku = sku;
         SocialPlatform = socialPlatform;
         AddressablesVariant = addressablesVariant;
         IsSIWAEnabled = isSIWAEnabled;
         ShowLanguageSelector = showLanguageSelector;
+        ShowBloodSelector = showBloodSelector;
     }
 }

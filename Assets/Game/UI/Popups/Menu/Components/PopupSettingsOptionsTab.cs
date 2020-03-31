@@ -31,7 +31,7 @@ public class PopupSettingsOptionsTab : MonoBehaviour {
 	[SerializeField] private TextMeshProUGUI m_graphicsQualityCurrentValueText = null;
 	[SerializeField] private GameObject[] m_graphicsQualitySeparators = new GameObject[4];
 	[Space]
-	[SerializeField] private GameObject m_adultGroupRoot = null;
+	[SerializeField] private GameObject m_adultGroup = null;
 	[SerializeField] private GameObject m_childrenGroupRoot_iOS = null;
 	[SerializeField] private GameObject m_childrenGroupRoot_Android = null;
 
@@ -49,8 +49,8 @@ public class PopupSettingsOptionsTab : MonoBehaviour {
 		// Toggle some components on/off if Age Restriction is enabled
 		bool ageRestriction = GDPRManager.SharedInstance.IsAgeRestrictionEnabled();
 
-		if(m_adultGroupRoot != null) {
-			m_adultGroupRoot.SetActive(!ageRestriction);
+		if(m_adultGroup != null) {
+			m_adultGroup.SetActive(!ageRestriction);
 		}
 
 		if(m_childrenGroupRoot_iOS != null) {
@@ -72,6 +72,10 @@ public class PopupSettingsOptionsTab : MonoBehaviour {
 		// Hide language selection for the chinese flavour
 		bool showLanguages = FlavourManager.Instance.GetCurrentFlavour().ShowLanguageSelector;
 		m_languageSelectorGroup.SetActive(showLanguages);
+
+		// Hide blood selection for the chinese flavour
+		bool showBloodSelector = FlavourManager.Instance.GetCurrentFlavour().ShowBloodSelector;
+		m_adultGroup.SetActive(showBloodSelector);
 
 	}
 

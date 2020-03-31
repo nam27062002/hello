@@ -76,7 +76,8 @@ public class FlavourFactory
            socialPlatform: Flavour.ESocialPlatform.Facebook,
            addressablesVariant: Flavour.EAddressablesVariant.WW,
            isSIWAEnabled: IsSIWAEnabled(devicePlatform),
-           showLanguageSelector: true);
+           showLanguageSelector: true,
+           showBloodSelector: true);
     }
 
     private void Settings_SetFlavourChina(Flavour flavour, Flavour.EDevicePlatform devicePlatform)
@@ -86,7 +87,8 @@ public class FlavourFactory
            socialPlatform: Flavour.ESocialPlatform.Weibo,
            addressablesVariant: Flavour.EAddressablesVariant.CN,
            isSIWAEnabled: IsSIWAEnabled(devicePlatform),
-           showLanguageSelector: false);
+           showLanguageSelector: false,
+           showBloodSelector: false);
     }    
 #endregion
 }
