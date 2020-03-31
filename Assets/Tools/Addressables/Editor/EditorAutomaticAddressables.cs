@@ -26,7 +26,7 @@ public static class EditorAutomaticAddressables {
             s_flavourAddressablesVariantToAssetFolder.Add(Flavour.EAddressablesVariant.WW, "");
 
             // flavourAddressablesVariant, folder name where the assets for flavourSku are stored in
-            s_flavourAddressablesVariantToAssetFolder.Add(Flavour.EAddressablesVariant.CN, "flavour_china");
+            s_flavourAddressablesVariantToAssetFolder.Add(Flavour.EAddressablesVariant.CN, "Flavours/China");
         }
     }
 
