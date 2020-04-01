@@ -154,6 +154,12 @@ public class Flavour
     // METHODS  		    												  //
     //------------------------------------------------------------------------//
 
+    /// <summary>
+    /// Returns the boolean value of a setting
+    /// </summary>
+    /// <typeparam name="Bool"></typeparam>
+    /// <param name="key"></param>
+    /// <returns></returns>
     public bool GetSetting<Bool> (SettingKey key)
     {
         if (boolSettings.ContainsKey(key) )
