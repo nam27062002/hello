@@ -197,7 +197,13 @@ public static class EditorAutomaticAddressables {
         //GetEntriesFromDirectory("Assets/Art/R", false, entries, bundlesSet, instanciableTypes, BuildTarget.NoTarget, AddressablesTypes.ELocationType.Resources);
 
         UbiListUtils.AddRange(_entries, entries, false, true);
-        _bundles.AddRange(bundlesSet);        
+        foreach (string s in bundlesSet)
+        {
+            if (!_bundles.Contains(s))
+            {
+                _bundles.Add(s);
+            }
+        }                
     }
 
     private static void GetEntriesFromDirectory(Flavour.EAddressablesVariant flavourAddressablesVariant, string _directoryPath, bool _addLastFolder, List<AddressablesCatalogEntry> _entries, HashSet<string> _bundles, System.Type[] _allowedTypes = null, BuildTarget platform = BuildTarget.NoTarget,
