@@ -317,13 +317,13 @@ public class ShopController : MonoBehaviour
     //------------------------------------------------------------------------//
     /// <summary>
     /// Initialize the shop with the requested mode. Should be called before opening the popup.
+    /// Notice that this method is not painting the shop. 
     /// </summary>
     /// <param name="_mode">Target mode.</param>
     /// <param name="_purchaseCompletedCallback">If provided, this action will be called each time an offer in
     /// this shop is successfully purchased</param>
     public void Init(Mode _mode, UnityAction<IShopPill> _purchaseCompletedCallback = null)
     {
-        int timer = Environment.TickCount;
 
         m_mode = _mode;
         switch (m_mode)
