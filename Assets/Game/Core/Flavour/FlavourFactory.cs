@@ -80,7 +80,8 @@ public class FlavourFactory
            showBloodSelector: true,
            isTwitterEnabled: true,
            isInstagramEnabled: true,
-           isWeChatEnabled: false);
+           isWeChatEnabled: false,
+           showSplashLegalText: false);
     }
 
     private void Settings_SetFlavourChina(Flavour flavour, Flavour.EDevicePlatform devicePlatform)
@@ -94,7 +95,8 @@ public class FlavourFactory
            showBloodSelector: false,
            isTwitterEnabled: false,
            isInstagramEnabled: false,
-           isWeChatEnabled: true);
+           isWeChatEnabled: true,
+           showSplashLegalText: true);
     }    
 #endregion
 }

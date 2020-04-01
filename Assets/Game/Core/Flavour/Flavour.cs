@@ -23,7 +23,8 @@ public class Flavour
         INSTAGRAM_ALLOWED,
         TWITTER_ALLOWED,
         WECHAT_ALLOWED,
-        SIWA_ALLOWED
+        SIWA_ALLOWED,
+        SHOW_SPLASH_LEGAL_TEXT
 
     }
 
@@ -174,7 +175,7 @@ public class Flavour
 
     public void Setup(string sku, ESocialPlatform socialPlatform, EAddressablesVariant addressablesVariant,
         bool isSIWAEnabled, bool showLanguageSelector, bool showBloodSelector, bool isTwitterEnabled, bool isInstagramEnabled,
-        bool isWeChatEnabled)
+        bool isWeChatEnabled, bool showSplashLegalText)
     {
 
         Sku = sku;
@@ -190,6 +191,7 @@ public class Flavour
         boolSettings.Add(SettingKey.TWITTER_ALLOWED, isTwitterEnabled);
         boolSettings.Add(SettingKey.INSTAGRAM_ALLOWED, isInstagramEnabled);
         boolSettings.Add(SettingKey.WECHAT_ALLOWED, isWeChatEnabled);
+        boolSettings.Add(SettingKey.SHOW_SPLASH_LEGAL_TEXT, showSplashLegalText);
 
     }
 
