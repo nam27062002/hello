@@ -72,8 +72,13 @@ public class DragonXPBar : MonoBehaviour {
 	[SerializeField] protected GameObject m_disguiseMarkerPrefab = null;
     [SerializeField] protected UITooltip m_levelToolTip = null;
 
-    // Internal
-    protected DragonDataClassic m_dragonData = null;    // Last used dragon data
+	// Next level dragon
+	[Separator]
+	[SerializeField] private GameObject m_nextDragonGroup = null;
+	[SerializeField] private UISpriteAddressablesLoader m_nextDragonAvatar = null;
+
+	// Internal
+	protected DragonDataClassic m_dragonData = null;    // Last used dragon data
     protected List<DragonXPBarSeparator> m_barSeparators = new List<DragonXPBarSeparator>();
 	protected List<DisguiseInfo> m_disguises = new List<DisguiseInfo>();
 	
@@ -105,17 +110,22 @@ public class DragonXPBar : MonoBehaviour {
         if (!classic) return;
 
 
-        // Ignore delay if disabled (coroutines can't be started with the component disabled)
-        if (isActiveAndEnabled && _delay > 0) {
+		// Ignore delay if disabled (coroutines can't be started with the component disabled)
+		if (isActiveAndEnabled && _delay > 0)
+		{
 			// Start internal coroutine
 			StartCoroutine(RefreshDelayed(_sku, _delay));
-		} else {
+		}
+		else
+		{
 			// Get new dragon's data from the dragon manager and do the refresh logic
 			Refresh(DragonManager.GetDragonData(_sku) as DragonDataClassic);
 		}
+
+
 	}
 
-    /// <summary>
+	/// <summary>
 	/// Update all fields with given dragon data.
 	/// Heirs should call the base when overriding.
 	/// </summary>
@@ -147,8 +157,42 @@ public class DragonXPBar : MonoBehaviour {
 
         // Bar separators and markers
         InitSeparators(_data);
+        
+			// Shall we show the next dragon avatar?
+		if (m_nextDragonGroup != null)
+		{
 
-    }
+			bool showNextDragon = false;
+
+			// Is enabled in the settings (can be disabled for AB tests)
+			DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, "UISettings");
+			if (def.GetAsBool("showNextDragonInXpBar", false))
+			{
+
+				IDragonData currentDragon = DragonManager.CurrentDragon;
+				IDragonData nextDragon = DragonManager.GetNextDragonData(currentDragon.sku);
+
+				// Show the next dragon, only if the player owns the current but not the next
+				if (currentDragon.isOwned && nextDragon != null && !nextDragon.isOwned)
+				{
+
+					showNextDragon = true;
+
+					// Show the proper avatar image (base skin)
+					DefinitionNode skinDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, nextDragon.disguise);
+
+					m_nextDragonAvatar.IsVisible = true;
+					m_nextDragonAvatar.LoadAsync(skinDef.Get("icon"));
+				}
+
+			}
+
+			// Show the avatar
+			m_nextDragonGroup.SetActive(showNextDragon);
+
+		}
+
+	}
 
 
     //------------------------------------------------------------------------//
