@@ -143,8 +143,13 @@ public class DragonHealthBehaviour : MonoBehaviour {
                 }
             }
 #if DEBUG
-            if (Input.GetKeyDown(KeyCode.M))
-                m_dragon.AddLife(-m_dragon.health, DamageType.NONE, null);
+			if(Input.GetKeyDown(KeyCode.M)) {
+				if(Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)) {
+					m_dragon.AddLife(-m_dragon.health, DamageType.BIG_DAMAGE, null);
+				} else {
+					m_dragon.AddLife(-m_dragon.health, DamageType.NONE, null);
+				}
+			}
 #endif
         }
 	}
