@@ -172,8 +172,9 @@ public class DragonXPBar : MonoBehaviour {
 				IDragonData currentDragon = DragonManager.CurrentDragon;
 				IDragonData nextDragon = DragonManager.GetNextDragonData(currentDragon.sku);
 
-				// Show the next dragon, only if the player owns the current but not the next
-				if (currentDragon.isOwned && nextDragon != null && !nextDragon.isOwned)
+				// Show the next dragon, only if the player owns the current one
+                // (and the current dragon is classic, this is implicit in this class)
+				if (currentDragon.isOwned && nextDragon != null)
 				{
 
 					showNextDragon = true;
