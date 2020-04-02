@@ -70,7 +70,8 @@ public class GameSettings : SingletonScriptableObject<GameSettings> {
 
 	// UI Settings
 	public const string SHOW_BIG_AMOUNT_CONFIRMATION_POPUP = "SHOW_BIG_AMOUNT_CONFIRMATION_POPUP";	// bool, default true
-	public const string SHOW_EXIT_RUN_CONFIRMATION_POPUP = "SHOW_EXIT_RUN_CONFIRMATION_POPUP";	// bool, default true
+	public const string SHOW_EXIT_RUN_CONFIRMATION_POPUP = "SHOW_EXIT_RUN_CONFIRMATION_POPUP";  // bool, default true
+	public const string UI_SETTINGS_SKU = "UISettings";
 
 	[Serializable]
 	public class ShareData {

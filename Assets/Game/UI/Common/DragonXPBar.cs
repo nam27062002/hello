@@ -165,7 +165,7 @@ public class DragonXPBar : MonoBehaviour {
 			bool showNextDragon = false;
 
 			// Is enabled in the settings (can be disabled for AB tests)
-			DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, "UISettings");
+			DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, GameSettings.UI_SETTINGS_SKU);
 			if (def.GetAsBool("showNextDragonInXpBar", false))
 			{
 

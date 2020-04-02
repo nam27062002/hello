@@ -29,6 +29,11 @@ public class GameHUD : MonoBehaviour {
     public Animator m_fireRushGroup;
 
 	[Space]
+	[SerializeField] private GameObject m_mapButtonVersionA; // The classic map icon
+	[SerializeField] private GameObject m_mapButtonVersionB; // The map icon shapped as a button (for AB testing)
+
+
+	[Space]
 	public Component[] m_toAutoDestroy = new Component[0];
 	[Min(0)]
 	public int m_autoDestroyDelayFrames = 1;
@@ -98,6 +103,34 @@ public class GameHUD : MonoBehaviour {
             }
         }
     }
+
+
+    /// <summary>
+    /// Display the proper button variant according to the configuration in the content (for AB test)
+    /// </summary>
+    private void RefreshMapButtons()
+    {
+
+		// Check which button variant is configured in the content (can be changed for AB tests)
+		DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, GameSettings.UI_SETTINGS_SKU);
+		bool mapAsButton = def.GetAsBool("mapAsButton", false);
+
+		if (m_mapButtonVersionA != null)
+			m_mapButtonVersionA.SetActive(!mapAsButton);
+
+		if (m_mapButtonVersionB != null)
+			m_mapButtonVersionB.SetActive(mapAsButton);
+
+		if (m_mapButtonGodRays != null)
+		{
+            // Disable the particles at some point of the game
+			def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS,GameSettings.FTUX_SKU) ;
+			int disableMapParticlesAtRun = def.GetAsInt("disableMapParticlesAtRun", 0);
+
+			m_mapButtonGodRays.SetActive(mapAsButton && UsersManager.currentUser.gamesPlayed < disableMapParticlesAtRun);
+
+		}
+	}
 
     //------------------------------------------------------------------//
     // CALLBACKS														//
@@ -173,6 +206,10 @@ public class GameHUD : MonoBehaviour {
 
 	void OnGameStarted() {
 		m_gameStarted = true;
+
+		RefreshMapButtons();
+
+
 	}
 
     void OnRevive(DragonPlayer.ReviveReason _reason) {
