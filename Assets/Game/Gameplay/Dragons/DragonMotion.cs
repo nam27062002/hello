@@ -646,9 +646,15 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 				case State.Dead:
 				{
 					m_controls.enabled = false;
-					m_animator.SetTrigger(GameConstants.Animator.DEAD);
+
+					// No death animation in China or Korea
+					if(!PlatformUtils.Instance.IsChina() && !PlatformUtils.Instance.IsKorea()) {
+						m_animator.SetTrigger(GameConstants.Animator.DEAD);
+					}
+
 					if ( m_previousState == State.InsideWater )
 						m_animator.SetBool(GameConstants.Animator.SWIM, true);
+					
 					// Save Position!
 					m_diePosition = m_transform.position;
 					m_deadTimer = 0;
@@ -1467,12 +1473,17 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 			m_impulse = m_rbody.velocity;
 			if ( m_deadTimer < 1.5f * Time.timeScale )
 			{
-				float gravity = 9.81f * m_dragonGravityModifier * m_deadGravityMultiplier;
-				Vector3 acceleration = GameConstants.Vector3.down * gravity * m_dragonMass;	// Gravity
+				// Don't fall in China or Korea
+				if(PlatformUtils.Instance.IsChina() || PlatformUtils.Instance.IsKorea()) {
+					ComputeImpulseToZero(_deltaTime);
+				} else {
+					float gravity = 9.81f * m_dragonGravityModifier * m_deadGravityMultiplier;
+					Vector3 acceleration = GameConstants.Vector3.down * gravity * m_dragonMass; // Gravity
 
-				// stroke's Drag
-				float impulseMag = m_impulse.magnitude;
-				m_impulse += (acceleration * _deltaTime) - ( m_impulse.normalized * m_dragonFricction * impulseMag * _deltaTime); // velocity = acceleration - friction * velocity
+					// stroke's Drag
+					float impulseMag = m_impulse.magnitude;
+					m_impulse += (acceleration * _deltaTime) - (m_impulse.normalized * m_dragonFricction * impulseMag * _deltaTime); // velocity = acceleration - friction * velocity
+				}
 			}
 			else
 			{
