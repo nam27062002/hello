@@ -149,8 +149,7 @@ public class MenuDragonClassicInfo : MenuDragonInfo {
                 if (m_unlockProgressionText != null)
                 {
                     // Is enabled in the settings (can be disabled for AB tests)
-                    DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, "UISettings");
-                    bool unlockTextEnabled = def.GetAsBool("showUnlockProgressionText", false);
+                    bool unlockTextEnabled = GameSettings.SHOWN_UNLOCK_PROGRESSION_TEXT;
 
 
                     // And the dragon is locked (and is a classic, thats implicit)
