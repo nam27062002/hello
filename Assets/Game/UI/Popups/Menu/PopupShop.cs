@@ -74,7 +74,10 @@ public class PopupShop : MonoBehaviour {
 	/// <param name="_mode">Target mode.</param>
 	public void Init(ShopController.Mode _mode, string _origin) {
 		m_openOrigin = _origin;
+
+        // Init the shop and call refresh to paint it
         m_shopController.Init(_mode, OnPurchaseSuccessful);
+		m_shopController.Refresh();
 
 		// Leave a reference in the instance manager
 		InstanceManager.shopController = m_shopController;
