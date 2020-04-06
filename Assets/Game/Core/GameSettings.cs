@@ -140,11 +140,6 @@ public class GameSettings : SingletonScriptableObject<GameSettings> {
 	private int m_enableHappyHourAtRun = 4;
 	public static int ENABLE_HAPPY_HOUR_AT_RUN { get { return instance.m_enableHappyHourAtRun; } }
 
-	private int m_enableMapAtRun = 2;
-	public static int ENABLE_MAP_AT_RUN { get { return instance.m_enableMapAtRun; } }
-
-	private int m_disableMapParticlesAtRun = 3;
-	public static int DISABLE_MAP_PARTICLES_AT_RUN { get { return instance.m_disableMapParticlesAtRun; } }
 
 	// FTUX
 	[Separator("UISettings")]
@@ -300,8 +295,7 @@ public class GameSettings : SingletonScriptableObject<GameSettings> {
 		instance.m_enableShareButtonsAtRun = def.GetAsInt("enableShareButtonsAtRun", instance.m_enableShareButtonsAtRun);
 		instance.m_enablePassiveEventsAtRun = def.GetAsInt("enablePassiveEventsAtRun", instance.m_enablePassiveEventsAtRun);
 		instance.m_enableHappyHourAtRun = def.GetAsInt("enableHappyHourAtRun", instance.m_enableHappyHourAtRun);
-		instance.m_enableMapAtRun = def.GetAsInt("enableMapAtRun", instance.m_enableMapAtRun);
-		instance.m_disableMapParticlesAtRun = def.GetAsInt("disableMapParticlesAtRun", instance.m_disableMapParticlesAtRun);
+
 
 		// UI Settings:
 		def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, UI_SETTINGS_SKU);

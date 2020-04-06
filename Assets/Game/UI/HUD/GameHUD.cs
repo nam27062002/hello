@@ -28,7 +28,6 @@ public class GameHUD : MonoBehaviour {
     public Animator m_fireRushGroup;
 
     [Space]
-	public GameObject m_mapGroup;
 	public GameObject m_mapButtonGodRays;
 
 
@@ -106,38 +105,6 @@ public class GameHUD : MonoBehaviour {
     }
 
 
-    /// <summary>
-    /// Display the proper button variant according to the configuration in the content (for AB test)
-    /// </summary>
-    private void RefreshMapUI()
-    {
-
-        if (m_mapGroup)
-        {
-			m_mapGroup.SetActive(UsersManager.currentUser.gamesPlayed >= GameSettings.ENABLE_MAP_AT_RUN);
-
-            // If this is the first run where we show the map, launch an animation
-            if (UsersManager.currentUser.gamesPlayed == GameSettings.ENABLE_MAP_AT_RUN)
-            {
-                // Make sure there is an animator (only one of the AB versions has it)
-				Animator animator = m_mapGroup.GetComponent<Animator>();
-                if (animator != null)
-                {
-                    // Trigger the animation
-					animator.SetTrigger("start");
-                }
-            }
-        }
-
-		if (m_mapButtonGodRays != null)
-		{
-			// Disable the particles at some point of the game
-
-			m_mapButtonGodRays.SetActive(UsersManager.currentUser.gamesPlayed < GameSettings.DISABLE_MAP_PARTICLES_AT_RUN);
-
-		}
-	}
-
     //------------------------------------------------------------------//
     // CALLBACKS														//
     //------------------------------------------------------------------//
@@ -211,10 +178,8 @@ public class GameHUD : MonoBehaviour {
 	}
 
 	void OnGameStarted() {
+
 		m_gameStarted = true;
-
-		RefreshMapUI();
-
 
 	}
 
