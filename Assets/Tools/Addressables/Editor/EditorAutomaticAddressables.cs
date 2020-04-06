@@ -16,17 +16,41 @@ public static class EditorAutomaticAddressables {
 
     private static string[] LOCAL_DRAGONS = { "dragon_baby", "dragon_crocodile", "dragon_reptile" };
 
-    private static Dictionary<Flavour.EAddressablesVariant, string> s_flavourAddressablesVariantToAssetFolder;
+    private class AddressablesVariant
+    {
+        public string FolderInAssets
+        {
+            get;
+            private set;
+        }
+
+        public BuildTarget Platform
+        {
+            get;
+            private set;
+        }
+
+        public AddressablesVariant(string folderInAssets, BuildTarget platform)
+        {
+            FolderInAssets = folderInAssets;
+            Platform = platform; 
+        }
+    }
+
+    private static Dictionary<Flavour.EAddressablesVariant, AddressablesVariant> s_flavourAddressablesVariantToAssetFolder;
 
     private static void Flavour_Init()
     {
         if (s_flavourAddressablesVariantToAssetFolder == null)
         {
-            s_flavourAddressablesVariantToAssetFolder = new Dictionary<Flavour.EAddressablesVariant, string>();
-            s_flavourAddressablesVariantToAssetFolder.Add(Flavour.EAddressablesVariant.WW, "");
+            s_flavourAddressablesVariantToAssetFolder = new Dictionary<Flavour.EAddressablesVariant, AddressablesVariant>();
+
+            AddressablesVariant addressablesVariant = new AddressablesVariant("", BuildTarget.NoTarget);
+            s_flavourAddressablesVariantToAssetFolder.Add(Flavour.EAddressablesVariant.WW, addressablesVariant);
 
             // flavourAddressablesVariant, folder name where the assets for flavourSku are stored in
-            s_flavourAddressablesVariantToAssetFolder.Add(Flavour.EAddressablesVariant.CN, "Flavours/China");
+            addressablesVariant = new AddressablesVariant("Flavours/China", BuildTarget.iOS);
+            s_flavourAddressablesVariantToAssetFolder.Add(Flavour.EAddressablesVariant.CN, addressablesVariant);
         }
     }
 
@@ -38,7 +62,7 @@ public static class EditorAutomaticAddressables {
        
         if (s_flavourAddressablesVariantToAssetFolder.ContainsKey(flavourAddressablesVariant))
         {
-            returnValue = s_flavourAddressablesVariantToAssetFolder[flavourAddressablesVariant];
+            returnValue = s_flavourAddressablesVariantToAssetFolder[flavourAddressablesVariant].FolderInAssets;
         }
         else
         {
@@ -139,19 +163,19 @@ public static class EditorAutomaticAddressables {
     }
 
 
-    private static void GetEntriesPrefab(out List<AddressablesCatalogEntry> entryList, out List<string> bundleList) {
+    private static void GetEntriesPrefab(out List<AddressablesCatalogEntry> entryList, out List<string> bundleList, BuildTarget platform = BuildTarget.NoTarget) {
         entryList = new List<AddressablesCatalogEntry>();
         bundleList = new List<string>();
 
         Flavour_Init();
 
-        foreach (KeyValuePair<Flavour.EAddressablesVariant, string> pair in s_flavourAddressablesVariantToAssetFolder)
+        foreach (KeyValuePair<Flavour.EAddressablesVariant, AddressablesVariant> pair in s_flavourAddressablesVariantToAssetFolder)
         {
-            GetFlavourEntriesPrefab(pair.Key, ref entryList, ref bundleList);
+            GetFlavourEntriesPrefab(pair.Key, ref entryList, ref bundleList, pair.Value.Platform);
         }        
     }    
 
-    private static void GetFlavourEntriesPrefab(Flavour.EAddressablesVariant flavourSku, ref List<AddressablesCatalogEntry> _entries, ref List<string> _bundles) {
+    private static void GetFlavourEntriesPrefab(Flavour.EAddressablesVariant flavourSku, ref List<AddressablesCatalogEntry> _entries, ref List<string> _bundles, BuildTarget platform) {
         List<AddressablesCatalogEntry> entries = new List<AddressablesCatalogEntry>();
         HashSet<string> bundlesSet = new HashSet<string>();
 
@@ -160,34 +184,34 @@ public static class EditorAutomaticAddressables {
 
         System.Type[] instanciableTypesAnimationControllers = new System.Type[] { typeof(UnityEngine.AnimatorOverrideController),
                                                                                   typeof(UnityEditor.Animations.AnimatorController)};
-        GetEntriesFromDirectory(flavourSku, rootPath + "Art/3D/Gameplay/Dragons/", false, entries, bundlesSet, instanciableTypesAnimationControllers);        
+        GetEntriesFromDirectory(flavourSku, rootPath + "Art/3D/Gameplay/Dragons/", false, entries, bundlesSet, instanciableTypesAnimationControllers, platform);        
 
         System.Type[] instanciableTypes = new System.Type[] { typeof(UnityEngine.GameObject), typeof(UnityEditor.SceneAsset) };
-        GetEntriesFromDirectory(flavourSku, rootPath + "AI", false, null, bundlesSet);
-        GetEntriesFromDirectory(flavourSku, rootPath + "Art/3D/Gameplay/Entities", false, null, bundlesSet);
-        GetEntriesFromDirectory(flavourSku, rootPath + "Art/3D/Gameplay/Entities/PrefabsMenu/", false, entries, bundlesSet, instanciableTypes);
-        GetEntriesFromDirectory(flavourSku, rootPath + "Art/Particles/", false, null, bundlesSet);
-        GetEntriesFromDirectory(flavourSku, rootPath + "Art/VFX/", false, null, bundlesSet);
-        GetEntriesFromDirectory(flavourSku, rootPath + "Game/Scenes/Levels/", false, entries, bundlesSet, instanciableTypes);
-        GetEntriesFromDirectory(flavourSku, rootPath + IEntity.ENTITY_PREFABS_PATH, true, entries, bundlesSet, instanciableTypes);
-        GetEntriesFromDirectory(flavourSku, rootPath + "Art/3D/Gameplay/Blockers/Prefabs/", false, entries, bundlesSet);
-        GetEntriesFromDirectory(flavourSku, rootPath + "Art/3D/Gameplay/Equipable/items/NPC/", false, entries, bundlesSet, instanciableTypes);
-        GetEntriesFromDirectory(flavourSku, rootPath + "Art/3D/Gameplay/Particles/", false, entries, bundlesSet, instanciableTypes);
-        GetEntriesFromDirectory(flavourSku, rootPath + "Art/3D/Gameplay/Projectiles/", false, entries, bundlesSet, instanciableTypes);
+        GetEntriesFromDirectory(flavourSku, rootPath + "AI", false, null, bundlesSet, null, platform);
+        GetEntriesFromDirectory(flavourSku, rootPath + "Art/3D/Gameplay/Entities", false, null, bundlesSet, null, platform);
+        GetEntriesFromDirectory(flavourSku, rootPath + "Art/3D/Gameplay/Entities/PrefabsMenu/", false, entries, bundlesSet, instanciableTypes, platform);
+        GetEntriesFromDirectory(flavourSku, rootPath + "Art/Particles/", false, null, bundlesSet, null, platform);
+        GetEntriesFromDirectory(flavourSku, rootPath + "Art/VFX/", false, null, bundlesSet, null, platform);
+        GetEntriesFromDirectory(flavourSku, rootPath + "Game/Scenes/Levels/", false, entries, bundlesSet, instanciableTypes, platform);
+        GetEntriesFromDirectory(flavourSku, rootPath + IEntity.ENTITY_PREFABS_PATH, true, entries, bundlesSet, instanciableTypes, platform);
+        GetEntriesFromDirectory(flavourSku, rootPath + "Art/3D/Gameplay/Blockers/Prefabs/", false, entries, bundlesSet, null, platform);
+        GetEntriesFromDirectory(flavourSku, rootPath + "Art/3D/Gameplay/Equipable/items/NPC/", false, entries, bundlesSet, instanciableTypes, platform);
+        GetEntriesFromDirectory(flavourSku, rootPath + "Art/3D/Gameplay/Particles/", false, entries, bundlesSet, instanciableTypes, platform);
+        GetEntriesFromDirectory(flavourSku, rootPath + "Art/3D/Gameplay/Projectiles/", false, entries, bundlesSet, instanciableTypes, platform);
 
         // Add all dragon bundles to bundleSet and (prefabs and materials) to entries
         System.Type[] instanciableTypesAndMaterials = new System.Type[] { typeof(UnityEngine.GameObject), typeof(UnityEditor.SceneAsset), typeof( UnityEngine.Material ) };
-        GetEntriesFromDirectory(flavourSku, rootPath + "Art/3D/Gameplay/Dragons/Prefabs/", false, entries, bundlesSet, instanciableTypes);
-        GetEntriesFromDirectory(flavourSku, rootPath + "Art/3D/Gameplay/Dragons/Skins/", false, entries, bundlesSet, instanciableTypesAndMaterials);
-        GetEntriesFromDirectory(flavourSku, rootPath + "Art/3D/Gameplay/Dragons/Items/", false, entries, bundlesSet, instanciableTypes);
+        GetEntriesFromDirectory(flavourSku, rootPath + "Art/3D/Gameplay/Dragons/Prefabs/", false, entries, bundlesSet, instanciableTypes, platform);
+        GetEntriesFromDirectory(flavourSku, rootPath + "Art/3D/Gameplay/Dragons/Skins/", false, entries, bundlesSet, instanciableTypesAndMaterials, platform);
+        GetEntriesFromDirectory(flavourSku, rootPath + "Art/3D/Gameplay/Dragons/Items/", false, entries, bundlesSet, instanciableTypes, platform);
 
            // Disguise icons
         System.Type[] instanciableTypesTextures = new System.Type[] { typeof(UnityEngine.Texture2D) };
-        GetEntriesFromDirectory(flavourSku, rootPath + "Art/UI/Metagame/Dragons/Disguises/", false, entries, bundlesSet, instanciableTypesTextures);
+        GetEntriesFromDirectory(flavourSku, rootPath + "Art/UI/Metagame/Dragons/Disguises/", false, entries, bundlesSet, instanciableTypesTextures, platform);
 
         // Add all pets bundles
-        GetEntriesFromDirectory(flavourSku, rootPath + "Art/3D/Gameplay/Pets/Prefabs/", false, entries, bundlesSet, instanciableTypes);
-        GetEntriesFromDirectory(flavourSku, rootPath + "Art/UI/Metagame/Pets/", false, entries, bundlesSet, instanciableTypesTextures);
+        GetEntriesFromDirectory(flavourSku, rootPath + "Art/3D/Gameplay/Pets/Prefabs/", false, entries, bundlesSet, instanciableTypes, platform);
+        GetEntriesFromDirectory(flavourSku, rootPath + "Art/UI/Metagame/Pets/", false, entries, bundlesSet, instanciableTypesTextures, platform);
 
         // AR (only for iOS)
         GetEntriesFromDirectory(flavourSku, rootPath + "PlatformResources/iOS/AR/Animojis/", false, entries, bundlesSet, instanciableTypes, BuildTarget.iOS);
