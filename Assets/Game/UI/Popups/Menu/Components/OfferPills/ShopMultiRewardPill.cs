@@ -103,16 +103,8 @@ public class ShopMultiRewardPill: ShopBasePill
 			if(m_layouts[i].m_container != null) {
                 if (m_currentLayout == m_layouts[i])
                 {
-                    // If it can be animated, do it (we use it in the skins popup)
-					ShowHideAnimator showHide = m_layouts[i].m_container.GetComponent<ShowHideAnimator>();
-                    if (showHide != null)
-                    {
-						showHide.ForceShow(true);
-					}
-					else
-                    {
-						m_layouts[i].m_container.gameObject.SetActive(true);
-					}
+                    
+				    m_layouts[i].m_container.gameObject.SetActive(true);
 
 				}
                 else
