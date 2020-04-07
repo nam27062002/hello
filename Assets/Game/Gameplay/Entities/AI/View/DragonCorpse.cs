@@ -111,6 +111,12 @@ public class DragonCorpse : MonoBehaviour {
             float forceFactor = _hasBoost ? 1.25f : 1f;
 
             for (int i = 0; i < m_gibs.Length; i++) {
+                if (m_gibs[i] == null)
+                {
+                    Debug.LogError(">>>>>>>>DragonCorpse.Spawn error: m_gibs[" + i + "] = null");
+                    continue;
+                }
+
                 m_gibs[i].transform.position = Vector3.zero;
 
                 m_gibs[i].transform.localPosition = m_originalTransforms[i].localPosition;
@@ -125,6 +131,13 @@ public class DragonCorpse : MonoBehaviour {
 
             if (!string.IsNullOrEmpty(m_blood.name) && m_bloodPoints != null) {
                 for (int i = 0; i < m_bloodPoints.Length; i++) {
+
+                    if (m_bloodPoints[i] == null)
+                    {
+                        Debug.LogError(">>>>>>>>DragonCorpse.Spawn error: m_bloodPoints[" + i + "] = null");
+                        continue;
+                    }
+
                     GameObject ps = m_blood.Spawn(m_bloodPoints[i].transform.position + m_blood.offset);
 
                     if (ps != null) {

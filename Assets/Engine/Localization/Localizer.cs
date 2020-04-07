@@ -41,19 +41,19 @@ public class Localizer : MonoBehaviour, IBroadcastListener {
 		get { return m_tid; }
 	}
 
-	[SerializeField] private Case m_caseType = Case.DEFAULT;
+	[SerializeField] protected Case m_caseType = Case.DEFAULT;
 	public Case caseType {
 		get { return m_caseType; }
 		set { m_caseType = value; }
 	}
 
-	[SerializeField] private string[] m_replacements;
+	[SerializeField] protected string[] m_replacements;
 	public string[] replacements {
 		get { return m_replacements; }
 	}
 
 	// References
-	private TextMeshProUGUI m_text = null;
+	protected TextMeshProUGUI m_text = null;
 	public TextMeshProUGUI text {
 		get { 
 			if(m_text == null) m_text = GetComponent<TextMeshProUGUI>();
@@ -62,7 +62,7 @@ public class Localizer : MonoBehaviour, IBroadcastListener {
 	}
 
 	// Internal logic
-	private bool m_ignoreLanguageChange = false;
+	protected bool m_ignoreLanguageChange = false;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -149,7 +149,7 @@ public class Localizer : MonoBehaviour, IBroadcastListener {
 	/// <summary>
 	/// Update the text with the current tid, replacements and language.
 	/// </summary>
-	private void Localize() {
+	protected virtual void Localize() {
 		// Check params
 		if(m_text == null) return;
 
@@ -195,7 +195,7 @@ public class Localizer : MonoBehaviour, IBroadcastListener {
 	/// Use for texts that don't require localization or texts localized from outside.
 	/// </summary>
 	/// <param name="_text">Text to be applied to the textfield.</param>
-	public void Set(string _text) {
+	public virtual void Set(string _text) {
 		// Clear tid and params
 		m_tid = string.Empty;
 		m_replacements = null;
