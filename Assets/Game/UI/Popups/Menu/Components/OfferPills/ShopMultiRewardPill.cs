@@ -101,7 +101,25 @@ public class ShopMultiRewardPill: ShopBasePill
 
 			// Only activate target layout
 			if(m_layouts[i].m_container != null) {
-				m_layouts[i].m_container.gameObject.SetActive(m_currentLayout == m_layouts[i]);
+                if (m_currentLayout == m_layouts[i])
+                {
+                    // If it can be animated, do it (we use it in the skins popup)
+					ShowHideAnimator showHide = m_layouts[i].m_container.GetComponent<ShowHideAnimator>();
+                    if (showHide != null)
+                    {
+						showHide.ForceShow(true);
+					}
+					else
+                    {
+						m_layouts[i].m_container.gameObject.SetActive(true);
+					}
+
+				}
+                else
+                {
+					m_layouts[i].m_container.gameObject.SetActive(false);
+
+				}
 			}
 		}
     }
