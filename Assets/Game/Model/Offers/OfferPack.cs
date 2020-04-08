@@ -11,6 +11,7 @@ using UnityEngine;
 using System;
 using System.Globalization;
 using System.Collections.Generic;
+using Metagame;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -1178,6 +1179,27 @@ public class OfferPack {
 		m_viewsCount++;
 		m_lastViewTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTime();
 	}
+
+    /// <summary>
+    /// Count how many items are in this pack that are a dragon or a skin
+    /// We need to know this number in order to open the proper info popup in the shop
+    /// </summary>
+    /// <returns>The amount of dragons/skins in the pack</returns>
+    public int GetDragonsSkinsCount ()
+    {
+		int amount = 0;
+
+        foreach (OfferPackItem it in items)
+        {
+            if (it.type == RewardDragon.TYPE_CODE || it.type == RewardSkin.TYPE_CODE)
+            {
+				amount++;
+            }
+        }
+
+		return amount;
+    }
+
 	#endregion
 
 	//------------------------------------------------------------------------//
