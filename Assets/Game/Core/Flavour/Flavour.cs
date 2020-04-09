@@ -59,6 +59,7 @@ public class Flavour
     //------------------------------------------------------------------------//
 
     private Dictionary<SettingKey, bool> boolSettings;
+    private HashSet<string> forbiddenSFX;
 
     public string Sku
     {
@@ -172,10 +173,24 @@ public class Flavour
         return false;
     }
 
+    /// <summary>
+    /// Validate if an audio clip it's on a forbidden list
+    /// </summary>
+    /// <param name="audioSubItemId"></param>
+    /// <returns>TRUE if the audio clip can be played, FALSE otherwise</returns>
+    public bool CanPlaySFX(string audioSubItemId)
+    {
+        if (forbiddenSFX == null)
+        {
+            return true;
+        }
+
+        return !forbiddenSFX.Contains(audioSubItemId);
+    }
 
     public void Setup(string sku, ESocialPlatform socialPlatform, EAddressablesVariant addressablesVariant,
         bool isSIWAEnabled, bool showLanguageSelector, bool showBloodSelector, bool isTwitterEnabled, bool isInstagramEnabled,
-        bool isWeChatEnabled, bool showSplashLegalText)
+        bool isWeChatEnabled, bool showSplashLegalText, string[] forbbidenSFXVariant)
     {
 
         Sku = sku;
@@ -193,6 +208,15 @@ public class Flavour
         boolSettings.Add(SettingKey.WECHAT_ALLOWED, isWeChatEnabled);
         boolSettings.Add(SettingKey.SHOW_SPLASH_LEGAL_TEXT, showSplashLegalText);
 
+        // Push the forbbiden audio clips
+        if (forbbidenSFXVariant != null)
+        {
+            forbiddenSFX = new HashSet<string>();
+            for (int i = 0; i < forbbidenSFXVariant.Length; i++)
+            {
+                forbiddenSFX.Add(forbbidenSFXVariant[i]);
+            }
+        }
     }
 
 }

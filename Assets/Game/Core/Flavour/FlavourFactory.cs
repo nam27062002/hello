@@ -46,6 +46,30 @@ public class FlavourFactory
 #endif        
     }
 
+    // The following audio clips cannot be played on China flavour, due to new China law
+    readonly string[] forbbidenSFXChina = new string[]
+    {
+        "hd_villager_alert_01",
+        "hd_villager_alert_02",
+        "hd_villager_alert_03",
+        "hd_villager_alert_04",
+        "hd_villager_death_01",
+        "hd_villager_death_02",
+        "hd_villager_death_03",
+        "hd_villager_death_04",
+        "hd_villager_death_05",
+        "hd_bakerwoman_alert_01",
+        "hd_bakerwoman_alert_02",
+        "hd_bakerwoman_dead_01",
+        "hd_bakerwoman_dead_02",
+        "hd_witch_dead_03",
+        "hd_goblin_dead_03",
+        "hd_soldier_death_02",
+        "hd_soldier_death_04",
+        "hd_soldier_death_05",
+        "hd_soldier_death_06"
+    };
+
 #region settings
     // Flavour skus: So far "WW" is used for worldwide version and the country code for every country that requires a different flavour    
     private const string SETTINGS_SKU_DEFAULT = SETTINGS_SKU_WW;
@@ -81,7 +105,8 @@ public class FlavourFactory
            isTwitterEnabled: true,
            isInstagramEnabled: true,
            isWeChatEnabled: false,
-           showSplashLegalText: false);
+           showSplashLegalText: false,
+           forbbidenSFXVariant: null);
     }
 
     private void Settings_SetFlavourChina(Flavour flavour, Flavour.EDevicePlatform devicePlatform)
@@ -96,7 +121,8 @@ public class FlavourFactory
            isTwitterEnabled: false,
            isInstagramEnabled: false,
            isWeChatEnabled: true,
-           showSplashLegalText: true);
+           showSplashLegalText: true,
+           forbbidenSFXVariant: forbbidenSFXChina);
     }    
 #endregion
 }
