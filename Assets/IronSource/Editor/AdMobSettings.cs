@@ -18,14 +18,31 @@ namespace IronSource.Editor
 			string targetId = project.TargetGuidByName (PBXProject.GetUnityTargetName ());
 
 			// Required System Frameworks
+			project.AddFrameworkToProject (targetId, "AdSupport.framework", false);
 			project.AddFrameworkToProject (targetId, "AudioToolbox.framework", false);
-			project.AddFrameworkToProject (targetId, "EventKit.framework", false);
-			project.AddFrameworkToProject (targetId, "EventKitUI.framework", false);
+			project.AddFrameworkToProject (targetId, "AVFoundation.framework", false);
+			project.AddFrameworkToProject (targetId, "CFNetwork.framework", false);
+			project.AddFrameworkToProject (targetId, "CoreData.framework", false);
+			project.AddFrameworkToProject (targetId, "CoreGraphics.framework", false);
+			project.AddFrameworkToProject (targetId, "CoreMedia.framework", false);
+			project.AddFrameworkToProject (targetId, "CoreTelephony.framework", false);
+			project.AddFrameworkToProject (targetId, "CoreVideo.framework", false);
+			project.AddFrameworkToProject (targetId, "Foundation.framework", false);
+			project.AddFrameworkToProject (targetId, "JavaScriptCore.framework", false);
 			project.AddFrameworkToProject (targetId, "MediaPlayer.framework", false);
 			project.AddFrameworkToProject (targetId, "MessageUI.framework", false);
+			project.AddFrameworkToProject (targetId, "MobileCoreServices.framework", false);
+			project.AddFrameworkToProject (targetId, "QuartzCore.framework", false);
+			project.AddFrameworkToProject (targetId, "SafariServices.framework", false);
+			project.AddFrameworkToProject (targetId, "Security.framework", false);
+			project.AddFrameworkToProject (targetId, "StoreKit.framework", false);
+			project.AddFrameworkToProject (targetId, "SystemConfiguration.framework", false);
+			project.AddFrameworkToProject (targetId, "UIKit.framework", false);
+			project.AddFrameworkToProject (targetId, "WebKit.framework", false);
 
-			project.AddFileToBuild (targetId, project.AddFile ("usr/lib/libz.1.2.5.tbd", "Frameworks/libz.1.2.5.tbd", PBXSourceTree.Sdk));
-
+			project.AddFileToBuild (targetId, project.AddFile ("usr/lib/libsqlite3.tbd", "Frameworks/libsqlite3.tbd", PBXSourceTree.Sdk));
+			project.AddFileToBuild (targetId, project.AddFile ("usr/lib/libz.tbd", "Frameworks/libz.tbd", PBXSourceTree.Sdk));
+			
 			// Custom Link Flag
 			project.AddBuildProperty (targetId, "OTHER_LDFLAGS", "-ObjC");
 
@@ -35,22 +52,6 @@ namespace IronSource.Editor
 		public void updateProjectPlist (BuildTarget buildTarget, string plistPath)
 		{
 			Debug.Log ("IronSource - Update plist for AdMob");
-
-		    CaletySettings settingsInstance = (CaletySettings)Resources.Load("CaletySettings");
-		    if(settingsInstance == null)
-		    {
-                Debug.Log("Unable to load CaletySettings in order to get AdMob application ID");
-                return;
-            }
-
-
-            PlistDocument plist = new PlistDocument();
-            plist.ReadFromFile(plistPath);
-
-            plist.root.SetString("GADApplicationIdentifier", settingsInstance.m_strAdMobAPPID);
-
-            plist.WriteToFile(plistPath);
-
 		}
 	}
 }

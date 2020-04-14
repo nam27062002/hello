@@ -29,7 +29,9 @@ public class ShopCurrencyPill : ShopMonoRewardPill {
 	//------------------------------------------------------------------------//
 	// Exposed
 	[Separator("Currency Pill Specifics")]
-	[SerializeField] protected Localizer m_bonusAmountText = null;	// [AOC] Unused as of 2.8, but keep it just in case
+	[SerializeField] protected Localizer m_bonusAmountText = null;  // [AOC] Unused as of 2.8, but keep it just in case
+
+	[SerializeField] private string m_trailSoundFx;
 
     [System.NonSerialized]
     public Transform currencyHudCounter; // When buying the pack, the coins/gems trail FX will go to this position
@@ -158,9 +160,21 @@ public class ShopCurrencyPill : ShopMonoRewardPill {
                 // Add the amount to the player currencies
                 UsersManager.currentUser.EarnCurrency(UserProfile.Currency.HARD, (ulong)m_amountApplied, true, HDTrackingManager.EEconomyGroup.SHOP_EXCHANGE);
 
-                    // Force HH popup if the player is in the shop scene right now (not in the popup shop)
-                    bool forceHHPopup = InstanceManager.menuSceneController.currentScreen == MenuScreen.SHOP &&
-                                        PopupManager.GetOpenPopup(PopupShop.PATH) == null;
+
+                    bool forceHHPopup;
+
+                    // Make sure we are not in the middle of a run at this moment
+                    if (InstanceManager.gameSceneController == null)
+                    {
+                        // Force HH popup if the player is in the shop scene right now (nor in the shop/missing pc popup)
+                        forceHHPopup = InstanceManager.menuSceneController.currentScreen == MenuScreen.SHOP &&
+                                        PopupManager.GetOpenPopup(PopupShop.PATH) == null &&
+                                        PopupManager.GetOpenPopup(ResourcesFlowMissingPCPopup.PATH) == null;
+                    } else
+                    {
+                        // We are in a run
+                        forceHHPopup = false;
+                    }
 
                 // Broadcast this event, so the happy hour can be activated / extended
                     Messenger.Broadcast<bool, string>(MessengerEvents.HC_PACK_ACQUIRED, forceHHPopup, m_def.sku);
@@ -207,6 +221,9 @@ public class ShopCurrencyPill : ShopMonoRewardPill {
                 toWorldPos
             );
             m_currencyFX.totalDuration = 0.5f;
+
+			// Play sound FX
+			GetComponent<UbiBCN.PlaySimpleAudio>().Play(m_trailSoundFx);
 
         }
     }

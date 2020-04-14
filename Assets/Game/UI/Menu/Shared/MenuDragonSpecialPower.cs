@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using UnityEngine;
 
 [RequireComponent(typeof(MenuDragonPreview))]
@@ -131,7 +132,7 @@ public class MenuDragonSpecialPower : MonoBehaviour {
                             if (_enable)
                             {
                                 string[] _params = m_elementsPerPowerLevel[_level].element[e].name.Split(':');
-                                m_dragonPreview.animator.SetInteger(_params[0], int.Parse(_params[1]));
+                                m_dragonPreview.animator.SetInteger(_params[0], int.Parse(_params[1], NumberStyles.Any, CultureInfo.InvariantCulture));
                             }
                         }break;
                 }

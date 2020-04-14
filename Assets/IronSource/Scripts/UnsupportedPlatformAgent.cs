@@ -66,9 +66,14 @@ public class UnsupportedPlatformAgent : IronSourceIAgent
 		Debug.Log ("Unsupported Platform");
 	}
 
-	//******************* SDK Init *******************//
+    public void setMetaData(string key, string value)
+    {
+        Debug.Log("Unsupported Platform");
+    }
 
-	public void setUserId (string userId)
+    //******************* SDK Init *******************//
+
+    public void setUserId (string userId)
 	{
 		Debug.Log ("Unsupported Platform");
 	}

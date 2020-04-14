@@ -11,6 +11,7 @@ using UnityEngine;
 using System;
 using System.Globalization;
 using System.Collections.Generic;
+using Metagame;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -112,6 +113,9 @@ public class OfferPack {
 	public State state {
 		get { return m_state; }
 	}
+
+	protected bool m_forcedStateChangePending = false;
+	protected State m_forcedStateChange = State.PENDING_ACTIVATION;
 
 	public bool isActive {
 		get { return m_state == State.ACTIVE; }
@@ -249,43 +253,49 @@ public class OfferPack {
 	/// <returns>Whether the pack has change its state.</returns>
 	public virtual bool UpdateState() {
 		//OffersManager.LogPack(this, "UpdateState {0} ({1})", Colors.pink, m_def.sku, m_state);
-
-		// Based on pack's state
 		State oldState = m_state;
-		switch(m_state) {
-			case State.PENDING_ACTIVATION: {
-				// Check for activation
-				if(CheckActivation() && CheckSegmentation()) {
-					ChangeState(State.ACTIVE);
 
-					// Just in case, check for expiration immediately after
+		// If a state change is forced, do it
+		if(m_forcedStateChangePending) {
+			m_forcedStateChangePending = false;
+			ChangeState(m_forcedStateChange);
+		} else {
+			// Based on pack's state
+			switch(m_state) {
+				case State.PENDING_ACTIVATION: {
+					// Check for activation
+					if(CheckActivation() && CheckSegmentation()) {
+						ChangeState(State.ACTIVE);
+
+						// Just in case, check for expiration immediately after
+						if(CheckExpiration(true)) {
+							ChangeState(State.EXPIRED);
+						}
+					}
+
+					// Packs expiring before ever being activated (i.e. dragon not owned, excluded countries, etc.)
+					else if(CheckExpiration(true)) {
+						ChangeState(State.EXPIRED);
+					}
+				} break;
+
+				case State.ACTIVE: {
+					// Check for expiration
 					if(CheckExpiration(true)) {
 						ChangeState(State.EXPIRED);
 					}
-				}
 
-				// Packs expiring before ever being activated (i.e. dragon not owned, excluded countries, etc.)
-				else if(CheckExpiration(true)) {
-					ChangeState(State.EXPIRED);
-				}
-			} break;
+					// The pack might have gone out of segmentation range (i.e. currency balance). Check it!
+					// [AOC] TODO!! We might wanna keep some packs until they expire even if initial segmentation is no longer valid
+					else if(!CheckSegmentation()) {
+						ChangeState(State.PENDING_ACTIVATION);
+					}
+				} break;
 
-			case State.ACTIVE: {
-				// Check for expiration
-				if(CheckExpiration(true)) {
-					ChangeState(State.EXPIRED);
-				}
-
-				// The pack might have gone out of segmentation range (i.e. currency balance). Check it!
-				// [AOC] TODO!! We might wanna keep some packs until they expire even if initial segmentation is no longer valid
-				else if(!CheckSegmentation()) {
-					ChangeState(State.PENDING_ACTIVATION);
-				}
-			} break;
-
-			case State.EXPIRED: {
-				// Nothing to do (expired packs can't be reactivated)
-			} break;
+				case State.EXPIRED: {
+					// Nothing to do (expired packs can't be reactivated)
+				} break;
+			}
 		}
 
 		// Has state changed?
@@ -293,11 +303,19 @@ public class OfferPack {
 	}
 
 	/// <summary>
-	/// Immediately mark this pack as expired!
+	/// Change the state of this pack.
 	/// No checks will be performed.
 	/// </summary>
-	public void ForceExpiration() {
-		ChangeState(State.EXPIRED);
+	/// <param name="_newState">The state to change to.</param>
+	/// <param name="_immediate">Whether to do it right now or in the next UpdateState() call.</param>
+	public void ForceStateChange(State _newState, bool _immediate) {
+		// Immediate?
+		if(_immediate) {
+			ChangeState(State.PENDING_ACTIVATION);
+		} else {
+			m_forcedStateChangePending = true;
+			m_forcedStateChange = _newState;
+		}
 	}
 	#endregion
 
@@ -1161,6 +1179,27 @@ public class OfferPack {
 		m_viewsCount++;
 		m_lastViewTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTime();
 	}
+
+    /// <summary>
+    /// Count how many items are in this pack that are a dragon or a skin
+    /// We need to know this number in order to open the proper info popup in the shop
+    /// </summary>
+    /// <returns>The amount of dragons/skins in the pack</returns>
+    public int GetDragonsSkinsCount ()
+    {
+		int amount = 0;
+
+        foreach (OfferPackItem it in items)
+        {
+            if (it.type == RewardDragon.TYPE_CODE || it.type == RewardSkin.TYPE_CODE)
+            {
+				amount++;
+            }
+        }
+
+		return amount;
+    }
+
 	#endregion
 
 	//------------------------------------------------------------------------//
@@ -1218,16 +1257,17 @@ public class OfferPack {
 		string[] tokens = _str.Split(':');
 		Range r = new Range(0, float.MaxValue);
 
-		float val = r.min;
+		float val;
 		if(tokens.Length > 0) {
-			float.TryParse(tokens[0], out val);
-			r.min = val;
+			if(PersistenceUtils.TryParse<float>(tokens[0], CultureInfo.InvariantCulture, out val)) {
+				r.min = val;
+			}
 		}
 
-		val = r.max;
 		if(tokens.Length > 1) {
-			float.TryParse(tokens[1], out val);
-			r.max = val;
+			if(PersistenceUtils.TryParse<float>(tokens[1], CultureInfo.InvariantCulture, out val)) {
+				r.max = val;
+			}
 		}
 
 		return r;
@@ -1266,16 +1306,17 @@ public class OfferPack {
 		string[] tokens = _str.Split(':');
 		RangeInt r = new RangeInt(0, int.MaxValue);
 
-		int val = r.min;
+		int val;
 		if(tokens.Length > 0) {
-			int.TryParse(tokens[0], out val);
-			r.min = val;
+			if(PersistenceUtils.TryParse<int>(tokens[0], CultureInfo.InvariantCulture, out val)) {
+				r.min = val;
+			}
 		}
 
-		val = r.max;
 		if(tokens.Length > 1) {
-			int.TryParse(tokens[1], out val);
-			r.max = val;
+			if(PersistenceUtils.TryParse<int>(tokens[1], CultureInfo.InvariantCulture, out val)) {
+				r.max = val;
+			}
 		}
 
 		return r;
@@ -1482,35 +1523,35 @@ public class OfferPack {
 		// State
 		key = "state";
 		if(_data.ContainsKey(key)) {
-			m_state = (State)_data[key].AsInt;
+			m_state = (State)PersistenceUtils.SafeParse<int>(_data[key]);
 		}
 
 		// Purchase count
 		key = "purchaseCount";
 		if(_data.ContainsKey(key)) {
-			m_purchaseCount = _data[key].AsInt;
+			m_purchaseCount = PersistenceUtils.SafeParse<int>(_data[key]);
 		}
 
 		// View count
 		key = "viewCount";
 		if(_data.ContainsKey(key)) {
-			m_viewsCount = _data[key].AsInt;
+			m_viewsCount = PersistenceUtils.SafeParse<int>(_data[key]);
 		}
 
 		// Last view timestamp
 		key = "lastViewTimestamp";
 		if(_data.ContainsKey(key)) {
-			m_lastViewTimestamp = DateTime.Parse(_data[key], PersistenceFacade.JSON_FORMATTING_CULTURE);
+			m_lastViewTimestamp = PersistenceUtils.SafeParse<DateTime>(_data[key]);
 		}
 
 		// Timestamps
 		key = "activationTimestamp";
 		if(_data.ContainsKey(key)) {
-			m_activationTimestamp = DateTime.Parse(_data[key], PersistenceFacade.JSON_FORMATTING_CULTURE);
+			m_activationTimestamp = PersistenceUtils.SafeParse<DateTime>(_data[key]);
 		}
 		key = "endTimestamp";
 		if(_data.ContainsKey(key)) {
-			m_endTimestamp = DateTime.Parse(_data[key], PersistenceFacade.JSON_FORMATTING_CULTURE);
+			m_endTimestamp = PersistenceUtils.SafeParse<DateTime>(_data[key]);
 		}
 	}
 
@@ -1532,7 +1573,7 @@ public class OfferPack {
 		data.Add("sku", m_def.sku);
 
 		// State
-		data.Add("state", ((int)m_state).ToString(CultureInfo.InvariantCulture));
+		data.Add("state", PersistenceUtils.SafeToString((int)m_state));
 
 		// Optimize by storing less info for expired packs
 		bool expired = m_state == State.EXPIRED;
@@ -1540,20 +1581,20 @@ public class OfferPack {
 		// Timestamps
 		// Only store for timed offers, the rest will be activated upon loading depending on activation triggers
 		if(m_isTimed && !expired) {
-			data.Add("activationTimestamp", m_activationTimestamp.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
-			data.Add("endTimestamp", m_endTimestamp.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
+			data.Add("activationTimestamp", PersistenceUtils.SafeToString(m_activationTimestamp));
+			data.Add("endTimestamp", PersistenceUtils.SafeToString(m_endTimestamp));
 		}
 
 		// Purchase count - only if needed
 		if(m_purchaseCount > 0) {
-			data.Add("purchaseCount", m_purchaseCount.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
+			data.Add("purchaseCount", PersistenceUtils.SafeToString(m_purchaseCount));
 		}
 
 		// View count - only if needed
 		// Last view timestamp
 		if(m_viewsCount > 0 && !expired) {
-			data.Add("viewCount", m_viewsCount.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
-			data.Add("lastViewTimestamp", m_lastViewTimestamp.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
+			data.Add("viewCount", PersistenceUtils.SafeToString(m_viewsCount));
+			data.Add("lastViewTimestamp", PersistenceUtils.SafeToString(m_lastViewTimestamp));
 		}
 
         if ( m_type == Type.PUSHED ){

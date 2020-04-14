@@ -517,7 +517,7 @@ public class LoadingSceneController : SceneController {
 #endif
                     if ( !isValid)
                     {
-                        string localeCountryCode = PlatformUtils.Instance.GetCountryCode();
+                        string localeCountryCode = PlatformUtils.Instance.Country_GetCurrentCode();
 #if UNITY_EDITOR
                         switch (m_policyToTest)
                         {

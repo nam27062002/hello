@@ -1,11 +1,13 @@
-﻿/// <summary>
+﻿using System.Collections.Generic;
+using System.Globalization;
+using UnityEngine;
+
+/// <summary>
 /// This class is responsible for listing all persistence data stored in prefs. There are two reason why you'd want to store a value as a pref instead of in a <c>PersistenceSystem</c>:
 /// 1)Sensitive data that need to be protected from corruption
 /// 2)Data that need to be ready as soon as possible, typically for tracking. Example: trackingID should be accessible immediately so we can start tracking system and send events
 ///   as soon as possible
 /// </summary>
-using System.Collections.Generic;
-using UnityEngine;
 public class PersistencePrefs
 {
     // If you want to add a new key, please remember to add it to the list defined below so all persistece prefs can be deleted when clearing the persistence
@@ -14,12 +16,9 @@ public class PersistencePrefs
     // We want the cloud save to stores per device instead of per profile
     private static string KEY_CLOUD_SAVE_ENABLED = "cloudSaveEnabled";
 
-    // Social platform used: Facebook, Weibo. Legacy flag used to know whether the user has used Weibo or Facebook in order to keep using the same even though the user changes countries
+    // Social platform used: Facebook, Weibo, SIWA
     private static string KEY_SOCIAL_PLATFORM_KEY = "socialPlatform";
-
-    // Current Social platform used: Facebook, Weibo
-    private static string KEY_SOCIAL_CURRENT_PLATFORM_KEY = "currentSocialPlatform";
-
+    
     private static string KEY_SOCIAL_ID = "socialId";
 
     private static string KEY_SOCIAL_PROFILE_NAME = "socialProfileName";
@@ -48,22 +47,28 @@ public class PersistencePrefs
     // Timestamp of the latest time a cp2 interstial was played at
     private static string KEY_CP2_INTERTITIAL_LATEST_AT_ID = "cp2InterstitialLatestAt";
 
+    // Country code when the app was installed
+    private static string KEY_COUNTRY_CODE_ON_INSTALL = "countryCodeOnInstall";
+
     private static List<string> KEYS = new List<string>()
     {
         KEY_ACTIVE_PROFILE_NAME,
-        KEY_CLOUD_SAVE_ENABLED,        
-        KEY_SOCIAL_PLATFORM_KEY,
-        KEY_SOCIAL_CURRENT_PLATFORM_KEY,
+        KEY_CLOUD_SAVE_ENABLED,
+
+        // Social
+        KEY_SOCIAL_PLATFORM_KEY,        
         KEY_SOCIAL_ID,
         KEY_SOCIAL_PROFILE_NAME,
         KEY_SOCIAL_LOGGED_IN_WHEN_QUIT,
+
         KEY_SERVER_USER_ID,
         KEY_SAVEPATHS_LATEST_INDEX,
         KEY_USER_PROFILE_NAME,
         KEY_SERVER_LANGUAGE,
         KEY_LATEST_MARKETING_ID_NOTIFIED,
         KEY_MARKETING_ID,
-        KEY_CP2_INTERTITIAL_LATEST_AT_ID
+        KEY_CP2_INTERTITIAL_LATEST_AT_ID,
+        KEY_COUNTRY_CODE_ON_INSTALL
     };        
 
     public static bool IsDirty = false;
@@ -121,7 +126,7 @@ public class PersistencePrefs
             string userId = ServerUserId;
             if (!string.IsNullOrEmpty(userId))
             {
-                if (!int.TryParse(userId, out returnValue))
+                if (!int.TryParse(userId, NumberStyles.Any, CultureInfo.InvariantCulture, out returnValue))
                 {
                     returnValue = 0;
                 }
@@ -187,18 +192,25 @@ public class PersistencePrefs
         return GetLong(KEY_CP2_INTERTITIAL_LATEST_AT_ID);
     }
 
+    public static string CountryCodeOnInstall
+    {
+        get
+        {
+            return PlayerPrefs.GetString(KEY_COUNTRY_CODE_ON_INSTALL, null);
+        }
+
+        set
+        {
+            SetString(KEY_COUNTRY_CODE_ON_INSTALL, value);
+        }
+    }
+
 #region social
     public static string Social_PlatformKey
     {
         get { return PlayerPrefs.GetString(KEY_SOCIAL_PLATFORM_KEY, null); }
         set { SetString(KEY_SOCIAL_PLATFORM_KEY, value); }
-    }
-
-    public static string Social_CurrentPlatformKey
-    {
-        get { return PlayerPrefs.GetString(KEY_SOCIAL_CURRENT_PLATFORM_KEY, null); }
-        set { SetString(KEY_SOCIAL_CURRENT_PLATFORM_KEY, value); }
-    }
+    }    
 
     public static string Social_Id
     {
@@ -242,7 +254,7 @@ public class PersistencePrefs
         string value = PlayerPrefs.GetString(key);        
         if (!string.IsNullOrEmpty(value))
         {
-            long.TryParse(value, out returnValue);
+            long.TryParse(value, NumberStyles.Any, CultureInfo.InvariantCulture, out returnValue);
         }
 
         return returnValue;

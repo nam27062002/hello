@@ -680,16 +680,13 @@ public class PersistenceCloudDriver
 			{
 				LocalDriver.ProcessSocialState(onDone);                
 			};
-
-            SocialPlatformManager manager = SocialPlatformManager.SharedInstance;
+            
             HDTrackingManager.Instance.Notify_SocialAuthentication();
 
-            string currentSocialPlatformKey = manager.CurrentPlatform_GetKey();
-            string socialId = manager.CurrentPlatform_GetUserID();
-
-            SocialUtils.EPlatform platformId = manager.CurrentPlatform_GetId();
-            bool saveSocialPlatform = platformId == SocialUtils.EPlatform.Facebook || platformId == SocialUtils.EPlatform.Weibo;                       
-			LocalDriver.NotifyUserHasLoggedIn(currentSocialPlatformKey, saveSocialPlatform, socialId, onUserLoggedIn);
+            SocialUtils.EPlatform platformId = Syncer_PlatformId;
+            string currentSocialPlatformKey = SocialUtils.EPlatformToKey(platformId);
+            string socialId = SocialPlatformManager.SharedInstance.GetUserID(platformId);            
+			LocalDriver.NotifyUserHasLoggedIn(currentSocialPlatformKey, socialId, onUserLoggedIn);
 		} 
 		else
 		{
@@ -879,12 +876,12 @@ public class PersistenceCloudDriver
 
 			// Checks for timeout after calling the social network so we don't depend on the social network, 
 			// in particular this approach lets us address HDK-1574 and HDK-2590          
-			if (SocialPlatformManager.SharedInstance.CurrentPlatform_IsLogInTimeoutEnabled()) 
+			if (SocialPlatformManager.SharedInstance.IsLogInTimeoutEnabled(Syncer_PlatformId)) 
 			{				
 				Syncer_Timer -= Math.Min (UnityEngine.Time.deltaTime, UnityEngine.Time.maximumDeltaTime);
 				if (Syncer_Timer <= 0f) 
 				{
-					SocialPlatformManager.SharedInstance.CurrentPlatform_OnLogInTimeout();
+					SocialPlatformManager.SharedInstance.OnLogInTimeout(Syncer_PlatformId);
 					Syncer_OnLogInSocialDone(SocialPlatformManager.ELoginResult.Error, null);
 				}					
 			}

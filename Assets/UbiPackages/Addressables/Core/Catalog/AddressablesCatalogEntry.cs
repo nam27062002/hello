@@ -54,6 +54,11 @@ public class AddressablesCatalogEntry
         }
     }       
 
+    public string FullId
+    {
+        get { return Id + "(" + Variant + ")"; }
+    }
+
     private const string ATT_ID = "id";
     private const string ATT_VARIANT = "variant";
     private const string ATT_LOCATION_TYPE = "locationType";        

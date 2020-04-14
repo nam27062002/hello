@@ -1,6 +1,7 @@
 ﻿using SimpleJSON;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -514,7 +515,7 @@ public class CPQualitySettings : MonoBehaviour
     public void OnAudioVoicesSetup()
     {
         var config = AudioSettings.GetConfiguration();
-        config.numVirtualVoices = int.Parse(m_audioVirtualVoices.text);
+        config.numVirtualVoices = int.Parse(m_audioVirtualVoices.text, NumberStyles.Any, CultureInfo.InvariantCulture);
         config.numRealVoices = int.Parse( m_audioRealVoices.text );
         AudioSettings.Reset(config);
     }

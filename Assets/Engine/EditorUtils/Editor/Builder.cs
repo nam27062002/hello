@@ -10,6 +10,7 @@ using System.IO;
 using System.Xml;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
+using System.Globalization;
 
 public class Builder : MonoBehaviour, UnityEditor.Build.IPreprocessBuild
 {
@@ -249,9 +250,9 @@ public class Builder : MonoBehaviour, UnityEditor.Build.IPreprocessBuild
 			// We should have 4 groups: the whole match, and each individual version number. If not, something went wrong, abort
 			if(match.Groups.Count == 4) {
 				// Parse the value of each group as an int (already validated by the regex, so it shouldn't throw any exception)
-				GameSettings.internalVersion.major = int.Parse(match.Groups[1].Value);
-				GameSettings.internalVersion.minor = int.Parse(match.Groups[2].Value);
-				GameSettings.internalVersion.patch = int.Parse(match.Groups[3].Value);
+				GameSettings.internalVersion.major = int.Parse(match.Groups[1].Value, NumberStyles.Any, CultureInfo.InvariantCulture);
+				GameSettings.internalVersion.minor = int.Parse(match.Groups[2].Value, NumberStyles.Any, CultureInfo.InvariantCulture);
+				GameSettings.internalVersion.patch = int.Parse(match.Groups[3].Value, NumberStyles.Any, CultureInfo.InvariantCulture);
 
 				// Save assets
 				EditorUtility.SetDirty(GameSettings.instance);

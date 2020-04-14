@@ -23,7 +23,7 @@ public class CurrencyShopPopupLauncher : PopupLauncher {
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
-	[SerializeField] private PopupShop.Mode m_mode = PopupShop.Mode.DEFAULT;
+	[SerializeField] private ShopController.Mode m_mode = ShopController.Mode.DEFAULT;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //

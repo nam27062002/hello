@@ -38,6 +38,7 @@ public class OfferItemSlotSC : OfferItemSlot {
     /// <param name="_order">Used to select the proper HC or SC icon</param>
     public override void InitFromItem(OfferPackItem _item, int _order)
     {
+        m_order = _order;
 
         // Force reloading preview if item is different than the current one
         bool reloadPreview = false;

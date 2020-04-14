@@ -936,7 +936,7 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
             // Checks if the rating has been overriden for this device
             if (deviceSettingsJSON.ContainsKey(FeatureSettings.KEY_RATING))
             {
-                rating = deviceSettingsJSON[FeatureSettings.KEY_RATING].AsFloat;
+                rating = PersistenceUtils.SafeParse<float>(deviceSettingsJSON[FeatureSettings.KEY_RATING]);
             }
 
             if (deviceSettingsJSON.ContainsKey(FeatureSettings.KEY_PROFILE))
@@ -986,7 +986,7 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
             // Checks if the rating has been overriden for this device
             if (serverQualitySettingsJSON.ContainsKey(FeatureSettings.KEY_RATING))
             {
-                rating = serverQualitySettingsJSON[FeatureSettings.KEY_RATING].AsFloat;
+                rating = PersistenceUtils.SafeParse<float>(serverQualitySettingsJSON[FeatureSettings.KEY_RATING]);
             }
 
             if (serverQualitySettingsJSON.ContainsKey(FeatureSettings.KEY_PROFILE))
@@ -1214,14 +1214,18 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
                 if (
                     pair.Key == "iOSGeneration" || // used for making easier to identify a device
                     pair.Key == "mngd" ||          // used on server side to identify devices that have been managed
-                    pair.Key == "comments"         // used on server to store some comments about the settings managed for a device
+                    pair.Key == "comments"  ||       // used on server to store some comments about the settings managed for a device
+                    pair.Key == "limit"            // We dont know the use, but server keeps on sendig us this param, so ignore it [JOM]
                     )
                     continue;
 
-                // Empty keys or keys with "as_profile" as a value need to be ignored
-                if (!string.IsNullOrEmpty(pair.Value.Value) && pair.Value.Value != "as_content")
+                if (pair.Value != null)
                 {
-                    returnValue.Add(pair.Key, pair.Value);
+                    // Empty keys or keys with "as_profile" as a value need to be ignored
+                    if (!string.IsNullOrEmpty(pair.Value.Value) && pair.Value.Value != "as_content")
+                    {
+                        returnValue.Add(pair.Key, pair.Value);
+                    }
                 }
             }
 
@@ -1515,9 +1519,7 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
 
     public bool IsIncentivisedLoginEnabled()
     {
-#if UNITY_EDITOR
-        return true;
-#elif UNITY_IOS
+#if UNITY_IOS
         return false;	// [AOC] Disabling for iOS as of 2.18, to make sure we are compliant with SIWA
 #else
         return true;
@@ -1723,12 +1725,25 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
 
     public bool IsBloodEnabled()
     {
-        bool ret = false;
-        if (!GDPRManager.SharedInstance.IsAgeRestrictionEnabled() && Prefs.GetBoolPlayer(GameSettings.BLOOD_ENABLED, true))
-        {
-            ret = true;
-        }
-        return ret;
+        bool ret = true;
+
+		// Never for China or Korea
+		// [AOC] Temp solution for 2.8 while waiting for the Flavours feature implementation (2.10)
+		if(PlatformUtils.Instance.IsChina() ||PlatformUtils.Instance.IsKorea()) {
+			ret = false;
+		}
+
+		// Don't show for underage either
+		else if(GDPRManager.SharedInstance.IsAgeRestrictionEnabled()) {
+			ret = false;
+		}
+
+		// Finally, don't show if disabled in the settings menu
+		else if(!Prefs.GetBoolPlayer(GameSettings.BLOOD_ENABLED, true)) {
+			ret = false;
+		}
+
+		return ret;
     }
 
 	public bool IfPetRigidbodyInterpolates

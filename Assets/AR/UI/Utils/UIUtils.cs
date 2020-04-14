@@ -5,6 +5,7 @@ using System.IO;
 using UnityEngine.UI;
 using System.Collections.Generic;
 using UnityEngine.EventSystems;
+using System.Globalization;
 
 /*
  * @brief Contains some UI utils
@@ -454,9 +455,9 @@ public partial class UIUtils {
 
         return new Color
             (
-                float.Parse (_color [0]) / 255f,
-                float.Parse (_color [1]) / 255f,
-                float.Parse (_color [2]) / 255f
+                float.Parse (_color [0], NumberStyles.Any, CultureInfo.InvariantCulture) / 255f,
+                float.Parse (_color [1], NumberStyles.Any, CultureInfo.InvariantCulture) / 255f,
+                float.Parse (_color [2], NumberStyles.Any, CultureInfo.InvariantCulture) / 255f
                 );
     }
 
@@ -465,9 +466,9 @@ public partial class UIUtils {
             return Vector3.zero;
         }
 
-        float x = float.Parse (_vct [0]);
-        float y = float.Parse (_vct [1]);
-        float z = float.Parse (_vct [2]);
+        float x = float.Parse (_vct [0], NumberStyles.Any, CultureInfo.InvariantCulture);
+        float y = float.Parse (_vct [1], NumberStyles.Any, CultureInfo.InvariantCulture);
+        float z = float.Parse (_vct [2], NumberStyles.Any, CultureInfo.InvariantCulture);
 
         return new Vector3 (x, y, z);
     }

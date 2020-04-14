@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Text.RegularExpressions;
 using System.IO;
+using System.Globalization;
 
 public class CacheServerManager {
 
@@ -163,7 +164,7 @@ public class CacheServerManager {
 				for( int i = 1; i<match.Groups.Count; i++ )
 				{
 					int result;
-					if (int.TryParse(match.Groups[i].Value, out result))
+					if (int.TryParse(match.Groups[i].Value, NumberStyles.Any, CultureInfo.InvariantCulture, out result))
 					{
 						ret[i-1] = result;
 					}

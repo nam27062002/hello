@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Xml;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -727,8 +728,8 @@ public class MemorySample : AbstractMemorySample
                 string type = node.ParentNode.Name;
                 string name = node.InnerText;
 
-                int size = int.Parse(sizeAsString);
-                int id = int.Parse(idAsString);
+                int size = int.Parse(sizeAsString, NumberStyles.Any, CultureInfo.InvariantCulture);
+                int id = int.Parse(idAsString, NumberStyles.Any, CultureInfo.InvariantCulture);
                 AddGeneric(type, id, name, size);                
             }            
         }

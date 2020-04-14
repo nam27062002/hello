@@ -153,10 +153,17 @@ public class HDNotificationsManager : Singleton<HDNotificationsManager>
         }
     }
 
+
+    private static int MAX_TIME_LEFT = 60 * 60 * 24 * 2;    //just 2 days
     private void ScheduleNotification(string strSKU, string strBody, string strAction, int iTimeLeft)
     {
         if (CanBeUsed())
         {
+            if (iTimeLeft > MAX_TIME_LEFT)
+            {
+                Debug.LogError("Error: ScheduleNotification time left = " + iTimeLeft + " secs. 2 days maximum allowed. ");
+                iTimeLeft = MAX_TIME_LEFT;
+            }
             Log("ScheduleNotification enabled = " + GetNotificationsEnabled() + " strSKU = " + strSKU + " strBody = " + strBody + " strAction = " + strAction + " iTimeLeft = " + iTimeLeft);
             NotificationsManager.SharedInstance.ScheduleNotification(strSKU, strBody, strAction, iTimeLeft);
         }

@@ -12,6 +12,7 @@ using UnityEngine.UI;
 using System;
 using System.Collections.Generic;
 using TMPro;
+using System.Globalization;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -73,7 +74,7 @@ public class CPGlobalEventsTest : MonoBehaviour {
 				return 10;
 			}
 
-			return int.Parse(sm_eventCode.text);
+			return int.Parse(sm_eventCode.text, NumberStyles.Any, CultureInfo.InvariantCulture);
 		}
 	}
 
@@ -252,7 +253,7 @@ public class CPGlobalEventsTest : MonoBehaviour {
 	/// Add event score to current player.
 	/// </summary>
 	public void OnAddScore() {
-		int amount = int.Parse(m_playerScoreText.text);
+		int amount = int.Parse(m_playerScoreText.text, NumberStyles.Any, CultureInfo.InvariantCulture);
 		GlobalEventUserData playerData = UsersManager.currentUser.GetGlobalEventData(GlobalEventManager.currentEvent.id);
 		if(playerData.score > 0) {
 			amount = playerData.score + amount;
@@ -264,7 +265,7 @@ public class CPGlobalEventsTest : MonoBehaviour {
 	/// Remove event score to current player.
 	/// </summary>
 	public void OnRemoveScore() {
-		int amount = int.Parse(m_playerScoreText.text);
+		int amount = int.Parse(m_playerScoreText.text, NumberStyles.Any, CultureInfo.InvariantCulture);
 		GlobalEventUserData playerData = UsersManager.currentUser.GetGlobalEventData(GlobalEventManager.currentEvent.id);
 		amount = playerData.score - amount;
 		if(amount < 0) amount = 0;
@@ -275,7 +276,7 @@ public class CPGlobalEventsTest : MonoBehaviour {
 	/// Set event score for current player.
 	/// </summary>
 	public void OnSetScore() {
-		int amount = int.Parse(m_playerScoreText.text);
+		int amount = int.Parse(m_playerScoreText.text, NumberStyles.Any, CultureInfo.InvariantCulture);
 		SetPlayerScore(amount);
 	}
 }

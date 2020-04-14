@@ -122,11 +122,14 @@ public class PopupDailyRewards : MonoBehaviour, IBroadcastListener {
         // Does the player has the Remove ads feature?
         bool removeAds = UsersManager.currentUser.removeAds.IsActive;
 
+		// Is this the seventh day?
+		bool finalRewardDay = ( m_sequence.rewardIdx == DailyRewardsSequence.SEQUENCE_SIZE - 1 );
+
 		// Initialize buttons
-		m_collectButton.SetActive(canCollect && !removeAds);
+		m_collectButton.SetActive(canCollect && ( !removeAds || finalRewardDay ) );
 		m_doubleAdButton.SetActive(canCollect && currentReward.canBeDoubled && !removeAds);
 		m_dismissButton.SetActive(!canCollect && _dismissButtonAllowed);
-        m_doubleButton.SetActive(canCollect && removeAds);
+        m_doubleButton.SetActive(canCollect && removeAds && !finalRewardDay);
     }
 
 	/// <summary>

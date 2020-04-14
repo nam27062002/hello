@@ -27,11 +27,11 @@ public class PopupShopOfferPack : MonoBehaviour {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed
-	[SerializeField] private ShopMultiRewardPill m_rootPill = null;
+	[SerializeField] protected ShopMultiRewardPill m_rootPill = null;
 
 	// Internal
-	private OfferPack m_pack = null;
-	private int m_initializationPending = -1;
+	protected OfferPack m_pack = null;
+	protected int m_initializationPending = -1;
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -66,7 +66,7 @@ public class PopupShopOfferPack : MonoBehaviour {
 	/// Initialize the popup with a given pack's data.
 	/// </summary>
 	/// <param name="_pack">Pack.</param>
-	public void InitFromOfferPack(OfferPack _pack) {
+	public virtual void InitFromOfferPack(OfferPack _pack) {
 		// Store pack
 		m_pack = _pack;
 
@@ -90,10 +90,18 @@ public class PopupShopOfferPack : MonoBehaviour {
 		if(m_initializationPending > 0) {
 			m_initializationPending--;
 			if(m_initializationPending <= 0) {
-				m_rootPill.InitFromOfferPack(m_pack);
+				Refresh();
 				m_initializationPending = -1;
 			}
 		}
+	}
+
+    /// <summary>
+    /// Refresh the view
+    /// </summary>
+    protected virtual void Refresh ()
+    {
+		m_rootPill.InitFromOfferPack(m_pack);
 	}
 
 	/// <summary>
@@ -133,7 +141,7 @@ public class PopupShopOfferPack : MonoBehaviour {
 		// Open shop popup - unless already open
 		if(PopupManager.GetOpenPopup(PopupShop.PATH) == null) {
 			PopupController shopPopup = PopupManager.LoadPopup(PopupShop.PATH);
-			shopPopup.GetComponent<PopupShop>().Init(PopupShop.Mode.OFFERS_FIRST, "Featured_Offer");
+			shopPopup.GetComponent<PopupShop>().Init(ShopController.Mode.DEFAULT, "Featured_Offer");
 			shopPopup.Open();
 		}
 	}

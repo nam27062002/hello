@@ -123,7 +123,7 @@ public class PopupRemoveAdsOffer : MonoBehaviour {
 
 		// Open shop popup
 		PopupController shopPopup = PopupManager.LoadPopup(PopupShop.PATH);
-		shopPopup.GetComponent<PopupShop>().Init(PopupShop.Mode.OFFERS_FIRST, "Featured_Offer");
+		shopPopup.GetComponent<PopupShop>().Init(ShopController.Mode.DEFAULT, "Featured_Offer");
 		shopPopup.Open();
 	}
 

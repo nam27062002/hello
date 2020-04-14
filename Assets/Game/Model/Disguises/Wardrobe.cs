@@ -298,7 +298,7 @@ public class Wardrobe : IBroadcastListener {
 		SimpleJSON.JSONArray diguisesArr = _data.AsArray;
 		int disguisesLength = diguisesArr.Count;
 		for (int i = 0; i < disguisesLength; i++) {
-			m_disguises[ diguisesArr[i]["disguise"] ] = (SkinState)diguisesArr[i]["level"].AsInt;
+			m_disguises[ diguisesArr[i]["disguise"] ] = (SkinState)PersistenceUtils.SafeParse<int>(diguisesArr[i]["level"]);
 		}
 
 		// Active season might have changed, refresh seasonal skins
@@ -323,8 +323,8 @@ public class Wardrobe : IBroadcastListener {
 
 				// We're reusing the old "level" field ^^
 				SimpleJSON.JSONClass dl = new SimpleJSON.JSONClass();
-				dl.Add("disguise", pair.Key.ToString());
-				dl.Add("level", ((int)pair.Value).ToString(System.Globalization.CultureInfo.InvariantCulture));
+				dl.Add("disguise", pair.Key);
+				dl.Add("level", PersistenceUtils.SafeToString((int)pair.Value));
 				diguisesArr.Add(dl);
 			}
 		}

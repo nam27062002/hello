@@ -150,14 +150,8 @@ public class PopupHappyHour : MonoBehaviour {
 		PopupController popup = PopupManager.LoadPopup(PopupShop.PATH);
 		PopupShop shopPopup = popup.GetComponent<PopupShop>();
 
-		// Are we playing a run at this moment?
-		if(InstanceManager.gameSceneController != null) {
-			// User is playing a run. Show only PC tab.
-			shopPopup.Init(PopupShop.Mode.PC_ONLY, "Happy_Hour_Popup");
-		} else {
-			// Show all the tab offers
-			shopPopup.Init(PopupShop.Mode.DEFAULT, "Happy_Hour_Popup");
-		}
+		// User is playing a run. Show only PC tab.
+		shopPopup.Init(ShopController.Mode.PC_ONLY, "Happy_Hour_Popup");
 
 		shopPopup.closeAfterPurchase = true;
 
@@ -216,12 +210,27 @@ public class PopupHappyHour : MonoBehaviour {
 		// Track this action
 		TrackShopButton();
 
-		// If we are already in the shop do nothing
-		if(PopupManager.GetOpenPopup(PopupShop.PATH) != null)
-			return;
+        // If the shop popup or shop scene are already open do nothing
+        if (PopupManager.GetOpenPopup(PopupShop.PATH) != null
+            || InstanceManager.menuSceneController.currentScreen == MenuScreen.SHOP)
+        {
+            return;
+        }
 
-		// Otherwise open the shop in the gems tab
-		OpenPCShopPopup();
+        // Are we in the middle of a run at this moment?
+        if (InstanceManager.gameSceneController != null)
+        {
+            // Show the shop only with gems packs
+            OpenPCShopPopup();
+            return;
+        } 
+
+        // So we are in the menu at this point. Go to the shop scene
+        {
+            InstanceManager.menuSceneController.GoToScreen(MenuScreen.SHOP);
+            return;
+        }
+
 	}
 
 }

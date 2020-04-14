@@ -16,9 +16,7 @@ using UnityEngine;
 /// Simple class to encapsulate the preview of an item.
 /// </summary>
 public abstract class IOfferItemPreviewHC : IOfferItemPreview {
-	//------------------------------------------------------------------------//
-	// CONSTANTS															  //
-	//------------------------------------------------------------------------//
+
 	
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
@@ -33,18 +31,6 @@ public abstract class IOfferItemPreviewHC : IOfferItemPreview {
 	protected override void InitInternal() {
 		// Item must be a pet!
 		Debug.Assert(m_item.reward is Metagame.RewardHardCurrency, "ITEM OF THE WRONG TYPE!", this);
-	}
-
-	/// <summary>
-	/// Format an amount value according to this item type.
-	/// </summary>
-	/// <param name="_amount">Amount to be formatted.</param>
-	/// <returns>Localized and formatted amount.</returns>
-	public string FormatAmount(long _amount) {
-		return LocalizationManager.SharedInstance.Localize(
-			"TID_OFFER_ITEM_HC",    // x250
-			UIConstants.FormatCurrency(_amount)
-		);
 	}
 
 	/// <summary>
@@ -99,4 +85,23 @@ public abstract class IOfferItemPreviewHC : IOfferItemPreview {
 		}
 		return null;
 	}
+
+
+    //------------------------------------------------------------------------//
+    // STATIC   															  //
+    //------------------------------------------------------------------------//
+
+    /// <summary>
+    /// Format an amount value according to this item type.
+    /// </summary>
+    /// <param name="_amount">Amount to be formatted.</param>
+    /// <returns>Localized and formatted amount.</returns>
+    public static string FormatAmount(long _amount)
+    {
+        return LocalizationManager.SharedInstance.Localize(
+            "TID_OFFER_ITEM_HC",    // x250
+            UIConstants.FormatCurrency(_amount)
+        );
+    }
+
 }

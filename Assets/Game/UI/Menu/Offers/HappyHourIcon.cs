@@ -108,6 +108,9 @@ public class HappyHourIcon : MonoBehaviour {
     /// </summary>
     private void GoToShopScene()
     {
+        // Open shop and jump to the gems section
+		InstanceManager.menuSceneController.shopScreenController.trackingOrigin = "Happy_Hour_Icon";
+        InstanceManager.menuSceneController.shopScreenController.mode = ShopController.Mode.JUMP_TO_PC;
         InstanceManager.menuSceneController.GoToScreen(MenuScreen.SHOP);
     }
 

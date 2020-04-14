@@ -98,12 +98,21 @@ public class LeaguesLeaderboardView : MonoBehaviour {
 	/// Refresh leaderboard with current data.
 	/// </summary>
 	public void Refresh() {
+        // Safety first
+        if (HDLiveDataManager.league == null ||
+            HDLiveDataManager.league.season == null ||
+            HDLiveDataManager.league.season.currentLeague == null)
+            return;
+
         // Get current tournament and init some aux vars
         m_season = HDLiveDataManager.league.season;
         m_league = m_season.currentLeague;
 
-        if (m_league != null) {
-            int playerRank = m_league.leaderboard.playerRank;
+        if (m_league != null && m_league.leaderboard != null) {
+
+            int playerRank = 0;
+            playerRank = m_league.leaderboard.playerRank;
+
 
             // Setup player pills
             LeaguesLeaderboardPillData currentPlayerData = null;
@@ -143,14 +152,20 @@ public class LeaguesLeaderboardView : MonoBehaviour {
                 int playerPillIdx = playerRank;
 
                 // Initialize the scroll list
-                m_scrollList.Setup(m_pillPrefabs, items);
+                if (m_scrollList != null)
+                {
+                    m_scrollList.Setup(m_pillPrefabs, items);
 
-                // Initialize current player pill
-                if (playerRank < 0) {
-                    m_scrollList.SetupPlayerPill(null, -1, null);
-                } else {
-                    m_scrollList.SetupPlayerPill(m_pillPrefabs[1], playerPillIdx, currentPlayerData);
-                    m_scrollList.FocusPlayerPill(false);
+                    // Initialize current player pill
+                    if (playerRank < 0)
+                    {
+                        m_scrollList.SetupPlayerPill(null, -1, null);
+                    }
+                    else
+                    {
+                        m_scrollList.SetupPlayerPill(m_pillPrefabs[1], playerPillIdx, currentPlayerData);
+                        m_scrollList.FocusPlayerPill(false);
+                    }
                 }
             }
         }

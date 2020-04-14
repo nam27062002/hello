@@ -29,14 +29,7 @@ public class PopupShop : MonoBehaviour {
 	//------------------------------------------------------------------//
 	public const string PATH = "UI/Popups/Economy/PF_PopupShop";
 
-    public enum Mode
-    {
-        DEFAULT,
-        SC_ONLY,
-        PC_ONLY,
-        OFFERS_FIRST,
-        PC_FIRST
-    };
+
 
     // Hide popup's content when any of these popups are open
     protected static readonly HashSet<string> POPUPS_TO_HIDE_CONTENT = new HashSet<string>() {
@@ -79,8 +72,15 @@ public class PopupShop : MonoBehaviour {
 	/// Initialize the popup with the requested mode. Should be called before opening the popup.
 	/// </summary>
 	/// <param name="_mode">Target mode.</param>
-	public void Init(PopupShop.Mode _mode, String _origin) {
+	public void Init(ShopController.Mode _mode, string _origin) {
+		m_openOrigin = _origin;
+
+        // Init the shop and call refresh to paint it
         m_shopController.Init(_mode, OnPurchaseSuccessful);
+		m_shopController.Refresh();
+
+		// Leave a reference in the instance manager
+		InstanceManager.shopController = m_shopController;
 	}
 
 	/// <summary>
@@ -117,7 +117,11 @@ public class PopupShop : MonoBehaviour {
 	/// The popup is about to be been opened.
 	/// </summary>
 	public void OnOpenPreAnimation() {
+		// Propagate to shop controller
+		m_shopController.OnShopEnter(m_openOrigin);
 
+		// Reset packs purchased list
+		m_packsPurchased.Clear();
 	}
 
 	/// <summary>
@@ -131,7 +135,10 @@ public class PopupShop : MonoBehaviour {
 	/// Popup is about to be closed.
 	/// </summary>
 	public void OnClosePreAnimation() {
-		
+
+		// Remove the reference in the instance manager
+		InstanceManager.shopController = null;
+
 	}
 
 
@@ -149,8 +156,9 @@ public class PopupShop : MonoBehaviour {
         {
             if (_pill is ShopCurrencyPill )
             {
-                // For currency packs wait some time before closing so the coins/gems trail FX can finish
-                UbiBCN.CoroutineManager.DelayedCall(() => GetComponent<PopupController>().Close(false) , 1.5f, false);
+				// For currency packs wait some time before closing so the coins/gems trail FX can finish
+
+				UbiBCN.CoroutineManager.DelayedCall(() => GetComponent<PopupController>().Close(true) , 1.5f, true);
             }
             else
             {

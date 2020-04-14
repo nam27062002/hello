@@ -85,12 +85,12 @@ public class HDTournamentData : HDLiveEventData {
 	{
 		JSONClass ret = base.ToJson();
 
-		ret.Add("lastFreeTournamentRun", m_lastFreeEntranceTimestamp);
-		ret.Add("elo", m_matchmakingValue);
+		ret.Add("lastFreeTournamentRun", PersistenceUtils.SafeToString(m_lastFreeEntranceTimestamp));
+		ret.Add("elo", PersistenceUtils.SafeToString(m_matchmakingValue));
 
 		// Leadeboard
 		JSONClass leaderboard = new JSONClass();
-		leaderboard.Add("n", m_tournamentSize);
+		leaderboard.Add("n", PersistenceUtils.SafeToString(m_tournamentSize));
 
 		JSONArray arr = new JSONArray();
 		int max = m_leaderboard.Count;
@@ -104,8 +104,8 @@ public class HDTournamentData : HDLiveEventData {
 		leaderboard.Add("l", arr);
 
 		JSONClass u = new JSONClass();
-		u.Add("rank", m_rank);
-		u.Add("score", m_score);
+		u.Add("rank", PersistenceUtils.SafeToString(m_rank));
+		u.Add("score", PersistenceUtils.SafeToString(m_score));
 		leaderboard.Add("u", u);
 
 		ret.Add("leaderboard", leaderboard);
@@ -119,12 +119,12 @@ public class HDTournamentData : HDLiveEventData {
 
 		if ( _data.ContainsKey("lastFreeTournamentRun") )
 		{
-			m_lastFreeEntranceTimestamp = _data["lastFreeTournamentRun"].AsLong;
+			m_lastFreeEntranceTimestamp = PersistenceUtils.SafeParse<long>(_data["lastFreeTournamentRun"]);
 		}
 
 		if ( _data.ContainsKey("elo") )
 		{
-			m_matchmakingValue = _data["elo"].AsInt;
+			m_matchmakingValue = PersistenceUtils.SafeParse<int>(_data["elo"]);
 		}
 
 		if ( _data.ContainsKey("leaderboard") )	// This comes from a saves data
@@ -139,8 +139,8 @@ public class HDTournamentData : HDLiveEventData {
 		if ( _data.ContainsKey("u") )
 		{
 			// user info
-			m_rank = _data["u"]["rank"].AsLong;
-			m_score = _data["u"]["score"].AsLong;
+			m_rank = PersistenceUtils.SafeParse<long>(_data["u"]["rank"]);
+			m_score = PersistenceUtils.SafeParse<long>(_data["u"]["score"]);
 			m_defaultBuild.LoadData(_data["u"]["build"]);
 		}
 
@@ -176,7 +176,7 @@ public class HDTournamentData : HDLiveEventData {
 
 		if ( _data.ContainsKey("n") )
 		{
-			m_tournamentSize = _data["n"].AsLong;
+			m_tournamentSize = PersistenceUtils.SafeParse<long>(_data["n"]);
 		}
 	}
 

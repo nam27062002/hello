@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Xml;
@@ -228,7 +229,7 @@ namespace FGOL.Xcode
                 case "integer":
                 {
                     int r;
-                    if (int.TryParse(GetText(xml), out r))
+                    if (int.TryParse(GetText(xml), NumberStyles.Any, CultureInfo.InvariantCulture, out r))
                         return new PlistElementInteger(r);
                     return null;
                 }

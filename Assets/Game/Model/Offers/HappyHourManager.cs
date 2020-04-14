@@ -48,12 +48,12 @@ public class HappyHourManager {
 
 			key = "expirationTime";
 			if(_data.ContainsKey(key)) {
-				expirationTime = new DateTime(_data[key].AsLong);
+				expirationTime = new DateTime(PersistenceUtils.SafeParse<long>(_data[key]));
 			}
 
 			key = "extraGemsFactor";
 			if(_data.ContainsKey(key)) {
-				extraGemsFactor = _data[key].AsFloat;
+				extraGemsFactor = PersistenceUtils.SafeParse<float>(_data[key]);
 			}
 
 			key = "lastPackSku";
@@ -71,8 +71,8 @@ public class HappyHourManager {
 			JSONClass data = new JSONClass();
 
 			data["activeSku"] = activeSku;
-			data["expirationTime"] = expirationTime.Ticks.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE);
-			data["extraGemsFactor"] = extraGemsFactor.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE);
+			data["expirationTime"] = PersistenceUtils.SafeToString(expirationTime.Ticks);
+			data["extraGemsFactor"] = PersistenceUtils.SafeToString(extraGemsFactor);
 
 			if(!string.IsNullOrEmpty(lastPackSku)) {	// No need to add it if none - more compact save file!
 				data["lastPackSku"] = lastPackSku;
@@ -281,6 +281,10 @@ public class HappyHourManager {
 	/// </summary>
 	/// <returns>The opened popup. Can be <c>null</c> if the popup couldn't be opened.</returns>
 	public PopupHappyHour OpenPopup() {
+		// Dont open the popup if we already are displaying a HH popup
+		if (PopupManager.GetOpenPopup(PopupHappyHour.PATH) != null)
+			return null;
+
 		// Load the popup
 		PopupController popup = PopupManager.LoadPopup(PopupHappyHour.PATH);
 		PopupHappyHour popupHappyHour = popup.GetComponent<PopupHappyHour>();
@@ -432,8 +436,11 @@ public class HappyHourManager {
 	/// Called when the player buys a gem pack
 	/// </summary>
 	private void OnHcPackAccquired(bool _forcePopup, string _packSku) {
+		// This is redundant, but just in case. I have seen some weird stuff out there...
+		m_happyHour = OffersManager.happyHourManager.happyHour;
+
 		// Is there an active happy hour already?
-		if(m_happyHour.IsActive()) {
+		if (m_happyHour.IsActive()) {
 			// Update bonus percentage
 			m_happyHour.IncreaseExtraGemsFactor();
 		}

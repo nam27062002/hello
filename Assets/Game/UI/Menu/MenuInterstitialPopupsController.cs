@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------------//
 using UnityEngine;
 using System.Collections;
+using System.Globalization;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -313,7 +314,7 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 				if(Prefs.GetBoolPlayer(Prefs.RATE_CHECK, true)) {
 					string dateStr = Prefs.GetStringPlayer(Prefs.RATE_FUTURE_DATE, System.DateTime.Now.ToString());
 					System.DateTime futureDate = System.DateTime.Now;
-					if(!System.DateTime.TryParse(dateStr, out futureDate)) {
+					if(!System.DateTime.TryParse(dateStr, CultureInfo.InvariantCulture, DateTimeStyles.None, out futureDate)) {
 						futureDate = System.DateTime.Now;
 					}
 					if(System.DateTime.Compare(System.DateTime.Now, futureDate) > 0) {
@@ -695,7 +696,7 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 		// All checks passed! Open the shop popup at the offers tab
 		PopupController popup = PopupManager.LoadPopup(PopupShop.PATH);
 		PopupShop shop = popup.GetComponent<PopupShop>();
-		shop.Init(PopupShop.Mode.OFFERS_FIRST, "After_Offer_Rewards");
+		shop.Init(ShopController.Mode.DEFAULT, "After_Offer_Rewards");
 		popup.Open();
 
 		// Reset flag

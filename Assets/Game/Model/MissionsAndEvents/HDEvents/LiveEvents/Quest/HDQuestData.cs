@@ -49,7 +49,7 @@ public class HDQuestData : HDLiveEventData {
 	public override SimpleJSON.JSONClass ToJson ()
 	{
 		JSONClass ret = base.ToJson();
-		ret.Add("globalScore", m_globalScore);
+		ret.Add("globalScore", PersistenceUtils.SafeToString(m_globalScore));
 		return ret;
 	}
 
@@ -59,7 +59,7 @@ public class HDQuestData : HDLiveEventData {
 
 		if ( _data.ContainsKey("globalScore") )
 		{
-			m_globalScore = _data["globalScore"].AsLong;
+			m_globalScore = PersistenceUtils.SafeParse<long>(_data["globalScore"]);
 		}
 	}
 

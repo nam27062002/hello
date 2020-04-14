@@ -34,7 +34,7 @@ public class OffersManager : Singleton<OffersManager> {
 
     // Debug
 #if LOG_PACKS
-	private const string LOG_PACK_SKU = "rotational";
+	private const string LOG_PACK_SKU = "rotationalHigh";
 #endif
 
     //------------------------------------------------------------------------//
@@ -218,7 +218,6 @@ public class OffersManager : Singleton<OffersManager> {
                 instance.m_activeOffers.Add(newPack);
             }
         }
-        
 
         // Get all known offer packs
         // Sort offers by their "order" field, so if two mutually exclusive offers (same uniqueId)
@@ -270,7 +269,13 @@ public class OffersManager : Singleton<OffersManager> {
 							// If active, store it as the current free offer
 							// [AOC] Shouldn't be needed since the Refresh(true) below should do the trick
 							if(newPack.state == OfferPack.State.ACTIVE) {
-								instance.m_activeFreeOffer = newPack as OfferPackFree;
+								// If another free offer was active first, something went wrong! Change this one to PENDING_ACTIVATION.
+								// [AOC] Shouldn't happen, but we have seen some cases, so protect it just in case
+								if(instance.m_activeFreeOffer != null) {
+									instance.m_activeFreeOffer.ForceStateChange(OfferPack.State.PENDING_ACTIVATION, false);
+								} else {
+									instance.m_activeFreeOffer = newPack as OfferPackFree;
+								}
 							}
 						} break;
 
@@ -654,13 +659,9 @@ public class OffersManager : Singleton<OffersManager> {
 
 		// Remove as many items as needed until the history size is right
 		int maxSize = settings.rotationalHistorySize + m_activeRotationalOffers.Count; // History contains active offers
+		CleanupHistory(ref history, maxSize);
 		Log("UpdateRotationalHistory: Checking history size: {0} vs {1} ({2} + {3})", history.Count, maxSize, settings.rotationalHistorySize, m_activeRotationalOffers.Count);
-		while(history.Count > maxSize) {
-			// Make sure we don't dequeue any active offer!
-			Log("    UpdateRotationalHistory: History too big ({0} > {1})! Dequeing {2}", Colors.red, history.Count, maxSize, history.Peek());
-			DequeueIfNotActive(ref history);
-		}
-
+		
 		// Debug
 		Log("UpdateRotationalHistory: Rotational history updated with pack {0}", (_offer == null ? "NULL" : _offer.def.sku));
 		LogHistory(OfferPack.Type.ROTATIONAL, ref history);
@@ -681,14 +682,9 @@ public class OffersManager : Singleton<OffersManager> {
 
 		// Remove as many items as needed until the history size is right
 		int activeFreeOfferCount = m_activeFreeOffer != null ? 1 : 0;	// History contains active offers
-		int maxSize = settings.rotationalHistorySize + activeFreeOfferCount;
-		Log("UpdateFreeHistory: Checking history size: {0} vs {1} ({2} + {3})", history.Count, maxSize, settings.freeHistorySize, activeFreeOfferCount);
-		while(history.Count > maxSize) {
-			// Make sure we don't dequeue any active offer!
-			Log("    UpdateFreeHistory: History too big ({0} > {1})! Dequeing {2}", Colors.red, history.Count, maxSize, history.Peek());
-			DequeueIfNotActive(ref history);
-		}
-
+		int maxSize = settings.freeHistorySize + activeFreeOfferCount;
+		CleanupHistory(ref history, maxSize);
+		
 		// Debug
 		Log("UpdateFreeHistory: Free history updated with pack {0}", (_offer == null ? "NULL" : _offer.def.sku));
 		LogHistory(OfferPack.Type.FREE, ref history);
@@ -710,7 +706,7 @@ public class OffersManager : Singleton<OffersManager> {
 #if LOG
 		string logStr = "";
 		foreach(OfferPack p in _initialPool) logStr += "    " + p.def.sku + "\n";
-		Log("PickRandomPack: Creating pool from non-expired offers...\nInitial Pool: {0}", logStr);
+		Log("<b>PickRandomPack: Creating pool from non-expired offers...</b>\nInitial Pool: {0}", logStr);
 #endif
 
 		// Create pool from non-expired offers
@@ -745,7 +741,7 @@ public class OffersManager : Singleton<OffersManager> {
 #if LOG
 			logStr = "";
 			foreach(OfferPack p in pool) logStr += "    " + p.def.sku + "\n";
-			Log("PickRandomPack: Picking random pack from a pool of {0}...\n{1}", pool.Count, logStr);
+			Log("<b>PickRandomPack: Picking random pack from a pool of {0}...</b>\n{1}", pool.Count, logStr);
 #endif
 		} else {
 			// If no selectable pack was found, try reusing packs in the history
@@ -757,7 +753,8 @@ public class OffersManager : Singleton<OffersManager> {
 
 			// Be more flexible with repeating recently used packs
 			pack = null;
-			while(pack == null && _history.Count > 0 && _maxTries > 0) {
+			int maxDequeueTries = _history.Count;	// Prevent infinite loop in case all packs are active
+			while(pack == null && _history.Count > 0 && _maxTries > 0 && maxDequeueTries > 0) {
 				// Some logging
 				Log("  PickRandomPack: {0} remaining tries", _maxTries);
 
@@ -767,7 +764,12 @@ public class OffersManager : Singleton<OffersManager> {
 				if(!DequeueIfNotActive(ref _history)) {
 					// Pack is still active and has been moved to the end of the queue
 					// Check next pack in the queue
-					// Doesn't count as a try!
+					// Doesn't count as a normal try!
+					--maxDequeueTries;
+					if(maxDequeueTries <= 0) {
+						Log("PickRandomPack: FAIL! Can't remove any pack from the history, all packs max tries reached! ({0})", Colors.coral, _maxTries);
+						break;	// No need to keep looping
+					}
 					continue;
 				}
 
@@ -814,6 +816,47 @@ public class OffersManager : Singleton<OffersManager> {
 	}
 
 	/// <summary>
+	/// Clean up a history
+	/// </summary>
+	/// <param name="_history"></param>
+	/// <param name="_maxSize"></param>
+	private static void CleanupHistory(ref Queue<string> _history, int _maxSize) {
+#if LOG
+		if(_history.Count > _maxSize) {
+			Log("    CleanupHistory: History too big ({0} > {1})! Dequeing packs...", Colors.red, _history.Count, _maxSize);
+		} else {
+			Log("    CleanupHistory: History size is OK! ({0} <= {1}) - Doing nothing.", Colors.lime, _history.Count, _maxSize);
+		}
+#endif
+
+		int tryCount = _history.Count;   // Prevent infinite loop in case none of the offers can be dequeued!
+		while(_history.Count > _maxSize) {
+			// Dequeue the first offer in the history
+			string dequeuedSku = _history.Dequeue();
+			OfferPack pack = GetOfferPack(dequeuedSku);
+
+			// If we still have remaining tries, check whehter the offer is active
+			if(tryCount > 0) {
+				if(pack != null && pack.isActive) { // [AOC] Pack could be null if it had a sku that is no longer in the content
+					// Offer is still active, enqueue it again!
+					_history.Enqueue(dequeuedSku);
+					Log("    CleanupHistory: Dequeued pack ({0}) was still active! Enqueued again at the end of the history.", Colors.magenta, dequeuedSku);
+				} else {
+					Log("    CleanupHistory: Pack ({0}) dequeued!", Colors.magenta, dequeuedSku);
+				}
+				--tryCount;
+			} else {
+				// Force dequeueing regardless of pack state
+				// If pack is active, disable it properly
+				if(pack != null && pack.isActive) {
+					pack.ForceStateChange(OfferPack.State.PENDING_ACTIVATION, false);	// Allow it to be activated again if all conditions are met
+					Log("    CleanupHistory: Pack ({0}) was still active, but dequeue forced!", Colors.magenta, dequeuedSku);
+				}
+			}
+		}
+	}
+
+	/// <summary>
 	/// Dequeue one item from the given queue, provided the Offer Pack it represents is not active.
 	/// If it's active, it will move it to the end of the queue.
 	/// </summary>
@@ -822,7 +865,8 @@ public class OffersManager : Singleton<OffersManager> {
 	private static bool DequeueIfNotActive(ref Queue<string> _q) {
 		// Make sure we don't dequeue any active offer!
 		string dequeuedSku = _q.Dequeue();
-		if(GetOfferPack(dequeuedSku).isActive) {
+		OfferPack pack = GetOfferPack(dequeuedSku);
+		if(pack != null && pack.isActive) {	// [AOC] Pack could be null if it had a sku that is no longer in the content
 			// Enqueue it again
 			_q.Enqueue(dequeuedSku);
 			Log("    DequeueIfNotActive: Dequeued pack ({0}) was still active! Enqueue it again.", Colors.magenta, dequeuedSku);

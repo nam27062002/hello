@@ -36,19 +36,21 @@ public class OfferItemSlotHC : OfferItemSlot {
     // Internal
     private HappyHour m_appliedHappyHour = null;
 
-    //------------------------------------------------------------------------//
-    // METHODS																  //
-    //------------------------------------------------------------------------//
-    /// <summary>
-    /// Refresh the widget with the data of a specific offer item.
-    /// </summary>
-    /// <param name="_item">Item to be used to initialize the slot.</param>
-    /// <param name="_order">Used to select the proper HC or SC icon</param>
-    public override void InitFromItem(OfferPackItem _item, int _order)
-    {
 
-        // Force reloading preview if item is different than the current one
-        bool reloadPreview = false;
+	//------------------------------------------------------------------------//
+	// METHODS																  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Refresh the widget with the data of a specific offer item.
+	/// </summary>
+	/// <param name="_item">Item to be used to initialize the slot.</param>
+	/// <param name="_order">Used to select the proper HC or SC icon</param>
+	public override void InitFromItem(OfferPackItem _item, int _order)
+    {
+		m_order = _order;
+
+		// Force reloading preview if item is different than the current one
+		bool reloadPreview = false;
         if (m_item != _item) reloadPreview = true;
 
         // Store new item
@@ -71,33 +73,35 @@ public class OfferItemSlotHC : OfferItemSlot {
         // If a preview was already created, destroy it
         if (reloadPreview) ClearPreview();
 
-        // Load new preview (if required)
-        if (reloadPreview)
-        {
-            // Load the proper gem pack icon
-            IOfferItemPreviewHC previewPrefab = ShopSettings.GetHcIconPrefab(_order);
-            if (previewPrefab == null)
-            {
-                Debug.LogError("No icon prefab defined for HC pack with order " + _order);
-            }
-            else {
-                if (m_previewContainer != null)
-                {
-                    // Instantiate preview! :)
-                    m_preview = GameObject.Instantiate<IOfferItemPreviewHC>(previewPrefab, m_previewContainer, false);
-                    m_preview.gameObject.SetActive(true);
-                }
+		// Load new preview (if required)
+		if(m_previewContainer != null) {
+			if(reloadPreview) {
+				// Load the proper gem pack icon
+				IOfferItemPreviewHC previewPrefab = ShopSettings.GetHcIconPrefab(_order);
+				if(previewPrefab == null) {
+					Debug.LogError("No icon prefab defined for HC pack with order " + _order);
+				} else {
+					if(m_previewContainer != null) {
+						// Instantiate preview! :)
+						m_preview = GameObject.Instantiate<IOfferItemPreviewHC>(previewPrefab, m_previewContainer, false);
+						m_preview.gameObject.SetActive(true);
+					}
 
-            }
-        }
+				}
+			}
 
-		// Initialize preview with item data
-		if(m_preview != null) {
-			m_preview.InitFromItem(m_item, m_slotType);
-			m_preview.SetParentAndFit(m_previewContainer as RectTransform);
-		} else {
-			// Skip if preview is not initialized (something went very wrong :s)
-			Debug.LogError("Attempting to initialize slot for item " + m_item.sku + " but reward preview is null!");
+			// Initialize preview with item data
+			if(m_preview != null) {
+				m_preview.InitFromItem(m_item, m_slotType);
+				m_preview.SetParentAndFit(m_previewContainer as RectTransform);
+			} else {
+				// Skip if preview is not initialized (something went very wrong :s)
+				Debug.LogError("Attempting to initialize slot for item " + m_item.sku + " but reward preview is null!" +
+					"\n" + "order: " + _order + " | " + this.transform.GetHierarchyPath());
+#if UNITY_EDITOR
+				UnityEditor.Selection.activeObject = this.gameObject;
+#endif
+			}
 		}
 
 		// Re-apply happy hour modifications
@@ -120,16 +124,13 @@ public class OfferItemSlotHC : OfferItemSlot {
 		bool validHH = _happyHour != null && _happyHour.IsActive();
 		m_appliedHappyHour = _happyHour;
 
-		// We need a valid preview to be able to format texts
-		IOfferItemPreviewHC previewHC = m_preview as IOfferItemPreviewHC;
-		validHH &= m_preview != null;
 
 		// Previous amount
 		if(m_previousAmountText != null) {
 			m_previousAmountText.gameObject.SetActive(validHH);
 			if(validHH) {
 				// Unmodified amount
-				m_previousAmountText.text = previewHC.FormatAmount(m_item.reward.amount);
+				m_previousAmountText.text = IOfferItemPreviewHC.FormatAmount(m_item.reward.amount);
 			}
 		}
 
@@ -141,15 +142,9 @@ public class OfferItemSlotHC : OfferItemSlot {
 				long newAmount = _happyHour.ApplyHappyHourExtra(m_item.reward.amount);
 
                 // Add some color!
-                m_amountText.text = m_happyHourTextColor.Tag(previewHC.FormatAmount(newAmount));
+                m_amountText.text = m_happyHourTextColor.Tag(IOfferItemPreviewHC.FormatAmount(newAmount));
 			} else {
-				// Unmodified amount
-				if(previewHC != null) {
-                    m_amountText.text = previewHC.FormatAmount(m_item.reward.amount);
-				} else {
-                    // Fallback, we should never reach this point
-                    m_amountText.text = StringUtils.FormatNumber(m_item.reward.amount);
-				}
+                m_amountText.text = IOfferItemPreviewHC.FormatAmount(m_item.reward.amount);
 			}
 		}
 	}

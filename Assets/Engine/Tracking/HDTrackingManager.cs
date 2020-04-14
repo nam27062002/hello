@@ -256,23 +256,50 @@ public class HDTrackingManager
 
     /// <summary>
     /// Called when the user opens the app store
-    // <param name="origin">Where the store is open.</param>
     /// </summary>
+    /// <param name="origin">Where the store is open.</param>
     public virtual void Notify_StoreVisited( string origin) {}
 
-    /// <summary>
-    /// Notifies the store section. When player visits a section of the store, HC, SC ...
-    /// </summary>
-    /// <param name="section">Section.</param>
-    public virtual void Notify_StoreSection( string section) {}
+	// [AOC] DEPRECATED
+	/*
+	/// <summary>
+	/// Notifies the store section. When player visits a section of the store, HC, SC ...
+	/// </summary>
+	/// <param name="section">Section.</param>
+	public virtual void Notify_StoreSection( string section) {}
+	*/
+
+	/// <summary>
+	/// Notifies that the player has stopped for X seconds while viewing the shop.
+	/// </summary>
+	/// <param name="_centralSection">Category displayed in the center of the screen.</param>
+	/// <param name="_centralItems">Item or items displayed in the center of the screen.</param>
+	/// <param name="_allVisibleSections">All categories being fully displayed in the screen. Don't include categories that are only partially displayed.</param>
+	/// <param name="_allVisibleItems">All items being fully displayed in the screen. Don't include items that are only partially displayed.</param>
+	public virtual void Notify_StoreView(string _centralSection, string[] _centralItems, string[] _allVisibleSections, string[] _allVisibleItems) { }
     
     /// <summary>
     /// Notifies the store item view. When the player clicks on a button to start buying something on the store
     /// </summary>
     /// <param name="id">Identifier.</param>
     public virtual void Notify_StoreItemView( string id) {}
-    
 
+	/// <summary>
+	/// Notify the order of a given category in the store.
+	/// </summary>
+	/// <param name="_categorySku">Category sku.</param>
+	/// <param name="_order">Order, left to right.</param>
+	public virtual void Notify_StoreCategoryOrder(string _categorySku, int _order) { }
+
+	/// <summary>
+	/// Notify when the player clicks on a shortcut in the shop.
+	/// </summary>
+	/// <param name="_shortcutID">The ID of the clicked shortcut.</param>
+	public virtual void Notify_StoreShortcutClick(string _shortcutID) { }
+
+	/// <summary>
+	/// 
+	/// </summary>
     public virtual void Notify_IAPStarted() {}
 
     /// <summary>
@@ -701,9 +728,9 @@ public class HDTrackingManager
     public virtual void Notify_UIButton(string _buttonName) { }
     
     #region log
-    private const bool LOG_USE_COLOR = false;
+    private const bool LOG_USE_COLOR = true;
     private const string LOG_CHANNEL = "[HDTrackingManager] ";
-    private const string LOG_CHANNEL_COLOR = "<color=cyan>" + LOG_CHANNEL;
+    private const string LOG_CHANNEL_COLOR = "<color=teal>" + LOG_CHANNEL;
 
 #if ENABLE_LOGS
     [Conditional("DEBUG")]
@@ -714,7 +741,18 @@ public class HDTrackingManager
     {        
         if (LOG_USE_COLOR)
         {
-            Debug.Log(LOG_CHANNEL_COLOR + msg + " </color>");
+			// Multiline texts don't work well with color tags in the console, so do some tricks :P
+			int idx = msg.IndexOf('\n');
+			if(idx >= 0) {
+				Debug.Log(
+					LOG_CHANNEL_COLOR +
+					msg.Substring(0, idx) +
+					"</color>" +
+					msg.Substring(idx, msg.Length - idx)
+				);
+			} else {
+				Debug.Log(LOG_CHANNEL_COLOR + msg + " </color>");
+			}
         }
         else
         {

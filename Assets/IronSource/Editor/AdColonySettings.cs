@@ -15,8 +15,12 @@ namespace IronSource.Editor
 			PBXProject project = new PBXProject ();
 			project.ReadFromString (File.ReadAllText (projectPath));
 
-			string targetId = project.TargetGuidByName (PBXProject.GetUnityTargetName ());
-
+			string targetId; 
+            #if UNITY_2019_3_OR_NEWER
+            targetId = project.GetUnityMainTargetGuid();
+            #else
+            targetId = project.TargetGuidByName(PBXProject.GetUnityTargetName());
+            #endif
 			// Required System Frameworks
 			project.AddFrameworkToProject (targetId, "AudioToolbox.framework", false);
 			project.AddFrameworkToProject (targetId, "EventKit.framework", false);
@@ -40,38 +44,6 @@ namespace IronSource.Editor
 		public void updateProjectPlist (BuildTarget buildTarget, string plistPath)
 		{
 			Debug.Log ("IronSource - Update plist for AdColony");
-
-
-			CaletySettings settingsInstance = (CaletySettings)Resources.Load("CaletySettings");
-		    if(settingsInstance == null)
-		    {
-                Debug.Log("Unable to load CaletySettings in order to get AdMob application ID");
-                return;
-            }
-
-
-            PlistDocument plist = new PlistDocument();
-            plist.ReadFromFile(plistPath);
-
-			PlistElementDict rootDict = plist.root;
-
-			//Add Necessary Things
-			PlistElementArray LSApplicationQueriesSchemes = rootDict["LSApplicationQueriesSchemes"] as PlistElementArray;
-			if ( LSApplicationQueriesSchemes == null )
-			{
-				LSApplicationQueriesSchemes = rootDict.CreateArray("LSApplicationQueriesSchemes");
-			}
-			LSApplicationQueriesSchemes.AddString ("fb");
-			LSApplicationQueriesSchemes.AddString ("instagram");
-			LSApplicationQueriesSchemes.AddString ("tumblr");
-			LSApplicationQueriesSchemes.AddString ("twitter");
-			
-			if (rootDict["NSMotionUsageDescription"] == null)
-			{
-				rootDict.SetString("NSMotionUsageDescription", "Interactive ad controls");
-			}
-
-            plist.WriteToFile(plistPath);
 		}
 	}
 }

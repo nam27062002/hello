@@ -8,9 +8,9 @@ using System.IO;
 #if !UNITY_IPHONE && !UNITY_ANDROID
 public class PlatformUtilsDummyImpl: PlatformUtils
 {
-	public override string GetCountryCode()
+	public override string Country_GetCurrentCode()
 	{
-		return "US";
+		return COUNTRY_CODE_WW_DEFAULT;
 	}
 
 	public override void GetTokens(){}

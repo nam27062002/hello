@@ -237,5 +237,63 @@ public class EditorDriversMenu : MonoBehaviour
         Menu.SetChecked(DRIVERS_DISK_NO_PERMISSION_MENU, MockDiskDriver.IsNoAccessPermissionEnabled);
         return true;
     }
-    #endregion
+ #endregion
+
+ #region country
+    private const string DRIVERS_COUNTRY_ON_INSTALL_MENU = DRIVERS_MENU + "/Country On Install";
+    private const string DRIVERS_COUNTRY_ON_INSTALL_NONE = DRIVERS_COUNTRY_ON_INSTALL_MENU + "/None";
+    private const string DRIVERS_COUNTRY_ON_INSTALL_WW = DRIVERS_COUNTRY_ON_INSTALL_MENU + "/Worldwide";
+    private const string DRIVERS_COUNTRY_ON_INSTALL_CHINA = DRIVERS_COUNTRY_ON_INSTALL_MENU + "/China";
+	private const string DRIVERS_COUNTRY_ON_INSTALL_KOREA = DRIVERS_COUNTRY_ON_INSTALL_MENU + "/Korea";
+
+	[MenuItem(DRIVERS_COUNTRY_ON_INSTALL_NONE)]
+    public static void CountryOnInstall_SetNone()
+    {
+        PersistencePrefs.CountryCodeOnInstall = "";
+    }
+
+    [MenuItem(DRIVERS_COUNTRY_ON_INSTALL_NONE, true)]
+    public static bool CountryOnInstall_SetNoneValidate()
+    {
+        Menu.SetChecked(DRIVERS_COUNTRY_ON_INSTALL_NONE, string.IsNullOrEmpty(PersistencePrefs.CountryCodeOnInstall));
+        return true;
+    }
+
+    [MenuItem(DRIVERS_COUNTRY_ON_INSTALL_WW)]
+    public static void CountryOnInstall_SetWW()
+    {
+        PersistencePrefs.CountryCodeOnInstall = PlatformUtils.COUNTRY_CODE_WW_DEFAULT;        
+    }
+
+    [MenuItem(DRIVERS_COUNTRY_ON_INSTALL_WW, true)]
+    public static bool CountryOnInstall_SetWWValidate()
+    {
+        Menu.SetChecked(DRIVERS_COUNTRY_ON_INSTALL_WW, PersistencePrefs.CountryCodeOnInstall == PlatformUtils.COUNTRY_CODE_WW_DEFAULT);
+        return true;
+    }
+
+    [MenuItem(DRIVERS_COUNTRY_ON_INSTALL_CHINA)]
+    public static void CountryOnInstall_SetChina()
+    {
+        PersistencePrefs.CountryCodeOnInstall = PlatformUtils.COUNTRY_CODE_CHINA;
+    }
+
+    [MenuItem(DRIVERS_COUNTRY_ON_INSTALL_CHINA, true)]
+    public static bool CountryOnInstall_SetChinaValidate()
+    {
+        Menu.SetChecked(DRIVERS_COUNTRY_ON_INSTALL_CHINA, PersistencePrefs.CountryCodeOnInstall == PlatformUtils.COUNTRY_CODE_CHINA);
+        return true;
+    }
+
+	[MenuItem(DRIVERS_COUNTRY_ON_INSTALL_KOREA)]
+	public static void CountryOnInstall_SetKorea() {
+		PersistencePrefs.CountryCodeOnInstall = PlatformUtils.COUNTRY_CODE_KOREA;
+	}
+
+	[MenuItem(DRIVERS_COUNTRY_ON_INSTALL_KOREA, true)]
+	public static bool CountryOnInstall_SetKoreaValidate() {
+		Menu.SetChecked(DRIVERS_COUNTRY_ON_INSTALL_KOREA, PersistencePrefs.CountryCodeOnInstall == PlatformUtils.COUNTRY_CODE_KOREA);
+		return true;
+	}
+	#endregion
 }

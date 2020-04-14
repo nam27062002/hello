@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using FGOL.Plugins.Native;
+using System.Globalization;
 
 namespace FGOL.Plugins.Native
 {
@@ -64,7 +65,7 @@ namespace FGOL.Plugins.Native
 			string[] resultSplit = result.Split(':');
 			//FGOL.Assert.Expect(resultSplit.Length == 2);
 
-			int msgId = int.Parse(resultSplit[0]);
+			int msgId = int.Parse(resultSplit[0], NumberStyles.Any, CultureInfo.InvariantCulture);
 			//FGOL.Assert.Expect(msgId != -1);
 
 			string isOK = resultSplit[1];
