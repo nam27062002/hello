@@ -34,6 +34,7 @@ public class PopupSettingsOptionsTab : MonoBehaviour {
 	[SerializeField] private GameObject m_adultGroup = null;
 	[SerializeField] private GameObject m_childrenGroupRoot_iOS = null;
 	[SerializeField] private GameObject m_childrenGroupRoot_Android = null;
+	[SerializeField] private GameObject m_bloodToggleRoot = null;
 
 
 	private int m_graphicsMaxLevel = 4;
@@ -69,7 +70,16 @@ public class PopupSettingsOptionsTab : MonoBehaviour {
 #endif
 		}
 
-
+		// Don't show blood toggle in China or Korea
+		// Don't show for underage either
+		// [AOC] Temp solution for 2.8 while waiting for the Flavours feature implementation (2.10)
+		if(m_bloodToggleRoot != null) {
+			m_bloodToggleRoot.SetActive(
+				!ageRestriction &&
+				!PlatformUtils.Instance.IsChina() && 
+				!PlatformUtils.Instance.IsKorea()
+			);
+		}
 	}
 
 
