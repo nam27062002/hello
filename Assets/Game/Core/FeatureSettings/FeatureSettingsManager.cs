@@ -1724,12 +1724,25 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
 
     public bool IsBloodEnabled()
     {
-        bool ret = false;
-        if (!GDPRManager.SharedInstance.IsAgeRestrictionEnabled() && Prefs.GetBoolPlayer(GameSettings.BLOOD_ENABLED, true))
-        {
-            ret = true;
-        }
-        return ret;
+        bool ret = true;
+
+		// Never for China or Korea
+		// [AOC] Temp solution for 2.8 while waiting for the Flavours feature implementation (2.10)
+		if(PlatformUtils.Instance.IsChina() ||PlatformUtils.Instance.IsKorea()) {
+			ret = false;
+		}
+
+		// Don't show for underage either
+		else if(GDPRManager.SharedInstance.IsAgeRestrictionEnabled()) {
+			ret = false;
+		}
+
+		// Finally, don't show if disabled in the settings menu
+		else if(!Prefs.GetBoolPlayer(GameSettings.BLOOD_ENABLED, true)) {
+			ret = false;
+		}
+
+		return ret;
     }
 
 	public bool IfPetRigidbodyInterpolates

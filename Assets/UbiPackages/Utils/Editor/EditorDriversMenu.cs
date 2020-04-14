@@ -244,8 +244,9 @@ public class EditorDriversMenu : MonoBehaviour
     private const string DRIVERS_COUNTRY_ON_INSTALL_NONE = DRIVERS_COUNTRY_ON_INSTALL_MENU + "/None";
     private const string DRIVERS_COUNTRY_ON_INSTALL_WW = DRIVERS_COUNTRY_ON_INSTALL_MENU + "/Worldwide";
     private const string DRIVERS_COUNTRY_ON_INSTALL_CHINA = DRIVERS_COUNTRY_ON_INSTALL_MENU + "/China";
+	private const string DRIVERS_COUNTRY_ON_INSTALL_KOREA = DRIVERS_COUNTRY_ON_INSTALL_MENU + "/Korea";
 
-    [MenuItem(DRIVERS_COUNTRY_ON_INSTALL_NONE)]
+	[MenuItem(DRIVERS_COUNTRY_ON_INSTALL_NONE)]
     public static void CountryOnInstall_SetNone()
     {
         PersistencePrefs.CountryCodeOnInstall = "";
@@ -283,5 +284,16 @@ public class EditorDriversMenu : MonoBehaviour
         Menu.SetChecked(DRIVERS_COUNTRY_ON_INSTALL_CHINA, PersistencePrefs.CountryCodeOnInstall == PlatformUtils.COUNTRY_CODE_CHINA);
         return true;
     }
- #endregion
+
+	[MenuItem(DRIVERS_COUNTRY_ON_INSTALL_KOREA)]
+	public static void CountryOnInstall_SetKorea() {
+		PersistencePrefs.CountryCodeOnInstall = PlatformUtils.COUNTRY_CODE_KOREA;
+	}
+
+	[MenuItem(DRIVERS_COUNTRY_ON_INSTALL_KOREA, true)]
+	public static bool CountryOnInstall_SetKoreaValidate() {
+		Menu.SetChecked(DRIVERS_COUNTRY_ON_INSTALL_KOREA, PersistencePrefs.CountryCodeOnInstall == PlatformUtils.COUNTRY_CODE_KOREA);
+		return true;
+	}
+	#endregion
 }
