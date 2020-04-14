@@ -24,9 +24,6 @@ public class PopupSettingsOptionsTab : MonoBehaviour {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed
-	[SerializeField] private SnappingScrollRect m_languageScrollList = null;
-	[SerializeField] private ShowHideAnimator m_languageNameAnim = null;
-	[Space]
 	[SerializeField] private Slider m_graphicsQualitySlider = null;
 	[SerializeField] private CanvasGroup m_graphicsQualityCanvasGroup = null;
 	[SerializeField] private TextMeshProUGUI m_graphicsQualityCurrentValueText = null;
@@ -35,6 +32,7 @@ public class PopupSettingsOptionsTab : MonoBehaviour {
 	[SerializeField] private GameObject m_adultGroupRoot = null;
 	[SerializeField] private GameObject m_childrenGroupRoot_iOS = null;
 	[SerializeField] private GameObject m_childrenGroupRoot_Android = null;
+	[SerializeField] private GameObject m_bloodToggleRoot = null;
 
 
 	private int m_graphicsMaxLevel = 4;
@@ -68,6 +66,17 @@ public class PopupSettingsOptionsTab : MonoBehaviour {
 #else
 			m_childrenGroupRoot_Android.SetActive(false);
 #endif
+		}
+
+		// Don't show blood toggle in China or Korea
+		// Don't show for underage either
+		// [AOC] Temp solution for 2.8 while waiting for the Flavours feature implementation (2.10)
+		if(m_bloodToggleRoot != null) {
+			m_bloodToggleRoot.SetActive(
+				!ageRestriction &&
+				!PlatformUtils.Instance.IsChina() && 
+				!PlatformUtils.Instance.IsKorea()
+			);
 		}
 	}
 

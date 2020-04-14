@@ -357,7 +357,7 @@ public class DragonTint : MonoBehaviour {
             DragonCorpse.setDeathMode(m_materials[i]);
         //            m_materials[i].shader = Shader.Find("Hungry Dragon/Dragon/Death");
 
-        if (_type == DamageType.MINE || _type == DamageType.BIG_DAMAGE || InstanceManager.player.m_alwaysSpawnCorpse) {
+		if(InstanceManager.player.CanSpawnCorpse(_type)) {
             // Shows corpse
             m_deathAlpha = 0;
             for (int i = 0; i < m_dragonRenderers.Count; i++) {
