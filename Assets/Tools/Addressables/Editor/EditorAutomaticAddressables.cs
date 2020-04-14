@@ -30,10 +30,13 @@ public static class EditorAutomaticAddressables {
             private set;
         }
 
-        public AddressablesVariant(string folderInAssets, BuildTarget platform)
+        public string AssetBundlePrefix = null;
+
+        public AddressablesVariant(string folderInAssets, BuildTarget platform, string assetBundlePrefix)
         {
             FolderInAssets = folderInAssets;
-            Platform = platform; 
+            Platform = platform;
+            AssetBundlePrefix = assetBundlePrefix;
         }
     }
 
@@ -45,29 +48,40 @@ public static class EditorAutomaticAddressables {
         {
             s_flavourAddressablesVariantToAssetFolder = new Dictionary<Flavour.EAddressablesVariant, AddressablesVariant>();
 
-            AddressablesVariant addressablesVariant = new AddressablesVariant("", BuildTarget.NoTarget);
+            AddressablesVariant addressablesVariant = new AddressablesVariant("", BuildTarget.NoTarget, null);
             s_flavourAddressablesVariantToAssetFolder.Add(Flavour.EAddressablesVariant.WW, addressablesVariant);
 
             // flavourAddressablesVariant, folder name where the assets for flavourSku are stored in
-            addressablesVariant = new AddressablesVariant("Flavours/China", BuildTarget.iOS);
-            s_flavourAddressablesVariantToAssetFolder.Add(Flavour.EAddressablesVariant.CN, addressablesVariant);
+            Flavour.EAddressablesVariant eAddressablesVariant = Flavour.EAddressablesVariant.CN;
+            addressablesVariant = new AddressablesVariant("Flavours/China", BuildTarget.iOS, Flavour.EAddressablesVariantToString(eAddressablesVariant));
+            s_flavourAddressablesVariantToAssetFolder.Add(eAddressablesVariant, addressablesVariant);
         }
+    }
+
+    private static AddressablesVariant GetAddressablesVariant(Flavour.EAddressablesVariant flavourAddressablesVariant)
+    {
+        AddressablesVariant returnValue = null;
+
+        Flavour_Init();
+
+        s_flavourAddressablesVariantToAssetFolder.TryGetValue(flavourAddressablesVariant, out returnValue);
+
+        return returnValue;
     }
 
     public static string FlavourAddressablesVariantToAssetFolder(Flavour.EAddressablesVariant flavourAddressablesVariant)
     {
-        string returnValue = "";
+        string returnValue;
 
-        Flavour_Init();
-       
-        if (s_flavourAddressablesVariantToAssetFolder.ContainsKey(flavourAddressablesVariant))
+        AddressablesVariant variant = GetAddressablesVariant(flavourAddressablesVariant);
+        if (variant == null)
         {
-            returnValue = s_flavourAddressablesVariantToAssetFolder[flavourAddressablesVariant].FolderInAssets;
+            Debug.LogError("No folder found for flavour addressables variant: " + flavourAddressablesVariant + " so " + flavourAddressablesVariant + " is used as asset folder");
+            returnValue = Flavour.EAddressablesVariantToString(flavourAddressablesVariant);
         }
         else
         {
-            Debug.LogError("No folder found for flavour addressables variant: " + flavourAddressablesVariant + " so " + flavourAddressablesVariant + " is used as asset folder");
-            returnValue = Flavour.EAddressablesVariantToString(flavourAddressablesVariant);                
+            returnValue = s_flavourAddressablesVariantToAssetFolder[flavourAddressablesVariant].FolderInAssets;
         }
 
         return returnValue;
@@ -261,6 +275,34 @@ public static class EditorAutomaticAddressables {
                 string assetBundle = ai.assetBundleName;
                 if (locationType == AddressablesTypes.ELocationType.Resources || locationType == AddressablesTypes.ELocationType.AssetBundles && !string.IsNullOrEmpty(assetBundle)) {                 
                     bool createEntry = false;
+
+                    AddressablesVariant addressablesVariant = GetAddressablesVariant(flavourAddressablesVariant);
+                    string assetBundlePrefix = (addressablesVariant == null) ? null : addressablesVariant.AssetBundlePrefix;
+
+                    // Asset bundles of an addressables variant need to include the addressables variant as a prefix in their name
+                    if (!string.IsNullOrEmpty(assetBundlePrefix)) {                                                
+                        char separator = '-';
+                        string[] tokens = assetBundle.Split(separator);
+                        int tokensCount = tokens.Length;
+                        string origAssetBundle = assetBundle;
+                        if (tokensCount < 2)
+                        {
+                            assetBundle = assetBundlePrefix + separator + assetBundle;
+                        }
+                        else if (tokens[0] != assetBundlePrefix)
+                        {
+                            assetBundle = assetBundlePrefix + separator;
+                            for (int i = 1; i < tokensCount; i++)
+                            {
+                                assetBundle += tokens[i];
+                            }
+                        }
+
+                        if (!origAssetBundle.Equals(assetBundle))
+                        {
+                            ai.assetBundleName = assetBundle;
+                        }                      
+                    }
 
                     if (_entries != null) {
                         if (_allowedTypes != null) {
