@@ -775,13 +775,9 @@ public class ViewControl : IViewControl, IBroadcastListener {
     }
 
 	public bool CanSpawnCorpse() {
-		// Never for China or Korea
-		if(PlatformUtils.Instance.IsChina() || PlatformUtils.Instance.IsKorea()) {
-			return false;
-		}
-
-		// All checks passed!
-		return true;
+        // Controlled by CORPSE_ALLOWED flavour setting
+        Flavour currentFlavour = FlavourManager.Instance.GetCurrentFlavour();
+        return currentFlavour.GetSetting<bool>(Flavour.SettingKey.CORPSE_ALLOWED);
 	}
 
     public bool isHitAnimOn() {

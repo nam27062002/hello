@@ -74,7 +74,8 @@ public class FlavourFactory
     // Flavour skus: So far "WW" is used for worldwide version and the country code for every country that requires a different flavour    
     private const string SETTINGS_SKU_DEFAULT = SETTINGS_SKU_WW;
     private const string SETTINGS_SKU_WW = "WW";
-    private const string SETTINGS_SKU_CHINA = PlatformUtils.COUNTRY_CODE_CHINA;             
+    private const string SETTINGS_SKU_CHINA = PlatformUtils.COUNTRY_CODE_CHINA;
+    private const string SETTINGS_SKU_KOREA = PlatformUtils.COUNTRY_CODE_KOREA;
 
     private void Settings_SetFlavour(Flavour flavour, string flavourSku, Flavour.EDevicePlatform devicePlatform)
     {
@@ -85,6 +86,10 @@ public class FlavourFactory
         else if (flavourSku == SETTINGS_SKU_CHINA)
         {
             Settings_SetFlavourChina(flavour, devicePlatform);
+        }
+        else if (flavourSku == SETTINGS_SKU_KOREA)
+        {
+            Settings_SetFlavourKorea(flavour, devicePlatform);
         }
         else
         {
@@ -106,7 +111,9 @@ public class FlavourFactory
            isInstagramEnabled: true,
            isWeChatEnabled: false,
            showSplashLegalText: false,
-           forbbidenSFXVariant: null);
+           forbbidenSFXVariant: null,
+           corpseAllowed: true,
+           shareLocationDef: "url");
     }
 
     private void Settings_SetFlavourChina(Flavour flavour, Flavour.EDevicePlatform devicePlatform)
@@ -122,7 +129,27 @@ public class FlavourFactory
            isInstagramEnabled: false,
            isWeChatEnabled: true,
            showSplashLegalText: true,
-           forbbidenSFXVariant: forbbidenSFXChina);
-    }    
-#endregion
+           forbbidenSFXVariant: forbbidenSFXChina,
+           corpseAllowed: false,
+           shareLocationDef: "urlChina");
+    }
+
+    private void Settings_SetFlavourKorea(Flavour flavour, Flavour.EDevicePlatform devicePlatform)
+    {
+        flavour.Setup(
+           sku: SETTINGS_SKU_KOREA,
+           socialPlatform: Flavour.ESocialPlatform.Facebook,
+           addressablesVariant: Flavour.EAddressablesVariant.KR,
+           isSIWAEnabled: IsSIWAEnabled(devicePlatform),
+           showLanguageSelector: true,
+           showBloodSelector: false,
+           isTwitterEnabled: true,
+           isInstagramEnabled: true,
+           isWeChatEnabled: false,
+           showSplashLegalText: false,
+           forbbidenSFXVariant: null,
+           corpseAllowed: false,
+           shareLocationDef: "url");
+    }
+    #endregion
 }
