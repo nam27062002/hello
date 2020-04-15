@@ -244,6 +244,7 @@ public class EditorDeviceMenu : MonoBehaviour
     private const string DEVICE_COUNTRY_ON_INSTALL_NONE = DEVICE_COUNTRY_ON_INSTALL_MENU + "/None";
     private const string DEVICE_COUNTRY_ON_INSTALL_WW = DEVICE_COUNTRY_ON_INSTALL_MENU + "/Worldwide";
     private const string DEVICE_COUNTRY_ON_INSTALL_CHINA = DEVICE_COUNTRY_ON_INSTALL_MENU + "/China";
+    private const string DEVICE_COUNTRY_ON_INSTALL_KOREA = DEVICE_COUNTRY_ON_INSTALL_MENU + "/Korea";
 
     [MenuItem(DEVICE_COUNTRY_ON_INSTALL_NONE)]
     public static void CountryOnInstall_SetNone()
@@ -283,9 +284,22 @@ public class EditorDeviceMenu : MonoBehaviour
         Menu.SetChecked(DEVICE_COUNTRY_ON_INSTALL_CHINA, PersistencePrefs.CountryCodeOnInstall == PlatformUtils.COUNTRY_CODE_CHINA);
         return true;
     }
-#endregion
 
-#region country
+    [MenuItem(DEVICE_COUNTRY_ON_INSTALL_KOREA)]
+    public static void CountryOnInstall_SetKorea()
+    {
+        PersistencePrefs.CountryCodeOnInstall = PlatformUtils.COUNTRY_CODE_KOREA;
+    }
+
+    [MenuItem(DEVICE_COUNTRY_ON_INSTALL_KOREA, true)]
+    public static bool CountryOnInstall_SetKoreaValidate()
+    {
+        Menu.SetChecked(DEVICE_COUNTRY_ON_INSTALL_KOREA, PersistencePrefs.CountryCodeOnInstall == PlatformUtils.COUNTRY_CODE_KOREA);
+        return true;
+    }
+    #endregion
+
+    #region country
     private const string DEVICE_PLATFORM_MENU = DEVICE_MENU + "/Platform";
     private const string DEVICE_PLATFORM_AS_BUILD_TARGET = DEVICE_PLATFORM_MENU + "/As Build Target";
     private const string DEVICE_PLATFORM_IOS = DEVICE_PLATFORM_MENU + "/iOS";
