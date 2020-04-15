@@ -107,17 +107,9 @@ public class Flavour
     public static string DEVICEPLATFORM_IOS = EDevicePlatform.iOS.ToString();
     public static string DEVICEPLATFORM_ANDROID = EDevicePlatform.Android.ToString();
 
-    public static List<string> ADDRESSABLE_VARIANT_KEYS = new List<string>()
-    {
-        "WW",
-        "CN"
-    };
-
-
+    private static List<string> s_addressableVariantKeys;
     public static EAddressablesVariant ADDRESSABLES_VARIANT_DEFAULT = EAddressablesVariant.WW;
     public static string ADDRESSABLES_VARIANT_DEFAULT_SKU = EAddressablesVariantToString(ADDRESSABLES_VARIANT_DEFAULT);
-
-
 
     private static SocialUtils.EPlatform ESocialPlatformToSocialUtilsEPlatform(ESocialPlatform value)
     {
@@ -133,19 +125,33 @@ public class Flavour
         return SocialUtils.EPlatform.None;
     }
 
+    private static List<string> GetAddressableVariantKeys()
+    {
+        if (s_addressableVariantKeys == null)
+        {
+            s_addressableVariantKeys = new List<string>();
+            foreach (EAddressablesVariant val in System.Enum.GetValues(typeof(EAddressablesVariant)))
+            {
+                s_addressableVariantKeys.Add(val.ToString().ToLower());
+            }
+        }
+
+        return s_addressableVariantKeys;
+    }
 
     public static string EAddressablesVariantToString(EAddressablesVariant value)
     {
         string returnValue;
 
         int index = (int)value;
-        if (index >= ADDRESSABLE_VARIANT_KEYS.Count)
+        List<string> variantKeys = GetAddressableVariantKeys();
+        if (index >= variantKeys.Count)
         {
             returnValue = ADDRESSABLES_VARIANT_DEFAULT_SKU;
         }
         else
         {
-            returnValue = ADDRESSABLE_VARIANT_KEYS[index];
+            returnValue = variantKeys[index];
         }
 
         return returnValue;
