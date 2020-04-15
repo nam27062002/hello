@@ -107,7 +107,7 @@ public class Flavour
     public static string DEVICEPLATFORM_IOS = EDevicePlatform.iOS.ToString();
     public static string DEVICEPLATFORM_ANDROID = EDevicePlatform.Android.ToString();
 
-    private static List<string> s_addressableVariantKeys;
+    private static List<string> s_addressablesVariantKeys;
     public static EAddressablesVariant ADDRESSABLES_VARIANT_DEFAULT = EAddressablesVariant.WW;
     public static string ADDRESSABLES_VARIANT_DEFAULT_SKU = EAddressablesVariantToString(ADDRESSABLES_VARIANT_DEFAULT);
 
@@ -125,18 +125,18 @@ public class Flavour
         return SocialUtils.EPlatform.None;
     }
 
-    private static List<string> GetAddressableVariantKeys()
+    private static List<string> GetAddressablesVariantKeys()
     {
-        if (s_addressableVariantKeys == null)
+        if (s_addressablesVariantKeys == null)
         {
-            s_addressableVariantKeys = new List<string>();
+            s_addressablesVariantKeys = new List<string>();
             foreach (EAddressablesVariant val in System.Enum.GetValues(typeof(EAddressablesVariant)))
             {
-                s_addressableVariantKeys.Add(val.ToString().ToLower());
+                s_addressablesVariantKeys.Add(val.ToString().ToLower());
             }
         }
 
-        return s_addressableVariantKeys;
+        return s_addressablesVariantKeys;
     }
 
     public static string EAddressablesVariantToString(EAddressablesVariant value)
@@ -144,7 +144,7 @@ public class Flavour
         string returnValue;
 
         int index = (int)value;
-        List<string> variantKeys = GetAddressableVariantKeys();
+        List<string> variantKeys = GetAddressablesVariantKeys();
         if (index >= variantKeys.Count)
         {
             returnValue = ADDRESSABLES_VARIANT_DEFAULT_SKU;
