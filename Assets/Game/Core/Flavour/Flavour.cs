@@ -111,6 +111,12 @@ public class Flavour
         private set;
     }
 
+    public string GetMonoLanguageSku
+    {
+        get;
+        private set;
+    }
+
     //------------------------------------------------------------------------//
     // STATIC   		    												  //
     //------------------------------------------------------------------------//
@@ -207,7 +213,8 @@ public class Flavour
 
     public void Setup(string sku, ESocialPlatform socialPlatform, EAddressablesVariant addressablesVariant,
         bool isSIWAEnabled, bool showLanguageSelector, bool showBloodSelector, bool isTwitterEnabled, bool isInstagramEnabled,
-        bool isWeChatEnabled, bool showSplashLegalText, string[] forbbidenSFXVariant, bool corpseAllowed, string shareLocationDef)
+        bool isWeChatEnabled, bool showSplashLegalText, string[] forbbidenSFXVariant, bool corpseAllowed, string shareLocationDef,
+        string monoLanguageSku)
     {
         Sku = sku;
         SocialPlatform = socialPlatform;
@@ -231,6 +238,9 @@ public class Flavour
         // Share data
         ShareLocationDef = shareLocationDef;
         SetupShareData();
+
+        // Unique language SKU allowed (for China)
+        GetMonoLanguageSku = monoLanguageSku;
     }
 
     private void SetupForbiddenSFX(string[] forbbidenSFXVariant)

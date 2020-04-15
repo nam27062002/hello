@@ -113,7 +113,8 @@ public class FlavourFactory
            showSplashLegalText: false,
            forbbidenSFXVariant: null,
            corpseAllowed: true,
-           shareLocationDef: "url");
+           shareLocationDef: "url",
+           monoLanguageSku: null);
     }
 
     private void Settings_SetFlavourChina(Flavour flavour, Flavour.EDevicePlatform devicePlatform)
@@ -131,7 +132,8 @@ public class FlavourFactory
            showSplashLegalText: true,
            forbbidenSFXVariant: forbbidenSFXChina,
            corpseAllowed: false,
-           shareLocationDef: "urlChina");
+           shareLocationDef: "urlChina",
+           monoLanguageSku: "lang_chinese");
     }
 
     private void Settings_SetFlavourKorea(Flavour flavour, Flavour.EDevicePlatform devicePlatform)
@@ -149,7 +151,8 @@ public class FlavourFactory
            showSplashLegalText: false,
            forbbidenSFXVariant: null,
            corpseAllowed: false,
-           shareLocationDef: "url");
+           shareLocationDef: "url",
+           monoLanguageSku: null);
     }
     #endregion
 }
