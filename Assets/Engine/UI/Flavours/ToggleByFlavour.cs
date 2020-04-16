@@ -21,10 +21,11 @@ public class ToggleByFlavour : MonoBehaviour
 
     [SerializeField] private Flavour.SettingKey m_settingKey;
     [SerializeField] private bool m_settingValue;
+    [SerializeField] private bool m_show;
 
     public bool settingValue { get { return m_settingValue; }  set { m_settingValue = value; } }
 
-
+    public bool showValue { get { return m_show; } set { m_show = value; } }
 
     /// <summary>
     /// Check the flavour settings in the Awake method. Flavours wont change during the game.
@@ -34,8 +35,10 @@ public class ToggleByFlavour : MonoBehaviour
 
         Flavour currentFlavour = FlavourManager.Instance.GetCurrentFlavour();
         bool settingValue = currentFlavour.GetSetting<bool>(m_settingKey);
-
-        gameObject.SetActive(settingValue == m_settingValue);
-
+        if (settingValue == m_settingValue)
+        {
+            gameObject.SetActive(m_show);
+        }
+        
     }
 }

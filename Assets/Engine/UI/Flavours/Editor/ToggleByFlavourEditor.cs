@@ -9,6 +9,8 @@
 //----------------------------------------------------------------------------//
 using UnityEngine;
 using UnityEditor;
+using UnityEditor.Experimental.SceneManagement;
+using UnityEditor.SceneManagement;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -27,6 +29,12 @@ public class ToggleByFlavourEditor : Editor {
 		TRUE = 1
 	}
 
+	public enum ShowValues
+	{
+		HIDE = 0,
+		SHOW = 1
+	}
+
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
@@ -37,8 +45,10 @@ public class ToggleByFlavourEditor : Editor {
 	private SerializedProperty m_scriptProp = null;
 	private SerializedProperty m_settingKey = null;
 	private SerializedProperty m_settingValue = null;
+	private SerializedProperty m_show = null;
 
 	private BoolValues boolValue;
+	private ShowValues showValue;
 
 	//------------------------------------------------------------------------//
 	// METHODS																  //
@@ -56,6 +66,7 @@ public class ToggleByFlavourEditor : Editor {
 
 		m_settingKey = serializedObject.FindProperty("m_settingKey");
 		m_settingValue = serializedObject.FindProperty("m_settingValue");
+		m_show = serializedObject.FindProperty("m_show");
 
 	}
 
@@ -89,15 +100,44 @@ public class ToggleByFlavourEditor : Editor {
 		}
 
 
-		content.text ="Show only if";
+		content.text ="If property";
 		EditorGUILayout.PropertyField(m_settingKey, content, true);
 
+
 		boolValue = m_target.settingValue? BoolValues.TRUE: BoolValues.FALSE;
-		boolValue = (BoolValues)EditorGUILayout.EnumPopup("Equals to ", boolValue);
-		m_target.settingValue =  (boolValue == BoolValues.TRUE) ? true : false;
+		BoolValues newBoolValue = (BoolValues)EditorGUILayout.EnumPopup("Equals to ", boolValue);
+		m_target.settingValue =  (newBoolValue == BoolValues.TRUE) ? true : false;
+        if (newBoolValue != boolValue)
+        {
+            // Make sure the prefab understands there was a change
+			MarkAsDirty();
+        }
+
+
+		showValue = m_target.showValue ? ShowValues.SHOW : ShowValues.HIDE;
+		ShowValues newShowValue = (ShowValues)EditorGUILayout.EnumPopup("Then ", showValue);
+		m_target.showValue = (newShowValue == ShowValues.SHOW) ? true : false;
+		if (newShowValue != showValue)
+		{
+			// Make sure the prefab understands there was a change
+			MarkAsDirty();
+		}
+
 
 		// Apply changes to the serialized object - always do this in the end of OnInspectorGUI.
 		serializedObject.ApplyModifiedProperties();
+	}
+
+	public static void MarkAsDirty()
+	{
+#if UNITY_EDITOR
+
+		var prefabStage = PrefabStageUtility.GetCurrentPrefabStage();
+		if (prefabStage != null)
+		{
+			EditorSceneManager.MarkSceneDirty(prefabStage.scene);
+		}
+#endif
 	}
 }
 
