@@ -60,26 +60,6 @@ public abstract class PlatformUtils
         COUNTRY_CODE_KOREA
     };
 
-    public bool IsChina()
-    {
-        string countryCode = Country_GetCurrentCode();
-        if (countryCode != null)
-        {
-            countryCode.ToUpper();
-        }
-
-        return countryCode == COUNTRY_CODE_CHINA;
-    }
-
-	public bool IsKorea() {
-		string countryCode = Country_GetCurrentCode();
-		if(countryCode != null) {
-			countryCode.ToUpper();
-		}
-
-		return countryCode == COUNTRY_CODE_KOREA;
-	}
-
     /// <summary>
     /// Returns the code of the country currently set
     /// </summary>    

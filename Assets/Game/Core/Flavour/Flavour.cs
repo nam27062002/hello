@@ -24,7 +24,8 @@ public class Flavour
         TWITTER_ALLOWED,
         WECHAT_ALLOWED,
         SIWA_ALLOWED,
-        SHOW_SPLASH_LEGAL_TEXT
+        SHOW_SPLASH_LEGAL_TEXT,
+        CORPSE_ALLOWED
 
     }
 
@@ -43,7 +44,8 @@ public class Flavour
     public enum EAddressablesVariant
     {
         WW,
-        CN
+        CN,
+        KR
     };
 
     //
@@ -97,8 +99,23 @@ public class Flavour
         }
     }
 
+    public string ShareLocationDef
+    {
+        get;
+        private set;
+    }
 
-   
+    public GameSettings.ShareData ShareData
+    {
+        get;
+        private set;
+    }
+
+    public string GetMonoLanguageSku
+    {
+        get;
+        private set;
+    }
 
     //------------------------------------------------------------------------//
     // STATIC   		    												  //
@@ -196,9 +213,9 @@ public class Flavour
 
     public void Setup(string sku, ESocialPlatform socialPlatform, EAddressablesVariant addressablesVariant,
         bool isSIWAEnabled, bool showLanguageSelector, bool showBloodSelector, bool isTwitterEnabled, bool isInstagramEnabled,
-        bool isWeChatEnabled, bool showSplashLegalText, string[] forbbidenSFXVariant)
+        bool isWeChatEnabled, bool showSplashLegalText, string[] forbbidenSFXVariant, bool corpseAllowed, string shareLocationDef,
+        string monoLanguageSku)
     {
-
         Sku = sku;
         SocialPlatform = socialPlatform;
         AddressablesVariant = addressablesVariant;
@@ -213,8 +230,21 @@ public class Flavour
         boolSettings.Add(SettingKey.INSTAGRAM_ALLOWED, isInstagramEnabled);
         boolSettings.Add(SettingKey.WECHAT_ALLOWED, isWeChatEnabled);
         boolSettings.Add(SettingKey.SHOW_SPLASH_LEGAL_TEXT, showSplashLegalText);
+        boolSettings.Add(SettingKey.CORPSE_ALLOWED, corpseAllowed);
 
         // Push the forbbiden audio clips
+        SetupForbiddenSFX(forbbidenSFXVariant);
+
+        // Share data
+        ShareLocationDef = shareLocationDef;
+        SetupShareData();
+
+        // Unique language SKU allowed (for China)
+        GetMonoLanguageSku = monoLanguageSku;
+    }
+
+    private void SetupForbiddenSFX(string[] forbbidenSFXVariant)
+    {
         if (forbbidenSFXVariant != null)
         {
             forbiddenSFX = new HashSet<string>();
@@ -225,4 +255,17 @@ public class Flavour
         }
     }
 
+    private void SetupShareData()
+    {
+        if (Sku == PlatformUtils.COUNTRY_CODE_CHINA) {
+            ShareData = GameSettings.instance.ShareDataChina;
+        }
+        else {
+#if UNITY_IOS
+			ShareData = GameSettings.instance.ShareDataIOS;
+#else
+            ShareData = GameSettings.instance.ShareDataAndroid;
+#endif
+        }
+    }
 }
