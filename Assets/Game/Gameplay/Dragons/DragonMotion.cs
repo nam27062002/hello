@@ -427,7 +427,7 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 
         // Cache the CORPSE_ALLOWED flavour setting
         Flavour currentFlavour = FlavourManager.Instance.GetCurrentFlavour();
-		isCorpseAllowed = currentFlavour.GetSetting<bool>(Flavour.SettingKey.CORPSE_ALLOWED);
+		isCorpseAllowed = currentFlavour.GetSetting<bool>(Flavour.SettingKey.CORPSES_ALLOWED);
 	}
 
 	/// <summary>

@@ -70,7 +70,8 @@ public class GameSettings : SingletonScriptableObject<GameSettings> {
 
 	// UI Settings
 	public const string SHOW_BIG_AMOUNT_CONFIRMATION_POPUP = "SHOW_BIG_AMOUNT_CONFIRMATION_POPUP";	// bool, default true
-	public const string SHOW_EXIT_RUN_CONFIRMATION_POPUP = "SHOW_EXIT_RUN_CONFIRMATION_POPUP";	// bool, default true
+	public const string SHOW_EXIT_RUN_CONFIRMATION_POPUP = "SHOW_EXIT_RUN_CONFIRMATION_POPUP";  // bool, default true
+	public const string UI_SETTINGS_SKU = "UISettings";
 
 	[Serializable]
 	public class ShareData {
@@ -138,6 +139,18 @@ public class GameSettings : SingletonScriptableObject<GameSettings> {
 
 	private int m_enableHappyHourAtRun = 4;
 	public static int ENABLE_HAPPY_HOUR_AT_RUN { get { return instance.m_enableHappyHourAtRun; } }
+
+
+	// FTUX
+	[Separator("UISettings")]
+	private bool m_showNextDragonInXpBar = false;
+	public static bool SHOW_NEXT_DRAGON_IN_XP_BAR { get { return instance.m_showNextDragonInXpBar; } }
+
+	private bool m_showUnlockProgressionText = false;
+	public static bool SHOWN_UNLOCK_PROGRESSION_TEXT { get { return instance.m_showUnlockProgressionText; } }
+
+	private bool m_mapAsButton = false;
+	public static bool MAP_AS_BUTTON { get { return instance.m_mapAsButton; } }
 
 	// Social
 	[Separator("Social")]
@@ -281,6 +294,15 @@ public class GameSettings : SingletonScriptableObject<GameSettings> {
 		instance.m_enableShareButtonsAtRun = def.GetAsInt("enableShareButtonsAtRun", instance.m_enableShareButtonsAtRun);
 		instance.m_enablePassiveEventsAtRun = def.GetAsInt("enablePassiveEventsAtRun", instance.m_enablePassiveEventsAtRun);
 		instance.m_enableHappyHourAtRun = def.GetAsInt("enableHappyHourAtRun", instance.m_enableHappyHourAtRun);
+
+
+		// UI Settings:
+		def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, UI_SETTINGS_SKU);
+		if (def == null) return;    // Just in case
+
+		instance.m_showNextDragonInXpBar = def.GetAsBool("showNextDragonInXpBar", instance.m_showNextDragonInXpBar);
+		instance.m_showUnlockProgressionText = def.GetAsBool("showUnlockProgressionText", instance.m_showUnlockProgressionText);
+		instance.m_mapAsButton = def.GetAsBool("mapAsButton", instance.m_mapAsButton);
 	}
 
 	/// <summary>

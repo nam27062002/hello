@@ -777,7 +777,7 @@ public class ViewControl : IViewControl, IBroadcastListener {
 	public bool CanSpawnCorpse() {
         // Controlled by CORPSE_ALLOWED flavour setting
         Flavour currentFlavour = FlavourManager.Instance.GetCurrentFlavour();
-        return currentFlavour.GetSetting<bool>(Flavour.SettingKey.CORPSE_ALLOWED);
+        return currentFlavour.GetSetting<bool>(Flavour.SettingKey.CORPSES_ALLOWED);
 	}
 
     public bool isHitAnimOn() {

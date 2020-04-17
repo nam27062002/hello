@@ -25,7 +25,9 @@ public class Flavour
         WECHAT_ALLOWED,
         SIWA_ALLOWED,
         SHOW_SPLASH_LEGAL_TEXT,
-        CORPSE_ALLOWED
+        CORPSES_ALLOWED,
+        MACABRE_ALLOWED, // Restriction for bones, tombs, ghosts, skulls...
+        WEAPONS_ALLOWED
 
     }
 
@@ -213,8 +215,8 @@ public class Flavour
 
     public void Setup(string sku, ESocialPlatform socialPlatform, EAddressablesVariant addressablesVariant,
         bool isSIWAEnabled, bool showLanguageSelector, bool showBloodSelector, bool isTwitterEnabled, bool isInstagramEnabled,
-        bool isWeChatEnabled, bool showSplashLegalText, string[] forbbidenSFXVariant, bool corpseAllowed, string shareLocationDef,
-        string monoLanguageSku)
+        bool isWeChatEnabled, bool showSplashLegalText, string[] forbbidenSFXVariant, bool corpsesAllowed, bool macabreAllowed,
+        bool weaponsAllowed, string shareLocationDef, string monoLanguageSku)
     {
         Sku = sku;
         SocialPlatform = socialPlatform;
@@ -230,7 +232,9 @@ public class Flavour
         boolSettings.Add(SettingKey.INSTAGRAM_ALLOWED, isInstagramEnabled);
         boolSettings.Add(SettingKey.WECHAT_ALLOWED, isWeChatEnabled);
         boolSettings.Add(SettingKey.SHOW_SPLASH_LEGAL_TEXT, showSplashLegalText);
-        boolSettings.Add(SettingKey.CORPSE_ALLOWED, corpseAllowed);
+        boolSettings.Add(SettingKey.CORPSES_ALLOWED, corpsesAllowed);
+        boolSettings.Add(SettingKey.MACABRE_ALLOWED, macabreAllowed);
+        boolSettings.Add(SettingKey.WEAPONS_ALLOWED, weaponsAllowed);
 
         // Push the forbbiden audio clips
         SetupForbiddenSFX(forbbidenSFXVariant);

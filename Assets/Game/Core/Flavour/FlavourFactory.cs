@@ -5,7 +5,7 @@ using System.Collections.Generic;
 /// This class is responsible for creating a Flavour object depending on a country code and the device platform
 /// </summary>
 public class FlavourFactory
-{   
+{
     public Flavour CreateFlavour()
     {
         return new Flavour();
@@ -34,12 +34,12 @@ public class FlavourFactory
             flavourSku = countryCode;
         }
 
-        Settings_SetFlavour(flavour, flavourSku, devicePlatform);                  
-    }       
+        Settings_SetFlavour(flavour, flavourSku, devicePlatform);
+    }
 
     private bool IsSIWAEnabled(Flavour.EDevicePlatform devicePlatform)
-    {       
-#if USE_SIWA        
+    {
+#if USE_SIWA
         return devicePlatform == Flavour.EDevicePlatform.iOS;
 #else
         return false;
@@ -70,7 +70,7 @@ public class FlavourFactory
         "hd_soldier_death_06"
     };
 
-#region settings
+    #region settings
     // Flavour skus: So far "WW" is used for worldwide version and the country code for every country that requires a different flavour    
     private const string SETTINGS_SKU_DEFAULT = SETTINGS_SKU_WW;
     private const string SETTINGS_SKU_WW = "WW";
@@ -95,13 +95,13 @@ public class FlavourFactory
         {
             // If there's no Flavour defined for flavourSku then the default one is returned
             Settings_SetFlavour(flavour, SETTINGS_SKU_DEFAULT, devicePlatform);
-        }                
+        }
     }
 
     private void Settings_SetFlavourWW(Flavour flavour, Flavour.EDevicePlatform devicePlatform)
     {
         flavour.Setup(
-           sku: SETTINGS_SKU_WW, 
+           sku: SETTINGS_SKU_WW,
            socialPlatform: Flavour.ESocialPlatform.Facebook,
            addressablesVariant: Flavour.EAddressablesVariant.WW,
            isSIWAEnabled: IsSIWAEnabled(devicePlatform),
@@ -112,7 +112,9 @@ public class FlavourFactory
            isWeChatEnabled: false,
            showSplashLegalText: false,
            forbbidenSFXVariant: null,
-           corpseAllowed: true,
+           corpsesAllowed: true,
+           macabreAllowed: true,
+           weaponsAllowed: true,
            shareLocationDef: "url",
            monoLanguageSku: null);
     }
@@ -131,7 +133,9 @@ public class FlavourFactory
            isWeChatEnabled: true,
            showSplashLegalText: true,
            forbbidenSFXVariant: forbbidenSFXChina,
-           corpseAllowed: false,
+           corpsesAllowed: false,
+           macabreAllowed: false,
+           weaponsAllowed: false,
            shareLocationDef: "urlChina",
            monoLanguageSku: "lang_chinese");
     }
@@ -150,7 +154,9 @@ public class FlavourFactory
            isWeChatEnabled: false,
            showSplashLegalText: false,
            forbbidenSFXVariant: null,
-           corpseAllowed: false,
+           corpsesAllowed: false,
+           macabreAllowed: true,
+           weaponsAllowed: true,
            shareLocationDef: "url",
            monoLanguageSku: null);
     }

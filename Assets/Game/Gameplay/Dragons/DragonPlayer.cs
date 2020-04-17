@@ -844,9 +844,9 @@ public class DragonPlayer : MonoBehaviour, IBroadcastListener {
     }
 
 	public bool CanSpawnCorpse(DamageType _damageType) {
-		// Never if CORPSE_ALLOWED for flavour setting is set to false
+		// Never if CORPSES_ALLOWED for flavour setting is set to false
 		Flavour currentFlavour = FlavourManager.Instance.GetCurrentFlavour();
-		if (!currentFlavour.GetSetting<bool>(Flavour.SettingKey.CORPSE_ALLOWED)) {
+		if (!currentFlavour.GetSetting<bool>(Flavour.SettingKey.CORPSES_ALLOWED)) {
 			return false;
         }
 
