@@ -424,7 +424,7 @@ public class ShopBasePill : IShopPill {
 					PopupShopOfferPack offerPopup = null;
 
 				    // Open the proper popup depending on the dragon/skins items in the offer
-					if (pack.GetDragonsSkinsCount() >= 2)
+					if (pack.GetDragonsSkinsCount() > 1)
                     {
 
                         // Show the info popup with an item selector and rotable preview

@@ -153,7 +153,8 @@ public class ContentManager
             "Rules/initialSettings",
             "Rules/missingRessourcesVariablesDefinitions",
 			"Rules/offerSettings",
-			"Rules/ftuxSettings"
+			"Rules/ftuxSettings",
+            "Rules/UISettings"
         });
 
 		kDefinitionFiles.Add(DefinitionsCategory.SEASONS, new string[] { "Rules/seasonsDefinitions" });
@@ -263,6 +264,7 @@ public class ContentManager
         // UI
         kDefinitionFiles.Add(DefinitionsCategory.SHARE_LOCATIONS, new string[] { "Rules/shareLocationDefinitions" });
         kDefinitionFiles.Add(DefinitionsCategory.ICONS, new string[] { "Rules/iconDefinitions" });
+
 
 
         DefinitionsManager.SharedInstance.Initialise(ref kDefinitionFiles, !UseDeltaContent);
