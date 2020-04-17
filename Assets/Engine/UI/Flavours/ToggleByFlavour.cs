@@ -21,7 +21,7 @@ public class ToggleByFlavour : MonoBehaviour
 
     [SerializeField] private Flavour.SettingKey m_settingKey;
     [SerializeField] private bool m_settingValue;
-    [SerializeField] private bool m_show;
+    [SerializeField] private bool m_show = false;
 
     public bool settingValue { get { return m_settingValue; }  set { m_settingValue = value; } }
 

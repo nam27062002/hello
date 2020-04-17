@@ -113,15 +113,20 @@ public class ToggleByFlavourEditor : Editor {
 			MarkAsDirty();
         }
 
-
-		showValue = m_target.showValue ? ShowValues.SHOW : ShowValues.HIDE;
-		ShowValues newShowValue = (ShowValues)EditorGUILayout.EnumPopup("Then ", showValue);
-		m_target.showValue = (newShowValue == ShowValues.SHOW) ? true : false;
-		if (newShowValue != showValue)
+        // If the gameobject is already disable, this script
+        // will never run, so makes not sense to have a SHOW option.
+		EditorGUI.BeginDisabledGroup(true);
 		{
-			// Make sure the prefab understands there was a change
-			MarkAsDirty();
+			showValue = m_target.showValue ? ShowValues.SHOW : ShowValues.HIDE;
+			ShowValues newShowValue = (ShowValues)EditorGUILayout.EnumPopup("Then ", showValue);
+			m_target.showValue = (newShowValue == ShowValues.SHOW) ? true : false;
+			if (newShowValue != showValue)
+			{
+				// Make sure the prefab understands there was a change
+				MarkAsDirty();
+			}
 		}
+		EditorGUI.EndDisabledGroup();
 
 
 		// Apply changes to the serialized object - always do this in the end of OnInspectorGUI.
