@@ -133,16 +133,12 @@ public class ToggleByFlavourEditor : Editor {
 		serializedObject.ApplyModifiedProperties();
 	}
 
-	public static void MarkAsDirty()
+	public void MarkAsDirty()
 	{
-#if UNITY_EDITOR
 
-		var prefabStage = PrefabStageUtility.GetCurrentPrefabStage();
-		if (prefabStage != null)
-		{
-			EditorSceneManager.MarkSceneDirty(prefabStage.scene);
-		}
-#endif
+		EditorUtility.SetDirty(m_target);
+		EditorSceneManager.MarkSceneDirty(m_target.gameObject.scene); //This used to happen automatically from SetDirty
 	}
+
 }
 
