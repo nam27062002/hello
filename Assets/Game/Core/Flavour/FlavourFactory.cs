@@ -70,6 +70,20 @@ public class FlavourFactory
         "hd_soldier_death_06"
     };
 
+    // The following accessories per-skin cannot be shown on China flavour, due to new China law
+    readonly Dictionary<string, List<string>> blackListAccessoriesChina = new Dictionary<string, List<string>>
+    {
+        { "dragon_bug_1", new List<string> { "PF_Pirate_Hook" } }, // Jekyll (Swashbuckler): Hook
+        { "dragon_bug_2", new List<string> { "PF_Executioner_L_Hat" } }, // Jekyll (Executioner): Axe
+        { "dragon_crocodile_2", new List<string> { "PF_Pirate_Hook" } }, // Mad Snax (Captain Crunch): Hook
+        { "dragon_tony_2", new List<string> { "PF_tony_mafia_gun" } }, // Tony Dragone (Vito Dragone): Gun
+        { "dragon_devil_3", new List<string> { "PF_Knight_Waist" } }, // Dante (Sir Burnalot): Sword
+        { "dragon_jawfrey_3", new List<string> { "PF_Orc_Axe" } }, // Jawfrey (Jawrc the Hungry): Axe
+        { "dragon_jawfrey_4", new List<string> { "PF_Samurai_Sword" } }, // Jawfrey (Ryujawn): Sword
+        { "dragon_skeleton_1", new List<string> { "PF_skeleton_motu_axe" } }, // Skully (Skulletor): Axe
+        { "dragon_skeleton_4", new List<string> { "PF_skeleton_viking_axe" } } // Skully (Dragnarok): Axe
+    };
+
     #region settings
     // Flavour skus: So far "WW" is used for worldwide version and the country code for every country that requires a different flavour    
     private const string SETTINGS_SKU_DEFAULT = SETTINGS_SKU_WW;
@@ -116,7 +130,8 @@ public class FlavourFactory
            macabreAllowed: true,
            weaponsAllowed: true,
            shareLocationDef: "url",
-           monoLanguageSku: null);
+           monoLanguageSku: null,
+           blackListAccessories: null);
     }
 
     private void Settings_SetFlavourChina(Flavour flavour, Flavour.EDevicePlatform devicePlatform)
@@ -137,7 +152,8 @@ public class FlavourFactory
            macabreAllowed: false,
            weaponsAllowed: false,
            shareLocationDef: "urlChina",
-           monoLanguageSku: "lang_chinese");
+           monoLanguageSku: "lang_chinese",
+           blackListAccessories: blackListAccessoriesChina);
     }
 
     private void Settings_SetFlavourKorea(Flavour flavour, Flavour.EDevicePlatform devicePlatform)
@@ -158,7 +174,8 @@ public class FlavourFactory
            macabreAllowed: true,
            weaponsAllowed: true,
            shareLocationDef: "url",
-           monoLanguageSku: null);
+           monoLanguageSku: null,
+           blackListAccessories: null);
     }
     #endregion
 }

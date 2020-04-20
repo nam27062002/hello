@@ -119,6 +119,12 @@ public class Flavour
         private set;
     }
 
+    public Dictionary<string, List<string>> BlackListAccessories
+    {
+        get;
+        private set;
+    }
+
     //------------------------------------------------------------------------//
     // STATIC   		    												  //
     //------------------------------------------------------------------------//
@@ -213,10 +219,33 @@ public class Flavour
         return !forbiddenSFX.Contains(audioSubItemId);
     }
 
+    /// <summary>
+    /// Validate if an accessory can be shown
+    /// </summary>
+    /// <param name="skin">skin SKU</param>
+    /// <param name="accessory">accessory SKU</param>
+    /// <returns>TRUE if the accessory is blacklisted for the given skin and cannot be shown, FALSE otherwise</returns>
+    public bool IsAccessoryBlacklisted(string skin, string accessory)
+    {
+        if (BlackListAccessories == null)
+            return false;
+
+        if (BlackListAccessories.TryGetValue(skin, out List<string> accessoriesSKU))
+        {
+            for (int i = 0; i < accessoriesSKU.Count; i++)
+            {
+                if (accessoriesSKU[i] == accessory)
+                    return true;
+            }
+        }
+
+        return false;
+    }
+
     public void Setup(string sku, ESocialPlatform socialPlatform, EAddressablesVariant addressablesVariant,
         bool isSIWAEnabled, bool showLanguageSelector, bool showBloodSelector, bool isTwitterEnabled, bool isInstagramEnabled,
         bool isWeChatEnabled, bool showSplashLegalText, string[] forbbidenSFXVariant, bool corpsesAllowed, bool macabreAllowed,
-        bool weaponsAllowed, string shareLocationDef, string monoLanguageSku)
+        bool weaponsAllowed, string shareLocationDef, string monoLanguageSku, Dictionary<string, List<string>> blackListAccessories)
     {
         Sku = sku;
         SocialPlatform = socialPlatform;
@@ -245,6 +274,9 @@ public class Flavour
 
         // Unique language SKU allowed (for China)
         GetMonoLanguageSku = monoLanguageSku;
+
+        // Black list for accessories (body_parts not allowed in China)
+        BlackListAccessories = blackListAccessories;
     }
 
     private void SetupForbiddenSFX(string[] forbbidenSFXVariant)
