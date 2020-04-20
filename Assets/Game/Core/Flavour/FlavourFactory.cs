@@ -47,7 +47,7 @@ public class FlavourFactory
     }
 
     // The following audio clips cannot be played on China flavour, due to new China law
-    readonly string[] forbbidenSFXChina = new string[]
+    readonly string[] blackListSFXChina = new string[]
     {
         "hd_villager_alert_01",
         "hd_villager_alert_02",
@@ -125,13 +125,13 @@ public class FlavourFactory
            isInstagramEnabled: true,
            isWeChatEnabled: false,
            showSplashLegalText: false,
-           forbbidenSFXVariant: null,
+           blackListedSFX: null,
            corpsesAllowed: true,
            macabreAllowed: true,
            weaponsAllowed: true,
            shareLocationDef: "url",
            monoLanguageSku: null,
-           blackListAccessories: null);
+           blackListedAccessories: null);
     }
 
     private void Settings_SetFlavourChina(Flavour flavour, Flavour.EDevicePlatform devicePlatform)
@@ -147,13 +147,13 @@ public class FlavourFactory
            isInstagramEnabled: false,
            isWeChatEnabled: true,
            showSplashLegalText: true,
-           forbbidenSFXVariant: forbbidenSFXChina,
+           blackListedSFX: blackListSFXChina,
            corpsesAllowed: false,
            macabreAllowed: false,
            weaponsAllowed: false,
            shareLocationDef: "urlChina",
            monoLanguageSku: "lang_chinese",
-           blackListAccessories: blackListAccessoriesChina);
+           blackListedAccessories: blackListAccessoriesChina);
     }
 
     private void Settings_SetFlavourKorea(Flavour flavour, Flavour.EDevicePlatform devicePlatform)
@@ -169,13 +169,13 @@ public class FlavourFactory
            isInstagramEnabled: true,
            isWeChatEnabled: false,
            showSplashLegalText: false,
-           forbbidenSFXVariant: null,
+           blackListedSFX: null,
            corpsesAllowed: false,
            macabreAllowed: true,
            weaponsAllowed: true,
            shareLocationDef: "url",
            monoLanguageSku: null,
-           blackListAccessories: null);
+           blackListedAccessories: null);
     }
     #endregion
 }
