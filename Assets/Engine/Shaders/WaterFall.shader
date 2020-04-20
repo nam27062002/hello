@@ -129,11 +129,11 @@ Shader "Hungry Dragon/Waterfall"
 
 					fixed3 one = fixed3(1, 1, 1);
 					col.xyz = one - 2.0 * (one - i.color.xyz * 0.75) * (one - col.xyz);	// Overlay
-
+#if !defined(SPACE)
 					fixed4 fogCol = tex2D(_FogTexture, i.fogCoord);
 					float intensity = smoothstep(0.0, _ZLimit, i.fogCoord.x);
 					col.rgb = lerp((col).rgb, fogCol.rgb, fogCol.a * intensity);
-
+#endif
 					col.a *= _BackColor.a;
 #if defined(NIGHT)
 					return col * fixed4(0.25, 0.25, 0.5, 1.0);
