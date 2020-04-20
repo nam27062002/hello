@@ -23,10 +23,13 @@ public class GameHUD : MonoBehaviour {
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
 	public GameObject m_speedGameObject;
-	public GameObject m_mapButtonGodRays;
 	public Button m_pauseButton;
     public GameObject m_miscGroup;
     public Animator m_fireRushGroup;
+
+    [Space]
+	public GameObject m_mapButtonGodRays;
+
 
 	[Space]
 	public Component[] m_toAutoDestroy = new Component[0];
@@ -48,6 +51,8 @@ public class GameHUD : MonoBehaviour {
         InstanceManager.gameHUD = this;
         Messenger.AddListener<DragonPlayer.ReviveReason>(MessengerEvents.PLAYER_REVIVE, OnRevive);
 		Messenger.AddListener(MessengerEvents.GAME_STARTED, OnGameStarted);
+
+
     }
 
     void OnDestroy() {
@@ -98,6 +103,7 @@ public class GameHUD : MonoBehaviour {
             }
         }
     }
+
 
     //------------------------------------------------------------------//
     // CALLBACKS														//
@@ -172,7 +178,9 @@ public class GameHUD : MonoBehaviour {
 	}
 
 	void OnGameStarted() {
+
 		m_gameStarted = true;
+
 	}
 
     void OnRevive(DragonPlayer.ReviveReason _reason) {
