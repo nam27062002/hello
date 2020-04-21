@@ -215,7 +215,7 @@ public class DisguisePill : MonoBehaviour, IPointerClickHandler {
 		}
 
 		// If available (but not new) show cart icon
-		bool showBuyIcon = _state == Wardrobe.SkinState.AVAILABLE && !isNew;
+		bool showBuyIcon = (_state == Wardrobe.SkinState.AVAILABLE && !isNew);
 
 		if (m_buyNotification != null)
 		{
