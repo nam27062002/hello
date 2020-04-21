@@ -27,10 +27,10 @@ public class DisguisePill : MonoBehaviour, IPointerClickHandler {
 	public class DisguisePillEvent : UnityEvent<DisguisePill>{}
 
 	// Resources constants
-	private const string NOTIFICATION_PREFAB_PATH = "UI/Common/PF_UINotificationFlag";
+	private const string NOTIFICATION_NEW_PREFAB_PATH = "UI/Common/PF_UINotification";
+	private const string NOTIFICATION_BUY_PREFAB_PATH = "UI/Common/PF_UINotification_Buy";
 
-
-    [System.Serializable]
+	[System.Serializable]
 	private class SkinShadowEffect {
 		public float brightness = -0.8f;
 		public float saturation = -0.7f;
@@ -117,7 +117,8 @@ public class DisguisePill : MonoBehaviour, IPointerClickHandler {
     private static bool m_useAsycLoading = true;
     private AddressablesOp m_previewRequest = null;
     private UINotification m_newNotification = null;
-    private GameObject m_seasonParticlesInstance = null;
+	private UINotification m_buyNotification = null;
+	private GameObject m_seasonParticlesInstance = null;
 
     //------------------------------------------------------------------------//
     // GENERIC METHODS														  //
@@ -203,14 +204,31 @@ public class DisguisePill : MonoBehaviour, IPointerClickHandler {
 
 		// "New" notification
 		bool isNew = (_state == Wardrobe.SkinState.NEW);
+
 		if(m_newNotification != null) {
 			m_newNotification.Set(isNew);
 		} else if(isNew) {
 			// Need to instantiate a notification?
-			GameObject prefab = Resources.Load<GameObject>(NOTIFICATION_PREFAB_PATH);
+			GameObject prefab = Resources.Load<GameObject>(NOTIFICATION_NEW_PREFAB_PATH);
 			m_newNotification = Instantiate<GameObject>(prefab, m_notificationAnchor, false).GetComponent<UINotification>();
 			m_newNotification.Show();
 		}
+
+		// If available (but not new) show cart icon
+		bool showBuyIcon = _state == Wardrobe.SkinState.AVAILABLE && !isNew;
+
+		if (m_buyNotification != null)
+		{
+			m_buyNotification.Set(showBuyIcon);
+		}
+		else if (showBuyIcon)
+		{
+			// Need to instantiate a notification?
+			GameObject prefab = Resources.Load<GameObject>(NOTIFICATION_BUY_PREFAB_PATH);
+			m_buyNotification = Instantiate<GameObject>(prefab, m_notificationAnchor, false).GetComponent<UINotification>();
+			m_buyNotification.Show();
+		}
+
 
 		// Season icon
 		if(m_seasonDef != null ) {
@@ -278,7 +296,8 @@ public class DisguisePill : MonoBehaviour, IPointerClickHandler {
 			// Locked, can't be neither owned nor equipped
 			// Locked by season or by level?
 			if(m_seasonDef != null) {
-				m_infoText.Localize(string.Empty);
+				m_infoText.Localize("TID_GEN_LOCKED");
+				m_infoText.text.color = m_lockedTextColor;
 			} else {
 				m_infoText.Localize("TID_LEVEL", (m_def.GetAsInt("unlockLevel") + 1).ToString());
 				m_infoText.text.color = m_lockedTextColor;
@@ -286,17 +305,16 @@ public class DisguisePill : MonoBehaviour, IPointerClickHandler {
 		} else if(m_state == Wardrobe.SkinState.OWNED) {
 			// Can't be equipped if it's not owned!
 			if(m_equipped) {
-				// Equipped
-				m_infoText.Localize("TID_DISGUISES_EQUIPPED");
-				m_infoText.text.color = m_equippedTextColor;
+				// Equipped - Dont show any text
+				m_infoText.Localize("");
 			} else {
 				// Owned but not equipped
 				m_infoText.Localize("");
 				m_infoText.text.color = Color.white;
 			}
 		} else {
-			// Not owned
-			m_infoText.Localize("TID_DISGUISES_GET_NOW");
+			// Not owned - Dont show any text
+			m_infoText.Localize("");
 			m_infoText.text.color = m_getNowTextColor;
 		}
 	}
