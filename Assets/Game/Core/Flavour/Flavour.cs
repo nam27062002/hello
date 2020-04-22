@@ -63,7 +63,8 @@ public class Flavour
     //------------------------------------------------------------------------//
 
     private Dictionary<SettingKey, bool> boolSettings;
-    private HashSet<string> forbiddenSFX;
+    private HashSet<string> blackListSFX;
+    private Dictionary<string, List<string>> blackListAccessories;
 
     public string Sku
     {
@@ -205,18 +206,41 @@ public class Flavour
     /// <returns>TRUE if the audio clip can be played, FALSE otherwise</returns>
     public bool CanPlaySFX(string audioSubItemId)
     {
-        if (forbiddenSFX == null)
+        if (blackListSFX == null)
         {
             return true;
         }
 
-        return !forbiddenSFX.Contains(audioSubItemId);
+        return !blackListSFX.Contains(audioSubItemId);
+    }
+
+    /// <summary>
+    /// Validate if an accessory can be shown
+    /// </summary>
+    /// <param name="skin">skin SKU</param>
+    /// <param name="accessory">accessory SKU</param>
+    /// <returns>TRUE if the accessory is blacklisted for the given skin and cannot be shown, FALSE otherwise</returns>
+    public bool IsAccessoryBlacklisted(string skin, string accessory)
+    {
+        if (blackListAccessories == null)
+            return false;
+
+        if (blackListAccessories.TryGetValue(skin, out List<string> accessoriesSKU))
+        {
+            for (int i = 0; i < accessoriesSKU.Count; i++)
+            {
+                if (accessoriesSKU[i] == accessory)
+                    return true;
+            }
+        }
+
+        return false;
     }
 
     public void Setup(string sku, ESocialPlatform socialPlatform, EAddressablesVariant addressablesVariant,
         bool isSIWAEnabled, bool showLanguageSelector, bool showBloodSelector, bool isTwitterEnabled, bool isInstagramEnabled,
-        bool isWeChatEnabled, bool showSplashLegalText, string[] forbbidenSFXVariant, bool corpsesAllowed, bool macabreAllowed,
-        bool weaponsAllowed, string shareLocationDef, string monoLanguageSku)
+        bool isWeChatEnabled, bool showSplashLegalText, string[] blackListedSFX, bool corpsesAllowed, bool macabreAllowed,
+        bool weaponsAllowed, string shareLocationDef, string monoLanguageSku, Dictionary<string, List<string>> blackListedAccessories)
     {
         Sku = sku;
         SocialPlatform = socialPlatform;
@@ -237,7 +261,7 @@ public class Flavour
         boolSettings.Add(SettingKey.WEAPONS_ALLOWED, weaponsAllowed);
 
         // Push the forbbiden audio clips
-        SetupForbiddenSFX(forbbidenSFXVariant);
+        SetupBlackListSFX(blackListedSFX);
 
         // Share data
         ShareLocationDef = shareLocationDef;
@@ -245,16 +269,19 @@ public class Flavour
 
         // Unique language SKU allowed (for China)
         GetMonoLanguageSku = monoLanguageSku;
+
+        // Black list for accessories (body_parts not allowed in China)
+        blackListAccessories = blackListedAccessories;
     }
 
-    private void SetupForbiddenSFX(string[] forbbidenSFXVariant)
+    private void SetupBlackListSFX(string[] blackListedSFX)
     {
-        if (forbbidenSFXVariant != null)
+        if (blackListedSFX != null)
         {
-            forbiddenSFX = new HashSet<string>();
-            for (int i = 0; i < forbbidenSFXVariant.Length; i++)
+            blackListSFX = new HashSet<string>();
+            for (int i = 0; i < blackListedSFX.Length; i++)
             {
-                forbiddenSFX.Add(forbbidenSFXVariant[i]);
+                blackListSFX.Add(blackListedSFX[i]);
             }
         }
     }
