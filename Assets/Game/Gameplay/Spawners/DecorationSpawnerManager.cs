@@ -21,7 +21,7 @@ public class DecorationSpawnerManager : Singleton<DecorationSpawnerManager>, IBr
     // CONSTANTS															  //
     //------------------------------------------------------------------------//
     private const float UPDATE_INTERVAL = 0.2f; // Seconds, avoid updating all the spawners all the time for better performance
-    public const float FAR_LAYER_Z = 8f;
+    public const float FAR_LAYER_Z = 10f;
     public const float BACKGROUND_LAYER_Z = 60f;
 
     //------------------------------------------------------------------------//
@@ -49,6 +49,9 @@ public class DecorationSpawnerManager : Singleton<DecorationSpawnerManager>, IBr
     private FastBounds2D m_maxRectFar = null;
     private FastBounds2D m_minRectBG = null;    // From the game camera
     private FastBounds2D m_maxRectBG = null;
+
+    // BUGFIX: adding an offset to the detection area to fix a bug where objects on scene do not respawn
+    private const float detectionAreaOffset = 20.0f;
 
     private Rect[] m_subRect = new Rect[4];
     private HashSet<ISpawner> m_selectedSpawners = new HashSet<ISpawner>();
@@ -320,7 +323,7 @@ public class DecorationSpawnerManager : Singleton<DecorationSpawnerManager>, IBr
             _max.x0,
             _max.y0,
             _max.w,
-            _min.y0 - _max.y0
+            (_min.y0 - _max.y0) + detectionAreaOffset
         );
         _qtree.GetHashSetInRange(m_subRect[0], ref m_selectedSpawners);
     }
@@ -329,7 +332,7 @@ public class DecorationSpawnerManager : Singleton<DecorationSpawnerManager>, IBr
         m_subRect[1].Set(
             _min.x1,
             _min.y0,
-            _max.x1 - _min.x1,
+            (_max.x1 - _min.x1) + detectionAreaOffset,
             _min.h
         );
         _qtree.GetHashSetInRange(m_subRect[1], ref m_selectedSpawners);
@@ -340,7 +343,7 @@ public class DecorationSpawnerManager : Singleton<DecorationSpawnerManager>, IBr
             _max.x0,
             _min.y1,
             _max.w,
-            _max.y1 - _min.y1
+            (_max.y1 - _min.y1) + detectionAreaOffset
         );
         _qtree.GetHashSetInRange(m_subRect[2], ref m_selectedSpawners);
     }
@@ -349,7 +352,7 @@ public class DecorationSpawnerManager : Singleton<DecorationSpawnerManager>, IBr
         m_subRect[3].Set(
             _max.x0,
             _min.y0,
-            _min.x0 - _max.x0,
+            (_min.x0 - _max.x0) + detectionAreaOffset,
             _min.h
         );
         _qtree.GetHashSetInRange(m_subRect[3], ref m_selectedSpawners);
@@ -468,7 +471,7 @@ public class DecorationSpawnerManager : Singleton<DecorationSpawnerManager>, IBr
             m_spawnersTreeFar.DrawGizmos(Colors.gold);
             m_spawnersTreeBG.DrawGizmos(Colors.white);
         }
-
+        
         // Selected spawners
         Gizmos.color = Colors.WithAlpha(Colors.yellow, 1.0f);
         foreach (ISpawner item in m_selectedSpawners) {
