@@ -51,7 +51,7 @@ public class DecorationSpawnerManager : Singleton<DecorationSpawnerManager>, IBr
     private FastBounds2D m_maxRectBG = null;
 
     // BUGFIX: adding an offset to the detection area to fix a bug where objects on scene do not respawn
-    private const float detectionAreaOffset = 20.0f;
+    private const float detectionAreaOffset = 10.0f;
 
     private Rect[] m_subRect = new Rect[4];
     private HashSet<ISpawner> m_selectedSpawners = new HashSet<ISpawner>();
