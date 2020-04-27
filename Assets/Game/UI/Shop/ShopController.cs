@@ -326,6 +326,9 @@ public class ShopController : MonoBehaviour
                 break;
         }
 
+        // Clear everything to avoid the shop content being flashed before the transition clouds
+        Clear();
+
         // In case we need to do something after the user purchases an offer
         m_purchaseCompletedCallback = _purchaseCompletedCallback;
 
