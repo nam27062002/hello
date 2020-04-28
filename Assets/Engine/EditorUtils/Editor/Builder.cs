@@ -1079,7 +1079,7 @@ public class Builder : MonoBehaviour, UnityEditor.Build.IPreprocessBuild
     public static void processUnityEditorLog()
     {
 #if UNITY_EDITOR_OSX
-		string EDITOR_LOG = "˜/Library/Logs/Unity/Editor.log";
+		string EDITOR_LOG = "/Library/Logs/Unity/Editor.log";
 
 		string assetsPath = Application.dataPath;
 		string relativeAssetsPath = "Assets";
