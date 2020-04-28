@@ -29,18 +29,6 @@ public class CameraTraveling : MonoBehaviour {
     // From 0 to 1. Interpolated position between starting and final points
     public float m_value;
 
-    /*public float Value  {
-        get { return m_value;  }
-        set {
-            m_value = Mathf.Clamp01(value);
-            UpdateCameraPosition();
-        }
-    }*/
-
-
-    //------------------------------------------------------------------------//
-    // GENERIC METHODS														  //
-    //------------------------------------------------------------------------//
 
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //
@@ -66,7 +54,5 @@ public class CameraTraveling : MonoBehaviour {
 
         UpdateCameraPosition();
     }
-    //------------------------------------------------------------------------//
-    // CALLBACKS															  //
-    //------------------------------------------------------------------------//
+    
 }
