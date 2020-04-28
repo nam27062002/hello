@@ -1073,4 +1073,81 @@ public class Builder : MonoBehaviour, UnityEditor.Build.IPreprocessBuild
             }
         }
     }
+
+
+    //Get Editor.log asset list in build
+    public static void processUnityEditorLog()
+    {
+#if UNITY_EDITOR_OSX
+		string EDITOR_LOG = "˜/Library/Logs/Unity/Editor.log";
+
+		string assetsPath = Application.dataPath;
+		string relativeAssetsPath = "Assets";
+		string projectPath = assetsPath.Substring(0, assetsPath.LastIndexOf("/Assets"));
+
+		string ASSET_LIST = projectPath + "/BuildAssetsList.txt";
+
+		CaletySettings settingsInstance = (CaletySettings)Resources.Load("CaletySettings");
+
+		string[] lines = File.ReadAllLines(EDITOR_LOG);
+		List<string> outputList = new List<string>();
+		bool capturing = false;
+
+        for (int c = 0; c < lines.Length; c++)
+        {
+			capturing = false;
+
+			string line = lines[c];
+
+            if (capturing)
+            {
+				outputList.Add(line);
+
+                if (line.Contains("----------------------------"))
+                {
+					capturing = false;
+                }
+            }
+            else
+            {
+                if (line.Contains("----------------------------") && lines[c + 1].Contains("Build report"))
+                {
+					outputList.Clear();
+					outputList.Add(line);
+
+                    string buildVersion = "Build version: " + GameSettings.internalVersion.major + "." + GameSettings.internalVersion.minor + "." + GameSettings.internalVersion.patch;
+					if (settingsInstance != null)
+					{
+						buildVersion += " version code: " + settingsInstance.m_strVersionIOSCode;
+					}
+
+					outputList.Add(buildVersion);
+					outputList.Add(line);
+
+					capturing = true;
+
+					c += 14;    //14 lines until asset list
+
+				}
+			}
+
+        }
+
+        if (capturing)
+        {
+			outputList.Add(">>>>>>>> Incomplete asset list.");
+        }
+
+        if (outputList.Count > 0)
+        {
+            if (File.Exists(ASSET_LIST))
+            {
+				FileUtil.DeleteFileOrDirectory(ASSET_LIST);
+            }
+			File.WriteAllLines(ASSET_LIST, outputList.ToArray());
+        }
+
+//		FileUtil.DeleteFileOrDirectory(EDITOR_LOG);
+#endif
+	}
 }
