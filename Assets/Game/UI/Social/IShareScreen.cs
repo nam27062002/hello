@@ -127,14 +127,11 @@ public abstract class IShareScreen : MonoBehaviour {
 	protected void SetLocation(string _shareLocationSku) {
 		// Get location definition
 		m_shareLocationDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SHARE_LOCATIONS, _shareLocationSku);
-		Debug.Assert(m_shareLocationDef != null, "Share Location Definition for " + _shareLocationSku + " couldn't be found!"); 
+		Debug.Assert(m_shareLocationDef != null, "Share Location Definition for " + _shareLocationSku + " couldn't be found!");
 
-		// Figure out URL to use
-		if(PlatformUtils.Instance.IsChina()) {
-			m_url = m_shareLocationDef.GetAsString("urlChina");
-		} else {
-			m_url = m_shareLocationDef.GetAsString("url");
-		}
+        // Figure out URL to use according to flavour
+		Flavour currentFlavour = FlavourManager.Instance.GetCurrentFlavour();
+		m_url = m_shareLocationDef.GetAsString(currentFlavour.ShareLocationDef);
 
 		// Generate and initialize QR code
 		if(m_qrCodeHolder != null) {

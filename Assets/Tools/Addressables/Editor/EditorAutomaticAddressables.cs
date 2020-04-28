@@ -16,34 +16,72 @@ public static class EditorAutomaticAddressables {
 
     private static string[] LOCAL_DRAGONS = { "dragon_baby", "dragon_crocodile", "dragon_reptile" };
 
-    private static Dictionary<Flavour.EAddressablesVariant, string> s_flavourAddressablesVariantToAssetFolder;
+    private class AddressablesVariant
+    {
+        public string FolderInAssets
+        {
+            get;
+            private set;
+        }
+
+        public BuildTarget Platform
+        {
+            get;
+            private set;
+        }
+
+        public string AssetBundlePrefix = null;
+
+        public AddressablesVariant(string folderInAssets, BuildTarget platform, string assetBundlePrefix)
+        {
+            FolderInAssets = folderInAssets;
+            Platform = platform;
+            AssetBundlePrefix = assetBundlePrefix;
+        }
+    }
+
+    private static Dictionary<Flavour.EAddressablesVariant, AddressablesVariant> s_flavourAddressablesVariantToAssetFolder;
 
     private static void Flavour_Init()
     {
         if (s_flavourAddressablesVariantToAssetFolder == null)
         {
-            s_flavourAddressablesVariantToAssetFolder = new Dictionary<Flavour.EAddressablesVariant, string>();
-            s_flavourAddressablesVariantToAssetFolder.Add(Flavour.EAddressablesVariant.WW, "");
+            s_flavourAddressablesVariantToAssetFolder = new Dictionary<Flavour.EAddressablesVariant, AddressablesVariant>();
+
+            AddressablesVariant addressablesVariant = new AddressablesVariant("", BuildTarget.NoTarget, null);
+            s_flavourAddressablesVariantToAssetFolder.Add(Flavour.EAddressablesVariant.WW, addressablesVariant);
 
             // flavourAddressablesVariant, folder name where the assets for flavourSku are stored in
-            s_flavourAddressablesVariantToAssetFolder.Add(Flavour.EAddressablesVariant.CN, "flavour_china");
+            Flavour.EAddressablesVariant eAddressablesVariant = Flavour.EAddressablesVariant.CN;
+            addressablesVariant = new AddressablesVariant("Flavours/China", BuildTarget.iOS, Flavour.EAddressablesVariantToString(eAddressablesVariant));
+            s_flavourAddressablesVariantToAssetFolder.Add(eAddressablesVariant, addressablesVariant);
         }
+    }
+
+    private static AddressablesVariant GetAddressablesVariant(Flavour.EAddressablesVariant flavourAddressablesVariant)
+    {
+        AddressablesVariant returnValue = null;
+
+        Flavour_Init();
+
+        s_flavourAddressablesVariantToAssetFolder.TryGetValue(flavourAddressablesVariant, out returnValue);
+
+        return returnValue;
     }
 
     public static string FlavourAddressablesVariantToAssetFolder(Flavour.EAddressablesVariant flavourAddressablesVariant)
     {
-        string returnValue = "";
+        string returnValue;
 
-        Flavour_Init();
-       
-        if (s_flavourAddressablesVariantToAssetFolder.ContainsKey(flavourAddressablesVariant))
+        AddressablesVariant variant = GetAddressablesVariant(flavourAddressablesVariant);
+        if (variant == null)
         {
-            returnValue = s_flavourAddressablesVariantToAssetFolder[flavourAddressablesVariant];
+            Debug.LogError("No folder found for flavour addressables variant: " + flavourAddressablesVariant + " so " + flavourAddressablesVariant + " is used as asset folder");
+            returnValue = Flavour.EAddressablesVariantToString(flavourAddressablesVariant);
         }
         else
         {
-            Debug.LogError("No folder found for flavour addressables variant: " + flavourAddressablesVariant + " so " + flavourAddressablesVariant + " is used as asset folder");
-            returnValue = Flavour.EAddressablesVariantToString(flavourAddressablesVariant);                
+            returnValue = s_flavourAddressablesVariantToAssetFolder[flavourAddressablesVariant].FolderInAssets;
         }
 
         return returnValue;
@@ -139,19 +177,19 @@ public static class EditorAutomaticAddressables {
     }
 
 
-    private static void GetEntriesPrefab(out List<AddressablesCatalogEntry> entryList, out List<string> bundleList) {
+    private static void GetEntriesPrefab(out List<AddressablesCatalogEntry> entryList, out List<string> bundleList, BuildTarget platform = BuildTarget.NoTarget) {
         entryList = new List<AddressablesCatalogEntry>();
         bundleList = new List<string>();
 
         Flavour_Init();
 
-        foreach (KeyValuePair<Flavour.EAddressablesVariant, string> pair in s_flavourAddressablesVariantToAssetFolder)
+        foreach (KeyValuePair<Flavour.EAddressablesVariant, AddressablesVariant> pair in s_flavourAddressablesVariantToAssetFolder)
         {
-            GetFlavourEntriesPrefab(pair.Key, ref entryList, ref bundleList);
+            GetFlavourEntriesPrefab(pair.Key, ref entryList, ref bundleList, pair.Value.Platform);
         }        
     }    
 
-    private static void GetFlavourEntriesPrefab(Flavour.EAddressablesVariant flavourSku, ref List<AddressablesCatalogEntry> _entries, ref List<string> _bundles) {
+    private static void GetFlavourEntriesPrefab(Flavour.EAddressablesVariant flavourSku, ref List<AddressablesCatalogEntry> _entries, ref List<string> _bundles, BuildTarget platform) {
         List<AddressablesCatalogEntry> entries = new List<AddressablesCatalogEntry>();
         HashSet<string> bundlesSet = new HashSet<string>();
 
@@ -160,34 +198,34 @@ public static class EditorAutomaticAddressables {
 
         System.Type[] instanciableTypesAnimationControllers = new System.Type[] { typeof(UnityEngine.AnimatorOverrideController),
                                                                                   typeof(UnityEditor.Animations.AnimatorController)};
-        GetEntriesFromDirectory(flavourSku, rootPath + "Art/3D/Gameplay/Dragons/", false, entries, bundlesSet, instanciableTypesAnimationControllers);        
+        GetEntriesFromDirectory(flavourSku, rootPath + "Art/3D/Gameplay/Dragons/", false, entries, bundlesSet, instanciableTypesAnimationControllers, platform);        
 
         System.Type[] instanciableTypes = new System.Type[] { typeof(UnityEngine.GameObject), typeof(UnityEditor.SceneAsset) };
-        GetEntriesFromDirectory(flavourSku, rootPath + "AI", false, null, bundlesSet);
-        GetEntriesFromDirectory(flavourSku, rootPath + "Art/3D/Gameplay/Entities", false, null, bundlesSet);
-        GetEntriesFromDirectory(flavourSku, rootPath + "Art/3D/Gameplay/Entities/PrefabsMenu/", false, entries, bundlesSet, instanciableTypes);
-        GetEntriesFromDirectory(flavourSku, rootPath + "Art/Particles/", false, null, bundlesSet);
-        GetEntriesFromDirectory(flavourSku, rootPath + "Art/VFX/", false, null, bundlesSet);
-        GetEntriesFromDirectory(flavourSku, rootPath + "Game/Scenes/Levels/", false, entries, bundlesSet, instanciableTypes);
-        GetEntriesFromDirectory(flavourSku, rootPath + IEntity.ENTITY_PREFABS_PATH, true, entries, bundlesSet, instanciableTypes);
-        GetEntriesFromDirectory(flavourSku, rootPath + "Art/3D/Gameplay/Blockers/Prefabs/", false, entries, bundlesSet);
-        GetEntriesFromDirectory(flavourSku, rootPath + "Art/3D/Gameplay/Equipable/items/NPC/", false, entries, bundlesSet, instanciableTypes);
-        GetEntriesFromDirectory(flavourSku, rootPath + "Art/3D/Gameplay/Particles/", false, entries, bundlesSet, instanciableTypes);
-        GetEntriesFromDirectory(flavourSku, rootPath + "Art/3D/Gameplay/Projectiles/", false, entries, bundlesSet, instanciableTypes);
+        GetEntriesFromDirectory(flavourSku, rootPath + "AI", false, null, bundlesSet, null, platform);
+        GetEntriesFromDirectory(flavourSku, rootPath + "Art/3D/Gameplay/Entities", false, null, bundlesSet, null, platform);
+        GetEntriesFromDirectory(flavourSku, rootPath + "Art/3D/Gameplay/Entities/PrefabsMenu/", false, entries, bundlesSet, instanciableTypes, platform);
+        GetEntriesFromDirectory(flavourSku, rootPath + "Art/Particles/", false, null, bundlesSet, null, platform);
+        GetEntriesFromDirectory(flavourSku, rootPath + "Art/VFX/", false, null, bundlesSet, null, platform);
+        GetEntriesFromDirectory(flavourSku, rootPath + "Game/Scenes/Levels/", false, entries, bundlesSet, instanciableTypes, platform);
+        GetEntriesFromDirectory(flavourSku, rootPath + IEntity.ENTITY_PREFABS_PATH, true, entries, bundlesSet, instanciableTypes, platform);
+        GetEntriesFromDirectory(flavourSku, rootPath + "Art/3D/Gameplay/Blockers/Prefabs/", false, entries, bundlesSet, null, platform);
+        GetEntriesFromDirectory(flavourSku, rootPath + "Art/3D/Gameplay/Equipable/items/NPC/", false, entries, bundlesSet, instanciableTypes, platform);
+        GetEntriesFromDirectory(flavourSku, rootPath + "Art/3D/Gameplay/Particles/", false, entries, bundlesSet, instanciableTypes, platform);
+        GetEntriesFromDirectory(flavourSku, rootPath + "Art/3D/Gameplay/Projectiles/", false, entries, bundlesSet, instanciableTypes, platform);
 
         // Add all dragon bundles to bundleSet and (prefabs and materials) to entries
         System.Type[] instanciableTypesAndMaterials = new System.Type[] { typeof(UnityEngine.GameObject), typeof(UnityEditor.SceneAsset), typeof( UnityEngine.Material ) };
-        GetEntriesFromDirectory(flavourSku, rootPath + "Art/3D/Gameplay/Dragons/Prefabs/", false, entries, bundlesSet, instanciableTypes);
-        GetEntriesFromDirectory(flavourSku, rootPath + "Art/3D/Gameplay/Dragons/Skins/", false, entries, bundlesSet, instanciableTypesAndMaterials);
-        GetEntriesFromDirectory(flavourSku, rootPath + "Art/3D/Gameplay/Dragons/Items/", false, entries, bundlesSet, instanciableTypes);
+        GetEntriesFromDirectory(flavourSku, rootPath + "Art/3D/Gameplay/Dragons/Prefabs/", false, entries, bundlesSet, instanciableTypes, platform);
+        GetEntriesFromDirectory(flavourSku, rootPath + "Art/3D/Gameplay/Dragons/Skins/", false, entries, bundlesSet, instanciableTypesAndMaterials, platform);
+        GetEntriesFromDirectory(flavourSku, rootPath + "Art/3D/Gameplay/Dragons/Items/", false, entries, bundlesSet, instanciableTypes, platform);
 
            // Disguise icons
         System.Type[] instanciableTypesTextures = new System.Type[] { typeof(UnityEngine.Texture2D) };
-        GetEntriesFromDirectory(flavourSku, rootPath + "Art/UI/Metagame/Dragons/Disguises/", false, entries, bundlesSet, instanciableTypesTextures);
+        GetEntriesFromDirectory(flavourSku, rootPath + "Art/UI/Metagame/Dragons/Disguises/", false, entries, bundlesSet, instanciableTypesTextures, platform);
 
         // Add all pets bundles
-        GetEntriesFromDirectory(flavourSku, rootPath + "Art/3D/Gameplay/Pets/Prefabs/", false, entries, bundlesSet, instanciableTypes);
-        GetEntriesFromDirectory(flavourSku, rootPath + "Art/UI/Metagame/Pets/", false, entries, bundlesSet, instanciableTypesTextures);
+        GetEntriesFromDirectory(flavourSku, rootPath + "Art/3D/Gameplay/Pets/Prefabs/", false, entries, bundlesSet, instanciableTypes, platform);
+        GetEntriesFromDirectory(flavourSku, rootPath + "Art/UI/Metagame/Pets/", false, entries, bundlesSet, instanciableTypesTextures, platform);
 
         // AR (only for iOS)
         GetEntriesFromDirectory(flavourSku, rootPath + "PlatformResources/iOS/AR/Animojis/", false, entries, bundlesSet, instanciableTypes, BuildTarget.iOS);
@@ -197,7 +235,13 @@ public static class EditorAutomaticAddressables {
         //GetEntriesFromDirectory("Assets/Art/R", false, entries, bundlesSet, instanciableTypes, BuildTarget.NoTarget, AddressablesTypes.ELocationType.Resources);
 
         UbiListUtils.AddRange(_entries, entries, false, true);
-        _bundles.AddRange(bundlesSet);        
+        foreach (string s in bundlesSet)
+        {
+            if (!_bundles.Contains(s))
+            {
+                _bundles.Add(s);
+            }
+        }                
     }
 
     private static void GetEntriesFromDirectory(Flavour.EAddressablesVariant flavourAddressablesVariant, string _directoryPath, bool _addLastFolder, List<AddressablesCatalogEntry> _entries, HashSet<string> _bundles, System.Type[] _allowedTypes = null, BuildTarget platform = BuildTarget.NoTarget,
@@ -231,6 +275,34 @@ public static class EditorAutomaticAddressables {
                 string assetBundle = ai.assetBundleName;
                 if (locationType == AddressablesTypes.ELocationType.Resources || locationType == AddressablesTypes.ELocationType.AssetBundles && !string.IsNullOrEmpty(assetBundle)) {                 
                     bool createEntry = false;
+
+                    AddressablesVariant addressablesVariant = GetAddressablesVariant(flavourAddressablesVariant);
+                    string assetBundlePrefix = (addressablesVariant == null) ? null : addressablesVariant.AssetBundlePrefix;
+
+                    // Asset bundles of an addressables variant need to include the addressables variant as a prefix in their name
+                    if (!string.IsNullOrEmpty(assetBundlePrefix)) {                                                
+                        char separator = '-';
+                        string[] tokens = assetBundle.Split(separator);
+                        int tokensCount = tokens.Length;
+                        string origAssetBundle = assetBundle;
+                        if (tokensCount < 2)
+                        {
+                            assetBundle = assetBundlePrefix + separator + assetBundle;
+                        }
+                        else if (tokens[0] != assetBundlePrefix)
+                        {
+                            assetBundle = assetBundlePrefix + separator;
+                            for (int i = 1; i < tokensCount; i++)
+                            {
+                                assetBundle += tokens[i];
+                            }
+                        }
+
+                        if (!origAssetBundle.Equals(assetBundle))
+                        {
+                            ai.assetBundleName = assetBundle;
+                        }                      
+                    }
 
                     if (_entries != null) {
                         if (_allowedTypes != null) {
