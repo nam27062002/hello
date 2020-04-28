@@ -326,6 +326,9 @@ public class ShopController : MonoBehaviour
                 break;
         }
 
+        // Clear everything to avoid the shop content being flashed before the transition clouds
+        Clear();
+
         // In case we need to do something after the user purchases an offer
         m_purchaseCompletedCallback = _purchaseCompletedCallback;
 
@@ -575,10 +578,23 @@ public class ShopController : MonoBehaviour
     {
         m_scrollRect.movementType = ScrollRect.MovementType.Unrestricted;
         m_scrollRect.horizontal = false;
-        m_scrollRect.GetComponent<HorizontalLayoutGroup>().enabled = true;
-        m_scrollRect.GetComponent<ContentSizeFitter>().enabled = true;
-        m_scrollRect.viewport.GetComponent<HorizontalLayoutGroup>().enabled = true;
-        m_scrollRect.viewport.GetComponent<ContentSizeFitter>().enabled = true;
+
+        HorizontalLayoutGroup layout = m_scrollRect.GetComponent<HorizontalLayoutGroup>();
+        ContentSizeFitter fitter = m_scrollRect.GetComponent<ContentSizeFitter>();
+        if (layout != null && fitter != null )
+        {
+            layout.enabled = true;
+            fitter.enabled = true;
+        }
+
+        layout = m_scrollRect.viewport.GetComponent<HorizontalLayoutGroup>();
+        fitter = m_scrollRect.viewport.GetComponent<ContentSizeFitter>();
+        if (layout != null && fitter != null)
+        {
+            layout.enabled = true;
+            fitter.enabled = true;
+        }
+
     }
 
 
