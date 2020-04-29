@@ -247,17 +247,31 @@ public class MenuTransitionManager : MonoBehaviour {
 			Ease ease = t.overrideEase ? t.ease : m_defaultTransitionEase;
 
 			// If using the overlay, override duration
-			if(t.showOverlay) duration = m_overlay.transitionDuration;
+			if (t.showOverlay)
+			{
+                // Override duration
+				duration = m_overlay.transitionDuration;
 
-			// UI
-			PerformUITransition(fromScreenData, toScreenData, duration);
-
-			// Camera
-			PerformCameraTransition(fromScreenData, toScreenData, t, duration, ease);
-
-			// Overlay
-			if(t.showOverlay) {
 				m_overlay.Play();
+
+				// Perform camera and UI transitions in the middle of the clouds animation
+				UbiBCN.CoroutineManager.DelayedCall(() =>
+				{
+					// UI
+					PerformUITransition(fromScreenData, toScreenData, duration);
+					// Camera
+					PerformCameraTransition(fromScreenData, toScreenData, t, duration, ease);
+				}, duration / 2 , true);
+
+			}
+            else
+            {
+				// UI
+				PerformUITransition(fromScreenData, toScreenData, duration);
+
+				// Camera
+				PerformCameraTransition(fromScreenData, toScreenData, t, duration, ease);
+
 			}
 
 			// Lock input to prevent weird flow cases when interrupting a screen transition

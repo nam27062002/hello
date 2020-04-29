@@ -843,6 +843,26 @@ public class DragonPlayer : MonoBehaviour, IBroadcastListener {
         return GetReminingLives() > 0;
     }
 
+	public bool CanSpawnCorpse(DamageType _damageType) {
+		// Never if in China or Korea
+		if(PlatformUtils.Instance.IsChina() || PlatformUtils.Instance.IsKorea()) {
+			return false;
+		}
+
+		// Always if forced
+		if(m_alwaysSpawnCorpse) {
+			return true;
+		}
+
+		// Otherwise check damage type
+		if(_damageType == DamageType.MINE || _damageType == DamageType.BIG_DAMAGE) {
+			return true;
+		}
+
+		// No for all other cases
+		return false;
+	}
+
 	/// <summary>
 	/// Gets the tier when breaking. Because we can have the "Destroy" power up wich increases the
 	/// tier on the dragon breaking things we have this function to ask on the proper places

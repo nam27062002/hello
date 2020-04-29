@@ -24,6 +24,7 @@ public class MenuDragonClassicInfo : MenuDragonInfo {
 
     [SerializeField] private DragonXPBar m_xpBar;
 
+    [SerializeField] private GameObject m_unlockProgressionText;
 
     //------------------------------------------------------------------------//
     // GENERIC METHODS														  //
@@ -135,12 +136,34 @@ public class MenuDragonClassicInfo : MenuDragonInfo {
                     if (!_data.isOwned)
                     {
                         m_dragonUnlock.Refresh(_data, true);
+
+
                     }
                     else
                     {
                         m_dragonUnlock.Refresh(_data, false);
                     }
                 }
+
+                // Show the progression unlock text
+                if (m_unlockProgressionText != null)
+                {
+                    // Is enabled in the settings (can be disabled for AB tests)
+                    bool unlockTextEnabled = GameSettings.SHOWN_UNLOCK_PROGRESSION_TEXT;
+
+
+                    // And the dragon is locked (and is a classic, thats implicit)
+                    if (unlockTextEnabled && _data.isLocked)
+                    {
+                        m_unlockProgressionText.GetComponent<ShowHideAnimator>().Show(true);
+                    }
+                    else
+                    {
+                        m_unlockProgressionText.GetComponent<ShowHideAnimator>().Hide(true);
+                    }
+                    
+                }
+
             }
 
             // Store new dragon data

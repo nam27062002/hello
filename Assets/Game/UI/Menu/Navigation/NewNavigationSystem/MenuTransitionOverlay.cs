@@ -31,7 +31,7 @@ public class MenuTransitionOverlay : MonoBehaviour {
 	public float transitionDuration {
 		get { return m_transitionDuration; }
 	}
-	
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -62,6 +62,7 @@ public class MenuTransitionOverlay : MonoBehaviour {
 
 		// Trigger animation
 		m_anim.SetTrigger("play");
+
 	}
 
 	/// <summary>

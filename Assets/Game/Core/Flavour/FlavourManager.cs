@@ -13,8 +13,6 @@ using System.Collections.Generic;
 /// </summary>
 public class FlavourManager
 {
-    private const string FLAVOUR_SKU_DEFAULT = FlavourFactory.CATALOG_SKU_WW;
-
     private static FlavourManager s_instance = null;
 
     public static FlavourManager Instance
@@ -48,10 +46,36 @@ public class FlavourManager
         if (m_currentFlavour == null)
         {
             m_currentFlavour = m_factory.CreateFlavour();
-            SetupCurrentFlavour();            
+            SetupCurrentFlavour();
         }
 
         return m_currentFlavour;
+    }
+
+    private Flavour.EDevicePlatform GetDevicePlatform()
+    {
+        Flavour.EDevicePlatform devicePlatform;
+
+#if UNITY_ANDROID
+        devicePlatform = Flavour.EDevicePlatform.Android;
+#else
+        devicePlatform = Flavour.EDevicePlatform.iOS;
+#endif
+
+#if UNITY_EDITOR
+        // Cheat to override devicePlatform. Used to be able to test flavours that depend on device platform without switching platforms
+        string value = Prefs_GetDevicePlatform();
+        if (value == Flavour.DEVICEPLATFORM_IOS)
+        {
+            devicePlatform = Flavour.EDevicePlatform.iOS;
+        }
+        else if (value == Flavour.DEVICEPLATFORM_ANDROID)
+        {
+            devicePlatform = Flavour.EDevicePlatform.Android;
+        }
+#endif
+
+        return devicePlatform;
     }
 
     private void SetupCurrentFlavour()
@@ -60,48 +84,37 @@ public class FlavourManager
 
         // The flavour to apply depends on the country code that the device had when the user installed the game.
         // We want the user to stick to the same flavour from installation on
-        m_factory.SetupFlavour(m_currentFlavour, countryCode);
+        m_factory.SetupFlavourBasedOnCriteria(m_currentFlavour, countryCode, GetDevicePlatform());
     }
 
     /// <summary>
-    /// Sets <c>flavourSku</c> as the current flavour. This method should be used only as a cheat
-    /// </summary>
-    /// <param name="flavourSku"></param>
-    public void SetSkuAsCurrentFlavour(string flavourSku)
+    /// Sets <c>countryCode</c> as country code at installation time and recalculates flavour. This method should be used only as a cheat
+    /// </summary>   
+    public void SetCountryCodeOnInstall(string countryCode)
     {
         if (FeatureSettingsManager.AreCheatsEnabled)
-        {
-            if (m_currentFlavour != null && m_currentFlavour.Sku != flavourSku)
-            {
-                string countryCode = FlavourSkuToCountryCode(flavourSku);
-                PersistencePrefs.CountryCodeOnInstall = countryCode;
-                SetupCurrentFlavour();
-            }
+        {                      
+            PersistencePrefs.CountryCodeOnInstall = countryCode;
+            SetupCurrentFlavour();        
         }
-    }
+    }    
 
-    private string FlavourSkuToCountryCode(string flavourSku)
+#region prefs
+#if UNITY_EDITOR
+    private const string PREFS_CHEAT_DEVICE_PLATFORM = "cheat.devicePlatform";
+
+    public static void Prefs_SetDevicePlatform(string value)
     {
-        // flavourSku is the same as the country code except for WW
-        return (string.IsNullOrEmpty(flavourSku) || flavourSku == FlavourFactory.CATALOG_SKU_WW) ? PlatformUtils.COUNTRY_CODE_WW_DEFAULT : flavourSku;
+        UnityEngine.PlayerPrefs.SetString(PREFS_CHEAT_DEVICE_PLATFORM, value);
     }
 
-    private string CountryCodeToFlavourSku(string countryCode)
+    public static string Prefs_GetDevicePlatform()
     {
-        // Just in case
-        if (!string.IsNullOrEmpty(countryCode))
-        {            
-            countryCode = countryCode.ToUpper();
-        }
-
-        return (m_factory.Catalog_ContainsSku(countryCode)) ? countryCode : FLAVOUR_SKU_DEFAULT;
+        return UnityEngine.PlayerPrefs.GetString(PREFS_CHEAT_DEVICE_PLATFORM);
     }
+#endif
+#endregion
 
-    public List<string> GetFlavourSkus()
-    {
-        return m_factory.Catalog_GetSkus();
-    }
- 
 #region log
     private const string LOG_CHANNEL = "[Flavours] ";
     private const string LOG_CHANNEL_COLOR = "<color=teal>" + LOG_CHANNEL;

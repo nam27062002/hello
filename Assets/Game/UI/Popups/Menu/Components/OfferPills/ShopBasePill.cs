@@ -419,17 +419,46 @@ public class ShopBasePill : IShopPill {
 		switch(m_infoButtonMode) {
 			// Popup
 			case InfoButtonMode.POPUP: {
-				// Open offer info popup
-				PopupController popup = PopupManager.LoadPopup(PopupShopOfferPack.PATH);
-				PopupShopOfferPack offerPopup = popup.GetComponent<PopupShopOfferPack>();
-				offerPopup.InitFromOfferPack(m_pack);
-				popup.Open();
 
-				// Send tracking event
-				if(_trackInfoPopupEvent) {
-					string popupName = System.IO.Path.GetFileNameWithoutExtension(PopupShopOfferPack.PATH);
-					TrackInfoPopup(popupName);
-				}
+				    PopupController popup = null;
+					PopupShopOfferPack offerPopup = null;
+
+				    // Open the proper popup depending on the dragon/skins items in the offer
+					if (pack.GetDragonsSkinsCount() > 1)
+                    {
+
+                        // Show the info popup with an item selector and rotable preview
+						popup = PopupManager.LoadPopup(PopupShopOfferPackSkins.PATH);
+						offerPopup = popup.GetComponent<PopupShopOfferPackSkins>();
+
+						offerPopup.InitFromOfferPack(m_pack);
+						popup.Open();
+
+						// Send tracking event
+						if (_trackInfoPopupEvent)
+						{
+							string popupName = System.IO.Path.GetFileNameWithoutExtension(PopupShopOfferPackSkins.PATH);
+							TrackInfoPopup(popupName);
+						}
+					}
+                    else
+                    {
+
+                        // Show the static info popup
+				        popup = PopupManager.LoadPopup(PopupShopOfferPack.PATH);
+						offerPopup = popup.GetComponent<PopupShopOfferPack>();
+
+						offerPopup.InitFromOfferPack(m_pack);
+						popup.Open();
+
+						// Send tracking event
+						if (_trackInfoPopupEvent)
+						{
+							string popupName = System.IO.Path.GetFileNameWithoutExtension(PopupShopOfferPack.PATH);
+							TrackInfoPopup(popupName);
+						}
+					}
+
 			} break;
 
 			// Tooltip
