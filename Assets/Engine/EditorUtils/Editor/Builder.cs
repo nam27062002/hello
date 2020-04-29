@@ -1080,6 +1080,7 @@ public class Builder : MonoBehaviour, UnityEditor.Build.IPreprocessBuild
     {
 #if UNITY_EDITOR_OSX
 		string EDITOR_LOG = "/Library/Logs/Unity/Editor.log";
+		string userPath = System.Environment.GetFolderPath(Environment.SpecialFolder.Personal) + EDITOR_LOG;
 
 		string assetsPath = Application.dataPath;
 		string relativeAssetsPath = "Assets";
@@ -1089,7 +1090,7 @@ public class Builder : MonoBehaviour, UnityEditor.Build.IPreprocessBuild
 
 		CaletySettings settingsInstance = (CaletySettings)Resources.Load("CaletySettings");
 
-		string[] lines = File.ReadAllLines(EDITOR_LOG);
+		string[] lines = File.ReadAllLines(userPath);
 		List<string> outputList = new List<string>();
 		bool capturing = false;
 
