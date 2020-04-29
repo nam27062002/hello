@@ -73,7 +73,7 @@ public class FlavourFactory
     // The following accessories per-skin cannot be shown on China flavour, due to new China law
     readonly Dictionary<string, List<string>> blackListAccessoriesChina = new Dictionary<string, List<string>>
     {
-        { "dragon_bug_1", new List<string> { "PF_Pirate_Hook" } }, // Jekyll (Swashbuckler): Hook
+        { "dragon_bug_1", new List<string> { "PF_Pirate_Hook", "PF_Pirate_Pegleg" } }, // Jekyll (Swashbuckler): Hook, PegLeg
         { "dragon_bug_2", new List<string> { "PF_Executioner_L_Hat" } }, // Jekyll (Executioner): Axe
         { "dragon_crocodile_2", new List<string> { "PF_Pirate_Hook" } }, // Mad Snax (Captain Crunch): Hook
         { "dragon_tony_2", new List<string> { "PF_tony_mafia_gun" } }, // Tony Dragone (Vito Dragone): Gun
