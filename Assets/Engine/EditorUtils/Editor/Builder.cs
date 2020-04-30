@@ -1074,49 +1074,36 @@ public class Builder : MonoBehaviour, UnityEditor.Build.IPreprocessBuild
         }
     }
 
-
-    //Get Editor.log asset list in build
-    public static void processUnityEditorLog()
-    {
-#if UNITY_EDITOR_OSX
-		string EDITOR_LOG = "/Library/Logs/Unity/Editor.log";
-		string userPath = System.Environment.GetFolderPath(Environment.SpecialFolder.Personal) + EDITOR_LOG;
-
-		string assetsPath = Application.dataPath;
-		string relativeAssetsPath = "Assets";
-		string projectPath = assetsPath.Substring(0, assetsPath.LastIndexOf("/Assets"));
-
-		string ASSET_LIST = projectPath + "/BuildAssetsList.txt";
-
-		CaletySettings settingsInstance = (CaletySettings)Resources.Load("CaletySettings");
+    static List<string> parseUnityEditorLog(string editorLogPath, CaletySettings settingsInstance)
+	{
+		string userPath = System.Environment.GetFolderPath(Environment.SpecialFolder.Personal) + editorLogPath;
 
 		string[] lines = File.ReadAllLines(userPath);
 		List<string> outputList = new List<string>();
 		bool capturing = false;
 
-        for (int c = 0; c < lines.Length; c++)
-        {
-			capturing = false;
+		for (int c = 0; c < lines.Length; c++)
+		{
 
 			string line = lines[c];
 
-            if (capturing)
-            {
+			if (capturing)
+			{
 				outputList.Add(line);
 
-                if (line.Contains("----------------------------"))
-                {
+				if (line.Contains("--------------"))
+				{
 					capturing = false;
-                }
-            }
-            else
-            {
-                if (line.Contains("----------------------------") && lines[c + 1].Contains("Build report"))
-                {
+				}
+			}
+			else
+			{
+				if (line.Contains("--------------") && lines[c + 1].Contains("Build Report"))
+				{
 					outputList.Clear();
 					outputList.Add(line);
 
-                    string buildVersion = "Build version: " + GameSettings.internalVersion.major + "." + GameSettings.internalVersion.minor + "." + GameSettings.internalVersion.patch;
+					string buildVersion = "Build version: " + GameSettings.internalVersion.major + "." + GameSettings.internalVersion.minor + "." + GameSettings.internalVersion.patch;
 					if (settingsInstance != null)
 					{
 						buildVersion += " version code: " + settingsInstance.m_strVersionIOSCode;
@@ -1132,12 +1119,31 @@ public class Builder : MonoBehaviour, UnityEditor.Build.IPreprocessBuild
 				}
 			}
 
-        }
+		}
 
-        if (capturing)
-        {
+		if (capturing)
+		{
 			outputList.Add(">>>>>>>> Incomplete asset list.");
-        }
+		}
+
+		return outputList;
+	}
+
+	//Get Editor.log asset list in build
+	public static void processUnityEditorLog()
+    {
+#if UNITY_EDITOR_OSX
+		string assetsPath = Application.dataPath;
+		string relativeAssetsPath = "Assets";
+		string projectPath = assetsPath.Substring(0, assetsPath.LastIndexOf("/Assets"));
+
+		CaletySettings settingsInstance = (CaletySettings)Resources.Load("CaletySettings");
+
+		string ASSET_LIST = projectPath + "/BuildAssetsList.txt";
+
+		string EDITOR_LOG = "/Library/Logs/Unity/Editor.log";
+
+		List<string> outputList = parseUnityEditorLog(EDITOR_LOG, settingsInstance);
 
         if (outputList.Count > 0)
         {
