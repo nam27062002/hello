@@ -821,6 +821,8 @@ public class RewardManager : Singleton<RewardManager>, IBroadcastListener {
 			m_isHighScore = false;
 		}
 
+		UsersManager.currentUser.totalScore += m_score;
+
 	}
 
     /// <summary>

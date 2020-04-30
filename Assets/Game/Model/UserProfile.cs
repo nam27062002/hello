@@ -152,8 +152,15 @@ public class UserProfile : UserPersistenceSystem
 		get { return GetCurrency(Currency.KEYS); }
 	}
 
-    // Game Settings
-    private string m_currentDragon;
+	private int m_gemsSpent = 0;
+	public int gemsSpent
+	{
+		get => m_gemsSpent;
+		set => m_gemsSpent = value;
+	}
+
+	// Game Settings
+	private string m_currentDragon;
     public string CurrentDragon
     {
         get { return m_currentDragon; }
@@ -181,6 +188,15 @@ public class UserProfile : UserPersistenceSystem
 		set { m_furyUsed = value; }
 	}
 
+	private bool m_enteredShop = false;
+	public bool hasEnteredShop
+	{
+		get => m_enteredShop;
+		set => m_enteredShop = value;
+	}
+
+
+
 	// Game Stats
 	private int m_gamesPlayed;
 	public int gamesPlayed {
@@ -198,11 +214,33 @@ public class UserProfile : UserPersistenceSystem
 		get { return m_highScore; }
 		set { m_highScore = value; }
 	}
-	
+
+	private long m_totalScore;
+	public long totalScore
+	{
+		get { return m_totalScore; }
+		set { m_totalScore = value; }
+	}
+
 	private int m_superFuryProgression;
 	public int superFuryProgression {
 		get { return m_superFuryProgression; }
 		set { m_superFuryProgression = value; }
+	}
+
+	private int m_firerushesCount;
+	public int firerushesCount
+	{
+		get => m_firerushesCount;
+		set => m_firerushesCount = value;
+	}
+
+    // Time in seconds (no decimals)
+	private int m_boostTime;
+	public int boostTime
+	{
+		get => m_boostTime;
+		set => m_boostTime = value;
 	}
 
 	// Dragon Data
@@ -376,8 +414,17 @@ public class UserProfile : UserPersistenceSystem
         set { m_removeAds = value; }
     }
 
+	// Clustering
+	private string m_clusterId;
+	public string clusterId
+	{
+		get { return m_clusterId; }
+		set { m_clusterId = value; }
+	}
 
-    private bool m_removeAdsOfferActive;
+
+
+	private bool m_removeAdsOfferActive;
     private int m_easyMissionCooldownsLeft;
     private int m_mediumMissionCooldownsLeft;
     private int m_hardMissionCooldownsLeft;
@@ -667,6 +714,11 @@ public class UserProfile : UserPersistenceSystem
 
 		// Set the new value!
 		long oldAmount = data.amount;	// Tracking purposes
+
+        // Clustering purposes
+        if (_currency == Currency.HARD) {
+			m_gemsSpent += (int) _amount;
+        }
 
 		// Consume free currency first, as much as possible
 		long partialAmount = (long)Mathf.Min(data.freeAmount, toSpend);
@@ -974,6 +1026,17 @@ public class UserProfile : UserPersistenceSystem
 		m_currencies[(int)Currency.GOLDEN_FRAGMENTS].Deserialize(profile.ContainsKey("gf") ? (string)profile["gf"] : "");
 		m_currencies[(int)Currency.KEYS].Deserialize(profile.ContainsKey("keys") ? (string)profile["keys"] : "", 0, 0);
 
+		key = "gemsSpent";
+		if (profile.ContainsKey(key))
+		{
+			m_gemsSpent = PersistenceUtils.SafeParse<int>(profile[key]);
+		}
+		else
+		{
+			m_gemsSpent = 0;
+		}
+
+
 		// Game settings
 		if ( profile.ContainsKey("currentDragon") )
 			m_currentDragon = profile["currentDragon"];
@@ -998,10 +1061,17 @@ public class UserProfile : UserPersistenceSystem
             m_furyUsed = PersistenceUtils.SafeParse<bool>(profile[key]);
         } else {
             m_furyUsed = false;
-        }        
+        }
 
-        // Game stats
-        key = "gamesPlayed";
+		key = "enteredShop";
+		if (profile.ContainsKey(key)){
+			m_enteredShop = PersistenceUtils.SafeParse<bool>(profile[key]);
+		} else {
+			m_enteredShop = false;
+		}
+
+		// Game stats
+		key = "gamesPlayed";
         if (profile.ContainsKey(key)) {
             m_gamesPlayed = PersistenceUtils.SafeParse<int>(profile[key]);
         } else {
@@ -1044,8 +1114,29 @@ public class UserProfile : UserPersistenceSystem
             }
         }
 
-        // Some cheats override profile settings - will be saved with the next Save()
-        if (Prefs.GetBoolPlayer("skipTutorialCheat")) {
+		key = "firerushesCount";
+		if (profile.ContainsKey(key)) {
+			m_firerushesCount = PersistenceUtils.SafeParse<int>(profile[key]);
+		} else {
+			m_firerushesCount = 0;
+		}
+
+		key = "totalScore";
+		if (profile.ContainsKey(key)) {
+			m_totalScore = PersistenceUtils.SafeParse<long>(profile[key]);
+		} else {
+			m_totalScore = 0;
+		}
+
+		key = "boostTime";
+		if (profile.ContainsKey(key))		{
+			m_boostTime = PersistenceUtils.SafeParse<int>(profile[key]);
+		} else {
+			m_boostTime = 0;
+		}
+
+		// Some cheats override profile settings - will be saved with the next Save()
+		if (Prefs.GetBoolPlayer("skipTutorialCheat")) {
 			m_tutorialStep = TutorialStep.ALL;
 			UsersManager.currentUser.gamesPlayed = 5;	// Fake the amount of played games to skip some tutorial steps depending on it
 			Prefs.SetBoolPlayer("skipTutorialCheat", false);
@@ -1294,8 +1385,16 @@ public class UserProfile : UserPersistenceSystem
 			}
 		}
 
-        // Visited Zones
-        key = "visitedZones";
+		// Clustering
+		key = "clusterId";
+		if (profile.ContainsKey(key)) {
+			m_clusterId = profile[key];
+		} else {
+			m_clusterId = "";
+		}
+
+		// Visited Zones
+		key = "visitedZones";
         m_visitedZones.Clear();
         if(_data.ContainsKey(key)) {
             // Parse json object into the list
@@ -1416,18 +1515,23 @@ public class UserProfile : UserPersistenceSystem
 		profile.Add( "pc", m_currencies[(int)Currency.HARD].Serialize());
 		profile.Add( "gf", m_currencies[(int)Currency.GOLDEN_FRAGMENTS].Serialize());
 		profile.Add( "keys", m_currencies[(int)Currency.KEYS].Serialize());
+		profile.Add( "gemsSpent", PersistenceUtils.SafeToString(m_gemsSpent));
 
 		// Game settings
 		profile.Add("currentDragon",m_currentDragon);
 		profile.Add("currentLevel",m_currentLevel);
 		profile.Add("tutorialStep", PersistenceUtils.SafeToString((int)m_tutorialStep));
 		profile.Add("furyUsed", PersistenceUtils.SafeToString(m_furyUsed));
+		profile.Add("enteredShop", PersistenceUtils.SafeToString(m_enteredShop));
 
 		// Game stats
 		profile.Add("gamesPlayed", PersistenceUtils.SafeToString(m_gamesPlayed));
 		profile.Add("highScore", PersistenceUtils.SafeToString(m_highScore));
 		profile.Add("superFuryProgression", PersistenceUtils.SafeToString(m_superFuryProgression));
         profile.Add("socialState",SocialStatesAsString[(int)SocialState]);
+		profile.Add("firerushesCount", PersistenceUtils.SafeToString(m_firerushesCount));
+		profile.Add("boostTime", PersistenceUtils.SafeToString(m_boostTime));
+		profile.Add("totalScore", PersistenceUtils.SafeToString(m_totalScore));
 
 		data.Add("userProfile", profile);
 
@@ -1533,8 +1637,11 @@ public class UserProfile : UserPersistenceSystem
         // but we store it also in the user profile just in case we need in the future
         data.Add("removeAdsFeature", m_removeAds.Save());
 
-        // Visited Zones
-        JSONArray zonesArray = new SimpleJSON.JSONArray();
+		// Clustering
+		data.Add("clusterId", m_clusterId);
+
+		// Visited Zones
+		JSONArray zonesArray = new SimpleJSON.JSONArray();
         int max = m_visitedZones.Count;
         foreach( string str in m_visitedZones)
         {

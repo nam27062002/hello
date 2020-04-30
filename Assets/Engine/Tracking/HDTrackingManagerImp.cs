@@ -699,6 +699,9 @@ public class HDTrackingManagerImp : HDTrackingManager {
             TrackingPersistenceSystem.EggsFound += eggFound;
         }
 
+        // For clustering purposes:
+        UsersManager.currentUser.boostTime += (int)(boostTime);
+
         // Last deathType, deathSource and deathCoordinates are used since this information is provided when Notify_RunEnd() is called
         Track_RoundEnd( Session_RoundId, dragonXp, deltaXp, dragonProgression, timePlayed, score, Session_LastDeathType, Session_LastDeathSource, Session_LastDeathCoordinates,
             chestsFound, eggFound, highestMultiplier, highestBaseMultiplier, furyRushNb, superFireRushNb, hcRevive, adRevive, scGained, hcGained, (int)(boostTime * 1000.0f), mapUsage);

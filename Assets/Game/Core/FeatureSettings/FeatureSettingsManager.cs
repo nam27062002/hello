@@ -614,7 +614,7 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         }
     }
 
-    private string Device_CalculatedProfile { get; set; }
+    public string Device_CalculatedProfile { get; private set; }
 
     public string Device_CurrentProfile
     {

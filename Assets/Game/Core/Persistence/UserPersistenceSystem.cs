@@ -41,13 +41,6 @@ public class UserPersistenceSystem : PersistenceSystem
 
     public bool bannedFromLiveEvents = false;
 
-    // Clustering parameters
-    private bool m_hasEnteredShop = false;
-    public bool hasEnteredShop {
-        get => m_hasEnteredShop;
-        set => m_hasEnteredShop = value; }
-
-
 
 
     public UserPersistenceSystem()
