@@ -53,8 +53,10 @@ public class ResultsScreenStepClustering : ResultsScreenStep {
 	/// </summary>
 	override protected void DoLaunch() {
 
-		// Request the cluster ID from the server
-		ClusteringManager.RequestClusterIdFromServer();
+		// Request the cluster ID. At this moment we dont use it, but anyway send the request
+        // to the server. So in the future, when we need the cluster id value it will
+        // be already in the client
+		ClusteringManager.Instance.GetClusterId();
 
 		// Notify we're finished
 		OnFinished.Invoke();

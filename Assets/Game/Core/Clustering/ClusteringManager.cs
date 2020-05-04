@@ -9,6 +9,8 @@
 //----------------------------------------------------------------------------//
 using UnityEngine;
 using System;
+using System.Collections.Generic;
+using SimpleJSON;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -23,16 +25,34 @@ public class ClusteringManager {
 	// CONSTANTS                											  //
 	//------------------------------------------------------------------------//
 
-    // The cluster will be calculated based on the data gathered until the end of this run
+	private static readonly string GET_CLUSTER_ID = "/api/cluster/get";
+
+	// The cluster will be calculated based on the data gathered until the end of this run
 	public static int CALCULATE_CLUSTER_AFTER_RUN = 2;
 
-	public static string CLUSTER_UNKNOW = "UNKNOWN";
+	public static string CLUSTER_UNKNOWN = "UNKNOWN";
 
 
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 
+	// Singleton instance
+	private static ClusteringManager m_instance = null;
+
+    // Communication with server
+	private bool m_initialised = false;
+	private bool m_offlineMode = false;
+
+	// Cached player values
+	private string m_accountId;
+    private string m_deviceProfile;
+    private int m_playerProgression;
+    private bool m_shopEntered;
+    private int m_firerushes;
+    private int m_gemsSpent;
+    private long m_score;
+    private int m_boostTime;
 
 
 	//------------------------------------------------------------------------//
@@ -52,63 +72,178 @@ public class ClusteringManager {
 
 	}
 
-    public static string GetClusterId()
-    {
-		string clusterId = UsersManager.currentUser.clusterId;
+	// Singleton
+	
 
-		if (!string.IsNullOrEmpty(clusterId)){
-            // the client already knows the cluster ID
-			return clusterId;
-        } else
-        {
-            // we dont know it yet. Request the cluster ID to the server.
-			return RequestClusterIdFromServer();
-        }
+	public static ClusteringManager Instance
+	{
+		get
+		{
+            if (m_instance == null)
+            {
+				m_instance = new ClusteringManager();
+            }
 
-    }
-
-    public static string RequestClusterIdFromServer()
-    {
-		string accountId = UsersManager.currentUser.userId;
-
-		string deviceProfile = FeatureSettingsManager.instance.Device_CalculatedProfile;
-
-		int playerProgression = UsersManager.currentUser.GetPlayerProgress();
-
-		bool shopEntered = UsersManager.currentUser.hasEnteredShop;
-
-		int firerushes = UsersManager.currentUser.firerushesCount;
-
-		int gemsSpent = UsersManager.currentUser.gemsSpent;
-
-		long score = UsersManager.currentUser.totalScore;
-
-		int boostTime = UsersManager.currentUser.boostTime;
-
-
-		// Make call to server
-
-        Debug.Log (
-            String.Format("Clustering data: accountId: {0}, deviceProfile: {1}, playerProgression: {2}, " +
-            "shopEntered: {3}, firerushes: {4}, gemsSpent: {5}, score: {6}, boostTime: {7}",
-            accountId, deviceProfile,playerProgression,shopEntered,firerushes,gemsSpent,score,boostTime) );
-
-		string clusterId = CLUSTER_UNKNOW;
-
-        if ( !string.IsNullOrEmpty(clusterId) && clusterId != CLUSTER_UNKNOW)
-        {
-			UsersManager.currentUser.clusterId = clusterId;
-        }
-
-		return clusterId;
-        
+			return m_instance;
+		}
 	}
+
+
 
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //
 	//------------------------------------------------------------------------//
 
+	public string GetClusterId()
+	{
+		string clusterId = UsersManager.currentUser.clusterId;
+
+		if (!string.IsNullOrEmpty(clusterId))
+		{
+			// the client already knows the cluster ID
+			return clusterId;
+		}
+		else
+		{
+			// we dont know it yet. Request the cluster ID to the server.
+			Initialise(false);
+
+			// In the meantime, return something
+			return CLUSTER_UNKNOWN;
+		}
+
+	}
+
+	/// <summary>
+	/// Gather all the player variables that will be sent to the server
+	/// </summary>
+	private void  LoadCachedValues()
+	{
+
+		m_accountId = UsersManager.currentUser.userId;
+        m_deviceProfile = FeatureSettingsManager.instance.Device_CalculatedProfile;
+        m_playerProgression = UsersManager.currentUser.GetPlayerProgress();
+        m_shopEntered = UsersManager.currentUser.hasEnteredShop;
+        m_firerushes = UsersManager.currentUser.firerushesCount;
+        m_gemsSpent = UsersManager.currentUser.gemsSpent;
+        m_score = UsersManager.currentUser.totalScore;
+        m_boostTime = UsersManager.currentUser.boostTime;
+
+    }
+
+
+	public void Initialise(bool _offlineMode = false)
+	{
+		if (!m_initialised)
+		{
+			m_offlineMode = _offlineMode;
+
+			LoadCachedValues();
+
+			NetworkManager.SharedInstance.RegistryEndPoint(GET_CLUSTER_ID, NetworkManager.EPacketEncryption.E_ENCRYPTION_AES, new int[] { 200, 404, 500, 503 }, OnGetClusterResponse);
+
+			m_initialised = true;
+		}
+
+
+		if (!_offlineMode)
+		{
+			SendRequestToServer();
+		}
+	}
+
+    /// <summary>
+    /// Put all the variables in the payload, and send the request to the server
+    /// </summary>
+	private void SendRequestToServer()
+	{
+		Dictionary<string, string> kParams = new Dictionary<string, string>();
+		kParams["uid"] = GameSessionManager.SharedInstance.GetUID();
+		kParams["token"] = GameSessionManager.SharedInstance.GetUserToken();
+
+
+        JSONClass kBody = new JSONClass();
+		kBody["accountId"] = m_accountId;
+		kBody["deviceProfile"] = m_deviceProfile;
+		kBody["maxProgression"] = PersistenceUtils.SafeToString (m_playerProgression);
+		kBody["fireRushes"] = PersistenceUtils.SafeToString(m_firerushes);
+		kBody["shopEntered"] = PersistenceUtils.SafeToString(m_shopEntered);
+		kBody["gemsSpent"] = PersistenceUtils.SafeToString(m_gemsSpent);
+		kBody["score"] = PersistenceUtils.SafeToString(m_score);
+		kBody["boostTime"] = PersistenceUtils.SafeToString(m_boostTime);
+
+		// Send it to the server
+		// ServerManager.SharedInstance.SendCommand(GET_CLUSTER_ID, kParams.ToString(), kBody);
+
+		//Debug:
+		JSONClass response = new JSONClass();
+		response["clusterId"] = "cluster_5";
+		int reponseCode = 200;
+
+		UbiBCN.CoroutineManager.DelayedCall(() =>
+	      {
+			  OnGetClusterResponse(response.ToString(), GET_CLUSTER_ID, reponseCode);
+	      }, 5);
+	}
+
+
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
+
+    /// <summary>
+    /// Response from the server was received
+    /// </summary>
+    /// <param name="_strResponse">Json containing the cluster Id requested</param>
+    /// <param name="_strCmd"></param>
+    /// <param name="_reponseCode">Response code. 200 if the request was successful</param>
+    /// <returns>Returns true if the response was successful</returns>
+	private bool OnGetClusterResponse(string _strResponse, string _strCmd, int _reponseCode)
+	{
+		bool responseOk = false;
+
+		if (_strResponse != null)
+		{
+			switch (_reponseCode)
+			{
+				case 200:
+					{
+						string clusterId = CLUSTER_UNKNOWN;
+
+						JSONNode kJSON = JSON.Parse(_strResponse);
+						if (kJSON != null)
+						{
+							if (kJSON.ContainsKey("clusterId"))
+							{
+								clusterId = kJSON["clusterId"];
+                            }
+						}
+
+						UsersManager.currentUser.clusterId = clusterId;
+
+						responseOk = true;
+
+						break;
+					}
+
+				default:
+					{
+						responseOk = false;
+						break;
+					}
+			}
+		}
+
+
+
+		if (m_offlineMode)
+		{
+			return false;
+		}
+		else
+		{
+			return responseOk;
+		}
+
+	}
 }
