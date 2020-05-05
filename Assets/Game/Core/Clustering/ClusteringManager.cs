@@ -46,7 +46,7 @@ public class ClusteringManager {
 
 	// Cached player values
 	private string m_accountId;
-    private string m_deviceProfile;
+    private int m_deviceProfile;
     private int m_playerProgression;
     private bool m_shopEntered;
     private int m_firerushes;
@@ -121,7 +121,7 @@ public class ClusteringManager {
 	{
 
 		m_accountId = UsersManager.currentUser.userId;
-        m_deviceProfile = FeatureSettingsManager.instance.Device_CalculatedProfile;
+        m_deviceProfile = FeatureSettingsManager.instance.Device_CalculatedProfileOrder;
         m_playerProgression = UsersManager.currentUser.GetPlayerProgress();
         m_shopEntered = UsersManager.currentUser.hasEnteredShop;
         m_firerushes = UsersManager.currentUser.firerushesCount;
@@ -157,6 +157,12 @@ public class ClusteringManager {
     /// </summary>
 	private void SendRequestToServer()
 	{
+        // Dont make the request if the session is not created
+        if (! GameSessionManager.SharedInstance.IsLogged())
+        {
+			return;
+        }
+
 		Dictionary<string, string> kParams = new Dictionary<string, string>();
 		kParams["uid"] = GameSessionManager.SharedInstance.GetUID();
 		kParams["token"] = GameSessionManager.SharedInstance.GetUserToken();
@@ -173,9 +179,10 @@ public class ClusteringManager {
 		kBody["boostTime"] = PersistenceUtils.SafeToString(m_boostTime);
 
 		// Send it to the server
-		// ServerManager.SharedInstance.SendCommand(GET_CLUSTER_ID, kParams.ToString(), kBody);
+		ServerManager.SharedInstance.SendCommand(GET_CLUSTER_ID, kParams.ToString(), kBody);
 
 		//Debug:
+        /*
 		JSONClass response = new JSONClass();
 		response["clusterId"] = "cluster_5";
 		int reponseCode = 200;
@@ -184,6 +191,7 @@ public class ClusteringManager {
 	      {
 			  OnGetClusterResponse(response.ToString(), GET_CLUSTER_ID, reponseCode);
 	      }, 5);
+          */
 	}
 
 
@@ -206,28 +214,45 @@ public class ClusteringManager {
 		{
 			switch (_reponseCode)
 			{
-				case 200:
+				case 200: // No error
+				case 204: // No error, but the server doesnt know the cluster id
 					{
-						string clusterId = CLUSTER_UNKNOWN;
 
 						JSONNode kJSON = JSON.Parse(_strResponse);
 						if (kJSON != null)
 						{
-							if (kJSON.ContainsKey("clusterId"))
+							if (kJSON.ContainsKey("result"))
 							{
-								clusterId = kJSON["clusterId"];
-                            }
+								if (kJSON["result"] == "true")
+								{
+									if (kJSON.ContainsKey("clusterId"))
+									{
+                                        // The server knows the cluster
+										UsersManager.currentUser.clusterId = kJSON["clusterId"];
+										
+									}
+                                    // else: the server doesnt know the cluster. Leave it empty.
+
+									responseOk = true;
+
+								}
+								else
+								{
+                                    // Server returned an error
+									Debug.LogError("Requests " + _strCmd + " returned error " +
+										kJSON["errorCode"] + ": " + kJSON["errorMsg"]);
+
+								}
+							}
 						}
-
-						UsersManager.currentUser.clusterId = clusterId;
-
-						responseOk = true;
 
 						break;
 					}
 
-				default:
+				default: 
 					{
+                        // An error happened
+
 						responseOk = false;
 						break;
 					}

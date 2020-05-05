@@ -223,6 +223,23 @@ public class DeviceQualityManager
 
         return returnValue;
     }
+
+    public int Profiles_ProfileNameToOrder(string _profileName)
+    {
+
+        int returnValue = -1;
+        if (Profiles_Data != null && Profiles_Data.ContainsKey(_profileName))
+        {
+            returnValue = Profiles_Data[_profileName].Json.GetValueOrDefault("order" , -1 );
+        }
+        else
+        { 
+            LogWarning("No profile " + _profileName + " found");
+        }
+
+        return returnValue;
+
+    }
     
     public int Profiles_GetMaxProfileLevel(int memorySize)
     {

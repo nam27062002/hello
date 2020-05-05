@@ -122,7 +122,7 @@ public class OffersManager : Singleton<OffersManager> {
 	}
 
 	// Cache
-	private string m_clusterId;
+	private string m_playerCluster;
 
 	private bool m_initialized = false;
 	private bool m_enabled = true;
@@ -196,7 +196,7 @@ public class OffersManager : Singleton<OffersManager> {
         instance.m_categories.Clear();
 
 		// Cache player cluster
-		instance.m_clusterId = ClusteringManager.Instance.GetClusterId();
+		instance.m_playerCluster = ClusteringManager.Instance.GetClusterId();
 
 		// Get all the shop categories
 		List<DefinitionNode> categoriesDefs = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.SHOP_CATEGORIES);
@@ -241,22 +241,30 @@ public class OffersManager : Singleton<OffersManager> {
 		// Create data for each known offer pack definition
 		for(int i = 0; i < offerDefs.Count; ++i) {
 
-			// Check clustering
-			string offerCluster = offerDefs[i].GetAsString("cluster");
+			// Create and initialize new pack
+			OfferPack newPack = OfferPack.CreateFromDefinition(offerDefs[i]);
 
-            // Is this offer targeted for a specific cluster?
-			if (!String.IsNullOrEmpty(offerCluster) && offerCluster != "-")
-            {
-                if ( instance.m_clusterId != offerCluster)
+
+			// Is this offer targeted for a specific cluster?
+			if (newPack.clusters.Length > 0)
+			{
+				bool belongsToCluster = false;
+
+                foreach (string offerCluster in newPack.clusters)
                 {
-					// The player is in a different cluster, so discard it
-					continue ;
+					if (instance.m_playerCluster == offerCluster)
+					{
+						belongsToCluster = true;
+					}
+				}
+
+                if (!belongsToCluster)
+                {
+                    // The player doesnt belong to any of the clusters in this offer. Discard the offer.
+					continue;
                 }
 
 			}
-
-			// Create and initialize new pack
-			OfferPack newPack = OfferPack.CreateFromDefinition(offerDefs[i]);
 
 			// Load persisted data
 			UsersManager.currentUser.LoadOfferPack(newPack);

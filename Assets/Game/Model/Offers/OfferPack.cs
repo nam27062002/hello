@@ -201,6 +201,11 @@ public class OfferPack {
 		get { return m_purchaseCount; }
 	}
 
+    // Clustering
+    protected string[] m_clusters;
+	public string[] clusters { get => m_clusters; set => m_clusters = value; }
+
+
 	// Internal vars
 	protected int m_viewsCount = 0;	// Only auto-triggered views
 	protected DateTime m_lastViewTimestamp = new DateTime();
@@ -225,6 +230,7 @@ public class OfferPack {
 			}
 		}
 	}
+
 
     #endregion
 
@@ -388,6 +394,9 @@ public class OfferPack {
 		m_purchaseLimit = 1;
 		m_purchaseCount = 0;
 
+		// Clustering
+		m_clusters = new string[0];
+
 		// Internal vars
 		m_viewsCount = 0;
 		m_lastViewTimestamp = new DateTime();
@@ -528,6 +537,8 @@ public class OfferPack {
 		m_skinsOwned = ParseArray(_def.GetAsString("skinsOwned"));
 		m_skinsNotOwned = ParseArray(_def.GetAsString("skinsNotOwned"));
 
+        m_clusters = ParseArray(_def.GetAsString("clusterId"));
+
 		// Purchase limit
 		m_purchaseLimit = _def.GetAsInt("purchaseLimit", m_purchaseLimit);
 	}
@@ -626,6 +637,8 @@ public class OfferPack {
 		SetValueIfMissing(ref _def, "skinsUnlocked", string.Join(";", m_skinsUnlocked));
 		SetValueIfMissing(ref _def, "skinsOwned", string.Join(";", m_skinsOwned));
 		SetValueIfMissing(ref _def, "skinsNotOwned", string.Join(";", m_skinsNotOwned));
+
+		SetValueIfMissing(ref _def, "clusterId", string.Join(";", m_clusters));
 
 		// Purchase limit
 		SetValueIfMissing(ref _def, "purchaseLimit", m_purchaseLimit.ToString(CultureInfo.InvariantCulture));

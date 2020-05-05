@@ -615,6 +615,7 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
     }
 
     public string Device_CalculatedProfile { get; private set; }
+    public int Device_CalculatedProfileOrder { get; private set; }
 
     public string Device_CurrentProfile
     {
@@ -976,6 +977,7 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         }
 
         Device_CalculatedProfile = profileName;
+        Device_CalculatedProfileOrder = m_deviceQualityManager.Profiles_ProfileNameToOrder(profileName);
 
         // The config received from server has to override the profile
         if (serverQualitySettingsJSON != null)
