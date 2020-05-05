@@ -1073,4 +1073,88 @@ public class Builder : MonoBehaviour, UnityEditor.Build.IPreprocessBuild
             }
         }
     }
+
+    static List<string> parseUnityEditorLog(string editorLogPath, CaletySettings settingsInstance)
+	{
+		string userPath = System.Environment.GetFolderPath(Environment.SpecialFolder.Personal) + editorLogPath;
+
+		string[] lines = File.ReadAllLines(userPath);
+		List<string> outputList = new List<string>();
+		bool capturing = false;
+
+		for (int c = 0; c < lines.Length; c++)
+		{
+
+			string line = lines[c];
+
+			if (capturing)
+			{
+				outputList.Add(line);
+
+				if (line.Contains("--------------"))
+				{
+					capturing = false;
+				}
+			}
+			else
+			{
+				if (line.Contains("--------------") && lines[c + 1].Contains("Build Report"))
+				{
+					outputList.Clear();
+					outputList.Add(line);
+
+					string buildVersion = "Build version: " + GameSettings.internalVersion.major + "." + GameSettings.internalVersion.minor + "." + GameSettings.internalVersion.patch;
+					if (settingsInstance != null)
+					{
+						buildVersion += " version code: " + settingsInstance.m_strVersionIOSCode;
+					}
+
+					outputList.Add(buildVersion);
+					outputList.Add(line);
+
+					capturing = true;
+
+					c += 14;    //14 lines until asset list
+
+				}
+			}
+
+		}
+
+		if (capturing)
+		{
+			outputList.Add(">>>>>>>> Incomplete asset list.");
+		}
+
+		return outputList;
+	}
+
+	//Get Editor.log asset list in build
+	public static void processUnityEditorLog()
+    {
+#if UNITY_EDITOR_OSX
+		string assetsPath = Application.dataPath;
+		string relativeAssetsPath = "Assets";
+		string projectPath = assetsPath.Substring(0, assetsPath.LastIndexOf("/Assets"));
+
+		CaletySettings settingsInstance = (CaletySettings)Resources.Load("CaletySettings");
+
+		string ASSET_LIST = projectPath + "/BuildAssetsList.txt";
+
+		string EDITOR_LOG = "/Library/Logs/Unity/Editor.log";
+
+		List<string> outputList = parseUnityEditorLog(EDITOR_LOG, settingsInstance);
+
+        if (outputList.Count > 0)
+        {
+            if (File.Exists(ASSET_LIST))
+            {
+				FileUtil.DeleteFileOrDirectory(ASSET_LIST);
+            }
+			File.WriteAllLines(ASSET_LIST, outputList.ToArray());
+        }
+
+//		FileUtil.DeleteFileOrDirectory(EDITOR_LOG);
+#endif
+	}
 }

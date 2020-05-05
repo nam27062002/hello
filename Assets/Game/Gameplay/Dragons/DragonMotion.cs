@@ -254,6 +254,8 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
     private bool m_rotateOnIdle = false;
 
     private bool m_waterMovement = false;
+
+	private bool isCorpseAllowed = false;
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
@@ -422,6 +424,10 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
         m_dragonGravityModifier = m_dragon.data.gravityModifier;
         m_dragonAirGravityModifier = m_dragon.data.airGravityModifier;
         m_dragonWaterGravityModifier = m_dragon.data.waterGravityModifier;
+
+        // Cache the CORPSE_ALLOWED flavour setting
+        Flavour currentFlavour = FlavourManager.Instance.GetCurrentFlavour();
+		isCorpseAllowed = currentFlavour.GetSetting<bool>(Flavour.SettingKey.CORPSES_ALLOWED);
 	}
 
 	/// <summary>
@@ -647,8 +653,8 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 				{
 					m_controls.enabled = false;
 
-					// No death animation in China or Korea
-					if(!PlatformUtils.Instance.IsChina() && !PlatformUtils.Instance.IsKorea()) {
+					// No death animation according to CORPSE_ALLOWED flavour setting
+					if (isCorpseAllowed) {
 						m_animator.SetTrigger(GameConstants.Animator.DEAD);
 					}
 
@@ -1473,8 +1479,8 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 			m_impulse = m_rbody.velocity;
 			if ( m_deadTimer < 1.5f * Time.timeScale )
 			{
-				// Don't fall in China or Korea
-				if(PlatformUtils.Instance.IsChina() || PlatformUtils.Instance.IsKorea()) {
+				// Don't fall if CORPSE_ALLOWED flavour setting is not allowed
+				if (!isCorpseAllowed) {
 					ComputeImpulseToZero(_deltaTime);
 				} else {
 					float gravity = 9.81f * m_dragonGravityModifier * m_deadGravityMultiplier;

@@ -515,12 +515,15 @@ if $UPLOAD;then
 
 fi
 
+eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.processUnityEditorLog"
+
 # Commit project changes
 if $COMMIT_CHANGES;then
   print_builder "Committing changes"
   git add "${SCRIPT_PATH}/Assets/Resources/Singletons/GameSettings.asset"
   git add "${SCRIPT_PATH}/Assets/Resources/CaletySettings.asset"
   git add "${SCRIPT_PATH}/ProjectSettings/ProjectSettings.asset"
+  git add "${SCRIPT_PATH}/BuildAssetsList.txt"
   git commit -m "Automatic Build. Version ${VERSION_ID}."
   git push origin "${BRANCH}"
 
