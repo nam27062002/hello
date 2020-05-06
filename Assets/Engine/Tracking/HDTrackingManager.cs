@@ -588,6 +588,11 @@ public class HDTrackingManager
     /// <param name="action">How did the player close the popup? Possible values: "close", "buy", "shop"</param>
     public virtual void Notify_CloseHappyHourPopup(string itemID, string action) { }
 
+    /// <summary>
+    /// Notifies that the server has assigned the player to a cluster
+    /// </summary>
+    public virtual void Notify_ClusterAssigned(string clusterId) {}
+
     #endregion
 
     #region animoji

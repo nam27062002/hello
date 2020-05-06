@@ -188,12 +188,6 @@ public class UserProfile : UserPersistenceSystem
 		set { m_furyUsed = value; }
 	}
 
-	private bool m_enteredShop = false;
-	public bool hasEnteredShop
-	{
-		get => m_enteredShop;
-		set => m_enteredShop = value;
-	}
 
 
 
@@ -400,6 +394,29 @@ public class UserProfile : UserPersistenceSystem
 		get;
 		set;
 	}
+
+	// Shopping data
+	private bool m_enteredShop = false;
+	public bool hasEnteredShop
+	{
+		get => m_enteredShop;
+		set => m_enteredShop = value;
+	}
+
+	private bool m_progressionPacksDiscovered = false;
+	public bool progressionPacksDiscovered
+	{
+		get => m_progressionPacksDiscovered;
+		set => m_progressionPacksDiscovered = value;
+	}
+
+	private int m_maxTransactionPrice = 0; // in USD cents
+	public int maxTransactionPrice
+	{
+		get => m_maxTransactionPrice;
+		set => m_maxTransactionPrice = value;
+	}
+
 
 	// Happy hour
 	private HappyHourManager.SaveData m_happyHourData = new HappyHourManager.SaveData();
@@ -1063,13 +1080,6 @@ public class UserProfile : UserPersistenceSystem
             m_furyUsed = false;
         }
 
-		key = "enteredShop";
-		if (profile.ContainsKey(key)){
-			m_enteredShop = PersistenceUtils.SafeParse<bool>(profile[key]);
-		} else {
-			m_enteredShop = false;
-		}
-
 		// Game stats
 		key = "gamesPlayed";
         if (profile.ContainsKey(key)) {
@@ -1385,6 +1395,39 @@ public class UserProfile : UserPersistenceSystem
 			}
 		}
 
+		// Shopping data
+		key = "enteredShop";
+		if (profile.ContainsKey(key))
+		{
+			m_enteredShop = PersistenceUtils.SafeParse<bool>(profile[key]);
+		}
+		else
+		{
+			m_enteredShop = false;
+		}
+
+		key = "progressionPacksDiscovered";
+		if (profile.ContainsKey(key))
+		{
+			m_progressionPacksDiscovered = PersistenceUtils.SafeParse<bool>(profile[key]);
+		}
+		else
+		{
+			m_progressionPacksDiscovered = false;
+		}
+
+		key = "maxTransactionPrice";
+		if (profile.ContainsKey(key))
+		{
+			m_maxTransactionPrice = PersistenceUtils.SafeParse<int>(profile[key]);
+		}
+		else
+		{
+			m_maxTransactionPrice = 0;
+		}
+
+
+
 		// Clustering
 		key = "clusterId";
 		if (profile.ContainsKey(key)) {
@@ -1522,7 +1565,6 @@ public class UserProfile : UserPersistenceSystem
 		profile.Add("currentLevel",m_currentLevel);
 		profile.Add("tutorialStep", PersistenceUtils.SafeToString((int)m_tutorialStep));
 		profile.Add("furyUsed", PersistenceUtils.SafeToString(m_furyUsed));
-		profile.Add("enteredShop", PersistenceUtils.SafeToString(m_enteredShop));
 
 		// Game stats
 		profile.Add("gamesPlayed", PersistenceUtils.SafeToString(m_gamesPlayed));
@@ -1636,6 +1678,11 @@ public class UserProfile : UserPersistenceSystem
         // For safety reasons we store the Remove Ads feature in the player preferences
         // but we store it also in the user profile just in case we need in the future
         data.Add("removeAdsFeature", m_removeAds.Save());
+
+		// Shopping data
+		profile.Add("enteredShop", PersistenceUtils.SafeToString(m_enteredShop));
+		profile.Add("progressionPacksDiscovered", PersistenceUtils.SafeToString(m_progressionPacksDiscovered));
+		profile.Add("maxTransactionPrice", PersistenceUtils.SafeToString(m_maxTransactionPrice));
 
 		// Clustering
 		data.Add("clusterId", m_clusterId);

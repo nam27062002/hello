@@ -41,7 +41,7 @@ public class ClusteringManager {
 	private static ClusteringManager m_instance = null;
 
     // Communication with server
-	private bool m_initialised = false;
+	private bool m_registered = false;
 	private bool m_offlineMode = false;
 
 	// Cached player values
@@ -134,21 +134,27 @@ public class ClusteringManager {
 
 	public void Initialise(bool _offlineMode = false)
 	{
-		if (!m_initialised)
+		if (!m_registered)
 		{
 			m_offlineMode = _offlineMode;
 
-			LoadCachedValues();
-
 			NetworkManager.SharedInstance.RegistryEndPoint(GET_CLUSTER_ID, NetworkManager.EPacketEncryption.E_ENCRYPTION_AES, new int[] { 200, 404, 500, 503 }, OnGetClusterResponse);
 
-			m_initialised = true;
+			m_registered = true;
 		}
 
 
 		if (!_offlineMode)
 		{
-			SendRequestToServer();
+			// Dont make the request if we are not logged yet in the server
+			if (GameSessionManager.SharedInstance.IsLogged())
+			{
+				// Gather all the player data (dont do it before the login or accountId wont be ready)
+				LoadCachedValues();
+
+				SendRequestToServer();
+
+			}
 		}
 	}
 
@@ -157,11 +163,6 @@ public class ClusteringManager {
     /// </summary>
 	private void SendRequestToServer()
 	{
-        // Dont make the request if the session is not created
-        if (! GameSessionManager.SharedInstance.IsLogged())
-        {
-			return;
-        }
 
 		Dictionary<string, string> kParams = new Dictionary<string, string>();
 		kParams["uid"] = GameSessionManager.SharedInstance.GetUID();
@@ -179,7 +180,7 @@ public class ClusteringManager {
 		kBody["boostTime"] = PersistenceUtils.SafeToString(m_boostTime);
 
 		// Send it to the server
-		ServerManager.SharedInstance.SendCommand(GET_CLUSTER_ID, kParams.ToString(), kBody);
+		ServerManager.SharedInstance.SendCommand(GET_CLUSTER_ID, kParams, kBody.ToString());
 
 		//Debug:
         /*
@@ -227,8 +228,14 @@ public class ClusteringManager {
 								{
 									if (kJSON.ContainsKey("clusterId"))
 									{
-                                        // The server knows the cluster
-										UsersManager.currentUser.clusterId = kJSON["clusterId"];
+
+										// The server knows the cluster
+										string clusterId = kJSON["clusterId"];
+										
+										UsersManager.currentUser.clusterId = clusterId;
+
+										// Track this event
+										HDTrackingManager.Instance.Notify_ClusterAssigned(clusterId);
 										
 									}
                                     // else: the server doesnt know the cluster. Leave it empty.
