@@ -1682,7 +1682,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
         // HQ event
         HDTrackingEvent e = new HDTrackingEvent("custom.player.iap.secondaryStore");
         {
-            Track_AddParamString(e, TRACK_PARAM_ECONOMY_GROUP, economyGroup);
+            Track_AddParamString(e, TRACK_PARAM_ECO_GROUP, economyGroup);
             Track_AddParamString(e, TRACK_PARAM_ITEM_ID, itemID);
             e.data.Add(TRACK_PARAM_ITEM_QUANTITY, itemQuantity);
             Track_AddParamString(e, TRACK_PARAM_PROMOTION_TYPE, promotionType);
@@ -2808,7 +2808,6 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private const string TRACK_PARAM_DRAGON_SKIN = "dragonSkin";
     private const string TRACK_PARAM_DURATION = "duration";
     private const string TRACK_PARAM_ECO_GROUP = "ecoGroup";
-    private const string TRACK_PARAM_ECONOMY_GROUP = "economyGroup";
     private const string TRACK_PARAM_EGG_FOUND = "eggFound";
     private const string TRACK_PARAM_ERROR_MESSAGE = "errorMessage";
     private const string TRACK_PARAM_ERROR_TYPE = "errorType";
