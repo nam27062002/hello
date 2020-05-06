@@ -1791,12 +1791,13 @@ public class HDTrackingManagerImp : HDTrackingManager {
     {
         Log("Track_ClusterAssigned clusterId = " + clusterId );
 
+        int runsCompleted = UsersManager.currentUser.gamesPlayed;
 
         HDTrackingEvent e = new HDTrackingEvent("custom.player.clusterAssigned");
         {
 
             Track_AddParamString(e, TRACK_PARAM_CLUSTER_ID, clusterId);
-            Track_AddParamRunsAmount(e);
+            Track_AddParamInt(e, TRACK_PARAM_RUNS_COMPLETED, runsCompleted);
             Track_AddParamFloat(e, TRACK_PARAM_MAX_TRANSACTION_PRICE, UsersManager.currentUser.maxTransactionPrice);
             Track_AddParamBool(e, TRACK_PARAM_STARTER_PACK_SHOWN, UsersManager.currentUser.progressionPacksDiscovered);
             Track_AddParamInt(e, TRACK_PARAM_AGE, GDPRManager.SharedInstance.GetCachedUserAge());
@@ -2932,6 +2933,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private const string TRACK_PARAM_REWARD_TIER = "rewardTier";
     private const string TRACK_PARAM_REWARD_TYPE = "rewardType";
     private const string TRACK_PARAM_ROUND_ID = "roundid";
+    private const string TRACK_PARAM_RUNS_COMPLETED = "runsCompleted";
     private const string TRACK_PARAM_SC_EARNED = "scEarned";
     private const string TRACK_PARAM_SCORE = "score";
     private const string TRACK_PARAM_SECTION = "section";
