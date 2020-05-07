@@ -524,6 +524,7 @@ if $COMMIT_CHANGES;then
   git add "${SCRIPT_PATH}/Assets/Resources/CaletySettings.asset"
   git add "${SCRIPT_PATH}/ProjectSettings/ProjectSettings.asset"
   git add "${SCRIPT_PATH}/BuildAssetsList.txt"
+#  git add "${SCRIPT_PATH}/BuildAssetbundlesList.txt"
   git commit -m "Automatic Build. Version ${VERSION_ID}."
   git push origin "${BRANCH}"
 
