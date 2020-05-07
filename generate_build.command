@@ -515,8 +515,6 @@ if $UPLOAD;then
 
 fi
 
-eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.processUnityEditorLog"
-
 # Commit project changes
 if $COMMIT_CHANGES;then
   print_builder "Committing changes"
