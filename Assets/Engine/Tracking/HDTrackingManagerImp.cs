@@ -1798,10 +1798,10 @@ public class HDTrackingManagerImp : HDTrackingManager {
 
             Track_AddParamString(e, TRACK_PARAM_CLUSTER_ID, clusterId);
             Track_AddParamInt(e, TRACK_PARAM_RUNS_COMPLETED, runsCompleted);
-            Track_AddParamFloat(e, TRACK_PARAM_MAX_TRANSACTION_PRICE, UsersManager.currentUser.maxTransactionPrice);
+            Track_AddParamInt(e, TRACK_PARAM_MAX_TRANSACTION_PRICE, UsersManager.currentUser.maxTransactionPrice);
             Track_AddParamBool(e, TRACK_PARAM_STARTER_PACK_SHOWN, UsersManager.currentUser.progressionPacksDiscovered);
             Track_AddParamInt(e, TRACK_PARAM_AGE, GDPRManager.SharedInstance.GetCachedUserAge());
-            Track_AddParamInt(e, TRACK_PARAM_OPT_IN, GDPRManager.SharedInstance.GetCachedUserMarketingConsentGiven());
+            Track_AddParamBool(e, TRACK_PARAM_OPT_IN, GDPRManager.SharedInstance.GetCachedUserMarketingConsentGiven() == 1);
         }
         m_eventQueue.Enqueue(e);
     }
