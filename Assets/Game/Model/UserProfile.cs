@@ -1145,6 +1145,44 @@ public class UserProfile : UserPersistenceSystem
 			m_boostTime = 0;
 		}
 
+		// Shopping data
+		key = "enteredShop";
+		if (profile.ContainsKey(key))
+		{
+			m_enteredShop = PersistenceUtils.SafeParse<bool>(profile[key]);
+		} else
+		{
+			m_enteredShop = false;
+		}
+
+		key = "progressionPacksDiscovered";
+		if (profile.ContainsKey(key))
+		{
+			m_progressionPacksDiscovered = PersistenceUtils.SafeParse<bool>(profile[key]);
+		} else
+		{
+			m_progressionPacksDiscovered = false;
+		}
+
+		key = "maxTransactionPrice";
+		if (profile.ContainsKey(key))
+		{
+			m_maxTransactionPrice = PersistenceUtils.SafeParse<int>(profile[key]);
+		} else
+		{
+			m_maxTransactionPrice = 0;
+		}
+       
+		// Clustering
+		key = "clusterId";
+		if (profile.ContainsKey(key))
+		{
+			m_clusterId = profile[key];
+		} else
+		{
+			m_clusterId = "";
+		}
+
 		// Some cheats override profile settings - will be saved with the next Save()
 		if (Prefs.GetBoolPlayer("skipTutorialCheat")) {
 			m_tutorialStep = TutorialStep.ALL;
@@ -1395,46 +1433,7 @@ public class UserProfile : UserPersistenceSystem
 			}
 		}
 
-		// Shopping data
-		key = "enteredShop";
-		if (profile.ContainsKey(key))
-		{
-			m_enteredShop = PersistenceUtils.SafeParse<bool>(profile[key]);
-		}
-		else
-		{
-			m_enteredShop = false;
-		}
-
-		key = "progressionPacksDiscovered";
-		if (profile.ContainsKey(key))
-		{
-			m_progressionPacksDiscovered = PersistenceUtils.SafeParse<bool>(profile[key]);
-		}
-		else
-		{
-			m_progressionPacksDiscovered = false;
-		}
-
-		key = "maxTransactionPrice";
-		if (profile.ContainsKey(key))
-		{
-			m_maxTransactionPrice = PersistenceUtils.SafeParse<int>(profile[key]);
-		}
-		else
-		{
-			m_maxTransactionPrice = 0;
-		}
-
-
-
-		// Clustering
-		key = "clusterId";
-		if (profile.ContainsKey(key)) {
-			m_clusterId = profile[key];
-		} else {
-			m_clusterId = "";
-		}
+		
 
 		// Visited Zones
 		key = "visitedZones";
@@ -1575,6 +1574,14 @@ public class UserProfile : UserPersistenceSystem
 		profile.Add("boostTime", PersistenceUtils.SafeToString(m_boostTime));
 		profile.Add("totalScore", PersistenceUtils.SafeToString(m_totalScore));
 
+		// Shopping data
+		profile.Add("enteredShop", PersistenceUtils.SafeToString(m_enteredShop));
+		profile.Add("progressionPacksDiscovered", PersistenceUtils.SafeToString(m_progressionPacksDiscovered));
+		profile.Add("maxTransactionPrice", PersistenceUtils.SafeToString(m_maxTransactionPrice));
+
+		// Clustering
+		profile.Add("clusterId", m_clusterId);
+
 		data.Add("userProfile", profile);
 
 		// Dragons
@@ -1679,13 +1686,6 @@ public class UserProfile : UserPersistenceSystem
         // but we store it also in the user profile just in case we need in the future
         data.Add("removeAdsFeature", m_removeAds.Save());
 
-		// Shopping data
-		profile.Add("enteredShop", PersistenceUtils.SafeToString(m_enteredShop));
-		profile.Add("progressionPacksDiscovered", PersistenceUtils.SafeToString(m_progressionPacksDiscovered));
-		profile.Add("maxTransactionPrice", PersistenceUtils.SafeToString(m_maxTransactionPrice));
-
-		// Clustering
-		data.Add("clusterId", m_clusterId);
 
 		// Visited Zones
 		JSONArray zonesArray = new SimpleJSON.JSONArray();
