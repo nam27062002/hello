@@ -1184,9 +1184,29 @@ public class Builder : MonoBehaviour, UnityEditor.Build.IPreprocessBuild
 				FileUtil.DeleteFileOrDirectory(ASSET_LIST);
             }
 			File.WriteAllLines(ASSET_LIST, outputList.ToArray());
+			Debug.Log("**** Builder.processUnityEditorLog: " + ASSET_LIST + " created ok.");
         }
+        else
+        {
+			Debug.Log("**** Builder.processUnityEditorLog: No data found in Unity editor.log");
+		}
 
-//		FileUtil.DeleteFileOrDirectory(EDITOR_LOG);
+		//		FileUtil.DeleteFileOrDirectory(EDITOR_LOG);
 #endif
 	}
+
+
+	[MenuItem("Tech/Build/Generate build asset list")]
+	public static void callProcessUnityEditorLogBuild()
+	{
+		processUnityEditorLog();
+	}
+
+	[MenuItem("Tech/Build/Generate asset bundles detailed list")]
+	public static void callProcessUnityEditorLogBundles()
+	{
+		processUnityEditorLog(true);
+	}
+
 }
+
