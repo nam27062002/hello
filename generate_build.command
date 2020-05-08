@@ -515,17 +515,18 @@ if $UPLOAD;then
 
 fi
 
-eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.processUnityEditorLog"
-
 # Commit project changes
 if $COMMIT_CHANGES;then
   print_builder "Committing changes"
+  set +e  # Dont exit script on error
   git add "${SCRIPT_PATH}/Assets/Resources/Singletons/GameSettings.asset"
   git add "${SCRIPT_PATH}/Assets/Resources/CaletySettings.asset"
   git add "${SCRIPT_PATH}/ProjectSettings/ProjectSettings.asset"
   git add "${SCRIPT_PATH}/BuildAssetsList.txt"
+#  git add "${SCRIPT_PATH}/BuildAssetbundlesList.txt"
   git commit -m "Automatic Build. Version ${VERSION_ID}."
   git push origin "${BRANCH}"
+  set -e
 
   # Create Git tag
   if $CREATE_TAG; then

@@ -76,6 +76,8 @@ public class Builder : MonoBehaviour, UnityEditor.Build.IPreprocessBuild
 		// Do the build!
 		BuildPlayer( stagePath, BuildTarget.iOS);
 
+		processUnityEditorLog();
+
 		// Restore
 		PlayerSettings.applicationIdentifier = oldBundleIdentifier;
         if (OVERRIDE_SYMBOLS)
@@ -106,8 +108,8 @@ public class Builder : MonoBehaviour, UnityEditor.Build.IPreprocessBuild
 		
 	//[MenuItem ("Build/Android")]
 	static void GenerateAPK()
-	{	
-#if UNITY_ANDROID	
+	{
+#if UNITY_ANDROID
 		PrepareAddressablesMode();
 
 		// Save Player Settings
@@ -172,6 +174,7 @@ public class Builder : MonoBehaviour, UnityEditor.Build.IPreprocessBuild
         
         // Do the build!
         BuildPlayer(stagePath, BuildTarget.Android);
+        processUnityEditorLog();
 
         // Restore Player Settings
         PlayerSettings.applicationIdentifier = oldBundleIdentifier;
@@ -179,6 +182,7 @@ public class Builder : MonoBehaviour, UnityEditor.Build.IPreprocessBuild
         {
             PlayerSettings.SetScriptingDefineSymbolsForGroup(BuildTargetGroup.Android, oldSymbols);
         }
+
 #endif
 	}
 
@@ -1074,31 +1078,50 @@ public class Builder : MonoBehaviour, UnityEditor.Build.IPreprocessBuild
         }
     }
 
-    static List<string> parseUnityEditorLog(string editorLogPath, CaletySettings settingsInstance)
+    static List<string> parseUnityEditorLog(string editorLogPath, CaletySettings settingsInstance, bool assetBundles)
 	{
 		string userPath = System.Environment.GetFolderPath(Environment.SpecialFolder.Personal) + editorLogPath;
 
 		string[] lines = File.ReadAllLines(userPath);
 		List<string> outputList = new List<string>();
 		bool capturing = false;
+		string searchToken = assetBundles ? "Bundle Name" : "Build Report";
+		int offset = assetBundles ? 0 : 14;    //14 lines until asset list
 
 		for (int c = 0; c < lines.Length; c++)
 		{
-
 			string line = lines[c];
 
 			if (capturing)
 			{
 				outputList.Add(line);
-
-				if (line.Contains("--------------"))
+				if (assetBundles)
 				{
-					capturing = false;
+					if (line.Contains("--------------")) 
+                    {
+						string line1 = lines[c + 1];
+						if (!(line1.Contains("--------------")))
+						{
+							capturing = false;
+						}
+                        else
+                        {
+							outputList.Add(line);
+							c++;
+                        }
+                    }
+				}
+				else
+				{
+					if (line.Contains("--------------"))
+					{
+						capturing = false;
+					}
 				}
 			}
 			else
 			{
-				if (line.Contains("--------------") && lines[c + 1].Contains("Build Report"))
+				if (line.Contains("--------------") && lines[c + 1].Contains(searchToken))
 				{
 					outputList.Clear();
 					outputList.Add(line);
@@ -1114,7 +1137,7 @@ public class Builder : MonoBehaviour, UnityEditor.Build.IPreprocessBuild
 
 					capturing = true;
 
-					c += 14;    //14 lines until asset list
+					c += offset;
 
 				}
 			}
@@ -1130,7 +1153,7 @@ public class Builder : MonoBehaviour, UnityEditor.Build.IPreprocessBuild
 	}
 
 	//Get Editor.log asset list in build
-	public static void processUnityEditorLog()
+	public static void processUnityEditorLog(bool assetBundles = false)
     {
 #if UNITY_EDITOR_OSX
 		string assetsPath = Application.dataPath;
@@ -1139,11 +1162,20 @@ public class Builder : MonoBehaviour, UnityEditor.Build.IPreprocessBuild
 
 		CaletySettings settingsInstance = (CaletySettings)Resources.Load("CaletySettings");
 
-		string ASSET_LIST = projectPath + "/BuildAssetsList.txt";
+		string ASSET_LIST;
+
+		if (assetBundles)
+        {
+			ASSET_LIST = projectPath + "/BuildAssetbundlesList.txt";
+		}
+		else
+        {
+			ASSET_LIST = projectPath + "/BuildAssetsList.txt";
+		}
 
 		string EDITOR_LOG = "/Library/Logs/Unity/Editor.log";
 
-		List<string> outputList = parseUnityEditorLog(EDITOR_LOG, settingsInstance);
+		List<string> outputList = parseUnityEditorLog(EDITOR_LOG, settingsInstance, assetBundles);
 
         if (outputList.Count > 0)
         {
@@ -1152,9 +1184,29 @@ public class Builder : MonoBehaviour, UnityEditor.Build.IPreprocessBuild
 				FileUtil.DeleteFileOrDirectory(ASSET_LIST);
             }
 			File.WriteAllLines(ASSET_LIST, outputList.ToArray());
+			Debug.Log("**** Builder.processUnityEditorLog: " + ASSET_LIST + " created ok.");
         }
+        else
+        {
+			Debug.Log("**** Builder.processUnityEditorLog: No data found in Unity editor.log");
+		}
 
-//		FileUtil.DeleteFileOrDirectory(EDITOR_LOG);
+		//		FileUtil.DeleteFileOrDirectory(EDITOR_LOG);
 #endif
 	}
+
+
+	[MenuItem("Tech/Build/Generate build asset list")]
+	public static void callProcessUnityEditorLogBuild()
+	{
+		processUnityEditorLog();
+	}
+
+	[MenuItem("Tech/Build/Generate asset bundles detailed list")]
+	public static void callProcessUnityEditorLogBundles()
+	{
+		processUnityEditorLog(true);
+	}
+
 }
+
