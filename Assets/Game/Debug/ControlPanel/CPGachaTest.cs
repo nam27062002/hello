@@ -31,7 +31,8 @@ public class CPGachaTest : MonoBehaviour {
 		COMMON_ONLY,
 		RARE_ONLY,
 		EPIC_ONLY,
-		FORCED_PET_SKU
+		FORCED_PET_SKU,
+        BABY_ONLY
 	};
 
 	public enum DuplicateMode {
