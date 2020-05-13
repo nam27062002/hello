@@ -1255,7 +1255,7 @@ public class Ingame_SwitchAreaHandle
 			// menu dragons
             foreach (KeyValuePair<string, DefinitionNode> pair in dragons)
             {
-				handle.AddAddressable(pair.Value.Get("menuPrefab"));            
+                Handle_AddAddressable(handle, pair.Value.Get("menuPrefab"));            
             }                      
 
             Dictionary<string, IDragonData> dragonDatas = DragonManager.dragonsBySku;
@@ -1270,6 +1270,11 @@ public class Ingame_SwitchAreaHandle
         }
     }
 
+    private void Handle_AddAddressable(AddressablesBatchHandle handle, string addressableId)
+    {
+        handle.AddAddressable(addressableId, Flavour_GetVariant(addressableId, null));
+    }
+
     private void AddGameDependenciesToAddressablesBatchHandle(AddressablesBatchHandle handle)
     { 
         if (handle != null)
@@ -1279,7 +1284,7 @@ public class Ingame_SwitchAreaHandle
 
             // Current dragon ingame dependencies
             IDragonData data = GetCurrentDragonData();
-            handle.AddAddressable(data.gamePrefab);
+            Handle_AddAddressable(handle, data.gamePrefab);
 
             AddDisguiseDependencies( handle, data, true );
 
@@ -1313,16 +1318,16 @@ public class Ingame_SwitchAreaHandle
                 }
             }
         }
-        handle.AddAddressable( resultPrefab );
+        Handle_AddAddressable(handle, resultPrefab);
         string animController = resultPrefab.Replace("PF_", "AC_");
-        handle.AddAddressable( animController );
+        Handle_AddAddressable(handle, animController);
         AddDisguiseDependencies( handle, dragon, false );
 
         // Add next dragon icon
         IDragonData nextDragonData = DragonManager.GetNextDragonData(dragon.sku);
 		if(nextDragonData != null) {
             string defaultIcon = IDragonData.GetDefaultDisguise(nextDragonData.def.sku).Get("icon");
-            handle.AddAddressable( defaultIcon );
+            Handle_AddAddressable(handle, defaultIcon);
         }
     }    
 
@@ -1358,11 +1363,11 @@ public class Ingame_SwitchAreaHandle
         int count = resourceIDs.Count;
         for (int i = 0; i < count; i++)
         {
-            handle.AddAddressable(resourceIDs[i]);
-        }        
+            Handle_AddAddressable(handle, resourceIDs[i]);
+        }
 
         // Icon
-        handle.AddAddressable( def.Get("icon") );
+        Handle_AddAddressable(handle, def.Get("icon"));
     }
 
     private void AddPetDependencies( AddressablesBatchHandle handle, IDragonData data )
@@ -1372,7 +1377,7 @@ public class Ingame_SwitchAreaHandle
             DefinitionNode petDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PETS, pet);
             if (petDef != null) {
                 string id = petDef.Get("gamePrefab");
-                handle.AddAddressable(id);
+                Handle_AddAddressable(handle, id);
             }
         }
     }

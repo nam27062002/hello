@@ -13,11 +13,6 @@ ShaderVariantCollection:
       variants:
       - keywords: MEDIUM_DETAIL_ON
         passType: 0
-  - first: {fileID: 4800000, guid: 025775b2b3616154f9eec0261bb8a581, type: 3}
-    second:
-      variants:
-      - keywords: MEDIUM_DETAIL_ON
-        passType: 0
   - first: {fileID: 4800000, guid: 02891335b31643f408fed70e86224f83, type: 3}
     second:
       variants:
@@ -266,6 +261,12 @@ ShaderVariantCollection:
           EXTENDED_PARTICLES MEDIUM_DETAIL_ON NOISEUV NOISE_TEXTURE NOISE_TEXTURE_ALPHA
           NOISE_TEXTURE_DISSOLVE NOISE_TEXTURE_EMISSION
         passType: 0
+      - keywords: APPLY_RGB_COLOR_VERTEX BLENDMODE_PREMULTIPLY DISSOLVE_ENABLED EXTENDED_PARTICLES
+          FLOWMAP MEDIUM_DETAIL_ON
+        passType: 0
+      - keywords: APPLY_RGB_COLOR_VERTEX BLENDMODE_PREMULTIPLY DISSOLVE_VERTEXCOLORALFA
+          EXTENDED_PARTICLES MEDIUM_DETAIL_ON
+        passType: 0
       - keywords: BLENDMODE_PREMULTIPLY DISSOLVE_ENABLED DISSOLVE_VERTEXCOLORALFA
           EXTENDED_PARTICLES MEDIUM_DETAIL_ON
         passType: 0
@@ -275,9 +276,16 @@ ShaderVariantCollection:
       - keywords: BLENDMODE_PREMULTIPLY DISSOLVE_ENABLED DISSOLVE_VERTEXCOLORALFA
           EXTENDED_PARTICLES MEDIUM_DETAIL_ON NOISEUV
         passType: 0
+      - keywords: APPLY_RGB_COLOR_VERTEX BLENDMODE_PREMULTIPLY DISSOLVE_VERTEXCOLORALFA
+          EXTENDED_PARTICLES MEDIUM_DETAIL_ON NOISEUV NOISE_TEXTURE NOISE_TEXTURE_ALPHA
+        passType: 0
       - keywords: BLENDMODE_PREMULTIPLY DISSOLVE_ENABLED DISSOLVE_VERTEXCOLORALFA
           EXTENDED_PARTICLES MEDIUM_DETAIL_ON NOISEUV NOISE_TEXTURE NOISE_TEXTURE_ALPHA
           NOISE_TEXTURE_EMISSION
+        passType: 0
+      - keywords: BLENDMODE_PREMULTIPLY DISSOLVE_ENABLED DISSOLVE_VERTEXCOLORALFA
+          EXTENDED_PARTICLES MEDIUM_DETAIL_ON NOISEUV NOISE_TEXTURE NOISE_TEXTURE_ALPHA
+          NOISE_TEXTURE_DISSOLVE NOISE_TEXTURE_EMISSION
         passType: 0
       - keywords: BLENDMODE_PREMULTIPLY COLOR_RAMP EXTENDED_PARTICLES MEDIUM_DETAIL_ON
         passType: 0
@@ -338,11 +346,6 @@ ShaderVariantCollection:
       variants:
       - keywords: MEDIUM_DETAIL_ON
         passType: 0
-  - first: {fileID: 4800000, guid: 1b62d0b1d1626d34ea157e7f2e06d54f, type: 3}
-    second:
-      variants:
-      - keywords: MEDIUM_DETAIL_ON
-        passType: 0
   - first: {fileID: 4800000, guid: 1c1d1e96ee7de4cca84f6af8cbe2b280, type: 3}
     second:
       variants:
@@ -353,10 +356,7 @@ ShaderVariantCollection:
       variants:
       - keywords: MEDIUM_DETAIL_ON
         passType: 0
-  - first: {fileID: 4800000, guid: 1e432315427554fac90b38453d9f6fed, type: 3}
-    second:
-      variants:
-      - keywords: MEDIUM_DETAIL_ON
+      - keywords: MEDIUM_DETAIL_ON SPACE
         passType: 0
   - first: {fileID: 4800000, guid: 1e938c1d9985e47d7988779cea0578e2, type: 3}
     second:
@@ -551,6 +551,9 @@ ShaderVariantCollection:
       - keywords: FRESNEL FXLAYER_NONE MEDIUM_DETAIL_ON NORMALMAP REFLECTIONTYPE_NORMAL
           SELFILLUMINATE_BLINKLIGHTS SPECULAR _ZWRITE_ON
         passType: 4
+      - keywords: CUTOFF DOUBLESIDED FRESNEL FXLAYER_NONE MEDIUM_DETAIL_ON NORMALMAP
+          REFLECTIONTYPE_NORMAL SELFILLUMINATE_EMISSIVE SPECULAR _ZWRITE_ON
+        passType: 4
       - keywords: CUTOFF DOUBLESIDED FXLAYER_REFLECTION MEDIUM_DETAIL_ON NORMALMAP
           REFLECTIONTYPE_NORMAL SELFILLUMINATE_BLINKLIGHTS SPECULAR _ZWRITE_ON
         passType: 4
@@ -564,11 +567,19 @@ ShaderVariantCollection:
           SELFILLUMINATE_NORMAL SPECULAR VERTEXOFFSET VERTEXOFFSETX VERTEXOFFSETZ
           _ZWRITE_ON
         passType: 4
+      - keywords: FXLAYER_NONE MEDIUM_DETAIL_ON NORMALMAP REFLECTIONTYPE_COLOR SPECULAR
+        passType: 4
       - keywords: CUTOFF DOUBLESIDED FRESNEL FXLAYER_NONE MEDIUM_DETAIL_ON NORMALMAP
           REFLECTIONTYPE_COLOR SELFILLUMINATE_NORMAL SPECULAR _ZWRITE_ON
         passType: 4
       - keywords: FRESNEL FXLAYER_NONE MEDIUM_DETAIL_ON NORMALMAP REFLECTIONTYPE_COLOR
           SELFILLUMINATE_EMISSIVE SPECULAR
+        passType: 4
+      - keywords: CUTOFF DOUBLESIDED FRESNEL FXLAYER_NONE MEDIUM_DETAIL_ON NORMALMAP
+          REFLECTIONTYPE_COLOR SELFILLUMINATE_EMISSIVE SPECULAR _ZWRITE_ON
+        passType: 4
+      - keywords: FXLAYER_REFLECTION MEDIUM_DETAIL_ON NORMALMAP REFLECTIONTYPE_COLOR
+          SPECULAR
         passType: 4
       - keywords: FXLAYER_REFLECTION MEDIUM_DETAIL_ON NORMALMAP REFLECTIONTYPE_COLOR
           SELFILLUMINATE_NORMAL SPECULAR
@@ -581,6 +592,12 @@ ShaderVariantCollection:
         passType: 4
       - keywords: CUTOFF DOUBLESIDED FRESNEL FXLAYER_REFLECTION MEDIUM_DETAIL_ON NORMALMAP
           REFLECTIONTYPE_COLOR SELFILLUMINATE_NORMAL SPECULAR _ZWRITE_ON
+        passType: 4
+      - keywords: FRESNEL FXLAYER_REFLECTION MEDIUM_DETAIL_ON NORMALMAP REFLECTIONTYPE_COLOR
+          SELFILLUMINATE_BLINKLIGHTS SPECULAR _ZWRITE_ON
+        passType: 4
+      - keywords: CUTOFF DOUBLESIDED FRESNEL FXLAYER_REFLECTION MEDIUM_DETAIL_ON NORMALMAP
+          REFLECTIONTYPE_COLOR SELFILLUMINATE_BLINKLIGHTS SPECULAR _ZWRITE_ON
         passType: 4
       - keywords: FRESNEL FXLAYER_REFLECTION MEDIUM_DETAIL_ON NORMALMAP REFLECTIONTYPE_COLOR
           SELFILLUMINATE_EMISSIVE SPECULAR
@@ -660,9 +677,15 @@ ShaderVariantCollection:
           SELFILLUMINATE_NORMAL SPECULAR VERTEXOFFSET VERTEXOFFSETX VERTEXOFFSETY
           VERTEXOFFSETZ _ZWRITE_ON
         passType: 4
+      - keywords: FXLAYER_NONE MEDIUM_DETAIL_ON REFLECTIONTYPE_COLOR SELFILLUMINATE_EMISSIVE
+          SPECULAR VERTEXOFFSET VERTEXOFFSETY VERTEXOFFSETZ
+        passType: 4
       - keywords: FRESNEL FXLAYER_NONE MEDIUM_DETAIL_ON NORMALMAP REFLECTIONTYPE_COLOR
           SELFILLUMINATE_NORMAL SPECULAR VERTEXOFFSET VERTEXOFFSETX VERTEXOFFSETY
           VERTEXOFFSETZ _ZWRITE_ON
+        passType: 4
+      - keywords: CUTOFF DOUBLESIDED FXLAYER_REFLECTION MEDIUM_DETAIL_ON NORMALMAP
+          REFLECTIONTYPE_COLOR SPECULAR VERTEXOFFSETY
         passType: 4
       - keywords: FRESNEL FXLAYER_REFLECTION MEDIUM_DETAIL_ON NORMALMAP REFLECTIONTYPE_COLOR
           SELFILLUMINATE_EMISSIVE SPECULAR VERTEXOFFSET VERTEXOFFSETX VERTEXOFFSETY
@@ -671,6 +694,8 @@ ShaderVariantCollection:
   - first: {fileID: 4800000, guid: 2792aaa8ace564651ba7198784ab33a8, type: 3}
     second:
       variants:
+      - keywords: MEDIUM_DETAIL_ON
+        passType: 4
       - keywords: COLORMODE_NONE MEDIUM_DETAIL_ON
         passType: 4
       - keywords: COLORMODE_COLORRAMP MEDIUM_DETAIL_ON
@@ -785,6 +810,8 @@ ShaderVariantCollection:
       - keywords: BLEND_TEXTURE CUSTOM_VERTEXCOLOR EMISSIVE_REFLECTIVE FOG MEDIUM_DETAIL_ON
           OPAQUEALPHA VERTEXCOLOR_NONE
         passType: 0
+      - keywords: EMISSIVE_COLOR MEDIUM_DETAIL_ON OPAQUEALPHA VERTEXCOLOR_NONE
+        passType: 0
       - keywords: EMISSIVE_COLOR FOG MEDIUM_DETAIL_ON OPAQUEALPHA VERTEXCOLOR_NONE
         passType: 0
       - keywords: FOG MAINCOLOR_TEXTURE MEDIUM_DETAIL_ON OPAQUEALPHA VERTEXCOLOR_NONE
@@ -825,6 +852,9 @@ ShaderVariantCollection:
         passType: 0
       - keywords: EMISSIVE_BLINK FOG MAINCOLOR_TEXTURE MEDIUM_DETAIL_ON OPAQUEALPHA
           VERTEXCOLOR_NONE
+        passType: 0
+      - keywords: EMISSIVE_COLOR FOG MAINCOLOR_TEXTURE MEDIUM_DETAIL_ON OPAQUEALPHA
+          VERTEXCOLOR_NONE _ZWRITE_ON
         passType: 0
       - keywords: EMISSIVE_COLOR FOG MAINCOLOR_TEXTURE MEDIUM_DETAIL_ON VERTEXCOLOR_NONE
           WAVE_EMISSION _ZWRITE_ON
@@ -900,11 +930,6 @@ ShaderVariantCollection:
       variants:
       - keywords: MEDIUM_DETAIL_ON
         passType: 0
-  - first: {fileID: 4800000, guid: 862c830f04eb50d48949b08e87ec7000, type: 3}
-    second:
-      variants:
-      - keywords: MEDIUM_DETAIL_ON
-        passType: 4
   - first: {fileID: 4800000, guid: 87e6fe19d163bc443910dc94823f7d3a, type: 3}
     second:
       variants:
@@ -955,11 +980,6 @@ ShaderVariantCollection:
       variants:
       - keywords: MEDIUM_DETAIL_ON
         passType: 0
-  - first: {fileID: 4800000, guid: c0983d60f2f7a4a20a4631b5a4a39960, type: 3}
-    second:
-      variants:
-      - keywords: MEDIUM_DETAIL_ON
-        passType: 0
   - first: {fileID: 4800000, guid: cac050e216f992d4daea2d13a5ee10f0, type: 3}
     second:
       variants:
@@ -977,11 +997,6 @@ ShaderVariantCollection:
       - keywords: MEDIUM_DETAIL_ON OUTLINE_ON UNDERLAY_ON
         passType: 0
       - keywords: MEDIUM_DETAIL_ON OUTLINE_ON UNDERLAY_INNER
-        passType: 0
-  - first: {fileID: 4800000, guid: d16f77d9dd6a34705bb518b491a7db03, type: 3}
-    second:
-      variants:
-      - keywords: MEDIUM_DETAIL_ON
         passType: 0
   - first: {fileID: 4800000, guid: d5b9852b5c005334591669d788bede8f, type: 3}
     second:
@@ -1016,17 +1031,47 @@ ShaderVariantCollection:
       variants:
       - keywords: MEDIUM_DETAIL_ON
         passType: 0
-  - first: {fileID: 4800000, guid: f3570630f31ec4223a549b595d8cbb53, type: 3}
-    second:
-      variants:
-      - keywords: MEDIUM_DETAIL_ON
-        passType: 0
   - first: {fileID: 4800000, guid: f5d01bbba3dd4e94a9d60ae9526d5186, type: 3}
     second:
       variants:
       - keywords: MEDIUM_DETAIL_ON
         passType: 0
   - first: {fileID: 4800000, guid: f684eb3ebc0d4b84b9e0993bc851b365, type: 3}
+    second:
+      variants:
+      - keywords: MEDIUM_DETAIL_ON
+        passType: 0
+  - first: {fileID: 4800000, guid: 1b62d0b1d1626d34ea157e7f2e06d54f, type: 3}
+    second:
+      variants:
+      - keywords: MEDIUM_DETAIL_ON
+        passType: 0
+  - first: {fileID: 4800000, guid: 862c830f04eb50d48949b08e87ec7000, type: 3}
+    second:
+      variants:
+      - keywords: MEDIUM_DETAIL_ON
+        passType: 4
+  - first: {fileID: 4800000, guid: 025775b2b3616154f9eec0261bb8a581, type: 3}
+    second:
+      variants:
+      - keywords: MEDIUM_DETAIL_ON
+        passType: 0
+  - first: {fileID: 4800000, guid: f3570630f31ec4223a549b595d8cbb53, type: 3}
+    second:
+      variants:
+      - keywords: MEDIUM_DETAIL_ON
+        passType: 0
+  - first: {fileID: 4800000, guid: c0983d60f2f7a4a20a4631b5a4a39960, type: 3}
+    second:
+      variants:
+      - keywords: MEDIUM_DETAIL_ON
+        passType: 0
+  - first: {fileID: 4800000, guid: d16f77d9dd6a34705bb518b491a7db03, type: 3}
+    second:
+      variants:
+      - keywords: MEDIUM_DETAIL_ON
+        passType: 0
+  - first: {fileID: 4800000, guid: 1e432315427554fac90b38453d9f6fed, type: 3}
     second:
       variants:
       - keywords: MEDIUM_DETAIL_ON
@@ -1047,4 +1092,6 @@ ShaderVariantCollection:
         passType: 4
       - keywords: BLENDAXIS_X COLORMODE_COLORRAMP FRESNEL LITMODE_UNLIT MEDIUM_DETAIL_ON
           REFLECTIONMAP
+        passType: 4
+      - keywords: BLENDAXIS_X COLORMODE_NONE FRESNEL LITMODE_LIT MEDIUM_DETAIL_ON
         passType: 4
