@@ -30,7 +30,11 @@ public class ClusteringManager {
 	// The cluster will be calculated based on the data gathered until the end of this run
 	public static int CALCULATE_CLUSTER_AFTER_RUN = 2;
 
-	public static string CLUSTER_UNKNOWN = "UNKNOWN";
+    // If the server didnt reply yet at this run, we assign the player to a generic cluster
+	public static int ASSIGN_CLUSTER_AT_RUN = 4;
+
+    // Generic cluster ID
+	public static string CLUSTER_GENERIC = "CLUSTER_GENERIC";
 
 
 	//------------------------------------------------------------------------//
@@ -94,13 +98,19 @@ public class ClusteringManager {
 	// OTHER METHODS														  //
 	//------------------------------------------------------------------------//
 
+    /// <summary>
+    /// Returns the cluster ID assigned to this player.
+    /// In case the client doesnt know the cluster, makes a request to the server,
+    /// and assigns a temporaric cluster ID in the meantime.
+    /// </summary>
+    /// <returns>The cluster ID</returns>
 	public string GetClusterId()
 	{
 		string clusterId = UsersManager.currentUser.clusterId;
 
 		if (!string.IsNullOrEmpty(clusterId))
 		{
-			// the client already knows the cluster ID
+			// we know the cluster ID
 			return clusterId;
 		}
 		else
@@ -108,10 +118,18 @@ public class ClusteringManager {
 			// we dont know it yet. Request the cluster ID to the server.
 			Initialise(false);
 
-			// In the meantime, return something
-			return CLUSTER_UNKNOWN;
+			// If the server response is taking too long. Assign the player to generic cluster.
+			if (UsersManager.currentUser.gamesPlayed >= ASSIGN_CLUSTER_AT_RUN)
+			{
+				UsersManager.currentUser.clusterId = CLUSTER_GENERIC;
+				return CLUSTER_GENERIC;
+			}
+			else
+			{
+				// We didnt decide a cluster yet
+				return null;
+			}
 		}
-
 	}
 
 	/// <summary>
@@ -209,6 +227,14 @@ public class ClusteringManager {
     /// <returns>Returns true if the response was successful</returns>
 	private bool OnGetClusterResponse(string _strResponse, string _strCmd, int _reponseCode)
 	{
+		// If the player already belongs to a cluster (non generic) ignore the response
+		if (string.IsNullOrEmpty(UsersManager.currentUser.clusterId) &&
+			UsersManager.currentUser.clusterId != CLUSTER_GENERIC)
+        {
+			return true;
+		}
+			
+
 		bool responseOk = false;
 
 		if (_strResponse != null)
