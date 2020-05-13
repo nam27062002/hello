@@ -195,7 +195,7 @@ public class DragonAnimationEvents : MonoBehaviour, IBroadcastListener {
 
 	protected virtual void OnKo( DamageType type , Transform _source)
 	{
-		if ( type == DamageType.MINE || type == DamageType.BIG_DAMAGE || InstanceManager.player.m_alwaysSpawnCorpse )
+		if (InstanceManager.player.CanSpawnCorpse(type))
 		{
 			PlaySound(m_onCorpseSound);
 		}

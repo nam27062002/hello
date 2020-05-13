@@ -24,7 +24,6 @@ public class Transition {
 
 	[Tooltip("Will override any other setup")]
 	public bool showOverlay = false;
-	public float pauseDuration = 0f;
 
 	public BezierCurve path = null;
 	public string initialPathPoint = "";
@@ -250,19 +249,29 @@ public class MenuTransitionManager : MonoBehaviour {
 			// If using the overlay, override duration
 			if (t.showOverlay)
 			{
+                // Override duration
 				duration = m_overlay.transitionDuration;
-				m_overlay.pauseDuration = t.pauseDuration;
-			}
 
-			// UI
-			PerformUITransition(fromScreenData, toScreenData, duration);
-
-			// Camera
-			PerformCameraTransition(fromScreenData, toScreenData, t, duration, ease);
-
-			// Overlay
-			if(t.showOverlay) {
 				m_overlay.Play();
+
+				// Perform camera and UI transitions in the middle of the clouds animation
+				UbiBCN.CoroutineManager.DelayedCall(() =>
+				{
+					// UI
+					PerformUITransition(fromScreenData, toScreenData, duration);
+					// Camera
+					PerformCameraTransition(fromScreenData, toScreenData, t, duration, ease);
+				}, duration / 2 , true);
+
+			}
+            else
+            {
+				// UI
+				PerformUITransition(fromScreenData, toScreenData, duration);
+
+				// Camera
+				PerformCameraTransition(fromScreenData, toScreenData, t, duration, ease);
+
 			}
 
 			// Lock input to prevent weird flow cases when interrupting a screen transition
