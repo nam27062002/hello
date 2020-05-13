@@ -278,12 +278,19 @@ public class DragonEquip : MonoBehaviour {
 
 		RemoveAccessories();
 
+		Flavour currentFlavour = FlavourManager.Instance.GetCurrentFlavour();
+		
 		// Now body parts!
 		List<string> bodyParts = def.GetAsList<string>("body_parts");
 		for( int i = 0; i<bodyParts.Count; i++ )
 		{
 			if ( !string.IsNullOrEmpty(bodyParts[i]) )
 			{
+                if (currentFlavour.IsAccessoryBlacklisted(skin, accessory: bodyParts[i]))
+                {
+					continue;
+                }
+
                 GameObject prefabObj = HDAddressablesManager.Instance.LoadAsset<GameObject>(bodyParts[i]);
                 if ( prefabObj != null )
 				{
