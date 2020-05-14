@@ -37,7 +37,7 @@ public class UISocialSetup : MonoBehaviour
 	public void Refresh() {
 		// Enables only what needs to be enabled
 		// Aux vars
-		bool isChina = PlatformUtils.Instance.IsChina();
+
 		bool isUnderage = GDPRManager.SharedInstance.IsAgeRestrictionEnabled(); // Don't show social platforms or external links to underage players!
 		
 		// Social platforms
@@ -63,17 +63,19 @@ public class UISocialSetup : MonoBehaviour
 				Toggle(m_appleItem, loggedInSocialPlatform == SocialUtils.EPlatform.SIWA && !isUnderage);	
 			} break;
 		}
-		
+
+		Flavour flavour = FlavourManager.Instance.GetCurrentFlavour();
 
 		// Global items
 		Toggle(m_webItem, !isUnderage);
 
 		// Western items
-		Toggle(m_twitterItem, !isChina && !isUnderage);
-		Toggle(m_instagramItem, !isChina && !isUnderage);
+		Toggle(m_twitterItem, flavour.GetSetting<bool>(Flavour.SettingKey.TWITTER_ALLOWED) && !isUnderage);
+		Toggle(m_instagramItem, flavour.GetSetting<bool>(Flavour.SettingKey.INSTAGRAM_ALLOWED) && !isUnderage);
 
 		// China items
-		Toggle(m_weChatItem, isChina && !string.IsNullOrEmpty(GameSettings.WE_CHAT_URL) && !isUnderage);    // Hide it while the URL is not defined
+		Toggle(m_weChatItem, flavour.GetSetting<bool>(Flavour.SettingKey.WECHAT_ALLOWED) &&
+            !string.IsNullOrEmpty(GameSettings.WE_CHAT_URL) && !isUnderage);    // Hide it while the URL is not defined
 	}
 
 	/// <summary>

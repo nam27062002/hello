@@ -49,26 +49,16 @@ public abstract class PlatformUtils
 
     // -----------------------------------------------------------------------------------------------------------------------
     #region country
-
-    public const string COUNTRY_CODE_CHINA = "CN";
     public const string COUNTRY_CODE_WW_DEFAULT = "US"; // United States is used as the default country code for WW flavor
+    public const string COUNTRY_CODE_CHINA = "CN";
+    public const string COUNTRY_CODE_KOREA = "KR";
 
     public static List<string> COUNTRY_CODES = new List<string>()
     {
         COUNTRY_CODE_WW_DEFAULT,
-        COUNTRY_CODE_CHINA
+        COUNTRY_CODE_CHINA,
+        COUNTRY_CODE_KOREA
     };
-
-    public bool IsChina()
-    {
-        string countryCode = Country_GetCurrentCode();
-        if (countryCode != null)
-        {
-            countryCode.ToUpper();
-        }
-
-        return countryCode == COUNTRY_CODE_CHINA;
-    }
 
     /// <summary>
     /// Returns the code of the country currently set

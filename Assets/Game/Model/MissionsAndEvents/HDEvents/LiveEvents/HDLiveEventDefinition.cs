@@ -89,6 +89,10 @@ public class HDLiveEventDefinition {
 			if ( _data.ContainsKey("type") ){
 				m_type = _data["type"];
 				m_typeDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.MISSION_TYPES, m_type);
+                if (m_typeDef == null)
+                {
+					Debug.LogError("Mission type '" + m_type + "' doesnt exist in the definitions");
+                }
 			}
 
 			if ( _data.ContainsKey("params") ){

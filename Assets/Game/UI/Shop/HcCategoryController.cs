@@ -143,13 +143,7 @@ public class HcCategoryController : CategoryController
                     ((ShopCurrencyPill)pill).currencyHudCounter = m_shopController.hcCounterPosition;
                 }
             }
-            else if (_offer.type == OfferPack.Type.SC)
-            {
-                if (m_shopController.scCounterPosition != null)
-                {
-                    ((ShopCurrencyPill)pill).currencyHudCounter = m_shopController.scCounterPosition;
-                }
-            }
+            
         }
 
     }

@@ -254,6 +254,8 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
     private bool m_rotateOnIdle = false;
 
     private bool m_waterMovement = false;
+
+	private bool isCorpseAllowed = false;
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
@@ -422,6 +424,10 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
         m_dragonGravityModifier = m_dragon.data.gravityModifier;
         m_dragonAirGravityModifier = m_dragon.data.airGravityModifier;
         m_dragonWaterGravityModifier = m_dragon.data.waterGravityModifier;
+
+        // Cache the CORPSE_ALLOWED flavour setting
+        Flavour currentFlavour = FlavourManager.Instance.GetCurrentFlavour();
+		isCorpseAllowed = currentFlavour.GetSetting<bool>(Flavour.SettingKey.CORPSES_ALLOWED);
 	}
 
 	/// <summary>
@@ -646,9 +652,15 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 				case State.Dead:
 				{
 					m_controls.enabled = false;
-					m_animator.SetTrigger(GameConstants.Animator.DEAD);
+
+					// No death animation according to CORPSE_ALLOWED flavour setting
+					if (isCorpseAllowed) {
+						m_animator.SetTrigger(GameConstants.Animator.DEAD);
+					}
+
 					if ( m_previousState == State.InsideWater )
 						m_animator.SetBool(GameConstants.Animator.SWIM, true);
+					
 					// Save Position!
 					m_diePosition = m_transform.position;
 					m_deadTimer = 0;
@@ -1467,12 +1479,17 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 			m_impulse = m_rbody.velocity;
 			if ( m_deadTimer < 1.5f * Time.timeScale )
 			{
-				float gravity = 9.81f * m_dragonGravityModifier * m_deadGravityMultiplier;
-				Vector3 acceleration = GameConstants.Vector3.down * gravity * m_dragonMass;	// Gravity
+				// Don't fall if CORPSE_ALLOWED flavour setting is not allowed
+				if (!isCorpseAllowed) {
+					ComputeImpulseToZero(_deltaTime);
+				} else {
+					float gravity = 9.81f * m_dragonGravityModifier * m_deadGravityMultiplier;
+					Vector3 acceleration = GameConstants.Vector3.down * gravity * m_dragonMass; // Gravity
 
-				// stroke's Drag
-				float impulseMag = m_impulse.magnitude;
-				m_impulse += (acceleration * _deltaTime) - ( m_impulse.normalized * m_dragonFricction * impulseMag * _deltaTime); // velocity = acceleration - friction * velocity
+					// stroke's Drag
+					float impulseMag = m_impulse.magnitude;
+					m_impulse += (acceleration * _deltaTime) - (m_impulse.normalized * m_dragonFricction * impulseMag * _deltaTime); // velocity = acceleration - friction * velocity
+				}
 			}
 			else
 			{
@@ -1992,10 +2009,14 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 	private void Bounce( Vector3 inNormal )
 	{
 		m_impulse = Vector3.Reflect( m_impulse, inNormal);
-		if ( m_impulse.magnitude < absoluteMaxSpeed * 3.5f )
+		// if ( m_impulse.magnitude < absoluteMaxSpeed * 3.5f )
 		{
+			// Remote siempre con la misma fuerza que
 			m_impulse = m_impulse.normalized * absoluteMaxSpeed * 4f;
+			// Remote que depende de la velocidad de entrada o choque
+			// m_impulse = m_impulse.normalized * m_impulse.magnitude * 4f;
 		}
+		m_rbody.velocity = m_impulse;
 	}
 
 	public void OnEnterWaterEvent( Collider _other )

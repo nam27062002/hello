@@ -1728,7 +1728,8 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         bool ret = false;
         if (!GDPRManager.SharedInstance.IsAgeRestrictionEnabled() && Prefs.GetBoolPlayer(GameSettings.BLOOD_ENABLED, true))
         {
-            ret = true;
+            Flavour currentFlavour = FlavourManager.Instance.GetCurrentFlavour();
+            ret = currentFlavour.GetSetting<bool>(Flavour.SettingKey.BLOOD_ALLOWED);
         }
         return ret;
     }

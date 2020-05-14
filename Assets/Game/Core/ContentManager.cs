@@ -153,7 +153,8 @@ public class ContentManager
             "Rules/initialSettings",
             "Rules/missingRessourcesVariablesDefinitions",
 			"Rules/offerSettings",
-			"Rules/ftuxSettings"
+			"Rules/ftuxSettings",
+            "Rules/UISettings"
         });
 
 		kDefinitionFiles.Add(DefinitionsCategory.SEASONS, new string[] { "Rules/seasonsDefinitions" });
@@ -265,6 +266,7 @@ public class ContentManager
         kDefinitionFiles.Add(DefinitionsCategory.ICONS, new string[] { "Rules/iconDefinitions" });
 
 
+
         DefinitionsManager.SharedInstance.Initialise(ref kDefinitionFiles, !UseDeltaContent);
     }
 
@@ -272,6 +274,19 @@ public class ContentManager
     {
         LocalizationManager.LanguageItemData[] kLanguagesData = null;
         Dictionary<string, DefinitionNode> kLanguagesSKUs = DefinitionsManager.SharedInstance.GetDefinitions(DefinitionsCategory.LOCALIZATION);
+
+        // In case of China, we only want to allow the chinese simplified language, configured via flavour
+        string defaultLanguage = "lang_english";
+        Flavour currentFlavour = FlavourManager.Instance.GetCurrentFlavour();
+        if (!string.IsNullOrEmpty(currentFlavour.GetMonoLanguageSku) && kLanguagesSKUs.ContainsKey(currentFlavour.GetMonoLanguageSku))
+        {
+            defaultLanguage = currentFlavour.GetMonoLanguageSku;
+
+            DefinitionNode definitionNode = DefinitionsManager.SharedInstance.GetDefinition(defaultLanguage);
+            kLanguagesSKUs.Clear();
+            kLanguagesSKUs.Add(defaultLanguage, definitionNode);
+        }
+
         if (kLanguagesSKUs.Count > 0)
         {
             kLanguagesData = new LocalizationManager.LanguageItemData[kLanguagesSKUs.Count];
@@ -311,7 +326,7 @@ public class ContentManager
             }
         }
 
-        LocalizationManager.SharedInstance.Initialise(ref kLanguagesData, "lang_english", "Localization");
+        LocalizationManager.SharedInstance.Initialise(ref kLanguagesData, defaultLanguage, "Localization");
         LocalizationManager.SharedInstance.debugMode = (LocalizationManager.DebugMode)DebugSettings.localizationDebugMode;	// [AOC] Initialize localization manager debug mode
     }
 

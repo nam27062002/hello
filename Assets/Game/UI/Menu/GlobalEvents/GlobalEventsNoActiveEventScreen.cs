@@ -19,12 +19,13 @@ public class GlobalEventsNoActiveEventScreen : MonoBehaviour
 
     void Start ()
     {
-        bool isChina = PlatformUtils.Instance.IsChina();
+        // Enable the social buttons according to the current flavour configuration
+        Flavour flavour = FlavourManager.Instance.GetCurrentFlavour();
         
-        SetActive(m_socialWeiboButton, isChina);
-        SetActive(m_socialFbButton, !isChina);
-        SetActive(m_socialTwitterButton, !isChina);
-        SetActive(m_socialInstagramButton, !isChina);
+        SetActive(m_socialWeiboButton, flavour.SocialPlatformASSocialUtilsEPlatform == SocialUtils.EPlatform.Weibo);
+        SetActive(m_socialFbButton, flavour.SocialPlatformASSocialUtilsEPlatform == SocialUtils.EPlatform.Facebook);
+        SetActive(m_socialTwitterButton, flavour.GetSetting<bool>(Flavour.SettingKey.TWITTER_ALLOWED));
+        SetActive(m_socialInstagramButton, flavour.GetSetting<bool>(Flavour.SettingKey.INSTAGRAM_ALLOWED));
 
         // All the social stuff is hidden for kids
         SetActive(m_socialRoot, SocialPlatformManager.SharedInstance.GetIsEnabled());

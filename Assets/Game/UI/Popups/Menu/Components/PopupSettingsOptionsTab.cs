@@ -24,17 +24,17 @@ public class PopupSettingsOptionsTab : MonoBehaviour {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed
-	[SerializeField] private SnappingScrollRect m_languageScrollList = null;
-	[SerializeField] private ShowHideAnimator m_languageNameAnim = null;
+	[SerializeField] private GameObject m_languageSelectorGroup;
 	[Space]
 	[SerializeField] private Slider m_graphicsQualitySlider = null;
 	[SerializeField] private CanvasGroup m_graphicsQualityCanvasGroup = null;
 	[SerializeField] private TextMeshProUGUI m_graphicsQualityCurrentValueText = null;
 	[SerializeField] private GameObject[] m_graphicsQualitySeparators = new GameObject[4];
 	[Space]
-	[SerializeField] private GameObject m_adultGroupRoot = null;
+	[SerializeField] private GameObject m_adultGroup = null;
 	[SerializeField] private GameObject m_childrenGroupRoot_iOS = null;
 	[SerializeField] private GameObject m_childrenGroupRoot_Android = null;
+	[SerializeField] private GameObject m_bloodToggleRoot = null;
 
 
 	private int m_graphicsMaxLevel = 4;
@@ -50,8 +50,8 @@ public class PopupSettingsOptionsTab : MonoBehaviour {
 		// Toggle some components on/off if Age Restriction is enabled
 		bool ageRestriction = GDPRManager.SharedInstance.IsAgeRestrictionEnabled();
 
-		if(m_adultGroupRoot != null) {
-			m_adultGroupRoot.SetActive(!ageRestriction);
+		if(m_adultGroup != null) {
+			m_adultGroup.SetActive(!ageRestriction);
 		}
 
 		if(m_childrenGroupRoot_iOS != null) {

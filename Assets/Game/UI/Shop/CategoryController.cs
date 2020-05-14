@@ -78,23 +78,18 @@ public class CategoryController : MonoBehaviour {
 	/// </summary>
 	private void Update() {
 
-        for (int i=0;i<m_shopController.m_pillsPerFrame;i++)
+        if (pillsToInitialize.Count > 0)
         {
-            if (pillsToInitialize.Count > 0 )
-            {
-                InitializePill(pillsToInitialize.Dequeue());
-            } else
-            {
-                break;
-            }
-        }
 
+            InitializePill(pillsToInitialize.Dequeue());
+
+        }
     }
 
-	/// <summary>
-	/// Destructor.
-	/// </summary>
-	private void OnDestroy() {
+    /// <summary>
+    /// Destructor.
+    /// </summary>
+    private void OnDestroy() {
 
 	}
 
@@ -204,6 +199,7 @@ public class CategoryController : MonoBehaviour {
     /// <param name="_offer"></param>
     protected virtual void InitializePill (OfferPack _offer)
     {
+
         // Instantiate the offer with the proper prefab
         IShopPill pill = InstantiatePill(_offer.type);
 
@@ -250,6 +246,7 @@ public class CategoryController : MonoBehaviour {
 
         }
 
+
     }
 
 
@@ -278,15 +275,18 @@ public class CategoryController : MonoBehaviour {
     /// <returns></returns>
     private IShopPill InstantiatePill(OfferPack.Type _type)
     {
+
+
         IShopPill pill;
 
         // Create new instance of prefab
-        IShopPill prefab = ShopSettings.GetPillPrefab(_type);
+        IShopPill prefab = m_shopController.GetPillPrefab(_type);
+
 
         Debug.Assert(prefab != null, "There is no prefab defined for offer type " + _type + " in ShopSettings");
 
         pill = Instantiate<IShopPill>(prefab);
-        
+
         return pill;
 
     }

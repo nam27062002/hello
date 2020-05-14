@@ -369,7 +369,7 @@ public class DragonParticleController : MonoBehaviour, IBroadcastListener
 	{
 		m_alive = false;	
 		CheckBodyParts();
-		if ( type == DamageType.MINE || type == DamageType.BIG_DAMAGE || InstanceManager.player.m_alwaysSpawnCorpse )
+		if (InstanceManager.player.CanSpawnCorpse(type))
 		{
 			SpawnCorpse();
 		}

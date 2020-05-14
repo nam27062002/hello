@@ -330,9 +330,11 @@ public class ViewControl : IViewControl, IBroadcastListener {
             m_rendererCount = m_renderers.Length;
         }
 
-        if (!string.IsNullOrEmpty(m_corpseAsset)) {
-            m_corpseHandler = ParticleManager.CreatePool(m_corpseAsset, "Corpses/");
-        }
+		if(CanSpawnCorpse()) {	// [AOC] No need to create the corpse pool if corpse can't be spawned
+			if(!string.IsNullOrEmpty(m_corpseAsset)) {
+				m_corpseHandler = ParticleManager.CreatePool(m_corpseAsset, "Corpses/");
+			}
+		}
 
         m_isExclamationMarkOn = false;
         if (m_exclamationTransform != null) {
@@ -511,9 +513,11 @@ public class ViewControl : IViewControl, IBroadcastListener {
                 m_materialList[i].DisableKeyword(GameConstants.Materials.Keyword.TINT);
         }
 
-        if (m_corpseHandler != null && !m_corpseHandler.isValid) {
-            m_corpseHandler = ParticleManager.CreatePool(m_corpseAsset, "Corpses/");
-        }
+		if(CanSpawnCorpse()) {	// [AOC] No need to create the corpse pool if corpse can't be spawned
+			if(m_corpseHandler != null && !m_corpseHandler.isValid) {
+				m_corpseHandler = ParticleManager.CreatePool(m_corpseAsset, "Corpses/");
+			}
+		}
 
         m_dragonBoost = InstanceManager.player.dragonBoostBehaviour;
     }
@@ -769,6 +773,12 @@ public class ViewControl : IViewControl, IBroadcastListener {
     public bool HasCorpseAsset() {
         return !string.IsNullOrEmpty(m_corpseAsset);
     }
+
+	public bool CanSpawnCorpse() {
+        // Controlled by CORPSE_ALLOWED flavour setting
+        Flavour currentFlavour = FlavourManager.Instance.GetCurrentFlavour();
+        return currentFlavour.GetSetting<bool>(Flavour.SettingKey.CORPSES_ALLOWED);
+	}
 
     public bool isHitAnimOn() {
         return m_hitAnimOn;

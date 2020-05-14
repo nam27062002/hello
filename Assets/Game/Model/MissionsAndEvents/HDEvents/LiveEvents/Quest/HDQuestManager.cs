@@ -88,7 +88,11 @@ public class HDQuestManager : HDLiveEventManager, IBroadcastListener{
     	base.ParseDefinition( _data );
 		m_tracker.Clear();
     	HDQuestDefinition def = m_data.definition as HDQuestDefinition;
-		m_tracker = TrackerBase.CreateTracker( def.m_goal.m_typeDef.sku, def.m_goal.m_params);
+
+		if (def.m_goal != null && def.m_goal.m_typeDef != null)
+		{
+			m_tracker = TrackerBase.CreateTracker(def.m_goal.m_typeDef.sku, def.m_goal.m_params);
+		}
     }
 
     public override void OnLiveDataResponse() {
