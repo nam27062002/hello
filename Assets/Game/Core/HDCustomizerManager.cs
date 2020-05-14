@@ -265,7 +265,10 @@ public class HDCustomizerManager
                     {
                         
                         UnApplyCustomizer();
-                        if (CustomizerManager.SharedInstance.ApplyCustomiser())
+
+                        // The user is targetable only if there's no consent restriction at all (no marketing or tracking).
+                        // We use both just to be safe since there's many doubts about which one to use
+                        if (CustomizerManager.SharedInstance.ApplyCustomiser(!GDPRManager.SharedInstance.IsConsentRestrictionEnabled()))
                         {
                             m_hasBeenApplied = true;
                             m_currentExperiment  = CustomizerManager.SharedInstance.GetFirstValidExperiment(customiser);
