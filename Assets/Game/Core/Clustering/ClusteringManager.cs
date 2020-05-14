@@ -101,7 +101,7 @@ public class ClusteringManager {
     /// <summary>
     /// Returns the cluster ID assigned to this player.
     /// In case the client doesnt know the cluster, makes a request to the server,
-    /// and assigns a temporaric cluster ID in the meantime.
+    /// and assigns a temporary cluster ID in the meantime.
     /// </summary>
     /// <returns>The cluster ID</returns>
 	public string GetClusterId()
