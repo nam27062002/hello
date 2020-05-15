@@ -564,7 +564,7 @@ public class EditorAddressablesManager
             AddressablesCatalog editorCatalog = GetEditorCatalog(target, true);            
             ParseAssetBundlesOutput output = ParseAssetBundles(editorCatalog, abManifest);
 
-            List<string> abList = UbiListUtils.AddRange(output.m_LocalABList, output.m_RemoteABList, true, true);
+            List<string> abList = UbiListUtils.AddRange(ref output.m_LocalABList, output.m_RemoteABList, true, true);
 
             AssetBundlesCatalog abCatalog = new AssetBundlesCatalog();
 
@@ -944,7 +944,7 @@ public class EditorAddressablesManager
 
         if (abManifest == null)
         {
-            UbiListUtils.AddRange(returnValue.m_ABInUsedNotInManifest, catalogUsedABs, false, true);
+            UbiListUtils.AddRange(ref returnValue.m_ABInUsedNotInManifest, catalogUsedABs, false, true);
             returnValue.m_LocalABList.Clear();
         }
         else
@@ -967,7 +967,7 @@ public class EditorAddressablesManager
                     }
 
                     dependencies = new List<string>(abManifest.GetAllDependencies(abName));
-                    UbiListUtils.AddRange(returnValue.m_LocalABList, dependencies, false, true);
+                    UbiListUtils.AddRange(ref returnValue.m_LocalABList, dependencies, false, true);
                 }
                 else if (!returnValue.m_ABInUsedNotInManifest.Contains(abName))
                 {
@@ -993,7 +993,7 @@ public class EditorAddressablesManager
                         returnValue.m_RemoteABList.Add(abName);
                         dependencies = new List<string>(abManifest.GetAllDependencies(abName));
                         UbiListUtils.SplitIntersectionAndDisjoint(dependencies, returnValue.m_LocalABList, out localDependencies, out remoteDependencies);
-                        UbiListUtils.AddRange(returnValue.m_RemoteABList, remoteDependencies, false, true);
+                        UbiListUtils.AddRange(ref returnValue.m_RemoteABList, remoteDependencies, false, true);
                     }
                     else if (!returnValue.m_ABInUsedNotInManifest.Contains(abName))
                     {

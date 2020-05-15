@@ -90,7 +90,7 @@ public class PopupSettingsRestoreIAPButton : MonoBehaviour {
 		List<Metagame.Reward> rewards = new List<Metagame.Reward>();
 		int count = productIds.Count;
 		for(int i = 0; i < count; i++) {
-			UbiListUtils.AddRange(rewards, Metagame.Reward.GetRewardsFromIAP(productIds[i]), false, true);
+			UbiListUtils.AddRange(ref rewards, Metagame.Reward.GetRewardsFromIAP(productIds[i]), false, true);
 		}
 
 		count = UsersManager.currentUser.PushRewards(rewards);

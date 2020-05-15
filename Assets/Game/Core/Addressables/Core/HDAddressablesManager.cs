@@ -338,7 +338,7 @@ public class HDAddressablesManager
             for (int i = 0; i < count; i++)
             {
                 thisDependencies = GetDependencyIds(ids[i], variant);
-                UbiListUtils.AddRange(returnValue, thisDependencies, false, true);    
+                UbiListUtils.AddRange(ref returnValue, thisDependencies, false, true);    
             }
         }
 
@@ -599,13 +599,13 @@ public class Ingame_SwitchAreaHandle
             List<string> prevAreaDependencyIds = Instance.GetAssetBundlesGroupDependencyIds(prevArea);
 
             // Adds the dependencies of the scenes and the dependencies of the addressables areas
-            prevAreaDependencyIds = UbiListUtils.AddRange(prevAreaDependencyIds, prevAreaSceneDependencyIds, true, true);
+            prevAreaDependencyIds = UbiListUtils.AddRange(ref prevAreaDependencyIds, prevAreaSceneDependencyIds, true, true);
 
             // Retrieves the dependencies of the next area defined in addressablesCatalog.json
             List<string> nextAreaDependencyIds = Instance.GetAssetBundlesGroupDependencyIds(nextArea);
 
             // Adds the dependencies of the scenes and the dependencies of the addressables areas
-            nextAreaDependencyIds = UbiListUtils.AddRange(nextAreaDependencyIds, nextAreaSceneDependencyIds, true, true);
+            nextAreaDependencyIds = UbiListUtils.AddRange(ref nextAreaDependencyIds, nextAreaSceneDependencyIds, true, true);
 
             List<string> assetBundleIdsToStay;
             List<string> assetBundleIdsToUnload;

@@ -272,7 +272,7 @@ public class TournamentInfoScreen : MonoBehaviour, IBroadcastListener {
                 if ( resoucesIds.Count > 0 )
                 {
                     List<string> deps = HDAddressablesManager.Instance.GetDependencyIdsList( resoucesIds ) ;
-                    UbiListUtils.AddRange(dependencyIds, deps, false, true);
+                    UbiListUtils.AddRange(ref dependencyIds, deps, false, true);
                 }
             }
 		}
