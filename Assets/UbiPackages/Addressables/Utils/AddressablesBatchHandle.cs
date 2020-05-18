@@ -70,11 +70,13 @@ public class AddressablesBatchHandle
             }
         }
 
-        DependencyIds = UbiListUtils.AddRange<string>(DependencyIds, actualDependencyIds, DependencyIds == null, true);
+        List<string> dependencies = DependencyIds;
+        DependencyIds = UbiListUtils.AddRange<string>(ref dependencies, actualDependencyIds, DependencyIds == null, true);
 
         if (mandatory)
         {
-            MandatoryDependencyIds = UbiListUtils.AddRange<string>(MandatoryDependencyIds, actualDependencyIds, MandatoryDependencyIds == null, true);
+            dependencies = MandatoryDependencyIds;
+            MandatoryDependencyIds = UbiListUtils.AddRange<string>(ref dependencies, actualDependencyIds, MandatoryDependencyIds == null, true);
         }
     }
 

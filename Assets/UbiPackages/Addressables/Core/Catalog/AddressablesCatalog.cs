@@ -402,11 +402,11 @@ public class AddressablesCatalog
         {
             foreach (KeyValuePair<string, AssetBundlesGroup> pair in m_groups)
             {
-                UbiListUtils.AddRange(returnValue, pair.Value.AssetBundleIds, false, true);
+                UbiListUtils.AddRange(ref returnValue, pair.Value.AssetBundleIds, false, true);
             }
         }
         
-        UbiListUtils.AddRange(returnValue, m_abConfig.GetLocalABList(), false, true);
+        UbiListUtils.AddRange(ref returnValue, m_abConfig.GetLocalABList(), false, true);
 
         return returnValue;
     }

@@ -117,7 +117,7 @@ public class UbiListUtils
     /// <param name="newList">when <c>true</c> a new list is created to store the result. When <c>false</c> <c>l1</c> is used to store the result</param>
     /// <param name="avoidDuplicates">When <c>true</c> all elements in the list returned are different. When <c>false</c> all elements of both lists are stored</param>
     /// <returns></returns>
-    public static List<T> AddRange<T>(List<T> l1, List<T> l2, bool newList, bool avoidDuplicates)
+    public static List<T> AddRange<T>(ref List<T> l1, List<T> l2, bool newList, bool avoidDuplicates)
     {
         List<T> returnValue = null;
 
@@ -127,31 +127,38 @@ public class UbiListUtils
             {
                 returnValue = new List<T>();
             }
+
+            if (l1 != null)
+            {
+                returnValue.AddRange(l1);
+            }
         }
         else
         {
             returnValue = l1;
         }
-
-        if (returnValue != null)
+        
+        if (l2 != null)
         {
-            if (newList && l1 != null)
+            if (returnValue == null)
             {
-                returnValue.AddRange(l1);
+                returnValue = new List<T>();
             }
 
-            if (l2 != null)
+            int count = l2.Count;
+            for (int i = 0; i < count; i++)
             {
-                int count = l2.Count;
-                for (int i = 0; i < count; i++)
+                if (!avoidDuplicates ||
+                    (avoidDuplicates && (l1 == null || !l1.Contains(l2[i]))))
                 {
-                    if (!avoidDuplicates ||
-                        (avoidDuplicates && (l1 == null || !l1.Contains(l2[i]))))
-                    {
-                        returnValue.Add(l2[i]);
-                    }
+                    returnValue.Add(l2[i]);
                 }
             }
+        }
+
+        if (!newList)
+        {
+            l1 = returnValue;
         }
 
         return returnValue;

@@ -234,7 +234,7 @@ public static class EditorAutomaticAddressables {
         // Example: This added all assets in Assets/Art/R folder and its subfolders. Since we pass false to _addLastFolder directory the name of the asset will be used as id in Addressables catalog.
         //GetEntriesFromDirectory("Assets/Art/R", false, entries, bundlesSet, instanciableTypes, BuildTarget.NoTarget, AddressablesTypes.ELocationType.Resources);
 
-        UbiListUtils.AddRange(_entries, entries, false, true);
+        UbiListUtils.AddRange(ref _entries, entries, false, true);
         foreach (string s in bundlesSet)
         {
             if (!_bundles.Contains(s))
