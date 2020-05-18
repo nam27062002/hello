@@ -1,11 +1,11 @@
 <Definitions>
-	<Definition sku="CLUSTER_TREE_001_RULE_001" rule="['GROUP_5','GROUP_6','GROUP_7','Others','Tier 1','Tier 2','Tier 3'].indexOf(model.countryGroup) &gt;= 0" />
+	<Definition sku="CLUSTER_TREE_001_RULE_001" rule="['GROUP_5','GROUP_6','GROUP_7','OTHERS','TIER_1','TIER_2','TIER_3'].indexOf(model.countryGroup) &gt;= 0" />
 	<Definition sku="CLUSTER_TREE_001_RULE_002" rule="model.deviceProfile == 0 || model.deviceProfile == 1  " />
 	<Definition sku="CLUSTER_TREE_001_RULE_003" rule="['GROUP_2','GROUP_3','GROUP_4'].indexOf(model.countryGroup) &gt;=0 " />
 	<Definition sku="CLUSTER_TREE_001_RULE_004" rule="model.score &lt; 15e+3" />
 	<Definition sku="CLUSTER_TREE_001_RULE_005" rule="model.deviceProfile != 4" />
 	<Definition sku="CLUSTER_TREE_001_RULE_006" rule="model.score &lt; 13e+3" />
-	<Definition sku="CLUSTER_TREE_002_RULE_001" rule="['GROUP_5','GROUP_6','GROUP_7','Others','Tier 1','Tier 2','Tier 3'].indexOf(model.countryGroup) &gt;= 0" />
+	<Definition sku="CLUSTER_TREE_002_RULE_001" rule="['GROUP_5','GROUP_6','GROUP_7','OTHERS','TIER_1','TIER_2','TIER_3'].indexOf(model.countryGroup) &gt;= 0" />
 	<Definition sku="CLUSTER_TREE_002_RULE_002" rule="model.deviceProfile == 0" />
 	<Definition sku="CLUSTER_TREE_002_RULE_003" rule="model.deviceProfile != 4" />
 	<Definition sku="CLUSTER_TREE_002_RULE_004" rule="model.score &lt; 12e+3" />
@@ -13,15 +13,15 @@
 	<Definition sku="CLUSTER_TREE_002_RULE_006" rule="model.score &lt; 12e+3" />
 	<Definition sku="CLUSTER_TREE_002_RULE_007" rule="model.platform == 'ANDROID'" />
 	<Definition sku="CLUSTER_TREE_002_RULE_008" rule="['GROUP_1','GROUP_2'].indexOf(model.countryGroup) &gt;=0 " />
-	<Definition sku="CLUSTER_TREE_002_RULE_009" rule="['GROUP_5','Others','Tier 2'].indexOf(model.countryGroup) &gt;= 0" />
+	<Definition sku="CLUSTER_TREE_002_RULE_009" rule="['GROUP_5','OTHERS','TIER_2'].indexOf(model.countryGroup) &gt;= 0" />
 	<Definition sku="CLUSTER_TREE_002_RULE_010" rule="model.boostTime &gt;= 186e+3" />
 	<Definition sku="CLUSTER_TREE_002_RULE_011" rule="model.maxProgression &gt;= 19" />
-	<Definition sku="CLUSTER_TREE_003_RULE_001" rule="['GROUP_5','GROUP_6','GROUP_7','Others','Tier 2','Tier 3'].indexOf(model.countryGroup) &gt;= 0" />
+	<Definition sku="CLUSTER_TREE_003_RULE_001" rule="['GROUP_5','GROUP_6','GROUP_7','OTHERS','TIER_2','TIER_3'].indexOf(model.countryGroup) &gt;= 0" />
 	<Definition sku="CLUSTER_TREE_003_RULE_002" rule="model.deviceProfile == 0" />
 	<Definition sku="CLUSTER_TREE_003_RULE_003" rule="model.score &lt; 14e+3" />
 	<Definition sku="CLUSTER_TREE_003_RULE_004" rule="model.score &lt; 12e+3" />
-	<Definition sku="CLUSTER_TREE_003_RULE_005" rule="['GROUP_2','GROUP_3','GROUP_4','Tier 1'].indexOf(model.countryGroup) &gt;= 0" />
-	<Definition sku="CLUSTER_TREE_003_RULE_006" rule="['GROUP_3','GROUP_4','Tier 1'].indexOf(model.countryGroup) &gt;= 0" />
+	<Definition sku="CLUSTER_TREE_003_RULE_005" rule="['GROUP_2','GROUP_3','GROUP_4','TIER_1'].indexOf(model.countryGroup) &gt;= 0" />
+	<Definition sku="CLUSTER_TREE_003_RULE_006" rule="['GROUP_3','GROUP_4','TIER_1'].indexOf(model.countryGroup) &gt;= 0" />
 	<Definition sku="CLUSTER_TREE_003_RULE_007" rule="model.deviceProfile != 4" />
 	<Definition sku="CLUSTER_TREE_003_RULE_008" rule="model.deviceProfile == 0 || model.deviceProfile == 1 || model.deviceProfile == 2" />
 	<Definition sku="CLUSTER_TREE_003_RULE_009" rule="model.maxProgression &gt;= 82" />
