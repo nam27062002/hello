@@ -28,8 +28,6 @@ public class PopupClassicDragonInfo : PopupDragonInfo {
 	//------------------------------------------------------------------------//
 	// Exposed
 	[Separator("Classic Dragon Stuff")]
-	[SerializeField] protected Localizer m_tierText = null;
-	[SerializeField] protected TintByTierColor m_tierColorTint = null;
 
 	[SerializeField] protected Localizer m_dragonLevelText = null;
 
@@ -50,19 +48,6 @@ public class PopupClassicDragonInfo : PopupDragonInfo {
 		// Dragon level
 		if(m_dragonLevelText != null) {
 			MenuDragonInfo.FormatLevel(m_dragonData, m_dragonLevelText);
-		}
-
-        // Dragon Icon
-        if (m_tierText != null)
-        {
-            // Replace with xxL, xS, L, etc.
-			m_tierText.Localize("TID_DRAGON_TIER_" + (int) dragonData.tier + "_NAME");
-        }
-
-		if (m_tierColorTint != null)
-		{
-			// Set the proper icon color
-			m_tierColorTint.Apply(dragonData.tier, TintByTierColor.ColorSet.ICON_TIER_COLOR);
 		}
 
 	}

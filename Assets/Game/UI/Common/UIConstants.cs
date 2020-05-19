@@ -320,6 +320,12 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 		get { return instance.m_dragonTiersSFX; }
 	}
 
+	[SerializeField] private GameObject[] m_dragonTierIcons = new GameObject[(int)DragonTier.COUNT];
+	public static GameObject[] dragonTierIcons
+	{
+		get { return instance.m_dragonTierIcons; }
+	}
+
 	[Space]
 	[Tooltip("width/height, 16:9 is 1.77")]
 	[SerializeField] private float m_androidSafeAreaAspectRatioThreshold = 1.95f; // (16:9) is 1.77 )
@@ -708,6 +714,17 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 		return instance.m_sb.ToString();
 	}
 
+    /// <summary>
+    /// Given a dragon tier return the icon prefab of this tier
+    /// </summary>
+    /// <param name="_tier"></param>
+    /// <returns></returns>
+    public static GameObject GetTierIcon (DragonTier _tier)
+    {
+		return dragonTierIcons[(int)_tier];
+    }
+
+
 	/// <summary>
 	/// Create a sprite tag to be inserted in a TMPro text.
 	/// </summary>
@@ -735,21 +752,5 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 		return instance.m_dragonTiersSFX[(int)_tier];
 	}
 
-	/// <summary>
-	/// Given a dragon tier, get the icon linked to it.
-	/// Use in combination with GetSpriteTag() to insert the icon within a text
-	/// </summary>
-	/// <returns>The id of the requested dragon tier icon.</returns>
-	/// <param name="_tier">Tier whose icon is required.</param>
-	public static string GetDragonTierIcon(DragonTier _tier) {
-		// Get definition of the wanted tier
-		DefinitionNode tierDef = DefinitionsManager.SharedInstance.GetDefinition(
-			DefinitionsCategory.DRAGON_TIERS, 
-			IDragonData.TierToSku(_tier)
-		);
-		if(tierDef == null) return string.Empty;
 
-		// Return icon name
-		return tierDef.GetAsString("icon");
-	}
 }
