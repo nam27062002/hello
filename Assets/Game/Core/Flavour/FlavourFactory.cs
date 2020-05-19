@@ -46,6 +46,16 @@ public class FlavourFactory
 #endif        
     }
 
+    // The following entities cannot be shown on China flavour, due to new China law
+    readonly string[] blackListEntitiesChina = new string[]
+    {
+        "Water/PF_TubeMan",
+        "Junk/PF_BadJunkBone",
+        "Junk/PF_BadJunkEye",
+        "Junk/PF_BadJunkFrog",
+        "Junk/PF_BadJunkMagicBottle"
+    };
+
     // The following audio clips cannot be played on China flavour, due to new China law
     readonly string[] blackListSFXChina = new string[]
     {
@@ -131,7 +141,8 @@ public class FlavourFactory
            weaponsAllowed: true,
            shareLocationDef: "url",
            monoLanguageSku: null,
-           blackListedAccessories: null);
+           blackListedAccessories: null,
+           blackListedEntities: null);
     }
 
     private void Settings_SetFlavourChina(Flavour flavour, Flavour.EDevicePlatform devicePlatform)
@@ -153,7 +164,8 @@ public class FlavourFactory
            weaponsAllowed: false,
            shareLocationDef: "urlChina",
            monoLanguageSku: "lang_chinese",
-           blackListedAccessories: blackListAccessoriesChina);
+           blackListedAccessories: blackListAccessoriesChina,
+           blackListedEntities: blackListEntitiesChina);
     }
 
     private void Settings_SetFlavourKorea(Flavour flavour, Flavour.EDevicePlatform devicePlatform)
@@ -175,7 +187,8 @@ public class FlavourFactory
            weaponsAllowed: true,
            shareLocationDef: "url",
            monoLanguageSku: null,
-           blackListedAccessories: null);
+           blackListedAccessories: null,
+           blackListedEntities: null);
     }
     #endregion
 }

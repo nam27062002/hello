@@ -65,6 +65,7 @@ public class Flavour
     private Dictionary<SettingKey, bool> boolSettings;
     private HashSet<string> blackListSFX;
     private Dictionary<string, List<string>> blackListAccessories;
+    private HashSet<string> blackListEntities;
 
     public string Sku
     {
@@ -215,6 +216,35 @@ public class Flavour
     }
 
     /// <summary>
+    /// Validate if an entity it's on a blacklist
+    /// </summary>
+    /// <param name="entityName"></param>
+    /// <returns>TRUE if the entity can be shown, FALSE otherwise</returns>
+    public bool CanSpawnEntity(string entityName)
+    {
+        if (blackListEntities == null)
+        {
+            return true;
+        }
+
+        return !blackListEntities.Contains(entityName);
+    }
+
+    /// <summary>
+    /// Check if the flavour has black listed entities
+    /// </summary>
+    /// <returns>TRUE if the flavour has blacklisted entities, FALSE otherwise</returns>
+    public bool HasBlacklistedEntities()
+    {
+        if (blackListEntities == null)
+        {
+            return false;
+        }
+
+        return blackListEntities.Count > 0;
+    }
+
+    /// <summary>
     /// Validate if an accessory can be shown
     /// </summary>
     /// <param name="skin">skin SKU</param>
@@ -240,7 +270,8 @@ public class Flavour
     public void Setup(string sku, ESocialPlatform socialPlatform, EAddressablesVariant addressablesVariant,
         bool isSIWAEnabled, bool showLanguageSelector, bool showBloodSelector, bool isTwitterEnabled, bool isInstagramEnabled,
         bool isWeChatEnabled, bool showSplashLegalText, string[] blackListedSFX, bool corpsesAllowed, bool macabreAllowed,
-        bool weaponsAllowed, string shareLocationDef, string monoLanguageSku, Dictionary<string, List<string>> blackListedAccessories)
+        bool weaponsAllowed, string shareLocationDef, string monoLanguageSku, Dictionary<string, List<string>> blackListedAccessories,
+        string[] blackListedEntities)
     {
         Sku = sku;
         SocialPlatform = socialPlatform;
@@ -272,6 +303,21 @@ public class Flavour
 
         // Black list for accessories (body_parts not allowed in China)
         blackListAccessories = blackListedAccessories;
+
+        // Black list entities (entity prefabs not allowed in China)
+        SetupBlackListEntities(blackListedEntities);
+    }
+
+    private void SetupBlackListEntities(string[] blackListedEntities)
+    {
+        if (blackListedEntities != null)
+        {
+            blackListEntities = new HashSet<string>();
+            for (int i = 0; i < blackListedEntities.Length; i++)
+            {
+                blackListEntities.Add(blackListedEntities[i]);
+            }
+        }
     }
 
     private void SetupBlackListSFX(string[] blackListedSFX)
