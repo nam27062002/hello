@@ -6,7 +6,7 @@ using UnityEngine.UI;
 [RequireComponent (typeof(Image))]
 public class TintByTierColor : MonoBehaviour
 {
-    enum ColorSet{
+    public enum ColorSet{
         DRAGON_TIER_COLOR,
         ICON_TIER_COLOR
     }
@@ -21,6 +21,15 @@ public class TintByTierColor : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+
+        Apply(m_tier, m_colorSet);
+    }
+
+    public void Apply(DragonTier _tier, ColorSet _colorSet)
+    {
+        m_tier = _tier;
+        m_colorSet = _colorSet;
+
         switch (m_colorSet)
         {
             case ColorSet.DRAGON_TIER_COLOR:
@@ -31,7 +40,6 @@ public class TintByTierColor : MonoBehaviour
                 GetComponent<Image>().color = UIConstants.GetIconTierColor(m_tier);
                 break;
         }
-        
     }
 
 

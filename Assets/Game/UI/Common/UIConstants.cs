@@ -675,19 +675,55 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 	}
 
 	/// <summary>
+	/// Create a sprite/label tag to be inserted in a TMPro text.
+	/// </summary>
+	/// <returns>The full tag with the given sprite: "<sprite name="_spriteName">".</returns>
+	/// <param name="_spriteName">ID of the sprite we want to show. Same ID as in the UI spritesheet asset.</param>
+	public static string GetTierTag(DefinitionNode _tierDef) {
+
+		DragonTier tier = (DragonTier) _tierDef.GetAsInt("order");
+
+		// Clear stringbuilder
+		instance.m_sb.Length = 0;
+
+		
+		if (tier == DragonTier.TIER_6)
+		{
+			// For special dragons keep the sprite icon
+
+			// Do the composition
+			instance.m_sb.Append("<sprite name=\"").Append(_tierDef.GetAsString("icon")).Append("\">");
+
+		}
+		else
+		{
+			// For classic dragons return colored text
+			Color color = GetDragonTierColor(tier);
+			instance.m_sb.Append("<color=#").Append(color.ToHexString()).Append(">");
+			instance.m_sb.Append(LocalizationManager.SharedInstance.Localize(_tierDef.GetAsString("tidName")));
+			instance.m_sb.Append("</color>");
+
+		}
+		// Done!
+		return instance.m_sb.ToString();
+	}
+
+	/// <summary>
 	/// Create a sprite tag to be inserted in a TMPro text.
 	/// </summary>
 	/// <returns>The full tag with the given sprite: "<sprite name="_spriteName">".</returns>
 	/// <param name="_spriteName">ID of the sprite we want to show. Same ID as in the UI spritesheet asset.</param>
-	public static string GetSpriteTag(string _spriteName) {
-		// Clear stringbuilder
-		instance.m_sb.Length = 0;
+	public static string GetSpriteTag(string _spriteName)
+	{
 
-		// Do the composition
-		instance.m_sb.Append("<sprite name=\"").Append(_spriteName).Append("\">");
+			// Clear stringbuilder
+			instance.m_sb.Length = 0;
 
-		// Done!
-		return instance.m_sb.ToString();
+			// Do the composition
+			instance.m_sb.Append("<sprite name=\"").Append(_spriteName).Append("\">");
+			// Done!
+			return instance.m_sb.ToString();
+
 	}
 
 	/// <summary>
