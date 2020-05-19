@@ -6,14 +6,32 @@ using UnityEngine.UI;
 [RequireComponent (typeof(Image))]
 public class TintByTierColor : MonoBehaviour
 {
+    enum ColorSet{
+        DRAGON_TIER_COLOR,
+        ICON_TIER_COLOR
+    }
 
     [SerializeField]
     private DragonTier m_tier;
 
+    [SerializeField]
+    private ColorSet m_colorSet = ColorSet.DRAGON_TIER_COLOR;
+
+
     // Start is called before the first frame update
     void Start()
     {
-        GetComponent<Image>().color = UIConstants.GetDragonTierColor(m_tier);
+        switch (m_colorSet)
+        {
+            case ColorSet.DRAGON_TIER_COLOR:
+                GetComponent<Image>().color = UIConstants.GetDragonTierColor(m_tier);
+                break;
+
+            case ColorSet.ICON_TIER_COLOR:
+                GetComponent<Image>().color = UIConstants.GetIconTierColor(m_tier);
+                break;
+        }
+        
     }
 
 

@@ -226,6 +226,8 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 	[SerializeField] private Color m_dragonStatColorEnergy = Color.yellow;
 
 	[SerializeField] private Color[] m_dragonTierColors = new Color[0];
+
+	[SerializeField] private Color[] m_iconTierColors = new Color[0];
 	#endregion
 
 	// -----------------------------------------------------------------------//
@@ -529,6 +531,16 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 	/// <param name="_tier">Tier whose color we want.</param>
 	public static Color GetDragonTierColor(DragonTier _tier) {
 		return instance.m_dragonTierColors[(int)_tier];
+	}
+
+	/// <summary>
+	/// Get the color assigned to a tier icon. Usually the same as dragon tier color, but less saturated.
+	/// </summary>
+	/// <returns>The color linked to the given dragon tier.</returns>
+	/// <param name="_tier">Tier whose color we want.</param>
+	public static Color GetIconTierColor(DragonTier _tier)
+	{
+		return instance.m_iconTierColors[(int)_tier];
 	}
 
 	/// <summary>
