@@ -180,6 +180,16 @@ public class GameSettings : SingletonScriptableObject<GameSettings> {
 		get { return m_shareDataChina; }
 	}
 
+    public string GameWebsiteUrl
+    {
+        get { return m_webURL; }
+    }
+
+    public string GetWebsiteUrlChina
+	{
+        get { return m_webURLChina; }
+	}
+
 	// Social Links
 	[Space]
 	[SerializeField] private string m_facebookURL = "https://www.facebook.com/HungryDragonGame";
@@ -198,8 +208,14 @@ public class GameSettings : SingletonScriptableObject<GameSettings> {
 	}
 
 	[SerializeField] private string m_webURL = "http://hungrydragongame.com";
-	public static string WEB_URL {
-		get { return instance.m_webURL; }
+	[SerializeField] private string m_webURLChina = "https://www.ubisoft.com.cn/games/hd";
+	public static string WEB_URL
+	{
+		get
+		{
+			Flavour currentFlavour = FlavourManager.Instance.GetCurrentFlavour();
+			return currentFlavour.GameWebsiteUrl;
+		}
 	}
 
 	[SerializeField] private string m_weiboURL = "https://www.weibo.com/ubichinamobile";

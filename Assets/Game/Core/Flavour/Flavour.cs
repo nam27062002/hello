@@ -121,6 +121,12 @@ public class Flavour
         private set;
     }
 
+    public string GameWebsiteUrl
+    {
+        get;
+        private set;
+    }
+
     //------------------------------------------------------------------------//
     // STATIC   		    												  //
     //------------------------------------------------------------------------//
@@ -271,7 +277,7 @@ public class Flavour
         bool isSIWAEnabled, bool showLanguageSelector, bool showBloodSelector, bool isTwitterEnabled, bool isInstagramEnabled,
         bool isWeChatEnabled, bool showSplashLegalText, string[] blackListedSFX, bool corpsesAllowed, bool macabreAllowed,
         bool weaponsAllowed, string shareLocationDef, string monoLanguageSku, Dictionary<string, List<string>> blackListedAccessories,
-        string[] blackListedEntities)
+        string[] blackListedEntities, string gameWebsite)
     {
         Sku = sku;
         SocialPlatform = socialPlatform;
@@ -306,6 +312,8 @@ public class Flavour
 
         // Black list entities (entity prefabs not allowed in China)
         SetupBlackListEntities(blackListedEntities);
+
+        GameWebsiteUrl = gameWebsite;
     }
 
     private void SetupBlackListEntities(string[] blackListedEntities)

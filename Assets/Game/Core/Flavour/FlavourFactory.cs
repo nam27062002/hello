@@ -142,7 +142,8 @@ public class FlavourFactory
            shareLocationDef: "url",
            monoLanguageSku: null,
            blackListedAccessories: null,
-           blackListedEntities: null);
+           blackListedEntities: null,
+           gameWebsite: GameSettings.instance.GameWebsiteUrl);
     }
 
     private void Settings_SetFlavourChina(Flavour flavour, Flavour.EDevicePlatform devicePlatform)
@@ -165,7 +166,8 @@ public class FlavourFactory
            shareLocationDef: "urlChina",
            monoLanguageSku: "lang_chinese",
            blackListedAccessories: blackListAccessoriesChina,
-           blackListedEntities: blackListEntitiesChina);
+           blackListedEntities: blackListEntitiesChina,
+           gameWebsite: GameSettings.instance.GetWebsiteUrlChina);
     }
 
     private void Settings_SetFlavourKorea(Flavour flavour, Flavour.EDevicePlatform devicePlatform)
@@ -188,7 +190,8 @@ public class FlavourFactory
            shareLocationDef: "url",
            monoLanguageSku: null,
            blackListedAccessories: null,
-           blackListedEntities: null);
+           blackListedEntities: null,
+           gameWebsite: GameSettings.instance.GameWebsiteUrl);
     }
     #endregion
 }
