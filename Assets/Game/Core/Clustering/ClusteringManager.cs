@@ -1,7 +1,7 @@
 // ClusteringManager.cs
 // Hungry Dragon
 // 
-// Created by  on 29/04/2020.
+// Created by Jose M. Olea on 29/04/2020.
 // Copyright (c) 2020 Ubisoft. All rights reserved.
 
 //----------------------------------------------------------------------------//
@@ -28,7 +28,7 @@ public class ClusteringManager {
 	private static readonly string GET_CLUSTER_ID = "/api/cluster/get";
 
 	// The cluster will be calculated based on the data gathered until the end of this run
-	public static int CALCULATE_CLUSTER_AFTER_RUN = 2;
+	public static int CALCULATE_CLUSTER_AT_RUN = 2;
 
     // If the server didnt reply yet at this run, we assign the player to a generic cluster
 	public static int ASSIGN_CLUSTER_AT_RUN = 4;
@@ -104,7 +104,7 @@ public class ClusteringManager {
     /// and assigns a temporary cluster ID in the meantime.
     /// </summary>
     /// <returns>The cluster ID</returns>
-	public string GetClusterId()
+	public string GetClusterId( )
 	{
 		string clusterId = UsersManager.currentUser.clusterId;
 
@@ -115,19 +115,27 @@ public class ClusteringManager {
 		}
 		else
 		{
-			// we dont know it yet. Request the cluster ID to the server.
-			Initialise(false);
+			// we dont know it yet.
 
-			// If the server response is taking too long. Assign the player to generic cluster.
-			if (UsersManager.currentUser.gamesPlayed >= ASSIGN_CLUSTER_AT_RUN)
+			if (UsersManager.currentUser.gamesPlayed < CALCULATE_CLUSTER_AT_RUN)
 			{
-				UsersManager.currentUser.clusterId = CLUSTER_GENERIC;
-				return CLUSTER_GENERIC;
+				// Too early. We are not calculating the cluster ID yet.
+				return null;
+			}
+
+			// Request the cluster ID to the server.
+			InitializeAndSendRequest(false);
+
+			if (UsersManager.currentUser.gamesPlayed < ASSIGN_CLUSTER_AT_RUN)
+			{
+				// We are still waiting for the server response
+				return null;
 			}
 			else
 			{
-				// We didnt decide a cluster yet
-				return null;
+				// The server response is taking too long. Assign the player to generic cluster.
+				UsersManager.currentUser.clusterId = CLUSTER_GENERIC;
+				return CLUSTER_GENERIC;
 			}
 		}
 	}
@@ -150,7 +158,7 @@ public class ClusteringManager {
     }
 
 
-	public void Initialise(bool _offlineMode = false)
+	public void InitializeAndSendRequest(bool _offlineMode = false)
 	{
 		if (!m_registered)
 		{
@@ -228,7 +236,7 @@ public class ClusteringManager {
 	private bool OnGetClusterResponse(string _strResponse, string _strCmd, int _reponseCode)
 	{
 		// If the player already belongs to a cluster (non generic) ignore the response
-		if (string.IsNullOrEmpty(UsersManager.currentUser.clusterId) &&
+		if (!string.IsNullOrEmpty(UsersManager.currentUser.clusterId) &&
 			UsersManager.currentUser.clusterId != CLUSTER_GENERIC)
         {
 			return true;
@@ -250,7 +258,7 @@ public class ClusteringManager {
 						{
 							if (kJSON.ContainsKey("result"))
 							{
-								if (kJSON["result"] == "true")
+								if (kJSON["result"] == true)
 								{
 									if (kJSON.ContainsKey("clusterId"))
 									{

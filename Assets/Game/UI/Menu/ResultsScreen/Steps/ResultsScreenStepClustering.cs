@@ -35,12 +35,12 @@ public class ResultsScreenStepClustering : ResultsScreenStep {
 
 		int gamesPlayed = UsersManager.currentUser.gamesPlayed;
 
-		// Do not calculate clustering until the end of the second run
-		if (gamesPlayed < ClusteringManager.CALCULATE_CLUSTER_AFTER_RUN)
+		// Do not calcultate if we already know it
+		if (!string.IsNullOrEmpty(UsersManager.currentUser.clusterId))
 			return false;
 
-        // Do not calcultate if we already know it
-        if (! string.IsNullOrEmpty (UsersManager.currentUser.clusterId))
+		// Do not calculate clustering until the end of the run 1 (0 is tutorial)
+		if (gamesPlayed != ClusteringManager.CALCULATE_CLUSTER_AT_RUN)
 			return false;
 
 
