@@ -89,6 +89,9 @@ public class OfferItemPreviewSkin3d : IOfferItemPreviewSkin {
 	/// <param name="_loader">Loader that triggered the event.</param>
 	private void OnDragonLoaded(MenuDragonLoader _loader) {
 		// Particle systems require a special initialization
-		InitParticles(m_dragonLoader.dragonInstance.gameObject);
+		if (m_dragonLoader.dragonInstance != null)
+		{
+			InitParticles(m_dragonLoader.dragonInstance.gameObject);
+		}
 	}
 }

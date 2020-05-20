@@ -167,7 +167,7 @@ public class LevelLoader
             m_realSceneNamesToLoad = new List<string>();
         }
 
-        UbiListUtils.AddRange(m_realSceneNamesToLoad, realSceneNames, false, true);
+        UbiListUtils.AddRange(ref m_realSceneNamesToLoad, realSceneNames, false, true);
     }
 
 
@@ -191,7 +191,7 @@ public class LevelLoader
             m_realSceneNamesToUnload = new List<string>();
         }
 
-        UbiListUtils.AddRange(m_realSceneNamesToUnload, realSceneNames, false, true);
+        UbiListUtils.AddRange(ref m_realSceneNamesToUnload, realSceneNames, false, true);
     }
     
     public void Perform(bool loadSync, OnChangeStateCallback onChangeState = null)
