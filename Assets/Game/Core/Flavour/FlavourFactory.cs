@@ -167,7 +167,7 @@ public class FlavourFactory
            monoLanguageSku: "lang_chinese",
            blackListedAccessories: blackListAccessoriesChina,
            blackListedEntities: blackListEntitiesChina,
-           gameWebsite: GameSettings.instance.GetWebsiteUrlChina);
+           gameWebsite: GameSettings.instance.GameWebsiteUrlChina);
     }
 
     private void Settings_SetFlavourKorea(Flavour flavour, Flavour.EDevicePlatform devicePlatform)

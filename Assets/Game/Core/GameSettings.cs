@@ -185,7 +185,7 @@ public class GameSettings : SingletonScriptableObject<GameSettings> {
         get { return m_webURL; }
     }
 
-    public string GetWebsiteUrlChina
+    public string GameWebsiteUrlChina
 	{
         get { return m_webURLChina; }
 	}
