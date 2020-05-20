@@ -30,7 +30,7 @@ public class LoadingScreen : UbiBCN.SingletonMonoBehaviour<LoadingScreen> {
 	[SerializeField] private Canvas m_loadingCanvas = null;
 	[Space]
 	[SerializeField] private UISpriteAddressablesLoader m_dragonIconLoader = null;
-    [SerializeField] private Image m_tierIcon = null;
+    [SerializeField] private Transform m_tierIconContainer = null;
     [Space]
     [SerializeField] private PowerIcon[] m_powerIcons = null;
 
@@ -85,8 +85,11 @@ public class LoadingScreen : UbiBCN.SingletonMonoBehaviour<LoadingScreen> {
             instance.m_dragonIconLoader.IsVisible = false;
         }
 
-
-        instance.m_tierIcon.sprite = ResourcesExt.LoadFromSpritesheet(UIConstants.UI_SPRITESHEET_PATH, currentDragon.tierDef.Get("icon"));
+        // Remove the placeholder
+		instance.m_tierIconContainer.transform.DestroyAllChildren(true);
+		// Set the actual tier icon
+		GameObject tierIconPrefab = UIConstants.GetTierIcon(currentDragon.tier);
+		Instantiate(tierIconPrefab, instance.m_tierIconContainer);
 
 		// Powers: skin + pets
 		// [AOC] PowerIcon does all the job for us!

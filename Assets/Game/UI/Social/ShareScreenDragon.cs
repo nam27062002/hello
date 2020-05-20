@@ -41,7 +41,7 @@ public class ShareScreenDragon : IShareScreen {
 	[SerializeField] private MenuDragonLoader m_dragonLoader = null;
 	public MenuDragonLoader dragonLoader { get { return m_dragonLoader; } }
 	[Space]
-	[SerializeField] private Image m_tierIcon = null;
+	[SerializeField] private Transform m_tierIconContainer = null;
 	[Space]
 	[SerializeField] private GameObject m_powerGroup = null;
 	[SerializeField] private PowerIcon m_powerIcon = null;
@@ -139,9 +139,12 @@ public class ShareScreenDragon : IShareScreen {
 		}
 
 		// Tier Icon 
-		if(m_tierIcon != null) {
-            string sprite = m_dragonData.tierDef.GetAsString("icon");
-            m_tierIcon.sprite = ResourcesExt.LoadFromSpritesheet(UIConstants.UI_SPRITESHEET_PATH, sprite);
+		if(m_tierIconContainer != null) {
+			// Remove the placeholder
+			m_tierIconContainer.transform.DestroyAllChildren(true);
+			// Set the actual tier icon
+			GameObject tierIconPrefab = UIConstants.GetTierIcon(m_dragonData.tier);
+			Instantiate(tierIconPrefab, m_tierIconContainer);
 		}
 
 

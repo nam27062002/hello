@@ -144,7 +144,7 @@ public class PopupDragonInfo : PopupTierPreyInfo {
 			// multiplier during <color=%U4>Fire Rush</color>
 			int numPets = m_dragonData.pets.Count;  // Dragon data has as many slots as defined for this dragon
 			m_tierInfoText.Localize("TID_DRAGON_INFO_TIER_DESCRIPTION",
-				UIConstants.GetSpriteTag(m_dragonData.tierDef.GetAsString("icon")),
+				UIConstants.GetTierTag(m_dragonData.tierDef),
 				(numPets > 1 ? LocalizationManager.SharedInstance.Localize("TID_PET_PLURAL") : LocalizationManager.SharedInstance.Localize("TID_PET")), // Singular/Plural
 				StringUtils.FormatNumber(numPets),
 				"x" + StringUtils.FormatNumber(m_dragonData.def.GetAsFloat("furyScoreMultiplier", 2), 0)
