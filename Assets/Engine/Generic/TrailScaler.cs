@@ -138,7 +138,10 @@ public class TrailScaler : MonoBehaviour
 		if (m_transform != null)
 		{
 			Scale(m_transform.lossyScale.x);
-		}
+		} else
+        {
+			Scale(transform.lossyScale.x);
+        }
 	}
 
 	void Scale( float scale )
