@@ -8,18 +8,35 @@ using System.Reflection;
 using AI;
 using UnityEditor;
 using UnityEngine;
+using System.IO;
+using System.Collections.Generic;
 
 public class BabyDragonWizard : EditorWindow
 {
 	// Constants
-	const string PET_GAMEPLAY_PREFAB_CLONE = "Assets/Art/3D/Gameplay/Pets/Prefabs/Bundle_01/PF_PetDactylus_0.prefab";
-	const string SAVE_FILE_PATH = "Assets/Art/3D/Gameplay/Pets/Prefabs/";
+	const string PET_BASE_PATH  = "Assets/Art/3D/Gameplay/Pets/Prefabs/";
+
+    // Enums
+    enum EBabyDragonPet
+    {
+        Dactylus,
+        Froggy,
+        BallGrenade,
+        BallMedic,
+        Bruce,
+        GhostEater,
+        GodzillaBasic,
+        MineEater
+    }
 
 	// Required
 	Object babyDragonFBX;
 	Object lastBabyDragonFBX;
 	Editor gameObjectEditor;
 	string sku;
+	EBabyDragonPet babyDragonBasePet;
+	static Dictionary<string, string> petCloneDict = new Dictionary<string, string>();
+	static List<string> popupPetClone = new List<string>();
 
     // Optional
 	string tagName = "Pet";
@@ -40,6 +57,25 @@ public class BabyDragonWizard : EditorWindow
 		BabyDragonWizard window = (BabyDragonWizard) GetWindow(typeof(BabyDragonWizard));
 		Texture icon = AssetDatabase.LoadAssetAtPath<Texture>("Assets/Art/UI/Common/Icons/icon_btn_pets.png");
 		window.titleContent = new GUIContent(" Baby Dragon", icon);
+
+		string[] directory = Directory.GetDirectories(PET_BASE_PATH);
+		for (int i = 0; i < directory.Length; i++)
+		{
+			string[] guid = AssetDatabase.FindAssets("PF_", new[] { directory[i] });
+			for (int x = 0; x < guid.Length; x++)
+			{
+				string path = AssetDatabase.GUIDToAssetPath(guid[x]);
+				string petName = path.Substring(path.LastIndexOf("/") + 1);
+				petName = petName.Substring(0, petName.IndexOf(".prefab"));
+				if (!petName.Contains("Menu"))
+				{
+					popupPetClone.Add(petName);
+					petCloneDict.Add(petName, path);
+					Debug.LogError("PetName: " + petName + " - " + path);
+				}
+			}
+		}
+
 		window.Show();
 	}
 
@@ -53,6 +89,9 @@ public class BabyDragonWizard : EditorWindow
 		babyDragonFBX = EditorGUILayout.ObjectField(babyDragonFBX, typeof(Object), true);
 		EditorGUILayout.EndHorizontal();
 		sku = EditorGUILayout.TextField("Definitions SKU:", sku);
+		EditorGUILayout.BeginHorizontal();
+		babyDragonBasePet = (EBabyDragonPet) EditorGUILayout.EnumPopup("Clone pet behaviour", babyDragonBasePet);
+		EditorGUILayout.EndHorizontal();
 
 		EditorGUILayout.Space();
 		EditorGUILayout.LabelField("Optional", EditorStyles.boldLabel);
@@ -176,8 +215,52 @@ public class BabyDragonWizard : EditorWindow
 		DestroyImmediate(root);
 	}
 
+    string GetClonePetPath()
+    {
+        string path;
+        switch (babyDragonBasePet)
+        {
+			case EBabyDragonPet.Dactylus:
+				path = "Bundle_01/PF_PetDactylus_0.prefab";
+				break;
+			case EBabyDragonPet.Froggy:
+				path = "Bundle_02/PF_PetFroggy_v5_13.prefab";
+				break;
+			case EBabyDragonPet.BallGrenade:
+				path = "Bundle_03/PF_PetBallGrenade_18.prefab";
+				break;
+			case EBabyDragonPet.BallMedic:
+				path = "Bundle_03/PF_PetBallMedic_42.prefab";
+				break;
+			case EBabyDragonPet.Bruce:
+				path = "Bundle_04/PF_PetBruce_50.prefab";
+				break;
+			case EBabyDragonPet.GhostEater:
+				path = "Bundle_05/PF_PetGhostEater_28.prefab";
+				break;
+			case EBabyDragonPet.GodzillaBasic:
+				path = "Bundle_05/PF_PetGodzillaBasic_24.prefab";
+				break;
+			case EBabyDragonPet.MineEater:
+				path = "Bundle_05/PF_PetMineEater_29.prefab";
+				break;
+			default:
+				return string.Empty;
+		}
+
+		return Path.Combine(PET_BASE_PATH, path);
+    }
+
     void CreateGameplayPrefab()
     {
+        // Pet to clone behaviour
+		string petClonePath = GetClonePetPath();
+		if (string.IsNullOrEmpty(petClonePath))
+		{
+			Debug.LogError("Pet to clone was not defined: " + babyDragonBasePet);
+			return;
+		}
+
 		// View
 		GameObject view = (GameObject)Instantiate(babyDragonFBX);
 		view.name = "view";
@@ -194,7 +277,7 @@ public class BabyDragonWizard : EditorWindow
 		// Create root object
 		string rootName = "PF_Pet" + babyDragonFBX.name.Replace("_LOW", "");
 		GameObject root = new GameObject(rootName) { tag = tagName };
-		GameObject basePetModel = (GameObject)AssetDatabase.LoadAssetAtPath(PET_GAMEPLAY_PREFAB_CLONE, typeof(GameObject));
+		GameObject basePetModel = (GameObject)AssetDatabase.LoadAssetAtPath(petClonePath, typeof(GameObject));
 
 		// Attach view as child
 		view.transform.SetParentAndReset(root.transform);
@@ -321,7 +404,7 @@ public class BabyDragonWizard : EditorWindow
 
 	void Export(GameObject root, string defaultName, string assetBundle = "", string saveDialogTitle = "")
 	{
-		string path = EditorUtility.SaveFilePanel("Baby Dragon " + saveDialogTitle, SAVE_FILE_PATH, defaultName, "prefab");
+		string path = EditorUtility.SaveFilePanel("Baby Dragon " + saveDialogTitle, PET_BASE_PATH, defaultName, "prefab");
 		if (!string.IsNullOrEmpty(path))
 		{
 			GameObject prefab = PrefabUtility.SaveAsPrefabAssetAndConnect(root, GetRelativePath(path), InteractionMode.UserAction);
