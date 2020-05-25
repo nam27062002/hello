@@ -27,7 +27,8 @@ public class Flavour
         SHOW_SPLASH_LEGAL_TEXT,
         CORPSES_ALLOWED,
         MACABRE_ALLOWED, // Restriction for bones, tombs, ghosts, skulls...
-        WEAPONS_ALLOWED
+        WEAPONS_ALLOWED,
+        SHOW_CONSUME_PROPERLY_REMINDER
 
     }
 
@@ -276,7 +277,8 @@ public class Flavour
     public void Setup(string sku, ESocialPlatform socialPlatform, EAddressablesVariant addressablesVariant,
         bool isSIWAEnabled, bool showLanguageSelector, bool showBloodSelector, bool isTwitterEnabled, bool isInstagramEnabled,
         bool isWeChatEnabled, bool showSplashLegalText, string[] blackListedSFX, bool corpsesAllowed, bool macabreAllowed,
-        bool weaponsAllowed, string shareLocationDef, string monoLanguageSku, Dictionary<string, List<string>> blackListedAccessories,
+        bool weaponsAllowed, bool consumeProperlyReminderEnabled,
+        string shareLocationDef, string monoLanguageSku, Dictionary<string, List<string>> blackListedAccessories,
         string[] blackListedEntities, string gameWebsite)
     {
         Sku = sku;
@@ -296,6 +298,7 @@ public class Flavour
         boolSettings.Add(SettingKey.CORPSES_ALLOWED, corpsesAllowed);
         boolSettings.Add(SettingKey.MACABRE_ALLOWED, macabreAllowed);
         boolSettings.Add(SettingKey.WEAPONS_ALLOWED, weaponsAllowed);
+        boolSettings.Add(SettingKey.SHOW_CONSUME_PROPERLY_REMINDER, consumeProperlyReminderEnabled);
 
         // Push the forbbiden audio clips
         SetupBlackListSFX(blackListedSFX);

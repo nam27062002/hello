@@ -28,6 +28,7 @@ public class PopupClassicDragonInfo : PopupDragonInfo {
 	//------------------------------------------------------------------------//
 	// Exposed
 	[Separator("Classic Dragon Stuff")]
+
 	[SerializeField] protected Localizer m_dragonLevelText = null;
 
 	//------------------------------------------------------------------------//
@@ -48,5 +49,6 @@ public class PopupClassicDragonInfo : PopupDragonInfo {
 		if(m_dragonLevelText != null) {
 			MenuDragonInfo.FormatLevel(m_dragonData, m_dragonLevelText);
 		}
+
 	}
 }
