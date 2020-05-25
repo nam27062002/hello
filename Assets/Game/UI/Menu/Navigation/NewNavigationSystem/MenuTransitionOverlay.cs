@@ -32,13 +32,6 @@ public class MenuTransitionOverlay : MonoBehaviour {
 		get { return m_transitionDuration; }
 	}
 
-	[SerializeField] private float m_pauseDuration = 1f;
-	public float pauseDuration
-	{
-		get { return m_pauseDuration; }
-        set { m_pauseDuration = value; }
-	}
-
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -70,20 +63,6 @@ public class MenuTransitionOverlay : MonoBehaviour {
 		// Trigger animation
 		m_anim.SetTrigger("play");
 
-		if (m_pauseDuration == 0)
-		{
-			m_anim.SetTrigger("continue");
-		}
-		else
-		{
-			// Make a pause after the clouds enter (fade in)
-			UbiBCN.CoroutineManager.DelayedCall(() =>
-		       {
-		       // After the pause continue with the second part of the animation (fade out)
-		       m_anim.SetTrigger("continue");
-		       },
-			m_transitionDuration + m_pauseDuration);
-		}
 	}
 
 	/// <summary>

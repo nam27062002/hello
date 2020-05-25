@@ -158,19 +158,36 @@ public class GameSettings : SingletonScriptableObject<GameSettings> {
 	[SerializeField] private ShareData m_shareDataAndroid = new ShareData();
 	[SerializeField] private ShareData m_shareDataChina = new ShareData();
 	public static ShareData shareData {
-		get {
-			// Select target share data based on platform
-			// Also specific data for China!
-			if(PlatformUtils.Instance.IsChina()) {
-				return instance.m_shareDataChina;
-			} else {
-#if UNITY_IOS
-				return instance.m_shareDataIOS;
-#else
-				return instance.m_shareDataAndroid;
-#endif
-			}
+		get
+        {
+			Flavour currentFlavour = FlavourManager.Instance.GetCurrentFlavour();
+			return currentFlavour.ShareData;
 		}
+	}
+
+	public ShareData ShareDataIOS
+	{
+		get { return m_shareDataIOS; }
+	}
+
+	public ShareData ShareDataAndroid
+	{
+		get { return m_shareDataAndroid; }
+	}
+
+	public ShareData ShareDataChina
+	{
+		get { return m_shareDataChina; }
+	}
+
+    public string GameWebsiteUrl
+    {
+        get { return m_webURL; }
+    }
+
+    public string GameWebsiteUrlChina
+	{
+        get { return m_webURLChina; }
 	}
 
 	// Social Links
@@ -191,15 +208,13 @@ public class GameSettings : SingletonScriptableObject<GameSettings> {
 	}
 
 	[SerializeField] private string m_webURL = "http://hungrydragongame.com";
-	[SerializeField] private string m_webChinaURL = "http://hungrydragongame.com";
-	public static string WEB_URL {
-		get {
-			// Are we in China?
-			if(PlatformUtils.Instance.IsChina()) {
-				return instance.m_webChinaURL;
-			} else {
-				return instance.m_webURL;
-			}
+	[SerializeField] private string m_webURLChina = "https://www.ubisoft.com.cn/games/hd";
+	public static string WEB_URL
+	{
+		get
+		{
+			Flavour currentFlavour = FlavourManager.Instance.GetCurrentFlavour();
+			return currentFlavour.GameWebsiteUrl;
 		}
 	}
 

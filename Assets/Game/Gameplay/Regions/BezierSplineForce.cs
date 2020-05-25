@@ -131,6 +131,13 @@ namespace Assets.Code.Game.Spline
 			public bool IsInCurrentDirection()
 			{
 				int step = 0;
+
+				if (spline == null)
+				{
+					Firebase.Crashlytics.Crashlytics.LogException(new System.Exception(">>>> IsInCurrentDirection(): null spline"));
+					return false;
+				}
+
 				spline.GetClosestPointToPoint(obj.transform.position, NumSteps, out t, out step);
 
 				Vector3 tangent = spline.GetTangent(t);

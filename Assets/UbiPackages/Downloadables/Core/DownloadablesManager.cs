@@ -976,7 +976,7 @@ namespace Downloadables
                     group = Groups_GetGroup(id);
                     if (group != null)
                     {
-                        UbiListUtils.AddRange(entryIds, group.EntryIds, false, true);
+                        UbiListUtils.AddRange(ref entryIds, group.EntryIds, false, true);
                     }
                 }
 

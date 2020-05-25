@@ -167,6 +167,7 @@ public class ShopController : MonoBehaviour
         // React to offers being reloaded 
         Messenger.AddListener(MessengerEvents.OFFERS_RELOADED, OnOffersReloaded);
         Messenger.AddListener<List<OfferPack>>(MessengerEvents.OFFERS_CHANGED, OnOffersChanged);
+        Messenger.AddListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnTransitionStart);
         Messenger.AddListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_END, OnTransitionEnd);
     }
 
@@ -177,6 +178,7 @@ public class ShopController : MonoBehaviour
     {
         Messenger.RemoveListener(MessengerEvents.OFFERS_RELOADED, OnOffersReloaded);
         Messenger.RemoveListener<List<OfferPack>>(MessengerEvents.OFFERS_CHANGED, OnOffersChanged);
+        Messenger.RemoveListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnTransitionStart);
         Messenger.RemoveListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_END, OnTransitionEnd);
     }
 
@@ -325,6 +327,9 @@ public class ShopController : MonoBehaviour
                 CenterItemsAndLockScroll();
                 break;
         }
+
+        // Clear everything to avoid the shop content being flashed before the transition clouds
+        Clear();
 
         // In case we need to do something after the user purchases an offer
         m_purchaseCompletedCallback = _purchaseCompletedCallback;
@@ -575,10 +580,23 @@ public class ShopController : MonoBehaviour
     {
         m_scrollRect.movementType = ScrollRect.MovementType.Unrestricted;
         m_scrollRect.horizontal = false;
-        m_scrollRect.GetComponent<HorizontalLayoutGroup>().enabled = true;
-        m_scrollRect.GetComponent<ContentSizeFitter>().enabled = true;
-        m_scrollRect.viewport.GetComponent<HorizontalLayoutGroup>().enabled = true;
-        m_scrollRect.viewport.GetComponent<ContentSizeFitter>().enabled = true;
+
+        HorizontalLayoutGroup layout = m_scrollRect.GetComponent<HorizontalLayoutGroup>();
+        ContentSizeFitter fitter = m_scrollRect.GetComponent<ContentSizeFitter>();
+        if (layout != null && fitter != null )
+        {
+            layout.enabled = true;
+            fitter.enabled = true;
+        }
+
+        layout = m_scrollRect.viewport.GetComponent<HorizontalLayoutGroup>();
+        fitter = m_scrollRect.viewport.GetComponent<ContentSizeFitter>();
+        if (layout != null && fitter != null)
+        {
+            layout.enabled = true;
+            fitter.enabled = true;
+        }
+
     }
 
 
@@ -1133,6 +1151,18 @@ public class ShopController : MonoBehaviour
 		HDTrackingManager.Instance.Notify_StoreShortcutClick(_sc.id);
 	}
 
+    /// <summary>
+    /// Fade out all the items in the shop, for a nicer trasition when leaving this screen
+    /// </summary>
+    private void FadeElementsOut ()
+    {
+        foreach (IShopPill pill in m_visiblePills)
+        {
+            pill.GetComponent<ShowHideAnimator>().Hide(true);
+        }
+        
+    }
+
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
@@ -1266,6 +1296,21 @@ public class ShopController : MonoBehaviour
 
             // TODO: refresh only the affected category (check before if it worth it)
 
+        }
+    }
+
+    /// <summary>
+    /// The current menu screen is changing (animation starts now).
+    /// </summary>
+    /// <param name="_from">Source screen.</param>
+    /// <param name="_to">Target screen.</param>
+    private void OnTransitionStart(MenuScreen _from, MenuScreen _to)
+    {
+        // We are leaving the shop
+        if (_from == MenuScreen.SHOP)
+        {
+            // Start fading the pills out for a nicer transition
+            FadeElementsOut();
         }
     }
 

@@ -3001,6 +3001,12 @@ public class AudioController : SingletonMonoBehaviour<AudioController>, ISeriali
 
         //Debug.Log( "PlayAudioSubItem Clip '" + subItem.Clip.name + "'" );
 
+        Flavour currentFlavour = FlavourManager.Instance.GetCurrentFlavour();
+        if (!currentFlavour.CanPlaySFX(subItem.Clip.name))
+        {
+            return null;
+        }
+
         var audioCategory = audioItem.category;
 
         float volumeWithoutCategory = subItem.Volume * audioItem.Volume * volume;

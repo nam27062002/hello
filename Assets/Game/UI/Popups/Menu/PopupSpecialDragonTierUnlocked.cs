@@ -27,7 +27,6 @@ public class PopupSpecialDragonTierUnlocked : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// Exposed references
 	[SerializeField] private Localizer m_tierDescText = null;
-	[SerializeField] private Image m_tierIcon = null;
 
 
 	//------------------------------------------------------------------------//
@@ -52,11 +51,6 @@ public class PopupSpecialDragonTierUnlocked : MonoBehaviour {
 			);
 		}
 
-		// Icon
-		if(m_tierIcon != null) {
-			m_tierIcon.sprite = ResourcesExt.LoadFromSpritesheet(UIConstants.UI_SPRITESHEET_PATH, _tierDef.GetAsString("icon"));
-			m_tierIcon.color = Color.white;
-		}
 	}
 
 	//------------------------------------------------------------------------//

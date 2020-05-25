@@ -679,6 +679,7 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 
 	/// <summary>
 	/// Do we need to open the offers shop?
+    /// Not really a popup, but this seems the right place to check
 	/// </summary>
 	private void CheckOpenShop() {
 		// Only if requested
@@ -693,11 +694,9 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 			return;
 		}
 
-		// All checks passed! Open the shop popup at the offers tab
-		PopupController popup = PopupManager.LoadPopup(PopupShop.PATH);
-		PopupShop shop = popup.GetComponent<PopupShop>();
-		shop.Init(ShopController.Mode.DEFAULT, "After_Offer_Rewards");
-		popup.Open();
+		// All checks passed! go to the shop.
+		MenuTransitionManager screensController = InstanceManager.menuSceneController.transitionManager;
+		screensController.GoToScreen(MenuScreen.SHOP, false, true, true);
 
 		// Reset flag
 		SetFlag(StateFlag.OPEN_SHOP, false);

@@ -26,7 +26,7 @@ public class DragonInfoTooltip : UITooltip {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed References
-	[SerializeField] private Image m_tierIcon = null;
+	[SerializeField] private Transform m_tierIconContainer = null;
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -36,7 +36,7 @@ public class DragonInfoTooltip : UITooltip {
 	/// </summary>
 	override protected void Awake() {
 		// Check required fields
-		Debug.Assert(m_tierIcon != null, "Required field!");
+		Debug.Assert(m_tierIconContainer != null, "Required field!");
 
 		// Call parent
 		base.Awake();
@@ -75,18 +75,18 @@ public class DragonInfoTooltip : UITooltip {
 		);
 
 		// Tier icon
-		if(m_tierIcon != null) {
+		if(m_tierIconContainer != null) {
 			// Get tier definition
 			string tierSku = _dragonDef.GetAsString("tier", "tier_6");  // If no tier is defined, assume it's a special dragon (tier_6)
-			DefinitionNode tierDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGON_TIERS, tierSku);
+			DragonTier tier = IDragonData.SkuToTier(tierSku);
 
-			// Load icon
-			Sprite tierSprite = ResourcesExt.LoadFromSpritesheet(UIConstants.UI_SPRITESHEET_PATH, tierDef.Get("icon"));
-			if(tierSprite != null) {
-				m_tierIcon.color = Color.white;
-				m_tierIcon.sprite = tierSprite;
-			}
-			m_icon.gameObject.SetActive(tierSprite != null);
+			// Remove the placeholder
+			m_tierIconContainer.DestroyAllChildren(true);
+
+			// Add the proper tier icon
+			GameObject tierIconPrefab = UIConstants.GetTierIcon(tier);
+			Instantiate(tierIconPrefab, m_tierIconContainer, false);
+
 		}
 	}
 
