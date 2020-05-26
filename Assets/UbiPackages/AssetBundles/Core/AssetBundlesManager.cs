@@ -230,7 +230,7 @@ public class AssetBundlesManager
 
             if (returnValue)
             {
-                UbiListUtils.AddRange(output, internalOutput, false, true);
+                UbiListUtils.AddRange(ref output, internalOutput, false, true);
             }
         }
 
@@ -418,7 +418,7 @@ public class AssetBundlesManager
             for (int i = 0; i < count; i++)
             {
                 abIds = GetDependenciesIncludingSelf(ids[i]);
-                UbiListUtils.AddRange(returnValue, abIds, false, true);
+                UbiListUtils.AddRange(ref returnValue, abIds, false, true);
             }
         }
 

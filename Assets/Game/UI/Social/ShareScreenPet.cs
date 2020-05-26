@@ -116,8 +116,8 @@ public class ShareScreenPet : IShareScreen {
         // Reapply render queues
         m_renderQueueSetter.Apply();
 
-        // [AOC] Disable animation instead, pet's default poses look good enough
-        m_petLoader.petInstance.animator.enabled = false;
+		// [AOC] Disable animation instead, pet's default poses look good enough
+		// [JOM] Default pose causes closed eyes [HDK-4812]. Let the animator enabled.
 
-    }
+	}
 }

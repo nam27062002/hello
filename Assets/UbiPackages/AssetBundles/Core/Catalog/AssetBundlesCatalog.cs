@@ -81,7 +81,7 @@ public class AssetBundlesCatalog
                 }
             }
 
-            UbiListUtils.AddRange(m_localList, m_explicitLocalList, false, true);
+            UbiListUtils.AddRange(ref m_localList, m_explicitLocalList, false, true);
 
             if (json.ContainsKey(CATALOG_ATT_GROUPS))
             {

@@ -76,13 +76,19 @@ public class HungryLettersPanel : MonoBehaviour
 		m_tweening = false;
 		m_presenting = false;
 		m_panelInPlace = false;
-		this.gameObject.SetActive(false);
+
 
 		// Subscribe to external events
 		Messenger.AddListener<bool, DragonSuperSize.Source>(MessengerEvents.SUPER_SIZE_TOGGLE, OnSuperSizeToggle);
 	}
 
-	private void OnDestroy() {
+    private void Start()
+    {
+        // Disable after awake for optimization purposes
+		this.gameObject.SetActive(false);
+	}
+
+    private void OnDestroy() {
 		// Unsubscribe from external events
 		Messenger.RemoveListener<bool, DragonSuperSize.Source>(MessengerEvents.SUPER_SIZE_TOGGLE, OnSuperSizeToggle);
 	}
