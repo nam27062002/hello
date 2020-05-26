@@ -34,9 +34,6 @@ public class BabyDragonWizard : EditorWindow
 	Object lastBabyDragonFBX;
 	Editor gameObjectEditor;
 	string sku;
-	static string[] popupPetCloneArray;
-	static string[] popupPetClonePathArray;
-	int popupPetCloneIndex = 0;
 
 	// Optional
 	Material babyDragonMaterial;
@@ -49,6 +46,9 @@ public class BabyDragonWizard : EditorWindow
 	int assetBundleMainMenuIndex = 0;
 
 	// Gameplay
+	static string[] popupPetCloneArray;
+	static string[] popupPetClonePathArray;
+	int popupPetCloneIndex = 0;
 	int tagIndexGameplay = 16;
 	RuntimeAnimatorController runtimeAnimatorControllerGameplay;
 	int assetBundleGameplayIndex = 0;
@@ -116,9 +116,6 @@ public class BabyDragonWizard : EditorWindow
 		babyDragonFBX = EditorGUILayout.ObjectField(babyDragonFBX, typeof(Object), true);
 		EditorGUILayout.EndHorizontal();
 		sku = EditorGUILayout.TextField("Definitions SKU:", sku);
-		EditorGUILayout.BeginHorizontal();
-		popupPetCloneIndex = EditorGUILayout.Popup("Clone pet behaviour:", popupPetCloneIndex, popupPetCloneArray);
-		EditorGUILayout.EndHorizontal();
 
         // Optional
 		EditorGUILayout.Space();
@@ -147,6 +144,9 @@ public class BabyDragonWizard : EditorWindow
 		EditorGUILayout.LabelField("Gameplay prefab settings", EditorStyles.boldLabel);
 		EditorGUILayout.BeginHorizontal();
 		tagIndexGameplay = EditorGUILayout.Popup("Tag:", tagIndexGameplay, tagArray);
+		EditorGUILayout.EndHorizontal();
+		EditorGUILayout.BeginHorizontal();
+		popupPetCloneIndex = EditorGUILayout.Popup("Clone pet behaviour:", popupPetCloneIndex, popupPetCloneArray);
 		EditorGUILayout.EndHorizontal();
 		EditorGUILayout.BeginHorizontal();
 		EditorGUILayout.LabelField("Animation Controller :");
