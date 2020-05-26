@@ -12,17 +12,18 @@
 	<Definition sku="CLUSTER_TREE_001_RULE_011" rule="model.deviceProfile == 4" />
 	<Definition sku="CLUSTER_TREE_001_RULE_012" rule="['GROUP_6','GROUP_7'].indexOf(model.countryGroup) &gt;=0 " />
 	<Definition sku="CLUSTER_TREE_001_RULE_013" rule="model.score &gt;= 10344" />
-	<Definition sku="CLUSTER_TREE_002_RULE_001" rule="['GROUP_1','GROUP_2','GROUP_3','GROUP_4'].indexOf(model.countryGroup) &gt;= 0" />
-	<Definition sku="CLUSTER_TREE_002_RULE_002" rule="model.countryGroup == 'GROUP_1'" />
+	<Definition sku="CLUSTER_TREE_002_RULE_001" rule="['GROUP_1','GROUP_2','GROUP_3','GROUP_4', 'TIER_1'].indexOf(model.countryGroup) &gt;= 0" />
+	<Definition sku="CLUSTER_TREE_002_RULE_002" rule="model.deviceProfile == 4" />
 	<Definition sku="CLUSTER_TREE_002_RULE_003" rule="model.deviceProfile != 0" />
-	<Definition sku="CLUSTER_TREE_002_RULE_004" rule="model.deviceProfile &lt;= 2" />
-	<Definition sku="CLUSTER_TREE_002_RULE_005" rule="model.score &gt;= 2139e+1" />
-	<Definition sku="CLUSTER_TREE_002_RULE_006" rule="model.score &gt;= 2315e+1" />
-	<Definition sku="CLUSTER_TREE_002_RULE_007" rule="model.score &gt;= 1659e+1" />
-	<Definition sku="CLUSTER_TREE_002_RULE_008" rule="['Asus','iphone','Lge','Samsung','Sony','Xiaomi'].indexOf(model.modelGroup) &gt;= 0" />
-	<Definition sku="CLUSTER_TREE_002_RULE_009" rule="['Asus','Google','Huawei','ipad','iphone','Lge','OnePlus','Samsung','Sony','Xiaomi'].indexOf(model.modelGroup) &gt;= 0" />
-	<Definition sku="CLUSTER_TREE_002_RULE_010" rule="['Amazon','Asus','Google','ipod','Lenovo','Lge','Motorola','Other','Samsung','Sony'].indexOf(model.modelGroup) &gt;= 0" />
-	<Definition sku="CLUSTER_TREE_002_RULE_011" rule="model.fireRushes &gt;= 12" />
+	<Definition sku="CLUSTER_TREE_002_RULE_004" rule="model.score &gt;= 9225" />
+	<Definition sku="CLUSTER_TREE_002_RULE_005" rule="['GROUP_1','GROUP_2'].indexOf(model.countryGroup) &gt;= 0" />
+	<Definition sku="CLUSTER_TREE_002_RULE_006" rule="model.score &gt;= 11265" />
+	<Definition sku="CLUSTER_TREE_002_RULE_007" rule="['GROUP_1','GROUP_2'].indexOf(model.countryGroup) &gt;= 0" />
+	<Definition sku="CLUSTER_TREE_002_RULE_008" rule="model.fireRushes &gt; 5" />
+	<Definition sku="CLUSTER_TREE_002_RULE_009" rule="model.gemsSpent &gt; 0" />
+	<Definition sku="CLUSTER_TREE_002_RULE_010" rule="model.fireRushes &lt;= 5" />
+	<Definition sku="CLUSTER_TREE_002_RULE_011" rule="['GROUP_6','GROUP_7'].indexOf(model.countryGroup) &gt;=0 " />
+	<Definition sku="CLUSTER_TREE_002_RULE_012" rule="model.score &gt;= 39496" />
 	<Definition sku="CLUSTER_TREE_003_RULE_001" rule="['GROUP_1','GROUP_2','GROUP_3','GROUP_4'].indexOf(model.countryGroup) &gt;= 0" />
 	<Definition sku="CLUSTER_TREE_003_RULE_002" rule="model.deviceProfile == 4" />
 	<Definition sku="CLUSTER_TREE_003_RULE_003" rule="model.deviceProfile != 0" />
