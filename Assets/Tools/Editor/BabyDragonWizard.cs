@@ -17,8 +17,8 @@ public class BabyDragonWizard : EditorWindow
 	const string PET_BASE_PATH  = "Assets/Art/3D/Gameplay/Pets/Prefabs/";
 
     // Required
-    UnityEngine.Object babyDragonFBX;
-    UnityEngine.Object lastBabyDragonFBX;
+    Object babyDragonFBX;
+    Object lastBabyDragonFBX;
 	Editor gameObjectEditor;
 	string sku;
 
@@ -322,6 +322,10 @@ public class BabyDragonWizard : EditorWindow
 		Component[] components = basePetModel.GetComponents<Component>();
         for (int i = 0; i < components.Length; i++)
         {
+            // Ignore SkinnedMeshCombiner component. Baby Dragons only have a single SkinnedMesh
+            if (components[i].GetType() == typeof(SkinnedMeshCombiner))
+				continue;
+
 			UnityEditorInternal.ComponentUtility.CopyComponent(components[i]);
 			UnityEditorInternal.ComponentUtility.PasteComponentAsNew(root);
 		}
