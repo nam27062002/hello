@@ -16,22 +16,9 @@ public class BabyDragonWizard : EditorWindow
 	// Constants
 	const string PET_BASE_PATH  = "Assets/Art/3D/Gameplay/Pets/Prefabs/";
 
-    // Enums
-    enum EBabyDragonPet
-    {
-        Dactylus,
-        Froggy,
-        BallGrenade,
-        BallMedic,
-        Bruce,
-        GhostEater,
-        GodzillaBasic,
-        MineEater
-    }
-
-	// Required
-	Object babyDragonFBX;
-	Object lastBabyDragonFBX;
+    // Required
+    UnityEngine.Object babyDragonFBX;
+    UnityEngine.Object lastBabyDragonFBX;
 	Editor gameObjectEditor;
 	string sku;
 
@@ -62,7 +49,15 @@ public class BabyDragonWizard : EditorWindow
 		Texture icon = AssetDatabase.LoadAssetAtPath<Texture>("Assets/Art/UI/Common/Icons/icon_btn_pets.png");
 		window.titleContent = new GUIContent(" Baby Dragon", icon);
 
-        // Create pets popup list
+		CreateWindowPopups();
+
+        // Show window
+		window.Show();
+	}
+
+    static void CreateWindowPopups()
+    {
+		// Create pets popup list
 		string[] directory = Directory.GetDirectories(PET_BASE_PATH);
 		List<string> popupPetClone = new List<string>();
 		List<string> popupPetClonePath = new List<string>();
@@ -89,33 +84,67 @@ public class BabyDragonWizard : EditorWindow
 		List<string> tags = new List<string>();
 		int totalTags = UnityEditorInternal.InternalEditorUtility.tags.Length;
 		for (int i = 0; i < totalTags; i++)
-        {
+		{
 			tags.Add(UnityEditorInternal.InternalEditorUtility.tags[i]);
-        }
+		}
 		tagArray = tags.ToArray();
 
 		// Create asset bundles popup list
 		string[] assetBundleNone = new string[] { "None" };
-        string[] assetBundles = AssetDatabase.GetAllAssetBundleNames();
+		string[] assetBundles = AssetDatabase.GetAllAssetBundleNames();
 		assetBundleArray = new string[assetBundleNone.Length + assetBundles.Length];
 		assetBundleNone.CopyTo(assetBundleArray, 0);
 		assetBundles.CopyTo(assetBundleArray, assetBundleNone.Length);
-
-        // Show window
-		window.Show();
 	}
 
-    // GUI
-	void OnGUI()
+    void OnEnable()
     {
+		EditorApplication.playModeStateChanged += OnPlayModeStateChanged;
+	}
+
+    void OnDisable()
+    {
+		EditorApplication.playModeStateChanged -= OnPlayModeStateChanged;
+	}
+
+    void OnPlayModeStateChanged(PlayModeStateChange state)
+    {
+        if (state == PlayModeStateChange.ExitingPlayMode)
+        {
+			CreateWindowPopups();
+        }
+    }
+
+    // GUI 
+    void OnGUI()
+    {
+        // Editor checks
+        if (EditorApplication.isCompiling)
+        {
+			EditorGUILayout.HelpBox("Cannot be used while the editor is compiling scripts", MessageType.Warning, true);
+			return;
+		}
+
+        if (EditorApplication.isUpdating)
+        {
+			EditorGUILayout.HelpBox("Cannot be used while refreshing the AssetDatabase", MessageType.Warning, true);
+			return;
+		}
+
+        if (EditorApplication.isPlayingOrWillChangePlaymode)
+        {
+			EditorGUILayout.HelpBox("Cannot be used in play mode", MessageType.Warning, true);
+			return;
+        }
+
         // Required
 		EditorGUILayout.HelpBox("This tool automatically creates 2 prefabs for Baby Dragons.\nIt will create the prefabs for Main Menu and Gameplay.", MessageType.Info, true);
 		EditorGUILayout.LabelField("Required", EditorStyles.boldLabel);
 		EditorGUILayout.BeginHorizontal();
 		EditorGUILayout.LabelField("View FBX:");
-		babyDragonFBX = EditorGUILayout.ObjectField(babyDragonFBX, typeof(Object), true);
+		babyDragonFBX = EditorGUILayout.ObjectField(babyDragonFBX, typeof(UnityEngine.Object), true);
 		EditorGUILayout.EndHorizontal();
-		sku = EditorGUILayout.TextField("Definitions SKU:", sku);
+		sku = EditorGUILayout.TextField("Baby dragon SKU:", sku);
 
         // Optional
 		EditorGUILayout.Space();
@@ -190,7 +219,7 @@ public class BabyDragonWizard : EditorWindow
 
 		if (string.IsNullOrEmpty(sku))
 		{
-			EditorUtility.DisplayDialog("Error", "Definitions SKU field is required", "Close");
+			EditorUtility.DisplayDialog("Error", "Baby dragon SKU field is required. Must be the same SKU defined in the baby dragons definitions XML", "Close");
 			return;
 		}
 

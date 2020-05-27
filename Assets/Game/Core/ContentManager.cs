@@ -265,7 +265,9 @@ public class ContentManager
         kDefinitionFiles.Add(DefinitionsCategory.SHARE_LOCATIONS, new string[] { "Rules/shareLocationDefinitions" });
         kDefinitionFiles.Add(DefinitionsCategory.ICONS, new string[] { "Rules/iconDefinitions" });
 
-
+        // Baby Dragons
+        kDefinitionFiles.Add(DefinitionsCategory.BABY_DRAGONS, new string[] { "Rules/babyDragonDefinitions" });
+        kDefinitionFiles.Add(DefinitionsCategory.BABY_DRAGONS_SHARED_POWER, new string[] { "Rules/sharedPowerupDefinitions" });
 
         DefinitionsManager.SharedInstance.Initialise(ref kDefinitionFiles, !UseDeltaContent);
     }
