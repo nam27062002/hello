@@ -118,6 +118,24 @@ public class DragonPowerUp : MonoBehaviour {
 					{
 						SetPowerUp(powerUp, true);
 					}
+				}   
+                else 
+                {
+					// Check baby dragons
+					petDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.BABY_DRAGONS, pets[i]);
+				    if (petDef != null)
+				    {
+					    string motherDragon = petDef.Get("motherDragonSKU");
+                        // Apply baby dragon stat bonus power only if we're playing with their mother dragon
+					    if (motherDragon == dragonSku)
+					    { 
+					        string statPower = petDef.Get("statPower");
+					        if (!string.IsNullOrEmpty(statPower))
+					        {
+						        SetPowerUp(statPower, true);
+					        }
+				        }
+					}
 				}
 			}
 		}
