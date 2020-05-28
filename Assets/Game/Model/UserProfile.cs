@@ -376,6 +376,21 @@ public class UserProfile : UserPersistenceSystem
         set { m_removeAds = value; }
     }
 
+	// Baby dragons - Extra gem granted
+	private bool m_babyDragonExtraGemGranted;
+    public bool babyDragonExtraGemGranted
+    {
+        get { return m_babyDragonExtraGemGranted; }
+        set { m_babyDragonExtraGemGranted = value; }
+    }
+
+    // Baby dragons - Extra gem failed counter
+	private int m_babyDragonExtraGemFailedCounter;
+    public int babyDragonExtraGemFailedCounter
+    {
+        get { return m_babyDragonExtraGemFailedCounter; }
+        set { m_babyDragonExtraGemFailedCounter = value; }
+    }
 
     private bool m_removeAdsOfferActive;
     private int m_easyMissionCooldownsLeft;
@@ -1312,7 +1327,29 @@ public class UserProfile : UserPersistenceSystem
         {
             GivenTransactions = _data[key];
         }
-    }
+
+        // Baby Dragons - Extra gem granted
+		key = "babyDragonExtraGemGranted";
+		if (profile.ContainsKey(key))
+		{
+			m_babyDragonExtraGemGranted = PersistenceUtils.SafeParse<bool>(profile[key]);
+		}
+		else
+		{
+			m_babyDragonExtraGemGranted = false;
+		}
+
+		// Baby Dragons - Extra gem failed counter
+		key = "babyDragonExtraGemFailedCounter";
+		if (profile.ContainsKey(key))
+		{
+			m_babyDragonExtraGemFailedCounter = PersistenceUtils.SafeParse<int>(profile[key]);
+		}
+		else
+		{
+			m_babyDragonExtraGemFailedCounter = 0;
+		}
+	}
 
 	/// <summary>
 	/// Loads the data related to eggs.
@@ -1546,6 +1583,12 @@ public class UserProfile : UserPersistenceSystem
         {
             data.Add("givenTransactions", GivenTransactions);
         }
+
+		// Baby dragons - Extra gem granted
+		data.Add("babyDragonExtraGemGranted", PersistenceUtils.SafeToString(m_babyDragonExtraGemGranted));
+
+		// Baby dragons - Extra gem failed counter
+		data.Add("babyDragonExtraGemFailedCounter", PersistenceUtils.SafeToString(m_babyDragonExtraGemFailedCounter));
 
         // Return it
 		return data;

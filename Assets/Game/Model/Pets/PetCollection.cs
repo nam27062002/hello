@@ -32,6 +32,24 @@ public class PetCollection
 	}
 
 	/// <summary>
+	/// Returns a list of unlocked baby pets
+	/// </summary>
+	public List<string> GetUnlockedBabyPets()
+    {
+		List<string> babyPetList = new List<string>();
+        for (int i = 0; i < m_pets.Count; i++)
+        {
+			DefinitionNode petDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.BABY_DRAGONS, m_pets[i]);
+            if (petDef != null)
+            {
+				babyPetList.Add(m_pets[i]);
+            }
+        }
+
+		return babyPetList;
+    }
+
+	/// <summary>
 	/// Check whether a pet is unlocked by this user.
 	/// </summary>
 	/// <returns><c>true</c> if the pet with the given sku has been unlocked by this user, <c>false</c> otherwise.</returns>

@@ -269,6 +269,42 @@ public class Entity : IEntity, IBroadcastListener {
 		if (!m_isPC) {
 			newReward.pc = 0;
 		}
+        else
+        {
+			BabyDragon babyDragon = InstanceManager.player.GetBabyDragon();
+			if (babyDragon.IsEquipped())
+			{
+				// Calculate if there is any chance to get an extra gem
+				float rnd = Random.Range(0, 100);
+
+                // If the player never received an extra gem due to baby dragon, check the for the firstSucceed value to grant an extra gem
+				if (!UsersManager.currentUser.babyDragonExtraGemGranted &&
+                    UsersManager.currentUser.babyDragonExtraGemFailedCounter > babyDragon.firstSucceed)
+				{
+					rnd = babyDragon.probability;
+				}
+
+				if (rnd <= babyDragon.probability)
+                {
+					// Player get a number of extra gems with baby dragon
+					newReward.pc += babyDragon.extraGems;
+
+					// Save player obtained extra gem with baby dragon
+					UsersManager.currentUser.babyDragonExtraGemGranted = true;
+
+					// TODO: inform user on UI. Received extra gems due to baby dragons
+				}
+                else
+                {
+					// Player didn't get an extra gem with baby dragon
+                    // If player never received an extra gem due to baby dragon, increase the failed extra gem counter for baby dragons
+					if (!UsersManager.currentUser.babyDragonExtraGemGranted)
+					{
+						UsersManager.currentUser.babyDragonExtraGemFailedCounter++;
+					}
+				}
+			}
+        }
 
         if (m_machine.IsBubbled()) {
             newReward.energy *= 2f;
@@ -425,7 +461,7 @@ public class Entity : IEntity, IBroadcastListener {
 
 		m_reward.coins = m_def.GetAsInt("rewardCoins");
 		m_reward.coins += ((m_reward.coins * m_powerUpSCMultiplier) / 100.0f);
-
+        
 		m_reward.xp = m_def.GetAsFloat("rewardXp");
 		m_reward.xp += (m_reward.xp * m_powerUpXpMultiplier) / 100.0f;
 

@@ -125,16 +125,22 @@ public class DragonPowerUp : MonoBehaviour {
 					petDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.BABY_DRAGONS, pets[i]);
 				    if (petDef != null)
 				    {
-					    string motherDragon = petDef.Get("motherDragonSKU");
+					    BabyDragon babyDragon = InstanceManager.player.GetBabyDragon();
+    					babyDragon.sku = pets[i];
+
+    					string motherDragon = petDef.Get("motherDragonSKU");
                         // Apply baby dragon stat bonus power only if we're playing with their mother dragon
 					    if (motherDragon == dragonSku)
-					    { 
+					    {
 					        string statPower = petDef.Get("statPower");
 					        if (!string.IsNullOrEmpty(statPower))
 					        {
 						        SetPowerUp(statPower, true);
 					        }
 				        }
+
+						// Apply shared power
+						SetSharedPower(petDef);
 					}
 				}
 			}
@@ -165,6 +171,37 @@ public class DragonPowerUp : MonoBehaviour {
 
 		ApplyPowerups();
 	}
+
+    // For baby dragons only
+    void SetSharedPower(DefinitionNode babyDragonDefinition)
+    {
+		PetCollection totalPets = UsersManager.currentUser.petCollection;
+		List<string> babyPetsList = totalPets.GetUnlockedBabyPets();
+		int totalBabyDragons = babyPetsList.Count;
+		if (totalBabyDragons > 0)
+		{
+			string sharedPower = babyDragonDefinition.Get("sharedPower");
+			DefinitionNode sharedPowerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.BABY_DRAGONS_SHARED_POWER, sharedPower);
+            if (sharedPowerDef != null)
+            {
+				int baseProbability = sharedPowerDef.GetAsInt("baseProbability");
+				int extraProbability = sharedPowerDef.GetAsInt("extraProbability");
+				int extraGems = sharedPowerDef.GetAsInt("extraGems");
+				int firstSucceed = sharedPowerDef.GetAsInt("firstSucceed");
+
+				int probability = baseProbability + (totalBabyDragons * extraProbability);
+
+				BabyDragon babyDragon = InstanceManager.player.GetBabyDragon();
+				babyDragon.probability = probability;
+				babyDragon.extraGems = extraGems;
+				babyDragon.firstSucceed = firstSucceed;
+			}
+            else
+            {
+				Debug.LogWarning("Shared power definition: " + sharedPower + " not found in sharedPowerUpDefinitions");
+            }
+        }
+    }
 
 	void SetPowerUp( string powerUpSku, bool _fromPet )
 	{
