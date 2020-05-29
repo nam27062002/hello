@@ -225,8 +225,11 @@ public class BabyDragonWizard : EditorWindow
 			return;
 		}
 
-		EditorUtility.DisplayProgressBar("Baby Dragon", "Setting FBX scale...", 0.25f);
-		SetFBXScale();
+		if (fbxScale > 0f)
+		{
+			EditorUtility.DisplayProgressBar("Baby Dragon", "Setting FBX scale...", 0.25f);
+			SetFBXScale();
+		}
 
 		EditorUtility.DisplayProgressBar("Baby Dragon", "Creating main menu prefab...", 0.5f);
 		CreateMenuPrefab();
@@ -270,7 +273,7 @@ public class BabyDragonWizard : EditorWindow
 		view.AddComponent<DragonAnimationEventsMenu>();
 
 		// Create root object
-		string rootName = "PF_Pet" + babyDragonFBX.name.Replace("_LOW", "") + "Menu";
+		string rootName = "PF_" + babyDragonFBX.name.Replace("_LOW", "") + "Menu";
 		GameObject root = new GameObject(rootName) { tag = tagArray[tagIndexMainMenu] };
 
         // Root - Equipable script
@@ -323,7 +326,7 @@ public class BabyDragonWizard : EditorWindow
 		view.AddComponent<DragonAnimationEvents>();
 
 		// Create root object
-		string rootName = "PF_Pet" + babyDragonFBX.name.Replace("_LOW", "");
+		string rootName = "PF_" + babyDragonFBX.name.Replace("_LOW", "");
 		GameObject root = new GameObject(rootName) { tag = tagArray[tagIndexGameplay] };
 		string petClonePath = popupPetClonePathArray[popupPetCloneIndex];
 		GameObject basePetModel = (GameObject)AssetDatabase.LoadAssetAtPath(petClonePath, typeof(GameObject));
@@ -425,6 +428,9 @@ public class BabyDragonWizard : EditorWindow
 		GameObject rootNode = view.transform.FindObjectRecursive("Pet_Hip");
 		if (rootNode == null)
 			rootNode = view.transform.FindObjectRecursive("root_JT"); // Fallback
+
+		if (rootNode == null)
+			rootNode = view.transform.FindObjectRecursive("Root"); // Fallback
 
 		return rootNode;
 	}
