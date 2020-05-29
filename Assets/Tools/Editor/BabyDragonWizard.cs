@@ -21,6 +21,7 @@ public class BabyDragonWizard : EditorWindow
     Object lastBabyDragonFBX;
 	Editor gameObjectEditor;
 	string sku;
+	float fbxScale = 2.5f;
 
 	// Optional
 	Material babyDragonMaterial;
@@ -145,8 +146,9 @@ public class BabyDragonWizard : EditorWindow
 		babyDragonFBX = EditorGUILayout.ObjectField(babyDragonFBX, typeof(UnityEngine.Object), true);
 		EditorGUILayout.EndHorizontal();
 		sku = EditorGUILayout.TextField("Baby dragon SKU:", sku);
+		fbxScale = EditorGUILayout.FloatField("FBX scale:", fbxScale);
 
-        // Optional
+		// Optional
 		EditorGUILayout.Space();
 		EditorGUILayout.LabelField("Optional", EditorStyles.boldLabel);
 		EditorGUILayout.BeginHorizontal();
@@ -223,6 +225,9 @@ public class BabyDragonWizard : EditorWindow
 			return;
 		}
 
+		EditorUtility.DisplayProgressBar("Baby Dragon", "Setting FBX scale...", 0.25f);
+		SetFBXScale();
+
 		EditorUtility.DisplayProgressBar("Baby Dragon", "Creating main menu prefab...", 0.5f);
 		CreateMenuPrefab();
 
@@ -231,6 +236,22 @@ public class BabyDragonWizard : EditorWindow
 
 		EditorUtility.ClearProgressBar();
     }
+
+    void SetFBXScale()
+    {
+		string fbxPath = AssetDatabase.GetAssetPath(babyDragonFBX);
+		string path = Path.GetDirectoryName(fbxPath);
+
+		foreach (string file in Directory.EnumerateFiles(path, "*.fbx", SearchOption.AllDirectories))
+		{
+			ModelImporter fbxModel = AssetImporter.GetAtPath(file) as ModelImporter;
+            if (fbxModel != null && fbxModel.globalScale != fbxScale)
+            {
+				fbxModel.globalScale = fbxScale;
+				fbxModel.SaveAndReimport();
+            }
+		}
+	}
 
     void CreateMenuPrefab()
     {
