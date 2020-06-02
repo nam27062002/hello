@@ -74,7 +74,7 @@ public class RewardInfoUI : MonoBehaviour {
 	[SerializeField] private Localizer m_dragonName = null;
 	[SerializeField] private Localizer m_dragonDesc = null;
 	[Space]
-	[SerializeField] private Image m_dragonTierIcon = null;
+	[SerializeField] private Transform m_dragonTierIconContainer = null;
 	[SerializeField] private ShowHideAnimator m_newPreysAnimator = null;
 	[Space]
 	[SerializeField] private TextMeshProUGUI m_healthText = null;
@@ -248,7 +248,15 @@ public class RewardInfoUI : MonoBehaviour {
 				// Initialize dragon info
 				if(m_dragonName != null) m_dragonName.Localize("TID_DRAGON_UNLOCK", dragonData.def.GetLocalized("tidName"));
 				if(m_dragonDesc != null) m_dragonDesc.Localize(dragonData.def.GetAsString("tidDesc"));
-				if(m_dragonTierIcon != null) m_dragonTierIcon.sprite = ResourcesExt.LoadFromSpritesheet(UIConstants.UI_SPRITESHEET_PATH, dragonData.tierDef.GetAsString("icon"));
+				if (m_dragonTierIconContainer != null)
+				{
+                    // Remove the placeholder
+					m_dragonTierIconContainer.DestroyAllChildren(true);
+
+					// Add the proper tier icon
+					GameObject tierIconPrefab = UIConstants.GetTierIcon(dragonData.tier);
+					Instantiate(tierIconPrefab, m_dragonTierIconContainer, false);
+				}
 				if(m_healthText != null) m_healthText.text = StringUtils.FormatNumber(dragonData.maxHealth, 0);
 				if(m_energyText != null) m_energyText.text = StringUtils.FormatNumber(dragonData.baseEnergy, 0);
 				if(m_speedText != null) m_speedText.text = StringUtils.FormatNumber(dragonData.maxSpeed * 10f, 0);  // x10 to show nicer numbers

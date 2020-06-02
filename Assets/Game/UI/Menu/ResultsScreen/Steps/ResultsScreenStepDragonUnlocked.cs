@@ -31,7 +31,7 @@ public class ResultsScreenStepDragonUnlocked : ResultsScreenSequenceStep {
 	[SerializeField] private DragControlRotation m_dragControl = null;
 	[Space]
 	[SerializeField] private TextMeshProUGUI m_dragonNameText = null;
-	[SerializeField] private Image m_dragonTierIcon = null;
+	[SerializeField] private Transform m_dragonTierIconContainer = null;
 	[SerializeField] private GameObject m_newPreysInfo = null;
 	[Space]
 	[SerializeField] private TextMeshProUGUI m_healthText = null;
@@ -104,13 +104,21 @@ public class ResultsScreenStepDragonUnlocked : ResultsScreenSequenceStep {
 
 		// Dragon preview
 		m_preview.LoadDragon(def.sku);
-		m_preview.dragonInstance.allowAltAnimations = false;	// [AOC] Disable weird alt animations for now
+		m_preview.dragonInstance.allowAltAnimations = false;    // [AOC] Disable weird alt animations for now
 
 		// Tier info
-		if(m_dragonTierIcon != null) m_dragonTierIcon.sprite = ResourcesExt.LoadFromSpritesheet(UIConstants.UI_SPRITESHEET_PATH, m_dragonData.tierDef.GetAsString("icon"));
+		if (m_dragonTierIconContainer != null)
+		{
+			// Remove the placeholder
+			m_dragonTierIconContainer.DestroyAllChildren(true);
+
+			// Add the proper tier icon
+			GameObject tierIconPrefab = UIConstants.GetTierIcon(m_dragonData.tier);
+			Instantiate(tierIconPrefab, m_dragonTierIconContainer, false);
+		}
 
 		// If the unlocked dragon is of different tier as the dragon used to unlocked it, show 'new preys' banner
-		if(m_newPreysInfo != null) {
+		if (m_newPreysInfo != null) {
 			DefinitionNode previousDragonDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, def.GetAsString("previousDragonSku"));
 			if(previousDragonDef != null && previousDragonDef.Get("tier") != m_dragonData.tierDef.sku) {
 				m_newPreysInfo.SetActive(true);

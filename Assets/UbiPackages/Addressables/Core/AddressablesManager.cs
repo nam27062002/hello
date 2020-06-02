@@ -231,7 +231,7 @@ public class AddressablesManager
                 for (int i = 0; i < count; i++)
                 {
                     provider = Providers_GetProvider(ids[i], variant, out entry);
-                    UbiListUtils.AddRange(returnValue, provider.GetDependencyIds(entry), false, true);
+                    UbiListUtils.AddRange(ref returnValue, provider.GetDependencyIds(entry), false, true);
                 }
             }
         }

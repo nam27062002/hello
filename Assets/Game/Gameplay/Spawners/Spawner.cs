@@ -192,6 +192,35 @@ public class Spawner : AbstractSpawner {
 			enabledByEvents = HDLiveDataManager.quest.IsRunning() && HDLiveDataManager.quest.isActive;
 		}
 
+        if (m_entityPrefabList != null)
+        {
+            // Check if in the current flavour there is any entity blacklisted
+			Flavour currentFlavour = FlavourManager.Instance.GetCurrentFlavour();
+			if (currentFlavour.HasBlacklistedEntities())
+			{
+                // Identify which entities must be blacklisted
+				List<EntityPrefab> entitiesToDelete = new List<EntityPrefab>();
+				for (int i = 0; i < m_entityPrefabList.Length; i++)
+				{
+					if (!currentFlavour.CanSpawnEntity(m_entityPrefabList[i].name))
+					{
+						entitiesToDelete.Add(m_entityPrefabList[i]);
+					}
+				}
+
+                // Only in case there is something blacklisted, remove it from the m_entityPrefabList
+                if (entitiesToDelete.Count > 0)
+                {
+					List<EntityPrefab> entityPrefabs = new List<EntityPrefab>(m_entityPrefabList);
+                    for (int i = entitiesToDelete.Count - 1; i >= 0; i--)
+                    {
+						entityPrefabs.Remove(entitiesToDelete[i]);
+                    }
+					m_entityPrefabList = entityPrefabs.ToArray();
+				}
+			}
+        }
+
 		if (enabledByEvents) {
 			float rnd = Random.Range(0f, 100f);
 			DragonTier playerTier = InstanceManager.player.data.tier;

@@ -30,7 +30,7 @@ public class DragonDiscountIcon : IPassiveEventIcon {
 	// Exposed
 	[Space]
 	[SerializeField] private UISpriteAddressablesLoader m_dragonIconLoader = null;
-	[SerializeField] private Image m_tierIcon = null;
+	[SerializeField] private Transform m_tierIconContainer = null;
 	[SerializeField] private TextMeshProUGUI m_discountText = null;
 	[Space]
 	[SerializeField] private GameObject m_arrow = null;
@@ -116,13 +116,21 @@ public class DragonDiscountIcon : IPassiveEventIcon {
 		}
 
 		// Tier icon
-		if(m_tierIcon != null) {
+		if(m_tierIconContainer != null) {
 			bool show = false;
-			if(targetDragonData != null) {
+
+			// Remove the placeholder
+			m_tierIconContainer.transform.DestroyAllChildren(true);
+
+			if (targetDragonData != null) {
 				show = true;
-				m_tierIcon.sprite = ResourcesExt.LoadFromSpritesheet(UIConstants.UI_SPRITESHEET_PATH, targetDragonData.tierDef.GetAsString("icon"));
+
+				// Set the actual tier icon
+				GameObject tierIconPrefab = UIConstants.GetTierIcon(targetDragonData.tier);
+				Instantiate(tierIconPrefab, m_tierIconContainer);
 			}
-			m_tierIcon.gameObject.SetActive(show);
+
+			m_tierIconContainer.gameObject.SetActive(show);
 		}
 
 		// Color tint
