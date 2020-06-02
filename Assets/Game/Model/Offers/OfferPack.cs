@@ -50,6 +50,7 @@ public class OfferPack {
 		ROTATIONAL,
         REMOVE_ADS,
         FREE,
+        REFERRAL,
         SC,
         HC,
         COUNT
@@ -60,6 +61,7 @@ public class OfferPack {
     public const string ROTATIONAL = "rotational";
     public const string REMOVE_ADS = "removeads";
     public const string FREE = "free";
+	public const string REFERRAL = "referral";
     public const string SC = "sc";
     public const string HC = "hc";
 
@@ -1401,6 +1403,7 @@ public class OfferPack {
 			case Type.PUSHED: 		return PUSH;
 			case Type.ROTATIONAL: 	return ROTATIONAL;
 			case Type.FREE:			return FREE;
+			case Type.REFERRAL:     return REFERRAL;
             case Type.REMOVE_ADS:   return REMOVE_ADS;
             case Type.SC:           return SC;
             case Type.HC:           return HC;
@@ -1419,6 +1422,7 @@ public class OfferPack {
 			case PUSH:		return Type.PUSHED;
 			case ROTATIONAL:	return Type.ROTATIONAL;
 			case FREE:		    return Type.FREE;
+			case REFERRAL:      return Type.REFERRAL;
             case REMOVE_ADS:    return Type.REMOVE_ADS;
             case HC:            return Type.HC;
             case SC:            return Type.SC;

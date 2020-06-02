@@ -36,20 +36,29 @@ public class ShopMonoRewardPill : ShopBasePill {
     [Separator("Mono Reward Specifics")]
     [SerializeField] protected OfferItemSlot m_offerItemSlot = null;
 
+    public OfferItemSlot offerItemSlot
+    {
+        set
+        {
+            m_offerItemSlot = value;
+            InitFromOfferPack(m_pack);
+        }
+    }
 
-	//------------------------------------------------------------------------//
-	// GENERIC METHODS														  //
-	//------------------------------------------------------------------------//
+
+    //------------------------------------------------------------------------//
+    // GENERIC METHODS														  //
+    //------------------------------------------------------------------------//
 
 
-	//------------------------------------------------------------------------//
-	// OTHER METHODS														  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Initialize the pill with a given pack's data.
-	/// </summary>
-	/// <param name="_pack">Pack.</param>
-	public override void InitFromOfferPack(OfferPack _pack) {
+    //------------------------------------------------------------------------//
+    // OTHER METHODS														  //
+    //------------------------------------------------------------------------//
+    /// <summary>
+    /// Initialize the pill with a given pack's data.
+    /// </summary>
+    /// <param name="_pack">Pack.</param>
+    public override void InitFromOfferPack(OfferPack _pack) {
 
         base.InitFromOfferPack(_pack);
 
@@ -80,6 +89,7 @@ public class ShopMonoRewardPill : ShopBasePill {
         }
 		
 	}
+
 
 
 
