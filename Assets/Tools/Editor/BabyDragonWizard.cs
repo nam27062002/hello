@@ -417,7 +417,7 @@ public class BabyDragonWizard : EditorWindow
 		SphereCollider sphereCollider = root.GetComponent<SphereCollider>();
 		if (sphereCollider != null)
 		{
-			CorrectSphereCollider(ref sphereCollider, root, view.transform);
+			CorrectSphereCollider(ref sphereCollider, view.transform);
 		}
 
 		// Deactivate gameObject
@@ -430,12 +430,12 @@ public class BabyDragonWizard : EditorWindow
 		DestroyImmediate(root);
 	}
 
-    void CorrectSphereCollider(ref SphereCollider sphereCollider, GameObject root, Transform view)
+    void CorrectSphereCollider(ref SphereCollider sphereCollider, Transform view)
     {
 		bool hasBounds = false;
 		Bounds bounds = new Bounds(Vector3.zero, Vector3.zero);
 
-		for (int i = 0; i < root.transform.childCount; ++i)
+		for (int i = 0; i < view.childCount; ++i)
 		{
 			Renderer childRenderer = view.GetChild(i).GetComponent<Renderer>();
 			if (childRenderer != null)
