@@ -146,11 +146,11 @@ public class BabyDragonWizard : EditorWindow
 		babyDragonFBX = EditorGUILayout.ObjectField(babyDragonFBX, typeof(UnityEngine.Object), true);
 		EditorGUILayout.EndHorizontal();
 		sku = EditorGUILayout.TextField("Baby dragon SKU:", sku);
-		fbxScale = EditorGUILayout.FloatField("FBX scale:", fbxScale);
 
 		// Optional
 		EditorGUILayout.Space();
 		EditorGUILayout.LabelField("Optional", EditorStyles.boldLabel);
+		fbxScale = EditorGUILayout.FloatField("FBX scale:", fbxScale);
 		EditorGUILayout.BeginHorizontal();
 		EditorGUILayout.LabelField("Material:");
 		babyDragonMaterial = (Material) EditorGUILayout.ObjectField(babyDragonMaterial, typeof(Material), true);
@@ -163,7 +163,7 @@ public class BabyDragonWizard : EditorWindow
 		tagIndexMainMenu = EditorGUILayout.Popup("Tag:", tagIndexMainMenu, tagArray);
 		EditorGUILayout.EndHorizontal();
 		EditorGUILayout.BeginHorizontal();
-		EditorGUILayout.LabelField("Animation Controller :");
+		EditorGUILayout.LabelField("Animation Controller:");
 		runtimeAnimatorControllerMenu = (RuntimeAnimatorController)EditorGUILayout.ObjectField(runtimeAnimatorControllerMenu, typeof(RuntimeAnimatorController), true);
 		EditorGUILayout.EndHorizontal();
 		EditorGUILayout.BeginHorizontal();
@@ -180,7 +180,7 @@ public class BabyDragonWizard : EditorWindow
 		popupPetCloneIndex = EditorGUILayout.Popup("Clone pet behaviour:", popupPetCloneIndex, popupPetCloneArray);
 		EditorGUILayout.EndHorizontal();
 		EditorGUILayout.BeginHorizontal();
-		EditorGUILayout.LabelField("Animation Controller :");
+		EditorGUILayout.LabelField("Animation Controller:");
 		runtimeAnimatorControllerGameplay = (RuntimeAnimatorController)EditorGUILayout.ObjectField(runtimeAnimatorControllerGameplay, typeof(RuntimeAnimatorController), true);
 		EditorGUILayout.EndHorizontal();
 		EditorGUILayout.BeginHorizontal();
