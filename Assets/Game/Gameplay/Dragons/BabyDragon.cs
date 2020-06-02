@@ -7,6 +7,7 @@
 public class BabyDragon 
 {
     public string sku;
+    public string powerup;
     public int probability;
     public int extraGems;
     public int firstSucceed;

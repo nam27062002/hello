@@ -127,8 +127,9 @@ public class DragonPowerUp : MonoBehaviour {
 				    {
 					    BabyDragon babyDragon = InstanceManager.player.GetBabyDragon();
     					babyDragon.sku = pets[i];
+						babyDragon.powerup = petDef.Get("powerup");
 
-    					string motherDragon = petDef.Get("motherDragonSKU");
+						string motherDragon = petDef.Get("motherDragonSKU");
                         // Apply baby dragon stat bonus power only if we're playing with their mother dragon
 					    if (motherDragon == dragonSku)
 					    {
