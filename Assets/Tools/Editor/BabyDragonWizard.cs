@@ -413,6 +413,13 @@ public class BabyDragonWizard : EditorWindow
 			}
 		}
 
+		// Correct SphereCollider position based on child renderers
+		SphereCollider sphereCollider = root.GetComponent<SphereCollider>();
+		if (sphereCollider != null)
+		{
+			CorrectSphereCollider(ref sphereCollider, root, view.transform);
+		}
+
 		// Deactivate gameObject
 		root.SetActive(false);
 
@@ -421,6 +428,32 @@ public class BabyDragonWizard : EditorWindow
 
 		// Clean-up
 		DestroyImmediate(root);
+	}
+
+    void CorrectSphereCollider(ref SphereCollider sphereCollider, GameObject root, Transform view)
+    {
+		bool hasBounds = false;
+		Bounds bounds = new Bounds(Vector3.zero, Vector3.zero);
+
+		for (int i = 0; i < root.transform.childCount; ++i)
+		{
+			Renderer childRenderer = view.GetChild(i).GetComponent<Renderer>();
+			if (childRenderer != null)
+			{
+				if (hasBounds)
+				{
+					bounds.Encapsulate(childRenderer.bounds);
+				}
+				else
+				{
+					bounds = childRenderer.bounds;
+					hasBounds = true;
+				}
+			}
+		}
+
+		sphereCollider.center = bounds.center - sphereCollider.transform.position;
+		sphereCollider.radius = 1.0f;
 	}
 
 	GameObject FindHipBone(ref GameObject view)
