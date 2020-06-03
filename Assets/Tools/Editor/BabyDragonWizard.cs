@@ -203,6 +203,7 @@ public class BabyDragonWizard : EditorWindow
 			{
 				gameObjectEditor = Editor.CreateEditor(babyDragonFBX);
 				TryGuessSkuFromFBX();
+				AssignMaterial();
 			}
 
 			GUIStyle bgColor = new GUIStyle();
@@ -213,15 +214,6 @@ public class BabyDragonWizard : EditorWindow
 			lastBabyDragonFBX = babyDragonFBX;
 		}
     }
-
-    void TryGuessSkuFromFBX()
-    {
-		string[] fbxName = babyDragonFBX.ToString().Split('_');
-		if (fbxName.Length >= 1)
-        {
-			sku = "baby_" + fbxName[1].ToLower();
-        }
-	}
 
     // Create main menu and gameplay prefabs
     void CreatePrefabs()
@@ -251,35 +243,6 @@ public class BabyDragonWizard : EditorWindow
 		CreateGameplayPrefab();
 
 		EditorUtility.ClearProgressBar();
-    }
-
-    void SetFBXScale()
-    {
-		string fbxPath = AssetDatabase.GetAssetPath(babyDragonFBX);
-		string path = Path.GetDirectoryName(fbxPath);
-
-		foreach (string file in Directory.EnumerateFiles(path, "*.fbx", SearchOption.AllDirectories))
-		{
-			ModelImporter fbxModel = AssetImporter.GetAtPath(file) as ModelImporter;
-            if (fbxModel != null && fbxModel.globalScale != fbxScale)
-            {
-				fbxModel.globalScale = fbxScale;
-				fbxModel.SaveAndReimport();
-            }
-		}
-	}
-
-    string GetSkuSuffix()
-    {
-		string suffix = sku;
-		string[] skuSplit = sku.Split('_');
-		if (skuSplit.Length >= 1)
-		{
-			suffix = skuSplit[1];
-			suffix = char.ToUpper(suffix[0]) + suffix.Substring(1);
-		}
-
-		return suffix;
     }
 
     void CreateMenuPrefab()
@@ -481,7 +444,70 @@ public class BabyDragonWizard : EditorWindow
 		DestroyImmediate(root);
 	}
 
-    void CorrectSphereCollider(ref SphereCollider sphereCollider, Transform view)
+	void AssignMaterial()
+	{
+		// Try to find material path
+		string fbxPath = AssetDatabase.GetAssetPath(babyDragonFBX);
+		DirectoryInfo dir = Directory.GetParent(fbxPath);
+		string materialPath = GetRelativePath(dir.Parent.ToString()) + "/Materials";
+
+		if (Directory.Exists(materialPath))
+		{
+			// Find assets of material type on materialPath
+			string[] guid = AssetDatabase.FindAssets("t:Material", new[] { materialPath });
+			for (int i = 0; i < guid.Length; i++)
+			{
+				string path = AssetDatabase.GUIDToAssetPath(guid[i]);
+				Material mat = (Material)AssetDatabase.LoadAssetAtPath(path, typeof(Material));
+				if (mat != null)
+				{
+					// Assign first material found on materialPath folder
+					babyDragonMaterial = mat;
+					break;
+				}
+			}
+		}
+	}
+
+	void TryGuessSkuFromFBX()
+	{
+		string[] fbxName = babyDragonFBX.name.ToString().Split('_');
+		if (fbxName.Length >= 1)
+		{
+			sku = "baby_" + fbxName[1].ToLower();
+		}
+	}
+
+	void SetFBXScale()
+	{
+		string fbxPath = AssetDatabase.GetAssetPath(babyDragonFBX);
+		string path = Path.GetDirectoryName(fbxPath);
+
+		foreach (string file in Directory.EnumerateFiles(path, "*.fbx", SearchOption.AllDirectories))
+		{
+			ModelImporter fbxModel = AssetImporter.GetAtPath(file) as ModelImporter;
+			if (fbxModel != null && fbxModel.globalScale != fbxScale)
+			{
+				fbxModel.globalScale = fbxScale;
+				fbxModel.SaveAndReimport();
+			}
+		}
+	}
+
+	string GetSkuSuffix()
+	{
+		string suffix = sku;
+		string[] skuSplit = sku.Split('_');
+		if (skuSplit.Length >= 1)
+		{
+			suffix = skuSplit[1];
+			suffix = char.ToUpper(suffix[0]) + suffix.Substring(1);
+		}
+
+		return suffix;
+	}
+
+	void CorrectSphereCollider(ref SphereCollider sphereCollider, Transform view)
     {
 		bool hasBounds = false;
 		Bounds bounds = new Bounds(Vector3.zero, Vector3.zero);
