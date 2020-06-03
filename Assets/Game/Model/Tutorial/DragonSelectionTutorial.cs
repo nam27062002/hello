@@ -39,6 +39,7 @@ public class DragonSelectionTutorial : MonoBehaviour {
 	// Exposed setup
 	[SerializeField] private float m_delay = 1f;
 	[SerializeField] private float m_backDelay = 1f;
+    [SerializeField] private float m_animationTotalDuration = 5f;
 	[Space]
 	[Tooltip("World Units per Second")]
 	[SerializeField] private float m_forwardSpeed = 35f;
@@ -167,7 +168,7 @@ public class DragonSelectionTutorial : MonoBehaviour {
 						UsersManager.currentUser.SetTutorialStepCompleted(TutorialStep.DRAGON_SELECTION);
 
                         // Unock all the UI when the animation is finished
-                        Messenger.Broadcast<bool>(MessengerEvents.UI_LOCK_INPUT, false);
+                        Messenger.Broadcast<bool, float>(MessengerEvents.UI_LOCK_INPUT, false, 0f);
 
                         // Tracking!
                         HDTrackingManager.Instance.Notify_Funnel_FirstUX(FunnelData_FirstUX.Steps._06b_animation_done);
@@ -195,8 +196,8 @@ public class DragonSelectionTutorial : MonoBehaviour {
 		if(m_state != State.IDLE) return;
 
 
-		// Lock all input
-		Messenger.Broadcast<bool>(MessengerEvents.UI_LOCK_INPUT, true);
+		// Lock all input for a specific duration. We introduced this lock duration to fix [HDK-5779]
+		Messenger.Broadcast<bool,float>(MessengerEvents.UI_LOCK_INPUT, true, m_animationTotalDuration);
 
 		// Hide HUD and UI
 		InstanceManager.menuSceneController.hud.animator.ForceHide(false);
@@ -258,7 +259,7 @@ public class DragonSelectionTutorial : MonoBehaviour {
 		m_timer.Start(m_delay * 1000);  // Start timer with the initial delay
 
         // Lock all the UI input while the animation is runnin
-        Messenger.Broadcast<bool>(MessengerEvents.UI_LOCK_INPUT, true);
+        Messenger.Broadcast<bool,float>(MessengerEvents.UI_LOCK_INPUT, true, 0f);
     }
 
 	/// <summary>
@@ -268,8 +269,9 @@ public class DragonSelectionTutorial : MonoBehaviour {
 		// Ignore if already in the IDLE state
 		if(m_state == State.IDLE) return;
 
-		// Lock all input
-		Messenger.Broadcast<bool>(MessengerEvents.UI_LOCK_INPUT, false);
+		// Unlock all input. [JOM] Actually this is not needed, as the previous lock has a defined duration and
+        // will unlock automatically when finished. But just in case.
+		Messenger.Broadcast<bool, float>(MessengerEvents.UI_LOCK_INPUT, false, 0f);
 
 		// Show HUD back
 		// Do some null checks to avoid potential issues

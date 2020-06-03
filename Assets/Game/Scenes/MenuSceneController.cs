@@ -169,10 +169,6 @@ public class MenuSceneController : SceneController {
 			HDTrackingManager.Instance.Notify_Funnel_FirstUX(FunnelData_FirstUX.Steps._06a_load_done);
 		}
 
-		// Start loading pet pill's on the background!
-		// PetsScreenController petsScreen = GetScreenData(MenuScreen.PETS).ui.GetComponent<PetsScreenController>();
-		// StartCoroutine(petsScreen.InstantiatePillsAsync());
-
 		// Request latest global event data
 		// GlobalEventManager.RequestCurrentEventData();
 		if ( HDLiveDataManager.instance.ShouldRequestMyLiveData() )

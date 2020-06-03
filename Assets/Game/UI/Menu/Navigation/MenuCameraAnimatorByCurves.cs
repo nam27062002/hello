@@ -93,33 +93,6 @@ public class MenuCameraAnimatorByCurves : MonoBehaviour {
 		Debug.Assert(m_cameraPath != null, "Required field");
 	}
 
-	/// <summary>
-	/// First update call
-	/// </summary>
-	private void Start() {
-		
-	}
-
-	/// <summary>
-	/// Component enabled.
-	/// </summary>
-	private void OnEnable() {
-		
-	}
-
-	/// <summary>
-	/// Component disabled.
-	/// </summary>
-	private void OnDisable() {
-		
-	}
-
-	/// <summary>
-	/// Destructor
-	/// </summary>
-	private void OnDestroy() {
-		
-	}
 
 	//------------------------------------------------------------------//
 	// OTHER METHODS													//
