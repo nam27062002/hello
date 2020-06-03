@@ -50,9 +50,10 @@ public class BabyDragonWizard : EditorWindow
 		Texture icon = AssetDatabase.LoadAssetAtPath<Texture>("Assets/Art/UI/Common/Icons/icon_btn_pets.png");
 		window.titleContent = new GUIContent(" Baby Dragon", icon);
 
+        // Create GUI popups
 		CreateWindowPopups();
 
-        // Show window
+		// Show window
 		window.Show();
 	}
 
@@ -138,7 +139,7 @@ public class BabyDragonWizard : EditorWindow
 			return;
         }
 
-        // Required
+		// Required
 		EditorGUILayout.HelpBox("This tool automatically creates 2 prefabs for Baby Dragons.\nIt will create the prefabs for Main Menu and Gameplay.", MessageType.Info, true);
 		EditorGUILayout.LabelField("Required", EditorStyles.boldLabel);
 		EditorGUILayout.BeginHorizontal();
@@ -199,6 +200,7 @@ public class BabyDragonWizard : EditorWindow
 			if (gameObjectEditor == null || lastBabyDragonFBX != babyDragonFBX)
 			{
 				gameObjectEditor = Editor.CreateEditor(babyDragonFBX);
+				TryGuessSkuFromFBX();
 			}
 
 			GUIStyle bgColor = new GUIStyle();
@@ -209,6 +211,15 @@ public class BabyDragonWizard : EditorWindow
 			lastBabyDragonFBX = babyDragonFBX;
 		}
     }
+
+    void TryGuessSkuFromFBX()
+    {
+		string[] fbxName = babyDragonFBX.ToString().Split('_');
+		if (fbxName.Length >= 1)
+        {
+			sku = "baby_" + fbxName[1].ToLower();
+        }
+	}
 
     // Create main menu and gameplay prefabs
     void CreatePrefabs()
@@ -330,6 +341,9 @@ public class BabyDragonWizard : EditorWindow
 		GameObject root = new GameObject(rootName) { tag = tagArray[tagIndexGameplay] };
 		string petClonePath = popupPetClonePathArray[popupPetCloneIndex];
 		GameObject basePetModel = (GameObject)AssetDatabase.LoadAssetAtPath(petClonePath, typeof(GameObject));
+
+        // Set layer
+		root.layer = basePetModel.layer;
 
 		// Attach view as child
 		view.transform.SetParentAndReset(root.transform);
