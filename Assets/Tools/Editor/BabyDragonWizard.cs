@@ -45,8 +45,10 @@ public class BabyDragonWizard : EditorWindow
 	[MenuItem("Hungry Dragon/Tools/Baby Dragon Wizard...", false, -150)]
 	static void Init()
 	{
-        // Prepare window
-		BabyDragonWizard window = (BabyDragonWizard) GetWindow(typeof(BabyDragonWizard));
+		// Prepare window docked next to Inspector tab
+		System.Type inspectorType = System.Type.GetType("UnityEditor.InspectorWindow,UnityEditor.dll");
+		System.Type[] desiredDockNextTo = new System.Type[] { inspectorType };
+		EditorWindow window = GetWindow<BabyDragonWizard>(desiredDockNextTo);
 		Texture icon = AssetDatabase.LoadAssetAtPath<Texture>("Assets/Art/UI/Common/Icons/icon_btn_pets.png");
 		window.titleContent = new GUIContent(" Baby Dragon", icon);
 
@@ -384,59 +386,81 @@ public class BabyDragonWizard : EditorWindow
 		// At this point, the references on the new prefab are still pointing to the old prefab.
 		// Update Pet script fields via reflection
 		Pet pet = root.GetComponent<Pet>();
-		foreach (FieldInfo field in pet.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance))
+		if (pet != null)
 		{
-            switch (field.Name)
-            {
-				case "m_sku":
-					field.SetValue(pet, sku);
-					break;
+			foreach (FieldInfo field in pet.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance))
+			{
+				switch (field.Name)
+				{
+					case "m_sku":
+						field.SetValue(pet, sku);
+						break;
 
-				case "m_pilot":
-					field.SetValue(pet, root.GetComponent<AirPilot>());
-					break;
+					case "m_pilot":
+						field.SetValue(pet, root.GetComponent<AirPilot>());
+						break;
 
-				case "m_machine":
-					field.SetValue(pet, root.GetComponent<MachineAir>());
-					break;
+					case "m_machine":
+						field.SetValue(pet, root.GetComponent<MachineAir>());
+						break;
 
-				case "m_viewControl":
-					field.SetValue(pet, root.GetComponent<ViewControl>());
-					break;
+					case "m_viewControl":
+						field.SetValue(pet, root.GetComponent<ViewControl>());
+						break;
 
-				case "m_otherSpawnables":
-					ISpawnable[] spawnables = new ISpawnable[4];
-					spawnables[0] = root.GetComponent<AirPilot>();
-					spawnables[1] = root.GetComponent<MachineAir>();
-					spawnables[2] = root.GetComponent<ViewControl>();
-					spawnables[3] = root.GetComponent<MachineEatBehaviour>();
-					field.SetValue(pet, spawnables);
-					break;
+					case "m_otherSpawnables":
+						ISpawnable[] spawnables = new ISpawnable[4];
+						spawnables[0] = root.GetComponent<AirPilot>();
+						spawnables[1] = root.GetComponent<MachineAir>();
+						spawnables[2] = root.GetComponent<ViewControl>();
+						spawnables[3] = root.GetComponent<MachineEatBehaviour>();
+						field.SetValue(pet, spawnables);
+						break;
+				}
 			}
 		}
 
         // Update viewControl script fields via reflection
 		ViewControl viewControl = root.GetComponent<ViewControl>();
-		foreach (FieldInfo field in viewControl.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance))
+		if (viewControl != null)
 		{
-			switch (field.Name)
+			foreach (FieldInfo field in viewControl.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance))
 			{
-				case "m_animator":
-					field.SetValue(viewControl, view.GetComponent<Animator>());
-					break;
+				switch (field.Name)
+				{
+					case "m_animator":
+						field.SetValue(viewControl, view.GetComponent<Animator>());
+						break;
 
-				case "m_renderers":
-					SkinnedMeshRenderer[] renderers = view.GetComponentsInChildren<SkinnedMeshRenderer>();
-					field.SetValue(viewControl, renderers);
-					break;
+					case "m_renderers":
+						SkinnedMeshRenderer[] renderers = view.GetComponentsInChildren<SkinnedMeshRenderer>();
+						field.SetValue(viewControl, renderers);
+						break;
 
-				case "m_transform":
-					field.SetValue(viewControl, root.transform);
-					break;
+					case "m_transform":
+						field.SetValue(viewControl, root.transform);
+						break;
 
-				case "m_view":
-					field.SetValue(viewControl, view.transform);
-					break;
+					case "m_view":
+						field.SetValue(viewControl, view.transform);
+						break;
+				}
+			}
+		}
+
+		// Update AudioControllerMixer script fields via reflection
+		AudioControllerMixerSetup audioControllerMixerSetup = root.GetComponent<AudioControllerMixerSetup>();
+		AudioController audioController = root.GetComponent<AudioController>();
+        if (audioControllerMixerSetup != null && audioController != null)
+        {
+			foreach (FieldInfo field in audioControllerMixerSetup.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance))
+			{
+				switch (field.Name)
+				{
+					case "m_controller":
+						field.SetValue(audioControllerMixerSetup, audioController);
+						break;
+				}
 			}
 		}
 
