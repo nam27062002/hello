@@ -31,7 +31,7 @@ public class BabyDragonWizard : EditorWindow
 	int tagIndexMainMenu = 16;
 	RuntimeAnimatorController runtimeAnimatorControllerMenu;
 	static string[] assetBundleArray;
-	int assetBundleMainMenuIndex = 0;
+	static int assetBundleMainMenuIndex = 0;
 
 	// Gameplay
 	static string[] popupPetCloneArray;
@@ -39,7 +39,7 @@ public class BabyDragonWizard : EditorWindow
 	int popupPetCloneIndex = 0;
 	int tagIndexGameplay = 16;
 	RuntimeAnimatorController runtimeAnimatorControllerGameplay;
-	int assetBundleGameplayIndex = 0;
+	static int assetBundleGameplayIndex = 0;
 
     // Menu
 	[MenuItem("Hungry Dragon/Tools/Baby Dragon Wizard...", false, -150)]
@@ -99,6 +99,24 @@ public class BabyDragonWizard : EditorWindow
 		assetBundleArray = new string[assetBundleNone.Length + assetBundles.Length];
 		assetBundleNone.CopyTo(assetBundleArray, 0);
 		assetBundles.CopyTo(assetBundleArray, assetBundleNone.Length);
+
+        // Set default asset bundle if not set
+		if (assetBundleMainMenuIndex == 0 && assetBundleGameplayIndex == 0)
+		{
+			string defaultAssetBundle = "pets_local";
+			int defaultAssetBundleIdx = 0;
+			for (int i = 0; i < assetBundles.Length; i++)
+			{
+				if (assetBundles[i] == defaultAssetBundle)
+				{
+					defaultAssetBundleIdx = i + 1;
+					break;
+				}
+			}
+
+			assetBundleMainMenuIndex = defaultAssetBundleIdx;
+			assetBundleGameplayIndex = defaultAssetBundleIdx;
+		}
 	}
 
     void OnEnable()
