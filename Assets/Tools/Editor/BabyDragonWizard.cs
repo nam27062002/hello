@@ -267,6 +267,19 @@ public class BabyDragonWizard : EditorWindow
 		}
 	}
 
+    string GetSkuSuffix()
+    {
+		string suffix = sku;
+		string[] skuSplit = sku.Split('_');
+		if (skuSplit.Length >= 1)
+		{
+			suffix = skuSplit[1];
+			suffix = char.ToUpper(suffix[0]) + suffix.Substring(1);
+		}
+
+		return suffix;
+    }
+
     void CreateMenuPrefab()
     {
         // View
@@ -284,7 +297,7 @@ public class BabyDragonWizard : EditorWindow
 		view.AddComponent<DragonAnimationEventsMenu>();
 
 		// Create root object
-		string rootName = "PF_" + babyDragonFBX.name.Replace("_LOW", "") + "Menu";
+		string rootName = "PF_Baby" + GetSkuSuffix() + "Menu";
 		GameObject root = new GameObject(rootName) { tag = tagArray[tagIndexMainMenu] };
 
         // Root - Equipable script
@@ -337,7 +350,7 @@ public class BabyDragonWizard : EditorWindow
 		view.AddComponent<DragonAnimationEvents>();
 
 		// Create root object
-		string rootName = "PF_" + babyDragonFBX.name.Replace("_LOW", "");
+		string rootName = "PF_Baby" + GetSkuSuffix();
 		GameObject root = new GameObject(rootName) { tag = tagArray[tagIndexGameplay] };
 		string petClonePath = popupPetClonePathArray[popupPetCloneIndex];
 		GameObject basePetModel = (GameObject)AssetDatabase.LoadAssetAtPath(petClonePath, typeof(GameObject));
