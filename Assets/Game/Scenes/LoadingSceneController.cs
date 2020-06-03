@@ -237,7 +237,7 @@ public class LoadingSceneController : SceneController {
     /// Initialization.
     /// </summary>
     override protected void Awake() {
-        CaletyFirebaseWrapper.initialize();
+        CaletyFirebaseWrapper.initialise();
 
         // Call parent
 		base.Awake();
