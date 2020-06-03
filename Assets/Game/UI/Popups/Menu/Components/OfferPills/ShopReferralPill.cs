@@ -126,6 +126,31 @@ public class ShopReferralPill : ShopMonoRewardPill {
 		}
 	}
 
+	/// <summary>
+	/// Open the extended info popup for this pill.
+	/// </summary>
+	/// <param name="_trackInfoPopupEvent">Whether to send tracking event or not for the custom.player.infopopup event.</param>
+	protected override void OpenInfoPopup(bool _trackInfoPopupEvent)
+	{
+		// Override parent to open the RemoveAdsOffer Popup instead
+		// Load the popup
+		PopupController popup = PopupManager.LoadPopup(PopupShopReferral.PATH);
+		PopupShopReferral popupReferralInstall = popup.GetComponent<PopupShopReferral>();
+
+		// Initialize it with the remove ad offer (if exists)
+		popupReferralInstall.Init();
+
+		// Show the popup
+		popup.Open();
+
+		// If defined, send tracking event
+		if (_trackInfoPopupEvent)
+		{
+			string popupName = System.IO.Path.GetFileNameWithoutExtension(PopupShopReferral.PATH);
+			TrackInfoPopup(popupName);
+		}
+	}
+
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
