@@ -41,6 +41,9 @@ public class BabyDragonWizard : EditorWindow
 	RuntimeAnimatorController runtimeAnimatorControllerGameplay;
 	static int assetBundleGameplayIndex = 0;
 
+	// GUI
+	static Texture2D darkTexture;
+
     // Menu
 	[MenuItem("Hungry Dragon/Tools/Baby Dragon Wizard...", false, -150)]
 	static void Init()
@@ -52,7 +55,11 @@ public class BabyDragonWizard : EditorWindow
 		Texture icon = AssetDatabase.LoadAssetAtPath<Texture>("Assets/Art/UI/Common/Icons/icon_btn_pets.png");
 		window.titleContent = new GUIContent(" Baby Dragon", icon);
 
-        // Create GUI popups
+		// Create preview texture
+		Color darkColor = new Color(0.1f, 0.1f, 0.1f);
+		darkTexture = MakeTexture(darkColor);
+
+		// Create GUI popups
 		CreateWindowPopups();
 
 		// Show window
@@ -224,17 +231,31 @@ public class BabyDragonWizard : EditorWindow
 				AssignMaterial();
 			}
 
-			GUIStyle bgColor = new GUIStyle();
-			bgColor.normal.background = EditorGUIUtility.whiteTexture;
-
+			GUIStyle previewStyle = new GUIStyle();
+			previewStyle.normal.background = darkTexture;
+            
 			EditorGUILayout.Space();
-			gameObjectEditor.OnInteractivePreviewGUI(GUILayoutUtility.GetRect(512, 512), bgColor);
+			gameObjectEditor.OnInteractivePreviewGUI(GUILayoutUtility.GetRect(256, 256), previewStyle);
 			lastBabyDragonFBX = babyDragonFBX;
 		}
     }
 
-    // Create main menu and gameplay prefabs
-    void CreatePrefabs()
+	static Texture2D MakeTexture(Color color, int width = 1, int height = 1)
+	{
+		Color[] pixels = new Color[width * height];
+
+		for (int i = 0; i < pixels.Length; i++)
+			pixels[i] = color;
+
+		Texture2D result = new Texture2D(width, height);
+		result.SetPixels(pixels);
+		result.Apply();
+
+		return result;
+	}
+
+	// Create main menu and gameplay prefabs
+	void CreatePrefabs()
     {
 		if (babyDragonFBX == null)
 		{
