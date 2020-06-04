@@ -227,8 +227,9 @@ public class BabyDragonWizard : EditorWindow
 			if (gameObjectEditor == null || lastBabyDragonFBX != babyDragonFBX)
 			{
 				gameObjectEditor = Editor.CreateEditor(babyDragonFBX);
-				TryGuessSkuFromFBX();
+				AssignSKU();
 				AssignMaterial();
+				AssignAnimationControllers();
 			}
 
 			GUIStyle previewStyle = new GUIStyle();
@@ -239,20 +240,6 @@ public class BabyDragonWizard : EditorWindow
 			lastBabyDragonFBX = babyDragonFBX;
 		}
     }
-
-	static Texture2D MakeTexture(Color color, int width = 1, int height = 1)
-	{
-		Color[] pixels = new Color[width * height];
-
-		for (int i = 0; i < pixels.Length; i++)
-			pixels[i] = color;
-
-		Texture2D result = new Texture2D(width, height);
-		result.SetPixels(pixels);
-		result.Apply();
-
-		return result;
-	}
 
 	// Create main menu and gameplay prefabs
 	void CreatePrefabs()
@@ -483,6 +470,15 @@ public class BabyDragonWizard : EditorWindow
 		DestroyImmediate(root);
 	}
 
+	void AssignSKU()
+	{
+		string[] fbxName = babyDragonFBX.name.ToString().Split('_');
+		if (fbxName.Length >= 1)
+		{
+			sku = "baby_" + fbxName[1].ToLower();
+		}
+	}
+
 	void AssignMaterial()
 	{
 		// Try to find material path
@@ -508,13 +504,48 @@ public class BabyDragonWizard : EditorWindow
 		}
 	}
 
-	void TryGuessSkuFromFBX()
+	void AssignAnimationControllers()
 	{
-		string[] fbxName = babyDragonFBX.name.ToString().Split('_');
-		if (fbxName.Length >= 1)
+		// Find animation controllers path
+		string fbxPath = GetRelativePath(AssetDatabase.GetAssetPath(babyDragonFBX));
+		DirectoryInfo dir = Directory.GetParent(fbxPath);
+		string animationControllerPath = GetRelativePath(dir.Parent.ToString());
+
+		if (Directory.Exists(animationControllerPath))
 		{
-			sku = "baby_" + fbxName[1].ToLower();
+			// Find animation controllers
+			string[] guid = AssetDatabase.FindAssets("AC_", new[] { animationControllerPath });
+			for (int i = 0; i < guid.Length; i++)
+			{
+				string path = AssetDatabase.GUIDToAssetPath(guid[i]);
+				RuntimeAnimatorController animController = (RuntimeAnimatorController)AssetDatabase.LoadAssetAtPath(path, typeof(RuntimeAnimatorController));
+				if (animController != null)
+				{
+                    if (animController.name.EndsWith("Menu"))
+                    {
+						runtimeAnimatorControllerMenu = animController;
+                    }
+                    else
+                    {
+						runtimeAnimatorControllerGameplay = animController;
+                    }
+				}
+			}
 		}
+	}
+
+	static Texture2D MakeTexture(Color color, int width = 1, int height = 1)
+	{
+		Color[] pixels = new Color[width * height];
+
+		for (int i = 0; i < pixels.Length; i++)
+			pixels[i] = color;
+
+		Texture2D result = new Texture2D(width, height);
+		result.SetPixels(pixels);
+		result.Apply();
+
+		return result;
 	}
 
 	void SetFBXScale()
