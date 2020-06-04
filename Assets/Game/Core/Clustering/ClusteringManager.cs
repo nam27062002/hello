@@ -157,7 +157,10 @@ public class ClusteringManager {
 
     }
 
-
+    /// <summary>
+    /// Check that endpoint is registered, gather all the parameters needed and the send the request to the server
+    /// </summary>
+    /// <param name="_offlineMode"></param>
 	public void InitializeAndSendRequest(bool _offlineMode = false)
 	{
 		if (!m_registered)
@@ -230,7 +233,7 @@ public class ClusteringManager {
     /// Response from the server was received
     /// </summary>
     /// <param name="_strResponse">Json containing the cluster Id requested</param>
-    /// <param name="_strCmd"></param>
+    /// <param name="_strCmd">The command sent</param>
     /// <param name="_reponseCode">Response code. 200 if the request was successful</param>
     /// <returns>Returns true if the response was successful</returns>
 	private bool OnGetClusterResponse(string _strResponse, string _strCmd, int _reponseCode)
@@ -283,6 +286,8 @@ public class ClusteringManager {
 									Debug.LogError("Requests " + _strCmd + " returned error " +
 										kJSON["errorCode"] + ": " + kJSON["errorMsg"]);
 
+									responseOk = false;
+
 								}
 							}
 						}
@@ -293,7 +298,6 @@ public class ClusteringManager {
 				default: 
 					{
                         // An error happened
-
 						responseOk = false;
 						break;
 					}
