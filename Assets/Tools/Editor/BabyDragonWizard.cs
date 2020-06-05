@@ -25,6 +25,7 @@ public class BabyDragonWizard : EditorWindow
 
 	// Optional
 	Material babyDragonMaterial;
+	Material lastBabyDragonMaterial;
 
 	// Main menu
 	static string[] tagArray;
@@ -226,10 +227,15 @@ public class BabyDragonWizard : EditorWindow
 		{
 			if (gameObjectEditor == null || lastBabyDragonFBX != babyDragonFBX)
 			{
-				gameObjectEditor = Editor.CreateEditor(babyDragonFBX);
 				AssignSKU();
 				AssignMaterial();
 				AssignAnimationControllers();
+
+				CreatePreview();
+			}
+            else if (lastBabyDragonMaterial != babyDragonMaterial)
+            {
+				CreatePreview();
 			}
 
 			GUIStyle previewStyle = new GUIStyle();
@@ -237,7 +243,9 @@ public class BabyDragonWizard : EditorWindow
             
 			EditorGUILayout.Space();
 			gameObjectEditor.OnInteractivePreviewGUI(GUILayoutUtility.GetRect(256, 256), previewStyle);
+
 			lastBabyDragonFBX = babyDragonFBX;
+			lastBabyDragonMaterial = babyDragonMaterial;
 		}
     }
 
@@ -468,6 +476,18 @@ public class BabyDragonWizard : EditorWindow
 
 		// Clean-up
 		DestroyImmediate(root);
+	}
+
+    void CreatePreview()
+    {
+		GameObject preview = (GameObject)babyDragonFBX;
+		Renderer[] renderers = preview.transform.GetComponentsInChildren<Renderer>();
+		for (int i = 0; i < renderers.Length; i++)
+		{
+			renderers[i].material = babyDragonMaterial;
+		}
+
+		gameObjectEditor = Editor.CreateEditor(preview);
 	}
 
 	void AssignSKU()
