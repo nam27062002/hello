@@ -40,7 +40,7 @@ public class ResultsScreenStepClustering : ResultsScreenStep {
 			return false;
 
 		// Do not calculate clustering until the end of the run 1 (0 is tutorial)
-		if (gamesPlayed != ClusteringManager.CALCULATE_CLUSTER_AT_RUN)
+		if (gamesPlayed != ClusteringManager.Instance.calculateClusterAtRun)
 			return false;
 
 

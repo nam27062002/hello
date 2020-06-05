@@ -27,13 +27,7 @@ public class ClusteringManager {
 
 	private static readonly string GET_CLUSTER_ID = "/api/cluster/get";
 
-	// The cluster will be calculated based on the data gathered until the end of this run
-	public static int CALCULATE_CLUSTER_AT_RUN = 2;
-
-    // If the server didnt reply yet at this run, we assign the player to a generic cluster
-	public static int ASSIGN_CLUSTER_AT_RUN = 4;
-
-    // Generic cluster ID
+	// Generic cluster ID
 	public static string CLUSTER_GENERIC = "CLUSTER_GENERIC";
 
 
@@ -44,7 +38,7 @@ public class ClusteringManager {
 	// Singleton instance
 	private static ClusteringManager m_instance = null;
 
-    // Communication with server
+	// Communication with server
 	private bool m_registered = false;
 	private bool m_offlineMode = false;
 
@@ -58,6 +52,15 @@ public class ClusteringManager {
     private long m_score;
     private int m_boostTime;
 
+	// Configuration in content:
+	// The cluster will be calculated based on the data gathered until the end of this run
+	private int m_calculateClusterAtRun;
+	public int calculateClusterAtRun
+        { get => m_calculateClusterAtRun; }
+
+	// If the server didnt reply yet at this run, we assign the player to a generic cluster
+	private int m_assignGenericClusterArRun;
+
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -67,6 +70,13 @@ public class ClusteringManager {
 	/// </summary>
 	public ClusteringManager() {
 
+		// Read config variables from the content
+		if (ContentManager.ready)
+		{
+			DefinitionNode offerSettingsDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, "offerSettings");
+			m_calculateClusterAtRun = offerSettingsDef.GetAsInt("calculateClusterAtRun");
+            m_assignGenericClusterArRun = offerSettingsDef.GetAsInt("assignGenericClusterAtRun");
+		}
 	}
 
 	/// <summary>
@@ -77,8 +87,6 @@ public class ClusteringManager {
 	}
 
 	// Singleton
-	
-
 	public static ClusteringManager Instance
 	{
 		get
@@ -94,9 +102,11 @@ public class ClusteringManager {
 
 
 
-	//------------------------------------------------------------------------//
-	// OTHER METHODS														  //
-	//------------------------------------------------------------------------//
+
+
+    //------------------------------------------------------------------------//
+    // OTHER METHODS														  //
+    //------------------------------------------------------------------------//
 
     /// <summary>
     /// Returns the cluster ID assigned to this player.
@@ -104,7 +114,7 @@ public class ClusteringManager {
     /// and assigns a temporary cluster ID in the meantime.
     /// </summary>
     /// <returns>The cluster ID</returns>
-	public string GetClusterId( )
+    public string GetClusterId( )
 	{
 		string clusterId = UsersManager.currentUser.clusterId;
 
@@ -117,7 +127,7 @@ public class ClusteringManager {
 		{
 			// we dont know it yet.
 
-			if (UsersManager.currentUser.gamesPlayed < CALCULATE_CLUSTER_AT_RUN)
+			if (UsersManager.currentUser.gamesPlayed < m_calculateClusterAtRun)
 			{
 				// Too early. We are not calculating the cluster ID yet.
 				return null;
@@ -126,7 +136,7 @@ public class ClusteringManager {
 			// Request the cluster ID to the server.
 			InitializeAndSendRequest(false);
 
-			if (UsersManager.currentUser.gamesPlayed < ASSIGN_CLUSTER_AT_RUN)
+			if (UsersManager.currentUser.gamesPlayed < m_assignGenericClusterArRun)
 			{
 				// We are still waiting for the server response
 				return null;
