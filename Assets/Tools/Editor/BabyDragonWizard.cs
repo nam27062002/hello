@@ -81,7 +81,7 @@ public class BabyDragonWizard : EditorWindow
 				string path = AssetDatabase.GUIDToAssetPath(guid[x]);
 				string petName = path.Substring(path.LastIndexOf("/") + 1);
 				petName = petName.Substring(0, petName.IndexOf(".prefab"));
-				if (!petName.Contains("Menu"))
+				if (!petName.Contains("Menu") && !petName.StartsWith("PF_Baby"))
 				{
 					popupPetClone.Add(petName);
 					popupPetClonePath.Add(path);
