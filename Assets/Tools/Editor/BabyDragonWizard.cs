@@ -39,6 +39,7 @@ public class BabyDragonWizard : EditorWindow
 	static string[] popupPetClonePathArray;
 	int popupPetCloneIndex = 0;
 	int tagIndexGameplay = 16;
+	bool addEatBehaviour = true;
 	RuntimeAnimatorController runtimeAnimatorControllerGameplay;
 	static int assetBundleGameplayIndex = 0;
 
@@ -207,6 +208,9 @@ public class BabyDragonWizard : EditorWindow
 		EditorGUILayout.EndHorizontal();
 		EditorGUILayout.BeginHorizontal();
 		popupPetCloneIndex = EditorGUILayout.Popup("Clone pet behaviour:", popupPetCloneIndex, popupPetCloneArray);
+		EditorGUILayout.EndHorizontal();
+		EditorGUILayout.BeginHorizontal();
+		addEatBehaviour = EditorGUILayout.Toggle("Add eat behaviour", addEatBehaviour);
 		EditorGUILayout.EndHorizontal();
 		EditorGUILayout.BeginHorizontal();
 		EditorGUILayout.LabelField("Animation Controller:");
@@ -459,6 +463,28 @@ public class BabyDragonWizard : EditorWindow
 						break;
 				}
 			}
+		}
+
+        // Add eat behaviour if needed
+        if (addEatBehaviour)
+        {
+			int eatPetIndex = 0;
+            // Find a pet with MachineEatBehaviour script to clone their script values
+            for (int i = 0; i < popupPetCloneArray.Length; i++)
+            {
+                if (popupPetCloneArray[i] == "PF_PetDactylus_0")
+                {
+					eatPetIndex = i;
+					break;
+                }
+            }
+
+			string eatPetClonePath = popupPetClonePathArray[eatPetIndex]; 
+			GameObject eatPetModel = (GameObject)AssetDatabase.LoadAssetAtPath(eatPetClonePath, typeof(GameObject));
+			MachineEatBehaviour machineEatBehaviour = eatPetModel.GetComponent<MachineEatBehaviour>();
+
+			UnityEditorInternal.ComponentUtility.CopyComponent(machineEatBehaviour);
+			UnityEditorInternal.ComponentUtility.PasteComponentAsNew(root);
 		}
 
 		// Correct SphereCollider position based on child renderers
