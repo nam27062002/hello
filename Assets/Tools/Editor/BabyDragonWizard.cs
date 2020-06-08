@@ -76,13 +76,13 @@ public class BabyDragonWizard : EditorWindow
 		List<string> popupPetClonePath = new List<string>();
 		for (int i = 0; i < directory.Length; i++)
 		{
-			string[] guid = AssetDatabase.FindAssets("PF_", new[] { directory[i] });
+			string[] guid = AssetDatabase.FindAssets("PF_Pet", new[] { directory[i] });
 			for (int x = 0; x < guid.Length; x++)
 			{
 				string path = AssetDatabase.GUIDToAssetPath(guid[x]);
 				string petName = path.Substring(path.LastIndexOf(Path.DirectorySeparatorChar) + 1);
 				petName = petName.Substring(0, petName.IndexOf(".prefab"));
-				if (!petName.Contains("Menu") && !petName.StartsWith("PF_Baby"))
+				if (!petName.Contains("Menu"))
 				{
 					popupPetClone.Add(petName);
 					popupPetClonePath.Add(path);
@@ -466,7 +466,7 @@ public class BabyDragonWizard : EditorWindow
 		}
 
         // Add eat behaviour if needed
-        if (addEatBehaviour)
+        if (addEatBehaviour && root.GetComponent<MachineEatBehaviour>() == null)
         {
 			int eatPetIndex = 0;
             // Find a pet with MachineEatBehaviour script to clone their script values
