@@ -79,7 +79,7 @@ public class BabyDragonWizard : EditorWindow
 			for (int x = 0; x < guid.Length; x++)
 			{
 				string path = AssetDatabase.GUIDToAssetPath(guid[x]);
-				string petName = path.Substring(path.LastIndexOf("/") + 1);
+				string petName = path.Substring(path.LastIndexOf(Path.DirectorySeparatorChar) + 1);
 				petName = petName.Substring(0, petName.IndexOf(".prefab"));
 				if (!petName.Contains("Menu") && !petName.StartsWith("PF_Baby"))
 				{
@@ -504,7 +504,7 @@ public class BabyDragonWizard : EditorWindow
 		// Try to find material path
 		string fbxPath = AssetDatabase.GetAssetPath(babyDragonFBX);
 		DirectoryInfo dir = Directory.GetParent(fbxPath);
-		string materialPath = GetRelativePath(dir.Parent.ToString()) + "/Materials";
+		string materialPath = GetRelativePath(dir.Parent.ToString()) + Path.DirectorySeparatorChar + "Materials";
 
 		if (Directory.Exists(materialPath))
 		{
@@ -637,7 +637,7 @@ public class BabyDragonWizard : EditorWindow
 
     string GetRelativePath(string path)
     {
-		return path.Substring(path.IndexOf("Assets/"));
+		return path.Substring(path.IndexOf("Assets" + Path.DirectorySeparatorChar));
 	}
 
 	void SetAnimationController(ref GameObject view, RuntimeAnimatorController controller)
