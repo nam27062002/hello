@@ -39,6 +39,7 @@ public class BabyDragonWizard : EditorWindow
 	static string[] popupPetClonePathArray;
 	int popupPetCloneIndex = 0;
 	int tagIndexGameplay = 16;
+	bool addEatBehaviour = true;
 	RuntimeAnimatorController runtimeAnimatorControllerGameplay;
 	static int assetBundleGameplayIndex = 0;
 
@@ -79,7 +80,7 @@ public class BabyDragonWizard : EditorWindow
 			for (int x = 0; x < guid.Length; x++)
 			{
 				string path = AssetDatabase.GUIDToAssetPath(guid[x]);
-				string petName = path.Substring(path.LastIndexOf("/") + 1);
+				string petName = path.Substring(path.LastIndexOf(Path.DirectorySeparatorChar) + 1);
 				petName = petName.Substring(0, petName.IndexOf(".prefab"));
 				if (!petName.Contains("Menu") && !petName.StartsWith("PF_Baby"))
 				{
@@ -207,6 +208,9 @@ public class BabyDragonWizard : EditorWindow
 		EditorGUILayout.EndHorizontal();
 		EditorGUILayout.BeginHorizontal();
 		popupPetCloneIndex = EditorGUILayout.Popup("Clone pet behaviour:", popupPetCloneIndex, popupPetCloneArray);
+		EditorGUILayout.EndHorizontal();
+		EditorGUILayout.BeginHorizontal();
+		addEatBehaviour = EditorGUILayout.Toggle("Add eat behaviour", addEatBehaviour);
 		EditorGUILayout.EndHorizontal();
 		EditorGUILayout.BeginHorizontal();
 		EditorGUILayout.LabelField("Animation Controller:");
@@ -461,6 +465,28 @@ public class BabyDragonWizard : EditorWindow
 			}
 		}
 
+        // Add eat behaviour if needed
+        if (addEatBehaviour)
+        {
+			int eatPetIndex = 0;
+            // Find a pet with MachineEatBehaviour script to clone their script values
+            for (int i = 0; i < popupPetCloneArray.Length; i++)
+            {
+                if (popupPetCloneArray[i] == "PF_PetDactylus_0")
+                {
+					eatPetIndex = i;
+					break;
+                }
+            }
+
+			string eatPetClonePath = popupPetClonePathArray[eatPetIndex]; 
+			GameObject eatPetModel = (GameObject)AssetDatabase.LoadAssetAtPath(eatPetClonePath, typeof(GameObject));
+			MachineEatBehaviour machineEatBehaviour = eatPetModel.GetComponent<MachineEatBehaviour>();
+
+			UnityEditorInternal.ComponentUtility.CopyComponent(machineEatBehaviour);
+			UnityEditorInternal.ComponentUtility.PasteComponentAsNew(root);
+		}
+
 		// Correct SphereCollider position based on child renderers
 		SphereCollider sphereCollider = root.GetComponent<SphereCollider>();
 		if (sphereCollider != null)
@@ -504,7 +530,7 @@ public class BabyDragonWizard : EditorWindow
 		// Try to find material path
 		string fbxPath = AssetDatabase.GetAssetPath(babyDragonFBX);
 		DirectoryInfo dir = Directory.GetParent(fbxPath);
-		string materialPath = GetRelativePath(dir.Parent.ToString()) + "/Materials";
+		string materialPath = GetRelativePath(dir.Parent.ToString()) + Path.DirectorySeparatorChar + "Materials";
 
 		if (Directory.Exists(materialPath))
 		{
@@ -637,7 +663,7 @@ public class BabyDragonWizard : EditorWindow
 
     string GetRelativePath(string path)
     {
-		return path.Substring(path.IndexOf("Assets/"));
+		return path.Substring(path.IndexOf("Assets" + Path.DirectorySeparatorChar));
 	}
 
 	void SetAnimationController(ref GameObject view, RuntimeAnimatorController controller)
