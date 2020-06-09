@@ -578,13 +578,11 @@ public class BabyDragonWizard : EditorWindow
 	void AssignAnimationControllers()
 	{
 		// Find animation controllers path
-		string fbxPath = GetRelativePath(AssetDatabase.GetAssetPath(babyDragonFBX));
-		if (string.IsNullOrEmpty(fbxPath))
-			return;
-
+		string fbxPath = AssetDatabase.GetAssetPath(babyDragonFBX);
 		DirectoryInfo dir = Directory.GetParent(fbxPath);
 		string animationControllerPath = GetRelativePath(dir.Parent.ToString());
-		if (!string.IsNullOrEmpty(animationControllerPath) && Directory.Exists(animationControllerPath))
+
+		if (Directory.Exists(animationControllerPath))
 		{
 			// Find animation controllers
 			string[] guid = AssetDatabase.FindAssets("AC_", new[] { animationControllerPath });
