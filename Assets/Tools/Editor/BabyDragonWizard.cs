@@ -57,8 +57,6 @@ public class BabyDragonWizard : EditorWindow
 	Material lastBabyDragonMaterial;
 
 	// Main menu
-	static string[] tagArray;
-	int tagIndexMainMenu = 16;
 	RuntimeAnimatorController runtimeAnimatorControllerMenu;
 	static string[] assetBundleArray;
 	static int assetBundleMainMenuIndex = 0;
@@ -67,7 +65,6 @@ public class BabyDragonWizard : EditorWindow
 	static string[] popupPetCloneArray;
 	static string[] popupPetClonePathArray;
 	int popupPetCloneIndex = 0;
-	int tagIndexGameplay = 16;
 	bool addEatBehaviour = true;
 	RuntimeAnimatorController runtimeAnimatorControllerGameplay;
 	static int assetBundleGameplayIndex = 0;
@@ -120,15 +117,6 @@ public class BabyDragonWizard : EditorWindow
 
 		popupPetCloneArray = popupPetClone.ToArray();
 		popupPetClonePathArray = popupPetClonePath.ToArray();
-
-		// Create tags popup list
-		List<string> tags = new List<string>();
-		int totalTags = UnityEditorInternal.InternalEditorUtility.tags.Length;
-		for (int i = 0; i < totalTags; i++)
-		{
-			tags.Add(UnityEditorInternal.InternalEditorUtility.tags[i]);
-		}
-		tagArray = tags.ToArray();
 
 		// Create asset bundles popup list
 		string[] assetBundleNone = new string[] { "None" };
@@ -218,9 +206,6 @@ public class BabyDragonWizard : EditorWindow
 		EditorGUILayout.Space();
 		EditorGUILayout.LabelField("Main menu prefab settings", EditorStyles.boldLabel);
 		EditorGUILayout.BeginHorizontal();
-		tagIndexMainMenu = EditorGUILayout.Popup("Tag:", tagIndexMainMenu, tagArray);
-		EditorGUILayout.EndHorizontal();
-		EditorGUILayout.BeginHorizontal();
 		EditorGUILayout.LabelField("Animation Controller:");
 		runtimeAnimatorControllerMenu = (RuntimeAnimatorController)EditorGUILayout.ObjectField(runtimeAnimatorControllerMenu, typeof(RuntimeAnimatorController), true);
 		EditorGUILayout.EndHorizontal();
@@ -231,9 +216,6 @@ public class BabyDragonWizard : EditorWindow
         // Gameplay settings
 		EditorGUILayout.Space();
 		EditorGUILayout.LabelField("Gameplay prefab settings", EditorStyles.boldLabel);
-		EditorGUILayout.BeginHorizontal();
-		tagIndexGameplay = EditorGUILayout.Popup("Tag:", tagIndexGameplay, tagArray);
-		EditorGUILayout.EndHorizontal();
 		EditorGUILayout.BeginHorizontal();
 		popupPetCloneIndex = EditorGUILayout.Popup("Clone pet behaviour:", popupPetCloneIndex, popupPetCloneArray);
 		EditorGUILayout.EndHorizontal();
@@ -336,7 +318,7 @@ public class BabyDragonWizard : EditorWindow
 
 		// Create root object
 		string rootName = "PF_Baby" + GetSkuSuffix() + "Menu";
-		GameObject root = new GameObject(rootName) { tag = tagArray[tagIndexMainMenu] };
+		GameObject root = new GameObject(rootName) { tag = "Pet" };
 
         // Root - Equipable script
 		root.AddComponent<Equipable>();
@@ -389,7 +371,7 @@ public class BabyDragonWizard : EditorWindow
 
 		// Create root object
 		string rootName = "PF_Baby" + GetSkuSuffix();
-		GameObject root = new GameObject(rootName) { tag = tagArray[tagIndexGameplay] };
+		GameObject root = new GameObject(rootName) { tag = "Pet" };
 		string petClonePath = popupPetClonePathArray[popupPetCloneIndex];
 		GameObject basePetModel = (GameObject)AssetDatabase.LoadAssetAtPath(petClonePath, typeof(GameObject));
 
