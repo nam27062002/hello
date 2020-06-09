@@ -15,10 +15,24 @@ public class BabyDragonWizard : EditorWindow
 {
 	// Constants
 	const string PET_BASE_PATH  = "Assets/Art/3D/Gameplay/Pets/Prefabs/";
+	readonly Dictionary<string, string> clonePetBehaviourPerSku = new Dictionary<string, string>()
+	{
+		{ "baby_classic", "PF_PetPhoenix_33" },
+		{ "baby_crocodile", "PF_PetGelato_66" },
+		{ "baby_croc", "PF_PetGelato_66" },
+		{ "baby_dark", "PF_PetNeutrin_38" },
+		{ "baby_titan", "PF_PetHorseman_70" },
+		{ "baby_jawfrey", "PF_PetSanta_58" },
+		{ "baby_dino", "PF_PetAlien_59" },
+		{ "baby_tony", "PF_PetXmasElf_60" },
+		{ "baby_dante", "PF_PetGrillmonger_64" },
+		{ "baby_alien", "PF_PetFireball_36" },
+		{ "baby_armordillo", "PF_PetUnicorn_67" },
+	};
 
     // Required
-    Object babyDragonFBX;
-    Object lastBabyDragonFBX;
+    UnityEngine.Object babyDragonFBX;
+    UnityEngine.Object lastBabyDragonFBX;
 	Editor gameObjectEditor;
 	string sku;
 	float fbxScale = 2.5f;
@@ -234,6 +248,7 @@ public class BabyDragonWizard : EditorWindow
 				AssignSKU();
 				AssignMaterial();
 				AssignAnimationControllers();
+				AssignClonePetBehaviour();
 
 				CreatePreview();
 			}
@@ -253,8 +268,8 @@ public class BabyDragonWizard : EditorWindow
 		}
     }
 
-	// Create main menu and gameplay prefabs
-	void CreatePrefabs()
+    // Create main menu and gameplay prefabs
+    void CreatePrefabs()
     {
 		if (babyDragonFBX == null)
 		{
@@ -487,6 +502,17 @@ public class BabyDragonWizard : EditorWindow
 			UnityEditorInternal.ComponentUtility.PasteComponentAsNew(root);
 		}
 
+		// Add PreyAnimationEvents if needed
+		Transform basePetView = basePetModel.transform.FindTransformRecursive("view");
+		if (basePetView != null)
+		{
+			PreyAnimationEvents preyAnimationEvents = basePetView.GetComponent<PreyAnimationEvents>();
+            if (preyAnimationEvents != null)
+            {
+				view.AddComponent<PreyAnimationEvents>();
+            }
+		}
+
 		// Correct SphereCollider position based on child renderers
 		SphereCollider sphereCollider = root.GetComponent<SphereCollider>();
 		if (sphereCollider != null)
@@ -578,6 +604,21 @@ public class BabyDragonWizard : EditorWindow
 				}
 			}
 		}
+	}
+
+	void AssignClonePetBehaviour()
+	{
+		if (clonePetBehaviourPerSku.TryGetValue(sku, out string petName))
+        {
+            for (int i = 0; i < popupPetCloneArray.Length; i++)
+            {
+                if (popupPetCloneArray[i] == petName)
+                {
+					popupPetCloneIndex = i;
+					break;
+                }
+            }
+        }
 	}
 
 	static Texture2D MakeTexture(Color color, int width = 1, int height = 1)
