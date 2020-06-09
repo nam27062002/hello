@@ -28,11 +28,26 @@ public class BabyDragonWizard : EditorWindow
 		{ "baby_dante", "PF_PetGrillmonger_64" },
 		{ "baby_alien", "PF_PetFireball_36" },
 		{ "baby_armordillo", "PF_PetUnicorn_67" },
+		{ "baby_armor", "PF_PetUnicorn_67" },
+		{ "baby_nibbler", "PF_PetHorseman_70" },
+		{ "baby_reptile", "PF_PetCupido_74" },
+        { "baby_snake", "PF_PetCupido_74" },
+		{ "baby_bug", "PF_PetXmasElf_60" },
+		{ "baby_chinese", "PF_PetUnicorn_67" },
+		{ "baby_devil", "PF_PetGrillmonger_64" },
+		{ "baby_balrog", "PF_PetBubby_65" },
+		{ "baby_goldheist", "PF_PetShu_75" },
+		{ "baby_skeleton", "PF_PetFaune_63" },
+		{ "baby_skully", "PF_PetFaune_63" },
+		{ "baby_light", "PF_PetCupido_74" },
+		{ "baby_mecha", "PF_PetChinesePig_73" },
+		{ "baby_icebreaker", "PF_PetFreeze_74" },
+		{ "baby_ice", "PF_PetFreeze_74" }
 	};
 
     // Required
-    UnityEngine.Object babyDragonFBX;
-    UnityEngine.Object lastBabyDragonFBX;
+    Object babyDragonFBX;
+    Object lastBabyDragonFBX;
 	Editor gameObjectEditor;
 	string sku;
 	float fbxScale = 2.5f;
@@ -233,11 +248,13 @@ public class BabyDragonWizard : EditorWindow
 		assetBundleGameplayIndex = EditorGUILayout.Popup("Asset bundle:", assetBundleGameplayIndex, assetBundleArray);
 		EditorGUILayout.EndHorizontal();
 
-        // Create prefabs button
+		// Create prefabs button
+		EditorGUI.BeginDisabledGroup(babyDragonFBX == null || string.IsNullOrEmpty(sku));
 		if (GUILayout.Button("Create prefabs...", GUILayout.Height(40)))
 		{
 			CreatePrefabs();
 		}
+		EditorGUI.EndDisabledGroup();
 
         // Preview FBX
 		if (babyDragonFBX != null)
@@ -265,6 +282,10 @@ public class BabyDragonWizard : EditorWindow
 			lastBabyDragonFBX = babyDragonFBX;
 			lastBabyDragonMaterial = babyDragonMaterial;
 		}
+        else
+        {
+			gameObjectEditor = null;
+        }
     }
 
     // Create main menu and gameplay prefabs
@@ -654,7 +675,7 @@ public class BabyDragonWizard : EditorWindow
 	{
 		string suffix = sku;
 		string[] skuSplit = sku.Split('_');
-		if (skuSplit.Length >= 1)
+		if (skuSplit.Length > 1)
 		{
 			suffix = skuSplit[1];
 			suffix = char.ToUpper(suffix[0]) + suffix.Substring(1);
