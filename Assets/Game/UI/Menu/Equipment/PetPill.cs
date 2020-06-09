@@ -155,32 +155,45 @@ public class PetPill : ScrollRectItem<PetPillData>, IBroadcastListener {
     [SerializeField] private Downloadables.Handle.DownloadState m_downloadState = Downloadables.Handle.DownloadState.NOT_STARTED;
 
 
-    //------------------------------------------------------------------------//
-    // GENERIC METHODS														  //
-    //------------------------------------------------------------------------//
-    /// <summary>
-    /// Component has been enabled.
-    /// </summary>
-    private void OnEnable() {
+	//------------------------------------------------------------------------//
+	// GENERIC METHODS														  //
+	//------------------------------------------------------------------------//
+
+    private void Start()
+	{
+		Broadcaster.AddListener(BroadcastEventType.LANGUAGE_CHANGED, this);
+	}
+
+
+	private void OnDestroy()
+	{
+		//[JOM] Keep listening to a languange event, even if the pill is disabled. Fix [HDK-8412]
+		Broadcaster.RemoveListener(BroadcastEventType.LANGUAGE_CHANGED, this);
+	}
+
+
+	/// <summary>
+	/// Component has been enabled.
+	/// </summary>
+	private void OnEnable() {
 		// Reset internal logic
 		m_tapAllowed = true;
 
 		// Subscribe to external events
 		Messenger.AddListener<string, int, string>(MessengerEvents.MENU_DRAGON_PET_CHANGE, OnPetChanged);
-		Broadcaster.AddListener(BroadcastEventType.LANGUAGE_CHANGED, this);
 
 
         // Make sure pill is updated
         Refresh();
 	}
 
-	/// <summary>
-	/// Component has been disabled.
-	/// </summary>
-	private void OnDisable() {
+
+    /// <summary>
+    /// Component has been disabled.
+    /// </summary>
+    private void OnDisable() {
 		// Unsubscribe from external events
 		Messenger.RemoveListener<string, int, string>(MessengerEvents.MENU_DRAGON_PET_CHANGE, OnPetChanged);
-		Broadcaster.RemoveListener(BroadcastEventType.LANGUAGE_CHANGED, this);
 
         // Delete pending requests
        /* if (m_previewRequest != null) {

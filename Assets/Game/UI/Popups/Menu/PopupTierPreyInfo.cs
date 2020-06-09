@@ -29,7 +29,7 @@ public class PopupTierPreyInfo : MonoBehaviour {
 	// Exposed
 	[Comment("All elements are optional")]
 	[Separator("UI Elements")]
-	[SerializeField] protected Image m_tierIcon = null;
+	[SerializeField] protected Transform m_tierIconContainer = null;
 
 	// Edibles/Destructibles layout
 	[Separator("Entities Layout")]
@@ -113,9 +113,11 @@ public class PopupTierPreyInfo : MonoBehaviour {
 		// Tier data (only if different than the last loaded)
 		if(m_loadedTier != m_targetTier) {
 			// Tier icon
-			string tierIcon = m_targetTierDef.GetAsString("icon");
-			if(m_tierIcon != null) {
-				m_tierIcon.sprite = ResourcesExt.LoadFromSpritesheet(UIConstants.UI_SPRITESHEET_PATH, tierIcon);
+
+			
+			if(m_tierIconContainer != null) {
+				GameObject tierIconPrefab = UIConstants.GetTierIcon(m_targetTier);
+				Instantiate(tierIconPrefab, m_tierIconContainer, false);
 			}
 
 			// Edible/destructible layout corresponding to this dragon's tier

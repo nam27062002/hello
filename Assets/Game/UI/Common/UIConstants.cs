@@ -226,6 +226,7 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 	[SerializeField] private Color m_dragonStatColorEnergy = Color.yellow;
 
 	[SerializeField] private Color[] m_dragonTierColors = new Color[0];
+
 	#endregion
 
 	// -----------------------------------------------------------------------//
@@ -316,6 +317,12 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 	[SerializeField] private string[] m_dragonTiersSFX = new string[(int)DragonTier.COUNT];
 	public static string[] dragonTiersSFX {
 		get { return instance.m_dragonTiersSFX; }
+	}
+
+	[SerializeField] private GameObject[] m_dragonTierIcons = new GameObject[(int)DragonTier.COUNT];
+	public static GameObject[] dragonTierIcons
+	{
+		get { return instance.m_dragonTierIcons; }
 	}
 
 	[Space]
@@ -531,6 +538,7 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 		return instance.m_dragonTierColors[(int)_tier];
 	}
 
+
 	/// <summary>
 	/// Get the name (sprite id within the atlas) for the given icon type.
 	/// </summary>
@@ -663,19 +671,66 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 	}
 
 	/// <summary>
+	/// Create a sprite/label tag to be inserted in a TMPro text.
+	/// </summary>
+	/// <returns>The full tag with the given sprite: "<sprite name="_spriteName">".</returns>
+	/// <param name="_spriteName">ID of the sprite we want to show. Same ID as in the UI spritesheet asset.</param>
+	public static string GetTierTag(DefinitionNode _tierDef) {
+
+		DragonTier tier = (DragonTier) _tierDef.GetAsInt("order");
+
+		// Clear stringbuilder
+		instance.m_sb.Length = 0;
+
+		
+		if (tier == DragonTier.TIER_6)
+		{
+			// For special dragons keep the sprite icon
+
+			// Do the composition
+			instance.m_sb.Append("<sprite name=\"").Append(_tierDef.GetAsString("icon")).Append("\">");
+
+		}
+		else
+		{
+			// For classic dragons return colored text
+			Color color = GetDragonTierColor(tier);
+			instance.m_sb.Append("<color=#").Append(color.ToHexString()).Append(">");
+			instance.m_sb.Append(LocalizationManager.SharedInstance.Localize(_tierDef.GetAsString("tidName")));
+			instance.m_sb.Append("</color>");
+
+		}
+		// Done!
+		return instance.m_sb.ToString();
+	}
+
+    /// <summary>
+    /// Given a dragon tier return the icon prefab of this tier
+    /// </summary>
+    /// <param name="_tier"></param>
+    /// <returns></returns>
+    public static GameObject GetTierIcon (DragonTier _tier)
+    {
+		return dragonTierIcons[(int)_tier];
+    }
+
+
+	/// <summary>
 	/// Create a sprite tag to be inserted in a TMPro text.
 	/// </summary>
 	/// <returns>The full tag with the given sprite: "<sprite name="_spriteName">".</returns>
 	/// <param name="_spriteName">ID of the sprite we want to show. Same ID as in the UI spritesheet asset.</param>
-	public static string GetSpriteTag(string _spriteName) {
-		// Clear stringbuilder
-		instance.m_sb.Length = 0;
+	public static string GetSpriteTag(string _spriteName)
+	{
 
-		// Do the composition
-		instance.m_sb.Append("<sprite name=\"").Append(_spriteName).Append("\">");
+			// Clear stringbuilder
+			instance.m_sb.Length = 0;
 
-		// Done!
-		return instance.m_sb.ToString();
+			// Do the composition
+			instance.m_sb.Append("<sprite name=\"").Append(_spriteName).Append("\">");
+			// Done!
+			return instance.m_sb.ToString();
+
 	}
 
 	/// <summary>
@@ -687,21 +742,5 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 		return instance.m_dragonTiersSFX[(int)_tier];
 	}
 
-	/// <summary>
-	/// Given a dragon tier, get the icon linked to it.
-	/// Use in combination with GetSpriteTag() to insert the icon within a text
-	/// </summary>
-	/// <returns>The id of the requested dragon tier icon.</returns>
-	/// <param name="_tier">Tier whose icon is required.</param>
-	public static string GetDragonTierIcon(DragonTier _tier) {
-		// Get definition of the wanted tier
-		DefinitionNode tierDef = DefinitionsManager.SharedInstance.GetDefinition(
-			DefinitionsCategory.DRAGON_TIERS, 
-			IDragonData.TierToSku(_tier)
-		);
-		if(tierDef == null) return string.Empty;
 
-		// Return icon name
-		return tierDef.GetAsString("icon");
-	}
 }

@@ -158,13 +158,13 @@ public class HeriarchyParticleScaler : MonoBehaviour
 	{	
 		if(m_applyToChildren) {
 			foreach(PSDataRegistry pdata in m_originalData)
-				ScalePS(pdata, scale);
+				ScaleGravity(pdata, scale);
 		} else {
-			if(m_originalData.Count > 0) ScalePS(m_originalData[0], scale);
+			if(m_originalData.Count > 0) ScaleGravity(m_originalData[0], scale);
 		}
 	}
 	
-	void ScalePS(PSDataRegistry data, float scale)
+	void ScaleGravity(PSDataRegistry data, float scale)
 	{
         if (data.m_psystem != null)
         {

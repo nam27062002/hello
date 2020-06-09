@@ -2160,19 +2160,33 @@ public class UserProfile : UserPersistenceSystem
     /// <returns></returns>
     private bool CanPushReward(Metagame.Reward _reward) {
         bool _returnValue = true;
-        if (_reward.IsUnique()) {
+        if (_reward == null)
+        {
+			_returnValue = false;
+			Firebase.Crashlytics.Crashlytics.LogException(new Exception(">>>>UserProfile.CanPushReward(): null reward"));
+        }
+        else if (_reward.IsUnique()) {
             // If the user already owns this type of reward then _reward can not be pushed
             if (_reward.IsAlreadyOwned()) {
                 _returnValue = false;
             } else {
                 // Loops through all the rewards already in the stack. If one already gives the type of _reward then _reward shouldn't be pushed again because it should be given only once
-                var enumerator = m_rewards.GetEnumerator();
-                while (enumerator.MoveNext() && _returnValue) {
-                    if (enumerator.Current.type == _reward.type) {
-                        _returnValue = false;
-                    }
-                }
-            }
+                if (m_rewards == null)
+                {
+					Firebase.Crashlytics.Crashlytics.LogException(new Exception(">>>>UserProfile.CanPushReward(): null m_rewards"));
+				}
+				else
+                {
+					var enumerator = m_rewards.GetEnumerator();
+					while (enumerator.MoveNext() && _returnValue)
+					{
+						if (enumerator.Current.type == _reward.type)
+						{
+							_returnValue = false;
+						}
+					}
+				}
+			}
         }
 
         return _returnValue;

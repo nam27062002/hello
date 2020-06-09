@@ -97,11 +97,11 @@ Shader "Hungry Dragon/Scenary/Scenary Standard"
 				#pragma vertex vert
 				#pragma fragment frag
 //				#pragma multi_compile_fwdbase
-				#pragma multi_compile __ BLEND_TEXTURE
-                #pragma multi_compile __ NIGHT
+				#pragma shader_feature __ BLEND_TEXTURE
+                #pragma shader_feature __ NIGHT
 				#pragma shader_feature __ ADDITIVE_BLEND
 				#pragma shader_feature __ CUSTOM_VERTEXCOLOR
-				#pragma multi_compile __ SPECULAR
+				#pragma shader_feature __ SPECULAR
 				#pragma shader_feature __ NORMALWASSPECULAR
 				#pragma shader_feature __ NORMALMAP
 				#pragma shader_feature __ FOG
@@ -110,7 +110,7 @@ Shader "Hungry Dragon/Scenary/Scenary Standard"
 //				#pragma shader_feature __ REFLECTIVE
 				#pragma shader_feature __ WAVE_EMISSION
 				#pragma shader_feature _ TINT
-                #pragma shader_feature  __ _ZWRITE_ON
+                #pragma shader_feature __ _ZWRITE_ON
 
 				#pragma shader_feature VERTEXCOLOR_NONE VERTEXCOLOR_OVERLAY VERTEXCOLOR_ADDITIVE VERTEXCOLOR_MODULATE
 //				#pragma shader_feature EMISSIVE_NONE EMISSIVE_BLINK EMISSIVE_REFLECTIVE EMISSIVE_LIGHTMAPCONTRAST

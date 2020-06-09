@@ -1228,6 +1228,9 @@ public class OfferPack {
 		// Update control vars and return
 		m_viewsCount++;
 		m_lastViewTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTime();
+
+        // Make sure we are saving this timestamp, so the offer is not shown twice
+		UsersManager.currentUser.SaveOfferPack(this);
 	}
 
     /// <summary>

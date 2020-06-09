@@ -44,6 +44,7 @@ public class LeaguesScreenController : MonoBehaviour {
     private HDLeagueController m_league = null;
     private HDSeasonData m_season = null;
 	private bool m_rewardsScreenPending = false;
+    private bool m_rewardsScreenAlreadyLaunched = false;
 
     //------------------------------------------------------------------------//
     // GENERIC METHODS														  //
@@ -94,7 +95,9 @@ public class LeaguesScreenController : MonoBehaviour {
 				InstanceManager.menuSceneController.GetScreenData(MenuScreen.LEAGUES_REWARD).ui.GetComponent<LeaguesRewardScreen>().StartFlow();
 				InstanceManager.menuSceneController.GoToScreen(MenuScreen.LEAGUES_REWARD, true);
 				m_rewardsScreenPending = false;
-				return;
+                m_rewardsScreenAlreadyLaunched = true;
+
+                return;
 			}
 		}
 
@@ -243,6 +246,8 @@ public class LeaguesScreenController : MonoBehaviour {
                                 }
                                 break;
                         }
+
+                        m_rewardsScreenAlreadyLaunched = false;
                     }
                     break;
 
@@ -261,7 +266,10 @@ public class LeaguesScreenController : MonoBehaviour {
 
                             case HDLiveData.State.VALID: {
 									targetPanel = Panel.LOADING;
-									m_rewardsScreenPending = true;	// Go to rewards screen when possible   
+                                    if (!m_rewardsScreenAlreadyLaunched) // Check to avoid bug HDK-8277
+                                    {
+                                        m_rewardsScreenPending = true;  // Go to rewards screen when possible
+                                    }
                                 }
                                 break;
 

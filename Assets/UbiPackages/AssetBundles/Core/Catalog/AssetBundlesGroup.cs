@@ -33,7 +33,8 @@ public class AssetBundlesGroup
         {
             Id = data[ATT_ID];
             List<string> abIds = UbiListUtils.JSONArrayToList(data[ATT_ASSET_BUNDLES].AsArray, true);
-            UbiListUtils.AddRange(AssetBundleIds, abIds, false, true);
+            List<string> assetBundleIds = AssetBundleIds;
+            UbiListUtils.AddRange(ref assetBundleIds, abIds, false, true);
         }
     }
 
@@ -56,7 +57,8 @@ public class AssetBundlesGroup
         Reset();
 
         Id = id;
-        UbiListUtils.AddRange(AssetBundleIds, assetBundleIds, false, true);
+        List<string> bundleIds = AssetBundleIds;
+        UbiListUtils.AddRange(ref bundleIds, assetBundleIds, false, true);
     }    
 
     public float GetMbLeftToDownload()
