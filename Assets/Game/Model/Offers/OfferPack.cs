@@ -1244,7 +1244,10 @@ public class OfferPack {
 			case Type.FREE: {
 				newPack = new OfferPackFree();
 			} break;
-            case Type.REMOVE_ADS:
+			case Type.REFERRAL:	{
+			    newPack = new OfferPackReferral();
+			} break;
+			case Type.REMOVE_ADS:
             {   newPack = new OfferPackRemoveAds();
             }  break;
             case Type.SC: {
