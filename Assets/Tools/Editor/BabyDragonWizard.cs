@@ -94,8 +94,7 @@ public class BabyDragonWizard : EditorWindow
 			for (int x = 0; x < guid.Length; x++)
 			{
 				string path = AssetDatabase.GUIDToAssetPath(guid[x]);
-				string petName = path.Substring(path.LastIndexOf(Path.DirectorySeparatorChar) + 1);
-				petName = petName.Substring(0, petName.IndexOf(".prefab"));
+				string petName = Path.GetFileNameWithoutExtension(path);
 				if (!petName.Contains("Menu"))
 				{
 					popupPetClone.Add(petName);
@@ -580,10 +579,12 @@ public class BabyDragonWizard : EditorWindow
 	{
 		// Find animation controllers path
 		string fbxPath = GetRelativePath(AssetDatabase.GetAssetPath(babyDragonFBX));
+		if (string.IsNullOrEmpty(fbxPath))
+			return;
+
 		DirectoryInfo dir = Directory.GetParent(fbxPath);
 		string animationControllerPath = GetRelativePath(dir.Parent.ToString());
-
-		if (Directory.Exists(animationControllerPath))
+		if (!string.IsNullOrEmpty(animationControllerPath) && Directory.Exists(animationControllerPath))
 		{
 			// Find animation controllers
 			string[] guid = AssetDatabase.FindAssets("AC_", new[] { animationControllerPath });
@@ -704,7 +705,11 @@ public class BabyDragonWizard : EditorWindow
 
     string GetRelativePath(string path)
     {
-		return path.Substring(path.IndexOf("Assets" + Path.DirectorySeparatorChar));
+		int startIndex = path.IndexOf("Assets" + Path.DirectorySeparatorChar);
+        if (startIndex >= 0)
+		    return path.Substring(startIndex);
+
+		return string.Empty;
 	}
 
 	void SetAnimationController(ref GameObject view, RuntimeAnimatorController controller)
