@@ -172,11 +172,205 @@ ModelImporter:
     animationWrapMode: 0
     extraExposedTransformPaths: []
     extraUserProperties: []
-    clipAnimations: []
+    clipAnimations:
+    - serializedVersion: 16
+      name: Fire
+      takeName: Fire
+      firstFrame: 0
+      lastFrame: 15
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 1
+      loopTime: 1
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events:
+      - time: 0.10344828
+        functionName: AttackStart
+        data: 
+        objectReferenceParameter: {instanceID: 0}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      - time: 0.3448276
+        functionName: AttachProjectile
+        data: 
+        objectReferenceParameter: {instanceID: 0}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      - time: 0.5960591
+        functionName: AttackDealDamage
+        data: 
+        objectReferenceParameter: {instanceID: 0}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      - time: 0.8641105
+        functionName: AttackEnd
+        data: 
+        objectReferenceParameter: {instanceID: 0}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      transformMask:
+      - path: 
+        weight: 1
+      - path: left1
+        weight: 0
+      - path: pet_baby_Alien
+        weight: 0
+      - path: Root_CTRL_NULL
+        weight: 0
+      - path: Root_CTRL_NULL/root_CTRL
+        weight: 1
+      - path: Root_CTRL_NULL/root_CTRL/Root_02_CTRL_NULL
+        weight: 1
+      - path: Root_CTRL_NULL/root_CTRL/Root_02_CTRL_NULL/root_02_CTRL
+        weight: 1
+      - path: Root_CTRL_NULL/root_CTRL/Root_02_CTRL_NULL/root_02_CTRL/Chest_CTRL_NULL
+        weight: 1
+      - path: Root_CTRL_NULL/root_CTRL/Root_02_CTRL_NULL/root_02_CTRL/Chest_CTRL_NULL/chest_CTRL
+        weight: 1
+      - path: Root_CTRL_NULL/root_CTRL/Root_02_CTRL_NULL/root_02_CTRL/Chest_CTRL_NULL/chest_CTRL/Pet_Head_CTRL_NULL
+        weight: 1
+      - path: Root_CTRL_NULL/root_CTRL/Root_02_CTRL_NULL/root_02_CTRL/Chest_CTRL_NULL/chest_CTRL/Pet_Head_CTRL_NULL/Pet_Head_CTRL
+        weight: 1
+      - path: Root_CTRL_NULL/root_CTRL/Root_02_CTRL_NULL/root_02_CTRL/Chest_CTRL_NULL/chest_CTRL/Pet_Head_CTRL_NULL/Pet_Head_CTRL/Jaw_CTRL_NULL
+        weight: 1
+      - path: Root_CTRL_NULL/root_CTRL/Root_02_CTRL_NULL/root_02_CTRL/Chest_CTRL_NULL/chest_CTRL/Pet_Head_CTRL_NULL/Pet_Head_CTRL/Jaw_CTRL_NULL/Jaw_CTRL
+        weight: 1
+      - path: Root_CTRL_NULL/root_CTRL/Root_02_CTRL_NULL/root_02_CTRL/Chest_CTRL_NULL/chest_CTRL/Spine_CTRL_NULL
+        weight: 1
+      - path: Root_CTRL_NULL/root_CTRL/Root_02_CTRL_NULL/root_02_CTRL/Chest_CTRL_NULL/chest_CTRL/Spine_CTRL_NULL/spine_CTRL
+        weight: 1
+      - path: Root_CTRL_NULL/root_CTRL/Root_02_CTRL_NULL/root_02_CTRL/Chest_CTRL_NULL/chest_CTRL/Spine_CTRL_NULL/spine_CTRL/Waist_CTRL_NULL
+        weight: 1
+      - path: Root_CTRL_NULL/root_CTRL/Root_02_CTRL_NULL/root_02_CTRL/Chest_CTRL_NULL/chest_CTRL/Spine_CTRL_NULL/spine_CTRL/Waist_CTRL_NULL/waist_CTRL
+        weight: 1
+      - path: Root_CTRL_NULL/root_CTRL/Root_02_CTRL_NULL/root_02_CTRL/Chest_CTRL_NULL/chest_CTRL/Spine_CTRL_NULL/spine_CTRL/Waist_CTRL_NULL/waist_CTRL/Leg_LF_CTRL_NULL
+        weight: 1
+      - path: Root_CTRL_NULL/root_CTRL/Root_02_CTRL_NULL/root_02_CTRL/Chest_CTRL_NULL/chest_CTRL/Spine_CTRL_NULL/spine_CTRL/Waist_CTRL_NULL/waist_CTRL/Leg_LF_CTRL_NULL/leg_LF_CTRL
+        weight: 1
+      - path: Root_CTRL_NULL/root_CTRL/Root_02_CTRL_NULL/root_02_CTRL/Chest_CTRL_NULL/chest_CTRL/Spine_CTRL_NULL/spine_CTRL/Waist_CTRL_NULL/waist_CTRL/Leg_LF_CTRL_NULL/leg_LF_CTRL/Knee_LF_CTRL_NULL
+        weight: 1
+      - path: Root_CTRL_NULL/root_CTRL/Root_02_CTRL_NULL/root_02_CTRL/Chest_CTRL_NULL/chest_CTRL/Spine_CTRL_NULL/spine_CTRL/Waist_CTRL_NULL/waist_CTRL/Leg_LF_CTRL_NULL/leg_LF_CTRL/Knee_LF_CTRL_NULL/Knee_LF_CTRL
+        weight: 1
+      - path: Root_CTRL_NULL/root_CTRL/Root_02_CTRL_NULL/root_02_CTRL/Chest_CTRL_NULL/chest_CTRL/Spine_CTRL_NULL/spine_CTRL/Waist_CTRL_NULL/waist_CTRL/Leg_LF_CTRL_NULL/leg_LF_CTRL/Knee_LF_CTRL_NULL/Knee_LF_CTRL/foot_LF_CTRL_NULL
+        weight: 1
+      - path: Root_CTRL_NULL/root_CTRL/Root_02_CTRL_NULL/root_02_CTRL/Chest_CTRL_NULL/chest_CTRL/Spine_CTRL_NULL/spine_CTRL/Waist_CTRL_NULL/waist_CTRL/Leg_LF_CTRL_NULL/leg_LF_CTRL/Knee_LF_CTRL_NULL/Knee_LF_CTRL/foot_LF_CTRL_NULL/foot_LF_CTRL
+        weight: 1
+      - path: Root_CTRL_NULL/root_CTRL/Root_02_CTRL_NULL/root_02_CTRL/Chest_CTRL_NULL/chest_CTRL/Spine_CTRL_NULL/spine_CTRL/Waist_CTRL_NULL/waist_CTRL/Leg_RT_CTRL_NULL
+        weight: 1
+      - path: Root_CTRL_NULL/root_CTRL/Root_02_CTRL_NULL/root_02_CTRL/Chest_CTRL_NULL/chest_CTRL/Spine_CTRL_NULL/spine_CTRL/Waist_CTRL_NULL/waist_CTRL/Leg_RT_CTRL_NULL/leg_RT_CTRL
+        weight: 1
+      - path: Root_CTRL_NULL/root_CTRL/Root_02_CTRL_NULL/root_02_CTRL/Chest_CTRL_NULL/chest_CTRL/Spine_CTRL_NULL/spine_CTRL/Waist_CTRL_NULL/waist_CTRL/Leg_RT_CTRL_NULL/leg_RT_CTRL/Knee_RT_CTRL_NULL
+        weight: 1
+      - path: Root_CTRL_NULL/root_CTRL/Root_02_CTRL_NULL/root_02_CTRL/Chest_CTRL_NULL/chest_CTRL/Spine_CTRL_NULL/spine_CTRL/Waist_CTRL_NULL/waist_CTRL/Leg_RT_CTRL_NULL/leg_RT_CTRL/Knee_RT_CTRL_NULL/Knee_RT_CTRL
+        weight: 1
+      - path: Root_CTRL_NULL/root_CTRL/Root_02_CTRL_NULL/root_02_CTRL/Chest_CTRL_NULL/chest_CTRL/Spine_CTRL_NULL/spine_CTRL/Waist_CTRL_NULL/waist_CTRL/Leg_RT_CTRL_NULL/leg_RT_CTRL/Knee_RT_CTRL_NULL/Knee_RT_CTRL/foot_RT_CTRL_NULL
+        weight: 1
+      - path: Root_CTRL_NULL/root_CTRL/Root_02_CTRL_NULL/root_02_CTRL/Chest_CTRL_NULL/chest_CTRL/Spine_CTRL_NULL/spine_CTRL/Waist_CTRL_NULL/waist_CTRL/Leg_RT_CTRL_NULL/leg_RT_CTRL/Knee_RT_CTRL_NULL/Knee_RT_CTRL/foot_RT_CTRL_NULL/foot_RT_CTRL
+        weight: 1
+      - path: Root_CTRL_NULL/root_CTRL/Root_02_CTRL_NULL/root_02_CTRL/Chest_CTRL_NULL/chest_CTRL/Spine_CTRL_NULL/spine_CTRL/Waist_CTRL_NULL/waist_CTRL/Tail_1_CTRL1_NULL
+        weight: 1
+      - path: Root_CTRL_NULL/root_CTRL/Root_02_CTRL_NULL/root_02_CTRL/Chest_CTRL_NULL/chest_CTRL/Spine_CTRL_NULL/spine_CTRL/Waist_CTRL_NULL/waist_CTRL/Tail_1_CTRL1_NULL/tail_1_CTRL1
+        weight: 1
+      - path: Root_CTRL_NULL/root_CTRL/Root_02_CTRL_NULL/root_02_CTRL/Chest_CTRL_NULL/chest_CTRL/Spine_CTRL_NULL/spine_CTRL/Waist_CTRL_NULL/waist_CTRL/Tail_1_CTRL1_NULL/tail_1_CTRL1/Tail_2_CTRL_NULL
+        weight: 1
+      - path: Root_CTRL_NULL/root_CTRL/Root_02_CTRL_NULL/root_02_CTRL/Chest_CTRL_NULL/chest_CTRL/Spine_CTRL_NULL/spine_CTRL/Waist_CTRL_NULL/waist_CTRL/Tail_1_CTRL1_NULL/tail_1_CTRL1/Tail_2_CTRL_NULL/tail_2_CTRL
+        weight: 1
+      - path: Root_CTRL_NULL/root_CTRL/Root_02_CTRL_NULL/root_02_CTRL/Chest_CTRL_NULL/chest_CTRL/Wing1_LF_CTRL_NULL
+        weight: 1
+      - path: Root_CTRL_NULL/root_CTRL/Root_02_CTRL_NULL/root_02_CTRL/Chest_CTRL_NULL/chest_CTRL/Wing1_LF_CTRL_NULL/Wing1_LF_CTRL
+        weight: 1
+      - path: Root_CTRL_NULL/root_CTRL/Root_02_CTRL_NULL/root_02_CTRL/Chest_CTRL_NULL/chest_CTRL/Wing1_LF_CTRL_NULL/Wing1_LF_CTRL/Wing1_02_LF_CTRL_NULL
+        weight: 1
+      - path: Root_CTRL_NULL/root_CTRL/Root_02_CTRL_NULL/root_02_CTRL/Chest_CTRL_NULL/chest_CTRL/Wing1_LF_CTRL_NULL/Wing1_LF_CTRL/Wing1_02_LF_CTRL_NULL/Wing1_02_LF_CTRL
+        weight: 1
+      - path: Root_CTRL_NULL/root_CTRL/Root_02_CTRL_NULL/root_02_CTRL/Chest_CTRL_NULL/chest_CTRL/Wing1_RT_CTRL_NULL
+        weight: 1
+      - path: Root_CTRL_NULL/root_CTRL/Root_02_CTRL_NULL/root_02_CTRL/Chest_CTRL_NULL/chest_CTRL/Wing1_RT_CTRL_NULL/Wing1_RT_CTRL
+        weight: 1
+      - path: Root_CTRL_NULL/root_CTRL/Root_02_CTRL_NULL/root_02_CTRL/Chest_CTRL_NULL/chest_CTRL/Wing1_RT_CTRL_NULL/Wing1_RT_CTRL/Wing1_02_RT_CTRL_NULL
+        weight: 1
+      - path: Root_CTRL_NULL/root_CTRL/Root_02_CTRL_NULL/root_02_CTRL/Chest_CTRL_NULL/chest_CTRL/Wing1_RT_CTRL_NULL/Wing1_RT_CTRL/Wing1_02_RT_CTRL_NULL/wing1_02_RT_CTRL
+        weight: 1
+      - path: root_JT
+        weight: 0
+      - path: root_JT/Pet_Hip
+        weight: 1
+      - path: root_JT/Pet_Hip/Pet_Head
+        weight: 1
+      - path: root_JT/Pet_Hip/Pet_Head/Fire_Dummy
+        weight: 1
+      - path: root_JT/Pet_Hip/Pet_Head/head_end_JT
+        weight: 1
+      - path: root_JT/Pet_Hip/Pet_Head/jaw_JT
+        weight: 1
+      - path: root_JT/Pet_Hip/Pet_Head/jaw_JT/jaw_end_JT
+        weight: 1
+      - path: root_JT/Pet_Hip/Pet_Head/SuctionPoint
+        weight: 1
+      - path: root_JT/Pet_Hip/Pet_Head/SwallowPoint
+        weight: 1
+      - path: root_JT/Pet_Hip/spine_02_JT
+        weight: 1
+      - path: root_JT/Pet_Hip/spine_02_JT/waist_JT
+        weight: 1
+      - path: root_JT/Pet_Hip/spine_02_JT/waist_JT/leg_LF_JT
+        weight: 1
+      - path: root_JT/Pet_Hip/spine_02_JT/waist_JT/leg_LF_JT/knee_LF_JT
+        weight: 1
+      - path: root_JT/Pet_Hip/spine_02_JT/waist_JT/leg_LF_JT/knee_LF_JT/foot_LF_JT
+        weight: 1
+      - path: root_JT/Pet_Hip/spine_02_JT/waist_JT/leg_LF_JT/knee_LF_JT/foot_LF_JT/foot_emd_LF_JT
+        weight: 1
+      - path: root_JT/Pet_Hip/spine_02_JT/waist_JT/leg_RT_JT
+        weight: 1
+      - path: root_JT/Pet_Hip/spine_02_JT/waist_JT/leg_RT_JT/knee_RT_JT
+        weight: 1
+      - path: root_JT/Pet_Hip/spine_02_JT/waist_JT/leg_RT_JT/knee_RT_JT/foot_RT_JT
+        weight: 1
+      - path: root_JT/Pet_Hip/spine_02_JT/waist_JT/leg_RT_JT/knee_RT_JT/foot_RT_JT/foot_end_RT_JT
+        weight: 1
+      - path: root_JT/Pet_Hip/spine_02_JT/waist_JT/tail_01_JT
+        weight: 1
+      - path: root_JT/Pet_Hip/spine_02_JT/waist_JT/tail_01_JT/tail_02_JT
+        weight: 1
+      - path: root_JT/Pet_Hip/spine_02_JT/waist_JT/tail_01_JT/tail_02_JT/joint26
+        weight: 1
+      - path: root_JT/Pet_Hip/wing1_01_LF_JT1
+        weight: 1
+      - path: root_JT/Pet_Hip/wing1_01_LF_JT1/wing1_02_LF_JT
+        weight: 1
+      - path: root_JT/Pet_Hip/wing1_01_LF_JT1/wing1_02_LF_JT/wing1_end_LF_JT
+        weight: 1
+      - path: root_JT/Pet_Hip/wing1_01_RT_JT
+        weight: 1
+      - path: root_JT/Pet_Hip/wing1_01_RT_JT/wing1_02_RT_JT
+        weight: 1
+      - path: root_JT/Pet_Hip/wing1_01_RT_JT/wing1_02_RT_JT/wing1_end_RT_JT
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
     isReadable: 0
   meshes:
     lODScreenPercentages: []
-    globalScale: 1
+    globalScale: 2.5
     meshCompression: 3
     addColliders: 0
     useSRGBMaterialColor: 1
@@ -197,7 +391,7 @@ ModelImporter:
     secondaryUVHardAngle: 88
     secondaryUVPackMargin: 4
     useFileScale: 1
-    previousCalculatedGlobalScale: 1
+    previousCalculatedGlobalScale: 2.5
     hasPreviousCalculatedGlobalScale: 1
   tangentSpace:
     normalSmoothAngle: 60
