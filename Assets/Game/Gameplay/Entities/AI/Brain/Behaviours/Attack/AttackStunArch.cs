@@ -22,6 +22,8 @@ namespace AI {
         [CreateAssetMenu(menuName = "Behaviour/Attack/Stun Arch")]
         public class AttackStunArch : Attack {
 
+            public string particlePrefab = "PS_PetStun";
+
             [StateTransitionTrigger]
             private static int onAttackDone = UnityEngine.Animator.StringToHash("onAttackDone");
 
@@ -52,7 +54,7 @@ namespace AI {
 
                 m_stunAnchor = m_pilot.FindTransformRecursive(m_stunData.m_beamAnchorPoint);
 
-                m_particle = ParticleManager.InitLeveledParticle("PS_PetStun", m_stunAnchor);
+                m_particle = ParticleManager.InitLeveledParticle(particlePrefab, m_stunAnchor);
                 if (m_particle != null) {
                     m_particle.gameObject.SetActive(true);
                 }
