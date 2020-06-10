@@ -52,6 +52,7 @@ public class OfferPack {
         FREE,
         SC,
         HC,
+		DRAGON_DISCOUNT,
         COUNT
 	}
 
@@ -62,7 +63,7 @@ public class OfferPack {
     public const string FREE = "free";
     public const string SC = "sc";
     public const string HC = "hc";
-
+	public const string DRAGON_DISCOUNT = "dragonDiscount";
 
     public const int MAX_ITEMS = 3; // For now
 	public const Type DEFAULT_TYPE = Type.PROGRESSION;
@@ -416,12 +417,18 @@ public class OfferPack {
 
 		// Choose tracking group for rewards depending on offer type
 		HDTrackingManager.EEconomyGroup ecoGroup = HDTrackingManager.EEconomyGroup.SHOP_OFFER_PACK;
-		if(m_type == Type.FREE) {
-			ecoGroup = HDTrackingManager.EEconomyGroup.SHOP_AD_OFFER_PACK;
-		}
-        else if (m_type == Type.REMOVE_ADS)
-        {
-            ecoGroup = HDTrackingManager.EEconomyGroup.SHOP_REMOVE_ADS_PACK;
+		switch(m_type) {
+			case Type.FREE: {
+				ecoGroup = HDTrackingManager.EEconomyGroup.SHOP_AD_OFFER_PACK;
+            } break;
+
+			case Type.REMOVE_ADS: {
+				ecoGroup = HDTrackingManager.EEconomyGroup.SHOP_REMOVE_ADS_PACK;
+            } break;
+
+			case Type.DRAGON_DISCOUNT: {
+				ecoGroup = HDTrackingManager.EEconomyGroup.DRAGON_DISCOUNT;
+			} break;
         }
 
         // Items - limited to 3 for now
@@ -1242,14 +1249,17 @@ public class OfferPack {
 			case Type.FREE: {
 				newPack = new OfferPackFree();
 			} break;
-            case Type.REMOVE_ADS:
-            {   newPack = new OfferPackRemoveAds();
+            case Type.REMOVE_ADS: {
+				newPack = new OfferPackRemoveAds();
             }  break;
             case Type.SC: {
                 newPack = new OfferPackCurrency();
             } break;
             case Type.HC: {
                 newPack = new OfferPackCurrency();
+            } break;
+			case Type.DRAGON_DISCOUNT: {
+				newPack = new OfferPackDragonDiscount();
             } break;
             default: {
 				newPack = new OfferPack();
