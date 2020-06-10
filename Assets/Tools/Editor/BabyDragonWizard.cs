@@ -401,6 +401,28 @@ public class BabyDragonWizard : EditorWindow
 			UnityEditorInternal.ComponentUtility.PasteComponentAsNew(root);
 		}
 
+		// Add eat behaviour if needed
+		if (addEatBehaviour && root.GetComponent<MachineEatBehaviour>() == null)
+		{
+			int eatPetIndex = 0;
+			// Find a pet with MachineEatBehaviour script to clone their script values
+			for (int i = 0; i < popupPetCloneArray.Length; i++)
+			{
+				if (popupPetCloneArray[i] == "PF_PetDactylus_0")
+				{
+					eatPetIndex = i;
+					break;
+				}
+			}
+
+			string eatPetClonePath = popupPetClonePathArray[eatPetIndex];
+			GameObject eatPetModel = (GameObject)AssetDatabase.LoadAssetAtPath(eatPetClonePath, typeof(GameObject));
+			MachineEatBehaviour machineEatBehaviour = eatPetModel.GetComponent<MachineEatBehaviour>();
+
+			UnityEditorInternal.ComponentUtility.CopyComponent(machineEatBehaviour);
+			UnityEditorInternal.ComponentUtility.PasteComponentAsNew(root);
+		}
+
 		// At this point, the references on the new prefab are still pointing to the old prefab.
 		// Update Pet script fields via reflection
 		Pet pet = root.GetComponent<Pet>();
@@ -480,28 +502,6 @@ public class BabyDragonWizard : EditorWindow
 						break;
 				}
 			}
-		}
-
-        // Add eat behaviour if needed
-        if (addEatBehaviour && root.GetComponent<MachineEatBehaviour>() == null)
-        {
-			int eatPetIndex = 0;
-            // Find a pet with MachineEatBehaviour script to clone their script values
-            for (int i = 0; i < popupPetCloneArray.Length; i++)
-            {
-                if (popupPetCloneArray[i] == "PF_PetDactylus_0")
-                {
-					eatPetIndex = i;
-					break;
-                }
-            }
-
-			string eatPetClonePath = popupPetClonePathArray[eatPetIndex]; 
-			GameObject eatPetModel = (GameObject)AssetDatabase.LoadAssetAtPath(eatPetClonePath, typeof(GameObject));
-			MachineEatBehaviour machineEatBehaviour = eatPetModel.GetComponent<MachineEatBehaviour>();
-
-			UnityEditorInternal.ComponentUtility.CopyComponent(machineEatBehaviour);
-			UnityEditorInternal.ComponentUtility.PasteComponentAsNew(root);
 		}
 
 		// Add PreyAnimationEvents if needed
@@ -599,8 +599,8 @@ public class BabyDragonWizard : EditorWindow
                     {
 						runtimeAnimatorControllerMenu = animController;
                     }
-                    else
-                    {
+                    else if (!animController.name.EndsWith("Controller"))
+					{
 						runtimeAnimatorControllerGameplay = animController;
                     }
 				}
