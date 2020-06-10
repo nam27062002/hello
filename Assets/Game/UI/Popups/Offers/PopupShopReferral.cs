@@ -21,6 +21,7 @@ public class PopupShopReferral : MonoBehaviour {
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
 	public const string PATH = "UI/Popups/Economy/PF_PopupShopReferral";
+
 	
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
@@ -33,8 +34,24 @@ public class PopupShopReferral : MonoBehaviour {
 	[SerializeField] private GameObject m_buttonInviteMore;
 	[SerializeField] private GameObject m_buttonClaim;
 
-	// Internal
-	private OfferPack m_pack = null;
+	[Header("Rewards")]
+	[SerializeField] private Transform m_rewardsContainer;
+	[SerializeField] private GameObject m_referralRewardPrefab;
+
+	[Header("Friends progression bar")]
+	[SerializeField] private Transform m_friendsProgressionBar;
+
+	[SerializeField] private GameObject m_friendIconDisabled;
+	[SerializeField] private GameObject m_friendIconActive;
+	[SerializeField] private GameObject m_friendIconHighlighted;
+
+
+
+    //debug
+	public int friends = 8;
+
+	// cache
+	private OfferPackReferral m_pack = null;
 
 	
 	//------------------------------------------------------------------------//
@@ -59,27 +76,6 @@ public class PopupShopReferral : MonoBehaviour {
     //------------------------------------------------------------------------//
     // OTHER METHODS														  //
     //------------------------------------------------------------------------//
-    /// <summary>
-    /// Initializes the popup with the remove ads offer active.
-    /// If no one is active, close the popup.
-    /// </summary>
-    public void Init()
-    {
-        // Find any active remove ads offer (shouldnt be more than 1, but just in case of crazy AB tests)
-        OfferPack pack =  OffersManager.activeOffers.Find(p => p.type == OfferPack.Type.REFERRAL);
-
-        if (pack == null)
-        {
-            // There are no remove ads active offers
-            GetComponent<PopupController>().Close(true);
-            return;
-        }
-
-
-        // Initialize the popup with the offer pack data
-        InitFromOfferPack(pack);
-
-    }
 
 
     /// <summary>
@@ -87,11 +83,87 @@ public class PopupShopReferral : MonoBehaviour {
     /// </summary>
     /// <param name="_pack">Pack.</param>
     public void InitFromOfferPack(OfferPack _pack) {
+
+        // Make sure the offer pack is a referral offer
+        if (! ( _pack is OfferPackReferral))
+        {
+			Debug.LogError("The offer pack " + _pack + " is not of type referral");
+			return;
+        }
+
 		// Store pack
-		m_pack = _pack;
+		m_pack = (OfferPackReferral) _pack;
+
+		Clear();
+
+		// Delay refresh a couple of frames, so the popup has tiem to open.
+        // Otherwise there are problems with the DisableOnPopup component
+		UbiBCN.CoroutineManager.DelayedCallByFrames( () =>
+        {
+		    Refresh();
+	    }, 2);
+		
 
 	}
 
+    /// <summary>
+    /// Clear all the visuals and prepare for a new refresh
+    /// </summary>
+    public void Clear ()
+    {
+        // Clear the progression bar (remove mockups icons)
+		m_friendsProgressionBar.DestroyAllChildren(true);
+
+        // Clear the rewards panel
+		m_rewardsContainer.DestroyAllChildren(true);
+    }
+
+
+    /// <summary>
+    /// Update the visuals
+    /// </summary>
+    public void Refresh()
+    {
+		OfferPackReferralReward lastReward = (OfferPackReferralReward) m_pack.items[m_pack.items.Count - 1];
+		int maxFriends = lastReward.friendsRequired;
+
+		// Friends progresion bar
+		for (int i=0; i< maxFriends + 1; i++)
+        {
+			GameObject friendIcon;
+
+			// Create a friend icon
+			if (i <= friends)
+            {
+				friendIcon = Instantiate(m_friendIconActive);
+			}
+            else
+            {
+				friendIcon = Instantiate(m_friendIconDisabled);
+			}
+
+			friendIcon.transform.SetParent(m_friendsProgressionBar, false);
+        }
+
+        // Reward items
+        foreach (OfferPackReferralReward reward in m_pack.items)
+        {
+
+            GameObject rewardPreview = Instantiate(m_referralRewardPrefab);
+			rewardPreview.transform.SetParent(m_rewardsContainer, false);
+
+            // Initialize reward preview
+			rewardPreview.GetComponent<OfferItemSlot>().InitFromItem(reward);
+
+			// Calculate the reward preview horizontal position, so it matches the friend icon in the progression bar
+			float unitWidth = (1f / (maxFriends + 1));
+			float anchorX = unitWidth * reward.friendsRequired + unitWidth * .5f; // Add .5f to center the reward
+
+			RectTransform rect = rewardPreview.GetComponent<RectTransform>();
+			rect.anchorMin = new Vector2(anchorX, rect.anchorMin.y);
+			rect.anchorMax = new Vector2(anchorX, rect.anchorMax.y);
+		}
+	}
 
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //

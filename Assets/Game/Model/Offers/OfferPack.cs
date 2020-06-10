@@ -427,9 +427,18 @@ public class OfferPack {
         }
 
         // Items - limited to 3 for now
-        for (int i = 1; i <= MAX_ITEMS; ++i) {	// [1..N]
-			// Create and initialize new item
-			OfferPackItem item = new OfferPackItem();
+        for (int i = 1; i <= MAX_ITEMS; ++i) {  // [1..N]
+												// Create and initialize new item
+			OfferPackItem item;
+			if (m_type == Type.REFERRAL)
+            {
+                // In referral offers, the items are defined in the referralRewards table
+				item = new OfferPackReferralReward();
+			} else
+            {
+				item = new OfferPackItem();
+			}
+			
 			item.InitFromDefinition(_def, i, ecoGroup);
 
 			// If a reward wasn't generated, the item is either not properly defined or the pack doesn't have this item, don't store it

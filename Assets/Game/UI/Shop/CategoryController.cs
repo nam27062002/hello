@@ -78,7 +78,7 @@ public class CategoryController : MonoBehaviour {
 	/// </summary>
 	private void Update() {
 
-        if (pillsToInitialize.Count > 0)
+        if (pillsToInitialize != null && pillsToInitialize.Count > 0)
         {
 
             InitializePill(pillsToInitialize.Dequeue());
