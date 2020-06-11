@@ -63,7 +63,7 @@ public class OfferPack {
     public const string FREE = "free";
     public const string SC = "sc";
     public const string HC = "hc";
-	public const string DRAGON_DISCOUNT = "dragonDiscount";
+	public const string DRAGON_DISCOUNT = "dragon_discount";
 
     public const int MAX_ITEMS = 3; // For now
 	public const Type DEFAULT_TYPE = Type.PROGRESSION;
