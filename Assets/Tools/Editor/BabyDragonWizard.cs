@@ -15,6 +15,9 @@ public class BabyDragonWizard : EditorWindow
 {
 	// Constants
 	const string PET_BASE_PATH  = "Assets/Art/3D/Gameplay/Pets/Prefabs/";
+	const string ANIM_CONTROLLER_MAIN_MENU_PATH = "Assets/Art/3D/Gameplay/Pets/Assets/Shared/PetAnimationControllerBlendMenu.controller";
+
+    // Clone pet behaviour relationship by baby dragon sku
 	readonly Dictionary<string, string> clonePetBehaviourPerSku = new Dictionary<string, string>()
 	{
 		{ "baby_classic", "PF_PetPhoenix_33" },
@@ -287,10 +290,13 @@ public class BabyDragonWizard : EditorWindow
 
 		EditorUtility.ClearProgressBar();
 
-        if (EditorUtility.DisplayDialog("Avatar masks", "Do you want to create the avatar masks for the animation controller?", "Yes", "No"))
-        {
-			CreateAvatarMasks();
-        }
+		if (!IsAvatarMaskCreated())
+		{
+			if (EditorUtility.DisplayDialog("Avatar masks", "Do you want to create the avatar masks for the animation controller?", "Yes", "No"))
+			{
+				CreateAvatarMasks();
+			}
+		}
     }
 
     void CreateMenuPrefab()
@@ -335,8 +341,18 @@ public class BabyDragonWizard : EditorWindow
 		// Set material
 		SetMaterial(ref view);
 
-        // Set animation controller
-        if (runtimeAnimatorControllerMenu != null)
+        // Create main menu animation controller if needed
+		if (runtimeAnimatorControllerMenu == null)
+		{
+			if (EditorUtility.DisplayDialog("Animation controller - Main menu", "Do you want to create the main menu animation controller?", "Yes", "No"))
+			{
+				CreateMainMenuAnimationController();
+				AssignAnimationControllers();
+			}
+		}
+
+		// Set animation controller
+		if (runtimeAnimatorControllerMenu != null)
 			SetAnimationController(ref view, runtimeAnimatorControllerMenu);
 
 		// Export prefab
@@ -378,9 +394,19 @@ public class BabyDragonWizard : EditorWindow
 		// Set material
 		SetMaterial(ref view);
 
-		// Set animation controller
+		// Create gameplay animation controller if needed
+        if (runtimeAnimatorControllerGameplay == null)
+        {
+			if (EditorUtility.DisplayDialog("Animation controller - Gameplay", "Do you want to create the gameplay animation controller?", "Yes", "No"))
+			{
+				CreateGameplayAnimationController(ref basePetModel);
+				AssignAnimationControllers();
+			}
+		}
+
+        // Set animation controller
 		if (runtimeAnimatorControllerGameplay != null)
-			SetAnimationController(ref view, runtimeAnimatorControllerGameplay);
+			SetAnimationController(ref view, runtimeAnimatorControllerGameplay);			
 
 		// First copy components from original prefab to the new prefab
 		Component[] components = basePetModel.GetComponents<Component>();
@@ -525,6 +551,86 @@ public class BabyDragonWizard : EditorWindow
 		DestroyImmediate(root);
 	}
 
+    void CloneAnimatorController(string animControllerName, string dest)
+    {
+		string[] guids = AssetDatabase.FindAssets(animControllerName);
+		foreach (string guid in guids)
+		{
+			string path = AssetDatabase.GUIDToAssetPath(guid);
+			if (Path.GetFileNameWithoutExtension(path) == animControllerName)
+			{
+				File.Copy(path, dest);
+				break;
+			}
+		}
+	}
+
+    void CreateGameplayAnimationController(ref GameObject petModel)
+    {
+		Animator petAnimator = petModel.GetComponentInChildren<Animator>();
+		if (petAnimator == null)
+			return;
+
+		RuntimeAnimatorController petAnimController = petAnimator.runtimeAnimatorController;
+		AnimatorOverrideController animatorOverrideController = petAnimController as AnimatorOverrideController;
+        if (animatorOverrideController == null)
+        {
+			// Clone animator controller
+			string dest = Path.Combine(GetFBXPath(), "AC_Baby" + GetSkuSuffix() + ".controller");
+			CloneAnimatorController(petAnimController.name, dest);
+        }
+        else
+        {
+			// Clone animator controller
+			RuntimeAnimatorController baseAnimationController = animatorOverrideController.runtimeAnimatorController;
+			string baseControllerPath = Path.Combine(GetFBXPath(), "AC_Baby" + GetSkuSuffix() + "Controller.controller");
+			CloneAnimatorController(baseAnimationController.name, baseControllerPath);
+
+			// Clone override controller
+			string overrideControllerPath = Path.Combine(GetFBXPath(), "AC_Baby" + GetSkuSuffix() + ".overrideController");
+			CloneAnimatorController(petAnimController.name, overrideControllerPath);
+			
+            // Refresh changes
+			AssetDatabase.Refresh();
+
+			// Assign animator controller to override controller
+			AnimatorOverrideController newAnimOverrideController = (AnimatorOverrideController) AssetDatabase.LoadAssetAtPath(overrideControllerPath, typeof(AnimatorOverrideController));
+			RuntimeAnimatorController newAnimController = (RuntimeAnimatorController)AssetDatabase.LoadAssetAtPath(baseControllerPath, typeof(RuntimeAnimatorController));
+			newAnimOverrideController.runtimeAnimatorController = newAnimController;
+        }
+
+        // Refresh changes
+		AssetDatabase.Refresh();
+    }
+
+    void CreateMainMenuAnimationController()
+    {
+		// Create new animator override controller
+		AnimatorOverrideController animatorOverrideController = new AnimatorOverrideController();
+		RuntimeAnimatorController animController = (RuntimeAnimatorController)AssetDatabase.LoadAssetAtPath(ANIM_CONTROLLER_MAIN_MENU_PATH, typeof(RuntimeAnimatorController));
+
+        // Assign main menu reference animator controller to new override controller
+        animatorOverrideController.runtimeAnimatorController = animController;
+
+        // Create asset
+        string path = Path.Combine(GetFBXPath(), "AC_Baby" + GetSkuSuffix() + "Menu.overrideController");
+		AssetDatabase.CreateAsset(animatorOverrideController, path);
+
+        // Refresh changes
+		AssetDatabase.Refresh();
+	}
+
+    string GetFBXPath()
+    {
+		string fbxPath = AssetDatabase.GetAssetPath(babyDragonFBX);
+		DirectoryInfo dir = Directory.GetParent(fbxPath);
+
+		// Navigate path one-time backwards
+		dir = Directory.GetParent(dir.ToString());
+
+		return dir.ToString();
+	}
+
     void CreateAvatarMasks()
     {
 		GameObject babyFBX = (GameObject) babyDragonFBX;
@@ -537,16 +643,10 @@ public class BabyDragonWizard : EditorWindow
 		AvatarMask avatarMaskNoMouth = new AvatarMask();
 		avatarMaskNoMouth.AddTransformPath(babyFBX.transform);
 
-        // Find FBX path
-		string fbxPath = AssetDatabase.GetAssetPath(babyDragonFBX);
-		DirectoryInfo dir = Directory.GetParent(fbxPath);
-
-		// Navigate path one-time backwards
-		dir = Directory.GetParent(dir.ToString());
-
-        // New avatar mask paths
-		string avatarPathMouth = Path.Combine(dir.ToString(), "Baby" + GetSkuSuffix() + "_Mouth.mask");
-		string avatarPathNoMouth = Path.Combine(dir.ToString(), "Baby" + GetSkuSuffix() + "_NoMouth.mask");
+		// New avatar mask paths
+		string path = GetFBXPath();
+		string avatarPathMouth = Path.Combine(path, "Baby" + GetSkuSuffix() + "_Mouth.mask");
+		string avatarPathNoMouth = Path.Combine(path, "Baby" + GetSkuSuffix() + "_NoMouth.mask");
 
         // Create avatar masks
 		AssetDatabase.CreateAsset(avatarMaskMouth, avatarPathMouth);
@@ -556,7 +656,15 @@ public class BabyDragonWizard : EditorWindow
 		AssetDatabase.Refresh();
 	}
 
-    void CreatePreview()
+	bool IsAvatarMaskCreated()
+	{
+		string mouthPath = Path.Combine(GetFBXPath(), "Baby" + GetSkuSuffix() + "_Mouth.mask");
+		string noMouthPath = Path.Combine(GetFBXPath(), "Baby" + GetSkuSuffix() + "_NoMouth.mask");
+
+		return File.Exists(mouthPath) && File.Exists(noMouthPath);
+	}
+
+	void CreatePreview()
     {
 		GameObject preview = (GameObject)babyDragonFBX;
 		Renderer[] renderers = preview.transform.GetComponentsInChildren<Renderer>();
