@@ -70,9 +70,10 @@ public class BabyDragonWizard : EditorWindow
 	static int assetBundleGameplayIndex = 0;
 
 	// GUI
-	static Texture2D darkTexture;
+	Texture2D previewBackgroundTexture = null;
+	GUIStyle previewStyle = new GUIStyle();
 
-    // Menu
+	// Menu
 	[MenuItem("Hungry Dragon/Tools/Baby Dragon Wizard...", false, -150)]
 	static void Init()
 	{
@@ -82,10 +83,6 @@ public class BabyDragonWizard : EditorWindow
 		EditorWindow window = GetWindow<BabyDragonWizard>(desiredDockNextTo);
 		Texture icon = AssetDatabase.LoadAssetAtPath<Texture>("Assets/Art/UI/Common/Icons/icon_btn_pets.png");
 		window.titleContent = new GUIContent(" Baby Dragon", icon);
-
-		// Create preview texture
-		Color darkColor = new Color(0.1f, 0.1f, 0.1f);
-		darkTexture = MakeTexture(darkColor);
 
 		// Create GUI popups
 		CreateWindowPopups();
@@ -144,24 +141,6 @@ public class BabyDragonWizard : EditorWindow
 		}
 	}
 
-    void OnEnable()
-    {
-		EditorApplication.playModeStateChanged += OnPlayModeStateChanged;
-	}
-
-    void OnDisable()
-    {
-		EditorApplication.playModeStateChanged -= OnPlayModeStateChanged;
-	}
-
-    void OnPlayModeStateChanged(PlayModeStateChange state)
-    {
-        if (state == PlayModeStateChange.ExitingPlayMode)
-        {
-			CreateWindowPopups();
-        }
-    }
-
     // GUI 
     void OnGUI()
     {
@@ -183,6 +162,12 @@ public class BabyDragonWizard : EditorWindow
 			EditorGUILayout.HelpBox("Cannot be used in play mode", MessageType.Warning, true);
 			return;
         }
+
+        // If needed, re-create GUI popups after recompiling scripts
+		if (assetBundleArray == null || popupPetCloneArray == null)
+		{
+			CreateWindowPopups();
+		}
 
 		// Required
 		EditorGUILayout.HelpBox("This tool automatically creates 2 prefabs for Baby Dragons.\nIt will create the prefabs for Main Menu and Gameplay.", MessageType.Info, true);
@@ -255,9 +240,12 @@ public class BabyDragonWizard : EditorWindow
 				CreatePreview();
 			}
 
-			GUIStyle previewStyle = new GUIStyle();
-			previewStyle.normal.background = darkTexture;
-            
+			if (previewBackgroundTexture == null)
+			{
+				CreatePreviewBackgroundTexture();
+				previewStyle.normal.background = previewBackgroundTexture;
+			}
+
 			EditorGUILayout.Space();
 			gameObjectEditor.OnInteractivePreviewGUI(GUILayoutUtility.GetRect(256, 256), previewStyle);
 
@@ -541,7 +529,7 @@ public class BabyDragonWizard : EditorWindow
     {
 		GameObject babyFBX = (GameObject) babyDragonFBX;
 
-        // Avatar mask mouth
+		// Avatar mask mouth
 		AvatarMask avatarMaskMouth = new AvatarMask();
 		avatarMaskMouth.AddTransformPath(babyFBX.transform);
 
@@ -659,7 +647,13 @@ public class BabyDragonWizard : EditorWindow
         }
 	}
 
-	static Texture2D MakeTexture(Color color, int width = 1, int height = 1)
+    void CreatePreviewBackgroundTexture()
+	{
+		Color darkColor = new Color(0.1f, 0.1f, 0.1f);
+		previewBackgroundTexture = MakeTexture(darkColor);
+	}
+
+	Texture2D MakeTexture(Color color, int width = 1, int height = 1)
 	{
 		Color[] pixels = new Color[width * height];
 
