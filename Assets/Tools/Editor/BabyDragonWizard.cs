@@ -249,6 +249,7 @@ public class BabyDragonWizard : EditorWindow
 			}
 
 			EditorGUILayout.Space();
+			EditorGUILayout.LabelField("Preview", EditorStyles.boldLabel);
 			gameObjectEditor.OnInteractivePreviewGUI(GUILayoutUtility.GetRect(256, 256), previewStyle);
 
 			lastBabyDragonFBX = babyDragonFBX;
@@ -756,8 +757,8 @@ public class BabyDragonWizard : EditorWindow
 
     void CreatePreviewBackgroundTexture()
 	{
-		Color darkColor = new Color(0.1f, 0.1f, 0.1f);
-		previewBackgroundTexture = MakeTexture(darkColor);
+		Color backgroundColor = new Color(0.1568f, 0.1568f, 0.1568f);
+		previewBackgroundTexture = MakeTexture(backgroundColor);
 	}
 
 	Texture2D MakeTexture(Color color, int width = 1, int height = 1)
@@ -767,7 +768,7 @@ public class BabyDragonWizard : EditorWindow
 		for (int i = 0; i < pixels.Length; i++)
 			pixels[i] = color;
 
-		Texture2D result = new Texture2D(width, height);
+		Texture2D result = new Texture2D(width, height, TextureFormat.RGB24, false);
 		result.SetPixels(pixels);
 		result.Apply();
 
