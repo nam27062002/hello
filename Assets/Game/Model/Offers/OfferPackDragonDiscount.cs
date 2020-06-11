@@ -7,8 +7,10 @@
 //----------------------------------------------------------------------------//
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
+using Calety.Customiser.Api;
 using SimpleJSON;
 using System;
+using UnityEngine;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -83,9 +85,36 @@ public class OfferPackDragonDiscount : OfferPack {
 		// Create a mod and initialize it with values from the offer definition
 		// Translate values to a format that the economy mod can understand
 		SimpleJSON.JSONClass json = new SimpleJSON.JSONClass();
+
+		// Target dragon
 		json.Add("param1", _def.GetAsString("dragonSku"));
-		json.Add("param2", _def.GetAsFloat("discount") * -100f);	// Dragon price mod expects negative percentage value as discount
+
+		// Discount
+		// [AOC] Per design request, adding support to directly set the discounted price 
+		//		 in the "refPrice" column rather than setting the discount percentage
+		//		 See https://mdc-web-tomcat17.ubisoft.org/confluence/pages/viewpage.action?pageId=694173878#id-[HD]7.Discounts2.0-refPriceSpecialBehaviour:"refPrice"and"discount"attributes
+		float refPrice = _def.GetAsFloat("refPrice", 0f);
+		float discount = 0f;
+		if(refPrice > 0f) {
+			// "refPrice" column defined, use it instead of "discount"
+			// Compute discount based on target and original dragon prices
+			IDragonData dragonData = DragonManager.GetDragonData(_def.GetAsString("dragonSku"));
+			if(dragonData == null) {
+				Debug.LogError("Unable to find dragon data for " + _def.GetAsString("dragonSku"));
+            }
+			float originalPrice = (float)dragonData.GetPrice(UserProfile.SkuToCurrency(_def.GetAsString("currency")));
+			discount = 1f - refPrice / originalPrice;
+			discount *= -100f;  // Dragon price mod expects negative percentage value as discount
+		} else {
+			// "refPrice" column not defined, use "discount" column
+			discount = _def.GetAsFloat("discount", 0f) * -100f;    // Dragon price mod expects negative percentage value as discount
+		}
+		json.Add("param2", discount);
+
+		// Currency
 		json.Add("param3", _def.GetAsString("currency"));
+
+		// Create mod!
 		m_mod = new ModEconomyDragonPrice(json);
 	}
 
