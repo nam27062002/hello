@@ -32,6 +32,7 @@ public class ModEconomyDragonPrice : ModifierEconomy {
         if (dragonData != null) {
             switch(m_currency) {
                 case "sc": dragonData.AddPriceModifer(m_percentage, UserProfile.Currency.SOFT); break;
+                case "pc":
 				case "hc": dragonData.AddPriceModifer(m_percentage, UserProfile.Currency.HARD); break;
             }
             Messenger.Broadcast<IDragonData>(MessengerEvents.MODIFIER_ECONOMY_DRAGON_PRICE_CHANGED, dragonData);
@@ -43,7 +44,8 @@ public class ModEconomyDragonPrice : ModifierEconomy {
         if (dragonData != null) {
             switch (m_currency) {
 				case "sc": dragonData.AddPriceModifer(-m_percentage, UserProfile.Currency.SOFT); break;
-				case "hc": dragonData.AddPriceModifer(-m_percentage, UserProfile.Currency.HARD); break;
+                case "pc":
+                case "hc": dragonData.AddPriceModifer(-m_percentage, UserProfile.Currency.HARD); break;
             }
             Messenger.Broadcast<IDragonData>(MessengerEvents.MODIFIER_ECONOMY_DRAGON_PRICE_CHANGED, dragonData);
         }
