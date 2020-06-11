@@ -202,7 +202,7 @@ public class BabyDragonWizard : EditorWindow
 		babyDragonMaterial = (Material) EditorGUILayout.ObjectField(babyDragonMaterial, typeof(Material), true);
 		EditorGUILayout.EndHorizontal();
 
-        // Main menu settings
+		// Main menu settings
 		EditorGUILayout.Space();
 		EditorGUILayout.LabelField("Main menu prefab settings", EditorStyles.boldLabel);
 		EditorGUILayout.BeginHorizontal();
@@ -298,6 +298,11 @@ public class BabyDragonWizard : EditorWindow
 		CreateGameplayPrefab();
 
 		EditorUtility.ClearProgressBar();
+
+        if (EditorUtility.DisplayDialog("Avatar masks", "Do you want to create the avatar masks for the animation controller?", "Yes", "No"))
+        {
+			CreateAvatarMasks();
+        }
     }
 
     void CreateMenuPrefab()
@@ -530,6 +535,37 @@ public class BabyDragonWizard : EditorWindow
 
 		// Clean-up
 		DestroyImmediate(root);
+	}
+
+    void CreateAvatarMasks()
+    {
+		GameObject babyFBX = (GameObject) babyDragonFBX;
+
+        // Avatar mask mouth
+		AvatarMask avatarMaskMouth = new AvatarMask();
+		avatarMaskMouth.AddTransformPath(babyFBX.transform);
+
+        // Avatar mask no mouth
+		AvatarMask avatarMaskNoMouth = new AvatarMask();
+		avatarMaskNoMouth.AddTransformPath(babyFBX.transform);
+
+        // Find FBX path
+		string fbxPath = AssetDatabase.GetAssetPath(babyDragonFBX);
+		DirectoryInfo dir = Directory.GetParent(fbxPath);
+
+		// Navigate path one-time backwards
+		dir = Directory.GetParent(dir.ToString());
+
+        // New avatar mask paths
+		string avatarPathMouth = Path.Combine(dir.ToString(), "Baby" + GetSkuSuffix() + "_Mouth.mask");
+		string avatarPathNoMouth = Path.Combine(dir.ToString(), "Baby" + GetSkuSuffix() + "_NoMouth.mask");
+
+        // Create avatar masks
+		AssetDatabase.CreateAsset(avatarMaskMouth, avatarPathMouth);
+		AssetDatabase.CreateAsset(avatarMaskNoMouth, avatarPathNoMouth);
+
+        // Refresh
+		AssetDatabase.Refresh();
 	}
 
     void CreatePreview()
