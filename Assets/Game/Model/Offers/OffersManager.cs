@@ -34,7 +34,7 @@ public class OffersManager : Singleton<OffersManager> {
 
     // Debug
 #if LOG_PACKS
-	private const string LOG_PACK_SKU = "rotationalHigh";
+	private const string LOG_PACK_SKU = "DragonDiscount";
 #endif
 
     //------------------------------------------------------------------------//
@@ -200,7 +200,10 @@ public class OffersManager : Singleton<OffersManager> {
 		instance.m_activeFreeOffer = null;
 
 		instance.m_allEnabledDragonDiscounts.Clear();
-		instance.m_activeDragonDiscount = null;
+		if(instance.m_activeDragonDiscount != null) {
+			instance.m_activeDragonDiscount.Reset();
+			instance.m_activeDragonDiscount = null;
+        }
 
 		instance.m_categories.Clear();
 
@@ -238,7 +241,10 @@ public class OffersManager : Singleton<OffersManager> {
 
 		// Use the loop to clean old offers from persistence so we don't end up having a huge user profile
         bool cleaningPushed = HDCustomizerManager.instance.hasBeenApplied;
-		List<string> validPushedCustomIds = new List<string>();
+		Dictionary<OfferPack.Type, List<string>> currentPushedIDs = new Dictionary<OfferPack.Type, List<string>> {
+			{ OfferPack.Type.PUSHED, new List<string>() },
+			{ OfferPack.Type.DRAGON_DISCOUNT, new List<string>() }
+		};
 		Dictionary<OfferPack.Type, List<string>> toClean = new Dictionary<OfferPack.Type, List<string>> {
 			{ OfferPack.Type.ROTATIONAL, new List<string>() },
 			{ OfferPack.Type.FREE, new List<string>() }
@@ -316,25 +322,42 @@ public class OffersManager : Singleton<OffersManager> {
 				}
 			}
 
+			// Pack disabled, nothing to do
+			else {
+				Log("InitFromDefinitions: OFFER PACK {0} DISABLED BY CONTENT! SKIPPING IT", Color.red, newPack.def.sku);
+			}
+
 			// Check whether it needs to be cleaned
-			// Pushed offers work a bit different here
-			if(newPack.type == OfferPack.Type.PUSHED) {
-				// Only if there is a customization on experiment
-				if(cleaningPushed) {
-					validPushedCustomIds.Add(OffersManager.GenerateTrackingOfferName(offerDefs[i]));
-				}
-			} else if(toClean.ContainsKey(newPack.type)) {
-				// Clean it if the pack is pending activation and has no purchases
-				if(newPack.state == OfferPack.State.PENDING_ACTIVATION && newPack.purchaseCount == 0) {
-					toClean[newPack.type].Add(newPack.def.sku);
+			switch(newPack.type) {
+				case OfferPack.Type.PUSHED:
+				case OfferPack.Type.DRAGON_DISCOUNT: {
+					// Only if customizer has been applied
+					if(cleaningPushed) {
+						currentPushedIDs[newPack.type].Add(OffersManager.GenerateTrackingOfferName(offerDefs[i]));
+					}
+				} break;
+
+				case OfferPack.Type.ROTATIONAL:
+				case OfferPack.Type.FREE: {
+					// Clean it if the pack is pending activation and has no purchases
+					if(newPack.state == OfferPack.State.PENDING_ACTIVATION && newPack.purchaseCount == 0) {
+						toClean[newPack.type].Add(newPack.def.sku);
+					}
+				} break;
+            }
+		}
+
+        // Clean offers persistence if needed
+		// Pushed and Discounts
+		if(cleaningPushed) {
+			foreach(KeyValuePair<OfferPack.Type, List<string>> kvp in currentPushedIDs) {
+				if(kvp.Value.Count > 0) {
+					UsersManager.currentUser.CleanOldPushedOffers(kvp.Key, kvp.Value);
 				}
 			}
 		}
 
-        // Clean offers persistence if needed
-        if ( cleaningPushed ){
-            UsersManager.currentUser.CleanOldPushedOffers(validPushedCustomIds);
-        }
+		// Rotationals and Free
 		foreach(KeyValuePair<OfferPack.Type, List<string>> kvp in toClean) {
 			if(kvp.Value.Count > 0) {
 				UsersManager.currentUser.CleanOldOffers(kvp.Key, kvp.Value);

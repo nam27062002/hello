@@ -2158,25 +2158,28 @@ public class UserProfile : UserPersistenceSystem
     }
     
     /// <summary>
-    /// Cleans old pushed offers. Removes all push offer packs that are not in the current customizer id
+    /// Cleans old pushed offers. Removes all push offer packs that are not in the current customization id.
     /// </summary>
-    /// <param name="currentPushIds">Current customizer identifier.</param>
-    public void CleanOldPushedOffers( List<string> currentPushIds ) {
-        List<JSONClass> offers = m_newOfferPersistanceData[OfferPack.Type.PUSHED];
-        int max = offers.Count;
-        
-        for (int i = max-1; i >= 0; i--) {
+	/// <param name="_type">Type of offers to be cleaned.</param>
+    /// <param name="_currentPushedIDs">Offer IDs in the current customization.</param>
+    public void CleanOldPushedOffers(OfferPack.Type _type, List<string> _currentPushedIDs ) {
+		// Gather persistence data for the target offer type
+		List<JSONClass> offersData = m_newOfferPersistanceData[_type];
+
+		// Reverse-iterate to delete all data that is not in the current customization
+		int count = offersData.Count;
+		for (int i = count - 1; i >= 0; --i) {
             string customId = "";
-            if ( offers[i].ContainsKey("customId") )
-            {
-                customId = offers[i]["customId"];
+            if(offersData[i].ContainsKey("customId")) {
+                customId = offersData[i]["customId"];
             }
         
-            if ( !currentPushIds.Contains( customId )) {
-                offers.RemoveAt(i);
+            if(!_currentPushedIDs.Contains(customId)) {
+				OffersManager.Log("PUSHED OFFER PACK {0} ({1}) IS BEING CLEANED FROM PERSISTENCE", Color.red, offersData[i]["sku"], _type.ToString());
+				offersData.RemoveAt(i);
             }
         }
-        m_newOfferPersistanceData[OfferPack.Type.PUSHED] = offers;
+        m_newOfferPersistanceData[_type] = offersData;
     }
 
 	/// <summary>
@@ -2218,31 +2221,34 @@ public class UserProfile : UserPersistenceSystem
         bool found = false;
         for(int i = 0; i < max && !found; i++) {
             if(offers[i].ContainsKey("sku") && offers[i]["sku"] == _pack.def.sku) {
-				// If not a pushed offer, directly override existing data
-				if(_pack.type != OfferPack.Type.PUSHED) {
-					// If pack doesn't need to be persisted anymore, remove it from the data instead
-					if(shouldBePersisted) {
-						m_newOfferPersistanceData[_pack.type][i] = _pack.Save();
-					} else {
-						OffersManager.Log("OFFER PACK {0} ({1}) IS BEING CLEANED FROM PERSISTENCE", Color.red, _pack.def.sku, _pack.type.ToString());
-						m_newOfferPersistanceData[_pack.type].RemoveAt(i);	// We will interrupt the loop by setting the found flag to true, so there is no problem in removing an element at this point
-					}
-                    found = true;
-                }
-
-				// If it's a pushed offer, check customization ID
-				else {
-					// Only if it actually needs to be persisted!
-					if(shouldBePersisted) {
-						if(offers[i].ContainsKey("customId")) {
-							string customId = OffersManager.GenerateTrackingOfferName(_pack.def);
-							if(customId == offers[i]["customId"]) {
-								m_newOfferPersistanceData[_pack.type][i] = _pack.Save();
-								found = true;
+				switch(_pack.type) {
+					// If it's a pushed offer, check customization ID
+					case OfferPack.Type.PUSHED:
+					case OfferPack.Type.DRAGON_DISCOUNT: {
+						// Only if it actually needs to be persisted!
+						if(shouldBePersisted) {
+							if(offers[i].ContainsKey("customId")) {
+								string customId = OffersManager.GenerateTrackingOfferName(_pack.def);
+								if(customId == offers[i]["customId"]) {
+									m_newOfferPersistanceData[_pack.type][i] = _pack.Save();
+									found = true;
+								}
 							}
 						}
-					}
-                }
+					} break;
+
+					// Otherwise just directly override existing data
+					default: {
+						// If pack doesn't need to be persisted anymore, remove it from the data instead
+						if(shouldBePersisted) {
+							m_newOfferPersistanceData[_pack.type][i] = _pack.Save();
+						} else {
+							OffersManager.Log("OFFER PACK {0} ({1}) IS BEING CLEANED FROM PERSISTENCE", Color.red, _pack.def.sku, _pack.type.ToString());
+							m_newOfferPersistanceData[_pack.type].RemoveAt(i);  // We will interrupt the loop by setting the found flag to true, so there is no problem in removing an element at this point
+						}
+						found = true;
+					} break;
+				}
             }
         }
 
@@ -2265,13 +2271,26 @@ public class UserProfile : UserPersistenceSystem
         bool found = false;
         for (int i = 0; i < max && !found; i++){
             if ( offers[i].ContainsKey("sku") && offers[i]["sku"] == _pack.def.sku ){
+				// Break loop
                 found = true;
-                // if not a pushed offer or is pushed and same customization code, so it's exactly the same
-                if ( _pack.type != OfferPack.Type.PUSHED || _pack.def.customizationCode == offers[i]["customizerId"] ){
-                    
-                    // Match! Load it into the pack
-                    _pack.Load(offers[i]);
+
+				// Check customization code as well for pushed offers
+				bool match = false;
+				switch(_pack.type) {
+					case OfferPack.Type.PUSHED:
+					case OfferPack.Type.DRAGON_DISCOUNT: {
+						match = _pack.def.customizationCode == offers[i]["customizerId"];
+                    } break;
+
+					default: {
+						match = true;
+                    } break;
                 }
+
+				// If we have a match, load data into the pack
+				if(match) {
+					_pack.Load(offers[i]);
+				}
             }
         }
         

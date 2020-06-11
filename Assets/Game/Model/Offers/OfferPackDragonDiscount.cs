@@ -7,6 +7,7 @@
 //----------------------------------------------------------------------------//
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
+using SimpleJSON;
 using System;
 
 //----------------------------------------------------------------------------//
@@ -23,6 +24,7 @@ public class OfferPackDragonDiscount : OfferPack {
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
+	private bool m_modApplied = false;
 	private ModEconomyDragonPrice m_mod = null;
 	public ModEconomyDragonPrice mod {
 		get { return m_mod; }
@@ -42,14 +44,20 @@ public class OfferPackDragonDiscount : OfferPack {
 	/// Destructor
 	/// </summary>
 	~OfferPackDragonDiscount() {
-
+		// Clear mod
+		ApplyMod(false);
+		m_mod = null;
 	}
 
     //------------------------------------------------------------------------//
     // PARENT OVERRIDES														  //
     //------------------------------------------------------------------------//
+	/// <summary>
+	/// Reset to default values.
+	/// </summary>
     public override void Reset() {
 		// Clear mod
+		ApplyMod(false);
 		m_mod = null;
 
 		// Let parent do the rest
@@ -76,7 +84,7 @@ public class OfferPackDragonDiscount : OfferPack {
 		// Translate values to a format that the economy mod can understand
 		SimpleJSON.JSONClass json = new SimpleJSON.JSONClass();
 		json.Add("param1", _def.GetAsString("dragonSku"));
-		json.Add("param2", _def.GetAsFloat("discount") * 100f);
+		json.Add("param2", _def.GetAsFloat("discount") * -100f);	// Dragon price mod expects negative percentage value as discount
 		json.Add("param3", _def.GetAsString("currency"));
 		m_mod = new ModEconomyDragonPrice(json);
 	}
@@ -135,8 +143,8 @@ public class OfferPackDragonDiscount : OfferPack {
 		switch(m_state) {
 			case State.ACTIVE: {
 				// Leaving ACTIVE state, disable mod
-				if(m_mod != null) m_mod.Remove();
-            } break;
+				ApplyMod(false);
+			} break;
 		}
 
 		// Let parent change the state
@@ -146,19 +154,70 @@ public class OfferPackDragonDiscount : OfferPack {
 		switch(m_state) {
 			case State.ACTIVE: {
 				// Entering ACTIVE state, apply mod
-				if(m_mod != null) m_mod.Apply();
-            } break;
+				ApplyMod(true);
+			} break;
         }
 	}
 
-	//------------------------------------------------------------------------//
-	// CUSTOM METHODS														  //
-	//------------------------------------------------------------------------//
 	/// <summary>
-	/// Immediately mark this pack as active.
-	/// No checks will be performed!
+	/// Load state from a persistence object.
 	/// </summary>
-	public void Activate() {
+	/// <param name="_data">The data object loaded from persistence.</param>
+	public override void Load(JSONClass _data) {
+		// Store state before loading
+		State oldState = m_state;
+
+		// Call parent
+        base.Load(_data);
+
+		// If state changed, check whether the mod needs to be applied
+		if(m_mod != null) {
+			if(oldState != m_state) {
+				// Entering ACTIVE state, apply mod
+				if(m_state == State.ACTIVE) {
+					ApplyMod(true);
+				}
+				
+				// Leaving ACTIVE state, disable mod
+				else if(oldState == State.ACTIVE) {
+					ApplyMod(false);
+				}
+			}
+		}
+    }
+
+    //------------------------------------------------------------------------//
+    // CUSTOM METHODS														  //
+    //------------------------------------------------------------------------//
+    /// <summary>
+    /// Immediately mark this pack as active.
+    /// No checks will be performed!
+    /// </summary>
+    public void Activate() {
 		ChangeState(State.ACTIVE);
 	}
+
+	/// <summary>
+	/// Apply/Remove mod. Will check if the mod was already applied to avoid duplicating its effect.
+	/// </summary>
+	/// <param name="_apply">Whether to apply or remove.</param>
+	private void ApplyMod(bool _apply) {
+		// Nothing to do if mod not valid
+		if(m_mod == null) return;
+
+		// Apply or remove?
+		if(_apply) {
+			// Apply! Only if mod is not currently applied
+			if(!m_modApplied) {
+				m_mod.Apply();
+				m_modApplied = true;
+			}
+        } else {
+			// Remove! Only if mod is currently applied
+			if(m_modApplied) {
+				m_mod.Remove();
+				m_modApplied = false;
+            }
+        }
+    }
 }
