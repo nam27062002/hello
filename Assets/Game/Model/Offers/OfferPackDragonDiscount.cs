@@ -10,6 +10,7 @@
 using Calety.Customiser.Api;
 using SimpleJSON;
 using System;
+using System.Linq;
 using UnityEngine;
 
 //----------------------------------------------------------------------------//
@@ -76,18 +77,33 @@ public class OfferPackDragonDiscount : OfferPack {
 			return;
 		}
 
+		// Aux vars
+		string targetDragonSku = _def.GetAsString("dragonSku");
+
 		// Let the parent do the trick
 		// [AOC] The definitions won't contain most of the values (since it's not
 		// from the offerPackDefinitions table), but that should be ok - default
 		// values will be used instead
 		base.InitFromDefinition(_def);
 
+		// To minimize human error, make sure the "dragonNotOwned" condition is initialized with target dragon's sku
+		// See https://mdc-web-tomcat17.ubisoft.org/confluence/pages/viewpage.action?pageId=694173878#id-[HD]7.Discounts2.0-dragonNotOwnedSpecialBehaviour:"dragonNotOwned"condition
+		if(!m_dragonNotOwned.Contains(targetDragonSku)) {
+			int count = m_dragonNotOwned.Length;
+			string[] newCollection = new string[count + 1];
+			for(int i = 0; i < count; ++i) {
+				newCollection[i] = m_dragonNotOwned[i];
+            }
+			newCollection[count] = targetDragonSku;	// Add to the end of the list
+			m_dragonNotOwned = newCollection;
+        }
+
 		// Create a mod and initialize it with values from the offer definition
 		// Translate values to a format that the economy mod can understand
 		SimpleJSON.JSONClass json = new SimpleJSON.JSONClass();
 
 		// Target dragon
-		json.Add("param1", _def.GetAsString("dragonSku"));
+		json.Add("param1", targetDragonSku);
 
 		// Discount
 		// [AOC] Per design request, adding support to directly set the discounted price 
@@ -98,9 +114,9 @@ public class OfferPackDragonDiscount : OfferPack {
 		if(refPrice > 0f) {
 			// "refPrice" column defined, use it instead of "discount"
 			// Compute discount based on target and original dragon prices
-			IDragonData dragonData = DragonManager.GetDragonData(_def.GetAsString("dragonSku"));
+			IDragonData dragonData = DragonManager.GetDragonData(targetDragonSku);
 			if(dragonData == null) {
-				Debug.LogError("Unable to find dragon data for " + _def.GetAsString("dragonSku"));
+				Debug.LogError("Unable to find dragon data for " + targetDragonSku);
             }
 			float originalPrice = (float)dragonData.GetPrice(UserProfile.SkuToCurrency(_def.GetAsString("currency")));
 			discount = 1f - refPrice / originalPrice;
