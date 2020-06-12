@@ -198,7 +198,7 @@ public class ContentManager
 		kDefinitionFiles.Add(DefinitionsCategory.DRAGON_STATS, new string[] { "Rules/dragonStatsDefinitions" });
 
         // Entites
-        kDefinitionFiles.Add(DefinitionsCategory.PETS, new string[] { "Rules/petDefinitions" });
+        kDefinitionFiles.Add(DefinitionsCategory.PETS, new string[] { "Rules/petDefinitions", "Rules/babyDragonDefinitions" });
         kDefinitionFiles.Add(DefinitionsCategory.PET_MOVEMENT, new string[] { "Rules/petMovementDefinitions" });
         kDefinitionFiles.Add(DefinitionsCategory.PET_CATEGORIES, new string[] { "Rules/petCategoryDefinitions" });
         kDefinitionFiles.Add(DefinitionsCategory.ENTITIES, new string[] { "Rules/entityDefinitions" });
@@ -266,7 +266,6 @@ public class ContentManager
         kDefinitionFiles.Add(DefinitionsCategory.ICONS, new string[] { "Rules/iconDefinitions" });
 
         // Baby Dragons
-        kDefinitionFiles.Add(DefinitionsCategory.BABY_DRAGONS, new string[] { "Rules/babyDragonDefinitions" });
         kDefinitionFiles.Add(DefinitionsCategory.BABY_DRAGONS_SHARED_POWER, new string[] { "Rules/sharedPowerupDefinitions" });
 
         DefinitionsManager.SharedInstance.Initialise(ref kDefinitionFiles, !UseDeltaContent);

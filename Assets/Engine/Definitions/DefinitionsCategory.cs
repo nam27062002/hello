@@ -71,7 +71,6 @@ public class DefinitionsCategory
     public const string EQUIPABLE           = "EQUIPABLE";
 
     // Baby dragons
-	public const string BABY_DRAGONS              = "BABY_DRAGONS";
 	public const string BABY_DRAGONS_SHARED_POWER = "BABY_DRAGONS_SHARED_POWER";
 
 	// Game

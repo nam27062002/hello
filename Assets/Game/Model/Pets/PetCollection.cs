@@ -39,8 +39,8 @@ public class PetCollection
 		List<string> babyPetList = new List<string>();
         for (int i = 0; i < m_pets.Count; i++)
         {
-			DefinitionNode petDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.BABY_DRAGONS, m_pets[i]);
-            if (petDef != null)
+			DefinitionNode petDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PETS, m_pets[i]);
+            if (petDef != null && petDef.Get("category") == "baby")
             {
 				babyPetList.Add(m_pets[i]);
             }
