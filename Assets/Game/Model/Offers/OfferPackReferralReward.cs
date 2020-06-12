@@ -25,6 +25,17 @@ public class OfferPackReferralReward:OfferPackItem {
 
     public static string TYPE_REFERRAL = "referral";
 
+
+	//------------------------------------------------------------------------//
+	// ENUM         														  //
+	//------------------------------------------------------------------------//
+	public enum State
+    {
+        NOT_AVAILABLE,
+        READY_TO_CLAIM,
+        CLAIMED
+    }
+
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
@@ -118,7 +129,7 @@ public class OfferPackReferralReward:OfferPackItem {
 		m_sku = referralReward.GetAsString("itemSku");
 
         // Amount
-        long amount = _def.GetAsLong("itemAmount", 1);
+        long amount = referralReward.GetAsLong("itemAmount", 1);
 
 		Metagame.Reward.Data rewardData = new Metagame.Reward.Data();
 		rewardData.typeCode = m_type;

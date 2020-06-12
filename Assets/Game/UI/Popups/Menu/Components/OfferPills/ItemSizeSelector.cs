@@ -1,7 +1,7 @@
 // ItemSizeSelector.cs
 // Hungry Dragon
 // 
-// Created by  on 29/05/2020.
+// Created by JOM on 29/05/2020.
 // Copyright (c) 2020 Ubisoft. All rights reserved.
 
 //----------------------------------------------------------------------------//

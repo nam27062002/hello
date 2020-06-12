@@ -991,6 +991,31 @@ public class OffersManager : Singleton<OffersManager> {
         return result;
     }
 
+    /// <summary>
+    /// Find the current active referral offer (if any)
+    /// </summary>
+    /// <returns>Null if the offer doesnt exist or is not active</returns>
+    public static OfferPackReferral GetActiveReferralOffer ()
+    {
+		// Find the current active referral offer (if any)
+
+		List<OfferPack> offers = activeOffers.FindAll(o => o.type == OfferPack.Type.REFERRAL);
+
+		// Play it safe
+		if (offers.Count == 0)
+		{
+			Debug.LogError("There is no referral offer active! the counter shouldnt appear.");
+			return null;
+		}
+
+		if (offers.Count > 1)
+		{
+			Debug.LogError("Shouldnt be more thant one referral offers active!");
+			return null;
+		}
+
+		return (OfferPackReferral)offers[0];
+	}
     //------------------------------------------------------------------------//
     // CALLBACKS															  //
     //------------------------------------------------------------------------//

@@ -33,6 +33,8 @@ public class ShopReferralPill : ShopMonoRewardPill {
 	//------------------------------------------------------------------------//
 	// Exposed references
 	[Separator("Referral install Pill Specifics")]
+	[SerializeField] private FriendCounter m_friendCounter;
+
 	[SerializeField] private Button m_buttonInvite = null;
 	[SerializeField] private Button m_buttonClaim = null;
 
@@ -63,6 +65,9 @@ public class ShopReferralPill : ShopMonoRewardPill {
 	public override void InitFromOfferPack(OfferPack _pack) {
 		// Call parent
 		base.InitFromOfferPack(_pack);
+
+		if (m_friendCounter != null)
+			m_friendCounter.InitFromOfferPack( (OfferPackReferral) _pack);
 
 	}
 

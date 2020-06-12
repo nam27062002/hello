@@ -47,6 +47,24 @@ public class OfferPackReferral: OfferPack {
     // OTHER METHODS														  //
     //------------------------------------------------------------------------//
 
+    /// <summary>
+    /// Returns an array with the friends required for each milestone
+    /// </summary>
+    /// <returns></returns>
+    public int[] GetFriendsRequired()
+    {
+		int[] friends = new int[items.Count];
+
+		int i = 0;
+        foreach (OfferPackItem it in items)
+        {
+			friends[i] = ((OfferPackReferralReward)it).friendsRequired;
+			i++;
+        }
+
+		return friends;
+    }
+
     //------------------------------------------------------------------------//
     // PARENT OVERRIDE														  //
     //------------------------------------------------------------------------//

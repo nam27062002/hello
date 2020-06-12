@@ -376,8 +376,15 @@ public class UserProfile : UserPersistenceSystem
         set { m_removeAds = value; }
     }
 
+	// Referral install
+	private int m_friends = 11;
+	public int friends
+	{
+		get { return m_friends; }
+        set { m_friends = value;  }
+	}
 
-    private bool m_removeAdsOfferActive;
+	private bool m_removeAdsOfferActive;
     private int m_easyMissionCooldownsLeft;
     private int m_mediumMissionCooldownsLeft;
     private int m_hardMissionCooldownsLeft;

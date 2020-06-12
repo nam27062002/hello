@@ -34,6 +34,8 @@ public class PopupShopReferral : MonoBehaviour {
 	[SerializeField] private GameObject m_buttonInviteMore;
 	[SerializeField] private GameObject m_buttonClaim;
 
+	[SerializeField] private FriendCounter m_friendCounter;
+
 	[Header("Rewards")]
 	[SerializeField] private Transform m_rewardsContainer;
 	[SerializeField] private GameObject m_referralRewardPrefab;
@@ -45,10 +47,6 @@ public class PopupShopReferral : MonoBehaviour {
 	[SerializeField] private GameObject m_friendIconActive;
 	[SerializeField] private GameObject m_friendIconHighlighted;
 
-
-
-    //debug
-	public int friends = 8;
 
 	// cache
 	private OfferPackReferral m_pack = null;
@@ -96,6 +94,11 @@ public class PopupShopReferral : MonoBehaviour {
 
 		Clear();
 
+        if (m_friendCounter != null)
+        {
+			m_friendCounter.InitFromOfferPack(m_pack);  
+        }
+
 		// Delay refresh a couple of frames, so the popup has tiem to open.
         // Otherwise there are problems with the DisableOnPopup component
 		UbiBCN.CoroutineManager.DelayedCallByFrames( () =>
@@ -127,15 +130,28 @@ public class PopupShopReferral : MonoBehaviour {
 		OfferPackReferralReward lastReward = (OfferPackReferralReward) m_pack.items[m_pack.items.Count - 1];
 		int maxFriends = lastReward.friendsRequired;
 
+		// Friends progression is cyclic so when reaches the final milestone, it starts from the begining
+		int friendsCount = UsersManager.currentUser.friends;
+		if (friendsCount > maxFriends)
+			friendsCount = (friendsCount - 1) % maxFriends + 1;
+
+
 		// Friends progresion bar
 		for (int i=0; i< maxFriends + 1; i++)
         {
 			GameObject friendIcon;
 
 			// Create a friend icon
-			if (i <= friends)
+			if (i <= friendsCount)
             {
-				friendIcon = Instantiate(m_friendIconActive);
+                if (IsMilestone (i))
+                {
+					friendIcon = Instantiate(m_friendIconHighlighted);
+				}
+				else
+                {
+					friendIcon = Instantiate(m_friendIconActive);
+				}
 			}
             else
             {
@@ -152,8 +168,22 @@ public class PopupShopReferral : MonoBehaviour {
             GameObject rewardPreview = Instantiate(m_referralRewardPrefab);
 			rewardPreview.transform.SetParent(m_rewardsContainer, false);
 
-            // Initialize reward preview
-			rewardPreview.GetComponent<OfferItemSlot>().InitFromItem(reward);
+			// Find the state of the reward (claimed, ready to claim, etc)
+			OfferPackReferralReward.State state;
+            if (friendsCount == reward.friendsRequired)
+            {
+				state = OfferPackReferralReward.State.READY_TO_CLAIM;
+            }
+			else if (friendsCount > reward.friendsRequired)
+            {
+				state = OfferPackReferralReward.State.CLAIMED;
+            } else
+            {
+				state = OfferPackReferralReward.State.NOT_AVAILABLE;
+            }
+
+			// Initialize reward preview
+			rewardPreview.GetComponent<OfferItemSlotReferral>().InitFromItem(reward, state);
 
 			// Calculate the reward preview horizontal position, so it matches the friend icon in the progression bar
 			float unitWidth = (1f / (maxFriends + 1));
@@ -163,6 +193,23 @@ public class PopupShopReferral : MonoBehaviour {
 			rect.anchorMin = new Vector2(anchorX, rect.anchorMin.y);
 			rect.anchorMax = new Vector2(anchorX, rect.anchorMax.y);
 		}
+	}
+
+    /// <summary>
+    /// Check if there is a reward milestone for the current amount of friends
+    /// </summary>
+    /// <param name="_friendsAmount">The amount of friends to check</param>
+    /// <returns>True if it's a milestone</returns>
+	private bool IsMilestone(int _friendsAmount)
+	{
+		foreach (OfferPackReferralReward reward in m_pack.items)
+		{
+            if (reward.friendsRequired == _friendsAmount)
+				return true;
+            
+		}
+
+		return false;
 	}
 
 	//------------------------------------------------------------------------//
