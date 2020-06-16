@@ -377,11 +377,19 @@ public class UserProfile : UserPersistenceSystem
     }
 
 	// Referral install
-	private int m_friends = 11;
-	public int friends
+	private int m_totalReferrals = 11;
+	public int totalReferrals
 	{
-		get { return m_friends; }
-        set { m_friends = value;  }
+		get { return m_totalReferrals; }
+        set { m_totalReferrals = value;  }
+	}
+
+    // List of unlocked referral rewards (milestones) that havent been claimed yet
+	private List<OfferPackReferralReward> m_unlockedReferralRewards;
+	public List<OfferPackReferralReward> unlockedReferralRewards
+	{
+		get { return m_unlockedReferralRewards; }
+		set { m_unlockedReferralRewards = value; }
 	}
 
 	private bool m_removeAdsOfferActive;

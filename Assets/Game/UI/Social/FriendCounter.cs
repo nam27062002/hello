@@ -54,7 +54,7 @@ public class FriendCounter : MonoBehaviour
     void Refresh()
     {
         // Friends progression is cyclic so when reaches the final milestone, it starts from the begining
-        int friendsCount = UsersManager.currentUser.friends;
+        int friendsCount = UsersManager.currentUser.totalReferrals;
         if (friendsCount > m_maxFriendsAmount)
             friendsCount = (friendsCount - 1) % m_maxFriendsAmount + 1;
 

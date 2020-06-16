@@ -67,9 +67,9 @@ public class OfferPackReferralReward:OfferPackItem {
     //------------------------------------------------------------------------//
 
 	/// <summary>
-	/// Initialize from definition.
+	/// Initialize from referral offer pack definition.
 	/// </summary>
-	/// <param name="_def">Def.</param>
+	/// <param name="_def">Definition node of the offer pack related.</param>
 	/// <param name="_itemIdx">Index of the item within the pack (1..N)</param>
 	/// <param name="_ecoGroup">Group ID used for tracking when the reward is collected.</param>
 	public override void InitFromDefinition(DefinitionNode _def, int _itemIdx, HDTrackingManager.EEconomyGroup _ecoGroup) {
@@ -100,36 +100,50 @@ public class OfferPackReferralReward:OfferPackItem {
 			return;
 		}
 
-        // Ignore amount
+		// Ignore amount
 
-        // We use the SKU to find the real reward in the referralRewards table
-        DefinitionNode referralReward = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.REFERRAL_REWARDS, sku);
+		// We use the SKU to find the real reward in the referralRewards table
+		DefinitionNode referralReward = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.REFERRAL_REWARDS, sku);
 
-        // If the reward doesnt exist. Clear and return
-        if( referralReward == null )
-        {
+		// If the reward doesnt exist. Clear and return
+		if (referralReward == null)
+		{
 			Clear();
 			return;
 		}
 
+        // Init the reward
+		InitFromRewardDefinition(referralReward, _ecoGroup);
+
+	}
+
+
+	/// <summary>
+	/// Init the reward object from the reward definition
+	/// </summary>
+	/// <param name="_def">The referral reward definition</param>
+	/// <param name="_ecoGroup">Group ID used for tracking when the reward is collected.</param>
+	public void InitFromRewardDefinition (DefinitionNode _def, HDTrackingManager.EEconomyGroup _ecoGroup = HDTrackingManager.EEconomyGroup.UNKNOWN)
+    {
 
 		// Initialize the referral reward
 
 		// Friends required
-		m_friendsRequired = referralReward.GetAsInt("friends");
+		m_friendsRequired = _def.GetAsInt("friends");
 
 		// If unknown type, clear data and return
-		m_type = referralReward.GetAsString("itemType", OffersManager.settings.emptyValue);
-		if(m_type == OffersManager.settings.emptyValue || string.IsNullOrEmpty(m_type)) {
+		m_type = _def.GetAsString("itemType", OffersManager.settings.emptyValue);
+		if (m_type == OffersManager.settings.emptyValue || string.IsNullOrEmpty(m_type))
+		{
 			Clear();
 			return;
 		}
 
 		// Item Sku
-		m_sku = referralReward.GetAsString("itemSku");
+		m_sku = _def.GetAsString("itemSku");
 
-        // Amount
-        long amount = referralReward.GetAsLong("itemAmount", 1);
+		// Amount
+		long amount = _def.GetAsLong("itemAmount", 1);
 
 		Metagame.Reward.Data rewardData = new Metagame.Reward.Data();
 		rewardData.typeCode = m_type;
@@ -140,9 +154,8 @@ public class OfferPackReferralReward:OfferPackItem {
 			_ecoGroup,
 			""
 		);
-
-
 	}
+
 	//------------------------------------------------------------------------//
 	// STATIC   															  //
 	//------------------------------------------------------------------------//
