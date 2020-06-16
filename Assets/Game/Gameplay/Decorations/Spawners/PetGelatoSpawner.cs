@@ -24,7 +24,8 @@ public class PetGelatoSpawner : AbstractSpawner, IBroadcastListener  {
 
 	[SerializeField] private string[] m_selectedPrefabs = new string[(int)DragonTier.COUNT];
 	[SerializeField] private ParticleData m_onSpawnEffect;
-	
+	[SerializeField] private int maxEntitiesToConvert = -1;
+
 	private string[] m_prefabNames;
 	private PoolHandler[] m_poolHandlers;
 	
@@ -127,7 +128,7 @@ public class PetGelatoSpawner : AbstractSpawner, IBroadcastListener  {
 
 		for (int i = 0; i< m_selectedPrefabs.Length; i++) {
 			string prefab = m_selectedPrefabs[i];
-			PoolHandler handle = PoolManager.RequestPool(prefab, 1);
+			PoolHandler handle = PoolManager.RequestPool(prefab, 1);	
 			if (handle != null) {
 				listValidPrefab.Add(prefab);
 				listValidHandlers.Add(handle);
@@ -172,6 +173,9 @@ public class PetGelatoSpawner : AbstractSpawner, IBroadcastListener  {
 			m_gelatosToSpawn = 0;
 
 			int entityCount = EntityManager.instance.GetOnScreenEntities(m_checkEntities);
+
+            if (maxEntitiesToConvert > 0)
+			    entityCount = Mathf.Clamp(entityCount, 0, maxEntitiesToConvert);
 
 			for (int i = 0; i < m_gelatoTypesToSpawn.Length; ++i) {
 				m_gelatoTypesToSpawn[i] = 0;
