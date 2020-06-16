@@ -116,6 +116,7 @@ public class PetGelatoSpawner : AbstractSpawner, IBroadcastListener  {
                 break;
             case BroadcastEventType.GAME_AREA_EXIT:
                 {
+					ForceRemoveEntities();
                     m_enabled = false;
                 }
                 break;
