@@ -11,6 +11,7 @@
 
 using System;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 [RequireComponent(typeof(PopupController))]
@@ -18,20 +19,18 @@ public class PopupMessage : IPopupMessage
 {
     public const string PATH = "UI/Popups/Message/PF_PopupMessage";
 
-    [SerializeField]
-    private Localizer m_titleText;
+	[Space]
+    [SerializeField] private Localizer m_titleText;
 
-    [SerializeField]
-    private Localizer m_messageText;
+    [SerializeField] private Localizer m_messageText;
 
-    [SerializeField]
-    private Localizer m_buttonCancelText;
+    [SerializeField] private Localizer m_buttonCancelText;
 
-    [SerializeField]
-    private Localizer m_buttonConfirmCenterText;
+	[FormerlySerializedAs("m_buttonConfirmCenterText")]
+	[SerializeField] private Localizer m_buttonExtraText;
 
-    [SerializeField]
-    private Localizer m_buttonConfirmRightText;
+	[FormerlySerializedAs("m_buttonConfirmRightText")]
+	[SerializeField] private Localizer m_buttonConfirmText;
 
 	override protected void ConfigureTexts(Config _config) {
 		m_titleText.gameObject.SetActive(_config.ShowTitle);
@@ -64,35 +63,33 @@ public class PopupMessage : IPopupMessage
 		}
 
 		// Button texts
-		switch (_config.ButtonMode)
-		{            
-			case Config.EButtonsMode.Confirm:
-			{
-				// Center button chosen since there's only one
-				m_buttonConfirmCenterText.Localize(_config.ConfirmButtonTid);
-			}
-			break;
-
-			case Config.EButtonsMode.ConfirmAndCancel:
-			case Config.EButtonsMode.ConfirmAndExtraAndCancel:
-			{
-				if (m_buttonCancelText != null)
-				{
+		if(m_buttonCancelText != null) {
+			switch(_config.ButtonMode) {
+				case Config.EButtonsMode.ConfirmAndCancel:
+				case Config.EButtonsMode.ConfirmAndExtraAndCancel: {
 					m_buttonCancelText.Localize(_config.CancelButtonTid);
-				}
-
-				// Confirm button: the right button is used because there are two buttons
-				if (m_buttonConfirmRightText != null)
-				{
-					m_buttonConfirmRightText.Localize(_config.ConfirmButtonTid);
-				}
-
-				if (_config.ButtonMode == Config.EButtonsMode.ConfirmAndExtraAndCancel)
-				{
-					m_buttonConfirmCenterText.Localize(_config.ExtraButtonTid);
-				}
+				} break;
 			}
-			break;
-		} 
+		}
+
+		if(m_buttonConfirmText != null) {
+			switch(_config.ButtonMode) {
+				case Config.EButtonsMode.Confirm:
+				case Config.EButtonsMode.ConfirmAndCancel:
+				case Config.EButtonsMode.ConfirmAndExtra:
+				case Config.EButtonsMode.ConfirmAndExtraAndCancel: {
+					m_buttonConfirmText.Localize(_config.ConfirmButtonTid);
+				} break;
+			}
+		}
+
+		if(m_buttonExtraText != null) {
+			switch(_config.ButtonMode) {
+				case Config.EButtonsMode.ConfirmAndExtra:
+				case Config.EButtonsMode.ConfirmAndExtraAndCancel: {
+					m_buttonExtraText.Localize(_config.ExtraButtonTid);
+				} break;
+			}
+		}
 	}
 }
