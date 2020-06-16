@@ -710,6 +710,31 @@ public class PersistenceFacade : IBroadcastListener
         PopupManager.PopupMessage_Open(config);
     }    
 
+    public static void Popup_OpenDNAMergeConflict(Action _onRestore, Action _onKeep) {
+        // Check params
+        Debug.Assert(_onRestore != null && _onKeep != null, "Both _onRestore and _onKeep callbacks must be defined!");
+
+        // Initialize popup
+        IPopupMessage.Config config = IPopupMessage.GetConfig();
+        
+        // Button setup
+        config.IsButtonCloseVisible = false;
+        config.ButtonMode = IPopupMessage.Config.EButtonsMode.ConfirmAndExtra;
+        config.OnConfirm = _onRestore;
+        config.OnExtra = _onKeep;
+        config.BackButtonStrategy = IPopupMessage.Config.EBackButtonStratety.PerformExtra;
+        config.HighlightButton = IPopupMessage.Config.EHighlightButton.Confirm;
+
+        // Texts setup
+        config.TitleTid = "TID_DNA_MERGE_CONFLICT_TITLE";   // Save game conflict!
+        config.MessageTid = "TID_DNA_MERGE_CONFLICT_MESSAGE"; // A previous progress linked to this device was found. Do you want to recover it or keep playing with the current progress?
+        config.ConfirmButtonTid = "TID_DNA_MERGE_CONFLICT_BUTTON_1"; // Recover previous progress
+        config.ExtraButtonTid = "TID_DNA_MERGE_CONFLICT_BUTTON_2"; // Keep current progress
+        
+        // Open popup!
+        PopupManager.PopupMessage_Open(config);
+    }
+
     public static void Popup_OpenErrorWhenSyncing(Action onContinue, Action onRetry)
 	{                
         IPopupMessage.Config config = IPopupMessage.GetConfig();
