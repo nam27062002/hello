@@ -134,7 +134,8 @@ namespace Assets.Code.Game.Spline
 
 				if (spline == null)
 				{
-					Firebase.Crashlytics.Crashlytics.LogException(new System.Exception(">>>> IsInCurrentDirection(): null spline"));
+//					Debug.LogError("Gameobject: " + obj.name + " doesn't have a valid spline");
+//					Firebase.Crashlytics.Crashlytics.LogException(new System.Exception(">>>> IsInCurrentDirection(): null spline"));
 					return false;
 				}
 
