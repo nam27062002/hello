@@ -331,8 +331,13 @@ public class PersistenceLocalDriver
             TrackingPersistenceSystem.SetSocialParams(socialPlatformKey, socialId);
         }
 
-		// Checks if it's the first time the user logs in, if so then socialState has to be updated
-		if (UserProfile != null && UserProfile.SocialState == UserProfile.ESocialState.NeverLoggedIn)
+        SocialUtils.EPlatform platformId = SocialUtils.KeyToEPlatform(socialPlatformKey);        
+        if (!SocialPlatformManager.SharedInstance.IsAutoFirstLoginEnabled(platformId))
+        {
+            Prefs_SocialEverLoggedInExplicitly = true;
+        }
+
+        if (UserProfile != null && UserProfile.SocialState == UserProfile.ESocialState.NeverLoggedIn)
 		{
 			UserProfile.SocialState = UserProfile.ESocialState.LoggedIn;
 			Save(onDone);
@@ -432,6 +437,12 @@ public class PersistenceLocalDriver
     {
         get { return PersistencePrefs.Social_Id; }
         set { PersistencePrefs.Social_Id = value; }
+    }
+
+    public virtual bool Prefs_SocialEverLoggedInExplicitly
+    {
+        get { return PersistencePrefs.Social_EverLoggedInExplicitly; }
+        set { PersistencePrefs.Social_EverLoggedInExplicitly = value; }
     }
     #endregion
 }

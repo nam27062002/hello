@@ -130,6 +130,11 @@ public class PersistenceCloudDriver
 	private SocialPlatformManager.ELoginResult Syncer_LogInSocialResult { get; set; }
 	private Action<PersistenceStates.ESyncResult, PersistenceStates.ESyncResultDetail> Syncer_OnSyncDone { get; set; }
 
+    /// <summary>
+    /// When <c>true</c> the local user server Id is forced to be linked to the social user Id used for merging accounts
+    /// </summary>
+    private bool Syncer_ForceMerge { get; set; }
+
 	private ESyncSetp mSyncerStep;
 	private ESyncSetp Syncer_Step 
 	{ 
@@ -195,12 +200,14 @@ public class PersistenceCloudDriver
 		Syncer_IsSilent = false;
 		Syncer_PlatformId = SocialUtils.EPlatform.None;
 		Syncer_OnSyncDone = null;
-		Syncer_LogInSocialResult = SocialPlatformManager.ELoginResult.Error;
+        Syncer_ForceMerge = false;
+        Syncer_LogInSocialResult = SocialPlatformManager.ELoginResult.Error;
         Syncer_NeedsToShowCloudOverridenPopup = false;
         Syncer_Timer = 0f;
     }
 
-	public void Sync(SocialUtils.EPlatform platformId, bool isSilent, bool isAppInit, Action<PersistenceStates.ESyncResult, PersistenceStates.ESyncResultDetail> onDone)
+	public void Sync(SocialUtils.EPlatform platformId, bool isSilent, bool isAppInit,
+                     Action<PersistenceStates.ESyncResult, PersistenceStates.ESyncResultDetail> onDone, bool forceMerge = false)
 	{        
         PersistenceFacade.Log("(SYNC) CLOUD STARTED...");
 
@@ -211,7 +218,8 @@ public class PersistenceCloudDriver
 		Syncer_PlatformId = platformId;
 		Syncer_IsSilent = isSilent;
 		Syncer_IsAppInit = isAppInit;
-		State = EState.Syncing;
+        Syncer_ForceMerge = forceMerge;
+        State = EState.Syncing;
 
 		Syncer_Step = ESyncSetp.CheckingConnection;
 	}
@@ -312,38 +320,52 @@ public class PersistenceCloudDriver
 	}    
 
 	private void Syncer_Sync()
-	{        
-        switch (Syncer_LogInSocialResult)
+	{
+        if (SocialPlatformManager.SharedInstance.IsAutoFirstLoginEnabled(Syncer_PlatformId) &&
+            (Syncer_LogInSocialResult == SocialPlatformManager.ELoginResult.MergeLocalOrOnlineAccount ||
+            Syncer_LogInSocialResult == SocialPlatformManager.ELoginResult.MergeDifferentAccountWithProgress))
         {
-            case SocialPlatformManager.ELoginResult.MergeLocalOrOnlineAccount:
+            // Automatic logging in to a social platform lets the user overwrite the server userId linked to the social user Id in order to use
+            // the current server userId because it's not as risky as letting explicit social platform such as Facebook or SIWA do it
+            PersistenceFacade.Popup_OpenDNAMergeConflict(Syncer_PlatformId, Syncer_OnMergeConflictOverwriteSocialUserIdWithLocalServerId, Syncer_OnMergeConflictUseCloud);
+        }
+        else
+        {
+            // Uncomment to force MergeDifferentAccountWithoutProgress popup
+            //Syncer_LogInSocialResult = SocialPlatformManager.ELoginResult.MergeDifferentAccountWithoutProgress;
+
+            switch (Syncer_LogInSocialResult)
             {
-                Syncer_ProcessMerge();
+                case SocialPlatformManager.ELoginResult.MergeLocalOrOnlineAccount:
+                    {
+                        Syncer_ProcessMerge();
+                    }
+                    break;
+
+                case SocialPlatformManager.ELoginResult.MergeDifferentAccountWithProgress:
+                case SocialPlatformManager.ELoginResult.MergeDifferentAccountWithoutProgress:
+                    {
+                        Action onConfirm = delegate ()
+                        {
+                            Syncer_OnMergeConflictUseCloud();
+                        };
+
+                        Action onCancel = delegate ()
+                        {
+                            SocialPlatformManager.SharedInstance.Logout();
+                            Syncer_PerformDone(PersistenceStates.ESyncResult.ErrorLogging, PersistenceStates.ESyncResultDetail.Cancelled);
+                        };
+
+                        PersistenceFacade.Popup_OpenMergeWithADifferentAccount(Syncer_PlatformId, onConfirm, onCancel);
+                    }
+                    break;
+
+                default:
+                    {
+                        Syncer_ProcessSync();
+                    }
+                    break;
             }
-            break;
-
-            case SocialPlatformManager.ELoginResult.MergeDifferentAccountWithProgress:
-            case SocialPlatformManager.ELoginResult.MergeDifferentAccountWithoutProgress:
-            {
-                Action onConfirm = delegate ()
-                {
-                    Syncer_OnMergeConflictUseCloud();
-                };
-
-                Action onCancel = delegate ()
-                {
-                    SocialPlatformManager.SharedInstance.Logout();
-                    Syncer_PerformDone(PersistenceStates.ESyncResult.ErrorLogging, PersistenceStates.ESyncResultDetail.Cancelled);
-                };
-
-                PersistenceFacade.Popup_OpenMergeWithADifferentAccount(Syncer_PlatformId, onConfirm, onCancel);
-            }
-            break;            
-
-            default:
-            {
-                Syncer_ProcessSync();         
-            }
-            break;        
         }                
 	}    
 
@@ -365,7 +387,9 @@ public class PersistenceCloudDriver
             {
                 conflictState = PersistenceStates.EConflictState.RecommendCloud;
             }
-            
+
+            // Uncomment to force User decision popup
+            //conflictState = PersistenceStates.EConflictState.UserDecision;
             Syncer_ProcessConflictState(conflictState);
         }
         else if (localState == PersistenceStates.ELoadState.OK && cloudState == PersistenceStates.ELoadState.Corrupted)
@@ -422,7 +446,14 @@ public class PersistenceCloudDriver
             Syncer_PerformDone(PersistenceStates.ESyncResult.ErrorSyncing, PersistenceStates.ESyncResultDetail.None);
         }
     }
-    
+
+    private void Syncer_OnMergeConflictOverwriteSocialUserIdWithLocalServerId()
+    {
+        // For automatic social platforms the user is allowed to override the server Id associated to the platform user Id        
+        // Sync is restarted stating that force is allowed
+        Sync(Syncer_PlatformId, false, false, Syncer_OnSyncDone, true);        
+    }
+
     private void Syncer_ProcessMerge()
     {
         PersistenceStates.ELoadState localState = LocalDriver.Data.LoadState;
@@ -498,7 +529,7 @@ public class PersistenceCloudDriver
     {        
         PersistenceFacade.Log("(SYNCER) MERGE WITH CLOUD!!! Syncer_LogInSocialResult = " + Syncer_LogInSocialResult + " CloudData = " + ((Data == null) ? null : Data.ToString()));
 
-        // Calety is called to override the anonymous id so the game will log in server with the right account Id when reloading	
+        // Calety is called to overwrite the anonymous id so the game will log in server with the right account Id when reloading	
         switch (Syncer_LogInSocialResult)
         {
             case SocialPlatformManager.ELoginResult.MergeLocalOrOnlineAccount:
@@ -759,7 +790,7 @@ public class PersistenceCloudDriver
 
 	protected virtual void Syncer_ExtendedLogInSocial(Action<SocialPlatformManager.ELoginResult, string> onDone)
     {
-        SocialPlatformManager.SharedInstance.Login(Syncer_PlatformId, Syncer_IsSilent, Syncer_IsAppInit, onDone);        
+        SocialPlatformManager.SharedInstance.Login(Syncer_PlatformId, Syncer_IsSilent, Syncer_IsAppInit, onDone, Syncer_ForceMerge);        
     }
 
 	protected virtual void Syncer_ExtendedGetPersistence (Action<bool> onDone)

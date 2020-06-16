@@ -108,22 +108,28 @@ public class SocialPlatformManager : MonoBehaviour
                     AddSocialPlatform(SocialUtils.EPlatform.SIWA);
                 }
 
+                //
+                // DNA
+                //                 
+                SocialUtils dnaSocialUtils = AddSocialPlatform(SocialUtils.EPlatform.DNA);                
+
                 // Retrieves the current social platform: Checks that the user was logged in when she quit and if so then the
                 // latest social platform key is retrieved
-                string socialPlatformKey = PersistenceFacade.instance.LocalDriver.Prefs_SocialPlatformKey;
+                string socialPlatformKey = PersistenceFacade.instance.LocalDriver.Prefs_SocialPlatformKey;                
                 if (PersistencePrefs.Social_WasLoggedInWhenQuit && IsPlatformKeySupported(socialPlatformKey)) 
 				{
 					m_currentPlatformId = SocialUtils.KeyToEPlatform(socialPlatformKey);
 				} 
 				else 
 				{
-					m_currentPlatformId = SocialUtils.EPlatform.None;
+                    // DNA is the default social platform, as long as it is enabled, since it provides the user with cloud save automatically
+                    m_currentPlatformId = (dnaSocialUtils.GetIsEnabled()) ? SocialUtils.EPlatform.DNA : SocialUtils.EPlatform.None;
 				}
             }          
         }        
     }   
 
-	private void AddSocialPlatform(SocialUtils.EPlatform platformId)
+	private SocialUtils AddSocialPlatform(SocialUtils.EPlatform platformId)
 	{
 		SocialUtils socialPlatform;
 		switch (platformId) 
@@ -140,6 +146,10 @@ public class SocialPlatformManager : MonoBehaviour
                 socialPlatform = new SocialUtilsSIWA();
                 break;
 
+            case SocialUtils.EPlatform.DNA:
+                socialPlatform = new SocialUtilsDNA();
+                break;
+
             default:
 				socialPlatform = new SocialUtilsDummy (false, false);
 				break;
@@ -154,7 +164,9 @@ public class SocialPlatformManager : MonoBehaviour
 		{
 			m_platforms.Add(platformId, socialPlatform);
 			m_supportedPlatformIds.Add(platformId);
-		}	
+		}
+
+        return socialPlatform;
 	}
     
     public void Reset()
@@ -279,6 +291,12 @@ public class SocialPlatformManager : MonoBehaviour
         {
             platform.Cache.Invalidate();
         }
+    }
+
+    public bool IsAutoFirstLoginEnabled(SocialUtils.EPlatform platformId)
+    {
+        SocialUtils platform = GetPlatform(platformId);
+        return platform != null && platform.IsAutoFirstLoginEnabled;        
     }
 
 	#region current_platform
@@ -426,7 +444,7 @@ public class SocialPlatformManager : MonoBehaviour
 			m_onSocialPlatformLogout();
 	}
 
-	public void Login(SocialUtils.EPlatform platformId, bool isSilent, bool isAppInit, Action<ELoginResult, string> onDone)
+	public void Login(SocialUtils.EPlatform platformId, bool isSilent, bool isAppInit, Action<ELoginResult, string> onDone, bool forceMerge = false)
     {
 		if (!IsPlatformIdSupported(platformId))
 		{
@@ -447,7 +465,8 @@ public class SocialPlatformManager : MonoBehaviour
         isAppInit = false;
 
         string socialId = PersistenceFacade.instance.LocalDriver.Prefs_SocialId;        
-        Log("LOGGING IN... currentPlatform = " + m_currentPlatformId + " isSilent = " + isSilent + " isAppInit = " + isAppInit + " alreadyLoggedIn = " + CurrentPlatform_IsLoggedIn() + " SocialId = " + socialId);
+        Log("LOGGING IN... currentPlatform = " + m_currentPlatformId + " isSilent = " + isSilent + " isAppInit = " + isAppInit +
+            " alreadyLoggedIn = " + CurrentPlatform_IsLoggedIn() + " SocialId = " + socialId + " forceMerge = " + forceMerge);
 
         Login_Discard();
 
@@ -461,10 +480,17 @@ public class SocialPlatformManager : MonoBehaviour
         if (isSilent)
         {
             bool neverLoggedIn = string.IsNullOrEmpty(socialId);
+            if (m_currentPlatformId == SocialUtils.EPlatform.DNA)
+            {
+                neverLoggedIn = false;
+            }
 
 #if UNITY_EDITOR
-            // We want to prevent developers from seeing social login popup every time the game is started since editor doesn't cache the social token
-            neverLoggedIn = true;
+            if (m_currentPlatformId == SocialUtils.EPlatform.Facebook)
+            {
+                // We want to prevent developers from seeing social login popup every time the game is started since editor doesn't cache the social token
+                neverLoggedIn = true;
+            }
 #endif
 
             // If the user has never logged in then we should just mark it as not loggedIn
@@ -485,7 +511,7 @@ public class SocialPlatformManager : MonoBehaviour
         if (!Login_IsLogInReady)
         {
             Messenger.AddListener<bool>(MessengerEvents.SOCIAL_LOGGED, Login_OnLoggedInHelper);
-			GetPlatform(m_currentPlatformId).Login(isAppInit);
+			GetPlatform(m_currentPlatformId).Login(isAppInit, forceMerge);
         }
 
         /*
@@ -638,6 +664,33 @@ public class SocialPlatformManager : MonoBehaviour
                         break;
                 }
 
+                SocialUtils platform = GetPlatform(CurrentPlatform_GetId());
+                if (platform != null && platform.IsAutoFirstLoginEnabled)
+                {
+                    switch (Login_MergeState)
+                    {
+                        case ELoginMergeState.MergeDifferentAccountWithoutProgress:
+                            // This situation is not allowed for implicit log in because it'd mean that the social userId has changed and
+                            // that's not possible because social userId in an implicit social platform is linked to the device
+                            LogWarning("(LOGGING):: MergeDifferentAccountWithoutProgress not allowed when logging in implicitly");
+                            result = ELoginResult.Error;
+                            break;
+
+                        case ELoginMergeState.MergeLocalOrOnlineAccount:
+                        case ELoginMergeState.MergeDifferentAccountWithProgress:
+                            // If the user has ever logged in explicitly then it means that the user might not be using her original server
+                            // user id, which is the only oe that is linked to her device id. Merging via an implicit platform is not allowed
+                            // after an user has logged in explicitly. If the user was using her original user server id then no merge conflict
+                            // had arisen an we don't want to give the user the chance to mess her progress up
+                            if (PersistenceFacade.instance.LocalDriver.Prefs_SocialEverLoggedInExplicitly)
+                            {
+                                Log("(LOGGING):: Merge conflict when loging in to an automatic social platform is ignored because the user has ever logged in explicitly");
+                                result = ELoginResult.Error;
+                            }                            
+                            break;
+                    }
+                }
+
                 Login_PerformDone(result);                
             }
             else
@@ -706,5 +759,15 @@ public class SocialPlatformManager : MonoBehaviour
     public static void LogError(string msg)
     {
         Debug.LogError(LOG_CHANNEL + msg);
+    }
+
+#if ENABLE_LOGS
+    [Conditional("DEBUG")]
+#else
+    [Conditional("FALSE")]
+#endif
+    public static void LogWarning(string msg)
+    {
+        Debug.LogWarning(LOG_CHANNEL + msg);
     }
 }

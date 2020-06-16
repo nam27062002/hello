@@ -11,7 +11,8 @@ public class EditorSocialPlatformMenu : MonoBehaviour
     private const string SOCIAL_PLATFORM_NONE = SOCIAL_PLATFORM_MENU + "/None";
     private const string SOCIAL_PLATFORM_FACEBOOK = SOCIAL_PLATFORM_MENU + "/Facebook";
     private const string SOCIAL_PLATFORM_WEIBO = SOCIAL_PLATFORM_MENU + "/Weibo";
-    private const string SOCIAL_PLATFORM_SIWA = SOCIAL_PLATFORM_MENU + "/SIWA";    
+    private const string SOCIAL_PLATFORM_SIWA = SOCIAL_PLATFORM_MENU + "/SIWA";
+    private const string SOCIAL_PLATFORM_DNA = SOCIAL_PLATFORM_MENU + "/DNA";
 
     private static PersistenceLocalDriver s_persistenceLocalDriver = new PersistenceLocalDriver();    
 
@@ -89,5 +90,18 @@ public class EditorSocialPlatformMenu : MonoBehaviour
     {
         Menu.SetChecked(SOCIAL_PLATFORM_SIWA, SocialPlatform == SocialUtils.EPlatform.SIWA);
         return true;
-    }   
+    }
+
+    [MenuItem(SOCIAL_PLATFORM_DNA)]
+    public static void SocialPlatform_SetDNA()
+    {
+        SocialPlatform = SocialUtils.EPlatform.DNA;
+    }
+
+    [MenuItem(SOCIAL_PLATFORM_DNA, true)]
+    public static bool SocialPlatform_SetDNAValidate()
+    {
+        Menu.SetChecked(SOCIAL_PLATFORM_DNA, SocialPlatform == SocialUtils.EPlatform.DNA);
+        return true;
+    }
 }

@@ -107,16 +107,19 @@ public class PersistenceFacade : IBroadcastListener
 
         Action onLoadDone = delegate()
 		{            
-            Log("SYNC: Loading  local DONE! " + LocalData.LoadState);           
+            Log("SYNC: Loading  local DONE! " + LocalData.LoadState);
 
-			// Retrieves the latest social platform that the user logged in to
-			SocialUtils.EPlatform platformId = SocialUtils.KeyToEPlatform(LocalDriver.Prefs_SocialPlatformKey);
-            bool isPlatformSupported = SocialPlatformManager.SharedInstance.IsPlatformIdSupported(platformId);
+            // Retrieves the latest social platform that the user logged in to
+            SocialPlatformManager socialPlatformManager = SocialPlatformManager.SharedInstance;
+            SocialUtils.EPlatform platformId = socialPlatformManager.CurrentPlatform_GetId();//SocialUtils.KeyToEPlatform(LocalDriver.Prefs_SocialPlatformKey);
+            bool isPlatformSupported = socialPlatformManager.IsPlatformIdSupported(platformId);
+            bool isAutoLoginEnabled = socialPlatformManager.IsAutoFirstLoginEnabled(platformId);
 
             // If local persistence is corrupted then we'll try to override it with cloud persistence if the user has ever logged in the social network
             if (LocalData.LoadState == PersistenceStates.ELoadState.Corrupted)
 			{
-                bool logInSocialEver = isPlatformSupported && !string.IsNullOrEmpty(LocalDriver.Prefs_SocialId);									   
+                bool logInSocialEver = isPlatformSupported &&
+                                       (isAutoLoginEnabled || !string.IsNullOrEmpty(LocalDriver.Prefs_SocialId));									   
 
 				Action onReset = delegate()
 				{
@@ -179,8 +182,10 @@ public class PersistenceFacade : IBroadcastListener
                     Sync_OnDone(result, null);
                 };
 
-                // Tries to sync with cloud only if the user was logged in the social platform when she quit the app last time she played
-                if (isPlatformSupported && PersistencePrefs.Social_WasLoggedInWhenQuit)
+                // Tries to sync with cloud if the platform is allowed to login automatically,
+                // otherwise the user needs to have been logged in to the social platform when she quit the app last time she played
+                if (isPlatformSupported &&
+                    (isAutoLoginEnabled || PersistencePrefs.Social_WasLoggedInWhenQuit))
                 {                    
                     Config.CloudDriver.Sync(platformId, true, true, onSyncDone);
                 }
@@ -642,7 +647,7 @@ public class PersistenceFacade : IBroadcastListener
         config.OnCancel = onLocal;
         config.IsButtonCloseVisible = false;
         PopupManager.PopupMessage_Open(config);
-    }   
+    }    
 
     public static void Popup_OpenSyncGenericError(SocialUtils.EPlatform platformId, int errorCode, Action onConfirm)
     {
