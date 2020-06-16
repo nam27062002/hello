@@ -40,10 +40,14 @@ public class CPTechTab : MonoBehaviour {
     [SerializeField] private TextMeshProUGUI m_AdUnitInfoText = null;
     [SerializeField] private Toggle m_debugServerToggle = null;
     [SerializeField] private TMP_Dropdown m_countryDropDown = null;
+	[SerializeField] private TextMeshProUGUI m_currentPlatformText = null;
+	[SerializeField] private TextMeshProUGUI m_currentPlatformUserIdText = null;
+	[SerializeField] private TextMeshProUGUI m_everExplicitLoggedInText = null;
 
 
-    // Internal
-    private DateTime m_startTimestamp;
+
+	// Internal
+	private DateTime m_startTimestamp;
 	private StringBuilder m_outputSb = new StringBuilder();
 
 	//private RequestNetwork requestNetwork;
@@ -76,8 +80,12 @@ public class CPTechTab : MonoBehaviour {
 		m_trackingIdText.text = "TrackingId: " + HDTrackingManager.Instance.GetTrackingID();
 		m_DNAProfileIdText.text = "DNA profileId: " + HDTrackingManager.Instance.GetDNAProfileID();
         m_AdUnitInfoText.text = "Ads: " + GameAds.instance.GetInfo();
+		m_currentPlatformText.text = "Cloud Platform: " + SocialPlatformManager.SharedInstance.CurrentPlatform_GetKey();
+		m_currentPlatformUserIdText.text = "Cloud userId:" + SocialPlatformManager.SharedInstance.CurrentPlatform_GetUserID();
+		m_everExplicitLoggedInText.text = "Ever explicit LogIn: " + PersistenceFacade.instance.LocalDriver.Prefs_SocialEverLoggedInExplicitly.ToString();
 
-        m_debugServerToggle.isOn = DebugSettings.useDebugServer;
+
+		m_debugServerToggle.isOn = DebugSettings.useDebugServer;
 		m_debugServerToggle.onValueChanged.AddListener(OnToggleDebugServer);        
     }
 
@@ -338,6 +346,12 @@ public class CPTechTab : MonoBehaviour {
 		m_outputSb.Length = 0;
 		Output("Hungry Dragon v" + GameSettings.internalVersion + " console output");
 	}
+
+    public void OnSaveGame()
+    {
+		PersistenceFacade.instance.Save_Request(true);
+		PersistenceFacade.instance.CloudDriver.Upload();
+    }
 
 #region countries
     private bool Country_IsInitializing { get; set; }
