@@ -293,10 +293,10 @@ public class SocialPlatformManager : MonoBehaviour
         }
     }
 
-    public bool IsAutoFirstLoginEnabled(SocialUtils.EPlatform platformId)
+    public bool IsImplicit(SocialUtils.EPlatform platformId)
     {
         SocialUtils platform = GetPlatform(platformId);
-        return platform != null && platform.IsAutoFirstLoginEnabled;        
+        return platform != null && platform.IsImplicit;        
     }
 
 	#region current_platform
@@ -359,6 +359,11 @@ public class SocialPlatformManager : MonoBehaviour
 	{
 		InvalidateCachedSocialInfo(m_currentPlatformId);
 	}
+
+    public bool CurrentPlatform_IsImplicit()
+    {
+        return IsImplicit(m_currentPlatformId);
+    }
 
 	public bool CurrentPlatform_IsLoggedIn()
 	{
@@ -665,7 +670,7 @@ public class SocialPlatformManager : MonoBehaviour
                 }
 
                 SocialUtils platform = GetPlatform(CurrentPlatform_GetId());
-                if (platform != null && platform.IsAutoFirstLoginEnabled)
+                if (platform != null && platform.IsImplicit)
                 {
                     switch (Login_MergeState)
                     {

@@ -332,7 +332,7 @@ public class PersistenceLocalDriver
         }
 
         SocialUtils.EPlatform platformId = SocialUtils.KeyToEPlatform(socialPlatformKey);        
-        if (!SocialPlatformManager.SharedInstance.IsAutoFirstLoginEnabled(platformId))
+        if (!SocialPlatformManager.SharedInstance.IsImplicit(platformId))
         {
             Prefs_SocialEverLoggedInExplicitly = true;
         }

@@ -321,7 +321,7 @@ public class PersistenceCloudDriver
 
 	private void Syncer_Sync()
 	{
-        if (SocialPlatformManager.SharedInstance.IsAutoFirstLoginEnabled(Syncer_PlatformId) &&
+        if (SocialPlatformManager.SharedInstance.IsImplicit(Syncer_PlatformId) &&
             (Syncer_LogInSocialResult == SocialPlatformManager.ELoginResult.MergeLocalOrOnlineAccount ||
             Syncer_LogInSocialResult == SocialPlatformManager.ELoginResult.MergeDifferentAccountWithProgress))
         {

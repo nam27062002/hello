@@ -294,29 +294,29 @@ public abstract class SocialUtils
     }
 
     /// <summary>
-    /// Whether or not the first login can be done by the game automatically, without user's interaction, typically for DNA.
+    /// Whether or not the platform is "implicit", which means that first login can be done by the game automatically, without user's interaction, typically for DNA.
     /// Other social platforms such as Facebook or SIWA require the user to hit the login button explicitly to trigger the first
-    /// login
+    /// login. These platforms are considered "explicit"
     /// </summary>
-    private bool m_isAutoFirstLoginEnabled;
-    public bool IsAutoFirstLoginEnabled
+    private bool m_isImplicit;
+    public bool IsImplicit
     {
         get
         {
-            return m_isAutoFirstLoginEnabled;
+            return m_isImplicit;
         }
 
         private set
         {
-            m_isAutoFirstLoginEnabled = value;
+            m_isImplicit = value;
         }
     }
 
-    public SocialUtils(EPlatform platform, bool isAutoFirstLoginEnabled=false)
+    public SocialUtils(EPlatform platform, bool isImplicit=false)
     {
         SetIsEnabled(true);
         SetPlatform(platform);
-        IsAutoFirstLoginEnabled = isAutoFirstLoginEnabled;
+        IsImplicit = isImplicit;
     }
 
     private string EPlatformToCaletySocialPlatform(EPlatform eplatform)
@@ -353,7 +353,7 @@ public abstract class SocialUtils
         {
             Messenger.Broadcast(MessengerEvents.MERGE_FAILED);
         }
-        else*/
+        else */
         {
             // Translate EPlatform into Calety social platform
             string platform = EPlatformToCaletySocialPlatform(GetPlatform());

@@ -113,7 +113,7 @@ public class PersistenceFacade : IBroadcastListener
             SocialPlatformManager socialPlatformManager = SocialPlatformManager.SharedInstance;
             SocialUtils.EPlatform platformId = socialPlatformManager.CurrentPlatform_GetId();//SocialUtils.KeyToEPlatform(LocalDriver.Prefs_SocialPlatformKey);
             bool isPlatformSupported = socialPlatformManager.IsPlatformIdSupported(platformId);
-            bool isAutoLoginEnabled = socialPlatformManager.IsAutoFirstLoginEnabled(platformId);
+            bool isAutoLoginEnabled = socialPlatformManager.IsImplicit(platformId);
 
             // If local persistence is corrupted then we'll try to override it with cloud persistence if the user has ever logged in the social network
             if (LocalData.LoadState == PersistenceStates.ELoadState.Corrupted)
