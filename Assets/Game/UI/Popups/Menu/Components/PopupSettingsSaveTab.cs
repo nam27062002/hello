@@ -329,9 +329,13 @@ public class PopupSettingsSaveTab : MonoBehaviour
 	/// </summary>
     private void Social_Refresh()
     {        
-        bool isLoggedIn = Model_SocialIsLoggedIn();
-		m_socialNotLoggedInRoot.SetActive(!isLoggedIn);
-		m_socialLoggedInRoot.SetActive(isLoggedIn);
+		// If the user is EXPLICITELY logged in into a social platform, show the logout layout instead
+        bool isExplicitelyLoggedIn = Model_SocialIsLoggedIn();
+		isExplicitelyLoggedIn &= !SocialPlatformManager.SharedInstance.CurrentPlatform_IsImplicit();
+
+		// Show target layout
+		m_socialNotLoggedInRoot.SetActive(!isExplicitelyLoggedIn);
+		m_socialLoggedInRoot.SetActive(isExplicitelyLoggedIn);
 
 		if(m_logoutIcon != null) {
 			m_logoutIcon.Refresh();
@@ -572,8 +576,8 @@ public class PopupSettingsSaveTab : MonoBehaviour
             case EState.LoggedInAndIncentivised:
             {
                 returnValue = PersistenceFacade.instance.CloudDriver.IsLoggedIn;
-            }
-            break;
+			}
+			break;
 
             case EState.NeverLoggedIn:
             case EState.PreviouslyLoggedIn:
