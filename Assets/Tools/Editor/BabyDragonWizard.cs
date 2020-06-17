@@ -70,6 +70,7 @@ public class BabyDragonWizard : EditorWindow
 	bool addEatBehaviour = true;
 	RuntimeAnimatorController runtimeAnimatorControllerGameplay;
 	static int assetBundleGameplayIndex = 0;
+	StateMachine aiBrain;
 
 	// GUI
 	Texture2D previewBackgroundTexture = null;
@@ -207,6 +208,10 @@ public class BabyDragonWizard : EditorWindow
 		popupPetCloneIndex = EditorGUILayout.Popup("Clone pet behaviour:", popupPetCloneIndex, popupPetCloneArray);
 		EditorGUILayout.EndHorizontal();
 		EditorGUILayout.BeginHorizontal();
+		EditorGUILayout.LabelField("Override AI Brain:");
+		aiBrain = (StateMachine)EditorGUILayout.ObjectField(aiBrain, typeof(StateMachine), true);
+		EditorGUILayout.EndHorizontal();
+		EditorGUILayout.BeginHorizontal();
 		addEatBehaviour = EditorGUILayout.Toggle("Add eat behaviour", addEatBehaviour);
 		EditorGUILayout.EndHorizontal();
 		EditorGUILayout.BeginHorizontal();
@@ -263,19 +268,7 @@ public class BabyDragonWizard : EditorWindow
 
     // Create main menu and gameplay prefabs
     void CreatePrefabs()
-    {
-		if (babyDragonFBX == null)
-		{
-			EditorUtility.DisplayDialog("Error", "View FBX field is required", "Close");
-			return;
-		}
-
-		if (string.IsNullOrEmpty(sku))
-		{
-			EditorUtility.DisplayDialog("Error", "Baby dragon SKU field is required. Must be the same SKU defined in the baby dragons definitions XML", "Close");
-			return;
-		}
-
+	{ 
 		if (fbxScale > 0f)
 		{
 			EditorUtility.DisplayProgressBar("Baby Dragon", "Setting FBX scale...", 0.25f);
@@ -441,6 +434,24 @@ public class BabyDragonWizard : EditorWindow
 			UnityEditorInternal.ComponentUtility.CopyComponent(machineEatBehaviour);
 			UnityEditorInternal.ComponentUtility.PasteComponentAsNew(root);
 		}
+
+        // Override AI brain if needed
+        if (aiBrain != null)
+        {
+			AirPilot airPilot = root.GetComponent<AirPilot>();
+            if (airPilot != null)
+            {
+			    foreach (FieldInfo field in airPilot.GetType().BaseType.GetFields(BindingFlags.NonPublic | BindingFlags.Instance))
+				{ 
+					switch (field.Name)
+					{
+						case "m_brainResource":
+							field.SetValue(airPilot, aiBrain);
+							break;
+					}
+				}
+            }
+        }
 
 		// At this point, the references on the new prefab are still pointing to the old prefab.
 		// Update Pet script fields via reflection
