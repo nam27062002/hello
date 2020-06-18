@@ -1,6 +1,9 @@
+//#define MOCK_CLOUD_DISCONNECTION
+
 using FGOL.Server;
 using SimpleJSON;
 using System;
+using System.Collections.Generic;
 public class PersistenceCloudDriver
 {
     private enum ESyncSetp
@@ -12,6 +15,13 @@ public class PersistenceCloudDriver
         GettingPersistence,
         Syncing
     };
+
+    public enum ESyncState
+    {
+        No,
+        Yes,
+        Failed // An irrecoverable error arose when syncing with server. The user chose to keep playing withoug cloud save
+    }
 
     private enum EState
     {
@@ -124,18 +134,98 @@ public class PersistenceCloudDriver
     }
 
     #region syncer
-    private bool Syncer_IsSilent { get; set; }
-	protected bool Syncer_IsAppInit { get; set; }
-	private SocialUtils.EPlatform Syncer_PlatformId { get; set; }
-	private SocialPlatformManager.ELoginResult Syncer_LogInSocialResult { get; set; }
-	private Action<PersistenceStates.ESyncResult, PersistenceStates.ESyncResultDetail> Syncer_OnSyncDone { get; set; }
+    private Stack<PersistenceSyncerRequest> m_syncerRequests;
+
+    private PersistenceSyncerRequest Syncer_CurrentRequest
+    {
+        get
+        {            
+            return m_syncerRequests.Peek();
+        }
+    }
+
+    private bool Syncer_IsSilent
+    {
+        get
+        {
+            return Syncer_CurrentRequest.IsSilent;
+        }
+
+        set
+        {
+            Syncer_CurrentRequest.IsSilent = value;
+        }
+    }
+
+	protected bool Syncer_IsAppInit
+    {
+        get
+        {
+            return Syncer_CurrentRequest.IsAppInit;
+        }
+
+        set
+        {
+            Syncer_CurrentRequest.IsAppInit = value;
+        }
+    }
+
+	public SocialUtils.EPlatform Syncer_PlatformId
+    {
+        get
+        {
+            return Syncer_CurrentRequest.PlatformId;
+        }
+
+        set
+        {
+            Syncer_CurrentRequest.PlatformId = value;
+        }
+    }
+
+    private SocialPlatformManager.ELoginResult Syncer_LogInSocialResult
+    {
+        get
+        {
+            return Syncer_CurrentRequest.LogInSocialResult;
+        }
+
+        set
+        {
+            Syncer_CurrentRequest.LogInSocialResult = value;
+        }
+    }
+
+    public Action<PersistenceStates.ESyncResult, PersistenceStates.ESyncResultDetail> Syncer_OnSyncDone
+    {
+        get
+        {
+            return Syncer_CurrentRequest.OnSyncDone;
+        }
+
+        set
+        {
+            Syncer_CurrentRequest.OnSyncDone = value;
+        }
+    }
 
     /// <summary>
     /// When <c>true</c> the local user server Id is forced to be linked to the social user Id used for merging accounts
     /// </summary>
-    private bool Syncer_ForceMerge { get; set; }
+    private bool Syncer_ForceMerge
+    {
+        get
+        {
+            return Syncer_CurrentRequest.ForceMerge;
+        }
 
-	private ESyncSetp mSyncerStep;
+        set
+        {
+            Syncer_CurrentRequest.ForceMerge = value;
+        }
+    }
+
+    private ESyncSetp mSyncerStep;
 	private ESyncSetp Syncer_Step 
 	{ 
 		get 
@@ -173,45 +263,75 @@ public class PersistenceCloudDriver
 		}
 	}
 
-	private PersistenceComparator mSyncerComparator;
 	private PersistenceComparator Syncer_Comparator 
 	{ 
 		get 
 		{
-			if (mSyncerComparator == null)
-			{
-				mSyncerComparator = new HDPersistenceComparator();
-			}
-
-			return mSyncerComparator;
+            return Syncer_CurrentRequest.Comparator;
 		}
 	}
 
-    private bool Syncer_NeedsToShowCloudOverridenPopup { get; set; }
+    private bool Syncer_NeedsToShowCloudOverridenPopup
+    {
+        get
+        {
+            return Syncer_CurrentRequest.NeedsToShowCloudOverridenPopup;
+        }
 
-    private float Syncer_Timer { get; set; }
+        set
+        {
+            Syncer_CurrentRequest.NeedsToShowCloudOverridenPopup = value;
+        }
+    }
 
-	private void Syncer_Reset()
+    private float Syncer_Timer
+    {
+        get
+        {
+            return Syncer_CurrentRequest.Timer;
+        }
+
+        set
+        {
+            Syncer_CurrentRequest.Timer = value;
+        }
+    }
+
+    private void Syncer_Reset()
 	{
-        Syncer_Comparator.Reset();
+        if (m_syncerRequests == null)
+        {
+            m_syncerRequests = new Stack<PersistenceSyncerRequest>();
+            m_syncerRequests.Push(new PersistenceSyncerRequest());
+        }
 
-		Syncer_Step = ESyncSetp.None;
-		Syncer_IsAppInit = false;
-		Syncer_IsSilent = false;
-		Syncer_PlatformId = SocialUtils.EPlatform.None;
-		Syncer_OnSyncDone = null;
-        Syncer_ForceMerge = false;
-        Syncer_LogInSocialResult = SocialPlatformManager.ELoginResult.Error;
-        Syncer_NeedsToShowCloudOverridenPopup = false;
-        Syncer_Timer = 0f;
+        Syncer_CurrentRequest.Reset();        
+		Syncer_Step = ESyncSetp.None;		       
+    }
+
+    public void Sync_PopRequest()
+    {
+        if (m_syncerRequests.Count > 1)
+        {
+            m_syncerRequests.Pop();
+        }
     }
 
 	public void Sync(SocialUtils.EPlatform platformId, bool isSilent, bool isAppInit,
-                     Action<PersistenceStates.ESyncResult, PersistenceStates.ESyncResultDetail> onDone, bool forceMerge = false)
+                     Action<PersistenceStates.ESyncResult, PersistenceStates.ESyncResultDetail> onDone,
+                     bool forceMerge = false, bool pushRequest = false)
 	{        
         PersistenceFacade.Log("(SYNC) CLOUD STARTED...");
 
-        Syncer_Reset();
+        if (pushRequest)
+        {
+            m_syncerRequests.Push(new PersistenceSyncerRequest());
+        }
+        else
+        {
+            Syncer_Reset();
+        }
+
 		Upload_IsAllowed = false;
 
 		Syncer_OnSyncDone = onDone;
@@ -237,11 +357,22 @@ public class PersistenceCloudDriver
 		}
 	}
 
-	private void Syncer_CheckConnection()
+#if MOCK_CLOUD_DISCONNECTION    
+    public bool ForceDisconnection = false;
+#endif
+
+    private void Syncer_CheckConnection()
 	{
 		Action<bool> onDone = delegate(bool success)
 		{
-			if (success)
+#if MOCK_CLOUD_DISCONNECTION            
+            if (ForceDisconnection)
+            {
+                Syncer_ProcessNoConnectionError();
+            }
+            else
+#endif
+            if (success)
 			{
 				Syncer_Step = ESyncSetp.LoggingInServer;
 			}
@@ -327,7 +458,7 @@ public class PersistenceCloudDriver
         {
             // Automatic logging in to a social platform lets the user overwrite the server userId linked to the social user Id in order to use
             // the current server userId because it's not as risky as letting explicit social platform such as Facebook or SIWA do it
-            PersistenceFacade.Popup_OpenDNAMergeConflict(Syncer_OnMergeConflictUseCloud, Syncer_OnMergeConflictOverwriteSocialUserIdWithLocalServerId);
+            PersistenceFacade.Popup_OpenImplicitMergeConflict(Syncer_PlatformId, Syncer_OnMergeConflictUseCloud, Syncer_OnMergeConflictOverwriteSocialUserIdWithLocalServerId);
         }
         else
         {
@@ -449,9 +580,9 @@ public class PersistenceCloudDriver
 
     private void Syncer_OnMergeConflictOverwriteSocialUserIdWithLocalServerId()
     {
-        // For automatic social platforms the user is allowed to override the server Id associated to the platform user Id        
-        // Sync is restarted stating that force is allowed
-        Sync(Syncer_PlatformId, false, false, Syncer_OnSyncDone, true);        
+        // Prevent this flow from being triggered again
+        PersistenceFacade.Log("User chooses to keep playing with local progress. This prevents this flow from being triggered again");
+        LocalDriver.Prefs_SocialSyncState = ESyncState.Failed;
     }
 
     private void Syncer_ProcessMerge()

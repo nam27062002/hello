@@ -346,14 +346,14 @@ public abstract class SocialUtils
     }
 
     public virtual void Login(bool isAppInit, bool forceMerge)
-    {
-        /*
-        // MOCK
+    {        
+        // MOCK        
         if (forceMerge)
         {
+            Messenger.Broadcast<bool>(MessengerEvents.SOCIAL_LOGGED, true);
             Messenger.Broadcast(MessengerEvents.MERGE_FAILED);
-        }
-        else */
+        }        
+        else        
         {
             // Translate EPlatform into Calety social platform
             string platform = EPlatformToCaletySocialPlatform(GetPlatform());

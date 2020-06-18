@@ -30,6 +30,8 @@ public class PersistencePrefs
     // by hitting a social platform button (Facebook Weibo, SIWA)
     private static string KEY_SOCIAL_EVER_LOGGED_IN_EXPLICITLY = "socialEverLoggedInExplicitly";
 
+    private static string KEY_SOCIAL_SYNC_STATE = "socialSyncState";
+
     // Stored here so TrackingManager can be initialized as soon as possible
     private static string KEY_SERVER_USER_ID = "serverUserId";
 
@@ -65,6 +67,7 @@ public class PersistencePrefs
         KEY_SOCIAL_PROFILE_NAME,
         KEY_SOCIAL_LOGGED_IN_WHEN_QUIT,
         KEY_SOCIAL_EVER_LOGGED_IN_EXPLICITLY,
+        KEY_SOCIAL_SYNC_STATE,
 
         KEY_SERVER_USER_ID,
         KEY_SAVEPATHS_LATEST_INDEX,
@@ -239,6 +242,12 @@ public class PersistencePrefs
     {
         get { return PlayerPrefs.GetInt(KEY_SOCIAL_EVER_LOGGED_IN_EXPLICITLY, 0) == 1; }
         set { SetInt(KEY_SOCIAL_EVER_LOGGED_IN_EXPLICITLY, (value ? 1 : 0)); }
+    }
+
+    public static int Social_SyncState
+    {
+        get { return PlayerPrefs.GetInt(KEY_SOCIAL_SYNC_STATE, 0); }
+        set { SetInt(KEY_SOCIAL_SYNC_STATE, value); }
     }
 #endregion
 

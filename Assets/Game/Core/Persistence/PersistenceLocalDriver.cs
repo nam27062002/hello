@@ -444,5 +444,11 @@ public class PersistenceLocalDriver
         get { return PersistencePrefs.Social_EverLoggedInExplicitly; }
         set { PersistencePrefs.Social_EverLoggedInExplicitly = value; }
     }
+
+    public PersistenceCloudDriver.ESyncState Prefs_SocialSyncState
+    {
+        get { return (PersistenceCloudDriver.ESyncState)PersistencePrefs.Social_SyncState; }
+        set { PersistencePrefs.Social_SyncState = (int)value; }
+    }
     #endregion
 }
