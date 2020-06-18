@@ -259,7 +259,7 @@ public class ReferralManager
         foreach (String sku in _skus)
         {
 
-			OfferPackReferralReward reward = UsersManager.currentUser.unlockedReferralRewards.Find(r => r.sku == sku);
+			OfferPackReferralReward reward = UsersManager.currentUser.unlockedReferralRewards.Find(r => r.referralRewardSku == sku);
 
 			if (reward != null)
 			{

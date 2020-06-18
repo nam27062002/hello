@@ -95,8 +95,9 @@ public class ItemSizeSelector : MonoBehaviour {
         // Always update the pill size in the Update phase to avoid errors
         if (m_updateSize)
         {
-			UpdateSize();
 			m_updateSize = false;
+			UpdateSize();
+			
         }
     }
 

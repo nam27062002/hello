@@ -173,19 +173,26 @@ public class PopupShopReferral : MonoBehaviour
             GameObject rewardPreview = Instantiate(m_referralRewardPrefab);
             rewardPreview.transform.SetParent(m_rewardsContainer, false);
 
+            // Is this reward in the list of unlocked rewards (ready to be claimed)
+            bool readyToClaim = UsersManager.currentUser.unlockedReferralRewards.
+                                Find(r => r.referralRewardSku == reward.referralRewardSku) != null;
+
             // Find the state of the reward (claimed, ready to claim, etc)
             OfferPackReferralReward.State state;
-            if (friendsCount == reward.friendsRequired)
+            if (readyToClaim)
             {
                 state = OfferPackReferralReward.State.READY_TO_CLAIM;
             }
-            else if (friendsCount > reward.friendsRequired)
-            {
-                state = OfferPackReferralReward.State.CLAIMED;
-            }
             else
             {
-                state = OfferPackReferralReward.State.NOT_AVAILABLE;
+                if (friendsCount >= reward.friendsRequired)
+                {
+                    state = OfferPackReferralReward.State.CLAIMED;
+                }
+                else
+                {
+                    state = OfferPackReferralReward.State.NOT_AVAILABLE;
+                }
             }
 
             // Initialize reward preview

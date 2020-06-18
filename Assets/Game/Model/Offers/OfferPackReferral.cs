@@ -21,11 +21,14 @@ public class OfferPackReferral: OfferPack {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	
+
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
-	
+
+	// Cache
+	private int[] m_milestones;
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -67,12 +70,21 @@ public class OfferPackReferral: OfferPack {
 
 
 	/// <summary>
-	/// Get the index of the current or next reward defined in the referral rewards progression
+	/// Get the index of next reward in the progression (or already ready to claim)
 	/// </summary>
 	/// <param name="_totalReferrals">The amount of referrals</param>
-	/// <returns>The index of the next/current reward in this pack</returns>
-	public int GetNextRewardIndex(int _totalReferrals)
+	/// <returns>The next offer pack to claim</returns>
+	public OfferPackReferralReward GetNextReward(int _totalReferrals)
 	{
+        // Check if there is a pending to claim reward
+        if (UsersManager.currentUser.unlockedReferralRewards.Count > 0)
+        {
+
+            // Pending rewards always are the next reward despite of the amount of referrals 
+			return UsersManager.currentUser.unlockedReferralRewards[0];
+
+		}
+
 		int maxFriendsAmount = ((OfferPackReferralReward)items[items.Count - 1]).friendsRequired;
 		int referralsCapped = _totalReferrals;
 
@@ -80,20 +92,37 @@ public class OfferPackReferral: OfferPack {
 		if (_totalReferrals > maxFriendsAmount)
 			referralsCapped = (_totalReferrals - 1) % maxFriendsAmount + 1;
 
-		int[] milestones = GetFriendsRequired();
 
+		// Find the next reward in the progression
 		int i = 0;
+		while (i < m_milestones.Length - 1)
+		{
+			if (m_milestones[i] > referralsCapped)
+			{
+				return (OfferPackReferralReward) items[i];
+			}
+			i++;
+		}
+		return (OfferPackReferralReward) items[i];
 
-        // Find the current (or next) reward in the progression
-        while (i < milestones.Length - 1)
+	}
+
+	/// <summary>
+	/// Get the index of a given reward
+	/// </summary>
+    ///<param name="_reward">A reward belonging to this offer pack</param>
+    ///<returns>The index of this reward in the pack. Returns 0 if is not found.</returns>
+	public int GetRewardIndex(OfferPackReferralReward _reward)
+	{
+		for (int i=0; i<items.Count; i++)
         {
-            if (milestones[i] >= referralsCapped)
+            if (items[i] == _reward )
             {
 				return i;
             }
-			i++;
         }
-		return i;
+
+		return 0;
 
 	}
 
@@ -107,6 +136,10 @@ public class OfferPackReferral: OfferPack {
 
 		// Sort the items based on the friends required
 		m_items.Sort(OfferPackReferralReward.Compare);
-    }
+
+        // Cache the milestones
+		m_milestones = GetFriendsRequired();
+
+	}
 
 }

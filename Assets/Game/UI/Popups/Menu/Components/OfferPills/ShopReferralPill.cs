@@ -105,9 +105,10 @@ public class ShopReferralPill : ShopMonoRewardPill {
 	/// <param name="_pack">Pack.</param>
 	public override void InitFromOfferPack(OfferPack _pack) {
 
-
 		// Find the next reward
-		m_itemIndex = ((OfferPackReferral)_pack).GetNextRewardIndex(UsersManager.currentUser.totalReferrals);
+        OfferPackReferralReward reward = ((OfferPackReferral)_pack).GetNextReward(UsersManager.currentUser.totalReferrals);
+        
+        m_itemIndex = ((OfferPackReferral)_pack).GetRewardIndex(reward);
 
 		// Call parent
 		base.InitFromOfferPack(_pack);

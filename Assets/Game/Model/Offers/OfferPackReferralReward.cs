@@ -44,6 +44,11 @@ public class OfferPackReferralReward:OfferPackItem {
 	public int friendsRequired
     { get => m_friendsRequired; set => m_friendsRequired = value; }
 
+	// The SKU of the referral reward (not the item)
+	private string m_referralRewardSku;
+	public string referralRewardSku
+	{ get => m_referralRewardSku; set => m_referralRewardSku = value;  }
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -81,6 +86,7 @@ public class OfferPackReferralReward:OfferPackItem {
 			Clear();
 			return;
 		}
+
 
 		// If unknown type, clear data and return. Make sure the type is referral, otherwise get out.
 		m_type = _def.GetAsString(prefix + "Type", OffersManager.settings.emptyValue);
@@ -138,6 +144,9 @@ public class OfferPackReferralReward:OfferPackItem {
 			Clear();
 			return;
 		}
+
+        // Referral Reward SKU
+		m_referralRewardSku = _def.GetAsString("sku");
 
 		// Item Sku
 		m_sku = _def.GetAsString("itemSku");
