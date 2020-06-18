@@ -48,7 +48,8 @@ public abstract class IPopupMessage : MonoBehaviour
         public Action OnCancel;
 
         public string ExtraButtonTid;
-        public Action OnExtra;		
+        public Action OnExtra;
+        public bool CloseOnExtra;
 
         public enum EBackButtonStratety
         {
@@ -106,6 +107,7 @@ public abstract class IPopupMessage : MonoBehaviour
             
             ExtraButtonTid = "";
             OnExtra = null;
+            CloseOnExtra = true;
 
             ButtonMode = EButtonsMode.None;
             HighlightButton = EHighlightButton.None;
@@ -337,7 +339,11 @@ public abstract class IPopupMessage : MonoBehaviour
             m_config.OnExtra();
         }
 
-        Close();
+
+        if (m_config == null || m_config.CloseOnExtra)
+        {
+            Close();
+        }
     }
 
     /// <summary>
