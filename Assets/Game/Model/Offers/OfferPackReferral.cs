@@ -65,11 +65,43 @@ public class OfferPackReferral: OfferPack {
 		return friends;
     }
 
-    //------------------------------------------------------------------------//
-    // PARENT OVERRIDE														  //
-    //------------------------------------------------------------------------//
 
-    public override void InitFromDefinition(DefinitionNode _def)
+	/// <summary>
+	/// Get the index of the current or next reward defined in the referral rewards progression
+	/// </summary>
+	/// <param name="_totalReferrals">The amount of referrals</param>
+	/// <returns>The index of the next/current reward in this pack</returns>
+	public int GetNextRewardIndex(int _totalReferrals)
+	{
+		int maxFriendsAmount = ((OfferPackReferralReward)items[items.Count - 1]).friendsRequired;
+		int referralsCapped = _totalReferrals;
+
+		// Module operation in case the amount of friends has surpassed the last milestone
+		if (_totalReferrals > maxFriendsAmount)
+			referralsCapped = (_totalReferrals - 1) % maxFriendsAmount + 1;
+
+		int[] milestones = GetFriendsRequired();
+
+		int i = 0;
+
+        // Find the current (or next) reward in the progression
+        while (i < milestones.Length - 1)
+        {
+            if (milestones[i] >= referralsCapped)
+            {
+				return i;
+            }
+			i++;
+        }
+		return i;
+
+	}
+
+	//------------------------------------------------------------------------//
+	// PARENT OVERRIDE														  //
+	//------------------------------------------------------------------------//
+
+	public override void InitFromDefinition(DefinitionNode _def)
     {
         base.InitFromDefinition(_def);
 

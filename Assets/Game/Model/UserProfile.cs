@@ -377,7 +377,7 @@ public class UserProfile : UserPersistenceSystem
     }
 
 	// Referral install
-	private int m_totalReferrals = 11;
+	private int m_totalReferrals;
 	public int totalReferrals
 	{
 		get { return m_totalReferrals; }
@@ -385,7 +385,7 @@ public class UserProfile : UserPersistenceSystem
 	}
 
     // List of unlocked referral rewards (milestones) that havent been claimed yet
-	private List<OfferPackReferralReward> m_unlockedReferralRewards;
+	private List<OfferPackReferralReward> m_unlockedReferralRewards = new List<OfferPackReferralReward>();
 	public List<OfferPackReferralReward> unlockedReferralRewards
 	{
 		get { return m_unlockedReferralRewards; }
@@ -575,7 +575,12 @@ public class UserProfile : UserPersistenceSystem
 
         // Remove Ads Offer
         m_removeAds = new RemoveAdsFeature();
-    }
+
+		// Referrals
+		m_totalReferrals = 0;
+		m_unlockedReferralRewards.Clear();
+
+	}
 
 	/// <summary>
 	/// 

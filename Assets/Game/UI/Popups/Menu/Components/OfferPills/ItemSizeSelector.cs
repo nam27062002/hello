@@ -51,6 +51,7 @@ public class ItemSizeSelector : MonoBehaviour {
 	// Internal
 	private Size m_curentSize = Size.LARGE;
 	private Size newSize;
+	private bool m_updateSize = false;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -62,7 +63,8 @@ public class ItemSizeSelector : MonoBehaviour {
 
 
 		m_pillRect = m_shopPill.GetComponent<RectTransform>();
-		UpdatePill();
+
+		m_updateSize = true;
 
 
 	}
@@ -79,16 +81,30 @@ public class ItemSizeSelector : MonoBehaviour {
 		{
 			m_curentSize = newSize;
 
-			UpdatePill();
+            // Mark the pill for update size
+			m_updateSize = true;
 
 		}
 	}
 
-	//------------------------------------------------------------------------//
-	// OTHER METHODS														  //
-	//------------------------------------------------------------------------//
+    /// <summary>
+    /// Called every frame
+    /// </summary>
+    private void Update()
+    {
+        // Always update the pill size in the Update phase to avoid errors
+        if (m_updateSize)
+        {
+			UpdateSize();
+			m_updateSize = false;
+        }
+    }
 
-    public void UpdatePill ()
+    //------------------------------------------------------------------------//
+    // OTHER METHODS														  //
+    //------------------------------------------------------------------------//
+
+    public void UpdateSize ()
     {
 
         if (m_largePreview != null)

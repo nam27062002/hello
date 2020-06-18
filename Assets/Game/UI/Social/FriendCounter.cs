@@ -8,7 +8,10 @@ using TMPro;
 /// </summary>
 public class FriendCounter : MonoBehaviour
 {
-    
+
+    //------------------------------------------------------------------------//
+    // MEMBERS AND PROPERTIES												  //
+    //------------------------------------------------------------------------//
     [SerializeField]
     private GameObject m_friendIcon;
 
@@ -24,26 +27,53 @@ public class FriendCounter : MonoBehaviour
     [SerializeField]
     private Color m_textColorHighlighted;
 
-
-
     //Cache
+    private OfferPackReferral m_offerPack;
+    private int m_friendsCount;
     private int m_maxFriendsAmount;
     private int [] m_friendsMilestones;
 
-
+    //------------------------------------------------------------------------//
+    // GENERIC METHODS      												  //
+    //------------------------------------------------------------------------//
     // Start is called before the first frame update
     void Start()
-    {       
+    {
     }
 
+    /// <summary>
+    /// Check every frame
+    /// </summary>
+    private void Update()
+    {
+        if (m_offerPack != null)
+        {
+            if (m_friendsCount != UsersManager.currentUser.totalReferrals)
+            {
+                // If friends count changed, refresh the visuals
+                m_friendsCount = UsersManager.currentUser.totalReferrals;
+                Refresh();
+            }
+        }
+    }
+
+
+    //------------------------------------------------------------------------//
+    // OTHER METHODS            											  //
+    //------------------------------------------------------------------------//
     public void InitFromOfferPack (OfferPackReferral _offer = null)
     {
-        if (_offer != null)
+        m_offerPack = _offer;
+
+        if (m_offerPack != null)
         {
+            m_friendsCount = UsersManager.currentUser.totalReferrals;
+
             // Get the milestones
             m_friendsMilestones = _offer.GetFriendsRequired();
             m_maxFriendsAmount = m_friendsMilestones[m_friendsMilestones.Length - 1];
 
+            
             Refresh();
         }
     }
@@ -51,14 +81,14 @@ public class FriendCounter : MonoBehaviour
     /// <summary>
     /// Refresh the visuals
     /// </summary>
-    void Refresh()
+    private void Refresh()
     {
-        // Friends progression is cyclic so when reaches the final milestone, it starts from the begining
-        int friendsCount = UsersManager.currentUser.totalReferrals;
-        if (friendsCount > m_maxFriendsAmount)
-            friendsCount = (friendsCount - 1) % m_maxFriendsAmount + 1;
 
-        bool highlighted = IsMilestone(friendsCount);
+        // Friends progression is cyclic so when reaches the final milestone, it starts from the begining
+        if (m_friendsCount > m_maxFriendsAmount)
+            m_friendsCount = (m_friendsCount - 1) % m_maxFriendsAmount + 1;
+
+        bool highlighted = IsMilestone(m_friendsCount);
 
         if (m_friendIcon != null)
             m_friendIcon.SetActive(!highlighted);
@@ -69,11 +99,12 @@ public class FriendCounter : MonoBehaviour
         Color color = highlighted ? m_textColorHighlighted : m_textColor;
 
         string text = "<color=" + color.ToHexString("#", false) + ">" +
-            friendsCount.ToString() +
+            m_friendsCount.ToString() +
             " / " +
             m_maxFriendsAmount.ToString();
 
         m_counterText.text = text;
+        
 
     }
 

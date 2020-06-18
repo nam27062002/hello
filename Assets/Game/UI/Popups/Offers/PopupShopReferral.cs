@@ -199,6 +199,13 @@ public class PopupShopReferral : MonoBehaviour
             rect.anchorMin = new Vector2(anchorX, rect.anchorMin.y);
             rect.anchorMax = new Vector2(anchorX, rect.anchorMax.y);
         }
+
+        // Buttons
+        bool canClaim = UsersManager.currentUser.unlockedReferralRewards.Count > 0;
+
+        m_buttonClaim.SetActive(canClaim);
+        m_buttonInvite.SetActive(!canClaim);
+
     }
 
     /// <summary>
@@ -225,13 +232,13 @@ public class PopupShopReferral : MonoBehaviour
     private void ApplyRewards ()
     {
         // Push all the pending rewards
-        while (ReferralManager.Instance.pendingRewards.Count > 0)
+        while (ReferralManager.instance.pendingRewards.Count > 0)
         {
-            OfferPackReferralReward next = ReferralManager.Instance.pendingRewards.Dequeue();
+            OfferPackReferralReward next = ReferralManager.instance.pendingRewards.Dequeue();
             UsersManager.currentUser.PushReward(next.reward);
         }
 
-        // Close all open popups
+        // Close all open popups (including this one)
         PopupManager.Clear(true);
 
         // Move to the rewards screen
@@ -268,7 +275,7 @@ public class PopupShopReferral : MonoBehaviour
     /// </summary>
 	public void OnClaimButtonPressed()
     {
-
+        ReferralManager.instance.ReclaimAllFromServer();
     }
 
 }

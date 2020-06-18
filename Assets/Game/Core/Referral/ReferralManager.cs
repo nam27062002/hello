@@ -26,8 +26,9 @@ public class ReferralManager
 	// CONSTANTS                											  //
 	//------------------------------------------------------------------------//
 
-	private static readonly string INFO = "/api/referral/info";
+	private static readonly string GET_INFO = "/api/referral/getInfo";
 	private static readonly string RECLAIM_REWARD= "/api/referral/reclaimReward";
+	private static readonly string RECLAIM_ALL = "/api/referral/reclaimAll";
 
 
 	//------------------------------------------------------------------------//
@@ -42,7 +43,7 @@ public class ReferralManager
 	private bool m_offlineMode = false;
 
 	// Rewards claimed
-	private Queue<OfferPackReferralReward> m_pendingRewards;
+	private Queue<OfferPackReferralReward> m_pendingRewards = new Queue<OfferPackReferralReward>();
 	public Queue<OfferPackReferralReward> pendingRewards
         { get => m_pendingRewards; set => m_pendingRewards = value; }
 
@@ -66,7 +67,7 @@ public class ReferralManager
 	}
 
 	// Singleton
-	public static ReferralManager Instance
+	public static ReferralManager instance
 	{
 		get
 		{
@@ -100,8 +101,9 @@ public class ReferralManager
 		{
 			m_offlineMode = _offlineMode;
 
-			NetworkManager.SharedInstance.RegistryEndPoint(INFO, NetworkManager.EPacketEncryption.E_ENCRYPTION_AES, new int[] { 200, 404, 500, 503 }, OnGetInfoResponse);
+			NetworkManager.SharedInstance.RegistryEndPoint(GET_INFO, NetworkManager.EPacketEncryption.E_ENCRYPTION_AES, new int[] { 200, 404, 500, 503 }, OnGetInfoResponse);
 			NetworkManager.SharedInstance.RegistryEndPoint(RECLAIM_REWARD, NetworkManager.EPacketEncryption.E_ENCRYPTION_AES, new int[] { 200, 404, 500, 503 }, OnReclaimRewardResponse);
+			NetworkManager.SharedInstance.RegistryEndPoint(RECLAIM_ALL, NetworkManager.EPacketEncryption.E_ENCRYPTION_AES, new int[] { 200, 404, 500, 503 }, OnReclaimAllResponse);
 
 			m_registered = true;
 		}
@@ -127,7 +129,7 @@ public class ReferralManager
 				kParams["token"] = GameSessionManager.SharedInstance.GetUserToken();
 
 				// Send it to the server
-				ServerManager.SharedInstance.SendCommand(INFO, kParams);
+				ServerManager.SharedInstance.SendCommand(GET_INFO, kParams);
 
 			}
 		}
@@ -164,11 +166,40 @@ public class ReferralManager
 		}
 	}
 
-    /// <summary>
-    /// Convert a list of skus in a list of rewards
-    /// </summary>
-    /// <param name="_skus">List of skus</param>
-    /// <returns></returns>
+
+	/// <summary>
+	/// Tell the server that the player is claiming all the rewards achieved. 
+	/// </summary>
+	/// <param name="_reward">The referral reward claimed</param>
+	public void ReclaimAllFromServer()
+	{
+		// Make sure the enpoints are registerd
+		Initialize();
+
+		if (!m_offlineMode)
+		{
+			// Dont make the request if we are not logged yet in the server
+			if (GameSessionManager.SharedInstance.IsLogged())
+			{
+
+				Dictionary<string, string> kParams = new Dictionary<string, string>();
+				kParams["uid"] = GameSessionManager.SharedInstance.GetUID();
+				kParams["token"] = GameSessionManager.SharedInstance.GetUserToken();
+
+
+				// Send it to the server
+				ServerManager.SharedInstance.SendCommand(RECLAIM_ALL, kParams);
+
+			}
+		}
+	}
+
+
+	/// <summary>
+	/// Convert a list of skus in a list of rewards
+	/// </summary>
+	/// <param name="_skus">List of skus</param>
+	/// <returns></returns>
 	private List<OfferPackReferralReward> GetRewardsFromSkus (List<string> _skus)
     {
 		List<OfferPackReferralReward> rewards = new List<OfferPackReferralReward>();
@@ -191,13 +222,14 @@ public class ReferralManager
 
 	}
 
+
     /// <summary>
     /// Remove this reward from the unlocked rewards list and give it to the player
     /// </summary>
-    /// <param name="sku"></param>
-    public void ApplyReward (string sku)
+    /// <param name="_sku"></param>
+    public void ApplyReward (string _sku)
     {
-		OfferPackReferralReward reward = UsersManager.currentUser.unlockedReferralRewards.Find(r => r.sku == sku);
+		OfferPackReferralReward reward = UsersManager.currentUser.unlockedReferralRewards.Find(r => r.sku == _sku);
 
         if (reward != null)
         {
@@ -212,6 +244,43 @@ public class ReferralManager
 
 		}
     }
+
+
+
+	/// <summary>
+	/// Remove this rewards from the unlocked rewards list and give them to the player
+	/// </summary>
+	/// <param name="sku"></param>
+	public void ApplyRewards(List<String> _skus)
+	{
+
+		bool success = false;
+
+        foreach (String sku in _skus)
+        {
+
+			OfferPackReferralReward reward = UsersManager.currentUser.unlockedReferralRewards.Find(r => r.sku == sku);
+
+			if (reward != null)
+			{
+				// Remove it from the unlocked rewards list
+				UsersManager.currentUser.unlockedReferralRewards.Remove(reward);
+
+				// Put the reward in the peding queue so it will delivered to the player asap
+				m_pendingRewards.Enqueue(reward);
+
+				success = true;
+
+			}
+		}
+
+        if (success)
+        {
+			// Notify the listeners that there are pending rewards ready
+			Messenger.Broadcast(MessengerEvents.REFERRAL_REWARDS_CLAIMED);
+		}
+
+	}
 
 
 	//------------------------------------------------------------------------//
@@ -242,38 +311,32 @@ public class ReferralManager
 						if (kJSON != null)
 						{
 
-							if (kJSON.ContainsKey("getTotalReferrals"))
+							if (kJSON.ContainsKey("total"))
 							{
 
-								int referrals = PersistenceUtils.SafeParse<int> ( kJSON["getTotalReferrals"] );
+								int referrals = PersistenceUtils.SafeParse<int> ( kJSON["total"] );
 
                                 // Store the value in user profile
 								UsersManager.currentUser.totalReferrals = referrals;
 
 							}
 
-							if (kJSON.ContainsKey("getAllRewards"))
+							if (kJSON.ContainsKey("rewards"))
 							{
 
-								JSONNode allRewards = kJSON["getAllRewards"];
+								List<string> skuList = new List<string>();
 
-                                if (allRewards.ContainsKey ("rewards"))
+                                foreach (JSONNode sku in kJSON["rewards"].AsArray)
                                 {
+									skuList.Add(sku["sku"].Value.ToString());
+                                }
 
-									List<string> skuList = new List<string>();
+								// Convert skus to actual rewards 
+								List<OfferPackReferralReward> rewards = GetRewardsFromSkus(skuList);
 
-                                    foreach (JSONNode sku in allRewards["rewards"].AsArray)
-                                    {
-										skuList.Add(sku.Value.ToString());
-                                    }
-
-									// Convert skus to actual rewards 
-									List<OfferPackReferralReward> rewards = GetRewardsFromSkus(skuList);
-
-                                    // Store them in user profile
-									UsersManager.currentUser.unlockedReferralRewards = rewards;
-
-								}
+                                // Store them in user profile
+								UsersManager.currentUser.unlockedReferralRewards = rewards;
+								
 							}
 
 							responseOk = true;
@@ -369,9 +432,72 @@ public class ReferralManager
 	}
 
 
+	/// <summary>
+	/// Response from the server was received
+	/// </summary>
+	/// <param name="_strResponse">Json containing the cluster Id requested</param>
+	/// <param name="_strCmd">The command sent</param>
+	/// <param name="_reponseCode">Response code. 200 if the request was successful</param>
+	/// <returns>Returns true if the response was successful</returns>
+	public bool OnReclaimAllResponse(string _strResponse, string _strCmd, int _reponseCode)
+	{
+		bool responseOk = false;
+
+		if (_strResponse != null)
+		{
+			switch (_reponseCode)
+			{
+				case 200: // No error
+					{
+
+						JSONNode kJSON = JSON.Parse(_strResponse);
+						if (kJSON != null)
+						{
+							if (kJSON.ContainsKey("rewards"))
+							{
+
+								List<string> skuList = new List<string>();
+
+								foreach (JSONNode reward in kJSON["rewards"].AsArray)
+								{
+									skuList.Add(reward["sku"].Value.ToString());
+								}
+
+								// Notify that the reward has been claimed successfully
+								ApplyRewards(skuList);
+
+								responseOk = true;
+
+							}
+						}
+
+						break;
+					}
+
+				default:
+					{
+						// An error happened
+						responseOk = false;
+						break;
+					}
+			}
+		}
 
 
-    /*
+
+		if (m_offlineMode)
+		{
+			return false;
+		}
+		else
+		{
+			return responseOk;
+		}
+	}
+
+
+
+	/*
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//

@@ -33,6 +33,7 @@ public class ShopReferralPill : ShopMonoRewardPill {
 	//------------------------------------------------------------------------//
 	// Exposed references
 	[Separator("Referral install Pill Specifics")]
+
 	[SerializeField] private FriendCounter m_friendCounter;
 
 	[SerializeField] private Button m_buttonInvite = null;
@@ -48,12 +49,52 @@ public class ShopReferralPill : ShopMonoRewardPill {
     /// Initialization.
     /// </summary>
     private void Awake() {
+		// Subscribe to external events
+		Messenger.AddListener(MessengerEvents.REFERRAL_REWARDS_CLAIMED, InitializeFromCurrentPack);
+	}
+
+    protected override void OnDestroy()
+    {
+		base.OnDestroy();
+
+		// Unsubscribe from external events
+		Messenger.RemoveListener(MessengerEvents.REFERRAL_REWARDS_CLAIMED, InitializeFromCurrentPack);
 
 	}
 
-	//------------------------------------------------------------------------//
-	// OTHER METHODS														  //
-	//------------------------------------------------------------------------//
+
+    //------------------------------------------------------------------------//
+    // OTHER METHODS														  //
+    //------------------------------------------------------------------------//
+    /// <summary>
+    /// Update visuals
+    /// </summary>
+    private void Refresh ()
+    {
+		bool rewardReadyToClaim = false;
+
+        // Any rewards ready to be claimed?
+        if (UsersManager.currentUser.unlockedReferralRewards.Count > 0)
+        {
+			rewardReadyToClaim = true;
+		}
+
+		m_buttonClaim.gameObject.SetActive(rewardReadyToClaim);
+		m_buttonInvite.gameObject.SetActive(!rewardReadyToClaim);
+
+		
+	}
+
+    /// <summary>
+    /// Initializes the pill once again with the current offer pack
+    /// We use this method to load the next reward preview after the user claims a reward
+    /// </summary>
+    private void InitializeFromCurrentPack()
+    {
+		InitFromOfferPack(m_pack);
+
+	}
+
 
 	//------------------------------------------------------------------------//
 	// PARENT OVERRIDES														  //
@@ -63,11 +104,21 @@ public class ShopReferralPill : ShopMonoRewardPill {
 	/// </summary>
 	/// <param name="_pack">Pack.</param>
 	public override void InitFromOfferPack(OfferPack _pack) {
+
+
+		// Find the next reward
+		m_itemIndex = ((OfferPackReferral)_pack).GetNextRewardIndex(UsersManager.currentUser.totalReferrals);
+
 		// Call parent
 		base.InitFromOfferPack(_pack);
 
+
+		// Set the referrals counter
 		if (m_friendCounter != null)
-			m_friendCounter.InitFromOfferPack( (OfferPackReferral) _pack);
+			m_friendCounter.InitFromOfferPack((OfferPackReferral)_pack);
+
+        // Update visuals
+		Refresh();
 
 	}
 

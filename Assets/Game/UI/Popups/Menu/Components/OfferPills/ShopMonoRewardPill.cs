@@ -1,4 +1,4 @@
-// PopupShopOffersPill.cs
+// PopupShopMonorewardPill.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 15/03/2018.
@@ -45,6 +45,8 @@ public class ShopMonoRewardPill : ShopBasePill {
         }
     }
 
+    // Internal
+    protected int m_itemIndex = 0;
 
     //------------------------------------------------------------------------//
     // GENERIC METHODS														  //
@@ -54,10 +56,13 @@ public class ShopMonoRewardPill : ShopBasePill {
     //------------------------------------------------------------------------//
     // OTHER METHODS														  //
     //------------------------------------------------------------------------//
+
+
     /// <summary>
     /// Initialize the pill with a given pack's data.
     /// </summary>
     /// <param name="_pack">Pack.</param>
+    /// <param name="_itemIndex">Specify which item will be shown in offerPacks containing several items</param>
     public override void InitFromOfferPack(OfferPack _pack) {
 
         base.InitFromOfferPack(_pack);
@@ -78,9 +83,9 @@ public class ShopMonoRewardPill : ShopBasePill {
                 return;
             }
 
-            if (m_pack.items !=null && m_pack.items.Count > 0 && m_pack.items[0] != null)
+            if (m_pack.items !=null && m_pack.items.Count > m_itemIndex && m_pack.items[m_itemIndex] != null)
             {
-                OfferPackItem item = m_pack.items[0];
+                OfferPackItem item = m_pack.items[m_itemIndex];
                 m_itemsToSet.Add(item);
                 m_slotsToSet.Add(m_offerItemSlot);
             } else {
