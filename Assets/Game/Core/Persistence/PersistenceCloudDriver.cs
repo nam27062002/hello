@@ -357,21 +357,10 @@ public class PersistenceCloudDriver
 		}
 	}
 
-#if MOCK_CLOUD_DISCONNECTION    
-    public bool ForceDisconnection = false;
-#endif
-
     private void Syncer_CheckConnection()
 	{
 		Action<bool> onDone = delegate(bool success)
 		{
-#if MOCK_CLOUD_DISCONNECTION            
-            if (ForceDisconnection)
-            {
-                Syncer_ProcessNoConnectionError();
-            }
-            else
-#endif
             if (success)
 			{
 				Syncer_Step = ESyncStep.LoggingInServer;

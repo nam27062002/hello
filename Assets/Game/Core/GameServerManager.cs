@@ -136,6 +136,24 @@ public class GameServerManager {
 
     public virtual void Reset() { }
 
+    private NetworkDriver m_networkDriver;
+    private NetworkDriver NetworkDriver
+    {
+        get
+        {
+            if (m_networkDriver == null)
+            {
+#if UNITY_EDITOR
+                m_networkDriver = new MockNetworkDriver(null);
+#else
+                m_networkDriver = new ProductionNetworkDriver();
+#endif
+            }
+
+            return m_networkDriver;
+        }
+    }
+
     /// <summary>
     /// 
     /// </summary>
@@ -146,7 +164,7 @@ public class GameServerManager {
     protected void InternalCheckConnection(Action<Error> callback, bool highPriority = false)
     {
 		Log("Check Connection");
-        if (DeviceUtilsManager.SharedInstance.internetReachability == NetworkReachability.NotReachable)
+        if (NetworkDriver.CurrentNetworkReachability == NetworkReachability.NotReachable)
         {
 			Log("CheckConnection : InternetReachability NotReachable");
             callback(new ClientConnectionError("InternetReachability NotReachable", ErrorCodes.ClientConnectionError));

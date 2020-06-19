@@ -731,10 +731,6 @@ public class PersistenceFacade : IBroadcastListener
         m_implicitMergeConflictPopupOnRestore = null;
         m_implicitMergeConflictPopupOnKeep = null;
         m_implicitMergeConflictPopupNeedsToPopRequest = false;
-
-#if MOCK_CLOUD_DISCONNECTION
-        instance.CloudDriver.ForceDisconnection = false;
-#endif
     }
 
     public static void Popup_OpenErrorWhenForcingLocalProgressInImplicitMergeConflict(Action _onRestore, Action _onKeep)
@@ -832,10 +828,6 @@ public class PersistenceFacade : IBroadcastListener
         };
 
         bool prevValue = m_implicitMergeConflictPopupNeedsToPopRequest;
-
-#if MOCK_CLOUD_DISCONNECTION
-        cloudDriver.ForceDisconnection = !prevValue;
-#endif
 
         m_implicitMergeConflictPopupNeedsToPopRequest = true;
 
