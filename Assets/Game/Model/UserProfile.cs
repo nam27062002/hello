@@ -377,6 +377,14 @@ public class UserProfile : UserPersistenceSystem
     }
 
 	// Referral install
+	private bool m_referralConfirmed;
+	public bool referralConfirmed
+	{
+		get { return m_referralConfirmed; }
+		set { m_referralConfirmed = value; }
+	}
+
+
 	private int m_totalReferrals;
 	public int totalReferrals
 	{
@@ -384,7 +392,8 @@ public class UserProfile : UserPersistenceSystem
         set { m_totalReferrals = value;  }
 	}
 
-    // List of unlocked referral rewards (milestones) that havent been claimed yet
+
+	// List of unlocked referral rewards (milestones) that havent been claimed yet
 	private List<OfferPackReferralReward> m_unlockedReferralRewards = new List<OfferPackReferralReward>();
 	public List<OfferPackReferralReward> unlockedReferralRewards
 	{
@@ -1332,6 +1341,16 @@ public class UserProfile : UserPersistenceSystem
         {
             GivenTransactions = _data[key];
         }
+
+		// Referral
+		key = "referralConfirmed";
+        if (_data.ContainsKey(key))
+        {
+			m_referralConfirmed = _data[key].AsBool;
+        } else
+        {
+			m_referralConfirmed = false;
+        }
     }
 
 	/// <summary>
@@ -1566,6 +1585,9 @@ public class UserProfile : UserPersistenceSystem
         {
             data.Add("givenTransactions", GivenTransactions);
         }
+
+		// Referral
+		data.Add("referralConfirmed", referralConfirmed);
 
         // Return it
 		return data;

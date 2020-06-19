@@ -29,6 +29,7 @@ public class ReferralManager
 	private static readonly string GET_INFO = "/api/referral/getInfo";
 	private static readonly string RECLAIM_REWARD= "/api/referral/reclaimReward";
 	private static readonly string RECLAIM_ALL = "/api/referral/reclaimAll";
+	private static readonly string MARK_REFERRAL = "/api/referral/markReferral";
 
 
 	//------------------------------------------------------------------------//
@@ -102,8 +103,9 @@ public class ReferralManager
 			m_offlineMode = _offlineMode;
 
 			NetworkManager.SharedInstance.RegistryEndPoint(GET_INFO, NetworkManager.EPacketEncryption.E_ENCRYPTION_AES, new int[] { 200, 404, 500, 503 }, OnGetInfoResponse);
-			NetworkManager.SharedInstance.RegistryEndPoint(RECLAIM_REWARD, NetworkManager.EPacketEncryption.E_ENCRYPTION_AES, new int[] { 200, 404, 500, 503 }, OnReclaimRewardResponse);
 			NetworkManager.SharedInstance.RegistryEndPoint(RECLAIM_ALL, NetworkManager.EPacketEncryption.E_ENCRYPTION_AES, new int[] { 200, 404, 500, 503 }, OnReclaimAllResponse);
+			NetworkManager.SharedInstance.RegistryEndPoint(MARK_REFERRAL, NetworkManager.EPacketEncryption.E_ENCRYPTION_AES, new int[] { 200, 404, 500, 503 }, OnMarkReferralResponse);
+
 
 			m_registered = true;
 		}
@@ -186,7 +188,6 @@ public class ReferralManager
 				kParams["uid"] = GameSessionManager.SharedInstance.GetUID();
 				kParams["token"] = GameSessionManager.SharedInstance.GetUserToken();
 
-
 				// Send it to the server
 				ServerManager.SharedInstance.SendCommand(RECLAIM_ALL, kParams);
 
@@ -194,6 +195,35 @@ public class ReferralManager
 		}
 	}
 
+    /// <summary>
+    /// Notify the server that the invited user has installed and open the game
+    /// </summary>
+    /// <param name="_userId">The id of the user that sent the invitation</param>
+    public void MarkReferral (string _userId)
+    {
+		Initialize();
+
+		if (!m_offlineMode)
+		{
+			// Dont make the request if we are not logged yet in the server
+			if (GameSessionManager.SharedInstance.IsLogged())
+			{
+
+				Dictionary<string, string> kParams = new Dictionary<string, string>();
+				kParams["uid"] = GameSessionManager.SharedInstance.GetUID();
+				kParams["token"] = GameSessionManager.SharedInstance.GetUserToken();
+
+
+				JSONClass kBody = new JSONClass();
+				kBody["referredBy"] = _userId;
+
+				// Send it to the server
+				ServerManager.SharedInstance.SendCommand(MARK_REFERRAL, kParams, kBody.ToString());
+
+			}
+		}
+
+	}
 
 	/// <summary>
 	/// Convert a list of skus in a list of rewards
@@ -283,6 +313,19 @@ public class ReferralManager
 	}
 
 
+    /// <summary>
+    /// Button invite has been pressed.
+    /// </summary>
+    public void InviteFriends()
+    {
+        // Get the link to share from firebase
+
+        // Open the share dialog
+    }
+
+
+
+
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
@@ -292,7 +335,7 @@ public class ReferralManager
 	/// <summary>
 	/// Response from the server was received
 	/// </summary>
-	/// <param name="_strResponse">Json containing the cluster Id requested</param>
+	/// <param name="_strResponse">Json containing the response</param>
 	/// <param name="_strCmd">The command sent</param>
 	/// <param name="_reponseCode">Response code. 200 if the request was successful</param>
 	/// <returns>Returns true if the response was successful</returns>
@@ -371,7 +414,7 @@ public class ReferralManager
 	/// <summary>
 	/// Response from the server was received
 	/// </summary>
-	/// <param name="_strResponse">Json containing the cluster Id requested</param>
+	/// <param name="_strResponse">Json containing the response</param>
 	/// <param name="_strCmd">The command sent</param>
 	/// <param name="_reponseCode">Response code. 200 if the request was successful</param>
 	/// <returns>Returns true if the response was successful</returns>
@@ -435,7 +478,7 @@ public class ReferralManager
 	/// <summary>
 	/// Response from the server was received
 	/// </summary>
-	/// <param name="_strResponse">Json containing the cluster Id requested</param>
+	/// <param name="_strResponse">Json containing the response</param>
 	/// <param name="_strCmd">The command sent</param>
 	/// <param name="_reponseCode">Response code. 200 if the request was successful</param>
 	/// <returns>Returns true if the response was successful</returns>
@@ -495,6 +538,65 @@ public class ReferralManager
 		}
 	}
 
+
+	/// <summary>
+	/// Response from the server was received
+	/// </summary>
+	/// <param name="_strResponse">Json containing the response</param>
+	/// <param name="_strCmd">The command sent</param>
+	/// <param name="_reponseCode">Response code. 200 if the request was successful</param>
+	/// <returns>Returns true if the response was successful</returns>
+	public bool OnMarkReferralResponse(string _strResponse, string _strCmd, int _reponseCode)
+	{
+		bool responseOk = false;
+
+		if (_strResponse != null)
+		{
+			switch (_reponseCode)
+			{
+				case 200: // No error
+					{
+
+						JSONNode kJSON = JSON.Parse(_strResponse);
+						if (kJSON != null)
+						{
+							if (kJSON.ContainsKey("result"))
+							{
+                                if (kJSON["result"].AsBool == true)
+                                {
+                                    // Store the value in user profile so markReferral is not sent ever
+                                    // again for this device/user
+									UsersManager.currentUser.referralConfirmed = true;
+                                }
+
+								responseOk = true;
+
+							}
+						}
+
+						break;
+					}
+
+				default:
+					{
+						// An error happened
+						responseOk = false;
+						break;
+					}
+			}
+		}
+
+
+
+		if (m_offlineMode)
+		{
+			return false;
+		}
+		else
+		{
+			return responseOk;
+		}
+	}
 
 
 	/*

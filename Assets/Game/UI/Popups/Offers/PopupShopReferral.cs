@@ -273,7 +273,7 @@ public class PopupShopReferral : MonoBehaviour
     /// </summary>
     public void OnInviteButtonPressed()
     {
-
+        ReferralManager.instance.InviteFriends();
     }
 
 
