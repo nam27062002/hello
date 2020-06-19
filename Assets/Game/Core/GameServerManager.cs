@@ -136,21 +136,11 @@ public class GameServerManager {
 
     public virtual void Reset() { }
 
-    private NetworkDriver m_networkDriver;
     private NetworkDriver NetworkDriver
     {
         get
         {
-            if (m_networkDriver == null)
-            {
-#if UNITY_EDITOR
-                m_networkDriver = new MockNetworkDriver(null);
-#else
-                m_networkDriver = new ProductionNetworkDriver();
-#endif
-            }
-
-            return m_networkDriver;
+            return ApplicationManager.NetworkDriver;
         }
     }
 

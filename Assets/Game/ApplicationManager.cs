@@ -226,6 +226,12 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 #if UNITY_EDITOR        
         if (Input.GetKeyDown(KeyCode.A))
         {
+            if (SocialPlatformManager.SharedInstance.CurrentPlatform_IsImplicit())
+            {
+                SocialPlatformManager.SharedInstance.CurrentPlatform_IsImplicit();
+                SocialPlatformManager.SharedInstance.CurrentPlatform_IsLoggedIn();
+            }
+
             // ---------------------------
             // Go to rewards
             // ---------------------------       
@@ -1182,10 +1188,42 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
                 }
             }
         }
-    }    
-#endregion
+    }
+    #endregion
 
-#region debug
+    private static bool UseMock
+    {
+        get
+        {
+            Calety.Server.ServerConfig kServerConfig = ServerManager.SharedInstance.GetServerConfig();
+            return (kServerConfig != null && kServerConfig.m_eBuildEnvironment != CaletyConstants.eBuildEnvironments.BUILD_PRODUCTION);
+        }
+    }
+
+    #region
+    private static NetworkDriver sm_networkDriver;
+    public static NetworkDriver NetworkDriver
+    {
+        get
+        {
+            if (sm_networkDriver == null)
+            {
+                if (UseMock)
+                {
+                    sm_networkDriver = new MockNetworkDriver(null);
+                }
+                else
+                {
+                    sm_networkDriver = new ProductionNetworkDriver();
+                }
+            }
+
+            return sm_networkDriver;
+        }
+    }
+    #endregion
+
+    #region debug
     private bool Debug_IsPaused { get; set; }
 
     private void Debug_RestartFlow()
