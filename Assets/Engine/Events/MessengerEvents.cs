@@ -51,7 +51,7 @@ public enum MessengerEvents {
 	PURCHASE_RECEIVED_PRODUCTS_AVAILABILITY,	// no params
 
 	// UI Events
-	UI_LOCK_INPUT,			// bool _lock
+	UI_LOCK_INPUT,			// params: bool _lock, float _durationSeconds
 
 	// Debug and control panel events
 	DEBUG_MENU_DRAGON_SELECTED,
