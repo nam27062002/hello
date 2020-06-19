@@ -461,7 +461,7 @@ public class GameServerManagerCalety : GameServerManager {
 	public override void LogOut()
     {
 		// The response is immediate. We don't want to treat it as a command because it could be trigger at any moment and we don't want it to mess with a command that is being processed
-		GameSessionManager.SharedInstance.LogOutFromServer(false);        
+		GameSessionManager.SharedInstance.LogOutFromServer(false, true);        
     }
 
     public override void OnLogOut()
