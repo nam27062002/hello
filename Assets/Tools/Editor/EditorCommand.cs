@@ -59,16 +59,20 @@ public class EditorCommand
                 EnableRaisingEvents = true
 			};
 
-			process.OutputDataReceived += new DataReceivedEventHandler((s, e) =>
+			if (showOutputWindow)
 			{
-				EditorCommandWindow.onResponse.Invoke(e.Data);
-			});
+				EditorCommandWindow.onResponse.Invoke("Executing command: <i>" + cmd + "</i>");
+				process.OutputDataReceived += new DataReceivedEventHandler((s, e) =>
+				{
+					EditorCommandWindow.onResponse.Invoke(e.Data);
+				});
 
-			process.ErrorDataReceived += new DataReceivedEventHandler((s, e) =>
-			{
-				if (!string.IsNullOrEmpty(e.Data))
-				    EditorCommandWindow.onError.Invoke(e.Data);
-			});
+				process.ErrorDataReceived += new DataReceivedEventHandler((s, e) =>
+				{
+					if (!string.IsNullOrEmpty(e.Data))
+						EditorCommandWindow.onError.Invoke(e.Data);
+				});
+			}
 
 			process.Exited += new System.EventHandler((s, e) =>
 			{
