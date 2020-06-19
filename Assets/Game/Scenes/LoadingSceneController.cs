@@ -239,8 +239,14 @@ public class LoadingSceneController : SceneController {
     override protected void Awake() {
         CaletyFirebaseWrapper.initialise();
 
+        CaletySettings settingsInstance = Resources.Load<CaletySettings>("CaletySettings");
+        if (settingsInstance.m_bUseDynamicLinks)
+        {
+            CaletyDynamicLinks.setDynamicLinksDomain(settingsInstance.m_strDynamicLinksDomain);
+        }
+
         // Call parent
-		base.Awake();
+        base.Awake();
 
         // We need to update the user id label when the user logs in 
         Messenger.AddListener<bool>(MessengerEvents.LOGGED, OnLoggedIn);
