@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 public class PersistenceCloudDriver
 {
-    private enum ESyncSetp
+    private enum ESyncStep
     {
         None,
         CheckingConnection,
@@ -225,8 +225,8 @@ public class PersistenceCloudDriver
         }
     }
 
-    private ESyncSetp mSyncerStep;
-	private ESyncSetp Syncer_Step 
+    private ESyncStep mSyncerStep;
+	private ESyncStep Syncer_Step 
 	{ 
 		get 
 		{
@@ -240,23 +240,23 @@ public class PersistenceCloudDriver
 
 			switch (mSyncerStep)
 			{
-				case ESyncSetp.CheckingConnection:
+				case ESyncStep.CheckingConnection:
 					Syncer_CheckConnection();
 					break;
 
-				case ESyncSetp.LoggingInServer:
+				case ESyncStep.LoggingInServer:
 					Syncer_LogInServer();
 					break;
 
-				case ESyncSetp.LoggingInSocial:
+				case ESyncStep.LoggingInSocial:
 					Syncer_LogInSocial();
 					break;
 
-				case ESyncSetp.GettingPersistence:
+				case ESyncStep.GettingPersistence:
 					Syncer_GetPersistence();
 					break;
 
-				case ESyncSetp.Syncing:
+				case ESyncStep.Syncing:
 					Syncer_Sync();
 					break;
 			}
@@ -306,7 +306,7 @@ public class PersistenceCloudDriver
         }
 
         Syncer_CurrentRequest.Reset();        
-		Syncer_Step = ESyncSetp.None;		       
+		Syncer_Step = ESyncStep.None;		       
     }
 
     public void Sync_PopRequest()
@@ -341,14 +341,14 @@ public class PersistenceCloudDriver
         Syncer_ForceMerge = forceMerge;
         State = EState.Syncing;
 
-		Syncer_Step = ESyncSetp.CheckingConnection;
+		Syncer_Step = ESyncStep.CheckingConnection;
 	}
 
 	public void Syncer_Discard()
 	{
 		if (State == EState.Syncing)
 		{
-            if (Syncer_Step == ESyncSetp.LoggingInSocial)
+            if (Syncer_Step == ESyncStep.LoggingInSocial)
             {
                 SocialPlatformManager.SharedInstance.Login_Discard();
             }
@@ -374,7 +374,7 @@ public class PersistenceCloudDriver
 #endif
             if (success)
 			{
-				Syncer_Step = ESyncSetp.LoggingInServer;
+				Syncer_Step = ESyncStep.LoggingInServer;
 			}
 			else
 			{
@@ -391,7 +391,7 @@ public class PersistenceCloudDriver
 		{
 			if (success)
 			{
-				Syncer_Step = ESyncSetp.LoggingInSocial;
+				Syncer_Step = ESyncStep.LoggingInSocial;
 			}
 			else
 			{
@@ -410,7 +410,7 @@ public class PersistenceCloudDriver
 
     private void Syncer_OnLogInSocialDone(SocialPlatformManager.ELoginResult result, string persistenceMerge)
     {
-        if (mSyncerStep == ESyncSetp.LoggingInSocial)
+        if (mSyncerStep == ESyncStep.LoggingInSocial)
         {
             Syncer_LogInSocialResult = result;
             switch (Syncer_LogInSocialResult)
@@ -420,14 +420,14 @@ public class PersistenceCloudDriver
                     break;
 
                 case SocialPlatformManager.ELoginResult.Ok:
-                    Syncer_Step = ESyncSetp.GettingPersistence;
+                    Syncer_Step = ESyncStep.GettingPersistence;
                     break;
 
                 case SocialPlatformManager.ELoginResult.MergeLocalOrOnlineAccount:
                 case SocialPlatformManager.ELoginResult.MergeDifferentAccountWithProgress:
                 case SocialPlatformManager.ELoginResult.MergeDifferentAccountWithoutProgress:
                     Data.LoadFromString(persistenceMerge);
-                    Syncer_Step = ESyncSetp.Syncing;
+                    Syncer_Step = ESyncStep.Syncing;
                     break;
             }
         }        
@@ -439,7 +439,7 @@ public class PersistenceCloudDriver
 		{
 			if (success)
 			{
-				Syncer_Step = ESyncSetp.Syncing;
+				Syncer_Step = ESyncStep.Syncing;
 			}
 			else
 			{
@@ -664,7 +664,7 @@ public class PersistenceCloudDriver
         switch (Syncer_LogInSocialResult)
         {
             case SocialPlatformManager.ELoginResult.MergeLocalOrOnlineAccount:
-                GameSessionManager.SharedInstance.MergeConfirmAfterPopup(true);
+                GameSessionManager.SharedInstance.MergeConfirmAfterPopup(true);                
                 break;
 
             case SocialPlatformManager.ELoginResult.MergeDifferentAccountWithProgress:
@@ -678,7 +678,7 @@ public class PersistenceCloudDriver
             default:                
                 PersistenceFacade.LogWarning("No Syncer_LogInSocialResult " + Syncer_LogInSocialResult + " supported");
                 break;
-        }        
+        }
 
         // Forces to log out from server since we're about to reload and we want to log in with the anonymous id that we've just overridden
         GameServerManager.SharedInstance.LogOut();
@@ -882,7 +882,7 @@ public class PersistenceCloudDriver
 
 		Action onRetry = delegate() 
 		{
-			Syncer_Step = ESyncSetp.GettingPersistence;
+			Syncer_Step = ESyncStep.GettingPersistence;
 		};
 
 		if (Syncer_IsSilent)
@@ -1034,7 +1034,7 @@ public class PersistenceCloudDriver
 	{     
         switch (mSyncerStep)
         {
-		case ESyncSetp.LoggingInSocial:
+		case ESyncStep.LoggingInSocial:
 
 			// Checks for timeout after calling the social network so we don't depend on the social network, 
 			// in particular this approach lets us address HDK-1574 and HDK-2590          
