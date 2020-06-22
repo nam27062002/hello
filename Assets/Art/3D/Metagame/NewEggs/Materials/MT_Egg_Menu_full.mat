@@ -4,8 +4,9 @@
 Material:
   serializedVersion: 6
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
   m_Name: MT_Egg_Menu_full
   m_Shader: {fileID: 4800000, guid: 2345015ac46679e4cb5817ed44c82547, type: 3}
   m_ShaderKeywords: FRESNEL FXLAYER_COLORIZE NORMALMAP SELFILLUMINATE_EMISSIVE SPECULAR
@@ -81,6 +82,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Floats:
     - FXLayer: 4
+    - ReflectionType: 0
     - SelfIlluminate: 3
     - _BlendMode: 0
     - _BumpScale: 1
@@ -99,6 +101,7 @@ Material:
     - _EnableBlendFresnel: 0
     - _EnableColorRamp: 1
     - _EnableCutoff: 0
+    - _EnableDiffuseAsSpecMask: 0
     - _EnableDoublesided: 0
     - _EnableEmissive: 1
     - _EnableFresnel: 1
@@ -109,6 +112,10 @@ Material:
     - _EnableSilhouette: 0
     - _EnableSpecular: 1
     - _EnableVertexOffset: 0
+    - _EnableVertexOffsetX: 0
+    - _EnableVertexOffsetY: 0
+    - _EnableVertexOffsetZ: 0
+    - _EnableVertexScaleZ: 0
     - _FireAmount: 0
     - _FireSpeed: 1
     - _Fresnel: 2.95
@@ -135,6 +142,8 @@ Material:
     - _SrcBlend: 1
     - _StencilMask: 10
     - _UVSec: 0
+    - _VOAmplitude: 0.3
+    - _VOSpeed: 3
     - _ZWrite: 1
     m_Colors:
     - _AmbientAdd: {r: 0, g: 0, b: 0, a: 0}
@@ -148,8 +157,9 @@ Material:
     - _GlowColor: {r: 0.6985294, g: 0.4263084, b: 0.4263084, a: 1}
     - _InnerLightColor: {r: 0.85294116, g: 0.6602941, b: 0.031358108, a: 1}
     - _LightColor: {r: 1, g: 1, b: 1, a: 0}
+    - _ReflectionColor: {r: 1, g: 1, b: 1, a: 1}
     - _RimColor: {r: 1, g: 0.5586207, b: 0, a: 1}
     - _SecondLightColor: {r: 0, g: 0, b: 0, a: 0}
-    - _SecondLightDir: {r: 0.8623407, g: 0.5063285, b: -0, a: 0}
+    - _SecondLightDir: {r: 0.18976589, g: 0.29194748, b: -0.9374196, a: 0}
     - _SpecularDir: {r: 0, g: 0, b: -1, a: 0}
     - _Tint: {r: 1, g: 1, b: 1, a: 1}
