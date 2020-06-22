@@ -42,9 +42,6 @@ public class CPTechTab : MonoBehaviour {
     [SerializeField] private TMP_Dropdown m_countryDropDown = null;
 	[SerializeField] private TextMeshProUGUI m_currentPlatformText = null;
 	[SerializeField] private TextMeshProUGUI m_currentPlatformUserIdText = null;
-	[SerializeField] private TextMeshProUGUI m_everExplicitLoggedInText = null;
-
-
 
 	// Internal
 	private DateTime m_startTimestamp;
@@ -81,9 +78,7 @@ public class CPTechTab : MonoBehaviour {
 		m_DNAProfileIdText.text = "DNA profileId: " + HDTrackingManager.Instance.GetDNAProfileID();
         m_AdUnitInfoText.text = "Ads: " + GameAds.instance.GetInfo();
 		m_currentPlatformText.text = "Cloud Platform: " + SocialPlatformManager.SharedInstance.CurrentPlatform_GetKey();
-		m_currentPlatformUserIdText.text = "Cloud userId:" + SocialPlatformManager.SharedInstance.CurrentPlatform_GetUserID();
-		m_everExplicitLoggedInText.text = "Ever explicit LogIn: " + PersistenceFacade.instance.LocalDriver.Prefs_SocialEverLoggedInExplicitly.ToString();
-
+		m_currentPlatformUserIdText.text = "Cloud userId:" + SocialPlatformManager.SharedInstance.CurrentPlatform_GetUserID();		
 
 		m_debugServerToggle.isOn = DebugSettings.useDebugServer;
 		m_debugServerToggle.onValueChanged.AddListener(OnToggleDebugServer);        
