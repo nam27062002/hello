@@ -42,9 +42,9 @@ public class PersistenceTester
             // User Action: Hit 'Keep' button
             // Extra: Test disconnecting network before hitting "Keep" button
             test = new PersistenceTest(PersistenceTest.EUserId.U2, PersistenceTest.EProgress.Empty, PersistenceCloudDriver.EMergeState.None,
-            PersistenceTest.EExplicitPlatformState.None, PersistenceTest.EUserId.U1, PersistenceTest.EProgress.P1, PersistenceTest.EImplicitMergeResponse.Conflict, PersistenceTest.EImplicitMergeResponse.OkForce,
-            PersistenceTest.EUserId.U2, PersistenceTest.EProgress.Empty, PersistenceCloudDriver.EMergeState.Ok, PersistenceTest.EExplicitPlatformState.None, UserProfile.ESocialState.NeverLoggedIn,
-            PersistenceCloudDriver.ESyncMode.Full);
+                PersistenceTest.EExplicitPlatformState.None, PersistenceTest.EUserId.U1, PersistenceTest.EProgress.P1, PersistenceTest.EImplicitMergeResponse.Conflict, PersistenceTest.EImplicitMergeResponse.OkForce,
+                PersistenceTest.EUserId.U2, PersistenceTest.EProgress.Empty, PersistenceCloudDriver.EMergeState.Ok, PersistenceTest.EExplicitPlatformState.None, UserProfile.ESocialState.NeverLoggedIn,
+                PersistenceCloudDriver.ESyncMode.Full);
             sm_tests.Add(4, test);
 
             // Use Case: 5. Implicit Conflict after reinstalling the game / Keep (Error) / Confirm
@@ -53,18 +53,47 @@ public class PersistenceTester
             // Result: Prompt Error when keeping local progress. Do you want to continue?
             // User Action: Hit 'Ok' button
             test = new PersistenceTest(PersistenceTest.EUserId.U2, PersistenceTest.EProgress.Empty, PersistenceCloudDriver.EMergeState.None,
-            PersistenceTest.EExplicitPlatformState.None, PersistenceTest.EUserId.U1, PersistenceTest.EProgress.P1, PersistenceTest.EImplicitMergeResponse.Conflict, PersistenceTest.EImplicitMergeResponse.Error,
-            PersistenceTest.EUserId.U2, PersistenceTest.EProgress.Empty, PersistenceCloudDriver.EMergeState.Failed, PersistenceTest.EExplicitPlatformState.None, UserProfile.ESocialState.NeverLoggedIn,
-            PersistenceCloudDriver.ESyncMode.Full);
+                PersistenceTest.EExplicitPlatformState.None, PersistenceTest.EUserId.U1, PersistenceTest.EProgress.P1, PersistenceTest.EImplicitMergeResponse.Conflict, PersistenceTest.EImplicitMergeResponse.Error,
+                PersistenceTest.EUserId.U2, PersistenceTest.EProgress.Empty, PersistenceCloudDriver.EMergeState.Failed, PersistenceTest.EExplicitPlatformState.None, UserProfile.ESocialState.NeverLoggedIn,
+                PersistenceCloudDriver.ESyncMode.Full);
             sm_tests.Add(5, test);
 
-            // Use Case: 6. Implicit login has already been done successfully
+            // Use Case: 6. Implicit login has already been done successfully and local persistence is ahead
             // Result: Persistences are synchronised without calling merge/c            
             test = new PersistenceTest(PersistenceTest.EUserId.U2, PersistenceTest.EProgress.P2, PersistenceCloudDriver.EMergeState.Ok,
-            PersistenceTest.EExplicitPlatformState.None, PersistenceTest.EUserId.U2, PersistenceTest.EProgress.P2, PersistenceTest.EImplicitMergeResponse.None, PersistenceTest.EImplicitMergeResponse.None,
-            PersistenceTest.EUserId.U2, PersistenceTest.EProgress.P2, PersistenceCloudDriver.EMergeState.Ok, PersistenceTest.EExplicitPlatformState.None, UserProfile.ESocialState.NeverLoggedIn,
-            PersistenceCloudDriver.ESyncMode.Lite);
+                PersistenceTest.EExplicitPlatformState.None, PersistenceTest.EUserId.U2, PersistenceTest.EProgress.P2, PersistenceTest.EImplicitMergeResponse.None, PersistenceTest.EImplicitMergeResponse.None,
+                PersistenceTest.EUserId.U2, PersistenceTest.EProgress.P2, PersistenceCloudDriver.EMergeState.Ok, PersistenceTest.EExplicitPlatformState.None, UserProfile.ESocialState.NeverLoggedIn,
+                PersistenceCloudDriver.ESyncMode.Lite);
             sm_tests.Add(6, test);
+            
+            // Use Case: 7. Implicit login has already been done successfully and cloud persistence is ahead
+            // Result: Persistences are synchronised without calling merge/c. Prompt Sync persistence popup
+            // User Action: Hit 'Local' button
+            // Result: Game continues
+            test = new PersistenceTest(PersistenceTest.EUserId.U2, PersistenceTest.EProgress.P2, PersistenceCloudDriver.EMergeState.Ok,
+                PersistenceTest.EExplicitPlatformState.None, PersistenceTest.EUserId.U2, PersistenceTest.EProgress.P1, PersistenceTest.EImplicitMergeResponse.None, PersistenceTest.EImplicitMergeResponse.None,
+                PersistenceTest.EUserId.U2, PersistenceTest.EProgress.P2, PersistenceCloudDriver.EMergeState.Ok, PersistenceTest.EExplicitPlatformState.None, UserProfile.ESocialState.NeverLoggedIn,
+                PersistenceCloudDriver.ESyncMode.Lite);
+            sm_tests.Add(7, test);
+
+            // Use Case: 8. Implicit login has already been done successfully and cloud persistence is ahead
+            // Result: Persistences are synchronised without calling merge/c. Prompt Sync persistence popup
+            // User Action: Hit 'Cloud' button
+            // Result: Game is restarted
+            test = new PersistenceTest(PersistenceTest.EUserId.U2, PersistenceTest.EProgress.P2, PersistenceCloudDriver.EMergeState.Ok,
+                PersistenceTest.EExplicitPlatformState.None, PersistenceTest.EUserId.U2, PersistenceTest.EProgress.P1, PersistenceTest.EImplicitMergeResponse.None, PersistenceTest.EImplicitMergeResponse.None,
+                PersistenceTest.EUserId.U2, PersistenceTest.EProgress.P1, PersistenceCloudDriver.EMergeState.Ok, PersistenceTest.EExplicitPlatformState.None, UserProfile.ESocialState.NeverLoggedIn,
+                PersistenceCloudDriver.ESyncMode.Lite);
+            sm_tests.Add(8, test);
+
+
+            // Use Case: 9. Implicit login has failed
+            // Result: No sync and cloud save disabled            
+            test = new PersistenceTest(PersistenceTest.EUserId.U2, PersistenceTest.EProgress.P2, PersistenceCloudDriver.EMergeState.Failed,
+                PersistenceTest.EExplicitPlatformState.None, PersistenceTest.EUserId.U1, PersistenceTest.EProgress.P1, PersistenceTest.EImplicitMergeResponse.None, PersistenceTest.EImplicitMergeResponse.None,
+                PersistenceTest.EUserId.U2, PersistenceTest.EProgress.P2, PersistenceCloudDriver.EMergeState.Failed, PersistenceTest.EExplicitPlatformState.None, UserProfile.ESocialState.NeverLoggedIn,
+                PersistenceCloudDriver.ESyncMode.None);
+            sm_tests.Add(9, test);
         }
     }
 
