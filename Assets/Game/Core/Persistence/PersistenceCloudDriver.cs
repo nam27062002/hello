@@ -859,7 +859,7 @@ public class PersistenceCloudDriver
 		};
 
 		// If the sync is ok we need to process the new social state (reward for logging in)
-		if (State == EState.LoggedIn)
+		if (State == EState.LoggedIn && Syncer_Mode == ESyncMode.Full)
 		{
 			Action onUserLoggedIn = delegate()
 			{

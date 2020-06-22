@@ -181,26 +181,33 @@ public class PersistenceFacade : IBroadcastListener
                 {
                     Sync_OnDone(result, null);
                 };
-                
+
+                PersistenceCloudDriver.ESyncMode mode = PersistenceCloudDriver.ESyncMode.None;
                 if (isPlatformSupported)
                 {
                     // Lite mode is enough except if it hasn't been linked to DNA yet (we'll try to link it now)
                     // and
                     // it hasn't logged in to an explicit platform yet (we don't want to mess up wih the platform chosen by the user)
-                    PersistenceCloudDriver.ESyncMode mode = PersistenceCloudDriver.ESyncMode.Lite;
-                    if (LocalDriver.Prefs_SocialImplicitMergeState == PersistenceCloudDriver.EMergeState.None && !LocalDriver.HasEverExplicitlyLoggedIn())
+                    if (LocalDriver.HasEverExplicitlyLoggedIn() || LocalDriver.Prefs_SocialImplicitMergeState == PersistenceCloudDriver.EMergeState.Ok)
+                    {
+                        mode = PersistenceCloudDriver.ESyncMode.Lite;
+                    }
+                    else if (LocalDriver.Prefs_SocialImplicitMergeState == PersistenceCloudDriver.EMergeState.None)
                     {
                         mode = PersistenceCloudDriver.ESyncMode.Full;
                     }
+                }
 
 #if UNITY_EDITOR
-                    ApplicationManager.instance.PersistenceTester.OnSyncModeAtLaunch(mode);
+                ApplicationManager.instance.PersistenceTester.OnSyncModeAtLaunch(mode);
 #endif
-                    Config.CloudDriver.Sync(platformId, mode, true, true, onSyncDone);
-                }
-                else
+                if (mode == PersistenceCloudDriver.ESyncMode.None)
                 {
                     onSyncDone(PersistenceStates.ESyncResult.ErrorLogging, PersistenceStates.ESyncResultDetail.NoLogInSocial);
+                }
+                else
+                { 
+                    Config.CloudDriver.Sync(platformId, mode, false, true, onSyncDone);
                 }
             }
         };
