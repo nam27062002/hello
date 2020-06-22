@@ -1191,7 +1191,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     }
     #endregion
 
-    private static bool UseMock
+    public static bool UseMock
     {
         get
         {
