@@ -237,7 +237,7 @@ public class PersistenceUtils
 		}
 
 		// Try with local culture
-		else if(TryParse<T>(_toParse, ApplicationManager.instance.originalCulture, out val)) {
+		else if(TryParse<T>(_toParse, ApplicationManager.originalCulture, out val)) {
 			return val;
 		}
 
