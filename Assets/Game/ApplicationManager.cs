@@ -1200,7 +1200,6 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         }
     }
 
-    #region
     private static NetworkDriver sm_networkDriver;
     public static NetworkDriver NetworkDriver
     {
@@ -1220,8 +1219,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
             return sm_networkDriver;
         }
-    }
-    #endregion
+    }    
 
     #region debug
     private bool Debug_IsPaused { get; set; }
