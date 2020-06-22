@@ -324,19 +324,13 @@ public class PersistenceLocalDriver
 	{
         Prefs_SocialPlatformKey = socialPlatformKey;        
         Prefs_SocialId = socialId;
-        PersistencePrefs.Social_WasLoggedInWhenQuit = true;
+        Prefs_SocialWasLoggedInWhenQuit = true;
 
         if (TrackingPersistenceSystem != null)
         {            
             TrackingPersistenceSystem.SetSocialParams(socialPlatformKey, socialId);
         }
-
-        SocialUtils.EPlatform platformId = SocialUtils.KeyToEPlatform(socialPlatformKey);        
-        if (!SocialPlatformManager.SharedInstance.IsImplicit(platformId))
-        {
-            Prefs_SocialEverLoggedInExplicitly = true;
-        }
-
+        
         if (UserProfile != null && UserProfile.SocialState == UserProfile.ESocialState.NeverLoggedIn)
 		{
 			UserProfile.SocialState = UserProfile.ESocialState.LoggedIn;
@@ -439,16 +433,16 @@ public class PersistenceLocalDriver
         set { PersistencePrefs.Social_Id = value; }
     }
 
-    public virtual bool Prefs_SocialEverLoggedInExplicitly
+    public virtual bool Prefs_SocialWasLoggedInWhenQuit
     {
-        get { return PersistencePrefs.Social_EverLoggedInExplicitly; }
-        set { PersistencePrefs.Social_EverLoggedInExplicitly = value; }
-    }
+        get { return PersistencePrefs.Social_WasLoggedInWhenQuit; }
+        set { PersistencePrefs.Social_WasLoggedInWhenQuit = value; }
+    }    
 
-    public PersistenceCloudDriver.ESyncState Prefs_SocialSyncState
+    public PersistenceCloudDriver.EMergeState Prefs_SocialImplicitMergeState
     {
-        get { return (PersistenceCloudDriver.ESyncState)PersistencePrefs.Social_SyncState; }
-        set { PersistencePrefs.Social_SyncState = (int)value; }
+        get { return (PersistenceCloudDriver.EMergeState)PersistencePrefs.Social_ImplicitMergeState; }
+        set { PersistencePrefs.Social_ImplicitMergeState = (int)value; }
     }
     #endregion
 }

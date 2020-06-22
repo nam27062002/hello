@@ -116,7 +116,7 @@ public class SocialPlatformManager : MonoBehaviour
                 // Retrieves the current social platform: Checks that the user was logged in when she quit and if so then the
                 // latest social platform key is retrieved
                 string socialPlatformKey = PersistenceFacade.instance.LocalDriver.Prefs_SocialPlatformKey;                
-                if (PersistencePrefs.Social_WasLoggedInWhenQuit && IsPlatformKeySupported(socialPlatformKey)) 
+                if (PersistenceFacade.instance.LocalDriver.Prefs_SocialWasLoggedInWhenQuit && IsPlatformKeySupported(socialPlatformKey)) 
 				{
 					m_currentPlatformId = SocialUtils.KeyToEPlatform(socialPlatformKey);
 				} 
@@ -401,9 +401,22 @@ public class SocialPlatformManager : MonoBehaviour
         MergeLocalOrOnlineAccount,
         MergeDifferentAccountWithProgress,
         MergeDifferentAccountWithoutProgress        
-    }    
+    }
 
-    private ELoginMergeState Login_MergeState { get; set; }
+    private ELoginMergeState m_loginMergeState;
+    private ELoginMergeState Login_MergeState
+    {
+        get
+        {
+            return m_loginMergeState;
+        }
+
+        set
+        {
+            m_loginMergeState = value;
+        }
+    }
+
     private bool Login_IsLogInReady { get; set; }
 
     private Action<ELoginResult, string> Login_OnDone { get; set; }
@@ -687,7 +700,7 @@ public class SocialPlatformManager : MonoBehaviour
                             // user id, which is the only oe that is linked to her device id. Merging via an implicit platform is not allowed
                             // after an user has logged in explicitly. If the user was using her original user server id then no merge conflict
                             // had arisen an we don't want to give the user the chance to mess her progress up
-                            if (PersistenceFacade.instance.LocalDriver.Prefs_SocialEverLoggedInExplicitly)
+                            if (!string.IsNullOrEmpty(PersistenceFacade.instance.LocalDriver.Prefs_SocialPlatformKey))
                             {
                                 Log("(LOGGING):: Merge conflict when loging in to an automatic social platform is ignored because the user has ever logged in explicitly");
                                 result = ELoginResult.Error;

@@ -12,15 +12,16 @@ public class PersistenceCloudDriver
         CheckingConnection,
         LoggingInServer,
         LoggingInSocial,
+        MergingAccounts,
         GettingPersistence,
-        Syncing
+        SyncingPersistences
     };
 
-    public enum ESyncState
+    public enum EMergeState
     {
-        No,
-        Yes,
-        Failed // An irrecoverable error arose when syncing with server. The user chose to keep playing withoug cloud save
+        None,
+        Ok,
+        Failed // An irrecoverable error arose when syncing with server. The user chose to keep playing without cloud save
     }
 
     private enum EState
@@ -113,7 +114,7 @@ public class PersistenceCloudDriver
 
 	private void OnLogout()
 	{
-		PersistencePrefs.Social_WasLoggedInWhenQuit = false;
+		LocalDriver.Prefs_SocialWasLoggedInWhenQuit = false;
 
 		if (State == EState.LoggedIn)
 		{
@@ -252,12 +253,16 @@ public class PersistenceCloudDriver
 					Syncer_LogInSocial();
 					break;
 
-				case ESyncStep.GettingPersistence:
+                case ESyncStep.MergingAccounts:
+                    Syncer_MergingAccounts();
+                    break;
+
+                case ESyncStep.GettingPersistence:
 					Syncer_GetPersistence();
 					break;
 
-				case ESyncStep.Syncing:
-					Syncer_Sync();
+				case ESyncStep.SyncingPersistences:
+					Syncer_SyncPersistences();
 					break;
 			}
 		}
@@ -416,7 +421,7 @@ public class PersistenceCloudDriver
                 case SocialPlatformManager.ELoginResult.MergeDifferentAccountWithProgress:
                 case SocialPlatformManager.ELoginResult.MergeDifferentAccountWithoutProgress:
                     Data.LoadFromString(persistenceMerge);
-                    Syncer_Step = ESyncStep.Syncing;
+                    Syncer_Step = ESyncStep.MergingAccounts;
                     break;
             }
         }        
@@ -428,7 +433,7 @@ public class PersistenceCloudDriver
 		{
 			if (success)
 			{
-				Syncer_Step = ESyncStep.Syncing;
+				Syncer_Step = ESyncStep.SyncingPersistences;
 			}
 			else
 			{
@@ -439,7 +444,7 @@ public class PersistenceCloudDriver
 		Syncer_ExtendedGetPersistence(onDone);
 	}    
 
-	private void Syncer_Sync()
+	private void Syncer_MergingAccounts()
 	{
         if (SocialPlatformManager.SharedInstance.IsImplicit(Syncer_PlatformId) &&
             (Syncer_LogInSocialResult == SocialPlatformManager.ELoginResult.MergeLocalOrOnlineAccount ||
@@ -478,18 +483,12 @@ public class PersistenceCloudDriver
 
                         PersistenceFacade.Popup_OpenMergeWithADifferentAccount(Syncer_PlatformId, onConfirm, onCancel);
                     }
-                    break;
-
-                default:
-                    {
-                        Syncer_ProcessSync();
-                    }
-                    break;
+                    break;               
             }
         }                
 	}    
 
-    private void Syncer_ProcessSync()
+    private void Syncer_SyncPersistences()
     {
         PersistenceStates.ELoadState localState = LocalDriver.Data.LoadState;
         PersistenceStates.ELoadState cloudState = Data.LoadState;
@@ -567,11 +566,18 @@ public class PersistenceCloudDriver
         }
     }
 
-    private void Syncer_OnMergeConflictOverwriteSocialUserIdWithLocalServerId()
-    {
-        // Prevent this flow from being triggered again
-        PersistenceFacade.Log("User chooses to keep playing with local progress. This prevents this flow from being triggered again");
-        LocalDriver.Prefs_SocialSyncState = ESyncState.Failed;
+    private void Syncer_OnMergeConflictOverwriteSocialUserIdWithLocalServerId(bool success)
+    {       
+        if (success)
+        {
+            LocalDriver.Prefs_SocialImplicitMergeState = EMergeState.Ok;
+            Syncer_PerformDone(PersistenceStates.ESyncResult.Ok, PersistenceStates.ESyncResultDetail.None);
+        }
+        else
+        {
+            LocalDriver.Prefs_SocialImplicitMergeState = EMergeState.Failed;
+            Syncer_PerformDone(PersistenceStates.ESyncResult.ErrorLogging, PersistenceStates.ESyncResultDetail.NoLogInSocial);
+        }                
     }
 
     private void Syncer_ProcessMerge()
@@ -834,10 +840,20 @@ public class PersistenceCloudDriver
             
             HDTrackingManager.Instance.Notify_SocialAuthentication();
 
-            SocialUtils.EPlatform platformId = Syncer_PlatformId;
-            string currentSocialPlatformKey = SocialUtils.EPlatformToKey(platformId);
-            string socialId = SocialPlatformManager.SharedInstance.GetUserID(platformId);            
-			LocalDriver.NotifyUserHasLoggedIn(currentSocialPlatformKey, socialId, onUserLoggedIn);
+            // Logging in to an implicit platform is not considered in terms of logging in (no reward is given to the user) because
+            // it hasn't been triggered by the user
+            if (SocialPlatformManager.SharedInstance.IsImplicit(Syncer_PlatformId))
+            {
+                LocalDriver.Prefs_SocialImplicitMergeState = EMergeState.Ok;
+                onDone();
+            }
+            else
+            {
+                SocialUtils.EPlatform platformId = Syncer_PlatformId;
+                string currentSocialPlatformKey = SocialUtils.EPlatformToKey(platformId);
+                string socialId = SocialPlatformManager.SharedInstance.GetUserID(platformId);
+                LocalDriver.NotifyUserHasLoggedIn(currentSocialPlatformKey, socialId, onUserLoggedIn);
+            }
 		} 
 		else
 		{

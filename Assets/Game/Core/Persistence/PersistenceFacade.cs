@@ -185,7 +185,7 @@ public class PersistenceFacade : IBroadcastListener
                 // Tries to sync with cloud if the platform is allowed to login automatically,
                 // otherwise the user needs to have been logged in to the social platform when she quit the app last time she played
                 if (isPlatformSupported &&
-                    (isAutoLoginEnabled || PersistencePrefs.Social_WasLoggedInWhenQuit))
+                    (isAutoLoginEnabled || LocalDriver.Prefs_SocialWasLoggedInWhenQuit))
                 {
                     Config.CloudDriver.Sync(platformId, true, true, onSyncDone);
                 }
@@ -721,7 +721,7 @@ public class PersistenceFacade : IBroadcastListener
     private static SocialUtils.EPlatform m_implicitMergePlatform;
     private static PopupController m_implicitMergeConflictPopupController = null;
     private static Action m_implicitMergeConflictPopupOnRestore;
-    private static Action m_implicitMergeConflictPopupOnKeep;
+    private static Action<bool> m_implicitMergeConflictPopupOnKeep;
     private static bool m_implicitMergeConflictPopupNeedsToPopRequest;
 
     private static void Popup_ImplicitMergeConflictReset()
@@ -749,11 +749,18 @@ public class PersistenceFacade : IBroadcastListener
         config.BackButtonStrategy = IPopupMessage.Config.EBackButtonStratety.PerformExtra;
         config.HighlightButton = IPopupMessage.Config.EHighlightButton.Confirm;
 
-        // Texts setup
+        // Texts setup        
         config.TitleTid = "TID_DNA_MERGE_CONFLICT_TITLE";   // Save game conflict!
         config.MessageTid = "TID_DNA_MERGE_CONFLICT_MESSAGE_IRRECOVERABLE_ERROR"; // An error arose when linking current progress to to this device. Do you want to recover your progress from the cloud or keep playing with the current progress and cloud save disabled?
         config.ConfirmButtonTid = "TID_DNA_MERGE_CONFLICT_BUTTON_1"; // Recover previous progress
         config.ExtraButtonTid = "TID_DNA_MERGE_CONFLICT_BUTTON_2"; // Keep current progress
+
+        /*
+        config.TitleTid = "Save game conflict!";
+        config.MessageTid = "An error arose when linking current progress to to this device. Do you want to recover your progress from the cloud or keep playing with the current progress and cloud save disabled?";
+        config.ConfirmButtonTid = "Recover"; // Recover previous progress
+        config.ExtraButtonTid = "Keep"; // Keep current progress
+        */
 
         // Open popup!
         // It's stored so it can be closed later on if an extra popup (no connection) needs to be prompted on the top of this one
@@ -768,6 +775,7 @@ public class PersistenceFacade : IBroadcastListener
         {            
             bool finishFlow = true;
 
+            //result = PersistenceStates.ESyncResult.ErrorSyncing;
             switch (result)
             {
                 case PersistenceStates.ESyncResult.ErrorLogging:                    
@@ -790,7 +798,7 @@ public class PersistenceFacade : IBroadcastListener
                             Action onKeep = delegate ()
                             {
                                 // User chooses to keep local progress anyway 
-                                Popup_ImplicitMergeConflictOnKeep();                                                               
+                                Popup_ImplicitMergeConflictOnKeep(false);                                                               
                             };                           
 
                             // Show popup notifying that there's been an irrecoverable error on server side
@@ -817,13 +825,7 @@ public class PersistenceFacade : IBroadcastListener
                     m_implicitMergeConflictPopupController = null;
                 }
 
-                // Pop the request that triggered by this popup
-                if (m_implicitMergeConflictPopupNeedsToPopRequest)
-                {
-                    instance.CloudDriver.Sync_PopRequest();
-                }
-
-                Popup_ImplicitMergeConflictReset();
+                Popup_ImplicitMergeConflictOnKeep(true);               
             }
         };
 
@@ -836,7 +838,7 @@ public class PersistenceFacade : IBroadcastListener
         cloudDriver.Sync(m_implicitMergePlatform, false, false, onSyncDone, true, !prevValue);
     }   
 
-    private static void Popup_ImplicitMergeConflictOnKeep()
+    private static void Popup_ImplicitMergeConflictOnKeep(bool success)
     {
         if (m_implicitMergeConflictPopupNeedsToPopRequest)
         {
@@ -845,7 +847,7 @@ public class PersistenceFacade : IBroadcastListener
 
         if (m_implicitMergeConflictPopupOnKeep != null)
         {
-            m_implicitMergeConflictPopupOnKeep();
+            m_implicitMergeConflictPopupOnKeep(success);
         }        
 
         Popup_ImplicitMergeConflictReset();
@@ -866,7 +868,7 @@ public class PersistenceFacade : IBroadcastListener
         Popup_ImplicitMergeConflictReset();
     }
 
-    public static void Popup_OpenImplicitMergeConflict(SocialUtils.EPlatform plaftormId, Action _onRestore, Action _onKeep) {
+    public static void Popup_OpenImplicitMergeConflict(SocialUtils.EPlatform plaftormId, Action _onRestore, Action<bool> _onKeep) {
         // Check params
         Debug.Assert(_onRestore != null && _onKeep != null, "Both _onRestore and _onKeep callbacks must be defined!");
 
@@ -886,11 +888,18 @@ public class PersistenceFacade : IBroadcastListener
         config.BackButtonStrategy = IPopupMessage.Config.EBackButtonStratety.PerformExtra;
         config.HighlightButton = IPopupMessage.Config.EHighlightButton.Confirm;
 
-        // Texts setup
+        // Texts setup        
         config.TitleTid = "TID_DNA_MERGE_CONFLICT_TITLE";   // Save game conflict!
         config.MessageTid = "TID_DNA_MERGE_CONFLICT_MESSAGE"; // A previous progress linked to this device was found. Do you want to recover it or keep playing with the current progress?
         config.ConfirmButtonTid = "TID_DNA_MERGE_CONFLICT_BUTTON_1"; // Recover previous progress
         config.ExtraButtonTid = "TID_DNA_MERGE_CONFLICT_BUTTON_2"; // Keep current progress
+
+        /*
+        config.TitleTid = "Save game conflict!";
+        config.MessageTid = "A previous progress linked to this device was found. Do you want to recover it or keep playing with the current progress?";
+        config.ConfirmButtonTid = "Recover";// "TID_DNA_MERGE_CONFLICT_BUTTON_1"; // Recover previous progress
+        config.ExtraButtonTid = "Keep"; // "TID_DNA_MERGE_CONFLICT_BUTTON_2"; // Keep current progress
+        */
 
         // Open popup!
         // It's stored so it can be closed later on if an extra popup (no connection) needs to be prompted on the top of this one
