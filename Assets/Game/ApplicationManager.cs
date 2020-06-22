@@ -51,9 +51,9 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     	get{ return m_appMode; }
     }
 
-	private CultureInfo m_originalCulture = CultureInfo.CurrentCulture;
-	public CultureInfo originalCulture {
-		get { return m_originalCulture; }
+	private static CultureInfo sm_originalCulture = CultureInfo.CurrentCulture;
+	public static CultureInfo originalCulture {
+		get { return sm_originalCulture; }
 	}
 
     /// <summary>
@@ -76,7 +76,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         }
 
 		// [AOC] To make sure we have a solid ToString() and Parse() systems through different platforms and locales, force it to Invariant
-		m_originalCulture = CultureInfo.CurrentCulture;	// Store original
+		sm_originalCulture = CultureInfo.CurrentCulture;	// Store original
 		CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
 		//CultureInfo.CurrentCulture = CultureInfo.CreateSpecificCulture("fr-FR");	// [AOC] For testing only!!
 
@@ -143,7 +143,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         base.OnDestroy();
 
 		// [AOC] Restore original culture. Don't think it's needed, but just in case
-		CultureInfo.CurrentCulture = m_originalCulture;
+		CultureInfo.CurrentCulture = sm_originalCulture;
 
         Messenger.RemoveListener(MessengerEvents.GAME_COUNTDOWN_STARTED, Game_OnCountdownStarted);
         Broadcaster.RemoveListener(BroadcastEventType.GAME_PAUSED, this);
