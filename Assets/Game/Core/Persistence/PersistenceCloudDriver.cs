@@ -17,6 +17,13 @@ public class PersistenceCloudDriver
         SyncingPersistences
     };
 
+    public enum ESyncMode
+    {
+        None,
+        Lite,
+        Full
+    };
+
     public enum EMergeState
     {
         None,
@@ -142,6 +149,19 @@ public class PersistenceCloudDriver
         get
         {            
             return m_syncerRequests.Peek();
+        }
+    }
+
+    private ESyncMode Syncer_Mode
+    {
+        get
+        {
+            return Syncer_CurrentRequest.Mode;
+        }
+
+        set
+        {
+            Syncer_CurrentRequest.Mode = value;
         }
     }
 
@@ -322,7 +342,7 @@ public class PersistenceCloudDriver
         }
     }
 
-	public void Sync(SocialUtils.EPlatform platformId, bool isSilent, bool isAppInit,
+	public void Sync(SocialUtils.EPlatform platformId, ESyncMode mode, bool isSilent, bool isAppInit,
                      Action<PersistenceStates.ESyncResult, PersistenceStates.ESyncResultDetail> onDone,
                      bool forceMerge = false, bool pushRequest = false)
 	{        
@@ -341,7 +361,8 @@ public class PersistenceCloudDriver
 
 		Syncer_OnSyncDone = onDone;
 		Syncer_PlatformId = platformId;
-		Syncer_IsSilent = isSilent;
+        Syncer_Mode = mode;
+        Syncer_IsSilent = isSilent;
 		Syncer_IsAppInit = isAppInit;
         Syncer_ForceMerge = forceMerge;
         State = EState.Syncing;
@@ -385,7 +406,14 @@ public class PersistenceCloudDriver
 		{
 			if (success)
 			{
-				Syncer_Step = ESyncStep.LoggingInSocial;
+                if (Syncer_Mode == ESyncMode.Full)
+                {
+                    Syncer_Step = ESyncStep.LoggingInSocial;
+                }
+                else
+                {
+                    Syncer_Step = ESyncStep.GettingPersistence;
+                }
 			}
 			else
 			{

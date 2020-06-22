@@ -52,6 +52,7 @@ public class PersistenceTest
     public PersistenceCloudDriver.EMergeState End_MergeState { get; set; }
     public EExplicitPlatformState End_ExplicitPlatformState { get; set; }
     public UserProfile.ESocialState End_SocialState { get; set; }
+    public PersistenceCloudDriver.ESyncMode End_SyncModeAtLaunch { get; set; }
 
     private UserProfile m_userProfile;
     private UserProfile UserProfile
@@ -93,9 +94,12 @@ public class PersistenceTest
 
     private bool HasAppBeenFirstLaunched { get; set; }
 
+    public PersistenceCloudDriver.ESyncMode SyncModeAtLaunch { get; set; }
+
     public PersistenceTest(EUserId startLocalUserId, EProgress startLocalProgress, PersistenceCloudDriver.EMergeState startMergeState,
         EExplicitPlatformState startExplicitPlatformState, EUserId startCloudUserId, EProgress startCloudProgress, EImplicitMergeResponse implicitMergeResponse, EImplicitMergeResponse implicitMergeResponse2,
-        EUserId endLocalUserId, EProgress endLocalProgress, PersistenceCloudDriver.EMergeState endMergeState, EExplicitPlatformState endExplicitPlatformState, UserProfile.ESocialState endSocialState)
+        EUserId endLocalUserId, EProgress endLocalProgress, PersistenceCloudDriver.EMergeState endMergeState, EExplicitPlatformState endExplicitPlatformState, UserProfile.ESocialState endSocialState,
+        PersistenceCloudDriver.ESyncMode endSyncModeAtLaunch)
     {
         Start_LocalUserId = startLocalUserId;
         Start_LocalProgress = startLocalProgress;
@@ -112,6 +116,7 @@ public class PersistenceTest
         End_MergeState = endMergeState;
         End_ExplicitPlatformState = endExplicitPlatformState;
         End_SocialState = endSocialState;
+        End_SyncModeAtLaunch = endSyncModeAtLaunch;
     }
 
     public void PrepareLocal()
@@ -198,11 +203,14 @@ public class PersistenceTest
             localDriver.Prefs_SocialImplicitMergeState == End_MergeState &&
             CheckExplicitPlatformState(End_ExplicitPlatformState) &&
             UsersManager.currentUser.SocialState == End_SocialState &&
-            !PersistenceFacade.instance.Sync_IsSyncing;
+            !PersistenceFacade.instance.Sync_IsSyncing &&
+            End_SyncModeAtLaunch == SyncModeAtLaunch;
     }
 
     public void OnAppLaunched()
     {
+        SyncModeAtLaunch = PersistenceCloudDriver.ESyncMode.None;
+
         DummyNetworkManager networkManager = NetworkManager.SharedInstance as DummyNetworkManager;
         if (networkManager != null)
         {

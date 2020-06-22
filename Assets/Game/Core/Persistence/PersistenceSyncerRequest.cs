@@ -5,8 +5,9 @@ public class PersistenceSyncerRequest
 	public PersistenceSyncerRequest()
 	{
 		Reset();
-	}	
+	}
 
+	public PersistenceCloudDriver.ESyncMode Mode { get; set; }
 	public bool IsSilent { get; set; }
 	public bool IsAppInit { get; set; }
 	public SocialUtils.EPlatform PlatformId { get; set; }
@@ -44,6 +45,7 @@ public class PersistenceSyncerRequest
 		Comparator.Reset();
 		
 		IsAppInit = false;
+		Mode = PersistenceCloudDriver.ESyncMode.Full;
 		IsSilent = false;
 		PlatformId = SocialUtils.EPlatform.None;
 		OnSyncDone = null;

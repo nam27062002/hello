@@ -344,6 +344,13 @@ public class PersistenceLocalDriver
 
     public void Update() {}
 
+    public bool HasEverExplicitlyLoggedIn()
+    {        
+        SocialUtils.EPlatform platform = SocialUtils.KeyToEPlatform(Prefs_SocialPlatformKey);
+        return (SocialPlatformManager.SharedInstance.IsPlatformIdSupported(platform) &&
+                !SocialPlatformManager.SharedInstance.IsImplicit(platform));
+    }
+
     #region SavePaths
     private const bool SAVE_PATHS_MULTIPLE_ENABLED = true;
     private const int SAVE_PATHS_COUNT = (SAVE_PATHS_MULTIPLE_ENABLED) ? 2 : 1;

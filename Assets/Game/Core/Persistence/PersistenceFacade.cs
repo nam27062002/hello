@@ -113,13 +113,13 @@ public class PersistenceFacade : IBroadcastListener
             SocialPlatformManager socialPlatformManager = SocialPlatformManager.SharedInstance;
             SocialUtils.EPlatform platformId = socialPlatformManager.CurrentPlatform_GetId();//SocialUtils.KeyToEPlatform(LocalDriver.Prefs_SocialPlatformKey);
             bool isPlatformSupported = socialPlatformManager.IsPlatformIdSupported(platformId);
-            bool isAutoLoginEnabled = socialPlatformManager.IsImplicit(platformId);
+            bool isImplicit = socialPlatformManager.IsImplicit(platformId);
 
             // If local persistence is corrupted then we'll try to override it with cloud persistence if the user has ever logged in the social network
             if (LocalData.LoadState == PersistenceStates.ELoadState.Corrupted)
             {
                 bool logInSocialEver = isPlatformSupported &&
-                                       (isAutoLoginEnabled || !string.IsNullOrEmpty(LocalDriver.Prefs_SocialId));
+                                       (isImplicit || !string.IsNullOrEmpty(LocalDriver.Prefs_SocialId));
 
                 Action onReset = delegate ()
                 {
@@ -154,7 +154,7 @@ public class PersistenceFacade : IBroadcastListener
                     };
 
                     // Logs in to the latest platform known
-                    Config.CloudDriver.Sync(platformId, false, true, onConnectDone);
+                    Config.CloudDriver.Sync(platformId, PersistenceCloudDriver.ESyncMode.Lite, false, true, onConnectDone);
                 }
                 else
                 {
@@ -181,13 +181,22 @@ public class PersistenceFacade : IBroadcastListener
                 {
                     Sync_OnDone(result, null);
                 };
-
-                // Tries to sync with cloud if the platform is allowed to login automatically,
-                // otherwise the user needs to have been logged in to the social platform when she quit the app last time she played
-                if (isPlatformSupported &&
-                    (isAutoLoginEnabled || LocalDriver.Prefs_SocialWasLoggedInWhenQuit))
+                
+                if (isPlatformSupported)
                 {
-                    Config.CloudDriver.Sync(platformId, true, true, onSyncDone);
+                    // Lite mode is enough except if it hasn't been linked to DNA yet (we'll try to link it now)
+                    // and
+                    // it hasn't logged in to an explicit platform yet (we don't want to mess up wih the platform chosen by the user)
+                    PersistenceCloudDriver.ESyncMode mode = PersistenceCloudDriver.ESyncMode.Lite;
+                    if (LocalDriver.Prefs_SocialImplicitMergeState == PersistenceCloudDriver.EMergeState.None && !LocalDriver.HasEverExplicitlyLoggedIn())
+                    {
+                        mode = PersistenceCloudDriver.ESyncMode.Full;
+                    }
+
+#if UNITY_EDITOR
+                    ApplicationManager.instance.PersistenceTester.OnSyncModeAtLaunch(mode);
+#endif
+                    Config.CloudDriver.Sync(platformId, mode, true, true, onSyncDone);
                 }
                 else
                 {
@@ -221,7 +230,7 @@ public class PersistenceFacade : IBroadcastListener
                     Sync_OnDone(result, onDone);
                 };
 
-                Config.CloudDriver.Sync(platformId, false, false, onSyncDone);
+                Config.CloudDriver.Sync(platformId, PersistenceCloudDriver.ESyncMode.Full, false, false, onSyncDone);
             };
 
             Config.LocalDriver.Save(onSaveDone);
@@ -251,7 +260,7 @@ public class PersistenceFacade : IBroadcastListener
 
                 // Uses the same social platform that is currently in usage since the user can not change social platforms
                 // when reconnecting
-                Config.CloudDriver.Sync(SocialPlatformManager.SharedInstance.CurrentPlatform_GetId(), true, false, onSyncDone);
+                Config.CloudDriver.Sync(SocialPlatformManager.SharedInstance.CurrentPlatform_GetId(), PersistenceCloudDriver.ESyncMode.Lite, true, false, onSyncDone);
             };
 
             Config.LocalDriver.Save(onSaveDone);
@@ -835,7 +844,7 @@ public class PersistenceFacade : IBroadcastListener
 
         // For automatic social platforms the user is allowed to override the server Id associated to the platform user Id        
         // Sync is restarted stating that force is allowed
-        cloudDriver.Sync(m_implicitMergePlatform, false, false, onSyncDone, true, !prevValue);
+        cloudDriver.Sync(m_implicitMergePlatform, PersistenceCloudDriver.ESyncMode.Full, false, false, onSyncDone, true, !prevValue);
     }   
 
     private static void Popup_ImplicitMergeConflictOnKeep(bool success)

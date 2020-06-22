@@ -17,12 +17,14 @@ public class PersistenceTester
             PersistenceTest test;
             test = new PersistenceTest(PersistenceTest.EUserId.U2, PersistenceTest.EProgress.Empty, PersistenceCloudDriver.EMergeState.None,
                 PersistenceTest.EExplicitPlatformState.None, PersistenceTest.EUserId.None, PersistenceTest.EProgress.Empty, PersistenceTest.EImplicitMergeResponse.Error, PersistenceTest.EImplicitMergeResponse.None,
-                PersistenceTest.EUserId.U2, PersistenceTest.EProgress.Empty, PersistenceCloudDriver.EMergeState.None, PersistenceTest.EExplicitPlatformState.None, UserProfile.ESocialState.NeverLoggedIn);
+                PersistenceTest.EUserId.U2, PersistenceTest.EProgress.Empty, PersistenceCloudDriver.EMergeState.None, PersistenceTest.EExplicitPlatformState.None, UserProfile.ESocialState.NeverLoggedIn,
+                PersistenceCloudDriver.ESyncMode.Full);
             sm_tests.Add(1, test);
 
             test = new PersistenceTest(PersistenceTest.EUserId.U2, PersistenceTest.EProgress.Empty, PersistenceCloudDriver.EMergeState.None,
                 PersistenceTest.EExplicitPlatformState.None, PersistenceTest.EUserId.None, PersistenceTest.EProgress.Empty, PersistenceTest.EImplicitMergeResponse.Ok, PersistenceTest.EImplicitMergeResponse.None,
-                PersistenceTest.EUserId.U2, PersistenceTest.EProgress.Empty, PersistenceCloudDriver.EMergeState.Ok, PersistenceTest.EExplicitPlatformState.None, UserProfile.ESocialState.NeverLoggedIn);
+                PersistenceTest.EUserId.U2, PersistenceTest.EProgress.Empty, PersistenceCloudDriver.EMergeState.Ok, PersistenceTest.EExplicitPlatformState.None, UserProfile.ESocialState.NeverLoggedIn,
+                PersistenceCloudDriver.ESyncMode.Full);
             sm_tests.Add(2, test);
 
             // Use Case: 3. Implicit Conflict after reinstalling the game / Restore
@@ -31,7 +33,8 @@ public class PersistenceTester
             // Extra: Test disconnecting network before hitting "Restore" button
             test = new PersistenceTest(PersistenceTest.EUserId.U2, PersistenceTest.EProgress.Empty, PersistenceCloudDriver.EMergeState.None,
                 PersistenceTest.EExplicitPlatformState.None, PersistenceTest.EUserId.U1, PersistenceTest.EProgress.P1, PersistenceTest.EImplicitMergeResponse.Conflict, PersistenceTest.EImplicitMergeResponse.None,
-                PersistenceTest.EUserId.U1, PersistenceTest.EProgress.P1, PersistenceCloudDriver.EMergeState.Ok, PersistenceTest.EExplicitPlatformState.None, UserProfile.ESocialState.NeverLoggedIn);
+                PersistenceTest.EUserId.U1, PersistenceTest.EProgress.P1, PersistenceCloudDriver.EMergeState.Ok, PersistenceTest.EExplicitPlatformState.None, UserProfile.ESocialState.NeverLoggedIn,
+                PersistenceCloudDriver.ESyncMode.Lite);
             sm_tests.Add(3, test);
 
             // Use Case: 4. Implicit Conflict after reinstalling the game / Keep (Ok) 
@@ -40,7 +43,8 @@ public class PersistenceTester
             // Extra: Test disconnecting network before hitting "Keep" button
             test = new PersistenceTest(PersistenceTest.EUserId.U2, PersistenceTest.EProgress.Empty, PersistenceCloudDriver.EMergeState.None,
             PersistenceTest.EExplicitPlatformState.None, PersistenceTest.EUserId.U1, PersistenceTest.EProgress.P1, PersistenceTest.EImplicitMergeResponse.Conflict, PersistenceTest.EImplicitMergeResponse.OkForce,
-            PersistenceTest.EUserId.U2, PersistenceTest.EProgress.Empty, PersistenceCloudDriver.EMergeState.Ok, PersistenceTest.EExplicitPlatformState.None, UserProfile.ESocialState.NeverLoggedIn);
+            PersistenceTest.EUserId.U2, PersistenceTest.EProgress.Empty, PersistenceCloudDriver.EMergeState.Ok, PersistenceTest.EExplicitPlatformState.None, UserProfile.ESocialState.NeverLoggedIn,
+            PersistenceCloudDriver.ESyncMode.Full);
             sm_tests.Add(4, test);
 
             // Use Case: 5. Implicit Conflict after reinstalling the game / Keep (Error) / Confirm
@@ -50,14 +54,16 @@ public class PersistenceTester
             // User Action: Hit 'Ok' button
             test = new PersistenceTest(PersistenceTest.EUserId.U2, PersistenceTest.EProgress.Empty, PersistenceCloudDriver.EMergeState.None,
             PersistenceTest.EExplicitPlatformState.None, PersistenceTest.EUserId.U1, PersistenceTest.EProgress.P1, PersistenceTest.EImplicitMergeResponse.Conflict, PersistenceTest.EImplicitMergeResponse.Error,
-            PersistenceTest.EUserId.U2, PersistenceTest.EProgress.Empty, PersistenceCloudDriver.EMergeState.Failed, PersistenceTest.EExplicitPlatformState.None, UserProfile.ESocialState.NeverLoggedIn);
+            PersistenceTest.EUserId.U2, PersistenceTest.EProgress.Empty, PersistenceCloudDriver.EMergeState.Failed, PersistenceTest.EExplicitPlatformState.None, UserProfile.ESocialState.NeverLoggedIn,
+            PersistenceCloudDriver.ESyncMode.Full);
             sm_tests.Add(5, test);
 
             // Use Case: 6. Implicit login has already been done successfully
             // Result: Persistences are synchronised without calling merge/c            
             test = new PersistenceTest(PersistenceTest.EUserId.U2, PersistenceTest.EProgress.P2, PersistenceCloudDriver.EMergeState.Ok,
             PersistenceTest.EExplicitPlatformState.None, PersistenceTest.EUserId.U2, PersistenceTest.EProgress.P2, PersistenceTest.EImplicitMergeResponse.None, PersistenceTest.EImplicitMergeResponse.None,
-            PersistenceTest.EUserId.U2, PersistenceTest.EProgress.P2, PersistenceCloudDriver.EMergeState.Ok, PersistenceTest.EExplicitPlatformState.None, UserProfile.ESocialState.NeverLoggedIn);
+            PersistenceTest.EUserId.U2, PersistenceTest.EProgress.P2, PersistenceCloudDriver.EMergeState.Ok, PersistenceTest.EExplicitPlatformState.None, UserProfile.ESocialState.NeverLoggedIn,
+            PersistenceCloudDriver.ESyncMode.Lite);
             sm_tests.Add(6, test);
         }
     }
@@ -141,6 +147,15 @@ public class PersistenceTester
         {
             currentTest.OnAppLaunched();
         }
-    }    
+    }
+
+    public void OnSyncModeAtLaunch(PersistenceCloudDriver.ESyncMode mode)
+    {
+        PersistenceTest currentTest = CurrentTest;
+        if (currentTest != null)
+        {
+            currentTest.SyncModeAtLaunch = mode;
+        }
+    }
 }
 #endif
