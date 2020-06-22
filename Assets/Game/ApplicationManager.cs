@@ -56,15 +56,37 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 		get { return sm_originalCulture; }
 	}
 
+#if UNITY_EDITOR
+    private PersistenceTester m_persistenceTester;
+    public PersistenceTester PersistenceTester
+    {
+        get
+        {
+            CreatePersistenceTester();
+            return m_persistenceTester;
+        }
+    }
+
+    private void CreatePersistenceTester()
+    {
+        if (m_persistenceTester == null)
+        {
+            m_persistenceTester = new PersistenceTester();
+        }
+    }
+#endif
+
     /// <summary>
-	/// Initialization. This method will be called only once regardless the amount of times the user is led to the Loading scene.
-	/// </summary>
-	protected void Awake()
+    /// Initialization. This method will be called only once regardless the amount of times the user is led to the Loading scene.
+    /// </summary>
+    protected void Awake()
     {
 		Application.targetFrameRate = 30;
 
         // Frame rate forced to 30 fps to make the experience in editor as similar to the one on device as possible
-#if UNITY_EDITOR
+#if UNITY_EDITOR        
+        CreatePersistenceTester();                
+
         QualitySettings.vSyncCount = 0;  // VSync must be disabled
 #endif
 
@@ -359,6 +381,10 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         {
             //GameSessionManager.RemoveKeys();
             //PersistencePrefs.Clear();
+        }
+        else if (Input.GetKeyDown(KeyCode.T))
+        {
+            Debug.Log("Current persistence test passed: " + PersistenceTester.HasCurrentTestPassed());
         }
 #endif
 		UnityEngine.Profiling.Profiler.BeginSample("ApplicationManager.Update()");

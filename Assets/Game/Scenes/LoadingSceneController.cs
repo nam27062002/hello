@@ -242,6 +242,9 @@ public class LoadingSceneController : SceneController {
         // Call parent
 		base.Awake();
 
+#if UNITY_EDITOR
+        ApplicationManager.instance.PersistenceTester.OnAppLaunched();
+#endif
         // We need to update the user id label when the user logs in 
         Messenger.AddListener<bool>(MessengerEvents.LOGGED, OnLoggedIn);
     }    

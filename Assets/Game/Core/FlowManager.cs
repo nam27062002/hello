@@ -136,6 +136,10 @@ public class FlowManager : Singleton<FlowManager> {
 	/// Interrupts current flow and restarts the application.
 	/// </summary>
 	public static void Restart() {
+#if UNITY_EDITOR
+        // Restart needs to be notified so login stuff can be spoofed properly
+        ApplicationManager.instance.PersistenceTester.OnAppLaunched();
+#endif
         // Delete key singletons that must be reloaded		
         GameVars.DestroyInstance();
 
