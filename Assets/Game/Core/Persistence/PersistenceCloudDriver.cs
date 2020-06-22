@@ -437,7 +437,7 @@ public class PersistenceCloudDriver
 			}
 			else
 			{
-				Syncer_ProcessSyncingError();
+				Syncer_ProcessSyncingPersistencesError();
 			}
 		};
 
@@ -878,7 +878,7 @@ public class PersistenceCloudDriver
 		}
 	}
 
-	private void Syncer_ProcessSyncingError()
+	private void Syncer_ProcessSyncingPersistencesError()
 	{
 		Action onDone = delegate() 
 		{
