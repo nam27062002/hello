@@ -11,6 +11,9 @@ public class EditorPersistenceTesterMenu
     private const string TESTER_MENU_04 = TESTER_MENU + "/04";
     private const string TESTER_MENU_05 = TESTER_MENU + "/05";
     private const string TESTER_MENU_06 = TESTER_MENU + "/06";
+    private const string TESTER_MENU_07 = TESTER_MENU + "/07";
+    private const string TESTER_MENU_08 = TESTER_MENU + "/08";
+    private const string TESTER_MENU_09 = TESTER_MENU + "/09";
 
     private static PersistenceTester sm_persistenceTester = new PersistenceTester();
 
@@ -115,6 +118,45 @@ public class EditorPersistenceTesterMenu
     public static bool Test_Set06Validate()
     {
         Menu.SetChecked(TESTER_MENU_06, CurrentTestId == 6);
+        return true;
+    }
+
+    [MenuItem(TESTER_MENU_07)]
+    public static void Test_Set07()
+    {
+        CurrentTestId = 7;
+    }
+
+    [MenuItem(TESTER_MENU_07, true)]
+    public static bool Test_Set07Validate()
+    {
+        Menu.SetChecked(TESTER_MENU_07, CurrentTestId == 7);
+        return true;
+    }
+
+    [MenuItem(TESTER_MENU_08)]
+    public static void Test_Set08()
+    {
+        CurrentTestId = 8;
+    }
+
+    [MenuItem(TESTER_MENU_08, true)]
+    public static bool Test_Set08Validate()
+    {
+        Menu.SetChecked(TESTER_MENU_08, CurrentTestId == 8);
+        return true;
+    }
+
+    [MenuItem(TESTER_MENU_09)]
+    public static void Test_Set09()
+    {
+        CurrentTestId = 9;
+    }
+
+    [MenuItem(TESTER_MENU_09, true)]
+    public static bool Test_Set09Validate()
+    {
+        Menu.SetChecked(TESTER_MENU_09, CurrentTestId == 9);
         return true;
     }
 }
