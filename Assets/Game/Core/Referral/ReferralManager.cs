@@ -318,18 +318,31 @@ public class ReferralManager
     /// </summary>
     public void InviteFriends()
     {
-        // Get the link to share from firebase
+		string userId = UsersManager.currentUser.userId;
 
-        // Open the share dialog
+		// Get the link to share from firebase
+		CaletyDynamicLinks.createLinkUserInvite(userId, OnShortLinkCreated);
+
     }
-
-
 
 
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
 
+
+	/// <summary>
+	/// Delegate for receiving the referral shortlink from firebase
+	/// </summary>
+	/// <param name="_link"></param>
+	public void OnShortLinkCreated(string _shortLink)
+	{
+
+		string title = LocalizationManager.SharedInstance.Localize("TID_REFERRAL_SHARE_TITLE");
+
+		// Open the share dialog
+		CaletyShareUtil.ShareLink(title, _shortLink);
+	}
 
 
 	/// <summary>
@@ -598,98 +611,4 @@ public class ReferralManager
 		}
 	}
 
-
-	/*
-	//------------------------------------------------------------------------//
-	// CALLBACKS															  //
-	//------------------------------------------------------------------------//
-
-	/// <summary>
-	/// Response from the server was received
-	/// </summary>
-	/// <param name="_strResponse">Json containing the cluster Id requested</param>
-	/// <param name="_strCmd">The command sent</param>
-	/// <param name="_reponseCode">Response code. 200 if the request was successful</param>
-	/// <returns>Returns true if the response was successful</returns>
-	private bool OnGetClusterResponse(string _strResponse, string _strCmd, int _reponseCode)
-	{
-		// If the player already belongs to a cluster (non generic) ignore the response
-		if (!string.IsNullOrEmpty(UsersManager.currentUser.clusterId) &&
-			UsersManager.currentUser.clusterId != CLUSTER_GENERIC)
-		{
-			return true;
-		}
-
-
-		bool responseOk = false;
-
-		if (_strResponse != null)
-		{
-			switch (_reponseCode)
-			{
-				case 200: // No error
-				case 204: // No error, but the server doesnt know the cluster id
-					{
-
-						JSONNode kJSON = JSON.Parse(_strResponse);
-						if (kJSON != null)
-						{
-							if (kJSON.ContainsKey("result"))
-							{
-								if (kJSON["result"] == true)
-								{
-									if (kJSON.ContainsKey("clusterId"))
-									{
-
-										// The server knows the cluster
-										string clusterId = kJSON["clusterId"];
-
-										UsersManager.currentUser.clusterId = clusterId;
-
-										// Track this event
-										HDTrackingManager.Instance.Notify_ClusterAssigned(clusterId);
-
-									}
-									// else: the server doesnt know the cluster. Leave it empty.
-
-									responseOk = true;
-
-								}
-								else
-								{
-									// Server returned an error
-									Debug.LogError("Requests " + _strCmd + " returned error " +
-										kJSON["errorCode"] + ": " + kJSON["errorMsg"]);
-
-									responseOk = false;
-
-								}
-							}
-						}
-
-						break;
-					}
-
-				default:
-					{
-						// An error happened
-						responseOk = false;
-						break;
-					}
-			}
-		}
-
-
-
-		if (m_offlineMode)
-		{
-			return false;
-		}
-		else
-		{
-			return responseOk;
-		}
-
-	}
-    */
 }
