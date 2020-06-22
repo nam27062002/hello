@@ -807,7 +807,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
 
             TrackingPersistenceSystem.TotalSpent += moneyUSD;
 			TrackingPersistenceSystem.LastPurchasePrice = moneyUSD;
-            TrackingPersistenceSystem.LastPurchaseTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong() / 1000L;  // Millis to Seconds
+            TrackingPersistenceSystem.LastPurchaseTimestamp = GameServerManager.GetEstimatedServerTimeAsLong() / 1000L;  // Millis to Seconds
 			if(moneyUSD > TrackingPersistenceSystem.MaxPurchasePrice) {
 				TrackingPersistenceSystem.MaxPurchasePrice = moneyUSD;
 			}

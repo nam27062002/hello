@@ -44,7 +44,7 @@ public abstract class IUserMissions {
 			// Check missions in cooldown to be unlocked
 			if(m_missions[i].state == Mission.State.COOLDOWN || m_missions[i].state == Mission.State.ACTIVATION_PENDING) {
 				// Has enough time passed for this mission's difficulty?
-				if((GameServerManager.SharedInstance.GetEstimatedServerTime() - m_missions[i].cooldownStartTimestamp).TotalSeconds >= MissionManager.GetCooldownPerDifficulty((Mission.Difficulty)i)) {
+				if((GameServerManager.GetEstimatedServerTime() - m_missions[i].cooldownStartTimestamp).TotalSeconds >= MissionManager.GetCooldownPerDifficulty((Mission.Difficulty)i)) {
 					// Yes!
 
                     // If Remove Ads feature is active, restore the extra missions counters

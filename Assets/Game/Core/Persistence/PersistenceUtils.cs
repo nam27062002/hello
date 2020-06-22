@@ -80,9 +80,9 @@ public class PersistenceUtils
 
 			// [AOC] Start with the map unlocked
 			// Use default 24hrs timer if the settings rules are not ready
-			System.DateTime mapResetTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTime().AddHours(24);
+			System.DateTime mapResetTimestamp = GameServerManager.GetEstimatedServerTime().AddHours(24);
 			if(gameSettingsDef != null) {
-				mapResetTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTime().AddMinutes(gameSettingsDef.GetAsDouble("miniMapTimer"));	// Minutes
+				mapResetTimestamp = GameServerManager.GetEstimatedServerTime().AddMinutes(gameSettingsDef.GetAsDouble("miniMapTimer"));	// Minutes
 			}
 			_returnValue.Add("mapResetTimestamp", mapResetTimestamp.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
         }

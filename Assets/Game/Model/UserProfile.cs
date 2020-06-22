@@ -329,7 +329,7 @@ public class UserProfile : UserPersistenceSystem
 
 	public bool mapUnlocked {
 		// Map is unlocked as long as the timestamp hasn't expired
-		get { return m_mapResetTimestamp > GameServerManager.SharedInstance.GetEstimatedServerTime(); }
+		get { return m_mapResetTimestamp > GameServerManager.GetEstimatedServerTime(); }
 	}
 
 	// Global events
@@ -826,9 +826,9 @@ public class UserProfile : UserPersistenceSystem
 		// [AOC] Fuck it! Easier implementation, fixed timer from the moment you unlock the map
 		DefinitionNode gameSettingsDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, "gameSettings");
 		if(gameSettingsDef != null) {
-			m_mapResetTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTime().AddMinutes(gameSettingsDef.GetAsDouble("miniMapTimer"));	// Minutes
+			m_mapResetTimestamp = GameServerManager.GetEstimatedServerTime().AddMinutes(gameSettingsDef.GetAsDouble("miniMapTimer"));	// Minutes
 		} else {
-			m_mapResetTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTime().AddHours(24);	// Default timer just in case
+			m_mapResetTimestamp = GameServerManager.GetEstimatedServerTime().AddHours(24);	// Default timer just in case
 		}
 		Broadcaster.Broadcast(BroadcastEventType.PROFILE_MAP_UNLOCKED);
 	}
@@ -841,7 +841,7 @@ public class UserProfile : UserPersistenceSystem
     /// <param name="seconds">Duration of the map reveal, in seconds</param>
     public void UnlockMap(int seconds)
     {
-        m_mapResetTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTime().AddSeconds(seconds);   // Default timer just in case
+        m_mapResetTimestamp = GameServerManager.GetEstimatedServerTime().AddSeconds(seconds);   // Default timer just in case
         
         Broadcaster.Broadcast(BroadcastEventType.PROFILE_MAP_UNLOCKED);
     }
@@ -1118,10 +1118,10 @@ public class UserProfile : UserPersistenceSystem
 				dailyChests[i] = new Chest();
 			}
 
-			//m_dailyChestsResetTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTime();	// That will reset to 24hrs from now
+			//m_dailyChestsResetTimestamp = GameServerManager.GetEstimatedServerTime();	// That will reset to 24hrs from now
 			// Reset timestamp to 00:00 of local time (but using server timezone!)
 			TimeSpan toMidnight = DateTime.Today.AddDays(1) - DateTime.Now;	// Local
-			m_dailyChestsResetTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTime() + toMidnight;	// Local 00:00 in server timezone
+			m_dailyChestsResetTimestamp = GameServerManager.GetEstimatedServerTime() + toMidnight;	// Local 00:00 in server timezone
 		}
 
 		// Daily mission Ads
@@ -1135,7 +1135,7 @@ public class UserProfile : UserPersistenceSystem
 		}
 		else
 		{
-			m_dailyRemoveMissionAdTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTime();	// Already expired
+			m_dailyRemoveMissionAdTimestamp = GameServerManager.GetEstimatedServerTime();	// Already expired
 		}
 
 		m_skipMissionAdUses = 0;
@@ -1145,7 +1145,7 @@ public class UserProfile : UserPersistenceSystem
 				m_skipMissionAdUses = PersistenceUtils.SafeParse<int>(_data["skipMissionAdUses"]);
 			}
 		} else {
-			m_skipMissionAdTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTime();	// Already expired
+			m_skipMissionAdTimestamp = GameServerManager.GetEstimatedServerTime();	// Already expired
 		}
 
 		// Map upgrades
@@ -1153,7 +1153,7 @@ public class UserProfile : UserPersistenceSystem
 		if(_data.ContainsKey(key)) {
 			m_mapResetTimestamp = PersistenceUtils.SafeParse<DateTime>(_data["mapResetTimestamp"]);
 		} else {
-			m_mapResetTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTime();	// Already expired
+			m_mapResetTimestamp = GameServerManager.GetEstimatedServerTime();	// Already expired
 		}
 
 		// Global events
@@ -1353,7 +1353,7 @@ public class UserProfile : UserPersistenceSystem
 		if ( _data.ContainsKey("incubationTimeReference") ){
 			m_incubationTimeReference = PersistenceUtils.SafeParse<long>(_data["incubationTimeReference"]);
 		}else{
-			m_incubationTimeReference = GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong();
+			m_incubationTimeReference = GameServerManager.GetEstimatedServerTimeAsLong();
 		}
 
 		// Incubator timer

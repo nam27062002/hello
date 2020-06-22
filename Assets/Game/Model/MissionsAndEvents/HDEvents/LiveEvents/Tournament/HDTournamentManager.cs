@@ -136,7 +136,7 @@ public class HDTournamentManager : HDLiveEventManager, IBroadcastListener {
     	if ( _force || ShouldRequestLeaderboard() )
     	{
 			m_isLeaderboardReady = false;
-			//m_lastLeaderboardTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong();	// [AOC] If the leaderboard fails, we won't be requesting it again until the caching period has expired!
+			//m_lastLeaderboardTimestamp = GameServerManager.GetEstimatedServerTimeAsLong();	// [AOC] If the leaderboard fails, we won't be requesting it again until the caching period has expired!
 
 	        if ( HDLiveDataManager.TEST_CALLS )
 	        {
@@ -153,7 +153,7 @@ public class HDTournamentManager : HDLiveEventManager, IBroadcastListener {
 
 	public bool ShouldRequestLeaderboard()
 	{
-		long diff = GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong() - m_lastLeaderboardTimestamp;
+		long diff = GameServerManager.GetEstimatedServerTimeAsLong() - m_lastLeaderboardTimestamp;
 		return diff > m_laderboardRequestMinTim;	// 5 min timeout
 	}
 
@@ -178,7 +178,7 @@ public class HDTournamentManager : HDLiveEventManager, IBroadcastListener {
 				m_isLeaderboardReady = true;
 
 				// We have new leaderobard data! Reset cache timer
-				m_lastLeaderboardTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong();
+				m_lastLeaderboardTimestamp = GameServerManager.GetEstimatedServerTimeAsLong();
             }
 			Messenger.Broadcast(MessengerEvents.TOURNAMENT_LEADERBOARD);
 		}
@@ -253,7 +253,7 @@ public class HDTournamentManager : HDLiveEventManager, IBroadcastListener {
 			m_tournamentData.ParseLeaderboard(responseJson);
 
 			// We have new leaderobard data! Reset cache timer
-			m_lastLeaderboardTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong();
+			m_lastLeaderboardTimestamp = GameServerManager.GetEstimatedServerTimeAsLong();
 		}
 
 		Messenger.Broadcast<HDLiveDataManager.ComunicationErrorCodes>(MessengerEvents.TOURNAMENT_SCORE_SENT, outErr);
@@ -285,7 +285,7 @@ public class HDTournamentManager : HDLiveEventManager, IBroadcastListener {
 		long millis = 0;
 
 		if ( m_tournamentDefinition.m_entrance.m_type != "free" )
-			millis = (m_tournamentDefinition.m_entrance.m_dailyFree * 1000) - (GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong() - m_tournamentData.lastFreeEntranceTimestamp);
+			millis = (m_tournamentDefinition.m_entrance.m_dailyFree * 1000) - (GameServerManager.GetEstimatedServerTimeAsLong() - m_tournamentData.lastFreeEntranceTimestamp);
 
 		if ( millis < 0  )
 			millis = 0;
@@ -299,7 +299,7 @@ public class HDTournamentManager : HDLiveEventManager, IBroadcastListener {
 		HDTournamentDefinition tDef = data.definition as HDTournamentDefinition;
 		bool ret = false;
 
-		long t1 = GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong() - tData.lastFreeEntranceTimestamp;
+		long t1 = GameServerManager.GetEstimatedServerTimeAsLong() - tData.lastFreeEntranceTimestamp;
 		long t2 = tDef.m_entrance.m_dailyFree * 1000;
 		if ( tDef.m_entrance.m_type == "free" || t1 > t2 )
 		{

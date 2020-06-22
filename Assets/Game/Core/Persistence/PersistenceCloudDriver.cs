@@ -63,7 +63,7 @@ public class PersistenceCloudDriver
 
                 if (mIsInSync)
                 {
-                    LatestSyncTime = GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong();
+                    LatestSyncTime = GameServerManager.GetEstimatedServerTimeAsLong();
                 }
 
                 Messenger.Broadcast<bool>(MessengerEvents.PERSISTENCE_SYNC_CHANGED, mIsInSync);

@@ -137,7 +137,7 @@ public class PersistenceData
         }
 
         // Makes sure that the date doesn't go backwards
-        int newModifiedTime = (int)(GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong() / 1000);        
+        int newModifiedTime = (int)(GameServerManager.GetEstimatedServerTimeAsLong() / 1000);        
         if (newModifiedTime >= m_modifiedTime)
         {
             m_modifiedTime = newModifiedTime;

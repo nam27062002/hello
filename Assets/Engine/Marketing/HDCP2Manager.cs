@@ -139,7 +139,7 @@ public class HDCP2Manager
         long latestTimestamp = PersistencePrefs.GetCp2InterstitialLatestAt();
         if (latestTimestamp > 0)
         {
-            long diff = GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong() - latestTimestamp;
+            long diff = GameServerManager.GetEstimatedServerTimeAsLong() - latestTimestamp;
             returnValue = (FeatureSettingsManager.instance.GetCP2InterstitialFrequency() * 1000 - diff) / 1000f;            
         }
 
@@ -214,7 +214,7 @@ public class HDCP2Manager
 
         if (success)
         {
-            long time = GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong();
+            long time = GameServerManager.GetEstimatedServerTimeAsLong();
             PersistencePrefs.SetCp2InterstitialLatestAt(time);
         }            
     }
