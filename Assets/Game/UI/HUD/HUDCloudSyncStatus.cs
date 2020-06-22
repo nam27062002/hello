@@ -214,7 +214,7 @@ public class HUDCloudSyncStatus : MonoBehaviour
 		switch(m_state) {
 			case State.CLOUD_SAVE_DISABLED: {
 				return;	// Shouldn't happen
-			} break;
+			}       
 
 			case State.NEVER_LOGGED_IN:
 			case State.PREVIOUSLY_LOGGED_IN: {
