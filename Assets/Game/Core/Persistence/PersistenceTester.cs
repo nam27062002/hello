@@ -52,6 +52,13 @@ public class PersistenceTester
             PersistenceTest.EExplicitPlatformState.None, PersistenceTest.EUserId.U1, PersistenceTest.EProgress.P1, PersistenceTest.EImplicitMergeResponse.Conflict, PersistenceTest.EImplicitMergeResponse.Error,
             PersistenceTest.EUserId.U2, PersistenceTest.EProgress.Empty, PersistenceCloudDriver.EMergeState.Failed, PersistenceTest.EExplicitPlatformState.None, UserProfile.ESocialState.NeverLoggedIn);
             sm_tests.Add(5, test);
+
+            // Use Case: 6. Implicit login has already been done successfully
+            // Result: Persistences are synchronised without calling merge/c            
+            test = new PersistenceTest(PersistenceTest.EUserId.U2, PersistenceTest.EProgress.P2, PersistenceCloudDriver.EMergeState.Ok,
+            PersistenceTest.EExplicitPlatformState.None, PersistenceTest.EUserId.U2, PersistenceTest.EProgress.P2, PersistenceTest.EImplicitMergeResponse.None, PersistenceTest.EImplicitMergeResponse.None,
+            PersistenceTest.EUserId.U2, PersistenceTest.EProgress.P2, PersistenceCloudDriver.EMergeState.Ok, PersistenceTest.EExplicitPlatformState.None, UserProfile.ESocialState.NeverLoggedIn);
+            sm_tests.Add(6, test);
         }
     }
 
