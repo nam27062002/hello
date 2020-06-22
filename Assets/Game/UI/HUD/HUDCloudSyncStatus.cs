@@ -115,46 +115,33 @@ public class HUDCloudSyncStatus : MonoBehaviour
 			// No! Nothing else to check
 			m_state = State.CLOUD_SAVE_DISABLED;
 			return;
-		}
+		}		
 
-		// Do we have a valid player profile?
-		UserProfile playerProfile = UsersManager.currentUser;
-		if(playerProfile == null) {
-			// No! Nothing else to check
-			m_state = State.NEVER_LOGGED_IN;
-			return;
-		}
-
-		// Check social state
-		bool isCurrentlyLoggedIn = PersistenceFacade.instance.CloudDriver.IsLoggedIn;
-		switch(playerProfile.SocialState) {
-			case UserProfile.ESocialState.NeverLoggedIn: {
-				m_state = State.NEVER_LOGGED_IN;
-			} break;
-
-			case UserProfile.ESocialState.LoggedIn:
-			case UserProfile.ESocialState.LoggedInAndIncentivised: {
-				// Is currently logged in?
-				if(isCurrentlyLoggedIn) {
-					// Yes! Check sync status
-					if(PersistenceFacade.instance.Sync_IsSynced) {
-						m_state = State.LOGGED_IN_SYNCHED;
-					} else {
-						m_state = State.LOGGED_IN_NOT_SYNCHED;
-					}
+        PersistenceLocalDriver localDriver = PersistenceFacade.instance.LocalDriver;
+        if (string.IsNullOrEmpty(localDriver.Prefs_SocialPlatformKey) && localDriver.Prefs_SocialImplicitMergeState != PersistenceCloudDriver.EMergeState.Ok) { 		
+		    m_state = State.NEVER_LOGGED_IN;
+	    } else {
+		    bool isCurrentlyLoggedIn = PersistenceFacade.instance.CloudDriver.IsLoggedIn;
+			// Is currently logged in?
+			if (isCurrentlyLoggedIn) {
+				// Yes! Check sync status
+				if (PersistenceFacade.instance.Sync_IsSynced) {
+					m_state = State.LOGGED_IN_SYNCHED;
 				} else {
-					// No!
-					m_state = State.PREVIOUSLY_LOGGED_IN;
+					m_state = State.LOGGED_IN_NOT_SYNCHED;
 				}
-			} break;
-		}
+			} else {
+				// No!
+				m_state = State.PREVIOUSLY_LOGGED_IN;
+			}
+		}		
 	}
 
 	/// <summary>
 	/// 
 	/// </summary>
 	/// <param name="_force"></param>
-    private void RefreshView(bool _force) {
+	private void RefreshView(bool _force) {
 		// Skip if state hasn't changed
 		if(m_state == m_lastDisplayedState && !_force) return;
 
