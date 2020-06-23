@@ -5,6 +5,7 @@ public class EditorPersistenceTesterMenu
     private const string TESTER_MENU = EditorPersistenceMenu.PERSISTENCE_MENU + "/" + "Tester";
 
     private const string TESTER_MENU_NONE = TESTER_MENU + "/None";
+    private const string TESTER_MENU_PERFORM_SELECTED = TESTER_MENU + "/Perform selected";
     private const string TESTER_MENU_01 = TESTER_MENU + "/01";
     private const string TESTER_MENU_02 = TESTER_MENU + "/02";
     private const string TESTER_MENU_03 = TESTER_MENU + "/03";
@@ -44,6 +45,12 @@ public class EditorPersistenceTesterMenu
         Menu.SetChecked(TESTER_MENU_NONE, CurrentTestId == 0);
         return true;
     }
+    
+    [MenuItem(TESTER_MENU_PERFORM_SELECTED)]
+    public static void Test_PerformSelected()
+    {
+        sm_persistenceTester.BeginTest(CurrentTestId);
+    }    
 
     [MenuItem(TESTER_MENU_01)]
     public static void Test_Set01()
