@@ -93,11 +93,12 @@ namespace Metagame {
 			m_def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.EGGS, _sku);
 
 			//
-			m_weightIDs = new float[3];
+			m_weightIDs = new float[4];
 			if (m_def.Has("weightCommon")) {
 				m_weightIDs[0] = m_def.GetAsFloat("weightCommon", 1);
 				m_weightIDs[1] = m_def.GetAsFloat("weightRare", 2);
 				m_weightIDs[2] = m_def.GetAsFloat("weightEpic", 3);
+				m_weightIDs[3] = m_def.GetAsFloat("weightBaby", 4);
 				m_hasCustomWeights = true;
 			} else {
 				m_hasCustomWeights = false;
