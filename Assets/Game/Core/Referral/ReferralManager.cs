@@ -26,10 +26,7 @@ public class ReferralManager
 	// CONSTANTS                											  //
 	//------------------------------------------------------------------------//
 
-	private static readonly string GET_INFO = "/api/referral/getInfo";
-	private static readonly string RECLAIM_REWARD= "/api/referral/reclaimReward";
-	private static readonly string RECLAIM_ALL = "/api/referral/reclaimAll";
-	private static readonly string MARK_REFERRAL = "/api/referral/markReferral";
+
 
 
 	//------------------------------------------------------------------------//
@@ -102,9 +99,9 @@ public class ReferralManager
 		{
 			m_offlineMode = _offlineMode;
 
-			NetworkManager.SharedInstance.RegistryEndPoint(GET_INFO, NetworkManager.EPacketEncryption.E_ENCRYPTION_AES, new int[] { 200, 404, 500, 503 }, OnGetInfoResponse);
-			NetworkManager.SharedInstance.RegistryEndPoint(RECLAIM_ALL, NetworkManager.EPacketEncryption.E_ENCRYPTION_AES, new int[] { 200, 404, 500, 503 }, OnReclaimAllResponse);
-			NetworkManager.SharedInstance.RegistryEndPoint(MARK_REFERRAL, NetworkManager.EPacketEncryption.E_ENCRYPTION_AES, new int[] { 200, 404, 500, 503 }, OnMarkReferralResponse);
+			//NetworkManager.SharedInstance.RegistryEndPoint(GET_INFO, NetworkManager.EPacketEncryption.E_ENCRYPTION_AES, new int[] { 200, 404, 500, 503 }, OnGetInfoResponse);
+			//NetworkManager.SharedInstance.RegistryEndPoint(RECLAIM_ALL, NetworkManager.EPacketEncryption.E_ENCRYPTION_AES, new int[] { 200, 404, 500, 503 }, OnReclaimAllResponse);
+			//NetworkManager.SharedInstance.RegistryEndPoint(MARK_REFERRAL, NetworkManager.EPacketEncryption.E_ENCRYPTION_AES, new int[] { 200, 404, 500, 503 }, OnMarkReferralResponse);
 
 
 			m_registered = true;
@@ -122,51 +119,12 @@ public class ReferralManager
 
 		if (!m_offlineMode)
 		{
-			// Dont make the request if we are not logged yet in the server
-			if (GameSessionManager.SharedInstance.IsLogged())
-			{
-
-				Dictionary<string, string> kParams = new Dictionary<string, string>();
-				kParams["uid"] = GameSessionManager.SharedInstance.GetUID();
-				kParams["token"] = GameSessionManager.SharedInstance.GetUserToken();
-
-				// Send it to the server
-				ServerManager.SharedInstance.SendCommand(GET_INFO, kParams);
-
-			}
+			//TODO: implement the callback method properly
+			GameServerManager.SharedInstance.Referral_GetInfo(OnGetInfoResponse);
 		}
 	}
 
 
-    /// <summary>
-	/// Tell the server that the player is claiming a reward. The server will double check if this
-	/// reward has been obtained by the player.
-	/// </summary>
-	/// <param name="_reward">The referral reward claimed</param>
-	public void ReclaimRewardFromServer(OfferPackReferralReward _reward)
-	{
-		// Make sure the enpoints are registerd
-		Initialize();
-
-		if (!m_offlineMode)
-		{
-			// Dont make the request if we are not logged yet in the server
-			if (GameSessionManager.SharedInstance.IsLogged())
-			{
-
-				Dictionary<string, string> kParams = new Dictionary<string, string>();
-				kParams["uid"] = GameSessionManager.SharedInstance.GetUID();
-				kParams["token"] = GameSessionManager.SharedInstance.GetUserToken();
-
-				JSONClass kBody = new JSONClass();
-				kBody["rewardSku"] = _reward.sku;
-
-				// Send it to the server
-				ServerManager.SharedInstance.SendCommand(RECLAIM_REWARD, kParams);
-
-			}
-		}
-	}
 
 
 	/// <summary>
@@ -180,18 +138,8 @@ public class ReferralManager
 
 		if (!m_offlineMode)
 		{
-			// Dont make the request if we are not logged yet in the server
-			if (GameSessionManager.SharedInstance.IsLogged())
-			{
-
-				Dictionary<string, string> kParams = new Dictionary<string, string>();
-				kParams["uid"] = GameSessionManager.SharedInstance.GetUID();
-				kParams["token"] = GameSessionManager.SharedInstance.GetUserToken();
-
-				// Send it to the server
-				ServerManager.SharedInstance.SendCommand(RECLAIM_ALL, kParams);
-
-			}
+			//TODO: implement the callback method properly
+			//GameServerManager.SharedInstance.Referral_ReclaimAll(OnReclaimAllResponse);
 		}
 	}
 
@@ -209,16 +157,8 @@ public class ReferralManager
 			if (GameSessionManager.SharedInstance.IsLogged())
 			{
 
-				Dictionary<string, string> kParams = new Dictionary<string, string>();
-				kParams["uid"] = GameSessionManager.SharedInstance.GetUID();
-				kParams["token"] = GameSessionManager.SharedInstance.GetUserToken();
-
-
-				JSONClass kBody = new JSONClass();
-				kBody["referredBy"] = _userId;
-
-				// Send it to the server
-				ServerManager.SharedInstance.SendCommand(MARK_REFERRAL, kParams, kBody.ToString());
+                //TODO: implement the callback method properly
+				//GameServerManager.SharedInstance.Referral_MarkReferral(_userId, OnMarkReferralResponse);
 
 			}
 		}
@@ -352,74 +292,49 @@ public class ReferralManager
 	/// <param name="_strCmd">The command sent</param>
 	/// <param name="_reponseCode">Response code. 200 if the request was successful</param>
 	/// <returns>Returns true if the response was successful</returns>
-	private bool OnGetInfoResponse(string _strResponse, string _strCmd, int _reponseCode)
+	private void OnGetInfoResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response)
 	{
-		bool responseOk = false;
-
-		if (_strResponse != null)
+		// If there was no error, update local cache
+		if (_error == null && _response != null && _response.ContainsKey("response"))
 		{
-			switch (_reponseCode)
-			{
-				case 200: // No error
+            if (_response["response"] != null)
+            {
+				JSONNode kJSON = JSON.Parse(_response["response"] as string);
+				if (kJSON != null)
+				{
+
+					if (kJSON.ContainsKey("total"))
 					{
 
-						JSONNode kJSON = JSON.Parse(_strResponse);
-						if (kJSON != null)
+						int referrals = PersistenceUtils.SafeParse<int>(kJSON["total"]);
+
+						// Store the value in user profile
+						UsersManager.currentUser.totalReferrals = referrals;
+
+					}
+
+					if (kJSON.ContainsKey("rewards"))
+					{
+
+						List<string> skuList = new List<string>();
+
+						foreach (JSONNode sku in kJSON["rewards"].AsArray)
 						{
-
-							if (kJSON.ContainsKey("total"))
-							{
-
-								int referrals = PersistenceUtils.SafeParse<int> ( kJSON["total"] );
-
-                                // Store the value in user profile
-								UsersManager.currentUser.totalReferrals = referrals;
-
-							}
-
-							if (kJSON.ContainsKey("rewards"))
-							{
-
-								List<string> skuList = new List<string>();
-
-                                foreach (JSONNode sku in kJSON["rewards"].AsArray)
-                                {
-									skuList.Add(sku["sku"].Value.ToString());
-                                }
-
-								// Convert skus to actual rewards 
-								List<OfferPackReferralReward> rewards = GetRewardsFromSkus(skuList);
-
-                                // Store them in user profile
-								UsersManager.currentUser.unlockedReferralRewards = rewards;
-								
-							}
-
-							responseOk = true;
+							skuList.Add(sku["sku"].Value.ToString());
 						}
 
-						break;
-					}
+						// Convert skus to actual rewards 
+						List<OfferPackReferralReward> rewards = GetRewardsFromSkus(skuList);
 
-				default:
-					{
-						// An error happened
-						responseOk = false;
-						break;
+						// Store them in user profile
+						UsersManager.currentUser.unlockedReferralRewards = rewards;
+
 					}
+				}
 			}
 		}
 
 
-
-		if (m_offlineMode)
-		{
-			return false;
-		}
-		else
-		{
-			return responseOk;
-		}
 	}
 
 

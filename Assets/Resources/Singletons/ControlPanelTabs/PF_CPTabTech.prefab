@@ -4517,8 +4517,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 114036838962686690}
   m_HandleRect: {fileID: 224548635685618328}
   m_Direction: 0
-  m_Value: 1
-  m_Size: 1
+  m_Value: 0
+  m_Size: 0.96494377
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -6281,6 +6281,7 @@ RectTransform:
   - {fileID: 224139580179797622}
   - {fileID: 224942332898697170}
   - {fileID: 4720017009218525413}
+  - {fileID: 6852045566207377798}
   m_Father: {fileID: 224856423585137536}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -12361,7 +12362,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 0, y: -0.00012207031}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &114109462362450010
@@ -13890,7 +13891,7 @@ GameObject:
   - component: {fileID: 125412293568880348}
   - component: {fileID: 4055751193658037969}
   m_Layer: 5
-  m_Name: Button
+  m_Name: ButtonReferral
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -13908,13 +13909,13 @@ RectTransform:
   m_LocalScale: {x: 0.99840003, y: 0.99840003, z: 0.99840003}
   m_Children:
   - {fileID: 8066282630756359777}
-  m_Father: {fileID: 4720017009218525413}
-  m_RootOrder: 1
+  m_Father: {fileID: 224411400185969926}
+  m_RootOrder: 28
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 1, y: 0.5}
-  m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 50}
-  m_SizeDelta: {x: 600, y: 100}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 1, y: 1}
 --- !u!222 &6188973618059322606
 CanvasRenderer:
@@ -14018,7 +14019,7 @@ MonoBehaviour:
   m_MinWidth: -1
   m_MinHeight: -1
   m_PreferredWidth: -1
-  m_PreferredHeight: -1
+  m_PreferredHeight: 100
   m_FlexibleWidth: 33
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
@@ -14229,7 +14230,6 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 7063622612588173375}
-  - {fileID: 6852045566207377798}
   m_Father: {fileID: 224411400185969926}
   m_RootOrder: 27
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

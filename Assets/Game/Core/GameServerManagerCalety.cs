@@ -932,6 +932,31 @@ public class GameServerManagerCalety : GameServerManager {
     }
     #endregion
 
+    #region Referral
+    //-----------------
+    // Referral
+    //-----------------
+    public override void Referral_GetInfo(ServerCallback _callback) {
+        Commands_EnqueueCommand(ECommand.Referral_GetInfo, null, _callback);
+    }
+
+    public override void Referral_ReclaimAll(ServerCallback _callback) {
+        Commands_EnqueueCommand(ECommand.Referral_ReclaimAll, null, _callback);
+    }
+
+    public override void Referral_MarkReferral(string _referralUserId, ServerCallback _callback) {
+
+        JSONClass kBody = new JSONClass();
+        kBody["referredBy"] = _referralUserId;
+
+        Dictionary<string, string> parameters = new Dictionary<string, string>();
+        parameters.Add("body", kBody.ToString());
+
+        Commands_EnqueueCommand(ECommand.Referral_ReclaimAll, parameters, _callback);
+    }
+
+    #endregion
+
     //------------------------------------------------------------------------//
     // INTERNAL COMMANDS MANAGEMENT											  //
     //------------------------------------------------------------------------//
@@ -989,7 +1014,11 @@ public class GameServerManagerCalety : GameServerManager {
         HDLeagues_GetLeaderboard,
         HDLeagues_SetScore,
         HDLeagues_GetMyRewards,
-        HDLeagues_FinishMySeason
+        HDLeagues_FinishMySeason,
+
+        Referral_GetInfo,
+        Referral_ReclaimAll,
+        Referral_MarkReferral   // params: _referralUserId
     }    
 
 	/// <summary>
@@ -1216,6 +1245,11 @@ public class GameServerManagerCalety : GameServerManager {
             case ECommand.HDLeagues_SetScore:
             case ECommand.HDLeagues_GetMyRewards:
             case ECommand.HDLeagues_FinishMySeason:
+
+            case ECommand.Referral_GetInfo:
+            case ECommand.Referral_ReclaimAll:
+            case ECommand.Referral_MarkReferral:
+
                 returnValue = true;
                 break;
         }
@@ -1470,6 +1504,21 @@ public class GameServerManagerCalety : GameServerManager {
                 case ECommand.HDLeagues_FinishMySeason:
                     Command_SendCommandAsGameAction(ACTION_HD_LEAGUES_FINISH_MY_SEASON, null, true);
                 break;
+
+                //--------------------------------------------------------------
+
+                case ECommand.Referral_GetInfo:
+                    Command_SendCommand(COMMAND_REFERRAL_GET_INFO);
+                    break;
+
+                case ECommand.Referral_ReclaimAll:
+                    Command_SendCommand(COMMAND_REFERRAL_RECLAIM_ALL);
+                    break;
+
+                case ECommand.Referral_MarkReferral:
+                    Command_SendCommand(COMMAND_REFERRAL_MARK_REFERRAL);
+                    break;
+
                 //--------------------------------------------------------------
 
 
@@ -1902,6 +1951,10 @@ public class GameServerManagerCalety : GameServerManager {
     private const string COMMAND_LANGUAGE_SET = "language";
     private const string COMMAND_CURRENCY_FLUCTUATION = "currencyfluctuation";
 
+    private const string COMMAND_REFERRAL_GET_INFO = "/api/referral/getInfo";
+    private const string COMMAND_REFERRAL_RECLAIM_ALL = "/api/referral/reclaimAll";
+    private const string COMMAND_REFERRAL_MARK_REFERRAL = "/api/referral/markReferral";
+
     /// <summary>
     /// Initialize Calety's NetworkManager.
     /// </summary>
@@ -1944,6 +1997,10 @@ public class GameServerManagerCalety : GameServerManager {
 
         nm.RegistryEndPoint(COMMAND_HD_LEAGUES_GET_ALL_LEAGUES, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
         nm.RegistryEndPoint(COMMAND_HD_LEAGUES_GET_LEADERBOARD, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
+
+        nm.RegistryEndPoint(COMMAND_REFERRAL_GET_INFO, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
+        nm.RegistryEndPoint(COMMAND_REFERRAL_RECLAIM_ALL, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
+        nm.RegistryEndPoint(COMMAND_REFERRAL_MARK_REFERRAL, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
     }    
 
     /// <summary>
