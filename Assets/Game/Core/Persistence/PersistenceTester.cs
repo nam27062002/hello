@@ -154,6 +154,7 @@ public class PersistenceTester
         if (currentTest != null)
         {
             NetworkManager.DUMMY = true;
+            DNASocialPlatformManager.DUMMY = true;
         }
     }
 
