@@ -5,6 +5,7 @@
 using System;
 using System.Diagnostics;
 using System.Globalization;
+using UnityEngine;
 
 public class PersistenceFacade : IBroadcastListener
 {
@@ -68,7 +69,7 @@ public class PersistenceFacade : IBroadcastListener
         Local_Reset();
         Cloud_Reset();
         Sync_Reset();
-    }
+    }    
 
     public void Update()
     {
@@ -76,6 +77,7 @@ public class PersistenceFacade : IBroadcastListener
 
         Config.LocalDriver.Update();
         Config.CloudDriver.Update();
+        Sync_Update();
     }
 
     public bool IsCloudSaveAllowed
@@ -95,15 +97,28 @@ public class PersistenceFacade : IBroadcastListener
     public bool Sync_IsSyncing { get; set; }
 
     public bool Sync_IsSynced { get { return CloudDriver.IsInSync; } }
-
+    
+    private float Sync_AutoImplicitLoginAt { get; set; }
+    
     private void Sync_Reset()
     {
         Sync_IsSyncing = false;
-    }
+        Sync_ResetAutoImplicitLogin();
+    }    
 
     public void Sync_FromLaunchApplication(Action onDone)
     {
         Sync_IsSyncing = true;
+
+        Action onSyncFromLaunchDone = delegate ()
+        {            
+            Sync_ScheduleAutoImplicitLogin();                        
+
+            if (onDone != null)
+            {
+                onDone();
+            }
+        };
 
         Action onLoadDone = delegate ()
         {
@@ -125,7 +140,7 @@ public class PersistenceFacade : IBroadcastListener
                 {
                     Action onResetDone = delegate ()
                     {
-                        Sync_FromLaunchApplication(onDone);
+                        Sync_FromLaunchApplication(onSyncFromLaunchDone);
                     };
 
                     LocalDriver.OverrideWithDefault(onResetDone);
@@ -133,7 +148,7 @@ public class PersistenceFacade : IBroadcastListener
 
                 Action onRetry = delegate ()
                 {
-                    Sync_FromLaunchApplication(onDone);
+                    Sync_FromLaunchApplication(onSyncFromLaunchDone);
                 };
 
                 if (logInSocialEver)
@@ -149,12 +164,12 @@ public class PersistenceFacade : IBroadcastListener
                         else
                         {
                             Config.LocalDriver.IsLoadedInGame = true;
-                            Sync_OnDone(result, onDone);
+                            Sync_OnDone(result, onSyncFromLaunchDone);
                         }
                     };
 
                     // Logs in to the latest platform known
-                    Config.CloudDriver.Sync(platformId, PersistenceCloudDriver.ESyncMode.Lite, false, true, onConnectDone);
+                    Config.CloudDriver.Sync(platformId, PersistenceCloudDriver.ESyncMode.Lite, PersistenceCloudDriver.EErrorMode.Verbose, true, onConnectDone);
                 }
                 else
                 {
@@ -172,9 +187,9 @@ public class PersistenceFacade : IBroadcastListener
                 HDTrackingManager.Instance.Notify_Razolytics_Funnel_Load(FunnelData_LoadRazolytics.Steps._00_start);
 
                 // Since local is already loaded then we consider the operation done. Sync will happen in background
-                if (onDone != null)
+                if (onSyncFromLaunchDone != null)
                 {
-                    onDone();
+                    onSyncFromLaunchDone();
                 }
 
                 Action<PersistenceStates.ESyncResult, PersistenceStates.ESyncResultDetail> onSyncDone = delegate (PersistenceStates.ESyncResult result, PersistenceStates.ESyncResultDetail resultDetail)
@@ -182,21 +197,7 @@ public class PersistenceFacade : IBroadcastListener
                     Sync_OnDone(result, null);
                 };
 
-                PersistenceCloudDriver.ESyncMode mode = PersistenceCloudDriver.ESyncMode.None;
-                if (isPlatformSupported)
-                {
-                    // Lite mode is enough except if it hasn't been linked to DNA yet (we'll try to link it now)
-                    // and
-                    // it hasn't logged in to an explicit platform yet (we don't want to mess up wih the platform chosen by the user)
-                    if (LocalDriver.HasEverExplicitlyLoggedIn() || LocalDriver.Prefs_SocialImplicitMergeState == PersistenceCloudDriver.EMergeState.Ok)
-                    {
-                        mode = PersistenceCloudDriver.ESyncMode.Lite;
-                    }
-                    else if (LocalDriver.Prefs_SocialImplicitMergeState == PersistenceCloudDriver.EMergeState.None)
-                    {
-                        mode = PersistenceCloudDriver.ESyncMode.Full;
-                    }
-                }
+                PersistenceCloudDriver.ESyncMode mode = Sync_GetMode(platformId);                
 
 #if UNITY_EDITOR
                 ApplicationManager.instance.PersistenceTester.OnSyncModeAtLaunch(mode);
@@ -207,7 +208,7 @@ public class PersistenceFacade : IBroadcastListener
                 }
                 else
                 { 
-                    Config.CloudDriver.Sync(platformId, mode, false, true, onSyncDone);
+                    Config.CloudDriver.Sync(platformId, mode, PersistenceCloudDriver.EErrorMode.OnlyMergeConflict, true, onSyncDone);
                 }
             }
         };
@@ -237,7 +238,7 @@ public class PersistenceFacade : IBroadcastListener
                     Sync_OnDone(result, onDone);
                 };
 
-                Config.CloudDriver.Sync(platformId, PersistenceCloudDriver.ESyncMode.Full, false, false, onSyncDone);
+                Config.CloudDriver.Sync(platformId, PersistenceCloudDriver.ESyncMode.Full, PersistenceCloudDriver.EErrorMode.Verbose, false, onSyncDone);
             };
 
             Config.LocalDriver.Save(onSaveDone);
@@ -267,11 +268,44 @@ public class PersistenceFacade : IBroadcastListener
 
                 // Uses the same social platform that is currently in usage since the user can not change social platforms
                 // when reconnecting
-                Config.CloudDriver.Sync(SocialPlatformManager.SharedInstance.CurrentPlatform_GetId(), PersistenceCloudDriver.ESyncMode.Lite, true, false, onSyncDone);
+                SocialUtils.EPlatform platform = SocialPlatformManager.SharedInstance.CurrentPlatform_GetId();
+                PersistenceCloudDriver.ESyncMode mode = Sync_GetMode(platform);
+                PersistenceCloudDriver.EErrorMode errorMode = (SocialPlatformManager.SharedInstance.IsImplicit(platform) && mode == PersistenceCloudDriver.ESyncMode.Full) ? PersistenceCloudDriver.EErrorMode.OnlyMergeConflict : PersistenceCloudDriver.EErrorMode.Silent;
+                if (mode == PersistenceCloudDriver.ESyncMode.None)
+                {
+                    if (onSyncDone != null)
+                    {
+                        onSyncDone(PersistenceStates.ESyncResult.ErrorLogging, PersistenceStates.ESyncResultDetail.NoLogInSocial);
+                    }
+                }
+                else
+                {
+                    Config.CloudDriver.Sync(platform, mode, errorMode, false, onSyncDone);
+                }
             };
 
             Config.LocalDriver.Save(onSaveDone);
         }
+    }
+
+    private PersistenceCloudDriver.ESyncMode Sync_GetMode(SocialUtils.EPlatform platform)
+    {
+        PersistenceCloudDriver.ESyncMode returnValue = PersistenceCloudDriver.ESyncMode.None;
+
+        if (SocialPlatformManager.SharedInstance.IsPlatformIdSupported(platform))
+        {
+            if (LocalDriver.Prefs_SocialWasLoggedInWhenQuit ||
+                (SocialPlatformManager.SharedInstance.IsImplicit(platform) && LocalDriver.Prefs_SocialImplicitMergeState == PersistenceCloudDriver.EMergeState.None))
+            {
+                returnValue = PersistenceCloudDriver.ESyncMode.Full;
+            }
+            else if (LocalDriver.HasEverExplicitlyLoggedIn() || LocalDriver.Prefs_SocialImplicitMergeState == PersistenceCloudDriver.EMergeState.Ok)
+            {
+                returnValue = PersistenceCloudDriver.ESyncMode.Lite;
+            }
+        }
+
+        return returnValue;
     }
 
     private void Sync_OnDone(PersistenceStates.ESyncResult result, Action onDone)
@@ -289,6 +323,51 @@ public class PersistenceFacade : IBroadcastListener
         else if (onDone != null)
         {
             onDone();
+        }
+    }    
+
+    private void Sync_ResetAutoImplicitLogin()
+    {
+        Sync_AutoImplicitLoginAt = -1;
+    }
+
+    private void Sync_ScheduleAutoImplicitLogin()
+    {
+        if (Sync_NeedsToAutoImplicitLogin())
+        {
+            Sync_AutoImplicitLoginAt = Time.timeSinceLevelLoad + 10f;
+        }
+        else
+        {
+            Sync_ResetAutoImplicitLogin();
+        }
+    }
+
+    private bool Sync_NeedsToAutoImplicitLogin()
+    {
+        return LocalDriver.Prefs_SocialImplicitMergeState == PersistenceCloudDriver.EMergeState.None && LocalDriver.HasEverExplicitlyLoggedIn();
+    }
+
+    private void Sync_Update()
+    {
+        if (!Sync_IsSyncing && Sync_AutoImplicitLoginAt > -1 && Time.timeSinceLevelLoad >= Sync_AutoImplicitLoginAt)
+        {
+            if (Sync_NeedsToAutoImplicitLogin())
+            {
+                Action<PersistenceStates.ESyncResult, PersistenceStates.ESyncResultDetail> onSyncDone = delegate (PersistenceStates.ESyncResult result, PersistenceStates.ESyncResultDetail resultDetail)
+                {
+                    Sync_ScheduleAutoImplicitLogin();
+                    Sync_OnDone(result, null);
+                };
+
+                Sync_ResetAutoImplicitLogin();
+                Sync_IsSyncing = true;                
+                CloudDriver.Sync(SocialUtils.EPlatform.DNA, PersistenceCloudDriver.ESyncMode.Full, PersistenceCloudDriver.EErrorMode.OnlyMergeConflict, false, onSyncDone);
+            }
+            else
+            {
+                Sync_ResetAutoImplicitLogin();
+            }
         }
     }
     #endregion
@@ -764,14 +843,14 @@ public class PersistenceFacade : IBroadcastListener
         config.OnExtra = _onKeep;
         config.BackButtonStrategy = IPopupMessage.Config.EBackButtonStratety.PerformExtra;
         config.HighlightButton = IPopupMessage.Config.EHighlightButton.Confirm;
-
+        
         // Texts setup        
         config.TitleTid = "TID_DNA_MERGE_CONFLICT_TITLE";   // Save game conflict!
         config.MessageTid = "TID_DNA_MERGE_CONFLICT_MESSAGE_IRRECOVERABLE_ERROR"; // An error arose when linking current progress to to this device. Do you want to recover your progress from the cloud or keep playing with the current progress and cloud save disabled?
         config.ConfirmButtonTid = "TID_DNA_MERGE_CONFLICT_BUTTON_1"; // Recover previous progress
         config.ExtraButtonTid = "TID_DNA_MERGE_CONFLICT_BUTTON_2"; // Keep current progress
 
-        /*
+        /*        
         config.TitleTid = "Save game conflict!";
         config.MessageTid = "An error arose when linking current progress to to this device. Do you want to recover your progress from the cloud or keep playing with the current progress and cloud save disabled?";
         config.ConfirmButtonTid = "Recover"; // Recover previous progress
@@ -851,7 +930,7 @@ public class PersistenceFacade : IBroadcastListener
 
         // For automatic social platforms the user is allowed to override the server Id associated to the platform user Id        
         // Sync is restarted stating that force is allowed
-        cloudDriver.Sync(m_implicitMergePlatform, PersistenceCloudDriver.ESyncMode.Full, false, false, onSyncDone, true, !prevValue);
+        cloudDriver.Sync(m_implicitMergePlatform, PersistenceCloudDriver.ESyncMode.Full, PersistenceCloudDriver.EErrorMode.OnlyMergeConflict, false, onSyncDone, true, !prevValue);
     }   
 
     private static void Popup_ImplicitMergeConflictOnKeep(bool success)
@@ -904,17 +983,17 @@ public class PersistenceFacade : IBroadcastListener
         config.BackButtonStrategy = IPopupMessage.Config.EBackButtonStratety.PerformExtra;
         config.HighlightButton = IPopupMessage.Config.EHighlightButton.Confirm;
 
-        // Texts setup        
+        // Texts setup                
         config.TitleTid = "TID_DNA_MERGE_CONFLICT_TITLE";   // Save game conflict!
         config.MessageTid = "TID_DNA_MERGE_CONFLICT_MESSAGE"; // A previous progress linked to this device was found. Do you want to recover it or keep playing with the current progress?
         config.ConfirmButtonTid = "TID_DNA_MERGE_CONFLICT_BUTTON_1"; // Recover previous progress
-        config.ExtraButtonTid = "TID_DNA_MERGE_CONFLICT_BUTTON_2"; // Keep current progress
+        config.ExtraButtonTid = "TID_DNA_MERGE_CONFLICT_BUTTON_2"; // Keep current progress        
 
         /*
         config.TitleTid = "Save game conflict!";
         config.MessageTid = "A previous progress linked to this device was found. Do you want to recover it or keep playing with the current progress?";
         config.ConfirmButtonTid = "Recover";// "TID_DNA_MERGE_CONFLICT_BUTTON_1"; // Recover previous progress
-        config.ExtraButtonTid = "Keep"; // "TID_DNA_MERGE_CONFLICT_BUTTON_2"; // Keep current progress
+        config.ExtraButtonTid = "Keep"; // "TID_DNA_MERGE_CONFLICT_BUTTON_2"; // Keep current progres
         */
 
         // Open popup!

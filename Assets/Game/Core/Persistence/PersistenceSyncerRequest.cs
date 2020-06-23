@@ -8,7 +8,7 @@ public class PersistenceSyncerRequest
 	}
 
 	public PersistenceCloudDriver.ESyncMode Mode { get; set; }
-	public bool IsSilent { get; set; }
+	public PersistenceCloudDriver.EErrorMode ErrorMode { get; set; }
 	public bool IsAppInit { get; set; }
 	public SocialUtils.EPlatform PlatformId { get; set; }
 	public SocialPlatformManager.ELoginResult LogInSocialResult { get; set; }
@@ -46,7 +46,7 @@ public class PersistenceSyncerRequest
 		
 		IsAppInit = false;
 		Mode = PersistenceCloudDriver.ESyncMode.Full;
-		IsSilent = false;
+		ErrorMode = PersistenceCloudDriver.EErrorMode.Verbose;
 		PlatformId = SocialUtils.EPlatform.None;
 		OnSyncDone = null;
 		ForceMerge = false;

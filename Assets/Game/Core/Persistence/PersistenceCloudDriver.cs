@@ -165,16 +165,41 @@ public class PersistenceCloudDriver
         }
     }
 
-    private bool Syncer_IsSilent
+    public enum EErrorMode
+    {
+        Verbose,        
+        OnlyMergeConflict,
+        Silent
+    };
+
+    public enum EError
+    {
+        NoConnection,
+        MergeConflict,
+        Persistence
+    }
+
+    private static bool CanProcessError(EError error, EErrorMode errorMode)
+    {
+        bool returnValue = errorMode == EErrorMode.Verbose;
+        if (errorMode == EErrorMode.OnlyMergeConflict)
+        {
+            returnValue = error == EError.MergeConflict;
+        }
+
+        return returnValue;
+    }
+
+    private EErrorMode Syncer_ErrorMode
     {
         get
         {
-            return Syncer_CurrentRequest.IsSilent;
+            return Syncer_CurrentRequest.ErrorMode;
         }
 
         set
         {
-            Syncer_CurrentRequest.IsSilent = value;
+            Syncer_CurrentRequest.ErrorMode = value;
         }
     }
 
@@ -342,7 +367,7 @@ public class PersistenceCloudDriver
         }
     }
 
-	public void Sync(SocialUtils.EPlatform platformId, ESyncMode mode, bool isSilent, bool isAppInit,
+	public void Sync(SocialUtils.EPlatform platformId, ESyncMode mode, EErrorMode errorMode, bool isAppInit,
                      Action<PersistenceStates.ESyncResult, PersistenceStates.ESyncResultDetail> onDone,
                      bool forceMerge = false, bool pushRequest = false)
 	{        
@@ -362,7 +387,7 @@ public class PersistenceCloudDriver
 		Syncer_OnSyncDone = onDone;
 		Syncer_PlatformId = platformId;
         Syncer_Mode = mode;
-        Syncer_IsSilent = isSilent;
+        Syncer_ErrorMode = errorMode;
 		Syncer_IsAppInit = isAppInit;
         Syncer_ForceMerge = forceMerge;
         State = EState.Syncing;
@@ -434,7 +459,7 @@ public class PersistenceCloudDriver
     {
         if (mSyncerStep == ESyncStep.LoggingInSocial)
         {
-            Syncer_LogInSocialResult = result;
+            Syncer_LogInSocialResult = result;            
             switch (Syncer_LogInSocialResult)
             {
                 case SocialPlatformManager.ELoginResult.Error:
@@ -447,9 +472,24 @@ public class PersistenceCloudDriver
 
                 case SocialPlatformManager.ELoginResult.MergeLocalOrOnlineAccount:
                 case SocialPlatformManager.ELoginResult.MergeDifferentAccountWithProgress:
-                case SocialPlatformManager.ELoginResult.MergeDifferentAccountWithoutProgress:
-                    Data.LoadFromString(persistenceMerge);
-                    Syncer_Step = ESyncStep.MergingAccounts;
+                case SocialPlatformManager.ELoginResult.MergeDifferentAccountWithoutProgress:                                         
+                    // If the user has logged in to an explicit platform and implicit logging in fails then we just stop the logging in
+                    // process and we mark the implicit merge as failed because we don't want to mess up with the user's progress, which
+                    // is linked to the explicit platform chosen by the suer
+                    if (SocialPlatformManager.SharedInstance.IsImplicit(Syncer_PlatformId) && LocalDriver.HasEverExplicitlyLoggedIn())
+                    {
+                        LocalDriver.Prefs_SocialImplicitMergeState = EMergeState.Failed;
+                        Syncer_PerformDone(PersistenceStates.ESyncResult.ErrorLogging, PersistenceStates.ESyncResultDetail.NoLogInSocial);
+                    }
+                    else if (CanProcessError(EError.MergeConflict, Syncer_ErrorMode))
+                    {                      
+                        Data.LoadFromString(persistenceMerge);
+                        Syncer_Step = ESyncStep.MergingAccounts;
+                    }
+                    else
+                    {
+                        Syncer_PerformDone(PersistenceStates.ESyncResult.ErrorLogging, PersistenceStates.ESyncResultDetail.NoLogInSocial);
+                    }
                     break;
             }
         }        
@@ -896,14 +936,14 @@ public class PersistenceCloudDriver
 			Syncer_PerformDone(PersistenceStates.ESyncResult.ErrorLogging, PersistenceStates.ESyncResultDetail.NoConnection);
 		};
 
-		if (Syncer_IsSilent)
+		if (CanProcessError(EError.NoConnection, Syncer_ErrorMode))
 		{
-			onDone();
+            PersistenceFacade.Popups_OpenErrorConnection(Syncer_PlatformId, onDone);            
 		}
 		else
 		{
-			PersistenceFacade.Popups_OpenErrorConnection(Syncer_PlatformId, onDone);
-		}
+            onDone();
+        }
 	}
 
 	private void Syncer_ProcessSyncingPersistencesError()
@@ -918,14 +958,14 @@ public class PersistenceCloudDriver
 			Syncer_Step = ESyncStep.GettingPersistence;
 		};
 
-		if (Syncer_IsSilent)
+		if (CanProcessError(EError.Persistence, Syncer_ErrorMode))
 		{
-			onDone();
+            PersistenceFacade.Popup_OpenErrorWhenSyncing(onDone, onRetry);            
 		}
 		else
 		{
-			PersistenceFacade.Popup_OpenErrorWhenSyncing(onDone, onRetry);
-		}
+            onDone();
+        }
 	}
 
 	protected virtual void Syncer_ExtendedCheckConnection(Action<bool> onDone)
@@ -954,7 +994,7 @@ public class PersistenceCloudDriver
 
 	protected virtual void Syncer_ExtendedLogInSocial(Action<SocialPlatformManager.ELoginResult, string> onDone)
     {
-        SocialPlatformManager.SharedInstance.Login(Syncer_PlatformId, Syncer_IsSilent, Syncer_IsAppInit, onDone, Syncer_ForceMerge);        
+        SocialPlatformManager.SharedInstance.Login(Syncer_PlatformId, Syncer_ErrorMode != EErrorMode.Verbose, Syncer_IsAppInit, onDone, Syncer_ForceMerge);        
     }
 
 	protected virtual void Syncer_ExtendedGetPersistence (Action<bool> onDone)
