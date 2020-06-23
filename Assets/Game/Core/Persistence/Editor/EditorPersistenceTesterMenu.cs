@@ -14,6 +14,8 @@ public class EditorPersistenceTesterMenu
     private const string TESTER_MENU_07 = TESTER_MENU + "/07";
     private const string TESTER_MENU_08 = TESTER_MENU + "/08";
     private const string TESTER_MENU_09 = TESTER_MENU + "/09";
+    private const string TESTER_MENU_10 = TESTER_MENU + "/10";
+
 
     private static PersistenceTester sm_persistenceTester = new PersistenceTester();
 
@@ -157,6 +159,19 @@ public class EditorPersistenceTesterMenu
     public static bool Test_Set09Validate()
     {
         Menu.SetChecked(TESTER_MENU_09, CurrentTestId == 9);
+        return true;
+    }
+
+    [MenuItem(TESTER_MENU_10)]
+    public static void Test_Set10()
+    {
+        CurrentTestId = 10;
+    }
+
+    [MenuItem(TESTER_MENU_10, true)]
+    public static bool Test_Set10Validate()
+    {
+        Menu.SetChecked(TESTER_MENU_10, CurrentTestId == 10);
         return true;
     }
 }

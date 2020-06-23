@@ -86,14 +86,39 @@ public class PersistenceTester
                 PersistenceCloudDriver.ESyncMode.Lite);
             sm_tests.Add(8, test);
 
+            // Use Case: 9. Implicit login has already been done successfully and persistences are synchronised
+            // Result: Game loads without friction
+            test = new PersistenceTest(PersistenceTest.EUserId.U2, PersistenceTest.EProgress.P2, PersistenceCloudDriver.EMergeState.Ok,
+                PersistenceTest.EExplicitPlatformState.None, PersistenceTest.EUserId.U2, PersistenceTest.EProgress.P2, PersistenceTest.EImplicitMergeResponse.None, PersistenceTest.EImplicitMergeResponse.None,
+                PersistenceTest.EUserId.U2, PersistenceTest.EProgress.P2, PersistenceCloudDriver.EMergeState.Ok, PersistenceTest.EExplicitPlatformState.None, UserProfile.ESocialState.NeverLoggedIn,
+                PersistenceCloudDriver.ESyncMode.Lite);
+            sm_tests.Add(9, test);
 
-            // Use Case: 9. Implicit login has failed
+            // Use Case: 10. Implicit login has failed
             // Result: No sync and cloud save disabled            
             test = new PersistenceTest(PersistenceTest.EUserId.U2, PersistenceTest.EProgress.P2, PersistenceCloudDriver.EMergeState.Failed,
                 PersistenceTest.EExplicitPlatformState.None, PersistenceTest.EUserId.U1, PersistenceTest.EProgress.P1, PersistenceTest.EImplicitMergeResponse.None, PersistenceTest.EImplicitMergeResponse.None,
                 PersistenceTest.EUserId.U2, PersistenceTest.EProgress.P2, PersistenceCloudDriver.EMergeState.Failed, PersistenceTest.EExplicitPlatformState.None, UserProfile.ESocialState.NeverLoggedIn,
                 PersistenceCloudDriver.ESyncMode.None);
-            sm_tests.Add(9, test);
+            sm_tests.Add(10, test);
+
+            // Use Case: 11. Implicit login hasn't been done and the user is explicitly logged in
+            // Result: No sync and cloud save enabled            
+            test = new PersistenceTest(PersistenceTest.EUserId.U2, PersistenceTest.EProgress.P2, PersistenceCloudDriver.EMergeState.None,
+                PersistenceTest.EExplicitPlatformState.LoggedInWhenQuit, PersistenceTest.EUserId.U2, PersistenceTest.EProgress.P2, PersistenceTest.EImplicitMergeResponse.None, PersistenceTest.EImplicitMergeResponse.None,
+                PersistenceTest.EUserId.U2, PersistenceTest.EProgress.P2, PersistenceCloudDriver.EMergeState.Ok, PersistenceTest.EExplicitPlatformState.LoggedInWhenQuit, UserProfile.ESocialState.NeverLoggedIn,
+                PersistenceCloudDriver.ESyncMode.Full);
+            sm_tests.Add(11, test);
+
+            /*
+            // Use Case: 11. Implicit login hasn't been done and the user has explicitly logged in, 
+            // Result: No sync and cloud save             
+            test = new PersistenceTest(PersistenceTest.EUserId.U2, PersistenceTest.EProgress.P2, PersistenceCloudDriver.EMergeState.None,
+                PersistenceTest.EExplicitPlatformState.LoggedInWhenQuit, PersistenceTest.EUserId.U2, PersistenceTest.EProgress.P2, PersistenceTest.EImplicitMergeResponse.None, PersistenceTest.EImplicitMergeResponse.None,
+                PersistenceTest.EUserId.U2, PersistenceTest.EProgress.P2, PersistenceCloudDriver.EMergeState.None, PersistenceTest.EExplicitPlatformState.LoggedInWhenQuit, UserProfile.ESocialState.NeverLoggedIn,
+                PersistenceCloudDriver.ESyncMode.Full);
+            sm_tests.Add(10, test);
+            */
         }
     }
 
