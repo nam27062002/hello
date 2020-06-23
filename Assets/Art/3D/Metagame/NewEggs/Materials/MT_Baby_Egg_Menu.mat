@@ -7,9 +7,9 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: MT_Egg_Menu_full
+  m_Name: MT_Baby_Egg_Menu
   m_Shader: {fileID: 4800000, guid: 2345015ac46679e4cb5817ed44c82547, type: 3}
-  m_ShaderKeywords: FRESNEL FXLAYER_COLORIZE NORMALMAP SELFILLUMINATE_EMISSIVE SPECULAR
+  m_ShaderKeywords: FRESNEL FXLAYER_NONE NORMALMAP SELFILLUMINATE_EMISSIVE SPECULAR
     _ZWRITE_ON
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -21,7 +21,7 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _BumpMap:
-        m_Texture: {fileID: 2800000, guid: b45c20f8fb7a24048979b801bb4a1b6e, type: 3}
+        m_Texture: {fileID: 2800000, guid: 7031e2332704093478ddd1c728ba8315, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _ColorRamp:
@@ -41,7 +41,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailTex:
-        m_Texture: {fileID: 2800000, guid: 37989328785eda64daecbeee69a144fc, type: 3}
+        m_Texture: {fileID: 2800000, guid: aefb0bcdefda6a44fad2f2551581dc90, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _EmissionMap:
@@ -57,7 +57,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 3ea5635aaa879d24da2d657216665b3e, type: 3}
+        m_Texture: {fileID: 2800000, guid: 3da7d437e8199a94cadfcfa9a444f6a8, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
@@ -81,7 +81,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
-    - FXLayer: 4
+    - FXLayer: 0
     - ReflectionType: 0
     - SelfIlluminate: 3
     - _BlendMode: 0
@@ -118,15 +118,15 @@ Material:
     - _EnableVertexScaleZ: 0
     - _FireAmount: 0
     - _FireSpeed: 1
-    - _Fresnel: 2.95
+    - _Fresnel: 10
     - _FresnelFactor: 1.68
     - _FresnelPower: 2.01
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
-    - _InnerLightAdd: 1
+    - _InnerLightAdd: 1.5
     - _InnerLightWavePhase: 1
-    - _InnerLightWaveSpeed: 1
+    - _InnerLightWaveSpeed: 2
     - _Metallic: 0
     - _Mode: 0
     - _NormalStrenght: 1
@@ -151,15 +151,15 @@ Material:
     - _ColorAdd: {r: 0, g: 0, b: 0, a: 0}
     - _EmissionColor: {r: 0.6, g: 0.6, b: 0.6, a: 1}
     - _EmissiveColor: {r: 1, g: 0.71089655, b: 0, a: 1}
-    - _FresnelColor: {r: 1, g: 0.5082414, b: 0, a: 1}
+    - _FresnelColor: {r: 0.1699448, g: 0.37245134, b: 0.6320754, a: 1}
     - _FresnelFinalColor: {r: 0, g: 0, b: 0, a: 0}
     - _FresnelInitialColor: {r: 0, g: 0, b: 0, a: 0}
     - _GlowColor: {r: 0.6985294, g: 0.4263084, b: 0.4263084, a: 1}
-    - _InnerLightColor: {r: 0.85294116, g: 0.6602941, b: 0.031358108, a: 1}
+    - _InnerLightColor: {r: 0.65620345, g: 0.19277322, b: 0.7169812, a: 1}
     - _LightColor: {r: 1, g: 1, b: 1, a: 0}
     - _ReflectionColor: {r: 1, g: 1, b: 1, a: 1}
     - _RimColor: {r: 1, g: 0.5586207, b: 0, a: 1}
-    - _SecondLightColor: {r: 0, g: 0, b: 0, a: 0}
-    - _SecondLightDir: {r: 0.18976589, g: 0.29194748, b: -0.9374196, a: 0}
+    - _SecondLightColor: {r: 0.9150943, g: 0.8469607, b: 0.7921569, a: 0}
+    - _SecondLightDir: {r: -0.3051635, g: 0.5912543, b: -0.74652106, a: 0}
     - _SpecularDir: {r: 0, g: 0, b: -1, a: 0}
     - _Tint: {r: 1, g: 1, b: 1, a: 1}
