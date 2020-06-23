@@ -11,6 +11,9 @@ public class Gelato : Entity {
 
 	//-----------------------------------------------------	
 	public void OverrideRewardFromDef(DefinitionNode _def) {
+		// Bug fix: when overriding, update definition from base class.
+		// Otherwise, ApplyPowerUpMultipliers is called and reading from a different definition file, giving wrong reward values
+		m_def = _def;
 		BuildRewardFromDef(_def);
 	}
 
