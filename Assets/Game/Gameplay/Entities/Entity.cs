@@ -118,7 +118,7 @@ public class Entity : IEntity, IBroadcastListener {
         {
             case BroadcastEventType.APPLY_ENTITY_POWERUPS:
             {
-                ApplyPowerUpMultipliers();
+                ApplyPowerUpMultipliers(m_def);
             }break;
         }
     }
@@ -171,7 +171,7 @@ public class Entity : IEntity, IBroadcastListener {
 			m_maxHealth *= (1f + (_node.GetAsFloat("healthScalePerDragonTier", 0f) * (int)InstanceManager.player.data.tier));
 		}
 
-		ApplyPowerUpMultipliers();
+		ApplyPowerUpMultipliers(_node);
 	}	
 
 	override public void Spawn(ISpawner _spawner) {        
@@ -454,15 +454,15 @@ public class Entity : IEntity, IBroadcastListener {
 		}
 	}
 
-	void ApplyPowerUpMultipliers()
+	void ApplyPowerUpMultipliers(DefinitionNode _node)
 	{
-		m_reward.score = m_def.GetAsInt("rewardScore");
+		m_reward.score = _node.GetAsInt("rewardScore");
 		m_reward.score += ((m_reward.score * m_powerUpScoreMultiplier) / 100.0f);
 
-		m_reward.coins = m_def.GetAsInt("rewardCoins");
+		m_reward.coins = _node.GetAsInt("rewardCoins");
 		m_reward.coins += ((m_reward.coins * m_powerUpSCMultiplier) / 100.0f);
         
-		m_reward.xp = m_def.GetAsFloat("rewardXp");
+		m_reward.xp = _node.GetAsFloat("rewardXp");
 		m_reward.xp += (m_reward.xp * m_powerUpXpMultiplier) / 100.0f;
 
         OnRewardCreated();
