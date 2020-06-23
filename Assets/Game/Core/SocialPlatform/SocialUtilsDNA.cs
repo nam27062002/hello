@@ -13,10 +13,16 @@ public class SocialUtilsDNA : SocialUtils
             m_manager = manager;
         }
 
-        public override void OnLoggedIn()
+        public override void onLogInCompleted()
         {
             Debug.TaggedLog(TAG, "onLogInCompleted");
             m_manager.OnSocialPlatformLogin();
+        }
+
+        public override void onLogInFailed()
+        {
+            Debug.TaggedLog(TAG, "onLogInFailed");
+            m_manager.OnSocialPlatformLoginFailed();
         }
     }
     //////////////////////////////////////////////////////////////////////////    
@@ -56,11 +62,8 @@ public class SocialUtilsDNA : SocialUtils
 
 	public override bool IsLogInTimeoutEnabled()
 	{
-		#if UNITY_ANDROID
-		return true;
-		#else
-		return false;
-		#endif
+        // Timout is implemented by Calety DNASocialPlatform
+        return false;
 	}
 
     public override void GetProfileInfoFromPlatform(Action<ProfileInfo> onGetProfileInfo)
