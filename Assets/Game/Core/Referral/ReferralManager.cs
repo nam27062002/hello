@@ -346,60 +346,26 @@ public class ReferralManager
 	/// <param name="_strCmd">The command sent</param>
 	/// <param name="_reponseCode">Response code. 200 if the request was successful</param>
 	/// <returns>Returns true if the response was successful</returns>
-	public bool OnReclaimRewardResponse(string _strResponse, string _strCmd, int _reponseCode)
+	public void OnReclaimRewardResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response)
 	{
-		bool responseOk = false;
-
-		if (_strResponse != null)
+		// If there was no error, update local cache
+		if (_error == null && _response != null && _response.ContainsKey("response"))
 		{
-			switch (_reponseCode)
+			if (_response["response"] != null)
 			{
-				case 200: // No error
+				JSONNode kJSON = JSON.Parse(_response["response"] as string);
+				if (kJSON != null)
+				{
+					// The reclamin operation was sucessful
+					if (kJSON.ContainsKey("sku"))
 					{
 
-						JSONNode kJSON = JSON.Parse(_strResponse);
-						if (kJSON != null)
-						{
-							if (kJSON.ContainsKey("result"))
-							{
-								if (kJSON["result"] == true)
-								{
-									// The reclamin operation was sucessful
-									if (kJSON.ContainsKey("sku"))
-									{
-
-										// Notify that the reward has been claimed successfully
-										ApplyReward (kJSON["sku"].ToString());
-
-										responseOk = true;
-									}
-
-								}
-							}
-						}
-
-						break;
+						// Notify that the reward has been claimed successfully
+						ApplyReward (kJSON["sku"].ToString());
 					}
-
-				default:
-					{
-						// An error happened
-						responseOk = false;
-						break;
-					}
+				}
 			}
-		}
-
-
-
-		if (m_offlineMode)
-		{
-			return false;
-		}
-		else
-		{
-			return responseOk;
-		}
+		}			
 	}
 
 
@@ -410,59 +376,32 @@ public class ReferralManager
 	/// <param name="_strCmd">The command sent</param>
 	/// <param name="_reponseCode">Response code. 200 if the request was successful</param>
 	/// <returns>Returns true if the response was successful</returns>
-	public bool OnReclaimAllResponse(string _strResponse, string _strCmd, int _reponseCode)
+	public void OnReclaimAllResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response)
 	{
-		bool responseOk = false;
-
-		if (_strResponse != null)
+		// If there was no error, update local cache
+		if (_error == null && _response != null && _response.ContainsKey("response"))
 		{
-			switch (_reponseCode)
+			if (_response["response"] != null)
 			{
-				case 200: // No error
+				JSONNode kJSON = JSON.Parse(_response["response"] as string);
+				if (kJSON != null)
+				{
+					if (kJSON.ContainsKey("rewards"))
 					{
 
-						JSONNode kJSON = JSON.Parse(_strResponse);
-						if (kJSON != null)
+						List<string> skuList = new List<string>();
+
+						foreach (JSONNode reward in kJSON["rewards"].AsArray)
 						{
-							if (kJSON.ContainsKey("rewards"))
-							{
-
-								List<string> skuList = new List<string>();
-
-								foreach (JSONNode reward in kJSON["rewards"].AsArray)
-								{
-									skuList.Add(reward["sku"].Value.ToString());
-								}
-
-								// Notify that the reward has been claimed successfully
-								ApplyRewards(skuList);
-
-								responseOk = true;
-
-							}
+							skuList.Add(reward["sku"].Value.ToString());
 						}
 
-						break;
-					}
+						// Notify that the reward has been claimed successfully
+						ApplyRewards(skuList);
 
-				default:
-					{
-						// An error happened
-						responseOk = false;
-						break;
 					}
+				}	
 			}
-		}
-
-
-
-		if (m_offlineMode)
-		{
-			return false;
-		}
-		else
-		{
-			return responseOk;
 		}
 	}
 
