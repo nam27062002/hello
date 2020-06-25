@@ -42,6 +42,8 @@ public class CPTechTab : MonoBehaviour {
     [SerializeField] private TMP_Dropdown m_countryDropDown = null;
 	[SerializeField] private TextMeshProUGUI m_currentPlatformText = null;
 	[SerializeField] private TextMeshProUGUI m_currentPlatformUserIdText = null;
+	[SerializeField] private TextMeshProUGUI m_loggedInWhenQuitText = null;
+	[SerializeField] private TextMeshProUGUI m_implicitMergeStateText = null;
 
 	// Internal
 	private DateTime m_startTimestamp;
@@ -78,7 +80,9 @@ public class CPTechTab : MonoBehaviour {
 		m_DNAProfileIdText.text = "DNA profileId: " + HDTrackingManager.Instance.GetDNAProfileID();
         m_AdUnitInfoText.text = "Ads: " + GameAds.instance.GetInfo();
 		m_currentPlatformText.text = "Cloud Platform: " + SocialPlatformManager.SharedInstance.CurrentPlatform_GetKey();
-		m_currentPlatformUserIdText.text = "Cloud userId:" + SocialPlatformManager.SharedInstance.CurrentPlatform_GetUserID();		
+		m_currentPlatformUserIdText.text = "Cloud userId:" + SocialPlatformManager.SharedInstance.CurrentPlatform_GetUserID();
+		m_loggedInWhenQuitText.text = "Logged in when quit: " + PersistenceFacade.instance.LocalDriver.Prefs_SocialWasLoggedInWhenQuit;
+		m_implicitMergeStateText.text = "Implicit merge state: " + PersistenceFacade.instance.LocalDriver.Prefs_SocialImplicitMergeState.ToString();
 
 		m_debugServerToggle.isOn = DebugSettings.useDebugServer;
 		m_debugServerToggle.onValueChanged.AddListener(OnToggleDebugServer);        
@@ -348,8 +352,18 @@ public class CPTechTab : MonoBehaviour {
 		PersistenceFacade.instance.CloudDriver.Upload();
     }
 
-#region countries
-    private bool Country_IsInitializing { get; set; }
+	public void OnCorruptLocalProgress()
+	{
+		Action onDone = delegate ()
+		{
+			ApplicationManager.instance.NeedsToRestartFlow = true;
+		};
+
+		PersistenceFacade.instance.LocalDriver.OverrideWithCorruptProgress(onDone);		
+	}
+
+	#region countries
+	private bool Country_IsInitializing { get; set; }
 
     private void Countries_Init()
     {
