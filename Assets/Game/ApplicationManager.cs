@@ -76,50 +76,14 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     }
 #endif
 
+    private bool m_isInited = false;
+
     /// <summary>
     /// Initialization. This method will be called only once regardless the amount of times the user is led to the Loading scene.
     /// </summary>
     protected void Awake()
     {
-		Application.targetFrameRate = 30;
-
-        // Frame rate forced to 30 fps to make the experience in editor as similar to the one on device as possible
-#if UNITY_EDITOR        
-        CreatePersistenceTester();                
-
-        QualitySettings.vSyncCount = 0;  // VSync must be disabled
-#endif
-
-        m_isAlive = true;
-
-        if (FeatureSettingsManager.IsDebugEnabled)
-        {
-            DebugSettings.Init();
-        }
-
-		// [AOC] To make sure we have a solid ToString() and Parse() systems through different platforms and locales, force it to Invariant
-		sm_originalCulture = CultureInfo.CurrentCulture;	// Store original
-		CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
-		//CultureInfo.CurrentCulture = CultureInfo.CreateSpecificCulture("fr-FR");	// [AOC] For testing only!!
-
-		Reset();
-
-        FGOL.Plugins.Native.NativeBinding.Instance.DontBackupDirectory(Application.persistentDataPath);                
-
-        // This class needs to know whether or not the user is in the middle of a game
-        Messenger.AddListener(MessengerEvents.GAME_COUNTDOWN_STARTED, Game_OnCountdownStarted);
-        Broadcaster.AddListener(BroadcastEventType.GAME_PAUSED, this);
-        Broadcaster.AddListener(BroadcastEventType.GAME_ENDED, this);
-        Broadcaster.AddListener(BroadcastEventType.LANGUAGE_CHANGED, this);
-
-        Device_Init();
-
-        GameCenter_Init();
-
-        // [DGR] GAME_VALIDATOR: Not supported yet
-        // GameValidator gv = new GameValidator();
-        //gv.StartBuildValidation();        
-        ExceptionManager.SharedInstance.AddCrashDelegate(new HDExceptionListener());
+        Init();        
     }
 
     protected void Start()
@@ -146,7 +110,62 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         StartCoroutine(Device_Update());
     }
 
-	private bool HasArg(string _argName) 
+    public void Init()
+    {
+        if (!m_isInited)
+        {
+            m_isInited = true;
+
+#if UNITY_EDITOR
+            PersistenceTester.OnAppLaunched();
+#endif
+            CaletySettings settingsInstance = (CaletySettings)Resources.Load("CaletySettings");
+            string buildVersion = (settingsInstance) ? settingsInstance.GetClientBuildVersion() : Application.version;
+            CacheServerManager.SharedInstance.Init(buildVersion);
+
+            Application.targetFrameRate = 30;
+
+            // Frame rate forced to 30 fps to make the experience in editor as similar to the one on device as possible
+#if UNITY_EDITOR
+            CreatePersistenceTester();
+
+            QualitySettings.vSyncCount = 0;  // VSync must be disabled
+#endif
+
+            m_isAlive = true;
+
+            if (FeatureSettingsManager.IsDebugEnabled)
+            {
+                DebugSettings.Init();
+            }
+
+            // [AOC] To make sure we have a solid ToString() and Parse() systems through different platforms and locales, force it to Invariant
+            sm_originalCulture = CultureInfo.CurrentCulture;    // Store original
+            CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
+            //CultureInfo.CurrentCulture = CultureInfo.CreateSpecificCulture("fr-FR");	// [AOC] For testing only!!
+
+            Reset();
+
+            FGOL.Plugins.Native.NativeBinding.Instance.DontBackupDirectory(Application.persistentDataPath);
+
+            // This class needs to know whether or not the user is in the middle of a game
+            Messenger.AddListener(MessengerEvents.GAME_COUNTDOWN_STARTED, Game_OnCountdownStarted);
+            Broadcaster.AddListener(BroadcastEventType.GAME_PAUSED, this);
+            Broadcaster.AddListener(BroadcastEventType.GAME_ENDED, this);
+            Broadcaster.AddListener(BroadcastEventType.LANGUAGE_CHANGED, this);
+
+            Device_Init();
+
+            GameCenter_Init();
+
+            // [DGR] GAME_VALIDATOR: Not supported yet
+            // GameValidator gv = new GameValidator();
+            //gv.StartBuildValidation();        
+            ExceptionManager.SharedInstance.AddCrashDelegate(new HDExceptionListener());
+        }
+    }
+
+    private bool HasArg(string _argName) 
 	{
 		string[] args = PlatformUtils.Instance.GetCommandLineArgs();
 		if ( args != null )
