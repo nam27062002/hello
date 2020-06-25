@@ -255,6 +255,7 @@ public class HUDCloudSyncStatus : MonoBehaviour
 	/// Cloud sync has finishehd.
 	/// </summary>
 	private void OnSyncDone() {
+		m_isPopupOpen = false;
 		PersistenceFacade.Popups_CloseLoadingPopup();
 	}
 }
