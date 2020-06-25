@@ -1811,6 +1811,11 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
             return (Device_CurrentFeatureSettings == null) ? 5f : Device_CurrentFeatureSettings.GetValueAsFloat(FeatureSettings.KEY_SOCIAL_PLAFTORM_LOGIN_TIMEOUT);
         }
     }
+
+    public bool IsImplicitCloudSaveEnabled()
+    {
+        return (Device_CurrentFeatureSettings == null) ? false : Device_CurrentFeatureSettings.GetValueAsBool(FeatureSettings.KEY_IMPLICIT_CLOUD_SAVE);
+    }
     #endregion
 
     #region log
