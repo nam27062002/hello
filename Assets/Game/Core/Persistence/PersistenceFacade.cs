@@ -18,11 +18,19 @@ public class PersistenceFacade : IBroadcastListener
         {
             if (smInstance == null)
             {
-                smInstance = new PersistenceFacade();
-                smInstance.Init();
+                CreateInstance();
             }
 
             return smInstance;
+        }
+    }
+
+    public static void CreateInstance()
+    {
+        if (smInstance == null)
+        {
+            smInstance = new PersistenceFacade();
+            smInstance.Init();
         }
     }
 
@@ -35,6 +43,8 @@ public class PersistenceFacade : IBroadcastListener
         // Forces a different code path in the BinaryFormatter that doesn't rely on run-time code generation (which would break on iOS).
         // From http://answers.unity3d.com/questions/30930/why-did-my-binaryserialzer-stop-working.html
         Environment.SetEnvironmentVariable("MONO_REFLECTION_SERIALIZER", "yes");
+
+        GameServerManager.SharedInstance.Configure();
 
         PersistenceFacadeConfigDebug.EUserCaseId userCaseId = PersistenceFacadeConfigDebug.EUserCaseId.Production;
         //userCaseId = PersistenceFacadeConfigDebug.EUserCaseId.Settings_Local_NeverLoggedIn_Cloud_More;
@@ -49,10 +59,9 @@ public class PersistenceFacade : IBroadcastListener
 
         Popups_Init();
 
-        GameServerManager.SharedInstance.Configure();
-
         // Tries to log in as soon as possible so the chances to have online stuff such as customizer (which may contain offers) ready when main menu is loaded are higher
         GameServerManager.SharedInstance.Auth(null);
+
     }
 
     public void Destroy()

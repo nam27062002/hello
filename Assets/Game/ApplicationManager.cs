@@ -134,6 +134,9 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
             m_isAlive = true;
 
+            // Make sure PersistenceFacade (which configures server) is created at the very beginning 
+            PersistenceFacade.CreateInstance();
+
             if (FeatureSettingsManager.IsDebugEnabled)
             {
                 DebugSettings.Init();
