@@ -519,12 +519,14 @@ public class PersistenceCloudDriver
             (Syncer_LogInSocialResult == SocialPlatformManager.ELoginResult.MergeLocalOrOnlineAccount ||
             Syncer_LogInSocialResult == SocialPlatformManager.ELoginResult.MergeDifferentAccountWithProgress))
         {
+            Syncer_Comparator.Compare(LocalDriver.Data, Data);            
+
             // Automatic logging in to a social platform lets the user overwrite the server userId linked to the social user Id in order to use
             // the current server userId because it's not as risky as letting explicit social platform such as Facebook or SIWA do it
             PersistenceFacade.Popup_OpenImplicitMergeConflict(
-                Syncer_PlatformId, 
-                null,   // [AOC] TODO!!
-                null,   // [AOC] TODO!!
+                Syncer_PlatformId,
+                Syncer_Comparator.GetLocalProgress() as PersistenceComparatorSystem,
+                Syncer_Comparator.GetCloudProgress() as PersistenceComparatorSystem,
                 Syncer_OnMergeConflictOverwriteSocialUserIdWithLocalServerId,
                 Syncer_OnMergeConflictUseCloud
             );
