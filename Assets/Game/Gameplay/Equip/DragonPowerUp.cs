@@ -176,8 +176,7 @@ public class DragonPowerUp : MonoBehaviour {
     void SetSharedPower(DefinitionNode babyDragonDefinition)
     {
 		PetCollection totalPets = UsersManager.currentUser.petCollection;
-		List<string> babyPetsList = totalPets.GetUnlockedBabyPets();
-		int totalBabyDragons = babyPetsList.Count;
+		int totalBabyDragons = totalPets.unlockedBabyPetsCount;
 		if (totalBabyDragons > 0)
 		{
 			string sharedPower = babyDragonDefinition.Get("sharedPower");
