@@ -156,13 +156,19 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
             Device_Init();
 
-            GameCenter_Init();
+            Messenger.AddListener(MessengerEvents.DEFINITIONS_LOADED, OnContentLoaded);
 
             // [DGR] GAME_VALIDATOR: Not supported yet
             // GameValidator gv = new GameValidator();
             //gv.StartBuildValidation();        
             ExceptionManager.SharedInstance.AddCrashDelegate(new HDExceptionListener());
         }
+    }
+
+    private void OnContentLoaded()
+    {
+        Messenger.RemoveListener(MessengerEvents.DEFINITIONS_LOADED, OnContentLoaded);
+        GameCenter_Init();
     }
 
     private bool HasArg(string _argName) 
