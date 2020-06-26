@@ -2105,8 +2105,11 @@ public class GameServerManagerCalety : GameServerManager {
 
                         m_connectionIsPerformingCheck = true;
 
+                        PersistenceLocalDriver localDriver = PersistenceFacade.instance.LocalDriver;
+
                         // Checks if we needs to relogin to cloud, if so then we force a sync (which also checks connection and login)
-                        if (!PersistenceFacade.instance.CloudDriver.IsLoggedIn && !PersistenceFacade.instance.Sync_IsSyncing) {                            
+                        if ((!PersistenceFacade.instance.CloudDriver.IsLoggedIn || (localDriver.Prefs_SocialWasLoggedInWhenQuit && !SocialPlatformManager.SharedInstance.IsLoggedInByKey(localDriver.Prefs_SocialPlatformKey))) &&
+                            !PersistenceFacade.instance.Sync_IsSyncing) {                            
                             Log("Automatic relogin performing cloud sync...");
                             PersistenceFacade.instance.Sync_FromReconnecting((PersistenceStates.ESyncResult result, PersistenceStates.ESyncResultDetail resultDetail) => { onDone(); });
                         } else {                            
