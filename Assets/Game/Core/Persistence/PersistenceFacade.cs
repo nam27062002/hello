@@ -844,8 +844,26 @@ public class PersistenceFacade : IBroadcastListener
         m_implicitMergeConflictPopupNeedsToPopRequest = false;
     }
 
-    public static void Popup_OpenErrorWhenForcingLocalProgressInImplicitMergeConflict(Action _onRestore, Action _onKeep)
+    // Show popup notifying that there's been an irrecoverable error on server side
+    // User needs to choose between local progress with cloud service disabled and
+    // recovering remote progress with cloud service enabled
+    public static void Popup_OpenErrorWhenForcingLocalProgressInImplicitMergeConflict()
     {
+        // Close the previous popup (this popup can be triggered only by Popup_OpenImplicitMergeConflict() 
+        if (m_implicitMergeConflictPopupController != null)
+        {
+            m_implicitMergeConflictPopupController.Close(true);
+            m_implicitMergeConflictPopupController = null;
+        }
+
+        Action _onRestore = Popup_ImplicitConflictOnRestore;
+
+        Action _onKeep = delegate ()
+        {
+            // User chooses to keep local progress anyway 
+            Popup_ImplicitMergeConflictOnKeep(false);
+        };
+
         // Check params
         Debug.Assert(_onRestore != null && _onKeep != null, "Both _onRestore and _onKeep callbacks must be defined!");
 
@@ -891,24 +909,8 @@ public class PersistenceFacade : IBroadcastListener
                             break;
 
                         case PersistenceStates.ESyncResultDetail.NoLogInSocial:
-                            finishFlow = false;
-
-                            if (m_implicitMergeConflictPopupController != null)
-                            {
-                                m_implicitMergeConflictPopupController.Close(true);
-                                m_implicitMergeConflictPopupController = null;
-                            }
-
-                            Action onKeep = delegate ()
-                            {
-                                // User chooses to keep local progress anyway 
-                                Popup_ImplicitMergeConflictOnKeep(false);                                                               
-                            };                           
-
-                            // Show popup notifying that there's been an irrecoverable error on server side
-                            // User needs to choose between local progress with cloud service disabled and
-                            // recovering remote progress with cloud service enabled
-                            Popup_OpenErrorWhenForcingLocalProgressInImplicitMergeConflict(Popup_ImplicitConflictOnRestore, onKeep);
+                            finishFlow = false;                                                       
+                            Popup_OpenErrorWhenForcingLocalProgressInImplicitMergeConflict();
                             break;
                     }
                     break;
@@ -933,14 +935,22 @@ public class PersistenceFacade : IBroadcastListener
             }
         };
 
-        bool prevValue = m_implicitMergeConflictPopupNeedsToPopRequest;
+        // Cheat to let QC test the flow responsible for letting the user know an error occurred when attempting to keep local savegame
+        if (DebugSettings.Persistence_IsForceErrorInMergePopupEnabled)
+        {
+            Popup_OpenErrorWhenForcingLocalProgressInImplicitMergeConflict();
+        }
+        else
+        {
+            bool prevValue = m_implicitMergeConflictPopupNeedsToPopRequest;
 
-        m_implicitMergeConflictPopupNeedsToPopRequest = true;
+            m_implicitMergeConflictPopupNeedsToPopRequest = true;
 
-        // For automatic social platforms the user is allowed to override the server Id associated to the platform user Id        
-        // Sync is restarted stating that force is allowed
-        cloudDriver.Sync(m_implicitMergePlatform, PersistenceCloudDriver.ESyncMode.UpToMerge, PersistenceCloudDriver.EErrorMode.Verbose, false, onSyncDone, true, !prevValue);
-    }   
+            // For automatic social platforms the user is allowed to override the server Id associated to the platform user Id        
+            // Sync is restarted stating that force is allowed
+            cloudDriver.Sync(m_implicitMergePlatform, PersistenceCloudDriver.ESyncMode.UpToMerge, PersistenceCloudDriver.EErrorMode.Verbose, false, onSyncDone, true, !prevValue);
+        }
+    }       
 
     private static void Popup_ImplicitMergeConflictOnKeep(bool success)
     {

@@ -100,6 +100,9 @@ public class DebugSettings : SingletonScriptableObject<DebugSettings> {
     public const string ALLOW_ZOOM_ON_SPACE                      = "ALLOW_ZOOM_ON_SPACE";
     public const string ALLOW_CAMERALOOK_ROTATION                = "ALLOW_CAMERALOOK_ROTATION";
 
+
+    public const string PERSISTENCE_FORCE_ERROR_IN_MERGE_POPUP  = "PERSISTENCE_FORCE_ERROR_IN_MERGE_POPUP";
+
     //------------------------------------------------------------------//
     // PROPERTIES														//
     //------------------------------------------------------------------//
@@ -314,7 +317,12 @@ public class DebugSettings : SingletonScriptableObject<DebugSettings> {
     public static bool isAutomaticDownloaderEnabled {
         get { return Prefs_GetBoolPlayer(AB_AUTOMATIC_DOWNLOADER, true); }
         set { Prefs_SetBoolPlayer(AB_AUTOMATIC_DOWNLOADER, value); }
-    }    
+    }
+
+    public static bool Persistence_IsForceErrorInMergePopupEnabled {
+        get { return Prefs_GetBoolPlayer(PERSISTENCE_FORCE_ERROR_IN_MERGE_POPUP, false); }
+        set { Prefs_SetBoolPlayer(PERSISTENCE_FORCE_ERROR_IN_MERGE_POPUP, value); }
+    }
 
     // Server debugging tools
     // Only in editor!
