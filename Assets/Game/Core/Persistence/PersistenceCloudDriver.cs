@@ -121,14 +121,7 @@ public class PersistenceCloudDriver
 
 	private void OnLogout()
 	{
-		LocalDriver.Prefs_SocialWasLoggedInWhenQuit = false;
-
-		if (State == EState.LoggedIn)
-		{
-			// Logs out
-			State = EState.NotLoggedIn;
-			IsInSync = false;
-		}
+		LocalDriver.Prefs_SocialWasLoggedInWhenQuit = false;		
 	}
 
     protected virtual void ExtendedLogout()
