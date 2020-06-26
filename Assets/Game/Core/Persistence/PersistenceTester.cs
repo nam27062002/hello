@@ -1,6 +1,5 @@
 ﻿#if UNITY_EDITOR
 
-using SimpleJSON;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -94,7 +93,7 @@ public class PersistenceTester
                 PersistenceCloudDriver.ESyncMode.Lite);
             sm_tests.Add(9, test);
 
-            // Use Case: 10. Implicit login has failed
+            // Use Case: 10. No previous explicit login. Implicit login has failed
             // Result: No sync and cloud save disabled            
             test = new PersistenceTest(PersistenceTest.EUserId.U2, PersistenceTest.EProgress.P2, PersistenceCloudDriver.EMergeState.Failed,
                 PersistenceTest.EExplicitPlatformState.None, PersistenceTest.EUserId.U1, PersistenceTest.EProgress.P1, PersistenceTest.EImplicitMergeResponse.None, PersistenceTest.EImplicitMergeResponse.None,
@@ -103,22 +102,61 @@ public class PersistenceTester
             sm_tests.Add(10, test);
 
             // Use Case: 11. Implicit login hasn't been done and the user is explicitly logged in
-            // Result: No sync and cloud save enabled            
+            // User Action: Wait until the game logs in to the DNA silently
+            // Result: Logged in to SIWA and cloud save synced            
             test = new PersistenceTest(PersistenceTest.EUserId.U2, PersistenceTest.EProgress.P2, PersistenceCloudDriver.EMergeState.None,
-                PersistenceTest.EExplicitPlatformState.LoggedInWhenQuit, PersistenceTest.EUserId.U2, PersistenceTest.EProgress.P2, PersistenceTest.EImplicitMergeResponse.None, PersistenceTest.EImplicitMergeResponse.None,
+                PersistenceTest.EExplicitPlatformState.LoggedInWhenQuit, PersistenceTest.EUserId.U2, PersistenceTest.EProgress.P2, PersistenceTest.EImplicitMergeResponse.Ok, PersistenceTest.EImplicitMergeResponse.None,
                 PersistenceTest.EUserId.U2, PersistenceTest.EProgress.P2, PersistenceCloudDriver.EMergeState.Ok, PersistenceTest.EExplicitPlatformState.LoggedInWhenQuit, UserProfile.ESocialState.NeverLoggedIn,
                 PersistenceCloudDriver.ESyncMode.Full);
             sm_tests.Add(11, test);
 
-            /*
-            // Use Case: 11. Implicit login hasn't been done and the user has explicitly logged in, 
-            // Result: No sync and cloud save             
+            // Use Case: 12. Implicit login hasn't been done and the user has been explicitly logged in but she's not anymmore
+            // Result: Not logged in to SIWA and cloud save synced (because of DNA)   
             test = new PersistenceTest(PersistenceTest.EUserId.U2, PersistenceTest.EProgress.P2, PersistenceCloudDriver.EMergeState.None,
-                PersistenceTest.EExplicitPlatformState.LoggedInWhenQuit, PersistenceTest.EUserId.U2, PersistenceTest.EProgress.P2, PersistenceTest.EImplicitMergeResponse.None, PersistenceTest.EImplicitMergeResponse.None,
-                PersistenceTest.EUserId.U2, PersistenceTest.EProgress.P2, PersistenceCloudDriver.EMergeState.None, PersistenceTest.EExplicitPlatformState.LoggedInWhenQuit, UserProfile.ESocialState.NeverLoggedIn,
+                PersistenceTest.EExplicitPlatformState.LoggedOutWhenQuit, PersistenceTest.EUserId.U2, PersistenceTest.EProgress.P2, PersistenceTest.EImplicitMergeResponse.Ok, PersistenceTest.EImplicitMergeResponse.None,
+                PersistenceTest.EUserId.U2, PersistenceTest.EProgress.P2, PersistenceCloudDriver.EMergeState.Ok, PersistenceTest.EExplicitPlatformState.LoggedOutWhenQuit, UserProfile.ESocialState.NeverLoggedIn,
                 PersistenceCloudDriver.ESyncMode.Full);
-            sm_tests.Add(10, test);
-            */
+            sm_tests.Add(12, test);
+
+            // Use Case: 13. The user is explicitly logged in. Implicit login hasn't been done and when it's done there's a conflict
+            // Result: No conflict is show, it's marked as failed and cloud save enabled because of the explicit platform          
+            test = new PersistenceTest(PersistenceTest.EUserId.U2, PersistenceTest.EProgress.P2, PersistenceCloudDriver.EMergeState.None,
+                PersistenceTest.EExplicitPlatformState.LoggedInWhenQuit, PersistenceTest.EUserId.U2, PersistenceTest.EProgress.P2, PersistenceTest.EImplicitMergeResponse.Conflict, PersistenceTest.EImplicitMergeResponse.None,
+                PersistenceTest.EUserId.U2, PersistenceTest.EProgress.P2, PersistenceCloudDriver.EMergeState.Failed, PersistenceTest.EExplicitPlatformState.LoggedInWhenQuit, UserProfile.ESocialState.NeverLoggedIn,
+                PersistenceCloudDriver.ESyncMode.Full);
+            sm_tests.Add(13, test);
+
+            // Use Case: 14. Implicit login hasn't been done and the user has been explicitly logged in but she's not anymmore. Implicit login causes a conflict
+            // Result: Not logged in to SIWA. Cloud save disabled        
+            test = new PersistenceTest(PersistenceTest.EUserId.U2, PersistenceTest.EProgress.P2, PersistenceCloudDriver.EMergeState.None,
+                PersistenceTest.EExplicitPlatformState.LoggedOutWhenQuit, PersistenceTest.EUserId.U2, PersistenceTest.EProgress.P2, PersistenceTest.EImplicitMergeResponse.Conflict, PersistenceTest.EImplicitMergeResponse.None,
+                PersistenceTest.EUserId.U2, PersistenceTest.EProgress.P2, PersistenceCloudDriver.EMergeState.Failed, PersistenceTest.EExplicitPlatformState.LoggedOutWhenQuit, UserProfile.ESocialState.NeverLoggedIn,
+                PersistenceCloudDriver.ESyncMode.Full);
+            sm_tests.Add(14, test);
+
+            // Use Case: 15. Implicit login has been done and the user has been explicitly logged in but she's not anymmore. 
+            // Result: Not logged in to SIWA. Cloud save enabled        
+            test = new PersistenceTest(PersistenceTest.EUserId.U2, PersistenceTest.EProgress.P2, PersistenceCloudDriver.EMergeState.Ok,
+                PersistenceTest.EExplicitPlatformState.LoggedOutWhenQuit, PersistenceTest.EUserId.U2, PersistenceTest.EProgress.P2, PersistenceTest.EImplicitMergeResponse.None, PersistenceTest.EImplicitMergeResponse.None,
+                PersistenceTest.EUserId.U2, PersistenceTest.EProgress.P2, PersistenceCloudDriver.EMergeState.Ok, PersistenceTest.EExplicitPlatformState.LoggedOutWhenQuit, UserProfile.ESocialState.NeverLoggedIn,
+                PersistenceCloudDriver.ESyncMode.Lite);
+            sm_tests.Add(15, test);
+
+            // Use Case: 16. Corrupt local progress. User wasn't not explicitly logged in last time she played
+            // Result: Prompts popup notifying local progress was recovered from corruption. Game loads. Not logged in to SIWA
+            test = new PersistenceTest(PersistenceTest.EUserId.U2, PersistenceTest.EProgress.PCORRUPTED, PersistenceCloudDriver.EMergeState.Ok,
+                PersistenceTest.EExplicitPlatformState.LoggedOutWhenQuit, PersistenceTest.EUserId.U2, PersistenceTest.EProgress.P2, PersistenceTest.EImplicitMergeResponse.None, PersistenceTest.EImplicitMergeResponse.None,
+                PersistenceTest.EUserId.U2, PersistenceTest.EProgress.P2, PersistenceCloudDriver.EMergeState.Ok, PersistenceTest.EExplicitPlatformState.LoggedOutWhenQuit, UserProfile.ESocialState.NeverLoggedIn,
+                PersistenceCloudDriver.ESyncMode.Lite);
+            sm_tests.Add(16, test);
+
+            // Use Case: 17. Corrupt local progress. User was explicitly logged in last time she played
+            // Result: Prompts popup notifying local progress was recovered from corruption. Game loads. Logged in to SIWA
+            test = new PersistenceTest(PersistenceTest.EUserId.U2, PersistenceTest.EProgress.PCORRUPTED, PersistenceCloudDriver.EMergeState.Ok,
+                PersistenceTest.EExplicitPlatformState.LoggedInWhenQuit, PersistenceTest.EUserId.U2, PersistenceTest.EProgress.P2, PersistenceTest.EImplicitMergeResponse.None, PersistenceTest.EImplicitMergeResponse.None,
+                PersistenceTest.EUserId.U2, PersistenceTest.EProgress.P2, PersistenceCloudDriver.EMergeState.Ok, PersistenceTest.EExplicitPlatformState.LoggedInWhenQuit, UserProfile.ESocialState.NeverLoggedIn,
+                PersistenceCloudDriver.ESyncMode.Full);
+            sm_tests.Add(17, test);
         }
     }
 
