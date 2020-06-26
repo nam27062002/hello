@@ -11,7 +11,8 @@ public class PersistenceTest
     {
         Empty,
         P2,
-        P1
+        P1,
+        PCORRUPTED
     };
 
     public enum EUserId
@@ -137,7 +138,14 @@ public class PersistenceTest
         PlayerPrefs.SetString(GameSessionManager.KEY_ANONYMOUS_PLATFORM_USER_ID, token);
 
         JSONNode persistence = EProgressToPersistence(Start_LocalProgress);
-        LocalDriver.Override(persistence.ToString(), null);
+        if (Start_LocalProgress == EProgress.PCORRUPTED)
+        {
+            LocalDriver.OverrideWithCorruptProgress(null);
+        }
+        else
+        {
+            LocalDriver.Override(persistence.ToString(), null);
+        }
 
         LocalDriver.Prefs_SocialImplicitMergeState = Start_MergeState;
 
@@ -327,6 +335,9 @@ public class PersistenceTest
 
             case EProgress.P2:
                 returnValue = PersistenceUtils.GetDefaultDataFromProfile("", currentDragonSku, UserProfile.ESocialState.NeverLoggedIn.ToString(), 10000);
+                break;
+            case EProgress.PCORRUPTED:
+                returnValue = JSONNode.Parse("{-CORRUPTED-}");
                 break;
         }
 
