@@ -963,35 +963,32 @@ public class PersistenceFacade : IBroadcastListener
         Popup_ImplicitMergeConflictReset();
     }
 
-    public static void Popup_OpenImplicitMergeConflict(SocialUtils.EPlatform plaftormId, Action _onRestore, Action<bool> _onKeep) {
+    public static void Popup_OpenImplicitMergeConflict(SocialUtils.EPlatform _plaftormId, PersistenceComparatorSystem _localProgress,
+            PersistenceComparatorSystem _cloudProgress, Action<bool> _onKeep, Action _onRestore) {
         // Check params
+        Debug.Assert(_localProgress != null && _cloudProgress != null, "Both _localProgress and _cloudProgress must be defined!");
         Debug.Assert(_onRestore != null && _onKeep != null, "Both _onRestore and _onKeep callbacks must be defined!");
 
-        m_implicitMergePlatform = plaftormId;
+        // Store some data
+        m_implicitMergePlatform = _plaftormId;
         m_implicitMergeConflictPopupOnRestore = _onRestore;
         m_implicitMergeConflictPopupOnKeep = _onKeep;
 
         // Initialize popup
-        IPopupMessage.Config config = IPopupMessage.GetConfig();        
+        PopupController popup = PopupManager.LoadPopup(PopupMergeDNA.PATH);
+        PopupMergeDNA mergePopup = popup.GetComponent<PopupMergeDNA>();
+        mergePopup.Setup(
+            _localProgress,
+            _cloudProgress, 
+            Popup_OnKeepingAtImplicitMergeConflict, 
+            Popup_ImplicitConflictOnRestore
+        );
 
-        // Button setup
-        config.IsButtonCloseVisible = false;
-        config.ButtonMode = IPopupMessage.Config.EButtonsMode.ConfirmAndExtra;
-        config.OnConfirm = Popup_ImplicitConflictOnRestore;
-        config.OnExtra = Popup_OnKeepingAtImplicitMergeConflict;
-        config.CloseOnExtra = false; // Not allowed to close upon hitting Extra because there's some flow (no connection/server error) to handle with this popup open
-        config.BackButtonStrategy = IPopupMessage.Config.EBackButtonStratety.PerformExtra;
-        config.HighlightButton = IPopupMessage.Config.EHighlightButton.Confirm;
+        // Open the popup!
+        popup.Open();
 
-        // Texts setup        
-        config.TitleTid = "TID_DNA_MERGE_CONFLICT_TITLE";   // Save game conflict!
-        config.MessageTid = "TID_DNA_MERGE_CONFLICT_MESSAGE"; // A previous progress linked to this device was found. Do you want to recover it or keep playing with the current progress?
-        config.ConfirmButtonTid = "TID_DNA_MERGE_CONFLICT_BUTTON_1"; // Recover previous progress
-        config.ExtraButtonTid = "TID_DNA_MERGE_CONFLICT_BUTTON_2"; // Keep current progress                
-                
-        // Open popup!
-        // It's stored so it can be closed later on if an extra popup (no connection) needs to be prompted on the top of this one
-        m_implicitMergeConflictPopupController = PopupManager.PopupMessage_Open(config);
+        // Store the popup so it can be closed later on if an extra popup (no connection) needs to be prompted on the top of this one
+        m_implicitMergeConflictPopupController = popup;
     }
 
     public static void Popup_OpenErrorWhenSyncing(Action onContinue, Action onRetry)

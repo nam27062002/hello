@@ -521,7 +521,13 @@ public class PersistenceCloudDriver
         {
             // Automatic logging in to a social platform lets the user overwrite the server userId linked to the social user Id in order to use
             // the current server userId because it's not as risky as letting explicit social platform such as Facebook or SIWA do it
-            PersistenceFacade.Popup_OpenImplicitMergeConflict(Syncer_PlatformId, Syncer_OnMergeConflictUseCloud, Syncer_OnMergeConflictOverwriteSocialUserIdWithLocalServerId);
+            PersistenceFacade.Popup_OpenImplicitMergeConflict(
+                Syncer_PlatformId, 
+                null,   // [AOC] TODO!!
+                null,   // [AOC] TODO!!
+                Syncer_OnMergeConflictOverwriteSocialUserIdWithLocalServerId,
+                Syncer_OnMergeConflictUseCloud
+            );
         }
         else
         {
