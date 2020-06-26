@@ -21,7 +21,8 @@ public class PersistenceCloudDriver
     {
         None,
         Lite,
-        Full
+        Full,
+        UpToMerge // for merge/c with force a true
     };
 
     public enum EMergeState
@@ -288,7 +289,14 @@ public class PersistenceCloudDriver
 					break;
 
 				case ESyncStep.LoggingInSocial:
-					Syncer_LogInSocial();
+                    if (Syncer_Mode == ESyncMode.Lite)
+                    {
+                        Syncer_Step = ESyncStep.GettingPersistence;
+                    }
+                    else
+                    {
+                        Syncer_LogInSocial();
+                    }					
 					break;
 
                 case ESyncStep.MergingAccounts:
@@ -296,7 +304,14 @@ public class PersistenceCloudDriver
                     break;
 
                 case ESyncStep.GettingPersistence:
-					Syncer_GetPersistence();
+                    if (Syncer_Mode == ESyncMode.UpToMerge)
+                    {
+                        Syncer_PerformDone(PersistenceStates.ESyncResult.Ok, PersistenceStates.ESyncResultDetail.None);
+                    }
+                    else
+                    {
+                        Syncer_GetPersistence();
+                    }
 					break;
 
 				case ESyncStep.SyncingPersistences:
@@ -423,15 +438,8 @@ public class PersistenceCloudDriver
 		Action<bool> onDone = delegate(bool success)
 		{
 			if (success)
-			{
-                if (Syncer_Mode == ESyncMode.Full)
-                {
-                    Syncer_Step = ESyncStep.LoggingInSocial;
-                }
-                else
-                {
-                    Syncer_Step = ESyncStep.GettingPersistence;
-                }
+			{                
+                Syncer_Step = ESyncStep.LoggingInSocial;                
 			}
 			else
 			{
@@ -859,16 +867,11 @@ public class PersistenceCloudDriver
 
 	private void Syncer_PerformDone(PersistenceStates.ESyncResult result, PersistenceStates.ESyncResultDetail resultDetail)
 	{        
-        PersistenceFacade.Log("(SYNCER) CLOUD DONE " + result.ToString());
-
-        Upload_IsAllowed = result == PersistenceStates.ESyncResult.Ok;
-		IsInSync = Upload_IsAllowed;
-		if (IsInSync)
-		{
-			LocalDriver.UpdatesAheadOfCloud = 0;
-		}
-
-		if (result == PersistenceStates.ESyncResult.ErrorLogging)
+        PersistenceFacade.Log("(SYNCER) CLOUD DONE " + result.ToString());        
+        
+        // Cloud save is enabled if it was possible to connect to server
+		if (result == PersistenceStates.ESyncResult.ErrorLogging &&
+            (resultDetail == PersistenceStates.ESyncResultDetail.NoConnection || resultDetail == PersistenceStates.ESyncResultDetail.NoLogInServer))
 		{
 			State = EState.NotLoggedIn;
 		} 
@@ -877,7 +880,15 @@ public class PersistenceCloudDriver
 			State = EState.LoggedIn;
 		}
 
-		Action onDone = delegate() 
+        // Uploading is allowed simply by logging in to the server in order to maximise the user's chances of having a backup
+        Upload_IsAllowed = State == EState.LoggedIn;
+        IsInSync = Upload_IsAllowed;
+        if (IsInSync)
+        {
+            LocalDriver.UpdatesAheadOfCloud = 0;
+        }
+
+        Action onDone = delegate() 
 		{
             // We need to call Syncer_Reset() before calling onSyncDone because onSyncDone could call Sync() again which will set a new value to Syncer_OnSyncDone,
             // will would be reseted if Syncer_Reset() was called after calling onSyncDone
@@ -890,9 +901,9 @@ public class PersistenceCloudDriver
                 onSyncDone(result, resultDetail);
 			}							
 		};
-
-		// If the sync is ok we need to process the new social state (reward for logging in)
-		if (State == EState.LoggedIn && Syncer_Mode == ESyncMode.Full)
+        
+        // If the sync is ok we need to process the new social state (reward for logging in)
+        if (State == EState.LoggedIn && resultDetail == PersistenceStates.ESyncResultDetail.None && Syncer_Mode == ESyncMode.Full)
 		{
 			Action onUserLoggedIn = delegate()
 			{

@@ -328,10 +328,11 @@ public class PopupSettingsSaveTab : MonoBehaviour
 	/// 
 	/// </summary>
     private void Social_Refresh()
-    {        
+    {
 		// If the user is EXPLICITELY logged in into a social platform, show the logout layout instead
-        bool isExplicitelyLoggedIn = Model_SocialIsLoggedIn();
-		isExplicitelyLoggedIn &= !SocialPlatformManager.SharedInstance.CurrentPlatform_IsImplicit();
+		bool isExplicitelyLoggedIn = SocialPlatformManager.SharedInstance.CurrentPlatform_IsLoggedIn() && !SocialPlatformManager.SharedInstance.CurrentPlatform_IsImplicit();
+		//Model_SocialIsLoggedIn();
+		//isExplicitelyLoggedIn &= !SocialPlatformManager.SharedInstance.CurrentPlatform_IsImplicit();
 
 		// Show target layout
 		m_socialNotLoggedInRoot.SetActive(!isExplicitelyLoggedIn);
@@ -391,7 +392,7 @@ public class PopupSettingsSaveTab : MonoBehaviour
             RefreshView();
         };
 
-        PersistenceFacade.instance.Sync_FromSettings(_platform, onDone);        
+        PersistenceFacade.instance.Sync_FromSettings(_platform, PersistenceCloudDriver.ESyncMode.Full, onDone);        
     }
    
     /// <summary>
@@ -472,7 +473,7 @@ public class PopupSettingsSaveTab : MonoBehaviour
 
 			// Uses the same social platform that is currently in usage since the user can not change social platforms
 			// by clicking on save sync
-			PersistenceFacade.instance.Sync_FromSettings(SocialPlatformManager.SharedInstance.CurrentPlatform_GetId(), onDone);
+			PersistenceFacade.instance.Sync_FromSettings(SocialPlatformManager.SharedInstance.CurrentPlatform_GetId(), PersistenceCloudDriver.ESyncMode.Lite, onDone);
         }
     }
 	#endregion

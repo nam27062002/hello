@@ -169,7 +169,7 @@ public class PersistenceFacade : IBroadcastListener
                     };
 
                     // Logs in to the latest platform known
-                    Config.CloudDriver.Sync(platformId, PersistenceCloudDriver.ESyncMode.Lite, PersistenceCloudDriver.EErrorMode.Verbose, true, onConnectDone);
+                    Config.CloudDriver.Sync(platformId, PersistenceCloudDriver.ESyncMode.Lite, PersistenceCloudDriver.EErrorMode.OnlyMergeConflict, true, onConnectDone);
                 }
                 else
                 {
@@ -218,7 +218,7 @@ public class PersistenceFacade : IBroadcastListener
         Config.LocalDriver.Load(onLoadDone);
     }
 
-    public void Sync_FromSettings(SocialUtils.EPlatform platformId, Action onDone)
+    public void Sync_FromSettings(SocialUtils.EPlatform platformId, PersistenceCloudDriver.ESyncMode mode, Action onDone)
     {
         // Check if there's already a sync being performed since only one can be performed simultaneously. this Typically happens when the sync from launching the app wasn't over yet when the game loaded so
         // the user could click on manual sync
@@ -238,7 +238,7 @@ public class PersistenceFacade : IBroadcastListener
                     Sync_OnDone(result, onDone);
                 };
 
-                Config.CloudDriver.Sync(platformId, PersistenceCloudDriver.ESyncMode.Full, PersistenceCloudDriver.EErrorMode.Verbose, false, onSyncDone);
+                Config.CloudDriver.Sync(platformId, mode, PersistenceCloudDriver.EErrorMode.Verbose, false, onSyncDone);
             };
 
             Config.LocalDriver.Save(onSaveDone);
@@ -292,17 +292,24 @@ public class PersistenceFacade : IBroadcastListener
     {
         PersistenceCloudDriver.ESyncMode returnValue = PersistenceCloudDriver.ESyncMode.None;
 
-        if (SocialPlatformManager.SharedInstance.IsPlatformIdSupported(platform))
+        if (FeatureSettingsManager.instance.IsImplicitCloudSaveEnabled())
         {
-            if (LocalDriver.Prefs_SocialWasLoggedInWhenQuit ||
-                (SocialPlatformManager.SharedInstance.IsImplicit(platform) && LocalDriver.Prefs_SocialImplicitMergeState == PersistenceCloudDriver.EMergeState.None))
+            if (SocialPlatformManager.SharedInstance.IsPlatformIdSupported(platform))
             {
-                returnValue = PersistenceCloudDriver.ESyncMode.Full;
+                if (LocalDriver.Prefs_SocialWasLoggedInWhenQuit ||
+                    (SocialPlatformManager.SharedInstance.IsImplicit(platform) && LocalDriver.Prefs_SocialImplicitMergeState == PersistenceCloudDriver.EMergeState.None))
+                {
+                    returnValue = PersistenceCloudDriver.ESyncMode.Full;
+                }
+                else if (LocalDriver.HasEverExplicitlyLoggedIn() || LocalDriver.Prefs_SocialImplicitMergeState == PersistenceCloudDriver.EMergeState.Ok)
+                {
+                    returnValue = PersistenceCloudDriver.ESyncMode.Lite;
+                }
             }
-            else if (LocalDriver.HasEverExplicitlyLoggedIn() || LocalDriver.Prefs_SocialImplicitMergeState == PersistenceCloudDriver.EMergeState.Ok)
-            {
-                returnValue = PersistenceCloudDriver.ESyncMode.Lite;
-            }
+        }
+        else
+        {
+            returnValue = PersistenceCloudDriver.ESyncMode.Full;
         }
 
         return returnValue;
@@ -345,7 +352,7 @@ public class PersistenceFacade : IBroadcastListener
 
     private bool Sync_NeedsToAutoImplicitLogin()
     {
-        return LocalDriver.Prefs_SocialImplicitMergeState == PersistenceCloudDriver.EMergeState.None && LocalDriver.HasEverExplicitlyLoggedIn();
+        return FeatureSettingsManager.instance.IsImplicitCloudSaveEnabled() && LocalDriver.Prefs_SocialImplicitMergeState == PersistenceCloudDriver.EMergeState.None && LocalDriver.HasEverExplicitlyLoggedIn();
     }
 
     private void Sync_Update()
@@ -849,14 +856,7 @@ public class PersistenceFacade : IBroadcastListener
         config.MessageTid = "TID_DNA_MERGE_CONFLICT_MESSAGE_IRRECOVERABLE_ERROR"; // An error arose when linking current progress to to this device. Do you want to recover your progress from the cloud or keep playing with the current progress and cloud save disabled?
         config.ConfirmButtonTid = "TID_DNA_MERGE_CONFLICT_BUTTON_1"; // Recover previous progress
         config.ExtraButtonTid = "TID_DNA_MERGE_CONFLICT_BUTTON_2"; // Keep current progress
-
-        /*        
-        config.TitleTid = "Save game conflict!";
-        config.MessageTid = "An error arose when linking current progress to to this device. Do you want to recover your progress from the cloud or keep playing with the current progress and cloud save disabled?";
-        config.ConfirmButtonTid = "Recover"; // Recover previous progress
-        config.ExtraButtonTid = "Keep"; // Keep current progress
-        */
-
+                
         // Open popup!
         // It's stored so it can be closed later on if an extra popup (no connection) needs to be prompted on the top of this one
         m_implicitMergeConflictPopupController = PopupManager.PopupMessage_Open(config);
@@ -930,7 +930,7 @@ public class PersistenceFacade : IBroadcastListener
 
         // For automatic social platforms the user is allowed to override the server Id associated to the platform user Id        
         // Sync is restarted stating that force is allowed
-        cloudDriver.Sync(m_implicitMergePlatform, PersistenceCloudDriver.ESyncMode.Full, PersistenceCloudDriver.EErrorMode.OnlyMergeConflict, false, onSyncDone, true, !prevValue);
+        cloudDriver.Sync(m_implicitMergePlatform, PersistenceCloudDriver.ESyncMode.UpToMerge, PersistenceCloudDriver.EErrorMode.Verbose, false, onSyncDone, true, !prevValue);
     }   
 
     private static void Popup_ImplicitMergeConflictOnKeep(bool success)
@@ -949,7 +949,7 @@ public class PersistenceFacade : IBroadcastListener
     }
 
     private static void Popup_ImplicitConflictOnRestore()
-    {       
+    {
         if (m_implicitMergeConflictPopupNeedsToPopRequest)
         {
             instance.CloudDriver.Sync_PopRequest();
@@ -983,19 +983,12 @@ public class PersistenceFacade : IBroadcastListener
         config.BackButtonStrategy = IPopupMessage.Config.EBackButtonStratety.PerformExtra;
         config.HighlightButton = IPopupMessage.Config.EHighlightButton.Confirm;
 
-        // Texts setup                
+        // Texts setup        
         config.TitleTid = "TID_DNA_MERGE_CONFLICT_TITLE";   // Save game conflict!
         config.MessageTid = "TID_DNA_MERGE_CONFLICT_MESSAGE"; // A previous progress linked to this device was found. Do you want to recover it or keep playing with the current progress?
         config.ConfirmButtonTid = "TID_DNA_MERGE_CONFLICT_BUTTON_1"; // Recover previous progress
-        config.ExtraButtonTid = "TID_DNA_MERGE_CONFLICT_BUTTON_2"; // Keep current progress        
-
-        /*
-        config.TitleTid = "Save game conflict!";
-        config.MessageTid = "A previous progress linked to this device was found. Do you want to recover it or keep playing with the current progress?";
-        config.ConfirmButtonTid = "Recover";// "TID_DNA_MERGE_CONFLICT_BUTTON_1"; // Recover previous progress
-        config.ExtraButtonTid = "Keep"; // "TID_DNA_MERGE_CONFLICT_BUTTON_2"; // Keep current progres
-        */
-
+        config.ExtraButtonTid = "TID_DNA_MERGE_CONFLICT_BUTTON_2"; // Keep current progress                
+                
         // Open popup!
         // It's stored so it can be closed later on if an extra popup (no connection) needs to be prompted on the top of this one
         m_implicitMergeConflictPopupController = PopupManager.PopupMessage_Open(config);

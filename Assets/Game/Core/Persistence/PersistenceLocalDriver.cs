@@ -170,7 +170,7 @@ public class PersistenceLocalDriver
         Data.LoadFromString(persistence);
 
         // Overrides all files except the one that is going to be overridden by Save(onDone) below
-        // They all need to be overridden becuase their values are not valid anymore, otherwise the user could be able to load an old persistence
+        // They all need to be overridden because their values are not valid anymore, otherwise the user could be able to load an old persistence
         // if the latest file got corrupted
         if (SAVE_PATHS_MULTIPLE_ENABLED)
         {
@@ -200,6 +200,35 @@ public class PersistenceLocalDriver
 		Override(defaultPersistence.ToString(), onDone);
 	}
 
+    public void OverrideWithCorruptProgress(Action onDone)
+    {
+        // Overrides all save files
+        // They all need to be overridden because their values are not valid anymore, otherwise the user could be able to load an old persistence
+        // if the latest file got corrupted
+
+        int index = SavePaths_GetNextIndexToLatestIndex();
+        string savePath = SavePaths_GetPathAtIndex(index);
+        Data.Corrupt(savePath);
+        
+        if (SAVE_PATHS_MULTIPLE_ENABLED)
+        {         
+            // all files have to be overridden because the current value is not valid anymore
+            for (int i = 0; i < SAVE_PATHS_COUNT; i++)
+            {
+                if (i != index)
+                {
+                    savePath = SavePaths_GetPathAtIndex(i);
+                    Data.Corrupt(savePath);
+                }
+            }
+        }
+
+        if (onDone != null)
+        {
+            onDone();
+        }
+    }
+
 	public void Save(Action onDone)
 	{        
         // Makes sure that the persistence that is about to be saved is a valid one
@@ -208,15 +237,19 @@ public class PersistenceLocalDriver
 			ExtendedSave();
 			OnSaveDone(onDone);
 		} 
-		else if (FeatureSettingsManager.IsDebugEnabled)
+		else 
 		{
-			PersistenceFacade.LogError(" Data is not OK so it won't be saved");
-			if (onDone != null)
-			{
-				onDone();
-			}
-		}
-	}
+            if (FeatureSettingsManager.IsDebugEnabled)
+            {
+                PersistenceFacade.LogError(" Data is not OK so it won't be saved");
+            }
+
+            if (onDone != null)
+            {
+                onDone();
+            }
+        }        
+    }
 
 	protected virtual void ExtendedSave()
 	{

@@ -183,7 +183,7 @@ public class HUDCloudSyncStatus : MonoBehaviour
 
 		// Uses the same social platform that is currently in usage since the user can not change social platforms
 		// by clicking this icon
-		PersistenceFacade.instance.Sync_FromSettings(SocialPlatformManager.SharedInstance.CurrentPlatform_GetId(), onSyncDone);
+		PersistenceFacade.instance.Sync_FromSettings(SocialPlatformManager.SharedInstance.CurrentPlatform_GetId(), PersistenceCloudDriver.ESyncMode.Lite, onSyncDone);
 	}
 
 	//------------------------------------------------------------------------//
