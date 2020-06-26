@@ -1186,6 +1186,7 @@ public class GameServerManagerCalety : GameServerManager {
         bool returnValue = false;
 
         switch (command) {
+            case ECommand.Language_Set: // It's sent very early on so we need to make sure log in request is sent before
             case ECommand.GetPersistence:
             case ECommand.SetPersistence:            
             case ECommand.SetQualitySettings: // The user is required to be logged to set its quality settings to prevent anonymous users from messing with the quality settings of other users who have the same device model
