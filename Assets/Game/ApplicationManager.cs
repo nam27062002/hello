@@ -227,10 +227,9 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         if (Input.GetKeyDown(KeyCode.A))
         {
             // ---------------------------
-            // Go to rewards
+            // Open pets popup
             // ---------------------------       
-            MenuSceneController controller = GameObject.FindObjectOfType<MenuSceneController>();
-            controller.GoToScreen(MenuScreen.LEAGUES_REWARD);
+            PopupManager.OpenPopupInstant(PopupInfoPets.PATH);
 
 
             // ---------------------------
