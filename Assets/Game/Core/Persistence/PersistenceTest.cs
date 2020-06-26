@@ -157,6 +157,7 @@ public class PersistenceTest
                 break;
 
             default:
+                LocalDriver.Prefs_SocialId = "socialId";
                 LocalDriver.Prefs_SocialPlatformKey = EXPLICIT_PLATFORM_STRING;
                 LocalDriver.Prefs_SocialWasLoggedInWhenQuit = Start_ExplicitPlatformState == PersistenceTest.EExplicitPlatformState.LoggedInWhenQuit;
                 break;
