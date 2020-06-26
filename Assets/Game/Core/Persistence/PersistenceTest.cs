@@ -319,11 +319,26 @@ public class PersistenceTest
         return returnValue;
     }
 
+    private string EProgressToExtraDragonSku(EProgress progress)
+    {
+        JSONNode returnValue = null;
+
+        switch (progress)
+        {                       
+            case EProgress.P1:
+                returnValue = "dragon_classic";
+                break;
+        }
+
+        return returnValue;
+    }
+
     private JSONNode EProgressToPersistence(EProgress progress)
     {
         JSONNode returnValue = null;
 
         string currentDragonSku = EProgressToCurrentDragonSku(progress);
+        string extraDragonSku = EProgressToExtraDragonSku(progress);
         switch (progress)
         {
             case EProgress.Empty:
@@ -331,12 +346,13 @@ public class PersistenceTest
                 break;
 
             case EProgress.P1:
-                returnValue = PersistenceUtils.GetDefaultDataFromProfile("", currentDragonSku, UserProfile.ESocialState.NeverLoggedIn.ToString(), 1000);
+                returnValue = PersistenceUtils.GetDefaultDataFromProfile("", currentDragonSku, extraDragonSku, UserProfile.ESocialState.NeverLoggedIn.ToString(), 100000);
                 break;
 
             case EProgress.P2:
-                returnValue = PersistenceUtils.GetDefaultDataFromProfile("", currentDragonSku, UserProfile.ESocialState.NeverLoggedIn.ToString(), 10000);
+                returnValue = PersistenceUtils.GetDefaultDataFromProfile("", currentDragonSku, extraDragonSku, UserProfile.ESocialState.NeverLoggedIn.ToString(), 10000);
                 break;
+
             case EProgress.PCORRUPTED:
                 returnValue = JSONNode.Parse("{-CORRUPTED-}");
                 break;

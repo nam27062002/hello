@@ -20,7 +20,7 @@ public class PersistenceUtils
     /// </summary>
     /// <returns>The data from profile.</returns>
     /// <param name="_profileName">The name of the profile to be loaded.</param>
-    public static SimpleJSON.JSONClass GetDefaultDataFromProfile(string _profileName = "", string _initialDragonSku=null, string _socialState=null, int _timePlayed=0)
+    public static SimpleJSON.JSONClass GetDefaultDataFromProfile(string _profileName = "", string _initialDragonSku=null, string _extraDragonSku=null, string _socialState=null, int _timePlayed=0)
     {
         SimpleJSON.JSONClass _returnValue = null;
 
@@ -75,6 +75,13 @@ public class PersistenceUtils
                 _dragon.Add("owned", "true");
                 _dragons.Add(_dragon);
 
+                if (!string.IsNullOrEmpty(_extraDragonSku))
+                {
+                    _dragon = new SimpleJSON.JSONClass();
+                    _dragon.Add("sku", _extraDragonSku);
+                    _dragon.Add("owned", "true");
+                    _dragons.Add(_dragon);
+                }
                 _returnValue.Add("dragons", _dragons);
             }
 
