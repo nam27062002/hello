@@ -36,11 +36,7 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
     private static void Static_Initialize()
     {
         if (!sm_initialized)
-        {
-            // It's stored in a variable because UnityEngine.Debug.isDebugBuild must be called from the main thread and DownloadablesDownloader, which is executed in its own thread
-            // needs to check this variable
-            sm_isDebugBuild = UnityEngine.Debug.isDebugBuild;
-
+        {            
 			// Cheats
 			sm_areCheatsEnabled = false;
 			if(Application.isPlaying) {
@@ -54,7 +50,10 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
             {
                 sm_areCheatsEnabled = true;
             }
-#endif
+#endif            
+            // Some cheats use sm_isDebugBuild instead of sm_areCheatsEnabled, that's why we need to set the same value for both (We want cheats enabled in all environments but PRODUCTION)
+            // TODO: Make all cheats use sm_areCheatsEnabled
+            sm_isDebugBuild = sm_areCheatsEnabled;
             sm_initialized = true;
         }
     }    
@@ -1421,8 +1420,7 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
                 Static_Initialize();
             }
 
-			// return sm_isDebugBuild;
-			return true;
+			return sm_isDebugBuild;
         }
     }
 
