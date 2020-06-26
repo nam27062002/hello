@@ -852,10 +852,10 @@ public class PersistenceFacade : IBroadcastListener
         config.HighlightButton = IPopupMessage.Config.EHighlightButton.Confirm;
         
         // Texts setup        
-        config.TitleTid = "TID_DNA_MERGE_CONFLICT_TITLE";   // Save game conflict!
-        config.MessageTid = "TID_DNA_MERGE_CONFLICT_MESSAGE_IRRECOVERABLE_ERROR"; // An error arose when linking current progress to to this device. Do you want to recover your progress from the cloud or keep playing with the current progress and cloud save disabled?
-        config.ConfirmButtonTid = "TID_DNA_MERGE_CONFLICT_BUTTON_1"; // Recover previous progress
-        config.ExtraButtonTid = "TID_DNA_MERGE_CONFLICT_BUTTON_2"; // Keep current progress
+        config.TitleTid = "TID_DNA_MERGE_ERROR_TITLE";   // Something went wrong!
+        config.MessageTid = "TID_DNA_MERGE_ERROR_MESSAGE"; // Current progress couldn't be saved into our servers.\n\nDo you want to keep your current progres (Cloud Save disabled) or go back to your previous progress (Cloud Save enabled)?\n\nCloud Save can still be activated in the Game Settings at any time.
+        config.ConfirmButtonTid = "TID_DNA_MERGE_ERROR_BUTTON_1"; // Recover previous progress
+        config.ExtraButtonTid = "TID_DNA_MERGE_ERROR_BUTTON_2"; // Keep current progress
                 
         // Open popup!
         // It's stored so it can be closed later on if an extra popup (no connection) needs to be prompted on the top of this one
