@@ -16,13 +16,13 @@ public class SocialUtilsDNA : SocialUtils
         public override void onLogInCompleted()
         {
             Debug.TaggedLog(TAG, "onLogInCompleted");
-            m_manager.OnSocialPlatformLogin();
+            m_manager.OnSocialPlatformLogin(EPlatform.DNA);
         }
 
         public override void onLogInFailed()
         {
             Debug.TaggedLog(TAG, "onLogInFailed");
-            m_manager.OnSocialPlatformLoginFailed();
+            m_manager.OnSocialPlatformLoginFailed(EPlatform.DNA);
         }
     }
     //////////////////////////////////////////////////////////////////////////    
