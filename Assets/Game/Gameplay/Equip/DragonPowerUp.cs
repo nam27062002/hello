@@ -226,8 +226,9 @@ public class DragonPowerUp : MonoBehaviour {
 				{
 					player.AddHealthBonus( def.GetAsFloat("param1") * multiplier );
 				}break;
-				case "boost_increase":	// increases boost bar
-				{
+				case "boost_increase":  // increases boost bar
+                case "baby_boost_increase":
+                    {
 					player.AddBoostBonus( def.GetAsFloat("param1") * multiplier);
 				}break;
 				case "faster_boost": // increases boost refill rate
@@ -238,8 +239,9 @@ public class DragonPowerUp : MonoBehaviour {
 						boost.AddRefillBonus( def.GetAsFloat("param1") * multiplier );
 					}
 				}break;
-				case "fury_duration":	// Adds fury duration
-				{
+				case "fury_duration":   // Adds fury duration
+                case "baby_fury_duration":
+                    {
 					DragonBreathBehaviour breath = player.breathBehaviour;
 					if ( breath != null )
 						breath.AddDurationBonus( def.GetAsFloat("param1") * multiplier );
@@ -299,8 +301,9 @@ public class DragonPowerUp : MonoBehaviour {
 					int increase = def.GetAsInt("param1");
 					player.SetOnBreakIncrease( increase );
 				}break;
-				case "prey_hp_boost":	// a prey gives you more hp
-				{
+				case "prey_hp_boost":   // a prey gives you more hp
+                case "baby_prey_hp_boost":
+                    {
 					// string from = def.Get("param1");
 					List<string> from = def.GetAsList<string>("param1");
 					float percentage = def.GetAsFloat("param2");
@@ -312,8 +315,9 @@ public class DragonPowerUp : MonoBehaviour {
 					}
 
 				}break;
-				case "food_increase":	// adds % bonus hp from any source
-				{
+				case "food_increase":   // adds % bonus hp from any source
+                case "baby_food_increase":
+                    {
 					float percentage = def.GetAsFloat("param1");
 					DragonHealthBehaviour healthBehaviour = GetComponent<DragonHealthBehaviour>();
 					healthBehaviour.AddEatingHpBoost(percentage * multiplier);
@@ -331,8 +335,9 @@ public class DragonPowerUp : MonoBehaviour {
 					Entity.AddSCMultiplier(coins);
 					m_warnEntities = true;
 				}break;
-				case "score_increase":	// Increases score given for all preys by param1 %
-				{
+				case "score_increase":  // Increases score given for all preys by param1 %
+                case "baby_score_increase":
+                    {
 					float score = def.GetAsFloat("param1", 0) * multiplier;
 					m_entityScoreMultiplier += score;
 
@@ -341,7 +346,8 @@ public class DragonPowerUp : MonoBehaviour {
 					m_warnEntities = true;
 				}break;
 				case "more_xp":
-				{
+                case "baby_more_xp":
+                    {
 					float xp = def.GetAsFloat("param1", 0) * multiplier;
 					m_entityXPMultiplier += xp;
 
@@ -357,8 +363,9 @@ public class DragonPowerUp : MonoBehaviour {
 						fireBreath.AddPowerUpLengthMultiplier( percentage * multiplier );
 					}
 				}break;
-				case "speed_increase":	// Increases max speed by param1 %
-				{
+				case "speed_increase":  // Increases max speed by param1 %
+                case "baby_speed_increase":
+                    {
 					DragonMotion motion = GetComponent<DragonMotion>();
 					if ( motion != null )
 					{
@@ -580,9 +587,12 @@ public class DragonPowerUp : MonoBehaviour {
 
 		// Get the color for this power type
 		string type = _powerDef.GetAsString("type");
-
-		// Some types need special treatment
-		switch(type) {
+        //TONI:Check if baby power type
+        bool babyType = type.Contains("baby_");
+        if (babyType) return GetColor("baby");
+        //TONI:end check
+        // Some types need special treatment
+        switch (type) {
 			case "combined": {
 				// Use the color from second combined power type
 				string powerUp2 = _powerDef.Get("param2");
@@ -688,8 +698,13 @@ public class DragonPowerUp : MonoBehaviour {
 				return UIConstants.PET_CATEGORY_SPECIAL;
 			} break;
 
-			// Special Cases
-			case "combined": {
+            case "baby":
+                {
+                    return UIConstants.PET_CATEGORY_BABY;
+                }
+                break;
+            // Special Cases
+            case "combined": {
 				// Should never be called, since we're parsing the type of the second combined power instead
 				return Color.black;
 			} break;
