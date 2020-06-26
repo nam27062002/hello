@@ -10,6 +10,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System;
+using System.Collections.Generic;
 using TMPro;
 using Calety.Customiser.Api;
 
@@ -40,8 +41,20 @@ public class PowerTooltipBabyPet : UITooltip
 		/// </summary>
 		/// <param name="_powerSku">Sku of the power to be used for initialization.</param>
 		public void InitWithPower(string _powerSku) {
-			// Get and store power definition
-			powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, _powerSku);
+			// Get power definition and use Definition initializer
+			DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, _powerSku);
+			InitWithPower(def);
+		}
+
+		/// <summary>
+		/// Initialize with a given power.
+		/// </summary>
+		/// <param name="_powerDef">Definition of the power to be used for initialization.</param>
+		public void InitWithPower(DefinitionNode _powerDef) {
+			// Store power def
+			powerDef = _powerDef;
+
+			// Nothing to do if null
 			if(powerDef == null) return;
 
 			// Power icon
@@ -73,6 +86,28 @@ public class PowerTooltipBabyPet : UITooltip
 
 	// Data
 	private DefinitionNode m_petDef = null;
+
+	// For performance, cache invariable values in static variables
+	private static int s_babyPetsTotalCount = -1;
+	private static int BABY_PETS_TOTAL_COUNT {
+		get {
+			// Static variable needs initialization?
+			if(s_babyPetsTotalCount < 0) {
+				// Get all baby pets definitions
+				List<DefinitionNode> defs = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.PETS, "category", "baby");
+
+				// Count only those that are not hidden
+				s_babyPetsTotalCount = 0;	// Reset counter
+				int count = defs.Count;
+				for(int i = 0; i < count; ++i) {
+					if(!defs[i].GetAsBool("hidden")) {
+						s_babyPetsTotalCount++;
+					}
+				}
+			}
+			return s_babyPetsTotalCount;
+		}
+	}
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -106,11 +141,19 @@ public class PowerTooltipBabyPet : UITooltip
 
 		// Init collection bonus power
 		if(m_collectionPower != null) {
-			////AAAAAAAH! Not using powerups definitions table -_-
-
-			m_collectionPower.InitWithPower(m_petDef.GetAsString("sharedPower"));
+			// Not using powerups definitions table, so gather definition first
+			DefinitionNode collectionPowerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.BABY_DRAGONS_SHARED_POWER, m_petDef.GetAsString("sharedPower"));
+			m_collectionPower.InitWithPower(collectionPowerDef);
 		}
+
 		// Init collection counter
+		if(m_collectionCounterText != null) {
+			LocalizationManager.SharedInstance.Localize(
+				"TID_FRACTION",
+				StringUtils.FormatNumber(UsersManager.currentUser.petCollection.unlockedPetsCount),
+				StringUtils.FormatNumber(BABY_PETS_TOTAL_COUNT)
+			);
+		}
 
 		// Init family bonus power
 
