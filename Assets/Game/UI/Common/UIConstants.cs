@@ -206,7 +206,8 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 	[SerializeField] private Color m_petCategoryColorFire = Color.white;
 	[SerializeField] private Color m_petCategoryColorDefense = Color.white;
 	[SerializeField] private Color m_petCategoryColorSpecial = Color.white;
-	[SerializeField] private Color m_petCategoryColorDefault = Color.white;
+    [SerializeField] private Color m_petCategoryColorBaby = Color.white;
+    [SerializeField] private Color m_petCategoryColorDefault = Color.white;
 
 	public static Color PET_CATEGORY_EAT { get { return instance.m_petCategoryColorEat; } }
 	public static Color PET_CATEGORY_HEALTH { get { return instance.m_petCategoryColorHealth; } }
@@ -215,7 +216,8 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 	public static Color PET_CATEGORY_FIRE { get { return instance.m_petCategoryColorFire; } }
 	public static Color PET_CATEGORY_DEFENSE { get { return instance.m_petCategoryColorDefense; } }
 	public static Color PET_CATEGORY_SPECIAL { get { return instance.m_petCategoryColorSpecial; } }
-	public static Color PET_CATEGORY_DEFAULT { get { return instance.m_petCategoryColorDefault; } }
+    public static Color PET_CATEGORY_BABY { get { return instance.m_petCategoryColorBaby; } }
+    public static Color PET_CATEGORY_DEFAULT { get { return instance.m_petCategoryColorDefault; } }
 	#endregion
 
 	// -------------------------------------------------------------------------
