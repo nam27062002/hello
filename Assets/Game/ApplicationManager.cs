@@ -112,6 +112,14 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
     public void Init()
     {
+        if (Restarting)
+        {
+            // When restarting some stuff needs to be reset. We don't do it before restarting the game because changing scenes
+            // takes a few ticks, which means that the user could see some glitches if we did it before restarting
+            FlowManager.Reset();
+            Restarting = false;
+        }
+
         if (!m_isInited)
         {
             m_isInited = true;
@@ -262,15 +270,17 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     private void Reset()
     {
         LastPauseTime = -1;
-        NeedsToRestartFlow = false;        
+        NeedsToRestartFlow = false;
+        Restarting = false;
         Game_IsInGame = false;
         Game_IsPaused = false;
         Debug_IsPaused = false;
         Language_Reset();
     }
 
-    public bool NeedsToRestartFlow { get; set; }    
-
+    public bool NeedsToRestartFlow { get; set; }
+    public bool Restarting { get; set; }
+    
     protected void Update()
     {        
 #if UNITY_EDITOR        
