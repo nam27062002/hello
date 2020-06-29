@@ -8,7 +8,7 @@ using System.Globalization;
 using UnityEngine;
 
 public class PersistenceFacade : IBroadcastListener
-{
+{    
     public static readonly CultureInfo JSON_FORMATTING_CULTURE = CultureInfo.InvariantCulture;
 
     private static PersistenceFacade smInstance;
@@ -87,8 +87,13 @@ public class PersistenceFacade : IBroadcastListener
         Config.LocalDriver.Update();
         Config.CloudDriver.Update();
         Sync_Update();
-    }
 
+        if (m_popupRequest != null && !m_popupRequest.IsOpen && GameSceneManager.currentScene != LoadingSceneController.NAME)        
+        {            
+            m_popupRequest.Open();
+        }
+    }
+    
     public bool IsCloudSaveAllowed
     {
         get { return CloudDriver.Upload_IsAllowed; }
@@ -333,7 +338,7 @@ public class PersistenceFacade : IBroadcastListener
         if (result == PersistenceStates.ESyncResult.NeedsToReload)
         {
             Log("(SYNCER) RELOADS THE APP TO LOAD CLOUD PERSISTENCE");
-
+            // The user is sent to the initial loading again
             ApplicationManager.instance.NeedsToRestartFlow = true;
         }
         else if (onDone != null)
@@ -476,6 +481,251 @@ public class PersistenceFacade : IBroadcastListener
     #endregion
 
     #region popups
+    public abstract class PopupRequest
+    {
+        public PopupRequest(bool doneAfterOpen)
+        {
+            DoneAfterOpen = doneAfterOpen;
+        }
+
+        private bool DoneAfterOpen { get; set; }
+        public bool IsOpen { get; set; }
+
+        public void Open()
+        {
+            if (!IsOpen)
+            {
+                ExtendedOpen();
+                IsOpen = true;
+
+                if (DoneAfterOpen)
+                {
+                    OnDone();
+                }
+            }
+        }
+
+        protected virtual void ExtendedOpen() { }
+
+        protected void OnDone()
+        {
+            Popup_ResetRequest();
+        }
+    }
+
+    public class PopupSyncPersistencesRequest : PopupRequest
+    {
+        private PersistenceStates.EConflictState m_conflictState;
+        private PersistenceComparatorSystem m_localPersistence;
+        private PersistenceComparatorSystem m_cloudPersistence;
+        private bool m_dismissable;
+        private Action<PersistenceStates.EConflictResult> m_onResolve;
+
+        public PopupSyncPersistencesRequest(PersistenceStates.EConflictState conflictState, PersistenceComparatorSystem local,
+            PersistenceComparatorSystem cloud, bool dismissable, Action<PersistenceStates.EConflictResult> onResolve) : base(true)
+        {
+            m_conflictState = conflictState;
+            m_localPersistence = local;
+            m_cloudPersistence = cloud;
+            m_dismissable = dismissable;
+            m_onResolve = onResolve;
+        }
+
+        protected override void ExtendedOpen()
+        {
+            PopupController pc = PopupManager.OpenPopupInstant(PopupMerge.PATH);
+            PopupMerge pm = pc.GetComponent<PopupMerge>();
+            if (pm != null)
+            {
+                pm.Setup(m_conflictState, m_localPersistence, m_cloudPersistence, m_dismissable, m_onResolve);
+            }
+        }
+    }
+
+    public class PopupImplicitMergeRequest : PopupRequest
+    {
+        private SocialUtils.EPlatform m_platformId;
+        private PersistenceComparatorSystem m_localProgress;
+        private PersistenceComparatorSystem m_cloudProgress;
+        private Action<bool> m_onKeep;
+        private Action m_onRestore;
+        private PopupController m_popupController;
+        private bool m_needsToPopRequest;
+
+        public PopupImplicitMergeRequest(SocialUtils.EPlatform _plaftormId, PersistenceComparatorSystem _localProgress,
+            PersistenceComparatorSystem _cloudProgress, Action<bool> _onKeep, Action _onRestore) : base(false)
+        {
+            m_platformId = _plaftormId;
+            m_localProgress = _localProgress;
+            m_cloudProgress = _cloudProgress;
+            m_onKeep = _onKeep;
+            m_onRestore = _onRestore;
+            m_popupController = null;
+            m_needsToPopRequest = false;
+        }
+
+        protected override void ExtendedOpen()
+        {            
+            // Initialize popup
+            m_popupController = PopupManager.LoadPopup(PopupMergeDNA.PATH);
+            PopupMergeDNA mergePopup = m_popupController.GetComponent<PopupMergeDNA>();
+            mergePopup.Setup(
+                m_localProgress,
+                m_cloudProgress,
+                OnKeepButton,
+                OnRestore
+            );
+
+            m_popupController.Open();
+        }
+
+        private void ClosePopup()
+        {
+            if (m_popupController != null)
+            {
+                m_popupController.Close(true);
+                m_popupController = null;
+            }
+        }
+
+        // Show popup notifying that there's been an irrecoverable error on server side
+        // User needs to choose between local progress with cloud service disabled and
+        // recovering remote progress with cloud service enabled
+        public void OpenErrorWhenForcingLocalProgress()
+        {
+            // Close the previous popup
+            ClosePopup();
+
+            Action _onRestore = OnRestore;
+
+            Action _onKeep = delegate ()
+            {
+                // User chooses to keep local progress anyway 
+                OnKeepProgress(false);
+            };
+
+            // Check params
+            Debug.Assert(_onRestore != null && _onKeep != null, "Both _onRestore and _onKeep callbacks must be defined!");
+
+            // Initialize popup
+            IPopupMessage.Config config = IPopupMessage.GetConfig();
+
+            // Button setup
+            config.IsButtonCloseVisible = false;
+            config.ButtonMode = IPopupMessage.Config.EButtonsMode.ConfirmAndExtra;
+            config.OnConfirm = _onRestore;
+            config.OnExtra = _onKeep;
+            config.BackButtonStrategy = IPopupMessage.Config.EBackButtonStratety.PerformExtra;
+            config.HighlightButton = IPopupMessage.Config.EHighlightButton.Confirm;
+
+            // Texts setup        
+            config.TitleTid = "TID_DNA_MERGE_ERROR_TITLE";   // Something went wrong!
+            config.MessageTid = "TID_DNA_MERGE_ERROR_MESSAGE"; // Current progress couldn't be saved into our servers.\n\nDo you want to keep your current progres (Cloud Save disabled) or go back to your previous progress (Cloud Save enabled)?\n\nCloud Save can still be activated in the Game Settings at any time.
+            config.ConfirmButtonTid = "TID_DNA_MERGE_ERROR_BUTTON_1"; // Recover previous progress
+            config.ExtraButtonTid = "TID_DNA_MERGE_ERROR_BUTTON_2"; // Keep current progress
+
+            // Open popup!
+            // It's stored so it can be closed later on if an extra popup (no connection) needs to be prompted on the top of this one
+            m_popupController = PopupManager.PopupMessage_Open(config);
+        }
+
+        private void OnKeepButton()
+        {
+            PersistenceCloudDriver cloudDriver = instance.CloudDriver;
+
+            Action<PersistenceStates.ESyncResult, PersistenceStates.ESyncResultDetail> onSyncDone = delegate (PersistenceStates.ESyncResult result, PersistenceStates.ESyncResultDetail detail)
+            {
+                bool finishFlow = true;
+
+                //result = PersistenceStates.ESyncResult.ErrorSyncing;
+                switch (detail)
+                {
+                    case PersistenceStates.ESyncResultDetail.NoConnection:
+                        // This case is treated automatically
+                        finishFlow = false;
+                        break;
+
+                    case PersistenceStates.ESyncResultDetail.NoLogInSocial:
+                        finishFlow = false;
+                        OpenErrorWhenForcingLocalProgress();
+                        break;
+                }
+
+                if (finishFlow)
+                {
+                    // Show a generic error
+                    if (result != PersistenceStates.ESyncResult.Ok)
+                    {
+                        Popup_OpenSyncGenericError(m_platformId, SYNC_GENERIC_ERROR_CODE_SYNC_UNEXPECTED_FLOW, null);
+                    }
+
+                    // Close popup
+                    ClosePopup();
+
+                    OnKeepProgress(true);
+                }
+            };
+
+            // Cheat to let QC test the flow responsible for letting the user know an error occurred when attempting to keep local savegame
+            if (DebugSettings.Persistence_IsForceErrorInMergePopupEnabled)
+            {
+                OpenErrorWhenForcingLocalProgress();
+            }
+            else
+            {
+                bool prevValue = m_needsToPopRequest;
+
+                m_needsToPopRequest = true;
+
+                // For automatic social platforms the user is allowed to override the server Id associated to the platform user Id        
+                // Sync is restarted stating that force is allowed
+                cloudDriver.Sync(m_platformId, PersistenceCloudDriver.ESyncMode.UpToMerge, PersistenceCloudDriver.EErrorMode.Verbose, false, onSyncDone, true, !prevValue);
+            }
+        }
+
+        private void OnKeepProgress(bool success)
+        {
+            if (m_needsToPopRequest)
+            {
+                instance.CloudDriver.Sync_PopRequest();
+            }
+
+            if (m_onKeep != null)
+            {
+                m_onKeep(success);
+            }
+
+            OnDone();
+        }
+
+        private void OnRestore()
+        {
+            if (m_needsToPopRequest)
+            {
+                instance.CloudDriver.Sync_PopRequest();
+            }
+
+            if (m_onRestore != null)
+            {
+                m_onRestore();
+            }
+
+            OnDone();
+        }        
+    }
+
+    private static PopupRequest m_popupRequest;
+
+    private static void Popup_SetRequest(PopupRequest popupRequest)
+    {
+        m_popupRequest = popupRequest;
+    }
+
+    private static void Popup_ResetRequest()
+    {
+        m_popupRequest = null;
+    }
+
     private static int SYNC_GENERIC_ERROR_CODE_MERGE_CLOUD_SAVE_CORRUPTED = 1;
     private static int SYNC_GENERIC_ERROR_CODE_MERGE_LOCAL_SAVE_CORRUPTED = 2;
     private static int SYNC_GENERIC_ERROR_CODE_MERGE_BOTH_SAVES_CORRUPTED = 3;
@@ -726,12 +976,7 @@ public class PersistenceFacade : IBroadcastListener
     /// </summary>
     public static void Popups_OpenSyncConflict(PersistenceStates.EConflictState conflictState, PersistenceComparatorSystem local, PersistenceComparatorSystem cloud, bool dismissable, Action<PersistenceStates.EConflictResult> onResolve)
     {
-        PopupController pc = PopupManager.OpenPopupInstant(PopupMerge.PATH);
-        PopupMerge pm = pc.GetComponent<PopupMerge>();
-        if (pm != null)
-        {
-            pm.Setup(conflictState, local, cloud, dismissable, onResolve);
-        }
+        Popup_SetRequest(new PopupSyncPersistencesRequest(conflictState, local, cloud, dismissable, onResolve));        
     }
 
     /// <summary>
@@ -827,160 +1072,7 @@ public class PersistenceFacade : IBroadcastListener
         config.OnCancel = onCancel;
         config.IsButtonCloseVisible = false;
         PopupManager.PopupMessage_Open(config);
-    }
-
-    private static SocialUtils.EPlatform m_implicitMergePlatform;
-    private static PopupController m_implicitMergeConflictPopupController = null;
-    private static Action m_implicitMergeConflictPopupOnRestore;
-    private static Action<bool> m_implicitMergeConflictPopupOnKeep;
-    private static bool m_implicitMergeConflictPopupNeedsToPopRequest;
-
-    private static void Popup_ImplicitMergeConflictReset()
-    {
-        m_implicitMergePlatform = SocialUtils.EPlatform.None;
-        m_implicitMergeConflictPopupController = null;
-        m_implicitMergeConflictPopupOnRestore = null;
-        m_implicitMergeConflictPopupOnKeep = null;
-        m_implicitMergeConflictPopupNeedsToPopRequest = false;
-    }
-
-    // Show popup notifying that there's been an irrecoverable error on server side
-    // User needs to choose between local progress with cloud service disabled and
-    // recovering remote progress with cloud service enabled
-    public static void Popup_OpenErrorWhenForcingLocalProgressInImplicitMergeConflict()
-    {
-        // Close the previous popup (this popup can be triggered only by Popup_OpenImplicitMergeConflict() 
-        if (m_implicitMergeConflictPopupController != null)
-        {
-            m_implicitMergeConflictPopupController.Close(true);
-            m_implicitMergeConflictPopupController = null;
-        }
-
-        Action _onRestore = Popup_ImplicitConflictOnRestore;
-
-        Action _onKeep = delegate ()
-        {
-            // User chooses to keep local progress anyway 
-            Popup_ImplicitMergeConflictOnKeep(false);
-        };
-
-        // Check params
-        Debug.Assert(_onRestore != null && _onKeep != null, "Both _onRestore and _onKeep callbacks must be defined!");
-
-        // Initialize popup
-        IPopupMessage.Config config = IPopupMessage.GetConfig();
-
-        // Button setup
-        config.IsButtonCloseVisible = false;
-        config.ButtonMode = IPopupMessage.Config.EButtonsMode.ConfirmAndExtra;
-        config.OnConfirm = _onRestore;
-        config.OnExtra = _onKeep;
-        config.BackButtonStrategy = IPopupMessage.Config.EBackButtonStratety.PerformExtra;
-        config.HighlightButton = IPopupMessage.Config.EHighlightButton.Confirm;
-        
-        // Texts setup        
-        config.TitleTid = "TID_DNA_MERGE_ERROR_TITLE";   // Something went wrong!
-        config.MessageTid = "TID_DNA_MERGE_ERROR_MESSAGE"; // Current progress couldn't be saved into our servers.\n\nDo you want to keep your current progres (Cloud Save disabled) or go back to your previous progress (Cloud Save enabled)?\n\nCloud Save can still be activated in the Game Settings at any time.
-        config.ConfirmButtonTid = "TID_DNA_MERGE_ERROR_BUTTON_1"; // Recover previous progress
-        config.ExtraButtonTid = "TID_DNA_MERGE_ERROR_BUTTON_2"; // Keep current progress
-                
-        // Open popup!
-        // It's stored so it can be closed later on if an extra popup (no connection) needs to be prompted on the top of this one
-        m_implicitMergeConflictPopupController = PopupManager.PopupMessage_Open(config);
-    }
-
-    private static void Popup_OnKeepingAtImplicitMergeConflict()
-    {
-        PersistenceCloudDriver cloudDriver = instance.CloudDriver;
-        
-        Action<PersistenceStates.ESyncResult, PersistenceStates.ESyncResultDetail> onSyncDone = delegate (PersistenceStates.ESyncResult result, PersistenceStates.ESyncResultDetail detail)
-        {            
-            bool finishFlow = true;
-
-            //result = PersistenceStates.ESyncResult.ErrorSyncing;
-            switch (result)
-            {
-                case PersistenceStates.ESyncResult.ErrorLogging:                    
-                    switch (detail)
-                    {
-                        case PersistenceStates.ESyncResultDetail.NoConnection:
-                            // This case is treated automatically
-                            finishFlow = false;
-                            break;
-
-                        case PersistenceStates.ESyncResultDetail.NoLogInSocial:
-                            finishFlow = false;                                                       
-                            Popup_OpenErrorWhenForcingLocalProgressInImplicitMergeConflict();
-                            break;
-                    }
-                    break;
-            }
-
-            if (finishFlow)
-            {
-                // Show a generic error
-                if(result != PersistenceStates.ESyncResult.Ok)
-                {
-                    Popup_OpenSyncGenericError(m_implicitMergePlatform, SYNC_GENERIC_ERROR_CODE_SYNC_UNEXPECTED_FLOW, null);
-                }
-
-                // Close popup
-                if (m_implicitMergeConflictPopupController != null)
-                {
-                    m_implicitMergeConflictPopupController.Close(true);
-                    m_implicitMergeConflictPopupController = null;
-                }
-
-                Popup_ImplicitMergeConflictOnKeep(true);               
-            }
-        };
-
-        // Cheat to let QC test the flow responsible for letting the user know an error occurred when attempting to keep local savegame
-        if (DebugSettings.Persistence_IsForceErrorInMergePopupEnabled)
-        {
-            Popup_OpenErrorWhenForcingLocalProgressInImplicitMergeConflict();
-        }
-        else
-        {
-            bool prevValue = m_implicitMergeConflictPopupNeedsToPopRequest;
-
-            m_implicitMergeConflictPopupNeedsToPopRequest = true;
-
-            // For automatic social platforms the user is allowed to override the server Id associated to the platform user Id        
-            // Sync is restarted stating that force is allowed
-            cloudDriver.Sync(m_implicitMergePlatform, PersistenceCloudDriver.ESyncMode.UpToMerge, PersistenceCloudDriver.EErrorMode.Verbose, false, onSyncDone, true, !prevValue);
-        }
-    }       
-
-    private static void Popup_ImplicitMergeConflictOnKeep(bool success)
-    {
-        if (m_implicitMergeConflictPopupNeedsToPopRequest)
-        {
-            instance.CloudDriver.Sync_PopRequest();
-        }
-
-        if (m_implicitMergeConflictPopupOnKeep != null)
-        {
-            m_implicitMergeConflictPopupOnKeep(success);
-        }        
-
-        Popup_ImplicitMergeConflictReset();
-    }
-
-    private static void Popup_ImplicitConflictOnRestore()
-    {
-        if (m_implicitMergeConflictPopupNeedsToPopRequest)
-        {
-            instance.CloudDriver.Sync_PopRequest();
-        }
-
-        if (m_implicitMergeConflictPopupOnRestore != null)
-        {
-            m_implicitMergeConflictPopupOnRestore();
-        }        
-
-        Popup_ImplicitMergeConflictReset();
-    }
+    }    
 
     public static void Popup_OpenImplicitMergeConflict(SocialUtils.EPlatform _plaftormId, PersistenceComparatorSystem _localProgress,
             PersistenceComparatorSystem _cloudProgress, Action<bool> _onKeep, Action _onRestore) {
@@ -988,27 +1080,9 @@ public class PersistenceFacade : IBroadcastListener
         Debug.Assert(_localProgress != null && _cloudProgress != null, "Both _localProgress and _cloudProgress must be defined!");
         Debug.Assert(_onRestore != null && _onKeep != null, "Both _onRestore and _onKeep callbacks must be defined!");
 
-        // Store some data
-        m_implicitMergePlatform = _plaftormId;
-        m_implicitMergeConflictPopupOnRestore = _onRestore;
-        m_implicitMergeConflictPopupOnKeep = _onKeep;
-
-        // Initialize popup
-        PopupController popup = PopupManager.LoadPopup(PopupMergeDNA.PATH);
-        PopupMergeDNA mergePopup = popup.GetComponent<PopupMergeDNA>();
-        mergePopup.Setup(
-            _localProgress,
-            _cloudProgress, 
-            Popup_OnKeepingAtImplicitMergeConflict, 
-            Popup_ImplicitConflictOnRestore
-        );
-
-        // Open the popup!
-        popup.Open();
-
         // Store the popup so it can be closed later on if an extra popup (no connection) needs to be prompted on the top of this one
-        m_implicitMergeConflictPopupController = popup;
-    }
+        Popup_SetRequest(new PopupImplicitMergeRequest(_plaftormId, _localProgress, _cloudProgress, _onKeep, _onRestore));
+    }    
 
     public static void Popup_OpenErrorWhenSyncing(Action onContinue, Action onRetry)
 	{                
