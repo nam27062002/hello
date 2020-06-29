@@ -547,17 +547,20 @@ public class PersistenceFacade : IBroadcastListener
         private SocialUtils.EPlatform m_platformId;
         private PersistenceComparatorSystem m_localProgress;
         private PersistenceComparatorSystem m_cloudProgress;
+        private PersistenceStates.EConflictState m_conflictState;
         private Action<bool> m_onKeep;
         private Action m_onRestore;
         private PopupController m_popupController;
         private bool m_needsToPopRequest;
 
         public PopupImplicitMergeRequest(SocialUtils.EPlatform _plaftormId, PersistenceComparatorSystem _localProgress,
-            PersistenceComparatorSystem _cloudProgress, Action<bool> _onKeep, Action _onRestore) : base(false)
+            PersistenceComparatorSystem _cloudProgress, PersistenceStates.EConflictState _conflictState,
+            Action<bool> _onKeep, Action _onRestore) : base(false)
         {
             m_platformId = _plaftormId;
             m_localProgress = _localProgress;
             m_cloudProgress = _cloudProgress;
+            m_conflictState = _conflictState;
             m_onKeep = _onKeep;
             m_onRestore = _onRestore;
             m_popupController = null;
@@ -572,6 +575,7 @@ public class PersistenceFacade : IBroadcastListener
             mergePopup.Setup(
                 m_localProgress,
                 m_cloudProgress,
+                m_conflictState,
                 OnKeepButton,
                 OnRestore
             );
@@ -1075,13 +1079,13 @@ public class PersistenceFacade : IBroadcastListener
     }    
 
     public static void Popup_OpenImplicitMergeConflict(SocialUtils.EPlatform _plaftormId, PersistenceComparatorSystem _localProgress,
-            PersistenceComparatorSystem _cloudProgress, Action<bool> _onKeep, Action _onRestore) {
+            PersistenceComparatorSystem _cloudProgress, PersistenceStates.EConflictState _conflictState, Action<bool> _onKeep, Action _onRestore) {
         // Check params
         Debug.Assert(_localProgress != null && _cloudProgress != null, "Both _localProgress and _cloudProgress must be defined!");
         Debug.Assert(_onRestore != null && _onKeep != null, "Both _onRestore and _onKeep callbacks must be defined!");
 
         // Store the popup so it can be closed later on if an extra popup (no connection) needs to be prompted on the top of this one
-        Popup_SetRequest(new PopupImplicitMergeRequest(_plaftormId, _localProgress, _cloudProgress, _onKeep, _onRestore));
+        Popup_SetRequest(new PopupImplicitMergeRequest(_plaftormId, _localProgress, _cloudProgress, _conflictState, _onKeep, _onRestore));
     }    
 
     public static void Popup_OpenErrorWhenSyncing(Action onContinue, Action onRetry)

@@ -15,18 +15,20 @@ public class PopupMergeDNA : IPopupMerge
     /// <param name="_cloudProgress">Recovered progress data from the server.</param>
     /// <param name="_onKeep">Action to perform when keeping the local progress.</param>
     /// <param name="_onRestore">Action to perform when restoring the server progress.</param>
-    public void Setup(PersistenceComparatorSystem _localProgress, PersistenceComparatorSystem _cloudProgress, Action _onKeep, Action _onRestore) {
+    public void Setup(PersistenceComparatorSystem _localProgress, PersistenceComparatorSystem _cloudProgress, PersistenceStates.EConflictState _conflictState, Action _onKeep, Action _onRestore) {
         // Store callbacks
         OnKeep = _onKeep;
         OnRestore = _onRestore;
 
+        bool useCloud = (_conflictState == PersistenceStates.EConflictState.UseCloud || _conflictState == PersistenceStates.EConflictState.RecommendCloud);
+
 		// Initialize left pill with current progress
 		m_profile1 = _localProgress;
-		m_leftPill.Setup(_localProgress, _cloudProgress, false);  // Force highlighting the remote progress
+		m_leftPill.Setup(_localProgress, _cloudProgress, !useCloud);  // Force highlighting the remote progress
 
 		// Initialize right pill with recovered progress
 		m_profile2 = _cloudProgress;
-		m_rightPill.Setup(_cloudProgress, _localProgress, true);  // Force highlighting the remote progress
+		m_rightPill.Setup(_cloudProgress, _localProgress, useCloud);  // Force highlighting the remote progress
     }
 
     /// <summary>
