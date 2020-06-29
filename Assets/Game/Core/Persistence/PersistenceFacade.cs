@@ -44,18 +44,9 @@ public class PersistenceFacade : IBroadcastListener
         // From http://answers.unity3d.com/questions/30930/why-did-my-binaryserialzer-stop-working.html
         Environment.SetEnvironmentVariable("MONO_REFLECTION_SERIALIZER", "yes");
 
-        GameServerManager.SharedInstance.Configure();
+        Config = new PersistenceFacadeConfig();
 
-        PersistenceFacadeConfigDebug.EUserCaseId userCaseId = PersistenceFacadeConfigDebug.EUserCaseId.Production;
-        //userCaseId = PersistenceFacadeConfigDebug.EUserCaseId.Settings_Local_NeverLoggedIn_Cloud_More;
-        if (FeatureSettingsManager.IsDebugEnabled && userCaseId != PersistenceFacadeConfigDebug.EUserCaseId.Production)
-        {
-            Config = new PersistenceFacadeConfigDebug(userCaseId);
-        }
-        else
-        {
-            Config = new PersistenceFacadeConfig();
-        }
+        GameServerManager.SharedInstance.Configure();
 
         Popups_Init();
 

@@ -2082,7 +2082,7 @@ public class GameServerManagerCalety : GameServerManager {
     }     
    
     private void Connection_ResetTimer() {
-        m_connectionTimeLeftToPing = FeatureSettingsManager.instance.GetAutomaticReloginPeriod();
+        m_connectionTimeLeftToPing = (NeedsToLogInToSocialPlatform()) ? 10f : FeatureSettingsManager.instance.GetAutomaticReloginPeriod();
     }                   
     
     private bool Connection_IsCheckEnabled() {
@@ -2113,8 +2113,7 @@ public class GameServerManagerCalety : GameServerManager {
                         PersistenceLocalDriver localDriver = PersistenceFacade.instance.LocalDriver;
 
                         // Checks if we needs to relogin to cloud, if so then we force a sync (which also checks connection and login)
-                        if ((!PersistenceFacade.instance.CloudDriver.IsLoggedIn || (localDriver.Prefs_SocialWasLoggedInWhenQuit && !SocialPlatformManager.SharedInstance.IsLoggedInByKey(localDriver.Prefs_SocialPlatformKey))) &&
-                            !PersistenceFacade.instance.Sync_IsSyncing) {                            
+                        if (NeedsToLogInToSocialPlatform()) { 
                             Log("Automatic relogin performing cloud sync...");
                             PersistenceFacade.instance.Sync_FromReconnecting((PersistenceStates.ESyncResult result, PersistenceStates.ESyncResultDetail resultDetail) => { onDone(); });
                         } else {                            
@@ -2132,6 +2131,19 @@ public class GameServerManagerCalety : GameServerManager {
                 }
             }
         }
+    }
+
+    private bool NeedsToLogInToSocialPlatform()
+    {
+        bool returnValue = !PersistenceFacade.instance.Sync_IsSyncing;
+        if (returnValue)
+        {
+            PersistenceLocalDriver localDriver = PersistenceFacade.instance.LocalDriver;
+            returnValue = !PersistenceFacade.instance.CloudDriver.IsLoggedIn ||
+                (localDriver.Prefs_SocialWasLoggedInWhenQuit && !SocialPlatformManager.SharedInstance.IsLoggedInByKey(localDriver.Prefs_SocialPlatformKey));
+        }
+
+        return returnValue;
     }
     #endregion
 
