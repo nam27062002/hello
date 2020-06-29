@@ -390,10 +390,11 @@ public class CPTechTab : MonoBehaviour {
 		{
 			ApplicationManager.instance.NeedsToRestartFlow = true;
 		};
+		
+		PersistenceFacade.instance.LocalDriver.OverrideWithCorruptProgress(onDone);
 
-        // Cloud driver is disable to avoid the corrupted progress to be uploaded
-		PersistenceFacade.instance.CloudDriver.Upload_IsAllowed = false;
-		PersistenceFacade.instance.LocalDriver.OverrideWithCorruptProgress(onDone);		
+        // Prevent game from saving on top of the corrupt progress
+		PersistenceFacade.instance.LocalDriver.IsLoadedInGame = false;
 	}
 
     public void OnResetCloudInfo()
