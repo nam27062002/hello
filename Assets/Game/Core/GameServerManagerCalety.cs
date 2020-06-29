@@ -32,7 +32,7 @@ public class GameServerManagerCalety : GameServerManager {
 		public SimpleJSON.JSONClass m_lastRecievedUniverse = null;
 		public int m_saveDataCounter = 0;
 
-		public delegate bool OnResponse(string response, int responseCode);
+		public delegate bool OnResponse(string response, int responseCode, ECommand cmd);
 
 		private OnResponse m_onResponse;
 
@@ -59,7 +59,7 @@ public class GameServerManagerCalety : GameServerManager {
 					responseAsString = response.ToString();
 				}
 
-				m_onResponse(responseAsString, (IsNewAppVersionNeeded) ? 426 : 200);
+				m_onResponse(responseAsString, (IsNewAppVersionNeeded) ? 426 : 200, ECommand.Auth);
 			}
 		}
 
@@ -68,7 +68,7 @@ public class GameServerManagerCalety : GameServerManager {
 			m_waitingLoginResponse = false;
 
 			if(m_onResponse != null) {
-				m_onResponse(null, 401);
+				m_onResponse(null, 401, ECommand.Auth);
 			}
 		}
 
@@ -1571,6 +1571,11 @@ public class GameServerManagerCalety : GameServerManager {
 
         // Makes sure there's a command waiting for the response
         if (Commands_CurrentCommand == null) {
+            return false;
+        }
+        else if (cmd != ECommand.None && Commands_CurrentCommand.Cmd != cmd)
+        {
+            LogWarning("Received response for command " + cmd + " but " + Commands_CurrentCommand + " command is expected instead");
             return false;
         }
         
