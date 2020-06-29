@@ -40,9 +40,9 @@ public class PersistenceTester
             // Result: Prompts Merge conflict popup
             // User Action: Hit 'Keep' button
             // Extra: Test disconnecting network before hitting "Keep" button
-            test = new PersistenceTest(PersistenceTest.EUserId.U2, PersistenceTest.EProgress.Empty, PersistenceCloudDriver.EMergeState.None,
-                PersistenceTest.EExplicitPlatformState.None, PersistenceTest.EUserId.U1, PersistenceTest.EProgress.P1, PersistenceTest.EImplicitMergeResponse.Conflict, PersistenceTest.EImplicitMergeResponse.OkForce,
-                PersistenceTest.EUserId.U2, PersistenceTest.EProgress.Empty, PersistenceCloudDriver.EMergeState.Ok, PersistenceTest.EExplicitPlatformState.None, UserProfile.ESocialState.NeverLoggedIn,
+            test = new PersistenceTest(PersistenceTest.EUserId.U1, PersistenceTest.EProgress.P1, PersistenceCloudDriver.EMergeState.None,
+                PersistenceTest.EExplicitPlatformState.None, PersistenceTest.EUserId.U2, PersistenceTest.EProgress.P2, PersistenceTest.EImplicitMergeResponse.Conflict, PersistenceTest.EImplicitMergeResponse.OkForce,
+                PersistenceTest.EUserId.U1, PersistenceTest.EProgress.P1, PersistenceCloudDriver.EMergeState.Ok, PersistenceTest.EExplicitPlatformState.None, UserProfile.ESocialState.NeverLoggedIn,
                 PersistenceCloudDriver.ESyncMode.Full);
             sm_tests.Add(4, test);
 
@@ -51,9 +51,9 @@ public class PersistenceTester
             // User Action: Hit 'Keep' button
             // Result: Prompt Error when keeping local progress. Do you want to continue?
             // User Action: Hit 'Ok' button
-            test = new PersistenceTest(PersistenceTest.EUserId.U2, PersistenceTest.EProgress.Empty, PersistenceCloudDriver.EMergeState.None,
-                PersistenceTest.EExplicitPlatformState.None, PersistenceTest.EUserId.U1, PersistenceTest.EProgress.P1, PersistenceTest.EImplicitMergeResponse.Conflict, PersistenceTest.EImplicitMergeResponse.Error,
-                PersistenceTest.EUserId.U2, PersistenceTest.EProgress.Empty, PersistenceCloudDriver.EMergeState.Failed, PersistenceTest.EExplicitPlatformState.None, UserProfile.ESocialState.NeverLoggedIn,
+            test = new PersistenceTest(PersistenceTest.EUserId.U1, PersistenceTest.EProgress.P1, PersistenceCloudDriver.EMergeState.None,
+                PersistenceTest.EExplicitPlatformState.None, PersistenceTest.EUserId.U2, PersistenceTest.EProgress.P2, PersistenceTest.EImplicitMergeResponse.Conflict, PersistenceTest.EImplicitMergeResponse.Error,
+                PersistenceTest.EUserId.U1, PersistenceTest.EProgress.P1, PersistenceCloudDriver.EMergeState.Failed, PersistenceTest.EExplicitPlatformState.None, UserProfile.ESocialState.NeverLoggedIn,
                 PersistenceCloudDriver.ESyncMode.Full);
             sm_tests.Add(5, test);
 
