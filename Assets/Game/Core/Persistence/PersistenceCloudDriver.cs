@@ -300,7 +300,14 @@ public class PersistenceCloudDriver
 					break;
 
                 case ESyncStep.MergingAccounts:
-                    Syncer_MergingAccounts();
+                    if (Syncer_ForceMerge && Syncer_LogInSocialResult != SocialPlatformManager.ELoginResult.Ok)
+                    {
+                        Syncer_PerformDone(PersistenceStates.ESyncResult.ErrorSyncing, PersistenceStates.ESyncResultDetail.NoLogInSocial);
+                    }
+                    else
+                    {
+                        Syncer_MergingAccounts();
+                    }
                     break;
 
                 case ESyncStep.GettingPersistence:
@@ -875,18 +882,25 @@ public class PersistenceCloudDriver
 
 	private void Syncer_PerformDone(PersistenceStates.ESyncResult result, PersistenceStates.ESyncResultDetail resultDetail)
 	{        
-        PersistenceFacade.Log("(SYNCER) CLOUD DONE " + result.ToString());        
-        
-        // Cloud save is enabled if it was possible to connect to server
-		if (result == PersistenceStates.ESyncResult.ErrorLogging &&
-            (resultDetail == PersistenceStates.ESyncResultDetail.NoConnection || resultDetail == PersistenceStates.ESyncResultDetail.NoLogInServer))
-		{
-			State = EState.NotLoggedIn;
-		} 
-		else
-		{
-			State = EState.LoggedIn;
-		}
+        PersistenceFacade.Log("(SYNCER) CLOUD DONE result: " + result.ToString() + " resultDetail: " + resultDetail);
+
+        if (Syncer_Mode == ESyncMode.Full || Syncer_Mode == ESyncMode.UpToMerge)
+        {
+            State = (result == PersistenceStates.ESyncResult.Ok || result == PersistenceStates.ESyncResult.NeedsToReload) ? EState.LoggedIn : EState.NotLoggedIn;
+        }
+        else
+        {
+            // Cloud save is enabled if it was possible to connect to server
+            if (result == PersistenceStates.ESyncResult.ErrorLogging &&
+                (resultDetail == PersistenceStates.ESyncResultDetail.NoConnection || resultDetail == PersistenceStates.ESyncResultDetail.NoLogInServer))
+            {
+                State = EState.NotLoggedIn;
+            }
+            else
+            {
+                State = EState.LoggedIn;
+            }
+        }
 
         // Uploading is allowed simply by logging in to the server in order to maximise the user's chances of having a backup
         Upload_IsAllowed = State == EState.LoggedIn;
