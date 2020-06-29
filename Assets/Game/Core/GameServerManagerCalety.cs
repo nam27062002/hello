@@ -1565,7 +1565,7 @@ public class GameServerManagerCalety : GameServerManager {
 	/// <summary>
 	/// 
 	/// </summary>
-	private bool Commands_OnResponse(string responseData, int statusCode) {
+	private bool Commands_OnResponse(string responseData, int statusCode, ECommand cmd = ECommand.None) {
 		Error error = null;
 		ServerResponse response = null;
 
@@ -1832,9 +1832,7 @@ public class GameServerManagerCalety : GameServerManager {
 			}
 
             Commands_List[i].Clear();
-        }
-        
-        Log("Server down \n" + Commands_ToString());
+        }        
 	}
 
 	private string Commands_ToString() {
