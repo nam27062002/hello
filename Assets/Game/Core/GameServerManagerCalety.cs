@@ -1832,7 +1832,9 @@ public class GameServerManagerCalety : GameServerManager {
 			}
 
             Commands_List[i].Clear();
-        }       
+        }
+        
+        Log("Server down \n" + Commands_ToString());
 	}
 
 	private string Commands_ToString() {
