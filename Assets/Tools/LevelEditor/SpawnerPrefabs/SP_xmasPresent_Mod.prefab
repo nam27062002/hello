@@ -9,9 +9,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 447832}
-  - component: {fileID: 114526873968243496}
+  - component: {fileID: 114548142343784516}
   m_Layer: 0
-  m_Name: SP_Seasonal_xmasPresent
+  m_Name: SP_xmasPresent_Mod
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -31,7 +31,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &114526873968243496
+--- !u!114 &114548142343784516
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -40,7 +40,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 177470}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dbfb88e5d380447b18c7544fca8810ce, type: 3}
+  m_Script: {fileID: 11500000, guid: a02c7d5d2da884a8aaf12f9d98345d65, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_rect:
@@ -52,7 +52,7 @@ MonoBehaviour:
   m_mixEntities: 0
   m_forceHeterogeneityMix: 0
   m_entityPrefabList:
-  - name: 
+  - name: Junk/PF_XmasPresent_Mod
     chance: 100
   m_quantity:
     min: 1
@@ -75,22 +75,12 @@ MonoBehaviour:
   m_deactivationTriggers: []
   m_deactivationKillTriggers: []
   m_spawnTime:
-    min: 90
-    max: 90
+    min: 60
+    max: 60
   m_isPremiumCurrencyNPC: 0
   m_homePosMethod: 0
   m_homePosDistance:
-    min: 0
-    max: 0
+    min: 1
+    max: 2
   m_homePosLineRotation: 0
   m_maxSpawns: 0
-  m_spawnConfigs:
-  - m_season: xmas
-    m_spawners:
-    - Seasonal/PF_XmasPresent
-  - m_season: presents
-    m_spawners:
-    - Seasonal/PF_XmasPresent
-  - m_season: presents
-    m_spawners:
-    - Seasonal/PF_XmasPresent
