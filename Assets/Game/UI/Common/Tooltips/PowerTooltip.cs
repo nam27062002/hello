@@ -64,7 +64,8 @@ public class PowerTooltip : UITooltip
 	/// Initialize this button with the data from the given definition.
 	/// </summary>
 	/// <param name="_powerDef">Power definition.</param>
-	public void InitFromDefinition(DefinitionNode _powerDef, PowerIcon.Mode _mode) {
+	/// <param name="_sourceDef">Source of the power: Skin, pet, special dragon, etc.</param>
+	public void InitFromDefinition(DefinitionNode _powerDef, DefinitionNode _sourceDef, PowerIcon.Mode _mode) {
 		// Ignore if given definition is not valid
 		if(_powerDef == null) return;
 
@@ -74,7 +75,7 @@ public class PowerTooltip : UITooltip
 		// Power icon
 		if(m_powerIcon != null) {
             // Load from resources
-            m_powerIcon.InitFromDefinition(_powerDef,false,false);
+            m_powerIcon.InitFromDefinition(_powerDef, _sourceDef, false, false);
 		}
 
 		// Name and description

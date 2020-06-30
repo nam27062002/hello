@@ -51,8 +51,8 @@ public class PetSlot : MonoBehaviour {
 		get { return m_slotIdx; }
 	}
 
+	private DefinitionNode m_petDef = null;
 	private IDragonData m_dragonData = null;
-
     private Coroutine m_unloadPetCoroutine = null;
 	
 	//------------------------------------------------------------------------//
@@ -141,7 +141,10 @@ public class PetSlot : MonoBehaviour {
 		Refresh(petDef, _animate);
 	}
 
-	public void Refresh(DefinitionNode _def, bool _animate) {		
+	public void Refresh(DefinitionNode _def, bool _animate) {
+		// Store target pet
+		m_petDef = _def;
+
 		// Get pet info
 		bool equipped = (_def != null);
 
@@ -155,9 +158,9 @@ public class PetSlot : MonoBehaviour {
 			if(equipped) {
 				// Get power definition
 				DefinitionNode powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, _def.Get("powerup"));
-				m_powerIcon.InitFromDefinition(powerDef, false, _animate);
+				m_powerIcon.InitFromDefinition(powerDef, m_petDef, false, _animate);
 			} else {
-				m_powerIcon.InitFromDefinition(null, false, _animate);
+				m_powerIcon.InitFromDefinition(null, m_petDef, false, _animate);
 			}
 		}
 
@@ -229,5 +232,13 @@ public class PetSlot : MonoBehaviour {
 	/// </summary>
 	private void DisableParticleScaler(ShowHideAnimator _anim) {
 		if(m_petLoader != null) m_petLoader.pscaler.enabled = false;
+	}
+
+	/// <summary>
+	/// A pet power tooltip trigger is about to open and needs the target pet definition.
+	/// </summary>
+	/// <param name="_trigger">The tooltip trigger that triggered the event.</param>
+	public void OnTooltipTriggerGetPetDef(PetPowerTooltipTrigger _trigger) {
+		_trigger.SetPetDef(m_petDef);
 	}
 }

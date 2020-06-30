@@ -199,7 +199,7 @@ public class RewardInfoUI : MonoBehaviour {
                         // Power icon
                         if (m_petPowerIcon != null)
                         {
-                            m_petPowerIcon.InitFromDefinition(powerDef, false);
+                            m_petPowerIcon.InitFromDefinition(powerDef, _rewardData.def, false);
                         }
 
                         // Power name
@@ -230,7 +230,7 @@ public class RewardInfoUI : MonoBehaviour {
 				if(m_skinPower != null) {
 					// Initialize with powers data
 					DefinitionNode powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, _rewardData.def.GetAsString("powerup"));
-					m_skinPower.InitFromDefinition(powerDef, false);
+					m_skinPower.InitFromDefinition(powerDef, _rewardData.def, false);
 				}
 
 				// Show share button!

@@ -33,7 +33,7 @@ public class UITooltipEditor : Editor {
 	UITooltip m_targetUITooltip = null;
 
 	// Editor flags
-	private bool applyPrefabAfterDisablingRaycasts {
+	private static bool applyPrefabAfterDisablingRaycasts {
 		get { return Prefs.GetBoolEditor("UITooltipEditor.applyPrefabAfterDisablingRaycasts", true); }
 		set { Prefs.SetBoolEditor("UITooltipEditor.applyPrefabAfterDisablingRaycasts", value); }
 	}
@@ -64,39 +64,8 @@ public class UITooltipEditor : Editor {
 		// Default inspector
 		DrawDefaultInspector();
 
-		// Button to disable all raycasting in nested objects
-		EditorGUILayoutExt.Separator();
-
-		applyPrefabAfterDisablingRaycasts = EditorGUILayout.Toggle("Apply Prefab after disabling raycasts", applyPrefabAfterDisablingRaycasts);
-
-		GUI.color = Colors.orange;
-		if(GUILayout.Button("DISABLE ALL RAYCASTS", GUILayout.Height(50f))) {
-			// Graphics
-			List<Graphic> graphics = m_targetUITooltip.transform.FindComponentsRecursive<Graphic>();
-			for(int i = 0; i < graphics.Count; ++i) {
-				graphics[i].raycastTarget = false;
-			}
-
-			// Canvas groups
-			List<CanvasGroup> groups = m_targetUITooltip.transform.FindComponentsRecursive<CanvasGroup>();
-			for(int i = 0; i < groups.Count; ++i) {
-				groups[i].blocksRaycasts = false;
-			}
-
-			// Apply prefab?
-			if(applyPrefabAfterDisablingRaycasts) {
-				GameObject rootObj = PrefabUtility.FindRootGameObjectWithSameParentPrefab(m_targetUITooltip.gameObject);
-				bool wasActive = rootObj.activeSelf;
-				rootObj.SetActive(true);
-				PrefabUtility.ReplacePrefab(
-					rootObj,
-					PrefabUtility.GetPrefabParent(m_targetUITooltip.gameObject),
-					ReplacePrefabOptions.ConnectToPrefab
-				);
-				rootObj.SetActive(wasActive);
-			}
-		}
-		GUI.color = Color.white;
+		// Raycast disabling tool
+		DoRaycastDisablingTool(m_targetUITooltip.gameObject);
 	}
 
 	/// <summary>
@@ -104,5 +73,62 @@ public class UITooltipEditor : Editor {
 	/// </summary>
 	public void OnSceneGUI() {
 		// Scene-related stuff
+	}
+
+	//------------------------------------------------------------------------//
+	// AUX METHODS															  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Show the raycast disabling tool in the inspector UI.
+	/// </summary>
+	public static void DoRaycastDisablingTool(GameObject _target) {
+		// Button to disable all raycasting in nested objects
+		EditorGUILayoutExt.Separator();
+
+		// Apply prefab toggle
+		bool applyPrefab = EditorGUILayout.Toggle("Apply Prefab after disabling raycasts", applyPrefabAfterDisablingRaycasts);
+		applyPrefabAfterDisablingRaycasts = applyPrefab;
+
+		// If apply prefab is toggled, disable feature and show warning message
+		if(applyPrefab) {
+			GUI.color = Color.red;
+			EditorGUILayout.HelpBox(
+				"\nApply Prefab feature doesn't support the new prefabs workflow.\n\n" +
+				"Toggle it off to use the Raycast Disable tool.\n\n" +
+				"TODO as soon as possible.\n"
+				, MessageType.Warning, true);
+			GUI.color = Color.white;
+		}
+
+		EditorGUI.BeginDisabledGroup(applyPrefab);
+		GUI.color = Colors.orange;
+		if(GUILayout.Button("DISABLE ALL RAYCASTS", GUILayout.Height(50f))) {
+			// Graphics
+			List<Graphic> graphics = _target.transform.FindComponentsRecursive<Graphic>();
+			for(int i = 0; i < graphics.Count; ++i) {
+				graphics[i].raycastTarget = false;
+			}
+
+			// Canvas groups
+			List<CanvasGroup> groups = _target.transform.FindComponentsRecursive<CanvasGroup>();
+			for(int i = 0; i < groups.Count; ++i) {
+				groups[i].blocksRaycasts = false;
+			}
+
+			// Apply prefab?
+			if(applyPrefabAfterDisablingRaycasts) {
+				GameObject rootObj = PrefabUtility.FindRootGameObjectWithSameParentPrefab(_target);
+				bool wasActive = rootObj.activeSelf;
+				rootObj.SetActive(true);
+				PrefabUtility.ReplacePrefab(
+					rootObj,
+					PrefabUtility.GetPrefabParent(_target),
+					ReplacePrefabOptions.ConnectToPrefab
+				);
+				rootObj.SetActive(wasActive);
+			}
+		}
+		GUI.color = Color.white;
+		EditorGUI.EndDisabledGroup();
 	}
 }
