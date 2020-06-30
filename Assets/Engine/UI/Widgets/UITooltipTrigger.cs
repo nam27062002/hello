@@ -31,8 +31,7 @@ public class UITooltipTrigger : MonoBehaviour, IPointerDownHandler, IPointerUpHa
 	//------------------------------------------------------------------------//
 	// Exposed
 	[Comment("If a tooltip instance is defined in the inspector, it will be used directly.\nIf not defined, a new instance of the defined prefab will be created as needed.")]
-	[SerializeField]
-	private UITooltip m_tooltip = null;
+	[SerializeField] protected UITooltip m_tooltip = null;
 	public UITooltip tooltip {
 		get { return m_tooltip; }
         set { m_tooltip = value; }
@@ -41,37 +40,37 @@ public class UITooltipTrigger : MonoBehaviour, IPointerDownHandler, IPointerUpHa
 	[SerializeField] private string m_prefabPath = "";
 
 	[Comment("\nThe tooltip will be spawned from this anchor point.\nIf not defined, it will be autopositioned using the trigger's transform as anchor.\nActivating the \"Keep Original Position\" flag will override the anchor.")]
-	[SerializeField] private RectTransform m_anchor = null;
+	[SerializeField] protected RectTransform m_anchor = null;
 	public RectTransform anchor {
 		get { return m_anchor; }
 		set { m_anchor = value; }
 	}
 
-	[SerializeField] private Vector2 m_offset = Vector2.zero;
+	[SerializeField] protected Vector2 m_offset = Vector2.zero;
 	public Vector2 offset {
 		get { return m_offset; }
 		set { m_offset = value; }
 	}
 
-	[SerializeField] private bool m_autoHide = true;
+	[SerializeField] protected bool m_autoHide = true;
 	public bool autoHide {
 		get { return m_autoHide; }
 		set { m_autoHide = value; }
 	}
 
-	[SerializeField] private bool m_keepOriginalPosition = false;
+	[SerializeField] protected bool m_keepOriginalPosition = false;
 	public bool keepOriginalPosition {
 		get { return m_keepOriginalPosition; }
 		set { m_keepOriginalPosition = value; }
 	}
 
-	[SerializeField] private bool m_checkScreenBounds = true;
+	[SerializeField] protected bool m_checkScreenBounds = true;
 	public bool checkScreenBounds {
 		get { return m_checkScreenBounds; }
 		set { m_checkScreenBounds = value; }
 	}
 
-	[SerializeField] private bool m_renderOnTop = true;
+	[SerializeField] protected bool m_renderOnTop = true;
 	public bool renderOnTop {
 		get { return m_renderOnTop; }
 		set { m_renderOnTop = value; }
@@ -83,8 +82,8 @@ public class UITooltipTrigger : MonoBehaviour, IPointerDownHandler, IPointerUpHa
 	public TooltipEvent OnTooltipOpen = new TooltipEvent();
 
 	// Internal references
-	private Canvas m_parentCanvas = null;
-	private Transform m_originalTooltipParent = null;
+	protected Canvas m_parentCanvas = null;
+	protected Transform m_originalTooltipParent = null;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -92,23 +91,76 @@ public class UITooltipTrigger : MonoBehaviour, IPointerDownHandler, IPointerUpHa
 	/// <summary>
 	/// Initialization.
 	/// </summary>
-	private void Awake() {
+	protected virtual void Awake() {
 		
 	}
 
 	/// <summary>
 	/// Destructor.
 	/// </summary>
-	private void OnDestroy() {
+	protected virtual void OnDestroy() {
 		if(m_tooltip != null) m_tooltip.animator.OnHidePostAnimation.RemoveListener(OnTooltipClosed);
 	}
 
 	/// <summary>
 	/// Component has been disabled.
 	/// </summary>
-	private void OnDisable() {
+	protected virtual void OnDisable() {
 		// Hide the tooltip!
 		if(m_tooltip != null) m_tooltip.animator.Hide();
+	}
+
+	//------------------------------------------------------------------------//
+	// OVERRIDE CANDIDATES													  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Instantiate or choose the right instance of the tooltip to be displayed.
+	/// Will override current m_tooltip.
+	/// </summary>
+	/// <param name="_spawnTransform">The root where to instantiate the new tooltip.</param>
+	/// <returns>The new tooltip instance. <c>null</c> if tooltip instance couldn't be created.</returns>
+	protected virtual UITooltip InitTooltipInstance(RectTransform _spawnTransform) {
+		// If we already have the tooltip instance, just use it
+		if(m_tooltip != null) return m_tooltip;
+
+		// Create the tooltip instance
+		UITooltip newTooltip = InstantiateTooltipPrefab(m_prefabPath, _spawnTransform);
+
+		// Done!
+		return newTooltip;
+	}
+
+	/// <summary>
+	/// Create an instance of a UITooltip prefab at the given transform.
+	/// </summary>
+	/// <param name="_prefabPath">The path of the tooltip prefab to be instantiated.</param>
+	/// <param name="_spawnTransform">The root where to instantiate the new tooltip.</param>
+	/// <returns>The new tooltip instance. <c>null</c> if tooltip instance couldn't be created.</returns>
+	protected virtual UITooltip InstantiateTooltipPrefab(string _prefabPath, RectTransform _spawnTransform) {
+		// Load prefab
+		GameObject prefabObj = Resources.Load<GameObject>(_prefabPath);
+		if(prefabObj == null) {
+			Debug.LogError("Tooltip prefab " + _prefabPath + " not found, skipping tooltip");
+			return null;
+		}
+
+		// Create new instance as sibling of this object and default pos
+		GameObject newObj = GameObject.Instantiate<GameObject>(prefabObj);
+		newObj.transform.SetParent(_spawnTransform.parent, false);
+
+		// Behind the spawn point!
+		newObj.transform.SetSiblingIndex(_spawnTransform.GetSiblingIndex());
+
+		// Store reference for future usage
+		UITooltip newTooltip = newObj.GetComponent<UITooltip>();
+
+		// If the given prefab doesn't have a show/hide animator, add one
+		if(newTooltip == null) {
+			newTooltip = newObj.AddComponent<UITooltip>();   // Default params are ok (no anim)
+		}
+
+		// Done!
+		return newTooltip;
 	}
 
 	//------------------------------------------------------------------------//
@@ -118,7 +170,7 @@ public class UITooltipTrigger : MonoBehaviour, IPointerDownHandler, IPointerUpHa
 	/// The pointer has gone down over this object.
 	/// </summary>
 	/// <param name="_eventData">Event data.</param>
-	public void OnPointerDown(PointerEventData _eventData) {
+	public virtual void OnPointerDown(PointerEventData _eventData) {
 		// Only if active
 		if(!isActiveAndEnabled) return;
 
@@ -136,29 +188,11 @@ public class UITooltipTrigger : MonoBehaviour, IPointerDownHandler, IPointerUpHa
 			spawnTransform = (RectTransform)this.transform;
 		}
 
-		// If prefab hasn't been instantiated, do it now
+		// Initialize tooltip instance. If invalid, don't do anything else.
+		m_tooltip = InitTooltipInstance(spawnTransform);
 		if(m_tooltip == null) {
-			// Load prefab
-			GameObject prefabObj = Resources.Load<GameObject>(m_prefabPath);
-			if(prefabObj == null) {
-				Debug.LogError("Tooltip prefab " + m_prefabPath + " not found, skipping tooltip");
-				return;
-			}
-
-			// Create new instance as sibling of this object and default pos
-			GameObject newObj = GameObject.Instantiate<GameObject>(prefabObj);
-			newObj.transform.SetParent(spawnTransform.parent, false);
-
-			// Behind the spawn point!
-			newObj.transform.SetSiblingIndex(spawnTransform.GetSiblingIndex());
-
-			// Store reference for future usage
-			m_tooltip = newObj.GetComponent<UITooltip>();
-
-			// If the given prefab doesn't have a show/hide animator, add one
-			if(m_tooltip == null) {
-				m_tooltip = newObj.AddComponent<UITooltip>();	// Default params are ok (no anim)
-			}
+			Debug.LogError("Couldn't instantiate tooltip for trigger " + this.name);
+			return;
 		}
 
 		// Invoke event (before animation, in case anything needs to be initialized)
@@ -271,7 +305,7 @@ public class UITooltipTrigger : MonoBehaviour, IPointerDownHandler, IPointerUpHa
 	/// The pointer has gone up over this object.
 	/// </summary>
 	/// <param name="_eventData">Event data.</param>
-	public void OnPointerUp(PointerEventData _eventData) {
+	public virtual void OnPointerUp(PointerEventData _eventData) {
 		// Nothing to do if auto hide not enabled
 		if(!m_autoHide) return;
 
@@ -283,7 +317,7 @@ public class UITooltipTrigger : MonoBehaviour, IPointerDownHandler, IPointerUpHa
 	/// The pointer has gone off over this object.
 	/// </summary>
 	/// <param name="_eventData">Event data.</param>
-	public void OnPointerExit(PointerEventData _eventData) {
+	public virtual void OnPointerExit(PointerEventData _eventData) {
 		// Nothing to do if auto hide not enabled
 		if(!m_autoHide) return;
 
@@ -295,7 +329,7 @@ public class UITooltipTrigger : MonoBehaviour, IPointerDownHandler, IPointerUpHa
 	/// The tooltip has been closed.
 	/// </summary>
 	/// <param name="_anim">The animator that triggered the event.</param>
-	public void OnTooltipClosed(ShowHideAnimator _anim) {
+	public virtual void OnTooltipClosed(ShowHideAnimator _anim) {
 		// Return tooltip to its original parent
 		m_tooltip.transform.SetParent(m_originalTooltipParent);
 	}
