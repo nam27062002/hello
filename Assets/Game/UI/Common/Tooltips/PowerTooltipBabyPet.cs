@@ -31,8 +31,13 @@ public class PowerTooltipBabyPet : UITooltip
 	[Serializable]
 	private class PowerGroup {
 		[SerializeField] private PowerIcon m_icon = null;
+		public PowerIcon icon { get { return m_icon; } }
+
 		[SerializeField] private TextMeshProUGUI m_powerNameText = null;
+		public TextMeshProUGUI powerNameText { get { return m_powerNameText; } }
+
 		[SerializeField] private TextMeshProUGUI m_powerDescText = null;
+		public TextMeshProUGUI powerDescText { get { return m_powerDescText; } }
 
 		[NonSerialized] public DefinitionNode powerDef = null;
 
@@ -40,17 +45,19 @@ public class PowerTooltipBabyPet : UITooltip
 		/// Initialize with a given power.
 		/// </summary>
 		/// <param name="_powerSku">Sku of the power to be used for initialization.</param>
-		public void InitWithPower(string _powerSku) {
+		/// <param name="_petDef">Definition of the pet this power belongs to.</param>
+		public void InitWithPower(string _powerSku, DefinitionNode _petDef) {
 			// Get power definition and use Definition initializer
 			DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, _powerSku);
-			InitWithPower(def);
+			InitWithPower(def, _petDef);
 		}
 
 		/// <summary>
 		/// Initialize with a given power.
 		/// </summary>
 		/// <param name="_powerDef">Definition of the power to be used for initialization.</param>
-		public void InitWithPower(DefinitionNode _powerDef) {
+		/// <param name="_petDef">Definition of the pet this power belongs to.</param>
+		public void InitWithPower(DefinitionNode _powerDef, DefinitionNode _petDef) {
 			// Store power def
 			powerDef = _powerDef;
 
@@ -59,7 +66,7 @@ public class PowerTooltipBabyPet : UITooltip
 
 			// Power icon
 			if(m_icon != null) {
-				m_icon.InitFromDefinition(powerDef, false, true, PowerIcon.Mode.PET);
+				m_icon.InitFromDefinition(powerDef, _petDef, false, true, PowerIcon.Mode.PET);
 			}
 
 			// Power name
@@ -78,11 +85,14 @@ public class PowerTooltipBabyPet : UITooltip
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed References
-	[SerializeField] private PowerGroup m_mainPower = null;
-	[SerializeField] private PowerGroup m_collectionPower = null;
-	[SerializeField] private PowerGroup m_familyPower = null;
 	[Space]
+	[SerializeField] private PowerGroup m_mainPower = null;
+	[Space]
+	[SerializeField] private PowerGroup m_collectionPower = null;
 	[SerializeField] private TextMeshProUGUI m_collectionCounterText = null;
+	[Space]
+	[SerializeField] private PowerGroup m_familyPower = null;
+	[SerializeField] private UIColorFX m_familyPowerIconFX = null;
 
 	// Data
 	private DefinitionNode m_petDef = null;
@@ -127,7 +137,8 @@ public class PowerTooltipBabyPet : UITooltip
 	/// Initialize this tooltip with the data from the given definition.
 	/// </summary>
 	/// <param name="_babyPetDef">Baby pet definition.</param>
-	public void InitFromDefinition(DefinitionNode _babyPetDef) {
+	/// <param name="_displayMode">The display mode for this power.</param>
+	public void InitFromDefinition(DefinitionNode _babyPetDef, PowerIcon.DisplayMode _displayMode) {
 		// Ignore if given definition is not valid
 		if(_babyPetDef == null) return;
 
@@ -136,45 +147,70 @@ public class PowerTooltipBabyPet : UITooltip
 
 		// Init main power
 		if(m_mainPower != null) {
-			m_mainPower.InitWithPower(m_petDef.GetAsString("powerup"));
+			m_mainPower.InitWithPower(m_petDef.GetAsString("powerup"), m_petDef);
 		}
 
 		// Init collection bonus power
 		if(m_collectionPower != null) {
 			// Not using powerups definitions table, so gather definition first
 			DefinitionNode collectionPowerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.BABY_DRAGONS_SHARED_POWER, m_petDef.GetAsString("sharedPower"));
-			m_collectionPower.InitWithPower(collectionPowerDef);
+			m_collectionPower.InitWithPower(collectionPowerDef, m_petDef);
 		}
 
 		// Init collection counter
 		if(m_collectionCounterText != null) {
-			LocalizationManager.SharedInstance.Localize(
+			/*LocalizationManager.SharedInstance.Localize(
 				"TID_FRACTION",
 				StringUtils.FormatNumber(UsersManager.currentUser.petCollection.unlockedPetsCount),
 				StringUtils.FormatNumber(BABY_PETS_TOTAL_COUNT)
+			);*/
+			LocalizationManager.SharedInstance.ReplaceParameters(
+				"x%U0",
+				StringUtils.FormatNumber(UsersManager.currentUser.petCollection.unlockedBabyPetsCount)
 			);
 		}
 
 		// Init family bonus power
+		if(m_familyPower != null) {
+			// Default setup
+			m_familyPower.InitWithPower(m_petDef.GetAsString("statPower"), m_petDef);
 
-		// Power icon
-		/*if(m_powerIcon != null) {
-            // Load from resources
-            m_powerIcon.InitFromDefinition(_powerDef,false,false);
+			// Aux vars
+			bool familyPowerActive = false;
+			string motherDragonSku = m_petDef.GetAsString("motherDragonSKU");
+
+			// If family power is not active, or if in preview mode, do some changes
+			if(_displayMode == PowerIcon.DisplayMode.EQUIPPED) {
+				// Only need to check if EQUIPPED mode. Check pet's mother dragon against current dragon.
+				familyPowerActive = UsersManager.currentUser.CurrentDragon == motherDragonSku;
+			}
+
+			// B/W icon
+			if(m_familyPowerIconFX != null) {
+				// Only in EQUIPPED mode when family power is not active
+				if(_displayMode == PowerIcon.DisplayMode.EQUIPPED && !familyPowerActive) {
+					m_familyPowerIconFX.saturation = UIColorFX.SATURATION_MIN;
+				} else {
+					m_familyPowerIconFX.saturation = UIColorFX.SATURATION_DEFAULT;
+				}
+			}
+
+			// Different text
+			if(m_familyPower.powerDescText != null) {
+				// Change text for preview mode or when fanily power is not active
+				if(_displayMode == PowerIcon.DisplayMode.PREVIEW || !familyPowerActive) {
+					// Get mother dragon definition
+					DefinitionNode motherDragonDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, motherDragonSku);
+
+					// Initialize text
+					m_familyPower.powerDescText.text = LocalizationManager.SharedInstance.Localize(
+						"TID_POWERUP_BABY_FAMILY_BONUS_DESC",
+						m_familyPower.powerDescText.text,   // Original text, initialized with the InitWithPower() call
+						motherDragonDef != null ? motherDragonDef.GetLocalized("tidName") : ""
+					);
+				}
+			}
 		}
-
-		// Name and description
-		// Name
-		if(m_titleText != null) {
-            string title = LocalizationManager.SharedInstance.Localize(_powerDef.Get("tidName"));
-            Debug.Log ("set Title: " + title);
-            m_titleText.text = title;
-		}
-
-		// Desc
-		if(m_messageText != null) {
-            m_messageText.text = DragonPowerUp.GetDescription(_powerDef, false, _mode == PowerIcon.Mode.PET);   // Custom formatting depending on powerup type, already localized
-		}*/
 	}
 
 	//------------------------------------------------------------------------//

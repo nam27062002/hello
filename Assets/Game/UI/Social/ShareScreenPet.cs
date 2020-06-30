@@ -107,7 +107,7 @@ public class ShareScreenPet : IShareScreen {
         // Power Info
         if (m_powerIcon != null) {
 			DefinitionNode powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, m_petDef.GetAsString("powerup"));
-			m_powerIcon.InitFromDefinition(powerDef, false, false, PowerIcon.Mode.PET);
+			m_powerIcon.InitFromDefinition(powerDef, m_petDef, false, false, PowerIcon.Mode.PET);
 		}
 	}
 
