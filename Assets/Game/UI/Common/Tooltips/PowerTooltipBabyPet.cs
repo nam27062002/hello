@@ -199,16 +199,28 @@ public class PowerTooltipBabyPet : UITooltip
 			if(m_familyPower.powerDescText != null) {
 				// Change text for preview mode or when fanily power is not active
 				if(_displayMode == PowerIcon.DisplayMode.PREVIEW || !familyPowerActive) {
-					// Get mother dragon definition
+					// Get mother dragon name to display
 					DefinitionNode motherDragonDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, motherDragonSku);
+					string motherName = "";
+					if(motherDragonDef != null) {
+						// Highlight name using power's color
+						Color powerHighlightColor = DragonPowerUp.GetColor(m_familyPower.powerDef);
+						motherName = motherDragonDef.GetLocalized("tidName");
+						motherName = powerHighlightColor.Tag(motherName);
+					}
 
 					// Initialize text
 					m_familyPower.powerDescText.text = LocalizationManager.SharedInstance.Localize(
 						"TID_POWERUP_BABY_FAMILY_BONUS_DESC",
 						//m_familyPower.powerDescText.text,   // Original text, initialized with the InitWithPower() call
 						DragonPowerUp.GetDescription(m_familyPower.powerDef, false, true),
-						motherDragonDef != null ? motherDragonDef.GetLocalized("tidName") : ""
+						motherName
 					);
+
+					// Also gray out power name to emphazise the fact that the power is disabled
+					if(m_familyPower.powerNameText != null) {
+						m_familyPower.powerNameText.text = Colors.silver.Tag(m_familyPower.powerNameText.text);
+					}
 				}
 			}
 		}
