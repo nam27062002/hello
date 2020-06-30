@@ -30,7 +30,8 @@ public class WorldFeedbackSpawner : MonoBehaviour, IBroadcastListener {
 	[SerializeField] private GameObject m_scoreFeedbackPrefab = null;
 	[SerializeField] private GameObject m_coinsFeedbackPrefab = null;
 	[SerializeField] private GameObject m_pcFeedbackPrefab = null;
-	[SerializeField] private GameObject m_killFeedbackPrefab = null;
+    [SerializeField] private GameObject m_pcDoubleFeedbackPrefab = null;
+    [SerializeField] private GameObject m_killFeedbackPrefab = null;
 	[SerializeField] private GameObject m_flockBonusFeedbackPrefab = null;
 	[SerializeField] private GameObject m_escapedFeedbackPrefab = null;
     [SerializeField] private ParticlesTrailFX m_hungryCollectibleEatenFeedbackPrefab = null;
@@ -54,7 +55,8 @@ public class WorldFeedbackSpawner : MonoBehaviour, IBroadcastListener {
 	private PoolHandler m_scoreFeedbackPoolHandler;
 	private PoolHandler m_coinsFeedbackPoolHandler;
 	private PoolHandler m_pcFeedbackPoolHandler;
-	private PoolHandler m_killFeedbackPoolHandler;
+    private PoolHandler m_pcDoubleFeedbackPoolHandler;
+    private PoolHandler m_killFeedbackPoolHandler;
 	private PoolHandler m_flockBonusFeedbackPoolHandler;
 	private PoolHandler m_escapedFeedbackPoolHandler;
     private PoolHandler m_cakeFeedbackPoolHandler;
@@ -125,6 +127,12 @@ public class WorldFeedbackSpawner : MonoBehaviour, IBroadcastListener {
 			// Use a dedicated camera as parent, that way the feedback will be positioned relative to the viewport
 			m_pcFeedbackPoolHandler = UIPoolManager.CreatePool(m_pcFeedbackPrefab, m_3dFeedbackContainer.transform, 2, false, false);
 		}
+
+        if (m_pcDoubleFeedbackPrefab != null)
+        {
+            // Use a dedicated camera as parent, that way the feedback will be positioned relative to the viewport
+            m_pcDoubleFeedbackPoolHandler = UIPoolManager.CreatePool(m_pcDoubleFeedbackPrefab, m_3dFeedbackContainer.transform, 2, false, false);
+        }
 
 
         // Start with the 3D feedback container disabled - will be enabled on demand
@@ -320,8 +328,18 @@ public class WorldFeedbackSpawner : MonoBehaviour, IBroadcastListener {
 
 		// PC
 		if(m_pcFeedbackPrefab != null && _reward.pc > 0) {
-			m_pcFeedbackPoolHandler.pool.containerObj.SetActive(true);
-			m_pcFeedbackPoolHandler.GetInstance();
+
+            // Check if baby dragon produced a double reward
+            if (_reward.origin == "doubleGems")
+            {
+                m_pcDoubleFeedbackPoolHandler.pool.containerObj.SetActive(true);
+                m_pcDoubleFeedbackPoolHandler.GetInstance();
+            }
+            else
+            {
+                m_pcFeedbackPoolHandler.pool.containerObj.SetActive(true);
+                m_pcFeedbackPoolHandler.GetInstance();
+            }
 		}
 	}
 
