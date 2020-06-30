@@ -159,12 +159,12 @@ public class PowerTooltipBabyPet : UITooltip
 
 		// Init collection counter
 		if(m_collectionCounterText != null) {
-			/*LocalizationManager.SharedInstance.Localize(
+			/*m_collectionCounterText.text = LocalizationManager.SharedInstance.Localize(
 				"TID_FRACTION",
 				StringUtils.FormatNumber(UsersManager.currentUser.petCollection.unlockedPetsCount),
 				StringUtils.FormatNumber(BABY_PETS_TOTAL_COUNT)
 			);*/
-			LocalizationManager.SharedInstance.ReplaceParameters(
+			m_collectionCounterText.text = LocalizationManager.SharedInstance.ReplaceParameters(
 				"x%U0",
 				StringUtils.FormatNumber(UsersManager.currentUser.petCollection.unlockedBabyPetsCount)
 			);
@@ -205,7 +205,8 @@ public class PowerTooltipBabyPet : UITooltip
 					// Initialize text
 					m_familyPower.powerDescText.text = LocalizationManager.SharedInstance.Localize(
 						"TID_POWERUP_BABY_FAMILY_BONUS_DESC",
-						m_familyPower.powerDescText.text,   // Original text, initialized with the InitWithPower() call
+						//m_familyPower.powerDescText.text,   // Original text, initialized with the InitWithPower() call
+						DragonPowerUp.GetDescription(m_familyPower.powerDef, false, true),
 						motherDragonDef != null ? motherDragonDef.GetLocalized("tidName") : ""
 					);
 				}
