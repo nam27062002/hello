@@ -15,7 +15,7 @@ public class UnityEditorLog
 	private static readonly string EDITOR_LOG_PATH = "/.config/unity3d/Editor.log";					//LINUX
 #endif
 
-	private static List<string> parseUnityEditorLog(string appVersion, bool assetBundles, string editorLogPath)
+	private static List<string> parseUnityEditorLog(bool assetBundles, string editorLogPath)
 	{
 		if (string.IsNullOrEmpty(editorLogPath))
 		{
@@ -65,9 +65,11 @@ public class UnityEditorLog
 				{
 					outputList.Clear();
 					outputList.Add(line);
-
-					string buildVersion = "Build version: " + appVersion;
-
+#if UNITY_IOS
+					string buildVersion = "Build version: " + Application.version + " [" + PlayerSettings.iOS.buildNumber + "]";
+#elif UNITY_ANDROID
+					string buildVersion = "Build version: " + Application.version + " [" + PlayerSettings.Android.bundleVersionCode + "]";
+#endif
 					outputList.Add(buildVersion);
 					outputList.Add(line);
 
@@ -89,7 +91,7 @@ public class UnityEditorLog
 	}
 
 	//Get Editor.log asset list
-	public static void exportAssetList(string appVersion, bool assetBundles = false, string editorLogPath = "" )
+	public static void exportAssetList(bool assetBundles = false, string editorLogPath = "" )
 	{
 
 		string assetsPath = Application.dataPath;
@@ -121,7 +123,7 @@ public class UnityEditorLog
 		}
 #endif
 
-		List<string> outputList = parseUnityEditorLog(appVersion, assetBundles, editorLogPath);
+		List<string> outputList = parseUnityEditorLog(assetBundles, editorLogPath);
 
 		if (outputList.Count > 0)
 		{
@@ -142,13 +144,13 @@ public class UnityEditorLog
 	[MenuItem("Tech/Build/Export build asset list")]
 	public static void callExportAssetListBuild()
 	{
-		exportAssetList(Application.version);
+		exportAssetList();
 	}
 
 	[MenuItem("Tech/Build/Export asset bundles detailed list")]
 	public static void callExportAssetListBundles()
 	{
-		exportAssetList(Application.version, true);
+		exportAssetList(true);
 	}
 
 }

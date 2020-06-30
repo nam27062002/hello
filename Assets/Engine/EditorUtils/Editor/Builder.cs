@@ -103,7 +103,7 @@ public class Builder : MonoBehaviour, UnityEditor.Build.IPreprocessBuild
 
         BuildPipeline.BuildPlayer(buildPlayerOptions);
 
-		UnityEditorLog.exportAssetList(Application.version);
+		UnityEditorLog.exportAssetList();
 	}
 		
 	//[MenuItem ("Build/Android")]
