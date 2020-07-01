@@ -10,7 +10,7 @@ public class UnityEditorLog
 #if UNITY_EDITOR_OSX
 	private static readonly string EDITOR_LOG_PATH = "/Library/Logs/Unity/Editor.log";				//MAC
 #elif UNITY_EDITOR_WIN
-	private static readonly string EDITOR_LOG_PATH = "\AppData\Local\Unity\Editor\Editor.log";		//WINDOWS
+	private static readonly string EDITOR_LOG_PATH = "\\AppData\\Local\\Unity\\Editor\\Editor.log";		//WINDOWS
 #else
 	private static readonly string EDITOR_LOG_PATH = "/.config/unity3d/Editor.log";					//LINUX
 #endif
@@ -96,17 +96,17 @@ public class UnityEditorLog
 
 		string assetsPath = Application.dataPath;
 #if UNITY_EDITOR_WIN
-		string projectPath = assetsPath.Substring(0, assetsPath.LastIndexOf("\Assets"));
+		string projectPath = assetsPath.Substring(0, assetsPath.LastIndexOf("\\Assets"));
 
 		string ASSET_LIST;
 
 		if (assetBundles)
 		{
-			ASSET_LIST = projectPath + "\BuildAssetbundlesList.txt";
+			ASSET_LIST = projectPath + "\\BuildAssetbundlesList.txt";
 		}
 		else
 		{
-			ASSET_LIST = projectPath + "\BuildAssetsList.txt";
+			ASSET_LIST = projectPath + "\\BuildAssetsList.txt";
 		}
 #else
 		string projectPath = assetsPath.Substring(0, assetsPath.LastIndexOf("/Assets"));
