@@ -22,12 +22,21 @@ public class PetPowerTooltipTriggerEditor : Editor {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
+	private class TooltipProperties {
+		public SerializedProperty tooltipInstanceProp = null;
+		public SerializedProperty tooltipPrefabProp = null;
+	}
 
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Casted target object
-	PetPowerTooltipTrigger m_targetPetPowerTooltipTrigger = null;
+	private PetPowerTooltipTrigger m_targetPetPowerTooltipTrigger = null;
+
+	// Cached properties
+	private TooltipProperties m_defaultTooltipProps = new TooltipProperties();
+	private TooltipProperties m_babyTooltipProps = new TooltipProperties();
+	private SerializedProperty m_instantiationModeProp = null;
 
 	//------------------------------------------------------------------------//
 	// METHODS																  //
@@ -38,6 +47,15 @@ public class PetPowerTooltipTriggerEditor : Editor {
 	private void OnEnable() {
 		// Get target object
 		m_targetPetPowerTooltipTrigger = target as PetPowerTooltipTrigger;
+
+		// Cache important properties
+		m_defaultTooltipProps.tooltipInstanceProp = serializedObject.FindProperty("m_defaultTooltipInstance");
+		m_defaultTooltipProps.tooltipPrefabProp = serializedObject.FindProperty("m_defaultPrefabPath");
+		
+		m_babyTooltipProps.tooltipInstanceProp = serializedObject.FindProperty("m_babyPetTooltipInstance");
+		m_babyTooltipProps.tooltipPrefabProp = serializedObject.FindProperty("m_babyPetPrefabPath");
+		
+		m_instantiationModeProp = serializedObject.FindProperty("m_instantiationMode");
 	}
 
 	/// <summary>
@@ -46,6 +64,15 @@ public class PetPowerTooltipTriggerEditor : Editor {
 	private void OnDisable() {
 		// Clear target object
 		m_targetPetPowerTooltipTrigger = null;
+
+		// Clear cached properties
+		m_defaultTooltipProps.tooltipInstanceProp = null;
+		m_defaultTooltipProps.tooltipPrefabProp = null;
+
+		m_babyTooltipProps.tooltipInstanceProp = null;
+		m_babyTooltipProps.tooltipPrefabProp = null;
+
+		m_instantiationModeProp = null;
 	}
 
 	/// <summary>
@@ -69,13 +96,43 @@ public class PetPowerTooltipTriggerEditor : Editor {
 		p.Next(true);	// To get first element
 		do {
 			// Properties requiring special treatment
-			// Properties we don't want to show
+			// Properties we don't want to show or that will be displayed together with another property
 			if(p.name == "m_ObjectHideFlags"
 			|| p.name == "m_Script"
-			|| p.name == "m_tooltip"
-			|| p.name == "m_prefabPath"
+			|| p.name == "m_tooltip"	// Parent props we're not using
+			|| p.name == "m_prefabPath" // Parent props we're not using
+			|| p.name == m_defaultTooltipProps.tooltipInstanceProp.name
+			|| p.name == m_defaultTooltipProps.tooltipPrefabProp.name
+			|| p.name == m_babyTooltipProps.tooltipInstanceProp.name
+			|| p.name == m_babyTooltipProps.tooltipPrefabProp.name
 			) {
 				// Do nothing
+			}
+
+			// Other properties requiring special treatment
+			else if(p.name == m_instantiationModeProp.name) {
+				// Show property
+				EditorGUILayout.PropertyField(m_instantiationModeProp, true);
+				UITooltipTrigger.TooltipInstantiationMode instantiationMode = (UITooltipTrigger.TooltipInstantiationMode)m_instantiationModeProp.enumValueIndex;
+
+				EditorGUI.indentLevel++;
+
+				// Show instance fields, enabled/disabled based on instantiation mode
+				EditorGUI.BeginDisabledGroup(instantiationMode != UITooltipTrigger.TooltipInstantiationMode.INSTANCE);
+				EditorGUILayout.PropertyField(m_defaultTooltipProps.tooltipInstanceProp, true);
+				EditorGUILayout.PropertyField(m_babyTooltipProps.tooltipInstanceProp, true);
+				EditorGUI.EndDisabledGroup();
+
+				EditorGUILayout.Space();
+				
+				// Show prefab fields, enabled/disabled based on instantiation mode
+				EditorGUI.BeginDisabledGroup(instantiationMode != UITooltipTrigger.TooltipInstantiationMode.PREFAB);
+				EditorGUILayout.PropertyField(m_defaultTooltipProps.tooltipPrefabProp, true);
+				EditorGUILayout.PropertyField(m_babyTooltipProps.tooltipPrefabProp, true);
+				EditorGUI.EndDisabledGroup();
+
+				EditorGUI.indentLevel--;
+				EditorGUILayout.Space();
 			}
 
 			// Default property display

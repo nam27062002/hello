@@ -30,7 +30,6 @@ public class PetPowerTooltipTrigger : UITooltipTrigger {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Tooltip prefab path
-	[Separator("Pet Power Tooltip Extras")]
 	[FileList("Resources/UI", StringUtils.PathFormat.RESOURCES_ROOT_WITHOUT_EXTENSION, "*.prefab")]
 	[SerializeField] private string m_defaultPrefabPath = "";
 
@@ -38,8 +37,8 @@ public class PetPowerTooltipTrigger : UITooltipTrigger {
 	[SerializeField] private string m_babyPetPrefabPath = "";
 
 	// Tooltip instances
-	private UITooltip m_defaultTooltipInstance = null;
-	private UITooltip m_babyPetTooltipInstance = null;
+	[SerializeField] private UITooltip m_defaultTooltipInstance = null;
+	[SerializeField] private UITooltip m_babyPetTooltipInstance = null;
 
 	// Other internal vars
 	private DefinitionNode m_petDef = null;
