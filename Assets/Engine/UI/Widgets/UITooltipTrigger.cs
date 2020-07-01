@@ -25,18 +25,24 @@ public class UITooltipTrigger : MonoBehaviour, IPointerDownHandler, IPointerUpHa
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
+	public enum TooltipInstantiationMode {
+		PREFAB,
+		INSTANCE
+	}
 
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed
-	[Comment("If a tooltip instance is defined in the inspector, it will be used directly.\nIf not defined, a new instance of the defined prefab will be created as needed.")]
+	[SerializeField] protected TooltipInstantiationMode m_instantiationMode = TooltipInstantiationMode.INSTANCE;
+	
 	[SerializeField] protected UITooltip m_tooltip = null;
 	public UITooltip tooltip {
 		get { return m_tooltip; }
         set { m_tooltip = value; }
 	}
 
+	[FileList("Resources/UI", StringUtils.PathFormat.RESOURCES_ROOT_WITHOUT_EXTENSION, "*.prefab")]
 	[SerializeField] private string m_prefabPath = "";
 
 	[Comment("\nThe tooltip will be spawned from this anchor point.\nIf not defined, it will be autopositioned using the trigger's transform as anchor.\nActivating the \"Keep Original Position\" flag will override the anchor.")]
