@@ -212,13 +212,15 @@ public class PowerTooltipBabyPet : UITooltip
 					// Initialize text
 					m_familyPower.powerDescText.text = LocalizationManager.SharedInstance.Localize(
 						"TID_POWERUP_BABY_FAMILY_BONUS_DESC",
-						//m_familyPower.powerDescText.text,   // Original text, initialized with the InitWithPower() call
 						DragonPowerUp.GetDescription(m_familyPower.powerDef, false, true),
 						motherName
 					);
+				}
 
-					// Also gray out power name to emphazise the fact that the power is disabled
-					if(m_familyPower.powerNameText != null) {
+				// Gray out power name to emphazise the fact that the power is disabled
+				if(m_familyPower.powerNameText != null) {
+					// Only in EQUIPPED mode when family power is not active
+					if(_displayMode == PowerIcon.DisplayMode.EQUIPPED && !familyPowerActive) {
 						m_familyPower.powerNameText.text = Colors.silver.Tag(m_familyPower.powerNameText.text);
 					}
 				}
