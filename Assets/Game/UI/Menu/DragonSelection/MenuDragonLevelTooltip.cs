@@ -35,8 +35,11 @@ public class MenuDragonLevelTooltip : UITooltipMultidirectional
     // Internal
     private string m_skinName;
     private string m_skinIconId;
+    private DefinitionNode m_skinDef;
+    
     private string m_powerUpText;
     private DefinitionNode m_powerUpDef;
+    
     private int m_unlockLevel;
 
     //------------------------------------------------------------------------//
@@ -58,6 +61,7 @@ public class MenuDragonLevelTooltip : UITooltipMultidirectional
     {
 
         // Skin info
+        m_skinDef = _skinDefinition;
         m_skinName = LocalizationManager.SharedInstance.Localize(_skinDefinition.Get("tidName"));
         m_skinIconId = _skinDefinition.Get("icon");
         m_unlockLevel = _skinDefinition.GetAsInt("unlockLevel");
@@ -107,7 +111,7 @@ public class MenuDragonLevelTooltip : UITooltipMultidirectional
         {
             if (m_powerUpDef != null)
             {
-                m_powerUpIcon.InitFromDefinition(m_powerUpDef, false, false, 0);
+                m_powerUpIcon.InitFromDefinition(m_powerUpDef, m_skinDef, false, false, 0);
             }
             m_powerUpIcon.gameObject.SetActive(m_powerUpDef != null);
         }

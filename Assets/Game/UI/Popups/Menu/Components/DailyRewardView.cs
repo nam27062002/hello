@@ -377,7 +377,7 @@ public class DailyRewardView : MetagameRewardView {
 				// Initialize tooltip - it should have a PowerTooltip component attached
 				PowerTooltip powerTooltip = _tooltip as PowerTooltip;
 				if(powerTooltip != null) {
-					powerTooltip.InitFromDefinition(powerDef, PowerIcon.Mode.PET);
+					powerTooltip.InitFromDefinition(powerDef, m_reward.def, PowerIcon.Mode.PET);
 				}
 			} break;
 		}

@@ -11,6 +11,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 using TMPro;
+using UnityEngine.Internal.Experimental.UIElements;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -107,21 +108,20 @@ public class MetagameRewardView : MonoBehaviour, IBroadcastListener {
 		string rewardText = string.Empty;
 		Sprite iconSprite = null;
 		DefinitionNode powerDef = null;
+		DefinitionNode powerSourceDef = null;
 		switch(m_reward.type) {
 			case Metagame.RewardPet.TYPE_CODE: {
 				// Get the pet preview
 				DefinitionNode petDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PETS, m_reward.sku);
 				if(petDef != null) {
-                        if (m_iconLoader != null)
-                        {
-                            m_iconLoader.LoadAsync(petDef.Get("icon"));
-                        }
-                        else
-                        {
-                            iconSprite = HDAddressablesManager.Instance.LoadAsset<Sprite>(petDef.Get("icon"));
-                        }
+                    if(m_iconLoader != null) {
+                        m_iconLoader.LoadAsync(petDef.Get("icon"));
+                    } else {
+                        iconSprite = HDAddressablesManager.Instance.LoadAsset<Sprite>(petDef.Get("icon"));
+                    }
 					rewardText = petDef.GetLocalized("tidName");
 					powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, petDef.Get("powerup"));
+					powerSourceDef = petDef;
 				} else {
 					// (shouldn't happen)
 					rewardText = LocalizationManager.SharedInstance.Localize("TID_PET");
@@ -144,6 +144,7 @@ public class MetagameRewardView : MonoBehaviour, IBroadcastListener {
                         }
 					rewardText = skinDef.GetLocalized("tidName");
 					powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, skinDef.Get("powerup"));
+					powerSourceDef = skinDef;
 				} else {
 					// (shouldn't happen)
 					rewardText = LocalizationManager.SharedInstance.Localize("TID_DISGUISE");
@@ -164,6 +165,7 @@ public class MetagameRewardView : MonoBehaviour, IBroadcastListener {
                         }
 					rewardText = dragonDef.GetLocalized("tidName");
 					powerDef = null;
+					powerSourceDef = null;
 				} else {
 					// (shouldn't happen)
 					rewardText = LocalizationManager.SharedInstance.Localize("Dragon");
@@ -245,7 +247,7 @@ public class MetagameRewardView : MonoBehaviour, IBroadcastListener {
 			m_powerIcon.gameObject.SetActive(powerDef != null);
 
 			// Initialize
-			m_powerIcon.InitFromDefinition(powerDef, false);
+			m_powerIcon.InitFromDefinition(powerDef, powerSourceDef, false);
 		}
 	}
 

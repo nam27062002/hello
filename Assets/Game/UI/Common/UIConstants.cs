@@ -217,18 +217,30 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 	public static Color PET_CATEGORY_DEFENSE { get { return instance.m_petCategoryColorDefense; } }
 	public static Color PET_CATEGORY_SPECIAL { get { return instance.m_petCategoryColorSpecial; } }
     public static Color PET_CATEGORY_BABY { get { return instance.m_petCategoryColorBaby; } }
-    public static Color PET_CATEGORY_DEFAULT { get { return instance.m_petCategoryColorDefault; } }
+	public static Color PET_CATEGORY_DEFAULT { get { return instance.m_petCategoryColorDefault; } }
 	#endregion
 
 	// -------------------------------------------------------------------------
-	// Misc colors
-	#region MiscColors
+	// Dragon colors
+	#region DragonColors
 	[SerializeField] private Color m_dragonStatColorHp = Color.red;
 	[SerializeField] private Color m_dragonStatColorSpeed = Color.cyan;
 	[SerializeField] private Color m_dragonStatColorEnergy = Color.yellow;
 
 	[SerializeField] private Color[] m_dragonTierColors = new Color[0];
 
+	#endregion
+
+	// Currency colors
+	#region CurrencyColors
+	[SerializeField] private Color m_currencyColorSC = Color.yellow;
+	public static Color CURRENCY_COLOR_SC { get { return instance.m_currencyColorSC; } }
+
+	[SerializeField] private Color m_currencyColorHC = Color.magenta;
+	public static Color CURRENCY_COLOR_HC { get { return instance.m_currencyColorHC; } }
+
+	[SerializeField] private Color m_currencyColorReal = Color.white;
+	public static Color CURRENCY_COLOR_REAL { get { return instance.m_currencyColorReal; } }
 	#endregion
 
 	// -----------------------------------------------------------------------//
