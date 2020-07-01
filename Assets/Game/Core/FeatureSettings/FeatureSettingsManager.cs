@@ -801,6 +801,8 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         }
 
         SetupCurrentFeatureSettings(GetDeviceFeatureSettingsAsJSON(), serverQualitySettingsJSON, serverGameSettingsJSON);
+
+        Messenger.Broadcast(MessengerEvents.FEATURE_SETTINGS_UPDATED);
     }
     #endregion
 

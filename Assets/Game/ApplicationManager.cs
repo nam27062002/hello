@@ -168,6 +168,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
             Device_Init();
 
             Messenger.AddListener(MessengerEvents.DEFINITIONS_LOADED, OnContentLoaded);
+            Messenger.AddListener(MessengerEvents.FEATURE_SETTINGS_UPDATED, OnFeatureSettingUpdated);
 
             // [DGR] GAME_VALIDATOR: Not supported yet
             // GameValidator gv = new GameValidator();
@@ -180,6 +181,12 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     {
         Messenger.RemoveListener(MessengerEvents.DEFINITIONS_LOADED, OnContentLoaded);
         GameCenter_Init();
+    }
+
+    private void OnFeatureSettingUpdated()
+    {
+        Messenger.RemoveListener(MessengerEvents.FEATURE_SETTINGS_UPDATED, OnFeatureSettingUpdated);
+        FeatureSettingsHasChanged = true;
     }
 
     private bool HasArg(string _argName) 
@@ -280,7 +287,8 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
     public bool NeedsToRestartFlow { get; set; }
     public bool Restarting { get; set; }
-    
+    private bool FeatureSettingsHasChanged { get; set; }
+
     protected void Update()
     {        
 #if UNITY_EDITOR        
@@ -425,6 +433,13 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
             Debug.Log("Current persistence test passed: " + PersistenceTester.HasCurrentTestPassed());
         }
 #endif
+
+        if (FeatureSettingsHasChanged)
+        {
+            HDTrackingManager.CreateInstance();
+            FeatureSettingsHasChanged = false;
+        }
+
 		UnityEngine.Profiling.Profiler.BeginSample("ApplicationManager.Update()");
 
 		UnityEngine.Profiling.Profiler.BeginSample("Language.Update()");
