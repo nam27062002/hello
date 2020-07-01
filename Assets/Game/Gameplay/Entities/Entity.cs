@@ -5,6 +5,9 @@ using UnityEngine;
 public class Entity : IEntity, IBroadcastListener {
 	private static readonly string RESOURCES_DIR = "Game/Entities";
 
+	private const string FLYING_PIG_SKU = "FlyingPig";
+
+
 	//-----------------------------------------------
 	// Properties
 	//-----------------------------------------------
@@ -269,7 +272,8 @@ public class Entity : IEntity, IBroadcastListener {
 		if (!m_isPC) {
 			newReward.pc = 0;
 		}
-        else
+        // Check if player ate a flying pig
+        else if (m_sku == FLYING_PIG_SKU)
         {
 			BabyDragon babyDragon = InstanceManager.player.GetBabyDragon();
 			if (babyDragon.IsEquipped())
@@ -292,7 +296,8 @@ public class Entity : IEntity, IBroadcastListener {
 					// Save player obtained extra gem with baby dragon
 					UsersManager.currentUser.babyDragonExtraGemGranted = true;
 
-					// TODO: inform user on UI. Received extra gems due to baby dragons
+                    // Use origin field to notify the feedback spawner
+					newReward.origin = "doubleGems";
 				}
                 else
                 {
