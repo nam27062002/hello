@@ -1,8 +1,8 @@
-// DisguisePowerTooltipBabyPet.cs
+// PowerTooltip_BabyPet.cs
 // Hungry Dragon
 // 
-// Created by Alger Ortín Castellví on 03/05/2016.
-// Copyright (c) 2016 Ubisoft. All rights reserved.
+// Created by Alger Ortín Castellví on 02/07/2020.
+// Copyright (c) 2020 Ubisoft. All rights reserved.
 
 //----------------------------------------------------------------------------//
 // INCLUDES																	  //
@@ -12,16 +12,14 @@ using UnityEngine.UI;
 using System;
 using System.Collections.Generic;
 using TMPro;
-using Calety.Customiser.Api;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
 //----------------------------------------------------------------------------//
 /// <summary>
-/// Controller for the Baby Dragon Pets power tooltip.
+/// Specialization for a baby pet power tooltip.
 /// </summary>
-public class PowerTooltipBabyPet : UITooltip
-{
+public class PowerTooltip_BabyPet : IPowerTooltip {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -80,7 +78,7 @@ public class PowerTooltipBabyPet : UITooltip
 			}
 		}
 	}
-	
+
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
@@ -94,9 +92,6 @@ public class PowerTooltipBabyPet : UITooltip
 	[SerializeField] private PowerGroup m_familyPower = null;
 	[SerializeField] private UIColorFX m_familyPowerIconFX = null;
 
-	// Data
-	private DefinitionNode m_petDef = null;
-
 	// For performance, cache invariable values in static variables
 	private static int s_babyPetsTotalCount = -1;
 	private static int BABY_PETS_TOTAL_COUNT {
@@ -107,7 +102,7 @@ public class PowerTooltipBabyPet : UITooltip
 				List<DefinitionNode> defs = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.PETS, "category", "baby");
 
 				// Count only those that are not hidden
-				s_babyPetsTotalCount = 0;	// Reset counter
+				s_babyPetsTotalCount = 0;   // Reset counter
 				int count = defs.Count;
 				for(int i = 0; i < count; ++i) {
 					if(!defs[i].GetAsBool("hidden")) {
@@ -118,43 +113,32 @@ public class PowerTooltipBabyPet : UITooltip
 			return s_babyPetsTotalCount;
 		}
 	}
-	
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Initialization.
-	/// </summary>
-	new private void Awake() {
-		// Start hidden
-        if(animator != null) animator.ForceHide(false);
-    }
-
+	
 	//------------------------------------------------------------------------//
-	// OTHER METHODS														  //
+	// ABSTRACT METHODS IMPLEMENTATION										  //
 	//------------------------------------------------------------------------//
 	/// <summary>
-	/// Initialize this tooltip with the data from the given definition.
+	/// Initialize the tooltip. To be implemented by heirs.
+	/// At this point, internal data variables have been initialized.
 	/// </summary>
-	/// <param name="_babyPetDef">Baby pet definition.</param>
-	/// <param name="_displayMode">The display mode for this power.</param>
-	public void InitFromDefinition(DefinitionNode _babyPetDef, PowerIcon.DisplayMode _displayMode) {
-		// Ignore if given definition is not valid
-		if(_babyPetDef == null) return;
-
-		// Save definition
-		m_petDef = _babyPetDef;
+	protected override void Init_Internal() {
+		// Nothing to do if pet definition is not valid
+		if(m_sourceDef == null) return;
 
 		// Init main power
 		if(m_mainPower != null) {
-			m_mainPower.InitWithPower(m_petDef.GetAsString("powerup"), m_petDef);
+			m_mainPower.InitWithPower(m_sourceDef.GetAsString("powerup"), m_sourceDef);
 		}
 
 		// Init collection bonus power
 		if(m_collectionPower != null) {
 			// Not using powerups definitions table, so gather definition first
-			DefinitionNode collectionPowerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.BABY_DRAGONS_SHARED_POWER, m_petDef.GetAsString("sharedPower"));
-			m_collectionPower.InitWithPower(collectionPowerDef, m_petDef);
+			DefinitionNode collectionPowerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.BABY_DRAGONS_SHARED_POWER, m_sourceDef.GetAsString("sharedPower"));
+			m_collectionPower.InitWithPower(collectionPowerDef, m_sourceDef);
 		}
 
 		// Init collection counter
@@ -173,14 +157,14 @@ public class PowerTooltipBabyPet : UITooltip
 		// Init family bonus power
 		if(m_familyPower != null) {
 			// Default setup
-			m_familyPower.InitWithPower(m_petDef.GetAsString("statPower"), m_petDef);
+			m_familyPower.InitWithPower(m_sourceDef.GetAsString("statPower"), m_sourceDef);
 
 			// Aux vars
 			bool familyPowerActive = false;
-			string motherDragonSku = m_petDef.GetAsString("motherDragonSKU");
+			string motherDragonSku = m_sourceDef.GetAsString("motherDragonSKU");
 
 			// If family power is not active, or if in preview mode, do some changes
-			if(_displayMode == PowerIcon.DisplayMode.EQUIPPED) {
+			if(m_displayMode == PowerIcon.DisplayMode.EQUIPPED) {
 				// Only need to check if EQUIPPED mode. Check pet's mother dragon against current dragon.
 				familyPowerActive = UsersManager.currentUser.CurrentDragon == motherDragonSku;
 			}
@@ -188,7 +172,7 @@ public class PowerTooltipBabyPet : UITooltip
 			// B/W icon
 			if(m_familyPowerIconFX != null) {
 				// Only in EQUIPPED mode when family power is not active
-				if(_displayMode == PowerIcon.DisplayMode.EQUIPPED && !familyPowerActive) {
+				if(m_displayMode == PowerIcon.DisplayMode.EQUIPPED && !familyPowerActive) {
 					m_familyPowerIconFX.saturation = UIColorFX.SATURATION_MIN;
 				} else {
 					m_familyPowerIconFX.saturation = UIColorFX.SATURATION_DEFAULT;
@@ -198,7 +182,7 @@ public class PowerTooltipBabyPet : UITooltip
 			// Different text
 			if(m_familyPower.powerDescText != null) {
 				// Change text for preview mode or when fanily power is not active
-				if(_displayMode == PowerIcon.DisplayMode.PREVIEW || !familyPowerActive) {
+				if(m_displayMode == PowerIcon.DisplayMode.PREVIEW || !familyPowerActive) {
 					// Get mother dragon name to display
 					DefinitionNode motherDragonDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, motherDragonSku);
 					string motherName = "";
@@ -220,7 +204,7 @@ public class PowerTooltipBabyPet : UITooltip
 				// Gray out power name to emphazise the fact that the power is disabled
 				if(m_familyPower.powerNameText != null) {
 					// Only in EQUIPPED mode when family power is not active
-					if(_displayMode == PowerIcon.DisplayMode.EQUIPPED && !familyPowerActive) {
+					if(m_displayMode == PowerIcon.DisplayMode.EQUIPPED && !familyPowerActive) {
 						m_familyPower.powerNameText.text = Colors.silver.Tag(m_familyPower.powerNameText.text);
 					}
 				}

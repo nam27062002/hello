@@ -49,7 +49,7 @@ public class RewardInfoUI : MonoBehaviour {
 	[Separator("Pet Reward")]
 	[SerializeField] private RarityTitleGroup m_petRarityTitle = null;
 	[SerializeField] private Localizer m_petNameText = null;
-	[SerializeField] private PetPowerTooltipTrigger m_petTooltipTrigger = null;
+	[SerializeField] private PowerTooltipTrigger m_powerTooltipTrigger = null;
 
 	[Separator("Golden Egg Fragments Reward")]
 	[SerializeField] private Localizer m_goldenFragmentTitle = null;
@@ -183,12 +183,12 @@ public class RewardInfoUI : MonoBehaviour {
 				}
 
                 // Power data
-				if(m_petTooltipTrigger != null) {
+				if(m_powerTooltipTrigger != null) {
 					// Open the tooltip! Unless if pet will be replaced
 					if(m_reward.WillBeReplaced()) {
-						m_petTooltipTrigger.CloseTooltip();
+						m_powerTooltipTrigger.CloseTooltip();
 					} else {
-						m_petTooltipTrigger.OpenTooltip();
+						m_powerTooltipTrigger.OpenTooltip();
 					}
 
 					// Nothing else to do, all data will be initialized via callbacks (OnPowerTooltipGetPetDef and OnPowerTooltipOpen)
@@ -419,54 +419,21 @@ public class RewardInfoUI : MonoBehaviour {
 	}
 
 	/// <summary>
-	/// A power tooltip is about to be opened.
-	/// Initialize tooltip with this reward's power def.
-	/// Link it via the inspector on a UITooltipTrigger component.
-	/// </summary>
-	/// <param name="_tooltip">The tooltip about to be opened.</param>
-	/// <param name="_trigger">The trigger which launched the event.</param>
-	public void OnPowerTooltipOpen(UITooltip _tooltip, UITooltipTrigger _trigger) {
-		// Nothing to do if the reward is not set or it's not a pet
-		if(m_reward == null) return;
-		if(m_reward.type != Metagame.RewardPet.TYPE_CODE) return;
-
-		// Get pet's def
-		DefinitionNode petDef = m_reward.def;
-
-		// Tooltip can either be a generic Power Tooltip or a Baby Pet Power Tooltip, using different initializations
-		if(_tooltip is PowerTooltip) {
-			// Cast to the right type and initialize it
-			PowerTooltip powerTooltip = (PowerTooltip)_tooltip;
-			if(powerTooltip != null) {
-				// Get power def
-				DefinitionNode powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, petDef.GetAsString("powerup"));
-
-				// Initialize tooltip
-				powerTooltip.InitFromDefinition(powerDef, petDef, PowerIcon.Mode.PET);
-				powerTooltip.SetLocked(false);
-			}
-		} else if(_tooltip is PowerTooltipBabyPet) {
-			// Cast to the right type and initialize it
-			PowerTooltipBabyPet powerTooltip = (PowerTooltipBabyPet)_tooltip;
-			if(powerTooltip != null) {
-				// Initialize
-				powerTooltip.InitFromDefinition(petDef, PowerIcon.DisplayMode.PREVIEW);
-			}
-		}
-	}
-
-	/// <summary>
-	/// A pet power tooltip trigger is about to open and needs the target pet definition.
-	/// Link it via the inspector on a PetPowerTooltipTrigger component.
+	/// A power tooltip trigger is about to open and needs data.
 	/// </summary>
 	/// <param name="_trigger">The tooltip trigger that triggered the event.</param>
-	public void OnPowerTooltipGetPetDef(PetPowerTooltipTrigger _trigger) {
+	public void OnPowerTooltipTriggerGetData(PowerTooltipTrigger _trigger) {
 		// Nothing to do if the reward is not set or it's not a pet
 		if(m_reward == null) return;
 		if(m_reward.type != Metagame.RewardPet.TYPE_CODE) return;
 
-		// Just share the pet definition with the tooltip
-		_trigger.SetPetDef(m_reward.def);
+		// Setup the tooltip
+		_trigger.SetTooltipData(
+			null,	// Irrelevant, since we are using the PET mode, the tooltip trigger will get the power def from the pet definition
+			m_reward.def,
+			PowerIcon.Mode.PET,
+			PowerIcon.DisplayMode.PREVIEW
+		);
 	}
 
 	/// <summary>

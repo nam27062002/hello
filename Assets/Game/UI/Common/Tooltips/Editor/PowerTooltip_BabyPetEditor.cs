@@ -1,4 +1,4 @@
-// PowerTooltipBabyPetEditor.cs
+// PowerTooltip_BabyPetEditor.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 29/06/2020.
@@ -14,9 +14,9 @@ using UnityEditor;
 // CLASSES																	  //
 //----------------------------------------------------------------------------//
 /// <summary>
-/// Custom editor for the PowerTooltipBabyPet class.
+/// Custom editor for the PowerTooltip_BabyPet class.
 /// </summary>
-[CustomEditor(typeof(PowerTooltipBabyPet), true)]	// True to be used by heir classes as well
+[CustomEditor(typeof(PowerTooltip_BabyPet), true)]	// True to be used by heir classes as well
 [CanEditMultipleObjects]
 public class PowerTooltipBabyPetEditor : Editor {
 	//------------------------------------------------------------------------//
@@ -27,7 +27,7 @@ public class PowerTooltipBabyPetEditor : Editor {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Casted target object
-	PowerTooltipBabyPet m_targetPowerTooltipBabyPet = null;
+	PowerTooltip_BabyPet m_targetPowerTooltipBabyPet = null;
 
 	//------------------------------------------------------------------------//
 	// METHODS																  //
@@ -37,7 +37,7 @@ public class PowerTooltipBabyPetEditor : Editor {
 	/// </summary>
 	private void OnEnable() {
 		// Get target object
-		m_targetPowerTooltipBabyPet = target as PowerTooltipBabyPet;
+		m_targetPowerTooltipBabyPet = target as PowerTooltip_BabyPet;
 	}
 
 	/// <summary>
@@ -86,7 +86,7 @@ public class PowerTooltipBabyPetEditor : Editor {
 		} while(p.NextVisible(false));      // Only direct children, not grand-children (will be drawn by default if using the default EditorGUI.PropertyField)
 
 		// Show raycast disable tool
-		UITooltipEditor.DoRaycastDisablingTool((target as PowerTooltipBabyPet).gameObject);
+		UITooltipEditor.DoRaycastDisablingTool((target as PowerTooltip_BabyPet).gameObject);
 
 		// Apply changes to the serialized object - always do this in the end of OnInspectorGUI.
 		serializedObject.ApplyModifiedProperties();
