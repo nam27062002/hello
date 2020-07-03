@@ -1,4 +1,4 @@
-// PetPowerTooltipTriggerEditor.cs
+// PowerTooltipTriggerEditor.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 29/06/2020.
@@ -14,11 +14,11 @@ using UnityEditor;
 // CLASSES																	  //
 //----------------------------------------------------------------------------//
 /// <summary>
-/// Custom editor for the PetPowerTooltipTrigger class.
+/// Custom editor for the PowerTooltipTrigger class.
 /// </summary>
-[CustomEditor(typeof(PetPowerTooltipTrigger), true)]	// True to be used by heir classes as well
+[CustomEditor(typeof(PowerTooltipTrigger), true)]	// True to be used by heir classes as well
 [CanEditMultipleObjects]
-public class PetPowerTooltipTriggerEditor : Editor {
+public class PowerTooltipTriggerEditor : Editor {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -31,10 +31,10 @@ public class PetPowerTooltipTriggerEditor : Editor {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Casted target object
-	private PetPowerTooltipTrigger m_targetPetPowerTooltipTrigger = null;
+	private PowerTooltipTrigger m_targetPetPowerTooltipTrigger = null;
 
 	// Cached properties
-	private TooltipProperties m_defaultTooltipProps = new TooltipProperties();
+	private TooltipProperties m_genericTooltipProps = new TooltipProperties();
 	private TooltipProperties m_babyTooltipProps = new TooltipProperties();
 	private SerializedProperty m_instantiationModeProp = null;
 
@@ -46,11 +46,11 @@ public class PetPowerTooltipTriggerEditor : Editor {
 	/// </summary>
 	private void OnEnable() {
 		// Get target object
-		m_targetPetPowerTooltipTrigger = target as PetPowerTooltipTrigger;
+		m_targetPetPowerTooltipTrigger = target as PowerTooltipTrigger;
 
 		// Cache important properties
-		m_defaultTooltipProps.tooltipInstanceProp = serializedObject.FindProperty("m_defaultTooltipInstance");
-		m_defaultTooltipProps.tooltipPrefabProp = serializedObject.FindProperty("m_defaultPrefabPath");
+		m_genericTooltipProps.tooltipInstanceProp = serializedObject.FindProperty("m_genericTooltipInstance");
+		m_genericTooltipProps.tooltipPrefabProp = serializedObject.FindProperty("m_genericPrefabPath");
 		
 		m_babyTooltipProps.tooltipInstanceProp = serializedObject.FindProperty("m_babyPetTooltipInstance");
 		m_babyTooltipProps.tooltipPrefabProp = serializedObject.FindProperty("m_babyPetPrefabPath");
@@ -66,8 +66,8 @@ public class PetPowerTooltipTriggerEditor : Editor {
 		m_targetPetPowerTooltipTrigger = null;
 
 		// Clear cached properties
-		m_defaultTooltipProps.tooltipInstanceProp = null;
-		m_defaultTooltipProps.tooltipPrefabProp = null;
+		m_genericTooltipProps.tooltipInstanceProp = null;
+		m_genericTooltipProps.tooltipPrefabProp = null;
 
 		m_babyTooltipProps.tooltipInstanceProp = null;
 		m_babyTooltipProps.tooltipPrefabProp = null;
@@ -101,8 +101,8 @@ public class PetPowerTooltipTriggerEditor : Editor {
 			|| p.name == "m_Script"
 			|| p.name == "m_tooltip"	// Parent props we're not using
 			|| p.name == "m_prefabPath" // Parent props we're not using
-			|| p.name == m_defaultTooltipProps.tooltipInstanceProp.name
-			|| p.name == m_defaultTooltipProps.tooltipPrefabProp.name
+			|| p.name == m_genericTooltipProps.tooltipInstanceProp.name
+			|| p.name == m_genericTooltipProps.tooltipPrefabProp.name
 			|| p.name == m_babyTooltipProps.tooltipInstanceProp.name
 			|| p.name == m_babyTooltipProps.tooltipPrefabProp.name
 			) {
@@ -119,7 +119,7 @@ public class PetPowerTooltipTriggerEditor : Editor {
 
 				// Show instance fields, enabled/disabled based on instantiation mode
 				EditorGUI.BeginDisabledGroup(instantiationMode != UITooltipTrigger.TooltipInstantiationMode.INSTANCE);
-				EditorGUILayout.PropertyField(m_defaultTooltipProps.tooltipInstanceProp, true);
+				EditorGUILayout.PropertyField(m_genericTooltipProps.tooltipInstanceProp, true);
 				EditorGUILayout.PropertyField(m_babyTooltipProps.tooltipInstanceProp, true);
 				EditorGUI.EndDisabledGroup();
 
@@ -127,7 +127,7 @@ public class PetPowerTooltipTriggerEditor : Editor {
 				
 				// Show prefab fields, enabled/disabled based on instantiation mode
 				EditorGUI.BeginDisabledGroup(instantiationMode != UITooltipTrigger.TooltipInstantiationMode.PREFAB);
-				EditorGUILayout.PropertyField(m_defaultTooltipProps.tooltipPrefabProp, true);
+				EditorGUILayout.PropertyField(m_genericTooltipProps.tooltipPrefabProp, true);
 				EditorGUILayout.PropertyField(m_babyTooltipProps.tooltipPrefabProp, true);
 				EditorGUI.EndDisabledGroup();
 

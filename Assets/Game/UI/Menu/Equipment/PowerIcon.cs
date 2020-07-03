@@ -45,7 +45,15 @@ public class PowerIcon : MonoBehaviour, IBroadcastListener {
 	//------------------------------------------------------------------------//
 	// Exposed References
 	[SerializeField] private Mode m_mode = Mode.SKIN;
+	public Mode mode {
+		get { return m_mode; }
+	}
+
 	[SerializeField] private DisplayMode m_displayMode = DisplayMode.EQUIPPED;
+	public DisplayMode displayMode {
+		get { return m_displayMode; }
+	}
+
 	[Tooltip("Optional")] [SerializeField] private Image m_powerIcon = null;
 	[Tooltip("Optional")] [SerializeField] private GameObject m_lockIcon = null;
 	[Tooltip("Optional")] [SerializeField] private Localizer m_nameText = null;
@@ -241,38 +249,41 @@ public class PowerIcon : MonoBehaviour, IBroadcastListener {
 
     }
 
-    //------------------------------------------------------------------------//
-    // CALLBACKS															  //
-    //------------------------------------------------------------------------//
-    /// <summary>
-    /// A tooltip is about to be opened.
-    /// If the trigger is attached to this power icon, initialize tooltip with this
-    /// button's power def.
-    /// Link it via the inspector.
-    /// </summary>
-    /// <param name="_tooltip">The tooltip about to be opened.</param>
-    /// <param name="_trigger">The button which triggered the event.</param>
-    public void OnTooltipOpen(UITooltip _tooltip, UITooltipTrigger _trigger) {
+	//------------------------------------------------------------------------//
+	// CALLBACKS															  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// A power tooltip trigger is about to open and needs data.
+	/// </summary>
+	/// <param name="_trigger">The tooltip trigger that triggered the event.</param>
+	public void OnPowerTooltipTriggerGetData(PowerTooltipTrigger _trigger) {
+		// Just propagate data
+		_trigger.SetTooltipData(
+			m_powerDef,
+			m_sourceDef,
+			m_mode,
+			m_displayMode
+		);
+	}
+
+	/// <summary>
+	/// A tooltip is about to be opened.
+	/// If the trigger is attached to this power icon, initialize tooltip with this
+	/// button's power def.
+	/// Link it via the inspector.
+	/// </summary>
+	/// <param name="_tooltip">The tooltip about to be opened.</param>
+	/// <param name="_trigger">The button which triggered the event.</param>
+	public void OnTooltipOpen(UITooltip _tooltip, UITooltipTrigger _trigger) {
 		// Make sure the trigger that opened the tooltip is linked to this icon
 		if(_trigger != trigger) return;
 
-		// Tooltip can either be a generic Power Tooltip or a Baby Pet Power Tooltip, using different initializations
-		if(_tooltip is PowerTooltip) {
-			// Cast to the right type and initialize it
-			PowerTooltip powerTooltip = (PowerTooltip)_tooltip;
+		// Tooltip must be of type PowerTooltip
+		if(_tooltip is IPowerTooltip) {
+			IPowerTooltip powerTooltip = (IPowerTooltip)_tooltip;
 			if(powerTooltip != null) {
-				// Initialize
-				powerTooltip.InitFromDefinition(m_powerDef, m_sourceDef, m_mode);
-
-				// Set lock state
-				powerTooltip.SetLocked(m_lockIcon != null && m_lockIcon.activeSelf);    // Use lock icon visibility to determine whether power is locked or not
-			}
-		} else if(_tooltip is PowerTooltipBabyPet) {
-			// Cast to the right type and initialize it
-			PowerTooltipBabyPet powerTooltip = (PowerTooltipBabyPet)_tooltip;
-			if(powerTooltip != null) {
-				// Initialize
-				powerTooltip.InitFromDefinition(m_sourceDef, m_displayMode);	// Use source def rather than power def
+				// IPowerTooltip makes it easy for us!
+				powerTooltip.InitTooltip(m_powerDef, m_sourceDef, m_mode, m_displayMode);
 			}
 		}
 
