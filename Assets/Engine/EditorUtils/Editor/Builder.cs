@@ -174,7 +174,6 @@ public class Builder : MonoBehaviour, UnityEditor.Build.IPreprocessBuild
         
         // Do the build!
         BuildPlayer(stagePath, BuildTarget.Android);
-        processUnityEditorLog();
 
         // Restore Player Settings
         PlayerSettings.applicationIdentifier = oldBundleIdentifier;
