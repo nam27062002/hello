@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 224542655895452892}
   - component: {fileID: 114392516808477910}
-  - component: {fileID: 114464584028534742}
   m_Layer: 5
   m_Name: PF_MenuSeasonalDecorations
   m_TagString: Untagged
@@ -25,7 +24,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1773974873679986}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
@@ -77,31 +76,36 @@ MonoBehaviour:
   - sku: summer
     targets: []
   - sku: Anniversary1
+    targets:
+    - obj: {fileID: 0}
+      action: 0
+    - obj: {fileID: 0}
+      action: 0
+    - obj: {fileID: 0}
+      action: 0
+    - obj: {fileID: 0}
+      action: 0
+  - sku: watermelon
     targets: []
---- !u!114 &114464584028534742
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1773974873679986}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3a1ccf5c30da243be93264797f5bc17c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_targetAnimator: {fileID: 0}
-  m_checkSelectedDragon: 0
-  m_hideForDragons: 0
-  m_showOnlyForType: 2
-  m_targetDragonSku: 
-  m_showIfShadow: 0
-  m_showIfLocked: 0
-  m_showIfAvailable: 0
-  m_showIfOwned: 1
-  m_checkScreens: 1
-  m_mode: 0
-  m_targetScreens: 0000000001000000
-  m_hideDelay: 0
-  m_showDelay: 0
-  m_restartShowAnimation: 0
+  - sku: snorkel
+    targets: []
+  - sku: cocktail
+    targets: []
+  - sku: cookies
+    targets: []
+  - sku: presents
+    targets: []
+  - sku: candy
+    targets: []
+  - sku: "jalape\xF1o"
+    targets: []
+  - sku: anniversary_no_equip
+    targets:
+    - obj: {fileID: 0}
+      action: 0
+    - obj: {fileID: 0}
+      action: 0
+    - obj: {fileID: 0}
+      action: 0
+    - obj: {fileID: 0}
+      action: 0

@@ -231,11 +231,12 @@ namespace Metagame {
 					// Create the egg reward!
 					if(petDef != null) {
 						m_reward = CreateTypePet(petDef, m_sku);
-						#if UNITY_EDITOR
+#if UNITY_EDITOR
 						Color[] colorTags = {
 							UIConstants.GetRarityColor(Rarity.COMMON),
 							UIConstants.GetRarityColor(Rarity.RARE),
-							UIConstants.GetRarityColor(Rarity.EPIC)
+							UIConstants.GetRarityColor(Rarity.EPIC),
+							UIConstants.GetRarityColor(Rarity.BABY)
 						};
 						Debug.Log(Colors.purple.Tag("EGG REWARD GENERATED FOR EGG " + m_sku + ":\n") + colorTags[(int)m_reward.rarity].Tag(m_reward.ToString()));
 						#endif

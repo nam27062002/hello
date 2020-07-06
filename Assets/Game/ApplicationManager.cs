@@ -228,8 +228,12 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         {
             // ---------------------------
             // Open pets popup
-            // ---------------------------       
-            PopupManager.OpenPopupInstant(PopupInfoPets.PATH);
+            // ---------------------------
+            Reward reward = new Reward();
+            reward.pc = 1;
+            reward.origin = "doubleGems";
+            Messenger.Broadcast<Reward, Transform>(MessengerEvents.REWARD_APPLIED, reward, null);
+
 
 
             // ---------------------------
