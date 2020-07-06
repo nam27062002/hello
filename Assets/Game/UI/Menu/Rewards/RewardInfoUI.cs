@@ -14,6 +14,7 @@ using TMPro;
 
 using System;
 using System.Collections.Generic;
+using Calety.Customiser.Api;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -47,17 +48,14 @@ public class RewardInfoUI : MonoBehaviour {
 
 	[Separator("Pet Reward")]
 	[SerializeField] private RarityTitleGroup m_petRarityTitle = null;
-    [SerializeField] private GameObject m_petPowerLayout = null;
-    [SerializeField] private Localizer m_petPowerName = null;
-    [SerializeField] private Localizer m_petPowerDescription = null;
-    [SerializeField] private PowerIcon m_petPowerIcon = null;
+	[SerializeField] private Localizer m_petNameText = null;
+	[SerializeField] private PowerTooltipTrigger m_powerTooltipTrigger = null;
 
 	[Separator("Golden Egg Fragments Reward")]
 	[SerializeField] private Localizer m_goldenFragmentTitle = null;
 	[Space]
 	[SerializeField] private string m_goldenFragmentsSFX = "";
 	
-
 	[SeparatorAttribute("SC Reward")]
 	[SerializeField] private Localizer m_scTitle = null;
 	[SerializeField] private string m_scSFX = "";
@@ -125,8 +123,6 @@ public class RewardInfoUI : MonoBehaviour {
 		if(m_shareButton != null) m_shareButton.gameObject.SetActive(false);
 	}
 
-
-
     //------------------------------------------------------------------------//
     // OTHER METHODS														  //
     //------------------------------------------------------------------------//
@@ -182,41 +178,24 @@ public class RewardInfoUI : MonoBehaviour {
 				}
 
 				// Pet name
-				TextMeshProUGUI rewardNameText = m_petRarityTitle.activeTitle.auxText;
-				if(rewardNameText != null) {
-					Localizer loc = rewardNameText.GetComponent<Localizer>();
-					if(loc != null) loc.Localize(_rewardData.def.Get("tidName"));	// Froggy
+				if(m_petNameText != null) {
+					m_petNameText.Localize(_rewardData.def.Get("tidName"));   // Froggy
 				}
 
-                    // Power data
-                    DefinitionNode powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, _rewardData.def.GetAsString("powerup"));
+                // Power data
+				if(m_powerTooltipTrigger != null) {
+					// Open the tooltip! Unless if pet will be replaced
+					if(m_reward.WillBeReplaced()) {
+						m_powerTooltipTrigger.CloseTooltip();
+					} else {
+						m_powerTooltipTrigger.OpenTooltip();
+					}
 
-                    // Power icon - don't show if pet will be replaced
-                    m_petPowerLayout.gameObject.SetActive(!_rewardData.WillBeReplaced());
+					// Nothing else to do, all data will be initialized via callbacks (OnPowerTooltipGetPetDef and OnPowerTooltipOpen)
+				}
 
-                    if (!_rewardData.WillBeReplaced())
-                    {
-                        // Power icon
-                        if (m_petPowerIcon != null)
-                        {
-                            m_petPowerIcon.InitFromDefinition(powerDef, _rewardData.def, false);
-                        }
-
-                        // Power name
-                        if (m_petPowerName != null)
-                        {
-                            m_petPowerName.Localize(powerDef.GetAsString("tidName"));
-                        }
-
-                        // Power description
-                        if (m_petPowerDescription != null)
-                        {
-                            m_petPowerDescription.Set (DragonPowerUp.GetDescription(powerDef.sku, false, true));
-                        }
-                    }
-
-                    // Show share button!
-                    showShareButton = !_rewardData.WillBeReplaced();
+                // Show share button!
+                showShareButton = !_rewardData.WillBeReplaced();
 			} break;
 
 			// Skin
@@ -341,15 +320,6 @@ public class RewardInfoUI : MonoBehaviour {
 	}
 
 	//------------------------------------------------------------------------//
-	// INTERNAL METHODS														  //
-	//------------------------------------------------------------------------//
-	
-
-	//------------------------------------------------------------------------//
-	// CALLBACKS															  //
-	//------------------------------------------------------------------------//
-
-	//------------------------------------------------------------------------//
 	// ANIMATION EVENTS														  //
 	//------------------------------------------------------------------------//
 	/// <summary>
@@ -392,6 +362,9 @@ public class RewardInfoUI : MonoBehaviour {
 		OnAnimFinished.Invoke();
 	}
 
+	//------------------------------------------------------------------------//
+	// CALLBACKS															  //
+	//------------------------------------------------------------------------//
 	/// <summary>
 	/// Share button has been pressed.
 	/// </summary>
@@ -445,11 +418,29 @@ public class RewardInfoUI : MonoBehaviour {
 		}
 	}
 
-    /// <summary>
-    /// Just play an SFX.
-    /// </summary>
-    /// <param name="_id"></param>
-    public void PlaySFX(string _id) {
+	/// <summary>
+	/// A power tooltip trigger is about to open and needs data.
+	/// </summary>
+	/// <param name="_trigger">The tooltip trigger that triggered the event.</param>
+	public void OnPowerTooltipTriggerGetData(PowerTooltipTrigger _trigger) {
+		// Nothing to do if the reward is not set or it's not a pet
+		if(m_reward == null) return;
+		if(m_reward.type != Metagame.RewardPet.TYPE_CODE) return;
+
+		// Setup the tooltip
+		_trigger.SetTooltipData(
+			null,	// Irrelevant, since we are using the PET mode, the tooltip trigger will get the power def from the pet definition
+			m_reward.def,
+			PowerIcon.Mode.PET,
+			PowerIcon.DisplayMode.PREVIEW
+		);
+	}
+
+	/// <summary>
+	/// Just play an SFX.
+	/// </summary>
+	/// <param name="_id"></param>
+	public void PlaySFX(string _id) {
         if(!string.IsNullOrEmpty(_id)) {
             AudioController.Play(_id);
         }

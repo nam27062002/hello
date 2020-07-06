@@ -183,17 +183,10 @@ public class DragonPowerUp : MonoBehaviour {
 			DefinitionNode sharedPowerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.BABY_DRAGONS_SHARED_POWER, sharedPower);
             if (sharedPowerDef != null)
             {
-				int baseProbability = sharedPowerDef.GetAsInt("baseProbability");
-				int extraProbability = sharedPowerDef.GetAsInt("extraProbability");
-				int extraGems = sharedPowerDef.GetAsInt("extraGems");
-				int firstSucceed = sharedPowerDef.GetAsInt("firstSucceed");
-
-				int probability = baseProbability + (totalBabyDragons * extraProbability);
-
 				BabyDragon babyDragon = InstanceManager.player.GetBabyDragon();
-				babyDragon.probability = probability;
-				babyDragon.extraGems = extraGems;
-				babyDragon.firstSucceed = firstSucceed;
+				babyDragon.probability = (int)ComputeSharedPowerProbability(sharedPowerDef);
+				babyDragon.extraGems = sharedPowerDef.GetAsInt("extraGems");
+				babyDragon.firstSucceed = sharedPowerDef.GetAsInt("firstSucceed");
 			}
             else
             {
@@ -201,6 +194,26 @@ public class DragonPowerUp : MonoBehaviour {
             }
         }
     }
+
+	/// <summary>
+	/// Compute the total probabilty for the given shared power considering current user's pet collection.
+	/// </summary>
+	/// <param name="_sharedPowerDef"></param>
+	/// <returns></returns>
+	public static float ComputeSharedPowerProbability(DefinitionNode _sharedPowerDef) {
+		if(_sharedPowerDef == null) return 0f;
+
+		int totalBabyDragons = UsersManager.currentUser.petCollection.unlockedBabyPetsCount;
+		if(totalBabyDragons > 0) {
+			int baseProbability = _sharedPowerDef.GetAsInt("baseProbability");
+			int extraProbability = _sharedPowerDef.GetAsInt("extraProbability");
+
+			int probability = baseProbability + (totalBabyDragons * extraProbability);
+			return (float)probability;
+		}
+
+		return 0f;
+	}
 
 	void SetPowerUp( string powerUpSku, bool _fromPet )
 	{
@@ -442,7 +455,10 @@ public class DragonPowerUp : MonoBehaviour {
 		// Check definition
 		if(_powerDef == null) return "";
 
+		// Get some aux vars from the def
 		string category = _powerDef.Get("category");
+		string type = _powerDef.GetAsString("type");
+		bool isBaby = _powerDef.sku.StartsWith("baby_");
 
 		float multiplier = 1f;
 		if (_fromPet) {
@@ -454,9 +470,10 @@ public class DragonPowerUp : MonoBehaviour {
 		// Short or long description?
 		string fieldId = _short ? "tidDescShort" : "tidDesc";
 
-		// Color and format based on type
-		string type = _powerDef.GetAsString("type");
+		// Text highlight color depends on power
 		Color color = GetColor(_powerDef);
+
+		// Text formatting depends on type
 		switch(type) {
 			// Powers with custom formats
 			case "lower_damage":
@@ -473,13 +490,6 @@ public class DragonPowerUp : MonoBehaviour {
 			} break;
 
 			case "prey_hp_boost": {
-				/*
-				// Show target entity name
-				// [AOC] TODO!! Plural
-				DefinitionNode entityDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.ENTITIES, _powerDef.GetAsString("param1"));
-				return _powerDef.GetLocalized(fieldId, entityDef.GetLocalized("tidName"), StringUtils.FormatNumber(_powerDef.GetAsFloat("param2"), 0), UIConstants.POWER_COLOR_ENTITY.ToHexString("#"), UIConstants.POWER_COLOR_HEALTH.ToHexString("#"));
-				*/
-
 				// [AOC] As of 05/07/2017, entity names are included in the TID (i.e. "Increased %U0 health on eating Birds")
 				if(_short) {
 					return _powerDef.GetLocalized(fieldId, color.ToHexString("#"));
@@ -487,6 +497,25 @@ public class DragonPowerUp : MonoBehaviour {
 					return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsFloat("param2") * multiplier, 0), color.ToHexString("#"));
 				}
 			} break;
+
+			// Baby pet shared power
+			case "collection": {
+				if(_short) {
+					// This power doesn't have short description, this should never be called
+					return Color.red.Tag("ERROR! This power doesn't have short description");
+				} else {
+					// %U0: Power value (i.e. "15")
+					// %U1: Power value increase (i.e. "2")
+					// %U2: Color code
+					return _powerDef.GetLocalized(
+						fieldId,
+						StringUtils.FormatNumber(ComputeSharedPowerProbability(_powerDef), 0),
+						StringUtils.FormatNumber(_powerDef.GetAsInt("extraProbability")),
+						color.ToHexString("#")
+					);
+				}
+			}
+			break;
 
 			//TONI
 			//We need to get all parameters for each single powerup. Combined powers could be a combination of 3 powers. As we can have just 2 parameters by power, a powerup that
@@ -563,6 +592,7 @@ public class DragonPowerUp : MonoBehaviour {
 					color.ToHexString("#")
 				);
 			} break;
+
 			// Rest of powers (no params)
 			default: {
 				return _powerDef.GetLocalized(
@@ -584,14 +614,19 @@ public class DragonPowerUp : MonoBehaviour {
 		// Check definition
 		if(_powerDef == null) return Color.white;
 
-		// Get the color for this power type
+		// Get some aux vars from the def
 		string type = _powerDef.GetAsString("type");
-        //TONI:Check if baby power type
-        bool babyType = type.Contains("baby_");
-        if (babyType) return GetColor("baby");
-        //TONI:end check
-        // Some types need special treatment
-        switch (type) {
+		bool isBaby = _powerDef.sku.StartsWith("baby_");
+
+		// If baby base power, force baby color
+		// We'll know it's a base power, not a stat power, by its "category" field
+		if(isBaby && _powerDef.GetAsString("category") == "other") {
+			return GetColor("baby");
+		}
+
+		// Get the color for this power type
+		// Some types need special treatment
+		switch(type) {
 			case "combined": {
 				// Use the color from second combined power type
 				string powerUp2 = _powerDef.Get("param2");
@@ -697,11 +732,15 @@ public class DragonPowerUp : MonoBehaviour {
 				return UIConstants.PET_CATEGORY_SPECIAL;
 			} break;
 
-            case "baby":
-                {
-                    return UIConstants.PET_CATEGORY_BABY;
-                }
-                break;
+			case "collection": {
+				//return UIConstants.PET_CATEGORY_BABY;
+				return UIConstants.CURRENCY_COLOR_HC;
+			} break;
+
+            case "baby": {
+				return UIConstants.PET_CATEGORY_BABY;
+            } break;
+
             // Special Cases
             case "combined": {
 				// Should never be called, since we're parsing the type of the second combined power instead

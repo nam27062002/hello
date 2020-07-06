@@ -69,7 +69,7 @@ public class DailyRewardView : MetagameRewardView {
 	[Space]
 	[SerializeField] private UITooltipTrigger m_tooltipTrigger = null;
 	[SerializeField] private DragonInfoTooltip m_dragonTooltip = null;
-	[SerializeField] private PowerTooltip m_powerTooltip = null;
+	[SerializeField] private PowerTooltip_Generic m_powerTooltip = null;
 	[Space]
 	[Comment("VFX (optional)")]
 	[SerializeField] private PrefabLoader m_currentGlowFX = null;
@@ -374,10 +374,10 @@ public class DailyRewardView : MetagameRewardView {
 				// Gather definition of this pet's power
 				DefinitionNode powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, m_reward.def.GetAsString("powerup"));
 
-				// Initialize tooltip - it should have a PowerTooltip component attached
-				PowerTooltip powerTooltip = _tooltip as PowerTooltip;
+				// Initialize tooltip - it should have a PowerTooltip_OLD component attached
+				PowerTooltip_Generic powerTooltip = _tooltip as PowerTooltip_Generic;
 				if(powerTooltip != null) {
-					powerTooltip.InitFromDefinition(powerDef, m_reward.def, PowerIcon.Mode.PET);
+					powerTooltip.InitTooltip(powerDef, m_reward.def, PowerIcon.Mode.PET, PowerIcon.DisplayMode.PREVIEW);
 				}
 			} break;
 		}

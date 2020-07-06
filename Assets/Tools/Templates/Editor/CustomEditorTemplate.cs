@@ -27,7 +27,10 @@ public class MonoBehaviourTemplateEditor : Editor {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Casted target object
-	MonoBehaviourTemplate m_targetMonoBehaviourTemplate = null;
+	private MonoBehaviourTemplate m_targetMonoBehaviourTemplate = null;
+
+	// Cached properties
+	private SerializedProperty m_scriptProp = null;
 
 	//------------------------------------------------------------------------//
 	// METHODS																  //
@@ -38,6 +41,9 @@ public class MonoBehaviourTemplateEditor : Editor {
 	private void OnEnable() {
 		// Get target object
 		m_targetMonoBehaviourTemplate = target as MonoBehaviourTemplate;
+
+		// Cache frequent properties
+		m_scriptProp = serializedObject.FindProperty("m_Script");
 	}
 
 	/// <summary>
@@ -46,6 +52,9 @@ public class MonoBehaviourTemplateEditor : Editor {
 	private void OnDisable() {
 		// Clear target object
 		m_targetMonoBehaviourTemplate = null;
+
+		// Clear cached properties
+		m_scriptProp = null;
 	}
 
 	/// <summary>
@@ -61,7 +70,7 @@ public class MonoBehaviourTemplateEditor : Editor {
 
 		// Unity's "script" property - draw disabled
 		EditorGUI.BeginDisabledGroup(true);
-		EditorGUILayout.PropertyField(serializedObject.FindProperty("m_Script"), true);
+		EditorGUILayout.PropertyField(m_scriptProp, true);
 		EditorGUI.EndDisabledGroup();
 
 		// Loop through all serialized properties and work with special ones
@@ -69,8 +78,10 @@ public class MonoBehaviourTemplateEditor : Editor {
 		p.Next(true);	// To get first element
 		do {
 			// Properties requiring special treatment
-			// Properties we don't want to show
-			if(p.name == "m_ObjectHideFlags" || p.name == "m_Script") {
+			// Properties we don't want to show or that will be displayed together with another property
+			if(p.name == "m_ObjectHideFlags"
+			|| p.name == m_scriptProp.name
+			) {
 				// Do nothing
 			}
 

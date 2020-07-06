@@ -32,7 +32,7 @@ public class EggManager : Singleton<EggManager> {
 	private const string PET_RARE 		= "pet_rare";
 	private const string PET_EPIC 		= "pet_epic";
 	private const string PET_SPECIAL 	= "pet_special";
-	private const string PET_BABY       = "baby";
+	private const string PET_BABY       = "pet_baby";
 
 	private const string RANDOM_STATE_PREFS_KEY = "EggManager.RandomState";
 
