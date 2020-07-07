@@ -375,6 +375,7 @@ if $BUILD_ANDROID; then
 
   # Do it!
   eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.GenerateAPK -buildTarget android -outputDir \"${OUTPUT_DIR}/apks/\" -obb ${GENERATE_OBB} -aab ${GENERATE_AAB} -code ${PROJECT_CODE_NAME} -addressablesMode ${ADDRESSABLES_MODE}"
+  cat "${BUILDLOG_FILE}"
 
   # Unity creates a tmp file androidBuildVersion.txt with the android build version number in it. Read from it and remove it.
 	print_builder "BUILDER: Reading internal android build version number";
@@ -408,6 +409,7 @@ if $BUILD_IOS; then
     # Generate XCode project
     print_builder "Generating XCode Project"
     eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.GenerateXcode -buildTarget ios -outputDir \"${OUTPUT_DIR}\""
+    cat "${BUILDLOG_FILE}"
 
     # Stage target files
     # BUNDLE_ID=$(/usr/libexec/PlistBuddy -c "Print :CFBundleVersion" "$SCRIPT_PATH/xcode/Info.plist")
@@ -458,8 +460,6 @@ if $BUILD_IOS; then
     xcodebuild -exportArchive -archivePath "${OUTPUT_DIR}/archives/${ARCHIVE_FILE}" -exportPath "${OUTPUT_DIR}/ipas/" -exportOptionsPlist "build.plist"
     mv -f "${OUTPUT_DIR}/ipas/Unity-iPhone.ipa" "${OUTPUT_DIR}/ipas/${IPA_FILE}"
 fi
-
-cat "${BUILDLOG_FILE}"
 
 if $UPLOAD;then
   # Upload to Samba server
