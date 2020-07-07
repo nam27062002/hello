@@ -95,7 +95,7 @@ public class SpecialDragonBarSkillElement : SpecialDragonBarElement
 			AudioController.Play("hd_lab_power_upgraded");
 
 			// Lock input (to prevent any other stat upgrade while the popup is opened)
-			Messenger.Broadcast<bool>(MessengerEvents.UI_LOCK_INPUT, true);
+			Messenger.Broadcast<bool, float>(MessengerEvents.UI_LOCK_INPUT, true, 0f);
 
 			// Open info popup (after some delay)
 			UbiBCN.CoroutineManager.DelayedCall(
@@ -108,7 +108,7 @@ public class SpecialDragonBarSkillElement : SpecialDragonBarElement
 					}
 
 					// Unlock input
-					Messenger.Broadcast<bool>(MessengerEvents.UI_LOCK_INPUT, false);
+					Messenger.Broadcast<bool, float>(MessengerEvents.UI_LOCK_INPUT, false, 0f);
 				}, 0.5f
 			);
 		}

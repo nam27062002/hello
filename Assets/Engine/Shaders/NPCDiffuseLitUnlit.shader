@@ -24,6 +24,12 @@
 		_FresnelPower("Fresnel power", Range(0.0, 5.0)) = 0.27
 		_FresnelColor("Fresnel color (RGB)", Color) = (0, 0, 0, 0)
 
+		[Toggle(SPECULAR)] _EnableSpecular("Enable Specular Light", Float) = 0
+		_SpecExponent("Specular Exponent", float) = 1.0
+		[Rotation] _SecondLightDir("Second Light direction", Vector) = (0,0,-1,0)
+		_SecondLightColor("Second Light color", Color) = (0.0, 0.0, 0.0, 0.0)
+
+
 		_StencilMask("Stencil Mask", int) = 10
 	}
 	SubShader
@@ -56,6 +62,7 @@
 			#pragma shader_feature BLENDAXIS_X BLENDAXIS_Y BLENDAXIS_Z
 			#pragma shader_feature __ REFLECTIONMAP
 			#pragma shader_feature __ FRESNEL
+			#pragma shader_feature __ SPECULAR
 
 			#include "UnityCG.cginc"
 			#include "Lighting.cginc"

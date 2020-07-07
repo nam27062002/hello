@@ -7,8 +7,7 @@ using UnityEngine.UI;
 public class TintByTierColor : MonoBehaviour
 {
     public enum ColorSet{
-        DRAGON_TIER_COLOR,
-        ICON_TIER_COLOR
+        DRAGON_TIER_COLOR
     }
 
     [SerializeField]
@@ -36,9 +35,6 @@ public class TintByTierColor : MonoBehaviour
                 GetComponent<Image>().color = UIConstants.GetDragonTierColor(m_tier);
                 break;
 
-            case ColorSet.ICON_TIER_COLOR:
-                GetComponent<Image>().color = UIConstants.GetIconTierColor(m_tier);
-                break;
         }
     }
 

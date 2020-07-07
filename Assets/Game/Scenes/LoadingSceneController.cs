@@ -214,6 +214,7 @@ public class LoadingSceneController : SceneController {
         COUNT
     }
     private State m_state = State.NONE;
+    private AndroidPermissionsManager m_androidPermissionsManager;
 	private AndroidPermissionsListener m_androidPermissionsListener = null;
 	private string m_buildVersion;
     private bool m_waitingTermsDone = false;
@@ -319,11 +320,10 @@ public class LoadingSceneController : SceneController {
 #if UNITY_ANDROID
             CaletySettings settingsInstance = (CaletySettings)Resources.Load("CaletySettings");
             if (settingsInstance != null)
-            {
+            {                
                 m_androidPermissionsListener = new AndroidPermissionsListener ();
-				AndroidPermissionsManager.SharedInstance.SetListener (m_androidPermissionsListener);
-
-                AndroidPermissionsManager.AndroidPermissionsConfig kAndroidPermissionsConfig = new AndroidPermissionsManager.AndroidPermissionsConfig ();
+				
+                AndroidPermissionsManager.PopupConfig kAndroidPermissionsConfig = new AndroidPermissionsManager.PopupConfig();
                 for (int i = 0; i < settingsInstance.m_kAndroidDangerousPermissions.Count; ++i)
                 {
                     AndroidPermissionsManager.AndroidDangerousPermission kNewAndroidDangerousPermission = new AndroidPermissionsManager.AndroidDangerousPermission();
@@ -343,9 +343,9 @@ public class LoadingSceneController : SceneController {
 				kAndroidPermissionsConfig.m_strPopupButtonSettings          = "TID_POPUP_ANDROID_PERMISSION_SETTINGS";
 				kAndroidPermissionsConfig.m_strPopupButtonExit              = "TID_EXIT_GAME";
 
-                AndroidPermissionsManager.SharedInstance.Initialise(ref kAndroidPermissionsConfig);
+                m_androidPermissionsManager = new AndroidPermissionsManager(ref kAndroidPermissionsConfig, m_androidPermissionsListener);               
                 
-				if(!AndroidPermissionsManager.SharedInstance.CheckDangerousPermissions ()) {
+				if(!m_androidPermissionsManager.CheckDangerousPermissions ()) {
                     // Application.targetFrameRate = 10;
 					SetState(State.WAITING_ANDROID_PERMISSIONS);
 				}else{
@@ -359,7 +359,7 @@ public class LoadingSceneController : SceneController {
                     	SetState(State.WAITING_FOR_RULES);
                     }
 			        // TEST
-			        /*
+                    /*
 					m_state = State.WAITING_ANDROID_PERMISSIONS;
 					m_androidPermissionsListener.m_permissionsFinished = false;
 					CaletyConstants.PopupConfig pConfig = new CaletyConstants.PopupConfig();
@@ -371,7 +371,7 @@ public class LoadingSceneController : SceneController {
 					button.m_pOnResponse = m_androidPermissionsListener.onAndroidPermissionsFinished;
 					pConfig.m_kPopupButtons.Add(button);
 					m_androidPermissionsListener.onAndroidPermissionPopupNeeded( pConfig );
-					*/
+                    */
 				}
             }
             else

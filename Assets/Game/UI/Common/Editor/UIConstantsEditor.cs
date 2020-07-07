@@ -151,8 +151,7 @@ public class UIConstantsEditor : CategorizedEditor {
 
 		// Dragon Tier Arrays
 		else if(_p.name == "m_dragonTiersSFX"
-        || _p.name == "m_dragonTierColors"
-		|| _p.name == "m_iconTierColors") {
+        || _p.name == "m_dragonTierColors") {
 			// Fixed length arrays!
 			EditorGUILayoutExt.FixedLengthArray(
 				_p,
