@@ -51,6 +51,8 @@ OUTPUT_DIR="${HOME}/Desktop/builds"
 UPLOAD=false
 SMB_FOLDER="BCNStudio/QA/builds"
 
+# build log file
+BUILDLOG_FILE="build.log"
 
 # iOS Code Sign
 CODE_SIGN_IDENTITY="iPhone Distribution"
@@ -225,7 +227,7 @@ DATE="$(date +%Y%m%d)"
 START_TIME=$(date +%s)
 
 # Initialize default Unity parameters
-UNITY_PARAMS="-batchmode -projectPath \"${PROJECT_PATH}\" -logfile > build.log -nographics -quit"
+UNITY_PARAMS="-batchmode -projectPath \"${PROJECT_PATH}\" -logfile \"${BUILDLOG_FILE}\" -nographics -quit"
 
 # Move to project path
 cd "${PROJECT_PATH}"
@@ -359,6 +361,11 @@ eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.OutputBundleIdentifier
 PACKAGE_NAME="$(cat bundleIdentifier.txt)"
 rm -f "bundleIdentifier.txt"
 
+# Check if build.log exists
+if [ -d "$BUILDLOG_FILE" ]; then
+  rm -f "${BUILDLOG_FILE}"
+fi
+
 # Generate Android build
 if $BUILD_ANDROID; then
   print_builder "BUILDER: Generating APKs..."
@@ -451,6 +458,8 @@ if $BUILD_IOS; then
     xcodebuild -exportArchive -archivePath "${OUTPUT_DIR}/archives/${ARCHIVE_FILE}" -exportPath "${OUTPUT_DIR}/ipas/" -exportOptionsPlist "build.plist"
     mv -f "${OUTPUT_DIR}/ipas/Unity-iPhone.ipa" "${OUTPUT_DIR}/ipas/${IPA_FILE}"
 fi
+
+cat "${BUILDLOG_FILE}"
 
 if $UPLOAD;then
   # Upload to Samba server
