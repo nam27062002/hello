@@ -227,7 +227,8 @@ DATE="$(date +%Y%m%d)"
 START_TIME=$(date +%s)
 
 # Initialize default Unity parameters
-UNITY_PARAMS="-batchmode -projectPath \"${PROJECT_PATH}\" -logfile ${BUILDLOG_FILE} -nographics -quit"
+# UNITY_PARAMS="-batchmode -projectPath \"${PROJECT_PATH}\" -logfile ${BUILDLOG_FILE} -nographics -quit"
+UNITY_PARAMS="-batchmode -projectPath \"${PROJECT_PATH}\" -logfile -nographics -quit"
 
 # Move to project path
 cd "${PROJECT_PATH}"
