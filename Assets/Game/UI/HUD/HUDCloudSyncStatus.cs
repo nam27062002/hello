@@ -24,8 +24,10 @@ public class HUDCloudSyncStatus : MonoBehaviour
 	//------------------------------------------------------------------------//
 	private enum State {
 		CLOUD_SAVE_DISABLED,
+
 		NEVER_LOGGED_IN,
 		PREVIOUSLY_LOGGED_IN,
+
 		LOGGED_IN_NOT_SYNCHED,
 		LOGGED_IN_SYNCHED
 	}
@@ -34,8 +36,11 @@ public class HUDCloudSyncStatus : MonoBehaviour
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	[SerializeField] private GameObject m_root;
+	[Space]
 	[SerializeField] private GameObject m_syncSuccessIcon = null;
-	[SerializeField] private GameObject m_syncFailedSprite = null;
+	[SerializeField] private GameObject m_syncPendingIcon = null;
+	[SerializeField] private GameObject m_syncFailedIcon = null;
+	[Space]
 	[SerializeField] private GameObject m_loginRewardRoot = null;
 	[SerializeField] private Localizer m_loginRewardText = null;
 
@@ -115,24 +120,39 @@ public class HUDCloudSyncStatus : MonoBehaviour
 			// No! Nothing else to check
 			m_state = State.CLOUD_SAVE_DISABLED;
 			return;
-		}		
+		}
 
-        PersistenceLocalDriver localDriver = PersistenceFacade.instance.LocalDriver;
-        if (string.IsNullOrEmpty(localDriver.Prefs_SocialPlatformKey) && localDriver.Prefs_SocialImplicitMergeState != PersistenceCloudDriver.EMergeState.Ok) { 		
-		    m_state = State.NEVER_LOGGED_IN;
-	    } else {
-		    bool isCurrentlyLoggedIn = PersistenceFacade.instance.CloudDriver.IsLoggedIn;
-			// Is currently logged in?
-			if (isCurrentlyLoggedIn) {
-				// Yes! Check sync status
-				if (PersistenceFacade.instance.Sync_IsSynced) {
-					m_state = State.LOGGED_IN_SYNCHED;
-				} else {
-					m_state = State.LOGGED_IN_NOT_SYNCHED;
-				}
-			} else {
-				// No!
-				m_state = State.PREVIOUSLY_LOGGED_IN;
+		// Cloud Save enabled - check status
+		// [AOC] Use UserProfile to check whether the player has logged at least once (thus we shouldn't incentivise)
+		m_state = State.NEVER_LOGGED_IN;
+		UserProfile profile = UsersManager.currentUser;
+		if(profile != null) {
+			// Compare stored log in status with current social log in status
+			switch(profile.SocialState) {
+				// If stored status is never logged in, trust so
+				case UserProfile.ESocialState.NeverLoggedIn: {
+					m_state = State.NEVER_LOGGED_IN;
+				} break;
+
+				case UserProfile.ESocialState.LoggedIn:
+				case UserProfile.ESocialState.LoggedInAndIncentivised: {
+					// Previously logged in - are we still logged in?
+					// [AOC] CloudDriver.IsLoggedIn takes in account DNA login.
+					//		 In this case we only care about explicit social logins, so use SocialPlatformManager instead.
+					//bool isCurrentlyLoggedIn = PersistenceFacade.instance.CloudDriver.IsLoggedIn;
+					bool isCurrentlyLoggedIn = SocialPlatformManager.SharedInstance.CurrentPlatform_IsLoggedIn() && !SocialPlatformManager.SharedInstance.CurrentPlatform_IsImplicit();
+					if(isCurrentlyLoggedIn) {
+						// Yes! Check sync status
+						if(PersistenceFacade.instance.Sync_IsSynced) {
+							m_state = State.LOGGED_IN_SYNCHED;
+						} else {
+							m_state = State.LOGGED_IN_NOT_SYNCHED;
+						}
+					} else {
+						// No! Mark as previously logged in (no incentivise)
+						m_state = State.PREVIOUSLY_LOGGED_IN;
+					}
+				} break;
 			}
 		}		
 	}
@@ -161,8 +181,12 @@ public class HUDCloudSyncStatus : MonoBehaviour
 			m_syncSuccessIcon.SetActive(m_state == State.LOGGED_IN_SYNCHED);
 		}
 
-		if(m_syncFailedSprite != null) {
-			m_syncFailedSprite.SetActive(m_state == State.LOGGED_IN_NOT_SYNCHED);
+		if(m_syncPendingIcon != null) {
+			m_syncPendingIcon.SetActive(m_state == State.LOGGED_IN_NOT_SYNCHED);
+		}
+
+		if(m_syncFailedIcon != null) {
+			m_syncFailedIcon.SetActive(m_state == State.PREVIOUSLY_LOGGED_IN || m_state == State.NEVER_LOGGED_IN);
 		}
 
 		// Login Incentivise reward

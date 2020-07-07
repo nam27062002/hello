@@ -540,8 +540,12 @@ public class PopupSettingsSaveTab : MonoBehaviour
 	/// </summary>
     private void Model_Refresh()
     {
-        EState state = EState.NeverLoggedIn;
-        bool isLoggedIn = PersistenceFacade.instance.CloudDriver.IsLoggedIn;
+		// [AOC] CloudDriver.IsLoggedIn takes in account DNA login.
+		//		 In this case we only care about explicit social logins, so use SocialPlatformManager instead.
+        //bool isLoggedIn = PersistenceFacade.instance.CloudDriver.IsLoggedIn;
+		bool isLoggedIn = SocialPlatformManager.SharedInstance.CurrentPlatform_IsLoggedIn() && !SocialPlatformManager.SharedInstance.CurrentPlatform_IsImplicit();
+
+		EState state = EState.NeverLoggedIn;
         UserProfile userProfile = UsersManager.currentUser;
         if (userProfile != null)
         {
@@ -576,7 +580,10 @@ public class PopupSettingsSaveTab : MonoBehaviour
             case EState.LoggedIn:
             case EState.LoggedInAndIncentivised:
             {
-                returnValue = PersistenceFacade.instance.CloudDriver.IsLoggedIn;
+				// [AOC] CloudDriver.IsLoggedIn takes in account DNA login.
+				//		 In this case we only care about explicit social logins, so use SocialPlatformManager instead.
+				//returnValue = PersistenceFacade.instance.CloudDriver.IsLoggedIn;
+				returnValue = SocialPlatformManager.SharedInstance.CurrentPlatform_IsLoggedIn() && !SocialPlatformManager.SharedInstance.CurrentPlatform_IsImplicit();
 			}
 			break;
 
