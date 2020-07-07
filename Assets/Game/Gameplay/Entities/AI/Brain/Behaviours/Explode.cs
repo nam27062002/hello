@@ -28,8 +28,13 @@ namespace AI {
 
 			protected override void OnInitialise() {
 				m_data = m_pilot.GetComponentData<ExplodeData>();
-				m_explosive = new Explosive(m_data.isMine, m_data.damage, m_data.radius, m_data.cameraShakeDuration);
+
+				// Set damage from entityDefinitions
 				m_entity = m_machine.GetComponent<Entity>();
+				DefinitionNode definition = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.ENTITIES, m_entity.sku);
+				m_data.damage = definition.GetAsFloat("damage", m_data.damage);
+
+				m_explosive = new Explosive(m_data.isMine, m_data.damage, m_data.radius, m_data.cameraShakeDuration);
 			}
 
 			protected override void OnEnter(State _oldState, object[] _param) {

@@ -30,6 +30,13 @@ namespace AI {
 
 			protected override void OnInitialise() {
 				m_data = m_pilot.GetComponentData<AttackPassiveData>();
+
+				// Set damage from entityDefinitions
+                if (m_entity == null)
+					m_entity = m_pilot.GetComponent<Entity>();
+				DefinitionNode definition = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.ENTITIES, m_entity.sku);
+				m_data.damage = definition.GetAsFloat("damage", m_data.damage);
+
 				m_dragon = InstanceManager.player.dragonHealthBehaviour;
 				m_timer = 0;
 			}
