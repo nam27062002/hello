@@ -372,8 +372,8 @@ if $BUILD_ANDROID; then
 
   # Do it!
   eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.GenerateAPK -buildTarget android -outputDir \"${OUTPUT_DIR}/apks/\" -obb ${GENERATE_OBB} -aab ${GENERATE_AAB} -code ${PROJECT_CODE_NAME} -addressablesMode ${ADDRESSABLES_MODE}"
-  BUILDLOG="$(cat ${BUILDLOG_FILE})"
-  echo $BUILDLOG
+  cat $BUILDLOG
+
 
 
   # Unity creates a tmp file androidBuildVersion.txt with the android build version number in it. Read from it and remove it.
@@ -408,9 +408,7 @@ if $BUILD_IOS; then
     # Generate XCode project
     print_builder "Generating XCode Project"
     eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.GenerateXcode -buildTarget ios -outputDir \"${OUTPUT_DIR}\""
-
-    BUILDLOG="$(cat ${BUILDLOG_FILE})"
-    echo $BUILDLOG
+    cat $BUILDLOG
 
     # Stage target files
     # BUNDLE_ID=$(/usr/libexec/PlistBuddy -c "Print :CFBundleVersion" "$SCRIPT_PATH/xcode/Info.plist")
