@@ -263,6 +263,8 @@ git checkout "${BRANCH}"
 print_builder "Pulling Branch ${BRANCH}"
 git pull origin "${BRANCH}"
 
+rm -f "${BUILDLOG_FILE}"
+
 print_builder "Custom Builder Action"
 eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.CustomAction"
 
@@ -361,11 +363,6 @@ eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.OutputBundleIdentifier
 PACKAGE_NAME="$(cat bundleIdentifier.txt)"
 rm -f "bundleIdentifier.txt"
 
-# Check if build.log exists
-if [ -d "$BUILDLOG_FILE" ]; then
-  rm -f "${BUILDLOG_FILE}"
-fi
-
 # Generate Android build
 if $BUILD_ANDROID; then
   print_builder "BUILDER: Generating APKs..."
@@ -375,7 +372,9 @@ if $BUILD_ANDROID; then
 
   # Do it!
   eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.GenerateAPK -buildTarget android -outputDir \"${OUTPUT_DIR}/apks/\" -obb ${GENERATE_OBB} -aab ${GENERATE_AAB} -code ${PROJECT_CODE_NAME} -addressablesMode ${ADDRESSABLES_MODE}"
-  cat "${BUILDLOG_FILE}"
+  BUILDLOG="$(cat ${BUILDLOG_FILE})"
+  echo "${BUILDLOG}"
+
 
   # Unity creates a tmp file androidBuildVersion.txt with the android build version number in it. Read from it and remove it.
 	print_builder "BUILDER: Reading internal android build version number";
@@ -409,7 +408,9 @@ if $BUILD_IOS; then
     # Generate XCode project
     print_builder "Generating XCode Project"
     eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.GenerateXcode -buildTarget ios -outputDir \"${OUTPUT_DIR}\""
-    cat "${BUILDLOG_FILE}"
+
+    BUILDLOG="$(cat ${BUILDLOG_FILE})"
+    echo "${BUILDLOG}"
 
     # Stage target files
     # BUNDLE_ID=$(/usr/libexec/PlistBuddy -c "Print :CFBundleVersion" "$SCRIPT_PATH/xcode/Info.plist")
