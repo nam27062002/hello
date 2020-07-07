@@ -145,6 +145,9 @@ public class ClusteringManager {
 			{
 				// The server response is taking too long. Assign the player to generic cluster.
 				UsersManager.currentUser.clusterId = CLUSTER_GENERIC;
+
+				Debug.Log("<color=white>Dint get answer from server. Assigning player to generic cluster '" + CLUSTER_GENERIC + "' </color>");
+
 				return CLUSTER_GENERIC;
 			}
 		}
@@ -280,6 +283,8 @@ public class ClusteringManager {
 										string clusterId = kJSON["clusterId"];
 										
 										UsersManager.currentUser.clusterId = clusterId;
+
+										Debug.Log("<color=white>Player assigned by server to cluster '" + clusterId + "' </color>");
 
 										// Track this event
 										HDTrackingManager.Instance.Notify_ClusterAssigned(clusterId);
