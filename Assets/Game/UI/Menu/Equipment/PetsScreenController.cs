@@ -329,6 +329,15 @@ public class PetsScreenController : MonoBehaviour, IBroadcastListener {
 			}
 		}
 
+		// Check baby pets info popup
+		if (!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.BABY_PETS_INFO))
+		{
+			if (categorySku == "baby")
+			{
+				PopupInfoBabyPets.ShowPopup();
+			}
+		}
+
 		// Refresh counter text
 		m_counterText.Localize(
 			"TID_PET_COUNTER",
@@ -379,6 +388,15 @@ public class PetsScreenController : MonoBehaviour, IBroadcastListener {
 			} else if(newSlot < 0) {
 				UIFeedbackText text = UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("Unknown error!"), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);	// There are no available slots!\nUnequip another pet before equipping this one.
 				text.text.color = Color.red;
+			}
+		}
+
+		// Check baby pets info popup
+		if (!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.BABY_PETS_INFO))
+		{
+			if (_pill.def.Get("category") == "baby")
+			{
+				PopupInfoBabyPets.ShowPopup();
 			}
 		}
 	}
