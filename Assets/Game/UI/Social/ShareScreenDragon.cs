@@ -157,7 +157,7 @@ public class ShareScreenDragon : IShareScreen {
 				// Initialize power info
 				if(m_powerIcon != null) {
 					DefinitionNode powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, skinDef.GetAsString("powerup"));
-					m_powerIcon.InitFromDefinition(powerDef, false, false, PowerIcon.Mode.SKIN);
+					m_powerIcon.InitFromDefinition(powerDef, skinDef, false, false, PowerIcon.Mode.SKIN);
 				}
 
 				// Skin name

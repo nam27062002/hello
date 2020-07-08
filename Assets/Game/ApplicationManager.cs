@@ -227,10 +227,13 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         if (Input.GetKeyDown(KeyCode.A))
         {
             // ---------------------------
-            // Go to rewards
-            // ---------------------------       
-            MenuSceneController controller = GameObject.FindObjectOfType<MenuSceneController>();
-            controller.GoToScreen(MenuScreen.LEAGUES_REWARD);
+            // Open pets popup
+            // ---------------------------
+            Reward reward = new Reward();
+            reward.pc = 1;
+            reward.origin = "doubleGems";
+            Messenger.Broadcast<Reward, Transform>(MessengerEvents.REWARD_APPLIED, reward, null);
+
 
 
             // ---------------------------

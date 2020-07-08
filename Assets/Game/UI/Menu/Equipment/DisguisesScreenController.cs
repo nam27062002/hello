@@ -430,7 +430,7 @@ public class DisguisesScreenController : MonoBehaviour {
 
 		// If no power, hide the power icon
 		// Refresh data
-		m_powerIcon.InitFromDefinition(powerDef, false);	// [AOC] Powers are not locked anymore
+		m_powerIcon.InitFromDefinition(powerDef, _pill.def, false);	// [AOC] Powers are not locked anymore
 
 		// Show
 		// Force the animation to be launched

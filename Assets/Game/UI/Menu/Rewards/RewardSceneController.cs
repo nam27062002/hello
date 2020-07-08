@@ -732,7 +732,7 @@ public class RewardSceneController : MenuScreenScene {
 		// Trigger SFX
 		// [AOC] Special SFX if it's a Halloween reward!
 		Metagame.RewardEgg r = m_currentReward as Metagame.RewardEgg;
-		if(r != null && r.reward.def.GetAsString("associatedSeason") == "halloween") {
+		if(r != null && r.reward != null && r.reward.def.GetAsString("associatedSeason") == "halloween") {
 			AudioController.Play(m_halloweenPetSFX);
 		} else {
 			AudioController.Play(m_rarityFXSetup[(int)m_currentReward.rarity].sfx);

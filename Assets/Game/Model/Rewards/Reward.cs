@@ -23,6 +23,7 @@ namespace Metagame {
 			COMMON, 
 			RARE, 
 			EPIC,
+            BABY,
 
 			COUNT
 		}
@@ -44,7 +45,8 @@ namespace Metagame {
 			switch (_raritySku) {
 				case "common":	return Rarity.COMMON; 
 				case "rare":	return Rarity.RARE;	
-				case "epic":	return Rarity.EPIC;	
+				case "epic":	return Rarity.EPIC;
+				case "baby":    return Rarity.BABY;
 			}
 			return Rarity.UNKNOWN;
 		}
@@ -60,6 +62,7 @@ namespace Metagame {
 				case Rarity.COMMON:		return "common";
 				case Rarity.RARE:		return "rare";
 				case Rarity.EPIC:		return "epic";
+				case Rarity.BABY:       return "baby";
 			}
 			return string.Empty;
 		}

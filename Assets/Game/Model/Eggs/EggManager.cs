@@ -32,6 +32,7 @@ public class EggManager : Singleton<EggManager> {
 	private const string PET_RARE 		= "pet_rare";
 	private const string PET_EPIC 		= "pet_epic";
 	private const string PET_SPECIAL 	= "pet_special";
+	private const string PET_BABY       = "pet_baby";
 
 	private const string RANDOM_STATE_PREFS_KEY = "EggManager.RandomState";
 
@@ -77,13 +78,13 @@ public class EggManager : Singleton<EggManager> {
 	}
 
 
-	private static float[] sm_weightIDs = {1f, 2f, 3f};
+	private static float[] sm_weightIDs = {1f, 2f, 3f, 4f};
 	public static void SetWeightIDs(float[] _weightIDs) {
 		sm_weightIDs = _weightIDs;
 	}
 
 	public static void RestoreWeightIDs() {
-		sm_weightIDs = new float[] {1f, 2f, 3f};
+		sm_weightIDs = new float[] {1f, 2f, 3f, 4f};
 	}
 
 	// Internal
@@ -135,6 +136,8 @@ public class EggManager : Singleton<EggManager> {
 		m_weights.Add(0);
 		m_rewardDropRate.AddElement(PET_EPIC);
 		m_weights.Add(0);
+		m_rewardDropRate.AddElement(PET_BABY);
+		m_weights.Add(0);
 
 		__BuildDynamicProbabilities();
 
@@ -182,6 +185,7 @@ public class EggManager : Singleton<EggManager> {
 			case Metagame.Reward.Rarity.COMMON:	return instance.m_defaultProbabilities[0];
 			case Metagame.Reward.Rarity.RARE:	return instance.m_defaultProbabilities[1];
 			case Metagame.Reward.Rarity.EPIC:	return instance.m_defaultProbabilities[2];
+			case Metagame.Reward.Rarity.BABY:   return instance.m_defaultProbabilities[3];
 		}
 		return 0f;	// Unsupported rarity, 0 chance of getting it
 	}
@@ -198,6 +202,7 @@ public class EggManager : Singleton<EggManager> {
 			case Metagame.Reward.Rarity.COMMON:	rewardId = PET_COMMON;	break;
 			case Metagame.Reward.Rarity.RARE:	rewardId = PET_RARE;	break;
 			case Metagame.Reward.Rarity.EPIC:	rewardId = PET_EPIC;	break;
+			case Metagame.Reward.Rarity.BABY:   rewardId = PET_BABY;    break;
 			default: return 0f;	// Unsupported rarity, 0 chance of getting it
 		}
 
@@ -375,6 +380,7 @@ public class EggManager : Singleton<EggManager> {
 			weights[0] = _eggDef.GetAsFloat("weightCommon", 1);
 			weights[1] = _eggDef.GetAsFloat("weightRare", 2);
 			weights[2] = _eggDef.GetAsFloat("weightEpic", 3);
+			weights[3] = _eggDef.GetAsFloat("weightBaby", 4);
 			probabilities = EggManager.ComputeProbabilities(weights);
 		} else {
 			// Default probabilities
@@ -416,6 +422,7 @@ public class EggManager : Singleton<EggManager> {
 			case CPGachaTest.RewardChanceMode.COMMON_ONLY:	rewardSku = PET_COMMON; break;
 			case CPGachaTest.RewardChanceMode.RARE_ONLY:  	rewardSku = PET_RARE;   break;
 			case CPGachaTest.RewardChanceMode.EPIC_ONLY: 	rewardSku = PET_EPIC;   break;
+			case CPGachaTest.RewardChanceMode.BABY_ONLY:    rewardSku = PET_BABY;   break;
 
 			case CPGachaTest.RewardChanceMode.SAME_PROBABILITY: {
 				// Exclude special pets!

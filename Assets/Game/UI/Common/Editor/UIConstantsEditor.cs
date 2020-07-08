@@ -74,6 +74,8 @@ public class UIConstantsEditor : CategorizedEditor {
 				m_categories[CAT_COLORS].Add(p);
 			}else if (p.name.Contains("m_iconTierColors")){	
 			    m_categories[CAT_COLORS].Add(p);
+			} else if(p.name.Contains("m_currencyColor")) {
+				m_categories[CAT_COLORS].Add(p, "Currency Colors");
 			} else if(p.name.Contains("m_rarity")) {
 				m_categories[CAT_RARITIES].Add(p);
 			} else if(p.name.Contains("Path")) {

@@ -11,6 +11,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System;
+using System.Collections.Generic;
 using DG.Tweening;
 
 //----------------------------------------------------------------------------//
@@ -19,15 +20,18 @@ using DG.Tweening;
 /// <summary>
 /// Controller for the dragon discount icon in the menu HUD.
 /// </summary>
-public class DragonDiscountIcon : IPassiveEventIcon {
+public class DragonDiscountIcon : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
+	private const float UPDATE_FREQUENCY = 1f;  // Seconds
 
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed
+	[SerializeField] private ShowHideAnimator m_rootAnim = null;
+	[SerializeField] private TextMeshProUGUI m_timerText = null;
 	[Space]
 	[SerializeField] private UISpriteAddressablesLoader m_dragonIconLoader = null;
 	[SerializeField] private Transform m_tierIconContainer = null;
@@ -38,20 +42,23 @@ public class DragonDiscountIcon : IPassiveEventIcon {
 	[SerializeField] private Graphic[] m_toTint = null;
 
 	// Internal properties for comfort
-	private ModEconomyDragonPrice _mod {
+	private OfferPackDragonDiscount targetDiscount {
+		get {
+			return OffersManager.activeDragonDiscount;
+		}
+	}
+
+	private ModEconomyDragonPrice mod {
 		get { 
-			if(m_passiveEventManager != null) {
-				if(m_passiveEventManager.m_passiveEventData != null) {
-					return m_passiveEventManager.m_passiveEventDefinition.mainMod as ModEconomyDragonPrice; 
-				}
+			if(targetDiscount != null) {
+				return targetDiscount.mod; 
 			}
 			return null;
 		}
 	}
 
-	private IDragonData _targetDragonData {
+	private IDragonData targetDragonData {
 		get {
-			ModEconomyDragonPrice mod = _mod;
 			if(mod != null) {
 				return DragonManager.GetDragonData(mod.dragonSku);
 			}
@@ -60,56 +67,91 @@ public class DragonDiscountIcon : IPassiveEventIcon {
 	}
 
 	//------------------------------------------------------------------------//
-	// PARENT OVERRIDES														  //
+	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Initialization.
+	/// </summary>
+	protected void Awake() {
+		// Start hidden
+		m_rootAnim.ForceHide(false);
+	}
+
 	/// <summary>
 	/// First update call.
 	/// </summary>
-	protected override void Start() {
-		// Call parent
-		base.Start();
+	protected virtual void Start() {
+		// Perform a firs refresh
+		RefreshData(true);
 
 		// Subscribe to external events
+		Messenger.AddListener(MessengerEvents.OFFERS_RELOADED, OnOffersReloaded);
+		Messenger.AddListener<List<OfferPack>>(MessengerEvents.OFFERS_CHANGED, OnOffersChanged);
 		Messenger.AddListener<string>(MessengerEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
-        Messenger.AddListener<int, HDLiveDataManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_NEW_DEFINITION, OnNewEventDefinition);
-    }
+		Messenger.AddListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_END, OnMenuScreenTransition);
+	}
 
 	/// <summary>
 	/// Destructor.
 	/// </summary>
-	protected override void OnDestroy() {
-		// Call parent
-		base.OnDestroy();
-
+	protected virtual void OnDestroy() {
 		// Unsubscribe from external events
+		Messenger.RemoveListener(MessengerEvents.OFFERS_RELOADED, OnOffersReloaded);
+		Messenger.RemoveListener<List<OfferPack>>(MessengerEvents.OFFERS_CHANGED, OnOffersChanged);
 		Messenger.RemoveListener<string>(MessengerEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
-        Messenger.RemoveListener<int, HDLiveDataManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_NEW_DEFINITION, OnNewEventDefinition);
+		Messenger.RemoveListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_END, OnMenuScreenTransition);
     }
 
-	//------------------------------------------------------------------------//
-	// IPassiveEventIcon IMPLEMENTATION										  //
-	//------------------------------------------------------------------------//
 	/// <summary>
-	/// Get the manager for this specific passive event type.
+	/// Component has been enabled.
 	/// </summary>
-	/// <returns>The event manager corresponding to this event type.</returns>
-	protected override HDPassiveEventManager GetEventManager() {
-		return HDLiveDataManager.dragonDiscounts;
+	protected virtual void OnEnable() {
+		// Program a periodic update
+		InvokeRepeating("UpdatePeriodic", 0f, UPDATE_FREQUENCY);
+
+		// Get latest data from the manager
+		RefreshData(true);
 	}
 
 	/// <summary>
-	/// Update visuals when new data has been received.
+	/// Called periodically - to avoid doing stuff every frame.
 	/// </summary>
-	protected override void RefreshDataInternal() {
-		// Aux vars
-		ModEconomyDragonPrice mod = _mod;
-		IDragonData targetDragonData = _targetDragonData;
+	protected virtual void UpdatePeriodic() {
+		// Skip if we're not active - probably in a screen we don't belong to
+		if(!isActiveAndEnabled) return;
 
-		// Dragon icon
+		// Refresh the timer!
+		RefreshTimer(true);
+	}
+
+	/// <summary>
+	/// Component has been disabled.
+	/// </summary>
+	protected virtual void OnDisable() {
+		// Cancel periodic update
+		CancelInvoke();
+	}
+
+	//------------------------------------------------------------------------//
+	// INTERNAL METHODS														  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Get latest data from the manager and update visuals.
+	/// </summary>
+	/// <param name="_checkVisibility">Whether to refresh visibility as well or not.</param>
+	protected virtual void RefreshData(bool _checkVisibility) {
+		// Refresh visibility
+		if(_checkVisibility) RefreshVisibility();
+
+		// Nothing else to do if there is no active discount
+		if(targetDiscount == null) return;
+
+		// Update the timer
+		RefreshTimer(false);
+
+		// Refresh Dragon icon
 		if(m_dragonIconLoader != null) {
-			bool show = false;
 			if(targetDragonData != null) {
-				show = true;
                 string iconName = IDragonData.GetDefaultDisguise(targetDragonData.sku).Get("icon");
 				m_dragonIconLoader.LoadAsync(iconName);
             }
@@ -157,23 +199,55 @@ public class DragonDiscountIcon : IPassiveEventIcon {
 	}
 
 	/// <summary>
-	/// Do custom visibility checks based on passive event type.
+	/// Check whether the icon can be displayed or not and does it.
 	/// </summary>
-	/// <returns>Whether the icon can be displayed or not.</returns>
-	protected override bool RefreshVisibilityInternal() {
-		// Only show in the menu
-		if(InstanceManager.menuSceneController == null) return false;
+	public void RefreshVisibility() {
+        // Check conditions
+        bool show = CheckVisibility(out bool allowAnim);
 
-		// Only show in the some specific screens
+		// Apply!
+		if(m_rootAnim != null) {
+			if(allowAnim) {
+				m_rootAnim.Set(show);
+			} else {
+				m_rootAnim.ForceSet(show, false);
+            }
+		}
+	}
+
+	/// <summary>
+	/// Perform all the required checks to see if the icon should be displayed or not.
+	/// </summary>
+	/// <param name="_allowAnim">Out parameter to tell whether we can show the animation or we just force visibility without animation.</param>
+	/// <returns>Whether the icon should be displayed or not.</returns>
+	protected virtual bool CheckVisibility(out bool _allowAnim) {
+		// Allow animation by default
+		_allowAnim = true;
+
+		// Only show in the menu
+		if(InstanceManager.menuSceneController == null) {
+			_allowAnim = false;
+			return false;
+		}
+
+		// Never during tutorial
+		if(UsersManager.currentUser.gamesPlayed < GameSettings.ENABLE_DRAGON_DISCOUNTS_AT_RUN) {
+			_allowAnim = false;
+			return false;
+		}
+
+		// Only show in some specific screens
 		MenuScreen currentScreen = InstanceManager.menuSceneController.currentScreen;
 		if(currentScreen != MenuScreen.DRAGON_SELECTION) return false;
 
+		// Don't show if there is no active discount
+		if(targetDiscount == null) return false;
+		if(!targetDiscount.isActive) return false;
+
 		// Don't show if mod not valid
-		ModEconomyDragonPrice mod = _mod;
 		if(mod == null) return false;
 
 		// Don't show if target dragon not valid
-		IDragonData targetDragonData = _targetDragonData;
 		if(targetDragonData == null) return false;
 
 		// Don't show if selected dragon is the target dragon
@@ -190,9 +264,50 @@ public class DragonDiscountIcon : IPassiveEventIcon {
 		return true;
 	}
 
+	/// <summary>
+	/// Refresh the timer. To be called periodically.
+	/// </summary>
+	/// <param name="_checkExpiration">Refresh data if timer reaches 0?</param>
+	private void RefreshTimer(bool _checkExpiration) {
+		// Is discount still valid?
+		if(targetDiscount == null) return;
+
+		// Update text
+		double remainingSeconds = targetDiscount.remainingTime.TotalSeconds;
+		if(m_timerText != null) {
+			// Set text
+			if(m_timerText.gameObject.activeSelf) {
+				m_timerText.text = TimeUtils.FormatTime(
+					System.Math.Max(0, remainingSeconds), // Just in case, never go negative
+					TimeUtils.EFormat.ABBREVIATIONS,
+					2
+				);
+			}
+		}
+
+		// Manage timer expiration when the icon is visible
+		if(_checkExpiration && remainingSeconds <= 0) {
+			RefreshData(true);
+		}
+	}
+
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
+	/// <summary>
+	/// The offers manager has been reloaded.
+	/// </summary>
+	private void OnOffersReloaded() {
+		RefreshData(true);
+	}
+
+	/// <summary>
+	/// Offers list has changed.
+	/// </summary>
+	private void OnOffersChanged(List<OfferPack> offersChanged = null) {
+		RefreshData(true);
+	}
+
 	/// <summary>
 	/// Selected dragon has changed.
 	/// </summary>
@@ -201,16 +316,20 @@ public class DragonDiscountIcon : IPassiveEventIcon {
 		RefreshVisibility();
 	}
 
-    private void OnNewEventDefinition(int _eventID, HDLiveDataManager.ComunicationErrorCodes _errorCode) {
-        RefreshVisibility();
-    }
+	/// <summary>
+	/// The menu screen change animation has started.
+	/// </summary>
+	/// <param name="_from">Screen we come from.</param>
+	/// <param name="_to">Screen we're going to.</param>
+	private void OnMenuScreenTransition(MenuScreen _from, MenuScreen _to) {
+		RefreshVisibility();
+	}
 
-    /// <summary>
-    /// The scroll to target button has been pressed.
-    /// </summary>
-    public void OnScrollToTargetDragon() {
+	/// <summary>
+	/// The scroll to target button has been pressed.
+	/// </summary>
+	public void OnScrollToTargetDragon() {
 		// Just do it
-		IDragonData targetDragonData = _targetDragonData;
 		if(targetDragonData != null) {
 			InstanceManager.menuSceneController.SetSelectedDragon(targetDragonData.sku);
 		}

@@ -57,6 +57,7 @@ public class ResultsScreenControllerEditor : ReorderableArrayInspector {
 
 					new StepSetup(ResultsScreenController.Step.TRACKING, true, true, "Logic step, send end of game tracking - before applying the rewards!"),
 					new StepSetup(ResultsScreenController.Step.APPLY_REWARDS, true, false, "Logic step, apply rewards to the profile"),
+					
 
 					new StepSetup(ResultsScreenController.Step.SKIN_UNLOCKED, true, true, "Optional, if a skin was unlocked. As many times as needed if more than one skin was unlocked in the same run"),
 					new StepSetup(ResultsScreenController.Step.DRAGON_UNLOCKED, true, false, "Optional, if a new dragon was unlocked"),
@@ -75,6 +76,8 @@ public class ResultsScreenControllerEditor : ReorderableArrayInspector {
 					new StepSetup(ResultsScreenController.Step.LEAGUE_SYNC, true, false, "Special Dragons League, sync with server, apply rewards and do tracking"),
 
 					new StepSetup(ResultsScreenController.Step.PAUSE, true, true, "Simple step to add a \"Tap To Continue\" pause"),
+
+					new StepSetup(ResultsScreenController.Step.CLUSTERING, true, true, "Logic step. Send player data to the server to calculate the cluster associated"),
 
 					new StepSetup(ResultsScreenController.Step.COUNT, false, false, "")
 				};

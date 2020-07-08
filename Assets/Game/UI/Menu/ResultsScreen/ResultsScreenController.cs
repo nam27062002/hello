@@ -43,6 +43,8 @@ public class ResultsScreenController : MonoBehaviour {
 
 		PAUSE,					// Simple step to add a "Tap To Continue" pause
 
+        CLUSTERING,             // Logic step. Send player data to the server to calculate the cluster associated
+
 		COUNT
 	}
 

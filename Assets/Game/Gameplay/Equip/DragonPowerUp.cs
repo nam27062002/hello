@@ -113,12 +113,36 @@ public class DragonPowerUp : MonoBehaviour {
 				DefinitionNode petDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PETS, pets[i]);
 				if ( petDef != null )
 				{
-					string powerUp = petDef.Get("powerup");
-					if ( !string.IsNullOrEmpty( powerUp ) )
+                    // Baby Dragons
+					if (petDef.Get("category") == "baby")
 					{
-						SetPowerUp(powerUp, true);
+						BabyDragon babyDragon = InstanceManager.player.GetBabyDragon();
+						babyDragon.sku = pets[i];
+						babyDragon.powerup = petDef.Get("powerup");
+
+						string motherDragon = petDef.Get("motherDragonSKU");
+						// Apply baby dragon stat bonus power only if we're playing with their mother dragon
+						if (motherDragon == dragonSku)
+						{
+							string statPower = petDef.Get("statPower");
+							if (!string.IsNullOrEmpty(statPower))
+							{
+								SetPowerUp(statPower, true);
+							}
+						}
+
+						// Apply shared power
+						SetSharedPower(petDef);
 					}
-				}
+					else
+					{
+						string powerUp = petDef.Get("powerup");
+						if (!string.IsNullOrEmpty(powerUp))
+						{
+							SetPowerUp(powerUp, true);
+						}
+					}
+				}   
 			}
 		}
 
@@ -148,6 +172,49 @@ public class DragonPowerUp : MonoBehaviour {
 		ApplyPowerups();
 	}
 
+    // For baby dragons only
+    void SetSharedPower(DefinitionNode babyDragonDefinition)
+    {
+		PetCollection totalPets = UsersManager.currentUser.petCollection;
+		int totalBabyDragons = totalPets.unlockedBabyPetsCount;
+		if (totalBabyDragons > 0)
+		{
+			string sharedPower = babyDragonDefinition.Get("sharedPower");
+			DefinitionNode sharedPowerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.BABY_DRAGONS_SHARED_POWER, sharedPower);
+            if (sharedPowerDef != null)
+            {
+				BabyDragon babyDragon = InstanceManager.player.GetBabyDragon();
+				babyDragon.probability = (int)ComputeSharedPowerProbability(sharedPowerDef);
+				babyDragon.extraGems = sharedPowerDef.GetAsInt("extraGems");
+				babyDragon.firstSucceed = sharedPowerDef.GetAsInt("firstSucceed");
+			}
+            else
+            {
+				Debug.LogWarning("Shared power definition: " + sharedPower + " not found in sharedPowerUpDefinitions");
+            }
+        }
+    }
+
+	/// <summary>
+	/// Compute the total probabilty for the given shared power considering current user's pet collection.
+	/// </summary>
+	/// <param name="_sharedPowerDef"></param>
+	/// <returns></returns>
+	public static float ComputeSharedPowerProbability(DefinitionNode _sharedPowerDef) {
+		if(_sharedPowerDef == null) return 0f;
+
+		int totalBabyDragons = UsersManager.currentUser.petCollection.unlockedBabyPetsCount;
+		if(totalBabyDragons > 0) {
+			int baseProbability = _sharedPowerDef.GetAsInt("baseProbability");
+			int extraProbability = _sharedPowerDef.GetAsInt("extraProbability");
+
+			int probability = baseProbability + (totalBabyDragons * extraProbability);
+			return (float)probability;
+		}
+
+		return 0f;
+	}
+
 	void SetPowerUp( string powerUpSku, bool _fromPet )
 	{
 		DragonPlayer player = InstanceManager.player;
@@ -171,8 +238,9 @@ public class DragonPowerUp : MonoBehaviour {
 				{
 					player.AddHealthBonus( def.GetAsFloat("param1") * multiplier );
 				}break;
-				case "boost_increase":	// increases boost bar
-				{
+				case "boost_increase":  // increases boost bar
+                case "baby_boost_increase":
+                    {
 					player.AddBoostBonus( def.GetAsFloat("param1") * multiplier);
 				}break;
 				case "faster_boost": // increases boost refill rate
@@ -183,8 +251,9 @@ public class DragonPowerUp : MonoBehaviour {
 						boost.AddRefillBonus( def.GetAsFloat("param1") * multiplier );
 					}
 				}break;
-				case "fury_duration":	// Adds fury duration
-				{
+				case "fury_duration":   // Adds fury duration
+                case "baby_fury_duration":
+                    {
 					DragonBreathBehaviour breath = player.breathBehaviour;
 					if ( breath != null )
 						breath.AddDurationBonus( def.GetAsFloat("param1") * multiplier );
@@ -244,8 +313,9 @@ public class DragonPowerUp : MonoBehaviour {
 					int increase = def.GetAsInt("param1");
 					player.SetOnBreakIncrease( increase );
 				}break;
-				case "prey_hp_boost":	// a prey gives you more hp
-				{
+				case "prey_hp_boost":   // a prey gives you more hp
+                case "baby_prey_hp_boost":
+                    {
 					// string from = def.Get("param1");
 					List<string> from = def.GetAsList<string>("param1");
 					float percentage = def.GetAsFloat("param2");
@@ -257,8 +327,9 @@ public class DragonPowerUp : MonoBehaviour {
 					}
 
 				}break;
-				case "food_increase":	// adds % bonus hp from any source
-				{
+				case "food_increase":   // adds % bonus hp from any source
+                case "baby_food_increase":
+                    {
 					float percentage = def.GetAsFloat("param1");
 					DragonHealthBehaviour healthBehaviour = GetComponent<DragonHealthBehaviour>();
 					healthBehaviour.AddEatingHpBoost(percentage * multiplier);
@@ -276,8 +347,9 @@ public class DragonPowerUp : MonoBehaviour {
 					Entity.AddSCMultiplier(coins);
 					m_warnEntities = true;
 				}break;
-				case "score_increase":	// Increases score given for all preys by param1 %
-				{
+				case "score_increase":  // Increases score given for all preys by param1 %
+                case "baby_score_increase":
+                    {
 					float score = def.GetAsFloat("param1", 0) * multiplier;
 					m_entityScoreMultiplier += score;
 
@@ -286,7 +358,8 @@ public class DragonPowerUp : MonoBehaviour {
 					m_warnEntities = true;
 				}break;
 				case "more_xp":
-				{
+                case "baby_more_xp":
+                    {
 					float xp = def.GetAsFloat("param1", 0) * multiplier;
 					m_entityXPMultiplier += xp;
 
@@ -302,8 +375,9 @@ public class DragonPowerUp : MonoBehaviour {
 						fireBreath.AddPowerUpLengthMultiplier( percentage * multiplier );
 					}
 				}break;
-				case "speed_increase":	// Increases max speed by param1 %
-				{
+				case "speed_increase":  // Increases max speed by param1 %
+                case "baby_speed_increase":
+                    {
 					DragonMotion motion = GetComponent<DragonMotion>();
 					if ( motion != null )
 					{
@@ -381,7 +455,10 @@ public class DragonPowerUp : MonoBehaviour {
 		// Check definition
 		if(_powerDef == null) return "";
 
+		// Get some aux vars from the def
 		string category = _powerDef.Get("category");
+		string type = _powerDef.GetAsString("type");
+		bool isBaby = _powerDef.sku.StartsWith("baby_");
 
 		float multiplier = 1f;
 		if (_fromPet) {
@@ -393,9 +470,10 @@ public class DragonPowerUp : MonoBehaviour {
 		// Short or long description?
 		string fieldId = _short ? "tidDescShort" : "tidDesc";
 
-		// Color and format based on type
-		string type = _powerDef.GetAsString("type");
+		// Text highlight color depends on power
 		Color color = GetColor(_powerDef);
+
+		// Text formatting depends on type
 		switch(type) {
 			// Powers with custom formats
 			case "lower_damage":
@@ -412,13 +490,6 @@ public class DragonPowerUp : MonoBehaviour {
 			} break;
 
 			case "prey_hp_boost": {
-				/*
-				// Show target entity name
-				// [AOC] TODO!! Plural
-				DefinitionNode entityDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.ENTITIES, _powerDef.GetAsString("param1"));
-				return _powerDef.GetLocalized(fieldId, entityDef.GetLocalized("tidName"), StringUtils.FormatNumber(_powerDef.GetAsFloat("param2"), 0), UIConstants.POWER_COLOR_ENTITY.ToHexString("#"), UIConstants.POWER_COLOR_HEALTH.ToHexString("#"));
-				*/
-
 				// [AOC] As of 05/07/2017, entity names are included in the TID (i.e. "Increased %U0 health on eating Birds")
 				if(_short) {
 					return _powerDef.GetLocalized(fieldId, color.ToHexString("#"));
@@ -426,6 +497,25 @@ public class DragonPowerUp : MonoBehaviour {
 					return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsFloat("param2") * multiplier, 0), color.ToHexString("#"));
 				}
 			} break;
+
+			// Baby pet shared power
+			case "collection": {
+				if(_short) {
+					// This power doesn't have short description, this should never be called
+					return Color.red.Tag("ERROR! This power doesn't have short description");
+				} else {
+					// %U0: Power value (i.e. "15")
+					// %U1: Power value increase (i.e. "2")
+					// %U2: Color code
+					return _powerDef.GetLocalized(
+						fieldId,
+						StringUtils.FormatNumber(ComputeSharedPowerProbability(_powerDef), 0),
+						StringUtils.FormatNumber(_powerDef.GetAsInt("extraProbability")),
+						color.ToHexString("#")
+					);
+				}
+			}
+			break;
 
 			//TONI
 			//We need to get all parameters for each single powerup. Combined powers could be a combination of 3 powers. As we can have just 2 parameters by power, a powerup that
@@ -502,6 +592,7 @@ public class DragonPowerUp : MonoBehaviour {
 					color.ToHexString("#")
 				);
 			} break;
+
 			// Rest of powers (no params)
 			default: {
 				return _powerDef.GetLocalized(
@@ -523,9 +614,17 @@ public class DragonPowerUp : MonoBehaviour {
 		// Check definition
 		if(_powerDef == null) return Color.white;
 
-		// Get the color for this power type
+		// Get some aux vars from the def
 		string type = _powerDef.GetAsString("type");
+		bool isBaby = _powerDef.sku.StartsWith("baby_");
 
+		// If baby base power, force baby color
+		// We'll know it's a base power, not a stat power, by its "category" field
+		if(isBaby && _powerDef.GetAsString("category") == "other") {
+			return GetColor("baby");
+		}
+
+		// Get the color for this power type
 		// Some types need special treatment
 		switch(type) {
 			case "combined": {
@@ -633,8 +732,17 @@ public class DragonPowerUp : MonoBehaviour {
 				return UIConstants.PET_CATEGORY_SPECIAL;
 			} break;
 
-			// Special Cases
-			case "combined": {
+			case "collection": {
+				//return UIConstants.PET_CATEGORY_BABY;
+				return UIConstants.CURRENCY_COLOR_HC;
+			} break;
+
+            case "baby": {
+				return UIConstants.PET_CATEGORY_BABY;
+            } break;
+
+            // Special Cases
+            case "combined": {
 				// Should never be called, since we're parsing the type of the second combined power instead
 				return Color.black;
 			} break;
