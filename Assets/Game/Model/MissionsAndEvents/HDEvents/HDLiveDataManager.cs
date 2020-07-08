@@ -117,13 +117,11 @@ public class HDLiveDataManager : Singleton<HDLiveDataManager> {
     private HDQuestManager          m_quest             = new HDQuestManager();
     private HDPassiveEventManager   m_passive           = new HDPassiveEventManager();
     private HDLeagueController      m_league            = new HDLeagueController();
-    private HDDiscountEventManager  m_dragonDiscounts   = new HDDiscountEventManager();
 
     public static HDTournamentManager      tournament      { get { return instance.m_tournament; } }
     public static HDQuestManager           quest           { get { return instance.m_quest; } }
     public static HDPassiveEventManager    passive         { get { return instance.m_passive; } }
     public static HDLeagueController       league          { get { return instance.m_league; } }
-    public static HDDiscountEventManager   dragonDiscounts { get { return instance.m_dragonDiscounts; } }
     //
 
 
@@ -152,7 +150,6 @@ public class HDLiveDataManager : Singleton<HDLiveDataManager> {
         m_managers.Add(m_tournament);
         m_managers.Add(m_quest);
         m_managers.Add(m_passive);
-        m_managers.Add(m_dragonDiscounts);
         m_managers.Add(m_league);
 
         Messenger.AddListener<bool>(MessengerEvents.LOGGED, OnLoggedIn);
@@ -449,7 +446,6 @@ public class HDLiveDataManager : Singleton<HDLiveDataManager> {
         m_passive.Deactivate();
         m_quest.Deactivate();
         m_league.Deactivate();
-        m_dragonDiscounts.Deactivate();
     }
 
     public void SwitchToQuest() {
@@ -459,7 +455,6 @@ public class HDLiveDataManager : Singleton<HDLiveDataManager> {
         if (UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.FIRST_RUN)) {
             m_passive.Activate();
             m_quest.Activate();
-            m_dragonDiscounts.Activate();
         }
     }
 
@@ -468,7 +463,6 @@ public class HDLiveDataManager : Singleton<HDLiveDataManager> {
         m_passive.Deactivate();
         m_quest.Deactivate();
         m_league.Activate();
-        m_dragonDiscounts.Activate();
     }
 
     // You have to activate the events first to allow for Later mods activation
@@ -479,7 +473,6 @@ public class HDLiveDataManager : Singleton<HDLiveDataManager> {
         m_passive.ActivateLaterMods();
         m_quest.ActivateLaterMods();
         m_league.ActivateLaterMods();
-        m_dragonDiscounts.ActivateLaterMods();
     }
 
     // Deactivate later mods
@@ -490,6 +483,5 @@ public class HDLiveDataManager : Singleton<HDLiveDataManager> {
         m_passive.DeactivateLaterMods();
         m_quest.DeactivateLaterMods();
         m_league.DeactivateLaterMods();
-        m_dragonDiscounts.DeactivateLaterMods();
     }
 }

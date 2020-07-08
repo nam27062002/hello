@@ -52,6 +52,7 @@ public class OfferPack {
         FREE,
         SC,
         HC,
+		DRAGON_DISCOUNT,
         COUNT
 	}
 
@@ -62,7 +63,7 @@ public class OfferPack {
     public const string FREE = "free";
     public const string SC = "sc";
     public const string HC = "hc";
-
+	public const string DRAGON_DISCOUNT = "dragon_discount";
 
     public const int MAX_ITEMS = 3; // For now
 	public const Type DEFAULT_TYPE = Type.PROGRESSION;
@@ -433,12 +434,18 @@ public class OfferPack {
 
 		// Choose tracking group for rewards depending on offer type
 		HDTrackingManager.EEconomyGroup ecoGroup = HDTrackingManager.EEconomyGroup.SHOP_OFFER_PACK;
-		if(m_type == Type.FREE) {
-			ecoGroup = HDTrackingManager.EEconomyGroup.SHOP_AD_OFFER_PACK;
-		}
-        else if (m_type == Type.REMOVE_ADS)
-        {
-            ecoGroup = HDTrackingManager.EEconomyGroup.SHOP_REMOVE_ADS_PACK;
+		switch(m_type) {
+			case Type.FREE: {
+				ecoGroup = HDTrackingManager.EEconomyGroup.SHOP_AD_OFFER_PACK;
+            } break;
+
+			case Type.REMOVE_ADS: {
+				ecoGroup = HDTrackingManager.EEconomyGroup.SHOP_REMOVE_ADS_PACK;
+            } break;
+
+			case Type.DRAGON_DISCOUNT: {
+				ecoGroup = HDTrackingManager.EEconomyGroup.DRAGON_DISCOUNT;
+			} break;
         }
 
         // Items - limited to 3 for now
@@ -1279,14 +1286,17 @@ public class OfferPack {
 			case Type.FREE: {
 				newPack = new OfferPackFree();
 			} break;
-            case Type.REMOVE_ADS:
-            {   newPack = new OfferPackRemoveAds();
+            case Type.REMOVE_ADS: {
+				newPack = new OfferPackRemoveAds();
             }  break;
             case Type.SC: {
                 newPack = new OfferPackCurrency();
             } break;
             case Type.HC: {
                 newPack = new OfferPackCurrency();
+            } break;
+			case Type.DRAGON_DISCOUNT: {
+				newPack = new OfferPackDragonDiscount();
             } break;
             default: {
 				newPack = new OfferPack();
@@ -1434,14 +1444,15 @@ public class OfferPack {
 	/// <param name="_type">Type to be converted.</param>
 	public static string TypeToString(Type _type) {
 		switch(_type) {
-			case Type.PROGRESSION: 	return PROGRESSION;
-			case Type.PUSHED: 		return PUSH;
-			case Type.ROTATIONAL: 	return ROTATIONAL;
-			case Type.FREE:			return FREE;
-            case Type.REMOVE_ADS:   return REMOVE_ADS;
-            case Type.SC:           return SC;
-            case Type.HC:           return HC;
-        }
+			case Type.PROGRESSION: 		return PROGRESSION;
+			case Type.PUSHED: 			return PUSH;
+			case Type.ROTATIONAL: 		return ROTATIONAL;
+			case Type.FREE:				return FREE;
+            case Type.REMOVE_ADS:		return REMOVE_ADS;
+            case Type.SC:				return SC;
+            case Type.HC:				return HC;
+			case Type.DRAGON_DISCOUNT:	return DRAGON_DISCOUNT;
+		}
 		return TypeToString(DEFAULT_TYPE);
 	}
 
@@ -1452,13 +1463,14 @@ public class OfferPack {
 	/// <param name="_typeStr">String representation of a type to be parsed.</param>
 	public static Type StringToType(string _typeStr) {
 		switch(_typeStr.ToLowerInvariant()) {
-			case PROGRESSION:   return Type.PROGRESSION;
-			case PUSH:		return Type.PUSHED;
-			case ROTATIONAL:	return Type.ROTATIONAL;
-			case FREE:		    return Type.FREE;
-            case REMOVE_ADS:    return Type.REMOVE_ADS;
-            case HC:            return Type.HC;
-            case SC:            return Type.SC;
+			case PROGRESSION:		return Type.PROGRESSION;
+			case PUSH:				return Type.PUSHED;
+			case ROTATIONAL:		return Type.ROTATIONAL;
+			case FREE:				return Type.FREE;
+            case REMOVE_ADS:		return Type.REMOVE_ADS;
+            case HC:				return Type.HC;
+            case SC:				return Type.SC;
+			case DRAGON_DISCOUNT:	return Type.DRAGON_DISCOUNT;
 		}
 		return DEFAULT_TYPE;
 	}
@@ -1568,7 +1580,6 @@ public class OfferPack {
 	/// Load state from a persistence object.
 	/// </summary>
 	/// <param name="_data">The data object loaded from persistence.</param>
-	/// <returns>Whether the mission was successfully loaded</returns>
 	public virtual void Load(SimpleJSON.JSONClass _data) {
 		string key = "";
 		OffersManager.Log("<color=magenta>LOADING PACK</color> {0} with data {1}", m_def.sku, _data.ToString());
@@ -1650,7 +1661,8 @@ public class OfferPack {
 			data.Add("lastViewTimestamp", PersistenceUtils.SafeToString(m_lastViewTimestamp));
 		}
 
-        if ( m_type == Type.PUSHED ){
+		// Add customization ID for pushed offers
+        if ( m_type == Type.PUSHED || m_type == Type.DRAGON_DISCOUNT){
             data.Add("customId",  OffersManager.GenerateTrackingOfferName(m_def));
         }
 

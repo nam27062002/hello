@@ -34,7 +34,7 @@ public class OffersManager : Singleton<OffersManager> {
 
     // Debug
 #if LOG_PACKS
-	private const string LOG_PACK_SKU = "rotationalHigh";
+	private const string LOG_PACK_SKU = "DragonDiscount";
 #endif
 
     //------------------------------------------------------------------------//
@@ -107,7 +107,15 @@ public class OffersManager : Singleton<OffersManager> {
 		get { return freeOfferRemainingCooldown.TotalSeconds > 0; }
 	} 
 
-	private bool m_freeOfferNeedsSorting = false;	// While on cooldown, the free offer will always be placed last. Keep a flag to re-calculate order once the cooldown has finished.
+	private bool m_freeOfferNeedsSorting = false;   // While on cooldown, the free offer will always be placed last. Keep a flag to re-calculate order once the cooldown has finished.
+
+	// Dragon Discount offers
+	private List<OfferPack> m_allEnabledDragonDiscounts = new List<OfferPack>();  // All enabled and non-expired dragon discount offer packs
+
+	private OfferPackDragonDiscount m_activeDragonDiscount = null;   // Currently active dragon discount
+	public static OfferPackDragonDiscount activeDragonDiscount {
+		get { return instance.m_activeDragonDiscount; }
+	}
 
 	// Settings
 	private OffersManagerSettings m_settings = null;
@@ -193,7 +201,13 @@ public class OffersManager : Singleton<OffersManager> {
 		instance.m_allEnabledFreeOffers.Clear();
 		instance.m_activeFreeOffer = null;
 
-        instance.m_categories.Clear();
+		instance.m_allEnabledDragonDiscounts.Clear();
+		if(instance.m_activeDragonDiscount != null) {
+			instance.m_activeDragonDiscount.Reset();
+			instance.m_activeDragonDiscount = null;
+        }
+
+		instance.m_categories.Clear();
 
 		// Cache player cluster
 		instance.m_playerCluster = ClusteringManager.Instance.GetClusterId();
@@ -232,7 +246,10 @@ public class OffersManager : Singleton<OffersManager> {
 
 		// Use the loop to clean old offers from persistence so we don't end up having a huge user profile
         bool cleaningPushed = HDCustomizerManager.instance.hasBeenApplied;
-		List<string> validPushedCustomIds = new List<string>();
+		Dictionary<OfferPack.Type, List<string>> currentPushedIDs = new Dictionary<OfferPack.Type, List<string>> {
+			{ OfferPack.Type.PUSHED, new List<string>() },
+			{ OfferPack.Type.DRAGON_DISCOUNT, new List<string>() }
+		};
 		Dictionary<OfferPack.Type, List<string>> toClean = new Dictionary<OfferPack.Type, List<string>> {
 			{ OfferPack.Type.ROTATIONAL, new List<string>() },
 			{ OfferPack.Type.FREE, new List<string>() }
@@ -312,31 +329,62 @@ public class OffersManager : Singleton<OffersManager> {
                         }
                         break;
 
+						case OfferPack.Type.DRAGON_DISCOUNT: {
+							instance.m_allEnabledDragonDiscounts.Add(newPack);
+
+							// If active, store it as the current dragon discount
+							// [AOC] Shouldn't be needed since the Refresh(true) below should do the trick
+							if (newPack.state == OfferPack.State.ACTIVE) {
+								// If another discount was active first, it has priority over this one (since they are sorted by "order"). Change this one to PENDING_ACTIVATION.
+								if (instance.m_activeDragonDiscount != null) {
+									instance.m_activeDragonDiscount.ForceStateChange(OfferPack.State.PENDING_ACTIVATION, false);
+								} else {
+									instance.m_activeDragonDiscount = newPack as OfferPackDragonDiscount;
+								}
+							}
+						} break;
                     }
                 } else {
 					Log("InitFromDefinitions: OFFER PACK {0} CAN'T BE ADDED!", Color.red, newPack.def.sku);
 				}
 			}
 
+			// Pack disabled, nothing to do
+			else {
+				Log("InitFromDefinitions: OFFER PACK {0} DISABLED BY CONTENT! SKIPPING IT", Color.red, newPack.def.sku);
+			}
+
 			// Check whether it needs to be cleaned
-			// Pushed offers work a bit different here
-			if(newPack.type == OfferPack.Type.PUSHED) {
-				// Only if there is a customization on experiment
-				if(cleaningPushed) {
-					validPushedCustomIds.Add(OffersManager.GenerateTrackingOfferName(offerDefs[i]));
-				}
-			} else if(toClean.ContainsKey(newPack.type)) {
-				// Clean it if the pack is pending activation and has no purchases
-				if(newPack.state == OfferPack.State.PENDING_ACTIVATION && newPack.purchaseCount == 0) {
-					toClean[newPack.type].Add(newPack.def.sku);
+			switch(newPack.type) {
+				case OfferPack.Type.PUSHED:
+				case OfferPack.Type.DRAGON_DISCOUNT: {
+					// Only if customizer has been applied
+					if(cleaningPushed) {
+						currentPushedIDs[newPack.type].Add(OffersManager.GenerateTrackingOfferName(offerDefs[i]));
+					}
+				} break;
+
+				case OfferPack.Type.ROTATIONAL:
+				case OfferPack.Type.FREE: {
+					// Clean it if the pack is pending activation and has no purchases
+					if(newPack.state == OfferPack.State.PENDING_ACTIVATION && newPack.purchaseCount == 0) {
+						toClean[newPack.type].Add(newPack.def.sku);
+					}
+				} break;
+            }
+		}
+
+        // Clean offers persistence if needed
+		// Pushed and Discounts
+		if(cleaningPushed) {
+			foreach(KeyValuePair<OfferPack.Type, List<string>> kvp in currentPushedIDs) {
+				if(kvp.Value.Count > 0) {
+					UsersManager.currentUser.CleanOldPushedOffers(kvp.Key, kvp.Value);
 				}
 			}
 		}
 
-        // Clean offers persistence if needed
-        if ( cleaningPushed ){
-            UsersManager.currentUser.CleanOldPushedOffers(validPushedCustomIds);
-        }
+		// Rotationals and Free
 		foreach(KeyValuePair<OfferPack.Type, List<string>> kvp in toClean) {
 			if(kvp.Value.Count > 0) {
 				UsersManager.currentUser.CleanOldOffers(kvp.Key, kvp.Value);
@@ -424,6 +472,9 @@ public class OffersManager : Singleton<OffersManager> {
 
         // Do we need to activate the remove Ads offer?
         dirty |= RefreshRemoveAds();
+
+		// Do we need to activate a new dragon discount?
+		dirty |= RefreshDragonDiscount();
 
         // Has any offer changed its state?
         if (dirty) {
@@ -590,6 +641,60 @@ public class OffersManager : Singleton<OffersManager> {
         return false;
     }
 
+	/// <summary>
+	/// Checks whether a new dragon discount needs to be activated and does it.
+	/// </summary>
+	/// <returns>Whether a new dragon discount has been activated or not.</returns>
+	private bool RefreshDragonDiscount() {
+		// Nothing to do if a dragon discount is already active
+		if(m_activeDragonDiscount != null) return false;
+
+		// Some logging
+		Log("RefreshDragonDiscount: New discount required", Colors.orange);
+
+		// Select a new pack!
+		// Packs are already sorted by "order", so check sequentially
+		OfferPackDragonDiscount pack = null;
+		for(int i = 0; i < m_allEnabledDragonDiscounts.Count; ++i) {
+			// Check if it can be activated
+			pack = m_allEnabledDragonDiscounts[i] as OfferPackDragonDiscount;
+			if(!pack.CanBeActivated()) {
+				Log("  RefreshDragonDiscount: {0} Activation checks failed! Try next pack", Colors.coral, pack.def.sku);
+				pack = null;
+				continue;
+			} else {
+				// Valid pack! Choose it and break the loop
+				Log("  RefreshDragonDiscount {0}: ALL CHECKS PASSED!", Colors.paleGreen, pack.def.sku);
+				break;
+			}
+		}
+
+		// If no pack was found, nothing else to do
+		// Report failure
+		if(pack == null) {
+			if(m_allEnabledDragonDiscounts.Count <= 0) {
+				Log("RefreshDragonDiscount: FAIL! No valid dragon discounts to choose from", Colors.coral);
+			} else {
+				Log("RefreshDragonDiscount: FAIL! Unknown error", Colors.coral);
+			}
+
+			return false;
+		}
+
+		// Activate new pack and add it to collections
+		Log("RefreshDragonDiscount: ACTIVATING pack {0}", Color.green, pack.def.sku);
+		pack.Activate();
+		m_activeDragonDiscount = pack;
+		UpdateCollections(pack);
+
+		// Update persistence with this pack's new state
+		// [AOC] UserProfile.SaveOfferPack() is smart, only stores packs when required
+		Log("RefreshDragonDiscount: ATTEMPTING TO SAVE DRAGON DISCOUNT OFFER {0} -> {1}", Colors.blue, pack.def.sku, pack.ShouldBePersisted());
+		UsersManager.currentUser.SaveOfferPack(pack);
+
+		// Done!
+		return true;
+	}
 
     /// <summary>
     /// 
@@ -635,6 +740,10 @@ public class OffersManager : Singleton<OffersManager> {
 					case OfferPack.Type.FREE: {
 						m_activeFreeOffer = _offer as OfferPackFree;
 					} break;
+
+					case OfferPack.Type.DRAGON_DISCOUNT: {
+						m_activeDragonDiscount = _offer as OfferPackDragonDiscount;
+                    } break;
 				}
 			} break;
 
@@ -649,6 +758,10 @@ public class OffersManager : Singleton<OffersManager> {
 					case OfferPack.Type.FREE: {
 						if(m_activeFreeOffer == _offer) m_activeFreeOffer = null;
 					} break;
+
+					case OfferPack.Type.DRAGON_DISCOUNT: {
+						if(m_activeDragonDiscount == _offer) m_activeDragonDiscount = null;
+                    } break;
 				}
 			} break;
 
@@ -662,6 +775,10 @@ public class OffersManager : Singleton<OffersManager> {
 					case OfferPack.Type.FREE: {
 						if(m_activeFreeOffer == _offer) m_activeFreeOffer = null;
 					} break;
+
+					case OfferPack.Type.DRAGON_DISCOUNT: {
+						if(m_activeDragonDiscount == _offer) m_activeDragonDiscount = null;
+                    } break;
 				}
 			} break;
 		}

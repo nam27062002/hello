@@ -101,6 +101,8 @@ public class HDTrackingManager
         LAB_REWARD_MISSION,              // When user gets reward from Lab Mission
 		LAB_UNLOCKED_GIFT,				 // When player unlocks the lab for the first time, a gift is given
 		GOLDEN_FRAGMENTS_REMOVAL,		 // Golden Fragments conversion to HC
+
+        DRAGON_DISCOUNT
     };
 
 	public enum EFunnels
