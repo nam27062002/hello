@@ -427,9 +427,12 @@ public class RewardInfoUI : MonoBehaviour {
 		if(m_reward == null) return;
 		if(m_reward.type != Metagame.RewardPet.TYPE_CODE) return;
 
+		// Get pet's power def
+		DefinitionNode powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, m_reward.def.GetAsString("powerup"));
+
 		// Setup the tooltip
 		_trigger.SetTooltipData(
-			null,	// Irrelevant, since we are using the PET mode, the tooltip trigger will get the power def from the pet definition
+			powerDef,
 			m_reward.def,
 			PowerIcon.Mode.PET,
 			PowerIcon.DisplayMode.PREVIEW
