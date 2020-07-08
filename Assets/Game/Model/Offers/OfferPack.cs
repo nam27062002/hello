@@ -152,6 +152,7 @@ public class OfferPack {
 
 	// Timing
 	protected float m_duration = 0f;
+	protected int m_durationRuns = 0;
 	protected DateTime m_startDate = DateTime.MinValue;
 	protected DateTime m_endDate = DateTime.MinValue;
 
@@ -201,6 +202,11 @@ public class OfferPack {
 		get { return m_purchaseCount; }
 	}
 
+    // Clustering
+    protected string[] m_clusters;
+	public string[] clusters { get => m_clusters; set => m_clusters = value; }
+
+
 	// Internal vars
 	protected int m_viewsCount = 0;	// Only auto-triggered views
 	protected DateTime m_lastViewTimestamp = new DateTime();
@@ -216,6 +222,12 @@ public class OfferPack {
 		get { return m_endTimestamp; }
 	}
 
+	protected int m_endRun = 0;
+	public int endRun
+	{
+		get { return m_endRun; }
+	}
+
 	public TimeSpan remainingTime {
 		get { 
 			if(isTimed && isActive) {
@@ -225,6 +237,7 @@ public class OfferPack {
 			}
 		}
 	}
+
 
     #endregion
 
@@ -346,6 +359,7 @@ public class OfferPack {
 
 		// Timing
 		m_duration = 0f;
+		m_durationRuns = 0;
 		m_startDate = DateTime.MinValue;
 		m_endDate = DateTime.MinValue;
 		m_isTimed = false;
@@ -387,6 +401,9 @@ public class OfferPack {
 		// Purchase limit
 		m_purchaseLimit = 1;
 		m_purchaseCount = 0;
+
+		// Clustering
+		m_clusters = new string[0];
 
 		// Internal vars
 		m_viewsCount = 0;
@@ -467,9 +484,11 @@ public class OfferPack {
 
 		// Timing
 		m_duration = _def.GetAsFloat("durationMinutes", 0f);
+		m_durationRuns = def.GetAsInt("durationRuns", 0);
 		m_startDate = TimeUtils.TimestampToDate(_def.GetAsLong("startDate", 0), false);
 		m_endDate = TimeUtils.TimestampToDate(_def.GetAsLong("endDate", 0), false);
 		m_isTimed = (m_endDate > m_startDate) || (m_duration > 0f);
+
 
 		// Segmentation
 		m_minAppVersion = Version.Parse(_def.GetAsString("minAppVersion", "1.0.0"));
@@ -477,7 +496,14 @@ public class OfferPack {
 		m_countriesExcluded = ParseArray(_def.GetAsString("countriesExcluded"));
 		m_gamesPlayed = _def.GetAsInt("gamesPlayed", m_gamesPlayed);
 
-		switch(_def.GetAsString("payerType", "").ToLowerInvariant()) {
+
+		// Caculate the end run
+		if (m_durationRuns > 0)
+		{
+			m_endRun = m_gamesPlayed + m_durationRuns;
+		}
+
+		switch (_def.GetAsString("payerType", "").ToLowerInvariant()) {
 			case "payer":		m_payerType = PayerType.PAYER;			break;
 			case "nonpayer":	m_payerType = PayerType.NON_PAYER;		break;
 			default:			break;	// Already has the default value
@@ -528,6 +554,8 @@ public class OfferPack {
 		m_skinsOwned = ParseArray(_def.GetAsString("skinsOwned"));
 		m_skinsNotOwned = ParseArray(_def.GetAsString("skinsNotOwned"));
 
+        m_clusters = ParseArray(_def.GetAsString("clusterId"));
+
 		// Purchase limit
 		m_purchaseLimit = _def.GetAsInt("purchaseLimit", m_purchaseLimit);
 	}
@@ -564,6 +592,7 @@ public class OfferPack {
 
 		// Timing
 		SetValueIfMissing(ref _def, "durationMinutes", m_duration.ToString(CultureInfo.InvariantCulture));
+		SetValueIfMissing(ref _def, "durationRuns", m_durationRuns.ToString(CultureInfo.InvariantCulture));
 		SetValueIfMissing(ref _def, "startDate", (TimeUtils.DateToTimestamp(m_startDate, false)).ToString(CultureInfo.InvariantCulture));
 		SetValueIfMissing(ref _def, "endDate", (TimeUtils.DateToTimestamp(m_endDate, false)).ToString(CultureInfo.InvariantCulture));
 
@@ -626,6 +655,8 @@ public class OfferPack {
 		SetValueIfMissing(ref _def, "skinsUnlocked", string.Join(";", m_skinsUnlocked));
 		SetValueIfMissing(ref _def, "skinsOwned", string.Join(";", m_skinsOwned));
 		SetValueIfMissing(ref _def, "skinsNotOwned", string.Join(";", m_skinsNotOwned));
+
+		SetValueIfMissing(ref _def, "clusterId", string.Join(";", m_clusters));
 
 		// Purchase limit
 		SetValueIfMissing(ref _def, "purchaseLimit", m_purchaseLimit.ToString(CultureInfo.InvariantCulture));
@@ -836,6 +867,12 @@ public class OfferPack {
 		if(_checkTime) {
 			if(CheckExpirationByTime()) return true;
 		}
+
+		// Check if the offer ends after an amount of runs
+		if (endRun != 0 &&  UsersManager.currentUser.gamesPlayed >= endRun)
+        {
+			return true;
+        }
 
 		// Purchase limit (ignore if 0 or negative, unlimited pack)
 		if(m_purchaseLimit > 0) {

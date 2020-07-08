@@ -326,6 +326,10 @@ public class ShopController : MonoBehaviour
                 m_categoryToShow = SC_CATEGORY_SKU;
                 CenterItemsAndLockScroll();
                 break;
+            case Mode.DEFAULT:
+                // The user has actively clicked in the shop button in the menu
+                UsersManager.currentUser.hasEnteredShop = true;
+                break;
         }
 
         // Clear everything to avoid the shop content being flashed before the transition clouds

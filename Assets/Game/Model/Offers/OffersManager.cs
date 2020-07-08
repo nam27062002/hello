@@ -121,6 +121,8 @@ public class OffersManager : Singleton<OffersManager> {
 		}
 	}
 
+	// Cache
+	private string m_playerCluster;
 
 	private bool m_initialized = false;
 	private bool m_enabled = true;
@@ -193,8 +195,11 @@ public class OffersManager : Singleton<OffersManager> {
 
         instance.m_categories.Clear();
 
-        // Get all the shop categories
-        List<DefinitionNode> categoriesDefs = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.SHOP_CATEGORIES);
+		// Cache player cluster
+		instance.m_playerCluster = ClusteringManager.Instance.GetClusterId();
+
+		// Get all the shop categories
+		List<DefinitionNode> categoriesDefs = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.SHOP_CATEGORIES);
         DefinitionsManager.SharedInstance.SortByProperty(ref categoriesDefs, "order", DefinitionsManager.SortType.NUMERIC);
 
         // Iterate all the categories definitions and initialize them
@@ -235,8 +240,31 @@ public class OffersManager : Singleton<OffersManager> {
 
 		// Create data for each known offer pack definition
 		for(int i = 0; i < offerDefs.Count; ++i) {
+
 			// Create and initialize new pack
 			OfferPack newPack = OfferPack.CreateFromDefinition(offerDefs[i]);
+
+
+			// Is this offer targeted for a specific cluster?
+			if (newPack.clusters.Length > 0)
+			{
+				bool belongsToCluster = false;
+
+                foreach (string offerCluster in newPack.clusters)
+                {
+					if (instance.m_playerCluster == offerCluster)
+					{
+						belongsToCluster = true;
+					}
+				}
+
+                if (!belongsToCluster)
+                {
+                    // The player doesnt belong to any of the clusters in this offer. Discard the offer.
+					continue;
+                }
+
+			}
 
 			// Load persisted data
 			UsersManager.currentUser.LoadOfferPack(newPack);
@@ -249,7 +277,6 @@ public class OffersManager : Singleton<OffersManager> {
 			if(newPack.state == OfferPack.State.EXPIRED) {
 				Log("InitFromDefinitions: OFFER PACK {0} EXPIRED! Won't be added", Color.red, newPack.def.sku);
 			}
-
 			// If enabled, store to the enabled collection
 			else if(offerDefs[i].GetAsBool("enabled", false)) {
                 //lets check if player has all the bundles required to view this offer

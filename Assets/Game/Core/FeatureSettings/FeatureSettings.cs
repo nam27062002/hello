@@ -27,6 +27,9 @@ public class FeatureSettings
 
     public const string KEY_SKU = "sku";
 
+    // Used as id when sending this value to the clustering server
+    public const string KEY_ORDER = "order";
+
     // Rating of the device corresponding to this set of settings
     public const string KEY_RATING = "rating";
 
@@ -178,9 +181,15 @@ public class FeatureSettings
         {
             Datas = new Dictionary<string, Data>();
 
-            // Rating
+
+            // sku
             string key = KEY_SKU;
             Data data = new DataString(key, null);
+            Datas.Add(key, data);
+
+            // order
+            key = KEY_ORDER;
+            data = new DataRangeInt(key, 0, 0, int.MaxValue);
             Datas.Add(key, data);
 
             // Rating
