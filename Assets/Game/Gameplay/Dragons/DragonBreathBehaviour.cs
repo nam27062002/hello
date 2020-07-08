@@ -607,6 +607,7 @@ public class DragonBreathBehaviour : MonoBehaviour, IBroadcastListener {
 			case State.BREATHING:
     		{
 				UsersManager.currentUser.furyUsed = true;
+				UsersManager.currentUser.firerushesCount++;
 				switch( m_type )
 				{
 					case Type.Mega:

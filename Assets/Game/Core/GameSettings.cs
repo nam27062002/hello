@@ -140,8 +140,10 @@ public class GameSettings : SingletonScriptableObject<GameSettings> {
 	private int m_enableHappyHourAtRun = 4;
 	public static int ENABLE_HAPPY_HOUR_AT_RUN { get { return instance.m_enableHappyHourAtRun; } }
 
+	private int m_enableDragonDiscountsAtRun = 4;
+	public static int ENABLE_DRAGON_DISCOUNTS_AT_RUN { get { return instance.m_enableDragonDiscountsAtRun; } }
 
-	// FTUX
+	// UI
 	[Separator("UISettings")]
 	private bool m_showNextDragonInXpBar = false;
 	public static bool SHOW_NEXT_DRAGON_IN_XP_BAR { get { return instance.m_showNextDragonInXpBar; } }
@@ -310,7 +312,7 @@ public class GameSettings : SingletonScriptableObject<GameSettings> {
 		instance.m_enableShareButtonsAtRun = def.GetAsInt("enableShareButtonsAtRun", instance.m_enableShareButtonsAtRun);
 		instance.m_enablePassiveEventsAtRun = def.GetAsInt("enablePassiveEventsAtRun", instance.m_enablePassiveEventsAtRun);
 		instance.m_enableHappyHourAtRun = def.GetAsInt("enableHappyHourAtRun", instance.m_enableHappyHourAtRun);
-
+		instance.m_enableDragonDiscountsAtRun = def.GetAsInt("enableDragonDiscountsAtRun", instance.m_enableDragonDiscountsAtRun);
 
 		// UI Settings:
 		def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, UI_SETTINGS_SKU);

@@ -152,8 +152,15 @@ public class UserProfile : UserPersistenceSystem
 		get { return GetCurrency(Currency.KEYS); }
 	}
 
-    // Game Settings
-    private string m_currentDragon;
+	private int m_gemsSpent = 0;
+	public int gemsSpent
+	{
+		get => m_gemsSpent;
+		set => m_gemsSpent = value;
+	}
+
+	// Game Settings
+	private string m_currentDragon;
     public string CurrentDragon
     {
         get { return m_currentDragon; }
@@ -181,6 +188,9 @@ public class UserProfile : UserPersistenceSystem
 		set { m_furyUsed = value; }
 	}
 
+
+
+
 	// Game Stats
 	private int m_gamesPlayed;
 	public int gamesPlayed {
@@ -198,11 +208,33 @@ public class UserProfile : UserPersistenceSystem
 		get { return m_highScore; }
 		set { m_highScore = value; }
 	}
-	
+
+	private long m_totalScore;
+	public long totalScore
+	{
+		get { return m_totalScore; }
+		set { m_totalScore = value; }
+	}
+
 	private int m_superFuryProgression;
 	public int superFuryProgression {
 		get { return m_superFuryProgression; }
 		set { m_superFuryProgression = value; }
+	}
+
+	private int m_firerushesCount;
+	public int firerushesCount
+	{
+		get => m_firerushesCount;
+		set => m_firerushesCount = value;
+	}
+
+    // Time in seconds (no decimals)
+	private int m_boostTime;
+	public int boostTime
+	{
+		get => m_boostTime;
+		set => m_boostTime = value;
 	}
 
 	// Dragon Data
@@ -363,6 +395,29 @@ public class UserProfile : UserPersistenceSystem
 		set;
 	}
 
+	// Shopping data
+	private bool m_enteredShop = false;
+	public bool hasEnteredShop
+	{
+		get => m_enteredShop;
+		set => m_enteredShop = value;
+	}
+
+	private bool m_progressionPacksDiscovered = false;
+	public bool progressionPacksDiscovered
+	{
+		get => m_progressionPacksDiscovered;
+		set => m_progressionPacksDiscovered = value;
+	}
+
+	private int m_maxTransactionPrice = 0; // in USD cents
+	public int maxTransactionPrice
+	{
+		get => m_maxTransactionPrice;
+		set => m_maxTransactionPrice = value;
+	}
+
+
 	// Happy hour
 	private HappyHourManager.SaveData m_happyHourData = new HappyHourManager.SaveData();
 	public HappyHourManager.SaveData happyHourData {
@@ -392,7 +447,15 @@ public class UserProfile : UserPersistenceSystem
         set { m_babyDragonExtraGemFailedCounter = value; }
     }
 
-    private bool m_removeAdsOfferActive;
+	// Clustering
+	private string m_clusterId;
+	public string clusterId
+	{
+		get { return m_clusterId; }
+		set { m_clusterId = value; }
+	}
+
+	private bool m_removeAdsOfferActive;
     private int m_easyMissionCooldownsLeft;
     private int m_mediumMissionCooldownsLeft;
     private int m_hardMissionCooldownsLeft;
@@ -682,6 +745,11 @@ public class UserProfile : UserPersistenceSystem
 
 		// Set the new value!
 		long oldAmount = data.amount;	// Tracking purposes
+
+        // Clustering purposes
+        if (_currency == Currency.HARD) {
+			m_gemsSpent += (int) _amount;
+        }
 
 		// Consume free currency first, as much as possible
 		long partialAmount = (long)Mathf.Min(data.freeAmount, toSpend);
@@ -989,6 +1057,17 @@ public class UserProfile : UserPersistenceSystem
 		m_currencies[(int)Currency.GOLDEN_FRAGMENTS].Deserialize(profile.ContainsKey("gf") ? (string)profile["gf"] : "");
 		m_currencies[(int)Currency.KEYS].Deserialize(profile.ContainsKey("keys") ? (string)profile["keys"] : "", 0, 0);
 
+		key = "gemsSpent";
+		if (profile.ContainsKey(key))
+		{
+			m_gemsSpent = PersistenceUtils.SafeParse<int>(profile[key]);
+		}
+		else
+		{
+			m_gemsSpent = 0;
+		}
+
+
 		// Game settings
 		if ( profile.ContainsKey("currentDragon") )
 			m_currentDragon = profile["currentDragon"];
@@ -1013,10 +1092,10 @@ public class UserProfile : UserPersistenceSystem
             m_furyUsed = PersistenceUtils.SafeParse<bool>(profile[key]);
         } else {
             m_furyUsed = false;
-        }        
+        }
 
-        // Game stats
-        key = "gamesPlayed";
+		// Game stats
+		key = "gamesPlayed";
         if (profile.ContainsKey(key)) {
             m_gamesPlayed = PersistenceUtils.SafeParse<int>(profile[key]);
         } else {
@@ -1059,8 +1138,67 @@ public class UserProfile : UserPersistenceSystem
             }
         }
 
-        // Some cheats override profile settings - will be saved with the next Save()
-        if (Prefs.GetBoolPlayer("skipTutorialCheat")) {
+		key = "firerushesCount";
+		if (profile.ContainsKey(key)) {
+			m_firerushesCount = PersistenceUtils.SafeParse<int>(profile[key]);
+		} else {
+			m_firerushesCount = 0;
+		}
+
+		key = "totalScore";
+		if (profile.ContainsKey(key)) {
+			m_totalScore = PersistenceUtils.SafeParse<long>(profile[key]);
+		} else {
+			m_totalScore = 0;
+		}
+
+		key = "boostTime";
+		if (profile.ContainsKey(key))		{
+			m_boostTime = PersistenceUtils.SafeParse<int>(profile[key]);
+		} else {
+			m_boostTime = 0;
+		}
+
+		// Shopping data
+		key = "enteredShop";
+		if (profile.ContainsKey(key))
+		{
+			m_enteredShop = PersistenceUtils.SafeParse<bool>(profile[key]);
+		} else
+		{
+			m_enteredShop = false;
+		}
+
+		key = "progressionPacksDiscovered";
+		if (profile.ContainsKey(key))
+		{
+			m_progressionPacksDiscovered = PersistenceUtils.SafeParse<bool>(profile[key]);
+		} else
+		{
+			m_progressionPacksDiscovered = false;
+		}
+
+		key = "maxTransactionPrice";
+		if (profile.ContainsKey(key))
+		{
+			m_maxTransactionPrice = PersistenceUtils.SafeParse<int>(profile[key]);
+		} else
+		{
+			m_maxTransactionPrice = 0;
+		}
+       
+		// Clustering
+		key = "clusterId";
+		if (profile.ContainsKey(key))
+		{
+			m_clusterId = profile[key];
+		} else
+		{
+			m_clusterId = "";
+		}
+
+		// Some cheats override profile settings - will be saved with the next Save()
+		if (Prefs.GetBoolPlayer("skipTutorialCheat")) {
 			m_tutorialStep = TutorialStep.ALL;
 			UsersManager.currentUser.gamesPlayed = 5;	// Fake the amount of played games to skip some tutorial steps depending on it
 			Prefs.SetBoolPlayer("skipTutorialCheat", false);
@@ -1309,8 +1447,10 @@ public class UserProfile : UserPersistenceSystem
 			}
 		}
 
-        // Visited Zones
-        key = "visitedZones";
+		
+
+		// Visited Zones
+		key = "visitedZones";
         m_visitedZones.Clear();
         if(_data.ContainsKey(key)) {
             // Parse json object into the list
@@ -1453,6 +1593,7 @@ public class UserProfile : UserPersistenceSystem
 		profile.Add( "pc", m_currencies[(int)Currency.HARD].Serialize());
 		profile.Add( "gf", m_currencies[(int)Currency.GOLDEN_FRAGMENTS].Serialize());
 		profile.Add( "keys", m_currencies[(int)Currency.KEYS].Serialize());
+		profile.Add( "gemsSpent", PersistenceUtils.SafeToString(m_gemsSpent));
 
 		// Game settings
 		profile.Add("currentDragon",m_currentDragon);
@@ -1465,6 +1606,17 @@ public class UserProfile : UserPersistenceSystem
 		profile.Add("highScore", PersistenceUtils.SafeToString(m_highScore));
 		profile.Add("superFuryProgression", PersistenceUtils.SafeToString(m_superFuryProgression));
         profile.Add("socialState",SocialStatesAsString[(int)SocialState]);
+		profile.Add("firerushesCount", PersistenceUtils.SafeToString(m_firerushesCount));
+		profile.Add("boostTime", PersistenceUtils.SafeToString(m_boostTime));
+		profile.Add("totalScore", PersistenceUtils.SafeToString(m_totalScore));
+
+		// Shopping data
+		profile.Add("enteredShop", PersistenceUtils.SafeToString(m_enteredShop));
+		profile.Add("progressionPacksDiscovered", PersistenceUtils.SafeToString(m_progressionPacksDiscovered));
+		profile.Add("maxTransactionPrice", PersistenceUtils.SafeToString(m_maxTransactionPrice));
+
+		// Clustering
+		profile.Add("clusterId", m_clusterId);
 
 		data.Add("userProfile", profile);
 
@@ -1570,8 +1722,9 @@ public class UserProfile : UserPersistenceSystem
         // but we store it also in the user profile just in case we need in the future
         data.Add("removeAdsFeature", m_removeAds.Save());
 
-        // Visited Zones
-        JSONArray zonesArray = new SimpleJSON.JSONArray();
+
+		// Visited Zones
+		JSONArray zonesArray = new SimpleJSON.JSONArray();
         int max = m_visitedZones.Count;
         foreach( string str in m_visitedZones)
         {
@@ -2201,25 +2354,28 @@ public class UserProfile : UserPersistenceSystem
     }
     
     /// <summary>
-    /// Cleans old pushed offers. Removes all push offer packs that are not in the current customizer id
+    /// Cleans old pushed offers. Removes all push offer packs that are not in the current customization id.
     /// </summary>
-    /// <param name="currentPushIds">Current customizer identifier.</param>
-    public void CleanOldPushedOffers( List<string> currentPushIds ) {
-        List<JSONClass> offers = m_newOfferPersistanceData[OfferPack.Type.PUSHED];
-        int max = offers.Count;
-        
-        for (int i = max-1; i >= 0; i--) {
+	/// <param name="_type">Type of offers to be cleaned.</param>
+    /// <param name="_currentPushedIDs">Offer IDs in the current customization.</param>
+    public void CleanOldPushedOffers(OfferPack.Type _type, List<string> _currentPushedIDs ) {
+		// Gather persistence data for the target offer type
+		List<JSONClass> offersData = m_newOfferPersistanceData[_type];
+
+		// Reverse-iterate to delete all data that is not in the current customization
+		int count = offersData.Count;
+		for (int i = count - 1; i >= 0; --i) {
             string customId = "";
-            if ( offers[i].ContainsKey("customId") )
-            {
-                customId = offers[i]["customId"];
+            if(offersData[i].ContainsKey("customId")) {
+                customId = offersData[i]["customId"];
             }
         
-            if ( !currentPushIds.Contains( customId )) {
-                offers.RemoveAt(i);
+            if(!_currentPushedIDs.Contains(customId)) {
+				OffersManager.Log("PUSHED OFFER PACK {0} ({1}) IS BEING CLEANED FROM PERSISTENCE", Color.red, offersData[i]["sku"], _type.ToString());
+				offersData.RemoveAt(i);
             }
         }
-        m_newOfferPersistanceData[OfferPack.Type.PUSHED] = offers;
+        m_newOfferPersistanceData[_type] = offersData;
     }
 
 	/// <summary>
@@ -2261,31 +2417,34 @@ public class UserProfile : UserPersistenceSystem
         bool found = false;
         for(int i = 0; i < max && !found; i++) {
             if(offers[i].ContainsKey("sku") && offers[i]["sku"] == _pack.def.sku) {
-				// If not a pushed offer, directly override existing data
-				if(_pack.type != OfferPack.Type.PUSHED) {
-					// If pack doesn't need to be persisted anymore, remove it from the data instead
-					if(shouldBePersisted) {
-						m_newOfferPersistanceData[_pack.type][i] = _pack.Save();
-					} else {
-						OffersManager.Log("OFFER PACK {0} ({1}) IS BEING CLEANED FROM PERSISTENCE", Color.red, _pack.def.sku, _pack.type.ToString());
-						m_newOfferPersistanceData[_pack.type].RemoveAt(i);	// We will interrupt the loop by setting the found flag to true, so there is no problem in removing an element at this point
-					}
-                    found = true;
-                }
-
-				// If it's a pushed offer, check customization ID
-				else {
-					// Only if it actually needs to be persisted!
-					if(shouldBePersisted) {
-						if(offers[i].ContainsKey("customId")) {
-							string customId = OffersManager.GenerateTrackingOfferName(_pack.def);
-							if(customId == offers[i]["customId"]) {
-								m_newOfferPersistanceData[_pack.type][i] = _pack.Save();
-								found = true;
+				switch(_pack.type) {
+					// If it's a pushed offer, check customization ID
+					case OfferPack.Type.PUSHED:
+					case OfferPack.Type.DRAGON_DISCOUNT: {
+						// Only if it actually needs to be persisted!
+						if(shouldBePersisted) {
+							if(offers[i].ContainsKey("customId")) {
+								string customId = OffersManager.GenerateTrackingOfferName(_pack.def);
+								if(customId == offers[i]["customId"]) {
+									m_newOfferPersistanceData[_pack.type][i] = _pack.Save();
+									found = true;
+								}
 							}
 						}
-					}
-                }
+					} break;
+
+					// Otherwise just directly override existing data
+					default: {
+						// If pack doesn't need to be persisted anymore, remove it from the data instead
+						if(shouldBePersisted) {
+							m_newOfferPersistanceData[_pack.type][i] = _pack.Save();
+						} else {
+							OffersManager.Log("OFFER PACK {0} ({1}) IS BEING CLEANED FROM PERSISTENCE", Color.red, _pack.def.sku, _pack.type.ToString());
+							m_newOfferPersistanceData[_pack.type].RemoveAt(i);  // We will interrupt the loop by setting the found flag to true, so there is no problem in removing an element at this point
+						}
+						found = true;
+					} break;
+				}
             }
         }
 
@@ -2308,13 +2467,26 @@ public class UserProfile : UserPersistenceSystem
         bool found = false;
         for (int i = 0; i < max && !found; i++){
             if ( offers[i].ContainsKey("sku") && offers[i]["sku"] == _pack.def.sku ){
+				// Break loop
                 found = true;
-                // if not a pushed offer or is pushed and same customization code, so it's exactly the same
-                if ( _pack.type != OfferPack.Type.PUSHED || _pack.def.customizationCode == offers[i]["customizerId"] ){
-                    
-                    // Match! Load it into the pack
-                    _pack.Load(offers[i]);
+
+				// Check customization code as well for pushed offers
+				bool match = false;
+				switch(_pack.type) {
+					case OfferPack.Type.PUSHED:
+					case OfferPack.Type.DRAGON_DISCOUNT: {
+						match = _pack.def.customizationCode == offers[i]["customizerId"];
+                    } break;
+
+					default: {
+						match = true;
+                    } break;
                 }
+
+				// If we have a match, load data into the pack
+				if(match) {
+					_pack.Load(offers[i]);
+				}
             }
         }
         

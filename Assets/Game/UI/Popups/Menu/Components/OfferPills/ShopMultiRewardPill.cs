@@ -114,6 +114,11 @@ public class ShopMultiRewardPill: ShopBasePill
 				}
 			}
 		}
+
+		// We need to register if the user has seen the progression packs for tracking purposes.
+        // This solution is not optimal, because push offers also use this pill, but as long as they are
+        // activated in the same run, this should do the trick
+		UsersManager.currentUser.progressionPacksDiscovered = true;
     }
 
 	/// <summary>
