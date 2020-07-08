@@ -35,11 +35,9 @@ public class PopupConsentLoadingCoppaGdpr : PopupConsentLoading {
 	[Space]
 	[SerializeField] private GameObject m_ageGroup = null;
 	[SerializeField] private GameObject m_termsGroup = null;
-	[SerializeField] private GameObject m_consentGroup = null;
+	[SerializeField] private GameObject m_consentGroupFolded = null;
+	[SerializeField] private GameObject m_consentGroupExpanded = null;
 
-	// Internal refs
-    private PopupConsentMoreInfo m_moreInfoPopup = null;
-   
 	// Internal logic
 	private bool m_ageEnabled = true;
 	private int m_initialAgeValue = -1;
@@ -48,10 +46,7 @@ public class PopupConsentLoadingCoppaGdpr : PopupConsentLoading {
 	private bool m_consentEnabled = true;
 
 	private bool m_initialTrackingConsent = true;
-	private bool m_trackingConsent = true;
-
 	private bool m_initialAdsConsent = true;
-	private bool m_adsConsent = true;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -64,7 +59,7 @@ public class PopupConsentLoadingCoppaGdpr : PopupConsentLoading {
 		base.Init();
 
 		// Show Age Group?
-		m_ageEnabled = GDPRManager.SharedInstance.IsAgePopupNeededToBeShown();	// Country requires age restriction and age has never been set before
+		m_ageEnabled = GDPRManager.SharedInstance.IsAgePopupNeededToBeShown();  // Country requires age restriction and age has never been set before
 		if(m_ageEnabled) {
 			// Init age text and subscribe to slider's OnChange event
 			m_ageValue = GDPRManager.SharedInstance.GetCachedUserAge();
@@ -81,27 +76,18 @@ public class PopupConsentLoadingCoppaGdpr : PopupConsentLoading {
 		// Show Consent Group?
 		m_consentEnabled = GDPRManager.SharedInstance.IsConsentRequired();
 		if(m_consentEnabled) {
-			m_trackingConsent = Prefs.GetBoolPlayer(IPopupConsentGDPR.TRACKING_CONSENT_KEY, true);
-			m_initialTrackingConsent = m_trackingConsent;
+			m_initialTrackingConsent = Prefs.GetBoolPlayer(IPopupConsentGDPR.TRACKING_CONSENT_KEY, true);
+			m_initialAdsConsent = Prefs.GetBoolPlayer(IPopupConsentGDPR.ADS_CONSENT_KEY, true);
+			m_consentGroupFolded.SetActive(true);
 
-			m_adsConsent = Prefs.GetBoolPlayer(IPopupConsentGDPR.ADS_CONSENT_KEY, true);
-			m_initialAdsConsent = m_adsConsent;
-
-			m_consentGroup.SetActive(true);
+			// Initialize consent data
+			Init(m_initialAgeValue, m_initialTrackingConsent, m_initialAdsConsent);
 		} else {
-			m_consentGroup.SetActive(false);
+			m_consentGroupFolded.SetActive(false);
 		}
-    }
 
-	/// <summary>
-	/// Default destructor.
-	/// </summary>
-    private void OnDestroy() {
-        // [AOC] Should never happen, but just in case
-		if(m_moreInfoPopup != null) {
-			m_moreInfoPopup.popupController.Close(true);
-			m_moreInfoPopup = null;
-		}
+		// Expanded Consent Group always starts folded
+		m_consentGroupExpanded.SetActive(false);
     }
 
 	//------------------------------------------------------------------------//
@@ -141,8 +127,8 @@ public class PopupConsentLoadingCoppaGdpr : PopupConsentLoading {
 		int duration = Convert.ToInt32(Time.unscaledTime - m_timeAtOpen);
 		HDTrackingManager.Instance.Notify_ConsentPopupAccept(
 			m_ageValue, 
-			m_trackingConsent, 
-			m_adsConsent, 
+			trackingConsented, 
+			adsConsented, 
 			"1_1_1", 
 			duration
 		);
@@ -158,21 +144,21 @@ public class PopupConsentLoadingCoppaGdpr : PopupConsentLoading {
 	/// More info button has been pressed.
 	/// </summary>
 	public void OnMoreInfoButton() {
-		// Load more info popup
-		PopupController popup = PopupManager.LoadPopup(PopupConsentMoreInfo.PATH);
-		m_moreInfoPopup = popup.GetComponent<PopupConsentMoreInfo>();
+		// Expand consent group
+		m_consentGroupExpanded.SetActive(true);
 
-		// Initialize it with current settings
-		m_moreInfoPopup.Init(
-			m_ageValue >= GDPRManager.SharedInstance.GetAgeToCheck(),
-			m_trackingConsent, m_adsConsent
+		// Hide compact consent group
+		m_consentGroupFolded.SetActive(false);
+
+		// Make sure consent group data is updated
+		Init(m_ageValue, trackingConsented, adsConsented);
+
+		// Scroll to the beginning of the text
+		// For some unknown reason, we need to delay a little bit the initial scrolling of the scroll view, otherwise it gets resetted to 0
+		UbiBCN.CoroutineManager.DelayedCall(
+			() => { m_scroll.verticalNormalizedPosition = 1f; },
+			0.1f
 		);
-
-		// When the popup closes, we'll store the new settings
-		popup.OnClosePreAnimation.AddListener(OnMoreInfoPopupClosed);
-
-		// Open the popup!
-		popup.Open();
 	}
 
 	/// <summary>
@@ -189,11 +175,11 @@ public class PopupConsentLoadingCoppaGdpr : PopupConsentLoading {
 		// Consent
 		if(m_consentEnabled) {
 			// Tell GDPR manager			
-			GDPRManager.SharedInstance.SetUserConsentGiven(m_trackingConsent, m_adsConsent);
+			GDPRManager.SharedInstance.SetUserConsentGiven(trackingConsented, adsConsented);
 
 			// Store new value to user prefs
-			Prefs.SetBoolPlayer(IPopupConsentGDPR.TRACKING_CONSENT_KEY, m_trackingConsent);
-			Prefs.SetBoolPlayer(IPopupConsentGDPR.ADS_CONSENT_KEY, m_adsConsent);
+			Prefs.SetBoolPlayer(IPopupConsentGDPR.TRACKING_CONSENT_KEY, trackingConsented);
+			Prefs.SetBoolPlayer(IPopupConsentGDPR.ADS_CONSENT_KEY, adsConsented);
 		}
 
 		// Let parent handle the rest
@@ -210,21 +196,17 @@ public class PopupConsentLoadingCoppaGdpr : PopupConsentLoading {
 
 		// Update text
 		SetAgeText(m_ageValue);
+
+		// Update opt-ins
+		Init(m_ageValue, trackingConsented, adsConsented);
 	}
 
 	/// <summary>
-	/// The more info popup has been closed.
+	/// Popup has finished opening.
 	/// </summary>
-	private void OnMoreInfoPopupClosed() {
-		// Just in case
-		if(m_moreInfoPopup == null) return;
-
-		// Gather new values and store them
-		m_trackingConsent = m_moreInfoPopup.trackingConsented;
-		m_adsConsent = m_moreInfoPopup.adsConsented;
-
-		// Remove listener and clear popup reference
-		m_moreInfoPopup.popupController.OnClosePreAnimation.RemoveListener(OnMoreInfoPopupClosed);
-		m_moreInfoPopup = null;
+	public void OnOpenPostAnimation() {
+		// In order to properly initialize the links, we need to disable and re-enable the terms group. TMPro things :(
+		m_termsGroup.SetActive(false);
+		m_termsGroup.SetActive(true);
 	}
 }
