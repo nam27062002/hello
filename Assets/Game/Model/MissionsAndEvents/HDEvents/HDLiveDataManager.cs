@@ -177,7 +177,7 @@ public class HDLiveDataManager : Singleton<HDLiveDataManager> {
             long.TryParse(CacheServerManager.SharedInstance.GetVariable("hdliveeventstimestamp"), NumberStyles.Any, CultureInfo.InvariantCulture, out cacheTimestamp);            
         }
 
-        if (GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong() - cacheTimestamp < CACHE_TIMEOUT_MS) {
+        if (GameServerManager.GetEstimatedServerTimeAsLong() - cacheTimestamp < CACHE_TIMEOUT_MS) {
             int max = m_managers.Count;
             for (int i = 0; i < max; ++i) {
                 LoadEventFromCache(i);
@@ -209,7 +209,7 @@ public class HDLiveDataManager : Singleton<HDLiveDataManager> {
             }
         }
 
-        CacheServerManager.SharedInstance.SetVariable("hdliveeventstimestamp", GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong().ToString());
+        CacheServerManager.SharedInstance.SetVariable("hdliveeventstimestamp", GameServerManager.GetEstimatedServerTimeAsLong().ToString());
     }
 
 #if UNITY_EDITOR
@@ -308,14 +308,14 @@ public class HDLiveDataManager : Singleton<HDLiveDataManager> {
 
 
     public bool ShouldRequestMyLiveData() {
-        long diff = GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong() - m_lastMyEventsRequestTimestamp;
+        long diff = GameServerManager.GetEstimatedServerTimeAsLong() - m_lastMyEventsRequestTimestamp;
         return diff > m_myEventsRequestMinTim;
     }
 
     public bool RequestMyLiveData(bool _force = false) {
         bool ret = false;
         if (_force || ShouldRequestMyLiveData()) {
-            m_lastMyEventsRequestTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong();
+            m_lastMyEventsRequestTimestamp = GameServerManager.GetEstimatedServerTimeAsLong();
             if (TEST_CALLS) {
 				ApplicationManager.instance.StartCoroutine(DelayedCall("hd_live_events.json", MyLiveDataResponse));
             } else {
@@ -343,10 +343,10 @@ public class HDLiveDataManager : Singleton<HDLiveDataManager> {
     }
 
     public void ForceRequestLeagues(bool _force = false) {
-        long deltaTime = GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong() - m_lastLeaguesRequestTimestamp;
+        long deltaTime = GameServerManager.GetEstimatedServerTimeAsLong() - m_lastLeaguesRequestTimestamp;
 
         if (_force || deltaTime > 1000 * 60 * 0.5f) { // half a minute
-            m_lastLeaguesRequestTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong();
+            m_lastLeaguesRequestTimestamp = GameServerManager.GetEstimatedServerTimeAsLong();
 
             if (TEST_CALLS) {
 				ApplicationManager.instance.StartCoroutine(DelayedGetEventOfTypeCall(HDLeagueController.TYPE_CODE, MyLiveDataResponse));

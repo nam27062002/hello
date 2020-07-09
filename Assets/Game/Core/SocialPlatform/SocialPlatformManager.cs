@@ -24,27 +24,31 @@ public class SocialPlatformManager : MonoBehaviour
 			
 			return s_pInstance;
 		}
-	}        
+	}
 
 	//////////////////////////////////////////////////////////////////////////	
 
 	// Social Platform Response //////////////////////////////////////////////
 
-	public void OnSocialPlatformLogin()
+	public void OnSocialPlatformLogin(SocialUtils.EPlatform platformId)
 	{
-        Log("OnSocialPlatformLogin CurrentPlatform: " + CurrentPlatform_GetId() + " isLoggedIn: " + CurrentPlatform_IsLoggedIn());
-        Messenger.Broadcast<bool>(MessengerEvents.SOCIAL_LOGGED, CurrentPlatform_IsLoggedIn());        
+        bool isLoggedIn = IsLoggedIn(platformId);
+        Log("OnSocialPlatformLogin platform: " + platformId + " isLoggedIn: " + isLoggedIn);
+        Messenger.Broadcast<bool>(MessengerEvents.SOCIAL_LOGGED, true);        
     }
 
-    public void OnSocialPlatformLoginFailed()
+    public void OnSocialPlatformLoginFailed(SocialUtils.EPlatform platformId)
 	{
-		Messenger.Broadcast<bool>(MessengerEvents.SOCIAL_LOGGED, CurrentPlatform_IsLoggedIn());        
+        bool isLoggedIn = IsLoggedIn(platformId);
+        Messenger.Broadcast<bool>(MessengerEvents.SOCIAL_LOGGED, isLoggedIn);        
     }
 
-    public void OnSocialPlatformLogOut()
+    public void OnSocialPlatformLogOut(SocialUtils.EPlatform platformId)
 	{
 		SocialPlatformManager.SharedInstance.OnLogout();
-		Messenger.Broadcast<bool>(MessengerEvents.SOCIAL_LOGGED, CurrentPlatform_IsLoggedIn());
+
+        bool isLoggedIn = IsLoggedIn(platformId);
+        Messenger.Broadcast<bool>(MessengerEvents.SOCIAL_LOGGED, isLoggedIn);
 	}
     //////////////////////////////////////////////////////////////////////////    
 
@@ -108,22 +112,32 @@ public class SocialPlatformManager : MonoBehaviour
                     AddSocialPlatform(SocialUtils.EPlatform.SIWA);
                 }
 
+                SocialUtils dnaSocialUtils = null;
+                if (FeatureSettingsManager.instance.IsImplicitCloudSaveEnabled())
+                {
+                    //
+                    // DNA
+                    //                 
+                    dnaSocialUtils = AddSocialPlatform(SocialUtils.EPlatform.DNA);
+                }
+
                 // Retrieves the current social platform: Checks that the user was logged in when she quit and if so then the
                 // latest social platform key is retrieved
-                string socialPlatformKey = PersistenceFacade.instance.LocalDriver.Prefs_SocialPlatformKey;
-                if (PersistencePrefs.Social_WasLoggedInWhenQuit && IsPlatformKeySupported(socialPlatformKey)) 
+                string socialPlatformKey = PersistenceFacade.instance.LocalDriver.Prefs_SocialPlatformKey;                
+                if (PersistenceFacade.instance.LocalDriver.Prefs_SocialWasLoggedInWhenQuit && IsPlatformKeySupported(socialPlatformKey)) 
 				{
 					m_currentPlatformId = SocialUtils.KeyToEPlatform(socialPlatformKey);
 				} 
 				else 
 				{
-					m_currentPlatformId = SocialUtils.EPlatform.None;
+                    // DNA is the default social platform, as long as it is enabled, since it provides the user with cloud save automatically
+                    m_currentPlatformId = (dnaSocialUtils != null && dnaSocialUtils.GetIsEnabled()) ? SocialUtils.EPlatform.DNA : SocialUtils.EPlatform.None;
 				}
             }          
         }        
     }   
 
-	private void AddSocialPlatform(SocialUtils.EPlatform platformId)
+	private SocialUtils AddSocialPlatform(SocialUtils.EPlatform platformId)
 	{
 		SocialUtils socialPlatform;
 		switch (platformId) 
@@ -140,6 +154,10 @@ public class SocialPlatformManager : MonoBehaviour
                 socialPlatform = new SocialUtilsSIWA();
                 break;
 
+            case SocialUtils.EPlatform.DNA:
+                socialPlatform = new SocialUtilsDNA();
+                break;
+
             default:
 				socialPlatform = new SocialUtilsDummy (false, false);
 				break;
@@ -154,7 +172,9 @@ public class SocialPlatformManager : MonoBehaviour
 		{
 			m_platforms.Add(platformId, socialPlatform);
 			m_supportedPlatformIds.Add(platformId);
-		}	
+		}
+
+        return socialPlatform;
 	}
     
     public void Reset()
@@ -226,7 +246,7 @@ public class SocialPlatformManager : MonoBehaviour
 	/// <param name=""></param>
 	public void GetProfileInfo(SocialUtils.EPlatform platformId, Action<SocialUtils.ProfileInfo> onDone)
 	{
-		SocialUtils platform = GetPlatform(m_currentPlatformId);
+		SocialUtils platform = GetPlatform(platformId);
 		if (platform == null) 
 		{
 			if (onDone != null) 
@@ -280,6 +300,17 @@ public class SocialPlatformManager : MonoBehaviour
             platform.Cache.Invalidate();
         }
     }
+
+    public bool IsImplicit(SocialUtils.EPlatform platformId)
+    {
+        SocialUtils platform = GetPlatform(platformId);
+        return platform != null && platform.IsImplicit;        
+    }
+
+    /// <summary>
+    /// Platform that this class is logging in to
+    /// </summary>
+    public SocialUtils.EPlatform LoggingInTo_PlatformId { get; set; }
 
 	#region current_platform
 	private SocialUtils.EPlatform m_currentPlatformId;
@@ -342,6 +373,11 @@ public class SocialPlatformManager : MonoBehaviour
 		InvalidateCachedSocialInfo(m_currentPlatformId);
 	}
 
+    public bool CurrentPlatform_IsImplicit()
+    {
+        return IsImplicit(m_currentPlatformId);
+    }
+
 	public bool CurrentPlatform_IsLoggedIn()
 	{
 		return IsLoggedIn(m_currentPlatformId);
@@ -378,9 +414,22 @@ public class SocialPlatformManager : MonoBehaviour
         MergeLocalOrOnlineAccount,
         MergeDifferentAccountWithProgress,
         MergeDifferentAccountWithoutProgress        
-    }    
+    }
 
-    private ELoginMergeState Login_MergeState { get; set; }
+    private ELoginMergeState m_loginMergeState;
+    private ELoginMergeState Login_MergeState
+    {
+        get
+        {
+            return m_loginMergeState;
+        }
+
+        set
+        {
+            m_loginMergeState = value;
+        }
+    }
+
     private bool Login_IsLogInReady { get; set; }
 
     private Action<ELoginResult, string> Login_OnDone { get; set; }
@@ -395,7 +444,14 @@ public class SocialPlatformManager : MonoBehaviour
 		return platform != null && platform.IsLoggedIn();
     }
 
-	public bool IsLogInTimeoutEnabled(SocialUtils.EPlatform platformId)
+    public bool IsLoggedInByKey(string platformKey)
+    {
+        SocialUtils.EPlatform platformId = SocialUtils.KeyToEPlatform(platformKey);
+        SocialUtils platform = GetPlatform(platformId);
+        return platform != null && platform.IsLoggedIn();
+    }
+
+    public bool IsLogInTimeoutEnabled(SocialUtils.EPlatform platformId)
 	{
 		SocialUtils platform = GetPlatform(platformId);
 		return platform != null && platform.IsLogInTimeoutEnabled();
@@ -426,7 +482,7 @@ public class SocialPlatformManager : MonoBehaviour
 			m_onSocialPlatformLogout();
 	}
 
-	public void Login(SocialUtils.EPlatform platformId, bool isSilent, bool isAppInit, Action<ELoginResult, string> onDone)
+	public void Login(SocialUtils.EPlatform platformId, bool isSilent, bool isAppInit, Action<ELoginResult, string> onDone, bool forceMerge = false)
     {
 		if (!IsPlatformIdSupported(platformId))
 		{
@@ -440,14 +496,22 @@ public class SocialPlatformManager : MonoBehaviour
 			return;
 		}
 
-		m_currentPlatformId = platformId;
+        LoggingInTo_PlatformId = platformId;
+
+        // An implicit platform has less priority than an explicit platform
+        bool setCurrentPlaform = !(!IsImplicit(m_currentPlatformId) && IsImplicit(platformId));
+        if (setCurrentPlaform)
+        {
+            m_currentPlatformId = platformId;
+        }
 
         // Forced to false because when Calety is called with true some flow can be performed that doesn't trigger any callback which would lead
         // this login flow to stay waiting forever
         isAppInit = false;
 
         string socialId = PersistenceFacade.instance.LocalDriver.Prefs_SocialId;        
-        Log("LOGGING IN... currentPlatform = " + m_currentPlatformId + " isSilent = " + isSilent + " isAppInit = " + isAppInit + " alreadyLoggedIn = " + CurrentPlatform_IsLoggedIn() + " SocialId = " + socialId);
+        Log("LOGGING IN... currentPlatform = " + platformId + " isSilent = " + isSilent + " isAppInit = " + isAppInit +
+            " alreadyLoggedIn = " + IsLoggedIn(platformId) + " SocialId = " + socialId + " forceMerge = " + forceMerge);
 
         Login_Discard();
 
@@ -461,10 +525,17 @@ public class SocialPlatformManager : MonoBehaviour
         if (isSilent)
         {
             bool neverLoggedIn = string.IsNullOrEmpty(socialId);
+            if (platformId == SocialUtils.EPlatform.DNA)
+            {
+                neverLoggedIn = false;
+            }
 
 #if UNITY_EDITOR
-            // We want to prevent developers from seeing social login popup every time the game is started since editor doesn't cache the social token
-            neverLoggedIn = true;
+            if (platformId == SocialUtils.EPlatform.Facebook)
+            {
+                // We want to prevent developers from seeing social login popup every time the game is started since editor doesn't cache the social token
+                neverLoggedIn = true;
+            }
 #endif
 
             // If the user has never logged in then we should just mark it as not loggedIn
@@ -485,7 +556,7 @@ public class SocialPlatformManager : MonoBehaviour
         if (!Login_IsLogInReady)
         {
             Messenger.AddListener<bool>(MessengerEvents.SOCIAL_LOGGED, Login_OnLoggedInHelper);
-			GetPlatform(m_currentPlatformId).Login(isAppInit);
+			GetPlatform(platformId).Login(isAppInit, forceMerge);
         }
 
         /*
@@ -612,7 +683,7 @@ public class SocialPlatformManager : MonoBehaviour
 
     private void Login_Update()
     {
-        bool isLoggedIn = CurrentPlatform_IsLoggedIn();
+        bool isLoggedIn = IsLoggedIn(LoggingInTo_PlatformId);
         if (Login_IsLogInReady && (Login_MergeState != ELoginMergeState.Waiting || !isLoggedIn))
         {
             if (isLoggedIn)
@@ -638,6 +709,34 @@ public class SocialPlatformManager : MonoBehaviour
                         break;
                 }
 
+                SocialUtils platform = GetPlatform(LoggingInTo_PlatformId);
+                  
+                if (platform != null && platform.IsImplicit && false)
+                {
+                    switch (Login_MergeState)
+                    {
+                        case ELoginMergeState.MergeDifferentAccountWithoutProgress:
+                            // This situation is not allowed for implicit log in because it'd mean that the social userId has changed and
+                            // that's not possible because social userId in an implicit social platform is linked to the device
+                            LogWarning("(LOGGING):: MergeDifferentAccountWithoutProgress not allowed when logging in implicitly");
+                            result = ELoginResult.Error;
+                            break;
+
+                        case ELoginMergeState.MergeLocalOrOnlineAccount:
+                        case ELoginMergeState.MergeDifferentAccountWithProgress:
+                            // If the user has ever logged in explicitly then it means that the user might not be using her original server
+                            // user id, which is the only oe that is linked to her device id. Merging via an implicit platform is not allowed
+                            // after an user has logged in explicitly. If the user was using her original user server id then no merge conflict
+                            // had arisen an we don't want to give the user the chance to mess her progress up
+                            if (!string.IsNullOrEmpty(PersistenceFacade.instance.LocalDriver.Prefs_SocialPlatformKey))
+                            {
+                                Log("(LOGGING):: Merge conflict when loging in to an automatic social platform is ignored because the user has ever logged in explicitly");
+                                result = ELoginResult.Error;
+                            }                           
+                            break;
+                    }
+                }
+
                 Login_PerformDone(result);                
             }
             else
@@ -649,8 +748,10 @@ public class SocialPlatformManager : MonoBehaviour
 
     private void Login_PerformDone(ELoginResult result)
     {        
-        Log("(LOGGING) DONE! " + result + " isLoggedInReady = " + Login_IsLogInReady + " Login_MergeState = " + Login_MergeState + " isLoggedIn = " + CurrentPlatform_IsLoggedIn() +
-            " currentPlatform = " + CurrentPlatform_GetId());
+        Log("(LOGGING) DONE! " + result + " isLoggedInReady = " + Login_IsLogInReady + " Login_MergeState = " + Login_MergeState + " isLoggedIn = " + IsLoggedIn(LoggingInTo_PlatformId) +
+            " currentPlatform = " + LoggingInTo_PlatformId);
+
+        LoggingInTo_PlatformId = SocialUtils.EPlatform.None;
 
         if (Login_OnDone != null)
         {
@@ -679,11 +780,22 @@ public class SocialPlatformManager : MonoBehaviour
             Login_Update();
         }
 
-		SocialUtils platform = GetPlatform(CurrentPlatform_GetId());
+        SocialUtils.EPlatform currentPlatformId = CurrentPlatform_GetId();
+		SocialUtils platform = GetPlatform(currentPlatformId);
 		if (platform != null) 
 		{
-			platform.Update ();
+			platform.Update();
 		}
+
+        SocialUtils.EPlatform loggingInToPlatformId = LoggingInTo_PlatformId;
+        if (loggingInToPlatformId != currentPlatformId)
+        {
+            platform = GetPlatform(loggingInToPlatformId);
+            if (platform != null)
+            {
+                platform.Update();
+            }
+        }
     }
 
     private const string LOG_CHANNEL = "[Social] ";
@@ -706,5 +818,15 @@ public class SocialPlatformManager : MonoBehaviour
     public static void LogError(string msg)
     {
         Debug.LogError(LOG_CHANNEL + msg);
+    }
+
+#if ENABLE_LOGS
+    [Conditional("DEBUG")]
+#else
+    [Conditional("FALSE")]
+#endif
+    public static void LogWarning(string msg)
+    {
+        Debug.LogWarning(LOG_CHANNEL + msg);
     }
 }

@@ -240,7 +240,7 @@ public class MapUpgradeController : MonoBehaviour, IBroadcastListener {
         {
 
             // Countdown format
-            TimeSpan timeToReset = UsersManager.currentUser.mapResetTimestamp - GameServerManager.SharedInstance.GetEstimatedServerTime();
+            TimeSpan timeToReset = UsersManager.currentUser.mapResetTimestamp - GameServerManager.GetEstimatedServerTime();
             double seconds = System.Math.Max(timeToReset.TotalSeconds, 0d); // Never go negative!
             m_timerText.text = TimeUtils.FormatTime(seconds, TimeUtils.EFormat.DIGITS, 3, TimeUtils.EPrecision.HOURS, true);
         }
@@ -254,7 +254,7 @@ public class MapUpgradeController : MonoBehaviour, IBroadcastListener {
         if (m_unlockFreeDescription != null)
         {
 
-            TimeSpan timeToReset = UsersManager.currentUser.removeAds.mapRevealTimestamp - GameServerManager.SharedInstance.GetEstimatedServerTime();
+            TimeSpan timeToReset = UsersManager.currentUser.removeAds.mapRevealTimestamp - GameServerManager.GetEstimatedServerTime();
             string timeLeft = TimeUtils.FormatTime(timeToReset.TotalSeconds, TimeUtils.EFormat.ABBREVIATIONS_WITHOUT_0_VALUES, 1);
             m_unlockFreeDescription.Localize(TID_MAP_FREE_UNLOCK_COOLDOWN, timeLeft);
         }

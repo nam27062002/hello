@@ -137,8 +137,8 @@ public class PersistenceFacadeConfigDebug : PersistenceFacadeConfig
                 // The incentivised social reward popup is shown regardless the persistence chosen by the user.
                 // If the user chooses local persistence or just closes the popup then the game continues with the local progress.
                 // If the user chooses cloud persistence then the game is reloaded with that progress
-				LocalDriverDebug.PersistenceAsString = GetPersistence(UserProfile.ESocialState.NeverLoggedIn, LOCAL_DRAGON_SKU, 10);
-				CloudDriverDebug.PersistenceAsString = GetPersistence(UserProfile.ESocialState.LoggedIn, CLOUD_DRAGON_SKU, 100);
+				LocalDriverDebug.PersistenceAsString = GetPersistence(UserProfile.ESocialState.NeverLoggedIn, LOCAL_DRAGON_SKU, null, 10);
+				CloudDriverDebug.PersistenceAsString = GetPersistence(UserProfile.ESocialState.LoggedIn, CLOUD_DRAGON_SKU, null, 100);
 			break;
 
 			case EUserCaseId.Launch_Local_NeverLoggedIn_Error_FullDisk_Cloud_More:
@@ -153,15 +153,15 @@ public class PersistenceFacadeConfigDebug : PersistenceFacadeConfig
 			case EUserCaseId.Launch_Local_NeverLoggedIn_Cloud_Less:
                 // Game loads with the local persistence.
                 // The incentivised social reward popup is shown.
-                LocalDriverDebug.PersistenceAsString = GetPersistence(UserProfile.ESocialState.NeverLoggedIn, LOCAL_DRAGON_SKU, 100);
-				CloudDriverDebug.PersistenceAsString = GetPersistence(UserProfile.ESocialState.LoggedIn, CLOUD_DRAGON_SKU, 10);
+                LocalDriverDebug.PersistenceAsString = GetPersistence(UserProfile.ESocialState.NeverLoggedIn, LOCAL_DRAGON_SKU, null, 100);
+				CloudDriverDebug.PersistenceAsString = GetPersistence(UserProfile.ESocialState.LoggedIn, CLOUD_DRAGON_SKU, null, 10);
 			break;
 
 			case EUserCaseId.Launch_Local_NeverLoggedIn_Cloud_Equal:
                 // Game loads with the local persistence.
                 // The incentivised social reward popup is shown.
-                LocalDriverDebug.PersistenceAsString = GetPersistence(UserProfile.ESocialState.NeverLoggedIn, LOCAL_DRAGON_SKU, 100);
-				CloudDriverDebug.PersistenceAsString = GetPersistence(UserProfile.ESocialState.NeverLoggedIn, CLOUD_DRAGON_SKU, 100);				
+                LocalDriverDebug.PersistenceAsString = GetPersistence(UserProfile.ESocialState.NeverLoggedIn, LOCAL_DRAGON_SKU, null, 100);
+				CloudDriverDebug.PersistenceAsString = GetPersistence(UserProfile.ESocialState.NeverLoggedIn, CLOUD_DRAGON_SKU, null, 100);				
 			break;
 
 			case EUserCaseId.Launch_Local_NeverLoggedIn_Cloud_Less_Error_Upload:
@@ -375,9 +375,9 @@ public class PersistenceFacadeConfigDebug : PersistenceFacadeConfig
 		return "{\"userProfile\":{\"sc\":\"10000:0\",\"pc\":\"0:0\",\"timestamp\":\"09 / 06 / 2017 07:31:01\"},\"User\":{\"NumGameLoops\":0,\"deviceName\":\"BCDTDAVIDGERM\",\"modifiedTime\":1504683061}";
 	}
 
-	private string GetPersistence(UserProfile.ESocialState socialState, string initialDragonSku=null, int timePlayed=0)
+	private string GetPersistence(UserProfile.ESocialState socialState, string initialDragonSku=null, string extraDragonSku=null, int timePlayed=0)
 	{   
-        return PersistenceUtils.GetDefaultDataFromProfile("", initialDragonSku, socialState.ToString(), timePlayed).ToString();
+        return PersistenceUtils.GetDefaultDataFromProfile("", initialDragonSku, extraDragonSku, socialState.ToString(), timePlayed).ToString();
     }
     
 	private PersistenceLocalDriverDebug LocalDriverDebug 

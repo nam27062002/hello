@@ -100,7 +100,7 @@ public class OffersManager : Singleton<OffersManager> {
 	}
 
 	public static TimeSpan freeOfferRemainingCooldown {
-		get { return freeOfferCooldownEndTime - GameServerManager.SharedInstance.GetEstimatedServerTime(); }
+		get { return freeOfferCooldownEndTime - GameServerManager.GetEstimatedServerTime(); }
 	}
 
 	public static bool isFreeOfferOnCooldown {
@@ -182,7 +182,7 @@ public class OffersManager : Singleton<OffersManager> {
 		Debug.Assert(ContentManager.ready, "Definitions Manager must be ready before invoking this method.");
 
 		// Aux vars
-		DateTime serverTime = GameServerManager.SharedInstance.GetEstimatedServerTime();
+		DateTime serverTime = GameServerManager.GetEstimatedServerTime();
 
 		// Reload settings
 		settings.InitFromDefinitions();
@@ -1118,7 +1118,7 @@ public class OffersManager : Singleton<OffersManager> {
 	/// Restart the free offer cooldown timer.
 	/// </summary>
 	public static void RestartFreeOfferCooldown() {
-		DateTime serverTime = GameServerManager.SharedInstance.GetEstimatedServerTime();
+		DateTime serverTime = GameServerManager.GetEstimatedServerTime();
 		UsersManager.currentUser.freeOfferCooldownEndTime = serverTime.AddMinutes(settings.freeCooldownMinutes);
 		instance.m_freeOfferNeedsSorting = true;
 	}
@@ -1302,6 +1302,6 @@ public class OffersManager : Singleton<OffersManager> {
 	/// Skips the cooldown timer of the free offer.
 	/// </summary>
 	public static void DEBUG_SkipFreeOfferCooldown() {
-		UsersManager.currentUser.freeOfferCooldownEndTime = GameServerManager.SharedInstance.GetEstimatedServerTime();
+		UsersManager.currentUser.freeOfferCooldownEndTime = GameServerManager.GetEstimatedServerTime();
 	}
 }

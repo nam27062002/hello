@@ -65,7 +65,7 @@ public class DailyRewardsSequence {
 	public TimeSpan timeToCollection {
 		get {
 			// Avoid negative values
-			TimeSpan remainingTime = m_nextCollectionTimestamp - GameServerManager.SharedInstance.GetEstimatedServerTime();
+			TimeSpan remainingTime = m_nextCollectionTimestamp - GameServerManager.GetEstimatedServerTime();
 			if(remainingTime.TotalSeconds < 0) {
 				return new TimeSpan(0);
 			} else {
@@ -114,10 +114,10 @@ public class DailyRewardsSequence {
 	/// </summary>
 	/// <returns><c>true</c>, if collect next reward was caned, <c>false</c> otherwise.</returns>
 	public bool CanCollectNextReward() {
-        bool returnValue = GameServerManager.SharedInstance.GetEstimatedServerTime() >= m_nextCollectionTimestamp;
+        bool returnValue = GameServerManager.GetEstimatedServerTime() >= m_nextCollectionTimestamp;
         
         // Check timestamps
-        Log("CanCollectNextReward = " + returnValue + " serverTime = " + GameServerManager.SharedInstance.GetEstimatedServerTime() + " nextTimestamp = " + m_nextCollectionTimestamp);
+        Log("CanCollectNextReward = " + returnValue + " serverTime = " + GameServerManager.GetEstimatedServerTime() + " nextTimestamp = " + m_nextCollectionTimestamp);
 
         return returnValue;
 	}
@@ -166,7 +166,7 @@ public class DailyRewardsSequence {
 		}
 
 		// Reset timestamp to 00:00 of local time (but using server timezone!)
-		DateTime serverTime = GameServerManager.SharedInstance.GetEstimatedServerTime();
+		DateTime serverTime = GameServerManager.GetEstimatedServerTime();
 #if PLAYTEST
 		m_nextCollectionTimestamp = serverTime.AddSeconds(PLAYTEST_COOLDOWN_DURATION);
 #else
@@ -363,7 +363,7 @@ public class DailyRewardsSequence {
 		if(CanCollectNextReward()) return;
 
 		// Set collection timestamp to current time
-		m_nextCollectionTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTime();
+		m_nextCollectionTimestamp = GameServerManager.GetEstimatedServerTime();
         Log("DEBUG_Skip nextTimestamp = " + m_nextCollectionTimestamp);
     }
 

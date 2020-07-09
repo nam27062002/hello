@@ -12,8 +12,10 @@ using System.Diagnostics;
 using UnityEngine;
 
 public class HDTrackingManager
-{   
-    private static HDTrackingManager smInstance = null;
+{
+    private static bool WasTrackingEnabledWhenCreated { get; set; }
+
+    private static HDTrackingManager smInstance = null;    
 
     public static HDTrackingManager Instance
     {
@@ -21,17 +23,27 @@ public class HDTrackingManager
         {
             if (smInstance == null)
             {
-                if (FeatureSettingsManager.instance.IsTrackingEnabled)                
-                {
-                    smInstance = new HDTrackingManagerImp();
-                }
-                else
-                {
-                    smInstance = new HDTrackingManager();
-                }
+                CreateInstance();
             }
 
             return smInstance;
+        }
+    }
+
+    public static void CreateInstance()
+    {
+        bool trackingEnabled = FeatureSettingsManager.instance.IsTrackingEnabled;
+        if (smInstance == null || WasTrackingEnabledWhenCreated != trackingEnabled)
+        {
+            WasTrackingEnabledWhenCreated = trackingEnabled;
+            if (WasTrackingEnabledWhenCreated)
+            {
+                smInstance = new HDTrackingManagerImp();
+            }
+            else
+            {
+                smInstance = new HDTrackingManager();
+            }
         }
     }
 

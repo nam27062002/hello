@@ -17,24 +17,24 @@ public class SocialUtilsFb : SocialUtils
         public override void onLogInCompleted()
         {
             Debug.TaggedLog(TAG, "onLogInCompleted");
-            m_manager.OnSocialPlatformLogin();
+            m_manager.OnSocialPlatformLogin(EPlatform.Facebook);
         }
 
         public override void onLogInCancelled()
         {
             Debug.TaggedLog(TAG, "onLogInCancelled");
-            m_manager.OnSocialPlatformLoginFailed();
+            m_manager.OnSocialPlatformLoginFailed(EPlatform.Facebook);
         }
 
         public override void onLogInFailed()
         {
             Debug.TaggedLog(TAG, "onLogInFailed");
-            m_manager.OnSocialPlatformLoginFailed();
+            m_manager.OnSocialPlatformLoginFailed(EPlatform.Facebook);
         }
 
         public override void onLogOut()
         {
-            m_manager.OnSocialPlatformLogOut();
+            m_manager.OnSocialPlatformLogOut(EPlatform.Facebook);
             Debug.TaggedLog(TAG, "onLogOut");
         }
 

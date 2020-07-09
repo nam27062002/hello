@@ -170,7 +170,7 @@ public class PersistenceLocalDriver
         Data.LoadFromString(persistence);
 
         // Overrides all files except the one that is going to be overridden by Save(onDone) below
-        // They all need to be overridden becuase their values are not valid anymore, otherwise the user could be able to load an old persistence
+        // They all need to be overridden because their values are not valid anymore, otherwise the user could be able to load an old persistence
         // if the latest file got corrupted
         if (SAVE_PATHS_MULTIPLE_ENABLED)
         {
@@ -200,6 +200,35 @@ public class PersistenceLocalDriver
 		Override(defaultPersistence.ToString(), onDone);
 	}
 
+    public void OverrideWithCorruptProgress(Action onDone)
+    {
+        // Overrides all save files
+        // They all need to be overridden because their values are not valid anymore, otherwise the user could be able to load an old persistence
+        // if the latest file got corrupted
+
+        int index = SavePaths_GetNextIndexToLatestIndex();
+        string savePath = SavePaths_GetPathAtIndex(index);
+        Data.Corrupt(savePath);
+        
+        if (SAVE_PATHS_MULTIPLE_ENABLED)
+        {         
+            // all files have to be overridden because the current value is not valid anymore
+            for (int i = 0; i < SAVE_PATHS_COUNT; i++)
+            {
+                if (i != index)
+                {
+                    savePath = SavePaths_GetPathAtIndex(i);
+                    Data.Corrupt(savePath);
+                }
+            }
+        }
+
+        if (onDone != null)
+        {
+            onDone();
+        }
+    }
+
 	public void Save(Action onDone)
 	{        
         // Makes sure that the persistence that is about to be saved is a valid one
@@ -208,15 +237,19 @@ public class PersistenceLocalDriver
 			ExtendedSave();
 			OnSaveDone(onDone);
 		} 
-		else if (FeatureSettingsManager.IsDebugEnabled)
+		else 
 		{
-			PersistenceFacade.LogError(" Data is not OK so it won't be saved");
-			if (onDone != null)
-			{
-				onDone();
-			}
-		}
-	}
+            if (FeatureSettingsManager.IsDebugEnabled)
+            {
+                PersistenceFacade.LogError(" Data is not OK so it won't be saved");
+            }
+
+            if (onDone != null)
+            {
+                onDone();
+            }
+        }        
+    }
 
 	protected virtual void ExtendedSave()
 	{
@@ -324,15 +357,14 @@ public class PersistenceLocalDriver
 	{
         Prefs_SocialPlatformKey = socialPlatformKey;        
         Prefs_SocialId = socialId;
-        PersistencePrefs.Social_WasLoggedInWhenQuit = true;
+        Prefs_SocialWasLoggedInWhenQuit = true;
 
         if (TrackingPersistenceSystem != null)
         {            
             TrackingPersistenceSystem.SetSocialParams(socialPlatformKey, socialId);
         }
-
-		// Checks if it's the first time the user logs in, if so then socialState has to be updated
-		if (UserProfile != null && UserProfile.SocialState == UserProfile.ESocialState.NeverLoggedIn)
+        
+        if (UserProfile != null && UserProfile.SocialState == UserProfile.ESocialState.NeverLoggedIn)
 		{
 			UserProfile.SocialState = UserProfile.ESocialState.LoggedIn;
 			Save(onDone);
@@ -344,6 +376,13 @@ public class PersistenceLocalDriver
 	}
 
     public void Update() {}
+
+    public bool HasEverExplicitlyLoggedIn()
+    {        
+        SocialUtils.EPlatform platform = SocialUtils.KeyToEPlatform(Prefs_SocialPlatformKey);
+        return (SocialPlatformManager.SharedInstance.IsPlatformIdSupported(platform) &&
+                !SocialPlatformManager.SharedInstance.IsImplicit(platform));
+    }
 
     #region SavePaths
     private const bool SAVE_PATHS_MULTIPLE_ENABLED = true;
@@ -432,6 +471,18 @@ public class PersistenceLocalDriver
     {
         get { return PersistencePrefs.Social_Id; }
         set { PersistencePrefs.Social_Id = value; }
+    }
+
+    public virtual bool Prefs_SocialWasLoggedInWhenQuit
+    {
+        get { return PersistencePrefs.Social_WasLoggedInWhenQuit; }
+        set { PersistencePrefs.Social_WasLoggedInWhenQuit = value; }
+    }    
+
+    public PersistenceCloudDriver.EMergeState Prefs_SocialImplicitMergeState
+    {
+        get { return (PersistenceCloudDriver.EMergeState)PersistencePrefs.Social_ImplicitMergeState; }
+        set { PersistencePrefs.Social_ImplicitMergeState = (int)value; }
     }
     #endregion
 }
