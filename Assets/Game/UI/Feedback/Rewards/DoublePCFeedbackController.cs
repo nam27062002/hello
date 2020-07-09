@@ -46,11 +46,9 @@ public class DoublePCFeedbackController : MonoBehaviour {
 	private void Start() {
 
 		BabyDragon babyDragon = InstanceManager.player.GetBabyDragon();
-
-		if (babyDragon != null && ! string.IsNullOrEmpty(babyDragon.sku) )
+		if (babyDragon.IsEquipped())
 		{
-			m_menuPetLoader.Load(babyDragon.sku);
-
+			m_menuPetLoader.Load(babyDragon.sku[0]);
 		}
 
         if (textCanvas != null)
