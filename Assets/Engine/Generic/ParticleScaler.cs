@@ -33,9 +33,13 @@ public class ParticleScaler : MonoBehaviour
 	[Space]
 	public WhenScale m_whenScale;
 
+	public int m_framesDelay;
+        
+    private int m_frameCount = 0;
+
 	// Internal
-	static ParticleSystem.Particle[] m_particlesBuffer;	// [AOC] Prevent constant memory allocation by having a buffer to perform particle by particle operations. 
-                                                        // [MALH] And if we share it between all particleScalers we avoid multiple news and memory trashing :p
+	static ParticleSystem.Particle[] m_particlesBuffer; // [AOC] Prevent constant memory allocation by having a buffer to perform particle by particle operations. 
+														// [MALH] And if we share it between all particleScalers we avoid multiple news and memory trashing :p
 
 
 	protected class PSDataRegistry
@@ -429,7 +433,15 @@ public class ParticleScaler : MonoBehaviour
 
 	IEnumerator AfterEnable()
 	{
-		yield return null;
+		m_frameCount = m_framesDelay;
+
+        // Wait for N frames
+		while (m_frameCount > 0)
+		{
+			m_frameCount--;
+			yield return null;
+		}
+
 		DoScale();
 	}
 

@@ -95,6 +95,18 @@ public class ParticleScalerEditor : Editor {
 				if(p.enumValueIndex == (int)ParticleScaler.WhenScale.ALWAYS) {
 					EditorGUILayout.HelpBox("ALWAYS mode can be very CPU heavy. Use carefully!", MessageType.Warning);
 				}
+
+
+			}
+
+			else if (p.name == "m_framesDelay")
+			{
+				// Only for AFTER_ENABLE mode
+
+				if (m_targetParticleScaler.m_whenScale == ParticleScaler.WhenScale.AFTER_ENABLE)
+				{
+					EditorGUILayout.PropertyField(p, true);
+				}
 			}
 
 			// Properties we don't want to show
