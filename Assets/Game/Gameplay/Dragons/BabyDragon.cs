@@ -12,6 +12,7 @@ public class BabyDragon
     public int probability;
     public int extraGems;
     public int firstSucceed;
+    public string babyDragonWithMotherSku;
 
     public bool IsEquipped()
     {
@@ -24,5 +25,6 @@ public class BabyDragon
         probability = 0;
         extraGems = 0;
         firstSucceed = 0;
+        babyDragonWithMotherSku = string.Empty;
     }
 }
