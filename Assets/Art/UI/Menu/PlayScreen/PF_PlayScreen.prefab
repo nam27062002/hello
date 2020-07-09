@@ -13168,7 +13168,6 @@ GameObject:
   - component: {fileID: 224744970781880318}
   - component: {fileID: 222698308353006348}
   - component: {fileID: 114167690920280946}
-  - component: {fileID: 114528489674997392}
   - component: {fileID: 8511167180335229079}
   - component: {fileID: 4977031747010517874}
   m_Layer: 0
@@ -13232,28 +13231,6 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
---- !u!114 &114528489674997392
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1859486376315288}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 889ebb13ef73942ce8eff2236d04e933, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_bold: 0
-  m_boldSize: 0.5
-  m_outline: 0
-  m_outlineQuality: 0
-  m_outlineSize: 1.5
-  m_outlineColor: {r: 0.1254902, g: 0.15686275, b: 0.18823531, a: 1}
-  m_shadow: 1
-  m_shadowAngle: 270
-  m_shadowSize: 6
-  m_shadowColor: {r: 0, g: 0, b: 0, a: 0.547}
 --- !u!114 &8511167180335229079
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13315,8 +13292,8 @@ MonoBehaviour:
   targetGO: {fileID: 0}
   tweenTargetIsTargetGO: 1
   delay: 0
-  duration: 1
-  easeType: 6
+  duration: 1.5
+  easeType: 10
   easeCurve:
     serializedVersion: 2
     m_Curve:
@@ -13357,7 +13334,7 @@ MonoBehaviour:
   autoPlay: 1
   useTargetAsV3: 0
   endValueFloat: 0
-  endValueV3: {x: 0, y: 0, z: 0}
+  endValueV3: {x: 0, y: 0, z: -359}
   endValueV2: {x: 0, y: 0}
   endValueColor: {r: 1, g: 1, b: 1, a: 1}
   endValueString: 
@@ -13371,7 +13348,7 @@ MonoBehaviour:
   optionalBool0: 0
   optionalFloat0: 0
   optionalInt0: 0
-  optionalRotationMode: 0
+  optionalRotationMode: 1
   optionalScrambleMode: 0
   optionalString: 
 --- !u!1 &1878245890755556
