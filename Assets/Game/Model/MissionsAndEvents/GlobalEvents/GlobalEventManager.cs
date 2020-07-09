@@ -93,7 +93,7 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 
 	// Shortcuts
 	private static DateTime serverTime {
-		get { return GameServerManager.SharedInstance.GetEstimatedServerTime(); }
+		get { return GameServerManager.GetEstimatedServerTime(); }
 	}
 
 	// Internal
@@ -173,7 +173,7 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 
 						// If we got a valid timestamp, update local event data
 						if(globalEventUserData != null && secondsToEnd > 0) {
-							globalEventUserData.endTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong() + (secondsToEnd * 1000);
+							globalEventUserData.endTimestamp = GameServerManager.GetEstimatedServerTimeAsLong() + (secondsToEnd * 1000);
 						}
 					}
 				}

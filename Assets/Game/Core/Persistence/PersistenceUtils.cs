@@ -20,7 +20,7 @@ public class PersistenceUtils
     /// </summary>
     /// <returns>The data from profile.</returns>
     /// <param name="_profileName">The name of the profile to be loaded.</param>
-    public static SimpleJSON.JSONClass GetDefaultDataFromProfile(string _profileName = "", string _initialDragonSku=null, string _socialState=null, int _timePlayed=0)
+    public static SimpleJSON.JSONClass GetDefaultDataFromProfile(string _profileName = "", string _initialDragonSku=null, string _extraDragonSku=null, string _socialState=null, int _timePlayed=0)
     {
         SimpleJSON.JSONClass _returnValue = null;
 
@@ -75,14 +75,21 @@ public class PersistenceUtils
                 _dragon.Add("owned", "true");
                 _dragons.Add(_dragon);
 
+                if (!string.IsNullOrEmpty(_extraDragonSku))
+                {
+                    _dragon = new SimpleJSON.JSONClass();
+                    _dragon.Add("sku", _extraDragonSku);
+                    _dragon.Add("owned", "true");
+                    _dragons.Add(_dragon);
+                }
                 _returnValue.Add("dragons", _dragons);
             }
 
 			// [AOC] Start with the map unlocked
 			// Use default 24hrs timer if the settings rules are not ready
-			System.DateTime mapResetTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTime().AddHours(24);
+			System.DateTime mapResetTimestamp = GameServerManager.GetEstimatedServerTime().AddHours(24);
 			if(gameSettingsDef != null) {
-				mapResetTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTime().AddMinutes(gameSettingsDef.GetAsDouble("miniMapTimer"));	// Minutes
+				mapResetTimestamp = GameServerManager.GetEstimatedServerTime().AddMinutes(gameSettingsDef.GetAsDouble("miniMapTimer"));	// Minutes
 			}
 			_returnValue.Add("mapResetTimestamp", mapResetTimestamp.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
         }
@@ -237,7 +244,7 @@ public class PersistenceUtils
 		}
 
 		// Try with local culture
-		else if(TryParse<T>(_toParse, ApplicationManager.instance.originalCulture, out val)) {
+		else if(TryParse<T>(_toParse, ApplicationManager.originalCulture, out val)) {
 			return val;
 		}
 

@@ -41,13 +41,24 @@ public class CPTechTab : MonoBehaviour {
 	[SerializeField] private TextMeshProUGUI m_clusterIdText = null;
 	[SerializeField] private Toggle m_debugServerToggle = null;
     [SerializeField] private TMP_Dropdown m_countryDropDown = null;
+	[SerializeField] private TextMeshProUGUI m_currentPlatformText = null;
+	[SerializeField] private TextMeshProUGUI m_currentPlatformUserIdText = null;
+	[SerializeField] private TextMeshProUGUI m_loggedInWhenQuitText = null;
+	[SerializeField] private TextMeshProUGUI m_implicitMergeStateText = null;
+	[SerializeField] private TextMeshProUGUI m_syncStateText = null;
 
-
-    // Internal
-    private DateTime m_startTimestamp;
+	// Internal
+	private DateTime m_startTimestamp;
 	private StringBuilder m_outputSb = new StringBuilder();
 
 	//private RequestNetwork requestNetwork;
+
+	public enum ESyncState
+	{
+		Disabled,
+		InSync,
+		OutOfSync
+	};
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -69,19 +80,48 @@ public class CPTechTab : MonoBehaviour {
         Countries_Init();
     }
 
-	private void OnEnable()
+	private void OnRefresh()
 	{
 		m_accountIdText.text = "AccountId: " + GameSessionManager.SharedInstance.GetUID();
 		m_enviromentText.text = "Env: " + ServerManager.SharedInstance.GetServerConfig().m_eBuildEnvironment.ToString();
 
 		m_trackingIdText.text = "TrackingId: " + HDTrackingManager.Instance.GetTrackingID();
 		m_DNAProfileIdText.text = "DNA profileId: " + HDTrackingManager.Instance.GetDNAProfileID();
-        m_AdUnitInfoText.text = "Ads: " + GameAds.instance.GetInfo();
+
+		m_AdUnitInfoText.text = "Ads: " + GameAds.instance.GetInfo();
+		m_currentPlatformText.text = "Cloud Platform: " + SocialPlatformManager.SharedInstance.CurrentPlatform_GetKey();
+		m_currentPlatformUserIdText.text = "Cloud userId:" + SocialPlatformManager.SharedInstance.CurrentPlatform_GetUserID();
+		m_loggedInWhenQuitText.text = "Logged in when quit: " + PersistenceFacade.instance.LocalDriver.Prefs_SocialWasLoggedInWhenQuit;
+		m_implicitMergeStateText.text = "Implicit merge state: " + PersistenceFacade.instance.LocalDriver.Prefs_SocialImplicitMergeState.ToString();
+		m_syncStateText.text = "Sync state: " + SyncState.ToString();
+
 		m_clusterIdText.text = "Cluster Id assigned: " + UsersManager.currentUser.clusterId;
 
 		m_debugServerToggle.isOn = DebugSettings.useDebugServer;
-		m_debugServerToggle.onValueChanged.AddListener(OnToggleDebugServer);        
-    }
+		m_debugServerToggle.onValueChanged.AddListener(OnToggleDebugServer);
+	}
+
+	private ESyncState SyncState
+	{
+		get
+		{
+            // Check if the user has a way to recover this progress
+			PersistenceLocalDriver localDriver = PersistenceFacade.instance.LocalDriver;
+			if (string.IsNullOrEmpty(localDriver.Prefs_SocialPlatformKey) && localDriver.Prefs_SocialImplicitMergeState != PersistenceCloudDriver.EMergeState.Ok)
+			{
+				return ESyncState.Disabled;
+			}
+			else
+			{				
+			    return PersistenceFacade.instance.CloudDriver.IsLoggedIn && PersistenceFacade.instance.Sync_IsSynced ? ESyncState.InSync : ESyncState.OutOfSync;				
+			}			
+		}
+	}
+
+	private void OnEnable()
+	{
+		OnRefresh();
+    }    
 
 	private void OnDisable() {
 		m_debugServerToggle.onValueChanged.RemoveListener(OnToggleDebugServer);
@@ -90,6 +130,7 @@ public class CPTechTab : MonoBehaviour {
 	private void Update()
 	{
 		//requestNetwork.Update();
+		//OnRefresh();
 	}
 
 	//------------------------------------------------------------------------//
@@ -341,8 +382,39 @@ public class CPTechTab : MonoBehaviour {
 		Output("Hungry Dragon v" + GameSettings.internalVersion + " console output");
 	}
 
-#region countries
-    private bool Country_IsInitializing { get; set; }
+    public void OnSaveGame()
+    {
+		PersistenceFacade.instance.Save_Request(true);
+		PersistenceFacade.instance.CloudDriver.Upload();
+    }
+
+	public void OnCorruptLocalProgress()
+	{
+		Action onDone = delegate ()
+		{
+			ApplicationManager.instance.NeedsToRestartFlow = true;
+		};
+		
+		PersistenceFacade.instance.LocalDriver.OverrideWithCorruptProgress(onDone);
+
+        // Prevent game from saving on top of the corrupt progress
+		PersistenceFacade.instance.LocalDriver.IsLoadedInGame = false;
+	}
+
+    public void OnResetCloudInfo()
+    {
+		PersistenceFacade.instance.LocalDriver.Prefs_SocialId = null;
+		PersistenceFacade.instance.LocalDriver.Prefs_SocialPlatformKey = null;
+		PersistenceFacade.instance.LocalDriver.Prefs_SocialImplicitMergeState = PersistenceCloudDriver.EMergeState.None;
+		PersistenceFacade.instance.LocalDriver.Prefs_SocialWasLoggedInWhenQuit = false;
+
+		OnRefresh();
+
+		ApplicationManager.instance.NeedsToRestartFlow = true;
+	}	
+
+	#region countries
+	private bool Country_IsInitializing { get; set; }
 
     private void Countries_Init()
     {

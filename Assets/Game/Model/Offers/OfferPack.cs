@@ -232,9 +232,9 @@ public class OfferPack {
 	public TimeSpan remainingTime {
 		get { 
 			if(isTimed && isActive) {
-				return m_endTimestamp - GameServerManager.SharedInstance.GetEstimatedServerTime(); 
+				return m_endTimestamp - GameServerManager.GetEstimatedServerTime(); 
 			} else {
-				return DateTime.MaxValue - GameServerManager.SharedInstance.GetEstimatedServerTime();
+				return DateTime.MaxValue - GameServerManager.GetEstimatedServerTime();
 			}
 		}
 	}
@@ -684,7 +684,7 @@ public class OfferPack {
 		// Aux vars
 		UserProfile profile = UsersManager.currentUser;
 		TrackingPersistenceSystem trackingPersistence = HDTrackingManager.Instance.TrackingPersistenceSystem;
-		DateTime serverTime = GameServerManager.SharedInstance.GetEstimatedServerTime();
+		DateTime serverTime = GameServerManager.GetEstimatedServerTime();
 		//OffersManager.LogPack(this, "      CheckActivation {0}", Colors.yellow, m_def.sku);
 
 		// Start date
@@ -975,7 +975,7 @@ public class OfferPack {
 		}
 
 		// Get server time
-		DateTime serverTime = GameServerManager.SharedInstance.GetEstimatedServerTime();
+		DateTime serverTime = GameServerManager.GetEstimatedServerTime();
 
 		// Global end date
 		if(m_endDate > DateTime.MinValue && serverTime > m_endDate) {
@@ -1021,7 +1021,7 @@ public class OfferPack {
 			TrackingPersistenceSystem trackingPersistence = HDTrackingManager.Instance.TrackingPersistenceSystem;
 			int totalPurchases = (trackingPersistence == null) ? 0 : trackingPersistence.TotalPurchases;
 			if(totalPurchases > 0) {	// Ignore if player hasn't yet purchased
-				long serverTime = GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong() / 1000L;
+				long serverTime = GameServerManager.GetEstimatedServerTimeAsLong() / 1000L;
 				long timeSinceLastPurchase = serverTime - trackingPersistence.LastPurchaseTimestamp;
 				if(m_secondsSinceLastPurchase > timeSinceLastPurchase) {    // Not enough time has passed
 					OffersManager.LogPack(this, "      CheckSegmentation {0}: FAIL! Time Since Last Purchase {1} vs {2}", Color.red, m_def.sku, m_secondsSinceLastPurchase, timeSinceLastPurchase);
@@ -1104,7 +1104,7 @@ public class OfferPack {
 				// Make sure we come from pending activation state
 				if(oldState == State.PENDING_ACTIVATION) {
 					// Set activation timestamp to now
-					m_activationTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTime();
+					m_activationTimestamp = GameServerManager.GetEstimatedServerTime();
 
 					// Compute end timestamp
 					// Combine duration and end date, both of which are optional
@@ -1169,7 +1169,7 @@ public class OfferPack {
 		}
 
 		// Check frequency
-		DateTime serverTime = GameServerManager.SharedInstance.GetEstimatedServerTime();
+		DateTime serverTime = GameServerManager.GetEstimatedServerTime();
 		TimeSpan timeSinceLastView = serverTime - m_lastViewTimestamp;
 		if(timeSinceLastView.TotalMinutes < m_frequency) return null;
 
@@ -1234,7 +1234,7 @@ public class OfferPack {
 
 		// Update control vars and return
 		m_viewsCount++;
-		m_lastViewTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTime();
+		m_lastViewTimestamp = GameServerManager.GetEstimatedServerTime();
 
         // Make sure we are saving this timestamp, so the offer is not shown twice
 		UsersManager.currentUser.SaveOfferPack(this);

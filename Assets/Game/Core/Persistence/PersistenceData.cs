@@ -112,20 +112,14 @@ public class PersistenceData
 		{
 			mLoadState = value;
 		}
-	}
+	}    
 
     public PersistenceStates.ESaveState SaveState { get; set; }
 
     public PersistenceStates.ESaveState Save(string savePath, bool backUpOnFail = true)
-	{
+    {
         m_data.Clear();
-
         Systems_Save();
-
-        SaveState = PersistenceStates.ESaveState.DiskSpace;
-
-        string playerPrefKey = "Save." + m_key + ".sav";
-
         //TODO record current platform of save
 
         m_deviceName = SystemInfo.deviceName;
@@ -137,7 +131,7 @@ public class PersistenceData
         }
 
         // Makes sure that the date doesn't go backwards
-        int newModifiedTime = (int)(GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong() / 1000);        
+        int newModifiedTime = (int)(GameServerManager.GetEstimatedServerTimeAsLong() / 1000);
         if (newModifiedTime >= m_modifiedTime)
         {
             m_modifiedTime = newModifiedTime;
@@ -146,7 +140,25 @@ public class PersistenceData
         m_data["deviceName"] = m_deviceName;
         m_data["modifiedTime"] = m_modifiedTime;
 
-        MemoryStream saveStream = SaveToStream();
+        return InternalSave(savePath, m_data.ToJSON(), backUpOnFail);
+    }
+
+    /// <summary>
+    /// Call it only for testing corruptes save progress flow
+    /// </summary>
+    public void Corrupt(string savePath)
+    {
+        InternalSave(savePath, "CORRUPTED", false);
+    }
+
+    public PersistenceStates.ESaveState InternalSave(string savePath, string data, bool backUpOnFail)
+	{        
+        SaveState = PersistenceStates.ESaveState.DiskSpace;
+
+        string playerPrefKey = "Save." + m_key + ".sav";
+
+       
+        MemoryStream saveStream = SaveToStream(data, IsStoredClear());
 
         if (saveStream != null)
         {
@@ -235,11 +247,9 @@ public class PersistenceData
 #endif
     }    
 
-    public MemoryStream SaveToStream()
+    public MemoryStream SaveToStream(string data, bool storeClear)
     {
-        MemoryStream stream = null;
-
-        string json = m_data.ToJSON();
+        MemoryStream stream = null;       
 
         //Compress the data using LZF compression
         byte[] compressed = null;
@@ -248,10 +258,10 @@ public class PersistenceData
         {
             using (StreamWriter writer = new StreamWriter(compMemStream, Encoding.UTF8))
             {
-                writer.Write(json);
+                writer.Write(data);
                 writer.Close();
 
-                if (IsStoredClear())
+                if (storeClear)
                 {
                     compressed = compMemStream.ToArray();
                 }

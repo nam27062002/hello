@@ -81,7 +81,7 @@ public class ChestManager : Singleton<ChestManager> {
 	}
 
 	public static TimeSpan timeToReset {
-		get { return resetTimestamp - GameServerManager.SharedInstance.GetEstimatedServerTime(); }
+		get { return resetTimestamp - GameServerManager.GetEstimatedServerTime(); }
 	}
 
 	// Internal
@@ -98,7 +98,7 @@ public class ChestManager : Singleton<ChestManager> {
 		if(!IsReady()) return;
 
 		// Check reset timer
-		if(GameServerManager.SharedInstance.GetEstimatedServerTime() >= resetTimestamp) {
+		if(GameServerManager.GetEstimatedServerTime() >= resetTimestamp) {
 			// Reset!
 			Reset();
 		}
@@ -195,7 +195,7 @@ public class ChestManager : Singleton<ChestManager> {
 
 		// Reset timestamp to 00:00 of local time (but using server timezone!)
 		TimeSpan toMidnight = DateTime.Today.AddDays(1) - DateTime.Now;	// Local
-		resetTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTime() + toMidnight;	// Local 00:00 in server timezone
+		resetTimestamp = GameServerManager.GetEstimatedServerTime() + toMidnight;	// Local 00:00 in server timezone
 
 		// Notify game
 		Messenger.Broadcast(MessengerEvents.CHESTS_RESET);

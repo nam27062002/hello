@@ -328,10 +328,15 @@ public class PopupSettingsSaveTab : MonoBehaviour
 	/// 
 	/// </summary>
     private void Social_Refresh()
-    {        
-        bool isLoggedIn = Model_SocialIsLoggedIn();
-		m_socialNotLoggedInRoot.SetActive(!isLoggedIn);
-		m_socialLoggedInRoot.SetActive(isLoggedIn);
+    {
+		// If the user is EXPLICITELY logged in into a social platform, show the logout layout instead
+		bool isExplicitelyLoggedIn = SocialPlatformManager.SharedInstance.CurrentPlatform_IsLoggedIn() && !SocialPlatformManager.SharedInstance.CurrentPlatform_IsImplicit();
+		//Model_SocialIsLoggedIn();
+		//isExplicitelyLoggedIn &= !SocialPlatformManager.SharedInstance.CurrentPlatform_IsImplicit();
+
+		// Show target layout
+		m_socialNotLoggedInRoot.SetActive(!isExplicitelyLoggedIn);
+		m_socialLoggedInRoot.SetActive(isExplicitelyLoggedIn);
 
 		if(m_logoutIcon != null) {
 			m_logoutIcon.Refresh();
@@ -387,7 +392,7 @@ public class PopupSettingsSaveTab : MonoBehaviour
             RefreshView();
         };
 
-        PersistenceFacade.instance.Sync_FromSettings(_platform, onDone);        
+        PersistenceFacade.instance.Sync_FromSettings(_platform, PersistenceCloudDriver.ESyncMode.Full, onDone);        
     }
    
     /// <summary>
@@ -468,7 +473,7 @@ public class PopupSettingsSaveTab : MonoBehaviour
 
 			// Uses the same social platform that is currently in usage since the user can not change social platforms
 			// by clicking on save sync
-			PersistenceFacade.instance.Sync_FromSettings(SocialPlatformManager.SharedInstance.CurrentPlatform_GetId(), onDone);
+			PersistenceFacade.instance.Sync_FromSettings(SocialPlatformManager.SharedInstance.CurrentPlatform_GetId(), PersistenceCloudDriver.ESyncMode.Lite, onDone);
         }
     }
 	#endregion
@@ -535,8 +540,12 @@ public class PopupSettingsSaveTab : MonoBehaviour
 	/// </summary>
     private void Model_Refresh()
     {
-        EState state = EState.NeverLoggedIn;
-        bool isLoggedIn = PersistenceFacade.instance.CloudDriver.IsLoggedIn;
+		// [AOC] CloudDriver.IsLoggedIn takes in account DNA login.
+		//		 In this case we only care about explicit social logins, so use SocialPlatformManager instead.
+        //bool isLoggedIn = PersistenceFacade.instance.CloudDriver.IsLoggedIn;
+		bool isLoggedIn = SocialPlatformManager.SharedInstance.CurrentPlatform_IsLoggedIn() && !SocialPlatformManager.SharedInstance.CurrentPlatform_IsImplicit();
+
+		EState state = EState.NeverLoggedIn;
         UserProfile userProfile = UsersManager.currentUser;
         if (userProfile != null)
         {
@@ -571,9 +580,12 @@ public class PopupSettingsSaveTab : MonoBehaviour
             case EState.LoggedIn:
             case EState.LoggedInAndIncentivised:
             {
-                returnValue = PersistenceFacade.instance.CloudDriver.IsLoggedIn;
-            }
-            break;
+				// [AOC] CloudDriver.IsLoggedIn takes in account DNA login.
+				//		 In this case we only care about explicit social logins, so use SocialPlatformManager instead.
+				//returnValue = PersistenceFacade.instance.CloudDriver.IsLoggedIn;
+				returnValue = SocialPlatformManager.SharedInstance.CurrentPlatform_IsLoggedIn() && !SocialPlatformManager.SharedInstance.CurrentPlatform_IsImplicit();
+			}
+			break;
 
             case EState.NeverLoggedIn:
             case EState.PreviouslyLoggedIn:

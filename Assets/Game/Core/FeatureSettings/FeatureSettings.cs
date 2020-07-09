@@ -153,6 +153,10 @@ public class FeatureSettings
     // Max time to wait for log in social platform to finish
     public const string KEY_SOCIAL_PLAFTORM_LOGIN_TIMEOUT = "socialPlatformLoginTimeout";
 
+    // Wehn <c>true</c> an implicit social platform, typically DNA, is used to store the game in the cloud automatically so the
+    // user can recover a former progress after reinstalling the game with no user's intervention
+    public const string KEY_IMPLICIT_CLOUD_SAVE = "implicitCloudSave";
+
     // Examples of how to use different type datas
     /*
     public const string KEY_INT_TEST = "intTest";    
@@ -377,6 +381,10 @@ public class FeatureSettings
 
             key = KEY_SOCIAL_PLAFTORM_LOGIN_TIMEOUT;
             data = new DataFloat(key, 10f);
+            Datas.Add(key, data);
+
+            key = KEY_IMPLICIT_CLOUD_SAVE;
+            data = new DataInt(key, EValueType.Bool, (int)EBoolValues.TRUE);
             Datas.Add(key, data);
             /*
             // intTest

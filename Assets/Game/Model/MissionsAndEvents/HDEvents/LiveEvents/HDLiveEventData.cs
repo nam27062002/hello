@@ -48,7 +48,7 @@ public abstract class HDLiveEventData {
 
 	public TimeSpan remainingTime {	// Dynamic, depending on current state
 		get { 
-			DateTime now = GameServerManager.SharedInstance.GetEstimatedServerTime();
+			DateTime now = GameServerManager.GetEstimatedServerTime();
 			switch(m_state) {
 				case State.TEASING:	return m_definition.m_startTimestamp - now;		break;
                 case State.REQUIRES_UPDATE:
@@ -89,7 +89,7 @@ public abstract class HDLiveEventData {
 			if (m_definition.m_refund) {
 				m_state = State.REFUND;
 			} else {
-				DateTime serverTime = GameServerManager.SharedInstance.GetEstimatedServerTime();
+				DateTime serverTime = GameServerManager.GetEstimatedServerTime();
 				if ( serverTime < m_definition.m_startTimestamp )
 				{
 					m_state = State.TEASING;

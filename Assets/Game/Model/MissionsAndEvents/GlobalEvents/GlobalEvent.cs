@@ -108,7 +108,7 @@ public partial class GlobalEvent {
 
 	public TimeSpan remainingTime {	// Dynamic, depending on current state
 		get { 
-			DateTime now = GameServerManager.SharedInstance.GetEstimatedServerTime();
+			DateTime now = GameServerManager.GetEstimatedServerTime();
 			switch(m_state) {
 				case State.TEASING:	return m_startTimestamp - now;		break;
 				case State.ACTIVE:	return m_endTimestamp - now;		break;
@@ -418,7 +418,7 @@ public partial class GlobalEvent {
 	public void UpdateState() {
 		if ( m_state != State.REWARD_COLLECTED ){
 			// Use server time to prevent cheating!
-			SetState(GetStateForTimestamp(GameServerManager.SharedInstance.GetEstimatedServerTime()));
+			SetState(GetStateForTimestamp(GameServerManager.GetEstimatedServerTime()));
 		}
 	}
 

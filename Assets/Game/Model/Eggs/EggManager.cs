@@ -160,7 +160,7 @@ public class EggManager : Singleton<EggManager> {
 
 		// Check for incubator deadline
 		if(incubatingEgg != null && incubatingEgg.isIncubating) {
-			if(GameServerManager.SharedInstance.GetEstimatedServerTime() >= incubatingEgg.incubationEndTimestamp) {
+			if(GameServerManager.GetEstimatedServerTime() >= incubatingEgg.incubationEndTimestamp) {
 				// Incubation done!
 				incubatingEgg.ChangeState(Egg.State.READY);
 			}

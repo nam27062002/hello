@@ -1,17 +1,11 @@
 ﻿using System;
 using UnityEngine;
 
-[RequireComponent(typeof(PopupController))]
-public class PopupMerge : MonoBehaviour 
+public class PopupMerge : IPopupMerge 
 {
 	public const string PATH = "UI/Popups/Message/PF_PopupMerge";
 
-	public PopupMergeProfilePill m_leftPill;
-	public PopupMergeProfilePill m_rightPill;
     public GameObject m_closeBtn;
-
-    PersistenceComparatorSystem m_profile1;
-    PersistenceComparatorSystem m_profile2;
 
     private PersistenceStates.EConflictState ConflictState { get; set; }
 

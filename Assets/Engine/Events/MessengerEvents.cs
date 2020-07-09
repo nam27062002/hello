@@ -32,7 +32,8 @@ public enum MessengerEvents {
 	// LANGUAGE_CHANGED,		// no params
 	// FONT_CHANGE_STARTED,	// no params
 	// FONT_CHANGE_FINISHED,	// no params
-	DEFINITIONS_LOADED,		// no params
+	DEFINITIONS_LOADED,     // no params
+	FEATURE_SETTINGS_UPDATED, // no params
 
 	// Tech
 	GOOGLE_PLAY_STATE_UPDATE,// no params
