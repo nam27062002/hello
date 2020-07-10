@@ -401,7 +401,10 @@ public class ResourcesFlow : IBroadcastListener {
         //
         if (m_finalAmount > 0 && economyGroup > HDTrackingManager.EEconomyGroup.UNKNOWN) {
             int amountBalance = (int)UsersManager.currentUser.GetCurrency(m_currency);
-            string trackingItemId = (m_itemDef != null) ? m_itemDef.Get("trackingSku") : null;
+			string trackingItemId = null;
+			if(m_itemDef != null) {
+				trackingItemId = m_itemDef.GetAsString("trackingSku", m_itemDef.sku);	// Use item's sku if "trackingSku" is not defined
+			}
             HDTrackingManager.Instance.Notify_PurchaseWithResourcesCompleted(economyGroup, trackingItemId, null, m_currency, (int)m_originalAmount, amountBalance);            
         }
 
