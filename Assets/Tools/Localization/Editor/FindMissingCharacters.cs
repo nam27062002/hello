@@ -89,14 +89,23 @@ public class FindMissingCharacters: EditorWindow {
 		m_languageSets.Add(new LanguageSet(LOCALIZATION_PATH + "english", FONT_PATH + "FNT_Default/FNT_Default"));
 		// Chinese
 		m_languageSets.Add(new LanguageSet(LOCALIZATION_PATH + "simplified_chinese", FONT_PATH + "FNT_ZH_Simpl/FNT_ZH_Simpl"));
+		m_languageSets.Add(new LanguageSet(LOCALIZATION_PATH + "traditional_chinese", FONT_PATH + "FNT_ZH_Trad/FNT_ZH_Trad"));
+		// Korean
+		m_languageSets.Add(new LanguageSet(LOCALIZATION_PATH + "korean", FONT_PATH + "FNT_KO/FNT_KO"));
+		// Japanese
+		m_languageSets.Add(new LanguageSet(LOCALIZATION_PATH + "japanese", FONT_PATH + "FNT_JA/FNT_JA"));
+		// Turkish
+		m_languageSets.Add(new LanguageSet(LOCALIZATION_PATH + "russian", FONT_PATH + "FNT_RU/FNT_RU"));
+		// Russian
+		m_languageSets.Add(new LanguageSet(LOCALIZATION_PATH + "turkish", FONT_PATH + "FNT_TR/FNT_TR"));
 
 	}
 
 
-    /// <summary>
-    /// Update the inspector window.
-    /// </summary>
-    public void OnGUI()
+	/// <summary>
+	/// Update the inspector window.
+	/// </summary>
+	public void OnGUI()
     {
 		EditorGUILayout.LabelField("Languages", EditorStyles.boldLabel);
 
