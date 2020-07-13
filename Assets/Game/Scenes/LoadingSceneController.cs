@@ -237,10 +237,16 @@ public class LoadingSceneController : SceneController {
     /// Initialization.
     /// </summary>
     override protected void Awake() {
-        CrashlyticsInit.Initialise();
+        CaletyFirebaseWrapper.initialise();
+
+        CaletySettings settingsInstance = Resources.Load<CaletySettings>("CaletySettings");
+        if (settingsInstance.m_bUseDynamicLinks)
+        {
+            CaletyDynamicLinks.setDynamicLinksDomain(settingsInstance.m_strDynamicLinksDomain);
+        }
 
         // Call parent
-		base.Awake();
+        base.Awake();
 
         ApplicationManager.instance.Init();
 

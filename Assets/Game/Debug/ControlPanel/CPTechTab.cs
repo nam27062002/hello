@@ -380,6 +380,10 @@ public class CPTechTab : MonoBehaviour {
 	public void OnClearConsoleButton() {
 		m_outputSb.Length = 0;
 		Output("Hungry Dragon v" + GameSettings.internalVersion + " console output");
+		if (CaletyDynamicLinks.receivedDynamicLinksData)
+        {
+			Output("Dynamic links data: " + CaletyDynamicLinks.getDynamicLinksData[0].ReceivedDynamicLink.Url);
+        }
 	}
 
     public void OnSaveGame()
