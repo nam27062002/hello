@@ -224,6 +224,8 @@ public class EggManager : Singleton<EggManager> {
 
 		float weight = 0f;
 		float weightTotal = 0f;
+		if (sm_weightIDs.Length > m_weights.Count)
+            Array.Resize(ref sm_weightIDs, m_weights.Count);
 		for(int i = 0; i < m_weights.Count; i++) {
 			// Dynamic probability
 			int triesWithoutRares = 0;

@@ -376,8 +376,12 @@ public class ShopBasePill : IShopPill {
 				// Show the proper currency button
 				if(m_priceButtonGroup != null) {
 					m_priceButtonGroup.SetAmount(localizedPrice, m_currency, localizedPreviousPrice);
-
 				}
+			}
+
+			// Only show price button if store is ready
+			if(m_priceButtonGroup != null) {
+				m_priceButtonGroup.gameObject.SetActive(storeReady);
 			}
 
 		} else if(m_currency == UserProfile.Currency.HARD || m_currency == UserProfile.Currency.SOFT) {
@@ -397,13 +401,9 @@ public class ShopBasePill : IShopPill {
             
             // Show the proper currency button
             if (m_priceButtonGroup != null) {
+				m_priceButtonGroup.gameObject.SetActive(true);				
 				m_priceButtonGroup.SetAmount(m_price, m_currency, m_previousPrice);
 			}
-		}
-
-		// Show buttons?
-		if(m_priceButtonGroup != null) {
-			m_priceButtonGroup.gameObject.SetActive(storeReady);
 		}
 	}
 
