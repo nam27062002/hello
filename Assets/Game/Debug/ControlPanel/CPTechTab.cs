@@ -38,6 +38,7 @@ public class CPTechTab : MonoBehaviour {
 	[SerializeField] private TextMeshProUGUI m_trackingIdText = null;
 	[SerializeField] private TextMeshProUGUI m_DNAProfileIdText = null;
     [SerializeField] private TextMeshProUGUI m_AdUnitInfoText = null;
+	[SerializeField] private TextMeshProUGUI m_referraUserId = null;
 	[SerializeField] private TextMeshProUGUI m_clusterIdText = null;
 	[SerializeField] private Toggle m_debugServerToggle = null;
     [SerializeField] private TMP_Dropdown m_countryDropDown = null;
@@ -87,6 +88,10 @@ public class CPTechTab : MonoBehaviour {
 
 		m_trackingIdText.text = "TrackingId: " + HDTrackingManager.Instance.GetTrackingID();
 		m_DNAProfileIdText.text = "DNA profileId: " + HDTrackingManager.Instance.GetDNAProfileID();
+
+        m_AdUnitInfoText.text = "Ads: " + GameAds.instance.GetInfo();
+		m_referraUserId.text = "Referral User Id: " + UsersManager.currentUser.referralUserId;
+
 
 		m_AdUnitInfoText.text = "Ads: " + GameAds.instance.GetInfo();
 		m_currentPlatformText.text = "Cloud Platform: " + SocialPlatformManager.SharedInstance.CurrentPlatform_GetKey();
@@ -384,6 +389,15 @@ public class CPTechTab : MonoBehaviour {
         {
 			Output("Dynamic links data: " + CaletyDynamicLinks.getDynamicLinksData[0].ReceivedDynamicLink.Url);
         }
+	}
+
+    /// <summary>
+    /// Clear referral user id has been pressed
+    /// </summary>
+    public void OnClearReferraUserIdButton()
+    {
+		UsersManager.currentUser.referralUserId = "";
+		m_referraUserId.text = "Referral User Id: " + UsersManager.currentUser.referralUserId;
 	}
 
     public void OnSaveGame()

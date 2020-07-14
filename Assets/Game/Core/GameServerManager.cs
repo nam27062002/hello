@@ -464,6 +464,14 @@ public class GameServerManager {
 
     public virtual void HDLeagues_FinishMySeason(ServerCallback _callback) { }
 
+    //-----------------
+    // Referral
+    //-----------------
+
+    public virtual void Referral_GetInfo(ServerCallback _callback) { }
+    public virtual void Referral_ReclaimAll(ServerCallback _callback) { }
+    public virtual void Referral_MarkReferral(string _referralUserId, ServerCallback _callback) { }
+
 
     //------------------------------------------------------------------------//
     // DEBUG ONLY															  //

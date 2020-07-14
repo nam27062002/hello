@@ -31,7 +31,11 @@ public class UITooltip : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
-	// Exposed References
+	// Setup
+	[SerializeField] protected bool m_startHidden = true;
+
+	// Arrow
+	[Space]
 	[SerializeField] protected RectTransform m_arrow = null;
 	[Tooltip("Arrow Dir determins in which axis the arrow moves (i.e. arrows pointing to left and right are moving in the VERTICAL axis, while arrows pointing up and down are moving in the HORIZONTAL axis.")]
 	[SerializeField] protected ArrowDirection m_arrowDir = ArrowDirection.HORIZONTAL;
@@ -39,6 +43,7 @@ public class UITooltip : MonoBehaviour {
 		get { return m_arrowDir; }
 	}
 
+	// Optional components
 	[Separator("Optional")]
 	[SerializeField] protected TMPro.TextMeshProUGUI m_titleText = null;
 	[SerializeField] protected TMPro.TextMeshProUGUI m_messageText = null;
@@ -82,7 +87,7 @@ public class UITooltip : MonoBehaviour {
 		m_animator = GetComponent<ShowHideAnimator>();
 
 		// Start hidden
-		if(animator != null) animator.ForceHide(false);
+		if(animator != null && m_startHidden) animator.ForceHide(false);
 	}
 
 	/// <summary>
