@@ -89,24 +89,6 @@ public class ReferralManager
     //------------------------------------------------------------------------//
 
 
-    /// <summary>
-    /// Register the endpoints 
-    /// </summary>
-    /// <param name="_offlineMode"></param>
-    private void Initialize(bool _offlineMode = false)
-	{
-		if (!m_registered)
-		{
-			m_offlineMode = _offlineMode;
-
-			//NetworkManager.SharedInstance.RegistryEndPoint(GET_INFO, NetworkManager.EPacketEncryption.E_ENCRYPTION_AES, new int[] { 200, 404, 500, 503 }, OnGetInfoResponse);
-			//NetworkManager.SharedInstance.RegistryEndPoint(RECLAIM_ALL, NetworkManager.EPacketEncryption.E_ENCRYPTION_AES, new int[] { 200, 404, 500, 503 }, OnReclaimAllResponse);
-			//NetworkManager.SharedInstance.RegistryEndPoint(MARK_REFERRAL, NetworkManager.EPacketEncryption.E_ENCRYPTION_AES, new int[] { 200, 404, 500, 503 }, OnMarkReferralResponse);
-
-
-			m_registered = true;
-		}
-	}
 
     /// <summary>
 	/// Update all the referral related data from the server: amount of referrals (friends invited)
@@ -114,12 +96,9 @@ public class ReferralManager
 	/// </summary>
 	public void GetInfoFromServer ()
 	{
-        // Make sure the enpoints are registerd
-		Initialize();
 
 		if (!m_offlineMode)
 		{
-			//TODO: implement the callback method properly
 			GameServerManager.SharedInstance.Referral_GetInfo(OnGetInfoResponse);
 		}
 	}
@@ -133,13 +112,10 @@ public class ReferralManager
 	/// <param name="_reward">The referral reward claimed</param>
 	public void ReclaimAllFromServer()
 	{
-		// Make sure the enpoints are registerd
-		Initialize();
 
 		if (!m_offlineMode)
 		{
-			//TODO: implement the callback method properly
-			//GameServerManager.SharedInstance.Referral_ReclaimAll(OnReclaimAllResponse);
+			GameServerManager.SharedInstance.Referral_ReclaimAll(OnReclaimAllResponse);
 		}
 	}
 
@@ -149,18 +125,9 @@ public class ReferralManager
     /// <param name="_userId">The id of the user that sent the invitation</param>
     public void MarkReferral (string _userId)
     {
-		Initialize();
-
 		if (!m_offlineMode)
-		{
-			// Dont make the request if we are not logged yet in the server
-			if (GameSessionManager.SharedInstance.IsLogged())
-			{
-
-                //TODO: implement the callback method properly
-				//GameServerManager.SharedInstance.Referral_MarkReferral(_userId, OnMarkReferralResponse);
-
-			}
+		{ 
+				GameServerManager.SharedInstance.Referral_MarkReferral(_userId, OnMarkReferralResponse );
 		}
 
 	}
@@ -286,12 +253,11 @@ public class ReferralManager
 
 
 	/// <summary>
-	/// Response from the server was received
+	/// The server answers with the information related to this user rewards:
+	/// total: long - Total of users referred by current logged user
+	/// reward: JSONObject - Reward to give to the user
+	/// rewards: JSONArray<JSONObject>  - Array of rewards to be reclaimed sorted by referral number
 	/// </summary>
-	/// <param name="_strResponse">Json containing the response</param>
-	/// <param name="_strCmd">The command sent</param>
-	/// <param name="_reponseCode">Response code. 200 if the request was successful</param>
-	/// <returns>Returns true if the response was successful</returns>
 	private void OnGetInfoResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response)
 	{
 		// If there was no error, update local cache
@@ -333,49 +299,14 @@ public class ReferralManager
 				}
 			}
 		}
-
-
 	}
 
 
 
 	/// <summary>
-	/// Response from the server was received
+	/// The server is confirming what rewards have been collected
+	/// rewards: JSONArray<JSONObject>  - Array of rewards successfully claimed
 	/// </summary>
-	/// <param name="_strResponse">Json containing the response</param>
-	/// <param name="_strCmd">The command sent</param>
-	/// <param name="_reponseCode">Response code. 200 if the request was successful</param>
-	/// <returns>Returns true if the response was successful</returns>
-	public void OnReclaimRewardResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response)
-	{
-		// If there was no error, update local cache
-		if (_error == null && _response != null && _response.ContainsKey("response"))
-		{
-			if (_response["response"] != null)
-			{
-				JSONNode kJSON = JSON.Parse(_response["response"] as string);
-				if (kJSON != null)
-				{
-					// The reclamin operation was sucessful
-					if (kJSON.ContainsKey("sku"))
-					{
-
-						// Notify that the reward has been claimed successfully
-						ApplyReward (kJSON["sku"].ToString());
-					}
-				}
-			}
-		}			
-	}
-
-
-	/// <summary>
-	/// Response from the server was received
-	/// </summary>
-	/// <param name="_strResponse">Json containing the response</param>
-	/// <param name="_strCmd">The command sent</param>
-	/// <param name="_reponseCode">Response code. 200 if the request was successful</param>
-	/// <returns>Returns true if the response was successful</returns>
 	public void OnReclaimAllResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response)
 	{
 		// If there was no error, update local cache
@@ -413,56 +344,32 @@ public class ReferralManager
 	/// <param name="_strCmd">The command sent</param>
 	/// <param name="_reponseCode">Response code. 200 if the request was successful</param>
 	/// <returns>Returns true if the response was successful</returns>
-	public bool OnMarkReferralResponse(string _strResponse, string _strCmd, int _reponseCode)
+	public void OnMarkReferralResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response)
 	{
-		bool responseOk = false;
-
-		if (_strResponse != null)
+		// If there was no error, update local cache
+		if (_error == null && _response != null && _response.ContainsKey("response"))
 		{
-			switch (_reponseCode)
+			if (_response["response"] != null)
 			{
-				case 200: // No error
+				JSONNode kJSON = JSON.Parse(_response["response"] as string);
+				if (kJSON != null)
+				{
+
+					if (kJSON.ContainsKey("result"))
 					{
+						if (kJSON["result"].AsBool == true)
+						{}
+                        else
+                        {}
 
-						JSONNode kJSON = JSON.Parse(_strResponse);
-						if (kJSON != null)
-						{
-							if (kJSON.ContainsKey("result"))
-							{
-                                if (kJSON["result"].AsBool == true)
-                                {
-                                    // Store the value in user profile so markReferral is not sent ever
-                                    // again for this device/user
-									UsersManager.currentUser.referralConfirmed = true;
-                                }
-
-								responseOk = true;
-
-							}
-						}
-
-						break;
+                        // No matter if the referral confirmation was valid or not.
+                        // We mark the flag as confirmed, so this call is never made again for
+                        // this user/device. We save a lot of unnecesary calls this way.
+						UsersManager.currentUser.referralConfirmed = true;
 					}
+				}
 
-				default:
-					{
-						// An error happened
-						responseOk = false;
-						break;
-					}
-			}
-		}
-
-
-
-		if (m_offlineMode)
-		{
-			return false;
-		}
-		else
-		{
-			return responseOk;
+			}			
 		}
 	}
-
 }

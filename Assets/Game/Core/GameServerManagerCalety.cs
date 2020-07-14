@@ -952,7 +952,7 @@ public class GameServerManagerCalety : GameServerManager {
         Dictionary<string, string> parameters = new Dictionary<string, string>();
         parameters.Add("body", kBody.ToString());
 
-        Commands_EnqueueCommand(ECommand.Referral_ReclaimAll, parameters, _callback);
+        Commands_EnqueueCommand(ECommand.Referral_MarkReferral, parameters, _callback);
     }
 
     #endregion
@@ -2004,9 +2004,9 @@ public class GameServerManagerCalety : GameServerManager {
         nm.RegistryEndPoint(COMMAND_HD_LEAGUES_GET_ALL_LEAGUES, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
         nm.RegistryEndPoint(COMMAND_HD_LEAGUES_GET_LEADERBOARD, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
 
-        nm.RegistryEndPoint(COMMAND_REFERRAL_GET_INFO, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
-        nm.RegistryEndPoint(COMMAND_REFERRAL_RECLAIM_ALL, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
-        nm.RegistryEndPoint(COMMAND_REFERRAL_MARK_REFERRAL, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
+        nm.RegistryEndPoint(COMMAND_REFERRAL_GET_INFO, NetworkManager.EPacketEncryption.E_ENCRYPTION_AES, codes, CaletyExtensions_OnCommandDefaultResponse);
+        nm.RegistryEndPoint(COMMAND_REFERRAL_RECLAIM_ALL, NetworkManager.EPacketEncryption.E_ENCRYPTION_AES, codes, CaletyExtensions_OnCommandDefaultResponse);
+        nm.RegistryEndPoint(COMMAND_REFERRAL_MARK_REFERRAL, NetworkManager.EPacketEncryption.E_ENCRYPTION_AES, codes, CaletyExtensions_OnCommandDefaultResponse);
     }    
 
     /// <summary>

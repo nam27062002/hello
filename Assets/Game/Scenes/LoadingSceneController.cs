@@ -906,7 +906,8 @@ public class LoadingSceneController : SceneController {
 
         }
 
-        if (UsersManager.currentUser.referralUserId != "")
+        // If the referral is not confirmed yet
+        if (UsersManager.currentUser.referralUserId != "" )
         {
             // Notify the server confirming the conversion of the invited player
             ReferralManager.instance.MarkReferral(UsersManager.currentUser.referralUserId);
