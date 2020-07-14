@@ -12,8 +12,10 @@ using System.Diagnostics;
 using UnityEngine;
 
 public class HDTrackingManager
-{   
-    private static HDTrackingManager smInstance = null;
+{
+    private static bool WasTrackingEnabledWhenCreated { get; set; }
+
+    private static HDTrackingManager smInstance = null;    
 
     public static HDTrackingManager Instance
     {
@@ -21,17 +23,27 @@ public class HDTrackingManager
         {
             if (smInstance == null)
             {
-                if (FeatureSettingsManager.instance.IsTrackingEnabled)                
-                {
-                    smInstance = new HDTrackingManagerImp();
-                }
-                else
-                {
-                    smInstance = new HDTrackingManager();
-                }
+                CreateInstance();
             }
 
             return smInstance;
+        }
+    }
+
+    public static void CreateInstance()
+    {
+        bool trackingEnabled = FeatureSettingsManager.instance.IsTrackingEnabled;
+        if (smInstance == null || WasTrackingEnabledWhenCreated != trackingEnabled)
+        {
+            WasTrackingEnabledWhenCreated = trackingEnabled;
+            if (WasTrackingEnabledWhenCreated)
+            {
+                smInstance = new HDTrackingManagerImp();
+            }
+            else
+            {
+                smInstance = new HDTrackingManager();
+            }
         }
     }
 
@@ -101,6 +113,8 @@ public class HDTrackingManager
         LAB_REWARD_MISSION,              // When user gets reward from Lab Mission
 		LAB_UNLOCKED_GIFT,				 // When player unlocks the lab for the first time, a gift is given
 		GOLDEN_FRAGMENTS_REMOVAL,		 // Golden Fragments conversion to HC
+
+        DRAGON_DISCOUNT
     };
 
 	public enum EFunnels
@@ -587,6 +601,11 @@ public class HDTrackingManager
     /// <param name="itemID">Id of the offer shown in the popup</param>
     /// <param name="action">How did the player close the popup? Possible values: "close", "buy", "shop"</param>
     public virtual void Notify_CloseHappyHourPopup(string itemID, string action) { }
+
+    /// <summary>
+    /// Notifies that the server has assigned the player to a cluster
+    /// </summary>
+    public virtual void Notify_ClusterAssigned(string clusterId) {}
 
     #endregion
 

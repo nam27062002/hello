@@ -32,7 +32,8 @@ public enum MessengerEvents {
 	// LANGUAGE_CHANGED,		// no params
 	// FONT_CHANGE_STARTED,	// no params
 	// FONT_CHANGE_FINISHED,	// no params
-	DEFINITIONS_LOADED,		// no params
+	DEFINITIONS_LOADED,     // no params
+	FEATURE_SETTINGS_UPDATED, // no params
 
 	// Tech
 	GOOGLE_PLAY_STATE_UPDATE,// no params
@@ -51,7 +52,7 @@ public enum MessengerEvents {
 	PURCHASE_RECEIVED_PRODUCTS_AVAILABILITY,	// no params
 
 	// UI Events
-	UI_LOCK_INPUT,			// bool _lock
+	UI_LOCK_INPUT,			// params: bool _lock, float _durationSeconds
 
 	// Debug and control panel events
 	DEBUG_MENU_DRAGON_SELECTED,

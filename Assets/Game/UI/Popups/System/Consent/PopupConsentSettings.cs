@@ -45,10 +45,11 @@ public class PopupConsentSettings : IPopupConsentGDPR {
 	/// <summary>
 	/// Initialize the popup with the given setup.
 	/// </summary>
-	/// <param name="_minAgeReached">Is the player old enough to give his/her consent?</param>
+	/// <param name="_playerAge">Age declared by the player.</param>
 	/// <param name="_trackingConsented">Does the player consent using his/her data for tracking purposes?</param>
 	/// <param name="_adsConsented">Does the player consent using his/her data for targeted ads?</param>
-	override public void Init(bool _minAgeReached, bool _trackingConsented, bool _adsConsented) {
+	override public void Init(int _playerAge, bool _trackingConsented, bool _adsConsented) {
+		// Tracking
         m_timeAtOpen = Time.unscaledTime;
 
         // Store initial values
@@ -65,7 +66,7 @@ public class PopupConsentSettings : IPopupConsentGDPR {
 		}
 
 		// Let parent do the rest
-		base.Init(_minAgeReached, _trackingConsented, _adsConsented);
+		base.Init(_playerAge, _trackingConsented, _adsConsented);
 
 
         //Tracking
@@ -85,7 +86,7 @@ public class PopupConsentSettings : IPopupConsentGDPR {
 	override public void OnOpenPreAnimation() {
 		// Initialize it!
 		Init(
-			GDPRManager.SharedInstance.GetCachedUserAge() >= GDPRManager.SharedInstance.GetAgeToCheck(),
+			GDPRManager.SharedInstance.GetCachedUserAge(),
 			Prefs.GetBoolPlayer(TRACKING_CONSENT_KEY, true),
 			Prefs.GetBoolPlayer(ADS_CONSENT_KEY, true)
 		);

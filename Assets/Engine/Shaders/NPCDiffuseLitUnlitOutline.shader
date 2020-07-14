@@ -24,6 +24,11 @@
 		_FresnelPower("Fresnel power", Range(0.0, 5.0)) = 0.27
 		_FresnelColor("Fresnel color (RGB)", Color) = (0, 0, 0, 0)
 
+		[Toggle(SPECULAR)] _EnableSpecular("Enable Specular Light", Float) = 0
+		_SpecExponent("Specular Exponent", float) = 1.0
+		[Rotation] _SecondLightDir("Second Light direction", Vector) = (0,0,-1,0)
+		_SecondLightColor("Second Light color", Color) = (0.0, 0.0, 0.0, 0.0)
+
 		_OutlineColor("Outline Color", Color) = (0.8, 0.0, 0.0, 1.0)
 		_OutlineWidth("Outline width", Range(0.0, 1.0)) = 0.08
 

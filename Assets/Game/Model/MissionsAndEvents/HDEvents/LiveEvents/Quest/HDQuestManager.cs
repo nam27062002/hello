@@ -142,7 +142,7 @@ public class HDQuestManager : HDLiveEventManager, IBroadcastListener{
 
 	public bool ShouldRequestProgress()
 	{
-		long diff = GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong() - m_lastProgressTimestamp;
+		long diff = GameServerManager.GetEstimatedServerTimeAsLong() - m_lastProgressTimestamp;
 		return diff > m_requestProgressMinTim;	// 5 min timeout
 	}
 
@@ -151,7 +151,7 @@ public class HDQuestManager : HDLiveEventManager, IBroadcastListener{
     	bool ret = false;
     	if ( _force || ShouldRequestProgress() )	
     	{
-			m_lastProgressTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong();
+			m_lastProgressTimestamp = GameServerManager.GetEstimatedServerTimeAsLong();
 	        if ( HDLiveDataManager.TEST_CALLS )
 	        {
 				ApplicationManager.instance.StartCoroutine( DelayedCall("quest_get_progress.json", RequestProgressResponse));

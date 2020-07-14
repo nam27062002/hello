@@ -31,13 +31,18 @@ public class UserPersistenceSystem : PersistenceSystem
     {
         get { return (isHacker || isCheater || isPirate); }
     }
+
+
+
     //reason why user was flagged as cheater/pirate/hacker
     public int flaggedReason = 0;
 
     public bool iapPurchaseMade = false;    
 
     public bool bannedFromLiveEvents = false;
-    
+
+
+
     public UserPersistenceSystem()
     {
         m_systemName = "User";

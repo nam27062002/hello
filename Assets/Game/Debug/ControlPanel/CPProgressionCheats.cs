@@ -449,7 +449,7 @@ public class CPProgressionCheats : MonoBehaviour {
 	/// </summary>
 	public void OnResetMapUpgrades() {
 		// Not much to do:
-		UsersManager.currentUser.mapResetTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTime(); // Already expired
+		UsersManager.currentUser.mapResetTimestamp = GameServerManager.GetEstimatedServerTime(); // Already expired
         PersistenceFacade.instance.Save_Request(false);
     }
 

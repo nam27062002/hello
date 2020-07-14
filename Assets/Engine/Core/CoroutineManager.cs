@@ -79,11 +79,11 @@ namespace UbiBCN {
 		/// Trigger an action after some delay.
 		/// </summary>
 		/// <param name="_action">Action to be triggered.</param>
-		/// <param name="_delay">Delay.</param>
+		/// <param name="_delaySecs">Delay in seconds.</param>
 		/// <param name="_ignoreTimescale">Whether to take timescale in account when delaying the action.</param>
-        public static Coroutine DelayedCall(Action _action, float _delay = 0f, bool _ignoreTimescale = true) {
+        public static Coroutine DelayedCall(Action _action, float _delaySecs = 0f, bool _ignoreTimescale = true) {
 			// Launch the coroutine
-            return instance.StartCoroutine(instance.DelayedCoroutine(_action, _delay, _ignoreTimescale));
+            return instance.StartCoroutine(instance.DelayedCoroutine(_action, _delaySecs, _ignoreTimescale));
 		}
 
 		/// <summary>

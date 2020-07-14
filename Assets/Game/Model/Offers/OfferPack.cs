@@ -53,6 +53,7 @@ public class OfferPack {
         REFERRAL,
         SC,
         HC,
+		DRAGON_DISCOUNT,
         COUNT
 	}
 
@@ -64,7 +65,7 @@ public class OfferPack {
 	public const string REFERRAL = "referral";
     public const string SC = "sc";
     public const string HC = "hc";
-
+	public const string DRAGON_DISCOUNT = "dragon_discount";
 
     public const int MAX_ITEMS = 3; // For now
 	public const Type DEFAULT_TYPE = Type.PROGRESSION;
@@ -154,6 +155,7 @@ public class OfferPack {
 
 	// Timing
 	protected float m_duration = 0f;
+	protected int m_durationRuns = 0;
 	protected DateTime m_startDate = DateTime.MinValue;
 	protected DateTime m_endDate = DateTime.MinValue;
 
@@ -203,6 +205,11 @@ public class OfferPack {
 		get { return m_purchaseCount; }
 	}
 
+    // Clustering
+    protected string[] m_clusters;
+	public string[] clusters { get => m_clusters; set => m_clusters = value; }
+
+
 	// Internal vars
 	protected int m_viewsCount = 0;	// Only auto-triggered views
 	protected DateTime m_lastViewTimestamp = new DateTime();
@@ -218,15 +225,22 @@ public class OfferPack {
 		get { return m_endTimestamp; }
 	}
 
+	protected int m_endRun = 0;
+	public int endRun
+	{
+		get { return m_endRun; }
+	}
+
 	public TimeSpan remainingTime {
 		get { 
 			if(isTimed && isActive) {
-				return m_endTimestamp - GameServerManager.SharedInstance.GetEstimatedServerTime(); 
+				return m_endTimestamp - GameServerManager.GetEstimatedServerTime(); 
 			} else {
-				return DateTime.MaxValue - GameServerManager.SharedInstance.GetEstimatedServerTime();
+				return DateTime.MaxValue - GameServerManager.GetEstimatedServerTime();
 			}
 		}
 	}
+
 
     #endregion
 
@@ -348,6 +362,7 @@ public class OfferPack {
 
 		// Timing
 		m_duration = 0f;
+		m_durationRuns = 0;
 		m_startDate = DateTime.MinValue;
 		m_endDate = DateTime.MinValue;
 		m_isTimed = false;
@@ -390,6 +405,9 @@ public class OfferPack {
 		m_purchaseLimit = 1;
 		m_purchaseCount = 0;
 
+		// Clustering
+		m_clusters = new string[0];
+
 		// Internal vars
 		m_viewsCount = 0;
 		m_lastViewTimestamp = new DateTime();
@@ -418,12 +436,18 @@ public class OfferPack {
 
 		// Choose tracking group for rewards depending on offer type
 		HDTrackingManager.EEconomyGroup ecoGroup = HDTrackingManager.EEconomyGroup.SHOP_OFFER_PACK;
-		if(m_type == Type.FREE) {
-			ecoGroup = HDTrackingManager.EEconomyGroup.SHOP_AD_OFFER_PACK;
-		}
-        else if (m_type == Type.REMOVE_ADS)
-        {
-            ecoGroup = HDTrackingManager.EEconomyGroup.SHOP_REMOVE_ADS_PACK;
+		switch(m_type) {
+			case Type.FREE: {
+				ecoGroup = HDTrackingManager.EEconomyGroup.SHOP_AD_OFFER_PACK;
+            } break;
+
+			case Type.REMOVE_ADS: {
+				ecoGroup = HDTrackingManager.EEconomyGroup.SHOP_REMOVE_ADS_PACK;
+            } break;
+
+			case Type.DRAGON_DISCOUNT: {
+				ecoGroup = HDTrackingManager.EEconomyGroup.DRAGON_DISCOUNT;
+			} break;
         }
 
         // Items - limited to 3 for now
@@ -478,9 +502,11 @@ public class OfferPack {
 
 		// Timing
 		m_duration = _def.GetAsFloat("durationMinutes", 0f);
+		m_durationRuns = def.GetAsInt("durationRuns", 0);
 		m_startDate = TimeUtils.TimestampToDate(_def.GetAsLong("startDate", 0), false);
 		m_endDate = TimeUtils.TimestampToDate(_def.GetAsLong("endDate", 0), false);
 		m_isTimed = (m_endDate > m_startDate) || (m_duration > 0f);
+
 
 		// Segmentation
 		m_minAppVersion = Version.Parse(_def.GetAsString("minAppVersion", "1.0.0"));
@@ -488,7 +514,14 @@ public class OfferPack {
 		m_countriesExcluded = ParseArray(_def.GetAsString("countriesExcluded"));
 		m_gamesPlayed = _def.GetAsInt("gamesPlayed", m_gamesPlayed);
 
-		switch(_def.GetAsString("payerType", "").ToLowerInvariant()) {
+
+		// Caculate the end run
+		if (m_durationRuns > 0)
+		{
+			m_endRun = m_gamesPlayed + m_durationRuns;
+		}
+
+		switch (_def.GetAsString("payerType", "").ToLowerInvariant()) {
 			case "payer":		m_payerType = PayerType.PAYER;			break;
 			case "nonpayer":	m_payerType = PayerType.NON_PAYER;		break;
 			default:			break;	// Already has the default value
@@ -539,6 +572,8 @@ public class OfferPack {
 		m_skinsOwned = ParseArray(_def.GetAsString("skinsOwned"));
 		m_skinsNotOwned = ParseArray(_def.GetAsString("skinsNotOwned"));
 
+        m_clusters = ParseArray(_def.GetAsString("clusterId"));
+
 		// Purchase limit
 		m_purchaseLimit = _def.GetAsInt("purchaseLimit", m_purchaseLimit);
 	}
@@ -575,6 +610,7 @@ public class OfferPack {
 
 		// Timing
 		SetValueIfMissing(ref _def, "durationMinutes", m_duration.ToString(CultureInfo.InvariantCulture));
+		SetValueIfMissing(ref _def, "durationRuns", m_durationRuns.ToString(CultureInfo.InvariantCulture));
 		SetValueIfMissing(ref _def, "startDate", (TimeUtils.DateToTimestamp(m_startDate, false)).ToString(CultureInfo.InvariantCulture));
 		SetValueIfMissing(ref _def, "endDate", (TimeUtils.DateToTimestamp(m_endDate, false)).ToString(CultureInfo.InvariantCulture));
 
@@ -638,6 +674,8 @@ public class OfferPack {
 		SetValueIfMissing(ref _def, "skinsOwned", string.Join(";", m_skinsOwned));
 		SetValueIfMissing(ref _def, "skinsNotOwned", string.Join(";", m_skinsNotOwned));
 
+		SetValueIfMissing(ref _def, "clusterId", string.Join(";", m_clusters));
+
 		// Purchase limit
 		SetValueIfMissing(ref _def, "purchaseLimit", m_purchaseLimit.ToString(CultureInfo.InvariantCulture));
 	}
@@ -657,7 +695,7 @@ public class OfferPack {
 		// Aux vars
 		UserProfile profile = UsersManager.currentUser;
 		TrackingPersistenceSystem trackingPersistence = HDTrackingManager.Instance.TrackingPersistenceSystem;
-		DateTime serverTime = GameServerManager.SharedInstance.GetEstimatedServerTime();
+		DateTime serverTime = GameServerManager.GetEstimatedServerTime();
 		//OffersManager.LogPack(this, "      CheckActivation {0}", Colors.yellow, m_def.sku);
 
 		// Start date
@@ -848,6 +886,12 @@ public class OfferPack {
 			if(CheckExpirationByTime()) return true;
 		}
 
+		// Check if the offer ends after an amount of runs
+		if (endRun != 0 &&  UsersManager.currentUser.gamesPlayed >= endRun)
+        {
+			return true;
+        }
+
 		// Purchase limit (ignore if 0 or negative, unlimited pack)
 		if(m_purchaseLimit > 0) {
 			if(m_purchaseCount >= m_purchaseLimit) {
@@ -942,7 +986,7 @@ public class OfferPack {
 		}
 
 		// Get server time
-		DateTime serverTime = GameServerManager.SharedInstance.GetEstimatedServerTime();
+		DateTime serverTime = GameServerManager.GetEstimatedServerTime();
 
 		// Global end date
 		if(m_endDate > DateTime.MinValue && serverTime > m_endDate) {
@@ -988,7 +1032,7 @@ public class OfferPack {
 			TrackingPersistenceSystem trackingPersistence = HDTrackingManager.Instance.TrackingPersistenceSystem;
 			int totalPurchases = (trackingPersistence == null) ? 0 : trackingPersistence.TotalPurchases;
 			if(totalPurchases > 0) {	// Ignore if player hasn't yet purchased
-				long serverTime = GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong() / 1000L;
+				long serverTime = GameServerManager.GetEstimatedServerTimeAsLong() / 1000L;
 				long timeSinceLastPurchase = serverTime - trackingPersistence.LastPurchaseTimestamp;
 				if(m_secondsSinceLastPurchase > timeSinceLastPurchase) {    // Not enough time has passed
 					OffersManager.LogPack(this, "      CheckSegmentation {0}: FAIL! Time Since Last Purchase {1} vs {2}", Color.red, m_def.sku, m_secondsSinceLastPurchase, timeSinceLastPurchase);
@@ -1071,7 +1115,7 @@ public class OfferPack {
 				// Make sure we come from pending activation state
 				if(oldState == State.PENDING_ACTIVATION) {
 					// Set activation timestamp to now
-					m_activationTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTime();
+					m_activationTimestamp = GameServerManager.GetEstimatedServerTime();
 
 					// Compute end timestamp
 					// Combine duration and end date, both of which are optional
@@ -1136,7 +1180,7 @@ public class OfferPack {
 		}
 
 		// Check frequency
-		DateTime serverTime = GameServerManager.SharedInstance.GetEstimatedServerTime();
+		DateTime serverTime = GameServerManager.GetEstimatedServerTime();
 		TimeSpan timeSinceLastView = serverTime - m_lastViewTimestamp;
 		if(timeSinceLastView.TotalMinutes < m_frequency) return null;
 
@@ -1201,7 +1245,7 @@ public class OfferPack {
 
 		// Update control vars and return
 		m_viewsCount++;
-		m_lastViewTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTime();
+		m_lastViewTimestamp = GameServerManager.GetEstimatedServerTime();
 
         // Make sure we are saving this timestamp, so the offer is not shown twice
 		UsersManager.currentUser.SaveOfferPack(this);
@@ -1253,17 +1297,21 @@ public class OfferPack {
 			case Type.FREE: {
 				newPack = new OfferPackFree();
 			} break;
+
 			case Type.REFERRAL:	{
 			    newPack = new OfferPackReferral();
 			} break;
-			case Type.REMOVE_ADS:
-            {   newPack = new OfferPackRemoveAds();
+			case Type.REMOVE_ADS: {
+                newPack = new OfferPackRemoveAds();
             }  break;
             case Type.SC: {
                 newPack = new OfferPackCurrency();
             } break;
             case Type.HC: {
                 newPack = new OfferPackCurrency();
+            } break;
+			case Type.DRAGON_DISCOUNT: {
+				newPack = new OfferPackDragonDiscount();
             } break;
             default: {
 				newPack = new OfferPack();
@@ -1411,6 +1459,7 @@ public class OfferPack {
 	/// <param name="_type">Type to be converted.</param>
 	public static string TypeToString(Type _type) {
 		switch(_type) {
+
 			case Type.PROGRESSION: 	return PROGRESSION;
 			case Type.PUSHED: 		return PUSH;
 			case Type.ROTATIONAL: 	return ROTATIONAL;
@@ -1419,7 +1468,9 @@ public class OfferPack {
             case Type.REMOVE_ADS:   return REMOVE_ADS;
             case Type.SC:           return SC;
             case Type.HC:           return HC;
-        }
+			case Type.DRAGON_DISCOUNT:	return DRAGON_DISCOUNT;
+		}
+
 		return TypeToString(DEFAULT_TYPE);
 	}
 
@@ -1430,6 +1481,7 @@ public class OfferPack {
 	/// <param name="_typeStr">String representation of a type to be parsed.</param>
 	public static Type StringToType(string _typeStr) {
 		switch(_typeStr.ToLowerInvariant()) {
+
 			case PROGRESSION:   return Type.PROGRESSION;
 			case PUSH:		return Type.PUSHED;
 			case ROTATIONAL:	return Type.ROTATIONAL;
@@ -1438,6 +1490,8 @@ public class OfferPack {
             case REMOVE_ADS:    return Type.REMOVE_ADS;
             case HC:            return Type.HC;
             case SC:            return Type.SC;
+			case DRAGON_DISCOUNT:	return Type.DRAGON_DISCOUNT;
+
 		}
 		return DEFAULT_TYPE;
 	}
@@ -1547,7 +1601,6 @@ public class OfferPack {
 	/// Load state from a persistence object.
 	/// </summary>
 	/// <param name="_data">The data object loaded from persistence.</param>
-	/// <returns>Whether the mission was successfully loaded</returns>
 	public virtual void Load(SimpleJSON.JSONClass _data) {
 		string key = "";
 		OffersManager.Log("<color=magenta>LOADING PACK</color> {0} with data {1}", m_def.sku, _data.ToString());
@@ -1629,7 +1682,8 @@ public class OfferPack {
 			data.Add("lastViewTimestamp", PersistenceUtils.SafeToString(m_lastViewTimestamp));
 		}
 
-        if ( m_type == Type.PUSHED ){
+		// Add customization ID for pushed offers
+        if ( m_type == Type.PUSHED || m_type == Type.DRAGON_DISCOUNT){
             data.Add("customId",  OffersManager.GenerateTrackingOfferName(m_def));
         }
 

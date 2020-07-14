@@ -14,8 +14,10 @@ struct appdata_t
 struct v2f
 {
 	float4 vertex : SV_POSITION;
-	fixed4 color : COLOR;
 
+#if !defined(VERTEXANIMATION)
+	fixed4 color : COLOR;
+#endif
 
 	half3 normalWorld : NORMAL;
 
@@ -69,15 +71,21 @@ uniform float _NormalStrength;
 #endif
 
 #if defined(SPECULAR)
-uniform float _SpecularPower;
-uniform float4 _SpecularColor;
+//uniform float _SpecularPower;
+//uniform float4 _SpecularColor;
+
+uniform float4 _SecondLightColor;
+uniform float _SpecExponent;
+
 #endif
 
 #if defined(SPECMASK)
 uniform sampler2D _SpecMask;
 uniform float _SpecExponent;
-uniform float4 _SecondLightDir;
+#endif
 
+#if defined(SPECULAR) || defined(SPECMASK)
+uniform float4 _SecondLightDir;
 #endif
 
 #endif //defined(LITMODE_LIT)
@@ -187,7 +195,7 @@ v2f vert(appdata_t v)
 #if defined(SPECULAR) && defined(LITMODE_LIT)
 	// Half View - See: Blinn-Phong
 	//	fixed3 worldPos = mul(unity_ObjectToWorld, v.vertex);
-	half3 lightDirection = normalize(_WorldSpaceLightPos0.xyz);
+	half3 lightDirection = normalize(_SecondLightDir.xyz);
 	o.halfDir = normalize(lightDirection + viewDirection);
 
 #elif defined(SPECMASK) && defined(LITMODE_LIT)
@@ -200,9 +208,9 @@ v2f vert(appdata_t v)
 	o.viewDir = viewDirection;
 #endif
 
-
-
+#if !defined(VERTEXANIMATION)
 	o.color = v.color;
+#endif
 
 #if defined(MATCAP) || defined(FREEZE)
 	half3 worldNorm = normalize(unity_WorldToObject[0].xyz * v.normal.x + unity_WorldToObject[1].xyz * v.normal.y + unity_WorldToObject[2].xyz * v.normal.z);
@@ -222,7 +230,7 @@ fixed4 frag(v2f i) : SV_Target
 	half3x3 local2WorldTranspose = float3x3(i.tangentWorld, i.binormalWorld, i.normalWorld);
 	half3 normalDirection = normalize(mul(localCoords, local2WorldTranspose));
 #else
-	half3 normalDirection = i.normalWorld;
+	half3 normalDirection = normalize(i.normalWorld);
 #endif
 
 	fixed4 diff = tex2D(_MainTex, i.uv);
@@ -259,7 +267,15 @@ fixed4 frag(v2f i) : SV_Target
 	fixed2 offset = fixed2(diff.x, vy * _RampTex_TexelSize.y );
 	fixed4 col = fixed4(tex2D(_RampTex, offset).xyz, diff.w);
 #else
+
+
+#if !defined(VERTEXANIMATION) && !defined(SPECMASK)
+	fixed4 col = diff * i.color;
+#else
 	fixed4 col = diff;
+#endif
+
+
 #endif
 
 #if defined(LITMODE_LIT)
@@ -288,7 +304,13 @@ fixed4 frag(v2f i) : SV_Target
 
 #if defined(LITMODE_LIT)
 
+#if defined(SPECULAR)
+	fixed3 diffuse = max(0, dot(normalDirection, normalize(_SecondLightDir.xyz))) * _LightColor0.xyz;
+#else
 	fixed3 diffuse = max(0, dot(normalDirection, normalize(_WorldSpaceLightPos0.xyz))) * _LightColor0.xyz;
+#endif
+
+
 #if defined(DYNAMIC_LIGHT)
 	col.xyz *= diffuse + i.vLight;
 #else
@@ -303,18 +325,18 @@ fixed4 frag(v2f i) : SV_Target
 
 
 #if defined(SPECULAR)
-	fixed specular = pow(max(dot(normalDirection, i.halfDir), 0), _SpecularPower) * specMask;
-	col.xyz += specular * (col.xyz + _SpecularColor.xyz * 2.0);
-
-#if defined(OPAQUESPECULAR)
-	col.a = max(col.a, specular * 4.0);
-#endif
-
+	fixed specular = pow(max(dot(normalDirection, i.halfDir), 0), _SpecExponent) * specMask;
+	col.xyz += specular * (col.xyz + _SecondLightColor.xyz * 2.0);
 
 #elif defined(SPECMASK)
 	fixed specular = pow(max(dot(normalDirection, i.halfDir), 0), _SpecExponent) * specMask;
 	col.xyz = lerp(col.xyz, colspec.xyz, specular);
 	col.a = max(col.a, specular);
+#endif
+
+
+#if defined(OPAQUESPECULAR)
+	col.a = max(col.a, specular * 4.0);
 #endif
 
 #endif //defined(LITMODE_LIT)

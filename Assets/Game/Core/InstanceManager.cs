@@ -82,8 +82,15 @@ public class InstanceManager : Singleton<InstanceManager> {
 		get { return instance.m_gameCamera; }
 		set { if(instance != null) instance.m_gameCamera = value; }
 	}
-    
-    private GameHUD m_gameHUD = null;
+
+	private UICamera m_uiCamera = null;
+	public static UICamera uiCamera
+	{
+		get { return instance.m_uiCamera; }
+		set { if (instance != null) instance.m_uiCamera = value; }
+	}
+
+	private GameHUD m_gameHUD = null;
     public static GameHUD gameHUD {
         get { return instance.m_gameHUD; }
         set { if(instance != null) instance.m_gameHUD = value; }

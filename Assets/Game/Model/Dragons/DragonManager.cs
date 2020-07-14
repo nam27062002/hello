@@ -50,7 +50,7 @@ public class DragonManager : Singleton<DragonManager> {
 
     public static IDragonData GetClassicDragonsByOrder(int order)
     {
-        return (m_instance.m_classicDragonsByOrder != null && order > -1 && order < m_instance.m_classicDragonsByOrder.Count) ? m_instance.m_classicDragonsByOrder[order] : null;
+        return (instance.m_classicDragonsByOrder != null && order > -1 && order < instance.m_classicDragonsByOrder.Count) ? instance.m_classicDragonsByOrder[order] : null;
     }
 
     // Shortcut to get the data of the biggest owned dragon (classic+special ones) (following progression order)

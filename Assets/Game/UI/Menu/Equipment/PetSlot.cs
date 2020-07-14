@@ -7,6 +7,7 @@
 //----------------------------------------------------------------------------//
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
+using Calety.Customiser.Api;
 using UnityEngine;
 
 //----------------------------------------------------------------------------//
@@ -51,8 +52,9 @@ public class PetSlot : MonoBehaviour {
 		get { return m_slotIdx; }
 	}
 
+	private DefinitionNode m_petDef = null;
+	private DefinitionNode m_powerDef = null;
 	private IDragonData m_dragonData = null;
-
     private Coroutine m_unloadPetCoroutine = null;
 	
 	//------------------------------------------------------------------------//
@@ -141,9 +143,12 @@ public class PetSlot : MonoBehaviour {
 		Refresh(petDef, _animate);
 	}
 
-	public void Refresh(DefinitionNode _def, bool _animate) {		
+	public void Refresh(DefinitionNode _def, bool _animate) {
+		// Store target pet
+		m_petDef = _def;
+
 		// Get pet info
-		bool equipped = (_def != null);
+		bool equipped = (m_petDef != null);
 
 		// Refresh power info
 		if(m_powerIcon != null) {
@@ -151,14 +156,14 @@ public class PetSlot : MonoBehaviour {
 			m_powerIcon.gameObject.SetActive(true);
 			m_powerIcon.anim.ForceShow(false);
 
+			// Get power definition
 			// Equipped?
 			if(equipped) {
-				// Get power definition
-				DefinitionNode powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, _def.Get("powerup"));
-				m_powerIcon.InitFromDefinition(powerDef, false, _animate);
+				m_powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, _def.Get("powerup"));
 			} else {
-				m_powerIcon.InitFromDefinition(null, false, _animate);
+				m_powerDef = null;
 			}
+			m_powerIcon.InitFromDefinition(m_powerDef, m_petDef, false, _animate);
 		}
 
 		// Toggle equipped/empty animators

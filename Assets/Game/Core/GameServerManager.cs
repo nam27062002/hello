@@ -136,6 +136,14 @@ public class GameServerManager {
 
     public virtual void Reset() { }
 
+    private NetworkDriver NetworkDriver
+    {
+        get
+        {
+            return ApplicationManager.NetworkDriver;
+        }
+    }
+
     /// <summary>
     /// 
     /// </summary>
@@ -146,7 +154,7 @@ public class GameServerManager {
     protected void InternalCheckConnection(Action<Error> callback, bool highPriority = false)
     {
 		Log("Check Connection");
-        if (DeviceUtilsManager.SharedInstance.internetReachability == NetworkReachability.NotReachable)
+        if (NetworkDriver.CurrentNetworkReachability == NetworkReachability.NotReachable)
         {
 			Log("CheckConnection : InternetReachability NotReachable");
             callback(new ClientConnectionError("InternetReachability NotReachable", ErrorCodes.ClientConnectionError));
@@ -201,7 +209,7 @@ public class GameServerManager {
     /// No request will be done to the server.
     /// </summary>
     /// <returns>The estimated server time.</returns>
-    public DateTime GetEstimatedServerTime() {
+    public static DateTime GetEstimatedServerTime() {
         // Calety already manages this, just convert it to a nice DateTime object.		
         long timestamp = GetEstimatedServerTimeAsLong();
         return TimeUtils.TimestampToDate(timestamp);
@@ -211,10 +219,15 @@ public class GameServerManager {
     /// Get an estimation of the current server time in milliseconds by using the last known server time
     /// </summary>
     /// <returns>The estimated server time in milliseconds</returns>
-    public long GetEstimatedServerTimeAsLong() {
-        double unixTimestamp = ServerManager.SharedInstance.GetServerTime();    // Seconds since 1970
+    public static long GetEstimatedServerTimeAsLong() {
+        double unixTimestamp;
+#if UNITY_EDITOR
+        unixTimestamp = (Application.isPlaying) ? ServerManager.SharedInstance.GetServerTime() : TimeUtils.DateToTimestamp(DateTime.Now, false);    // Seconds since 1970
+#else
+        unixTimestamp = ServerManager.SharedInstance.GetServerTime();    // Seconds since 1970
+#endif
         return (long)unixTimestamp * 1000;
-    }
+    }    
 
     public virtual void OnGameActionProcessed(string cmd, SimpleJSON.JSONNode response) { }
     public virtual void OnGameActionFailed(string cmd, int errorCode) { }

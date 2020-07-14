@@ -81,7 +81,7 @@ public class PersistenceCloudDriverDebug : PersistenceCloudDriver
 			else if (IsMergeEnabled)
 			{
 				// We need to do it only once because the flow might make the game
-				// reload so we don't want this to be send again
+				// reload so we don't want this to be sent again
 				IsMergeEnabled = false;				
 				onDone(SocialPlatformManager.ELoginResult.MergeLocalOrOnlineAccount, PersistenceAsString);
 			}

@@ -48,6 +48,12 @@ internal class NPCDiffuseShaderGUI : ShaderGUI
         readonly public static string fresnelColorText = "Fresnel Color";
         readonly public static string outlineWidthText = "Outline Width";
         readonly public static string outlineColorText = "Outline Color";
+
+        readonly public static string enableSpecularText = "Enable Specular";
+        readonly public static string specularPowerText = "Specular Exponent";
+        readonly public static string secondLightDirectionText = "Second light direction";
+        readonly public static string secondLightColorText = "Second light color";
+
     }
 
     MaterialProperty mp_mainTexture;
@@ -68,6 +74,12 @@ internal class NPCDiffuseShaderGUI : ShaderGUI
 
     MaterialProperty mp_outlineWidth;
     MaterialProperty mp_outlineColor;
+
+    MaterialProperty mp_EnableSpecular;
+    MaterialProperty mp_specExponent;
+    MaterialProperty mp_secondLightDir;
+    MaterialProperty mp_secondLightColor;
+
 
     MaterialEditor m_materialEditor;
 
@@ -115,6 +127,12 @@ internal class NPCDiffuseShaderGUI : ShaderGUI
             mp_enableFresnel = FindProperty("_EnableFresnel", props);
             mp_fresnelPower = FindProperty("_FresnelPower", props);
             mp_fresnelColor = FindProperty("_FresnelColor", props);
+
+
+            mp_EnableSpecular = FindProperty("_EnableSpecular", props);
+            mp_specExponent = FindProperty("_SpecExponent", props);
+            mp_secondLightDir = FindProperty("_SecondLightDir", props);
+            mp_secondLightColor = FindProperty("_SecondLightColor", props);
         }
 
         if (m_npcDiffuseOutline)
@@ -122,6 +140,8 @@ internal class NPCDiffuseShaderGUI : ShaderGUI
             mp_outlineWidth = FindProperty("_OutlineWidth", props);
             mp_outlineColor = FindProperty("_OutlineColor", props);
         }
+
+
 
     }
 
@@ -168,6 +188,16 @@ internal class NPCDiffuseShaderGUI : ShaderGUI
             {
                 materialEditor.ShaderProperty(mp_fresnelPower, Styles.fresnelPowerText);
                 materialEditor.ShaderProperty(mp_fresnelColor, Styles.fresnelColorText);
+            }
+
+            if (featureSet(mp_EnableSpecular, Styles.enableSpecularText))
+            {
+                materialEditor.ShaderProperty(mp_specExponent, Styles.specularPowerText);
+                RotationDrawer.setColor(mp_secondLightColor.colorValue);
+                //            RotationDrawer.setTargetPoint(mp_secondLightDir.vectorValue.x, mp_secondLightDir.vectorValue.y);
+                RotationDrawer.setSpecularPow(mp_specExponent.floatValue);
+                materialEditor.ShaderProperty(mp_secondLightDir, Styles.secondLightDirectionText);
+                materialEditor.ShaderProperty(mp_secondLightColor, Styles.secondLightColorText);
             }
         }
 

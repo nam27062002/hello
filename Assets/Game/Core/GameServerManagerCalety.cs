@@ -32,7 +32,7 @@ public class GameServerManagerCalety : GameServerManager {
 		public SimpleJSON.JSONClass m_lastRecievedUniverse = null;
 		public int m_saveDataCounter = 0;
 
-		public delegate bool OnResponse(string response, int responseCode);
+		public delegate bool OnResponse(string response, int responseCode, ECommand cmd);
 
 		private OnResponse m_onResponse;
 
@@ -59,7 +59,7 @@ public class GameServerManagerCalety : GameServerManager {
 					responseAsString = response.ToString();
 				}
 
-				m_onResponse(responseAsString, (IsNewAppVersionNeeded) ? 426 : 200);
+				m_onResponse(responseAsString, (IsNewAppVersionNeeded) ? 426 : 200, ECommand.Auth);
 			}
 		}
 
@@ -68,7 +68,7 @@ public class GameServerManagerCalety : GameServerManager {
 			m_waitingLoginResponse = false;
 
 			if(m_onResponse != null) {
-				m_onResponse(null, 401);
+				m_onResponse(null, 401, ECommand.Auth);
 			}
 		}
 
@@ -461,7 +461,7 @@ public class GameServerManagerCalety : GameServerManager {
 	public override void LogOut()
     {
 		// The response is immediate. We don't want to treat it as a command because it could be trigger at any moment and we don't want it to mess with a command that is being processed
-		GameSessionManager.SharedInstance.LogOutFromServer(false);        
+		GameSessionManager.SharedInstance.LogOutFromServer(false, true);        
     }
 
     public override void OnLogOut()
@@ -1215,6 +1215,7 @@ public class GameServerManagerCalety : GameServerManager {
         bool returnValue = false;
 
         switch (command) {
+            case ECommand.Language_Set: // It's sent very early on so we need to make sure log in request is sent before
             case ECommand.GetPersistence:
             case ECommand.SetPersistence:            
             case ECommand.SetQualitySettings: // The user is required to be logged to set its quality settings to prevent anonymous users from messing with the quality settings of other users who have the same device model
@@ -1613,12 +1614,17 @@ public class GameServerManagerCalety : GameServerManager {
 	/// <summary>
 	/// 
 	/// </summary>
-	private bool Commands_OnResponse(string responseData, int statusCode) {
+	private bool Commands_OnResponse(string responseData, int statusCode, ECommand cmd = ECommand.None) {
 		Error error = null;
 		ServerResponse response = null;
 
         // Makes sure there's a command waiting for the response
         if (Commands_CurrentCommand == null) {
+            return false;
+        }
+        else if (cmd != ECommand.None && Commands_CurrentCommand.Cmd != cmd)
+        {
+            LogWarning("Received response for command " + cmd + " but " + Commands_CurrentCommand + " command is expected instead");
             return false;
         }
         
@@ -1875,7 +1881,7 @@ public class GameServerManagerCalety : GameServerManager {
 			}
 
             Commands_List[i].Clear();
-        }       
+        }        
 	}
 
 	private string Commands_ToString() {
@@ -2133,7 +2139,7 @@ public class GameServerManagerCalety : GameServerManager {
     }     
    
     private void Connection_ResetTimer() {
-        m_connectionTimeLeftToPing = FeatureSettingsManager.instance.GetAutomaticReloginPeriod();
+        m_connectionTimeLeftToPing = (NeedsToLogInToSocialPlatform()) ? 10f : FeatureSettingsManager.instance.GetAutomaticReloginPeriod();
     }                   
     
     private bool Connection_IsCheckEnabled() {
@@ -2161,10 +2167,11 @@ public class GameServerManagerCalety : GameServerManager {
 
                         m_connectionIsPerformingCheck = true;
 
-                        // Checks if we needs to relogin to cloud, if so then we force a sync (which also checks connection and login)
-                        if (SocialPlatformManager.SharedInstance.CurrentPlatform_IsLoggedIn() && !PersistenceFacade.instance.CloudDriver.IsLoggedIn && !PersistenceFacade.instance.Sync_IsSyncing) {                            
-                            Log("Automatic relogin performing cloud sync...");
+                        PersistenceLocalDriver localDriver = PersistenceFacade.instance.LocalDriver;
 
+                        // Checks if we needs to relogin to cloud, if so then we force a sync (which also checks connection and login)
+                        if (NeedsToLogInToSocialPlatform()) { 
+                            Log("Automatic relogin performing cloud sync...");
                             PersistenceFacade.instance.Sync_FromReconnecting((PersistenceStates.ESyncResult result, PersistenceStates.ESyncResultDetail resultDetail) => { onDone(); });
                         } else {                            
                             Log("Automatic relogin performing a ping...");
@@ -2181,6 +2188,19 @@ public class GameServerManagerCalety : GameServerManager {
                 }
             }
         }
+    }
+
+    private bool NeedsToLogInToSocialPlatform()
+    {
+        bool returnValue = !PersistenceFacade.instance.Sync_IsSyncing;
+        if (returnValue)
+        {
+            PersistenceLocalDriver localDriver = PersistenceFacade.instance.LocalDriver;
+            returnValue = !PersistenceFacade.instance.CloudDriver.IsLoggedIn ||
+                (localDriver.Prefs_SocialWasLoggedInWhenQuit && !SocialPlatformManager.SharedInstance.IsLoggedInByKey(localDriver.Prefs_SocialPlatformKey));
+        }
+
+        return returnValue;
     }
     #endregion
 

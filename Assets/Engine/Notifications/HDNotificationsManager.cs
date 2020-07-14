@@ -60,6 +60,10 @@ public class HDNotificationsManager : Singleton<HDNotificationsManager>
 	private void CheckRemoteNotifications() {
 		if ( UnityEngine.iOS.NotificationServices.remoteNotificationCount > 0)
 		{
+			// CheckAppOpenedBy() needs to be called because it takes into account NotificationServices.remoteNotificationCount,
+            // which will be cleared at the end of this method
+            DeviceUtilsManager.SharedInstance.CheckAppOpenedBy();
+            
             bool debugEnabled = FeatureSettingsManager.IsDebugEnabled;
             if (debugEnabled)
             {

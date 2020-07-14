@@ -334,6 +334,10 @@ public class ShopController : MonoBehaviour
                 m_categoryToShow = SC_CATEGORY_SKU;
                 CenterItemsAndLockScroll();
                 break;
+            case Mode.DEFAULT:
+                // The user has actively clicked in the shop button in the menu
+                UsersManager.currentUser.hasEnteredShop = true;
+                break;
         }
 
         // Clear everything to avoid the shop content being flashed before the transition clouds
@@ -1144,10 +1148,16 @@ public class ShopController : MonoBehaviour
 	/// Tell the tracking manager about categories order.
 	/// </summary>
 	private void NotifyCategoryOrderTracking() {
-		// We already have the categories sorted, so just send an event for each
-		for(int i = 0; i < m_activeCategories.Count; ++i) {
-			HDTrackingManager.Instance.Notify_StoreCategoryOrder(m_activeCategories[i].def.sku, i);
-		}
+        // We already have the categories sorted, so just send an event for each
+        int i = 0;
+        foreach (ShopCategory category in OffersManager.instance.activeCategories )
+        {
+            if (category.enabled)
+            {
+                HDTrackingManager.Instance.Notify_StoreCategoryOrder(category.sku, i);
+                i++;
+            }
+        }
 	}
 
 	/// <summary>

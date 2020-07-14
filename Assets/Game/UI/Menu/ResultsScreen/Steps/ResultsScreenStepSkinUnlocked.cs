@@ -136,7 +136,7 @@ public class ResultsScreenStepSkinUnlocked : ResultsScreenSequenceStep {
 		// Power
 		string powerSku = def.GetAsString("powerup");
 		DefinitionNode powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, powerSku);
-		m_powerIcon.InitFromDefinition(powerDef, false);	// [AOC] Powers are not locked anymore
+		m_powerIcon.InitFromDefinition(powerDef, def, false);	// [AOC] Powers are not locked anymore
 
 		// Price
 		float priceSC = def.GetAsFloat("priceSC");

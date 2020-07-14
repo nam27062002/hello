@@ -56,16 +56,22 @@ public class MusicController : MonoBehaviour, IBroadcastListener
             Music_Update();
         }
 
-        int max = m_delayedReturnObjects.Count - 1;
-        for (int i = max; i >= 0; --i)
+        if (m_delayedReturnObjects.Count > 0)
         {
-            AudioObject ao = m_delayedReturnObjects[i];
-            ao.transform.parent = null;
-            ao.completelyPlayedDelegate = null;
-            if (ao.IsPlaying() && ao.audioItem != null && ao.audioItem.Loop != AudioItem.LoopMode.DoNotLoop)
-                ao.Stop();
+            int max = m_delayedReturnObjects.Count - 1;
+            for (int i = max; i >= 0; --i)
+            {
+                AudioObject ao = m_delayedReturnObjects[i];
+                if (ao != null)
+                {
+                    ao.transform.parent = null;
+                    ao.completelyPlayedDelegate = null;
+                    if (ao.IsPlaying() && ao.audioItem != null && ao.audioItem.Loop != AudioItem.LoopMode.DoNotLoop)
+                        ao.Stop();
+                }
+            }
+            m_delayedReturnObjects.Clear();
         }
-        m_delayedReturnObjects.Clear();
     }
 
     private void Reset()

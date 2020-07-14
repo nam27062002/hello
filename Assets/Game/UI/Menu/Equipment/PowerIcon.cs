@@ -22,7 +22,9 @@ public class PowerIcon : MonoBehaviour, IBroadcastListener {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-
+	/// <summary>
+	/// Modify some visuals depending on power's type
+	/// </summary>
 	public enum Mode {
 		SKIN = 0,
 		PET,
@@ -30,11 +32,28 @@ public class PowerIcon : MonoBehaviour, IBroadcastListener {
         SPECIAL_DRAGON
 	}
 
+	/// <summary>
+	/// Modify some visuals depending on type of info to display
+	/// </summary>
+	public enum DisplayMode {
+		PREVIEW,
+		EQUIPPED
+	}
+
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed References
 	[SerializeField] private Mode m_mode = Mode.SKIN;
+	public Mode mode {
+		get { return m_mode; }
+	}
+
+	[SerializeField] private DisplayMode m_displayMode = DisplayMode.EQUIPPED;
+	public DisplayMode displayMode {
+		get { return m_displayMode; }
+	}
+
 	[Tooltip("Optional")] [SerializeField] private Image m_powerIcon = null;
 	[Tooltip("Optional")] [SerializeField] private GameObject m_lockIcon = null;
 	[Tooltip("Optional")] [SerializeField] private Localizer m_nameText = null;
@@ -59,6 +78,11 @@ public class PowerIcon : MonoBehaviour, IBroadcastListener {
     private DefinitionNode m_powerDef = null;
 	public DefinitionNode powerDef {
 		get { return m_powerDef; }
+	}
+
+	private DefinitionNode m_sourceDef = null;	// Where does the power come from? Skin, pet, special dragon, etc.
+	public DefinitionNode sourceDef {
+		get { return m_sourceDef; }
 	}
 
 	// Internal references (shortcuts)
@@ -104,23 +128,26 @@ public class PowerIcon : MonoBehaviour, IBroadcastListener {
 	/// Initialize this button with the data from the given definition.
 	/// </summary>
 	/// <param name="_powerDef">Power definition.</param>
+	/// <param name="_sourceDef">Source of the power: Skin, pet, special dragon, etc.</param>
 	/// <param name="_locked">Whether the power is locked or not.</param>
 	/// <parma name="_animate">Whether to show animations or not.</param>
 	/// <parma name="_mode">It can be a Skin or Pet power</param>
-	public void InitFromDefinition(DefinitionNode _powerDef, bool _locked, bool _animate, Mode _mode) {
+	public void InitFromDefinition(DefinitionNode _powerDef, DefinitionNode _sourceDef, bool _locked, bool _animate, Mode _mode) {
 		m_mode = _mode;
-		InitFromDefinition(_powerDef, _locked, _animate);
+		InitFromDefinition(_powerDef, _sourceDef, _locked, _animate);
 	}
 
 	/// <summary>
 	/// Initialize this button with the data from the given definition.
 	/// </summary>
 	/// <param name="_powerDef">Power definition.</param>
+	/// <param name="_sourceDef">Source of the power: Skin, pet, special dragon, etc.</param>
 	/// <param name="_locked">Whether the power is locked or not.</param>
 	/// <parma name="_animate">Optional, whether to show animations or not.</param>
-	public void InitFromDefinition(DefinitionNode _powerDef, bool _locked, bool _animate = true) {
+	public void InitFromDefinition(DefinitionNode _powerDef, DefinitionNode _sourceDef, bool _locked, bool _animate = true) {
 		// Save definition
 		m_powerDef = _powerDef;
+		m_sourceDef = _sourceDef;
 		bool show = (_powerDef != null);
 
 		// If defined, trigger empty/equipped animators
@@ -222,36 +249,46 @@ public class PowerIcon : MonoBehaviour, IBroadcastListener {
 
     }
 
-    //------------------------------------------------------------------------//
-    // CALLBACKS															  //
-    //------------------------------------------------------------------------//
-    /// <summary>
-    /// A tooltip is about to be opened.
-    /// If the trigger is attached to this power icon, initialize tooltip with this
-    /// button's power def.
-    /// Link it via the inspector.
-    /// </summary>
-    /// <param name="_tooltip">The tooltip about to be opened.</param>
-    /// <param name="_trigger">The button which triggered the event.</param>
-    public void OnTooltipOpen(UITooltip _tooltip, UITooltipTrigger _trigger) {
+	//------------------------------------------------------------------------//
+	// CALLBACKS															  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// A power tooltip trigger is about to open and needs data.
+	/// </summary>
+	/// <param name="_trigger">The tooltip trigger that triggered the event.</param>
+	public void OnPowerTooltipTriggerGetData(PowerTooltipTrigger _trigger) {
+		// Just propagate data
+		_trigger.SetTooltipData(
+			m_powerDef,
+			m_sourceDef,
+			m_mode,
+			m_displayMode
+		);
+	}
+
+	/// <summary>
+	/// A tooltip is about to be opened.
+	/// If the trigger is attached to this power icon, initialize tooltip with this
+	/// button's power def.
+	/// Link it via the inspector.
+	/// </summary>
+	/// <param name="_tooltip">The tooltip about to be opened.</param>
+	/// <param name="_trigger">The button which triggered the event.</param>
+	public void OnTooltipOpen(UITooltip _tooltip, UITooltipTrigger _trigger) {
 		// Make sure the trigger that opened the tooltip is linked to this icon
 		if(_trigger != trigger) return;
 
-        if (!_tooltip is PowerTooltip) return;
-
-        PowerTooltip powerTooltip = (PowerTooltip)_tooltip;
-
-		// Tooltip will take care of the rest
-		if(powerTooltip != null) {
-            // Initialize
-            powerTooltip.InitFromDefinition(m_powerDef, m_mode);
-
-            // Set lock state
-            powerTooltip.SetLocked(m_lockIcon != null && m_lockIcon.activeSelf);	// Use lock icon visibility to determine whether power is locked or not
+		// Tooltip must be of type PowerTooltip
+		if(_tooltip is IPowerTooltip) {
+			IPowerTooltip powerTooltip = (IPowerTooltip)_tooltip;
+			if(powerTooltip != null) {
+				// IPowerTooltip makes it easy for us!
+				powerTooltip.InitTooltip(m_powerDef, m_sourceDef, m_mode, m_displayMode);
+			}
 		}
 
         // Set arrow offset to make it point to this icon
-        powerTooltip.SetArrowOffset(m_tooltipArrowOffset);
+        _tooltip.SetArrowOffset(m_tooltipArrowOffset);
 	}
 
 	/// <summary>
@@ -290,6 +327,7 @@ public class PowerIcon : MonoBehaviour, IBroadcastListener {
 
 		// Aux vars
 		List<DefinitionNode> powerDefs = new List<DefinitionNode>();
+		List<DefinitionNode> sourceDefs = new List<DefinitionNode>();
 		List<Mode> iconModes = new List<Mode>();
 
 		// Skin
@@ -299,6 +337,7 @@ public class PowerIcon : MonoBehaviour, IBroadcastListener {
 		} else {
 			powerDefs.Add(DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, skinDef.Get("powerup")));   // Can be null
 		}
+		sourceDefs.Add(skinDef);
 		iconModes.Add(Mode.SKIN);
 
 		// Special Dragon Powers
@@ -306,6 +345,7 @@ public class PowerIcon : MonoBehaviour, IBroadcastListener {
 			DragonDataSpecial dataSpecial = (DragonDataSpecial)_dragonData;
 			for(int i = 1; i <= dataSpecial.m_powerLevel; ++i) {
 				powerDefs.Add(dataSpecial.specialPowerDefsByOrder[i - 1]);
+				sourceDefs.Add(dataSpecial.def);
 				iconModes.Add(Mode.SPECIAL_DRAGON);
 			}
 		}
@@ -318,6 +358,7 @@ public class PowerIcon : MonoBehaviour, IBroadcastListener {
 			} else {
 				powerDefs.Add(DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, petDef.Get("powerup")));
 			}
+			sourceDefs.Add(petDef);
 			iconModes.Add(Mode.PET);
 		}
 
@@ -337,7 +378,7 @@ public class PowerIcon : MonoBehaviour, IBroadcastListener {
 				// Except for classic dragon default skin, which we will leave the power for consistency
 				// (we detect that knowing that skin power is idx 0 and checking dragon type)
 				if(i == 0 && _dragonData.type == IDragonData.Type.CLASSIC) {
-					powerIcon.InitFromDefinition(null, false, false);
+					powerIcon.InitFromDefinition(null, _dragonData.def, false, false);
 				} else {
 					powerIcon.gameObject.SetActive(false);
 				}
@@ -346,7 +387,7 @@ public class PowerIcon : MonoBehaviour, IBroadcastListener {
 
 			// Everything ok! Initialize
 			powerIcon.gameObject.SetActive(true);
-			powerIcon.InitFromDefinition(powerDefs[i], false, false, iconModes[i]);
+			powerIcon.InitFromDefinition(powerDefs[i], sourceDefs[i], false, false, iconModes[i]);
 		}
 	}
 }

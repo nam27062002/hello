@@ -855,6 +855,20 @@
         "etl"
       ]
     },
+    "custom.player.clusterAssigned": {
+         "Parameters": [
+        { "clusterId": { "Status": "OK" } },
+        { "runsCompleted": { "Status": "OK" } },
+        { "maxTransactionPrice": { "Status": "OK" } },
+        { "starterPackShown": { "Status": "OK" } },
+        { "age": { "Status": "OK" } },
+        { "optIn": { "Status": "OK" } }
+      ],
+      "APIs": [
+        "dna",
+        "etl"
+      ]
+    },
 	"custom.ui.button": {
       "Parameters": [
         { "buttonName": { "Status": "OK" } },
@@ -1820,6 +1834,26 @@
     "content": {
       "Type": "STRING:64",
       "Values": []
+    },
+     "clusterId": {
+       "Type": "STRING:16",
+       "Values": []
+    },
+    "runsCompleted": {
+       "Type": "INT:4",
+       "Values": []
+    },
+    "maxTransactionPrice": {
+       "Type": "INT:16",
+       "Values": []
+    },
+    "starterPackShown": {
+       "Type": "BOOL",
+       "Values": []
+    },
+    "optIn": {
+       "Type": "BOOL",
+       "Values": []
     }
   }
 }

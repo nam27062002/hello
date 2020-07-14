@@ -54,9 +54,6 @@ public class AIPilotEditor : Editor {
 	/// The editor has been disabled - target object unselected.
 	/// </summary>
 	private void OnDisable() {
-		// Save target object
-		Save();
-
 		// Clear target object
 		m_targetAIPilot = null;
 	}
@@ -77,8 +74,9 @@ public class AIPilotEditor : Editor {
             m_targetAIPilot.ValidateComponentsData();
         }
 
-        // Draw the data list!
-        Undo.RecordObject(m_targetAIPilot, "AIPilot Changed");
+		// Draw the data list!
+		EditorGUI.BeginChangeCheck();
+		Undo.RecordObject(m_targetAIPilot, "AIPilot Changed");
         if (Application.isPlaying && m_targetAIPilot != null && m_targetAIPilot.brain != null && m_targetAIPilot.brain.current != null) {
             EditorGUILayout.Space();
             EditorGUILayout.LabelField("Current State: " + m_targetAIPilot.brain.current.name);
@@ -120,8 +118,13 @@ public class AIPilotEditor : Editor {
             }
         }
 
-        // Apply changes to the serialized object - always do this in the end of OnInspectorGUI.
-        serializedObject.ApplyModifiedProperties();
+		// If there have been changes, mark pilot as dirty so when assets database is refreshed, this asset is saved as well
+		if(EditorGUI.EndChangeCheck()) {
+			Save();
+		}
+
+		// Apply changes to the serialized object - always do this in the end of OnInspectorGUI.
+		serializedObject.ApplyModifiedProperties();
     }
     
 	/// <summary>

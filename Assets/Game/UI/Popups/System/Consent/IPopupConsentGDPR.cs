@@ -65,18 +65,18 @@ public class IPopupConsentGDPR : MonoBehaviour {
 	/// <summary>
 	/// Initialize the popup with the given setup.
 	/// </summary>
-	/// <param name="_minAgeReached">Is the player old enough to give his/her consent?</param>
+	/// <param name="_playerAge">Age declared by the player.</param>
 	/// <param name="_trackingConsented">Does the player consent using his/her data for tracking purposes?</param>
 	/// <param name="_adsConsented">Does the player consent using his/her data for targeted ads?</param>
-	public virtual void Init(bool _minAgeReached, bool _trackingConsented, bool _adsConsented) {
+	public virtual void Init(int _playerAge, bool _trackingConsented, bool _adsConsented) {
 		// Store values
-		m_minAgeReached = _minAgeReached;
+		m_minAgeReached = _playerAge >= GDPRManager.SharedInstance.GetAgeToCheck();
 		m_trackingConsentGroup.consented = _trackingConsented;
 		m_adsConsentGroup.consented = _adsConsented;
 
 		// Only allow changes if the player is old enough
-		m_trackingConsentGroup.checkbox.interactable = _minAgeReached;
-		m_adsConsentGroup.checkbox.interactable = _minAgeReached;
+		m_trackingConsentGroup.checkbox.interactable = m_minAgeReached;
+		m_adsConsentGroup.checkbox.interactable = m_minAgeReached;
 
 		// Initialize visuals
 		RefreshVisuals();

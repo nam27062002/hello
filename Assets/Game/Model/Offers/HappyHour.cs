@@ -143,7 +143,7 @@ public class HappyHour {
 			m_expirationTime = m_data.endDate;
 		} else {
 			// Expiration date based on duration
-			DateTime serverTime = GameServerManager.SharedInstance.GetEstimatedServerTime();
+			DateTime serverTime = GameServerManager.GetEstimatedServerTime();
 			m_expirationTime = serverTime.AddMinutes(data.def.GetAsFloat("happyHourTimer"));
 		}
 
@@ -195,7 +195,7 @@ public class HappyHour {
 		// If not triggered by date, restart timer
 		if(!data.triggeredByDate) {
 			// Extend the expiration time of this offer
-			DateTime serverTime = GameServerManager.SharedInstance.GetEstimatedServerTime();
+			DateTime serverTime = GameServerManager.GetEstimatedServerTime();
 			m_expirationTime = serverTime.AddMinutes(data.def.GetAsFloat("happyHourTimer"));
 		}
 
@@ -212,7 +212,7 @@ public class HappyHour {
 		if(!IsActive()) return -1;
 
 		// Compute remaining time and return
-		DateTime serverTime = GameServerManager.SharedInstance.GetEstimatedServerTime();
+		DateTime serverTime = GameServerManager.GetEstimatedServerTime();
 		return expirationTime.Subtract(serverTime).TotalSeconds;
 	}
 

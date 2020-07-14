@@ -226,6 +226,12 @@ public class HDTrackingManagerImp : HDTrackingManager {
             }
         }
 
+        // Register price payed for future tracking
+        if (moneyUSD > UsersManager.currentUser.maxTransactionPrice)
+        {
+            UsersManager.currentUser.maxTransactionPrice = moneyUSD;
+        }
+
         // store transaction ID is also used for houston transaction ID, which is what Migh&Magic game also does
         string houstonTransactionID = _storeTransactionID;        
         Notify_IAPCompleted(_storeTransactionID, houstonTransactionID, _sku, promotionType, moneyCurrencyCode, moneyPrice, moneyUSD, isSpecialOffer);
@@ -699,6 +705,9 @@ public class HDTrackingManagerImp : HDTrackingManager {
             TrackingPersistenceSystem.EggsFound += eggFound;
         }
 
+        // For clustering purposes:
+        UsersManager.currentUser.boostTime += (int)(boostTime);
+
         // Last deathType, deathSource and deathCoordinates are used since this information is provided when Notify_RunEnd() is called
         Track_RoundEnd( Session_RoundId, dragonXp, deltaXp, dragonProgression, timePlayed, score, Session_LastDeathType, Session_LastDeathSource, Session_LastDeathCoordinates,
             chestsFound, eggFound, highestMultiplier, highestBaseMultiplier, furyRushNb, superFireRushNb, hcRevive, adRevive, scGained, hcGained, (int)(boostTime * 1000.0f), mapUsage);
@@ -807,7 +816,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
 
             TrackingPersistenceSystem.TotalSpent += moneyUSD;
 			TrackingPersistenceSystem.LastPurchasePrice = moneyUSD;
-            TrackingPersistenceSystem.LastPurchaseTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong() / 1000L;  // Millis to Seconds
+            TrackingPersistenceSystem.LastPurchaseTimestamp = GameServerManager.GetEstimatedServerTimeAsLong() / 1000L;  // Millis to Seconds
 			if(moneyUSD > TrackingPersistenceSystem.MaxPurchasePrice) {
 				TrackingPersistenceSystem.MaxPurchasePrice = moneyUSD;
 			}
@@ -1319,6 +1328,11 @@ public class HDTrackingManagerImp : HDTrackingManager {
         Track_CloseHappyHourPopup(itemID, action);
     }
 
+    public override void Notify_ClusterAssigned(string clusterId)
+    {
+        Track_ClusterAssigned(clusterId);
+    }
+
 
     #endregion
 
@@ -1771,6 +1785,25 @@ public class HDTrackingManagerImp : HDTrackingManager {
         }
         m_eventQueue.Enqueue(e);
 
+    }
+
+    private void Track_ClusterAssigned (string clusterId)
+    {
+        Log("Track_ClusterAssigned clusterId = " + clusterId );
+
+        int runsCompleted = UsersManager.currentUser.gamesPlayed;
+
+        HDTrackingEvent e = new HDTrackingEvent("custom.player.clusterAssigned");
+        {
+
+            Track_AddParamString(e, TRACK_PARAM_CLUSTER_ID, clusterId);
+            Track_AddParamInt(e, TRACK_PARAM_RUNS_COMPLETED, runsCompleted);
+            Track_AddParamInt(e, TRACK_PARAM_MAX_TRANSACTION_PRICE, UsersManager.currentUser.maxTransactionPrice);
+            Track_AddParamBool(e, TRACK_PARAM_STARTER_PACK_SHOWN, UsersManager.currentUser.progressionPacksDiscovered);
+            Track_AddParamInt(e, TRACK_PARAM_AGE, GDPRManager.SharedInstance.GetCachedUserAge());
+            Track_AddParamBool(e, TRACK_PARAM_OPT_IN, GDPRManager.SharedInstance.GetCachedUserMarketingConsentGiven() == 1);
+        }
+        m_eventQueue.Enqueue(e);
     }
 
     private bool SendRtTracking()
@@ -2783,6 +2816,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private const string TRACK_PARAM_BUTTON_NAME = "buttonName";
     private const string TRACK_PARAM_CATEGORY = "category";
 	private const string TRACK_PARAM_CHESTS_FOUND = "chestsFound";
+    private const string TRACK_PARAM_CLUSTER_ID = "clusterId";
     private const string TRACK_PARAM_CONTENT = "content";
     private const string TRACK_PARAM_CONTROL_CHOICE = "controlChoice";
 	private const string TRACK_PARAM_COORDINATESBL = "coordinatesBL";
@@ -2851,6 +2885,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private const string TRACK_PARAM_MAX_REACHED = "maxReached";
     private const string TRACK_PARAM_MB_AVAILABLE_END = "mbAvailable_end";
     private const string TRACK_PARAM_MB_AVAILABLE_START = "mbAvailable_start";
+    private const string TRACK_PARAM_MAX_TRANSACTION_PRICE = "maxTransactionPrice";
     private const string TRACK_PARAM_MAX_XP = "maxXp";    
     private const string TRACK_PARAM_MISSION_DIFFICULTY = "missionDifficulty";
     private const string TRACK_PARAM_MISSION_TARGET = "missionTarget";
@@ -2869,6 +2904,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private const string TRACK_PARAM_NEW_AREA = "newArea";
     private const string TRACK_PARAM_OFFER_NAME = "offerName";
     private const string TRACK_PARAM_OFFER_TYPE = "offerType";
+    private const string TRACK_PARAM_OPT_IN = "optIn";
     private const string TRACK_PARAM_ORIGINAL_AREA = "originalArea";
     private const string TRACK_PARAM_PAID = "paid";
     private const string TRACK_PARAM_PET1 = "pet1";
@@ -2897,10 +2933,12 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private const string TRACK_PARAM_REWARD_TIER = "rewardTier";
     private const string TRACK_PARAM_REWARD_TYPE = "rewardType";
     private const string TRACK_PARAM_ROUND_ID = "roundid";
+    private const string TRACK_PARAM_RUNS_COMPLETED = "runsCompleted";
     private const string TRACK_PARAM_SC_EARNED = "scEarned";
     private const string TRACK_PARAM_SCORE = "score";
     private const string TRACK_PARAM_SECTION = "section";
-	private const string TRACK_PARAM_POSITION = "position";
+    private const string TRACK_PARAM_STARTER_PACK_SHOWN = "starterPackShown";
+    private const string TRACK_PARAM_POSITION = "position";
 	private const string TRACK_PARAM_SIZE = "size";
     private const string TRACK_PARAM_SOFT_CURRENCY = "softCurrency";
     private const string TRACK_PARAM_EVENT_SCORE_RUN = "scoreRun";

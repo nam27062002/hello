@@ -248,24 +248,14 @@ public class LoadingSceneController : SceneController {
         // Call parent
         base.Awake();
 
+        ApplicationManager.instance.Init();
+
         // We need to update the user id label when the user logs in 
         Messenger.AddListener<bool>(MessengerEvents.LOGGED, OnLoggedIn);
     }    
     
     private void CustomAwake()
-    {
-        // Initialize server cache
-        CaletySettings settingsInstance = (CaletySettings)Resources.Load("CaletySettings");
-        if ( settingsInstance )
-        {
-            m_buildVersion = settingsInstance.GetClientBuildVersion();
-        }
-        else
-        {
-            m_buildVersion = Application.version;
-        }
-        CacheServerManager.SharedInstance.Init(m_buildVersion);
-
+    {       
         // Initialize content
         ContentManager.InitContent();
 

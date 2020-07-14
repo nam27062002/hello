@@ -77,8 +77,8 @@ public class Egg {
 	[SerializeField] private DateTime m_incubationEndTimestamp;
 	public DateTime incubationEndTimestamp { get { return m_incubationEndTimestamp; }}
 	public DateTime incubationStartTimestamp { get { return incubationEndTimestamp - incubationDuration; }}
-	public TimeSpan incubationElapsed { get { return GameServerManager.SharedInstance.GetEstimatedServerTime() - incubationStartTimestamp; }}
-	public TimeSpan incubationRemaining { get { return incubationEndTimestamp - GameServerManager.SharedInstance.GetEstimatedServerTime(); }}
+	public TimeSpan incubationElapsed { get { return GameServerManager.GetEstimatedServerTime() - incubationStartTimestamp; }}
+	public TimeSpan incubationRemaining { get { return incubationEndTimestamp - GameServerManager.GetEstimatedServerTime(); }}
 	public float incubationProgress { get { return isIncubating ? Mathf.InverseLerp(0f, (float)incubationDuration.TotalSeconds, (float)incubationElapsed.TotalSeconds) : 0f; }}
 	public bool isIncubating { get { return state == Egg.State.INCUBATING; }}
 
@@ -196,7 +196,7 @@ public class Egg {
 			case State.INCUBATING: {
 				// Reset incubation timer
 				// Max between this and the reference timer
-				long t = GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong();
+				long t = GameServerManager.GetEstimatedServerTimeAsLong();
 				if ( t < UsersManager.currentUser.incubationTimeReference)
 					t = UsersManager.currentUser.incubationTimeReference;
 				DateTime dt = TimeUtils.TimestampToDate( t );
@@ -212,7 +212,7 @@ public class Egg {
 			case State.OPENING: {
 				// If no reward was generated, do it now
 				// Save Time as min time for start incubating again!
-				long t = GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong();
+				long t = GameServerManager.GetEstimatedServerTimeAsLong();
 				if ( t < UsersManager.currentUser.incubationTimeReference)
 					t = UsersManager.currentUser.incubationTimeReference;
 

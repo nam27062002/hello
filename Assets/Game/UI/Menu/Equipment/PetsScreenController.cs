@@ -329,6 +329,15 @@ public class PetsScreenController : MonoBehaviour, IBroadcastListener {
 			}
 		}
 
+		// Check baby pets info popup
+		if (!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.BABY_PETS_INFO))
+		{
+			if (categorySku == "baby")
+			{
+				PopupInfoBabyPets.ShowPopup();
+			}
+		}
+
 		// Refresh counter text
 		m_counterText.Localize(
 			"TID_PET_COUNTER",
@@ -347,19 +356,37 @@ public class PetsScreenController : MonoBehaviour, IBroadcastListener {
 	/// </summary>
 	/// <param name="_pill">The target pill.</param>
 	private void OnPillTapped(PetPill _pill) {
-		// Nothing to do if pet is locked
+		// If pet is locked, just show some feedback
 		if(_pill.locked) {
+			// Different feedbacks depending on lock condition
+			string feedbackText = string.Empty;
+
+			// Seasonal pets
 			if(_pill.seasonDef != null) {
-				// Also different feedback if it's a seasonal pet
-				UIFeedbackText.CreateAndLaunch(
-					LocalizationManager.SharedInstance.Localize("TID_PET_UNLOCK_INFO_SEASON", _pill.seasonDef.GetLocalized("tidName")), 
-					new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform
-				);
-			}else if ( _pill.m_isNotInGatcha ){
-				UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize(_pill.def.Get("tidUnlockCondition")), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
-			} else {
-				UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_PET_UNLOCK_INFO"), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
+				feedbackText = LocalizationManager.SharedInstance.Localize("TID_PET_UNLOCK_INFO_SEASON", _pill.seasonDef.GetLocalized("tidName"));  // "Available for _season_name_!"
 			}
+
+			// Pets with custom unlock condition
+			else if( _pill.m_isNotInGatcha && !_pill.def.Has("tidUnlockCondition")) {
+				feedbackText = LocalizationManager.SharedInstance.Localize(_pill.def.GetAsString("tidUnlockCondition"));    // "Available during special events", "Play Hungry Shark Evolution to get it!"
+			}
+
+			// Baby Dragons
+			else if(_pill.def.GetAsString("rarity") == Metagame.Reward.RarityToSku(Metagame.Reward.Rarity.BABY)) {
+				feedbackText = LocalizationManager.SharedInstance.Localize("TID_BABY_DRAGON_UNLOCK");   // "Open Baby Eggs to unlock!"
+			}
+
+			// Default unlock condition
+			else {
+				feedbackText = LocalizationManager.SharedInstance.Localize("TID_PET_UNLOCK_INFO");     // "Open Eggs to unlock!"
+			}
+
+			// Launch feedback text!
+			UIFeedbackText.CreateAndLaunch(
+				feedbackText,
+				new Vector2(0.5f, 0.5f), 
+				this.GetComponentInParent<Canvas>().transform as RectTransform
+			);
 		}
 
 		// If equipped in the target slot, try to unequip
@@ -379,6 +406,15 @@ public class PetsScreenController : MonoBehaviour, IBroadcastListener {
 			} else if(newSlot < 0) {
 				UIFeedbackText text = UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("Unknown error!"), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);	// There are no available slots!\nUnequip another pet before equipping this one.
 				text.text.color = Color.red;
+			}
+		}
+
+		// Check baby pets info popup
+		if (!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.BABY_PETS_INFO))
+		{
+			if (_pill.def.Get("category") == "baby")
+			{
+				PopupInfoBabyPets.ShowPopup();
 			}
 		}
 	}

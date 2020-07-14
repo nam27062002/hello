@@ -74,6 +74,8 @@ public class UIConstantsEditor : CategorizedEditor {
 				m_categories[CAT_COLORS].Add(p);
 			}else if (p.name.Contains("m_iconTierColors")){	
 			    m_categories[CAT_COLORS].Add(p);
+			} else if(p.name.Contains("m_currencyColor")) {
+				m_categories[CAT_COLORS].Add(p, "Currency Colors");
 			} else if(p.name.Contains("m_rarity")) {
 				m_categories[CAT_RARITIES].Add(p);
 			} else if(p.name.Contains("Path")) {
@@ -151,8 +153,7 @@ public class UIConstantsEditor : CategorizedEditor {
 
 		// Dragon Tier Arrays
 		else if(_p.name == "m_dragonTiersSFX"
-        || _p.name == "m_dragonTierColors"
-		|| _p.name == "m_iconTierColors") {
+        || _p.name == "m_dragonTierColors") {
 			// Fixed length arrays!
 			EditorGUILayoutExt.FixedLengthArray(
 				_p,

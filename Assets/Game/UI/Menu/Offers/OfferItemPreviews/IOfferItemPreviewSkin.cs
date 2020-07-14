@@ -104,13 +104,13 @@ public abstract class IOfferItemPreviewSkin : IOfferItemPreview {
 				if(m_def != null) {
 					// Get the power definition linked to this skin - PowerIcon will do the rest
 					DefinitionNode powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, m_def.Get("powerup"));
-					_powerIcon.InitFromDefinition(powerDef, false, false, PowerIcon.Mode.SKIN);
+					_powerIcon.InitFromDefinition(powerDef, m_def, false, false, PowerIcon.Mode.SKIN);
 					return;
 				}
 			} break;
 		}
 
 		// Don't show in the rest of cases
-		_powerIcon.InitFromDefinition(null, false, false);
+		_powerIcon.InitFromDefinition(null, m_def, false, false);
 	}
 }

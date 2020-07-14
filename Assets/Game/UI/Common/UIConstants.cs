@@ -206,7 +206,8 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 	[SerializeField] private Color m_petCategoryColorFire = Color.white;
 	[SerializeField] private Color m_petCategoryColorDefense = Color.white;
 	[SerializeField] private Color m_petCategoryColorSpecial = Color.white;
-	[SerializeField] private Color m_petCategoryColorDefault = Color.white;
+    [SerializeField] private Color m_petCategoryColorBaby = Color.white;
+    [SerializeField] private Color m_petCategoryColorDefault = Color.white;
 
 	public static Color PET_CATEGORY_EAT { get { return instance.m_petCategoryColorEat; } }
 	public static Color PET_CATEGORY_HEALTH { get { return instance.m_petCategoryColorHealth; } }
@@ -215,19 +216,31 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 	public static Color PET_CATEGORY_FIRE { get { return instance.m_petCategoryColorFire; } }
 	public static Color PET_CATEGORY_DEFENSE { get { return instance.m_petCategoryColorDefense; } }
 	public static Color PET_CATEGORY_SPECIAL { get { return instance.m_petCategoryColorSpecial; } }
+    public static Color PET_CATEGORY_BABY { get { return instance.m_petCategoryColorBaby; } }
 	public static Color PET_CATEGORY_DEFAULT { get { return instance.m_petCategoryColorDefault; } }
 	#endregion
 
 	// -------------------------------------------------------------------------
-	// Misc colors
-	#region MiscColors
+	// Dragon colors
+	#region DragonColors
 	[SerializeField] private Color m_dragonStatColorHp = Color.red;
 	[SerializeField] private Color m_dragonStatColorSpeed = Color.cyan;
 	[SerializeField] private Color m_dragonStatColorEnergy = Color.yellow;
 
 	[SerializeField] private Color[] m_dragonTierColors = new Color[0];
 
-	[SerializeField] private Color[] m_iconTierColors = new Color[0];
+	#endregion
+
+	// Currency colors
+	#region CurrencyColors
+	[SerializeField] private Color m_currencyColorSC = Color.yellow;
+	public static Color CURRENCY_COLOR_SC { get { return instance.m_currencyColorSC; } }
+
+	[SerializeField] private Color m_currencyColorHC = Color.magenta;
+	public static Color CURRENCY_COLOR_HC { get { return instance.m_currencyColorHC; } }
+
+	[SerializeField] private Color m_currencyColorReal = Color.white;
+	public static Color CURRENCY_COLOR_REAL { get { return instance.m_currencyColorReal; } }
 	#endregion
 
 	// -----------------------------------------------------------------------//
@@ -539,15 +552,6 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 		return instance.m_dragonTierColors[(int)_tier];
 	}
 
-	/// <summary>
-	/// Get the color assigned to a tier icon. Usually the same as dragon tier color, but less saturated.
-	/// </summary>
-	/// <returns>The color linked to the given dragon tier.</returns>
-	/// <param name="_tier">Tier whose color we want.</param>
-	public static Color GetIconTierColor(DragonTier _tier)
-	{
-		return instance.m_iconTierColors[(int)_tier];
-	}
 
 	/// <summary>
 	/// Get the name (sprite id within the atlas) for the given icon type.

@@ -190,7 +190,7 @@ public class HappyHourManager {
 	/// </summary>
 	public void Update() {
 		// Aux vars
-		DateTime serverTime = GameServerManager.SharedInstance.GetEstimatedServerTime();
+		DateTime serverTime = GameServerManager.GetEstimatedServerTime();
 
 		// If we have an active happy hour, look for expiration
 		if(m_happyHour.IsActive()) {

@@ -27,6 +27,9 @@ public class FeatureSettings
 
     public const string KEY_SKU = "sku";
 
+    // Used as id when sending this value to the clustering server
+    public const string KEY_ORDER = "order";
+
     // Rating of the device corresponding to this set of settings
     public const string KEY_RATING = "rating";
 
@@ -150,6 +153,10 @@ public class FeatureSettings
     // Max time to wait for log in social platform to finish
     public const string KEY_SOCIAL_PLAFTORM_LOGIN_TIMEOUT = "socialPlatformLoginTimeout";
 
+    // Wehn <c>true</c> an implicit social platform, typically DNA, is used to store the game in the cloud automatically so the
+    // user can recover a former progress after reinstalling the game with no user's intervention
+    public const string KEY_IMPLICIT_CLOUD_SAVE = "implicitCloudSave";
+
     // Examples of how to use different type datas
     /*
     public const string KEY_INT_TEST = "intTest";    
@@ -178,9 +185,15 @@ public class FeatureSettings
         {
             Datas = new Dictionary<string, Data>();
 
-            // Rating
+
+            // sku
             string key = KEY_SKU;
             Data data = new DataString(key, null);
+            Datas.Add(key, data);
+
+            // order
+            key = KEY_ORDER;
+            data = new DataRangeInt(key, 0, 0, int.MaxValue);
             Datas.Add(key, data);
 
             // Rating
@@ -368,6 +381,10 @@ public class FeatureSettings
 
             key = KEY_SOCIAL_PLAFTORM_LOGIN_TIMEOUT;
             data = new DataFloat(key, 10f);
+            Datas.Add(key, data);
+
+            key = KEY_IMPLICIT_CLOUD_SAVE;
+            data = new DataInt(key, EValueType.Bool, (int)EBoolValues.TRUE);
             Datas.Add(key, data);
             /*
             // intTest
