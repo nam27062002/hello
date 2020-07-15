@@ -48,6 +48,12 @@ public class PopupShopReferral : MonoBehaviour
     [SerializeField] private GameObject m_friendIconActive;
     [SerializeField] private GameObject m_friendIconHighlighted;
 
+    private bool m_inviteAlreadyPressed = false;
+    public bool inviteAlreadyPressed
+    {
+        get { return m_inviteAlreadyPressed; }
+        set { m_inviteAlreadyPressed = value; }
+    }
 
     // cache
     private OfferPackReferral m_pack = null;
@@ -124,6 +130,8 @@ public class PopupShopReferral : MonoBehaviour
 
         // Clear the rewards panel
         m_rewardsContainer.DestroyAllChildren(true);
+
+        inviteAlreadyPressed = false; 
     }
 
 
@@ -132,6 +140,7 @@ public class PopupShopReferral : MonoBehaviour
     /// </summary>
     public void Refresh()
     {
+
         OfferPackReferralReward lastReward = (OfferPackReferralReward)m_pack.items[m_pack.items.Count - 1];
         int maxFriends = lastReward.friendsRequired;
 
@@ -211,7 +220,8 @@ public class PopupShopReferral : MonoBehaviour
         bool canClaim = UsersManager.currentUser.unlockedReferralRewards.Count > 0;
 
         m_buttonClaim.SetActive(canClaim);
-        m_buttonInvite.SetActive(!canClaim);
+        m_buttonInvite.SetActive(!canClaim && !inviteAlreadyPressed);
+        m_buttonInviteMore.SetActive(!canClaim && inviteAlreadyPressed);
 
     }
 
@@ -274,6 +284,13 @@ public class PopupShopReferral : MonoBehaviour
     public void OnInviteButtonPressed()
     {
         ReferralManager.instance.InviteFriends();
+
+        Clear();
+        
+        inviteAlreadyPressed = true;
+
+        // Refresh the popup with the "INVITE MORE" button
+        Refresh();
     }
 
 
