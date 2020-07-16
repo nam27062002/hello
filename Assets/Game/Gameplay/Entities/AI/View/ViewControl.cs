@@ -506,6 +506,11 @@ public class ViewControl : IViewControl, IBroadcastListener {
         }
 
         DragonBreathBehaviour dragonBreath = InstanceManager.player.breathBehaviour;
+
+        //[HDK-8773] Bugfix: NPCs from pools not being golden
+        if (m_entity != null && _spawner != null && !IsEntityGolden() && m_entity.goldenChance > 0.0f)
+            m_entity.SetGolden((Spawner.EntityGoldMode)m_entity.goldenChance);
+
         SetMaterialType(GetMaterialType(IsEntityGolden(), dragonBreath.IsFuryOn(), dragonBreath.type));
 
         if (m_showDamageFeedback) {
