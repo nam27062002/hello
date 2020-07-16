@@ -1471,7 +1471,39 @@ public class HDTrackingManagerImp : HDTrackingManager {
 
         Track_PopupOTA(_popupName, actionStr);
     }
-#endregion
+    #endregion
+
+    #region referral
+
+    /// <summary>
+    /// Sent when user interacts with this with feature with pop up or shop section.
+    /// </summary>
+    /// <param name="_popupName"></param>
+    /// <param name="_action"></param>
+    public override void Notify_ReferralPopup(EReferralPopupName _popupName, EReferralAction _action) {
+        Track_ReferralPopup(_popupName, _action);
+    }
+
+    /// <summary>
+    /// Sent when user get clicked in INVITE, selected a Network and successfully send the invitation.
+    /// </summary>
+    /// <param name="_linkId"></param>
+    /// <param name="_origin"></param>
+    public override void Notify_ReferralSendInvite(string _linkId, EReferralOrigin _origin) {
+        Track_ReferralSendInvite(_linkId, _origin);
+    }
+
+    /// <summary>
+    /// Sent when a new users installs the game via Referral Install.
+    /// </summary>
+    /// <param name="_linkId"></param>
+    /// <param name="_reward"></param>
+    /// <param name="_valid"></param>
+    public override void Notify_ReferralInstall(string _linkId, string _reward, bool _valid) {
+        Track_ReferralInstall(_linkId, _reward, _valid);
+    }
+
+    #endregion
 
     /// <summary>
     /// Sent when the user unlocks the map.
@@ -2782,6 +2814,60 @@ public class HDTrackingManagerImp : HDTrackingManager {
         m_eventQueue.Enqueue(e);
     }
 
+
+    private void Track_ReferralPopup(EReferralPopupName _popupName, EReferralAction _action)
+    {
+        Log("Track_ReferralPopup "
+            + ", popupName = " + _popupName
+            + ", action = " + _action);
+
+
+        // Create event
+        HDTrackingEvent e = new HDTrackingEvent("custom.general.referral.popup");
+        {
+            Track_AddParamString(e, TRACK_PARAM_POPUP_NAME, _popupName.ToString());
+            Track_AddParamString(e, TRACK_PARAM_ACTION, _action.ToString());
+            Track_AddParamPlayerProgress(e);
+        }
+        m_eventQueue.Enqueue(e);
+    }
+
+
+    private void Track_ReferralSendInvite(string _linkId, EReferralOrigin _origin)
+    {
+        Log("Track_ReferralSendInvite "
+            + ", linkId = " + _linkId
+            + ", origin = " + _origin);
+
+        // Create event
+        HDTrackingEvent e = new HDTrackingEvent("custom.general.referral.sendInvite");
+        {
+            Track_AddParamString(e, TRACK_PARAM_LINK_ID, _linkId);
+            Track_AddParamString(e, TRACK_PARAM_ORIGIN, _origin.ToString());
+            Track_AddParamPlayerProgress(e);
+        }
+        m_eventQueue.Enqueue(e);
+    }
+
+
+    private void Track_ReferralInstall(string _linkId, string _reward, bool _valid)
+    {
+        Log("Track_ReferralPopup "
+            + ", linkId = " + _linkId
+            + ", reward = " + _reward
+            + ", valid = " + _valid);
+
+        // Create event
+        HDTrackingEvent e = new HDTrackingEvent("custom.general.referral.install");
+        {
+            Track_AddParamString(e, TRACK_PARAM_LINK_ID, _linkId);
+            Track_AddParamString(e, TRACK_PARAM_REWARD, _reward);
+            Track_AddParamBool(e, TRACK_PARAM_VALID, _valid);
+            Track_AddParamPlayerProgress(e);
+        }
+        m_eventQueue.Enqueue(e);
+    }
+
     // -------------------------------------------------------------
     // Events
     // -------------------------------------------------------------
@@ -2878,6 +2964,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private const string TRACK_PARAM_LAB_POWER = "labPower";
     private const string TRACK_PARAM_LAB_SPEED = "labSpeed";    
     private const string TRACK_PARAM_LANGUAGE = "language";
+    private const string TRACK_PARAM_LINK_ID = "linkID";
     private const string TRACK_PARAM_LOADING_TIME = "loadingTime";
     private const string TRACK_PARAM_LOCATION = "location";    
     private const string TRACK_PARAM_MAP_USAGE = "mapUsedNB";
@@ -2905,6 +2992,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private const string TRACK_PARAM_OFFER_NAME = "offerName";
     private const string TRACK_PARAM_OFFER_TYPE = "offerType";
     private const string TRACK_PARAM_OPT_IN = "optIn";
+    private const string TRACK_PARAM_ORIGIN = "origin";
     private const string TRACK_PARAM_ORIGINAL_AREA = "originalArea";
     private const string TRACK_PARAM_PAID = "paid";
     private const string TRACK_PARAM_PET1 = "pet1";
@@ -2930,6 +3018,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private const string TRACK_PARAM_RATE_RESULT = "rateResult";
     private const string TRACK_PARAM_RECORDINGS = "recordings";
     private const string TRACK_PARAM_RESULT = "result";
+    private const string TRACK_PARAM_REWARD = "reward";
     private const string TRACK_PARAM_REWARD_TIER = "rewardTier";
     private const string TRACK_PARAM_REWARD_TYPE = "rewardType";
     private const string TRACK_PARAM_ROUND_ID = "roundid";
@@ -2977,6 +3066,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private const string TRACK_PARAM_TYPE_NOTIF = "typeNotif";
     private const string TRACK_PARAM_UNLOCK_TYPE = "unlockType";    
     private const string TRACK_PARAM_UPCOMING_LEAGUE = "upcomingLeague";
+    private const string TRACK_PARAM_VALID = "valid";
     private const string TRACK_PARAM_VERSION_QUALITY_FORMULA = "versionQualityFormula";
     private const string TRACK_PARAM_VERSION_REVISION = "versionRevision";
     private const string TRACK_PARAM_XP = "xp";

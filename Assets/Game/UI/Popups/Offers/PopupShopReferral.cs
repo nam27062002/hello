@@ -283,6 +283,10 @@ public class PopupShopReferral : MonoBehaviour
     /// </summary>
     public void OnInviteButtonPressed()
     {
+        // Send tracking event
+        HDTrackingManager.Instance.Notify_ReferralPopup(HDTrackingManager.EReferralPopupName.InfoPopup,
+                                                        HDTrackingManager.EReferralAction.Invite);
+
         ReferralManager.instance.InviteFriends();
 
         Clear();
@@ -295,11 +299,47 @@ public class PopupShopReferral : MonoBehaviour
 
 
     /// <summary>
+    /// The user has pressed the INVITE MORE button
+    /// </summary>
+    public void OnInviteMoreButtonPressed()
+    {
+        // Send tracking event
+        HDTrackingManager.Instance.Notify_ReferralPopup(HDTrackingManager.EReferralPopupName.InfoPopup,
+                                                        HDTrackingManager.EReferralAction.InviteMore);
+
+        ReferralManager.instance.InviteFriends();
+
+        Clear();
+
+        inviteAlreadyPressed = true;
+
+        // Refresh the popup with the "INVITE MORE" button
+        Refresh();
+    }
+
+
+    /// <summary>
     /// The user has pressed the CLAIM reward button
     /// </summary>
 	public void OnClaimButtonPressed()
     {
+        // Send tracking event
+        HDTrackingManager.Instance.Notify_ReferralPopup(HDTrackingManager.EReferralPopupName.InfoPopup,
+                                                        HDTrackingManager.EReferralAction.Claim);
+
         ReferralManager.instance.ReclaimAllFromServer();
+    }
+
+
+    /// <summary>
+    /// The user has pressed the close popup button
+    /// </summary>
+    public void OnCloseButtonPressed()
+    {
+        // Send tracking event
+        HDTrackingManager.Instance.Notify_ReferralPopup(HDTrackingManager.EReferralPopupName.InfoPopup,
+                                                        HDTrackingManager.EReferralAction.Close);
+
     }
 
 }

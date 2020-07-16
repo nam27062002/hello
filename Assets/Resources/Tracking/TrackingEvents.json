@@ -1033,7 +1033,41 @@
       "Parameters": [
       ],
       "APIs": [ "facebook" ]
-    }
+    },
+    "custom.general.referral.popup": {
+      "Parameters": [
+        { "popupName": { "Status": "OK" } },
+        { "action": { "Status": "OK" } },
+        { "playerProgress": { "Status": "OK" } },
+      ],
+      "APIs": [
+        "dna",
+        "etl"
+      ]
+    },
+    "custom.general.referral.sendInvite": {
+      "Parameters": [
+        { "linkID": { "Status": "OK" } },
+        { "origin": { "Status": "OK" } },
+        { "playerProgress": { "Status": "OK" } },
+      ],
+      "APIs": [
+        "dna",
+        "etl"
+      ]
+    },
+    "custom.general.referral.install": {
+      "Parameters": [
+        { "linkID": { "Status": "OK" } },
+        { "reward": { "Status": "OK" } },
+        { "valid": { "Status": "OK" } },
+        { "playerProgress": { "Status": "OK" } },
+      ],
+      "APIs": [
+        "dna",
+        "etl"
+      ]
+    },
   },
   "ParameterValues": {
     "fireRushNb": {
@@ -1854,6 +1888,23 @@
     "optIn": {
        "Type": "BOOL",
        "Values": []
-    }
+    },
+    "linkID": {
+       "Type": "STRING:256",
+       "Values": []
+    },
+    "origin": {
+       "Type": "STRING:8",
+       "Values": []
+    },
+    "reward": {
+       "Type": "STRING:32",
+       "Values": []
+    },
+    "valid": {
+       "Type": "BOOL",
+       "Values": []
+    },
+
   }
 }

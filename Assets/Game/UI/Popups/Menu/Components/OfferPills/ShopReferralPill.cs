@@ -137,8 +137,7 @@ public class ShopReferralPill : ShopMonoRewardPill {
 	/// <summary>
 	/// Open the extended info popup for this pill.
 	/// </summary>
-	/// <param name="_trackInfoPopupEvent">Whether to send tracking event or not for the custom.player.infopopup event.</param>
-	protected override void OpenInfoPopup(bool _trackInfoPopupEvent)
+	private void OpenInfoPopup()
 	{
 		// Override parent to open the RemoveAdsOffer Popup instead
 		// Load the popup
@@ -151,16 +150,46 @@ public class ShopReferralPill : ShopMonoRewardPill {
 		// Show the popup
 		popup.Open();
 
-		// If defined, send tracking event
-		if (_trackInfoPopupEvent)
-		{
-			string popupName = System.IO.Path.GetFileNameWithoutExtension(PopupShopReferral.PATH);
-			TrackInfoPopup(popupName);
-		}
+
 	}
 
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
 
+    /// <summary>
+    /// Button Info pressed in the pill
+    /// </summary>
+    public override void OnInfoButton()
+    {
+		// Send tracking event
+		HDTrackingManager.Instance.Notify_ReferralPopup(HDTrackingManager.EReferralPopupName.Shop,
+														HDTrackingManager.EReferralAction.Info);
+
+        OpenInfoPopup();
+    }
+
+	/// <summary>
+	/// Button CLAIM pressed in the pill
+	/// </summary>
+	public void OnClaimButton()
+    {
+		// Send tracking event
+		HDTrackingManager.Instance.Notify_ReferralPopup(HDTrackingManager.EReferralPopupName.Shop,
+														HDTrackingManager.EReferralAction.Claim);
+
+		OpenInfoPopup();
+	}
+
+	/// <summary>
+	/// Button INVITE pressed in the pill
+	/// </summary>
+	public void OnInviteButton()
+    {
+		// Send tracking event
+		HDTrackingManager.Instance.Notify_ReferralPopup(HDTrackingManager.EReferralPopupName.Shop,
+														HDTrackingManager.EReferralAction.Invite);
+
+		OpenInfoPopup();
+	}
 }

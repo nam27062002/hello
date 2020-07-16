@@ -249,6 +249,9 @@ public class ReferralManager
 
 		// Open the share dialog
 		CaletyShareUtil.ShareLink(title, _shortLink);
+
+        // Notify a tracking event
+		HDTrackingManager.Instance.Notify_ReferralSendInvite(_shortLink, HDTrackingManager.EReferralOrigin.Popup);
 	}
 
 
@@ -351,6 +354,9 @@ public class ReferralManager
 		{
 			if (_response["response"] != null)
 			{
+
+				bool success = false;
+
 				JSONNode kJSON = JSON.Parse(_response["response"] as string);
 				if (kJSON != null)
 				{
@@ -358,9 +364,13 @@ public class ReferralManager
 					if (kJSON.ContainsKey("result"))
 					{
 						if (kJSON["result"].AsBool == true)
-						{}
+						{
+							success = true;
+						}
                         else
-                        {}
+                        {
+							success = false;
+                        }
 
                         // No matter if the referral confirmation was valid or not.
                         // We mark the flag as confirmed, so this call is never made again for
@@ -369,6 +379,13 @@ public class ReferralManager
 					}
 				}
 
+				// Send tracking information
+
+				// TODO: find the proper linkId and reward parameters
+				string linkId = null;
+				string reward = null;
+
+				HDTrackingManager.Instance.Notify_ReferralInstall(linkId, reward, success);
 			}			
 		}
 	}
