@@ -98,7 +98,15 @@ public class ReferralManager
 
 		if (!m_offlineMode)
 		{
-			GameServerManager.SharedInstance.Referral_GetInfo(OnGetInfoResponse);
+            // Find the current active referral offer 
+			OfferPackReferral offer = OffersManager.GetActiveReferralOffer();
+
+			if (offer != null)
+            {
+				string referralSku = offer.def.sku;
+
+				GameServerManager.SharedInstance.Referral_GetInfo(referralSku, OnGetInfoResponse);
+			}			
 		}
 	}
 
@@ -114,7 +122,15 @@ public class ReferralManager
 
 		if (!m_offlineMode)
 		{
-			GameServerManager.SharedInstance.Referral_ReclaimAll(OnReclaimAllResponse);
+			// Find the current active referral offer 
+			OfferPackReferral offer = OffersManager.GetActiveReferralOffer();
+
+			if (offer != null)
+			{
+				string referralSku = offer.def.sku;
+
+				GameServerManager.SharedInstance.Referral_ReclaimAll(referralSku, OnReclaimAllResponse);
+			}
 		}
 	}
 

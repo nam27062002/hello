@@ -116,7 +116,7 @@ public class OfferPackReferral: OfferPack {
 	{
 		for (int i=0; i<items.Count; i++)
         {
-            if (items[i] == _reward )
+            if (items[i].sku == _reward.sku )
             {
 				return i;
             }

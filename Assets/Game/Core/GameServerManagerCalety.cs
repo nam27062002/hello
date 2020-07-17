@@ -936,11 +936,25 @@ public class GameServerManagerCalety : GameServerManager {
     //-----------------
     // Referral
     //-----------------
-    public override void Referral_GetInfo(ServerCallback _callback) {
+    public override void Referral_GetInfo(string _milestonesPathSku, ServerCallback _callback) {
+
+        JSONClass kBody = new JSONClass();
+        kBody["milestonesPathSku"] = _milestonesPathSku;
+
+        Dictionary<string, string> parameters = new Dictionary<string, string>();
+        parameters.Add("body", kBody.ToString());
+
         Commands_EnqueueCommand(ECommand.Referral_GetInfo, null, _callback);
     }
 
-    public override void Referral_ReclaimAll(ServerCallback _callback) {
+    public override void Referral_ReclaimAll(string _milestonesPathSku, ServerCallback _callback) {
+
+        JSONClass kBody = new JSONClass();
+        kBody["milestonesPathSku"] = _milestonesPathSku;
+
+        Dictionary<string, string> parameters = new Dictionary<string, string>();
+        parameters.Add("body", kBody.ToString());
+
         Commands_EnqueueCommand(ECommand.Referral_ReclaimAll, null, _callback);
     }
 
@@ -1016,8 +1030,8 @@ public class GameServerManagerCalety : GameServerManager {
         HDLeagues_GetMyRewards,
         HDLeagues_FinishMySeason,
 
-        Referral_GetInfo,
-        Referral_ReclaimAll,
+        Referral_GetInfo,       // params: _milestonesPathSku
+        Referral_ReclaimAll,    // params: _milestonesPathSku
         Referral_MarkReferral   // params: _referralUserId
     }    
 
