@@ -37,13 +37,12 @@ public class ReferralManager
 	private static ReferralManager m_instance = null;
 
 	// Communication with server
-	private bool m_registered = false;
 	private bool m_offlineMode = false;
 
 	// Rewards claimed
 	private Queue<OfferPackReferralReward> m_pendingRewards = new Queue<OfferPackReferralReward>();
 	public Queue<OfferPackReferralReward> pendingRewards
-        { get => m_pendingRewards; set => m_pendingRewards = value; }
+        { get => m_pendingRewards;  }
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
