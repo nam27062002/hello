@@ -715,8 +715,9 @@ public class LoadingSceneController : SceneController {
             }break;
         	case State.SHOWING_UPGRADE_POPUP:
         	{
-        		PopupManager.OpenPopupInstant( PopupUpgrade.PATH );
-            }break;
+                ApplicationManager.instance.Issues_ProcessUpgradeClientVersion();
+            }
+            break;
             case State.WAITING_COUNTRY_CODE:
                 {
 					// A timeout is set just in case, in order to prevent the game from getting stuck if the request above is not responsed because of an error code
