@@ -36,7 +36,8 @@ public class PersistenceCloudDriver
     {
         NotLoggedIn,
         Syncing,
-        LoggedIn
+        LoggedIn,
+        NeedsToUpgradeClientVersion
     };
 
     public PersistenceData Data { get; set; }
@@ -278,6 +279,12 @@ public class PersistenceCloudDriver
 
             mSyncerStep = value;
 
+            if (mSyncerStep != ESyncStep.None && CacheServerManager.SharedInstance.GameNeedsUpdate())
+            {
+                Syncer_PerformDone(PersistenceStates.ESyncResult.NeedsToUpgradeClientVersion, PersistenceStates.ESyncResultDetail.NoLogInServer);                
+                return;
+            }
+
 			switch (mSyncerStep)
 			{
 				case ESyncStep.CheckingConnection:
@@ -385,7 +392,17 @@ public class PersistenceCloudDriver
 	public void Sync(SocialUtils.EPlatform platformId, ESyncMode mode, EErrorMode errorMode, bool isAppInit,
                      Action<PersistenceStates.ESyncResult, PersistenceStates.ESyncResultDetail> onDone,
                      bool forceMerge = false, bool pushRequest = false)
-	{        
+	{
+        if (State == EState.NeedsToUpgradeClientVersion)
+        {
+            if (onDone != null)
+            {
+                onDone(PersistenceStates.ESyncResult.NeedsToUpgradeClientVersion, PersistenceStates.ESyncResultDetail.NoLogInServer);
+            }
+
+            return;
+        }
+
         PersistenceFacade.Log("(SYNC) CLOUD STARTED...");
 
         if (pushRequest)
@@ -885,6 +902,13 @@ public class PersistenceCloudDriver
 	{        
         PersistenceFacade.Log("(SYNCER) CLOUD DONE result: " + result.ToString() + " resultDetail: " + resultDetail);
 
+        if (result == PersistenceStates.ESyncResult.NeedsToUpgradeClientVersion)
+        {
+            State = EState.NeedsToUpgradeClientVersion;
+            ApplicationManager.instance.Issues_ProcessUpgradeClientVersion();
+            return;
+        }
+
         if (Syncer_Mode == ESyncMode.Full || Syncer_Mode == ESyncMode.UpToMerge)
         {
             State = (result == PersistenceStates.ESyncResult.Ok || result == PersistenceStates.ESyncResult.NeedsToReload) ? EState.LoggedIn : EState.NotLoggedIn;
@@ -954,7 +978,7 @@ public class PersistenceCloudDriver
 		{
 			onDone();
 		}
-	}
+	}    
 
 	private void Syncer_ProcessNoConnectionError()
 	{
