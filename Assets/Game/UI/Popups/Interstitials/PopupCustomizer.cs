@@ -396,18 +396,14 @@ public class PopupCustomizer : MonoBehaviour {
 						// Make sure selected dragon is owned (requirement for opening the pets screen)
 						InstanceManager.menuSceneController.SetSelectedDragon(DragonManager.CurrentDragon.def.sku);	// Current dragon is the last owned selected dragon
 
-						// Initialize the pets screen
-						MenuTransitionManager screensController = InstanceManager.menuSceneController.transitionManager;
-						MenuScreen targetPetScreen = MenuScreen.PETS;
-                                PetsScreenController petScreen = screensController.GetScreenData(targetPetScreen).ui.GetComponent<PetsScreenController>();
+						// Go to the pets screen
+						nextScreen = MenuScreen.PETS;
 
 						// Navigate to a specific pet?
 						if(tokens.Length > 1) {
+							PetsScreenController petScreen = InstanceManager.menuSceneController.transitionManager.GetScreenData(nextScreen).ui.GetComponent<PetsScreenController>();
 							petScreen.Initialize(tokens[1]);
 						}
-
-						// Go the screen
-						nextScreen = targetPetScreen;
 					} break;
 
 					case "global_event": {
@@ -421,30 +417,42 @@ public class PopupCustomizer : MonoBehaviour {
 					} break;
 
 					case "skins": {
-						// Make sure selected dragon is owned (requirement for opening the skins screen)
-						string targetDragon = DragonManager.CurrentDragon.def.sku;  // Current dragon is owned for sure
-						InstanceManager.menuSceneController.SetSelectedDragon(targetDragon);
-
-						// Check whether all assets required for the selected dragon are available or not
-						// Get assets download handle for selected dragon
-						Downloadables.Handle dragonHandle = HDAddressablesManager.Instance.GetHandleForClassicDragon(targetDragon);
-						if(!dragonHandle.IsAvailable()) {
-							// Dragon assets not available, just close the popup
-							nextScreen = MenuScreen.NONE;
-							break;
-						}
-
-						// Initialize the skins screen
-						MenuTransitionManager screensController = InstanceManager.menuSceneController.transitionManager;
-						DisguisesScreenController skinsScreen = screensController.GetScreenData(MenuScreen.SKINS).ui.GetComponent<DisguisesScreenController>();
-
-						// Navigate to a specific skin?
+						// Is a specific skin sku defined?
+						DefinitionNode targetSkinDef = null;
 						if(tokens.Length > 1) {
-							skinsScreen.initialSkin = tokens[1];
+							targetSkinDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, tokens[1]);
 						}
 
-						// Go the screen
-						nextScreen = MenuScreen.SKINS;
+						// Find out target dragon
+						string targetDragonSku = DragonManager.CurrentDragon.def.sku;  // Current dragon by default
+						if(targetSkinDef != null) {
+							targetDragonSku = targetSkinDef.GetAsString("dragonSku", targetDragonSku);
+						}
+
+						// Scroll to target dragon
+						InstanceManager.menuSceneController.SetSelectedDragon(targetDragonSku);
+
+						// Is target dragon owned?
+						bool dragonOwned = DragonManager.IsDragonOwned(targetDragonSku);
+
+						// Are all assets downloaded for this dragon?
+						Downloadables.Handle dragonHandle = HDAddressablesManager.Instance.GetHandleForClassicDragon(targetDragonSku);
+						bool assetsDownloaded = dragonHandle.IsAvailable();
+
+						// Is dragon owned and assets downloaded?
+						if(dragonOwned && assetsDownloaded) {
+							// Yes! Go to the skins screen
+							nextScreen = MenuScreen.SKINS;
+
+							// If defined, select a specific skin
+							if(targetSkinDef != null) {
+								DisguisesScreenController skinsScreen = InstanceManager.menuSceneController.GetScreenData(MenuScreen.SKINS).ui.GetComponent<DisguisesScreenController>();
+								skinsScreen.initialSkin = targetSkinDef.sku;
+							}
+						} else {
+							// No! Go to the dragon selection screen instead
+							nextScreen = MenuScreen.DRAGON_SELECTION;
+						}
 					} break;
 				}
 

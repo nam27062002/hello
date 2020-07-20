@@ -50,7 +50,7 @@ public class DisguisesScreenController : MonoBehaviour {
 	[SerializeField] private ShopMonoRewardPill m_offerPill = null;
 
 	// Setup
-	private string m_initialSkin = string.Empty;	// String to be selected upon entering the screen. Will be resetted every time the screen is reloaded.
+	private string m_initialSkin = string.Empty;	// Skin to be selected upon entering the screen. Will be resetted every time the screen is reloaded.
 	public string initialSkin {
 		get { return m_initialSkin; }
 		set { m_initialSkin = value; }
