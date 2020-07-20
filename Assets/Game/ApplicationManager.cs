@@ -283,6 +283,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         Game_IsPaused = false;
         Debug_IsPaused = false;
         Language_Reset();
+        Issues_Reset();
     }
 
     public bool NeedsToRestartFlow { get; set; }
@@ -436,6 +437,15 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
             Debug.Log("Current persistence test passed: " + PersistenceTester.HasCurrentTestPassed());
         }
 #endif
+
+        // Upgrade client popup needs to be shown as soon as the server notifies that the client is obsolete
+        // in order to avoid weird behaviours (https://mdc-tomcat-jira100.ubisoft.org/jira/browse/HDK-8818)
+        // while playing online since server will refuse to log in this user until she updates client version
+        // We don't do it while playing a run in order to avoid frustration
+        if (!Game_IsInGame && CacheServerManager.SharedInstance.GameNeedsUpdate() && !Issues_GetHasBeenProcessed(EIssue.UpgradeClientVersion))
+        {
+            Issues_ProcessUpgradeClientVersion();
+        }
 
         if (FeatureSettingsHasChanged)
         {
@@ -1301,7 +1311,44 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
             return sm_networkDriver;
         }
+    }
+
+    #region issues
+    private enum EIssue
+    {
+        UpgradeClientVersion
+    };
+
+    private static int IssuesCount = Enum.GetValues(typeof(EIssue)).Length;
+    private bool[] m_issuesProcessed = new bool[IssuesCount];
+
+    private void Issues_Reset()
+    {
+        for (int i = 0; i < IssuesCount; i++)
+        {
+            m_issuesProcessed[i] = false;
+        }
+    }
+
+    private bool Issues_GetHasBeenProcessed(EIssue issue)
+    {
+        return m_issuesProcessed[(int)issue];
+    }
+
+    private void Issues_SetHasBeenProcessed(EIssue issue, bool value)
+    {
+        m_issuesProcessed[(int)issue] = value;
+    }
+
+    public void Issues_ProcessUpgradeClientVersion()
+    {
+        if (!Issues_GetHasBeenProcessed(EIssue.UpgradeClientVersion))
+        {
+            Issues_SetHasBeenProcessed(EIssue.UpgradeClientVersion, true);
+            PopupManager.OpenPopupInstant(PopupUpgrade.PATH);
+        }
     }    
+    #endregion
 
     #region debug
     private bool Debug_IsPaused { get; set; }

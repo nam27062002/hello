@@ -267,7 +267,7 @@ fixed4 frag(v2f i) : SV_Target
 #else
 
 
-#if !defined(VERTEXANIMATION) && !defined(SPECMASK) && !defined(JELLY)
+#if !defined(VERTEXANIMATION) && !defined(SPECMASK) && !defined(JELLY) && !defined(BOTTLE)
 	fixed4 col = diff * i.color;
 #else
 	fixed4 col = diff;
