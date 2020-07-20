@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------//
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections.Generic;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -25,10 +26,15 @@ public class MenuNavigationButton : MonoBehaviour {
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
 	// Exposed
-	[InfoBox("- Will only be used if the OnNavigationButton listener is added to the button's OnClick event.\n" +
-		"- Passing enum values as parameters for events is not possible in Unity, so we must do it this way.\n" +
-		"- For the OnBackButton callback, this is the screen to default if there is no previous screen in the navigation history.")]
+	[InfoBox("USAGE:\n" +
+		"1. Define target screen\n" +
+		"2. Add the OnNavigationButton or OnBackButton listeners to the button's OnClick event.\n" +
+		"(Passing enum values as parameters for events is not possible in Unity, so we must do it this way.)\n\n" +
+		"Target Screen Parameter:\n" +
+		"- For the OnNavigationButton callback, this is the screen to go to.\n" +
+		"- For the OnBackButton callback, this is the screen to go if there is no previous screen in the navigation history or the last screen is in the excluded list.\n\n")]
 	[SerializeField] protected MenuScreen m_targetScreen = MenuScreen.NONE;
+	[SerializeField] protected List<MenuScreen> m_excludedScreens = new List<MenuScreen>();
 
 	// Internal References
 	protected MenuTransitionManager m_transitionManager = null;
@@ -69,9 +75,17 @@ public class MenuNavigationButton : MonoBehaviour {
         if (m_transitionManager != null) {
             // If history is empty, go to default screen
             if (m_transitionManager.screenHistory.Count == 0) {
-                OnNavigationButton();
-            } else {
-                m_transitionManager.Back(true);
+				m_transitionManager.GoToScreen(m_targetScreen, true);
+			} else {
+				// Make sure that the last screen is not in the excluded list
+				MenuScreen lastScreen = m_transitionManager.screenHistory.Last();
+				if(m_excludedScreens.Contains(lastScreen)) {
+					// Default to target scren
+					m_transitionManager.GoToScreen(m_targetScreen, true);
+				} else {
+					// Good to go!
+					m_transitionManager.Back(true);
+				}
             }
         }
     }
