@@ -298,23 +298,6 @@ public class PopupCustomizer : MonoBehaviour {
 		this.GetComponent<PopupController>().Close(true);
 	}
 
-	/// <summary>
-	/// Opens the shop popup.
-	/// </summary>
-	/// <param name="_tabName">Initial tab name. "hc", "sc", "offers". Empty string for default behaviour.</param>
-	/// <param name="_itemSku">Item sku. Empty string for default behaviour.</param>
-	private void OpenShop(string _tabName, string _itemSku) {
-		// Load and initialize popup
-		PopupController popup = PopupManager.LoadPopup(PopupShop.PATH);
-		PopupShop shopPopup = popup.GetComponent<PopupShop>();
-
-		// If targeting a specific item, close popup after purchase
-		shopPopup.closeAfterPurchase = !string.IsNullOrEmpty(_itemSku);
-
-		// Open popup!
-		popup.Open();
-	}
-
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
@@ -391,10 +374,22 @@ public class PopupCustomizer : MonoBehaviour {
 					} break;
 
 					case "shop": {
-						OpenShop(
-							tokens.Length > 1 ? tokens[1] : string.Empty,	// Initial tab
-							tokens.Length > 2 ? tokens[2] : string.Empty	// Initial item (optional)
-						);
+						// Scroll to a specific item / category?
+						if(tokens.Length > 1) {
+							// Is it a category sku?
+							string targetSku = tokens[1];
+							if(DefinitionsManager.SharedInstance.GetSkuList(DefinitionsCategory.SHOP_CATEGORIES).Contains(targetSku)) {
+								// Yes! Tell the shop to scroll to that category
+								InstanceManager.menuSceneController.shopScreenController.shopController.SetInitialCategory(targetSku);
+							} else {
+								// No! Assume it's a shop item sku and tell the shop to scroll to that item
+								InstanceManager.menuSceneController.shopScreenController.shopController.SetInitialItem(targetSku);
+							}
+						}
+
+						// Go to the shop screen
+						InstanceManager.menuSceneController.shopScreenController.mode = ShopController.Mode.DEFAULT;
+						nextScreen = MenuScreen.SHOP;
 					} break;
 
 					case "pets": {
