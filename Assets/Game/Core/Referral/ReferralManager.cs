@@ -388,8 +388,8 @@ public class ReferralManager
                         }
 
                         // No matter if the referral confirmation was valid or not.
-                        // We mark the flag as confirmed, so this call is never made again for
-                        // this user/device. We save a lot of unnecesary calls this way.
+                        // We mark the flag as confirmed, so this call is never made again for this user/device.
+                        // This way we save a lot of unnecesary calls to the server.
 						UsersManager.currentUser.referralConfirmed = true;
 					}
 				}

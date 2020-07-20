@@ -397,6 +397,10 @@ public class CPTechTab : MonoBehaviour {
     public void OnClearReferraUserIdButton()
     {
 		UsersManager.currentUser.referralUserId = "";
+
+        // Clear the confirmation flag, so the client will call to the server again 
+		UsersManager.currentUser.referralConfirmed = false;
+
 		m_referraUserId.text = "Referral User Id: " + UsersManager.currentUser.referralUserId;
 	}
 

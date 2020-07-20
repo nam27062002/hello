@@ -890,7 +890,7 @@ public class LoadingSceneController : SceneController {
     private void ConfirmReferralConversion()
     {
 
-        // Exit if the conversion has been already confirmed
+        // Exit if the conversion has been already confirmed (with or without success)
         if (UsersManager.currentUser.referralConfirmed)
             return;
 
@@ -906,7 +906,6 @@ public class LoadingSceneController : SceneController {
 
         }
 
-        // If the referral is not confirmed yet
         if (UsersManager.currentUser.referralUserId != "" )
         {
             // Notify the server confirming the conversion of the invited player
@@ -969,7 +968,7 @@ public class LoadingSceneController : SceneController {
 
                 HDTrackingManager.Instance.Notify_Razolytics_Funnel_Load(FunnelData_LoadRazolytics.Steps._01_02_persistance_ready);
 
-
+                // At this point check if this player has been invited by another, and notify the conversion to the server
                 ConfirmReferralConversion();
 
                 // Given stuff is stored in USerProfile, that's why we need to wait for persistence to be loaded to load given stuff
