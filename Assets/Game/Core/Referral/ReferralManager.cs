@@ -44,6 +44,10 @@ public class ReferralManager
 	public Queue<OfferPackReferralReward> pendingRewards
         { get => m_pendingRewards;  }
 
+
+    // Tracking
+	private HDTrackingManager.EReferralOrigin m_inviteOrigin;
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -238,9 +242,12 @@ public class ReferralManager
     /// <summary>
     /// Button invite has been pressed.
     /// </summary>
-    public void InviteFriends()
+    public void InviteFriends(HDTrackingManager.EReferralOrigin _origin)
     {
 		string userId = UsersManager.currentUser.userId;
+
+		// Store origin for tracking purposes
+		m_inviteOrigin = _origin;
 
 		// Get the link to share from firebase
 		CaletyDynamicLinks.createLinkUserInvite(userId, OnShortLinkCreated);
@@ -266,7 +273,7 @@ public class ReferralManager
 		CaletyShareUtil.ShareLink(title, _shortLink);
 
         // Notify a tracking event
-		HDTrackingManager.Instance.Notify_ReferralSendInvite(_shortLink, HDTrackingManager.EReferralOrigin.Popup);
+		HDTrackingManager.Instance.Notify_ReferralSendInvite(_shortLink, m_inviteOrigin);
 	}
 
 

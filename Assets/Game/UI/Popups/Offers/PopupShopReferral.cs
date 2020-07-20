@@ -287,7 +287,7 @@ public class PopupShopReferral : MonoBehaviour
         HDTrackingManager.Instance.Notify_ReferralPopup(HDTrackingManager.EReferralPopupName.InfoPopup,
                                                         HDTrackingManager.EReferralAction.Invite);
 
-        ReferralManager.instance.InviteFriends();
+        ReferralManager.instance.InviteFriends(HDTrackingManager.EReferralOrigin.Shop);
 
         Clear();
         
@@ -307,7 +307,7 @@ public class PopupShopReferral : MonoBehaviour
         HDTrackingManager.Instance.Notify_ReferralPopup(HDTrackingManager.EReferralPopupName.InfoPopup,
                                                         HDTrackingManager.EReferralAction.InviteMore);
 
-        ReferralManager.instance.InviteFriends();
+        ReferralManager.instance.InviteFriends(HDTrackingManager.EReferralOrigin.Shop);
 
         Clear();
 

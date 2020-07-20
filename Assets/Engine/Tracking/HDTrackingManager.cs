@@ -723,7 +723,7 @@ public class HDTrackingManager
     public enum EReferralOrigin
     {
         Shop,
-        Popup
+        Interstitial
     }
 
     public virtual void Notify_ReferralSendInvite(string linkId, EReferralOrigin origin) { }
