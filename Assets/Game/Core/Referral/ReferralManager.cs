@@ -264,7 +264,7 @@ public class ReferralManager
 	/// Delegate for receiving the referral shortlink from firebase
 	/// </summary>
 	/// <param name="_link"></param>
-	public void OnShortLinkCreated(string _shortLink)
+	public void OnShortLinkCreated(string _shortLink, CaletyDynamicLinks.shortLinkResult result)
 	{
 
 		string title = LocalizationManager.SharedInstance.Localize("TID_REFERRAL_SHARE_TITLE");
