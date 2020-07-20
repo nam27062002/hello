@@ -53,6 +53,7 @@ Shader "Hungry Dragon/NPC/NPC Sky bottle liquid"
 			#define EMISSIVE
 			#define LITMODE_LIT
 
+			#define BOTTLE
 
 			#include "entities.cginc"
 			ENDCG
