@@ -77,12 +77,14 @@ public class ShopController : MonoBehaviour
     public bool ShopReady // All the pills have been initialized
         { get; set; } = false;
 
-    //Internal
+    // Scroll control
     private Mode m_mode;    // Shop mode (all offers, only PC, etc)
     private bool m_scrolling = false; // The tweener scrolling animation is still running
     private float m_scrollViewOffset;
+    private string m_initialItemSku = "";  // Optional, if defined the shop will scroll to the target item (provided it's active) as soon as possible
+    private string m_initialCategorySku = "";  // Optional, if defined (and no initial item is defined) the shop will scroll to the target category (provided it's active) as soon as possible
     
-    //Filtering categories
+    // Filtering categories
     private string m_categoryToShow;
 
 	// Cache the category containers and pills
@@ -93,9 +95,6 @@ public class ShopController : MonoBehaviour
     // Cache the pill prefabs
     private Dictionary<OfferPack.Type, IShopPill> m_pillPrefabs;
 
-
-
-
     // Shortcuts
     private List<ShopCategoryShortcut> m_shortcuts; 
     private Dictionary<string, ShopCategoryShortcut> m_skuToShorcut; // Cache the sku-shortcut pair to improve performance
@@ -105,12 +104,9 @@ public class ShopController : MonoBehaviour
     // Keep the bounds of the current category, so we dont recalculate every time the user scrolls the shop
     private float categoryLeftBorder, categoryRightBorder;
 
-
+    // Performance optimizations
+    [System.NonSerialized] public bool m_useOptimization = true; // Aux var to turn optimization on/off from the inspector
     private bool m_optimizationActive = false; // Current state of the performance optimizations
-
-    // Aux var to turn optimization on/off from the inspector
-    [System.NonSerialized]
-    public bool m_useOptimization = true;
 
     // Optimization #1: disable layouts after refresh
     private bool m_layoutGropusActive = false;
@@ -125,8 +121,6 @@ public class ShopController : MonoBehaviour
     private Queue<ShopCategory> m_categoriesToInitialize;
     private CategoryController m_catBeingInitialized;
 
-
-
     // Parallax effect
     private CameraTraveling m_cameraTraveling;
     public bool m_cameraTravelingEnabled;
@@ -138,14 +132,11 @@ public class ShopController : MonoBehaviour
     private UnityAction<IShopPill> m_purchaseCompletedCallback;
     public UnityAction<IShopPill> purchaseCompletedCallback { get { return m_purchaseCompletedCallback; } }
 
-
-
-
     // Benchmarking
     private int timestamp, timestamp2;
 
-	// Tracking
-	private string m_trackingOrigin = "";	// Track from where the shop has been opened
+    // Tracking
+    private string m_trackingOrigin = "";	// Track from where the shop has been opened
 	private float m_trackingViewTimer = -1f;
 
     //------------------------------------------------------------------------//
@@ -246,8 +237,6 @@ public class ShopController : MonoBehaviour
         {
             // Keep a reference to the new pills created
             m_pills.AddRange(m_catBeingInitialized.offerPills);
-
-
             
             // This category has been initialized succesfully!
             m_catBeingInitialized = null;
@@ -255,16 +244,41 @@ public class ShopController : MonoBehaviour
             // Are there some categories left to initialize?
             if (m_categoriesToInitialize.Count == 0)
             {
+                // If we have an item defined to be our initial item, jump to it now
+                if(!string.IsNullOrEmpty(m_initialItemSku)) {
+                    // Find target item
+                    for(int i = 0; i < m_pills.Count; ++i) {
+                        // Is it our target item?
+                        if(m_pills[i].def.sku == m_initialItemSku) {
+                            // Yes! Scroll to it and break loop
+                            ScrollToItem(m_pills[i].transform);
+                            break;
+                        }
+					}
 
-                // Move the scroll to the proper position
+                    // Reset so we don't do it again
+                    m_initialItemSku = "";
+                    m_initialCategorySku = "";
+				}
 
-                if (m_mode == Mode.JUMP_TO_PC)
-                {
-                    // Jump to the HC section
-                    ShopCategoryShortcut sc = m_skuToShorcut[PC_CATEGORY_SKU];
-                    if ( sc!= null )
-                        OnShortcutSelected( sc );
-                }
+                // If we have a category defined to be our initial category, jump to it now
+                else if(!string.IsNullOrEmpty(m_initialCategorySku)) {
+                    // Find target category controller
+                    for(int i = 0; i < m_categoryContainers.Count; ++i) {
+                        // Is it our target category?
+                        if(m_categoryContainers[i].category.sku == m_initialCategorySku) {
+                            // Yes! Scroll to it and break loop
+                            //Vector2 categoryAnchor = m_scrollRect.GetNormalizedPositionForItem(m_categoryContainers[i].transform, true) + new Vector2(m_scrollViewOffset, 0);
+                            ScrollToItem(m_categoryContainers[i].anchor);
+                            break;
+						}
+                    }
+
+                    // Reset so we don't do it again
+                    m_initialCategorySku = "";
+				}
+                
+                // Default case
                 else if (m_lastScrollPos != 0)
                 {
                     // Jump to last known position
@@ -330,6 +344,11 @@ public class ShopController : MonoBehaviour
                 // The user has actively clicked in the shop button in the menu
                 UsersManager.currentUser.hasEnteredShop = true;
                 break;
+
+            case Mode.JUMP_TO_PC:
+                m_initialCategorySku = PC_CATEGORY_SKU;
+                m_initialItemSku = "";
+                break;
         }
 
         // Clear everything to avoid the shop content being flashed before the transition clouds
@@ -339,6 +358,27 @@ public class ShopController : MonoBehaviour
         m_purchaseCompletedCallback = _purchaseCompletedCallback;
 
     }
+
+    /// <summary>
+    /// Define the item to focus to upon opening the shop.
+    /// The item will be focused as soon as it's initalized.
+    /// If the item is not active, nothing will happen.
+    /// </summary>
+    /// <param name="_itemSku">Either an offer pack or currency pack SKU.</param>
+    public void SetInitialItem(string _itemSku) {
+        m_initialItemSku = _itemSku;
+	}
+
+    /// <summary>
+    /// Define the category to focus upon opening the shop.
+    /// The category will be focused as soon as it's initialized.
+    /// If an initial item is defined, this will be ignored.
+    /// If the category is not enabled, nothing will happen.
+    /// </summary>
+    /// <param name="_categorySku">Sku of the category, from shopCategoriesDefinitions content table.</param>
+    public void SetInitialCategory(string _categorySku) {
+        m_initialCategorySku = _categorySku;
+	}
 
 
     /// <summary>
