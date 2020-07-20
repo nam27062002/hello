@@ -1,8 +1,7 @@
 using System;
 using UnityEngine;
 
-[RequireComponent(typeof(PopupController))]
-public abstract class IPopupMerge : MonoBehaviour 
+public abstract class IPopupMerge : PopupPauseBase 
 {
 	public PopupMergeProfilePill m_leftPill;
 	public PopupMergeProfilePill m_rightPill;
