@@ -201,62 +201,6 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 	/// Check popups coming from the customizer.
 	/// </summary>
 	private void CheckCustomizerPopup() {
-		// [AOC] TEST!! DO NOT COMMIT
-#if UNITY_EDITOR && DEBUG
-		{
-			Calety.Customiser.CustomiserPopupConfig fakeConfig = new Calety.Customiser.CustomiserPopupConfig();
-			fakeConfig.m_bHasCloseButton = true;
-			fakeConfig.m_bIsOnline = false;
-			fakeConfig.m_eType = Calety.Customiser.eCustomiserPopupType.E_CUSTOMISER_POPUP_DEFAULT;
-			fakeConfig.m_eTypeButton1 = Calety.Customiser.eCustomiserPopupButtonType.E_CUSTOMISER_POPUP_BUTTON_GAME_LINK;
-			fakeConfig.m_eTypeButton2 = Calety.Customiser.eCustomiserPopupButtonType.E_CUSTOMISER_POPUP_BUTTON_CLOSE;
-			fakeConfig.m_iCustomizerCode = -1;
-			fakeConfig.m_iLayout = 0;
-			fakeConfig.m_iTimesToShow = 100000;
-			fakeConfig.m_kReward = null;
-			fakeConfig.m_kUnityImageTexture = Resources.Load<Texture2D>("UI/Fonts/textures/texture_magma");
-
-			Calety.Customiser.CustomiserPopupPrepareState prepareState = new Calety.Customiser.CustomiserPopupPrepareState();
-			if(prepareState != null) {
-				prepareState.m_bDownloaded = true;
-				prepareState.m_bDownloadingFile = false;
-				prepareState.m_bIsPrepared = true;
-				prepareState.m_bIsReturned = true;
-				prepareState.m_bNeedToBePreparedByLanguage = false;
-				prepareState.m_bNeedToPrepare = false;
-				prepareState.m_bProcessed = true;
-				prepareState.m_strLanguageDownloaded = "en";
-				prepareState.m_strLanguageToPrepare = "";
-				prepareState.m_strPreparedLanguage = "en";
-				fakeConfig.m_kPrepareState = prepareState;
-			}
-
-			CaletyConstants.PopupConfig langConfig = new CaletyConstants.PopupConfig();
-			if(langConfig != null) {
-				langConfig.m_strTitle = "This is a test popup!";
-				langConfig.m_strMessage = "Faked in the client since 1985.";
-
-				Calety.Customiser.CustomiserPopupButton buttonConfig = new Calety.Customiser.CustomiserPopupButton();
-				if(buttonConfig != null) {
-					buttonConfig.m_eButtonAction = Calety.Customiser.ePopupButtonAction.GAME_LINK;
-					buttonConfig.m_strText = "TEST BUTTON";
-					buttonConfig.m_strParam = "shop";   // 	(optional)only one of the following: Shop Category SKU, Offer Pack SKU, Currency Pack SKU
-					langConfig.m_kPopupButtons.Add(buttonConfig);
-
-					buttonConfig = new Calety.Customiser.CustomiserPopupButton();
-					buttonConfig.m_eButtonAction = Calety.Customiser.ePopupButtonAction.GAME_LINK;
-					buttonConfig.m_strText = "TEST BUTTON 2";
-					buttonConfig.m_strParam = "shop";
-					langConfig.m_kPopupButtons.Add(buttonConfig);
-				}
-			}
-			fakeConfig.m_kPopupConfigByLanguage["en"] = langConfig;
-
-			OpenCustomizerPopup(fakeConfig);
-			return;
-		}
-#endif
-
 		// Ignore if a popup has already been displayed in this iteration
 		if(GetFlag(StateFlag.POPUP_DISPLAYED)) return;
 
@@ -289,55 +233,9 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 	/// Check popups coming from the customizer.
 	/// </summary>
 	private void CheckCustomizerPopup_DEBUG() {
-		Calety.Customiser.CustomiserPopupConfig fakeConfig = new Calety.Customiser.CustomiserPopupConfig();
-		fakeConfig.m_bHasCloseButton = true;
-		fakeConfig.m_bIsOnline = false;
-		fakeConfig.m_eType = Calety.Customiser.eCustomiserPopupType.E_CUSTOMISER_POPUP_DEFAULT;
-		fakeConfig.m_eTypeButton1 = Calety.Customiser.eCustomiserPopupButtonType.E_CUSTOMISER_POPUP_BUTTON_GAME_LINK;
-		fakeConfig.m_eTypeButton2 = Calety.Customiser.eCustomiserPopupButtonType.E_CUSTOMISER_POPUP_BUTTON_CLOSE;
-		fakeConfig.m_iCustomizerCode = -1;
-		fakeConfig.m_iLayout = 0;
-		fakeConfig.m_iTimesToShow = 100000;
-		fakeConfig.m_kReward = null;
-		fakeConfig.m_kUnityImageTexture = Resources.Load<Texture2D>("UI/Fonts/textures/texture_magma");
-
-		Calety.Customiser.CustomiserPopupPrepareState prepareState = new Calety.Customiser.CustomiserPopupPrepareState();
-		if(prepareState != null) {
-			prepareState.m_bDownloaded = true;
-			prepareState.m_bDownloadingFile = false;
-			prepareState.m_bIsPrepared = true;
-			prepareState.m_bIsReturned = true;
-			prepareState.m_bNeedToBePreparedByLanguage = false;
-			prepareState.m_bNeedToPrepare = false;
-			prepareState.m_bProcessed = true;
-			prepareState.m_strLanguageDownloaded = "en";
-			prepareState.m_strLanguageToPrepare = "";
-			prepareState.m_strPreparedLanguage = "en";
-			fakeConfig.m_kPrepareState = prepareState;
-		}
-
-		CaletyConstants.PopupConfig langConfig = new CaletyConstants.PopupConfig();
-		if(langConfig != null) {
-			langConfig.m_strTitle = "This is a test popup!";
-			langConfig.m_strMessage = "Faked in the client since 1985.";
-
-			Calety.Customiser.CustomiserPopupButton buttonConfig = new Calety.Customiser.CustomiserPopupButton();
-			if(buttonConfig != null) {
-				buttonConfig.m_eButtonAction = Calety.Customiser.ePopupButtonAction.GAME_LINK;
-				buttonConfig.m_strText = "TEST BUTTON";
-				buttonConfig.m_strParam = "shop";   // 	(optional)only one of the following: Shop Category SKU, Offer Pack SKU, Currency Pack SKU
-				langConfig.m_kPopupButtons.Add(buttonConfig);
-
-				buttonConfig = new Calety.Customiser.CustomiserPopupButton();
-				buttonConfig.m_eButtonAction = Calety.Customiser.ePopupButtonAction.GAME_LINK;
-				buttonConfig.m_strText = "TEST BUTTON 2";
-				buttonConfig.m_strParam = "shop";
-				langConfig.m_kPopupButtons.Add(buttonConfig);
-			}
-		}
-		fakeConfig.m_kPopupConfigByLanguage["en"] = langConfig;
-
-		OpenCustomizerPopup(fakeConfig);
+		// Only if enabled in the debug settings
+		if(!DebugSettings.CUSTOMIZER_POPUP_TEST_ENABLED) return;
+		OpenCustomizerPopup(DebugSettings.CUSTOMIZER_POPUP_TEST_CONFIG);
 		return;
 	}
 #endif
