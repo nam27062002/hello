@@ -454,6 +454,13 @@ public class UserProfile : UserPersistenceSystem
         set { m_totalReferrals = value;  }
 	}
 
+	private int m_invitesSent;
+	public int invitesSent
+	{
+		get { return m_invitesSent; }
+		set { m_invitesSent = value; }
+	}
+
 
 	// List of unlocked referral rewards (milestones) that havent been claimed yet
 	private List<OfferPackReferralReward> m_unlockedReferralRewards = new List<OfferPackReferralReward>();
@@ -675,6 +682,7 @@ public class UserProfile : UserPersistenceSystem
 		// Referrals
 		m_totalReferrals = 0;
 		m_unlockedReferralRewards.Clear();
+		m_invitesSent = 0;
 
 	}
 
@@ -1526,7 +1534,17 @@ public class UserProfile : UserPersistenceSystem
 			m_referralConfirmed = false;
         }
 
-        // Baby Dragons - Extra gem granted
+		key = "invitesSent";
+		if (_data.ContainsKey(key))
+		{
+			m_invitesSent = PersistenceUtils.SafeParse<int> (_data[key]);
+		}
+		else
+		{
+			m_invitesSent = 0;
+		}
+
+		// Baby Dragons - Extra gem granted
 		key = "babyDragonExtraGemGranted";
 		if (profile.ContainsKey(key))
 		{
@@ -1800,6 +1818,8 @@ public class UserProfile : UserPersistenceSystem
 		data.Add("referralUserId", referralUserId);
 
 		data.Add("referralConfirmed", referralConfirmed);
+
+		data.Add("invitesSent", invitesSent);
 
 		// Baby dragons - Extra gem granted
 		data.Add("babyDragonExtraGemGranted", PersistenceUtils.SafeToString(m_babyDragonExtraGemGranted));

@@ -266,14 +266,27 @@ public class ReferralManager
 	/// <param name="_link"></param>
 	public void OnShortLinkCreated(string _shortLink, CaletyDynamicLinks.shortLinkResult result)
 	{
+		switch (result) {
 
-		string title = LocalizationManager.SharedInstance.Localize("TID_REFERRAL_SHARE_TITLE");
+			case CaletyDynamicLinks.shortLinkResult.OK:
+				string title = LocalizationManager.SharedInstance.Localize("TID_REFERRAL_SHARE_TITLE");
 
-		// Open the share dialog
-		CaletyShareUtil.ShareLink(title, _shortLink);
+		        // Open the share dialog
+		        CaletyShareUtil.ShareLink(title, _shortLink);
 
-        // Notify a tracking event
-		HDTrackingManager.Instance.Notify_ReferralSendInvite(_shortLink, m_inviteOrigin);
+				// Increment counter
+				UsersManager.currentUser.invitesSent++;
+
+                // Tracking
+                HDTrackingManager.Instance.Notify_ReferralSendInvite(m_inviteOrigin);
+				break;
+
+
+			case CaletyDynamicLinks.shortLinkResult.CANCELLED:
+			case CaletyDynamicLinks.shortLinkResult.FAULTED:
+				// Show error popup in the game
+				break;
+	    }
 	}
 
 
@@ -402,12 +415,7 @@ public class ReferralManager
 				}
 
 				// Send tracking information
-
-				// TODO: find the proper linkId and reward parameters
-				string linkId = null;
-				string reward = null;
-
-				HDTrackingManager.Instance.Notify_ReferralInstall(linkId, reward, success);
+				HDTrackingManager.Instance.Notify_ReferralInstall(success, UsersManager.currentUser.referralUserId);
 			}			
 		}
 	}

@@ -713,7 +713,6 @@ public class HDTrackingManager
         Invite,
         Close,
         InviteMore,
-        TryAgain,
         Claim
     }
 
@@ -726,9 +725,9 @@ public class HDTrackingManager
         Interstitial
     }
 
-    public virtual void Notify_ReferralSendInvite(string linkId, EReferralOrigin origin) { }
+    public virtual void Notify_ReferralSendInvite(EReferralOrigin origin) { }
 
-    public virtual void Notify_ReferralInstall(string linkId, string reward, bool valid) { }
+    public virtual void Notify_ReferralInstall(bool valid, string referrerId) { }
 
     #endregion referral
 
