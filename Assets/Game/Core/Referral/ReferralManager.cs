@@ -285,6 +285,13 @@ public class ReferralManager
 			case CaletyDynamicLinks.shortLinkResult.CANCELLED:
 			case CaletyDynamicLinks.shortLinkResult.FAULTED:
 				// Show error popup in the game
+				string text = LocalizationManager.SharedInstance.Localize("TID_GEN_ERROR");
+				UIFeedbackText.CreateAndLaunch(
+                    text,
+                    new Vector2(0.5f, 0.33f),
+					PopupManager.canvas.transform as RectTransform
+                );  // Use popup's canvas
+
 				break;
 	    }
 	}
