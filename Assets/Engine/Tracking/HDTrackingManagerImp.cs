@@ -91,21 +91,28 @@ public class HDTrackingManagerImp : HDTrackingManager {
         return sizeInBytes * BYTES_TO_KB;
     }
 
+    private bool ListenersHaveBeenAdded { get; set; }
+
     public override void Init() {
         base.Init();
 
         Reset();
 
-		// We need to track all events that have to be sent right after the session is created. We need to do it here in order to make sure they will be tracked at the very beginning
-		// The session will be started later on because we need to wait for persistence to be loaded (since it may contain the trackind id required to start the session) and some
-		// events may be reported before the persistence is loaded
-		Track_StartSessionEvent();
+        // We need to track all events that have to be sent right after the session is created. We need to do it here in order to make sure they will be tracked at the very beginning
+        // The session will be started later on because we need to wait for persistence to be loaded (since it may contain the trackind id required to start the session) and some
+        // events may be reported before the persistence is loaded
+        Track_StartSessionEvent();
 
-        Messenger.AddListener<string, string, SimpleJSON.JSONNode>(MessengerEvents.PURCHASE_SUCCESSFUL, OnPurchaseSuccessful);
-        Messenger.AddListener<string>(MessengerEvents.PURCHASE_ERROR, OnPurchaseFailed);
-        Messenger.AddListener<string>(MessengerEvents.PURCHASE_FAILED, OnPurchaseFailed);
-        Messenger.AddListener<string>(MessengerEvents.PURCHASE_CANCELLED, OnPurchaseFailed);
-        Messenger.AddListener<bool>(MessengerEvents.LOGGED, OnLoggedIn);
+        if (!ListenersHaveBeenAdded)
+        {
+            Messenger.AddListener<string, string, SimpleJSON.JSONNode>(MessengerEvents.PURCHASE_SUCCESSFUL, OnPurchaseSuccessful);
+            Messenger.AddListener<string>(MessengerEvents.PURCHASE_ERROR, OnPurchaseFailed);
+            Messenger.AddListener<string>(MessengerEvents.PURCHASE_FAILED, OnPurchaseFailed);
+            Messenger.AddListener<string>(MessengerEvents.PURCHASE_CANCELLED, OnPurchaseFailed);
+            Messenger.AddListener<bool>(MessengerEvents.LOGGED, OnLoggedIn);
+
+            ListenersHaveBeenAdded = true;
+        }
     }
 
     protected override void Reset()
@@ -135,11 +142,15 @@ public class HDTrackingManagerImp : HDTrackingManager {
         FlushEventQueue();
 
         base.Destroy();
+
         Messenger.RemoveListener<string, string, SimpleJSON.JSONNode>(MessengerEvents.PURCHASE_SUCCESSFUL, OnPurchaseSuccessful);
         Messenger.RemoveListener<string>(MessengerEvents.PURCHASE_ERROR, OnPurchaseFailed);
         Messenger.RemoveListener<string>(MessengerEvents.PURCHASE_FAILED, OnPurchaseFailed);
         Messenger.RemoveListener<string>(MessengerEvents.PURCHASE_CANCELLED, OnPurchaseFailed);
         Messenger.RemoveListener<bool>(MessengerEvents.LOGGED, OnLoggedIn);
+
+        ListenersHaveBeenAdded = false;
+
         Reset();
     }
 
