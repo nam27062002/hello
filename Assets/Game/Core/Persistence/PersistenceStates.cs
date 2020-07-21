@@ -38,7 +38,8 @@ public class PersistenceStates
 		Ok,
 		ErrorLogging,
 		ErrorSyncing, // Log In successfully but local couldn't be sent to cloud
-		NeedsToReload
+		NeedsToReload,
+        NeedsToUpgradeClientVersion
 	};
 
     public enum ESyncResultDetail
