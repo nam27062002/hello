@@ -199,7 +199,7 @@ public class DailyRewardsSequence {
 		Dictionary<int, List<DefinitionNode>> rewardDefsByDay = new Dictionary<int, List<DefinitionNode>>();
 		for(int i = 0; i < rewardDefs.Count; ++i) {
 			// Skip if reward is not enabled
-			if(!rewardDefs[i].GetAsBool("enabled", true)) return;
+			if(!rewardDefs[i].GetAsBool("enabled", true)) break;
 
 			// Put the reward definition in the proper day slot
 			int day = rewardDefs[i].GetAsInt("day");
