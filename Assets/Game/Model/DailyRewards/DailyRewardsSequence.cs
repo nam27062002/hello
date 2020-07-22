@@ -198,6 +198,10 @@ public class DailyRewardsSequence {
 		// As of 2.8, multiple rewards can be defined for the same day, using them as replacement if the original reward is already owned (dragons, pets, skins)
 		Dictionary<int, List<DefinitionNode>> rewardDefsByDay = new Dictionary<int, List<DefinitionNode>>();
 		for(int i = 0; i < rewardDefs.Count; ++i) {
+			// Skip if reward is not enabled
+			if(!rewardDefs[i].GetAsBool("enabled", true)) continue;
+
+			// Put the reward definition in the proper day slot
 			int day = rewardDefs[i].GetAsInt("day");
 			if(!rewardDefsByDay.ContainsKey(day)) {
 				rewardDefsByDay.Add(day, new List<DefinitionNode>());
@@ -205,11 +209,14 @@ public class DailyRewardsSequence {
 			rewardDefsByDay[day].Add(rewardDefs[i]);
 		}
 
-		// Generate rewards for the next SEQUENCE_SIZE days (totalRewardIdx to totalRewardIdx + SEQUENCE_SIZE)
+		// Find the initial sequence day closest to the current reward idx
+		int initialSequenceDay = m_totalRewardIdx - (m_totalRewardIdx % SEQUENCE_SIZE);
+
+		// Generate rewards for the next SEQUENCE_SIZE days (initialSequenceDay to initialSequenceDay + SEQUENCE_SIZE)
 		for(int i = 0; i < SEQUENCE_SIZE; ++i) {
 			// Find out closest reward corresponding to the current total reward index for this day
 			// With this, day 14 will use def for day 14, but day 13 will reuse the def for day 6 instead :)
-			int targetDay = m_totalRewardIdx + i + 1;
+			int targetDay = initialSequenceDay + i + 1;
 			while(targetDay >= 0 && !rewardDefsByDay.ContainsKey(targetDay)) {
 				targetDay -= SEQUENCE_SIZE;
 			}
@@ -329,6 +336,28 @@ public class DailyRewardsSequence {
 
         // Done!
         return data;
+	}
+
+	//------------------------------------------------------------------------//
+	// CALLBACKS															  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// This method is called when rules have changed (customizer applied).
+	/// </summary>
+	public void OnRulesUpdated() {
+		// Nothing to do if rewards are not valid
+		if(!ValidateRewards()) return;
+
+		// Check current rewards sequence
+		// If customization Id for any of the rewards definition has changed, re-generate sequence.
+		for(int i = 0; i < m_rewards.Length; ++i) {
+			// Has the customization Id for this reward changed?
+			if(!m_rewards[i].CheckCustomizationIDs()) {
+				// Yes!! Re-generate sequence and break loop
+				Generate();
+				break;
+			}
+		}
 	}
 
 	//------------------------------------------------------------------------//
