@@ -39,7 +39,6 @@ public class ShopReferralPill : ShopMonoRewardPill {
 	[SerializeField] private Button m_buttonInvite = null;
 	[SerializeField] private Button m_buttonClaim = null;
 
-    [SerializeField] private Button m_pillHitArea = null;
 
 
     //------------------------------------------------------------------------//
