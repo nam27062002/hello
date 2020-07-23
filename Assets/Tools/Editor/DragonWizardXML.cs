@@ -72,31 +72,43 @@ public class DragonWizardXML : EditorWindow
 
     void ProcessXMLs()
     {
-        ProcessXML(DRAGON_DEFINITIONS_PATH, sku);
-        ProcessXML(DRAGON_PROGRESSION_DEFINITIONS_PATH, sku + "_progression", new KeyValuePair<string, string>("dragonSku", sku));
-        for (int i = 0; i < skin.Count; i++)
+        bool result = ProcessXML(DRAGON_DEFINITIONS_PATH, sku);
+        if (result)
         {
-            ProcessXML(DISGUISES_DEFINITIONS_PATH, skin[i], new KeyValuePair<string, string>("dragonSku", sku));
+            ProcessXML(DRAGON_PROGRESSION_DEFINITIONS_PATH, sku + "_progression", new KeyValuePair<string, string>("dragonSku", sku));
+            for (int i = 0; i < skin.Count; i++)
+            {
+                ProcessXML(DISGUISES_DEFINITIONS_PATH, skin[i], new KeyValuePair<string, string>("dragonSku", sku));
+            }
+
+            ProcessXML(DAILY_REWARDS_DRAGON_MODIFIERS_DEFINITIONS_PATH, sku + "_reward", new KeyValuePair<string, string>("dragonSku", sku));
+            ProcessXML(MISSION_DRAGON_MODIFIERS_DEFINITIONS_PATH, sku + "_mission", new KeyValuePair<string, string>("dragonSku", sku));
+
+            EditorUtility.DisplayDialog("Process completed", "Dragon " + sku + " added to XML files", "Close");
         }
-
-        ProcessXML(DAILY_REWARDS_DRAGON_MODIFIERS_DEFINITIONS_PATH, sku + "_reward", new KeyValuePair<string, string>("dragonSku", sku));
-        ProcessXML(MISSION_DRAGON_MODIFIERS_DEFINITIONS_PATH, sku + "_mission", new KeyValuePair<string, string>("dragonSku", sku));
-
-        EditorUtility.DisplayDialog("Process completed", "Dragon " + sku + " added to XML files", "Close");
-        Debug.Log("Process completed");
+        else
+        {
+            EditorUtility.DisplayDialog("Process failed", "Dragon " + sku + " was already added to the XML files", "Close");
+        }
     }
 
-    void ProcessXML(string xmlPath, string newSku, params KeyValuePair<string, string>[] extraAttributes)
+    bool ProcessXML(string xmlPath, string newSku, params KeyValuePair<string, string>[] extraAttributes)
     {
-        Debug.Log("Processing " + xmlPath + " ...");
-
         // Load XML file
         XmlDocument doc = new XmlDocument();
         doc.Load(xmlPath);
-
+        
         // Select XML node
         XmlNodeList nodeList = doc.SelectNodes("Definitions");
         XmlNode lastChildNode = nodeList[nodeList.Count - 1].LastChild;
+
+        // Check if the new sku already exists
+        XmlNode duplicatedElement = doc.SelectSingleNode("/Definitions/Definition[@sku='" + newSku + "']");
+        if (duplicatedElement != null)
+        {
+            Debug.LogError("Duplicated element " + newSku + " found on: " + xmlPath);
+            return false;
+        }
 
         // Create new XML element
         XmlElement xmlElement = doc.CreateElement("Definition");
@@ -134,5 +146,7 @@ public class DragonWizardXML : EditorWindow
         {
             doc.Save(writer);
         }
+
+        return true;
     }
 }
