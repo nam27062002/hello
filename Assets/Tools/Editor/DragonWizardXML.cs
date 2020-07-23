@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using System.Xml;
+using System.Text;
 
 public class DragonWizardXML : EditorWindow
 {
@@ -19,7 +20,16 @@ public class DragonWizardXML : EditorWindow
     const string MISSION_DRAGON_MODIFIERS_DEFINITIONS_PATH = BASE_DEFINITIONS_PATH + "missionDragonModifiersDefinitions.xml";
 
     string sku;
-    readonly List<string> skin = new List<string>() { string.Empty };
+    readonly List<string> skin = new List<string>();
+
+    public void Init(string newSku)
+    {
+        if (string.IsNullOrEmpty(newSku))
+            newSku = "dragon_sku";
+
+        sku = newSku;
+        skin.Add(newSku + "_0");
+    }
 
     void OnGUI()
     {
@@ -46,7 +56,7 @@ public class DragonWizardXML : EditorWindow
         // Add new skin
         if (GUILayout.Button("+ Add new skin", GUILayout.Height(20)))
         {
-            skin.Add(string.Empty);
+            skin.Add(sku + "_" + skin.Count);
         }
 
         // Add dragon to XMLs
@@ -72,11 +82,14 @@ public class DragonWizardXML : EditorWindow
         ProcessXML(DAILY_REWARDS_DRAGON_MODIFIERS_DEFINITIONS_PATH, sku + "_reward", new KeyValuePair<string, string>("dragonSku", sku));
         ProcessXML(MISSION_DRAGON_MODIFIERS_DEFINITIONS_PATH, sku + "_mission", new KeyValuePair<string, string>("dragonSku", sku));
 
-        EditorUtility.DisplayDialog("Process finished", "Dragon " + sku + " added to XML files", "Close");
+        EditorUtility.DisplayDialog("Process completed", "Dragon " + sku + " added to XML files", "Close");
+        Debug.Log("Process completed");
     }
 
     void ProcessXML(string xmlPath, string newSku, params KeyValuePair<string, string>[] extraAttributes)
     {
+        Debug.Log("Processing " + xmlPath + " ...");
+
         // Load XML file
         XmlDocument doc = new XmlDocument();
         doc.Load(xmlPath);
@@ -107,6 +120,19 @@ public class DragonWizardXML : EditorWindow
 
         // Append new element and save
         doc.DocumentElement.AppendChild(xmlElement);
-        doc.Save(xmlPath);
+
+        // Create XML writer settings
+        XmlWriterSettings settings = new XmlWriterSettings
+        {
+            Indent = true,
+            IndentChars = "\t",
+            OmitXmlDeclaration = true
+        };
+
+        // Save the changes to disk using the XML writer settings
+        using (XmlWriter writer = XmlWriter.Create(xmlPath, settings))
+        {
+            doc.Save(writer);
+        }
     }
 }
