@@ -151,14 +151,14 @@ public class PopupShopReferral : MonoBehaviour
 
 
         // Friends progresion bar
-        for (int i = 0; i < maxFriends + 1; i++)
+        for (int i = 0; i < maxFriends ; i++)
         {
             GameObject friendIcon;
 
             // Create a friend icon
-            if (i <= friendsCount)
+            if (i < friendsCount)
             {
-                if (IsMilestone(i))
+                if (IsMilestone(i + 1))
                 {
                     friendIcon = Instantiate(m_friendIconHighlighted);
                 }
@@ -208,8 +208,8 @@ public class PopupShopReferral : MonoBehaviour
             rewardPreview.GetComponent<OfferItemSlotReferral>().InitFromItem(reward, state);
 
             // Calculate the reward preview horizontal position, so it matches the friend icon in the progression bar
-            float unitWidth = (1f / (maxFriends + 1));
-            float anchorX = unitWidth * reward.friendsRequired + unitWidth * .5f; // Add .5f to center the reward
+            float unitWidth = (1f / maxFriends);
+            float anchorX = unitWidth * (reward.friendsRequired -1) + unitWidth * .5f; // Add .5f to center the reward
 
             RectTransform rect = rewardPreview.GetComponent<RectTransform>();
             rect.anchorMin = new Vector2(anchorX, rect.anchorMin.y);
