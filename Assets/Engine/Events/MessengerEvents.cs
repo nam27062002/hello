@@ -166,8 +166,7 @@ public enum MessengerEvents {
 	MENU_DRAGON_PET_CHANGE,		 // params: string _dragonSku, int _slotIdx, string _newPetSku
 
 	MENU_SCREEN_TRANSITION_REQUESTED,	// params: MenuScreen _from, MenuScreen _to
-	MENU_SCREEN_TRANSITION_START,       // params: MenuScreen _from, MenuScreen _to
-	MENU_SCREEN_TRANSITION_EQUATOR,       // params: MenuScreen _from, MenuScreen _to
+	MENU_SCREEN_TRANSITION_START,		// params: MenuScreen _from, MenuScreen _to
 	MENU_SCREEN_TRANSITION_END,			// params: MenuScreen _from, MenuScreen _to
 	MENU_CAMERA_TRANSITION_START,		// params: MenuScreen _from, MenuScreen _to, bool _usingPath
 

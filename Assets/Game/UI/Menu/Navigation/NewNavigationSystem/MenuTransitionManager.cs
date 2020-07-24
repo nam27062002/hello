@@ -257,10 +257,6 @@ public class MenuTransitionManager : MonoBehaviour {
 				// Perform camera and UI transitions in the middle of the clouds animation
 				UbiBCN.CoroutineManager.DelayedCall(() =>
 				{
-					// When using overlay, we broadcast this event when the clouds have covered the screen.
-					// This way we avoid problems with menuShowConditional elements hiding in plain sight. [HDK-8292]
-					Messenger.Broadcast<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_EQUATOR, m_prevScreen, m_currentScreen);
-
 					// UI
 					PerformUITransition(fromScreenData, toScreenData, duration);
 					// Camera
@@ -270,20 +266,11 @@ public class MenuTransitionManager : MonoBehaviour {
 			}
             else
             {
-
-
 				// UI
 				PerformUITransition(fromScreenData, toScreenData, duration);
 
 				// Camera
 				PerformCameraTransition(fromScreenData, toScreenData, t, duration, ease);
-
-				
-				UbiBCN.CoroutineManager.DelayedCall(() =>
-				{
-					// Perform mid-transition operations (yes, menuShowConditional, we are talking about you)
-					Messenger.Broadcast<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_EQUATOR, m_prevScreen, m_currentScreen);
-				}, duration / 2, true);
 
 			}
 
@@ -297,9 +284,6 @@ public class MenuTransitionManager : MonoBehaviour {
 			// Adjust transition safety duration
 			safetyPeriodDuration = Mathf.Max(safetyPeriodDuration, duration);
 		} else {
-
-
-
 			// UI
 			PerformUITransition(fromScreenData, toScreenData);
 
@@ -308,7 +292,6 @@ public class MenuTransitionManager : MonoBehaviour {
 
 			// No animation, instantly notify game the screen transition has been completed
 			m_isTransitioning = false;
-            Messenger.Broadcast<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_EQUATOR, m_prevScreen, m_currentScreen);
 			Messenger.Broadcast<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_END, m_prevScreen, m_currentScreen);
 		}
 
