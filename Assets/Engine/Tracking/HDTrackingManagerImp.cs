@@ -704,7 +704,8 @@ public class HDTrackingManagerImp : HDTrackingManager {
     }
 
     public override void Notify_RoundEnd(int dragonXp, int deltaXp, int dragonProgression, int timePlayed, int score, int chestsFound, int eggFound,
-        float highestMultiplier, float highestBaseMultiplier, int furyRushNb, int superFireRushNb, int hcRevive, int adRevive, int scGained, int hcGained, float boostTime, int mapUsage) {
+        float highestMultiplier, float highestBaseMultiplier, int furyRushNb, int superFireRushNb, int hcRevive, int adRevive, int scGained,
+        int hcGained, float boostTime, int mapUsage, string runType) {
         Notify_CheckAndProcessEvent(TRACK_EVENT_TUTORIAL_COMPLETION);
         Notify_CheckAndProcessEvent(TRACK_EVENT_FIRST_10_RUNS_COMPLETED);
 
@@ -721,7 +722,8 @@ public class HDTrackingManagerImp : HDTrackingManager {
 
         // Last deathType, deathSource and deathCoordinates are used since this information is provided when Notify_RunEnd() is called
         Track_RoundEnd( Session_RoundId, dragonXp, deltaXp, dragonProgression, timePlayed, score, Session_LastDeathType, Session_LastDeathSource, Session_LastDeathCoordinates,
-            chestsFound, eggFound, highestMultiplier, highestBaseMultiplier, furyRushNb, superFireRushNb, hcRevive, adRevive, scGained, hcGained, (int)(boostTime * 1000.0f), mapUsage);
+            chestsFound, eggFound, highestMultiplier, highestBaseMultiplier, furyRushNb, superFireRushNb, hcRevive, adRevive, scGained, hcGained, (int)(boostTime * 1000.0f),
+            mapUsage, runType);
 
         Session_NotifyRoundEnd();
     }
@@ -1962,7 +1964,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
     public void Track_RoundEnd( string roundId, int dragonXp, int deltaXp, int dragonProgression, int timePlayed, int score,
         string deathType, string deathSource, string deathCoordinates, int chestsFound, int eggFound,
         float highestMultiplier, float highestBaseMultiplier, int furyRushNb, int superFireRushNb, int hcRevive, int adRevive,
-        int scGained, int hcGained, int boostTimeMs, int mapUsage) {
+        int scGained, int hcGained, int boostTimeMs, int mapUsage, string runType) {
         
         Log("Track_RoundEnd roundId = " + roundId +" dragonXp = " + dragonXp + " deltaXp = " + deltaXp + " dragonProgression = " + dragonProgression +
             " timePlayed = " + timePlayed + " score = " + score +
@@ -1971,7 +1973,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
             " highestMultiplier = " + highestMultiplier + " highestBaseMultiplier = " + highestBaseMultiplier +
             " furyRushNb = " + furyRushNb + " superFireRushNb = " + superFireRushNb + " hcRevive = " + hcRevive + " adRevive = " + adRevive +
             " scGained = " + scGained + " hcGained = " + hcGained +
-            " boostTimeMs = " + boostTimeMs + " mapUsage = " + mapUsage
+            " boostTimeMs = " + boostTimeMs + " mapUsage = " + mapUsage + " runType = " + runType
             );        
 
         HDTrackingEvent e = new HDTrackingEvent("custom.gameplay.end");
@@ -2009,6 +2011,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
             Track_AddParamEggsOpened(e);
 			Track_AddParamBatteryLevel(e);
 			Track_AddParamControlChoice(e);
+            e.data.Add(TRACK_PARAM_RUN_TYPE, runType);
         }
         m_eventQueue.Enqueue(e);
     }
@@ -2944,6 +2947,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private const string TRACK_PARAM_REWARD_TIER = "rewardTier";
     private const string TRACK_PARAM_REWARD_TYPE = "rewardType";
     private const string TRACK_PARAM_ROUND_ID = "roundid";
+    private const string TRACK_PARAM_RUN_TYPE = "runType";
     private const string TRACK_PARAM_RUNS_COMPLETED = "runsCompleted";
     private const string TRACK_PARAM_SC_EARNED = "scEarned";
     private const string TRACK_PARAM_SCORE = "score";

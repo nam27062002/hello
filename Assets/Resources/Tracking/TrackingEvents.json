@@ -166,7 +166,8 @@
         { "totalEggFound": { "Status": "OK" } },
         { "totalEggOpened": { "Status": "OK" } },
         { "batteryLevel": { "Status": "OK" } },
-        { "controlChoice": { "Status": "OK" } }
+        { "controlChoice": { "Status": "OK" } },
+        { "runType": { "Status": "OK" } }
       ],
       "APIs": [
         "dna",
@@ -1853,6 +1854,10 @@
     },
     "optIn": {
        "Type": "INT:4",
+       "Values": []
+    },
+    "runType": {
+       "Type": "STRING:16",
        "Values": []
     }
   }
