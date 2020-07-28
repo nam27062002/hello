@@ -51,7 +51,7 @@ public class ABTest {
 				return GameSettings.SHOWN_UNLOCK_PROGRESSION_TEXT;
 				
 			case Test.UNLOCKED_SKIN_POWER_AS_TOOLTIP:
-				return GameSettings.UNLOCKED_SKIN_POWER_AS_TOOLTIP;
+				return GameSettings.UNLOCKED_SKIN_POWER_AS_INFO_BOX;
 				
 			case Test.UNLOCKED_SKIN_TAP_TO_CONTINUE_AS_BUTTON:
 				return GameSettings.TAP_TO_CONTINUE_IN_UNLOCKED_SKIN_AS_BUTTON;

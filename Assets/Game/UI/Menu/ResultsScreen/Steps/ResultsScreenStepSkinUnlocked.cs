@@ -33,6 +33,7 @@ public class ResultsScreenStepSkinUnlocked : ResultsScreenSequenceStep {
 	[Space]
 	[SerializeField] private TextMeshProUGUI m_skinNameText = null;
 	[SerializeField] private PowerIcon m_powerIcon = null;
+	[SerializeField] private ShowHideAnimator m_buttonsGroup = null;
 	[SerializeField] private MultiCurrencyButton m_purchaseButton = null;
 	[SerializeField] private ShowHideAnimator m_shareButtonGroup = null;
 
@@ -143,10 +144,10 @@ public class ResultsScreenStepSkinUnlocked : ResultsScreenSequenceStep {
 		DefinitionNode powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, powerSku);
 
 		// Choose the proper power layout depending on the AB test
-		m_skinPowerWithTooltip.gameObject.SetActive(GameSettings.UNLOCKED_SKIN_POWER_AS_TOOLTIP);
-		m_skinPowerWithoutTooltip.gameObject.SetActive(!GameSettings.UNLOCKED_SKIN_POWER_AS_TOOLTIP);
+		m_skinPowerWithTooltip.gameObject.SetActive(!GameSettings.UNLOCKED_SKIN_POWER_AS_INFO_BOX);
+		m_skinPowerWithoutTooltip.gameObject.SetActive(GameSettings.UNLOCKED_SKIN_POWER_AS_INFO_BOX);
 
-		if (GameSettings.UNLOCKED_SKIN_POWER_AS_TOOLTIP)
+		if (! GameSettings.UNLOCKED_SKIN_POWER_AS_INFO_BOX)
 		{
             m_skinPowerWithTooltip.InitFromDefinition(powerDef, def, false);
 		}
@@ -165,8 +166,9 @@ public class ResultsScreenStepSkinUnlocked : ResultsScreenSequenceStep {
 			m_purchaseButton.SetAmount(priceSC, UserProfile.Currency.SOFT);
 		}
 
-		// Start with purchase button hidden
-		m_purchaseButton.GetComponent<ShowHideAnimator>().ForceHide(false);
+
+        // Show purchase buttons
+		m_buttonsGroup.ForceShow();
 
 		// Start with share button hidden
 		m_shareButtonGroup.ForceHide(false);
@@ -235,7 +237,7 @@ public class ResultsScreenStepSkinUnlocked : ResultsScreenSequenceStep {
 		m_controller.scene.LaunchConfettiFX(true);
 
 		// Hide the button to prevent spamming
-		m_purchaseButton.GetComponent<ShowHideAnimator>().ForceHide();
+		m_buttonsGroup.ForceHide();
 
 		// Show share button
 		m_shareButtonGroup.ForceShow();
