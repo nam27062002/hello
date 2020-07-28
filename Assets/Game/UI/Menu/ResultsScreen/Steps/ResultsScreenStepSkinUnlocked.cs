@@ -36,6 +36,11 @@ public class ResultsScreenStepSkinUnlocked : ResultsScreenSequenceStep {
 	[SerializeField] private MultiCurrencyButton m_purchaseButton = null;
 	[SerializeField] private ShowHideAnimator m_shareButtonGroup = null;
 
+	// Test AB
+	[SerializeField] private ResultsScreenSkinPower m_skinPowerWithTooltip = null;
+	[SerializeField] private ResultsScreenSkinPower m_skinPowerWithoutTooltip = null;
+	
+
 	// Internal
 	private List<DefinitionNode> m_skinsToProcess = new List<DefinitionNode>();
 	private int m_processedSkins = 0;
@@ -136,7 +141,20 @@ public class ResultsScreenStepSkinUnlocked : ResultsScreenSequenceStep {
 		// Power
 		string powerSku = def.GetAsString("powerup");
 		DefinitionNode powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, powerSku);
-		m_powerIcon.InitFromDefinition(powerDef, def, false);	// [AOC] Powers are not locked anymore
+
+		// Choose the proper power layout depending on the AB test
+		m_skinPowerWithTooltip.gameObject.SetActive(GameSettings.UNLOCKED_SKIN_POWER_AS_TOOLTIP);
+		m_skinPowerWithoutTooltip.gameObject.SetActive(!GameSettings.UNLOCKED_SKIN_POWER_AS_TOOLTIP);
+
+		if (GameSettings.UNLOCKED_SKIN_POWER_AS_TOOLTIP)
+		{
+            m_skinPowerWithTooltip.InitFromDefinition(powerDef, def, false);
+		}
+        else
+        {
+			m_skinPowerWithoutTooltip.InitFromDefinition(powerDef, def, false);
+		}
+		    
 
 		// Price
 		float priceSC = def.GetAsFloat("priceSC");

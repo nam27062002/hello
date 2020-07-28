@@ -154,6 +154,17 @@ public class GameSettings : SingletonScriptableObject<GameSettings> {
 	private bool m_mapAsButton = false;
 	public static bool MAP_AS_BUTTON { get { return instance.m_mapAsButton; } }
 
+    // If false, the skin power description in the unlocked skin screen, will be always visible. If true, it will
+    // behave as a clickable tooltip.
+	private bool m_unlockedSkinPowerAsTooltip = true;
+    public static bool UNLOCKED_SKIN_POWER_AS_TOOLTIP { get { return instance.m_unlockedSkinPowerAsTooltip; } }
+
+	// If true, the "tap to continue" in the unlocked skin screen will be hidden, and instead, we will show a button
+    // with "No, thanks" besides the buy button.
+	private bool m_tapToContinueInUnlockedSkinAsButton = false;
+	public static bool TAP_TO_CONTINUE_IN_UNLOCKED_SKIN_AS_BUTTON { get { return instance.m_tapToContinueInUnlockedSkinAsButton; } }
+
+
 	// Social
 	[Separator("Social")]
 	[SerializeField] private ShareData m_shareDataIOS = new ShareData();
@@ -321,6 +332,8 @@ public class GameSettings : SingletonScriptableObject<GameSettings> {
 		instance.m_showNextDragonInXpBar = def.GetAsBool("showNextDragonInXpBar", instance.m_showNextDragonInXpBar);
 		instance.m_showUnlockProgressionText = def.GetAsBool("showUnlockProgressionText", instance.m_showUnlockProgressionText);
 		instance.m_mapAsButton = def.GetAsBool("mapAsButton", instance.m_mapAsButton);
+		instance.m_unlockedSkinPowerAsTooltip = def.GetAsBool("unlockedSkinPowerAsTooltip", instance.m_unlockedSkinPowerAsTooltip);
+		instance.m_tapToContinueInUnlockedSkinAsButton = def.GetAsBool("tapToContinueInUnlockedSkinAsButton", instance.m_tapToContinueInUnlockedSkinAsButton);
 	}
 
 	/// <summary>
