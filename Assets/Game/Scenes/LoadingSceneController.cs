@@ -242,7 +242,7 @@ public class LoadingSceneController : SceneController {
         CaletySettings settingsInstance = Resources.Load<CaletySettings>("CaletySettings");
         if (settingsInstance.m_bUseDynamicLinks)
         {
-            CaletyDynamicLinks.setDynamicLinksDomain(settingsInstance.m_strDynamicLinksDomain);
+            CaletyDynamicLinks.setDynamicLinksParameters(settingsInstance.m_strDynamicLinksDomain, settingsInstance.m_strDynamicLinksBaseLink);
         }
 
         // Call parent
