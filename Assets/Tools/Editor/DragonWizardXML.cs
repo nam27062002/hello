@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using System.Xml;
-using System.Text;
 
 public class DragonWizardXML : EditorWindow
 {
@@ -72,17 +71,19 @@ public class DragonWizardXML : EditorWindow
 
     void ProcessXMLs()
     {
-        bool result = ProcessXML(DRAGON_DEFINITIONS_PATH, sku);
+        bool result = ProcessXML(DRAGON_DEFINITIONS_PATH, sku, new KeyValuePair<string, string>("trackingSku", sku));
         if (result)
         {
             ProcessXML(DRAGON_PROGRESSION_DEFINITIONS_PATH, sku + "_progression", new KeyValuePair<string, string>("dragonSku", sku));
             for (int i = 0; i < skin.Count; i++)
             {
-                ProcessXML(DISGUISES_DEFINITIONS_PATH, skin[i], new KeyValuePair<string, string>("dragonSku", sku));
+                ProcessXML(DISGUISES_DEFINITIONS_PATH, skin[i], new KeyValuePair<string, string>("dragonSku", sku), new KeyValuePair<string, string>("unlockLevel", "0"), new KeyValuePair<string, string>("trackingSku", sku));
             }
 
             ProcessXML(DAILY_REWARDS_DRAGON_MODIFIERS_DEFINITIONS_PATH, sku + "_reward", new KeyValuePair<string, string>("dragonSku", sku));
             ProcessXML(MISSION_DRAGON_MODIFIERS_DEFINITIONS_PATH, sku + "_mission", new KeyValuePair<string, string>("dragonSku", sku));
+
+            AssetDatabase.Refresh();
 
             EditorUtility.DisplayDialog("Process completed", "Dragon " + sku + " added to XML files", "Close");
         }
