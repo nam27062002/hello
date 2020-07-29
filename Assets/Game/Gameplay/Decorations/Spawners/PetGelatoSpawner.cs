@@ -264,8 +264,9 @@ public class PetGelatoSpawner : AbstractSpawner, IBroadcastListener  {
             // Unregisters the entity            
             UnregisterFromEntityManager(_entity);
 
-            // Returns the entity to the pool
-			ReturnEntityToPool(m_poolHandlers[tierIndex], _entity.gameObject);
+			// Returns the entity to the pool
+			if (_entity != null)
+			    ReturnEntityToPool(m_poolHandlers[tierIndex], _entity.gameObject);
 
 			OnRemoveEntity(_entity, index, _killedByPlayer);
 

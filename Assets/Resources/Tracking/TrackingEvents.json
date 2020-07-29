@@ -166,7 +166,8 @@
         { "totalEggFound": { "Status": "OK" } },
         { "totalEggOpened": { "Status": "OK" } },
         { "batteryLevel": { "Status": "OK" } },
-        { "controlChoice": { "Status": "OK" } }
+        { "controlChoice": { "Status": "OK" } },
+        { "runType": { "Status": "OK" } }
       ],
       "APIs": [
         "dna",
@@ -1848,11 +1849,15 @@
        "Values": []
     },
     "starterPackShown": {
-       "Type": "BOOL",
+       "Type": "INT:4",
        "Values": []
     },
     "optIn": {
-       "Type": "BOOL",
+       "Type": "INT:4",
+       "Values": []
+    },
+    "runType": {
+       "Type": "STRING:16",
        "Values": []
     }
   }

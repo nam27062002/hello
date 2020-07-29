@@ -257,7 +257,14 @@ namespace InControl
 
 		internal static void UpdateInternal()
 		{
+            // Make sure setup is completed
+            if (!IsSetup)
+            {
+				SetupInternal();
+            }
+
 			AssertIsSetup();
+
 			if (OnSetup != null)
 			{
 				OnSetup.Invoke();
