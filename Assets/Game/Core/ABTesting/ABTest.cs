@@ -28,8 +28,8 @@ public class ABTest {
 		MAP_AS_A_BUTTON,
 		SHOW_NEXT_DRAGON_IN_XP_BAR,
 		SHOW_UNLOCK_PROGRESSION_TEXT,
-		UNLOCKED_SKIN_POWER_AS_TOOLTIP,
-        UNLOCKED_SKIN_TAP_TO_CONTINUE_AS_BUTTON
+		UNLOCKED_SKIN_POWER_AS_INFO_BOX, // Show an info box instead of a power icon with tooltip
+        UNLOCKED_SKIN_SHOW_CONTINUE_BUTTON // Show a continue button next to the purchase button
 	}
 
 	//------------------------------------------------------------------------//
@@ -50,11 +50,11 @@ public class ABTest {
 			case Test.SHOW_UNLOCK_PROGRESSION_TEXT:
 				return GameSettings.SHOWN_UNLOCK_PROGRESSION_TEXT;
 				
-			case Test.UNLOCKED_SKIN_POWER_AS_TOOLTIP:
+			case Test.UNLOCKED_SKIN_POWER_AS_INFO_BOX:
 				return GameSettings.UNLOCKED_SKIN_POWER_AS_INFO_BOX;
 				
-			case Test.UNLOCKED_SKIN_TAP_TO_CONTINUE_AS_BUTTON:
-				return GameSettings.TAP_TO_CONTINUE_IN_UNLOCKED_SKIN_AS_BUTTON;
+			case Test.UNLOCKED_SKIN_SHOW_CONTINUE_BUTTON:
+				return GameSettings.SHOW_CONTINUE_BUTTON_IN_UNLOCKED_SKIN;
 
         }
 

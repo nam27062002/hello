@@ -161,8 +161,8 @@ public class GameSettings : SingletonScriptableObject<GameSettings> {
 
 	// If true, the "tap to continue" in the unlocked skin screen will be hidden, and instead, we will show a button
     // with "No, thanks" besides the buy button.
-	private bool m_tapToContinueInUnlockedSkinAsButton = false;
-	public static bool TAP_TO_CONTINUE_IN_UNLOCKED_SKIN_AS_BUTTON { get { return instance.m_tapToContinueInUnlockedSkinAsButton; } }
+	private bool m_showContinueButtonInUnlockedSkin = false;
+	public static bool SHOW_CONTINUE_BUTTON_IN_UNLOCKED_SKIN { get { return instance.m_showContinueButtonInUnlockedSkin; } }
 
 
 	// Social
@@ -333,7 +333,7 @@ public class GameSettings : SingletonScriptableObject<GameSettings> {
 		instance.m_showUnlockProgressionText = def.GetAsBool("showUnlockProgressionText", instance.m_showUnlockProgressionText);
 		instance.m_mapAsButton = def.GetAsBool("mapAsButton", instance.m_mapAsButton);
 		instance.m_unlockedSkinPowerAsInfoBox = def.GetAsBool("unlockedSkinPowerAsInfoBox", instance.m_unlockedSkinPowerAsInfoBox);
-		instance.m_tapToContinueInUnlockedSkinAsButton = def.GetAsBool("tapToContinueInUnlockedSkinAsButton", instance.m_tapToContinueInUnlockedSkinAsButton);
+		instance.m_showContinueButtonInUnlockedSkin = def.GetAsBool("showContinueButtonInUnlockedSkin", instance.m_showContinueButtonInUnlockedSkin);
 	}
 
 	/// <summary>
