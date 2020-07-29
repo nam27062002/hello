@@ -79,6 +79,8 @@ public class PersistenceFacade : IBroadcastListener
         Config.CloudDriver.Update();
         Sync_Update();
 
+        // Implicit merge popup is not allowed to prompt in the first loading scene because this popup lets the user restart the game and
+        // restarting in the first loading sceen  might make the game crash
         if (m_popupRequest != null && !m_popupRequest.IsOpen && GameSceneManager.currentScene != LoadingSceneController.NAME)        
         {            
             m_popupRequest.Open();
