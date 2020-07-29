@@ -2141,7 +2141,7 @@ public class UserProfile : UserPersistenceSystem
 	}
     
     public void OnRulesUpdated(){
-        // Because We cach dragon's price on a variable we need to refresh the value
+        // Because We cache dragon's price on a variable we need to refresh the value
         foreach(KeyValuePair<string, IDragonData> pair in m_dragonsBySku) {
             pair.Value.RefreshPrice();
             pair.Value.RefreshShadowRevealUnlock();
@@ -2150,6 +2150,11 @@ public class UserProfile : UserPersistenceSystem
 				(pair.Value as DragonDataClassic).RefreshProgression();
 			}
         }
+
+		// Propagate to daily rewards sequence
+		if(m_dailyRewards != null) {
+			m_dailyRewards.OnRulesUpdated();
+		}
     }
 
 
