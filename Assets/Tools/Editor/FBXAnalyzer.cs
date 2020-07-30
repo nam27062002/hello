@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class FBXAnalyzer : EditorWindow
 {
-    [MenuItem("Hungry Dragon/Tools/FBX Analyzer...", false, -150)]
+    [MenuItem("Hungry Dragon/Tools/Gameplay/FBX Analyzer...", false, -150)]
     static void Init()
     {
         EditorUtility.DisplayProgressBar("FBX analyzer", "Scanning FBXs...", 0.0f);

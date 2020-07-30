@@ -28,7 +28,7 @@ public class DragonWizard : EditorWindow
 	GUIStyle previewStyle = new GUIStyle();
 
 	// Menu
-	[MenuItem("Hungry Dragon/Tools/Dragon Wizard...", false, -150)]
+	[MenuItem("Hungry Dragon/Tools/Gameplay/Dragon Wizard...", false, -150)]
 	static void Init()
 	{
 		// Prepare window docked next to Inspector tab
