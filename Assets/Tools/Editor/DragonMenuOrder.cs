@@ -18,11 +18,13 @@ public class DragonMenuOrder : EditorWindow
     Vector2 scroll;
     MenuDragonSlot[] slots;
     GameObject prefab;
+    int normalDragonsCount;
 
     [Serializable]
     public class MenuDragons
     {
         public List<string> sku = new List<string>();
+        public List<bool> isSpecialDragon = new List<bool>();
     }
 
     [SerializeField]
@@ -64,12 +66,14 @@ public class DragonMenuOrder : EditorWindow
         {
             MenuDragonLoader menuDragonLoader = slots[i].transform.GetChild(0).GetComponent<MenuDragonLoader>();
             dragons.sku.Add(menuDragonLoader.dragonSku);
+            dragons.isSpecialDragon.Add(i >= normalDragonsCount);
         }
     }
 
     void OnEnable()
     {
         // Prepare dragons sku
+        normalDragonsCount = GetNormalDragonsCount();
         LoadMenuDragons();
 
         // Prepare reorderable list
@@ -84,18 +88,50 @@ public class DragonMenuOrder : EditorWindow
 
         // Subscribe to reorderable list callbacks
         list.drawHeaderCallback += OnDrawHeaderCallback;
+        list.drawElementCallback += OnDrawElementCallback;
+        list.onReorderCallbackWithDetails += OnReorderCallbackWithDetails;
+    }
+
+    void OnReorderCallbackWithDetails(ReorderableList list, int oldIndex, int newIndex)
+    {
+        if (oldIndex >= normalDragonsCount && newIndex < normalDragonsCount)
+        {
+            LoadMenuDragons();
+            EditorUtility.DisplayDialog("Error", "Cannot move a dragon from special to normal.\nAborting operation: reverting all changes", "Close");
+            return;
+        }
+
+        if (oldIndex < normalDragonsCount && newIndex >= normalDragonsCount)
+        {
+            LoadMenuDragons();
+            EditorUtility.DisplayDialog("Error", "Cannot move a dragon from normal to special.\nAborting operation: reverting all changes", "Close");
+            return;
+        }
     }
 
     void OnDisable()
     {
         // Unsubscribe to reorderable list callbacks
         list.drawHeaderCallback -= OnDrawHeaderCallback;
+        list.drawElementCallback += OnDrawElementCallback;
+        list.onReorderCallbackWithDetails -= OnReorderCallbackWithDetails;
     }
 
     void OnDrawHeaderCallback(Rect rect)
     {
         // Reorderable list title
         EditorGUI.LabelField(rect, "Main menu dragons by order");
+    }
+
+    void OnDrawElementCallback(Rect rect, int index, bool isActive, bool isFocused)
+    {
+        GUIStyle style = new GUIStyle(EditorStyles.label);
+
+        // Change color on special dragons
+        if (index >= normalDragonsCount)
+            style.normal.textColor = Color.green;
+
+        EditorGUI.LabelField(rect, dragons.sku[index], style);
     }
 
     void OnGUI()
@@ -120,6 +156,17 @@ public class DragonMenuOrder : EditorWindow
         EditorGUILayout.EndScrollView();
     }
 
+    int GetNormalDragonsCount()
+    {
+        // Load dragon definitions XML file
+        XmlDocument doc = new XmlDocument();
+        doc.Load(DRAGON_DEFINITIONS_PATH);
+
+        // Select XML node
+        XmlNodeList nodeList = doc.SelectNodes("Definitions");
+        return nodeList.Item(0).ChildNodes.Count;
+    }
+
     void SaveChanges()
     {
         // Save dragon sku order to prefab
@@ -129,7 +176,7 @@ public class DragonMenuOrder : EditorWindow
             menuDragonLoader.dragonSku = dragons.sku[i];
 
             // Update definitions order id
-            UpdateXMLOrderId(dragons.sku[i], i);
+            UpdateXMLOrderId(dragons.sku[i], i, dragons.isSpecialDragon[i]);
         }
 
         // The current implementation of reading XMLs in content depends on the order in the XML file
@@ -170,18 +217,12 @@ public class DragonMenuOrder : EditorWindow
         }
     }
 
-    void UpdateXMLOrderId(string sku, int order)
+    void UpdateXMLOrderId(string sku, int order, bool isSpecialDragon)
     {
         // Load dragon definitions XML file
         XmlDocument doc = new XmlDocument();
         string definitionsFile = DRAGON_DEFINITIONS_PATH;
         doc.Load(definitionsFile);
-
-        // Select XML node
-        XmlNodeList nodeList = doc.SelectNodes("Definitions");
-        int normalDragonsCount = nodeList.Item(0).ChildNodes.Count;
-        
-        bool isSpecialDragon = false;
 
         // Check if the sku exists
         // If does not exists, check the special dragon definitions XML file
@@ -196,8 +237,6 @@ public class DragonMenuOrder : EditorWindow
                 Debug.LogError("Dragon " + sku + " not found in specialDragonDefinitions");
                 return;
             }
-
-            isSpecialDragon = true;
         }
 
         int newOrder = isSpecialDragon ? Mathf.Abs(normalDragonsCount - order) : order;
