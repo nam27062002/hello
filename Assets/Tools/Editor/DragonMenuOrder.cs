@@ -3,10 +3,16 @@ using UnityEngine;
 using UnityEditor;
 using UnityEditorInternal;
 using System;
+using System.Xml;
+using System.Linq;
+using System.Xml.Linq;
 
 public class DragonMenuOrder : EditorWindow
 {
     const string DRAGON_SELECTION_PREFAB = "Assets/Art/3D/Menu/DRAGON_SELECTION_Scene.prefab";
+    const string BASE_DEFINITIONS_PATH = "Assets/Resources/Rules/";
+    const string DRAGON_DEFINITIONS_PATH = BASE_DEFINITIONS_PATH + "dragonDefinitions.xml";
+    const string SPECIAL_DRAGON_DEFINITIONS_PATH = BASE_DEFINITIONS_PATH + "specialDragonDefinitions.xml";
 
     ReorderableList list;
     Vector2 scroll;
@@ -33,8 +39,8 @@ public class DragonMenuOrder : EditorWindow
 		Texture icon = AssetDatabase.LoadAssetAtPath<Texture>("Assets/Art/UI/Common/Icons/icon_btn_animoji.png");
 		window.titleContent = new GUIContent(" Dragon Menu Order", icon);
 
-		// Show window
-		window.Show();
+        // Show window
+        window.Show();
 	}
 
     void LoadMenuDragons()
@@ -121,11 +127,94 @@ public class DragonMenuOrder : EditorWindow
         {
             MenuDragonLoader menuDragonLoader = slots[i].transform.GetChild(0).GetComponent<MenuDragonLoader>();
             menuDragonLoader.dragonSku = dragons.sku[i];
+
+            // Update definitions order id
+            UpdateXMLOrderId(dragons.sku[i], i);
         }
 
+        // The current implementation of reading XMLs in content depends on the order in the XML file
+        // We need to sort the node elements by order
+        SortXML(DRAGON_DEFINITIONS_PATH);
+        SortXML(SPECIAL_DRAGON_DEFINITIONS_PATH);
+
+        // Save assets
         EditorUtility.SetDirty(prefab);
         AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+        EditorUtility.DisplayDialog("Save completed", "Prefab and definition files were updated successfully", "Close");
+    }
 
-        EditorUtility.DisplayDialog("Save completed", "Changes were applied", "Close");
+    void SortXML(string xmlPath)
+    {
+        // Load dragon definitions XML file
+        XDocument xDoc = XDocument.Load(xmlPath);
+
+        // Sort by order attribute
+        var xml = from ele in xDoc.Descendants("Definition")
+                       orderby int.Parse(ele.Attribute("order").Value)
+                       select ele;
+
+        // Create XML writer settings
+        XmlWriterSettings settings = new XmlWriterSettings
+        {
+            Indent = true,
+            IndentChars = "\t",
+            OmitXmlDeclaration = true
+        };
+
+        // Save the changes to disk using the XML writer settings
+        using (XmlWriter writer = XmlWriter.Create(xmlPath, settings))
+        {
+            XDocument doc = new XDocument(new XElement("Definitions", xml));
+            doc.Save(writer);
+        }
+    }
+
+    void UpdateXMLOrderId(string sku, int order)
+    {
+        // Load dragon definitions XML file
+        XmlDocument doc = new XmlDocument();
+        string definitionsFile = DRAGON_DEFINITIONS_PATH;
+        doc.Load(definitionsFile);
+
+        // Select XML node
+        XmlNodeList nodeList = doc.SelectNodes("Definitions");
+        int normalDragonsCount = nodeList.Item(0).ChildNodes.Count;
+        
+        bool isSpecialDragon = false;
+
+        // Check if the sku exists
+        // If does not exists, check the special dragon definitions XML file
+        XmlElement element = (XmlElement) doc.SelectSingleNode("/Definitions/Definition[@sku='" + sku + "']");
+        if (element == null)
+        {
+            definitionsFile = SPECIAL_DRAGON_DEFINITIONS_PATH;
+            doc.Load(definitionsFile);
+            element = (XmlElement) doc.SelectSingleNode("/Definitions/Definition[@sku='" + sku + "']");
+            if (element == null)
+            {
+                Debug.LogError("Dragon " + sku + " not found in specialDragonDefinitions");
+                return;
+            }
+
+            isSpecialDragon = true;
+        }
+
+        int newOrder = isSpecialDragon ? Mathf.Abs(normalDragonsCount - order) : order;
+        element.SetAttribute("order", newOrder.ToString());
+
+        // Create XML writer settings
+        XmlWriterSettings settings = new XmlWriterSettings
+        {
+            Indent = true,
+            IndentChars = "\t",
+            OmitXmlDeclaration = true
+        };
+
+        // Save the changes to disk using the XML writer settings
+        using (XmlWriter writer = XmlWriter.Create(definitionsFile, settings))
+        {
+            doc.Save(writer);
+        }
     }
 }
