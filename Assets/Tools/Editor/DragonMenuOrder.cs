@@ -98,14 +98,11 @@ public class DragonMenuOrder : EditorWindow
         {
             LoadMenuDragons();
             EditorUtility.DisplayDialog("Error", "Cannot move a dragon from special to normal.\nAborting operation: reverting all changes", "Close");
-            return;
         }
-
-        if (oldIndex < normalDragonsCount && newIndex >= normalDragonsCount)
+        else if (oldIndex < normalDragonsCount && newIndex >= normalDragonsCount)
         {
             LoadMenuDragons();
             EditorUtility.DisplayDialog("Error", "Cannot move a dragon from normal to special.\nAborting operation: reverting all changes", "Close");
-            return;
         }
     }
 
@@ -126,12 +123,16 @@ public class DragonMenuOrder : EditorWindow
     void OnDrawElementCallback(Rect rect, int index, bool isActive, bool isFocused)
     {
         GUIStyle style = new GUIStyle(EditorStyles.label);
+        string labelText = dragons.sku[index];
 
-        // Change color on special dragons
+        // Change color and add special label text on special dragons
         if (index >= normalDragonsCount)
+        {
             style.normal.textColor = Color.green;
+            labelText += " [special]";
+        }
 
-        EditorGUI.LabelField(rect, dragons.sku[index], style);
+        EditorGUI.LabelField(rect, labelText, style);
     }
 
     void OnGUI()
