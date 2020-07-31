@@ -164,22 +164,31 @@ public class PopupConsentLoadingCoppaGdpr : PopupConsentLoading {
 	/// <summary>
 	/// The accept button has been pressed.
 	/// </summary>
-	override public void OnAccept() {
+	override public void OnAccept() {        
 		// Process changes
 		// Age
 		if(m_ageEnabled) {
 			// Tell GDPR manager
-			GDPRManager.SharedInstance.SetUserAge(m_ageValue);
+			GDPRManager.SharedInstance.SetUserAge(m_ageValue);			
 		}
 
 		// Consent
-		if(m_consentEnabled) {
+		if (m_consentEnabled) {
+			bool _trackingConsented = trackingConsented;
+			bool _adsConsented = adsConsented;
+
+            // Makes sure consents are disabled for minors
+			if (m_ageEnabled && m_ageValue < GDPRManager.SharedInstance.GetAgeToCheck()) {
+				_trackingConsented = false;
+				_adsConsented = false;
+			}
+
 			// Tell GDPR manager			
-			GDPRManager.SharedInstance.SetUserConsentGiven(trackingConsented, adsConsented);
+			GDPRManager.SharedInstance.SetUserConsentGiven(_trackingConsented, _adsConsented);
 
 			// Store new value to user prefs
-			Prefs.SetBoolPlayer(IPopupConsentGDPR.TRACKING_CONSENT_KEY, trackingConsented);
-			Prefs.SetBoolPlayer(IPopupConsentGDPR.ADS_CONSENT_KEY, adsConsented);
+			Prefs.SetBoolPlayer(IPopupConsentGDPR.TRACKING_CONSENT_KEY, _trackingConsented);
+			Prefs.SetBoolPlayer(IPopupConsentGDPR.ADS_CONSENT_KEY, _adsConsented);
 		}
 
 		// Let parent handle the rest
