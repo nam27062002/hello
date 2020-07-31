@@ -608,7 +608,6 @@ public class HDTrackingManager
     /// </summary>
     public virtual void Notify_ClusterAssigned(string clusterId) {}
 
-    #endregion
 
     #region animoji
     /// <summary>
@@ -699,6 +698,42 @@ public class HDTrackingManager
 
     public virtual void Notify_PopupOTA(string _popupName, Downloadables.Popup.EAction _action) {  }
     #endregion
+
+    #region referral
+    public enum EReferralPopupName
+    {
+        InfoPopup,
+        ErrorPopup,
+        ConfirmationPopup,
+        Shop
+    }
+
+    public enum EReferralAction
+    {
+        Info,
+        Invite,
+        Close,
+        InviteMore,
+        Claim
+    }
+
+    public virtual void Notify_ReferralPopup(EReferralPopupName popupName, EReferralAction action) { }
+
+
+    public enum EReferralOrigin
+    {
+        Shop,
+        Interstitial
+    }
+
+    public virtual void Notify_ReferralSendInvite(EReferralOrigin origin) { }
+
+    public virtual void Notify_ReferralInstall(bool valid, string referrerId) { }
+
+    #endregion referral
+
+
+    #endregion notify
 
     // The names of the values of this enum match the ones that BI expect, so you shouldn't change them unless BI requires so
     public enum ELocation
@@ -803,5 +838,7 @@ public class HDTrackingManager
         Session_GameRoundCount = 0;
     }
     #endregion
+
+    
 }
 

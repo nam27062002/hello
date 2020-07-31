@@ -164,6 +164,9 @@ public class ShopController : MonoBehaviour
 
         m_cameraTraveling = GetComponent<CameraTraveling>();
 
+        // Update the referrals info from the server
+        ReferralManager.instance.GetInfoFromServer();
+
         // React to offers being reloaded 
         Messenger.AddListener(MessengerEvents.OFFERS_RELOADED, OnOffersReloaded);
         Messenger.AddListener<List<OfferPack>>(MessengerEvents.OFFERS_CHANGED, OnOffersChanged);
@@ -191,6 +194,9 @@ public class ShopController : MonoBehaviour
 
         m_cameraTravelingEnabled = true;
 
+        // Update the referrals info from the server
+        ReferralManager.instance.GetInfoFromServer();
+
     }
 
     private void OnDisable()
@@ -207,6 +213,8 @@ public class ShopController : MonoBehaviour
 
         InvokeRepeating("PeriodicRefresh", 0f, REFRESH_FREQUENCY);
         ShopReady = false;
+
+
     }
 
 

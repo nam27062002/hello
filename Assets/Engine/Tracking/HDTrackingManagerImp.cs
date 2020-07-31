@@ -1484,7 +1484,40 @@ public class HDTrackingManagerImp : HDTrackingManager {
 
         Track_PopupOTA(_popupName, actionStr);
     }
-#endregion
+    #endregion
+
+    #region referral
+
+    /// <summary>
+    /// Sent when user interacts with this with feature with pop up or shop section.
+    /// </summary>
+    /// <param name="_popupName"></param>
+    /// <param name="_action"></param>
+    public override void Notify_ReferralPopup(EReferralPopupName _popupName, EReferralAction _action)
+    {
+        Track_ReferralPopup(_popupName, _action);
+    }
+
+    /// <summary>
+    /// Sent when user get clicked in INVITE, selected a Network and successfully send the invitation.
+    /// </summary>
+    /// <param name="_linkId"></param>
+    /// <param name="_origin"></param>
+    public override void Notify_ReferralSendInvite( EReferralOrigin _origin) {
+        Track_ReferralSendInvite(_origin);
+    }
+
+    /// <summary>
+    /// Sent when a new users installs the game via Referral Install.
+    /// </summary>
+    /// <param name="_linkId"></param>
+    /// <param name="_reward"></param>
+    /// <param name="_valid"></param>
+    public override void Notify_ReferralInstall( bool _valid, string _referrerId) {
+        Track_ReferralInstall(_valid, _referrerId);
+    }
+
+    #endregion
 
     /// <summary>
     /// Sent when the user unlocks the map.
@@ -2796,6 +2829,61 @@ public class HDTrackingManagerImp : HDTrackingManager {
         m_eventQueue.Enqueue(e);
     }
 
+
+    private void Track_ReferralPopup(EReferralPopupName _popupName, EReferralAction _action)
+    {
+        Log("Track_ReferralPopup "
+            + ", popupName = " + _popupName
+            + ", action = " + _action);
+
+
+        // Create event
+        HDTrackingEvent e = new HDTrackingEvent("custom.general.referral.popup");
+        {
+            Track_AddParamString(e, TRACK_PARAM_POPUP_NAME, _popupName.ToString());
+            Track_AddParamString(e, TRACK_PARAM_ACTION, _action.ToString());
+            Track_AddParamReward(e);
+            Track_AddParamReferredUsers(e);
+            Track_AddParamInvitesSent(e);
+        }
+        m_eventQueue.Enqueue(e);
+    }
+
+
+    private void Track_ReferralSendInvite(EReferralOrigin _origin)
+    {
+        Log("Track_ReferralSendInvite "
+            + ", origin = " + _origin );
+
+        // Create event
+        HDTrackingEvent e = new HDTrackingEvent("custom.general.referral.sendInvite");
+        {
+            Track_AddParamString(e, TRACK_PARAM_ORIGIN, _origin.ToString());
+            Track_AddParamReward(e);
+            Track_AddParamReferredUsers(e);
+            Track_AddParamInvitesSent(e);
+            Track_AddParamPlayerProgress(e);
+        }
+        m_eventQueue.Enqueue(e);
+    }
+
+
+    private void Track_ReferralInstall(bool _valid, string _referrerId)
+    {
+        Log("Track_ReferralPopup "
+            + ", valid = " + _valid
+            + ", referrerId = " + _referrerId);
+
+        // Create event
+        HDTrackingEvent e = new HDTrackingEvent("custom.general.referral.install");
+        {
+            Track_AddParamString(e, TRACK_PARAM_REFERRER_ID, _referrerId);
+            Track_AddParamBool(e, TRACK_PARAM_VALID, _valid);
+            Track_AddParamPlayerProgress(e);
+        }
+        m_eventQueue.Enqueue(e);
+    }
+
     // -------------------------------------------------------------
     // Events
     // -------------------------------------------------------------
@@ -2879,6 +2967,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private const string TRACK_PARAM_HUNGRY_LETTERS_NB = "hungryLettersNb";
     private const string TRACK_PARAM_IN_GAME_ID = "InGameId";
     private const string TRACK_PARAM_INITIALQUALITY = "initialQuality";
+    private const string TRACK_PARAM_INVITES_SENT = "invitesSent";
     private const string TRACK_PARAM_IS_FATAL = "isFatal";
     private const string TRACK_PARAM_IS_HACKER = "isHacker";
     private const string TRACK_PARAM_IS_LOADED = "isLoaded";
@@ -2919,6 +3008,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private const string TRACK_PARAM_OFFER_NAME = "offerName";
     private const string TRACK_PARAM_OFFER_TYPE = "offerType";
     private const string TRACK_PARAM_OPT_IN = "optIn";
+    private const string TRACK_PARAM_ORIGIN = "origin";
     private const string TRACK_PARAM_ORIGINAL_AREA = "originalArea";
     private const string TRACK_PARAM_PAID = "paid";
     private const string TRACK_PARAM_PET1 = "pet1";
@@ -2943,7 +3033,10 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private const string TRACK_PARAM_RARITY = "rarity";
     private const string TRACK_PARAM_RATE_RESULT = "rateResult";
     private const string TRACK_PARAM_RECORDINGS = "recordings";
+    private const string TRACK_PARAM_REFERRED_USERS = "referredUsers";
+    private const string TRACK_PARAM_REFERRER_ID = "referrerID";
     private const string TRACK_PARAM_RESULT = "result";
+    private const string TRACK_PARAM_REWARD = "reward";
     private const string TRACK_PARAM_REWARD_TIER = "rewardTier";
     private const string TRACK_PARAM_REWARD_TYPE = "rewardType";
     private const string TRACK_PARAM_ROUND_ID = "roundid";
@@ -2992,6 +3085,8 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private const string TRACK_PARAM_TYPE_NOTIF = "typeNotif";
     private const string TRACK_PARAM_UNLOCK_TYPE = "unlockType";    
     private const string TRACK_PARAM_UPCOMING_LEAGUE = "upcomingLeague";
+    private const string TRACK_PARAM_VALID = "valid";
+
     private const string TRACK_PARAM_VERSION_QUALITY_FORMULA = "versionQualityFormula";
     private const string TRACK_PARAM_VERSION_REVISION = "versionRevision";
     private const string TRACK_PARAM_XP = "xp";
@@ -3130,6 +3225,40 @@ public class HDTrackingManagerImp : HDTrackingManager {
     {
         int value = (UsersManager.currentUser != null) ? (int)UsersManager.currentUser.coins : 0;
         _e.data.Add(TRACK_PARAM_SOFT_CURRENCY, value);
+    }
+
+    private void Track_AddParamReward (HDTrackingEvent _e)
+    {
+        string reward = "";
+
+        // Find the next reward in the milestones progression
+        OfferPackReferral offer = OffersManager.GetActiveReferralOffer();
+
+        if (UsersManager.currentUser != null)
+        {
+
+            OfferPackReferralReward refReward = offer.GetNextReward(UsersManager.currentUser.totalReferrals);
+            if (refReward != null)
+            {
+
+                reward = refReward.reward.amount.ToString() + "_" + refReward.reward.sku;
+
+            }
+        }
+
+        _e.data.Add(TRACK_PARAM_REWARD, reward);
+    }
+
+    private void Track_AddParamReferredUsers(HDTrackingEvent _e)
+    {
+        int value = (UsersManager.currentUser != null) ? UsersManager.currentUser.totalReferrals : 0;
+        _e.data.Add(TRACK_PARAM_REFERRED_USERS, value);
+    }
+
+    private void Track_AddParamInvitesSent(HDTrackingEvent _e)
+    {
+        int value = (UsersManager.currentUser != null) ? UsersManager.currentUser.invitesSent : 0;
+        _e.data.Add(TRACK_PARAM_INVITES_SENT, value);
     }
 
     private void Track_AddParamSessionsCount(HDTrackingEvent _e) {

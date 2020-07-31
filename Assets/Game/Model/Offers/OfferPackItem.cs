@@ -41,17 +41,17 @@ public class OfferPackItem {
 		get { return m_featured; }
 	}
 
-	private string m_type = "";		// Matching Metagame.Reward.TYPE_CODEs
+	protected string m_type = "";		// Matching Metagame.Reward.TYPE_CODEs
 	public string type {
 		get { return m_type; }
 	}
 
-	private Metagame.Reward m_reward = null;
+	protected Metagame.Reward m_reward = null;
 	public Metagame.Reward reward {
 		get { return m_reward; }
 	}
 
-	private string m_sku = null;
+	protected string m_sku = null;
 	public string sku {
 		get { return m_sku; }
 	}
@@ -90,7 +90,7 @@ public class OfferPackItem {
 	/// <param name="_def">Def.</param>
 	/// <param name="_itemIdx">Index of the item within the pack (1..N)</param>
 	/// <param name="_ecoGroup">Group ID used for tracking when the reward is collected.</param>
-	public void InitFromDefinition(DefinitionNode _def, int _itemIdx, HDTrackingManager.EEconomyGroup _ecoGroup) {
+	public virtual void InitFromDefinition(DefinitionNode _def, int _itemIdx, HDTrackingManager.EEconomyGroup _ecoGroup) {
 		// Aux vars
 		string prefix = GetPrefix(_itemIdx);
 
