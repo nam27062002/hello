@@ -20,7 +20,7 @@ public class DragonMenuOrder : EditorWindow
     MenuDragonSlot[] slots;
     GameObject prefab;
     int normalDragonsCount;
-    Dictionary<string, Texture2D> dragonIconCache = new Dictionary<string, Texture2D>();
+    readonly Dictionary<string, Texture2D> dragonIconCache = new Dictionary<string, Texture2D>();
 
     [Serializable]
     public class MenuDragons
@@ -148,6 +148,9 @@ public class DragonMenuOrder : EditorWindow
 
     void OnGUI()
     {
+        // Help box
+        EditorGUILayout.HelpBox("Drag and drop the dragons below to change their order in the main menu.\nPlease do not mix normal and special dragons.", MessageType.Info, true);
+
         // Scroll view
         scroll = EditorGUILayout.BeginScrollView(scroll);
 
