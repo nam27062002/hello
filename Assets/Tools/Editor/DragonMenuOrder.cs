@@ -13,12 +13,14 @@ public class DragonMenuOrder : EditorWindow
     const string BASE_DEFINITIONS_PATH = "Assets/Resources/Rules/";
     const string DRAGON_DEFINITIONS_PATH = BASE_DEFINITIONS_PATH + "dragonDefinitions.xml";
     const string SPECIAL_DRAGON_DEFINITIONS_PATH = BASE_DEFINITIONS_PATH + "specialDragonDefinitions.xml";
+    const string DRAGON_ICONS_PATH = "Assets/Art/UI/Metagame/Dragons/Disguises/";
 
     ReorderableList list;
     Vector2 scroll;
     MenuDragonSlot[] slots;
     GameObject prefab;
     int normalDragonsCount;
+    Dictionary<string, Texture2D> dragonIconCache = new Dictionary<string, Texture2D>();
 
     [Serializable]
     public class MenuDragons
@@ -48,6 +50,7 @@ public class DragonMenuOrder : EditorWindow
     void LoadMenuDragons()
     {
         dragons.sku.Clear();
+        dragonIconCache.Clear();
 
         // Load prefab
         prefab = AssetDatabase.LoadAssetAtPath(DRAGON_SELECTION_PREFAB, typeof(GameObject)) as GameObject;
@@ -123,8 +126,9 @@ public class DragonMenuOrder : EditorWindow
     void OnDrawElementCallback(Rect rect, int index, bool isActive, bool isFocused)
     {
         GUIStyle style = new GUIStyle(EditorStyles.label);
-        string labelText = dragons.sku[index];
-
+        string sku = dragons.sku[index];
+        string labelText = " " + sku;
+        
         // Change color and add special label text on special dragons
         if (index >= normalDragonsCount)
         {
@@ -132,7 +136,14 @@ public class DragonMenuOrder : EditorWindow
             labelText += " [special]";
         }
 
-        EditorGUI.LabelField(rect, labelText, style);
+        // Add dragon icon
+        if (!dragonIconCache.TryGetValue(sku, out Texture2D icon))
+        {
+            icon = (Texture2D)AssetDatabase.LoadAssetAtPath(System.IO.Path.Combine(DRAGON_ICONS_PATH, dragons.sku[index], "icon_" + sku.Split('_')[1] + "_0.png"), typeof(Texture2D));
+            dragonIconCache.Add(sku, icon);
+        }
+
+        GUI.Box(rect, new GUIContent(labelText, icon), style);
     }
 
     void OnGUI()
