@@ -50,6 +50,7 @@ public class OfferPack {
 		ROTATIONAL,
         REMOVE_ADS,
         FREE,
+        REFERRAL,
         SC,
         HC,
 		DRAGON_DISCOUNT,
@@ -61,6 +62,7 @@ public class OfferPack {
     public const string ROTATIONAL = "rotational";
     public const string REMOVE_ADS = "removeads";
     public const string FREE = "free";
+	public const string REFERRAL = "referral";
     public const string SC = "sc";
     public const string HC = "hc";
 	public const string DRAGON_DISCOUNT = "dragon_discount";
@@ -449,9 +451,18 @@ public class OfferPack {
         }
 
         // Items - limited to 3 for now
-        for (int i = 1; i <= MAX_ITEMS; ++i) {	// [1..N]
-			// Create and initialize new item
-			OfferPackItem item = new OfferPackItem();
+        for (int i = 1; i <= MAX_ITEMS; ++i) {  // [1..N]
+												// Create and initialize new item
+			OfferPackItem item;
+			if (m_type == Type.REFERRAL)
+            {
+                // In referral offers, the items are defined in the referralRewards table
+				item = new OfferPackReferralReward();
+			} else
+            {
+				item = new OfferPackItem();
+			}
+			
 			item.InitFromDefinition(_def, i, ecoGroup);
 
 			// If a reward wasn't generated, the item is either not properly defined or the pack doesn't have this item, don't store it
@@ -1286,8 +1297,12 @@ public class OfferPack {
 			case Type.FREE: {
 				newPack = new OfferPackFree();
 			} break;
-            case Type.REMOVE_ADS: {
-				newPack = new OfferPackRemoveAds();
+
+			case Type.REFERRAL:	{
+			    newPack = new OfferPackReferral();
+			} break;
+			case Type.REMOVE_ADS: {
+                newPack = new OfferPackRemoveAds();
             }  break;
             case Type.SC: {
                 newPack = new OfferPackCurrency();
@@ -1444,15 +1459,18 @@ public class OfferPack {
 	/// <param name="_type">Type to be converted.</param>
 	public static string TypeToString(Type _type) {
 		switch(_type) {
-			case Type.PROGRESSION: 		return PROGRESSION;
-			case Type.PUSHED: 			return PUSH;
-			case Type.ROTATIONAL: 		return ROTATIONAL;
-			case Type.FREE:				return FREE;
-            case Type.REMOVE_ADS:		return REMOVE_ADS;
-            case Type.SC:				return SC;
-            case Type.HC:				return HC;
+
+			case Type.PROGRESSION: 	return PROGRESSION;
+			case Type.PUSHED: 		return PUSH;
+			case Type.ROTATIONAL: 	return ROTATIONAL;
+			case Type.FREE:			return FREE;
+			case Type.REFERRAL:     return REFERRAL;
+            case Type.REMOVE_ADS:   return REMOVE_ADS;
+            case Type.SC:           return SC;
+            case Type.HC:           return HC;
 			case Type.DRAGON_DISCOUNT:	return DRAGON_DISCOUNT;
 		}
+
 		return TypeToString(DEFAULT_TYPE);
 	}
 
@@ -1463,14 +1481,17 @@ public class OfferPack {
 	/// <param name="_typeStr">String representation of a type to be parsed.</param>
 	public static Type StringToType(string _typeStr) {
 		switch(_typeStr.ToLowerInvariant()) {
-			case PROGRESSION:		return Type.PROGRESSION;
-			case PUSH:				return Type.PUSHED;
-			case ROTATIONAL:		return Type.ROTATIONAL;
-			case FREE:				return Type.FREE;
-            case REMOVE_ADS:		return Type.REMOVE_ADS;
-            case HC:				return Type.HC;
-            case SC:				return Type.SC;
+
+			case PROGRESSION:   return Type.PROGRESSION;
+			case PUSH:		return Type.PUSHED;
+			case ROTATIONAL:	return Type.ROTATIONAL;
+			case FREE:		    return Type.FREE;
+			case REFERRAL:      return Type.REFERRAL;
+            case REMOVE_ADS:    return Type.REMOVE_ADS;
+            case HC:            return Type.HC;
+            case SC:            return Type.SC;
 			case DRAGON_DISCOUNT:	return Type.DRAGON_DISCOUNT;
+
 		}
 		return DEFAULT_TYPE;
 	}
