@@ -38,7 +38,7 @@ public class ABTestSelector : MonoBehaviour {
 	/// </summary>
 	private void Awake() {
 
-        if ( ! ABTest.GetValue (m_abTest) )
+        if ( ! ABTest.Evaluate (m_abTest) )
         {
             // Variant A is the old version
 		    InstantiatePrefabVariant(m_prefabVariantA);

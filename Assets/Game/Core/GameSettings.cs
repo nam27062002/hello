@@ -165,6 +165,10 @@ public class GameSettings : SingletonScriptableObject<GameSettings> {
 	public static bool SHOW_CONTINUE_BUTTON_IN_UNLOCKED_SKIN { get { return instance.m_showContinueButtonInUnlockedSkin; } }
 
 
+	// If true, dont start the map countdown until the player clicks on the map icon for first time
+	private bool m_initialMapCountdownTriggeredByPlayer;
+    public static bool INITIAL_MAP_COUNTDOWN_TRIGGER_BY_PLAYER { get { return instance.m_initialMapCountdownTriggeredByPlayer; } }
+
 	// Social
 	[Separator("Social")]
 	[SerializeField] private ShareData m_shareDataIOS = new ShareData();
@@ -334,6 +338,8 @@ public class GameSettings : SingletonScriptableObject<GameSettings> {
 		instance.m_mapAsButton = def.GetAsBool("mapAsButton", instance.m_mapAsButton);
 		instance.m_unlockedSkinPowerAsInfoBox = def.GetAsBool("unlockedSkinPowerAsInfoBox", instance.m_unlockedSkinPowerAsInfoBox);
 		instance.m_showContinueButtonInUnlockedSkin = def.GetAsBool("showContinueButtonInUnlockedSkin", instance.m_showContinueButtonInUnlockedSkin);
+		instance.m_initialMapCountdownTriggeredByPlayer = def.GetAsBool("initialMapCountdownTriggeredByPlayer", instance.m_initialMapCountdownTriggeredByPlayer);
+
 	}
 
 	/// <summary>
