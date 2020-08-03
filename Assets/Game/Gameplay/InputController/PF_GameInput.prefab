@@ -1,0 +1,110 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &178280
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 481480}
+  - component: {fileID: 11407390}
+  - component: {fileID: 11460204}
+  - component: {fileID: 114000012863333618}
+  - component: {fileID: 114432848181361590}
+  m_Layer: 5
+  m_Name: PF_GameInput
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &481480
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 178280}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &11407390
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 178280}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3766138b118844ef2b8dd5800d9cb9ed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_defaultTiltSensitivity: 0.5
+  m_tiltSensitivityScaleMin: 8
+  m_tiltSensitivityScaleMax: 16
+  m_dodgyCalibratePosition: 0.475
+  m_tiltFilter: 0.1
+--- !u!114 &11460204
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 178280}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 346fc1ec8f1214aae905ea9c434d56b3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_boostWithRadiusCheck: 0
+  m_boostWithSecondTouch: 1
+  touchAction: 0
+  m_dpadObj: {fileID: 0}
+  m_dpadDotObj: {fileID: 0}
+  m_dpadBoost: {fileID: 0}
+--- !u!1001 &100100000
+Prefab:
+  m_ObjectHideFlags: 1
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications: []
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 0}
+  m_RootGameObject: {fileID: 178280}
+  m_IsPrefabParent: 1
+--- !u!114 &114000012863333618
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 178280}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 33e18b5a18ff5f149b0ddf5c59366a73, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_inputModule: {fileID: 0}
+--- !u!114 &114432848181361590
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 178280}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ad6800246bc7440d483eea1e61297791, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_defaultTiltSensitivity: 0.5
+  m_tiltSensitivityScaleMin: 5
+  m_tiltSensitivityScaleMax: 100
+  m_dodgyCalibratePosition: 0.475
+  m_tiltFilter: 0.1
+  m_touchAction: 0
+  m_debugUI: {fileID: 0}
+  m_debugClampedLine: {fileID: 0}
+  m_debugUnclampedLine: {fileID: 0}

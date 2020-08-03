@@ -1,0 +1,67 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 10e44ee821bc1415bad9be20d48609ea, type: 3}
+  m_Name: ShopSettings
+  m_EditorClassIdentifier: 
+  m_itemTypesSetup:
+  - type: sc
+    prefab2d: UI/Shop/ItemPreview/PF_OfferItemPreviewSC2d
+    prefab3d: UI/Shop/ItemPreview/PF_OfferItemPreviewSC3d
+  - type: pc
+    prefab2d: UI/Shop/ItemPreview/PF_OfferItemPreviewHC2d
+    prefab3d: UI/Shop/ItemPreview/PF_OfferItemPreviewHC3d
+  - type: egg
+    prefab2d: UI/Shop/ItemPreview/PF_OfferItemPreviewEgg2d
+    prefab3d: UI/Shop/ItemPreview/PF_OfferItemPreviewEgg3d
+  - type: pet
+    prefab2d: UI/Shop/ItemPreview/PF_OfferItemPreviewPet2d
+    prefab3d: UI/Shop/ItemPreview/PF_OfferItemPreviewPet3d
+  - type: skin
+    prefab2d: UI/Shop/ItemPreview/PF_OfferItemPreviewSkin2d
+    prefab3d: UI/Shop/ItemPreview/PF_OfferItemPreviewSkin3d
+  - type: dragon
+    prefab2d: UI/Shop/ItemPreview/PF_OfferItemPreviewDragon2d
+    prefab3d: UI/Shop/ItemPreview/PF_OfferItemPreviewDragon3d
+  - type: removeAds
+    prefab2d: UI/Metagame/Offers/PF_OfferItemPreviewDragon2d
+    prefab3d: UI/Metagame/Offers/PF_OfferItemPreviewDragon3d
+  m_shopPillsSetup:
+  - offerPackType: progression
+    prefab: UI/Shop/Pills/PF_ShopOfferPackPill
+  - offerPackType: push
+    prefab: UI/Shop/Pills/PF_ShopOfferPackPill
+  - offerPackType: rotational
+    prefab: UI/Shop/Pills/PF_ShopRotationalCellPill
+  - offerPackType: free
+    prefab: UI/Shop/Pills/PF_ShopFreePill
+  - offerPackType: removeads
+    prefab: UI/Shop/Pills/PF_ShopVIPPill
+  - offerPackType: sc
+    prefab: UI/Shop/Pills/PF_ShopCoinPackPill
+  - offerPackType: referral
+    prefab: UI/Shop/Pills/PF_ShopReferralPill
+  m_HcIconPrefabs:
+  - {fileID: 114071161709766558, guid: 5bec9c81405b4470ea0c54ce10aa681e, type: 3}
+  - {fileID: 114802098726288636, guid: 5a8fcdf50e4dc4cf19367959b34cd1e5, type: 3}
+  - {fileID: 114279864837497406, guid: db8b3143eaab3ef4e9fe14d2989a2320, type: 3}
+  - {fileID: 114545604664809612, guid: d3806c90116e14a1bac59ca1e9f54684, type: 3}
+  - {fileID: 114735065208836792, guid: 8c6440b5c594941aea595eca41c1fdf2, type: 3}
+  - {fileID: 114581467013896664, guid: a5192f19f4a8f4e3f97398ac950d0df1, type: 3}
+  - {fileID: 114907792873517082, guid: db883735bdb25754c98870baabfe88cf, type: 3}
+  m_ScIconPrefabs:
+  - {fileID: 114066095654175792, guid: 7a40a6086d34544d4ba317ec05802839, type: 3}
+  - {fileID: 114572701282430962, guid: b25ccc8e429674346891d2c63fd570ad, type: 3}
+  - {fileID: 114365175386618672, guid: 80eba90ebaab240a6a27017e0b6081c4, type: 3}
+  - {fileID: 114406090223287396, guid: 6da4504aba5cd4d89892c8ea8fb1e87a, type: 3}
+  - {fileID: 114410938975321256, guid: 89b1c97cdc81947a79a2cb47c5a32cbc, type: 3}
+  - {fileID: 114239649638307554, guid: 96a70317c7e694b80bd143f81460db1b, type: 3}
+  m_shopTooltipPath: UI/Shop/PF_ShopTooltip

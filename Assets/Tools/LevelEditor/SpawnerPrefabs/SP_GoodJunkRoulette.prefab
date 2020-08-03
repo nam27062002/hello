@@ -1,0 +1,92 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &194974
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 494148}
+  - component: {fileID: 114072550146400748}
+  - component: {fileID: 114813571708727332}
+  m_Layer: 0
+  m_Name: SP_GoodJunkRoulette
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &494148
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 194974}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -172.6, y: 178.6, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &100100000
+Prefab:
+  m_ObjectHideFlags: 1
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications: []
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 0}
+  m_RootGameObject: {fileID: 194974}
+  m_IsPrefabParent: 1
+--- !u!114 &114072550146400748
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 194974}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6eea47f5599f54e948774badb4a20f4a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_minTier: 0
+  m_maxTier: 4
+  m_checkMaxTier: 0
+  m_activationChance: 100
+  m_activationTriggers: []
+  m_activationKillTriggers: []
+  m_deactivationTriggers: []
+  m_deactivationKillTriggers: []
+--- !u!114 &114813571708727332
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 194974}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ed9432f00ad274b068167a38fc6789ba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_entityPrefabList:
+  - name: Junk/PF_RouletteCoins
+    chance: 100
+  - name: Junk/PF_RouletteFrog
+    chance: 100
+  - name: Junk/PF_RouletteGem
+    chance: 100
+  - name: Junk/PF_RouletteStar
+    chance: 100
+  m_spawnTime:
+    min: 240
+    max: 240
+  m_rouletteChangeTime: 1
+  m_rect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 4.79
+    height: 4.74

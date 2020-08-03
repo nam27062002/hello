@@ -1,0 +1,41 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 476f90a6cbdac4eb69432e3a345d1c01, type: 3}
+  m_Name: MineBigBrain
+  m_EditorClassIdentifier: 
+  m_states:
+  - m_name: Idle
+    m_componentAssets:
+    - {fileID: 11400000, guid: 8003d7bc8a7ae47658a12c6d64c74378, type: 2}
+    - {fileID: 11400000, guid: 230f52e1ad40a4246bf157c8e8ac2d66, type: 2}
+  - m_name: Idle Active
+    m_componentAssets:
+    - {fileID: 11400000, guid: 8003d7bc8a7ae47658a12c6d64c74378, type: 2}
+    - {fileID: 11400000, guid: 780480b4642294643879b96b48036d5a, type: 2}
+    - {fileID: 11400000, guid: 5ab5d86800ae44ba7b35830cb1e875eb, type: 2}
+  - m_name: Explode
+    m_componentAssets:
+    - {fileID: 11400000, guid: 550ce65fef60d4c4280bc2379df85445, type: 2}
+  m_transitionData:
+  - to: 1
+    id: onEnemyInSight
+    from: 0
+  - to: 0
+    id: onEnemyOutSight
+    from: 1
+  - to: 2
+    id: onTriggerEnter
+    from: -1
+  - to: 2
+    id: onBurning
+    from: -1
+  m_firstState_A: 0
+  m_firstState_B: 0

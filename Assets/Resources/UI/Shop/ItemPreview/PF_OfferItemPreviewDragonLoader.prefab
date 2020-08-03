@@ -1,0 +1,279 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &4034818679261464871
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3915049271255386318}
+  - component: {fileID: 5399809068807300262}
+  m_Layer: 5
+  m_Name: DragonOffset
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &3915049271255386318
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4034818679261464871}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 8278392448757964076}
+  m_Father: {fileID: 4519251987975147352}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &5399809068807300262
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4034818679261464871}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1afef63fb7f6d44dca40e5a5fb4df0e5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_targetDragonLoader: {fileID: 591408046810695733}
+  m_targetTransform: {fileID: 3915049271255386318}
+  m_dragonSetups:
+  - sku: dragon_dino
+    position: {x: 0.81, y: 0.43, z: 0}
+    scale: {x: 1, y: 1, z: 1}
+  - sku: dragon_ice
+    position: {x: 0.5, y: 0.2, z: 0}
+    scale: {x: 1, y: 1, z: 1}
+  - sku: dragon_hedgehog
+    position: {x: 0, y: 0.25, z: 0}
+    scale: {x: 1, y: 1, z: 1}
+  - sku: dragon_helicopter
+    position: {x: 0, y: 0.9, z: 0}
+    scale: {x: 1, y: 1, z: 1}
+  - sku: dragon_electric
+    position: {x: 0.82, y: 1, z: 0}
+    scale: {x: 1, y: 1, z: 1}
+  - sku: dragon_skeleton
+    position: {x: -0.25, y: 0.4, z: 0}
+    scale: {x: 0.8, y: 0.8, z: 0.8}
+  - sku: dragon_alien
+    position: {x: 0.31, y: -0.09, z: 0}
+    scale: {x: 0.75, y: 0.75, z: 0.75}
+  - sku: dragon_dark
+    position: {x: 0.98, y: -0.1, z: 0}
+    scale: {x: 0.8, y: 0.8, z: 0.8}
+  - sku: dragon_goldheist
+    position: {x: 0.33, y: -0.77, z: 0}
+    scale: {x: 0.7, y: 0.7, z: 0.7}
+  - sku: dragon_titan
+    position: {x: 0.38, y: 0.4, z: 0}
+    scale: {x: 0.75, y: 0.75, z: 0.75}
+  - sku: dragon_balrog
+    position: {x: 1.08, y: 0, z: 0}
+    scale: {x: 1, y: 1, z: 1}
+  - sku: dragon_devil
+    position: {x: -0.44, y: 0.35, z: 0}
+    scale: {x: 0.85, y: 0.85, z: 0.85}
+  - sku: dragon_classic
+    position: {x: -0.24, y: 0.66, z: 0}
+    scale: {x: 0.85, y: 0.85, z: 0.85}
+  - sku: dragon_bug
+    position: {x: -0.49, y: 0.09, z: 0}
+    scale: {x: 0.9, y: 0.9, z: 0.9}
+  - sku: dragon_fat
+    position: {x: 0.27, y: 0.28, z: 0}
+    scale: {x: 0.8, y: 0.8, z: 0.8}
+  - sku: dragon_reptile
+    position: {x: -1.23, y: 0.26, z: 0}
+    scale: {x: 0.9, y: 0.9, z: 0.9}
+  - sku: dragon_crocodile
+    position: {x: -0.26, y: 0.37, z: 0}
+    scale: {x: 0.8, y: 0.8, z: 0.8}
+  - sku: dragon_jawfrey
+    position: {x: -0.84, y: 0.21, z: 0}
+    scale: {x: 0.9, y: 0.9, z: 0.9}
+  - sku: dragon_chinese
+    position: {x: -0.53, y: 0.19, z: 0}
+    scale: {x: 0.8, y: 0.8, z: 0.8}
+  - sku: dragon_light
+    position: {x: 0, y: 0, z: 0}
+    scale: {x: 0.45, y: 0.45, z: 0.45}
+--- !u!1 &4444680813888818674
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4519251987975147352}
+  - component: {fileID: 4337124151501856734}
+  - component: {fileID: 4340805034303965114}
+  m_Layer: 5
+  m_Name: PF_OfferItemPreviewDragonLoader
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &4519251987975147352
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4444680813888818674}
+  m_LocalRotation: {x: 0, y: 0.53729963, z: 0, w: 0.8433915}
+  m_LocalPosition: {x: 0, y: 0, z: -500}
+  m_LocalScale: {x: 120, y: 120, z: 120}
+  m_Children:
+  - {fileID: 3915049271255386318}
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 65, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &4337124151501856734
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4444680813888818674}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 47cb4c8fd4f7a45e481525a55b840ba2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_refPopupCount: -1
+  m_animator: {fileID: 0}
+  m_onPopupOpened:
+    m_PersistentCalls:
+      m_Calls: []
+  m_onAllPopupsClosed:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &4340805034303965114
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4444680813888818674}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9634bc65078f347cf933d4c74430cb15, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_tweenType: 7
+  m_tweenDuration: 0.25
+  m_tweenValue: 0
+  m_tweenEase: 27
+  m_tweenDelay: 0
+  m_ignoreTimeScale: 1
+  m_showTweens: []
+  m_hideTweens: []
+  m_animator: {fileID: 0}
+  m_triggerChildren: 1
+  m_canBeTriggeredByParents: 1
+  OnShowPreAnimation:
+    m_PersistentCalls:
+      m_Calls: []
+  OnShowPreAnimationAfterDelay:
+    m_PersistentCalls:
+      m_Calls: []
+  OnShowPostAnimation:
+    m_PersistentCalls:
+      m_Calls: []
+  OnHidePreAnimation:
+    m_PersistentCalls:
+      m_Calls: []
+  OnHidePostAnimation:
+    m_PersistentCalls:
+      m_Calls: []
+  OnShowCheck:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!1 &5578141913233680399
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8278392448757964076}
+  - component: {fileID: 591408046810695733}
+  m_Layer: 5
+  m_Name: DragonLoader
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &8278392448757964076
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5578141913233680399}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 3915049271255386318}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: -0.00000023048602, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &591408046810695733
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5578141913233680399}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b4307df3638f47a29e60f0bc3d5abee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_mode: 2
+  m_dragonSku: dragon_baby
+  m_disguiseSku: dragon_baby_0
+  m_anim: 3
+  m_resetDragonScale: 1
+  m_showPets: 0
+  m_hideResultsEquipment: 0
+  m_removeFresnel: 0
+  m_keepLayers: 0
+  m_useResultsScreen: 0
+  m_allowAltAnimations: 0
+  m_altAnimationsMaxLevel: 10
+  m_refreshOnEnable: 1
+  m_loadAsync: 1
+  OnCompleteLoad:
+    m_PersistentCalls:
+      m_Calls: []
+  m_placeholderDragonSku: dragon_classic
