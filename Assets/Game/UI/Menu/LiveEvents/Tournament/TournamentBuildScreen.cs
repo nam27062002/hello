@@ -234,7 +234,7 @@ public class TournamentBuildScreen : MonoBehaviour {
 
 
 		// Check for assets for this specific tournament
-		Downloadables.Handle tournamentHandle = HDAddressablesManager.Instance.GetHandleForTournamentDragon(m_tournament);
+		Downloadables.Handle tournamentHandle = HDAddressablesManager.Instance.GetHandleForTournament(m_tournament);
 		if(!tournamentHandle.IsAvailable()) {
 
 			// Initialize download flow with handle for ALL assets
