@@ -127,7 +127,7 @@ public class DragonMenuOrder : EditorWindow
     {
         GUIStyle style = new GUIStyle(EditorStyles.label);
         string sku = dragons.sku[index];
-        string labelText = " " + sku;
+        string labelText = " " + (index + 1) + ". " + sku;
         
         // Change color and add special label text on special dragons
         if (index >= normalDragonsCount)
