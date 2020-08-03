@@ -165,7 +165,7 @@ public class DragonXPBar : MonoBehaviour {
 			bool showNextDragon = false;
 
 			// Is enabled in the settings (can be disabled for AB tests)
-			if (GameSettings.SHOW_NEXT_DRAGON_IN_XP_BAR)
+			if (ABTest.GetValue(ABTest.Test.SHOW_NEXT_DRAGON_IN_XP_BAR))
 			{
 
 				IDragonData currentDragon = DragonManager.CurrentDragon;

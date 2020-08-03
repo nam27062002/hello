@@ -47,6 +47,7 @@ public class ShopPill {
 			OfferPack.PUSH,
 			OfferPack.ROTATIONAL,
 			OfferPack.FREE,
+            OfferPack.REFERRAL,
             OfferPack.REMOVE_ADS,
             OfferPack.SC
     )]

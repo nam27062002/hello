@@ -91,21 +91,28 @@ public class HDTrackingManagerImp : HDTrackingManager {
         return sizeInBytes * BYTES_TO_KB;
     }
 
+    private bool ListenersHaveBeenAdded { get; set; }
+
     public override void Init() {
         base.Init();
 
         Reset();
 
-		// We need to track all events that have to be sent right after the session is created. We need to do it here in order to make sure they will be tracked at the very beginning
-		// The session will be started later on because we need to wait for persistence to be loaded (since it may contain the trackind id required to start the session) and some
-		// events may be reported before the persistence is loaded
-		Track_StartSessionEvent();
+        // We need to track all events that have to be sent right after the session is created. We need to do it here in order to make sure they will be tracked at the very beginning
+        // The session will be started later on because we need to wait for persistence to be loaded (since it may contain the trackind id required to start the session) and some
+        // events may be reported before the persistence is loaded
+        Track_StartSessionEvent();
 
-        Messenger.AddListener<string, string, SimpleJSON.JSONNode>(MessengerEvents.PURCHASE_SUCCESSFUL, OnPurchaseSuccessful);
-        Messenger.AddListener<string>(MessengerEvents.PURCHASE_ERROR, OnPurchaseFailed);
-        Messenger.AddListener<string>(MessengerEvents.PURCHASE_FAILED, OnPurchaseFailed);
-        Messenger.AddListener<string>(MessengerEvents.PURCHASE_CANCELLED, OnPurchaseFailed);
-        Messenger.AddListener<bool>(MessengerEvents.LOGGED, OnLoggedIn);
+        if (!ListenersHaveBeenAdded)
+        {
+            Messenger.AddListener<string, string, SimpleJSON.JSONNode>(MessengerEvents.PURCHASE_SUCCESSFUL, OnPurchaseSuccessful);
+            Messenger.AddListener<string>(MessengerEvents.PURCHASE_ERROR, OnPurchaseFailed);
+            Messenger.AddListener<string>(MessengerEvents.PURCHASE_FAILED, OnPurchaseFailed);
+            Messenger.AddListener<string>(MessengerEvents.PURCHASE_CANCELLED, OnPurchaseFailed);
+            Messenger.AddListener<bool>(MessengerEvents.LOGGED, OnLoggedIn);
+
+            ListenersHaveBeenAdded = true;
+        }
     }
 
     protected override void Reset()
@@ -135,11 +142,15 @@ public class HDTrackingManagerImp : HDTrackingManager {
         FlushEventQueue();
 
         base.Destroy();
+
         Messenger.RemoveListener<string, string, SimpleJSON.JSONNode>(MessengerEvents.PURCHASE_SUCCESSFUL, OnPurchaseSuccessful);
         Messenger.RemoveListener<string>(MessengerEvents.PURCHASE_ERROR, OnPurchaseFailed);
         Messenger.RemoveListener<string>(MessengerEvents.PURCHASE_FAILED, OnPurchaseFailed);
         Messenger.RemoveListener<string>(MessengerEvents.PURCHASE_CANCELLED, OnPurchaseFailed);
         Messenger.RemoveListener<bool>(MessengerEvents.LOGGED, OnLoggedIn);
+
+        ListenersHaveBeenAdded = false;
+
         Reset();
     }
 
@@ -693,7 +704,8 @@ public class HDTrackingManagerImp : HDTrackingManager {
     }
 
     public override void Notify_RoundEnd(int dragonXp, int deltaXp, int dragonProgression, int timePlayed, int score, int chestsFound, int eggFound,
-        float highestMultiplier, float highestBaseMultiplier, int furyRushNb, int superFireRushNb, int hcRevive, int adRevive, int scGained, int hcGained, float boostTime, int mapUsage) {
+        float highestMultiplier, float highestBaseMultiplier, int furyRushNb, int superFireRushNb, int hcRevive, int adRevive, int scGained,
+        int hcGained, float boostTime, int mapUsage, string runType) {
         Notify_CheckAndProcessEvent(TRACK_EVENT_TUTORIAL_COMPLETION);
         Notify_CheckAndProcessEvent(TRACK_EVENT_FIRST_10_RUNS_COMPLETED);
 
@@ -710,7 +722,8 @@ public class HDTrackingManagerImp : HDTrackingManager {
 
         // Last deathType, deathSource and deathCoordinates are used since this information is provided when Notify_RunEnd() is called
         Track_RoundEnd( Session_RoundId, dragonXp, deltaXp, dragonProgression, timePlayed, score, Session_LastDeathType, Session_LastDeathSource, Session_LastDeathCoordinates,
-            chestsFound, eggFound, highestMultiplier, highestBaseMultiplier, furyRushNb, superFireRushNb, hcRevive, adRevive, scGained, hcGained, (int)(boostTime * 1000.0f), mapUsage);
+            chestsFound, eggFound, highestMultiplier, highestBaseMultiplier, furyRushNb, superFireRushNb, hcRevive, adRevive, scGained, hcGained, (int)(boostTime * 1000.0f),
+            mapUsage, runType);
 
         Session_NotifyRoundEnd();
     }
@@ -1471,7 +1484,40 @@ public class HDTrackingManagerImp : HDTrackingManager {
 
         Track_PopupOTA(_popupName, actionStr);
     }
-#endregion
+    #endregion
+
+    #region referral
+
+    /// <summary>
+    /// Sent when user interacts with this with feature with pop up or shop section.
+    /// </summary>
+    /// <param name="_popupName"></param>
+    /// <param name="_action"></param>
+    public override void Notify_ReferralPopup(EReferralPopupName _popupName, EReferralAction _action)
+    {
+        Track_ReferralPopup(_popupName, _action);
+    }
+
+    /// <summary>
+    /// Sent when user get clicked in INVITE, selected a Network and successfully send the invitation.
+    /// </summary>
+    /// <param name="_linkId"></param>
+    /// <param name="_origin"></param>
+    public override void Notify_ReferralSendInvite( EReferralOrigin _origin) {
+        Track_ReferralSendInvite(_origin);
+    }
+
+    /// <summary>
+    /// Sent when a new users installs the game via Referral Install.
+    /// </summary>
+    /// <param name="_linkId"></param>
+    /// <param name="_reward"></param>
+    /// <param name="_valid"></param>
+    public override void Notify_ReferralInstall( bool _valid, string _referrerId) {
+        Track_ReferralInstall(_valid, _referrerId);
+    }
+
+    #endregion
 
     /// <summary>
     /// Sent when the user unlocks the map.
@@ -1951,7 +1997,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
     public void Track_RoundEnd( string roundId, int dragonXp, int deltaXp, int dragonProgression, int timePlayed, int score,
         string deathType, string deathSource, string deathCoordinates, int chestsFound, int eggFound,
         float highestMultiplier, float highestBaseMultiplier, int furyRushNb, int superFireRushNb, int hcRevive, int adRevive,
-        int scGained, int hcGained, int boostTimeMs, int mapUsage) {
+        int scGained, int hcGained, int boostTimeMs, int mapUsage, string runType) {
         
         Log("Track_RoundEnd roundId = " + roundId +" dragonXp = " + dragonXp + " deltaXp = " + deltaXp + " dragonProgression = " + dragonProgression +
             " timePlayed = " + timePlayed + " score = " + score +
@@ -1960,7 +2006,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
             " highestMultiplier = " + highestMultiplier + " highestBaseMultiplier = " + highestBaseMultiplier +
             " furyRushNb = " + furyRushNb + " superFireRushNb = " + superFireRushNb + " hcRevive = " + hcRevive + " adRevive = " + adRevive +
             " scGained = " + scGained + " hcGained = " + hcGained +
-            " boostTimeMs = " + boostTimeMs + " mapUsage = " + mapUsage
+            " boostTimeMs = " + boostTimeMs + " mapUsage = " + mapUsage + " runType = " + runType
             );        
 
         HDTrackingEvent e = new HDTrackingEvent("custom.gameplay.end");
@@ -1998,6 +2044,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
             Track_AddParamEggsOpened(e);
 			Track_AddParamBatteryLevel(e);
 			Track_AddParamControlChoice(e);
+            e.data.Add(TRACK_PARAM_RUN_TYPE, runType);
         }
         m_eventQueue.Enqueue(e);
     }
@@ -2782,6 +2829,61 @@ public class HDTrackingManagerImp : HDTrackingManager {
         m_eventQueue.Enqueue(e);
     }
 
+
+    private void Track_ReferralPopup(EReferralPopupName _popupName, EReferralAction _action)
+    {
+        Log("Track_ReferralPopup "
+            + ", popupName = " + _popupName
+            + ", action = " + _action);
+
+
+        // Create event
+        HDTrackingEvent e = new HDTrackingEvent("custom.general.referral.popup");
+        {
+            Track_AddParamString(e, TRACK_PARAM_POPUP_NAME, _popupName.ToString());
+            Track_AddParamString(e, TRACK_PARAM_ACTION, _action.ToString());
+            Track_AddParamReward(e);
+            Track_AddParamReferredUsers(e);
+            Track_AddParamInvitesSent(e);
+        }
+        m_eventQueue.Enqueue(e);
+    }
+
+
+    private void Track_ReferralSendInvite(EReferralOrigin _origin)
+    {
+        Log("Track_ReferralSendInvite "
+            + ", origin = " + _origin );
+
+        // Create event
+        HDTrackingEvent e = new HDTrackingEvent("custom.general.referral.sendInvite");
+        {
+            Track_AddParamString(e, TRACK_PARAM_ORIGIN, _origin.ToString());
+            Track_AddParamReward(e);
+            Track_AddParamReferredUsers(e);
+            Track_AddParamInvitesSent(e);
+            Track_AddParamPlayerProgress(e);
+        }
+        m_eventQueue.Enqueue(e);
+    }
+
+
+    private void Track_ReferralInstall(bool _valid, string _referrerId)
+    {
+        Log("Track_ReferralPopup "
+            + ", valid = " + _valid
+            + ", referrerId = " + _referrerId);
+
+        // Create event
+        HDTrackingEvent e = new HDTrackingEvent("custom.general.referral.install");
+        {
+            Track_AddParamString(e, TRACK_PARAM_REFERRER_ID, _referrerId);
+            Track_AddParamBool(e, TRACK_PARAM_VALID, _valid);
+            Track_AddParamPlayerProgress(e);
+        }
+        m_eventQueue.Enqueue(e);
+    }
+
     // -------------------------------------------------------------
     // Events
     // -------------------------------------------------------------
@@ -2865,6 +2967,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private const string TRACK_PARAM_HUNGRY_LETTERS_NB = "hungryLettersNb";
     private const string TRACK_PARAM_IN_GAME_ID = "InGameId";
     private const string TRACK_PARAM_INITIALQUALITY = "initialQuality";
+    private const string TRACK_PARAM_INVITES_SENT = "invitesSent";
     private const string TRACK_PARAM_IS_FATAL = "isFatal";
     private const string TRACK_PARAM_IS_HACKER = "isHacker";
     private const string TRACK_PARAM_IS_LOADED = "isLoaded";
@@ -2905,6 +3008,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private const string TRACK_PARAM_OFFER_NAME = "offerName";
     private const string TRACK_PARAM_OFFER_TYPE = "offerType";
     private const string TRACK_PARAM_OPT_IN = "optIn";
+    private const string TRACK_PARAM_ORIGIN = "origin";
     private const string TRACK_PARAM_ORIGINAL_AREA = "originalArea";
     private const string TRACK_PARAM_PAID = "paid";
     private const string TRACK_PARAM_PET1 = "pet1";
@@ -2929,10 +3033,14 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private const string TRACK_PARAM_RARITY = "rarity";
     private const string TRACK_PARAM_RATE_RESULT = "rateResult";
     private const string TRACK_PARAM_RECORDINGS = "recordings";
+    private const string TRACK_PARAM_REFERRED_USERS = "referredUsers";
+    private const string TRACK_PARAM_REFERRER_ID = "referrerID";
     private const string TRACK_PARAM_RESULT = "result";
+    private const string TRACK_PARAM_REWARD = "reward";
     private const string TRACK_PARAM_REWARD_TIER = "rewardTier";
     private const string TRACK_PARAM_REWARD_TYPE = "rewardType";
     private const string TRACK_PARAM_ROUND_ID = "roundid";
+    private const string TRACK_PARAM_RUN_TYPE = "runType";
     private const string TRACK_PARAM_RUNS_COMPLETED = "runsCompleted";
     private const string TRACK_PARAM_SC_EARNED = "scEarned";
     private const string TRACK_PARAM_SCORE = "score";
@@ -2977,6 +3085,8 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private const string TRACK_PARAM_TYPE_NOTIF = "typeNotif";
     private const string TRACK_PARAM_UNLOCK_TYPE = "unlockType";    
     private const string TRACK_PARAM_UPCOMING_LEAGUE = "upcomingLeague";
+    private const string TRACK_PARAM_VALID = "valid";
+
     private const string TRACK_PARAM_VERSION_QUALITY_FORMULA = "versionQualityFormula";
     private const string TRACK_PARAM_VERSION_REVISION = "versionRevision";
     private const string TRACK_PARAM_XP = "xp";
@@ -3115,6 +3225,40 @@ public class HDTrackingManagerImp : HDTrackingManager {
     {
         int value = (UsersManager.currentUser != null) ? (int)UsersManager.currentUser.coins : 0;
         _e.data.Add(TRACK_PARAM_SOFT_CURRENCY, value);
+    }
+
+    private void Track_AddParamReward (HDTrackingEvent _e)
+    {
+        string reward = "";
+
+        // Find the next reward in the milestones progression
+        OfferPackReferral offer = OffersManager.GetActiveReferralOffer();
+
+        if (UsersManager.currentUser != null)
+        {
+
+            OfferPackReferralReward refReward = offer.GetNextReward(UsersManager.currentUser.totalReferrals);
+            if (refReward != null)
+            {
+
+                reward = refReward.reward.amount.ToString() + "_" + refReward.reward.sku;
+
+            }
+        }
+
+        _e.data.Add(TRACK_PARAM_REWARD, reward);
+    }
+
+    private void Track_AddParamReferredUsers(HDTrackingEvent _e)
+    {
+        int value = (UsersManager.currentUser != null) ? UsersManager.currentUser.totalReferrals : 0;
+        _e.data.Add(TRACK_PARAM_REFERRED_USERS, value);
+    }
+
+    private void Track_AddParamInvitesSent(HDTrackingEvent _e)
+    {
+        int value = (UsersManager.currentUser != null) ? UsersManager.currentUser.invitesSent : 0;
+        _e.data.Add(TRACK_PARAM_INVITES_SENT, value);
     }
 
     private void Track_AddParamSessionsCount(HDTrackingEvent _e) {

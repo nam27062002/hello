@@ -431,6 +431,46 @@ public class UserProfile : UserPersistenceSystem
         set { m_removeAds = value; }
     }
 
+	// Referral install
+	private string m_referralUserId;
+	public string referralUserId
+	{
+		get { return m_referralUserId; }
+		set { m_referralUserId = value; }
+	}
+
+	private bool m_referralConfirmed;
+	public bool referralConfirmed
+	{
+		get { return m_referralConfirmed; }
+		set { m_referralConfirmed = value; }
+	}
+
+
+	private int m_totalReferrals;
+	public int totalReferrals
+	{
+		get { return m_totalReferrals; }
+        set { m_totalReferrals = value;  }
+	}
+
+	private int m_invitesSent;
+	public int invitesSent
+	{
+		get { return m_invitesSent; }
+		set { m_invitesSent = value; }
+	}
+
+
+	// List of unlocked referral rewards (milestones) that havent been claimed yet
+	private List<OfferPackReferralReward> m_unlockedReferralRewards = new List<OfferPackReferralReward>();
+	public List<OfferPackReferralReward> unlockedReferralRewards
+	{
+		get { return m_unlockedReferralRewards; }
+		set { m_unlockedReferralRewards = value; }
+	}
+
+
 	// Baby dragons - Extra gem granted
 	private bool m_babyDragonExtraGemGranted;
     public bool babyDragonExtraGemGranted
@@ -638,7 +678,13 @@ public class UserProfile : UserPersistenceSystem
 
         // Remove Ads Offer
         m_removeAds = new RemoveAdsFeature();
-    }
+
+		// Referrals
+		m_totalReferrals = 0;
+		m_unlockedReferralRewards.Clear();
+		m_invitesSent = 0;
+
+	}
 
 	/// <summary>
 	/// 
@@ -1468,7 +1514,37 @@ public class UserProfile : UserPersistenceSystem
             GivenTransactions = _data[key];
         }
 
-        // Baby Dragons - Extra gem granted
+		// Referral
+		key = "referralUserId";
+		if (_data.ContainsKey(key))
+		{
+			m_referralUserId = _data[key].Value;
+		}
+		else
+		{
+			m_referralUserId = "";
+		}
+
+		key = "referralConfirmed";
+        if (_data.ContainsKey(key))
+        {
+			m_referralConfirmed = _data[key].AsBool;
+        } else
+        {
+			m_referralConfirmed = false;
+        }
+
+		key = "invitesSent";
+		if (_data.ContainsKey(key))
+		{
+			m_invitesSent = PersistenceUtils.SafeParse<int> (_data[key]);
+		}
+		else
+		{
+			m_invitesSent = 0;
+		}
+
+		// Baby Dragons - Extra gem granted
 		key = "babyDragonExtraGemGranted";
 		if (profile.ContainsKey(key))
 		{
@@ -1490,6 +1566,7 @@ public class UserProfile : UserPersistenceSystem
 			m_babyDragonExtraGemFailedCounter = 0;
 		}
 	}
+
 
 	/// <summary>
 	/// Loads the data related to eggs.
@@ -1736,6 +1813,13 @@ public class UserProfile : UserPersistenceSystem
         {
             data.Add("givenTransactions", GivenTransactions);
         }
+
+		// Referral
+		data.Add("referralUserId", referralUserId);
+
+		data.Add("referralConfirmed", referralConfirmed);
+
+		data.Add("invitesSent", invitesSent);
 
 		// Baby dragons - Extra gem granted
 		data.Add("babyDragonExtraGemGranted", PersistenceUtils.SafeToString(m_babyDragonExtraGemGranted));
@@ -2057,7 +2141,7 @@ public class UserProfile : UserPersistenceSystem
 	}
     
     public void OnRulesUpdated(){
-        // Because We cach dragon's price on a variable we need to refresh the value
+        // Because We cache dragon's price on a variable we need to refresh the value
         foreach(KeyValuePair<string, IDragonData> pair in m_dragonsBySku) {
             pair.Value.RefreshPrice();
             pair.Value.RefreshShadowRevealUnlock();
@@ -2066,6 +2150,11 @@ public class UserProfile : UserPersistenceSystem
 				(pair.Value as DragonDataClassic).RefreshProgression();
 			}
         }
+
+		// Propagate to daily rewards sequence
+		if(m_dailyRewards != null) {
+			m_dailyRewards.OnRulesUpdated();
+		}
     }
 
 

@@ -39,8 +39,10 @@ public class ResultsScreenStepClustering : ResultsScreenStep {
 		if (!string.IsNullOrEmpty(UsersManager.currentUser.clusterId))
 			return false;
 
+		DefinitionNode offerSettingsDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, "offerSettings");
+
 		// Do not calculate clustering until the end of the run 1 (0 is tutorial)
-		if (gamesPlayed != ClusteringManager.Instance.calculateClusterAtRun)
+		if (gamesPlayed != offerSettingsDef.GetAsInt("assignGenericClusterAtRun"))
 			return false;
 
 

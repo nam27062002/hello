@@ -252,9 +252,10 @@ public class HDTrackingManager
     /// <param name="hcGained">Amount of hard currency gained during the round.</param>
 	/// <param name="boostTime">Amount of time the player was using boost during the round in seconds.</param>
     /// <param name="mapUsage">Numer of time the player opened the map.</param>
+    /// <param name="runType">Type of run: common or tournament</param>
     public virtual void Notify_RoundEnd(int dragonXp, int deltaXp, int dragonProgression, int timePlayed, int score, 
         int chestsFound, int eggFound, float highestMultiplier, float highestBaseMultiplier, int furyRushNb, int superFireRushNb, int hcRevive, int adRevive,
-        int scGained, int hcGained, float boostTime, int mapUsage) {}
+        int scGained, int hcGained, float boostTime, int mapUsage, string runType) {}
 
     /// <summary>
     /// Called when a run finished (because of death or quit game). Remember that a round is composed of at least one run, but it can have more than one if after a run
@@ -607,7 +608,6 @@ public class HDTrackingManager
     /// </summary>
     public virtual void Notify_ClusterAssigned(string clusterId) {}
 
-    #endregion
 
     #region animoji
     /// <summary>
@@ -698,6 +698,42 @@ public class HDTrackingManager
 
     public virtual void Notify_PopupOTA(string _popupName, Downloadables.Popup.EAction _action) {  }
     #endregion
+
+    #region referral
+    public enum EReferralPopupName
+    {
+        InfoPopup,
+        ErrorPopup,
+        ConfirmationPopup,
+        Shop
+    }
+
+    public enum EReferralAction
+    {
+        Info,
+        Invite,
+        Close,
+        InviteMore,
+        Claim
+    }
+
+    public virtual void Notify_ReferralPopup(EReferralPopupName popupName, EReferralAction action) { }
+
+
+    public enum EReferralOrigin
+    {
+        Shop,
+        Interstitial
+    }
+
+    public virtual void Notify_ReferralSendInvite(EReferralOrigin origin) { }
+
+    public virtual void Notify_ReferralInstall(bool valid, string referrerId) { }
+
+    #endregion referral
+
+
+    #endregion notify
 
     // The names of the values of this enum match the ones that BI expect, so you shouldn't change them unless BI requires so
     public enum ELocation
@@ -802,5 +838,7 @@ public class HDTrackingManager
         Session_GameRoundCount = 0;
     }
     #endregion
+
+    
 }
 

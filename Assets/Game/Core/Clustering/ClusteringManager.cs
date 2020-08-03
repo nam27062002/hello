@@ -52,14 +52,7 @@ public class ClusteringManager {
     private long m_score;
     private int m_boostTime;
 
-	// Configuration in content:
-	// The cluster will be calculated based on the data gathered until the end of this run
-	private int m_calculateClusterAtRun;
-	public int calculateClusterAtRun
-        { get => m_calculateClusterAtRun; }
 
-	// If the server didnt reply yet at this run, we assign the player to a generic cluster
-	private int m_assignGenericClusterArRun;
 
 
 	//------------------------------------------------------------------------//
@@ -70,13 +63,7 @@ public class ClusteringManager {
 	/// </summary>
 	public ClusteringManager() {
 
-		// Read config variables from the content
-		if (ContentManager.ready)
-		{
-			DefinitionNode offerSettingsDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, "offerSettings");
-			m_calculateClusterAtRun = offerSettingsDef.GetAsInt("calculateClusterAtRun");
-            m_assignGenericClusterArRun = offerSettingsDef.GetAsInt("assignGenericClusterAtRun");
-		}
+
 	}
 
 	/// <summary>
@@ -116,6 +103,7 @@ public class ClusteringManager {
     /// <returns>The cluster ID</returns>
     public string GetClusterId( )
 	{
+
 		string clusterId = UsersManager.currentUser.clusterId;
 
 		if (!string.IsNullOrEmpty(clusterId))
@@ -125,9 +113,20 @@ public class ClusteringManager {
 		}
 		else
 		{
-			// we dont know it yet.
 
-			if (UsersManager.currentUser.gamesPlayed < m_calculateClusterAtRun)
+
+			if (!ContentManager.ready)
+			{
+				// The content manager is not ready yet
+				return null;
+			}
+
+			// Read config variables from the content
+			DefinitionNode offerSettingsDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, "offerSettings");
+
+
+			// The cluster will be calculated based on the data gathered at the end of this run
+            if (UsersManager.currentUser.gamesPlayed < offerSettingsDef.GetAsInt("calculateClusterAtRun"))
 			{
 				// Too early. We are not calculating the cluster ID yet.
 				return null;
@@ -136,7 +135,7 @@ public class ClusteringManager {
 			// Request the cluster ID to the server.
 			InitializeAndSendRequest(false);
 
-			if (UsersManager.currentUser.gamesPlayed < m_assignGenericClusterArRun)
+			if ( UsersManager.currentUser.gamesPlayed < offerSettingsDef.GetAsInt("assignGenericClusterAtRun") )
 			{
 				// We are still waiting for the server response
 				return null;
