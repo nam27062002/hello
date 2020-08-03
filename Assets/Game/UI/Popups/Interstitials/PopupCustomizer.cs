@@ -412,8 +412,45 @@ public class PopupCustomizer : MonoBehaviour {
 					} break;
 
 					case "tournament": {
-						// [AOC] TODO!!
-						LogError("Customizer Popup: Action not yet implemented! (" + button.m_eButtonAction.ToString() + " | " + button.m_strParam + ")", true);
+						// Do we have a valid tournament?
+						HDTournamentManager tournamentManager = HDLiveDataManager.tournament;
+
+						// Do we actually have a tournament?
+						if(!tournamentManager.EventExists()) break;
+
+						// If the tournament requires a game update, show popup and break
+						if(tournamentManager.RequiresUpdate()) {
+							// Show update popup!
+							PopupManager.OpenPopupInstant(PopupUpdateEvents.PATH);
+							break;
+						}
+
+						// Is the tournament running?
+						if(!tournamentManager.IsRunning()) break;
+
+						// Is OTA ready for this tournament?
+						// If we dont have downloaded the content yet, dont go to the tournament screen
+						Downloadables.Handle tournamentHandle = HDAddressablesManager.Instance.GetHandleForTournament(tournamentManager);
+						if(tournamentHandle.IsAvailable()) {
+							// All good! go to the tournament screen
+							// Change game mode first
+    						SceneController.SetMode(SceneController.Mode.TOURNAMENT);
+        					HDLiveDataManager.instance.SwitchToTournament();
+
+							// Now we're good to go!
+							nextScreen = MenuScreen.TOURNAMENT_INFO;
+						} else {
+							// Show popup with download progress
+							PopupAssetsDownloadFlow downloadPopup = PopupAssetsDownloadFlow.OpenPopupByState(
+								tournamentHandle,
+								PopupAssetsDownloadFlow.PopupType.ANY,
+								AssetsDownloadFlow.Context.PLAYER_CLICKS_ON_TOURNAMENT
+							);
+
+							// Allow the player to hit the button again once the OTA popup is closed
+							// [AOC] TODO!! This flow should be reviewed
+							closePopup = false;
+						}
 					} break;
 
 					case "skins": {
