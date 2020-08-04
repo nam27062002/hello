@@ -491,6 +491,26 @@ public class PopupCustomizer : MonoBehaviour {
 							nextScreen = MenuScreen.DRAGON_SELECTION;
 						}
 					} break;
+
+					case "offer_popup": {
+						// Is a specific offer sku defined?
+						OfferPack targetOffer = null;
+						if(tokens.Length > 1) {
+							targetOffer = OffersManager.GetOfferPack(tokens[1]);
+						}
+
+						// If not defined, the target offer will be the featured one (if any)
+						else {
+							targetOffer = OffersManager.featuredOffer;
+						}
+
+						// Valid and active offer?
+						if(targetOffer != null && targetOffer.isActive) {
+							// Yes! Open offer popup
+							PopupController popup = PopupShopOfferPack.LoadPopupForOfferPack(targetOffer);
+							popup.Open();
+						}
+					} break;
 				}
 
 				// Trigger screen transition
