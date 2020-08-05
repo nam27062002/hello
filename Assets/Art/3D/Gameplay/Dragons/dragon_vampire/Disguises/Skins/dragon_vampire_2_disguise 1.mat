@@ -7,10 +7,10 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: dragon_vampire_0_body
+  m_Name: dragon_vampire_2_disguise 1
   m_Shader: {fileID: 4800000, guid: 2345015ac46679e4cb5817ed44c82547, type: 3}
-  m_ShaderKeywords: FRESNEL FXLAYER_REFLECTION NORMALMAP REFLECTIONTYPE_NORMAL SELFILLUMINATE_NORMAL
-    SPECULAR _ZWRITE_ON
+  m_ShaderKeywords: FXLAYER_REFLECTION NORMALMAP REFLECTIONTYPE_NORMAL SELFILLUMINATE_NORMAL
+    SPECULAR VERTEXOFFSETZ _ZWRITE_ON
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -21,7 +21,7 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _BumpMap:
-        m_Texture: {fileID: 2800000, guid: 0f6a79e2f4afbf84b90fd950ae24a25e, type: 3}
+        m_Texture: {fileID: 2800000, guid: b8547e06fadbccc4198cce28b838726d, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailAlbedoMap:
@@ -37,7 +37,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailTex:
-        m_Texture: {fileID: 2800000, guid: 2e5344026e604ae459dcefe539f98703, type: 3}
+        m_Texture: {fileID: 2800000, guid: 33893c9071422b3499f8d073cfc0db8b, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _EmissionMap:
@@ -49,7 +49,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 32e9a4805fa72da4194ac7b4159f17ff, type: 3}
+        m_Texture: {fileID: 2800000, guid: 29293d98ae079634d8727af3f56f6655, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
@@ -65,7 +65,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _ReflectionMap:
-        m_Texture: {fileID: 8900000, guid: 526eef17382f158429f2491abb96d089, type: 2}
+        m_Texture: {fileID: 8900000, guid: 14ca732449041b64aa36929057e32ebc, type: 2}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
@@ -89,7 +89,7 @@ Material:
     - _EnableCutoff: 0
     - _EnableDiffuseAsSpecMask: 0
     - _EnableDoublesided: 0
-    - _EnableFresnel: 1
+    - _EnableFresnel: 0
     - _EnableNormalMap: 1
     - _EnableOpaqueFresnel: 0
     - _EnableOpaqueSpecular: 0
@@ -98,39 +98,39 @@ Material:
     - _EnableVertexOffset: 0
     - _EnableVertexOffsetX: 0
     - _EnableVertexOffsetY: 0
-    - _EnableVertexOffsetZ: 0
+    - _EnableVertexOffsetZ: 1
     - _EnableVertexScaleZ: 0
     - _FireAmount: 0
     - _FireSpeed: 1
-    - _Fresnel: 6.47
+    - _Fresnel: 8.21
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
     - _InnerLightAdd: 0
     - _InnerLightWavePhase: 1
-    - _InnerLightWaveSpeed: 2
+    - _InnerLightWaveSpeed: 1
     - _Metallic: 0
     - _Mode: 0
-    - _NormalStrenght: 1.4
+    - _NormalStrenght: 1
     - _OcclusionStrength: 1
     - _Parallax: 0.02
-    - _ReflectionAmount: 0.118
+    - _ReflectionAmount: 0.212
     - _SmoothnessTextureChannel: 0
-    - _SpecExponent: 13.8
+    - _SpecExponent: 52
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _StencilMask: 10
     - _UVSec: 0
-    - _VOAmplitude: 0.3
-    - _VOSpeed: 3
+    - _VOAmplitude: 0.2
+    - _VOSpeed: 4
     - _ZWrite: 1
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _ColorAdd: {r: 0, g: 0, b: 0, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _FresnelColor: {r: 0.38679248, g: 0.16237986, b: 0.16932042, a: 1}
-    - _InnerLightColor: {r: 0.38679248, g: 0.38679248, b: 0.38679248, a: 1}
+    - _FresnelColor: {r: 0.21293165, g: 0.23662166, b: 0.2735849, a: 1}
+    - _InnerLightColor: {r: 1, g: 1, b: 1, a: 1}
     - _ReflectionColor: {r: 1, g: 1, b: 1, a: 1}
-    - _SecondLightColor: {r: 0.06376031, g: 0.0027032858, b: 0.07352942, a: 0}
-    - _SecondLightDir: {r: 0.55703527, g: 0.83048886, b: -0, a: 0}
-    - _Tint: {r: 0.8962264, g: 0.8962264, b: 0.8962264, a: 1}
+    - _SecondLightColor: {r: 0, g: 0, b: 0, a: 0}
+    - _SecondLightDir: {r: -0.17579065, g: 0.98442763, b: -0, a: 0}
+    - _Tint: {r: 1, g: 1, b: 1, a: 1}
