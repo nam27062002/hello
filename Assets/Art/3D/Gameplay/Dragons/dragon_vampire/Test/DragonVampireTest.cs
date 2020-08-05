@@ -10,6 +10,8 @@ public class DragonVampireTest : MonoBehaviour
     [SerializeField] float m_fadeDelay = 0.5f;
     [SerializeField] float m_fadeTime = 1f;
 
+    public bool m_isVampire = true;
+
     bool m_simulation = false;
     bool m_isDeathAnimationEnabled = false;
     bool m_isPauseEffectEnabled = false;
@@ -94,8 +96,17 @@ public class DragonVampireTest : MonoBehaviour
 
     void SetDeathMaterials()
     {
-        DragonCorpse.setDeathMode(m_bodyMaterial);
-        DragonCorpse.setDeathMode(m_wingsMaterial);
+        if (m_isVampire)
+        {
+            m_bodyMaterial.EnableKeyword("FXLAYER_DISSOLVE");
+            m_wingsMaterial.EnableKeyword("FXLAYER_DISSOLVE");
+        }
+        else
+        {
+            DragonCorpse.setDeathMode(m_bodyMaterial);
+            DragonCorpse.setDeathMode(m_wingsMaterial);
+
+        }
     }
 
     void SetAlpha(float alpha)
@@ -103,9 +114,16 @@ public class DragonVampireTest : MonoBehaviour
         int count = m_fadeMaterials.Count;
         for (int i = 0; i < count; ++i)
         {
-            Color tint = m_fadeMaterials[i].GetColor(GameConstants.Materials.Property.TINT);
-            tint.a = alpha;
-            m_fadeMaterials[i].SetColor(GameConstants.Materials.Property.TINT, tint);
+            if (m_isVampire)
+            {
+                m_fadeMaterials[i].SetFloat("_DissolveAmount", 1.0f - alpha);
+            }
+            else
+            {
+                Color tint = m_fadeMaterials[i].GetColor(GameConstants.Materials.Property.TINT);
+                tint.a = alpha;
+                m_fadeMaterials[i].SetColor(GameConstants.Materials.Property.TINT, tint);
+            }
         }
     }
 
