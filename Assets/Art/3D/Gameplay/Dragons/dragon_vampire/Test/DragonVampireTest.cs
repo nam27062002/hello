@@ -1,36 +1,42 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class DragonVampireTest : MonoBehaviour
 {
-    public GameObject effect;
-    public Material bodyMaterial;
-    public Material wingsMaterial;
-    [SerializeField] private float m_fadeDelay = 0.5f;
-    [SerializeField] private float m_fadeTime = 1f;
+    [SerializeField] GameObject m_effect;
+    [SerializeField] Material m_bodyMaterial;
+    [SerializeField] Material m_wingsMaterial;
+    [SerializeField] float m_fadeDelay = 0.5f;
+    [SerializeField] float m_fadeTime = 1f;
+
+    bool m_simulation = false;
+    bool m_isDeathAnimationEnabled = false;
+    bool m_isPauseEffectEnabled = false;
+
     float m_delay;
     float m_time;
-    bool isDeathAnimationEnabled = false;
-    bool isPauseEffectEnabled = false;
+    Animator m_anim;
+    readonly List<Material> m_fadeMaterials = new List<Material>();
+    readonly int m_animTriggerDeath = Animator.StringToHash("DEATH");
 
-    int animTriggerDeath = Animator.StringToHash("DEATH");
-    Animator anim;
-    bool simulation = false;
-    List<Material> m_fadeMaterials = new List<Material>();
-
-    private void Awake()
+    void Awake()
     {
-        anim = GetComponent<Animator>();
-        m_delay = m_fadeDelay;
-        m_time = m_fadeTime;
-        m_fadeMaterials.Add(bodyMaterial);
-        m_fadeMaterials.Add(wingsMaterial);
-        SetAlpha(1.0f);
+        m_anim = GetComponent<Animator>(); 
+        m_fadeMaterials.Add(m_bodyMaterial);
+        m_fadeMaterials.Add(m_wingsMaterial);
+
+        ResetEffect(resetOrientation: true);
     }
 
     void Update()
     {
-        if (simulation)
+        if (Input.GetMouseButton(0) && !EventSystem.current.IsPointerOverGameObject())
+        {
+            RotateDragon();
+        }
+
+        if (m_simulation)
         {
             m_delay -= Time.deltaTime;
             if (m_delay <= 0)
@@ -43,52 +49,53 @@ public class DragonVampireTest : MonoBehaviour
         }
     }
 
+    void RotateDragon()
+    {
+        transform.Rotate(new Vector3(100 * Time.deltaTime, 0, 0));
+    }
+
     public void PlayEffect()
     {
-        if (simulation)
-        {
-            ResetEffect();
-        }
+        if (m_simulation)
+            ResetEffect(resetOrientation: false);
 
-        simulation = true;
-        if (isDeathAnimationEnabled)
-            anim.SetTrigger(animTriggerDeath);
+        m_simulation = true;
         SetDeathMaterials();
-        effect.SetActive(true);
+        if (m_isDeathAnimationEnabled)
+            m_anim.SetTrigger(m_animTriggerDeath);
+        m_effect.SetActive(true);
 
-        if (isPauseEffectEnabled)
+        if (m_isPauseEffectEnabled)
             Debug.Break();
     }
 
-    public void ResetEffect()
+    public void ResetEffect(bool resetOrientation)
     {
-        simulation = false;
+        m_simulation = false;
         SetAlpha(1.0f);
         m_delay = m_fadeDelay;
         m_time = m_fadeTime;
-        anim.Play("Flying");
-        effect.SetActive(false);  
+        m_anim.Play("Flying");
+        m_effect.SetActive(false);
+
+        if (resetOrientation)
+            transform.rotation = Quaternion.Euler(0, 90, 0);
     }
 
     public void EnableDeathAnimation(bool deathAnimationEnabled)
     {
-        isDeathAnimationEnabled = deathAnimationEnabled;
+        m_isDeathAnimationEnabled = deathAnimationEnabled;
     }
 
     public void EnablePauseEffect(bool pauseEffectEnabled)
     {
-        isPauseEffectEnabled = pauseEffectEnabled;
-    }
-
-    void WingsFlyingSound()
-    {
-
+        m_isPauseEffectEnabled = pauseEffectEnabled;
     }
 
     void SetDeathMaterials()
     {
-        DragonCorpse.setDeathMode(bodyMaterial);
-        DragonCorpse.setDeathMode(wingsMaterial);
+        DragonCorpse.setDeathMode(m_bodyMaterial);
+        DragonCorpse.setDeathMode(m_wingsMaterial);
     }
 
     void SetAlpha(float alpha)
@@ -100,5 +107,11 @@ public class DragonVampireTest : MonoBehaviour
             tint.a = alpha;
             m_fadeMaterials[i].SetColor(GameConstants.Materials.Property.TINT, tint);
         }
+    }
+
+    // Dummy flying animation event
+    void WingsFlyingSound()
+    {
+
     }
 }
