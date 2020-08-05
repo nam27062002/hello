@@ -442,7 +442,7 @@ public class ShopController : MonoBehaviour
         m_lastShortcut = null;
 
         // Iterate all the active categories
-        foreach (ShopCategory category in OffersManager.instance.activeCategories)
+        foreach (ShopCategory category in OffersManager.activeCategories)
         {
             // Filtering categories if needed
             if (m_categoryToShow == null || category.sku == m_categoryToShow)
@@ -1190,7 +1190,7 @@ public class ShopController : MonoBehaviour
 	private void NotifyCategoryOrderTracking() {
         // We already have the categories sorted, so just send an event for each
         int i = 0;
-        foreach (ShopCategory category in OffersManager.instance.activeCategories )
+        foreach (ShopCategory category in OffersManager.activeCategories )
         {
             if (category.enabled)
             {
