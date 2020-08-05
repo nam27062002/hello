@@ -643,6 +643,14 @@ public class PersistenceFacade : IBroadcastListener
             {
                 bool finishFlow = true;
 
+                // Disable spam prevention on the popup
+                if(m_popupController != null) {
+                    PopupMergeDNA dnaPopup = m_popupController.GetComponent<PopupMergeDNA>();
+                    if(dnaPopup != null) {
+                        dnaPopup.ToggleUILock(false);
+					}
+				}
+
                 //result = PersistenceStates.ESyncResult.ErrorSyncing;
                 switch (detail)
                 {

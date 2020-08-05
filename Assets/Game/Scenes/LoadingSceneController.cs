@@ -800,7 +800,7 @@ public class LoadingSceneController : SceneController {
 
                 // Tech
                 GameSceneManager.CreateInstance(true);
-                HDLiveDataManager.CreateInstance(false);
+                HDLiveDataManager.CreateInstance(true);
                 FlowManager.CreateInstance(true);
                 PoolManager.CreateInstance(true);
                 ActionPointManager.CreateInstance(true);
