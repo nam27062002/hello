@@ -511,6 +511,22 @@ public class PopupCustomizer : MonoBehaviour {
 							popup.Open();
 						}
 					} break;
+
+					case "vip_offer": {
+						// Get VIP offer
+						OfferPack vipOffer = OffersManager.removeAdsOffer;
+						if(vipOffer != null && vipOffer.isActive) {
+							// Load the popup
+							PopupController popup = PopupManager.LoadPopup(PopupRemoveAdsOffer.PATH);
+
+							// Initialize it with the remove ad offer (if exists)
+							PopupRemoveAdsOffer popupRemoveAdsOffer = popup.GetComponent<PopupRemoveAdsOffer>();
+							popupRemoveAdsOffer.Init();	// The popup itself will look for the vip offer
+
+							// Show the popup
+							popup.Open();
+						}
+					} break;
 				}
 
 				// Trigger screen transition
