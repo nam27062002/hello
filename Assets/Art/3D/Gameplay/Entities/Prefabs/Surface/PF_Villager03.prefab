@@ -121,7 +121,7 @@ MonoBehaviour:
     max: 1.5
   m_useSpawnerRotation: 0
   m_serializedJson: '[{"speed":1.5,"isWallWalking":false,"timeToIdle":{"min":15,"max":20},"timeToChangeDirection":{"min":5,"max":10},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false},{"restTime":{"min":2,"max":4},"randomLookAt":true,"dataType":"AI.Behaviour.IdleData","editorFolded":false},{"speed":10,"checkDragonPositionTime":0.5,"checkForActionPointTime":1,"actions":{"panic":{"id":0,"active":true,"probability":1},"jump":{"id":1,"active":false,"probability":1},"goOn":{"id":2,"active":true,"probability":1},"hide":{"id":3,"active":true,"probability":1},"home":{"id":3,"active":true,"probability":1}},"dataType":"AI.Behaviour.FleeToAPData","editorFolded":false},{"dataType":"AI.Behaviour.OnActionPointData","editorFolded":false},{"speed":1.5,"dataType":"AI.Behaviour.HomeSenseDragonData","editorFolded":false},{"speed":10,"dataType":"AI.Behaviour.HomeData","editorFolded":false}]'
-  m_databaseKey: PF_Villager03 (1)
+  m_databaseKey: PF_Villager03
 --- !u!114 &114991683550668954
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -493,7 +493,7 @@ MonoBehaviour:
   - season: Alien
     groups:
     - name: Mask
-      probability: 1
+      probability: 0.9
       items:
       - equipablePrefabName: PF_AlienMask_villager
         defaultItemLOW: 1
