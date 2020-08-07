@@ -33,6 +33,7 @@ public class Equipable : MonoBehaviour {
 		Extra_1,
 		Extra_2,
 		Extra_3,
+        Extra_4,
 		Count
 	};
 
