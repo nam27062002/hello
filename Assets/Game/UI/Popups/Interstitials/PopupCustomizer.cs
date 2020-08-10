@@ -527,6 +527,22 @@ public class PopupCustomizer : MonoBehaviour {
 							popup.Open();
 						}
 					} break;
+
+					case "referral": {
+						// Find the current active referral offer and make sure it's valid
+						OfferPackReferral referralOffer = OffersManager.GetActiveReferralOffer();
+						if(referralOffer != null && referralOffer.isActive) {
+							// Load the popup
+							PopupController popup = PopupManager.LoadPopup(PopupShopReferral.PATH);
+
+							// Initialize it with the referral install offer pack
+							PopupShopReferral popupReferralInstall = popup.GetComponent<PopupShopReferral>();
+							popupReferralInstall.InitFromOfferPack(referralOffer);
+
+							// Show the popup
+							popup.Open();
+						}
+					} break;
 				}
 
 				// Trigger screen transition
