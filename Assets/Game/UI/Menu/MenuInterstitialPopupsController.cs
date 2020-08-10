@@ -79,6 +79,12 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 	/// Update loop.
 	/// </summary>
 	private void Update() {
+#if UNITY_EDITOR && DEBUG
+		if(Input.GetKeyDown(KeyCode.C)) {
+			CheckCustomizerPopup_DEBUG();
+		}
+#endif
+
 		// Customizer popup async operation+
 		if(GetFlag(StateFlag.WAIT_FOR_CUSTOM_POPUP)) {
 			if(!GetFlag(StateFlag.POPUP_DISPLAYED)) {
@@ -221,6 +227,18 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 			}
 		}
 	}
+
+#if UNITY_EDITOR && DEBUG
+	/// <summary>
+	/// Check popups coming from the customizer.
+	/// </summary>
+	private void CheckCustomizerPopup_DEBUG() {
+		// Only if enabled in the debug settings
+		if(!DebugSettings.CUSTOMIZER_POPUP_TEST_ENABLED) return;
+		OpenCustomizerPopup(DebugSettings.CUSTOMIZER_POPUP_TEST_CONFIG);
+		return;
+	}
+#endif
 
 	/// <summary>
 	/// Popups coming from the customizer.

@@ -1283,7 +1283,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5378e1f14d974d419f811d6b0861f20, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 21778727031127588, guid: 4caf79d4ce203ce4a8a8f4fc8677675e,
+  m_Material: {fileID: 21269453278868366, guid: 4caf79d4ce203ce4a8a8f4fc8677675e,
     type: 2}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
@@ -1293,7 +1293,7 @@ MonoBehaviour:
   m_fontAsset: {fileID: 11400000, guid: 8ea6cf986662c4e6f942e88850b31e64, type: 2}
   m_spriteAsset: {fileID: 11400000, guid: 4caf79d4ce203ce4a8a8f4fc8677675e, type: 2}
   m_material: {fileID: 0}
-  m_sharedMaterial: {fileID: 21778727031127588, guid: 4caf79d4ce203ce4a8a8f4fc8677675e,
+  m_sharedMaterial: {fileID: 21269453278868366, guid: 4caf79d4ce203ce4a8a8f4fc8677675e,
     type: 2}
   m_isDefaultMaterial: 1
   m_padding: 0
@@ -2357,7 +2357,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 1024.3782, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 59.13}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!222 &222000014123285178
@@ -2651,12 +2651,12 @@ MonoBehaviour:
     textComponent: {fileID: 114000012096020968}
     characterCount: 3
     spriteCount: 0
-    spaceCount: 0
+    spaceCount: 1
     wordCount: 2
     linkCount: 0
     lineCount: 1
     pageCount: 1
-    materialCount: 3
+    materialCount: 2
   m_havePropertiesChanged: 1
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
@@ -4164,7 +4164,7 @@ MonoBehaviour:
     linkCount: 0
     lineCount: 3
     pageCount: 1
-    materialCount: 2
+    materialCount: 1
   m_havePropertiesChanged: 1
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
@@ -5059,6 +5059,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2622e552596133e4cb12fdd241d7c1ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_startHidden: 1
   m_arrow: {fileID: 0}
   m_arrowDir: 0
   m_titleText: {fileID: 114143745446204448}
@@ -5128,7 +5129,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5378e1f14d974d419f811d6b0861f20, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 21778727031127588, guid: 4caf79d4ce203ce4a8a8f4fc8677675e,
+  m_Material: {fileID: 21269453278868366, guid: 4caf79d4ce203ce4a8a8f4fc8677675e,
     type: 2}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
@@ -5138,7 +5139,7 @@ MonoBehaviour:
   m_fontAsset: {fileID: 11400000, guid: 8ea6cf986662c4e6f942e88850b31e64, type: 2}
   m_spriteAsset: {fileID: 11400000, guid: 4caf79d4ce203ce4a8a8f4fc8677675e, type: 2}
   m_material: {fileID: 0}
-  m_sharedMaterial: {fileID: 21778727031127588, guid: 4caf79d4ce203ce4a8a8f4fc8677675e,
+  m_sharedMaterial: {fileID: 21269453278868366, guid: 4caf79d4ce203ce4a8a8f4fc8677675e,
     type: 2}
   m_isDefaultMaterial: 1
   m_padding: 0
@@ -6433,7 +6434,7 @@ MonoBehaviour:
     textComponent: {fileID: 114526689669542678}
     characterCount: 15
     spriteCount: 0
-    spaceCount: 3
+    spaceCount: 4
     wordCount: 4
     linkCount: 0
     lineCount: 1
@@ -7253,7 +7254,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b14aa7aba6897447d947373a65bfb333, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_targetScreen: -1
+  m_targetScreen: 1
+  m_excludedScreens: 00000000
 --- !u!114 &114285919458409634
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11615,8 +11617,8 @@ MonoBehaviour:
     textComponent: {fileID: 114600452197544010}
     characterCount: 19
     spriteCount: 0
-    spaceCount: 3
-    wordCount: 4
+    spaceCount: 4
+    wordCount: 3
     linkCount: 0
     lineCount: 1
     pageCount: 1
@@ -13021,7 +13023,7 @@ PrefabInstance:
     - target: {fileID: 5549263775805610711, guid: ec505cf8e58c2374e8107b08b9da8407,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -224.67001
+      value: -195.315
       objectReference: {fileID: 0}
     - target: {fileID: 5549372086865768379, guid: ec505cf8e58c2374e8107b08b9da8407,
         type: 3}
@@ -13177,6 +13179,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Material
       value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 5731322016613912127, guid: ec505cf8e58c2374e8107b08b9da8407,
+        type: 3}
+      propertyPath: m_textInfo.materialCount
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5731766298121542537, guid: ec505cf8e58c2374e8107b08b9da8407,
         type: 3}
