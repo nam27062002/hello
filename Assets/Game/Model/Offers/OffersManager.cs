@@ -63,18 +63,18 @@ public class OffersManager : Singleton<OffersManager> {
 	}
 
     private OfferPack m_removeAdsOffer = null;
-    public OfferPack removeAdsOffer
+    public static OfferPack removeAdsOffer
     {
-        get { return removeAdsOffer; }
+        get { return instance.m_removeAdsOffer; }
     }
 
     private OfferPack m_activeRemoveAdsOffer = null;
 
     // List of all the active categories
     private List<ShopCategory> m_categories = new List<ShopCategory>();
-    public List<ShopCategory> activeCategories
+    public static List<ShopCategory> activeCategories
     {
-        get { return m_categories; }
+        get { return instance.m_categories; }
     }
 
     // Internal

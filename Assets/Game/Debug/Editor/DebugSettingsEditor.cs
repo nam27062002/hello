@@ -35,6 +35,9 @@ public class DebugSettingsEditor : Editor {
 	private SerializedProperty m_debugSafeAreaProp = null;
 	private SerializedProperty m_simulatedSpecialDeviceProp = null;
 
+	private SerializedProperty m_customizerTestEnabledProp = null;
+	private SerializedProperty m_customizerTestConfigProp = null;
+
 	//------------------------------------------------------------------------//
 	// METHODS																  //
 	//------------------------------------------------------------------------//
@@ -50,6 +53,9 @@ public class DebugSettingsEditor : Editor {
 		m_useUnitySafeAreaProp = serializedObject.FindProperty("m_useUnitySafeArea");
 		m_debugSafeAreaProp = serializedObject.FindProperty("m_debugSafeArea");
 		m_simulatedSpecialDeviceProp = serializedObject.FindProperty("m_simulatedSpecialDevice");
+
+		m_customizerTestEnabledProp = serializedObject.FindProperty("m_customizerPopupTestEnabled");
+		m_customizerTestConfigProp = serializedObject.FindProperty("m_customizerPopupTestConfig");
 	}
 
 	/// <summary>
@@ -60,9 +66,13 @@ public class DebugSettingsEditor : Editor {
 		m_targetDebugSettings = null;
 
 		// Clear cached properties
+		m_useDebugSafeAreaProp = null;
 		m_useUnitySafeAreaProp = null;
 		m_debugSafeAreaProp = null;
 		m_simulatedSpecialDeviceProp = null;
+
+		m_customizerTestEnabledProp = null;
+		m_customizerTestConfigProp = null;
 	}
 
 	/// <summary>
@@ -118,12 +128,77 @@ public class DebugSettingsEditor : Editor {
 				} EditorGUI.EndDisabledGroup();
 			}
 
+			// Customizer popup test
+			else if(p.name == m_customizerTestEnabledProp.name) {
+				// Section separator
+				EditorGUILayoutExt.Separator("Customizer Popup Test");
+
+				// Draw "Customizer Popup Test Enabled" toggle
+				EditorGUILayout.PropertyField(m_customizerTestEnabledProp, true);
+
+				// Test Enabled?
+				EditorGUI.BeginDisabledGroup(!m_customizerTestEnabledProp.boolValue); {
+					// Indent in
+					EditorGUI.indentLevel++;
+
+					// Info Box
+					EditorGUILayout.HelpBox(
+						"Press 'C' in the menu to open the customizer popup\n" +
+						"See https://confluence.ubisoft.com/display/ubm/%5BHD%5D+11.+Customizer+Popup+Actions \n" +
+						"This is an offline simulation, not all parameters may work as real!",
+						MessageType.Info,
+						true
+					);
+
+					// Customizer test config property
+					EditorGUILayout.PropertyField(m_customizerTestConfigProp, true);
+
+					// Open customizer popup button
+					GUILayout.BeginHorizontal();
+					GUILayout.Space(EditorGUI.indentLevel * 10f);   // Cheap trick to simulate indentation on a GUILayout.Button
+					GUI.color = Colors.paleGreen;
+					if(GUILayout.Button("Open Customizer Popup", GUILayout.Height(40f))) {
+						// Only while playing
+						if(!Application.isPlaying) {
+							EditorWindow.focusedWindow.ShowNotification(new GUIContent("Only while playing!"));
+						}
+
+						// Only in the menu...
+						else if(InstanceManager.menuSceneController == null) {
+							EditorWindow.focusedWindow.ShowNotification(new GUIContent("Only in the menu!"));
+						}
+
+						// ...and only in some screens
+						else if(InstanceManager.menuSceneController.currentScreen != MenuScreen.PLAY
+							 && InstanceManager.menuSceneController.currentScreen != MenuScreen.DRAGON_SELECTION) {
+							EditorWindow.focusedWindow.ShowNotification(new GUIContent("Only in the PLAY or DRAGON_SELECTION screens!"));
+						}
+
+						// All checks passed!
+						else {
+							// Copied from MenuInterstitialPopupsController
+							Calety.Customiser.CustomiserPopupConfig config = DebugSettings.CUSTOMIZER_POPUP_TEST_CONFIG;
+							string popupPath = PopupCustomizer.PATH + "PF_PopupLayout_" + config.m_iLayout;
+							PopupController pController = PopupManager.EnqueuePopup(popupPath);
+							PopupCustomizer pCustomizer = pController.GetComponent<PopupCustomizer>();
+							pCustomizer.InitFromConfig(config);
+						}
+					}
+					GUI.color = Colors.white;
+					GUILayout.EndHorizontal();
+
+					// Indent out
+					EditorGUI.indentLevel--;
+				} EditorGUI.EndDisabledGroup();
+			}
+
 			// Properties we don't want to show
 			else if(p.name == "m_ObjectHideFlags" ||
-			        p.name == m_useDebugSafeAreaProp.name ||
+					p.name == m_useDebugSafeAreaProp.name ||
 			        p.name == m_useUnitySafeAreaProp.name ||
 			        p.name == m_simulatedSpecialDeviceProp.name ||
-			        p.name == m_debugSafeAreaProp.name) {
+			        p.name == m_debugSafeAreaProp.name ||
+					p.name == m_customizerTestConfigProp.name) {
 				// Do nothing
 			}
 
