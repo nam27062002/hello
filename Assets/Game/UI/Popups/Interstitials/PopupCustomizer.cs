@@ -298,23 +298,6 @@ public class PopupCustomizer : MonoBehaviour {
 		this.GetComponent<PopupController>().Close(true);
 	}
 
-	/// <summary>
-	/// Opens the shop popup.
-	/// </summary>
-	/// <param name="_tabName">Initial tab name. "hc", "sc", "offers". Empty string for default behaviour.</param>
-	/// <param name="_itemSku">Item sku. Empty string for default behaviour.</param>
-	private void OpenShop(string _tabName, string _itemSku) {
-		// Load and initialize popup
-		PopupController popup = PopupManager.LoadPopup(PopupShop.PATH);
-		PopupShop shopPopup = popup.GetComponent<PopupShop>();
-
-		// If targeting a specific item, close popup after purchase
-		shopPopup.closeAfterPurchase = !string.IsNullOrEmpty(_itemSku);
-
-		// Open popup!
-		popup.Open();
-	}
-
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
@@ -391,28 +374,36 @@ public class PopupCustomizer : MonoBehaviour {
 					} break;
 
 					case "shop": {
-						OpenShop(
-							tokens.Length > 1 ? tokens[1] : string.Empty,	// Initial tab
-							tokens.Length > 2 ? tokens[2] : string.Empty	// Initial item (optional)
-						);
+						// Scroll to a specific item / category?
+						if(tokens.Length > 1) {
+							// Is it a category sku?
+							string targetSku = tokens[1];
+							if(DefinitionsManager.SharedInstance.GetSkuList(DefinitionsCategory.SHOP_CATEGORIES).Contains(targetSku)) {
+								// Yes! Tell the shop to scroll to that category
+								InstanceManager.menuSceneController.shopScreenController.shopController.SetInitialCategory(targetSku);
+							} else {
+								// No! Assume it's a shop item sku and tell the shop to scroll to that item
+								InstanceManager.menuSceneController.shopScreenController.shopController.SetInitialItem(targetSku);
+							}
+						}
+
+						// Go to the shop screen
+						InstanceManager.menuSceneController.shopScreenController.mode = ShopController.Mode.DEFAULT;
+						nextScreen = MenuScreen.SHOP;
 					} break;
 
 					case "pets": {
 						// Make sure selected dragon is owned (requirement for opening the pets screen)
 						InstanceManager.menuSceneController.SetSelectedDragon(DragonManager.CurrentDragon.def.sku);	// Current dragon is the last owned selected dragon
 
-						// Initialize the pets screen
-						MenuTransitionManager screensController = InstanceManager.menuSceneController.transitionManager;
-						MenuScreen targetPetScreen = MenuScreen.PETS;
-                                PetsScreenController petScreen = screensController.GetScreenData(targetPetScreen).ui.GetComponent<PetsScreenController>();
+						// Go to the pets screen
+						nextScreen = MenuScreen.PETS;
 
 						// Navigate to a specific pet?
 						if(tokens.Length > 1) {
+							PetsScreenController petScreen = InstanceManager.menuSceneController.transitionManager.GetScreenData(nextScreen).ui.GetComponent<PetsScreenController>();
 							petScreen.Initialize(tokens[1]);
 						}
-
-						// Go the screen
-						nextScreen = targetPetScreen;
 					} break;
 
 					case "global_event": {
@@ -421,35 +412,136 @@ public class PopupCustomizer : MonoBehaviour {
 					} break;
 
 					case "tournament": {
-						// [AOC] TODO!!
-						LogError("Customizer Popup: Action not yet implemented! (" + button.m_eButtonAction.ToString() + " | " + button.m_strParam + ")", true);
-					} break;
+						// Do we have a valid tournament?
+						HDTournamentManager tournamentManager = HDLiveDataManager.tournament;
 
-					case "skins": {
-						// Make sure selected dragon is owned (requirement for opening the skins screen)
-						string targetDragon = DragonManager.CurrentDragon.def.sku;  // Current dragon is owned for sure
-						InstanceManager.menuSceneController.SetSelectedDragon(targetDragon);
+						// Do we actually have a tournament?
+						if(!tournamentManager.EventExists()) break;
 
-						// Check whether all assets required for the selected dragon are available or not
-						// Get assets download handle for selected dragon
-						Downloadables.Handle dragonHandle = HDAddressablesManager.Instance.GetHandleForClassicDragon(targetDragon);
-						if(!dragonHandle.IsAvailable()) {
-							// Dragon assets not available, just close the popup
-							nextScreen = MenuScreen.NONE;
+						// If the tournament requires a game update, show popup and break
+						if(tournamentManager.RequiresUpdate()) {
+							// Show update popup!
+							PopupManager.OpenPopupInstant(PopupUpdateEvents.PATH);
 							break;
 						}
 
-						// Initialize the skins screen
-						MenuTransitionManager screensController = InstanceManager.menuSceneController.transitionManager;
-						DisguisesScreenController skinsScreen = screensController.GetScreenData(MenuScreen.SKINS).ui.GetComponent<DisguisesScreenController>();
+						// Is the tournament running?
+						if(!tournamentManager.IsRunning()) break;
 
-						// Navigate to a specific skin?
+						// Is OTA ready for this tournament?
+						// If we dont have downloaded the content yet, dont go to the tournament screen
+						Downloadables.Handle tournamentHandle = HDAddressablesManager.Instance.GetHandleForTournament(tournamentManager);
+						if(tournamentHandle.IsAvailable()) {
+							// All good! go to the tournament screen
+							// Change game mode first
+    						SceneController.SetMode(SceneController.Mode.TOURNAMENT);
+        					HDLiveDataManager.instance.SwitchToTournament();
+
+							// Now we're good to go!
+							nextScreen = MenuScreen.TOURNAMENT_INFO;
+						} else {
+							// Show popup with download progress
+							PopupAssetsDownloadFlow downloadPopup = PopupAssetsDownloadFlow.OpenPopupByState(
+								tournamentHandle,
+								PopupAssetsDownloadFlow.PopupType.ANY,
+								AssetsDownloadFlow.Context.PLAYER_CLICKS_ON_TOURNAMENT
+							);
+
+							// Allow the player to hit the button again once the OTA popup is closed
+							// [AOC] TODO!! This flow should be reviewed
+							closePopup = false;
+						}
+					} break;
+
+					case "skins": {
+						// Is a specific skin sku defined?
+						DefinitionNode targetSkinDef = null;
 						if(tokens.Length > 1) {
-							skinsScreen.initialSkin = tokens[1];
+							targetSkinDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, tokens[1]);
 						}
 
-						// Go the screen
-						nextScreen = MenuScreen.SKINS;
+						// Find out target dragon
+						string targetDragonSku = DragonManager.CurrentDragon.def.sku;  // Current dragon by default
+						if(targetSkinDef != null) {
+							targetDragonSku = targetSkinDef.GetAsString("dragonSku", targetDragonSku);
+						}
+
+						// Scroll to target dragon
+						InstanceManager.menuSceneController.SetSelectedDragon(targetDragonSku);
+
+						// Is target dragon owned?
+						bool dragonOwned = DragonManager.IsDragonOwned(targetDragonSku);
+
+						// Are all assets downloaded for this dragon?
+						Downloadables.Handle dragonHandle = HDAddressablesManager.Instance.GetHandleForClassicDragon(targetDragonSku);
+						bool assetsDownloaded = dragonHandle.IsAvailable();
+
+						// Is dragon owned and assets downloaded?
+						if(dragonOwned && assetsDownloaded) {
+							// Yes! Go to the skins screen
+							nextScreen = MenuScreen.SKINS;
+
+							// If defined, select a specific skin
+							if(targetSkinDef != null) {
+								DisguisesScreenController skinsScreen = InstanceManager.menuSceneController.GetScreenData(MenuScreen.SKINS).ui.GetComponent<DisguisesScreenController>();
+								skinsScreen.initialSkin = targetSkinDef.sku;
+							}
+						} else {
+							// No! Go to the dragon selection screen instead
+							nextScreen = MenuScreen.DRAGON_SELECTION;
+						}
+					} break;
+
+					case "offer_popup": {
+						// Is a specific offer sku defined?
+						OfferPack targetOffer = null;
+						if(tokens.Length > 1) {
+							targetOffer = OffersManager.GetOfferPack(tokens[1]);
+						}
+
+						// If not defined, the target offer will be the featured one (if any)
+						else {
+							targetOffer = OffersManager.featuredOffer;
+						}
+
+						// Valid and active offer?
+						if(targetOffer != null && targetOffer.isActive) {
+							// Yes! Open offer popup
+							PopupController popup = PopupShopOfferPack.LoadPopupForOfferPack(targetOffer);
+							popup.Open();
+						}
+					} break;
+
+					case "vip_offer": {
+						// Get VIP offer
+						OfferPack vipOffer = OffersManager.removeAdsOffer;
+						if(vipOffer != null && vipOffer.isActive) {
+							// Load the popup
+							PopupController popup = PopupManager.LoadPopup(PopupRemoveAdsOffer.PATH);
+
+							// Initialize it with the remove ad offer (if exists)
+							PopupRemoveAdsOffer popupRemoveAdsOffer = popup.GetComponent<PopupRemoveAdsOffer>();
+							popupRemoveAdsOffer.Init();	// The popup itself will look for the vip offer
+
+							// Show the popup
+							popup.Open();
+						}
+					} break;
+
+					case "referral": {
+						// Find the current active referral offer and make sure it's valid
+						OfferPackReferral referralOffer = OffersManager.GetActiveReferralOffer();
+						if(referralOffer != null && referralOffer.isActive) {
+							// Load the popup
+							PopupController popup = PopupManager.LoadPopup(PopupShopReferral.PATH);
+
+							// Initialize it with the referral install offer pack
+							PopupShopReferral popupReferralInstall = popup.GetComponent<PopupShopReferral>();
+							popupReferralInstall.InitFromOfferPack(referralOffer);
+
+							// Show the popup
+							popup.Open();
+						}
 					} break;
 				}
 

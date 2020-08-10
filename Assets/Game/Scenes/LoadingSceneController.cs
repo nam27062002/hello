@@ -242,7 +242,7 @@ public class LoadingSceneController : SceneController {
         CaletySettings settingsInstance = Resources.Load<CaletySettings>("CaletySettings");
         if (settingsInstance.m_bUseDynamicLinks)
         {
-            CaletyDynamicLinks.setDynamicLinksParameters(settingsInstance.m_strDynamicLinksDomain, settingsInstance.m_strDynamicLinksBaseLink);
+            CaletyDynamicLinks.setDynamicLinksParameters(settingsInstance.m_strDynamicLinksDomain, settingsInstance.m_strDynamicLinksBaseLink, settingsInstance.m_iOSAppStoreID);
         }
 
         // Call parent
@@ -800,7 +800,7 @@ public class LoadingSceneController : SceneController {
 
                 // Tech
                 GameSceneManager.CreateInstance(true);
-                HDLiveDataManager.CreateInstance(false);
+                HDLiveDataManager.CreateInstance(true);
                 FlowManager.CreateInstance(true);
                 PoolManager.CreateInstance(true);
                 ActionPointManager.CreateInstance(true);

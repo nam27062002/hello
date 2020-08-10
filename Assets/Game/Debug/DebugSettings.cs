@@ -8,6 +8,7 @@
 // INCLUDES																//
 //----------------------------------------------------------------------//
 using UnityEngine;
+using System.Collections.Generic;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -100,8 +101,42 @@ public class DebugSettings : SingletonScriptableObject<DebugSettings> {
     public const string ALLOW_ZOOM_ON_SPACE                      = "ALLOW_ZOOM_ON_SPACE";
     public const string ALLOW_CAMERALOOK_ROTATION                = "ALLOW_CAMERALOOK_ROTATION";
 
-
     public const string PERSISTENCE_FORCE_ERROR_IN_MERGE_POPUP  = "PERSISTENCE_FORCE_ERROR_IN_MERGE_POPUP";
+
+    //------------------------------------------------------------------//
+    // AUXILIAR CLASSES 												//
+    //------------------------------------------------------------------//
+    /// <summary>
+    /// Custom class to serialize some of Calety's customiser popup config fields so we can fake as much as we want.
+    /// </summary>
+    [System.Serializable]
+    public class DebugCustomiserPopupConfig : Calety.Customiser.CustomiserPopupConfig {
+        [System.Serializable] public class PrepareState : Calety.Customiser.CustomiserPopupPrepareState { }
+        [SerializeField] private PrepareState m_prepareState = new PrepareState();
+
+        [System.Serializable] public class ButtonSetup : Calety.Customiser.CustomiserPopupButton { }
+
+        [System.Serializable]
+        public class LangSetup : CaletyConstants.PopupConfig {
+            public List<ButtonSetup> buttons = new List<ButtonSetup>();
+        }
+        [SerializeField] private LangSetup m_defaultLangSetup = new LangSetup();
+
+        /// <summary>
+        /// Should be called before using.
+        /// </summary>
+        public void RefreshValues() {
+            // Prepare State
+            m_kPrepareState = m_prepareState;
+
+            // Buttons
+            m_defaultLangSetup.m_kPopupButtons.Clear();
+            m_defaultLangSetup.m_kPopupButtons.AddRange(m_defaultLangSetup.buttons);
+
+            // Language conf
+            m_kPopupConfigByLanguage["en"] = m_defaultLangSetup;
+        }
+    }
 
     //------------------------------------------------------------------//
     // PROPERTIES														//
@@ -388,6 +423,19 @@ public class DebugSettings : SingletonScriptableObject<DebugSettings> {
 #endif
 		}
 		set { instance.m_simulatedSpecialDevice = value; }
+	}
+
+    [SerializeField] private bool m_customizerPopupTestEnabled = false;
+    public static bool CUSTOMIZER_POPUP_TEST_ENABLED {
+        get { return instance.m_customizerPopupTestEnabled; }
+	}
+
+    [SerializeField] private DebugCustomiserPopupConfig m_customizerPopupTestConfig = new DebugCustomiserPopupConfig();
+    public static DebugCustomiserPopupConfig CUSTOMIZER_POPUP_TEST_CONFIG {
+        get {
+            instance.m_customizerPopupTestConfig.RefreshValues();
+            return instance.m_customizerPopupTestConfig;
+		}
 	}
 
     public static bool popupAdDuration {

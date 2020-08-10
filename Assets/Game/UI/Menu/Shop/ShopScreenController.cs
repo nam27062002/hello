@@ -41,6 +41,14 @@ public class ShopScreenController : MonoBehaviour {
     }
 
 	private ShopController m_shopController = null;
+    public ShopController shopController {
+        get {
+            if(m_shopController == null) {
+                m_shopController = GetComponent<ShopController>();
+			}
+            return m_shopController;
+		}
+	}
 
     // Shop mode
     private ShopController.Mode m_mode = ShopController.Mode.DEFAULT;

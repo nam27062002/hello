@@ -471,7 +471,8 @@ public class GameServerManager {
     public virtual void Referral_GetInfo(string _milestonesPathSku, ServerCallback _callback) { }
     public virtual void Referral_ReclaimAll(string _milestonesPathSku, ServerCallback _callback) { }
     public virtual void Referral_MarkReferral(string _referralUserId, ServerCallback _callback) { }
-
+    public virtual void Referral_DEBUG_SetReferralCount(int _totalReferralCount, ServerCallback _callback) { }
+    public virtual void Referral_DEBUG_SimulateReferralInstall(string _referralUserId, ServerCallback _callback) { }
 
     //------------------------------------------------------------------------//
     // DEBUG ONLY															  //
