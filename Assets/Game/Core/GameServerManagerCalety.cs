@@ -241,6 +241,7 @@ public class GameServerManagerCalety : GameServerManager {
 
     public override void Update()
     {
+        base.Update();
         Connection_Update();
         Commands_Update();
     }
@@ -932,10 +933,10 @@ public class GameServerManagerCalety : GameServerManager {
     }
     #endregion
 
-    #region Referral
     //-----------------
     // Referral
     //-----------------
+    #region Referral
     public override void Referral_GetInfo(string _milestonesPathSku, ServerCallback _callback) {
         Dictionary<string, string> parameters = new Dictionary<string, string>();
         parameters.Add("milestonesPathSku", _milestonesPathSku);
@@ -969,6 +970,18 @@ public class GameServerManagerCalety : GameServerManager {
         Referral_MarkReferral(_referrerUserId, _callback);
     }
 
+    #endregion
+
+    //-----------------
+    // Clustering
+    //-----------------
+    #region clustering
+    public override void Clustering_SetClusterId(string _clusterId, ServerCallback _callback) {
+        Dictionary<string, string> parameters = new Dictionary<string, string>();
+        parameters.Add("clusterId", _clusterId);
+
+        Commands_EnqueueCommand(ECommand.Clustering_Set, parameters, _callback);
+    }
     #endregion
 
     //------------------------------------------------------------------------//
@@ -1033,7 +1046,9 @@ public class GameServerManagerCalety : GameServerManager {
         Referral_GetInfo,               // params: _milestonesPathSku
         Referral_ReclaimAll,            // params: _milestonesPathSku
         Referral_MarkReferral,          // params: _referralUserId
-        Referral_DEBUG_SetReferralCount // params: int _referralCount
+        Referral_DEBUG_SetReferralCount, // params: int _referralCount
+
+        Clustering_Set,                 // params: string _clusterId
     }    
 
 	/// <summary>
@@ -1542,6 +1557,11 @@ public class GameServerManagerCalety : GameServerManager {
 
                 //--------------------------------------------------------------
 
+                case ECommand.Clustering_Set: {
+                    Command_SendCommand(COMMAND_CLUSTERING_SET, parameters, null, null);
+				} break;
+
+                //--------------------------------------------------------------
 
                 case ECommand.Language_Set: {
                     JSONClass data = null;
@@ -1982,6 +2002,8 @@ public class GameServerManagerCalety : GameServerManager {
     private const string COMMAND_REFERRAL_MARK_REFERRAL = "/api/referral/markReferral";
     private const string COMMAND_REFERRAL_DEBUG_SET_REFERRAL_COUNT = "/api/referral/fakeReferrals";
 
+    private const string COMMAND_CLUSTERING_SET = "/api/cluster/set";
+
     /// <summary>
     /// Initialize Calety's NetworkManager.
     /// </summary>
@@ -2029,6 +2051,8 @@ public class GameServerManagerCalety : GameServerManager {
         nm.RegistryEndPoint(COMMAND_REFERRAL_RECLAIM_ALL, NetworkManager.EPacketEncryption.E_ENCRYPTION_AES, codes, CaletyExtensions_OnCommandDefaultResponse);
         nm.RegistryEndPoint(COMMAND_REFERRAL_MARK_REFERRAL, NetworkManager.EPacketEncryption.E_ENCRYPTION_AES, codes, CaletyExtensions_OnCommandDefaultResponse);
         nm.RegistryEndPoint(COMMAND_REFERRAL_DEBUG_SET_REFERRAL_COUNT, NetworkManager.EPacketEncryption.E_ENCRYPTION_AES, codes, CaletyExtensions_OnCommandDefaultResponse);
+
+        nm.RegistryEndPoint(COMMAND_CLUSTERING_SET, NetworkManager.EPacketEncryption.E_ENCRYPTION_AES, codes, CaletyExtensions_OnCommandDefaultResponse);
     }    
 
     /// <summary>

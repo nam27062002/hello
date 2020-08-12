@@ -491,7 +491,12 @@ public class UserProfile : UserPersistenceSystem
     }
 
 	// Clustering
-	private string m_clusterId;
+	private string m_clusterId;	// Use Getter and Setter
+	private bool m_clusterSynced = true;	// Is the cluster ID in sync with the server?
+	public bool clusterSynced {
+		get { return m_clusterSynced; }
+		set { m_clusterSynced = value; }
+	}
 
 	// Remove Ads
 	private bool m_removeAdsOfferActive;
@@ -688,6 +693,7 @@ public class UserProfile : UserPersistenceSystem
 
 		// Clustering
 		m_clusterId = "";
+		m_clusterSynced = true;
 	}
 
 	/// <summary>
@@ -1257,6 +1263,13 @@ public class UserProfile : UserPersistenceSystem
 			m_clusterId = "";
 		}
 
+		key = "clusterSynced";
+		if(profile.ContainsKey(key)) {
+			m_clusterSynced = profile[key].AsBool;
+		} else {
+			m_clusterSynced = true;
+		}
+
 		// Some cheats override profile settings - will be saved with the next Save()
 		if (Prefs.GetBoolPlayer("skipTutorialCheat")) {
 			m_tutorialStep = TutorialStep.ALL;
@@ -1710,6 +1723,7 @@ public class UserProfile : UserPersistenceSystem
 
 		// Clustering
 		profile.Add("clusterId", m_clusterId);
+		profile.Add("clusterSynced", m_clusterSynced);
 
 		data.Add("userProfile", profile);
 
@@ -2639,6 +2653,7 @@ public class UserProfile : UserPersistenceSystem
 	//------------------------------------------------------------------------//
 	// CLUSTERING															  //
 	//------------------------------------------------------------------------//
+	#region clustering
 	/// <summary>
 	/// Get the stored cluster ID for this user.
 	/// </summary>
@@ -2650,6 +2665,8 @@ public class UserProfile : UserPersistenceSystem
 			// If current assigned cluster ID is not compliant with GDPR settings, assign the Generic one
 			if(!CheckClusterIdGDPRCompliance(m_clusterId)) {
 				SetClusterId(ClusteringManager.CLUSTER_GENERIC);
+				UsersManager.currentUser.clusterSynced = false;     // Pending sync with server
+				ClusteringManager.Instance.SyncWithServer();
 			}
 		}
 
@@ -2691,4 +2708,5 @@ public class UserProfile : UserPersistenceSystem
 		// No more checks to perform, cluster is compliant with current GDPR settings
 		return true;
 	}
+	#endregion
 }

@@ -474,6 +474,11 @@ public class GameServerManager {
     public virtual void Referral_DEBUG_SetReferralCount(int _totalReferralCount, ServerCallback _callback) { }
     public virtual void Referral_DEBUG_SimulateReferralInstall(string _referralUserId, ServerCallback _callback) { }
 
+    //-----------------
+    // Clustering
+    //-----------------
+    public virtual void Clustering_SetClusterId(string _clusterId, ServerCallback _callback) { }
+
     //------------------------------------------------------------------------//
     // DEBUG ONLY															  //
     //------------------------------------------------------------------------//	
