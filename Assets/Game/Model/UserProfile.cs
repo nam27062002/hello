@@ -687,6 +687,12 @@ public class UserProfile : UserPersistenceSystem
 		m_unlockedReferralRewards.Clear();
 		m_invitesSent = 0;
 
+		// Baby Dragons
+		m_babyDragonExtraGemFailedCounter = 0;
+		m_babyDragonExtraGemGranted = false;
+
+		// Clustering
+		m_clusterId = "";
 	}
 
 	/// <summary>
