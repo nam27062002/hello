@@ -100,7 +100,7 @@ public class CPTechTab : MonoBehaviour {
 		m_implicitMergeStateText.text = "Implicit merge state: " + PersistenceFacade.instance.LocalDriver.Prefs_SocialImplicitMergeState.ToString();
 		m_syncStateText.text = "Sync state: " + SyncState.ToString();
 
-		m_clusterIdText.text = "Cluster Id assigned: " + UsersManager.currentUser.clusterId;
+		m_clusterIdText.text = "Cluster Id assigned: " + UsersManager.currentUser.GetClusterId(false);
 
 		m_debugServerToggle.isOn = DebugSettings.useDebugServer;
 		m_debugServerToggle.onValueChanged.AddListener(OnToggleDebugServer);

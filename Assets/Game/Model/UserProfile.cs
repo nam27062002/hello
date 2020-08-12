@@ -492,11 +492,6 @@ public class UserProfile : UserPersistenceSystem
 
 	// Clustering
 	private string m_clusterId;
-	public string clusterId
-	{
-		get { return m_clusterId; }
-		set { m_clusterId = value; }
-	}
 
 	// Remove Ads
 	private bool m_removeAdsOfferActive;
@@ -2641,5 +2636,59 @@ public class UserProfile : UserPersistenceSystem
     }
 	#endregion
 
-}
+	//------------------------------------------------------------------------//
+	// CLUSTERING															  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Get the stored cluster ID for this user.
+	/// </summary>
+	/// <param name="_checkGDPRCompliance">Whether to check if the cluster ID is compliant with current GDPR settings or not. If set to true and not compliant, it will be corrected.</param>
+	/// <returns></returns>
+	public string GetClusterId(bool _checkGDPRCompliance = true) {
+		// Check GDPR compliance?
+		if(_checkGDPRCompliance) {
+			// If current assigned cluster ID is not compliant with GDPR settings, assign the Generic one
+			if(!CheckClusterIdGDPRCompliance(m_clusterId)) {
+				SetClusterId(ClusteringManager.CLUSTER_GENERIC);
+			}
+		}
 
+		// Return stored cluster ID
+		return m_clusterId;
+	}
+
+	/// <summary>
+	/// Set a new cluster Id for this user. No checks performed.
+	/// </summary>
+	/// <param name="_newClusterId">The Cluster Id assigned to this user.</param>
+	public void SetClusterId(string _newClusterId) {
+		// Store the new value
+		m_clusterId = _newClusterId;
+
+		// Send tracking event
+		HDTrackingManager.Instance.Notify_ClusterAssigned(_newClusterId);
+	}
+
+	/// <summary>
+	/// Is the given cluster ID compliant with current GDPR settings?
+	/// </summary>
+	/// <param name="_clusterId">The cluster ID to be checked.</param>
+	/// <returns>Whether the given cluster ID is compliant with GDPR settings or not.</returns>
+	private bool CheckClusterIdGDPRCompliance(string _clusterId) {
+		// No problems if cluster is not assigned
+		if(string.IsNullOrEmpty(_clusterId)) return true;
+
+		// If user is underage, the cluster must be the generic one
+		if(GDPRManager.SharedInstance.IsAgeRestrictionEnabled()) {
+			return _clusterId == ClusteringManager.CLUSTER_GENERIC;
+		}
+
+		// If user is an adult, check the marketing consent flag. If not given, generic cluster must be used.
+		else if(GDPRManager.SharedInstance.IsConsentTrackingRestrictionEnabled()) {
+			return _clusterId == ClusteringManager.CLUSTER_GENERIC;
+		}
+
+		// No more checks to perform, cluster is compliant with current GDPR settings
+		return true;
+	}
+}

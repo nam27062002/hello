@@ -20,21 +20,18 @@ using SimpleJSON;
 /// </summary>
 [Serializable]
 public class ClusteringManager {
-
 	//------------------------------------------------------------------------//
 	// CONSTANTS                											  //
 	//------------------------------------------------------------------------//
-
+	// Server endpoint
 	private static readonly string GET_CLUSTER_ID = "/api/cluster/get";
 
 	// Generic cluster ID
 	public static string CLUSTER_GENERIC = "CLUSTER_GENERIC";
 
-
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
-
 	// Singleton instance
 	private static ClusteringManager m_instance = null;
 
@@ -51,9 +48,6 @@ public class ClusteringManager {
     private int m_gemsSpent;
     private long m_score;
     private int m_boostTime;
-
-
-
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -87,14 +81,9 @@ public class ClusteringManager {
 		}
 	}
 
-
-
-
-
     //------------------------------------------------------------------------//
     // OTHER METHODS														  //
     //------------------------------------------------------------------------//
-
     /// <summary>
     /// Returns the cluster ID assigned to this player.
     /// In case the client doesnt know the cluster, makes a request to the server,
@@ -104,7 +93,7 @@ public class ClusteringManager {
     public string GetClusterId( )
 	{
 
-		string clusterId = UsersManager.currentUser.clusterId;
+		string clusterId = UsersManager.currentUser.GetClusterId();
 
 		if (!string.IsNullOrEmpty(clusterId))
 		{
@@ -143,9 +132,9 @@ public class ClusteringManager {
 			else
 			{
 				// The server response is taking too long. Assign the player to generic cluster.
-				UsersManager.currentUser.clusterId = CLUSTER_GENERIC;
+				UsersManager.currentUser.SetClusterId(CLUSTER_GENERIC);
 
-				Debug.Log("<color=white>Dint get answer from server. Assigning player to generic cluster '" + CLUSTER_GENERIC + "' </color>");
+				Debug.Log("<color=white>Didnt get answer from server. Assigning player to generic cluster '" + CLUSTER_GENERIC + "' </color>");
 
 				return CLUSTER_GENERIC;
 			}
@@ -236,23 +225,23 @@ public class ClusteringManager {
           */
 	}
 
-
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
 
-    /// <summary>
-    /// Response from the server was received
-    /// </summary>
-    /// <param name="_strResponse">Json containing the cluster Id requested</param>
-    /// <param name="_strCmd">The command sent</param>
-    /// <param name="_reponseCode">Response code. 200 if the request was successful</param>
-    /// <returns>Returns true if the response was successful</returns>
+	/// <summary>
+	/// Response from the server was received
+	/// </summary>
+	/// <param name="_strResponse">Json containing the cluster Id requested</param>
+	/// <param name="_strCmd">The command sent</param>
+	/// <param name="_reponseCode">Response code. 200 if the request was successful</param>
+	/// <returns>Returns true if the response was successful</returns>
 	private bool OnGetClusterResponse(string _strResponse, string _strCmd, int _reponseCode)
 	{
 		// If the player already belongs to a cluster (non generic) ignore the response
-		if (!string.IsNullOrEmpty(UsersManager.currentUser.clusterId) &&
-			UsersManager.currentUser.clusterId != CLUSTER_GENERIC)
+		string currentClusterId = UsersManager.currentUser.GetClusterId();
+		if (!string.IsNullOrEmpty(currentClusterId) &&
+			currentClusterId != CLUSTER_GENERIC)
         {
 			return true;
 		}
@@ -281,13 +270,9 @@ public class ClusteringManager {
 										// The server knows the cluster
 										string clusterId = kJSON["clusterId"];
 										
-										UsersManager.currentUser.clusterId = clusterId;
+										UsersManager.currentUser.SetClusterId(clusterId);
 
 										Debug.Log("<color=white>Player assigned by server to cluster '" + clusterId + "' </color>");
-
-										// Track this event
-										HDTrackingManager.Instance.Notify_ClusterAssigned(clusterId);
-										
 									}
                                     // else: the server doesnt know the cluster. Leave it empty.
 
