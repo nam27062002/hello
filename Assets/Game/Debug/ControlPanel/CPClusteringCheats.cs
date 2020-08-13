@@ -11,6 +11,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using SimpleJSON;
+using System.Collections.Generic;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -22,6 +23,26 @@ public class CPClusteringCheats : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
+	// Add here any new cluster
+	public enum ClusterIdOptions {
+		CLUSTER_NONE = 0,
+		CLUSTER_GENERIC,
+		CLUSTER_NON_PAYER,
+		CLUSTER_2,
+		CLUSTER_5,
+		CLUSTER_10,
+		COUNT
+	};
+
+	// Should match the skus in the clusterDefinitions content table
+	private static readonly string[] CLUSTER_IDS = new string[] {
+		"",
+		ClusteringManager.CLUSTER_GENERIC,
+		"CLUSTER_NON_PAYER",
+		"CLUSTER_2",
+		"CLUSTER_5",
+		"CLUSTER_10"
+	};
 
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
@@ -32,6 +53,7 @@ public class CPClusteringCheats : MonoBehaviour {
 	[SerializeField] private Toggle m_syncedToggle = null;
 	[Space]
 	[SerializeField] private TMP_InputField m_clusterIdInput = null;
+	[SerializeField] private TMP_Dropdown m_clusterIdDropdown = null;
 	[SerializeField] private Button m_setCustomButton = null;
 
 	// Internal
@@ -47,8 +69,20 @@ public class CPClusteringCheats : MonoBehaviour {
 		// Init toggle view
 		RefreshSyncedView();
 
+		// Init dropdown options
+		if(m_clusterIdDropdown != null) {
+			List<TMP_Dropdown.OptionData> options = new List<TMP_Dropdown.OptionData>();
+			for(int i = 0; i < (int)ClusterIdOptions.COUNT; ++i) {
+				string label = CLUSTER_IDS[i];
+				if(string.IsNullOrEmpty(label)) label = "-";	// Show something for empty
+				options.Add(new TMP_Dropdown.OptionData(label));
+			}
+			m_clusterIdDropdown.AddOptions(options);
+		}
+
 		// Detect cluster ID changes
-		m_clusterIdInput.onValueChanged.AddListener(OnClusterIdChanged);
+		if(m_clusterIdInput != null) m_clusterIdInput.onValueChanged.AddListener(OnClusterIdChangedInput);
+		if(m_clusterIdDropdown != null) m_clusterIdDropdown.onValueChanged.AddListener(OnClusterIdChangedDropdown);
 
 		// Init cluster ID view
 		RefreshClusterIdView(true);
@@ -59,7 +93,8 @@ public class CPClusteringCheats : MonoBehaviour {
 	/// </summary>
 	private void OnDisable() {
 		// Unsubscribe from events
-		m_clusterIdInput.onValueChanged.RemoveListener(OnClusterIdChanged);
+		if(m_clusterIdInput != null) m_clusterIdInput.onValueChanged.RemoveListener(OnClusterIdChangedInput);
+		if(m_clusterIdDropdown != null) m_clusterIdDropdown.onValueChanged.RemoveListener(OnClusterIdChangedDropdown);
 	}
 
 	/// <summary>
@@ -75,18 +110,48 @@ public class CPClusteringCheats : MonoBehaviour {
 	/// </summary>
 	/// <param name="_updateText">Set the text to the current Cluster Id?</param>
 	public void RefreshClusterIdView(bool _updateText) {
-		// Refresh visuals
-		// Set text?
-		if(_updateText) {
-			m_clusterIdInput.text = GetCurrentClusterId();
+		// Aux vars
+		string currentClusterId = GetCurrentClusterId();
+		bool isNewValue = false;
+
+		// Support both input textfield and dropdown
+		// A) Input textfield
+		if(m_clusterIdInput != null) {
+			// Set text?
+			if(_updateText) {
+				m_clusterIdInput.text = currentClusterId;
+			}
+
+			// Use different color if textfield value doesn't match current value
+			isNewValue = m_clusterIdInput.text != currentClusterId;
+			if(isNewValue) {
+				m_clusterIdInput.textComponent.color = Colors.yellow;
+			} else {
+				m_clusterIdInput.textComponent.color = Color.white;
+			}
 		}
 
-		// Use different color if textfield value doesn't match current value
-		bool isNewValue = m_clusterIdInput.text != GetCurrentClusterId();
-		if(isNewValue) {
-			m_clusterIdInput.textComponent.color = Color.yellow;
-		} else {
-			m_clusterIdInput.textComponent.color = Color.white;
+		// B) Dropdown
+		if(m_clusterIdDropdown != null) {
+			// Set text?
+			if(_updateText) {
+				// Find matching index
+				for(int i = 0; i < CLUSTER_IDS.Length; ++i) {
+					if(CLUSTER_IDS[i] == currentClusterId) {
+						// Set it as the selected value
+						m_clusterIdDropdown.value = i;
+						break;
+					}
+				}
+			}
+
+			// Use different color if textfield value doesn't match current value
+			isNewValue = CLUSTER_IDS[m_clusterIdDropdown.value] != currentClusterId;
+			if(isNewValue) {
+				m_clusterIdDropdown.captionText.color = Colors.orange;
+			} else {
+				m_clusterIdDropdown.captionText.color = Color.black;
+			}
 		}
 
 		// Only enable Set button if ID is different
@@ -165,10 +230,19 @@ public class CPClusteringCheats : MonoBehaviour {
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
 	/// <summary>
-	/// The referrer id has changed.
+	/// The cluster id has changed.
 	/// </summary>
 	/// <param name="_newValue">New value.</param>
-	public void OnClusterIdChanged(string _newValue) {
+	public void OnClusterIdChangedInput(string _newValue) {
+		// Refresh visuals
+		RefreshClusterIdView(false);
+	}
+
+	/// <summary>
+	/// The cluster id has changed.
+	/// </summary>
+	/// <param name="_newValueIdx">Index of the new selected option.</param>
+	public void OnClusterIdChangedDropdown(int _newValueIdx) {
 		// Refresh visuals
 		RefreshClusterIdView(false);
 	}
@@ -193,7 +267,13 @@ public class CPClusteringCheats : MonoBehaviour {
 	/// Set custom cluster ID button.
 	/// </summary>
 	public void OnSetCustomClusterId() {
-		// Read from input field and do it!
-		SetClusterId(m_clusterIdInput.text);
+		// Read from input field / dropdown and do it!
+		if(m_clusterIdInput != null && m_clusterIdInput.isActiveAndEnabled) {
+			SetClusterId(m_clusterIdInput.text);
+		}
+
+		else if(m_clusterIdDropdown != null && m_clusterIdDropdown.isActiveAndEnabled) {
+			SetClusterId(CLUSTER_IDS[m_clusterIdDropdown.value]);
+		}
 	}
 }
