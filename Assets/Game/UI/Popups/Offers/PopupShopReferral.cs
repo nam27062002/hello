@@ -23,7 +23,6 @@ public class PopupShopReferral : MonoBehaviour
     //------------------------------------------------------------------------//
     public const string PATH = "UI/Popups/Economy/PF_PopupShopReferral";
 
-
     //------------------------------------------------------------------------//
     // MEMBERS AND PROPERTIES												  //
     //------------------------------------------------------------------------//
@@ -57,6 +56,7 @@ public class PopupShopReferral : MonoBehaviour
 
     // cache
     private OfferPackReferral m_pack = null;
+    private PopupController m_loadingPopup = null;
 
 
     //------------------------------------------------------------------------//
@@ -69,7 +69,7 @@ public class PopupShopReferral : MonoBehaviour
     {
         // Subscribe to external events
         Messenger.AddListener(MessengerEvents.REFERRAL_REWARDS_CLAIMED, ApplyRewards);
-
+        Messenger.AddListener<FGOL.Server.Error>(MessengerEvents.REFERRAL_REWARDS_CLAIM_RESPONSE_RECEIVED, OnClaimResponseReceived);
     }
 
     /// <summary>
@@ -79,13 +79,17 @@ public class PopupShopReferral : MonoBehaviour
     {
         // Unsubscribe from external events
         Messenger.RemoveListener(MessengerEvents.REFERRAL_REWARDS_CLAIMED, ApplyRewards);
+        Messenger.RemoveListener<FGOL.Server.Error>(MessengerEvents.REFERRAL_REWARDS_CLAIM_RESPONSE_RECEIVED, OnClaimResponseReceived);
+
+        // If we had loaded a popup, destroy it now
+        if(m_loadingPopup != null) {
+            GameObject.Destroy(m_loadingPopup.gameObject);
+		}
     }
 
     //------------------------------------------------------------------------//
     // OTHER METHODS														  //
     //------------------------------------------------------------------------//
-
-
     /// <summary>
     /// Initialize the popup with a given pack's data.
     /// </summary>
@@ -255,6 +259,9 @@ public class PopupShopReferral : MonoBehaviour
             UsersManager.currentUser.PushReward(next.reward);
         }
 
+        // Save current profile state in case the open egg flow is interrupted
+        PersistenceFacade.instance.Save_Request(true);
+
         // Close all open popups (including this one)
         PopupManager.Clear(true);
 
@@ -328,6 +335,12 @@ public class PopupShopReferral : MonoBehaviour
                                                         HDTrackingManager.EReferralAction.Claim);
 
         ReferralManager.instance.ReclaimAllFromServer();
+
+        // Prevent spamming by showing a ui locker
+        if(m_loadingPopup == null) {
+            m_loadingPopup = PopupManager.LoadPopup(PopupLoading.PATH_LITE);
+		}
+        m_loadingPopup.Open();
     }
 
 
@@ -342,4 +355,25 @@ public class PopupShopReferral : MonoBehaviour
 
     }
 
+    /// <summary>
+    /// The response from the server has arrived.
+    /// </summary>
+    /// <param name="_error">The error, if any.</param>
+    private void OnClaimResponseReceived(FGOL.Server.Error _error) {
+        // Hide UI blocker
+        if(m_loadingPopup != null && !m_loadingPopup.isOpen) {
+            m_loadingPopup.Close(false);    // Don't destroy in case we need to retry
+		}
+
+        // If there was an error, show some feedback
+        if(_error != null) {
+            UIFeedbackText txt = UIFeedbackText.CreateAndLaunch(
+                LocalizationManager.SharedInstance.Localize("TID_GEN_ERROR") + "\n" + _error.ToString(),
+                new Vector2(0.5f, 0.5f),
+                this.GetComponentInParent<Canvas>().transform as RectTransform
+            );
+            txt.text.color = UIConstants.ERROR_MESSAGE_COLOR;
+            txt.duration = 3f;  // Text might be quite long, make it last a bit longer
+        }
+    }
 }
