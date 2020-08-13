@@ -82,16 +82,12 @@ public class PersistenceFacade : IBroadcastListener
         // 1. Make sure there's a popup
         // 2. Make sure the popup is not already open
         // 3. Implicit merge popup is not allowed to prompt in the first loading scene because this popup lets the user restart the game and
-        //    restarting in the first loading sceen  might make the game crash
-        // 4. It waits until the store is ready because of a intrincate issue (https://mdc-tomcat-jira100.ubisoft.org/jira/browse/HDK-8885) that
-        //    makes prices be 0 for some iaps, possibly because the game is restarted and as a consequence the store is initialised again before
-        //    it was done with the first initialisation. This is a HACK and should be substituted by a proper flow that initialises the store only
-        //    once throughout the whole user's session regardless the app is restarted
+        //    restarting in the first loading sceen  might make the game crash       
         if (m_popupRequest != null &&                                           // 1.
             !m_popupRequest.IsOpen &&                                           // 2.
-            GameSceneManager.currentScene != LoadingSceneController.NAME &&     // 3.
-            GameStoreManager.SharedInstance.IsReady())                          // 4.        
-        {            
+            GameSceneManager.currentScene != LoadingSceneController.NAME)       // 3.        
+        {
+            Debug.Log("Open merge popup" + GameStoreManager.SharedInstance.IsReady());
             m_popupRequest.Open();
         }
     }
