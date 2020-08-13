@@ -523,6 +523,9 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 		if(!Game_IsInGame) EggManager.instance.Update();
         UnityEngine.Profiling.Profiler.EndSample();
 
+        UnityEngine.Profiling.Profiler.BeginSample("ClusteringManager.Update()");
+        ClusteringManager.Instance.Update();
+        UnityEngine.Profiling.Profiler.EndSample();
 
         if (NeedsToRestartFlow)
         {

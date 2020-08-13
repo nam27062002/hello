@@ -412,6 +412,7 @@ public class ReferralManager
                         else
                         {
 							success = false;
+							Debug.LogError("Unsuccessful! " + kJSON["errorCode"] + ": " + kJSON["errorMsg"]);
                         }
 
                         // No matter if the referral confirmation was valid or not.

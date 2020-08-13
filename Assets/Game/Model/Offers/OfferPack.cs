@@ -1186,21 +1186,7 @@ public class OfferPack {
 
 		// All checks passed!
 		// Put popup to the queue and return
-		PopupController popup;
-
-		if (GetDragonsSkinsCount() > 1)
-        {
-            // If the pack contains more than one dragon/skin, show the skins popup
-			popup = PopupManager.LoadPopup(PopupShopOfferPackSkins.PATH);
-			popup.GetComponent<PopupShopOfferPackSkins>().InitFromOfferPack(this);
-
-		} else
-        {
-            // Just the regular offer pack popup
-			popup = PopupManager.LoadPopup(PopupShopOfferPack.PATH);
-			popup.GetComponent<PopupShopOfferPack>().InitFromOfferPack(this);
-		}
-		
+		PopupController popup = PopupShopOfferPack.LoadPopupForOfferPack(this);
 		PopupManager.EnqueuePopup(popup);
 		return popup;
 	}

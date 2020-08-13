@@ -36,7 +36,7 @@ public class ResultsScreenStepClustering : ResultsScreenStep {
 		int gamesPlayed = UsersManager.currentUser.gamesPlayed;
 
 		// Do not calcultate if we already know it
-		if (!string.IsNullOrEmpty(UsersManager.currentUser.clusterId))
+		if (!string.IsNullOrEmpty(UsersManager.currentUser.GetClusterId()))
 			return false;
 
 		DefinitionNode offerSettingsDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, "offerSettings");

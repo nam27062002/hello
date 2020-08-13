@@ -154,4 +154,35 @@ public class PopupShopOfferPack : MonoBehaviour {
 		// Close popup
 		GetComponent<PopupController>().Close(true);
 	}
+
+	//------------------------------------------------------------------------//
+	// STATIC UTILS															  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Loads the popup layout best matching the given offer's content and initializes it.
+	/// The popup WON'T be opened nor enqueued, the user is responsible to do so.
+	/// </summary>
+	/// <param name="_pack">The pack used to select the popup layout and initialize it.</param>
+	/// <returns>The loaded popup instance.</returns>
+	public static PopupController LoadPopupForOfferPack(OfferPack _pack) {
+		// Check params
+		if(_pack == null) return null;
+
+		// Aux vars
+		PopupController popup = null;
+
+		// Does the pack contain more than 1 skin?
+		if(_pack.GetDragonsSkinsCount() > 1) {
+			// Yes!! Use skins popup layout
+			popup = PopupManager.LoadPopup(PopupShopOfferPackSkins.PATH);
+			popup.GetComponent<PopupShopOfferPackSkins>().InitFromOfferPack(_pack);
+		} else {
+			// No, use the default offer layout
+			popup = PopupManager.LoadPopup(PopupShopOfferPack.PATH);
+			popup.GetComponent<PopupShopOfferPack>().InitFromOfferPack(_pack);
+		}
+
+		// Done!
+		return popup;
+	}
 }
