@@ -955,6 +955,9 @@ public class GameServerManagerCalety : GameServerManager {
         Dictionary<string, string> parameters = new Dictionary<string, string>();
         parameters.Add("referredBy", _referrerUserId);
 
+        // Add current user DNA id to prevent exploiting the feature by uninstalling/reinstalling the app in the same device multiple times
+        parameters.Add("dnaId", DNAManager.SharedInstance.GetProfileID());
+
         Commands_EnqueueCommand(ECommand.Referral_MarkReferral, parameters, _callback);
     }
 
