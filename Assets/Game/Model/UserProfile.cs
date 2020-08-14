@@ -167,10 +167,7 @@ public class UserProfile : UserPersistenceSystem
     public string CurrentDragon
     {
         get { return m_currentDragon; }
-        set
-        {
-            m_currentDragon = value;
-        }
+        set { m_currentDragon = value; }
     }
 
 	private string m_currentLevel;
@@ -1293,17 +1290,28 @@ public class UserProfile : UserPersistenceSystem
 		}
 
 		key = "currentDragon";
+		string loadedCurrentDragon = "";
 		if(profile.ContainsKey(key)) {
-			m_currentDragon = profile[key];
+			loadedCurrentDragon = profile[key];
 
 			// Validate that current dragon actually exists. This happens often when switching between branches during the development of new dragons.
 			DefinitionNode dragonDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, m_currentDragon);
-			if(dragonDef == null) {
-				// Default
+			if(dragonDef != null) {
+				m_currentDragon = loadedCurrentDragon;
+			} else {
 				m_currentDragon = "";
 			}
 		} else {
 			m_currentDragon = "";
+		}
+
+		if(string.IsNullOrEmpty(m_currentDragon)) {
+			DefinitionNode initialSettingsDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, "initialSettings");
+			if(initialSettingsDef != null) {
+				m_currentDragon = initialSettingsDef.Get("initialDragonSKU");
+			} else {
+				Debug.LogError("UserProfile Load: Loaded current dragon (" + loadedCurrentDragon + ") does not exist and couldn't get default from initialSettings");
+			}
 		}
 
 		// Disguises
