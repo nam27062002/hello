@@ -1135,11 +1135,6 @@ public class UserProfile : UserPersistenceSystem
 
 
 		// Game settings
-		if ( profile.ContainsKey("currentDragon") )
-			m_currentDragon = profile["currentDragon"];
-		else
-            m_currentDragon = "";
-
 		if ( profile.ContainsKey("currentLevel") )
 			m_currentLevel = profile["currentLevel"];
 		else
@@ -1278,20 +1273,37 @@ public class UserProfile : UserPersistenceSystem
 		}
 
 		// Dragons
-		if ( _data.ContainsKey("dragons") )
-		{
+		if ( _data.ContainsKey("dragons") ) {
 			SimpleJSON.JSONArray dragons = _data["dragons"] as SimpleJSON.JSONArray;
-			for( int i = 0; i<dragons.Count; i++ )
-			{
+			for( int i = 0; i<dragons.Count; i++ ) {
+				// Validate that the dragon actually exists. This happens often when switching between branches during the development of new dragons.
 				string sku = dragons[i]["sku"];
-				m_dragonsBySku[sku].Load(dragons[i]);
+				DefinitionNode dragonDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, sku);
+				if(dragonDef != null) {
+					m_dragonsBySku[sku].Load(dragons[i]);
+				} else if(m_dragonsBySku.ContainsKey(sku)) {
+					m_dragonsBySku.Remove(sku);
+				}
+			}
+		} else {
+			// Clean Dragon Data
+			foreach(KeyValuePair<string, IDragonData> pair in m_dragonsBySku) {
+				pair.Value.ResetLoadedData();
 			}
 		}
-		else
-		{
-			// Clean Dragon Data
-			foreach( KeyValuePair<string, IDragonData> pair in m_dragonsBySku)
-				pair.Value.ResetLoadedData();
+
+		key = "currentDragon";
+		if(profile.ContainsKey(key)) {
+			m_currentDragon = profile[key];
+
+			// Validate that current dragon actually exists. This happens often when switching between branches during the development of new dragons.
+			DefinitionNode dragonDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, m_currentDragon);
+			if(dragonDef == null) {
+				// Default
+				m_currentDragon = "";
+			}
+		} else {
+			m_currentDragon = "";
 		}
 
 		// Disguises

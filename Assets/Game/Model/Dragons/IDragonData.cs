@@ -498,9 +498,19 @@ public int GetOrder() {
 		m_revealed = PersistenceUtils.SafeParse<bool>(_data["revealed"]);
 
 		// Disguise
+		m_persistentDisguise = "";
 		if(_data.ContainsKey("disguise")) {
+			// Validate that the disguise actually exists
+			// This happens often when creating a new disguises and switching within branches
 			m_persistentDisguise = _data["disguise"];
-		} else {
+			DefinitionNode skinDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, m_persistentDisguise);
+			if(skinDef == null) {
+				m_persistentDisguise = "";
+			}
+		}
+		
+		// If no valid disguise was found, equip default one
+		if(string.IsNullOrEmpty(m_persistentDisguise)) {
 			m_persistentDisguise = GetDefaultDisguise(sku).sku;
 		}
 		m_disguise = m_persistentDisguise;

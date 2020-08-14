@@ -298,7 +298,12 @@ public class Wardrobe : IBroadcastListener {
 		SimpleJSON.JSONArray diguisesArr = _data.AsArray;
 		int disguisesLength = diguisesArr.Count;
 		for (int i = 0; i < disguisesLength; i++) {
-			m_disguises[ diguisesArr[i]["disguise"] ] = (SkinState)PersistenceUtils.SafeParse<int>(diguisesArr[i]["level"]);
+			// Validate that skin actually exists. This happens often when switching between branches during the development of new dragons.
+			string sku = diguisesArr[i]["disguise"];
+			DefinitionNode skinDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, sku);
+			if(skinDef != null) {
+				m_disguises[sku] = (SkinState)PersistenceUtils.SafeParse<int>(diguisesArr[i]["level"]);
+			}
 		}
 
 		// Active season might have changed, refresh seasonal skins
