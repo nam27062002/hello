@@ -254,7 +254,7 @@ public class CPReferralCheats : MonoBehaviour {
 				if(kJSON["result"].AsBool == true) {
 					ControlPanel.LaunchTextFeedback("Success!", Color.green, 3f);
 				} else {
-					ControlPanel.LaunchTextFeedback("Unsuccessful!", Color.red);
+					ControlPanel.LaunchTextFeedback("Unsuccessful! " + kJSON["errorCode"] + ": " + kJSON["errorMsg"], Color.red);
 				}
 			}
 		} else if(_error != null) {
@@ -281,7 +281,7 @@ public class CPReferralCheats : MonoBehaviour {
 					ControlPanel.LaunchTextFeedback("Success!\nEnter the shop again to refresh the rewards.", Color.green, 3f);
 					UsersManager.currentUser.totalReferrals = (int)m_referralCountSetter.GetValue();
 				} else {
-					ControlPanel.LaunchTextFeedback("Unsuccessful!", Color.red);
+					ControlPanel.LaunchTextFeedback("Unsuccessful! " + kJSON["errorCode"] + ": " + kJSON["errorMsg"], Color.red);
 				}
 			}
 		} else if(_error != null) {

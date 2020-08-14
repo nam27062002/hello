@@ -111,9 +111,20 @@ public class GameServerManager {
     //------------------------------------------------------------------------//
     private bool m_configured = false;
 
+    // Estimated server time
+    private int m_serverTimeUpdateFrame = -1;
+    private long m_estimatedServerTimeAsLong = -1;
+    private DateTime m_estimatedServerTime = DateTime.MinValue;
+
     //------------------------------------------------------------------------//
     // GENERIC METHODS														  //
     //------------------------------------------------------------------------//
+    /// <summary>
+    /// Update frame.
+    /// </summary>
+    public virtual void Update() {
+        ;   // Put a breakpoint in here to peek what the GameServerManager is doing
+    }
 
     public virtual void Destroy() { }
 
@@ -210,9 +221,9 @@ public class GameServerManager {
     /// </summary>
     /// <returns>The estimated server time.</returns>
     public static DateTime GetEstimatedServerTime() {
-        // Calety already manages this, just convert it to a nice DateTime object.		
-        long timestamp = GetEstimatedServerTimeAsLong();
-        return TimeUtils.TimestampToDate(timestamp);
+        // Update cached value if needed and return it
+        SharedInstance.UpdateEstimatedServerTimeIfNeeded();
+        return SharedInstance.m_estimatedServerTime;
     }
 
     /// <summary>
@@ -220,14 +231,32 @@ public class GameServerManager {
     /// </summary>
     /// <returns>The estimated server time in milliseconds</returns>
     public static long GetEstimatedServerTimeAsLong() {
+        // Update cached value if needed and return it
+        SharedInstance.UpdateEstimatedServerTimeIfNeeded();
+        return SharedInstance.m_estimatedServerTimeAsLong;
+    }
+
+    /// <summary>
+    /// Compute and store estimated server time if needed.
+    /// </summary>
+    private void UpdateEstimatedServerTimeIfNeeded() {
+        // Are cached values still valid?
+        if(m_serverTimeUpdateFrame == Time.frameCount) {
+            return; // Yes!! Nothing to do
+        }
+
+        // Compute and store estimated server unix timestamp
         double unixTimestamp;
 #if UNITY_EDITOR
         unixTimestamp = (Application.isPlaying) ? ServerManager.SharedInstance.GetServerTime() : TimeUtils.DateToTimestamp(DateTime.Now, false);    // Seconds since 1970
 #else
         unixTimestamp = ServerManager.SharedInstance.GetServerTime();    // Seconds since 1970
 #endif
-        return (long)unixTimestamp * 1000;
-    }    
+        m_estimatedServerTimeAsLong = (long)unixTimestamp * 1000;
+
+        // Convert it and store it into a nice DateTime object.
+        m_estimatedServerTime = TimeUtils.TimestampToDate(m_estimatedServerTimeAsLong);
+    }
 
     public virtual void OnGameActionProcessed(string cmd, SimpleJSON.JSONNode response) { }
     public virtual void OnGameActionFailed(string cmd, int errorCode) { }
@@ -467,23 +496,20 @@ public class GameServerManager {
     //-----------------
     // Referral
     //-----------------
-
     public virtual void Referral_GetInfo(string _milestonesPathSku, ServerCallback _callback) { }
     public virtual void Referral_ReclaimAll(string _milestonesPathSku, ServerCallback _callback) { }
     public virtual void Referral_MarkReferral(string _referralUserId, ServerCallback _callback) { }
     public virtual void Referral_DEBUG_SetReferralCount(int _totalReferralCount, ServerCallback _callback) { }
     public virtual void Referral_DEBUG_SimulateReferralInstall(string _referralUserId, ServerCallback _callback) { }
 
+    //-----------------
+    // Clustering
+    //-----------------
+    public virtual void Clustering_SetClusterId(string _clusterId, ServerCallback _callback) { }
+
     //------------------------------------------------------------------------//
     // DEBUG ONLY															  //
     //------------------------------------------------------------------------//	
-    /// <summary>
-    /// Update frame.
-    /// </summary>
-    public virtual void Update() {
-		;	// Put a breakpoint in here to peek what the GameServerManager is doing
-	}
-
     /// <summary>
     /// Print something on the console / control panel log.
     /// </summary>
