@@ -48,6 +48,17 @@ public class DragonManager : Singleton<DragonManager> {
         }
 	}
 
+	// Check current game context to know if the current dragon assigned to the player is the actual current owned and selected dragon, or the one assigned by the tournament.
+	public static IDragonData CurrentDragonConsideringTournament {
+		get {
+			if(SceneController.mode == SceneController.Mode.TOURNAMENT) {
+				return HDLiveDataManager.tournament.tournamentData.tournamentDef.dragonData;
+			} else {
+				return CurrentDragon;
+			}
+		}
+	}
+
     public static IDragonData GetClassicDragonsByOrder(int order)
     {
         return (instance.m_classicDragonsByOrder != null && order > -1 && order < instance.m_classicDragonsByOrder.Count) ? instance.m_classicDragonsByOrder[order] : null;
