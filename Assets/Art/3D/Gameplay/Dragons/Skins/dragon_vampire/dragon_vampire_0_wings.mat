@@ -9,15 +9,15 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: dragon_vampire_0_wings
   m_Shader: {fileID: 4800000, guid: 2345015ac46679e4cb5817ed44c82547, type: 3}
-  m_ShaderKeywords: FRESNEL FXLAYER_NONE NORMALMAP REFLECTIONTYPE_NORMAL SELFILLUMINATE_NORMAL
-    SPECULAR _ZWRITE_ON
+  m_ShaderKeywords: CUTOFF DOUBLESIDED FRESNEL FXLAYER_NONE NORMALMAP REFLECTIONTYPE_NORMAL
+    SELFILLUMINATE_NORMAL SPECULAR _ZWRITE_ON
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
   stringTagMap:
-    QUEUE: Transparent
-    RenderType: Transparent
+    QUEUE: AlphaTest
+    RenderType: TransparentCutout
   disabledShaderPasses: []
   m_SavedProperties:
     serializedVersion: 3
@@ -74,12 +74,12 @@ Material:
     - FXLayer: 0
     - ReflectionType: 0
     - SelfIlluminate: 0
-    - _BlendMode: 2
+    - _BlendMode: 1
     - _BumpScale: 1
     - _ColorRampAmount: 0
     - _ColorRampID0: 0
     - _ColorRampID1: 0
-    - _Cull: 1
+    - _Cull: 0
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
     - _DissolveAmount: 0
@@ -90,7 +90,7 @@ Material:
     - _EnableBlendFresnel: 0
     - _EnableCutoff: 1
     - _EnableDiffuseAsSpecMask: 0
-    - _EnableDoublesided: 0
+    - _EnableDoublesided: 1
     - _EnableFresnel: 1
     - _EnableNormalMap: 1
     - _EnableOpaqueFresnel: 0
@@ -118,7 +118,7 @@ Material:
     - _Parallax: 0.02
     - _ReflectionAmount: 0
     - _SmoothnessTextureChannel: 0
-    - _SpecExponent: 48
+    - _SpecExponent: 45.4
     - _SpecularHighlights: 1
     - _SrcBlend: 5
     - _StencilMask: 10
@@ -133,6 +133,6 @@ Material:
     - _FresnelColor: {r: 0.38679248, g: 0.16237986, b: 0.16932042, a: 1}
     - _InnerLightColor: {r: 0.38679248, g: 0.38679248, b: 0.38679248, a: 1}
     - _ReflectionColor: {r: 1, g: 1, b: 1, a: 1}
-    - _SecondLightColor: {r: 0.06376031, g: 0.0027032858, b: 0.07352942, a: 0}
-    - _SecondLightDir: {r: 0.55703527, g: 0.83048886, b: -0, a: 0}
+    - _SecondLightColor: {r: 0.7830189, g: 0.4434545, b: 0.37304202, a: 0}
+    - _SecondLightDir: {r: -0.36097336, g: 0.28813854, b: -0.8869467, a: 0}
     - _Tint: {r: 0.7830189, g: 0.4986205, b: 0.53774774, a: 1}
