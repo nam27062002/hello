@@ -54,7 +54,8 @@ public class FontReplacer : MonoBehaviour, IBroadcastListener {
 	public void Awake() {
 		// Get text reference
 		m_text = GetComponent<TextMeshProUGUI>();
-		Debug.Assert(m_text != null, "Required member!");
+		//		Debug.Assert(m_text != null, "Required member!");
+		if (m_text == null) return;
 
 		// Store original setup
 		m_originalFontName = m_text.font.name;
@@ -78,7 +79,8 @@ public class FontReplacer : MonoBehaviour, IBroadcastListener {
 	/// First update.
 	/// </summary>
 	public void Start() {
-		if(FontManager.instance.isReady) {
+		if (m_text == null) return;
+		if (FontManager.instance.isReady) {
 			OnFontChangeFinished();	// Make sure we have the right font loaded!
 		}
 	}
@@ -87,6 +89,7 @@ public class FontReplacer : MonoBehaviour, IBroadcastListener {
 	/// 
 	/// </summary>
 	public void OnDestroy() {
+		if (m_text == null) return;
 		// Unsubscribe from external events
 		Broadcaster.RemoveListener(BroadcastEventType.FONT_CHANGE_STARTED, this);
 		Broadcaster.RemoveListener(BroadcastEventType.FONT_CHANGE_FINISHED, this);
@@ -98,7 +101,8 @@ public class FontReplacer : MonoBehaviour, IBroadcastListener {
     
     public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
     {
-        switch( eventType )
+		if (m_text == null) return;
+		switch ( eventType )
         {
             case BroadcastEventType.FONT_CHANGE_STARTED:
             {
