@@ -89,7 +89,7 @@ public class CPTechTab : MonoBehaviour {
 		m_DNAProfileIdText.text = "DNA profileId: " + HDTrackingManager.Instance.GetDNAProfileID();
 
         m_AdUnitInfoText.text = "Ads: " + GameAds.instance.GetInfo();
-		m_referraUserId.text = "Referral User Id: " + UsersManager.currentUser.referralUserId;
+		m_referraUserId.text = "Referral User Id: " + UsersManager.currentUser.referrerUserId;
 
 
 		m_AdUnitInfoText.text = "Ads: " + GameAds.instance.GetInfo();
@@ -393,12 +393,12 @@ public class CPTechTab : MonoBehaviour {
     /// </summary>
     public void OnClearReferraUserIdButton()
     {
-		UsersManager.currentUser.referralUserId = "";
+		UsersManager.currentUser.referrerUserId = "";
 
         // Clear the confirmation flag, so the client will call to the server again 
 		UsersManager.currentUser.referralConfirmed = false;
 
-		m_referraUserId.text = "Referral User Id: " + UsersManager.currentUser.referralUserId;
+		m_referraUserId.text = "Referral User Id: " + UsersManager.currentUser.referrerUserId;
 	}
 
     public void OnSaveGame()

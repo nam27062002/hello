@@ -435,11 +435,11 @@ public class UserProfile : UserPersistenceSystem
     }
 
 	// Referral install
-	private string m_referralUserId;
-	public string referralUserId
+	private string m_referrerUserId;
+	public string referrerUserId
 	{
-		get { return m_referralUserId; }
-		set { m_referralUserId = value; }
+		get { return m_referrerUserId; }
+		set { m_referrerUserId = value; }
 	}
 
 	private bool m_referralConfirmed;
@@ -1542,14 +1542,14 @@ public class UserProfile : UserPersistenceSystem
         }
 
 		// Referral
-		key = "referralUserId";
+		key = "referrerUserId";
 		if (_data.ContainsKey(key))
 		{
-			m_referralUserId = _data[key].Value;
+			m_referrerUserId = _data[key].Value;
 		}
 		else
 		{
-			m_referralUserId = "";
+			m_referrerUserId = "";
 		}
 
 		key = "referralConfirmed";
@@ -1845,7 +1845,7 @@ public class UserProfile : UserPersistenceSystem
         }
 
 		// Referral
-		data.Add("referralUserId", referralUserId);
+		data.Add("referrerUserId", referrerUserId);
 
 		data.Add("referralConfirmed", referralConfirmed);
 
