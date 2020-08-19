@@ -23,15 +23,24 @@ public class ReferralManager {
 	//------------------------------------------------------------------------//
 	// CONSTANTS                											  //
 	//------------------------------------------------------------------------//
-
+	
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Singleton instance
 	private static ReferralManager m_instance = null;
+	public static ReferralManager instance {
+		get {
+			if(m_instance == null) {
+				m_instance = new ReferralManager();
+			}
+			return m_instance;
+		}
+	}
 
 	// Communication with server
 	private bool m_offlineMode = false;
+	private bool m_waitingServerResponse = false;
 
 	// Rewards claimed
 	private Queue<OfferPackReferralReward> m_pendingRewards = new Queue<OfferPackReferralReward>();
@@ -57,19 +66,71 @@ public class ReferralManager {
 
 	}
 
-	// Singleton
-	public static ReferralManager instance {
-		get {
-			if(m_instance == null) {
-				m_instance = new ReferralManager();
-			}
-			return m_instance;
-		}
+	/// <summary>
+	/// To be called externally every frame, since this singleton is not a MonoBehaviour.
+	/// </summary>
+	public void Update() {
+		// Try to mark the referral install if needed
+		ConfirmReferralConversionIfPossible();
 	}
 
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //
 	//------------------------------------------------------------------------//
+	/// <summary>
+	/// To be call whenever the app is ready to read the referral link.
+	/// </summary>
+	public void ReadReferralLink() {
+		// Ignore if the player has already been referred
+		if(UsersManager.currentUser.referralConfirmed)
+			return;
+
+		// Ignore if we already have a referrer ID assigned
+		if(!string.IsNullOrEmpty(UsersManager.currentUser.referrerUserId))
+			return;
+
+		// All good! Get the referrer ID from Calety's Deep Link system
+		string referrerId = CaletyDynamicLinks.getReferrerID();
+		if(!string.IsNullOrEmpty(referrerId)) {
+			// Valid Id, store it
+			UsersManager.currentUser.referrerUserId = referrerId;
+		}
+	}
+
+	/// <summary>
+	// The invited user has to confirm that the app has been open, so the referral user
+	// increments its referal counter and can claim rewards.
+	/// </summary>
+	public void ConfirmReferralConversionIfPossible() {
+		// Exit if the conversion has been already confirmed (with or without success)
+		if(UsersManager.currentUser.referralConfirmed)
+			return;
+
+		// Nothing to do either if we don't have a valid referrer User Id
+		// [AOC] TOOD!! FOR SURE? WE MAY WANT TO MARK AS REFERRAL CONFIRMED (UNSUCCESSFUL) SO WE DON'T KEEP TRYING FOREVER
+		//		 THE ONLY RISK HERE IS - MAY WE GET THE REFERRER USER ID AFTER ATEMPTING THE CONVERSION?
+		//		 REFLEXIONEM-HI, SI US PLAU, REFLEXIONEM-HI
+		if(string.IsNullOrEmpty(UsersManager.currentUser.referrerUserId))
+			return;
+
+		// We need a valid DNA Id to validate the request
+		if(string.IsNullOrEmpty(HDTrackingManager.Instance.GetDNAProfileID()))
+			return;
+
+		// Skip if we are waiting for a server response
+		if(m_waitingServerResponse)
+			return;
+
+		// All good! Notify the server confirming the conversion of the invited player
+		if(!m_offlineMode) {
+			m_waitingServerResponse = true;
+			GameServerManager.SharedInstance.Referral_MarkReferral(
+				UsersManager.currentUser.referrerUserId, 
+				OnMarkReferralResponse
+			);
+		}
+	}
+
 	/// <summary>
 	/// Update all the referral related data from the server: amount of referrals (friends invited)
 	/// and list of rewards ready to claim
@@ -104,17 +165,6 @@ public class ReferralManager {
 				GameServerManager.SharedInstance.Referral_ReclaimAll(referralSku, OnReclaimAllResponse);
 			}
 		}
-	}
-
-	/// <summary>
-	/// Notify the server that the invited user has installed and open the game
-	/// </summary>
-	/// <param name="_userId">The id of the user that sent the invitation</param>
-	public void MarkReferral(string _userId) {
-		if(!m_offlineMode) {
-			GameServerManager.SharedInstance.Referral_MarkReferral(_userId, OnMarkReferralResponse);
-		}
-
 	}
 
 	/// <summary>
@@ -309,6 +359,9 @@ public class ReferralManager {
 	/// <param name="_reponseCode">Response code. 200 if the request was successful</param>
 	/// <returns>Returns true if the response was successful</returns>
 	public void OnMarkReferralResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response) {
+		// No longer waiting for response
+		m_waitingServerResponse = false;
+
 		// If there was no error, update local cache
 		if(_error == null && _response != null && _response.ContainsKey("response")) {
 			if(_response["response"] != null) {
@@ -334,7 +387,7 @@ public class ReferralManager {
 				}
 
 				// Send tracking information
-				HDTrackingManager.Instance.Notify_ReferralInstall(success, UsersManager.currentUser.referralUserId);
+				HDTrackingManager.Instance.Notify_ReferralInstall(success, UsersManager.currentUser.referrerUserId);
 			}
 		}
 	}

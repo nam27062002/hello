@@ -1,5 +1,5 @@
 -------------------------------------------------------------------------------------------------------------------------------------------------------------
-HD ver: 2.12.8
+HD ver: 3.0.2
 -------------------------------------------------------------------------------------------------------------------------------------------------------------
 Material:   alen_buildboard
 Shader:     Hungry Dragon/Scenary/Scenary Standard
@@ -130,6 +130,11 @@ Material:   Bat
 Shader:     Hungry Dragon/NPC/NPC Diffuse
 LightMode:  FORWARDBASE
 Keywords:   COLORMODE_NONE 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+Material:   bat_sprites
+Shader:     Hungry Dragon/Particles/Transparent Signal
+LightMode:  
+Keywords:   
 -------------------------------------------------------------------------------------------------------------------------------------------------------------
 Material:   BeamRush
 Shader:     Hungry Dragon/BeamRush
@@ -2691,6 +2696,136 @@ Shader:     Hungry Dragon/Dragon/Dragon standard
 LightMode:  FORWARDBASE
 Keywords:   CUTOFF DOUBLESIDED FXLAYER_REFLECTION NORMALMAP REFLECTIONTYPE_NORMAL SELFILLUMINATE_BLINKLIGHTS SPECULAR _ZWRITE_ON 
 -------------------------------------------------------------------------------------------------------------------------------------------------------------
+Material:   dragon_vampire_0_body
+Shader:     Hungry Dragon/Dragon/Dragon standard
+LightMode:  FORWARDBASE
+Keywords:   FRESNEL FXLAYER_REFLECTION NORMALMAP REFLECTIONTYPE_NORMAL SELFILLUMINATE_NORMAL SPECULAR _ZWRITE_ON 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+Material:   dragon_vampire_0_disguise
+Shader:     Hungry Dragon/Dragon/Dragon standard
+LightMode:  FORWARDBASE
+Keywords:   FRESNEL FXLAYER_REFLECTION NORMALMAP REFLECTIONTYPE_NORMAL SELFILLUMINATE_NORMAL SPECULAR VERTEXOFFSETZ _ZWRITE_ON 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+Material:   dragon_vampire_0_ingame_body
+Shader:     Hungry Dragon/Dragon/Dragon standard
+LightMode:  FORWARDBASE
+Keywords:   FRESNEL FXLAYER_REFLECTION NORMALMAP REFLECTIONTYPE_NORMAL SELFILLUMINATE_NORMAL SPECULAR _ZWRITE_ON 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+Material:   dragon_vampire_0_ingame_wings
+Shader:     Hungry Dragon/Dragon/Dragon standard
+LightMode:  FORWARDBASE
+Keywords:   FRESNEL FXLAYER_NONE NORMALMAP REFLECTIONTYPE_NORMAL SELFILLUMINATE_NORMAL SPECULAR _ZWRITE_ON 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+Material:   dragon_vampire_0_wings
+Shader:     Hungry Dragon/Dragon/Dragon standard
+LightMode:  FORWARDBASE
+Keywords:   CUTOFF DOUBLESIDED FRESNEL FXLAYER_NONE NORMALMAP REFLECTIONTYPE_NORMAL SELFILLUMINATE_NORMAL SPECULAR _ZWRITE_ON 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+Material:   dragon_vampire_1_body
+Shader:     Hungry Dragon/Dragon/Dragon standard
+LightMode:  FORWARDBASE
+Keywords:   FRESNEL FXLAYER_NONE NORMALMAP REFLECTIONTYPE_NORMAL SELFILLUMINATE_NORMAL SPECULAR _ZWRITE_ON 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+Material:   dragon_vampire_1_disguise
+Shader:     Hungry Dragon/Dragon/Dragon standard
+LightMode:  FORWARDBASE
+Keywords:   FRESNEL FXLAYER_NONE NORMALMAP REFLECTIONTYPE_NORMAL SELFILLUMINATE_NORMAL SPECULAR VERTEXOFFSET VERTEXOFFSETY _ZWRITE_ON 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+Material:   dragon_vampire_1_ingame_body
+Shader:     Hungry Dragon/Dragon/Dragon standard
+LightMode:  FORWARDBASE
+Keywords:   FXLAYER_REFLECTION NORMALMAP REFLECTIONTYPE_NORMAL SELFILLUMINATE_NORMAL SPECULAR _ZWRITE_ON 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+Material:   dragon_vampire_1_ingame_wings
+Shader:     Hungry Dragon/Dragon/Dragon standard
+LightMode:  FORWARDBASE
+Keywords:   FRESNEL FXLAYER_REFLECTION NORMALMAP OPAQUEALPHA REFLECTIONTYPE_NORMAL SELFILLUMINATE_NORMAL SPECULAR _ZWRITE_ON 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+Material:   dragon_vampire_1_wings
+Shader:     Hungry Dragon/Dragon/Dragon standard
+LightMode:  FORWARDBASE
+Keywords:   FRESNEL FXLAYER_REFLECTION NORMALMAP OPAQUEALPHA REFLECTIONTYPE_NORMAL SELFILLUMINATE_NORMAL SPECULAR _ZWRITE_ON 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+Material:   dragon_vampire_2_body
+Shader:     Hungry Dragon/Dragon/Dragon standard
+LightMode:  FORWARDBASE
+Keywords:   FRESNEL FXLAYER_REFLECTION NORMALMAP REFLECTIONTYPE_NORMAL SELFILLUMINATE_NORMAL SPECULAR _ZWRITE_ON 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+Material:   dragon_vampire_2_disguise 1
+Shader:     Hungry Dragon/Dragon/Dragon standard
+LightMode:  FORWARDBASE
+Keywords:   FRESNEL FXLAYER_REFLECTION NORMALMAP REFLECTIONTYPE_NORMAL SELFILLUMINATE_NORMAL SPECULAR VERTEXOFFSETZ _ZWRITE_ON 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+Material:   dragon_vampire_2_ingame_body
+Shader:     Hungry Dragon/Dragon/Dragon standard
+LightMode:  FORWARDBASE
+Keywords:   FXLAYER_REFLECTION NORMALMAP REFLECTIONTYPE_NORMAL SELFILLUMINATE_NORMAL SPECULAR _ZWRITE_ON 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+Material:   dragon_vampire_2_ingame_wings
+Shader:     Hungry Dragon/Dragon/Dragon standard
+LightMode:  FORWARDBASE
+Keywords:   FRESNEL FXLAYER_REFLECTION NORMALMAP OPAQUEALPHA REFLECTIONTYPE_NORMAL SELFILLUMINATE_NORMAL SPECULAR _ZWRITE_ON 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+Material:   dragon_vampire_2_wings
+Shader:     Hungry Dragon/Dragon/Dragon standard
+LightMode:  FORWARDBASE
+Keywords:   FRESNEL FXLAYER_REFLECTION NORMALMAP OPAQUEALPHA REFLECTIONTYPE_NORMAL SELFILLUMINATE_NORMAL SPECULAR _ZWRITE_ON 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+Material:   dragon_vampire_3_body
+Shader:     Hungry Dragon/Dragon/Dragon standard
+LightMode:  FORWARDBASE
+Keywords:   FRESNEL FXLAYER_REFLECTION NORMALMAP REFLECTIONTYPE_NORMAL SELFILLUMINATE_NORMAL SPECULAR _ZWRITE_ON 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+Material:   dragon_vampire_3_disguise
+Shader:     Hungry Dragon/Dragon/Dragon standard
+LightMode:  FORWARDBASE
+Keywords:   FRESNEL FXLAYER_NONE NORMALMAP REFLECTIONTYPE_NORMAL SELFILLUMINATE_NORMAL SPECULAR VERTEXOFFSET VERTEXOFFSETY _ZWRITE_ON 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+Material:   dragon_vampire_3_disguise_alpha
+Shader:     Hungry Dragon/Dragon/Dragon standard
+LightMode:  FORWARDBASE
+Keywords:   CUTOFF FRESNEL FXLAYER_NONE NORMALMAP REFLECTIONTYPE_NORMAL SELFILLUMINATE_NORMAL SPECULAR VERTEXOFFSET VERTEXOFFSETY _ZWRITE_ON 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+Material:   dragon_vampire_3_ingame_body
+Shader:     Hungry Dragon/Dragon/Dragon standard
+LightMode:  FORWARDBASE
+Keywords:   FXLAYER_REFLECTION NORMALMAP REFLECTIONTYPE_NORMAL SELFILLUMINATE_NORMAL SPECULAR _ZWRITE_ON 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+Material:   dragon_vampire_3_ingame_wings
+Shader:     Hungry Dragon/Dragon/Dragon standard
+LightMode:  FORWARDBASE
+Keywords:   FRESNEL FXLAYER_REFLECTION NORMALMAP OPAQUEALPHA REFLECTIONTYPE_NORMAL SELFILLUMINATE_NORMAL SPECULAR _ZWRITE_ON 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+Material:   dragon_vampire_3_wings
+Shader:     Hungry Dragon/Dragon/Dragon standard
+LightMode:  FORWARDBASE
+Keywords:   FRESNEL FXLAYER_REFLECTION NORMALMAP OPAQUEALPHA REFLECTIONTYPE_NORMAL SELFILLUMINATE_NORMAL SPECULAR _ZWRITE_ON 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+Material:   dragon_vampire_4_body
+Shader:     Hungry Dragon/Dragon/Dragon standard
+LightMode:  FORWARDBASE
+Keywords:   FRESNEL FXLAYER_REFLECTION NORMALMAP REFLECTIONTYPE_NORMAL SELFILLUMINATE_NORMAL SPECULAR _ZWRITE_ON 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+Material:   dragon_vampire_4_disguise
+Shader:     Hungry Dragon/Dragon/Dragon standard
+LightMode:  FORWARDBASE
+Keywords:   FRESNEL FXLAYER_NONE NORMALMAP REFLECTIONTYPE_NORMAL SELFILLUMINATE_NORMAL SPECULAR VERTEXOFFSET VERTEXOFFSETY _ZWRITE_ON 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+Material:   dragon_vampire_4_ingame_body
+Shader:     Hungry Dragon/Dragon/Dragon standard
+LightMode:  FORWARDBASE
+Keywords:   FRESNEL FXLAYER_REFLECTION NORMALMAP REFLECTIONTYPE_NORMAL SELFILLUMINATE_NORMAL SPECULAR _ZWRITE_ON 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+Material:   dragon_vampire_4_ingame_wings
+Shader:     Hungry Dragon/Dragon/Dragon standard
+LightMode:  FORWARDBASE
+Keywords:   FRESNEL FXLAYER_NONE NORMALMAP OPAQUEALPHA REFLECTIONTYPE_NORMAL SELFILLUMINATE_NORMAL SPECULAR _ZWRITE_ON 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+Material:   dragon_vampire_4_wings
+Shader:     Hungry Dragon/Dragon/Dragon standard
+LightMode:  FORWARDBASE
+Keywords:   FRESNEL FXLAYER_NONE NORMALMAP OPAQUEALPHA REFLECTIONTYPE_NORMAL SELFILLUMINATE_NORMAL SPECULAR _ZWRITE_ON 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
 Material:   DragonSilhouette
 Shader:     Hungry Dragon/StrokeSilhouette
 LightMode:  
@@ -3579,7 +3714,7 @@ Keywords:   APPLY_RGB_COLOR_VERTEX BLENDMODE_PREMULTIPLY DISSOLVE_VERTEXCOLORALF
 Material:   FX_MT_BatsSpriteSheet
 Shader:     Hungry Dragon/Particles/Transparent particles standard
 LightMode:  
-Keywords:   BLENDMODE_ALPHABLEND 
+Keywords:   BLENDMODE_ADDITIVEALPHABLEND 
 -------------------------------------------------------------------------------------------------------------------------------------------------------------
 Material:   FX_MT_BlizzardStorm_AlphaBlend_01
 Shader:     Hungry Dragon/Particles/Transparent particles standard
@@ -4589,12 +4724,12 @@ Keywords:   DIFFUSE_AS_SPECULARMASK FRESNEL FXLAYER_REFLECTION REFLECTIONTYPE_CO
 Material:   MT_baby_bug 1
 Shader:     Hungry Dragon/Dragon/Dragon standard
 LightMode:  FORWARDBASE
-Keywords:   DIFFUSE_AS_SPECULARMASK FRESNEL FXLAYER_REFLECTION REFLECTIONTYPE_COLOR SPECULAR 
+Keywords:   DIFFUSE_AS_SPECULARMASK FRESNEL FXLAYER_NONE REFLECTIONTYPE_COLOR SPECULAR 
 -------------------------------------------------------------------------------------------------------------------------------------------------------------
 Material:   MT_baby_bug 1
 Shader:     Hungry Dragon/Dragon/Dragon standard
 LightMode:  FORWARDBASE
-Keywords:   DIFFUSE_AS_SPECULARMASK FRESNEL FXLAYER_NONE REFLECTIONTYPE_COLOR SPECULAR 
+Keywords:   DIFFUSE_AS_SPECULARMASK FRESNEL FXLAYER_REFLECTION REFLECTIONTYPE_COLOR SPECULAR 
 -------------------------------------------------------------------------------------------------------------------------------------------------------------
 Material:   MT_baby_classic
 Shader:     Hungry Dragon/Dragon/Dragon standard
@@ -5567,9 +5702,9 @@ LightMode:  FORWARDBASE
 Keywords:   BLENDAXIS_X COLORMODE_NONE FRESNEL LITMODE_UNLIT 
 -------------------------------------------------------------------------------------------------------------------------------------------------------------
 Material:   MT_icon_butterflyEgg
-Shader:     Hungry Dragon/NPC/NPC Diffuse Lit-Unlit Outline
+Shader:     Hungry Dragon/NPC/NPC Cocoon
 LightMode:  FORWARDBASE
-Keywords:   BLENDAXIS_X COLORMODE_NONE FRESNEL LITMODE_UNLIT 
+Keywords:   
 -------------------------------------------------------------------------------------------------------------------------------------------------------------
 Material:   MT_icon_canary
 Shader:     Hungry Dragon/NPC/NPC Diffuse Lit-Unlit Outline
@@ -5722,14 +5857,14 @@ LightMode:  FORWARDBASE
 Keywords:   BLENDAXIS_X COLORMODE_NONE FRESNEL LITMODE_UNLIT 
 -------------------------------------------------------------------------------------------------------------------------------------------------------------
 Material:   MT_icon_jellyfishBlue
-Shader:     Hungry Dragon/NPC/NPC Diffuse Lit-Unlit Outline
+Shader:     Hungry Dragon/NPC/NPC Jelly fish
 LightMode:  FORWARDBASE
-Keywords:   BLENDAXIS_X COLORMODE_NONE FRESNEL LITMODE_LIT 
+Keywords:   
 -------------------------------------------------------------------------------------------------------------------------------------------------------------
 Material:   MT_icon_jellyfishes
-Shader:     Hungry Dragon/NPC/NPC Diffuse Lit-Unlit Outline
+Shader:     Hungry Dragon/NPC/NPC Jelly fish
 LightMode:  FORWARDBASE
-Keywords:   BLENDAXIS_X COLORMODE_NONE FRESNEL LITMODE_LIT 
+Keywords:   
 -------------------------------------------------------------------------------------------------------------------------------------------------------------
 Material:   MT_icon_lionbird
 Shader:     Hungry Dragon/NPC/NPC Diffuse Lit-Unlit Outline
@@ -7835,6 +7970,16 @@ Material:   UIImageHolder_Ramp
 Shader:     Custom/UI/UIImage
 LightMode:  
 Keywords:   COLOR_RAMP_ENABLED 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+Material:   vampire_body_smoke
+Shader:     Hungry Dragon/Particles/Transparent particles standard
+LightMode:  
+Keywords:   BLENDMODE_MULTIPLY DISSOLVE_ENABLED DISSOLVE_VERTEXCOLORALFA EXTENDED_PARTICLES 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+Material:   vampire_body_twirl
+Shader:     Hungry Dragon/Particles/Transparent particles standard
+LightMode:  
+Keywords:   BLENDMODE_ALPHABLEND DISSOLVE_ENABLED DISSOLVE_VERTEXCOLORALFA EXTENDED_PARTICLES 
 -------------------------------------------------------------------------------------------------------------------------------------------------------------
 Material:   VFX ExplosionStretchedShapes Sheet Composition
 Shader:     Hungry Dragon/Particles/Transparent particles standard
