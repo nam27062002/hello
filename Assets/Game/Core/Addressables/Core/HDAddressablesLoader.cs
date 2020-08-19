@@ -247,4 +247,36 @@ public class HDAddressablesLoader : MonoBehaviour {
 		// To be implemented by heirs if needed
 	}
 
+	//------------------------------------------------------------------------//
+	// STATIC UTILS															  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Given an asset full path, get its addressable Id.
+	/// </summary>
+	/// <param name="_path">Path to the asset. Either full path or from the project's root.</param>
+	/// <param name="_folderLevel">How many folders to include in the Id. Generally 0 except for entities which is typically 1.</param>
+	/// <returns>The asset Id corresponding to the given path. Not validated with the catalog.</returns>
+	public static string GetAssetIdFromPath(string _path, int _folderLevel) {
+		// Figure out asset Id in the catalog from the resources path and folder level parameters
+		// The incoming path will be always use the separator '/' regardless of the OS
+		// However, when splitting it using the Path library, the separator char is changed
+		// Use StringUtils.SafePath to correct that and guarantee that separator remains '/'
+		string id = StringUtils.SafePath(Path.GetFileNameWithoutExtension(_path));
+		string path = StringUtils.SafePath(Path.GetDirectoryName(_path));
+		int i = _folderLevel;
+		while(i > 0) {
+			int index = path.LastIndexOf("/");
+			if(index > 0) {
+				// In the catalog the separator is always '/'
+				id = path.Substring(index + 1) + "/" + id;
+				path = path.Substring(0, index);
+				i--;
+			} else {
+				i = 0;	// No more folders, break loop
+			}
+		}
+
+		// Got it!
+		return id;
+	}
 }
