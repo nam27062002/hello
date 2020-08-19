@@ -39,7 +39,7 @@ public class SpawnersCaptureTool : CaptureTool {
 	// Exposed
 	[Separator("Spawner Setup")]
 	[SerializeField] private Dropdown m_dropdown = null;
-	[SerializeField] private PrefabLoader m_loader = null;
+	[SerializeField] private HDAddressablesLoader m_loader = null;
 	[SerializeField] private DragControlRotation m_dragControl = null;
 
 	private string selectedSpawnerName {
@@ -63,7 +63,7 @@ public class SpawnersCaptureTool : CaptureTool {
 		LocalizationManager.SharedInstance.SetLanguage("lang_english");
 
 		// Gather all prefabs within the root path recursively
-		string dirPath = Application.dataPath + IEntity.ENTITY_PREFABS_PATH;
+		string dirPath = StringUtils.SafePath(Application.dataPath + "/" + IEntity.ENTITY_PREFABS_PATH);
 		DirectoryInfo dirInfo = new DirectoryInfo(dirPath);
 		ScanFiles(dirInfo, "*.prefab");
 
@@ -170,15 +170,11 @@ public class SpawnersCaptureTool : CaptureTool {
 	/// Reload dragon preview button has been pressed.
 	/// </summary>
 	public void OnLoadButton() {
+		// Figure out assetId corresponding to the selected prefab
 		PrefabData selectedSpawner = m_prefabsList[m_dropdown.value];
-		m_loader.Load(selectedSpawner.path);
+		string assetId = HDAddressablesLoader.GetAssetIdFromPath(selectedSpawner.path, 1);
 
-		// Spawners need an extra material initialization!
-		if(m_loader.loadedInstance != null) {
-			ViewControl vc = m_loader.loadedInstance.GetComponent<ViewControl>();
-			if (vc != null) {
-				vc.SetMaterialType(ViewControl.MaterialType.NORMAL);
-			}
-		}
+		// Load it!
+		m_loader.LoadAsync(assetId);
 	}
 }
