@@ -162,7 +162,7 @@ public class FileListAttributeEditor : ExtendedPropertyDrawer {
 		try {
 			files = _dirInfo.GetFiles(_filter).Where(_file => !_file.Extension.EndsWith(".meta")).ToArray(); // Use file filter, exclude .meta files
 		} catch(Exception _e) {
-			Debug.LogError(Color.red.Tag("EXCEPTION! Skipping directory " + _prefix) + "\n" + _e.ToString());
+			//Debug.LogError(Color.red.Tag("EXCEPTION! Skipping directory " + _prefix) + "\n" + _e.ToString());
 			return;	// Skip this directory
 		}
 
