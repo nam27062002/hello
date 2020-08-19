@@ -231,7 +231,12 @@ public abstract class  CaptureTool : MonoBehaviour {
 
 		// Apply camera FOV
 		if(Math.Abs(fovOffset) > Mathf.Epsilon) {
-			m_mainCamera.fieldOfView = Mathf.Clamp(m_mainCamera.fieldOfView + fovOffset, 1f, 179f);
+			// For orthogonal cameras, change size instead
+			if(m_mainCamera.orthographic) {
+				m_mainCamera.orthographicSize = Mathf.Clamp(m_mainCamera.orthographicSize + fovOffset, 1f, 10000f);
+			} else {
+				m_mainCamera.fieldOfView = Mathf.Clamp(m_mainCamera.fieldOfView + fovOffset, 1f, 179f);
+			}
 		}
 
 		// Time scale
