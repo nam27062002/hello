@@ -31,6 +31,11 @@ public class UI3DAddressablesLoaderEditor : Editor {
     // Casted target object
     UI3DAddressablesLoader m_targetUI3DLoader = null;
 
+	// Useful properties
+	private SerializedProperty m_resPathProp = null;
+	private SerializedProperty m_folderLevelProp = null;
+	private SerializedProperty m_assetIdProp = null;
+
 	//------------------------------------------------------------------------//
 	// METHODS																  //
 	//------------------------------------------------------------------------//
@@ -41,7 +46,11 @@ public class UI3DAddressablesLoaderEditor : Editor {
 		// Get target object
 		m_targetUI3DLoader = target as UI3DAddressablesLoader;
 
-    }
+		// Gather useful properties
+		m_resPathProp = serializedObject.FindProperty("m_resourcePath");
+		m_folderLevelProp = serializedObject.FindProperty("m_useFolderLevelInID");
+		m_assetIdProp = serializedObject.FindProperty("m_assetId");
+	}
 
 	/// <summary>
 	/// The editor has been disabled - target object unselected.
@@ -49,6 +58,11 @@ public class UI3DAddressablesLoaderEditor : Editor {
 	private void OnDisable() {
 		// Clear target object
 		m_targetUI3DLoader = null;
+
+		// Clear properties
+		m_resPathProp = null;
+		m_folderLevelProp = null;
+		m_assetIdProp = null;
 	}
 
 	/// <summary>
@@ -75,41 +89,76 @@ public class UI3DAddressablesLoaderEditor : Editor {
 				EditorGUILayout.PropertyField(p, true);
 				GUI.enabled = wasEnabled;
 			}
-            else if (p.name == "m_assetId") {
-                
-                // The resource path could be empty in case we want to select the assetId in runtime
-                if (m_targetUI3DLoader.resourcePath != "")
-                {
-                    string id = Path.GetFileNameWithoutExtension(m_targetUI3DLoader.resourcePath);
-                    string path = Path.GetDirectoryName(m_targetUI3DLoader.resourcePath);
-                    int i = m_targetUI3DLoader.useFolderLevelInID;
-                    while (i > 0)
-                    {
-                        // The incoming path will be always use the separator '/' regardless of the OS
-                        int index = path.LastIndexOf("/");
-                        if (index > 0)
-                        {
-                            // In the catalog the separator is always "/"
-                            id = path.Substring(index + 1) + "/" + id;
-                            path = path.Substring(0, index);
-                            i--;
-                        }
-                        else
-                        {
-                            i = 0;
-                        }
-                    }
 
-                    p.stringValue = id;
-                    
-                }
+			// Resource Path
+			else if(p.name == m_resPathProp.name) {
+				// We will automatically convert the chosen resource path into an ID for the addressables system
+				// Show all related properties grouped here
 
-                EditorGUILayout.LabelField("    Addressable ID: " + p.stringValue);
-            }
+				// Resources path - default editor, will use the FileList attribute to display a nice selector
+				EditorGUILayout.PropertyField(p, true);
+
+				// Show indented. Disable if path is empty.
+				string resPath = p.stringValue;
+				bool validPath = !string.IsNullOrEmpty(p.stringValue);  // The resource path could be empty in case we want to select the assetId in runtime
+				EditorGUI.BeginDisabledGroup(!validPath);
+				EditorGUI.indentLevel++;
+
+				// Folder level: show using a slider for comfort
+				// Limit max to the amount of folders in the current resource path - if defined
+				int max = 10;
+				if(validPath) {
+					// Strip project root from the path
+					string cleanPath = StringUtils.FormatPath(resPath, StringUtils.PathFormat.ASSETS_ROOT);
+
+					// Find the amount of subdirectories included in the path
+					max = cleanPath.Split('/').Length - 1;    // Trick to count folders. We have guaranteed that the path uses '/' since it comes from StringUtils.FormatPath :)
+				}
+				EditorGUILayout.IntSlider(m_folderLevelProp, 0, max);
+
+				// Final asset ID: Show in a label
+				if(validPath) {
+					// Figure out asset Id in the catalog from the resources path and folder level properties
+					// The incoming path will be always use the separator '/' regardless of the OS
+					// However, when splitting it using the Path library, the separator char is changed
+					// Use StringUtils.SafePath to correct that and guarantee that separator remains '/'
+					string id = StringUtils.SafePath(Path.GetFileNameWithoutExtension(resPath));
+					string path = StringUtils.SafePath(Path.GetDirectoryName(resPath));
+					int i = m_folderLevelProp.intValue;
+					while(i > 0) {
+						int index = path.LastIndexOf("/");
+						if(index > 0) {
+							// In the catalog the separator is always '/'
+							id = path.Substring(index + 1) + "/" + id;
+							path = path.Substring(0, index);
+							i--;
+						} else {
+							i = 0;
+						}
+					}
+
+					// Store new value
+					m_assetIdProp.stringValue = id;
+				} else {
+					// Clear asset Id
+					m_assetIdProp.stringValue = string.Empty;
+				}
+				EditorGUILayout.SelectableLabel("Addressable ID: " + m_assetIdProp.stringValue);
+
+				// Indent back out
+				EditorGUI.EndDisabledGroup();
+				EditorGUI.indentLevel--;
+			}
+
+			else if(p.name == m_folderLevelProp.name || p.name == m_assetIdProp.name) {
+				// Already displayed with resourcePath property, do nothing :)
+			}
+
             // Properties we don't want to show
             else if(p.name == "m_ObjectHideFlags") {
 				// Do nothing
 			}
+
 			// Default property display
 			else {
 				EditorGUILayout.PropertyField(p, true);

@@ -29,21 +29,13 @@ public class UI3DAddressablesLoader : MonoBehaviour {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed
-	[FileListAttribute("", StringUtils.PathFormat.RESOURCES_ROOT_WITHOUT_EXTENSION, "*.prefab")]
+	// DEPRECATED - we keep it to migrate to the new addressables system -> the asset ID will be extracted from this attribute
+	[FileListAttribute("", StringUtils.PathFormat.FULL_PATH_WITHOUT_EXTENSION, "*.prefab")]
 	[SerializeField] private string m_resourcePath = "";
-    public string resourcePath
-    {
-        get { return m_resourcePath; }
-    }
     [SerializeField] private int m_useFolderLevelInID = 0;
-    public int useFolderLevelInID { get { return m_useFolderLevelInID; } }
-    // this will be stored in the editor
-    [SerializeField] private string m_assetId = "";
-    public string assetId
-    {
-        get { return m_assetId; }
-    }
+	[SerializeField] private string m_assetId = "";
 
+	[Space]
     [SerializeField] private bool m_loadOnAwake = false;
 
 	[Space]
