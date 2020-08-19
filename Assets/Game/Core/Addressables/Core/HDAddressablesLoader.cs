@@ -10,6 +10,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
+using System.IO;
 using System.Collections;
 
 //----------------------------------------------------------------------------//
@@ -28,14 +29,29 @@ public class HDAddressablesLoader : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
+	// Asset to load
 	// DEPRECATED - we keep it to migrate to the new addressables system -> the asset ID will be extracted from this attribute
 	[FileListAttribute("", StringUtils.PathFormat.ASSETS_ROOT_WITHOUT_EXTENSION, "*.prefab")]
 	[SerializeField] protected string m_resourcePath = "";
 	[SerializeField] protected int m_useFolderLevelInID = 0;
 	[SerializeField] protected string m_assetId = "";
 
+	// Setup
 	[SerializeField] protected bool m_loadOnAwake = false;
 
+	[SerializeField] private bool m_resetScale = false;
+	public bool resetScale {
+		get { return m_resetScale; }
+		set { m_resetScale = value; }
+	}
+
+	[SerializeField] private bool m_keepLayers = false;
+	public bool keepLayers {
+		get { return m_keepLayers; }
+		set { m_keepLayers = value; }
+	}
+
+	// Container
 	[Space]
 	[SerializeField] protected Transform m_container = null;
 	public Transform container {
@@ -184,14 +200,24 @@ public class HDAddressablesLoader : MonoBehaviour {
 				// Make sure it's activated (the prefab might be saved disabled for faster loading)
 				m_loadedInstance.SetActive(true);
 
-                // Apply layer
-                Renderer[] renderers = m_loadedInstance.transform.GetComponentsInChildren<Renderer>(false);
-                for (int i = 0; i < renderers.Length; ++i) {
-                    Renderer renderer = renderers[i];
-                    if (renderer.GetType() == typeof(SkinnedMeshRenderer) || renderer.GetType() == typeof(MeshRenderer)) {
-                        renderer.gameObject.SetLayer(m_container.gameObject.layer);
-                    }
-                }
+				// Apply layer if requested
+				if(!m_keepLayers) {
+					// Renderers
+					Renderer[] renderers = m_loadedInstance.transform.GetComponentsInChildren<Renderer>(false);
+					for(int i = 0; i < renderers.Length; ++i) {
+						Renderer renderer = renderers[i];
+						if(renderer.GetType() == typeof(SkinnedMeshRenderer) || renderer.GetType() == typeof(MeshRenderer)) {
+							renderer.gameObject.SetLayer(m_container.gameObject.layer);
+						}
+					}
+
+					// Particle systems
+					ParticleSystem[] ps = m_loadedInstance.GetComponentsInChildren<ParticleSystem>();
+					for(int i = 0; i < ps.Length; ++i) {
+						// Make sure they belong to the right layer	
+						ps[i].gameObject.SetLayer(m_container.gameObject.layer);
+					}
+				}
 
                 // Remove collision events
                 CollisionEventForwarding cef = m_loadedInstance.FindComponentRecursive<CollisionEventForwarding>();
@@ -203,18 +229,16 @@ public class HDAddressablesLoader : MonoBehaviour {
                 // Reset position
                 m_loadedInstance.transform.localPosition = Vector3.zero;
 
+				// Reset scale if required
+				if(m_resetScale) {
+					m_loadedInstance.transform.localScale = Vector3.one;
+				}
+
 				// Clear any status effects on the materials
-                ViewControl vc = m_loadedInstance.GetComponent<ViewControl>();
+				ViewControl vc = m_loadedInstance.GetComponent<ViewControl>();
                 if (vc != null) {
                     vc.SetMaterialType(ViewControl.MaterialType.NORMAL);
                 }
-
-				// Process particle systems
-				ParticleSystem[] ps = m_loadedInstance.GetComponentsInChildren<ParticleSystem>();
-				for(int i = 0; i < ps.Length; ++i) {
-					// Make sure they belong to the right layer	
-					ps[i].gameObject.SetLayer(m_container.gameObject.layer);
-				}
 
 				// Let heirs do further processing
 				ProcessNewInstance();
