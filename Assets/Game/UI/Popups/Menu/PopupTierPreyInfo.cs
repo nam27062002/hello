@@ -222,7 +222,7 @@ public class PopupTierPreyInfo : MonoBehaviour {
 	/// A 3D loader has been complete.
 	/// </summary>
 	/// <param name="_loader">The loader that triggered the event.</param>
-	public void OnLoaderCompleted(UI3DAddressablesLoader _loader) {
+	public void OnLoaderCompleted(HDAddressablesLoader _loader) {
         // Do any initialization required in the loaded 3D object
         // Basically remove all components that depend on in-game stuff
         // Let's go hardcore and actually remove ALL components

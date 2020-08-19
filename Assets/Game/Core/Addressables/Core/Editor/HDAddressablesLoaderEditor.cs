@@ -1,4 +1,4 @@
-﻿// UI3DLoaderEditor.cs
+﻿// HDAddressablesLoaderEditor.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 13/03/2017.
@@ -15,11 +15,11 @@ using System.IO;
 // CLASSES																	  //
 //----------------------------------------------------------------------------//
 /// <summary>
-/// Custom editor for the UI3DLoader class.
+/// Custom editor for the AddressablesLoader class.
 /// </summary>
-[CustomEditor(typeof(UI3DAddressablesLoader), true)]	// True to be used by heir classes as well
+[CustomEditor(typeof(HDAddressablesLoader), true)]	// True to be used by heir classes as well
 [CanEditMultipleObjects]
-public class UI3DAddressablesLoaderEditor : Editor {
+public class HDAddressablesLoaderEditor : Editor {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -29,7 +29,7 @@ public class UI3DAddressablesLoaderEditor : Editor {
     // MEMBERS AND PROPERTIES												  //
     //------------------------------------------------------------------------//
     // Casted target object
-    UI3DAddressablesLoader m_targetUI3DLoader = null;
+    private HDAddressablesLoader m_targetUI3DLoader = null;
 
 	// Useful properties
 	private SerializedProperty m_resPathProp = null;
@@ -44,7 +44,7 @@ public class UI3DAddressablesLoaderEditor : Editor {
 	/// </summary>
 	private void OnEnable() {
 		// Get target object
-		m_targetUI3DLoader = target as UI3DAddressablesLoader;
+		m_targetUI3DLoader = target as HDAddressablesLoader;
 
 		// Gather useful properties
 		m_resPathProp = serializedObject.FindProperty("m_resourcePath");
@@ -217,7 +217,7 @@ public class UI3DAddressablesLoaderEditor : Editor {
 	/// <param name="_target"></param>
 	/// <param name="_gizmo"></param>
 	[DrawGizmo(GizmoType.Active | GizmoType.InSelectionHierarchy)]
-	public static void DoGizmos(UI3DAddressablesLoader _target, GizmoType _gizmo) {
+	public static void DoGizmos(HDAddressablesLoader _target, GizmoType _gizmo) {
 		// Color and matrix
 		Gizmos.color = Colors.WithAlpha(Color.red, 0.25f);
 		Gizmos.matrix = _target.transform.localToWorldMatrix;
