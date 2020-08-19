@@ -344,7 +344,13 @@ public class DragonManager : Singleton<DragonManager> {
 		DefinitionsManager.SharedInstance.SortByProperty(ref defs, "order", DefinitionsManager.SortType.NUMERIC);
 		instance.m_classicDragonsByOrder.Clear();
 		for(int i = 0; i < defs.Count; i++) {
-			dragonData = instance.m_dragonsBySku[defs[i].sku];
+			// If no data is found for this dragon, create one now!
+			// This shouldn't happen, but we've seen some reports in Crashlytics starting at 2.12, so protect it just in case
+			// https://console.firebase.google.com/u/0/project/hungry-dragon-45530774/crashlytics/app/android:com.ubisoft.hungrydragon/issues/5c73b34df8b88c29630c9a20?time=last-seven-days&sessionId=5F3B837F006E000168033BADEADDE56B_DNE_0_v2
+			if(!instance.m_dragonsBySku.TryGetValue(defs[i].sku, out dragonData)) {
+				dragonData = IDragonData.CreateFromDef(defs[i]);
+				instance.m_dragonsBySku.Add(defs[i].sku, dragonData);
+			}
 			instance.m_classicDragonsByOrder.Add(dragonData);
 			instance.m_allDragonsByOrder.Add(dragonData);
 		}
@@ -354,7 +360,13 @@ public class DragonManager : Singleton<DragonManager> {
 		DefinitionsManager.SharedInstance.SortByProperty(ref defs, "order", DefinitionsManager.SortType.NUMERIC);
 		instance.m_specialDragonsByOrder.Clear();
 		for(int i = 0; i < defs.Count; i++) {
-			dragonData = instance.m_dragonsBySku[defs[i].sku];
+			// If no data is found for this dragon, create one now!
+			// This shouldn't happen, but we've seen some reports in Crashlytics starting at 2.12, so protect it just in case
+			// https://console.firebase.google.com/u/0/project/hungry-dragon-45530774/crashlytics/app/android:com.ubisoft.hungrydragon/issues/5c73b34df8b88c29630c9a20?time=last-seven-days&sessionId=5F3B837F006E000168033BADEADDE56B_DNE_0_v2
+			if(!instance.m_dragonsBySku.TryGetValue(defs[i].sku, out dragonData)) {
+				dragonData = IDragonData.CreateFromDef(defs[i]);
+				instance.m_dragonsBySku.Add(defs[i].sku, dragonData);
+			}
 			instance.m_specialDragonsByOrder.Add(dragonData);
 			instance.m_allDragonsByOrder.Add(dragonData);
 		}
