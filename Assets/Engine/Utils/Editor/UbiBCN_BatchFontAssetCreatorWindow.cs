@@ -24,6 +24,7 @@ using System.Linq;
 
 using TMPro;
 using TMPro.EditorUtilities;
+using DG.DemiEditor;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -67,7 +68,8 @@ namespace BatchFontCreator
 		private const int PANEL_WIDTH = 250;
 		private const int PANEL_CONTENT_WIDTH = PANEL_WIDTH - 10;
 		private const int LABEL_WIDTH = 60;
-		private const int FIELD_WIDTH = PANEL_CONTENT_WIDTH - LABEL_WIDTH	;
+		private const int FIELD_WIDTH = PANEL_CONTENT_WIDTH - LABEL_WIDTH;
+		private const float PREVIEW_SIZE = 768f;
 		#endregion // CONSTANTS
 
 		//------------------------------------------------------------------------//
@@ -77,6 +79,7 @@ namespace BatchFontCreator
 		//private Thread MainThread;              
 		private bool m_isRepaintNeeded = false;
 		private Vector2 m_scrollPos = Vector2.zero;
+		private bool m_changesToSave = false;
 
 		private Rect m_progressRect;
 		private float m_renderingProgress;
@@ -101,8 +104,10 @@ namespace BatchFontCreator
 		private int[] m_kerningSet;
 
 		private EditorWindow m_editorWindow;
-		private Vector2 m_previewWindowSize = new Vector2(768, 768);
 		private Rect m_uiPanelSize;
+		private int m_previewSelectedFontIdx = 0;
+		private Vector2 m_previewWindowSize = new Vector2(PREVIEW_SIZE, PREVIEW_SIZE);
+		private bool m_previewIsTemp = false;
 
 		private Queue<int> m_toGenerateQueue = new Queue<int>();
 		private int m_toGenerateCount = 0;
@@ -123,7 +128,7 @@ namespace BatchFontCreator
 			var window = GetWindow<UbiBCN_BatchFontAssetCreatorWindow>();
 			window.titleContent = new GUIContent("Batch Font Asset Creator");
 			
-			window.minSize = new Vector2(100f, 100f);
+			window.minSize = new Vector2(PREVIEW_SIZE + PANEL_WIDTH + 100f, 911f);
 			window.maxSize = screenSize;
 
 			window.Focus();
@@ -134,7 +139,7 @@ namespace BatchFontCreator
 		/// </summary>
 		public void OnEnable() {
 			m_editorWindow = this;
-			UpdateEditorWindowSize(768, 768);
+			UpdatePreviewWindowSize(PREVIEW_SIZE, PREVIEW_SIZE);
 
 			// Get the UI Skin and Styles for the various Editors
 			TMP_UIStyleManager.GetUIStyles();
@@ -143,6 +148,9 @@ namespace BatchFontCreator
 			ShaderUtilities.GetShaderPropertyIDs();
 
 			OnReadFontSettingsButton();
+
+			// Show atlas preview for first font in the list
+			SetFontForAtlasPreview(0, true);
 		}
 
 		/// <summary>
@@ -160,29 +168,6 @@ namespace BatchFontCreator
 			}
 
 			Resources.UnloadUnusedAssets();
-		}
-
-		/// <summary>
-		/// GUI is being painted.
-		/// </summary>
-		public void OnGUI() {
-			GUILayout.Label("<b>Font Asset Creator</b>", TMP_UIStyleManager.Section_Label, GUILayout.Width(300));
-
-			m_scrollPos = EditorGUILayout.BeginScrollView(m_scrollPos);
-
-			GUILayout.BeginHorizontal();	// Somehow this adds the needed padding for the scrollbar
-			GUILayout.BeginVertical();
-			{
-				DrawControls();
-			}
-			GUILayout.EndVertical();
-			GUILayout.EndHorizontal();
-
-			EditorGUILayout.EndScrollView();
-
-			EditorGUILayout.Space();
-
-			DrawButtons();
 		}
 
 		/// <summary>
@@ -224,6 +209,10 @@ namespace BatchFontCreator
 							SaveFontAtlas(m_fontSettings[m_currentRenderingSettingIndex]);
 						}
 
+						// Make it the current atlas preview
+						m_previewIsTemp = m_generateMode == GenerateMode.PREVIEW;
+						SetFontForAtlasPreview(m_currentRenderingSettingIndex, false);
+
 						m_renderingProgress = 0f;
 						m_currentRenderingSettingIndex = -1;
 					}
@@ -231,6 +220,344 @@ namespace BatchFontCreator
 			}
 		}
 		#endregion // GENERIC METHODS
+
+		//------------------------------------------------------------------------//
+		// OTHER METHODS														  //
+		//------------------------------------------------------------------------//
+		#region GUI METHODS
+		/// <summary>
+		/// GUI is being painted.
+		/// </summary>
+		public void OnGUI() {
+			EditorGUILayout.BeginHorizontal();      // Horizontal layout to fit the preview
+			{
+				EditorGUILayout.BeginVertical("box");
+				{
+					// Title
+					GUILayout.Label("<b>Font Asset Creator</b>", TMP_UIStyleManager.Section_Label);
+
+					// Font settings in a scroll panel
+					m_scrollPos = EditorGUILayout.BeginScrollView(m_scrollPos);
+					{
+						EditorGUI.BeginChangeCheck();
+						DrawFonts();
+						if(EditorGUI.EndChangeCheck()) {
+							m_changesToSave = true;
+						}
+					}
+					EditorGUILayout.EndScrollView();
+
+					EditorGUILayout.Space();
+
+					// Buttons group
+					DrawButtons();
+				}
+				EditorGUILayout.EndVertical();
+
+				// Preview
+				EditorGUILayout.BeginVertical("box", GUILayout.MinWidth(m_previewWindowSize.x), GUILayout.ExpandWidth(true));
+				{
+					DrawPreview();
+				}
+				EditorGUILayout.EndVertical();
+			}
+			EditorGUILayout.EndHorizontal();
+		}
+
+		/// <summary>
+		/// Draw all fonts settings in a nice layout.
+		/// </summary>
+		private void DrawFonts() {
+			GUI.enabled = (m_toGenerateCount == 0) ? true : false;
+
+			GUILayout.BeginHorizontal();
+			for(int s = 0; s < m_fontSettings.Count; ++s) {
+				DrawSingleFont(s);
+			}
+
+			for(int i = 0; i < m_toDeleteSettings.Count; ++i) {
+				m_fontSettings.Remove(m_toDeleteSettings[i]);
+			}
+
+			GUILayout.EndHorizontal();
+		}
+
+		/// <summary>
+		/// Draw a single font settings group.
+		/// </summary>
+		/// <param name="_fontIdx"></param>
+		private void DrawSingleFont(int _fontIdx) {
+			FontObjectAndSettings fontData = m_fontSettings[_fontIdx];
+			FontCreationSetting settings = fontData.settings;
+
+			GUILayout.BeginVertical();
+			{
+				if(fontData.fontTTF != null) {
+					GUILayout.Label(fontData.fontTTF.name, TMP_UIStyleManager.Section_Label, GUILayout.Width(PANEL_WIDTH));
+				} else {
+					GUILayout.Label("empty", TMP_UIStyleManager.Section_Label, GUILayout.Width(PANEL_WIDTH));
+				}
+
+				GUILayout.BeginVertical(TMP_UIStyleManager.TextureAreaBox, GUILayout.Width(PANEL_WIDTH));
+				{
+					float labelWidthBckp = EditorGUIUtility.labelWidth;
+					float fieldWidthBckp = EditorGUIUtility.fieldWidth;
+					EditorGUIUtility.labelWidth = LABEL_WIDTH;
+					EditorGUIUtility.fieldWidth = FIELD_WIDTH;
+
+					// FONT TTF SELECTION
+					EditorGUI.BeginChangeCheck();
+					fontData.fontTTF = EditorGUILayout.ObjectField("Source", fontData.fontTTF, typeof(Font), false, GUILayout.Width(PANEL_CONTENT_WIDTH)) as Font;
+					if(EditorGUI.EndChangeCheck()) {
+						settings.fontSourcePath = AssetDatabase.GetAssetPath(fontData.fontTTF);
+					}
+					settings.fontSize = EditorGUILayout.IntField("Size", settings.fontSize, GUILayout.Width(PANEL_CONTENT_WIDTH));
+
+
+					// FONT PADDING
+					settings.fontPadding = EditorGUILayout.IntField("Padding", settings.fontPadding, GUILayout.Width(PANEL_CONTENT_WIDTH));
+					settings.fontPadding = (int)Mathf.Clamp((float)settings.fontPadding, 0f, 64f);
+
+
+					// FONT ATLAS RESOLUTION SELECTION
+					GUILayout.BeginHorizontal(GUILayout.Width(PANEL_CONTENT_WIDTH));
+					{
+						//GUI.changed = false;	// [AOC] Why this??
+						EditorGUIUtility.labelWidth = LABEL_WIDTH;
+						EditorGUIUtility.fieldWidth = 30f;
+
+						GUILayout.Label("Atlas");
+						settings.fontAtlasWidth = EditorGUILayout.IntPopup(settings.fontAtlasWidth, FONT_ATLAS_RESOLUTIONS_LABELS, FONT_ATLAS_RESOLUTIONS); //, GUILayout.Width(80));
+						settings.fontAtlasHeight = EditorGUILayout.IntPopup(settings.fontAtlasHeight, FONT_ATLAS_RESOLUTIONS_LABELS, FONT_ATLAS_RESOLUTIONS); //, GUILayout.Width(80));
+					}
+					GUILayout.EndHorizontal();
+
+					// FONT CHARACTER SET SELECTION
+					// Character List from File
+					// [AOC] Support multiple input files
+					EditorGUILayout.BeginVertical(TMP_UIStyleManager.TextureAreaBox);
+					{
+						GUILayout.Label("Input Files:", TMP_UIStyleManager.Label);
+						GUILayout.Space(10f);
+
+						for(int i = 0; i < fontData.inputCharactersFiles.Count; ++i) {
+							fontData.inputCharactersFiles[i] = EditorGUILayout.ObjectField(fontData.inputCharactersFiles[i], typeof(TextAsset), false, GUILayout.Width(PANEL_CONTENT_WIDTH - 10)) as TextAsset;
+						}
+
+						GUILayout.BeginHorizontal();
+						{
+							if(GUILayout.Button("Add", GUILayout.Width(50))) {
+								fontData.inputCharactersFiles.Add(null);
+							}
+							if(fontData.inputCharactersFiles.Count > 0) {
+								if(GUILayout.Button("Delete", GUILayout.Width(50))) {
+									fontData.inputCharactersFiles.RemoveAt(fontData.inputCharactersFiles.Count - 1);
+								}
+							}
+						}
+						GUILayout.EndHorizontal();
+					}
+					EditorGUILayout.EndVertical();
+
+					EditorGUIUtility.labelWidth = LABEL_WIDTH;
+					EditorGUIUtility.fieldWidth = FIELD_WIDTH;
+
+					GUILayout.Space(20);
+
+					EditorGUI.BeginDisabledGroup(fontData.fontTTF == null);
+					{
+						if(GUILayout.Button("Load Atlas")) {
+							SetFontForAtlasPreview(_fontIdx, true);
+						}
+
+						if(GUILayout.Button("Generate Preview", GUILayout.Width(PANEL_CONTENT_WIDTH)) && GUI.enabled) {
+							m_generateMode = GenerateMode.PREVIEW;
+							m_toGenerateQueue.Enqueue(_fontIdx);
+							m_toGenerateCount = 1;
+						}
+
+						if(GUILayout.Button("Generate and Save Font Asset", GUILayout.Width(PANEL_CONTENT_WIDTH)) && GUI.enabled) {
+							m_generateMode = GenerateMode.PRODUCTION;
+							m_toGenerateQueue.Enqueue(_fontIdx);
+							m_toGenerateCount = 1;
+						}
+					}
+					EditorGUI.EndDisabledGroup();
+
+					// FONT RENDERING PROGRESS BAR
+					float renderProgress = 0f;
+					if(m_currentRenderingSettingIndex == _fontIdx) {
+						renderProgress = m_renderingProgress;
+					}
+
+					GUILayout.Space(1);
+					m_progressRect = GUILayoutUtility.GetRect(PANEL_CONTENT_WIDTH, 20, TMP_UIStyleManager.TextAreaBoxWindow, GUILayout.Width(PANEL_CONTENT_WIDTH), GUILayout.Height(20));
+
+					GUI.BeginGroup(m_progressRect);
+					GUI.DrawTextureWithTexCoords(new Rect(2, 0, PANEL_CONTENT_WIDTH, 20), TMP_UIStyleManager.progressTexture, new Rect(1 - renderProgress, 0, 1, 1));
+					GUI.EndGroup();
+
+					// FONT STATUS & INFORMATION
+					GUISkin skin = GUI.skin;
+					GUI.skin = TMP_UIStyleManager.TMP_GUISkin;
+
+					GUILayout.Space(5);
+					GUILayout.BeginVertical(TMP_UIStyleManager.TextAreaBoxWindow);
+					fontData.output_ScrollPosition = EditorGUILayout.BeginScrollView(fontData.output_ScrollPosition, GUILayout.Height(145));
+					EditorGUILayout.LabelField(fontData.output_feedback, TMP_UIStyleManager.Label);
+					EditorGUILayout.EndScrollView();
+					GUILayout.EndVertical();
+
+					GUI.skin = skin;
+
+					GUILayout.Space(10);
+
+					// SAVE TEXTURE & CREATE and SAVE FONT XML FILE
+					GUI.color = Colors.coral;
+					if(GUILayout.Button("Delete Font", GUILayout.Width(PANEL_CONTENT_WIDTH)) && GUI.enabled) {
+						m_toDeleteSettings.Add(fontData);
+					}
+					GUI.color = Color.white;
+
+					// Restore label and field widths
+					EditorGUIUtility.labelWidth = labelWidthBckp;
+					EditorGUIUtility.fieldWidth = fieldWidthBckp;
+
+					GUILayout.Space(5);
+				}
+				GUILayout.EndVertical();
+				GUILayout.Space(25);
+
+				// Figure out the size of the current UI Panel
+				Rect rect = EditorGUILayout.GetControlRect(false, 5);
+				if(Event.current.type == EventType.Repaint)
+					m_uiPanelSize = rect;
+
+			}
+			GUILayout.EndVertical();
+
+			//Update reference
+			fontData.settings = settings;
+			m_fontSettings[_fontIdx] = fontData;
+		}
+
+		/// <summary>
+		/// Draw font atlas preview.
+		/// </summary>
+		private void DrawPreview() {
+			// Join in a vertical layout
+			EditorGUILayout.BeginVertical();
+
+			GUILayout.Label("Font Atlas Preview", TMP_UIStyleManager.Section_Label);
+
+			// Selector
+			string[] fontList = new string[m_fontSettings.Count];
+			for(int i = 0; i < m_fontSettings.Count; ++i) {
+				if(m_fontSettings[i].fontTTF != null) {
+					fontList[i] = m_fontSettings[i].fontTTF.name;
+				} else {
+					fontList[i] = "Font " + i;
+				}
+			}
+
+			EditorGUI.BeginChangeCheck();
+			m_previewSelectedFontIdx = EditorGUILayout.Popup("Font to Preview", m_previewSelectedFontIdx, fontList);
+			if(EditorGUI.EndChangeCheck()) {
+				// Load existing font atlas for the selected font
+				LoadFontAtlas(fontList[m_previewSelectedFontIdx]);
+			}
+
+			// Texture preview
+			// [AOC] Fixed size
+			GUILayout.BeginVertical(TMP_UIStyleManager.TextureAreaBox, GUILayout.MinWidth(PREVIEW_SIZE), GUILayout.MinHeight(PREVIEW_SIZE));
+			{
+				Rect pixelRect = GUILayoutUtility.GetRect(m_previewWindowSize.x, m_previewWindowSize.y, TMP_UIStyleManager.Section_Label);
+				if(m_font_atlas != null) {
+					EditorGUI.DrawTextureAlpha(new Rect(pixelRect.x, pixelRect.y, m_previewWindowSize.x, m_previewWindowSize.y), m_font_atlas, ScaleMode.ScaleToFit);
+				}
+			}
+			GUILayout.EndVertical();
+
+			// Info box if texture is temp
+			if(m_previewIsTemp) {
+				GUI.color = Color.yellow;
+				GUILayout.BeginVertical("box");
+				EditorGUILayout.HelpBox("Preview Atlas, not saved.\n" + "Use \"Generate and Save Font Asset\" to create the final atlas", MessageType.Warning);
+				GUI.color = Color.white;
+				if(GUILayout.Button("Generate and Save Font Asset\n" + fontList[m_previewSelectedFontIdx], GUILayout.Height(30f))) {
+					m_generateMode = GenerateMode.PRODUCTION;
+					m_toGenerateQueue.Enqueue(m_previewSelectedFontIdx);
+					m_toGenerateCount = 1;
+				}
+				GUILayout.EndVertical();
+			}
+
+			// Finish vertical layout
+			EditorGUILayout.EndVertical();
+		}
+
+		/// <summary>
+		/// Draw global buttons.
+		/// </summary>
+		private void DrawButtons() {
+			float buttonHeight = 25f;
+			GUILayout.BeginVertical();
+			{
+				if(GUILayout.Button("Add Font", GUILayout.Height(buttonHeight))) {
+					m_fontSettings.Add(CreateDefaultSettings());
+				}
+
+				EditorGUILayout.Space();
+
+				EditorGUI.BeginDisabledGroup(!m_changesToSave);
+				GUI.color = m_changesToSave ? Colors.paleGreen : Colors.white;
+				if(GUILayout.Button("Save Settings", GUILayout.Height(buttonHeight))) {
+					OnSaveFontSettingsButton();
+				}
+				GUI.color = Colors.white;
+				EditorGUI.EndDisabledGroup();
+
+				if(GUILayout.Button("Restore Settings", GUILayout.Height(buttonHeight))) {
+					OnReadFontSettingsButton();
+				}
+
+				EditorGUILayout.Space();
+
+				EditorGUI.BeginDisabledGroup(true);
+				EditorGUILayout.LabelField("Experimental, easy to run out of memory");
+				if(GUILayout.Button("Preview All Fonts", GUILayout.Height(buttonHeight))) {
+					OnBatchPreviewButton();
+				}
+
+				if(GUILayout.Button("Generate All Fonts", GUILayout.Height(buttonHeight))) {
+					OnBatchGenerateButton();
+				}
+				EditorGUI.EndDisabledGroup();
+			}
+			GUILayout.EndVertical();
+		}
+
+		/// <summary>
+		/// Define which font to use to preview its atlas and load it.
+		/// </summary>
+		/// <param name="_fontIdx"></param>
+		/// <param name="_loadAtlas"></param>
+		private void SetFontForAtlasPreview(int _fontIdx, bool _loadAtlas) {
+			// Valid indexes only
+			if(_fontIdx < 0 || _fontIdx >= m_fontSettings.Count) return;
+			
+			FontObjectAndSettings fontData = m_fontSettings[_fontIdx];
+			if(fontData == null) return;
+
+			// Store font index
+			m_previewSelectedFontIdx = _fontIdx;
+
+			// If required, load the atlas for that font
+			if(_loadAtlas) {
+				LoadFontAtlas(fontData.fontTTF.name);
+			}
+		}
+		#endregion // GUI METHODS
 
 		//------------------------------------------------------------------------//
 		// OTHER METHODS														  //
@@ -262,195 +589,6 @@ namespace BatchFontCreator
 
 			return container;
 		}
-
-		/// <summary>
-		/// 
-		/// </summary>
-		private void DrawControls() {
-			GUI.enabled = (m_toGenerateCount == 0) ? true : false;
-
-			GUILayout.BeginHorizontal();
-			for(int s = 0; s < m_fontSettings.Count; ++s) {
-				FontObjectAndSettings container = m_fontSettings[s];
-				FontCreationSetting settings = container.settings;
-
-				GUILayout.BeginVertical();
-
-				if(container.fontTTF != null) {
-					GUILayout.Label(container.fontTTF.name, TMP_UIStyleManager.Section_Label, GUILayout.Width(PANEL_WIDTH));
-				} else {
-					GUILayout.Label("empty", TMP_UIStyleManager.Section_Label, GUILayout.Width(PANEL_WIDTH));
-				}
-
-				GUILayout.BeginVertical(TMP_UIStyleManager.TextureAreaBox, GUILayout.Width(PANEL_WIDTH));
-
-				EditorGUIUtility.labelWidth = LABEL_WIDTH;
-				EditorGUIUtility.fieldWidth = FIELD_WIDTH;
-
-				// FONT TTF SELECTION
-				EditorGUI.BeginChangeCheck();
-				container.fontTTF = EditorGUILayout.ObjectField("Source", container.fontTTF, typeof(Font), false, GUILayout.Width(PANEL_CONTENT_WIDTH)) as Font;
-				if(EditorGUI.EndChangeCheck()) {
-					settings.fontSourcePath = AssetDatabase.GetAssetPath(container.fontTTF);
-				}
-				settings.fontSize = EditorGUILayout.IntField("Size", settings.fontSize, GUILayout.Width(PANEL_CONTENT_WIDTH));
-
-
-				// FONT PADDING
-				settings.fontPadding = EditorGUILayout.IntField("Padding", settings.fontPadding, GUILayout.Width(PANEL_CONTENT_WIDTH));
-				settings.fontPadding = (int)Mathf.Clamp((float)settings.fontPadding, 0f, 64f);
-
-
-				// FONT ATLAS RESOLUTION SELECTION
-				GUILayout.BeginHorizontal(GUILayout.Width(PANEL_CONTENT_WIDTH));
-				GUI.changed = false;
-
-				EditorGUIUtility.labelWidth = LABEL_WIDTH;
-				EditorGUIUtility.fieldWidth = 30f;
-
-				GUILayout.Label("Atlas");
-				settings.fontAtlasWidth = EditorGUILayout.IntPopup(settings.fontAtlasWidth, FONT_ATLAS_RESOLUTIONS_LABELS, FONT_ATLAS_RESOLUTIONS); //, GUILayout.Width(80));
-				settings.fontAtlasHeight = EditorGUILayout.IntPopup(settings.fontAtlasHeight, FONT_ATLAS_RESOLUTIONS_LABELS, FONT_ATLAS_RESOLUTIONS); //, GUILayout.Width(80));
-
-				GUILayout.EndHorizontal();
-
-				// FONT CHARACTER SET SELECTION
-				// Character List from File
-				// [AOC] Support multiple input files
-				EditorGUILayout.BeginVertical(TMP_UIStyleManager.TextureAreaBox);
-				{
-					GUILayout.Label("Input Files:", TMP_UIStyleManager.Label);
-					GUILayout.Space(10f);
-
-					for(int i = 0; i < container.inputCharactersFiles.Count; ++i) {
-						container.inputCharactersFiles[i] = EditorGUILayout.ObjectField(container.inputCharactersFiles[i], typeof(TextAsset), false, GUILayout.Width(PANEL_CONTENT_WIDTH - 10)) as TextAsset;
-					}
-
-					GUILayout.BeginHorizontal();
-					if(GUILayout.Button("Add", GUILayout.Width(50))) {
-						container.inputCharactersFiles.Add(null);
-					}
-					if(container.inputCharactersFiles.Count > 0) {
-						if(GUILayout.Button("Delete", GUILayout.Width(50))) {
-							container.inputCharactersFiles.RemoveAt(container.inputCharactersFiles.Count - 1);
-						}
-					}
-					GUILayout.EndHorizontal();
-				}
-				EditorGUILayout.EndVertical();
-
-
-				EditorGUIUtility.labelWidth = LABEL_WIDTH;
-				EditorGUIUtility.fieldWidth = FIELD_WIDTH;
-
-				GUILayout.Space(20);
-
-				if(GUILayout.Button("Preview Font", GUILayout.Width(PANEL_CONTENT_WIDTH)) && GUI.enabled) {
-					m_generateMode = GenerateMode.PREVIEW;
-					m_toGenerateQueue.Enqueue(s);
-					m_toGenerateCount = 1;
-				}
-
-				if(GUILayout.Button("Generate Font", GUILayout.Width(PANEL_CONTENT_WIDTH)) && GUI.enabled) {
-					m_generateMode = GenerateMode.PRODUCTION;
-					m_toGenerateQueue.Enqueue(s);
-					m_toGenerateCount = 1;
-				}
-
-				// FONT RENDERING PROGRESS BAR
-				float renderProgress = 0f;
-				if(m_currentRenderingSettingIndex == s) {
-					renderProgress = m_renderingProgress;
-				}
-
-				GUILayout.Space(1);
-				m_progressRect = GUILayoutUtility.GetRect(PANEL_CONTENT_WIDTH, 20, TMP_UIStyleManager.TextAreaBoxWindow, GUILayout.Width(PANEL_CONTENT_WIDTH), GUILayout.Height(20));
-
-				GUI.BeginGroup(m_progressRect);
-				GUI.DrawTextureWithTexCoords(new Rect(2, 0, PANEL_CONTENT_WIDTH, 20), TMP_UIStyleManager.progressTexture, new Rect(1 - renderProgress, 0, 1, 1));
-				GUI.EndGroup();
-
-				// FONT STATUS & INFORMATION
-				GUISkin skin = GUI.skin;
-				GUI.skin = TMP_UIStyleManager.TMP_GUISkin;
-
-				GUILayout.Space(5);
-				GUILayout.BeginVertical(TMP_UIStyleManager.TextAreaBoxWindow);
-				container.output_ScrollPosition = EditorGUILayout.BeginScrollView(container.output_ScrollPosition, GUILayout.Height(145));
-				EditorGUILayout.LabelField(container.output_feedback, TMP_UIStyleManager.Label);
-				EditorGUILayout.EndScrollView();
-				GUILayout.EndVertical();
-
-				GUI.skin = skin;
-
-				GUILayout.Space(10);
-
-				// SAVE TEXTURE & CREATE and SAVE FONT XML FILE
-				GUI.color = Colors.coral;
-				if(GUILayout.Button("Delete Font", GUILayout.Width(PANEL_CONTENT_WIDTH)) && GUI.enabled) {
-					m_toDeleteSettings.Add(container);
-				}
-				GUI.color = Color.white;
-
-				GUILayout.Space(5);
-				GUILayout.EndVertical();
-				GUILayout.Space(25);
-
-				// Figure out the size of the current UI Panel
-				Rect rect = EditorGUILayout.GetControlRect(false, 5);
-				if(Event.current.type == EventType.Repaint)
-					m_uiPanelSize = rect;
-
-				GUILayout.EndVertical();
-
-				//Update reference
-				container.settings = settings;
-				m_fontSettings[s] = container;
-			}
-
-			for(int i = 0; i < m_toDeleteSettings.Count; ++i) {
-				m_fontSettings.Remove(m_toDeleteSettings[i]);
-			}
-
-			GUILayout.EndHorizontal();
-		}
-
-		/// <summary>
-		/// 
-		/// </summary>
-		private void DrawButtons() {
-			float buttonHeight = 25f;
-			GUILayout.BeginVertical(GUILayout.Width(Screen.width));
-			{
-				if(GUILayout.Button("Add Font", GUILayout.Height(buttonHeight))) {
-					m_fontSettings.Add(CreateDefaultSettings());
-				}
-
-				EditorGUILayout.Space();
-
-				if(GUILayout.Button("Save Settings", GUILayout.Height(buttonHeight))) {
-					OnSaveFontSettingsButton();
-				}
-
-				if(GUILayout.Button("Load Settings", GUILayout.Height(buttonHeight))) {
-					OnReadFontSettingsButton();
-				}
-
-				EditorGUILayout.Space();
-
-				EditorGUI.BeginDisabledGroup(true);
-				EditorGUILayout.LabelField("Experimental, easy to run out of memory");
-				if(GUILayout.Button("Preview All Fonts", GUILayout.Height(buttonHeight))) {
-					OnBatchPreviewButton();
-				}
-
-				if(GUILayout.Button("Generate All Fonts", GUILayout.Height(buttonHeight))) {
-					OnBatchGenerateButton();
-				}
-				EditorGUI.EndDisabledGroup();
-			}
-			GUILayout.EndVertical();
-		}
 		#endregion // OTHER METHODS
 
 		//------------------------------------------------------------------------//
@@ -474,7 +612,43 @@ namespace BatchFontCreator
 			m_font_atlas.SetPixels32(colors, 0);
 			m_font_atlas.Apply(false, true);
 
-			UpdateEditorWindowSize(m_font_atlas.width, m_font_atlas.height);
+			UpdatePreviewWindowSize(m_font_atlas.width, m_font_atlas.height);
+		}
+
+		/// <summary>
+		/// Load the current atlas for the given font into the m_font_atlas var.
+		/// </summary>
+		/// <param name="_fontName"></param>
+		private void LoadFontAtlas(string _fontName) {
+			TMP_FontAsset font = Load_SDF_FontAsset(GetPathForFontAsset(_fontName));
+			if(font != null) {
+				m_previewIsTemp = false;
+				m_font_atlas = font.material.mainTexture as Texture2D;
+			}
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="_filePath"></param>
+		/// <returns></returns>
+		private TMP_FontAsset Load_SDF_FontAsset(string _filePath) {
+			_filePath = _filePath.Substring(0, _filePath.Length - 6); // Trim file extension from filePath.
+
+			string dataPath = Application.dataPath;
+
+			if(_filePath.IndexOf(dataPath, System.StringComparison.InvariantCultureIgnoreCase) == -1) {
+				Debug.LogError("You're loading the font asset from a directory outside of this project folder. This is not supported. Please select a directory under \"" + dataPath + "\"");
+				return null;
+			}
+
+			string relativeAssetPath = _filePath.Substring(dataPath.Length - 6);
+			string tex_DirName = Path.GetDirectoryName(relativeAssetPath);
+			string tex_FileName = Path.GetFileNameWithoutExtension(relativeAssetPath);
+			string tex_Path_NoExt = tex_DirName + "/" + tex_FileName;
+
+			TMP_FontAsset font_asset = AssetDatabase.LoadAssetAtPath(tex_Path_NoExt + ".asset", typeof(TMP_FontAsset)) as TMP_FontAsset;
+			return font_asset;
 		}
 
 		/// <summary>
@@ -496,8 +670,6 @@ namespace BatchFontCreator
 			string tex_DirName = Path.GetDirectoryName(relativeAssetPath);
 			string tex_FileName = Path.GetFileNameWithoutExtension(relativeAssetPath);
 			string tex_Path_NoExt = tex_DirName + "/" + tex_FileName;
-
-
 
 			// Check if TextMeshPro font asset already exists. If not, create a new one. Otherwise update the existing one.
 			TMP_FontAsset font_asset = AssetDatabase.LoadAssetAtPath(tex_Path_NoExt + ".asset", typeof(TMP_FontAsset)) as TMP_FontAsset;
@@ -656,14 +828,14 @@ namespace BatchFontCreator
 		/// </summary>
 		/// <param name="width"></param>
 		/// <param name="height"></param>
-		private void UpdateEditorWindowSize(float width, float height) {
-			m_previewWindowSize = new Vector2(768, 768);
-
-			if(width > height) {
-				m_previewWindowSize = new Vector2(768, height / (width / 768));
+		private void UpdatePreviewWindowSize(float width, float height) {
+			// [AOC] Have the preview window with a fixed size
+			m_previewWindowSize = new Vector2(PREVIEW_SIZE, PREVIEW_SIZE);
+			/*if(width > height) {
+				m_previewWindowSize = new Vector2(PREVIEW_SIZE, height / (width / PREVIEW_SIZE));
 			} else if(height > width) {
-				m_previewWindowSize = new Vector2(width / (height / 768), 768);
-			}
+				m_previewWindowSize = new Vector2(width / (height / PREVIEW_SIZE), PREVIEW_SIZE);
+			}*/
 
 			//m_editorWindow.minSize = new Vector2(m_previewWindowSize.x + 330, Mathf.Max(m_uiPanelSize.y + 20f, m_previewWindowSize.y + 20f));
 			//m_editorWindow.maxSize = m_editorWindow.minSize + new Vector2(.25f, 0);
@@ -923,11 +1095,27 @@ namespace BatchFontCreator
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <param name="_fontName"></param>
+		/// <returns></returns>
+		private string GetPathForFontAsset(string _fontName) {
+			return Application.dataPath + "/Resources/UI/Fonts/" + _fontName + "/" + _fontName + ".asset";
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="_fontSettings"></param>
+		/// <returns></returns>
+		private string GetPathForFontAsset(FontObjectAndSettings _fontSettings) {
+			return GetPathForFontAsset(_fontSettings.fontTTF.name);
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
 		/// <param name="_container"></param>
 		private void SaveFontAtlas(FontObjectAndSettings _container) {
-			string filePath = Application.dataPath + "/Resources/UI/Fonts/" + _container.fontTTF.name + "/" + _container.fontTTF.name + ".asset";
-
-			Save_SDF_FontAsset(filePath, _container);
+			Save_SDF_FontAsset(GetPathForFontAsset(_container), _container);
 		}
 
 		/// <summary>
@@ -1020,6 +1208,8 @@ namespace BatchFontCreator
 				BinaryFormatter bf = new BinaryFormatter();
 				bf.Serialize(file, files);
 			}
+
+			m_changesToSave = false;
 		}
 
 		/// <summary>
@@ -1058,6 +1248,8 @@ namespace BatchFontCreator
 					m_fontSettings.Add(container);
 				}
 			}
+
+			m_changesToSave = false;
 		}
 
 		/// <summary>
