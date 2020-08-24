@@ -527,6 +527,10 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         ClusteringManager.Instance.Update();
         UnityEngine.Profiling.Profiler.EndSample();
 
+        UnityEngine.Profiling.Profiler.BeginSample("ReferralManager.Update()");
+        if(!Game_IsInGame) ReferralManager.instance.Update();
+        UnityEngine.Profiling.Profiler.EndSample();
+
         if (NeedsToRestartFlow)
         {
             NeedsToRestartFlow = false;
