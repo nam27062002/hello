@@ -237,7 +237,8 @@ public enum MessengerEvents {
     HAPPY_HOUR_CHANGED, // a happy hour was activated/deactivated/extended. No params 
 
     // Referral rewards
-    REFERRAL_REWARDS_CLAIMED,    //params: none
+    REFERRAL_REWARDS_CLAIMED,    // params: none, the list of rewards to collect can be found in ReferralManager.instance.pendingRewards
+	REFERRAL_REWARDS_CLAIM_RESPONSE_RECEIVED,	// params: FGOL.Server.Error _error, will be null if no error
 
 	// Live Events
 	LIVE_EVENT_STATES_UPDATED,

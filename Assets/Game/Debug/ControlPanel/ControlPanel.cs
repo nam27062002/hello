@@ -95,6 +95,8 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
 	[SerializeField]
 	private TextMeshProUGUI m_drawCalls_npc;
 
+	[SerializeField]
+	private TextMeshProUGUI m_userIDText = null;
 
     // Exposed setup
     [Space]
@@ -347,20 +349,6 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
     }
 
 	/// <summary>
-	/// Check whether canvas should be active (performance).
-	/// </summary>
-	private void CheckCanvasActivation() {
-		// Toggle both canvas and camera
-		// Check all widgets that are permanently displayed
-		bool active = DebugSettings.showStats || DebugSettings.showFps || DebugSettings.showFpsRecorder || m_panel.gameObject.activeSelf;
-		m_canvas.gameObject.SetActive(active);
-		m_canvas.worldCamera.gameObject.SetActive(active);
-	}
-
-	//------------------------------------------------------------------//
-	// CALLBACKS														//
-	//------------------------------------------------------------------//
-	/// <summary>
 	/// Toggle the panel on and off.
 	/// </summary>
 	public void Toggle() {
@@ -374,6 +362,38 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
 		}
 	}
 
+	/// <summary>
+	/// Check whether canvas should be active (performance).
+	/// </summary>
+	private void CheckCanvasActivation() {
+		// Toggle both canvas and camera
+		// Check all widgets that are permanently displayed
+		bool active = DebugSettings.showStats || DebugSettings.showFps || DebugSettings.showFpsRecorder || m_panel.gameObject.activeSelf;
+		m_canvas.gameObject.SetActive(active);
+		m_canvas.worldCamera.gameObject.SetActive(active);
+
+		// Refresh info if activating the canvas
+		if(active) Refresh();
+	}
+
+	/// <summary>
+	/// Refresh info that is not refreshed during the update.
+	/// To be called upon showing the panel.
+	/// </summary>
+	private void Refresh() {
+		// User ID
+		if(m_userIDText != null) {
+			string uid = GameSessionManager.SharedInstance.GetUID();
+			if(string.IsNullOrEmpty(uid)) {
+				uid = "-";
+			}
+			m_userIDText.text = "User ID: " + uid;
+		}
+	}
+
+	//------------------------------------------------------------------//
+	// CALLBACKS														//
+	//------------------------------------------------------------------//
 	/// <summary>
 	/// Clear all prefs.
 	/// </summary>
@@ -591,13 +611,14 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
 	/// <summary>
 	/// Trigger a text feedback.
 	/// </summary>
-	public static void LaunchTextFeedback(string _text, Color _color) {
+	public static void LaunchTextFeedback(string _text, Color _color, float _duration = 2f) {
 		UIFeedbackText text = UIFeedbackText.CreateAndLaunch(
 			_text,
 			new Vector2(0.5f, 0.5f),
 			ControlPanel.panel.parent as RectTransform
 		);
 		text.text.color = _color;
+		text.duration = _duration;
 	}
     #endregion
 }
