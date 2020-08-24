@@ -17,6 +17,15 @@ public class HUDMultiplierTest : MonoBehaviour {
 
 	private Vector2 m_fillTextureOffset = Vector2.zero;
 
+	[Space]
+	[Header("Debug display values, do not fill in the inspector")]
+	public int m_fontMaterialInstanceID = -1;
+	public int m_fontMaterialInstanceID_CACHED = -1;
+	public int m_sharedFontMaterialInstanceID = -1;
+	public int m_sharedFontMaterialInstanceID_CACHED = -1;
+	public Material m_fontMaterial = null;
+	public Material m_sharedFontMaterial = null;
+
 	// Use this for initialization
 	void Start () {
 		Apply();
@@ -37,10 +46,28 @@ public class HUDMultiplierTest : MonoBehaviour {
 		for(int i = 0; i < targetTexts.Length; ++i) {
 			if(targetTexts[i] != null) {
 				// Set text and fill offset
-				if(targetTexts[i].baseText != null) targetTexts[i].baseText.text = text;
-				if(targetTexts[i].fillText != null) {
-					targetTexts[i].fillText.text = text;
-					targetTexts[i].fillText.fontMaterial.SetTextureOffset(ShaderUtilities.ID_FaceTex, m_fillTextureOffset);
+				MultiplierText target = targetTexts[i];
+				if(target.baseText != null) target.baseText.text = text;
+				if(target.fillText != null) {
+					target.fillText.text = text;
+					if(i == 2) {
+						if(m_fontMaterial == null) m_fontMaterial = target.fillText.fontMaterial;
+						if(m_fontMaterial != null) {
+							//m_fontMaterial.SetTextureOffset(ShaderUtilities.ID_FaceTex, m_fillTextureOffset);
+							m_fontMaterialInstanceID_CACHED = m_fontMaterial.GetInstanceID();
+						}
+
+						if(m_sharedFontMaterial == null) m_sharedFontMaterial = target.fillText.fontMaterial;
+						if(m_sharedFontMaterial != null) {
+							m_sharedFontMaterial.SetTextureOffset(ShaderUtilities.ID_FaceTex, m_fillTextureOffset);
+							m_sharedFontMaterialInstanceID_CACHED = m_sharedFontMaterial.GetInstanceID();
+						}
+
+						m_fontMaterialInstanceID = target.fillText.fontMaterial.GetInstanceID();
+						m_sharedFontMaterialInstanceID = target.fillText.fontSharedMaterial.GetInstanceID();
+					} else {
+						target.fillText.fontMaterial.SetTextureOffset(ShaderUtilities.ID_FaceTex, m_fillTextureOffset);
+					}
 				}
 			}
 		}
