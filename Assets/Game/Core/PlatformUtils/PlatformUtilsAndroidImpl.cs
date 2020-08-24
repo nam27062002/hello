@@ -57,7 +57,7 @@ public class PlatformUtilsAndroidImpl: PlatformUtils
 			//intentObject.Call<AndroidJavaObject>("putExtra", intentClass.GetStatic<string>("EXTRA_SUBJECT"), subject);
 			intentObject.Call<AndroidJavaObject>("putExtra", intentClass.GetStatic<string>("EXTRA_TEXT"), caption);
 
-			if (string.IsNullOrEmpty())
+			if (!string.IsNullOrEmpty(subject))
 			{
 				// Instantiate the object Uri class pointing to the file's path
 				AndroidJavaObject fileObject = new AndroidJavaObject("java.io.File", filename);
@@ -68,7 +68,10 @@ public class PlatformUtilsAndroidImpl: PlatformUtils
 				intentObject.Call<AndroidJavaObject>("setType", "image/png");
 				intentObject.Call<AndroidJavaObject>("putExtra", intentClass.GetStatic<string>("EXTRA_STREAM"), uriObject);
 				intentObject.Call<AndroidJavaObject>("addFlags", intentClass.GetStatic<int>("FLAG_GRANT_READ_URI_PERMISSION"));
-
+			}
+			else
+			{
+			    intentObject.Call<AndroidJavaObject>("setType", "text/html");
 			}
 			// finally start application with our intent
 			// [AOC] Create custom chooser intent to avoid showing the "Always" and "Only Once" button
