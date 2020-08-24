@@ -42,7 +42,7 @@ public class PlatformUtilsAndroidImpl: PlatformUtils
 		return "";
 	}
 
-	public override void ShareImage(string filename, string caption)
+	public override void ShareImage(string filename, string caption, string subject = "")
 	{
 		Debug.Log ("Trying to share " + filename);
 #if !UNITY_EDITOR || SKIP_DEFINES
@@ -54,19 +54,22 @@ public class PlatformUtilsAndroidImpl: PlatformUtils
 
 			// Initialize intent parameters
 			intentObject.Call<AndroidJavaObject>("setAction", intentClass.GetStatic<string>("ACTION_SEND"));
-			//intentObject.Call<AndroidJavaObject>("putExtra", intentClass.GetStatic<string>("EXTRA_SUBJECT"), "");	// Not using subject field for now
+			//intentObject.Call<AndroidJavaObject>("putExtra", intentClass.GetStatic<string>("EXTRA_SUBJECT"), subject);
 			intentObject.Call<AndroidJavaObject>("putExtra", intentClass.GetStatic<string>("EXTRA_TEXT"), caption);
 
-			// Instantiate the object Uri class pointing to the file's path
-			AndroidJavaObject fileObject = new AndroidJavaObject("java.io.File", filename);
-			AndroidJavaClass fileProviderClass = new AndroidJavaClass("androidx.core.content.FileProvider");
-			AndroidJavaObject uriObject = fileProviderClass.CallStatic<AndroidJavaObject>("getUriForFile", currentActivity, Application.identifier + ".provider", fileObject);
+			if (string.IsNullOrEmpty())
+			{
+				// Instantiate the object Uri class pointing to the file's path
+				AndroidJavaObject fileObject = new AndroidJavaObject("java.io.File", filename);
+				AndroidJavaClass fileProviderClass = new AndroidJavaClass("androidx.core.content.FileProvider");
+				AndroidJavaObject uriObject = fileProviderClass.CallStatic<AndroidJavaObject>("getUriForFile", currentActivity, Application.identifier + ".provider", fileObject);
 
-			// attach file
-			intentObject.Call<AndroidJavaObject>("setType", "image/png");
-			intentObject.Call<AndroidJavaObject>("putExtra", intentClass.GetStatic<string>("EXTRA_STREAM"), uriObject);
-			intentObject.Call<AndroidJavaObject>("addFlags", intentClass.GetStatic<int>("FLAG_GRANT_READ_URI_PERMISSION"));
+				// attach file
+				intentObject.Call<AndroidJavaObject>("setType", "image/png");
+				intentObject.Call<AndroidJavaObject>("putExtra", intentClass.GetStatic<string>("EXTRA_STREAM"), uriObject);
+				intentObject.Call<AndroidJavaObject>("addFlags", intentClass.GetStatic<int>("FLAG_GRANT_READ_URI_PERMISSION"));
 
+			}
 			// finally start application with our intent
 			// [AOC] Create custom chooser intent to avoid showing the "Always" and "Only Once" button
 			bool customChooser = true;
@@ -99,7 +102,7 @@ public class PlatformUtilsAndroidImpl: PlatformUtils
 
 		return currentActivity;
 	}
-	#endif
+#endif
 
 	public override string GetTrackingId()
 	{
@@ -110,9 +113,9 @@ public class PlatformUtilsAndroidImpl: PlatformUtils
 		string adInfo = client.CallStatic<string> ("getTrackingId",currentActivity);
 
 		return adInfo;
-		#else
+#else
 		return "Using editor";
-		#endif
+#endif
 	}
 
 	public override void askPermissions(){
