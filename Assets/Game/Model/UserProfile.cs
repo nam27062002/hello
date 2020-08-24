@@ -367,6 +367,14 @@ public class UserProfile : UserPersistenceSystem
 		get { return m_mapResetTimestamp > GameServerManager.GetEstimatedServerTime(); }
 	}
 
+    // True if the player already pressed the map button in the game for the first time
+	private bool m_mapDiscovered;
+    public bool mapDiscovered
+    {
+        get { return m_mapDiscovered; }
+        set { m_mapDiscovered = value; }
+    }
+
 	// Global events
 	private Dictionary<int, GlobalEventUserData> m_globalEvents = new Dictionary<int, GlobalEventUserData>();
 	public Dictionary<int, GlobalEventUserData> globalEvents {
@@ -1382,6 +1390,17 @@ public class UserProfile : UserPersistenceSystem
 			m_mapResetTimestamp = GameServerManager.GetEstimatedServerTime();	// Already expired
 		}
 
+		key = "mapDiscovered";
+		if (_data.ContainsKey(key))
+		{
+			mapDiscovered = PersistenceUtils.SafeParse<bool>(_data["mapDiscovered"]);
+		}
+		else
+		{
+			mapDiscovered = false;  
+		}
+
+
 		// Global events
 		key = "globalEvents";
 		m_globalEvents.Clear();	// Clear current events data
@@ -1754,6 +1773,7 @@ public class UserProfile : UserPersistenceSystem
 
 		// Map upgrades
 		data.Add("mapResetTimestamp", PersistenceUtils.SafeToString(m_mapResetTimestamp));
+		data.Add("mapDiscovered", PersistenceUtils.SafeToString(m_mapDiscovered));
 
 		// Global Events
 		SimpleJSON.JSONArray eventsData = new SimpleJSON.JSONArray();
