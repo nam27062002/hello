@@ -158,13 +158,7 @@ public class GameHUD : MonoBehaviour {
 				UsersManager.currentUser.mapDiscovered = true;
 
 				// Start the count down. Use default 24hrs timer if the settings rules are not ready
-				System.DateTime mapResetTimestamp = GameServerManager.GetEstimatedServerTime().AddHours(24);
-
-				DefinitionNode gameSettingsDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, "gameSettings");
-				if (gameSettingsDef != null)
-				{
-					mapResetTimestamp = GameServerManager.GetEstimatedServerTime().AddMinutes(gameSettingsDef.GetAsDouble("miniMapTimer")); // Minutes
-				}
+				UsersManager.currentUser.UnlockMap();
 
 			}
         }
