@@ -55,6 +55,8 @@ public enum BroadcastEventType
 
 	QUALITY_PROFILE_CHANGED,    // no params, current profile can be consulted at FeatureSettingsManager.instance.GetCurrentProfileLevel()
 
+    CLUSTER_ID_ASSIGNED,        // params: string clusterId
+
 	/////// NEW EVENTS HERE!!! ///////
 
 
@@ -114,4 +116,9 @@ public class SeasonChangedEventInfo : BroadcastEventInfo {
 
 public class PositionEventInfo : BroadcastEventInfo {
 	public Vector3 position;
+}
+
+
+public class ClusterIdEventInfo : BroadcastEventInfo {
+    public string clusterId = "";
 }
