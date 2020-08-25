@@ -472,9 +472,21 @@ public class CPProgressionCheats : MonoBehaviour {
     	ApplicationManager.instance.GameCenter_ResetAchievements();
     }
 
-	public void PlayAd()
+	public void PlayInterstitialAd() {
+		GameAds.instance.ShowInterstitial(OnInterstitialAdResult);
+	}
+
+	private void OnInterstitialAdResult(bool _success) {
+		ControlPanel.LaunchTextFeedback("Interstitial Ad Result!\n" + (_success ? "SUCCESS!" : "UNSUCCESSFUL"), _success ? Color.green : Color.red);
+	}
+
+	public void PlayRewardedAd()
 	{
-		ApplicationManager.instance.Debug_TestPlayAd();
+		GameAds.instance.ShowRewarded(GameAds.EAdPurpose.UPGRADE_MAP, OnRewardedAdResult);
+	}
+
+	private void OnRewardedAdResult(bool _success) {
+		ControlPanel.LaunchTextFeedback("Rewarded Ad Result!\n" + (_success ? "SUCCESS!" : "UNSUCCESSFUL"), _success ? Color.green : Color.red);
 	}
 
     /// <summary>
