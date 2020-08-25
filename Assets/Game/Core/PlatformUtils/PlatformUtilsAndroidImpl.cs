@@ -57,7 +57,7 @@ public class PlatformUtilsAndroidImpl: PlatformUtils
 			//intentObject.Call<AndroidJavaObject>("putExtra", intentClass.GetStatic<string>("EXTRA_SUBJECT"), subject);
 			intentObject.Call<AndroidJavaObject>("putExtra", intentClass.GetStatic<string>("EXTRA_TEXT"), caption);
 
-			if (!string.IsNullOrEmpty(subject))
+			if (!string.IsNullOrEmpty(filename))
 			{
 				// Instantiate the object Uri class pointing to the file's path
 				AndroidJavaObject fileObject = new AndroidJavaObject("java.io.File", filename);
