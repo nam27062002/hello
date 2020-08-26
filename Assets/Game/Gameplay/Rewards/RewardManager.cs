@@ -395,6 +395,9 @@ public class RewardManager : Singleton<RewardManager>, IBroadcastListener {
 			// Store new multiplier
 			m_scoreMultipliers[i] = newMult;
 		}
+
+		// Init survival bonus data
+		ParseSurvivalBonus();
 	}
 
 	//------------------------------------------------------------------//
@@ -657,12 +660,22 @@ public class RewardManager : Singleton<RewardManager>, IBroadcastListener {
 	/// </summary>
 	/// <returns>The total amount of coins rewarded by the survival bonus.</returns>
 	public int CalculateSurvivalBonus() {
+		// Calculate survival bonus with final run duration and obtained coins
+		return CalculateSurvivalBonus(GameTime(), coins);
+	}
+
+	/// <summary>
+	/// Calculates the survival bonus with the given game time and rewarded coins.
+	/// </summary>
+	/// <param name="_elapsedTime">The elapsed run time.</param>
+	/// <param name="_coins">Amount of coins obtained during the run.</param>
+	/// <returns>The total amount of coins rewarded by the survival bonus with the given parameters.</returns>
+	public int CalculateSurvivalBonus(float _elapsedTime, long _coins) {
 		// [AOC] No survival bonus in tournament mode!
 		if(GameSceneController.mode == SceneController.Mode.TOURNAMENT) return 0;
 
 		// Find out the bonus percentage of coins earned per minute
-		float elapsedTime = GameTime();
-		int elapsedMinutes = (int)Math.Floor(elapsedTime / 60);
+		int elapsedMinutes = (int)Math.Floor(_elapsedTime / 60);
 
 		// Find the bonus linked to the total amount of minutes
 		// List is sorted
@@ -678,7 +691,7 @@ public class RewardManager : Singleton<RewardManager>, IBroadcastListener {
 		}
 
 		// Compute total amount of bonus coins
-		return Mathf.FloorToInt((float)coins * (float)elapsedMinutes * bonusCoinsPerMinute);
+		return Mathf.FloorToInt((float)_coins * (float)elapsedMinutes * bonusCoinsPerMinute);
 	}
 
 	//------------------------------------------------------------------//

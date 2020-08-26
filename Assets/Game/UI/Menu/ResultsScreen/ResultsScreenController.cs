@@ -108,7 +108,12 @@ public class ResultsScreenController : MonoBehaviour {
 	public int survivalBonus {
 		get {
 			if(CPResultsScreenTest.testEnabled) {
-				return (int)CPResultsScreenTest.survivalBonus;
+				// Custom survival bonus or based on coins and time?
+				if(CPResultsScreenTest.customSurvivalBonus) {
+					return (int)CPResultsScreenTest.survivalBonus;
+				} else {
+					return RewardManager.instance.CalculateSurvivalBonus(time, coins);
+				}
 			} else {
 				return RewardManager.instance.CalculateSurvivalBonus();
 			}
