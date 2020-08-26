@@ -54,11 +54,11 @@ public class PlatformUtilsAndroidImpl: PlatformUtils
 
 			// Initialize intent parameters
 			intentObject.Call<AndroidJavaObject>("setAction", intentClass.GetStatic<string>("ACTION_SEND"));
-			//intentObject.Call<AndroidJavaObject>("putExtra", intentClass.GetStatic<string>("EXTRA_SUBJECT"), subject);
-			intentObject.Call<AndroidJavaObject>("putExtra", intentClass.GetStatic<string>("EXTRA_TEXT"), caption);
 
 			if (!string.IsNullOrEmpty(filename))
 			{
+				//intentObject.Call<AndroidJavaObject>("putExtra", intentClass.GetStatic<string>("EXTRA_SUBJECT"), subject);
+				intentObject.Call<AndroidJavaObject>("putExtra", intentClass.GetStatic<string>("EXTRA_TEXT"), caption);
 				// Instantiate the object Uri class pointing to the file's path
 				AndroidJavaObject fileObject = new AndroidJavaObject("java.io.File", filename);
 				AndroidJavaClass fileProviderClass = new AndroidJavaClass("androidx.core.content.FileProvider");
@@ -71,7 +71,9 @@ public class PlatformUtilsAndroidImpl: PlatformUtils
 			}
 			else
 			{
-			    intentObject.Call<AndroidJavaObject>("setType", "text/html");
+			    intentObject.Call<AndroidJavaObject>("setType", "text/plain");
+				intentObject.Call<AndroidJavaObject>("putExtra", intentClass.GetStatic<string>("EXTRA_SUBJECT"), subject);
+				intentObject.Call<AndroidJavaObject>("putExtra", intentClass.GetStatic<string>("EXTRA_TEXT"), caption);
 			}
 			// finally start application with our intent
 			// [AOC] Create custom chooser intent to avoid showing the "Always" and "Only Once" button
