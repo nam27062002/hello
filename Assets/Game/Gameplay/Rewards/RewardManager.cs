@@ -520,16 +520,11 @@ public class RewardManager : Singleton<RewardManager>, IBroadcastListener {
 		return 0;
 	}
 
-    public void OnApplyCheatsReward(Reward _reward) {
-        ApplyReward(_reward, null);
-    }
-
-	/// <summary>
+    /// <summary>
 	/// Apply the given rewards package.
 	/// </summary>
 	/// <param name="_reward">The rewards to be applied.</param>
 	/// <param name="_entity">The entity that has triggered the reward. Can be null.</param>
-	float bonusCoins = 0f;
 	private void ApplyReward(Reward _reward, Transform _entity) {
 		// Score
 		// Apply multiplier
@@ -902,9 +897,15 @@ public class RewardManager : Singleton<RewardManager>, IBroadcastListener {
     	return freeReviveCount + paidReviveCount + 1;
     }
 
-
-    // Cheats
-    public void SetCategoryKill(string _category, int amount) {
+	//------------------------------------------------------------------//
+	// CHEATS															//
+	//------------------------------------------------------------------//
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <param name="_category"></param>
+	/// <param name="amount"></param>
+	public void DEBUG_SetCategoryKill(string _category, int amount) {
         if (m_categoryKillCount.ContainsKey(_category)) {
             m_categoryKillCount[_category] += amount;
         } else {
@@ -912,11 +913,24 @@ public class RewardManager : Singleton<RewardManager>, IBroadcastListener {
         }
     }
 
-    public void SetNPCKill(string _sku, int amount) {
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <param name="_sku"></param>
+	/// <param name="amount"></param>
+    public void DEBUG_SetNPCKill(string _sku, int amount) {
         if (m_killCount.ContainsKey(_sku)) {
             m_killCount[_sku] += amount;
         } else {
             m_killCount.Add(_sku, amount);
         }
     }
+
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <param name="_reward"></param>
+	public void DEBUG_ApplyReward(Reward _reward) {
+		ApplyReward(_reward, null);
+	}
 }
