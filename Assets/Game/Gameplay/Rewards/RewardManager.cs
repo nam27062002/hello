@@ -63,7 +63,18 @@ public class RewardManager : Singleton<RewardManager>, IBroadcastListener {
 
 	// Score multiplier
 	[SerializeField] private ScoreMultiplier[] m_scoreMultipliers;
-	private int m_scoreMultiplierStreak = 0;	// Amount of consecutive eaten/burnt/destroyed entities without taking damage
+	private int m_scoreMultiplierStreak = 0;    // Amount of consecutive eaten/burnt/destroyed entities without taking damage
+
+	// Ad reward modifier settings
+	private DefinitionNode m_rewardAdModifierSettings = null;
+	public static DefinitionNode rewardAdModifierSettings {
+		get { 
+			if(instance.m_rewardAdModifierSettings == null) {
+				instance.m_rewardAdModifierSettings = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, "rewardAdModifierSettings");
+			}
+			return instance.m_rewardAdModifierSettings;
+		}
+	}
 
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
