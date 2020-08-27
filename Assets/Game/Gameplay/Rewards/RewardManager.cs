@@ -702,7 +702,13 @@ public class RewardManager : Singleton<RewardManager>, IBroadcastListener {
 		}
 
 		// Compute total amount of bonus coins
-		return Mathf.FloorToInt((float)_coins * (float)elapsedMinutes * bonusCoinsPerMinute);
+		float survivalBonus = (float)_coins * (float)elapsedMinutes * bonusCoinsPerMinute;
+
+		// Apply Ad multiplier correction
+		survivalBonus *= m_rewardAdModifierSettings.GetAsFloat("survivalBonusCoinsMultiplier");
+
+		// Round and return
+		return Mathf.FloorToInt(survivalBonus);
 	}
 
 	//------------------------------------------------------------------//
