@@ -70,17 +70,17 @@ public class TweenSequenceEditor : Editor {
 			pos.width += 1f;	// Small space between start time and duration
 			EditorGUI.LabelField(pos, "Start");
 
-			// Duration
+			// End Time
 			pos.x += pos.width;
 			pos.width = TweenSequenceElementPropertyDrawer.TIME_TEXT_WIDTH;
 			pos.width += TweenSequenceElementPropertyDrawer.SPACE_WIDTH;
-			EditorGUI.LabelField(pos, "Dur");
+			EditorGUI.LabelField(pos, "End");
 
-			// End Time - put at the end
+			// Duration - put at the end
 			pos.x = _rect.x + _rect.width;
 			pos.width = TweenSequenceElementPropertyDrawer.TIME_TEXT_WIDTH;
 			pos.x -= pos.width;
-			EditorGUI.LabelField(pos, "End");
+			EditorGUI.LabelField(pos, "Dur");
 		};
 
 		// Element

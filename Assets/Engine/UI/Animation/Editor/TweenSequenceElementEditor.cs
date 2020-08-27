@@ -133,17 +133,10 @@ public class TweenSequenceElementPropertyDrawer : ExtendedPropertyDrawer {
 		pos.x += pos.width;
 		pos.width = 1f;
 
-		// Duration text
-		EditorGUI.BeginChangeCheck(); {
-			pos.x += pos.width;
-			pos.width = TIME_TEXT_WIDTH;
-			duration = EditorGUI.DelayedFloatField(pos, duration);
-		} if(EditorGUI.EndChangeCheck()) {
-			// Duration has changed, adjust end time to match new duration
-			// Validate new duration
-			duration = Mathf.Max(duration, 0f);	// At least 0!
-			endTime = startTime + duration;
-		}
+		// End time text
+		pos.x += pos.width;
+		pos.width = TIME_TEXT_WIDTH;
+		endTime = EditorGUI.DelayedFloatField(pos, endTime);
 
 		// Space
 		pos.x += pos.width;
@@ -160,10 +153,17 @@ public class TweenSequenceElementPropertyDrawer : ExtendedPropertyDrawer {
 		pos.x += pos.width;
 		pos.width = SPACE_WIDTH;
 
-		// End time text
-		pos.x += pos.width;
-		pos.width = TIME_TEXT_WIDTH;
-		endTime = EditorGUI.DelayedFloatField(pos, endTime);
+		// Duration text
+		EditorGUI.BeginChangeCheck(); {
+			pos.x += pos.width;
+			pos.width = TIME_TEXT_WIDTH;
+			duration = EditorGUI.DelayedFloatField(pos, duration);
+		} if(EditorGUI.EndChangeCheck()) {
+			// Duration has changed, adjust end time to match new duration
+			// Validate new duration
+			duration = Mathf.Max(duration, 0f);	// At least 0!
+			endTime = startTime + duration;
+		}
 
 		// Round to 2 decimals
 		/*startTime = Mathf.Floor(startTime * 100f) / 100f;
