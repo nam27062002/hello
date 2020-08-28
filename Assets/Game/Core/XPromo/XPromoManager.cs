@@ -20,10 +20,17 @@ using System.Collections.Generic;
 [Serializable]
 public class XPromoManager {
 	//------------------------------------------------------------------------//
+	// STRUCT															  //
+	//------------------------------------------------------------------------//
+    public enum Origin {
+        HD,
+        HSE
+    }
+
+	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
 	// Tracking constants
-	private const HDTrackingManager.EEconomyGroup ECONOMY_GROUP = HDTrackingManager.EEconomyGroup.XPROMO;
 	private const string DEFAULT_SOURCE = "";
 
 
@@ -45,6 +52,9 @@ public class XPromoManager {
 		}
 	}
 
+	private Queue<Metagame.Reward> m_pendingRewards;
+    public Queue<Metagame.Reward> pendingRewards { get { return m_pendingRewards;  } }
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -54,7 +64,7 @@ public class XPromoManager {
 	public XPromoManager() {
 
 		// Subscribe to XPromo broadcast
-		Messenger.AddListener(MessengerEvents.DEEPLINK_NOTIFICATION, OnDeepLinkNotification);
+		Messenger.AddListener(MessengerEvents.INCOMING_DEEPLINK_NOTIFICATION, OnDeepLinkNotification);
 
 	}
 
@@ -64,7 +74,7 @@ public class XPromoManager {
 	~XPromoManager() {
 
 		// Unsubscribe to XPromo broadcast
-		Messenger.RemoveListener(MessengerEvents.DEEPLINK_NOTIFICATION, OnDeepLinkNotification);
+		Messenger.RemoveListener(MessengerEvents.INCOMING_DEEPLINK_NOTIFICATION, OnDeepLinkNotification);
 	}
 
 	//------------------------------------------------------------------------//
@@ -74,14 +84,14 @@ public class XPromoManager {
 
 
 	/// <summary>
-	/// Check if there is any pending rewards coming from the promoted app via deep link
+	/// Check if there is any pending rewards coming from the promoted app (HSE) via deep link
 	/// </summary>
 	public void ProcessIncomingRewards()
 	{
-        // Get the rewards ids incoming in the deep link
-		string[] rewardsSku = CaletyDynamicLinks.GetXPromoRewards();
+		// Get the rewards ids incoming in the deep link
+		List<string> rewardsSku = new List<string>(); // = CaletyDynamicLinks.GetXPromoRewards();
 
-		if (rewardsSku.Length == 0)
+		if (rewardsSku.Count == 0)
 			return; // No rewards
 
         // Process all incoming rewards
@@ -99,11 +109,13 @@ public class XPromoManager {
             }
 
             // Create a reward from the content definition
-			Metagame.Reward reward = CreateRewardFromDef(rewardDef, false);
+			Metagame.Reward reward = CreateRewardFromDef(rewardDef, Origin.HSE);
 
 			// Put this reward in the rewards queue
             if (reward != null)
-			    UsersManager.currentUser.PushReward(reward);
+				pendingRewards.Enqueue(reward);
+
+            // This rewards will be given when the user enters the selection screen
 
 		}
 
@@ -129,9 +141,9 @@ public class XPromoManager {
 	/// Creates a new Metagame.Reward initialized with the data in the given Definition from rewards table.
 	/// </summary>
 	/// <param name="_def">Definition from localRewards or incomingRewards table.</param>
-    /// <param name="_localReward">True if the reward origin is HD, false if the origin is HSE</param>
+    /// <param name="_origin">The app that granted the reward</param>
 	/// <returns>New reward created from the given definition.</returns>
-	private static Metagame.Reward CreateRewardFromDef(DefinitionNode _def, bool _localReward)
+	private static Metagame.Reward CreateRewardFromDef(DefinitionNode _def, Origin _origin)
 	{
 
 		Metagame.Reward.Data rewardData = new Metagame.Reward.Data();
@@ -142,9 +154,9 @@ public class XPromoManager {
 		// Assign an economy group based on the xpromo reward origin
 		HDTrackingManager.EEconomyGroup economyGroup;
 
-        if (_localReward) {
+        if (_origin == Origin.HD) {
 			economyGroup = HDTrackingManager.EEconomyGroup.REWARD_XPROMO_LOCAL;
-		} else { 
+		} else {
 			economyGroup = HDTrackingManager.EEconomyGroup.REWARD_XPROMO_INCOMING;
 		}
 
