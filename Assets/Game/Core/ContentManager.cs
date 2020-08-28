@@ -154,7 +154,8 @@ public class ContentManager
             "Rules/missingRessourcesVariablesDefinitions",
 			"Rules/offerSettings",
 			"Rules/ftuxSettings",
-            "Rules/UISettings"
+            "Rules/UISettings",
+            "Rules/xPromoSettings"
         });
 
 		kDefinitionFiles.Add(DefinitionsCategory.SEASONS, new string[] { "Rules/seasonsDefinitions" });
@@ -268,6 +269,12 @@ public class ContentManager
 
         // Baby Dragons
         kDefinitionFiles.Add(DefinitionsCategory.BABY_DRAGONS_SHARED_POWER, new string[] { "Rules/sharedPowerupDefinitions" });
+
+        // Cross Promotion rewards
+        kDefinitionFiles.Add(DefinitionsCategory.LOCAL_REWARDS, new string[] { "Rules/localRewardsDefinitions" });
+        kDefinitionFiles.Add(DefinitionsCategory.INCOMING_REWARDS, new string[] { "Rules/incomingRewardsDefinitions" });
+
+
 
         DefinitionsManager.SharedInstance.Initialise(ref kDefinitionFiles, !UseDeltaContent);
     }

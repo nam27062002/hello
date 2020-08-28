@@ -125,5 +125,9 @@ public class DefinitionsCategory
 	// UI
 	public const string SHARE_LOCATIONS = "SHARE_LOCATIONS";
     public const string ICONS = "ICONS";
+
+	//Cross promotion Rewards
+	public const string LOCAL_REWARDS = "LOCAL_REWARDS";
+	public const string INCOMING_REWARDS = "INCOMING_REWARDS";
 };
     

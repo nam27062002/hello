@@ -95,6 +95,8 @@ public class HDTrackingManager
 		REWARD_AD,						// Reward given by watching an ad
 		REWARD_PREREG,					// Reward given from pre-registration
 		REWARD_DAILY,					// Daily rewards system
+        REWARD_XPROMO_LOCAL,            // X-Promo reward originated in HD
+        REWARD_XPROMO_INCOMING,         // X-Priomo reward coming from HSE
         PET_DUPLICATED,                 // Used when the user gets some reward instead of a pet because the user already has that pet
         SHOP_EXCHANGE,                  // Used when the user exchanges a currency into any other currency such as HC into SC, HC into keys or real money into HC
 
