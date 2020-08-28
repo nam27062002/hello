@@ -39,7 +39,6 @@ public class CPTechTab : MonoBehaviour {
 	[SerializeField] private TextMeshProUGUI m_DNAProfileIdText = null;
     [SerializeField] private TextMeshProUGUI m_AdUnitInfoText = null;
 	[SerializeField] private TextMeshProUGUI m_referraUserId = null;
-	[SerializeField] private TextMeshProUGUI m_clusterIdText = null;
 	[SerializeField] private Toggle m_debugServerToggle = null;
     [SerializeField] private TMP_Dropdown m_countryDropDown = null;
 	[SerializeField] private TextMeshProUGUI m_currentPlatformText = null;
@@ -90,7 +89,7 @@ public class CPTechTab : MonoBehaviour {
 		m_DNAProfileIdText.text = "DNA profileId: " + HDTrackingManager.Instance.GetDNAProfileID();
 
         m_AdUnitInfoText.text = "Ads: " + GameAds.instance.GetInfo();
-		m_referraUserId.text = "Referral User Id: " + UsersManager.currentUser.referralUserId;
+		m_referraUserId.text = "Referral User Id: " + UsersManager.currentUser.referrerUserId;
 
 
 		m_AdUnitInfoText.text = "Ads: " + GameAds.instance.GetInfo();
@@ -99,8 +98,6 @@ public class CPTechTab : MonoBehaviour {
 		m_loggedInWhenQuitText.text = "Logged in when quit: " + PersistenceFacade.instance.LocalDriver.Prefs_SocialWasLoggedInWhenQuit;
 		m_implicitMergeStateText.text = "Implicit merge state: " + PersistenceFacade.instance.LocalDriver.Prefs_SocialImplicitMergeState.ToString();
 		m_syncStateText.text = "Sync state: " + SyncState.ToString();
-
-		m_clusterIdText.text = "Cluster Id assigned: " + UsersManager.currentUser.clusterId;
 
 		m_debugServerToggle.isOn = DebugSettings.useDebugServer;
 		m_debugServerToggle.onValueChanged.AddListener(OnToggleDebugServer);
@@ -396,12 +393,12 @@ public class CPTechTab : MonoBehaviour {
     /// </summary>
     public void OnClearReferraUserIdButton()
     {
-		UsersManager.currentUser.referralUserId = "";
+		UsersManager.currentUser.referrerUserId = "";
 
         // Clear the confirmation flag, so the client will call to the server again 
 		UsersManager.currentUser.referralConfirmed = false;
 
-		m_referraUserId.text = "Referral User Id: " + UsersManager.currentUser.referralUserId;
+		m_referraUserId.text = "Referral User Id: " + UsersManager.currentUser.referrerUserId;
 	}
 
     public void OnSaveGame()

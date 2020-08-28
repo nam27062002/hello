@@ -1559,6 +1559,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
         Track_AddParamProviderAuth(e);
         Track_AddParamPlayerID(e);
         Track_AddParamServerAccID(e);
+        Track_AddParamAppsflyerID(e);
 
         DeviceUtilsManager.SharedInstance.CheckAppOpenedBy();
         Calety.DeviceUtils.EAppOpenedBy openedBy = DeviceUtilsManager.SharedInstance.m_eAppOpenedBy;
@@ -2907,10 +2908,11 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private const string TRACK_PARAM_AF_DEF_LOGPURCHASE = "af_def_logPurchase";
     private const string TRACK_PARAM_AF_DEF_QUANTITY = "af_quantity";
     private const string TRACK_PARAM_AGE = "age";
-	private const string TRACK_PARAM_AMOUNT = "amount";
+    private const string TRACK_PARAM_AMOUNT = "amount";
     private const string TRACK_PARAM_AMOUNT_BALANCE = "amountBalance";
     private const string TRACK_PARAM_AMOUNT_DELTA = "amountDelta";
     private const string TRACK_PARAM_ANALYTICS_OPTION = "analytics_optin";
+    private const string TRACK_PARAM_APPSFLYER_ID = "appsflyer_id";
     private const string TRACK_PARAM_ASSET_BUNDLE = "assetBundle";
     private const string TRACK_PARAM_AVERAGE_FPS = "avgFPS";
 	private const string TRACK_PARAM_BATTERY_LEVEL = "batteryLevel";
@@ -3184,6 +3186,12 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private void Track_AddParamServerAccID(HDTrackingEvent _e) {
         int value = PersistencePrefs.ServerUserIdAsInt;
         _e.data.Add(TRACK_PARAM_IN_GAME_ID, value);
+    }
+
+    private void Track_AddParamAppsflyerID(HDTrackingEvent _e)
+    {
+        string value = AppsFlyer.getAppsFlyerId();
+        _e.data.Add(TRACK_PARAM_APPSFLYER_ID, value);
     }
 
     private void Track_AddParamAbTesting(HDTrackingEvent _e) {

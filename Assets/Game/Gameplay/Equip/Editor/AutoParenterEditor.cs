@@ -19,5 +19,14 @@ public class AutoParenterEditor : Editor {
 			}
 		}
 		GUI.enabled = true;
-    }
+
+		GUI.color = Colors.paleGreen;
+		if(GUILayout.Button("Re-parent!", GUILayout.Height(30f))) {
+			Undo.RecordObjects(targets, "AutoParenter.Reparent");
+			for(int i = 0; i < targets.Length; ++i) {
+				(targets[i] as AutoParenter).Reparent();
+			}
+		}
+		GUI.color = Color.white;
+	}
 }

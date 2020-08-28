@@ -925,6 +925,15 @@ public class OfferPack {
 			return true;
 		}
 
+		// Max purchase price
+		if(m_maxPurchasePrice != null) {    // Only check if needed
+			int maxPurchasePrice = (trackingPersistence == null) ? -1 : trackingPersistence.MaxPurchasePrice;
+			if(maxPurchasePrice > m_maxPurchasePrice.max) {
+				OffersManager.LogPack(this, "      CheckExpiration {0}: EXPIRED! Max Purchase Price {1} vs {2}", Color.red, m_def.sku, m_maxPurchasePrice.ToString(), maxPurchasePrice);
+				return true;
+			}
+		}
+
 		// Progression
 		int playerProgress = profile.GetPlayerProgress();
 		if(playerProgress > m_progressionRange.max) {
@@ -1186,21 +1195,7 @@ public class OfferPack {
 
 		// All checks passed!
 		// Put popup to the queue and return
-		PopupController popup;
-
-		if (GetDragonsSkinsCount() > 1)
-        {
-            // If the pack contains more than one dragon/skin, show the skins popup
-			popup = PopupManager.LoadPopup(PopupShopOfferPackSkins.PATH);
-			popup.GetComponent<PopupShopOfferPackSkins>().InitFromOfferPack(this);
-
-		} else
-        {
-            // Just the regular offer pack popup
-			popup = PopupManager.LoadPopup(PopupShopOfferPack.PATH);
-			popup.GetComponent<PopupShopOfferPack>().InitFromOfferPack(this);
-		}
-		
+		PopupController popup = PopupShopOfferPack.LoadPopupForOfferPack(this);
 		PopupManager.EnqueuePopup(popup);
 		return popup;
 	}

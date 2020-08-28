@@ -73,7 +73,10 @@ public class EggManager : Singleton<EggManager> {
 	// Incubator
 	public static Egg incubatingEgg {
 		get {
-			return inventory[0];	// Always first slot
+			if(inventory != null && inventory.Length > 0) {
+				return inventory[0];    // Always first slot
+			}
+			return null;
 		}
 	}
 

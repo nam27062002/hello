@@ -9,12 +9,12 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: dragon_vampire_0_wings
   m_Shader: {fileID: 4800000, guid: 2345015ac46679e4cb5817ed44c82547, type: 3}
-  m_ShaderKeywords: CUTOFF FRESNEL FXLAYER_NONE NORMALMAP REFLECTIONTYPE_NORMAL SELFILLUMINATE_NORMAL
-    SPECULAR _ZWRITE_ON
+  m_ShaderKeywords: CUTOFF DOUBLESIDED FRESNEL FXLAYER_NONE NORMALMAP REFLECTIONTYPE_NORMAL
+    SELFILLUMINATE_NORMAL SPECULAR _ZWRITE_ON
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: 2901
+  m_CustomRenderQueue: -1
   stringTagMap:
     QUEUE: AlphaTest
     RenderType: TransparentCutout
@@ -47,7 +47,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _FireMap:
-        m_Texture: {fileID: 2800000, guid: a9fa104be878cf246abd0583f9fd51d9, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
@@ -79,13 +79,13 @@ Material:
     - _ColorRampAmount: 0
     - _ColorRampID0: 0
     - _ColorRampID1: 0
-    - _Cull: 1
+    - _Cull: 0
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
     - _DissolveAmount: 0
     - _DissolveLowerLimit: -1
     - _DissolveMargin: 0.1
-    - _DissolveUpperLimit: 8
+    - _DissolveUpperLimit: 1
     - _DstBlend: 10
     - _EnableBlendFresnel: 0
     - _EnableCutoff: 1
@@ -104,7 +104,7 @@ Material:
     - _EnableVertexScaleZ: 0
     - _FireAmount: 0
     - _FireSpeed: 1
-    - _Fresnel: 6.47
+    - _Fresnel: 0.96
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
@@ -118,7 +118,7 @@ Material:
     - _Parallax: 0.02
     - _ReflectionAmount: 0
     - _SmoothnessTextureChannel: 0
-    - _SpecExponent: 48
+    - _SpecExponent: 41.18
     - _SpecularHighlights: 1
     - _SrcBlend: 5
     - _StencilMask: 10
@@ -129,11 +129,10 @@ Material:
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _ColorAdd: {r: 0, g: 0, b: 0, a: 0}
-    - _DissolveDirection: {r: -1, g: 0, b: 0, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _FresnelColor: {r: 0.38679248, g: 0.16237986, b: 0.16932042, a: 1}
+    - _FresnelColor: {r: 0.4528302, g: 0.33655214, b: 0.30971876, a: 1}
     - _InnerLightColor: {r: 0.38679248, g: 0.38679248, b: 0.38679248, a: 1}
     - _ReflectionColor: {r: 1, g: 1, b: 1, a: 1}
-    - _SecondLightColor: {r: 0.06376031, g: 0.0027032858, b: 0.07352942, a: 0}
-    - _SecondLightDir: {r: 0.55703527, g: 0.83048886, b: -0, a: 0}
-    - _Tint: {r: 0.7830189, g: 0.4986205, b: 0.53774774, a: 1}
+    - _SecondLightColor: {r: 0.41509432, g: 0.16642933, b: 0.16642933, a: 0}
+    - _SecondLightDir: {r: -0.28865632, g: 0.013978506, b: -0.95733076, a: 0}
+    - _Tint: {r: 0.5283019, g: 0.2267711, b: 0.24640469, a: 1}

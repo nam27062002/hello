@@ -754,16 +754,17 @@ public class Ingame_SwitchAreaHandle
     // [AOC] Keep it hardcoded? For now it's fine since there aren't so many 
     //		 groups and rules can be tricky to represent in content
 
-    private const string DOWNLOADABLE_GROUP_LEVEL_AREA_1        = GROUP_LEVEL_AREA_1;
-    private const string DOWNLOADABLE_GROUP_LEVEL_AREA_2        = GROUP_LEVEL_AREA_2;
-    private const string DOWNLOADABLE_GROUP_LEVEL_AREA_3        = GROUP_LEVEL_AREA_3;
+    private const string DOWNLOADABLE_GROUP_LEVEL_AREA_1        = GROUP_LEVEL_AREA_1;	// Village - All tiers (0+, XS+)
+    private const string DOWNLOADABLE_GROUP_LEVEL_AREA_2        = GROUP_LEVEL_AREA_2;	// Castle - Tier 2+ (M+)
+    private const string DOWNLOADABLE_GROUP_LEVEL_AREA_3        = GROUP_LEVEL_AREA_3;	// Dark - Tier 3+ (L+)
     
     // Combined    
-    private const string DOWNLOADABLE_GROUP_LEVEL_AREAS_1_2     = "areas1_2";
-    private const string DOWNLOADABLE_GROUP_LEVEL_AREAS_1_2_3   = "areas1_2_3";
+    private const string DOWNLOADABLE_GROUP_LEVEL_AREAS_1_2     = "areas1_2";		// Village, Castle
+	private const string DOWNLOADABLE_GROUP_LEVEL_AREAS_1_3		= "areas1_3";		// Village, Dark
+    private const string DOWNLOADABLE_GROUP_LEVEL_AREAS_1_2_3   = "areas1_2_3";     // Village, Castle and Dark
 
-    // All downloadables
-    private const string DOWNLOADABLE_GROUP_ALL                 = "all";
+	// All downloadables
+	private const string DOWNLOADABLE_GROUP_ALL                 = "all";
 
     /// <summary>
     /// Downloadable.Handle objects are cached because they're going to be requested ofter and generating them often may trigger garbage collector often
@@ -793,8 +794,15 @@ public class Ingame_SwitchAreaHandle
         handle = m_addressablesManager.CreateDownloadablesHandle(groupIds);
         m_downloadableHandles.Add(DOWNLOADABLE_GROUP_LEVEL_AREAS_1_2, handle);
 
-        // Areas 1,2 and 3
-        groupIds = new HashSet<string>();
+		// Areas 1 and 3
+		groupIds = new HashSet<string>();
+		groupIds.Add(DOWNLOADABLE_GROUP_LEVEL_AREA_1);
+		groupIds.Add(DOWNLOADABLE_GROUP_LEVEL_AREA_3);
+		handle = m_addressablesManager.CreateDownloadablesHandle(groupIds);
+		m_downloadableHandles.Add(DOWNLOADABLE_GROUP_LEVEL_AREAS_1_3, handle);
+
+		// Areas 1,2 and 3
+		groupIds = new HashSet<string>();
         groupIds.Add(DOWNLOADABLE_GROUP_LEVEL_AREA_1);
         groupIds.Add(DOWNLOADABLE_GROUP_LEVEL_AREA_2);
         groupIds.Add(DOWNLOADABLE_GROUP_LEVEL_AREA_3);
@@ -836,7 +844,7 @@ public class Ingame_SwitchAreaHandle
 		// 1. Level area dependencies: will depend basically on the dragon's tier
 		//    Some powers allow dragons to go to areas above their tier, check for those cases as well
 		List<string> equippedPowers = GetPowersList(dragonData.persistentDisguise, dragonData.pets);
-		Downloadables.Handle levelHandle = GetLevelHandle(dragonData.tier, equippedPowers);
+		Downloadables.Handle levelHandle = GetLevelHandle(dragonData.tier, equippedPowers, null);
 		handle.AddDownloadableIds(levelHandle.GetDownloadableIds());
 
 		// 2. Dragon bundles
@@ -864,11 +872,12 @@ public class Ingame_SwitchAreaHandle
 
 	/// <summary>
 	/// Same as <see cref="GetHandleForClassicDragon(string)"/> but for a dragon in a tournament.
+	/// Will also take in consideration tournament's starting point.
 	/// </summary>
-	/// <returns>The handle for all downloadables required for that dragon.</returns>
+	/// <returns>The handle for all downloadables required for the given tournament.</returns>
 	/// <param name="_tournament">Tournament data.</param>
-	public Downloadables.Handle GetHandleForTournamentDragon(HDTournamentManager _tournament) {
-		// Create new handle. We will fill it with downloadable Ids based on target dragon status
+	public Downloadables.Handle GetHandleForTournament(HDTournamentManager _tournament) {
+		// Create new handle. We will fill it with downloadable Ids based on target tournament data
 		Downloadables.Handle handle = m_addressablesManager.CreateDownloadablesHandle();
 		List<string> resourceIDs = new List<string>();
 
@@ -878,8 +887,10 @@ public class Ingame_SwitchAreaHandle
 		// Figure out group dependencies for this dragon
 		// 1. Level area dependencies: will depend basically on the dragon's tier
 		//    Some powers allow dragons to go to areas above their tier, check for those cases as well
+		//	  Take in consideration tournament's starting point as well
 		List<string> equippedPowers = GetPowersList(dragonData.disguise, dragonData.pets);
-		Downloadables.Handle levelHandle = GetLevelHandle(dragonData.tier, equippedPowers);
+		string startingArea = _tournament.tournamentData.tournamentDef.m_goal.m_area;
+		Downloadables.Handle levelHandle = GetLevelHandle(dragonData.tier, equippedPowers, startingArea);
 		handle.AddDownloadableIds(levelHandle.GetDownloadableIds());
 
 		// 2. Dragon bundles
@@ -889,8 +900,6 @@ public class Ingame_SwitchAreaHandle
 		for(int i = 0; i < dragonData.pets.Count; ++i) {
 			resourceIDs.AddRange(GetResourceIDsForPet(dragonData.pets[i]));
 		}
-
-		// 4. [AOC] TODO!! Level bundles for target spawn point. Feature not yet implemented.
 
 		// No more dependencies to be checked: Add resource IDs and return!
 		HDAddressablesManager.Instance.AddResourceListDownloadableIdsToHandle(handle, resourceIDs);
@@ -915,35 +924,45 @@ public class Ingame_SwitchAreaHandle
     /// <returns>The handle for all downloadables required for the given setup.</returns>
     /// <param name="_tier">Tier.</param>
     /// <param name="_powers">Powers sku list.</param>
-    private Downloadables.Handle GetLevelHandle(DragonTier _tier, List<string> _powers) {
+	/// <param name="_startingArea">The area where the dragon will start. Can be null or empty (default).</param>
+    private Downloadables.Handle GetLevelHandle(DragonTier _tier, List<string> _powers, string _startingArea) {
 		// Check equipped powers to detect those that might modify the target tier
-		for(int i = 0; i < _powers.Count; ++i) {
-			// Is it one of the tier-modifying powers?
-			// [AOC] TODO!! Check whether having multiple powers of this type would accumulate max tier or not
-			switch(_powers[i]) {
-				case "dragonram": {
-					// Increaase tier by 1, don't go out of bounds!
-					_tier = _tier + 1;
-					if(_tier >= DragonTier.COUNT) {
-						_tier = DragonTier.COUNT - 1;
-					}
-				} break;
-			}
-		}
+		_tier = AdjustDragonTier(_tier, _powers);
 
-        // Now select target asset groups based on final tier
+        // Now select target asset groups based on final tier and starting area
         string handleId = null;
-        if (_tier >= DragonTier.TIER_3)
-        {    // L and bigger
-            handleId = DOWNLOADABLE_GROUP_LEVEL_AREAS_1_2_3; // Village, Castle and Dark
-        }        
-        else if(_tier >= DragonTier.TIER_2) {    // M and bigger
-            handleId = DOWNLOADABLE_GROUP_LEVEL_AREAS_1_2; // Village and Castle
-        }
-        else if (_tier >= DragonTier.TIER_0)
-        {  // XS and bigger
-            handleId = DOWNLOADABLE_GROUP_LEVEL_AREA_1; // Village
-        }
+		switch(_startingArea) {
+			// Default case: same as starting in the Area 1 (Village)
+			case "":
+			case null:
+			case DOWNLOADABLE_GROUP_LEVEL_AREA_1: {
+				if(_tier >= DragonTier.TIER_3) {			// L and bigger
+					handleId = DOWNLOADABLE_GROUP_LEVEL_AREAS_1_2_3;
+				} else if(_tier >= DragonTier.TIER_2) {		// M
+					handleId = DOWNLOADABLE_GROUP_LEVEL_AREAS_1_2;  // Since they won't be able to enter the Dark (3)
+				} else if(_tier >= DragonTier.TIER_0) {		// XS, S
+					handleId = DOWNLOADABLE_GROUP_LEVEL_AREA_1;	// Since they won't be able to enter neither the Castle (2) or the Dark (3)
+				}
+			} break;
+
+			// Starting at Area 2 (Castle)
+			case DOWNLOADABLE_GROUP_LEVEL_AREA_2: {
+				if(_tier >= DragonTier.TIER_3) {            // L and bigger
+					handleId = DOWNLOADABLE_GROUP_LEVEL_AREAS_1_2_3;
+				} else if(_tier >= DragonTier.TIER_0) {     // XS, S, M
+					handleId = DOWNLOADABLE_GROUP_LEVEL_AREAS_1_2;  // Since they can return to the village (1), but never be able to enter the dark (3)
+				}
+			} break;
+
+			// Starting at Area 3 (Dark)
+			case DOWNLOADABLE_GROUP_LEVEL_AREA_3: {
+				if(_tier >= DragonTier.TIER_2) {            // M and bigger
+					handleId = DOWNLOADABLE_GROUP_LEVEL_AREAS_1_2_3;
+				} else if(_tier >= DragonTier.TIER_0) {     // XS, S
+					handleId = DOWNLOADABLE_GROUP_LEVEL_AREAS_1_3;	// Since they can return to the village (1), but never be able to enter the castle (2)
+				}
+			} break;
+		}
 
         // Finally get / create the handle for these assets groups
         if (DebugSettings.useDownloadablesMockHandlers) {
@@ -1048,6 +1067,31 @@ public class Ingame_SwitchAreaHandle
 
 		// Done!
 		return powers;
+	}
+
+	/// <summary>
+    /// Adjust a given dragon tier according to a given list of powers.
+    /// </summary>
+    /// <returns>The corrected dragon tier once all powers are processed.</returns>
+    /// <param name="_tier">Base Tier.</param>
+    /// <param name="_powers">Powers sku list.</param>
+    private DragonTier AdjustDragonTier(DragonTier _tier, List<string> _powers) {
+		// Check equipped powers to detect those that might modify the target tier
+		for(int i = 0; i < _powers.Count; ++i) {
+			// Is it one of the tier-modifying powers?
+			// [AOC] TODO!! Check whether having multiple powers of this type would accumulate max tier or not
+			switch(_powers[i]) {
+				case "dragonram": {
+					// Increaase tier by 1, don't go out of bounds!
+					_tier = _tier + 1;
+					if(_tier >= DragonTier.COUNT) {
+						_tier = DragonTier.COUNT - 1;
+					}
+				} break;
+			}
+		}
+
+		return _tier;
 	}
 
     #endregion

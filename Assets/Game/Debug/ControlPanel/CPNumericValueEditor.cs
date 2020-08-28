@@ -30,13 +30,35 @@ public class CPNumericValueEditor : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// References
 	[SerializeField] private TMP_InputField m_valueInput = null;
+	public TMP_InputField valueInput {
+		get { return m_valueInput; }
+	}
+
 	[SerializeField] private Button m_addButton = null;
+	public Button addButton {
+		get { return m_addButton; }
+	}
+
 	[SerializeField] private Button m_removeButton = null;
+	public Button removeButton {
+		get { return m_removeButton; }
+	}
+
 	[SerializeField] private Button m_setButton = null;
+	public Button setButton {
+		get { return m_setButton; }
+	}
 
 	// Setup
 	[SerializeField] private float m_step = 10f;
+	public float step {
+		get { return m_step; }
+	}
+
 	[SerializeField] private Range m_range = new Range(0f, 100000f);
+	public Range range {
+		get { return m_range; }
+	}
 
 	// Events
 	[SerializeField] public NumericValueEvent OnValueChanged = new NumericValueEvent();
@@ -83,6 +105,22 @@ public class CPNumericValueEditor : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //
 	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Get the current value.
+	/// </summary>
+	/// <returns></returns>
+	public float GetValue() {
+		// Get amount from linked input field
+		float amount = 0f;
+		if(!float.TryParse(m_valueInput.text, NumberStyles.Any, CultureInfo.InvariantCulture, out amount)) {
+			ControlPanel.LaunchTextFeedback("Invalid number format!!", Color.red);
+			return float.MinValue;
+		}
+
+		// Clamp value and return
+		return m_range.Clamp(amount);
+	}
+
 	/// <summary>
 	/// Set value. Will be clamped to the range.
 	/// </summary>

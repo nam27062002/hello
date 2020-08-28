@@ -85,13 +85,18 @@ public class PersistenceUtils
                 _returnValue.Add("dragons", _dragons);
             }
 
-			// [AOC] Start with the map unlocked
-			// Use default 24hrs timer if the settings rules are not ready
-			System.DateTime mapResetTimestamp = GameServerManager.GetEstimatedServerTime().AddHours(24);
-			if(gameSettingsDef != null) {
-				mapResetTimestamp = GameServerManager.GetEstimatedServerTime().AddMinutes(gameSettingsDef.GetAsDouble("miniMapTimer"));	// Minutes
-			}
-			_returnValue.Add("mapResetTimestamp", mapResetTimestamp.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
+            // Shall we start map countdown automatically?
+            if (!ABTest.Evaluate(ABTest.Test.INITIAL_MAP_COUNTDOWN_TRIGGER_BY_PLAYER))
+            {
+                // [AOC] Start with the map unlocked
+                // Use default 24hrs timer if the settings rules are not ready
+                System.DateTime mapResetTimestamp = GameServerManager.GetEstimatedServerTime().AddHours(24);
+                if (gameSettingsDef != null)
+                {
+                    mapResetTimestamp = GameServerManager.GetEstimatedServerTime().AddMinutes(gameSettingsDef.GetAsDouble("miniMapTimer")); // Minutes
+                }
+                _returnValue.Add("mapResetTimestamp", mapResetTimestamp.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
+            }
         }
         else
         {

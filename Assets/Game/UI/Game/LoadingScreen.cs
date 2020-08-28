@@ -77,9 +77,8 @@ public class LoadingScreen : UbiBCN.SingletonMonoBehaviour<LoadingScreen> {
 	/// Initialize the screen with current data: selected dragon, skin, pets, etc.
 	/// </summary>
 	private static void InitWithCurrentData(bool loadAddressables) {
-        IDragonData currentDragon = GetCurrentDragonData();
-
-        if (loadAddressables) {
+		IDragonData currentDragon = DragonManager.CurrentDragonConsideringTournament;
+		if (loadAddressables) {
             LoadAddressables();
         } else {
             instance.m_dragonIconLoader.IsVisible = false;
@@ -96,22 +95,8 @@ public class LoadingScreen : UbiBCN.SingletonMonoBehaviour<LoadingScreen> {
 		PowerIcon.InitPowerIconsWithDragonData(ref instance.m_powerIcons, currentDragon);
 	}
 
-    private static IDragonData GetCurrentDragonData() {
-        IDragonData currentDragon = null;
-        if (SceneController.mode == SceneController.Mode.TOURNAMENT)
-        {
-            currentDragon = HDLiveDataManager.tournament.tournamentData.tournamentDef.dragonData;
-        }
-        else
-        {
-            currentDragon = DragonManager.CurrentDragon;
-        }
-
-        return currentDragon;
-    }
-
     public static void LoadAddressables() {
-        IDragonData currentDragon = GetCurrentDragonData();        
+        IDragonData currentDragon = DragonManager.CurrentDragonConsideringTournament;        
         DefinitionNode skinDef = skinDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, currentDragon.disguise);
 
         instance.m_dragonIconLoader.IsVisible = true;
