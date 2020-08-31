@@ -230,6 +230,15 @@ public class LoadingSceneController : SceneController {
 
     private bool m_needsToLoadMenu = false;
 
+    //------------------------------------------------------------------
+    // Dynamic Links data receiver callback
+    //
+    public static void OnDynamicLinksDataReceived(Dictionary<string, string> dlinkParameters)
+    {
+
+    }
+
+
     //------------------------------------------------------------------//
     // GENERIC METHODS													//
     //------------------------------------------------------------------//
@@ -237,13 +246,14 @@ public class LoadingSceneController : SceneController {
     /// Initialization.
     /// </summary>
     override protected void Awake() {
-        CaletyFirebaseWrapper.initialise();
 
         CaletySettings settingsInstance = Resources.Load<CaletySettings>("CaletySettings");
         if (settingsInstance.m_bUseDynamicLinks)
         {
+            CaletyDynamicLinks.setDynamicLinksDataReceivedCallback(OnDynamicLinksDataReceived);
             CaletyDynamicLinks.setDynamicLinksParameters(settingsInstance.m_strDynamicLinksDomain, settingsInstance.m_strDynamicLinksBaseLink, settingsInstance.m_iOSAppStoreID);
         }
+        CaletyFirebaseWrapper.initialise();
 
         // Call parent
         base.Awake();

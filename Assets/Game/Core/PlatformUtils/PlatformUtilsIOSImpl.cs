@@ -116,18 +116,19 @@ public class PlatformUtilsIOSImpl : PlatformUtils
 		showAlertMessage(ref conf);
 	}
 	
-	private void CallSocialShareAdvanced(string img, string caption)
+	private void CallSocialShareAdvanced(string img, string caption, string subject)
 	{
 		SocialSharingStruct conf = new SocialSharingStruct();
 		conf.text = caption;
 		conf.filePaths = img;
-		conf.subject = "";
+		conf.subject = subject;
 
 		showSocialSharing(ref conf);
+
 	}
 
-	public override void ShareImage(string filename, string caption){
-		CallSocialShareAdvanced(filename, caption);
+	public override void ShareImage(string filename, string caption, string subject = ""){
+		CallSocialShareAdvanced(filename, caption, subject);
 	}
 	#endregion
 	

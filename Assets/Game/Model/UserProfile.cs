@@ -2702,6 +2702,10 @@ public class UserProfile : UserPersistenceSystem
 		// Store the new value
 		m_clusterId = _newClusterId;
 
+		// Notify game
+		ClusterIdEventInfo eventData = new ClusterIdEventInfo() { clusterId = _newClusterId };
+		Broadcaster.Broadcast(BroadcastEventType.CLUSTER_ID_ASSIGNED, eventData);
+
 		// Send tracking event
 		HDTrackingManager.Instance.Notify_ClusterAssigned(_newClusterId);
 	}
