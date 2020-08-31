@@ -66,11 +66,11 @@ public class RewardManager : Singleton<RewardManager>, IBroadcastListener {
 	private int m_scoreMultiplierStreak = 0;    // Amount of consecutive eaten/burnt/destroyed entities without taking damage
 
 	// Ad reward modifier settings
-	private DefinitionNode m_rewardAdModifierSettings = null;
-	public static DefinitionNode rewardAdModifierSettings {
+	private RewardAdModifierSettings m_rewardAdModifierSettings = new RewardAdModifierSettings();
+	public static RewardAdModifierSettings rewardAdModifierSettings {
 		get { 
-			if(instance.m_rewardAdModifierSettings == null) {
-				instance.m_rewardAdModifierSettings = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, "rewardAdModifierSettings");
+			if(!instance.m_rewardAdModifierSettings.isInitialized) {
+				instance.m_rewardAdModifierSettings.InitFromDefinitions();
 			}
 			return instance.m_rewardAdModifierSettings;
 		}
@@ -490,7 +490,7 @@ public class RewardManager : Singleton<RewardManager>, IBroadcastListener {
 	/// Adds the final rewards to the user profile. To be called at the end of 
 	/// the game.
 	/// </summary>
-	public static void ApplyEndOfGameRewards() {
+	public static void ApplyEndOfGameRewards(long _extraCoinsFromAdMultiplier) {
 		// Coins, PC and XP are applied in real time during gameplay
 		// Apply the rest of rewards
 
@@ -498,6 +498,11 @@ public class RewardManager : Singleton<RewardManager>, IBroadcastListener {
 		// [AOC] No survival bonus in tournament mode!
 		if(GameSceneController.mode != SceneController.Mode.TOURNAMENT) {
 			UsersManager.currentUser.EarnCurrency(UserProfile.Currency.SOFT, (ulong)instance.CalculateSurvivalBonus(), false, HDTrackingManager.EEconomyGroup.REWARD_RUN);
+		}
+
+		// Extra coins from Ad multiplier
+		if(_extraCoinsFromAdMultiplier > 0) {
+			UsersManager.currentUser.EarnCurrency(UserProfile.Currency.SOFT, (ulong)_extraCoinsFromAdMultiplier, false, HDTrackingManager.EEconomyGroup.REWARD_RUN);
 		}
 	}
 
@@ -699,9 +704,9 @@ public class RewardManager : Singleton<RewardManager>, IBroadcastListener {
 		// Compute total amount of bonus coins
 		float survivalBonus = (float)_coins * (float)elapsedMinutes * bonusCoinsPerMinute;
 
-		// Apply Ad multiplier correction
-		survivalBonus *= m_rewardAdModifierSettings.GetAsFloat("survivalBonusCoinsMultiplier");
-
+		// [AOC] Apply ad reward modifier factor if enabled
+		survivalBonus *= m_rewardAdModifierSettings.survivalBonusCoinsMultiplier;
+		
 		// Round and return
 		return Mathf.FloorToInt(survivalBonus);
 	}

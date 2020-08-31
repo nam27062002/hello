@@ -211,7 +211,7 @@ public class HungryLettersManager : MonoBehaviour
 			m_reward.score = m_scoreAwards[ m_lettersCollected ];
 
 		// [AOC] Apply ad reward modifier factor
-		m_reward.coins = m_reward.coins * RewardManager.rewardAdModifierSettings.GetAsFloat("spawnersCoinsMultiplier", 1f);
+		m_reward.coins *= RewardManager.rewardAdModifierSettings.spawnersCoinsMultiplier;
 
 		Messenger.Broadcast<Reward>(MessengerEvents.LETTER_COLLECTED, m_reward);
 

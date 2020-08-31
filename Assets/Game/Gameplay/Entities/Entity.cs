@@ -465,7 +465,7 @@ public class Entity : IEntity, IBroadcastListener {
 		m_reward.score += ((m_reward.score * m_powerUpScoreMultiplier) / 100.0f);
 
 		m_reward.coins = _node.GetAsInt("rewardCoins");
-		m_reward.coins = m_reward.coins * RewardManager.rewardAdModifierSettings.GetAsFloat("spawnersCoinsMultiplier", 1f);	// [AOC] Apply ad reward modifier factor
+		m_reward.coins *= RewardManager.rewardAdModifierSettings.spawnersCoinsMultiplier;   // [AOC] Apply ad reward modifier factor if enabled
 		m_reward.coins += ((m_reward.coins * m_powerUpSCMultiplier) / 100.0f);
         
 		m_reward.xp = _node.GetAsFloat("rewardXp");
