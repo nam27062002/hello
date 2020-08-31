@@ -126,8 +126,9 @@ public class DefinitionsCategory
 	public const string SHARE_LOCATIONS = "SHARE_LOCATIONS";
     public const string ICONS = "ICONS";
 
-	//Cross promotion Rewards
+	//Cross promotion 
 	public const string LOCAL_REWARDS = "LOCAL_REWARDS";
 	public const string INCOMING_REWARDS = "INCOMING_REWARDS";
+	public const string XPROMO_SETTINGS = "XPROMO_SETTINGS";
 };
     

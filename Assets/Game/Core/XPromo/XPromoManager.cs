@@ -10,6 +10,7 @@
 using UnityEngine;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -22,7 +23,8 @@ public class XPromoManager {
 	//------------------------------------------------------------------------//
 	// STRUCT															  //
 	//------------------------------------------------------------------------//
-    public enum Origin {
+    public enum Game {
+        UNDEFINED,
         HD,
         HSE
     }
@@ -30,6 +32,10 @@ public class XPromoManager {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
+
+	public const string GAME_CODE_HD = "hd";
+	public const string GAME_CODE_HSE = "hse";
+
 	// Tracking constants
 	private const string DEFAULT_SOURCE = "";
 
@@ -52,8 +58,20 @@ public class XPromoManager {
 		}
 	}
 
-	private Queue<Metagame.Reward> m_pendingRewards;
-    public Queue<Metagame.Reward> pendingRewards { get { return m_pendingRewards;  } }
+	// Set of local x-promo rewards as defined in content
+	private List<XPromo.LocalReward> m_localRewards;
+
+    // Queue with the rewards incoming from HSE. Will be given to the player when we have a chance (selection screen)
+	private Queue<Metagame.Reward> m_pendingIncomingRewards;
+    public Queue<Metagame.Reward> pendingIncomingRewards { get { return m_pendingIncomingRewards;  } }
+
+	// Configuration
+	private Boolean m_enabled;
+	private DateTime m_startDate;
+    private DateTime m_endDate;
+	private int m_minRuns;
+	private int m_cycleSize;
+
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -80,6 +98,62 @@ public class XPromoManager {
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //
 	//------------------------------------------------------------------------//
+
+    // Empty all the sets
+    public void Clear()
+    {
+		m_localRewards = new List<XPromo.LocalReward>();
+		m_pendingIncomingRewards = new Queue<Metagame.Reward>();
+
+		m_startDate = new DateTime();
+		m_endDate = new DateTime();
+
+	}
+
+    /// <summary>
+    /// Load all data from content tables
+    /// </summary>
+	public void InitFromDefinitions()
+	{
+
+        Clear();
+
+		// Load settings
+	    DefinitionNode settingsDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.XPROMO_SETTINGS, "xPromoSettings");
+		m_enabled = settingsDef.GetAsBool("enabled");
+		m_minRuns = settingsDef.GetAsInt("minRuns");
+		m_cycleSize = settingsDef.GetAsInt("cycleSize");
+
+		if (settingsDef.Has("startDate"))
+		{
+			m_startDate = TimeUtils.TimestampToDate(settingsDef.GetAsLong("startDate", 0), false);
+		}
+
+		if (settingsDef.Has("endDate"))
+		{
+			m_endDate = TimeUtils.TimestampToDate(settingsDef.GetAsLong("endDate", 0), false);
+		}
+
+
+		// Load local rewards
+		List<DefinitionNode> localRwdDefinitions = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.LOCAL_REWARDS);
+        foreach (DefinitionNode def in localRwdDefinitions)
+        {
+			XPromo.LocalReward localReward = XPromo.LocalReward.CreateLocalRewardFromDef(def);
+
+			if (localReward != null)
+				m_localRewards.Add(localReward);
+        }
+
+		// Check settings-rewards consistency, so the designers can know if they screwed up the content tables 
+		List<XPromo.LocalReward> activeRewards = m_localRewards.Where<XPromo.LocalReward>(r => r.enabled == true).ToList();
+        if (activeRewards.Count != m_cycleSize)
+        {
+			Debug.LogError("The number of xPromo active rewards doesn´t match the xPromo cycle length! Please, fix the content tables.");
+        }
+
+
+	}
 
 
 
@@ -109,19 +183,15 @@ public class XPromoManager {
             }
 
             // Create a reward from the content definition
-			Metagame.Reward reward = CreateRewardFromDef(rewardDef, Origin.HSE);
+			Metagame.Reward reward = CreateRewardFromDef(rewardDef, Game.HSE);
 
 			// Put this reward in the rewards queue
             if (reward != null)
-				pendingRewards.Enqueue(reward);
+				m_pendingIncomingRewards.Enqueue(reward);
 
             // This rewards will be given when the user enters the selection screen
 
 		}
-
-		// Shows a different reward popup depending if this is the
-		// first time the player opens the game (welcome popup)
-		// or if the game was already being played by this user (reward popup).
 
 
 	}
@@ -143,7 +213,7 @@ public class XPromoManager {
 	/// <param name="_def">Definition from localRewards or incomingRewards table.</param>
     /// <param name="_origin">The app that granted the reward</param>
 	/// <returns>New reward created from the given definition.</returns>
-	private static Metagame.Reward CreateRewardFromDef(DefinitionNode _def, Origin _origin)
+	private static Metagame.Reward CreateRewardFromDef(DefinitionNode _def, Game _origin)
 	{
 
 		Metagame.Reward.Data rewardData = new Metagame.Reward.Data();
@@ -154,7 +224,7 @@ public class XPromoManager {
 		// Assign an economy group based on the xpromo reward origin
 		HDTrackingManager.EEconomyGroup economyGroup;
 
-        if (_origin == Origin.HD) {
+        if (_origin == Game.HD) {
 			economyGroup = HDTrackingManager.EEconomyGroup.REWARD_XPROMO_LOCAL;
 		} else {
 			economyGroup = HDTrackingManager.EEconomyGroup.REWARD_XPROMO_INCOMING;
@@ -162,6 +232,8 @@ public class XPromoManager {
 
         // Construct the reward
 		return Metagame.Reward.CreateFromData(rewardData, economyGroup, DEFAULT_SOURCE);
+
+
 	}
 
 
