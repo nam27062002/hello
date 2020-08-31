@@ -235,7 +235,7 @@ public class LoadingSceneController : SceneController {
     //
     public static void OnDynamicLinksDataReceived(Dictionary<string, string> dlinkParameters)
     {
-
+        Messenger.Broadcast<Dictionary<string, string>>(MessengerEvents.INCOMING_DEEPLINK_NOTIFICATION, dlinkParameters);
     }
 
 
