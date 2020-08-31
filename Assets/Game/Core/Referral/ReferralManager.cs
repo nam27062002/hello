@@ -256,7 +256,8 @@ public class ReferralManager {
 				string title = LocalizationManager.SharedInstance.Localize("TID_REFERRAL_SHARE_TITLE");
 
 				// Open the share dialog
-				CaletyShareUtil.ShareLink(title, _shortLink);
+//				CaletyShareUtil.ShareLink(title, _shortLink);
+				PlatformUtils.Instance.ShareImage(null, _shortLink, title);
 
 				// Increment counter
 				UsersManager.currentUser.invitesSent++;
