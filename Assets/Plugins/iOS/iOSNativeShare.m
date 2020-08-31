@@ -69,7 +69,7 @@ void ShowAlertMessage (NSString *title, NSString *message){
 	NSMutableArray *items = [NSMutableArray new];
 	
 	if(mText != NULL && mText.length > 0){
-        MyActivityItemProvider *activityItem = [[MyActivityItemProvider alloc] initWithPlaceholderItem:mText];
+		MyActivityItemProvider *activityItem = [[MyActivityItemProvider alloc] initWithPlaceholderItem:mText];
         activityItem.hasImage = mfilePath != NULL && mfilePath.length > 0;
         [items addObject:activityItem];
 		// [items addObject:mText];
@@ -121,6 +121,12 @@ void ShowAlertMessage (NSString *title, NSString *message){
 				}
 			}
 		}
+	}
+
+	if (mText != NULL && [mText hasPrefix:@"http"])
+	{
+		NSURL *url = [NSURL URLWithString:mText];
+		[items addObject:url];
 	}
 	
 	UIActivityViewController *activity = [[UIActivityViewController alloc] initWithActivityItems:items applicationActivities:Nil];
