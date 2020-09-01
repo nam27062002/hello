@@ -10,6 +10,7 @@
 using UnityEngine;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -22,14 +23,19 @@ public class XPromoManager {
 	//------------------------------------------------------------------------//
 	// STRUCT															  //
 	//------------------------------------------------------------------------//
-    public enum Origin {
-        HD,
-        HSE
-    }
+	public enum Game {
+		UNDEFINED,
+		HD,
+		HSE
+	}
 
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
+
+	public const string GAME_CODE_HD = "hd";
+	public const string GAME_CODE_HSE = "hse";
+
 	// Tracking constants
 	private const string DEFAULT_SOURCE = "";
 
@@ -52,8 +58,15 @@ public class XPromoManager {
 		}
 	}
 
-	private Queue<Metagame.Reward> m_pendingRewards;
-    public Queue<Metagame.Reward> pendingRewards { get { return m_pendingRewards;  } }
+	// X-promo daily rewards cycle
+	private XPromoCycle m_xPromoCycle;
+	public XPromoCycle xPromoCycle{ get { return m_xPromoCycle; } }
+    
+	// Queue with the rewards incoming from HSE. Will be given to the player when we have a chance (selection screen)
+	private Queue<Metagame.Reward> m_pendingIncomingRewards;
+    public Queue<Metagame.Reward> pendingIncomingRewards { get { return m_pendingIncomingRewards;  } }
+
+	
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -66,6 +79,9 @@ public class XPromoManager {
 		// Subscribe to XPromo broadcast
 		Messenger.AddListener(MessengerEvents.INCOMING_DEEPLINK_NOTIFICATION, OnDeepLinkNotification);
 
+        // Create a new cycle from the content data
+		m_xPromoCycle = XPromoCycle.CreateXPromoCycleFromDefinitions();
+
 	}
 
 	/// <summary>
@@ -77,9 +93,25 @@ public class XPromoManager {
 		Messenger.RemoveListener(MessengerEvents.INCOMING_DEEPLINK_NOTIFICATION, OnDeepLinkNotification);
 	}
 
+    public static void Init()
+    {
+		if (m_instance == null)
+		{
+			m_instance = new XPromoManager();
+		}  
+	}
+
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //
 	//------------------------------------------------------------------------//
+
+    public void Clear()
+    {
+		m_pendingIncomingRewards = new Queue<Metagame.Reward>();
+
+        // Reset the xpromo cycle
+		m_xPromoCycle.Clear();
+	}
 
 
 
@@ -109,31 +141,29 @@ public class XPromoManager {
             }
 
             // Create a reward from the content definition
-			Metagame.Reward reward = CreateRewardFromDef(rewardDef, Origin.HSE);
+			Metagame.Reward reward = CreateRewardFromDef(rewardDef, Game.HSE);
 
 			// Put this reward in the rewards queue
             if (reward != null)
-				pendingRewards.Enqueue(reward);
+				m_pendingIncomingRewards.Enqueue(reward);
 
             // This rewards will be given when the user enters the selection screen
 
 		}
-
-		// Shows a different reward popup depending if this is the
-		// first time the player opens the game (welcome popup)
-		// or if the game was already being played by this user (reward popup).
 
 
 	}
 
 
 	/// <summary>
-	/// Send rewards to the promoted external app (HSE).
+	/// Send rewards to the promoted external app (HSE) via deeplink.
 	/// This is the reciprocal counterpart of ProcessIncomingRewards()
 	/// </summary>
 	/// <param name="rewardsId"></param>
-	public void SendRewards(string [] rewardsId)
+	public void SendRewardToHSE(XPromo.LocalRewardHSE _reward)
     {
+
+        // Send the reward with id = _reward.rewardSku
 
     }
 
@@ -143,7 +173,7 @@ public class XPromoManager {
 	/// <param name="_def">Definition from localRewards or incomingRewards table.</param>
     /// <param name="_origin">The app that granted the reward</param>
 	/// <returns>New reward created from the given definition.</returns>
-	private static Metagame.Reward CreateRewardFromDef(DefinitionNode _def, Origin _origin)
+	private static Metagame.Reward CreateRewardFromDef(DefinitionNode _def, Game _origin)
 	{
 
 		Metagame.Reward.Data rewardData = new Metagame.Reward.Data();
@@ -154,7 +184,7 @@ public class XPromoManager {
 		// Assign an economy group based on the xpromo reward origin
 		HDTrackingManager.EEconomyGroup economyGroup;
 
-        if (_origin == Origin.HD) {
+        if (_origin == Game.HD) {
 			economyGroup = HDTrackingManager.EEconomyGroup.REWARD_XPROMO_LOCAL;
 		} else {
 			economyGroup = HDTrackingManager.EEconomyGroup.REWARD_XPROMO_INCOMING;
@@ -162,7 +192,11 @@ public class XPromoManager {
 
         // Construct the reward
 		return Metagame.Reward.CreateFromData(rewardData, economyGroup, DEFAULT_SOURCE);
+
+
 	}
+
+    
 
 
 	//------------------------------------------------------------------------//
@@ -177,8 +211,37 @@ public class XPromoManager {
 
 		// Check if this deep link notification contains a XPromo reward
 
+
         // Process the incoming rewards
 		ProcessIncomingRewards();
+
 	}
+
+    /// <summary>
+    /// The content was updated (probably via customizer)
+    /// </summary>
+    public void OnContentUpdate()
+    {
+		// Update the rewards and cycle settings
+		m_xPromoCycle.InitFromDefinitions();
+	}
+
+	//------------------------------------------------------------------------//
+	// DEBUG CP 															  //
+	//------------------------------------------------------------------------//
+
+
+    public void OnResetProgression()
+    {
+		m_xPromoCycle.ResetProgression();
+    }
+
+    public void OnMoveIndexTo(int _newIndex)
+    {
+        
+		m_xPromoCycle.totalNextRewardIdx = _newIndex;
+
+    }
+
 
 }
