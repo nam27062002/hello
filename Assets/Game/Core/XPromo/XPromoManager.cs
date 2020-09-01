@@ -93,6 +93,14 @@ public class XPromoManager {
 		Messenger.RemoveListener(MessengerEvents.INCOMING_DEEPLINK_NOTIFICATION, OnDeepLinkNotification);
 	}
 
+    public static void Init()
+    {
+		if (m_instance == null)
+		{
+			m_instance = new XPromoManager();
+		}  
+	}
+
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //
 	//------------------------------------------------------------------------//
@@ -207,6 +215,15 @@ public class XPromoManager {
         // Process the incoming rewards
 		ProcessIncomingRewards();
 
+	}
+
+    /// <summary>
+    /// The content was updated (probably via customizer)
+    /// </summary>
+    public void OnContentUpdate()
+    {
+		// Update the rewards and cycle settings
+		m_xPromoCycle.InitFromDefinitions();
 	}
 
 	//------------------------------------------------------------------------//
