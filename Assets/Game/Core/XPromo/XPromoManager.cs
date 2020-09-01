@@ -23,11 +23,11 @@ public class XPromoManager {
 	//------------------------------------------------------------------------//
 	// STRUCT															  //
 	//------------------------------------------------------------------------//
-    public enum Game {
-        UNDEFINED,
-        HD,
-        HSE
-    }
+	public enum Game {
+		UNDEFINED,
+		HD,
+		HSE
+	}
 
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
@@ -58,20 +58,15 @@ public class XPromoManager {
 		}
 	}
 
-	// Set of local x-promo rewards as defined in content
-	private List<XPromo.LocalReward> m_localRewards;
-
-    // Queue with the rewards incoming from HSE. Will be given to the player when we have a chance (selection screen)
+	// X-promo daily rewards cycle
+	private XPromoCycle m_xPromoCycle;
+	public XPromoCycle xPromoCycle{ get { return m_xPromoCycle; } }
+    
+	// Queue with the rewards incoming from HSE. Will be given to the player when we have a chance (selection screen)
 	private Queue<Metagame.Reward> m_pendingIncomingRewards;
     public Queue<Metagame.Reward> pendingIncomingRewards { get { return m_pendingIncomingRewards;  } }
 
-	// Configuration
-	private Boolean m_enabled;
-	private DateTime m_startDate;
-    private DateTime m_endDate;
-	private int m_minRuns;
-	private int m_cycleSize;
-
+	
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -83,6 +78,9 @@ public class XPromoManager {
 
 		// Subscribe to XPromo broadcast
 		Messenger.AddListener(MessengerEvents.INCOMING_DEEPLINK_NOTIFICATION, OnDeepLinkNotification);
+
+        // Create a new cycle from the content data
+		m_xPromoCycle = XPromoCycle.CreateXPromoCycleFromDefinitions();
 
 	}
 
@@ -99,60 +97,12 @@ public class XPromoManager {
 	// OTHER METHODS														  //
 	//------------------------------------------------------------------------//
 
-    // Empty all the sets
     public void Clear()
     {
-		m_localRewards = new List<XPromo.LocalReward>();
 		m_pendingIncomingRewards = new Queue<Metagame.Reward>();
 
-		m_startDate = new DateTime();
-		m_endDate = new DateTime();
-
-	}
-
-    /// <summary>
-    /// Load all data from content tables
-    /// </summary>
-	public void InitFromDefinitions()
-	{
-
-        Clear();
-
-		// Load settings
-	    DefinitionNode settingsDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.XPROMO_SETTINGS, "xPromoSettings");
-		m_enabled = settingsDef.GetAsBool("enabled");
-		m_minRuns = settingsDef.GetAsInt("minRuns");
-		m_cycleSize = settingsDef.GetAsInt("cycleSize");
-
-		if (settingsDef.Has("startDate"))
-		{
-			m_startDate = TimeUtils.TimestampToDate(settingsDef.GetAsLong("startDate", 0), false);
-		}
-
-		if (settingsDef.Has("endDate"))
-		{
-			m_endDate = TimeUtils.TimestampToDate(settingsDef.GetAsLong("endDate", 0), false);
-		}
-
-
-		// Load local rewards
-		List<DefinitionNode> localRwdDefinitions = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.LOCAL_REWARDS);
-        foreach (DefinitionNode def in localRwdDefinitions)
-        {
-			XPromo.LocalReward localReward = XPromo.LocalReward.CreateLocalRewardFromDef(def);
-
-			if (localReward != null)
-				m_localRewards.Add(localReward);
-        }
-
-		// Check settings-rewards consistency, so the designers can know if they screwed up the content tables 
-		List<XPromo.LocalReward> activeRewards = m_localRewards.Where<XPromo.LocalReward>(r => r.enabled == true).ToList();
-        if (activeRewards.Count != m_cycleSize)
-        {
-			Debug.LogError("The number of xPromo active rewards doesn´t match the xPromo cycle length! Please, fix the content tables.");
-        }
-
-
+        // Reset the xpromo cycle
+		m_xPromoCycle.Clear();
 	}
 
 
@@ -198,12 +148,14 @@ public class XPromoManager {
 
 
 	/// <summary>
-	/// Send rewards to the promoted external app (HSE).
+	/// Send rewards to the promoted external app (HSE) via deeplink.
 	/// This is the reciprocal counterpart of ProcessIncomingRewards()
 	/// </summary>
 	/// <param name="rewardsId"></param>
-	public void SendRewards(string [] rewardsId)
+	public void SendRewardToHSE(XPromo.LocalRewardHSE _reward)
     {
+
+        // Send the reward with id = _reward.rewardSku
 
     }
 
@@ -236,6 +188,8 @@ public class XPromoManager {
 
 	}
 
+    
+
 
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
@@ -249,8 +203,28 @@ public class XPromoManager {
 
 		// Check if this deep link notification contains a XPromo reward
 
+
         // Process the incoming rewards
 		ProcessIncomingRewards();
+
 	}
+
+	//------------------------------------------------------------------------//
+	// DEBUG CP 															  //
+	//------------------------------------------------------------------------//
+
+
+    public void OnResetProgression()
+    {
+		m_xPromoCycle.ResetProgression();
+    }
+
+    public void OnMoveIndexTo(int _newIndex)
+    {
+        
+		m_xPromoCycle.totalNextRewardIdx = _newIndex;
+
+    }
+
 
 }
