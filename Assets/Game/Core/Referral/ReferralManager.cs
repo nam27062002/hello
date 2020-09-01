@@ -97,6 +97,13 @@ public class ReferralManager {
 		}
 	}
 
+	enum State {
+		INIT,					// Initial state, we haven't read the deep link yet
+		NOT_REFERRED,			// We've read the data from the deep link, no referrer Id was found -> user not referred
+		PENDING_CONFIRMATION,	// We've read the data from the deep link, a valid referrer Id was found, pending confirmation with server
+		REFERRAL_CONFIRMED		// Server confirmation received, with or without success
+	}
+
 	/// <summary>
 	// The invited user has to confirm that the app has been open, so the referral user
 	// increments its referal counter and can claim rewards.
@@ -107,7 +114,10 @@ public class ReferralManager {
 			return;
 
 		// Nothing to do either if we don't have a valid referrer User Id
-		// [AOC] TOOD!! FOR SURE? WE MAY WANT TO MARK AS REFERRAL CONFIRMED (UNSUCCESSFUL) SO WE DON'T KEEP TRYING FOREVER
+		// [AOC] TODO!! FOR SURE?
+		//		 Non-referred users will be constantly performing this check (string comparison)
+		//		 
+		//		 WE MAY WANT TO MARK AS REFERRAL CONFIRMED (UNSUCCESSFUL) SO WE DON'T KEEP TRYING FOREVER
 		//		 THE ONLY RISK HERE IS - MAY WE GET THE REFERRER USER ID AFTER ATEMPTING THE CONVERSION?
 		//		 REFLEXIONEM-HI, SI US PLAU, REFLEXIONEM-HI
 		if(string.IsNullOrEmpty(UsersManager.currentUser.referrerUserId))
