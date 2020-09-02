@@ -369,11 +369,11 @@ public class ContentManager
         }
         
         
-            // seasonsDefinitions
+        // seasonsDefinitions
         SeasonManager.instance.RefreshActiveSeason();
 
         // Refresh x-promo rewards
-        XPromoManager.instance.InitFromDefinitions();
+        XPromoManager.instance.OnContentUpdate();
     }
      
 
