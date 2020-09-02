@@ -11,6 +11,7 @@ using UnityEngine;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Diagnostics;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -55,6 +56,7 @@ public class XPromoCycle {
 	public int nextRewardIdx
 	{
 		get { return m_totalNextRewardIdx % m_cycleSize; }
+       
 	}
 
 	// Time when the player can collect the next reward
@@ -62,6 +64,7 @@ public class XPromoCycle {
 	public DateTime nextRewardTimestamp
 	{
 		get { return m_nextRewardTimestamp; }
+		set { m_nextRewardTimestamp = value; }
 	}
 
 
@@ -197,10 +200,14 @@ public class XPromoCycle {
 			{
 				// Show new item in reward screen
 			}
+
+			XPromoManager.Log("Reward " + rewardContent.ToString() + " collected ");
 		}
 
+
+
 		// Move index to next item
-		m_nextRewardIdx++;
+		m_totalNextRewardIdx++;
 
 		// Calculate next item timestamp
 		// Reset timestamp to 00:00 of local time (but using server timezone!)
@@ -208,7 +215,7 @@ public class XPromoCycle {
 		TimeSpan toMidnight = DateTime.Today.AddDays(1) - DateTime.Now; // Local
 		m_nextRewardTimestamp = serverTime + toMidnight;   // Local 00:00 in server timezone
 
-		Debug.Log("CollectNextReward nextTimestamp = " + m_nextRewardTimestamp);
+		XPromoManager.Log("CollectNextReward nextTimestamp = " + m_nextRewardTimestamp);
 
 		// Add tracking
 
@@ -340,7 +347,7 @@ public class XPromoCycle {
 		}
 
 		// No reward was found :( this shouldnt happen
-		Debug.Log("No reward found for day " + _index + 1);
+		XPromoManager.Log("No reward found for day " + _index + 1);
 		return null;
 
 	}
@@ -394,7 +401,7 @@ public class XPromoCycle {
 		if (_data.ContainsKey("xPromoNextRewardTimestamp"))
 		{
 			m_nextRewardTimestamp = PersistenceUtils.SafeParse<DateTime>(_data["xPromoNextRewardTimestamp"]);
-			Debug.Log("LoadData xPromoNextRewardTimestamp = " + m_nextRewardTimestamp);
+			XPromoManager.Log("LoadData xPromoNextRewardTimestamp = " + m_nextRewardTimestamp);
 		}
 
 	}
@@ -414,14 +421,12 @@ public class XPromoCycle {
 
 		// Collect timestamp
 		data.Add("xPromoNextRewardTimestamp", PersistenceUtils.SafeToString(m_nextRewardTimestamp));
-		Debug.Log("SaveData xPromoNextRewardTimestamp = " + m_nextRewardTimestamp);
+		XPromoManager.Log("SaveData xPromoNextRewardTimestamp = " + m_nextRewardTimestamp);
 
 		// Done!
 		return data;
 	}
 
 
-	//------------------------------------------------------------------------//
-	// CALLBACKS															  //
-	//------------------------------------------------------------------------//
+
 }
