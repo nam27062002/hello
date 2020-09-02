@@ -3,7 +3,7 @@ using UnityEngine.SceneManagement;
 
 public class DragonVampireEffects : MonoBehaviour
 {
-    [Header("Damage particle")]
+    [Header("Damage effect")]
     [SerializeField] ParticleData onDamageParticleEffect;
     [SerializeField] int maxDamageParticlesAmount = 30;
     [SerializeField] float secondsBetweenSpawnDamageParticle = 10.0f;
@@ -27,7 +27,7 @@ public class DragonVampireEffects : MonoBehaviour
         Messenger.RemoveListener<float, DamageType, Transform>(MessengerEvents.PLAYER_DAMAGE_RECEIVED, OnPlayerDamage);
     }
 
-    private void OnPlayerDamage(float _damage, DamageType _damageType, Transform _transform)
+    void OnPlayerDamage(float _damage, DamageType _damageType, Transform _transform)
     {
         // Ignore this type of damage
         if (_damage < 1.0f || _damageType == DamageType.POISON || _damageType == DamageType.CURSE)
@@ -53,14 +53,12 @@ public class DragonVampireEffects : MonoBehaviour
 
     void CreateInstance()
     {
-        if (onDamageParticleEffect != null)
-        {
-            // Pre-cache damage particle
-            m_damageParticleInstance = onDamageParticleEffect.CreateInstance();
-            ParticleSystem particleInstance = m_damageParticleInstance.GetComponent<ParticleSystem>();
-            m_damageParticleMainModule = particleInstance.main;
-            m_damageParticleInstance.SetActive(false);
-            SceneManager.MoveGameObjectToScene(particleInstance.gameObject, gameObject.scene);
-        }
+        // Preload damage effect
+        m_damageParticleInstance = onDamageParticleEffect.CreateInstance();
+        ParticleSystem particleInstance = m_damageParticleInstance.GetComponent<ParticleSystem>();
+        m_damageParticleMainModule = particleInstance.main;
+        m_damageParticleInstance.SetActive(false);
+        SceneManager.MoveGameObjectToScene(particleInstance.gameObject, gameObject.scene);
+        m_damageParticleInstance.transform.SetParentAndReset(InstanceManager.player.transform);
     }
 }
