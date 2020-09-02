@@ -11,6 +11,7 @@ using UnityEngine;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Diagnostics;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -35,6 +36,9 @@ public class XPromoManager {
 
 	public const string GAME_CODE_HD = "hd";
 	public const string GAME_CODE_HSE = "hse";
+
+	// Deeplink params
+	public const string XPROMO_REWARD_KEY = "rewardSku";
 
 	// Tracking constants
 	private const string DEFAULT_SOURCE = "";
@@ -77,7 +81,7 @@ public class XPromoManager {
 	public XPromoManager() {
 
 		// Subscribe to XPromo broadcast
-		Messenger.AddListener(MessengerEvents.INCOMING_DEEPLINK_NOTIFICATION, OnDeepLinkNotification);
+		Messenger.AddListener<Dictionary<string,string>>(MessengerEvents.INCOMING_DEEPLINK_NOTIFICATION, OnDeepLinkNotification);
 
         // Create a new cycle from the content data
 		m_xPromoCycle = XPromoCycle.CreateXPromoCycleFromDefinitions();
@@ -90,7 +94,7 @@ public class XPromoManager {
 	~XPromoManager() {
 
 		// Unsubscribe to XPromo broadcast
-		Messenger.RemoveListener(MessengerEvents.INCOMING_DEEPLINK_NOTIFICATION, OnDeepLinkNotification);
+		Messenger.RemoveListener<Dictionary<string, string>>(MessengerEvents.INCOMING_DEEPLINK_NOTIFICATION, OnDeepLinkNotification);
 	}
 
     public static void Init()
@@ -116,41 +120,33 @@ public class XPromoManager {
 
 
 	/// <summary>
-	/// Check if there is any pending rewards coming from the promoted app (HSE) via deep link
+	/// Process the incoming reward from HSE
 	/// </summary>
-	public void ProcessIncomingRewards()
+    /// <param name="_rewardSku">SKU of the incoming reward as defined in content</param>
+	public void ProcessIncomingReward(string _rewardSku)
 	{
-		// Get the rewards ids incoming in the deep link
-		List<string> rewardsSku = new List<string>(); // = CaletyDynamicLinks.GetXPromoRewards();
 
-		if (rewardsSku.Count == 0)
+		if (string.IsNullOrEmpty(_rewardSku)) 
 			return; // No rewards
 
-        // Process all incoming rewards
-        foreach (string rewardSku in rewardsSku)
+		// Find this reward in the content
+		DefinitionNode rewardDef = DefinitionsManager.SharedInstance.GetDefinitionByVariable(DefinitionsCategory.INCOMING_REWARDS, "sku", _rewardSku);
+
+        if (rewardDef == null)
         {
+			// Reward not found. Process next reward (if any)
+			Debug.LogError("Incoming reward with SKU " + _rewardSku + " is not defined in the content");
+	    }
 
-			// Find this reward in the content
-			DefinitionNode rewardDef = DefinitionsManager.SharedInstance.GetDefinitionByVariable(DefinitionsCategory.INCOMING_REWARDS, "sku", rewardSku);
+        // Create a reward from the content definition
+		Metagame.Reward reward = CreateRewardFromDef(rewardDef, Game.HSE);
 
-            if (rewardDef == null)
-            {
-				// Reward not found. Process next reward (if any)
-				Debug.LogError("Incoming reward with SKU " + rewardSku + " is not defined in the content");
-				continue;
-            }
+		// Put this reward in the rewards queue
+        if (reward != null)
+			m_pendingIncomingRewards.Enqueue(reward);
 
-            // Create a reward from the content definition
-			Metagame.Reward reward = CreateRewardFromDef(rewardDef, Game.HSE);
-
-			// Put this reward in the rewards queue
-            if (reward != null)
-				m_pendingIncomingRewards.Enqueue(reward);
-
-            // This rewards will be given when the user enters the selection screen
-
-		}
-
+        // This rewards will be given when the user enters the selection screen
+        
 
 	}
 
@@ -163,7 +159,8 @@ public class XPromoManager {
 	public void SendRewardToHSE(XPromo.LocalRewardHSE _reward)
     {
 
-        // Send the reward with id = _reward.rewardSku
+		// Send the reward with id = _reward.rewardSku
+		Log("Reward with SKU='" + _reward.rewardSku + "' sent to HSE");
 
     }
 
@@ -206,14 +203,17 @@ public class XPromoManager {
 	/// <summary>
 	/// A new deeplink notification was registered
 	/// </summary>
-	public void OnDeepLinkNotification()
+	public void OnDeepLinkNotification(Dictionary<string,string> _params)
 	{
 
 		// Check if this deep link notification contains a XPromo reward
+        if (_params.ContainsKey(XPROMO_REWARD_KEY))
+        {
 
+			// Process the incoming rewards
+			ProcessIncomingReward(_params[XPROMO_REWARD_KEY]);
+		}
 
-        // Process the incoming rewards
-		ProcessIncomingRewards();
 
 	}
 
@@ -238,10 +238,32 @@ public class XPromoManager {
 
     public void OnMoveIndexTo(int _newIndex)
     {
-        
-		m_xPromoCycle.totalNextRewardIdx = _newIndex;
-
+        m_xPromoCycle.totalNextRewardIdx = _newIndex;
     }
 
+    public void OnSkipTimer()
+    {
+		m_xPromoCycle.nextRewardTimestamp = GameServerManager.GetEstimatedServerTime();
+	}
+
+    public void OnCollectReward()
+    {
+        // Skip timer to force it can be collected
+		m_xPromoCycle.nextRewardTimestamp = GameServerManager.GetEstimatedServerTime();
+
+		m_xPromoCycle.CollectReward();
+    }
+
+	//------------------------------------------------------------------------//
+	// DEBUG LOG															  //
+	//------------------------------------------------------------------------//
+
+	#region log
+	private const string LOG_CHANNEL = "[XPromo]";
+	public static void Log(string message)
+	{
+		ControlPanel.Log(LOG_CHANNEL + message, ControlPanel.ELogChannel.XPromo);
+	}
+	#endregion
 
 }
