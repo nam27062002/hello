@@ -2150,7 +2150,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5722299659496576766}
-  m_LocalRotation: {x: 0.38217735, y: 0.34699017, z: -0.15752277, w: 0.841858}
+  m_LocalRotation: {x: -0.064857975, y: 0.73276347, z: 0.07054387, w: 0.67370224}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -2623,7 +2623,6 @@ MonoBehaviour:
   m_curseColor: {r: 0, g: 1, b: 0, a: 1}
   m_damageColor: {r: 1, g: 0, b: 0, a: 1}
   m_reduceInnerColorInsideWater: 0
-  m_enableDissolve: 1
 --- !u!114 &5690651361329936442
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4435,45 +4434,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b1af85d2f7d7344669c80dfbd4608112, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  onDieParticleEffect:
-    name: FX_PF_VampireDragon_Dies
-    path: 
-    changeStartColor: 0
-    startColor: {r: 1, g: 1, b: 1, a: 1}
-    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
-    changeColorOvertime: 0
-    colorOvertime:
-      serializedVersion: 2
-      key0: {r: 1, g: 1, b: 1, a: 1}
-      key1: {r: 1, g: 1, b: 1, a: 1}
-      key2: {r: 0, g: 0, b: 0, a: 0}
-      key3: {r: 0, g: 0, b: 0, a: 0}
-      key4: {r: 0, g: 0, b: 0, a: 0}
-      key5: {r: 0, g: 0, b: 0, a: 0}
-      key6: {r: 0, g: 0, b: 0, a: 0}
-      key7: {r: 0, g: 0, b: 0, a: 0}
-      ctime0: 0
-      ctime1: 65535
-      ctime2: 0
-      ctime3: 0
-      ctime4: 0
-      ctime5: 0
-      ctime6: 0
-      ctime7: 0
-      atime0: 0
-      atime1: 65535
-      atime2: 0
-      atime3: 0
-      atime4: 0
-      atime5: 0
-      atime6: 0
-      atime7: 0
-      m_Mode: 0
-      m_NumColorKeys: 2
-      m_NumAlphaKeys: 2
-    offset: {x: 0, y: 0, z: 0}
-    scale: 1
-    orientate: 1
   onDamageParticleEffect:
     name: FX_PF_VampireDragon_Damage
     path: 
@@ -4513,6 +4473,8 @@ MonoBehaviour:
     offset: {x: 0, y: 0, z: 0}
     scale: 1
     orientate: 1
+  maxDamageParticlesAmount: 30
+  secondsBetweenSpawnDamageParticle: 5
 --- !u!1 &5722523550854846176
 GameObject:
   m_ObjectHideFlags: 0
