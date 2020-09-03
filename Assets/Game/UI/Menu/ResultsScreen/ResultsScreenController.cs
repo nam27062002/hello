@@ -108,11 +108,22 @@ public class ResultsScreenController : MonoBehaviour {
 	public int survivalBonus {
 		get {
 			if(CPResultsScreenTest.testEnabled) {
-				return (int)CPResultsScreenTest.survivalBonus;
+				// Custom survival bonus or based on coins and time?
+				if(CPResultsScreenTest.customSurvivalBonus) {
+					return (int)CPResultsScreenTest.survivalBonus;
+				} else {
+					return RewardManager.instance.CalculateSurvivalBonus(time, coins);
+				}
 			} else {
 				return RewardManager.instance.CalculateSurvivalBonus();
 			}
 		}
+	}
+
+	private long m_multipliedCoinsExtra = 0;	// Coins added via the ad multiplier feature
+	public long multipliedCoinsExtra {
+		get { return m_multipliedCoinsExtra; }
+		set { m_multipliedCoinsExtra = value; }
 	}
 
 	public long highScore {
@@ -215,6 +226,7 @@ public class ResultsScreenController : MonoBehaviour {
 		m_totalCoins = UsersManager.currentUser.coins - this.coins;		// Coins have been added in real-time, so start the results screen counter with the amount of coins we had before the run
 		m_totalPc = UsersManager.currentUser.pc;
         m_totalGf = UsersManager.currentUser.goldenEggFragments;
+		m_multipliedCoinsExtra = 0;
 
 		m_eggFound = false;
 		switch(CPResultsScreenTest.eggMode) {
