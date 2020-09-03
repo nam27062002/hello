@@ -339,14 +339,14 @@ public class DragonTint : MonoBehaviour {
         {
             for (int i = 0; i < m_materialsCount; ++i)
             {
-                m_materials[i].EnableKeyword("VERTEXSCALEZ");
+                m_materials[i].SetFloat(GameConstants.Materials.Property.VERTEX_SCALE_Z, 0.25f);
             }
         }
         else
         {
             for (int i = 0; i < m_materialsCount; ++i)
             {
-                m_materials[i].DisableKeyword("VERTEXSCALEZ");
+                m_materials[i].SetFloat(GameConstants.Materials.Property.VERTEX_SCALE_Z, 1.0f);
             }
         }
     }
