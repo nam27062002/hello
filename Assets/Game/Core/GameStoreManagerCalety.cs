@@ -244,35 +244,36 @@ public class GameStoreManagerCalety : GameStoreManager
 
 	public override void Initialize()
 	{
+        Log("Initialize firstInit: " + m_isFirstInit);
         if (m_isFirstInit)
         {
-            Messenger.AddListener(MessengerEvents.CONNECTION_RECOVERED, OnConnectionRecovered);            
+            Messenger.AddListener(MessengerEvents.CONNECTION_RECOVERED, OnConnectionRecovered);
 
             StoreManager.SharedInstance.AddListener(m_storeListener);
             CacheStoreSkus();
 
-			m_isFirstInit = false;
-        }
+            m_isFirstInit = false;
 
-        ResetWaitForInitialization();
-		m_onRestoredPurchasesCompleted = null;
+            ResetWaitForInitialization();
+            m_onRestoredPurchasesCompleted = null;
 
-        m_storeListener.InitialiseStore(ref m_storeSkus, false);
+            m_storeListener.InitialiseStore(ref m_storeSkus, false);
 
 #if UNITY_ANDROID && !UNITY_EDITOR
-        CaletySettings settingsInstance = (CaletySettings)Resources.Load("CaletySettings");
-        if(settingsInstance != null)
-        {
-            if (settingsInstance.m_iAndroidMarketSelected == CaletyConstants.MARKET_GOOGLE_PLAY)
+            CaletySettings settingsInstance = (CaletySettings)Resources.Load("CaletySettings");
+            if(settingsInstance != null)
             {
-                StoreManager.SharedInstance.onReceivedPublicKey(settingsInstance.m_strAndroidPublicKeysGoogle[settingsInstance.m_iBuildEnvironmentSelected]);
+                if (settingsInstance.m_iAndroidMarketSelected == CaletyConstants.MARKET_GOOGLE_PLAY)
+                {
+                    StoreManager.SharedInstance.onReceivedPublicKey(settingsInstance.m_strAndroidPublicKeysGoogle[settingsInstance.m_iBuildEnvironmentSelected]);
+                }
+                else if (settingsInstance.m_iAndroidMarketSelected == CaletyConstants.MARKET_AMAZON)
+                {
+                    StoreManager.SharedInstance.onReceivedPublicKey(settingsInstance.m_strAndroidPublicKeysAmazon[settingsInstance.m_iBuildEnvironmentSelected]);
+                }
             }
-            else if (settingsInstance.m_iAndroidMarketSelected == CaletyConstants.MARKET_AMAZON)
-            {
-                StoreManager.SharedInstance.onReceivedPublicKey(settingsInstance.m_strAndroidPublicKeysAmazon[settingsInstance.m_iBuildEnvironmentSelected]);
-            }
+#endif
         }
-#endif        
 	}
 
     public override bool IsInitializing()
