@@ -94,11 +94,11 @@ public class ReferralManager {
 	public bool ReadReferralLink() {
 		// Ignore if the player has already been referred
 		if(UsersManager.currentUser.referralConfirmed)
-			return;
+			return false;
 
 		// Ignore if we already have a referrer ID assigned
 		if(!string.IsNullOrEmpty(UsersManager.currentUser.referrerUserId))
-			return;
+			return false;
 
 		// All checks passed! Get the referrer Id
 		return ReadReferralLinkInternal();
