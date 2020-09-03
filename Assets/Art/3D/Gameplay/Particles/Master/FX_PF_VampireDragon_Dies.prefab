@@ -28,7 +28,7 @@ Transform:
   m_GameObject: {fileID: 2693482689584250520}
   m_LocalRotation: {x: 0.53683025, y: 0.45327643, z: 0.3322336, w: 0.6292651}
   m_LocalPosition: {x: 0.2, y: 1.03, z: -0.41}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 2, y: 2, z: 2}
   m_Children: []
   m_Father: {fileID: 89599947544490989}
   m_RootOrder: 0
@@ -90,7 +90,7 @@ Animator:
   m_Avatar: {fileID: 0}
   m_Controller: {fileID: 9100000, guid: 3bbc6592062a6e1418535200f405750a, type: 2}
   m_CullingMode: 0
-  m_UpdateMode: 0
+  m_UpdateMode: 2
   m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
   m_WarningMessage: 
@@ -125,7 +125,7 @@ Transform:
   m_GameObject: {fileID: 4829993476408783297}
   m_LocalRotation: {x: -0.000000030908623, y: 0.7071068, z: -0.7071068, w: -0.000000030908623}
   m_LocalPosition: {x: 0.25, y: 1.89, z: -0.7}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 2, y: 2, z: 2}
   m_Children: []
   m_Father: {fileID: 89599947544490989}
   m_RootOrder: 1
@@ -187,7 +187,7 @@ Animator:
   m_Avatar: {fileID: 0}
   m_Controller: {fileID: 9100000, guid: 2c9ea15d99b84544eb6afbe1665cc364, type: 2}
   m_CullingMode: 0
-  m_UpdateMode: 0
+  m_UpdateMode: 2
   m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
   m_WarningMessage: 
@@ -206,6 +206,7 @@ GameObject:
   - component: {fileID: 2586163856686638858}
   - component: {fileID: 5842151165523994090}
   - component: {fileID: 2493034429642923256}
+  - component: {fileID: 114957747426003568}
   m_Layer: 0
   m_Name: FX_PF_VampireDragon_Dies
   m_TagString: Untagged
@@ -220,7 +221,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5461710638170551492}
-  m_LocalRotation: {x: 0.07533627, y: 0.70308214, z: -0.07533627, w: 0.70308214}
+  m_LocalRotation: {x: 0.075336374, y: 0.70308214, z: -0.075336374, w: 0.7030821}
   m_LocalPosition: {x: 0.16575485, y: -1.878097, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -229,7 +230,7 @@ Transform:
   - {fileID: 6368623173622962628}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 12.232, y: 90.00001, z: 0}
 --- !u!198 &2586163856686638858
 ParticleSystem:
   m_ObjectHideFlags: 0
@@ -4908,14 +4909,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 438cf31a59dc645398073c030faafc6e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_scaleOrigin: 0
-  m_scale: 1
+  m_scaleOrigin: 2
+  m_scale: 2
   m_transform: {fileID: 0}
   m_resetFirst: 0
   m_scaleLifetime: 0
   m_scaleAllChildren: 1
   m_whenScale: 0
   m_framesDelay: 0
+--- !u!114 &114957747426003568
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5461710638170551492}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 554e9c1e563a14f8990e41f925e29008, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_activeTime: 5
+  m_returnTo: 3
+  m_disableOnInvisible: 1
+  m_alwaysActive: 1
 --- !u!1 &6368623173622662628
 GameObject:
   m_ObjectHideFlags: 0
@@ -4944,7 +4961,7 @@ Transform:
   m_GameObject: {fileID: 6368623173622662628}
   m_LocalRotation: {x: -0.51864433, y: 0.4806331, z: 0.4806332, w: -0.51864403}
   m_LocalPosition: {x: -0.09, y: 1.86, z: -1.23}
-  m_LocalScale: {x: 0.88936, y: 0.88936, z: 0.88936}
+  m_LocalScale: {x: 1.88936, y: 1.88936, z: 1.88936}
   m_Children: []
   m_Father: {fileID: 89599947544490989}
   m_RootOrder: 2
@@ -5006,7 +5023,7 @@ Animator:
   m_Avatar: {fileID: 0}
   m_Controller: {fileID: 9100000, guid: 04c4f6bd5f8f64c43a7e5a1456e4d3d0, type: 2}
   m_CullingMode: 0
-  m_UpdateMode: 0
+  m_UpdateMode: 2
   m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
   m_WarningMessage: 

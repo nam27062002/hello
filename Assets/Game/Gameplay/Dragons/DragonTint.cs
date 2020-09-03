@@ -12,6 +12,11 @@ public class DragonTint : MonoBehaviour {
     Renderer[] m_renderers = null;
     List<Renderer> m_dragonRenderers = new List<Renderer>();
 
+    public List<Material> GetDragonMaterials
+    {
+        get { return m_materials; }
+    }
+
     int m_materialsCount = 0;
     List<Material> m_materials = new List<Material>();
     List<Color> m_materialsMultiplyColors = new List<Color>();
@@ -50,6 +55,8 @@ public class DragonTint : MonoBehaviour {
     private bool m_criticalOn = false;
 
     public bool m_reduceInnerColorInsideWater = false;
+
+    [SerializeField] bool m_enableDissolve;
 
     // Use this for initialization
     IEnumerator Start() {
@@ -214,6 +221,8 @@ public class DragonTint : MonoBehaviour {
         if (!m_health.IsAlive()) {
             // To alpha
             m_deathAlpha -= Time.deltaTime * 1.0f / Time.timeScale * 0.5f;
+            if (m_enableDissolve)
+                return;
         } else {
             // To opaque
             m_deathAlpha += Time.deltaTime;
