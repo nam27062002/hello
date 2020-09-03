@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using GameConstants.Materials;
 
 public class DragonDissolveEffect : MonoBehaviour
 {
@@ -19,7 +20,7 @@ public class DragonDissolveEffect : MonoBehaviour
     List<Material> m_material = new List<Material>();
     float m_delay;
     float m_time;
-
+    
     void Awake()
     {
         Reset();
@@ -37,16 +38,16 @@ public class DragonDissolveEffect : MonoBehaviour
     {
         if (m_material.Count == 0)
             m_material = m_dragonTint.GetDragonMaterials;
-
+        
         for (int i = 0; i < m_material.Count; i++)
         {
-            m_material[i].DisableKeyword("FXLAYER_REFLECTION");
-            m_material[i].EnableKeyword("FXLAYER_DISSOLVE");
-            m_material[i].SetTexture("_FireMap", m_dissolveNoiseTexture);
-            m_material[i].SetFloat("_DissolveUpperLimit", m_dissolveUpperLimit);
-            m_material[i].SetFloat("_DissolveLowerLimit", m_dissolveLowerLimit);
-            m_material[i].SetFloat("_DissolveMargin", m_dissolveMargin);
-            m_material[i].SetVector("_DissolveDirection", m_dissolveDirection);
+            m_material[i].DisableKeyword(Keyword.FX_REFLECTION);
+            m_material[i].EnableKeyword(Keyword.FX_DISSOLVE);
+            m_material[i].SetTexture(Property.FIRE_MAP, m_dissolveNoiseTexture);
+            m_material[i].SetFloat(Property.DISSOLVE_UPPER_LIMIT, m_dissolveUpperLimit);
+            m_material[i].SetFloat(Property.DISSOLVE_LOWER_LIMIT, m_dissolveLowerLimit);
+            m_material[i].SetFloat(Property.DISSOLVE_MARGIN, m_dissolveMargin);
+            m_material[i].SetVector(Property.DISSOLVE_DIRECTION, m_dissolveDirection);
         }
 
         enabled = true;
@@ -68,7 +69,7 @@ public class DragonDissolveEffect : MonoBehaviour
     {
         for (int i = 0; i < m_material.Count; i++)
         {
-            m_material[i].SetFloat("_DissolveAmount", 1.0f - alpha);
+            m_material[i].SetFloat(Property.DISSOLVE_AMOUNT, 1.0f - alpha);
         }
     }
 }
