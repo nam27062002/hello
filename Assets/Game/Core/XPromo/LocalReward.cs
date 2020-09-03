@@ -22,14 +22,6 @@ namespace XPromo
 	public class LocalReward
 	{
 
-		//------------------------------------------------------------------------//
-		// ENUM                     											  //
-		//------------------------------------------------------------------------//
-		public enum Destination
-		{
-			HD,
-			HSE
-		}
 
 		//------------------------------------------------------------------------//
 		// CONSTS               												  //
@@ -43,17 +35,15 @@ namespace XPromo
 		//------------------------------------------------------------------------//
 
 		protected bool m_enabled;
-        protected int m_day;
+		public bool enabled { get { return m_enabled; } }
+
+		protected int m_day;
+        public int day { get { return m_day;  } }
+
+		protected int m_priority;
+        public int priority {  get { return m_priority;  } }
+
 		protected XPromoManager.Game m_destination;
-
-        public bool enabled { get => m_enabled;}
-
-
-        //------------------------------------------------------------------------//
-        // GENERIC METHODS														  //
-        //------------------------------------------------------------------------//
-
-
 
 
         //------------------------------------------------------------------------//
@@ -123,9 +113,34 @@ namespace XPromo
 			localReward.m_destination = destination;
 			localReward.m_day = _def.GetAsInt("day");
 			localReward.m_enabled = _def.GetAsBool("enabled");
+			localReward.m_priority = _def.GetAsInt("priority");
 
 			return localReward;
                        
+		}
+
+		/// <summary>
+		/// Compare two definitions by day
+		/// </summary>
+		/// <param name="_def1">First definitions to be compared.</param>
+		/// <param name="_def2">Second definitions to be compared.</param>
+		/// <returns>The result of the comparison (-1, 0, 1).</returns>
+		public static int CompareDefsByDay(DefinitionNode _def1, DefinitionNode _def2)
+		{
+            int result = _def1.GetAsFloat("day", 0).CompareTo(_def2.GetAsFloat("day", 0));
+			return result;
+		}
+
+		/// <summary>
+		/// Compare two definitions by priority
+		/// </summary>
+		/// <param name="_def1">First definitions to be compared.</param>
+		/// <param name="_def2">Second definitions to be compared.</param>
+		/// <returns>The result of the comparison (-1, 0, 1).</returns>
+		public static int CompareDefsByPriority(DefinitionNode _def1, DefinitionNode _def2)
+		{
+			int result = _def1.GetAsFloat("priority", 0).CompareTo(_def2.GetAsFloat("priority", 0));
+			return result;
 		}
 
 	}

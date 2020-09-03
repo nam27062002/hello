@@ -455,7 +455,8 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
 		Offers,
 		Loading,
         Addressables,
-        DailyRewards
+        DailyRewards,
+        XPromo
     };
     
     private static Dictionary<ELogChannel, string> sm_logChannelColors;
@@ -474,7 +475,8 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
 		Log_SetupChannel(ELogChannel.Loading, "Loading", Colors.darkGray);
         Log_SetupChannel(ELogChannel.Addressables, "Addressables", Colors.lime);
         Log_SetupChannel(ELogChannel.DailyRewards, "DailyRewards", Colors.magenta);
-    }
+		Log_SetupChannel(ELogChannel.XPromo, "XPromo", Colors.magenta);
+	}
 
     private static string Log_GetChannelColor(ELogChannel channel)
     {

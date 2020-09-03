@@ -1450,9 +1450,21 @@ public class UserProfile : UserPersistenceSystem
 			m_dailyRewards.Generate();	// Generate a new sequence
 		}
 
+		key = "xPromo";
+		Debug.Log(Colors.cyan.Tag("LOADING XPROMO"));
+		if (_data.ContainsKey(key))
+		{
+			Debug.Log(Colors.lime.Tag("VALID DATA!!\n") + new JsonFormatter().PrettyPrint(_data[key].ToString()));
+			XPromoManager.instance.xPromoCycle.LoadData(_data[key]);
+		}
+		else
+		{
+			Debug.Log(Colors.red.Tag("INVALID DATA!"));
+		}
+
 		// Offer Packs
-        // Old version. transform to offer packs v2
-        if ( _data.ContainsKey( "offerPacks" ) || _data.ContainsKey("offerPacksRotationalHistory") )
+		// Old version. transform to offer packs v2
+		if ( _data.ContainsKey( "offerPacks" ) || _data.ContainsKey("offerPacksRotationalHistory") )
         {
             UpdateOfferPacksPersistance( _data );
         }
@@ -1817,8 +1829,19 @@ public class UserProfile : UserPersistenceSystem
 			Debug.Log(Colors.red.Tag("DAILY REWARDS: INVALID DATA!"));
 		}
 
+		// XPromo
+		JSONClass xPromoData = XPromoManager.instance.xPromoCycle.SaveData();
+		if (xPromoData != null)
+		{  // Can be null if the sequence was never generated
+			data.Add("xPromo", xPromoData);
+		}
+		else
+		{
+			Debug.Log(Colors.red.Tag("XPROMO: INVALID DATA!"));
+		}
+
 		// Offer packs
-        JSONClass newOffersData = new SimpleJSON.JSONClass();
+		JSONClass newOffersData = new SimpleJSON.JSONClass();
         int count = (int)OfferPack.Type.COUNT;
         for (int i = 0; i < count; i++) {
             JSONArray array = new JSONArray();
