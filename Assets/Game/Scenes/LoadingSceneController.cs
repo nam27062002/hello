@@ -18,6 +18,7 @@ using System.Diagnostics;
 using TMPro;
 using System.Text.RegularExpressions;
 using System.Collections.Generic;
+using FirebaseWrapper;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -253,12 +254,12 @@ public class LoadingSceneController : SceneController {
         CaletySettings settingsInstance = Resources.Load<CaletySettings>("CaletySettings");
         if (settingsInstance.m_bUseDynamicLinks)
         {
-            CaletyDynamicLinks.setDynamicLinksDataReceivedCallback(OnDynamicLinksDataReceived);
-            CaletyDynamicLinks.setDynamicLinksParameters(settingsInstance.m_strDynamicLinksDomain, settingsInstance.m_strDynamicLinksBaseLink, settingsInstance.m_iOSAppStoreID);
+            DynamicLinksWrapper.setDynamicLinksDataReceivedCallback(OnDynamicLinksDataReceived);
+            DynamicLinksWrapper.setDynamicLinksParameters(settingsInstance.m_strDynamicLinksDomain, settingsInstance.m_strDynamicLinksBaseLink, settingsInstance.m_iOSAppStoreID);
         }
 
         // Initialize Firebase
-        CaletyFirebaseWrapper.initialise();
+        FirebaseInit.initialise();
 
         // Call parent
         base.Awake();

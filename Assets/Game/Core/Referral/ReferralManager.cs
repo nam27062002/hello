@@ -11,6 +11,7 @@ using UnityEngine;
 using System;
 using System.Collections.Generic;
 using SimpleJSON;
+using FirebaseWrapper;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -370,17 +371,17 @@ public class ReferralManager : Singleton<ReferralManager> {
 		m_inviteOrigin = _origin;
 
 		// Get the link to share from firebase
-		CaletyDynamicLinks.createLinkUserInvite(userId, OnShortLinkCreated);
+		DynamicLinksWrapper.createLinkUserInvite(userId, OnShortLinkCreated);
 	}
 
 	/// <summary>
 	/// Delegate for receiving the referral shortlink from firebase
 	/// </summary>
 	/// <param name="_link"></param>
-	public void OnShortLinkCreated(string _shortLink, CaletyDynamicLinks.shortLinkResult result) {
+	public void OnShortLinkCreated(string _shortLink, DynamicLinksWrapper.shortLinkResult result) {
 		switch(result) {
 
-			case CaletyDynamicLinks.shortLinkResult.OK:
+			case DynamicLinksWrapper.shortLinkResult.OK:
 				string title = LocalizationManager.SharedInstance.Localize("TID_REFERRAL_SHARE_TITLE");
 
 				// Open the share dialog
@@ -395,8 +396,8 @@ public class ReferralManager : Singleton<ReferralManager> {
 				break;
 
 
-			case CaletyDynamicLinks.shortLinkResult.CANCELLED:
-			case CaletyDynamicLinks.shortLinkResult.FAULTED:
+			case DynamicLinksWrapper.shortLinkResult.CANCELLED:
+			case DynamicLinksWrapper.shortLinkResult.FAULTED:
 				// Show error popup in the game
 				string text = LocalizationManager.SharedInstance.Localize("TID_GEN_ERROR");
 				UIFeedbackText.CreateAndLaunch(
