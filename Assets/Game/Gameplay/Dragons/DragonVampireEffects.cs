@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 
-[RequireComponent(typeof(DragonTint))]
 [RequireComponent(typeof(DragonDissolveEffect))]
 public class DragonVampireEffects : MonoBehaviour
 {
@@ -42,13 +41,13 @@ public class DragonVampireEffects : MonoBehaviour
         Messenger.RemoveListener<DamageType, Transform>(MessengerEvents.PLAYER_KO, OnPlayerKo);
     }
 
-    void OnPlayerRevive(DragonPlayer.ReviveReason reviveReason)
+    void OnPlayerRevive(DragonPlayer.ReviveReason _reviveReason)
     {
         // Reset dissolve effect
         m_dissolveEffect.Reset();
     }
 
-    void OnPlayerKo(DamageType arg1, Transform arg2)
+    void OnPlayerKo(DamageType _damageType, Transform _transform)
     {
         // Spawn death particle effect
         m_deathParticleInstance.transform.SetPositionAndRotation(m_deathAttachpoint.position, transform.rotation);
