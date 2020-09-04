@@ -155,7 +155,8 @@ public class ContentManager
 			"Rules/offerSettings",
 			"Rules/ftuxSettings",
             "Rules/UISettings",
-            "Rules/xPromoSettings"
+            "Rules/xPromoSettings",
+            "Rules/rewardAdModifierSettings"
         });
 
 		kDefinitionFiles.Add(DefinitionsCategory.SEASONS, new string[] { "Rules/seasonsDefinitions" });

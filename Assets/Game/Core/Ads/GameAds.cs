@@ -14,7 +14,8 @@ public class GameAds : Singleton<GameAds>, IBroadcastListener {
         EVENT_SCORE_X2,
         INTERSTITIAL,
 		DAILY_REWARD_DOUBLE,
-		FREE_OFFER_PACK
+		FREE_OFFER_PACK,
+        RUN_REWARD_MULTIPLIER
     };
 
     private const string INTERSTITIAL_RUNS_KEY = "GameAds.InterstitialRuns";
