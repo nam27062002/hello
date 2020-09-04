@@ -41,6 +41,7 @@ namespace GameConstants {
             public static readonly int DISSOLVE_DIRECTION = Shader.PropertyToID("_DissolveDirection");
             public static readonly int DISSOLVE_AMOUNT = Shader.PropertyToID("_DissolveAmount");
 
+            public static readonly int VERTEX_SCALE_Z = Shader.PropertyToID("_VertexScaleZ");
 
             public static readonly int COLOR_RAMP_ID_0 = Shader.PropertyToID("_ColorRampID0");
             public static readonly int COLOR_RAMP_ID_1 = Shader.PropertyToID("_ColorRampID1");

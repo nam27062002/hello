@@ -133,6 +133,12 @@ public class CPResultsScreenTest : MonoBehaviour {
 		set { Prefs.SetFloatPlayer(SURVIVAL_BONUS, value); }
 	}
 
+	public const string CUSTOM_SURVIVAL_BONUS = "RESULTS_CUSTOM_SURVIVAL_BONUS";
+	public static bool customSurvivalBonus {
+		get { return Prefs.GetBoolPlayer(CUSTOM_SURVIVAL_BONUS, false); }
+		set { Prefs.SetBoolPlayer(CUSTOM_SURVIVAL_BONUS, value); }
+	}
+
 	//------------------------------------------------------------------------//
 	// PROGRESSION															  //
 	//------------------------------------------------------------------------//
@@ -178,6 +184,8 @@ public class CPResultsScreenTest : MonoBehaviour {
 	[Space]
 	[SerializeField] private TMP_InputField m_coinsValueInput = null;
 	[SerializeField] private TMP_InputField m_timeValueInput = null;
+	[SerializeField] private Toggle m_customSurvivalBonusToggle = null;
+	[SerializeField] private CanvasGroup m_customSurvivalBonusGroup = null;
 	[SerializeField] private TMP_InputField m_survivalBonusInput = null;
 
 	// Progression
@@ -210,9 +218,25 @@ public class CPResultsScreenTest : MonoBehaviour {
 		m_highScoreValueInput.onValueChanged.AddListener(_text => highScoreValue = long.Parse(_text, NumberStyles.Any, CultureInfo.InvariantCulture));
 		m_newHighScoreToggle.onValueChanged.AddListener(_toggled => newHighScore = _toggled);
 
-		m_coinsValueInput.onValueChanged.AddListener(_text => coinsValue = long.Parse(_text));
-		m_timeValueInput.onValueChanged.AddListener(_text => timeValue = float.Parse(_text, NumberStyles.Any, CultureInfo.InvariantCulture));
-		m_survivalBonusInput.onValueChanged.AddListener(_text => survivalBonus = long.Parse(_text, NumberStyles.Any, CultureInfo.InvariantCulture));
+		m_coinsValueInput.onValueChanged.AddListener(
+			(string _text) => {
+				coinsValue = long.Parse(_text);
+				if(!customSurvivalBonus) RefreshSurvivalBonus(false);
+			}
+		);
+		m_timeValueInput.onValueChanged.AddListener(
+			(string _text) => {
+				timeValue = float.Parse(_text, NumberStyles.Any, CultureInfo.InvariantCulture);
+				if(!customSurvivalBonus) RefreshSurvivalBonus(false);
+			}
+		);
+		m_survivalBonusInput.onValueChanged.AddListener(
+			(string _text) => {
+				// Save new survival bonus only if custom survival bonus is enabled
+				if(customSurvivalBonus) survivalBonus = long.Parse(_text, NumberStyles.Any, CultureInfo.InvariantCulture);
+			}
+		);
+		m_customSurvivalBonusToggle.onValueChanged.AddListener(ToggleCustomSurvivalBonus);
 
 		m_xpInitialDeltaSlider.minValue = 0f;
 		m_xpInitialDeltaSlider.maxValue = 1f;
@@ -249,14 +273,39 @@ public class CPResultsScreenTest : MonoBehaviour {
 
 		m_coinsValueInput.text = coinsValue.ToString();
 		m_timeValueInput.text = timeValue.ToString();
-		m_survivalBonusInput.text = survivalBonus.ToString();
+		m_customSurvivalBonusToggle.isOn = customSurvivalBonus;
+		RefreshSurvivalBonus(customSurvivalBonus);
 
 		m_xpInitialDeltaSlider.value = xpInitialDelta;
 		m_xpFinalDeltaSlider.value = xpFinalDelta;
 		m_nextDragonLockedToggle.isOn = nextDragonLocked;
 	}
 
+	/// <summary>
+	/// Refresh the survival bonus widgets.
+	/// </summary>
+	private void RefreshSurvivalBonus(bool _customSurvivalBonusToggled) {
+		// Interactable?
+		m_customSurvivalBonusGroup.interactable = _customSurvivalBonusToggled;
+		m_customSurvivalBonusGroup.alpha = _customSurvivalBonusToggled ? 1 : .5f;
+
+		// If toggled, put custom value in the textfield. Otherwise, put computed value using content formula.
+		if(_customSurvivalBonusToggled) {
+			m_survivalBonusInput.text = survivalBonus.ToString();
+		} else {
+			m_survivalBonusInput.text = RewardManager.instance.CalculateSurvivalBonus(timeValue, coinsValue).ToString();
+		}
+	}
+
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Toggle custom survival bonus on or off.
+	/// </summary>
+	/// <param name="_toggled"></param>
+	private void ToggleCustomSurvivalBonus(bool _toggled) {
+		customSurvivalBonus = _toggled;
+		RefreshSurvivalBonus(_toggled);
+	}
 }

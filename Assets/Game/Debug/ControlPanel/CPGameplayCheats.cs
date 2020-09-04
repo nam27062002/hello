@@ -18,28 +18,28 @@ public class CPGameplayCheats : MonoBehaviour {
     public void OnAddXP() {
         Reward reward = new Reward();
         reward.xp = long.Parse(m_numberInput.text, NumberStyles.Any, CultureInfo.InvariantCulture);
-        RewardManager.instance.OnApplyCheatsReward(reward);
+        RewardManager.instance.DEBUG_ApplyReward(reward);
     }
 
     public void OnRemoveXP() {
         Reward reward = new Reward();
         reward.xp = -long.Parse(m_numberInput.text, NumberStyles.Any, CultureInfo.InvariantCulture);
-        RewardManager.instance.OnApplyCheatsReward(reward);
+        RewardManager.instance.DEBUG_ApplyReward(reward);
     }
 
     public void OnSetXP() {
         Reward reward = new Reward();
         reward.xp = long.Parse(m_numberInput.text, NumberStyles.Any, CultureInfo.InvariantCulture) - RewardManager.xp;
-        RewardManager.instance.OnApplyCheatsReward(reward);
+        RewardManager.instance.DEBUG_ApplyReward(reward);
     }
     //--------------------------------------------------------------------------
 
     //--------------------------------------------------------------------------
     public void OnSetCategoryKill() {
-        RewardManager.instance.SetCategoryKill(m_textInput.text, int.Parse(m_numberInput.text, NumberStyles.Any, CultureInfo.InvariantCulture));
+        RewardManager.instance.DEBUG_SetCategoryKill(m_textInput.text, int.Parse(m_numberInput.text, NumberStyles.Any, CultureInfo.InvariantCulture));
     }
     public void OnSetNPCKill() {
-        RewardManager.instance.SetNPCKill(m_textInput.text, int.Parse(m_numberInput.text, NumberStyles.Any, CultureInfo.InvariantCulture));
+        RewardManager.instance.DEBUG_SetNPCKill(m_textInput.text, int.Parse(m_numberInput.text, NumberStyles.Any, CultureInfo.InvariantCulture));
     }
     //--------------------------------------------------------------------------
 }
