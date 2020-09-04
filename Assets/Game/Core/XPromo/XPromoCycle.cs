@@ -32,6 +32,7 @@ public class XPromoCycle {
 
 	// Set of local x-promo rewards as defined in content
 	private List<XPromo.LocalReward> m_localRewards;
+	public List<XPromo.LocalReward> localRewards { get { return m_localRewards; } }
 
 
 	// Configuration from content
@@ -39,7 +40,9 @@ public class XPromoCycle {
 	private DateTime m_startDate;
 	private DateTime m_endDate;
 	private int m_minRuns;
-	private int m_cycleSize;
+
+    private int m_cycleSize;
+    public int cycleSize { get { return m_cycleSize;  } }
 
 	// Rewards status:
 

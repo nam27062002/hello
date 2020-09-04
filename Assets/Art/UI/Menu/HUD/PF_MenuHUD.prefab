@@ -3163,7 +3163,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.00011253, y: 0}
+  m_AnchoredPosition: {x: -0.00011444092, y: 0}
   m_SizeDelta: {x: 0.063446, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &222619636671764270
@@ -3954,7 +3954,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.7, y: 0.89}
+  m_AnchoredPosition: {x: -0.70000076, y: 0.8899994}
   m_SizeDelta: {x: 17.71, y: 25.82}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &222503438544615006
@@ -9664,7 +9664,7 @@ GameObject:
   - component: {fileID: 3884354517821296005}
   - component: {fileID: 969338544436656770}
   m_Layer: 5
-  m_Name: DailyRewardsButton
+  m_Name: XPromoButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9732,8 +9732,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 4459252050474026402}
-        m_MethodName: OnIconTap
+      - m_Target: {fileID: 1266356330}
+        m_MethodName: OnTapIcon
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -9868,9 +9868,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7332186411507638972}
-  - component: {fileID: 4459252050474026402}
   - component: {fileID: 5478600078199500928}
   - component: {fileID: 3017069767723993787}
+  - component: {fileID: 1266356330}
   m_Layer: 5
   m_Name: XpromoIcon
   m_TagString: Untagged
@@ -9898,20 +9898,6 @@ RectTransform:
   m_AnchoredPosition: {x: 240, y: 0}
   m_SizeDelta: {x: 130, y: 150}
   m_Pivot: {x: 0, y: 1}
---- !u!114 &4459252050474026402
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2522387600544708643}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3847dfeca8aca49c183cc9ea9fcb69e8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_rootAnim: {fileID: 2293628265214685284}
-  m_notification: {fileID: 6592480363558040346}
 --- !u!114 &5478600078199500928
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9980,6 +9966,18 @@ MonoBehaviour:
   m_hideDelay: 0
   m_showDelay: 0
   m_restartShowAnimation: 0
+--- !u!114 &1266356330
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2522387600544708643}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd74e876ca5aa49859b8dee61691b58f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3652009662110152837
 GameObject:
   m_ObjectHideFlags: 0
@@ -10231,7 +10229,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -22.6, y: -75.001}
+  m_AnchoredPosition: {x: -22.599998, y: -75.001}
   m_SizeDelta: {x: 80, y: 80}
   m_Pivot: {x: 0.3747373, y: 0.06248878}
 --- !u!222 &1598557826067570745
