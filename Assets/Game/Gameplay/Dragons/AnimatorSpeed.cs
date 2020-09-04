@@ -8,7 +8,7 @@ public class AnimatorSpeed : MonoBehaviour
 
     readonly int m_animParamSpeedId = Animator.StringToHash("speed");
 
-    void Start()
+    void OnEnable()
     {
         m_animator.SetFloat(m_animParamSpeedId, speed);
     }
