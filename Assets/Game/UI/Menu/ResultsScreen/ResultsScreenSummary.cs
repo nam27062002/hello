@@ -47,9 +47,19 @@ public class ResultsScreenSummary : MonoBehaviour {
 	[SerializeField] private ShowHideAnimator m_collectiblesAnim = null;
 	[SerializeField] private ShowHideAnimator m_missionsAnim = null;
 
+	[Separator("Other Parameters")]
+	[SerializeField] private Color m_coinsBonusColor = Color.green;
+
+	// Internal
+	private Color m_coinsDefaultColor = Color.white;
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
+	protected void Awake() {
+		// Init some vars
+		m_coinsDefaultColor = m_coinsText.color;
+	}
 
 	//------------------------------------------------------------------------//
 	// PUBLIC METHODS														  //
@@ -111,9 +121,17 @@ public class ResultsScreenSummary : MonoBehaviour {
 	/// Show the coins slot.
 	/// </summary>
 	/// <param name="_coins">Number of collected coins.</param>
-	public void ShowCoins(long _coins) {
+	/// <param name="_bonusApplied">Whether any kind of bonus has been applied or not.</param>
+	public void ShowCoins(long _coins, bool _bonusApplied) {
 		// Set text
 		m_coinsText.text = StringUtils.FormatNumber(_coins);
+
+		// Set color based on whether the amount is bonified or not
+		if(_bonusApplied) {
+			m_coinsText.color = m_coinsBonusColor;
+		} else {
+			m_coinsText.color = m_coinsDefaultColor;
+		}
 
 		// Show element
 		ShowElement(m_coinsAnim, true);

@@ -19,7 +19,7 @@ using SimpleJSON;
 /// 
 /// </summary>
 [Serializable]
-public class ReferralManager {
+public class ReferralManager : Singleton<ReferralManager> {
 	//------------------------------------------------------------------------//
 	// CONSTANTS                											  //
 	//------------------------------------------------------------------------//
@@ -34,17 +34,6 @@ public class ReferralManager {
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
-	// Singleton instance
-	private static ReferralManager m_instance = null;
-	public static ReferralManager instance {
-		get {
-			if(m_instance == null) {
-				m_instance = new ReferralManager();
-			}
-			return m_instance;
-		}
-	}
-
 	// Deep linking
 	private bool m_deepLinkReceived = false;
 	private Dictionary<string, string> m_deepLinkParams = null;
