@@ -247,7 +247,22 @@ public class SpawnerRoulette : MonoBehaviour, ISpawner {
 		}
 	}
 
-	private int GetPrefabIndex() { return (m_currentPoolHandlerIndex + 1) % m_entityPrefabList.Length; }
+	private int GetPrefabIndex()
+    {
+		int i;
+		float rand = Random.Range(0f, 100f);
+
+		for (i = 0; i < m_entityPrefabList.Length - 1; ++i)
+		{
+			float prob = m_entityPrefabList[i].chance;
+			if (rand <= prob)
+			{
+				break;
+			}
+		}
+
+		return i;
+	}
 
 	public void RemoveEntity(IEntity _entity, bool _killedByPlayer) {
 
