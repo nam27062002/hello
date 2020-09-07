@@ -1,39 +1,33 @@
 <Definitions>
-	<Definition sku="CLUSTER_TREE_001_RULE_001" rule="['GROUP_1','GROUP_2','GROUP_3','GROUP_4', 'TIER_1'].indexOf(model.countryGroup) &gt;= 0" />
-	<Definition sku="CLUSTER_TREE_001_RULE_002" rule="model.score &gt;= 1786e+1" />
+	<Definition sku="CLUSTER_TREE_001_RULE_001" rule="['GROUP_1','GROUP_2','GROUP_3','GROUP_4'].indexOf(model.countryGroup) &gt;= 0" />
+	<Definition sku="CLUSTER_TREE_001_RULE_002" rule="model.countryGroup == 'GROUP_1'" />
 	<Definition sku="CLUSTER_TREE_001_RULE_003" rule="model.deviceProfile != 0" />
-	<Definition sku="CLUSTER_TREE_001_RULE_004" rule="['GROUP_1','GROUP_2'].indexOf(model.countryGroup) &gt;= 0" />
-	<Definition sku="CLUSTER_TREE_001_RULE_005" rule="model.countryGroup == 'GROUP_1'" />
-	<Definition sku="CLUSTER_TREE_001_RULE_006" rule="model.score &gt;= 1092e+1" />
-	<Definition sku="CLUSTER_TREE_001_RULE_007" rule="model.deviceProfile &gt;= 3" />
-	<Definition sku="CLUSTER_TREE_001_RULE_008" rule="['Amazon','Google','Huawei','ipad','ipod','iphone','Lenovo','Lge','OnePlus','Other','Samsung','Sony'].indexOf(model.modelGroup) &gt;= 0" />
-	<Definition sku="CLUSTER_TREE_001_RULE_009" rule="model.shopEntered" />
-	<Definition sku="CLUSTER_TREE_001_RULE_010" rule="model.score &gt;= 671e+2" />
-	<Definition sku="CLUSTER_TREE_001_RULE_011" rule="model.deviceProfile == 4" />
-	<Definition sku="CLUSTER_TREE_001_RULE_012" rule="['GROUP_6','GROUP_7'].indexOf(model.countryGroup) &gt;=0 " />
-	<Definition sku="CLUSTER_TREE_001_RULE_013" rule="model.score &gt;= 10344" />
-	<Definition sku="CLUSTER_TREE_002_RULE_001" rule="['GROUP_1','GROUP_2','GROUP_3','GROUP_4', 'TIER_1'].indexOf(model.countryGroup) &gt;= 0" />
-	<Definition sku="CLUSTER_TREE_002_RULE_002" rule="model.deviceProfile == 4" />
+	<Definition sku="CLUSTER_TREE_001_RULE_004" rule="model.deviceProfile == 4" />
+	<Definition sku="CLUSTER_TREE_001_RULE_005" rule="model.score &gt;= 7836e+1" />
+	<Definition sku="CLUSTER_TREE_001_RULE_006" rule="model.score &gt;= 8966e+1" />
+	<Definition sku="CLUSTER_TREE_001_RULE_007" rule="model.score &gt;= 5753e+1" />
+	<Definition sku="CLUSTER_TREE_001_RULE_008" rule="['GROUP_5','GROUP_6','GROUP_7','TIER_1'].indexOf(model.countryGroup) &gt;=0 " />
+	<Definition sku="CLUSTER_TREE_001_RULE_009" rule="['Asus','Google','Huawei','ipad','Lge','Oppo','Samsung','Sony','Vivo','Xiaomi'].indexOf(model.modelGroup) &gt;= 0" />
+	<Definition sku="CLUSTER_TREE_001_RULE_010" rule="['Google','Huawei','ipad','iphone','Lge','Samsung','Sony'].indexOf(model.modelGroup) &gt;= 0" />
+	<Definition sku="CLUSTER_TREE_001_RULE_011" rule="model.shopEntered" />
+	<Definition sku="CLUSTER_TREE_001_RULE_012" rule="model.shopEntered" />
+	<Definition sku="CLUSTER_TREE_002_RULE_001" rule="['GROUP_1','GROUP_2','GROUP_3','GROUP_4'].indexOf(model.countryGroup) &gt;= 0" />
+	<Definition sku="CLUSTER_TREE_002_RULE_002" rule="model.score &gt;= 8262e+1" />
 	<Definition sku="CLUSTER_TREE_002_RULE_003" rule="model.deviceProfile != 0" />
-	<Definition sku="CLUSTER_TREE_002_RULE_004" rule="model.score &gt;= 9295" />
+	<Definition sku="CLUSTER_TREE_002_RULE_004" rule="['GROUP_1','GROUP_2'].indexOf(model.countryGroup) &gt;= 0" />
 	<Definition sku="CLUSTER_TREE_002_RULE_005" rule="['GROUP_1','GROUP_2'].indexOf(model.countryGroup) &gt;= 0" />
-	<Definition sku="CLUSTER_TREE_002_RULE_006" rule="model.score &gt;= 11265" />
-	<Definition sku="CLUSTER_TREE_002_RULE_007" rule="['GROUP_1','GROUP_2'].indexOf(model.countryGroup) &gt;= 0" />
-	<Definition sku="CLUSTER_TREE_002_RULE_008" rule="model.fireRushes &gt; 5" />
-	<Definition sku="CLUSTER_TREE_002_RULE_009" rule="model.gemsSpent &gt; 0" />
-	<Definition sku="CLUSTER_TREE_002_RULE_010" rule="model.fireRushes &lt;= 5" />
-	<Definition sku="CLUSTER_TREE_002_RULE_011" rule="['GROUP_6','GROUP_7'].indexOf(model.countryGroup) &gt;=0 " />
-	<Definition sku="CLUSTER_TREE_002_RULE_012" rule="model.score &gt;= 39496" />
+	<Definition sku="CLUSTER_TREE_002_RULE_006" rule="model.score &gt;= 8808e+1" />
+	<Definition sku="CLUSTER_TREE_002_RULE_007" rule="model.deviceProfile == 4" />
+	<Definition sku="CLUSTER_TREE_002_RULE_008" rule="model.shopEntered" />
 	<Definition sku="CLUSTER_TREE_003_RULE_001" rule="['GROUP_1','GROUP_2','GROUP_3','GROUP_4'].indexOf(model.countryGroup) &gt;= 0" />
-	<Definition sku="CLUSTER_TREE_003_RULE_002" rule="model.deviceProfile == 4" />
+	<Definition sku="CLUSTER_TREE_003_RULE_002" rule="model.score &gt;= 6027" />
 	<Definition sku="CLUSTER_TREE_003_RULE_003" rule="model.deviceProfile != 0" />
-	<Definition sku="CLUSTER_TREE_003_RULE_004" rule="model.score &gt;= 7676" />
-	<Definition sku="CLUSTER_TREE_003_RULE_005" rule="model.countryGroup == 'GROUP_1'" />
-	<Definition sku="CLUSTER_TREE_003_RULE_006" rule="model.score &gt;= 1086e+1" />
-	<Definition sku="CLUSTER_TREE_003_RULE_007" rule="model.maxProgression &gt;= 106" />
-	<Definition sku="CLUSTER_TREE_003_RULE_008" rule="model.shopEntered" />
-	<Definition sku="CLUSTER_TREE_003_RULE_009" rule="['Asus','ipad','Lge','Motorola'].indexOf(model.modelGroup) &gt;= 0" />
-	<Definition sku="CLUSTER_TREE_003_RULE_010" rule="model.deviceProfile == 4" />
-	<Definition sku="CLUSTER_TREE_003_RULE_011" rule="model.maxProgression &gt;= 52" />
-	<Definition sku="CLUSTER_TREE_003_RULE_012" rule="['GROUP_1','GROUP_2','GROUP_3'].indexOf(model.countryGroup) &gt;= 0" />
+	<Definition sku="CLUSTER_TREE_003_RULE_004" rule="['GROUP_1','GROUP_2'].indexOf(model.countryGroup) &gt;= 0" />
+	<Definition sku="CLUSTER_TREE_003_RULE_005" rule="['GROUP_1','GROUP_2'].indexOf(model.countryGroup) &gt;= 0" />
+	<Definition sku="CLUSTER_TREE_003_RULE_006" rule="model.score &gt;= 8127e+1" />
+	<Definition sku="CLUSTER_TREE_003_RULE_007" rule="model.deviceProfile == 4" />
+	<Definition sku="CLUSTER_TREE_003_RULE_008" rule="['GROUP_5','GROUP_6','GROUP_7','TIER_1'].indexOf(model.countryGroup) &gt;=0 " />
+	<Definition sku="CLUSTER_TREE_003_RULE_009" rule="model.score &gt;= 14,46e+3" />
+	<Definition sku="CLUSTER_TREE_003_RULE_010" rule="model.shopEntered" />
+	<Definition sku="CLUSTER_TREE_003_RULE_011" rule="['Asus','Google','Huawei','ipad','Lge','Oppo','Other','Samsung','Sony','Vivo','Xiaomi'].indexOf(model.modelGroup) &gt;= 0" />
 </Definitions>
