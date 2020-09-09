@@ -53,7 +53,9 @@ public class FlavourFactory
         "Junk/PF_BadJunkBone",
         "Junk/PF_BadJunkEye",
         "Junk/PF_BadJunkFrog",
-        "Junk/PF_BadJunkMagicBottle"
+        "Junk/PF_BadJunkMagicBottle",
+        "Seasonal/PF_Zombie_Ground",
+        "World/InflammableDestructible/PF_Grave_Zombie"
     };
 
     // The following audio clips cannot be played on China flavour, due to new China law
