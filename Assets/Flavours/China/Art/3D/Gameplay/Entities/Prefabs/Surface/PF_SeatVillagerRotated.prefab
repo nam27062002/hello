@@ -424,7 +424,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f45dfbaed20447daa07123ab6b7cd80, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_seasonalItems: []
+  m_seasonalItems:
+  - season: xmas
+    groups:
+    - name: Hat
+      probability: 0.8
+      items:
+      - equipablePrefabName: PF_Christmas_Hat
+        defaultItemLOW: 0
+        probability: 1
+        toDisableOnEquip: []
+        position: {x: -0.091057025, y: 0.6327226, z: -0.090808466}
+        scale: {x: 0.77368295, y: 0.77368295, z: 0.77368295}
+        rotation: {x: -0, y: 337.81693, z: 0}
 --- !u!1 &176664
 GameObject:
   m_ObjectHideFlags: 0
@@ -632,7 +644,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1159957525811902}
-  m_LocalRotation: {x: 0.4796844, y: -0.51951367, z: -0.47969264, w: 0.51952237}
+  m_LocalRotation: {x: -0.49999994, y: 0.5000001, z: 0.5000001, w: -0.49999994}
   m_LocalPosition: {x: 0.000004050925, y: 1.9212219, z: 0.027839527}
   m_LocalScale: {x: 1.0000013, y: 1.000001, z: 1.0000011}
   m_Children: []

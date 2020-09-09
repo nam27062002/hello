@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 11449904}
   - component: {fileID: 136000011231704714}
   - component: {fileID: 54000010887478324}
+  - component: {fileID: 114525582499422954}
   m_Layer: 21
   m_Name: PF_Villager04_Static
   m_TagString: Untagged
@@ -38,6 +39,7 @@ Transform:
   - {fileID: 4000011390334812}
   - {fileID: 4000011408368702}
   - {fileID: 4000012739181878}
+  - {fileID: 3907703665285843329}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -62,7 +64,7 @@ MonoBehaviour:
   m_pilot: {fileID: 11441020}
   m_machine: {fileID: 114309327233998120}
   m_viewControl: {fileID: 11459890}
-  m_equip: {fileID: 0}
+  m_equip: {fileID: 114525582499422954}
   m_sku: Villager01
   m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1
@@ -433,6 +435,55 @@ Rigidbody:
   m_Interpolate: 1
   m_Constraints: 112
   m_CollisionDetection: 0
+--- !u!114 &114525582499422954
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 131698}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1f45dfbaed20447daa07123ab6b7cd80, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_seasonalItems:
+  - season: xmas
+    groups:
+    - name: Hat
+      probability: 0.7
+      items:
+      - equipablePrefabName: PF_Christmas_Hat
+        defaultItemLOW: 1
+        probability: 1
+        toDisableOnEquip: []
+        position: {x: 0, y: 0.20000005, z: 0.00000004172327}
+        scale: {x: 0.8, y: 0.8, z: 0.8}
+        rotation: {x: 3.4667878, y: 2.5206504, z: 359.51678}
+  - season: ufoDay
+    groups:
+    - name: Hat
+      probability: 1
+      items:
+      - equipablePrefabName: PF_Tinfoilhat_villager
+        defaultItemLOW: 1
+        probability: 1
+        toDisableOnEquip: []
+        position: {x: 0, y: 0.22000001, z: 0.04999928}
+        scale: {x: 1, y: 1, z: 1}
+        rotation: {x: 0, y: 0, z: 0}
+  - season: Alien
+    groups:
+    - name: Hat
+      probability: 0.9
+      items:
+      - equipablePrefabName: PF_AlienMask_villager
+        defaultItemLOW: 1
+        probability: 1
+        toDisableOnEquip: []
+        position: {x: 0, y: 0.23, z: 0.06000142}
+        scale: {x: 1, y: 1, z: 1}
+        rotation: {x: 0, y: 0, z: 0}
 --- !u!1 &176664
 GameObject:
   m_ObjectHideFlags: 0
@@ -749,6 +800,7 @@ Transform:
   m_Children:
   - {fileID: 4257381772438992}
   - {fileID: 4821476859486786}
+  - {fileID: 6822013248890337891}
   m_Father: {fileID: 475722}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -812,4 +864,190 @@ Transform:
   m_Children: []
   m_Father: {fileID: 4849407383565958}
   m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &86547376545380902
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8978397424284149076}
+  - component: {fileID: 6685522798839514532}
+  - component: {fileID: 6581310058279050011}
+  m_Layer: 21
+  m_Name: Head_2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8978397424284149076
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 86547376545380902}
+  m_LocalRotation: {x: -0.00000010430814, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.0000076293945, y: 1.1818328, z: 0.04175949}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 3907703665285843329}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6685522798839514532
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 86547376545380902}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ece7f0589cf74ddf97a0a63886f8499, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_point: 17
+--- !u!114 &6581310058279050011
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 86547376545380902}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9aae6699537414c7ab185eeaef226fe0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_parentName: Human_Head
+  m_parentRoot: {fileID: 475722}
+  m_worldPositionStays: 1
+  m_resetScale: 0
+  m_when: 0
+--- !u!1 &4326961421779181569
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 302536894144222325}
+  - component: {fileID: 1520728763392195530}
+  - component: {fileID: 6847730398527449132}
+  m_Layer: 21
+  m_Name: Head_1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &302536894144222325
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4326961421779181569}
+  m_LocalRotation: {x: -0.00000010430814, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.0000076293945, y: 1.1818328, z: 0.04175949}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 3907703665285843329}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1520728763392195530
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4326961421779181569}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ece7f0589cf74ddf97a0a63886f8499, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_point: 5
+--- !u!114 &6847730398527449132
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4326961421779181569}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9aae6699537414c7ab185eeaef226fe0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_parentName: Human_Head
+  m_parentRoot: {fileID: 475722}
+  m_worldPositionStays: 1
+  m_resetScale: 0
+  m_when: 0
+--- !u!1 &4328817112461777165
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3907703665285843329}
+  m_Layer: 21
+  m_Name: AttachPoints
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3907703665285843329
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4328817112461777165}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 302536894144222325}
+  - {fileID: 8978397424284149076}
+  m_Father: {fileID: 475722}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &4384295363374981743
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6822013248890337891}
+  m_Layer: 0
+  m_Name: Human_Head
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6822013248890337891
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4384295363374981743}
+  m_LocalRotation: {x: -0.49999997, y: 0.50000006, z: 0.50000006, w: -0.49999997}
+  m_LocalPosition: {x: 0.000004050925, y: 1.9212219, z: 0.027839527}
+  m_LocalScale: {x: 1.0000013, y: 1.000001, z: 1.0000011}
+  m_Children: []
+  m_Father: {fileID: 4849407383565958}
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
