@@ -41,9 +41,9 @@ public class XPromoCycle {
 	// Configuration from content
 	private Boolean m_enabled;
 	private DateTime m_startDate;
+    private DateTime m_recruitmentEndDate;
 	private DateTime m_endDate;
 	private int m_minRuns;
-
     private int m_cycleSize;
     public int cycleSize { get { return m_cycleSize;  } }
 
@@ -283,6 +283,10 @@ public class XPromoCycle {
 		if (serverTime < m_startDate || serverTime > m_endDate)
 			return false;
 
+        // The user is not recruited yet, and the recruitment period has ended
+        if ( ! IsRecruited()  && serverTime > m_recruitmentEndDate)
+            retrn false;
+
         // Has the xpromo cycle been completed?
         if (m_totalNextRewardIdx >= m_cycleSize)
 			return false;
@@ -293,7 +297,13 @@ public class XPromoCycle {
 
 	}
 
-
+    /// <summary>
+    /// Returns true if the player already started the cycle (collected the first reward)
+    /// </summary>
+    /// <returns></returns>
+    public bool IsRecruited(){
+        return m_totalNextRewardIdx > 0;
+    }
 
 	/// <summary>
 	/// Load all data from content tables
@@ -310,6 +320,11 @@ public class XPromoCycle {
 		if (settingsDef.Has("startDate"))
 		{
 			m_startDate = TimeUtils.TimestampToDate(settingsDef.GetAsLong("startDate", 0), false);
+		}
+
+        if (settingsDef.Has("recruitmentEndDate"))
+		{
+			m_recruitmentEndDate = TimeUtils.TimestampToDate(settingsDef.GetAsLong("recruitmentEndDate", 0), false);
 		}
 
 		if (settingsDef.Has("endDate"))
