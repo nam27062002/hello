@@ -18,6 +18,7 @@ using System.Diagnostics;
 using TMPro;
 using System.Text.RegularExpressions;
 using System.Collections.Generic;
+using FirebaseWrapper;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -246,18 +247,24 @@ public class LoadingSceneController : SceneController {
     /// Initialization.
     /// </summary>
     override protected void Awake() {
+        // Initializing referral manager before Firebase so we receive the deep link callback in time
+        ReferralManager.CreateInstance();
 
+        // Initialize Dynamic Links library (before Firebase)
         CaletySettings settingsInstance = Resources.Load<CaletySettings>("CaletySettings");
         if (settingsInstance.m_bUseDynamicLinks)
         {
-            CaletyDynamicLinks.setDynamicLinksDataReceivedCallback(OnDynamicLinksDataReceived);
-            CaletyDynamicLinks.setDynamicLinksParameters(settingsInstance.m_strDynamicLinksDomain, settingsInstance.m_strDynamicLinksBaseLink, settingsInstance.m_iOSAppStoreID);
+            DynamicLinksWrapper.setDynamicLinksDataReceivedCallback(OnDynamicLinksDataReceived);
+            DynamicLinksWrapper.setDynamicLinksParameters(settingsInstance.m_strDynamicLinksDomain, settingsInstance.m_strDynamicLinksBaseLink, settingsInstance.m_iOSAppStoreID);
         }
-        CaletyFirebaseWrapper.initialise();
+
+        // Initialize Firebase
+        FirebaseInit.initialise();
 
         // Call parent
         base.Awake();
 
+        // Initialize Application manager
         ApplicationManager.instance.Init();
 
         // We need to update the user id label when the user logs in 

@@ -41,6 +41,8 @@ uniform float4 _ColorAdd;
 uniform float _InnerLightAdd;
 uniform float4 _InnerLightColor;
 
+uniform float _VertexScaleZ;
+
 #ifdef FRESNEL
 uniform float _Fresnel;
 uniform float4 _FresnelColor;
@@ -137,14 +139,9 @@ v2f vert(appdata_t v)
 
 #endif
 
-#if defined(VERTEXSCALEZ)
 	float4x4 m = unity_ObjectToWorld;
-	m[2].xyzw *= 0.25;
+	m[2].xyzw *= _VertexScaleZ;
 	o.vertex = mul(UNITY_MATRIX_VP, mul(m, v.vertex));
-
-#else
-	o.vertex = UnityObjectToClipPos(v.vertex);
-#endif
 
 	o.texcoord = TRANSFORM_TEX(v.texcoord, _MainTex);
 

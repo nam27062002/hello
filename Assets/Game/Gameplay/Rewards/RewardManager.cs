@@ -63,7 +63,18 @@ public class RewardManager : Singleton<RewardManager>, IBroadcastListener {
 
 	// Score multiplier
 	[SerializeField] private ScoreMultiplier[] m_scoreMultipliers;
-	private int m_scoreMultiplierStreak = 0;	// Amount of consecutive eaten/burnt/destroyed entities without taking damage
+	private int m_scoreMultiplierStreak = 0;    // Amount of consecutive eaten/burnt/destroyed entities without taking damage
+
+	// Ad reward modifier settings
+	private RewardAdModifierSettings m_rewardAdModifierSettings = new RewardAdModifierSettings();
+	public static RewardAdModifierSettings rewardAdModifierSettings {
+		get { 
+			if(!instance.m_rewardAdModifierSettings.isInitialized) {
+				instance.m_rewardAdModifierSettings.InitFromDefinitions();
+			}
+			return instance.m_rewardAdModifierSettings;
+		}
+	}
 
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
@@ -395,6 +406,9 @@ public class RewardManager : Singleton<RewardManager>, IBroadcastListener {
 			// Store new multiplier
 			m_scoreMultipliers[i] = newMult;
 		}
+
+		// Init survival bonus data
+		ParseSurvivalBonus();
 	}
 
 	//------------------------------------------------------------------//
@@ -476,7 +490,7 @@ public class RewardManager : Singleton<RewardManager>, IBroadcastListener {
 	/// Adds the final rewards to the user profile. To be called at the end of 
 	/// the game.
 	/// </summary>
-	public static void ApplyEndOfGameRewards() {
+	public static void ApplyEndOfGameRewards(long _extraCoinsFromAdMultiplier) {
 		// Coins, PC and XP are applied in real time during gameplay
 		// Apply the rest of rewards
 
@@ -484,6 +498,11 @@ public class RewardManager : Singleton<RewardManager>, IBroadcastListener {
 		// [AOC] No survival bonus in tournament mode!
 		if(GameSceneController.mode != SceneController.Mode.TOURNAMENT) {
 			UsersManager.currentUser.EarnCurrency(UserProfile.Currency.SOFT, (ulong)instance.CalculateSurvivalBonus(), false, HDTrackingManager.EEconomyGroup.REWARD_RUN);
+		}
+
+		// Extra coins from Ad multiplier
+		if(_extraCoinsFromAdMultiplier > 0) {
+			UsersManager.currentUser.EarnCurrency(UserProfile.Currency.SOFT, (ulong)_extraCoinsFromAdMultiplier, false, HDTrackingManager.EEconomyGroup.REWARD_RUN);
 		}
 	}
 
@@ -506,16 +525,11 @@ public class RewardManager : Singleton<RewardManager>, IBroadcastListener {
 		return 0;
 	}
 
-    public void OnApplyCheatsReward(Reward _reward) {
-        ApplyReward(_reward, null);
-    }
-
-	/// <summary>
+    /// <summary>
 	/// Apply the given rewards package.
 	/// </summary>
 	/// <param name="_reward">The rewards to be applied.</param>
 	/// <param name="_entity">The entity that has triggered the reward. Can be null.</param>
-	float bonusCoins = 0f;
 	private void ApplyReward(Reward _reward, Transform _entity) {
 		// Score
 		// Apply multiplier
@@ -657,12 +671,22 @@ public class RewardManager : Singleton<RewardManager>, IBroadcastListener {
 	/// </summary>
 	/// <returns>The total amount of coins rewarded by the survival bonus.</returns>
 	public int CalculateSurvivalBonus() {
+		// Calculate survival bonus with final run duration and obtained coins
+		return CalculateSurvivalBonus(GameTime(), coins);
+	}
+
+	/// <summary>
+	/// Calculates the survival bonus with the given game time and rewarded coins.
+	/// </summary>
+	/// <param name="_elapsedTime">The elapsed run time.</param>
+	/// <param name="_coins">Amount of coins obtained during the run.</param>
+	/// <returns>The total amount of coins rewarded by the survival bonus with the given parameters.</returns>
+	public int CalculateSurvivalBonus(float _elapsedTime, long _coins) {
 		// [AOC] No survival bonus in tournament mode!
 		if(GameSceneController.mode == SceneController.Mode.TOURNAMENT) return 0;
 
 		// Find out the bonus percentage of coins earned per minute
-		float elapsedTime = GameTime();
-		int elapsedMinutes = (int)Math.Floor(elapsedTime / 60);
+		int elapsedMinutes = (int)Math.Floor(_elapsedTime / 60);
 
 		// Find the bonus linked to the total amount of minutes
 		// List is sorted
@@ -678,7 +702,13 @@ public class RewardManager : Singleton<RewardManager>, IBroadcastListener {
 		}
 
 		// Compute total amount of bonus coins
-		return Mathf.FloorToInt((float)coins * (float)elapsedMinutes * bonusCoinsPerMinute);
+		float survivalBonus = (float)_coins * (float)elapsedMinutes * bonusCoinsPerMinute;
+
+		// [AOC] Apply ad reward modifier factor if enabled
+		survivalBonus *= m_rewardAdModifierSettings.survivalBonusCoinsMultiplier;
+		
+		// Round and return
+		return Mathf.FloorToInt(survivalBonus);
 	}
 
 	//------------------------------------------------------------------//
@@ -872,9 +902,15 @@ public class RewardManager : Singleton<RewardManager>, IBroadcastListener {
     	return freeReviveCount + paidReviveCount + 1;
     }
 
-
-    // Cheats
-    public void SetCategoryKill(string _category, int amount) {
+	//------------------------------------------------------------------//
+	// CHEATS															//
+	//------------------------------------------------------------------//
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <param name="_category"></param>
+	/// <param name="amount"></param>
+	public void DEBUG_SetCategoryKill(string _category, int amount) {
         if (m_categoryKillCount.ContainsKey(_category)) {
             m_categoryKillCount[_category] += amount;
         } else {
@@ -882,11 +918,24 @@ public class RewardManager : Singleton<RewardManager>, IBroadcastListener {
         }
     }
 
-    public void SetNPCKill(string _sku, int amount) {
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <param name="_sku"></param>
+	/// <param name="amount"></param>
+    public void DEBUG_SetNPCKill(string _sku, int amount) {
         if (m_killCount.ContainsKey(_sku)) {
             m_killCount[_sku] += amount;
         } else {
             m_killCount.Add(_sku, amount);
         }
     }
+
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <param name="_reward"></param>
+	public void DEBUG_ApplyReward(Reward _reward) {
+		ApplyReward(_reward, null);
+	}
 }
