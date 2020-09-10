@@ -32,7 +32,8 @@ public enum MessengerEvents {
 	// LANGUAGE_CHANGED,		// no params
 	// FONT_CHANGE_STARTED,	// no params
 	// FONT_CHANGE_FINISHED,	// no params
-	DEFINITIONS_LOADED,		// no params
+	DEFINITIONS_LOADED,     // no params
+	FEATURE_SETTINGS_UPDATED, // no params
 
 	// Tech
 	GOOGLE_PLAY_STATE_UPDATE,// no params
@@ -165,7 +166,8 @@ public enum MessengerEvents {
 	MENU_DRAGON_PET_CHANGE,		 // params: string _dragonSku, int _slotIdx, string _newPetSku
 
 	MENU_SCREEN_TRANSITION_REQUESTED,	// params: MenuScreen _from, MenuScreen _to
-	MENU_SCREEN_TRANSITION_START,		// params: MenuScreen _from, MenuScreen _to
+	MENU_SCREEN_TRANSITION_START,       // params: MenuScreen _from, MenuScreen _to
+	MENU_SCREEN_TRANSITION_EQUATOR,       // params: MenuScreen _from, MenuScreen _to
 	MENU_SCREEN_TRANSITION_END,			// params: MenuScreen _from, MenuScreen _to
 	MENU_CAMERA_TRANSITION_START,		// params: MenuScreen _from, MenuScreen _to, bool _usingPath
 
@@ -233,6 +235,10 @@ public enum MessengerEvents {
 	OFFER_APPLIED,		// OfferPack _pack
     HC_PACK_ACQUIRED,  // a HC pack was bought by the player. PARAMS: bool _showPopup: opens the happy hour popup immediately, string offerSku: the purchased offer sku
     HAPPY_HOUR_CHANGED, // a happy hour was activated/deactivated/extended. No params 
+
+    // Referral rewards
+    REFERRAL_REWARDS_CLAIMED,    // params: none, the list of rewards to collect can be found in ReferralManager.instance.pendingRewards
+	REFERRAL_REWARDS_CLAIM_RESPONSE_RECEIVED,	// params: FGOL.Server.Error _error, will be null if no error
 
 	// Live Events
 	LIVE_EVENT_STATES_UPDATED,

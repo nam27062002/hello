@@ -65,7 +65,7 @@ MonoBehaviour:
   m_machine: {fileID: 114309327233998120}
   m_viewControl: {fileID: 11459890}
   m_equip: {fileID: 114022831369640826}
-  m_sku: BadJunk
+  m_sku: Villager04
   m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1
 --- !u!114 &11441020
@@ -457,9 +457,9 @@ MonoBehaviour:
         defaultItemLOW: 1
         probability: 1
         toDisableOnEquip: []
-        position: {x: 0, y: -0.24909091, z: 0.1061484}
+        position: {x: 0, y: -0.24909663, z: 0.18714961}
         scale: {x: 1.2, y: 1.2, z: 2}
-        rotation: {x: 15.984326, y: 0, z: 0}
+        rotation: {x: 13.204944, y: 0, z: 0}
   - season: xmas
     groups:
     - name: Hat
@@ -484,6 +484,18 @@ MonoBehaviour:
         position: {x: -0.014404297, y: 0.17409062, z: -0.061275877}
         scale: {x: 1, y: 1, z: 1}
         rotation: {x: 3.4667878, y: 2.5206504, z: 359.51678}
+  - season: Alien
+    groups:
+    - name: Hat
+      probability: 0.9
+      items:
+      - equipablePrefabName: PF_AlienMask_villager
+        defaultItemLOW: 1
+        probability: 1
+        toDisableOnEquip: []
+        position: {x: 0, y: 0.0064270496, z: 0.09999999}
+        scale: {x: 1, y: 1, z: 1}
+        rotation: {x: 15, y: 0, z: 0}
 --- !u!1 &176664
 GameObject:
   m_ObjectHideFlags: 0

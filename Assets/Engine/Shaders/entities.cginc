@@ -71,8 +71,6 @@ uniform float _NormalStrength;
 #endif
 
 #if defined(SPECULAR)
-//uniform float _SpecularPower;
-//uniform float4 _SpecularColor;
 
 uniform float4 _SecondLightColor;
 uniform float _SpecExponent;
@@ -195,11 +193,11 @@ v2f vert(appdata_t v)
 #if defined(SPECULAR) && defined(LITMODE_LIT)
 	// Half View - See: Blinn-Phong
 	//	fixed3 worldPos = mul(unity_ObjectToWorld, v.vertex);
-	half3 lightDirection = normalize(_SecondLightDir.xyz);
+	half3 lightDirection = normalize(_SecondLightDir.xyz + _WorldSpaceLightPos0.xyz);
 	o.halfDir = normalize(lightDirection + viewDirection);
 
 #elif defined(SPECMASK) && defined(LITMODE_LIT)
-	half3 lightDirection = normalize(_SecondLightDir.xyz);
+	half3 lightDirection = normalize(_SecondLightDir.xyz + _WorldSpaceLightPos0.xyz);
 	o.halfDir = normalize(lightDirection + viewDirection);
 
 #endif
@@ -269,7 +267,7 @@ fixed4 frag(v2f i) : SV_Target
 #else
 
 
-#if !defined(VERTEXANIMATION)
+#if !defined(VERTEXANIMATION) && !defined(SPECMASK) && !defined(JELLY) && !defined(BOTTLE)
 	fixed4 col = diff * i.color;
 #else
 	fixed4 col = diff;
@@ -305,7 +303,7 @@ fixed4 frag(v2f i) : SV_Target
 #if defined(LITMODE_LIT)
 
 #if defined(SPECULAR)
-	fixed3 diffuse = max(0, dot(normalDirection, normalize(_SecondLightDir.xyz))) * _LightColor0.xyz;
+	fixed3 diffuse = max(0, dot(normalDirection, normalize(_SecondLightDir.xyz + _WorldSpaceLightPos0.xyz))) * _LightColor0.xyz;
 #else
 	fixed3 diffuse = max(0, dot(normalDirection, normalize(_WorldSpaceLightPos0.xyz))) * _LightColor0.xyz;
 #endif

@@ -78,7 +78,7 @@ public class HDSeasonData {
         m_closeDate = new DateTime(1970, 1, 1);
         m_resultDate = new DateTime(1970, 1, 1);
         m_endDate   = new DateTime(1970, 1, 1);
-		m_dataReceivedDate = GameServerManager.SharedInstance.GetEstimatedServerTime();
+		m_dataReceivedDate = GameServerManager.GetEstimatedServerTime();
 		m_cachedEndDate = new DateTime(1970, 1, 1);
 
         currentLeague = null;
@@ -255,7 +255,7 @@ public class HDSeasonData {
 		// Is it a different season from the cached one?
 		if(m_cachedEndDate < m_startDate) {		// Season that occurred in the past
 			// It's a new season! Update cached vars
-			m_dataReceivedDate = GameServerManager.SharedInstance.GetEstimatedServerTime();
+			m_dataReceivedDate = GameServerManager.GetEstimatedServerTime();
 			Prefs.SetDateTimePlayer(DATA_RECEIVED_TIMESTAMP_KEY, m_dataReceivedDate);
 			Prefs.SetDateTimePlayer(CACHED_END_TIMESTAMP_KEY, m_endDate);
 		}
@@ -439,10 +439,10 @@ public class HDSeasonData {
 
     //---[Query Methods]--------------------------------------------------------
 
-    public TimeSpan timeToStart             { get { return m_startDate - GameServerManager.SharedInstance.GetEstimatedServerTime(); } }
-    public TimeSpan timeToClose             { get { return m_closeDate - GameServerManager.SharedInstance.GetEstimatedServerTime(); } }
-    public TimeSpan timeToResuts            { get { return m_resultDate - GameServerManager.SharedInstance.GetEstimatedServerTime(); } }
-    public TimeSpan timeToEnd               { get { return m_endDate   - GameServerManager.SharedInstance.GetEstimatedServerTime(); } }
+    public TimeSpan timeToStart             { get { return m_startDate - GameServerManager.GetEstimatedServerTime(); } }
+    public TimeSpan timeToClose             { get { return m_closeDate - GameServerManager.GetEstimatedServerTime(); } }
+    public TimeSpan timeToResuts            { get { return m_resultDate - GameServerManager.GetEstimatedServerTime(); } }
+    public TimeSpan timeToEnd               { get { return m_endDate   - GameServerManager.GetEstimatedServerTime(); } }
 	public TimeSpan duration                { get { return m_closeDate - m_startDate; } }
     public TimeSpan durationWaitResults     { get { return m_resultDate - m_closeDate; } }
     public TimeSpan durationWaitNewSeason   { get { return m_endDate - m_closeDate; } }

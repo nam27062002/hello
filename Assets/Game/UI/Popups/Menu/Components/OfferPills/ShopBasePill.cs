@@ -376,8 +376,12 @@ public class ShopBasePill : IShopPill {
 				// Show the proper currency button
 				if(m_priceButtonGroup != null) {
 					m_priceButtonGroup.SetAmount(localizedPrice, m_currency, localizedPreviousPrice);
-
 				}
+			}
+
+			// Only show price button if store is ready
+			if(m_priceButtonGroup != null) {
+				m_priceButtonGroup.gameObject.SetActive(storeReady);
 			}
 
 		} else if(m_currency == UserProfile.Currency.HARD || m_currency == UserProfile.Currency.SOFT) {
@@ -397,13 +401,9 @@ public class ShopBasePill : IShopPill {
             
             // Show the proper currency button
             if (m_priceButtonGroup != null) {
+				m_priceButtonGroup.gameObject.SetActive(true);				
 				m_priceButtonGroup.SetAmount(m_price, m_currency, m_previousPrice);
 			}
-		}
-
-		// Show buttons?
-		if(m_priceButtonGroup != null) {
-			m_priceButtonGroup.gameObject.SetActive(storeReady);
 		}
 	}
 
@@ -419,46 +419,14 @@ public class ShopBasePill : IShopPill {
 		switch(m_infoButtonMode) {
 			// Popup
 			case InfoButtonMode.POPUP: {
+				// Open popup - different layout depending on offer's content, PopupShopOfferPack does the work for us
+				PopupController popup = PopupShopOfferPack.LoadPopupForOfferPack(m_pack);
+				popup.Open();
 
-				    PopupController popup = null;
-					PopupShopOfferPack offerPopup = null;
-
-				    // Open the proper popup depending on the dragon/skins items in the offer
-					if (pack.GetDragonsSkinsCount() > 1)
-                    {
-
-                        // Show the info popup with an item selector and rotable preview
-						popup = PopupManager.LoadPopup(PopupShopOfferPackSkins.PATH);
-						offerPopup = popup.GetComponent<PopupShopOfferPackSkins>();
-
-						offerPopup.InitFromOfferPack(m_pack);
-						popup.Open();
-
-						// Send tracking event
-						if (_trackInfoPopupEvent)
-						{
-							string popupName = System.IO.Path.GetFileNameWithoutExtension(PopupShopOfferPackSkins.PATH);
-							TrackInfoPopup(popupName);
-						}
-					}
-                    else
-                    {
-
-                        // Show the static info popup
-				        popup = PopupManager.LoadPopup(PopupShopOfferPack.PATH);
-						offerPopup = popup.GetComponent<PopupShopOfferPack>();
-
-						offerPopup.InitFromOfferPack(m_pack);
-						popup.Open();
-
-						// Send tracking event
-						if (_trackInfoPopupEvent)
-						{
-							string popupName = System.IO.Path.GetFileNameWithoutExtension(PopupShopOfferPack.PATH);
-							TrackInfoPopup(popupName);
-						}
-					}
-
+				// Send tracking event
+				if(_trackInfoPopupEvent) {
+					TrackInfoPopup(popup.name);
+				}
 			} break;
 
 			// Tooltip

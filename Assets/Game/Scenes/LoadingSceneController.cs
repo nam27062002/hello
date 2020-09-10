@@ -237,29 +237,25 @@ public class LoadingSceneController : SceneController {
     /// Initialization.
     /// </summary>
     override protected void Awake() {
-        CrashlyticsInit.Initialise();
+        CaletyFirebaseWrapper.initialise();
+
+        CaletySettings settingsInstance = Resources.Load<CaletySettings>("CaletySettings");
+        if (settingsInstance.m_bUseDynamicLinks)
+        {
+            CaletyDynamicLinks.setDynamicLinksParameters(settingsInstance.m_strDynamicLinksDomain, settingsInstance.m_strDynamicLinksBaseLink, settingsInstance.m_iOSAppStoreID);
+        }
 
         // Call parent
-		base.Awake();
+        base.Awake();
+
+        ApplicationManager.instance.Init();
 
         // We need to update the user id label when the user logs in 
         Messenger.AddListener<bool>(MessengerEvents.LOGGED, OnLoggedIn);
     }    
     
     private void CustomAwake()
-    {
-        // Initialize server cache
-        CaletySettings settingsInstance = (CaletySettings)Resources.Load("CaletySettings");
-        if ( settingsInstance )
-        {
-            m_buildVersion = settingsInstance.GetClientBuildVersion();
-        }
-        else
-        {
-            m_buildVersion = Application.version;
-        }
-        CacheServerManager.SharedInstance.Init(m_buildVersion);
-
+    {       
         // Initialize content
         ContentManager.InitContent();
 
@@ -725,8 +721,9 @@ public class LoadingSceneController : SceneController {
             }break;
         	case State.SHOWING_UPGRADE_POPUP:
         	{
-        		PopupManager.OpenPopupInstant( PopupUpgrade.PATH );
-            }break;
+                ApplicationManager.instance.Issues_ProcessUpgradeClientVersion();
+            }
+            break;
             case State.WAITING_COUNTRY_CODE:
                 {
 					// A timeout is set just in case, in order to prevent the game from getting stuck if the request above is not responsed because of an error code
@@ -803,7 +800,7 @@ public class LoadingSceneController : SceneController {
 
                 // Tech
                 GameSceneManager.CreateInstance(true);
-                HDLiveDataManager.CreateInstance(false);
+                HDLiveDataManager.CreateInstance(true);
                 FlowManager.CreateInstance(true);
                 PoolManager.CreateInstance(true);
                 ActionPointManager.CreateInstance(true);
@@ -885,7 +882,7 @@ public class LoadingSceneController : SceneController {
         // We need to notify marketing id. According to design this event has to be sent once the terms flow is done. It has to be sent only if there's new information
         HDTrackingManager.Instance.Notify_MarketingID(HDTrackingManager.EMarketingIdFrom.FirstLoading);
     }
-        
+
     private void StartLoadFlow()
     {
         if (m_startLoadFlow)
@@ -937,6 +934,9 @@ public class LoadingSceneController : SceneController {
                 }
 
                 HDTrackingManager.Instance.Notify_Razolytics_Funnel_Load(FunnelData_LoadRazolytics.Steps._01_02_persistance_ready);
+
+                // At this point check if this player has been invited by another and store the referrer user Id
+                ReferralManager.instance.ReadReferralLink();
 
                 // Given stuff is stored in USerProfile, that's why we need to wait for persistence to be loaded to load given stuff
                 TransactionManager.instance.Given_Load();

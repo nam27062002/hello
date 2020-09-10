@@ -9,7 +9,7 @@ public class SocialUtilsDummy : SocialUtils
         m_mockLoggedIn = mockLoggedIn;
     }
 
-    public override void Login(bool isAppInit)
+    public override void Login(bool isAppInit, bool forceMerge)
     {
         bool isLoggedIn = IsLoggedIn();
         Messenger.Broadcast<bool>(MessengerEvents.SOCIAL_LOGGED, isLoggedIn);

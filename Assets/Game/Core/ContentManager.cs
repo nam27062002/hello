@@ -154,7 +154,8 @@ public class ContentManager
             "Rules/missingRessourcesVariablesDefinitions",
 			"Rules/offerSettings",
 			"Rules/ftuxSettings",
-            "Rules/UISettings"
+            "Rules/UISettings",
+            "Rules/rewardAdModifierSettings"
         });
 
 		kDefinitionFiles.Add(DefinitionsCategory.SEASONS, new string[] { "Rules/seasonsDefinitions" });
@@ -198,7 +199,7 @@ public class ContentManager
 		kDefinitionFiles.Add(DefinitionsCategory.DRAGON_STATS, new string[] { "Rules/dragonStatsDefinitions" });
 
         // Entites
-        kDefinitionFiles.Add(DefinitionsCategory.PETS, new string[] { "Rules/petDefinitions" });
+        kDefinitionFiles.Add(DefinitionsCategory.PETS, new string[] { "Rules/petDefinitions", "Rules/babyDragonDefinitions" });
         kDefinitionFiles.Add(DefinitionsCategory.PET_MOVEMENT, new string[] { "Rules/petMovementDefinitions" });
         kDefinitionFiles.Add(DefinitionsCategory.PET_CATEGORIES, new string[] { "Rules/petCategoryDefinitions" });
         kDefinitionFiles.Add(DefinitionsCategory.ENTITIES, new string[] { "Rules/entityDefinitions" });
@@ -250,11 +251,12 @@ public class ContentManager
 
         // Economy
         kDefinitionFiles.Add(DefinitionsCategory.SHOP_PACKS, new string[]{"Rules/shopPacksDefinitions"});
-		kDefinitionFiles.Add(DefinitionsCategory.OFFER_PACKS, new string[]{"Rules/offerPacksDefinitions"});
+		kDefinitionFiles.Add(DefinitionsCategory.OFFER_PACKS, new string[]{"Rules/offerPacksDefinitions", "Rules/dragonDiscountsDefinitions"});
         kDefinitionFiles.Add(DefinitionsCategory.SHOP_CATEGORIES, new string[] { "Rules/shopCategoriesDefinitions" });
         kDefinitionFiles.Add(DefinitionsCategory.HAPPY_HOUR, new string[] {"Rules/happyHourDefinitions"});
         kDefinitionFiles.Add(DefinitionsCategory.CURRENCY_TIERS, new string[]{"Rules/missingRessourcesTiersDefinitions"});
         kDefinitionFiles.Add(DefinitionsCategory.REMOVE_ADS_OFFER, new string[] { "Rules/removeAdsOfferDefinitions" });
+        kDefinitionFiles.Add(DefinitionsCategory.REFERRAL_REWARDS, new string[] { "Rules/referralRewardsDefinitions" });
 
         // Specials
         kDefinitionFiles.Add(DefinitionsCategory.SPECIAL_DRAGON_TIERS, new string[]{"Rules/specialDragonTierDefinitions"});
@@ -265,7 +267,8 @@ public class ContentManager
         kDefinitionFiles.Add(DefinitionsCategory.SHARE_LOCATIONS, new string[] { "Rules/shareLocationDefinitions" });
         kDefinitionFiles.Add(DefinitionsCategory.ICONS, new string[] { "Rules/iconDefinitions" });
 
-
+        // Baby Dragons
+        kDefinitionFiles.Add(DefinitionsCategory.BABY_DRAGONS_SHARED_POWER, new string[] { "Rules/sharedPowerupDefinitions" });
 
         DefinitionsManager.SharedInstance.Initialise(ref kDefinitionFiles, !UseDeltaContent);
     }

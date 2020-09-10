@@ -11,11 +11,13 @@
 
 using System;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 [RequireComponent(typeof(PopupController))]
 public abstract class IPopupMessage : MonoBehaviour
 {
+    [System.Serializable]
     /// <summary>
     /// This class is used to store the configuration to use when a <c>PopupMessage</c> is started. This configuration decides the amount of buttons and the delegates that should be called
     /// when each button is clicked.    
@@ -26,27 +28,28 @@ public abstract class IPopupMessage : MonoBehaviour
 			DEFAULT,
 			SYSTEM
 		}
-		public ETextType TextType { get; set; }
+		public ETextType TextType;
 
-        public string TitleTid { get; set; }
-		public bool ShowTitle { get; set; }
-        public string MessageTid { get; set; } 
-        public string[] MessageParams { get; set; }
+        public string TitleTid;
+		public bool ShowTitle;
+        public string MessageTid; 
+        public string[] MessageParams;
 
         // Use should use these properties instead of the ones defined above if you need to write a text directly. Using tids is the recommended approach, you should use these properties only
         // in exceptional cases when you don't have t
-        public string TitleText { get; set; }
-        public string MessageText { get; set; }
+        public string TitleText;
+        public string MessageText;
 
-        public string ConfirmButtonTid { get; set; }
-        public Action OnConfirm { get; set; }
+        public string ConfirmButtonTid;
+        public Action OnConfirm;
         public bool CloseOnConfirm;
 
-        public string CancelButtonTid { get; set; }
-        public Action OnCancel { get; set; }
+        public string CancelButtonTid;
+        public Action OnCancel;
 
-        public string ExtraButtonTid { get; set; }
-        public Action OnExtra { get; set; }		
+        public string ExtraButtonTid;
+        public Action OnExtra;
+        public bool CloseOnExtra;
 
         public enum EBackButtonStratety
         {
@@ -55,22 +58,31 @@ public abstract class IPopupMessage : MonoBehaviour
             PerformCancel,
             PerformExtra,
             Close,
-            Default // Default configuration: If close button is visible then the popup is just closed, if there's only one button then that button is performed. If there are several buttons then cancel is performed.             
+            Default // Default configuration: If close button is visible then the popup is just closed. If the Cancel button is visible, then Cancel is performed. In all other cases, Confirm is performed.
         }
 
-        public EBackButtonStratety BackButtonStrategy { get; set; }
+        public EBackButtonStratety BackButtonStrategy;
 
         public enum EButtonsMode
         {
             None,
             Confirm,
             ConfirmAndCancel,
+            ConfirmAndExtra,
             ConfirmAndExtraAndCancel
 
         };
-        public EButtonsMode ButtonMode { get; set; }
+        public EButtonsMode ButtonMode;
+
+        public enum EHighlightButton {
+            None,
+            Confirm,
+            Cancel,
+            Extra
+		}
+        public EHighlightButton HighlightButton;
         
-        public bool IsButtonCloseVisible { get; set; }
+        public bool IsButtonCloseVisible;
 
         public Config()
         {
@@ -86,11 +98,19 @@ public abstract class IPopupMessage : MonoBehaviour
             MessageParams = null;
             TitleText = null;
             MessageText = null;
+            
             ConfirmButtonTid = "TID_GEN_OK";
             OnConfirm = null;
+            
             CancelButtonTid = "TID_GEN_CANCEL";
             OnCancel = null;
+            
+            ExtraButtonTid = "";
+            OnExtra = null;
+            CloseOnExtra = true;
+
             ButtonMode = EButtonsMode.None;
+            HighlightButton = EHighlightButton.None;
             IsButtonCloseVisible = true;
             CloseOnConfirm = true; 
 
@@ -104,58 +124,60 @@ public abstract class IPopupMessage : MonoBehaviour
         return new Config();        
     }
 
-    [SerializeField]
-    private Button m_buttonCancel;
-    [SerializeField]
-    private GameObject m_buttonCancelRoot;
+    [SerializeField] private Button m_buttonCancel;
+    [SerializeField] private GameObject m_buttonCancelRoot;
+    [SerializeField] private GameObject m_buttonCancelGlow;
 
-    [SerializeField]
-    private Button m_buttonConfirmCenter;
-    [SerializeField]
-    private GameObject m_buttonConfirmCenterRoot;
+    [Space]
+    [FormerlySerializedAs("m_buttonConfirmCenter")]
+    [SerializeField] private Button m_buttonExtra;
+    [FormerlySerializedAs("m_buttonConfirmCenterRoot")]
+    [SerializeField] private GameObject m_buttonExtraRoot;
+    [SerializeField] private GameObject m_buttonExtraGlow;
 
-    [SerializeField]
-    private Button m_buttonConfirmRight;
-    [SerializeField]
-    private GameObject m_buttonConfirmRightRoot;
+    [Space]
+    [FormerlySerializedAs("m_buttonConfirmRight")]
+    [SerializeField] private Button m_buttonConfirm;
+    [FormerlySerializedAs("m_buttonConfirmRightRoot")]
+    [SerializeField] private GameObject m_buttonConfirmRoot;
+    [SerializeField] private GameObject m_buttonConfirmGlow;
 
-   [SerializeField]
+    [Space]
+    [SerializeField]
     private GameObject m_buttonCloseRoot;
 
     private Config m_config;    
 
-    private bool IsInited { get; set; }
+    private bool IsConfigured { get; set; }
     private void Awake()
     {        
-        DebugUtils.Assert(m_buttonConfirmCenter != null, "Required field!");        
         DebugUtils.Assert(m_buttonCloseRoot != null, "Required field!");
 
-        IsInited = false;
+        // Add all listeners
+        if(m_buttonCancel != null) m_buttonCancel.onClick.AddListener(OnCancel);
+        if(m_buttonConfirm != null) m_buttonConfirm.onClick.AddListener(OnConfirm);
+        if(m_buttonExtra != null) m_buttonExtra.onClick.AddListener(OnExtra);
+    }
 
-        if (m_buttonCancel != null)
-        {
-            m_buttonCancel.onClick.AddListener(OnCancel);
+	private void OnDestroy() {
+        // Remove all listeners
+        if(m_buttonCancel != null) m_buttonCancel.onClick.RemoveListener(OnCancel);
+        if(m_buttonConfirm != null) m_buttonConfirm.onClick.RemoveListener(OnConfirm);
+        if(m_buttonExtra != null) m_buttonExtra.onClick.RemoveListener(OnExtra);
+
+        // Reset if needed
+        if(IsConfigured) {
+            Reset();
         }
+	}
 
-        if (m_buttonConfirmRight != null)
-        {
-            m_buttonConfirmRight.onClick.AddListener(OnConfirm);
-        }
-    }    
-
-    private void Reset()
+	private void Reset()
     {
-        if (m_config != null)
-        {
-            if (m_config.ButtonMode == Config.EButtonsMode.ConfirmAndExtraAndCancel)
-            {
-                m_buttonConfirmCenter.onClick.RemoveListener(OnExtra);
-            }
-            else if (m_config.ButtonMode == Config.EButtonsMode.Confirm)
-            {
-                m_buttonConfirmCenter.onClick.RemoveListener(OnConfirm);
-            }
-        }        
+        // Clear config
+        m_config = null;
+        
+        // Reset flag
+        IsConfigured = false;
     }
 
     private void Start()
@@ -168,13 +190,17 @@ public abstract class IPopupMessage : MonoBehaviour
 
     public void Configure(Config config)
     {
+        // Reset previous config
         if (m_config != null)
         {
             Reset();
         }
 
+        // Store new config
         m_config = config;
         
+        // Apply new config
+        // Back button handler
         PopupBackButtonHandlerWithAction backHandler =  GetComponent<PopupBackButtonHandlerWithAction>();
         if ( backHandler != null )
         {
@@ -187,13 +213,16 @@ public abstract class IPopupMessage : MonoBehaviour
                 }
                 else
                 {
-                    if (config.ButtonMode == Config.EButtonsMode.Confirm)
-                    {
-                        backButtonStrategy = Config.EBackButtonStratety.PerformConfirm;
-                    }
-                    else
-                    {
-                        backButtonStrategy = Config.EBackButtonStratety.PerformCancel;
+                    // Default configuration: If close button is visible then the popup is just closed. If the Cancel button is visible, then Cancel is performed. In all other cases, Confirm is performed.
+                    switch(config.ButtonMode) {
+                        case Config.EButtonsMode.Confirm:
+                        case Config.EButtonsMode.ConfirmAndExtra: {
+                            backButtonStrategy = Config.EBackButtonStratety.PerformConfirm;
+						} break;
+
+                        default: {
+                            backButtonStrategy = Config.EBackButtonStratety.PerformCancel;
+                        } break;
                     }
                 }
             }
@@ -222,60 +251,51 @@ public abstract class IPopupMessage : MonoBehaviour
             }
         }
 
+        // Close button
 		if (m_buttonCloseRoot != null)
         {
             m_buttonCloseRoot.SetActive(m_config.IsButtonCloseVisible);
         }
 
-        // All buttons disabled by default since the required ones will be enabled depending on the button mode
-        if (m_buttonCancelRoot != null)
-        {
-            m_buttonCancelRoot.SetActive(false);
-        }
-        
-        m_buttonConfirmCenterRoot.SetActive(false);
-
-        if (m_buttonConfirmRightRoot != null)
-        {
-            m_buttonConfirmRightRoot.SetActive(false);
+        // Dynamic buttons - depends on button mode
+        if(m_buttonCancelRoot != null) {
+            m_buttonCancelRoot.SetActive(
+                m_config.ButtonMode == Config.EButtonsMode.ConfirmAndCancel ||
+                m_config.ButtonMode == Config.EButtonsMode.ConfirmAndExtraAndCancel
+            );
         }
 
-        switch (m_config.ButtonMode)
-        {            
-            case Config.EButtonsMode.Confirm:
-            {
-                // Center button chosen since there's only one
-                m_buttonConfirmCenterRoot.SetActive(true);                
-                m_buttonConfirmCenter.onClick.AddListener(OnConfirm);
-            }
-            break;
+        if(m_buttonConfirmRoot != null) {
+            m_buttonConfirmRoot.SetActive(
+                m_config.ButtonMode == Config.EButtonsMode.Confirm ||
+                m_config.ButtonMode == Config.EButtonsMode.ConfirmAndCancel ||
+                m_config.ButtonMode == Config.EButtonsMode.ConfirmAndExtra ||
+                m_config.ButtonMode == Config.EButtonsMode.ConfirmAndExtraAndCancel
+            );
+        }
 
-            case Config.EButtonsMode.ConfirmAndCancel:
-            case Config.EButtonsMode.ConfirmAndExtraAndCancel:
-            {
-                if (m_buttonCancelRoot != null)
-                {
-                    // Cancel button
-                    m_buttonCancelRoot.SetActive(true);
-                }
+        if(m_buttonExtraRoot != null) {
+            m_buttonExtraRoot.SetActive(
+                m_config.ButtonMode == Config.EButtonsMode.ConfirmAndExtra ||
+                m_config.ButtonMode == Config.EButtonsMode.ConfirmAndExtraAndCancel
+            );
+        }
 
-                // Confirm button: the right button is used because there are two buttons
-                if (m_buttonConfirmRightRoot != null)
-                {
-                    m_buttonConfirmRightRoot.SetActive(true);
-                }
+        // Configure glows
+        if(m_buttonCancelGlow != null) {
+            m_buttonCancelGlow.SetActive(m_config.HighlightButton == Config.EHighlightButton.Cancel);
+        }
 
-                if (m_config.ButtonMode == Config.EButtonsMode.ConfirmAndExtraAndCancel)
-                {
-                    m_buttonConfirmCenterRoot.SetActive(true);
-                    m_buttonConfirmCenter.onClick.AddListener(OnExtra);
-                }
-            }
-            break;
+        if(m_buttonConfirmGlow != null) {
+            m_buttonConfirmGlow.SetActive(m_config.HighlightButton == Config.EHighlightButton.Confirm);
 		}
 
-		// Configure texts (abstract)
-		ConfigureTexts(m_config);
+        if(m_buttonExtraGlow != null) {
+            m_buttonExtraGlow.SetActive(m_config.HighlightButton == Config.EHighlightButton.Extra);
+        }
+
+        // Configure texts (abstract)
+        ConfigureTexts(m_config);
     }    
 
 	protected abstract void ConfigureTexts(Config _config);
@@ -319,7 +339,11 @@ public abstract class IPopupMessage : MonoBehaviour
             m_config.OnExtra();
         }
 
-        Close();
+
+        if (m_config == null || m_config.CloseOnExtra)
+        {
+            Close();
+        }
     }
 
     /// <summary>

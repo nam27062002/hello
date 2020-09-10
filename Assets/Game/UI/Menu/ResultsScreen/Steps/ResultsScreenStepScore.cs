@@ -128,14 +128,8 @@ public class ResultsScreenStepScore : ResultsScreenSequenceStep {
 	/// Share high score button has been pressed.
 	/// </summary>
 	public void OnShareButton() {
-		IDragonData dragonData = null;
-		if(SceneController.mode == SceneController.Mode.TOURNAMENT) {
-			dragonData = HDLiveDataManager.tournament.tournamentData.tournamentDef.dragonData;
-		} else {
-			dragonData = DragonManager.CurrentDragon;
-		}
-
 		// Initialize and show the corresponding share screen
+		IDragonData dragonData = DragonManager.CurrentDragonConsideringTournament;
 		ShareScreenHighScore shareScreen = ShareScreensManager.GetShareScreen("high_score") as ShareScreenHighScore;
 		shareScreen.Init(
 			"high_score",

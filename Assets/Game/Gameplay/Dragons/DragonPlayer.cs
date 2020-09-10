@@ -106,6 +106,11 @@ public class DragonPlayer : MonoBehaviour, IBroadcastListener {
 	private float m_superSizeTimer = 0f;
 	private float m_superSizeDuration = 0.5f;
 
+	private BabyDragon babyDragon = new BabyDragon();
+    public BabyDragon GetBabyDragon()
+    {
+		return babyDragon;
+    }
 
 	// Interaction
 	private bool m_playable = true;

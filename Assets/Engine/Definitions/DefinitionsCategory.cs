@@ -70,6 +70,9 @@ public class DefinitionsCategory
 	public const string FREEZE_CONSTANTS	= "FREEZE_CONSTANTS";
     public const string EQUIPABLE           = "EQUIPABLE";
 
+    // Baby dragons
+	public const string BABY_DRAGONS_SHARED_POWER = "BABY_DRAGONS_SHARED_POWER";
+
 	// Game
 	public const string SCORE_MULTIPLIERS = "SCORE_MULTIPLIERS";
 	public const string SURVIVAL_BONUS = "SURVIVAL_BONUS";
@@ -117,6 +120,7 @@ public class DefinitionsCategory
     public const string HAPPY_HOUR = "HAPPY_HOUR";
     public const string CURRENCY_TIERS = "CURRENCY_TIERS";
     public const string REMOVE_ADS_OFFER = "REMOVE_ADS_OFFER";
+	public const string REFERRAL_REWARDS = "REFERRAL_REWARDS";
 
 	// UI
 	public const string SHARE_LOCATIONS = "SHARE_LOCATIONS";

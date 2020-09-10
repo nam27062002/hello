@@ -25,10 +25,10 @@ using CodeStage.AntiCheat.ObscuredTypes;
 /// </summary>
 public class UserProfile : UserPersistenceSystem
 {
-    //------------------------------------------------------------------------//
-    // CONSTANTS															  //
-    //------------------------------------------------------------------------//
-
+	//------------------------------------------------------------------------//
+	// CONSTANTS															  //
+	//------------------------------------------------------------------------//
+	#region currency_constants
 	/////// Currency Enum ///////
 	public enum Currency {
 		NONE = -1,
@@ -107,16 +107,19 @@ public class UserProfile : UserPersistenceSystem
 			}
 		}
 	};
+	#endregion
 
-    //------------------------------------------------------------------------//
-    // MEMBERS																  //
-    //------------------------------------------------------------------------//
+	//------------------------------------------------------------------------//
+	// PROPERTIES															  //
+	//------------------------------------------------------------------------//
 
-    //------------------------------------------------------------------------//
-    // PROPERTIES															  //
-    //------------------------------------------------------------------------//
-    // Last save timestamp
-    private DateTime m_saveTimestamp;
+	//
+	// !!!! Remember to add new properties to the Reset() method!!!
+	//
+
+	#region properties
+	// Last save timestamp
+	private DateTime m_saveTimestamp;
     public DateTime saveTimestamp {
         get { return m_saveTimestamp; }
     }
@@ -152,8 +155,15 @@ public class UserProfile : UserPersistenceSystem
 		get { return GetCurrency(Currency.KEYS); }
 	}
 
-    // Game Settings
-    private string m_currentDragon;
+	private int m_gemsSpent = 0;
+	public int gemsSpent
+	{
+		get => m_gemsSpent;
+		set => m_gemsSpent = value;
+	}
+
+	// Game Settings
+	private string m_currentDragon;
     public string CurrentDragon
     {
         get { return m_currentDragon; }
@@ -181,6 +191,9 @@ public class UserProfile : UserPersistenceSystem
 		set { m_furyUsed = value; }
 	}
 
+
+
+
 	// Game Stats
 	private int m_gamesPlayed;
 	public int gamesPlayed {
@@ -198,11 +211,33 @@ public class UserProfile : UserPersistenceSystem
 		get { return m_highScore; }
 		set { m_highScore = value; }
 	}
-	
+
+	private long m_totalScore;
+	public long totalScore
+	{
+		get { return m_totalScore; }
+		set { m_totalScore = value; }
+	}
+
 	private int m_superFuryProgression;
 	public int superFuryProgression {
 		get { return m_superFuryProgression; }
 		set { m_superFuryProgression = value; }
+	}
+
+	private int m_firerushesCount;
+	public int firerushesCount
+	{
+		get => m_firerushesCount;
+		set => m_firerushesCount = value;
+	}
+
+    // Time in seconds (no decimals)
+	private int m_boostTime;
+	public int boostTime
+	{
+		get => m_boostTime;
+		set => m_boostTime = value;
 	}
 
 	// Dragon Data
@@ -329,8 +364,16 @@ public class UserProfile : UserPersistenceSystem
 
 	public bool mapUnlocked {
 		// Map is unlocked as long as the timestamp hasn't expired
-		get { return m_mapResetTimestamp > GameServerManager.SharedInstance.GetEstimatedServerTime(); }
+		get { return m_mapResetTimestamp > GameServerManager.GetEstimatedServerTime(); }
 	}
+
+    // True if the player already pressed the map button in the game for the first time
+	private bool m_mapDiscovered;
+    public bool mapDiscovered
+    {
+        get { return m_mapDiscovered; }
+        set { m_mapDiscovered = value; }
+    }
 
 	// Global events
 	private Dictionary<int, GlobalEventUserData> m_globalEvents = new Dictionary<int, GlobalEventUserData>();
@@ -363,6 +406,29 @@ public class UserProfile : UserPersistenceSystem
 		set;
 	}
 
+	// Shopping data
+	private bool m_enteredShop = false;
+	public bool hasEnteredShop
+	{
+		get => m_enteredShop;
+		set => m_enteredShop = value;
+	}
+
+	private bool m_progressionPacksDiscovered = false;
+	public bool progressionPacksDiscovered
+	{
+		get => m_progressionPacksDiscovered;
+		set => m_progressionPacksDiscovered = value;
+	}
+
+	private int m_maxTransactionPrice = 0; // in USD cents
+	public int maxTransactionPrice
+	{
+		get => m_maxTransactionPrice;
+		set => m_maxTransactionPrice = value;
+	}
+
+
 	// Happy hour
 	private HappyHourManager.SaveData m_happyHourData = new HappyHourManager.SaveData();
 	public HappyHourManager.SaveData happyHourData {
@@ -376,8 +442,74 @@ public class UserProfile : UserPersistenceSystem
         set { m_removeAds = value; }
     }
 
+	// Referral install
+	private string m_referrerUserId;
+	public string referrerUserId
+	{
+		get { return m_referrerUserId; }
+		set { m_referrerUserId = value; }
+	}
 
-    private bool m_removeAdsOfferActive;
+	private bool m_referralConfirmed;
+	public bool referralConfirmed
+	{
+		get { return m_referralConfirmed; }
+		set { m_referralConfirmed = value; }
+	}
+
+
+	private int m_totalReferrals;
+	public int totalReferrals
+	{
+		get { return m_totalReferrals; }
+        set { m_totalReferrals = value;  }
+	}
+
+	private int m_invitesSent;
+	public int invitesSent
+	{
+		get { return m_invitesSent; }
+		set { m_invitesSent = value; }
+	}
+
+
+	// List of unlocked referral rewards (milestones) that havent been claimed yet
+	private List<OfferPackReferralReward> m_unlockedReferralRewards = new List<OfferPackReferralReward>();
+	public List<OfferPackReferralReward> unlockedReferralRewards
+	{
+		get { return m_unlockedReferralRewards; }
+		set { m_unlockedReferralRewards = value; }
+	}
+
+
+	// Baby dragons - Extra gem granted
+	private bool m_babyDragonExtraGemGranted;
+    public bool babyDragonExtraGemGranted
+    {
+        get { return m_babyDragonExtraGemGranted; }
+        set { m_babyDragonExtraGemGranted = value; }
+    }
+
+    // Baby dragons - Extra gem failed counter
+	private int m_babyDragonExtraGemFailedCounter;
+    public int babyDragonExtraGemFailedCounter
+    {
+        get { return m_babyDragonExtraGemFailedCounter; }
+        set { m_babyDragonExtraGemFailedCounter = value; }
+    }
+
+	// Clustering
+	private string m_clusterId;	// Use Getter and Setter
+	private bool m_clusterSynced = true;	// Is the cluster ID in sync with the server?
+	public bool clusterSynced {
+		get { return m_clusterSynced; }
+		set { m_clusterSynced = value; }
+	}
+
+	// Remove Ads
+	private bool m_removeAdsOfferActive;
+
+	// Missions and map timers
     private int m_easyMissionCooldownsLeft;
     private int m_mediumMissionCooldownsLeft;
     private int m_hardMissionCooldownsLeft;
@@ -398,7 +530,6 @@ public class UserProfile : UserPersistenceSystem
         LoggedIn,
         LoggedInAndIncentivised
     };
-
 
     private static List<string> smSocialStatesAsString;
     private static List<string> SocialStatesAsString
@@ -423,22 +554,20 @@ public class UserProfile : UserPersistenceSystem
 
     public string GivenTransactions { get; set; }
 
+	#endregion
 
+	//
+	// New variables here: Remember to initialize them in Reset()
+	//
 
-
-
-    //
-    // New variables here: Remember to initialize them in Reset()
-    //
-
-
-    //------------------------------------------------------------------------//
-    // GENERIC METHODS														  //
-    //------------------------------------------------------------------------//
-    /// <summary>
-    /// Default constructor.
-    /// </summary>
-    public UserProfile()
+	//------------------------------------------------------------------------//
+	// GENERIC METHODS														  //
+	//------------------------------------------------------------------------//
+	#region generic_methods
+	/// <summary>
+	/// Default constructor.
+	/// </summary>
+	public UserProfile()
 	{        
     }
 
@@ -560,7 +689,20 @@ public class UserProfile : UserPersistenceSystem
 
         // Remove Ads Offer
         m_removeAds = new RemoveAdsFeature();
-    }
+
+		// Referrals
+		m_totalReferrals = 0;
+		m_unlockedReferralRewards.Clear();
+		m_invitesSent = 0;
+
+		// Baby Dragons
+		m_babyDragonExtraGemFailedCounter = 0;
+		m_babyDragonExtraGemGranted = false;
+
+		// Clustering
+		m_clusterId = "";
+		m_clusterSynced = true;
+	}
 
 	/// <summary>
 	/// 
@@ -593,10 +735,12 @@ public class UserProfile : UserPersistenceSystem
 	public override string ToString() {
 		return ToJson().ToString();
 	}
-		
+	#endregion
+
 	//------------------------------------------------------------------------//
 	// CURRENCIES MANAGEMENT METHODS										  //
 	//------------------------------------------------------------------------//
+	#region currencies
 	/// <summary>
 	/// Get current amount of any currency.
 	/// </summary>
@@ -667,6 +811,11 @@ public class UserProfile : UserPersistenceSystem
 
 		// Set the new value!
 		long oldAmount = data.amount;	// Tracking purposes
+
+        // Clustering purposes
+        if (_currency == Currency.HARD) {
+			m_gemsSpent += (int) _amount;
+        }
 
 		// Consume free currency first, as much as possible
 		long partialAmount = (long)Mathf.Min(data.freeAmount, toSpend);
@@ -758,11 +907,13 @@ public class UserProfile : UserPersistenceSystem
 		}
 		return Currency.NONE;
 	}
+	#endregion
 
 	//------------------------------------------------------------------------//
 	// TUTORIAL																  //
 	// To simplify bitmask operations										  //
 	//------------------------------------------------------------------------//
+	#region tutorial
 	/// <summary>
 	/// Check whether a tutorial step has been completed by this user.
 	/// </summary>
@@ -805,10 +956,12 @@ public class UserProfile : UserPersistenceSystem
 	public bool HasPlayedGames(int _toCheck) {
 		return m_gamesPlayed >= _toCheck;
 	}
+	#endregion
 
 	//------------------------------------------------------------------------//
-	// OTHER METHODS														  //
+	// MAP MANAGEMENT METHODS												  //
 	//------------------------------------------------------------------------//
+	#region map
 	/// <summary>
 	/// Increases the map level.
 	/// Doesn't perform any check or currency transaction, resets timer.
@@ -826,9 +979,9 @@ public class UserProfile : UserPersistenceSystem
 		// [AOC] Fuck it! Easier implementation, fixed timer from the moment you unlock the map
 		DefinitionNode gameSettingsDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, "gameSettings");
 		if(gameSettingsDef != null) {
-			m_mapResetTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTime().AddMinutes(gameSettingsDef.GetAsDouble("miniMapTimer"));	// Minutes
+			m_mapResetTimestamp = GameServerManager.GetEstimatedServerTime().AddMinutes(gameSettingsDef.GetAsDouble("miniMapTimer"));	// Minutes
 		} else {
-			m_mapResetTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTime().AddHours(24);	// Default timer just in case
+			m_mapResetTimestamp = GameServerManager.GetEstimatedServerTime().AddHours(24);	// Default timer just in case
 		}
 		Broadcaster.Broadcast(BroadcastEventType.PROFILE_MAP_UNLOCKED);
 	}
@@ -841,15 +994,17 @@ public class UserProfile : UserPersistenceSystem
     /// <param name="seconds">Duration of the map reveal, in seconds</param>
     public void UnlockMap(int seconds)
     {
-        m_mapResetTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTime().AddSeconds(seconds);   // Default timer just in case
+        m_mapResetTimestamp = GameServerManager.GetEstimatedServerTime().AddSeconds(seconds);   // Default timer just in case
         
         Broadcaster.Broadcast(BroadcastEventType.PROFILE_MAP_UNLOCKED);
     }
+	#endregion
 
-    //------------------------------------------------------------------------//
-    // PUBLIC PERSISTENCE METHODS											  //
-    //------------------------------------------------------------------------//   
-    public override void Load()
+	//------------------------------------------------------------------------//
+	// PUBLIC PERSISTENCE METHODS											  //
+	//------------------------------------------------------------------------// 
+	#region persistence
+	public override void Load()
     {
         base.Load();
 
@@ -944,10 +1099,12 @@ public class UserProfile : UserPersistenceSystem
 		Debug.Log(_jsonString);
 	}
 #endif
+	#endregion
 
 	//------------------------------------------------------------------------//
 	// PERSISTENCE LOAD METHODS												  //
-	//------------------------------------------------------------------------//   
+	//------------------------------------------------------------------------//
+	#region load
 	/// <summary>
 	/// Load state from a json object.
 	/// </summary>
@@ -974,6 +1131,17 @@ public class UserProfile : UserPersistenceSystem
 		m_currencies[(int)Currency.GOLDEN_FRAGMENTS].Deserialize(profile.ContainsKey("gf") ? (string)profile["gf"] : "");
 		m_currencies[(int)Currency.KEYS].Deserialize(profile.ContainsKey("keys") ? (string)profile["keys"] : "", 0, 0);
 
+		key = "gemsSpent";
+		if (profile.ContainsKey(key))
+		{
+			m_gemsSpent = PersistenceUtils.SafeParse<int>(profile[key]);
+		}
+		else
+		{
+			m_gemsSpent = 0;
+		}
+
+
 		// Game settings
 		if ( profile.ContainsKey("currentDragon") )
 			m_currentDragon = profile["currentDragon"];
@@ -998,10 +1166,10 @@ public class UserProfile : UserPersistenceSystem
             m_furyUsed = PersistenceUtils.SafeParse<bool>(profile[key]);
         } else {
             m_furyUsed = false;
-        }        
+        }
 
-        // Game stats
-        key = "gamesPlayed";
+		// Game stats
+		key = "gamesPlayed";
         if (profile.ContainsKey(key)) {
             m_gamesPlayed = PersistenceUtils.SafeParse<int>(profile[key]);
         } else {
@@ -1044,8 +1212,74 @@ public class UserProfile : UserPersistenceSystem
             }
         }
 
-        // Some cheats override profile settings - will be saved with the next Save()
-        if (Prefs.GetBoolPlayer("skipTutorialCheat")) {
+		key = "firerushesCount";
+		if (profile.ContainsKey(key)) {
+			m_firerushesCount = PersistenceUtils.SafeParse<int>(profile[key]);
+		} else {
+			m_firerushesCount = 0;
+		}
+
+		key = "totalScore";
+		if (profile.ContainsKey(key)) {
+			m_totalScore = PersistenceUtils.SafeParse<long>(profile[key]);
+		} else {
+			m_totalScore = 0;
+		}
+
+		key = "boostTime";
+		if (profile.ContainsKey(key))		{
+			m_boostTime = PersistenceUtils.SafeParse<int>(profile[key]);
+		} else {
+			m_boostTime = 0;
+		}
+
+		// Shopping data
+		key = "enteredShop";
+		if (profile.ContainsKey(key))
+		{
+			m_enteredShop = PersistenceUtils.SafeParse<bool>(profile[key]);
+		} else
+		{
+			m_enteredShop = false;
+		}
+
+		key = "progressionPacksDiscovered";
+		if (profile.ContainsKey(key))
+		{
+			m_progressionPacksDiscovered = PersistenceUtils.SafeParse<bool>(profile[key]);
+		} else
+		{
+			m_progressionPacksDiscovered = false;
+		}
+
+		key = "maxTransactionPrice";
+		if (profile.ContainsKey(key))
+		{
+			m_maxTransactionPrice = PersistenceUtils.SafeParse<int>(profile[key]);
+		} else
+		{
+			m_maxTransactionPrice = 0;
+		}
+       
+		// Clustering
+		key = "clusterId";
+		if (profile.ContainsKey(key))
+		{
+			m_clusterId = profile[key];
+		} else
+		{
+			m_clusterId = "";
+		}
+
+		key = "clusterSynced";
+		if(profile.ContainsKey(key)) {
+			m_clusterSynced = profile[key].AsBool;
+		} else {
+			m_clusterSynced = true;
+		}
+
+		// Some cheats override profile settings - will be saved with the next Save()
+		if (Prefs.GetBoolPlayer("skipTutorialCheat")) {
 			m_tutorialStep = TutorialStep.ALL;
 			UsersManager.currentUser.gamesPlayed = 5;	// Fake the amount of played games to skip some tutorial steps depending on it
 			Prefs.SetBoolPlayer("skipTutorialCheat", false);
@@ -1118,10 +1352,10 @@ public class UserProfile : UserPersistenceSystem
 				dailyChests[i] = new Chest();
 			}
 
-			//m_dailyChestsResetTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTime();	// That will reset to 24hrs from now
+			//m_dailyChestsResetTimestamp = GameServerManager.GetEstimatedServerTime();	// That will reset to 24hrs from now
 			// Reset timestamp to 00:00 of local time (but using server timezone!)
 			TimeSpan toMidnight = DateTime.Today.AddDays(1) - DateTime.Now;	// Local
-			m_dailyChestsResetTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTime() + toMidnight;	// Local 00:00 in server timezone
+			m_dailyChestsResetTimestamp = GameServerManager.GetEstimatedServerTime() + toMidnight;	// Local 00:00 in server timezone
 		}
 
 		// Daily mission Ads
@@ -1135,7 +1369,7 @@ public class UserProfile : UserPersistenceSystem
 		}
 		else
 		{
-			m_dailyRemoveMissionAdTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTime();	// Already expired
+			m_dailyRemoveMissionAdTimestamp = GameServerManager.GetEstimatedServerTime();	// Already expired
 		}
 
 		m_skipMissionAdUses = 0;
@@ -1145,7 +1379,7 @@ public class UserProfile : UserPersistenceSystem
 				m_skipMissionAdUses = PersistenceUtils.SafeParse<int>(_data["skipMissionAdUses"]);
 			}
 		} else {
-			m_skipMissionAdTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTime();	// Already expired
+			m_skipMissionAdTimestamp = GameServerManager.GetEstimatedServerTime();	// Already expired
 		}
 
 		// Map upgrades
@@ -1153,8 +1387,19 @@ public class UserProfile : UserPersistenceSystem
 		if(_data.ContainsKey(key)) {
 			m_mapResetTimestamp = PersistenceUtils.SafeParse<DateTime>(_data["mapResetTimestamp"]);
 		} else {
-			m_mapResetTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTime();	// Already expired
+			m_mapResetTimestamp = GameServerManager.GetEstimatedServerTime();	// Already expired
 		}
+
+		key = "mapDiscovered";
+		if (_data.ContainsKey(key))
+		{
+			mapDiscovered = PersistenceUtils.SafeParse<bool>(_data["mapDiscovered"]);
+		}
+		else
+		{
+			mapDiscovered = false;  
+		}
+
 
 		// Global events
 		key = "globalEvents";
@@ -1294,8 +1539,10 @@ public class UserProfile : UserPersistenceSystem
 			}
 		}
 
-        // Visited Zones
-        key = "visitedZones";
+		
+
+		// Visited Zones
+		key = "visitedZones";
         m_visitedZones.Clear();
         if(_data.ContainsKey(key)) {
             // Parse json object into the list
@@ -1312,7 +1559,60 @@ public class UserProfile : UserPersistenceSystem
         {
             GivenTransactions = _data[key];
         }
-    }
+
+		// Referral
+		key = "referrerUserId";
+		if (_data.ContainsKey(key))
+		{
+			m_referrerUserId = _data[key].Value;
+		}
+		else
+		{
+			m_referrerUserId = "";
+		}
+
+		key = "referralConfirmed";
+        if (_data.ContainsKey(key))
+        {
+			m_referralConfirmed = _data[key].AsBool;
+        } else
+        {
+			m_referralConfirmed = false;
+        }
+
+		key = "invitesSent";
+		if (_data.ContainsKey(key))
+		{
+			m_invitesSent = PersistenceUtils.SafeParse<int> (_data[key]);
+		}
+		else
+		{
+			m_invitesSent = 0;
+		}
+
+		// Baby Dragons - Extra gem granted
+		key = "babyDragonExtraGemGranted";
+		if (profile.ContainsKey(key))
+		{
+			m_babyDragonExtraGemGranted = PersistenceUtils.SafeParse<bool>(profile[key]);
+		}
+		else
+		{
+			m_babyDragonExtraGemGranted = false;
+		}
+
+		// Baby Dragons - Extra gem failed counter
+		key = "babyDragonExtraGemFailedCounter";
+		if (profile.ContainsKey(key))
+		{
+			m_babyDragonExtraGemFailedCounter = PersistenceUtils.SafeParse<int>(profile[key]);
+		}
+		else
+		{
+			m_babyDragonExtraGemFailedCounter = 0;
+		}
+	}
+
 
 	/// <summary>
 	/// Loads the data related to eggs.
@@ -1353,7 +1653,7 @@ public class UserProfile : UserPersistenceSystem
 		if ( _data.ContainsKey("incubationTimeReference") ){
 			m_incubationTimeReference = PersistenceUtils.SafeParse<long>(_data["incubationTimeReference"]);
 		}else{
-			m_incubationTimeReference = GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong();
+			m_incubationTimeReference = GameServerManager.GetEstimatedServerTimeAsLong();
 		}
 
 		// Incubator timer
@@ -1395,16 +1695,18 @@ public class UserProfile : UserPersistenceSystem
 		// Reset timestamp
 		m_dailyChestsResetTimestamp = PersistenceUtils.SafeParse<DateTime>(_data["resetTimestamp"]);
 	}
+	#endregion
 
 	//------------------------------------------------------------------------//
 	// PERSISTENCE SAVE METHODS												  //
 	//------------------------------------------------------------------------//
-    /// <summary>
-    /// Create a json with the current data in the profile.
-    /// Similar to Save(), but doesn't update timestamp nor save count.
-    /// </summary>
-    /// <returns>A json representing this profile.</returns>
-    public SimpleJSON.JSONClass ToJson() {
+	#region save
+	/// <summary>
+	/// Create a json with the current data in the profile.
+	/// Similar to Save(), but doesn't update timestamp nor save count.
+	/// </summary>
+	/// <returns>A json representing this profile.</returns>
+	public SimpleJSON.JSONClass ToJson() {
 		// Create new object
 		SimpleJSON.JSONClass data = new SimpleJSON.JSONClass();
 		SimpleJSON.JSONClass profile = new SimpleJSON.JSONClass();
@@ -1416,6 +1718,7 @@ public class UserProfile : UserPersistenceSystem
 		profile.Add( "pc", m_currencies[(int)Currency.HARD].Serialize());
 		profile.Add( "gf", m_currencies[(int)Currency.GOLDEN_FRAGMENTS].Serialize());
 		profile.Add( "keys", m_currencies[(int)Currency.KEYS].Serialize());
+		profile.Add( "gemsSpent", PersistenceUtils.SafeToString(m_gemsSpent));
 
 		// Game settings
 		profile.Add("currentDragon",m_currentDragon);
@@ -1428,6 +1731,18 @@ public class UserProfile : UserPersistenceSystem
 		profile.Add("highScore", PersistenceUtils.SafeToString(m_highScore));
 		profile.Add("superFuryProgression", PersistenceUtils.SafeToString(m_superFuryProgression));
         profile.Add("socialState",SocialStatesAsString[(int)SocialState]);
+		profile.Add("firerushesCount", PersistenceUtils.SafeToString(m_firerushesCount));
+		profile.Add("boostTime", PersistenceUtils.SafeToString(m_boostTime));
+		profile.Add("totalScore", PersistenceUtils.SafeToString(m_totalScore));
+
+		// Shopping data
+		profile.Add("enteredShop", PersistenceUtils.SafeToString(m_enteredShop));
+		profile.Add("progressionPacksDiscovered", PersistenceUtils.SafeToString(m_progressionPacksDiscovered));
+		profile.Add("maxTransactionPrice", PersistenceUtils.SafeToString(m_maxTransactionPrice));
+
+		// Clustering
+		profile.Add("clusterId", m_clusterId);
+		profile.Add("clusterSynced", m_clusterSynced);
 
 		data.Add("userProfile", profile);
 
@@ -1458,6 +1773,7 @@ public class UserProfile : UserPersistenceSystem
 
 		// Map upgrades
 		data.Add("mapResetTimestamp", PersistenceUtils.SafeToString(m_mapResetTimestamp));
+		data.Add("mapDiscovered", PersistenceUtils.SafeToString(m_mapDiscovered));
 
 		// Global Events
 		SimpleJSON.JSONArray eventsData = new SimpleJSON.JSONArray();
@@ -1533,8 +1849,9 @@ public class UserProfile : UserPersistenceSystem
         // but we store it also in the user profile just in case we need in the future
         data.Add("removeAdsFeature", m_removeAds.Save());
 
-        // Visited Zones
-        JSONArray zonesArray = new SimpleJSON.JSONArray();
+
+		// Visited Zones
+		JSONArray zonesArray = new SimpleJSON.JSONArray();
         int max = m_visitedZones.Count;
         foreach( string str in m_visitedZones)
         {
@@ -1546,6 +1863,19 @@ public class UserProfile : UserPersistenceSystem
         {
             data.Add("givenTransactions", GivenTransactions);
         }
+
+		// Referral
+		data.Add("referrerUserId", referrerUserId);
+
+		data.Add("referralConfirmed", referralConfirmed);
+
+		data.Add("invitesSent", invitesSent);
+
+		// Baby dragons - Extra gem granted
+		data.Add("babyDragonExtraGemGranted", PersistenceUtils.SafeToString(m_babyDragonExtraGemGranted));
+
+		// Baby dragons - Extra gem failed counter
+		data.Add("babyDragonExtraGemFailedCounter", PersistenceUtils.SafeToString(m_babyDragonExtraGemFailedCounter));
 
         // Return it
 		return data;
@@ -1615,10 +1945,12 @@ public class UserProfile : UserPersistenceSystem
 		// Done!
 		return data;
 	}
+	#endregion
 
 	//------------------------------------------------------------------------//
-	// DISGUISES MANAGEMENT													  //
+	// SKINS MANAGEMENT														  //
 	//------------------------------------------------------------------------//
+	#region skins
 	/// <summary>
 	/// Get the sku of the disguise equipped to a specific dragon.
 	/// </summary>
@@ -1658,10 +1990,12 @@ public class UserProfile : UserPersistenceSystem
 		}
 		return ret;
 	}
+	#endregion
 
 	//------------------------------------------------------------------------//
 	// PETS MANAGEMENT														  //
 	//------------------------------------------------------------------------//
+	#region pets
 	/// <summary>
 	/// Get the current pet loadout for the target dragon.
 	/// </summary>
@@ -1831,10 +2165,12 @@ public class UserProfile : UserPersistenceSystem
 
 		return _slotIdx;
 	}
+	#endregion
 
 	//------------------------------------------------------------------------//
 	// GLOBAL EVENTS MANAGEMENT												  //
 	//------------------------------------------------------------------------//
+	#region global_events
 	/// <summary>
 	/// Get the data of this user for a given event.
 	/// A new one will be created if the user has no data stored for this event.
@@ -1861,7 +2197,7 @@ public class UserProfile : UserPersistenceSystem
 	}
     
     public void OnRulesUpdated(){
-        // Because We cach dragon's price on a variable we need to refresh the value
+        // Because We cache dragon's price on a variable we need to refresh the value
         foreach(KeyValuePair<string, IDragonData> pair in m_dragonsBySku) {
             pair.Value.RefreshPrice();
             pair.Value.RefreshShadowRevealUnlock();
@@ -1870,12 +2206,18 @@ public class UserProfile : UserPersistenceSystem
 				(pair.Value as DragonDataClassic).RefreshProgression();
 			}
         }
-    }
 
+		// Propagate to daily rewards sequence
+		if(m_dailyRewards != null) {
+			m_dailyRewards.OnRulesUpdated();
+		}
+    }
+	#endregion
 
 	//------------------------------------------------------------------------//
 	// DRAGONS MANAGEMENT													  //
 	//------------------------------------------------------------------------//
+	#region dragons
 	/// <summary>
 	/// Gets the number OF owned dragons.
 	/// </summary>
@@ -1990,21 +2332,22 @@ public class UserProfile : UserPersistenceSystem
 
         return returnValue;
     }
+	#endregion
 
 	//------------------------------------------------------------------------//
 	// REWARDS MANAGEMENT													  //
 	//------------------------------------------------------------------------//
-
-    /// <summary>
-    /// Returns whether or not a reward can be pushed to <c>m_rewards</c>, the stack of pending rewards. The requirements that a reward must meet to be allowed to be pushed to the stack are:
-    /// a)For a unique reward (the type of reward that can be given only once such as remove_ads):
-    ///     a.1)The user must not own it already
-    ///     a.2)It must not be in the stack already
-    /// b)For a non unique reward (the default type of reward): No requirements. This type of reward can be pushed with no concerns.
-    /// </summary>
-    /// <param name="_reward"></param>
-    /// <returns></returns>
-    private bool CanPushReward(Metagame.Reward _reward) {
+	#region rewards
+	/// <summary>
+	/// Returns whether or not a reward can be pushed to <c>m_rewards</c>, the stack of pending rewards. The requirements that a reward must meet to be allowed to be pushed to the stack are:
+	/// a)For a unique reward (the type of reward that can be given only once such as remove_ads):
+	///     a.1)The user must not own it already
+	///     a.2)It must not be in the stack already
+	/// b)For a non unique reward (the default type of reward): No requirements. This type of reward can be pushed with no concerns.
+	/// </summary>
+	/// <param name="_reward"></param>
+	/// <returns></returns>
+	private bool CanPushReward(Metagame.Reward _reward) {
         bool _returnValue = true;
         if (_reward == null)
         {
@@ -2085,17 +2428,17 @@ public class UserProfile : UserPersistenceSystem
 		Messenger.Broadcast<Metagame.Reward>(MessengerEvents.PROFILE_REWARD_POPPED, r);
 		return r;
 	}
+	#endregion
 
 	//------------------------------------------------------------------------//
 	// OFFERS MANAGEMENT													  //
 	//------------------------------------------------------------------------//
-    
-    
-    /// <summary>
-    /// Updates the offer packs persistance.
-    /// </summary>
-    /// <param name="">.</param>
-    public void UpdateOfferPacksPersistance( SimpleJSON.JSONNode _data )
+	#region offers
+	/// <summary>
+	/// Updates the offer packs persistance.
+	/// </summary>
+	/// <param name="">.</param>
+	public void UpdateOfferPacksPersistance( SimpleJSON.JSONNode _data )
     {
         string key = "";
         key = "offerPacksRotationalHistory";
@@ -2158,25 +2501,28 @@ public class UserProfile : UserPersistenceSystem
     }
     
     /// <summary>
-    /// Cleans old pushed offers. Removes all push offer packs that are not in the current customizer id
+    /// Cleans old pushed offers. Removes all push offer packs that are not in the current customization id.
     /// </summary>
-    /// <param name="currentPushIds">Current customizer identifier.</param>
-    public void CleanOldPushedOffers( List<string> currentPushIds ) {
-        List<JSONClass> offers = m_newOfferPersistanceData[OfferPack.Type.PUSHED];
-        int max = offers.Count;
-        
-        for (int i = max-1; i >= 0; i--) {
+	/// <param name="_type">Type of offers to be cleaned.</param>
+    /// <param name="_currentPushedIDs">Offer IDs in the current customization.</param>
+    public void CleanOldPushedOffers(OfferPack.Type _type, List<string> _currentPushedIDs ) {
+		// Gather persistence data for the target offer type
+		List<JSONClass> offersData = m_newOfferPersistanceData[_type];
+
+		// Reverse-iterate to delete all data that is not in the current customization
+		int count = offersData.Count;
+		for (int i = count - 1; i >= 0; --i) {
             string customId = "";
-            if ( offers[i].ContainsKey("customId") )
-            {
-                customId = offers[i]["customId"];
+            if(offersData[i].ContainsKey("customId")) {
+                customId = offersData[i]["customId"];
             }
         
-            if ( !currentPushIds.Contains( customId )) {
-                offers.RemoveAt(i);
+            if(!_currentPushedIDs.Contains(customId)) {
+				OffersManager.Log("PUSHED OFFER PACK {0} ({1}) IS BEING CLEANED FROM PERSISTENCE", Color.red, offersData[i]["sku"], _type.ToString());
+				offersData.RemoveAt(i);
             }
         }
-        m_newOfferPersistanceData[OfferPack.Type.PUSHED] = offers;
+        m_newOfferPersistanceData[_type] = offersData;
     }
 
 	/// <summary>
@@ -2218,31 +2564,34 @@ public class UserProfile : UserPersistenceSystem
         bool found = false;
         for(int i = 0; i < max && !found; i++) {
             if(offers[i].ContainsKey("sku") && offers[i]["sku"] == _pack.def.sku) {
-				// If not a pushed offer, directly override existing data
-				if(_pack.type != OfferPack.Type.PUSHED) {
-					// If pack doesn't need to be persisted anymore, remove it from the data instead
-					if(shouldBePersisted) {
-						m_newOfferPersistanceData[_pack.type][i] = _pack.Save();
-					} else {
-						OffersManager.Log("OFFER PACK {0} ({1}) IS BEING CLEANED FROM PERSISTENCE", Color.red, _pack.def.sku, _pack.type.ToString());
-						m_newOfferPersistanceData[_pack.type].RemoveAt(i);	// We will interrupt the loop by setting the found flag to true, so there is no problem in removing an element at this point
-					}
-                    found = true;
-                }
-
-				// If it's a pushed offer, check customization ID
-				else {
-					// Only if it actually needs to be persisted!
-					if(shouldBePersisted) {
-						if(offers[i].ContainsKey("customId")) {
-							string customId = OffersManager.GenerateTrackingOfferName(_pack.def);
-							if(customId == offers[i]["customId"]) {
-								m_newOfferPersistanceData[_pack.type][i] = _pack.Save();
-								found = true;
+				switch(_pack.type) {
+					// If it's a pushed offer, check customization ID
+					case OfferPack.Type.PUSHED:
+					case OfferPack.Type.DRAGON_DISCOUNT: {
+						// Only if it actually needs to be persisted!
+						if(shouldBePersisted) {
+							if(offers[i].ContainsKey("customId")) {
+								string customId = OffersManager.GenerateTrackingOfferName(_pack.def);
+								if(customId == offers[i]["customId"]) {
+									m_newOfferPersistanceData[_pack.type][i] = _pack.Save();
+									found = true;
+								}
 							}
 						}
-					}
-                }
+					} break;
+
+					// Otherwise just directly override existing data
+					default: {
+						// If pack doesn't need to be persisted anymore, remove it from the data instead
+						if(shouldBePersisted) {
+							m_newOfferPersistanceData[_pack.type][i] = _pack.Save();
+						} else {
+							OffersManager.Log("OFFER PACK {0} ({1}) IS BEING CLEANED FROM PERSISTENCE", Color.red, _pack.def.sku, _pack.type.ToString());
+							m_newOfferPersistanceData[_pack.type].RemoveAt(i);  // We will interrupt the loop by setting the found flag to true, so there is no problem in removing an element at this point
+						}
+						found = true;
+					} break;
+				}
             }
         }
 
@@ -2265,13 +2614,26 @@ public class UserProfile : UserPersistenceSystem
         bool found = false;
         for (int i = 0; i < max && !found; i++){
             if ( offers[i].ContainsKey("sku") && offers[i]["sku"] == _pack.def.sku ){
+				// Break loop
                 found = true;
-                // if not a pushed offer or is pushed and same customization code, so it's exactly the same
-                if ( _pack.type != OfferPack.Type.PUSHED || _pack.def.customizationCode == offers[i]["customizerId"] ){
-                    
-                    // Match! Load it into the pack
-                    _pack.Load(offers[i]);
+
+				// Check customization code as well for pushed offers
+				bool match = false;
+				switch(_pack.type) {
+					case OfferPack.Type.PUSHED:
+					case OfferPack.Type.DRAGON_DISCOUNT: {
+						match = _pack.def.customizationCode == offers[i]["customizerId"];
+                    } break;
+
+					default: {
+						match = true;
+                    } break;
                 }
+
+				// If we have a match, load data into the pack
+				if(match) {
+					_pack.Load(offers[i]);
+				}
             }
         }
         
@@ -2306,6 +2668,69 @@ public class UserProfile : UserPersistenceSystem
             m_mapRevealTimestamp = _removeAds.mapRevealTimestamp;
         }
     }
+	#endregion
 
+	//------------------------------------------------------------------------//
+	// CLUSTERING															  //
+	//------------------------------------------------------------------------//
+	#region clustering
+	/// <summary>
+	/// Get the stored cluster ID for this user.
+	/// </summary>
+	/// <param name="_checkGDPRCompliance">Whether to check if the cluster ID is compliant with current GDPR settings or not. If set to true and not compliant, it will be corrected.</param>
+	/// <returns></returns>
+	public string GetClusterId(bool _checkGDPRCompliance = true) {
+		// Check GDPR compliance?
+		if(_checkGDPRCompliance) {
+			// If current assigned cluster ID is not compliant with GDPR settings, assign the Generic one
+			if(!CheckClusterIdGDPRCompliance(m_clusterId)) {
+				SetClusterId(ClusteringManager.CLUSTER_GENERIC);
+				UsersManager.currentUser.clusterSynced = false;     // Pending sync with server
+				ClusteringManager.Instance.SyncWithServer();
+			}
+		}
+
+		// Return stored cluster ID
+		return m_clusterId;
+	}
+
+	/// <summary>
+	/// Set a new cluster Id for this user. No checks performed.
+	/// </summary>
+	/// <param name="_newClusterId">The Cluster Id assigned to this user.</param>
+	public void SetClusterId(string _newClusterId) {
+		// Store the new value
+		m_clusterId = _newClusterId;
+
+		// Notify game
+		ClusterIdEventInfo eventData = new ClusterIdEventInfo() { clusterId = _newClusterId };
+		Broadcaster.Broadcast(BroadcastEventType.CLUSTER_ID_ASSIGNED, eventData);
+
+		// Send tracking event
+		HDTrackingManager.Instance.Notify_ClusterAssigned(_newClusterId);
+	}
+
+	/// <summary>
+	/// Is the given cluster ID compliant with current GDPR settings?
+	/// </summary>
+	/// <param name="_clusterId">The cluster ID to be checked.</param>
+	/// <returns>Whether the given cluster ID is compliant with GDPR settings or not.</returns>
+	private bool CheckClusterIdGDPRCompliance(string _clusterId) {
+		// No problems if cluster is not assigned
+		if(string.IsNullOrEmpty(_clusterId)) return true;
+
+		// If user is underage, the cluster must be the generic one
+		if(GDPRManager.SharedInstance.IsAgeRestrictionEnabled()) {
+			return _clusterId == ClusteringManager.CLUSTER_GENERIC;
+		}
+
+		// If user is an adult, check the marketing consent flag. If not given, generic cluster must be used.
+		else if(GDPRManager.SharedInstance.IsConsentTrackingRestrictionEnabled()) {
+			return _clusterId == ClusteringManager.CLUSTER_GENERIC;
+		}
+
+		// No more checks to perform, cluster is compliant with current GDPR settings
+		return true;
+	}
+	#endregion
 }
-

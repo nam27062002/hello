@@ -65,7 +65,7 @@ MonoBehaviour:
   m_machine: {fileID: 114185027437266162}
   m_viewControl: {fileID: 11459890}
   m_equip: {fileID: 114370094577216100}
-  m_sku: BadJunk
+  m_sku: Villager04
   m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1
 --- !u!114 &11441020
@@ -457,7 +457,19 @@ MonoBehaviour:
         defaultItemLOW: 1
         probability: 1
         toDisableOnEquip: []
-        position: {x: 0, y: -0.24909091, z: 0.1061484}
+        position: {x: 0, y: -0.2416003, z: 0.1871496}
+        scale: {x: 1.2, y: 1.2, z: 2}
+        rotation: {x: 15.984326, y: 0, z: 0}
+  - season: halloween_China
+    groups:
+    - name: Mask
+      probability: 1
+      items:
+      - equipablePrefabName: PF_Werewolf_mask
+        defaultItemLOW: 1
+        probability: 1
+        toDisableOnEquip: []
+        position: {x: 0, y: -0.2216003, z: 0.18994203}
         scale: {x: 1.2, y: 1.2, z: 2}
         rotation: {x: 15.984326, y: 0, z: 0}
   - season: xmas
@@ -484,6 +496,18 @@ MonoBehaviour:
         position: {x: 0.013000488, y: 0.19148564, z: -0.061275877}
         scale: {x: 1, y: 1, z: 1}
         rotation: {x: 9.424573, y: 38.937077, z: 1.6586212}
+  - season: Alien
+    groups:
+    - name: Hat
+      probability: 0.8
+      items:
+      - equipablePrefabName: PF_AlienMask_villager
+        defaultItemLOW: 1
+        probability: 1
+        toDisableOnEquip: []
+        position: {x: 0, y: 0.0059998035, z: 0.089999996}
+        scale: {x: 1, y: 1, z: 1}
+        rotation: {x: 15, y: 0, z: 0}
 --- !u!1 &176664
 GameObject:
   m_ObjectHideFlags: 0

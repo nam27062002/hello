@@ -1765,6 +1765,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 572946866}
+  - component: {fileID: 572946867}
   m_Layer: 0
   m_Name: Anniversary1_Candle_OFF
   m_TagString: Untagged
@@ -1787,6 +1788,67 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &572946867
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 572946865}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4175ba4db6af94a65bae6b40e64dcb45, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_seasonsData:
+  - sku: none
+    targets: []
+  - sku: xmas
+    targets: []
+  - sku: halloween
+    targets: []
+  - sku: spring
+    targets: []
+  - sku: midAutumnFestival
+    targets: []
+  - sku: chineseNewYear
+    targets: []
+  - sku: valentine
+    targets: []
+  - sku: patricks
+    targets: []
+  - sku: easter
+    targets: []
+  - sku: ufoDay
+    targets: []
+  - sku: football
+    targets: []
+  - sku: preSummerDay
+    targets: []
+  - sku: summer
+    targets: []
+  - sku: Anniversary1
+    targets:
+    - obj: {fileID: 1887711692}
+      action: 0
+  - sku: watermelon
+    targets: []
+  - sku: snorkel
+    targets: []
+  - sku: cocktail
+    targets: []
+  - sku: cookies
+    targets: []
+  - sku: presents
+    targets: []
+  - sku: candy
+    targets: []
+  - sku: "jalape\xF1o"
+    targets: []
+  - sku: anniversary_no_equip
+    targets:
+    - obj: {fileID: 1887711692}
+      action: 0
 --- !u!1001 &590114774
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5680,7 +5742,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1887711693}
   m_Layer: 0
-  m_Name: Candle
+  m_Name: Candle_Mines
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

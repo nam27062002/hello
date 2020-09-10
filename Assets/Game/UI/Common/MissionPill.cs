@@ -343,9 +343,9 @@ public class MissionPill : MonoBehaviour, IBroadcastListener {
 			if ( usesPerDay > 0 )
 			{
 				// Check remaining uses
-				if ( GameServerManager.SharedInstance.GetEstimatedServerTime() >= UsersManager.currentUser.dailyRemoveMissionAdTimestamp )
+				if ( GameServerManager.GetEstimatedServerTime() >= UsersManager.currentUser.dailyRemoveMissionAdTimestamp )
 				{
-					UsersManager.currentUser.dailyRemoveMissionAdTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTime().AddDays(1);
+					UsersManager.currentUser.dailyRemoveMissionAdTimestamp = GameServerManager.GetEstimatedServerTime().AddDays(1);
 					UsersManager.currentUser.dailyRemoveMissionAdUses = 0;
 				}
 				if (UsersManager.currentUser.dailyRemoveMissionAdUses >= usesPerDay) 
@@ -603,7 +603,7 @@ public class MissionPill : MonoBehaviour, IBroadcastListener {
 			double cooldownHours = _def.GetAsDouble("cooldownAdsSkipMissions", 24);
 			if(usesPerDay > 0) {
 				// If timestamp has passed, reset ad count
-				DateTime serverTime = GameServerManager.SharedInstance.GetEstimatedServerTime();
+				DateTime serverTime = GameServerManager.GetEstimatedServerTime();
 				if(serverTime >= UsersManager.currentUser.skipMissionAdTimestamp) {
 					UsersManager.currentUser.skipMissionAdTimestamp = serverTime.AddHours(cooldownHours);
 					UsersManager.currentUser.skipMissionAdUses = 0;

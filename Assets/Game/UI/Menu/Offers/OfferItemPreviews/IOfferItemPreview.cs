@@ -193,7 +193,7 @@ public abstract class IOfferItemPreview : MonoBehaviour {
 	public virtual void InitPowerIcon(PowerIcon _powerIcon, OfferItemSlot.Type _slotType) {
 		// To be implemented by heirs if needed
 		// Disable by default
-		_powerIcon.InitFromDefinition(null, false, false);	// This will do the trick
+		_powerIcon.InitFromDefinition(null, null, false, false);	// This will do the trick
 	}
 
 	/// <summary>

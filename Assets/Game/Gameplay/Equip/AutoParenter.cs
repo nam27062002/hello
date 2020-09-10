@@ -62,7 +62,9 @@ public class AutoParenter : MonoBehaviour {
             }
         }
 
-        Destroy(this);
+		if(Application.isPlaying) {
+			Destroy(this);
+		}
     }
 
 	public void CopyTargetPosAndRot()

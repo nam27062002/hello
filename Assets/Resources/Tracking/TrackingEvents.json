@@ -166,7 +166,8 @@
         { "totalEggFound": { "Status": "OK" } },
         { "totalEggOpened": { "Status": "OK" } },
         { "batteryLevel": { "Status": "OK" } },
-        { "controlChoice": { "Status": "OK" } }
+        { "controlChoice": { "Status": "OK" } },
+        { "runType": { "Status": "OK" } }
       ],
       "APIs": [
         "dna",
@@ -327,7 +328,8 @@
         { "isHacker": { "Status": "OK" } },
         { "deviceProfile": { "Status": "OK" } },
         { "initialQuality": { "Status": "OK" } },
-        { "trackingID": { "Status": "OK" } }
+        { "trackingID": { "Status": "OK" } },
+        { "appsflyer_id": { "Status": "OK" } }
       ],
       "APIs": [
         "dna",
@@ -855,6 +857,20 @@
         "etl"
       ]
     },
+    "custom.player.clusterAssigned": {
+         "Parameters": [
+        { "clusterId": { "Status": "OK" } },
+        { "runsCompleted": { "Status": "OK" } },
+        { "maxTransactionPrice": { "Status": "OK" } },
+        { "starterPackShown": { "Status": "OK" } },
+        { "age": { "Status": "OK" } },
+        { "optIn": { "Status": "OK" } }
+      ],
+      "APIs": [
+        "dna",
+        "etl"
+      ]
+    },
 	"custom.ui.button": {
       "Parameters": [
         { "buttonName": { "Status": "OK" } },
@@ -1019,6 +1035,44 @@
       "Parameters": [
       ],
       "APIs": [ "facebook" ]
+    },
+    "custom.general.referral.popup": {
+      "Parameters": [
+        { "popupName": { "Status": "OK" } },
+        { "action": { "Status": "OK" } },
+        { "playerProgress": { "Status": "OK" } },
+        { "reward": { "Status": "OK" } },
+        { "referredUsers": { "Status": "OK" } },
+        { "invitesSent": { "Status": "OK" } }
+      ],
+      "APIs": [
+        "dna",
+        "etl"
+      ]
+    },
+    "custom.general.referral.sendInvite": {
+      "Parameters": [
+        { "origin": { "Status": "OK" } },
+        { "reward": { "Status": "OK" } },
+        { "playerProgress": { "Status": "OK" } },
+        { "referredUsers": { "Status": "OK" } },
+        { "invitesSent": { "Status": "OK" } }
+      ],
+      "APIs": [
+        "dna",
+        "etl"
+      ]
+    },
+    "custom.general.referral.install": {
+      "Parameters": [
+        { "valid": { "Status": "OK" } },
+        { "playerProgress": { "Status": "OK" } },
+        { "referrerID": { "Status": "OK" } }
+      ],
+      "APIs": [
+        "dna",
+        "etl"
+      ]
     }
   },
   "ParameterValues": {
@@ -1818,6 +1872,58 @@
       "Values": []
     },
     "content": {
+      "Type": "STRING:64",
+      "Values": []
+    },
+     "clusterId": {
+       "Type": "STRING:16",
+       "Values": []
+    },
+    "runsCompleted": {
+       "Type": "INT:4",
+       "Values": []
+    },
+    "maxTransactionPrice": {
+       "Type": "INT:8",
+       "Values": []
+    },
+    "starterPackShown": {
+       "Type": "INT:4",
+       "Values": []
+    },
+    "optIn": {
+       "Type": "INT:4",
+       "Values": []
+    },
+    "origin": {
+       "Type": "STRING:8",
+       "Values": []
+    },
+    "reward": {
+       "Type": "STRING:32",
+       "Values": []
+    },
+    "valid": {
+       "Type": "BOOL",
+       "Values": []
+    },
+    "referredUsers": {
+       "Type": "INT:8",
+       "Values": []
+    },
+    "invitesSent": {
+       "Type": "INT:8",
+       "Values": []
+    },
+    "referrerId": {
+       "Type": "STRING:16",
+       "Values": []
+    },
+    "runType": {
+       "Type": "STRING:16",
+       "Values": []
+    },
+    "appsflyer_id": {
       "Type": "STRING:64",
       "Values": []
     }

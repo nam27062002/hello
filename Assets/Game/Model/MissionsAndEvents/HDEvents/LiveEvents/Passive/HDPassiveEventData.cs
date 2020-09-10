@@ -39,7 +39,7 @@ public class HDPassiveEventData : HDLiveEventData {
 
     public override void UpdateStateFromTimers() {
         if (m_eventId > 0 && definition.m_eventId == m_eventId) {
-            DateTime serverTime = GameServerManager.SharedInstance.GetEstimatedServerTime();
+            DateTime serverTime = GameServerManager.GetEstimatedServerTime();
             if (serverTime < m_definition.m_startTimestamp) {
                 m_state = State.TEASING;
             } else if (m_state < State.REWARD_AVAILABLE) {

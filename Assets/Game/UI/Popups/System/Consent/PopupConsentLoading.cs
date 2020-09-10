@@ -18,7 +18,7 @@ using TMPro;
 /// The Legal Consent Popup triggered during the loading funnel.
 /// </summary>
 [RequireComponent(typeof(PopupController))]
-public class PopupConsentLoading : MonoBehaviour {
+public class PopupConsentLoading : IPopupConsentGDPR {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//

@@ -247,7 +247,8 @@ public abstract class SocialUtils
         None,
         Facebook,
         Weibo,
-        SIWA
+        SIWA,
+        DNA
     };
 
     private static string[] sm_platformKeys;
@@ -292,10 +293,30 @@ public abstract class SocialUtils
         return EPlatformToKey(GetPlatform());
     }
 
-    public SocialUtils(EPlatform platform)
+    /// <summary>
+    /// Whether or not the platform is "implicit", which means that first login can be done by the game automatically, without user's interaction, typically for DNA.
+    /// Other social platforms such as Facebook or SIWA require the user to hit the login button explicitly to trigger the first
+    /// login. These platforms are considered "explicit"
+    /// </summary>
+    private bool m_isImplicit;
+    public bool IsImplicit
+    {
+        get
+        {
+            return m_isImplicit;
+        }
+
+        private set
+        {
+            m_isImplicit = value;
+        }
+    }
+
+    public SocialUtils(EPlatform platform, bool isImplicit=false)
     {
         SetIsEnabled(true);
         SetPlatform(platform);
+        IsImplicit = isImplicit;
     }
 
     private string EPlatformToCaletySocialPlatform(EPlatform eplatform)
@@ -315,16 +336,31 @@ public abstract class SocialUtils
             case EPlatform.SIWA:
                 platform = CaletyConstants.SOCIAL_PLATFORM_SIWA;
                 break;
+
+            case EPlatform.DNA:
+                platform = CaletyConstants.SOCIAL_PLATFORM_DNA;
+                break;
         }
 
         return platform;
     }
 
-    public virtual void Login(bool isAppInit)
-    {
-        // Translate EPlatform into Calety social platform
-        string platform = EPlatformToCaletySocialPlatform(GetPlatform());        
-        GameSessionManager.SharedInstance.LogInToSocialPlatform(isAppInit, platform);
+    public virtual void Login(bool isAppInit, bool forceMerge)
+    {        
+        // MOCK        
+        /*
+        if (forceMerge)
+        {
+            Messenger.Broadcast<bool>(MessengerEvents.SOCIAL_LOGGED, true);
+            Messenger.Broadcast(MessengerEvents.MERGE_FAILED);
+        }        
+        else
+        */
+        {
+            // Translate EPlatform into Calety social platform
+            string platform = EPlatformToCaletySocialPlatform(GetPlatform());
+            GameSessionManager.SharedInstance.LogInToSocialPlatform(isAppInit, platform, forceMerge);
+        }
     }
 
     public void Logout()

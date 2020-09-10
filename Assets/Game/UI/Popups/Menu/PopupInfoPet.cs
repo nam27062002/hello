@@ -34,7 +34,7 @@ public class PopupInfoPet : MonoBehaviour {
 	[SerializeField] private DragControlRotation m_rotationController = null;
 	[Space]
 	[SerializeField] private Localizer m_nameText = null;
-	[SerializeField] private PowerTooltip m_powerInfo = null;
+	[SerializeField] private PowerTooltip_Generic m_powerInfo = null;
 	[Space]
 	[SerializeField] private Localizer m_rarityText = null;
 	[SerializeField] private Image m_rarityIcon = null;
@@ -184,7 +184,8 @@ public class PopupInfoPet : MonoBehaviour {
 		// Initialize power info
 		if(m_powerInfo != null) {
 			DefinitionNode powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, m_petDef.Get("powerup"));
-			m_powerInfo.InitFromDefinition(powerDef, PowerIcon.Mode.PET);
+			m_powerInfo.InitTooltip(powerDef, m_petDef, PowerIcon.Mode.PET, PowerIcon.DisplayMode.PREVIEW);
+			m_powerInfo.animator.ForceShow(false);
 		}
 
 		// Initialize lock state

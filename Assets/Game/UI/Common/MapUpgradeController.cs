@@ -35,6 +35,7 @@ public class MapUpgradeController : MonoBehaviour, IBroadcastListener {
     [Separator("Animators")]
 	[SerializeField] private ShowHideAnimator m_lockedGroupAnim = null;
 	[SerializeField] private ShowHideAnimator m_unlockedGroupAnim = null;
+    [SerializeField] private ShowHideAnimator m_infoGroupAnim = null;
 
 
     [Separator("Objects")]
@@ -166,9 +167,33 @@ public class MapUpgradeController : MonoBehaviour, IBroadcastListener {
 		// Aux vars
 		bool isLocked = !isUnlocked;
 
-		// Groups visibility
-		if(m_lockedGroupAnim != null) m_lockedGroupAnim.ForceSet(isLocked, _animate);
-		if(m_unlockedGroupAnim != null) m_unlockedGroupAnim.ForceSet(!isLocked, _animate);
+        // Groups visibility
+        // This feature needs to be AB testeable
+        if (ABTest.Evaluate(ABTest.Test.INITIAL_MAP_COUNTDOWN_TRIGGER_BY_PLAYER) == false)
+        {
+            // Test A:
+            // Show the countdown automatically when the map is available
+            if (m_lockedGroupAnim != null) m_lockedGroupAnim.ForceSet(isLocked, _animate);
+            if (m_unlockedGroupAnim != null) m_unlockedGroupAnim.ForceSet(!isLocked, _animate);
+            if (m_infoGroupAnim != null) m_infoGroupAnim.gameObject.SetActive(false);
+        }
+        else
+        {
+            // Test B:
+            // Do not show the countdown if the player didnt discovered the map button yet
+            if (m_infoGroupAnim != null) m_infoGroupAnim.gameObject.SetActive(!UsersManager.currentUser.mapDiscovered);
+            if (!UsersManager.currentUser.mapDiscovered)
+            {      
+                if (m_lockedGroupAnim != null) m_lockedGroupAnim.gameObject.SetActive(false);
+                if (m_unlockedGroupAnim != null) m_unlockedGroupAnim.gameObject.SetActive(false);
+                
+            }
+            else
+            {
+                if (m_lockedGroupAnim != null) m_lockedGroupAnim.ForceSet(isLocked, _animate);
+                if (m_unlockedGroupAnim != null) m_unlockedGroupAnim.ForceSet(!isLocked, _animate);
+            }
+        }
 
         // Check if remove ads feature is active
         bool removeAds = UsersManager.currentUser.removeAds.IsActive;
@@ -240,7 +265,7 @@ public class MapUpgradeController : MonoBehaviour, IBroadcastListener {
         {
 
             // Countdown format
-            TimeSpan timeToReset = UsersManager.currentUser.mapResetTimestamp - GameServerManager.SharedInstance.GetEstimatedServerTime();
+            TimeSpan timeToReset = UsersManager.currentUser.mapResetTimestamp - GameServerManager.GetEstimatedServerTime();
             double seconds = System.Math.Max(timeToReset.TotalSeconds, 0d); // Never go negative!
             m_timerText.text = TimeUtils.FormatTime(seconds, TimeUtils.EFormat.DIGITS, 3, TimeUtils.EPrecision.HOURS, true);
         }
@@ -254,7 +279,7 @@ public class MapUpgradeController : MonoBehaviour, IBroadcastListener {
         if (m_unlockFreeDescription != null)
         {
 
-            TimeSpan timeToReset = UsersManager.currentUser.removeAds.mapRevealTimestamp - GameServerManager.SharedInstance.GetEstimatedServerTime();
+            TimeSpan timeToReset = UsersManager.currentUser.removeAds.mapRevealTimestamp - GameServerManager.GetEstimatedServerTime();
             string timeLeft = TimeUtils.FormatTime(timeToReset.TotalSeconds, TimeUtils.EFormat.ABBREVIATIONS_WITHOUT_0_VALUES, 1);
             m_unlockFreeDescription.Localize(TID_MAP_FREE_UNLOCK_COOLDOWN, timeLeft);
         }

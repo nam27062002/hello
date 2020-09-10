@@ -75,6 +75,16 @@ public class Singleton<T> where T : Singleton<T>, new() {
     // PUBLIC METHODS													//
     //------------------------------------------------------------------//
     /// <summary>
+    /// Reset the singleton creation flow. Call it when you need to make sure a singleton will be created, typically
+    /// from editor tools that might fail after quitting the player because <c>ISingleton.EState.APPLICATION_QUITTING</c>
+    /// was assigned to <c>m_state</c> 
+    /// </summary>
+    public static void ResetSingleton()
+    {
+        m_state = ISingleton.EState.INIT;
+    }
+
+    /// <summary>
     /// Create the singleton instance if not created.
     /// </summary>
     /// <param name="_force">If <c>true</c>, re-create instance.</param>

@@ -23,8 +23,14 @@ public class PersistencePrefs
 
     private static string KEY_SOCIAL_PROFILE_NAME = "socialProfileName";
 
-    // Whether or not the user was logged in the social platform when she quit
+    // Whether or not the user was logged in to a social platform when she quit
     private static string KEY_SOCIAL_LOGGED_IN_WHEN_QUIT = "socialWasLoggedInWhenQuit";
+
+    // Whether or not the user has ever logged in explicitly, which means that the user triggered the flow explicitly, typically
+    // by hitting a social platform button (Facebook Weibo, SIWA)
+    private static string KEY_SOCIAL_EVER_LOGGED_IN_EXPLICITLY = "socialEverLoggedInExplicitly";
+
+    private static string KEY_SOCIAL_IMPLICIT_MERGE_STATE = "socialImpliciMergeState";
 
     // Stored here so TrackingManager can be initialized as soon as possible
     private static string KEY_SERVER_USER_ID = "serverUserId";
@@ -60,6 +66,8 @@ public class PersistencePrefs
         KEY_SOCIAL_ID,
         KEY_SOCIAL_PROFILE_NAME,
         KEY_SOCIAL_LOGGED_IN_WHEN_QUIT,
+        KEY_SOCIAL_EVER_LOGGED_IN_EXPLICITLY,
+        KEY_SOCIAL_IMPLICIT_MERGE_STATE,
 
         KEY_SERVER_USER_ID,
         KEY_SAVEPATHS_LATEST_INDEX,
@@ -228,6 +236,18 @@ public class PersistencePrefs
     {
         get { return PlayerPrefs.GetInt(KEY_SOCIAL_LOGGED_IN_WHEN_QUIT, 0) == 1; }
         set { SetInt(KEY_SOCIAL_LOGGED_IN_WHEN_QUIT, (value ? 1 : 0)); }
+    }
+
+    public static bool Social_EverLoggedInExplicitly
+    {
+        get { return PlayerPrefs.GetInt(KEY_SOCIAL_EVER_LOGGED_IN_EXPLICITLY, 0) == 1; }
+        set { SetInt(KEY_SOCIAL_EVER_LOGGED_IN_EXPLICITLY, (value ? 1 : 0)); }
+    }
+
+    public static int Social_ImplicitMergeState
+    {
+        get { return PlayerPrefs.GetInt(KEY_SOCIAL_IMPLICIT_MERGE_STATE, 0); }
+        set { SetInt(KEY_SOCIAL_IMPLICIT_MERGE_STATE, value); }
     }
 #endregion
 

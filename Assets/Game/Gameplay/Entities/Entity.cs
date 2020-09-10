@@ -5,6 +5,9 @@ using UnityEngine;
 public class Entity : IEntity, IBroadcastListener {
 	private static readonly string RESOURCES_DIR = "Game/Entities";
 
+	private const string FLYING_PIG_SKU = "FlyingPig";
+
+
 	//-----------------------------------------------
 	// Properties
 	//-----------------------------------------------
@@ -118,7 +121,7 @@ public class Entity : IEntity, IBroadcastListener {
         {
             case BroadcastEventType.APPLY_ENTITY_POWERUPS:
             {
-                ApplyPowerUpMultipliers();
+                ApplyPowerUpMultipliers(m_def);
             }break;
         }
     }
@@ -171,7 +174,7 @@ public class Entity : IEntity, IBroadcastListener {
 			m_maxHealth *= (1f + (_node.GetAsFloat("healthScalePerDragonTier", 0f) * (int)InstanceManager.player.data.tier));
 		}
 
-		ApplyPowerUpMultipliers();
+		ApplyPowerUpMultipliers(_node);
 	}	
 
 	override public void Spawn(ISpawner _spawner) {        
@@ -269,6 +272,44 @@ public class Entity : IEntity, IBroadcastListener {
 		if (!m_isPC) {
 			newReward.pc = 0;
 		}
+        // Check if player ate a flying pig
+        else if (m_sku == FLYING_PIG_SKU)
+        {
+			BabyDragon babyDragon = InstanceManager.player.GetBabyDragon();
+			if (babyDragon.IsEquipped())
+			{
+				// Calculate if there is any chance to get an extra gem
+				float rnd = Random.Range(0, 100);
+
+                // If the player never received an extra gem due to baby dragon, check the for the firstSucceed value to grant an extra gem
+				if (!UsersManager.currentUser.babyDragonExtraGemGranted &&
+                    UsersManager.currentUser.babyDragonExtraGemFailedCounter > babyDragon.firstSucceed)
+				{
+					rnd = babyDragon.probability;
+				}
+
+				if (rnd <= babyDragon.probability)
+                {
+					// Player get a number of extra gems with baby dragon
+					newReward.pc += babyDragon.extraGems;
+
+					// Save player obtained extra gem with baby dragon
+					UsersManager.currentUser.babyDragonExtraGemGranted = true;
+
+                    // Use origin field to notify the feedback spawner
+					newReward.origin = "doubleGems";
+				}
+                else
+                {
+					// Player didn't get an extra gem with baby dragon
+                    // If player never received an extra gem due to baby dragon, increase the failed extra gem counter for baby dragons
+					if (!UsersManager.currentUser.babyDragonExtraGemGranted)
+					{
+						UsersManager.currentUser.babyDragonExtraGemFailedCounter++;
+					}
+				}
+			}
+        }
 
         if (m_machine.IsBubbled()) {
             newReward.energy *= 2f;
@@ -418,15 +459,16 @@ public class Entity : IEntity, IBroadcastListener {
 		}
 	}
 
-	void ApplyPowerUpMultipliers()
+	void ApplyPowerUpMultipliers(DefinitionNode _node)
 	{
-		m_reward.score = m_def.GetAsInt("rewardScore");
+		m_reward.score = _node.GetAsInt("rewardScore");
 		m_reward.score += ((m_reward.score * m_powerUpScoreMultiplier) / 100.0f);
 
-		m_reward.coins = m_def.GetAsInt("rewardCoins");
+		m_reward.coins = _node.GetAsInt("rewardCoins");
+		m_reward.coins *= RewardManager.rewardAdModifierSettings.spawnersCoinsMultiplier;   // [AOC] Apply ad reward modifier factor if enabled
 		m_reward.coins += ((m_reward.coins * m_powerUpSCMultiplier) / 100.0f);
-
-		m_reward.xp = m_def.GetAsFloat("rewardXp");
+        
+		m_reward.xp = _node.GetAsFloat("rewardXp");
 		m_reward.xp += (m_reward.xp * m_powerUpXpMultiplier) / 100.0f;
 
         OnRewardCreated();

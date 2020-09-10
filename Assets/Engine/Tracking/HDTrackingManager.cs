@@ -12,8 +12,10 @@ using System.Diagnostics;
 using UnityEngine;
 
 public class HDTrackingManager
-{   
-    private static HDTrackingManager smInstance = null;
+{
+    private static bool WasTrackingEnabledWhenCreated { get; set; }
+
+    private static HDTrackingManager smInstance = null;    
 
     public static HDTrackingManager Instance
     {
@@ -21,17 +23,27 @@ public class HDTrackingManager
         {
             if (smInstance == null)
             {
-                if (FeatureSettingsManager.instance.IsTrackingEnabled)                
-                {
-                    smInstance = new HDTrackingManagerImp();
-                }
-                else
-                {
-                    smInstance = new HDTrackingManager();
-                }
+                CreateInstance();
             }
 
             return smInstance;
+        }
+    }
+
+    public static void CreateInstance()
+    {
+        bool trackingEnabled = FeatureSettingsManager.instance.IsTrackingEnabled;
+        if (smInstance == null || WasTrackingEnabledWhenCreated != trackingEnabled)
+        {
+            WasTrackingEnabledWhenCreated = trackingEnabled;
+            if (WasTrackingEnabledWhenCreated)
+            {
+                smInstance = new HDTrackingManagerImp();
+            }
+            else
+            {
+                smInstance = new HDTrackingManager();
+            }
         }
     }
 
@@ -101,6 +113,8 @@ public class HDTrackingManager
         LAB_REWARD_MISSION,              // When user gets reward from Lab Mission
 		LAB_UNLOCKED_GIFT,				 // When player unlocks the lab for the first time, a gift is given
 		GOLDEN_FRAGMENTS_REMOVAL,		 // Golden Fragments conversion to HC
+
+        DRAGON_DISCOUNT
     };
 
 	public enum EFunnels
@@ -238,9 +252,10 @@ public class HDTrackingManager
     /// <param name="hcGained">Amount of hard currency gained during the round.</param>
 	/// <param name="boostTime">Amount of time the player was using boost during the round in seconds.</param>
     /// <param name="mapUsage">Numer of time the player opened the map.</param>
+    /// <param name="runType">Type of run: common or tournament</param>
     public virtual void Notify_RoundEnd(int dragonXp, int deltaXp, int dragonProgression, int timePlayed, int score, 
         int chestsFound, int eggFound, float highestMultiplier, float highestBaseMultiplier, int furyRushNb, int superFireRushNb, int hcRevive, int adRevive,
-        int scGained, int hcGained, float boostTime, int mapUsage) {}
+        int scGained, int hcGained, float boostTime, int mapUsage, string runType) {}
 
     /// <summary>
     /// Called when a run finished (because of death or quit game). Remember that a round is composed of at least one run, but it can have more than one if after a run
@@ -588,7 +603,11 @@ public class HDTrackingManager
     /// <param name="action">How did the player close the popup? Possible values: "close", "buy", "shop"</param>
     public virtual void Notify_CloseHappyHourPopup(string itemID, string action) { }
 
-    #endregion
+    /// <summary>
+    /// Notifies that the server has assigned the player to a cluster
+    /// </summary>
+    public virtual void Notify_ClusterAssigned(string clusterId) {}
+
 
     #region animoji
     /// <summary>
@@ -679,6 +698,42 @@ public class HDTrackingManager
 
     public virtual void Notify_PopupOTA(string _popupName, Downloadables.Popup.EAction _action) {  }
     #endregion
+
+    #region referral
+    public enum EReferralPopupName
+    {
+        InfoPopup,
+        ErrorPopup,
+        ConfirmationPopup,
+        Shop
+    }
+
+    public enum EReferralAction
+    {
+        Info,
+        Invite,
+        Close,
+        InviteMore,
+        Claim
+    }
+
+    public virtual void Notify_ReferralPopup(EReferralPopupName popupName, EReferralAction action) { }
+
+
+    public enum EReferralOrigin
+    {
+        Shop,
+        Interstitial
+    }
+
+    public virtual void Notify_ReferralSendInvite(EReferralOrigin origin) { }
+
+    public virtual void Notify_ReferralInstall(bool valid, string referrerId) { }
+
+    #endregion referral
+
+
+    #endregion notify
 
     // The names of the values of this enum match the ones that BI expect, so you shouldn't change them unless BI requires so
     public enum ELocation
@@ -783,5 +838,7 @@ public class HDTrackingManager
         Session_GameRoundCount = 0;
     }
     #endregion
+
+    
 }
 

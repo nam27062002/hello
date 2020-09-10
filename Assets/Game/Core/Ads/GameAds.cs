@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GameAds : Singleton<GameAds> {
+public class GameAds : Singleton<GameAds>, IBroadcastListener {
 
     public enum EAdPurpose
     {
@@ -14,10 +14,15 @@ public class GameAds : Singleton<GameAds> {
         EVENT_SCORE_X2,
         INTERSTITIAL,
 		DAILY_REWARD_DOUBLE,
-		FREE_OFFER_PACK
+		FREE_OFFER_PACK,
+        RUN_REWARD_MULTIPLIER
     };
 
-	public static bool adsAvailable {
+    private const string INTERSTITIAL_RUNS_KEY = "GameAds.InterstitialRuns";
+    private const string RUNS_WITHOUT_ADS_KEY = "GameAds.RunsWithoutAds";
+    private const string DEFAULT_SETTINGS_SKU = "defaultAdsSettings";
+
+    public static bool adsAvailable {
 		get { return DeviceUtilsManager.SharedInstance.internetReachability != NetworkReachability.NotReachable
                   && FeatureSettingsManager.AreAdsEnabled && DebugSettings.areAdsEnabled;
 		}
@@ -31,10 +36,9 @@ public class GameAds : Singleton<GameAds> {
 
     private bool IsInited { get; set; }
 
-    private AdProvider m_adProvider;
+    private DefinitionNode m_interstitialSettings = null;
 
-    private const string INTERSTITIAL_RUNS_KEY = "GameAds.InterstitialRuns";
-    private const string RUNS_WITHOUT_ADS_KEY = "GameAds.RunsWithoutAds";
+    private AdProvider m_adProvider;
 
     private AdProvider GetAdProvider()
     {
@@ -216,12 +220,16 @@ public class GameAds : Singleton<GameAds> {
         bool ret = false;
         if (FeatureSettingsManager.AreAdsEnabled)
         {
-            DefinitionNode interstitialsSetup = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.INTERSTITIALS_SETUP, "intersitialsSetup");
-            int minRuns = interstitialsSetup.GetAsInt("runsToStart");
+            // If settings not initialized, do it now
+            if(m_interstitialSettings == null) {
+                LoadSettingsForCluster(UsersManager.currentUser.GetClusterId());
+			}
+
+            int minRuns = m_interstitialSettings.GetAsInt("runsToStart");
             if (UsersManager.currentUser.gamesPlayed >= minRuns)
             {
                 bool cleanCounter = true;
-                bool checkHacker = interstitialsSetup.GetAsBool("checkHacker");
+                bool checkHacker = m_interstitialSettings.GetAsBool("checkHacker");
                 if ( checkHacker &&  UsersManager.currentUser.isHacker)
                 {
                     ret = true;
@@ -231,8 +239,8 @@ public class GameAds : Singleton<GameAds> {
                     TrackingPersistenceSystem trackingPersistence = HDTrackingManager.Instance.TrackingPersistenceSystem;
                     int totalPurchases = (trackingPersistence == null) ? 0 : trackingPersistence.TotalPurchases;
                     long lastPurchaseTimestamp = (trackingPersistence == null) ? 0 : trackingPersistence.LastPurchaseTimestamp * 1000;  // to milliseconds
-                    long timestamp = GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong();
-                    long timeNoPaying = interstitialsSetup.GetAsLong("daysNoPaying") * 24 * 60 * 60 * 1000; // to milliseconds
+                    long timestamp = GameServerManager.GetEstimatedServerTimeAsLong();
+                    long timeNoPaying = m_interstitialSettings.GetAsLong("daysNoPaying") * 24 * 60 * 60 * 1000; // to milliseconds
                     if ( totalPurchases <= 0 || timestamp - lastPurchaseTimestamp > timeNoPaying )
                     {
                         cleanCounter = false;
@@ -253,8 +261,12 @@ public class GameAds : Singleton<GameAds> {
 
     public void ResetIntersitialCounter()
     {
-        DefinitionNode intertitialsSetup = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.INTERSTITIALS_SETUP, "intersitialsSetup");
-        int intersitialRuns = intertitialsSetup.GetAsInt("interstitialRuns");
+        // If settings not initialized, do it now
+        if(m_interstitialSettings == null) {
+            LoadSettingsForCluster(UsersManager.currentUser.GetClusterId());
+        }
+
+        int intersitialRuns = m_interstitialSettings.GetAsInt("interstitialRuns");
         PlayerPrefs.SetInt(INTERSTITIAL_RUNS_KEY, intersitialRuns);
         PlayerPrefs.Save();
     }
@@ -268,5 +280,47 @@ public class GameAds : Singleton<GameAds> {
         PlayerPrefs.Save();
     }
 
+    /// <summary>
+    /// Load the interstitial ad settings corresponding to the given cluster.
+    /// </summary>
+    /// <param name="_clusterId">The cluster whose settings we want.</param>
+    private void LoadSettingsForCluster(string _clusterId) {
+        // Get all settings definitions
+        List<DefinitionNode> settingsDefs = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.INTERSTITIALS_SETUP);
+        bool found = false;
+        for(int i = 0; i < settingsDefs.Count; ++i) {
+            // Is this setting valid for this cluster?
+            List<string> clusterIds = settingsDefs[i].GetAsList<string>("clusterIds");
+            if(clusterIds.Contains(_clusterId)) {
+                // Yes! store it and break the loop
+                m_interstitialSettings = settingsDefs[i];
+                found = true;
+                break;
+			}
+		}
+
+        // If we couldn't find any settings for the given cluster, use default
+        if(!found) {
+            // Default settings
+            m_interstitialSettings = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.INTERSTITIALS_SETUP, DEFAULT_SETTINGS_SKU);
+        }
+    }
+
     #endregion
+
+    #region callbacks
+    /// <summary>
+    /// An event has been received.
+    /// </summary>
+    /// <param name="_eventType"></param>
+    /// <param name="_eventData"></param>
+    public void OnBroadcastSignal(BroadcastEventType _eventType, BroadcastEventInfo _eventData) {
+        switch(_eventType) {
+            case BroadcastEventType.CLUSTER_ID_ASSIGNED: {
+                // Load interstitial settings for the new cluster
+                LoadSettingsForCluster((_eventData as ClusterIdEventInfo).clusterId);
+			} break;
+		}
+	}
+	#endregion
 }

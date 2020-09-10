@@ -917,9 +917,13 @@ public class GameSceneController : GameSceneControllerBase {
                 }
             }
 
+            // Track the run type
+            string runType = HDLiveDataManager.tournament.isActive ? "tournament_run" : "common_run";
+
             HDTrackingManager.Instance.Notify_RoundEnd(dragonXp, (int)RewardManager.xp, dragonProgress, timePlayed, score, chestsFound, eggsFound,
                         RewardManager.maxScoreMultiplier, RewardManager.maxBaseScoreMultiplier, RewardManager.furyFireRushAmount, RewardManager.furySuperFireRushAmount,
-                        RewardManager.paidReviveCount, RewardManager.freeReviveCount, (int)RewardManager.coins, (int)RewardManager.pc, m_boostTimeTracker.currentValue, (int)m_mapUsageTracker.currentValue);
+                        RewardManager.paidReviveCount, RewardManager.freeReviveCount, (int)RewardManager.coins, (int)RewardManager.pc, m_boostTimeTracker.currentValue,
+                        (int)m_mapUsageTracker.currentValue, runType);
         }
 
         m_boostTimeTracker.enabled = false;

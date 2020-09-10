@@ -89,7 +89,7 @@ public class HDCustomizerManager
     
     public long GetTimeMillis()
     {
-        return GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong();
+        return GameServerManager.GetEstimatedServerTimeAsLong();
     }
     
     private enum EState

@@ -569,7 +569,7 @@ MonoBehaviour:
   m_machine: {fileID: 114423549668357976}
   m_viewControl: {fileID: 114042048743257310}
   m_equip: {fileID: 114368725262741708}
-  m_sku: BadJunk
+  m_sku: VillagerGirl
   m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1
 --- !u!114 &114731166678089918
@@ -595,7 +595,7 @@ MonoBehaviour:
     max: 2.75
   m_useSpawnerRotation: 0
   m_serializedJson: '[{"restTime":{"min":0,"max":0},"randomLookAt":true,"dataType":"AI.Behaviour.IdleData","editorFolded":false},{"speed":11,"checkDragonPositionTime":0.5,"checkForActionPointTime":0.5,"actions":{"panic":{"id":0,"active":true,"probability":1},"jump":{"id":1,"active":false,"probability":1},"goOn":{"id":2,"active":true,"probability":1},"hide":{"id":3,"active":true,"probability":1},"home":{"id":3,"active":true,"probability":1}},"dataType":"AI.Behaviour.FleeToAPData","editorFolded":false},{"standUpTime":0,"dataType":"AI.Behaviour.OnGroundData","editorFolded":false},{"dataType":"AI.Behaviour.OnActionPointData","editorFolded":false}]'
-  m_databaseKey: PF_VillagerGirl_Static (1)
+  m_databaseKey: PF_VillagerGirl_Static
 --- !u!114 &114423549668357976
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -988,3 +988,15 @@ MonoBehaviour:
         position: {x: -0.003118515, y: 0.21958745, z: 0.028951943}
         scale: {x: 0.738326, y: 0.7383261, z: 0.7383261}
         rotation: {x: 18.178547, y: 336.93127, z: 0.6223211}
+  - season: Alien
+    groups:
+    - name: Hat
+      probability: 0.7
+      items:
+      - equipablePrefabName: PF_AlienMask_villager
+        defaultItemLOW: 0
+        probability: 1
+        toDisableOnEquip: []
+        position: {x: -0.003118515, y: 0.08, z: 0.12}
+        scale: {x: 0.738326, y: 0.7383261, z: 0.7383261}
+        rotation: {x: 7.1, y: 0, z: 0}

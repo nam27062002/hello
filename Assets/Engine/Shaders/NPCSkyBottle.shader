@@ -13,8 +13,8 @@ Shader "Hungry Dragon/NPC/NPC Sky bottle"
 		_NormalTex("Normal", 2D) = "white" {}
 		_NormalStrength("Normal Strength", float) = 3
 
-		_SpecularPower("Specular power", float) = 1
-		_SpecularColor("Specular color (RGB)", Color) = (0, 0, 0, 0)
+		_SpecExponent("Specular Exponent", float) = 1.0
+		[Rotation] _SecondLightDir("Second Light direction", Vector) = (0,0,-1,0)
 
 		_FresnelPower("Fresnel power", Range(0.0, 5.0)) = 0.27
 		_FresnelColor("Fresnel color (RGB)", Color) = (0, 0, 0, 0)
@@ -63,6 +63,7 @@ Shader "Hungry Dragon/NPC/NPC Sky bottle"
 			#define FRESNEL
 			#define LITMODE_LIT
 
+			#define BOTTLE
 
 //			#define GHOST
 //			#define TINT

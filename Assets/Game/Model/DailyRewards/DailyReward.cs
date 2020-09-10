@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------------//
 using UnityEngine;
 using System;
+using System.Globalization;
 using System.Collections.Generic;
 
 //----------------------------------------------------------------------------//
@@ -34,6 +35,7 @@ public class DailyReward {
 	public List<DefinitionNode> replacementDefs = new List<DefinitionNode>();
 	public int order = 0;
 	public Metagame.Reward reward = null;
+	public string customizationID = "";
 
 	public bool canBeDoubled {
 		get {
@@ -76,6 +78,7 @@ public class DailyReward {
 		reward = null;
 		sourceDef = null;
 		replacementDefs.Clear();
+		customizationID = "";
 		order = 0;
 
 		// Reset state
@@ -103,6 +106,9 @@ public class DailyReward {
 		// Store source and replacement definitions
 		sourceDef = _defs[0];
 		replacementDefs.AddRange(_defs.GetRange(1, _defs.Count - 1));
+
+		// Store customization ID
+		customizationID = GenerateCustomizationID();
 
 		// Create new reward
 		reward = CreateRewardFromDef(sourceDef);
@@ -208,6 +214,40 @@ public class DailyReward {
         return _amount;
     }
 
+	/// <summary>
+	/// Compare the customization ID for the current reward definition with the one used when the reward was generated.
+	/// </summary>
+	/// <returns><c>true</c> if the customization ID for the current reward definition matches the one used when the reward was generated. <c>false</c> otherwise.</returns>
+	public bool CheckCustomizationIDs() {
+		// Obtain customization ID for current content
+		string currentId = GenerateCustomizationID();
+
+		// Compare with loaded ID at the time the reward was generated
+		return currentId == customizationID;
+	}
+
+	/// <summary>
+	/// Generate a composed customization ID by composing the customization ID 
+	/// of the definitions of this reward and of all of its replacement rewards.
+	/// </summary>
+	/// <returns>A composed customization ID representing this reward.</returns>
+	private string GenerateCustomizationID() {
+		string composedId = "";
+
+		// Add this reward's definition's code
+		if(sourceDef != null) {
+			composedId += sourceDef.customizationCode.ToString(CultureInfo.InvariantCulture);
+		}
+
+		// Add replacement's reward definition's code
+		for(int i = 0; i < replacementDefs.Count; ++i) {
+			composedId += replacementDefs[i].customizationCode.ToString(CultureInfo.InvariantCulture);
+		}
+
+		// Done!
+		return composedId;
+	}
+
 	//------------------------------------------------------------------------//
 	// PERSISTENCE METHODS													  //
 	//------------------------------------------------------------------------//
@@ -241,6 +281,14 @@ public class DailyReward {
 					replacementDefs.Add(replacementRewardDef);
 				}
 			}
+		}
+
+		// Customization ID
+		if(_data.ContainsKey("customizationID")) {
+			customizationID = _data["customizationID"];
+		} else {
+			// Retro-compatibility: if not generated, do it now
+			customizationID = GenerateCustomizationID();
 		}
 
 		// State
@@ -277,6 +325,13 @@ public class DailyReward {
 			}
 			data.Add("replacements", replacementsData);
 		}
+
+		// Customization ID
+		// Retro-compatibility: if not generated, do it now
+		if(string.IsNullOrEmpty(customizationID)) {
+			customizationID = GenerateCustomizationID();
+		}
+		data.Add("customizationID", customizationID);
 
 		// State
 		data.Add("collected", PersistenceUtils.SafeToString(collected));

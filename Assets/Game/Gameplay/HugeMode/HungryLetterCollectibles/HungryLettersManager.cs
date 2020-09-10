@@ -202,12 +202,19 @@ public class HungryLettersManager : MonoBehaviour
 	private void AwardStuff()
 	{
 		//TextSystem.Instance.ShowSituationalText(SituationalTextSystem.Type.HungryLetterCollected);
+		
 		// award stuff.
 		if ( m_lettersCollected < m_coinAwards.Count )
 			m_reward.coins = m_coinAwards[ m_lettersCollected ];
+
 		if ( m_lettersCollected < m_scoreAwards.Count )
 			m_reward.score = m_scoreAwards[ m_lettersCollected ];
+
+		// [AOC] Apply ad reward modifier factor
+		m_reward.coins *= RewardManager.rewardAdModifierSettings.spawnersCoinsMultiplier;
+
 		Messenger.Broadcast<Reward>(MessengerEvents.LETTER_COLLECTED, m_reward);
+
 		//report analytics.
 		// TODO: Recover analytics
 		/*

@@ -51,11 +51,11 @@ public class HDLiveEventDefinition {
 	public bool m_refund;
 
 	public TimeSpan timeToEnd {
-		get { return m_endTimestamp - GameServerManager.SharedInstance.GetEstimatedServerTime(); }
+		get { return m_endTimestamp - GameServerManager.GetEstimatedServerTime(); }
 	}
 
 	public TimeSpan timeToStart {
-		get { return m_startTimestamp - GameServerManager.SharedInstance.GetEstimatedServerTime(); }
+		get { return m_startTimestamp - GameServerManager.GetEstimatedServerTime(); }
 	}
 
 	// Goal?

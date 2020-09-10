@@ -140,8 +140,10 @@ public class GameSettings : SingletonScriptableObject<GameSettings> {
 	private int m_enableHappyHourAtRun = 4;
 	public static int ENABLE_HAPPY_HOUR_AT_RUN { get { return instance.m_enableHappyHourAtRun; } }
 
+	private int m_enableDragonDiscountsAtRun = 4;
+	public static int ENABLE_DRAGON_DISCOUNTS_AT_RUN { get { return instance.m_enableDragonDiscountsAtRun; } }
 
-	// FTUX
+	// UI
 	[Separator("UISettings")]
 	private bool m_showNextDragonInXpBar = false;
 	public static bool SHOW_NEXT_DRAGON_IN_XP_BAR { get { return instance.m_showNextDragonInXpBar; } }
@@ -151,6 +153,21 @@ public class GameSettings : SingletonScriptableObject<GameSettings> {
 
 	private bool m_mapAsButton = false;
 	public static bool MAP_AS_BUTTON { get { return instance.m_mapAsButton; } }
+
+    // If false, the skin power description in the unlocked skin screen, will be always visible. If true, it will
+    // behave as a clickable tooltip.
+	private bool m_unlockedSkinPowerAsInfoBox = false;
+    public static bool UNLOCKED_SKIN_POWER_AS_INFO_BOX { get { return instance.m_unlockedSkinPowerAsInfoBox; } }
+
+	// If true, the "tap to continue" in the unlocked skin screen will be hidden, and instead, we will show a button
+    // with "No, thanks" besides the buy button.
+	private bool m_showContinueButtonInUnlockedSkin = false;
+	public static bool SHOW_CONTINUE_BUTTON_IN_UNLOCKED_SKIN { get { return instance.m_showContinueButtonInUnlockedSkin; } }
+
+
+	// If true, dont start the map countdown until the player clicks on the map icon for first time
+	private bool m_initialMapCountdownTriggeredByPlayer;
+    public static bool INITIAL_MAP_COUNTDOWN_TRIGGER_BY_PLAYER { get { return instance.m_initialMapCountdownTriggeredByPlayer; } }
 
 	// Social
 	[Separator("Social")]
@@ -310,7 +327,7 @@ public class GameSettings : SingletonScriptableObject<GameSettings> {
 		instance.m_enableShareButtonsAtRun = def.GetAsInt("enableShareButtonsAtRun", instance.m_enableShareButtonsAtRun);
 		instance.m_enablePassiveEventsAtRun = def.GetAsInt("enablePassiveEventsAtRun", instance.m_enablePassiveEventsAtRun);
 		instance.m_enableHappyHourAtRun = def.GetAsInt("enableHappyHourAtRun", instance.m_enableHappyHourAtRun);
-
+		instance.m_enableDragonDiscountsAtRun = def.GetAsInt("enableDragonDiscountsAtRun", instance.m_enableDragonDiscountsAtRun);
 
 		// UI Settings:
 		def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, UI_SETTINGS_SKU);
@@ -319,6 +336,10 @@ public class GameSettings : SingletonScriptableObject<GameSettings> {
 		instance.m_showNextDragonInXpBar = def.GetAsBool("showNextDragonInXpBar", instance.m_showNextDragonInXpBar);
 		instance.m_showUnlockProgressionText = def.GetAsBool("showUnlockProgressionText", instance.m_showUnlockProgressionText);
 		instance.m_mapAsButton = def.GetAsBool("mapAsButton", instance.m_mapAsButton);
+		instance.m_unlockedSkinPowerAsInfoBox = def.GetAsBool("unlockedSkinPowerAsInfoBox", instance.m_unlockedSkinPowerAsInfoBox);
+		instance.m_showContinueButtonInUnlockedSkin = def.GetAsBool("showContinueButtonInUnlockedSkin", instance.m_showContinueButtonInUnlockedSkin);
+		instance.m_initialMapCountdownTriggeredByPlayer = def.GetAsBool("initialMapCountdownTriggeredByPlayer", instance.m_initialMapCountdownTriggeredByPlayer);
+
 	}
 
 	/// <summary>

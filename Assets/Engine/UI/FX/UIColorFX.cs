@@ -34,20 +34,42 @@ public class UIColorFX : UIBehaviour {	// Inherit from UIBehaviour to have some 
 	public const string TEXT_REFERENCE_MATERIAL_PATH = "UI/UIFontHolder";
 	public const string COLOR_RAMP_MATERIAL_SUFFIX = "_Ramp";
 
+	// Range Values
+	#region range_constants
+	public static readonly Color COLOR_MULTIPLY_DEFAULT = Color.white;
+	public static readonly Color COLOR_ADD_DEFAULT = new Color(0f, 0f, 0f, 0f);	// Alpha 0!
+
+	public const float ALPHA_MIN = 0f;
+	public const float ALPHA_MAX = 1f;
+	public const float ALPHA_DEFAULT = 1f;
+
+	public const float BRIGHTNESS_MIN = -1f;
+	public const float BRIGHTNESS_MAX = 1f;
+	public const float BRIGHTNESS_DEFAULT = 0f;
+
+	public const float SATURATION_MIN = -1f;
+	public const float SATURATION_MAX = 1f;
+	public const float SATURATION_DEFAULT = 0f;
+
+	public const float CONTRAST_MIN = -1f;
+	public const float CONTRAST_MAX = 1f;
+	public const float CONTRAST_DEFAULT = 0f;
+	#endregion
+
 	// Auxiliar class
 	[System.Serializable]
 	public class Setup {
 		// Members
-		public Color colorMultiply = Color.white;
-		public Color colorAdd = new Color(0f, 0f, 0f, 0f);	// Alpha 0!
+		public Color colorMultiply = COLOR_MULTIPLY_DEFAULT;
+		public Color colorAdd = COLOR_ADD_DEFAULT;
 
 		[Space]
-		[Range(0f, 1f)] public float alpha = 1f;	// Will be multiplied to the source and tint alpha components
+		[Range(ALPHA_MIN, ALPHA_MAX)] public float alpha = ALPHA_DEFAULT;	// Will be multiplied to the source and tint alpha components
 
 		[Space]
-		[Range(-1f, 1f)] public float brightness = 0f;
-		[Range(-1, 1f)] public float saturation = 0f;
-		[Range(-1, 1)] public float contrast = 0f;
+		[Range(BRIGHTNESS_MIN, BRIGHTNESS_MAX)] public float brightness = BRIGHTNESS_DEFAULT;
+		[Range(SATURATION_MIN, SATURATION_MAX)] public float saturation = SATURATION_DEFAULT;
+		[Range(CONTRAST_MIN, CONTRAST_MAX)] public float contrast = CONTRAST_DEFAULT;
 
 		/// <summary>
 		/// Parametrized constructor.
@@ -71,14 +93,14 @@ public class UIColorFX : UIBehaviour {	// Inherit from UIBehaviour to have some 
 
 	[Space]
 	[FormerlySerializedAs("colorMultiply")]
-	[SerializeField] private Color m_colorMultiply = new Color(1, 1, 1, 1);
+	[SerializeField] private Color m_colorMultiply = COLOR_MULTIPLY_DEFAULT;
 	public Color colorMultiply {
 		get { return m_colorMultiply; }
 		set { m_colorMultiply = value; SetDirty(); }
 	}
 
 	[FormerlySerializedAs("colorAdd")]
-	[SerializeField] private Color m_colorAdd = new Color(0, 0, 0, 0);
+	[SerializeField] private Color m_colorAdd = COLOR_ADD_DEFAULT;
 	public Color colorAdd {
 		get { return m_colorAdd; }
 		set { m_colorAdd = value; SetDirty(); }
@@ -112,7 +134,7 @@ public class UIColorFX : UIBehaviour {	// Inherit from UIBehaviour to have some 
 
 	[Space]
 	[FormerlySerializedAs("alpha")]
-	[SerializeField] [Range(0f, 1f)] private float m_alpha = 1f;	// Will be multiplied to the source and tint alpha components
+	[SerializeField] [Range(ALPHA_MIN, ALPHA_MAX)] private float m_alpha = ALPHA_DEFAULT;	// Will be multiplied to the source and tint alpha components
 	public float alpha {
 		get { return m_alpha; }
 		set { m_alpha = value; SetDirty(); }
@@ -120,21 +142,21 @@ public class UIColorFX : UIBehaviour {	// Inherit from UIBehaviour to have some 
 
 	[Space]
 	[FormerlySerializedAs("brightness")]
-	[SerializeField] [Range(-1f, 1f)] private float m_brightness = 0f;
+	[SerializeField] [Range(BRIGHTNESS_MIN, BRIGHTNESS_MAX)] private float m_brightness = BRIGHTNESS_DEFAULT;
 	public float brightness {
 		get { return m_brightness; }
 		set { m_brightness = value; SetDirty(); }
 	}
 
 	[FormerlySerializedAs("saturation")]
-	[SerializeField] [Range(-1, 1f)] private float m_saturation = 0f;
+	[SerializeField] [Range(SATURATION_MIN, SATURATION_MAX)] private float m_saturation = SATURATION_DEFAULT;
 	public float saturation {
 		get { return m_saturation; }
 		set { m_saturation = value; SetDirty(); }
 	}
 
 	[FormerlySerializedAs("contrast")]
-	[SerializeField] [Range(-1, 1)] private float m_contrast = 0f;
+	[SerializeField] [Range(CONTRAST_MIN, CONTRAST_MAX)] private float m_contrast = CONTRAST_DEFAULT;
 	public float contrast {
 		get { return m_contrast; }
 		set { m_contrast = value; SetDirty(); }

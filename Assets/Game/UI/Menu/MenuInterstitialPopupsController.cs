@@ -79,6 +79,12 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 	/// Update loop.
 	/// </summary>
 	private void Update() {
+#if UNITY_EDITOR && DEBUG
+		if(Input.GetKeyDown(KeyCode.C)) {
+			CheckCustomizerPopup_DEBUG();
+		}
+#endif
+
 		// Customizer popup async operation+
 		if(GetFlag(StateFlag.WAIT_FOR_CUSTOM_POPUP)) {
 			if(!GetFlag(StateFlag.POPUP_DISPLAYED)) {
@@ -221,6 +227,18 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 			}
 		}
 	}
+
+#if UNITY_EDITOR && DEBUG
+	/// <summary>
+	/// Check popups coming from the customizer.
+	/// </summary>
+	private void CheckCustomizerPopup_DEBUG() {
+		// Only if enabled in the debug settings
+		if(!DebugSettings.CUSTOMIZER_POPUP_TEST_ENABLED) return;
+		OpenCustomizerPopup(DebugSettings.CUSTOMIZER_POPUP_TEST_CONFIG);
+		return;
+	}
+#endif
 
 	/// <summary>
 	/// Popups coming from the customizer.
@@ -702,6 +720,32 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 		SetFlag(StateFlag.OPEN_SHOP, false);
 	}
 
+
+    /// <summary>
+    /// Check if we need to show the FTUX baby pets info popup
+    /// Do it if the player unlocked a baby pet
+    /// </summary>
+	private void CheckBabyPetsPopup()
+	{
+		// Check baby pets info popup
+		if (!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.BABY_PETS_INFO))
+		{
+			if (UsersManager.currentUser.petCollection.unlockedBabyPetsCount > 0)
+			{
+				// Load the popup
+				PopupController popup = PopupManager.LoadPopup(PopupInfoBabyPets.PATH);
+				PopupInfoBabyPets popupPets = popup.GetComponent<PopupInfoBabyPets>();
+
+				// Show the popup
+				PopupManager.EnqueuePopup(popup);
+
+				// Mark this tutorial step as completed
+				UsersManager.currentUser.SetTutorialStepCompleted(TutorialStep.BABY_PETS_INFO);
+			}
+		}
+	}
+
+
 	/// <summary>
 	/// If the player has watched enough interstitials
 	/// we show him a Remove ads offer popup.
@@ -777,6 +821,7 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 		CheckAnimojiTutorial();
 		CheckLegendaryDragonsUnlock();
 		CheckLeaguesUnlock();
+		CheckBabyPetsPopup();
 		CheckRating();
 		CheckSurvey();
 		CheckSilentNotification();

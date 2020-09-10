@@ -8,12 +8,12 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: MT_icon_jellyfishes
-  m_Shader: {fileID: 4800000, guid: 3880f73760fb52c4bba39b1167e234e7, type: 3}
-  m_ShaderKeywords: BLENDAXIS_X COLORMODE_NONE FRESNEL LITMODE_LIT
+  m_Shader: {fileID: 4800000, guid: 0df7d50e0696885468c98a6971751340, type: 3}
+  m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: 4000
+  m_CustomRenderQueue: -1
   stringTagMap: {}
   disabledShaderPasses: []
   m_SavedProperties:
@@ -56,6 +56,10 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _NormalTex:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
@@ -126,20 +130,26 @@ Material:
     - _Metallic: 0
     - _Mode: 0
     - _NormalStrenght: 1
+    - _NormalStrength: 2
     - _OcclusionStrength: 1
     - _OutlineWidth: 0.11
     - _Parallax: 0.02
+    - _Period: 6
+    - _Period2: 2
     - _ReflectionAmount: 1
     - _SmoothnessTextureChannel: 0
-    - _SpecExponent: 37
+    - _SpecExponent: 50
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _StencilMask: 10
+    - _TimePhase: 4
+    - _TimePhase2: 3
     - _UVSec: 0
     - _VOAmplitude: 0.3
     - _VOSpeed: 3
     - _ZWrite: 1
     m_Colors:
+    - _AmbientColor: {r: 0, g: 0, b: 0, a: 0}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _ColorAdd: {r: 0, g: 0, b: 0, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
@@ -149,7 +159,10 @@ Material:
     - _OutlineColor: {r: 0.34901962, g: 0.21568628, b: 0.0627451, a: 1}
     - _ReflectionColor: {r: 1, g: 0.6914807, b: 0.1397059, a: 1}
     - _SecondLightColor: {r: 0, g: 0, b: 0, a: 0}
-    - _SecondLightDir: {r: 0, g: 0, b: -1, a: 0}
+    - _SecondLightDir: {r: -0.072844066, g: 0.46943948, b: -0.8799547, a: 0}
     - _Tint: {r: 0.9338235, g: 0.785321, b: 0.16479237, a: 1}
     - _Tint1: {r: 1, g: 1, b: 1, a: 1}
     - _Tint2: {r: 1, g: 1, b: 1, a: 1}
+    - _VertexAnimation: {r: 0, g: -0.04, b: 0, a: 0}
+    - _VertexAnimation2: {r: -0.2, g: 0.1, b: -0.2, a: 0}
+    - _VertexAnimation3: {r: 0.15, g: 0, b: 0.15, a: 1}

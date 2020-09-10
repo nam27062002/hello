@@ -15,24 +15,24 @@ public class SocialUtilsWeibo : SocialUtils
         public override void onLogInCompleted()
         {
             Debug.TaggedLog(TAG, "onLogInCompleted");
-            m_manager.OnSocialPlatformLogin();
+            m_manager.OnSocialPlatformLogin(EPlatform.Weibo);
         }
 
         public override void onLogInCancelled()
         {
             Debug.TaggedLog(TAG, "onLogInCancelled");
-            m_manager.OnSocialPlatformLoginFailed();
+            m_manager.OnSocialPlatformLoginFailed(EPlatform.Weibo);
         }
 
         public override void onLogInFailed(string strError)
         {
             Debug.TaggedLog(TAG, "onLogInFailed with error: " + strError);
-            m_manager.OnSocialPlatformLoginFailed();
+            m_manager.OnSocialPlatformLoginFailed(EPlatform.Weibo);
         }
 
         public override void onLogOut()
         {
-            m_manager.OnSocialPlatformLogOut();
+            m_manager.OnSocialPlatformLogOut(EPlatform.Weibo);
             Debug.TaggedLog(TAG, "onLogOut");
         }       
     }

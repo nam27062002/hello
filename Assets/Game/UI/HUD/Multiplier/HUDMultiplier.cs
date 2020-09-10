@@ -71,6 +71,7 @@ public class HUDMultiplier : IHUDCounter {
 
 		// Subscribe to external events
 		Messenger.AddListener<ScoreMultiplier, float>(MessengerEvents.SCORE_MULTIPLIER_CHANGED, OnMultiplierChanged);
+        Messenger.AddListener(MessengerEvents.GAME_STARTED, OnGameStarted);
 	}
 	
 	/// <summary>
@@ -82,7 +83,8 @@ public class HUDMultiplier : IHUDCounter {
 
 		// Unsubscribe from external events
 		Messenger.RemoveListener<ScoreMultiplier, float>(MessengerEvents.SCORE_MULTIPLIER_CHANGED, OnMultiplierChanged);
-	}
+        Messenger.RemoveListener(MessengerEvents.GAME_STARTED, OnGameStarted);
+    }
 
 	/// <summary>
 	/// Called every frame.
@@ -107,11 +109,11 @@ public class HUDMultiplier : IHUDCounter {
 		}
 
 		if(m_progressFillText != null && m_fontMaterial != null) {
-			// The fill texture is setup in a way that the top half is transparent and the bottom half is tinted
-			// When empty (value 0), map the top half to the text mesh
-			// When full (value 1), map the bottom half to the text mesh
-			// In between, interpolate fill texture offsetY between 0 and -0.5
-			m_fillTextureOffset.y = Mathf.Lerp(0, -0.5f, RewardManager.scoreMultiplierProgress);
+            // The fill texture is setup in a way that the top half is transparent and the bottom half is tinted
+            // When empty (value 0), map the top half to the text mesh
+            // When full (value 1), map the bottom half to the text mesh
+            // In between, interpolate fill texture offsetY between 0 and -0.5
+            m_fillTextureOffset.y = Mathf.Lerp(0, -0.5f, RewardManager.scoreMultiplierProgress);
 			m_fontMaterial.SetTextureOffset(ShaderUtilities.ID_FaceTex, m_fillTextureOffset);
 		}
 	}
@@ -119,7 +121,7 @@ public class HUDMultiplier : IHUDCounter {
     private void SetMultiplierToShow(ScoreMultiplier _mult, float fireRushMultiplier ,bool immediate)
     {
         // We just keep the integer part
-		m_multiplierToShow = (long)(_mult.multiplier * fireRushMultiplier);
+        m_multiplierToShow = (long)(_mult.multiplier * fireRushMultiplier);
 
         // Do it! Except if going back to "no multiplier"
         // if (_mult != null && _mult != RewardManager.defaultScoreMultiplier)
@@ -197,5 +199,13 @@ public class HUDMultiplier : IHUDCounter {
         // Update text
 		SetMultiplierToShow(_newMultiplier, fireRushMultiplier, false);
         NeedsToPlayAnim = true;
+    }
+
+    /// <summary>
+    /// Game has just started
+    /// </summary>
+    private void OnGameStarted() {
+        // Make sure we have the right material reference (it seems to change between Start() and game start)
+        m_fontMaterial = m_progressFillText.fontMaterial;
     }
 }

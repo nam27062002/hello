@@ -18,22 +18,12 @@ using UnityEngine;
 /// </summary>
 public class ABTestSelector : MonoBehaviour {
 
-    //------------------------------------------------------------------------//
-	// ENUM     															  //
-	//------------------------------------------------------------------------//
-
-    // The different AB tests configuraed in this component
-    public enum ABTest
-    {
-        MAP_AS_A_BUTTON
-    }
-
 
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 
-	[SerializeField] private ABTest m_abTest;
+	[SerializeField] private ABTest.Test m_abTest;
 
     [Tooltip("Variant A should be the old version")] 
 	[SerializeField] private GameObject m_prefabVariantA;
@@ -48,23 +38,16 @@ public class ABTestSelector : MonoBehaviour {
 	/// </summary>
 	private void Awake() {
 
-        switch (m_abTest)
+        if ( ! ABTest.Evaluate (m_abTest) )
         {
-			case ABTest.MAP_AS_A_BUTTON:
-                {
-                    if (! GameSettings.MAP_AS_BUTTON)
-                    {
-                        // Variant A is the old version
-						InstantiatePrefabVariant(m_prefabVariantA);
-                    }
-                    else
-                    {
-                        // Variant B is the new one
-						InstantiatePrefabVariant(m_prefabVariantB);
-					}
-					break;
-                }
+            // Variant A is the old version
+		    InstantiatePrefabVariant(m_prefabVariantA);
         }
+        else
+        {
+            // Variant B is the new one
+		    InstantiatePrefabVariant(m_prefabVariantB);
+	    }
 
 	}
 

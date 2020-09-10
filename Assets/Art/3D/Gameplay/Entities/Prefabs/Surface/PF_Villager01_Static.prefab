@@ -418,7 +418,7 @@ CapsuleCollider:
   m_Radius: 0.45
   m_Height: 3
   m_Direction: 1
-  m_Center: {x: 0, y: -0.18, z: 0}
+  m_Center: {x: 0, y: 0.43, z: 0}
 --- !u!54 &54000010887478324
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -479,6 +479,18 @@ MonoBehaviour:
         position: {x: 0, y: 0, z: 0}
         scale: {x: 1, y: 1, z: 1}
         rotation: {x: 0, y: 0, z: 0}
+  - season: Alien
+    groups:
+    - name: import
+      probability: 0.8
+      items:
+      - equipablePrefabName: PF_AlienMask_villager
+        defaultItemLOW: 1
+        probability: 1
+        toDisableOnEquip: []
+        position: {x: 0, y: 0, z: 0}
+        scale: {x: 1, y: 1, z: 1}
+        rotation: {x: 0, y: 0, z: 0}
   - season: Anniversary1
     groups:
     - name: import
@@ -496,13 +508,13 @@ MonoBehaviour:
     - name: Hat
       probability: 1
       items:
-      - equipablePrefabName: PF_Axe_Hat
+      - equipablePrefabName: PF_Saw_Hat
         defaultItemLOW: 0
         probability: 1
         toDisableOnEquip: []
-        position: {x: 0.13880296, y: 1.251683, z: 0.06757983}
+        position: {x: -0.0018310547, y: 0.062060595, z: -0.3486008}
         scale: {x: 1.2, y: 1.2, z: 1.2}
-        rotation: {x: 0, y: 0, z: -28.85}
+        rotation: {x: 13.3443985, y: 276.55817, z: 355.80487}
   - season: xmas
     groups:
     - name: Hat
@@ -603,7 +615,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1000011993423810}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0.61, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 475722}
@@ -714,7 +726,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1000013474072868}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -1.6848, z: 0}
+  m_LocalPosition: {x: 0, y: -1.19, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 475722}
@@ -918,7 +930,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1819189002718992}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -1.7, z: 0}
+  m_LocalPosition: {x: 0, y: -1.157, z: 0}
   m_LocalScale: {x: 1.5, y: 1.5, z: 1.5}
   m_Children:
   - {fileID: 4618029735816054}

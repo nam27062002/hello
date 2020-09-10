@@ -7,10 +7,15 @@ public class PetCollection
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
-	private List<string> m_pets;
+	private List<string> m_pets;		// Includes baby pets
+	private List<string> m_babyPets;	// For convenience, keep baby pets list a part
 
 	public int unlockedPetsCount {
 		get { return m_pets.Count; }
+	}
+
+	public int unlockedBabyPetsCount {
+		get { return m_babyPets.Count; }
 	}
 
 	//------------------------------------------------------------------//
@@ -22,6 +27,7 @@ public class PetCollection
 	public PetCollection()
 	{
 		m_pets = new List<string>();
+		m_babyPets = new List<string>();
 	}
 
 	/// <summary>
@@ -29,6 +35,7 @@ public class PetCollection
 	/// </summary>
 	public void Reset() {
 		m_pets.Clear();
+		m_babyPets.Clear();
 	}
 
 	/// <summary>
@@ -51,6 +58,11 @@ public class PetCollection
 		if ( !m_pets.Contains( _sku ) ) {
 			m_pets.Add( _sku );
 
+			// Is it a baby pet?
+			if(IsBaby(_sku)) {
+				m_babyPets.Add(_sku);
+			}
+
 			// Notify game!
 			Messenger.Broadcast<string>(MessengerEvents.PET_ACQUIRED, _sku);
 		}
@@ -63,6 +75,24 @@ public class PetCollection
 	/// <param name="_sku">Pet to be removed.</param>
 	public void RemovePet(string _sku) {
 		m_pets.Remove(_sku);
+		m_babyPets.Remove(_sku);
+	}
+
+	//------------------------------------------------------------------//
+	// STATIC UTILS														//
+	//------------------------------------------------------------------//
+	/// <summary>
+	/// Check whether the given pet is a baby pet or not.
+	/// </summary>
+	/// <param name="_petSku">The sku of the pet to be checked</param>
+	/// <returns>Whether the pet is a baby or not.</returns>
+	public static bool IsBaby(string _petSku) {
+		// Get definition and check pet's category sku
+		DefinitionNode petDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PETS, _petSku);
+		if(petDef != null && petDef.Get("category") == "baby") {
+			return true;
+		}
+		return false;
 	}
 
 	//------------------------------------------------------------------//
@@ -74,12 +104,24 @@ public class PetCollection
 	/// <param name="_data">The data object loaded from persistence.</param>
 	public void Load(SimpleJSON.JSONNode _data) 
 	{
-		SimpleJSON.JSONArray diguisesArr = _data.AsArray;
-		int disguisesLength = diguisesArr.Count;
-		m_pets.Clear();
-		for (int i = 0; i < disguisesLength; i++) {
-			if ( !m_pets.Contains( diguisesArr[i]) )
-				m_pets.Add( diguisesArr[i] );
+		// Clear current data
+		Reset();
+
+		SimpleJSON.JSONArray petsArr = _data.AsArray;
+		int petsLength = petsArr.Count;
+		string petSku = "";
+		for (int i = 0; i < petsLength; i++) {
+			petSku = petsArr[i];
+			if(!m_pets.Contains(petSku)) {
+				m_pets.Add(petSku);
+
+				// Is it a baby?
+				if(IsBaby(petSku)) {
+					if(!m_babyPets.Contains(petSku)) {
+						m_babyPets.Add(petSku);
+					}
+				}
+			}
 		}
 	}
 
@@ -89,12 +131,12 @@ public class PetCollection
 	/// <returns>A new data object to be stored to persistence by the PersistenceManager.</returns>
 	public SimpleJSON.JSONNode Save() 
 	{
-		SimpleJSON.JSONArray diguisesArr = new SimpleJSON.JSONArray();
+		SimpleJSON.JSONArray petsArr = new SimpleJSON.JSONArray();
 		if(m_pets != null) {
 			for (int i = 0; i<m_pets.Count; i++) {
-				diguisesArr.Add(m_pets[i]);
+				petsArr.Add(m_pets[i]);
 			}
 		}
-		return diguisesArr;
+		return petsArr;
 	}
 }

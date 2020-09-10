@@ -20,18 +20,18 @@ public class SocialUtilsSIWA : SocialUtils
 		public override void OnSignedInSuccess(SignInType type, SignInCredential credential)
 		{
 			Debug.TaggedLog(TAG, "onLogInCompleted");
-			m_manager.OnSocialPlatformLogin();
+			m_manager.OnSocialPlatformLogin(EPlatform.SIWA);
 		}
 
 		public override void OnSignedInError(SignInType type, SignInError error)
 		{
 			Debug.TaggedLog(TAG, "onLogInFailed");
-			m_manager.OnSocialPlatformLoginFailed();
+			m_manager.OnSocialPlatformLoginFailed(EPlatform.SIWA);
 		}
 
 		public override void OnSignedOut()
 		{
-			m_manager.OnSocialPlatformLogOut();
+			m_manager.OnSocialPlatformLogOut(EPlatform.SIWA);
 			Debug.TaggedLog(TAG, "onLogOut");
 		}		
     }
