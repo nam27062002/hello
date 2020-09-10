@@ -125,18 +125,5 @@ public class CPXPromoRewardsCheats : MonoBehaviour {
 		m_rewardIndexSetter.SetValue(XPromoManager.instance.xPromoCycle.totalNextRewardIdx);
 	}
 
-    /// <summary>
-    /// Collect the next reward if available.
-    /// </summary>
-    public void OnCollectReward()
-    {
-		XPromoManager.instance.OnCollectReward();
-
-		// Save persistence
-		PersistenceFacade.instance.Save_Request();
-
-		// Update CP UI
-		m_rewardIndexSetter.SetValue(XPromoManager.instance.xPromoCycle.totalNextRewardIdx);
-	}
 
 }

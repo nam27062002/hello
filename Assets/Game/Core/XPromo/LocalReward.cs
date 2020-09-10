@@ -22,6 +22,17 @@ namespace XPromo
 	public class LocalReward
 	{
 
+		//------------------------------------------------------------------------//
+		// ENUM     															  //
+		//------------------------------------------------------------------------//
+
+		public enum State
+		{
+			COLLECTED,
+			READY,
+			COUNTDOWN,
+			LOCKED
+		}
 
 		//------------------------------------------------------------------------//
 		// CONSTS               												  //
@@ -42,6 +53,9 @@ namespace XPromo
 
 		protected int m_priority;
         public int priority {  get { return m_priority;  } }
+
+		protected string m_sku;
+		public string sku { get { return m_sku; } }
 
 		protected XPromoManager.Game m_destination;
 
@@ -114,6 +128,7 @@ namespace XPromo
 			localReward.m_day = _def.GetAsInt("day");
 			localReward.m_enabled = _def.GetAsBool("enabled");
 			localReward.m_priority = _def.GetAsInt("priority");
+			localReward.m_sku = _def.GetAsString("sku");
 
 			return localReward;
                        

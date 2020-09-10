@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Diagnostics;
+using XPromo;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -226,14 +227,19 @@ public class XPromoManager {
 		m_xPromoCycle.InitFromDefinitions();
 	}
 
+   
+
+
 	//------------------------------------------------------------------------//
 	// DEBUG CP 															  //
 	//------------------------------------------------------------------------//
 
 
-    public void OnResetProgression()
+	public void OnResetProgression()
     {
 		m_xPromoCycle.ResetProgression();
+
+        //TODO: reset the incoming rewards collected from the user persistence
     }
 
     public void OnMoveIndexTo(int _newIndex)
@@ -245,14 +251,6 @@ public class XPromoManager {
     {
 		m_xPromoCycle.nextRewardTimestamp = GameServerManager.GetEstimatedServerTime();
 	}
-
-    public void OnCollectReward()
-    {
-        // Skip timer to force it can be collected
-		m_xPromoCycle.nextRewardTimestamp = GameServerManager.GetEstimatedServerTime();
-
-		m_xPromoCycle.CollectReward();
-    }
 
 	//------------------------------------------------------------------------//
 	// DEBUG LOG															  //

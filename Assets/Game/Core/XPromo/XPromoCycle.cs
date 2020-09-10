@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Diagnostics;
+using XPromo;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -21,6 +22,9 @@ using System.Diagnostics;
 /// </summary>
 [Serializable]
 public class XPromoCycle {
+
+
+
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -33,7 +37,6 @@ public class XPromoCycle {
 	// Set of local x-promo rewards as defined in content
 	private List<XPromo.LocalReward> m_localRewards;
 	public List<XPromo.LocalReward> localRewards { get { return m_localRewards; } }
-
 
 	// Configuration from content
 	private Boolean m_enabled;
@@ -71,13 +74,6 @@ public class XPromoCycle {
 	}
 
 
-	// Index of the last collected reward
-	private int m_lastCollectedRewardIdx;
-	public int lastCollectedRewardIdx
-	{
-		get { return m_lastCollectedRewardIdx; }
-	}
-
     // Remaining time to unlock the next reward
 	public TimeSpan timeToCollection
 	{
@@ -95,6 +91,24 @@ public class XPromoCycle {
 			}
 		}
 	}
+
+	// Cache
+	private List<XPromo.LocalReward> m_cycleRewards; // List of the the final local rewards in this cycle (without priority duplicities)
+    public List<LocalReward> cycleRewards
+    {
+        get
+        {
+			// If not cached yet
+			if (m_cycleRewards == null)
+            {
+                // Obtain the rewards in the cycle and cache them
+				m_cycleRewards = GetCycleRewards();
+		    }
+			return m_cycleRewards;
+		}
+    }
+
+	private int[] m_daysWithRewards;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -144,6 +158,7 @@ public class XPromoCycle {
 		// Go back to the first reward
 		m_totalNextRewardIdx = 0;
 
+
 		// Reset the timestamp, so the first reward can be collected.
 		m_nextRewardTimestamp = DateTime.MinValue;
 	}
@@ -169,59 +184,84 @@ public class XPromoCycle {
 		return GameServerManager.GetEstimatedServerTime() >= m_nextRewardTimestamp;
 
 	}
-    /// <summary>
-    ///  Collects the next reward (if possible) and advance the progression
-    /// </summary>
-	public void CollectReward()
+
+
+	/// <summary>
+	///  Collects the next reward (if possible) and advance the progression
+	/// </summary>
+	/// <param name="_index">The index of the reward in the cycle</param>
+	/// <returns>Returns the collected reward</returns>
+	public LocalReward CollectReward(int _index)
 	{
-		// Make sure the reward is available
-		if (!CanCollectNextReward())
-			return;
 
 		// Find the proper next reward (in case the player already owns it, find a replacement)
-		XPromo.LocalReward reward = GetRewardByIndex(nextRewardIdx);
+		LocalReward reward = GetRewardByIndex(_index);
 
-		if (reward is XPromo.LocalRewardHSE)
+        // A HSE reward can always be collected.
+        // We make sure the player doesnt lose the reward if he fails to open the HSE app.
+		if (reward is LocalRewardHSE)
 		{
 			// Open the HSE link
-			XPromoManager.instance.SendRewardToHSE((XPromo.LocalRewardHSE)reward);
+			XPromoManager.instance.SendRewardToHSE((LocalRewardHSE)reward);
 
 		}
-		else if (reward is XPromo.LocalRewardHD)
-		{
-			Metagame.Reward rewardContent = ((XPromo.LocalRewardHD)reward).reward;
+		else if (reward is LocalRewardHD)
+		{   
+			// Make sure the reward is available
+			if (!CanCollectNextReward())
+				return null;
+
+            Metagame.Reward rewardContent = ((LocalRewardHD)reward).reward;
 
 			if (rewardContent is Metagame.RewardCurrency)
 			{
-				// Show trail of coins/gems
+                // Give coins/gems to the user
+				UsersManager.currentUser.EarnCurrency(((Metagame.RewardCurrency)rewardContent).currency, (ulong)rewardContent.amount, false,
+                                                        HDTrackingManager.EEconomyGroup.REWARD_XPROMO_LOCAL);
+
 			}
-			else if (rewardContent is Metagame.RewardDragon)
+			else  // Dragons, pets and eggs
 			{
-				// Show new dragon in selection screen
-			}
-			else
-			{
-				// Show new item in reward screen
+				// Add this reward to the queue
+				UsersManager.currentUser.PushReward(rewardContent);
 			}
 
 			XPromoManager.Log("Reward " + rewardContent.ToString() + " collected ");
+
 		}
 
 
-
-		// Move index to next item
-		m_totalNextRewardIdx++;
-
-		// Calculate next item timestamp
-		// Reset timestamp to 00:00 of local time (but using server timezone!)
-		DateTime serverTime = GameServerManager.GetEstimatedServerTime();
-		TimeSpan toMidnight = DateTime.Today.AddDays(1) - DateTime.Now; // Local
-		m_nextRewardTimestamp = serverTime + toMidnight;   // Local 00:00 in server timezone
-
-		XPromoManager.Log("CollectNextReward nextTimestamp = " + m_nextRewardTimestamp);
+		// If we are collecting this reward for first time
+		if (_index == nextRewardIdx)
+		{
+			// Unlock the next one
+			UnlockNextReward();
+		}
 
 		// Add tracking
 
+		return reward;
+	}
+
+    /// <summary>
+    /// Start the countdown of the next reward in the cycle and advance the next reward pointer.
+    /// </summary>
+    private void UnlockNextReward ()
+    {
+		// Advance the index
+		m_totalNextRewardIdx++;
+
+		// Calculate the days difference between the current and next reward
+		LocalReward nextReward = m_cycleRewards[nextRewardIdx];
+		LocalReward currentReward = m_cycleRewards[(m_totalNextRewardIdx - 1) % m_cycleSize];
+		int daysDiff = nextReward.day - currentReward.day;
+
+		// Reset timestamp to 00:00 of local time (but using server timezone!)
+		DateTime serverTime = GameServerManager.GetEstimatedServerTime();
+		TimeSpan toMidnight = DateTime.Today.AddDays(daysDiff) - DateTime.Now; // Local
+		m_nextRewardTimestamp = serverTime + toMidnight;   // Local 00:00 in server timezone
+
+		XPromoManager.Log("nextRewardTimestamp = " + m_nextRewardTimestamp);
 	}
 
 
@@ -242,6 +282,11 @@ public class XPromoCycle {
 		DateTime serverTime = GameServerManager.GetEstimatedServerTime();
 		if (serverTime < m_startDate || serverTime > m_endDate)
 			return false;
+
+        // Has the xpromo cycle been completed?
+        if (m_totalNextRewardIdx >= m_cycleSize)
+			return false;
+
 
 		// All checks passed. The xPromo feature is active
 		return true;
@@ -292,23 +337,26 @@ public class XPromoCycle {
 			{
 				// Keep a list with all the local rewards
 				m_localRewards.Add(localReward);
-
 			}
 		}
 
 		// Check settings-rewards consistency, so the designers can know if they screwed up the content tables 
-		List<XPromo.LocalReward> activeRewards = m_localRewards.Where<XPromo.LocalReward>(r => r.enabled == true).ToList();
-		if (activeRewards.Count != m_cycleSize)
+		m_daysWithRewards = m_localRewards.Select(r => r.day).Distinct().ToArray<int>();
+        if (m_daysWithRewards.Length != m_cycleSize)
 		{
 			Debug.LogError("The number of xPromo active rewards doesn´t match the xPromo cycle length! Please, fix the content tables.");
 		}
+
+		// Cache the rewards in a cycle
+		m_cycleRewards = GetCycleRewards();
+
 
 
 	}
 
 	/// <summary>
 	/// Gets the reward in the content in a specific position in the cycle (it could not match the day)
-	/// Asumes that the local rewards is already sorted by day and priority.
+	/// Asumes that the local rewards list is already sorted by day and priority.
 	/// </summary>
 	/// <param name="_index">The position index in the xpromo cycle</param>
 	/// <returns></returns>
@@ -318,12 +366,14 @@ public class XPromoCycle {
 		_index = _index % m_cycleSize;
 
 		// Get all rewards for that day (could be more than one) 
-		List<XPromo.LocalReward> rewards = m_localRewards.Where(r => r.day == _index + 1).ToList();
+		List<XPromo.LocalReward> rewards = m_localRewards.Where(r => r.day == m_daysWithRewards[_index]).ToList();
 
 		// Just in case
 		if (rewards.Count == 0)
 			return null;
 
+		LocalReward candidate = null;
+        
 		foreach (XPromo.LocalReward reward in rewards)
 		{
 			// In case of an HSE reward, ignore the priorities.
@@ -335,52 +385,127 @@ public class XPromoCycle {
 			// In case of HD, find the first reward not owned by the player
 			else if (reward is XPromo.LocalRewardHD)
 			{
-				if (((XPromo.LocalRewardHD)reward).reward.IsAlreadyOwned())
-				{
-					// The player already have this item, try the next one in priority
-					continue;
+				candidate = reward;
 
-				}
-				else
+                // The player doesnt have this item yet?
+				if (! ((XPromo.LocalRewardHD)reward).reward.IsAlreadyOwned())
 				{
 					// We have a winner!
-					return reward;
+					return candidate;
 				}
 			}
 		}
 
-		// No reward was found :( this shouldnt happen
-		XPromoManager.Log("No reward found for day " + _index + 1);
-		return null;
+        if (candidate == null) {
+			// No reward was found :( this shouldnt happen
+			XPromoManager.Log("No reward found for day " + _index + 1);
+		}
+        
+		return candidate;
 
 	}
 
+
     /// <summary>
-    /// Return a list of all the rewards in the cycle, in case that there are two rewards
-    /// in the same day, use the lower priority.
-    /// Asumes that the local rewards is already sorted by day and priority.
+    /// Return a list of all the rewards in a cycle.
+    /// Will avoid using rewards that are already owned by the player.
     /// </summary>
     /// <returns></returns>
-    public List<XPromo.LocalReward> GetCycleRewards()
+    public List<LocalReward> GetCycleRewards()
     {
-        List<XPromo.LocalReward> cycleRewards = new List<XPromo.LocalReward>();
-        
-		int dayPointer = -1;
-               
-        foreach (XPromo.LocalReward reward in m_localRewards)
+        List<LocalReward> cycleRewards = new List<XPromo.LocalReward>();
+
+        for (int i = 0; i < cycleSize ; i++)
         {
-            if (reward.day == dayPointer)
-            {
-				// We already have this day, skip it
-				continue;
-            }
-
-			cycleRewards.Add(reward);
-			dayPointer = reward.day;
+			cycleRewards.Add( GetRewardByIndex(i) );
         }
-
+        
 		return cycleRewards;
     }
+
+
+    /// <summary>
+    /// Get the index of a reward in the current xpromo cycle. This index could not match the day.
+    /// </summary>
+    /// <param name="_reward">The local reward</param>
+    /// <returns>Index of the reward starting from 0 (first reward). Returns -1 in case this reward doesnt belong to the current xpromo cycle.</returns>
+    public int GetRewardIndex (LocalReward _reward)
+    {
+		return cycleRewards.FindIndex( (LocalReward e) => e.sku == _reward.sku);
+    }
+
+
+	/// <summary>
+	/// Find the state of a reward reward depending on its availability (ready to collect, already collected, still in countdown...)
+	/// </summary>
+	/// <returns></returns>
+	public LocalReward.State GetRewardState(LocalReward _reward)
+	{
+
+        // Find the actual index of this reward in the cycle
+		int index = GetRewardIndex(_reward);
+
+		return GetRewardState(index);
+
+	}
+
+	/// <summary>
+	/// Find the state of a reward reward depending on its availability (ready to collect, already collected, still in countdown...)
+	/// </summary>
+    /// <param name="_index">The index in the cycle</param>
+	/// <returns></returns>
+	public LocalReward.State GetRewardState(int _index)
+	{
+
+
+		if (_index < XPromoManager.instance.xPromoCycle.m_totalNextRewardIdx)
+		{
+			// This reward has been already claimed 
+			return LocalReward.State.COLLECTED;
+		}
+
+
+		else if (_index == XPromoManager.instance.xPromoCycle.m_totalNextRewardIdx)
+		{
+			// The reward is the next in the cycle
+			if (timeToCollection.TotalMilliseconds <= 0)
+			{
+				// The reward is ready to collect
+				return LocalReward.State.READY;
+			}
+			else
+			{
+				// The timer countdown is not zero yet
+				return LocalReward.State.COUNTDOWN;
+			}
+
+		}
+
+		// The last case is implicit
+		// else if (_index > XPromoManager.instance.xPromoCycle.m_totalNextRewardIdx + 1)
+		{
+			// The reward isnt unlocked yet
+			return LocalReward.State.LOCKED;
+		}
+
+	}
+
+
+
+	//------------------------------------------------------------------------//
+	// CALLBACK METHODS		    											  //
+	//------------------------------------------------------------------------//
+
+	/// <summary>
+	/// The player clicked on collect reward / open HSE
+	/// </summary>
+	/// <returns>Returns the reward collected</returns>
+	public LocalReward OnCollectReward(int _index)
+	{
+
+		return CollectReward(_index);
+		
+	}
 
 	//------------------------------------------------------------------------//
 	// PERSISTENCE METHODS													  //
@@ -399,6 +524,7 @@ public class XPromoCycle {
 		{
 			m_totalNextRewardIdx = PersistenceUtils.SafeParse<int>(_data["xPromoNextRewardIdx"]);
 		}
+
 
 		// Collect timestamp
 		if (_data.ContainsKey("xPromoNextRewardTimestamp"))
@@ -421,6 +547,7 @@ public class XPromoCycle {
 
 		// Current reward index
 		data.Add("xPromoNextRewardIdx", PersistenceUtils.SafeToString(m_totalNextRewardIdx));
+
 
 		// Collect timestamp
 		data.Add("xPromoNextRewardTimestamp", PersistenceUtils.SafeToString(m_nextRewardTimestamp));

@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------------//
 using TMPro;
 using UnityEngine;
+using XPromo;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -17,9 +18,7 @@ using UnityEngine;
 /// 
 /// </summary>
 public class XPromoRewardMarker : MonoBehaviour {
-	//------------------------------------------------------------------------//
-	// CONSTANTS															  //
-	//------------------------------------------------------------------------//
+
 
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
@@ -42,7 +41,7 @@ public class XPromoRewardMarker : MonoBehaviour {
 	private GameObject m_separator;
 
 	[SerializeField]
-	private TextMeshProUGUI m_dayLabel;
+	private Localizer m_dayLabel;
 
 	[SerializeField]
 	private GameObject m_clockIcon;
@@ -62,50 +61,55 @@ public class XPromoRewardMarker : MonoBehaviour {
 	[SerializeField]
 	private GameObject m_bgroundUnavailable;
 
+	// Internal
+	private LocalReward m_reward;
+    public LocalReward reward
+    {
+        get { return m_reward;  }
+    }
+
+	private XPromoRewardPreview m_preview;
+
+    // Cache
+	private LocalReward.State m_rewardState;
+
+	// The marker has been selected
+	private bool m_selected;
+	public bool selected
+	{
+		set
+		{
+			m_selected = value;
+		}
+	}
+
+	private int m_index;
+
+	public delegate void OnRewardSelectedDelegate(int index);
+	public OnRewardSelectedDelegate rewardSelectedDelegate;
+
+	// Internal
+	private float m_timer;
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Initialization.
-	/// </summary>
-	private void Awake() {
-
-	}
-
-	/// <summary>
-	/// First update call.
-	/// </summary>
-	private void Start() {
-
-	}
-
-	/// <summary>
-	/// Component has been enabled.
-	/// </summary>
-	private void OnEnable() {
-
-	}
-
-	/// <summary>
-	/// Component has been disabled.
-	/// </summary>
-	private void OnDisable() {
-
-	}
 
 	/// <summary>
 	/// Called every frame.
 	/// </summary>
 	private void Update() {
+		// Refresh periodically for better performance
+		if (m_timer <= 0)
+		{
+			m_timer = 1f; // Refresh every second
+			Refresh();
+		}
+		m_timer -= Time.deltaTime;
+
 
 	}
 
-	/// <summary>
-	/// Destructor.
-	/// </summary>
-	private void OnDestroy() {
-
-	}
 
     //------------------------------------------------------------------------//
     // OTHER METHODS														  //
@@ -116,12 +120,91 @@ public class XPromoRewardMarker : MonoBehaviour {
     /// </summary>
     /// <param name="_reward">The local reward to be displayed</param>
     /// <param name="_showSeparator">If true, adds a separator after the marker.</param>
-    public void Init (XPromo.LocalReward _reward, bool _showSeparator)
+    public void Init (LocalReward _reward, bool _showSeparator, int _index)
     {
+
+		m_reward = _reward;
+		m_index = _index;
+
+
+        // Show a separator between daily markers
 		m_separator.SetActive(_showSeparator);
+
+        // Initialize the reward preview
+
+        if (_reward is XPromo.LocalRewardHD)
+        {
+			m_preview = Instantiate(m_HDPreviewPrefab, m_previewContainer);
+        }
+        else if (_reward is XPromo.LocalRewardHSE)
+        {
+			m_preview = Instantiate(m_HSEPreviewPrefab, m_previewContainer);
+		}
+
+        if (m_preview != null)
+        {
+			m_preview.Init(_reward);
+        }
+
+
+        // Initialize the UI elements
+		Refresh();
+
     }
+
+
+    /// <summary>
+    /// Update all the UI elements
+    /// </summary>
+    public void Refresh ()
+    {
+
+		// Find the state
+		m_rewardState = XPromoManager.instance.xPromoCycle.GetRewardState(m_index);
+
+
+		// Initialize day marker label
+		m_dayLabel.Localize("TID_DAILY_LOGIN_DAY", m_reward.day.ToString());
+
+
+		// Show/hide UI elements
+		m_clockIcon.SetActive(m_rewardState == LocalReward.State.COUNTDOWN);
+		m_greenTick.SetActive(m_rewardState == LocalReward.State.COLLECTED);
+		m_bgroundCollected.SetActive(m_rewardState == LocalReward.State.COLLECTED);
+		m_bgroundReady.SetActive(m_rewardState == LocalReward.State.READY);
+		m_bgroundUnavailable.SetActive(m_rewardState == LocalReward.State.LOCKED);
+		m_bgroundUnavailable.SetActive(m_rewardState == LocalReward.State.COUNTDOWN);
+		m_timerCountdown.gameObject.SetActive(m_rewardState == LocalReward.State.COUNTDOWN);
+
+
+		// Initialize timer
+		if (m_rewardState == LocalReward.State.COUNTDOWN)
+		{
+			string timeLeft = TimeUtils.FormatTime(XPromoManager.instance.xPromoCycle.timeToCollection.TotalSeconds, TimeUtils.EFormat.ABBREVIATIONS_WITHOUT_0_VALUES, 2);
+			m_timerCountdown.text = timeLeft;
+
+		}
+
+		// Cascade down the refresh call
+		m_preview.selected = m_selected;
+		m_preview.state = m_rewardState;
+		m_preview.Refresh();
+
+
+	}
+
 
     //------------------------------------------------------------------------//
     // CALLBACKS															  //
     //------------------------------------------------------------------------//
+
+    /// <summary>
+    /// The player clicked over the reward
+    /// </summary>
+    public void OnClick ()
+    {
+        // Let the popup know
+		rewardSelectedDelegate(m_index);
+    }
+
 }

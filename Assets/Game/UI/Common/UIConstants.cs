@@ -181,6 +181,12 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 		get { return instance.m_hdLogoPath; }
 	}
 
+	[SerializeField] private string m_hseLogoPath = "UI/Menu/XPromo/Logo/";
+	public static string HSE_LOGO_PATH
+	{
+		get { return instance.m_hseLogoPath; }
+	}
+
 	[SerializeField] private string m_shareScreensPath = "UI/Social/";
 	public static string SHARE_SCREENS_PATH {
 		get { return instance.m_shareScreensPath; }
