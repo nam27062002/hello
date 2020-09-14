@@ -48,6 +48,7 @@ public abstract class IOfferItemPreviewPet : IOfferItemPreview {
 		switch(_slotType) {
 			case OfferItemSlot.Type.POPUP_BIG:
 			case OfferItemSlot.Type.POPUP_SMALL:
+			case OfferItemSlot.Type.POPUP_MINI:
 			case OfferItemSlot.Type.TOOLTIP:
 			case OfferItemSlot.Type.PILL_FREE: {
 				if(m_def != null) {
@@ -129,7 +130,8 @@ public abstract class IOfferItemPreviewPet : IOfferItemPreview {
 		// Only in popups
 		switch(_slotType) {
 			case OfferItemSlot.Type.POPUP_BIG:
-			case OfferItemSlot.Type.POPUP_SMALL: {
+			case OfferItemSlot.Type.POPUP_SMALL:
+			case OfferItemSlot.Type.POPUP_MINI: {
 				if(m_def != null) {
 					// Get the power definition linked to this pet - PowerIcon will do the rest
 					DefinitionNode powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, m_def.Get("powerup"));

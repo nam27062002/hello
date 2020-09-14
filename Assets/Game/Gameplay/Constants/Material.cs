@@ -34,7 +34,11 @@ namespace GameConstants {
             public static readonly int START_TIME = Shader.PropertyToID("_StartTime");
             public static readonly int START_POSITION = Shader.PropertyToID("_StartPosition");
 
-
+            public static readonly int FIRE_MAP = Shader.PropertyToID("_FireMap");
+            public static readonly int DISSOLVE_UPPER_LIMIT = Shader.PropertyToID("_DissolveUpperLimit");
+            public static readonly int DISSOLVE_LOWER_LIMIT = Shader.PropertyToID("_DissolveLowerLimit");
+            public static readonly int DISSOLVE_MARGIN = Shader.PropertyToID("_DissolveMargin");
+            public static readonly int DISSOLVE_DIRECTION = Shader.PropertyToID("_DissolveDirection");
             public static readonly int DISSOLVE_AMOUNT = Shader.PropertyToID("_DissolveAmount");
 
             public static readonly int VERTEX_SCALE_Z = Shader.PropertyToID("_VertexScaleZ");
@@ -54,6 +58,8 @@ namespace GameConstants {
             public static readonly string FRESNEL = "FRESNEL";
             public static readonly string MATCAP = "MATCAP";
             public static readonly string NIGHT = "NIGHT";
+            public static readonly string FX_REFLECTION = "FXLAYER_REFLECTION";
+            public static readonly string FX_DISSOLVE = "FXLAYER_DISSOLVE";
         }
     }
 }

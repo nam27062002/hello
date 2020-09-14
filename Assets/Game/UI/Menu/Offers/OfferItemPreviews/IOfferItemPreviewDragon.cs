@@ -52,6 +52,21 @@ public abstract class IOfferItemPreviewDragon : IOfferItemPreview {
 	}
 
 	/// <summary>
+	/// Gets the secondary text of this item, already localized and formatted.
+	/// </summary>
+	/// <param name="_slotType">The type of slot where the item will be displayed.</param>
+	/// <returns>The localized secondary text. <c>null</c> if this item type doesn't have to show any secondary text for the given type of slot (i.e. coins).</returns>
+	public override string GetLocalizedSecondaryText(OfferItemSlot.Type _slotType) {
+		// Only in the selection tabs in the popups - show dragon name
+		switch(_slotType) {
+			case OfferItemSlot.Type.POPUP_MINI: {
+				return GetLocalizedMainText(_slotType);
+			} break;
+		}
+		return null;
+	}
+
+	/// <summary>
 	/// Gets the description of this item, already localized and formatted.
 	/// </summary>
 	/// <param name="_slotType">The type of slot where the item will be displayed.</param>
