@@ -51,11 +51,14 @@ namespace XPromo
 		protected int m_day;
         public int day { get { return m_day;  } }
 
-		protected int m_priority;
-        public int priority {  get { return m_priority;  } }
-
 		protected string m_sku;
 		public string sku { get { return m_sku; } }
+
+		protected int m_altRewardSC;
+        public int altRewardSC { get { return m_altRewardSC; } }
+
+		protected int m_altRewardPC;
+		public int altRewardPC { get { return m_altRewardPC; } }        
 
 		protected XPromoManager.Game m_destination;
 
@@ -76,7 +79,7 @@ namespace XPromo
 
 			// For which game is destinated this reward?
 			XPromoManager.Game destination = XPromoManager.Game.UNDEFINED;
-            switch (_def.GetAsString("game"))
+            switch (_def.GetAsString("destination"))
             {
 				case XPromoManager.GAME_CODE_HD:
 					destination = XPromoManager.Game.HD;
@@ -86,7 +89,7 @@ namespace XPromo
 					break;
 				default:
                     // This shouldnt happen
-					Debug.Log("The game destination " + _def.GetAsString("game")  + " is not defined");
+					Debug.Log("The game destination " + _def.GetAsString("destination")  + " is not defined");
 					return null;
 			}
 
@@ -127,7 +130,6 @@ namespace XPromo
 			localReward.m_destination = destination;
 			localReward.m_day = _def.GetAsInt("day");
 			localReward.m_enabled = _def.GetAsBool("enabled");
-			localReward.m_priority = _def.GetAsInt("priority");
 			localReward.m_sku = _def.GetAsString("sku");
 
 			return localReward;
@@ -146,17 +148,7 @@ namespace XPromo
 			return result;
 		}
 
-		/// <summary>
-		/// Compare two definitions by priority
-		/// </summary>
-		/// <param name="_def1">First definitions to be compared.</param>
-		/// <param name="_def2">Second definitions to be compared.</param>
-		/// <returns>The result of the comparison (-1, 0, 1).</returns>
-		public static int CompareDefsByPriority(DefinitionNode _def1, DefinitionNode _def2)
-		{
-			int result = _def1.GetAsFloat("priority", 0).CompareTo(_def2.GetAsFloat("priority", 0));
-			return result;
-		}
+		
 
 	}
 }

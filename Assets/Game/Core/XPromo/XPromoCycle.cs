@@ -26,8 +26,13 @@ public class XPromoCycle {
 
 
 	//------------------------------------------------------------------------//
-	// CONSTANTS															  //
+	// ENUM															           //
 	//------------------------------------------------------------------------//
+
+    public enum ABGroup // For AB test purposes
+	{
+		UNDEFINED, A, B
+	}
 
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
@@ -40,8 +45,9 @@ public class XPromoCycle {
 
 	// Configuration from content
 	private Boolean m_enabled;
+    private ABGroup m_abGroup;
 	private DateTime m_startDate;
-    private DateTime m_recruitmentEndDate;
+    private DateTime m_recruitmentLimitDate;
 	private DateTime m_endDate;
 	private int m_minRuns;
     private int m_cycleSize;
@@ -284,18 +290,24 @@ public class XPromoCycle {
 			return false;
 
         // The user is not recruited yet, and the recruitment period has ended
-        if ( ! IsRecruited()  && serverTime > m_recruitmentEndDate)
+        if ( ! IsRecruited()  && serverTime > m_recruitmentLimitDate)
             return false;
+
+		// Are there local rewards defined in the content?
+		if (m_cycleRewards.Count == 0)
+			return false;
 
         // Has the xpromo cycle been completed?
         if (m_totalNextRewardIdx >= m_cycleSize)
 			return false;
 
 
+
 		// All checks passed. The xPromo feature is active
 		return true;
 
 	}
+
 
     /// <summary>
     /// Returns true if the player already started the cycle (collected the first reward)
@@ -304,6 +316,7 @@ public class XPromoCycle {
     public bool IsRecruited(){
         return m_totalNextRewardIdx > 0;
     }
+
 
 	/// <summary>
 	/// Load all data from content tables
@@ -317,14 +330,30 @@ public class XPromoCycle {
 		m_minRuns = settingsDef.GetAsInt("minRuns");
 		m_cycleSize = settingsDef.GetAsInt("cycleSize");
 
+        
+		if (settingsDef.Has("ABGroup"))
+		{
+            // By default everyone is in the group UNDEFINED
+            string param = settingsDef.GetAsString("ABGroup", "");
+
+            if (param.ToLower() == "a")
+            {
+				m_abGroup = ABGroup.A;
+            }
+            else if (param.ToLower() == "b")
+            {
+				m_abGroup = ABGroup.B;
+            }
+		}
+
 		if (settingsDef.Has("startDate"))
 		{
 			m_startDate = TimeUtils.TimestampToDate(settingsDef.GetAsLong("startDate", 0), false);
 		}
 
-        if (settingsDef.Has("recruitmentEndDate"))
+        if (settingsDef.Has("recruitmentLimitDate"))
 		{
-			m_recruitmentEndDate = TimeUtils.TimestampToDate(settingsDef.GetAsLong("recruitmentEndDate", 0), false);
+			m_recruitmentLimitDate = TimeUtils.TimestampToDate(settingsDef.GetAsLong("recruitmentLimitDate", 0), false);
 		}
 
 		if (settingsDef.Has("endDate"))
@@ -333,12 +362,11 @@ public class XPromoCycle {
 		}
 
 
-		// Load local rewards
-		List<DefinitionNode> localRwdDefinitions = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.LOCAL_REWARDS);
+		// Load local rewards (origin game = HD)
+		List<DefinitionNode> localRwdDefinitions = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.XPROMO_REWARDS, "origin", XPromoManager.GAME_CODE_HD);
 
-		// Sort the rewards by day, then by priority (should be already sorted in the content, but who knows)
-		localRwdDefinitions.Sort(XPromo.LocalReward.CompareDefsByPriority);
-		localRwdDefinitions.Sort(XPromo.LocalReward.CompareDefsByDay);
+		// Sort the rewards by day (should be already sorted in the content, but who knows)
+		localRwdDefinitions.Sort(LocalReward.CompareDefsByDay);
 
 		foreach (DefinitionNode def in localRwdDefinitions)
 		{
@@ -346,7 +374,14 @@ public class XPromoCycle {
 			if (def.GetAsBool("enabled") == false)
 				continue;
 
-			XPromo.LocalReward localReward = XPromo.LocalReward.CreateLocalRewardFromDef(def);
+            // Discard rewards from other AB groups
+            if (def.GetAsString("ABGroup") != "")
+            {
+                if(def.GetAsString("ABGroup").ToLower() != m_abGroup.ToString().ToLower())
+					continue;
+            }
+
+			LocalReward localReward = LocalReward.CreateLocalRewardFromDef(def);
 
 			if (localReward != null)
 			{
@@ -365,58 +400,33 @@ public class XPromoCycle {
 		// Cache the rewards in a cycle
 		m_cycleRewards = GetCycleRewards();
 
-
-
 	}
+
 
 	/// <summary>
 	/// Gets the reward in the content in a specific position in the cycle (it could not match the day)
-	/// Asumes that the local rewards list is already sorted by day and priority.
+	/// Asumes that the local rewards list is already sorted by day.
 	/// </summary>
 	/// <param name="_index">The position index in the xpromo cycle</param>
 	/// <returns></returns>
-	private XPromo.LocalReward GetRewardByIndex(int _index)
+	private LocalReward GetRewardByIndex(int _index)
 	{
+
 		// Trim the index
 		_index = _index % m_cycleSize;
 
-		// Get all rewards for that day (could be more than one) 
-		List<XPromo.LocalReward> rewards = m_localRewards.Where(r => r.day == m_daysWithRewards[_index]).ToList();
-
-		// Just in case
-		if (rewards.Count == 0)
-			return null;
-
-		LocalReward candidate = null;
-        
-		foreach (XPromo.LocalReward reward in rewards)
-		{
-			// In case of an HSE reward, ignore the priorities.
-			if (reward is XPromo.LocalRewardHSE)
-			{
-				return reward;
-			}
-
-			// In case of HD, find the first reward not owned by the player
-			else if (reward is XPromo.LocalRewardHD)
-			{
-				candidate = reward;
-
-                // The player doesnt have this item yet?
-				if (! ((XPromo.LocalRewardHD)reward).reward.IsAlreadyOwned())
-				{
-					// We have a winner!
-					return candidate;
-				}
-			}
-		}
-
-        if (candidate == null) {
+        if ( _index >= m_daysWithRewards.Length)
+        {
 			// No reward was found :( this shouldnt happen
-			XPromoManager.Log("No reward found for day " + _index + 1);
+			XPromoManager.Log("No reward found for index " + _index + 1);
+			return null;
 		}
-        
-		return candidate;
+
+		// Get all rewards for that day (could be more than one, but shouldnt) 
+		List<LocalReward> rewards = m_localRewards.Where(r => r.day == m_daysWithRewards[_index]).ToList();
+
+
+		return rewards[0];
 
 	}
 
@@ -428,7 +438,7 @@ public class XPromoCycle {
     /// <returns></returns>
     public List<LocalReward> GetCycleRewards()
     {
-        List<LocalReward> cycleRewards = new List<XPromo.LocalReward>();
+        List<LocalReward> cycleRewards = new List<LocalReward>();
 
         for (int i = 0; i < cycleSize ; i++)
         {

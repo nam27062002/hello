@@ -130,8 +130,9 @@ public class XPromoManager {
 		if (string.IsNullOrEmpty(_rewardSku)) 
 			return; // No rewards
 
-		// Find this reward in the content
-		DefinitionNode rewardDef = DefinitionsManager.SharedInstance.GetDefinitionByVariable(DefinitionsCategory.INCOMING_REWARDS, "sku", _rewardSku);
+		// Find this reward in the content. We trust the SKU so we dont check ABGroup or origin.
+		DefinitionNode rewardDef = DefinitionsManager.SharedInstance.GetDefinitionByVariable(DefinitionsCategory.XPROMO_REWARDS, "sku", _rewardSku);
+       
 
         if (rewardDef == null)
         {
