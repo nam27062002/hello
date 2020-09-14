@@ -285,7 +285,7 @@ public class XPromoCycle {
 
         // The user is not recruited yet, and the recruitment period has ended
         if ( ! IsRecruited()  && serverTime > m_recruitmentEndDate)
-            retrn false;
+            return false;
 
         // Has the xpromo cycle been completed?
         if (m_totalNextRewardIdx >= m_cycleSize)

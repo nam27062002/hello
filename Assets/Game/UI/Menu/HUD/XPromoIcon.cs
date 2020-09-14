@@ -24,8 +24,11 @@ public class XPromoIcon : MonoBehaviour {
     // MEMBERS AND PROPERTIES												  //
     //------------------------------------------------------------------------//
 
+    [SerializeField] protected ShowHideAnimator m_animationRoot;
+
     // Internal
     private float m_timer;
+    private bool m_active; // Use this flag to detect a change in the xpromo state∫
 
     //------------------------------------------------------------------------//
     // GENERIC METHODS														  //
@@ -34,7 +37,12 @@ public class XPromoIcon : MonoBehaviour {
     public void Start()
     {
         Refresh();
+
+        // Start with the icon hidden
+        m_active = false;
+        m_animationRoot.ForceHide(false);
     }
+
 
     public void Update()
     {
@@ -52,12 +60,30 @@ public class XPromoIcon : MonoBehaviour {
     //------------------------------------------------------------------------//
 
     /// <summary>
-    /// Update the UI
+    /// Update the UI. Show/hide the xpromo icon.
     /// </summary>
     public void Refresh()
     {
-        //Once this element is disabled it wont be enabled again, as Update() wont be executed.
-        gameObject.SetActive(XPromoManager.instance.xPromoCycle.IsActive());
+        
+        bool newState = XPromoManager.instance.xPromoCycle.IsActive();
+
+        // Has the xpromo cycle been enabled/disabled in the last frame
+        if (newState != m_active)
+        {
+            if (newState)
+            {
+                // Display the xpromo icon
+                m_animationRoot.Show(true);
+            }
+            else
+            {
+                // Hide the xPromo icon
+                m_animationRoot.Hide(true);
+            }
+
+            m_active = newState;
+
+        }
     }
 
     //------------------------------------------------------------------------//
