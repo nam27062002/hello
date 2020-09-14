@@ -10,9 +10,8 @@
 using UnityEngine;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Diagnostics;
 using XPromo;
+using FirebaseWrapper;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -65,7 +64,20 @@ public class XPromoManager {
 
 	// X-promo daily rewards cycle
 	private XPromoCycle m_xPromoCycle;
-	public XPromoCycle xPromoCycle{ get { return m_xPromoCycle; } }
+	public XPromoCycle xPromoCycle
+	{
+		get
+		{
+            // Use m_xPromoCycle as initialization flag
+			if (m_xPromoCycle == null)
+			{
+                // Initialize the manager
+				Init();
+			}
+
+			return m_xPromoCycle;
+		}
+	}
     
 	// Queue with the rewards incoming from HSE. Will be given to the player when we have a chance (selection screen)
 	private Queue<Metagame.Reward> m_pendingIncomingRewards;
@@ -84,9 +96,6 @@ public class XPromoManager {
 		// Subscribe to XPromo broadcast
 		Messenger.AddListener<Dictionary<string,string>>(MessengerEvents.INCOMING_DEEPLINK_NOTIFICATION, OnDeepLinkNotification);
 
-        // Create a new cycle from the content data
-		m_xPromoCycle = XPromoCycle.CreateXPromoCycleFromDefinitions();
-
 	}
 
 	/// <summary>
@@ -98,12 +107,14 @@ public class XPromoManager {
 		Messenger.RemoveListener<Dictionary<string, string>>(MessengerEvents.INCOMING_DEEPLINK_NOTIFICATION, OnDeepLinkNotification);
 	}
 
-    public static void Init()
+    /// <summary>
+    /// Initializes the XPromo manager from the content
+    /// </summary>
+    public void Init()
     {
-		if (m_instance == null)
-		{
-			m_instance = new XPromoManager();
-		}  
+
+		// Create a new cycle from the content data
+		m_xPromoCycle = XPromoCycle.CreateXPromoCycleFromDefinitions();
 	}
 
 	//------------------------------------------------------------------------//
@@ -158,11 +169,14 @@ public class XPromoManager {
 	/// This is the reciprocal counterpart of ProcessIncomingRewards()
 	/// </summary>
 	/// <param name="rewardsId"></param>
-	public void SendRewardToHSE(XPromo.LocalRewardHSE _reward)
+	public void SendRewardToHSE(LocalRewardHSE _reward)
     {
+		
 
 		// Send the reward with id = _reward.rewardSku
 		Log("Reward with SKU='" + _reward.rewardSku + "' sent to HSE");
+
+
 
     }
 

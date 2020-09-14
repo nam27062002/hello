@@ -83,7 +83,7 @@ public class PopupXPromo : MonoBehaviour {
 	private void Start() {
 
 		// Get the list of rewards in one xpromo cycle
-		List<XPromo.LocalReward> rewards = XPromoManager.instance.xPromoCycle.cycleRewards;
+		List<XPromo.LocalReward> rewards = XPromoManager.instance.xPromoCycle.localRewards;
 
 
         for( int i=0; i< rewards.Count; i++)
@@ -95,8 +95,8 @@ public class PopupXPromo : MonoBehaviour {
             // If this is the last element, do not display a separator
 			bool lastElement = (i == rewards.Count - 1);
 
-            // Initialize the marker with the reward data
-            newMarker.Init(reward, !lastElement, i);
+            // Initialize the marker with the reward index
+            newMarker.Init(i);
 
             // Initialize delegate for player clicking in the rewards
 			newMarker.rewardSelectedDelegate = OnRewardSelected;
@@ -186,7 +186,7 @@ public class PopupXPromo : MonoBehaviour {
     public void Refresh()
     {
         // Check the status of the reward we have selected
-		LocalReward currentReward = XPromoManager.instance.xPromoCycle.cycleRewards[m_selectedIndex];
+		LocalReward currentReward = XPromoManager.instance.xPromoCycle.localRewards[m_selectedIndex];
 		LocalReward.State rewardState = XPromoManager.instance.xPromoCycle.GetRewardState(m_selectedIndex);
 
 

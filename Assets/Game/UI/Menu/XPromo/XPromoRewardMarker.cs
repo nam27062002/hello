@@ -118,32 +118,33 @@ public class XPromoRewardMarker : MonoBehaviour {
     /// <summary>
     /// Initilizes a marker with the reward data
     /// </summary>
-    /// <param name="_reward">The local reward to be displayed</param>
-    /// <param name="_showSeparator">If true, adds a separator after the marker.</param>
-    public void Init (LocalReward _reward, bool _showSeparator, int _index)
+    /// <param name="_index">The position in the cycle</param>
+
+    public void Init (int _index)
     {
 
-		m_reward = _reward;
+		
 		m_index = _index;
+		m_reward = XPromoManager.instance.xPromoCycle.localRewards[_index];
 
-
-        // Show a separator between daily markers
-		m_separator.SetActive(_showSeparator);
+		// Show a separator between daily markers
+		bool showSeparator = (m_index < XPromoManager.instance.xPromoCycle.cycleSize - 1);
+		m_separator.SetActive(showSeparator);
 
         // Initialize the reward preview
 
-        if (_reward is XPromo.LocalRewardHD)
+        if (m_reward is XPromo.LocalRewardHD)
         {
 			m_preview = Instantiate(m_HDPreviewPrefab, m_previewContainer);
         }
-        else if (_reward is XPromo.LocalRewardHSE)
+        else if (m_reward is XPromo.LocalRewardHSE)
         {
 			m_preview = Instantiate(m_HSEPreviewPrefab, m_previewContainer);
 		}
 
         if (m_preview != null)
         {
-			m_preview.Init(_reward);
+			m_preview.Init(m_reward);
         }
 
 

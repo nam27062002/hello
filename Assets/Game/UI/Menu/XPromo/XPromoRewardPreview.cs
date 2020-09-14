@@ -79,7 +79,7 @@ public class XPromoRewardPreview : MetagameRewardView {
     /// Initialize all the elements from the reward data
     /// </summary>
     /// <param name="_reward">The local reward represented in this preview</param>
-    public void Init(XPromo.LocalReward _reward)
+    public void Init(LocalReward _reward)
     {
         // The local Xpromo reward
         m_localReward = _reward;

@@ -40,8 +40,8 @@ public class XPromoCycle {
 
 
 	// Set of local x-promo rewards as defined in content
-	private List<XPromo.LocalReward> m_localRewards;
-	public List<XPromo.LocalReward> localRewards { get { return m_localRewards; } }
+	private List<LocalReward> m_localRewards;
+	public List<LocalReward> localRewards { get { return m_localRewards; } }
 
 	// Configuration from content
 	private Boolean m_enabled;
@@ -65,11 +65,7 @@ public class XPromoCycle {
 
 	// Index of the next reward (in the current xpromo cycle)
 	private int m_nextRewardIdx;
-	public int nextRewardIdx
-	{
-		get { return m_totalNextRewardIdx % m_cycleSize; }
-       
-	}
+	public int nextRewardIdx { get { return m_totalNextRewardIdx % m_cycleSize; } }
 
 	// Time when the player can collect the next reward
 	private DateTime m_nextRewardTimestamp;
@@ -98,24 +94,6 @@ public class XPromoCycle {
 		}
 	}
 
-	// Cache
-	private List<XPromo.LocalReward> m_cycleRewards; // List of the the final local rewards in this cycle (without priority duplicities)
-    public List<LocalReward> cycleRewards
-    {
-        get
-        {
-			// If not cached yet
-			if (m_cycleRewards == null)
-            {
-                // Obtain the rewards in the cycle and cache them
-				m_cycleRewards = GetCycleRewards();
-		    }
-			return m_cycleRewards;
-		}
-    }
-
-	private int[] m_daysWithRewards;
-
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -123,8 +101,9 @@ public class XPromoCycle {
 	/// Default constructor.
 	/// </summary>
 	public XPromoCycle() {
-		Clear();
+
 	}
+
 
 	/// <summary>
 	/// Custom factory method
@@ -174,7 +153,7 @@ public class XPromoCycle {
 	/// Obtain the next reward to be collected.
 	/// </summary>
 	/// <returns>The next reward to be collected. Shouldn't be null.</returns>
-	public XPromo.LocalReward GetNextReward()
+	public LocalReward GetNextReward()
 	{
 		return m_localRewards[m_nextRewardIdx];    // Should always be valid
 	}
@@ -201,7 +180,7 @@ public class XPromoCycle {
 	{
 
 		// Find the proper next reward (in case the player already owns it, find a replacement)
-		LocalReward reward = GetRewardByIndex(_index);
+		LocalReward reward = m_localRewards [_index];
 
         // A HSE reward can always be collected.
         // We make sure the player doesnt lose the reward if he fails to open the HSE app.
@@ -258,8 +237,8 @@ public class XPromoCycle {
 		m_totalNextRewardIdx++;
 
 		// Calculate the days difference between the current and next reward
-		LocalReward nextReward = m_cycleRewards[nextRewardIdx];
-		LocalReward currentReward = m_cycleRewards[(m_totalNextRewardIdx - 1) % m_cycleSize];
+		LocalReward nextReward = m_localRewards[nextRewardIdx];
+		LocalReward currentReward = m_localRewards[(m_totalNextRewardIdx - 1) % m_cycleSize];
 		int daysDiff = nextReward.day - currentReward.day;
 
 		// Reset timestamp to 00:00 of local time (but using server timezone!)
@@ -294,7 +273,7 @@ public class XPromoCycle {
             return false;
 
 		// Are there local rewards defined in the content?
-		if (m_cycleRewards.Count == 0)
+		if (m_localRewards.Count == 0)
 			return false;
 
         // Has the xpromo cycle been completed?
@@ -323,6 +302,8 @@ public class XPromoCycle {
 	/// </summary>
 	public void InitFromDefinitions()
 	{
+
+		Clear();
 
 		// Load settings
 		DefinitionNode settingsDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.XPROMO_SETTINGS, "xPromoSettings");
@@ -368,6 +349,7 @@ public class XPromoCycle {
 		// Sort the rewards by day (should be already sorted in the content, but who knows)
 		localRwdDefinitions.Sort(LocalReward.CompareDefsByDay);
 
+		int lastDay = -1;
 		foreach (DefinitionNode def in localRwdDefinitions)
 		{
             // Discard disabled definitions
@@ -388,65 +370,24 @@ public class XPromoCycle {
 				// Keep a list with all the local rewards
 				m_localRewards.Add(localReward);
 			}
+
+            // Keep a track of the last "day" param to avoid more than one reward with the same day value in the content.
+            if (lastDay != -1 && localReward.day == lastDay)
+            {
+				Debug.LogError("There can be only one reward per day! Please, fix the content.");
+            }
+			lastDay = localReward.day;
+
 		}
 
 		// Check settings-rewards consistency, so the designers can know if they screwed up the content tables 
-		m_daysWithRewards = m_localRewards.Select(r => r.day).Distinct().ToArray<int>();
-        if (m_daysWithRewards.Length != m_cycleSize)
+        if (m_localRewards.Count != m_cycleSize)
 		{
 			Debug.LogError("The number of xPromo active rewards doesn´t match the xPromo cycle length! Please, fix the content tables.");
 		}
 
-		// Cache the rewards in a cycle
-		m_cycleRewards = GetCycleRewards();
 
 	}
-
-
-	/// <summary>
-	/// Gets the reward in the content in a specific position in the cycle (it could not match the day)
-	/// Asumes that the local rewards list is already sorted by day.
-	/// </summary>
-	/// <param name="_index">The position index in the xpromo cycle</param>
-	/// <returns></returns>
-	private LocalReward GetRewardByIndex(int _index)
-	{
-
-		// Trim the index
-		_index = _index % m_cycleSize;
-
-        if ( _index >= m_daysWithRewards.Length)
-        {
-			// No reward was found :( this shouldnt happen
-			XPromoManager.Log("No reward found for index " + _index + 1);
-			return null;
-		}
-
-		// Get all rewards for that day (could be more than one, but shouldnt) 
-		List<LocalReward> rewards = m_localRewards.Where(r => r.day == m_daysWithRewards[_index]).ToList();
-
-
-		return rewards[0];
-
-	}
-
-
-    /// <summary>
-    /// Return a list of all the rewards in a cycle.
-    /// Will avoid using rewards that are already owned by the player.
-    /// </summary>
-    /// <returns></returns>
-    public List<LocalReward> GetCycleRewards()
-    {
-        List<LocalReward> cycleRewards = new List<LocalReward>();
-
-        for (int i = 0; i < cycleSize ; i++)
-        {
-			cycleRewards.Add( GetRewardByIndex(i) );
-        }
-        
-		return cycleRewards;
-    }
 
 
     /// <summary>
@@ -456,7 +397,7 @@ public class XPromoCycle {
     /// <returns>Index of the reward starting from 0 (first reward). Returns -1 in case this reward doesnt belong to the current xpromo cycle.</returns>
     public int GetRewardIndex (LocalReward _reward)
     {
-		return cycleRewards.FindIndex( (LocalReward e) => e.sku == _reward.sku);
+		return m_localRewards.FindIndex( (LocalReward e) => e.sku == _reward.sku);
     }
 
 

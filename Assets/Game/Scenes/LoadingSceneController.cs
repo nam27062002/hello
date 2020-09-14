@@ -919,8 +919,8 @@ public class LoadingSceneController : SceneController {
                 // GlobalEventManager.SetupUser(UsersManager.currentUser);
 				OffersManager.InitFromDefinitions();	// Reload offers - need persistence to properly initialize offer packs rewards
 
-                // Load X-Promo rewards from content and subscribe to incoming deeplink notifications
-                XPromoManager.Init();
+                // Create XPromo manager and subscribe to incoming deeplink notifications
+                XPromoManager xPromo = XPromoManager.instance;
                 
                 // Automatic connection check is enabled once the loading is over
                 GameServerManager.SharedInstance.Connection_SetIsCheckEnabled(true);
