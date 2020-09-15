@@ -18,7 +18,8 @@ using System.Collections.Generic;
 /// 
 /// </summary>
 //[CreateAssetMenu(fileName = "XPromoDynamicLinksCollectionAsset", menuName = "XPromoDynamicLinksCollection", order = 2)]
-public class XPromoDynamicLinksCollection : SingletonScriptableObject<XPromoDynamicLinksCollection>
+public class XPromoDynamicLinksCollection : ScriptableObject
+    
 {
 	//------------------------------------------------------------------------//
 	// ENUM															  //

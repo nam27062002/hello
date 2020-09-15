@@ -183,7 +183,7 @@ public class XPromoCycle {
 		// Find the proper next reward (in case the player already owns it, find a replacement)
 		LocalReward reward = m_localRewards [_index];
 
-        // A HSE reward can always be collected.
+        // An HSE reward can always be collected.
         // We make sure the player doesnt lose the reward if he fails to open the HSE app.
 		if (reward is LocalRewardHSE)
 		{
@@ -208,8 +208,44 @@ public class XPromoCycle {
 			}
 			else  // Dragons, pets and eggs
 			{
-				// Add this reward to the queue
-				UsersManager.currentUser.PushReward(rewardContent);
+				// Does the player already have this item?
+				if (!rewardContent.IsAlreadyOwned())
+				{
+					// Add the reward to the queue
+					UsersManager.currentUser.PushReward(rewardContent);
+
+                }
+                else
+                { 
+
+					// So the player already owns the reward. We are going to give him an alternative reward
+					// in form of currencies as defined in the content
+					Metagame.Reward altReward;
+
+                    if (reward.altRewardSC > 0)
+                    {
+						altReward = Metagame.Reward.CreateTypeCurrency(reward.altRewardSC, UserProfile.Currency.SOFT,
+                            Metagame.Reward.Rarity.UNKNOWN, HDTrackingManager.EEconomyGroup.REWARD_XPROMO_LOCAL, reward.sku);
+					}
+                    else  if (reward.altRewardPC > 0)
+                    {
+						altReward = Metagame.Reward.CreateTypeCurrency(reward.altRewardPC, UserProfile.Currency.HARD,
+	                        Metagame.Reward.Rarity.UNKNOWN, HDTrackingManager.EEconomyGroup.REWARD_XPROMO_LOCAL, reward.sku);
+					}
+                    else
+                    {
+
+                        // Someone forgot to define the alternative reward. So we give the player the original one,
+						// and the reward system in the game will take care of giving the player an equivalent amount of coins/gems
+						altReward = rewardContent;
+
+					}
+
+					// Add the reward to the queue
+					UsersManager.currentUser.PushReward(altReward);
+
+				}
+
 			}
 
 			XPromoManager.Log("Reward " + rewardContent.ToString() + " collected ");
@@ -224,10 +260,9 @@ public class XPromoCycle {
 			UnlockNextReward();
 		}
 
-		// Add tracking
-
 		return reward;
 	}
+
 
     /// <summary>
     /// Start the countdown of the next reward in the cycle and advance the next reward pointer.

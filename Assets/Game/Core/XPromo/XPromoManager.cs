@@ -178,13 +178,14 @@ public class XPromoManager {
     private Dictionary<string, string> LoadShortLinksFromAsset ()
     {
 
-        // Get the scriptable object with all the links
-		XPromoDynamicLinksCollection links = XPromoDynamicLinksCollection.instance;
+        // Load the scriptable object containing all the links
+		XPromoDynamicLinksCollection scriptableObj = Resources.Load<XPromoDynamicLinksCollection>("XPromo/XPromoDynamicLinks");
+        List< XPromoDynamicLinksCollection.XPromoRewardShortLink> links = scriptableObj.xPromoShortLinks;
 
 		Dictionary<string, string> result = new Dictionary<string, string>();
 
         // Interate all the shortlinks defined
-        foreach (XPromoDynamicLinksCollection.XPromoRewardShortLink rewardLink in links.xPromoShortLinks)
+        foreach (XPromoDynamicLinksCollection.XPromoRewardShortLink rewardLink in links)
         {
 
 			// If the player is not in this AB group, ignore this entry
@@ -234,6 +235,7 @@ public class XPromoManager {
 
 
 	}
+
 
 
 	//------------------------------------------------------------------------//

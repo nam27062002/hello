@@ -100,6 +100,9 @@ namespace XPromo
 				rewardData.amount = _def.GetAsLong("amount");
 				rewardData.sku = _def.GetAsString("rewardSku");
 
+				localReward.m_altRewardSC = _def.GetAsInt("altSC");
+				localReward.m_altRewardPC = _def.GetAsInt("altPC");
+
 				// Assign an economy group based on the xpromo reward origin
 				HDTrackingManager.EEconomyGroup economyGroup;
 				economyGroup = HDTrackingManager.EEconomyGroup.REWARD_XPROMO_LOCAL;
