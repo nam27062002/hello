@@ -78,21 +78,15 @@ namespace XPromo
 
 
 			// For which game is destinated this reward?
-			XPromoManager.Game destination = XPromoManager.Game.UNDEFINED;
-            switch (_def.GetAsString("destination"))
-            {
-				case XPromoManager.GAME_CODE_HD:
-					destination = XPromoManager.Game.HD;
-					break;
-				case XPromoManager.GAME_CODE_HSE:
-					destination = XPromoManager.Game.HSE;
-					break;
-				default:
-                    // This shouldnt happen
-					Debug.Log("The game destination " + _def.GetAsString("destination")  + " is not defined");
-					return null;
-			}
+			XPromoManager.Game destination = XPromoManager.GameStringToEnum(_def.GetAsString("destination"));
 
+            if (destination == XPromoManager.Game.UNDEFINED)
+            {
+				// This shouldnt happen
+				Debug.Log("The game destination " + _def.GetAsString("destination") + " is not defined");
+				return null;
+			}
+            
 
 			LocalReward localReward = null;
 

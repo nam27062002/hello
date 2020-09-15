@@ -46,6 +46,7 @@ public class XPromoCycle {
 	// Configuration from content
 	private Boolean m_enabled;
     private ABGroup m_abGroup;
+    public ABGroup aBGroup { get { return m_abGroup;  } }
 	private DateTime m_startDate;
     private DateTime m_recruitmentLimitDate;
 	private DateTime m_endDate;

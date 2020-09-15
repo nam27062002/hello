@@ -83,7 +83,8 @@ public class XPromoManager {
 	private Queue<Metagame.Reward> m_pendingIncomingRewards;
     public Queue<Metagame.Reward> pendingIncomingRewards { get { return m_pendingIncomingRewards;  } }
 
-	
+	// HSE dynamic short links
+	private Dictionary<string, string> m_dynamicShortLinks;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -115,6 +116,10 @@ public class XPromoManager {
 
 		// Create a new cycle from the content data
 		m_xPromoCycle = XPromoCycle.CreateXPromoCycleFromDefinitions();
+
+		// Load the dynamic shortlinks
+		m_dynamicShortLinks = LoadShortLinksFromAsset( );
+
 	}
 
 	//------------------------------------------------------------------------//
@@ -130,40 +135,6 @@ public class XPromoManager {
 	}
 
 
-
-	/// <summary>
-	/// Process the incoming reward from HSE
-	/// </summary>
-    /// <param name="_rewardSku">SKU of the incoming reward as defined in content</param>
-	public void ProcessIncomingReward(string _rewardSku)
-	{
-
-		if (string.IsNullOrEmpty(_rewardSku)) 
-			return; // No rewards
-
-		// Find this reward in the content. We trust the SKU so we dont check ABGroup or origin.
-		DefinitionNode rewardDef = DefinitionsManager.SharedInstance.GetDefinitionByVariable(DefinitionsCategory.XPROMO_REWARDS, "sku", _rewardSku);
-       
-
-        if (rewardDef == null)
-        {
-			// Reward not found. Process next reward (if any)
-			Debug.LogError("Incoming reward with SKU " + _rewardSku + " is not defined in the content");
-	    }
-
-        // Create a reward from the content definition
-		Metagame.Reward reward = CreateRewardFromDef(rewardDef, Game.HSE);
-
-		// Put this reward in the rewards queue
-        if (reward != null)
-			m_pendingIncomingRewards.Enqueue(reward);
-
-        // This rewards will be given when the user enters the selection screen
-        
-
-	}
-
-
 	/// <summary>
 	/// Send rewards to the promoted external app (HSE) via deeplink.
 	/// This is the reciprocal counterpart of ProcessIncomingRewards()
@@ -171,45 +142,98 @@ public class XPromoManager {
 	/// <param name="rewardsId"></param>
 	public void SendRewardToHSE(LocalRewardHSE _reward)
     {
-		
+
+        // Make some safety checks 
+        if (!m_dynamicShortLinks.ContainsKey(_reward.rewardSku))
+        {
+            // The requested reward shortlink is not defined
+			Debug.LogError("There is no HSE shortlink defined for the reward with sku=" + _reward.rewardSku);
+			return;
+        }
+
+		string url = m_dynamicShortLinks[_reward.rewardSku];
+
+        if (string.IsNullOrEmpty(url))
+        {
+			// The url was left empty in the scriptable object
+			Debug.LogError("The HSE shortlink url is empty.");
+			return;
+		}
+
 
 		// Send the reward with id = _reward.rewardSku
 		Log("Reward with SKU='" + _reward.rewardSku + "' sent to HSE");
 
-
+		// All good! open the HSE app
+		Application.OpenURL(url);
 
     }
+	
 
-	/// <summary>
-	/// Creates a new Metagame.Reward initialized with the data in the given Definition from rewards table.
-	/// </summary>
-	/// <param name="_def">Definition from localRewards or incomingRewards table.</param>
-    /// <param name="_origin">The app that granted the reward</param>
-	/// <returns>New reward created from the given definition.</returns>
-	private static Metagame.Reward CreateRewardFromDef(DefinitionNode _def, Game _origin)
-	{
+    /// <summary>
+    /// Load all the HSE reward short links that are stored in a scriptable object
+    /// it will ignore the rewards not belonging to the player's AB group
+    /// </summary>
+    /// <returns></returns>
+    private Dictionary<string, string> LoadShortLinksFromAsset ()
+    {
 
-		Metagame.Reward.Data rewardData = new Metagame.Reward.Data();
-		rewardData.typeCode = _def.GetAsString("type");
-		rewardData.amount = _def.GetAsLong("amount");
-		rewardData.sku = _def.GetAsString("rewardSku");
+        // Get the scriptable object with all the links
+		XPromoDynamicLinksCollection links = XPromoDynamicLinksCollection.instance;
 
-		// Assign an economy group based on the xpromo reward origin
-		HDTrackingManager.EEconomyGroup economyGroup;
+		Dictionary<string, string> result = new Dictionary<string, string>();
 
-        if (_origin == Game.HD) {
-			economyGroup = HDTrackingManager.EEconomyGroup.REWARD_XPROMO_LOCAL;
-		} else {
-			economyGroup = HDTrackingManager.EEconomyGroup.REWARD_XPROMO_INCOMING;
-		}
+        // Interate all the shortlinks defined
+        foreach (XPromoDynamicLinksCollection.XPromoRewardShortLink rewardLink in links.xPromoShortLinks)
+        {
 
-        // Construct the reward
-		return Metagame.Reward.CreateFromData(rewardData, economyGroup, DEFAULT_SOURCE);
+			// If the player is not in this AB group, ignore this entry
+			if (rewardLink.abGroup.ToString().ToLower() == m_xPromoCycle.aBGroup.ToString().ToLower())
+            {
+                // Use the reward sku as key in the links dictionary
+				result.Add(rewardLink.rewardSKU, rewardLink.url);
+            }
+			
+        }
 
+		return result;
 
 	}
 
-    
+
+	/// <summary>
+	/// Process the incoming reward from HSE
+	/// </summary>
+	/// <param name="_rewardSku">SKU of the incoming reward as defined in content</param>
+	public void ProcessIncomingReward(string _rewardSku)
+	{
+
+		if (string.IsNullOrEmpty(_rewardSku))
+			return; // No rewards
+
+		// Find this reward in the content. We trust the SKU so we dont check ABGroup or origin.
+		DefinitionNode rewardDef = DefinitionsManager.SharedInstance.GetDefinitionByVariable(DefinitionsCategory.XPROMO_REWARDS, "sku", _rewardSku);
+
+
+		if (rewardDef == null)
+		{
+			// Reward not found. Process next reward (if any)
+			Debug.LogError("Incoming reward with SKU " + _rewardSku + " is not defined in the content");
+		}
+
+		// Create a reward from the content definition
+		Metagame.Reward reward = CreateRewardFromDef(rewardDef);
+
+        // TODO: check that this reward has not been already collected
+
+		// Put this reward in the rewards queue
+		if (reward != null)
+			m_pendingIncomingRewards.Enqueue(reward);
+
+		// This rewards will be given when the user enters the selection screen
+
+
+	}
 
 
 	//------------------------------------------------------------------------//
@@ -242,7 +266,60 @@ public class XPromoManager {
 		m_xPromoCycle.InitFromDefinitions();
 	}
 
-   
+	//------------------------------------------------------------------------//
+	// STATIC   															  //
+	//------------------------------------------------------------------------//
+
+	/// <summary>
+	/// Creates a new Metagame.Reward initialized with the data in the given Definition from rewards table.
+	/// </summary>
+	/// <param name="_def">Definition from xPromo rewards table.</param>
+	/// <param name="_origin">The app that granted the reward</param>
+	/// <returns>New reward created from the given definition.</returns>
+	private static Metagame.Reward CreateRewardFromDef(DefinitionNode _def)
+	{
+
+		Metagame.Reward.Data rewardData = new Metagame.Reward.Data();
+		rewardData.typeCode = _def.GetAsString("type");
+		rewardData.amount = _def.GetAsLong("amount");
+		rewardData.sku = _def.GetAsString("rewardSku");
+
+		// Assign an economy group based on the xpromo reward origin
+		HDTrackingManager.EEconomyGroup economyGroup;
+
+		Game origin = XPromoManager.GameStringToEnum(_def.GetAsString("origin"));
+
+		if (origin == Game.HD)
+		{
+			economyGroup = HDTrackingManager.EEconomyGroup.REWARD_XPROMO_LOCAL;
+		}
+		else
+		{
+			economyGroup = HDTrackingManager.EEconomyGroup.REWARD_XPROMO_INCOMING;
+		}
+
+		// Construct the reward
+		return Metagame.Reward.CreateFromData(rewardData, economyGroup, DEFAULT_SOURCE);
+
+
+	}
+
+	/// <summary>
+	/// String to enum conversion for Game code
+	/// </summary>
+	/// <param name="_input"></param>
+	/// <returns></returns>
+	public static Game GameStringToEnum (string _input)
+    {
+        switch (_input)
+        {
+
+			case GAME_CODE_HD: return Game.HD; 
+			case GAME_CODE_HSE: return Game.HSE; 
+			default: return Game.UNDEFINED;
+                
+        }
+    }
 
 
 	//------------------------------------------------------------------------//
