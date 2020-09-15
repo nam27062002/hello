@@ -27,7 +27,7 @@ public class DisguisePill : MonoBehaviour, IPointerClickHandler {
 	public class DisguisePillEvent : UnityEvent<DisguisePill>{}
 
 	// Resources constants
-	private const string NOTIFICATION_NEW_PREFAB_PATH = "UI/Common/PF_UINotification";
+	private const string NOTIFICATION_NEW_PREFAB_PATH = "UI/Common/PF_UINotificationText";
 	private const string NOTIFICATION_BUY_PREFAB_PATH = "UI/Common/PF_UINotification_Buy";
 
 	[System.Serializable]

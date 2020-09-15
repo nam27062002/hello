@@ -33,7 +33,7 @@ public class DragonMenuOrder : EditorWindow
     MenuDragons dragons = new MenuDragons();
 
 	// Menu
-	[MenuItem("Hungry Dragon/Tools/Gameplay/Dragon Menu Order...", false, -150)]
+	[MenuItem("Hungry Dragon/Tools/UI/Dragon Menu Order...", false, -150)]
 	static void Init()
 	{
 		// Prepare window docked next to Inspector tab
