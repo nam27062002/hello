@@ -39,8 +39,11 @@ namespace AI {
 				{
 					AttackRangedData attackData = (AttackRangedData) m_data;
 					DefinitionNode definition = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.ENTITIES, entity.sku);
-					attackData.damage = definition.GetAsFloat("damage", attackData.damage);
-					m_data = attackData;
+					if (definition != null)
+					{
+						attackData.damage = definition.GetAsFloat("damage", attackData.damage);
+						m_data = attackData;
+					}
 				}
 
 				m_projectileSpawnPoint = m_pilot.FindTransformRecursive(((AttackRangedData)m_data).projectileSpawnTransformName);
