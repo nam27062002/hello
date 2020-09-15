@@ -137,20 +137,6 @@ public class XPromoCycle {
 
 
 	/// <summary>
-	/// Reset the current progression in the xpromo cycle.
-	/// </summary>
-	public void ResetProgression()
-	{
-		// Go back to the first reward
-		m_totalNextRewardIdx = 0;
-
-
-		// Reset the timestamp, so the first reward can be collected.
-		m_nextRewardTimestamp = DateTime.MinValue;
-	}
-
-
-	/// <summary>
 	/// Obtain the next reward to be collected.
 	/// </summary>
 	/// <returns>The next reward to be collected. Shouldn't be null.</returns>
@@ -508,57 +494,5 @@ public class XPromoCycle {
 		return CollectReward(_index);
 		
 	}
-
-	//------------------------------------------------------------------------//
-	// PERSISTENCE METHODS													  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Constructor from json data.
-	/// </summary>
-	/// <param name="_data">Data to be parsed.</param>
-	public void LoadData(SimpleJSON.JSONNode _data)
-	{
-		// Reset any existing data
-		Clear();
-
-		// Current reward index
-		if (_data.ContainsKey("xPromoNextRewardIdx"))
-		{
-			m_totalNextRewardIdx = PersistenceUtils.SafeParse<int>(_data["xPromoNextRewardIdx"]);
-		}
-
-
-		// Collect timestamp
-		if (_data.ContainsKey("xPromoNextRewardTimestamp"))
-		{
-			m_nextRewardTimestamp = PersistenceUtils.SafeParse<DateTime>(_data["xPromoNextRewardTimestamp"]);
-			XPromoManager.Log("LoadData xPromoNextRewardTimestamp = " + m_nextRewardTimestamp);
-		}
-
-	}
-
-	/// <summary>
-	/// Serialize into json.
-	/// </summary>
-	/// <returns>The json. Can be null if sequence has never been generated.</returns>
-	public SimpleJSON.JSONClass SaveData()
-	{
-
-		// Create a new json data object
-		SimpleJSON.JSONClass data = new SimpleJSON.JSONClass();
-
-		// Current reward index
-		data.Add("xPromoNextRewardIdx", PersistenceUtils.SafeToString(m_totalNextRewardIdx));
-
-
-		// Collect timestamp
-		data.Add("xPromoNextRewardTimestamp", PersistenceUtils.SafeToString(m_nextRewardTimestamp));
-		XPromoManager.Log("SaveData xPromoNextRewardTimestamp = " + m_nextRewardTimestamp);
-
-		// Done!
-		return data;
-	}
-
-
 
 }

@@ -104,8 +104,7 @@ namespace XPromo
 				localReward.m_altRewardPC = _def.GetAsInt("altPC");
 
 				// Assign an economy group based on the xpromo reward origin
-				HDTrackingManager.EEconomyGroup economyGroup;
-				economyGroup = HDTrackingManager.EEconomyGroup.REWARD_XPROMO_LOCAL;
+				HDTrackingManager.EEconomyGroup economyGroup = HDTrackingManager.EEconomyGroup.REWARD_XPROMO_LOCAL;
 
 				// Construct the reward object
 				((LocalRewardHD)localReward).reward =  Metagame.Reward.CreateFromData(rewardData, economyGroup, DEFAULT_SOURCE);

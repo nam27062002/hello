@@ -12,15 +12,17 @@ using System;
 using System.Collections.Generic;
 using XPromo;
 using FirebaseWrapper;
+using SimpleJSON;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
 //----------------------------------------------------------------------------//
 /// <summary>
-/// 
+/// This class takes care of all the stuff related with the xPromo rewards system.
+/// Manages the send of deeplinks related with local rewards and the recepction of incoming rewards from HSE.
 /// </summary>
 [Serializable]
-public class XPromoManager {
+public class XPromoManager: Singleton<XPromoManager> {
 	//------------------------------------------------------------------------//
 	// STRUCT															  //
 	//------------------------------------------------------------------------//
@@ -48,20 +50,6 @@ public class XPromoManager {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 
-	// Singleton instance
-	private static XPromoManager m_instance = null;
-	public static XPromoManager instance
-	{
-		get
-		{
-			if (m_instance == null)
-			{
-				m_instance = new XPromoManager();
-			}
-			return m_instance;
-		}
-	}
-
 	// X-promo daily rewards cycle
 	private XPromoCycle m_xPromoCycle;
 	public XPromoCycle xPromoCycle
@@ -83,6 +71,9 @@ public class XPromoManager {
 	private Queue<Metagame.Reward> m_pendingIncomingRewards;
     public Queue<Metagame.Reward> pendingIncomingRewards { get { return m_pendingIncomingRewards;  } }
 
+    // List of collected incoming rewards. So we dont give them twice.
+	private List<String> m_incomingRewardsCollected;
+
 	// HSE dynamic short links
 	private Dictionary<string, string> m_dynamicShortLinks;
 
@@ -90,12 +81,16 @@ public class XPromoManager {
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
 	/// <summary>
-	/// Default constructor.
+	/// Default constructor. This method is called in the game initalization, so keep it light.
 	/// </summary>
 	public XPromoManager() {
 
 		// Subscribe to XPromo broadcast
 		Messenger.AddListener<Dictionary<string,string>>(MessengerEvents.INCOMING_DEEPLINK_NOTIFICATION, OnDeepLinkNotification);
+
+		m_pendingIncomingRewards = new Queue<Metagame.Reward>();
+
+		m_incomingRewardsCollected = new List<string>();
 
 	}
 
@@ -128,10 +123,12 @@ public class XPromoManager {
 
     public void Clear()
     {
-		m_pendingIncomingRewards = new Queue<Metagame.Reward>();
+		m_pendingIncomingRewards.Clear();
 
-        // Reset the xpromo cycle
-		m_xPromoCycle.Clear();
+		m_incomingRewardsCollected.Clear();
+
+		// Reset the xpromo cycle
+		xPromoCycle.Clear();
 	}
 
 
@@ -225,14 +222,21 @@ public class XPromoManager {
 		// Create a reward from the content definition
 		Metagame.Reward reward = CreateRewardFromDef(rewardDef);
 
-        // TODO: check that this reward has not been already collected
+		// check that this reward has not been already collected
+		if (m_incomingRewardsCollected.Contains(reward.sku))
+		{
+            // Nice try ¬¬
+			return;
+        }
 
 		// Put this reward in the rewards queue
+		// This rewards will be given when the user enters the selection screen
 		if (reward != null)
 			m_pendingIncomingRewards.Enqueue(reward);
 
-		// This rewards will be given when the user enters the selection screen
 
+		// At this poing treat the reward as collected
+		m_incomingRewardsCollected.Add(reward.sku);
 
 	}
 
@@ -265,7 +269,25 @@ public class XPromoManager {
     public void OnContentUpdate()
     {
 		// Update the rewards and cycle settings
-		m_xPromoCycle.InitFromDefinitions();
+		xPromoCycle.InitFromDefinitions();
+	}
+
+
+    /// <summary>
+    /// Reset all the rewards progression. Used for debugging purposes.
+    /// </summary>
+    private void ResetProgression()
+    {
+
+		// Forget all the incoming rewards received
+		m_pendingIncomingRewards.Clear();
+
+		// Go back to the first reward
+		m_xPromoCycle.totalNextRewardIdx = 0;
+
+		// Reset the timestamp, so the first reward can be collected.
+		m_xPromoCycle.nextRewardTimestamp = DateTime.MinValue;
+
 	}
 
 	//------------------------------------------------------------------------//
@@ -323,6 +345,81 @@ public class XPromoManager {
         }
     }
 
+	//------------------------------------------------------------------------//
+	// PERSISTENCE METHODS													  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Constructor from json data.
+	/// </summary>
+	/// <param name="_data">Data to be parsed.</param>
+	public void LoadData(SimpleJSON.JSONNode _data)
+	{
+
+		// Reset any existing data
+		Clear();
+
+		// Load collected incoming rewards
+        string key = "xPromoCollectedRewards";
+        if ( _data.ContainsKey(key) ) {
+
+			// Rewards skus are stored as an array 
+			JSONArray arrayData = _data[key].AsArray;
+			for (int j = 0; j < arrayData.Count; ++j)
+			{
+				m_incomingRewardsCollected.Add(arrayData[j]);
+			}
+		
+		}
+
+
+		// Load XPromo Cycle specifics:
+		// Current reward index
+		if (_data.ContainsKey("xPromoNextRewardIdx"))
+		{
+			m_xPromoCycle.totalNextRewardIdx = PersistenceUtils.SafeParse<int>(_data["xPromoNextRewardIdx"]);
+		}
+        
+		// Collect timestamp
+		if (_data.ContainsKey("xPromoNextRewardTimestamp"))
+		{
+			m_xPromoCycle.nextRewardTimestamp = PersistenceUtils.SafeParse<DateTime>(_data["xPromoNextRewardTimestamp"]);
+		}
+
+	}
+
+	/// <summary>
+	/// Serialize into json.
+	/// </summary>
+	/// <returns>The json. Can be null if sequence has never been generated.</returns>
+	public SimpleJSON.JSONClass SaveData()
+	{
+
+		// Create a new json data object
+		SimpleJSON.JSONClass data = new SimpleJSON.JSONClass();
+
+		// Save collected incoming rewards skus
+		JSONArray arrayData = new JSONArray();
+		foreach (string rewardSku in m_incomingRewardsCollected)
+		{
+			arrayData.Add(rewardSku);
+		}
+        data.Add("xPromoCollectedRewards", arrayData);
+
+
+		// Save XPromo Cycle specifics:
+		if (xPromoCycle != null)
+
+			// Current reward index
+			data.Add("xPromoNextRewardIdx", PersistenceUtils.SafeToString(xPromoCycle.totalNextRewardIdx));
+
+			// Collect timestamp
+			data.Add("xPromoNextRewardTimestamp", PersistenceUtils.SafeToString(xPromoCycle.nextRewardTimestamp));
+
+
+		// Done!
+		return data;
+	}
+
 
 	//------------------------------------------------------------------------//
 	// DEBUG CP 															  //
@@ -331,9 +428,9 @@ public class XPromoManager {
 
 	public void OnResetProgression()
     {
-		m_xPromoCycle.ResetProgression();
 
-        //TODO: reset the incoming rewards collected from the user persistence
+		ResetProgression();
+        
     }
 
     public void OnMoveIndexTo(int _newIndex)
