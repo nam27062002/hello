@@ -75,7 +75,7 @@ public class HungryDragonEditorMenu
 	/// <summary>
 	/// Custom toolbar for the project.
 	/// </summary>
-	[MenuItem("Hungry Dragon/Tools/Hungry Dragon Toolbar", false, -100)]
+	[MenuItem("Hungry Dragon/Tools/Hungry Dragon Toolbar", false, -200)]
 	public static void HungryDragonToolbar() {
 		HungryDragonEditorToolbar.ShowWindow();
 	}
@@ -226,7 +226,7 @@ public class HungryDragonEditorMenu
 	/// <summary>
 	/// Capture tool for dragon disguises.
 	/// </summary>
-	[MenuItem("Hungry Dragon/Tools/UI Disguises Capture Tool", false, 200)]
+	[MenuItem("Hungry Dragon/Tools/UI/Disguises Capture Tool", false, 200)]
 	public static void OpenDisguisesCaptureTool() {
 		OpenScene("Assets/Tools/UITools/CaptureTool/SC_DisguisesCaptureTool.unity", true);
 	}
@@ -234,7 +234,7 @@ public class HungryDragonEditorMenu
 	/// <summary>
 	/// Capture tool for dragon disguises.
 	/// </summary>
-	[MenuItem("Hungry Dragon/Tools/UI Pets Capture Tool", false, 201)]
+	[MenuItem("Hungry Dragon/Tools/UI/Pets Capture Tool", false, 201)]
 	public static void OpenPetsCaptureTool() {
 		OpenScene("Assets/Tools/UITools/CaptureTool/SC_PetsCaptureTool.unity", true);
 	}
@@ -242,7 +242,7 @@ public class HungryDragonEditorMenu
 	/// <summary>
 	/// Capture tool for dragon disguises.
 	/// </summary>
-	[MenuItem("Hungry Dragon/Tools/UI Spawners Capture Tool", false, 202)]
+	[MenuItem("Hungry Dragon/Tools/UI/Spawners Capture Tool", false, 202)]
 	public static void OpenSpawnersCaptureTool() {
 		OpenScene("Assets/Tools/UITools/CaptureTool/SC_SpawnersCaptureTool.unity", true);
 	}
@@ -250,7 +250,7 @@ public class HungryDragonEditorMenu
 	/// <summary>
 	/// Capture tool for dragon disguises.
 	/// </summary>
-	[MenuItem("Hungry Dragon/Tools/Live Event Icons Capture Tool", false, 203)]
+	[MenuItem("Hungry Dragon/Tools/UI/Live Event Icons Capture Tool", false, 203)]
 	public static void OpenLiveEventIconsCaptureTool() {
 		OpenScene("Assets/Tools/UITools/CaptureTool/SC_LiveEventIconsCaptureTool.unity", true);
 	}
@@ -258,7 +258,7 @@ public class HungryDragonEditorMenu
 	/// <summary>
 	/// Regenerate the icon for the selected entity prefab.
 	/// </summary>
-	[MenuItem("Hungry Dragon/Tools/Generate Spawner Icons (selected entity prefabs)", false, 204)]
+	[MenuItem("Hungry Dragon/Tools/UI/Generate Spawner Icons (selected entity prefabs)", false, 204)]
     public static void GenerateSpawnerIconsSelected()
     {
         // Show error message if nothing is selected
@@ -312,7 +312,7 @@ public class HungryDragonEditorMenu
     /// <summary>
     /// Regenerate the icon for all the spawners in the scene.
     /// </summary>
-    [MenuItem("Hungry Dragon/Tools/Generate Spawner Icons (all, takes a while)", false, 205)]
+    [MenuItem("Hungry Dragon/Tools/UI/Generate Spawner Icons (all, takes a while)", false, 205)]
     public static void GenerateSpawnerIconsAll()
     {
         //SpawnerIconGeneratorEditor.GenerateSpawnerIconsInScene();

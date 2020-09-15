@@ -8,7 +8,7 @@ public class CopySeasonAccessoriesChina : Editor
 	const string PREFABS_CHINA_PATH = "Assets/Flavours/China/Art/3D/Gameplay/Entities/Prefabs/Surface";
 	const string PREFABS_PATH = "Assets/Art/3D/Gameplay/Entities/Prefabs/Surface";
 
-	[MenuItem("Hungry Dragon/Tools/Gameplay/Copy season accessories on China", false, -150)]
+	[MenuItem("Hungry Dragon/Tools/Copy season accessories on China", false)]
 	static void Init()
 	{
         // Extract prefab list to search
