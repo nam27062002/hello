@@ -17,6 +17,7 @@ using XPromo;
 /// <summary>
 /// Represents a preview of a Xpromo remoward, could be for HSE or HD
 /// </summary>
+[RequireComponent (typeof (Animator))]
 public class XPromoRewardPreview : MetagameRewardView {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
@@ -61,13 +62,24 @@ public class XPromoRewardPreview : MetagameRewardView {
         set
         {
             m_selected = value;
+
+            // Trigger the selection animation
+            m_animator.SetBool("selected", value);
         }
     }
 
+    // Cache
+    private Animator m_animator;
 
     //------------------------------------------------------------------------//
     // GENERIC METHODS														  //
     //------------------------------------------------------------------------//
+
+
+    private void Awake()
+    {
+        m_animator = GetComponent<Animator>();
+    }
 
 
 

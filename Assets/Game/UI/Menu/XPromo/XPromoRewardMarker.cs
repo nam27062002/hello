@@ -206,6 +206,8 @@ public class XPromoRewardMarker : MonoBehaviour {
     {
         // Let the popup know
 		rewardSelectedDelegate(m_index);
+
+		Refresh();
     }
 
 }
