@@ -122,7 +122,7 @@ public class RotationDrawer : MaterialPropertyDrawer {
             GL.PopMatrix();
             GUI.EndClip();
 
-            GUI.Label(_rect, "Light Direction");
+            GUI.Label(_rect, _label);
         }
         else if ((Event.current.type == EventType.MouseDown || Event.current.type == EventType.MouseUp) && Event.current.button == 0)
         {

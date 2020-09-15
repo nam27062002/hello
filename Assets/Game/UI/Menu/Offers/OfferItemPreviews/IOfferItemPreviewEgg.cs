@@ -64,6 +64,7 @@ public abstract class IOfferItemPreviewEgg : IOfferItemPreview {
 		switch(_slotType) {
 			case OfferItemSlot.Type.POPUP_BIG:
 			case OfferItemSlot.Type.POPUP_SMALL:
+			case OfferItemSlot.Type.POPUP_MINI:
 			case OfferItemSlot.Type.PILL_FREE: {
 				// Each type of egg has its own name, grab it from definition
 				if(m_def != null) {
@@ -98,7 +99,8 @@ public abstract class IOfferItemPreviewEgg : IOfferItemPreview {
 		switch(_slotType) {
 			case OfferItemSlot.Type.TOOLTIP:
 			case OfferItemSlot.Type.POPUP_BIG:
-			case OfferItemSlot.Type.POPUP_SMALL: {
+			case OfferItemSlot.Type.POPUP_SMALL:
+			{
 				if(m_def != null) {
 					// Use UIConstants StringBuilder instance to avoid allocations
 					System.Text.StringBuilder sb = UIConstants.sb;

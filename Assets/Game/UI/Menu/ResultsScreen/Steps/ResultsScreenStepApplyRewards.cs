@@ -41,7 +41,7 @@ public class ResultsScreenStepApplyRewards : ResultsScreenStep {
 	/// </summary>
 	override protected void DoLaunch() {
 		// Apply rewards to user profile
-		RewardManager.ApplyEndOfGameRewards();
+		RewardManager.ApplyEndOfGameRewards(m_controller.multipliedCoinsExtra);
 
 		// Process Missions: give rewards and generate new missions replacing those completed
 		MissionManager.ProcessMissions();

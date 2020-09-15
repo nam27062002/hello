@@ -63,6 +63,14 @@ namespace AI {
             protected override void OnInitialise() {
                 m_data = m_pilot.GetComponentData<GoblinWarBoatAttackData>();
 
+                // Set damage from entityDefinitions
+                IEntity entity = m_pilot.GetComponent<IEntity>();
+                if (entity != null)
+                {
+                    DefinitionNode definition = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.ENTITIES, entity.sku);
+                    m_data.damage = definition.GetAsFloat("damage", m_data.damage);
+                }
+
                 m_animEvents = m_pilot.FindComponentRecursive<PreyAnimationEvents>();
                 m_machine.SetSignal(Signals.Type.Alert, true);
 
