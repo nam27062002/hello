@@ -32,8 +32,11 @@ namespace AI {
                 // Set damage from entityDefinitions
 				AttackMeleeData attackData = (AttackMeleeData)m_data;
 				DefinitionNode definition = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.ENTITIES, m_entity.sku);
-				attackData.damage = definition.GetAsFloat("damage", attackData.damage);
-				m_data = attackData;
+				if (definition != null)
+				{
+					attackData.damage = definition.GetAsFloat("damage", attackData.damage);
+					m_data = attackData;
+				}
 
 				m_meleeWeapon = m_pilot.FindComponentRecursive<IMeleeWeapon>();
                 m_meleeWeapon.entity = m_entity;

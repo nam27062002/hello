@@ -47,7 +47,8 @@ namespace AI {
 				if (m_entity != null)
 				{
 					DefinitionNode definition = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.ENTITIES, m_entity.sku);
-					m_data.damage = definition.GetAsFloat("damage", m_data.damage);
+                    if (definition != null)
+					    m_data.damage = definition.GetAsFloat("damage", m_data.damage);
 				}
 
 				m_eatBehaviour.holdDamage = m_data.damage;

@@ -68,7 +68,8 @@ namespace AI {
                 if (entity != null)
                 {
                     DefinitionNode definition = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.ENTITIES, entity.sku);
-                    m_data.damage = definition.GetAsFloat("damage", m_data.damage);
+                    if (definition != null)
+                        m_data.damage = definition.GetAsFloat("damage", m_data.damage);
                 }
 
                 m_animEvents = m_pilot.FindComponentRecursive<PreyAnimationEvents>();
