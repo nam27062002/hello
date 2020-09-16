@@ -345,6 +345,23 @@ public class XPromoManager: Singleton<XPromoManager> {
         }
     }
 
+	/// <summary>
+	/// Is the Hungry Shark Evolution game installed?
+	/// </summary>
+	/// <returns>Whether Hungry Shark Evolution is installed in this device.</returns>
+	public static bool IsHungrySharkGameInstalled()
+	{
+		bool ret = false;
+#if UNITY_EDITOR
+		ret = true;
+#elif UNITY_ANDROID
+        ret = PlatformUtils.Instance.ApplicationExists("com.fgol.HungrySharkEvolution");
+#elif UNITY_IOS
+		ret = PlatformUtils.Instance.ApplicationExists("hungrysharkevolution://");
+#endif
+		return ret;
+	}
+
 	//------------------------------------------------------------------------//
 	// PERSISTENCE METHODS													  //
 	//------------------------------------------------------------------------//

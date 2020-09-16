@@ -26,11 +26,14 @@ public class PopupXPromo : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	public const string PATH = "UI/Popups/Menu/PF_PopupXPromo";
 
+	private const string TID_OPEN_HSE = "TID_XPROMO_OPEN_HSE";
+	private const string TID_INSTALL_HSE = "TID_XPROMO_INSTALL_HSE";
+
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 
-    [SerializeField] protected XPromoRewardMarker m_rewardMarkerPrefab;
+	[SerializeField] protected XPromoRewardMarker m_rewardMarkerPrefab;
 
 	[SerializeField] protected Transform m_rewardsContainer;
 
@@ -216,7 +219,14 @@ public class PopupXPromo : MonoBehaviour {
 		m_buttonLeft.SetActive(m_selectedIndex > 0);
 		m_buttonRight.SetActive(m_selectedIndex < m_rewardMarkers.Count - 1);
 
+        // Detect if HSE is installed, and show the proper button label
+        if (m_buttonCollectHSE.activeInHierarchy)
+        {
+			string buttonTID = XPromoManager.IsHungrySharkGameInstalled() ? TID_OPEN_HSE : TID_INSTALL_HSE;
 
+			m_buttonCollectHSE.GetComponentInChildren<Localizer>().Localize(buttonTID);
+            
+        }
 
 		// Cascade down the refresh
 		for ( int i=0; i<m_rewardMarkers.Count; i++)

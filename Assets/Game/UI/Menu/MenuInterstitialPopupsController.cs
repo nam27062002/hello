@@ -174,28 +174,13 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 		if(m_currentScreen != MenuScreen.DRAGON_SELECTION) return;
 
 		// Check if hungry shark is installed
-		if(IsHungrySharkGameInstalled()) {
+		if(XPromoManager.IsHungrySharkGameInstalled()) {
 			// Show popup
 			PopupController popup = PopupManager.EnqueuePopup(PopupSharkPetReward.PATH);
 			SetFlag(StateFlag.POPUP_DISPLAYED, true);
 		}
 	}
 
-	/// <summary>
-	/// Is the Hungry Shark Evolution game installed?
-	/// </summary>
-	/// <returns>Whether Hungry Shark Evolution is installed in this device.</returns>
-	private bool IsHungrySharkGameInstalled() {
-		bool ret = false;
-#if UNITY_EDITOR
-		ret = true;
-#elif UNITY_ANDROID
-        ret = PlatformUtils.Instance.ApplicationExists("com.fgol.HungrySharkEvolution");
-#elif UNITY_IOS
-		ret = PlatformUtils.Instance.ApplicationExists("hungrysharkevolution://");
-#endif
-		return ret;
-	}
 
 	/// <summary>
 	/// Check popups coming from the customizer.
