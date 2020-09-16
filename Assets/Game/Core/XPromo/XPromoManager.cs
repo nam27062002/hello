@@ -212,6 +212,8 @@ public class XPromoManager: Singleton<XPromoManager> {
 		// Find this reward in the content. We trust the SKU so we dont check ABGroup or origin.
 		DefinitionNode rewardDef = DefinitionsManager.SharedInstance.GetDefinitionByVariable(DefinitionsCategory.XPROMO_REWARDS, "sku", _rewardSku);
 
+        // Just in case the content is wrong. Shouldnt happen.
+		Debug.Assert(rewardDef.GetAsString("origin") == GAME_CODE_HSE, "This sku doesnt belong to an incoming reward!");
 
 		if (rewardDef == null)
 		{
