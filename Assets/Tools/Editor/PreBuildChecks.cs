@@ -20,7 +20,7 @@ public class PreBuildChecks : Editor
         "PF_BadJunkMagicBottle"
     };
 
-    [MenuItem("Hungry Dragon/Tools/Gameplay/Run game checks before build...", false, -150)]
+    [MenuItem("Hungry Dragon/Tools/Optimization/Run game checks before build...", false, -150)]
     static void Init()
     {
         int errorCounter = 0;

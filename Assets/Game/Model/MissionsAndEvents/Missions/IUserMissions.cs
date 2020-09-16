@@ -4,11 +4,16 @@
 // Created by Alger Ortín Castellví on 30/11/2015.
 // Copyright (c) 2015 Ubisoft. All rights reserved.
 
+#if DEBUG && !DISABLE_LOGS
+//#define LOG
+#endif
+
 //----------------------------------------------------------------------//
 // INCLUDES																//
 //----------------------------------------------------------------------//
 using UnityEngine;
 using System;
+using System.Diagnostics;
 using System.Collections.Generic;
 
 //----------------------------------------------------------------------//
@@ -70,7 +75,7 @@ public abstract class IUserMissions {
     public void EnableTracker(bool _enable) {
         for (int i = 0; i < m_missions.Length; i++) {
             m_missions[i].EnableTracker(_enable);
-            Debug.Log(Color.yellow.Tag("MISSION OBJECTIVE ENABLED[" + _enable + "]:\n" + m_missions[i].def.sku + " | " + m_missions[i].state));
+            Log(Color.yellow.Tag("MISSION OBJECTIVE ENABLED[" + _enable + "]:\n" + m_missions[i].def.sku + " | " + m_missions[i].state));
         }
     }
 
@@ -185,7 +190,7 @@ public abstract class IUserMissions {
 	/// <param name="_forceSku">Optional, force a specific mission sku rather than using the procedural engine.</param>
 	/// <param name="_preventRepetition">Whether to prevent generating a mission of the latest mission types. Set to true except for debugging.</param>
 	protected Mission GenerateNewMission(Mission.Difficulty _difficulty, string _forceSku = "", bool _preventRepetition = true) {
-		Debug.Log("<color=green>GENERATING NEW MISSION " + _difficulty + "</color>");
+		Log("<color=green>GENERATING NEW MISSION " + _difficulty + "</color>");
 
 		// Filter types to prevent repetition
 		// Do it before terminating previous mission so we don't repeat the same mission type we just completed/skipped
@@ -211,8 +216,8 @@ public abstract class IUserMissions {
 			// Get forced mission def
             selectedMissionDef = DefinitionsManager.SharedInstance.GetDefinition(m_defMissionCategory, _forceSku);
             selectedTypeDef = DefinitionsManager.SharedInstance.GetDefinition(m_defTypesCategory, selectedMissionDef.Get("type"));
-			Debug.Log("\tSelected Type: <color=yellow>" + selectedTypeDef.sku + "</color>");
-			Debug.Log("\tSelected Mission: <color=yellow>" + selectedMissionDef.sku + "</color>");
+			Log("\tSelected Type: <color=yellow>" + selectedTypeDef.sku + "</color>");
+			Log("\tSelected Mission: <color=yellow>" + selectedMissionDef.sku + "</color>");
 		} else {
 			// Some more aux vars
 			List<DefinitionNode> missionDefs = new List<DefinitionNode>();
@@ -280,7 +285,7 @@ public abstract class IUserMissions {
 
                         // If the selected type has no valid missions, remove it from the candidates list and select a new type
                         if (missionDefs.Count == 0) {
-						    Debug.Log(Colors.orange.Tag("No missions found for type " + selectedTypeDef.sku + ". Choosing a new type."));
+						    Log(Colors.orange.Tag("No missions found for type " + selectedTypeDef.sku + ". Choosing a new type."));
 
 						    selectedTypeDef = null;
 						    typeDefs.RemoveAt(i);
@@ -303,7 +308,7 @@ public abstract class IUserMissions {
 				Mission currentMission = GetMission(_difficulty);
 				selectedTypeDef = currentMission.typeDef;
 			}
-			Debug.Log("\tSelected Type: <color=yellow>" + selectedTypeDef.sku + "</color>");
+			Log("\tSelected Type: <color=yellow>" + selectedTypeDef.sku + "</color>");
 
 			// 4. Select a random mission based on weight (as we just did with the mission type)
 			// 4.1. Compute total weight
@@ -312,14 +317,14 @@ public abstract class IUserMissions {
 			for(int i = 0; i < missionDefs.Count; i++) {
 				weightsArray.Add(missionDefs[i].GetAsFloat("weight"));
 				totalWeight += weightsArray[i];
-				Debug.Log(Colors.magenta.Tag("Added mission " + missionDefs[i].sku + " | " + weightsArray.Last() + " | " + totalWeight));
+				Log(Colors.magenta.Tag("Added mission " + missionDefs[i].sku + " | " + weightsArray.Last() + " | " + totalWeight));
 			}
 
 			// 4.2. Select a random value [0..totalWeight]
 			// Iterate through elements until the selected value is reached
 			// This should match weighted probability distribution
 			targetValue = UnityEngine.Random.Range(0f, totalWeight);
-			Debug.Log(Colors.magenta.Tag("Target Value: " + targetValue));
+			Log(Colors.magenta.Tag("Target Value: " + targetValue));
 			for(int i = 0; i < missionDefs.Count; i++) {
 				targetValue -= weightsArray[i];
 				if(targetValue <= 0f) {
@@ -336,12 +341,12 @@ public abstract class IUserMissions {
 				selectedTypeDef = currentMission.typeDef;
 				selectedMissionDef = currentMission.def;
 			}
-			Debug.Log("\tSelected Mission: <color=yellow>" + selectedMissionDef.sku + "</color>");
+			Log("\tSelected Mission: <color=yellow>" + selectedMissionDef.sku + "</color>");
 		}
 
 		// 5. If mission type supports single run mode, choose randomly whether to use it or not
 		bool singleRun = UnityEngine.Random.value < selectedMissionDef.GetAsFloat("singleRunChance");
-		Debug.Log("\tSingle run?: <color=yellow>" + singleRun + "</color>");
+		Log("\tSingle run?: <color=yellow>" + singleRun + "</color>");
 
 		// 6. All ready! Generate the mission!
 		return GenerateNewMission(_difficulty, selectedMissionDef, selectedTypeDef, singleRun, "");
@@ -365,7 +370,7 @@ public abstract class IUserMissions {
 			_missionDef.GetAsLong("objectiveBaseQuantityMin"),
 			_missionDef.GetAsLong("objectiveBaseQuantityMax")
 		);
-		Debug.Log("\tTarget Value:  <color=yellow>" + targetValue + "</color> [" + _missionDef.GetAsFloat("objectiveBaseQuantityMin") + ", " + _missionDef.GetAsFloat("objectiveBaseQuantityMax") + "]");
+		Log("\tTarget Value:  <color=yellow>" + targetValue + "</color> [" + _missionDef.GetAsFloat("objectiveBaseQuantityMin") + ", " + _missionDef.GetAsFloat("objectiveBaseQuantityMax") + "]");
 
         // 2. Compute and apply modifiers to the target value
         float totalModifier = 0f;
@@ -381,7 +386,7 @@ public abstract class IUserMissions {
 
         if (dragonModifierDef != null) {
             totalModifier += dragonModifierDef.GetAsFloat("quantityModifier");
-            Debug.Log("\tDragon Modifier " + dragonModifierDef.GetAsFloat("quantityModifier") + "\n\tTotal modifier: " + totalModifier);
+            Log("\tDragon Modifier " + dragonModifierDef.GetAsFloat("quantityModifier") + "\n\tTotal modifier: " + totalModifier);
         }
 
         // 2.2. Difficulty modifier - additive
@@ -389,7 +394,7 @@ public abstract class IUserMissions {
         DefinitionNode difficultyModifierDef = DefinitionsManager.SharedInstance.GetDefinitionByVariable(DefinitionsCategory.MISSION_MODIFIERS, "difficulty", difficultyDef.Get("difficulty"));
         if (difficultyModifierDef != null) {
             totalModifier += difficultyModifierDef.GetAsFloat("quantityModifier");
-            Debug.Log("\tDifficulty Modifier " + difficultyModifierDef.GetAsFloat("quantityModifier") + "\n\tTotal modifier: " + totalModifier);
+            Log("\tDifficulty Modifier " + difficultyModifierDef.GetAsFloat("quantityModifier") + "\n\tTotal modifier: " + totalModifier);
         }
 
         // 2.3. Single run modifier - multiplicative
@@ -397,7 +402,7 @@ public abstract class IUserMissions {
             DefinitionNode singleRunModifierDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.MISSION_MODIFIERS, "single_run");
             if (singleRunModifierDef != null) {
                 totalModifier *= 1f - singleRunModifierDef.GetAsFloat("quantityModifier");
-                Debug.Log("\tSingle Run Modifier " + singleRunModifierDef.GetAsFloat("quantityModifier") + "\n\tTotal modifier: " + totalModifier);
+                Log("\tSingle Run Modifier " + singleRunModifierDef.GetAsFloat("quantityModifier") + "\n\tTotal modifier: " + totalModifier);
             }
         }
 
@@ -415,7 +420,7 @@ public abstract class IUserMissions {
         }
         
 		targetValue = (long)Mathf.Max(targetValue, 1);	// Just in case, avoid 0 or negative values!
-		Debug.Log("\t<color=lime>Final Target Value: " + targetValue + "</color>");
+		Log("\t<color=lime>Final Target Value: " + targetValue + "</color>");
 
         // 2.5. Compute remove cost
 
@@ -492,7 +497,7 @@ public abstract class IUserMissions {
     /// <param name="_singleRun">Single run mission?</param>
     /// <param name="_forceModifierSku">The dragon to be used as modifier (biggest owned dragon).</param>
     public Mission DEBUG_GenerateNewMission(Mission.Difficulty _difficulty, DefinitionNode _missionDef, DefinitionNode _typeDef, bool _singleRun, string _forceModifierSku) {
-		Debug.Log("<color=green>GENERATING NEW MISSION (DEBUG) " + _difficulty + "</color>");
+		Log("<color=green>GENERATING NEW MISSION (DEBUG) " + _difficulty + "</color>");
 		Mission m = GenerateNewMission(_difficulty, _missionDef, _typeDef, _singleRun, _forceModifierSku);
 		m_missions[(int)_difficulty] = m;
 		return m;
@@ -507,8 +512,21 @@ public abstract class IUserMissions {
 	public Mission DEBUG_GenerateNewMissionForResultsScreen() {
 		// Random difficulty
 		Mission.Difficulty difficulty = (Mission.Difficulty)UnityEngine.Random.Range((int)Mission.Difficulty.EASY, (int)Mission.Difficulty.COUNT);
-		Debug.Log("<color=green>GENERATING NEW MISSION (DEBUG FOR RESULTS SCREEN) " + difficulty + "</color>");
+		Log("<color=green>GENERATING NEW MISSION (DEBUG FOR RESULTS SCREEN) " + difficulty + "</color>");
 		return GenerateNewMission(difficulty, "", false);
+	}
+
+	/// <summary>
+	/// Debug log
+	/// </summary>
+	/// <param name="_msg"></param>
+#if LOG
+	[Conditional("DEBUG")]
+#else
+	[Conditional("FALSE")]
+#endif
+	public static void Log(string _msg) {
+		Debug.Log(_msg);
 	}
 
 	//------------------------------------------------------------------------//

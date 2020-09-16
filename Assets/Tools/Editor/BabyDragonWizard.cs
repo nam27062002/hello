@@ -77,7 +77,7 @@ public class BabyDragonWizard : EditorWindow
 	GUIStyle previewStyle = new GUIStyle();
 
 	// Menu
-	[MenuItem("Hungry Dragon/Tools/Gameplay/Baby Dragon Wizard...", false, -150)]
+	[MenuItem("Hungry Dragon/Tools/Creation/Baby Dragon Wizard...", false)]
 	static void Init()
 	{
 		// Prepare window docked next to Inspector tab
