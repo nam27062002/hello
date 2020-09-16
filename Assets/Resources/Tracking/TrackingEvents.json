@@ -1073,6 +1073,49 @@
         "dna",
         "etl"
       ]
+    },
+    "custom.xpromo.dailyLoginCollect.origin": {
+      "Parameters": [
+        {"day": { "Status": "OK" } },
+        {"calendarDay": { "Status": "OK" } },
+        {"amount": { "Status": "OK" } },
+        {"rewardSku": { "Status": "OK" } },
+        {"deeplink": { "Status": "OK" } },
+        {"hseInstalled": { "Status": "OK" } },
+        {"playerProgress": { "Status": "OK" } },
+        {"abtestGroup": { "Status": "OK" } }
+      ],
+      "APIs": [
+        "dna",
+        "etl"
+      ]
+    },
+    "custom.xpromo.dailyLoginCollect.destination": {
+      "Parameters": [
+        {"day": { "Status": "OK" } },
+        {"calendarDay": { "Status": "OK" } },
+        {"amount": { "Status": "OK" } },
+        {"rewardSku": { "Status": "OK" } },
+        {"deeplink": { "Status": "OK" } },
+        {"recentlyInstalled": { "Status": "OK" } },
+        {"abtestGroup": { "Status": "OK" } }
+      ],
+      "APIs": [
+        "dna",
+        "etl"
+      ]
+    },
+    "custom.xpromo.uiButtons": {
+      "Parameters": [
+        {"buttonName": { "Status": "OK" } },
+        {"timerValue": { "Status": "OK" } },
+        {"calendarDay": { "Status": "OK" } },
+        {"abtestGroup": { "Status": "OK" } }
+      ],
+      "APIs": [
+        "dna",
+        "etl"
+      ]
     }
   },
   "ParameterValues": {
@@ -1925,6 +1968,30 @@
     },
     "appsflyer_id": {
       "Type": "STRING:64",
+      "Values": []
+    },
+    "calendarDay": {
+      "Type": "INT:4",
+      "Values": []
+    },
+     "rewardSku": {
+      "Type": "STRING:32",
+      "Values": []
+    },
+    "hseInstalled": {
+       "Type": "BOOL",
+       "Values": []
+    },
+    "abtestGroup": {
+      "Type": "STRING:4",
+      "Values": []
+    },
+    "recentlyInstalled": {
+       "Type": "BOOL",
+       "Values": []
+    },
+    "timerValue": {
+      "Type": "INT:4",
       "Values": []
     }
   }
