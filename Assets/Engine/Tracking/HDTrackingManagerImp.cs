@@ -1519,6 +1519,32 @@ public class HDTrackingManagerImp : HDTrackingManager {
 
     #endregion
 
+    #region xpromo
+    /// <summary>
+    /// A reward has been collected in HD or sent to HSE.
+    /// </summary>
+    /// <param name="_rewardDef">The reward data.</param>
+    public override void Notify_XPromoRewardCollected(DefinitionNode _rewardDef) {
+        Track_XPromoRewardCollected(_rewardDef);
+    }
+
+    /// <summary>
+    /// A reward coming from HSE has been received and validated via deep link.
+    /// </summary>
+    /// <param name="_rewardDef">The reward data.</param>
+    public override void Notify_XPromoRewardReceived(DefinitionNode _rewardDef) {
+        Track_XPromoRewardReceived(_rewardDef);
+    }
+
+    /// <summary>
+    /// A button has been pressed in the XPromo UI.
+    /// </summary>
+    /// <param name="_buttonName">Name of the button.</param>
+    public override void Notify_XPromoUIButton(string _buttonName) {
+        Track_XPromoUIButton(_buttonName);
+    }
+    #endregion
+
     /// <summary>
     /// Sent when the user unlocks the map.
     /// </summary>
@@ -2885,6 +2911,51 @@ public class HDTrackingManagerImp : HDTrackingManager {
         m_eventQueue.Enqueue(e);
     }
 
+    #region xpromo
+    /// <summary>
+    /// A reward has been collected in HD or sent to HSE.
+    /// </summary>
+    /// <param name="_rewardDef">The reward data.</param>
+    private void Track_XPromoRewardCollected(DefinitionNode _rewardDef) {
+        Log("Track_XPromoRewardCollected "
+           + ", _rewardDef = " + (_rewardDef != null ? _rewardDef.sku : "NULL"));
+
+        // Aux vars
+        XPromoCycle currentCycle = XPromoManager.instance.xPromoCycle;
+
+        // Create event, fill parameters and enqueue it
+        HDTrackingEvent e = new HDTrackingEvent("custom.xpromo.dailyLoginCollect.origin"); {
+            Track_AddParamInt(e, TRACK_PARAM_DAY, 0);
+            Track_AddParamInt(e, TRACK_PARAM_DAY, 0);
+            Track_AddParamInt(e, TRACK_PARAM_DAY, 0);
+            Track_AddParamString(e, TRACK_PARAM_DAY, "");
+            Track_AddParamString(e, TRACK_PARAM_DAY, "");
+            Track_AddParamBool(e, TRACK_PARAM_VALID, false);
+            Track_AddParamPlayerProgress(e);
+            Track_AddParamString(e, TRACK_PARAM_AB_TEST_GROUP, XPromoCycle.ABGroupToString(currentCycle.aBGroup));
+        }
+        m_eventQueue.Enqueue(e);
+    }
+
+    /// <summary>
+    /// A reward coming from HSE has been received and validated via deep link.
+    /// </summary>
+    /// <param name="_rewardDef">The reward data.</param>
+    private void Track_XPromoRewardReceived(DefinitionNode _rewardDef) {
+        Log("Track_XPromoRewardReceived "
+           + ", _rewardDef = " + (_rewardDef != null ? _rewardDef.sku : "NULL"));
+    }
+
+    /// <summary>
+    /// A button has been pressed in the XPromo UI.
+    /// </summary>
+    /// <param name="_buttonName">Name of the button.</param>
+    private void Track_XPromoUIButton(string _buttonName) {
+        Log("Track_XPromoUIButton "
+           + ", _buttonName = " + _buttonName);
+    }
+    #endregion
+
     // -------------------------------------------------------------
     // Events
     // -------------------------------------------------------------
@@ -2896,6 +2967,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
 
     // Please, respect the alphabetic order, string order
     private const string TRACK_PARAM_AB_TESTING = "abtesting";
+    private const string TRACK_PARAM_AB_TEST_GROUP = "abtestGroup";
     private const string TRACK_PARAM_ACCEPTED = "accepted";
     private const string TRACK_PARAM_ACQ_MARKETING_ID = "acq_marketing_id";
     private const string TRACK_PARAM_ACTION = "action";			// "automatic", "info_button" or "settings"
@@ -2918,6 +2990,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
 	private const string TRACK_PARAM_BATTERY_LEVEL = "batteryLevel";
     private const string TRACK_PARAM_BOOST_TIME = "boostTime";
     private const string TRACK_PARAM_BUTTON_NAME = "buttonName";
+    private const string TRACK_PARAM_CALENDAR_DAY = "calendarDay";
     private const string TRACK_PARAM_CATEGORY = "category";
 	private const string TRACK_PARAM_CHESTS_FOUND = "chestsFound";
     private const string TRACK_PARAM_CLUSTER_ID = "clusterId";
@@ -3039,6 +3112,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private const string TRACK_PARAM_REFERRER_ID = "referrerID";
     private const string TRACK_PARAM_RESULT = "result";
     private const string TRACK_PARAM_REWARD = "reward";
+    private const string TRACK_PARAM_REWARD_SKU = "rewardSku";
     private const string TRACK_PARAM_REWARD_TIER = "rewardTier";
     private const string TRACK_PARAM_REWARD_TYPE = "rewardType";
     private const string TRACK_PARAM_ROUND_ID = "roundid";
@@ -3070,6 +3144,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private const string TRACK_PARAM_SUPER_FIRE_RUSH_NB = "superFireRushNb";
     private const string TRACK_PARAM_TIME_PLAYED = "timePlayed";
     private const string TRACK_PARAM_TIME_SPENT = "timeSpent";
+    private const string TRACK_PARAM_TIMER_VALUE = "timerValue";
     private const string TRACK_PARAM_TRACKING_ID = "trackingID";
     private const string TRACK_PARAM_GLOBAL_TOP_CONTRIBUTOR = "topContributor";
     private const string TRACK_PARAM_TOTAL_EGG_BOUGHT_HC = "totalEggBought";
@@ -3094,14 +3169,21 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private const string TRACK_PARAM_XP = "xp";
     private const string TRACK_PARAM_YEAR_OF_BIRTH = "yearOfBirth";
     private const string TRACK_PARAM_ZONE = "zone";
+
+    // Shop
 	private const string TRACK_PARAM_SHOP_ENTRANCE_ID = "shopEntrance_ID";
 	private const string TRACK_PARAM_SHOP_CENTRAL_SECTION = "central_section";
 	private const string TRACK_PARAM_SHOP_CENTRAL_ITEMS = "central_itemID";
 	private const string TRACK_PARAM_SHOP_ALL_SECTIONS = "all_section";
 	private const string TRACK_PARAM_SHOP_ALL_ITEMS = "all_itemID";
 	private const string TRACK_PARAM_SHOP_DESTINATION_SECTION = "destination_section";
+    private const string OFFER_TYPE_SHOP = "shop";
 
-	private const string OFFER_TYPE_SHOP = "shop";
+    // XPromo
+    private const string TRACK_PARAM_XPROMO_HSE_INSTALLED = "hseInstalled";
+    private const string TRACK_PARAM_XPROMO_RECENTLY_INSTALLED = "recentlyInstalled";
+
+
 
     //------------------------------------------------------------------------//
     private void Track_SendEvent(HDTrackingEvent _e) {

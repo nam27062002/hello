@@ -734,6 +734,25 @@ public class HDTrackingManager
 
     #endregion referral
 
+    #region xpromo
+    /// <summary>
+    /// A reward has been collected in HD or sent to HSE.
+    /// </summary>
+    /// <param name="_rewardDef">The reward data.</param>
+    public virtual void Notify_XPromoRewardCollected(DefinitionNode _rewardDef) { }
+
+    /// <summary>
+    /// A reward coming from HSE has been received and validated via deep link.
+    /// </summary>
+    /// <param name="_rewardDef">The reward data.</param>
+    public virtual void Notify_XPromoRewardReceived(DefinitionNode _rewardDef) { }
+
+    /// <summary>
+    /// A button has been pressed in the XPromo UI.
+    /// </summary>
+    /// <param name="_buttonName">Name of the button.</param>
+    public virtual void Notify_XPromoUIButton(string _buttonName) { }
+    #endregion
 
     #endregion notify
 
