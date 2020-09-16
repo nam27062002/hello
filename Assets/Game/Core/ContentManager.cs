@@ -272,8 +272,7 @@ public class ContentManager
         kDefinitionFiles.Add(DefinitionsCategory.BABY_DRAGONS_SHARED_POWER, new string[] { "Rules/sharedPowerupDefinitions" });
 
         // Cross Promotion 
-        kDefinitionFiles.Add(DefinitionsCategory.LOCAL_REWARDS, new string[] { "Rules/localRewardsDefinitions" });
-        kDefinitionFiles.Add(DefinitionsCategory.INCOMING_REWARDS, new string[] { "Rules/incomingRewardsDefinitions" });
+        kDefinitionFiles.Add(DefinitionsCategory.XPROMO_REWARDS, new string[] { "Rules/xPromoRewardsDefinitions" });
         kDefinitionFiles.Add(DefinitionsCategory.XPROMO_SETTINGS, new string[] { "Rules/xPromoSettings" });
 
 

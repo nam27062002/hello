@@ -1457,7 +1457,7 @@ public class UserProfile : UserPersistenceSystem
 		if (_data.ContainsKey(key))
 		{
 			Debug.Log(Colors.lime.Tag("VALID DATA!!\n") + new JsonFormatter().PrettyPrint(_data[key].ToString()));
-			XPromoManager.instance.xPromoCycle.LoadData(_data[key]);
+			XPromoManager.instance.LoadData(_data[key]);
 		}
 		else
 		{
@@ -1821,7 +1821,7 @@ public class UserProfile : UserPersistenceSystem
 		}
 
 		// XPromo
-		JSONClass xPromoData = XPromoManager.instance.xPromoCycle.SaveData();
+		JSONClass xPromoData = XPromoManager.instance.SaveData();
 		if (xPromoData != null)
 		{  // Can be null if the sequence was never generated
 			data.Add("xPromo", xPromoData);

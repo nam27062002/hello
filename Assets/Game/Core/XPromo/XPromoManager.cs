@@ -10,17 +10,19 @@
 using UnityEngine;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Diagnostics;
+using XPromo;
+using FirebaseWrapper;
+using SimpleJSON;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
 //----------------------------------------------------------------------------//
 /// <summary>
-/// 
+/// This class takes care of all the stuff related with the xPromo rewards system.
+/// Manages the send of deeplinks related with local rewards and the recepction of incoming rewards from HSE.
 /// </summary>
 [Serializable]
-public class XPromoManager {
+public class XPromoManager: Singleton<XPromoManager> {
 	//------------------------------------------------------------------------//
 	// STRUCT															  //
 	//------------------------------------------------------------------------//
@@ -48,43 +50,47 @@ public class XPromoManager {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 
-	// Singleton instance
-	private static XPromoManager m_instance = null;
-	public static XPromoManager instance
+	// X-promo daily rewards cycle
+	private XPromoCycle m_xPromoCycle;
+	public XPromoCycle xPromoCycle
 	{
 		get
 		{
-			if (m_instance == null)
+            // Use m_xPromoCycle as initialization flag
+			if (m_xPromoCycle == null)
 			{
-				m_instance = new XPromoManager();
+                // Initialize the manager
+				Init();
 			}
-			return m_instance;
+
+			return m_xPromoCycle;
 		}
 	}
-
-	// X-promo daily rewards cycle
-	private XPromoCycle m_xPromoCycle;
-	public XPromoCycle xPromoCycle{ get { return m_xPromoCycle; } }
     
 	// Queue with the rewards incoming from HSE. Will be given to the player when we have a chance (selection screen)
 	private Queue<Metagame.Reward> m_pendingIncomingRewards;
     public Queue<Metagame.Reward> pendingIncomingRewards { get { return m_pendingIncomingRewards;  } }
 
-	
+    // List of collected incoming rewards. So we dont give them twice.
+	private List<String> m_incomingRewardsCollected;
+
+	// HSE dynamic short links
+	private Dictionary<string, string> m_dynamicShortLinks;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
 	/// <summary>
-	/// Default constructor.
+	/// Default constructor. This method is called in the game initalization, so keep it light.
 	/// </summary>
 	public XPromoManager() {
 
 		// Subscribe to XPromo broadcast
 		Messenger.AddListener<Dictionary<string,string>>(MessengerEvents.INCOMING_DEEPLINK_NOTIFICATION, OnDeepLinkNotification);
 
-        // Create a new cycle from the content data
-		m_xPromoCycle = XPromoCycle.CreateXPromoCycleFromDefinitions();
+		m_pendingIncomingRewards = new Queue<Metagame.Reward>();
+
+		m_incomingRewardsCollected = new List<string>();
 
 	}
 
@@ -97,12 +103,18 @@ public class XPromoManager {
 		Messenger.RemoveListener<Dictionary<string, string>>(MessengerEvents.INCOMING_DEEPLINK_NOTIFICATION, OnDeepLinkNotification);
 	}
 
-    public static void Init()
+    /// <summary>
+    /// Initializes the XPromo manager from the content
+    /// </summary>
+    public void Init()
     {
-		if (m_instance == null)
-		{
-			m_instance = new XPromoManager();
-		}  
+
+		// Create a new cycle from the content data
+		m_xPromoCycle = XPromoCycle.CreateXPromoCycleFromDefinitions();
+
+		// Load the dynamic shortlinks
+		m_dynamicShortLinks = LoadShortLinksFromAsset( );
+
 	}
 
 	//------------------------------------------------------------------------//
@@ -111,43 +123,12 @@ public class XPromoManager {
 
     public void Clear()
     {
-		m_pendingIncomingRewards = new Queue<Metagame.Reward>();
+		m_pendingIncomingRewards.Clear();
 
-        // Reset the xpromo cycle
-		m_xPromoCycle.Clear();
-	}
+		m_incomingRewardsCollected.Clear();
 
-
-
-	/// <summary>
-	/// Process the incoming reward from HSE
-	/// </summary>
-    /// <param name="_rewardSku">SKU of the incoming reward as defined in content</param>
-	public void ProcessIncomingReward(string _rewardSku)
-	{
-
-		if (string.IsNullOrEmpty(_rewardSku)) 
-			return; // No rewards
-
-		// Find this reward in the content
-		DefinitionNode rewardDef = DefinitionsManager.SharedInstance.GetDefinitionByVariable(DefinitionsCategory.INCOMING_REWARDS, "sku", _rewardSku);
-
-        if (rewardDef == null)
-        {
-			// Reward not found. Process next reward (if any)
-			Debug.LogError("Incoming reward with SKU " + _rewardSku + " is not defined in the content");
-	    }
-
-        // Create a reward from the content definition
-		Metagame.Reward reward = CreateRewardFromDef(rewardDef, Game.HSE);
-
-		// Put this reward in the rewards queue
-        if (reward != null)
-			m_pendingIncomingRewards.Enqueue(reward);
-
-        // This rewards will be given when the user enters the selection screen
-        
-
+		// Reset the xpromo cycle
+		xPromoCycle.Clear();
 	}
 
 
@@ -156,44 +137,109 @@ public class XPromoManager {
 	/// This is the reciprocal counterpart of ProcessIncomingRewards()
 	/// </summary>
 	/// <param name="rewardsId"></param>
-	public void SendRewardToHSE(XPromo.LocalRewardHSE _reward)
+	public void SendRewardToHSE(LocalRewardHSE _reward)
     {
+
+        // Make some safety checks 
+        if (!m_dynamicShortLinks.ContainsKey(_reward.rewardSku))
+        {
+            // The requested reward shortlink is not defined
+			Debug.LogError("There is no HSE shortlink defined for the reward with sku=" + _reward.rewardSku);
+			return;
+        }
+
+		string url = m_dynamicShortLinks[_reward.rewardSku];
+
+        if (string.IsNullOrEmpty(url))
+        {
+			// The url was left empty in the scriptable object
+			Debug.LogError("The HSE shortlink url is empty.");
+			return;
+		}
+
 
 		// Send the reward with id = _reward.rewardSku
 		Log("Reward with SKU='" + _reward.rewardSku + "' sent to HSE");
 
+		// All good! open the HSE app
+		Application.OpenURL(url);
+
     }
+	
 
-	/// <summary>
-	/// Creates a new Metagame.Reward initialized with the data in the given Definition from rewards table.
-	/// </summary>
-	/// <param name="_def">Definition from localRewards or incomingRewards table.</param>
-    /// <param name="_origin">The app that granted the reward</param>
-	/// <returns>New reward created from the given definition.</returns>
-	private static Metagame.Reward CreateRewardFromDef(DefinitionNode _def, Game _origin)
-	{
+    /// <summary>
+    /// Load all the HSE reward short links that are stored in a scriptable object
+    /// it will ignore the rewards not belonging to the player's AB group
+    /// </summary>
+    /// <returns></returns>
+    private Dictionary<string, string> LoadShortLinksFromAsset ()
+    {
 
-		Metagame.Reward.Data rewardData = new Metagame.Reward.Data();
-		rewardData.typeCode = _def.GetAsString("type");
-		rewardData.amount = _def.GetAsLong("amount");
-		rewardData.sku = _def.GetAsString("rewardSku");
+        // Load the scriptable object containing all the links
+		XPromoDynamicLinksCollection scriptableObj = Resources.Load<XPromoDynamicLinksCollection>("XPromo/XPromoDynamicLinks");
+        List< XPromoDynamicLinksCollection.XPromoRewardShortLink> links = scriptableObj.xPromoShortLinks;
 
-		// Assign an economy group based on the xpromo reward origin
-		HDTrackingManager.EEconomyGroup economyGroup;
+		Dictionary<string, string> result = new Dictionary<string, string>();
 
-        if (_origin == Game.HD) {
-			economyGroup = HDTrackingManager.EEconomyGroup.REWARD_XPROMO_LOCAL;
-		} else {
-			economyGroup = HDTrackingManager.EEconomyGroup.REWARD_XPROMO_INCOMING;
-		}
+        // Interate all the shortlinks defined
+        foreach (XPromoDynamicLinksCollection.XPromoRewardShortLink rewardLink in links)
+        {
 
-        // Construct the reward
-		return Metagame.Reward.CreateFromData(rewardData, economyGroup, DEFAULT_SOURCE);
+			// If the player is not in this AB group, ignore this entry
+			if (rewardLink.abGroup.ToString().ToLower() == m_xPromoCycle.aBGroup.ToString().ToLower())
+            {
+                // Use the reward sku as key in the links dictionary
+				result.Add(rewardLink.rewardSKU, rewardLink.url);
+            }
+			
+        }
 
+		return result;
 
 	}
 
-    
+
+	/// <summary>
+	/// Process the incoming reward from HSE
+	/// </summary>
+	/// <param name="_rewardSku">SKU of the incoming reward as defined in content</param>
+	public void ProcessIncomingReward(string _rewardSku)
+	{
+
+		if (string.IsNullOrEmpty(_rewardSku))
+			return; // No rewards
+
+		// Find this reward in the content. We trust the SKU so we dont check ABGroup or origin.
+		DefinitionNode rewardDef = DefinitionsManager.SharedInstance.GetDefinitionByVariable(DefinitionsCategory.XPROMO_REWARDS, "sku", _rewardSku);
+
+
+		if (rewardDef == null)
+		{
+			// Reward not found. Process next reward (if any)
+			Debug.LogError("Incoming reward with SKU " + _rewardSku + " is not defined in the content");
+		}
+
+		// Create a reward from the content definition
+		Metagame.Reward reward = CreateRewardFromDef(rewardDef);
+
+		// check that this reward has not been already collected
+		if (m_incomingRewardsCollected.Contains(reward.sku))
+		{
+            // Nice try ¬¬
+			return;
+        }
+
+		// Put this reward in the rewards queue
+		// This rewards will be given when the user enters the selection screen
+		if (reward != null)
+			m_pendingIncomingRewards.Enqueue(reward);
+
+
+		// At this poing treat the reward as collected
+		m_incomingRewardsCollected.Add(reward.sku);
+
+	}
+
 
 
 	//------------------------------------------------------------------------//
@@ -223,17 +269,185 @@ public class XPromoManager {
     public void OnContentUpdate()
     {
 		// Update the rewards and cycle settings
-		m_xPromoCycle.InitFromDefinitions();
+		xPromoCycle.InitFromDefinitions();
 	}
+
+
+    /// <summary>
+    /// Reset all the rewards progression. Used for debugging purposes.
+    /// </summary>
+    private void ResetProgression()
+    {
+
+		// Forget all the incoming rewards received
+		m_pendingIncomingRewards.Clear();
+
+		// Go back to the first reward
+		m_xPromoCycle.totalNextRewardIdx = 0;
+
+		// Reset the timestamp, so the first reward can be collected.
+		m_xPromoCycle.nextRewardTimestamp = DateTime.MinValue;
+
+	}
+
+	//------------------------------------------------------------------------//
+	// STATIC   															  //
+	//------------------------------------------------------------------------//
+
+	/// <summary>
+	/// Creates a new Metagame.Reward initialized with the data in the given Definition from rewards table.
+	/// </summary>
+	/// <param name="_def">Definition from xPromo rewards table.</param>
+	/// <param name="_origin">The app that granted the reward</param>
+	/// <returns>New reward created from the given definition.</returns>
+	private static Metagame.Reward CreateRewardFromDef(DefinitionNode _def)
+	{
+
+		Metagame.Reward.Data rewardData = new Metagame.Reward.Data();
+		rewardData.typeCode = _def.GetAsString("type");
+		rewardData.amount = _def.GetAsLong("amount");
+		rewardData.sku = _def.GetAsString("rewardSku");
+
+		// Assign an economy group based on the xpromo reward origin
+		HDTrackingManager.EEconomyGroup economyGroup;
+
+		Game origin = XPromoManager.GameStringToEnum(_def.GetAsString("origin"));
+
+		if (origin == Game.HD)
+		{
+			economyGroup = HDTrackingManager.EEconomyGroup.REWARD_XPROMO_LOCAL;
+		}
+		else
+		{
+			economyGroup = HDTrackingManager.EEconomyGroup.REWARD_XPROMO_INCOMING;
+		}
+
+		// Construct the reward
+		return Metagame.Reward.CreateFromData(rewardData, economyGroup, DEFAULT_SOURCE);
+
+
+	}
+
+	/// <summary>
+	/// String to enum conversion for Game code
+	/// </summary>
+	/// <param name="_input"></param>
+	/// <returns></returns>
+	public static Game GameStringToEnum (string _input)
+    {
+        switch (_input)
+        {
+
+			case GAME_CODE_HD: return Game.HD; 
+			case GAME_CODE_HSE: return Game.HSE; 
+			default: return Game.UNDEFINED;
+                
+        }
+    }
+
+	/// <summary>
+	/// Is the Hungry Shark Evolution game installed?
+	/// </summary>
+	/// <returns>Whether Hungry Shark Evolution is installed in this device.</returns>
+	public static bool IsHungrySharkGameInstalled()
+	{
+		bool ret = false;
+#if UNITY_EDITOR
+		ret = true;
+#elif UNITY_ANDROID
+        ret = PlatformUtils.Instance.ApplicationExists("com.fgol.HungrySharkEvolution");
+#elif UNITY_IOS
+		ret = PlatformUtils.Instance.ApplicationExists("hungrysharkevolution://");
+#endif
+		return ret;
+	}
+
+	//------------------------------------------------------------------------//
+	// PERSISTENCE METHODS													  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Constructor from json data.
+	/// </summary>
+	/// <param name="_data">Data to be parsed.</param>
+	public void LoadData(SimpleJSON.JSONNode _data)
+	{
+
+		// Reset any existing data
+		Clear();
+
+		// Load collected incoming rewards
+        string key = "xPromoCollectedRewards";
+        if ( _data.ContainsKey(key) ) {
+
+			// Rewards skus are stored as an array 
+			JSONArray arrayData = _data[key].AsArray;
+			for (int j = 0; j < arrayData.Count; ++j)
+			{
+				m_incomingRewardsCollected.Add(arrayData[j]);
+			}
+		
+		}
+
+
+		// Load XPromo Cycle specifics:
+		// Current reward index
+		if (_data.ContainsKey("xPromoNextRewardIdx"))
+		{
+			m_xPromoCycle.totalNextRewardIdx = PersistenceUtils.SafeParse<int>(_data["xPromoNextRewardIdx"]);
+		}
+        
+		// Collect timestamp
+		if (_data.ContainsKey("xPromoNextRewardTimestamp"))
+		{
+			m_xPromoCycle.nextRewardTimestamp = PersistenceUtils.SafeParse<DateTime>(_data["xPromoNextRewardTimestamp"]);
+		}
+
+	}
+
+	/// <summary>
+	/// Serialize into json.
+	/// </summary>
+	/// <returns>The json. Can be null if sequence has never been generated.</returns>
+	public SimpleJSON.JSONClass SaveData()
+	{
+
+		// Create a new json data object
+		SimpleJSON.JSONClass data = new SimpleJSON.JSONClass();
+
+		// Save collected incoming rewards skus
+		JSONArray arrayData = new JSONArray();
+		foreach (string rewardSku in m_incomingRewardsCollected)
+		{
+			arrayData.Add(rewardSku);
+		}
+        data.Add("xPromoCollectedRewards", arrayData);
+
+
+		// Save XPromo Cycle specifics:
+		if (xPromoCycle != null)
+
+			// Current reward index
+			data.Add("xPromoNextRewardIdx", PersistenceUtils.SafeToString(xPromoCycle.totalNextRewardIdx));
+
+			// Collect timestamp
+			data.Add("xPromoNextRewardTimestamp", PersistenceUtils.SafeToString(xPromoCycle.nextRewardTimestamp));
+
+
+		// Done!
+		return data;
+	}
+
 
 	//------------------------------------------------------------------------//
 	// DEBUG CP 															  //
 	//------------------------------------------------------------------------//
 
 
-    public void OnResetProgression()
+	public void OnResetProgression()
     {
-		m_xPromoCycle.ResetProgression();
+
+		ResetProgression();
+        
     }
 
     public void OnMoveIndexTo(int _newIndex)
@@ -245,14 +459,6 @@ public class XPromoManager {
     {
 		m_xPromoCycle.nextRewardTimestamp = GameServerManager.GetEstimatedServerTime();
 	}
-
-    public void OnCollectReward()
-    {
-        // Skip timer to force it can be collected
-		m_xPromoCycle.nextRewardTimestamp = GameServerManager.GetEstimatedServerTime();
-
-		m_xPromoCycle.CollectReward();
-    }
 
 	//------------------------------------------------------------------------//
 	// DEBUG LOG															  //

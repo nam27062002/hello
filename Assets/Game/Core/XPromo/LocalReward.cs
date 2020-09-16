@@ -22,6 +22,17 @@ namespace XPromo
 	public class LocalReward
 	{
 
+		//------------------------------------------------------------------------//
+		// ENUM     															  //
+		//------------------------------------------------------------------------//
+
+		public enum State
+		{
+			COLLECTED,
+			READY,
+			COUNTDOWN,
+			LOCKED
+		}
 
 		//------------------------------------------------------------------------//
 		// CONSTS               												  //
@@ -40,8 +51,14 @@ namespace XPromo
 		protected int m_day;
         public int day { get { return m_day;  } }
 
-		protected int m_priority;
-        public int priority {  get { return m_priority;  } }
+		protected string m_sku;
+		public string sku { get { return m_sku; } }
+
+		protected int m_altRewardSC;
+        public int altRewardSC { get { return m_altRewardSC; } }
+
+		protected int m_altRewardPC;
+		public int altRewardPC { get { return m_altRewardPC; } }        
 
 		protected XPromoManager.Game m_destination;
 
@@ -61,21 +78,15 @@ namespace XPromo
 
 
 			// For which game is destinated this reward?
-			XPromoManager.Game destination = XPromoManager.Game.UNDEFINED;
-            switch (_def.GetAsString("game"))
-            {
-				case XPromoManager.GAME_CODE_HD:
-					destination = XPromoManager.Game.HD;
-					break;
-				case XPromoManager.GAME_CODE_HSE:
-					destination = XPromoManager.Game.HSE;
-					break;
-				default:
-                    // This shouldnt happen
-					Debug.Log("The game destination " + _def.GetAsString("game")  + " is not defined");
-					return null;
-			}
+			XPromoManager.Game destination = XPromoManager.GameStringToEnum(_def.GetAsString("destination"));
 
+            if (destination == XPromoManager.Game.UNDEFINED)
+            {
+				// This shouldnt happen
+				Debug.Log("The game destination " + _def.GetAsString("destination") + " is not defined");
+				return null;
+			}
+            
 
 			LocalReward localReward = null;
 
@@ -89,9 +100,11 @@ namespace XPromo
 				rewardData.amount = _def.GetAsLong("amount");
 				rewardData.sku = _def.GetAsString("rewardSku");
 
+				localReward.m_altRewardSC = _def.GetAsInt("altSC");
+				localReward.m_altRewardPC = _def.GetAsInt("altPC");
+
 				// Assign an economy group based on the xpromo reward origin
-				HDTrackingManager.EEconomyGroup economyGroup;
-				economyGroup = HDTrackingManager.EEconomyGroup.REWARD_XPROMO_LOCAL;
+				HDTrackingManager.EEconomyGroup economyGroup = HDTrackingManager.EEconomyGroup.REWARD_XPROMO_LOCAL;
 
 				// Construct the reward object
 				((LocalRewardHD)localReward).reward =  Metagame.Reward.CreateFromData(rewardData, economyGroup, DEFAULT_SOURCE);
@@ -113,7 +126,7 @@ namespace XPromo
 			localReward.m_destination = destination;
 			localReward.m_day = _def.GetAsInt("day");
 			localReward.m_enabled = _def.GetAsBool("enabled");
-			localReward.m_priority = _def.GetAsInt("priority");
+			localReward.m_sku = _def.GetAsString("sku");
 
 			return localReward;
                        
@@ -131,17 +144,7 @@ namespace XPromo
 			return result;
 		}
 
-		/// <summary>
-		/// Compare two definitions by priority
-		/// </summary>
-		/// <param name="_def1">First definitions to be compared.</param>
-		/// <param name="_def2">Second definitions to be compared.</param>
-		/// <returns>The result of the comparison (-1, 0, 1).</returns>
-		public static int CompareDefsByPriority(DefinitionNode _def1, DefinitionNode _def2)
-		{
-			int result = _def1.GetAsFloat("priority", 0).CompareTo(_def2.GetAsFloat("priority", 0));
-			return result;
-		}
+		
 
 	}
 }
