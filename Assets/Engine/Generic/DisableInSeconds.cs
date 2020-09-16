@@ -6,7 +6,8 @@ public class DisableInSeconds : MonoBehaviour {
 	public enum PoolType {
 		PoolManager = 0,
 		ParticleManager,
-		UIPoolManager
+		UIPoolManager,
+        DisabledState
 	};
 
 	[SerializeField] private float m_activeTime = 1f;
@@ -79,6 +80,9 @@ public class DisableInSeconds : MonoBehaviour {
 				break;
 			case PoolType.ParticleManager: 	
 				if (m_particleHandler != null) m_particleHandler.ReturnInstance(gameObject);
+				break;
+			case PoolType.DisabledState:
+				gameObject.SetActive(false);
 				break;
 		}
 	}

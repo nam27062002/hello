@@ -154,7 +154,8 @@ public class ContentManager
             "Rules/missingRessourcesVariablesDefinitions",
 			"Rules/offerSettings",
 			"Rules/ftuxSettings",
-            "Rules/UISettings"
+            "Rules/UISettings",
+            "Rules/rewardAdModifierSettings"
         });
 
 		kDefinitionFiles.Add(DefinitionsCategory.SEASONS, new string[] { "Rules/seasonsDefinitions" });

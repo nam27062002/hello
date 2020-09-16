@@ -29,7 +29,7 @@ Shader "Hungry Dragon/Dragon/Dragon standard" {
 		_FresnelColor("Fresnel Color", Color) = (1,1,1,1)
 
 		_SpecExponent("Specular Exponent", float) = 1.0
-		[Rotation] _SecondLightDir("Second Light direction", Vector) = (0,0,-1,0)
+		[Rotation] _SecondLightDir("Second Light direction", Vector) = (0.0, 0.0 ,-1.0 ,0.0)
 		_SecondLightColor("Second Light color", Color) = (0.0, 0.0, 0.0, 0.0)
 
 		_ReflectionMap("Reflection Map", Cube) = "white" {}
@@ -44,6 +44,7 @@ Shader "Hungry Dragon/Dragon/Dragon standard" {
 		_DissolveUpperLimit("Dissolve upper", float) = 1.0
 		_DissolveLowerLimit("Dissolve lower limit", float) = -1.0
 		_DissolveMargin("Dissolve margin", float) = 0.1
+		_DissolveDirection("Dissolve direction", Vector) = (1.0, 0.0, 0.0, 0.0)
 
 		_ColorRampAmount("Color ramp amount", Range(0.0, 1.0)) = 0.0
 		_ColorRampID0("Color ramp id 0", float) = 0.0
@@ -51,6 +52,8 @@ Shader "Hungry Dragon/Dragon/Dragon standard" {
 
 		_VOAmplitude("Vertex offset amplitude", float) = 0.3
 		_VOSpeed("Vertex offset speed", float) = 3.0
+
+		_VertexScaleZ("Vertex scale z", float) = 1.0
 
 		// Blending state
 		[Enum(UnityEngine.Rendering.CullMode)] _Cull("Cull mode", Float) = 0.0
@@ -78,7 +81,6 @@ Shader "Hungry Dragon/Dragon/Dragon standard" {
 		[Toggle(VERTEXOFFSETX)] _EnableVertexOffsetX("Vertex offset X", Float) = 0.0
 		[Toggle(VERTEXOFFSETY)] _EnableVertexOffsetY("Vertex offset Y", Float) = 0.0
 		[Toggle(VERTEXOFFSETZ)] _EnableVertexOffsetZ("Vertex offset Z", Float) = 0.0
-		[Toggle(VERTEXSCALEZ)] _EnableVertexScaleZ("Vertex scale Z", Float) = 0.0
 
 		/// Enum Material Properties
 		[KeywordEnum(None, Reflection, Fire, Dissolve, Colorize)] FXLayer("Additional FX layer", Float) = 0
@@ -127,13 +129,14 @@ Shader "Hungry Dragon/Dragon/Dragon standard" {
 			#pragma shader_feature	__ VERTEXOFFSETX
 			#pragma shader_feature	__ VERTEXOFFSETY
 			#pragma shader_feature	__ VERTEXOFFSETZ
-			#pragma shader_feature	__ VERTEXSCALEZ
 			#pragma shader_feature	__ DIFFUSE_AS_SPECULARMASK
             #pragma shader_feature  __ _ZWRITE_ON
 
 			#pragma shader_feature SELFILLUMINATE_NORMAL SELFILLUMINATE_AUTOINNERLIGHT SELFILLUMINATE_BLINKLIGHTS SELFILLUMINATE_EMISSIVE
 			#pragma shader_feature FXLAYER_NONE FXLAYER_REFLECTION FXLAYER_FIRE FXLAYER_DISSOLVE FXLAYER_COLORIZE
 			#pragma shader_feature REFLECTIONTYPE_NORMAL REFLECTIONTYPE_COLOR REFLECTIONTYPE_COLORRAMP
+
+			#pragma multi_compile __ FXLAYER_DISSOLVE
 
 
 			#include "UnityCG.cginc" 

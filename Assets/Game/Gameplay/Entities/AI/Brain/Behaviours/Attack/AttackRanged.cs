@@ -33,6 +33,19 @@ namespace AI {
                 if ( m_data == null )
                     m_data = m_pilot.GetComponentData<AttackRangedData>();
 
+				// Set damage from entityDefinitions
+				IEntity entity = m_pilot.GetComponent<IEntity>();
+				if (entity != null)
+				{
+					AttackRangedData attackData = (AttackRangedData) m_data;
+					DefinitionNode definition = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.ENTITIES, entity.sku);
+					if (definition != null)
+					{
+						attackData.damage = definition.GetAsFloat("damage", attackData.damage);
+						m_data = attackData;
+					}
+				}
+
 				m_projectileSpawnPoint = m_pilot.FindTransformRecursive(((AttackRangedData)m_data).projectileSpawnTransformName);
 			
 				CreatePool();

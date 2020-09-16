@@ -104,7 +104,16 @@ public class DragonAnimationEventsMenu : MonoBehaviour {
     {
         ToggleParticle(particleName, true);
     }
-    
+
+    public void EnableParticle()
+    {
+        if (m_particleAnchor)
+        {
+            m_particleAnchor.gameObject.SetActive(false);
+            m_particleAnchor.gameObject.SetActive(true);
+        }
+    }
+
     public void PlayExtraParticle(int index)
     {
         transform.parent.GetComponent<MenuDragonPreview>().PlayExtraParticle( index );

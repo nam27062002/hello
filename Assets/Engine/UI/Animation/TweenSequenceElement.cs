@@ -10,6 +10,7 @@
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.Events;
 using System;
 using DG.Tweening;
@@ -31,7 +32,8 @@ public class TweenSequenceElement {
 
 		FADE,
 		SCALE,
-		MOVE
+		MOVE,
+		COLOR
 	}
 
 	//------------------------------------------------------------------------//
@@ -52,14 +54,19 @@ public class TweenSequenceElement {
 
 	public float floatValue = 0f;
 	public Vector3 vectorValue = Vector3.zero;
+	public Color colorValue = Color.white;
 
 	public UnityEvent OnStart = new UnityEvent();
 	public UnityEvent OnEnd = new UnityEvent();
+
+	// Internal logic
+	private Type m_correctedType = Type.IDLE;
 
 	// Original values backup
 	private bool m_originalValuesSaved = false;
 	private float m_originalFloatValue = 0f;
 	private Vector3 m_originalVectorValue = Vector3.zero;
+	private Color m_originalColorValue = Color.white;
 
 	// Debug
 #if LOG
@@ -91,6 +98,19 @@ public class TweenSequenceElement {
 		));
 #endif
 
+		// Some types require specific components
+		// If those components are not available, treat them as IDLE so we still invoke the start and end callbacks
+		m_correctedType = type;
+		switch(type) {
+			case Type.COLOR: {
+				// Requires Graphic component
+				Graphic targetGraphic = target.GetComponent<Graphic>();
+				if(targetGraphic == null) {
+					m_correctedType = Type.IDLE;
+				}
+			} break;
+		}
+
 		// If original values have never been saved, do it now!
 		if(!m_originalValuesSaved) {
 			SaveOriginalValues();
@@ -100,7 +120,7 @@ public class TweenSequenceElement {
 		Tweener tween = null;
 
 		// Depends on type!
-		switch(type) {
+		switch(m_correctedType) {
 			case Type.FADE: {
 				// If the object doesn't have a canvas group, add it now!
 				CanvasGroup targetGroup = target.ForceGetComponent<CanvasGroup>();
@@ -124,8 +144,16 @@ public class TweenSequenceElement {
 				*/
 
 				// [AOC] For some damn reason the previous logic triggers the Start callback twice
-				//		 Let's do a dummy move tween instead towards the parent sequence's transform instead
+				//		 Do a dummy move tween instead so the callbacks are still invoked
 				tween = target.DOBlendableLocalMoveBy(GameConstants.Vector3.zero, duration);
+			} break;
+
+			case Type.COLOR: {
+				// The object needs a graphic component, otherwise ignore
+				Graphic targetGraphic = target.GetComponent<Graphic>();
+				if(targetGraphic != null) {
+					tween = targetGraphic.DOColor(colorValue, duration);
+				}
 			} break;
 		}
 
@@ -151,7 +179,7 @@ public class TweenSequenceElement {
 	/// </summary>
 	public void SaveOriginalValues() {
 		// Depends on type!
-		switch(type) {
+		switch(m_correctedType) {
 			case Type.FADE: {
 				// If the object doesn't have a canvas group, add it now!
 				CanvasGroup targetGroup = target.ForceGetComponent<CanvasGroup>();
@@ -166,6 +194,14 @@ public class TweenSequenceElement {
 			case Type.MOVE: {
 				m_originalVectorValue = target.localPosition;
 			} break;
+
+			case Type.COLOR: {
+				// The object needs a graphic component, otherwise ignore
+				Graphic targetGraphic = target.GetComponent<Graphic>();
+				if(targetGraphic != null) {
+					m_originalColorValue = targetGraphic.color;
+				}
+			} break;
 		}
 		m_originalValuesSaved = true;
 	}
@@ -178,7 +214,7 @@ public class TweenSequenceElement {
 		if(!m_originalValuesSaved) return;
 
 		// Depends on type
-		switch(type) {
+		switch(m_correctedType) {
 			case Type.FADE: {
 				// If the object doesn't have a canvas group, add it now!
 				CanvasGroup targetGroup = target.ForceGetComponent<CanvasGroup>();
@@ -192,6 +228,13 @@ public class TweenSequenceElement {
 			case Type.IDLE:		// [AOC] InsertCallback() workaround
 			case Type.MOVE: {
 				target.localPosition = m_originalVectorValue;
+			} break;
+
+			case Type.COLOR: {
+				Graphic targetGraphic = target.GetComponent<Graphic>();
+				if(targetGraphic != null) {
+					targetGraphic.color = m_originalColorValue;
+				}
 			} break;
 		}
 	}
