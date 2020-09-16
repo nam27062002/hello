@@ -121,7 +121,7 @@ MonoBehaviour:
     max: 2
   m_useSpawnerRotation: 0
   m_serializedJson: '[{"restTime":{"min":0,"max":0},"randomLookAt":true,"dataType":"AI.Behaviour.IdleData","editorFolded":false},{"speed":11,"checkDragonPositionTime":0.5,"checkForActionPointTime":0.5,"actions":{"panic":{"id":0,"active":true,"probability":1},"jump":{"id":1,"active":false,"probability":1},"goOn":{"id":2,"active":true,"probability":1},"hide":{"id":3,"active":true,"probability":1},"home":{"id":3,"active":true,"probability":1}},"dataType":"AI.Behaviour.FleeToAPData","editorFolded":false},{"standUpTime":0,"dataType":"AI.Behaviour.OnGroundData","editorFolded":false},{"dataType":"AI.Behaviour.OnActionPointData","editorFolded":false}]'
-  m_databaseKey: PF_Villager03_Static
+  m_databaseKey: PF_Villager03_Static (1)
 --- !u!114 &114991683550668954
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -479,6 +479,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_seasonalItems:
   - season: halloween
+    groups:
+    - name: Mask
+      probability: 1
+      items:
+      - equipablePrefabName: PF_Werewolf_mask
+        defaultItemLOW: 1
+        probability: 1
+        toDisableOnEquip: []
+        position: {x: 0, y: -0.13113856, z: 0.16058746}
+        scale: {x: 1.512, y: 1.512, z: 1.512}
+        rotation: {x: 11.24911, y: 0, z: 0}
+  - season: werewolf
     groups:
     - name: Mask
       probability: 1
