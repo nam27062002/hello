@@ -34,6 +34,13 @@ public class XPromoCycle {
 		UNDEFINED, A, B
 	}
 
+	public static string ABGroupToString(ABGroup _group) {
+		switch(_group) {
+			case ABGroup.UNDEFINED: return string.Empty;
+			default: return _group.ToString();
+		}
+	}
+
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
