@@ -1,5 +1,5 @@
 -------------------------------------------------------------------------------------------------------------------------------------------------------------
-HD ver: 3.0.5
+HD ver: 3.2.0
 -------------------------------------------------------------------------------------------------------------------------------------------------------------
 Material:   alen_buildboard
 Shader:     Hungry Dragon/Scenary/Scenary Standard
@@ -2699,7 +2699,7 @@ Keywords:   CUTOFF DOUBLESIDED FXLAYER_REFLECTION NORMALMAP REFLECTIONTYPE_NORMA
 Material:   dragon_vampire_0_body
 Shader:     Hungry Dragon/Dragon/Dragon standard
 LightMode:  FORWARDBASE
-Keywords:   FRESNEL FXLAYER_REFLECTION NORMALMAP REFLECTIONTYPE_NORMAL SELFILLUMINATE_NORMAL SPECULAR _ZWRITE_ON 
+Keywords:   CUTOFF FRESNEL FXLAYER_NONE NORMALMAP REFLECTIONTYPE_NORMAL SELFILLUMINATE_NORMAL SPECULAR _ZWRITE_ON 
 -------------------------------------------------------------------------------------------------------------------------------------------------------------
 Material:   dragon_vampire_0_disguise
 Shader:     Hungry Dragon/Dragon/Dragon standard
@@ -3794,7 +3794,7 @@ Keywords:   APPLY_RGB_COLOR_VERTEX BLENDMODE_ALPHABLEND DISSOLVE_ENABLED EXTENDE
 Material:   FX_MT_FlowSmoke_AlphaBlend_02
 Shader:     Hungry Dragon/Particles/Transparent particles standard
 LightMode:  
-Keywords:   APPLY_RGB_COLOR_VERTEX BLENDMODE_PREMULTIPLY DISSOLVE_ENABLED EXTENDED_PARTICLES FLOWMAP 
+Keywords:   APPLY_RGB_COLOR_VERTEX BLENDMODE_PREMULTIPLY DISSOLVE_ENABLED DISSOLVE_VERTEXCOLORALFA EXTENDED_PARTICLES FLOWMAP 
 -------------------------------------------------------------------------------------------------------------------------------------------------------------
 Material:   FX_MT_Greenback_AlphaBlend_01
 Shader:     Hungry Dragon/Particles/Transparent particles standard
