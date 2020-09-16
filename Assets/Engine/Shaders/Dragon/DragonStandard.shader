@@ -29,7 +29,7 @@ Shader "Hungry Dragon/Dragon/Dragon standard" {
 		_FresnelColor("Fresnel Color", Color) = (1,1,1,1)
 
 		_SpecExponent("Specular Exponent", float) = 1.0
-		[Rotation] _SecondLightDir("Second Light direction", Vector) = (0,0,-1,0)
+		[Rotation] _SecondLightDir("Second Light direction", Vector) = (0.0, 0.0 ,-1.0 ,0.0)
 		_SecondLightColor("Second Light color", Color) = (0.0, 0.0, 0.0, 0.0)
 
 		_ReflectionMap("Reflection Map", Cube) = "white" {}
@@ -44,6 +44,7 @@ Shader "Hungry Dragon/Dragon/Dragon standard" {
 		_DissolveUpperLimit("Dissolve upper", float) = 1.0
 		_DissolveLowerLimit("Dissolve lower limit", float) = -1.0
 		_DissolveMargin("Dissolve margin", float) = 0.1
+		_DissolveDirection("Dissolve direction", Vector) = (1.0, 0.0, 0.0, 0.0)
 
 		_ColorRampAmount("Color ramp amount", Range(0.0, 1.0)) = 0.0
 		_ColorRampID0("Color ramp id 0", float) = 0.0
@@ -134,6 +135,8 @@ Shader "Hungry Dragon/Dragon/Dragon standard" {
 			#pragma shader_feature SELFILLUMINATE_NORMAL SELFILLUMINATE_AUTOINNERLIGHT SELFILLUMINATE_BLINKLIGHTS SELFILLUMINATE_EMISSIVE
 			#pragma shader_feature FXLAYER_NONE FXLAYER_REFLECTION FXLAYER_FIRE FXLAYER_DISSOLVE FXLAYER_COLORIZE
 			#pragma shader_feature REFLECTIONTYPE_NORMAL REFLECTIONTYPE_COLOR REFLECTIONTYPE_COLORRAMP
+
+			#pragma multi_compile __ FXLAYER_DISSOLVE
 
 
 			#include "UnityCG.cginc" 

@@ -26,7 +26,18 @@ namespace AI {
 			protected override void OnInitialise() {
                 if ( m_data == null )
 				    m_data = m_pilot.GetComponentData<AttackMeleeData>();
-                m_entity = m_pilot.GetComponent<IEntity>(); 
+
+				m_entity = m_pilot.GetComponent<IEntity>();
+
+                // Set damage from entityDefinitions
+				AttackMeleeData attackData = (AttackMeleeData)m_data;
+				DefinitionNode definition = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.ENTITIES, m_entity.sku);
+				if (definition != null)
+				{
+					attackData.damage = definition.GetAsFloat("damage", attackData.damage);
+					m_data = attackData;
+				}
+
 				m_meleeWeapon = m_pilot.FindComponentRecursive<IMeleeWeapon>();
                 m_meleeWeapon.entity = m_entity;
                 m_meleeWeapon.DisableWeapon();
