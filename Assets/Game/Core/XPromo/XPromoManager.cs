@@ -141,14 +141,14 @@ public class XPromoManager: Singleton<XPromoManager> {
     {
 
         // Make some safety checks 
-        if (!m_dynamicShortLinks.ContainsKey(_reward.rewardSku))
+        if (!m_dynamicShortLinks.ContainsKey(_reward.sku))
         {
             // The requested reward shortlink is not defined
-			Debug.LogError("There is no HSE shortlink defined for the reward with sku=" + _reward.rewardSku);
+			Debug.LogError("There is no HSE shortlink defined for the reward with sku=" + _reward.sku);
 			return;
         }
 
-		string url = m_dynamicShortLinks[_reward.rewardSku];
+		string url = m_dynamicShortLinks[_reward.sku];
 
         if (string.IsNullOrEmpty(url))
         {
