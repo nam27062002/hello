@@ -361,9 +361,9 @@ public class XPromoCycle {
 			m_startDate = DateTime.Parse(settingsDef.GetAsString("startDate"));
 		}
 
-        if (settingsDef.Has("recruitmentLimitDate"))
+        if (settingsDef.Has("recruitingLimitDate"))
 		{
-			m_recruitmentLimitDate = DateTime.Parse(settingsDef.GetAsString("recruitmentLimitDate"));
+			m_recruitmentLimitDate = DateTime.Parse(settingsDef.GetAsString("recruitingLimitDate"));
 		}
 
 		if (settingsDef.Has("endDate"))
