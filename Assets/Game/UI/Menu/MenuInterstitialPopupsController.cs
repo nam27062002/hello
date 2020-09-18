@@ -569,6 +569,27 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 	}
 
 	/// <summary>
+	/// Checks if we are coming from HSE cross promotion
+	/// </summary>
+	private void CheckXPromoIncomingReward()
+	{
+		// Ignore if a popup has already been displayed in this iteration
+		if (GetFlag(StateFlag.POPUP_DISPLAYED)) return;
+
+		// Only in the right screen
+		if (m_currentScreen != MenuScreen.DRAGON_SELECTION) return;
+
+		// Is there any incoming reward ready to collect?
+		if (! XPromoManager.instance.IsIncomingRewardWaiting())
+			return;
+
+		// All checks passed! Show the popup
+		PopupManager.EnqueuePopup(PopupXPromoIncomingReward.PATH);
+		SetFlag(StateFlag.POPUP_DISPLAYED, true);
+	}
+
+
+	/// <summary>
 	/// Check whether we need to trigger any popup related to downloadable assets.
 	/// </summary>
 	private void CheckDownloadAssets() {
@@ -795,6 +816,7 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 		// Each check function should use m_previousScreen and m_currentScreen to decide
 		// Use PopupManager.OpenPopup to force a popup open or PopupManager.EnqueuePopup to put it in a sequence
 		// Check other flags (StateFlag) for other state conditions
+		CheckXPromoIncomingReward();
 		CheckPromotedIAPs();
 		CheckInterstitialAds();
 		//CheckTermsAndConditions();

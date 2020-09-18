@@ -66,13 +66,15 @@ public class XPromoManager: Singleton<XPromoManager> {
 			return m_xPromoCycle;
 		}
 	}
-    
-	// Queue with the rewards incoming from HSE. Will be given to the player when we have a chance (selection screen)
-	private Queue<Metagame.Reward> m_pendingIncomingRewards;
-    public Queue<Metagame.Reward> pendingIncomingRewards { get { return m_pendingIncomingRewards;  } }
 
-    // List of collected incoming rewards. So we dont give them twice.
-	private List<String> m_incomingRewardsCollected;
+	// Incoming rewards received from HSE via deep link waiting to be processed
+	// Will be given to the player when we have a chance in the selection screen.
+	private Queue<String> m_incomingRewardsToProcess;
+
+
+	// List of already collected incoming rewards. So we dont give them twice.
+	private List<String> m_collectedIncomingRewards;
+
 
 	// HSE dynamic short links
 	private Dictionary<string, string> m_dynamicShortLinks;
@@ -88,9 +90,14 @@ public class XPromoManager: Singleton<XPromoManager> {
 		// Subscribe to XPromo broadcast
 		Messenger.AddListener<Dictionary<string,string>>(MessengerEvents.INCOMING_DEEPLINK_NOTIFICATION, OnDeepLinkNotification);
 
-		m_pendingIncomingRewards = new Queue<Metagame.Reward>();
 
-		m_incomingRewardsCollected = new List<string>();
+
+		m_incomingRewardsToProcess = new Queue<string>();
+
+		m_collectedIncomingRewards = new List<string>();
+
+		// Debug
+		//m_incomingRewardsToProcess.Enqueue( "reward_hse_hd_1a" );
 
 	}
 
@@ -123,9 +130,8 @@ public class XPromoManager: Singleton<XPromoManager> {
 
     public void Clear()
     {
-		m_pendingIncomingRewards.Clear();
 
-		m_incomingRewardsCollected.Clear();
+		m_collectedIncomingRewards.Clear();
 
 		// Reset the xpromo cycle
 		xPromoCycle.Clear();
@@ -159,7 +165,8 @@ public class XPromoManager: Singleton<XPromoManager> {
 
 
 		// Send the reward with id = _reward.rewardSku
-		Log("Reward with SKU='" + _reward.rewardSku + "' sent to HSE");
+		Log("Reward with SKU='" + _reward.sku + "' sent to HSE");
+		Log("Opening URL " + url );
 
 		// All good! open the HSE app
 		Application.OpenURL(url);
@@ -198,47 +205,81 @@ public class XPromoManager: Singleton<XPromoManager> {
 
 	}
 
+    /// <summary>
+    /// Returns true if there is valid incoming reward waiting to be collected
+    /// </summary>
+    public bool IsIncomingRewardWaiting()
+    {
+		// First of all process the incoming rewards queue to discard invalid/already collected SKUs
+		DiscardInvalidIncomingRewards();
+
+		return m_incomingRewardsToProcess.Count > 0;
+    }
+
 
 	/// <summary>
-	/// Process the incoming reward from HSE
+	/// Checks if there is any incoming reward waiting to be processed. Clean all the non valid/already collected
+    /// rewards in the incoming rewards queue.
 	/// </summary>
-	/// <param name="_rewardSku">SKU of the incoming reward as defined in content</param>
-	public void ProcessIncomingReward(string _rewardSku)
+
+	public void DiscardInvalidIncomingRewards()
 	{
+		// No incoming rewards waiting
+		if (m_incomingRewardsToProcess.Count == 0)
+			return;
 
-		if (string.IsNullOrEmpty(_rewardSku))
-			return; // No rewards
 
-		// Find this reward in the content. We trust the SKU so we dont check ABGroup or origin.
-		DefinitionNode rewardDef = DefinitionsManager.SharedInstance.GetDefinitionByVariable(DefinitionsCategory.XPROMO_REWARDS, "sku", _rewardSku);
+		// Create a temp queue to keep the valid incoming rewards
+		Queue<string> validRewards = new Queue<string>();
 
-        // Just in case the content is wrong. Shouldnt happen.
-		Debug.Assert(rewardDef.GetAsString("origin") == GAME_CODE_HSE, "This sku doesnt belong to an incoming reward!");
 
-		if (rewardDef == null)
+		while (m_incomingRewardsToProcess.Count > 0)
 		{
-			// Reward not found. Process next reward (if any)
-			Debug.LogError("Incoming reward with SKU " + _rewardSku + " is not defined in the content");
+            // Take the first SKU in the queue
+            string sku = m_incomingRewardsToProcess.Dequeue();
+
+			// This reward was already collected. Nice try
+			if (m_collectedIncomingRewards.Contains(sku))
+			{
+                // Continue with the next reward
+				continue;
+			}
+
+			// Find this reward in the content. Note that ABGroup param is not affecting the receiving end.
+			DefinitionNode rewardDef = DefinitionsManager.SharedInstance.GetDefinitionByVariable(DefinitionsCategory.XPROMO_REWARDS, "sku", sku);
+
+			// Just in case the content is wrong. Shouldnt happen.
+			Debug.Assert(rewardDef.GetAsString("origin") == GAME_CODE_HSE, "This sku doesnt belong to an incoming reward!");
+
+			if (rewardDef == null)
+			{
+				// Reward not found. 
+				Debug.LogError("Incoming reward with SKU " + m_incomingRewardsToProcess + " is not defined in the content");
+
+				// Continue with the next reward
+				continue;
+			}
+
+			// Create a reward from the content definition
+			Metagame.Reward reward = CreateRewardFromDef(rewardDef);
+
+			// Put this reward in the queue
+			// This rewards will be given when the user enters the selection screen
+			if (reward == null)
+			{
+				Debug.LogError("Incoming reward with SKU " + m_incomingRewardsToProcess + " contains an invalid reward");
+
+				// Continue with the next reward
+				continue;
+			}
+
+			// All checks passed. The incoming reward is valid candidate.
+			validRewards.Enqueue(sku);
+
 		}
 
-		// Create a reward from the content definition
-		Metagame.Reward reward = CreateRewardFromDef(rewardDef);
-
-		// check that this reward has not been already collected
-		if (m_incomingRewardsCollected.Contains(reward.sku))
-		{
-            // Nice try ¬¬
-			return;
-        }
-
-		// Put this reward in the rewards queue
-		// This rewards will be given when the user enters the selection screen
-		if (reward != null)
-			m_pendingIncomingRewards.Enqueue(reward);
-
-
-		// At this poing treat the reward as collected
-		m_incomingRewardsCollected.Add(reward.sku);
+		// Replace the old queue with new one that contains only the valid rewards
+		m_incomingRewardsToProcess = validRewards;
 
 	}
 
@@ -258,8 +299,8 @@ public class XPromoManager: Singleton<XPromoManager> {
         if (_params.ContainsKey(XPROMO_REWARD_KEY))
         {
 
-			// Process the incoming rewards
-			ProcessIncomingReward(_params[XPROMO_REWARD_KEY]);
+			// Store the incoming rewards SKU. Treat it later.
+			m_incomingRewardsToProcess.Enqueue(_params[XPROMO_REWARD_KEY]);
 		}
 
 
@@ -281,14 +322,49 @@ public class XPromoManager: Singleton<XPromoManager> {
     private void ResetProgression()
     {
 
-		// Forget all the incoming rewards received
-		m_pendingIncomingRewards.Clear();
-
 		// Go back to the first reward
 		m_xPromoCycle.totalNextRewardIdx = 0;
 
 		// Reset the timestamp, so the first reward can be collected.
 		m_xPromoCycle.nextRewardTimestamp = DateTime.MinValue;
+
+		// Reset all the incoming rewards
+		m_collectedIncomingRewards.Clear();
+
+	}
+
+
+	/// <summary>
+	/// The user collected the incoming rewards, so put them all in the pending reward queue
+	/// </summary>
+	public void OnCollectAllIncomingRewards()
+	{
+		// First of all process the incoming rewards queue to discard invalid/already collected SKUs
+		DiscardInvalidIncomingRewards();
+
+		// From now no more checks are needed, as all the elements in the queue are valid
+
+		while (m_incomingRewardsToProcess.Count > 0)
+		{
+    		string sku = m_incomingRewardsToProcess.Dequeue();
+
+			// Find this reward in the content. Note that ABGroup param is not affecting the receiving end.
+			DefinitionNode rewardDef = DefinitionsManager.SharedInstance.GetDefinitionByVariable(DefinitionsCategory.XPROMO_REWARDS, "sku", sku);
+
+			// Create a reward from the content definition
+			Metagame.Reward reward = CreateRewardFromDef(rewardDef);
+
+            // Just in case
+			if (reward != null)
+			{
+				// All checks passed. Put it in the pending rewards queue
+				UsersManager.currentUser.PushReward(reward);
+			}
+
+			// At this point consider the reward as collected
+			m_collectedIncomingRewards.Add(sku);
+
+		}
 
 	}
 
@@ -385,7 +461,7 @@ public class XPromoManager: Singleton<XPromoManager> {
 			JSONArray arrayData = _data[key].AsArray;
 			for (int j = 0; j < arrayData.Count; ++j)
 			{
-				m_incomingRewardsCollected.Add(arrayData[j]);
+				m_collectedIncomingRewards.Add(arrayData[j]);
 			}
 		
 		}
@@ -418,7 +494,7 @@ public class XPromoManager: Singleton<XPromoManager> {
 
 		// Save collected incoming rewards skus
 		JSONArray arrayData = new JSONArray();
-		foreach (string rewardSku in m_incomingRewardsCollected)
+		foreach (string rewardSku in m_collectedIncomingRewards)
 		{
 			arrayData.Add(rewardSku);
 		}

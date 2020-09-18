@@ -126,7 +126,7 @@ namespace XPromo
 			localReward.m_destination = destination;
 			localReward.m_day = _def.GetAsInt("day");
 			localReward.m_enabled = _def.GetAsBool("enabled");
-			localReward.m_sku = _def.GetAsString("sku");
+			localReward.m_sku = _def.sku;
 
 			return localReward;
                        
