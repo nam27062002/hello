@@ -256,6 +256,7 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
     private bool m_waterMovement = false;
 
 	private bool isCorpseAllowed = false;
+	[SerializeField] bool m_disableDeadFalling = false;
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
@@ -1480,7 +1481,7 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 			if ( m_deadTimer < 1.5f * Time.timeScale )
 			{
 				// Don't fall if CORPSE_ALLOWED flavour setting is not allowed
-				if (!isCorpseAllowed) {
+				if (!isCorpseAllowed || m_disableDeadFalling) {
 					ComputeImpulseToZero(_deltaTime);
 				} else {
 					float gravity = 9.81f * m_dragonGravityModifier * m_deadGravityMultiplier;

@@ -469,7 +469,7 @@ public class Spawner : AbstractSpawner {
 		float prob = 0;
 
 		for (i = 0; i < m_entityPrefabList.Length - 1; ++i) {
-			prob += m_entityPrefabList[i].chance;
+			prob = m_entityPrefabList[i].chance;
 
 			if (rand <= prob) {
 				break;
@@ -485,7 +485,7 @@ public class Spawner : AbstractSpawner {
 		float prob = 0;
 
 		for (int i = 0; i < m_entityPrefabList.Length; ++i) {
-			prob += m_entityPrefabList[i].chance;
+			prob = m_entityPrefabList[i].chance;
 
 			if (!m_hasbeenSpawned[i]) {
 				fallback = i;

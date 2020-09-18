@@ -29,11 +29,18 @@ namespace AI {
 
 			protected override void OnInitialise() {
 				m_data = m_pilot.GetComponentData<CurseData>();
-                m_dragon = InstanceManager.player.dragonHealthBehaviour;
+
+				// Set damage from entityDefinitions
+				m_entity = m_pilot.GetComponent<Entity>();
+				DefinitionNode definition = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.ENTITIES, m_entity.sku);
+                if (definition != null)
+				    m_data.damage = definition.GetAsFloat("damage", m_data.damage);
+
+				m_dragon = InstanceManager.player.dragonHealthBehaviour;
 				m_timer = 0;
 
 				DragonTier dragonTier = InstanceManager.player.data.tier;
-				m_entity = m_pilot.GetComponent<Entity>();
+
 				m_enabled = !m_entity.IsEdible(dragonTier);
 			}
 

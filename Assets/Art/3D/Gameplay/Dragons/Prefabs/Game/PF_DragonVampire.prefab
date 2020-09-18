@@ -1506,6 +1506,36 @@ MonoBehaviour:
   m_worldPositionStays: 1
   m_resetScale: 0
   m_when: 0
+--- !u!1 &5613046711041160163
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7457876863536384615}
+  m_Layer: 12
+  m_Name: DeathAnchor
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7457876863536384615
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5613046711041160163}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 1.7, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 5720553643947297944}
+  m_RootOrder: 8
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5651600833743637354
 GameObject:
   m_ObjectHideFlags: 0
@@ -1820,6 +1850,7 @@ Transform:
   - {fileID: 5720446218258786132}
   - {fileID: 5720617354809403500}
   - {fileID: 4341038502044194317}
+  - {fileID: 7457876863536384615}
   m_Father: {fileID: 5720259394214795036}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -2150,7 +2181,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5722299659496576766}
-  m_LocalRotation: {x: 0.30680242, y: -0.5710323, z: 0.24274796, w: 0.7217118}
+  m_LocalRotation: {x: -0.21185546, y: 0.6996141, z: 0.23080549, w: 0.64217305}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -2410,6 +2441,8 @@ GameObject:
   - component: {fileID: 5690999205657949172}
   - component: {fileID: 5691336037645485618}
   - component: {fileID: 5690647032341778464}
+  - component: {fileID: 3034187747376114735}
+  - component: {fileID: 114583314388984432}
   m_Layer: 12
   m_Name: PF_DragonVampire
   m_TagString: Player
@@ -2507,6 +2540,7 @@ MonoBehaviour:
   m_dragonAirEnterSpeedMultiplier: 1
   m_startingParabolic: 0
   m_dragonWaterGravityModifier: 0.3
+  m_disableDeadFalling: 1
   m_introDisplacementCurve:
     serializedVersion: 2
     m_Curve:
@@ -2622,6 +2656,7 @@ MonoBehaviour:
   m_curseColor: {r: 0, g: 1, b: 0, a: 1}
   m_damageColor: {r: 1, g: 0, b: 0, a: 1}
   m_reduceInnerColorInsideWater: 0
+  m_enableDissolve: 1
 --- !u!114 &5690651361329936442
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4421,6 +4456,120 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_controller: {fileID: 5690621252503887256}
+--- !u!114 &3034187747376114735
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5722465260423064992}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1af85d2f7d7344669c80dfbd4608112, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_dissolveEffect: {fileID: 114583314388984432}
+  m_deathParticle:
+    name: FX_PF_VampireDragon_Dies
+    path: 
+    changeStartColor: 0
+    startColor: {r: 1, g: 1, b: 1, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
+    changeColorOvertime: 0
+    colorOvertime:
+      serializedVersion: 2
+      key0: {r: 1, g: 1, b: 1, a: 1}
+      key1: {r: 1, g: 1, b: 1, a: 1}
+      key2: {r: 0, g: 0, b: 0, a: 0}
+      key3: {r: 0, g: 0, b: 0, a: 0}
+      key4: {r: 0, g: 0, b: 0, a: 0}
+      key5: {r: 0, g: 0, b: 0, a: 0}
+      key6: {r: 0, g: 0, b: 0, a: 0}
+      key7: {r: 0, g: 0, b: 0, a: 0}
+      ctime0: 0
+      ctime1: 65535
+      ctime2: 0
+      ctime3: 0
+      ctime4: 0
+      ctime5: 0
+      ctime6: 0
+      ctime7: 0
+      atime0: 0
+      atime1: 65535
+      atime2: 0
+      atime3: 0
+      atime4: 0
+      atime5: 0
+      atime6: 0
+      atime7: 0
+      m_Mode: 0
+      m_NumColorKeys: 2
+      m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
+    scale: 1
+    orientate: 1
+  m_deathAttachpoint: {fileID: 7457876863536384615}
+  m_damageParticle:
+    name: FX_PF_VampireDragon_Damage
+    path: 
+    changeStartColor: 0
+    startColor: {r: 1, g: 1, b: 1, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
+    changeColorOvertime: 0
+    colorOvertime:
+      serializedVersion: 2
+      key0: {r: 1, g: 1, b: 1, a: 1}
+      key1: {r: 1, g: 1, b: 1, a: 1}
+      key2: {r: 0, g: 0, b: 0, a: 0}
+      key3: {r: 0, g: 0, b: 0, a: 0}
+      key4: {r: 0, g: 0, b: 0, a: 0}
+      key5: {r: 0, g: 0, b: 0, a: 0}
+      key6: {r: 0, g: 0, b: 0, a: 0}
+      key7: {r: 0, g: 0, b: 0, a: 0}
+      ctime0: 0
+      ctime1: 65535
+      ctime2: 0
+      ctime3: 0
+      ctime4: 0
+      ctime5: 0
+      ctime6: 0
+      ctime7: 0
+      atime0: 0
+      atime1: 65535
+      atime2: 0
+      atime3: 0
+      atime4: 0
+      atime5: 0
+      atime6: 0
+      atime7: 0
+      m_Mode: 0
+      m_NumColorKeys: 2
+      m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
+    scale: 1
+    orientate: 1
+  m_maxDamageParticlesAmount: 30
+  m_secondsBetweenSpawnDamageParticle: 5
+--- !u!114 &114583314388984432
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5722465260423064992}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d74ee725e27494d5aa2480e47b873a85, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_dragonTint: {fileID: 5691251056218136228}
+  m_dissolveTime: 4
+  m_dissolveNoiseTexture: {fileID: 2800000, guid: a9fa104be878cf246abd0583f9fd51d9,
+    type: 3}
+  m_dissolveUpperLimit: 18
+  m_dissolveLowerLimit: -18
+  m_dissolveMargin: 0.1
+  m_dissolveDirection: {x: -1, y: 0, z: 0, w: 1}
 --- !u!1 &5722523550854846176
 GameObject:
   m_ObjectHideFlags: 0

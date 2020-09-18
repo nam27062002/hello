@@ -89,6 +89,7 @@ internal class DragonShaderGUI : ShaderGUI
         readonly public static string dissolveUpperLimitText = "Dissolve upper limit";
         readonly public static string dissolveLowerLimitText = "Dissolve lower limit";
         readonly public static string dissolveMarginText = "Dissolve margin";
+        readonly public static string dissolveDirectionText = "Dissolve direction";
 
         readonly public static string reflectionLayerText = "Reflection layer are actually used by chinese dragon. Applied as (Reflection Texture intensity) * (Reflection Amount) * (Detail Texture.b)";
         readonly public static string fireLayerText = "Fire layer are actually used by pet Phoenix and water dragon. Applied as (Fire Amount) * (Detail Texture.b)";
@@ -139,6 +140,7 @@ internal class DragonShaderGUI : ShaderGUI
     MaterialProperty mp_dissolveUpperLimit;
     MaterialProperty mp_dissolveLowerLimit;
     MaterialProperty mp_dissolveMargin;
+    MaterialProperty mp_dissolveDirection;
 
     MaterialProperty mp_colorRampAmount;
     MaterialProperty mp_colorRampID0;
@@ -251,6 +253,7 @@ internal class DragonShaderGUI : ShaderGUI
         mp_dissolveUpperLimit = FindProperty("_DissolveUpperLimit", props);
         mp_dissolveLowerLimit = FindProperty("_DissolveLowerLimit", props);
         mp_dissolveMargin = FindProperty("_DissolveMargin", props);
+        mp_dissolveDirection = FindProperty("_DissolveDirection", props);
 
         mp_colorRampAmount = FindProperty("_ColorRampAmount", props);
         mp_colorRampID0 = FindProperty("_ColorRampID0", props);
@@ -337,7 +340,6 @@ internal class DragonShaderGUI : ShaderGUI
         {
             materialEditor.ShaderProperty(mp_specExponent, Styles.specularPowerText);
             RotationDrawer.setColor(mp_secondLightColor.colorValue);
-//            RotationDrawer.setTargetPoint(mp_secondLightDir.vectorValue.x, mp_secondLightDir.vectorValue.y);
             RotationDrawer.setSpecularPow(mp_specExponent.floatValue);
             materialEditor.ShaderProperty(mp_secondLightDir, Styles.secondLightDirectionText);
             materialEditor.ShaderProperty(mp_secondLightColor, Styles.secondLightColorText);
@@ -390,6 +392,7 @@ internal class DragonShaderGUI : ShaderGUI
                 materialEditor.ShaderProperty(mp_dissolveUpperLimit, Styles.dissolveUpperLimitText);
                 materialEditor.ShaderProperty(mp_dissolveLowerLimit, Styles.dissolveLowerLimitText);
                 materialEditor.ShaderProperty(mp_dissolveMargin, Styles.dissolveMarginText);
+                materialEditor.ShaderProperty(mp_dissolveDirection, Styles.dissolveDirectionText);
                 break;
             case 4:     //FXLayer_Colorize
                 materialEditor.TextureProperty(mp_fireMap, Styles.colorRampMapText, true);
