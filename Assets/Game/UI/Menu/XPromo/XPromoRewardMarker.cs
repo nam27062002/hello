@@ -53,6 +53,9 @@ public class XPromoRewardMarker : MonoBehaviour {
 	private GameObject m_greenTick;
 
 	[SerializeField]
+	private GameObject m_greyTick;
+
+	[SerializeField]
 	private GameObject m_bgroundCollected;
 
 	[SerializeField]
@@ -171,6 +174,7 @@ public class XPromoRewardMarker : MonoBehaviour {
 		// Show/hide UI elements
 		m_clockIcon.SetActive(m_rewardState == LocalReward.State.COUNTDOWN);
 		m_greenTick.SetActive(m_rewardState == LocalReward.State.COLLECTED);
+		m_greyTick.SetActive(m_rewardState != LocalReward.State.COLLECTED);
 		m_bgroundCollected.SetActive(m_rewardState == LocalReward.State.COLLECTED);
 		m_bgroundReady.SetActive(m_rewardState == LocalReward.State.READY);
 		m_bgroundUnavailable.SetActive(m_rewardState == LocalReward.State.LOCKED);

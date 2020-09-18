@@ -95,6 +95,9 @@ public class PopupXPromo : MonoBehaviour {
 
 			XPromoRewardMarker newMarker = Instantiate(m_rewardMarkerPrefab, m_rewardsContainer);
 
+            // Position the new marker before the right spacer (thats the last element)
+			newMarker.transform.SetSiblingIndex(m_rewardsContainer.childCount - 2);
+
             // If this is the last element, do not display a separator
 			bool lastElement = (i == rewards.Count - 1);
 
