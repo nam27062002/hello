@@ -13,6 +13,11 @@ ShaderVariantCollection:
       variants:
       - keywords: LOW_DETAIL_ON
         passType: 0
+  - first: {fileID: 4800000, guid: 025775b2b3616154f9eec0261bb8a581, type: 3}
+    second:
+      variants:
+      - keywords: LOW_DETAIL_ON
+        passType: 0
   - first: {fileID: 4800000, guid: 02891335b31643f408fed70e86224f83, type: 3}
     second:
       variants:
@@ -258,9 +263,6 @@ ShaderVariantCollection:
           EXTENDED_PARTICLES LOW_DETAIL_ON NOISEUV NOISE_TEXTURE NOISE_TEXTURE_ALPHA
           NOISE_TEXTURE_DISSOLVE NOISE_TEXTURE_EMISSION
         passType: 0
-      - keywords: APPLY_RGB_COLOR_VERTEX BLENDMODE_PREMULTIPLY DISSOLVE_ENABLED EXTENDED_PARTICLES
-          FLOWMAP LOW_DETAIL_ON
-        passType: 0
       - keywords: BLENDMODE_ALPHABLEND DISSOLVE_ENABLED DISSOLVE_VERTEXCOLORALFA EXTENDED_PARTICLES
           LOW_DETAIL_ON
         passType: 0
@@ -289,6 +291,9 @@ ShaderVariantCollection:
       - keywords: BLENDMODE_PREMULTIPLY DISSOLVE_ENABLED DISSOLVE_VERTEXCOLORALFA
           EXTENDED_PARTICLES LOW_DETAIL_ON NOISEUV NOISE_TEXTURE NOISE_TEXTURE_ALPHA
           NOISE_TEXTURE_DISSOLVE NOISE_TEXTURE_EMISSION
+        passType: 0
+      - keywords: APPLY_RGB_COLOR_VERTEX BLENDMODE_PREMULTIPLY DISSOLVE_ENABLED DISSOLVE_VERTEXCOLORALFA
+          EXTENDED_PARTICLES FLOWMAP LOW_DETAIL_ON
         passType: 0
       - keywords: APPLY_RGB_COLOR_VERTEX BLENDMODE_PREMULTIPLY DISSOLVE_ENABLED DISSOLVE_VERTEXCOLORALFA
           EXTENDED_PARTICLES FLOWMAP LOW_DETAIL_ON NOISEUV
@@ -355,6 +360,11 @@ ShaderVariantCollection:
       variants:
       - keywords: LOW_DETAIL_ON
         passType: 0
+  - first: {fileID: 4800000, guid: 1b62d0b1d1626d34ea157e7f2e06d54f, type: 3}
+    second:
+      variants:
+      - keywords: LOW_DETAIL_ON
+        passType: 0
   - first: {fileID: 4800000, guid: 1c1d1e96ee7de4cca84f6af8cbe2b280, type: 3}
     second:
       variants:
@@ -366,6 +376,11 @@ ShaderVariantCollection:
       - keywords: LOW_DETAIL_ON
         passType: 0
       - keywords: LOW_DETAIL_ON SPACE
+        passType: 0
+  - first: {fileID: 4800000, guid: 1e432315427554fac90b38453d9f6fed, type: 3}
+    second:
+      variants:
+      - keywords: LOW_DETAIL_ON
         passType: 0
   - first: {fileID: 4800000, guid: 1e938c1d9985e47d7988779cea0578e2, type: 3}
     second:
@@ -548,6 +563,9 @@ ShaderVariantCollection:
           SPECULAR _ZWRITE_ON
         passType: 4
       - keywords: FRESNEL FXLAYER_NONE LOW_DETAIL_ON NORMALMAP REFLECTIONTYPE_NORMAL
+          SELFILLUMINATE_NORMAL SPECULAR _ZWRITE_ON
+        passType: 4
+      - keywords: CUTOFF FRESNEL FXLAYER_NONE LOW_DETAIL_ON NORMALMAP REFLECTIONTYPE_NORMAL
           SELFILLUMINATE_NORMAL SPECULAR _ZWRITE_ON
         passType: 4
       - keywords: CUTOFF DOUBLESIDED FRESNEL FXLAYER_NONE LOW_DETAIL_ON NORMALMAP
@@ -752,6 +770,11 @@ ShaderVariantCollection:
       variants:
       - keywords: LOW_DETAIL_ON
         passType: 0
+  - first: {fileID: 4800000, guid: 2f120649b10d5f342b99e1d1ad51261f, type: 3}
+    second:
+      variants:
+      - keywords: BLENDAXIS_X COLORMODE_NONE LITMODE_LIT LOW_DETAIL_ON SPECULAR
+        passType: 4
   - first: {fileID: 4800000, guid: 2f6ca74d0843144c6a67a24f151daf1a, type: 3}
     second:
       variants:
@@ -761,6 +784,20 @@ ShaderVariantCollection:
     second:
       variants:
       - keywords: LOW_DETAIL_ON
+        passType: 4
+  - first: {fileID: 4800000, guid: 3880f73760fb52c4bba39b1167e234e7, type: 3}
+    second:
+      variants:
+      - keywords: BLENDAXIS_X COLORMODE_NONE FRESNEL LITMODE_UNLIT LOW_DETAIL_ON
+        passType: 4
+      - keywords: BLENDAXIS_X COLORMODE_COLORRAMP FRESNEL LITMODE_UNLIT LOW_DETAIL_ON
+        passType: 4
+      - keywords: BLENDAXIS_X COLORMODE_COLORRAMPMASKED FRESNEL LITMODE_UNLIT LOW_DETAIL_ON
+        passType: 4
+      - keywords: BLENDAXIS_X COLORMODE_COLORRAMP FRESNEL LITMODE_UNLIT LOW_DETAIL_ON
+          REFLECTIONMAP
+        passType: 4
+      - keywords: BLENDAXIS_X COLORMODE_TINT FRESNEL LITMODE_UNLIT LOW_DETAIL_ON
         passType: 4
   - first: {fileID: 4800000, guid: 4349792d2c4d5a44684801646bdf60ca, type: 3}
     second:
@@ -907,6 +944,11 @@ ShaderVariantCollection:
         passType: 0
       - keywords: EMISSIVE_BLINK FOG LOW_DETAIL_ON MAINCOLOR_COLOR OPAQUEALPHA VERTEXCOLOR_NONE
         passType: 0
+  - first: {fileID: 4800000, guid: 4d4ad820f36dbc1429b53a7702b00536, type: 3}
+    second:
+      variants:
+      - keywords: BLENDMODE_ADDITIVEALPHABLEND LOW_DETAIL_ON
+        passType: 0
   - first: {fileID: 4800000, guid: 4e3b17cf747b2664787fab8d103d78ad, type: 3}
     second:
       variants:
@@ -958,6 +1000,11 @@ ShaderVariantCollection:
       variants:
       - keywords: LOW_DETAIL_ON
         passType: 0
+  - first: {fileID: 4800000, guid: 862c830f04eb50d48949b08e87ec7000, type: 3}
+    second:
+      variants:
+      - keywords: LOW_DETAIL_ON
+        passType: 4
   - first: {fileID: 4800000, guid: 87e6fe19d163bc443910dc94823f7d3a, type: 3}
     second:
       variants:
@@ -1008,6 +1055,11 @@ ShaderVariantCollection:
       variants:
       - keywords: LOW_DETAIL_ON
         passType: 0
+  - first: {fileID: 4800000, guid: c0983d60f2f7a4a20a4631b5a4a39960, type: 3}
+    second:
+      variants:
+      - keywords: LOW_DETAIL_ON
+        passType: 0
   - first: {fileID: 4800000, guid: cac050e216f992d4daea2d13a5ee10f0, type: 3}
     second:
       variants:
@@ -1025,6 +1077,11 @@ ShaderVariantCollection:
       - keywords: LOW_DETAIL_ON OUTLINE_ON UNDERLAY_ON
         passType: 0
       - keywords: LOW_DETAIL_ON OUTLINE_ON UNDERLAY_INNER
+        passType: 0
+  - first: {fileID: 4800000, guid: d16f77d9dd6a34705bb518b491a7db03, type: 3}
+    second:
+      variants:
+      - keywords: LOW_DETAIL_ON
         passType: 0
   - first: {fileID: 4800000, guid: d5b9852b5c005334591669d788bede8f, type: 3}
     second:
@@ -1059,6 +1116,11 @@ ShaderVariantCollection:
       variants:
       - keywords: LOW_DETAIL_ON
         passType: 0
+  - first: {fileID: 4800000, guid: f3570630f31ec4223a549b595d8cbb53, type: 3}
+    second:
+      variants:
+      - keywords: LOW_DETAIL_ON
+        passType: 0
   - first: {fileID: 4800000, guid: f5d01bbba3dd4e94a9d60ae9526d5186, type: 3}
     second:
       variants:
@@ -1069,62 +1131,3 @@ ShaderVariantCollection:
       variants:
       - keywords: LOW_DETAIL_ON
         passType: 0
-  - first: {fileID: 4800000, guid: 1b62d0b1d1626d34ea157e7f2e06d54f, type: 3}
-    second:
-      variants:
-      - keywords: LOW_DETAIL_ON
-        passType: 0
-  - first: {fileID: 4800000, guid: 862c830f04eb50d48949b08e87ec7000, type: 3}
-    second:
-      variants:
-      - keywords: LOW_DETAIL_ON
-        passType: 4
-  - first: {fileID: 4800000, guid: 025775b2b3616154f9eec0261bb8a581, type: 3}
-    second:
-      variants:
-      - keywords: LOW_DETAIL_ON
-        passType: 0
-  - first: {fileID: 4800000, guid: f3570630f31ec4223a549b595d8cbb53, type: 3}
-    second:
-      variants:
-      - keywords: LOW_DETAIL_ON
-        passType: 0
-  - first: {fileID: 4800000, guid: c0983d60f2f7a4a20a4631b5a4a39960, type: 3}
-    second:
-      variants:
-      - keywords: LOW_DETAIL_ON
-        passType: 0
-  - first: {fileID: 4800000, guid: d16f77d9dd6a34705bb518b491a7db03, type: 3}
-    second:
-      variants:
-      - keywords: LOW_DETAIL_ON
-        passType: 0
-  - first: {fileID: 4800000, guid: 1e432315427554fac90b38453d9f6fed, type: 3}
-    second:
-      variants:
-      - keywords: LOW_DETAIL_ON
-        passType: 0
-  - first: {fileID: 4800000, guid: 2f120649b10d5f342b99e1d1ad51261f, type: 3}
-    second:
-      variants:
-      - keywords: BLENDAXIS_X COLORMODE_NONE LITMODE_LIT LOW_DETAIL_ON SPECULAR
-        passType: 4
-  - first: {fileID: 4800000, guid: 4d4ad820f36dbc1429b53a7702b00536, type: 3}
-    second:
-      variants:
-      - keywords: BLENDMODE_ADDITIVEALPHABLEND LOW_DETAIL_ON
-        passType: 0
-  - first: {fileID: 4800000, guid: 3880f73760fb52c4bba39b1167e234e7, type: 3}
-    second:
-      variants:
-      - keywords: BLENDAXIS_X COLORMODE_NONE FRESNEL LITMODE_UNLIT LOW_DETAIL_ON
-        passType: 4
-      - keywords: BLENDAXIS_X COLORMODE_COLORRAMP FRESNEL LITMODE_UNLIT LOW_DETAIL_ON
-        passType: 4
-      - keywords: BLENDAXIS_X COLORMODE_COLORRAMPMASKED FRESNEL LITMODE_UNLIT LOW_DETAIL_ON
-        passType: 4
-      - keywords: BLENDAXIS_X COLORMODE_COLORRAMP FRESNEL LITMODE_UNLIT LOW_DETAIL_ON
-          REFLECTIONMAP
-        passType: 4
-      - keywords: BLENDAXIS_X COLORMODE_TINT FRESNEL LITMODE_UNLIT LOW_DETAIL_ON
-        passType: 4
