@@ -53,7 +53,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &4000014019788774
 Transform:
   m_ObjectHideFlags: 0
@@ -479,6 +479,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_seasonalItems:
   - season: halloween
+    groups:
+    - name: Mask
+      probability: 1
+      items:
+      - equipablePrefabName: PF_Werewolf_mask
+        defaultItemLOW: 1
+        probability: 1
+        toDisableOnEquip: []
+        position: {x: 0, y: -0.13062704, z: 0.17671666}
+        scale: {x: 1.5708165, y: 1.5708152, z: 1.5708152}
+        rotation: {x: 15.0225315, y: 0, z: 0}
+  - season: werewolf_vampire
     groups:
     - name: Mask
       probability: 1
