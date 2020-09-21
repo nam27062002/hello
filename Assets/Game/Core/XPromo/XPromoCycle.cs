@@ -358,17 +358,17 @@ public class XPromoCycle {
 
 		if (settingsDef.Has("startDate"))
 		{
-			m_startDate = DateTime.Parse(settingsDef.GetAsString("startDate"));
+			m_startDate = TimeUtils.TimestampToDate(settingsDef.GetAsLong("startDate"), false);
 		}
 
         if (settingsDef.Has("recruitingLimitDate"))
 		{
-			m_recruitmentLimitDate = DateTime.Parse(settingsDef.GetAsString("recruitingLimitDate"));
+			m_recruitmentLimitDate = TimeUtils.TimestampToDate(settingsDef.GetAsLong("recruitingLimitDate"), false);
 		}
 
 		if (settingsDef.Has("endDate"))
 		{
-			m_endDate = DateTime.Parse(settingsDef.GetAsString("endDate"));
+			m_endDate = TimeUtils.TimestampToDate(settingsDef.GetAsLong("endDate"), false);
 		}
 
 

@@ -89,7 +89,7 @@ public class PopupXPromo : MonoBehaviour {
 		List<XPromo.LocalReward> rewards = XPromoManager.instance.xPromoCycle.localRewards;
 
 
-        for( int i=0; i< rewards.Count; i++)
+        for( int i=0; i< XPromoManager.instance.xPromoCycle.cycleSize; i++)
         {
 			XPromo.LocalReward reward = rewards[i];
 

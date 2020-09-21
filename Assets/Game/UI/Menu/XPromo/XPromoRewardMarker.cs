@@ -8,6 +8,7 @@
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
 using TMPro;
+using UnityEditor;
 using UnityEngine;
 using XPromo;
 
@@ -94,14 +95,26 @@ public class XPromoRewardMarker : MonoBehaviour {
 	// Internal
 	private float m_timer;
 
-	//------------------------------------------------------------------------//
-	// GENERIC METHODS														  //
-	//------------------------------------------------------------------------//
+    //------------------------------------------------------------------------//
+    // GENERIC METHODS														  //
+    //------------------------------------------------------------------------//
 
-	/// <summary>
-	/// Called every frame.
-	/// </summary>
-	private void Update() {
+    private void Start()
+    {
+
+		Refresh();
+
+        // Dirty trick to force update the UI Color component. Without this the tick looks yellow D:
+		m_greyTick.GetComponent<UIColorFX>().DestroyMaterials();
+
+	}
+
+    /// <summary>
+    /// Called every frame.
+    /// </summary>
+    private void Update() {
+
+		
 		// Refresh periodically for better performance
 		if (m_timer <= 0)
 		{
@@ -114,16 +127,16 @@ public class XPromoRewardMarker : MonoBehaviour {
 	}
 
 
-    //------------------------------------------------------------------------//
-    // OTHER METHODS														  //
-    //------------------------------------------------------------------------//
+	//------------------------------------------------------------------------//
+	// OTHER METHODS														  //
+	//------------------------------------------------------------------------//
 
-    /// <summary>
-    /// Initilizes a marker with the reward data
-    /// </summary>
-    /// <param name="_index">The position in the cycle</param>
+	/// <summary>
+	/// Initilizes a marker with the reward data
+	/// </summary>
+	/// <param name="_index">The position in the cycle</param>
 
-    public void Init (int _index)
+	public void Init (int _index)
     {
 
 		
@@ -151,9 +164,6 @@ public class XPromoRewardMarker : MonoBehaviour {
         }
 
 
-        // Initialize the UI elements
-		Refresh();
-
     }
 
 
@@ -171,6 +181,7 @@ public class XPromoRewardMarker : MonoBehaviour {
 		m_dayLabel.Localize("TID_DAILY_LOGIN_DAY", m_reward.day.ToString());
 
 
+
 		// Show/hide UI elements
 		m_clockIcon.SetActive(m_rewardState == LocalReward.State.COUNTDOWN);
 		m_greenTick.SetActive(m_rewardState == LocalReward.State.COLLECTED);
@@ -180,6 +191,7 @@ public class XPromoRewardMarker : MonoBehaviour {
 		m_bgroundUnavailable.SetActive(m_rewardState == LocalReward.State.LOCKED);
 		m_bgroundUnavailable.SetActive(m_rewardState == LocalReward.State.COUNTDOWN);
 		m_timerCountdown.gameObject.SetActive(m_rewardState == LocalReward.State.COUNTDOWN);
+
 
 
 		// Initialize timer
