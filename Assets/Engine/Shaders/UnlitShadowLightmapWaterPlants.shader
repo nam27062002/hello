@@ -19,6 +19,7 @@ Shader "Hungry Dragon/Scenary/Diffuse + Lightmap + Animated Vertex (Water plants
 			CGPROGRAM
 				#pragma vertex vert
 				#pragma fragment frag
+				#pragma shader_feature __ NIGHT
 
 				#include "UnityCG.cginc"
 				#include "AutoLight.cginc"
