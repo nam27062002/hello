@@ -26,10 +26,12 @@ namespace XPromo {
         private string m_rewardSku;
         private string m_icon;
         private string m_title_tid;
+        private int m_amount;
 
         public string rewardSku { get => m_rewardSku; set => m_rewardSku = value; }
         public string icon { get => m_icon; set => m_icon = value; }
         public string title_tid { get => m_title_tid; set => m_title_tid = value; }
+        public int amount { get => m_amount; set => m_amount = value; }
 
 
         //------------------------------------------------------------------------//

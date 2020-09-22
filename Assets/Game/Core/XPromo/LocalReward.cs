@@ -119,6 +119,7 @@ namespace XPromo
 				((LocalRewardHSE)localReward).rewardSku = _def.GetAsString("rewardSku");
 				((LocalRewardHSE)localReward).title_tid = _def.GetAsString("tid");
 				((LocalRewardHSE)localReward).icon = _def.GetAsString("icon");
+				((LocalRewardHSE)localReward).amount = _def.GetAsInt("amount");
 			}
             
 

@@ -143,8 +143,16 @@ public class XPromoRewardPreview : MetagameRewardView {
             m_icon.sprite = sprite;
 
             // Just show the title defined in the content
-            m_rewardText.text = LocalizationManager.SharedInstance.Localize(((LocalRewardHSE)m_localReward).title_tid);
+            string title = LocalizationManager.SharedInstance.Localize(((LocalRewardHSE)m_localReward).title_tid);
 
+            // if the reward is countable, show the amount
+            int amount = ((LocalRewardHSE)m_localReward).amount;
+            if (amount > 1)
+            {
+                title = title + " x " + amount.ToString("N0");
+            }
+
+            m_rewardText.text = title;
 
             // Get the localized logo filename
             string logoName = GetLocalizedLogoFilename(XPromoManager.Game.HSE);
