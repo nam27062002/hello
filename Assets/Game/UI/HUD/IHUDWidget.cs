@@ -68,8 +68,13 @@ public abstract class IHUDWidget : MonoBehaviour {
 	/// </summary>
 	protected virtual void OnDisable() {
         if (ApplicationManager.IsAlive) {
-            // Self-unregister to the manager
-            InstanceManager.gameSceneControllerBase.hudManager.RemoveWidget(this);
+
+			// Protect from null exceptions (it shouldnt happen, but happens)
+			if (InstanceManager.gameSceneControllerBase != null && InstanceManager.gameSceneControllerBase.hudManager != null)
+			{
+				// Self-unregister to the manager
+				InstanceManager.gameSceneControllerBase.hudManager.RemoveWidget(this);
+			}
         }
 	}
 }
