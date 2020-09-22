@@ -552,8 +552,12 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 	/// Checks the daily rewards popup.
 	/// </summary>
 	private void CheckDailyRewards() {
+
+		// Ignore if a popup has already been displayed in this iteration
+		if (GetFlag(StateFlag.POPUP_DISPLAYED)) return;
+
 		// Never if feature not enabled
-		if(!FeatureSettingsManager.IsDailyRewardsEnabled()) return;
+		if (!FeatureSettingsManager.IsDailyRewardsEnabled()) return;
 
 		// Only in the right screen
 		if(m_currentScreen != MenuScreen.DRAGON_SELECTION) return;
