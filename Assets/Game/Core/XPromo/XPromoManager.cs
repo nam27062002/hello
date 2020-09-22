@@ -96,8 +96,12 @@ public class XPromoManager: Singleton<XPromoManager> {
 
 		m_collectedIncomingRewards = new List<string>();
 
-		// Debug
-		//m_incomingRewardsToProcess.Enqueue( "reward_hse_hd_1a" );
+		// Debug incoming deeplink
+		/*
+        Dictionary<string,string> dLinkParams = new Dictionary<string, string>();
+        dLinkParams.Add(XPROMO_REWARD_KEY, "reward_hse_hd_1a" );
+        Messenger.Broadcast<Dictionary<string, string>>(MessengerEvents.INCOMING_DEEPLINK_NOTIFICATION, dLinkParams);
+        */
 
 	}
 
@@ -298,9 +302,12 @@ public class XPromoManager: Singleton<XPromoManager> {
 		// Check if this deep link notification contains a XPromo reward
         if (_params.ContainsKey(XPROMO_REWARD_KEY))
         {
+            string value = _params[XPROMO_REWARD_KEY];
+
+            Log ("DeepLink notification received " + XPROMO_REWARD_KEY + "=" + value);
 
 			// Store the incoming rewards SKU. Treat it later.
-			m_incomingRewardsToProcess.Enqueue(_params[XPROMO_REWARD_KEY]);
+			m_incomingRewardsToProcess.Enqueue(value);
 		}
 
 
