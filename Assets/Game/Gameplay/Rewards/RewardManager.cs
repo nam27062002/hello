@@ -389,7 +389,6 @@ public class RewardManager : Singleton<RewardManager>, IBroadcastListener {
 		DefinitionsManager.SharedInstance.SortByProperty(ref defs, "order", DefinitionsManager.SortType.NUMERIC);
 		m_scoreMultipliers = new ScoreMultiplier[defs.Count];
 		ScoreMultiplier newMult;
-		List<DefinitionNode> feedbackDefs;
 		for(int i = 0; i < defs.Count; i++) {
 			// Create a new score multiplier
 			newMult = new ScoreMultiplier();
@@ -398,10 +397,7 @@ public class RewardManager : Singleton<RewardManager>, IBroadcastListener {
 			newMult.duration = defs[i].GetAsFloat("duration");
 
 			// Feedback messages
-			feedbackDefs = defs[i].GetChildNodesByTag("FeedbackMessage");
-			for(int j = 0; j < feedbackDefs.Count; j++) {
-				newMult.feedbackMessages.Add(feedbackDefs[j].GetAsString("tidMessage"));
-			}
+			newMult.feedbackMessages.AddRange(defs[i].GetAsList<string>("tidMessage"));
 
 			// Store new multiplier
 			m_scoreMultipliers[i] = newMult;

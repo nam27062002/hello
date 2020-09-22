@@ -822,6 +822,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 56549582}
+  - component: {fileID: 56549583}
   m_Layer: 0
   m_Name: Grave
   m_TagString: Untagged
@@ -943,6 +944,21 @@ Transform:
   m_Father: {fileID: 632154116}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &56549583
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 56549581}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9cbc62378fc9e47e1ad7fde43d87ae3c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_settingKey: 8
+  m_settingValue: 0
+  m_show: 0
 --- !u!1001 &63795232
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -10012,9 +10028,19 @@ MonoBehaviour:
     targets: []
   - sku: candy
     targets: []
-  - sku: "jalape\xF1o"
+  - sku: jalapeno
     targets: []
-  - sku: anniversary_no_equip
+  - sku: Anniversary_No_Equip
+    targets: []
+  - sku: Alien
+    targets: []
+  - sku: halloween_China
+    targets: []
+  - sku: werewolf
+    targets: []
+  - sku: vampire
+    targets: []
+  - sku: bunnies
     targets: []
 --- !u!1001 &842906147
 PrefabInstance:
@@ -10092,6 +10118,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 863823443}
+  - component: {fileID: 863823444}
   m_Layer: 0
   m_Name: Ground_Zombie_Village
   m_TagString: Untagged
@@ -10213,6 +10240,21 @@ Transform:
   m_Father: {fileID: 632154116}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &863823444
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 863823442}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9cbc62378fc9e47e1ad7fde43d87ae3c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_settingKey: 8
+  m_settingValue: 0
+  m_show: 0
 --- !u!1001 &868060645
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -21464,7 +21506,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1799060547}
   m_Layer: 0
-  m_Name: Easter_Bunny
+  m_Name: Village_Easter_Bunny
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -21715,6 +21757,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1831586535}
+  - component: {fileID: 1831586536}
   m_Layer: 0
   m_Name: Easter
   m_TagString: Untagged
@@ -21737,6 +21780,75 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1831586536
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1831586534}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4175ba4db6af94a65bae6b40e64dcb45, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_seasonsData:
+  - sku: none
+    targets: []
+  - sku: xmas
+    targets: []
+  - sku: halloween
+    targets: []
+  - sku: spring
+    targets: []
+  - sku: midAutumnFestival
+    targets: []
+  - sku: chineseNewYear
+    targets: []
+  - sku: valentine
+    targets: []
+  - sku: patricks
+    targets: []
+  - sku: easter
+    targets:
+    - obj: {fileID: 1799060546}
+      action: 0
+  - sku: ufoDay
+    targets: []
+  - sku: football
+    targets: []
+  - sku: preSummerDay
+    targets: []
+  - sku: summer
+    targets: []
+  - sku: Anniversary1
+    targets: []
+  - sku: watermelon
+    targets: []
+  - sku: snorkel
+    targets: []
+  - sku: cocktail
+    targets: []
+  - sku: cookies
+    targets: []
+  - sku: presents
+    targets: []
+  - sku: candy
+    targets: []
+  - sku: jalapeno
+    targets: []
+  - sku: Anniversary_No_Equip
+    targets: []
+  - sku: Alien
+    targets: []
+  - sku: halloween_China
+    targets: []
+  - sku: werewolf
+    targets: []
+  - sku: vampire
+    targets: []
+  - sku: bunnies
+    targets: []
 --- !u!1001 &1834407424
 PrefabInstance:
   m_ObjectHideFlags: 0

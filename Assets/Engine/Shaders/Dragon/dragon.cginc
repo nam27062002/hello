@@ -80,10 +80,12 @@ uniform float _FireAmount;
 uniform float _FireSpeed;
 #elif defined (FXLAYER_DISSOLVE)
 uniform sampler2D _FireMap;
+uniform float4 _FireMap_ST;
 uniform float _DissolveAmount;
 uniform float _DissolveLowerLimit;
 uniform float _DissolveUpperLimit;
 uniform float _DissolveMargin;
+uniform float2 _DissolveDirection;
 #elif defined (FXLAYER_COLORIZE)
 uniform sampler2D _FireMap;
 uniform float4 _FireMap_TexelSize;
@@ -173,7 +175,8 @@ v2f vert(appdata_t v)
 #if defined(FXLAYER_FIRE)
 	o.screenPos = (v.vertex.xy / v.vertex.w) * _FireMap_ST.xy * 0.1;
 #elif defined(FXLAYER_DISSOLVE)
-	fixed limit = smoothstep(_DissolveUpperLimit, _DissolveLowerLimit + _DissolveMargin, v.vertex.x);
+	fixed dir = dot(v.vertex.xy, _DissolveDirection.xy);
+	fixed limit = smoothstep(_DissolveUpperLimit, _DissolveLowerLimit + _DissolveMargin, dir);
 	o.screenPos = fixed2(0.0, limit);
 #endif
 

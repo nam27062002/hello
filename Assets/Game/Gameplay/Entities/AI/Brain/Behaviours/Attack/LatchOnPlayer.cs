@@ -41,6 +41,16 @@ namespace AI {
 			protected override void OnInitialise() {
 				m_eatBehaviour = m_pilot.GetComponent<EatBehaviour>();
 				m_data = m_pilot.GetComponentData<LatchData>();
+
+				// Set damage from entityDefinitions
+				IEntity m_entity = m_pilot.GetComponent<IEntity>();
+				if (m_entity != null)
+				{
+					DefinitionNode definition = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.ENTITIES, m_entity.sku);
+                    if (definition != null)
+					    m_data.damage = definition.GetAsFloat("damage", m_data.damage);
+				}
+
 				m_eatBehaviour.holdDamage = m_data.damage;
 				m_eatBehaviour.holdDuration = m_data.duration;
 				m_eatBehaviour.onEndLatching += OnEndLatchingEvent;

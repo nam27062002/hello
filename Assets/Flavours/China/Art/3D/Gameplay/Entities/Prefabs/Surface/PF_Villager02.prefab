@@ -77,6 +77,7 @@ GameObject:
   - component: {fileID: 11443182}
   - component: {fileID: 136000012060026642}
   - component: {fileID: 54000012594169162}
+  - component: {fileID: 114162972009644956}
   m_Layer: 21
   m_Name: PF_Villager02
   m_TagString: Untagged
@@ -99,6 +100,7 @@ Transform:
   - {fileID: 4000011032456354}
   - {fileID: 4142005352940140}
   - {fileID: 4000010642602572}
+  - {fileID: 8968631352210077077}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -123,7 +125,7 @@ MonoBehaviour:
   m_pilot: {fileID: 11453012}
   m_machine: {fileID: 114304424817110602}
   m_viewControl: {fileID: 11419496}
-  m_equip: {fileID: 0}
+  m_equip: {fileID: 114162972009644956}
   m_sku: Villager02
   m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1
@@ -150,7 +152,7 @@ MonoBehaviour:
     max: 2.75
   m_useSpawnerRotation: 0
   m_serializedJson: '[{"speed":1.5,"isWallWalking":false,"timeToIdle":{"min":15,"max":20},"timeToChangeDirection":{"min":5,"max":10},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false},{"restTime":{"min":1,"max":3},"randomLookAt":true,"dataType":"AI.Behaviour.IdleData","editorFolded":false},{"speed":11,"checkDragonPositionTime":0.5,"checkForActionPointTime":0.1,"actions":{"panic":{"id":0,"active":true,"probability":1},"jump":{"id":1,"active":false,"probability":1},"goOn":{"id":2,"active":true,"probability":1},"hide":{"id":3,"active":true,"probability":1},"home":{"id":3,"active":true,"probability":1}},"dataType":"AI.Behaviour.FleeToAPData","editorFolded":false},{"dataType":"AI.Behaviour.OnActionPointData","editorFolded":false},{"speed":1.5,"dataType":"AI.Behaviour.HomeSenseDragonData","editorFolded":false},{"speed":11,"dataType":"AI.Behaviour.HomeData","editorFolded":false}]'
-  m_databaseKey: PF_Villager02
+  m_databaseKey: PF_Villager02 (1)
 --- !u!114 &114304424817110602
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -494,6 +496,86 @@ Rigidbody:
   m_Interpolate: 1
   m_Constraints: 112
   m_CollisionDetection: 0
+--- !u!114 &114162972009644956
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 174524}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1f45dfbaed20447daa07123ab6b7cd80, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_seasonalItems:
+  - season: halloween
+    groups:
+    - name: Mask
+      probability: 1
+      items:
+      - equipablePrefabName: PF_vampire_mask
+        defaultItemLOW: 1
+        probability: 1
+        toDisableOnEquip: []
+        position: {x: 0, y: 0.05000015, z: 0.19999982}
+        scale: {x: 1.2, y: 1.2, z: 1.2}
+        rotation: {x: -0, y: 0, z: 0}
+  - season: werewolf_vampire
+    groups:
+    - name: Mask
+      probability: 1
+      items:
+      - equipablePrefabName: PF_vampire_mask
+        defaultItemLOW: 1
+        probability: 1
+        toDisableOnEquip: []
+        position: {x: 0, y: 0.05000015, z: 0.19999982}
+        scale: {x: 1.2, y: 1.2, z: 1.2}
+        rotation: {x: -0, y: 0, z: 0}
+  - season: xmas
+    groups:
+    - name: Mask
+      probability: 0.5
+      items:
+      - equipablePrefabName: PF_Christmas_Hat
+        defaultItemLOW: 1
+        probability: 1
+        toDisableOnEquip: []
+        position: {x: -0.010893822, y: 0.15999985, z: 0.010000262}
+        scale: {x: 0.81807625, y: 0.8180765, z: 0.8180765}
+        rotation: {x: 345.28156, y: 19.662483, z: 354.8128}
+  - season: ufoDay
+    groups:
+    - name: Mask
+      probability: 1
+      items:
+      - equipablePrefabName: PF_AlienMask_villager
+        defaultItemLOW: 0
+        probability: 0
+        toDisableOnEquip: []
+        position: {x: 0, y: 0.20000003, z: 0.05000023}
+        scale: {x: 1, y: 1, z: 1}
+        rotation: {x: 0, y: 0, z: 0}
+      - equipablePrefabName: PF_Tinfoilhat_villager
+        defaultItemLOW: 0
+        probability: 1
+        toDisableOnEquip: []
+        position: {x: 0, y: 0.24999999, z: 0.050000243}
+        scale: {x: 1, y: 1, z: 1}
+        rotation: {x: 0, y: 0, z: 0}
+  - season: Alien
+    groups:
+    - name: Mask
+      probability: 0.9
+      items:
+      - equipablePrefabName: PF_AlienMask_villager
+        defaultItemLOW: 0
+        probability: 1
+        toDisableOnEquip: []
+        position: {x: 0, y: 0.20000003, z: 0.05000023}
+        scale: {x: 1, y: 1, z: 1}
+        rotation: {x: 0, y: 0, z: 0}
 --- !u!1 &1000010173523934
 GameObject:
   m_ObjectHideFlags: 0
@@ -779,6 +861,7 @@ Transform:
   m_Children:
   - {fileID: 4517140782566996}
   - {fileID: 4709304073699508}
+  - {fileID: 2154358344423175783}
   m_Father: {fileID: 411742}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -813,3 +896,189 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 149ad3fbe96824237911aae39b27ab1a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &4473993393374745968
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1146461213438255309}
+  - component: {fileID: 3986849937379905834}
+  - component: {fileID: 6169057628663341324}
+  m_Layer: 21
+  m_Name: Head_2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1146461213438255309
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4473993393374745968}
+  m_LocalRotation: {x: -0.00000010430814, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.000006198883, y: 1.1818328, z: 0.04175949}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 8968631352210077077}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3986849937379905834
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4473993393374745968}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ece7f0589cf74ddf97a0a63886f8499, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_point: 17
+--- !u!114 &6169057628663341324
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4473993393374745968}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9aae6699537414c7ab185eeaef226fe0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_parentName: Human_Head
+  m_parentRoot: {fileID: 411742}
+  m_worldPositionStays: 1
+  m_resetScale: 0
+  m_when: 0
+--- !u!1 &5453135612712735849
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2154358344423175783}
+  m_Layer: 0
+  m_Name: Human_Head
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2154358344423175783
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5453135612712735849}
+  m_LocalRotation: {x: -0.49999997, y: 0.50000006, z: 0.50000006, w: -0.49999997}
+  m_LocalPosition: {x: 0.000004050925, y: 1.9212219, z: 0.027839527}
+  m_LocalScale: {x: 1.0000013, y: 1.000001, z: 1.0000011}
+  m_Children: []
+  m_Father: {fileID: 4092714547951798}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &5594592416754188960
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1500402980568418973}
+  - component: {fileID: 7360898943636851632}
+  - component: {fileID: 7769827182066148450}
+  m_Layer: 21
+  m_Name: Head_1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1500402980568418973
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5594592416754188960}
+  m_LocalRotation: {x: -0.00000010430814, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.000006198883, y: 1.1818328, z: 0.04175949}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 8968631352210077077}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7360898943636851632
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5594592416754188960}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ece7f0589cf74ddf97a0a63886f8499, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_point: 5
+--- !u!114 &7769827182066148450
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5594592416754188960}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9aae6699537414c7ab185eeaef226fe0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_parentName: Human_Head
+  m_parentRoot: {fileID: 411742}
+  m_worldPositionStays: 1
+  m_resetScale: 0
+  m_when: 0
+--- !u!1 &6800390012944491537
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8968631352210077077}
+  m_Layer: 21
+  m_Name: AttachPoints
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8968631352210077077
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6800390012944491537}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 1500402980568418973}
+  - {fileID: 1146461213438255309}
+  m_Father: {fileID: 411742}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

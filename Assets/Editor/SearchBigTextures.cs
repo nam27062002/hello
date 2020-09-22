@@ -4,7 +4,7 @@ using System;
 
 public class SearchBigTextures : Editor
 {
-    [MenuItem("Hungry Dragon/Tools/Search big textures in project")]
+    [MenuItem("Hungry Dragon/Tools/Optimization/Search big textures in project")]
     public static void StartSearchBigTextures()
     {
         EditorUtility.DisplayProgressBar("Big textures", "Searching for big textures in project...", 0);

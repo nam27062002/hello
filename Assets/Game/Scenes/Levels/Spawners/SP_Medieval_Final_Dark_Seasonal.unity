@@ -767,10 +767,8 @@ Transform:
   - {fileID: 672058218}
   - {fileID: 1456976731}
   - {fileID: 1542421548}
-  - {fileID: 1455014723}
-  - {fileID: 602801451}
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &99709554
 PrefabInstance:
@@ -2909,8 +2907,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 602801451}
+  - component: {fileID: 602801452}
   m_Layer: 0
-  m_Name: Easter_Bunny
+  m_Name: Dark_Easter_Bunny
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2957,9 +2956,78 @@ Transform:
   - {fileID: 1075477546}
   - {fileID: 1560154508}
   - {fileID: 83665810}
-  m_Father: {fileID: 87931173}
-  m_RootOrder: 4
+  m_Father: {fileID: 0}
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &602801452
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 602801450}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4175ba4db6af94a65bae6b40e64dcb45, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_seasonsData:
+  - sku: none
+    targets: []
+  - sku: xmas
+    targets: []
+  - sku: halloween
+    targets: []
+  - sku: spring
+    targets: []
+  - sku: midAutumnFestival
+    targets: []
+  - sku: chineseNewYear
+    targets: []
+  - sku: valentine
+    targets: []
+  - sku: patricks
+    targets: []
+  - sku: easter
+    targets:
+    - obj: {fileID: 602801450}
+      action: 0
+  - sku: ufoDay
+    targets: []
+  - sku: football
+    targets: []
+  - sku: preSummerDay
+    targets: []
+  - sku: summer
+    targets: []
+  - sku: Anniversary1
+    targets: []
+  - sku: watermelon
+    targets: []
+  - sku: snorkel
+    targets: []
+  - sku: cocktail
+    targets: []
+  - sku: cookies
+    targets: []
+  - sku: presents
+    targets: []
+  - sku: candy
+    targets: []
+  - sku: jalapeno
+    targets: []
+  - sku: Anniversary_No_Equip
+    targets: []
+  - sku: Alien
+    targets: []
+  - sku: halloween_China
+    targets: []
+  - sku: werewolf
+    targets: []
+  - sku: vampire
+    targets: []
+  - sku: bunnies
+    targets: []
 --- !u!1001 &622338392
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5496,8 +5564,8 @@ Transform:
   m_Children:
   - {fileID: 2066043829}
   - {fileID: 1664435624}
-  m_Father: {fileID: 87931173}
-  m_RootOrder: 3
+  m_Father: {fileID: 0}
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1456976730
 GameObject:
@@ -5914,12 +5982,20 @@ MonoBehaviour:
     targets: []
   - sku: candy
     targets: []
-  - sku: "jalape\xF1o"
+  - sku: jalapeno
     targets: []
-  - sku: anniversary_no_equip
-    targets:
-    - obj: {fileID: 975007455}
-      action: 0
+  - sku: Anniversary_No_Equip
+    targets: []
+  - sku: Alien
+    targets: []
+  - sku: halloween_China
+    targets: []
+  - sku: werewolf
+    targets: []
+  - sku: vampire
+    targets: []
+  - sku: bunnies
+    targets: []
 --- !u!1001 &1645989495
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6449,7 +6525,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1746168817
 PrefabInstance:
