@@ -19,7 +19,7 @@ using System;
 /// triggering this benefits.
 /// </summary>
 [Serializable]
-public class WelcomeBackManager : SingletonInstance<WelcomeBackManager>
+public class WelcomeBackManager : Singleton<WelcomeBackManager>
 {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
@@ -69,7 +69,7 @@ public class WelcomeBackManager : SingletonInstance<WelcomeBackManager>
 
 
     /// <summary>
-	/// Checks if the player is elegible for this welcome back feature
+	/// Checks if the player is elegible for the welcome back feature
 	/// </summary>
 	/// <returns>Returns true if the player has been X days without connecting to the game
 	/// and didnt enjoy this welcome back feature before.</returns>
@@ -93,33 +93,42 @@ public class WelcomeBackManager : SingletonInstance<WelcomeBackManager>
 	/// </summary>
     public void Activate()
 	{
-        
-		// Create Solo Quest
 
-		// Create Passive Event
+		// Create Solo Quest
+		CreateSoloQuest();
+
+		// Activate Passive Event
+		ActivatePassiveEvent();
 
 		// Activate free tournament entrance
+		ActivateFreePassTournament();
 
-        // Profile specific perks:
+		// Profile specific perks:
 		bool nonPayer = true;
         if ( nonPayer)
 		{
-            // Activate boosted seven day login
+			// Activate boosted seven day login
+			CreateBoostedSevenDayLogin();
 
-            // Show non payer offer in the shop
+			// Show non payer offer in the shop
+			CreateNonPayerOffer();
+
 		} else
 		{
 			// Enable Happy Hour
+			ActivateHappyHour();
 
             // Dragon progression specifics
 			bool playerOwnsLatestDragon = true;
             if (playerOwnsLatestDragon)
 			{
-                // Show special Gatcha offer
+				// Show special Gatcha offer
+				CreateSpecialGatchaOffer();
 			}
             else
 			{
-                // Show Latest dragon offer
+				// Show Latest dragon offer
+				CreateLatestDragonOffer();
 			}
 		}
 
@@ -128,6 +137,45 @@ public class WelcomeBackManager : SingletonInstance<WelcomeBackManager>
 	}
 
 
+    private void CreateSoloQuest()
+    {
+
+    }
+
+	private void ActivatePassiveEvent()
+    {
+
+    }
+
+    private void ActivateFreePassTournament()
+    {
+
+    }
+
+    private void CreateBoostedSevenDayLogin()
+    {
+
+    }
+
+    private void CreateNonPayerOffer()
+    {
+
+    }
+
+    private void ActivateHappyHour()
+    {
+
+    }
+
+    private void CreateLatestDragonOffer ()
+    {
+
+    }
+
+    private void CreateSpecialGatchaOffer()
+    {
+
+    }
 
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
