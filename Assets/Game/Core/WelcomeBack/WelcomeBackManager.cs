@@ -29,6 +29,13 @@ public class WelcomeBackManager : SingletonInstance<WelcomeBackManager>
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 
+	private DateTime m_lastVisit;
+	private bool m_welcomeBackTriggered;
+
+	// WB configuration
+	private int m_minAbsentDays; // Amount of days the the player needs to be absent to get the WB
+
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -66,9 +73,18 @@ public class WelcomeBackManager : SingletonInstance<WelcomeBackManager>
 	/// </summary>
 	/// <returns>Returns true if the player has been X days without connecting to the game
 	/// and didnt enjoy this welcome back feature before.</returns>
-    public bool CheckPlayerComingBack()
+    public bool IsElegibleForWB()
 	{
-		return false;
+        // This player already enjoyed this feature
+        if (m_welcomeBackTriggered)
+		    return false;
+
+        // This player didnt spend enough days offline to get a WB
+		if (GameServerManager.GetEstimatedServerTime() < m_lastVisit.AddDays(m_minAbsentDays))
+			return false;
+
+        // All checks passed
+		return true;
 	}
 
 
@@ -77,6 +93,7 @@ public class WelcomeBackManager : SingletonInstance<WelcomeBackManager>
 	/// </summary>
     public void Activate()
 	{
+        
 		// Create Solo Quest
 
 		// Create Passive Event
@@ -105,6 +122,9 @@ public class WelcomeBackManager : SingletonInstance<WelcomeBackManager>
                 // Show Latest dragon offer
 			}
 		}
+
+		// Register WB
+		m_welcomeBackTriggered = true;
 	}
 
 
