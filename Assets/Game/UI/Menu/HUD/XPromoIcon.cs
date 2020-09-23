@@ -64,26 +64,20 @@ public class XPromoIcon : MonoBehaviour {
     /// </summary>
     public void Refresh()
     {
-        
-        bool newState = XPromoManager.instance.xPromoCycle.IsActive();
 
-        // Has the xpromo cycle been enabled/disabled in the last frame
-        if (newState != m_active)
+        m_active = XPromoManager.instance.xPromoCycle.IsActive();
+
+        if (m_active)
         {
-            if (newState)
-            {
-                // Display the xpromo icon
-                m_animationRoot.Show(true);
-            }
-            else
-            {
-                // Hide the xPromo icon
-                m_animationRoot.Hide(true);
-            }
-
-            m_active = newState;
-
+            // Display the xpromo icon
+            m_animationRoot.Show(true);
         }
+        else
+        {
+            // Hide the xPromo icon
+            m_animationRoot.Hide(true);
+        }
+
     }
 
     //------------------------------------------------------------------------//

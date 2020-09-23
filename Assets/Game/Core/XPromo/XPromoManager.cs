@@ -353,6 +353,8 @@ public class XPromoManager: Singleton<XPromoManager> {
 		{
     		string sku = m_incomingRewardsToProcess.Dequeue();
 
+			Log("Collecting incoming reward with SKU=" + sku);
+
 			// Find this reward in the content. Note that ABGroup param is not affecting the receiving end.
 			DefinitionNode rewardDef = DefinitionsManager.SharedInstance.GetDefinitionByVariable(DefinitionsCategory.XPROMO_REWARDS, "sku", sku);
 

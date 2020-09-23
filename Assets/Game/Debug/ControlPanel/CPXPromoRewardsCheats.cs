@@ -91,6 +91,9 @@ public class CPXPromoRewardsCheats : MonoBehaviour {
 
 		// Update CP UI
 		m_rewardIndexSetter.SetValue(XPromoManager.instance.xPromoCycle.totalNextRewardIdx);
+
+		// Throw some log lines to check if the xPromo should be active
+		XPromoManager.instance.xPromoCycle.CheckActiveConditions();
 	}
 
 	/// <summary>
@@ -123,6 +126,9 @@ public class CPXPromoRewardsCheats : MonoBehaviour {
 
 		// Update CP UI
 		m_rewardIndexSetter.SetValue(XPromoManager.instance.xPromoCycle.totalNextRewardIdx);
+
+		// Throw some log lines to check if the xPromo should be active
+		XPromoManager.instance.xPromoCycle.CheckActiveConditions();
 	}
 
 

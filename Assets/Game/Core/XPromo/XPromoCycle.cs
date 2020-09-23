@@ -502,4 +502,63 @@ public class XPromoCycle {
 		
 	}
 
+
+	//------------------------------------------------------------------------//
+	// DEBUG        		    											  //
+	//------------------------------------------------------------------------//
+    /// <summary>
+    /// Will check all the conditions for this feature to be activated and
+    /// show the output in the console for debug purposes
+    /// </summary>
+    public void CheckActiveConditions()
+    {
+
+		if (m_enabled == false)
+        {
+			XPromoManager.Log("Not active: The feature is not enabled in the settings");
+			return;
+        }
+
+
+		// The player needs to play more runs to see xPromo
+		if (UsersManager.currentUser.gamesPlayed < m_minRuns)
+		{
+			XPromoManager.Log("Not active: The minimum amount of runs ("+ m_minRuns + ") hasnt been reached");
+			return;
+		}
+
+		// Has the xpromo already started? or is it expired?
+		DateTime serverTime = GameServerManager.GetEstimatedServerTime();
+		if (serverTime < m_startDate || serverTime > m_endDate)
+		{
+			XPromoManager.Log("Not active: The xPromo feature has expired / not started yet");
+			return;
+		}
+
+		// The user is not recruited yet, and the recruitment period has ended
+		if (!IsRecruited() && serverTime > m_recruitmentLimitDate)
+		{
+			XPromoManager.Log("Not active: The recruiment date has finished");
+			return;
+		}
+
+		// Are there local rewards defined in the content?
+		if (m_localRewards.Count == 0)
+		{
+			XPromoManager.Log("Not active: There are no xpromo rewards defined");
+			return;
+		}
+
+		// Has the xpromo cycle been completed?
+		if (m_totalNextRewardIdx >= m_cycleSize)
+		{
+			XPromoManager.Log("Not active: The xPromo cycle has been already completed");
+			return;
+		}
+
+        // Default case. Everything ok
+		XPromoManager.Log("Active: all conditions met");
+
+	}
+
 }
