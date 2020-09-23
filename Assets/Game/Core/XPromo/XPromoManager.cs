@@ -40,7 +40,7 @@ public class XPromoManager: Singleton<XPromoManager> {
 	public const string GAME_CODE_HSE = "hse";
 
 	// Deeplink params
-	public const string XPROMO_REWARD_KEY = "rewardSku";
+	public const string XPROMO_REWARD_KEY = "RewardSKU";
 
 	// Tracking constants
 	private const string DEFAULT_SOURCE = "";
