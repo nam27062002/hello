@@ -146,24 +146,9 @@ public class XPromoManager: Singleton<XPromoManager> {
 	/// <param name="rewardsId"></param>
 	public void SendRewardToHSE(LocalRewardHSE _reward)
     {
-
-        // Make some safety checks 
-        if (!m_dynamicShortLinks.ContainsKey(_reward.sku))
-        {
-            // The requested reward shortlink is not defined
-			Debug.LogError("There is no HSE shortlink defined for the reward with sku=" + _reward.sku);
-			return;
-        }
-
-		string url = m_dynamicShortLinks[_reward.sku];
-
-        if (string.IsNullOrEmpty(url))
-        {
-			// The url was left empty in the scriptable object
-			Debug.LogError("The HSE shortlink url is empty.");
-			return;
-		}
-
+		// Get the deep link url for this reward
+		string url = GetShortLinkForReward(_reward.sku);
+		if(string.IsNullOrEmpty(url)) return;
 
 		// Send the reward with id = _reward.rewardSku
 		Log("Reward with SKU='" + _reward.sku + "' sent to HSE");
@@ -173,6 +158,30 @@ public class XPromoManager: Singleton<XPromoManager> {
 		Application.OpenURL(url);
 
     }
+
+	/// <summary>
+	/// Get the short link corresponding to a reward to send to HSE.
+	/// </summary>
+	/// <param name="_rewardSku">The sku of the reward whose link we want.</param>
+	/// <returns>The link to use to open HSE and obtain the reward. Can be <c>null</c> if no link was defined for the given reward sku.</returns>
+	public string GetShortLinkForReward(string _rewardSku) {
+		// Make some safety checks 
+		if(!m_dynamicShortLinks.ContainsKey(_rewardSku)) {
+			// The requested reward shortlink is not defined
+			Debug.LogError("There is no HSE shortlink defined for the reward with sku=" + _rewardSku);
+			return null;
+		}
+
+		string url = m_dynamicShortLinks[_rewardSku];
+		if(string.IsNullOrEmpty(url)) {
+			// The url was left empty in the scriptable object
+			Debug.LogError("The HSE shortlink url is empty.");
+			return null;
+		}
+
+		// All good!
+		return url;
+	}
 	
 
     /// <summary>
