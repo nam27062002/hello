@@ -102,6 +102,11 @@ public class XPromoCycle {
 		}
 	}
 
+	// Tracking
+	private string m_experimentName = "";
+	public string experimentName { get { return m_experimentName; } }
+	private bool m_experimentChecked = false;
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -140,7 +145,8 @@ public class XPromoCycle {
 		m_startDate = DateTime.MinValue;
 		m_endDate = DateTime.MinValue;
 
-	}
+		m_experimentChecked = false;
+}
 
 
 	/// <summary>
@@ -309,11 +315,26 @@ public class XPromoCycle {
         if (m_totalNextRewardIdx >= m_cycleSize)
 			return false;
 
+		// All checks passed. The xPromo feature is active!
 
+		// [AOC] Update tracking vars if needed
+		if(!m_experimentChecked) {
+			TrackingPersistenceSystem trackingPersistence = HDTrackingManager.Instance.TrackingPersistenceSystem;
+			if(trackingPersistence != null) {
+				// Are we starting a new experiment?
+				string lastExperimentName = trackingPersistence.XPromoExperimentName;
+				if(m_experimentName != lastExperimentName) {
+					// Yes!! Store activation date
+					trackingPersistence.XPromoActivationDate = serverTime;
+				}
 
-		// All checks passed. The xPromo feature is active
+				// Mark as checked, we don't need to do it again
+				m_experimentChecked = true;
+			}
+		}
+
+		// Done!
 		return true;
-
 	}
 
 
@@ -415,7 +436,9 @@ public class XPromoCycle {
 			Debug.LogError("The number of xPromo active rewards doesn´t match the xPromo cycle length! Please, fix the content tables.");
 		}
 
-
+		// Tracking vars
+		m_experimentName = settingsDef.GetAsString("experiment");
+		m_experimentChecked = false;
 	}
 
 

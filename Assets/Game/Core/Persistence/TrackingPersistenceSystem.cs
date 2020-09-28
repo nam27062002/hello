@@ -1,3 +1,5 @@
+using System;
+
 public class TrackingPersistenceSystem : PersistenceSystem
 {
     private const string PARAM_SERVER_USER_ID = "accID";
@@ -43,6 +45,10 @@ public class TrackingPersistenceSystem : PersistenceSystem
 
     // Events sent that should be sent only once.
     private const string PARAM_EVENTS_ALREADY_SENT = "eventsAlreadySent";
+
+    // XPromo
+    private const string PARAM_XPROMO_EXPERIMENT_NAME = "xpromoExperimentName";    // Unique identifier of the last xpromo experiment activated on for this player
+    private const string PARAM_XPROMO_ACTIVATION_DATE = "xpromoActivationDate"; // The date the xpromo was activated for this player
 
     // Tracking user ID generated upon first time session is started, uses GUID as we don't have server at this point
     public string UserID
@@ -419,6 +425,27 @@ public class TrackingPersistenceSystem : PersistenceSystem
         }
     }
 
+    // XPromo
+    public string XPromoExperimentName {
+        get { return Cache_GetString(PARAM_XPROMO_EXPERIMENT_NAME); }
+        set { Cache_SetString(PARAM_XPROMO_EXPERIMENT_NAME, value); }
+	}
+
+    public DateTime XPromoActivationDate {
+        get {
+            DateTime date = DateTime.MaxValue;
+            if(PersistenceUtils.SafeTryParse<DateTime>(Cache_GetString(PARAM_XPROMO_ACTIVATION_DATE), out date)) {
+                return date;
+			} else {
+                return DateTime.MaxValue;
+			}
+		}
+
+        set {
+            Cache_SetString(PARAM_XPROMO_ACTIVATION_DATE, PersistenceUtils.SafeToString(value));
+		}
+	}
+
     public TrackingPersistenceSystem()
     {
         m_systemName = "Tracking";
@@ -530,6 +557,14 @@ public class TrackingPersistenceSystem : PersistenceSystem
         Cache_AddData(key, dataInt);
 
         key = PARAM_EVENTS_ALREADY_SENT;
+        dataString = new CacheDataString(key, "");
+        Cache_AddData(key, dataString);
+
+        key = PARAM_XPROMO_EXPERIMENT_NAME;
+        dataString = new CacheDataString(key, "");
+        Cache_AddData(key, dataString);
+
+        key = PARAM_XPROMO_ACTIVATION_DATE;
         dataString = new CacheDataString(key, "");
         Cache_AddData(key, dataString);
 
