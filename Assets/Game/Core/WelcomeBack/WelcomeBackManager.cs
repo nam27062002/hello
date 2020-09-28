@@ -35,6 +35,9 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
 	// WB configuration
 	private int m_minAbsentDays; // Amount of days the the player needs to be absent to get the WB
 
+	// Benefit definitions from content
+	DefinitionNode m_soloQuestDef;
+    
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -65,6 +68,7 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
 	public void InitFromDefinitions()
 	{
 
+		
 	}
 
 
@@ -78,6 +82,8 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
         // This player already enjoyed this feature
         if (m_welcomeBackTriggered)
 		    return false;
+
+		m_lastVisit = UsersManager.currentUser.saveTimestamp;
 
         // This player didnt spend enough days offline to get a WB
 		if (GameServerManager.GetEstimatedServerTime() < m_lastVisit.AddDays(m_minAbsentDays))

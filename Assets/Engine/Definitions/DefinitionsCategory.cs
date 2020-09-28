@@ -125,5 +125,8 @@ public class DefinitionsCategory
 	// UI
 	public const string SHARE_LOCATIONS = "SHARE_LOCATIONS";
     public const string ICONS = "ICONS";
+
+	// Welcome back perks
+	public const string SOLO_QUESTS = "SOLO_QUESTS";
 };
     

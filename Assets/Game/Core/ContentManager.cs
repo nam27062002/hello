@@ -270,6 +270,9 @@ public class ContentManager
         // Baby Dragons
         kDefinitionFiles.Add(DefinitionsCategory.BABY_DRAGONS_SHARED_POWER, new string[] { "Rules/sharedPowerupDefinitions" });
 
+        // Welcome back
+        kDefinitionFiles.Add(DefinitionsCategory.SOLO_QUESTS, new string[] { "Rules/soloQuestsDefinitions" });
+
         DefinitionsManager.SharedInstance.Initialise(ref kDefinitionFiles, !UseDeltaContent);
     }
 
