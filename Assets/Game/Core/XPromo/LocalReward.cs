@@ -61,6 +61,7 @@ namespace XPromo
 		public int altRewardPC { get { return m_altRewardPC; } }        
 
 		protected XPromoManager.Game m_destination;
+		public XPromoManager.Game destination { get { return m_destination; } }
 
 
         //------------------------------------------------------------------------//
