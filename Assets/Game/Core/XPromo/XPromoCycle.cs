@@ -182,53 +182,74 @@ public class XPromoCycle {
 		// Find the proper next reward (in case the player already owns it, find a replacement)
 		LocalReward reward = m_localRewards [_index];
 
-        // An HSE reward can always be collected.
-        // We make sure the player doesnt lose the reward if he fails to open the HSE app.
+		// Prepare tracking vars
+		HDTrackingManager.XPromoRewardTrackingData rewardTrackingData = new HDTrackingManager.XPromoRewardTrackingData();
+		rewardTrackingData.sourceReward = reward;
+		rewardTrackingData.sourceCycle = this;
+		rewardTrackingData.isAltReward = false;
+
+		// Reward for HSE?
 		if (reward is LocalRewardHSE)
 		{
-			// Open the HSE link
-			XPromoManager.instance.SendRewardToHSE((LocalRewardHSE)reward);
+			// An HSE reward can always be collected.
+			// We make sure the player doesnt lose the reward if he fails to open the HSE app.
+			LocalRewardHSE hseReward = (LocalRewardHSE)reward;
 
+			// Open the HSE link
+			XPromoManager.instance.SendRewardToHSE(hseReward);
+
+			// Tracking data
+			rewardTrackingData.sku = hseReward.rewardSku;
+			rewardTrackingData.amount = hseReward.amount;
 		}
+
+		// Reward for HD?
 		else if (reward is LocalRewardHD)
 		{   
 			// Make sure the reward is available
 			if (!CanCollectNextReward())
 				return null;
 
-            Metagame.Reward rewardContent = ((LocalRewardHD)reward).reward;
+			// Aux vars
+			Metagame.Reward finalRewardContent = ((LocalRewardHD)reward).reward;
+			Metagame.Reward altRewardContent = null;
 
-			if (rewardContent is Metagame.RewardCurrency)
+			// Is it a currency reward?
+			if (finalRewardContent is Metagame.RewardCurrency)
 			{
                 // Give coins/gems to the user
-				UsersManager.currentUser.EarnCurrency(((Metagame.RewardCurrency)rewardContent).currency, (ulong)rewardContent.amount, false,
+				UsersManager.currentUser.EarnCurrency(((Metagame.RewardCurrency)finalRewardContent).currency, (ulong)finalRewardContent.amount, false,
                                                         HDTrackingManager.EEconomyGroup.REWARD_XPROMO_LOCAL);
 
+				// Tracking data
+				rewardTrackingData.sku = finalRewardContent.type;   // "sc" or "hc", will match the required format for tracking spec
+				rewardTrackingData.amount = (int)finalRewardContent.amount;
 			}
 			else  // Dragons, pets and eggs
 			{
 				// Does the player already have this item?
-				if (!rewardContent.IsAlreadyOwned())
+				if (!finalRewardContent.IsAlreadyOwned())
 				{
 					// Add the reward to the queue
-					UsersManager.currentUser.PushReward(rewardContent);
+					UsersManager.currentUser.PushReward(finalRewardContent);
 
-                }
+					// Tracking data
+					rewardTrackingData.sku = finalRewardContent.sku;
+					rewardTrackingData.amount = (int)finalRewardContent.amount;
+				}
                 else
                 { 
 
 					// So the player already owns the reward. We are going to give him an alternative reward
 					// in form of currencies as defined in the content
-					Metagame.Reward altReward;
-
-                    if (reward.altRewardSC > 0)
+					if (reward.altRewardSC > 0)
                     {
-						altReward = Metagame.Reward.CreateTypeCurrency(reward.altRewardSC, UserProfile.Currency.SOFT,
+						altRewardContent = Metagame.Reward.CreateTypeCurrency(reward.altRewardSC, UserProfile.Currency.SOFT,
                             Metagame.Reward.Rarity.UNKNOWN, HDTrackingManager.EEconomyGroup.REWARD_XPROMO_LOCAL, reward.sku);
 					}
                     else  if (reward.altRewardPC > 0)
                     {
-						altReward = Metagame.Reward.CreateTypeCurrency(reward.altRewardPC, UserProfile.Currency.HARD,
+						altRewardContent = Metagame.Reward.CreateTypeCurrency(reward.altRewardPC, UserProfile.Currency.HARD,
 	                        Metagame.Reward.Rarity.UNKNOWN, HDTrackingManager.EEconomyGroup.REWARD_XPROMO_LOCAL, reward.sku);
 					}
                     else
@@ -236,21 +257,30 @@ public class XPromoCycle {
 
                         // Someone forgot to define the alternative reward. So we give the player the original one,
 						// and the reward system in the game will take care of giving the player an equivalent amount of coins/gems
-						altReward = rewardContent;
+						altRewardContent = finalRewardContent;
 
 					}
 
+					// Tracking data
+					if(altRewardContent is Metagame.RewardCurrency) {
+						rewardTrackingData.sku = altRewardContent.type;	// "hc", "sc", etc.
+					} else {
+						rewardTrackingData.sku = altRewardContent.sku;
+					}
+					rewardTrackingData.amount = (int)altRewardContent.amount;
+					rewardTrackingData.isAltReward = true;
+
 					// Add the reward to the queue
-					UsersManager.currentUser.PushReward(altReward);
-
+					UsersManager.currentUser.PushReward(altRewardContent);
 				}
-
 			}
 
-			XPromoManager.Log("Reward " + rewardContent.ToString() + " collected ");
+			XPromoManager.Log("Reward " + finalRewardContent.ToString() + " collected ");
 
 		}
 
+		// Tracking!
+		HDTrackingManager.Instance.Notify_XPromoRewardCollected(rewardTrackingData);
 
 		// If we are collecting this reward for first time
 		if (_index == nextRewardIdx)

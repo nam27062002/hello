@@ -735,11 +735,30 @@ public class HDTrackingManager
     #endregion referral
 
     #region xpromo
+    public class XPromoRewardTrackingData {
+        public string sku = "";
+        public int amount = 1;
+        public bool isAltReward = false;
+
+        public XPromo.LocalReward sourceReward = null;
+        public XPromoCycle sourceCycle = null;
+
+        public override string ToString() {
+            return "{\n" + 
+                "\tsku: " + sku + "\n" +
+                "\tamount: " + amount + "\n" +
+                "\tisAltReward: " + isAltReward + "\n" +
+                "\tsourceReward: " + (sourceReward != null ? sourceReward.sku : "NULL") + "\n" +
+                "\tsourceCycle: " + (sourceCycle != null ? sourceCycle.experimentName : "NULL") + "\n" +
+                "}";
+		}
+	}
+
     /// <summary>
     /// A reward has been collected in HD or sent to HSE.
     /// </summary>
-    /// <param name="_rewardDef">The reward data.</param>
-    public virtual void Notify_XPromoRewardCollected(DefinitionNode _rewardDef) { }
+    /// <param name="_reward">The reward data.</param>
+    public virtual void Notify_XPromoRewardCollected(XPromoRewardTrackingData _reward) { }
 
     /// <summary>
     /// A reward coming from HSE has been received and validated via deep link.
