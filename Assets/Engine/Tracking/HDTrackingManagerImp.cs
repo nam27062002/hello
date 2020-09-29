@@ -332,6 +332,38 @@ public class HDTrackingManagerImp : HDTrackingManager {
         // Calety needs to be initialized every time a session starts because the session count has changed
         InitTrackingManager();
 
+        // [AOC] Figure out player source
+        if(TrackingPersistenceSystem.PlayerSource == TrackingPersistenceSystem.PLAYER_SOURCE_UNDEFINED) {
+            // First session?
+            if(Session_IsFirstTime) {
+                // Referral?
+                // Mark it if we have a valid referrer Id, regardless of whether it's valid or not, since we only care about where the player comes from
+                if(!string.IsNullOrEmpty(UsersManager.currentUser.referrerUserId)) {
+                    TrackingPersistenceSystem.PlayerSource = TrackingPersistenceSystem.PLAYER_SOURCE_REFERRAL;
+				}
+
+                // XPromo?
+                // Again, we don't care if the received rewards are not valid or already collected, we only care about where the player comes from
+                else if(XPromoManager.instance.IncomingRewardsReceived) {
+                    TrackingPersistenceSystem.PlayerSource = TrackingPersistenceSystem.PLAYER_SOURCE_XPROMO_HSE;
+                }
+
+                // Paid?
+                else if(false) {
+                    // [AOC] TODO!!
+                    // Don't have the tech to do it as of now, but HSE is able to track paid users. Figure out how.
+				}
+
+                // The rest are considered organic
+                else {
+                    TrackingPersistenceSystem.PlayerSource = TrackingPersistenceSystem.PLAYER_SOURCE_ORGANIC;
+				}
+			} else {
+                // Mark it as unknown
+                TrackingPersistenceSystem.PlayerSource = TrackingPersistenceSystem.PLAYER_SOURCE_UNKNOWN;
+			}
+		}
+
         InitSDKs();
 
         //-------------------------------

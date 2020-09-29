@@ -79,6 +79,12 @@ public class XPromoManager: Singleton<XPromoManager> {
 	// HSE dynamic short links
 	private Dictionary<string, string> m_dynamicShortLinks;
 
+	// Helper to detect player source
+	public bool IncomingRewardsReceived {
+		get;
+		private set;
+	}
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -93,8 +99,10 @@ public class XPromoManager: Singleton<XPromoManager> {
 		m_incomingRewardsToProcess = new Queue<string>();
 		m_collectedIncomingRewards = new List<string>();
 
+		IncomingRewardsReceived = false;
+
 		// Debug incoming deeplink
-        /*
+		/*
         Dictionary<string,string> dLinkParams = new Dictionary<string, string>();
         dLinkParams.Add(XPROMO_REWARD_KEY, "reward_hse_hd_2a" );
         Messenger.Broadcast<Dictionary<string, string>>(MessengerEvents.INCOMING_DEEPLINK_NOTIFICATION, dLinkParams);
@@ -315,6 +323,8 @@ public class XPromoManager: Singleton<XPromoManager> {
 
 			// Store the incoming rewards SKU. Treat it later.
 			m_incomingRewardsToProcess.Enqueue(value);
+
+			IncomingRewardsReceived = true;
 		}
 
 
@@ -375,6 +385,9 @@ public class XPromoManager: Singleton<XPromoManager> {
 			{
 				// All checks passed. Put it in the pending rewards queue
 				UsersManager.currentUser.PushReward(reward);
+
+				// Tracking!
+				// [AOC] TODO!!
 			}
 
 			// At this point consider the reward as collected

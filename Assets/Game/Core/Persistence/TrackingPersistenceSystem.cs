@@ -50,6 +50,9 @@ public class TrackingPersistenceSystem : PersistenceSystem
     private const string PARAM_XPROMO_EXPERIMENT_NAME = "xpromoExperimentName";    // Unique identifier of the last xpromo experiment activated on for this player
     private const string PARAM_XPROMO_ACTIVATION_DATE = "xpromoActivationDate"; // The date the xpromo was activated for this player
 
+    // Player source
+    private const string PARAM_PLAYER_SOURCE = "playerSource";  // Where does this player come from? Organic, Paid, XPromo, Referral, etc.
+
     // Tracking user ID generated upon first time session is started, uses GUID as we don't have server at this point
     public string UserID
     {
@@ -446,6 +449,18 @@ public class TrackingPersistenceSystem : PersistenceSystem
 		}
 	}
 
+    // Player source - where does this player come from?
+    public const string PLAYER_SOURCE_UNDEFINED = "";
+    public const string PLAYER_SOURCE_UNKNOWN = "unknown";
+    public const string PLAYER_SOURCE_ORGANIC = "organic";
+    public const string PLAYER_SOURCE_PAID = "paid";
+    public const string PLAYER_SOURCE_REFERRAL = "referral";
+    public const string PLAYER_SOURCE_XPROMO_HSE = "xpromoHSE";
+    public string PlayerSource {
+        get { return Cache_GetString(PARAM_PLAYER_SOURCE); }
+        set { Cache_SetString(PARAM_PLAYER_SOURCE, value); }
+	}
+
     public TrackingPersistenceSystem()
     {
         m_systemName = "Tracking";
@@ -566,6 +581,10 @@ public class TrackingPersistenceSystem : PersistenceSystem
 
         key = PARAM_XPROMO_ACTIVATION_DATE;
         dataString = new CacheDataString(key, "");
+        Cache_AddData(key, dataString);
+
+        key = PARAM_PLAYER_SOURCE;
+        dataString = new CacheDataString(key, PLAYER_SOURCE_UNDEFINED);
         Cache_AddData(key, dataString);
 
         Reset();
