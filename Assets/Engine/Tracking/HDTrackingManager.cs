@@ -735,6 +735,9 @@ public class HDTrackingManager
     #endregion referral
 
     #region xpromo
+    /// <summary>
+    /// Auxliar class to send tracking data to the manager.
+    /// </summary>
     public class XPromoRewardTrackingData {
         public string sku = "";
         public int amount = 1;
@@ -743,6 +746,33 @@ public class HDTrackingManager
         public XPromo.LocalReward sourceReward = null;
         public XPromoCycle sourceCycle = null;
 
+        /// <summary>
+        /// Initialize the tracking data with the given parameters.
+        /// Can still be modified afterwards using the public members of the class.
+        /// </summary>
+        /// <param name="_reward"></param>
+        /// <param name="_isAlt"></param>
+        /// <param name="_sourceReward"></param>
+        /// <param name="_sourceCycle"></param>
+        public void InitWithReward(Metagame.Reward _reward, bool _isAlt, XPromo.LocalReward _sourceReward, XPromoCycle _sourceCycle) {
+            // Sku depends on reward type
+            if(_reward is Metagame.RewardCurrency) {
+                sku = _reward.type; // "hc", "sc", etc.
+            } else {
+                sku = _reward.sku;
+            }
+
+            // Rest of parameters as is
+            amount = (int)_reward.amount;
+            isAltReward = _isAlt;
+            sourceReward = _sourceReward;
+            sourceCycle = _sourceCycle;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public override string ToString() {
             return "{\n" + 
                 "\tsku: " + sku + "\n" +
@@ -763,8 +793,8 @@ public class HDTrackingManager
     /// <summary>
     /// A reward coming from HSE has been received and validated via deep link.
     /// </summary>
-    /// <param name="_rewardDef">The reward data.</param>
-    public virtual void Notify_XPromoRewardReceived(DefinitionNode _rewardDef) { }
+    /// <param name="_reward">The reward data.</param>
+    public virtual void Notify_XPromoRewardReceived(XPromoRewardTrackingData _reward) { }
 
     /// <summary>
     /// A button has been pressed in the XPromo UI.

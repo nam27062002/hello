@@ -18,6 +18,7 @@ using System.Collections.Generic;
 using System.Text;
 using Calety.Tracking;
 using XPromo;
+using FirebaseWrapper;
 
 public class HDTrackingManagerImp : HDTrackingManager {
     private enum EState {
@@ -1564,9 +1565,9 @@ public class HDTrackingManagerImp : HDTrackingManager {
     /// <summary>
     /// A reward coming from HSE has been received and validated via deep link.
     /// </summary>
-    /// <param name="_rewardDef">The reward data.</param>
-    public override void Notify_XPromoRewardReceived(DefinitionNode _rewardDef) {
-        Track_XPromoRewardReceived(_rewardDef);
+    /// <param name="_reward">The reward data.</param>
+    public override void Notify_XPromoRewardReceived(XPromoRewardTrackingData _reward) {
+        Track_XPromoRewardReceived(_reward);
     }
 
     /// <summary>
@@ -2984,9 +2985,40 @@ public class HDTrackingManagerImp : HDTrackingManager {
     /// A reward coming from HSE has been received and validated via deep link.
     /// </summary>
     /// <param name="_rewardDef">The reward data.</param>
-    private void Track_XPromoRewardReceived(DefinitionNode _rewardDef) {
+    private void Track_XPromoRewardReceived(XPromoRewardTrackingData _reward) {
         Log("Track_XPromoRewardReceived "
-           + ", _rewardDef = " + (_rewardDef != null ? _rewardDef.sku : "NULL"));
+            + ", _reward = " + (_reward != null ? _reward.ToString() : "NULL"));
+
+        // Ignore if given reward is not valid
+        if(_reward == null) return;
+        if(_reward.sourceReward == null) return;
+
+        // Compute some parameters
+        // Figure out deep link used to receive this reward
+        string deeplink = "";
+        List<Firebase.DynamicLinks.ReceivedDynamicLinkEventArgs> receivedLinks = DynamicLinksWrapper.getDynamicLinksData;
+        for(int i = 0; i < receivedLinks.Count; ++i) {
+            // Is this the link containing the xpromo data?
+            // [AOC] A bit hacky, but we don't have access to internal vars on DynamicLinksWrapper to consult the params from the link without modifying Calety - and no time for that now
+            string urlQuery = receivedLinks[i].ReceivedDynamicLink.Url.Query;
+            urlQuery = Uri.UnescapeDataString(urlQuery);
+            if(urlQuery.Contains(XPromoManager.XPROMO_REWARD_KEY) && urlQuery.Contains(_reward.sourceReward.sku)) {
+                // Match! Use this link for tracking and break the loop
+                deeplink = receivedLinks[i].ReceivedDynamicLink.Url.OriginalString;
+			}
+		}
+        
+        // Create event, fill parameters and enqueue it
+        HDTrackingEvent e = new HDTrackingEvent("custom.xpromo.dailyLoginCollect.destination"); {
+            Track_AddParamInt(e, TRACK_PARAM_DAY, _reward.sourceReward.day);
+            Track_AddParamInt(e, TRACK_PARAM_AMOUNT, _reward.amount);
+            Track_AddParamString(e, TRACK_PARAM_REWARD_SKU, _reward.sku);
+            Track_AddParamBool(e, TRACK_PARAM_ALT_REWARD, _reward.isAltReward);
+            Track_AddParamString(e, TRACK_PARAM_DEEP_LINK, deeplink);
+            Track_AddParamBool(e, TRACK_PARAM_XPROMO_RECENTLY_INSTALLED, Session_IsFirstTime);
+            Track_AddParamString(e, TRACK_PARAM_AB_TEST_GROUP, XPromoCycle.ABGroupToString(_reward.sourceReward.abGroup));
+        }
+        m_eventQueue.Enqueue(e);
     }
 
     /// <summary>
