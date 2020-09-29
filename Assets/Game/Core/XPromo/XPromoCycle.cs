@@ -41,6 +41,15 @@ public class XPromoCycle {
 		}
 	}
 
+	public static ABGroup StringToABGroup(string _str) {
+		if(_str.ToLowerInvariant() == "a") {
+			return ABGroup.A;
+		} else if(_str.ToLowerInvariant() == "b") {
+			return ABGroup.B;
+		}
+		return ABGroup.UNDEFINED;
+	}
+
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
@@ -396,15 +405,7 @@ public class XPromoCycle {
 		{
             // By default everyone is in the group UNDEFINED
             string param = settingsDef.GetAsString("ABGroup", "");
-
-            if (param.ToLower() == "a")
-            {
-				m_abGroup = ABGroup.A;
-            }
-            else if (param.ToLower() == "b")
-            {
-				m_abGroup = ABGroup.B;
-            }
+			m_abGroup = StringToABGroup(param);
 		}
 
 		if (settingsDef.Has("startDate"))
