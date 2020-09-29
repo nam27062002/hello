@@ -63,6 +63,8 @@ namespace XPromo
 		protected XPromoManager.Game m_destination;
 		public XPromoManager.Game destination { get { return m_destination; } }
 
+		protected XPromoCycle.ABGroup m_abGroup = XPromoCycle.ABGroup.UNDEFINED;
+		public XPromoCycle.ABGroup abGroup { get { return m_abGroup; } }
 
         //------------------------------------------------------------------------//
         // OTHER METHODS														  //
@@ -129,6 +131,7 @@ namespace XPromo
 			localReward.m_day = _def.GetAsInt("day");
 			localReward.m_enabled = _def.GetAsBool("enabled");
 			localReward.m_sku = _def.sku;
+			localReward.m_abGroup = XPromoCycle.StringToABGroup(_def.GetAsString("abGroup", ""));
 
 			return localReward;
                        
