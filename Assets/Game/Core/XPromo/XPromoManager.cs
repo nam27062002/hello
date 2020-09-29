@@ -211,7 +211,7 @@ public class XPromoManager: Singleton<XPromoManager> {
         {
 
 			// If the player is not in this AB group, ignore this entry
-			if (rewardLink.abGroup.ToString().ToLower() == m_xPromoCycle.aBGroup.ToString().ToLower())
+			if (rewardLink.abGroup.ToString().ToLower() == m_xPromoCycle.abGroup.ToString().ToLower())
             {
                 // Use the reward sku as key in the links dictionary
 				result.Add(rewardLink.rewardSKU, rewardLink.url);

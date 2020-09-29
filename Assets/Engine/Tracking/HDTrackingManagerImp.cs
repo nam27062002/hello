@@ -2974,7 +2974,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
             Track_AddParamString(e, TRACK_PARAM_DEEP_LINK, deepLinkUrl);
             Track_AddParamBool(e, TRACK_PARAM_XPROMO_HSE_INSTALLED, XPromoManager.IsHungrySharkGameInstalled());
             Track_AddParamPlayerProgress(e);
-            Track_AddParamString(e, TRACK_PARAM_AB_TEST_GROUP, XPromoCycle.ABGroupToString(_reward.sourceCycle.aBGroup));
+            Track_AddParamString(e, TRACK_PARAM_AB_TEST_GROUP, XPromoCycle.ABGroupToString(_reward.sourceCycle.abGroup));
             Track_AddParamString(e, TRACK_PARAM_AB_TEST_NAME, _reward.sourceCycle.experimentName);
         }
         m_eventQueue.Enqueue(e);
