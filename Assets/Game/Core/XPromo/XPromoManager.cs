@@ -71,9 +71,13 @@ public class XPromoManager: Singleton<XPromoManager> {
 	// Will be given to the player when we have a chance in the selection screen.
 	private Queue<String> m_incomingRewardsToProcess;
 
+    // Same that previous but without not valid/already collected/empty rewards
+	private Queue<String> m_processedIncomingRewards;
 
 	// List of already collected incoming rewards. So we dont give them twice.
 	private List<String> m_collectedIncomingRewards;
+
+    
 
 
 	// HSE dynamic short links
@@ -91,7 +95,9 @@ public class XPromoManager: Singleton<XPromoManager> {
 		Messenger.AddListener<Dictionary<string,string>>(MessengerEvents.INCOMING_DEEPLINK_NOTIFICATION, OnDeepLinkNotification);
 
 		m_incomingRewardsToProcess = new Queue<string>();
+		m_processedIncomingRewards = new Queue<string>();
 		m_collectedIncomingRewards = new List<string>();
+
 
 		// Debug incoming deeplink
         /*
@@ -211,28 +217,48 @@ public class XPromoManager: Singleton<XPromoManager> {
     /// </summary>
     public bool IsIncomingRewardWaiting()
     {
-		// First of all process the incoming rewards queue to discard invalid/already collected SKUs
-		DiscardInvalidIncomingRewards();
+		ProcessIncomingRewards();
 
-		return m_incomingRewardsToProcess.Count > 0;
+		return m_processedIncomingRewards.Count > 0;
     }
+
+
+    /// <summary>
+    /// Get the next reward waiting in the queue of processed incoming rewards
+    /// </summary>
+    /// <param name="_alternativeReward">If true returns the alternative reward (usually a currency)</param>
+    /// <returns>The next metagame Reward waiting to be collected</returns>
+    public Metagame.Reward GetNextWaitingReward( bool _alternativeReward)
+    {
+		ProcessIncomingRewards();
+
+		if (m_processedIncomingRewards.Count > 0)
+        {
+			// Find this reward in the content. Note that ABGroup param is not affecting the receiving end.
+			DefinitionNode rewardDef = DefinitionsManager.SharedInstance.GetDefinitionByVariable(DefinitionsCategory.XPROMO_REWARDS, "sku", m_processedIncomingRewards.Peek());
+
+            // The list of skus should be already sanitized, so we dont do any extra check
+
+			// Create a reward from the content definition
+			return ( CreateRewardFromDef(rewardDef, _alternativeReward) );
+		}
+
+		return null;
+	}
+
+
 
 
 	/// <summary>
 	/// Checks if there is any incoming reward waiting to be processed. Clean all the non valid/already collected
-    /// rewards in the incoming rewards queue.
+	/// rewards and move the valid ones to the processed queue.
 	/// </summary>
 
-	public void DiscardInvalidIncomingRewards()
+	public void ProcessIncomingRewards()
 	{
-		// No incoming rewards waiting
+		// No incoming rewards waitinglos
 		if (m_incomingRewardsToProcess.Count == 0)
 			return;
-
-
-		// Create a temp queue to keep the valid incoming rewards
-		Queue<string> validRewards = new Queue<string>();
-
 
 		while (m_incomingRewardsToProcess.Count > 0)
 		{
@@ -275,12 +301,30 @@ public class XPromoManager: Singleton<XPromoManager> {
 			}
 
 			// All checks passed. The incoming reward is valid candidate.
-			validRewards.Enqueue(sku);
+			if (!m_processedIncomingRewards.Contains(sku))
+			{
+				m_processedIncomingRewards.Enqueue(sku);
+			}
 
 		}
 
-		// Replace the old queue with new one that contains only the valid rewards
-		m_incomingRewardsToProcess = validRewards;
+	}
+
+
+	/// <summary>
+	/// Reset all the rewards progression. Used for debugging purposes.
+	/// </summary>
+	private void ResetProgression()
+	{
+
+		// Go back to the first reward
+		m_xPromoCycle.totalNextRewardIdx = 0;
+
+		// Reset the timestamp, so the first reward can be collected.
+		m_xPromoCycle.nextRewardTimestamp = DateTime.MinValue;
+
+		// Reset all the incoming rewards
+		m_collectedIncomingRewards.Clear();
 
 	}
 
@@ -321,23 +365,6 @@ public class XPromoManager: Singleton<XPromoManager> {
 	}
 
 
-    /// <summary>
-    /// Reset all the rewards progression. Used for debugging purposes.
-    /// </summary>
-    private void ResetProgression()
-    {
-
-		// Go back to the first reward
-		m_xPromoCycle.totalNextRewardIdx = 0;
-
-		// Reset the timestamp, so the first reward can be collected.
-		m_xPromoCycle.nextRewardTimestamp = DateTime.MinValue;
-
-		// Reset all the incoming rewards
-		m_collectedIncomingRewards.Clear();
-
-	}
-
 
 	/// <summary>
 	/// The user collected the incoming rewards, so put them all in the pending reward queue
@@ -345,13 +372,13 @@ public class XPromoManager: Singleton<XPromoManager> {
 	public void OnCollectAllIncomingRewards()
 	{
 		// First of all process the incoming rewards queue to discard invalid/already collected SKUs
-		DiscardInvalidIncomingRewards();
+		ProcessIncomingRewards();
 
 		// From now no more checks are needed, as all the elements in the queue are valid
 
-		while (m_incomingRewardsToProcess.Count > 0)
+		while (m_processedIncomingRewards.Count > 0)
 		{
-    		string sku = m_incomingRewardsToProcess.Dequeue();
+    		string sku = m_processedIncomingRewards.Dequeue();
 
 			Log("Collecting incoming reward with SKU=" + sku);
 
@@ -360,6 +387,14 @@ public class XPromoManager: Singleton<XPromoManager> {
 
 			// Create a reward from the content definition
 			Metagame.Reward reward = CreateRewardFromDef(rewardDef);
+
+
+            // If the reward is already owned, give the alternative currency reward
+            if (reward.IsAlreadyOwned())
+            {
+				reward = CreateRewardFromDef(rewardDef, true);
+			}
+
 
             // Just in case
 			if (reward != null)
@@ -375,6 +410,8 @@ public class XPromoManager: Singleton<XPromoManager> {
 
 	}
 
+
+
 	//------------------------------------------------------------------------//
 	// STATIC   															  //
 	//------------------------------------------------------------------------//
@@ -384,14 +421,42 @@ public class XPromoManager: Singleton<XPromoManager> {
 	/// </summary>
 	/// <param name="_def">Definition from xPromo rewards table.</param>
 	/// <param name="_origin">The app that granted the reward</param>
+	/// <param name="_alternativeReward">If true, creates the alternative reward (usually currency) </param>
 	/// <returns>New reward created from the given definition.</returns>
-	private static Metagame.Reward CreateRewardFromDef(DefinitionNode _def)
+	private static Metagame.Reward CreateRewardFromDef(DefinitionNode _def, bool _alternativeReward = false)
 	{
 
 		Metagame.Reward.Data rewardData = new Metagame.Reward.Data();
-		rewardData.typeCode = _def.GetAsString("type");
-		rewardData.amount = _def.GetAsLong("amount");
-		rewardData.sku = _def.GetAsString("rewardSku");
+
+		if (!_alternativeReward)
+		{
+			rewardData.typeCode = _def.GetAsString("type");
+			rewardData.amount = _def.GetAsLong("amount");
+			rewardData.sku = _def.GetAsString("rewardSku");
+		}
+        else
+        {
+			int altSc = _def.GetAsInt("altSC");
+			int altPc = _def.GetAsInt("altPC");
+
+            if (altSc != 0)
+            {
+                // Coins reward as alternative
+				rewardData.typeCode = "SC";
+				rewardData.amount = altSc;
+
+			} else if (altPc != 0)
+            {
+                // Gems reward as alternative
+				rewardData.typeCode = "PC";
+				rewardData.amount = altPc;
+			}
+            else
+            {
+                // No alternative reward found in the definition
+				return null;
+            }
+		}
 
 		// Assign an economy group based on the xpromo reward origin
 		HDTrackingManager.EEconomyGroup economyGroup;
