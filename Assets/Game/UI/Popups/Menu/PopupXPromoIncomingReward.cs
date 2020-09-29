@@ -26,15 +26,69 @@ public class PopupXPromoIncomingReward : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	public const string PATH = "UI/Popups/Menu/PF_PopupXPromoIncomingReward";
 
+
+	public const string WELCOME_TID = "TID_XPROMO_REWARD_POPUP_DESC";
+	public const string WELCOME_ALT_TID = "TID_XPROMO_REWARD_POPUP_ALTERNATIVE_DESC";
+	public const string WELCOME_FTUX_TID = "TID_XPROMO_REWARD_POPUP_FTUX_DESC";
+
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
-	
+
+	[SerializeField] private Localizer m_welcomeDescription;
+
+	[SerializeField] private MetagameRewardView m_rewardPreview;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
-	
+
+
+	private void Start()
+	{
+		bool isAlternative = false;
+
+        // Show the next incoming reward in the preview
+		Metagame.Reward reward = XPromoManager.instance.GetNextWaitingReward(false);
+
+        if (reward == null)
+        	return;
+
+		// The player already have this reward?
+		if (reward.IsAlreadyOwned())
+        {
+            // Ask for the alternative reward instead.
+			reward = XPromoManager.instance.GetNextWaitingReward(true);
+            isAlternative = true;
+
+			if (reward == null)
+				return;
+		}
+
+        // Initialize the preview with the reward
+		m_rewardPreview.InitFromReward(reward);
+
+		// If this is the first run (the player just installed the game), show the proper welcome message
+		if (UsersManager.currentUser.gamesPlayed == 0)
+        {
+			m_welcomeDescription.Localize(WELCOME_FTUX_TID);
+        }
+        else
+        {
+            // Are we giving the alternative reward?
+            if (! isAlternative)
+            {
+                // Base case
+				m_welcomeDescription.Localize(WELCOME_TID);
+			}
+            else
+            {
+                // Inform the player that he is receiveing an alternative reward
+				m_welcomeDescription.Localize(WELCOME_ALT_TID);
+			}
+        }
+	}
+
 
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //

@@ -583,8 +583,8 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 		// Only in the right screen
 		if (m_currentScreen != MenuScreen.DRAGON_SELECTION) return;
 
-		// Is there any incoming reward ready to collect?
-		if (! XPromoManager.instance.IsIncomingRewardWaiting())
+        // Is there any incoming reward ready to collect?
+       	if (! XPromoManager.instance.IsIncomingRewardWaiting() )
 			return;
 
 		// All checks passed! Show the popup
