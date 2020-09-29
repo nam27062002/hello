@@ -231,8 +231,7 @@ public class XPromoCycle {
                                                         HDTrackingManager.EEconomyGroup.REWARD_XPROMO_LOCAL);
 
 				// Tracking data
-				rewardTrackingData.sku = finalRewardContent.type;   // "sc" or "hc", will match the required format for tracking spec
-				rewardTrackingData.amount = (int)finalRewardContent.amount;
+				rewardTrackingData.InitWithReward(finalRewardContent, false, reward, this);
 			}
 			else  // Dragons, pets and eggs
 			{
@@ -243,41 +242,16 @@ public class XPromoCycle {
 					UsersManager.currentUser.PushReward(finalRewardContent);
 
 					// Tracking data
-					rewardTrackingData.sku = finalRewardContent.sku;
-					rewardTrackingData.amount = (int)finalRewardContent.amount;
+					rewardTrackingData.InitWithReward(finalRewardContent, false, reward, this);
 				}
                 else
-                { 
-
+                {
 					// So the player already owns the reward. We are going to give him an alternative reward
 					// in form of currencies as defined in the content
-					if (reward.altRewardSC > 0)
-                    {
-						altRewardContent = Metagame.Reward.CreateTypeCurrency(reward.altRewardSC, UserProfile.Currency.SOFT,
-                            Metagame.Reward.Rarity.UNKNOWN, HDTrackingManager.EEconomyGroup.REWARD_XPROMO_LOCAL, reward.sku);
-					}
-                    else  if (reward.altRewardPC > 0)
-                    {
-						altRewardContent = Metagame.Reward.CreateTypeCurrency(reward.altRewardPC, UserProfile.Currency.HARD,
-	                        Metagame.Reward.Rarity.UNKNOWN, HDTrackingManager.EEconomyGroup.REWARD_XPROMO_LOCAL, reward.sku);
-					}
-                    else
-                    {
-
-                        // Someone forgot to define the alternative reward. So we give the player the original one,
-						// and the reward system in the game will take care of giving the player an equivalent amount of coins/gems
-						altRewardContent = finalRewardContent;
-
-					}
+					altRewardContent = XPromoManager.CreateAltReward(reward);
 
 					// Tracking data
-					if(altRewardContent is Metagame.RewardCurrency) {
-						rewardTrackingData.sku = altRewardContent.type;	// "hc", "sc", etc.
-					} else {
-						rewardTrackingData.sku = altRewardContent.sku;
-					}
-					rewardTrackingData.amount = (int)altRewardContent.amount;
-					rewardTrackingData.isAltReward = true;
+					rewardTrackingData.InitWithReward(altRewardContent, true, reward, this);
 
 					// Add the reward to the queue
 					UsersManager.currentUser.PushReward(altRewardContent);
