@@ -66,6 +66,7 @@ public class XPromoCycle {
 	private DateTime m_startDate;
     private DateTime m_recruitmentLimitDate;
 	private DateTime m_endDate;
+	public DateTime endDate { get { return m_endDate; } }
 	private int m_minRuns;
     private int m_cycleSize;
     public int cycleSize { get { return m_cycleSize;  } }
