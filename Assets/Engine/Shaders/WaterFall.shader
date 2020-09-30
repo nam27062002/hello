@@ -136,7 +136,7 @@ Shader "Hungry Dragon/Waterfall"
 #endif
 					col.a *= _BackColor.a;
 #if defined(NIGHT)
-					return col * fixed4(0.25, 0.25, 0.5, 1.0);
+					return col * fixed4(0.3, 0.3, 0.7, 1.0);
 #else
 					return col;
 #endif
@@ -222,7 +222,7 @@ Shader "Hungry Dragon/Waterfall"
 				fcol.a *= (1.0 - i.color.a) + saturate;
 
 #if defined(NIGHT)
-				return col * fixed4(0.25, 0.25, 0.5, 1.0);
+				return col * fixed4(0.3, 0.3, 0.7, 1.0);
 #else
 				return col;
 #endif

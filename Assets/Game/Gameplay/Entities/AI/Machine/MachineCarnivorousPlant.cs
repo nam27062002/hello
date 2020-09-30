@@ -97,8 +97,15 @@ namespace AI {
 
 			if (InstanceManager.player != null)	{
 				DragonPlayer player = InstanceManager.player;
-				HoldPreyPoint t = player.holdPreyPoints[player.holdPreyPoints.Length - 1];
-				m_sensor.SetupEnemy(t.transform, player.dragonEatBehaviour.eatDistanceSqr, player.dragonMotion.hitBounds);
+				if (player.holdPreyPoints.Length > 0)
+				{
+					HoldPreyPoint t = player.holdPreyPoints[player.holdPreyPoints.Length - 1];
+					m_sensor.SetupEnemy(t.transform, player.dragonEatBehaviour.eatDistanceSqr, player.dragonMotion.hitBounds);
+				}
+				else
+                {
+					m_sensor.SetupEnemy(player.transform, player.dragonEatBehaviour.eatDistanceSqr, player.dragonMotion.hitBounds);
+				}
 			}
 
 			m_upVector = Vector3.up;
