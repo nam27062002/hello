@@ -46,24 +46,12 @@ public class PopupXPromoIncomingReward : MonoBehaviour {
 
 	private void Start()
 	{
-		bool isAlternative = false;
 
         // Show the next incoming reward in the preview
-		Metagame.Reward reward = XPromoManager.instance.GetNextWaitingReward(false);
+		Metagame.Reward reward = XPromoManager.instance.GetNextWaitingReward();
 
         if (reward == null)
         	return;
-
-		// The player already have this reward?
-		if (reward.IsAlreadyOwned())
-        {
-            // Ask for the alternative reward instead.
-			reward = XPromoManager.instance.GetNextWaitingReward(true);
-            isAlternative = true;
-
-			if (reward == null)
-				return;
-		}
 
         // Initialize the preview with the reward
 		m_rewardPreview.InitFromReward(reward);
@@ -76,12 +64,12 @@ public class PopupXPromoIncomingReward : MonoBehaviour {
         else
         {
             // Are we giving the alternative reward?
-            if (! isAlternative)
+            if (reward.IsAlreadyOwned() && reward.replacement != null)
             {
                 // Base case
 				m_welcomeDescription.Localize(WELCOME_TID);
 			}
-            else
+            else if (!reward.IsAlreadyOwned () )
             {
                 // Inform the player that he is receiveing an alternative reward
 				m_welcomeDescription.Localize(WELCOME_ALT_TID);

@@ -100,11 +100,11 @@ public class XPromoManager: Singleton<XPromoManager> {
 
 
 		// Debug incoming deeplink
-        /*
+        
         Dictionary<string,string> dLinkParams = new Dictionary<string, string>();
         dLinkParams.Add(XPROMO_REWARD_KEY, "reward_hse_hd_2a" );
         Messenger.Broadcast<Dictionary<string, string>>(MessengerEvents.INCOMING_DEEPLINK_NOTIFICATION, dLinkParams);
-        */
+        
 
 	}
 
@@ -228,7 +228,7 @@ public class XPromoManager: Singleton<XPromoManager> {
     /// </summary>
     /// <param name="_alternativeReward">If true returns the alternative reward (usually a currency)</param>
     /// <returns>The next metagame Reward waiting to be collected</returns>
-    public Metagame.Reward GetNextWaitingReward( bool _alternativeReward)
+    public Metagame.Reward GetNextWaitingReward()
     {
 		ProcessIncomingRewards();
 
@@ -240,7 +240,7 @@ public class XPromoManager: Singleton<XPromoManager> {
             // The list of skus should be already sanitized, so we dont do any extra check
 
 			// Create a reward from the content definition
-			return ( CreateRewardFromDef(rewardDef, _alternativeReward) );
+			return ( CreateRewardFromDef(rewardDef) );
 		}
 
 		return null;
@@ -389,13 +389,6 @@ public class XPromoManager: Singleton<XPromoManager> {
 			Metagame.Reward reward = CreateRewardFromDef(rewardDef);
 
 
-            // If the reward is already owned, give the alternative currency reward
-            if (reward.IsAlreadyOwned())
-            {
-				reward = CreateRewardFromDef(rewardDef, true);
-			}
-
-
             // Just in case
 			if (reward != null)
 			{
@@ -421,42 +414,16 @@ public class XPromoManager: Singleton<XPromoManager> {
 	/// </summary>
 	/// <param name="_def">Definition from xPromo rewards table.</param>
 	/// <param name="_origin">The app that granted the reward</param>
-	/// <param name="_alternativeReward">If true, creates the alternative reward (usually currency) </param>
 	/// <returns>New reward created from the given definition.</returns>
-	private static Metagame.Reward CreateRewardFromDef(DefinitionNode _def, bool _alternativeReward = false)
+	private static Metagame.Reward CreateRewardFromDef(DefinitionNode _def)
 	{
 
 		Metagame.Reward.Data rewardData = new Metagame.Reward.Data();
 
-		if (!_alternativeReward)
-		{
-			rewardData.typeCode = _def.GetAsString("type");
-			rewardData.amount = _def.GetAsLong("amount");
-			rewardData.sku = _def.GetAsString("rewardSku");
-		}
-        else
-        {
-			int altSc = _def.GetAsInt("altSC");
-			int altPc = _def.GetAsInt("altPC");
-
-            if (altSc != 0)
-            {
-                // Coins reward as alternative
-				rewardData.typeCode = "SC";
-				rewardData.amount = altSc;
-
-			} else if (altPc != 0)
-            {
-                // Gems reward as alternative
-				rewardData.typeCode = "PC";
-				rewardData.amount = altPc;
-			}
-            else
-            {
-                // No alternative reward found in the definition
-				return null;
-            }
-		}
+		rewardData.typeCode = _def.GetAsString("type");
+		rewardData.amount = _def.GetAsLong("amount");
+		rewardData.sku = _def.GetAsString("rewardSku");
+	
 
 		// Assign an economy group based on the xpromo reward origin
 		HDTrackingManager.EEconomyGroup economyGroup;
@@ -473,8 +440,38 @@ public class XPromoManager: Singleton<XPromoManager> {
 		}
 
 		// Construct the reward
-		return Metagame.Reward.CreateFromData(rewardData, economyGroup, DEFAULT_SOURCE);
+		Metagame.Reward reward = Metagame.Reward.CreateFromData(rewardData, economyGroup, DEFAULT_SOURCE);
 
+        // Is the reward already owned? try an alternative reward
+		if (reward.IsAlreadyOwned())
+		{
+
+			// Is there an alternative reward?
+			int altSc = _def.GetAsInt("altSC");
+			int altPc = _def.GetAsInt("altPC");
+
+			if (altSc != 0)
+			{
+				// Coins reward as alternative
+				rewardData.typeCode = "SC";
+				rewardData.amount = altSc;
+
+			}
+			else if (altPc != 0)
+			{
+				// Gems reward as alternative
+				rewardData.typeCode = "PC";
+				rewardData.amount = altPc;
+			}
+
+			// Construct the reward
+			Metagame.Reward altReward = Metagame.Reward.CreateFromData(rewardData, economyGroup, DEFAULT_SOURCE);
+
+			// Set the alternative reward
+			reward.SetReplacement(altReward);
+		}
+
+		return reward;
 
 	}
 
