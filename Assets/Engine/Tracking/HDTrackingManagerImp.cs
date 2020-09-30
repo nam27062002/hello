@@ -3028,6 +3028,28 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private void Track_XPromoUIButton(string _buttonName) {
         Log("Track_XPromoUIButton "
            + ", _buttonName = " + _buttonName);
+
+        // XPromo vars, only valid if we have an active XPromo
+        int timerValue = -1;
+        string abTestGroup = "";
+        string abTestName = "";
+        XPromoCycle currentCycle = XPromoManager.instance.xPromoCycle;
+        if(currentCycle != null && currentCycle.IsActive()) {
+            timerValue = (int)(currentCycle.endDate - GameServerManager.GetEstimatedServerTime()).TotalSeconds;
+            abTestGroup = XPromoCycle.ABGroupToString(currentCycle.abGroup);
+            abTestName = currentCycle.experimentName;
+		}
+
+        // Create event, fill parameters and enqueue it
+        HDTrackingEvent e = new HDTrackingEvent("custom.xpromo.dailyLoginCollect.uiButtons");
+        {
+            Track_AddParamString(e, TRACK_PARAM_BUTTON_NAME, _buttonName);
+            Track_AddParamInt(e, TRACK_PARAM_TIMER_VALUE, timerValue);
+            Track_AddParamXPromoCalendarDay(e);
+            Track_AddParamString(e, TRACK_PARAM_AB_TEST_GROUP, abTestGroup);
+            Track_AddParamString(e, TRACK_PARAM_AB_TEST_NAME, abTestName);
+        }
+        m_eventQueue.Enqueue(e);
     }
     #endregion
 
@@ -3658,24 +3680,34 @@ public class HDTrackingManagerImp : HDTrackingManager {
         Track_AddParamString(_e, TRACK_PARAM_TRACKING_ID, TrackingPersistenceSystem.UserID);
     }
 
+    /// <summary>
+    /// XPromo Calendar Day parameter.
+    /// Number of days elapsed since the XPromo campaign started for this player.
+    /// </summary>
+    /// <param name="_e"></param>
     private void Track_AddParamXPromoCalendarDay(HDTrackingEvent _e) {
-        // We're gonna assume xpromo is active, otherwise this shouldn't be called
+        // Aux vars
         int calendarDay = -1;
-        TrackingPersistenceSystem trackingPersistence = HDTrackingManager.Instance.TrackingPersistenceSystem;
-        if(trackingPersistence != null) {
-            // Compute how many days have passed since the xpromo was activated for this player
-            // We don't want to count 24 hour periods, but rather actual calendar days
-            DateTime xpromoStartDate = trackingPersistence.XPromoActivationDate;
-            DateTime serverTime = GameServerManager.GetEstimatedServerTime();
-            DateTime date;
-            int dayCount = 0;
-            while(calendarDay < 0 && dayCount < 100) {   // Protect infinite loop
-                date = xpromoStartDate.AddDays(dayCount);
-                if(date.Day == serverTime.Day) {    // Today
-                    calendarDay = dayCount + 1;     // [1..N]
+
+        // Is XPromo active?
+        if(XPromoManager.instance.xPromoCycle.IsActive()) {
+            // Get the activation date from tracking persistence
+            TrackingPersistenceSystem trackingPersistence = HDTrackingManager.Instance.TrackingPersistenceSystem;
+            if(trackingPersistence != null) {
+                // Compute how many days have passed since the xpromo was activated for this player
+                // We don't want to count 24 hour periods, but rather actual calendar days
+                DateTime xpromoStartDate = trackingPersistence.XPromoActivationDate;
+                DateTime serverTime = GameServerManager.GetEstimatedServerTime();
+                DateTime date;
+                int dayCount = 0;
+                while(calendarDay < 0 && dayCount < 100) {   // Protect infinite loop
+                    date = xpromoStartDate.AddDays(dayCount);
+                    if(date.Day == serverTime.Day) {    // Today
+                        calendarDay = dayCount + 1;     // [1..N]
+                    }
+                    dayCount++;
                 }
-                dayCount++;
-			}
+            }
         }
 
         // Add param to the event
