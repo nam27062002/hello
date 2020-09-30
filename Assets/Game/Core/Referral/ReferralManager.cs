@@ -11,6 +11,7 @@ using UnityEngine;
 using System;
 using System.Collections.Generic;
 using SimpleJSON;
+using FirebaseWrapper;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -19,24 +20,18 @@ using SimpleJSON;
 /// 
 /// </summary>
 [Serializable]
-public class ReferralManager {
+public class ReferralManager : Singleton<ReferralManager> {
 	//------------------------------------------------------------------------//
 	// CONSTANTS                											  //
 	//------------------------------------------------------------------------//
-	
+	private static readonly string INVITED_BY_DLINK_PARAM = "invitedby";
+
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
-	// Singleton instance
-	private static ReferralManager m_instance = null;
-	public static ReferralManager instance {
-		get {
-			if(m_instance == null) {
-				m_instance = new ReferralManager();
-			}
-			return m_instance;
-		}
-	}
+	// Deep linking
+	private bool m_deepLinkReceived = false;
+	private Dictionary<string, string> m_deepLinkParams = null;
 
 	// Communication with server
 	private bool m_offlineMode = false;
@@ -52,18 +47,21 @@ public class ReferralManager {
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
+	#region generic_methods
 	/// <summary>
 	/// Default constructor.
 	/// </summary>
 	public ReferralManager() {
-
+		// Subscribe to external events
+		Messenger.AddListener<Dictionary<string, string>>(MessengerEvents.INCOMING_DEEPLINK_NOTIFICATION, OnDeepLinkNotification);
 	}
 
 	/// <summary>
 	/// Destructor
 	/// </summary>
 	~ReferralManager() {
-
+		// Unsubscribe from external events
+		Messenger.RemoveListener<Dictionary<string, string>>(MessengerEvents.INCOMING_DEEPLINK_NOTIFICATION, OnDeepLinkNotification);
 	}
 
 	/// <summary>
@@ -73,28 +71,52 @@ public class ReferralManager {
 		// Try to mark the referral install if needed
 		ConfirmReferralConversionIfPossible();
 	}
+	#endregion
 
 	//------------------------------------------------------------------------//
-	// OTHER METHODS														  //
+	// REFERRAL DETECTION METHODS											  //
 	//------------------------------------------------------------------------//
+	#region referral_detection
 	/// <summary>
 	/// To be call whenever the app is ready to read the referral link.
 	/// </summary>
-	public void ReadReferralLink() {
+	/// <returns>Whether the link was successfully read from the deep link or not.</returns>
+	public bool ReadReferralLink() {
 		// Ignore if the player has already been referred
 		if(UsersManager.currentUser.referralConfirmed)
-			return;
+			return false;
 
 		// Ignore if we already have a referrer ID assigned
 		if(!string.IsNullOrEmpty(UsersManager.currentUser.referrerUserId))
-			return;
+			return false;
 
-		// All good! Get the referrer ID from Calety's Deep Link system
-		string referrerId = CaletyDynamicLinks.getReferrerID();
-		if(!string.IsNullOrEmpty(referrerId)) {
-			// Valid Id, store it
-			UsersManager.currentUser.referrerUserId = referrerId;
+		// All checks passed! Get the referrer Id
+		return ReadReferralLinkInternal();
+	}
+
+	/// <summary>
+	/// Try to read the referral link data withou any checks.
+	/// </summary>
+	/// <returns>Whether the link was successfully read from the deep link or not.</returns>
+	private bool ReadReferralLinkInternal() {
+		// Have we received data from the deep link system?
+		if(m_deepLinkReceived) {
+			// Does received data contain info about the referrer user?
+			if(m_deepLinkParams != null && m_deepLinkParams.ContainsKey(INVITED_BY_DLINK_PARAM)) {
+				// Read the referrer Id from the deep link
+				string referrerId = m_deepLinkParams[INVITED_BY_DLINK_PARAM];
+
+				// Store referrer Id if valid
+				if(!string.IsNullOrEmpty(referrerId)) {
+					UsersManager.currentUser.referrerUserId = referrerId;
+				}
+
+				// Nothing else to do! Notify that the link was successfully read
+				return true;
+			}
 		}
+
+		return false;
 	}
 
 	/// <summary>
@@ -107,7 +129,10 @@ public class ReferralManager {
 			return;
 
 		// Nothing to do either if we don't have a valid referrer User Id
-		// [AOC] TOOD!! FOR SURE? WE MAY WANT TO MARK AS REFERRAL CONFIRMED (UNSUCCESSFUL) SO WE DON'T KEEP TRYING FOREVER
+		// [AOC] TODO!! FOR SURE?
+		//		 Non-referred users will be constantly performing this check (string comparison)
+		//		 
+		//		 WE MAY WANT TO MARK AS REFERRAL CONFIRMED (UNSUCCESSFUL) SO WE DON'T KEEP TRYING FOREVER
 		//		 THE ONLY RISK HERE IS - MAY WE GET THE REFERRER USER ID AFTER ATEMPTING THE CONVERSION?
 		//		 REFLEXIONEM-HI, SI US PLAU, REFLEXIONEM-HI
 		if(string.IsNullOrEmpty(UsersManager.currentUser.referrerUserId))
@@ -117,54 +142,157 @@ public class ReferralManager {
 		if(string.IsNullOrEmpty(HDTrackingManager.Instance.GetDNAProfileID()))
 			return;
 
-		// Skip if we are waiting for a server response
+		// Skip if we are already waiting for a server response
 		if(m_waitingServerResponse)
 			return;
 
 		// All good! Notify the server confirming the conversion of the invited player
-		if(!m_offlineMode) {
-			m_waitingServerResponse = true;
-			GameServerManager.SharedInstance.Referral_MarkReferral(
-				UsersManager.currentUser.referrerUserId, 
-				OnMarkReferralResponse
-			);
-		}
+		m_waitingServerResponse = true;
+		GameServerManager.SharedInstance.Referral_MarkReferral(
+			UsersManager.currentUser.referrerUserId, 
+			OnMarkReferralResponse
+		);
 	}
 
+	/// <summary>
+	/// Response from the server was received
+	/// </summary>
+	/// <param name="_strResponse">Json containing the response</param>
+	/// <param name="_strCmd">The command sent</param>
+	/// <param name="_reponseCode">Response code. 200 if the request was successful</param>
+	/// <returns>Returns true if the response was successful</returns>
+	public void OnMarkReferralResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response) {
+		// No longer waiting for response
+		m_waitingServerResponse = false;
+
+		// If there was no error, mark as confirmed
+		if(_error == null && _response != null && _response.ContainsKey("response")) {
+			if(_response["response"] != null) {
+				bool success = false;
+				JSONNode kJSON = JSON.Parse(_response["response"] as string);
+				if(kJSON != null) {
+					if(kJSON.ContainsKey("result")) {
+						if(kJSON["result"].AsBool == true) {
+							success = true;
+						} else {
+							success = false;
+							Debug.LogError("Unsuccessful! " + kJSON["errorCode"] + ": " + kJSON["errorMsg"]);
+						}
+
+						// No matter if the referral confirmation was valid or not, change the state to confirmed
+						// so this call is never made again for this user/device.
+						// This way we save a lot of unnecesary calls to the server.
+						UsersManager.currentUser.referralConfirmed = true;
+					}
+				}
+
+				// Send tracking information
+				HDTrackingManager.Instance.Notify_ReferralInstall(success, UsersManager.currentUser.referrerUserId);
+			}
+		}
+	}
+	#endregion
+
+	//------------------------------------------------------------------------//
+	// REFERRAL REWARDS METHODS												  //
+	//------------------------------------------------------------------------//
+	#region referral_rewards
 	/// <summary>
 	/// Update all the referral related data from the server: amount of referrals (friends invited)
 	/// and list of rewards ready to claim
 	/// </summary>
 	public void GetInfoFromServer() {
+		// Find the current active referral offer 
+		OfferPackReferral offer = OffersManager.GetActiveReferralOffer();
 
-		if(!m_offlineMode) {
-			// Find the current active referral offer 
-			OfferPackReferral offer = OffersManager.GetActiveReferralOffer();
+		if(offer != null) {
+			string referralSku = offer.def.sku;
 
-			if(offer != null) {
-				string referralSku = offer.def.sku;
+			GameServerManager.SharedInstance.Referral_GetInfo(referralSku, OnGetInfoResponse);
+		}
+	}
 
-				GameServerManager.SharedInstance.Referral_GetInfo(referralSku, OnGetInfoResponse);
+	/// <summary>
+	/// The server answers with the information related to this user rewards:
+	/// total: long - Total of users referred by current logged user
+	/// reward: JSONObject - Reward to give to the user
+	/// rewards: JSONArray<JSONObject>  - Array of rewards to be reclaimed sorted by referral number
+	/// </summary>
+	private void OnGetInfoResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response) {
+		// If there was no error, update local cache
+		if(_error == null && _response != null && _response.ContainsKey("response")) {
+			if(_response["response"] != null) {
+				JSONNode kJSON = JSON.Parse(_response["response"] as string);
+				if(kJSON != null) {
+					if(kJSON.ContainsKey("total")) {
+						int referrals = PersistenceUtils.SafeParse<int>(kJSON["total"]);
+
+						// Store the value in user profile
+						UsersManager.currentUser.totalReferrals = referrals;
+
+					}
+
+					if(kJSON.ContainsKey("rewards")) {
+
+						List<string> skuList = new List<string>();
+
+						foreach(JSONNode sku in kJSON["rewards"].AsArray) {
+							skuList.Add(sku["sku"].Value.ToString());
+						}
+
+						// Convert skus to actual rewards 
+						List<OfferPackReferralReward> rewards = GetRewardsFromSkus(skuList);
+
+						// Store them in user profile
+						UsersManager.currentUser.unlockedReferralRewards = rewards;
+					}
+				}
 			}
 		}
 	}
-	
+
 	/// <summary>
 	/// Tell the server that the player is claiming all the rewards achieved. 
 	/// </summary>
 	/// <param name="_reward">The referral reward claimed</param>
 	public void ReclaimAllFromServer() {
+		// Find the current active referral offer 
+		OfferPackReferral offer = OffersManager.GetActiveReferralOffer();
 
-		if(!m_offlineMode) {
-			// Find the current active referral offer 
-			OfferPackReferral offer = OffersManager.GetActiveReferralOffer();
+		if(offer != null) {
+			string referralSku = offer.def.sku;
 
-			if(offer != null) {
-				string referralSku = offer.def.sku;
+			GameServerManager.SharedInstance.Referral_ReclaimAll(referralSku, OnReclaimAllResponse);
+		}
+	}
 
-				GameServerManager.SharedInstance.Referral_ReclaimAll(referralSku, OnReclaimAllResponse);
+	/// <summary>
+	/// The server is confirming what rewards have been collected
+	/// rewards: JSONArray<JSONObject>  - Array of rewards successfully claimed
+	/// </summary>
+	public void OnReclaimAllResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response) {
+		// If there was no error, update local cache
+		if(_error == null && _response != null && _response.ContainsKey("response")) {
+			if(_response["response"] != null) {
+				JSONNode kJSON = JSON.Parse(_response["response"] as string);
+				if(kJSON != null) {
+					if(kJSON.ContainsKey("rewards")) {
+
+						List<string> skuList = new List<string>();
+
+						foreach(JSONNode reward in kJSON["rewards"].AsArray) {
+							skuList.Add(reward["sku"].Value.ToString());
+						}
+
+						// Notify that the reward has been claimed successfully
+						ApplyRewards(skuList);
+					}
+				}
 			}
 		}
+
+		// Notify the game
+		Messenger.Broadcast<FGOL.Server.Error>(MessengerEvents.REFERRAL_REWARDS_CLAIM_RESPONSE_RECEIVED, _error);
 	}
 
 	/// <summary>
@@ -184,7 +312,6 @@ public class ReferralManager {
 		}
 		return rewards;
 	}
-
 
 	/// <summary>
 	/// Remove this reward from the unlocked rewards list and give it to the player
@@ -228,7 +355,12 @@ public class ReferralManager {
 		}
 
 	}
+	#endregion
 
+	//------------------------------------------------------------------------//
+	// REFERRAL INVITE METHODS												  //
+	//------------------------------------------------------------------------//
+	#region referral_invite
 	/// <summary>
 	/// Button invite has been pressed.
 	/// </summary>
@@ -239,20 +371,17 @@ public class ReferralManager {
 		m_inviteOrigin = _origin;
 
 		// Get the link to share from firebase
-		CaletyDynamicLinks.createLinkUserInvite(userId, OnShortLinkCreated);
+		DynamicLinksWrapper.createLinkUserInvite(userId, OnShortLinkCreated);
 	}
 
-	//------------------------------------------------------------------------//
-	// CALLBACKS															  //
-	//------------------------------------------------------------------------//
 	/// <summary>
 	/// Delegate for receiving the referral shortlink from firebase
 	/// </summary>
 	/// <param name="_link"></param>
-	public void OnShortLinkCreated(string _shortLink, CaletyDynamicLinks.shortLinkResult result) {
+	public void OnShortLinkCreated(string _shortLink, DynamicLinksWrapper.shortLinkResult result) {
 		switch(result) {
 
-			case CaletyDynamicLinks.shortLinkResult.OK:
+			case DynamicLinksWrapper.shortLinkResult.OK:
 				string title = LocalizationManager.SharedInstance.Localize("TID_REFERRAL_SHARE_TITLE");
 
 				// Open the share dialog
@@ -267,8 +396,8 @@ public class ReferralManager {
 				break;
 
 
-			case CaletyDynamicLinks.shortLinkResult.CANCELLED:
-			case CaletyDynamicLinks.shortLinkResult.FAULTED:
+			case DynamicLinksWrapper.shortLinkResult.CANCELLED:
+			case DynamicLinksWrapper.shortLinkResult.FAULTED:
 				// Show error popup in the game
 				string text = LocalizationManager.SharedInstance.Localize("TID_GEN_ERROR");
 				UIFeedbackText.CreateAndLaunch(
@@ -280,116 +409,20 @@ public class ReferralManager {
 				break;
 		}
 	}
+	#endregion
 
+	//------------------------------------------------------------------------//
+	// CALLBACKS															  //
+	//------------------------------------------------------------------------//
+	#region callbacks
 	/// <summary>
-	/// The server answers with the information related to this user rewards:
-	/// total: long - Total of users referred by current logged user
-	/// reward: JSONObject - Reward to give to the user
-	/// rewards: JSONArray<JSONObject>  - Array of rewards to be reclaimed sorted by referral number
+	/// A new deeplink notification was registered
 	/// </summary>
-	private void OnGetInfoResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response) {
-		// If there was no error, update local cache
-		if(_error == null && _response != null && _response.ContainsKey("response")) {
-			if(_response["response"] != null) {
-				JSONNode kJSON = JSON.Parse(_response["response"] as string);
-				if(kJSON != null) {
-
-					if(kJSON.ContainsKey("total")) {
-
-						int referrals = PersistenceUtils.SafeParse<int>(kJSON["total"]);
-
-						// Store the value in user profile
-						UsersManager.currentUser.totalReferrals = referrals;
-
-					}
-
-					if(kJSON.ContainsKey("rewards")) {
-
-						List<string> skuList = new List<string>();
-
-						foreach(JSONNode sku in kJSON["rewards"].AsArray) {
-							skuList.Add(sku["sku"].Value.ToString());
-						}
-
-						// Convert skus to actual rewards 
-						List<OfferPackReferralReward> rewards = GetRewardsFromSkus(skuList);
-
-						// Store them in user profile
-						UsersManager.currentUser.unlockedReferralRewards = rewards;
-
-					}
-				}
-			}
-		}
+	/// <param name="_dlinkParameters">Parameters of the deeplink.</param>
+	public void OnDeepLinkNotification(Dictionary<string, string> _dlinkParameters) {
+		// Store params until we can use them
+		m_deepLinkReceived = true;
+		m_deepLinkParams = _dlinkParameters;
 	}
-
-	/// <summary>
-	/// The server is confirming what rewards have been collected
-	/// rewards: JSONArray<JSONObject>  - Array of rewards successfully claimed
-	/// </summary>
-	public void OnReclaimAllResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response) {
-		// If there was no error, update local cache
-		if(_error == null && _response != null && _response.ContainsKey("response")) {
-			if(_response["response"] != null) {
-				JSONNode kJSON = JSON.Parse(_response["response"] as string);
-				if(kJSON != null) {
-					if(kJSON.ContainsKey("rewards")) {
-
-						List<string> skuList = new List<string>();
-
-						foreach(JSONNode reward in kJSON["rewards"].AsArray) {
-							skuList.Add(reward["sku"].Value.ToString());
-						}
-
-						// Notify that the reward has been claimed successfully
-						ApplyRewards(skuList);
-					}
-				}
-			}
-		}
-
-		// Notify the game
-		Messenger.Broadcast<FGOL.Server.Error>(MessengerEvents.REFERRAL_REWARDS_CLAIM_RESPONSE_RECEIVED, _error);
-	}
-
-	/// <summary>
-	/// Response from the server was received
-	/// </summary>
-	/// <param name="_strResponse">Json containing the response</param>
-	/// <param name="_strCmd">The command sent</param>
-	/// <param name="_reponseCode">Response code. 200 if the request was successful</param>
-	/// <returns>Returns true if the response was successful</returns>
-	public void OnMarkReferralResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response) {
-		// No longer waiting for response
-		m_waitingServerResponse = false;
-
-		// If there was no error, update local cache
-		if(_error == null && _response != null && _response.ContainsKey("response")) {
-			if(_response["response"] != null) {
-
-				bool success = false;
-
-				JSONNode kJSON = JSON.Parse(_response["response"] as string);
-				if(kJSON != null) {
-
-					if(kJSON.ContainsKey("result")) {
-						if(kJSON["result"].AsBool == true) {
-							success = true;
-						} else {
-							success = false;
-							Debug.LogError("Unsuccessful! " + kJSON["errorCode"] + ": " + kJSON["errorMsg"]);
-						}
-
-						// No matter if the referral confirmation was valid or not.
-						// We mark the flag as confirmed, so this call is never made again for this user/device.
-						// This way we save a lot of unnecesary calls to the server.
-						UsersManager.currentUser.referralConfirmed = true;
-					}
-				}
-
-				// Send tracking information
-				HDTrackingManager.Instance.Notify_ReferralInstall(success, UsersManager.currentUser.referrerUserId);
-			}
-		}
-	}
+	#endregion
 }

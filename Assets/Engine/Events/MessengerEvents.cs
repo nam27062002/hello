@@ -262,7 +262,11 @@ public enum MessengerEvents {
     // Modifiers
     MODIFIER_ECONOMY_DRAGON_PRICE_CHANGED,  // params: IDragonData
 
-    ENTITY_KILLED,  // params: IEntity _entity, Reward _reward, KillType _type
+	// Deep linking
+	INCOMING_DEEPLINK_NOTIFICATION, // params: Dictionary<string, string>
+
+
+	ENTITY_KILLED,  // params: IEntity _entity, Reward _reward, KillType _type
 
     COUNT
 }

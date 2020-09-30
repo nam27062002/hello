@@ -42,6 +42,7 @@ public enum BroadcastEventType
 
 	// Debug
 	DEBUG_REFRESH_DAILY_REWARDS,    // no params
+    DEBUG_REFRESH_XPROMO_CYCLE,
     
     SHIELD_HIT,
     

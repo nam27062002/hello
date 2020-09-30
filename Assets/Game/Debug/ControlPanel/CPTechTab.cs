@@ -14,7 +14,7 @@ using System.Text;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
-using Firebase.Crashlytics;
+using FirebaseWrapper;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -382,9 +382,9 @@ public class CPTechTab : MonoBehaviour {
 	public void OnClearConsoleButton() {
 		m_outputSb.Length = 0;
 		Output("Hungry Dragon v" + GameSettings.internalVersion + " console output");
-		if (CaletyDynamicLinks.receivedDynamicLinksData)
+		if (DynamicLinksWrapper.receivedDynamicLinksData)
         {
-			Output("Dynamic links data: " + CaletyDynamicLinks.getDynamicLinksData[0].ReceivedDynamicLink.Url);
+			Output("Dynamic links data: " + DynamicLinksWrapper.getDynamicLinksData[0].ReceivedDynamicLink.Url);
         }
 	}
 
@@ -395,7 +395,8 @@ public class CPTechTab : MonoBehaviour {
     {
 		UsersManager.currentUser.referrerUserId = "";
 
-        // Clear the confirmation flag, so the client will call to the server again 
+		// Clear the confirmation flag, so the client will call to the server again 
+		//UsersManager.currentUser.referralState = ReferralManager.State.PENDING_CONFIRMATION;
 		UsersManager.currentUser.referralConfirmed = false;
 
 		m_referraUserId.text = "Referral User Id: " + UsersManager.currentUser.referrerUserId;
