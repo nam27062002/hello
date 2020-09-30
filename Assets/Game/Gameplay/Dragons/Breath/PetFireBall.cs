@@ -138,7 +138,8 @@ public class PetFireBall :  MonoBehaviour, IProjectile {
 	{		
 		if ( !m_hasBeenShot ) return;
 
-		m_explosionParticle.Spawn(transform.position);
+        if (m_explosionParticle != null)
+		    m_explosionParticle.Spawn(transform.position);
 
 		Entity[] preys = EntityManager.instance.GetEntitiesInRange2D(m_area.center, m_area.radius * 3);
 		for (int i = 0; i < preys.Length; i++) {
