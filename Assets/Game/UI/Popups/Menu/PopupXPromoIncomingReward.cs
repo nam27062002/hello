@@ -105,6 +105,8 @@ public class PopupXPromoIncomingReward : MonoBehaviour {
 	/// </summary>
 	public void OnCollectButton()
 	{
+		// Send tracking event
+		HDTrackingManager.Instance.Notify_XPromoUIButton("Collect_HSE_Reward");
 
 		// Tell the manager to put the rewards in the pending reward queue
 		XPromoManager.instance.OnCollectAllIncomingRewards();

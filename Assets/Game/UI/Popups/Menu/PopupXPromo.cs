@@ -292,6 +292,9 @@ public class PopupXPromo : MonoBehaviour {
 	{
 		// Just close the poopup
 		GetComponent<PopupController>().Close(true);
+
+		// Send tracking event
+		HDTrackingManager.Instance.Notify_XPromoUIButton("Close");
 	}
 
 	/// <summary>
@@ -313,10 +316,19 @@ public class PopupXPromo : MonoBehaviour {
 
     	if (reward is LocalRewardHSE)
         {
-            // No feedback needed here
-        }
+			// No feedback needed here
+
+			// Send tracking event
+			if(XPromoManager.IsHungrySharkGameInstalled()) {
+				HDTrackingManager.Instance.Notify_XPromoUIButton("Open_HSE");
+			} else {
+				HDTrackingManager.Instance.Notify_XPromoUIButton("Install_HSE");
+			}
+		}
 		if (reward is LocalRewardHD)
 		{
+			// Send tracking event
+			HDTrackingManager.Instance.Notify_XPromoUIButton("Collect");
 
 			Metagame.Reward rewardContent = ((LocalRewardHD)reward).reward;
 
@@ -388,6 +400,9 @@ public class PopupXPromo : MonoBehaviour {
             // Update visuals
 			Refresh();
 		}
+
+		// Send tracking event
+		HDTrackingManager.Instance.Notify_XPromoUIButton("Right_Arrow");
 	}
 
     /// <summary>
@@ -406,6 +421,9 @@ public class PopupXPromo : MonoBehaviour {
 			// Update visuals
 			Refresh();
 		}
+
+		// Send tracking event
+		HDTrackingManager.Instance.Notify_XPromoUIButton("Left_Arrow");
 	}
 
     /// <summary>
@@ -422,6 +440,8 @@ public class PopupXPromo : MonoBehaviour {
 		// Update visuals
 		Refresh();
 
+		// Send tracking event
+		HDTrackingManager.Instance.Notify_XPromoUIButton("Item" + _index);
 	}
 
 
