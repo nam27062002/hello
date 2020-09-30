@@ -83,6 +83,12 @@ public class XPromoManager: Singleton<XPromoManager> {
 	// HSE dynamic short links
 	private Dictionary<string, string> m_dynamicShortLinks;
 
+	// Helper to detect player source
+	public bool IncomingRewardsReceived {
+		get;
+		private set;
+	}
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -98,13 +104,15 @@ public class XPromoManager: Singleton<XPromoManager> {
 		m_processedIncomingRewards = new Queue<string>();
 		m_collectedIncomingRewards = new List<string>();
 
+		IncomingRewardsReceived = false;
 
 		// Debug incoming deeplink
-        
+
+        /*
         Dictionary<string,string> dLinkParams = new Dictionary<string, string>();
         dLinkParams.Add(XPROMO_REWARD_KEY, "reward_hse_hd_2a" );
         Messenger.Broadcast<Dictionary<string, string>>(MessengerEvents.INCOMING_DEEPLINK_NOTIFICATION, dLinkParams);
-        
+        */
 
 	}
 
@@ -152,24 +160,9 @@ public class XPromoManager: Singleton<XPromoManager> {
 	/// <param name="rewardsId"></param>
 	public void SendRewardToHSE(LocalRewardHSE _reward)
     {
-
-        // Make some safety checks 
-        if (!m_dynamicShortLinks.ContainsKey(_reward.sku))
-        {
-            // The requested reward shortlink is not defined
-			Debug.LogError("There is no HSE shortlink defined for the reward with sku=" + _reward.sku);
-			return;
-        }
-
-		string url = m_dynamicShortLinks[_reward.sku];
-
-        if (string.IsNullOrEmpty(url))
-        {
-			// The url was left empty in the scriptable object
-			Debug.LogError("The HSE shortlink url is empty.");
-			return;
-		}
-
+		// Get the deep link url for this reward
+		string url = GetShortLinkForReward(_reward.sku);
+		if(string.IsNullOrEmpty(url)) return;
 
 		// Send the reward with id = _reward.rewardSku
 		Log("Reward with SKU='" + _reward.sku + "' sent to HSE");
@@ -179,6 +172,30 @@ public class XPromoManager: Singleton<XPromoManager> {
 		Application.OpenURL(url);
 
     }
+
+	/// <summary>
+	/// Get the short link corresponding to a reward to send to HSE.
+	/// </summary>
+	/// <param name="_rewardSku">The sku of the reward whose link we want.</param>
+	/// <returns>The link to use to open HSE and obtain the reward. Can be <c>null</c> if no link was defined for the given reward sku.</returns>
+	public string GetShortLinkForReward(string _rewardSku) {
+		// Make some safety checks 
+		if(!m_dynamicShortLinks.ContainsKey(_rewardSku)) {
+			// The requested reward shortlink is not defined
+			Debug.LogError("There is no HSE shortlink defined for the reward with sku=" + _rewardSku);
+			return null;
+		}
+
+		string url = m_dynamicShortLinks[_rewardSku];
+		if(string.IsNullOrEmpty(url)) {
+			// The url was left empty in the scriptable object
+			Debug.LogError("The HSE shortlink url is empty.");
+			return null;
+		}
+
+		// All good!
+		return url;
+	}
 	
 
     /// <summary>
@@ -200,7 +217,7 @@ public class XPromoManager: Singleton<XPromoManager> {
         {
 
 			// If the player is not in this AB group, ignore this entry
-			if (rewardLink.abGroup.ToString().ToLower() == m_xPromoCycle.aBGroup.ToString().ToLower())
+			if (rewardLink.abGroup.ToString().ToLower() == m_xPromoCycle.abGroup.ToString().ToLower())
             {
                 // Use the reward sku as key in the links dictionary
 				result.Add(rewardLink.rewardSKU, rewardLink.url);
@@ -281,7 +298,7 @@ public class XPromoManager: Singleton<XPromoManager> {
 			if (rewardDef == null)
 			{
 				// Reward not found. 
-				Debug.LogError("Incoming reward with SKU " + m_incomingRewardsToProcess + " is not defined in the content");
+				Debug.LogError("Incoming reward with SKU " + sku + " is not defined in the content");
 
 				// Continue with the next reward
 				continue;
@@ -294,7 +311,7 @@ public class XPromoManager: Singleton<XPromoManager> {
 			// This rewards will be given when the user enters the selection screen
 			if (reward == null)
 			{
-				Debug.LogError("Incoming reward with SKU " + m_incomingRewardsToProcess + " contains an invalid reward");
+				Debug.LogError("Incoming reward with SKU " + sku + " contains an invalid reward");
 
 				// Continue with the next reward
 				continue;
@@ -350,6 +367,8 @@ public class XPromoManager: Singleton<XPromoManager> {
 
 			// Store the incoming rewards SKU. Treat it later.
 			m_incomingRewardsToProcess.Enqueue(value);
+
+			IncomingRewardsReceived = true;
 		}
 
 
@@ -394,6 +413,29 @@ public class XPromoManager: Singleton<XPromoManager> {
 			{
 				// All checks passed. Put it in the pending rewards queue
 				UsersManager.currentUser.PushReward(reward);
+
+				// Tracking!
+				{
+					// Even if the reward is not collected exactly here, it has already been pushed so we know for sure that it will be given eventually
+					HDTrackingManager.XPromoRewardTrackingData trackingData = new HDTrackingManager.XPromoRewardTrackingData();
+					trackingData.sourceCycle = null;
+
+					// Create a local reward object, just for tracking purposes
+					LocalReward sourceReward = LocalReward.CreateLocalRewardFromDef(rewardDef);
+					trackingData.sourceReward = sourceReward;
+
+					// Alternative reward?
+					trackingData.isAltReward = reward.IsAlreadyOwned();
+					if(trackingData.isAltReward) {
+						Metagame.Reward altReward = CreateAltReward(sourceReward);
+						trackingData.InitWithReward(altReward, true, sourceReward, null);
+					} else {
+						trackingData.InitWithReward(reward, false, sourceReward, null);
+					}
+
+					// Notify the event!
+					HDTrackingManager.Instance.Notify_XPromoRewardReceived(trackingData);
+				}
 			}
 
 			// At this point consider the reward as collected
@@ -473,6 +515,33 @@ public class XPromoManager: Singleton<XPromoManager> {
 
 		return reward;
 
+	}
+
+	/// <summary>
+	/// Given a local reward, create the alternative reward for it.
+	/// </summary>
+	/// <param name="_localReward">The local reward whose alternative we want.</param>
+	/// <returns>The alternative reward. Can be null if no alternative reward configured or invalid input parameter.</returns>
+	public static Metagame.Reward CreateAltReward(LocalReward _localReward) {
+		// Need a valid reward
+		if(_localReward == null) return null;
+
+		// Do it!
+		Metagame.Reward altReward = null;
+		if(_localReward.altRewardSC > 0) {
+			altReward = Metagame.Reward.CreateTypeCurrency(_localReward.altRewardSC, UserProfile.Currency.SOFT,
+				Metagame.Reward.Rarity.UNKNOWN, HDTrackingManager.EEconomyGroup.REWARD_XPROMO_LOCAL, _localReward.sku);
+		} else if(_localReward.altRewardPC > 0) {
+			altReward = Metagame.Reward.CreateTypeCurrency(_localReward.altRewardPC, UserProfile.Currency.HARD,
+				Metagame.Reward.Rarity.UNKNOWN, HDTrackingManager.EEconomyGroup.REWARD_XPROMO_LOCAL, _localReward.sku);
+		} else {
+			// Someone forgot to define the alternative reward. So we give the player the original one,
+			// and the reward system in the game will take care of giving the player an equivalent amount of coins/gems
+			if(_localReward is LocalRewardHD) {
+				altReward = ((LocalRewardHD)_localReward).reward;
+			}
+		}
+		return altReward;
 	}
 
 	/// <summary>

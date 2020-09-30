@@ -17,6 +17,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using Calety.Tracking;
+using XPromo;
+using FirebaseWrapper;
 
 public class HDTrackingManagerImp : HDTrackingManager {
     private enum EState {
@@ -330,6 +332,38 @@ public class HDTrackingManagerImp : HDTrackingManager {
 
         // Calety needs to be initialized every time a session starts because the session count has changed
         InitTrackingManager();
+
+        // [AOC] Figure out player source
+        if(TrackingPersistenceSystem.PlayerSource == TrackingPersistenceSystem.PLAYER_SOURCE_UNDEFINED) {
+            // First session?
+            if(Session_IsFirstTime) {
+                // Referral?
+                // Mark it if we have a valid referrer Id, regardless of whether it's valid or not, since we only care about where the player comes from
+                if(!string.IsNullOrEmpty(UsersManager.currentUser.referrerUserId)) {
+                    TrackingPersistenceSystem.PlayerSource = TrackingPersistenceSystem.PLAYER_SOURCE_REFERRAL;
+				}
+
+                // XPromo?
+                // Again, we don't care if the received rewards are not valid or already collected, we only care about where the player comes from
+                else if(XPromoManager.instance.IncomingRewardsReceived) {
+                    TrackingPersistenceSystem.PlayerSource = TrackingPersistenceSystem.PLAYER_SOURCE_XPROMO_HSE;
+                }
+
+                // Paid?
+                else if(false) {
+                    // [AOC] TODO!!
+                    // Don't have the tech to do it as of now, but HSE is able to track paid users. Figure out how.
+				}
+
+                // The rest are considered organic
+                else {
+                    TrackingPersistenceSystem.PlayerSource = TrackingPersistenceSystem.PLAYER_SOURCE_ORGANIC;
+				}
+			} else {
+                // Mark it as unknown
+                TrackingPersistenceSystem.PlayerSource = TrackingPersistenceSystem.PLAYER_SOURCE_UNKNOWN;
+			}
+		}
 
         InitSDKs();
 
@@ -1524,16 +1558,16 @@ public class HDTrackingManagerImp : HDTrackingManager {
     /// A reward has been collected in HD or sent to HSE.
     /// </summary>
     /// <param name="_rewardDef">The reward data.</param>
-    public override void Notify_XPromoRewardCollected(DefinitionNode _rewardDef) {
-        Track_XPromoRewardCollected(_rewardDef);
+    public override void Notify_XPromoRewardCollected(XPromoRewardTrackingData _reward) {
+        Track_XPromoRewardCollected(_reward);
     }
 
     /// <summary>
     /// A reward coming from HSE has been received and validated via deep link.
     /// </summary>
-    /// <param name="_rewardDef">The reward data.</param>
-    public override void Notify_XPromoRewardReceived(DefinitionNode _rewardDef) {
-        Track_XPromoRewardReceived(_rewardDef);
+    /// <param name="_reward">The reward data.</param>
+    public override void Notify_XPromoRewardReceived(XPromoRewardTrackingData _reward) {
+        Track_XPromoRewardReceived(_reward);
     }
 
     /// <summary>
@@ -2915,24 +2949,34 @@ public class HDTrackingManagerImp : HDTrackingManager {
     /// <summary>
     /// A reward has been collected in HD or sent to HSE.
     /// </summary>
-    /// <param name="_rewardDef">The reward data.</param>
-    private void Track_XPromoRewardCollected(DefinitionNode _rewardDef) {
+    /// <param name="_reward">The reward data.</param>
+    private void Track_XPromoRewardCollected(XPromoRewardTrackingData _reward) {
         Log("Track_XPromoRewardCollected "
-           + ", _rewardDef = " + (_rewardDef != null ? _rewardDef.sku : "NULL"));
+           + ", _reward = " + (_reward != null ? _reward.ToString() : "NULL"));
 
-        // Aux vars
-        XPromoCycle currentCycle = XPromoManager.instance.xPromoCycle;
+        // Ignore if given reward is not valid
+        if(_reward == null) return;
+        if(_reward.sourceReward == null) return;
+        if(_reward.sourceCycle == null) return;
+
+        // Deep link param: If it's a HSE reward, deeplink used to switch the game. If it's an HD reward, empty.
+        string deepLinkUrl = string.Empty;
+        if(_reward.sourceReward.destination == XPromoManager.Game.HSE) {
+            deepLinkUrl = XPromoManager.instance.GetShortLinkForReward(_reward.sku);
+        }
 
         // Create event, fill parameters and enqueue it
         HDTrackingEvent e = new HDTrackingEvent("custom.xpromo.dailyLoginCollect.origin"); {
-            Track_AddParamInt(e, TRACK_PARAM_DAY, 0);
-            Track_AddParamInt(e, TRACK_PARAM_DAY, 0);
-            Track_AddParamInt(e, TRACK_PARAM_DAY, 0);
-            Track_AddParamString(e, TRACK_PARAM_DAY, "");
-            Track_AddParamString(e, TRACK_PARAM_DAY, "");
-            Track_AddParamBool(e, TRACK_PARAM_VALID, false);
+            Track_AddParamInt(e, TRACK_PARAM_DAY, _reward.sourceReward.day);
+            Track_AddParamXPromoCalendarDay(e);
+            Track_AddParamInt(e, TRACK_PARAM_AMOUNT, _reward.amount);
+            Track_AddParamString(e, TRACK_PARAM_REWARD_SKU, _reward.sku);
+            Track_AddParamBool(e, TRACK_PARAM_ALT_REWARD, _reward.isAltReward);
+            Track_AddParamString(e, TRACK_PARAM_DEEP_LINK, deepLinkUrl);
+            Track_AddParamBool(e, TRACK_PARAM_XPROMO_HSE_INSTALLED, XPromoManager.IsHungrySharkGameInstalled());
             Track_AddParamPlayerProgress(e);
-            Track_AddParamString(e, TRACK_PARAM_AB_TEST_GROUP, XPromoCycle.ABGroupToString(currentCycle.aBGroup));
+            Track_AddParamString(e, TRACK_PARAM_AB_TEST_GROUP, XPromoCycle.ABGroupToString(_reward.sourceCycle.abGroup));
+            Track_AddParamString(e, TRACK_PARAM_AB_TEST_NAME, _reward.sourceCycle.experimentName);
         }
         m_eventQueue.Enqueue(e);
     }
@@ -2941,9 +2985,40 @@ public class HDTrackingManagerImp : HDTrackingManager {
     /// A reward coming from HSE has been received and validated via deep link.
     /// </summary>
     /// <param name="_rewardDef">The reward data.</param>
-    private void Track_XPromoRewardReceived(DefinitionNode _rewardDef) {
+    private void Track_XPromoRewardReceived(XPromoRewardTrackingData _reward) {
         Log("Track_XPromoRewardReceived "
-           + ", _rewardDef = " + (_rewardDef != null ? _rewardDef.sku : "NULL"));
+            + ", _reward = " + (_reward != null ? _reward.ToString() : "NULL"));
+
+        // Ignore if given reward is not valid
+        if(_reward == null) return;
+        if(_reward.sourceReward == null) return;
+
+        // Compute some parameters
+        // Figure out deep link used to receive this reward
+        string deeplink = "";
+        List<Firebase.DynamicLinks.ReceivedDynamicLinkEventArgs> receivedLinks = DynamicLinksWrapper.getDynamicLinksData;
+        for(int i = 0; i < receivedLinks.Count; ++i) {
+            // Is this the link containing the xpromo data?
+            // [AOC] A bit hacky, but we don't have access to internal vars on DynamicLinksWrapper to consult the params from the link without modifying Calety - and no time for that now
+            string urlQuery = receivedLinks[i].ReceivedDynamicLink.Url.Query;
+            urlQuery = Uri.UnescapeDataString(urlQuery);
+            if(urlQuery.Contains(XPromoManager.XPROMO_REWARD_KEY) && urlQuery.Contains(_reward.sourceReward.sku)) {
+                // Match! Use this link for tracking and break the loop
+                deeplink = receivedLinks[i].ReceivedDynamicLink.Url.OriginalString;
+			}
+		}
+        
+        // Create event, fill parameters and enqueue it
+        HDTrackingEvent e = new HDTrackingEvent("custom.xpromo.dailyLoginCollect.destination"); {
+            Track_AddParamInt(e, TRACK_PARAM_DAY, _reward.sourceReward.day);
+            Track_AddParamInt(e, TRACK_PARAM_AMOUNT, _reward.amount);
+            Track_AddParamString(e, TRACK_PARAM_REWARD_SKU, _reward.sku);
+            Track_AddParamBool(e, TRACK_PARAM_ALT_REWARD, _reward.isAltReward);
+            Track_AddParamString(e, TRACK_PARAM_DEEP_LINK, deeplink);
+            Track_AddParamBool(e, TRACK_PARAM_XPROMO_RECENTLY_INSTALLED, Session_IsFirstTime);
+            Track_AddParamString(e, TRACK_PARAM_AB_TEST_GROUP, XPromoCycle.ABGroupToString(_reward.sourceReward.abGroup));
+        }
+        m_eventQueue.Enqueue(e);
     }
 
     /// <summary>
@@ -2967,7 +3042,8 @@ public class HDTrackingManagerImp : HDTrackingManager {
 
     // Please, respect the alphabetic order, string order
     private const string TRACK_PARAM_AB_TESTING = "abtesting";
-    private const string TRACK_PARAM_AB_TEST_GROUP = "abtestGroup";
+    private const string TRACK_PARAM_AB_TEST_GROUP = "abTestGroup";
+    private const string TRACK_PARAM_AB_TEST_NAME = "abTestName";
     private const string TRACK_PARAM_ACCEPTED = "accepted";
     private const string TRACK_PARAM_ACQ_MARKETING_ID = "acq_marketing_id";
     private const string TRACK_PARAM_ACTION = "action";			// "automatic", "info_button" or "settings"
@@ -2980,6 +3056,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private const string TRACK_PARAM_AF_DEF_LOGPURCHASE = "af_def_logPurchase";
     private const string TRACK_PARAM_AF_DEF_QUANTITY = "af_quantity";
     private const string TRACK_PARAM_AGE = "age";
+    private const string TRACK_PARAM_ALT_REWARD = "altReward";
     private const string TRACK_PARAM_AMOUNT = "amount";
     private const string TRACK_PARAM_AMOUNT_BALANCE = "amountBalance";
     private const string TRACK_PARAM_AMOUNT_DELTA = "amountDelta";
@@ -3004,6 +3081,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private const string TRACK_PARAM_CURRENCY = "currency";
     private const string TRACK_PARAM_CURRENT_LEAGUE = "currentLeague";
 	private const string TRACK_PARAM_DAY = "day";
+    private const string TRACK_PARAM_DEEP_LINK = "deeplink";
     private const string TRACK_PARAM_DEATH_CAUSE = "deathCause";
     private const string TRACK_PARAM_DEATH_COORDINATES = "deathCoordinates";
     private const string TRACK_PARAM_DEATH_IN_CURRENT_RUN_NB = "deathInCurrentRunNb";
@@ -3578,6 +3656,30 @@ public class HDTrackingManagerImp : HDTrackingManager {
 
     private void Track_AddParamTrackingID(HDTrackingEvent _e) {
         Track_AddParamString(_e, TRACK_PARAM_TRACKING_ID, TrackingPersistenceSystem.UserID);
+    }
+
+    private void Track_AddParamXPromoCalendarDay(HDTrackingEvent _e) {
+        // We're gonna assume xpromo is active, otherwise this shouldn't be called
+        int calendarDay = -1;
+        TrackingPersistenceSystem trackingPersistence = HDTrackingManager.Instance.TrackingPersistenceSystem;
+        if(trackingPersistence != null) {
+            // Compute how many days have passed since the xpromo was activated for this player
+            // We don't want to count 24 hour periods, but rather actual calendar days
+            DateTime xpromoStartDate = trackingPersistence.XPromoActivationDate;
+            DateTime serverTime = GameServerManager.GetEstimatedServerTime();
+            DateTime date;
+            int dayCount = 0;
+            while(calendarDay < 0 && dayCount < 100) {   // Protect infinite loop
+                date = xpromoStartDate.AddDays(dayCount);
+                if(date.Day == serverTime.Day) {    // Today
+                    calendarDay = dayCount + 1;     // [1..N]
+                }
+                dayCount++;
+			}
+        }
+
+        // Add param to the event
+        Track_AddParamInt(_e, TRACK_PARAM_CALENDAR_DAY, calendarDay);
     }
 #endregion
 

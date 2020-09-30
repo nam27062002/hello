@@ -41,6 +41,15 @@ public class XPromoCycle {
 		}
 	}
 
+	public static ABGroup StringToABGroup(string _str) {
+		if(_str.ToLowerInvariant() == "a") {
+			return ABGroup.A;
+		} else if(_str.ToLowerInvariant() == "b") {
+			return ABGroup.B;
+		}
+		return ABGroup.UNDEFINED;
+	}
+
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
@@ -53,7 +62,7 @@ public class XPromoCycle {
 	// Configuration from content
 	private Boolean m_enabled;
     private ABGroup m_abGroup;
-    public ABGroup aBGroup { get { return m_abGroup;  } }
+    public ABGroup abGroup { get { return m_abGroup;  } }
 	private DateTime m_startDate;
     private DateTime m_recruitmentLimitDate;
 	private DateTime m_endDate;
@@ -102,6 +111,11 @@ public class XPromoCycle {
 		}
 	}
 
+	// Tracking
+	private string m_experimentName = "";
+	public string experimentName { get { return m_experimentName; } }
+	private bool m_experimentChecked = false;
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -140,7 +154,8 @@ public class XPromoCycle {
 		m_startDate = DateTime.MinValue;
 		m_endDate = DateTime.MinValue;
 
-	}
+		m_experimentChecked = false;
+}
 
 
 	/// <summary>
@@ -176,75 +191,79 @@ public class XPromoCycle {
 		// Find the proper next reward (in case the player already owns it, find a replacement)
 		LocalReward reward = m_localRewards [_index];
 
-        // An HSE reward can always be collected.
-        // We make sure the player doesnt lose the reward if he fails to open the HSE app.
+		// Prepare tracking vars
+		HDTrackingManager.XPromoRewardTrackingData rewardTrackingData = new HDTrackingManager.XPromoRewardTrackingData();
+		rewardTrackingData.sourceReward = reward;
+		rewardTrackingData.sourceCycle = this;
+		rewardTrackingData.isAltReward = false;
+
+		// Reward for HSE?
 		if (reward is LocalRewardHSE)
 		{
-			// Open the HSE link
-			XPromoManager.instance.SendRewardToHSE((LocalRewardHSE)reward);
+			// An HSE reward can always be collected.
+			// We make sure the player doesnt lose the reward if he fails to open the HSE app.
+			LocalRewardHSE hseReward = (LocalRewardHSE)reward;
 
+			// Open the HSE link
+			XPromoManager.instance.SendRewardToHSE(hseReward);
+
+			// Tracking data
+			rewardTrackingData.sku = hseReward.rewardSku;
+			rewardTrackingData.amount = hseReward.amount;
 		}
+
+		// Reward for HD?
 		else if (reward is LocalRewardHD)
 		{   
 			// Make sure the reward is available
 			if (!CanCollectNextReward())
 				return null;
 
-            Metagame.Reward rewardContent = ((LocalRewardHD)reward).reward;
+			// Aux vars
+			Metagame.Reward finalRewardContent = ((LocalRewardHD)reward).reward;
+			Metagame.Reward altRewardContent = null;
 
-			if (rewardContent is Metagame.RewardCurrency)
+			// Is it a currency reward?
+			if (finalRewardContent is Metagame.RewardCurrency)
 			{
                 // Give coins/gems to the user
-				UsersManager.currentUser.EarnCurrency(((Metagame.RewardCurrency)rewardContent).currency, (ulong)rewardContent.amount, false,
+				UsersManager.currentUser.EarnCurrency(((Metagame.RewardCurrency)finalRewardContent).currency, (ulong)finalRewardContent.amount, false,
                                                         HDTrackingManager.EEconomyGroup.REWARD_XPROMO_LOCAL);
 
+				// Tracking data
+				rewardTrackingData.InitWithReward(finalRewardContent, false, reward, this);
 			}
 			else  // Dragons, pets and eggs
 			{
 				// Does the player already have this item?
-				if (!rewardContent.IsAlreadyOwned())
+				if (!finalRewardContent.IsAlreadyOwned())
 				{
 					// Add the reward to the queue
-					UsersManager.currentUser.PushReward(rewardContent);
+					UsersManager.currentUser.PushReward(finalRewardContent);
 
-                }
+					// Tracking data
+					rewardTrackingData.InitWithReward(finalRewardContent, false, reward, this);
+				}
                 else
-                { 
-
+                {
 					// So the player already owns the reward. We are going to give him an alternative reward
 					// in form of currencies as defined in the content
-					Metagame.Reward altReward;
+					altRewardContent = XPromoManager.CreateAltReward(reward);
 
-                    if (reward.altRewardSC > 0)
-                    {
-						altReward = Metagame.Reward.CreateTypeCurrency(reward.altRewardSC, UserProfile.Currency.SOFT,
-                            Metagame.Reward.Rarity.UNKNOWN, HDTrackingManager.EEconomyGroup.REWARD_XPROMO_LOCAL, reward.sku);
-					}
-                    else  if (reward.altRewardPC > 0)
-                    {
-						altReward = Metagame.Reward.CreateTypeCurrency(reward.altRewardPC, UserProfile.Currency.HARD,
-	                        Metagame.Reward.Rarity.UNKNOWN, HDTrackingManager.EEconomyGroup.REWARD_XPROMO_LOCAL, reward.sku);
-					}
-                    else
-                    {
-
-                        // Someone forgot to define the alternative reward. So we give the player the original one,
-						// and the reward system in the game will take care of giving the player an equivalent amount of coins/gems
-						altReward = rewardContent;
-
-					}
+					// Tracking data
+					rewardTrackingData.InitWithReward(altRewardContent, true, reward, this);
 
 					// Add the reward to the queue
-					UsersManager.currentUser.PushReward(altReward);
-
+					UsersManager.currentUser.PushReward(altRewardContent);
 				}
-
 			}
 
-			XPromoManager.Log("Reward " + rewardContent.ToString() + " collected ");
+			XPromoManager.Log("Reward " + finalRewardContent.ToString() + " collected ");
 
 		}
 
+		// Tracking!
+		HDTrackingManager.Instance.Notify_XPromoRewardCollected(rewardTrackingData);
 
 		// If we are collecting this reward for first time
 		if (_index == nextRewardIdx)
@@ -309,11 +328,26 @@ public class XPromoCycle {
         if (m_totalNextRewardIdx >= m_cycleSize)
 			return false;
 
+		// All checks passed. The xPromo feature is active!
 
+		// [AOC] Update tracking vars if needed
+		if(!m_experimentChecked) {
+			TrackingPersistenceSystem trackingPersistence = HDTrackingManager.Instance.TrackingPersistenceSystem;
+			if(trackingPersistence != null) {
+				// Are we starting a new experiment?
+				string lastExperimentName = trackingPersistence.XPromoExperimentName;
+				if(m_experimentName != lastExperimentName) {
+					// Yes!! Store activation date
+					trackingPersistence.XPromoActivationDate = serverTime;
+				}
 
-		// All checks passed. The xPromo feature is active
+				// Mark as checked, we don't need to do it again
+				m_experimentChecked = true;
+			}
+		}
+
+		// Done!
 		return true;
-
 	}
 
 
@@ -345,15 +379,7 @@ public class XPromoCycle {
 		{
             // By default everyone is in the group UNDEFINED
             string param = settingsDef.GetAsString("ABGroup", "");
-
-            if (param.ToLower() == "a")
-            {
-				m_abGroup = ABGroup.A;
-            }
-            else if (param.ToLower() == "b")
-            {
-				m_abGroup = ABGroup.B;
-            }
+			m_abGroup = StringToABGroup(param);
 		}
 
 		if (settingsDef.Has("startDate"))
@@ -415,7 +441,9 @@ public class XPromoCycle {
 			Debug.LogError("The number of xPromo active rewards doesn´t match the xPromo cycle length! Please, fix the content tables.");
 		}
 
-
+		// Tracking vars
+		m_experimentName = settingsDef.GetAsString("experiment");
+		m_experimentChecked = false;
 	}
 
 

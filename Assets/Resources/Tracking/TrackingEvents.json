@@ -1080,10 +1080,12 @@
         {"calendarDay": { "Status": "OK" } },
         {"amount": { "Status": "OK" } },
         {"rewardSku": { "Status": "OK" } },
+        {"altReward": { "Status": "OK" } },
         {"deeplink": { "Status": "OK" } },
         {"hseInstalled": { "Status": "OK" } },
         {"playerProgress": { "Status": "OK" } },
-        {"abtestGroup": { "Status": "OK" } }
+        {"abTestGroup": { "Status": "OK" } },
+        {"abTestName": { "Status": "OK" } }
       ],
       "APIs": [
         "dna",
@@ -1093,12 +1095,12 @@
     "custom.xpromo.dailyLoginCollect.destination": {
       "Parameters": [
         {"day": { "Status": "OK" } },
-        {"calendarDay": { "Status": "OK" } },
         {"amount": { "Status": "OK" } },
         {"rewardSku": { "Status": "OK" } },
+        {"altReward": { "Status": "OK" } },
         {"deeplink": { "Status": "OK" } },
         {"recentlyInstalled": { "Status": "OK" } },
-        {"abtestGroup": { "Status": "OK" } }
+        {"abTestGroup": { "Status": "OK" } },
       ],
       "APIs": [
         "dna",
@@ -1974,16 +1976,28 @@
       "Type": "INT:4",
       "Values": []
     },
-     "rewardSku": {
+    "rewardSku": {
       "Type": "STRING:32",
       "Values": []
+    },
+    "deeplink": {
+      "Type": "STRING:64",
+      "Values": []
+    },
+    "altReward": {
+       "Type": "BOOL",
+       "Values": []
     },
     "hseInstalled": {
        "Type": "BOOL",
        "Values": []
     },
-    "abtestGroup": {
+    "abTestGroup": {
       "Type": "STRING:4",
+      "Values": []
+    },
+    "abTestName": {
+      "Type": "STRING:64",
       "Values": []
     },
     "recentlyInstalled": {

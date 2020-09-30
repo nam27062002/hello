@@ -251,7 +251,7 @@ public class LoadingSceneController : SceneController {
         ReferralManager.CreateInstance();
 
         // Create XPromo manager and subscribe to incoming deeplink notifications
-        XPromoManager xPromo = XPromoManager.instance;
+        XPromoManager.CreateInstance();
 
         // Initialize Dynamic Links library (before Firebase)
         CaletySettings settingsInstance = Resources.Load<CaletySettings>("CaletySettings");
