@@ -396,8 +396,7 @@ public class CPTechTab : MonoBehaviour {
 		UsersManager.currentUser.referrerUserId = "";
 
 		// Clear the confirmation flag, so the client will call to the server again 
-		//UsersManager.currentUser.referralState = ReferralManager.State.PENDING_CONFIRMATION;
-		UsersManager.currentUser.referralConfirmed = false;
+		UsersManager.currentUser.referralState = ReferralManager.State.PENDING_CONFIRMATION;
 
 		m_referraUserId.text = "Referral User Id: " + UsersManager.currentUser.referrerUserId;
 	}

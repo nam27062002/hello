@@ -25,6 +25,12 @@ public class ReferralManager : Singleton<ReferralManager> {
 	// CONSTANTS                											  //
 	//------------------------------------------------------------------------//
 	private static readonly string INVITED_BY_DLINK_PARAM = "invitedby";
+	public enum State {
+		// KEEP INDEXES THE SAME!
+		UNKNOWN = 0,                // Initial state, we haven't read the deep link yet
+		PENDING_CONFIRMATION = 1,   // We've read the data from the deep link, pending confirmation with server regardless of whether we found a valid referrer Id or not
+		REFERRAL_CONFIRMED = 3      // Server confirmation received, with or without success
+	}
 
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
@@ -82,13 +88,16 @@ public class ReferralManager : Singleton<ReferralManager> {
 	/// </summary>
 	/// <returns>Whether the link was successfully read from the deep link or not.</returns>
 	public bool ReadReferralLink() {
-		// Ignore if the player has already been referred
-		if(UsersManager.currentUser.referralConfirmed)
+		// Only if we don't have any referral info yet
+		if(UsersManager.currentUser.referralState != State.UNKNOWN)
 			return false;
 
-		// Ignore if we already have a referrer ID assigned
-		if(!string.IsNullOrEmpty(UsersManager.currentUser.referrerUserId))
-			return false;
+		// For retrocompatibility, if we have a referrer ID assigned, force a state change and return
+		// [AOC] This might not be needed since we already do it on the UserProfile.Load(), but just in case
+		if(!string.IsNullOrEmpty(UsersManager.currentUser.referrerUserId)) {
+			UsersManager.currentUser.referralState = State.PENDING_CONFIRMATION;
+			return true;
+		}
 
 		// All checks passed! Get the referrer Id
 		return ReadReferralLinkInternal();
@@ -106,10 +115,11 @@ public class ReferralManager : Singleton<ReferralManager> {
 				// Read the referrer Id from the deep link
 				string referrerId = m_deepLinkParams[INVITED_BY_DLINK_PARAM];
 
-				// Store referrer Id if valid
-				if(!string.IsNullOrEmpty(referrerId)) {
-					UsersManager.currentUser.referrerUserId = referrerId;
-				}
+				// Change state so we don't attempt to read the link anymore!
+				UsersManager.currentUser.referralState = State.PENDING_CONFIRMATION;
+
+				// Store referrer Id (whether it's valid or not)
+				UsersManager.currentUser.referrerUserId = referrerId;
 
 				// Nothing else to do! Notify that the link was successfully read
 				return true;
@@ -125,18 +135,15 @@ public class ReferralManager : Singleton<ReferralManager> {
 	/// </summary>
 	public void ConfirmReferralConversionIfPossible() {
 		// Exit if the conversion has been already confirmed (with or without success)
-		if(UsersManager.currentUser.referralConfirmed)
+		//if(UsersManager.currentUser.referralConfirmed)
+		if(UsersManager.currentUser.referralState == State.REFERRAL_CONFIRMED)
 			return;
 
-		// Nothing to do either if we don't have a valid referrer User Id
-		// [AOC] TODO!! FOR SURE?
-		//		 Non-referred users will be constantly performing this check (string comparison)
-		//		 
-		//		 WE MAY WANT TO MARK AS REFERRAL CONFIRMED (UNSUCCESSFUL) SO WE DON'T KEEP TRYING FOREVER
-		//		 THE ONLY RISK HERE IS - MAY WE GET THE REFERRER USER ID AFTER ATEMPTING THE CONVERSION?
-		//		 REFLEXIONEM-HI, SI US PLAU, REFLEXIONEM-HI
-		if(string.IsNullOrEmpty(UsersManager.currentUser.referrerUserId))
-			return;
+		// If we haven't yet received info from the deep link, try again
+		if(UsersManager.currentUser.referralState == State.UNKNOWN) {
+			// If no link was successfully read, don't do anything else
+			if(!ReadReferralLinkInternal()) return;
+		}
 
 		// We need a valid DNA Id to validate the request
 		if(string.IsNullOrEmpty(HDTrackingManager.Instance.GetDNAProfileID()))
@@ -182,7 +189,7 @@ public class ReferralManager : Singleton<ReferralManager> {
 						// No matter if the referral confirmation was valid or not, change the state to confirmed
 						// so this call is never made again for this user/device.
 						// This way we save a lot of unnecesary calls to the server.
-						UsersManager.currentUser.referralConfirmed = true;
+						UsersManager.currentUser.referralState = State.REFERRAL_CONFIRMED;
 					}
 				}
 
