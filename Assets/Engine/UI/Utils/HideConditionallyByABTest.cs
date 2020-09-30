@@ -55,7 +55,7 @@ public class HideConditionallyByABTest : MonoBehaviour {
 	private void Start() {
 
         // If the value selected matches the value of the AB test
-        if ( ABTest.GetValue(m_test) == (m_ifTestEquals == Boolean.TRUE) )
+        if ( ABTest.Evaluate(m_test) == (m_ifTestEquals == Boolean.TRUE) )
         {
 			switch (m_action)
             {

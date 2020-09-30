@@ -158,7 +158,13 @@ public class FileListAttributeEditor : ExtendedPropertyDrawer {
 	/// <param name="_optionsPrefix">The prefix to be used when adding the file name to the options list. Used for nesting the foldable menu.</param>
 	private void ScanFiles(DirectoryInfo _dirInfo, string _filter, string _prefix = "") {
 		// Scan target dir's files
-		FileInfo[] files = _dirInfo.GetFiles(_filter).Where(_file => !_file.Extension.EndsWith(".meta")).ToArray();	// Use file filter, exclude .meta files
+		FileInfo[] files = null;
+		try {
+			files = _dirInfo.GetFiles(_filter).Where(_file => !_file.Extension.EndsWith(".meta")).ToArray(); // Use file filter, exclude .meta files
+		} catch(Exception _e) {
+			//Debug.LogError(Color.red.Tag("EXCEPTION! Skipping directory " + _prefix) + "\n" + _e.ToString());
+			return;	// Skip this directory
+		}
 
 		// Add files to files list
 		m_files.AddRange(files);

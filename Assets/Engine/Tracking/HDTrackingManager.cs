@@ -95,6 +95,8 @@ public class HDTrackingManager
 		REWARD_AD,						// Reward given by watching an ad
 		REWARD_PREREG,					// Reward given from pre-registration
 		REWARD_DAILY,					// Daily rewards system
+        REWARD_XPROMO_LOCAL,            // X-Promo reward originated in HD
+        REWARD_XPROMO_INCOMING,         // X-Priomo reward coming from HSE
         PET_DUPLICATED,                 // Used when the user gets some reward instead of a pet because the user already has that pet
         SHOP_EXCHANGE,                  // Used when the user exchanges a currency into any other currency such as HC into SC, HC into keys or real money into HC
 
@@ -732,6 +734,74 @@ public class HDTrackingManager
 
     #endregion referral
 
+    #region xpromo
+    /// <summary>
+    /// Auxliar class to send tracking data to the manager.
+    /// </summary>
+    public class XPromoRewardTrackingData {
+        public string sku = "";
+        public int amount = 1;
+        public bool isAltReward = false;
+
+        public XPromo.LocalReward sourceReward = null;
+        public XPromoCycle sourceCycle = null;
+
+        /// <summary>
+        /// Initialize the tracking data with the given parameters.
+        /// Can still be modified afterwards using the public members of the class.
+        /// </summary>
+        /// <param name="_reward"></param>
+        /// <param name="_isAlt"></param>
+        /// <param name="_sourceReward"></param>
+        /// <param name="_sourceCycle"></param>
+        public void InitWithReward(Metagame.Reward _reward, bool _isAlt, XPromo.LocalReward _sourceReward, XPromoCycle _sourceCycle) {
+            // Sku depends on reward type
+            if(_reward is Metagame.RewardCurrency) {
+                sku = _reward.type; // "hc", "sc", etc.
+            } else {
+                sku = _reward.sku;
+            }
+
+            // Rest of parameters as is
+            amount = (int)_reward.amount;
+            isAltReward = _isAlt;
+            sourceReward = _sourceReward;
+            sourceCycle = _sourceCycle;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString() {
+            return "{\n" + 
+                "\tsku: " + sku + "\n" +
+                "\tamount: " + amount + "\n" +
+                "\tisAltReward: " + isAltReward + "\n" +
+                "\tsourceReward: " + (sourceReward != null ? sourceReward.sku : "NULL") + "\n" +
+                "\tsourceCycle: " + (sourceCycle != null ? sourceCycle.experimentName : "NULL") + "\n" +
+                "}";
+		}
+	}
+
+    /// <summary>
+    /// A reward has been collected in HD or sent to HSE.
+    /// </summary>
+    /// <param name="_reward">The reward data.</param>
+    public virtual void Notify_XPromoRewardCollected(XPromoRewardTrackingData _reward) { }
+
+    /// <summary>
+    /// A reward coming from HSE has been received and validated via deep link.
+    /// </summary>
+    /// <param name="_reward">The reward data.</param>
+    public virtual void Notify_XPromoRewardReceived(XPromoRewardTrackingData _reward) { }
+
+    /// <summary>
+    /// A button has been pressed in the XPromo UI.
+    /// </summary>
+    /// <param name="_buttonName">Name of the button.</param>
+    public virtual void Notify_XPromoUIButton(string _buttonName) { }
+    #endregion
 
     #endregion notify
 

@@ -42,6 +42,7 @@ public enum BroadcastEventType
 
 	// Debug
 	DEBUG_REFRESH_DAILY_REWARDS,    // no params
+    DEBUG_REFRESH_XPROMO_CYCLE,
     
     SHIELD_HIT,
     
@@ -54,6 +55,8 @@ public enum BroadcastEventType
     START_COLLECTIBLE_HUNGRY_MODE,
 
 	QUALITY_PROFILE_CHANGED,    // no params, current profile can be consulted at FeatureSettingsManager.instance.GetCurrentProfileLevel()
+
+    CLUSTER_ID_ASSIGNED,        // params: string clusterId
 
 	/////// NEW EVENTS HERE!!! ///////
 
@@ -114,4 +117,9 @@ public class SeasonChangedEventInfo : BroadcastEventInfo {
 
 public class PositionEventInfo : BroadcastEventInfo {
 	public Vector3 position;
+}
+
+
+public class ClusterIdEventInfo : BroadcastEventInfo {
+    public string clusterId = "";
 }

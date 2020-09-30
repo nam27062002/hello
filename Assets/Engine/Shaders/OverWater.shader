@@ -35,6 +35,8 @@ Shader "Hungry Dragon/OverWater"
 				#pragma glsl_no_auto_normalization
 				#pragma fragmentoption ARB_precision_hint_fastest
 
+				#pragma shader_feature __ NIGHT
+
 //				#pragma multi_compile_fog
 //				#pragma multi_compile_fwdbase
 //				#pragma multi_compile_particles
@@ -149,6 +151,10 @@ Shader "Hungry Dragon/OverWater"
 
 //					float attenuation = LIGHT_ATTENUATION(i);	// Shadow
 //					col *= attenuation;
+
+#if defined(NIGHT)
+					col *= fixed4(0.3, 0.3, 0.7, 1.0);
+#endif
 
 
 					return col;

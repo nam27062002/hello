@@ -149,6 +149,20 @@ public class GameHUD : MonoBehaviour {
 
 		m_mapButtonGodRays.SetActive(false);
 
+		// Is the map countdown starting automatically or manually?
+		if (ABTest.Evaluate(ABTest.Test.INITIAL_MAP_COUNTDOWN_TRIGGER_BY_PLAYER))
+		{
+			// If this is the first time the player opens the map
+		    if (!UsersManager.currentUser.mapDiscovered)
+			{ 
+				UsersManager.currentUser.mapDiscovered = true;
+
+				// Start the count down. Use default 24hrs timer if the settings rules are not ready
+				UsersManager.currentUser.UnlockMap();
+
+			}
+        }
+
 		// Open the popup
 		m_paused = true;
 		PopupController popupController = PopupManager.OpenPopupInstant(PopupInGameMap.PATH);

@@ -1,3 +1,5 @@
+using System;
+
 public class TrackingPersistenceSystem : PersistenceSystem
 {
     private const string PARAM_SERVER_USER_ID = "accID";
@@ -43,6 +45,13 @@ public class TrackingPersistenceSystem : PersistenceSystem
 
     // Events sent that should be sent only once.
     private const string PARAM_EVENTS_ALREADY_SENT = "eventsAlreadySent";
+
+    // XPromo
+    private const string PARAM_XPROMO_EXPERIMENT_NAME = "xpromoExperimentName";    // Unique identifier of the last xpromo experiment activated on for this player
+    private const string PARAM_XPROMO_ACTIVATION_DATE = "xpromoActivationDate"; // The date the xpromo was activated for this player
+
+    // Player source
+    private const string PARAM_PLAYER_SOURCE = "playerSource";  // Where does this player come from? Organic, Paid, XPromo, Referral, etc.
 
     // Tracking user ID generated upon first time session is started, uses GUID as we don't have server at this point
     public string UserID
@@ -419,6 +428,39 @@ public class TrackingPersistenceSystem : PersistenceSystem
         }
     }
 
+    // XPromo
+    public string XPromoExperimentName {
+        get { return Cache_GetString(PARAM_XPROMO_EXPERIMENT_NAME); }
+        set { Cache_SetString(PARAM_XPROMO_EXPERIMENT_NAME, value); }
+	}
+
+    public DateTime XPromoActivationDate {
+        get {
+            DateTime date = DateTime.MaxValue;
+            if(PersistenceUtils.SafeTryParse<DateTime>(Cache_GetString(PARAM_XPROMO_ACTIVATION_DATE), out date)) {
+                return date;
+			} else {
+                return DateTime.MaxValue;
+			}
+		}
+
+        set {
+            Cache_SetString(PARAM_XPROMO_ACTIVATION_DATE, PersistenceUtils.SafeToString(value));
+		}
+	}
+
+    // Player source - where does this player come from?
+    public const string PLAYER_SOURCE_UNDEFINED = "";
+    public const string PLAYER_SOURCE_UNKNOWN = "unknown";
+    public const string PLAYER_SOURCE_ORGANIC = "organic";
+    public const string PLAYER_SOURCE_PAID = "paid";
+    public const string PLAYER_SOURCE_REFERRAL = "referral";
+    public const string PLAYER_SOURCE_XPROMO_HSE = "xpromoHSE";
+    public string PlayerSource {
+        get { return Cache_GetString(PARAM_PLAYER_SOURCE); }
+        set { Cache_SetString(PARAM_PLAYER_SOURCE, value); }
+	}
+
     public TrackingPersistenceSystem()
     {
         m_systemName = "Tracking";
@@ -531,6 +573,18 @@ public class TrackingPersistenceSystem : PersistenceSystem
 
         key = PARAM_EVENTS_ALREADY_SENT;
         dataString = new CacheDataString(key, "");
+        Cache_AddData(key, dataString);
+
+        key = PARAM_XPROMO_EXPERIMENT_NAME;
+        dataString = new CacheDataString(key, "");
+        Cache_AddData(key, dataString);
+
+        key = PARAM_XPROMO_ACTIVATION_DATE;
+        dataString = new CacheDataString(key, "");
+        Cache_AddData(key, dataString);
+
+        key = PARAM_PLAYER_SOURCE;
+        dataString = new CacheDataString(key, PLAYER_SOURCE_UNDEFINED);
         Cache_AddData(key, dataString);
 
         Reset();

@@ -418,7 +418,7 @@ CapsuleCollider:
   m_Radius: 0.45
   m_Height: 3
   m_Direction: 1
-  m_Center: {x: 0, y: -0.18, z: 0}
+  m_Center: {x: 0, y: 0.43, z: 0}
 --- !u!54 &54000010887478324
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -457,7 +457,7 @@ MonoBehaviour:
         defaultItemLOW: 0
         probability: 1
         toDisableOnEquip: []
-        position: {x: 0, y: -0.0000121593475, z: 0}
+        position: {x: 0, y: 0.5242219, z: 0.000000022351742}
         scale: {x: 1, y: 1, z: 1}
         rotation: {x: 0, y: 0, z: 0}
   - season: ufoDay
@@ -469,14 +469,14 @@ MonoBehaviour:
         defaultItemLOW: 0
         probability: 0.3714645
         toDisableOnEquip: []
-        position: {x: 0, y: 0, z: 0}
+        position: {x: 0, y: 0.5612917, z: 0.000000022351742}
         scale: {x: 1, y: 1, z: 1}
         rotation: {x: 0, y: 0, z: 0}
       - equipablePrefabName: PF_AlienMask_villager
         defaultItemLOW: 1
         probability: 0.6285355
         toDisableOnEquip: []
-        position: {x: 0, y: 0, z: 0}
+        position: {x: 0, y: 0.52805066, z: 0.000000022351742}
         scale: {x: 1, y: 1, z: 1}
         rotation: {x: 0, y: 0, z: 0}
   - season: Alien
@@ -488,8 +488,20 @@ MonoBehaviour:
         defaultItemLOW: 1
         probability: 1
         toDisableOnEquip: []
-        position: {x: 0, y: 0, z: 0}
+        position: {x: 0, y: 0, z: 0.000000022351742}
         scale: {x: 1, y: 1, z: 1}
+        rotation: {x: 0, y: 0, z: 0}
+  - season: werewolf_vampire
+    groups:
+    - name: import
+      probability: 1
+      items:
+      - equipablePrefabName: PF_vampire_mask
+        defaultItemLOW: 1
+        probability: 1
+        toDisableOnEquip: []
+        position: {x: 0, y: 0.3343686, z: 0.13844106}
+        scale: {x: 1.2, y: 1.2, z: 1.2}
         rotation: {x: 0, y: 0, z: 0}
   - season: Anniversary1
     groups:
@@ -500,7 +512,7 @@ MonoBehaviour:
         defaultItemLOW: 0
         probability: 1
         toDisableOnEquip: []
-        position: {x: 0, y: 0.01, z: -0.04}
+        position: {x: 0, y: 0.566874, z: -0.04}
         scale: {x: 0.7, y: 0.6, z: 0.7}
         rotation: {x: -10.11, y: 0, z: 12.07}
   - season: halloween
@@ -508,13 +520,13 @@ MonoBehaviour:
     - name: Hat
       probability: 1
       items:
-      - equipablePrefabName: PF_Axe_Hat
+      - equipablePrefabName: PF_Saw_Hat
         defaultItemLOW: 0
         probability: 1
         toDisableOnEquip: []
-        position: {x: 0.13880296, y: 1.251683, z: 0.06757983}
-        scale: {x: 1.2, y: 1.2, z: 1.2}
-        rotation: {x: 0, y: 0, z: -28.85}
+        position: {x: -0.0018310547, y: -0.0434649, z: -0.34860078}
+        scale: {x: 1, y: 1, z: 1}
+        rotation: {x: 13.3443985, y: 276.55817, z: 355.80487}
   - season: xmas
     groups:
     - name: Hat
@@ -524,7 +536,7 @@ MonoBehaviour:
         defaultItemLOW: 0
         probability: 1
         toDisableOnEquip: []
-        position: {x: -0.03457687, y: -0.05322814, z: -0.0010790303}
+        position: {x: -0.03457687, y: 0.4574709, z: -0.0010790005}
         scale: {x: 0.75400096, y: 0.75400096, z: 0.75400096}
         rotation: {x: 340.2716, y: 359.8333, z: 0.4937762}
 --- !u!1 &176664
@@ -615,7 +627,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1000011993423810}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0.61, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 475722}
@@ -726,7 +738,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1000013474072868}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -1.6848, z: 0}
+  m_LocalPosition: {x: 0, y: -1.19, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 475722}
@@ -930,7 +942,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1819189002718992}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -1.7, z: 0}
+  m_LocalPosition: {x: 0, y: -1.157, z: 0}
   m_LocalScale: {x: 1.5, y: 1.5, z: 1.5}
   m_Children:
   - {fileID: 4618029735816054}
@@ -998,6 +1010,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4976269376330164}
+  - {fileID: 5117001309933280376}
   m_Father: {fileID: 475722}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1031,3 +1044,65 @@ Transform:
   m_Father: {fileID: 4532924204112608}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &5587691992876676410
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5117001309933280376}
+  - component: {fileID: 510920387033144863}
+  - component: {fileID: 5741243062514221172}
+  m_Layer: 21
+  m_Name: Head_2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5117001309933280376
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5587691992876676410}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 1.425, z: 0.091}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4788433174935530}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &510920387033144863
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5587691992876676410}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ece7f0589cf74ddf97a0a63886f8499, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_point: 17
+--- !u!114 &5741243062514221172
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5587691992876676410}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9aae6699537414c7ab185eeaef226fe0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_parentName: Human_Head
+  m_parentRoot: {fileID: 475722}
+  m_worldPositionStays: 1
+  m_resetScale: 0
+  m_when: 0

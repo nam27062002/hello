@@ -14,7 +14,7 @@ using System.Text;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
-using Firebase.Crashlytics;
+using FirebaseWrapper;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -89,7 +89,7 @@ public class CPTechTab : MonoBehaviour {
 		m_DNAProfileIdText.text = "DNA profileId: " + HDTrackingManager.Instance.GetDNAProfileID();
 
         m_AdUnitInfoText.text = "Ads: " + GameAds.instance.GetInfo();
-		m_referraUserId.text = "Referral User Id: " + UsersManager.currentUser.referralUserId;
+		m_referraUserId.text = "Referral User Id: " + UsersManager.currentUser.referrerUserId;
 
 
 		m_AdUnitInfoText.text = "Ads: " + GameAds.instance.GetInfo();
@@ -382,9 +382,9 @@ public class CPTechTab : MonoBehaviour {
 	public void OnClearConsoleButton() {
 		m_outputSb.Length = 0;
 		Output("Hungry Dragon v" + GameSettings.internalVersion + " console output");
-		if (CaletyDynamicLinks.receivedDynamicLinksData)
+		if (DynamicLinksWrapper.receivedDynamicLinksData)
         {
-			Output("Dynamic links data: " + CaletyDynamicLinks.getDynamicLinksData[0].ReceivedDynamicLink.Url);
+			Output("Dynamic links data: " + DynamicLinksWrapper.getDynamicLinksData[0].ReceivedDynamicLink.Url);
         }
 	}
 
@@ -393,12 +393,12 @@ public class CPTechTab : MonoBehaviour {
     /// </summary>
     public void OnClearReferraUserIdButton()
     {
-		UsersManager.currentUser.referralUserId = "";
+		UsersManager.currentUser.referrerUserId = "";
 
-        // Clear the confirmation flag, so the client will call to the server again 
-		UsersManager.currentUser.referralConfirmed = false;
+		// Clear the confirmation flag, so the client will call to the server again 
+		UsersManager.currentUser.referralState = ReferralManager.State.PENDING_CONFIRMATION;
 
-		m_referraUserId.text = "Referral User Id: " + UsersManager.currentUser.referralUserId;
+		m_referraUserId.text = "Referral User Id: " + UsersManager.currentUser.referrerUserId;
 	}
 
     public void OnSaveGame()

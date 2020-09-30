@@ -18,6 +18,7 @@ using System.Diagnostics;
 using TMPro;
 using System.Text.RegularExpressions;
 using System.Collections.Generic;
+using FirebaseWrapper;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -230,6 +231,15 @@ public class LoadingSceneController : SceneController {
 
     private bool m_needsToLoadMenu = false;
 
+    //------------------------------------------------------------------
+    // Dynamic Links data receiver callback
+    //
+    public static void OnDynamicLinksDataReceived(Dictionary<string, string> dlinkParameters)
+    {
+        Messenger.Broadcast<Dictionary<string, string>>(MessengerEvents.INCOMING_DEEPLINK_NOTIFICATION, dlinkParameters);
+    }
+
+
     //------------------------------------------------------------------//
     // GENERIC METHODS													//
     //------------------------------------------------------------------//
@@ -237,17 +247,27 @@ public class LoadingSceneController : SceneController {
     /// Initialization.
     /// </summary>
     override protected void Awake() {
-        CaletyFirebaseWrapper.initialise();
+        // Initializing referral manager before Firebase so we receive the deep link callback in time
+        ReferralManager.CreateInstance();
 
+        // Create XPromo manager and subscribe to incoming deeplink notifications
+        XPromoManager.CreateInstance();
+
+        // Initialize Dynamic Links library (before Firebase)
         CaletySettings settingsInstance = Resources.Load<CaletySettings>("CaletySettings");
         if (settingsInstance.m_bUseDynamicLinks)
         {
-            CaletyDynamicLinks.setDynamicLinksParameters(settingsInstance.m_strDynamicLinksDomain, settingsInstance.m_strDynamicLinksBaseLink, settingsInstance.m_iOSAppStoreID);
+            DynamicLinksWrapper.setDynamicLinksDataReceivedCallback(OnDynamicLinksDataReceived);
+            DynamicLinksWrapper.setDynamicLinksParameters(settingsInstance.m_strDynamicLinksDomain, settingsInstance.m_strDynamicLinksBaseLink, settingsInstance.m_iOSAppStoreID);
         }
+
+        // Initialize Firebase
+        FirebaseInit.initialise();
 
         // Call parent
         base.Awake();
 
+        // Initialize Application manager
         ApplicationManager.instance.Init();
 
         // We need to update the user id label when the user logs in 
@@ -883,40 +903,6 @@ public class LoadingSceneController : SceneController {
         HDTrackingManager.Instance.Notify_MarketingID(HDTrackingManager.EMarketingIdFrom.FirstLoading);
     }
 
-
-    /// <summary>
-    // The invited user has to confirm that the app has been open, so the referral user
-    // increments its referal counter and can claim rewards.
-    /// </summary>
-    private void ConfirmReferralConversion()
-    {
-
-        // Exit if the conversion has been already confirmed (with or without success)
-        if (UsersManager.currentUser.referralConfirmed)
-            return;
-
-        if (UsersManager.currentUser.referralUserId == "")
-        {
-
-            // We still dont know the referral id. Ask calety for it.
-            string referralId = CaletyDynamicLinks.getReferrerID();
-            if (referralId != "")
-            {
-                UsersManager.currentUser.referralUserId = referralId;
-            }
-
-        }
-
-        if (UsersManager.currentUser.referralUserId != "" )
-        {
-            // Notify the server confirming the conversion of the invited player
-            ReferralManager.instance.MarkReferral(UsersManager.currentUser.referralUserId);
-
-        }
-
-    }
-
-
     private void StartLoadFlow()
     {
         if (m_startLoadFlow)
@@ -936,6 +922,7 @@ public class LoadingSceneController : SceneController {
                 // GlobalEventManager.SetupUser(UsersManager.currentUser);
 				OffersManager.InitFromDefinitions();	// Reload offers - need persistence to properly initialize offer packs rewards
 
+                
                 // Automatic connection check is enabled once the loading is over
                 GameServerManager.SharedInstance.Connection_SetIsCheckEnabled(true);
 
@@ -969,8 +956,8 @@ public class LoadingSceneController : SceneController {
 
                 HDTrackingManager.Instance.Notify_Razolytics_Funnel_Load(FunnelData_LoadRazolytics.Steps._01_02_persistance_ready);
 
-                // At this point check if this player has been invited by another, and notify the conversion to the server
-                ConfirmReferralConversion();
+                // At this point check if this player has been invited by another and store the referrer user Id
+                ReferralManager.instance.ReadReferralLink();
 
                 // Given stuff is stored in USerProfile, that's why we need to wait for persistence to be loaded to load given stuff
                 TransactionManager.instance.Given_Load();

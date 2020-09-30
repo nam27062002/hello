@@ -367,6 +367,14 @@ public class UserProfile : UserPersistenceSystem
 		get { return m_mapResetTimestamp > GameServerManager.GetEstimatedServerTime(); }
 	}
 
+    // True if the player already pressed the map button in the game for the first time
+	private bool m_mapDiscovered;
+    public bool mapDiscovered
+    {
+        get { return m_mapDiscovered; }
+        set { m_mapDiscovered = value; }
+    }
+
 	// Global events
 	private Dictionary<int, GlobalEventUserData> m_globalEvents = new Dictionary<int, GlobalEventUserData>();
 	public Dictionary<int, GlobalEventUserData> globalEvents {
@@ -435,20 +443,18 @@ public class UserProfile : UserPersistenceSystem
     }
 
 	// Referral install
-	private string m_referralUserId;
-	public string referralUserId
+	private string m_referrerUserId;
+	public string referrerUserId
 	{
-		get { return m_referralUserId; }
-		set { m_referralUserId = value; }
+		get { return m_referrerUserId; }
+		set { m_referrerUserId = value; }
 	}
 
-	private bool m_referralConfirmed;
-	public bool referralConfirmed
-	{
-		get { return m_referralConfirmed; }
-		set { m_referralConfirmed = value; }
+	private ReferralManager.State m_referralState;
+	public ReferralManager.State referralState {
+		get { return m_referralState; }
+		set { m_referralState = value; }
 	}
-
 
 	private int m_totalReferrals;
 	public int totalReferrals
@@ -1382,6 +1388,17 @@ public class UserProfile : UserPersistenceSystem
 			m_mapResetTimestamp = GameServerManager.GetEstimatedServerTime();	// Already expired
 		}
 
+		key = "mapDiscovered";
+		if (_data.ContainsKey(key))
+		{
+			mapDiscovered = PersistenceUtils.SafeParse<bool>(_data["mapDiscovered"]);
+		}
+		else
+		{
+			mapDiscovered = false;  
+		}
+
+
 		// Global events
 		key = "globalEvents";
 		m_globalEvents.Clear();	// Clear current events data
@@ -1433,9 +1450,21 @@ public class UserProfile : UserPersistenceSystem
 			m_dailyRewards.Generate();	// Generate a new sequence
 		}
 
+		key = "xPromo";
+		Debug.Log(Colors.cyan.Tag("LOADING XPROMO"));
+		if (_data.ContainsKey(key))
+		{
+			Debug.Log(Colors.lime.Tag("VALID DATA!!\n") + new JsonFormatter().PrettyPrint(_data[key].ToString()));
+			XPromoManager.instance.LoadData(_data[key]);
+		}
+		else
+		{
+			Debug.Log(Colors.red.Tag("INVALID DATA!"));
+		}
+
 		// Offer Packs
-        // Old version. transform to offer packs v2
-        if ( _data.ContainsKey( "offerPacks" ) || _data.ContainsKey("offerPacksRotationalHistory") )
+		// Old version. transform to offer packs v2
+		if ( _data.ContainsKey( "offerPacks" ) || _data.ContainsKey("offerPacksRotationalHistory") )
         {
             UpdateOfferPacksPersistance( _data );
         }
@@ -1542,23 +1571,34 @@ public class UserProfile : UserPersistenceSystem
         }
 
 		// Referral
-		key = "referralUserId";
+		key = "referrerUserId";
 		if (_data.ContainsKey(key))
 		{
-			m_referralUserId = _data[key].Value;
+			m_referrerUserId = _data[key].Value;
 		}
 		else
 		{
-			m_referralUserId = "";
+			m_referrerUserId = "";
 		}
 
-		key = "referralConfirmed";
+		key = "referralState";	// Important: before referralConfirmed!
+		if(_data.ContainsKey(key)) {
+			m_referralState = (ReferralManager.State)_data[key].AsInt;
+		} else {
+			m_referralState = ReferralManager.State.UNKNOWN;
+		}
+
+		key = "referralConfirmed";	// Deprecated
         if (_data.ContainsKey(key))
         {
-			m_referralConfirmed = _data[key].AsBool;
-        } else
-        {
-			m_referralConfirmed = false;
+			// [AOC] Persistence format changed for 3.2
+			//		 Adding retrocompatibility support
+			bool referralConfirmed = _data[key].AsBool;
+			if(referralConfirmed) {
+				m_referralState = ReferralManager.State.REFERRAL_CONFIRMED;
+			} else {
+				m_referralState = ReferralManager.State.UNKNOWN;	// [AOC] If we have a valid referrerUserId, the ReferralManager will switch to PENDING_CONFIRMATION state
+			}
         }
 
 		key = "invitesSent";
@@ -1754,6 +1794,7 @@ public class UserProfile : UserPersistenceSystem
 
 		// Map upgrades
 		data.Add("mapResetTimestamp", PersistenceUtils.SafeToString(m_mapResetTimestamp));
+		data.Add("mapDiscovered", PersistenceUtils.SafeToString(m_mapDiscovered));
 
 		// Global Events
 		SimpleJSON.JSONArray eventsData = new SimpleJSON.JSONArray();
@@ -1788,8 +1829,19 @@ public class UserProfile : UserPersistenceSystem
 			Debug.Log(Colors.red.Tag("DAILY REWARDS: INVALID DATA!"));
 		}
 
+		// XPromo
+		JSONClass xPromoData = XPromoManager.instance.SaveData();
+		if (xPromoData != null)
+		{  // Can be null if the sequence was never generated
+			data.Add("xPromo", xPromoData);
+		}
+		else
+		{
+			Debug.Log(Colors.red.Tag("XPROMO: INVALID DATA!"));
+		}
+
 		// Offer packs
-        JSONClass newOffersData = new SimpleJSON.JSONClass();
+		JSONClass newOffersData = new SimpleJSON.JSONClass();
         int count = (int)OfferPack.Type.COUNT;
         for (int i = 0; i < count; i++) {
             JSONArray array = new JSONArray();
@@ -1845,10 +1897,9 @@ public class UserProfile : UserPersistenceSystem
         }
 
 		// Referral
-		data.Add("referralUserId", referralUserId);
-
-		data.Add("referralConfirmed", referralConfirmed);
-
+		data.Add("referrerUserId", referrerUserId);
+		//data.Add("referralConfirmed", referralConfirmed);		// [AOC] Not anymore as of 3.2
+		data.Add("referralState", (int)referralState);
 		data.Add("invitesSent", invitesSent);
 
 		// Baby dragons - Extra gem granted
@@ -2681,6 +2732,10 @@ public class UserProfile : UserPersistenceSystem
 	public void SetClusterId(string _newClusterId) {
 		// Store the new value
 		m_clusterId = _newClusterId;
+
+		// Notify game
+		ClusterIdEventInfo eventData = new ClusterIdEventInfo() { clusterId = _newClusterId };
+		Broadcaster.Broadcast(BroadcastEventType.CLUSTER_ID_ASSIGNED, eventData);
 
 		// Send tracking event
 		HDTrackingManager.Instance.Notify_ClusterAssigned(_newClusterId);

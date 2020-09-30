@@ -85,13 +85,18 @@ public class PersistenceUtils
                 _returnValue.Add("dragons", _dragons);
             }
 
-			// [AOC] Start with the map unlocked
-			// Use default 24hrs timer if the settings rules are not ready
-			System.DateTime mapResetTimestamp = GameServerManager.GetEstimatedServerTime().AddHours(24);
-			if(gameSettingsDef != null) {
-				mapResetTimestamp = GameServerManager.GetEstimatedServerTime().AddMinutes(gameSettingsDef.GetAsDouble("miniMapTimer"));	// Minutes
-			}
-			_returnValue.Add("mapResetTimestamp", mapResetTimestamp.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
+            // Shall we start map countdown automatically?
+            if (!ABTest.Evaluate(ABTest.Test.INITIAL_MAP_COUNTDOWN_TRIGGER_BY_PLAYER))
+            {
+                // [AOC] Start with the map unlocked
+                // Use default 24hrs timer if the settings rules are not ready
+                System.DateTime mapResetTimestamp = GameServerManager.GetEstimatedServerTime().AddHours(24);
+                if (gameSettingsDef != null)
+                {
+                    mapResetTimestamp = GameServerManager.GetEstimatedServerTime().AddMinutes(gameSettingsDef.GetAsDouble("miniMapTimer")); // Minutes
+                }
+                _returnValue.Add("mapResetTimestamp", mapResetTimestamp.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
+            }
         }
         else
         {
@@ -235,22 +240,39 @@ public class PersistenceUtils
 	/// <param name="_toParse">The string to be parsed.</param>
 	/// <returns>Parsed value. Will be the default value of <typeparamref name="T"/> if parsing not successful.</returns>
 	public static T SafeParse<T>(string _toParse) where T : IConvertible {
-		// Aux vars
-		T val;
+        // Aux vars
+        T val;
 
-		// Try first with invariant culture
-		if(TryParse<T>(_toParse, PersistenceFacade.JSON_FORMATTING_CULTURE, out val)) {
-			return val;
-		}
+        // Try parsing the string
+        if(SafeTryParse(_toParse, out val)) {
+            return val;         // Success! Return value
+        } else {
+            return default(T);  // Couldn't parse input string, return default value for this type
+        }
+    }
 
-		// Try with local culture
-		else if(TryParse<T>(_toParse, ApplicationManager.originalCulture, out val)) {
-			return val;
-		}
+    /// <summary>
+    /// Parse the given string using Persistnece and Server Comms formatting.
+    /// If it fails, try using device's local formatting.
+    /// </summary>
+    /// <typeparam name="T">The type we want to parse.</typeparam>
+    /// <param name="_toParse">The string to be parsed.</param>
+    /// <param name="_val">Out variable where the parse result will be stored.</param>
+    /// <returns>Whether the parsing was successful or not.</returns>
+    public static bool SafeTryParse<T>(string _toParse, out T _val) where T : IConvertible {
+        // Try first with invariant culture
+        if(TryParse<T>(_toParse, PersistenceFacade.JSON_FORMATTING_CULTURE, out _val)) {
+            return true;
+        }
 
-		// Couldn't parse input string, return default value for this type
-		return default(T);
-	}
+        // Try with local culture
+        else if(TryParse<T>(_toParse, ApplicationManager.originalCulture, out _val)) {
+            return true;
+        }
+
+        // Couldn't parse input string, return error
+        return false;
+    }
 
 	/// <summary>
 	/// Generic version of the TryParse method for IConvertibles.

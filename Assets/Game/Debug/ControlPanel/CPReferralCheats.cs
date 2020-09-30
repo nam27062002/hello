@@ -11,6 +11,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using SimpleJSON;
+using FirebaseWrapper;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -53,12 +54,12 @@ public class CPReferralCheats : MonoBehaviour {
 
 		// 2. Read from user profile
 		if(string.IsNullOrEmpty(m_debugReferrerId)) {
-			m_debugReferrerId = UsersManager.currentUser.referralUserId;
+			m_debugReferrerId = UsersManager.currentUser.referrerUserId;
 		}
 
 		// 3. Read from deep linking
 		if(string.IsNullOrEmpty(m_debugReferrerId)) {
-			m_debugReferrerId = CaletyDynamicLinks.getReferrerID();
+			m_debugReferrerId = DynamicLinksWrapper.getReferrerID();
 		}
 
 		// Detect changes
@@ -192,7 +193,7 @@ public class CPReferralCheats : MonoBehaviour {
 	/// Read the referrer ID from the Deep Link tech and use it as debug referrer ID.
 	/// </summary>
 	public void OnReadReferrerIDFromDeepLink() {
-		m_referrerIdInput.text = CaletyDynamicLinks.getReferrerID();
+		m_referrerIdInput.text = DynamicLinksWrapper.getReferrerID();
 		RefreshReferrerId();
 	}
 
@@ -200,7 +201,7 @@ public class CPReferralCheats : MonoBehaviour {
 	/// Read the referrer ID from the User Profile and use it as debug referrer ID.
 	/// </summary>
 	public void OnReadReferrerIDFromUserProfile() {
-		m_referrerIdInput.text = UsersManager.currentUser.referralUserId;
+		m_referrerIdInput.text = UsersManager.currentUser.referrerUserId;
 		RefreshReferrerId();
 	}
 

@@ -1,18 +1,18 @@
 <Definitions>
-	<Definition sku="TID_GLOBAL_EVENT_PUMPKINS" type="collect" target="season_halloween_0;season_halloween_1;season_halloween_2" category="Pumpkins" icon="icon_pumpkin" />
-	<Definition sku="TID_GLOBAL_EVENT_HEARTS" type="collect" target="valentines_heart" icon="icon_heart" />
+	<Definition sku="TID_GLOBAL_EVENT_PUMPKINS" type="kill" target="season_halloween_0;season_halloween_1;season_halloween_2" category="Pumpkins" icon="icon_pumpkin" />
+	<Definition sku="TID_GLOBAL_EVENT_HEARTS" type="kill" target="valentines_heart" icon="icon_heart" />
 	<Definition sku="TID_GLOBAL_EVENT_COLLECT_EGG" type="collect" target="egg_standard" icon="icon_egg" />
-	<Definition sku="TID_GLOBAL_EVENT_SHAMROCK" type="collect" target="st_patrick_balloon" icon="icon_stpatrick_balloon" />
-	<Definition sku="TID_GLOBAL_EVENT_FIRST_DAY_SUMMER_WATERMELONS" type="collect" target="PreSummer_02_watermelon" icon="icon_watermelon" />
+	<Definition sku="TID_GLOBAL_EVENT_SHAMROCK" type="kill" target="st_patrick_balloon" icon="icon_stpatrick_balloon" />
+	<Definition sku="TID_GLOBAL_EVENT_FIRST_DAY_SUMMER_WATERMELONS" type="kill" target="PreSummer_02_watermelon" icon="icon_watermelon" />
 	<Definition sku="TID_GLOBAL_EVENT_EAT_FLYINGBUNNIES" type="kill" target="FlyingBunny" icon="icon_rabbit" />
-	<Definition sku="TID_GLOBAL_EVENT_GIFT" type="collect" target="XmasPresent" icon="icon_mission_destroy_gift" />
+	<Definition sku="TID_GLOBAL_EVENT_GIFT" type="kill" target="XmasPresent" icon="icon_mission_destroy_gift" />
 	<Definition sku="TID_GLOBAL_EVENT_DESTROY_HOUSES" type="destroy" target="building_small;building_medium;building_big" category="Buildings" icon="icon_destroy" />
 	<Definition sku="TID_GLOBAL_EVENT_DIVE" type="distance" icon="icon_run" />
-	<Definition sku="TID_GLOBAL_EVENT_RED_ENVELOPE" type="collect" target="red_envelop" icon="icon_red_envelope" />
+	<Definition sku="TID_GLOBAL_EVENT_RED_ENVELOPE" type="kill" target="red_envelop" icon="icon_red_envelope" />
 	<Definition sku="TID_GLOBAL_EVENT_SURVIVE_TIME" type="survive_time" icon="icon_clock" />
 	<Definition sku="TID_GLOBAL_EVENT_COLLECT_COINS" type="collect" target="coins" icon="icon_money" />
 	<Definition sku="TID_GLOBAL_EVENT_HUNGRY_BIRTHDAY " type="birthday_mode_count" icon="icon_1stAnniversaryCake" />
-	<Definition sku="TID_GLOBAL_EVENT_EAT_BIRDS" type="kill" target="Canary01_Flock;Canary02_Flock;Canary03_Flock;Canary04_Flock;Hawk;OwlWhite;OwlBig;Vulture;Starling_Flock;CrowFlock" category="Birds" icon="icon_canary" />
+	<Definition sku="TID_GLOBAL_EVENT_EAT_BIRDS" type="kill" target="Canary01_Flock;Canary02_Flock;Canary03_Flock;Canary04_Flock;Hawk;OwlWhite;OwlBig;Vulture;Starling_Flock;CrowFlock;BatSmall_Flock;BatBig_Flock" category="Birds" icon="icon_canary" />
 	<Definition sku="TID_GLOBAL_EVENT_SCORE" type="score" icon="icon_score" />
 	<Definition sku="TID_GLOBAL_EVENT_DISTANCE" type="distance" icon="icon_run" />
 	<Definition sku="TID_GLOBAL_EVENT_EASTER_BUNNIES" type="kill" target="easter_bunny" icon="icon_easter_bunny" />
@@ -24,7 +24,7 @@
 	<Definition sku="TID_GLOBAL_EVENT_BIRTHDAY_CAKES" type="kill" target="Anniversary1_Cake_Piece" icon="icon_1stAnniversaryCake" />
 	<Definition sku="TID_GLOBAL_EVENT_EAT_FLYING_PIGS" type="kill" target="FlyingPig" icon="icon_flying_pig" />
 	<Definition sku="TID_GLOBAL_EVENT_EAT_ARCHER" type="kill" target="Archer01;Archer02" icon="icon_archer" />
-	<Definition sku="TID_GLOBAL_EVENT_FOOTBALL" type="collect" target="football_ball" icon="icon_football" />
+	<Definition sku="TID_GLOBAL_EVENT_FOOTBALL" type="kill" target="football_ball" icon="icon_football" />
 	<Definition sku="TID_GLOBAL_EVENT_EAT_GOBLINS" type="kill" target="Bomber;WorkerWagon;Spartakus;Guardian;Miner;Worker;Driller;Kamikaze;Unka;GoblinWarMachine" category="Goblins" icon="icon_goblins" />
 	<Definition sku="TID_GLOBAL_EVENT_EAT_DRAGONS" type="kill" target="EnemyTier0;EnemyTier1;EnemyTier2;EnemyTier3;EnemyTier5" category="Dragons" icon="icon_dragon" />
 	<Definition sku="TID_GLOBAL_EVENT_EAT_FISH" type="kill" target="Fish01_Generic;FishDark;StingraySmall;Piranha;Fish03_Generic;PiranhaDark;StingrayLarge;Fish02_Generic;Shark;JellyfishBlue;JellyfishRed" category="Fish" icon="icon_fish" />
@@ -32,21 +32,25 @@
 	<Definition sku="TID_GLOBAL_EVENT_EAT_SPIDERS" type="kill" target="SpiderSmall;SpiderGreenTurret;SpiderRed" category="Spiders" icon="icon_spiders" />
 	<Definition sku="TID_GLOBAL_EVENT_EAT_TROLLS" type="kill" target="Troll" icon="icon_troll" />
 	<Definition sku="TID_GLOBAL_EVENT_EAT_FAIRIES" type="kill" target="FairySmall;FairyBig" category="Fairies" icon="icon_fairy" />
-	<Definition sku="TID_GLOBAL_EVENT_EAT_HUMANS" type="kill" target="RichMan;BoatFisher;BakerWoman;BadFarmer;Soldier;Archer01;Archer02;ShieldMan;DrunkenMan;Catapulter;Villager01;Villager02" category="Humans" icon="icon_humans" />
+	<Definition sku="TID_GLOBAL_EVENT_EAT_HUMANS" type="kill" target="RichMan;BoatFisher;BakerWoman;BadFarmer;Soldier;Archer01;Archer02;ShieldMan;DrunkenMan;Catapulter;Villager01;Villager02;Villager03;Villager04;TubeMan;VillagerGirl" category="Humans" icon="icon_humans" />
 	<Definition sku="TID_GLOBAL_EVENT_EAT_GOLDEN" type="kill" icon="icon_eat_gold" />
 	<Definition sku="TID_GLOBAL_EVENT_ZOMBIES" type="kill" target="Villager01;boatrider;Bakerwoman" icon="icon_humans_halloween" />
 	<Definition sku="TID_GLOBAL_EVENT_GRAVES_ZOMBIES" type="kill" target="Ground_Zombie" icon="icon_grave_zombie" />
 	<Definition sku="TID_GLOBAL_EVENT_NIAN" type="kill" target="Nian" icon="icon_nian" />
 	<Definition sku="TID_GLOBAL_EVENT_CHRISTMAS_HAT" type="kill_equipped" target="christmas_santa_hat" icon="icon_XmasHat" />
 	<Definition sku="TID_GLOBAL_EVENT_GINGERBREAD_MAN_COOKIE" type="kill" target="GingerbreadManCookie" icon="icon_GingerbreadManCookie" />
-	<Definition sku="TID_GLOBAL_EVENT_SNORKEL" type="collect" target="PreSummer_03_snorkel" icon="icon_dive" />
-	<Definition sku="TID_GLOBAL_EVENT_COCKTAIL" type="collect" target="PreSummer_01_cocktail" icon="icon_cocktail" />
-	<Definition sku="TID_GLOBAL_EVENT_DESTROY_PRESENTS" type="collect" target="XmasPresent" icon="icon_mission_destroy_gift" />
-	<Definition sku="TID_GLOBAL_EVENT_CANDY" type="collect" target="xmasFood" icon="icon_heart" />
-	<Definition sku="TID_GLOBAL_EVENT_JALAPEÑO" type="collect" target="MexicanPepper" icon="icon_mexican_pepper" />
-	<Definition sku="TID_GLOBAL_EVENT_CAKES" type="collect" target="Anniversary1_Cake_Piece" icon="icon_1stAnniversaryCake" />
-	<Definition sku="TID_GLOBAL_EVENT_COOKIES" type="collect" target="GingerbreadManCookie" icon="icon_HungryXmasMode" />
+	<Definition sku="TID_GLOBAL_EVENT_SNORKEL" type="kill" target="PreSummer_03_snorkel" icon="icon_dive" />
+	<Definition sku="TID_GLOBAL_EVENT_COCKTAIL" type="kill" target="PreSummer_01_cocktail" icon="icon_cocktail" />
+	<Definition sku="TID_GLOBAL_EVENT_DESTROY_PRESENTS" type="kill" target="XmasPresent" icon="icon_mission_destroy_gift" />
+	<Definition sku="TID_GLOBAL_EVENT_CANDY" type="kill" target="xmasFood" icon="icon_heart" />
+	<Definition sku="TID_GLOBAL_EVENT_JALAPEÑO" type="kill" target="MexicanPepper" icon="icon_mexican_pepper" />
+	<Definition sku="TID_GLOBAL_EVENT_CAKES" type="kill" target="Anniversary1_Cake_Piece" icon="icon_1stAnniversaryCake" />
+	<Definition sku="TID_GLOBAL_EVENT_COOKIES" type="kill" target="GingerbreadManCookie" icon="icon_HungryXmasMode" />
 	<Definition sku="TID_GLOBAL_EVENT_GOBLIN_ASTRONAUT" type="kill" target="WorkerSpace" icon="icon_goblins_space" />
 	<Definition sku="TID_GLOBAL_EVENT_SPACE_BIRD" type="kill" target="Canary05_Flock_SPACE" icon="icon_space_birds" />
 	<Definition sku="TID_GLOBAL_EVENT_EAT_TUBE_MAN_FLOAT" type="kill" target="TubeMan" icon="icon_tubeman" />
+	<Definition sku="TID_GLOBAL_EVENT_HALLOWEEN_CREATURES" type="kill" target="Witch;BadWitch;GoodWitch;GoodWitch02;RichMan;BoatFisher;BakerWoman;Villager01;Villager02;Villager03;Villager04;EnemyTier0;EnemyTier1;EnemyTier2;EnemyTier3;EnemyTier5;Ground_Zombie;Cow;Horse;Sheep;Troll;worker" icon="icon_humans_halloween" />
+	<Definition sku="TID_GLOBAL_EVENT_WEREWOLF" type="kill_equipped" target="halloween_werewolf_mask" icon="icon_humans_werewolf" />
+	<Definition sku="TID_GLOBAL_EVENT_VAMPIRE" type="kill_equipped" target="halloween_vampire_mask" icon="icon_humans_vampire" />
+	<Definition sku="TID_GLOBAL_EVENT_KILL_BUNNIES" type="kill" target="FlyingBunny;easter_bunny" icon="icon_rabbit" />
 </Definitions>

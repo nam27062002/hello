@@ -14,7 +14,7 @@ using System;
 // CLASSES																	  //
 //----------------------------------------------------------------------------//
 /// <summary>
-/// Use this class to centralize all the AB tests defined by the designers      
+/// Use this class to centralize all the UI AB tests requested by the designers      
 /// </summary>
 [Serializable]
 public class ABTest {
@@ -29,14 +29,15 @@ public class ABTest {
 		SHOW_NEXT_DRAGON_IN_XP_BAR,
 		SHOW_UNLOCK_PROGRESSION_TEXT,
 		UNLOCKED_SKIN_POWER_AS_INFO_BOX, // Show an info box instead of a power icon with tooltip
-        UNLOCKED_SKIN_SHOW_CONTINUE_BUTTON // Show a continue button next to the purchase button
+        UNLOCKED_SKIN_SHOW_CONTINUE_BUTTON, // Show a continue button next to the purchase button
+		INITIAL_MAP_COUNTDOWN_TRIGGER_BY_PLAYER // Start mini map countdown only when the player clicks on the map button
 	}
 
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 
-    public static bool GetValue (Test _test)
+    public static bool Evaluate (Test _test)
     {
 
         switch (_test)
@@ -55,6 +56,9 @@ public class ABTest {
 				
 			case Test.UNLOCKED_SKIN_SHOW_CONTINUE_BUTTON:
 				return GameSettings.SHOW_CONTINUE_BUTTON_IN_UNLOCKED_SKIN;
+
+			case Test.INITIAL_MAP_COUNTDOWN_TRIGGER_BY_PLAYER:
+				return GameSettings.INITIAL_MAP_COUNTDOWN_TRIGGER_BY_PLAYER;
 
         }
 

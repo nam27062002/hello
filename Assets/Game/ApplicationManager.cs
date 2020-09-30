@@ -527,6 +527,10 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         ClusteringManager.Instance.Update();
         UnityEngine.Profiling.Profiler.EndSample();
 
+        UnityEngine.Profiling.Profiler.BeginSample("ReferralManager.Update()");
+        if(!Game_IsInGame) ReferralManager.instance.Update();
+        UnityEngine.Profiling.Profiler.EndSample();
+
         if (NeedsToRestartFlow)
         {
             NeedsToRestartFlow = false;
@@ -1778,17 +1782,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         PersistenceFacade.instance.Save_Request();
     }
 
-	public void Debug_TestPlayAd() 
-	{
-		GameAds.instance.ShowRewarded(GameAds.EAdPurpose.UPGRADE_MAP, Debug_OnAdResult);
-	}
-
-	private void Debug_OnAdResult(bool success) 
-	{
-		Debug.Log("OnAdPlayed result = " + success);
-	}
-
-    private bool m_debugUseAgeProtection = false;
+	private bool m_debugUseAgeProtection = false;
     private void Debug_TestSocialPlatformToggleAgeProtection()
     {
         m_debugUseAgeProtection = !m_debugUseAgeProtection;        

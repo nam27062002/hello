@@ -166,7 +166,7 @@ public class PowerTooltip_BabyPet : IPowerTooltip {
 			// If family power is not active, or if in preview mode, do some changes
 			if(m_displayMode == PowerIcon.DisplayMode.EQUIPPED) {
 				// Only need to check if EQUIPPED mode. Check pet's mother dragon against current dragon.
-				familyPowerActive = UsersManager.currentUser.CurrentDragon == motherDragonSku;
+				familyPowerActive = DragonManager.CurrentDragonConsideringTournament.sku == motherDragonSku;
 			}
 
 			// B/W icon

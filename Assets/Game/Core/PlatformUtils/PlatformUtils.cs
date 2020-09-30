@@ -25,7 +25,7 @@ public abstract class PlatformUtils
 	}
 	
 	public abstract void GetTokens();
-	public abstract void ShareImage(string filename, string caption);
+	public abstract void ShareImage(string filename, string caption, string subject = "");
 	public abstract void MakeToast(string text, bool longDuration);
 	public abstract string GetTrackingId();
 	public abstract string FormatPrice( float price, string currencyLocale );

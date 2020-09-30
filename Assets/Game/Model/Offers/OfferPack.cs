@@ -925,6 +925,15 @@ public class OfferPack {
 			return true;
 		}
 
+		// Max purchase price
+		if(m_maxPurchasePrice != null) {    // Only check if needed
+			int maxPurchasePrice = (trackingPersistence == null) ? -1 : trackingPersistence.MaxPurchasePrice;
+			if(maxPurchasePrice > m_maxPurchasePrice.max) {
+				OffersManager.LogPack(this, "      CheckExpiration {0}: EXPIRED! Max Purchase Price {1} vs {2}", Color.red, m_def.sku, m_maxPurchasePrice.ToString(), maxPurchasePrice);
+				return true;
+			}
+		}
+
 		// Progression
 		int playerProgress = profile.GetPlayerProgress();
 		if(playerProgress > m_progressionRange.max) {

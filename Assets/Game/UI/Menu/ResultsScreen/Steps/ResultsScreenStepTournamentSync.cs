@@ -133,7 +133,7 @@ public class ResultsScreenStepTournamentSync : ResultsScreenStep {
 				OnFinished.Invoke();
 				return;
 			}
-			RewardManager.ApplyEndOfGameRewards();
+			RewardManager.ApplyEndOfGameRewards(m_controller.multipliedCoinsExtra);
 			PersistenceFacade.instance.Save_Request(true);
 		}
 
