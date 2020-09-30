@@ -114,15 +114,10 @@ public class Singleton<T> where T : Singleton<T>, new() {
                 // Lock instance creation
                 m_state = ISingleton.EState.CREATING_INSTANCE;
 
-                // Check if there is a stored SO at the resources directory
+                // Create the new instance!
                 m_instance = new T();
-                // m_instance = Resources.Load<T>(ISingleton.RESOURCES_FOLDER + typeof(T).Name);
 
-                // Make it persistent
-                // [AOC] Not needed since scriptable objects already persist through scenes (and doing this throws a warning in runtime)
-                //		 See http://answers.unity3d.com/questions/1115856/scriptableobject-vs-dontdestroyonload.html
-                //ScriptableObject.DontDestroyOnLoad(m_instance);
-
+                // Catch application quit event
                 Messenger.AddListener(MessengerEvents.APPLICATION_QUIT, m_instance.OnApplicationQuit);
 
                 // Instance has been created and stored, unlock instance creation

@@ -240,22 +240,39 @@ public class PersistenceUtils
 	/// <param name="_toParse">The string to be parsed.</param>
 	/// <returns>Parsed value. Will be the default value of <typeparamref name="T"/> if parsing not successful.</returns>
 	public static T SafeParse<T>(string _toParse) where T : IConvertible {
-		// Aux vars
-		T val;
+        // Aux vars
+        T val;
 
-		// Try first with invariant culture
-		if(TryParse<T>(_toParse, PersistenceFacade.JSON_FORMATTING_CULTURE, out val)) {
-			return val;
-		}
+        // Try parsing the string
+        if(SafeTryParse(_toParse, out val)) {
+            return val;         // Success! Return value
+        } else {
+            return default(T);  // Couldn't parse input string, return default value for this type
+        }
+    }
 
-		// Try with local culture
-		else if(TryParse<T>(_toParse, ApplicationManager.originalCulture, out val)) {
-			return val;
-		}
+    /// <summary>
+    /// Parse the given string using Persistnece and Server Comms formatting.
+    /// If it fails, try using device's local formatting.
+    /// </summary>
+    /// <typeparam name="T">The type we want to parse.</typeparam>
+    /// <param name="_toParse">The string to be parsed.</param>
+    /// <param name="_val">Out variable where the parse result will be stored.</param>
+    /// <returns>Whether the parsing was successful or not.</returns>
+    public static bool SafeTryParse<T>(string _toParse, out T _val) where T : IConvertible {
+        // Try first with invariant culture
+        if(TryParse<T>(_toParse, PersistenceFacade.JSON_FORMATTING_CULTURE, out _val)) {
+            return true;
+        }
 
-		// Couldn't parse input string, return default value for this type
-		return default(T);
-	}
+        // Try with local culture
+        else if(TryParse<T>(_toParse, ApplicationManager.originalCulture, out _val)) {
+            return true;
+        }
+
+        // Couldn't parse input string, return error
+        return false;
+    }
 
 	/// <summary>
 	/// Generic version of the TryParse method for IConvertibles.

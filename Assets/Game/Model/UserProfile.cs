@@ -450,13 +450,11 @@ public class UserProfile : UserPersistenceSystem
 		set { m_referrerUserId = value; }
 	}
 
-	private bool m_referralConfirmed;
-	public bool referralConfirmed
-	{
-		get { return m_referralConfirmed; }
-		set { m_referralConfirmed = value; }
+	private ReferralManager.State m_referralState;
+	public ReferralManager.State referralState {
+		get { return m_referralState; }
+		set { m_referralState = value; }
 	}
-
 
 	private int m_totalReferrals;
 	public int totalReferrals
@@ -1452,9 +1450,21 @@ public class UserProfile : UserPersistenceSystem
 			m_dailyRewards.Generate();	// Generate a new sequence
 		}
 
+		key = "xPromo";
+		Debug.Log(Colors.cyan.Tag("LOADING XPROMO"));
+		if (_data.ContainsKey(key))
+		{
+			Debug.Log(Colors.lime.Tag("VALID DATA!!\n") + new JsonFormatter().PrettyPrint(_data[key].ToString()));
+			XPromoManager.instance.LoadData(_data[key]);
+		}
+		else
+		{
+			Debug.Log(Colors.red.Tag("INVALID DATA!"));
+		}
+
 		// Offer Packs
-        // Old version. transform to offer packs v2
-        if ( _data.ContainsKey( "offerPacks" ) || _data.ContainsKey("offerPacksRotationalHistory") )
+		// Old version. transform to offer packs v2
+		if ( _data.ContainsKey( "offerPacks" ) || _data.ContainsKey("offerPacksRotationalHistory") )
         {
             UpdateOfferPacksPersistance( _data );
         }
@@ -1571,13 +1581,24 @@ public class UserProfile : UserPersistenceSystem
 			m_referrerUserId = "";
 		}
 
-		key = "referralConfirmed";
+		key = "referralState";	// Important: before referralConfirmed!
+		if(_data.ContainsKey(key)) {
+			m_referralState = (ReferralManager.State)_data[key].AsInt;
+		} else {
+			m_referralState = ReferralManager.State.UNKNOWN;
+		}
+
+		key = "referralConfirmed";	// Deprecated
         if (_data.ContainsKey(key))
         {
-			m_referralConfirmed = _data[key].AsBool;
-        } else
-        {
-			m_referralConfirmed = false;
+			// [AOC] Persistence format changed for 3.2
+			//		 Adding retrocompatibility support
+			bool referralConfirmed = _data[key].AsBool;
+			if(referralConfirmed) {
+				m_referralState = ReferralManager.State.REFERRAL_CONFIRMED;
+			} else {
+				m_referralState = ReferralManager.State.UNKNOWN;	// [AOC] If we have a valid referrerUserId, the ReferralManager will switch to PENDING_CONFIRMATION state
+			}
         }
 
 		key = "invitesSent";
@@ -1808,8 +1829,19 @@ public class UserProfile : UserPersistenceSystem
 			Debug.Log(Colors.red.Tag("DAILY REWARDS: INVALID DATA!"));
 		}
 
+		// XPromo
+		JSONClass xPromoData = XPromoManager.instance.SaveData();
+		if (xPromoData != null)
+		{  // Can be null if the sequence was never generated
+			data.Add("xPromo", xPromoData);
+		}
+		else
+		{
+			Debug.Log(Colors.red.Tag("XPROMO: INVALID DATA!"));
+		}
+
 		// Offer packs
-        JSONClass newOffersData = new SimpleJSON.JSONClass();
+		JSONClass newOffersData = new SimpleJSON.JSONClass();
         int count = (int)OfferPack.Type.COUNT;
         for (int i = 0; i < count; i++) {
             JSONArray array = new JSONArray();
@@ -1866,9 +1898,8 @@ public class UserProfile : UserPersistenceSystem
 
 		// Referral
 		data.Add("referrerUserId", referrerUserId);
-
-		data.Add("referralConfirmed", referralConfirmed);
-
+		//data.Add("referralConfirmed", referralConfirmed);		// [AOC] Not anymore as of 3.2
+		data.Add("referralState", (int)referralState);
 		data.Add("invitesSent", invitesSent);
 
 		// Baby dragons - Extra gem granted

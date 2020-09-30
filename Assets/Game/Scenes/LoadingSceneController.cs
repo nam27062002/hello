@@ -18,6 +18,7 @@ using System.Diagnostics;
 using TMPro;
 using System.Text.RegularExpressions;
 using System.Collections.Generic;
+using FirebaseWrapper;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -230,6 +231,15 @@ public class LoadingSceneController : SceneController {
 
     private bool m_needsToLoadMenu = false;
 
+    //------------------------------------------------------------------
+    // Dynamic Links data receiver callback
+    //
+    public static void OnDynamicLinksDataReceived(Dictionary<string, string> dlinkParameters)
+    {
+        Messenger.Broadcast<Dictionary<string, string>>(MessengerEvents.INCOMING_DEEPLINK_NOTIFICATION, dlinkParameters);
+    }
+
+
     //------------------------------------------------------------------//
     // GENERIC METHODS													//
     //------------------------------------------------------------------//
@@ -237,17 +247,27 @@ public class LoadingSceneController : SceneController {
     /// Initialization.
     /// </summary>
     override protected void Awake() {
-        CaletyFirebaseWrapper.initialise();
+        // Initializing referral manager before Firebase so we receive the deep link callback in time
+        ReferralManager.CreateInstance();
 
+        // Create XPromo manager and subscribe to incoming deeplink notifications
+        XPromoManager.CreateInstance();
+
+        // Initialize Dynamic Links library (before Firebase)
         CaletySettings settingsInstance = Resources.Load<CaletySettings>("CaletySettings");
         if (settingsInstance.m_bUseDynamicLinks)
         {
-            CaletyDynamicLinks.setDynamicLinksParameters(settingsInstance.m_strDynamicLinksDomain, settingsInstance.m_strDynamicLinksBaseLink, settingsInstance.m_iOSAppStoreID);
+            DynamicLinksWrapper.setDynamicLinksDataReceivedCallback(OnDynamicLinksDataReceived);
+            DynamicLinksWrapper.setDynamicLinksParameters(settingsInstance.m_strDynamicLinksDomain, settingsInstance.m_strDynamicLinksBaseLink, settingsInstance.m_iOSAppStoreID);
         }
+
+        // Initialize Firebase
+        FirebaseInit.initialise();
 
         // Call parent
         base.Awake();
 
+        // Initialize Application manager
         ApplicationManager.instance.Init();
 
         // We need to update the user id label when the user logs in 
@@ -902,6 +922,7 @@ public class LoadingSceneController : SceneController {
                 // GlobalEventManager.SetupUser(UsersManager.currentUser);
 				OffersManager.InitFromDefinitions();	// Reload offers - need persistence to properly initialize offer packs rewards
 
+                
                 // Automatic connection check is enabled once the loading is over
                 GameServerManager.SharedInstance.Connection_SetIsCheckEnabled(true);
 
