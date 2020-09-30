@@ -456,7 +456,7 @@ if $BUILD_IOS; then
       </plist>" > build.plist
 
     xcodebuild -exportArchive -archivePath "${OUTPUT_DIR}/archives/${ARCHIVE_FILE}" -exportPath "${OUTPUT_DIR}/ipas/" -exportOptionsPlist "build.plist"
-    mv -f "${OUTPUT_DIR}/ipas/Unity-iPhone.ipa" "${OUTPUT_DIR}/ipas/${IPA_FILE}"
+    mv -f "${OUTPUT_DIR}/ipas/hungrydragon.ipa" "${OUTPUT_DIR}/ipas/${IPA_FILE}"
 fi
 
 if $UPLOAD;then
