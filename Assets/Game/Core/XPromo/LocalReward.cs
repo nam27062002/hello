@@ -66,6 +66,9 @@ namespace XPromo
 		protected XPromoCycle.ABGroup m_abGroup = XPromoCycle.ABGroup.UNDEFINED;
 		public XPromoCycle.ABGroup abGroup { get { return m_abGroup; } }
 
+		protected DefinitionNode m_def;
+        public DefinitionNode def { get { return m_def; } }
+
         //------------------------------------------------------------------------//
         // OTHER METHODS														  //
         //------------------------------------------------------------------------//
@@ -78,7 +81,6 @@ namespace XPromo
         /// <returns>New reward created from the given definition.</returns>
         public static LocalReward CreateLocalRewardFromDef(DefinitionNode _def)
 		{
-
 
 			// For which game is destinated this reward?
 			XPromoManager.Game destination = XPromoManager.GameStringToEnum(_def.GetAsString("destination"));
@@ -93,24 +95,21 @@ namespace XPromo
 
 			LocalReward localReward = null;
 
+
+
             if (destination == XPromoManager.Game.HD)
             {
                 // This reward will be received in HD
 				localReward = new LocalRewardHD();
 
-				Metagame.Reward.Data rewardData = new Metagame.Reward.Data();
-				rewardData.typeCode = _def.GetAsString("type");
-				rewardData.amount = _def.GetAsLong("amount");
-				rewardData.sku = _def.GetAsString("rewardSku");
 
 				localReward.m_altRewardSC = _def.GetAsInt("altSC");
 				localReward.m_altRewardPC = _def.GetAsInt("altPC");
 
-				// Assign an economy group based on the xpromo reward origin
-				HDTrackingManager.EEconomyGroup economyGroup = HDTrackingManager.EEconomyGroup.REWARD_XPROMO_LOCAL;
 
 				// Construct the reward object
-				((LocalRewardHD)localReward).reward =  Metagame.Reward.CreateFromData(rewardData, economyGroup, DEFAULT_SOURCE);
+				Metagame.Reward content = XPromoManager.CreateRewardFromDef(_def);
+				((LocalRewardHD)localReward).reward = content;
 
 			}
             else if(destination == XPromoManager.Game.HSE)
@@ -124,7 +123,9 @@ namespace XPromo
 				((LocalRewardHSE)localReward).icon = _def.GetAsString("icon");
 				((LocalRewardHSE)localReward).amount = _def.GetAsInt("amount");
 			}
-            
+
+			// Keep a copy of the definition node
+			localReward.m_def = _def;
 
 			// Shared parameters:
 			localReward.m_destination = destination;

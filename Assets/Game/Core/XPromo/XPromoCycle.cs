@@ -183,7 +183,7 @@ public class XPromoCycle {
 	/// <summary>
 	///  Collects the next reward (if possible) and advance the progression
 	/// </summary>
-	/// <param name="_index">The index of the reward in the cycle</param>
+	/// <param name="_index">The ordinal index of the reward in the cycle</param>
 	/// <returns>Returns the collected reward</returns>
 	public LocalReward CollectReward(int _index)
 	{
@@ -219,46 +219,42 @@ public class XPromoCycle {
 			if (!CanCollectNextReward())
 				return null;
 
-			// Aux vars
-			Metagame.Reward finalRewardContent = ((LocalRewardHD)reward).reward;
-			Metagame.Reward altRewardContent = null;
+			// Generate again the metagame.reward. Just in case the player obtained the rewarded item in the meantime
+			Metagame.Reward rewardContent = XPromoManager.CreateRewardFromDef(reward.def);
 
 			// Is it a currency reward?
-			if (finalRewardContent is Metagame.RewardCurrency)
+			if (rewardContent is Metagame.RewardCurrency)
 			{
                 // Give coins/gems to the user
-				UsersManager.currentUser.EarnCurrency(((Metagame.RewardCurrency)finalRewardContent).currency, (ulong)finalRewardContent.amount, false,
+				UsersManager.currentUser.EarnCurrency(((Metagame.RewardCurrency)rewardContent).currency, (ulong)rewardContent.amount, false,
                                                         HDTrackingManager.EEconomyGroup.REWARD_XPROMO_LOCAL);
 
 				// Tracking data
-				rewardTrackingData.InitWithReward(finalRewardContent, false, reward, this);
+				rewardTrackingData.InitWithReward(rewardContent, false, reward, this);
 			}
 			else  // Dragons, pets and eggs
 			{
+                
 				// Does the player already have this item?
-				if (!finalRewardContent.IsAlreadyOwned())
+				if (rewardContent.IsAlreadyOwned())
 				{
-					// Add the reward to the queue
-					UsersManager.currentUser.PushReward(finalRewardContent);
-
+					// So the player already owns the reward. We are going to give him an alternative reward
+					// in form of currencies as defined in the content
 					// Tracking data
-					rewardTrackingData.InitWithReward(finalRewardContent, false, reward, this);
+					rewardTrackingData.InitWithReward(rewardContent, true, reward, this);
 				}
                 else
                 {
-					// So the player already owns the reward. We are going to give him an alternative reward
-					// in form of currencies as defined in the content
-					altRewardContent = XPromoManager.CreateAltReward(reward);
-
 					// Tracking data
-					rewardTrackingData.InitWithReward(altRewardContent, true, reward, this);
-
-					// Add the reward to the queue
-					UsersManager.currentUser.PushReward(altRewardContent);
+					rewardTrackingData.InitWithReward(rewardContent, false, reward, this);
 				}
+
+				// Add the reward to the queue
+				UsersManager.currentUser.PushReward(rewardContent);
+
 			}
 
-			XPromoManager.Log("Reward " + finalRewardContent.ToString() + " collected ");
+			XPromoManager.Log("Reward " + rewardContent.ToString() + " collected ");
 
 		}
 

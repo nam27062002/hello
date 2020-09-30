@@ -110,7 +110,7 @@ public class XPromoManager: Singleton<XPromoManager> {
 
         /*
         Dictionary<string,string> dLinkParams = new Dictionary<string, string>();
-        dLinkParams.Add(XPROMO_REWARD_KEY, "reward_hse_hd_2a" );
+        dLinkParams.Add(XPROMO_REWARD_KEY, "reward_hse_hd_3a");
         Messenger.Broadcast<Dictionary<string, string>>(MessengerEvents.INCOMING_DEEPLINK_NOTIFICATION, dLinkParams);
         */
 
@@ -457,7 +457,7 @@ public class XPromoManager: Singleton<XPromoManager> {
 	/// <param name="_def">Definition from xPromo rewards table.</param>
 	/// <param name="_origin">The app that granted the reward</param>
 	/// <returns>New reward created from the given definition.</returns>
-	private static Metagame.Reward CreateRewardFromDef(DefinitionNode _def)
+	public static Metagame.Reward CreateRewardFromDef(DefinitionNode _def)
 	{
 
 		Metagame.Reward.Data rewardData = new Metagame.Reward.Data();
