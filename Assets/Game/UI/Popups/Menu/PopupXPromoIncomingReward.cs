@@ -66,13 +66,15 @@ public class PopupXPromoIncomingReward : MonoBehaviour {
             // Are we giving the alternative reward?
             if (reward.IsAlreadyOwned() && reward.replacement != null)
             {
-                // Base case
-				m_welcomeDescription.Localize(WELCOME_TID);
-			}
-            else if (!reward.IsAlreadyOwned () )
-            {
-                // Inform the player that he is receiveing an alternative reward
+				// Inform the player that he is receiveing an alternative reward
 				m_welcomeDescription.Localize(WELCOME_ALT_TID);
+
+
+			}
+            else 
+            {
+				// Base case
+				m_welcomeDescription.Localize(WELCOME_TID);
 			}
         }
 	}
