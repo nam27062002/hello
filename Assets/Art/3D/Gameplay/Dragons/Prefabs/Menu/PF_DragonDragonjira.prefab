@@ -546,6 +546,8 @@ Transform:
   - {fileID: 4044745951301142166}
   - {fileID: 4044615405568600952}
   - {fileID: 4044468927210298416}
+  - {fileID: 5113688994262603903}
+  - {fileID: 3109401984528052373}
   m_Father: {fileID: 4044547547171008314}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -3152,7 +3154,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4047291533482553048}
-  m_LocalRotation: {x: -0.19764264, y: 0.5568926, z: 0.13849093, w: 0.7947504}
+  m_LocalRotation: {x: 0.469171, y: 0.20012692, z: -0.110066876, w: 0.85306096}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -3389,7 +3391,7 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1.36, y: 0.74, z: 0.48}
+  m_Size: {x: 3, y: 1.5, z: 2}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &4047580465062290792
 GameObject:
@@ -3446,7 +3448,7 @@ GameObject:
   - component: {fileID: 4044468927210298416}
   - component: {fileID: 4091277640471971638}
   - component: {fileID: 4159397337834675912}
-  m_Layer: 12
+  m_Layer: 17
   m_Name: hit_tail_5
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -3478,7 +3480,7 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1.1, y: 0.24, z: 0.2}
+  m_Size: {x: 1.5, y: 0.5, z: 0.5}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &4159397337834675912
 MonoBehaviour:
@@ -3868,6 +3870,68 @@ MonoBehaviour:
   m_worldPositionStays: 1
   m_resetScale: 0
   m_when: 0
+--- !u!1 &5055067339698661629
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3109401984528052373}
+  - component: {fileID: 1211319941624448757}
+  - component: {fileID: 3486111804805468790}
+  m_Layer: 17
+  m_Name: hit_foot_R
+  m_TagString: Player
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3109401984528052373
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5055067339698661629}
+  m_LocalRotation: {x: 0.6733905, y: -0.6752551, z: 0.16788922, w: 0.24977805}
+  m_LocalPosition: {x: 0.9691813, y: 0.37847483, z: -0.27274287}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4044242870652429138}
+  m_RootOrder: 7
+  m_LocalEulerAnglesHint: {x: -180, y: 89.99999, z: 211.824}
+--- !u!114 &1211319941624448757
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5055067339698661629}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9aae6699537414c7ab185eeaef226fe0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_parentName: ankle_RT_JT
+  m_parentRoot: {fileID: 4044547547171008314}
+  m_worldPositionStays: 1
+  m_resetScale: 0
+  m_when: 0
+--- !u!135 &3486111804805468790
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5055067339698661629}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 1
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &5108754187236353874
 GameObject:
   m_ObjectHideFlags: 0
@@ -3991,6 +4055,68 @@ MonoBehaviour:
   m_worldPositionStays: 1
   m_resetScale: 0
   m_when: 0
+--- !u!1 &6907070211243171940
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5113688994262603903}
+  - component: {fileID: 8301660410928330218}
+  - component: {fileID: 2489488015939555111}
+  m_Layer: 17
+  m_Name: hit_foot_L
+  m_TagString: Player
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5113688994262603903
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6907070211243171940}
+  m_LocalRotation: {x: -0.21229616, y: 0.20463914, z: 0.6879602, w: 0.663147}
+  m_LocalPosition: {x: -0.99151844, y: 0.37847483, z: -0.27276886}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4044242870652429138}
+  m_RootOrder: 6
+  m_LocalEulerAnglesHint: {x: -180, y: 89.99999, z: 211.824}
+--- !u!114 &8301660410928330218
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6907070211243171940}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9aae6699537414c7ab185eeaef226fe0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_parentName: ankle_LF_JT
+  m_parentRoot: {fileID: 4044547547171008314}
+  m_worldPositionStays: 1
+  m_resetScale: 0
+  m_when: 0
+--- !u!135 &2489488015939555111
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6907070211243171940}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 1
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &7280443355774773628
 GameObject:
   m_ObjectHideFlags: 0
