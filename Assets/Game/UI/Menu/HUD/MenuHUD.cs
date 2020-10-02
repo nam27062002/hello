@@ -25,9 +25,6 @@ public class MenuHUD : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// Shortcuts
 	[SerializeField] private GameObject m_photoButton = null;
-	public GameObject photoButton {
-		get { return m_photoButton; }
-	}
 
 	[Space]
 	[SerializeField] private ProfileCurrencyCounter m_scCounter = null;

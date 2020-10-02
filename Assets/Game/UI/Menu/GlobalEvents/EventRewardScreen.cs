@@ -448,11 +448,7 @@ public class EventRewardScreen : MonoBehaviour {
 			PhotoScreenController photoScreen = InstanceManager.menuSceneController.GetScreenData(MenuScreen.PHOTO).ui.GetComponent<PhotoScreenController>();
 			photoScreen.mode = PhotoScreenController.Mode.EGG_REWARD;
 
-			// Special stuff if coming back from the photo screen
-			if(_from == MenuScreen.PHOTO) {
-				// Restore photo button
-				InstanceManager.menuSceneController.hud.photoButton.GetComponent<ShowHideAnimator>().Show();
-			}
+			
 		}
 	}
 
