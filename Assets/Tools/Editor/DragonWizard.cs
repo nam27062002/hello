@@ -12,14 +12,14 @@ public class DragonWizard : EditorWindow
 {
 	const string DRAGON_MODEL_PATH = "Assets/Art/3D/Gameplay/Dragons/Prefabs/Game/PF_DragonClassic.prefab";
 
-    // Required
-    UnityEngine.Object dragonFBX;
+	// Required
+	UnityEngine.Object dragonFBX;
 	UnityEngine.Object lastDragonFBX;
 	Editor gameObjectEditor;
 	string sku;
 	float fbxScale = 1.0f;
 
-    // Optional
+	// Optional
 	Material dragonMaterial;
 	Material lastDragonMaterial;
 
@@ -27,16 +27,19 @@ public class DragonWizard : EditorWindow
 	Texture2D previewBackgroundTexture = null;
 	GUIStyle previewStyle = new GUIStyle();
 
+	// Toolbar
+	int m_toolbarInt = 0;
+	string[] m_toolbarStrings = { "New dragon", "Skins", "Validation" };
+	Vector2 m_scrollView;
+
 	// Menu
 	[MenuItem("Hungry Dragon/Tools/Creation/Dragon Wizard...", false)]
 	static void Init()
 	{
-		// Prepare window docked next to Inspector tab
-		System.Type inspectorType = System.Type.GetType("UnityEditor.InspectorWindow,UnityEditor.dll");
-		System.Type[] desiredDockNextTo = new System.Type[] { inspectorType };
-		EditorWindow window = GetWindow<DragonWizard>(desiredDockNextTo);
+		// Prepare window
+        EditorWindow window = GetWindow<DragonWizard>();
 		Texture icon = AssetDatabase.LoadAssetAtPath<Texture>("Assets/Art/UI/Common/Icons/icon_btn_animoji.png");
-		window.titleContent = new GUIContent(" Dragon", icon);
+		window.titleContent = new GUIContent(" Dragon wizard", icon);
 
 		// Show window
 		window.Show();
@@ -48,6 +51,48 @@ public class DragonWizard : EditorWindow
 		// Editor checks
 		if (IsEditorBusy())
 			return;
+
+        // Toolbar
+		m_toolbarInt = GUILayout.Toolbar(m_toolbarInt, m_toolbarStrings, GUILayout.Height(35));
+		EditorGUILayout.Space();
+
+		m_scrollView = EditorGUILayout.BeginScrollView(m_scrollView);
+        switch (m_toolbarInt)
+        {
+			case 0:
+				DrawNewDragonGUI();
+				break;
+			case 1:
+				DrawSkinsGUI();
+				break;
+			case 2:
+				DrawValidationGUI();
+				break;
+        }
+		EditorGUILayout.EndScrollView();
+	}
+
+    void DrawSelectDragonGUI()
+    {
+		EditorGUILayout.BeginHorizontal();
+		//EditorGUILayout.Popup();
+		EditorGUILayout.EndHorizontal();
+    }
+
+    private void DrawValidationGUI()
+    {
+		EditorGUILayout.HelpBox("Check if dragon is correctly configured with all required points, bones, animations, etc.", MessageType.Info, true);
+
+		DrawSelectDragonGUI();
+    }
+
+    private void DrawSkinsGUI()
+    {
+		EditorGUILayout.HelpBox("TODO", MessageType.Warning, true);
+	}
+
+    void DrawNewDragonGUI()
+    {
 		EditorGUILayout.HelpBox("Prepare the required XML files when creating a new dragon", MessageType.Info, true);
 		if (GUILayout.Button("Setup new dragon XML tables...", GUILayout.Height(40)))
 		{
@@ -89,7 +134,7 @@ public class DragonWizard : EditorWindow
 				//AssignMaterial();
 				//AssignAnimationControllers();
 				//AssignClonePetBehaviour();
-                
+
 				CreatePreview();
 			}
 			else if (lastDragonMaterial != dragonMaterial)
