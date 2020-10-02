@@ -155,7 +155,7 @@ public class MenuDragonClassicInfo : MenuDragonInfo {
                     // And the dragon is locked (and is a classic, thats implicit)
                     if (unlockTextEnabled && _data.isLocked)
                     {
-                        m_unlockProgressionText.GetComponent<ShowHideAnimator>().Show(true);
+                        m_unlockProgressionText.GetComponent<ShowHideAnimator>().RestartShow();
                     }
                     else
                     {
