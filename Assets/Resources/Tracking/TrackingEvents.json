@@ -1073,6 +1073,52 @@
         "dna",
         "etl"
       ]
+    },
+    "custom.xpromo.dailyLoginCollect.origin": {
+      "Parameters": [
+        {"day": { "Status": "OK" } },
+        {"calendarDay": { "Status": "OK" } },
+        {"amount": { "Status": "OK" } },
+        {"rewardSku": { "Status": "OK" } },
+        {"altReward": { "Status": "OK" } },
+        {"deeplink": { "Status": "OK" } },
+        {"hseInstalled": { "Status": "OK" } },
+        {"playerProgress": { "Status": "OK" } },
+        {"abTestGroup": { "Status": "OK" } },
+        {"abTestName": { "Status": "OK" } }
+      ],
+      "APIs": [
+        "dna",
+        "etl"
+      ]
+    },
+    "custom.xpromo.dailyLoginCollect.destination": {
+      "Parameters": [
+        {"day": { "Status": "OK" } },
+        {"amount": { "Status": "OK" } },
+        {"rewardSku": { "Status": "OK" } },
+        {"altReward": { "Status": "OK" } },
+        {"deeplink": { "Status": "OK" } },
+        {"recentlyInstalled": { "Status": "OK" } },
+        {"abTestGroup": { "Status": "OK" } },
+      ],
+      "APIs": [
+        "dna",
+        "etl"
+      ]
+    },
+    "custom.xpromo.uiButtons": {
+      "Parameters": [
+        {"buttonName": { "Status": "OK" } },
+        {"timerValue": { "Status": "OK" } },
+        {"calendarDay": { "Status": "OK" } },
+        {"abtestGroup": { "Status": "OK" } },
+        {"abTestName": { "Status": "OK" } }
+      ],
+      "APIs": [
+        "dna",
+        "etl"
+      ]
     }
   },
   "ParameterValues": {
@@ -1925,6 +1971,42 @@
     },
     "appsflyer_id": {
       "Type": "STRING:64",
+      "Values": []
+    },
+    "calendarDay": {
+      "Type": "INT:4",
+      "Values": []
+    },
+    "rewardSku": {
+      "Type": "STRING:32",
+      "Values": []
+    },
+    "deeplink": {
+      "Type": "STRING:64",
+      "Values": []
+    },
+    "altReward": {
+       "Type": "BOOL",
+       "Values": []
+    },
+    "hseInstalled": {
+       "Type": "BOOL",
+       "Values": []
+    },
+    "abTestGroup": {
+      "Type": "STRING:4",
+      "Values": []
+    },
+    "abTestName": {
+      "Type": "STRING:64",
+      "Values": []
+    },
+    "recentlyInstalled": {
+       "Type": "BOOL",
+       "Values": []
+    },
+    "timerValue": {
+      "Type": "INT:4",
       "Values": []
     }
   }

@@ -1147,8 +1147,7 @@ public class OffersManager : Singleton<OffersManager> {
 
 		// Play it safe
 		if (offers.Count == 0)
-		{
-			Debug.LogError("There is no referral offer active! the counter shouldnt appear.");
+		{			
 			return null;
 		}
 

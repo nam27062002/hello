@@ -446,7 +446,6 @@ Variant: Hungry Dragon/Dragon/Dragon standard LightMode: ForwardBase with keywor
 Variant: Hungry Dragon/Dragon/Dragon standard LightMode: ForwardBase with keywords: FRESNEL FXLAYER_NONE NORMALMAP REFLECTIONTYPE_NORMAL SELFILLUMINATE_NORMAL SPECULAR _ZWRITE_ON LOW_DETAIL_ON already exists.
 Variant: Hungry Dragon/Dragon/Dragon standard LightMode: ForwardBase with keywords: CUTOFF DOUBLESIDED FXLAYER_REFLECTION NORMALMAP REFLECTIONTYPE_NORMAL SELFILLUMINATE_BLINKLIGHTS SPECULAR _ZWRITE_ON LOW_DETAIL_ON already exists.
 Variant: Hungry Dragon/Dragon/Dragon standard LightMode: ForwardBase with keywords: CUTOFF DOUBLESIDED FXLAYER_REFLECTION NORMALMAP REFLECTIONTYPE_NORMAL SELFILLUMINATE_BLINKLIGHTS SPECULAR _ZWRITE_ON LOW_DETAIL_ON already exists.
-Stripped keyword: _DissolveAmount
 Variant: Hungry Dragon/Dragon/Dragon standard LightMode: ForwardBase with keywords: CUTOFF FRESNEL FXLAYER_NONE NORMALMAP REFLECTIONTYPE_NORMAL SELFILLUMINATE_NORMAL SPECULAR _ZWRITE_ON LOW_DETAIL_ON  added to collection.
 Variant: Hungry Dragon/Dragon/Dragon standard LightMode: ForwardBase with keywords: FRESNEL FXLAYER_REFLECTION NORMALMAP REFLECTIONTYPE_NORMAL SELFILLUMINATE_NORMAL SPECULAR _ZWRITE_ON LOW_DETAIL_ON  added to collection.
 Variant: Hungry Dragon/Dragon/Dragon standard LightMode: ForwardBase with keywords: CUTOFF DOUBLESIDED FRESNEL FXLAYER_NONE NORMALMAP REFLECTIONTYPE_NORMAL SELFILLUMINATE_NORMAL SPECULAR _ZWRITE_ON LOW_DETAIL_ON already exists.
@@ -864,6 +863,7 @@ Shader path: Assets/Engine/Shaders/Skybox/SkyboxDome.shader
 Variant: Hungry Dragon/Skybox/Dome Skybox LightMode: Normal with keywords: LOW_DETAIL_ON  added to collection.
 Variant: Hungry Dragon/Scenary/Scenary Standard LightMode: Normal with keywords: FOG VERTEXCOLOR_NONE LOW_DETAIL_ON already exists.
 Variant: Hungry Dragon/Scenary/Scenary Standard LightMode: Normal with keywords: FOG VERTEXCOLOR_NONE LOW_DETAIL_ON already exists.
+Stripped keyword: ETC1_EXTERNAL_ALPHA
 Variant: Hungry Dragon/Particles/Transparent particles standard LightMode: Normal with keywords: BLENDMODE_ALPHABLEND LOW_DETAIL_ON already exists.
 Variant: Hungry Dragon/Scenary/Scenary Standard LightMode: Normal with keywords: FOG VERTEXCOLOR_NONE LOW_DETAIL_ON already exists.
 Variant: Hungry Dragon/Particles/Transparent particles standard LightMode: Normal with keywords: BLENDMODE_ADDITIVE LOW_DETAIL_ON already exists.
@@ -1108,7 +1108,7 @@ Shader name: Hungry Dragon/Particles/Transparent Signal
 Shader path: Assets/Engine/Shaders/TransparentSignal.shader
 Variant: Hungry Dragon/Particles/Transparent Signal LightMode: Normal with keywords: LOW_DETAIL_ON  added to collection.
 Variant: Hungry Dragon/Scenary/Scenary Standard LightMode: Normal with keywords: EMISSIVE_NONE FOG OPAQUEALPHA VERTEXCOLOR_NONE LOW_DETAIL_ON already exists.
-Variant: Hungry Dragon/Scenary/Scenary Standard LightMode: Normal with keywords: EMISSIVE_NONE FOG OPAQUEALPHA VERTEXCOLOR_NONE LOW_DETAIL_ON already exists.
+Variant: Hungry Dragon/Scenary/Scenary Standard LightMode: Normal with keywords: EMISSIVE_NONE OPAQUEALPHA VERTEXCOLOR_NONE LOW_DETAIL_ON already exists.
 Shader name: Hungry Dragon/SkyForeground
 Shader path: Assets/Engine/Shaders/SkyForeground.shader
 Variant: Hungry Dragon/SkyForeground LightMode: Normal with keywords: LOW_DETAIL_ON  added to collection.
@@ -1135,8 +1135,19 @@ Variant: Hungry Dragon/NPC/NPC Sky bottle LightMode: Normal with keywords: LOW_D
 Shader name: Hungry Dragon/NPC/NPC Sky bottle liquid
 Shader path: Assets/Engine/Shaders/NPCSkyBottleLiquid.shader
 Variant: Hungry Dragon/NPC/NPC Sky bottle liquid LightMode: ForwardBase with keywords: LOW_DETAIL_ON  added to collection.
-Variant: Hungry Dragon/Scenary/Scenary Standard LightMode: Normal with keywords: EMISSIVE_BLINK MAINCOLOR_TEXTURE OPAQUEALPHA VERTEXCOLOR_NONE LOW_DETAIL_ON already exists.
-Variant: Hungry Dragon/Scenary/Scenary Standard LightMode: Normal with keywords: EMISSIVE_COLOR MAINCOLOR_TEXTURE NORMALWASSPECULAR OPAQUEALPHA VERTEXCOLOR_NONE LOW_DETAIL_ON  added to collection.
+Stripped keyword: EMISSIVE_BLINK
+Stripped keyword: LITMODE_LIT
+Stripped keyword: MAINCOLOR_TEXTURE
+Stripped keyword: OPAQUEALPHA
+Stripped keyword: VERTEXCOLOR_NONE
+Variant: Hungry Dragon/NPC/NPC Diffuse LightMode: ForwardBase with keywords: COLORMODE_NONE LOW_DETAIL_ON already exists.
+Stripped keyword: EMISSIVE_COLOR
+Stripped keyword: LITMODE_LIT
+Stripped keyword: MAINCOLOR_TEXTURE
+Stripped keyword: NORMALWASSPECULAR
+Stripped keyword: OPAQUEALPHA
+Stripped keyword: VERTEXCOLOR_NONE
+Variant: Hungry Dragon/NPC/NPC Diffuse LightMode: ForwardBase with keywords: COLORMODE_NONE LOW_DETAIL_ON already exists.
 Variant: Hungry Dragon/Scenary/Scenary Standard LightMode: Normal with keywords: EMISSIVE_COLOR FOG MAINCOLOR_TEXTURE NORMALWASSPECULAR OPAQUEALPHA VERTEXCOLOR_NONE _ZWRITE_ON LOW_DETAIL_ON  added to collection.
 Variant: Hungry Dragon/Scenary/Scenary Standard LightMode: Normal with keywords: EMISSIVE_NONE MAINCOLOR_TEXTURE VERTEXCOLOR_NONE _ZWRITE_ON LOW_DETAIL_ON already exists.
 Variant: Hungry Dragon/Scenary/Scenary Standard LightMode: Normal with keywords: EMISSIVE_COLOR FOG MAINCOLOR_TEXTURE OPAQUEALPHA VERTEXCOLOR_NONE _ZWRITE_ON LOW_DETAIL_ON  added to collection.
@@ -3061,7 +3072,7 @@ Variant: Hungry Dragon/Scenary/Scenary Standard LightMode: Normal with keywords:
 Variant: Hungry Dragon/Scenary/Scenary Standard LightMode: Normal with keywords: FOG VERTEXCOLOR_NONE MEDIUM_DETAIL_ON already exists.
 Variant: Hungry Dragon/Particles/Transparent Signal LightMode: Normal with keywords: MEDIUM_DETAIL_ON  added to collection.
 Variant: Hungry Dragon/Scenary/Scenary Standard LightMode: Normal with keywords: EMISSIVE_NONE FOG OPAQUEALPHA VERTEXCOLOR_NONE MEDIUM_DETAIL_ON already exists.
-Variant: Hungry Dragon/Scenary/Scenary Standard LightMode: Normal with keywords: EMISSIVE_NONE FOG OPAQUEALPHA VERTEXCOLOR_NONE MEDIUM_DETAIL_ON already exists.
+Variant: Hungry Dragon/Scenary/Scenary Standard LightMode: Normal with keywords: EMISSIVE_NONE OPAQUEALPHA VERTEXCOLOR_NONE MEDIUM_DETAIL_ON already exists.
 Variant: Hungry Dragon/SkyForeground LightMode: Normal with keywords: MEDIUM_DETAIL_ON  added to collection.
 Variant: Hungry Dragon/SkyForeground LightMode: Normal with keywords: MEDIUM_DETAIL_ON already exists.
 Variant: Hungry Dragon/SkyForeground LightMode: Normal with keywords: MEDIUM_DETAIL_ON already exists.
@@ -3082,8 +3093,8 @@ Variant: Hungry Dragon/Scenary/Scenary Standard LightMode: Normal with keywords:
 Variant: Hungry Dragon/Scenary/Scenary Standard LightMode: Normal with keywords: BLEND_TEXTURE CUSTOM_VERTEXCOLOR FOG OPAQUEALPHA VERTEXCOLOR_NONE MEDIUM_DETAIL_ON already exists.
 Variant: Hungry Dragon/NPC/NPC Sky bottle LightMode: Normal with keywords: MEDIUM_DETAIL_ON  added to collection.
 Variant: Hungry Dragon/NPC/NPC Sky bottle liquid LightMode: ForwardBase with keywords: MEDIUM_DETAIL_ON  added to collection.
-Variant: Hungry Dragon/Scenary/Scenary Standard LightMode: Normal with keywords: EMISSIVE_BLINK MAINCOLOR_TEXTURE OPAQUEALPHA VERTEXCOLOR_NONE MEDIUM_DETAIL_ON already exists.
-Variant: Hungry Dragon/Scenary/Scenary Standard LightMode: Normal with keywords: EMISSIVE_COLOR MAINCOLOR_TEXTURE NORMALWASSPECULAR OPAQUEALPHA VERTEXCOLOR_NONE MEDIUM_DETAIL_ON  added to collection.
+Variant: Hungry Dragon/NPC/NPC Diffuse LightMode: ForwardBase with keywords: COLORMODE_NONE MEDIUM_DETAIL_ON already exists.
+Variant: Hungry Dragon/NPC/NPC Diffuse LightMode: ForwardBase with keywords: COLORMODE_NONE MEDIUM_DETAIL_ON already exists.
 Variant: Hungry Dragon/Scenary/Scenary Standard LightMode: Normal with keywords: EMISSIVE_COLOR FOG MAINCOLOR_TEXTURE NORMALWASSPECULAR OPAQUEALPHA VERTEXCOLOR_NONE _ZWRITE_ON MEDIUM_DETAIL_ON  added to collection.
 Variant: Hungry Dragon/Scenary/Scenary Standard LightMode: Normal with keywords: EMISSIVE_NONE MAINCOLOR_TEXTURE VERTEXCOLOR_NONE _ZWRITE_ON MEDIUM_DETAIL_ON already exists.
 Variant: Hungry Dragon/Scenary/Scenary Standard LightMode: Normal with keywords: EMISSIVE_COLOR FOG MAINCOLOR_TEXTURE OPAQUEALPHA VERTEXCOLOR_NONE _ZWRITE_ON MEDIUM_DETAIL_ON  added to collection.
@@ -4938,7 +4949,7 @@ Variant: Hungry Dragon/Scenary/Scenary Standard LightMode: Normal with keywords:
 Variant: Hungry Dragon/Scenary/Scenary Standard LightMode: Normal with keywords: FOG VERTEXCOLOR_NONE HI_DETAIL_ON already exists.
 Variant: Hungry Dragon/Particles/Transparent Signal LightMode: Normal with keywords: HI_DETAIL_ON  added to collection.
 Variant: Hungry Dragon/Scenary/Scenary Standard LightMode: Normal with keywords: EMISSIVE_NONE FOG OPAQUEALPHA VERTEXCOLOR_NONE HI_DETAIL_ON already exists.
-Variant: Hungry Dragon/Scenary/Scenary Standard LightMode: Normal with keywords: EMISSIVE_NONE FOG OPAQUEALPHA VERTEXCOLOR_NONE HI_DETAIL_ON already exists.
+Variant: Hungry Dragon/Scenary/Scenary Standard LightMode: Normal with keywords: EMISSIVE_NONE OPAQUEALPHA VERTEXCOLOR_NONE HI_DETAIL_ON already exists.
 Variant: Hungry Dragon/SkyForeground LightMode: Normal with keywords: HI_DETAIL_ON  added to collection.
 Variant: Hungry Dragon/SkyForeground LightMode: Normal with keywords: HI_DETAIL_ON already exists.
 Variant: Hungry Dragon/SkyForeground LightMode: Normal with keywords: HI_DETAIL_ON already exists.
@@ -4959,8 +4970,8 @@ Variant: Hungry Dragon/Scenary/Scenary Standard LightMode: Normal with keywords:
 Variant: Hungry Dragon/Scenary/Scenary Standard LightMode: Normal with keywords: BLEND_TEXTURE CUSTOM_VERTEXCOLOR FOG OPAQUEALPHA VERTEXCOLOR_NONE HI_DETAIL_ON already exists.
 Variant: Hungry Dragon/NPC/NPC Sky bottle LightMode: Normal with keywords: HI_DETAIL_ON  added to collection.
 Variant: Hungry Dragon/NPC/NPC Sky bottle liquid LightMode: ForwardBase with keywords: HI_DETAIL_ON  added to collection.
-Variant: Hungry Dragon/Scenary/Scenary Standard LightMode: Normal with keywords: EMISSIVE_BLINK MAINCOLOR_TEXTURE OPAQUEALPHA VERTEXCOLOR_NONE HI_DETAIL_ON already exists.
-Variant: Hungry Dragon/Scenary/Scenary Standard LightMode: Normal with keywords: EMISSIVE_COLOR MAINCOLOR_TEXTURE NORMALWASSPECULAR OPAQUEALPHA VERTEXCOLOR_NONE HI_DETAIL_ON  added to collection.
+Variant: Hungry Dragon/NPC/NPC Diffuse LightMode: ForwardBase with keywords: COLORMODE_NONE HI_DETAIL_ON already exists.
+Variant: Hungry Dragon/NPC/NPC Diffuse LightMode: ForwardBase with keywords: COLORMODE_NONE HI_DETAIL_ON already exists.
 Variant: Hungry Dragon/Scenary/Scenary Standard LightMode: Normal with keywords: EMISSIVE_COLOR FOG MAINCOLOR_TEXTURE NORMALWASSPECULAR OPAQUEALPHA VERTEXCOLOR_NONE _ZWRITE_ON HI_DETAIL_ON  added to collection.
 Variant: Hungry Dragon/Scenary/Scenary Standard LightMode: Normal with keywords: EMISSIVE_NONE MAINCOLOR_TEXTURE VERTEXCOLOR_NONE _ZWRITE_ON HI_DETAIL_ON already exists.
 Variant: Hungry Dragon/Scenary/Scenary Standard LightMode: Normal with keywords: EMISSIVE_COLOR FOG MAINCOLOR_TEXTURE OPAQUEALPHA VERTEXCOLOR_NONE _ZWRITE_ON HI_DETAIL_ON  added to collection.

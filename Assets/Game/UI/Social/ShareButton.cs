@@ -46,4 +46,19 @@ public class ShareButton : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
+
+
+	/// <summary>
+	/// Photo button has been pressed.
+	/// </summary>
+	public void OnPhotoButton()
+	{
+		// Make sure selected dragon can be photographed!
+		IDragonData dragonData = InstanceManager.menuSceneController.selectedDragonData;
+		if (dragonData != null && dragonData.isOwned)
+		{
+			// Go to target screen
+			InstanceManager.menuSceneController.GoToScreen(MenuScreen.PHOTO, true);
+		}
+	}
 }

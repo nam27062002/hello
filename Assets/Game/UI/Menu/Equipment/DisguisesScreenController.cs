@@ -80,16 +80,7 @@ public class DisguisesScreenController : MonoBehaviour {
 			return m_animator;
 		}
 	}
-
-	private Button m_photoButton = null;
-	private Button photoButton {
-		get {
-			if(m_photoButton == null) {
-				m_photoButton = InstanceManager.menuSceneController.hud.photoButton.GetComponentInChildren<Button>();
-			}
-			return m_photoButton;
-		}
-	}
+	
 
 	// Internal logic
 	private bool m_waitingForDragonPreviewToLoad = false;
@@ -389,12 +380,7 @@ public class DisguisesScreenController : MonoBehaviour {
 				equip.TogglePets(true, true);
 			}
 		}
-
-		// Restore photo button
-		// We can only enter the disguises screen with owned dragons, so photo button should be enabled
-		if(photoButton != null) {
-			photoButton.interactable = true;
-		}
+		
 	}
 
 	/// <summary>
@@ -509,12 +495,7 @@ public class DisguisesScreenController : MonoBehaviour {
 				m_offerButton.animator.Hide(false);
 			}
 		}
-
-		// Photo button
-		if(photoButton != null) {
-			// Only enabled for owned skins
-			photoButton.interactable = _pill.owned;
-		}
+		
 
 		// Store as selected pill
 		m_selectedPill = _pill;

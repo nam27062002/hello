@@ -174,28 +174,13 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 		if(m_currentScreen != MenuScreen.DRAGON_SELECTION) return;
 
 		// Check if hungry shark is installed
-		if(IsHungrySharkGameInstalled()) {
+		if(XPromoManager.IsHungrySharkGameInstalled()) {
 			// Show popup
 			PopupController popup = PopupManager.EnqueuePopup(PopupSharkPetReward.PATH);
 			SetFlag(StateFlag.POPUP_DISPLAYED, true);
 		}
 	}
 
-	/// <summary>
-	/// Is the Hungry Shark Evolution game installed?
-	/// </summary>
-	/// <returns>Whether Hungry Shark Evolution is installed in this device.</returns>
-	private bool IsHungrySharkGameInstalled() {
-		bool ret = false;
-#if UNITY_EDITOR
-		ret = true;
-#elif UNITY_ANDROID
-        ret = PlatformUtils.Instance.ApplicationExists("com.fgol.HungrySharkEvolution");
-#elif UNITY_IOS
-		ret = PlatformUtils.Instance.ApplicationExists("hungrysharkevolution://");
-#endif
-		return ret;
-	}
 
 	/// <summary>
 	/// Check popups coming from the customizer.
@@ -567,8 +552,12 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 	/// Checks the daily rewards popup.
 	/// </summary>
 	private void CheckDailyRewards() {
+
+		// Ignore if a popup has already been displayed in this iteration
+		if (GetFlag(StateFlag.POPUP_DISPLAYED)) return;
+
 		// Never if feature not enabled
-		if(!FeatureSettingsManager.IsDailyRewardsEnabled()) return;
+		if (!FeatureSettingsManager.IsDailyRewardsEnabled()) return;
 
 		// Only in the right screen
 		if(m_currentScreen != MenuScreen.DRAGON_SELECTION) return;
@@ -582,6 +571,33 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 			SetFlag(StateFlag.POPUP_DISPLAYED, true);
 		}
 	}
+
+	/// <summary>
+	/// Checks if we are coming from HSE cross promotion
+	/// </summary>
+	private void CheckXPromoIncomingReward()
+	{
+		// Ignore if a popup has already been displayed in this iteration
+		if (GetFlag(StateFlag.POPUP_DISPLAYED)) return;
+
+
+        // Is there any incoming reward ready to collect?
+       	if (! XPromoManager.instance.IsIncomingRewardWaiting() )
+			return;
+
+        // Is the player opening the game for the first time?
+        bool ftux = UsersManager.currentUser.gamesPlayed == 0;
+
+		// Only in the right screen
+		bool rightScreen = (m_currentScreen == MenuScreen.DRAGON_SELECTION || (m_currentScreen == MenuScreen.PLAY && ftux));
+        if (!rightScreen)
+			return;
+
+		// All checks passed! Show the popup
+		PopupManager.EnqueuePopup(PopupXPromoIncomingReward.PATH);
+		SetFlag(StateFlag.POPUP_DISPLAYED, true);
+	}
+
 
 	/// <summary>
 	/// Check whether we need to trigger any popup related to downloadable assets.
@@ -810,6 +826,7 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 		// Each check function should use m_previousScreen and m_currentScreen to decide
 		// Use PopupManager.OpenPopup to force a popup open or PopupManager.EnqueuePopup to put it in a sequence
 		// Check other flags (StateFlag) for other state conditions
+		CheckXPromoIncomingReward();
 		CheckPromotedIAPs();
 		CheckInterstitialAds();
 		//CheckTermsAndConditions();

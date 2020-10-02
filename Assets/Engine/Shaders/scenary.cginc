@@ -369,7 +369,7 @@ fixed4 frag (v2f i) : SV_Target
 #endif
 
 #if defined(NIGHT)
-    col *= fixed4(0.3, 0.3, 0.7, 1.0);
+    col *= fixed4(0.4, 0.4, 0.7, 1.0);
 #endif
 	return col;
 }
