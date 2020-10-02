@@ -81,6 +81,7 @@ public class DisguisesScreenController : MonoBehaviour {
 			return m_animator;
 		}
 	}
+	
 
 	// Internal logic
 	private bool m_waitingForDragonPreviewToLoad = false;

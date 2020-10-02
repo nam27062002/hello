@@ -7,6 +7,8 @@
 //----------------------------------------------------------------------------//
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
+
+using System;
 using UnityEngine;
 
 //----------------------------------------------------------------------------//
@@ -26,14 +28,17 @@ public class XPromoIcon : MonoBehaviour {
 
     [SerializeField] protected ShowHideAnimator m_animationRoot;
 
+    [SerializeField] protected UINotification m_newNotification;
+
     // Internal
     private float m_timer;
     private bool m_active; // Use this flag to detect a change in the xpromo state∫
 
+    
     //------------------------------------------------------------------------//
     // GENERIC METHODS														  //
     //------------------------------------------------------------------------//
-
+    
     public void Start()
     {
         Refresh();
@@ -42,6 +47,8 @@ public class XPromoIcon : MonoBehaviour {
         m_active = false;
         if (m_animationRoot != null)
             m_animationRoot.ForceHide(false);
+        
+        m_newNotification.Show(true);
     }
 
 
@@ -65,21 +72,33 @@ public class XPromoIcon : MonoBehaviour {
     /// </summary>
     private void Refresh()
     {
+        
         m_active = XPromoManager.instance.xPromoCycle.IsActive();
-
         if (m_active)
         {
             // Display the xpromo icon
-            if (m_animationRoot != null)
-                m_animationRoot.Show(true);
+            m_animationRoot.Show(true);
         }
         else
         {
             // Hide the xPromo icon
-            if (m_animationRoot != null)
-                m_animationRoot.Hide(true);
+            m_animationRoot.Hide(true);
+            
+            // No xpromo, no cookie. Nothing else to do here.
+            return;
         }
-
+        
+        // If there is a reward ready to collect, show the NEW notification bubble
+        bool rewardReadyToCollext = XPromoManager.instance.xPromoCycle.CanCollectNextReward();
+        if (rewardReadyToCollext)
+        {
+            m_newNotification.Show(true);
+        }
+        else
+        {
+            m_newNotification.Hide(true);
+        }
+        
     }
 
     //------------------------------------------------------------------------//
