@@ -40,7 +40,8 @@ public class XPromoIcon : MonoBehaviour {
 
         // Start with the icon hidden
         m_active = false;
-        m_animationRoot.ForceHide(false);
+        if (m_animationRoot != null)
+            m_animationRoot.ForceHide(false);
     }
 
 
@@ -62,20 +63,21 @@ public class XPromoIcon : MonoBehaviour {
     /// <summary>
     /// Update the UI. Show/hide the xpromo icon.
     /// </summary>
-    public void Refresh()
+    private void Refresh()
     {
-
         m_active = XPromoManager.instance.xPromoCycle.IsActive();
 
         if (m_active)
         {
             // Display the xpromo icon
-            m_animationRoot.Show(true);
+            if (m_animationRoot != null)
+                m_animationRoot.Show(true);
         }
         else
         {
             // Hide the xPromo icon
-            m_animationRoot.Hide(true);
+            if (m_animationRoot != null)
+                m_animationRoot.Hide(true);
         }
 
     }
