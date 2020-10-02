@@ -42,6 +42,7 @@ public class DisguisesScreenController : MonoBehaviour {
 	[SerializeField] private CurrencyButton m_PCButton = null;
 	[SerializeField] private AnimatedButton m_offerButton = null;
 	[SerializeField] private AnimatedButton m_equipButton = null;
+	[SerializeField] private Button m_photoButton = null;
 
 	[Space]
 	[SerializeField] private Localizer m_lockText = null;
@@ -78,16 +79,6 @@ public class DisguisesScreenController : MonoBehaviour {
 				m_animator = GetComponent<NavigationShowHideAnimator>();
 			}
 			return m_animator;
-		}
-	}
-
-	private Button m_photoButton = null;
-	private Button photoButton {
-		get {
-			if(m_photoButton == null) {
-				m_photoButton = InstanceManager.menuSceneController.hud.photoButton.GetComponentInChildren<Button>();
-			}
-			return m_photoButton;
 		}
 	}
 
@@ -392,8 +383,8 @@ public class DisguisesScreenController : MonoBehaviour {
 
 		// Restore photo button
 		// We can only enter the disguises screen with owned dragons, so photo button should be enabled
-		if(photoButton != null) {
-			photoButton.interactable = true;
+		if(m_photoButton != null) {
+			m_photoButton.interactable = true;
 		}
 	}
 
@@ -511,9 +502,9 @@ public class DisguisesScreenController : MonoBehaviour {
 		}
 
 		// Photo button
-		if(photoButton != null) {
+		if(m_photoButton != null) {
 			// Only enabled for owned skins
-			photoButton.interactable = _pill.owned;
+			m_photoButton.interactable = _pill.owned;
 		}
 
 		// Store as selected pill
