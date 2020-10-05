@@ -64,6 +64,8 @@ public class MenuDragonScreenController : MonoBehaviour {
 
     private bool m_showPendingTransactions = false;
 
+	private List<MenuShowConditionally> m_disabledShowConditionals = new List<MenuShowConditionally>();
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -198,27 +200,33 @@ public class MenuDragonScreenController : MonoBehaviour {
 					// Target dragon is already selected, make sure lock icon is visible!
 					m_lockIcon.GetComponent<ShowHideAnimator>().ForceShow();
 				}
-			})
-			.AppendInterval(Mathf.Max(0.1f, _initialDelay))	// Avoid 0 duration
-			.AppendCallback(() => {
-				// Navigate to target dragon (should be next dragon)
-				InstanceManager.menuSceneController.dragonSelector.SetSelectedDragon(_unlockedDragonSku);
-			})
-			.AppendInterval(Mathf.Max(0.1f, _scrollDuration))	// Sync with dragon scroll duration. Avoid 0 duration, otherwise lock animator gets broken
-			.AppendCallback(() => {
+
 				// Clean screen
-				// Don't disable elements, otherwise they won't be enabled on the next screen change!
+				m_disabledShowConditionals.Clear();
 				for(int i = 0; i < m_toHideOnUnlockAnim.Length; i++) {
+					// Hide! Don't disable, otherwise it won't be enabled on the next screen change!
 					m_toHideOnUnlockAnim[i].ForceHide(true, false);
 
 					// If the element has a ShowConditionally component, disable to override its behaviour
 					MenuShowConditionally[] showConditionally = m_toHideOnUnlockAnim[i].GetComponentsInChildren<MenuShowConditionally>();
 					for(int j = 0; j < showConditionally.Length; ++j) {
 						showConditionally[j].enabled = false;
+						m_disabledShowConditionals.Add(showConditionally[j]);
 					}
 				}
 				InstanceManager.menuSceneController.hud.animator.ForceHide(true, false);
+			})
+			.AppendInterval(Mathf.Max(0.1f, _initialDelay))	// Avoid 0 duration
+			.AppendCallback(() => {
+				// Navigate to target dragon (should be next dragon)
+				InstanceManager.menuSceneController.dragonSelector.SetSelectedDragon(_unlockedDragonSku);
 
+				// Changing the selected dragon will make the dragon info appear, make sure it stays hidden during the animation
+				m_classicDragonInfo.SetVisible(false);
+				m_specialDragonInfo.SetVisible(false);
+			})
+			.AppendInterval(Mathf.Max(0.1f, _scrollDuration))	// Sync with dragon scroll duration. Avoid 0 duration, otherwise lock animator gets broken
+			.AppendCallback(() => {
 				// Show icon unlock animation
 				m_lockIcon.GetComponent<ShowHideAnimator>().ForceShow();
 				m_lockIcon.view.LaunchUnlockAnim();
@@ -237,27 +245,20 @@ public class MenuDragonScreenController : MonoBehaviour {
 				// Put lock icon back to its original position
 				m_lockIcon.view.StopAllAnims();
 
-				// Restore all hidden items
-				for(int i = 0; i < m_toHideOnUnlockAnim.Length; i++) {
-					// Leave them hidden if changing screens!
-					if(!_gotoDragonUnlockScreen) {
-						m_toHideOnUnlockAnim[i].Show(true);
-					}
-
-					// Re-enable all disabled ShowConditionally components
-					MenuShowConditionally[] showConditionally = m_toHideOnUnlockAnim[i].GetComponentsInChildren<MenuShowConditionally>();
-					for(int j = 0; j < showConditionally.Length; ++j) {
-						showConditionally[j].enabled = true;
-						showConditionally[j].OnDragonSelected(_unlockedDragonSku);
-					}
-				}
-
-				// Refresh dragon infos
-				// If going to dragon unlock screen afterwards, keep them hidden
+				// Refresh visuals, depending on whether we go to another screen or not
 				if(_gotoDragonUnlockScreen) {
 					m_classicDragonInfo.SetVisible(false);
 					m_specialDragonInfo.SetVisible(false);
 				} else {
+					// Restore all hidden items
+					for(int i = 0; i < m_toHideOnUnlockAnim.Length; i++) {
+						m_toHideOnUnlockAnim[i].Show(true);
+					}
+
+					// Re-enable all disabled ShowConditionally components
+					EnableConditionalShowComponents(_unlockedDragonSku);
+
+					// Dragon infos
 					m_classicDragonInfo.Refresh();
 					m_specialDragonInfo.Refresh();
 				}
@@ -530,6 +531,30 @@ public class MenuDragonScreenController : MonoBehaviour {
 		}
 	}
 
+	/// <summary>
+	/// Enable the collection of MenuShowConditionally components stored in the m_disabledShowConditionals variable.
+	/// Clears the variable afterwards.
+	/// </summary>
+	/// <param name="_dragonSku">If not empty, will update them with this dragon sku as selected one.</param>
+	private void EnableConditionalShowComponents(string _dragonSku = "") {
+		// Simulate dragon selection event?
+		bool simulateDragonSelection = !string.IsNullOrEmpty(_dragonSku);
+
+		// Loop through all the components
+		for(int i = 0; i < m_disabledShowConditionals.Count; ++i) {
+			// Enable component
+			m_disabledShowConditionals[i].enabled = true;
+
+			// If a dragon sku was defined, simulate a selection event
+			if(simulateDragonSelection) {
+				m_disabledShowConditionals[i].OnDragonSelected(_dragonSku);
+			}
+		}
+
+		// Clear the list
+		m_disabledShowConditionals.Clear();
+	}
+
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
@@ -618,6 +643,14 @@ public class MenuDragonScreenController : MonoBehaviour {
 			if(!string.IsNullOrEmpty(m_pendingToSelectDragon)) {
 				InstanceManager.menuSceneController.SetSelectedDragon(m_pendingToSelectDragon);
 				m_pendingToSelectDragon = string.Empty;
+			}
+		}
+
+		// If leaving this screen
+		if(_from == MenuScreen.DRAGON_SELECTION) {
+			// Restore disabled components if needed
+			if(m_disabledShowConditionals.Count > 0) {
+				EnableConditionalShowComponents();
 			}
 		}
 	}    

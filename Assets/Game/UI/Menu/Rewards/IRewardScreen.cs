@@ -397,8 +397,6 @@ public abstract class IRewardScreen : MonoBehaviour {
 			// Put photo screen in EggReward mode and override some setup
 			PhotoScreenController photoScreen = InstanceManager.menuSceneController.GetScreenData(MenuScreen.PHOTO).ui.GetComponent<PhotoScreenController>();
 			photoScreen.mode = PhotoScreenController.Mode.EGG_REWARD;
-
-			
 		}
 	}
 

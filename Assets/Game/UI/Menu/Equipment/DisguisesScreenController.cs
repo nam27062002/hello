@@ -42,6 +42,7 @@ public class DisguisesScreenController : MonoBehaviour {
 	[SerializeField] private CurrencyButton m_PCButton = null;
 	[SerializeField] private AnimatedButton m_offerButton = null;
 	[SerializeField] private AnimatedButton m_equipButton = null;
+	[SerializeField] private ShowHideAnimator m_photoButtonAnim = null;
 
 	[Space]
 	[SerializeField] private Localizer m_lockText = null;
@@ -380,7 +381,6 @@ public class DisguisesScreenController : MonoBehaviour {
 				equip.TogglePets(true, true);
 			}
 		}
-		
 	}
 
 	/// <summary>
@@ -495,7 +495,12 @@ public class DisguisesScreenController : MonoBehaviour {
 				m_offerButton.animator.Hide(false);
 			}
 		}
-		
+
+		// Photo button
+		if(m_photoButtonAnim != null) {
+			// Only enabled for owned skins
+			m_photoButtonAnim.Set(_pill.owned);
+		}
 
 		// Store as selected pill
 		m_selectedPill = _pill;
