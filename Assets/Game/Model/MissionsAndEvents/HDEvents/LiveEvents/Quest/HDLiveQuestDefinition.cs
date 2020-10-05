@@ -19,7 +19,7 @@ using System.Collections.Generic;
 /// 
 /// </summary>
 [Serializable]
-public class HDQuestDefinition : HDLiveEventDefinition {
+public class HDLiveQuestDefinition : HDLiveEventDefinition {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -69,14 +69,14 @@ public class HDQuestDefinition : HDLiveEventDefinition {
 	/// <summary>
 	/// Default constructor.
 	/// </summary>
-	public HDQuestDefinition() {
+	public HDLiveQuestDefinition() {
 
 	}
 
 	/// <summary>
 	/// Destructor
 	/// </summary>
-	~HDQuestDefinition() {
+	~HDLiveQuestDefinition() {
 
 	}
 

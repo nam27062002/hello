@@ -18,7 +18,7 @@ using SimpleJSON;
 /// 
 /// </summary>
 [Serializable]
-public class HDQuestData : HDLiveEventData {
+public class HDLiveQuestData : HDLiveEventData {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -35,8 +35,8 @@ public class HDQuestData : HDLiveEventData {
 	/// <summary>
 	/// Default constructor.
 	/// </summary>
-	public HDQuestData() {
-        m_definition = new HDQuestDefinition();
+	public HDLiveQuestData() {
+        m_definition = new HDLiveQuestDefinition();
 	}
 
 
@@ -70,6 +70,6 @@ public class HDQuestData : HDLiveEventData {
 			m_globalScore = _data["globalScore"].AsLong;
 		}
     }
-
+    
 
 }

@@ -50,7 +50,7 @@ public class GoalsScreenController : MonoBehaviour {
 	[SerializeField] private HorizontalOrVerticalLayoutGroup m_buttonsLayout = null;
 	[SerializeField] private SelectableButtonGroup m_buttons = null;
 
-	HDQuestManager m_quest;
+	IQuestManager m_quest;
     HDLeagueController m_league;
     HDSeasonData m_season;
 
@@ -180,7 +180,7 @@ public class GoalsScreenController : MonoBehaviour {
 		// Event Timer - only if active
 		if(m_eventActiveGroup.activeSelf) {
 
-			HDLiveEventData evt = m_quest.data;
+			HDLiveEventData evt = m_quest.GetQuestData();
 
 			// Timer text
 			double remainingSeconds = System.Math.Max(0, evt.remainingTime.TotalSeconds);	// Never go negative!

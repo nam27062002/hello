@@ -47,7 +47,7 @@ public class ResultsScreenStepGlobalEvent : ResultsScreenStep {
 	[SerializeField] private string m_transferSFX = "";
 
 	// Internal logic
-	private HDQuestManager m_questManager = null;
+	private IQuestManager m_questManager = null;
 	private Panel m_activePanel = Panel.OFFLINE;
 	private Sequence m_activePanelSequence = null;
 
@@ -77,12 +77,12 @@ public class ResultsScreenStepGlobalEvent : ResultsScreenStep {
 			return false;
 		}
 
-		HDQuestManager questManager = HDLiveDataManager.quest;
+		IQuestManager questManager = HDLiveDataManager.quest;
 
 		if (	questManager.EventExists() &&
 				questManager.IsRunning() && 
-				questManager.isActive &&
-				questManager.m_questData.remainingTime.TotalSeconds > 0 &&
+				questManager.IsActive() &&
+				questManager.GetRemainingTime() > 0 &&
                 DeviceUtilsManager.SharedInstance.internetReachability != NetworkReachability.NotReachable
 		)
 		{
@@ -189,8 +189,8 @@ public class ResultsScreenStepGlobalEvent : ResultsScreenStep {
 				// Bar anim
 				if (m_eventPanelActive != null) {
 					m_eventPanelActive.MoveScoreTo(
-						m_questManager.m_questData.m_globalScore, 
-						m_questManager.m_questData.m_globalScore + m_questManager.GetRunScore(),
+						m_questManager.GetQuestData().m_globalScore, 
+						m_questManager.GetQuestData().m_globalScore + m_questManager.GetRunScore(),
 						scoreAnimDuration
 					);
 				}

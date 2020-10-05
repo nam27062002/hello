@@ -655,7 +655,7 @@ public class MenuDragonScreenController : MonoBehaviour {
 		// Do it as well if the event is pending reward collection
 		if ( UsersManager.currentUser.gamesPlayed >= GameSettings.ENABLE_QUESTS_AT_RUN )
 		{
-			HDQuestManager quest = HDLiveDataManager.quest;
+			IQuestManager quest = HDLiveDataManager.quest;
 			if ( quest.EventExists() )	
 			{
 				if (quest.IsTeasing() || quest.IsRunning() || quest.IsRewardPending())

@@ -30,7 +30,7 @@ public class GlobalEventsProgressBar : MonoBehaviour {
 	[Space]
 	[SerializeField] private GlobalEventsRewardInfo[] m_rewardInfos = new GlobalEventsRewardInfo[0];
 
-	public void RefreshRewards(HDQuestDefinition _evt, long currentValue) {
+	public void RefreshRewards(HDLiveQuestDefinition _evt, long currentValue) {
 		// Initialize bar limits
 		if(m_progressBar != null) {
 			m_progressBar.minValue = 0f;

@@ -18,7 +18,7 @@ using System.Collections.Generic;
 /// 
 /// </summary>
 [Serializable]
-public class HDQuestManager : HDLiveEventManager, IBroadcastListener{
+public class HDLiveQuestManager : HDLiveEventManager, IBroadcastListener, IQuestManager{
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -29,8 +29,8 @@ public class HDQuestManager : HDLiveEventManager, IBroadcastListener{
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	TrackerBase m_tracker = new TrackerBase();
-	public HDQuestData m_questData;
-	public HDQuestDefinition m_questDefinition;
+	public HDLiveQuestData liveQuestData;
+	public HDLiveQuestDefinition liveQuestDefinition;
 
 
 	int m_lastContribution;
@@ -47,13 +47,13 @@ public class HDQuestManager : HDLiveEventManager, IBroadcastListener{
 	/// <summary>
 	/// Default constructor.
 	/// </summary>
-	public HDQuestManager() {
+	public HDLiveQuestManager() {
 		m_type = TYPE_CODE;
 		m_numericType = NUMERIC_TYPE_CODE;
 
-        m_data = new HDQuestData();
-        m_questData = m_data as HDQuestData;
-        m_questDefinition = m_questData.definition as HDQuestDefinition;
+        m_data = new HDLiveQuestData();
+        liveQuestData = m_data as HDLiveQuestData;
+        liveQuestDefinition = liveQuestData.definition as HDLiveQuestDefinition;
         
 		// Subscribe to external events
 		Messenger.AddListener(MessengerEvents.GAME_STARTED, OnGameStarted);
@@ -63,10 +63,10 @@ public class HDQuestManager : HDLiveEventManager, IBroadcastListener{
 	/// <summary>
 	/// Destructor
 	/// </summary>
-	~HDQuestManager() {
+	~HDLiveQuestManager() {
         m_data = null;
-        m_questData = null;
-        m_questDefinition = null;
+        liveQuestData = null;
+        liveQuestDefinition = null;
 		// Unsubscribe from external events
 		Messenger.RemoveListener(MessengerEvents.GAME_STARTED, OnGameStarted);
 		Broadcaster.RemoveListener(BroadcastEventType.GAME_ENDED, this);
@@ -87,7 +87,7 @@ public class HDQuestManager : HDLiveEventManager, IBroadcastListener{
     {
     	base.ParseDefinition( _data );
 		m_tracker.Clear();
-    	HDQuestDefinition def = m_data.definition as HDQuestDefinition;
+    	HDLiveQuestDefinition def = m_data.definition as HDLiveQuestDefinition;
 
 		if (def.m_goal != null && def.m_goal.m_typeDef != null)
 		{
@@ -117,20 +117,11 @@ public class HDQuestManager : HDLiveEventManager, IBroadcastListener{
     	// Save tracker value?
     }
 
-	public long GetRunScore() 
-	{
-		return m_tracker.currentValue;
-	}
-
-
-	public virtual string GetGoalDescription() {
-		// Use replacements?
-		return m_tracker.FormatDescription(m_questDefinition.m_goal.m_desc, m_questDefinition.m_goal.m_amount);
-	}
+    
 
 
 	public float progress {
-		get { return Mathf.Clamp01(m_questData.m_globalScore/(float)m_questDefinition.m_goal.m_amount); }
+		get { return Mathf.Clamp01(liveQuestData.m_globalScore/(float)liveQuestDefinition.m_goal.m_amount); }
 	}
 
     #region server_comunication
@@ -172,10 +163,10 @@ public class HDQuestManager : HDLiveEventManager, IBroadcastListener{
 		SimpleJSON.JSONNode responseJson = HDLiveDataManager.ResponseErrorCheck(_error, _response, out outErr);
 		if ( outErr == HDLiveDataManager.ComunicationErrorCodes.NO_ERROR )
 		{
-            HDQuestData questData = data as HDQuestData;
-            if (questData != null )
+            HDLiveQuestData liveQuestData = data as HDLiveQuestData;
+            if (liveQuestData != null )
             {
-				questData.ParseProgress( responseJson );
+				liveQuestData.ParseProgress( responseJson );
             }
 			Messenger.Broadcast(MessengerEvents.QUEST_SCORE_UPDATED);
 		}
@@ -220,6 +211,8 @@ public class HDQuestManager : HDLiveEventManager, IBroadcastListener{
 		}
 	}
 
+
+
 	protected virtual void OnContributeResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response)
     {
 		HDLiveDataManager.ComunicationErrorCodes outErr = HDLiveDataManager.ComunicationErrorCodes.NO_ERROR;
@@ -227,10 +220,10 @@ public class HDQuestManager : HDLiveEventManager, IBroadcastListener{
 		SimpleJSON.JSONNode responseJson = HDLiveDataManager.ResponseErrorCheck(_error, _response, out outErr);
 		if ( outErr == HDLiveDataManager.ComunicationErrorCodes.NO_ERROR )
 		{
-            HDQuestData questData = data as HDQuestData;
-            if (questData != null )
+            HDLiveQuestData liveQuestData = data as HDLiveQuestData;
+            if (liveQuestData != null )
             {
-				questData.ParseProgress( responseJson );
+				liveQuestData.ParseProgress( responseJson );
 
 				int contribution = m_lastContribution;
 				float _keysMultiplier = m_lastKeysMultiplier;
@@ -245,10 +238,10 @@ public class HDQuestManager : HDLiveEventManager, IBroadcastListener{
 					else 		  		mult = HDTrackingManager.EEventMultiplier.golden_key;
 				}
 
-				HDTrackingManager.Instance.Notify_GlobalEventRunDone(questData.m_eventId, m_questDefinition.m_goal.m_type , (int)GetRunScore(), contribution, mult);	// TODO: we have no player score anymore!
+				HDTrackingManager.Instance.Notify_GlobalEventRunDone(liveQuestData.m_eventId, liveQuestDefinition.m_goal.m_type , (int)GetRunScore(), contribution, mult);	// TODO: we have no player score anymore!
 
-				if ( questData.m_state == HDLiveEventData.State.NOT_JOINED )
-					questData.m_state = HDLiveEventData.State.JOINED;
+				if ( liveQuestData.m_state == HDLiveEventData.State.NOT_JOINED )
+					liveQuestData.m_state = HDLiveEventData.State.JOINED;
             }	
 		}
 
@@ -268,7 +261,7 @@ public class HDQuestManager : HDLiveEventManager, IBroadcastListener{
 			// Check reward level
 			// In a quest, the reward level tells us in which reward tier have been reached
 			// All rewards below it are also given
-			HDQuestDefinition def = data.definition as HDQuestDefinition;
+			HDLiveQuestDefinition def = data.definition as HDLiveQuestDefinition;
 			for(int i = 0; i < m_rewardLevel; ++i) {	// Reward level is 1-N
 				rewards.Add(def.m_rewards[i]);	// Assuming rewards are properly sorted :)
 			}
@@ -276,6 +269,45 @@ public class HDQuestManager : HDLiveEventManager, IBroadcastListener{
 
 		// Done!
 		return rewards;
+	}
+	
+	//------------------------------------------------------------------------//
+	// IQuestManager INTERFACE												  //
+	//------------------------------------------------------------------------//
+	
+	public double GetRemainingTime()
+	{
+		return data.remainingTime.TotalSeconds;
+	}
+
+	public long GetRunScore() 
+	{
+		return m_tracker.currentValue;
+	}
+
+	public bool IsActive()
+	{
+		return isActive;
+	}
+
+	public string GetGoalDescription() {
+		// Use replacements?
+		return m_tracker.FormatDescription(liveQuestDefinition.m_goal.m_desc, liveQuestDefinition.m_goal.m_amount);
+	}
+
+	public HDLiveQuestDefinition GetQuestDefinition()
+	{
+		return liveQuestDefinition;
+	}
+
+	public HDLiveQuestData GetQuestData()
+	{
+		return liveQuestData;
+	}
+	
+	public bool IsWaitingForNewDefinition()
+	{
+		return isWaitingForNewDefinition;
 	}
 
 	//------------------------------------------------------------------------//

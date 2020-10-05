@@ -42,7 +42,7 @@ public class GlobalEventsScreenController : MonoBehaviour {
 
 	// Internal
 	private Panel m_activePanel = Panel.OFFLINE;
-	private HDQuestManager m_questManager;
+	private IQuestManager m_questManager;
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -106,7 +106,7 @@ public class GlobalEventsScreenController : MonoBehaviour {
 		{
 			m_questManager.UpdateStateFromTimers();
 			// If the current global event has a reward pending, go to the event reward screen
-			if(m_questManager.data.m_state == HDLiveEventData.State.REWARD_AVAILABLE ) {
+			if(m_questManager.GetQuestData().m_state == HDLiveEventData.State.REWARD_AVAILABLE ) {
 				// Show requesting!
 				OnRetryRewardsButton();
 				return;
@@ -123,7 +123,7 @@ public class GlobalEventsScreenController : MonoBehaviour {
 
 	protected void OnRewards(int _eventId ,HDLiveDataManager.ComunicationErrorCodes _err)
 	{
-		if ( _eventId == m_questManager.data.m_eventId )	
+		if ( _eventId == m_questManager.GetQuestData().m_eventId )	
 		{
 			if ( _err == HDLiveDataManager.ComunicationErrorCodes.NO_ERROR )
 			{
@@ -162,7 +162,7 @@ public class GlobalEventsScreenController : MonoBehaviour {
 	/// </summary>
 	private void SelectPanel() {
 		Panel targetPanel = Panel.NO_EVENT;
-		HDQuestManager quest = HDLiveDataManager.quest;
+		IQuestManager quest = HDLiveDataManager.quest;
 		if ( quest.EventExists() )
 		{
 			if (DeviceUtilsManager.SharedInstance.internetReachability == NetworkReachability.NotReachable || !GameSessionManager.SharedInstance.IsLogged ())
@@ -175,10 +175,10 @@ public class GlobalEventsScreenController : MonoBehaviour {
                     quest.RequestDefinition();
                 }
 
-                if (quest.isWaitingForNewDefinition) {
+                if (quest.IsWaitingForNewDefinition()) {
                     targetPanel = Panel.LOADING;
                 } else {
-                    switch (quest.data.m_state) {
+                    switch (quest.GetQuestData().m_state) {
                         case HDLiveEventData.State.TEASING: {
                                 targetPanel = Panel.EVENT_TEASER;
                             }
@@ -314,7 +314,7 @@ public class GlobalEventsScreenController : MonoBehaviour {
 
 	void OnNewDefinition(int _eventId, HDLiveDataManager.ComunicationErrorCodes _err)
 	{
-		if ( _err == HDLiveDataManager.ComunicationErrorCodes.NO_ERROR && _eventId == m_questManager.data.m_eventId)
+		if ( _err == HDLiveDataManager.ComunicationErrorCodes.NO_ERROR && _eventId == m_questManager.GetQuestData().m_eventId)
 		{
 			Refresh();
 		}

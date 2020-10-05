@@ -47,7 +47,7 @@ public class EventRewardScreen : MonoBehaviour {
 	private RewardSceneController m_sceneController = null;
 
 	// Internal logic
-	private HDQuestManager m_questManager;
+	private IQuestManager m_questManager;
 	private Step m_step;
 	private State m_state;
 
@@ -278,7 +278,7 @@ public class EventRewardScreen : MonoBehaviour {
 			case Step.INTRO: {
 
                 // Get the icon definition
-                string iconSku = m_questManager.m_questDefinition.m_goal.m_icon;
+                string iconSku = m_questManager.GetQuestDefinition().m_goal.m_icon;
 
                 // The BaseIcon component will load the proper image or 3d model according to iconDefinition.xml
                 m_eventIcon.LoadIcon(iconSku);
@@ -312,7 +312,7 @@ public class EventRewardScreen : MonoBehaviour {
 				AudioController.Play("UI_Light FX");
 
 				// Animate progress bar
-				m_questPanel.MoveScoreTo(m_questManager.m_questDefinition.m_rewards[m_questRewardIdx].target, 0.5f);
+				m_questPanel.MoveScoreTo(m_questManager.GetQuestDefinition().m_rewards[m_questRewardIdx].target, 0.5f);
 
 				// Tell the scene to open the next reward (should be already stacked)
 				m_sceneController.OpenReward();
