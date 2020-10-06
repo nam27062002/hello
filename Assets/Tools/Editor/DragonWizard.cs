@@ -79,4 +79,31 @@ public class DragonWizard : EditorWindow
 
 		return isEditorBusy;
 	}
+
+    public enum IconType
+    {
+        TestPassed,
+        TestFailed
+    }
+
+	public static class Icons
+	{
+		public static GUIContent testPassed = EditorGUIUtility.IconContent("TestPassed");
+		public static GUIContent testFailed = EditorGUIUtility.IconContent("TestFailed");
+	}
+
+    public static GUIContent GetIcon(IconType iconType)
+    {
+        switch (iconType)
+        {
+            case IconType.TestPassed:
+                return Icons.testPassed;
+            case IconType.TestFailed:
+                return Icons.testFailed;
+            default:
+                break;
+        }
+
+        return new GUIContent();
+    }
 }
