@@ -7,21 +7,22 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: dragon_dragonjira_0_body
+  m_Name: dragon_dragonjira_1_disguise
   m_Shader: {fileID: 4800000, guid: 2345015ac46679e4cb5817ed44c82547, type: 3}
-  m_ShaderKeywords: FRESNEL FXLAYER_NONE NORMALMAP SELFILLUMINATE_BLINKLIGHTS SPECULAR
-    _ZWRITE_ON
-  m_LightmapFlags: 4
+  m_ShaderKeywords: FRESNEL FXLAYER_REFLECTION NORMALMAP OPAQUEALPHA SPECULAR _ZWRITE_ON
+  m_LightmapFlags: 1
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
-  stringTagMap: {}
+  m_CustomRenderQueue: 2010
+  stringTagMap:
+    QUEUE: Geometry
+    RenderType: Opaque
   disabledShaderPasses: []
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
     - _BumpMap:
-        m_Texture: {fileID: 2800000, guid: 0ca149a04cb89b740936032f7bdd0379, type: 3}
+        m_Texture: {fileID: 2800000, guid: 1209fb89bccac9a488a3384d3f987600, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailAlbedoMap:
@@ -37,7 +38,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailTex:
-        m_Texture: {fileID: 2800000, guid: cb86a9f71967af6428b77c625f4f5b6e, type: 3}
+        m_Texture: {fileID: 2800000, guid: 0f1069ca8be07ba42a106e216d1dcef1, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _EmissionMap:
@@ -49,7 +50,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 539b4b0091e437b44913c58bf7010574, type: 3}
+        m_Texture: {fileID: 2800000, guid: a6a0622ffa8381c45a0ab55b2ed4c204, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
@@ -65,19 +66,19 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _ReflectionMap:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 8900000, guid: 942c495c6dbefd241aca26cda9f991ec, type: 2}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
-    - FXLayer: 0
+    - FXLayer: 1
     - ReflectionType: 0
-    - SelfIlluminate: 2
+    - SelfIlluminate: 0
     - _BlendMode: 0
     - _BumpScale: 1
     - _ColorRampAmount: 0
     - _ColorRampID0: 0
     - _ColorRampID1: 0
-    - _Cull: 0
+    - _Cull: 2
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
     - _DissolveAmount: 0
@@ -99,24 +100,23 @@ Material:
     - _EnableVertexOffsetX: 0
     - _EnableVertexOffsetY: 0
     - _EnableVertexOffsetZ: 0
-    - _EnableVertexScaleZ: 0
     - _FireAmount: 0
     - _FireSpeed: 1
-    - _Fresnel: 5.96
+    - _Fresnel: 6.69
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
-    - _InnerLightAdd: 3.77
+    - _InnerLightAdd: 0
     - _InnerLightWavePhase: 1
-    - _InnerLightWaveSpeed: 0
+    - _InnerLightWaveSpeed: 1
     - _Metallic: 0
     - _Mode: 0
     - _NormalStrenght: 1
     - _OcclusionStrength: 1
     - _Parallax: 0.02
-    - _ReflectionAmount: 0
+    - _ReflectionAmount: 0.399
     - _SmoothnessTextureChannel: 0
-    - _SpecExponent: 15.8
+    - _SpecExponent: 73.2
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _StencilMask: 10
@@ -126,13 +126,14 @@ Material:
     - _VertexScaleZ: 1
     - _ZWrite: 1
     m_Colors:
+    - _AmbientAdd: {r: 0, g: 0, b: 0, a: 0}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _ColorAdd: {r: 0, g: 0, b: 0, a: 0}
     - _DissolveDirection: {r: 1, g: 0, b: 0, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _FresnelColor: {r: 0.24203454, g: 0.28535274, b: 0.3490566, a: 1}
-    - _InnerLightColor: {r: 0.20784312, g: 0.94509804, b: 0.93019843, a: 1}
+    - _FresnelColor: {r: 0.24528301, g: 0.19090423, b: 0.19362046, a: 1}
+    - _InnerLightColor: {r: 1, g: 1, b: 1, a: 1}
     - _ReflectionColor: {r: 1, g: 1, b: 1, a: 1}
     - _SecondLightColor: {r: 0, g: 0, b: 0, a: 0}
-    - _SecondLightDir: {r: -0.565039, g: -0.23695189, b: -0.7903067, a: 0}
-    - _Tint: {r: 1, g: 1, b: 1, a: 1}
+    - _SecondLightDir: {r: 0.32269302, g: 0.14667867, b: -0.93506926, a: 0}
+    - _Tint: {r: 0.9245283, g: 0.9245283, b: 0.9245283, a: 1}
