@@ -40,8 +40,14 @@ public class DragonWizard : EditorWindow
 		window.Show();
 	}
 
-	// GUI 
-	void OnGUI()
+    void OnDestroy()
+    {
+		m_modules = null;
+		m_toolbarStrings = null;
+    }
+
+    // GUI 
+    void OnGUI()
 	{
 		// Editor checks
 		if (IsEditorBusy())
