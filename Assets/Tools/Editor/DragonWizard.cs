@@ -48,6 +48,9 @@ public class DragonWizard : EditorWindow
 	public static string[] dragonSku;
 	public static int dragonSkuIndex;
 
+	// Styles
+	static GUIStyle popupStyle;
+
 	// Menu
 	[MenuItem("Hungry Dragon/Tools/Creation/Dragon Wizard...", false)]
 	static void Init()
@@ -75,6 +78,13 @@ public class DragonWizard : EditorWindow
 			m_toolbarStrings[i] = m_modules[i].GetToolbarTitle();
 		}
 
+		// GUI styles
+		popupStyle = new GUIStyle(EditorStyles.popup);
+		popupStyle.fixedHeight = 35;
+		popupStyle.fontSize = 14;
+		popupStyle.stretchWidth = true;
+
+        // Dragon skus
 		LoadDragonSkus();
 	}
 
@@ -142,7 +152,7 @@ public class DragonWizard : EditorWindow
 
     public static int DrawDragonSelection()
     {
-		dragonSkuIndex = EditorGUILayout.Popup("Select dragon:", dragonSkuIndex, dragonSku);
+		dragonSkuIndex = EditorGUILayout.Popup(dragonSkuIndex, dragonSku, popupStyle);
 		return dragonSkuIndex;
 	}
 }
