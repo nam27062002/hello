@@ -6,9 +6,13 @@
 
 using UnityEngine;
 using UnityEditor;
+using System.IO;
+using System.Collections.Generic;
 
 public class DragonWizard : EditorWindow
 {
+	const string BASE_DRAGONS_PATH = "Assets/Art/3D/Gameplay/Dragons";
+
 	public enum IconType
 	{
 		TestPassed,
@@ -41,6 +45,8 @@ public class DragonWizard : EditorWindow
 	string[] m_toolbarStrings;
 	IDragonWizard[] m_modules;
 	Vector2 m_scrollView;
+	public static string[] dragonSku;
+	public static int dragonSkuIndex;
 
 	// Menu
 	[MenuItem("Hungry Dragon/Tools/Creation/Dragon Wizard...", false)]
@@ -68,13 +74,26 @@ public class DragonWizard : EditorWindow
 		{
 			m_toolbarStrings[i] = m_modules[i].GetToolbarTitle();
 		}
+
+		LoadDragonSkus();
 	}
 
-    void OnDestroy()
+    void LoadDragonSkus()
     {
-		m_modules = null;
-		m_toolbarStrings = null;
-    }
+		string[] folder = Directory.GetDirectories(BASE_DRAGONS_PATH);
+		List<string> dragonFolder = new List<string>();
+        for (int i = 0; i < folder.Length; i++)
+        {
+			DirectoryInfo directoryInfo = new DirectoryInfo(folder[i]);
+			if (directoryInfo.Name.StartsWith("dragon_"))
+			{
+				dragonFolder.Add(directoryInfo.Name);
+			}
+        }
+
+		dragonSku = new string[dragonFolder.Count];
+		dragonSku = dragonFolder.ToArray();
+	}
 
     // GUI 
     public void OnGUI()
@@ -83,7 +102,7 @@ public class DragonWizard : EditorWindow
 		if (IsEditorBusy())
 			return;
 
-        // Toolbar
+		// Toolbar
 		m_toolbarInt = GUILayout.Toolbar(m_toolbarInt, m_toolbarStrings, GUILayout.Height(35));
 		EditorGUILayout.Space();
 
@@ -119,5 +138,11 @@ public class DragonWizard : EditorWindow
 	public static DragonWizardXML GetDragonWizardXMLWindow()
 	{
         return GetWindow<DragonWizardXML>();
+	}
+
+    public static int DrawDragonSelection()
+    {
+		dragonSkuIndex = EditorGUILayout.Popup("Select dragon:", dragonSkuIndex, dragonSku);
+		return dragonSkuIndex;
 	}
 }
