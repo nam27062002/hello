@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-public class DragonWizardCreateDragonModule : EditorWindow, IDragonWizard
+public class DragonWizardCreateDragonModule : IDragonWizard
 {
 	const string DRAGON_MODEL_PATH = "Assets/Art/3D/Gameplay/Dragons/Prefabs/Game/PF_DragonClassic.prefab";
 
@@ -99,6 +99,7 @@ public class DragonWizardCreateDragonModule : EditorWindow, IDragonWizard
 
 	void CreateXMLTables()
 	{
+        /*
 		DragonWizardXML window = GetWindow<DragonWizardXML>();
 		Texture icon = AssetDatabase.LoadAssetAtPath<Texture>("Assets/Art/UI/Common/Icons/icon_tab_missions.png");
 		window.titleContent = new GUIContent(" New dragon XML setup", icon);
@@ -106,6 +107,7 @@ public class DragonWizardCreateDragonModule : EditorWindow, IDragonWizard
 		// Show window
 		window.Init(sku);
 		window.Show();
+        */
 	}
 
 	void CreatePreviewBackgroundTexture()

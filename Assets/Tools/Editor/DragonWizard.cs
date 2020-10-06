@@ -9,10 +9,37 @@ using UnityEditor;
 
 public class DragonWizard : EditorWindow
 {
+	public enum IconType
+	{
+		TestPassed,
+		TestFailed
+	}
+
+	public static class Icons
+	{
+		public static GUIContent testPassed = EditorGUIUtility.IconContent("TestPassed");
+		public static GUIContent testFailed = EditorGUIUtility.IconContent("TestFailed");
+	}
+
+	public static GUIContent GetIcon(IconType iconType)
+	{
+		switch (iconType)
+		{
+			case IconType.TestPassed:
+				return Icons.testPassed;
+			case IconType.TestFailed:
+				return Icons.testFailed;
+			default:
+				break;
+		}
+
+		return new GUIContent();
+	}
+
 	// Toolbar
 	int m_toolbarInt = 0;
-	static string[] m_toolbarStrings;
-	static IDragonWizard[] m_modules;
+	string[] m_toolbarStrings;
+	IDragonWizard[] m_modules;
 	Vector2 m_scrollView;
 
 	// Menu
@@ -24,20 +51,23 @@ public class DragonWizard : EditorWindow
 		Texture icon = AssetDatabase.LoadAssetAtPath<Texture>("Assets/Art/UI/Common/Icons/icon_btn_animoji.png");
 		window.titleContent = new GUIContent(" Dragon wizard", icon);
 
-		// Prepare modules
-		m_modules = new IDragonWizard[3];
-		m_modules[0] = CreateInstance<DragonWizardCreateDragonModule>();
-		m_modules[1] = CreateInstance<DragonWizardSkinsModule>();
-		m_modules[2] = CreateInstance<DragonWizardValidationModule>();
-
-		m_toolbarStrings = new string[m_modules.Length];
-        for (int i = 0; i < m_modules.Length; i++)
-        {
-			m_toolbarStrings[i] = m_modules[i].GetToolbarTitle();
-        }
-        
 		// Show window
 		window.Show();
+	}
+
+    void OnEnable()
+    {
+		// Prepare modules
+		m_modules = new IDragonWizard[3];
+		m_modules[0] = new DragonWizardCreateDragonModule();
+		m_modules[1] = new DragonWizardSkinsModule();
+		m_modules[2] = new DragonWizardValidationModule();
+
+		m_toolbarStrings = new string[m_modules.Length];
+		for (int i = 0; i < m_modules.Length; i++)
+		{
+			m_toolbarStrings[i] = m_modules[i].GetToolbarTitle();
+		}
 	}
 
     void OnDestroy()
@@ -47,7 +77,7 @@ public class DragonWizard : EditorWindow
     }
 
     // GUI 
-    void OnGUI()
+    public void OnGUI()
 	{
 		// Editor checks
 		if (IsEditorBusy())
@@ -85,31 +115,4 @@ public class DragonWizard : EditorWindow
 
 		return isEditorBusy;
 	}
-
-    public enum IconType
-    {
-        TestPassed,
-        TestFailed
-    }
-
-	public static class Icons
-	{
-		public static GUIContent testPassed = EditorGUIUtility.IconContent("TestPassed");
-		public static GUIContent testFailed = EditorGUIUtility.IconContent("TestFailed");
-	}
-
-    public static GUIContent GetIcon(IconType iconType)
-    {
-        switch (iconType)
-        {
-            case IconType.TestPassed:
-                return Icons.testPassed;
-            case IconType.TestFailed:
-                return Icons.testFailed;
-            default:
-                break;
-        }
-
-        return new GUIContent();
-    }
 }

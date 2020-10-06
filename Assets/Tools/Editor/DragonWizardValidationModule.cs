@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-public class DragonWizardValidationModule : EditorWindow, IDragonWizard
+public class DragonWizardValidationModule : IDragonWizard
 {
     public string GetToolbarTitle()
     {
