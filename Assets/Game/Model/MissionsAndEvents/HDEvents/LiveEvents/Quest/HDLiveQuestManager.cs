@@ -280,6 +280,7 @@ public class HDLiveQuestManager : HDLiveEventManager, IBroadcastListener, IQuest
 		return data.remainingTime.TotalSeconds;
 	}
 
+
 	public long GetRunScore() 
 	{
 		return m_tracker.currentValue;
@@ -290,20 +291,24 @@ public class HDLiveQuestManager : HDLiveEventManager, IBroadcastListener, IQuest
 		return isActive;
 	}
 
+
 	public string GetGoalDescription() {
 		// Use replacements?
 		return m_tracker.FormatDescription(liveQuestDefinition.m_goal.m_desc, liveQuestDefinition.m_goal.m_amount);
 	}
+
 
 	public HDLiveQuestDefinition GetQuestDefinition()
 	{
 		return liveQuestDefinition;
 	}
 
+
 	public HDLiveQuestData GetQuestData()
 	{
 		return liveQuestData;
 	}
+	
 	
 	public bool IsWaitingForNewDefinition()
 	{
@@ -316,7 +321,7 @@ public class HDLiveQuestManager : HDLiveEventManager, IBroadcastListener, IQuest
 	/// <summary>
 	/// Given a score, format it based on quest type
 	/// </summary>
-	public string FormatScore(long _score) {
+	public  string FormatScore(long _score) {
 		// Tracker will do it for us
 		if(m_tracker != null) {
 			return m_tracker.FormatValue(_score);

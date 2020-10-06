@@ -129,6 +129,7 @@ public class DefinitionsCategory
 
 	// Welcome back perks
 	public const string SOLO_QUESTS = "SOLO_QUESTS";
+	public const string SOLO_QUESTS_REWARDS = "SOLO_QUESTS_REWARDS";
 
 	//Cross promotion 
 	public const string XPROMO_REWARDS = "XPROMO_REWARDS";
