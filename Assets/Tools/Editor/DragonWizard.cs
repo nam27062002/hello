@@ -115,4 +115,9 @@ public class DragonWizard : EditorWindow
 
 		return isEditorBusy;
 	}
+
+	public static DragonWizardXML GetDragonWizardXMLWindow()
+	{
+        return GetWindow<DragonWizardXML>();
+	}
 }

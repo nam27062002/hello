@@ -99,15 +99,13 @@ public class DragonWizardCreateDragonModule : IDragonWizard
 
 	void CreateXMLTables()
 	{
-        /*
-		DragonWizardXML window = GetWindow<DragonWizardXML>();
+		DragonWizardXML window = DragonWizard.GetDragonWizardXMLWindow();
 		Texture icon = AssetDatabase.LoadAssetAtPath<Texture>("Assets/Art/UI/Common/Icons/icon_tab_missions.png");
 		window.titleContent = new GUIContent(" New dragon XML setup", icon);
 
 		// Show window
 		window.Init(sku);
 		window.Show();
-        */
 	}
 
 	void CreatePreviewBackgroundTexture()
