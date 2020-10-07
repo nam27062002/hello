@@ -25,6 +25,12 @@ public class DragonWizardValidationModule : IDragonWizard
     }
 
     readonly List<DragonTest> results = new List<DragonTest>();
+    GameObject mainMenuPrefab;
+
+    string SelectedSku
+    {
+        get { return DragonWizard.dragonSku[DragonWizard.dragonSkuIndex]; }
+    }
 
     public string GetToolbarTitle()
     {
@@ -59,15 +65,54 @@ public class DragonWizardValidationModule : IDragonWizard
 
     void ProcessTests()
     {
-        //Debug.Log("Validating dragon: " + DragonWizard.dragonSku[DragonWizard.dragonSkuIndex]);
         results.Clear();
 
         MainMenuTests();
     }
 
+    string GetMainMenuPrefabName()
+    {
+        string[] split = SelectedSku.Split('_');
+        string first = split[0];
+        string second = split[1];
+        string skuUpperCase = char.ToUpper(first[0]) + first.Substring(1) + char.ToUpper(second[0]) + second.Substring(1);
+        return "PF_" + skuUpperCase + "Menu";
+    }
+
     void MainMenuTests()
     {
+        // Title
         results.Add(new DragonTest("Main menu tests"));
+
+        // Load main menu prefab
+        string[] guid = AssetDatabase.FindAssets(GetMainMenuPrefabName());
+        if (guid.Length != 1)
+        {
+            results.Add(new DragonTest(false, "Asset not found: " + GetMainMenuPrefabName()));
+            return;
+        }
+
+        string assetPath = AssetDatabase.GUIDToAssetPath(guid[0]);
+        mainMenuPrefab = AssetDatabase.LoadAssetAtPath(assetPath, typeof(GameObject)) as GameObject;
+
+        // Unit tests for main menu prefab
+        results.Add(new DragonTest(MainMenuTestViewGameObject(), "View gameobject exists"));
+        results.Add(new DragonTest(MainMenuTestAnimationController(), "Animation controller is set"));
+    }
+
+    bool MainMenuTestViewGameObject()
+    {
+        return mainMenuPrefab.transform.Find("view") != null ? true : false;
+    }
+    
+    bool MainMenuTestAnimationController()
+    {
+        Transform view = mainMenuPrefab.transform.Find("view");
+        Animator anim = view.GetComponent<Animator>();
+        if (anim == null)
+            return false;
+
+        return anim.runtimeAnimatorController != null ? true : false;
     }
 
     void DrawTestTitleGUI(string title)
