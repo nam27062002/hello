@@ -86,4 +86,29 @@ public abstract class IOfferItemPreviewDragon : IOfferItemPreview {
 		}
 		return null;
 	}
+
+	/// <summary>
+	/// Initialize the given tier icon instance with data from this reward.
+	/// Will disable it if reward type doesn't support tiers, as well as depending on the setup from offerSettings.
+	/// </summary>
+	/// <param name="_tierIconContainer">Where to instantiate the tier icon.</param>
+	/// <param name="_slotType">The type of slot where the item will be displayed.</param>
+	public override void InitTierIcon(GameObject _tierIconContainer, OfferItemSlot.Type _slotType) {
+		// Should it be displayed by this slot type?
+		bool show = ShowTierIconBySlotType(_slotType);
+		_tierIconContainer.SetActive(show);
+
+		// If not, nothing else to do
+		if(!show) return;
+
+		// Clear any previously loaded icon
+		_tierIconContainer.transform.DestroyAllChildren(false);
+
+		// Load tier icon
+		DragonTier tier = IDragonData.SkuToTier(m_def.GetAsString("tier", "tier_6")); // Specials definitions don't have the tier field, so use special tier as default value
+		GameObject tierIconPrefab = UIConstants.GetTierIcon(tier);
+		Instantiate(tierIconPrefab, _tierIconContainer.transform, false);
+
+		_tierIconContainer.SetActive(false);
+	}
 }
