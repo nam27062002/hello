@@ -182,7 +182,7 @@ public class ViewParticleSpawner : MonoBehaviour, IBroadcastListener {
     protected bool CheckActivationArea() {
         bool isInsideActivationMaxArea = false;
 
-        if (m_camera != null) {
+        if (m_camera != null && m_parent != null) {
             if (m_view != null) {
                 isInsideActivationMaxArea = m_camera.IsInsideCameraFrustrum(m_view.bounds);
             } else {

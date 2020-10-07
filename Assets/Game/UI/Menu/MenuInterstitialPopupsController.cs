@@ -580,11 +580,17 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 		// Ignore if a popup has already been displayed in this iteration
 		if (GetFlag(StateFlag.POPUP_DISPLAYED)) return;
 
-		// Only in the right screen
-		if (m_currentScreen != MenuScreen.DRAGON_SELECTION) return;
 
         // Is there any incoming reward ready to collect?
        	if (! XPromoManager.instance.IsIncomingRewardWaiting() )
+			return;
+
+        // Is the player opening the game for the first time?
+        bool ftux = UsersManager.currentUser.gamesPlayed == 0;
+
+		// Only in the right screen
+		bool rightScreen = (m_currentScreen == MenuScreen.DRAGON_SELECTION || (m_currentScreen == MenuScreen.PLAY && ftux));
+        if (!rightScreen)
 			return;
 
 		// All checks passed! Show the popup

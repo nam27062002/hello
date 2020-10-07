@@ -67,7 +67,7 @@ public class ResultsScreenStepRewards : ResultsScreenSequenceStep {
 		// Internal vars
 		m_totalCoinsReward = m_controller.coins + m_controller.survivalBonus;
 		m_adCoinsMultiplier = RewardManager.rewardAdModifierSettings.watchAdCoinsMultiplier;
-		m_adExtraCoins = ((long)(m_totalCoinsReward * m_adCoinsMultiplier)) - m_totalCoinsReward;
+		m_adExtraCoins = (long)(Mathf.Ceil(m_totalCoinsReward * m_adCoinsMultiplier) - m_totalCoinsReward);
 		m_spamPreventer = false;
 		m_modifierApplied = false;
 

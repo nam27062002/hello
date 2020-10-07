@@ -155,7 +155,6 @@ public class ContentManager
 			"Rules/offerSettings",
 			"Rules/ftuxSettings",
             "Rules/UISettings",
-            "Rules/xPromoSettings",
             "Rules/rewardAdModifierSettings"
         });
 
