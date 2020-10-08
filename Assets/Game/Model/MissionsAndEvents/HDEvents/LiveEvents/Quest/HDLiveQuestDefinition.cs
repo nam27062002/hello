@@ -156,13 +156,19 @@ public class HDLiveQuestDefinition : HDLiveEventDefinition {
 			data.typeCode = rewardDef.GetAsString("type");
 			reward.reward = Metagame.Reward.CreateFromData(data, HDTrackingManager.EEconomyGroup.SOLO_QUEST, "");
 
-			if (reward == null)
+			if (reward.reward == null)
 			{
 				Debug.LogError("The reward defined for the Solo Quest is not valid");
 				continue;
 			}
 			
 			m_rewards.Add(reward);
+		}
+
+		// The UI only allows 4 rewards
+		if (m_rewards.Count != 4)
+		{
+			Debug.LogError("The expected amount of rewards for a Solo Quest is 4. Please fix the content.");
 		}
 		
 		// Duration of the quest
