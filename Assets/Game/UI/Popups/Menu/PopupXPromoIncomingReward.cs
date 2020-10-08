@@ -63,10 +63,7 @@ public class PopupXPromoIncomingReward : MonoBehaviour {
         if (m_reward == null)
         	return;
 
-        // Initialize the preview with the reward
-		m_rewardPreview.InitFromReward(m_reward);
-
-		// If this is the first run (the player just installed the game), show the proper welcome message
+        // If this is the first run (the player just installed the game), show the proper welcome message
 		if (UsersManager.currentUser.gamesPlayed == 0)
         {
 			m_welcomeDescription.Localize(WELCOME_FTUX_TID);
