@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using UnityEditor;
 using UnityEngine;
 
@@ -26,6 +27,7 @@ public class DragonWizardValidationModule : IDragonWizard
 
     readonly List<DragonTest> results = new List<DragonTest>();
     GameObject mainMenuPrefab;
+    GameObject gameplayPrefab;
 
     string SelectedSku
     {
@@ -68,21 +70,36 @@ public class DragonWizardValidationModule : IDragonWizard
         results.Clear();
 
         MainMenuTests();
+        GameplayTests();
     }
 
-    string GetMainMenuPrefabName()
+    string GetSkuUpperCase()
     {
         string[] split = SelectedSku.Split('_');
         string first = split[0];
         string second = split[1];
-        string skuUpperCase = char.ToUpper(first[0]) + first.Substring(1) + char.ToUpper(second[0]) + second.Substring(1);
-        return "PF_" + skuUpperCase + "Menu";
+        return char.ToUpper(first[0]) + first.Substring(1) + char.ToUpper(second[0]) + second.Substring(1);
+    }
+
+    string GetMainMenuPrefabName()
+    {
+        return "PF_" + GetSkuUpperCase() + "Menu";
+    }
+
+    string GetGameplayPrefabName()
+    {
+        return "PF_" + GetSkuUpperCase();
+    }
+
+    string GetResultsPrefabName()
+    {
+        return "PF_" + GetSkuUpperCase() + "Results";
     }
 
     void MainMenuTests()
     {
         // Title
-        results.Add(new DragonTest("Main menu tests"));
+        results.Add(new DragonTest("Main menu prefab"));
 
         // Load main menu prefab
         string[] guid = AssetDatabase.FindAssets(GetMainMenuPrefabName());
@@ -98,6 +115,46 @@ public class DragonWizardValidationModule : IDragonWizard
         // Unit tests for main menu prefab
         results.Add(new DragonTest(MainMenuTestViewGameObject(), "View gameobject exists"));
         results.Add(new DragonTest(MainMenuTestAnimationController(), "Animation controller is set"));
+        results.Add(new DragonTest(MainMenuTestDragonPreview(), "MenuDragonPreview script was added"));
+        results.Add(new DragonTest(MainMenuTestSku(), "MenuDragonPreview sku matches " + SelectedSku));
+        results.Add(new DragonTest(MainMenuTestDragonEquip(), "DragonEquip script was added"));
+        results.Add(new DragonTest(MainMenuTestAssetBundle(), "Asset bundle prefab set to: " + SelectedSku + "_local"));
+    }
+
+    void GameplayTests()
+    {
+        // Title
+        results.Add(new DragonTest("Gameplay prefab"));
+
+        // Load main menu prefab
+        string[] gameplayGuid = AssetDatabase.FindAssets(GetGameplayPrefabName());
+        if (gameplayGuid.Length == 0)
+        {
+            results.Add(new DragonTest(false, "Asset not found: " + GetGameplayPrefabName()));
+            return;
+        }
+
+        bool found = false;
+        for (int i = 0; i < gameplayGuid.Length; i++)
+        {
+            string assetPath = AssetDatabase.GUIDToAssetPath(gameplayGuid[i]);
+            if (Path.GetFileNameWithoutExtension(assetPath) == GetGameplayPrefabName())
+            {
+                found = true;
+                gameplayPrefab = AssetDatabase.LoadAssetAtPath(assetPath, typeof(GameObject)) as GameObject;
+                break;
+            }
+        }
+
+        if (!found)
+        {
+            results.Add(new DragonTest(false, "Asset not found: " + GetGameplayPrefabName()));
+            return;
+        }
+        
+        // Unit tests for gameplay prefab
+        results.Add(new DragonTest(GameplayTestDragonPlayer(), "DragonPlayer script was added"));
+        results.Add(new DragonTest(GameplayTestSku(), "DragonPlayer sku matches " + SelectedSku));
     }
 
     bool MainMenuTestViewGameObject()
@@ -115,9 +172,48 @@ public class DragonWizardValidationModule : IDragonWizard
         return anim.runtimeAnimatorController != null ? true : false;
     }
 
+    bool MainMenuTestAssetBundle()
+    {
+        string assetPath = AssetDatabase.GetAssetPath(mainMenuPrefab);
+        return AssetImporter.GetAtPath(assetPath).assetBundleName == SelectedSku + "_local";
+    }
+
+    bool MainMenuTestDragonPreview()
+    {
+        return mainMenuPrefab.GetComponent<MenuDragonPreview>() != null ? true : false;
+    }
+
+    bool MainMenuTestDragonEquip()
+    {
+        return mainMenuPrefab.GetComponent<DragonEquip>() != null ? true : false;
+    }
+
+    bool MainMenuTestSku()
+    {
+        if (!MainMenuTestDragonPreview())
+            return false;
+
+        MenuDragonPreview menuDragonPreview = mainMenuPrefab.GetComponent<MenuDragonPreview>();
+        return menuDragonPreview.sku == SelectedSku;
+    }
+
+    bool GameplayTestDragonPlayer()
+    {
+        return gameplayPrefab.GetComponent<DragonPlayer>() != null ? true : false;
+    }
+
+    bool GameplayTestSku()
+    {
+        if (!GameplayTestDragonPlayer())
+            return false;
+
+        DragonPlayer dragonPlayer = gameplayPrefab.GetComponent<DragonPlayer>();
+        return dragonPlayer.sku == SelectedSku;
+    }
+
     void DrawTestTitleGUI(string title)
     {
-        EditorGUILayout.LabelField(title, EditorStyles.boldLabel);
+        EditorGUILayout.LabelField(title, DragonWizard.titleStyle);
     }
 
     void DrawTestResultGUI(bool success, string title)

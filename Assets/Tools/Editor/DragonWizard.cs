@@ -50,6 +50,7 @@ public class DragonWizard : EditorWindow
 
 	// Styles
 	static GUIStyle popupStyle;
+	public static GUIStyle titleStyle;
 
 	// Menu
 	[MenuItem("Hungry Dragon/Tools/Creation/Dragon Wizard...", false)]
@@ -78,14 +79,21 @@ public class DragonWizard : EditorWindow
 			m_toolbarStrings[i] = m_modules[i].GetToolbarTitle();
 		}
 
-		// GUI styles
-		popupStyle = new GUIStyle(EditorStyles.popup);
-		popupStyle.fixedHeight = 35;
-		popupStyle.fontSize = 14;
-		popupStyle.stretchWidth = true;
+        // GUI styles
+        popupStyle = new GUIStyle(EditorStyles.popup)
+        {
+            fixedHeight = 35,
+            fontSize = 14,
+            stretchWidth = true
+        };
+
+		titleStyle = new GUIStyle(EditorStyles.boldLabel)
+		{
+			fontSize = 12
+        };
 
         // Dragon skus
-		LoadDragonSkus();
+        LoadDragonSkus();
 	}
 
     void LoadDragonSkus()
