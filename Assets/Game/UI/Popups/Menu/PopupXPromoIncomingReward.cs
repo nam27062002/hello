@@ -39,22 +39,32 @@ public class PopupXPromoIncomingReward : MonoBehaviour {
 
 	[SerializeField] private MetagameRewardView m_rewardPreview;
 
+	// Internal vars
+	private Metagame.Reward m_reward = null;
+	private ShowHideAnimator m_rewardAnimator = null;
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
-
+	/// <summary>
+	/// Initialization.
+	/// </summary>
+	private void Awake() {
+		// Cache reference to reward's animator
+		m_rewardAnimator = m_rewardPreview.GetComponent<ShowHideAnimator>();
+	}
 
 	private void Start()
 	{
 
-        // Show the next incoming reward in the preview
-		Metagame.Reward reward = XPromoManager.instance.GetNextWaitingReward();
+		// Show the next incoming reward in the preview
+		m_reward = XPromoManager.instance.GetNextWaitingReward();
 
-        if (reward == null)
+        if (m_reward == null)
         	return;
 
         // Initialize the preview with the reward
-		m_rewardPreview.InitFromReward(reward);
+		m_rewardPreview.InitFromReward(m_reward);
 
 		// If this is the first run (the player just installed the game), show the proper welcome message
 		if (UsersManager.currentUser.gamesPlayed == 0)
@@ -64,7 +74,7 @@ public class PopupXPromoIncomingReward : MonoBehaviour {
         else
         {
             // Are we giving the alternative reward?
-            if (reward.IsAlreadyOwned() && reward.replacement != null)
+            if (m_reward.IsAlreadyOwned() && m_reward.replacement != null)
             {
 				// Inform the player that he is receiveing an alternative reward
 				m_welcomeDescription.Localize(WELCOME_ALT_TID);
@@ -83,12 +93,48 @@ public class PopupXPromoIncomingReward : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //
 	//------------------------------------------------------------------------//
-
+	/// <summary>
+	/// Shortcut method to show/hide reward, either using animator or GameObject 
+	/// if no animator was found.
+	/// </summary>
+	/// <param name="_show">Whether to show or hide the reward.</param>
+	/// <param name="_animate">Animate? (Only if a ShowHideAnimator was found).</param>
+	private void ShowReward(bool _show, bool _animate) {
+		if(m_rewardAnimator != null) {
+			m_rewardAnimator.ForceSet(_show, _animate);
+		} else {
+			m_rewardPreview.gameObject.SetActive(_show);
+		}
+	}
 
 
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
+	/// <summary>
+	/// The popup is about to open.
+	/// </summary>
+	public void OnOpenPreAnimation() {
+		// Hide reward
+		ShowReward(false, false);
+	}
+
+	/// <summary>
+	/// The popup has finished opening.
+	/// </summary>
+	public void OnOpenPostAnimation() {
+		// Initialize and show reward
+		m_rewardPreview.InitFromReward(m_reward);
+		ShowReward(true, true);
+	}
+
+	/// <summary>
+	/// The popup is about to close.
+	/// </summary>
+	public void OnClosePreAnimation() {
+		// Hide reward
+		ShowReward(false, true);
+	}
 
 	/// <summary>
 	/// The player clicked the collect reward button
