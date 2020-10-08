@@ -108,7 +108,5 @@ public abstract class IOfferItemPreviewDragon : IOfferItemPreview {
 		DragonTier tier = IDragonData.SkuToTier(m_def.GetAsString("tier", "tier_6")); // Specials definitions don't have the tier field, so use special tier as default value
 		GameObject tierIconPrefab = UIConstants.GetTierIcon(tier);
 		Instantiate(tierIconPrefab, _tierIconContainer.transform, false);
-
-		_tierIconContainer.SetActive(false);
 	}
 }
