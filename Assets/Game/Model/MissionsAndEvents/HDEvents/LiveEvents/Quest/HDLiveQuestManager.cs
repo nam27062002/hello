@@ -275,11 +275,6 @@ public class HDLiveQuestManager : HDLiveEventManager, IBroadcastListener, IQuest
 	// IQuestManager INTERFACE												  //
 	//------------------------------------------------------------------------//
 	
-	public double GetRemainingTime()
-	{
-		return data.remainingTime.TotalSeconds;
-	}
-
 
 	public long GetRunScore() 
 	{

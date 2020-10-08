@@ -62,6 +62,9 @@ public class HDLiveQuestDefinition : HDLiveEventDefinition {
 	public QuestGoal m_goal = new QuestGoal();
 
 	public List<HDLiveData.Reward> m_rewards = new List<HDLiveData.Reward>();
+
+	// Duration of the quest in mins (for solo quests)
+	public long duration;
 		
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -111,11 +114,12 @@ public class HDLiveQuestDefinition : HDLiveEventDefinition {
 
 		// Add rewards
 		// [AOC] TODO!! Restoring caching rewards cause a null pointer exception. Investigate why, don't cache them meanwhile
-		/*JSONArray rewardsData = new JSONArray();
-		for(int i = 0; i < m_rewards.Count; ++i) {
-			rewardsData.Add(m_rewards[i].ToJson());
+		JSONArray rewardsData = new JSONArray();
+		for(int i = 0; i < m_rewards.Count; ++i)
+		{
+			rewardsData.Add(m_rewards[i].SaveData());
 		}
-		data.Add("rewards", rewardsData);*/
+		data.Add("rewards", rewardsData);
 
 		return data;
 	}
@@ -148,11 +152,20 @@ public class HDLiveQuestDefinition : HDLiveEventDefinition {
 
 			Metagame.Reward.Data data = new Metagame.Reward.Data();
 			data.amount = rewardDef.GetAsInt("amount");
-			data.sku = rewardDef.GetAsString("sku");
+			data.sku = rewardDef.GetAsString("rewardSku");
 			data.typeCode = rewardDef.GetAsString("type");
 			reward.reward = Metagame.Reward.CreateFromData(data, HDTrackingManager.EEconomyGroup.SOLO_QUEST, "");
+
+			if (reward == null)
+			{
+				Debug.LogError("The reward defined for the Solo Quest is not valid");
+				continue;
+			}
 			
 			m_rewards.Add(reward);
 		}
+		
+		// Duration of the quest
+		duration = _def.GetAsLong("duration");
 	}
 }

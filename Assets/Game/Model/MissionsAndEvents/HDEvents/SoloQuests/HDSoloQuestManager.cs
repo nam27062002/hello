@@ -18,7 +18,7 @@ using System.Collections.Generic;
 /// 
 /// </summary>
 [Serializable]
-public class HdSoloQuestManager : IBroadcastListener, IQuestManager{
+public class HDSoloQuestManager : IBroadcastListener, IQuestManager{
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -32,6 +32,7 @@ public class HdSoloQuestManager : IBroadcastListener, IQuestManager{
 	private HDLiveQuestData m_data;
 	private HDLiveQuestDefinition m_def;
 
+
 	private bool m_active;
 	
 	//------------------------------------------------------------------------//
@@ -40,7 +41,7 @@ public class HdSoloQuestManager : IBroadcastListener, IQuestManager{
 	/// <summary>
 	/// Default constructor.
 	/// </summary>
-	public HdSoloQuestManager() {
+	public HDSoloQuestManager() {
 
 		m_data = new HDLiveQuestData();
 		m_def = m_data.definition as HDLiveQuestDefinition;
@@ -50,7 +51,7 @@ public class HdSoloQuestManager : IBroadcastListener, IQuestManager{
 	/// <summary>
 	/// Destructor
 	/// </summary>
-	~HdSoloQuestManager() {
+	~HDSoloQuestManager() {
 		m_data = null;
         m_def = null;
 
@@ -63,14 +64,34 @@ public class HdSoloQuestManager : IBroadcastListener, IQuestManager{
 	/// <summary>
 	/// The quest has been activated for the first time
 	/// </summary>
-	public void Start()
+	public void StartQuest()
 	{
-		// Calculate the end timestamp
 		
 		// Initialize the quest from content
 		InitFromDefinition();
-		
-		// Set the quest state to NOT_JOINED
+
+		// Did we find any quest in the content?
+		if (EventExists())
+		{
+			// Calculate the ending timestamp
+			m_def.m_startTimestamp = GameServerManager.GetEstimatedServerTime();
+			m_def.m_endTimestamp = m_def.m_startTimestamp.AddMinutes(m_def.duration);
+
+			// Set the quest state to NOT_JOINED
+			m_data.m_state = HDLiveEventData.State.NOT_JOINED;
+			
+		}
+	}
+
+	/// <summary>
+	/// Forces the quest to end without giving any reward. Useful for testing purposes.
+	/// </summary>
+	public void DestroyQuest()
+	{
+		m_data.Clean();
+		m_data.definition.Clean();
+
+		m_def = m_data.definition as HDLiveQuestDefinition;
 	}
 	
 	public void InitFromDefinition()
@@ -85,18 +106,27 @@ public class HdSoloQuestManager : IBroadcastListener, IQuestManager{
 		{
 			// Make sure there is valid solo quest definition in the xml
 			Debug.LogError("Couldnt find any active soloQuest definition in the content");
+			
+			m_active = false;
+			
 			return;
 		} else if (defs.Count > 1)
 		{
+
 			Debug.LogWarning("There are more than one active definitions for soloQuests. " +
 			                 "It should be just one.");
 		}
-
+		
 		// Use the first definition found
 		DefinitionNode def = defs[0];
 
 		m_data = new HDLiveQuestData();
-		((HDLiveQuestDefinition)m_data.definition).InitFromDefinition(def);
+		m_data.m_eventId = 1; // Any number higher than zero
+		
+		m_def = (HDLiveQuestDefinition) m_data.definition;
+		m_def.InitFromDefinition(def);
+		m_def.m_eventId = m_data.m_eventId;
+		
 	}
 	
 	
@@ -120,11 +150,6 @@ public class HdSoloQuestManager : IBroadcastListener, IQuestManager{
 		return m_data;
 	}
 
-	public double GetRemainingTime()
-	{
-		throw new NotImplementedException();
-	}
-
 	public string GetGoalDescription()
 	{
 		return m_tracker.FormatDescription(m_def.m_goal.m_desc, m_def.m_goal.m_amount);
@@ -142,7 +167,7 @@ public class HdSoloQuestManager : IBroadcastListener, IQuestManager{
 
 	public void UpdateStateFromTimers()
 	{
-		throw new NotImplementedException();
+		m_data.UpdateStateFromTimers();
 	}
 
 	public void RequestRewards()
@@ -204,21 +229,67 @@ public class HdSoloQuestManager : IBroadcastListener, IQuestManager{
 
 	public bool IsTeasing()
 	{
-		throw new NotImplementedException();
+		// Solo Quests dont have a teasing phase
+		return false;
 	}
 
 	public bool IsRunning()
 	{
-		throw new NotImplementedException();
+		bool ret = false;
+		if (m_data != null)
+		{
+			ret = m_data.m_state == HDLiveEventData.State.NOT_JOINED || m_data.m_state == HDLiveEventData.State.JOINED;
+		}
+		return ret;
 	}
 
 	public bool IsActive()
 	{
-		throw new NotImplementedException();
+		// Doesnt apply to solo quests
+		return true;
 	}
 
 	public bool IsRewardPending()
 	{
 		throw new NotImplementedException();
 	}
+	
+	//------------------------------------------------------------------------//
+	// PERSISTENCE															  //
+	//------------------------------------------------------------------------//
+	
+	/// <summary>
+	/// Constructor from json data.
+	/// </summary>
+	/// <param name="_data">Data to be parsed.</param>
+	public void ParseJson(SimpleJSON.JSONNode _data)
+	{
+		m_data.Clean();
+		m_data.ParseState(_data["data"]);
+		
+		m_def = m_data.definition as HDLiveQuestDefinition;
+
+		// Load tracker
+		m_tracker.Clear();
+		if (m_def.m_goal != null && m_def.m_goal.m_typeDef != null)
+		{
+			m_tracker = TrackerBase.CreateTracker(m_def.m_goal.m_typeDef.sku, m_def.m_goal.m_params);
+		}
+	}
+
+	/// <summary>
+	/// Serialize into json.
+	/// </summary>
+	/// <returns>The json.</returns>
+	public SimpleJSON.JSONClass ToJson()
+	{
+		SimpleJSON.JSONClass data = new SimpleJSON.JSONClass();
+
+		// Add data
+		
+		data.Add("data", m_data.ToJson());
+
+		return data;
+	}
+	
 }

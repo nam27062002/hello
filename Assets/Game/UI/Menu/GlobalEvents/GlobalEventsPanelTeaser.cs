@@ -72,7 +72,7 @@ public class GlobalEventsPanelTeaser : GlobalEventsPanel {
 		HDLiveQuestDefinition liveQuestDef = questManager.GetQuestDefinition();
 
 		// Update timer
-		double remainingSeconds = questManager.GetRemainingTime();
+		double remainingSeconds = questManager.GetQuestData().remainingTime.TotalSeconds;
 		m_timerText.text = TimeUtils.FormatTime(
 			System.Math.Max(0, remainingSeconds),	// Never show negative time!
 			TimeUtils.EFormat.ABBREVIATIONS_WITHOUT_0_VALUES,

@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------------//
 using UnityEngine;
 using System;
+using System.Runtime.InteropServices.WindowsRuntime;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -33,8 +34,10 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
 	private bool m_welcomeBackTriggered;
 
 	// WB configuration
+	private bool enabled = true;
 	private int m_minAbsentDays; // Amount of days the the player needs to be absent to get the WB
 
+	
 	// Benefit definitions from content
 	DefinitionNode m_soloQuestDef;
     
@@ -67,7 +70,8 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
 	/// </summary>
 	public void InitFromDefinitions()
 	{
-
+		 
+		// Read the settings from content
 		
 	}
 
@@ -78,7 +82,11 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
 	/// <returns>Returns true if the player has been X days without connecting to the game
 	/// and didnt enjoy this welcome back feature before.</returns>
     public bool IsElegibleForWB()
-	{
+    {
+	    // The feature is disabled from the content
+	    if (!enabled)
+		    return false;
+		
         // This player already enjoyed this feature
         if (m_welcomeBackTriggered)
 		    return false;
@@ -142,10 +150,24 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
 		m_welcomeBackTriggered = true;
 	}
 
+    /// <summary>
+    /// End all the welcome back perks
+    /// We use it for testing purposes
+    /// </summary>
+    public void Deactivate()
+    {
+	    EndSoloQuest();
+    }
 
     private void CreateSoloQuest()
     {
+	    // Initialize the solo quest
+		HDLiveDataManager.instance.soloQuest.StartQuest();
+    }
 
+    private void EndSoloQuest()
+    {
+	    HDLiveDataManager.instance.soloQuest.DestroyQuest();
     }
 
 	private void ActivatePassiveEvent()
@@ -196,18 +218,58 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
 	/// Constructor from json data.
 	/// </summary>
 	/// <param name="_data">Data to be parsed.</param>
-	public void LoadData(SimpleJSON.JSONNode _data)
+	public void ParseJson(SimpleJSON.JSONNode _data)
 	{
+		
+		// Load solo quest in the liveDataManager
+		string key = "soloQuest";
+		if ( _data.ContainsKey(key) )
+		{
+			HDSoloQuestManager soloQuest = new HDSoloQuestManager();
+			soloQuest.ParseJson(_data[key]);
+			HDLiveDataManager.instance.soloQuest = soloQuest;
+		}
+		
 	}
 
 	/// <summary>
 	/// Serialize into json.
 	/// </summary>
 	/// <returns>The json.</returns>
-	public SimpleJSON.JSONClass SaveData()
+	public SimpleJSON.JSONClass ToJson()
 	{
-		SimpleJSON.JSONClass data = null;
+		SimpleJSON.JSONClass data = new SimpleJSON.JSONClass();
 
+		// If there is an active SoloQuest, save it
+		if (HDLiveDataManager.instance.soloQuest.EventExists())
+		{
+			data.Add("soloQuest", HDLiveDataManager.instance.soloQuest.ToJson());
+		}
+		
+		
 		return data;
 	}
+	
+	//------------------------------------------------------------------------//
+	// DEBUG																  //
+	//------------------------------------------------------------------------//
+
+	/// <summary>
+	/// Forces the activation of Welcome back feature
+	/// </summary>
+	public void OnForceStart()
+	{
+		m_welcomeBackTriggered = false;
+		
+		Activate();
+	}
+
+	/// <summary>
+	/// End all the benefits granted by the welcome back feature
+	/// </summary>
+	public void OnForceEnd()
+	{
+		Deactivate();
+	}
+
 }

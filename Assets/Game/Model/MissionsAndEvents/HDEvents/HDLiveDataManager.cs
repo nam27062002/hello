@@ -114,10 +114,17 @@ public class HDLiveDataManager : Singleton<HDLiveDataManager> {
 
     //
     private HDTournamentManager     m_tournament        = new HDTournamentManager();
-    private HDLiveQuestManager          m_liveQuest             = new HDLiveQuestManager();
-    private HdSoloQuestManager    m_soloQuest    = new HdSoloQuestManager();
     private HDPassiveEventManager   m_passive           = new HDPassiveEventManager();
     private HDLeagueController      m_league            = new HDLeagueController();
+    private HDLiveQuestManager          m_liveQuest             = new HDLiveQuestManager();
+    private HDSoloQuestManager    m_soloQuest    = new HDSoloQuestManager();
+    public HDSoloQuestManager soloQuest
+    {
+        // Access to the soloQuest so it can be loaded/saved from persistence
+        get => m_soloQuest;
+        set => m_soloQuest = value;
+    }
+
 
     public static HDTournamentManager      tournament      { get { return instance.m_tournament; } }
     public static HDPassiveEventManager    passive         { get { return instance.m_passive; } }
@@ -212,6 +219,25 @@ public class HDLiveDataManager : Singleton<HDLiveDataManager> {
         CacheServerManager.SharedInstance.SetVariable("hdliveeventstimestamp", GameServerManager.GetEstimatedServerTimeAsLong().ToString());
     }
 
+
+    /// <summary>
+    /// Initialize the solo Quest
+    /// </summary>
+    public void StartSoloQuest()
+    {
+        m_soloQuest.StartQuest();
+    }
+
+    /// <summary>
+    /// Returns true if the solo Quest is enabled and running at this moment
+    /// </summary>
+    /// <returns></returns>
+    public bool IsSoloQuestActive()
+    {
+        return (m_soloQuest.EventExists() && m_soloQuest.IsActive() && m_soloQuest.IsRunning());
+    }
+    
+
     /// <summary>
     /// There could be solo and live quests. This method returns the active one
     /// considering that the solo quest has priority over the live one.
@@ -219,7 +245,7 @@ public class HDLiveDataManager : Singleton<HDLiveDataManager> {
     /// <returns></returns>
     private  IQuestManager GetActiveQuest()
     {
-        if (m_soloQuest.EventExists() && m_soloQuest.IsActive() && m_soloQuest.IsRunning())
+        if (IsSoloQuestActive())
         {
             return m_soloQuest;
         }
@@ -228,7 +254,7 @@ public class HDLiveDataManager : Singleton<HDLiveDataManager> {
             return m_liveQuest;
         }
     }
-
+    
 #if UNITY_EDITOR
     public static GameServerManager.ServerResponse CreateTestResponse(string fileName) {
         string path = Directory.GetCurrentDirectory() + "/Assets/HDLiveEventsTest/" + fileName;

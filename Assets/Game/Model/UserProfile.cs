@@ -1450,6 +1450,7 @@ public class UserProfile : UserPersistenceSystem
 			m_dailyRewards.Generate();	// Generate a new sequence
 		}
 
+		// XPromo
 		key = "xPromo";
 		Debug.Log(Colors.cyan.Tag("LOADING XPROMO"));
 		if (_data.ContainsKey(key))
@@ -1461,7 +1462,20 @@ public class UserProfile : UserPersistenceSystem
 		{
 			Debug.Log(Colors.red.Tag("INVALID DATA!"));
 		}
-
+		
+		// Welcome back feature
+		key = "welcomeBack";
+		Debug.Log(Colors.cyan.Tag("LOADING WELCOME BACK"));
+		if (_data.ContainsKey(key))
+		{
+			Debug.Log(Colors.lime.Tag("VALID DATA!!\n") + new JsonFormatter().PrettyPrint(_data[key].ToString()));
+			WelcomeBackManager.instance.ParseJson(_data[key]);
+		}
+		else
+		{
+			Debug.Log(Colors.red.Tag("INVALID DATA!"));
+		}
+		
 		// Offer Packs
 		// Old version. transform to offer packs v2
 		if ( _data.ContainsKey( "offerPacks" ) || _data.ContainsKey("offerPacksRotationalHistory") )
@@ -1838,6 +1852,17 @@ public class UserProfile : UserPersistenceSystem
 		else
 		{
 			Debug.Log(Colors.red.Tag("XPROMO: INVALID DATA!"));
+		}
+		
+		// Welcome Back
+		JSONClass welcomeBack = WelcomeBackManager.instance.ToJson();
+		if (welcomeBack != null)
+		{  // Can be null if the sequence was never generated
+			data.Add("welcomeBack", welcomeBack);
+		}
+		else
+		{
+			Debug.Log(Colors.red.Tag("Welcome Back: INVALID DATA!"));
 		}
 
 		// Offer packs

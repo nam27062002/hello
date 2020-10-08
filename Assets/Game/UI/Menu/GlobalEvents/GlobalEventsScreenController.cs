@@ -15,7 +15,7 @@ using System.Collections.Generic;
 // CLASSES																	  //
 //----------------------------------------------------------------------------//
 /// <summary>
-/// General controller for the Global Events tab in the Goals Screen.
+/// General controller for the Quests tab in the Goals Screen.
 /// </summary>
 public class GlobalEventsScreenController : MonoBehaviour {
 	//------------------------------------------------------------------------//
@@ -123,6 +123,12 @@ public class GlobalEventsScreenController : MonoBehaviour {
 
 	protected void OnRewards(int _eventId ,HDLiveDataManager.ComunicationErrorCodes _err)
 	{
+		if (HDLiveDataManager.instance.IsSoloQuestActive())
+		{
+			// If we are showing a solo quest, forget about live quest rewards
+			return;
+		}
+		
 		if ( _eventId == m_questManager.GetQuestData().m_eventId )	
 		{
 			if ( _err == HDLiveDataManager.ComunicationErrorCodes.NO_ERROR )

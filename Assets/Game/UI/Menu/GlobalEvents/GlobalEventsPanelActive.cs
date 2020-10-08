@@ -84,7 +84,7 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 		// Just in case
 		if(!HDLiveDataManager.quest.EventExists()) return;
 
-		double remainingTime = System.Math.Max(0, HDLiveDataManager.quest.GetRemainingTime());
+		double remainingTime = System.Math.Max(0, HDLiveDataManager.quest.GetQuestData().remainingTime.TotalSeconds);
 
 		// Update countdown text
 		if(m_timerText != null) {

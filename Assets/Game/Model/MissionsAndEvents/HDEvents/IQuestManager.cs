@@ -51,14 +51,7 @@ public interface IQuestManager
         /// </summary>
         /// <returns></returns>
         HDLiveQuestData GetQuestData();
-
-        /// <summary>
-        /// Returns the remaining time in seconds for a started quest, or the
-        /// time left to start for a teasing quest
-        /// </summary>
-        /// <returns></returns>
-        double GetRemainingTime();
-
+        
         
         /// <summary>
         /// Returns the scored achieved in the current run

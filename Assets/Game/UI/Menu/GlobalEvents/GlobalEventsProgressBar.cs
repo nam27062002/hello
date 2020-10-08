@@ -96,7 +96,10 @@ public class GlobalEventsProgressBar : MonoBehaviour {
 	public void RefreshAchieved(bool _animate) {
 		// Use current bar value
 		for(int i = 0; i < m_rewardInfos.Length; ++i) {
-			m_rewardInfos[i].ShowAchieved(m_progressBar.value >= m_rewardInfos[i].questReward.target, _animate);
+			if (m_rewardInfos[i].questReward != null)
+			{
+				m_rewardInfos[i].ShowAchieved(m_progressBar.value >= m_rewardInfos[i].questReward.target, _animate);
+			}
 		}
 	}
 

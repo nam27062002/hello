@@ -82,7 +82,7 @@ public class ResultsScreenStepGlobalEvent : ResultsScreenStep {
 		if (	questManager.EventExists() &&
 				questManager.IsRunning() && 
 				questManager.IsActive() &&
-				questManager.GetRemainingTime() > 0 &&
+				questManager.GetQuestData().remainingTime.TotalSeconds > 0 &&
                 DeviceUtilsManager.SharedInstance.internetReachability != NetworkReachability.NotReachable
 		)
 		{
