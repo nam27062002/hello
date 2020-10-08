@@ -219,14 +219,7 @@ public class HDLiveDataManager : Singleton<HDLiveDataManager> {
         CacheServerManager.SharedInstance.SetVariable("hdliveeventstimestamp", GameServerManager.GetEstimatedServerTimeAsLong().ToString());
     }
 
-
-    /// <summary>
-    /// Initialize the solo Quest
-    /// </summary>
-    public void StartSoloQuest()
-    {
-        m_soloQuest.StartQuest();
-    }
+    
 
     /// <summary>
     /// Returns true if the solo Quest is enabled and running at this moment

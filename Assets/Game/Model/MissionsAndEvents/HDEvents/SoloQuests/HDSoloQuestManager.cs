@@ -33,7 +33,7 @@ public class HDSoloQuestManager : IBroadcastListener, IQuestManager{
 	private HDLiveQuestDefinition m_def;
 
 
-	private bool m_active;
+	private int m_rewardLevel = -1;	// Response to the get_my_rewards request
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -45,6 +45,10 @@ public class HDSoloQuestManager : IBroadcastListener, IQuestManager{
 
 		m_data = new HDLiveQuestData();
 		m_def = m_data.definition as HDLiveQuestDefinition;
+		
+		// Subscribe to external events
+		Messenger.AddListener(MessengerEvents.GAME_STARTED, OnGameStarted);
+		Broadcaster.AddListener(BroadcastEventType.GAME_ENDED, this);
         
 	}
 
@@ -60,6 +64,7 @@ public class HDSoloQuestManager : IBroadcastListener, IQuestManager{
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //
 	//------------------------------------------------------------------------//
+
 
 	/// <summary>
 	/// The quest has been activated for the first time
@@ -106,9 +111,7 @@ public class HDSoloQuestManager : IBroadcastListener, IQuestManager{
 		{
 			// Make sure there is valid solo quest definition in the xml
 			Debug.LogError("Couldnt find any active soloQuest definition in the content");
-			
-			m_active = false;
-			
+
 			return;
 		} else if (defs.Count > 1)
 		{
@@ -134,10 +137,27 @@ public class HDSoloQuestManager : IBroadcastListener, IQuestManager{
 	// EVENTS																  //
 	//------------------------------------------------------------------------//
 
+	public void OnGameStarted(){
+		if ( m_tracker != null)
+		{ 
+			// Always track. If not active, contribute wont be called.
+			m_tracker.enabled = true;
+			m_tracker.InitValue(0);
+		}
+	}
+	public void OnGameEnded(){
+		// Save tracker value?
+	}
+	
 	public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
 	{
-		throw new NotImplementedException();
-	}
+		switch(eventType)
+		{
+			case BroadcastEventType.GAME_ENDED:
+			{
+				OnGameEnded();
+			}break;
+		}	}
 
 
 	//------------------------------------------------------------------------//
@@ -172,32 +192,94 @@ public class HDSoloQuestManager : IBroadcastListener, IQuestManager{
 
 	public void RequestRewards()
 	{
-		throw new NotImplementedException();
+		// Calculate reward level according to score
+		int newRewardLevel = 0;
+		
+		// Iterate all rewards until we reach that one not achieved
+		foreach  (HDLiveData.Reward reward in m_def.m_rewards)
+		{
+			if (m_data.m_globalScore < reward.target)
+			{
+				break;
+			}
+			newRewardLevel++;
+		}
+
+		// Save it to use it later
+		m_rewardLevel = newRewardLevel;
 	}
 
 	public List<HDLiveData.Reward> GetMyRewards()
 	{
-		throw new NotImplementedException();
+		// Create new list
+		List<HDLiveData.Reward> rewards = new List<HDLiveData.Reward>();
+
+		// We must have a valid data and definition
+		if(m_data != null && m_data.definition != null) {
+			// Check reward level
+			// In a quest, the reward level tells us in which reward tier have been reached
+			// All rewards below it are also given
+			HDLiveQuestDefinition def = m_data.definition as HDLiveQuestDefinition;
+			for(int i = 0; i < m_rewardLevel; ++i) {	// Reward level is 1-N
+				rewards.Add(def.m_rewards[i]);	// Assuming rewards are properly sorted :)
+			}
+		}
+
+		// Done!
+		return rewards;
 	}
 
 	public void FinishEvent()
 	{
-		throw new NotImplementedException();
+		// Just change the state. For solo quests is as simple as this
+		m_data.m_state = HDLiveEventData.State.FINALIZED;
+
+		// Notify everyone via broadcast
+		Messenger.Broadcast<int,HDLiveDataManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_FINISHED, m_data.m_eventId, 
+			HDLiveDataManager.ComunicationErrorCodes.NO_ERROR);
+
 	}
 
 	public void ClearEvent()
 	{
-		throw new NotImplementedException();
+		// Clear data an definition
+		m_data.Clean();
+		m_def.Clean();
 	}
 
 	public string FormatScore(long _score)
 	{
-		throw new NotImplementedException();
+		// Tracker will do it for us
+		if(m_tracker != null) {
+			return m_tracker.FormatValue(_score);
+		}
+		return StringUtils.FormatNumber(_score);
 	}
 
 	public void Contribute(float _runScore, float _keysMultiplier, bool _spentHC, bool _viewAD)
 	{
-		throw new NotImplementedException();
+		Debug.Log("<color=magenta>REGISTER SOLO QUEST SCORE:</color> "+ _runScore);
+		
+		// Get contribution amount and apply multipliers
+		int contribution = (int)_runScore;
+		contribution = (int)(_keysMultiplier * contribution);
+	
+		// Track here!
+		HDTrackingManager.EEventMultiplier mult = HDTrackingManager.EEventMultiplier.none;
+		if (_keysMultiplier > 1) {
+			if (_spentHC) 		mult = HDTrackingManager.EEventMultiplier.hc_payment;
+			else if (_viewAD)	mult = HDTrackingManager.EEventMultiplier.ad;
+			else 		  		mult = HDTrackingManager.EEventMultiplier.golden_key;
+		}
+
+		HDTrackingManager.Instance.Notify_GlobalEventRunDone(m_data.m_eventId, m_def.m_goal.m_type , (int)GetRunScore(), contribution, mult);	
+
+		if (m_data.m_state == HDLiveEventData.State.NOT_JOINED)
+		{
+			m_data.m_state = HDLiveEventData.State.JOINED;
+		}
+
+		Messenger.Broadcast(MessengerEvents.QUEST_SCORE_UPDATED);
 	}
 
 	public bool ShouldRequestDefinition()
@@ -251,7 +333,13 @@ public class HDSoloQuestManager : IBroadcastListener, IQuestManager{
 
 	public bool IsRewardPending()
 	{
-		throw new NotImplementedException();
+		bool ret = false;
+		if (m_data != null && m_data.m_eventId > 0 )
+		{
+			// Just check the state of the quest
+			ret = m_data.m_state == HDLiveEventData.State.REWARD_AVAILABLE;
+		}
+		return ret;
 	}
 	
 	//------------------------------------------------------------------------//
