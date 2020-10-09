@@ -28,6 +28,7 @@ public class DragonWizardValidationModule : IDragonWizard
     readonly List<DragonTest> results = new List<DragonTest>();
     GameObject mainMenuPrefab;
     GameObject gameplayPrefab;
+    GameObject resultsPrefab;
 
     string SelectedSku
     {
@@ -46,9 +47,9 @@ public class DragonWizardValidationModule : IDragonWizard
 
         EditorGUILayout.BeginHorizontal();
         DragonWizard.DrawDragonSelection();
-        if (GUILayout.Button("Start validation", GUILayout.Height(35)))
+        if (GUILayout.Button("Run tests", GUILayout.Height(35)))
         {
-            ProcessTests();
+            RunTests();
         }
         EditorGUILayout.EndHorizontal();
 
@@ -65,12 +66,14 @@ public class DragonWizardValidationModule : IDragonWizard
         }
     }
 
-    void ProcessTests()
+    void RunTests()
     {
         results.Clear();
 
+        // Run prefab tests
         MainMenuTests();
         GameplayTests();
+        ResultsTests();
     }
 
     string GetSkuUpperCase()
@@ -99,7 +102,7 @@ public class DragonWizardValidationModule : IDragonWizard
     void MainMenuTests()
     {
         // Title
-        results.Add(new DragonTest("Main menu prefab"));
+        results.Add(new DragonTest("Main menu prefab " + GetMainMenuPrefabName()));
 
         // Load main menu prefab
         string[] guid = AssetDatabase.FindAssets(GetMainMenuPrefabName());
@@ -124,7 +127,7 @@ public class DragonWizardValidationModule : IDragonWizard
     void GameplayTests()
     {
         // Title
-        results.Add(new DragonTest("Gameplay prefab"));
+        results.Add(new DragonTest("Gameplay prefab " + GetGameplayPrefabName()));
 
         // Load main menu prefab
         string[] gameplayGuid = AssetDatabase.FindAssets(GetGameplayPrefabName());
@@ -155,6 +158,28 @@ public class DragonWizardValidationModule : IDragonWizard
         // Unit tests for gameplay prefab
         results.Add(new DragonTest(GameplayTestDragonPlayer(), "DragonPlayer script was added"));
         results.Add(new DragonTest(GameplayTestSku(), "DragonPlayer sku matches " + SelectedSku));
+        results.Add(new DragonTest(GameplayTestHoldPreyPoints(), "HoldPreyPoints are set"));
+    }
+
+    void ResultsTests()
+    {
+        // Title
+        results.Add(new DragonTest("Results prefab " + GetResultsPrefabName()));
+
+        // Load results prefab
+        string[] guid = AssetDatabase.FindAssets(GetResultsPrefabName());
+        if (guid.Length != 1)
+        {
+            results.Add(new DragonTest(false, "Asset not found: " + GetResultsPrefabName()));
+            return;
+        }
+
+        string assetPath = AssetDatabase.GUIDToAssetPath(guid[0]);
+        resultsPrefab = AssetDatabase.LoadAssetAtPath(assetPath, typeof(GameObject)) as GameObject;
+
+        // Unit tests for results prefab
+        results.Add(new DragonTest(ResultsTestAnimationController(), "Animation controller is not set"));
+        results.Add(new DragonTest(ResultsTestAssetBundle(), "Asset bundle prefab set to: " + SelectedSku + "_local"));
     }
 
     bool MainMenuTestViewGameObject()
@@ -209,6 +234,32 @@ public class DragonWizardValidationModule : IDragonWizard
 
         DragonPlayer dragonPlayer = gameplayPrefab.GetComponent<DragonPlayer>();
         return dragonPlayer.sku == SelectedSku;
+    }
+
+    bool GameplayTestHoldPreyPoints()
+    {
+        Transform points = gameplayPrefab.FindTransformRecursive("points");
+        if (points == null)
+            return false;
+
+        HoldPreyPoint[] holdPreyPoints = points.GetComponentsInChildren<HoldPreyPoint>();
+        return holdPreyPoints.Length > 0;
+    }
+
+    bool ResultsTestAnimationController()
+    {
+        Transform view = resultsPrefab.transform.Find("view");
+        Animator anim = view.GetComponent<Animator>();
+        if (anim == null)
+            return false;
+
+        return anim.runtimeAnimatorController == null ? true : false;
+    }
+
+    bool ResultsTestAssetBundle()
+    {
+        string assetPath = AssetDatabase.GetAssetPath(resultsPrefab);
+        return AssetImporter.GetAtPath(assetPath).assetBundleName == SelectedSku + "_local";
     }
 
     void DrawTestTitleGUI(string title)
