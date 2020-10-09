@@ -29,6 +29,7 @@ public class DragonWizardValidationModule : IDragonWizard
     GameObject mainMenuPrefab;
     GameObject gameplayPrefab;
     GameObject resultsPrefab;
+    int oldSelection;
 
     string SelectedSku
     {
@@ -46,11 +47,14 @@ public class DragonWizardValidationModule : IDragonWizard
         EditorGUILayout.Space();
 
         EditorGUILayout.BeginHorizontal();
-        DragonWizard.DrawDragonSelection();
+        int currentSelection = DragonWizard.DrawDragonSelection();
+
         if (GUILayout.Button("Run tests", GUILayout.Height(35)))
         {
+            oldSelection = currentSelection;
             RunTests();
         }
+
         EditorGUILayout.EndHorizontal();
 
         if (results.Count > 0)
@@ -64,16 +68,26 @@ public class DragonWizardValidationModule : IDragonWizard
                     DrawTestResultGUI(results[i].success, results[i].text);
             }
         }
+
+        if (oldSelection != currentSelection)
+        {
+            ClearResults();
+        }
     }
 
     void RunTests()
     {
-        results.Clear();
+        ClearResults();
 
         // Run prefab tests
         MainMenuTests();
         GameplayTests();
         ResultsTests();
+    }
+
+    void ClearResults()
+    {
+        results.Clear();
     }
 
     string GetSkuUpperCase()
