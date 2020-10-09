@@ -125,7 +125,10 @@ public class GlobalEventsScreenController : MonoBehaviour {
 	{
 		if (HDLiveDataManager.instance.IsSoloQuestActive())
 		{
-			// If we are showing a solo quest, forget about live quest rewards
+			// If we are showing a solo quest forget about comm errors. Solo quests are local.
+			EventRewardScreen scr = InstanceManager.menuSceneController.GetScreenData(MenuScreen.EVENT_REWARD).ui.GetComponent<EventRewardScreen>();
+			scr.StartFlow();
+			InstanceManager.menuSceneController.GoToScreen(MenuScreen.EVENT_REWARD, true);	
 			return;
 		}
 		
@@ -155,8 +158,8 @@ public class GlobalEventsScreenController : MonoBehaviour {
 		}
 		else
 		{
-			m_questManager.RequestRewards();
 			SetActivePanel(Panel.LOADING);	
+			m_questManager.RequestRewards();
 		}
 	}
 

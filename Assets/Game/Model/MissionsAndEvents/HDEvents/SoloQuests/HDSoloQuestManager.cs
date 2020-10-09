@@ -85,6 +85,9 @@ public class HDSoloQuestManager : IBroadcastListener, IQuestManager{
 			// Set the quest state to NOT_JOINED
 			m_data.m_state = HDLiveEventData.State.NOT_JOINED;
 			
+			// Anounce the new quest via broadcast
+			Messenger.Broadcast<HDLiveDataManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_NEW_DEFINITION, 
+				HDLiveDataManager.ComunicationErrorCodes.NO_ERROR);
 		}
 	}
 
@@ -207,6 +210,11 @@ public class HDSoloQuestManager : IBroadcastListener, IQuestManager{
 
 		// Save it to use it later
 		m_rewardLevel = newRewardLevel;
+		
+		// Fake the live event answer, so the quests screen can go on and show the rewards
+		Messenger.Broadcast<int,HDLiveDataManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_REWARDS_RECEIVED, 
+			m_data.m_eventId, HDLiveDataManager.ComunicationErrorCodes.NO_ERROR);
+
 	}
 
 	public List<HDLiveData.Reward> GetMyRewards()
@@ -271,14 +279,19 @@ public class HDSoloQuestManager : IBroadcastListener, IQuestManager{
 			else if (_viewAD)	mult = HDTrackingManager.EEventMultiplier.ad;
 			else 		  		mult = HDTrackingManager.EEventMultiplier.golden_key;
 		}
-
 		HDTrackingManager.Instance.Notify_GlobalEventRunDone(m_data.m_eventId, m_def.m_goal.m_type , (int)GetRunScore(), contribution, mult);	
 
 		if (m_data.m_state == HDLiveEventData.State.NOT_JOINED)
 		{
 			m_data.m_state = HDLiveEventData.State.JOINED;
 		}
+		
+		// Apply contribution to the quest
+		m_data.m_globalScore += contribution;
 
+		// Send the QUEST_SCORE_SENT message, otherwise the result screen wont advance to the next step
+		Messenger.Broadcast<HDLiveDataManager.ComunicationErrorCodes>(MessengerEvents.QUEST_SCORE_SENT, 
+			HDLiveDataManager.ComunicationErrorCodes.NO_ERROR);
 		Messenger.Broadcast(MessengerEvents.QUEST_SCORE_UPDATED);
 	}
 
@@ -315,12 +328,18 @@ public class HDSoloQuestManager : IBroadcastListener, IQuestManager{
 		return false;
 	}
 
+
 	public bool IsRunning()
 	{
+		// Basically we want to know if we need to show this event in the quest screen
+		// or check the live event instead
+		
 		bool ret = false;
 		if (m_data != null)
 		{
-			ret = m_data.m_state == HDLiveEventData.State.NOT_JOINED || m_data.m_state == HDLiveEventData.State.JOINED;
+			ret = m_data.m_state == HDLiveEventData.State.NOT_JOINED || 
+			      m_data.m_state == HDLiveEventData.State.JOINED ||
+			      m_data.m_state == HDLiveEventData.State.REWARD_AVAILABLE;
 		}
 		return ret;
 	}
