@@ -5,23 +5,38 @@ using UnityEngine;
 
 public class DragonWizardValidationModule : IDragonWizard
 {
+    enum PrefabType
+    {
+        MainMenu,
+        Gameplay,
+        Results,
+        Corpse
+    }
+
     class DragonTest
     {
         public bool isTitle;
         public string text;
         public bool success;
+        public PrefabType prefabType;
 
         public DragonTest(bool _success, string _text)
         {
             isTitle = false;
             success = _success;
             text = _text;
+
+            if (_success)
+                testsSuccessCounter++;
+            else
+                testsFailedCounter++;
         }
 
-        public DragonTest(string _title)
+        public DragonTest(string _title, PrefabType _prefabType)
         {
             isTitle = true;
             text = _title;
+            prefabType = _prefabType;
         }
     }
 
@@ -29,7 +44,10 @@ public class DragonWizardValidationModule : IDragonWizard
     GameObject mainMenuPrefab;
     GameObject gameplayPrefab;
     GameObject resultsPrefab;
+    GameObject corpsePrefab;
     int oldSelection;
+    static int testsSuccessCounter;
+    static int testsFailedCounter;
 
     string SelectedSku
     {
@@ -39,6 +57,19 @@ public class DragonWizardValidationModule : IDragonWizard
     public string GetToolbarTitle()
     {
         return "Validation";
+    }
+
+    string MainMenuPrefabName { get { return "PF_" + GetSkuUpperCase() + "Menu"; } }
+    string GameplayPrefabName { get { return "PF_" + GetSkuUpperCase(); } }
+    string ResultsPrefabName { get { return "PF_" + GetSkuUpperCase() + "Results"; } }
+    string CorpsePrefabName { get { return "PF_" + GetSkuUpperCase() + "Corpse"; } }
+
+    string GetSkuUpperCase()
+    {
+        string[] split = SelectedSku.Split('_');
+        string first = split[0];
+        string second = split[1];
+        return char.ToUpper(first[0]) + first.Substring(1) + char.ToUpper(second[0]) + second.Substring(1);
     }
 
     public void OnGUI()
@@ -60,19 +91,61 @@ public class DragonWizardValidationModule : IDragonWizard
         if (results.Count > 0)
         {
             EditorGUILayout.Space();
+
+            if (testsFailedCounter > 0)
+                EditorGUILayout.HelpBox(testsFailedCounter + " " + (testsFailedCounter == 1 ? "test" : "tests") + " failed to pass", MessageType.Error);
+            else
+                EditorGUILayout.HelpBox(testsSuccessCounter + " " + (testsSuccessCounter == 1 ? "test" : "tests") + " have been passed", MessageType.Info);
+
+            EditorGUILayout.Space();
+
             for (int i = 0; i < results.Count; i++)
             {
                 if (results[i].isTitle)
-                    DrawTestTitleGUI(results[i].text);
+                    DrawTestTitleGUI(results[i].text, results[i].prefabType);
                 else
                     DrawTestResultGUI(results[i].success, results[i].text);
             }
+
+            EditorGUILayout.Space();
         }
 
         if (oldSelection != currentSelection)
         {
             ClearResults();
         }
+    }
+
+    void DrawTestTitleGUI(string title, PrefabType prefabType)
+    {
+        if (GUILayout.Button(title, DragonWizard.titleStyle))
+        {
+            GameObject prefab = null;
+            switch (prefabType)
+            {
+                case PrefabType.MainMenu:
+                    prefab = mainMenuPrefab;
+                    break;
+                case PrefabType.Gameplay:
+                    prefab = gameplayPrefab;
+                    break;
+                case PrefabType.Results:
+                    prefab = resultsPrefab;
+                    break;
+                case PrefabType.Corpse:
+                    prefab = corpsePrefab;
+                    break;
+            }
+
+            Selection.activeGameObject = prefab;
+        }
+    }
+
+    void DrawTestResultGUI(bool success, string title)
+    {
+        GUIContent content = DragonWizard.GetIcon(success ? DragonWizard.IconType.TestPassed : DragonWizard.IconType.TestFailed);
+        content.text = "\n " + title + "\n";
+        EditorGUILayout.HelpBox(content, true);
     }
 
     void RunTests()
@@ -83,46 +156,32 @@ public class DragonWizardValidationModule : IDragonWizard
         MainMenuTests();
         GameplayTests();
         ResultsTests();
+        CorpseTests();
     }
 
     void ClearResults()
     {
         results.Clear();
-    }
 
-    string GetSkuUpperCase()
-    {
-        string[] split = SelectedSku.Split('_');
-        string first = split[0];
-        string second = split[1];
-        return char.ToUpper(first[0]) + first.Substring(1) + char.ToUpper(second[0]) + second.Substring(1);
-    }
+        testsSuccessCounter = 0;
+        testsFailedCounter = 0;
 
-    string GetMainMenuPrefabName()
-    {
-        return "PF_" + GetSkuUpperCase() + "Menu";
-    }
-
-    string GetGameplayPrefabName()
-    {
-        return "PF_" + GetSkuUpperCase();
-    }
-
-    string GetResultsPrefabName()
-    {
-        return "PF_" + GetSkuUpperCase() + "Results";
+        mainMenuPrefab = null;
+        gameplayPrefab = null;
+        resultsPrefab = null;
+        corpsePrefab = null;
     }
 
     void MainMenuTests()
     {
         // Title
-        results.Add(new DragonTest("Main menu prefab " + GetMainMenuPrefabName()));
+        results.Add(new DragonTest("Main menu prefab " + MainMenuPrefabName, PrefabType.MainMenu));
 
         // Load main menu prefab
-        string[] guid = AssetDatabase.FindAssets(GetMainMenuPrefabName());
+        string[] guid = AssetDatabase.FindAssets(MainMenuPrefabName);
         if (guid.Length != 1)
         {
-            results.Add(new DragonTest(false, "Asset not found: " + GetMainMenuPrefabName()));
+            results.Add(new DragonTest(false, "Asset not found: " + MainMenuPrefabName));
             return;
         }
 
@@ -141,13 +200,13 @@ public class DragonWizardValidationModule : IDragonWizard
     void GameplayTests()
     {
         // Title
-        results.Add(new DragonTest("Gameplay prefab " + GetGameplayPrefabName()));
+        results.Add(new DragonTest("Gameplay prefab " + GameplayPrefabName, PrefabType.Gameplay));
 
         // Load main menu prefab
-        string[] gameplayGuid = AssetDatabase.FindAssets(GetGameplayPrefabName());
+        string[] gameplayGuid = AssetDatabase.FindAssets(GameplayPrefabName);
         if (gameplayGuid.Length == 0)
         {
-            results.Add(new DragonTest(false, "Asset not found: " + GetGameplayPrefabName()));
+            results.Add(new DragonTest(false, "Asset not found: " + GameplayPrefabName));
             return;
         }
 
@@ -155,7 +214,7 @@ public class DragonWizardValidationModule : IDragonWizard
         for (int i = 0; i < gameplayGuid.Length; i++)
         {
             string assetPath = AssetDatabase.GUIDToAssetPath(gameplayGuid[i]);
-            if (Path.GetFileNameWithoutExtension(assetPath) == GetGameplayPrefabName())
+            if (Path.GetFileNameWithoutExtension(assetPath) == GameplayPrefabName)
             {
                 found = true;
                 gameplayPrefab = AssetDatabase.LoadAssetAtPath(assetPath, typeof(GameObject)) as GameObject;
@@ -165,7 +224,7 @@ public class DragonWizardValidationModule : IDragonWizard
 
         if (!found)
         {
-            results.Add(new DragonTest(false, "Asset not found: " + GetGameplayPrefabName()));
+            results.Add(new DragonTest(false, "Asset not found: " + GameplayPrefabName));
             return;
         }
         
@@ -178,13 +237,13 @@ public class DragonWizardValidationModule : IDragonWizard
     void ResultsTests()
     {
         // Title
-        results.Add(new DragonTest("Results prefab " + GetResultsPrefabName()));
+        results.Add(new DragonTest("Results prefab " + ResultsPrefabName, PrefabType.Results));
 
         // Load results prefab
-        string[] guid = AssetDatabase.FindAssets(GetResultsPrefabName());
+        string[] guid = AssetDatabase.FindAssets(ResultsPrefabName);
         if (guid.Length != 1)
         {
-            results.Add(new DragonTest(false, "Asset not found: " + GetResultsPrefabName()));
+            results.Add(new DragonTest(false, "Asset not found: " + ResultsPrefabName));
             return;
         }
 
@@ -196,6 +255,27 @@ public class DragonWizardValidationModule : IDragonWizard
         results.Add(new DragonTest(ResultsTestAssetBundle(), "Asset bundle prefab set to: " + SelectedSku + "_local"));
     }
 
+    void CorpseTests()
+    {
+        // Title
+        results.Add(new DragonTest("Corpse prefab " + CorpsePrefabName, PrefabType.Corpse));
+
+        // Load results prefab
+        string[] guid = AssetDatabase.FindAssets(CorpsePrefabName);
+        if (guid.Length != 1)
+        {
+            results.Add(new DragonTest(false, "Asset not found: " + CorpsePrefabName));
+            return;
+        }
+
+        string assetPath = AssetDatabase.GUIDToAssetPath(guid[0]);
+        corpsePrefab = AssetDatabase.LoadAssetAtPath(assetPath, typeof(GameObject)) as GameObject;
+
+        // Unit tests for corpse prefab
+        results.Add(new DragonTest(CorpseTestIsDefined(), "Corpse defined on gameplay prefab to: " + CorpsePrefabName));
+    }
+
+    #region MAIN_MENU_TESTS
     bool MainMenuTestViewGameObject()
     {
         return mainMenuPrefab.transform.Find("view") != null ? true : false;
@@ -235,7 +315,9 @@ public class DragonWizardValidationModule : IDragonWizard
         MenuDragonPreview menuDragonPreview = mainMenuPrefab.GetComponent<MenuDragonPreview>();
         return menuDragonPreview.sku == SelectedSku;
     }
+    #endregion
 
+    #region GAMEPLAY_TESTS
     bool GameplayTestDragonPlayer()
     {
         return gameplayPrefab.GetComponent<DragonPlayer>() != null ? true : false;
@@ -259,7 +341,9 @@ public class DragonWizardValidationModule : IDragonWizard
         HoldPreyPoint[] holdPreyPoints = points.GetComponentsInChildren<HoldPreyPoint>();
         return holdPreyPoints.Length > 0;
     }
+    #endregion
 
+    #region RESULTS_TESTS
     bool ResultsTestAnimationController()
     {
         Transform view = resultsPrefab.transform.Find("view");
@@ -275,16 +359,16 @@ public class DragonWizardValidationModule : IDragonWizard
         string assetPath = AssetDatabase.GetAssetPath(resultsPrefab);
         return AssetImporter.GetAtPath(assetPath).assetBundleName == SelectedSku + "_local";
     }
+    #endregion
 
-    void DrawTestTitleGUI(string title)
+    #region CORPSE_TESTS
+    bool CorpseTestIsDefined()
     {
-        EditorGUILayout.LabelField(title, DragonWizard.titleStyle);
-    }
+        DragonParticleController particleController = gameplayPrefab.FindComponentRecursive<DragonParticleController>();
+        if (particleController == null)
+            return false;
 
-    void DrawTestResultGUI(bool success, string title)
-    {
-        GUIContent content = DragonWizard.GetIcon(success ? DragonWizard.IconType.TestPassed : DragonWizard.IconType.TestFailed);
-        content.text = "\n " + title + "\n";
-        EditorGUILayout.HelpBox(content, true);
+        return particleController.m_corpseAsset == CorpsePrefabName;
     }
+    #endregion
 }
