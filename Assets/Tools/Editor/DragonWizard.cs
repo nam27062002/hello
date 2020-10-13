@@ -53,7 +53,7 @@ public class DragonWizard : EditorWindow
 	public static GUIStyle titleStyle;
 
 	// Menu
-	[MenuItem("Hungry Dragon/Tools/Creation/Dragon Wizard...", false)]
+	[MenuItem("Hungry Dragon/Tools/Creation/Dragon Wizard...", false, -150)]
 	static void Init()
 	{
 		// Prepare window
