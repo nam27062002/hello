@@ -232,6 +232,7 @@ public class DragonWizardValidationModule : IDragonWizard
         results.Add(new DragonTest(GameplayTestDragonPlayer(), "DragonPlayer script was added"));
         results.Add(new DragonTest(GameplayTestSku(), "DragonPlayer sku matches " + SelectedSku));
         results.Add(new DragonTest(GameplayTestHoldPreyPoints(), "HoldPreyPoints are set"));
+        results.Add(new DragonTest(GameplayTestAnimationController(), "Animation controller is set"));
     }
 
     void ResultsTests()
@@ -341,6 +342,17 @@ public class DragonWizardValidationModule : IDragonWizard
         HoldPreyPoint[] holdPreyPoints = points.GetComponentsInChildren<HoldPreyPoint>();
         return holdPreyPoints.Length > 0;
     }
+
+    bool GameplayTestAnimationController()
+    {
+        Transform view = gameplayPrefab.transform.Find("view");
+        Animator anim = view.GetComponent<Animator>();
+        if (anim == null)
+            return false;
+
+        return anim.runtimeAnimatorController != null ? true : false;
+    }
+
     #endregion
 
     #region RESULTS_TESTS
