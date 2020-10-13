@@ -323,6 +323,9 @@ public class GlobalEventsScreenController : MonoBehaviour {
 
 	void OnNewDefinition(int _eventId, HDLiveDataManager.ComunicationErrorCodes _err)
 	{
+		// Request again the active quest, just in case it changed
+		m_questManager = HDLiveDataManager.quest;
+		
 		if ( _err == HDLiveDataManager.ComunicationErrorCodes.NO_ERROR && _eventId == m_questManager.GetQuestData().m_eventId)
 		{
 			Refresh();
