@@ -13,6 +13,12 @@ public class DragonWizardValidationModule : IDragonWizard
         Corpse
     }
 
+    enum Severity
+    {
+        Error,
+        Warning
+    }
+
     class DragonTest
     {
         public bool isTitle;
@@ -20,7 +26,7 @@ public class DragonWizardValidationModule : IDragonWizard
         public bool success;
         public PrefabType prefabType;
 
-        public DragonTest(bool _success, string _text)
+        public DragonTest(bool _success, string _text, Severity _severity = Severity.Error)
         {
             isTitle = false;
             success = _success;
@@ -29,7 +35,12 @@ public class DragonWizardValidationModule : IDragonWizard
             if (_success)
                 testsSuccessCounter++;
             else
-                testsFailedCounter++;
+            {
+                if (_severity == Severity.Error)
+                    testsFailedCounter++;
+                else
+                    testWarningCounter++;
+            }
         }
 
         public DragonTest(string _title, PrefabType _prefabType)
@@ -48,6 +59,7 @@ public class DragonWizardValidationModule : IDragonWizard
     int oldSelection;
     static int testsSuccessCounter;
     static int testsFailedCounter;
+    static int testWarningCounter;
 
     string SelectedSku
     {
@@ -94,7 +106,10 @@ public class DragonWizardValidationModule : IDragonWizard
 
             if (testsFailedCounter > 0)
                 EditorGUILayout.HelpBox(testsFailedCounter + " " + (testsFailedCounter == 1 ? "test" : "tests") + " failed to pass", MessageType.Error);
-            else
+
+            if (testWarningCounter > 0)
+                EditorGUILayout.HelpBox(testWarningCounter + " " + (testWarningCounter == 1 ? "test" : "tests") + " may require your attention", MessageType.Warning);
+            else if (testsFailedCounter == 0)
                 EditorGUILayout.HelpBox(testsSuccessCounter + " " + (testsSuccessCounter == 1 ? "test" : "tests") + " have been passed", MessageType.Info);
 
             EditorGUILayout.Space();
@@ -165,6 +180,7 @@ public class DragonWizardValidationModule : IDragonWizard
 
         testsSuccessCounter = 0;
         testsFailedCounter = 0;
+        testWarningCounter = 0;
 
         mainMenuPrefab = null;
         gameplayPrefab = null;
@@ -190,11 +206,11 @@ public class DragonWizardValidationModule : IDragonWizard
 
         // Unit tests for main menu prefab
         results.Add(new DragonTest(MainMenuTestViewGameObject(), "View gameobject exists"));
-        results.Add(new DragonTest(MainMenuTestAnimationController(), "Animation controller is set"));
+        results.Add(new DragonTest(MainMenuTestAnimationController(), "Animation controller is set", Severity.Warning));
         results.Add(new DragonTest(MainMenuTestDragonPreview(), "MenuDragonPreview script was added"));
         results.Add(new DragonTest(MainMenuTestSku(), "MenuDragonPreview sku matches " + SelectedSku));
         results.Add(new DragonTest(MainMenuTestDragonEquip(), "DragonEquip script was added"));
-        results.Add(new DragonTest(MainMenuTestAssetBundle(), "Asset bundle prefab set to: " + SelectedSku + "_local"));
+        results.Add(new DragonTest(MainMenuTestAssetBundle(), "Asset bundle prefab set to: " + SelectedSku + "_local", Severity.Warning));
         results.Add(new DragonTest(MainMenuTestBodyWingsTags(), "Body and wings tags are set"));
     }
 
@@ -258,8 +274,8 @@ public class DragonWizardValidationModule : IDragonWizard
         resultsPrefab = AssetDatabase.LoadAssetAtPath(assetPath, typeof(GameObject)) as GameObject;
 
         // Unit tests for results prefab
-        results.Add(new DragonTest(ResultsTestAnimationController(), "Animation controller is not set"));
-        results.Add(new DragonTest(ResultsTestAssetBundle(), "Asset bundle prefab set to: " + SelectedSku + "_local"));
+        results.Add(new DragonTest(ResultsTestAnimationController(), "Animation controller is not set", Severity.Warning));
+        results.Add(new DragonTest(ResultsTestAssetBundle(), "Asset bundle prefab set to: " + SelectedSku + "_local", Severity.Warning));
         results.Add(new DragonTest(ResultsTestBodyWingsTags(), "Body and wings tags are set"));
     }
 
@@ -469,6 +485,9 @@ public class DragonWizardValidationModule : IDragonWizard
             else if (renderers[i].CompareTag("DragonWings"))
                 wingsTag = true;
         }
+
+        if (renderers.Count == 1 && (bodyTag || wingsTag))
+            return true;
 
         return wingsTag && bodyTag;
     }
