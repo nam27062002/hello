@@ -25,12 +25,14 @@ public class DragonWizardValidationModule : IDragonWizard
         public string text;
         public bool success;
         public PrefabType prefabType;
+        public Severity severity;
 
         public DragonTest(bool _success, string _text, Severity _severity = Severity.Error)
         {
             isTitle = false;
             success = _success;
             text = _text;
+            severity = _severity;
 
             if (_success)
                 testsSuccessCounter++;
@@ -119,7 +121,7 @@ public class DragonWizardValidationModule : IDragonWizard
                 if (results[i].isTitle)
                     DrawTestTitleGUI(results[i].text, results[i].prefabType);
                 else
-                    DrawTestResultGUI(results[i].success, results[i].text);
+                    DrawTestResultGUI(results[i].success, results[i].text, results[i].severity);
             }
 
             EditorGUILayout.Space();
@@ -156,9 +158,9 @@ public class DragonWizardValidationModule : IDragonWizard
         }
     }
 
-    void DrawTestResultGUI(bool success, string title)
+    void DrawTestResultGUI(bool success, string title, Severity severity)
     {
-        GUIContent content = DragonWizard.GetIcon(success ? DragonWizard.IconType.TestPassed : DragonWizard.IconType.TestFailed);
+        GUIContent content = DragonWizard.GetIcon(success ? DragonWizard.IconType.TestPassed : severity == Severity.Error ? DragonWizard.IconType.TestFailed : DragonWizard.IconType.TestWarning);
         content.text = "\n " + title + "\n";
         EditorGUILayout.HelpBox(content, true);
     }

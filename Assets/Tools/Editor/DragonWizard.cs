@@ -16,13 +16,15 @@ public class DragonWizard : EditorWindow
 	public enum IconType
 	{
 		TestPassed,
-		TestFailed
+		TestFailed,
+        TestWarning
 	}
 
 	public static class Icons
 	{
 		public static GUIContent testPassed = EditorGUIUtility.IconContent("TestPassed");
 		public static GUIContent testFailed = EditorGUIUtility.IconContent("TestFailed");
+		public static GUIContent testWarning = EditorGUIUtility.IconContent("TestInconclusive");
 	}
 
 	public static GUIContent GetIcon(IconType iconType)
@@ -33,6 +35,8 @@ public class DragonWizard : EditorWindow
 				return Icons.testPassed;
 			case IconType.TestFailed:
 				return Icons.testFailed;
+			case IconType.TestWarning:
+				return Icons.testWarning;
 			default:
 				break;
 		}
