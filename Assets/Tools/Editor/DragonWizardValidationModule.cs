@@ -195,6 +195,7 @@ public class DragonWizardValidationModule : IDragonWizard
         results.Add(new DragonTest(MainMenuTestSku(), "MenuDragonPreview sku matches " + SelectedSku));
         results.Add(new DragonTest(MainMenuTestDragonEquip(), "DragonEquip script was added"));
         results.Add(new DragonTest(MainMenuTestAssetBundle(), "Asset bundle prefab set to: " + SelectedSku + "_local"));
+        results.Add(new DragonTest(MainMenuTestBodyWingsTags(), "Body and wings tags are set"));
     }
 
     void GameplayTests()
@@ -233,6 +234,11 @@ public class DragonWizardValidationModule : IDragonWizard
         results.Add(new DragonTest(GameplayTestSku(), "DragonPlayer sku matches " + SelectedSku));
         results.Add(new DragonTest(GameplayTestHoldPreyPoints(), "HoldPreyPoints are set"));
         results.Add(new DragonTest(GameplayTestAnimationController(), "Animation controller is set"));
+        results.Add(new DragonTest(GameplayTestSensors(), "Sensors are set"));
+        results.Add(new DragonTest(GameplayTestCollisions(), "Collisions are set"));
+        results.Add(new DragonTest(GameplayTestParticles(), "Particles are set"));
+        results.Add(new DragonTest(GameplayTestMapMarker(), "MapMarker is set"));
+        results.Add(new DragonTest(GameplayTestBodyWingsTags(), "Body and wings tags are set"));
     }
 
     void ResultsTests()
@@ -254,6 +260,7 @@ public class DragonWizardValidationModule : IDragonWizard
         // Unit tests for results prefab
         results.Add(new DragonTest(ResultsTestAnimationController(), "Animation controller is not set"));
         results.Add(new DragonTest(ResultsTestAssetBundle(), "Asset bundle prefab set to: " + SelectedSku + "_local"));
+        results.Add(new DragonTest(ResultsTestBodyWingsTags(), "Body and wings tags are set"));
     }
 
     void CorpseTests()
@@ -316,6 +323,11 @@ public class DragonWizardValidationModule : IDragonWizard
         MenuDragonPreview menuDragonPreview = mainMenuPrefab.GetComponent<MenuDragonPreview>();
         return menuDragonPreview.sku == SelectedSku;
     }
+
+    bool MainMenuTestBodyWingsTags()
+    {
+        return TestBodyWingsTags(mainMenuPrefab);
+    }
     #endregion
 
     #region GAMEPLAY_TESTS
@@ -353,6 +365,56 @@ public class DragonWizardValidationModule : IDragonWizard
         return anim.runtimeAnimatorController != null ? true : false;
     }
 
+    bool GameplayTestSensors()
+    {
+        Transform sensors = gameplayPrefab.transform.Find("sensors");
+        if (sensors == null)
+            return false;
+
+        return sensors.childCount < 2 ? false : true;
+    }
+
+    bool GameplayTestCollisions()
+    {
+        Transform collisions = gameplayPrefab.transform.Find("collisions");
+        if (collisions == null)
+            return false;
+
+        return collisions.childCount > 0 ? true : false;
+    }
+
+    bool GameplayTestParticles()
+    {
+        Transform particles = gameplayPrefab.transform.Find("particles");
+        if (particles == null)
+            return false;
+
+        return particles.childCount > 0 ? true : false;
+    }
+
+    bool GameplayTestMapMarker()
+    {
+        Transform mapMarker = gameplayPrefab.transform.Find("MapMarker");
+        if (mapMarker == null)
+            return false;
+
+        InstantiateInSeconds mapMarkerScript = mapMarker.GetComponent<InstantiateInSeconds>();
+        if (mapMarkerScript == null)
+            return false;
+
+        if (mapMarkerScript.prefab == null)
+            return false;
+
+        if (mapMarkerScript.targetParent != mapMarker)
+            return false;
+
+        return true;
+    }
+
+    bool GameplayTestBodyWingsTags()
+    {
+        return TestBodyWingsTags(gameplayPrefab);
+    }
     #endregion
 
     #region RESULTS_TESTS
@@ -371,6 +433,11 @@ public class DragonWizardValidationModule : IDragonWizard
         string assetPath = AssetDatabase.GetAssetPath(resultsPrefab);
         return AssetImporter.GetAtPath(assetPath).assetBundleName == SelectedSku + "_local";
     }
+
+    bool ResultsTestBodyWingsTags()
+    {
+        return TestBodyWingsTags(resultsPrefab);
+    }
     #endregion
 
     #region CORPSE_TESTS
@@ -381,6 +448,29 @@ public class DragonWizardValidationModule : IDragonWizard
             return false;
 
         return particleController.m_corpseAsset == CorpsePrefabName;
+    }
+    #endregion
+
+    #region HELPER_TESTS
+    bool TestBodyWingsTags(GameObject prefab)
+    {
+        Transform view = prefab.transform.Find("view");
+        if (view == null)
+            return false;
+
+        bool wingsTag = false;
+        bool bodyTag = false;
+
+        List<SkinnedMeshRenderer> renderers = view.FindComponentsRecursive<SkinnedMeshRenderer>();
+        for (int i = 0; i < renderers.Count; i++)
+        {
+            if (renderers[i].CompareTag("DragonBody"))
+                bodyTag = true;
+            else if (renderers[i].CompareTag("DragonWings"))
+                wingsTag = true;
+        }
+
+        return wingsTag && bodyTag;
     }
     #endregion
 }
