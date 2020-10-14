@@ -36,6 +36,9 @@ public class HDSoloQuestManager : IBroadcastListener, IQuestManager{
 
 
 	private int m_rewardLevel = -1;	// Response to the get_my_rewards request
+
+	private bool m_active = false; // True if we are in quest mode
+	
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -69,7 +72,7 @@ public class HDSoloQuestManager : IBroadcastListener, IQuestManager{
 
 
 	/// <summary>
-	/// The quest has been activated for the first time
+	/// The solo quest has been activated for the first time
 	/// </summary>
 	public void StartQuest()
 	{
@@ -162,8 +165,19 @@ public class HDSoloQuestManager : IBroadcastListener, IQuestManager{
 			{
 				OnGameEnded();
 			}break;
-		}	}
+		}	
+	}
 
+	public void Activate()
+	{
+		m_active = true;
+
+	}
+
+	public void Deactivate()
+	{
+		m_active = false;
+	}
 
 	//------------------------------------------------------------------------//
 	// IQuestManager INTERFACE												  //
@@ -360,10 +374,14 @@ public class HDSoloQuestManager : IBroadcastListener, IQuestManager{
 		return ret;
 	}
 
+	/// <summary>
+	/// Is Quest event active right now?
+	/// </summary>
+	/// <returns>True if the current run is counting for quest score.
+	/// Return false if we are in tournament or leagues</returns>
 	public bool IsActive()
 	{
-		// Doesnt apply to solo quests
-		return true;
+		return m_active;
 	}
 
 	public bool IsRewardPending()

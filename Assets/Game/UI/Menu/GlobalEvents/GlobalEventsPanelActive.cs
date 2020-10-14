@@ -100,14 +100,15 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 		// If enabled, update quest state
 		if(m_updateEventState)
 		{
-
-			HDLiveEventData.State formerState = HDLiveDataManager.quest.GetQuestData().m_state;
+			IQuestManager quest = HDLiveDataManager.quest;
+			HDLiveEventData.State formerState = quest.GetQuestData().m_state;
 			if(remainingTime <= 0) {
 				HDLiveDataManager.quest.UpdateStateFromTimers();
 			}
 
 			// If the state changed after the update
-			if(formerState != HDLiveDataManager.quest.GetQuestData().m_state) {
+			if(formerState != quest.GetQuestData().m_state) {
+				Debug.Log("Broadcast LIVE_EVENT_STATES_UPDATED");
 				Messenger.Broadcast(MessengerEvents.LIVE_EVENT_STATES_UPDATED);
 			}
 		}

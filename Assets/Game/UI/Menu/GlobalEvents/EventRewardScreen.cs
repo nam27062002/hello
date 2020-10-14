@@ -116,6 +116,10 @@ public class EventRewardScreen : MonoBehaviour {
 		m_step = Step.INIT;
 		m_state = State.IDLE;
 
+		// Initialize progress bar
+		m_questPanel.Refresh();
+		m_questPanel.MoveScoreTo(0, 0, 0f);
+		
 		// Stack all rewards into the pending rewards stack
 		// Add reward to the stack - In the right order!
 		if(m_questManager != null) {
@@ -150,9 +154,7 @@ public class EventRewardScreen : MonoBehaviour {
             PersistenceFacade.instance.Save_Request(true);
 		}
 
-		// Initialize progress bar
-		m_questPanel.Refresh();
-		m_questPanel.MoveScoreTo(0, 0, 0f);
+
 
 		// Hide all screens
 		for(int i = 0; i < (int)Step.FINISH; ++i) {
