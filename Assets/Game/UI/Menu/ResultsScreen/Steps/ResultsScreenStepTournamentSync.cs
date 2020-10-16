@@ -36,7 +36,7 @@ public class ResultsScreenStepTournamentSync : ResultsScreenStep {
 
 	// Internal refs
 	private HDLiveEventManager m_tournament = null;
-	private IQuestManager m_quest = null;
+	private BaseQuestManager m_quest = null;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -106,7 +106,7 @@ public class ResultsScreenStepTournamentSync : ResultsScreenStep {
 				
 				if(m_quest.EventExists()
 					&& m_quest.IsRunning()
-					&& m_quest.IsActive()
+					&& m_quest.isActive
                     && m_quest.GetQuestData().remainingTime.TotalSeconds > 0
 					&& m_quest.GetRunScore() > 0		// Only if we actually got a score!
 				)

@@ -47,7 +47,7 @@ public class ResultsScreenStepGlobalEvent : ResultsScreenStep {
 	[SerializeField] private string m_transferSFX = "";
 
 	// Internal logic
-	private IQuestManager m_questManager = null;
+	private BaseQuestManager m_questManager = null;
 	private Panel m_activePanel = Panel.OFFLINE;
 	private Sequence m_activePanelSequence = null;
 
@@ -77,11 +77,11 @@ public class ResultsScreenStepGlobalEvent : ResultsScreenStep {
 			return false;
 		}
 
-		IQuestManager questManager = HDLiveDataManager.quest;
+		BaseQuestManager questManager = HDLiveDataManager.quest;
 
 		if (	questManager.EventExists() &&
 				questManager.IsRunning() && 
-				questManager.IsActive() &&
+				questManager.isActive &&
 				questManager.GetQuestData().remainingTime.TotalSeconds > 0 &&
                 DeviceUtilsManager.SharedInstance.internetReachability != NetworkReachability.NotReachable
 		)
