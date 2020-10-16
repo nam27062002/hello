@@ -116,8 +116,8 @@ public class HDLiveDataManager : Singleton<HDLiveDataManager> {
     private HDTournamentManager     m_tournament        = new HDTournamentManager();
     private HDPassiveEventManager   m_passive           = new HDPassiveEventManager();
     private HDLeagueController      m_league            = new HDLeagueController();
-    private HDLiveQuestManager          m_liveQuest             = new HDLiveQuestManager();
-    private HDSoloQuestManager    m_soloQuest    = new HDSoloQuestManager();
+    private HDLiveQuestManager      m_liveQuest             = new HDLiveQuestManager();
+    private HDSoloQuestManager      m_soloQuest    = new HDSoloQuestManager();
     public HDSoloQuestManager soloQuest
     {
         // Access to the soloQuest so it can be loaded/saved from persistence
@@ -481,6 +481,7 @@ public class HDLiveDataManager : Singleton<HDLiveDataManager> {
         m_tournament.Activate();
         m_passive.Deactivate();
         m_liveQuest.Deactivate();
+        m_soloQuest.Deactivate();
         m_league.Deactivate();
     }
 
@@ -491,6 +492,7 @@ public class HDLiveDataManager : Singleton<HDLiveDataManager> {
         if (UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.FIRST_RUN)) {
             m_passive.Activate();
             m_liveQuest.Activate();
+            m_soloQuest.Activate();
         }
     }
 
@@ -498,6 +500,7 @@ public class HDLiveDataManager : Singleton<HDLiveDataManager> {
         m_tournament.Deactivate();
         m_passive.Deactivate();
         m_liveQuest.Deactivate();
+        m_soloQuest.Deactivate();
         m_league.Activate();
     }
 

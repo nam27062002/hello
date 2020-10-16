@@ -121,51 +121,7 @@ public class GlobalEventsScreenController : MonoBehaviour {
 		m_panels[(int)m_activePanel].Refresh();
 	}
 
-	protected void OnRewards(int _eventId ,HDLiveDataManager.ComunicationErrorCodes _err)
-	{
-		if (HDLiveDataManager.instance.IsSoloQuestActive())
-		{
-			// If we are showing a solo quest forget about comm errors. Solo quests are local.
-			EventRewardScreen scr = InstanceManager.menuSceneController.GetScreenData(MenuScreen.EVENT_REWARD).ui.GetComponent<EventRewardScreen>();
-			scr.StartFlow();
-			InstanceManager.menuSceneController.GoToScreen(MenuScreen.EVENT_REWARD, true);	
-			return;
-		}
-		
-		if ( _eventId == m_questManager.GetQuestData().m_eventId )	
-		{
-			if ( _err == HDLiveDataManager.ComunicationErrorCodes.NO_ERROR )
-			{
-				EventRewardScreen scr = InstanceManager.menuSceneController.GetScreenData(MenuScreen.EVENT_REWARD).ui.GetComponent<EventRewardScreen>();
-				scr.StartFlow();
-				InstanceManager.menuSceneController.GoToScreen(MenuScreen.EVENT_REWARD, true);	
-			}
-			else
-			{
-				// Show error message and retry button
-				(m_panels[(int)Panel.RETRY_REWARDS] as GlobalEventsPanelRetryRewards).SetError(_err);
-				SetActivePanel(Panel.RETRY_REWARDS);
-			}
-		}
-	}
-
-	public void OnRetryRewardsButton()
-	{
-		// Show requesting!
-		if (DeviceUtilsManager.SharedInstance.internetReachability == NetworkReachability.NotReachable || !GameSessionManager.SharedInstance.IsLogged ())
-		{
-			SetActivePanel(Panel.OFFLINE);	
-		}
-		else
-		{
-			SetActivePanel(Panel.LOADING);	
-			m_questManager.RequestRewards();
-		}
-	}
-
-	//------------------------------------------------------------------------//
-	// OTHER METHODS														  //
-	//------------------------------------------------------------------------//
+	
 	/// <summary>
 	/// Based on current event state, select which panel should be active.
 	/// </summary>
@@ -247,10 +203,73 @@ public class GlobalEventsScreenController : MonoBehaviour {
 			HDTrackingManager.Instance.Notify_InfoPopup(popupName, "automatic");
 		}
 	}
+	
+	/// <summary>
+	/// Start the event reward flow and move the camera to the reward screen.
+	/// </summary>
+	private void GoToRewardsScreen()
+	{
+		// Add 1 frame delay to avoid a weird bug
+		UbiBCN.CoroutineManager.DelayedCallByFrames(() =>
+		{
+			
+			EventRewardScreen scr = InstanceManager.menuSceneController.GetScreenData(MenuScreen.EVENT_REWARD).ui
+				.GetComponent<EventRewardScreen>();
+			scr.StartFlow();
+			InstanceManager.menuSceneController.GoToScreen(MenuScreen.EVENT_REWARD, true);
+			
+		}, 1);
+	}
 
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
+	
+	/// <summary>
+	/// Go to the rewards screen and show the collected rewards
+	/// </summary>
+	/// <param name="_eventId"></param>
+	/// <param name="_err"></param>
+	protected void OnRewards(int _eventId ,HDLiveDataManager.ComunicationErrorCodes _err)
+	{
+		if (HDLiveDataManager.instance.IsSoloQuestActive())
+		{
+			// If we are showing a solo quest forget about comm errors. Solo quests are local.
+			GoToRewardsScreen();
+			return;
+		}
+		
+		if ( _eventId == m_questManager.GetQuestData().m_eventId )	
+		{
+			if ( _err == HDLiveDataManager.ComunicationErrorCodes.NO_ERROR )
+			{
+				GoToRewardsScreen();
+			}
+			else
+			{
+				// Show error message and retry button
+				(m_panels[(int)Panel.RETRY_REWARDS] as GlobalEventsPanelRetryRewards).SetError(_err);
+				SetActivePanel(Panel.RETRY_REWARDS);
+			}
+		}
+	}
+
+
+
+	public void OnRetryRewardsButton()
+	{
+		// Show requesting!
+		if (DeviceUtilsManager.SharedInstance.internetReachability == NetworkReachability.NotReachable || !GameSessionManager.SharedInstance.IsLogged ())
+		{
+			SetActivePanel(Panel.OFFLINE);	
+		}
+		else
+		{
+			SetActivePanel(Panel.LOADING);	
+			m_questManager.RequestRewards();
+		}
+	}
+	
 	/// <summary>
 	/// Force a refresh every time we enter the tab!
 	/// </summary>
@@ -323,6 +342,9 @@ public class GlobalEventsScreenController : MonoBehaviour {
 
 	void OnNewDefinition(int _eventId, HDLiveDataManager.ComunicationErrorCodes _err)
 	{
+		// Request again the active quest, just in case it changed
+		m_questManager = HDLiveDataManager.quest;
+		
 		if ( _err == HDLiveDataManager.ComunicationErrorCodes.NO_ERROR && _eventId == m_questManager.GetQuestData().m_eventId)
 		{
 			Refresh();

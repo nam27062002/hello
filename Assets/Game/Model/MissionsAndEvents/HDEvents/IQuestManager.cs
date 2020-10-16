@@ -22,9 +22,10 @@ public interface IQuestManager
         bool IsRunning();
 
         /// <summary>
-        /// True if this quest has been activated
+        /// Is Quest event active right now?
         /// </summary>
-        /// <returns></returns>
+        /// <returns>True if the current run is counting for quest score.
+        /// Return false if we are in tournament or leagues</returns>
         bool IsActive();
 
         /// <summary>

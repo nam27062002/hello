@@ -23,6 +23,8 @@ public class HDSoloQuestManager : IBroadcastListener, IQuestManager{
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
 
+	// Use a static event id for the solo quests
+	public const int EVENT_ID = 1; 
 
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
@@ -34,6 +36,9 @@ public class HDSoloQuestManager : IBroadcastListener, IQuestManager{
 
 
 	private int m_rewardLevel = -1;	// Response to the get_my_rewards request
+
+	private bool m_active = false; // True if we are in quest mode
+	
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -67,7 +72,7 @@ public class HDSoloQuestManager : IBroadcastListener, IQuestManager{
 
 
 	/// <summary>
-	/// The quest has been activated for the first time
+	/// The solo quest has been activated for the first time
 	/// </summary>
 	public void StartQuest()
 	{
@@ -86,7 +91,7 @@ public class HDSoloQuestManager : IBroadcastListener, IQuestManager{
 			m_data.m_state = HDLiveEventData.State.NOT_JOINED;
 			
 			// Anounce the new quest via broadcast
-			Messenger.Broadcast<HDLiveDataManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_NEW_DEFINITION, 
+			Messenger.Broadcast<int, HDLiveDataManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_NEW_DEFINITION, EVENT_ID,
 				HDLiveDataManager.ComunicationErrorCodes.NO_ERROR);
 		}
 	}
@@ -127,7 +132,7 @@ public class HDSoloQuestManager : IBroadcastListener, IQuestManager{
 		DefinitionNode def = defs[0];
 
 		m_data = new HDLiveQuestData();
-		m_data.m_eventId = 1; // Any number higher than zero
+		m_data.m_eventId = EVENT_ID; // Any number higher than zero
 		
 		m_def = (HDLiveQuestDefinition) m_data.definition;
 		m_def.InitFromDefinition(def);
@@ -160,8 +165,19 @@ public class HDSoloQuestManager : IBroadcastListener, IQuestManager{
 			{
 				OnGameEnded();
 			}break;
-		}	}
+		}	
+	}
 
+	public void Activate()
+	{
+		m_active = true;
+
+	}
+
+	public void Deactivate()
+	{
+		m_active = false;
+	}
 
 	//------------------------------------------------------------------------//
 	// IQuestManager INTERFACE												  //
@@ -193,6 +209,9 @@ public class HDSoloQuestManager : IBroadcastListener, IQuestManager{
 		m_data.UpdateStateFromTimers();
 	}
 
+	/// <summary>
+	/// Make a call to request the rewards
+	/// </summary>
 	public void RequestRewards()
 	{
 		// Calculate reward level according to score
@@ -217,6 +236,10 @@ public class HDSoloQuestManager : IBroadcastListener, IQuestManager{
 
 	}
 
+	/// <summary>
+	/// Returns all the rewards achieved in this quest (based on the rewardLevel value)
+	/// </summary>
+	/// <returns></returns>
 	public List<HDLiveData.Reward> GetMyRewards()
 	{
 		// Create new list
@@ -264,6 +287,13 @@ public class HDSoloQuestManager : IBroadcastListener, IQuestManager{
 		return StringUtils.FormatNumber(_score);
 	}
 
+	/// <summary>
+	/// Notify the quest of the contribution made by the player
+	/// </summary>
+	/// <param name="_runScore"></param>
+	/// <param name="_keysMultiplier"></param>
+	/// <param name="_spentHC"></param>
+	/// <param name="_viewAD"></param>
 	public void Contribute(float _runScore, float _keysMultiplier, bool _spentHC, bool _viewAD)
 	{
 		Debug.Log("<color=magenta>REGISTER SOLO QUEST SCORE:</color> "+ _runScore);
@@ -344,10 +374,14 @@ public class HDSoloQuestManager : IBroadcastListener, IQuestManager{
 		return ret;
 	}
 
+	/// <summary>
+	/// Is Quest event active right now?
+	/// </summary>
+	/// <returns>True if the current run is counting for quest score.
+	/// Return false if we are in tournament or leagues</returns>
 	public bool IsActive()
 	{
-		// Doesnt apply to solo quests
-		return true;
+		return m_active;
 	}
 
 	public bool IsRewardPending()

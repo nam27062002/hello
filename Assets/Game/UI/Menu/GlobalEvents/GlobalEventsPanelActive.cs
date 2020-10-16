@@ -12,6 +12,8 @@ using UnityEngine.UI;
 using TMPro;
 using System.Collections;
 using System.Collections.Generic;
+using HDLiveData;
+
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
 //----------------------------------------------------------------------------//
@@ -96,12 +98,17 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 		}
 
 		// If enabled, update quest state
-		if(m_updateEventState) {
+		if(m_updateEventState)
+		{
+			IQuestManager quest = HDLiveDataManager.quest;
+			HDLiveEventData.State formerState = quest.GetQuestData().m_state;
 			if(remainingTime <= 0) {
 				HDLiveDataManager.quest.UpdateStateFromTimers();
 			}
 
-			if(!HDLiveDataManager.quest.IsRunning()) {
+			// If the state changed after the update
+			if(formerState != quest.GetQuestData().m_state) {
+				Debug.Log("Broadcast LIVE_EVENT_STATES_UPDATED");
 				Messenger.Broadcast(MessengerEvents.LIVE_EVENT_STATES_UPDATED);
 			}
 		}
