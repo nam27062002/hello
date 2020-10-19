@@ -50,7 +50,7 @@ public class GoalsScreenController : MonoBehaviour {
 	[SerializeField] private HorizontalOrVerticalLayoutGroup m_buttonsLayout = null;
 	[SerializeField] private SelectableButtonGroup m_buttons = null;
 
-	IQuestManager m_quest;
+	BaseQuestManager m_quest;
     HDLeagueController m_league;
     HDSeasonData m_season;
 

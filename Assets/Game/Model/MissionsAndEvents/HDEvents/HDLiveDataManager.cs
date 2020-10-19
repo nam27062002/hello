@@ -129,7 +129,7 @@ public class HDLiveDataManager : Singleton<HDLiveDataManager> {
     public static HDTournamentManager      tournament      { get { return instance.m_tournament; } }
     public static HDPassiveEventManager    passive         { get { return instance.m_passive; } }
     public static HDLeagueController       league          { get { return instance.m_league; } }
-    public static IQuestManager  quest  { get { return instance.GetActiveQuest();  } }
+    public static BaseQuestManager  quest  { get { return instance.GetActiveQuest();  } }
 
 
     // Avoid using dictionaries when possible
@@ -156,6 +156,7 @@ public class HDLiveDataManager : Singleton<HDLiveDataManager> {
         m_managers = new List<HDLiveDataController>();
         m_managers.Add(m_tournament);
         m_managers.Add(m_liveQuest);
+        m_managers.Add(m_soloQuest);
         m_managers.Add(m_passive);
         m_managers.Add(m_league);
 
@@ -227,7 +228,7 @@ public class HDLiveDataManager : Singleton<HDLiveDataManager> {
     /// <returns></returns>
     public bool IsSoloQuestActive()
     {
-        return (m_soloQuest.EventExists() && m_soloQuest.IsActive() && m_soloQuest.IsRunning());
+        return (m_soloQuest.EventExists() && m_soloQuest.isActive && m_soloQuest.IsRunning());
     }
     
 
@@ -236,7 +237,7 @@ public class HDLiveDataManager : Singleton<HDLiveDataManager> {
     /// considering that the solo quest has priority over the live one.
     /// </summary>
     /// <returns></returns>
-    private  IQuestManager GetActiveQuest()
+    private  BaseQuestManager GetActiveQuest()
     {
         if (IsSoloQuestActive())
         {

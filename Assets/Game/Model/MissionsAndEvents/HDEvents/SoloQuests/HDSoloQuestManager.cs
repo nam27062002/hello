@@ -10,62 +10,44 @@
 using UnityEngine;
 using System;
 using System.Collections.Generic;
+using SimpleJSON;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
 //----------------------------------------------------------------------------//
 /// <summary>
-/// 
+/// This class represents a quest that can be ployed alone, and where the player is the
+/// only one contributing to the general score.
+/// It works as a regular quest but it has been stripped off all the connections with the server.
+/// All the information is stored locally in the user persistence. 
 /// </summary>
 [Serializable]
-public class HDSoloQuestManager : IBroadcastListener, IQuestManager{
+public class HDSoloQuestManager : BaseQuestManager {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
 
 	// Use a static event id for the solo quests
 	public const int EVENT_ID = 1; 
+    
+    // Manager will try to find this def in the server response. Wont be there as this quest is local.
+    // For the sake of consistency only. 
+    public const string TYPE_CODE = "soloQuest";
+    public const int NUMERIC_TYPE_CODE = 3;
 
-	//------------------------------------------------------------------------//
-	// MEMBERS AND PROPERTIES												  //
-	//------------------------------------------------------------------------//
-	TrackerBase m_tracker = new TrackerBase();
-
-	private HDLiveQuestData m_data;
-	private HDLiveQuestDefinition m_def;
-
-
-	private int m_rewardLevel = -1;	// Response to the get_my_rewards request
-
-	private bool m_active = false; // True if we are in quest mode
 	
-	
-	//------------------------------------------------------------------------//
-	// GENERIC METHODS														  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Default constructor.
-	/// </summary>
-	public HDSoloQuestManager() {
+    //------------------------------------------------------------------------//
+    // GENERIC METHODS														  //
+    //------------------------------------------------------------------------//
+    /// <summary>
+    /// Default constructor.
+    /// </summary>
+    public HDSoloQuestManager() : base() {
+        m_type = TYPE_CODE;
+        m_numericType = NUMERIC_TYPE_CODE;
+    }
 
-		m_data = new HDLiveQuestData();
-		m_def = m_data.definition as HDLiveQuestDefinition;
-		
-		// Subscribe to external events
-		Messenger.AddListener(MessengerEvents.GAME_STARTED, OnGameStarted);
-		Broadcaster.AddListener(BroadcastEventType.GAME_ENDED, this);
-        
-	}
-
-	/// <summary>
-	/// Destructor
-	/// </summary>
-	~HDSoloQuestManager() {
-		m_data = null;
-        m_def = null;
-
-	}
-
+    
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //
 	//------------------------------------------------------------------------//
@@ -79,6 +61,7 @@ public class HDSoloQuestManager : IBroadcastListener, IQuestManager{
 		
 		// Initialize the quest from content
 		InitFromDefinition();
+        
 
 		// Did we find any quest in the content?
 		if (EventExists())
@@ -89,10 +72,15 @@ public class HDSoloQuestManager : IBroadcastListener, IQuestManager{
 
 			// Set the quest state to NOT_JOINED
 			m_data.m_state = HDLiveEventData.State.NOT_JOINED;
-			
+
+            // Activate quest
+            Activate();
+            
 			// Anounce the new quest via broadcast
 			Messenger.Broadcast<int, HDLiveDataManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_NEW_DEFINITION, EVENT_ID,
 				HDLiveDataManager.ComunicationErrorCodes.NO_ERROR);
+  
+
 		}
 	}
 
@@ -137,82 +125,48 @@ public class HDSoloQuestManager : IBroadcastListener, IQuestManager{
 		m_def = (HDLiveQuestDefinition) m_data.definition;
 		m_def.InitFromDefinition(def);
 		m_def.m_eventId = m_data.m_eventId;
+        
+        // Create tracker
+        m_tracker = TrackerBase.CreateTracker(m_def.m_goal.m_typeDef.sku, m_def.m_goal.m_params);
 		
 	}
 	
-	
+
 	//------------------------------------------------------------------------//
-	// EVENTS																  //
+	// PARENT OVERRIDING                									  //
 	//------------------------------------------------------------------------//
 
-	public void OnGameStarted(){
-		if ( m_tracker != null)
-		{ 
-			// Always track. If not active, contribute wont be called.
-			m_tracker.enabled = true;
-			m_tracker.InitValue(0);
-		}
-	}
-	public void OnGameEnded(){
-		// Save tracker value?
-	}
-	
-	public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+	public override bool IsTeasing()
 	{
-		switch(eventType)
+		// Solo Quests dont have a teasing phase
+		return false;
+	}
+
+	public override bool IsRunning()
+	{
+		// Basically we want to know if we need to show this event in the quest screen
+		// or check the live event instead
+		
+		bool ret = false;
+		if (m_data != null)
 		{
-			case BroadcastEventType.GAME_ENDED:
-			{
-				OnGameEnded();
-			}break;
-		}	
+			ret = m_data.m_state == HDLiveEventData.State.NOT_JOINED || 
+			      m_data.m_state == HDLiveEventData.State.JOINED ||
+			      m_data.m_state == HDLiveEventData.State.REWARD_AVAILABLE;
+		}
+		return ret;
 	}
-
-	public void Activate()
-	{
-		m_active = true;
-
-	}
-
-	public void Deactivate()
-	{
-		m_active = false;
-	}
-
-	//------------------------------------------------------------------------//
-	// IQuestManager INTERFACE												  //
-	//------------------------------------------------------------------------//
 	
-	
-	public HDLiveQuestData GetQuestData()
+	public override void OnLiveDataResponse()
 	{
-		return m_data;
+		// Nothing
 	}
-
-	public string GetGoalDescription()
-	{
-		return m_tracker.FormatDescription(m_def.m_goal.m_desc, m_def.m_goal.m_amount);
-	}
-
-	public HDLiveQuestDefinition GetQuestDefinition()
-	{
-		return m_def;
-	}
-
-	public long GetRunScore() 
-	{
-		return m_tracker.currentValue;
-	}
-
-	public void UpdateStateFromTimers()
-	{
-		m_data.UpdateStateFromTimers();
-	}
+    
 
 	/// <summary>
 	/// Make a call to request the rewards
 	/// </summary>
-	public void RequestRewards()
+	public override void RequestRewards()
 	{
 		// Calculate reward level according to score
 		int newRewardLevel = 0;
@@ -236,31 +190,8 @@ public class HDSoloQuestManager : IBroadcastListener, IQuestManager{
 
 	}
 
-	/// <summary>
-	/// Returns all the rewards achieved in this quest (based on the rewardLevel value)
-	/// </summary>
-	/// <returns></returns>
-	public List<HDLiveData.Reward> GetMyRewards()
-	{
-		// Create new list
-		List<HDLiveData.Reward> rewards = new List<HDLiveData.Reward>();
 
-		// We must have a valid data and definition
-		if(m_data != null && m_data.definition != null) {
-			// Check reward level
-			// In a quest, the reward level tells us in which reward tier have been reached
-			// All rewards below it are also given
-			HDLiveQuestDefinition def = m_data.definition as HDLiveQuestDefinition;
-			for(int i = 0; i < m_rewardLevel; ++i) {	// Reward level is 1-N
-				rewards.Add(def.m_rewards[i]);	// Assuming rewards are properly sorted :)
-			}
-		}
-
-		// Done!
-		return rewards;
-	}
-
-	public void FinishEvent()
+	public override void FinishEvent()
 	{
 		// Just change the state. For solo quests is as simple as this
 		m_data.m_state = HDLiveEventData.State.FINALIZED;
@@ -271,21 +202,6 @@ public class HDSoloQuestManager : IBroadcastListener, IQuestManager{
 
 	}
 
-	public void ClearEvent()
-	{
-		// Clear data an definition
-		m_data.Clean();
-		m_def.Clean();
-	}
-
-	public string FormatScore(long _score)
-	{
-		// Tracker will do it for us
-		if(m_tracker != null) {
-			return m_tracker.FormatValue(_score);
-		}
-		return StringUtils.FormatNumber(_score);
-	}
 
 	/// <summary>
 	/// Notify the quest of the contribution made by the player
@@ -294,7 +210,7 @@ public class HDSoloQuestManager : IBroadcastListener, IQuestManager{
 	/// <param name="_keysMultiplier"></param>
 	/// <param name="_spentHC"></param>
 	/// <param name="_viewAD"></param>
-	public void Contribute(float _runScore, float _keysMultiplier, bool _spentHC, bool _viewAD)
+	public override void Contribute(float _runScore, float _keysMultiplier, bool _spentHC, bool _viewAD)
 	{
 		Debug.Log("<color=magenta>REGISTER SOLO QUEST SCORE:</color> "+ _runScore);
 		
@@ -325,76 +241,25 @@ public class HDSoloQuestManager : IBroadcastListener, IQuestManager{
 		Messenger.Broadcast(MessengerEvents.QUEST_SCORE_UPDATED);
 	}
 
-	public bool ShouldRequestDefinition()
+	public override bool ShouldRequestDefinition()
 	{
+        // Will never be called in solo quest
 		return false;
 	}
 
-	public bool RequestDefinition(bool _force = false)
+	public override bool RequestDefinition(bool _force = false)
 	{
 		// Will never be called in solo quest
 		return false;
 	}
 
-	public bool IsWaitingForNewDefinition()
+	public override bool IsWaitingForNewDefinition()
 	{
+        // Will never be called in solo quest
 		return false;
 	}
+    
 
-
-	public bool EventExists()
-	{
-		bool ret = false;
-		if (m_data != null)
-		{
-			ret = m_data.definition != null;
-		}
-		return ret;
-	}
-
-	public bool IsTeasing()
-	{
-		// Solo Quests dont have a teasing phase
-		return false;
-	}
-
-
-	public bool IsRunning()
-	{
-		// Basically we want to know if we need to show this event in the quest screen
-		// or check the live event instead
-		
-		bool ret = false;
-		if (m_data != null)
-		{
-			ret = m_data.m_state == HDLiveEventData.State.NOT_JOINED || 
-			      m_data.m_state == HDLiveEventData.State.JOINED ||
-			      m_data.m_state == HDLiveEventData.State.REWARD_AVAILABLE;
-		}
-		return ret;
-	}
-
-	/// <summary>
-	/// Is Quest event active right now?
-	/// </summary>
-	/// <returns>True if the current run is counting for quest score.
-	/// Return false if we are in tournament or leagues</returns>
-	public bool IsActive()
-	{
-		return m_active;
-	}
-
-	public bool IsRewardPending()
-	{
-		bool ret = false;
-		if (m_data != null && m_data.m_eventId > 0 )
-		{
-			// Just check the state of the quest
-			ret = m_data.m_state == HDLiveEventData.State.REWARD_AVAILABLE;
-		}
-		return ret;
-	}
-	
 	//------------------------------------------------------------------------//
 	// PERSISTENCE															  //
 	//------------------------------------------------------------------------//

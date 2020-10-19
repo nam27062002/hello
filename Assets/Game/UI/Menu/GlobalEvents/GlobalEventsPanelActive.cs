@@ -7,6 +7,8 @@
 //----------------------------------------------------------------------------//
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
+
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -44,6 +46,9 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
     // Properties
     public BaseIcon ObjectiveIcon
     { get { return m_objectiveIcon; }  }
+    
+    // Internal
+    private BaseQuestManager m_questManager;
 
 
     //------------------------------------------------------------------------//
@@ -55,6 +60,8 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
     protected override void OnEnable() {
 		// Call parent
 		base.OnEnable();
+        
+        m_questManager = HDLiveDataManager.quest;
 
 		// Program periodic update call
 		InvokeRepeating("UpdatePeriodic", 0f, EVENT_COUNTDOWN_UPDATE_INTERVAL);
@@ -100,10 +107,12 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 		// If enabled, update quest state
 		if(m_updateEventState)
 		{
-			IQuestManager quest = HDLiveDataManager.quest;
+			BaseQuestManager quest = HDLiveDataManager.quest;
 			HDLiveEventData.State formerState = quest.GetQuestData().m_state;
-			if(remainingTime <= 0) {
-				HDLiveDataManager.quest.UpdateStateFromTimers();
+            
+            DateTime serverTime = GameServerManager.GetEstimatedServerTime();
+            if ( serverTime > quest.GetQuestDefinition().m_endTimestamp ) {
+                HDLiveDataManager.quest.UpdateStateFromTimers();
 			}
 
 			// If the state changed after the update
@@ -113,24 +122,26 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 			}
 		}
 	}
-
+    
 	//------------------------------------------------------------------------//
 	// PARENT OVERRIDES														  //
 	//------------------------------------------------------------------------//
 	/// <summary>
 	/// Refresh displayed data.
 	/// </summary>
-	override public void Refresh() {
-		// Get current event
-		IQuestManager questManager = HDLiveDataManager.quest;
-		if(!questManager.EventExists()) return;
+	override public void Refresh()
+    {
+
+        m_questManager = HDLiveDataManager.quest;
+        
+        if(m_questManager == null || !m_questManager.EventExists()) return;
 		
-		HDLiveQuestDefinition def = questManager.GetQuestDefinition();
-		HDLiveQuestData data = questManager.GetQuestData();
+		HDLiveQuestDefinition def = m_questManager.GetQuestDefinition();
+		HDLiveQuestData data = m_questManager.GetQuestData();
 
 		// Initialize visuals
 		// Event description
-		if(m_objectiveText != null) m_objectiveText.text = questManager.GetGoalDescription();
+		if(m_objectiveText != null) m_objectiveText.text = m_questManager.GetGoalDescription();
 
         if (m_objectiveIcon != null)
         {
@@ -176,7 +187,7 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 	public void MoveScoreTo(long _to, float _duration) {
 		long currentValue = 0;
 		if(m_progressBar != null) {
-			IQuestManager questManager = HDLiveDataManager.quest;
+			BaseQuestManager questManager = HDLiveDataManager.quest;
 			if(questManager.EventExists()) {
 				currentValue = (long)m_progressBar.progressBar.value;
 			}
@@ -189,10 +200,9 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 		// If not animating, just set the final value directly
 		if(_duration <= 0f) {
 			// Set initial value
-			IQuestManager questManager = HDLiveDataManager.quest;
-			if(questManager.EventExists())
+            if(m_questManager.EventExists())
 			{
-				HDLiveQuestDefinition def = questManager.GetQuestDefinition();
+				HDLiveQuestDefinition def = m_questManager.GetQuestDefinition();
 				if(m_progressBar != null) {
 					m_progressBar.RefreshRewards(def, _to);
 					m_progressBar.RefreshProgress(_to);
@@ -204,7 +214,7 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 	}
 
 	IEnumerator GoingUp(long _from, long _to, float _duration) {
-		IQuestManager questManager = HDLiveDataManager.quest;
+		BaseQuestManager questManager = HDLiveDataManager.quest;
 		if(questManager.EventExists()) {
 			HDLiveQuestData data = questManager.GetQuestData();
 			HDLiveQuestDefinition def = data.definition as HDLiveQuestDefinition;

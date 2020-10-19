@@ -42,7 +42,7 @@ public class GlobalEventsScreenController : MonoBehaviour {
 
 	// Internal
 	private Panel m_activePanel = Panel.OFFLINE;
-	private IQuestManager m_questManager;
+	private BaseQuestManager m_questManager;
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -55,7 +55,6 @@ public class GlobalEventsScreenController : MonoBehaviour {
 		// Shouldn't happen, the custom editor makes sure everyhting is ok
 		Debug.Assert(m_panels.Length == (int)Panel.COUNT, "Unexpected amount of defined panels");
 
-		m_questManager = HDLiveDataManager.quest;
 
 		// Init panels
 		for(int i = 0; i < m_panels.Length; i++) {
@@ -69,6 +68,9 @@ public class GlobalEventsScreenController : MonoBehaviour {
 	/// Component has been enabled.
 	/// </summary>
 	private void OnEnable() {
+        
+        m_questManager = HDLiveDataManager.quest;
+        
 		// Subscribe to external events
 		Messenger.AddListener<GlobalEventManager.RequestType>(MessengerEvents.GLOBAL_EVENT_UPDATED, OnEventDataUpdated);
 		Messenger.AddListener(MessengerEvents.GLOBAL_EVENT_CUSTOMIZER_ERROR, OnNoEvent);
@@ -127,7 +129,7 @@ public class GlobalEventsScreenController : MonoBehaviour {
 	/// </summary>
 	private void SelectPanel() {
 		Panel targetPanel = Panel.NO_EVENT;
-		IQuestManager quest = HDLiveDataManager.quest;
+		BaseQuestManager quest = HDLiveDataManager.quest;
 		if ( quest.EventExists() )
 		{
 			if (DeviceUtilsManager.SharedInstance.internetReachability == NetworkReachability.NotReachable || !GameSessionManager.SharedInstance.IsLogged ())
@@ -215,7 +217,7 @@ public class GlobalEventsScreenController : MonoBehaviour {
 			
 			EventRewardScreen scr = InstanceManager.menuSceneController.GetScreenData(MenuScreen.EVENT_REWARD).ui
 				.GetComponent<EventRewardScreen>();
-			scr.StartFlow();
+			scr.StartFlow( );
 			InstanceManager.menuSceneController.GoToScreen(MenuScreen.EVENT_REWARD, true);
 			
 		}, 1);

@@ -47,7 +47,7 @@ public class EventRewardScreen : MonoBehaviour {
 	private RewardSceneController m_sceneController = null;
 
 	// Internal logic
-	private IQuestManager m_questManager;
+	private BaseQuestManager m_questManager;
 	private Step m_step;
 	private State m_state;
 
@@ -93,9 +93,13 @@ public class EventRewardScreen : MonoBehaviour {
 	// PUBLIC METHODS													//
 	//------------------------------------------------------------------//
 	/// <summary>
-	/// Start the reward flow with current event in the manager.
+	/// Start the reward flow with the specified event
 	/// </summary>
 	public void StartFlow() {
+        
+        // Store current event for faster access
+        m_questManager = HDLiveDataManager.quest;
+        
 		// Make sure all required references are set
 		ValidateReferences();
 
@@ -109,15 +113,12 @@ public class EventRewardScreen : MonoBehaviour {
 		// Clear 3D scene
 		m_sceneController.Clear();
 
-		// Store current event for faster access
-		m_questManager = HDLiveDataManager.quest;
-
-		// Set initial state
+        // Set initial state
 		m_step = Step.INIT;
 		m_state = State.IDLE;
 
 		// Initialize progress bar
-		m_questPanel.Refresh();
+        m_questPanel.Refresh();
 		m_questPanel.MoveScoreTo(0, 0, 0f);
 		
 		// Stack all rewards into the pending rewards stack

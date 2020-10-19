@@ -49,7 +49,7 @@ public class ShareScreenQuest : IShareScreen {
 		SetRefCamera(_refCamera);
 
 		// Aux vars
-		IQuestManager quest = HDLiveDataManager.quest;
+		BaseQuestManager quest = HDLiveDataManager.quest;
 
 		// Initialize UI elements
 		// Quest data

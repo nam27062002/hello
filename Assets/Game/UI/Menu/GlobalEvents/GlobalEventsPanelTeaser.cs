@@ -68,7 +68,7 @@ public class GlobalEventsPanelTeaser : GlobalEventsPanel {
 		// Just in case
 		if ( !HDLiveDataManager.quest.EventExists() ) return;
 
-		IQuestManager questManager = HDLiveDataManager.quest;
+		BaseQuestManager questManager = HDLiveDataManager.quest;
 		HDLiveQuestDefinition liveQuestDef = questManager.GetQuestDefinition();
 
 		// Update timer
