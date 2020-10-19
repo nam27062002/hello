@@ -136,9 +136,6 @@ Shader "Hungry Dragon/Dragon/Dragon standard" {
 			#pragma shader_feature FXLAYER_NONE FXLAYER_REFLECTION FXLAYER_FIRE FXLAYER_DISSOLVE FXLAYER_COLORIZE
 			#pragma shader_feature REFLECTIONTYPE_NORMAL REFLECTIONTYPE_COLOR REFLECTIONTYPE_COLORRAMP
 
-			#pragma multi_compile __ FXLAYER_DISSOLVE
-
-
 			#include "UnityCG.cginc" 
 			#include "Lighting.cginc"
 			#include "../HungryDragon.cginc"

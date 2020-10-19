@@ -41,6 +41,7 @@ Shader "Hungry Dragon/UnderWater2"
 				#pragma fragment frag
 //				#pragma glsl_no_auto_normalization
 //				#pragma fragmentoption ARB_precision_hint_fastest
+				#pragma shader_feature __ NIGHT
 
 				#include "UnityCG.cginc"
 				#include "AutoLight.cginc"
@@ -91,7 +92,9 @@ Shader "Hungry Dragon/UnderWater2"
 				{
 					float depth =  pow(1.0 - abs(i.uv.y - 1.0), _PerspectivePower);
 					fixed4 frag = lerp(fixed4(_ColorBack), fixed4(_ColorFront), 1.0 - depth);
-
+#if defined(NIGHT)
+					frag *= fixed4(0.3, 0.3, 0.7, 1.0);
+#endif
 					return frag;
 				}
 			ENDCG
@@ -116,6 +119,7 @@ Shader "Hungry Dragon/UnderWater2"
 				#pragma fragment frag
 //				#pragma glsl_no_auto_normalization
 //				#pragma fragmentoption ARB_precision_hint_fastest
+				#pragma shader_feature __ NIGHT
 
 				#include "UnityCG.cginc"
 
@@ -166,7 +170,9 @@ Shader "Hungry Dragon/UnderWater2"
 					fixed4 frag = lerp(fixed4(_ColorBack), fixed4(_ColorFront), 1.0 - depth);
 
 //					frag = fixed4(0.2, 0.8, 0.2, 0.9);
-
+#if defined(NIGHT)
+					frag *= fixed4(0.3, 0.3, 0.7, 1.0);
+#endif
 					return frag;
 				}
 			ENDCG

@@ -92,6 +92,9 @@ public class SeasonTrigger : MonoBehaviour {
 		SeasonalObject[] season = null;
 		if(m_seasons.TryGetValue(currentSeason, out season)) {
 			for(int i = 0; i < season.Length; ++i) {
+				// Skip if target object is null
+				if(season[i].obj == null) continue;
+
 				switch(season[i].action) {
 					case Action.ACTIVATE: {
 						toActivate.Add(season[i].obj);
@@ -112,6 +115,9 @@ public class SeasonTrigger : MonoBehaviour {
 
 			// Process all objects in the target season
 			foreach(SeasonalObject obj in kvp.Value) {
+				// Skip if target object is null
+				if(obj.obj == null) continue;
+
 				// Skip if already processed
 				if(processedObjs.Contains(obj.obj)) continue;
 

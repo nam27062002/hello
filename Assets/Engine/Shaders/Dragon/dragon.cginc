@@ -80,6 +80,7 @@ uniform float _FireAmount;
 uniform float _FireSpeed;
 #elif defined (FXLAYER_DISSOLVE)
 uniform sampler2D _FireMap;
+uniform float4 _FireMap_ST;
 uniform float _DissolveAmount;
 uniform float _DissolveLowerLimit;
 uniform float _DissolveUpperLimit;

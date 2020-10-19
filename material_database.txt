@@ -1,5 +1,5 @@
 -------------------------------------------------------------------------------------------------------------------------------------------------------------
-HD ver: 3.0.5
+HD ver: 3.2.2
 -------------------------------------------------------------------------------------------------------------------------------------------------------------
 Material:   alen_buildboard
 Shader:     Hungry Dragon/Scenary/Scenary Standard
@@ -2699,7 +2699,7 @@ Keywords:   CUTOFF DOUBLESIDED FXLAYER_REFLECTION NORMALMAP REFLECTIONTYPE_NORMA
 Material:   dragon_vampire_0_body
 Shader:     Hungry Dragon/Dragon/Dragon standard
 LightMode:  FORWARDBASE
-Keywords:   FRESNEL FXLAYER_REFLECTION NORMALMAP REFLECTIONTYPE_NORMAL SELFILLUMINATE_NORMAL SPECULAR _ZWRITE_ON 
+Keywords:   CUTOFF FRESNEL FXLAYER_NONE NORMALMAP REFLECTIONTYPE_NORMAL SELFILLUMINATE_NORMAL SPECULAR _ZWRITE_ON 
 -------------------------------------------------------------------------------------------------------------------------------------------------------------
 Material:   dragon_vampire_0_disguise
 Shader:     Hungry Dragon/Dragon/Dragon standard
@@ -3794,7 +3794,7 @@ Keywords:   APPLY_RGB_COLOR_VERTEX BLENDMODE_ALPHABLEND DISSOLVE_ENABLED EXTENDE
 Material:   FX_MT_FlowSmoke_AlphaBlend_02
 Shader:     Hungry Dragon/Particles/Transparent particles standard
 LightMode:  
-Keywords:   APPLY_RGB_COLOR_VERTEX BLENDMODE_PREMULTIPLY DISSOLVE_ENABLED EXTENDED_PARTICLES FLOWMAP 
+Keywords:   APPLY_RGB_COLOR_VERTEX BLENDMODE_PREMULTIPLY DISSOLVE_ENABLED DISSOLVE_VERTEXCOLORALFA EXTENDED_PARTICLES FLOWMAP 
 -------------------------------------------------------------------------------------------------------------------------------------------------------------
 Material:   FX_MT_Greenback_AlphaBlend_01
 Shader:     Hungry Dragon/Particles/Transparent particles standard
@@ -5681,6 +5681,11 @@ Shader:     Hungry Dragon/NPC/NPC Diffuse Lit-Unlit Outline
 LightMode:  FORWARDBASE
 Keywords:   BLENDAXIS_X COLORMODE_NONE FRESNEL LITMODE_UNLIT 
 -------------------------------------------------------------------------------------------------------------------------------------------------------------
+Material:   MT_icon_archer
+Shader:     Hungry Dragon/NPC/NPC Diffuse Lit-Unlit Outline
+LightMode:  FORWARDBASE
+Keywords:   BLENDAXIS_X COLORMODE_NONE LITMODE_UNLIT 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
 Material:   MT_icon_archer_soldier
 Shader:     Hungry Dragon/NPC/NPC Diffuse Lit-Unlit Outline
 LightMode:  FORWARDBASE
@@ -5860,6 +5865,11 @@ Material:   MT_icon_heart
 Shader:     Hungry Dragon/NPC/NPC Diffuse Lit-Unlit Outline
 LightMode:  FORWARDBASE
 Keywords:   BLENDAXIS_X COLORMODE_NONE FRESNEL LITMODE_UNLIT 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+Material:   MT_icon_humans
+Shader:     Hungry Dragon/NPC/NPC Diffuse Lit-Unlit Outline
+LightMode:  FORWARDBASE
+Keywords:   BLENDAXIS_X COLORMODE_NONE LITMODE_UNLIT 
 -------------------------------------------------------------------------------------------------------------------------------------------------------------
 Material:   MT_icon_jellyfishBlue
 Shader:     Hungry Dragon/NPC/NPC Jelly fish
@@ -7239,7 +7249,7 @@ Keywords:   EMISSIVE_NONE FOG OPAQUEALPHA VERTEXCOLOR_NONE
 Material:   new_signals_wood
 Shader:     Hungry Dragon/Scenary/Scenary Standard
 LightMode:  
-Keywords:   EMISSIVE_NONE FOG OPAQUEALPHA VERTEXCOLOR_NONE 
+Keywords:   EMISSIVE_NONE OPAQUEALPHA VERTEXCOLOR_NONE 
 -------------------------------------------------------------------------------------------------------------------------------------------------------------
 Material:   new_tree_tex
 Shader:     Hungry Dragon/Scenary/Scenary Standard
@@ -7657,14 +7667,14 @@ LightMode:  FORWARDBASE
 Keywords:   
 -------------------------------------------------------------------------------------------------------------------------------------------------------------
 Material:   sky_star_material
-Shader:     Hungry Dragon/Scenary/Scenary Standard
-LightMode:  
-Keywords:   EMISSIVE_BLINK MAINCOLOR_TEXTURE OPAQUEALPHA VERTEXCOLOR_NONE 
+Shader:     Hungry Dragon/NPC/NPC Diffuse
+LightMode:  FORWARDBASE
+Keywords:   COLORMODE_NONE 
 -------------------------------------------------------------------------------------------------------------------------------------------------------------
 Material:   sky_surprise_box_material
-Shader:     Hungry Dragon/Scenary/Scenary Standard
-LightMode:  
-Keywords:   EMISSIVE_COLOR MAINCOLOR_TEXTURE NORMALWASSPECULAR OPAQUEALPHA VERTEXCOLOR_NONE 
+Shader:     Hungry Dragon/NPC/NPC Diffuse
+LightMode:  FORWARDBASE
+Keywords:   COLORMODE_NONE 
 -------------------------------------------------------------------------------------------------------------------------------------------------------------
 Material:   skymaterial
 Shader:     Hungry Dragon/SkyForeground

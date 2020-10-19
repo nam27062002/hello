@@ -94,9 +94,9 @@
 	<Definition sku="TID_EVENT_TOURNAMENT_KILL_GOLDEN_NORMAL_ALL" type="kill_golden" gameMode="0" target="%all%" icon="icon_golden" />
 	<Definition sku="TID_EVENT_TOURNAMENT_KILL_GOLDEN_TIME_LIMIT_ALL" type="kill_golden" gameMode="2" target="%all%" icon="icon_golden" />
 	<Definition sku="TID_EVENT_TOURNAMENT_KILL_GOLDEN_TIME_ATTACK_ALL" type="kill_golden" gameMode="1" target="%all%" icon="icon_golden" />
-	<Definition sku="TID_EVENT_TOURNAMENT_KILL_NORMAL_ZOMBIES" type="kill" gameMode="0" target="Villager01;boatrider;Bakerwoman" icon="icon_humans_halloween" />
-	<Definition sku="TID_EVENT_TOURNAMENT_KILL_TIME_LIMIT_ZOMBIES" type="kill" gameMode="2" target="Villager01;boatrider;Bakerwoman" icon="icon_humans_halloween" />
-	<Definition sku="TID_EVENT_TOURNAMENT_KILL_TIME_ATTACK_ZOMBIES" type="kill" gameMode="1" target="Villager01;boatrider;Bakerwoman" icon="icon_humans_halloween" />
+	<Definition sku="TID_EVENT_TOURNAMENT_KILL_NORMAL_ZOMBIES" type="kill" gameMode="0" target="Villager01;boatrider;Bakerwoman;Ground_Zombie" icon="icon_humans_halloween" />
+	<Definition sku="TID_EVENT_TOURNAMENT_KILL_TIME_LIMIT_ZOMBIES" type="kill" gameMode="2" target="Villager01;boatrider;Bakerwoman;Ground_Zombie" icon="icon_humans_halloween" />
+	<Definition sku="TID_EVENT_TOURNAMENT_KILL_TIME_ATTACK_ZOMBIES" type="kill" gameMode="1" target="Villager01;boatrider;Bakerwoman;Ground_Zombie" icon="icon_humans_halloween" />
 	<Definition sku="TID_EVENT_TOURNAMENT_KILL_NORMAL_GRAVES_ZOMBIES" type="kill" gameMode="0" target="Ground_Zombie" icon="icon_grave_zombie" />
 	<Definition sku="TID_EVENT_TOURNAMENT_KILL_TIME_LIMIT_GRAVES_ZOMBIES" type="kill" gameMode="2" target="Ground_Zombie" icon="icon_grave_zombie" />
 	<Definition sku="TID_EVENT_TOURNAMENT_KILL_TIME_ATTACK_GRAVES_ZOMBIES" type="kill" gameMode="1" target="Ground_Zombie" icon="icon_grave_zombie" />
@@ -159,12 +159,18 @@
 	<Definition sku="TID_EVENT_TOURNAMENT_WEARING_KILL_TIME_LIMIT_ALIEN_DISGUISE" type="kill_equipped" gameMode="2" target="alien_mask" icon="icon_ufo_mask_humanoids" />
 	<Definition sku="TID_EVENT_TOURNAMENT_KILL_WEARING_NORMAL_ALIEN_DISGUISE" type="kill_equipped" gameMode="0" target="alien_mask" icon="icon_ufo_mask_humanoids" />
 	<Definition sku="TID_EVENT_TOURNAMENT_WEARING_KILL_TIME_ATTACK_ALIEN_DISGUISE" type="kill_equipped" gameMode="1" target="alien_mask" icon="icon_ufo_mask_humanoids" />
-	<Definition sku="TID_EVENT_TOURNAMENT_KILL_TIME_LIMIT_HALLOWEEN_CREATURES" type="kill" gameMode="2" target="Witch;BadWitch;GoodWitch;GoodWitch02;RichMan;BoatFisher;BakerWoman;Villager01;Villager02;Villager03;Villager04" icon="icon_masks_halloween" />
-	<Definition sku="TID_EVENT_TOURNAMENT_KILL_NORMAL_HALLOWEEN_CREATURES" type="kill" gameMode="0" target="Witch;BadWitch;GoodWitch;GoodWitch02;RichMan;BoatFisher;BakerWoman;Villager01;Villager02;Villager03;Villager04" icon="icon_masks_halloween" />
-	<Definition sku="TID_EVENT_TOURNAMENT_KILL_TIME_ATTACK_HALLOWEEN_CREATURES" type="kill" gameMode="1" target="Witch;BadWitch;GoodWitch;GoodWitch02;RichMan;BoatFisher;BakerWoman;Villager01;Villager02;Villager03;Villager04" icon="icon_masks_halloween" />
-	<Definition sku="TID_EVENT_TOURNAMENT_EAT_NORMAL_BIRTHDAY_CAKE" type="kill" gameMode="2" target="Anniversary1_Cake_Piece" icon="icon_1stAnniversaryCake" />
+	<Definition sku="TID_EVENT_TOURNAMENT_KILL_TIME_LIMIT_HALLOWEEN_CREATURES" type="kill" gameMode="2" target="Witch;BadWitch;GoodWitch;GoodWitch02;BoatFisher;BakerWoman;Villager01;Villager02;Villager03;Villager04;EnemyTier0;EnemyTier1;EnemyTier2;EnemyTier3;EnemyTier5;Ground_Zombie;Cow;Horse;Sheep;Troll;worker" icon="icon_masks_halloween" />
+	<Definition sku="TID_EVENT_TOURNAMENT_KILL_NORMAL_HALLOWEEN_CREATURES" type="kill" gameMode="0" target="Witch;BadWitch;GoodWitch;GoodWitch02;BoatFisher;BakerWoman;Villager01;Villager02;Villager03;Villager04;EnemyTier0;EnemyTier1;EnemyTier2;EnemyTier3;EnemyTier5;Ground_Zombie;Cow;Horse;Sheep;Troll;worker" icon="icon_masks_halloween" />
+	<Definition sku="TID_EVENT_TOURNAMENT_KILL_TIME_ATTACK_HALLOWEEN_CREATURES" type="kill" gameMode="1" target="Witch;BadWitch;GoodWitch;GoodWitch02;BoatFisher;BakerWoman;Villager01;Villager02;Villager03;Villager04;EnemyTier0;EnemyTier1;EnemyTier2;EnemyTier3;EnemyTier5;Ground_Zombie;Cow;Horse;Sheep;Troll;worker" icon="icon_masks_halloween" />
+	<Definition sku="TID_EVENT_TOURNAMENT_EAT_TIME_LIMIT_BIRTHDAY_CAKE" type="kill" gameMode="2" target="Anniversary1_Cake_Piece" icon="icon_1stAnniversaryCake" />
 	<Definition sku="TID_EVENT_TOURNAMENT_EAT_NORMAL_BIRTHDAY_CAKE" type="kill" gameMode="0" target="Anniversary1_Cake_Piece" icon="icon_1stAnniversaryCake" />
-	<Definition sku="TID_EVENT_TOURNAMENT_KILL_NORMAL_BUNNIES" type="kill" gameMode="0" target="FlyingBunny;easter_bunny" icon="icon_bunnies" />
-	<Definition sku="TID_EVENT_TOURNAMENT_KILL_TIME_LIMIT_BUNNIES" type="kill" gameMode="2" target="FlyingBunny;easter_bunny" icon="icon_bunnies" />
-	<Definition sku="TID_EVENT_TOURNAMENT_KILL_TIME_ATTACK_BUNNIES" type="kill" gameMode="1" target="FlyingBunny;easter_bunny" icon="icon_bunnies" />
+	<Definition sku="TID_EVENT_TOURNAMENT_KILL_NORMAL_BUNNIES" type="kill" gameMode="0" target="FlyingBunny;easter_bunny" icon="icon_rabbit" />
+	<Definition sku="TID_EVENT_TOURNAMENT_KILL_TIME_LIMIT_BUNNIES" type="kill" gameMode="2" target="FlyingBunny;easter_bunny" icon="icon_rabbit" />
+	<Definition sku="TID_EVENT_TOURNAMENT_KILL_TIME_ATTACK_BUNNIES" type="kill" gameMode="1" target="FlyingBunny;easter_bunny" icon="icon_rabbit" />
+	<Definition sku="TID_EVENT_TOURNAMENT_WEARING_KILL_TIME_LIMIT_WEREWOLF_DISGUISE" type="kill_equipped" gameMode="2" target="halloween_werewolf_mask" icon="icon_humans_werewolf" />
+	<Definition sku="TID_EVENT_TOURNAMENT_KILL_WEARING_NORMAL_WEREWOLF_DISGUISE" type="kill_equipped" gameMode="0" target="halloween_werewolf_mask" icon="icon_humans_werewolf" />
+	<Definition sku="TID_EVENT_TOURNAMENT_WEARING_KILL_TIME_ATTACK_WEREWOLF_DISGUISE" type="kill_equipped" gameMode="1" target="halloween_werewolf_mask" icon="icon_humans_werewolf" />
+	<Definition sku="TID_EVENT_TOURNAMENT_WEARING_KILL_TIME_LIMIT_VAMPIRE_DISGUISE" type="kill_equipped" gameMode="2" target="halloween_vampire_mask" icon="icon_humans_vampire" />
+	<Definition sku="TID_EVENT_TOURNAMENT_KILL_WEARING_NORMAL_VAMPIRE_DISGUISE" type="kill_equipped" gameMode="0" target="halloween_vampire_mask" icon="icon_humans_vampire" />
+	<Definition sku="TID_EVENT_TOURNAMENT_WEARING_KILL_TIME_ATTACK_VAMPIRE_DISGUISE" type="kill_equipped" gameMode="1" target="halloween_vampire_mask" icon="icon_humans_vampire" />
 </Definitions>

@@ -11,6 +11,7 @@ using UnityEngine;
 using System;
 using System.Globalization;
 using System.Collections.Generic;
+using System.Linq;
 using Metagame;
 
 //----------------------------------------------------------------------------//
@@ -197,6 +198,8 @@ public class OfferPack {
 	protected string[] m_skinsUnlocked = new string[0];
 	protected string[] m_skinsOwned = new string[0];
 	protected string[] m_skinsNotOwned = new string[0];
+	
+	protected string[] m_playerSources = new string[0];
 
 	// Purchase limit
 	protected int m_purchaseLimit = 1;
@@ -208,7 +211,6 @@ public class OfferPack {
     // Clustering
     protected string[] m_clusters;
 	public string[] clusters { get => m_clusters; set => m_clusters = value; }
-
 
 	// Internal vars
 	protected int m_viewsCount = 0;	// Only auto-triggered views
@@ -401,6 +403,8 @@ public class OfferPack {
 		m_skinsOwned = new string[0];
 		m_skinsNotOwned = new string[0];
 
+		m_playerSources = new string[0];
+
 		// Purchase limit
 		m_purchaseLimit = 1;
 		m_purchaseCount = 0;
@@ -572,6 +576,8 @@ public class OfferPack {
 		m_skinsOwned = ParseArray(_def.GetAsString("skinsOwned"));
 		m_skinsNotOwned = ParseArray(_def.GetAsString("skinsNotOwned"));
 
+		m_playerSources = ParseArray(_def.GetAsString("playerSources"));
+
         m_clusters = ParseArray(_def.GetAsString("clusterId"));
 
 		// Purchase limit
@@ -673,6 +679,8 @@ public class OfferPack {
 		SetValueIfMissing(ref _def, "skinsUnlocked", string.Join(";", m_skinsUnlocked));
 		SetValueIfMissing(ref _def, "skinsOwned", string.Join(";", m_skinsOwned));
 		SetValueIfMissing(ref _def, "skinsNotOwned", string.Join(";", m_skinsNotOwned));
+
+		SetValueIfMissing(ref _def, "playerSources", string.Join(";", m_playerSources));
 
 		SetValueIfMissing(ref _def, "clusterId", string.Join(";", m_clusters));
 
@@ -847,6 +855,16 @@ public class OfferPack {
 			}
 		}
 
+		// Player source - only if needed
+		if(m_playerSources.Length > 0) {
+			// Only activate if the player source is included in the sources for this offer pack
+			string playerSource = trackingPersistence.PlayerSource;
+			if(!m_playerSources.Contains(playerSource)) {
+				OffersManager.LogPack(this, "      CheckActivation {0}: FAIL! Player Source {1}", Color.red, m_def.sku, playerSource);
+				return false;
+			}
+		}
+
 		// All checks passed!
 		OffersManager.LogPack(this, "      CheckActivation {0}: PASSED!", Colors.lime, m_def.sku);
 		return true;
@@ -863,6 +881,7 @@ public class OfferPack {
 		// Order is relevant!
 		// Aux vars
 		UserProfile profile = UsersManager.currentUser;
+		TrackingPersistenceSystem trackingPersistence = HDTrackingManager.Instance.TrackingPersistenceSystem;
 		//OffersManager.LogPack(this, "      CheckExpiration {0} ({1})", Colors.yellow, m_def.sku, _checkTime);
 
 		// Multiple packs may have the same unique ID, with the intention to make 
@@ -907,7 +926,6 @@ public class OfferPack {
 		}
 
 		// Payer profile
-		TrackingPersistenceSystem trackingPersistence = HDTrackingManager.Instance.TrackingPersistenceSystem;
 		int totalPurchases = (trackingPersistence == null) ? 0 : trackingPersistence.TotalPurchases;
 		switch(m_payerType) {
 			case PayerType.NON_PAYER: {
@@ -976,6 +994,19 @@ public class OfferPack {
 		if(m_countriesExcluded.IndexOf(countryCode) >= 0) {
 			OffersManager.LogPack(this, "      CheckExpiration {0}: EXPIRED! Countries Excluded {1}", Color.red, m_def.sku, countryCode);
 			return true;
+		}
+
+		// Player source - only if needed
+		if(m_playerSources.Length > 0) {
+			// Don't expire if player source hasn't yet been determined - probably first session
+			string playerSource = trackingPersistence.PlayerSource;
+			if(playerSource != TrackingPersistenceSystem.PLAYER_SOURCE_UNDEFINED) {
+				// If the player source is not in the list of accepted ones for this offer, expire it since player source won't change anymore
+				if(!m_playerSources.Contains(playerSource)) {
+					OffersManager.LogPack(this, "      CheckExpiration {0}: EXPIRED! Player Source {1}", Color.red, m_def.sku, playerSource);
+					return true;
+				}
+			}
 		}
 
 		// All checks passed!

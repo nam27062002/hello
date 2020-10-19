@@ -52,7 +52,7 @@ public class AutoParenter : MonoBehaviour {
             if (p == null) {
                 if (FeatureSettingsManager.IsDebugEnabled) {
                     string parentObjName = t.name;
-                    Debug.LogWarning(string.Format("Can't find transform for {0} on object {1}", m_parentName, parentObjName));
+                    Debug.LogWarning(string.Format("Can't find transform for {0} on object {1} ({2})", m_parentName, parentObjName, t.root.name));
                 }
             } else {
                 t.SetParent(p, m_worldPositionStays);

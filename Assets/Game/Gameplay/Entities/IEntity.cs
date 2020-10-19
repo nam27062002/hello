@@ -163,7 +163,8 @@ abstract public class IEntity : ISpawnable {
 
     override public void CustomUpdate() {
 		for (int i = 0; i < m_otherSpawnablesCount; i++) {
-            m_otherSpawnables[i].CustomUpdate();
+            if (m_otherSpawnables[i] != null)
+                m_otherSpawnables[i].CustomUpdate();
         }
     }
 
