@@ -249,6 +249,17 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
 			soloQuest.ParseJson(_data[key]);
 			HDLiveDataManager.instance.soloQuest = soloQuest;
 		}
+        
+        // Load passive events in the liveDataManager
+        key = "localPassive";
+        if ( _data.ContainsKey(key) )
+        {
+            HDLocalPassiveEventManager passive = new HDLocalPassiveEventManager();
+            passive.ParseJson(_data[key]);
+            HDLiveDataManager.instance.localPassive = passive;
+        }
+        
+        
 		
 	}
 
@@ -266,6 +277,11 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
 			data.Add("soloQuest", HDLiveDataManager.instance.soloQuest.ToJson());
 		}
 		
+        // Save local passive events
+        if (HDLiveDataManager.instance.localPassive.EventExists())
+        {
+            data.Add("localPassive", HDLiveDataManager.instance.localPassive.ToJson());
+        }
 		
 		return data;
 	}

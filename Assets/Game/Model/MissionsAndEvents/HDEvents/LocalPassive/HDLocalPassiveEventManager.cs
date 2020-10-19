@@ -201,14 +201,16 @@ public class HDLocalPassiveEventManager: HDPassiveEventManager {
     /// Serialize into json.
     /// </summary>
     /// <returns>The json.</returns>
-    public SimpleJSON.JSONClass ToJson()
+    public JSONClass ToJson()
     {
-        SimpleJSON.JSONClass data = new SimpleJSON.JSONClass();
+        JSONClass jsonData = new JSONClass();
 
         // Add data
 		
-        data.Add("data", m_data.ToJson());
+        jsonData.Add("data", m_data.ToJson());
 
-        return data;
+        return jsonData;
     }
+    
+    
 }

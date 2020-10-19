@@ -101,8 +101,20 @@ public class HDPassiveEventDefinition : HDLiveEventDefinition {
             return;
         }
         
-        // Create the modifier
+        // Create the modifier    
         m_mainMod = Modifier.CreateFromDefinition(modDef);
+        
+        // Categorize the mod depending on its type
+        if (m_mainMod.isValid()) {
+            if ( m_mainMod.isLateModifier() ) {
+                m_laterMods.Add(m_mainMod);
+            } else if (m_mainMod is ModifierDragon) {
+                m_dragonMods.Add(m_mainMod);
+            } else {
+                m_otherMods.Add(m_mainMod);
+            }
+        }
+
 
         // Set the initialized flag to true (otherwise wont show in the UI)
         m_initialized = true;
