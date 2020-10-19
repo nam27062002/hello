@@ -55,6 +55,9 @@ public class PassiveEventIcon : IPassiveEventIcon {
 	/// Update visuals when new data has been received.
 	/// </summary>
 	protected override void RefreshDataInternal() {
+        // Get passive manager again (in case we changed from live to local or the other way)
+        m_passiveEventManager = GetEventManager();
+        
 		// Make sure icon is showing the right info
 		if(m_modifierIcon != null) {
 			// Init icon
@@ -73,6 +76,9 @@ public class PassiveEventIcon : IPassiveEventIcon {
 	/// </summary>
 	/// <returns>Whether the icon can be displayed or not.</returns>
 	protected override bool RefreshVisibilityInternal() {
+        // Get passive manager again (in case we changed from live to local or the other way)
+        m_passiveEventManager = GetEventManager();
+        
 		// Check current screen and event's UI settings
 		bool show = true;
 		Modifier mod = m_passiveEventManager.m_passiveEventDefinition.mainMod;

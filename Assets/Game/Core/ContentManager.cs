@@ -272,6 +272,7 @@ public class ContentManager
 
 
         // Welcome back
+        kDefinitionFiles.Add(DefinitionsCategory.WELCOME_BACK, new string[] { "Rules/welcomeBackDefinitions" });
         kDefinitionFiles.Add(DefinitionsCategory.SOLO_QUESTS, new string[] { "Rules/soloQuestsDefinitions" });
         kDefinitionFiles.Add(DefinitionsCategory.SOLO_QUESTS_REWARDS, new string[] { "Rules/soloQuestsRewardsDefinitions" });
 

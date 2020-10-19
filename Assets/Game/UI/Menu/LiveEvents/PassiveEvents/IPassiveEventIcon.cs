@@ -42,8 +42,7 @@ public abstract class IPassiveEventIcon : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	protected virtual void Awake() {
-		// Get tournament manager
-		m_passiveEventManager = GetEventManager();
+
 
 		// Start hidden
 		m_rootAnim.ForceHide(false);
@@ -78,6 +77,9 @@ public abstract class IPassiveEventIcon : MonoBehaviour {
 	/// Component has been enabled.
 	/// </summary>
 	protected virtual void OnEnable() {
+        // Get passive manager
+        m_passiveEventManager = GetEventManager();
+        
 		// Program a periodic update
 		InvokeRepeating("UpdatePeriodic", 0f, UPDATE_FREQUENCY);
 
@@ -112,6 +114,9 @@ public abstract class IPassiveEventIcon : MonoBehaviour {
 	/// </summary>
 	/// <param name="_checkVisibility">Whether to refresh visibility as well or not.</param>
 	public void RefreshData(bool _checkVisibility) {
+        // Get passive manager again (in case we changed from live to local or the other way)
+        m_passiveEventManager = GetEventManager();
+        
 		// Make sure tournament is at the right state
 		m_passiveEventManager.UpdateStateFromTimers();
 
@@ -162,7 +167,10 @@ public abstract class IPassiveEventIcon : MonoBehaviour {
 	/// <summary>
 	/// Check whether the icon can be displayed or not.
 	/// </summary>
-	public bool RefreshVisibility() {
+	public bool RefreshVisibility(bool _force = false) {
+        // Get passive manager again (in case we changed from live to local or the other way)
+        m_passiveEventManager = GetEventManager();
+        
 		// Never during tutorial
 		if(UsersManager.currentUser.gamesPlayed < GameSettings.ENABLE_PASSIVE_EVENTS_AT_RUN) {
 			m_rootAnim.ForceHide(false);
@@ -203,7 +211,13 @@ public abstract class IPassiveEventIcon : MonoBehaviour {
 		// If going visible, refresh data
 		if(!wasVisible && show) {
 			RefreshData(false);
-		}
+		} 
+        else if (_force)
+        {
+            // Sometimes we want to force the refresh (i.e. changing from local to live passive event)
+            RefreshData(true);
+        }
+            
 
 		// Apply!
 		if(m_rootAnim != null) m_rootAnim.Set(show);
@@ -249,7 +263,7 @@ public abstract class IPassiveEventIcon : MonoBehaviour {
 	/// A live event has finished.
 	/// </summary>
     private void OnEventFinished(int _eventId, HDLiveDataManager.ComunicationErrorCodes _error) {
-        RefreshVisibility();
+        RefreshVisibility(true);
     }
 
 	/// <summary>

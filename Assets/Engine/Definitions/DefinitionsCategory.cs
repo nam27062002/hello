@@ -128,6 +128,7 @@ public class DefinitionsCategory
 
 
 	// Welcome back perks
+    public const string WELCOME_BACK = "WELCOME_BACK";
 	public const string SOLO_QUESTS = "SOLO_QUESTS";
 	public const string SOLO_QUESTS_REWARDS = "SOLO_QUESTS_REWARDS";
 

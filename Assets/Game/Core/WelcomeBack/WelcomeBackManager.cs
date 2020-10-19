@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------------//
 using UnityEngine;
 using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices.WindowsRuntime;
 
 //----------------------------------------------------------------------------//
@@ -38,11 +39,12 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
 	private int m_minAbsentDays; // Amount of days the the player needs to be absent to get the WB
 
 	
-	// Benefit definitions from content
-	DefinitionNode m_soloQuestDef;
-    
+	// Keep the definition at hand
+	private DefinitionNode m_def;
 
-	//------------------------------------------------------------------------//
+    public DefinitionNode def => m_def;
+
+    //------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
 	/// <summary>
@@ -72,8 +74,20 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
 	{
 		 
 		// Read the settings from content
-		
-	}
+        List<DefinitionNode> defs =
+            DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.WELCOME_BACK, 
+                "enabled", "true");
+
+        if (defs.Count > 0)
+        {
+            // Take the first enabled ocurrence
+            m_def = defs[0];
+        }
+
+        // Load the config params
+        m_minAbsentDays = def.GetAsInt("minAbsentDays");
+
+    }
 
 
     /// <summary>
@@ -157,6 +171,7 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
     public void Deactivate()
     {
 	    EndSoloQuest();
+        EndPassiveEvent();
     }
 
     private void CreateSoloQuest()
@@ -172,7 +187,12 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
 
 	private void ActivatePassiveEvent()
     {
+        HDLiveDataManager.instance.localPassive.StartPassiveEvent();
+    }
 
+    private void EndPassiveEvent()
+    {
+        HDLiveDataManager.instance.localPassive.DestroyPassiveEvent();
     }
 
     private void ActivateFreePassTournament()

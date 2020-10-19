@@ -93,6 +93,10 @@ public class HDSoloQuestManager : BaseQuestManager {
 		m_data.definition.Clean();
 
 		m_def = m_data.definition as HDLiveQuestDefinition;
+        
+        // Anounce it via broadcast
+        Messenger.Broadcast<int, HDLiveDataManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_FINISHED, EVENT_ID,
+            HDLiveDataManager.ComunicationErrorCodes.NO_ERROR);
 	}
 	
 	public void InitFromDefinition()
