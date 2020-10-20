@@ -10,7 +10,8 @@ public class DragonWizardValidationModule : IDragonWizard
         MainMenu,
         Gameplay,
         Results,
-        Corpse
+        Corpse,
+        None
     }
 
     enum Severity
@@ -174,6 +175,7 @@ public class DragonWizardValidationModule : IDragonWizard
         GameplayTests();
         ResultsTests();
         CorpseTests();
+        ConsistencyTests();
     }
 
     void ClearResults()
@@ -214,6 +216,7 @@ public class DragonWizardValidationModule : IDragonWizard
         results.Add(new DragonTest(MainMenuTestDragonEquip(), "DragonEquip script was added"));
         results.Add(new DragonTest(MainMenuTestAssetBundle(), "Asset bundle prefab set to: " + SelectedSku + "_local", Severity.Warning));
         results.Add(new DragonTest(MainMenuTestBodyWingsTags(), "Body and wings tags are set"));
+        results.Add(new DragonTest(MainMenuTestPetPoints(), "Pet points are set"));
     }
 
     void GameplayTests()
@@ -257,6 +260,9 @@ public class DragonWizardValidationModule : IDragonWizard
         results.Add(new DragonTest(GameplayTestParticles(), "Particles are set"));
         results.Add(new DragonTest(GameplayTestMapMarker(), "MapMarker is set"));
         results.Add(new DragonTest(GameplayTestBodyWingsTags(), "Body and wings tags are set"));
+        results.Add(new DragonTest(GameplayTestMegaFireRush(), "Mega fire rush is set"));
+        results.Add(new DragonTest(GameplayTestMegaFireRushAnchor(), "Mega fire rush anchor is set", Severity.Warning));
+        results.Add(new DragonTest(GameplayTestPetPoints(), "Pet points are set"));
     }
 
     void ResultsTests()
@@ -299,6 +305,18 @@ public class DragonWizardValidationModule : IDragonWizard
 
         // Unit tests for corpse prefab
         results.Add(new DragonTest(CorpseTestIsDefined(), "Corpse defined on gameplay prefab to: " + CorpsePrefabName));
+    }
+
+    void ConsistencyTests()
+    {
+        // Title
+        results.Add(new DragonTest("Consistency between prefabs", PrefabType.None));
+
+        // At this point all prefabs are loaded.
+        // We're going to check the consistency between all prefabs (same points in all prefabs and similar)
+
+        // Unit tests for consistency 
+        results.Add(new DragonTest(ConsistencyTestPoints(), "All prefabs have the same points"));
     }
 
     #region MAIN_MENU_TESTS
@@ -345,6 +363,15 @@ public class DragonWizardValidationModule : IDragonWizard
     bool MainMenuTestBodyWingsTags()
     {
         return TestBodyWingsTags(mainMenuPrefab);
+    }
+
+    bool MainMenuTestPetPoints()
+    {
+        Transform points = mainMenuPrefab.FindTransformRecursive("points");
+        if (points == null)
+            return false;
+
+        return TestPetPoints(points);
     }
     #endregion
 
@@ -433,6 +460,41 @@ public class DragonWizardValidationModule : IDragonWizard
     {
         return TestBodyWingsTags(gameplayPrefab);
     }
+
+    bool GameplayTestMegaFireRush()
+    {
+        Transform particles = gameplayPrefab.transform.Find("particles");
+        if (particles == null)
+            return false;
+
+        DragonParticleController dragonParticleController = particles.GetComponent<DragonParticleController>();
+        if (dragonParticleController == null)
+            return false;
+
+        return !string.IsNullOrEmpty(dragonParticleController.m_megaFireRush);
+    }
+
+    bool GameplayTestMegaFireRushAnchor()
+    {
+        Transform particles = gameplayPrefab.transform.Find("particles");
+        if (particles == null)
+            return false;
+
+        DragonParticleController dragonParticleController = particles.GetComponent<DragonParticleController>();
+        if (dragonParticleController == null)
+            return false;
+
+        return dragonParticleController.m_megaFireRushAnchor != null;
+    }
+
+    bool GameplayTestPetPoints()
+    {
+        Transform points = gameplayPrefab.FindTransformRecursive("points");
+        if (points == null)
+            return false;
+
+        return TestPetPoints(points);
+    }
     #endregion
 
     #region RESULTS_TESTS
@@ -469,7 +531,70 @@ public class DragonWizardValidationModule : IDragonWizard
     }
     #endregion
 
+    #region CONSISTENCY_TESTS
+    bool ConsistencyTestPoints()
+    {
+        // TODO: ignore pet points, validate point positions
+
+        Transform mainMenuPointsTransform = mainMenuPrefab.FindTransformRecursive("points");
+        if (mainMenuPointsTransform == null)
+            return false;
+
+        Transform gameplayPointsTransform = gameplayPrefab.FindTransformRecursive("points");
+        if (gameplayPointsTransform == null)
+            return false;
+
+        Transform resultsPointsTransform = resultsPrefab.FindTransformRecursive("points");
+        if (resultsPointsTransform == null)
+            return false;
+
+        Transform corpsePointsTransform = corpsePrefab.FindTransformRecursive("points");
+        if (corpsePointsTransform == null)
+            return false;
+
+        Transform[] mainMenuPoints = mainMenuPointsTransform.GetComponentsInChildren<Transform>();
+        Transform[] gameplayPoints = gameplayPointsTransform.GetComponentsInChildren<Transform>();
+        Transform[] resultsPoints = resultsPointsTransform.GetComponentsInChildren<Transform>();
+        Transform[] corpsePoints = corpsePointsTransform.GetComponentsInChildren<Transform>();
+
+        int totalMainMenuPoints = mainMenuPoints.Length;
+        int totalGameplayPoints = gameplayPoints.Length;
+        int totalResultsPoints = resultsPoints.Length;
+        int totalCorpsePoints = corpsePoints.Length;
+
+        if (totalGameplayPoints < totalMainMenuPoints) // Because we're considering the extra attack points for gameplay
+            return false;
+
+        if (totalMainMenuPoints != totalResultsPoints)
+            return false;
+
+        if (totalResultsPoints < totalCorpsePoints)
+            return false;
+
+        return true;
+    }
+    #endregion
+
     #region HELPER_TESTS
+    bool TestPetPoints(Transform points)
+    {
+        int totalPetPoints = 0;
+        AttachPoint[] attachPoints = points.GetComponentsInChildren<AttachPoint>();
+        for (int i = 0; i < attachPoints.Length; i++)
+        {
+            if (attachPoints[i].point == Equipable.AttachPoint.Pet_1 ||
+                attachPoints[i].point == Equipable.AttachPoint.Pet_2 ||
+                attachPoints[i].point == Equipable.AttachPoint.Pet_3 ||
+                attachPoints[i].point == Equipable.AttachPoint.Pet_4 ||
+                attachPoints[i].point == Equipable.AttachPoint.Pet_5)
+            {
+                totalPetPoints++;
+            }
+        }
+
+        return totalPetPoints > 0;
+    }
+
     bool TestBodyWingsTags(GameObject prefab)
     {
         Transform view = prefab.transform.Find("view");
