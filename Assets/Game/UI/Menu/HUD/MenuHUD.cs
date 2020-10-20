@@ -1,3 +1,4 @@
+
 // MenuHUD.cs
 // Hungry Dragon
 // 
@@ -24,9 +25,6 @@ public class MenuHUD : MonoBehaviour {
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
 	// Shortcuts
-	[SerializeField] private GameObject m_photoButton = null;
-
-	[Space]
 	[SerializeField] private ProfileCurrencyCounter m_scCounter = null;
 	public ProfileCurrencyCounter scCounter {
 		get { return m_scCounter; }
