@@ -435,7 +435,7 @@ public class PopupCustomizer : MonoBehaviour {
 							// All good! go to the tournament screen
 							// Change game mode first
     						SceneController.SetMode(SceneController.Mode.TOURNAMENT);
-        					HDLiveDataManager.instance.SwitchToTournament();
+        					HDLiveDataManager.instance.SwitchToGameMode(HDLiveDataManager.GameMode.TOURNAMENT);
 
 							// Now we're good to go!
 							nextScreen = MenuScreen.TOURNAMENT_INFO;

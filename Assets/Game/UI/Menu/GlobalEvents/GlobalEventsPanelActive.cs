@@ -49,6 +49,7 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
     
     // Internal
     private BaseQuestManager m_questManager;
+    private HDLiveEventData.State m_formerState;
 
 
     //------------------------------------------------------------------------//
@@ -67,6 +68,8 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 		InvokeRepeating("UpdatePeriodic", 0f, EVENT_COUNTDOWN_UPDATE_INTERVAL);
 
 		//Refresh();
+        
+        m_formerState = m_questManager.GetQuestData().m_state;
 
 		// Subscribe to external events
 		Messenger.AddListener(MessengerEvents.QUEST_SCORE_UPDATED, OnEventDataUpdated);
@@ -108,18 +111,22 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 		if(m_updateEventState)
 		{
 			BaseQuestManager quest = HDLiveDataManager.quest;
-			HDLiveEventData.State formerState = quest.GetQuestData().m_state;
+
             
             DateTime serverTime = GameServerManager.GetEstimatedServerTime();
             if ( serverTime > quest.GetQuestDefinition().m_endTimestamp ) {
                 HDLiveDataManager.quest.UpdateStateFromTimers();
 			}
 
-			// If the state changed after the update
-			if(formerState != quest.GetQuestData().m_state) {
+			// If the state changed in the last iteration
+			if(m_formerState != quest.GetQuestData().m_state) {
+                // Update the former state
+                m_formerState = quest.GetQuestData().m_state;
+                
 				Debug.Log("Broadcast LIVE_EVENT_STATES_UPDATED");
 				Messenger.Broadcast(MessengerEvents.LIVE_EVENT_STATES_UPDATED);
-			}
+   
+            }
 		}
 	}
     

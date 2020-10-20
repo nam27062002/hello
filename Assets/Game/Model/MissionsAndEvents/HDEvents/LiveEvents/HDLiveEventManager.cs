@@ -69,7 +69,7 @@ public abstract class HDLiveEventManager : HDLiveDataController {
     }
 
     /// <summary>
-    /// Is this event active?
+    /// Whether this event is should be active according to its state
     /// </summary>
 	/// <returns><c>true</c> if this event is active (not teasing, nor reward pending).</returns>
     public virtual bool IsRunning()

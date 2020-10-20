@@ -288,7 +288,7 @@ public class PendingRewardScreen : MonoBehaviour {
 
                 // Go back to previous screen
                 if (m_specialDragonUnlocked) {
-                    HDLiveDataManager.instance.SwitchToLeague();
+                    HDLiveDataManager.instance.SwitchToGameMode(HDLiveDataManager.GameMode.LEAGUE);
                     InstanceManager.menuSceneController.GoToScreen(MenuScreen.DRAGON_SELECTION);
                 } else {
                     InstanceManager.menuSceneController.transitionManager.Back(true);

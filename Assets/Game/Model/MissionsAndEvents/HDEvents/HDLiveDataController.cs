@@ -7,6 +7,7 @@ public abstract class HDLiveDataController {
     protected bool m_dataLoadedFromCache = false;
     public bool isDataFromCache { get { return m_dataLoadedFromCache; } }
 
+    // Active means that in the current context (tournament, normal run, quest) we should take this event in account
     protected bool m_active = false;
     public bool isActive { get { return m_active; } }
 

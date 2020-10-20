@@ -369,7 +369,7 @@ public class EventRewardScreen : MonoBehaviour {
 				PersistenceFacade.instance.Save_Request();
 
                     // Go back to main screen
-                HDLiveDataManager.instance.SwitchToQuest();
+                HDLiveDataManager.instance.SwitchToGameMode(HDLiveDataManager.GameMode.QUEST);
                 InstanceManager.menuSceneController.GoToScreen(MenuScreen.DRAGON_SELECTION);
 			} break;
 		}

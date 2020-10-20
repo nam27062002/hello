@@ -234,7 +234,7 @@ public class GlobalEventsScreenController : MonoBehaviour {
 	/// <param name="_err"></param>
 	protected void OnRewards(int _eventId ,HDLiveDataManager.ComunicationErrorCodes _err)
 	{
-		if (HDLiveDataManager.instance.IsSoloQuestActive())
+		if (HDLiveDataManager.instance.SoloQuestIsAvailable())
 		{
 			// If we are showing a solo quest forget about comm errors. Solo quests are local.
 			GoToRewardsScreen();

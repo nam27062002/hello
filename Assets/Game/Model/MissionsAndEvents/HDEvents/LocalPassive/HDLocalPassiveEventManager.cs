@@ -88,13 +88,15 @@ public class HDLocalPassiveEventManager: HDPassiveEventManager {
             
             // Set the state to JOINED 
             m_data.m_state = HDLiveEventData.State.JOINED;
-
-            // Activate passive
-            Activate();
+            
+            // Refresh the game mode, so local passive is activated and the live passive (if any) is deactivated
+            HDLiveDataManager.instance.SwitchToGameMode();
             
             // Anounce the new passive via broadcast
             Messenger.Broadcast<int, HDLiveDataManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_NEW_DEFINITION, EVENT_ID,
                 HDLiveDataManager.ComunicationErrorCodes.NO_ERROR);
+            
+
         }
     }
 
@@ -103,14 +105,13 @@ public class HDLocalPassiveEventManager: HDPassiveEventManager {
     /// </summary>
     public void DestroyPassiveEvent()
     {
+        // Finish the event properly
+        FinishEvent();
+
+        // Clean the data
         m_passiveEventData.Clean();
         m_passiveEventDefinition.Clean();
-
-        m_passiveEventDefinition = m_passiveEventData.definition as HDPassiveEventDefinition;
         
-        // Anounce it via broadcast
-        Messenger.Broadcast<int, HDLiveDataManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_FINISHED, EVENT_ID,
-            HDLiveDataManager.ComunicationErrorCodes.NO_ERROR);
     }
     
     /// <summary>
@@ -160,9 +161,14 @@ public class HDLocalPassiveEventManager: HDPassiveEventManager {
         // Just change the state. For local events is as simple as this
         m_data.m_state = HDLiveEventData.State.FINALIZED;
 
+        // Refresh the game mode, so the local passive is deactivated and live passive event (if any) is activated again
+        HDLiveDataManager.instance.SwitchToGameMode();
+        
         // Notify everyone via broadcast
         Messenger.Broadcast<int,HDLiveDataManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_FINISHED, m_data.m_eventId, 
             HDLiveDataManager.ComunicationErrorCodes.NO_ERROR);
+        
+
 
     }
 

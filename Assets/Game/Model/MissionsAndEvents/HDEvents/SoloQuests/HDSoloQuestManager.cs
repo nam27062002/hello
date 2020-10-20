@@ -80,6 +80,8 @@ public class HDSoloQuestManager : BaseQuestManager {
 			Messenger.Broadcast<int, HDLiveDataManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_NEW_DEFINITION, EVENT_ID,
 				HDLiveDataManager.ComunicationErrorCodes.NO_ERROR);
   
+            // Refresh the game mode, so the live quest (if any) is deactivated
+            HDLiveDataManager.instance.SwitchToGameMode();
 
 		}
 	}
@@ -146,6 +148,10 @@ public class HDSoloQuestManager : BaseQuestManager {
 		return false;
 	}
 
+    /// <summary>
+    /// Whether this event is should be active according to its state
+    /// </summary>
+    /// <returns></returns>
 	public override bool IsRunning()
 	{
 		// Basically we want to know if we need to show this event in the quest screen
@@ -203,6 +209,9 @@ public class HDSoloQuestManager : BaseQuestManager {
 		// Notify everyone via broadcast
 		Messenger.Broadcast<int,HDLiveDataManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_FINISHED, m_data.m_eventId, 
 			HDLiveDataManager.ComunicationErrorCodes.NO_ERROR);
+        
+        // Refresh the game mode, so the live quest (if any) is activated
+        HDLiveDataManager.instance.SwitchToGameMode();
 
 	}
 

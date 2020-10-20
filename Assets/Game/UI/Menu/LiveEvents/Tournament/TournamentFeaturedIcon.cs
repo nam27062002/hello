@@ -272,7 +272,7 @@ public class TournamentFeaturedIcon : MonoBehaviour {
             {
             	// Change game mode
     	        SceneController.SetMode(SceneController.Mode.TOURNAMENT);
-        	    HDLiveDataManager.instance.SwitchToTournament();
+        	    HDLiveDataManager.instance.SwitchToGameMode(HDLiveDataManager.GameMode.TOURNAMENT);
     	
         	    // Send Tracking event
             	HDTrackingManager.Instance.Notify_TournamentClickOnMainScreen(m_tournamentManager.data.definition.m_name);
