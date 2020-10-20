@@ -257,6 +257,8 @@ public class DragonWizardValidationModule : IDragonWizard
         results.Add(new DragonTest(GameplayTestParticles(), "Particles are set"));
         results.Add(new DragonTest(GameplayTestMapMarker(), "MapMarker is set"));
         results.Add(new DragonTest(GameplayTestBodyWingsTags(), "Body and wings tags are set"));
+        results.Add(new DragonTest(GameplayTestMegaFireRush(), "Mega fire rush is set"));
+        results.Add(new DragonTest(GameplayTestMegaFireRushAnchor(), "Mega fire rush anchor is set", Severity.Warning));
     }
 
     void ResultsTests()
@@ -432,6 +434,32 @@ public class DragonWizardValidationModule : IDragonWizard
     bool GameplayTestBodyWingsTags()
     {
         return TestBodyWingsTags(gameplayPrefab);
+    }
+
+    bool GameplayTestMegaFireRush()
+    {
+        Transform particles = gameplayPrefab.transform.Find("particles");
+        if (particles == null)
+            return false;
+
+        DragonParticleController dragonParticleController = particles.GetComponent<DragonParticleController>();
+        if (dragonParticleController == null)
+            return false;
+
+        return !string.IsNullOrEmpty(dragonParticleController.m_megaFireRush);
+    }
+
+    bool GameplayTestMegaFireRushAnchor()
+    {
+        Transform particles = gameplayPrefab.transform.Find("particles");
+        if (particles == null)
+            return false;
+
+        DragonParticleController dragonParticleController = particles.GetComponent<DragonParticleController>();
+        if (dragonParticleController == null)
+            return false;
+
+        return dragonParticleController.m_megaFireRushAnchor != null;
     }
     #endregion
 
