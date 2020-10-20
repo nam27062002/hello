@@ -10,7 +10,8 @@ public class DragonWizardValidationModule : IDragonWizard
         MainMenu,
         Gameplay,
         Results,
-        Corpse
+        Corpse,
+        None
     }
 
     enum Severity
@@ -174,6 +175,7 @@ public class DragonWizardValidationModule : IDragonWizard
         GameplayTests();
         ResultsTests();
         CorpseTests();
+        ConsistencyTests();
     }
 
     void ClearResults()
@@ -301,6 +303,18 @@ public class DragonWizardValidationModule : IDragonWizard
 
         // Unit tests for corpse prefab
         results.Add(new DragonTest(CorpseTestIsDefined(), "Corpse defined on gameplay prefab to: " + CorpsePrefabName));
+    }
+
+    void ConsistencyTests()
+    {
+        // Title
+        results.Add(new DragonTest("Consistency between prefabs", PrefabType.None));
+
+        // At this point all prefabs are loaded.
+        // We're going to check the consistency between all prefabs (same points in all prefabs and similar)
+
+        // Unit tests for consistency 
+        results.Add(new DragonTest(ConsistencyTestPoints(), "All prefabs have the same points"));
     }
 
     #region MAIN_MENU_TESTS
@@ -494,6 +508,50 @@ public class DragonWizardValidationModule : IDragonWizard
             return false;
 
         return particleController.m_corpseAsset == CorpsePrefabName;
+    }
+    #endregion
+
+    #region CONSISTENCY_TESTS
+    bool ConsistencyTestPoints()
+    {
+        // TODO: ignore pet points, validate point positions
+
+        Transform mainMenuPointsTransform = mainMenuPrefab.FindTransformRecursive("points");
+        if (mainMenuPointsTransform == null)
+            return false;
+
+        Transform gameplayPointsTransform = gameplayPrefab.FindTransformRecursive("points");
+        if (gameplayPointsTransform == null)
+            return false;
+
+        Transform resultsPointsTransform = resultsPrefab.FindTransformRecursive("points");
+        if (resultsPointsTransform == null)
+            return false;
+
+        Transform corpsePointsTransform = corpsePrefab.FindTransformRecursive("points");
+        if (corpsePointsTransform == null)
+            return false;
+
+        Transform[] mainMenuPoints = mainMenuPointsTransform.GetComponentsInChildren<Transform>();
+        Transform[] gameplayPoints = gameplayPointsTransform.GetComponentsInChildren<Transform>();
+        Transform[] resultsPoints = resultsPointsTransform.GetComponentsInChildren<Transform>();
+        Transform[] corpsePoints = corpsePointsTransform.GetComponentsInChildren<Transform>();
+
+        int totalMainMenuPoints = mainMenuPoints.Length;
+        int totalGameplayPoints = gameplayPoints.Length;
+        int totalResultsPoints = resultsPoints.Length;
+        int totalCorpsePoints = corpsePoints.Length;
+
+        if (totalGameplayPoints < totalMainMenuPoints) // Because we're considering the extra attack points for gameplay
+            return false;
+
+        if (totalMainMenuPoints != totalResultsPoints)
+            return false;
+
+        if (totalResultsPoints < totalCorpsePoints)
+            return false;
+
+        return true;
     }
     #endregion
 
