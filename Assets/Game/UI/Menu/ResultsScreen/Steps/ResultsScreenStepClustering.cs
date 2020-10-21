@@ -41,8 +41,8 @@ public class ResultsScreenStepClustering : ResultsScreenStep {
 
 		DefinitionNode offerSettingsDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, "offerSettings");
 
-		// Do not calculate clustering until the end of the run 1 (0 is tutorial)
-		if (gamesPlayed != offerSettingsDef.GetAsInt("assignGenericClusterAtRun"))
+		// Calculate clustering at the end of the spcified run
+		if (gamesPlayed != offerSettingsDef.GetAsInt("calculateClusterAtRun"))
 			return false;
 
 
