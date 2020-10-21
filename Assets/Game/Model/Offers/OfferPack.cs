@@ -926,14 +926,22 @@ public class OfferPack {
 		}
 
 		// Payer profile
-		int totalPurchases = (trackingPersistence == null) ? 0 : trackingPersistence.TotalPurchases;
-		switch(m_payerType) {
-			case PayerType.NON_PAYER: {
-				if(totalPurchases > 0) {
-					OffersManager.LogPack(this, "      CheckExpiration {0}: EXPIRED!  Payer Type {1} (totalPurchases {2})", Color.red, m_def.sku, m_payerType, totalPurchases);
-					return true;
-				}
-			} break;
+		// [AOC] Only for non-payers and if the offer hasn't yet been activated
+		//       We don't want an already active offer to disappear because the player has become a payer - bad UX
+		//       However, we want to expire non-payer targeted offers if the player is already a payer before they 
+		//       are activated, since they will never be active and doesn't make sense to keep them in the pending_activation state (performance-wise)
+		//       See User Story: https://confluence.ubisoft.com/pages/viewpage.action?pageId=872683518 
+		if(m_state != State.ACTIVE) {
+			// Expire if the player is a payer and the offer is targeted to non-payers, since the player can't become a non-payer anymore and thus this offer will never be activated
+			int totalPurchases = (trackingPersistence == null) ? 0 : trackingPersistence.TotalPurchases;
+			switch(m_payerType) {
+				case PayerType.NON_PAYER: {
+					if(totalPurchases > 0) {
+						OffersManager.LogPack(this, "      CheckExpiration {0}: EXPIRED!  Payer Type {1} (totalPurchases {2})", Color.red, m_def.sku, m_payerType, totalPurchases);
+						return true;
+					}
+				} break;
+			}
 		}
 
 		// Max spent
@@ -944,11 +952,15 @@ public class OfferPack {
 		}
 
 		// Max purchase price
-		if(m_maxPurchasePrice != null) {    // Only check if needed
-			int maxPurchasePrice = (trackingPersistence == null) ? -1 : trackingPersistence.MaxPurchasePrice;
-			if(maxPurchasePrice > m_maxPurchasePrice.max) {
-				OffersManager.LogPack(this, "      CheckExpiration {0}: EXPIRED! Max Purchase Price {1} vs {2}", Color.red, m_def.sku, m_maxPurchasePrice.ToString(), maxPurchasePrice);
-				return true;
+		// [AOC] Same remark as payer profile (only when not active)
+		if(m_state != State.ACTIVE) {
+			if(m_maxPurchasePrice != null) {    // Only check if needed
+				// Expire if the player's maxPurchasePrice is bigger than the upper limit of the offer's setup, since maxPurchasePrice will never go down and thus this offer will never be activated
+				int maxPurchasePrice = (trackingPersistence == null) ? -1 : trackingPersistence.MaxPurchasePrice;
+				if(maxPurchasePrice > m_maxPurchasePrice.max) {
+					OffersManager.LogPack(this, "      CheckExpiration {0}: EXPIRED! Max Purchase Price {1} vs {2}", Color.red, m_def.sku, m_maxPurchasePrice.ToString(), maxPurchasePrice);
+					return true;
+				}
 			}
 		}
 
