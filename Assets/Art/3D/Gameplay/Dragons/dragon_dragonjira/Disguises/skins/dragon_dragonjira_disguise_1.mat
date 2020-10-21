@@ -7,9 +7,9 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: dragon_dragonjira_1_disguise
+  m_Name: dragon_dragonjira_disguise_1
   m_Shader: {fileID: 4800000, guid: 2345015ac46679e4cb5817ed44c82547, type: 3}
-  m_ShaderKeywords: FRESNEL FXLAYER_REFLECTION NORMALMAP OPAQUEALPHA _ZWRITE_ON
+  m_ShaderKeywords: FRESNEL FXLAYER_NONE NORMALMAP OPAQUEALPHA _ZWRITE_ON
   m_LightmapFlags: 1
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -22,7 +22,7 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _BumpMap:
-        m_Texture: {fileID: 2800000, guid: 893891cd789fdd74d9b759b415e9a1d9, type: 3}
+        m_Texture: {fileID: 2800000, guid: b4433f433ed50264d9069cf4ada73b71, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailAlbedoMap:
@@ -50,7 +50,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 423389f0ab1f29d4f8aedec6a49ad405, type: 3}
+        m_Texture: {fileID: 2800000, guid: 0c3310180a12d22449d5cde40dd3b01d, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
@@ -66,11 +66,11 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _ReflectionMap:
-        m_Texture: {fileID: 8900000, guid: 526eef17382f158429f2491abb96d089, type: 2}
+        m_Texture: {fileID: 8900000, guid: 942c495c6dbefd241aca26cda9f991ec, type: 2}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
-    - FXLayer: 1
+    - FXLayer: 0
     - ReflectionType: 0
     - SelfIlluminate: 0
     - _BlendMode: 0
@@ -114,9 +114,9 @@ Material:
     - _NormalStrenght: 1
     - _OcclusionStrength: 1
     - _Parallax: 0.02
-    - _ReflectionAmount: 0.22
+    - _ReflectionAmount: 0.399
     - _SmoothnessTextureChannel: 0
-    - _SpecExponent: 73.2
+    - _SpecExponent: 100
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _StencilMask: 10
@@ -135,5 +135,5 @@ Material:
     - _InnerLightColor: {r: 1, g: 1, b: 1, a: 1}
     - _ReflectionColor: {r: 1, g: 1, b: 1, a: 1}
     - _SecondLightColor: {r: 0, g: 0, b: 0, a: 0}
-    - _SecondLightDir: {r: 0.10102575, g: 0.3175096, b: -0.9428581, a: 0}
-    - _Tint: {r: 0.9056604, g: 0.9056604, b: 0.9056604, a: 1}
+    - _SecondLightDir: {r: 0, g: 0.24431638, b: -0.9696956, a: 0}
+    - _Tint: {r: 0.9245283, g: 0.9245283, b: 0.9245283, a: 1}
