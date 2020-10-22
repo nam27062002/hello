@@ -516,7 +516,7 @@ if $UPLOAD;then
   if $BUILD_IOS; then    
       if [ "$ENVIRONMENT" == "stage_qc" -o "$ENVIRONMENT" == "production" ]; then
         print_builder "Uploading dSYMs to Firebase"
-        eval "${OUTPUT_DIR}/xcode/Pods/Fabric/upload-symbols -gsp ${OUTPUT_DIR}/xcode/GoogleService-Info.plist -p ios ${OUTPUT_DIR}/archives/${ARCHIVE_FILE}/dSYMs"
+        eval "${OUTPUT_DIR}/xcode/Pods/FirebaseCrashlytics/upload-symbols -gsp ${OUTPUT_DIR}/xcode/GoogleService-Info.plist -p ios ${OUTPUT_DIR}/archives/${ARCHIVE_FILE}/dSYMs"
       fi
   fi
 
