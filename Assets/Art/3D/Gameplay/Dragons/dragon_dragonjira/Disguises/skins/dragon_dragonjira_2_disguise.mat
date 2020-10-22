@@ -9,7 +9,8 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: dragon_dragonjira_2_disguise
   m_Shader: {fileID: 4800000, guid: 2345015ac46679e4cb5817ed44c82547, type: 3}
-  m_ShaderKeywords: FRESNEL FXLAYER_REFLECTION NORMALMAP OPAQUEALPHA SPECULAR _ZWRITE_ON
+  m_ShaderKeywords: FRESNEL FXLAYER_NONE NORMALMAP OPAQUEALPHA SELFILLUMINATE_BLINKLIGHTS
+    SPECULAR _ZWRITE_ON
   m_LightmapFlags: 1
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -70,9 +71,9 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
-    - FXLayer: 1
+    - FXLayer: 0
     - ReflectionType: 0
-    - SelfIlluminate: 0
+    - SelfIlluminate: 2
     - _BlendMode: 0
     - _BumpScale: 1
     - _ColorRampAmount: 0
@@ -106,7 +107,7 @@ Material:
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
-    - _InnerLightAdd: 0.95
+    - _InnerLightAdd: 2.97
     - _InnerLightWavePhase: 1
     - _InnerLightWaveSpeed: 1
     - _Metallic: 0
@@ -114,9 +115,9 @@ Material:
     - _NormalStrenght: 1
     - _OcclusionStrength: 1
     - _Parallax: 0.02
-    - _ReflectionAmount: 0.22
+    - _ReflectionAmount: 0.208
     - _SmoothnessTextureChannel: 0
-    - _SpecExponent: 73.2
+    - _SpecExponent: 67.79
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _StencilMask: 10
@@ -136,4 +137,4 @@ Material:
     - _ReflectionColor: {r: 1, g: 1, b: 1, a: 1}
     - _SecondLightColor: {r: 0, g: 0, b: 0, a: 0}
     - _SecondLightDir: {r: 0.32269302, g: 0.14667867, b: -0.93506926, a: 0}
-    - _Tint: {r: 0.9245283, g: 0.8503916, b: 0.87853515, a: 1}
+    - _Tint: {r: 1, g: 1, b: 1, a: 1}
