@@ -239,7 +239,7 @@ public class OffersManager : Singleton<OffersManager> {
         }
 
         // Get all known offer packs
-        // Sort offers by their "order" field, so if two mutually exclusive offers (same uniqueId)
+        // Sort offers by their "order" field, so if two mutually exclusive offers (same groupId)
         // are triggered at the same time, we can control which one shows
         List<DefinitionNode> offerDefs = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.OFFER_PACKS);
 		DefinitionsManager.SharedInstance.SortByProperty(ref offerDefs, "order", DefinitionsManager.SortType.NUMERIC);

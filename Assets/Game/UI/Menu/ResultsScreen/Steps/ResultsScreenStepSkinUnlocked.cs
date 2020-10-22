@@ -168,6 +168,7 @@ public class ResultsScreenStepSkinUnlocked : ResultsScreenSequenceStep {
 
 
         // Show purchase buttons
+        m_buttonsGroup.gameObject.SetActive(false); // Do this to force layout update. Fixes bug HDK-9537
 		m_buttonsGroup.ForceShow();
 
 		// Start with share button hidden
