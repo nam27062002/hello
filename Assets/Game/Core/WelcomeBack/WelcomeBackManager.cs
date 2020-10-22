@@ -43,6 +43,9 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
 	private DefinitionNode m_def;
 
     public DefinitionNode def => m_def;
+    
+    // Free tournament
+    private DateTime m_freeTournamentExpirationTimestamp;
 
     //------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -172,32 +175,72 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
     {
 	    EndSoloQuest();
         EndPassiveEvent();
+        EndFreePassTournament();
     }
 
+    /// <summary>
+    /// Check if the free tournament pass is active
+    /// </summary>
+    /// <returns>True if active</returns>
+    public bool IsFreeTournamentPassActive()
+    {
+        return m_freeTournamentExpirationTimestamp > GameServerManager.GetEstimatedServerTime();
+    }
+    
+
+    /// <summary>
+    /// Initialize the solo quest perk
+    /// </summary>
     private void CreateSoloQuest()
     {
 	    // Initialize the solo quest
 		HDLiveDataManager.instance.soloQuest.StartQuest();
     }
 
+    /// <summary>
+    /// Finalize the solo quest perk
+    /// </summary>
     private void EndSoloQuest()
     {
 	    HDLiveDataManager.instance.soloQuest.DestroyQuest();
     }
 
+    /// <summary>
+    /// Enable the passive event perk
+    /// </summary>
 	private void ActivatePassiveEvent()
     {
         HDLiveDataManager.instance.localPassive.StartPassiveEvent();
     }
 
+    /// <summary>
+    /// Finalize the passive event perk
+    /// </summary>
     private void EndPassiveEvent()
     {
         HDLiveDataManager.instance.localPassive.DestroyPassiveEvent();
     }
 
+    /// <summary>
+    /// Activate the free pass tournament perk
+    /// </summary>
     private void ActivateFreePassTournament()
     {
-
+        // Calculate the free pass expiration date
+        int freeTournamentDurationHours = m_def.GetAsInt("freeTournamentDurationHours");
+        DateTime now = GameServerManager.GetEstimatedServerTime();
+        
+        m_freeTournamentExpirationTimestamp = now.AddHours(freeTournamentDurationHours);
+        
+    }
+    
+    /// <summary>
+    /// Finalize the free pass tournament perk
+    /// </summary>
+    private void EndFreePassTournament()
+    {
+        // Reset the expiration date to invalidate the free pass ticket.
+        m_freeTournamentExpirationTimestamp = new DateTime();
     }
 
     private void CreateBoostedSevenDayLogin()
@@ -224,6 +267,8 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
     {
 
     }
+    
+    
 
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
@@ -259,6 +304,13 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
             HDLiveDataManager.instance.localPassive = passive;
         }
         
+        // Load free tournament pass data
+        key = "freeTournamentExpiration";
+        if ( _data.ContainsKey(key) )
+        {
+            m_freeTournamentExpirationTimestamp = TimeUtils.TimestampToDate(PersistenceUtils.SafeParse<long>(_data["freeTournamentExpiration"]));
+        }
+        
         
 		
 	}
@@ -282,6 +334,10 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
         {
             data.Add("localPassive", HDLiveDataManager.instance.localPassive.ToJson());
         }
+        
+        // Save free tournament pass
+        data.Add("freeTournamentExpiration", PersistenceUtils.SafeToString(TimeUtils.DateToTimestamp( m_freeTournamentExpirationTimestamp )));
+
 		
 		return data;
 	}

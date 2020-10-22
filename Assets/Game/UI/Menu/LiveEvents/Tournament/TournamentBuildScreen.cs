@@ -133,7 +133,12 @@ public class TournamentBuildScreen : MonoBehaviour {
 
 
 		//-- Entrance Button ------------------------------------------//
-		if (m_tournament.CanIUseFree()) {
+        
+        // Check if the free cooldown expired or if the welcome back free pass is active
+        m_hasFreeEntrance = m_tournament.CanIUseFree() || WelcomeBackManager.instance.IsFreeTournamentPassActive();
+        
+        
+		if ( m_hasFreeEntrance ) {
 			ShowEntranceButton(m_enterFreeBtn);
 			m_nextFreeTimerGroup.SetActive(false);
 		} else {
@@ -141,7 +146,6 @@ public class TournamentBuildScreen : MonoBehaviour {
 			m_nextFreeTimerGroup.SetActive(true);
 		}
 
-		m_hasFreeEntrance = m_tournament.CanIUseFree();
 
 		//TIMER
 		m_nextFreeSlider.minValue = 0f;
