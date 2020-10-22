@@ -85,7 +85,8 @@ public class OfferItemSlot : MonoBehaviour, IBroadcastListener {
 	[SerializeField] protected TextMeshProUGUI m_amountText = null;
 	[SerializeField] protected TextMeshProUGUI m_descriptionText = null;
 	[Space]
-	[SerializeField] protected PowerIcon m_powerIcon = null;	// Will only be displayed for some types
+	[SerializeField] protected PowerIcon m_powerIcon = null;    // Will only be displayed for some types
+	[SerializeField] protected GameObject m_tierIcon = null;	// Will only be displayed for some types
 
 	// Convenience properties
 	public RectTransform rectTransform {
@@ -225,6 +226,11 @@ public class OfferItemSlot : MonoBehaviour, IBroadcastListener {
 		// Initialize power Icon
 		if(m_powerIcon != null && m_preview != null) {
 			m_preview.InitPowerIcon(m_powerIcon, m_slotType);
+		}
+
+		// Initialize tier Icon
+		if(m_tierIcon != null && m_preview != null) {
+			m_preview.InitTierIcon(m_tierIcon, m_slotType);
 		}
 	}
 
@@ -404,17 +410,32 @@ public class OfferItemSlot : MonoBehaviour, IBroadcastListener {
 	}
 
 	//------------------------------------------------------------------------//
+	// STATIC UTILS															  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Convert a slot type to string representation, mostly to read from content.
+	/// </summary>
+	/// <param name="_slotType">The type of slot.</param>
+	/// <returns>String representation for the given type of slot.</returns>
+	public static string TypeToString(Type _slotType) {
+		switch(_slotType) {
+			// If a type needs a special string representation, add it as a new case
+			default: return _slotType.ToString().ToLowerInvariant();
+		}
+	}
+
+	//------------------------------------------------------------------------//
 	// DEBUG																  //
 	//------------------------------------------------------------------------//
-	    /// <summary>
-    /// Log into the console (if enabled).
-    /// </summary>
-    /// <param name="_msg">Message to be logged. Can have replacements like string.Format method would have.</param>
-    /// <param name="_replacements">Replacements, to be used as string.Format method.</param>
+	/// <summary>
+	/// Log into the console (if enabled).
+	/// </summary>
+	/// <param name="_msg">Message to be logged. Can have replacements like string.Format method would have.</param>
+	/// <param name="_replacements">Replacements, to be used as string.Format method.</param>
 #if LOG
     [Conditional("DEBUG")]
 #else
-    [Conditional("FALSE")]
+	[Conditional("FALSE")]
 #endif
     public static void Log(string _msg, params object[] _replacements) {
 		if(!FeatureSettingsManager.IsDebugEnabled) return;

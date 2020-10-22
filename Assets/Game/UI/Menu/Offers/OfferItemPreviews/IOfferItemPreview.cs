@@ -10,6 +10,8 @@
 using UnityEngine;
 using UnityEngine.UI;
 
+using System.Collections.Generic;
+
 using TMPro;
 
 //----------------------------------------------------------------------------//
@@ -194,6 +196,32 @@ public abstract class IOfferItemPreview : MonoBehaviour {
 		// To be implemented by heirs if needed
 		// Disable by default
 		_powerIcon.InitFromDefinition(null, null, false, false);	// This will do the trick
+	}
+
+	/// <summary>
+	/// Initialize the given tier icon instance with data from this reward.
+	/// Will disable it if reward type doesn't support tiers, as well as depending on the setup from offerSettings.
+	/// </summary>
+	/// <param name="_tierIconContainer">Where to instantiate the tier icon.</param>
+	/// <param name="_slotType">The type of slot where the item will be displayed.</param>
+	public virtual void InitTierIcon(GameObject _tierIconContainer, OfferItemSlot.Type _slotType) {
+		// To be implemented by heirs if needed
+		// Hide by default
+		_tierIconContainer.SetActive(false);
+	}
+
+	/// <summary>
+	/// Can the tier icon be displayed in the given slot type?
+	/// </summary>
+	/// <param name="_slotType">Type of slot to be checked.</param>
+	/// <returns>Whether the tier icon should be displayed or not for the given slot type.</returns>
+	protected bool ShowTierIconBySlotType(OfferItemSlot.Type _slotType) {
+		// Get accepted slot types from settings
+		DefinitionNode offerSettings = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, "offerSettings");
+		List<string> acceptedSlots = offerSettings.GetAsList<string>("showTierInOffers");
+
+		// Check if the given slot type is accepted
+		return acceptedSlots.Contains(OfferItemSlot.TypeToString(_slotType));
 	}
 
 	/// <summary>

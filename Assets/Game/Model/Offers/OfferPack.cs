@@ -100,11 +100,11 @@ public class OfferPack {
 		get { return m_items; }
 	}
 
-	protected string m_uniqueId = "";
-	public string uniqueId {
+	protected string m_groupId = "";
+	public string groupId {
 		get {
-			if(!string.IsNullOrEmpty(m_uniqueId)) {
-				return m_uniqueId;
+			if(!string.IsNullOrEmpty(m_groupId)) {
+				return m_groupId;
 			} else if(m_def != null) {
 				return m_def.sku;
 			} else {
@@ -349,7 +349,7 @@ public class OfferPack {
 		m_items.Clear();
 		m_def = null;
 		m_type = DEFAULT_TYPE;
-		m_uniqueId = string.Empty;
+		m_groupId = string.Empty;
 		m_state = State.PENDING_ACTIVATION;
 
 		// Mandatory params
@@ -476,12 +476,12 @@ public class OfferPack {
 
 
         // Unique ID
-        m_uniqueId = m_def.GetAsString("uniqueId");
-        if (String.IsNullOrEmpty(m_uniqueId)) { // 
+        m_groupId = m_def.GetAsString("groupId");
+        if (String.IsNullOrEmpty(m_groupId)) { // 
             //[MSF] at this point, the ID is always empty.
             //So we have to use the sku and the experiment
             //number as an ID.
-            m_uniqueId = m_def.customizationCode.ToString() + "_" + m_def.sku;
+            m_groupId = m_def.customizationCode.ToString() + "_" + m_def.sku;
         }
 
         // Shop category
@@ -601,7 +601,7 @@ public class OfferPack {
 		}
 
 		// General
-		SetValueIfMissing(ref _def, "uniqueId", m_uniqueId.ToString(CultureInfo.InvariantCulture));
+		SetValueIfMissing(ref _def, "groupId", m_groupId.ToString(CultureInfo.InvariantCulture));
 		SetValueIfMissing(ref _def, "type", TypeToString(DEFAULT_TYPE));
         SetValueIfMissing(ref _def, "currency", CurrencyToString(DEFAULT_CURRENCY));
         SetValueIfMissing(ref _def, "order", m_order.ToString(CultureInfo.InvariantCulture));
@@ -893,9 +893,9 @@ public class OfferPack {
 			if(OffersManager.activeOffers[i] == this) continue;
 
 			// Is there a pack with the same unique ID already active?
-			if(OffersManager.activeOffers[i].uniqueId == this.uniqueId) {
+			if(OffersManager.activeOffers[i].groupId == this.groupId) {
 				// Yes! Mark offer as expired ^^
-				OffersManager.LogPack(this, "      CheckExpiration {0}: EXPIRED! Duplicated unique ID {1}", Color.red, m_def.sku, this.uniqueId);
+				OffersManager.LogPack(this, "      CheckExpiration {0}: EXPIRED! Duplicated unique ID {1}", Color.red, m_def.sku, this.groupId);
 				return true;
 			}
 		}
@@ -926,14 +926,22 @@ public class OfferPack {
 		}
 
 		// Payer profile
-		int totalPurchases = (trackingPersistence == null) ? 0 : trackingPersistence.TotalPurchases;
-		switch(m_payerType) {
-			case PayerType.NON_PAYER: {
-				if(totalPurchases > 0) {
-					OffersManager.LogPack(this, "      CheckExpiration {0}: EXPIRED!  Payer Type {1} (totalPurchases {2})", Color.red, m_def.sku, m_payerType, totalPurchases);
-					return true;
-				}
-			} break;
+		// [AOC] Only for non-payers and if the offer hasn't yet been activated
+		//       We don't want an already active offer to disappear because the player has become a payer - bad UX
+		//       However, we want to expire non-payer targeted offers if the player is already a payer before they 
+		//       are activated, since they will never be active and doesn't make sense to keep them in the pending_activation state (performance-wise)
+		//       See User Story: https://confluence.ubisoft.com/pages/viewpage.action?pageId=872683518 
+		if(m_state != State.ACTIVE) {
+			// Expire if the player is a payer and the offer is targeted to non-payers, since the player can't become a non-payer anymore and thus this offer will never be activated
+			int totalPurchases = (trackingPersistence == null) ? 0 : trackingPersistence.TotalPurchases;
+			switch(m_payerType) {
+				case PayerType.NON_PAYER: {
+					if(totalPurchases > 0) {
+						OffersManager.LogPack(this, "      CheckExpiration {0}: EXPIRED!  Payer Type {1} (totalPurchases {2})", Color.red, m_def.sku, m_payerType, totalPurchases);
+						return true;
+					}
+				} break;
+			}
 		}
 
 		// Max spent
@@ -944,11 +952,15 @@ public class OfferPack {
 		}
 
 		// Max purchase price
-		if(m_maxPurchasePrice != null) {    // Only check if needed
-			int maxPurchasePrice = (trackingPersistence == null) ? -1 : trackingPersistence.MaxPurchasePrice;
-			if(maxPurchasePrice > m_maxPurchasePrice.max) {
-				OffersManager.LogPack(this, "      CheckExpiration {0}: EXPIRED! Max Purchase Price {1} vs {2}", Color.red, m_def.sku, m_maxPurchasePrice.ToString(), maxPurchasePrice);
-				return true;
+		// [AOC] Same remark as payer profile (only when not active)
+		if(m_state != State.ACTIVE) {
+			if(m_maxPurchasePrice != null) {    // Only check if needed
+				// Expire if the player's maxPurchasePrice is bigger than the upper limit of the offer's setup, since maxPurchasePrice will never go down and thus this offer will never be activated
+				int maxPurchasePrice = (trackingPersistence == null) ? -1 : trackingPersistence.MaxPurchasePrice;
+				if(maxPurchasePrice > m_maxPurchasePrice.max) {
+					OffersManager.LogPack(this, "      CheckExpiration {0}: EXPIRED! Max Purchase Price {1} vs {2}", Color.red, m_def.sku, m_maxPurchasePrice.ToString(), maxPurchasePrice);
+					return true;
+				}
 			}
 		}
 
