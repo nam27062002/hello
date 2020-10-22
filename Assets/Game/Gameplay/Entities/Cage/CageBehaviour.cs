@@ -83,8 +83,14 @@ public class CageBehaviour : ISpawnable {
 		}
 
         if(m_view != null) m_view.SetActive(true);
-        for (int i = 0; i < m_viewDestroyed.Length; i++) {
-            if(m_viewDestroyed != null) m_viewDestroyed[i].SetActive(false);
+
+        if (m_viewDestroyed != null)
+        {
+            for (int i = 0; i < m_viewDestroyed.Length; i++)
+            {
+                if (m_viewDestroyed[i] != null)
+                    m_viewDestroyed[i].SetActive(false);
+            }
         }
 
         SetCollisionsEnabled(true);
