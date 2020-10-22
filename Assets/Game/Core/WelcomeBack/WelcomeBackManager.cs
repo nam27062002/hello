@@ -179,12 +179,44 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
     }
 
     /// <summary>
-    /// Check if the free tournament pass is active
+    /// Check if the "free" tournament pass is active. Notice that the entrance fee could be free or not.
     /// </summary>
     /// <returns>True if active</returns>
     public bool IsFreeTournamentPassActive()
     {
         return m_freeTournamentExpirationTimestamp > GameServerManager.GetEstimatedServerTime();
+    }
+    
+    /// <summary>
+    /// Check if the "free" tournament entrance fee is really free, or just cheaper
+    /// </summary>
+    /// <returns></returns>
+    public bool IsFreeTournamentReallyFree()
+    {
+        return GetFreeTournamentPassPrice() == 0;
+    }
+
+    /// <summary>
+    /// Returns the price of the "free" pass for tournaments. 
+    /// </summary>
+    /// <returns>Returns zero if free</returns>
+    public int GetFreeTournamentPassPrice()
+    {
+        return m_def.GetAsInt("freeTournamentPassPrice");
+    }
+
+    
+    /// <summary>
+    /// The currency type defined in the content
+    /// </summary>
+    /// <returns>Returns the type of currency of the tournament pass</returns>
+    public UserProfile.Currency GetFreeTournamentCurrency()
+    {
+        // This sku could be "-" in case of a free pass
+        string sku = m_def.GetAsString("freeTournamentPassCurrency");
+        UserProfile.Currency currency = UserProfile.SkuToCurrency(sku);
+
+        return currency;
     }
     
 

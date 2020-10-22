@@ -24,6 +24,8 @@ public class TournamentBuildScreen : MonoBehaviour {
 	[Separator("Enter button")]
 	[SerializeField] private Button 			m_enterCurrencyBtn = null;
 	[SerializeField] private Button 			m_enterFreeBtn = null;
+    [SerializeField] private Button 			m_enterWelcomeBackCurrencyBtn = null;
+    [SerializeField] private Button 			m_enterWelcomeBackFreeBtn = null;
 	[SerializeField] private Button 			m_enterAdBtn = null;
 	[SerializeField] private GameObject			m_nextFreeTimerGroup = null;
 	[SerializeField] private TextMeshProUGUI 	m_nextFreeTimer = null;
@@ -135,19 +137,41 @@ public class TournamentBuildScreen : MonoBehaviour {
 		//-- Entrance Button ------------------------------------------//
         
         // Check if the free cooldown expired or if the welcome back free pass is active
-        m_hasFreeEntrance = m_tournament.CanIUseFree() || WelcomeBackManager.instance.IsFreeTournamentPassActive();
-        
-        
-		if ( m_hasFreeEntrance ) {
-			ShowEntranceButton(m_enterFreeBtn);
-			m_nextFreeTimerGroup.SetActive(false);
-		} else {
-			ShowEntranceButton(m_enterCurrencyBtn);
-			m_nextFreeTimerGroup.SetActive(true);
-		}
+        m_hasFreeEntrance = m_tournament.CanIUseFree() || 
+                            (WelcomeBackManager.instance.IsFreeTournamentPassActive() && WelcomeBackManager.instance.IsFreeTournamentReallyFree());
 
+        // Is the welcome back feature active?
+        if (WelcomeBackManager.instance.IsFreeTournamentPassActive())
+        {
+            // Welcome back tournament button has a different look
 
-		//TIMER
+            if (WelcomeBackManager.instance.IsFreeTournamentReallyFree())
+            {
+                ShowEntranceButton(m_enterWelcomeBackFreeBtn);
+                m_nextFreeTimerGroup.SetActive(false);
+            }
+            else
+            {
+                ShowEntranceButton(m_enterWelcomeBackCurrencyBtn);
+                m_nextFreeTimerGroup.SetActive(true);
+            }
+        }
+        else
+        {
+            // No welcome back. Just the regular tournament buttons:
+            if (m_hasFreeEntrance)
+            {
+                ShowEntranceButton(m_enterFreeBtn);
+                m_nextFreeTimerGroup.SetActive(false);
+            }
+            else
+            {
+                ShowEntranceButton(m_enterCurrencyBtn);
+                m_nextFreeTimerGroup.SetActive(true);
+            }
+        }
+
+        //TIMER
 		m_nextFreeSlider.minValue = 0f;
 		m_nextFreeSlider.maxValue = m_definition.m_entrance.m_dailyFree;
 		UpdatePeriodic();
@@ -193,23 +217,50 @@ public class TournamentBuildScreen : MonoBehaviour {
 		}
 	}
 
-	private void ShowEntranceButton(Button _activeButton) {
+	private void ShowEntranceButton(Button _activeButton)
+    {
+        // Just in case
+        if (_activeButton == null)
+            return;
+        
 		m_enterAdBtn.gameObject.SetActive(m_enterAdBtn == _activeButton);
 		m_enterFreeBtn.gameObject.SetActive(m_enterFreeBtn == _activeButton);
 		m_enterCurrencyBtn.gameObject.SetActive(m_enterCurrencyBtn == _activeButton);
+        m_enterWelcomeBackCurrencyBtn.gameObject.SetActive(m_enterWelcomeBackCurrencyBtn == _activeButton);
+        m_enterWelcomeBackFreeBtn.gameObject.SetActive(m_enterWelcomeBackFreeBtn == _activeButton);
 
 		Localizer loc = _activeButton.FindComponentRecursive<Localizer>();
-		if (m_enterAdBtn == _activeButton) {
-			loc.Localize("TID_TOURNAMENT_PLAY_AD");
-		} else if (m_enterFreeBtn == _activeButton) {
+
+        
+
+        // Free entrance button
+        if (m_enterFreeBtn == _activeButton || m_enterWelcomeBackFreeBtn == _activeButton) {
 			loc.Localize("TID_GEN_FREE");
-		} else if (m_enterCurrencyBtn == _activeButton) {
+		}
+        // Watch video to play button
+        else if (m_enterAdBtn == _activeButton) {
+            loc.Localize("TID_TOURNAMENT_PLAY_AD");
+        } 
+        // SC/PC fee button
+        else if (m_enterCurrencyBtn == _activeButton) {
 			if (m_definition.m_entrance.m_type == "hc" || m_definition.m_entrance.m_type == "pc") {
 				loc.Localize("TID_TOURNAMENT_PLAY_PC", StringUtils.FormatNumber(m_definition.m_entrance.m_amount));
 			} else{ 
 				loc.Localize("TID_TOURNAMENT_PLAY_SC", StringUtils.FormatNumber(m_definition.m_entrance.m_amount));
 			}
 		}
+        // Reduced SC/PC fee button  (welcome back)
+        else if (m_enterWelcomeBackCurrencyBtn == _activeButton) {
+            switch (WelcomeBackManager.instance.GetFreeTournamentCurrency())
+            {
+                case UserProfile.Currency.HARD:
+                    loc.Localize("TID_TOURNAMENT_PLAY_PC", StringUtils.FormatNumber(WelcomeBackManager.instance.GetFreeTournamentPassPrice()));
+                    break;
+                case UserProfile.Currency.SOFT:
+                    loc.Localize("TID_TOURNAMENT_PLAY_SC", StringUtils.FormatNumber(WelcomeBackManager.instance.GetFreeTournamentPassPrice()));
+                    break;
+            }
+        }
 	}
 
 	//------------------------------------------------------------------------//
@@ -234,6 +285,9 @@ public class TournamentBuildScreen : MonoBehaviour {
 		Messenger.RemoveListener<int, HDLiveDataManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_REWARDS_RECEIVED, OnRewardsResponse);
 	}
 
+    /// <summary>
+    /// The player clicked in the Play button
+    /// </summary>
 	public void OnStartPaying() {
 
 
@@ -252,13 +306,6 @@ public class TournamentBuildScreen : MonoBehaviour {
 		if (DeviceUtilsManager.SharedInstance.internetReachability == NetworkReachability.NotReachable || !GameServerManager.SharedInstance.IsLoggedIn()) {
 			SendFeedback("TID_GEN_NO_CONNECTION");
 		} 
-		/*
-		else if (!GameServerManager.SharedInstance.IsLoggedIn()) 
-		{
-			// Check log in!
-			SendFeedback("TID_NEED_TO_LOG_IN");
-		} 
-		*/
 		else 
 		{
 			// Check paying
@@ -275,14 +322,29 @@ public class TournamentBuildScreen : MonoBehaviour {
 
 				// Send Entrance
 				m_tournament.SendEntrance("free", 0);
+                
 			} else {
+                
 				// Check if I have enough currency
 				m_purchaseFlow = new ResourcesFlow("TOURNAMENT_ENTRANCE");
 				m_purchaseFlow.OnSuccess.AddListener( OnEntrancePayAccepted );
-				long amount = m_definition.m_entrance.m_amount;
-				UserProfile.Currency currency = UserProfile.SkuToCurrency(m_definition.m_entrance.m_type);
-				m_purchaseFlow.Begin(amount, currency, HDTrackingManager.EEconomyGroup.TOURNAMENT_ENTRY, null, false);
-			}
+
+                if (WelcomeBackManager.instance.IsFreeTournamentPassActive() &&
+                    !WelcomeBackManager.instance.IsFreeTournamentReallyFree())
+                {
+                    // Welcome back reduced entrance fee
+                    long amount = WelcomeBackManager.instance.GetFreeTournamentPassPrice();
+                    UserProfile.Currency currency = WelcomeBackManager.instance.GetFreeTournamentCurrency();
+                    m_purchaseFlow.Begin(amount, currency, HDTrackingManager.EEconomyGroup.TOURNAMENT_ENTRY, null, false);
+                }
+                else
+                {
+                    // Regular tournament entrance fee
+                    long amount = m_definition.m_entrance.m_amount;
+                    UserProfile.Currency currency = UserProfile.SkuToCurrency(m_definition.m_entrance.m_type);
+                    m_purchaseFlow.Begin(amount, currency, HDTrackingManager.EEconomyGroup.TOURNAMENT_ENTRY, null, false);
+                }
+            }
 		}
 	}
 
