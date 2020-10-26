@@ -38,7 +38,7 @@ public class DailyRewardsSequence {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Sequence
-	private DailyReward[] m_rewards;
+	protected DailyReward[] m_rewards;
 	public DailyReward[] rewards {
 		get {
 			if(!ValidateRewards()) Generate();	// Just in case
@@ -47,7 +47,7 @@ public class DailyRewardsSequence {
 	}
 
 	// Rewards indexing
-	private int m_totalRewardIdx;
+	protected int m_totalRewardIdx;
 	public int totalRewardIdx {	// The total index of the NEXT reward to be collected, that is, counting all collected rewards in all sequences
 		get { return m_totalRewardIdx; }
 	}
@@ -57,7 +57,7 @@ public class DailyRewardsSequence {
 	}
 
 	// Other vars
-	private DateTime m_nextCollectionTimestamp;	// UTC, time at which the cooldown has expired and the player can collect the next reward
+	protected DateTime m_nextCollectionTimestamp;	// UTC, time at which the cooldown has expired and the player can collect the next reward
 	public DateTime nextCollectionTimestamp {
 		get { return m_nextCollectionTimestamp; }
 	}
@@ -190,7 +190,7 @@ public class DailyRewardsSequence {
 	/// <summary>
 	/// Generate a new sequence of rewards.
 	/// </summary>
-	public void Generate() {
+	public virtual void Generate() {
 		// Gather all defined reward definitions
 		List<DefinitionNode> rewardDefs = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.DAILY_REWARDS);
 
@@ -271,7 +271,7 @@ public class DailyRewardsSequence {
 	/// Constructor from json data.
 	/// </summary>
 	/// <param name="_data">Data to be parsed.</param>
-	public void LoadData(SimpleJSON.JSONNode _data) {
+	public virtual void LoadData(SimpleJSON.JSONNode _data) {
 		// Reset any existing data
 		Reset();
 
@@ -306,7 +306,7 @@ public class DailyRewardsSequence {
 	/// Serialize into json.
 	/// </summary>
 	/// <returns>The json. Can be null if sequence has never been generated.</returns>
-	public SimpleJSON.JSONClass SaveData() {
+	public virtual SimpleJSON.JSONClass SaveData() {
 		// If sequence is not valid, don't save
 		if(!ValidateRewards()) {
 			return null;

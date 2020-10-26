@@ -41,11 +41,27 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
 	
 	// Keep the definition at hand
 	private DefinitionNode m_def;
-
     public DefinitionNode def => m_def;
     
     // Free tournament
     private DateTime m_freeTournamentExpirationTimestamp;
+    
+    // Boosted daily reward
+    private BoostedDailyRewardsSequence m_boostedDailyRewards;
+    public BoostedDailyRewardsSequence boostedDailyRewards
+    {
+        get => m_boostedDailyRewards;
+    }
+    
+    // The multiplier applied to the reward if watching an ad
+    public int boostedDailyRewardAdMultiplier
+    {
+        get
+        {
+            return m_def.GetAsInt("boostedDailyLoginAdMultiplier");
+        }
+    }
+
 
     //------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -176,6 +192,7 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
 	    EndSoloQuest();
         EndPassiveEvent();
         EndFreePassTournament();
+        EndBoostedSevenDayLogin();
     }
 
     /// <summary>
@@ -218,7 +235,13 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
 
         return currency;
     }
-    
+
+
+    public bool IsBoostedDailyRewardActive()
+    {
+        bool rewardsDefined = m_boostedDailyRewards.rewards.Length > 0;
+        return rewardsDefined;
+    }
 
     /// <summary>
     /// Initialize the solo quest perk
@@ -277,7 +300,15 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
 
     private void CreateBoostedSevenDayLogin()
     {
+        m_boostedDailyRewards = new BoostedDailyRewardsSequence();
+        
+        //Initialize from content
+        m_boostedDailyRewards.Generate();
+    }
 
+    private void EndBoostedSevenDayLogin()
+    {
+        m_boostedDailyRewards = new BoostedDailyRewardsSequence();
     }
 
     private void CreateNonPayerOffer()

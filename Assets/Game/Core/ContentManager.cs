@@ -275,6 +275,7 @@ public class ContentManager
         kDefinitionFiles.Add(DefinitionsCategory.WELCOME_BACK, new string[] { "Rules/welcomeBackDefinitions" });
         kDefinitionFiles.Add(DefinitionsCategory.SOLO_QUESTS, new string[] { "Rules/soloQuestsDefinitions" });
         kDefinitionFiles.Add(DefinitionsCategory.SOLO_QUESTS_REWARDS, new string[] { "Rules/soloQuestsRewardsDefinitions" });
+        kDefinitionFiles.Add(DefinitionsCategory.BOOSTED_DAILY_REWARDS, new string[] { "Rules/boostedDailyRewardsDefinitions" });
 
         // Cross Promotion 
         kDefinitionFiles.Add(DefinitionsCategory.XPROMO_REWARDS, new string[] { "Rules/xPromoRewardsDefinitions" });
