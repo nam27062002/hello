@@ -9,14 +9,14 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 224000011541814836}
-  - component: {fileID: 114267201634759346}
+  - component: {fileID: 7985068894829633159}
   - component: {fileID: 95000013029732220}
   - component: {fileID: 114000011298517116}
   - component: {fileID: 225000013469517432}
   - component: {fileID: 114561554520341830}
   - component: {fileID: 114616326611522424}
   m_Layer: 5
-  m_Name: PF_PopupDailyRewards
+  m_Name: PF_PopupBoostedDailyRewards
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -45,7 +45,7 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &114267201634759346
+--- !u!114 &7985068894829633159
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -54,7 +54,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1000010013748420}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f792b00c186c445e7922b6c003e179d7, type: 3}
+  m_Script: {fileID: 11500000, guid: 2ff6a7ec735564649b2cf1a07c0b3cc5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_rewardSlots:
@@ -128,7 +128,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 114267201634759346}
+      - m_Target: {fileID: 7985068894829633159}
         m_MethodName: OnOpenPreAnimation
         m_Mode: 1
         m_Arguments:
@@ -170,7 +170,7 @@ MonoBehaviour:
   OnClosePostAnimation:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 114267201634759346}
+      - m_Target: {fileID: 7985068894829633159}
         m_MethodName: OnClosePostAnimation
         m_Mode: 1
         m_Arguments:
@@ -221,7 +221,7 @@ MonoBehaviour:
   OnBackButton:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 114267201634759346}
+      - m_Target: {fileID: 7985068894829633159}
         m_MethodName: OnBackButton
         m_Mode: 1
         m_Arguments:
@@ -1418,7 +1418,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 114267201634759346}
+      - m_Target: {fileID: 7985068894829633159}
         m_MethodName: OnAdButton
         m_Mode: 1
         m_Arguments:
@@ -5643,8 +5643,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 114267201634759346}
-        m_MethodName: OnDoubleButton
+      - m_Target: {fileID: 7985068894829633159}
+        m_MethodName: OnMultiplierButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -7779,7 +7779,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 114267201634759346}
+      - m_Target: {fileID: 7985068894829633159}
         m_MethodName: OnCollectButton
         m_Mode: 1
         m_Arguments:
@@ -18831,7 +18831,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 114267201634759346}
+      - m_Target: {fileID: 7985068894829633159}
         m_MethodName: OnDismissButton
         m_Mode: 1
         m_Arguments:

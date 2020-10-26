@@ -77,16 +77,7 @@ public class BoostedDailyRewardsSequence : DailyRewardsSequence {
 			m_rewards[i].InitFromDefs(rewardDefsByDay[targetDay]);
 		}
 	}
-    #region log
-    private const string LOG_CHANNEL = "[DailyRewards]";
-#if ENABLE_LOGS
-    [Conditional("DEBUG")]
-#else
-    [Conditional("FALSE")]
-#endif
-    private void Log(string message)
-    {
-        ControlPanel.Log(LOG_CHANNEL + message, ControlPanel.ELogChannel.DailyRewards);
-    }
-    #endregion
+    
+    
+
 }

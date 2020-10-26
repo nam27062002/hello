@@ -236,11 +236,26 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
         return currency;
     }
 
-
+    /// <summary>
+    /// Check if the boosted daily reward is active.
+    /// </summary>
+    /// <returns></returns>
     public bool IsBoostedDailyRewardActive()
     {
-        bool rewardsDefined = m_boostedDailyRewards.rewards.Length > 0;
-        return rewardsDefined;
+        if (m_boostedDailyRewards == null)
+        {
+            // have the boosted daily reward been initialized? 
+            return false;
+        }
+
+        bool finalRewardCollected = m_boostedDailyRewards.totalRewardIdx >= m_boostedDailyRewards.rewards.Length;
+        if (finalRewardCollected)
+        {
+            // If the 7 rewards have been collected, the boosted daily login is not longer active
+            return false;
+        }
+
+        return true;
     }
 
     /// <summary>
@@ -308,7 +323,7 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
 
     private void EndBoostedSevenDayLogin()
     {
-        m_boostedDailyRewards = new BoostedDailyRewardsSequence();
+        m_boostedDailyRewards = null;
     }
 
     private void CreateNonPayerOffer()
@@ -374,6 +389,15 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
             m_freeTournamentExpirationTimestamp = TimeUtils.TimestampToDate(PersistenceUtils.SafeParse<long>(_data["freeTournamentExpiration"]));
         }
         
+        // Load boosted daily rewards
+        key = "boostedDailyRewards";
+        if ( _data.ContainsKey(key) )
+        {
+            m_boostedDailyRewards = new BoostedDailyRewardsSequence();
+            m_boostedDailyRewards.LoadData(_data[key]);
+            
+        }
+        
         
 		
 	}
@@ -401,8 +425,14 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
         // Save free tournament pass
         data.Add("freeTournamentExpiration", PersistenceUtils.SafeToString(TimeUtils.DateToTimestamp( m_freeTournamentExpirationTimestamp )));
 
-		
-		return data;
+        // Save boosted daily rewarsd
+        if (m_boostedDailyRewards != null)
+        {
+            data.Add("boostedDailyRewards", m_boostedDailyRewards.SaveData());
+        }
+
+
+        return data;
 	}
 	
 	//------------------------------------------------------------------------//

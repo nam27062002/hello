@@ -127,8 +127,8 @@ public class DailyRewardsSequence {
 	/// No checks performed.
 	/// If the collected reward is the last one from the sequene, a new sequence will be generated.
 	/// </summary>
-	/// <param name="_doubled">Has the reward been doubled?</param>
-	public void CollectNextReward(bool _doubled) {
+	/// <param name="_multiplier">The multiplier to be applied to the reward</param>
+	public void CollectNextReward(float _multiplier = 1f) {
 		// Aux vars
 		DailyReward reward = GetNextReward();
 
@@ -145,13 +145,13 @@ public class DailyRewardsSequence {
 			rewardIdx,
 			m_totalRewardIdx,
 			trackingType,
-			_doubled ? reward.reward.amount * 2 : reward.reward.amount,
+			Convert.ToInt64( Math.Round(reward.reward.amount * _multiplier) ),
 			trackingSku,
-			_doubled
+			_multiplier > 1f
 		);
 
 		// Do it!
-		reward.Collect(_doubled);
+		reward.Collect(_multiplier);
 
 		// Do we need to generate a new sequence?
 		// [AOC] Before increasing the total index!! Otherwise rewardIdx will give 0

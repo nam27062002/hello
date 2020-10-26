@@ -57,7 +57,7 @@ public class DailyReward {
 
 	// State
 	public bool collected;
-	public bool doubled;
+	public bool multiplied;
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -83,7 +83,7 @@ public class DailyReward {
 
 		// Reset state
 		collected = false;
-		doubled = false;
+		multiplied = false;
 	}
 
 	/// <summary>
@@ -128,19 +128,19 @@ public class DailyReward {
     /// Collect the reward :)
     /// No checks performed.
     /// </summary>
-    /// <param name="_doubled">Has the reward been doubled?</param>
-    public void Collect(bool _doubled) {
+    /// <param name="_multiplier">Has the reward been multiplied?</param>
+    public void Collect(float _multiplier) {
 		// Make sure that we actually have a valid reward
 		if(reward == null) {
 			Debug.LogError("Attempting to collect a NULL daily reward!!");
 			return;
 		}
 
-		// Double the reward?
-		// [AOC] Just in case, don't do it again if it has already been doubled!
-		if(_doubled && !this.doubled) {
-			reward.bonusPercentage = 100f;
-			this.doubled = true;
+		// Multiply the reward? (ignore multipliers < 1)
+		// [AOC] Just in case, don't do it again if it has already been multiplied!
+		if(_multiplier > 1 && !this.multiplied) {
+			reward.bonusPercentage = 100f *  ( _multiplier - 1) ;
+			this.multiplied = true;
 		}
 
 		// If the reward is already owned by the time of collection (i.e. Dragon
@@ -293,7 +293,7 @@ public class DailyReward {
 
 		// State
 		if(_data.ContainsKey("collected")) collected = PersistenceUtils.SafeParse<bool>(_data["collected"]);
-		if(_data.ContainsKey("doubled")) doubled = PersistenceUtils.SafeParse<bool>(_data["doubled"]);
+		if(_data.ContainsKey("doubled")) multiplied = PersistenceUtils.SafeParse<bool>(_data["doubled"]);
 	}
 
 	/// <summary>
@@ -335,7 +335,7 @@ public class DailyReward {
 
 		// State
 		data.Add("collected", PersistenceUtils.SafeToString(collected));
-		data.Add("doubled", PersistenceUtils.SafeToString(doubled));
+		data.Add("doubled", PersistenceUtils.SafeToString(multiplied));
 
 		return data;
 	}
