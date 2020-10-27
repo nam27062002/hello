@@ -94,7 +94,8 @@ public class FlavourFactory
         { "dragon_skeleton_1", new List<string> { "PF_skeleton_tail_fire_blue", "PF_skeleton_motu_axe", "PF_skeleton_motu_chest", "PF_skeleton_motu_hood", "PF_skeleton_motu_shin_LF", "PF_skeleton_motu_shin_RT", "PF_skeleton_motu_shoulder_LF", "PF_skeleton_motu_shoulder_RT"} }, // Skully (Skulletor): Axe
         { "dragon_skeleton_2", new List<string> { "PF_skeleton_termi_wing_LF", "PF_skeleton_termi_wing_RT", "PF_skeleton_body_fire", "PF_skeleton_tail_fire" } },
         { "dragon_skeleton_3", new List<string> { "PF_skeleton_viking_axe", "PF_skeleton_mex_guitar", "PF_skeleton_mex_hat", "PF_skeleton_mex_jacket", "PF_skeleton_mex_sleeve_RT", "PF_skeleton_mex_sleeve_LF" } }, // Skully (Dragnarok): Axe
-        { "dragon_skeleton_4", new List<string> { "PF_skeleton_tail_fire_blue", "PF_skeleton_body_fire_blue", "PF_skeleton_viking_axe", "PF_skeleton_viking_necklace", "PF_skeleton_viking_belt", "PF_skeleton_viking_helmet", "PF_skeleton_viking_shield", "PF_skeleton_viking_shoulder_LF", "PF_skeleton_viking_shoulder_RT" } } // Skully (Dragnarok): Axe
+        { "dragon_skeleton_4", new List<string> { "PF_skeleton_tail_fire_blue", "PF_skeleton_body_fire_blue", "PF_skeleton_viking_axe", "PF_skeleton_viking_necklace", "PF_skeleton_viking_belt", "PF_skeleton_viking_helmet", "PF_skeleton_viking_shield", "PF_skeleton_viking_shoulder_LF", "PF_skeleton_viking_shoulder_RT" } }, // Skully (Dragnarok): Axe
+        { "dragon_dragonjira_4", new List<string> { "PF_spartan_hand", "PF_spartan_shield" } } // Dragonjira (Spartan): Spear, Shield (WW)
     };
 
     // The following accessories per-skin are only allowed on China
@@ -104,7 +105,8 @@ public class FlavourFactory
         { "dragon_skeleton_1", new List<string> { "PF_skeleton_facemask_1;PF_skeleton_legpiece_LF_1;PF_skeleton_legpiece_RT_1;PF_skeleton_ribcage_1;PF_skeleton_vertebra_1_1;PF_skeleton_vertebra_2_1;PF_skeleton_vertebra_3_1;PF_skeleton_wing_LF_1;PF_skeleton_wing_RT_1" } },
         { "dragon_skeleton_2", new List<string> { "PF_skeleton_facemask_2;PF_skeleton_legpiece_LF_2;PF_skeleton_legpiece_RT_2;PF_skeleton_ribcage_2;PF_skeleton_vertebra_1_2;PF_skeleton_vertebra_2_2;PF_skeleton_vertebra_3_2;PF_skeleton_wing_LF_2;PF_skeleton_wing_RT_2" } },
         { "dragon_skeleton_3", new List<string> { "PF_skeleton_facemask_3;PF_skeleton_legpiece_LF_3;PF_skeleton_legpiece_RT_3;PF_skeleton_ribcage_3;PF_skeleton_vertebra_1_3;PF_skeleton_vertebra_2_3;PF_skeleton_vertebra_3_3;PF_skeleton_wing_LF_3;PF_skeleton_wing_RT_3" } },
-        { "dragon_skeleton_4", new List<string> { "PF_skeleton_facemask_4;PF_skeleton_legpiece_LF_4;PF_skeleton_legpiece_RT_4;PF_skeleton_ribcage_4;PF_skeleton_vertebra_1_4;PF_skeleton_vertebra_2_4;PF_skeleton_vertebra_3_4;PF_skeleton_wing_LF_4;PF_skeleton_wing_RT_4" } }
+        { "dragon_skeleton_4", new List<string> { "PF_skeleton_facemask_4;PF_skeleton_legpiece_LF_4;PF_skeleton_legpiece_RT_4;PF_skeleton_ribcage_4;PF_skeleton_vertebra_1_4;PF_skeleton_vertebra_2_4;PF_skeleton_vertebra_3_4;PF_skeleton_wing_LF_4;PF_skeleton_wing_RT_4" } },
+        { "dragon_dragonjira_4", new List<string> { "PF_spartan_shield_china" } }
     };
 
     #region settings

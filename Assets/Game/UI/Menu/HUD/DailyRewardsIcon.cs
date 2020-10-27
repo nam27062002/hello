@@ -121,8 +121,18 @@ public class DailyRewardsIcon : MonoBehaviour, IBroadcastListener {
 	/// The icon has been tapped.
 	/// </summary>
 	public void OnIconTap() {
-		// Show the Daily Rewards popup
-		PopupManager.OpenPopupInstant(PopupDailyRewards.PATH);
+        // Check if there is a boosted daily login
+        if (WelcomeBackManager.instance.IsBoostedDailyRewardActive())
+        {
+            // Boosted daily has priority
+            PopupManager.OpenPopupInstant(PopupBoostedDailyRewards.PATH);
+        }
+        else
+        {
+            // Show the regular Daily Rewards popup
+            PopupManager.OpenPopupInstant(PopupDailyRewards.PATH);
+        }
+
 	}
 
 	/// <summary>

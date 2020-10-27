@@ -41,11 +41,27 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
 	
 	// Keep the definition at hand
 	private DefinitionNode m_def;
-
     public DefinitionNode def => m_def;
     
     // Free tournament
     private DateTime m_freeTournamentExpirationTimestamp;
+    
+    // Boosted daily reward
+    private BoostedDailyRewardsSequence m_boostedDailyRewards;
+    public BoostedDailyRewardsSequence boostedDailyRewards
+    {
+        get => m_boostedDailyRewards;
+    }
+    
+    // The multiplier applied to the reward if watching an ad
+    public int boostedDailyRewardAdMultiplier
+    {
+        get
+        {
+            return m_def.GetAsInt("boostedDailyLoginAdMultiplier");
+        }
+    }
+
 
     //------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -176,6 +192,7 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
 	    EndSoloQuest();
         EndPassiveEvent();
         EndFreePassTournament();
+        EndBoostedSevenDayLogin();
     }
 
     /// <summary>
@@ -218,7 +235,28 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
 
         return currency;
     }
-    
+
+    /// <summary>
+    /// Check if the boosted daily reward is active.
+    /// </summary>
+    /// <returns></returns>
+    public bool IsBoostedDailyRewardActive()
+    {
+        if (m_boostedDailyRewards == null)
+        {
+            // have the boosted daily reward been initialized? 
+            return false;
+        }
+
+        bool finalRewardCollected = m_boostedDailyRewards.totalRewardIdx >= m_boostedDailyRewards.rewards.Length;
+        if (finalRewardCollected)
+        {
+            // If the 7 rewards have been collected, the boosted daily login is not longer active
+            return false;
+        }
+
+        return true;
+    }
 
     /// <summary>
     /// Initialize the solo quest perk
@@ -277,7 +315,15 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
 
     private void CreateBoostedSevenDayLogin()
     {
+        m_boostedDailyRewards = new BoostedDailyRewardsSequence();
+        
+        //Initialize from content
+        m_boostedDailyRewards.Generate();
+    }
 
+    private void EndBoostedSevenDayLogin()
+    {
+        m_boostedDailyRewards = null;
     }
 
     private void CreateNonPayerOffer()
@@ -343,6 +389,15 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
             m_freeTournamentExpirationTimestamp = TimeUtils.TimestampToDate(PersistenceUtils.SafeParse<long>(_data["freeTournamentExpiration"]));
         }
         
+        // Load boosted daily rewards
+        key = "boostedDailyRewards";
+        if ( _data.ContainsKey(key) )
+        {
+            m_boostedDailyRewards = new BoostedDailyRewardsSequence();
+            m_boostedDailyRewards.LoadData(_data[key]);
+            
+        }
+        
         
 		
 	}
@@ -370,8 +425,14 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
         // Save free tournament pass
         data.Add("freeTournamentExpiration", PersistenceUtils.SafeToString(TimeUtils.DateToTimestamp( m_freeTournamentExpirationTimestamp )));
 
-		
-		return data;
+        // Save boosted daily rewarsd
+        if (m_boostedDailyRewards != null)
+        {
+            data.Add("boostedDailyRewards", m_boostedDailyRewards.SaveData());
+        }
+
+
+        return data;
 	}
 	
 	//------------------------------------------------------------------------//

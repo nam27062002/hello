@@ -25,31 +25,31 @@ public class PopupDailyRewards : MonoBehaviour, IBroadcastListener {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed References
-	[SerializeField] private DailyRewardView[] m_rewardSlots = new DailyRewardView[DailyRewardsSequence.SEQUENCE_SIZE];
+	[SerializeField] protected DailyRewardView[] m_rewardSlots = new DailyRewardView[DailyRewardsSequence.SEQUENCE_SIZE];
 	public DailyRewardView[] rewardSlots {
 		get { return m_rewardSlots; }
 	}
 
 	[Space]
-	[SerializeField] private GameObject m_collectButton = null;
-	[SerializeField] private GameObject m_doubleAdButton = null;
-	[SerializeField] private GameObject m_dismissButton = null;
-    [SerializeField] private GameObject m_doubleButton = null;
+	[SerializeField] protected GameObject m_collectButton = null;
+	[SerializeField] protected GameObject m_doubleAdButton = null;
+	[SerializeField] protected GameObject m_dismissButton = null;
+    [SerializeField] protected GameObject m_doubleButton = null;
 
     [Space]
-	[SerializeField] private ShowHideAnimator m_currencyCounterAnim = null;
-	[SerializeField] private ProfileCurrencyCounter m_currencyCounter = null;
-	[SerializeField] private Transform m_currencyFXAnchor = null;
+	[SerializeField] protected ShowHideAnimator m_currencyCounterAnim = null;
+	[SerializeField] protected ProfileCurrencyCounter m_currencyCounter = null;
+	[SerializeField] protected Transform m_currencyFXAnchor = null;
 
 	// Internal logic
-	private bool m_rewardsFlowPending = false;
-	private bool m_rewardCollected = false; // Prevent collect spamming
+    protected bool m_rewardsFlowPending = false;
+    protected bool m_rewardCollected = false; // Prevent collect spamming
 
 	// Internal references
-	private ParticlesTrailFX m_currencyFX = null;
+    protected ParticlesTrailFX m_currencyFX = null;
 
 	// Cache some data
-	private DailyRewardsSequence m_sequence = null;
+    protected DailyRewardsSequence m_sequence = null;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -81,7 +81,7 @@ public class PopupDailyRewards : MonoBehaviour, IBroadcastListener {
 	/// Initialize the popup with current Daily Rewards Sequence.
 	/// </summary>
 	/// <param name="_dismissButtonAllowed">Allow dismiss button?</param>
-	private void InitWithCurrentData(bool _dismissButtonAllowed) {
+	protected virtual void InitWithCurrentData(bool _dismissButtonAllowed) {
 		// Aux vars
 		m_sequence = UsersManager.currentUser.dailyRewards;
 		DailyReward currentReward = m_sequence.GetNextReward();
@@ -135,8 +135,8 @@ public class PopupDailyRewards : MonoBehaviour, IBroadcastListener {
 	/// <summary>
 	/// Collects the next reward, programs the reward flow and closes the popup.
 	/// </summary>
-	/// <param name="_doubled">Has the reward been doubled?</param>
-	private void CollectNextReward(bool _doubled) {
+	/// <param name="_multiplier">The multiplier applied to the reward</param>
+	protected void CollectNextReward(float _multiplier = 1) {
 		// Prevent spamming
 		if(m_rewardCollected) return;
 
@@ -151,7 +151,7 @@ public class PopupDailyRewards : MonoBehaviour, IBroadcastListener {
 			DailyRewardView collectedRewardSlot = m_rewardSlots[rewardIdx];
 
 			// Collect the reward! (This only pushes the reward to the stack and updates its state)
-			m_sequence.CollectNextReward(_doubled);
+			m_sequence.CollectNextReward(_multiplier);
 
 			// Save persistence
 			PersistenceFacade.instance.Save_Request();
@@ -278,14 +278,14 @@ public class PopupDailyRewards : MonoBehaviour, IBroadcastListener {
 		// Prevent spamming
 		if(m_rewardCollected) return;
 
-		// Launch the rewards flow, no doubling
-		CollectNextReward(false);
+		// Launch the rewards flow, no multiplier
+		CollectNextReward();
 	}
 
 	/// <summary>
-	/// The double button has been pressed.
+	/// The ad button has been pressed.
 	/// </summary>
-	public void OnDoubleAdButton() {
+	public void OnAdButton() {
 		// Prevent spamming
 		if(m_rewardCollected) return;
 
@@ -317,21 +317,21 @@ public class PopupDailyRewards : MonoBehaviour, IBroadcastListener {
 	/// A rewarded ad has finished.
 	/// </summary>
 	/// <param name="_success">Has the ad been successfully played?</param>
-	public void OnAdRewardCallback(bool _success) {
+	public virtual void OnAdRewardCallback(bool _success) {
 		if(_success) {
 			// Success!
 			// Launch the rewards flow, double reward
-			CollectNextReward(true);
+			CollectNextReward(2f);
 		}
 	}
 
     /// <summary>
     /// The player collects the double reward by using the Remove Ads feature
     /// </summary>
-    public void OnDoubleButton ()
+    public virtual void OnDoubleButton ()
     {
         // Launch the rewards flow, double reward
-        CollectNextReward(true);
+        CollectNextReward(2f);
     }
 
 	//------------------------------------------------------------------------//

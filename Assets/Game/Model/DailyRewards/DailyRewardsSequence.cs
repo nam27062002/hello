@@ -38,7 +38,7 @@ public class DailyRewardsSequence {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Sequence
-	private DailyReward[] m_rewards;
+	protected DailyReward[] m_rewards;
 	public DailyReward[] rewards {
 		get {
 			if(!ValidateRewards()) Generate();	// Just in case
@@ -47,7 +47,7 @@ public class DailyRewardsSequence {
 	}
 
 	// Rewards indexing
-	private int m_totalRewardIdx;
+	protected int m_totalRewardIdx;
 	public int totalRewardIdx {	// The total index of the NEXT reward to be collected, that is, counting all collected rewards in all sequences
 		get { return m_totalRewardIdx; }
 	}
@@ -57,7 +57,7 @@ public class DailyRewardsSequence {
 	}
 
 	// Other vars
-	private DateTime m_nextCollectionTimestamp;	// UTC, time at which the cooldown has expired and the player can collect the next reward
+	protected DateTime m_nextCollectionTimestamp;	// UTC, time at which the cooldown has expired and the player can collect the next reward
 	public DateTime nextCollectionTimestamp {
 		get { return m_nextCollectionTimestamp; }
 	}
@@ -127,8 +127,8 @@ public class DailyRewardsSequence {
 	/// No checks performed.
 	/// If the collected reward is the last one from the sequene, a new sequence will be generated.
 	/// </summary>
-	/// <param name="_doubled">Has the reward been doubled?</param>
-	public void CollectNextReward(bool _doubled) {
+	/// <param name="_multiplier">The multiplier to be applied to the reward</param>
+	public void CollectNextReward(float _multiplier = 1f) {
 		// Aux vars
 		DailyReward reward = GetNextReward();
 
@@ -145,13 +145,13 @@ public class DailyRewardsSequence {
 			rewardIdx,
 			m_totalRewardIdx,
 			trackingType,
-			_doubled ? reward.reward.amount * 2 : reward.reward.amount,
+			Convert.ToInt64( Math.Round(reward.reward.amount * _multiplier) ),
 			trackingSku,
-			_doubled
+			_multiplier > 1f
 		);
 
 		// Do it!
-		reward.Collect(_doubled);
+		reward.Collect(_multiplier);
 
 		// Do we need to generate a new sequence?
 		// [AOC] Before increasing the total index!! Otherwise rewardIdx will give 0
@@ -190,7 +190,7 @@ public class DailyRewardsSequence {
 	/// <summary>
 	/// Generate a new sequence of rewards.
 	/// </summary>
-	public void Generate() {
+	public virtual void Generate() {
 		// Gather all defined reward definitions
 		List<DefinitionNode> rewardDefs = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.DAILY_REWARDS);
 
@@ -271,7 +271,7 @@ public class DailyRewardsSequence {
 	/// Constructor from json data.
 	/// </summary>
 	/// <param name="_data">Data to be parsed.</param>
-	public void LoadData(SimpleJSON.JSONNode _data) {
+	public virtual void LoadData(SimpleJSON.JSONNode _data) {
 		// Reset any existing data
 		Reset();
 
@@ -306,7 +306,7 @@ public class DailyRewardsSequence {
 	/// Serialize into json.
 	/// </summary>
 	/// <returns>The json. Can be null if sequence has never been generated.</returns>
-	public SimpleJSON.JSONClass SaveData() {
+	public virtual SimpleJSON.JSONClass SaveData() {
 		// If sequence is not valid, don't save
 		if(!ValidateRewards()) {
 			return null;

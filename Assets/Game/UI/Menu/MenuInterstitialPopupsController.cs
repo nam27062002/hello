@@ -566,11 +566,27 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 		if(!UsersManager.currentUser.HasPlayedGames(GameSettings.ENABLE_DAILY_REWARDS_AT_RUN)) return;
 
 		// If the reward is available show the popup!
-		if(UsersManager.currentUser.dailyRewards.CanCollectNextReward()) {
-			PopupManager.EnqueuePopup(PopupDailyRewards.PATH);
-			SetFlag(StateFlag.POPUP_DISPLAYED, true);
-		}
-	}
+        
+        // Check if boosted daily login is enabled (welcome back feature)
+        if (WelcomeBackManager.instance.IsBoostedDailyRewardActive())
+        {
+            // Boosted daily has priority
+            if (WelcomeBackManager.instance.boostedDailyRewards.CanCollectNextReward())
+            {
+                PopupManager.OpenPopupInstant(PopupBoostedDailyRewards.PATH);
+                SetFlag(StateFlag.POPUP_DISPLAYED, true);
+            }
+        }
+        else
+        {
+            // Show the regular Daily Rewards popup
+            if (UsersManager.currentUser.dailyRewards.CanCollectNextReward())
+            {
+                PopupManager.EnqueuePopup(PopupDailyRewards.PATH);
+                SetFlag(StateFlag.POPUP_DISPLAYED, true);
+            }
+        }
+    }
 
 	/// <summary>
 	/// Checks if we are coming from HSE cross promotion
