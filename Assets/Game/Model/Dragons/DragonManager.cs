@@ -48,6 +48,15 @@ public class DragonManager : Singleton<DragonManager> {
         }
 	}
 
+    // Returns the last classic dragon in the progression
+    public static IDragonData lastClassicDragon
+    {
+        get
+        {
+            return instance.m_classicDragonsByOrder[instance.m_classicDragonsByOrder.Count - 1];
+        }
+    }
+
 	// Check current game context to know if the current dragon assigned to the player is the actual current owned and selected dragon, or the one assigned by the tournament.
 	public static IDragonData CurrentDragonConsideringTournament {
 		get {

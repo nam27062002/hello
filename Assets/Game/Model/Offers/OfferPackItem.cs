@@ -108,7 +108,12 @@ public class OfferPackItem {
 		}
 
 		// Item Sku
-		m_sku = _def.GetAsString(prefix + "Sku");
+        m_sku = _def.GetAsString(prefix + "Sku");
+        
+        // If needed replace "dragon_last_classic" with the actual dragon sku
+        if (m_sku == OfferPack.DRAGON_LAST_CLASSIC)
+            m_sku = DragonManager.lastClassicDragon.sku;
+
 
 		// Initialize reward
 		Metagame.Reward.Data rewardData = new Metagame.Reward.Data();

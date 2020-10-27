@@ -24,22 +24,37 @@ using System.Runtime.InteropServices.WindowsRuntime;
 public class WelcomeBackManager : Singleton<WelcomeBackManager>
 {
 	//------------------------------------------------------------------------//
-	// CONSTANTS															  //
+	// ENUM        															  //
 	//------------------------------------------------------------------------//
+    public enum PlayerType
+    {
+        NON_PAYER,
+        PAYER_WITHOUT_LAST_DRAGON,
+        PAYER_WITH_LAST_DRAGON
+    }
+    
+    //------------------------------------------------------------------------//
+    // CONST       															  //
+    //------------------------------------------------------------------------//
+    public const string ALL = "all";
+    public const string PAYER = "payer";
+    public const string NON_PAYER = "non_payer";
 
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 
 	private DateTime m_lastVisit;
-	private bool m_welcomeBackTriggered;
+    private PlayerType m_playerType;
+    private bool m_active;
+
 
 	// WB configuration
 	private bool enabled = true;
-	private int m_minAbsentDays; // Amount of days the the player needs to be absent to get the WB
 
-	
-	// Keep the definition at hand
+
+
+    // Keep the definition at hand
 	private DefinitionNode m_def;
     public DefinitionNode def => m_def;
     
@@ -61,6 +76,14 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
             return m_def.GetAsInt("boostedDailyLoginAdMultiplier");
         }
     }
+
+    
+    // Welcome back becomes active when triggered and never expires. Only can be deactivated via cheats panel.
+    public bool active
+    {
+        get { return m_active; }
+    }
+
 
 
     //------------------------------------------------------------------------//
@@ -103,8 +126,7 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
             m_def = defs[0];
         }
 
-        // Load the config params
-        m_minAbsentDays = def.GetAsInt("minAbsentDays");
+
 
     }
 
@@ -121,13 +143,16 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
 		    return false;
 		
         // This player already enjoyed this feature
-        if (m_welcomeBackTriggered)
+        if (m_active)
 		    return false;
 
 		m_lastVisit = UsersManager.currentUser.saveTimestamp;
+        
+        // Amount of days the the player needs to be absent to get the WB
+        int minAbsentDays = def.GetAsInt("minAbsentDays");
 
         // This player didnt spend enough days offline to get a WB
-		if (GameServerManager.GetEstimatedServerTime() < m_lastVisit.AddDays(m_minAbsentDays))
+		if (GameServerManager.GetEstimatedServerTime() < m_lastVisit.AddDays(minAbsentDays))
 			return false;
 
         // All checks passed
@@ -139,7 +164,7 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
 	/// The welcome back feature becomes active. Enables all the benefits depending on the player profile.
 	/// </summary>
     public void Activate()
-	{
+    {
 
 		// Create Solo Quest
 		CreateSoloQuest();
@@ -150,37 +175,55 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
 		// Activate free tournament entrance
 		ActivateFreePassTournament();
 
+        // Which type of players can enjoy the boosted 7 day login?
+        string boostedDailyRewardsPlayerType = m_def.GetAsString("boostedDailyRewardsPlayerType", "all");
+
 		// Profile specific perks:
-		bool nonPayer = true;
-        if ( nonPayer)
-		{
-			// Activate boosted seven day login
-			CreateBoostedSevenDayLogin();
-
-			// Show non payer offer in the shop
+        if ( m_playerType == PlayerType.NON_PAYER)
+        {
+            // Show non payer offer in the shop
 			CreateNonPayerOffer();
+            
+            if (boostedDailyRewardsPlayerType == ALL || boostedDailyRewardsPlayerType == NON_PAYER)
+            {
+                // Activate boosted seven day login
+                CreateBoostedSevenDayLogin();
+            }
 
-		} else
+		} 
+        else if (m_playerType == PlayerType.PAYER_WITHOUT_LAST_DRAGON)
+        {
+            // Enable Happy Hour
+            ActivateHappyHour();
+            
+            // Show Latest dragon offer
+            CreateLatestDragonOffer();
+            
+            if (boostedDailyRewardsPlayerType == ALL || boostedDailyRewardsPlayerType == PAYER)
+            {
+                // Activate boosted seven day login
+                CreateBoostedSevenDayLogin();
+            }
+			
+        }
+        else if (m_playerType == PlayerType.PAYER_WITH_LAST_DRAGON)
 		{
 			// Enable Happy Hour
 			ActivateHappyHour();
-
-            // Dragon progression specifics
-			bool playerOwnsLatestDragon = true;
-            if (playerOwnsLatestDragon)
-			{
-				// Show special Gatcha offer
-				CreateSpecialGatchaOffer();
-			}
-            else
-			{
-				// Show Latest dragon offer
-				CreateLatestDragonOffer();
-			}
-		}
+    
+            // Show special Gatcha offer
+			CreateSpecialGatchaOffer();
+            
+            if (boostedDailyRewardsPlayerType == ALL || boostedDailyRewardsPlayerType == NON_PAYER)
+            {
+                // Activate boosted seven day login
+                CreateBoostedSevenDayLogin();
+            }
+        }
+        
 
 		// Register WB
-		m_welcomeBackTriggered = true;
+		m_active = true;
 	}
 
     /// <summary>
@@ -193,6 +236,8 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
         EndPassiveEvent();
         EndFreePassTournament();
         EndBoostedSevenDayLogin();
+
+        m_active = false;
     }
 
     /// <summary>
@@ -364,8 +409,15 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
 	public void ParseJson(SimpleJSON.JSONNode _data)
 	{
 		
+        // Is active?
+        string key = "active";
+        if ( _data.ContainsKey(key) )
+        {
+            m_active = PersistenceUtils.SafeParse<bool>(_data[key]);
+        }
+        
 		// Load solo quest in the liveDataManager
-		string key = "soloQuest";
+		key = "soloQuest";
 		if ( _data.ContainsKey(key) )
 		{
 			HDSoloQuestManager soloQuest = new HDSoloQuestManager();
@@ -409,8 +461,11 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
 	public SimpleJSON.JSONClass ToJson()
 	{
 		SimpleJSON.JSONClass data = new SimpleJSON.JSONClass();
+        
+        // Welcome back state
+        data.Add("active", m_active);
 
-		// If there is an active SoloQuest, save it
+        // If there is an active SoloQuest, save it
 		if (HDLiveDataManager.instance.soloQuest.EventExists())
 		{
 			data.Add("soloQuest", HDLiveDataManager.instance.soloQuest.ToJson());
@@ -444,7 +499,7 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
 	/// </summary>
 	public void OnForceStart()
 	{
-		m_welcomeBackTriggered = false;
+		m_active = false;
 		
 		Activate();
 	}
