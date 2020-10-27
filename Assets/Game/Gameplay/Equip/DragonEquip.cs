@@ -309,13 +309,6 @@ public class DragonEquip : MonoBehaviour {
 								rqSetters[j].Apply();
 							}
 						}
-
-                        // Set skinned mesh renderer on particle accessory
-						EquipableParticleSetViewMesh particleSetViewMesh = equipable.GetComponent<EquipableParticleSetViewMesh>();
-                        if (particleSetViewMesh != null)
-                        {
-							particleSetViewMesh.Setup(this);
-                        }
 					}
 					else
 					{
