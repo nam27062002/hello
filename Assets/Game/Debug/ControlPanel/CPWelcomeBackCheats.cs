@@ -26,7 +26,8 @@ public class CPWelcomeBackCheats : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
-	// Exposed
+
+    [SerializeField] private TextMeshProUGUI m_playerType;
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -73,7 +74,10 @@ public class CPWelcomeBackCheats : MonoBehaviour {
 		
 		// Save persistence
 		PersistenceFacade.instance.Save_Request(false);
-	}
+
+        // Update cheats panel info
+        m_playerType.text = "Player Type: " + WelcomeBackManager.instance.playerType.ToString();
+    }
 	
 	/// <summary>
 	/// The activate Welcome back button has been pressed
@@ -85,6 +89,10 @@ public class CPWelcomeBackCheats : MonoBehaviour {
 		
 		// Save persistence
 		PersistenceFacade.instance.Save_Request(false);
+        
+        // Update cheats panel info
+        m_playerType.text = "Player Type: " + WelcomeBackManager.instance.playerType.ToString();
+        
 	}
 
 

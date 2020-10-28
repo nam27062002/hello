@@ -359,6 +359,44 @@ public class HappyHourManager {
 		return false;
 	}
 
+    /// <summary>
+    /// Force the start of a happy hour with the specified SKU, even if such HH appears as
+    /// disabled in the content.
+    /// </summary>
+    /// <param name="_happyHourSku">The SKU of the happy hour config in the content</param>
+    public void ForceStart(string _happyHourSku)
+    {
+        
+        // Check that such SKU is defined
+        if (!m_allHappyHours.ContainsKey(_happyHourSku))
+        {
+            Debug.LogError("The specified Happy Hour configuration " + _happyHourSku +
+                           " doesnt exist in the content");
+            return;
+        }
+
+        HappyHour.Data data = m_allHappyHours[_happyHourSku];
+        ActivateHappyHour(data);
+    }
+
+    /// <summary>
+    /// Force the stop of the specified Happy Hour
+    /// Usually happy hours expires after a time, but we provide this method to be
+    /// used from the cheats panel for debug purposes.
+    /// </summary>
+    /// <param name="_happyHourSku"></param>
+    public void ForceStop(string _happyHourSku)
+    {
+        // Check if the specified SKU is the current one
+        if (m_happyHour != null &&
+            m_happyHour.IsActive() &&
+            m_happyHour.data.def.sku == _happyHourSku)
+        {
+            // End the happy hour
+            m_happyHour.Finish();
+        }
+    }
+
 	//------------------------------------------------------------------------//
 	// PERSISTENCE															  //
 	//------------------------------------------------------------------------//
