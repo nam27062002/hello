@@ -70,7 +70,7 @@ public class OfferPack {
 	public const string DRAGON_DISCOUNT = "dragon_discount";
     public const string WELCOME_BACK = "welcomeback";
 
-    public const string DRAGON_LAST_CLASSIC = "dragon_last_classic"; 
+    public const string DRAGON_LAST_PROGRESSION = "dragon_last_progression"; 
 
     public const int MAX_ITEMS = 3; // For now
 	public const Type DEFAULT_TYPE = Type.PROGRESSION;
@@ -819,12 +819,10 @@ public class OfferPack {
 		// Dragons
 		for(int i = 0; i < m_dragonUnlocked.Length; ++i) {
             
-            // replace "dragon_last_classic" with the actual dragon sku
-            string sku = (m_dragonUnlocked[i] == DRAGON_LAST_CLASSIC)
-                ? DragonManager.lastClassicDragon.sku
-                : m_dragonUnlocked[i];
-            
-			if(DragonManager.GetDragonData(sku).lockState <= IDragonData.LockState.LOCKED) {
+            // replace "dragon_last_progression" with the actual dragon sku
+            string sku = m_dragonUnlocked[i].Replace(DRAGON_LAST_PROGRESSION, DragonManager.lastClassicDragon.sku);
+
+            if(DragonManager.GetDragonData(sku).lockState <= IDragonData.LockState.LOCKED) {
 				OffersManager.LogPack(this, "      CheckActivation {0}: FAIL! Unlocked Dragons {1}", Color.red, m_def.sku, sku);
 				return false;
 			}
@@ -832,10 +830,9 @@ public class OfferPack {
 
 		for(int i = 0; i < m_dragonOwned.Length; ++i) {
             
-            // replace "dragon_last_classic" with the actual dragon sku
-            string sku = (m_dragonOwned[i] == DRAGON_LAST_CLASSIC)
-                ? DragonManager.lastClassicDragon.sku
-                : m_dragonOwned[i];
+            // replace "dragon_last_progression" with the actual dragon sku
+            string sku = m_dragonOwned[i].Replace(DRAGON_LAST_PROGRESSION, DragonManager.lastClassicDragon.sku);
+
             
 			if(!DragonManager.IsDragonOwned(sku))
             {
@@ -991,10 +988,9 @@ public class OfferPack {
 		// Dragons
 		for(int i = 0; i < m_dragonNotOwned.Length; ++i) {
             
-            // replace "dragon_last_classic" with the actual dragon sku
-            string sku = (m_dragonNotOwned[i] == DRAGON_LAST_CLASSIC)
-                ? DragonManager.lastClassicDragon.sku
-                : m_dragonNotOwned[i];
+            // replace "dragon_last_progression" with the actual dragon sku
+            string sku = m_dragonNotOwned[i].Replace(DRAGON_LAST_PROGRESSION, DragonManager.lastClassicDragon.sku);
+
             
 			if(DragonManager.IsDragonOwned(sku)) {
 				OffersManager.LogPack(this, "      CheckExpiration {0}: EXPIRED! Dragons Not Owned {1}", Color.red, m_def.sku, sku);

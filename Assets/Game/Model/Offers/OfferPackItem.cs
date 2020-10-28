@@ -10,6 +10,8 @@
 using UnityEngine;
 using System;
 using System.Globalization;
+using System.Text.RegularExpressions;
+using Metagame;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -110,10 +112,10 @@ public class OfferPackItem {
 		// Item Sku
         m_sku = _def.GetAsString(prefix + "Sku");
         
-        // If needed replace "dragon_last_classic" with the actual dragon sku
-        if (m_sku == OfferPack.DRAGON_LAST_CLASSIC)
-            m_sku = DragonManager.lastClassicDragon.sku;
-
+        // If needed replace the generic SKU "dragon_last_progression" with the actual dragon SKU,
+        // this also works for skins (i.e. "dragon_last_progression_2")
+        m_sku = m_sku.Replace(OfferPack.DRAGON_LAST_PROGRESSION, DragonManager.lastClassicDragon.sku);
+        
 
 		// Initialize reward
 		Metagame.Reward.Data rewardData = new Metagame.Reward.Data();
