@@ -28,6 +28,7 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
 	//------------------------------------------------------------------------//
     public enum PlayerType
     {
+        UNKNOWN,
         NON_PAYER,
         PAYER_WITHOUT_LAST_DRAGON,
         PAYER_WITH_LAST_DRAGON
@@ -46,6 +47,7 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
 
 	private DateTime m_lastVisit;
     private PlayerType m_playerType;
+    public PlayerType playerType => m_playerType;
     private bool m_active;
 
 
@@ -165,11 +167,11 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
 	/// </summary>
     public void Activate()
     {
-
-		// Create Solo Quest
+        
+        m_playerType = FindPlayerType();
+        
 		CreateSoloQuest();
-
-		// Activate Passive Event
+        
 		ActivatePassiveEvent();
 
 		// Activate free tournament entrance
@@ -186,14 +188,14 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
             
             if (boostedDailyRewardsPlayerType == ALL || boostedDailyRewardsPlayerType == NON_PAYER)
             {
-                // Activate boosted seven day login
+                // Activate boosted daily rewards
                 CreateBoostedSevenDayLogin();
             }
 
 		} 
         else if (m_playerType == PlayerType.PAYER_WITHOUT_LAST_DRAGON)
         {
-            // Enable Happy Hour
+            
             ActivateHappyHour();
             
             // Show Latest dragon offer
@@ -208,7 +210,7 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
         }
         else if (m_playerType == PlayerType.PAYER_WITH_LAST_DRAGON)
 		{
-			// Enable Happy Hour
+
 			ActivateHappyHour();
     
             // Show special Gatcha offer
@@ -236,9 +238,13 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
         EndPassiveEvent();
         EndFreePassTournament();
         EndBoostedSevenDayLogin();
+        EndHappyHour();
 
         m_active = false;
+
+        m_playerType = PlayerType.UNKNOWN;
     }
+
 
     /// <summary>
     /// Check if the "free" tournament pass is active. Notice that the entrance fee could be free or not.
@@ -301,6 +307,38 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
         }
 
         return true;
+    }
+    
+    
+    /// <summary>
+    /// Find the type of the player based on his purchases / dragons progression.
+    /// </summary>
+    /// <returns>Payer, non payer, etc.</returns>
+    private PlayerType FindPlayerType()
+    {
+        // Find all the purchases of this player
+        TrackingPersistenceSystem trackingPersistence = HDTrackingManager.Instance.TrackingPersistenceSystem;
+        int totalPurchases = (trackingPersistence == null) ? 0 : trackingPersistence.TotalPurchases;
+
+        if (totalPurchases <= 0)
+        {
+            // No purchases -> non payer
+            return PlayerType.NON_PAYER;
+        } else
+        {
+            // Does the player own the last classic dragon?
+            string lastDragonSku = DragonManager.lastClassicDragon.sku;
+            bool lastDragonOwned = DragonManager.IsDragonOwned(lastDragonSku);
+
+            if (lastDragonOwned)
+            {
+                return PlayerType.PAYER_WITH_LAST_DRAGON;
+            }
+            else
+            {
+                return PlayerType.PAYER_WITHOUT_LAST_DRAGON;
+            }
+        }
     }
 
     /// <summary>
@@ -373,22 +411,48 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
 
     private void CreateNonPayerOffer()
     {
-
+        // Nothing to do, this offer will be automatically activated
+        // by the offersManager
     }
 
     private void ActivateHappyHour()
     {
+        string sku = def.GetAsString("happyHourSku");
+        if (string.IsNullOrEmpty(sku) || sku == "-")
+        {
+            // Happy hour feature is disabled from content
+            return;
+        }
+        
+        // Force the activation of this HH config
+        OffersManager.happyHourManager.ForceStart(sku);
+
+    }
+    
+    private void EndHappyHour()
+    {
+        string sku = def.GetAsString("happyHourSku");
+        if (string.IsNullOrEmpty(sku) || sku == "-")
+        {
+            // Happy hour feature is disabled from content
+            return;
+        }
+        
+        // Force the stop of this HH config
+        OffersManager.happyHourManager.ForceStop(sku);
 
     }
 
     private void CreateLatestDragonOffer ()
     {
-
+        // Nothing to do, this offer will be automatically activated
+        // by the offersManager
     }
 
     private void CreateSpecialGatchaOffer()
     {
-
+        // Nothing to do, this offer will be automatically activated
+        // by the offersManager
     }
     
     
@@ -485,7 +549,6 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
         {
             data.Add("boostedDailyRewards", m_boostedDailyRewards.SaveData());
         }
-
 
         return data;
 	}
