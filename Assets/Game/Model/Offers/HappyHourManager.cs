@@ -212,11 +212,20 @@ public class HappyHourManager {
 				candidateData = m_enabledHappyHours[i];
 				Log(Colors.white.Tag("Checking candidate " + candidateData.def.sku));
 
+                                
+                // Only HH with automatic start are elegible for time activation
+                if (!candidateData.autoStart)
+                {
+                    Log(Colors.orange.Tag("TO BE TRIGGERED MANUALLY, SKIP"));
+                    continue;
+                }
+                
 				// Only happy hours triggered by date are eligible for time activation!
 				if(!candidateData.triggeredByDate) {
 					Log(Colors.orange.Tag("NOT TRIGGERED BY TIME, SKIP"));
 					continue;
 				}
+
 
 				// Did we reached the start date?
 				if(candidateData.startDate <= serverTime) {
@@ -377,6 +386,7 @@ public class HappyHourManager {
 
         HappyHour.Data data = m_allHappyHours[_happyHourSku];
         ActivateHappyHour(data);
+
     }
 
     /// <summary>
@@ -392,9 +402,18 @@ public class HappyHourManager {
             m_happyHour.IsActive() &&
             m_happyHour.data.def.sku == _happyHourSku)
         {
+            
             // End the happy hour
             m_happyHour.Finish();
+            
+            // Store new expiration date
+            m_lastHappyHourExpirationDate = m_happyHour.expirationTime;
+            
+            // Save persistence
+            Save();
         }
+        
+        
     }
 
 	//------------------------------------------------------------------------//
@@ -487,6 +506,9 @@ public class HappyHourManager {
 		else {
 			// Check all enabled happy hours looking for the one that needs to be activated
 			for(int i = 0; i < m_enabledHappyHours.Count; ++i) {
+                // Obly HH with auto start are elegible to be activated here!
+                if (!m_enabledHappyHours[i].autoStart) continue;
+                
 				// Only happy hours NOT triggered by date are eligible for this type of activation!
 				if(m_enabledHappyHours[i].triggeredByDate) continue;
 

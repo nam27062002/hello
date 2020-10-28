@@ -40,6 +40,9 @@ public class HappyHour {
 		public bool triggeredByDate { get { return startDate > DateTime.MinValue; } }
 
 		public int popupTriggerRunNumber = 0;
+        
+        public bool autoStart; // True: HH will be activated when buying PC, or after a date.
+                               // False: HH will be activated when explicitly requested (i.e. Welcome Back feature)
 
 		/// <summary>
 		/// Parametrized constructor.
@@ -64,7 +67,10 @@ public class HappyHour {
 
 			// Popup delay
 			popupTriggerRunNumber = def.GetAsInt("triggerRunNumber", 0);
-		}
+            
+            // Auto start at run N, or manual start (welcome back)
+            autoStart = def.GetAsBool("autoStart", true);
+        }
 	}
 
 	//------------------------------------------------------------------------//
