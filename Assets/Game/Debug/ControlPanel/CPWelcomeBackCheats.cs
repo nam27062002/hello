@@ -43,7 +43,8 @@ public class CPWelcomeBackCheats : MonoBehaviour {
 	/// Component has been enabled.
 	/// </summary>
 	private void OnEnable() {
-
+        // Update cheats panel info
+        m_playerType.text = "Player Type: " + WelcomeBackManager.instance.playerType.ToString();
 	}
 
 	/// <summary>
