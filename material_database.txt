@@ -1,5 +1,5 @@
 -------------------------------------------------------------------------------------------------------------------------------------------------------------
-HD ver: 3.4.1
+HD ver: 3.4.2
 -------------------------------------------------------------------------------------------------------------------------------------------------------------
 Material:   alen_buildboard
 Shader:     Hungry Dragon/Scenary/Scenary Standard
@@ -1574,12 +1574,12 @@ Keywords:   FRESNEL FXLAYER_NONE NORMALMAP SELFILLUMINATE_NORMAL SPECULAR _ZWRIT
 Material:   dragon_dragonjira_0_body
 Shader:     Hungry Dragon/Dragon/Dragon standard
 LightMode:  FORWARDBASE
-Keywords:   FRESNEL FXLAYER_NONE NORMALMAP SELFILLUMINATE_NORMAL SPECULAR _ZWRITE_ON 
+Keywords:   FRESNEL FXLAYER_NONE NORMALMAP SELFILLUMINATE_BLINKLIGHTS SPECULAR _ZWRITE_ON 
 -------------------------------------------------------------------------------------------------------------------------------------------------------------
 Material:   dragon_dragonjira_0_ingame_body
 Shader:     Hungry Dragon/Dragon/Dragon standard
 LightMode:  FORWARDBASE
-Keywords:   FRESNEL FXLAYER_NONE NORMALMAP SELFILLUMINATE_NORMAL SPECULAR _ZWRITE_ON 
+Keywords:   FRESNEL FXLAYER_NONE NORMALMAP SELFILLUMINATE_BLINKLIGHTS SPECULAR _ZWRITE_ON 
 -------------------------------------------------------------------------------------------------------------------------------------------------------------
 Material:   dragon_dragonjira_0_ingame_wings
 Shader:     Hungry Dragon/Dragon/Dragon standard
@@ -1694,7 +1694,7 @@ Keywords:   CUTOFF DOUBLESIDED FRESNEL FXLAYER_NONE NORMALMAP SELFILLUMINATE_BLI
 Material:   dragon_dragonjira_disguise_1
 Shader:     Hungry Dragon/Dragon/Dragon standard
 LightMode:  FORWARDBASE
-Keywords:   FRESNEL FXLAYER_NONE NORMALMAP OPAQUEALPHA SPECULAR _ZWRITE_ON 
+Keywords:   FRESNEL FXLAYER_REFLECTION NORMALMAP OPAQUEALPHA REFLECTIONTYPE_NORMAL SPECULAR _ZWRITE_ON 
 -------------------------------------------------------------------------------------------------------------------------------------------------------------
 Material:   dragon_electric_0_body
 Shader:     Hungry Dragon/Dragon/Dragon standard
