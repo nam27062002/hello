@@ -47,9 +47,10 @@ public class PopupShopOfferPack : MonoBehaviour {
 	/// <summary>
 	/// First update call.
 	/// </summary>
-	private void Start() {
+	protected void Start() {
 		InvokeRepeating("PeriodicRefresh", 0f, REFRESH_FREQUENCY);
-	}
+
+    }
 
 	/// <summary>
 	/// Destructor.
