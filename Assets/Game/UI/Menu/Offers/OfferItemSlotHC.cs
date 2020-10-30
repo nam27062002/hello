@@ -34,10 +34,15 @@ public class OfferItemSlotHC : OfferItemSlot {
 	[SerializeField] protected Color m_happyHourTextColor = Colors.yellow;
 
     // Internal
+    private bool m_applyHappyHour = false;
     private HappyHour m_appliedHappyHour = null;
+    public bool applyHappyHour
+    {
+        set => m_applyHappyHour = value;
+    }
 
 
-	//------------------------------------------------------------------------//
+    //------------------------------------------------------------------------//
 	// METHODS																  //
 	//------------------------------------------------------------------------//
 	/// <summary>
@@ -49,7 +54,7 @@ public class OfferItemSlotHC : OfferItemSlot {
     {
 		m_order = _order;
 
-		// Force reloading preview if item is different than the current one
+        // Force reloading preview if item is different than the current one
 		bool reloadPreview = false;
         if (m_item != _item) reloadPreview = true;
 
@@ -104,31 +109,27 @@ public class OfferItemSlotHC : OfferItemSlot {
 			}
 		}
 
-		// Re-apply happy hour modifications
-		ApplyHappyHour(OffersManager.happyHourManager.happyHour);
+        // Refresh UI 
+        Refresh();
 
 	}
 
 	/// <summary>
-	/// Apply Happy Hour visuals to this item.
+	/// Refresh visuals of this item.
 	/// </summary>
-	/// <param name="_happyHour">The happy hour to be applied. <c>null</c> if not active or the pack this item belongs to is not affected by it.</param>
-	public void ApplyHappyHour(HappyHour _happyHour) {
+	public void Refresh()
+    {
 
-		// Nothing to do if item is not valid
+        // Nothing to do if item is not valid
 		if(m_item == null) return;
 
-		// Toggle on or off?
-		// Assume the pack this item belongs to is affected by the happy hour,
-		// otherwise the parent pill should pass null as argument
-		bool validHH = _happyHour != null && _happyHour.IsActive();
-		m_appliedHappyHour = _happyHour;
+		// Make sure happy hour is active, and affects this item
+        HappyHour happyHour = OffersManager.happyHourManager.happyHour;
 
-
-		// Previous amount
+        // Previous amount
 		if(m_previousAmountText != null) {
-			m_previousAmountText.gameObject.SetActive(validHH);
-			if(validHH) {
+			m_previousAmountText.gameObject.SetActive(m_applyHappyHour);
+			if(m_applyHappyHour && happyHour != null) {
 				// Unmodified amount
 				m_previousAmountText.text = IOfferItemPreviewHC.FormatAmount(m_item.reward.amount);
 			}
@@ -136,10 +137,10 @@ public class OfferItemSlotHC : OfferItemSlot {
 
 		// New amount
 		if(m_amountText != null) {
-			if(validHH) {
+			if(m_applyHappyHour && happyHour != null) {
 				// Amount with HH bonus applied
-				float bonusAmount = _happyHour.extraGemsFactor;
-				long newAmount = _happyHour.ApplyHappyHourExtra(m_item.reward.amount);
+				float bonusAmount = happyHour.extraGemsFactor;
+				long newAmount = happyHour.ApplyHappyHourExtra(m_item.reward.amount);
 
                 // Add some color!
                 m_amountText.text = m_happyHourTextColor.Tag(IOfferItemPreviewHC.FormatAmount(newAmount));

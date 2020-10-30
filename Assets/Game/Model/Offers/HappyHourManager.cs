@@ -342,8 +342,15 @@ public class HappyHourManager {
 
 		// Ignore if happy hour is not active
 		if(!m_happyHour.IsActive()) return false;
+        
+        // Check price limits
+        if (_packDef.GetAsFloat("refPrice") < m_happyHour.minPriceAffected)
+            return false;
+        
+        if (_packDef.GetAsFloat("refPrice") > m_happyHour.maxPriceAffected)
+            return false;
 
-		// Depends on mode
+            // Depends on mode
 		switch(m_happyHour.affectedPacks) {
 			case HappyHour.AffectedPacks.ALL_PACKS: {
 				return true;
