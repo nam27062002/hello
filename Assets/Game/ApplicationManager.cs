@@ -14,7 +14,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
-
+using FirebaseWrapper;
 using UnityEngine;
 
 /// <summary>
@@ -573,6 +573,9 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
 
         UnityEngine.Profiling.Profiler.EndSample();
+        
+        
+        DynamicLinksWrapper.dispatchShortLinkCreated();
     }
 
     private long LastPauseTime { get; set; }
