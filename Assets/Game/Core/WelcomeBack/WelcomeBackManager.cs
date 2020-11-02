@@ -327,21 +327,24 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
     
     
     /// <summary>
-    /// Find the type of the player based on his purchases / dragons progression.
+    /// Find the type of the player based on the cluster id he has been asigned to.
+    /// He is not necessarely a payer, could be a possible payer. But that's the
+    /// magic of clustering and statistic prediction!
     /// </summary>
     /// <returns>Payer, non payer, etc.</returns>
     private PlayerType FindPlayerType()
     {
-        // Find all the purchases of this player
-        TrackingPersistenceSystem trackingPersistence = HDTrackingManager.Instance.TrackingPersistenceSystem;
-        int totalPurchases = (trackingPersistence == null) ? 0 : trackingPersistence.TotalPurchases;
+        // Get the clusters ids for payers from the content
+        List<String> payers = def.GetAsList<String>("payerClusters");
+        
+        // Find the cluster this player belongs to
+        string playerCluster = ClusteringManager.Instance.GetClusterId();
 
-        if (totalPurchases <= 0)
+        bool belongsToPayers = payers.FindIndex(x => x.Equals(playerCluster, StringComparison.OrdinalIgnoreCase)) != -1;
+
+        if (belongsToPayers) 
         {
-            // No purchases -> non payer
-            return PlayerType.NON_PAYER;
-        } else
-        {
+            // Ok, he is a payer (or at least clustering considers him as a possible payer)
             // Does the player own the last classic dragon?
             string lastDragonSku = DragonManager.lastClassicDragon.sku;
             bool lastDragonOwned = DragonManager.IsDragonOwned(lastDragonSku);
@@ -354,6 +357,10 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
             {
                 return PlayerType.PAYER_WITHOUT_LAST_DRAGON;
             }
+        }
+        else {
+            // Everything else is a non payer
+            return PlayerType.NON_PAYER;
         }
     }
 
