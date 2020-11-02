@@ -7,73 +7,60 @@
 //----------------------------------------------------------------------------//
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
+
+using System;
 using UnityEngine;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
 //----------------------------------------------------------------------------//
 /// <summary>
-/// 
+/// Popup Welcome Back. It is shown when the feature is activated.
 /// </summary>
+
+[RequireComponent(typeof(PopupController))]
 public class PopupWelcomeBack : MonoBehaviour {
-	//------------------------------------------------------------------------//
-	// CONSTANTS															  //
-	//------------------------------------------------------------------------//
-	
+    //------------------------------------------------------------------------//
+    // CONSTANTS															  //
+    //------------------------------------------------------------------------//
+    public const string PATH = "UI/Popups/Menu/PF_PopupWelcomeBack";
+    
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
+    [SerializeField] private GameObject m_benefitsWithOffer;
+    [SerializeField] private GameObject m_benefitsWithoutOffer;
 	
 	//------------------------------------------------------------------------//
-	// GENERIC METHODS														  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Initialization.
-	/// </summary>
-	private void Awake() {
-
-	}
-
-	/// <summary>
-	/// First update call.
-	/// </summary>
-	private void Start() {
-
-	}
-
-	/// <summary>
-	/// Component has been enabled.
-	/// </summary>
-	private void OnEnable() {
-
-	}
-
-	/// <summary>
-	/// Component has been disabled.
-	/// </summary>
-	private void OnDisable() {
-
-	}
-
-	/// <summary>
-	/// Called every frame.
-	/// </summary>
-	private void Update() {
-
-	}
-
-	/// <summary>
-	/// Destructor.
-	/// </summary>
-	private void OnDestroy() {
-
-	}
-
-	//------------------------------------------------------------------------//
-	// OTHER METHODS														  //
+	//  METHODS														          //
 	//------------------------------------------------------------------------//
 
-	//------------------------------------------------------------------------//
-	// CALLBACKS															  //
-	//------------------------------------------------------------------------//
+
+    public void OnEnable()
+    {
+  
+        // Welcome back has a special offer for some type of players, not for all
+        bool showSpecialOffer = WelcomeBackManager.instance.hasSpecialOffer;
+        
+        // Show the proper perk icons in the popup
+        m_benefitsWithOffer.SetActive(showSpecialOffer);
+        m_benefitsWithoutOffer.SetActive(!showSpecialOffer);
+        
+        // Dont show it again
+        WelcomeBackManager.instance.isPopupWaiting = false;
+    }
+
+    //------------------------------------------------------------------------//
+    //  CALLBACK													          //
+    //------------------------------------------------------------------------//
+    
+    /// <summary>
+    /// The dismiss button has been pressed.
+    /// </summary>
+    public void OnDismissButton() {
+        // Just close the poopup
+        GetComponent<PopupController>().Close(true);
+    }
+    
+    
 }

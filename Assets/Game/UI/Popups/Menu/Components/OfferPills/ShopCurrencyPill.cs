@@ -153,9 +153,14 @@ public class ShopCurrencyPill : ShopMonoRewardPill {
                 UsersManager.currentUser.EarnCurrency(UserProfile.Currency.SOFT, (ulong)m_amountApplied, true, HDTrackingManager.EEconomyGroup.SHOP_EXCHANGE);
             } break;
 
-            case UserProfile.Currency.HARD: {
+            case UserProfile.Currency.HARD:
+            {
+                m_amountApplied = reward.amount;
+                
 				// Get the proper amount after applying the happy hour
-				m_amountApplied = OffersManager.happyHourManager.happyHour.ApplyHappyHourExtra(reward.amount);
+                if (OffersManager.happyHourManager.IsPackAffected(def)) {
+                    m_amountApplied = OffersManager.happyHourManager.happyHour.ApplyHappyHourExtra(reward.amount);
+                }
 
                 // Add the amount to the player currencies
                 UsersManager.currentUser.EarnCurrency(UserProfile.Currency.HARD, (ulong)m_amountApplied, true, HDTrackingManager.EEconomyGroup.SHOP_EXCHANGE);

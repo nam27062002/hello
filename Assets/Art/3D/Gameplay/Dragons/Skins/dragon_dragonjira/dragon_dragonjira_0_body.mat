@@ -9,7 +9,7 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: dragon_dragonjira_0_body
   m_Shader: {fileID: 4800000, guid: 2345015ac46679e4cb5817ed44c82547, type: 3}
-  m_ShaderKeywords: FRESNEL FXLAYER_NONE NORMALMAP SELFILLUMINATE_NORMAL SPECULAR
+  m_ShaderKeywords: FRESNEL FXLAYER_NONE NORMALMAP SELFILLUMINATE_BLINKLIGHTS SPECULAR
     _ZWRITE_ON
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -71,7 +71,7 @@ Material:
     m_Floats:
     - FXLayer: 0
     - ReflectionType: 0
-    - SelfIlluminate: 0
+    - SelfIlluminate: 2
     - _BlendMode: 0
     - _BumpScale: 1
     - _ColorRampAmount: 0
@@ -102,13 +102,13 @@ Material:
     - _EnableVertexScaleZ: 0
     - _FireAmount: 0
     - _FireSpeed: 1
-    - _Fresnel: 5.96
+    - _Fresnel: 4.88
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
-    - _InnerLightAdd: 3.69
+    - _InnerLightAdd: 3
     - _InnerLightWavePhase: 1
-    - _InnerLightWaveSpeed: 0
+    - _InnerLightWaveSpeed: 3
     - _Metallic: 0
     - _Mode: 0
     - _NormalStrenght: 1
@@ -134,5 +134,5 @@ Material:
     - _InnerLightColor: {r: 0.20784312, g: 0.94509804, b: 0.93019843, a: 1}
     - _ReflectionColor: {r: 1, g: 1, b: 1, a: 1}
     - _SecondLightColor: {r: 0, g: 0, b: 0, a: 0}
-    - _SecondLightDir: {r: -0.565039, g: -0.23695189, b: -0.7903067, a: 0}
+    - _SecondLightDir: {r: -0.7650569, g: 0.58290046, b: -0.27370602, a: 0}
     - _Tint: {r: 1, g: 1, b: 1, a: 1}

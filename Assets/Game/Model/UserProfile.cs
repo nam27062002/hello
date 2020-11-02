@@ -1527,41 +1527,12 @@ public class UserProfile : UserPersistenceSystem
 		}
 
 		// Happy hour offer
-		// [AOC] As of 2.6 format has changed. Add support for retrocompatibility. Can be removed at 2.8.
-		key = "happyHourOffer";
+		
+		// Post 2.6 - Keep it
+		key = "happyHour";
 		if(_data.ContainsKey(key)) {
-			// Pre 2.6 - Delete by 2.8
-			// Create a fake json object using the new keys
-			JSONNode oldData = _data[key];
-			JSONClass newData = new JSONClass();
-
-			key = "happyHourExpirationTime";
-			if(oldData.ContainsKey(key)) {
-				newData["expirationTime"] = oldData[key];
-			}
-
-			key = "happyHourExtraGemsRate";
-			if(oldData.ContainsKey(key)) {
-				newData["extraGemsFactor"] = oldData[key];
-			}
-
-			key = "happyHourLastPackSku";
-			if(oldData.ContainsKey(key)) {
-				newData["lastPackSku"] = oldData[key];
-			}
-
-			// Inject sku
-			newData["activeSku"] = "happy_hour_local";	// Legacy system only had the local one
-
-			// Load it!
-			m_happyHourData.FromJson(newData as JSONClass);
-		} else {
-			// Post 2.6 - Keep it
-			key = "happyHour";
-			if(_data.ContainsKey(key)) {
-				m_happyHourData.FromJson(_data[key] as JSONClass);
-			}
-		}
+			m_happyHourData.FromJson(_data[key] as JSONClass);
+        }
 
 		
 

@@ -37,6 +37,16 @@ public class PopupShopOfferPackSkins : PopupShopOfferPack
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
 
+    /// <summary>
+    /// Start.
+    /// </summary>
+    private void Start() {
+        base.Start();
+        
+        // Start with preview hidden, so it can be animated when the load is finished
+        bigPreview.GetComponent<ShowHideAnimator>().Hide(false);
+    }
+
 
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //

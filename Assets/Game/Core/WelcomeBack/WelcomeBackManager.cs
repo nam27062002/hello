@@ -48,10 +48,18 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
 	private DateTime m_lastVisit;
     private PlayerType m_playerType;
     public PlayerType playerType => m_playerType;
+    
     private bool m_active;
 
+    private bool m_isPopupWaiting = false;
+    public bool isPopupWaiting
+    {
+        get => m_isPopupWaiting;
+        set => m_isPopupWaiting = value;
+    }
 
-	// WB configuration
+
+    // WB configuration
 	private bool enabled = true;
 
 
@@ -70,6 +78,11 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
         get => m_boostedDailyRewards;
     }
     
+    // Special offers
+    private bool m_hasSpecialOffer = false;
+    public bool hasSpecialOffer => m_hasSpecialOffer;
+
+
     // The multiplier applied to the reward if watching an ad
     public int boostedDailyRewardAdMultiplier
     {
@@ -226,7 +239,10 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
 
 		// Register WB
 		m_active = true;
-	}
+        
+        // Show the welcome back popup when possible
+        m_isPopupWaiting = true;
+    }
 
     /// <summary>
     /// End all the welcome back perks
@@ -241,7 +257,7 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
         EndHappyHour();
 
         m_active = false;
-
+        m_isPopupWaiting = false;
         m_playerType = PlayerType.UNKNOWN;
     }
 
@@ -413,6 +429,9 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
     {
         // Nothing to do, this offer will be automatically activated
         // by the offersManager
+
+        // Make sure we show this perk in the popup
+        m_hasSpecialOffer = true;
     }
 
     private void ActivateHappyHour()
@@ -447,16 +466,20 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
     {
         // Nothing to do, this offer will be automatically activated
         // by the offersManager
+        
+        // Make sure we show this perk in the popup
+        m_hasSpecialOffer = true;
     }
 
     private void CreateSpecialGatchaOffer()
     {
         // Nothing to do, this offer will be automatically activated
         // by the offersManager
+        
+        // Make sure we show this perk in the popup
+        m_hasSpecialOffer = true;
     }
     
-    
-
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
@@ -574,5 +597,6 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
 	{
 		Deactivate();
 	}
+
 
 }
