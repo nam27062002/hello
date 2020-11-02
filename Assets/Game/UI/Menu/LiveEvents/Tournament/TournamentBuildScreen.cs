@@ -186,6 +186,8 @@ public class TournamentBuildScreen : MonoBehaviour {
 
 	// Update timers periodically
 	void UpdatePeriodic() {
+        
+        
 		if (!m_hasFreeEntrance) {	
 			double seconds = m_tournament.TimeToNextFree();
 			m_nextFreeSlider.value = m_definition.m_entrance.m_dailyFree - (float)seconds;
@@ -193,7 +195,15 @@ public class TournamentBuildScreen : MonoBehaviour {
 			m_nextFreeTimer.text = TimeUtils.FormatTime(seconds, TimeUtils.EFormat.DIGITS, 3, TimeUtils.EPrecision.HOURS, true);	// [AOC] HARDCODED!!
 			if (seconds <= 0) {
 				m_hasFreeEntrance = true;
-				ShowEntranceButton(m_enterFreeBtn);
+
+                if (WelcomeBackManager.instance.IsFreeTournamentPassActive())
+                {
+                    ShowEntranceButton(m_enterWelcomeBackFreeBtn);
+                }
+                else
+                {
+                    ShowEntranceButton(m_enterFreeBtn);
+                }
 				m_nextFreeTimerGroup.SetActive(false);
 			}
 		}

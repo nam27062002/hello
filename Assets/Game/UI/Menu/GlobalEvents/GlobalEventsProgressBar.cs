@@ -106,7 +106,7 @@ public class GlobalEventsProgressBar : MonoBehaviour {
 	public void RefreshProgress(float _value, float _animDuration = -1f, bool _checkAchieved = true) {
 		if (m_progressBar != null) {
 			// [AOC] For visual purposes, always show a minimum amount of bar
-			_value = Mathf.Max(_value, Mathf.Lerp(m_progressBar.minValue, m_progressBar.maxValue, m_minBarThreshold));
+			_value = Mathf.Max(m_minBarThreshold, Mathf.Lerp(m_progressBar.minValue, m_progressBar.maxValue, _value));
 
 			if(_animDuration < 0f) {
 				m_progressBar.value = _value;

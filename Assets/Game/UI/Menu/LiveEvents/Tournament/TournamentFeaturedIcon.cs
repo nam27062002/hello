@@ -20,6 +20,16 @@ using DG.Tweening;
 /// Controller for the featured tournament icon in the play screen.
 /// </summary>
 public class TournamentFeaturedIcon : MonoBehaviour {
+    //------------------------------------------------------------------------//
+    // ENUM															  //
+    //------------------------------------------------------------------------//
+    public enum Variation
+    {
+        NORMAL,
+        WELCOME_BACK
+    }
+    
+    
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -30,6 +40,8 @@ public class TournamentFeaturedIcon : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// Exposed
 	[SerializeField] private GameObject m_root = null;
+    [Tooltip("Will hide this element depending if welcome back is enabled/disabled")]
+    [SerializeField] private Variation m_visualVariation = Variation.NORMAL;
     	
 
 	[Separator("Teasing")]
@@ -51,6 +63,7 @@ public class TournamentFeaturedIcon : MonoBehaviour {
 	private HDTournamentManager m_tournamentManager;
 	private bool m_waitingRewardsData = false;
     private bool m_waitingDefinition = false;
+    private bool m_welcomeBackActive = false;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -104,7 +117,17 @@ public class TournamentFeaturedIcon : MonoBehaviour {
 
 		// Refresh the timer!
 		RefreshTimer(true);
-	}
+        
+        // Check the welcome back mode
+        m_welcomeBackActive = WelcomeBackManager.instance.IsFreeTournamentPassActive();
+        
+        // The current variation matches the welcome back state?
+        bool show = ((m_visualVariation == Variation.WELCOME_BACK && m_welcomeBackActive)
+                     || (m_visualVariation == Variation.NORMAL && !m_welcomeBackActive));
+        
+        m_root.SetActive(show);
+
+    }
 
 	/// <summary>
 	/// Component has been disabled.

@@ -26,7 +26,8 @@ public class GlobalEventsScreenController : MonoBehaviour {
 		LOG_IN,
 		NO_EVENT,
 		EVENT_TEASER,
-		EVENT_ACTIVE,
+		QUEST_ACTIVE,
+        SOLO_QUEST_ACTIVE,
 		LOADING,
 		RETRY_REWARDS,
         REQUIRES_UPDATE,
@@ -152,8 +153,17 @@ public class GlobalEventsScreenController : MonoBehaviour {
                             break;
                         case HDLiveEventData.State.NOT_JOINED:
                         case HDLiveEventData.State.JOINED: {
-                                targetPanel = Panel.EVENT_ACTIVE;
+                            if (HDLiveDataManager.instance.SoloQuestIsAvailable())
+                            {
+                                // Choose the welcome back green panel
+                                targetPanel = Panel.SOLO_QUEST_ACTIVE;
                             }
+                            else
+                            {
+                                // Choose the regular wooden panel
+                                targetPanel = Panel.QUEST_ACTIVE;
+                            }
+                        }
                             break;
                         case HDLiveEventData.State.REQUIRES_UPDATE: {
                                 targetPanel = Panel.REQUIRES_UPDATE;
@@ -193,8 +203,10 @@ public class GlobalEventsScreenController : MonoBehaviour {
 		}
 
 		// If showing the ACTIVE panel for the first time, trigger the tutorial
-		if(m_activePanel == Panel.EVENT_ACTIVE && !UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.QUEST_INFO)) {
-			// Open popup!
+		if( (m_activePanel ==  Panel.QUEST_ACTIVE || m_activePanel ==  Panel.SOLO_QUEST_ACTIVE) && 
+            !UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.QUEST_INFO)) 
+        {
+            // Open popup!
 			string popupName = "PF_PopupInfoGlobalEvents";
 			PopupManager.OpenPopupInstant("UI/Popups/Tutorial/" + popupName);
 
