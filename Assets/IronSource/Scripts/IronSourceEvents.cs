@@ -685,32 +685,6 @@ public class IronSourceEvents : MonoBehaviour
         }
     }
 
-
-    // ******************************* Rewarded Interstitial Events *******************************
-
-    private static event Action _onInterstitialAdRewardedEvent;
-    
-    public static event Action onInterstitialAdRewardedEvent {
-        add {
-            if (_onInterstitialAdRewardedEvent == null || !_onInterstitialAdRewardedEvent.GetInvocationList ().Contains (value)) {
-                _onInterstitialAdRewardedEvent += value;
-            }
-        }
-        
-        remove {
-            if (_onInterstitialAdRewardedEvent.GetInvocationList ().Contains (value)) {
-                _onInterstitialAdRewardedEvent -= value;
-            }
-        }
-    }
-    
-    public void onInterstitialAdRewarded (string empty)
-    {
-        if (_onInterstitialAdRewardedEvent != null) {
-            _onInterstitialAdRewardedEvent ();
-        }
-    }
-
     // ******************************* Offerwall Events ******************************* 
 
     private static event Action _onOfferwallOpenedEvent;
@@ -1009,10 +983,43 @@ public class IronSourceEvents : MonoBehaviour
         if (_onSegmentReceivedEvent != null)
             _onSegmentReceivedEvent (segmentName);
     }
-    
+
+    // ******************************* ImpressionData Callbacks *******************************   
+
+    private static event Action<IronSourceImpressionData> _onImpressionSuccessEvent;
+
+    public static event Action<IronSourceImpressionData> onImpressionSuccessEvent
+    {
+        add
+        {
+            if (_onImpressionSuccessEvent == null || !_onImpressionSuccessEvent.GetInvocationList().Contains(value))
+            {
+                _onImpressionSuccessEvent += value;
+            }
+        }
+
+        remove
+        {
+            if (_onImpressionSuccessEvent.GetInvocationList().Contains(value))
+            {
+                _onImpressionSuccessEvent -= value;
+            }
+        }
+    }
+
+    public void onImpressionSuccess(string args)
+    {
+        if (_onImpressionSuccessEvent != null)
+        {
+            IronSourceImpressionData impressionData = new IronSourceImpressionData(args);
+            _onImpressionSuccessEvent(impressionData);
+        }
+
+    }
+
     // ******************************* Helper methods *******************************   
 
-        private IronSourceError getErrorFromErrorObject (object descriptionObject)
+    private IronSourceError getErrorFromErrorObject (object descriptionObject)
     {
         Dictionary<string,object> error = null;
         if (descriptionObject is IDictionary) {

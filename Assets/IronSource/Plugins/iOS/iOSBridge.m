@@ -58,9 +58,9 @@ char *const IRONSOURCE_EVENTS = "IronSourceEvents";
         [IronSource setInterstitialDelegate:self];
         [IronSource setISDemandOnlyInterstitialDelegate:self];
         [IronSource setISDemandOnlyRewardedVideoDelegate:self];
-        [IronSource setRewardedInterstitialDelegate:self];
         [IronSource setOfferwallDelegate:self];
         [IronSource setBannerDelegate:self];
+        [IronSource setImpressionDataDelegate:self];
         
         _bannerView = nil;
         _bannerViewController = nil;
@@ -80,21 +80,6 @@ char *const IRONSOURCE_EVENTS = "IronSourceEvents";
 }
 
 #pragma mark Base API
-
-- (void)setAge:(NSInteger)age {
-    [IronSource setAge:age];
-}
-
-- (void)setGender:(NSString *)gender {
-    if([gender caseInsensitiveCompare:@"male"] == NSOrderedSame)
-        [IronSource setGender:IRONSOURCE_USER_MALE];
-    
-    else if([gender caseInsensitiveCompare:@"female"] == NSOrderedSame)
-        [IronSource setGender:IRONSOURCE_USER_FEMALE];
-    
-    else if([gender caseInsensitiveCompare:@"unknown"] == NSOrderedSame)
-        [IronSource setGender:IRONSOURCE_USER_UNKNOWN];
-}
 
 - (void)setMediationSegment:(NSString *)segment {
     [IronSource setMediationSegment:segment];
@@ -128,6 +113,10 @@ char *const IRONSOURCE_EVENTS = "IronSourceEvents";
 
 - (void)setMetaDataWithKey:(NSString *)key value:(NSString *)value {
     [IronSource setMetaDataWithKey:key value:value];
+}
+
+- (void)setMetaDataWithKey:(NSString *)key values:(NSMutableArray *)valuesArray {
+    [IronSource setMetaDataWithKey:key values:valuesArray];
 }
 
 #pragma mark Init SDK
@@ -414,12 +403,6 @@ char *const IRONSOURCE_EVENTS = "IronSourceEvents";
     UnitySendMessage(IRONSOURCE_EVENTS, "onInterstitialAdClickedDemandOnly", MakeStringCopy(instanceId));
 }
 
-#pragma mark Rewarded Interstitial Delegate
-
-- (void)didReceiveRewardForInterstitial {
-    UnitySendMessage(IRONSOURCE_EVENTS, "onInterstitialAdRewarded", "");
-}
-
 #pragma mark Offerwall API
 
 - (void)showOfferwall {
@@ -479,14 +462,7 @@ char *const IRONSOURCE_EVENTS = "IronSourceEvents";
 - (void)loadBanner:(NSString *)description width:(NSInteger)width height:(NSInteger)height position:(NSInteger)position placement:(NSString *)placement {
     @synchronized(self) {
         _position = position;
-        
-        ISBannerSize* size = nil;
-        if ([description isEqualToString:@"CUSTOM"]) {
-            size = [[ISBannerSize alloc] initWithWidth:width andHeight:height];
-        }
-        else {
-            size = [[ISBannerSize alloc] initWithDescription:description];
-        }
+        ISBannerSize* size = [self getBannerSize:description width:width height:height];
         
         _bannerViewController = [UIApplication sharedApplication].keyWindow.rootViewController;
         [IronSource loadBannerWithViewController:_bannerViewController size:size placement:placement];
@@ -527,6 +503,24 @@ char *const IRONSOURCE_EVENTS = "IronSourceEvents";
 
 - (BOOL)isBannerPlacementCapped:(NSString *)placementName {
     return [IronSource isBannerCappedForPlacement:placementName];
+}
+
+- (ISBannerSize *) getBannerSize:(NSString *)description width:(NSInteger)width height:(NSInteger)height {
+    if ([description isEqualToString:@"CUSTOM"]) {
+        return [[ISBannerSize alloc] initWithWidth:width andHeight:height];
+    }
+    if ([description isEqualToString:@"SMART"]) {
+        return ISBannerSize_SMART;
+    }
+    if ([description isEqualToString:@"RECTANGLE"]) {
+        return ISBannerSize_RECTANGLE;
+    }
+    if ([description isEqualToString:@"LARGE"]) {
+        return ISBannerSize_LARGE;
+    }
+    else {
+        return ISBannerSize_BANNER;
+    }
 }
 
 #pragma mark Banner Delegate
@@ -689,6 +683,13 @@ char *const IRONSOURCE_EVENTS = "IronSourceEvents";
     }
 }
 
+#pragma mark ImpressionData Delegate
+
+- (void)impressionDataDidSucceed:(ISImpressionData *)impressionData {
+    UnitySendMessage(IRONSOURCE_EVENTS, "onImpressionSuccess", [self getJsonFromObj:[impressionData all_data]].UTF8String);
+
+}
+
 #pragma mark - C Section
 
 #ifdef __cplusplus
@@ -699,14 +700,7 @@ extern "C" {
         [[iOSBridge start] setPluginDataWithType:GetStringParam(pluginType) pluginVersion:GetStringParam(pluginVersion) pluginFrameworkVersion:GetStringParam(pluginFrameworkVersion)];
     }
     
-    void CFSetAge(int age){
-        [[iOSBridge start] setAge:age];
-    }
-    
-    void CFSetGender(const char *gender){
-        [[iOSBridge start] setGender:GetStringParam(gender)];
-    }
-    
+  
     void CFSetMediationSegment(const char *segment){
         [[iOSBridge start] setMediationSegment:GetStringParam(segment)];
     }
@@ -741,6 +735,20 @@ extern "C" {
     
     void CFSetMetaData (char *key, char *value) {
         [[iOSBridge start] setMetaDataWithKey:GetStringParam(key) value:GetStringParam(value)];
+    }
+    
+    void CFSetMetaDataWithValues (char *key,const char *values[]) {
+        NSMutableArray *valuesArray = [NSMutableArray new];
+        if(values != nil ) {
+            int i = 0;
+            
+            while (values[i] != nil) {
+                [valuesArray addObject: [NSString stringWithCString: values[i] encoding:NSASCIIStringEncoding]];
+                i++;
+            }
+            
+            [[iOSBridge start] setMetaDataWithKey:GetStringParam(key) values:valuesArray];
+        }
     }
     
 #pragma mark Init SDK
