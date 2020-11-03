@@ -172,16 +172,43 @@ public class PopupShopOfferPack : MonoBehaviour {
 		// Aux vars
 		PopupController popup = null;
 
-		// Does the pack contain more than 1 skin?
-		if(_pack.GetDragonsSkinsCount() > 1) {
-			// Yes!! Use skins popup layout
-			popup = PopupManager.LoadPopup(PopupShopOfferPackSkins.PATH);
-			popup.GetComponent<PopupShopOfferPackSkins>().InitFromOfferPack(_pack);
-		} else {
-			// No, use the default offer layout
-			popup = PopupManager.LoadPopup(PopupShopOfferPack.PATH);
-			popup.GetComponent<PopupShopOfferPack>().InitFromOfferPack(_pack);
+        
+		if (_pack.type == OfferPack.Type.WELCOME_BACK)
+		{
+			// Does the pack contain more than 1 skin?
+			if (_pack.GetDragonsSkinsCount() > 1)
+			{
+				// Yes!! Use skins popup layout
+				popup = PopupManager.LoadPopup(PopupShopWelcomeBackOfferPackSkins.PATH);
+				popup.GetComponent<PopupShopOfferPackSkins>().InitFromOfferPack(_pack);
+			}
+			else
+			{
+				// No, use the default offer layout
+				popup = PopupManager.LoadPopup(PopupShopWelcomeBackOfferPack.PATH);
+				popup.GetComponent<PopupShopOfferPack>().InitFromOfferPack(_pack);
+			}
 		}
+
+        else
+        {
+			// Does the pack contain more than 1 skin?
+			if (_pack.GetDragonsSkinsCount() > 1)
+			{
+				// Yes!! Use skins popup layout
+				popup = PopupManager.LoadPopup(PopupShopOfferPackSkins.PATH);
+				popup.GetComponent<PopupShopOfferPackSkins>().InitFromOfferPack(_pack);
+			}
+			else
+			{
+				// No, use the default offer layout
+				popup = PopupManager.LoadPopup(PopupShopOfferPack.PATH);
+				popup.GetComponent<PopupShopOfferPack>().InitFromOfferPack(_pack);
+			}
+
+		}
+
+
 
 		// Done!
 		return popup;
