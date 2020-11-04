@@ -28,7 +28,8 @@ public class CPWelcomeBackCheats : MonoBehaviour {
 	//------------------------------------------------------------------------//
 
     [SerializeField] private TextMeshProUGUI m_playerType;
-	
+	[SerializeField] private TextMeshProUGUI m_lastLoginTimestamp;
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -59,6 +60,7 @@ public class CPWelcomeBackCheats : MonoBehaviour {
 	/// </summary>
 	private void Update() {
 		// Update timer text
+		m_lastLoginTimestamp.text = "Last Login: " + UsersManager.currentUser.saveTimestamp.ToString();
 
 	}
 
@@ -96,5 +98,31 @@ public class CPWelcomeBackCheats : MonoBehaviour {
         
 	}
 
+    /// <summary>
+    /// Perform all the checks needed, and if this player is elegible, activate WB.
+    /// </summary>
+    public void OnTryActivation()
+    {
+		WelcomeBackManager.instance.CheckActivation();
+    }
+
+
+    /// <summary>
+    /// Removes one day to the last save timestamp
+    /// </summary>
+    public void OnSubstractDay()
+    {
+		UsersManager.currentUser.saveTimestamp = UsersManager.currentUser.saveTimestamp.AddDays(-1);
+
+	}
+
+
+    /// <summary>
+    /// Adds one day to the last save timestamp
+    /// </summary>
+    public void OnAddDay ()
+    {
+		UsersManager.currentUser.saveTimestamp = UsersManager.currentUser.saveTimestamp.AddDays(1);
+	}
 
 }
