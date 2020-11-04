@@ -209,12 +209,12 @@ public class DragonWizardValidationModule : IDragonWizard
         mainMenuPrefab = AssetDatabase.LoadAssetAtPath(assetPath, typeof(GameObject)) as GameObject;
 
         // Unit tests for main menu prefab
-        results.Add(new DragonTest(MainMenuTestViewGameObject(), "View gameobject exists"));
         results.Add(new DragonTest(MainMenuTestAnimationController(), "Animation controller is set", Severity.Warning));
+        results.Add(new DragonTest(MainMenuTestAssetBundle(), "Asset bundle prefab set to: " + SelectedSku + "_local", Severity.Warning));
+        results.Add(new DragonTest(MainMenuTestViewGameObject(), "View gameobject exists"));
         results.Add(new DragonTest(MainMenuTestDragonPreview(), "MenuDragonPreview script was added"));
         results.Add(new DragonTest(MainMenuTestSku(), "MenuDragonPreview sku matches " + SelectedSku));
         results.Add(new DragonTest(MainMenuTestDragonEquip(), "DragonEquip script was added"));
-        results.Add(new DragonTest(MainMenuTestAssetBundle(), "Asset bundle prefab set to: " + SelectedSku + "_local", Severity.Warning));
         results.Add(new DragonTest(MainMenuTestBodyWingsTags(), "Body and wings tags are set"));
         results.Add(new DragonTest(MainMenuTestPetPoints(), "Pet points are set"));
     }
@@ -249,8 +249,9 @@ public class DragonWizardValidationModule : IDragonWizard
             results.Add(new DragonTest(false, "Asset not found: " + GameplayPrefabName));
             return;
         }
-        
+
         // Unit tests for gameplay prefab
+        results.Add(new DragonTest(GameplayTestMegaFireRushAnchor(), "Mega fire rush anchor is set", Severity.Warning));
         results.Add(new DragonTest(GameplayTestDragonPlayer(), "DragonPlayer script was added"));
         results.Add(new DragonTest(GameplayTestSku(), "DragonPlayer sku matches " + SelectedSku));
         results.Add(new DragonTest(GameplayTestHoldPreyPoints(), "HoldPreyPoints are set"));
@@ -261,7 +262,6 @@ public class DragonWizardValidationModule : IDragonWizard
         results.Add(new DragonTest(GameplayTestMapMarker(), "MapMarker is set"));
         results.Add(new DragonTest(GameplayTestBodyWingsTags(), "Body and wings tags are set"));
         results.Add(new DragonTest(GameplayTestMegaFireRush(), "Mega fire rush is set"));
-        results.Add(new DragonTest(GameplayTestMegaFireRushAnchor(), "Mega fire rush anchor is set", Severity.Warning));
         results.Add(new DragonTest(GameplayTestPetPoints(), "Pet points are set"));
     }
 
