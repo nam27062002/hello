@@ -48,6 +48,9 @@ public class MetagameRewardView3d : MetagameRewardView {
 			m_dragonLoader.dragonSku = "";
 			m_dragonLoader.onDragonLoaded += OnDragonLoaded;
 		}
+
+		// Make sure all elements start disabled (bug HDK-9628)
+		Clear();
 	}
 
 	/// <summary>
