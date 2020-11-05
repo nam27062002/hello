@@ -34,11 +34,17 @@ public class GlobalEventsScreenController : MonoBehaviour {
 
 		COUNT
 	};
-	
+
+	public const string TID_COLLABORATIVE_QUEST = "TID_QUEST_NAME";
+	public const string TID_SOLO_QUEST = "TID_SOLO_QUEST_NAME";
+
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed references
+	[SerializeField] private GameObject m_collaborativeQuestTitle;
+	[SerializeField] private GameObject m_soloQuestTitle;
+
 	[SerializeField] private GlobalEventsPanel[] m_panels = new GlobalEventsPanel[(int)Panel.COUNT];
 
 	// Internal
@@ -104,6 +110,18 @@ public class GlobalEventsScreenController : MonoBehaviour {
 	/// Select active panel based on current global event state.
 	/// </summary>
 	public void Refresh() {
+
+		// Refresh title text depending if is solo or collaborative quest
+		bool soloQuest = HDLiveDataManager.instance.SoloQuestIsAvailable();
+
+		m_collaborativeQuestTitle.SetActive(!soloQuest);
+        m_soloQuestTitle.SetActive(soloQuest);
+
+        // In case the solo quest ends, force show the title
+        if (m_collaborativeQuestTitle)
+			m_collaborativeQuestTitle.GetComponentInChildren<ShowHideAnimator>().Show();
+
+
 		// Do we need to go to the rewards screen?
 		if ( m_questManager.EventExists() )
 		{
