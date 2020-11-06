@@ -129,6 +129,7 @@ public class DefinitionsCategory
 
 	// Welcome back perks
     public const string WELCOME_BACK = "WELCOME_BACK";
+	public const string WELCOME_BACK_PERKS = "WELCOME_BACK_PERKS";
 	public const string SOLO_QUESTS = "SOLO_QUESTS";
 	public const string SOLO_QUESTS_REWARDS = "SOLO_QUESTS_REWARDS";
     public const string BOOSTED_DAILY_REWARDS = "BOOSTED_DAILY_REWARDS";

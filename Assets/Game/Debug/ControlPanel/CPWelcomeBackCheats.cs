@@ -44,8 +44,11 @@ public class CPWelcomeBackCheats : MonoBehaviour {
 	/// Component has been enabled.
 	/// </summary>
 	private void OnEnable() {
-        // Update cheats panel info
-        m_playerType.text = "Player Type: " + WelcomeBackManager.instance.playerType.ToString();
+
+		// Update cheats panel info
+		Refresh();
+
+  
 	}
 
 	/// <summary>
@@ -64,6 +67,19 @@ public class CPWelcomeBackCheats : MonoBehaviour {
 
 	}
 
+    private void Refresh()
+    {
+		if (WelcomeBackManager.instance.perksDef != null)
+		{
+			// There is not such thing as player group name, but use SKU just for info purposes
+			m_playerType.text = "Player Group SKU: " + WelcomeBackManager.instance.perksDef.GetAsString("sku");
+		}
+		else
+		{
+			m_playerType.text = "Player Group SKU: - ";
+		}
+	}
+
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
@@ -78,9 +94,10 @@ public class CPWelcomeBackCheats : MonoBehaviour {
 		// Save persistence
 		PersistenceFacade.instance.Save_Request(false);
 
-        // Update cheats panel info
-        m_playerType.text = "Player Type: " + WelcomeBackManager.instance.playerType.ToString();
-    }
+		// Update cheats panel info
+		Refresh();
+
+	}
 	
 	/// <summary>
 	/// The activate Welcome back button has been pressed
@@ -92,10 +109,10 @@ public class CPWelcomeBackCheats : MonoBehaviour {
 		
 		// Save persistence
 		PersistenceFacade.instance.Save_Request(false);
-        
-        // Update cheats panel info
-        m_playerType.text = "Player Type: " + WelcomeBackManager.instance.playerType.ToString();
-        
+
+		// Update cheats panel info
+		Refresh();
+
 	}
 
     /// <summary>

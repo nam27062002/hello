@@ -273,6 +273,7 @@ public class ContentManager
 
         // Welcome back
         kDefinitionFiles.Add(DefinitionsCategory.WELCOME_BACK, new string[] { "Rules/welcomeBackDefinitions" });
+        kDefinitionFiles.Add(DefinitionsCategory.WELCOME_BACK_PERKS, new string[] { "Rules/welcomeBackPerksDefinitions" });
         kDefinitionFiles.Add(DefinitionsCategory.SOLO_QUESTS, new string[] { "Rules/soloQuestsDefinitions" });
         kDefinitionFiles.Add(DefinitionsCategory.SOLO_QUESTS_REWARDS, new string[] { "Rules/soloQuestsRewardsDefinitions" });
         kDefinitionFiles.Add(DefinitionsCategory.BOOSTED_DAILY_REWARDS, new string[] { "Rules/boostedDailyRewardsDefinitions" });

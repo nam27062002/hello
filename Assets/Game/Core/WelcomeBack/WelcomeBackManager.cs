@@ -26,28 +26,27 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
 	//------------------------------------------------------------------------//
 	// ENUM        															  //
 	//------------------------------------------------------------------------//
-    public enum PlayerType
-    {
-        UNKNOWN,
-        NON_PAYER,
-        PAYER_WITHOUT_LAST_DRAGON,
-        PAYER_WITH_LAST_DRAGON
-    }
+
     
     //------------------------------------------------------------------------//
     // CONST       															  //
     //------------------------------------------------------------------------//
-    public const string ALL = "all";
-    public const string PAYER = "payer";
-    public const string NON_PAYER = "non_payer";
 
-	//------------------------------------------------------------------------//
-	// MEMBERS AND PROPERTIES												  //
-	//------------------------------------------------------------------------//
+    // Perks
+    public const string ENABLE_POPUP = "enablePopup"; 
+    public const string ENABLE_HAPPY_HOUR = "enableHappyHour";
+    public const string ENABLE_OFFER = "enableOffer";
+    public const string ENABLE_BOOSTED_DAILY_LOGIN = "enableBoostedDailyLogin";
+    public const string ENABLE_PASSIVE = "enablePassive";
+    public const string ENABLE_SOLO_QUEST = "enableSoloQuest";
+    public const string ENABLE_TOURNAMENT_PASS = "enableTournamentPass";
 
-	private DateTime m_lastVisit;
-    private PlayerType m_playerType;
-    public PlayerType playerType => m_playerType;
+    //------------------------------------------------------------------------//
+    // MEMBERS AND PROPERTIES												  //
+    //------------------------------------------------------------------------//
+
+    private DateTime m_lastVisit;
+
     
     private bool m_active;
 
@@ -63,11 +62,17 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
 	private bool enabled = true;
 
 
-
     // Keep the definition at hand
 	private DefinitionNode m_def;
     public DefinitionNode def => m_def;
+
+    private DefinitionNode m_perksDef;
+    public DefinitionNode perksDef => m_perksDef;
+
+    private List<DefinitionNode> m_perksDefs;
+
     
+
     // Free tournament
     private DateTime m_freeTournamentExpirationTimestamp;
     
@@ -141,6 +146,11 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
             m_def = defs[0];
         }
 
+        // Read the perks definitions
+        m_perksDefs =
+            DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.WELCOME_BACK_PERKS,
+            "enabled", "true");
+
     }
 
     /// <summary>
@@ -209,68 +219,42 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
 	/// </summary>
     public void Activate()
     {
-        
-        m_playerType = FindPlayerType();
-        
-		CreateSoloQuest();
-        
-		ActivatePassiveEvent();
 
-		// Activate free tournament entrance
-		ActivateFreePassTournament();
+        m_perksDef = FindPerksForThisPlayer();
 
-        // Which type of players can enjoy the boosted 7 day login?
-        string boostedDailyRewardsPlayerType = m_def.GetAsString("boostedDailyRewardsPlayerType", "all");
-
-		// Profile specific perks:
-        if ( m_playerType == PlayerType.NON_PAYER)
+        if (m_perksDef == null)
         {
-            // Show non payer offer in the shop
-			CreateNonPayerOffer();
-            
-            if (boostedDailyRewardsPlayerType == ALL || boostedDailyRewardsPlayerType == NON_PAYER)
-            {
-                // Activate boosted daily rewards
-                CreateBoostedSevenDayLogin();
-            }
+            // No configuration find for this player
+            return;
+        }
 
-		} 
-        else if (m_playerType == PlayerType.PAYER_WITHOUT_LAST_DRAGON)
-        {
-            
+
+        // Check all the perks one by one:
+
+        if (perksDef.GetAsBool(ENABLE_POPUP))
+            EnablePopup();  
+
+        if (perksDef.GetAsBool(ENABLE_SOLO_QUEST))
+            CreateSoloQuest();       
+
+        if (perksDef.GetAsBool(ENABLE_PASSIVE))
+            ActivatePassiveEvent();
+
+        if (perksDef.GetAsBool(ENABLE_TOURNAMENT_PASS))
+            ActivateFreePassTournament();
+
+        if (perksDef.GetAsBool(ENABLE_HAPPY_HOUR))
             ActivateHappyHour();
-            
-            // Show Latest dragon offer
-            CreateLatestDragonOffer();
-            
-            if (boostedDailyRewardsPlayerType == ALL || boostedDailyRewardsPlayerType == PAYER)
-            {
-                // Activate boosted seven day login
-                CreateBoostedSevenDayLogin();
-            }
-			
-        }
-        else if (m_playerType == PlayerType.PAYER_WITH_LAST_DRAGON)
-		{
 
-			ActivateHappyHour();
-    
-            // Show special Gatcha offer
-			CreateSpecialGatchaOffer();
-            
-            if (boostedDailyRewardsPlayerType == ALL || boostedDailyRewardsPlayerType == NON_PAYER)
-            {
-                // Activate boosted seven day login
-                CreateBoostedSevenDayLogin();
-            }
-        }
-        
+        if (perksDef.GetAsBool(ENABLE_BOOSTED_DAILY_LOGIN))
+            CreateBoostedSevenDayLogin();
 
-		// Register WB
-		m_active = true;
-        
-        // Show the welcome back popup when possible
-        m_isPopupWaiting = true;
+        if (perksDef.GetAsBool(ENABLE_OFFER))
+            EnableSpecialOffer();
+
+
+        // Register WB
+        m_active = true;
 
         Log("Welcome back succesfully activated");
 
@@ -287,10 +271,11 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
         EndFreePassTournament();
         EndBoostedSevenDayLogin();
         EndHappyHour();
+        DisableSpecialOffer();
+        DisablePopup();
 
         m_active = false;
-        m_isPopupWaiting = false;
-        m_playerType = PlayerType.UNKNOWN;
+
     }
 
 
@@ -359,42 +344,65 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
     
     
     /// <summary>
-    /// Find the type of the player based on the cluster id he has been asigned to.
-    /// He is not necessarely a payer, could be a possible payer. But that's the
-    /// magic of clustering and statistic prediction!
+    /// Find the perks associated to this player based on his cluster, and on the dragons he owns
     /// </summary>
-    /// <returns>Payer, non payer, etc.</returns>
-    private PlayerType FindPlayerType()
+    private DefinitionNode FindPerksForThisPlayer()
     {
-        // Get the clusters ids for payers from the content
-        List<String> payers = def.GetAsList<String>("payerClusters");
-        
-        // Find the cluster this player belongs to
-        string playerCluster = ClusteringManager.Instance.GetClusterId();
-
-        bool belongsToPayers = payers.FindIndex(x => x.Equals(playerCluster, StringComparison.OrdinalIgnoreCase)) != -1;
-
-        if (belongsToPayers) 
+        if (m_perksDefs.Count == 0)
         {
-            // Ok, he is a payer (or at least clustering considers him as a possible payer)
-            // Does the player own the last classic dragon?
-            string lastDragonSku = DragonManager.lastClassicDragon.sku;
-            bool lastDragonOwned = DragonManager.IsDragonOwned(lastDragonSku);
+            Debug.LogError("The perks are not defined in the content!");
+            return null;
+        }
 
-            if (lastDragonOwned)
+        // Cluster is needed to get the proper perks
+        string cluster = ClusteringManager.Instance.GetClusterId();
+
+
+        foreach (DefinitionNode candidate in m_perksDefs)
+        {
+
+            //Check clusters
+            List<string> clusters = candidate.GetAsList<string>("cluster");
+
+            if ( ! clusters.Contains(cluster) )
             {
-                return PlayerType.PAYER_WITH_LAST_DRAGON;
+                // Doesnt belong to this group. Try next
+                continue;
             }
-            else
+
+
+            // Check dragons ownership
+            string ownedDragon = candidate.GetAsString("ownedDragon");
+            string notOwnedDragon = candidate.GetAsString("notOwnedDragon");
+
+            // In case the designer used the generick sku "last_dragon_progression", replace it with the proper dragon
+            ownedDragon = ownedDragon.Replace(OfferPack.DRAGON_LAST_PROGRESSION, DragonManager.lastClassicDragon.sku);
+            notOwnedDragon = notOwnedDragon.Replace(OfferPack.DRAGON_LAST_PROGRESSION, DragonManager.lastClassicDragon.sku);
+
+            if (! string.IsNullOrEmpty(ownedDragon) && ! DragonManager.IsDragonOwned(ownedDragon))
             {
-                return PlayerType.PAYER_WITHOUT_LAST_DRAGON;
+                // Doesnt own the required dragon. Try next
+                continue;
             }
+
+            if (!string.IsNullOrEmpty(notOwnedDragon) && DragonManager.IsDragonOwned(notOwnedDragon))
+            {
+                // Owns the forbidden dragon. Try next
+                continue;
+            }
+
+
+            // At this point we have a candidate! Stop searching
+            return candidate;
+
         }
-        else {
-            // Everything else is a non payer
-            return PlayerType.NON_PAYER;
-        }
+
+        // We finish without finding a candidate. It shouldnt happen. Designers should fix the content!
+        Debug.LogError("There is no perks definition suitable for the current player! He doesnt belong to any group!");
+        return null;
+
     }
+
 
     /// <summary>
     /// Initialize the solo quest perk
@@ -451,6 +459,7 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
         m_freeTournamentExpirationTimestamp = new DateTime();
     }
 
+
     private void CreateBoostedSevenDayLogin()
     {
         m_boostedDailyRewards = new BoostedDailyRewardsSequence();
@@ -459,10 +468,12 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
         m_boostedDailyRewards.Generate();
     }
 
+
     private void EndBoostedSevenDayLogin()
     {
         m_boostedDailyRewards = null;
     }
+
 
     private void CreateNonPayerOffer()
     {
@@ -472,6 +483,7 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
         // Make sure we show this perk in the popup
         m_hasSpecialOffer = true;
     }
+
 
     private void ActivateHappyHour()
     {
@@ -486,6 +498,7 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
         OffersManager.happyHourManager.ForceStart(sku);
 
     }
+
     
     private void EndHappyHour()
     {
@@ -501,7 +514,8 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
 
     }
 
-    private void CreateLatestDragonOffer ()
+
+    private void EnableSpecialOffer ()
     {
         // Nothing to do, this offer will be automatically activated
         // by the offersManager
@@ -510,13 +524,27 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
         m_hasSpecialOffer = true;
     }
 
-    private void CreateSpecialGatchaOffer()
+
+    private void DisableSpecialOffer ()
     {
-        // Nothing to do, this offer will be automatically activated
-        // by the offersManager
-        
-        // Make sure we show this perk in the popup
-        m_hasSpecialOffer = true;
+        // Nothing to do. Offers manager will expire WB offers automatically
+
+        m_hasSpecialOffer = false;
+    }
+
+
+    private void EnablePopup()
+    {
+        // Show the welcome back popup when possible
+        m_isPopupWaiting = true;
+    }
+
+
+    private void DisablePopup()
+    {
+        // Probably the popup has already been displayed.
+        // But just in case we are in time...
+        m_isPopupWaiting = false;
     }
     
 	//------------------------------------------------------------------------//
