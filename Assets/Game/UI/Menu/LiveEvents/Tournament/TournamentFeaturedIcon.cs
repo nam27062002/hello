@@ -119,7 +119,7 @@ public class TournamentFeaturedIcon : MonoBehaviour {
 		RefreshTimer(true);
         
         // Check the welcome back mode
-        m_welcomeBackActive = WelcomeBackManager.instance.IsFreeTournamentPassActive();
+        m_welcomeBackActive = WelcomeBackManager.instance.IsTournamentPassActive();
         
         // The current variation matches the welcome back state?
         bool show = ((m_visualVariation == Variation.WELCOME_BACK && m_welcomeBackActive)

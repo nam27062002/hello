@@ -74,7 +74,7 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
     
 
     // Free tournament
-    private DateTime m_freeTournamentExpirationTimestamp;
+    private DateTime m_tournamentPassExpirationTimestamp;
     
     // Boosted daily reward
     private BoostedDailyRewardsSequence m_boostedDailyRewards;
@@ -241,7 +241,7 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
             ActivatePassiveEvent();
 
         if (perksDef.GetAsBool(ENABLE_TOURNAMENT_PASS))
-            ActivateFreePassTournament();
+            ActivateTournamentPass();
 
         if (perksDef.GetAsBool(ENABLE_HAPPY_HOUR))
             ActivateHappyHour();
@@ -268,7 +268,7 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
     {
 	    EndSoloQuest();
         EndPassiveEvent();
-        EndFreePassTournament();
+        EndTournamentPass();
         EndBoostedSevenDayLogin();
         EndHappyHour();
         DisableSpecialOffer();
@@ -280,30 +280,30 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
 
 
     /// <summary>
-    /// Check if the "free" tournament pass is active. Notice that the entrance fee could be free or not.
+    /// Check if the tournament pass is active. Notice that the entrance fee could be free or not.
     /// </summary>
     /// <returns>True if active</returns>
-    public bool IsFreeTournamentPassActive()
+    public bool IsTournamentPassActive()
     {
-        return m_freeTournamentExpirationTimestamp > GameServerManager.GetEstimatedServerTime();
+        return m_tournamentPassExpirationTimestamp > GameServerManager.GetEstimatedServerTime();
     }
     
     /// <summary>
-    /// Check if the "free" tournament entrance fee is really free, or just cheaper
+    /// Check if the tournament entrance fee is really free, or just cheaper
     /// </summary>
     /// <returns></returns>
-    public bool IsFreeTournamentReallyFree()
+    public bool IsTournamentPassFree()
     {
-        return GetFreeTournamentPassPrice() == 0;
+        return GetTournamentPassPrice() == 0;
     }
 
     /// <summary>
     /// Returns the price of the "free" pass for tournaments. 
     /// </summary>
     /// <returns>Returns zero if free</returns>
-    public int GetFreeTournamentPassPrice()
+    public int GetTournamentPassPrice()
     {
-        return m_def.GetAsInt("freeTournamentPassPrice");
+        return m_def.GetAsInt("tournamentPassPrice");
     }
 
     
@@ -311,10 +311,10 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
     /// The currency type defined in the content
     /// </summary>
     /// <returns>Returns the type of currency of the tournament pass</returns>
-    public UserProfile.Currency GetFreeTournamentCurrency()
+    public UserProfile.Currency GetTournamentPassCurrency()
     {
         // This sku could be "-" in case of a free pass
-        string sku = m_def.GetAsString("freeTournamentPassCurrency");
+        string sku = m_def.GetAsString("tournamentPassCurrency");
         UserProfile.Currency currency = UserProfile.SkuToCurrency(sku);
 
         return currency;
@@ -440,23 +440,23 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
     /// <summary>
     /// Activate the free pass tournament perk
     /// </summary>
-    private void ActivateFreePassTournament()
+    private void ActivateTournamentPass()
     {
         // Calculate the free pass expiration date
-        int freeTournamentDurationHours = m_def.GetAsInt("freeTournamentDurationHours");
+        int durationHours = m_def.GetAsInt("tournamentPassDurationHours");
         DateTime now = GameServerManager.GetEstimatedServerTime();
         
-        m_freeTournamentExpirationTimestamp = now.AddHours(freeTournamentDurationHours);
+        m_tournamentPassExpirationTimestamp = now.AddHours(durationHours);
         
     }
     
     /// <summary>
     /// Finalize the free pass tournament perk
     /// </summary>
-    private void EndFreePassTournament()
+    private void EndTournamentPass()
     {
         // Reset the expiration date to invalidate the free pass ticket.
-        m_freeTournamentExpirationTimestamp = new DateTime();
+        m_tournamentPassExpirationTimestamp = new DateTime();
     }
 
 
@@ -589,10 +589,10 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
         }
         
         // Load free tournament pass data
-        key = "freeTournamentExpiration";
+        key = "tournamentPassExpiration";
         if ( _data.ContainsKey(key) )
         {
-            m_freeTournamentExpirationTimestamp = TimeUtils.TimestampToDate(PersistenceUtils.SafeParse<long>(_data["freeTournamentExpiration"]));
+            m_tournamentPassExpirationTimestamp = TimeUtils.TimestampToDate(PersistenceUtils.SafeParse<long>(_data["freeTournamentExpiration"]));
         }
         
         // Load boosted daily rewards
@@ -632,7 +632,7 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
         }
         
         // Save free tournament pass
-        data.Add("freeTournamentExpiration", PersistenceUtils.SafeToString(TimeUtils.DateToTimestamp( m_freeTournamentExpirationTimestamp )));
+        data.Add("tournamentPassExpiration", PersistenceUtils.SafeToString(TimeUtils.DateToTimestamp( m_tournamentPassExpirationTimestamp )));
 
         // Save boosted daily rewarsd
         if (m_boostedDailyRewards != null)
