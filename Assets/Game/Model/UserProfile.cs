@@ -122,6 +122,7 @@ public class UserProfile : UserPersistenceSystem
 	private DateTime m_saveTimestamp;
     public DateTime saveTimestamp {
         get { return m_saveTimestamp; }
+		set { m_saveTimestamp = value; } // For debug purposes 
     }
     public int lastModified { get; set; }
 

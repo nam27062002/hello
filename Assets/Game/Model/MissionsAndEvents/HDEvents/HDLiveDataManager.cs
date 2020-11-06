@@ -257,7 +257,7 @@ public class HDLiveDataManager : Singleton<HDLiveDataManager> {
     /// Returns true if there is a local passive event active at this moment
     /// </summary>
     /// <returns></returns>
-    public bool LocalPassiveEventIsAvailable()
+    public bool IsLocalPassiveEventAvailable()
     {
         return (m_localPassive.EventExists() && m_localPassive.IsRunning());
     }
@@ -287,7 +287,7 @@ public class HDLiveDataManager : Singleton<HDLiveDataManager> {
     /// <returns></returns>
     private HDPassiveEventManager GetActivePassiveEvent()
     {
-        if (LocalPassiveEventIsAvailable())
+        if (IsLocalPassiveEventAvailable())
         {
             return m_localPassive;
         }
@@ -541,7 +541,7 @@ public class HDLiveDataManager : Singleton<HDLiveDataManager> {
 
         if (UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.FIRST_RUN)) {
             // Local passive events always have priority over live passive
-            if (LocalPassiveEventIsAvailable())
+            if (IsLocalPassiveEventAvailable())
             {
                 m_livePassive.Deactivate();
                 m_localPassive.Activate();

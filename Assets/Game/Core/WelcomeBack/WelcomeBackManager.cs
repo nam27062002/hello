@@ -141,7 +141,23 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
             m_def = defs[0];
         }
 
+    }
 
+    /// <summary>
+    /// Check if the player is elefgible for the WB feature, and in that case, activate WB.
+    /// </summary>
+    public void CheckActivation ()
+    {
+        if (m_def == null)
+        {
+            // WB hasnt been properly initialized
+            return;
+        }
+
+        if (IsElegibleForWB())
+        {
+            Activate();
+        }
 
     }
 
@@ -153,25 +169,38 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
 	/// and didnt enjoy this welcome back feature before.</returns>
     public bool IsElegibleForWB()
     {
-	    // The feature is disabled from the content
-	    if (!enabled)
-		    return false;
-		
-        // This player already enjoyed this feature
-        if (m_active)
-		    return false;
+        // The feature is disabled from the content
+        if (!enabled)
+        {
+            Log("Welcome Back disabled");
+            return false;
+        }
 
+        // Calculate time absent
 		m_lastVisit = UsersManager.currentUser.saveTimestamp;
-        
+        TimeSpan timeAbsent = GameServerManager.GetEstimatedServerTime() - m_lastVisit;
+
         // Amount of days the the player needs to be absent to get the WB
         int minAbsentDays = def.GetAsInt("minAbsentDays");
 
-        // This player didnt spend enough days offline to get a WB
-		if (GameServerManager.GetEstimatedServerTime() < m_lastVisit.AddDays(minAbsentDays))
-			return false;
+        // Did this player spend enough days offline to get a WB?
+        if (timeAbsent.TotalDays < minAbsentDays)
+        {     
+            Log("The player needs to be absent at least " + minAbsentDays + " days to trigger WB, " +
+                "he was out only " + timeAbsent.TotalDays);
+            return false;
+        }
+
+        // This player already enjoyed this feature
+        if (m_active)
+        {
+            Log("The player cannot activate Welcome back twice");
+            return false;
+        }
 
         // All checks passed
-		return true;
+        Log("All checks passed. WB will be activated now");
+        return true;
 	}
 
 
@@ -242,6 +271,9 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
         
         // Show the welcome back popup when possible
         m_isPopupWaiting = true;
+
+        Log("Welcome back succesfully activated");
+
     }
 
     /// <summary>
@@ -605,5 +637,16 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
 		Deactivate();
 	}
 
+    //------------------------------------------------------------------------//
+    // DEBUG LOG															  //
+    //------------------------------------------------------------------------//
+
+    #region log
+    private const string LOG_CHANNEL = "[WelcomeBack]";
+    public static void Log(string message)
+    {
+        ControlPanel.Log(LOG_CHANNEL + message, ControlPanel.ELogChannel.WelcomeBack);
+    }
+    #endregion
 
 }

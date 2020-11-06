@@ -130,10 +130,18 @@ public class OfferFeaturedIcon : MonoBehaviour {
 	private void RefreshVisibility(bool _animate = true, bool _force = false) {
 
 		// Show the proper icon
-		bool isWelcomeBackOffer = (m_targetOffer.type == OfferPack.Type.WELCOME_BACK);
+		if (m_targetOffer != null)
+		{
+			bool isWelcomeBackOffer = (m_targetOffer.type == OfferPack.Type.WELCOME_BACK);
 
-        m_regularIcon.SetActive(!isWelcomeBackOffer);
-		m_welcomeBackIcon.SetActive(isWelcomeBackOffer);
+			m_regularIcon.SetActive(!isWelcomeBackOffer);
+			m_welcomeBackIcon.SetActive(isWelcomeBackOffer);
+		}
+        else
+        {
+			m_regularIcon.SetActive(false);
+			m_welcomeBackIcon.SetActive(false);
+		}
 
 
 		// Same conditions as the show conditioner
