@@ -315,8 +315,10 @@ public class DragonWizardValidationModule : IDragonWizard
         // At this point all prefabs are loaded.
         // We're going to check the consistency between all prefabs (same points in all prefabs and similar)
 
-        // Unit tests for consistency 
-        results.Add(new DragonTest(ConsistencyTestPoints(), "All prefabs have the same points"));
+        // Unit tests for consistency
+        string details;
+        bool consistencyTestResult = ConsistencyTestPoints(out details);
+        results.Add(new DragonTest(consistencyTestResult, "All prefabs have the same points: " + details, Severity.Warning));
     }
 
     #region MAIN_MENU_TESTS
@@ -532,50 +534,92 @@ public class DragonWizardValidationModule : IDragonWizard
     #endregion
 
     #region CONSISTENCY_TESTS
-    bool ConsistencyTestPoints()
+    bool ConsistencyTestPoints(out string errorDetails)
     {
-        // TODO: ignore pet points, validate point positions
+        errorDetails = "success";
 
         Transform mainMenuPointsTransform = mainMenuPrefab.FindTransformRecursive("points");
         if (mainMenuPointsTransform == null)
+        {
+            errorDetails = "points gameobject does not exists for main menu prefab";
             return false;
+        }
 
         Transform gameplayPointsTransform = gameplayPrefab.FindTransformRecursive("points");
         if (gameplayPointsTransform == null)
+        {
+            errorDetails = "points gameobject does not exists for gameplay prefab";
             return false;
+        }
 
         Transform resultsPointsTransform = resultsPrefab.FindTransformRecursive("points");
         if (resultsPointsTransform == null)
+        {
+            errorDetails = "points gameobject does not exists for results prefab";
             return false;
+        }
 
         Transform corpsePointsTransform = corpsePrefab.FindTransformRecursive("points");
         if (corpsePointsTransform == null)
+        {
+            errorDetails = "points gameobject does not exists for corpse prefab";
             return false;
+        }
 
-        Transform[] mainMenuPoints = mainMenuPointsTransform.GetComponentsInChildren<Transform>();
-        Transform[] gameplayPoints = gameplayPointsTransform.GetComponentsInChildren<Transform>();
-        Transform[] resultsPoints = resultsPointsTransform.GetComponentsInChildren<Transform>();
-        Transform[] corpsePoints = corpsePointsTransform.GetComponentsInChildren<Transform>();
+        AttachPoint[] mainMenuPoints = mainMenuPointsTransform.GetComponentsInChildren<AttachPoint>();
+        AttachPoint[] gameplayPoints = gameplayPointsTransform.GetComponentsInChildren<AttachPoint>();
+        AttachPoint[] resultsPoints = resultsPointsTransform.GetComponentsInChildren<AttachPoint>();
+        AttachPoint[] corpsePoints = corpsePointsTransform.GetComponentsInChildren<AttachPoint>();
 
-        int totalMainMenuPoints = mainMenuPoints.Length;
-        int totalGameplayPoints = gameplayPoints.Length;
-        int totalResultsPoints = resultsPoints.Length;
-        int totalCorpsePoints = corpsePoints.Length;
+        int totalMainMenuPoints = GetValidAttachPoints(ref mainMenuPoints);
+        int totalGameplayPoints = GetValidAttachPoints(ref gameplayPoints);
+        int totalResultsPoints = GetValidAttachPoints(ref resultsPoints);
+        int totalCorpsePoints = GetValidAttachPoints(ref corpsePoints);
 
-        if (totalGameplayPoints < totalMainMenuPoints) // Because we're considering the extra attack points for gameplay
+        if (totalGameplayPoints != totalMainMenuPoints)
+        {
+            errorDetails = "points did not match between gameplay and main menu prefab";
             return false;
+        }
 
-        if (totalMainMenuPoints != totalResultsPoints)
+        if (totalGameplayPoints != totalResultsPoints)
+        {
+            errorDetails = "points did not match between gameplay and results prefab";
             return false;
+        }
 
-        if (totalResultsPoints < totalCorpsePoints)
+        if (totalGameplayPoints != totalCorpsePoints)
+        {
+            errorDetails = "points did not match between gameplay and corpse prefab";
             return false;
+        }
 
         return true;
     }
     #endregion
 
     #region HELPER_TESTS
+    int GetValidAttachPoints(ref AttachPoint[] attachPoint)
+    {
+        int totalPoints = 0;
+        for (int i = 0; i < attachPoint.Length; i++)
+        {
+            if (attachPoint[i].point == Equipable.AttachPoint.Pet_1 ||
+                attachPoint[i].point == Equipable.AttachPoint.Pet_2 ||
+                attachPoint[i].point == Equipable.AttachPoint.Pet_3 ||
+                attachPoint[i].point == Equipable.AttachPoint.Pet_4 ||
+                attachPoint[i].point == Equipable.AttachPoint.Pet_5 ||
+                attachPoint[i].transform.name.StartsWith("attack_"))
+            {
+                continue;
+            }
+
+            totalPoints++;
+        }
+
+        return totalPoints;
+    }
+
     bool TestPetPoints(Transform points)
     {
         int totalPetPoints = 0;
