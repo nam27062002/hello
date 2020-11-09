@@ -93,7 +93,7 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
     {
         get
         {
-            return m_def.GetAsInt("boostedDailyLoginAdMultiplier");
+            return m_def.GetAsInt("boostedDailyRewardsAdMultiplier");
         }
     }
 
@@ -592,7 +592,7 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
         key = "tournamentPassExpiration";
         if ( _data.ContainsKey(key) )
         {
-            m_tournamentPassExpirationTimestamp = TimeUtils.TimestampToDate(PersistenceUtils.SafeParse<long>(_data["freeTournamentExpiration"]));
+            m_tournamentPassExpirationTimestamp = TimeUtils.TimestampToDate(PersistenceUtils.SafeParse<long>(_data["tournamentPassExpiration"]));
         }
         
         // Load boosted daily rewards
