@@ -19,19 +19,10 @@ using System;
 /// </summary>
 //[CreateAssetMenu]
 
-public class BoostedDailyRewardViewSettings : ScriptableObject {
+public class BoostedDailyRewardViewSettings : DailyRewardViewSettings {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
 	public const string PATH = "UI/Metagame/Rewards/BoostedDailyRewardViewSettings";
-
-	//------------------------------------------------------------------------//
-	// MEMBERS AND PROPERTIES												  //
-	//------------------------------------------------------------------------//
-	public Gradient4 defaultGradient = new Gradient4();
-	public Gradient4 cooldownGradient = new Gradient4();
-	public Gradient4 currentGradient = new Gradient4();
-	public Gradient4 collectedGradient = new Gradient4();
-	public Gradient4 specialGradient = new Gradient4();
 
 }
