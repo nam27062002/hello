@@ -619,18 +619,24 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
 	/// </summary>
 	public void OnForceStart()
 	{
+        
 
-		Activate();
+        Activate();
+
+        // In debug mode, activation time is now!
+        m_lastActivationTime = GameServerManager.GetEstimatedServerTime();
 
         // TODO: Call the server to Start
-	}
+    }
 
-	/// <summary>
-	/// End all the benefits granted by the welcome back feature
-	/// </summary>
-	public void OnForceEnd()
+    /// <summary>
+    /// End all the benefits granted by the welcome back feature
+    /// </summary>
+    public void OnForceEnd()
 	{
 		Deactivate();
+
+        m_lastActivationTime = DateTime.MinValue;
 
         // TODO: Call the server to Stop
 	}
