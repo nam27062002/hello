@@ -77,7 +77,72 @@ public class BoostedDailyRewardsSequence : DailyRewardsSequence {
 			m_rewards[i].InitFromDefs(rewardDefsByDay[targetDay]);
 		}
 	}
-    
-    
+
+	//------------------------------------------------------------------------//
+	// OVERRIDE PARENT      												  //
+	//------------------------------------------------------------------------//
+
+	/// <summary>
+	/// Reset to default values.
+	/// </summary>
+	public override void Reset()
+	{
+		// Rewards
+		m_rewards = new DailyReward[SEQUENCE_SIZE];
+		for (int i = 0; i < SEQUENCE_SIZE; ++i)
+		{
+			m_rewards[i] = new BoostedDailyReward();
+		}
+
+		// Other vars
+		m_totalRewardIdx = 0;
+		m_nextCollectionTimestamp = DateTime.MinValue;  // Already expired so first reward can be collected
+		Log("Reset nextTimestamp = " + m_nextCollectionTimestamp);
+	}
+
+
+	/// <summary>
+	/// Constructor from json data.
+	/// </summary>
+	/// <param name="_data">Data to be parsed.</param>
+	public override void LoadData(SimpleJSON.JSONNode _data)
+	{
+		// Reset any existing data
+		Reset();
+
+		// Current reward index
+		if (_data.ContainsKey("totalRewardIdx"))
+		{
+			m_totalRewardIdx = PersistenceUtils.SafeParse<int>(_data["totalRewardIdx"]);
+		}
+
+		// Collect timestamp
+		if (_data.ContainsKey("nextCollectionTimestamp"))
+		{
+			m_nextCollectionTimestamp = PersistenceUtils.SafeParse<DateTime>(_data["nextCollectionTimestamp"]);
+			Log("LoadData nextTimestamp = " + m_nextCollectionTimestamp);
+		}
+
+		// Rewards
+		if (_data.ContainsKey("rewards"))
+		{
+			SimpleJSON.JSONArray rewardsData = _data["rewards"].AsArray;
+			for (int i = 0; i < rewardsData.Count && i < m_rewards.Length; ++i)
+			{
+				if (m_rewards[i] != null)
+				{
+					m_rewards[i].LoadData(rewardsData[i]);
+				}
+			}
+		}
+
+		// Make sure rewards are valid, generate a new sequence otherwise
+		if (!ValidateRewards())
+		{
+			Generate();
+		}
+	}
+
+
 
 }

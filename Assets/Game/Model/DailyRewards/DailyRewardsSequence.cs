@@ -88,7 +88,7 @@ public class DailyRewardsSequence {
 	/// <summary>
 	/// Reset to default values.
 	/// </summary>
-	public void Reset() {
+	public virtual void Reset() {
 		// Rewards
 		m_rewards = new DailyReward[SEQUENCE_SIZE];
 		for(int i = 0; i < SEQUENCE_SIZE; ++i) {
@@ -236,7 +236,7 @@ public class DailyRewardsSequence {
 	/// Make sure the rewards are valid.
 	/// </summary>
 	/// <returns>Whether all the rewards in the sequence are valid. Returns <c>false</c> if at least one reward is not valid.</returns>
-	private bool ValidateRewards() {
+	protected bool ValidateRewards() {
 		// Check array
 		if(m_rewards == null) {
 			return false;
@@ -403,7 +403,7 @@ public class DailyRewardsSequence {
 #else
     [Conditional("FALSE")]
 #endif
-    private void Log(string message)
+    protected void Log(string message)
     {
         ControlPanel.Log(LOG_CHANNEL + message, ControlPanel.ELogChannel.DailyRewards);
     }
