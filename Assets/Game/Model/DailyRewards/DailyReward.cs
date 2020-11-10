@@ -24,8 +24,8 @@ public class DailyReward {
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
 	// Tracking constants
-	private const HDTrackingManager.EEconomyGroup ECONOMY_GROUP = HDTrackingManager.EEconomyGroup.REWARD_DAILY;
-	private const string DEFAULT_SOURCE = "";
+	protected const HDTrackingManager.EEconomyGroup ECONOMY_GROUP = HDTrackingManager.EEconomyGroup.REWARD_DAILY;
+	protected const string DEFAULT_SOURCE = "";
 
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
@@ -231,7 +231,7 @@ public class DailyReward {
 	/// of the definitions of this reward and of all of its replacement rewards.
 	/// </summary>
 	/// <returns>A composed customization ID representing this reward.</returns>
-	private string GenerateCustomizationID() {
+	protected string GenerateCustomizationID() {
 		string composedId = "";
 
 		// Add this reward's definition's code
@@ -255,7 +255,7 @@ public class DailyReward {
 	/// Constructor from json data.
 	/// </summary>
 	/// <param name="_data">Data to be parsed.</param>
-	public void LoadData(SimpleJSON.JSONNode _data) {
+	public virtual void LoadData(SimpleJSON.JSONNode _data) {
 		// Reset any existing data
 		Reset();
 

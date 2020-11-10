@@ -45,10 +45,12 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
     // MEMBERS AND PROPERTIES												  //
     //------------------------------------------------------------------------//
 
-    private DateTime m_lastVisit;
+    private DateTime m_lastActivationTime;
+    public DateTime lastActivationTime
+    {
+        get => m_lastActivationTime;
+    }
 
-    
-    private bool m_active;
 
     private bool m_isPopupWaiting = false;
     public bool isPopupWaiting
@@ -97,22 +99,20 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
         }
     }
 
-    
-    // Welcome back becomes active when triggered and never expires. Only can be deactivated via cheats panel.
-    public bool active
+    public bool hasBeenActivated
     {
-        get { return m_active; }
+        get => (m_lastActivationTime != null && m_lastActivationTime > DateTime.MinValue);
     }
 
 
 
     //------------------------------------------------------------------------//
-	// GENERIC METHODS														  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Default constructor.
-	/// </summary>
-	public WelcomeBackManager()
+    // GENERIC METHODS														  //
+    //------------------------------------------------------------------------//
+    /// <summary>
+    /// Default constructor.
+    /// </summary>
+    public WelcomeBackManager()
 	{
 
 	}
@@ -153,65 +153,34 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
 
     }
 
-    /// <summary>
-    /// Check if the player is elefgible for the WB feature, and in that case, activate WB.
-    /// </summary>
-    public void CheckActivation ()
-    {
-        if (m_def == null)
-        {
-            // WB hasnt been properly initialized
-            return;
-        }
 
-        if (IsElegibleForWB())
+    /// <summary>
+    /// Try to activate WB in the client. Takes the time this WB was activated in the server and compares it
+    /// with the last time it was activated in the client. If the times differ, activates
+    /// the feature in the client. If the time is same, it means that we are receiveing data from an already
+    /// activated WB, so we can ignore it.
+    /// </summary>
+    /// <param name="_activationTime">Time when the WB was activated in the server</param>
+    /// <returns>True if the WB has been succesfully activated in the client</returns>
+    public bool TryActivation ( DateTime _activationTime )
+    {
+
+        if (m_lastActivationTime == _activationTime)
         {
+            // The welcome back sent by the server is already active in the client. Do nothing
+            return false;
+          
+        } else
+        {
+            // Otherwise the WB has been properly triggered
             Activate();
+            m_lastActivationTime = _activationTime;
+
+            return true;
         }
 
     }
 
-
-    /// <summary>
-	/// Checks if the player is elegible for the welcome back feature
-	/// </summary>
-	/// <returns>Returns true if the player has been X days without connecting to the game
-	/// and didnt enjoy this welcome back feature before.</returns>
-    public bool IsElegibleForWB()
-    {
-        // The feature is disabled from the content
-        if (!enabled)
-        {
-            Log("Welcome Back disabled");
-            return false;
-        }
-
-        // Calculate time absent
-		m_lastVisit = UsersManager.currentUser.saveTimestamp;
-        TimeSpan timeAbsent = GameServerManager.GetEstimatedServerTime() - m_lastVisit;
-
-        // Amount of days the the player needs to be absent to get the WB
-        int minAbsentDays = def.GetAsInt("minAbsentDays");
-
-        // Did this player spend enough days offline to get a WB?
-        if (timeAbsent.TotalDays < minAbsentDays)
-        {     
-            Log("The player needs to be absent at least " + minAbsentDays + " days to trigger WB, " +
-                "he was out only " + timeAbsent.TotalDays);
-            return false;
-        }
-
-        // This player already enjoyed this feature
-        if (m_active)
-        {
-            Log("The player cannot activate Welcome back twice");
-            return false;
-        }
-
-        // All checks passed
-        Log("All checks passed. WB will be activated now");
-        return true;
-	}
 
 
     /// <summary>
@@ -253,9 +222,6 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
             EnableSpecialOffer();
 
 
-        // Register WB
-        m_active = true;
-
         Log("Welcome back succesfully activated");
 
     }
@@ -274,7 +240,7 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
         DisableSpecialOffer();
         DisablePopup();
 
-        m_active = false;
+        m_lastActivationTime = DateTime.MinValue;
 
     }
 
@@ -287,6 +253,7 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
     {
         return m_tournamentPassExpirationTimestamp > GameServerManager.GetEstimatedServerTime();
     }
+
     
     /// <summary>
     /// Check if the tournament entrance fee is really free, or just cheaper
@@ -567,7 +534,7 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
         string key = "active";
         if ( _data.ContainsKey(key) )
         {
-            m_active = PersistenceUtils.SafeParse<bool>(_data[key]);
+            m_lastActivationTime = TimeUtils.TimestampToDate(PersistenceUtils.SafeParse<long>(_data["lastActivationTime"]));
         }
         
 		// Load solo quest in the liveDataManager
@@ -616,8 +583,8 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
 	{
 		SimpleJSON.JSONClass data = new SimpleJSON.JSONClass();
         
-        // Welcome back state
-        data.Add("active", m_active);
+        // Activation time
+        data.Add("lastActivationTime", PersistenceUtils.SafeToString(TimeUtils.DateToTimestamp(m_lastActivationTime)));
 
         // If there is an active SoloQuest, save it
 		if (HDLiveDataManager.instance.soloQuest.EventExists())
@@ -652,9 +619,10 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
 	/// </summary>
 	public void OnForceStart()
 	{
-		m_active = false;
-		
+
 		Activate();
+
+        // TODO: Call the server to Start
 	}
 
 	/// <summary>
@@ -663,6 +631,8 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
 	public void OnForceEnd()
 	{
 		Deactivate();
+
+        // TODO: Call the server to Stop
 	}
 
     //------------------------------------------------------------------------//

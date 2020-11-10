@@ -59,7 +59,7 @@ public class OfferPackWelcomeBack : OfferPack {
 		base.UpdateState();
         
         // If welcome back offer is deactivated (can only be done via cheats panel), this offer expires
-        if (oldState == State.ACTIVE && !WelcomeBackManager.instance.active)
+        if (oldState == State.ACTIVE && !WelcomeBackManager.instance.hasBeenActivated)
         {
             ChangeState(State.EXPIRED);
         }
@@ -77,7 +77,7 @@ public class OfferPackWelcomeBack : OfferPack {
     public override bool CheckActivation()
     {
         // Welcome pack offers are only available if Welcome back has been triggered
-        bool welcomeBackTriggered = WelcomeBackManager.instance.active;
+        bool welcomeBackTriggered = WelcomeBackManager.instance.hasBeenActivated;
         
         // Check the rest of the  segmentation conditions
         bool activate =  base.CheckActivation() && welcomeBackTriggered;
