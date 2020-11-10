@@ -430,7 +430,11 @@ public class CPTechTab : MonoBehaviour {
 		OnRefresh();
 
 		ApplicationManager.instance.NeedsToRestartFlow = true;
-	}	
+	}
+	public void OnTrackDNAEvent()
+	{
+		HDTrackingManager.Instance.Notify_CustomerSupportRequested();
+	}
 
 	#region countries
 	private bool Country_IsInitializing { get; set; }
