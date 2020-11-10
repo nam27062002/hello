@@ -131,7 +131,6 @@ public class BoostedDailyRewardsSequence : DailyRewardsSequence {
 			{
 				if (m_rewards[i] != null)
 				{
-                    // Force a casting to invoke the boostedDailyReward Load method
 					m_rewards[i].LoadData(rewardsData[i]);
 				}
 			}

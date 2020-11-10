@@ -37,7 +37,7 @@ public class BoostedDailyReward : DailyReward {
 
 		// Def (we're only saving the sku)
 		if(_data.ContainsKey("sourceSku")) {
-			sourceDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DAILY_REWARDS, _data["sourceSku"]);
+			sourceDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.BOOSTED_DAILY_REWARDS, _data["sourceSku"]);
 		} else {
 			Debug.Log(Colors.red.Tag("ERROR! Daily Reward doesn't contain sourceSku property!\n" + _data.ToString()));
 		}
