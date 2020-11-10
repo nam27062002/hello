@@ -6,7 +6,7 @@ echo "----------- EXPORTING EXCEL TO XML... ------------"
 echo " "
 
 rem Aux vars
-set EXCEL_TO_EXPORT=HungryDragonContent_welcomeBackDefinitions.xlsx
+set EXCEL_TO_EXPORT=HungryDragonContent_WelcomeBack.xlsx
 set TMP_DIR=tmp
 set OUTPUT_DIR=xml
 set PROJECT_DIR=..\..\Assets\Resources\Rules
