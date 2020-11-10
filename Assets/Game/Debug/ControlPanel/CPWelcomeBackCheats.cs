@@ -11,6 +11,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.Collections.Generic;
+using System;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -28,7 +29,7 @@ public class CPWelcomeBackCheats : MonoBehaviour {
 	//------------------------------------------------------------------------//
 
     [SerializeField] private TextMeshProUGUI m_playerType;
-	[SerializeField] private TextMeshProUGUI m_lastLoginTimestamp;
+	[SerializeField] private TextMeshProUGUI m_lastActivationTime;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -62,8 +63,11 @@ public class CPWelcomeBackCheats : MonoBehaviour {
 	/// Update loop.
 	/// </summary>
 	private void Update() {
+		DateTime time = WelcomeBackManager.instance.lastActivationTime;
+		bool isValid = time != null && time != DateTime.MinValue;
+
 		// Update timer text
-		m_lastLoginTimestamp.text = "Last Login: " + UsersManager.currentUser.saveTimestamp.ToString();
+		m_lastActivationTime.text = "Last Activation Time: " + (isValid ? time.ToString() : "-");
 
 	}
 
@@ -115,13 +119,6 @@ public class CPWelcomeBackCheats : MonoBehaviour {
 
 	}
 
-    /// <summary>
-    /// Perform all the checks needed, and if this player is elegible, activate WB.
-    /// </summary>
-    public void OnTryActivation()
-    {
-		WelcomeBackManager.instance.CheckActivation();
-    }
 
 
     /// <summary>
