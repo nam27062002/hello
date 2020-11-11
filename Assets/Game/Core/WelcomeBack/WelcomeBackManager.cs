@@ -527,9 +527,15 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
         {
             m_lastActivationTime = TimeUtils.TimestampToDate(PersistenceUtils.SafeParse<long>(_data["lastActivationTime"]));
         }
-        
-		// Load solo quest in the liveDataManager
-		key = "soloQuest";
+
+        key = "hasSpecialOffer";
+        if (_data.ContainsKey(key))
+        {
+            m_hasSpecialOffer = PersistenceUtils.SafeParse<bool>(_data["hasSpecialOffer"]);
+        }
+
+        // Load solo quest in the liveDataManager
+        key = "soloQuest";
 		if ( _data.ContainsKey(key) )
 		{
 			HDSoloQuestManager soloQuest = new HDSoloQuestManager();
@@ -574,11 +580,13 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
 	{
 		SimpleJSON.JSONClass data = new SimpleJSON.JSONClass();
         
-        // Activation time
         data.Add("lastActivationTime", PersistenceUtils.SafeToString(TimeUtils.DateToTimestamp(m_lastActivationTime)));
 
+        data.Add("hasSpecialOffer", PersistenceUtils.SafeToString(m_hasSpecialOffer));
+
+
         // If there is an active SoloQuest, save it
-		if (HDLiveDataManager.instance.soloQuest.EventExists())
+        if (HDLiveDataManager.instance.soloQuest.EventExists())
 		{
 			data.Add("soloQuest", HDLiveDataManager.instance.soloQuest.ToJson());
 		}
