@@ -209,12 +209,12 @@ public class DragonWizardValidationModule : IDragonWizard
         mainMenuPrefab = AssetDatabase.LoadAssetAtPath(assetPath, typeof(GameObject)) as GameObject;
 
         // Unit tests for main menu prefab
-        results.Add(new DragonTest(MainMenuTestViewGameObject(), "View gameobject exists"));
         results.Add(new DragonTest(MainMenuTestAnimationController(), "Animation controller is set", Severity.Warning));
+        results.Add(new DragonTest(MainMenuTestAssetBundle(), "Asset bundle prefab set to: " + SelectedSku + "_local", Severity.Warning));
+        results.Add(new DragonTest(MainMenuTestViewGameObject(), "View gameobject exists"));
         results.Add(new DragonTest(MainMenuTestDragonPreview(), "MenuDragonPreview script was added"));
         results.Add(new DragonTest(MainMenuTestSku(), "MenuDragonPreview sku matches " + SelectedSku));
         results.Add(new DragonTest(MainMenuTestDragonEquip(), "DragonEquip script was added"));
-        results.Add(new DragonTest(MainMenuTestAssetBundle(), "Asset bundle prefab set to: " + SelectedSku + "_local", Severity.Warning));
         results.Add(new DragonTest(MainMenuTestBodyWingsTags(), "Body and wings tags are set"));
         results.Add(new DragonTest(MainMenuTestPetPoints(), "Pet points are set"));
     }
@@ -249,8 +249,9 @@ public class DragonWizardValidationModule : IDragonWizard
             results.Add(new DragonTest(false, "Asset not found: " + GameplayPrefabName));
             return;
         }
-        
+
         // Unit tests for gameplay prefab
+        results.Add(new DragonTest(GameplayTestMegaFireRushAnchor(), "Mega fire rush anchor is set", Severity.Warning));
         results.Add(new DragonTest(GameplayTestDragonPlayer(), "DragonPlayer script was added"));
         results.Add(new DragonTest(GameplayTestSku(), "DragonPlayer sku matches " + SelectedSku));
         results.Add(new DragonTest(GameplayTestHoldPreyPoints(), "HoldPreyPoints are set"));
@@ -261,7 +262,6 @@ public class DragonWizardValidationModule : IDragonWizard
         results.Add(new DragonTest(GameplayTestMapMarker(), "MapMarker is set"));
         results.Add(new DragonTest(GameplayTestBodyWingsTags(), "Body and wings tags are set"));
         results.Add(new DragonTest(GameplayTestMegaFireRush(), "Mega fire rush is set"));
-        results.Add(new DragonTest(GameplayTestMegaFireRushAnchor(), "Mega fire rush anchor is set", Severity.Warning));
         results.Add(new DragonTest(GameplayTestPetPoints(), "Pet points are set"));
     }
 
@@ -315,8 +315,10 @@ public class DragonWizardValidationModule : IDragonWizard
         // At this point all prefabs are loaded.
         // We're going to check the consistency between all prefabs (same points in all prefabs and similar)
 
-        // Unit tests for consistency 
-        results.Add(new DragonTest(ConsistencyTestPoints(), "All prefabs have the same points"));
+        // Unit tests for consistency
+        string details;
+        bool consistencyTestResult = ConsistencyTestPoints(out details);
+        results.Add(new DragonTest(consistencyTestResult, "All prefabs have the same points: " + details, Severity.Warning));
     }
 
     #region MAIN_MENU_TESTS
@@ -532,50 +534,92 @@ public class DragonWizardValidationModule : IDragonWizard
     #endregion
 
     #region CONSISTENCY_TESTS
-    bool ConsistencyTestPoints()
+    bool ConsistencyTestPoints(out string errorDetails)
     {
-        // TODO: ignore pet points, validate point positions
+        errorDetails = "success";
 
         Transform mainMenuPointsTransform = mainMenuPrefab.FindTransformRecursive("points");
         if (mainMenuPointsTransform == null)
+        {
+            errorDetails = "points gameobject does not exists for main menu prefab";
             return false;
+        }
 
         Transform gameplayPointsTransform = gameplayPrefab.FindTransformRecursive("points");
         if (gameplayPointsTransform == null)
+        {
+            errorDetails = "points gameobject does not exists for gameplay prefab";
             return false;
+        }
 
         Transform resultsPointsTransform = resultsPrefab.FindTransformRecursive("points");
         if (resultsPointsTransform == null)
+        {
+            errorDetails = "points gameobject does not exists for results prefab";
             return false;
+        }
 
         Transform corpsePointsTransform = corpsePrefab.FindTransformRecursive("points");
         if (corpsePointsTransform == null)
+        {
+            errorDetails = "points gameobject does not exists for corpse prefab";
             return false;
+        }
 
-        Transform[] mainMenuPoints = mainMenuPointsTransform.GetComponentsInChildren<Transform>();
-        Transform[] gameplayPoints = gameplayPointsTransform.GetComponentsInChildren<Transform>();
-        Transform[] resultsPoints = resultsPointsTransform.GetComponentsInChildren<Transform>();
-        Transform[] corpsePoints = corpsePointsTransform.GetComponentsInChildren<Transform>();
+        AttachPoint[] mainMenuPoints = mainMenuPointsTransform.GetComponentsInChildren<AttachPoint>();
+        AttachPoint[] gameplayPoints = gameplayPointsTransform.GetComponentsInChildren<AttachPoint>();
+        AttachPoint[] resultsPoints = resultsPointsTransform.GetComponentsInChildren<AttachPoint>();
+        AttachPoint[] corpsePoints = corpsePointsTransform.GetComponentsInChildren<AttachPoint>();
 
-        int totalMainMenuPoints = mainMenuPoints.Length;
-        int totalGameplayPoints = gameplayPoints.Length;
-        int totalResultsPoints = resultsPoints.Length;
-        int totalCorpsePoints = corpsePoints.Length;
+        int totalMainMenuPoints = GetValidAttachPoints(ref mainMenuPoints);
+        int totalGameplayPoints = GetValidAttachPoints(ref gameplayPoints);
+        int totalResultsPoints = GetValidAttachPoints(ref resultsPoints);
+        int totalCorpsePoints = GetValidAttachPoints(ref corpsePoints);
 
-        if (totalGameplayPoints < totalMainMenuPoints) // Because we're considering the extra attack points for gameplay
+        if (totalGameplayPoints != totalMainMenuPoints)
+        {
+            errorDetails = "points did not match between gameplay and main menu prefab";
             return false;
+        }
 
-        if (totalMainMenuPoints != totalResultsPoints)
+        if (totalGameplayPoints != totalResultsPoints)
+        {
+            errorDetails = "points did not match between gameplay and results prefab";
             return false;
+        }
 
-        if (totalResultsPoints < totalCorpsePoints)
+        if (totalGameplayPoints != totalCorpsePoints)
+        {
+            errorDetails = "points did not match between gameplay and corpse prefab";
             return false;
+        }
 
         return true;
     }
     #endregion
 
     #region HELPER_TESTS
+    int GetValidAttachPoints(ref AttachPoint[] attachPoint)
+    {
+        int totalPoints = 0;
+        for (int i = 0; i < attachPoint.Length; i++)
+        {
+            if (attachPoint[i].point == Equipable.AttachPoint.Pet_1 ||
+                attachPoint[i].point == Equipable.AttachPoint.Pet_2 ||
+                attachPoint[i].point == Equipable.AttachPoint.Pet_3 ||
+                attachPoint[i].point == Equipable.AttachPoint.Pet_4 ||
+                attachPoint[i].point == Equipable.AttachPoint.Pet_5 ||
+                attachPoint[i].transform.name.StartsWith("attack_"))
+            {
+                continue;
+            }
+
+            totalPoints++;
+        }
+
+        return totalPoints;
+    }
+
     bool TestPetPoints(Transform points)
     {
         int totalPetPoints = 0;
