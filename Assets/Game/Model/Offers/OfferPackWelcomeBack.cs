@@ -78,9 +78,12 @@ public class OfferPackWelcomeBack : OfferPack {
     {
         // Welcome pack offers are only available if Welcome back has been triggered
         bool welcomeBackTriggered = WelcomeBackManager.instance.hasBeenActivated;
-        
+
+        // Are WB offers available for this player cluster?
+        bool offersEnabled = WelcomeBackManager.instance.hasSpecialOffer;
+
         // Check the rest of the  segmentation conditions
-        bool activate =  base.CheckActivation() && welcomeBackTriggered;
+        bool activate =  base.CheckActivation() && welcomeBackTriggered && offersEnabled;
 
         return activate;
     }

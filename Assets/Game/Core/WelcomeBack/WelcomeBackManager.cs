@@ -442,15 +442,6 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
     }
 
 
-    private void CreateNonPayerOffer()
-    {
-        // Nothing to do, this offer will be automatically activated
-        // by the offersManager
-
-        // Make sure we show this perk in the popup
-        m_hasSpecialOffer = true;
-    }
-
 
     private void ActivateHappyHour()
     {
@@ -530,8 +521,8 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
 	public void ParseJson(SimpleJSON.JSONNode _data)
 	{
 		
-        // Is active?
-        string key = "active";
+        
+        string key = "lastActivationTime";
         if ( _data.ContainsKey(key) )
         {
             m_lastActivationTime = TimeUtils.TimestampToDate(PersistenceUtils.SafeParse<long>(_data["lastActivationTime"]));
