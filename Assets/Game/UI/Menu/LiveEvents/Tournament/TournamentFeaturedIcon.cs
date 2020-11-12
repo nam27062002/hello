@@ -122,10 +122,14 @@ public class TournamentFeaturedIcon : MonoBehaviour {
         m_welcomeBackActive = WelcomeBackManager.instance.IsTournamentPassActive();
         
         // The current variation matches the welcome back state?
-        bool show = ((m_visualVariation == Variation.WELCOME_BACK && m_welcomeBackActive)
+        bool rightVariation = ((m_visualVariation == Variation.WELCOME_BACK && m_welcomeBackActive)
                      || (m_visualVariation == Variation.NORMAL && !m_welcomeBackActive));
-        
-        m_root.SetActive(show);
+
+        // Hide if is not the right variation
+		if (m_root.activeInHierarchy && !rightVariation)
+		{
+			m_root.SetActive(false);
+		}
 
     }
 
