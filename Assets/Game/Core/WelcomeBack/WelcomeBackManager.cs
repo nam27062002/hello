@@ -109,7 +109,14 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
         get => (m_lastActivationTime != null && m_lastActivationTime > DateTime.MinValue);
     }
 
-
+    // Use only for trackin purposes
+    private bool m_enablePopup;
+    private bool m_enableSoloQuest;
+    private bool m_enablePassive;
+    private bool m_enableTournamentPass;
+    private bool m_enableHappyHour;
+    private bool m_enableBoostedDailyLogin;
+    private bool m_enableOffer;
 
     //------------------------------------------------------------------------//
     // GENERIC METHODS														  //
@@ -171,7 +178,8 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
     {
 
         if (m_lastActivationTime == _activationTime)
-        {
+        {        
+
             // The welcome back sent by the server is already active in the client. Do nothing
             return false;
           
@@ -220,37 +228,37 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
 
 
         // Check all the perks one by one:
-        bool enablePopup = perksDef.GetAsBool(ENABLE_POPUP);
-        bool enableSoloQuest = perksDef.GetAsBool(ENABLE_SOLO_QUEST);
-        bool enablePassive = perksDef.GetAsBool(ENABLE_PASSIVE);
-        bool enableTournamentPass = perksDef.GetAsBool(ENABLE_TOURNAMENT_PASS);
-        bool enableHappyHour = perksDef.GetAsBool(ENABLE_HAPPY_HOUR);
-        bool enableBoostedDailyLogin = perksDef.GetAsBool(ENABLE_BOOSTED_DAILY_LOGIN);
-        bool enableOffer = perksDef.GetAsBool(ENABLE_OFFER);
+        m_enablePopup = perksDef.GetAsBool(ENABLE_POPUP);
+        m_enableSoloQuest = perksDef.GetAsBool(ENABLE_SOLO_QUEST);
+        m_enablePassive = perksDef.GetAsBool(ENABLE_PASSIVE);
+        m_enableTournamentPass = perksDef.GetAsBool(ENABLE_TOURNAMENT_PASS);
+        m_enableHappyHour = perksDef.GetAsBool(ENABLE_HAPPY_HOUR);
+        m_enableBoostedDailyLogin = perksDef.GetAsBool(ENABLE_BOOSTED_DAILY_LOGIN);
+        m_enableOffer = perksDef.GetAsBool(ENABLE_OFFER);
 
-        if (enablePopup)
+        if (m_enablePopup)
             EnablePopup();  
 
-        if (enableSoloQuest)
+        if (m_enableSoloQuest)
             CreateSoloQuest();       
 
-        if (enablePassive)
+        if (m_enablePassive)
             ActivatePassiveEvent();
 
-        if (enableTournamentPass)
+        if (m_enableTournamentPass)
             ActivateTournamentPass();
 
-        if (enableHappyHour)
+        if (m_enableHappyHour)
             ActivateHappyHour();
 
-        if (enableBoostedDailyLogin)
+        if (m_enableBoostedDailyLogin)
             CreateBoostedSevenDayLogin();
 
-        if (enableOffer)
+        if (m_enableOffer)
             EnableSpecialOffer();
 
 
-        string output = String.Format("Welcome back succesfully activated." +
+        string perks = String.Format(
             "Popup = {0}, " +
             "Solo Quest = {1}, " +
             "Passive = {2}, " +
@@ -258,9 +266,10 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
             "Happy Hour = {4}, " +
             "Boosted daily reward = {5}, " +
             "Special offer = {6}",
-            enablePopup, enableSoloQuest, enablePassive, enableTournamentPass, enableHappyHour, enableBoostedDailyLogin, enableOffer);
+            m_enablePopup, m_enableSoloQuest, m_enablePassive, m_enableTournamentPass, m_enableHappyHour, m_enableBoostedDailyLogin, m_enableOffer);
 
-        Log(output);
+        Log("Welcome back activated. " + perks);
+
 
         return true;
 
@@ -580,7 +589,16 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
         DateTime startDateTime = TimeUtils.TimestampToDate(long.Parse(value));
 
         // Check if we have to activate WB
-        TryActivation(startDateTime);
+        if (TryActivation(startDateTime) )
+        {
+            // Tracking (WB just activated!)
+            TrackWelcomeBackStatus(true);
+        }
+        else
+        {
+            // Tracking (witout WB activation)
+            TrackWelcomeBackStatus(false);
+        }
 
     }
 
@@ -725,6 +743,42 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
 
         // Call the server to Stop
         GameServerManager.SharedInstance.WelcomeBack_DEBUG_Stop(UsersManager.currentUser.userId, null);
+    }
+
+
+    //------------------------------------------------------------------------//
+    // TRACKING         													  //
+    //------------------------------------------------------------------------//
+    /// <summary>
+    /// Send the tracking event
+    /// </summary>
+    /// <param name="_triggered">True if the welcome back has been triggered in this round</param>
+    private void TrackWelcomeBackStatus(bool _triggered)
+    {
+
+        string clusterId = ClusteringManager.Instance.GetClusterId();
+        int minAbsentDays = def.GetAsInt("minAbsentDays");
+
+        string perks = "";
+        if (_triggered)
+        {
+            // Only send the perks list if we just triggered WB
+            perks = String.Format(
+                    "Popup = {0}, " +
+                    "Solo Quest = {1}, " +
+                    "Passive = {2}, " +
+                    "Tournament pass = {3}, " +
+                    "Happy Hour = {4}, " +
+                    "Boosted daily reward = {5}, " +
+                    "Special offer = {6}",
+                    m_enablePopup, m_enableSoloQuest, m_enablePassive, m_enableTournamentPass, m_enableHappyHour, m_enableBoostedDailyLogin, m_enableOffer);
+        }
+
+        // Generate a unique ID for this precise welcome back
+        string welcomeBackId = "WB_" + m_lastActivationTime.ToString("ddMMyyHHmmss");
+
+        HDTrackingManager.Instance.Notify_WelcomeBackStatus(clusterId, minAbsentDays, perks, _triggered, welcomeBackId);
+
     }
 
     //------------------------------------------------------------------------//
