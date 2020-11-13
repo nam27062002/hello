@@ -41,6 +41,16 @@ public class AndroidAgent : IronSourceIAgent
 		}
 	}
 
+	public void setAge (int age)
+	{
+		getBridge ().Call ("setAge", age);
+	}
+
+	public void setGender (string gender)
+	{
+		getBridge ().Call ("setGender", gender);
+	}
+
 	public void setMediationSegment (string segment)
 	{
 		getBridge ().Call ("setMediationSegment", segment);
@@ -76,14 +86,9 @@ public class AndroidAgent : IronSourceIAgent
         getBridge().Call("setMetaData", key, value);
     }
 
-	public void setMetaData(string key, params string[] values)
-	{
-		getBridge().Call("setMetaData", key, values);
-	}
+    //******************* SDK Init *******************//
 
-	//******************* SDK Init *******************//
-
-	public void setUserId(string userId) {
+    public void setUserId(string userId) {
 		getBridge ().Call ("setUserId", userId);
 	}
 
