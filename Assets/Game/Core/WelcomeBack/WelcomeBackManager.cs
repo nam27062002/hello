@@ -600,14 +600,21 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
         string key = "lastActivationTime";
         if ( _data.ContainsKey(key) )
         {
-            m_lastActivationTime = TimeUtils.TimestampToDate(PersistenceUtils.SafeParse<long>(_data["lastActivationTime"]));
+            m_lastActivationTime = TimeUtils.TimestampToDate(PersistenceUtils.SafeParse<long>(_data[key]));
         }
 
         key = "hasSpecialOffer";
         if (_data.ContainsKey(key))
         {
-            m_hasSpecialOffer = PersistenceUtils.SafeParse<bool>(_data["hasSpecialOffer"]);
+            m_hasSpecialOffer = PersistenceUtils.SafeParse<bool>(_data[key]);
         }
+
+        key = "isPopupWaiting";
+        if (_data.ContainsKey(key))
+        {
+            m_isPopupWaiting = PersistenceUtils.SafeParse<bool>(_data[key]);
+        }
+
 
         // Load solo quest in the liveDataManager
         key = "soloQuest";
@@ -659,6 +666,8 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
 
         data.Add("hasSpecialOffer", PersistenceUtils.SafeToString(m_hasSpecialOffer));
 
+        // In case the player closes the app before seeing the popup, we want to show it the next time he comes back
+        data.Add("isPopupWaiting", PersistenceUtils.SafeToString(m_isPopupWaiting));
 
         // If there is an active SoloQuest, save it
         if (HDLiveDataManager.instance.soloQuest.EventExists())
