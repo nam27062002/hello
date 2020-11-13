@@ -44,6 +44,11 @@ public class PopupHappyHour : MonoBehaviour {
 	[SerializeField]
 	private ShopHCPill m_offerToDisplay;
 
+	[SerializeField]
+	private GameObject m_regularBground;
+	[SerializeField]
+	private GameObject m_welcomeBackBground;
+
 	// Internal
 	private HappyHour m_happyHour;
 
@@ -82,6 +87,14 @@ public class PopupHappyHour : MonoBehaviour {
 
 				m_offerToDisplay.InitFromDef(_lastPackDef);
 			}
+
+			// The only way to know if this is activated by WB is looking at autostart. Not very elegant... but works
+			bool welcomeBackHH = (m_happyHour.data.autoStart == false);
+
+			// Show the proper background
+			m_regularBground.SetActive(!welcomeBackHH);
+			m_welcomeBackBground.SetActive(welcomeBackHH);
+
 		} else {
 			//Shouldnt happent, but just in case. If there is not happy hour active, close the popup.
 			m_descriptionText.gameObject.SetActive(false);
@@ -137,6 +150,7 @@ public class PopupHappyHour : MonoBehaviour {
 		if(m_offerToDisplay != null) {
 			m_offerToDisplay.RefreshTimer();
 		}
+
 	}
 
 	//------------------------------------------------------------------------//
