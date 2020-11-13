@@ -41,6 +41,11 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
     public const string ENABLE_SOLO_QUEST = "enableSoloQuest";
     public const string ENABLE_TOURNAMENT_PASS = "enableTournamentPass";
 
+
+    // Server call
+    public const string WELCOME_BACK_KEY = "welcomeBack";
+    public const string START_DATE_KEY = "welcomeBackStartDate";
+
     //------------------------------------------------------------------------//
     // MEMBERS AND PROPERTIES												  //
     //------------------------------------------------------------------------//
@@ -170,13 +175,28 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
             // The welcome back sent by the server is already active in the client. Do nothing
             return false;
           
-        } else
+        }
+        else if (m_lastActivationTime > _activationTime)
+        {
+            // This shouldnt happen, probably an error
+            Debug.LogError("The server is sending a Welcome Back activation date older than the current one!");
+            return false;
+        }
+        else
         {
             // Otherwise the WB has been properly triggered
-            Activate();
-            m_lastActivationTime = _activationTime;
 
-            return true;
+            Log("The server notified that WB has been triggered with date " + _activationTime.ToString());
+
+            if (Activate())
+            {
+                // Keep the date sent by the server. We will use it to check if there is a new WB in the future.
+                m_lastActivationTime = _activationTime;
+
+                return true;
+            }
+
+            return false;
         }
 
     }
@@ -186,7 +206,8 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
     /// <summary>
 	/// The welcome back feature becomes active. Enables all the benefits depending on the player profile.
 	/// </summary>
-    public void Activate()
+    /// <returns>True if the activation was succesful</returns>
+    public bool Activate()
     {
 
         m_perksDef = FindPerksForThisPlayer();
@@ -194,35 +215,54 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
         if (m_perksDef == null)
         {
             // No configuration find for this player
-            return;
+            return false;
         }
 
 
         // Check all the perks one by one:
+        bool enablePopup = perksDef.GetAsBool(ENABLE_POPUP);
+        bool enableSoloQuest = perksDef.GetAsBool(ENABLE_SOLO_QUEST);
+        bool enablePassive = perksDef.GetAsBool(ENABLE_PASSIVE);
+        bool enableTournamentPass = perksDef.GetAsBool(ENABLE_TOURNAMENT_PASS);
+        bool enableHappyHour = perksDef.GetAsBool(ENABLE_HAPPY_HOUR);
+        bool enableBoostedDailyLogin = perksDef.GetAsBool(ENABLE_BOOSTED_DAILY_LOGIN);
+        bool enableOffer = perksDef.GetAsBool(ENABLE_OFFER);
 
-        if (perksDef.GetAsBool(ENABLE_POPUP))
+        if (enablePopup)
             EnablePopup();  
 
-        if (perksDef.GetAsBool(ENABLE_SOLO_QUEST))
+        if (enableSoloQuest)
             CreateSoloQuest();       
 
-        if (perksDef.GetAsBool(ENABLE_PASSIVE))
+        if (enablePassive)
             ActivatePassiveEvent();
 
-        if (perksDef.GetAsBool(ENABLE_TOURNAMENT_PASS))
+        if (enableTournamentPass)
             ActivateTournamentPass();
 
-        if (perksDef.GetAsBool(ENABLE_HAPPY_HOUR))
+        if (enableHappyHour)
             ActivateHappyHour();
 
-        if (perksDef.GetAsBool(ENABLE_BOOSTED_DAILY_LOGIN))
+        if (enableBoostedDailyLogin)
             CreateBoostedSevenDayLogin();
 
-        if (perksDef.GetAsBool(ENABLE_OFFER))
+        if (enableOffer)
             EnableSpecialOffer();
 
 
-        Log("Welcome back succesfully activated");
+        string output = String.Format("Welcome back succesfully activated." +
+            "Popup = {0}, " +
+            "Solo Quest = {1}, " +
+            "Passive = {2}, " +
+            "Tournament pass = {3}, " +
+            "Happy Hour = {4}, " +
+            "Boosted daily reward = {5}, " +
+            "Special offer = {6}",
+            enablePopup, enableSoloQuest, enablePassive, enableTournamentPass, enableHappyHour, enableBoostedDailyLogin, enableOffer);
+
+        Log(output);
+
+        return true;
 
     }
 
@@ -324,6 +364,13 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
         // Cluster is needed to get the proper perks
         string cluster = ClusteringManager.Instance.GetClusterId();
 
+        if (cluster == null )
+        {
+            // By the time WB is triggered, the player should already been assigned to a cluster
+            Debug.LogWarning("This player is not assigned to any cluster yet!");
+            return null;
+
+        }
 
         foreach (DefinitionNode candidate in m_perksDefs)
         {
@@ -509,30 +556,65 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
 
-	//------------------------------------------------------------------------//
-	// PERSISTENCE															  //
-	//------------------------------------------------------------------------//
+    /// <summary>
+    /// The server is telling us if the WB has been triggered right now, or in the past.
+    /// </summary>
+    /// <param name="_data"></param>
+    public void OnLiveDataResponse (SimpleJSON.JSONNode _data)
+    {
+
+        if (!_data.ContainsKey(START_DATE_KEY))
+        {
+            // According to the server, WB was never triggered. So get out.
+            return;
+        }
+
+        string value  = _data[ START_DATE_KEY ];
+
+        if (string.IsNullOrEmpty (value) || value ==  "0")
+        {
+            // An empty start date, means that WB hasnt been triggered. Get out
+            return;
+        }
+
+        DateTime startDateTime = TimeUtils.TimestampToDate(long.Parse(value));
+
+        // Check if we have to activate WB
+        TryActivation(startDateTime);
+
+    }
+
+    //------------------------------------------------------------------------//
+    // PERSISTENCE															  //
+    //------------------------------------------------------------------------//
 
 
-	/// <summary>
-	/// Constructor from json data.
-	/// </summary>
-	/// <param name="_data">Data to be parsed.</param>
-	public void ParseJson(SimpleJSON.JSONNode _data)
+    /// <summary>
+    /// Constructor from json data.
+    /// </summary>
+    /// <param name="_data">Data to be parsed.</param>
+    public void ParseJson(SimpleJSON.JSONNode _data)
 	{
 		
         
         string key = "lastActivationTime";
         if ( _data.ContainsKey(key) )
         {
-            m_lastActivationTime = TimeUtils.TimestampToDate(PersistenceUtils.SafeParse<long>(_data["lastActivationTime"]));
+            m_lastActivationTime = TimeUtils.TimestampToDate(PersistenceUtils.SafeParse<long>(_data[key]));
         }
 
         key = "hasSpecialOffer";
         if (_data.ContainsKey(key))
         {
-            m_hasSpecialOffer = PersistenceUtils.SafeParse<bool>(_data["hasSpecialOffer"]);
+            m_hasSpecialOffer = PersistenceUtils.SafeParse<bool>(_data[key]);
         }
+
+        key = "isPopupWaiting";
+        if (_data.ContainsKey(key))
+        {
+            m_isPopupWaiting = PersistenceUtils.SafeParse<bool>(_data[key]);
+        }
+
 
         // Load solo quest in the liveDataManager
         key = "soloQuest";
@@ -584,6 +666,8 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
 
         data.Add("hasSpecialOffer", PersistenceUtils.SafeToString(m_hasSpecialOffer));
 
+        // In case the player closes the app before seeing the popup, we want to show it the next time he comes back
+        data.Add("isPopupWaiting", PersistenceUtils.SafeToString(m_isPopupWaiting));
 
         // If there is an active SoloQuest, save it
         if (HDLiveDataManager.instance.soloQuest.EventExists())
@@ -618,14 +702,17 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
 	/// </summary>
 	public void OnForceStart()
 	{
-        
 
-        Activate();
+        // Use startTimestamp empty, so the server will use the current time
+        string startTimestamp = "";
 
-        // In debug mode, activation time is now!
-        m_lastActivationTime = GameServerManager.GetEstimatedServerTime();
+        //Activate();
 
-        // TODO: Call the server to Start
+        // Call the server to Start WB 
+        GameServerManager.SharedInstance.WelcomeBack_DEBUG_Start(UsersManager.currentUser.userId, startTimestamp, null);
+
+        // After this call, the WB will be activated in the next GetMyEvents message (restarting game, or after playing a run)
+
     }
 
     /// <summary>
@@ -633,12 +720,12 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
     /// </summary>
     public void OnForceEnd()
 	{
+        // Disable the WB in the client
 		Deactivate();
 
-        m_lastActivationTime = DateTime.MinValue;
-
-        // TODO: Call the server to Stop
-	}
+        // Call the server to Stop
+        GameServerManager.SharedInstance.WelcomeBack_DEBUG_Stop(UsersManager.currentUser.userId, null);
+    }
 
     //------------------------------------------------------------------------//
     // DEBUG LOG															  //

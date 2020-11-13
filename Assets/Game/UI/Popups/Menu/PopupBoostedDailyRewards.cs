@@ -88,9 +88,9 @@ public class PopupBoostedDailyRewards : PopupDailyRewards {
 
 		// Initialize buttons
 		m_collectButton.SetActive(canCollect && ( !removeAds || finalRewardDay ) );
-		m_doubleAdButton.SetActive(canCollect && currentReward.canBeDoubled && !removeAds);
+		m_doubleAdButton.SetActive(canCollect && currentReward.canBeDoubled && !removeAds && !finalRewardDay);
 		m_dismissButton.SetActive(!canCollect && _dismissButtonAllowed);
-        m_doubleButton.SetActive(canCollect && removeAds && !finalRewardDay);
+        m_doubleButton.SetActive(canCollect && currentReward.canBeDoubled && removeAds && !finalRewardDay);
     }
     
     

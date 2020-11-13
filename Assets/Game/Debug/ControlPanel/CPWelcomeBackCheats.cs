@@ -108,7 +108,7 @@ public class CPWelcomeBackCheats : MonoBehaviour {
 	/// </summary>
 	public void OnEndWelcomeBack() {
 		
-		// Activate the WB feature
+		// Disable the WB feature
 		WelcomeBackManager.instance.OnForceEnd();
 		
 		// Save persistence
