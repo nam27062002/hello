@@ -853,7 +853,19 @@ public class HDTrackingManager
     /// </summary>
     /// <param name="_buttonName">The custom identifier of the button pressed</param>
     public virtual void Notify_UIButton(string _buttonName) { }
-    
+
+
+    /// <summary>
+    /// Sent when WB data has been received from the server
+    /// </summary>
+    /// <param name="_clusterId">current cluster name</param>
+    /// <param name="_minAbsentDays">number of days the users needs to be inactive in order to trigger Welcome Back	</param>
+    /// <param name="_activeBenefits">Send separated by comas all the benefits that are active at the start of the session. For instance: happy_hour, seven_day_login, ...	</param>
+    /// <param name="_triggered">send TRUE if this is the activation session of the current welcome back.</param>
+    /// <param name="_welcomeBackId">create a unique identifier of the configuration by concatenating 'WB_' + activation_date	</param>
+    public virtual void Notify_WelcomeBackStatus(string _clusterId, int _minAbsentDays, string _activeBenefits, bool _triggered, string _welcomeBackId) { }
+
+
     #region log
     private const bool LOG_USE_COLOR = true;
     private const string LOG_CHANNEL = "[HDTrackingManager] ";

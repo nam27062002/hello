@@ -881,6 +881,19 @@
         "etl"
       ]
     },
+    "custom.general.welcomeBackStatus": {
+      "Parameters": [
+        { "clusterId": { "Status": "OK" } },
+        { "minAbsentDays": { "Status": "OK" } },
+        { "activeBenefits": { "Status": "OK" } },
+        { "triggered": { "Status": "OK" } },
+        { "welcomeBackId": { "Status": "OK" } }
+      ],
+      "APIs": [
+        "dna",
+        "etl"
+      ]
+    },
     "af_purchase": {
       "Parameters": [
         { "af_def_logPurchase": { "Status": "OK" } },
@@ -1100,7 +1113,7 @@
         {"altReward": { "Status": "OK" } },
         {"deeplink": { "Status": "OK" } },
         {"recentlyInstalled": { "Status": "OK" } },
-        {"abTestGroup": { "Status": "OK" } },
+        {"abTestGroup": { "Status": "OK" } }
       ],
       "APIs": [
         "dna",
@@ -2007,6 +2020,18 @@
     },
     "timerValue": {
       "Type": "INT:4",
+      "Values": []
+    },
+    "minAbsentDays": {
+      "Type": "INT:4",
+      "Values": []
+    },
+    "activeBenefits": {
+      "Type": "STRING:64",
+      "Values": []
+    },
+    "welcomeBackId": {
+      "Type": "STRING:32",
       "Values": []
     }
   }
