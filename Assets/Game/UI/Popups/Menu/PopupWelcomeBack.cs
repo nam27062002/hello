@@ -48,6 +48,9 @@ public class PopupWelcomeBack : MonoBehaviour {
         
         // Dont show it again
         WelcomeBackManager.instance.isPopupWaiting = false;
+
+        // Send some tracking
+        HDTrackingManager.Instance.Notify_InfoPopup("Menu/PF_PopupWelcomeBack", "automatic");
     }
 
     //------------------------------------------------------------------------//
