@@ -177,6 +177,15 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
     public bool TryActivation ( DateTime _activationTime )
     {
 
+        // First of all check if the player finished the mininum required runs
+        int minRuns = m_def.GetAsInt("minRuns");
+        if (UsersManager.currentUser.gamesPlayed < minRuns)
+        {
+            Log("The server tried to activate WB, but the player didnt complete the required runs");
+            return false;
+        }
+
+
         if (m_lastActivationTime == _activationTime)
         {        
 
