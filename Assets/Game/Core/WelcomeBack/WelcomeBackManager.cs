@@ -177,6 +177,15 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
     public bool TryActivation ( DateTime _activationTime )
     {
 
+        // First of all check if the player finished the mininum required runs
+        int minRuns = m_def.GetAsInt("minRuns");
+        if (UsersManager.currentUser.gamesPlayed < minRuns)
+        {
+            Log("The server tried to activate WB, but the player didnt complete the required runs");
+            return false;
+        }
+
+
         if (m_lastActivationTime == _activationTime)
         {        
 
@@ -615,19 +624,19 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
 	{
 		
         
-        string key = "lastActivationTime";
+        string key = "lastActivation";
         if ( _data.ContainsKey(key) )
         {
             m_lastActivationTime = TimeUtils.TimestampToDate(PersistenceUtils.SafeParse<long>(_data[key]));
         }
 
-        key = "hasSpecialOffer";
+        key = "hasOffer";
         if (_data.ContainsKey(key))
         {
             m_hasSpecialOffer = PersistenceUtils.SafeParse<bool>(_data[key]);
         }
 
-        key = "isPopupWaiting";
+        key = "popupWaiting";
         if (_data.ContainsKey(key))
         {
             m_isPopupWaiting = PersistenceUtils.SafeParse<bool>(_data[key]);
@@ -644,7 +653,7 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
 		}
         
         // Load passive events in the liveDataManager
-        key = "localPassive";
+        key = "passive";
         if ( _data.ContainsKey(key) )
         {
             HDLocalPassiveEventManager passive = new HDLocalPassiveEventManager();
@@ -653,14 +662,14 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
         }
         
         // Load free tournament pass data
-        key = "tournamentPassExpiration";
+        key = "tourPassExp";
         if ( _data.ContainsKey(key) )
         {
-            m_tournamentPassExpirationTimestamp = TimeUtils.TimestampToDate(PersistenceUtils.SafeParse<long>(_data["tournamentPassExpiration"]));
+            m_tournamentPassExpirationTimestamp = TimeUtils.TimestampToDate(PersistenceUtils.SafeParse<long>(_data[key]));
         }
         
         // Load boosted daily rewards
-        key = "boostedDailyRewards";
+        key = "boostedDailyRwds";
         if ( _data.ContainsKey(key) )
         {
             m_boostedDailyRewards = new BoostedDailyRewardsSequence();
@@ -680,12 +689,12 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
 	{
 		SimpleJSON.JSONClass data = new SimpleJSON.JSONClass();
         
-        data.Add("lastActivationTime", PersistenceUtils.SafeToString(TimeUtils.DateToTimestamp(m_lastActivationTime)));
+        data.Add("lastActivation", PersistenceUtils.SafeToString(TimeUtils.DateToTimestamp(m_lastActivationTime)));
 
-        data.Add("hasSpecialOffer", PersistenceUtils.SafeToString(m_hasSpecialOffer));
+        data.Add("hasOffer", PersistenceUtils.SafeToString(m_hasSpecialOffer));
 
         // In case the player closes the app before seeing the popup, we want to show it the next time he comes back
-        data.Add("isPopupWaiting", PersistenceUtils.SafeToString(m_isPopupWaiting));
+        data.Add("popupWaiting", PersistenceUtils.SafeToString(m_isPopupWaiting));
 
         // If there is an active SoloQuest, save it
         if (HDLiveDataManager.instance.soloQuest.EventExists())
@@ -696,16 +705,16 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
         // Save local passive events
         if (HDLiveDataManager.instance.localPassive.EventExists())
         {
-            data.Add("localPassive", HDLiveDataManager.instance.localPassive.ToJson());
+            data.Add("passive", HDLiveDataManager.instance.localPassive.ToJson());
         }
         
         // Save free tournament pass
-        data.Add("tournamentPassExpiration", PersistenceUtils.SafeToString(TimeUtils.DateToTimestamp( m_tournamentPassExpirationTimestamp )));
+        data.Add("tourPassExp", PersistenceUtils.SafeToString(TimeUtils.DateToTimestamp( m_tournamentPassExpirationTimestamp )));
 
         // Save boosted daily rewarsd
         if (m_boostedDailyRewards != null)
         {
-            data.Add("boostedDailyRewards", m_boostedDailyRewards.SaveData());
+            data.Add("boostedDailyRwds", m_boostedDailyRewards.SaveData());
         }
 
         return data;
