@@ -630,10 +630,6 @@ public class HDTrackingManagerImp : HDTrackingManager {
 
         // We need to make sure all events enqueued are sent to Calety TrackingManager in order to give them a chance to be sent before the game is sent to background, just in case the user doesn't resume it
         FlushEventQueue();
-
-        // Last chance to cache pending events to be sent are stored
-        // Not lazy approach is used to guarantee events are stored
-        DNAManager.SharedInstance.SaveOfflineUnsentEvents(false);
     }
 
     public override void Notify_ApplicationResumed() {        
