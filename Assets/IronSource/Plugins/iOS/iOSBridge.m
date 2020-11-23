@@ -58,7 +58,6 @@ char *const IRONSOURCE_EVENTS = "IronSourceEvents";
         [IronSource setInterstitialDelegate:self];
         [IronSource setISDemandOnlyInterstitialDelegate:self];
         [IronSource setISDemandOnlyRewardedVideoDelegate:self];
-        [IronSource setRewardedInterstitialDelegate:self];
         [IronSource setOfferwallDelegate:self];
         [IronSource setBannerDelegate:self];
         
@@ -412,12 +411,6 @@ char *const IRONSOURCE_EVENTS = "IronSourceEvents";
 
 - (void)didClickInterstitial:(NSString *)instanceId {
     UnitySendMessage(IRONSOURCE_EVENTS, "onInterstitialAdClickedDemandOnly", MakeStringCopy(instanceId));
-}
-
-#pragma mark Rewarded Interstitial Delegate
-
-- (void)didReceiveRewardForInterstitial {
-    UnitySendMessage(IRONSOURCE_EVENTS, "onInterstitialAdRewarded", "");
 }
 
 #pragma mark Offerwall API

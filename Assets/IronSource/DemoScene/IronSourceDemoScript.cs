@@ -50,11 +50,11 @@ public class IronSourceDemoScript : MonoBehaviour
         //Add Rewarded Video DemandOnly Events
         IronSourceEvents.onRewardedVideoAdOpenedDemandOnlyEvent += RewardedVideoAdOpenedDemandOnlyEvent;
         IronSourceEvents.onRewardedVideoAdClosedDemandOnlyEvent += RewardedVideoAdClosedDemandOnlyEvent;
-        IronSourceEvents.onRewardedVideoAdLoadedDemandOnlyEvent += this.RewardedVideoAdLoadedDemandOnlyEvent;
+        IronSourceEvents.onRewardedVideoAdLoadedDemandOnlyEvent += RewardedVideoAdLoadedDemandOnlyEvent;
         IronSourceEvents.onRewardedVideoAdRewardedDemandOnlyEvent += RewardedVideoAdRewardedDemandOnlyEvent;
         IronSourceEvents.onRewardedVideoAdShowFailedDemandOnlyEvent += RewardedVideoAdShowFailedDemandOnlyEvent;
         IronSourceEvents.onRewardedVideoAdClickedDemandOnlyEvent += RewardedVideoAdClickedDemandOnlyEvent;
-        IronSourceEvents.onRewardedVideoAdLoadFailedDemandOnlyEvent += this.RewardedVideoAdLoadFailedDemandOnlyEvent;
+        IronSourceEvents.onRewardedVideoAdLoadFailedDemandOnlyEvent += RewardedVideoAdLoadFailedDemandOnlyEvent;
 
 
         // Add Offerwall Events
@@ -82,10 +82,6 @@ public class IronSourceDemoScript : MonoBehaviour
         IronSourceEvents.onInterstitialAdClickedDemandOnlyEvent += InterstitialAdClickedDemandOnlyEvent;
         IronSourceEvents.onInterstitialAdOpenedDemandOnlyEvent += InterstitialAdOpenedDemandOnlyEvent;
         IronSourceEvents.onInterstitialAdClosedDemandOnlyEvent += InterstitialAdClosedDemandOnlyEvent;
-
-        // Add Rewarded Interstitial Events
-        IronSourceEvents.onInterstitialAdRewardedEvent += InterstitialAdRewardedEvent;
-
 
 
         // Add Banner Events
@@ -307,11 +303,6 @@ public class IronSourceDemoScript : MonoBehaviour
         Debug.Log("unity-script: I got InterstitialAdClosedEvent");
     }
 
-    void InterstitialAdRewardedEvent()
-    {
-        Debug.Log("unity-script: I got InterstitialAdRewardedEvent");
-    }
-
     /************* Interstitial DemandOnly Delegates *************/
 
     void InterstitialAdReadyDemandOnlyEvent(string instanceId)
@@ -344,10 +335,7 @@ public class IronSourceDemoScript : MonoBehaviour
         Debug.Log("unity-script: I got InterstitialAdClosedDemandOnlyEvent for instance: " + instanceId);
     }
 
-    void InterstitialAdRewardedDemandOnlyEvent(string instanceId)
-    {
-        Debug.Log("unity-script: I got InterstitialAdRewardedDemandOnlyEvent for instance: " + instanceId);
-    }
+   
 
 
     #endregion
