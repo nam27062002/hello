@@ -377,8 +377,14 @@ public class ReferralManager : Singleton<ReferralManager> {
 		// Store origin for tracking purposes
 		m_inviteOrigin = _origin;
 
-		// Get the link to share from firebase
-		DynamicLinksWrapper.createLinkUserInvite(userId, OnShortLinkCreated);
+
+		// Do not send "local_user" if there is no user, it crashes the server
+		if (userId != UserProfile.LOCAL_USER)
+
+		{
+			// Get the link to share from firebase
+			DynamicLinksWrapper.createLinkUserInvite(userId, OnShortLinkCreated);
+		}
 	}
 
 	/// <summary>
