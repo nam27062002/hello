@@ -42,6 +42,8 @@ public class UserProfile : UserPersistenceSystem
 		COUNT
 	};
 
+	public const string LOCAL_USER = "local_user";
+
    	// COMPARER. Use this on all your Dictionaries
     public struct CurrencyComparer : IEqualityComparer<Currency>
     {
@@ -132,7 +134,7 @@ public class UserProfile : UserPersistenceSystem
 			if(!DebugSettings.useDebugServer && GameSessionManager.SharedInstance.IsLogged()) {
 				return GameSessionManager.SharedInstance.GetUID(); 
 			} else {
-				return "local_user";
+				return LOCAL_USER;
 			}
 		}
 	}
