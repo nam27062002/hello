@@ -32,7 +32,7 @@ public class HDLiveEventDefinition {
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
-	private bool m_initialized = false;
+	protected bool m_initialized = false;
 	public bool initialized {
         get { return m_initialized; }
 	}

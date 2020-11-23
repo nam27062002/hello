@@ -68,6 +68,9 @@ public class CPProgressionCheats : MonoBehaviour {
 		// Reset dragons
 		OnResetAllDragons();
 		OnResetAllPets();
+        
+        // Disable welcome back
+        WelcomeBackManager.instance.Deactivate();
 
 		// Clear persistence and sets the default persistence
 		PersistenceFacade.instance.LocalDriver.OverrideWithDefault(null);

@@ -30,6 +30,10 @@ public class CPDailyRewardsCheats : MonoBehaviour {
 	[SerializeField] private CPNumericValueEditor m_rewardIndexSetter = null;
 	[SerializeField] private TextMeshProUGUI m_timerText = null;
 
+	// Internal
+	private bool m_boostedActive = false;
+	private DailyRewardsSequence m_dailyRewardSequence;
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -44,8 +48,22 @@ public class CPDailyRewardsCheats : MonoBehaviour {
 	/// Component has been enabled.
 	/// </summary>
 	private void OnEnable() {
+
+		// Reuse this panel to apply cheats to boosted daily rewards feature if welcome back is active.
+		m_boostedActive = WelcomeBackManager.instance.IsBoostedDailyRewardActive();
+
+		if (m_boostedActive)
+        {
+			m_dailyRewardSequence = WelcomeBackManager.instance.boostedDailyRewards;
+
+		} else
+        {
+			m_dailyRewardSequence = UsersManager.currentUser.dailyRewards;
+		}
+
+
 		// Initialize UI
-		m_rewardIndexSetter.SetValue(UsersManager.currentUser.dailyRewards.totalRewardIdx);
+		m_rewardIndexSetter.SetValue(m_dailyRewardSequence.totalRewardIdx);
 
 		// Subscribe to events
 		m_rewardIndexSetter.OnValueChanged.AddListener(OnRewardIndexChanged);
@@ -64,7 +82,7 @@ public class CPDailyRewardsCheats : MonoBehaviour {
 	/// </summary>
 	private void Update() {
 		// Update timer text
-		System.TimeSpan remainingTime = UsersManager.currentUser.dailyRewards.timeToCollection;
+		System.TimeSpan remainingTime = m_dailyRewardSequence.timeToCollection;
 		m_timerText.text = "Skip DR Timer\n" + TimeUtils.FormatTime(remainingTime.TotalSeconds, TimeUtils.EFormat.DIGITS, 3);
 	}
 
@@ -77,10 +95,10 @@ public class CPDailyRewardsCheats : MonoBehaviour {
 	/// <param name="_newValue">New value.</param>
 	public void OnRewardIndexChanged(float _newValue) {
 		// Tell the rewards sequence
-		UsersManager.currentUser.dailyRewards.DEBUG_SetTotalRewardIdx((int)_newValue);
+		m_dailyRewardSequence.DEBUG_SetTotalRewardIdx((int)_newValue);
 
 		// Skip timer as well
-		UsersManager.currentUser.dailyRewards.DEBUG_SkipCooldownTimer();
+		m_dailyRewardSequence.DEBUG_SkipCooldownTimer();
 
 		// Save persistence
 		PersistenceFacade.instance.Save_Request();
@@ -94,7 +112,7 @@ public class CPDailyRewardsCheats : MonoBehaviour {
 	/// </summary>
 	public void OnSkipCooldownTimer() {
 		// Tell the rewards sequence
-		UsersManager.currentUser.dailyRewards.DEBUG_SkipCooldownTimer();
+		m_dailyRewardSequence.DEBUG_SkipCooldownTimer();
 
 		// Save persistence
 		PersistenceFacade.instance.Save_Request();
@@ -110,9 +128,21 @@ public class CPDailyRewardsCheats : MonoBehaviour {
 		// Close panel
 		ControlPanel.instance.Toggle();
 
-		// Show the popup after a short delay
-		UbiBCN.CoroutineManager.DelayedCall(() => {
-			PopupManager.OpenPopupInstant(PopupDailyRewards.PATH);
-		}, 0.5f);
+        // Shall we show the regular popup or the boosted popup?
+        if (m_boostedActive)
+        {
+			// Show the popup after a short delay
+			UbiBCN.CoroutineManager.DelayedCall(() => {
+				PopupManager.OpenPopupInstant(PopupBoostedDailyRewards.PATH);
+			}, 0.5f);
+		}
+        else
+        {
+			// Show the popup after a short delay
+			UbiBCN.CoroutineManager.DelayedCall(() => {
+				PopupManager.OpenPopupInstant(PopupDailyRewards.PATH);
+			}, 0.5f);
+		}
+
 	}
 }

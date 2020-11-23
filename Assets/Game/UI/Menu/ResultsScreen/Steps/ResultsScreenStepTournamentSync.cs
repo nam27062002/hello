@@ -35,7 +35,8 @@ public class ResultsScreenStepTournamentSync : ResultsScreenStep {
 	}
 
 	// Internal refs
-	private HDLiveEventManager m_event = null;
+	private HDLiveEventManager m_tournament = null;
+	private BaseQuestManager m_quest = null;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -59,7 +60,7 @@ public class ResultsScreenStepTournamentSync : ResultsScreenStep {
 		switch(SceneController.mode) {
 			case SceneController.Mode.TOURNAMENT: {
 				// Store event reference
-				m_event = HDLiveDataManager.tournament;
+				m_tournament = HDLiveDataManager.tournament;
 
 				// Listen to score sent confirmation
 				Messenger.AddListener<HDLiveDataManager.ComunicationErrorCodes>(MessengerEvents.TOURNAMENT_SCORE_SENT, OnTournamentScoreSent);
@@ -67,7 +68,7 @@ public class ResultsScreenStepTournamentSync : ResultsScreenStep {
 
 			case SceneController.Mode.DEFAULT: {
 				// Store event reference
-				m_event = HDLiveDataManager.quest;
+				m_quest = HDLiveDataManager.quest;
 
 				// Listen to score sent confirmation 
 				Messenger.AddListener<HDLiveDataManager.ComunicationErrorCodes>(MessengerEvents.QUEST_SCORE_SENT, OnQuestScoreSent);
@@ -102,13 +103,12 @@ public class ResultsScreenStepTournamentSync : ResultsScreenStep {
 				if(UsersManager.currentUser.gamesPlayed - 1 < GameSettings.ENABLE_QUESTS_AT_RUN) {
 					return false;
 				}
-
-				HDQuestManager questManager = m_event as HDQuestManager;
-				if(questManager.EventExists()
-					&& questManager.IsRunning()
-					&& questManager.isActive
-                    && questManager.m_questData.remainingTime.TotalSeconds > 0
-					&& questManager.GetRunScore() > 0		// Only if we actually got a score!
+				
+				if(m_quest.EventExists()
+					&& m_quest.IsRunning()
+					&& m_quest.isActive
+                    && m_quest.GetQuestData().remainingTime.TotalSeconds > 0
+					&& m_quest.GetRunScore() > 0		// Only if we actually got a score!
 				)
 				{
 					return true;
@@ -158,14 +158,13 @@ public class ResultsScreenStepTournamentSync : ResultsScreenStep {
 		switch (SceneController.mode) {
 			// Tournament
 			case SceneController.Mode.TOURNAMENT: {
-				HDTournamentManager tournament = m_event as HDTournamentManager;
+				HDTournamentManager tournament = m_tournament as HDTournamentManager;
 				tournament.SendScore((int)tournament.GetRunScore());
 			} break;
 
 			// Quest
 			case SceneController.Mode.DEFAULT: {
-				HDQuestManager quest = m_event as HDQuestManager;
-				quest.Contribute((int)quest.GetRunScore(), 1f, false, false);	// [AOC] TODO!! Remove deprecated params
+				m_quest.Contribute((int)m_quest.GetRunScore(), 1f, false, false);	// [AOC] TODO!! Remove deprecated params
 			} break;
 		}
 	}
@@ -209,7 +208,7 @@ public class ResultsScreenStepTournamentSync : ResultsScreenStep {
                 || _errorCode == HDLiveDataManager.ComunicationErrorCodes.EVENT_IS_NOT_VALID
                 || _errorCode == HDLiveDataManager.ComunicationErrorCodes.EVENT_TTL_EXPIRED) {
 			// Yes, event no longer valid! :/ Go to next step
-            m_event.ForceFinishByError();
+            m_tournament.ForceFinishByError();
 			OnFinished.Invoke();
         } else {
 			// Yes :( Show error screen
@@ -234,10 +233,10 @@ public class ResultsScreenStepTournamentSync : ResultsScreenStep {
                 || _errorCode == HDLiveDataManager.ComunicationErrorCodes.EVENT_TTL_EXPIRED)
 		{
             // Yes, event no longer valid! :/ Go to next step
-            m_event.ForceFinishByError();
+            m_tournament.ForceFinishByError();
             OnFinished.Invoke();
 		} else if (_errorCode == HDLiveDataManager.ComunicationErrorCodes.QUEST_IS_OVER) {
-			m_event.RequestDefinition(true);
+			m_tournament.RequestDefinition(true);
 			OnFinished.Invoke();
 		} else {
 			// Yes :( Show error screen

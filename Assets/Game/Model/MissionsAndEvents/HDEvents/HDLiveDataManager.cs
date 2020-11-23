@@ -24,7 +24,9 @@ using System.Globalization;
 /// </summary>
 public class HDLiveDataManager : Singleton<HDLiveDataManager> {
 
-
+    //----------------------------------------------------------------------------//
+    // ENUMS																	  //
+    //----------------------------------------------------------------------------//
     public enum ErrorCode {
         NONE = 0,
 
@@ -74,6 +76,15 @@ public class HDLiveDataManager : Singleton<HDLiveDataManager> {
         NO_ERROR
     };
 
+    public enum GameMode
+    {
+        UNDEFINED,
+        QUEST,
+        TOURNAMENT,
+        LEAGUE
+    }
+
+
 	private static Dictionary<int, HDLiveDataManager.ComunicationErrorCodes> s_errorCodesDict = new Dictionary<int, ComunicationErrorCodes> {
         {  0, ComunicationErrorCodes.NO_ERROR },
         {  1, ComunicationErrorCodes.NET_ERROR },
@@ -112,17 +123,32 @@ public class HDLiveDataManager : Singleton<HDLiveDataManager> {
 		{ 805, ComunicationErrorCodes.SEASON_IS_NOT_ACTIVE }
 	};
 
-    //
+    //----------------------------------------------------------------------------//
+    // MEMBERS AND PROPERTIES													  //
+    //----------------------------------------------------------------------------//
     private HDTournamentManager     m_tournament        = new HDTournamentManager();
-    private HDQuestManager          m_quest             = new HDQuestManager();
-    private HDPassiveEventManager   m_passive           = new HDPassiveEventManager();
+    private HDPassiveEventManager   m_livePassive           = new HDPassiveEventManager();
+    private HDLocalPassiveEventManager m_localPassive = new HDLocalPassiveEventManager();
     private HDLeagueController      m_league            = new HDLeagueController();
+    private HDLiveQuestManager      m_liveQuest             = new HDLiveQuestManager();
+    private HDSoloQuestManager      m_soloQuest    = new HDSoloQuestManager();
+    public HDSoloQuestManager soloQuest
+    {
+        // Access to the soloQuest so it can be loaded/saved from persistence
+        get => m_soloQuest;
+        set => m_soloQuest = value;
+    }
+
+    public HDLocalPassiveEventManager localPassive
+    {
+        get => m_localPassive;
+        set => m_localPassive = value;
+    }
 
     public static HDTournamentManager      tournament      { get { return instance.m_tournament; } }
-    public static HDQuestManager           quest           { get { return instance.m_quest; } }
-    public static HDPassiveEventManager    passive         { get { return instance.m_passive; } }
+    public static HDPassiveEventManager    passive         { get { return instance.GetActivePassiveEvent(); } }
     public static HDLeagueController       league          { get { return instance.m_league; } }
-    //
+    public static BaseQuestManager  quest  { get { return instance.GetActiveQuest();  } }
 
 
     // Avoid using dictionaries when possible
@@ -134,6 +160,8 @@ public class HDLiveDataManager : Singleton<HDLiveDataManager> {
 
     private long m_myEventsRequestMinTim = 1000 * 60 * 5;   // 5 min
 
+
+    private GameMode m_currentGameMode;
 
 #if UNITY_EDITOR
     public static bool TEST_CALLS {
@@ -148,8 +176,10 @@ public class HDLiveDataManager : Singleton<HDLiveDataManager> {
         //
         m_managers = new List<HDLiveDataController>();
         m_managers.Add(m_tournament);
-        m_managers.Add(m_quest);
-        m_managers.Add(m_passive);
+        m_managers.Add(m_liveQuest);
+        m_managers.Add(m_soloQuest);
+        m_managers.Add(m_livePassive);
+        m_managers.Add(m_localPassive);
         m_managers.Add(m_league);
 
         Messenger.AddListener<bool>(MessengerEvents.LOGGED, OnLoggedIn);
@@ -212,6 +242,61 @@ public class HDLiveDataManager : Singleton<HDLiveDataManager> {
         CacheServerManager.SharedInstance.SetVariable("hdliveeventstimestamp", GameServerManager.GetEstimatedServerTimeAsLong().ToString());
     }
 
+    
+
+    /// <summary>
+    /// Returns true if the solo Quest is enabled and running at this moment
+    /// </summary>
+    /// <returns></returns>
+    public bool SoloQuestIsAvailable()
+    {
+        return (m_soloQuest.EventExists() && m_soloQuest.IsRunning());
+    }
+
+    /// <summary>
+    /// Returns true if there is a local passive event active at this moment
+    /// </summary>
+    /// <returns></returns>
+    public bool IsLocalPassiveEventAvailable()
+    {
+        return (m_localPassive.EventExists() && m_localPassive.IsRunning());
+    }
+    
+
+    /// <summary>
+    /// There could be solo and live quests. This method returns the active one
+    /// considering that the solo quest has priority over the live one.
+    /// </summary>
+    /// <returns></returns>
+    private  BaseQuestManager GetActiveQuest()
+    {
+        if (SoloQuestIsAvailable())
+        {
+            return m_soloQuest;
+        }
+        else
+        {
+            return m_liveQuest;
+        }
+    }
+
+    /// <summary>
+    /// There can be local passive events and live passive events. The local one
+    /// has priority over the live one. So in case that both exist, use the local one.
+    /// </summary>
+    /// <returns></returns>
+    private HDPassiveEventManager GetActivePassiveEvent()
+    {
+        if (IsLocalPassiveEventAvailable())
+        {
+            return m_localPassive;
+        }
+        else
+        {
+            return m_livePassive;
+        }
+    }
+    
 #if UNITY_EDITOR
     public static GameServerManager.ServerResponse CreateTestResponse(string fileName) {
         string path = Directory.GetCurrentDirectory() + "/Assets/HDLiveEventsTest/" + fileName;
@@ -382,6 +467,14 @@ public class HDLiveDataManager : Singleton<HDLiveDataManager> {
                     m_managers[i].OnLiveDataResponse();
                 }
             }
+
+            // Process Welcome Back. Technically not a HD live manager, but the server is sending
+            // the WB data in this call.
+            if (responseJson.ContainsKey(WelcomeBackManager.WELCOME_BACK_KEY))
+            {
+                WelcomeBackManager.instance.OnLiveDataResponse(responseJson[WelcomeBackManager.WELCOME_BACK_KEY]);
+            }
+
         } else if (outErr != ComunicationErrorCodes.NET_ERROR) {
             int max = m_managers.Count;
             for (int i = 0; i < max; i++) {
@@ -441,37 +534,98 @@ public class HDLiveDataManager : Singleton<HDLiveDataManager> {
         }
     }
 
-    public void SwitchToTournament() {
+    private void SwitchToTournament() {
         m_tournament.Activate();
-        m_passive.Deactivate();
-        m_quest.Deactivate();
+        m_livePassive.Deactivate();
+        m_localPassive.Deactivate();
+        m_liveQuest.Deactivate();
+        m_soloQuest.Deactivate();
         m_league.Deactivate();
     }
 
-    public void SwitchToQuest() {
+    private void SwitchToQuest() {
         m_tournament.Deactivate();
         m_league.Deactivate();
 
         if (UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.FIRST_RUN)) {
-            m_passive.Activate();
-            m_quest.Activate();
+            // Local passive events always have priority over live passive
+            if (IsLocalPassiveEventAvailable())
+            {
+                m_livePassive.Deactivate();
+                m_localPassive.Activate();
+            }
+            else
+            {
+                m_livePassive.Activate();
+                m_localPassive.Deactivate();
+            }
+
+            // Solo quests have priority over live quests
+            if (SoloQuestIsAvailable())
+            {
+                m_liveQuest.Deactivate();
+                m_soloQuest.Activate();
+            }
+            else
+            {
+                m_liveQuest.Activate();
+                m_soloQuest.Deactivate();
+            }
         }
     }
 
-    public void SwitchToLeague() {
+    private void SwitchToLeague() {
         m_tournament.Deactivate();
-        m_passive.Deactivate();
-        m_quest.Deactivate();
+        m_livePassive.Deactivate();
+        m_localPassive.Deactivate();
+        m_liveQuest.Deactivate();
+        m_soloQuest.Deactivate();
         m_league.Activate();
     }
+
+    /// <summary>
+    /// Activate/deactivate all the existing live events depending on the game mode.
+    /// </summary>
+    /// <param name="_mode">The new game mode. If enmpty, just refresh all the events depending on
+    /// the current game mode</param>
+    public void SwitchToGameMode(GameMode _mode = GameMode.UNDEFINED)
+    {
+        // If no mode is specified, just refresh using the current one
+        if (_mode == GameMode.UNDEFINED)
+        {
+            _mode = m_currentGameMode;
+        }
+        
+        switch (_mode)
+        {
+            case GameMode.QUEST:
+                SwitchToQuest();
+                break;
+            case GameMode.LEAGUE:
+                SwitchToLeague();
+                break;
+            case GameMode.TOURNAMENT:
+                SwitchToTournament();
+                break;
+            default:
+                // nothing to do.
+                return;
+        }
+
+        // Update the current game mode
+        m_currentGameMode = _mode;
+    }
+    
 
     // You have to activate the events first to allow for Later mods activation
     public void ApplyLaterMods()
     {
         // Every Activate Later Mods already checks if the event is active
         m_tournament.ActivateLaterMods();
-        m_passive.ActivateLaterMods();
-        m_quest.ActivateLaterMods();
+        m_livePassive.ActivateLaterMods();
+        m_localPassive.ActivateLaterMods();
+        m_liveQuest.ActivateLaterMods();
+        m_soloQuest.ActivateLaterMods();
         m_league.ActivateLaterMods();
     }
 
@@ -480,8 +634,10 @@ public class HDLiveDataManager : Singleton<HDLiveDataManager> {
     {
         // Every Deactivate Later Mods already checks if the event is active
         m_tournament.DeactivateLaterMods();
-        m_passive.DeactivateLaterMods();
-        m_quest.DeactivateLaterMods();
+        m_livePassive.DeactivateLaterMods();
+        m_localPassive.DeactivateLaterMods();
+        m_liveQuest.DeactivateLaterMods();
+        m_soloQuest.DeactivateLaterMods();
         m_league.DeactivateLaterMods();
     }
 }

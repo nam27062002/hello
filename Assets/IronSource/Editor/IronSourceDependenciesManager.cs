@@ -10,7 +10,7 @@ using UnityEngine.Networking;
 
 public class IronSourceDependenciesManager : EditorWindow
 {
-    private const string jsonURL = "http://ssa.public.s3.amazonaws.com/Unity-Integration-Manager/IronSourceSDKInfo.json";
+    private const string jsonURL = "http://ssa.public.s3.amazonaws.com/ironsource-integration-manager/IronSourceSDKInfo.json";
     private const string ironSourceDownloadDir = "Assets/IronSource/Editor/";
     private const string sdk = "sdk";
     private const string errorMessage = "SDK and adapters data are not available right now. Try again soon.";
@@ -18,7 +18,7 @@ public class IronSourceDependenciesManager : EditorWindow
     private const int Height = 600;
     private const string Android = "Android";
     private const string iOS = "iOS";
-	private readonly List<providerInfo> providersSet = new List<providerInfo>();
+    private readonly SortedSet<providerInfo> providersSet = new SortedSet<providerInfo>(new ProviderInfoComparor());
     private providerInfo ironSourceProviderInfo;
     private UnityWebRequest downloadWebClient;
     private string messageData;
@@ -176,6 +176,7 @@ public class IronSourceDependenciesManager : EditorWindow
     {
         UnityWebRequest unityWebRequest = UnityWebRequest.Get(jsonURL);
         var webRequest = unityWebRequest.SendWebRequest();
+
         while (!webRequest.isDone)
         {
             yield return new WaitForSeconds(0.1f);

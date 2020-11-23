@@ -503,6 +503,12 @@ public class GameServerManager {
     public virtual void Referral_DEBUG_SimulateReferralInstall(string _referralUserId, ServerCallback _callback) { }
 
     //-----------------
+    // WelcomeBack
+    //-----------------
+    public virtual void WelcomeBack_DEBUG_Start(string _userId, string start, ServerCallback _callback) { }
+    public virtual void WelcomeBack_DEBUG_Stop(string _userId, ServerCallback _callback) { }
+
+    //-----------------
     // Clustering
     //-----------------
     public virtual void Clustering_SetClusterId(string _clusterId, ServerCallback _callback) { }

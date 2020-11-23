@@ -48,9 +48,7 @@ public class ShareScreenHighScore : IShareScreen {
 		// Set location and camera
 		SetLocation(_shareLocationSku);
 		SetRefCamera(_refCamera);
-
-		// Aux vars
-		HDQuestManager quest = HDLiveDataManager.quest;
+		
 
 		// Initialize UI elements
 		// Score text

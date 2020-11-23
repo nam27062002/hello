@@ -446,7 +446,7 @@ public class ResourcesFlow : IBroadcastListener {
             long amount = m_pcPackDefinitions[i].GetAsLong("amount");
 
             // Mind the happy hour offers when calculating the recommended pack
-            if (OffersManager.happyHourManager.happyHour.IsActive())
+            if (OffersManager.happyHourManager.IsPackAffected(m_pcPackDefinitions [i]))
             {
 				amount = OffersManager.happyHourManager.happyHour.ApplyHappyHourExtra((int)amount);
             }

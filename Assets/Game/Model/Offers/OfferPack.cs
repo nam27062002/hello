@@ -55,6 +55,7 @@ public class OfferPack {
         SC,
         HC,
 		DRAGON_DISCOUNT,
+        WELCOME_BACK,
         COUNT
 	}
 
@@ -67,6 +68,9 @@ public class OfferPack {
     public const string SC = "sc";
     public const string HC = "hc";
 	public const string DRAGON_DISCOUNT = "dragon_discount";
+    public const string WELCOME_BACK = "welcomeback";
+
+    public const string DRAGON_LAST_PROGRESSION = "dragon_last_progression"; 
 
     public const int MAX_ITEMS = 3; // For now
 	public const Type DEFAULT_TYPE = Type.PROGRESSION;
@@ -814,15 +818,25 @@ public class OfferPack {
 
 		// Dragons
 		for(int i = 0; i < m_dragonUnlocked.Length; ++i) {
-			if(DragonManager.GetDragonData(m_dragonUnlocked[i]).lockState <= IDragonData.LockState.LOCKED) {
-				OffersManager.LogPack(this, "      CheckActivation {0}: FAIL! Unlocked Dragons {1}", Color.red, m_def.sku, m_dragonUnlocked[i]);
+            
+            // replace "dragon_last_progression" with the actual dragon sku
+            string sku = m_dragonUnlocked[i].Replace(DRAGON_LAST_PROGRESSION, DragonManager.lastClassicDragon.sku);
+
+            if(DragonManager.GetDragonData(sku).lockState <= IDragonData.LockState.LOCKED) {
+				OffersManager.LogPack(this, "      CheckActivation {0}: FAIL! Unlocked Dragons {1}", Color.red, m_def.sku, sku);
 				return false;
 			}
 		}
 
 		for(int i = 0; i < m_dragonOwned.Length; ++i) {
-			if(!DragonManager.IsDragonOwned(m_dragonOwned[i])) {
-				OffersManager.LogPack(this, "      CheckActivation {0}: FAIL! Owned Dragons {1}", Color.red, m_def.sku, m_dragonOwned[i]);
+            
+            // replace "dragon_last_progression" with the actual dragon sku
+            string sku = m_dragonOwned[i].Replace(DRAGON_LAST_PROGRESSION, DragonManager.lastClassicDragon.sku);
+
+            
+			if(!DragonManager.IsDragonOwned(sku))
+            {
+                OffersManager.LogPack(this, "      CheckActivation {0}: FAIL! Owned Dragons {1}", Color.red, m_def.sku, sku);
 				return false;
 			}
 		}
@@ -973,8 +987,13 @@ public class OfferPack {
 
 		// Dragons
 		for(int i = 0; i < m_dragonNotOwned.Length; ++i) {
-			if(DragonManager.IsDragonOwned(m_dragonNotOwned[i])) {
-				OffersManager.LogPack(this, "      CheckExpiration {0}: EXPIRED! Dragons Not Owned {1}", Color.red, m_def.sku, m_dragonNotOwned[i]);
+            
+            // replace "dragon_last_progression" with the actual dragon sku
+            string sku = m_dragonNotOwned[i].Replace(DRAGON_LAST_PROGRESSION, DragonManager.lastClassicDragon.sku);
+
+            
+			if(DragonManager.IsDragonOwned(sku)) {
+				OffersManager.LogPack(this, "      CheckExpiration {0}: EXPIRED! Dragons Not Owned {1}", Color.red, m_def.sku, sku);
 				return true;
 			}
 		}
@@ -1335,8 +1354,7 @@ public class OfferPack {
 			case Type.FREE: {
 				newPack = new OfferPackFree();
 			} break;
-
-			case Type.REFERRAL:	{
+            case Type.REFERRAL:	{
 			    newPack = new OfferPackReferral();
 			} break;
 			case Type.REMOVE_ADS: {
@@ -1350,6 +1368,9 @@ public class OfferPack {
             } break;
 			case Type.DRAGON_DISCOUNT: {
 				newPack = new OfferPackDragonDiscount();
+            } break;
+            case Type.WELCOME_BACK: {
+                newPack = new OfferPackWelcomeBack();
             } break;
             default: {
 				newPack = new OfferPack();
@@ -1507,6 +1528,7 @@ public class OfferPack {
             case Type.SC:           return SC;
             case Type.HC:           return HC;
 			case Type.DRAGON_DISCOUNT:	return DRAGON_DISCOUNT;
+            case Type.WELCOME_BACK: return WELCOME_BACK;
 		}
 
 		return TypeToString(DEFAULT_TYPE);
@@ -1529,6 +1551,7 @@ public class OfferPack {
             case HC:            return Type.HC;
             case SC:            return Type.SC;
 			case DRAGON_DISCOUNT:	return Type.DRAGON_DISCOUNT;
+            case WELCOME_BACK: return Type.WELCOME_BACK;
 
 		}
 		return DEFAULT_TYPE;

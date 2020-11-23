@@ -270,11 +270,18 @@ public class ContentManager
         // Baby Dragons
         kDefinitionFiles.Add(DefinitionsCategory.BABY_DRAGONS_SHARED_POWER, new string[] { "Rules/sharedPowerupDefinitions" });
 
+
+        // Welcome back
+        kDefinitionFiles.Add(DefinitionsCategory.WELCOME_BACK, new string[] { "Rules/welcomeBackDefinitions" });
+        kDefinitionFiles.Add(DefinitionsCategory.WELCOME_BACK_PERKS, new string[] { "Rules/welcomeBackPerksDefinitions" });
+        kDefinitionFiles.Add(DefinitionsCategory.SOLO_QUESTS, new string[] { "Rules/soloQuestsDefinitions" });
+        kDefinitionFiles.Add(DefinitionsCategory.SOLO_QUESTS_REWARDS, new string[] { "Rules/soloQuestsRewardsDefinitions" });
+        kDefinitionFiles.Add(DefinitionsCategory.BOOSTED_DAILY_REWARDS, new string[] { "Rules/boostedDailyRewardsDefinitions" });
+
         // Cross Promotion 
         kDefinitionFiles.Add(DefinitionsCategory.XPROMO_REWARDS, new string[] { "Rules/xPromoRewardsDefinitions" });
         kDefinitionFiles.Add(DefinitionsCategory.XPROMO_SETTINGS, new string[] { "Rules/xPromoSettings" });
-
-
+        
 
         DefinitionsManager.SharedInstance.Initialise(ref kDefinitionFiles, !UseDeltaContent);
     }
