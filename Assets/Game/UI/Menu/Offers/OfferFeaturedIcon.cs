@@ -32,6 +32,9 @@ public class OfferFeaturedIcon : MonoBehaviour {
 	[SerializeField] private MenuShowConditionally m_showConditioner = null;
 	[SerializeField] private TextMeshProUGUI m_timerText = null;
 
+	[SerializeField] private GameObject m_regularIcon;
+	[SerializeField] private GameObject m_welcomeBackIcon;
+
 	// Internal
 	private OfferPack m_targetOffer = null;
 	
@@ -125,6 +128,22 @@ public class OfferFeaturedIcon : MonoBehaviour {
 	/// Check whether the icon can be displayed or not.
 	/// </summary>
 	private void RefreshVisibility(bool _animate = true, bool _force = false) {
+
+		// Show the proper icon
+		if (m_targetOffer != null)
+		{
+			bool isWelcomeBackOffer = (m_targetOffer.type == OfferPack.Type.WELCOME_BACK);
+
+			m_regularIcon.SetActive(!isWelcomeBackOffer);
+			m_welcomeBackIcon.SetActive(isWelcomeBackOffer);
+		}
+        else
+        {
+			m_regularIcon.SetActive(false);
+			m_welcomeBackIcon.SetActive(false);
+		}
+
+
 		// Same conditions as the show conditioner
 		bool show = ValidateOffer() && m_showConditioner.Check();
 		if(_force) {

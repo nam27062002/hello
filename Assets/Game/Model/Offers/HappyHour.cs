@@ -40,6 +40,9 @@ public class HappyHour {
 		public bool triggeredByDate { get { return startDate > DateTime.MinValue; } }
 
 		public int popupTriggerRunNumber = 0;
+        
+        public bool autoStart; // True: HH will be activated when buying PC, or after a date.
+                               // False: HH will be activated when explicitly requested (i.e. Welcome Back feature)
 
 		/// <summary>
 		/// Parametrized constructor.
@@ -64,7 +67,10 @@ public class HappyHour {
 
 			// Popup delay
 			popupTriggerRunNumber = def.GetAsInt("triggerRunNumber", 0);
-		}
+            
+            // Auto start at run N, or manual start (welcome back)
+            autoStart = def.GetAsBool("autoStart", true);
+        }
 	}
 
 	//------------------------------------------------------------------------//
@@ -82,7 +88,14 @@ public class HappyHour {
 		get { return m_affectedPacks; }
 	}
 
-	// Current offer values
+    // Price min/max thresholds. Only packs betweens this two prices will benefit from HH
+    private float m_minPriceAffected = float.MinValue; 
+    public float minPriceAffected => m_minPriceAffected;
+    private float m_maxPriceAffected = float.MaxValue;
+    public float maxPriceAffected => m_maxPriceAffected;
+    
+
+    // Current offer values
 	private DateTime m_expirationTime = DateTime.MinValue; // Timestamp when the offer will finish
 	public DateTime expirationTime {
 		get { return m_expirationTime; }
@@ -133,6 +146,9 @@ public class HappyHour {
 			case "lastPackPurchased":			m_affectedPacks = AffectedPacks.LAST_PACK_PURCHASED; break;
 			case "lastPackPurchasedAndAbove":	m_affectedPacks = AffectedPacks.LAST_PACK_PURCHASED_AND_ABOVE; break;
 		}
+
+        m_minPriceAffected = m_data.def.GetAsFloat("minPriceAffected", float.MinValue);
+        m_maxPriceAffected = m_data.def.GetAsFloat("maxPriceAffected", float.MaxValue);
 
 		// Initialize live data
 		m_extraGemsFactor = m_data.def.GetAsFloat("percentageMinExtraGems");

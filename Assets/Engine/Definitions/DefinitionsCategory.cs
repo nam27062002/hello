@@ -126,8 +126,17 @@ public class DefinitionsCategory
 	public const string SHARE_LOCATIONS = "SHARE_LOCATIONS";
     public const string ICONS = "ICONS";
 
+
+	// Welcome back perks
+    public const string WELCOME_BACK = "WELCOME_BACK";
+	public const string WELCOME_BACK_PERKS = "WELCOME_BACK_PERKS";
+	public const string SOLO_QUESTS = "SOLO_QUESTS";
+	public const string SOLO_QUESTS_REWARDS = "SOLO_QUESTS_REWARDS";
+    public const string BOOSTED_DAILY_REWARDS = "BOOSTED_DAILY_REWARDS";
+
 	//Cross promotion 
 	public const string XPROMO_REWARDS = "XPROMO_REWARDS";
 	public const string XPROMO_SETTINGS = "XPROMO_SETTINGS";
+
 };
     

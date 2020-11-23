@@ -35,7 +35,7 @@ public abstract class HDLiveEventManager : HDLiveDataController {
     protected bool m_requestingRewards = false;
 
 	protected HDLiveEventData m_data;
-	public HDLiveEventData data
+	public virtual HDLiveEventData data
 	{	
 		get { return m_data; }
 	}
@@ -65,11 +65,11 @@ public abstract class HDLiveEventManager : HDLiveDataController {
 
     public virtual void UpdateStateFromTimers()
     {
-    	m_data.UpdateStateFromTimers();
+    	data.UpdateStateFromTimers();
     }
 
     /// <summary>
-    /// Is this event active?
+    /// Whether this event is should be active according to its state
     /// </summary>
 	/// <returns><c>true</c> if this event is active (not teasing, nor reward pending).</returns>
     public virtual bool IsRunning()
@@ -176,7 +176,7 @@ public abstract class HDLiveEventManager : HDLiveDataController {
 
         CleanData();
         OnNewStateInfo(_data);
-        if (data.m_eventId > 0 && (!HasValidDefinition() || dataWasLoadedFromCache)) {
+        if (data != null && data.m_eventId > 0 && (!HasValidDefinition() || dataWasLoadedFromCache)) {
             RequestDefinition();
         }
 
@@ -256,12 +256,12 @@ public abstract class HDLiveEventManager : HDLiveDataController {
 #region server_comunication
 
 
-	public bool ShouldRequestDefinition()
+	public virtual bool ShouldRequestDefinition()
 	{
 		return m_shouldRequestDefinition;
 	}
 
-    public bool RequestDefinition(bool _force = false)
+    public virtual bool RequestDefinition(bool _force = false)
     {
     	bool ret = false;
     	if ( _force || ShouldRequestDefinition() )
@@ -373,7 +373,7 @@ public abstract class HDLiveEventManager : HDLiveDataController {
 		{
 			if ( responseJson.ContainsKey("code") )
 			{
-                if (responseJson["code"].AsInt == m_data.m_eventId) {
+                if (responseJson["code"].AsInt == data.m_eventId) {
                     data.m_state = HDLiveEventData.State.FINALIZED;
                     HDLiveDataManager.instance.SaveEventsToCache();
                 }
@@ -462,13 +462,15 @@ public abstract class HDLiveEventManager : HDLiveDataController {
 		if (m_active)
     	{
             m_active = false;
-    		List<Modifier> mods = data.definition.m_otherMods;
-			for (int i = 0; i < mods.Count; i++) {
-                if (mods[i] != null) {
+            List<Modifier> mods = data.definition.m_otherMods;
+            for (int i = 0; i < mods.Count; i++)
+            {
+                if (mods[i] != null)
+                {
                     mods[i].Remove();
                 }
-			}
-    	}
+            }
+        }
     }
 
     public override void ActivateLaterMods()

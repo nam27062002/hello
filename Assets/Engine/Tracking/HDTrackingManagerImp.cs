@@ -1599,6 +1599,15 @@ public class HDTrackingManagerImp : HDTrackingManager {
     }
 
 
+    /// <summary>
+    /// Sent when WB data has been received from the server
+    /// </summary>
+    public override void Notify_WelcomeBackStatus(string _clusterId, int _minAbsentDays, string _activeBenefits, bool _triggered, string _welcomeBackId)
+
+    {
+        Track_WelcomeBackStatus(_clusterId, _minAbsentDays, _activeBenefits, _triggered, _welcomeBackId);
+    }
+
     #region track
     private const string TRACK_EVENT_TUTORIAL_COMPLETION = "tutorial_completion";
     private const string TRACK_EVENT_FIRST_10_RUNS_COMPLETED = "first_10_runs_completed";
@@ -3051,6 +3060,35 @@ public class HDTrackingManagerImp : HDTrackingManager {
         }
         m_eventQueue.Enqueue(e);
     }
+
+    /// <summary>
+    /// Welcome back data has been received from the server 
+    /// </summary>
+    /// <param name="_clusterId"></param>
+    /// <param name="_minAbsentDays"></param>
+    /// <param name="_activeBenefits"></param>
+    /// <param name="_triggered">True if the WB is being activated in this call</param>
+    /// <param name="_welcomeBackId"></param>
+    private void Track_WelcomeBackStatus(string _clusterId, int _minAbsentDays, string _activeBenefits, bool _triggered, string _welcomeBackId)
+    {
+        Log("Track_WelcomeBackStatus "
+            + ", clusterId = " + _clusterId
+            + ", minAbsentDays = " + _minAbsentDays
+            + ", activeBenefits = " + _activeBenefits
+            + ", triggered = " + _triggered
+            + ", welcomeBackId = " + _welcomeBackId );
+
+        // Create event
+        HDTrackingEvent e = new HDTrackingEvent("custom.general.welcomeBackStatus");
+        {
+            Track_AddParamString(e, TRACK_PARAM_CLUSTER_ID, _clusterId);
+            Track_AddParamInt(e, TRACK_PARAM_MIN_ABSENT_DAYS, _minAbsentDays);
+            Track_AddParamString(e, TRACK_PARAM_ACTIVE_BENEFITS, _activeBenefits);
+            Track_AddParamBool(e, TRACK_PARAM_TRIGGERED, _triggered);
+            Track_AddParamString(e, TRACK_PARAM_WELCOME_BACK_ID, _welcomeBackId);
+        }
+        m_eventQueue.Enqueue(e);
+    }
     #endregion
 
     // -------------------------------------------------------------
@@ -3068,6 +3106,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private const string TRACK_PARAM_AB_TEST_NAME = "abTestName";
     private const string TRACK_PARAM_ACCEPTED = "accepted";
     private const string TRACK_PARAM_ACQ_MARKETING_ID = "acq_marketing_id";
+    private const string TRACK_PARAM_ACTIVE_BENEFITS = "activeBenefits";
     private const string TRACK_PARAM_ACTION = "action";			// "automatic", "info_button" or "settings"
     private const string TRACK_PARAM_AD_IS_AVAILABLE = "adIsAvailable";
     private const string TRACK_PARAM_AD_REVIVE = "adRevive";
@@ -3164,7 +3203,8 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private const string TRACK_PARAM_MB_AVAILABLE_END = "mbAvailable_end";
     private const string TRACK_PARAM_MB_AVAILABLE_START = "mbAvailable_start";
     private const string TRACK_PARAM_MAX_TRANSACTION_PRICE = "maxTransactionPrice";
-    private const string TRACK_PARAM_MAX_XP = "maxXp";    
+    private const string TRACK_PARAM_MAX_XP = "maxXp";
+    private const string TRACK_PARAM_MIN_ABSENT_DAYS = "minAbsentDays";
     private const string TRACK_PARAM_MISSION_DIFFICULTY = "missionDifficulty";
     private const string TRACK_PARAM_MISSION_TARGET = "missionTarget";
     private const string TRACK_PARAM_MISSION_TYPE = "missionType";
@@ -3266,6 +3306,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
 
     private const string TRACK_PARAM_VERSION_QUALITY_FORMULA = "versionQualityFormula";
     private const string TRACK_PARAM_VERSION_REVISION = "versionRevision";
+    private const string TRACK_PARAM_WELCOME_BACK_ID = "welcomeBackId";
     private const string TRACK_PARAM_XP = "xp";
     private const string TRACK_PARAM_YEAR_OF_BIRTH = "yearOfBirth";
     private const string TRACK_PARAM_ZONE = "zone";

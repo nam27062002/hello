@@ -47,7 +47,7 @@ public class EventRewardScreen : MonoBehaviour {
 	private RewardSceneController m_sceneController = null;
 
 	// Internal logic
-	private HDQuestManager m_questManager;
+	private BaseQuestManager m_questManager;
 	private Step m_step;
 	private State m_state;
 
@@ -93,9 +93,13 @@ public class EventRewardScreen : MonoBehaviour {
 	// PUBLIC METHODS													//
 	//------------------------------------------------------------------//
 	/// <summary>
-	/// Start the reward flow with current event in the manager.
+	/// Start the reward flow with the specified event
 	/// </summary>
 	public void StartFlow() {
+        
+        // Store current event for faster access
+        m_questManager = HDLiveDataManager.quest;
+        
 		// Make sure all required references are set
 		ValidateReferences();
 
@@ -109,13 +113,14 @@ public class EventRewardScreen : MonoBehaviour {
 		// Clear 3D scene
 		m_sceneController.Clear();
 
-		// Store current event for faster access
-		m_questManager = HDLiveDataManager.quest;
-
-		// Set initial state
+        // Set initial state
 		m_step = Step.INIT;
 		m_state = State.IDLE;
 
+		// Initialize progress bar
+        m_questPanel.Refresh();
+		m_questPanel.MoveScoreTo(0, 0, 0f);
+		
 		// Stack all rewards into the pending rewards stack
 		// Add reward to the stack - In the right order!
 		if(m_questManager != null) {
@@ -150,9 +155,7 @@ public class EventRewardScreen : MonoBehaviour {
             PersistenceFacade.instance.Save_Request(true);
 		}
 
-		// Initialize progress bar
-		m_questPanel.Refresh();
-		m_questPanel.MoveScoreTo(0, 0, 0f);
+
 
 		// Hide all screens
 		for(int i = 0; i < (int)Step.FINISH; ++i) {
@@ -278,7 +281,7 @@ public class EventRewardScreen : MonoBehaviour {
 			case Step.INTRO: {
 
                 // Get the icon definition
-                string iconSku = m_questManager.m_questDefinition.m_goal.m_icon;
+                string iconSku = m_questManager.GetQuestDefinition().m_goal.m_icon;
 
                 // The BaseIcon component will load the proper image or 3d model according to iconDefinition.xml
                 m_eventIcon.LoadIcon(iconSku);
@@ -312,7 +315,7 @@ public class EventRewardScreen : MonoBehaviour {
 				AudioController.Play("UI_Light FX");
 
 				// Animate progress bar
-				m_questPanel.MoveScoreTo(m_questManager.m_questDefinition.m_rewards[m_questRewardIdx].target, 0.5f);
+				m_questPanel.MoveScoreTo(m_questManager.GetQuestDefinition().m_rewards[m_questRewardIdx].target, 0.5f);
 
 				// Tell the scene to open the next reward (should be already stacked)
 				m_sceneController.OpenReward();
@@ -366,7 +369,7 @@ public class EventRewardScreen : MonoBehaviour {
 				PersistenceFacade.instance.Save_Request();
 
                     // Go back to main screen
-                HDLiveDataManager.instance.SwitchToQuest();
+                HDLiveDataManager.instance.SwitchToGameMode(HDLiveDataManager.GameMode.QUEST);
                 InstanceManager.menuSceneController.GoToScreen(MenuScreen.DRAGON_SELECTION);
 			} break;
 		}

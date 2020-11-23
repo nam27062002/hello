@@ -49,7 +49,8 @@ public class ShopPill {
 			OfferPack.FREE,
             OfferPack.REFERRAL,
             OfferPack.REMOVE_ADS,
-            OfferPack.SC
+            OfferPack.SC,
+            OfferPack.WELCOME_BACK
     )]
     public string offerPackType;
 

@@ -19,7 +19,7 @@ using System.Collections.Generic;
 /// 
 /// </summary>
 [Serializable]
-public class HDQuestDefinition : HDLiveEventDefinition {
+public class HDLiveQuestDefinition : HDLiveEventDefinition {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -62,6 +62,9 @@ public class HDQuestDefinition : HDLiveEventDefinition {
 	public QuestGoal m_goal = new QuestGoal();
 
 	public List<HDLiveData.Reward> m_rewards = new List<HDLiveData.Reward>();
+
+	// Duration of the quest in mins (for solo quests)
+	public long duration;
 		
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -69,14 +72,14 @@ public class HDQuestDefinition : HDLiveEventDefinition {
 	/// <summary>
 	/// Default constructor.
 	/// </summary>
-	public HDQuestDefinition() {
+	public HDLiveQuestDefinition() {
 
 	}
 
 	/// <summary>
 	/// Destructor
 	/// </summary>
-	~HDQuestDefinition() {
+	~HDLiveQuestDefinition() {
 
 	}
 
@@ -111,12 +114,64 @@ public class HDQuestDefinition : HDLiveEventDefinition {
 
 		// Add rewards
 		// [AOC] TODO!! Restoring caching rewards cause a null pointer exception. Investigate why, don't cache them meanwhile
-		/*JSONArray rewardsData = new JSONArray();
-		for(int i = 0; i < m_rewards.Count; ++i) {
-			rewardsData.Add(m_rewards[i].ToJson());
+		JSONArray rewardsData = new JSONArray();
+		for(int i = 0; i < m_rewards.Count; ++i)
+		{
+			rewardsData.Add(m_rewards[i].SaveData());
 		}
-		data.Add("rewards", rewardsData);*/
+		data.Add("rewards", rewardsData);
 
 		return data;
+	}
+
+	/// <summary>
+	/// Initialize this quest definition from the data in the content
+	/// We use this method to load a quest from the soloQuestDefinitions
+	/// </summary>
+	/// <param name="_def">The soloQuest definition node</param>
+	public void InitFromDefinition(DefinitionNode _def)
+	{
+		string sku = _def.GetAsString("sku");
+		
+		// Initialize Goal
+		m_goal = new QuestGoal();
+		m_goal.m_amount = _def.GetAsLong("amount");
+		m_goal.m_desc = _def.GetAsString("description");
+		m_goal.m_icon = _def.GetAsString("icon");
+		m_goal.m_type = _def.GetAsString("type");
+		m_goal.m_typeDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.MISSION_TYPES, m_goal.m_type);
+
+		// Initialize rewards
+		List<DefinitionNode> rewardsDef = DefinitionsManager.SharedInstance.
+			GetDefinitionsByVariable(DefinitionsCategory.SOLO_QUESTS_REWARDS, "questSku", sku);
+
+		foreach (DefinitionNode rewardDef in rewardsDef)
+		{
+			HDLiveData.Reward reward = new HDLiveData.Reward();
+			reward.target = rewardDef.GetAsLong("target");
+
+			Metagame.Reward.Data data = new Metagame.Reward.Data();
+			data.amount = rewardDef.GetAsInt("amount");
+			data.sku = rewardDef.GetAsString("rewardSku");
+			data.typeCode = rewardDef.GetAsString("type");
+			reward.reward = Metagame.Reward.CreateFromData(data, HDTrackingManager.EEconomyGroup.SOLO_QUEST, "");
+
+			if (reward.reward == null)
+			{
+				Debug.LogError("The reward defined for the Solo Quest is not valid");
+				continue;
+			}
+			
+			m_rewards.Add(reward);
+		}
+
+		// The UI only allows 4 rewards
+		if (m_rewards.Count != 4)
+		{
+			Debug.LogError("The expected amount of rewards for a Solo Quest is 4. Please fix the content.");
+		}
+		
+		// Duration of the quest
+		duration = _def.GetAsLong("duration");
 	}
 }

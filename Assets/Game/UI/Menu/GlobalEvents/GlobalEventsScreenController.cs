@@ -15,7 +15,7 @@ using System.Collections.Generic;
 // CLASSES																	  //
 //----------------------------------------------------------------------------//
 /// <summary>
-/// General controller for the Global Events tab in the Goals Screen.
+/// General controller for the Quests tab in the Goals Screen.
 /// </summary>
 public class GlobalEventsScreenController : MonoBehaviour {
 	//------------------------------------------------------------------------//
@@ -26,23 +26,30 @@ public class GlobalEventsScreenController : MonoBehaviour {
 		LOG_IN,
 		NO_EVENT,
 		EVENT_TEASER,
-		EVENT_ACTIVE,
+		QUEST_ACTIVE,
+        SOLO_QUEST_ACTIVE,
 		LOADING,
 		RETRY_REWARDS,
         REQUIRES_UPDATE,
 
 		COUNT
 	};
-	
+
+	public const string TID_COLLABORATIVE_QUEST = "TID_QUEST_NAME";
+	public const string TID_SOLO_QUEST = "TID_SOLO_QUEST_NAME";
+
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed references
+	[SerializeField] private GameObject m_collaborativeQuestTitle;
+	[SerializeField] private GameObject m_soloQuestTitle;
+
 	[SerializeField] private GlobalEventsPanel[] m_panels = new GlobalEventsPanel[(int)Panel.COUNT];
 
 	// Internal
 	private Panel m_activePanel = Panel.OFFLINE;
-	private HDQuestManager m_questManager;
+	private BaseQuestManager m_questManager;
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -55,7 +62,6 @@ public class GlobalEventsScreenController : MonoBehaviour {
 		// Shouldn't happen, the custom editor makes sure everyhting is ok
 		Debug.Assert(m_panels.Length == (int)Panel.COUNT, "Unexpected amount of defined panels");
 
-		m_questManager = HDLiveDataManager.quest;
 
 		// Init panels
 		for(int i = 0; i < m_panels.Length; i++) {
@@ -69,6 +75,9 @@ public class GlobalEventsScreenController : MonoBehaviour {
 	/// Component has been enabled.
 	/// </summary>
 	private void OnEnable() {
+        
+        m_questManager = HDLiveDataManager.quest;
+        
 		// Subscribe to external events
 		Messenger.AddListener<GlobalEventManager.RequestType>(MessengerEvents.GLOBAL_EVENT_UPDATED, OnEventDataUpdated);
 		Messenger.AddListener(MessengerEvents.GLOBAL_EVENT_CUSTOMIZER_ERROR, OnNoEvent);
@@ -101,12 +110,24 @@ public class GlobalEventsScreenController : MonoBehaviour {
 	/// Select active panel based on current global event state.
 	/// </summary>
 	public void Refresh() {
+
+		// Refresh title text depending if is solo or collaborative quest
+		bool soloQuest = HDLiveDataManager.instance.SoloQuestIsAvailable();
+
+		m_collaborativeQuestTitle.SetActive(!soloQuest);
+        m_soloQuestTitle.SetActive(soloQuest);
+
+        // In case the solo quest ends, force show the title
+        if (m_collaborativeQuestTitle)
+			m_collaborativeQuestTitle.GetComponentInChildren<ShowHideAnimator>().Show();
+
+
 		// Do we need to go to the rewards screen?
 		if ( m_questManager.EventExists() )
 		{
 			m_questManager.UpdateStateFromTimers();
 			// If the current global event has a reward pending, go to the event reward screen
-			if(m_questManager.data.m_state == HDLiveEventData.State.REWARD_AVAILABLE ) {
+			if(m_questManager.GetQuestData().m_state == HDLiveEventData.State.REWARD_AVAILABLE ) {
 				// Show requesting!
 				OnRetryRewardsButton();
 				return;
@@ -121,48 +142,13 @@ public class GlobalEventsScreenController : MonoBehaviour {
 		m_panels[(int)m_activePanel].Refresh();
 	}
 
-	protected void OnRewards(int _eventId ,HDLiveDataManager.ComunicationErrorCodes _err)
-	{
-		if ( _eventId == m_questManager.data.m_eventId )	
-		{
-			if ( _err == HDLiveDataManager.ComunicationErrorCodes.NO_ERROR )
-			{
-				EventRewardScreen scr = InstanceManager.menuSceneController.GetScreenData(MenuScreen.EVENT_REWARD).ui.GetComponent<EventRewardScreen>();
-				scr.StartFlow();
-				InstanceManager.menuSceneController.GoToScreen(MenuScreen.EVENT_REWARD, true);	
-			}
-			else
-			{
-				// Show error message and retry button
-				(m_panels[(int)Panel.RETRY_REWARDS] as GlobalEventsPanelRetryRewards).SetError(_err);
-				SetActivePanel(Panel.RETRY_REWARDS);
-			}
-		}
-	}
-
-	public void OnRetryRewardsButton()
-	{
-		// Show requesting!
-		if (DeviceUtilsManager.SharedInstance.internetReachability == NetworkReachability.NotReachable || !GameSessionManager.SharedInstance.IsLogged ())
-		{
-			SetActivePanel(Panel.OFFLINE);	
-		}
-		else
-		{
-			m_questManager.RequestRewards();
-			SetActivePanel(Panel.LOADING);	
-		}
-	}
-
-	//------------------------------------------------------------------------//
-	// OTHER METHODS														  //
-	//------------------------------------------------------------------------//
+	
 	/// <summary>
 	/// Based on current event state, select which panel should be active.
 	/// </summary>
 	private void SelectPanel() {
 		Panel targetPanel = Panel.NO_EVENT;
-		HDQuestManager quest = HDLiveDataManager.quest;
+		BaseQuestManager quest = HDLiveDataManager.quest;
 		if ( quest.EventExists() )
 		{
 			if (DeviceUtilsManager.SharedInstance.internetReachability == NetworkReachability.NotReachable || !GameSessionManager.SharedInstance.IsLogged ())
@@ -175,18 +161,27 @@ public class GlobalEventsScreenController : MonoBehaviour {
                     quest.RequestDefinition();
                 }
 
-                if (quest.isWaitingForNewDefinition) {
+                if (quest.IsWaitingForNewDefinition()) {
                     targetPanel = Panel.LOADING;
                 } else {
-                    switch (quest.data.m_state) {
+                    switch (quest.GetQuestData().m_state) {
                         case HDLiveEventData.State.TEASING: {
                                 targetPanel = Panel.EVENT_TEASER;
                             }
                             break;
                         case HDLiveEventData.State.NOT_JOINED:
                         case HDLiveEventData.State.JOINED: {
-                                targetPanel = Panel.EVENT_ACTIVE;
+                            if (HDLiveDataManager.instance.SoloQuestIsAvailable())
+                            {
+                                // Choose the welcome back green panel
+                                targetPanel = Panel.SOLO_QUEST_ACTIVE;
                             }
+                            else
+                            {
+                                // Choose the regular wooden panel
+                                targetPanel = Panel.QUEST_ACTIVE;
+                            }
+                        }
                             break;
                         case HDLiveEventData.State.REQUIRES_UPDATE: {
                                 targetPanel = Panel.REQUIRES_UPDATE;
@@ -226,8 +221,10 @@ public class GlobalEventsScreenController : MonoBehaviour {
 		}
 
 		// If showing the ACTIVE panel for the first time, trigger the tutorial
-		if(m_activePanel == Panel.EVENT_ACTIVE && !UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.QUEST_INFO)) {
-			// Open popup!
+		if( (m_activePanel ==  Panel.QUEST_ACTIVE || m_activePanel ==  Panel.SOLO_QUEST_ACTIVE) && 
+            !UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.QUEST_INFO)) 
+        {
+            // Open popup!
 			string popupName = "PF_PopupInfoGlobalEvents";
 			PopupManager.OpenPopupInstant("UI/Popups/Tutorial/" + popupName);
 
@@ -238,10 +235,73 @@ public class GlobalEventsScreenController : MonoBehaviour {
 			HDTrackingManager.Instance.Notify_InfoPopup(popupName, "automatic");
 		}
 	}
+	
+	/// <summary>
+	/// Start the event reward flow and move the camera to the reward screen.
+	/// </summary>
+	private void GoToRewardsScreen()
+	{
+		// Add 1 frame delay to avoid a weird bug
+		UbiBCN.CoroutineManager.DelayedCallByFrames(() =>
+		{
+			
+			EventRewardScreen scr = InstanceManager.menuSceneController.GetScreenData(MenuScreen.EVENT_REWARD).ui
+				.GetComponent<EventRewardScreen>();
+			scr.StartFlow( );
+			InstanceManager.menuSceneController.GoToScreen(MenuScreen.EVENT_REWARD, true);
+			
+		}, 1);
+	}
 
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
+	
+	/// <summary>
+	/// Go to the rewards screen and show the collected rewards
+	/// </summary>
+	/// <param name="_eventId"></param>
+	/// <param name="_err"></param>
+	protected void OnRewards(int _eventId ,HDLiveDataManager.ComunicationErrorCodes _err)
+	{
+		if (HDLiveDataManager.instance.SoloQuestIsAvailable())
+		{
+			// If we are showing a solo quest forget about comm errors. Solo quests are local.
+			GoToRewardsScreen();
+			return;
+		}
+		
+		if ( _eventId == m_questManager.GetQuestData().m_eventId )	
+		{
+			if ( _err == HDLiveDataManager.ComunicationErrorCodes.NO_ERROR )
+			{
+				GoToRewardsScreen();
+			}
+			else
+			{
+				// Show error message and retry button
+				(m_panels[(int)Panel.RETRY_REWARDS] as GlobalEventsPanelRetryRewards).SetError(_err);
+				SetActivePanel(Panel.RETRY_REWARDS);
+			}
+		}
+	}
+
+
+
+	public void OnRetryRewardsButton()
+	{
+		// Show requesting!
+		if (DeviceUtilsManager.SharedInstance.internetReachability == NetworkReachability.NotReachable || !GameSessionManager.SharedInstance.IsLogged ())
+		{
+			SetActivePanel(Panel.OFFLINE);	
+		}
+		else
+		{
+			SetActivePanel(Panel.LOADING);	
+			m_questManager.RequestRewards();
+		}
+	}
+	
 	/// <summary>
 	/// Force a refresh every time we enter the tab!
 	/// </summary>
@@ -314,7 +374,10 @@ public class GlobalEventsScreenController : MonoBehaviour {
 
 	void OnNewDefinition(int _eventId, HDLiveDataManager.ComunicationErrorCodes _err)
 	{
-		if ( _err == HDLiveDataManager.ComunicationErrorCodes.NO_ERROR && _eventId == m_questManager.data.m_eventId)
+		// Request again the active quest, just in case it changed
+		m_questManager = HDLiveDataManager.quest;
+		
+		if ( _err == HDLiveDataManager.ComunicationErrorCodes.NO_ERROR && _eventId == m_questManager.GetQuestData().m_eventId)
 		{
 			Refresh();
 		}

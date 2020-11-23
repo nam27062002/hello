@@ -958,6 +958,9 @@ public class LoadingSceneController : SceneController {
 
                 // At this point check if this player has been invited by another and store the referrer user Id
                 ReferralManager.instance.ReadReferralLink();
+                
+                // Load the welcome back definitions from content
+                WelcomeBackManager.instance.InitFromDefinitions();
 
                 // Given stuff is stored in USerProfile, that's why we need to wait for persistence to be loaded to load given stuff
                 TransactionManager.instance.Given_Load();

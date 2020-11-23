@@ -113,7 +113,7 @@ public class PopupLeaguesUnlocked : MonoBehaviour {
                     HDTrackingManager.Instance.Notify_InfoPopup(popupName, "automatic");
 
                     // Change mode
-                    HDLiveDataManager.instance.SwitchToLeague();
+                    HDLiveDataManager.instance.SwitchToGameMode(HDLiveDataManager.GameMode.LEAGUE);
 
                     // Go to leagues Screen
                     InstanceManager.menuSceneController.GoToScreen(MenuScreen.LEAGUES);
