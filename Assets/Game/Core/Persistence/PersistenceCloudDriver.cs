@@ -1106,6 +1106,16 @@ public class PersistenceCloudDriver
 		}
 	}
 
+    public void Upload(Action<bool> onDone)
+    {
+        // Makes sure no upload is already running
+        if (!Upload_IsRunning)
+        {
+            Upload_Internal(onDone);
+        }
+    }
+
+
 	private void Upload_Internal(Action<bool> onDone)
 	{
 		int updatesAhead = LocalDriver.UpdatesAheadOfCloud;

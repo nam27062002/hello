@@ -12,6 +12,7 @@ using UnityEngine.UI;
 using TMPro;
 using System.Collections.Generic;
 using System;
+using FGOL.Server;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -91,13 +92,27 @@ public class CPWelcomeBackCheats : MonoBehaviour {
 	/// The activate Welcome back button has been pressed
 	/// </summary>
 	public void OnActivateWelcomeBack() {
-		
-		// Activate the WB feature
-		WelcomeBackManager.instance.OnForceStart();
-		
+
+
+
 		// Save persistence
 		PersistenceFacade.instance.Save_Request(false);
 
+
+		// The server needs to know the amount of runs played in order to activate the WB
+		// so send the user persistence to the server
+		PersistenceFacade.instance.CloudDriver.Upload( (bool success) => {
+
+            if (!success)
+			{
+				Debug.LogError("Failed when saving the persistency in the server");
+			}
+
+			// After sending persistency, activate WB
+			WelcomeBackManager.instance.OnForceStart();
+		});
+
+	
 		// Update cheats panel info
 		Refresh();
 
