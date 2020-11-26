@@ -282,23 +282,6 @@ public class CPTechTab : MonoBehaviour {
         GameAds.instance.ShowInterstitial(OnIntersitialDone);
     }
 
-    public void OnButton6()
-    {		
-		HDCP2Manager.Instance.PlayInterstitial(false, OnCp2IntersitialDone);                
-    }
-
-    private void OnCp2IntersitialDone(bool success)
-    {
-        string msg = "OnCp2IntersitialDone success = " + success;
-        Output(msg);
-    }
-
-    public void OnDebugCP2()
-    {
-        FeatureSettingsManager manager = FeatureSettingsManager.instance;
-        Output("CP2Enabled = " + manager.IsCP2Enabled() + " " + HDCP2Manager.Instance.GetDebugInfo());
-    }
-
     public void OnOpenCSTS()
     {
         PopupSettings.CS_OpenPopup();

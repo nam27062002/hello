@@ -24,8 +24,7 @@ public class PopupAdBlocker : MonoBehaviour {
     
     public enum EAdType {
         AdRewarded,
-        AdInterstitial,
-        CP2Interstitial
+        AdInterstitial
     };
     
 	//------------------------------------------------------------------------//
@@ -63,13 +62,6 @@ public class PopupAdBlocker : MonoBehaviour {
             ControlPanel.Log("Launching Ad rewarded = " + rewarded + " purpose = " + _adPurpose, ControlPanel.ELogChannel.General);
 
         return LaunchAdType(adType, _adPurpose, _onAdFinishedCallback);
-    }
-
-    public static PopupController LaunchCp2Interstitial(UnityAction<bool> _onAdFinishedCallback) {
-        if (FeatureSettingsManager.AreCheatsEnabled)
-            ControlPanel.Log("Launching CP2Intersitial", ControlPanel.ELogChannel.CP2);
-            
-        return LaunchAdType(EAdType.CP2Interstitial, GameAds.EAdPurpose.NONE, _onAdFinishedCallback);
     }
 
     /// <summary>
@@ -168,10 +160,6 @@ public class PopupAdBlocker : MonoBehaviour {
 
             case EAdType.AdInterstitial:
                 GameAds.instance.ShowInterstitial(OnAdResult);
-                break;
-
-            case EAdType.CP2Interstitial:
-                HDCP2Manager.Instance.PlayInterstitial(true, OnAdResult);
                 break;
         }		
 

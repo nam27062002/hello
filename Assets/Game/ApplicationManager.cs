@@ -420,12 +420,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
             // Test social platform with/without age protection
             //Debug_TestSocialPlatformToggleAgeProtection();
             // ---------------------------        
-
-            // ---------------------------
-            // Test CP2 interstitial
-            //Debug_TestCP2Interstitial();
-            // ---------------------------        
-
+     
         }
         else if (Input.GetKeyDown(KeyCode.D))
         {
@@ -1789,11 +1784,6 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     {
         m_debugUseAgeProtection = !m_debugUseAgeProtection;        
         NeedsToRestartFlow = true;
-    }
-
-    private void Debug_TestCP2Interstitial()
-    {
-        HDCP2Manager.Instance.PlayInterstitial(false, null);
     }
 
     private const string LOG_CHANNEL = "[ApplicationManager]";

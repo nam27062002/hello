@@ -272,25 +272,6 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 	}
 
 	/// <summary>
-	/// Check Cross Promotion popups.
-	/// </summary>
-	private void CheckInterstitialCP2() {
-		// CP2 interstitial has the lowest priority so if the user has already seen a popup or an ad then cp2 interstitial shouldn't be shown
-		if(GetFlag(StateFlag.POPUP_DISPLAYED)) return;
-
-		// Only in the right screen
-		if(m_currentScreen != MenuScreen.DRAGON_SELECTION) return;
-
-		// Only after a run
-		if(!GetFlag(StateFlag.COMING_FROM_A_RUN)) return;
-
-		bool checkUserRestriction = true;
-		if(HDCP2Manager.Instance.CanPlayInterstitial(checkUserRestriction)) {
-			PopupAdBlocker.LaunchCp2Interstitial(null);
-		}
-	}
-
-	/// <summary>
 	/// Checks whether the Rating popup must be opened or not and does it.
 	/// </summary>
 	private void CheckRating() {
@@ -886,7 +867,6 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 		CheckSilentNotification();
         CheckOpenShop();
         CheckFeaturedOffer();
-		CheckInterstitialCP2();
 		CheckDownloadAssets();
 		CheckHappyHourOffer();
 	}
