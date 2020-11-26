@@ -117,19 +117,6 @@ public class TournamentFeaturedIcon : MonoBehaviour {
 
 		// Refresh the timer!
 		RefreshTimer(true);
-        
-        // Check the welcome back mode
-        m_welcomeBackActive = WelcomeBackManager.instance.IsTournamentPassActive();
-        
-        // The current variation matches the welcome back state?
-        bool rightVariation = ((m_visualVariation == Variation.WELCOME_BACK && m_welcomeBackActive)
-                     || (m_visualVariation == Variation.NORMAL && !m_welcomeBackActive));
-
-        // Hide if is not the right variation
-		if (m_root.activeInHierarchy && !rightVariation)
-		{
-			m_root.SetActive(false);
-		}
 
     }
 
@@ -256,7 +243,20 @@ public class TournamentFeaturedIcon : MonoBehaviour {
 			}
 		}
 
-		if(m_root != null) m_root.SetActive(show);
+		// Check the welcome back mode
+		m_welcomeBackActive = WelcomeBackManager.instance.IsTournamentPassActive();
+
+		// The current variation matches the welcome back state?
+		bool rightVariation = ((m_visualVariation == Variation.WELCOME_BACK && m_welcomeBackActive)
+					 || (m_visualVariation == Variation.NORMAL && !m_welcomeBackActive));
+
+		// Hide if is not the right variation
+		if (m_root.activeInHierarchy && !rightVariation)
+		{
+			show = false;
+		}
+
+		if (m_root != null) m_root.SetActive(show);
 		return show;
 	}
 
