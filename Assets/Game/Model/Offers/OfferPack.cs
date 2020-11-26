@@ -70,9 +70,12 @@ public class OfferPack {
 	public const string DRAGON_DISCOUNT = "dragon_discount";
     public const string WELCOME_BACK = "welcomeback";
 
-    public const string DRAGON_LAST_PROGRESSION = "dragon_last_progression"; 
+    public const string DRAGON_LAST_PROGRESSION = "dragon_last_progression";
 
-    public const int MAX_ITEMS = 3; // For now
+	public const string PLATFORM_IOS = "ios";
+	public const string PLATFORM_ANDROID = "android";
+
+	public const int MAX_ITEMS = 3; // For now
 	public const Type DEFAULT_TYPE = Type.PROGRESSION;
     public const UserProfile.Currency DEFAULT_CURRENCY = UserProfile.Currency.REAL;
 
@@ -204,6 +207,8 @@ public class OfferPack {
 	protected string[] m_skinsNotOwned = new string[0];
 	
 	protected string[] m_playerSources = new string[0];
+
+	protected string m_platform;
 
 	// Purchase limit
 	protected int m_purchaseLimit = 1;
@@ -409,6 +414,8 @@ public class OfferPack {
 
 		m_playerSources = new string[0];
 
+		m_platform = "";
+
 		// Purchase limit
 		m_purchaseLimit = 1;
 		m_purchaseCount = 0;
@@ -580,6 +587,11 @@ public class OfferPack {
 		m_skinsOwned = ParseArray(_def.GetAsString("skinsOwned"));
 		m_skinsNotOwned = ParseArray(_def.GetAsString("skinsNotOwned"));
 
+		m_platform = _def.GetAsString("platform").ToLower();
+
+		if (m_platform != "" && m_platform != PLATFORM_ANDROID && m_platform != PLATFORM_IOS)
+			Debug.LogError("The platform specified '" + m_platform + "' is not valid. Use 'android' or 'ios'");
+
 		m_playerSources = ParseArray(_def.GetAsString("playerSources"));
 
         m_clusters = ParseArray(_def.GetAsString("clusterId"));
@@ -690,6 +702,7 @@ public class OfferPack {
 
 		// Purchase limit
 		SetValueIfMissing(ref _def, "purchaseLimit", m_purchaseLimit.ToString(CultureInfo.InvariantCulture));
+
 	}
 	#endregion
 
@@ -877,6 +890,32 @@ public class OfferPack {
 				OffersManager.LogPack(this, "      CheckActivation {0}: FAIL! Player Source {1}", Color.red, m_def.sku, playerSource);
 				return false;
 			}
+		}
+
+		// Platform
+		if (!String.IsNullOrEmpty(m_platform))
+		{
+            switch (m_platform)
+            {
+				case PLATFORM_IOS:
+                    if (Application.platform != RuntimePlatform.IPhonePlayer)
+                    {
+						OffersManager.LogPack(this, "      CheckActivation {0}: FAIL! Platform required: {0}", Color.red, m_def.sku, m_platform);
+						return false;
+                    }
+					break;
+
+				case PLATFORM_ANDROID:
+                    if (Application.platform != RuntimePlatform.Android)
+                    {
+						OffersManager.LogPack(this, "      CheckActivation {0}: FAIL! Platform required: {0}", Color.red, m_def.sku, m_platform);
+						return false;
+                    }
+					break;
+
+				default:
+					return false;
+            }
 		}
 
 		// All checks passed!

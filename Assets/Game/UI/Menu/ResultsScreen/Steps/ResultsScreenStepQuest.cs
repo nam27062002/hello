@@ -18,13 +18,13 @@ using DG.Tweening;
 /// <summary>
 /// Step for the results screen.
 /// </summary>
-public class ResultsScreenStepGlobalEvent : ResultsScreenStep {
+public class ResultsScreenStepQuest : ResultsScreenStep {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
 	private const int MAX_SUBMIT_ATTEMPTS = 2;
 
-	private enum Panel {
+	protected enum Panel {
 		OFFLINE,
 		ACTIVE
 	}
@@ -37,23 +37,23 @@ public class ResultsScreenStepGlobalEvent : ResultsScreenStep {
 	[SerializeField] private ShowHideAnimator m_activeGroupAnim = null;
 	[Space]
 	[SerializeField] private Localizer m_tapToContinueText = null;
-	[SerializeField] private ShowHideAnimator m_tapToContinueAnim = null;
+	[SerializeField] protected ShowHideAnimator m_tapToContinueAnim = null;
 	[Space]
 	[SerializeField] private TweenSequence m_sequence = null;
 	[Space]
-	[SerializeField] private NumberTextAnimator m_runScoreText = null;
-	[SerializeField] private Transform m_scoreTransferFXFrom = null;
-	[SerializeField] private Transform m_scoreTransferFXTo = null;
-	[SerializeField] private string m_transferSFX = "";
+	[SerializeField] protected NumberTextAnimator m_runScoreText = null;
+	[SerializeField] protected Transform m_scoreTransferFXFrom = null;
+	[SerializeField] protected Transform m_scoreTransferFXTo = null;
+	[SerializeField] protected string m_transferSFX = "";
 
 	// Internal logic
-	private BaseQuestManager m_questManager = null;
-	private Panel m_activePanel = Panel.OFFLINE;
-	private Sequence m_activePanelSequence = null;
+	protected BaseQuestManager m_questManager = null;
+	protected Panel m_activePanel = Panel.OFFLINE;
+	protected Sequence m_activePanelSequence = null;
 
-	private bool m_continueEnabled = false;
-	private bool m_panelActiveInitialized = false;
-	private GlobalEventsPanelActive m_eventPanelActive = null;
+	protected bool m_continueEnabled = false;
+	protected bool m_panelActiveInitialized = false;
+	protected GlobalEventsPanelActive m_eventPanelActive = null;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -79,7 +79,8 @@ public class ResultsScreenStepGlobalEvent : ResultsScreenStep {
 
 		BaseQuestManager questManager = HDLiveDataManager.quest;
 
-		if (	questManager.EventExists() &&
+		if (    ! HDLiveDataManager.instance.SoloQuestIsAvailable() &&
+                questManager.EventExists() &&
 				questManager.IsRunning() && 
 				questManager.isActive &&
 				questManager.GetQuestData().remainingTime.TotalSeconds > 0 &&
@@ -169,9 +170,9 @@ public class ResultsScreenStepGlobalEvent : ResultsScreenStep {
 	/// <summary>
 	/// Trigger the active panel animation.
 	/// </summary>
-	private void LaunchActivePanelAnimation() {
+	protected virtual void LaunchActivePanelAnimation() {
 		// Kill any existing tween
-		string tweenId = "ResultsScreenStepGlobalEvent.ActivePanel";
+		string tweenId = "ResultsScreenStepQuest.ActivePanel";
 		DOTween.Kill(tweenId);
 
 		// Init some stuff
