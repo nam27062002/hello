@@ -55,13 +55,13 @@ public class ShopHCPill : ShopCurrencyPill {
 		Debug.Assert(m_itemSlotHC != null, "This pill type should have a OfferItemSlotHC as item slot.");
 
         // Subscribe to happy hour events
-        Messenger.AddListener(MessengerEvents.HAPPY_HOUR_CHANGED, RefreshHappyHour);
+        Messenger.AddListener(MessengerEvents.HAPPY_HOUR_CHANGED, Refresh);
     }
 
     private new void OnDestroy()
     {
         // Unsubscribe to events
-        Messenger.RemoveListener(MessengerEvents.HAPPY_HOUR_CHANGED, RefreshHappyHour);
+        Messenger.RemoveListener(MessengerEvents.HAPPY_HOUR_CHANGED, Refresh);
     }
 
 
@@ -74,7 +74,7 @@ public class ShopHCPill : ShopCurrencyPill {
         base.OnEnable();
 
 		// Refresh Happy Hour visuals immediately
-		RefreshHappyHour();
+		Refresh();
 	}
 
 	/// <summary>
@@ -101,42 +101,42 @@ public class ShopHCPill : ShopCurrencyPill {
         // Nothing to do if pack is not valid
         if (m_def == null) return;
 
-        // Happy Hour visuals
-        RefreshHappyHour();
+        // Refresh visuals
+        Refresh();
     }
 
 
 	/// <summary>
-	/// Refresh Happy Hour visuals.
+	/// Refresh  visuals.
 	/// </summary>
-	/// <param name="_force">Force refresh or only if state has changed?</param>
-    private void RefreshHappyHour() {
+    private void Refresh() {
         
         // In case there is a happy hour active
-        bool hhActive = false;
+        bool applyHH = false;
 		if(OffersManager.happyHourManager.happyHour != null) {
 			// Check whether Happy Hour applies to this pack or not
 			HappyHourManager happyHour = OffersManager.happyHourManager;
-			hhActive = happyHour.happyHour.IsActive() && happyHour.IsPackAffected(m_def);
+			applyHH = happyHour.IsPackAffected(m_def);
 		}
 
         // Add a shiny effect to the button
         if (m_happyHourButtonFx != null)
         {
-            m_happyHourButtonFx.SetActive(hhActive);
+            m_happyHourButtonFx.SetActive(applyHH);
         }
 
 
         // Apply to item slot
-        if (m_itemSlotHC != null)
+        if (m_itemSlotHC != null )
         {
-            m_itemSlotHC.ApplyHappyHour(OffersManager.happyHourManager.happyHour);
+            m_itemSlotHC.applyHappyHour = applyHH;
+            m_itemSlotHC.Refresh();
         }
 
 
 		// Hide the regular extra % text during HH
 		if(m_bonusAmountText != null) {
-			m_bonusAmountText.gameObject.SetActive(!hhActive);
+			m_bonusAmountText.gameObject.SetActive(!applyHH);
 		}
     }
 }

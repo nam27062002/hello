@@ -113,39 +113,40 @@ public class ResourcesFlowMissingPCPopup : MonoBehaviour {
 	/// <summary>
 	/// Refresh the Happy Hour visuals
 	/// </summary>
-	private void RefreshHappyHour() {
-		// Refresh the happy hour panel
-		if(m_happyHour != null)  {
+	private void RefreshHappyHour()
+    {
+        // Check if happy hour is applied to this offer pack
+        bool applyHappyHour = OffersManager.happyHourManager.IsPackAffected(m_recommendedPackPill.def);
+        
+   
+        if (m_happyHourPanel != null)
+        {
+            m_happyHourPanel.SetActive(applyHappyHour);
+        }
 
-            // If show the happy hour panel only if the offer is active        
-            if (m_happyHourPanel != null)
-            {
-                m_happyHourPanel.SetActive(m_happyHour.IsActive());
-            }
+        if (m_happyHourBackground != null)
+        {
+            m_happyHourBackground.SetActive(applyHappyHour);
+        }
 
-            if (m_happyHourBackground != null)
-            {
-                m_happyHourBackground.SetActive(m_happyHour.IsActive());
-            }
+        if (applyHappyHour) {
 
-            if (m_happyHour.IsActive()) {
+            // Convert offer rate to percentage (example: .5f to +50%) 
+            float percentage = m_happyHour.extraGemsFactor * 100;
+            string gemsPercentage = String.Format("{0}", Math.Round(percentage));
 
-                // Convert offer rate to percentage (example: .5f to +50%) 
-                float percentage = m_happyHour.extraGemsFactor * 100;
-                string gemsPercentage = String.Format("{0}", Math.Round(percentage));
+            // Show badge with extra rate
+            string badgeText = LocalizationManager.SharedInstance.Localize("TID_SHOP_BONUS_AMOUNT", gemsPercentage + "%");
+            m_happyHourBadgeText.text = badgeText;
 
-                // Show badge with extra rate
-                string badgeText = LocalizationManager.SharedInstance.Localize("TID_SHOP_BONUS_AMOUNT", gemsPercentage + "%");
-                m_happyHourBadgeText.text = badgeText;
-
-                // Show time left in the proper format (1h 20m 30s)
-                string timeLeft = TimeUtils.FormatTime(m_happyHour.TimeLeftSecs(), TimeUtils.EFormat.ABBREVIATIONS_WITHOUT_0_VALUES, 3);
-				if(m_happyHourTimer != null) {
-					m_happyHourTimer.text = timeLeft;
-				}
-
+            // Show time left in the proper format (1h 20m 30s)
+            string timeLeft = TimeUtils.FormatTime(m_happyHour.TimeLeftSecs(), TimeUtils.EFormat.ABBREVIATIONS_WITHOUT_0_VALUES, 3);
+			if(m_happyHourTimer != null) {
+				m_happyHourTimer.text = timeLeft;
 			}
+
 		}
+		
 	}
 
 	//------------------------------------------------------------------------//

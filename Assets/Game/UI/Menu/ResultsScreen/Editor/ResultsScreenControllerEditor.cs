@@ -79,6 +79,8 @@ public class ResultsScreenControllerEditor : ReorderableArrayInspector {
 
 					new StepSetup(ResultsScreenController.Step.CLUSTERING, true, true, "Logic step. Send player data to the server to calculate the cluster associated"),
 
+					new StepSetup(ResultsScreenController.Step.SOLO_QUEST, true, false, "Optional, if there is a solo quest active and the player scored"),
+
 					new StepSetup(ResultsScreenController.Step.COUNT, false, false, "")
 				};
 			}

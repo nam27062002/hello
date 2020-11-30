@@ -1,0 +1,57 @@
+[ 
+    {"alias" : "soloQuests" , "file": "soloQuestsDefinitions.xml", "type" : "SoftDefsMap", "forceString": false, "schema": {
+            "enabled" : "Boolean",
+            "type" : "String",
+            "target" : "String",
+            "icon" : "String",
+            "amount" : "Integer" ,
+            "duration" : "Integer" ,
+            "description" : "String"
+        }
+    },
+    {"alias" : "soloQuestsRewards" , "file": "soloQuestsRewardsDefinitions.xml", "type" : "SoftDefsMap", "forceString": false, "schema": {
+            "questSku" : "String",
+            "type" : "String",
+            "rewardSku" : "String",
+            "amount" : "Long",
+            "target" : "Integer"
+        }
+    },
+    {"alias" : "boostedDailyRewards" , "file": "boostedDailyRewardsDefinitions.xml", "type" : "SoftDefsMap", "forceString": false, "schema": {
+            "enabled" : "Boolean",
+            "day" : "Integer",
+            "type" : "String",
+            "amount" : "Long",
+            "rewardSku" : "String",
+            "priority" : "Integer"
+        }
+    },
+    {"alias" : "welcomeBackPerks" , "file": "welcomeBackPerksDefinitions.xml", "type" : "SoftDefsMap", "forceString": false, "schema": {
+        "enabled" : "Boolean",
+        "cluster" : "String",
+        "ownedDragon" : "String",
+        "notOwnedDragon" : "String",
+        "enablePopup" : "Boolean" ,
+        "enableHappyHour" : "Boolean",
+        "enableOffer" : "Boolean",
+        "enableBoostedDailyLogin" : "Boolean",
+        "enablePassive" : "Boolean",
+        "enableSoloQuest" : "Boolean",
+        "enableTournamentPass" : "Boolean"}
+    },
+    {"alias" : "welcomeBackDefinitions" , "file": "welcomeBackDefinitions.xml", "type" : "SettingsDefsMap", "forceString": false, "schema": {
+        "enabled" : "Boolean",
+        "minAbsentDays" : "Integer",
+        "maxActivationsAllowed" : "Integer",
+        "soloQuestSku" : "String",
+        "passiveDurationDays" : "Integer",
+        "passiveModSkuv" : "String",
+        "tournamentPassDurationHours" : "Integer",
+        "tournamentPassCurrency" : "String",
+        "tournamentPassPrice" : "Long",
+        "boostedDailyRewardsAdMultiplier" : "Double",
+        "happyHourSku" : "String",
+        "minRuns" : "Integer"
+        }
+    }
+]

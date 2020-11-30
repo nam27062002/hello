@@ -314,7 +314,7 @@ public class TournamentInfoScreen : MonoBehaviour, IBroadcastListener {
     /// </summary>
     public void OnBackButton() {
         SceneController.SetMode(SceneController.Mode.DEFAULT);
-        HDLiveDataManager.instance.SwitchToQuest();
+        HDLiveDataManager.instance.SwitchToGameMode(HDLiveDataManager.GameMode.QUEST);
     }
 
 	/// <summary>
@@ -371,7 +371,7 @@ public class TournamentInfoScreen : MonoBehaviour, IBroadcastListener {
 				this.GetComponentInParent<Canvas>().transform as RectTransform
 			);
 			text.text.color = UIConstants.ERROR_MESSAGE_COLOR;
-            HDLiveDataManager.instance.SwitchToQuest();
+            HDLiveDataManager.instance.SwitchToGameMode(HDLiveDataManager.GameMode.QUEST);
             InstanceManager.menuSceneController.GoToScreen(MenuScreen.DRAGON_SELECTION, true);
 
              // Finish tournament if 607 / 608 / 622

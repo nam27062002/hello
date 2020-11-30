@@ -80,4 +80,45 @@ public class HDPassiveEventDefinition : HDLiveEventDefinition {
 		m_mainMod = null;
 		base.Clean();
 	}
+
+    /// <summary>
+    /// Initialize this passiveevent definition from the data in the content
+    /// We use this method to load a quest from the localPassiveEvent
+    /// </summary>
+    /// <param name="_def">The welcomeBack definition node</param>
+    public void InitFromDefinition(DefinitionNode _def)
+    {
+        // Find the modifier defined in the welcome back content
+        string modSku = _def.GetAsString("passiveModSku");
+        DefinitionNode modDef =
+            DefinitionsManager.SharedInstance.GetDefinitionByVariable(DefinitionsCategory.LIVE_EVENTS_MODIFIERS, 
+                "sku", modSku);
+
+        // Make sure the mod sku is valid
+        if (modDef == null)
+        {
+            Debug.LogError("The Passive Event modifier in the Welcome Back definition doesnt exist.");
+            return;
+        }
+        
+        // Create the modifier    
+        m_mainMod = Modifier.CreateFromDefinition(modDef);
+        
+        // Categorize the mod depending on its type
+        if (m_mainMod.isValid()) {
+            if ( m_mainMod.isLateModifier() ) {
+                m_laterMods.Add(m_mainMod);
+            } else if (m_mainMod is ModifierDragon) {
+                m_dragonMods.Add(m_mainMod);
+            } else {
+                m_otherMods.Add(m_mainMod);
+            }
+        }
+
+
+        // Set the initialized flag to true (otherwise wont show in the UI)
+        m_initialized = true;
+
+
+    }
 }

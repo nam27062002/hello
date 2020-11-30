@@ -212,11 +212,20 @@ public class HappyHourManager {
 				candidateData = m_enabledHappyHours[i];
 				Log(Colors.white.Tag("Checking candidate " + candidateData.def.sku));
 
+                                
+                // Only HH with automatic start are elegible for time activation
+                if (!candidateData.autoStart)
+                {
+                    Log(Colors.orange.Tag("TO BE TRIGGERED MANUALLY, SKIP"));
+                    continue;
+                }
+                
 				// Only happy hours triggered by date are eligible for time activation!
 				if(!candidateData.triggeredByDate) {
 					Log(Colors.orange.Tag("NOT TRIGGERED BY TIME, SKIP"));
 					continue;
 				}
+
 
 				// Did we reached the start date?
 				if(candidateData.startDate <= serverTime) {
@@ -333,8 +342,15 @@ public class HappyHourManager {
 
 		// Ignore if happy hour is not active
 		if(!m_happyHour.IsActive()) return false;
+        
+        // Check price limits
+        if (_packDef.GetAsFloat("refPrice") < m_happyHour.minPriceAffected)
+            return false;
+        
+        if (_packDef.GetAsFloat("refPrice") > m_happyHour.maxPriceAffected)
+            return false;
 
-		// Depends on mode
+            // Depends on mode
 		switch(m_happyHour.affectedPacks) {
 			case HappyHour.AffectedPacks.ALL_PACKS: {
 				return true;
@@ -358,6 +374,54 @@ public class HappyHourManager {
 		// Fallback - don't apply happy hour to this pack
 		return false;
 	}
+
+    /// <summary>
+    /// Force the start of a happy hour with the specified SKU, even if such HH appears as
+    /// disabled in the content.
+    /// </summary>
+    /// <param name="_happyHourSku">The SKU of the happy hour config in the content</param>
+    public void ForceStart(string _happyHourSku)
+    {
+        
+        // Check that such SKU is defined
+        if (!m_allHappyHours.ContainsKey(_happyHourSku))
+        {
+            Debug.LogError("The specified Happy Hour configuration " + _happyHourSku +
+                           " doesnt exist in the content");
+            return;
+        }
+
+        HappyHour.Data data = m_allHappyHours[_happyHourSku];
+        ActivateHappyHour(data);
+
+    }
+
+    /// <summary>
+    /// Force the stop of the specified Happy Hour
+    /// Usually happy hours expires after a time, but we provide this method to be
+    /// used from the cheats panel for debug purposes.
+    /// </summary>
+    /// <param name="_happyHourSku"></param>
+    public void ForceStop(string _happyHourSku)
+    {
+        // Check if the specified SKU is the current one
+        if (m_happyHour != null &&
+            m_happyHour.IsActive() &&
+            m_happyHour.data.def.sku == _happyHourSku)
+        {
+            
+            // End the happy hour
+            m_happyHour.Finish();
+            
+            // Store new expiration date
+            m_lastHappyHourExpirationDate = m_happyHour.expirationTime;
+            
+            // Save persistence
+            Save();
+        }
+        
+        
+    }
 
 	//------------------------------------------------------------------------//
 	// PERSISTENCE															  //
@@ -449,6 +513,9 @@ public class HappyHourManager {
 		else {
 			// Check all enabled happy hours looking for the one that needs to be activated
 			for(int i = 0; i < m_enabledHappyHours.Count; ++i) {
+                // Obly HH with auto start are elegible to be activated here!
+                if (!m_enabledHappyHours[i].autoStart) continue;
+                
 				// Only happy hours NOT triggered by date are eligible for this type of activation!
 				if(m_enabledHappyHours[i].triggeredByDate) continue;
 

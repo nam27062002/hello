@@ -30,6 +30,12 @@ public class HDPassiveEventManager : HDLiveEventManager {
 	//------------------------------------------------------------------------//
 	public HDPassiveEventData m_passiveEventData = null;
 	public HDPassiveEventDefinition m_passiveEventDefinition = null;
+    
+    public override HDLiveEventData data
+    {	
+        get { return m_passiveEventData; }
+    }
+
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //

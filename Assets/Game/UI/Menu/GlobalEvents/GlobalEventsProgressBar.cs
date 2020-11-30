@@ -30,7 +30,7 @@ public class GlobalEventsProgressBar : MonoBehaviour {
 	[Space]
 	[SerializeField] private GlobalEventsRewardInfo[] m_rewardInfos = new GlobalEventsRewardInfo[0];
 
-	public void RefreshRewards(HDQuestDefinition _evt, long currentValue) {
+	public void RefreshRewards(HDLiveQuestDefinition _evt, long currentValue) {
 		// Initialize bar limits
 		if(m_progressBar != null) {
 			m_progressBar.minValue = 0f;
@@ -96,14 +96,20 @@ public class GlobalEventsProgressBar : MonoBehaviour {
 	public void RefreshAchieved(bool _animate) {
 		// Use current bar value
 		for(int i = 0; i < m_rewardInfos.Length; ++i) {
-			m_rewardInfos[i].ShowAchieved(m_progressBar.value >= m_rewardInfos[i].questReward.target, _animate);
+			if (m_rewardInfos[i].questReward != null)
+			{
+				m_rewardInfos[i].ShowAchieved(m_progressBar.value >= m_rewardInfos[i].questReward.target, _animate);
+			}
 		}
 	}
 
 	public void RefreshProgress(float _value, float _animDuration = -1f, bool _checkAchieved = true) {
 		if (m_progressBar != null) {
+			
+			float t = _value / (m_progressBar.maxValue - m_progressBar.minValue);
+
 			// [AOC] For visual purposes, always show a minimum amount of bar
-			_value = Mathf.Max(_value, Mathf.Lerp(m_progressBar.minValue, m_progressBar.maxValue, m_minBarThreshold));
+			_value = Mathf.Max(m_minBarThreshold, Mathf.Lerp(m_progressBar.minValue, m_progressBar.maxValue, t));
 
 			if(_animDuration < 0f) {
 				m_progressBar.value = _value;

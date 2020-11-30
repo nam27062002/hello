@@ -55,6 +55,7 @@ public class OfferPack {
         SC,
         HC,
 		DRAGON_DISCOUNT,
+        WELCOME_BACK,
         COUNT
 	}
 
@@ -67,8 +68,14 @@ public class OfferPack {
     public const string SC = "sc";
     public const string HC = "hc";
 	public const string DRAGON_DISCOUNT = "dragon_discount";
+    public const string WELCOME_BACK = "welcomeback";
 
-    public const int MAX_ITEMS = 3; // For now
+    public const string DRAGON_LAST_PROGRESSION = "dragon_last_progression";
+
+	public const string PLATFORM_IOS = "ios";
+	public const string PLATFORM_ANDROID = "android";
+
+	public const int MAX_ITEMS = 3; // For now
 	public const Type DEFAULT_TYPE = Type.PROGRESSION;
     public const UserProfile.Currency DEFAULT_CURRENCY = UserProfile.Currency.REAL;
 
@@ -200,6 +207,8 @@ public class OfferPack {
 	protected string[] m_skinsNotOwned = new string[0];
 	
 	protected string[] m_playerSources = new string[0];
+
+	protected string m_platform;
 
 	// Purchase limit
 	protected int m_purchaseLimit = 1;
@@ -405,6 +414,8 @@ public class OfferPack {
 
 		m_playerSources = new string[0];
 
+		m_platform = "";
+
 		// Purchase limit
 		m_purchaseLimit = 1;
 		m_purchaseCount = 0;
@@ -576,6 +587,11 @@ public class OfferPack {
 		m_skinsOwned = ParseArray(_def.GetAsString("skinsOwned"));
 		m_skinsNotOwned = ParseArray(_def.GetAsString("skinsNotOwned"));
 
+		m_platform = _def.GetAsString("platform").ToLower();
+
+		if (m_platform != "" && m_platform != PLATFORM_ANDROID && m_platform != PLATFORM_IOS)
+			Debug.LogError("The platform specified '" + m_platform + "' is not valid. Use 'android' or 'ios'");
+
 		m_playerSources = ParseArray(_def.GetAsString("playerSources"));
 
         m_clusters = ParseArray(_def.GetAsString("clusterId"));
@@ -686,6 +702,7 @@ public class OfferPack {
 
 		// Purchase limit
 		SetValueIfMissing(ref _def, "purchaseLimit", m_purchaseLimit.ToString(CultureInfo.InvariantCulture));
+
 	}
 	#endregion
 
@@ -814,15 +831,25 @@ public class OfferPack {
 
 		// Dragons
 		for(int i = 0; i < m_dragonUnlocked.Length; ++i) {
-			if(DragonManager.GetDragonData(m_dragonUnlocked[i]).lockState <= IDragonData.LockState.LOCKED) {
-				OffersManager.LogPack(this, "      CheckActivation {0}: FAIL! Unlocked Dragons {1}", Color.red, m_def.sku, m_dragonUnlocked[i]);
+            
+            // replace "dragon_last_progression" with the actual dragon sku
+            string sku = m_dragonUnlocked[i].Replace(DRAGON_LAST_PROGRESSION, DragonManager.lastClassicDragon.sku);
+
+            if(DragonManager.GetDragonData(sku).lockState <= IDragonData.LockState.LOCKED) {
+				OffersManager.LogPack(this, "      CheckActivation {0}: FAIL! Unlocked Dragons {1}", Color.red, m_def.sku, sku);
 				return false;
 			}
 		}
 
 		for(int i = 0; i < m_dragonOwned.Length; ++i) {
-			if(!DragonManager.IsDragonOwned(m_dragonOwned[i])) {
-				OffersManager.LogPack(this, "      CheckActivation {0}: FAIL! Owned Dragons {1}", Color.red, m_def.sku, m_dragonOwned[i]);
+            
+            // replace "dragon_last_progression" with the actual dragon sku
+            string sku = m_dragonOwned[i].Replace(DRAGON_LAST_PROGRESSION, DragonManager.lastClassicDragon.sku);
+
+            
+			if(!DragonManager.IsDragonOwned(sku))
+            {
+                OffersManager.LogPack(this, "      CheckActivation {0}: FAIL! Owned Dragons {1}", Color.red, m_def.sku, sku);
 				return false;
 			}
 		}
@@ -863,6 +890,32 @@ public class OfferPack {
 				OffersManager.LogPack(this, "      CheckActivation {0}: FAIL! Player Source {1}", Color.red, m_def.sku, playerSource);
 				return false;
 			}
+		}
+
+		// Platform
+		if (!String.IsNullOrEmpty(m_platform))
+		{
+            switch (m_platform)
+            {
+				case PLATFORM_IOS:
+                    if (Application.platform != RuntimePlatform.IPhonePlayer)
+                    {
+						OffersManager.LogPack(this, "      CheckActivation {0}: FAIL! Platform required: {0}", Color.red, m_def.sku, m_platform);
+						return false;
+                    }
+					break;
+
+				case PLATFORM_ANDROID:
+                    if (Application.platform != RuntimePlatform.Android)
+                    {
+						OffersManager.LogPack(this, "      CheckActivation {0}: FAIL! Platform required: {0}", Color.red, m_def.sku, m_platform);
+						return false;
+                    }
+					break;
+
+				default:
+					return false;
+            }
 		}
 
 		// All checks passed!
@@ -973,8 +1026,13 @@ public class OfferPack {
 
 		// Dragons
 		for(int i = 0; i < m_dragonNotOwned.Length; ++i) {
-			if(DragonManager.IsDragonOwned(m_dragonNotOwned[i])) {
-				OffersManager.LogPack(this, "      CheckExpiration {0}: EXPIRED! Dragons Not Owned {1}", Color.red, m_def.sku, m_dragonNotOwned[i]);
+            
+            // replace "dragon_last_progression" with the actual dragon sku
+            string sku = m_dragonNotOwned[i].Replace(DRAGON_LAST_PROGRESSION, DragonManager.lastClassicDragon.sku);
+
+            
+			if(DragonManager.IsDragonOwned(sku)) {
+				OffersManager.LogPack(this, "      CheckExpiration {0}: EXPIRED! Dragons Not Owned {1}", Color.red, m_def.sku, sku);
 				return true;
 			}
 		}
@@ -1335,8 +1393,7 @@ public class OfferPack {
 			case Type.FREE: {
 				newPack = new OfferPackFree();
 			} break;
-
-			case Type.REFERRAL:	{
+            case Type.REFERRAL:	{
 			    newPack = new OfferPackReferral();
 			} break;
 			case Type.REMOVE_ADS: {
@@ -1350,6 +1407,9 @@ public class OfferPack {
             } break;
 			case Type.DRAGON_DISCOUNT: {
 				newPack = new OfferPackDragonDiscount();
+            } break;
+            case Type.WELCOME_BACK: {
+                newPack = new OfferPackWelcomeBack();
             } break;
             default: {
 				newPack = new OfferPack();
@@ -1507,6 +1567,7 @@ public class OfferPack {
             case Type.SC:           return SC;
             case Type.HC:           return HC;
 			case Type.DRAGON_DISCOUNT:	return DRAGON_DISCOUNT;
+            case Type.WELCOME_BACK: return WELCOME_BACK;
 		}
 
 		return TypeToString(DEFAULT_TYPE);
@@ -1529,6 +1590,7 @@ public class OfferPack {
             case HC:            return Type.HC;
             case SC:            return Type.SC;
 			case DRAGON_DISCOUNT:	return Type.DRAGON_DISCOUNT;
+            case WELCOME_BACK: return Type.WELCOME_BACK;
 
 		}
 		return DEFAULT_TYPE;

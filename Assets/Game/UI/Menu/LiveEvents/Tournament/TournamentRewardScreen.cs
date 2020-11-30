@@ -318,7 +318,7 @@ public class TournamentRewardScreen : MonoBehaviour {
 
                 // Go back to main screen
                 SceneController.SetMode(SceneController.Mode.DEFAULT);
-                HDLiveDataManager.instance.SwitchToQuest();
+                HDLiveDataManager.instance.SwitchToGameMode(HDLiveDataManager.GameMode.QUEST);
                 InstanceManager.menuSceneController.GoToScreen(MenuScreen.DRAGON_SELECTION);
 			} break;
 		}

@@ -685,32 +685,6 @@ public class IronSourceEvents : MonoBehaviour
         }
     }
 
-
-    // ******************************* Rewarded Interstitial Events *******************************
-
-    private static event Action _onInterstitialAdRewardedEvent;
-    
-    public static event Action onInterstitialAdRewardedEvent {
-        add {
-            if (_onInterstitialAdRewardedEvent == null || !_onInterstitialAdRewardedEvent.GetInvocationList ().Contains (value)) {
-                _onInterstitialAdRewardedEvent += value;
-            }
-        }
-        
-        remove {
-            if (_onInterstitialAdRewardedEvent.GetInvocationList ().Contains (value)) {
-                _onInterstitialAdRewardedEvent -= value;
-            }
-        }
-    }
-    
-    public void onInterstitialAdRewarded (string empty)
-    {
-        if (_onInterstitialAdRewardedEvent != null) {
-            _onInterstitialAdRewardedEvent ();
-        }
-    }
-
     // ******************************* Offerwall Events ******************************* 
 
     private static event Action _onOfferwallOpenedEvent;

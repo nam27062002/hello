@@ -978,6 +978,33 @@ public class GameServerManagerCalety : GameServerManager {
     #endregion
 
     //-----------------
+    // Welcome Back
+    //-----------------
+    #region clustering
+    public override void WelcomeBack_DEBUG_Start(string _userId, string _startTimestamp, ServerCallback _callback)
+    {
+        Dictionary<string, string> parameters = new Dictionary<string, string>();
+        parameters.Add("user", _userId);
+        
+        if (!string.IsNullOrEmpty(_startTimestamp))
+        {
+            // Optional parameter. If empty, server uses current time.
+            parameters.Add("start", _startTimestamp);
+        }
+
+        Commands_EnqueueCommand(ECommand.WelcomeBack_DEBUG_Start, parameters, _callback);
+    }
+
+    public override void WelcomeBack_DEBUG_Stop(string _userId, ServerCallback _callback)
+    {
+        Dictionary<string, string> parameters = new Dictionary<string, string>();
+        parameters.Add("user", _userId);
+
+        Commands_EnqueueCommand(ECommand.WelcomeBack_DEBUG_Stop, parameters, _callback);
+    }
+    #endregion
+
+    //-----------------
     // Clustering
     //-----------------
     #region clustering
@@ -1053,6 +1080,9 @@ public class GameServerManagerCalety : GameServerManager {
         Referral_MarkReferral,          // params: string _referralUserId, string _validationToken
         Referral_DEBUG_MarkReferral,    // params: string _referralUserId
         Referral_DEBUG_SetReferralCount, // params: int _referralCount
+
+        WelcomeBack_DEBUG_Start,    // params: _userId
+        WelcomeBack_DEBUG_Stop,     // params: _userId, _startTimestamp
 
         Clustering_Set,                 // params: string _clusterId
     }    
@@ -1288,6 +1318,9 @@ public class GameServerManagerCalety : GameServerManager {
             case ECommand.Referral_MarkReferral:
             case ECommand.Referral_DEBUG_MarkReferral:
             case ECommand.Referral_DEBUG_SetReferralCount:
+
+            case ECommand.WelcomeBack_DEBUG_Start:
+            case ECommand.WelcomeBack_DEBUG_Stop:
 
                 returnValue = true;
                 break;
@@ -1565,6 +1598,20 @@ public class GameServerManagerCalety : GameServerManager {
                 case ECommand.Referral_DEBUG_SetReferralCount: {
                     Command_SendCommand(COMMAND_REFERRAL_DEBUG_SET_REFERRAL_COUNT, parameters, null, null);
                 } break;
+
+                //--------------------------------------------------------------
+
+                case ECommand.WelcomeBack_DEBUG_Start:
+                {
+                    Command_SendCommand(COMMAND_WELCOME_BACK_DEBUG_START, parameters, null, null);
+                }
+                break;
+
+                case ECommand.WelcomeBack_DEBUG_Stop:
+                {
+                    Command_SendCommand(COMMAND_WELCOME_BACK_DEBUG_STOP, parameters, null, null);
+                }
+                break;
 
                 //--------------------------------------------------------------
 
@@ -2014,6 +2061,9 @@ public class GameServerManagerCalety : GameServerManager {
     private const string COMMAND_REFERRAL_DEBUG_MARK_REFERRAL = "/api/referral/fakeMarkReferral";
     private const string COMMAND_REFERRAL_DEBUG_SET_REFERRAL_COUNT = "/api/referral/fakeReferrals";
 
+    private const string COMMAND_WELCOME_BACK_DEBUG_START = "/api/ldatam/startWelcomeBack";
+    private const string COMMAND_WELCOME_BACK_DEBUG_STOP = "/api/ldatam/stopWelcomeBack";
+
     private const string COMMAND_CLUSTERING_SET = "/api/cluster/set";
 
     /// <summary>
@@ -2064,6 +2114,9 @@ public class GameServerManagerCalety : GameServerManager {
         nm.RegistryEndPoint(COMMAND_REFERRAL_MARK_REFERRAL, NetworkManager.EPacketEncryption.E_ENCRYPTION_AES, codes, CaletyExtensions_OnCommandDefaultResponse);
         nm.RegistryEndPoint(COMMAND_REFERRAL_DEBUG_SET_REFERRAL_COUNT, NetworkManager.EPacketEncryption.E_ENCRYPTION_AES, codes, CaletyExtensions_OnCommandDefaultResponse);
 
+        nm.RegistryEndPoint(COMMAND_WELCOME_BACK_DEBUG_START, NetworkManager.EPacketEncryption.E_ENCRYPTION_AES, codes, CaletyExtensions_OnCommandDefaultResponse);
+        nm.RegistryEndPoint(COMMAND_WELCOME_BACK_DEBUG_STOP, NetworkManager.EPacketEncryption.E_ENCRYPTION_AES, codes, CaletyExtensions_OnCommandDefaultResponse);
+        
         nm.RegistryEndPoint(COMMAND_CLUSTERING_SET, NetworkManager.EPacketEncryption.E_ENCRYPTION_AES, codes, CaletyExtensions_OnCommandDefaultResponse);
     }    
 

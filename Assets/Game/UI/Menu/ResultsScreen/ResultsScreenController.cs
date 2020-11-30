@@ -45,6 +45,8 @@ public class ResultsScreenController : MonoBehaviour {
 
         CLUSTERING,             // Logic step. Send player data to the server to calculate the cluster associated
 
+        SOLO_QUEST,             // Optional, if there is a solo quest active and the player scored
+
 		COUNT
 	}
 

@@ -36,7 +36,7 @@ public class MenuPlayButton : MenuNavigationButton {
 	/// </summary>
 	public void OnPlayButton() {
 		SceneController.SetMode(SceneController.Mode.DEFAULT);
-        HDLiveDataManager.instance.SwitchToQuest();
+        HDLiveDataManager.instance.SwitchToGameMode(HDLiveDataManager.GameMode.QUEST);
         // Depends on the tutorial status
         if (!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.FIRST_RUN)) {
             // Go straight to game

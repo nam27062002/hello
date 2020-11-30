@@ -124,6 +124,7 @@ public class UserProfile : UserPersistenceSystem
 	private DateTime m_saveTimestamp;
     public DateTime saveTimestamp {
         get { return m_saveTimestamp; }
+		set { m_saveTimestamp = value; } // For debug purposes 
     }
     public int lastModified { get; set; }
 
@@ -1452,6 +1453,7 @@ public class UserProfile : UserPersistenceSystem
 			m_dailyRewards.Generate();	// Generate a new sequence
 		}
 
+		// XPromo
 		key = "xPromo";
 		Debug.Log(Colors.cyan.Tag("LOADING XPROMO"));
 		if (_data.ContainsKey(key))
@@ -1463,7 +1465,20 @@ public class UserProfile : UserPersistenceSystem
 		{
 			Debug.Log(Colors.red.Tag("INVALID DATA!"));
 		}
-
+		
+		// Welcome back feature
+		key = "welcomeBack";
+		Debug.Log(Colors.cyan.Tag("LOADING WELCOME BACK"));
+		if (_data.ContainsKey(key))
+		{
+			Debug.Log(Colors.lime.Tag("VALID DATA!!\n") + new JsonFormatter().PrettyPrint(_data[key].ToString()));
+			WelcomeBackManager.instance.ParseJson(_data[key]);
+		}
+		else
+		{
+			Debug.Log(Colors.red.Tag("INVALID DATA!"));
+		}
+		
 		// Offer Packs
 		// Old version. transform to offer packs v2
 		if ( _data.ContainsKey( "offerPacks" ) || _data.ContainsKey("offerPacksRotationalHistory") )
@@ -1515,41 +1530,12 @@ public class UserProfile : UserPersistenceSystem
 		}
 
 		// Happy hour offer
-		// [AOC] As of 2.6 format has changed. Add support for retrocompatibility. Can be removed at 2.8.
-		key = "happyHourOffer";
+		
+		// Post 2.6 - Keep it
+		key = "happyHour";
 		if(_data.ContainsKey(key)) {
-			// Pre 2.6 - Delete by 2.8
-			// Create a fake json object using the new keys
-			JSONNode oldData = _data[key];
-			JSONClass newData = new JSONClass();
-
-			key = "happyHourExpirationTime";
-			if(oldData.ContainsKey(key)) {
-				newData["expirationTime"] = oldData[key];
-			}
-
-			key = "happyHourExtraGemsRate";
-			if(oldData.ContainsKey(key)) {
-				newData["extraGemsFactor"] = oldData[key];
-			}
-
-			key = "happyHourLastPackSku";
-			if(oldData.ContainsKey(key)) {
-				newData["lastPackSku"] = oldData[key];
-			}
-
-			// Inject sku
-			newData["activeSku"] = "happy_hour_local";	// Legacy system only had the local one
-
-			// Load it!
-			m_happyHourData.FromJson(newData as JSONClass);
-		} else {
-			// Post 2.6 - Keep it
-			key = "happyHour";
-			if(_data.ContainsKey(key)) {
-				m_happyHourData.FromJson(_data[key] as JSONClass);
-			}
-		}
+			m_happyHourData.FromJson(_data[key] as JSONClass);
+        }
 
 		
 
@@ -1840,6 +1826,17 @@ public class UserProfile : UserPersistenceSystem
 		else
 		{
 			Debug.Log(Colors.red.Tag("XPROMO: INVALID DATA!"));
+		}
+		
+		// Welcome Back
+		JSONClass welcomeBack = WelcomeBackManager.instance.ToJson();
+		if (welcomeBack != null)
+		{  // Can be null if the sequence was never generated
+			data.Add("welcomeBack", welcomeBack);
+		}
+		else
+		{
+			Debug.Log(Colors.red.Tag("Welcome Back: INVALID DATA!"));
 		}
 
 		// Offer packs

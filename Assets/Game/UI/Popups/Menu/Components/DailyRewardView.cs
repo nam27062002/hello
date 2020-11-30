@@ -29,17 +29,16 @@ public class DailyRewardView : MetagameRewardView
         COLLECTED
     }
 
-    // Fake singleton - since it's private to this class, no need to create a full singleton infrastructure
-    private static DailyRewardViewSettings s_settings = null;
-    private static DailyRewardViewSettings settings
+    private DailyRewardViewSettings m_settings = null;
+    protected virtual DailyRewardViewSettings settings
     {
         get
         {
-            if (s_settings == null)
+            if (m_settings == null)
             {
-                s_settings = Resources.Load<DailyRewardViewSettings>(DailyRewardViewSettings.PATH);
+                m_settings = Resources.Load<DailyRewardViewSettings>(DailyRewardViewSettings.PATH);
             }
-            return s_settings;
+            return m_settings;
         }
     }
 

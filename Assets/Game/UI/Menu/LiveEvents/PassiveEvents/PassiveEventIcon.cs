@@ -38,7 +38,8 @@ public class PassiveEventIcon : IPassiveEventIcon {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed
-	[SerializeField] private ModifierIcon m_modifierIcon = null;
+	[SerializeField] private ModifierIcon m_regularModifierIcon = null;
+	[SerializeField] private ModifierIcon m_welcomeBackModifierIcon = null;
 
 	//------------------------------------------------------------------------//
 	// IPassiveEventIcon IMPLEMENTATION										  //
@@ -55,24 +56,56 @@ public class PassiveEventIcon : IPassiveEventIcon {
 	/// Update visuals when new data has been received.
 	/// </summary>
 	protected override void RefreshDataInternal() {
-		// Make sure icon is showing the right info
-		if(m_modifierIcon != null) {
-			// Init icon
-			HDPassiveEventDefinition def = m_passiveEventManager.data.definition as HDPassiveEventDefinition;
-			if(def.mainMod != null) {				
-				m_modifierIcon.gameObject.SetActive(true);
-				m_modifierIcon.InitFromDefinition(def.mainMod);
-			} else {
-				m_modifierIcon.gameObject.SetActive(false);
+
+        // Get passive manager again (in case we changed from live to local or the other way)
+        m_passiveEventManager = GetEventManager();
+		HDPassiveEventDefinition def = m_passiveEventManager.data.definition as HDPassiveEventDefinition;
+
+		// Are we showing a welcome back passive event?
+		bool isWelcomeBackPassive = HDLiveDataManager.instance.IsLocalPassiveEventAvailable();
+
+
+		bool showRegular = false, showWelcomeBack  = false;
+
+        if (def.mainMod == null)
+        {
+			// Not valid definition. Hide everything 
+			showRegular = false;
+			showWelcomeBack = false;
+
+		} else
+        {
+			if (isWelcomeBackPassive && m_welcomeBackModifierIcon != null)
+			{
+                // If welcome back is active, try to use this specific WB icon
+				m_welcomeBackModifierIcon.InitFromDefinition(def.mainMod);
+				showRegular = false;
+				showWelcomeBack = true;
+
+			}
+			else if (m_regularModifierIcon != null)
+			{
+                // In case WB not active (or WB icon not implemented) use the regular icon
+				m_regularModifierIcon.InitFromDefinition(def.mainMod);
+				showRegular = true;
+				showWelcomeBack = false;
 			}
 		}
+
+		if (m_regularModifierIcon != null) m_regularModifierIcon.gameObject.SetActive(showRegular);
+		if (m_welcomeBackModifierIcon != null) m_welcomeBackModifierIcon.gameObject.SetActive(showWelcomeBack);
+                     
 	}
+
 
 	/// <summary>
 	/// Do custom visibility checks based on passive event type.
 	/// </summary>
 	/// <returns>Whether the icon can be displayed or not.</returns>
 	protected override bool RefreshVisibilityInternal() {
+        // Get passive manager again (in case we changed from live to local or the other way)
+        m_passiveEventManager = GetEventManager();
+        
 		// Check current screen and event's UI settings
 		bool show = true;
 		Modifier mod = m_passiveEventManager.m_passiveEventDefinition.mainMod;

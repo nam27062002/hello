@@ -49,7 +49,7 @@ public class ShareScreenQuest : IShareScreen {
 		SetRefCamera(_refCamera);
 
 		// Aux vars
-		HDQuestManager quest = HDLiveDataManager.quest;
+		BaseQuestManager quest = HDLiveDataManager.quest;
 
 		// Initialize UI elements
 		// Quest data
@@ -72,13 +72,13 @@ public class ShareScreenQuest : IShareScreen {
 
 			// Refresh progression counting the run score
 			if(show && m_questDataPanel != null) {
-				m_questDataPanel.MoveScoreTo(quest.m_questData.m_globalScore + runScore, 0f);	// Instant, no animation
+				m_questDataPanel.MoveScoreTo(quest.GetQuestData().m_globalScore + runScore, 0f);	// Instant, no animation
 			}
 		}
 
 		// Remaining text
 		if(m_remainingTimeText != null) {
-			double remainingSeconds = quest.m_questData.remainingTime.TotalSeconds;
+			double remainingSeconds = quest.GetQuestData().remainingTime.TotalSeconds;
 			m_remainingTimeText.gameObject.SetActive(remainingSeconds > 0);
 			if(remainingSeconds > 0) {
 				m_remainingTimeText.Localize(
