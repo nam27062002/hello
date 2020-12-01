@@ -1,5 +1,5 @@
 [ 
-    {"alias" : "offerPacks" , "file": "offerPacksDefinitions.xml", "type" : "SoftDefsMap", "forceString": false, "schema": {
+    {"alias" : "offerPacks" , "file": "offerPacksDefinitions.xml", "type" : "SoftDefsMap", "forceString": true, "schema": {
             "type" : "String",
             "enabled" : "Boolean",
             "startDate" : "String",
@@ -53,7 +53,8 @@
             "currency" : "String",
             "playerSources" : "String" ,
             "refPrice" : "String" ,
-            "platform" : "String"							
+            "platform" : "String",
+            "iapSku" : "String"
         }
     },
     {"alias" : "soloQuests" , "file": "soloQuestsDefinitions.xml", "type" : "SoftDefsMap", "forceString": false, "schema": {
