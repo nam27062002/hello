@@ -177,6 +177,12 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
     public bool TryActivation ( DateTime _activationTime )
     {
 
+        // No active definitions found for WB in the content
+        if (m_def == null)
+        {
+            return false;
+        }
+
         // First of all check if the player finished the mininum required runs
         int minRuns = m_def.GetAsInt("minRuns");
         if (UsersManager.currentUser.gamesPlayed < minRuns)
