@@ -29,7 +29,10 @@ public class CPWelcomeBackCheats : MonoBehaviour {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 
-    [SerializeField] private TextMeshProUGUI m_playerType;
+	[SerializeField] private Button startButton;
+	[SerializeField] private Button stopButton;
+
+	[SerializeField] private TextMeshProUGUI m_playerType;
 	[SerializeField] private TextMeshProUGUI m_lastActivationTime;
 
 	//------------------------------------------------------------------------//
@@ -74,6 +77,13 @@ public class CPWelcomeBackCheats : MonoBehaviour {
 
     private void Refresh()
     {
+
+        bool wbEnabled = (WelcomeBackManager.instance.def != null);
+
+        // If there is no enabled definition in the content then disable the buttons
+		stopButton.interactable = wbEnabled;
+		startButton.interactable = wbEnabled;
+
 		if (WelcomeBackManager.instance.perksDef != null)
 		{
 			// There is not such thing as player group name, but use SKU just for info purposes
