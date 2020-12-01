@@ -665,7 +665,7 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
         key = "tourPassExp";
         if ( _data.ContainsKey(key) )
         {
-            m_tournamentPassExpirationTimestamp = TimeUtils.TimestampToDate(PersistenceUtils.SafeParse<long>(_data[key]));
+            m_tournamentPassExpirationTimestamp = PersistenceUtils.SafeParse<DateTime>(_data[key]);
         }
         
         // Load boosted daily rewards
@@ -709,7 +709,7 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
         }
         
         // Save free tournament pass
-        data.Add("tourPassExp", PersistenceUtils.SafeToString(TimeUtils.DateToTimestamp( m_tournamentPassExpirationTimestamp )));
+        data.Add("tourPassExp", PersistenceUtils.SafeToString(m_tournamentPassExpirationTimestamp));
 
         // Save boosted daily rewarsd
         if (m_boostedDailyRewards != null)

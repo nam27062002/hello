@@ -89,7 +89,7 @@ public class CPWelcomeBackCheats : MonoBehaviour {
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
 	/// <summary>
-	/// The activate Welcome back button has been pressed
+	/// The start Welcome back button has been pressed
 	/// </summary>
 	public void OnActivateWelcomeBack() {
 
@@ -119,7 +119,7 @@ public class CPWelcomeBackCheats : MonoBehaviour {
 	}
 	
 	/// <summary>
-	/// The activate Welcome back button has been pressed
+	/// The stop Welcome back button has been pressed
 	/// </summary>
 	public void OnEndWelcomeBack() {
 		
