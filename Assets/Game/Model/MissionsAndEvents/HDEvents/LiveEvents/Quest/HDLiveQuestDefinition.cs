@@ -172,6 +172,6 @@ public class HDLiveQuestDefinition : HDLiveEventDefinition {
 		}
 		
 		// Duration of the quest
-		duration = _def.GetAsLong("duration");
+		duration = _def.GetAsLong("durationMinutes");
 	}
 }
