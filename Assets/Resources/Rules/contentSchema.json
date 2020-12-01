@@ -1,5 +1,5 @@
 [ 
-    {"alias" : "offerPacks" , "file": "offerPacksDefinitions.xml", "type" : "SoftDefsMap", "forceString": true, "schema": {
+    {"alias" : "offerPacks" , "file": "offerPacksDefinitions.xml", "type" : "SoftDefsMap", "forceString": true, "schema": [
             "type" : "String",
             "enabled" : "Boolean",
             "startDate" : "String",
@@ -55,9 +55,9 @@
             "refPrice" : "String" ,
             "platform" : "String",
             "iapSku" : "String"
-        }
+        ]
     },
-    {"alias" : "soloQuests" , "file": "soloQuestsDefinitions.xml", "type" : "SoftDefsMap", "forceString": false, "schema": {
+    {"alias" : "soloQuests" , "file": "soloQuestsDefinitions.xml", "type" : "SoftDefsMap", "forceString": false, "schema": [
             "enabled" : "Boolean",
             "type" : "String",
             "target" : "String",
@@ -65,26 +65,26 @@
             "amount" : "Integer" ,
             "duration" : "Integer" ,
             "description" : "String"
-        }
+       ]
     },
-    {"alias" : "soloQuestsRewards" , "file": "soloQuestsRewardsDefinitions.xml", "type" : "SoftDefsMap", "forceString": false, "schema": {
+    {"alias" : "soloQuestsRewards" , "file": "soloQuestsRewardsDefinitions.xml", "type" : "SoftDefsMap", "forceString": false, "schema": [
             "questSku" : "String",
             "type" : "String",
             "rewardSku" : "String",
             "amount" : "Long",
             "target" : "Integer"
-        }
+        ]
     },
-    {"alias" : "boostedDailyRewards" , "file": "boostedDailyRewardsDefinitions.xml", "type" : "SoftDefsMap", "forceString": false, "schema": {
+    {"alias" : "boostedDailyRewards" , "file": "boostedDailyRewardsDefinitions.xml", "type" : "SoftDefsMap", "forceString": false, "schema": [
             "enabled" : "Boolean",
             "day" : "Integer",
             "type" : "String",
             "amount" : "Long",
             "rewardSku" : "String",
             "priority" : "Integer"
-        }
+        ]
     },
-    {"alias" : "welcomeBackPerks" , "file": "welcomeBackPerksDefinitions.xml", "type" : "SoftDefsMap", "forceString": false, "schema": {
+    {"alias" : "welcomeBackPerks" , "file": "welcomeBackPerksDefinitions.xml", "type" : "SoftDefsMap", "forceString": false, "schema": [
         "enabled" : "Boolean",
         "cluster" : "String",
         "ownedDragon" : "String",
@@ -95,7 +95,7 @@
         "enableBoostedDailyLogin" : "Boolean",
         "enablePassive" : "Boolean",
         "enableSoloQuest" : "Boolean",
-        "enableTournamentPass" : "Boolean"}
+        "enableTournamentPass" : "Boolean"]
     },
     {"alias" : "welcomeBackDefinitions" , "file": "welcomeBackDefinitions.xml", "type" : "SettingsDefsMap", "forceString": false, "schema": {
         "enabled" : "Boolean",
@@ -110,6 +110,6 @@
         "boostedDailyRewardsAdMultiplier" : "Double",
         "happyHourSku" : "String",
         "minRuns" : "Integer"
-        }
+        ]
     }
 ]
