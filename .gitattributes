@@ -1,8 +1,10 @@
-* text=auto
+* text eol=crlf
 
-*.cs diff=csharp text
+*.cs diff=csharp text eol=crlf
+*.sh text eol=lf
 *.cginc text
 *.shader text
+
 
 # Unity YAML
 *.anim -text merge=unityyamlmerge diff
@@ -111,7 +113,12 @@
 *.[tT][tT][fF] filter=lfs diff=lfs merge=lfs -text
 
 # Documents
-*.[pP][dD][fF] filter=lfs diff=lfs merge=lfs -text
+*.[pP][dD][fF] 		filter=lfs diff=lfs merge=lfs -text
+*.[xX][lL][sS] 		diff=excel -text
+*.[xX][lL][sS][xX] 	diff=excel -text
+*.[xX][lL][sS][mM] 	diff=excel -text
+*.[dD][oO][cC]		diff=word  -text
+*.[dD][oO][cC][xX]	diff=word  -text
 
 # Collapse Unity-generated files on GitHub
 *.asset             linguist-generated
