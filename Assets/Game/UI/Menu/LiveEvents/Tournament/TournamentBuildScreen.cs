@@ -367,7 +367,16 @@ public class TournamentBuildScreen : MonoBehaviour
                 Messenger.AddListener<HDLiveDataManager.ComunicationErrorCodes, string, long>(MessengerEvents.TOURNAMENT_ENTRANCE, OnTournamentEntrance);
 
                 // Send Entrance
-                m_tournament.SendEntrance("free", 0);
+                if (WelcomeBackManager.instance.IsTournamentPassActive())
+                {
+                    // Use a special type "open" when using a welcome back pass. So the server wont validate the entrance fee.
+                    m_tournament.SendEntrance(HDTournamentDefinition.ENTRANCE_TYPE_OPEN, 0);
+                }
+                else
+                {
+                    m_tournament.SendEntrance("free", 0);
+                }
+                
 
             }
             else
@@ -405,7 +414,18 @@ public class TournamentBuildScreen : MonoBehaviour
         Messenger.AddListener<HDLiveDataManager.ComunicationErrorCodes, string, long>(MessengerEvents.TOURNAMENT_ENTRANCE, OnTournamentEntrance);
 
         // Send Entrance
-        m_tournament.SendEntrance(m_definition.m_entrance.m_type, m_definition.m_entrance.m_amount);
+        
+        if (WelcomeBackManager.instance.IsTournamentPassActive())
+        {
+            // Use a special type "open" when using a welcome back pass. So the server wont validate the entrance fee.
+            m_tournament.SendEntrance(HDTournamentDefinition.ENTRANCE_TYPE_OPEN, 0);
+        }
+        else
+        {
+            // Use the regular entrance fee
+            m_tournament.SendEntrance(m_definition.m_entrance.m_type, m_definition.m_entrance.m_amount);
+        }
+        
     }
 
     void OnTournamentEntrance(HDLiveDataManager.ComunicationErrorCodes err, string type, long amount)

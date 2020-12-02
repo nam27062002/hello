@@ -477,13 +477,6 @@ public class HDLiveDataManager : Singleton<HDLiveDataManager> {
                 }
             }
 
-            // Process Welcome Back. Technically not a HD live manager, but the server is sending
-            // the WB data in this call.
-            if (responseJson.ContainsKey(WelcomeBackManager.WELCOME_BACK_KEY))
-            {
-                WelcomeBackManager.instance.OnLiveDataResponse(responseJson[WelcomeBackManager.WELCOME_BACK_KEY]);
-            }
-
         } else if (outErr != ComunicationErrorCodes.NET_ERROR) {
             int max = m_managers.Count;
             for (int i = 0; i < max; i++) {
