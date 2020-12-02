@@ -165,30 +165,31 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
     /// Try to activate WB in the client. Send a tracking event with the result.
     /// </summary>
     /// <returns>True if the WB has been succesfully activated in the client</returns>
-    public bool TryActivation ()
+    public void TryActivation ()
     {
-        if (m_def == null)
-        {
-            // WB not active in the content
-            return false;
-        }
 
-        if (IsElegibleForWB())
-        {
 
-            if (Activate())
+        // WB  active in the content?
+        if (m_def != null)
+        {
+            bool success = false;
+
+            // All the checks passed?
+            if (IsElegibleForWB())
             {
-                // Tracking (WB just activated!)
-                TrackWelcomeBackStatus(true);
-                return true;
+
+                if (Activate())
+                {
+                    success = true;
+                }
+
             }
 
-        }
-        
-        // Tracking (witout WB activation)
-        TrackWelcomeBackStatus(false);
+            // Tracking
+            TrackWelcomeBackStatus(success);
 
-        return false;
+        }
+
 
     }
 
@@ -221,15 +222,16 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
 
 
         // Check the absent time, based on the last saved timestamp
-        DateTime m_lastVisit = UsersManager.currentUser.saveTimestamp;
-        if (m_lastVisit > GameServerManager.GetEstimatedServerTime())
+        DateTime m_lastVisit = UsersManager.currentUser.lastSaveTimestamp;
+        DateTime now = DateTime.UtcNow; 
+        if (m_lastVisit > now)
         {
             // Someone is cheating
-            Log("Won´t activate WB: Stored date cannot be greater than server time");
+            Log("Won´t activate WB: Elapsed time cannot be negative");
             return false;
         }
 
-        TimeSpan timeAbsent = GameServerManager.GetEstimatedServerTime() - m_lastVisit;
+        TimeSpan timeAbsent = now - m_lastVisit;
         int minAbsentDays = m_def.GetAsInt("minAbsentDays");
 
 
@@ -634,6 +636,7 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
         {
             m_timesActivated = PersistenceUtils.SafeParse<int>(_data[key]);
         }
+
 
         key = "hasOffer";
         if (_data.ContainsKey(key))
