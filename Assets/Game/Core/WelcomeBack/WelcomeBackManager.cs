@@ -353,7 +353,7 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
     /// <returns></returns>
     public bool IsTournamentPassFree()
     {
-        return GetTournamentPassPrice() == 0;
+        return IsTournamentPassActive() && (GetTournamentPassPrice() == 0);
     }
 
     /// <summary>
@@ -373,7 +373,7 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
     public UserProfile.Currency GetTournamentPassCurrency()
     {
         // This sku could be "-" in case of a free pass
-        string sku = m_def.GetAsString("tournamentPassCurrency");
+        string sku = m_def.GetAsString("tournamentPassCurrency").ToLower();
         UserProfile.Currency currency = UserProfile.SkuToCurrency(sku);
 
         return currency;
