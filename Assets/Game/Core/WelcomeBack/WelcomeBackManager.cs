@@ -618,6 +618,20 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
 	//------------------------------------------------------------------------//
 
 
+    /// <summary>
+    /// In case a new configuration new arrives from the customizer
+    /// try to launch WB again
+    /// </summary>
+    public void OnContentUpdate()
+    {
+
+        InitFromDefinitions();
+
+        TryActivation();
+
+    }
+
+
     //------------------------------------------------------------------------//
     // PERSISTENCE															  //
     //------------------------------------------------------------------------//
