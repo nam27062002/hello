@@ -544,10 +544,22 @@ public class DragonWizardValidationModule : IDragonWizard
     {
         errorDetails = "success";
 
+        if (mainMenuPrefab == null)
+        {
+            errorDetails = "main menu prefab not found";
+            return false;
+        }
+
         Transform mainMenuPointsTransform = mainMenuPrefab.FindTransformRecursive("points");
         if (mainMenuPointsTransform == null)
         {
             errorDetails = "points gameobject does not exists for main menu prefab";
+            return false;
+        }
+
+        if (gameplayPrefab == null)
+        {
+            errorDetails = "gameplay prefab not found";
             return false;
         }
 
@@ -558,10 +570,22 @@ public class DragonWizardValidationModule : IDragonWizard
             return false;
         }
 
+        if (resultsPrefab == null)
+        {
+            errorDetails = "results prefab not found";
+            return false;
+        }
+
         Transform resultsPointsTransform = resultsPrefab.FindTransformRecursive("points");
         if (resultsPointsTransform == null)
         {
             errorDetails = "points gameobject does not exists for results prefab";
+            return false;
+        }
+
+        if (corpsePrefab == null)
+        {
+            errorDetails = "corpse prefab not found";
             return false;
         }
 
