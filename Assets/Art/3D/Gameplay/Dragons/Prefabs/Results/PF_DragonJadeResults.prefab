@@ -28,11 +28,11 @@ Transform:
   m_GameObject: {fileID: 4267961489029701850}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: -3, z: 0}
-  m_LocalScale: {x: 0.7, y: 0.7, z: 0.7}
+  m_LocalScale: {x: 2, y: 2, z: 2}
   m_Children:
   - {fileID: 4266216802988034116}
   - {fileID: 4266594324375037658}
-  - {fileID: 6313576045567227103}
+  - {fileID: 6313576045567227101}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -66,7 +66,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_sku: dragon_jade
   m_offsetModifier: {x: 0, y: -3, z: 0}
-  m_baseScaleModifier: 0.7
+  m_baseScaleModifier: 2
   m_altAnimConfigs: []
   m_hasFire: 0
   m_dragonFlameStandard: {fileID: 0}
@@ -200,8 +200,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4268808993760863540}
-  m_LocalRotation: {x: 0.00000007520429, y: -0.00000017881392, z: 0.005348846, w: 0.9999857}
-  m_LocalPosition: {x: 1.3583316, y: 0.1712445, z: -0.00000059604645}
+  m_LocalRotation: {x: -0.003782212, y: -0.70709676, z: 0.0037822158, w: 0.70709664}
+  m_LocalPosition: {x: 0.00018610453, y: 1.9183816, z: 2.3757389}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4266594324375037658}
@@ -374,8 +374,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4268984000541906390}
-  m_LocalRotation: {x: 0.00000008312053, y: -0.00000017881392, z: 0.005348841, w: 0.9999857}
-  m_LocalPosition: {x: 1.3583229, y: 0.17124358, z: 0}
+  m_LocalRotation: {x: -0.003782212, y: -0.70709676, z: 0.0037822158, w: 0.70709664}
+  m_LocalPosition: {x: 0.00018610453, y: 1.9183816, z: 2.3757389}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4266216802988034116}
@@ -436,8 +436,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4269079940430734608}
-  m_LocalRotation: {x: -0, y: -0.00000007636845, z: 0.9982258, w: 0.05954317}
-  m_LocalPosition: {x: 3.0258033, y: 0.22593544, z: 0}
+  m_LocalRotation: {x: -0.676423, y: -0.20603873, z: 0.676423, w: 0.20603862}
+  m_LocalPosition: {x: -0.0000000020831976, y: 2.989814, z: 2.853969}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4266216802988034116}
@@ -498,8 +498,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4269109636800461030}
-  m_LocalRotation: {x: 0.00000007636845, y: -0.00000014901161, z: 0.023307888, w: 0.9997284}
-  m_LocalPosition: {x: 3.0258033, y: 0.22593544, z: 0}
+  m_LocalRotation: {x: -0.3866481, y: -0.59209734, z: 0.38665247, w: 0.5919661}
+  m_LocalPosition: {x: 2.5579538e-13, y: 2.9761648, z: 2.8577156}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4266216802988034116}
@@ -579,13 +579,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_point: 3
---- !u!114 &8406328306026040237
+--- !u!114 &7994529690670596986
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6313576045567322367}
+  m_GameObject: {fileID: 6313576045567322365}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a8e40bc0f188741ec85c749c34469a45, type: 3}
@@ -643,13 +643,29 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DragonBody
       objectReference: {fileID: 0}
+    - target: {fileID: 100144, guid: 833309bcc7f5dfc43a84929262e85297, type: 3}
+      propertyPath: m_Name
+      value: view
+      objectReference: {fileID: 0}
     - target: {fileID: 100146, guid: 833309bcc7f5dfc43a84929262e85297, type: 3}
       propertyPath: m_Name
       value: view
       objectReference: {fileID: 0}
+    - target: {fileID: 100148, guid: 833309bcc7f5dfc43a84929262e85297, type: 3}
+      propertyPath: m_TagString
+      value: DragonBody
+      objectReference: {fileID: 0}
     - target: {fileID: 100150, guid: 833309bcc7f5dfc43a84929262e85297, type: 3}
       propertyPath: m_TagString
       value: DragonBody
+      objectReference: {fileID: 0}
+    - target: {fileID: 400018, guid: 833309bcc7f5dfc43a84929262e85297, type: 3}
+      propertyPath: m_RootOrder
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 400144, guid: 833309bcc7f5dfc43a84929262e85297, type: 3}
+      propertyPath: m_RootOrder
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 400146, guid: 833309bcc7f5dfc43a84929262e85297, type: 3}
       propertyPath: m_LocalPosition.x
@@ -717,15 +733,15 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: 73f3a3de238d64e318d3bdb948cd1d99, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 833309bcc7f5dfc43a84929262e85297, type: 3}
---- !u!1 &6313576045567322367 stripped
+--- !u!1 &6313576045567322365 stripped
 GameObject:
-  m_CorrespondingSourceObject: {fileID: 100146, guid: 833309bcc7f5dfc43a84929262e85297,
+  m_CorrespondingSourceObject: {fileID: 100144, guid: 833309bcc7f5dfc43a84929262e85297,
     type: 3}
   m_PrefabInstance: {fileID: 6313576045567356877}
   m_PrefabAsset: {fileID: 0}
---- !u!4 &6313576045567227103 stripped
+--- !u!4 &6313576045567227101 stripped
 Transform:
-  m_CorrespondingSourceObject: {fileID: 400146, guid: 833309bcc7f5dfc43a84929262e85297,
+  m_CorrespondingSourceObject: {fileID: 400144, guid: 833309bcc7f5dfc43a84929262e85297,
     type: 3}
   m_PrefabInstance: {fileID: 6313576045567356877}
   m_PrefabAsset: {fileID: 0}

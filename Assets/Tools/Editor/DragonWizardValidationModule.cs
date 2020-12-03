@@ -405,6 +405,9 @@ public class DragonWizardValidationModule : IDragonWizard
     bool GameplayTestAnimationController()
     {
         Transform view = gameplayPrefab.transform.Find("view");
+        if (view == null)
+            return false;
+
         Animator anim = view.GetComponent<Animator>();
         if (anim == null)
             return false;
@@ -503,6 +506,9 @@ public class DragonWizardValidationModule : IDragonWizard
     bool ResultsTestAnimationController()
     {
         Transform view = resultsPrefab.transform.Find("view");
+        if (view == null)
+            return false;
+
         Animator anim = view.GetComponent<Animator>();
         if (anim == null)
             return false;
