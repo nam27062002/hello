@@ -60,7 +60,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2287020290486206837}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.5, y: 3, z: 0}
+  m_LocalPosition: {x: 0.5, y: 4, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 8576064489309491984}
@@ -104,7 +104,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6664176303565094296}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 4, y: 1, z: 0}
+  m_LocalPosition: {x: 4, y: 2, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 8576064489309491984}
@@ -362,7 +362,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8575248605694754680}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0.45}
+  m_LocalPosition: {x: 0, y: -0.35, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 8576064489309596664}
@@ -379,7 +379,7 @@ SphereCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 1.78
+  m_Radius: 1.6
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &8575263106945890130
 GameObject:
@@ -405,7 +405,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8575263106945890130}
-  m_LocalRotation: {x: 0.006113269, y: 0.98531616, z: 0.16676354, w: -0.03612002}
+  m_LocalRotation: {x: -0.070028216, y: 0.91660047, z: 0.18464486, w: 0.34762895}
   m_LocalPosition: {x: 0, y: 0, z: -0.68}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -469,15 +469,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c394be8faf4554797800097a3f452252, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_root: {fileID: 1747376372254044656}
+  m_root: {fileID: 1747376372254045680}
   m_partsNames:
-  - Dragon_LMoustache_2 1
-  - Dragon_LMoustache_3 1
+  - Dragon_r_Whisker_01_02SHJnt
+  - Dragon_r_Whisker_01_03SHJnt
   springSpeed: 10
-  m_upDir: {x: 0, y: -90, z: 0}
+  m_upDir: {x: 0, y: 90, z: 0}
   m_disableOnResults: 0
   m_useLocalTransforms: 1
-  m_rootLocalReference: {fileID: 8576064489309547768}
+  m_rootLocalReference: {fileID: 0}
 --- !u!1 &8575387362802460434
 GameObject:
   m_ObjectHideFlags: 0
@@ -521,15 +521,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c394be8faf4554797800097a3f452252, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_root: {fileID: 1747376372254044590}
+  m_root: {fileID: 1747376372254045966}
   m_partsNames:
-  - Dragon_LMoustache_2
-  - Dragon_LMoustache_3
+  - Dragon_l_Whisker_01_02SHJnt
+  - Dragon_l_Whisker_01_03SHJnt
   springSpeed: 10
   m_upDir: {x: 0, y: -90, z: 0}
   m_disableOnResults: 0
   m_useLocalTransforms: 1
-  m_rootLocalReference: {fileID: 8576064489309547768}
+  m_rootLocalReference: {fileID: 0}
 --- !u!1 &8575408410230774478
 GameObject:
   m_ObjectHideFlags: 0
@@ -635,19 +635,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c394be8faf4554797800097a3f452252, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_root: {fileID: 1747376372254044658}
+  m_root: {fileID: 1747376372254045482}
   m_partsNames:
-  - Dragon_Spine_2
-  - Dragon_Spine_3
-  - Dragon_Spine_4
-  - Dragon_Hip
-  - Dragon_Tail1
-  - Dragon_Tail2
-  - Dragon_Tail3
-  - Dragon_Tail4
-  - Dragon_Tail5
-  - Dragon_Tail6
-  - Dragon_Tail7
+  - Dragon_Spine_01_04SHJnt
+  - Dragon_Spine_01_05SHJnt
+  - Dragon_Spine_01_06SHJnt
+  - Dragon_Spine_01_07SHJnt
+  - Dragon_Spine_01_08SHJnt
+  - Dragon_Spine_01_09SHJnt
+  - Dragon_Spine_01_10SHJnt
+  - Dragon_Spine_01_11SHJnt
+  - Dragon_Spine_01_12SHJnt
+  - Dragon_Spine_01_13SHJnt
+  - Dragon_Spine_01_14SHJnt
+  - Dragon_Spine_01_15SHJnt
+  - Dragon_Spine_01_16SHJnt
   springSpeed: 7
   m_upDir: {x: 0, y: -90, z: 0}
   m_disableOnResults: 0
@@ -3340,7 +3342,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8576064489309649086}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.5, y: 3, z: 0}
+  m_LocalPosition: {x: -1.5, y: 4, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 8576064489309491984}
@@ -3537,7 +3539,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8576064489309805850}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.5, y: 1, z: 0}
+  m_LocalPosition: {x: -1.5, y: 2, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 8576064489309491984}
@@ -3691,7 +3693,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8576064489309852444}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 4, y: 3, z: 0}
+  m_LocalPosition: {x: 4, y: 4, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 8576064489309491984}
@@ -4119,7 +4121,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 400144, guid: 833309bcc7f5dfc43a84929262e85297, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -2
+      value: -3.5
       objectReference: {fileID: 0}
     - target: {fileID: 400144, guid: 833309bcc7f5dfc43a84929262e85297, type: 3}
       propertyPath: m_LocalPosition.z
@@ -4203,21 +4205,21 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 1747376372253911700}
   m_PrefabAsset: {fileID: 0}
---- !u!4 &1747376372254044590 stripped
+--- !u!4 &1747376372254045966 stripped
 Transform:
-  m_CorrespondingSourceObject: {fileID: 400186, guid: 833309bcc7f5dfc43a84929262e85297,
+  m_CorrespondingSourceObject: {fileID: 400794, guid: 833309bcc7f5dfc43a84929262e85297,
     type: 3}
   m_PrefabInstance: {fileID: 1747376372253911700}
   m_PrefabAsset: {fileID: 0}
---- !u!4 &1747376372254044656 stripped
+--- !u!4 &1747376372254045680 stripped
 Transform:
-  m_CorrespondingSourceObject: {fileID: 400228, guid: 833309bcc7f5dfc43a84929262e85297,
+  m_CorrespondingSourceObject: {fileID: 401252, guid: 833309bcc7f5dfc43a84929262e85297,
     type: 3}
   m_PrefabInstance: {fileID: 1747376372253911700}
   m_PrefabAsset: {fileID: 0}
---- !u!4 &1747376372254044658 stripped
+--- !u!4 &1747376372254045482 stripped
 Transform:
-  m_CorrespondingSourceObject: {fileID: 400230, guid: 833309bcc7f5dfc43a84929262e85297,
+  m_CorrespondingSourceObject: {fileID: 401342, guid: 833309bcc7f5dfc43a84929262e85297,
     type: 3}
   m_PrefabInstance: {fileID: 1747376372253911700}
   m_PrefabAsset: {fileID: 0}
