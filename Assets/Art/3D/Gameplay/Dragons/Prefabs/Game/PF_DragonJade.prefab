@@ -1,40 +1,161 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &7477218194812636879
+--- !u!1 &184447779015135317
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4021210139216285495}
+  - component: {fileID: 219057245309717355}
+  m_Layer: 0
+  m_Name: RopeBackCenter
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4021210139216285495
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 184447779015135317}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -2, y: -3, z: 0}
+  m_LocalScale: {x: 1.8, y: 1.8, z: 1.8}
+  m_Children: []
+  m_Father: {fileID: 8580601847129536770}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &219057245309717355
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1747376372253945252}
+  m_GameObject: {fileID: 184447779015135317}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 335a9949851dd400f8a7643e754bcae2, type: 3}
+  m_Script: {fileID: 11500000, guid: c394be8faf4554797800097a3f452252, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_wingsIdleSound: Dragon_Idle_Flaps
-  m_wingsFlyingSound: Dragon_Flaps
-  m_eatSound: Dragon_Eat_2
-  m_eatHoldSound: 
-  m_wingsWindSound: Dragon_wind_boost
-  m_wingsStrongFlap: Dragon_Strong_Flap
-  m_levelUpSound: Level_Up
-  m_starvingSound: Dragon_hungry
-  m_hitSound: Dragon_Impact
-  m_poisonHitSound: 
-  m_enterWaterSound: Dragon_Water_In_Soft
-  m_enterWaterWithSplashSound: Dragon_Water_In_Hard
-  m_exitWaterSound: Dragon_Water_Out_Soft
-  m_exitWaterWithSplashSound: Dragon_Water_Out_Hard
-  m_skimmingSound: Dragon_Surfing
-  m_waterDeepToSnapshot: 4
-  m_hiccupSound: 
-  m_gruntSound: Dragon_Grunt
-  m_gruntToEatProbability: 25
-  m_onDeadSound: hd_dragon_dead
-  m_onCorpseSound: hd_dragon_dead
-  m_onReviveSound: hd_dragon_revive
-  m_onPreMegaFire: hd_megafire_charge
+  m_root: {fileID: 4009521808980366702}
+  m_partsNames:
+  - Dragon_Belt_01
+  - Dragon_Belt_02
+  springSpeed: 10
+  m_upDir: {x: 0, y: -90, z: 0}
+  m_disableOnResults: 0
+  m_useLocalTransforms: 1
+  m_rootLocalReference: {fileID: 0}
+--- !u!1 &1330194476291939149
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 980799754921340584}
+  - component: {fileID: 562693134041444075}
+  m_Layer: 0
+  m_Name: RopeFrontRight
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &980799754921340584
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1330194476291939149}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -1, y: -4, z: 0}
+  m_LocalScale: {x: 1.8, y: 1.8, z: 1.8}
+  m_Children: []
+  m_Father: {fileID: 8580601847129536770}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &562693134041444075
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1330194476291939149}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c394be8faf4554797800097a3f452252, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_root: {fileID: 4009521808980366758}
+  m_partsNames:
+  - Dragon_r_Front_Rope_01
+  - Dragon_r_Front_Rope_02
+  springSpeed: 10
+  m_upDir: {x: 0, y: 90, z: 0}
+  m_disableOnResults: 0
+  m_useLocalTransforms: 1
+  m_rootLocalReference: {fileID: 0}
+--- !u!1 &1413639903866085883
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6817737315721282109}
+  - component: {fileID: 1914523593881040128}
+  m_Layer: 0
+  m_Name: RopeFrontLeft
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6817737315721282109
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1413639903866085883}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -1, y: -4, z: 0}
+  m_LocalScale: {x: 1.8, y: 1.8, z: 1.8}
+  m_Children: []
+  m_Father: {fileID: 8580601847129536770}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1914523593881040128
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1413639903866085883}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c394be8faf4554797800097a3f452252, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_root: {fileID: 4009521808980366712}
+  m_partsNames:
+  - Dragon_l_Front_Rope_01
+  - Dragon_l_Front_Rope_02
+  springSpeed: 10
+  m_upDir: {x: 0, y: -90, z: 0}
+  m_disableOnResults: 0
+  m_useLocalTransforms: 1
+  m_rootLocalReference: {fileID: 0}
 --- !u!1 &2287020290486206837
 GameObject:
   m_ObjectHideFlags: 0
@@ -79,6 +200,93 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_point: 4
+--- !u!1 &3029681250754032458
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 9185391133598772742}
+  - component: {fileID: 3452020005708955635}
+  m_Layer: 0
+  m_Name: RopeBackLeft
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &9185391133598772742
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3029681250754032458}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -2, y: -3, z: 0}
+  m_LocalScale: {x: 1.8, y: 1.8, z: 1.8}
+  m_Children: []
+  m_Father: {fileID: 8580601847129536770}
+  m_RootOrder: 6
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3452020005708955635
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3029681250754032458}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c394be8faf4554797800097a3f452252, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_root: {fileID: 4009521808980366710}
+  m_partsNames:
+  - Dragon_l_Back_Rope_01
+  - Dragon_l_Back_Rope_02
+  springSpeed: 10
+  m_upDir: {x: 0, y: -90, z: 0}
+  m_disableOnResults: 0
+  m_useLocalTransforms: 1
+  m_rootLocalReference: {fileID: 0}
+--- !u!114 &7477218194812636879
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4009521808980275764}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 335a9949851dd400f8a7643e754bcae2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_wingsIdleSound: Dragon_Idle_Flaps
+  m_wingsFlyingSound: Dragon_Flaps
+  m_eatSound: Dragon_Eat_2
+  m_eatHoldSound: 
+  m_wingsWindSound: Dragon_wind_boost
+  m_wingsStrongFlap: Dragon_Strong_Flap
+  m_levelUpSound: Level_Up
+  m_starvingSound: Dragon_hungry
+  m_hitSound: Dragon_Impact
+  m_poisonHitSound: 
+  m_enterWaterSound: Dragon_Water_In_Soft
+  m_enterWaterWithSplashSound: Dragon_Water_In_Hard
+  m_exitWaterSound: Dragon_Water_Out_Soft
+  m_exitWaterWithSplashSound: Dragon_Water_Out_Hard
+  m_skimmingSound: Dragon_Surfing
+  m_waterDeepToSnapshot: 4
+  m_hiccupSound: 
+  m_gruntSound: Dragon_Grunt
+  m_gruntToEatProbability: 25
+  m_onDeadSound: hd_dragon_dead
+  m_onCorpseSound: hd_dragon_dead
+  m_onReviveSound: hd_dragon_revive
+  m_onPreMegaFire: hd_megafire_charge
 --- !u!1 &6664176303565094296
 GameObject:
   m_ObjectHideFlags: 0
@@ -123,6 +331,58 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_point: 3
+--- !u!1 &7068540628882661211
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4593394079094562544}
+  - component: {fileID: 6623910538630761195}
+  m_Layer: 0
+  m_Name: RopeBackRight
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4593394079094562544
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7068540628882661211}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -2, y: -3, z: 0}
+  m_LocalScale: {x: 1.8, y: 1.8, z: 1.8}
+  m_Children: []
+  m_Father: {fileID: 8580601847129536770}
+  m_RootOrder: 7
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6623910538630761195
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7068540628882661211}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c394be8faf4554797800097a3f452252, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_root: {fileID: 4009521808980366748}
+  m_partsNames:
+  - Dragon_r_Back_Rope_01
+  - Dragon_r_Back_Rope_02
+  springSpeed: 10
+  m_upDir: {x: 0, y: 90, z: 0}
+  m_disableOnResults: 0
+  m_useLocalTransforms: 1
+  m_rootLocalReference: {fileID: 0}
 --- !u!1 &8574877464805221012
 GameObject:
   m_ObjectHideFlags: 0
@@ -270,8 +530,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8574990207990997526}
-  m_LocalRotation: {x: -0.676423, y: -0.20603873, z: 0.676423, w: 0.20603862}
-  m_LocalPosition: {x: -0.0000000020831976, y: 0.98981404, z: -0.1460309}
+  m_LocalRotation: {x: -0.5, y: 0.5, z: -0.5, w: 0.5}
+  m_LocalPosition: {x: 0, y: 0.70380855, z: -0.42449737}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 8576064489309491984}
@@ -405,7 +665,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8575263106945890130}
-  m_LocalRotation: {x: -0.070028216, y: 0.91660047, z: 0.18464486, w: 0.34762895}
+  m_LocalRotation: {x: -0.10381126, y: 0.49424487, z: 0.05958842, w: 0.8610427}
   m_LocalPosition: {x: 0, y: 0, z: -0.68}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -469,10 +729,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c394be8faf4554797800097a3f452252, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_root: {fileID: 1747376372254045680}
+  m_root: {fileID: 4009521808980366770}
   m_partsNames:
-  - Dragon_r_Whisker_01_02SHJnt
-  - Dragon_r_Whisker_01_03SHJnt
+  - Dragon_r_whiskers_1
+  - Dragon_r_whiskers_2
+  - Dragon_r_whiskers_3
   springSpeed: 10
   m_upDir: {x: 0, y: 90, z: 0}
   m_disableOnResults: 0
@@ -521,10 +782,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c394be8faf4554797800097a3f452252, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_root: {fileID: 1747376372254045966}
+  m_root: {fileID: 4009521808980366740}
   m_partsNames:
-  - Dragon_l_Whisker_01_02SHJnt
-  - Dragon_l_Whisker_01_03SHJnt
+  - Dragon_l_whiskers_1
+  - Dragon_l_whiskers_2
+  - Dragon_l_whiskers_3
   springSpeed: 10
   m_upDir: {x: 0, y: -90, z: 0}
   m_disableOnResults: 0
@@ -635,26 +897,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c394be8faf4554797800097a3f452252, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_root: {fileID: 1747376372254045482}
+  m_root: {fileID: 4009521808980366778}
   m_partsNames:
-  - Dragon_Spine_01_04SHJnt
-  - Dragon_Spine_01_05SHJnt
-  - Dragon_Spine_01_06SHJnt
-  - Dragon_Spine_01_07SHJnt
-  - Dragon_Spine_01_08SHJnt
-  - Dragon_Spine_01_09SHJnt
-  - Dragon_Spine_01_10SHJnt
-  - Dragon_Spine_01_11SHJnt
-  - Dragon_Spine_01_12SHJnt
-  - Dragon_Spine_01_13SHJnt
-  - Dragon_Spine_01_14SHJnt
-  - Dragon_Spine_01_15SHJnt
-  - Dragon_Spine_01_16SHJnt
+  - Dragon_Spine_04
+  - Dragon_Spine_05
+  - Dragon_Spine_06
+  - Dragon_Spine_07
+  - Dragon_Spine_08
+  - Dragon_Spine_09
+  - Dragon_Spine_10
+  - Dragon_Spine_11
+  - Dragon_Spine_12
+  - Dragon_Spine_13
+  - Dragon_Spine_14
+  - Dragon_Spine_15
+  - Dragon_Spine_16
   springSpeed: 7
   m_upDir: {x: 0, y: -90, z: 0}
   m_disableOnResults: 0
   m_useLocalTransforms: 1
-  m_rootLocalReference: {fileID: 8576064489309547768}
+  m_rootLocalReference: {fileID: 0}
 --- !u!1 &8575481973694216394
 GameObject:
   m_ObjectHideFlags: 0
@@ -685,6 +947,11 @@ Transform:
   - {fileID: 8581014670375155490}
   - {fileID: 8577916860633091956}
   - {fileID: 8580902833113292908}
+  - {fileID: 6817737315721282109}
+  - {fileID: 980799754921340584}
+  - {fileID: 4021210139216285495}
+  - {fileID: 9185391133598772742}
+  - {fileID: 4593394079094562544}
   m_Father: {fileID: 8576064489309547768}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -836,8 +1103,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8575595325216743610}
-  m_LocalRotation: {x: -0.676423, y: -0.20603873, z: 0.676423, w: 0.20603862}
-  m_LocalPosition: {x: -0.0000000020831976, y: 0.98981404, z: -0.1460309}
+  m_LocalRotation: {x: -0.5, y: 0.5, z: -0.5, w: 0.5}
+  m_LocalPosition: {x: 0, y: 0.70380855, z: -0.42449737}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 8576064489309596664}
@@ -1292,7 +1559,7 @@ Transform:
   - {fileID: 8577801249693664976}
   - {fileID: 8580601847129536770}
   - {fileID: 8581030735973458810}
-  - {fileID: 1747376372254044548}
+  - {fileID: 4009521808980373012}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -3582,8 +3849,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8576064489309813880}
-  m_LocalRotation: {x: 0.26532176, y: -0, z: -0, w: 0.96415997}
-  m_LocalPosition: {x: -1.6543612e-24, y: 1.0479693, z: 3.2713532}
+  m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: 0, y: 0.31329918, z: 0.0693059}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 8576064489309491984}
@@ -3782,8 +4049,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8576064489309854042}
-  m_LocalRotation: {x: -0.676423, y: -0.20603873, z: 0.676423, w: 0.20603862}
-  m_LocalPosition: {x: -0.0000000020831976, y: 0.98981404, z: -0.1460309}
+  m_LocalRotation: {x: -0.5, y: 0.5, z: -0.5, w: 0.5}
+  m_LocalPosition: {x: 0, y: 0.70380855, z: -0.42449737}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 8576064489309491984}
@@ -4092,7 +4359,7 @@ MonoBehaviour:
   m_worldPositionStays: 1
   m_resetScale: 0
   m_when: 0
---- !u!1001 &1747376372253911700
+--- !u!1001 &4009521808980243716
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -4103,81 +4370,53 @@ PrefabInstance:
       propertyPath: m_Name
       value: view
       objectReference: {fileID: 0}
-    - target: {fileID: 100146, guid: 833309bcc7f5dfc43a84929262e85297, type: 3}
-      propertyPath: m_Name
-      value: view
-      objectReference: {fileID: 0}
     - target: {fileID: 100148, guid: 833309bcc7f5dfc43a84929262e85297, type: 3}
       propertyPath: m_TagString
       value: DragonBody
       objectReference: {fileID: 0}
-    - target: {fileID: 100150, guid: 833309bcc7f5dfc43a84929262e85297, type: 3}
-      propertyPath: m_TagString
-      value: DragonBody
+    - target: {fileID: 400144, guid: 833309bcc7f5dfc43a84929262e85297, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 400144, guid: 833309bcc7f5dfc43a84929262e85297, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -2.75
+      objectReference: {fileID: 0}
+    - target: {fileID: 400144, guid: 833309bcc7f5dfc43a84929262e85297, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -3
+      objectReference: {fileID: 0}
+    - target: {fileID: 400144, guid: 833309bcc7f5dfc43a84929262e85297, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 400144, guid: 833309bcc7f5dfc43a84929262e85297, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 400144, guid: 833309bcc7f5dfc43a84929262e85297, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 400144, guid: 833309bcc7f5dfc43a84929262e85297, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 400144, guid: 833309bcc7f5dfc43a84929262e85297, type: 3}
       propertyPath: m_RootOrder
       value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 400144, guid: 833309bcc7f5dfc43a84929262e85297, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: -3.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 400144, guid: 833309bcc7f5dfc43a84929262e85297, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -3
-      objectReference: {fileID: 0}
-    - target: {fileID: 400146, guid: 833309bcc7f5dfc43a84929262e85297, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 400146, guid: 833309bcc7f5dfc43a84929262e85297, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: -5
-      objectReference: {fileID: 0}
-    - target: {fileID: 400146, guid: 833309bcc7f5dfc43a84929262e85297, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -3
-      objectReference: {fileID: 0}
-    - target: {fileID: 400146, guid: 833309bcc7f5dfc43a84929262e85297, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 400146, guid: 833309bcc7f5dfc43a84929262e85297, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 400146, guid: 833309bcc7f5dfc43a84929262e85297, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 400146, guid: 833309bcc7f5dfc43a84929262e85297, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 400146, guid: 833309bcc7f5dfc43a84929262e85297, type: 3}
-      propertyPath: m_RootOrder
-      value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 400146, guid: 833309bcc7f5dfc43a84929262e85297, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 400146, guid: 833309bcc7f5dfc43a84929262e85297, type: 3}
+    - target: {fileID: 400144, guid: 833309bcc7f5dfc43a84929262e85297, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 400146, guid: 833309bcc7f5dfc43a84929262e85297, type: 3}
+    - target: {fileID: 400144, guid: 833309bcc7f5dfc43a84929262e85297, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 400150, guid: 833309bcc7f5dfc43a84929262e85297, type: 3}
-      propertyPath: m_RootOrder
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 400152, guid: 833309bcc7f5dfc43a84929262e85297, type: 3}
-      propertyPath: m_RootOrder
-      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 9500000, guid: 833309bcc7f5dfc43a84929262e85297, type: 3}
       propertyPath: m_Controller
@@ -4187,39 +4426,65 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 73f3a3de238d64e318d3bdb948cd1d99, type: 2}
-    - target: {fileID: 13700002, guid: 833309bcc7f5dfc43a84929262e85297, type: 3}
-      propertyPath: m_Materials.Array.data[0]
-      value: 
-      objectReference: {fileID: 2100000, guid: 73f3a3de238d64e318d3bdb948cd1d99, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 833309bcc7f5dfc43a84929262e85297, type: 3}
---- !u!1 &1747376372253945252 stripped
+--- !u!1 &4009521808980275764 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 100144, guid: 833309bcc7f5dfc43a84929262e85297,
     type: 3}
-  m_PrefabInstance: {fileID: 1747376372253911700}
+  m_PrefabInstance: {fileID: 4009521808980243716}
   m_PrefabAsset: {fileID: 0}
---- !u!4 &1747376372254044548 stripped
+--- !u!4 &4009521808980373012 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400144, guid: 833309bcc7f5dfc43a84929262e85297,
     type: 3}
-  m_PrefabInstance: {fileID: 1747376372253911700}
+  m_PrefabInstance: {fileID: 4009521808980243716}
   m_PrefabAsset: {fileID: 0}
---- !u!4 &1747376372254045966 stripped
+--- !u!4 &4009521808980366740 stripped
 Transform:
-  m_CorrespondingSourceObject: {fileID: 400794, guid: 833309bcc7f5dfc43a84929262e85297,
+  m_CorrespondingSourceObject: {fileID: 401552, guid: 833309bcc7f5dfc43a84929262e85297,
     type: 3}
-  m_PrefabInstance: {fileID: 1747376372253911700}
+  m_PrefabInstance: {fileID: 4009521808980243716}
   m_PrefabAsset: {fileID: 0}
---- !u!4 &1747376372254045680 stripped
+--- !u!4 &4009521808980366770 stripped
 Transform:
-  m_CorrespondingSourceObject: {fileID: 401252, guid: 833309bcc7f5dfc43a84929262e85297,
+  m_CorrespondingSourceObject: {fileID: 401590, guid: 833309bcc7f5dfc43a84929262e85297,
     type: 3}
-  m_PrefabInstance: {fileID: 1747376372253911700}
+  m_PrefabInstance: {fileID: 4009521808980243716}
   m_PrefabAsset: {fileID: 0}
---- !u!4 &1747376372254045482 stripped
+--- !u!4 &4009521808980366778 stripped
 Transform:
-  m_CorrespondingSourceObject: {fileID: 401342, guid: 833309bcc7f5dfc43a84929262e85297,
+  m_CorrespondingSourceObject: {fileID: 401598, guid: 833309bcc7f5dfc43a84929262e85297,
     type: 3}
-  m_PrefabInstance: {fileID: 1747376372253911700}
+  m_PrefabInstance: {fileID: 4009521808980243716}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &4009521808980366712 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 401532, guid: 833309bcc7f5dfc43a84929262e85297,
+    type: 3}
+  m_PrefabInstance: {fileID: 4009521808980243716}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &4009521808980366758 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 401570, guid: 833309bcc7f5dfc43a84929262e85297,
+    type: 3}
+  m_PrefabInstance: {fileID: 4009521808980243716}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &4009521808980366702 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 401514, guid: 833309bcc7f5dfc43a84929262e85297,
+    type: 3}
+  m_PrefabInstance: {fileID: 4009521808980243716}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &4009521808980366710 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 401522, guid: 833309bcc7f5dfc43a84929262e85297,
+    type: 3}
+  m_PrefabInstance: {fileID: 4009521808980243716}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &4009521808980366748 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 401560, guid: 833309bcc7f5dfc43a84929262e85297,
+    type: 3}
+  m_PrefabInstance: {fileID: 4009521808980243716}
   m_PrefabAsset: {fileID: 0}
