@@ -380,6 +380,9 @@ public class ContentManager
 
         // Refresh x-promo rewards
         XPromoManager.instance.OnContentUpdate();
+
+        // Refresh Welcome back configuration
+        WelcomeBackManager.instance.OnContentUpdate();
     }
      
 

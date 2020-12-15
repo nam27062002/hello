@@ -251,7 +251,7 @@ public class TournamentFeaturedIcon : MonoBehaviour {
 					 || (m_visualVariation == Variation.NORMAL && !m_welcomeBackActive));
 
 		// Hide if is not the right variation
-		if (m_root.activeInHierarchy && !rightVariation)
+		if (!rightVariation)
 		{
 			show = false;
 		}

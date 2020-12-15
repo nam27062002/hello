@@ -126,7 +126,14 @@ public class UserProfile : UserPersistenceSystem
         get { return m_saveTimestamp; }
 		set { m_saveTimestamp = value; } // For debug purposes 
     }
-    public int lastModified { get; set; }
+
+	private DateTime m_lastSaveTimestamp;
+	public DateTime lastSaveTimestamp
+	{
+		get { return m_lastSaveTimestamp; }
+	}
+
+	public int lastModified { get; set; }
 
 	// User ID shortcut
 	public string userId {
@@ -590,7 +597,10 @@ public class UserProfile : UserPersistenceSystem
         base.Reset();
 
         m_saveTimestamp = DateTime.UtcNow;
-        lastModified = 0;
+		m_lastSaveTimestamp = DateTime.MinValue;
+		lastModified = 0;
+
+        
 
         if (m_currencies == null)
         {
@@ -1124,6 +1134,12 @@ public class UserProfile : UserPersistenceSystem
         else
         {
             m_saveTimestamp = DateTime.UtcNow;
+        }
+
+        // If not initialized yet, store the last save date
+        if (m_lastSaveTimestamp == DateTime.MinValue)
+        {
+			m_lastSaveTimestamp = m_saveTimestamp;
         }
 
         // Economy
