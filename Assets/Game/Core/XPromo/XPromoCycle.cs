@@ -403,6 +403,8 @@ public class XPromoCycle {
 		// Sort the rewards by day (should be already sorted in the content, but who knows)
 		localRwdDefinitions.Sort(LocalReward.CompareDefsByDay);
 
+		m_localRewards = new List<LocalReward>();
+
 		int lastDay = -1;
 		foreach (DefinitionNode def in localRwdDefinitions)
 		{
