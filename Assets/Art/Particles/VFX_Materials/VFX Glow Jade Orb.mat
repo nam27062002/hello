@@ -7,9 +7,9 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: VFX Glow 01
+  m_Name: VFX Glow Jade Orb
   m_Shader: {fileID: 4800000, guid: 02891335b31643f408fed70e86224f83, type: 3}
-  m_ShaderKeywords: BLENDMODE_ADDITIVE
+  m_ShaderKeywords: APPLY_RGB_COLOR_VERTEX BLENDMODE_ADDITIVE EXTENDED_PARTICLES
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -92,16 +92,16 @@ Material:
     - _DstBlend: 1
     - _EmisPowa: 1.14
     - _EmissionPower: 2.5
-    - _EmissionSaturation: 1
+    - _EmissionSaturation: 1.27
     - _EmissivePower: 1
     - _EnableAlphaDissolve: 0
     - _EnableAutomaticPanning: 0
     - _EnableColorRamp: 0
     - _EnableColorTint: 0
-    - _EnableColorVertex: 0
+    - _EnableColorVertex: 1
     - _EnableDissolveVertexColorAlpha: 0
     - _EnableEmissivePower: 0
-    - _EnableExtendedParticles: 0
+    - _EnableExtendedParticles: 1
     - _EnableFlowMap: 0
     - _EnableNoiseTexture: 0
     - _EnableNoiseTextureAlpha: 0
@@ -140,12 +140,12 @@ Material:
     - _ZTest: 2
     - _ZWrite: 1
     m_Colors:
-    - _BasicColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+    - _BasicColor: {r: 0.07539296, g: 1, b: 0, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _DissolveStep: {r: 0, g: 1, b: 0, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _NoisePanning: {r: 0, g: 0, b: 0, a: 0}
     - _Panning: {r: 0, g: 0, b: 0, a: 0}
-    - _SaturatedColor: {r: 0.5, g: 0.5, b: 0.5, a: 0.5}
+    - _SaturatedColor: {r: 0.2576334, g: 0.8962264, b: 0, a: 0.5}
     - _TintColor: {r: 1, g: 1, b: 1, a: 0.634}
     - _VColor: {r: 1, g: 1, b: 1, a: 1}
