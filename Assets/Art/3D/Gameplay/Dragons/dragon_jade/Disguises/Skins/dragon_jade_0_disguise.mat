@@ -9,7 +9,7 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: dragon_jade_0_disguise
   m_Shader: {fileID: 4800000, guid: 2345015ac46679e4cb5817ed44c82547, type: 3}
-  m_ShaderKeywords: FXLAYER_REFLECTION NORMALMAP REFLECTIONTYPE_COLOR SPECULAR
+  m_ShaderKeywords: FRESNEL FXLAYER_REFLECTION NORMALMAP REFLECTIONTYPE_COLOR SPECULAR
   m_LightmapFlags: 1
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -90,7 +90,7 @@ Material:
     - _EnableCutoff: 0
     - _EnableDiffuseAsSpecMask: 0
     - _EnableDoublesided: 0
-    - _EnableFresnel: 0
+    - _EnableFresnel: 1
     - _EnableNormalMap: 1
     - _EnableOpaqueFresnel: 0
     - _EnableOpaqueSpecular: 0
@@ -103,7 +103,7 @@ Material:
     - _EnableVertexScaleZ: 0
     - _FireAmount: 0
     - _FireSpeed: 1
-    - _Fresnel: 8.04
+    - _Fresnel: 2.12
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
