@@ -9,12 +9,12 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: VFX_ParticlesFireworks
   m_Shader: {fileID: 4800000, guid: 02891335b31643f408fed70e86224f83, type: 3}
-  m_ShaderKeywords: BLENDMODE_PREMULTIPLY DISSOLVE_NONE EXTENDED_PARTICLES NOISE_TEXTURE
-    NOISE_TEXTURE_ALPHA
+  m_ShaderKeywords: BLENDMODE_PREMULTIPLY DISSOLVE_ENABLED DISSOLVE_VERTEXCOLORALFA
+    EXTENDED_PARTICLES NOISE_TEXTURE NOISE_TEXTURE_ALPHA NOISE_TEXTURE_DISSOLVE
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: 3000
+  m_CustomRenderQueue: 3065
   stringTagMap: {}
   disabledShaderPasses: []
   m_SavedProperties:
@@ -80,18 +80,18 @@ Material:
     - _DstBlend: 10
     - _EmissionSaturation: 1.75
     - _EmissivePower: 1
-    - _EnableAlphaDissolve: 0
+    - _EnableAlphaDissolve: 1
     - _EnableAutomaticPanning: 0
     - _EnableColorRamp: 0
     - _EnableColorTint: 0
     - _EnableColorVertex: 0
-    - _EnableDissolveVertexColorAlpha: 0
+    - _EnableDissolveVertexColorAlpha: 1
     - _EnableEmissivePower: 0
     - _EnableExtendedParticles: 1
     - _EnableFlowMap: 0
     - _EnableNoiseTexture: 0
     - _EnableNoiseTextureAlpha: 1
-    - _EnableNoiseTextureDissolve: 0
+    - _EnableNoiseTextureDissolve: 1
     - _EnableNoiseTextureEmission: 0
     - _EnableNoiseUV: 0
     - _EnableScreenMapNoise: 0
@@ -117,6 +117,6 @@ Material:
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _NoisePanning: {r: 0.57, g: 0.42, b: 0, a: 0}
     - _Panning: {r: 0, g: 0, b: 0, a: 0}
-    - _SaturatedColor: {r: 1, g: 0.8636708, b: 0.6084906, a: 0.5}
+    - _SaturatedColor: {r: 1, g: 0.6589208, b: 0.23113209, a: 0.5}
     - _TintColor: {r: 1, g: 0, b: 0, a: 1}
     - _VColor: {r: 1, g: 1, b: 1, a: 1}
