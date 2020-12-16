@@ -42,19 +42,10 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
     public const string ENABLE_TOURNAMENT_PASS = "enableTournamentPass";
 
 
-    // Server call
-    public const string WELCOME_BACK_KEY = "welcomeBack";
-    public const string START_DATE_KEY = "welcomeBackStartDate";
-
     //------------------------------------------------------------------------//
     // MEMBERS AND PROPERTIES												  //
     //------------------------------------------------------------------------//
 
-    private DateTime m_lastActivationTime;
-    public DateTime lastActivationTime
-    {
-        get => m_lastActivationTime;
-    }
 
 
     private bool m_isPopupWaiting = false;
@@ -78,7 +69,6 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
 
     private List<DefinitionNode> m_perksDefs;
 
-    
 
     // Free tournament
     private DateTime m_tournamentPassExpirationTimestamp;
@@ -106,10 +96,15 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
 
     public bool hasBeenActivated
     {
-        get => (m_lastActivationTime != null && m_lastActivationTime > DateTime.MinValue);
+        get => (m_timesActivated > 0);
     }
 
+
+    private int m_timesActivated;
+    public int timesActivated { get => m_timesActivated; }
+
     // Use only for trackin purposes
+    private DateTime m_lastActivationTime;
     private bool m_enablePopup;
     private bool m_enableSoloQuest;
     private bool m_enablePassive;
@@ -167,57 +162,93 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
 
 
     /// <summary>
-    /// Try to activate WB in the client. Takes the time this WB was activated in the server and compares it
-    /// with the last time it was activated in the client. If the times differ, activates
-    /// the feature in the client. If the time is same, it means that we are receiveing data from an already
-    /// activated WB, so we can ignore it.
+    /// Try to activate WB in the client. Send a tracking event with the result.
     /// </summary>
-    /// <param name="_activationTime">Time when the WB was activated in the server</param>
     /// <returns>True if the WB has been succesfully activated in the client</returns>
-    public bool TryActivation ( DateTime _activationTime )
+    public void TryActivation ()
     {
+
+
+        // WB  active in the content?
+        if (m_def != null)
+        {
+            bool success = false;
+
+            // All the checks passed?
+            if (IsElegibleForWB())
+            {
+
+                if (Activate())
+                {
+                    success = true;
+                }
+
+            }
+
+            // Tracking
+            TrackWelcomeBackStatus(success);
+
+        }
+
+
+    }
+
+
+    /// <summary>
+    /// Check if this player is elegible for the WB feature
+    /// </summary>
+    /// <returns>True if all the checks passed</returns>
+    private bool IsElegibleForWB ()
+    {
+
+        Debug.Assert(def != null);
+
 
         // First of all check if the player finished the mininum required runs
         int minRuns = m_def.GetAsInt("minRuns");
         if (UsersManager.currentUser.gamesPlayed < minRuns)
         {
-            Log("The server tried to activate WB, but the player didnt complete the required runs");
+            Log("Won´t activate WB: The player didnt complete the required runs");
             return false;
         }
 
 
-        if (m_lastActivationTime == _activationTime)
-        {        
-
-            // The welcome back sent by the server is already active in the client. Do nothing
-            return false;
-          
-        }
-        else if (m_lastActivationTime > _activationTime)
+        // Check if the maximum WB activations were reached
+        if (m_timesActivated >= m_def.GetAsInt("maxActivationsAllowed"))
         {
-            // This shouldnt happen, probably an error
-            Debug.LogError("The server is sending a Welcome Back activation date older than the current one!");
+            Log("Won´t activate WB: The maximum amount of activations was reached");
             return false;
         }
-        else
+
+
+        // Check the absent time, based on the last saved timestamp
+        DateTime m_lastVisit = UsersManager.currentUser.lastSaveTimestamp;
+        DateTime now = DateTime.UtcNow; 
+        if (m_lastVisit > now)
         {
-            // Otherwise the WB has been properly triggered
-
-            Log("The server notified that WB has been triggered with date " + _activationTime.ToString());
-
-            if (Activate())
-            {
-                // Keep the date sent by the server. We will use it to check if there is a new WB in the future.
-                m_lastActivationTime = _activationTime;
-
-                return true;
-            }
-
+            // Someone is cheating
+            Log("Won´t activate WB: Elapsed time cannot be negative");
             return false;
         }
 
+        TimeSpan timeAbsent = now - m_lastVisit;
+        int minAbsentDays = m_def.GetAsInt("minAbsentDays");
+
+
+        // Did this player spend enough days offline to get a WB?
+        if (timeAbsent.TotalDays < minAbsentDays)
+        {
+            Log("The player needs to be absent at least " + minAbsentDays + " days to trigger WB, " +
+                "he was out only " + timeAbsent.TotalDays);
+            return false;
+        }
+
+
+        // All tests passed. 
+        Log("The player is elegible for welcome back!");
+
+        return true;
     }
-
 
 
     /// <summary>
@@ -232,6 +263,8 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
         if (m_perksDef == null)
         {
             // No configuration find for this player
+            Debug.LogError("No WB perks config was found for this player. This shouldn't happen!");
+
             return false;
         }
 
@@ -266,6 +299,9 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
         if (m_enableOffer)
             EnableSpecialOffer();
 
+        m_timesActivated++;
+
+        m_lastActivationTime = GameServerManager.GetEstimatedServerTime();
 
         string perks = String.Format(
             "Popup = {0}, " +
@@ -298,7 +334,7 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
         DisableSpecialOffer();
         DisablePopup();
 
-        m_lastActivationTime = DateTime.MinValue;
+        m_timesActivated = 0;
 
     }
 
@@ -319,7 +355,7 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
     /// <returns></returns>
     public bool IsTournamentPassFree()
     {
-        return GetTournamentPassPrice() == 0;
+        return IsTournamentPassActive() && (GetTournamentPassPrice() == 0);
     }
 
     /// <summary>
@@ -339,7 +375,7 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
     public UserProfile.Currency GetTournamentPassCurrency()
     {
         // This sku could be "-" in case of a free pass
-        string sku = m_def.GetAsString("tournamentPassCurrency");
+        string sku = m_def.GetAsString("tournamentPassCurrency").ToLower();
         UserProfile.Currency currency = UserProfile.SkuToCurrency(sku);
 
         return currency;
@@ -479,7 +515,11 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
         DateTime now = GameServerManager.GetEstimatedServerTime();
         
         m_tournamentPassExpirationTimestamp = now.AddHours(durationHours);
-        
+
+        // Let all the UI involved that something changed
+        Messenger.Broadcast(MessengerEvents.LIVE_EVENT_STATES_UPDATED);
+
+
     }
     
     /// <summary>
@@ -489,6 +529,9 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
     {
         // Reset the expiration date to invalidate the free pass ticket.
         m_tournamentPassExpirationTimestamp = new DateTime();
+
+        // Let all the UI involved that something changed
+        Messenger.Broadcast(MessengerEvents.LIVE_EVENT_STATES_UPDATED);
     }
 
 
@@ -574,42 +617,20 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
 
+
     /// <summary>
-    /// The server is telling us if the WB has been triggered right now, or in the past.
+    /// In case a new configuration new arrives from the customizer
+    /// try to launch WB again
     /// </summary>
-    /// <param name="_data"></param>
-    public void OnLiveDataResponse (SimpleJSON.JSONNode _data)
+    public void OnContentUpdate()
     {
 
-        if (!_data.ContainsKey(START_DATE_KEY))
-        {
-            // According to the server, WB was never triggered. So get out.
-            return;
-        }
+        InitFromDefinitions();
 
-        string value  = _data[ START_DATE_KEY ];
-
-        if (string.IsNullOrEmpty (value) || value ==  "0")
-        {
-            // An empty start date, means that WB hasnt been triggered. Get out
-            return;
-        }
-
-        DateTime startDateTime = TimeUtils.TimestampToDate(long.Parse(value));
-
-        // Check if we have to activate WB
-        if (TryActivation(startDateTime) )
-        {
-            // Tracking (WB just activated!)
-            TrackWelcomeBackStatus(true);
-        }
-        else
-        {
-            // Tracking (witout WB activation)
-            TrackWelcomeBackStatus(false);
-        }
+        TryActivation();
 
     }
+
 
     //------------------------------------------------------------------------//
     // PERSISTENCE															  //
@@ -622,13 +643,14 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
     /// <param name="_data">Data to be parsed.</param>
     public void ParseJson(SimpleJSON.JSONNode _data)
 	{
-		
-        
-        string key = "lastActivation";
-        if ( _data.ContainsKey(key) )
+		       
+
+        string key = "timesActivated";
+        if (_data.ContainsKey(key))
         {
-            m_lastActivationTime = TimeUtils.TimestampToDate(PersistenceUtils.SafeParse<long>(_data[key]));
+            m_timesActivated = PersistenceUtils.SafeParse<int>(_data[key]);
         }
+
 
         key = "hasOffer";
         if (_data.ContainsKey(key))
@@ -665,7 +687,7 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
         key = "tourPassExp";
         if ( _data.ContainsKey(key) )
         {
-            m_tournamentPassExpirationTimestamp = TimeUtils.TimestampToDate(PersistenceUtils.SafeParse<long>(_data[key]));
+            m_tournamentPassExpirationTimestamp = PersistenceUtils.SafeParse<DateTime>(_data[key]);
         }
         
         // Load boosted daily rewards
@@ -689,7 +711,7 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
 	{
 		SimpleJSON.JSONClass data = new SimpleJSON.JSONClass();
         
-        data.Add("lastActivation", PersistenceUtils.SafeToString(TimeUtils.DateToTimestamp(m_lastActivationTime)));
+        data.Add("timesActivated", PersistenceUtils.SafeToString(m_timesActivated));
 
         data.Add("hasOffer", PersistenceUtils.SafeToString(m_hasSpecialOffer));
 
@@ -709,7 +731,7 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
         }
         
         // Save free tournament pass
-        data.Add("tourPassExp", PersistenceUtils.SafeToString(TimeUtils.DateToTimestamp( m_tournamentPassExpirationTimestamp )));
+        data.Add("tourPassExp", PersistenceUtils.SafeToString(m_tournamentPassExpirationTimestamp));
 
         // Save boosted daily rewarsd
         if (m_boostedDailyRewards != null)
@@ -730,15 +752,7 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
 	public void OnForceStart()
 	{
 
-        // Use startTimestamp empty, so the server will use the current time
-        string startTimestamp = "";
-
-        //Activate();
-
-        // Call the server to Start WB 
-        GameServerManager.SharedInstance.WelcomeBack_DEBUG_Start(UsersManager.currentUser.userId, startTimestamp, null);
-
-        // After this call, the WB will be activated in the next GetMyEvents message (restarting game, or after playing a run)
+        Activate();
 
     }
 
@@ -749,9 +763,6 @@ public class WelcomeBackManager : Singleton<WelcomeBackManager>
 	{
         // Disable the WB in the client
 		Deactivate();
-
-        // Call the server to Stop
-        GameServerManager.SharedInstance.WelcomeBack_DEBUG_Stop(UsersManager.currentUser.userId, null);
     }
 
 

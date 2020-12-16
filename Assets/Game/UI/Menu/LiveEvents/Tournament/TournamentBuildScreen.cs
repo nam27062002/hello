@@ -152,8 +152,7 @@ public class TournamentBuildScreen : MonoBehaviour
         //-- Entrance Button ------------------------------------------//
 
         // Check if the free cooldown expired or if the welcome back free pass is active
-        m_hasFreeEntrance = m_tournament.CanIUseFree() ||
-                            (WelcomeBackManager.instance.IsTournamentPassActive() && WelcomeBackManager.instance.IsTournamentPassFree());
+        m_hasFreeEntrance = m_tournament.CanIUseFree();
 
         // Is the welcome back feature active?
         if (WelcomeBackManager.instance.IsTournamentPassActive())
@@ -353,8 +352,8 @@ public class TournamentBuildScreen : MonoBehaviour
         }
         else
         {
-            // Check paying
-            if (m_hasFreeEntrance)
+
+            if (m_hasFreeEntrance) // Free because the cooldown ended
             {
 
                 //Remove existig loading messages in the busy screen
@@ -367,10 +366,29 @@ public class TournamentBuildScreen : MonoBehaviour
                 Messenger.AddListener<HDLiveDataManager.ComunicationErrorCodes, string, long>(MessengerEvents.TOURNAMENT_ENTRANCE, OnTournamentEntrance);
 
                 // Send Entrance
-                m_tournament.SendEntrance("free", 0);
+
+               m_tournament.SendEntrance("free", 0);
+                
+                
 
             }
-            else
+            else if (WelcomeBackManager.instance.IsTournamentPassFree()) // Free because WB
+            {
+
+                //Remove existig loading messages in the busy screen
+                BusyScreen.Setup(true, null);
+
+                // Then show busy screen
+                BusyScreen.Show(this);
+
+                // Prepare to wait for the callback
+                Messenger.AddListener<HDLiveDataManager.ComunicationErrorCodes, string, long>(MessengerEvents.TOURNAMENT_ENTRANCE, OnTournamentEntrance);
+
+                // Use a special type "open" when using a welcome back pass. So the server wont validate the entrance fee.
+                m_tournament.SendEntrance(HDTournamentDefinition.ENTRANCE_TYPE_OPEN, 0);
+
+            }
+            else // Not free
             {
 
                 // Check if I have enough currency
@@ -405,7 +423,18 @@ public class TournamentBuildScreen : MonoBehaviour
         Messenger.AddListener<HDLiveDataManager.ComunicationErrorCodes, string, long>(MessengerEvents.TOURNAMENT_ENTRANCE, OnTournamentEntrance);
 
         // Send Entrance
-        m_tournament.SendEntrance(m_definition.m_entrance.m_type, m_definition.m_entrance.m_amount);
+        
+        if (WelcomeBackManager.instance.IsTournamentPassActive())
+        {
+            // Use a special type "open" when using a welcome back pass. So the server wont validate the entrance fee.
+            m_tournament.SendEntrance(HDTournamentDefinition.ENTRANCE_TYPE_OPEN, 0);
+        }
+        else
+        {
+            // Use the regular entrance fee
+            m_tournament.SendEntrance(m_definition.m_entrance.m_type, m_definition.m_entrance.m_amount);
+        }
+        
     }
 
     void OnTournamentEntrance(HDLiveDataManager.ComunicationErrorCodes err, string type, long amount)
@@ -416,13 +445,16 @@ public class TournamentBuildScreen : MonoBehaviour
         {
             case HDLiveDataManager.ComunicationErrorCodes.NO_ERROR:
                 {
+
+                    bool isFree = ( type == "free" || WelcomeBackManager.instance.IsTournamentPassFree()  );
+
                     // Pay and go to play
-                    if (type != "free")
+                    if (!isFree)
                     {
                         m_purchaseFlow.OnSuccess.RemoveListener(OnEntrancePayAccepted);
                         m_purchaseFlow.OnSuccess.AddListener(OnPayAndPlay);
                         m_purchaseFlow.DoTransaction();
-                    }
+                    } 
                     else
                     {
                         // Tracking

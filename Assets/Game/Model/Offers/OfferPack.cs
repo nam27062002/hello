@@ -589,8 +589,14 @@ public class OfferPack {
 
 		m_platform = _def.GetAsString("platform").ToLower();
 
-		if (m_platform != "" && m_platform != PLATFORM_ANDROID && m_platform != PLATFORM_IOS)
-			Debug.LogError("The platform specified '" + m_platform + "' is not valid. Use 'android' or 'ios'");
+		if (m_platform != "" && m_platform != OffersManager.settings.emptyValue)
+		{
+			if (m_platform != PLATFORM_ANDROID && m_platform != PLATFORM_IOS)
+			{
+				Debug.LogError("The platform specified '" + m_platform + "' is not valid. Use 'android' or 'ios'");
+			}
+		}
+			
 
 		m_playerSources = ParseArray(_def.GetAsString("playerSources"));
 
@@ -893,7 +899,7 @@ public class OfferPack {
 		}
 
 		// Platform
-		if (!String.IsNullOrEmpty(m_platform))
+		if (!String.IsNullOrEmpty(m_platform) && m_platform != OffersManager.settings.emptyValue)
 		{
             switch (m_platform)
             {

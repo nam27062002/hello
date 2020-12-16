@@ -125,6 +125,12 @@ public class XPromoCycle {
 	/// </summary>
 	public XPromoCycle() {
 
+		m_localRewards = new List<XPromo.LocalReward>();
+
+		m_startDate = DateTime.MinValue;
+		m_endDate = DateTime.MinValue;
+
+		m_experimentChecked = false;
 	}
 
 
@@ -146,17 +152,13 @@ public class XPromoCycle {
 	//------------------------------------------------------------------------//
 
 	/// <summary>
-	/// Empty all the sets and restart variables
+	/// Empty the persisted variabales (called before load persistency)
 	/// </summary>
 	public void Clear()
 	{
-		m_localRewards = new List<XPromo.LocalReward>();
-
-		m_startDate = DateTime.MinValue;
-		m_endDate = DateTime.MinValue;
-
-		m_experimentChecked = false;
-}
+		m_totalNextRewardIdx = 0;
+		m_nextRewardTimestamp = DateTime.MinValue;
+    }
 
 
 	/// <summary>
@@ -400,6 +402,8 @@ public class XPromoCycle {
 
 		// Sort the rewards by day (should be already sorted in the content, but who knows)
 		localRwdDefinitions.Sort(LocalReward.CompareDefsByDay);
+
+		m_localRewards = new List<LocalReward>();
 
 		int lastDay = -1;
 		foreach (DefinitionNode def in localRwdDefinitions)

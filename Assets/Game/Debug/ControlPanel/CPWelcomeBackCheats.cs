@@ -29,8 +29,11 @@ public class CPWelcomeBackCheats : MonoBehaviour {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 
-    [SerializeField] private TextMeshProUGUI m_playerType;
-	[SerializeField] private TextMeshProUGUI m_lastActivationTime;
+	[SerializeField] private Button startButton;
+	[SerializeField] private Button stopButton;
+
+	[SerializeField] private TextMeshProUGUI m_playerType;
+	[SerializeField] private TextMeshProUGUI m_status;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -64,16 +67,26 @@ public class CPWelcomeBackCheats : MonoBehaviour {
 	/// Update loop.
 	/// </summary>
 	private void Update() {
-		DateTime time = WelcomeBackManager.instance.lastActivationTime;
-		bool isValid = time != null && time != DateTime.MinValue;
 
-		// Update timer text
-		m_lastActivationTime.text = "Last Activation Time: " + (isValid ? time.ToString() : "-");
 
 	}
 
     private void Refresh()
     {
+
+        bool wbEnabled = (WelcomeBackManager.instance.def != null);
+
+        // If there is no enabled definition in the content then disable the buttons
+		stopButton.interactable = wbEnabled;
+		startButton.interactable = wbEnabled;
+
+
+		// Update status text
+		int timesActivated = WelcomeBackManager.instance.timesActivated;
+		m_status.text = "Status: " + (timesActivated > 0 ? "ACTIVE (" + timesActivated + ")" : "NOT ACTIVE");
+
+
+        // Player group text
 		if (WelcomeBackManager.instance.perksDef != null)
 		{
 			// There is not such thing as player group name, but use SKU just for info purposes
@@ -89,37 +102,25 @@ public class CPWelcomeBackCheats : MonoBehaviour {
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
 	/// <summary>
-	/// The activate Welcome back button has been pressed
+	/// The start Welcome back button has been pressed
 	/// </summary>
 	public void OnActivateWelcomeBack() {
 
-
+		// Activate WB
+		WelcomeBackManager.instance.OnForceStart();
 
 		// Save persistence
 		PersistenceFacade.instance.Save_Request(false);
 
-
-		// The server needs to know the amount of runs played in order to activate the WB
-		// so send the user persistence to the server
-		PersistenceFacade.instance.CloudDriver.Upload( (bool success) => {
-
-            if (!success)
-			{
-				Debug.LogError("Failed when saving the persistency in the server");
-			}
-
-			// After sending persistency, activate WB
-			WelcomeBackManager.instance.OnForceStart();
-		});
-
-	
 		// Update cheats panel info
 		Refresh();
+
+
 
 	}
 	
 	/// <summary>
-	/// The activate Welcome back button has been pressed
+	/// The stop Welcome back button has been pressed
 	/// </summary>
 	public void OnEndWelcomeBack() {
 		

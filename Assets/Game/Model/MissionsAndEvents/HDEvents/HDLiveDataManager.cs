@@ -136,13 +136,22 @@ public class HDLiveDataManager : Singleton<HDLiveDataManager> {
     {
         // Access to the soloQuest so it can be loaded/saved from persistence
         get => m_soloQuest;
-        set => m_soloQuest = value;
+        set {
+            m_managers.Remove(m_soloQuest);
+            m_soloQuest = value;
+            m_managers.Add(m_soloQuest);
+        }
     }
 
     public HDLocalPassiveEventManager localPassive
     {
         get => m_localPassive;
-        set => m_localPassive = value;
+        set
+        {
+            m_managers.Remove(m_localPassive);
+            m_localPassive = value;
+            m_managers.Add(m_localPassive);
+        }
     }
 
     public static HDTournamentManager      tournament      { get { return instance.m_tournament; } }
@@ -466,13 +475,6 @@ public class HDLiveDataManager : Singleton<HDLiveDataManager> {
                 if (finishLoadingData) {
                     m_managers[i].OnLiveDataResponse();
                 }
-            }
-
-            // Process Welcome Back. Technically not a HD live manager, but the server is sending
-            // the WB data in this call.
-            if (responseJson.ContainsKey(WelcomeBackManager.WELCOME_BACK_KEY))
-            {
-                WelcomeBackManager.instance.OnLiveDataResponse(responseJson[WelcomeBackManager.WELCOME_BACK_KEY]);
             }
 
         } else if (outErr != ComunicationErrorCodes.NET_ERROR) {
