@@ -271,12 +271,26 @@ public class HDSoloQuestManager : BaseQuestManager {
         // Will never be called in solo quest
 		return false;
 	}
-    
+
+	public override void LoadDataFromCache()
+	{
+		// Nothing. Local events are stored in the persistence.
+	}
+
+	/// <summary>
+	/// This method determines if the event should be saved in the cache
+	/// </summary>
+	/// <returns></returns>
+	public override bool ShouldSaveData()
+	{
+		// Nope. Local events are stored in the persistence, not in cache.
+		return false;
+	}
 
 	//------------------------------------------------------------------------//
 	// PERSISTENCE															  //
 	//------------------------------------------------------------------------//
-	
+
 	/// <summary>
 	/// Constructor from json data.
 	/// </summary>
