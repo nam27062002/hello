@@ -209,7 +209,7 @@ public class DragonWizardValidationModule : IDragonWizard
         mainMenuPrefab = AssetDatabase.LoadAssetAtPath(assetPath, typeof(GameObject)) as GameObject;
 
         // Unit tests for main menu prefab
-        results.Add(new DragonTest(MainMenuTestAnimationController(), "Animation controller is set", Severity.Warning));
+        results.Add(new DragonTest(MainMenuTestAnimationController(), "Animation controller is not set", Severity.Warning));
         results.Add(new DragonTest(MainMenuTestAssetBundle(), "Asset bundle prefab set to: " + SelectedSku + "_local", Severity.Warning));
         results.Add(new DragonTest(MainMenuTestViewGameObject(), "View gameobject exists"));
         results.Add(new DragonTest(MainMenuTestDragonPreview(), "MenuDragonPreview script was added"));
@@ -334,7 +334,7 @@ public class DragonWizardValidationModule : IDragonWizard
         if (anim == null)
             return false;
 
-        return anim.runtimeAnimatorController != null ? true : false;
+        return anim.runtimeAnimatorController == null ? true : false;
     }
 
     bool MainMenuTestAssetBundle()
