@@ -9,9 +9,9 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: VFX_ParticlesFireworks_01
   m_Shader: {fileID: 4800000, guid: 02891335b31643f408fed70e86224f83, type: 3}
-  m_ShaderKeywords: BLENDMODE_PREMULTIPLY DISSOLVE_ENABLED DISSOLVE_VERTEXCOLORALFA
-    EXTENDED_PARTICLES NOISEUV NOISE_TEXTURE NOISE_TEXTURE_ALPHA NOISE_TEXTURE_DISSOLVE
-    NOISE_TEXTURE_EMISSION
+  m_ShaderKeywords: APPLY_RGB_COLOR_VERTEX BLENDMODE_PREMULTIPLY DISSOLVE_ENABLED
+    DISSOLVE_VERTEXCOLORALFA EXTENDED_PARTICLES NOISEUV NOISE_TEXTURE NOISE_TEXTURE_ALPHA
+    NOISE_TEXTURE_DISSOLVE
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -59,7 +59,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     - _NoiseTex:
         m_Texture: {fileID: 2800000, guid: fceba7f7f1e091347a3143a5876dcedc, type: 3}
-        m_Scale: {x: 0.75, y: 0.75}
+        m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _OcclusionMap:
         m_Texture: {fileID: 0}
@@ -79,13 +79,13 @@ Material:
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
     - _DstBlend: 10
-    - _EmissionSaturation: 3
+    - _EmissionSaturation: 4
     - _EmissivePower: 1
     - _EnableAlphaDissolve: 1
     - _EnableAutomaticPanning: 0
     - _EnableColorRamp: 0
     - _EnableColorTint: 0
-    - _EnableColorVertex: 0
+    - _EnableColorVertex: 1
     - _EnableDissolveVertexColorAlpha: 1
     - _EnableEmissivePower: 0
     - _EnableExtendedParticles: 1
@@ -93,7 +93,7 @@ Material:
     - _EnableNoiseTexture: 0
     - _EnableNoiseTextureAlpha: 1
     - _EnableNoiseTextureDissolve: 1
-    - _EnableNoiseTextureEmission: 1
+    - _EnableNoiseTextureEmission: 0
     - _EnableNoiseUV: 1
     - _EnableScreenMapNoise: 0
     - _GlobalAlpha: 1
@@ -112,12 +112,12 @@ Material:
     - _ZTest: 2
     - _ZWrite: 1
     m_Colors:
-    - _BasicColor: {r: 1, g: 0.5473311, b: 0.2783019, a: 0.5}
+    - _BasicColor: {r: 1, g: 0.43806884, b: 0.13679248, a: 0.5}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _DissolveStep: {r: 0, g: 1, b: 0, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _NoisePanning: {r: -0.4, g: 0.4, b: 0, a: 0}
+    - _NoisePanning: {r: -0.8, g: 0.4, b: 0, a: 0}
     - _Panning: {r: 0, g: 0, b: 0, a: 0}
-    - _SaturatedColor: {r: 1, g: 0.39462644, b: 0, a: 0.5}
+    - _SaturatedColor: {r: 1, g: 0.6808211, b: 0.08962262, a: 0.5}
     - _TintColor: {r: 1, g: 0, b: 0, a: 1}
     - _VColor: {r: 1, g: 1, b: 1, a: 1}
