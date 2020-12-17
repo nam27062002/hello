@@ -8,8 +8,9 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: M_PaperSeals
-  m_Shader: {fileID: 4800000, guid: 02891335b31643f408fed70e86224f83, type: 3}
-  m_ShaderKeywords: BLENDMODE_PREMULTIPLY EXTENDED_PARTICLES
+  m_Shader: {fileID: 4800000, guid: 7c755659303fc430e9beee01a27dff3e, type: 3}
+  m_ShaderKeywords: BLENDAXIS_X BLENDMODE_PREMULTIPLY COLORMODE_TINT EXTENDED_PARTICLES
+    LITMODE_UNLIT OPAQUEALPHA
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -44,7 +45,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 95987bea969148f4b8a0ea7a87c1a822, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
@@ -63,9 +64,23 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _RampTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ReflectionMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     m_Floats:
+    - BlendAxis: 0
     - BlendMode: 5
+    - ColorMode: 1
+    - LitMode: 0
     - _ABOffset: 0
+    - _BlendAlpha: 1
+    - _BlendUVOffset: 0
+    - _BlendUVScale: 1
     - _BumpScale: 1
     - _ColorMultiplier: 3.37
     - _Cull: 0
@@ -83,12 +98,16 @@ Material:
     - _EnableEmissivePower: 0
     - _EnableExtendedParticles: 1
     - _EnableFlowMap: 0
+    - _EnableFresnel: 0
     - _EnableNoiseTexture: 0
     - _EnableNoiseTextureAlpha: 0
     - _EnableNoiseTextureDissolve: 0
     - _EnableNoiseTextureEmission: 0
     - _EnableNoiseUV: 0
+    - _EnableReflectionMap: 0
     - _EnableScreenMapNoise: 0
+    - _EnableSpecular: 0
+    - _FresnelPower: 0.27
     - _GlobalAlpha: 1
     - _GlossMapScale: 1
     - _Glossiness: 0.5
@@ -97,10 +116,14 @@ Material:
     - _Mode: 0
     - _OcclusionStrength: 1
     - _OpacitySaturation: 3.48
+    - _OpaqueAlpha: 1
     - _Parallax: 0.02
+    - _ReflectionAmount: 0.5
     - _SmoothnessTextureChannel: 0
+    - _SpecExponent: 1
     - _SpecularHighlights: 1
     - _SrcBlend: 1
+    - _StencilMask: 10
     - _UVSec: 0
     - _ZTest: 2
     - _ZWrite: 1
@@ -109,7 +132,13 @@ Material:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _DissolveStep: {r: 0, g: 1, b: 0, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _FresnelColor: {r: 0, g: 0, b: 0, a: 0}
     - _NoisePanning: {r: 0, g: 0, b: 0, a: 0}
     - _Panning: {r: 0, g: 0, b: 0, a: 0}
     - _SaturatedColor: {r: 0.8490566, g: 0.77365667, b: 0.58873266, a: 0.5}
+    - _SecondLightColor: {r: 0, g: 0, b: 0, a: 0}
+    - _SecondLightDir: {r: 0, g: 0, b: -1, a: 0}
+    - _Tint: {r: 1, g: 1, b: 1, a: 1}
+    - _Tint1: {r: 0.9150943, g: 0.80631894, b: 0.64315593, a: 1}
+    - _Tint2: {r: 1, g: 1, b: 1, a: 1}
     - _TintColor: {r: 0.5, g: 0.5, b: 0.5, a: 0.5}
