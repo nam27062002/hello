@@ -9,8 +9,8 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: dragon_jade_3_body
   m_Shader: {fileID: 4800000, guid: 2345015ac46679e4cb5817ed44c82547, type: 3}
-  m_ShaderKeywords: FRESNEL FXLAYER_REFLECTION OPAQUEALPHA REFLECTIONTYPE_COLOR SPECULAR
-    VERTEXOFFSET VERTEXOFFSETX VERTEXOFFSETY VERTEXOFFSETZ
+  m_ShaderKeywords: FRESNEL FXLAYER_REFLECTION NORMALMAP OPAQUEALPHA REFLECTIONTYPE_COLOR
+    SPECULAR VERTEXOFFSET VERTEXOFFSETX VERTEXOFFSETY VERTEXOFFSETZ
   m_LightmapFlags: 5
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -23,7 +23,7 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _BumpMap:
-        m_Texture: {fileID: 2800000, guid: 156ff611c79affe4c8d496a8f285ec7e, type: 3}
+        m_Texture: {fileID: 2800000, guid: b9b5aeadf1e044b17b243e14b8da7a4c, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailAlbedoMap:
@@ -51,7 +51,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 9475189db02668240951201077489ff7, type: 3}
+        m_Texture: {fileID: 2800000, guid: 0ad0ba9da22824b95bf800592ec88f85, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
@@ -93,7 +93,7 @@ Material:
     - _EnableDiffuseAsSpecMask: 0
     - _EnableDoublesided: 0
     - _EnableFresnel: 1
-    - _EnableNormalMap: 0
+    - _EnableNormalMap: 1
     - _EnableOpaqueFresnel: 0
     - _EnableOpaqueSpecular: 0
     - _EnableSilhouette: 0
