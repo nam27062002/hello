@@ -444,6 +444,68 @@ MonoBehaviour:
   m_disableOnResults: 1
   m_useLocalTransforms: 0
   m_rootLocalReference: {fileID: 0}
+--- !u!1 &1397404725305846693
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2677917264345536940}
+  - component: {fileID: 8665287865548457545}
+  - component: {fileID: 5024408968380241588}
+  m_Layer: 0
+  m_Name: knee_R
+  m_TagString: Untagged
+  m_Icon: {fileID: 5132851093641282708, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2677917264345536940
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1397404725305846693}
+  m_LocalRotation: {x: 0.6048307, y: -0.46481937, z: -0.5532295, w: -0.33475348}
+  m_LocalPosition: {x: 0.8151976, y: -1.1285391, z: -5.375758}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 8576064489309491984}
+  m_RootOrder: 36
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8665287865548457545
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1397404725305846693}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ece7f0589cf74ddf97a0a63886f8499, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_point: 36
+--- !u!114 &5024408968380241588
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1397404725305846693}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9aae6699537414c7ab185eeaef226fe0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_parentName: Dragon_r_Leg_Knee
+  m_parentRoot: {fileID: 8576064489309547768}
+  m_worldPositionStays: 1
+  m_resetScale: 0
+  m_when: 0
 --- !u!1 &1413639903866085883
 GameObject:
   m_ObjectHideFlags: 0
@@ -3354,6 +3416,68 @@ MonoBehaviour:
   m_worldPositionStays: 1
   m_resetScale: 0
   m_when: 0
+--- !u!1 &4113912242749686819
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8180595753251594857}
+  - component: {fileID: 3952082305969049551}
+  - component: {fileID: 6425485882792442427}
+  m_Layer: 0
+  m_Name: knee_L
+  m_TagString: Untagged
+  m_Icon: {fileID: 5132851093641282708, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8180595753251594857
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4113912242749686819}
+  m_LocalRotation: {x: 0.33475348, y: -0.5532295, z: 0.46481937, w: 0.6048307}
+  m_LocalPosition: {x: -0.8151976, y: -1.1285391, z: -5.375758}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 8576064489309491984}
+  m_RootOrder: 35
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3952082305969049551
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4113912242749686819}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ece7f0589cf74ddf97a0a63886f8499, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_point: 35
+--- !u!114 &6425485882792442427
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4113912242749686819}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9aae6699537414c7ab185eeaef226fe0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_parentName: Dragon_l_Leg_Knee
+  m_parentRoot: {fileID: 8576064489309547768}
+  m_worldPositionStays: 1
+  m_resetScale: 0
+  m_when: 0
 --- !u!1 &4171011536546281866
 GameObject:
   m_ObjectHideFlags: 0
@@ -4288,7 +4412,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8575263106945890130}
-  m_LocalRotation: {x: -0.0017653196, y: 0.9786216, z: 0.20548975, w: 0.008407135}
+  m_LocalRotation: {x: -0.04620345, y: -0.17157613, z: -0.008055869, w: 0.98405385}
   m_LocalPosition: {x: 0, y: 0, z: -0.68}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -7667,6 +7791,8 @@ Transform:
   - {fileID: 4864803132589841839}
   - {fileID: 4650394166686519344}
   - {fileID: 1988483764131599732}
+  - {fileID: 8180595753251594857}
+  - {fileID: 2677917264345536940}
   m_Father: {fileID: 8576064489309547768}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
