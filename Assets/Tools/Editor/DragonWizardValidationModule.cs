@@ -209,7 +209,7 @@ public class DragonWizardValidationModule : IDragonWizard
         mainMenuPrefab = AssetDatabase.LoadAssetAtPath(assetPath, typeof(GameObject)) as GameObject;
 
         // Unit tests for main menu prefab
-        results.Add(new DragonTest(MainMenuTestAnimationController(), "Animation controller is set", Severity.Warning));
+        results.Add(new DragonTest(MainMenuTestAnimationController(), "Animation controller is not set", Severity.Warning));
         results.Add(new DragonTest(MainMenuTestAssetBundle(), "Asset bundle prefab set to: " + SelectedSku + "_local", Severity.Warning));
         results.Add(new DragonTest(MainMenuTestViewGameObject(), "View gameobject exists"));
         results.Add(new DragonTest(MainMenuTestDragonPreview(), "MenuDragonPreview script was added"));
@@ -334,7 +334,7 @@ public class DragonWizardValidationModule : IDragonWizard
         if (anim == null)
             return false;
 
-        return anim.runtimeAnimatorController != null ? true : false;
+        return anim.runtimeAnimatorController == null ? true : false;
     }
 
     bool MainMenuTestAssetBundle()
@@ -405,6 +405,9 @@ public class DragonWizardValidationModule : IDragonWizard
     bool GameplayTestAnimationController()
     {
         Transform view = gameplayPrefab.transform.Find("view");
+        if (view == null)
+            return false;
+
         Animator anim = view.GetComponent<Animator>();
         if (anim == null)
             return false;
@@ -503,6 +506,9 @@ public class DragonWizardValidationModule : IDragonWizard
     bool ResultsTestAnimationController()
     {
         Transform view = resultsPrefab.transform.Find("view");
+        if (view == null)
+            return false;
+
         Animator anim = view.GetComponent<Animator>();
         if (anim == null)
             return false;
@@ -538,10 +544,22 @@ public class DragonWizardValidationModule : IDragonWizard
     {
         errorDetails = "success";
 
+        if (mainMenuPrefab == null)
+        {
+            errorDetails = "main menu prefab not found";
+            return false;
+        }
+
         Transform mainMenuPointsTransform = mainMenuPrefab.FindTransformRecursive("points");
         if (mainMenuPointsTransform == null)
         {
             errorDetails = "points gameobject does not exists for main menu prefab";
+            return false;
+        }
+
+        if (gameplayPrefab == null)
+        {
+            errorDetails = "gameplay prefab not found";
             return false;
         }
 
@@ -552,10 +570,22 @@ public class DragonWizardValidationModule : IDragonWizard
             return false;
         }
 
+        if (resultsPrefab == null)
+        {
+            errorDetails = "results prefab not found";
+            return false;
+        }
+
         Transform resultsPointsTransform = resultsPrefab.FindTransformRecursive("points");
         if (resultsPointsTransform == null)
         {
             errorDetails = "points gameobject does not exists for results prefab";
+            return false;
+        }
+
+        if (corpsePrefab == null)
+        {
+            errorDetails = "corpse prefab not found";
             return false;
         }
 

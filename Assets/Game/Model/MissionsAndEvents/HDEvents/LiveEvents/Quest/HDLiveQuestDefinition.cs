@@ -83,6 +83,15 @@ public class HDLiveQuestDefinition : HDLiveEventDefinition {
 
 	}
 
+	public override void Clean()
+    {
+		base.Clean();
+
+		m_goal = new QuestGoal();
+
+	    m_rewards = new List<HDLiveData.Reward>();
+}
+
 	public override void ParseInfo( SimpleJSON.JSONNode _data )
 	{
 		base.ParseInfo(_data);
@@ -113,7 +122,6 @@ public class HDLiveQuestDefinition : HDLiveEventDefinition {
 		data.Add("goal", m_goal.ToJson());
 
 		// Add rewards
-		// [AOC] TODO!! Restoring caching rewards cause a null pointer exception. Investigate why, don't cache them meanwhile
 		JSONArray rewardsData = new JSONArray();
 		for(int i = 0; i < m_rewards.Count; ++i)
 		{
@@ -172,6 +180,6 @@ public class HDLiveQuestDefinition : HDLiveEventDefinition {
 		}
 		
 		// Duration of the quest
-		duration = _def.GetAsLong("duration");
+		duration = _def.GetAsLong("durationMinutes");
 	}
 }

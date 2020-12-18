@@ -148,7 +148,7 @@ public class XPromoManager: Singleton<XPromoManager> {
 
 		m_collectedIncomingRewards.Clear();
 
-		// Reset the xpromo cycle
+		// Clear the xpromo cycle variables
 		xPromoCycle.Clear();
 	}
 
