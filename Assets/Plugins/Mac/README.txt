@@ -1,0 +1,1 @@
+Folder for Mac plugins, don't delete this file please!

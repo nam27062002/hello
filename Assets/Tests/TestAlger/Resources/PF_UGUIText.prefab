@@ -1,0 +1,97 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &139170
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 4
+  m_Component:
+  - 224: {fileID: 22403376}
+  - 222: {fileID: 22224770}
+  - 114: {fileID: 11413852}
+  m_Layer: 5
+  m_Name: PF_UGUIText
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &11413852
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 139170}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 708705254, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 2100000, guid: 70291bb78f22f450cb4a60f9a632312f, type: 2}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
+      Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+  m_FontData:
+    m_Font: {fileID: 12800000, guid: 20fbf4f27906d4ee7a306b10581b3589, type: 3}
+    m_FontSize: 75
+    m_FontStyle: 0
+    m_BestFit: 0
+    m_MinSize: 1
+    m_MaxSize: 300
+    m_Alignment: 0
+    m_AlignByGeometry: 0
+    m_RichText: 1
+    m_HorizontalOverflow: 0
+    m_VerticalOverflow: 0
+    m_LineSpacing: 1
+  m_Text: "EN: A diverse tropical eco-system teeming with tasty tourists\nFR: \"Un
+    \xE9cosyst\xE8me tropical diversifi\xE9, grouillant de d\xE9licieux touristes.\"\nDE:
+    \"Ein artenreiches \xD6kosystem, das mit delikaten Touristen k\xF6dert.\"\nIT:
+    Un ecosistema tropicale brulicante di deliziosi turisti\nJP: \u591A\u69D8\u306A\u71B1\u5E2F\u306E\u751F\u614B\u7CFB\u306B\u52A0\u3048\u5927\u52E2\u306E\u89B3\u5149\u5BA2\u304C\u98DF\u6B32\u3092\u305D\u305D\u308B\u3002\nKO:
+    \uB9DB\uC788\uB294 \uAD00\uAD11\uAC1D\uC774 \uC6B0\uAE00\uC6B0\uAE00\uD55C \uC5F4\uB300
+    \uC0DD\uD0DC\uACC4\uC785\uB2C8\uB2E4.\nTR: Lezzetli turistlerle dolu \xE7e\u015Fitli
+    bir tropik ekosistem\nRU: \"\u0422\u0440\u043E\u043F\u0438\u0447\u0435\u0441\u043A\u0438\u0439
+    \u043C\u0438\u0440, \u0438\u0437\u043E\u0431\u0438\u043B\u0443\u044E\u0449\u0438\u0439
+    \u0432\u043A\u0443\u0441\u043D\u044B\u043C\u0438 \u0442\u0443\u0440\u0438\u0441\u0442\u0430\u043C\u0438\"\nES:
+    Un ecosistema tropical repleto de deliciosos turistas\nZH: \"\u591A\u5F69\u591A\u59FF\u7684\u70ED\u5E26\u751F\u6001,\u5145\u6EE1\u7F8E\u5473\u7684\u6E38\u5BA2\",\u591A\u91C7\u591A\u59FF\u7684\u71B1\u5E36\u751F\u614B\uFF0C\u5145\u6EFF\u7F8E\u5473\u7684\u904A\u5BA2\nPT:
+    Um ecossistema tropical diversificado com diversos turistas saborosos"
+--- !u!222 &22224770
+CanvasRenderer:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 139170}
+--- !u!224 &22403376
+RectTransform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 139170}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: -20, y: -20}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1001 &100100000
+Prefab:
+  m_ObjectHideFlags: 1
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications: []
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 0}
+  m_RootGameObject: {fileID: 139170}
+  m_IsPrefabParent: 1

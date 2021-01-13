@@ -1,0 +1,1 @@
+Folder for Windows plugins, don't delete this file please!

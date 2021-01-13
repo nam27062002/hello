@@ -1,0 +1,1188 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:wsa10="http://www.w3.org/2005/08/addressing" xmlns:tns="http://Ubi.Tools.Oasis.WebServices/2013/08" xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://Ubi.Tools.Oasis.WebServices/2013/08" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <xsd:schema targetNamespace="http://Ubi.Tools.Oasis.WebServices/2013/08/Imports">
+      <xsd:import schemaLocation="http://newoasis.ubisoft.org/Demo/v4.00/WebServices/OasisService.svc?xsd=xsd0" namespace="http://Ubi.Tools.Oasis.WebServices/2013/08" />
+      <xsd:import schemaLocation="http://newoasis.ubisoft.org/Demo/v4.00/WebServices/OasisService.svc?xsd=xsd5" namespace="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" />
+      <xsd:import schemaLocation="http://newoasis.ubisoft.org/Demo/v4.00/WebServices/OasisService.svc?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+      <xsd:import schemaLocation="http://newoasis.ubisoft.org/Demo/v4.00/WebServices/OasisService.svc?xsd=xsd2" namespace="http://Ubi.Tools.Oasis.WebServices/2013/08/Requests" />
+      <xsd:import schemaLocation="http://newoasis.ubisoft.org/Demo/v4.00/WebServices/OasisService.svc?xsd=xsd3" namespace="http://Ubi.Tools.Oasis.WebServices/2013/08/Models" />
+      <xsd:import schemaLocation="http://newoasis.ubisoft.org/Demo/v4.00/WebServices/OasisService.svc?xsd=xsd4" namespace="http://Ubi.Tools.Oasis.WebServices/2013/08/Responses" />
+      <xsd:import schemaLocation="http://newoasis.ubisoft.org/Demo/v4.00/WebServices/OasisService.svc?xsd=xsd6" namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
+      <xsd:import schemaLocation="http://newoasis.ubisoft.org/Demo/v4.00/WebServices/OasisService.svc?xsd=xsd7" namespace="http://Ubi.Tools.Oasis.WebServices/2013/08/Types" />
+      <xsd:import schemaLocation="http://newoasis.ubisoft.org/Demo/v4.00/WebServices/OasisService.svc?xsd=xsd8" namespace="http://schemas.datacontract.org/2004/07/System" />
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="IOasisService_UpdateLineLocalizationPresets_InputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateLineLocalizationPresets" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_UpdateLineLocalizationPresets_OutputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateLineLocalizationPresetsResponse" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_UpdateLineLocalizationPresets_ScheduleFaultFault_FaultMessage">
+    <wsdl:part xmlns:q1="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q1:ScheduleFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_UpdateLineLocalizationPresets_ServiceFaultFault_FaultMessage">
+    <wsdl:part xmlns:q2="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q2:ServiceFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetProjectSettings_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetProjectSettings" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetProjectSettings_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetProjectSettingsResponse" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetProjectSettings_ScheduleFaultFault_FaultMessage">
+    <wsdl:part xmlns:q3="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q3:ScheduleFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetProjectSettings_ServiceFaultFault_FaultMessage">
+    <wsdl:part xmlns:q4="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q4:ServiceFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetProps_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetProps" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetProps_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetPropsResponse" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetProps_ScheduleFaultFault_FaultMessage">
+    <wsdl:part xmlns:q5="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q5:ScheduleFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetProps_ServiceFaultFault_FaultMessage">
+    <wsdl:part xmlns:q6="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q6:ServiceFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetSections_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetSections" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetSections_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetSectionsResponse" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetSections_ScheduleFaultFault_FaultMessage">
+    <wsdl:part xmlns:q7="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q7:ScheduleFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetSections_ServiceFaultFault_FaultMessage">
+    <wsdl:part xmlns:q8="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q8:ServiceFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetShoots_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetShoots" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetShoots_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetShootsResponse" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetShoots_ServiceFaultFault_FaultMessage">
+    <wsdl:part xmlns:q9="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q9:ServiceFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetShoots_ScheduleFaultFault_FaultMessage">
+    <wsdl:part xmlns:q10="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q10:ScheduleFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetShots_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetShots" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetShots_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetShotsResponse" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetShots_ScheduleFaultFault_FaultMessage">
+    <wsdl:part xmlns:q11="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q11:ScheduleFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetShots_ServiceFaultFault_FaultMessage">
+    <wsdl:part xmlns:q12="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q12:ServiceFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetShotCharacters_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetShotCharacters" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetShotCharacters_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetShotCharactersResponse" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetShotCharacters_ScheduleFaultFault_FaultMessage">
+    <wsdl:part xmlns:q13="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q13:ScheduleFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetShotCharacters_ServiceFaultFault_FaultMessage">
+    <wsdl:part xmlns:q14="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q14:ServiceFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetShotProps_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetShotProps" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetShotProps_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetShotPropsResponse" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetShotProps_ScheduleFaultFault_FaultMessage">
+    <wsdl:part xmlns:q15="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q15:ScheduleFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetShotProps_ServiceFaultFault_FaultMessage">
+    <wsdl:part xmlns:q16="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q16:ServiceFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetTeams_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetTeams" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetTeams_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetTeamsResponse" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetTeams_ScheduleFaultFault_FaultMessage">
+    <wsdl:part xmlns:q17="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q17:ScheduleFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetTeams_ServiceFaultFault_FaultMessage">
+    <wsdl:part xmlns:q18="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q18:ServiceFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_UpdateAIElements_InputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateAIElements" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_UpdateAIElements_OutputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateAIElementsResponse" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_UpdateAIElements_ScheduleFaultFault_FaultMessage">
+    <wsdl:part xmlns:q19="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q19:ScheduleFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_UpdateAIElements_ServiceFaultFault_FaultMessage">
+    <wsdl:part xmlns:q20="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q20:ServiceFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_UpdateAIElementSections_InputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateAIElementSections" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_UpdateAIElementSections_OutputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateAIElementSectionsResponse" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_UpdateAIElementSections_ServiceFaultFault_FaultMessage">
+    <wsdl:part xmlns:q21="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q21:ServiceFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_UpdateAIElementSections_ScheduleFaultFault_FaultMessage">
+    <wsdl:part xmlns:q22="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q22:ScheduleFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_UpdateAIElementTypes_InputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateAIElementTypes" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_UpdateAIElementTypes_OutputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateAIElementTypesResponse" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_UpdateAIElementTypes_ScheduleFaultFault_FaultMessage">
+    <wsdl:part xmlns:q23="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q23:ScheduleFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_UpdateAIElementTypes_ServiceFaultFault_FaultMessage">
+    <wsdl:part xmlns:q24="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q24:ServiceFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_UpdateAudioFiles_InputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateAudioFiles" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_UpdateAudioFiles_OutputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateAudioFilesResponse" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_UpdateAudioFiles_ScheduleFaultFault_FaultMessage">
+    <wsdl:part xmlns:q25="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q25:ScheduleFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_UpdateAudioFiles_ServiceFaultFault_FaultMessage">
+    <wsdl:part xmlns:q26="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q26:ServiceFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_UpdateCharacters_InputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateCharacters" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_UpdateCharacters_OutputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateCharactersResponse" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_UpdateCharacters_ServiceFaultFault_FaultMessage">
+    <wsdl:part xmlns:q27="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q27:ServiceFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_UpdateCharacters_ScheduleFaultFault_FaultMessage">
+    <wsdl:part xmlns:q28="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q28:ScheduleFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_UpdateComments_InputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateComments" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_UpdateComments_OutputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateCommentsResponse" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_UpdateComments_ScheduleFaultFault_FaultMessage">
+    <wsdl:part xmlns:q29="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q29:ScheduleFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_UpdateComments_ServiceFaultFault_FaultMessage">
+    <wsdl:part xmlns:q30="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q30:ServiceFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_UpdateCustomDatas_InputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateCustomDatas" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_UpdateCustomDatas_OutputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateCustomDatasResponse" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_UpdateCustomDatas_ServiceFaultFault_FaultMessage">
+    <wsdl:part xmlns:q31="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q31:ServiceFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_UpdateCustomDatas_ScheduleFaultFault_FaultMessage">
+    <wsdl:part xmlns:q32="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q32:ScheduleFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_UpdateCustomPresets_InputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateCustomPresets" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_UpdateCustomPresets_OutputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateCustomPresetsResponse" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_UpdateCustomPresets_ServiceFaultFault_FaultMessage">
+    <wsdl:part xmlns:q33="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q33:ServiceFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_UpdateCustomPresets_ScheduleFaultFault_FaultMessage">
+    <wsdl:part xmlns:q34="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q34:ScheduleFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_UpdateCustomPresetTypes_InputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateCustomPresetTypes" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_UpdateCustomPresetTypes_OutputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateCustomPresetTypesResponse" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_UpdateCustomPresetTypes_ScheduleFaultFault_FaultMessage">
+    <wsdl:part xmlns:q35="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q35:ScheduleFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_UpdateCustomPresetTypes_ServiceFaultFault_FaultMessage">
+    <wsdl:part xmlns:q36="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q36:ServiceFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_UpdateCustomProperties_InputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateCustomProperties" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_UpdateCustomProperties_OutputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateCustomPropertiesResponse" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_UpdateCustomProperties_ServiceFaultFault_FaultMessage">
+    <wsdl:part xmlns:q37="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q37:ServiceFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_UpdateCustomProperties_ScheduleFaultFault_FaultMessage">
+    <wsdl:part xmlns:q38="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q38:ScheduleFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_UpdateCustomValues_InputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateCustomValues" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_UpdateCustomValues_OutputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateCustomValuesResponse" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_UpdateCustomValues_ScheduleFaultFault_FaultMessage">
+    <wsdl:part xmlns:q39="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q39:ScheduleFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_UpdateCustomValues_ServiceFaultFault_FaultMessage">
+    <wsdl:part xmlns:q40="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q40:ServiceFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_UpdateScenes_InputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateScenes" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_UpdateScenes_OutputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateScenesResponse" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_UpdateScenes_ServiceFaultFault_FaultMessage">
+    <wsdl:part xmlns:q41="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q41:ServiceFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_UpdateScenes_ScheduleFaultFault_FaultMessage">
+    <wsdl:part xmlns:q42="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q42:ScheduleFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_UpdateFolders_InputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateFolders" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_UpdateFolders_OutputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateFoldersResponse" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_UpdateFolders_ScheduleFaultFault_FaultMessage">
+    <wsdl:part xmlns:q43="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q43:ScheduleFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_UpdateFolders_ServiceFaultFault_FaultMessage">
+    <wsdl:part xmlns:q44="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q44:ServiceFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_UpdateLanguages_InputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateLanguages" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_UpdateLanguages_OutputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateLanguagesResponse" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_UpdateLanguages_ServiceFaultFault_FaultMessage">
+    <wsdl:part xmlns:q45="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q45:ServiceFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_UpdateLanguages_ScheduleFaultFault_FaultMessage">
+    <wsdl:part xmlns:q46="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q46:ScheduleFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_UpdateLines_InputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateLines" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_UpdateLines_OutputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateLinesResponse" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_UpdateLines_ServiceFaultFault_FaultMessage">
+    <wsdl:part xmlns:q47="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q47:ServiceFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_UpdateLines_ScheduleFaultFault_FaultMessage">
+    <wsdl:part xmlns:q48="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q48:ScheduleFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_UpdateLineCustomDataValues_InputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateLineCustomDataValues" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_UpdateLineCustomDataValues_OutputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateLineCustomDataValuesResponse" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_UpdateLineCustomDataValues_ScheduleFaultFault_FaultMessage">
+    <wsdl:part xmlns:q49="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q49:ScheduleFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_UpdateLineCustomDataValues_ServiceFaultFault_FaultMessage">
+    <wsdl:part xmlns:q50="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q50:ServiceFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_UpdateSceneCustomDataValues_InputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateSceneCustomDataValues" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_UpdateSceneCustomDataValues_OutputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateSceneCustomDataValuesResponse" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_UpdateSceneCustomDataValues_ServiceFaultFault_FaultMessage">
+    <wsdl:part xmlns:q51="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q51:ServiceFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_UpdateSceneCustomDataValues_ScheduleFaultFault_FaultMessage">
+    <wsdl:part xmlns:q52="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q52:ScheduleFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_UpdateLineTranslations_InputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateLineTranslations" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_UpdateLineTranslations_OutputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateLineTranslationsResponse" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_UpdateLineTranslations_ServiceFaultFault_FaultMessage">
+    <wsdl:part xmlns:q53="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q53:ServiceFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_UpdateLineTranslations_ScheduleFaultFault_FaultMessage">
+    <wsdl:part xmlns:q54="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q54:ScheduleFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_UpdateMenuControls_InputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateMenuControls" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_UpdateMenuControls_OutputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateMenuControlsResponse" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_UpdateMenuControls_ServiceFaultFault_FaultMessage">
+    <wsdl:part xmlns:q55="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q55:ServiceFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_UpdateMenuControls_ScheduleFaultFault_FaultMessage">
+    <wsdl:part xmlns:q56="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q56:ScheduleFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_UpdateSections_InputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateSections" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_UpdateSections_OutputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateSectionsResponse" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_UpdateSections_ServiceFaultFault_FaultMessage">
+    <wsdl:part xmlns:q57="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q57:ServiceFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_UpdateSections_ScheduleFaultFault_FaultMessage">
+    <wsdl:part xmlns:q58="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q58:ScheduleFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_UpdateShoots_InputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateShoots" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_UpdateShoots_OutputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateShootsResponse" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_UpdateShoots_ServiceFaultFault_FaultMessage">
+    <wsdl:part xmlns:q59="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q59:ServiceFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_UpdateShoots_ScheduleFaultFault_FaultMessage">
+    <wsdl:part xmlns:q60="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q60:ScheduleFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_UpdateShots_InputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateShots" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_UpdateShots_OutputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateShotsResponse" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_UpdateShots_ScheduleFaultFault_FaultMessage">
+    <wsdl:part xmlns:q61="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q61:ScheduleFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_UpdateShots_ServiceFaultFault_FaultMessage">
+    <wsdl:part xmlns:q62="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q62:ServiceFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_UpdateTeams_InputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateTeams" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_UpdateTeams_OutputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateTeamsResponse" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_UpdateTeams_ServiceFaultFault_FaultMessage">
+    <wsdl:part xmlns:q63="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q63:ServiceFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_UpdateTeams_ScheduleFaultFault_FaultMessage">
+    <wsdl:part xmlns:q64="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q64:ScheduleFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_UpdateLocalizationPresets_InputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateLocalizationPresets" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_UpdateLocalizationPresets_OutputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateLocalizationPresetsResponse" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_UpdateLocalizationPresets_ScheduleFaultFault_FaultMessage">
+    <wsdl:part xmlns:q65="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q65:ScheduleFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_UpdateLocalizationPresets_ServiceFaultFault_FaultMessage">
+    <wsdl:part xmlns:q66="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q66:ServiceFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetAudioFilenames_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetAudioFilenames" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetAudioFilenames_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetAudioFilenamesResponse" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetAudioFilenames_ServiceFaultFault_FaultMessage">
+    <wsdl:part xmlns:q67="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q67:ServiceFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetAudioFilenames_ScheduleFaultFault_FaultMessage">
+    <wsdl:part xmlns:q68="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q68:ScheduleFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_IsRecordingRequired_InputMessage">
+    <wsdl:part name="parameters" element="tns:IsRecordingRequired" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_IsRecordingRequired_OutputMessage">
+    <wsdl:part name="parameters" element="tns:IsRecordingRequiredResponse" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_IsRecordingRequired_ServiceFaultFault_FaultMessage">
+    <wsdl:part xmlns:q69="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q69:ServiceFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_IsRecordingRequired_ScheduleFaultFault_FaultMessage">
+    <wsdl:part xmlns:q70="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q70:ScheduleFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_IsTranslationRequired_InputMessage">
+    <wsdl:part name="parameters" element="tns:IsTranslationRequired" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_IsTranslationRequired_OutputMessage">
+    <wsdl:part name="parameters" element="tns:IsTranslationRequiredResponse" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_IsTranslationRequired_ServiceFaultFault_FaultMessage">
+    <wsdl:part xmlns:q71="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q71:ServiceFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_IsTranslationRequired_ScheduleFaultFault_FaultMessage">
+    <wsdl:part xmlns:q72="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q72:ScheduleFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetDatabaseVersion_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetDatabaseVersion" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetDatabaseVersion_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetDatabaseVersionResponse" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetDatabaseVersion_ScheduleFaultFault_FaultMessage">
+    <wsdl:part xmlns:q73="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q73:ScheduleFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetDatabaseVersion_ServiceFaultFault_FaultMessage">
+    <wsdl:part xmlns:q74="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q74:ServiceFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetRemoteFileStorageSettings_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetRemoteFileStorageSettings" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetRemoteFileStorageSettings_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetRemoteFileStorageSettingsResponse" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetRemoteFileStorageSettings_ScheduleFaultFault_FaultMessage">
+    <wsdl:part xmlns:q75="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q75:ScheduleFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetRemoteFileStorageSettings_ServiceFaultFault_FaultMessage">
+    <wsdl:part xmlns:q76="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q76:ServiceFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_MoveScenes_InputMessage">
+    <wsdl:part name="parameters" element="tns:MoveScenes" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_MoveScenes_OutputMessage">
+    <wsdl:part name="parameters" element="tns:MoveScenesResponse" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_MoveScenes_ScheduleFaultFault_FaultMessage">
+    <wsdl:part xmlns:q77="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q77:ScheduleFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_MoveScenes_ServiceFaultFault_FaultMessage">
+    <wsdl:part xmlns:q78="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q78:ServiceFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_MoveSections_InputMessage">
+    <wsdl:part name="parameters" element="tns:MoveSections" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_MoveSections_OutputMessage">
+    <wsdl:part name="parameters" element="tns:MoveSectionsResponse" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_MoveSections_ScheduleFaultFault_FaultMessage">
+    <wsdl:part xmlns:q79="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q79:ScheduleFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_MoveSections_ServiceFaultFault_FaultMessage">
+    <wsdl:part xmlns:q80="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q80:ServiceFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_MoveMenuControls_InputMessage">
+    <wsdl:part name="parameters" element="tns:MoveMenuControls" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_MoveMenuControls_OutputMessage">
+    <wsdl:part name="parameters" element="tns:MoveMenuControlsResponse" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_MoveMenuControls_ScheduleFaultFault_FaultMessage">
+    <wsdl:part xmlns:q81="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q81:ScheduleFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_MoveMenuControls_ServiceFaultFault_FaultMessage">
+    <wsdl:part xmlns:q82="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q82:ServiceFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetActors_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetActors" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetActors_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetActorsResponse" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetActors_ServiceFaultFault_FaultMessage">
+    <wsdl:part xmlns:q83="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q83:ServiceFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetActors_ScheduleFaultFault_FaultMessage">
+    <wsdl:part xmlns:q84="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q84:ScheduleFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetAIElements_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetAIElements" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetAIElements_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetAIElementsResponse" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetAIElements_ScheduleFaultFault_FaultMessage">
+    <wsdl:part xmlns:q85="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q85:ScheduleFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetAIElements_ServiceFaultFault_FaultMessage">
+    <wsdl:part xmlns:q86="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q86:ServiceFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetAIElementSections_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetAIElementSections" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetAIElementSections_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetAIElementSectionsResponse" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetAIElementSections_ScheduleFaultFault_FaultMessage">
+    <wsdl:part xmlns:q87="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q87:ScheduleFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetAIElementSections_ServiceFaultFault_FaultMessage">
+    <wsdl:part xmlns:q88="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q88:ServiceFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetAIElementTypes_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetAIElementTypes" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetAIElementTypes_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetAIElementTypesResponse" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetAIElementTypes_ScheduleFaultFault_FaultMessage">
+    <wsdl:part xmlns:q89="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q89:ScheduleFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetAIElementTypes_ServiceFaultFault_FaultMessage">
+    <wsdl:part xmlns:q90="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q90:ServiceFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetAudioFiles_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetAudioFiles" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetAudioFiles_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetAudioFilesResponse" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetAudioFiles_ScheduleFaultFault_FaultMessage">
+    <wsdl:part xmlns:q91="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q91:ScheduleFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetAudioFiles_ServiceFaultFault_FaultMessage">
+    <wsdl:part xmlns:q92="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q92:ServiceFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetAudioFilesLatest_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetAudioFilesLatest" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetAudioFilesLatest_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetAudioFilesLatestResponse" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetAudioFilesLatest_ScheduleFaultFault_FaultMessage">
+    <wsdl:part xmlns:q93="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q93:ScheduleFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetAudioFilesLatest_ServiceFaultFault_FaultMessage">
+    <wsdl:part xmlns:q94="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q94:ServiceFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetCharacters_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetCharacters" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetCharacters_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetCharactersResponse" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetCharacters_ScheduleFaultFault_FaultMessage">
+    <wsdl:part xmlns:q95="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q95:ScheduleFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetCharacters_ServiceFaultFault_FaultMessage">
+    <wsdl:part xmlns:q96="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q96:ServiceFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetComments_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetComments" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetComments_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetCommentsResponse" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetComments_ScheduleFaultFault_FaultMessage">
+    <wsdl:part xmlns:q97="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q97:ScheduleFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetComments_ServiceFaultFault_FaultMessage">
+    <wsdl:part xmlns:q98="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q98:ServiceFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetCustomDatas_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetCustomDatas" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetCustomDatas_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetCustomDatasResponse" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetCustomDatas_ScheduleFaultFault_FaultMessage">
+    <wsdl:part xmlns:q99="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q99:ScheduleFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetCustomDatas_ServiceFaultFault_FaultMessage">
+    <wsdl:part xmlns:q100="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q100:ServiceFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetCustomPresets_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetCustomPresets" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetCustomPresets_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetCustomPresetsResponse" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetCustomPresets_ScheduleFaultFault_FaultMessage">
+    <wsdl:part xmlns:q101="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q101:ScheduleFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetCustomPresets_ServiceFaultFault_FaultMessage">
+    <wsdl:part xmlns:q102="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q102:ServiceFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetCustomPresetTypes_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetCustomPresetTypes" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetCustomPresetTypes_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetCustomPresetTypesResponse" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetCustomPresetTypes_ScheduleFaultFault_FaultMessage">
+    <wsdl:part xmlns:q103="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q103:ScheduleFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetCustomPresetTypes_ServiceFaultFault_FaultMessage">
+    <wsdl:part xmlns:q104="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q104:ServiceFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetCustomProperties_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetCustomProperties" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetCustomProperties_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetCustomPropertiesResponse" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetCustomProperties_ScheduleFaultFault_FaultMessage">
+    <wsdl:part xmlns:q105="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q105:ScheduleFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetCustomProperties_ServiceFaultFault_FaultMessage">
+    <wsdl:part xmlns:q106="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q106:ServiceFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetCustomValues_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetCustomValues" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetCustomValues_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetCustomValuesResponse" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetCustomValues_ScheduleFaultFault_FaultMessage">
+    <wsdl:part xmlns:q107="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q107:ScheduleFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetCustomValues_ServiceFaultFault_FaultMessage">
+    <wsdl:part xmlns:q108="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q108:ServiceFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetScenes_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetScenes" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetScenes_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetScenesResponse" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetScenes_ScheduleFaultFault_FaultMessage">
+    <wsdl:part xmlns:q109="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q109:ScheduleFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetScenes_ServiceFaultFault_FaultMessage">
+    <wsdl:part xmlns:q110="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q110:ServiceFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetFolders_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetFolders" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetFolders_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetFoldersResponse" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetFolders_ScheduleFaultFault_FaultMessage">
+    <wsdl:part xmlns:q111="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q111:ScheduleFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetFolders_ServiceFaultFault_FaultMessage">
+    <wsdl:part xmlns:q112="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q112:ServiceFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetLanguages_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetLanguages" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetLanguages_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetLanguagesResponse" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetLanguages_ScheduleFaultFault_FaultMessage">
+    <wsdl:part xmlns:q113="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q113:ScheduleFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetLanguages_ServiceFaultFault_FaultMessage">
+    <wsdl:part xmlns:q114="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q114:ServiceFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetLines_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetLines" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetLines_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetLinesResponse" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetLines_ScheduleFaultFault_FaultMessage">
+    <wsdl:part xmlns:q115="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q115:ScheduleFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetLines_ServiceFaultFault_FaultMessage">
+    <wsdl:part xmlns:q116="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q116:ServiceFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetLineCustomDataValues_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetLineCustomDataValues" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetLineCustomDataValues_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetLineCustomDataValuesResponse" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetLineCustomDataValues_ServiceFaultFault_FaultMessage">
+    <wsdl:part xmlns:q117="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q117:ServiceFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetLineCustomDataValues_ScheduleFaultFault_FaultMessage">
+    <wsdl:part xmlns:q118="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q118:ScheduleFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetSceneCustomDataValues_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetSceneCustomDataValues" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetSceneCustomDataValues_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetSceneCustomDataValuesResponse" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetSceneCustomDataValues_ScheduleFaultFault_FaultMessage">
+    <wsdl:part xmlns:q119="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q119:ScheduleFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetSceneCustomDataValues_ServiceFaultFault_FaultMessage">
+    <wsdl:part xmlns:q120="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q120:ServiceFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetLineLocalizationPresets_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetLineLocalizationPresets" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetLineLocalizationPresets_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetLineLocalizationPresetsResponse" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetLineLocalizationPresets_ScheduleFaultFault_FaultMessage">
+    <wsdl:part xmlns:q121="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q121:ScheduleFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetLineLocalizationPresets_ServiceFaultFault_FaultMessage">
+    <wsdl:part xmlns:q122="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q122:ServiceFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetLineSubtitles_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetLineSubtitles" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetLineSubtitles_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetLineSubtitlesResponse" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetLineSubtitles_ScheduleFaultFault_FaultMessage">
+    <wsdl:part xmlns:q123="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q123:ScheduleFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetLineSubtitles_ServiceFaultFault_FaultMessage">
+    <wsdl:part xmlns:q124="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q124:ServiceFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetLineTranslations_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetLineTranslations" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetLineTranslations_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetLineTranslationsResponse" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetLineTranslations_ServiceFaultFault_FaultMessage">
+    <wsdl:part xmlns:q125="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q125:ServiceFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetLineTranslations_ScheduleFaultFault_FaultMessage">
+    <wsdl:part xmlns:q126="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q126:ScheduleFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetLocalizationPresets_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetLocalizationPresets" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetLocalizationPresets_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetLocalizationPresetsResponse" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetLocalizationPresets_ServiceFaultFault_FaultMessage">
+    <wsdl:part xmlns:q127="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q127:ServiceFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetLocalizationPresets_ScheduleFaultFault_FaultMessage">
+    <wsdl:part xmlns:q128="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q128:ScheduleFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetMenuControls_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetMenuControls" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetMenuControls_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetMenuControlsResponse" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetMenuControls_ScheduleFaultFault_FaultMessage">
+    <wsdl:part xmlns:q129="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q129:ScheduleFault" />
+  </wsdl:message>
+  <wsdl:message name="IOasisService_GetMenuControls_ServiceFaultFault_FaultMessage">
+    <wsdl:part xmlns:q130="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" name="detail" element="q130:ServiceFault" />
+  </wsdl:message>
+  <wsdl:portType name="IOasisService">
+    <wsdl:operation name="UpdateLineLocalizationPresets">
+      <wsdl:input wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/UpdateLineLocalizationPresets" message="tns:IOasisService_UpdateLineLocalizationPresets_InputMessage" />
+      <wsdl:output wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/UpdateLineLocalizationPresetsResponse" message="tns:IOasisService_UpdateLineLocalizationPresets_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/UpdateLineLocalizationPresetsScheduleFaultFault" name="ScheduleFaultFault" message="tns:IOasisService_UpdateLineLocalizationPresets_ScheduleFaultFault_FaultMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/UpdateLineLocalizationPresetsServiceFaultFault" name="ServiceFaultFault" message="tns:IOasisService_UpdateLineLocalizationPresets_ServiceFaultFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetProjectSettings">
+      <wsdl:input wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/GetProjectSettings" message="tns:IOasisService_GetProjectSettings_InputMessage" />
+      <wsdl:output wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetProjectSettingsResponse" message="tns:IOasisService_GetProjectSettings_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetProjectSettingsScheduleFaultFault" name="ScheduleFaultFault" message="tns:IOasisService_GetProjectSettings_ScheduleFaultFault_FaultMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetProjectSettingsServiceFaultFault" name="ServiceFaultFault" message="tns:IOasisService_GetProjectSettings_ServiceFaultFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetProps">
+      <wsdl:input wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/GetProps" message="tns:IOasisService_GetProps_InputMessage" />
+      <wsdl:output wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetPropsResponse" message="tns:IOasisService_GetProps_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetPropsScheduleFaultFault" name="ScheduleFaultFault" message="tns:IOasisService_GetProps_ScheduleFaultFault_FaultMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetPropsServiceFaultFault" name="ServiceFaultFault" message="tns:IOasisService_GetProps_ServiceFaultFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetSections">
+      <wsdl:input wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/GetSections" message="tns:IOasisService_GetSections_InputMessage" />
+      <wsdl:output wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetSectionsResponse" message="tns:IOasisService_GetSections_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetSectionsScheduleFaultFault" name="ScheduleFaultFault" message="tns:IOasisService_GetSections_ScheduleFaultFault_FaultMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetSectionsServiceFaultFault" name="ServiceFaultFault" message="tns:IOasisService_GetSections_ServiceFaultFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetShoots">
+      <wsdl:input wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/GetShoots" message="tns:IOasisService_GetShoots_InputMessage" />
+      <wsdl:output wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetShootsResponse" message="tns:IOasisService_GetShoots_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetShootsServiceFaultFault" name="ServiceFaultFault" message="tns:IOasisService_GetShoots_ServiceFaultFault_FaultMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetShootsScheduleFaultFault" name="ScheduleFaultFault" message="tns:IOasisService_GetShoots_ScheduleFaultFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetShots">
+      <wsdl:input wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/GetShots" message="tns:IOasisService_GetShots_InputMessage" />
+      <wsdl:output wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetShotsResponse" message="tns:IOasisService_GetShots_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetShotsScheduleFaultFault" name="ScheduleFaultFault" message="tns:IOasisService_GetShots_ScheduleFaultFault_FaultMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetShotsServiceFaultFault" name="ServiceFaultFault" message="tns:IOasisService_GetShots_ServiceFaultFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetShotCharacters">
+      <wsdl:input wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/GetShotCharacters" message="tns:IOasisService_GetShotCharacters_InputMessage" />
+      <wsdl:output wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetShotCharactersResponse" message="tns:IOasisService_GetShotCharacters_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetShotCharactersScheduleFaultFault" name="ScheduleFaultFault" message="tns:IOasisService_GetShotCharacters_ScheduleFaultFault_FaultMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetShotCharactersServiceFaultFault" name="ServiceFaultFault" message="tns:IOasisService_GetShotCharacters_ServiceFaultFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetShotProps">
+      <wsdl:input wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/GetShotProps" message="tns:IOasisService_GetShotProps_InputMessage" />
+      <wsdl:output wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetShotPropsResponse" message="tns:IOasisService_GetShotProps_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetShotPropsScheduleFaultFault" name="ScheduleFaultFault" message="tns:IOasisService_GetShotProps_ScheduleFaultFault_FaultMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetShotPropsServiceFaultFault" name="ServiceFaultFault" message="tns:IOasisService_GetShotProps_ServiceFaultFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetTeams">
+      <wsdl:input wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/GetTeams" message="tns:IOasisService_GetTeams_InputMessage" />
+      <wsdl:output wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetTeamsResponse" message="tns:IOasisService_GetTeams_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetTeamsScheduleFaultFault" name="ScheduleFaultFault" message="tns:IOasisService_GetTeams_ScheduleFaultFault_FaultMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetTeamsServiceFaultFault" name="ServiceFaultFault" message="tns:IOasisService_GetTeams_ServiceFaultFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="UpdateAIElements">
+      <wsdl:input wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/UpdateAIElements" message="tns:IOasisService_UpdateAIElements_InputMessage" />
+      <wsdl:output wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/UpdateAIElementsResponse" message="tns:IOasisService_UpdateAIElements_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/UpdateAIElementsScheduleFaultFault" name="ScheduleFaultFault" message="tns:IOasisService_UpdateAIElements_ScheduleFaultFault_FaultMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/UpdateAIElementsServiceFaultFault" name="ServiceFaultFault" message="tns:IOasisService_UpdateAIElements_ServiceFaultFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="UpdateAIElementSections">
+      <wsdl:input wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/UpdateAIElementSections" message="tns:IOasisService_UpdateAIElementSections_InputMessage" />
+      <wsdl:output wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/UpdateAIElementSectionsResponse" message="tns:IOasisService_UpdateAIElementSections_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/UpdateAIElementSectionsServiceFaultFault" name="ServiceFaultFault" message="tns:IOasisService_UpdateAIElementSections_ServiceFaultFault_FaultMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/UpdateAIElementSectionsScheduleFaultFault" name="ScheduleFaultFault" message="tns:IOasisService_UpdateAIElementSections_ScheduleFaultFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="UpdateAIElementTypes">
+      <wsdl:input wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/UpdateAIElementTypes" message="tns:IOasisService_UpdateAIElementTypes_InputMessage" />
+      <wsdl:output wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/UpdateAIElementTypesResponse" message="tns:IOasisService_UpdateAIElementTypes_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/UpdateAIElementTypesScheduleFaultFault" name="ScheduleFaultFault" message="tns:IOasisService_UpdateAIElementTypes_ScheduleFaultFault_FaultMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/UpdateAIElementTypesServiceFaultFault" name="ServiceFaultFault" message="tns:IOasisService_UpdateAIElementTypes_ServiceFaultFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="UpdateAudioFiles">
+      <wsdl:input wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/UpdateAduioFiles" message="tns:IOasisService_UpdateAudioFiles_InputMessage" />
+      <wsdl:output wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/UpdateAudioFilesResponse" message="tns:IOasisService_UpdateAudioFiles_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/UpdateAudioFilesScheduleFaultFault" name="ScheduleFaultFault" message="tns:IOasisService_UpdateAudioFiles_ScheduleFaultFault_FaultMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/UpdateAudioFilesServiceFaultFault" name="ServiceFaultFault" message="tns:IOasisService_UpdateAudioFiles_ServiceFaultFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="UpdateCharacters">
+      <wsdl:input wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/UpdateCharacters" message="tns:IOasisService_UpdateCharacters_InputMessage" />
+      <wsdl:output wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/UpdateCharactersResponse" message="tns:IOasisService_UpdateCharacters_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/UpdateCharactersServiceFaultFault" name="ServiceFaultFault" message="tns:IOasisService_UpdateCharacters_ServiceFaultFault_FaultMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/UpdateCharactersScheduleFaultFault" name="ScheduleFaultFault" message="tns:IOasisService_UpdateCharacters_ScheduleFaultFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="UpdateComments">
+      <wsdl:input wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/UpdateComments" message="tns:IOasisService_UpdateComments_InputMessage" />
+      <wsdl:output wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/UpdateCommentsResponse" message="tns:IOasisService_UpdateComments_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/UpdateCommentsScheduleFaultFault" name="ScheduleFaultFault" message="tns:IOasisService_UpdateComments_ScheduleFaultFault_FaultMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/UpdateCommentsServiceFaultFault" name="ServiceFaultFault" message="tns:IOasisService_UpdateComments_ServiceFaultFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="UpdateCustomDatas">
+      <wsdl:input wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/UpdateCustomDatas" message="tns:IOasisService_UpdateCustomDatas_InputMessage" />
+      <wsdl:output wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/UpdateCustomDatasResponse" message="tns:IOasisService_UpdateCustomDatas_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/UpdateCustomDatasServiceFaultFault" name="ServiceFaultFault" message="tns:IOasisService_UpdateCustomDatas_ServiceFaultFault_FaultMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/UpdateCustomDatasScheduleFaultFault" name="ScheduleFaultFault" message="tns:IOasisService_UpdateCustomDatas_ScheduleFaultFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="UpdateCustomPresets">
+      <wsdl:input wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/UpdateCustomPresets" message="tns:IOasisService_UpdateCustomPresets_InputMessage" />
+      <wsdl:output wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/UpdateCustomPresetsResponse" message="tns:IOasisService_UpdateCustomPresets_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/UpdateCustomPresetsServiceFaultFault" name="ServiceFaultFault" message="tns:IOasisService_UpdateCustomPresets_ServiceFaultFault_FaultMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/UpdateCustomPresetsScheduleFaultFault" name="ScheduleFaultFault" message="tns:IOasisService_UpdateCustomPresets_ScheduleFaultFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="UpdateCustomPresetTypes">
+      <wsdl:input wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/UpdateCustomPresetTypes" message="tns:IOasisService_UpdateCustomPresetTypes_InputMessage" />
+      <wsdl:output wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/UpdateCustomPresetTypesResponse" message="tns:IOasisService_UpdateCustomPresetTypes_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/UpdateCustomPresetTypesScheduleFaultFault" name="ScheduleFaultFault" message="tns:IOasisService_UpdateCustomPresetTypes_ScheduleFaultFault_FaultMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/UpdateCustomPresetTypesServiceFaultFault" name="ServiceFaultFault" message="tns:IOasisService_UpdateCustomPresetTypes_ServiceFaultFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="UpdateCustomProperties">
+      <wsdl:input wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/UpdateCustomProperties" message="tns:IOasisService_UpdateCustomProperties_InputMessage" />
+      <wsdl:output wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/UpdateCustomPropertiesResponse" message="tns:IOasisService_UpdateCustomProperties_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/UpdateCustomPropertiesServiceFaultFault" name="ServiceFaultFault" message="tns:IOasisService_UpdateCustomProperties_ServiceFaultFault_FaultMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/UpdateCustomPropertiesScheduleFaultFault" name="ScheduleFaultFault" message="tns:IOasisService_UpdateCustomProperties_ScheduleFaultFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="UpdateCustomValues">
+      <wsdl:input wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/UpdateCustomValues" message="tns:IOasisService_UpdateCustomValues_InputMessage" />
+      <wsdl:output wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/UpdateCustomValuesResponse" message="tns:IOasisService_UpdateCustomValues_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/UpdateCustomValuesScheduleFaultFault" name="ScheduleFaultFault" message="tns:IOasisService_UpdateCustomValues_ScheduleFaultFault_FaultMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/UpdateCustomValuesServiceFaultFault" name="ServiceFaultFault" message="tns:IOasisService_UpdateCustomValues_ServiceFaultFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="UpdateScenes">
+      <wsdl:input wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/UpdateScenes" message="tns:IOasisService_UpdateScenes_InputMessage" />
+      <wsdl:output wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/UpdateScenesResponse" message="tns:IOasisService_UpdateScenes_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/UpdateScenesServiceFaultFault" name="ServiceFaultFault" message="tns:IOasisService_UpdateScenes_ServiceFaultFault_FaultMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/UpdateScenesScheduleFaultFault" name="ScheduleFaultFault" message="tns:IOasisService_UpdateScenes_ScheduleFaultFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="UpdateFolders">
+      <wsdl:input wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/UpdateFolders" message="tns:IOasisService_UpdateFolders_InputMessage" />
+      <wsdl:output wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/UpdateFoldersResponse" message="tns:IOasisService_UpdateFolders_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/UpdateFoldersScheduleFaultFault" name="ScheduleFaultFault" message="tns:IOasisService_UpdateFolders_ScheduleFaultFault_FaultMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/UpdateFoldersServiceFaultFault" name="ServiceFaultFault" message="tns:IOasisService_UpdateFolders_ServiceFaultFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="UpdateLanguages">
+      <wsdl:input wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/UpdateLanguages" message="tns:IOasisService_UpdateLanguages_InputMessage" />
+      <wsdl:output wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/UpdateLanguagesResponse" message="tns:IOasisService_UpdateLanguages_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/UpdateLanguagesServiceFaultFault" name="ServiceFaultFault" message="tns:IOasisService_UpdateLanguages_ServiceFaultFault_FaultMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/UpdateLanguagesScheduleFaultFault" name="ScheduleFaultFault" message="tns:IOasisService_UpdateLanguages_ScheduleFaultFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="UpdateLines">
+      <wsdl:input wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/UpdateLines" message="tns:IOasisService_UpdateLines_InputMessage" />
+      <wsdl:output wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/UpdateLinesResponse" message="tns:IOasisService_UpdateLines_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/UpdateLinesServiceFaultFault" name="ServiceFaultFault" message="tns:IOasisService_UpdateLines_ServiceFaultFault_FaultMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/UpdateLinesScheduleFaultFault" name="ScheduleFaultFault" message="tns:IOasisService_UpdateLines_ScheduleFaultFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="UpdateLineCustomDataValues">
+      <wsdl:input wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/UpdateLineCustomDataValues" message="tns:IOasisService_UpdateLineCustomDataValues_InputMessage" />
+      <wsdl:output wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/UpdateLineCustomDataValuesResponse" message="tns:IOasisService_UpdateLineCustomDataValues_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/UpdateLineCustomDataValuesScheduleFaultFault" name="ScheduleFaultFault" message="tns:IOasisService_UpdateLineCustomDataValues_ScheduleFaultFault_FaultMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/UpdateLineCustomDataValuesServiceFaultFault" name="ServiceFaultFault" message="tns:IOasisService_UpdateLineCustomDataValues_ServiceFaultFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="UpdateSceneCustomDataValues">
+      <wsdl:input wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/UpdateSceneCustomDataValues" message="tns:IOasisService_UpdateSceneCustomDataValues_InputMessage" />
+      <wsdl:output wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/UpdateSceneCustomDataValuesResponse" message="tns:IOasisService_UpdateSceneCustomDataValues_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/UpdateSceneCustomDataValuesServiceFaultFault" name="ServiceFaultFault" message="tns:IOasisService_UpdateSceneCustomDataValues_ServiceFaultFault_FaultMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/UpdateSceneCustomDataValuesScheduleFaultFault" name="ScheduleFaultFault" message="tns:IOasisService_UpdateSceneCustomDataValues_ScheduleFaultFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="UpdateLineTranslations">
+      <wsdl:input wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/UpdateLineTranslations" message="tns:IOasisService_UpdateLineTranslations_InputMessage" />
+      <wsdl:output wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/UpdateLineTranslationsResponse" message="tns:IOasisService_UpdateLineTranslations_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/UpdateLineTranslationsServiceFaultFault" name="ServiceFaultFault" message="tns:IOasisService_UpdateLineTranslations_ServiceFaultFault_FaultMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/UpdateLineTranslationsScheduleFaultFault" name="ScheduleFaultFault" message="tns:IOasisService_UpdateLineTranslations_ScheduleFaultFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="UpdateMenuControls">
+      <wsdl:input wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/UpdateMenuControls" message="tns:IOasisService_UpdateMenuControls_InputMessage" />
+      <wsdl:output wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/UpdateMenuControlsResponse" message="tns:IOasisService_UpdateMenuControls_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/UpdateMenuControlsServiceFaultFault" name="ServiceFaultFault" message="tns:IOasisService_UpdateMenuControls_ServiceFaultFault_FaultMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/UpdateMenuControlsScheduleFaultFault" name="ScheduleFaultFault" message="tns:IOasisService_UpdateMenuControls_ScheduleFaultFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="UpdateSections">
+      <wsdl:input wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/UpdateSections" message="tns:IOasisService_UpdateSections_InputMessage" />
+      <wsdl:output wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/UpdateSectionsResponse" message="tns:IOasisService_UpdateSections_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/UpdateSectionsServiceFaultFault" name="ServiceFaultFault" message="tns:IOasisService_UpdateSections_ServiceFaultFault_FaultMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/UpdateSectionsScheduleFaultFault" name="ScheduleFaultFault" message="tns:IOasisService_UpdateSections_ScheduleFaultFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="UpdateShoots">
+      <wsdl:input wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/UpdateShoots" message="tns:IOasisService_UpdateShoots_InputMessage" />
+      <wsdl:output wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/UpdateShootsResponse" message="tns:IOasisService_UpdateShoots_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/UpdateShootsServiceFaultFault" name="ServiceFaultFault" message="tns:IOasisService_UpdateShoots_ServiceFaultFault_FaultMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/UpdateShootsScheduleFaultFault" name="ScheduleFaultFault" message="tns:IOasisService_UpdateShoots_ScheduleFaultFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="UpdateShots">
+      <wsdl:input wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/UpdateShots" message="tns:IOasisService_UpdateShots_InputMessage" />
+      <wsdl:output wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/UpdateShotsResponse" message="tns:IOasisService_UpdateShots_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/UpdateShotsScheduleFaultFault" name="ScheduleFaultFault" message="tns:IOasisService_UpdateShots_ScheduleFaultFault_FaultMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/UpdateShotsServiceFaultFault" name="ServiceFaultFault" message="tns:IOasisService_UpdateShots_ServiceFaultFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="UpdateTeams">
+      <wsdl:input wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/UpdateTeams" message="tns:IOasisService_UpdateTeams_InputMessage" />
+      <wsdl:output wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/UpdateTeamsResponse" message="tns:IOasisService_UpdateTeams_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/UpdateTeamsServiceFaultFault" name="ServiceFaultFault" message="tns:IOasisService_UpdateTeams_ServiceFaultFault_FaultMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/UpdateTeamsScheduleFaultFault" name="ScheduleFaultFault" message="tns:IOasisService_UpdateTeams_ScheduleFaultFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="UpdateLocalizationPresets">
+      <wsdl:input wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/UpdateLocalizationPresets" message="tns:IOasisService_UpdateLocalizationPresets_InputMessage" />
+      <wsdl:output wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/UpdateLocalizationPresetsResponse" message="tns:IOasisService_UpdateLocalizationPresets_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/UpdateLocalizationPresetsScheduleFaultFault" name="ScheduleFaultFault" message="tns:IOasisService_UpdateLocalizationPresets_ScheduleFaultFault_FaultMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/UpdateLocalizationPresetsServiceFaultFault" name="ServiceFaultFault" message="tns:IOasisService_UpdateLocalizationPresets_ServiceFaultFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetAudioFilenames">
+      <wsdl:input wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/GenerateAudioFileName" message="tns:IOasisService_GetAudioFilenames_InputMessage" />
+      <wsdl:output wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetAudioFilenamesResponse" message="tns:IOasisService_GetAudioFilenames_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetAudioFilenamesServiceFaultFault" name="ServiceFaultFault" message="tns:IOasisService_GetAudioFilenames_ServiceFaultFault_FaultMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetAudioFilenamesScheduleFaultFault" name="ScheduleFaultFault" message="tns:IOasisService_GetAudioFilenames_ScheduleFaultFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="IsRecordingRequired">
+      <wsdl:input wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IsRecordingRequired" message="tns:IOasisService_IsRecordingRequired_InputMessage" />
+      <wsdl:output wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/IsRecordingRequiredResponse" message="tns:IOasisService_IsRecordingRequired_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/IsRecordingRequiredServiceFaultFault" name="ServiceFaultFault" message="tns:IOasisService_IsRecordingRequired_ServiceFaultFault_FaultMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/IsRecordingRequiredScheduleFaultFault" name="ScheduleFaultFault" message="tns:IOasisService_IsRecordingRequired_ScheduleFaultFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="IsTranslationRequired">
+      <wsdl:input wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IsTranslationRequired" message="tns:IOasisService_IsTranslationRequired_InputMessage" />
+      <wsdl:output wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/IsTranslationRequiredResponse" message="tns:IOasisService_IsTranslationRequired_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/IsTranslationRequiredServiceFaultFault" name="ServiceFaultFault" message="tns:IOasisService_IsTranslationRequired_ServiceFaultFault_FaultMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/IsTranslationRequiredScheduleFaultFault" name="ScheduleFaultFault" message="tns:IOasisService_IsTranslationRequired_ScheduleFaultFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetDatabaseVersion">
+      <wsdl:input wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/GetDatabaseVersion" message="tns:IOasisService_GetDatabaseVersion_InputMessage" />
+      <wsdl:output wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetDatabaseVersionResponse" message="tns:IOasisService_GetDatabaseVersion_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetDatabaseVersionScheduleFaultFault" name="ScheduleFaultFault" message="tns:IOasisService_GetDatabaseVersion_ScheduleFaultFault_FaultMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetDatabaseVersionServiceFaultFault" name="ServiceFaultFault" message="tns:IOasisService_GetDatabaseVersion_ServiceFaultFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetRemoteFileStorageSettings">
+      <wsdl:input wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/GetRemoteFileStorageSettings" message="tns:IOasisService_GetRemoteFileStorageSettings_InputMessage" />
+      <wsdl:output wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetRemoteFileStorageSettingsResponse" message="tns:IOasisService_GetRemoteFileStorageSettings_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetRemoteFileStorageSettingsScheduleFaultFault" name="ScheduleFaultFault" message="tns:IOasisService_GetRemoteFileStorageSettings_ScheduleFaultFault_FaultMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetRemoteFileStorageSettingsServiceFaultFault" name="ServiceFaultFault" message="tns:IOasisService_GetRemoteFileStorageSettings_ServiceFaultFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="MoveScenes">
+      <wsdl:input wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/MoveScenes" message="tns:IOasisService_MoveScenes_InputMessage" />
+      <wsdl:output wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/MoveScenesResponse" message="tns:IOasisService_MoveScenes_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/MoveScenesScheduleFaultFault" name="ScheduleFaultFault" message="tns:IOasisService_MoveScenes_ScheduleFaultFault_FaultMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/MoveScenesServiceFaultFault" name="ServiceFaultFault" message="tns:IOasisService_MoveScenes_ServiceFaultFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="MoveSections">
+      <wsdl:input wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/MoveSections" message="tns:IOasisService_MoveSections_InputMessage" />
+      <wsdl:output wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/MoveSectionsResponse" message="tns:IOasisService_MoveSections_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/MoveSectionsScheduleFaultFault" name="ScheduleFaultFault" message="tns:IOasisService_MoveSections_ScheduleFaultFault_FaultMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/MoveSectionsServiceFaultFault" name="ServiceFaultFault" message="tns:IOasisService_MoveSections_ServiceFaultFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="MoveMenuControls">
+      <wsdl:input wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/MoveMenuControl" message="tns:IOasisService_MoveMenuControls_InputMessage" />
+      <wsdl:output wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/MoveMenuControlsResponse" message="tns:IOasisService_MoveMenuControls_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/MoveMenuControlsScheduleFaultFault" name="ScheduleFaultFault" message="tns:IOasisService_MoveMenuControls_ScheduleFaultFault_FaultMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/MoveMenuControlsServiceFaultFault" name="ServiceFaultFault" message="tns:IOasisService_MoveMenuControls_ServiceFaultFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetActors">
+      <wsdl:input wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/GetActors" message="tns:IOasisService_GetActors_InputMessage" />
+      <wsdl:output wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetActorsResponse" message="tns:IOasisService_GetActors_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetActorsServiceFaultFault" name="ServiceFaultFault" message="tns:IOasisService_GetActors_ServiceFaultFault_FaultMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetActorsScheduleFaultFault" name="ScheduleFaultFault" message="tns:IOasisService_GetActors_ScheduleFaultFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetAIElements">
+      <wsdl:input wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/GetAIElements" message="tns:IOasisService_GetAIElements_InputMessage" />
+      <wsdl:output wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetAIElementsResponse" message="tns:IOasisService_GetAIElements_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetAIElementsScheduleFaultFault" name="ScheduleFaultFault" message="tns:IOasisService_GetAIElements_ScheduleFaultFault_FaultMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetAIElementsServiceFaultFault" name="ServiceFaultFault" message="tns:IOasisService_GetAIElements_ServiceFaultFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetAIElementSections">
+      <wsdl:input wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/GetAIElementSections" message="tns:IOasisService_GetAIElementSections_InputMessage" />
+      <wsdl:output wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetAIElementSectionsResponse" message="tns:IOasisService_GetAIElementSections_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetAIElementSectionsScheduleFaultFault" name="ScheduleFaultFault" message="tns:IOasisService_GetAIElementSections_ScheduleFaultFault_FaultMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetAIElementSectionsServiceFaultFault" name="ServiceFaultFault" message="tns:IOasisService_GetAIElementSections_ServiceFaultFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetAIElementTypes">
+      <wsdl:input wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/GetAIElementTypes" message="tns:IOasisService_GetAIElementTypes_InputMessage" />
+      <wsdl:output wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetAIElementTypesResponse" message="tns:IOasisService_GetAIElementTypes_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetAIElementTypesScheduleFaultFault" name="ScheduleFaultFault" message="tns:IOasisService_GetAIElementTypes_ScheduleFaultFault_FaultMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetAIElementTypesServiceFaultFault" name="ServiceFaultFault" message="tns:IOasisService_GetAIElementTypes_ServiceFaultFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetAudioFiles">
+      <wsdl:input wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/GetAudioFiles" message="tns:IOasisService_GetAudioFiles_InputMessage" />
+      <wsdl:output wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetAudioFilesResponse" message="tns:IOasisService_GetAudioFiles_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetAudioFilesScheduleFaultFault" name="ScheduleFaultFault" message="tns:IOasisService_GetAudioFiles_ScheduleFaultFault_FaultMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetAudioFilesServiceFaultFault" name="ServiceFaultFault" message="tns:IOasisService_GetAudioFiles_ServiceFaultFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetAudioFilesLatest">
+      <wsdl:input wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/GetAudioFilesLatest" message="tns:IOasisService_GetAudioFilesLatest_InputMessage" />
+      <wsdl:output wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetAudioFilesLatestResponse" message="tns:IOasisService_GetAudioFilesLatest_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetAudioFilesLatestScheduleFaultFault" name="ScheduleFaultFault" message="tns:IOasisService_GetAudioFilesLatest_ScheduleFaultFault_FaultMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetAudioFilesLatestServiceFaultFault" name="ServiceFaultFault" message="tns:IOasisService_GetAudioFilesLatest_ServiceFaultFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetCharacters">
+      <wsdl:input wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/GetCharacters" message="tns:IOasisService_GetCharacters_InputMessage" />
+      <wsdl:output wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetCharactersResponse" message="tns:IOasisService_GetCharacters_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetCharactersScheduleFaultFault" name="ScheduleFaultFault" message="tns:IOasisService_GetCharacters_ScheduleFaultFault_FaultMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetCharactersServiceFaultFault" name="ServiceFaultFault" message="tns:IOasisService_GetCharacters_ServiceFaultFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetComments">
+      <wsdl:input wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/GetComments" message="tns:IOasisService_GetComments_InputMessage" />
+      <wsdl:output wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetCommentsResponse" message="tns:IOasisService_GetComments_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetCommentsScheduleFaultFault" name="ScheduleFaultFault" message="tns:IOasisService_GetComments_ScheduleFaultFault_FaultMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetCommentsServiceFaultFault" name="ServiceFaultFault" message="tns:IOasisService_GetComments_ServiceFaultFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetCustomDatas">
+      <wsdl:input wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/GetCustomDatas" message="tns:IOasisService_GetCustomDatas_InputMessage" />
+      <wsdl:output wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetCustomDatasResponse" message="tns:IOasisService_GetCustomDatas_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetCustomDatasScheduleFaultFault" name="ScheduleFaultFault" message="tns:IOasisService_GetCustomDatas_ScheduleFaultFault_FaultMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetCustomDatasServiceFaultFault" name="ServiceFaultFault" message="tns:IOasisService_GetCustomDatas_ServiceFaultFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetCustomPresets">
+      <wsdl:input wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/GetCustomPresets" message="tns:IOasisService_GetCustomPresets_InputMessage" />
+      <wsdl:output wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetCustomPresetsResponse" message="tns:IOasisService_GetCustomPresets_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetCustomPresetsScheduleFaultFault" name="ScheduleFaultFault" message="tns:IOasisService_GetCustomPresets_ScheduleFaultFault_FaultMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetCustomPresetsServiceFaultFault" name="ServiceFaultFault" message="tns:IOasisService_GetCustomPresets_ServiceFaultFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetCustomPresetTypes">
+      <wsdl:input wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/GetCustomPresetTypes" message="tns:IOasisService_GetCustomPresetTypes_InputMessage" />
+      <wsdl:output wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetCustomPresetTypesResponse" message="tns:IOasisService_GetCustomPresetTypes_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetCustomPresetTypesScheduleFaultFault" name="ScheduleFaultFault" message="tns:IOasisService_GetCustomPresetTypes_ScheduleFaultFault_FaultMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetCustomPresetTypesServiceFaultFault" name="ServiceFaultFault" message="tns:IOasisService_GetCustomPresetTypes_ServiceFaultFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetCustomProperties">
+      <wsdl:input wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/GetCustomProperties" message="tns:IOasisService_GetCustomProperties_InputMessage" />
+      <wsdl:output wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetCustomPropertiesResponse" message="tns:IOasisService_GetCustomProperties_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetCustomPropertiesScheduleFaultFault" name="ScheduleFaultFault" message="tns:IOasisService_GetCustomProperties_ScheduleFaultFault_FaultMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetCustomPropertiesServiceFaultFault" name="ServiceFaultFault" message="tns:IOasisService_GetCustomProperties_ServiceFaultFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetCustomValues">
+      <wsdl:input wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/GetCustomValues" message="tns:IOasisService_GetCustomValues_InputMessage" />
+      <wsdl:output wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetCustomValuesResponse" message="tns:IOasisService_GetCustomValues_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetCustomValuesScheduleFaultFault" name="ScheduleFaultFault" message="tns:IOasisService_GetCustomValues_ScheduleFaultFault_FaultMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetCustomValuesServiceFaultFault" name="ServiceFaultFault" message="tns:IOasisService_GetCustomValues_ServiceFaultFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetScenes">
+      <wsdl:input wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/GetScenes" message="tns:IOasisService_GetScenes_InputMessage" />
+      <wsdl:output wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetScenesResponse" message="tns:IOasisService_GetScenes_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetScenesScheduleFaultFault" name="ScheduleFaultFault" message="tns:IOasisService_GetScenes_ScheduleFaultFault_FaultMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetScenesServiceFaultFault" name="ServiceFaultFault" message="tns:IOasisService_GetScenes_ServiceFaultFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetFolders">
+      <wsdl:input wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/GetFolders" message="tns:IOasisService_GetFolders_InputMessage" />
+      <wsdl:output wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetFoldersResponse" message="tns:IOasisService_GetFolders_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetFoldersScheduleFaultFault" name="ScheduleFaultFault" message="tns:IOasisService_GetFolders_ScheduleFaultFault_FaultMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetFoldersServiceFaultFault" name="ServiceFaultFault" message="tns:IOasisService_GetFolders_ServiceFaultFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetLanguages">
+      <wsdl:input wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/GetLanguages" message="tns:IOasisService_GetLanguages_InputMessage" />
+      <wsdl:output wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetLanguagesResponse" message="tns:IOasisService_GetLanguages_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetLanguagesScheduleFaultFault" name="ScheduleFaultFault" message="tns:IOasisService_GetLanguages_ScheduleFaultFault_FaultMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetLanguagesServiceFaultFault" name="ServiceFaultFault" message="tns:IOasisService_GetLanguages_ServiceFaultFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetLines">
+      <wsdl:input wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/GetLines" message="tns:IOasisService_GetLines_InputMessage" />
+      <wsdl:output wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetLinesResponse" message="tns:IOasisService_GetLines_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetLinesScheduleFaultFault" name="ScheduleFaultFault" message="tns:IOasisService_GetLines_ScheduleFaultFault_FaultMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetLinesServiceFaultFault" name="ServiceFaultFault" message="tns:IOasisService_GetLines_ServiceFaultFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetLineCustomDataValues">
+      <wsdl:input wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/GetLineCustomDataValues" message="tns:IOasisService_GetLineCustomDataValues_InputMessage" />
+      <wsdl:output wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetLineCustomDataValuesResponse" message="tns:IOasisService_GetLineCustomDataValues_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetLineCustomDataValuesServiceFaultFault" name="ServiceFaultFault" message="tns:IOasisService_GetLineCustomDataValues_ServiceFaultFault_FaultMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetLineCustomDataValuesScheduleFaultFault" name="ScheduleFaultFault" message="tns:IOasisService_GetLineCustomDataValues_ScheduleFaultFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetSceneCustomDataValues">
+      <wsdl:input wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/GetSceneCustomDataValues" message="tns:IOasisService_GetSceneCustomDataValues_InputMessage" />
+      <wsdl:output wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetSceneCustomDataValuesResponse" message="tns:IOasisService_GetSceneCustomDataValues_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetSceneCustomDataValuesScheduleFaultFault" name="ScheduleFaultFault" message="tns:IOasisService_GetSceneCustomDataValues_ScheduleFaultFault_FaultMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetSceneCustomDataValuesServiceFaultFault" name="ServiceFaultFault" message="tns:IOasisService_GetSceneCustomDataValues_ServiceFaultFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetLineLocalizationPresets">
+      <wsdl:input wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/GetLineLocalizationPresets" message="tns:IOasisService_GetLineLocalizationPresets_InputMessage" />
+      <wsdl:output wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetLineLocalizationPresetsResponse" message="tns:IOasisService_GetLineLocalizationPresets_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetLineLocalizationPresetsScheduleFaultFault" name="ScheduleFaultFault" message="tns:IOasisService_GetLineLocalizationPresets_ScheduleFaultFault_FaultMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetLineLocalizationPresetsServiceFaultFault" name="ServiceFaultFault" message="tns:IOasisService_GetLineLocalizationPresets_ServiceFaultFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetLineSubtitles">
+      <wsdl:input wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/GetLineSubtitles" message="tns:IOasisService_GetLineSubtitles_InputMessage" />
+      <wsdl:output wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetLineSubtitlesResponse" message="tns:IOasisService_GetLineSubtitles_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetLineSubtitlesScheduleFaultFault" name="ScheduleFaultFault" message="tns:IOasisService_GetLineSubtitles_ScheduleFaultFault_FaultMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetLineSubtitlesServiceFaultFault" name="ServiceFaultFault" message="tns:IOasisService_GetLineSubtitles_ServiceFaultFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetLineTranslations">
+      <wsdl:input wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/GetLineTranslations" message="tns:IOasisService_GetLineTranslations_InputMessage" />
+      <wsdl:output wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetLineTranslationsResponse" message="tns:IOasisService_GetLineTranslations_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetLineTranslationsServiceFaultFault" name="ServiceFaultFault" message="tns:IOasisService_GetLineTranslations_ServiceFaultFault_FaultMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetLineTranslationsScheduleFaultFault" name="ScheduleFaultFault" message="tns:IOasisService_GetLineTranslations_ScheduleFaultFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetLocalizationPresets">
+      <wsdl:input wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/GetLocalizationPresets" message="tns:IOasisService_GetLocalizationPresets_InputMessage" />
+      <wsdl:output wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetLocalizationPresetsResponse" message="tns:IOasisService_GetLocalizationPresets_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetLocalizationPresetsServiceFaultFault" name="ServiceFaultFault" message="tns:IOasisService_GetLocalizationPresets_ServiceFaultFault_FaultMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetLocalizationPresetsScheduleFaultFault" name="ScheduleFaultFault" message="tns:IOasisService_GetLocalizationPresets_ScheduleFaultFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetMenuControls">
+      <wsdl:input wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/GetMenuControls" message="tns:IOasisService_GetMenuControls_InputMessage" />
+      <wsdl:output wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetMenuControlsResponse" message="tns:IOasisService_GetMenuControls_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetMenuControlsScheduleFaultFault" name="ScheduleFaultFault" message="tns:IOasisService_GetMenuControls_ScheduleFaultFault_FaultMessage" />
+      <wsdl:fault wsaw:Action="http://Ubi.Tools.Oasis.WebServices/2013/08/IOasisService/GetMenuControlsServiceFaultFault" name="ServiceFaultFault" message="tns:IOasisService_GetMenuControls_ServiceFaultFault_FaultMessage" />
+    </wsdl:operation>
+  </wsdl:portType>
+</wsdl:definitions>

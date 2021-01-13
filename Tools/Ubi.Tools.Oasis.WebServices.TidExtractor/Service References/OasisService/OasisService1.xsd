@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" elementFormDefault="qualified" targetNamespace="http://Ubi.Tools.Oasis.WebServices/2013/08/Faults" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:complexType name="ScheduleFault">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="SuggestedHostAddress" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ScheduleFault" nillable="true" type="tns:ScheduleFault" />
+  <xs:complexType name="ServiceFault">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="FaultMessage" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Operation" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ServiceFault" nillable="true" type="tns:ServiceFault" />
+</xs:schema>

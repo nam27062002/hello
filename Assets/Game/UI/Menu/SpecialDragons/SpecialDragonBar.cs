@@ -1,0 +1,363 @@
+﻿using System.Collections.Generic;
+using UnityEngine;
+
+public class SpecialDragonBar : MonoBehaviour {
+
+    [SerializeField] private GameObject m_elementLevelPrefab = null;
+    [SerializeField] private GameObject m_elementSkillPrefab = null;
+    [SerializeField] private GameObject m_elementTierPrefab = null;
+
+	[Space]
+    [SerializeField] private RectTransform m_content = null;
+	[SerializeField] private Localizer m_levelText = null;
+	[SerializeField] private SpecialDragonBarTooltip m_skillTooltip = null;
+	[SerializeField] private SpecialDragonBarTooltip m_tierTooltip = null;
+	[SerializeField] private ShowHideAnimator m_showHide = null;
+	public ShowHideAnimator showHide {
+		get { return m_showHide; }
+	}
+
+	[Space]
+    [SerializeField] private float m_blankSpace = 5f;
+    [SerializeField] private AnimationCurve m_scaleTiersCurve = null;
+    [SerializeField] private AnimationCurve m_scaleLevelsCurve = null;
+    [SerializeField] private AnimationCurve m_positionLevelsCurve = null;
+    [SerializeField] private float m_positionCurveScale = 10f;
+
+    [Separator("Debug")]
+    [SerializeField] private int m_debugMaxLevel = 30;
+    [SerializeField] private int[] m_debugLevelTier = { 0, 10, 20, 30 };
+    [SerializeField] private int[] m_debugLevelSkill = { 5, 15, 25 };
+    [Space]
+    [SerializeField] private int m_debugCurrentLevel = 1;
+    [SerializeField] private int m_debugMaxTierUnlocked = 3;
+
+
+    private List<SpecialDragonBarElement> m_levelElements = new List<SpecialDragonBarElement>();
+    private List<SpecialDragonBarTierElement> m_tierElements = new List<SpecialDragonBarTierElement>();
+    private List<SpecialDragonBarSkillElement> m_skillElements = new List<SpecialDragonBarSkillElement>();
+
+    private List<SpecialDragonBarElement> m_sortedElements = new List<SpecialDragonBarElement>();
+
+    private int m_maxLevel; // At this moment, maximum level is 33
+    private int[] m_levelSkill;
+    private int[] m_levelTier;
+    private int m_currentLevel; // Initial level is 0
+
+    private List<DefinitionNode> m_skillsDefinitions;
+    private List<DefinitionNode> m_tiersDefinitions;
+
+
+    //------------------------------------------------------------------------//
+    // GENERIC METHODS														  //
+    //------------------------------------------------------------------------//
+    private void Awake() {
+		// Clear any placeholder bar left from UI editing
+		m_content.DestroyAllChildren(false);
+		DestroyElements();
+
+    }
+
+    private void OnEnable ()
+    {
+        Messenger.AddListener<DragonDataSpecial>(MessengerEvents.SPECIAL_DRAGON_LEVEL_UPGRADED, OnDragonLevelUpgraded);
+
+    }
+
+    private void OnDisable()
+    {
+        Messenger.RemoveListener<DragonDataSpecial>(MessengerEvents.SPECIAL_DRAGON_LEVEL_UPGRADED, OnDragonLevelUpgraded);
+    }
+
+
+    //------------------------------------------------------------------------//
+    // OTHER METHODS														  //
+    //------------------------------------------------------------------------//
+
+    public void BuildFromDragonData(DragonDataSpecial _dragonData)
+    {
+        m_maxLevel = _dragonData.MaxLevel;
+
+        // tier data
+        m_tiersDefinitions = _dragonData.specialTierDefsByOrder;
+        m_levelTier = new int[m_tiersDefinitions.Count - 1];
+
+        // Skip the base level (0)
+        for (int i = 1; i < m_tiersDefinitions.Count; i++)
+        {
+            m_levelTier[i - 1] = m_tiersDefinitions[i].GetAsInt("upgradeLevelToUnlock");
+        }
+
+        //skills
+        m_skillsDefinitions = _dragonData.specialPowerDefsByOrder;
+        m_levelSkill = new int[m_skillsDefinitions.Count];
+        for (int i = 0; i < m_skillsDefinitions.Count; ++i)
+        {
+            m_levelSkill[i] = m_skillsDefinitions[i].GetAsInt("upgradeLevelToUnlock");
+        }
+
+
+        SetLevel(_dragonData.Level);
+
+        CreateElements();
+        ArrangeElements();
+    }
+
+
+    private void SetLevel(int _level) {
+		// Update level var
+		m_currentLevel = _level;
+
+        Refresh();
+	}
+
+
+	private void CreateElements() {
+        int levelElementsCount = m_maxLevel;
+
+        if (m_levelElements.Count < levelElementsCount ) {
+            for (int i = m_levelElements.Count; i < levelElementsCount; ++i) {
+                GameObject go = Instantiate(m_elementLevelPrefab);
+                go.transform.SetParent(m_content.transform, false);
+                m_levelElements.Add(go.GetComponent<SpecialDragonBarElement>());
+            }
+        }
+
+        if (m_skillElements.Count < m_levelSkill.Length ) {
+            for (int i = m_skillElements.Count; i < m_levelSkill.Length; ++i) {
+                GameObject go = Instantiate(m_elementSkillPrefab);
+                go.transform.SetParent(m_content.transform, false);
+				m_skillElements.Add(go.GetComponent<SpecialDragonBarSkillElement>());
+            }
+        }
+
+        if (m_tierElements.Count < m_levelTier.Length ) {
+            for (int i = m_tierElements.Count; i < m_levelTier.Length; ++i) {
+                GameObject go = Instantiate(m_elementTierPrefab);
+                SpecialDragonBarTierElement tierElement = go.GetComponent<SpecialDragonBarTierElement>();
+
+                // Make sure the tierDefinitions are initialized, or it will fail in the debug mode
+                if (m_tiersDefinitions.Count >= i + 1)
+                {
+                    tierElement.SetTier(m_tiersDefinitions[i + 1]); // Plus 1 because tier 0 is the starting tier
+                }
+                go.transform.SetParent(m_content.transform, false);
+                m_tierElements.Add(tierElement);
+            }
+        }
+
+        //Hide everything
+        if (m_skillTooltip != null) {
+            m_skillTooltip.gameObject.SetActive(false);
+        }
+
+        for (int i = 0; i < m_levelElements.Count; ++i) {
+            m_levelElements[i].gameObject.SetActive(false);
+        }
+
+        for (int i = 0; i < m_tierElements.Count; ++i) {
+			m_tierElements[i].SetTooltip(m_tierTooltip);
+            m_tierElements[i].gameObject.SetActive(false);   
+        }
+
+        for (int i = 0; i < m_skillElements.Count; ++i) {
+            if (i < m_skillsDefinitions.Count) {
+                m_skillElements[i].SetDefinition(m_skillsDefinitions[i]);
+            }
+            m_skillElements[i].SetTooltip(m_skillTooltip);
+            m_skillElements[i].gameObject.SetActive(false);
+        }
+    }
+
+    public void DestroyElements() {
+        for (int i = 0; i < m_levelElements.Count; ++i) {
+            if (m_levelElements[i] != null) 
+                Object.DestroyImmediate(m_levelElements[i].gameObject);
+        }
+        m_levelElements.Clear();
+
+        for (int i = 0; i < m_tierElements.Count; ++i) {
+            if (m_tierElements[i] != null) 
+                Object.DestroyImmediate(m_tierElements[i].gameObject);
+        }
+        m_tierElements.Clear();
+
+        for (int i = 0; i < m_skillElements.Count; ++i) {
+            if (m_skillElements[i] != null) 
+                Object.DestroyImmediate(m_skillElements[i].gameObject);
+        }
+        m_skillElements.Clear();
+
+        m_sortedElements.Clear();
+    }
+
+    private void ArrangeElements() {
+        float contentWidth = m_content.rect.width;
+
+        // sum up the space reserved for Tier icons
+        float tiersWidth = 0f;
+        for (int i = 0; i < m_levelTier.Length; ++i)
+        {
+            float scale = m_scaleTiersCurve.Evaluate((float)m_levelTier[i] / m_maxLevel);
+            float width = m_tierElements[0].GetWidth() * scale;
+
+            tiersWidth += width + m_blankSpace;
+        }
+
+        // sum up the space reserved for Powerups icons
+        float skillsWidth = 0f;
+        for (int i = 0; i < m_levelSkill.Length; ++i)
+        {
+            float width = m_skillElements[0].GetWidth();
+
+            skillsWidth += width + m_blankSpace;
+        }
+
+        // sum up the space reserved for levels 
+        float levelCount = (m_maxLevel - m_skillElements.Count - m_tierElements.Count);
+
+        // get the width of each level slot
+        float levelWidth = (contentWidth - tiersWidth - skillsWidth - m_blankSpace * levelCount) / levelCount;
+        float levelScale = levelWidth / m_levelElements[0].GetWidth();
+
+        // order all the elements
+        float deltaX = -m_content.rect.width * m_content.pivot.x;
+		float deltaY = 0f;
+
+        m_sortedElements.Clear();
+
+        int m_tierElementIndex = 0;
+        int m_levelElementIndex = 0;
+        int m_skillElementIndex = 0;
+
+        
+        for (int i = 1; i <= m_maxLevel; ++i) {
+            SpecialDragonBarElement.State elementState;
+            SpecialDragonBarElement element;
+            float scaleFactor = 1f;
+            float posY = 0f;
+
+            if (i <= m_currentLevel ) { 
+                elementState = SpecialDragonBarElement.State.OWNED;
+            } else {
+                elementState = SpecialDragonBarElement.State.LOCKED;
+            }
+
+            if (m_levelTier.IndexOf(i) >= 0)
+            {
+                // this level is a Tier icon
+                scaleFactor = m_scaleTiersCurve.Evaluate((float)i / m_maxLevel);
+
+                element = m_tierElements[m_tierElementIndex];
+                element.SetGlobalScale(scaleFactor, scaleFactor);
+
+                (element as SpecialDragonBarTierElement).SetUnlockLevel(i);
+
+                m_tierElementIndex++;
+            }
+            else if (m_levelSkill.IndexOf(i) >= 0) {
+                // this is a level with a skill
+                element = m_skillElements[m_skillElementIndex];
+                element.SetLocalScale(scaleFactor, 1f);
+
+				(element as SpecialDragonBarSkillElement).SetUnlockLevel(i);
+
+                m_skillElementIndex++;
+            } else {
+                // this is a standard level
+                scaleFactor = levelScale;
+
+                element = m_levelElements[m_levelElementIndex];
+                element.SetLocalScale(scaleFactor, m_scaleLevelsCurve.Evaluate((float)i / m_maxLevel));
+
+                m_levelElementIndex++;
+            }
+
+            float offsetY = m_positionLevelsCurve.Evaluate(((float)i / m_maxLevel)) * m_positionCurveScale;
+            float width = element.GetWidth() * scaleFactor;
+
+            deltaX += (width + m_blankSpace) * 0.5f;
+			element.SetPos(
+				deltaX + element.GetOffset().x,
+				deltaY + posY + offsetY
+			);
+            deltaX += (width + m_blankSpace) * 0.5f;
+
+            element.gameObject.SetActive(true);
+
+            // Update the element look
+            element.SetState(elementState);
+
+            m_sortedElements.Add(element);
+        }
+    }
+
+    
+
+    public void BuildUsingDebugValues() {
+        m_maxLevel = m_debugMaxLevel;
+        m_levelSkill = m_debugLevelSkill;
+        m_levelTier = m_debugLevelTier;
+        SetLevel(m_debugCurrentLevel);
+
+        m_skillsDefinitions = new List<DefinitionNode>(3);
+		m_tiersDefinitions = new List<DefinitionNode>(3);
+
+        CreateElements();
+        ArrangeElements();
+    }
+
+    public void AddLevel() {
+		SetLevel(m_currentLevel + 1);
+        if (m_currentLevel <= m_maxLevel) {
+            // The level 1 element is in the position 0 of the array
+            m_sortedElements[m_currentLevel - 1].SetState(SpecialDragonBarElement.State.OWNED);
+        }
+    }
+
+    /// <summary>
+    /// Refresh the GUI
+    /// </summary>
+    private void Refresh()
+    {
+        // Refresh visuals
+        if (m_levelText != null)
+        {
+			MenuDragonInfo.FormatLevel(
+				Mathf.Min(m_currentLevel, m_maxLevel),  // Cap level?
+				m_maxLevel,
+				m_levelText
+			);
+        }
+    }
+
+	//------------------------------------------------------------------------//
+	// PUBLIC UTILS															  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Get a specific element from the bar.
+	/// </summary>
+	/// <param name="_level">The level whose element we want.</param>
+	/// <returns>The element representing level <paramref name="_level"/>. <c>null</c> if level not valid.</returns>
+	public SpecialDragonBarElement GetElementAtLevel(int _level) {
+		// Check params
+		if(_level < 0 || _level >= m_sortedElements.Count) return null;
+
+		// Just checked sorted elements
+		return m_sortedElements[_level];
+	}
+
+	//------------------------------------------------------------------------//
+	// CALLBACKS															  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// A dragon stat has been upgraded.
+	/// </summary>
+	private void OnDragonLevelUpgraded(DragonDataSpecial _dragonData)
+    {
+        // Let's just refresh for now
+        AddLevel();
+    }
+
+  
+}

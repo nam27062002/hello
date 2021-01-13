@@ -1,0 +1,1304 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://Ubi.Tools.Oasis.WebServices/2013/08/Models" elementFormDefault="qualified" targetNamespace="http://Ubi.Tools.Oasis.WebServices/2013/08/Models" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import schemaLocation="http://newoasis.ubisoft.org/Demo/v4.00/WebServices/OasisService.svc?xsd=xsd7" namespace="http://Ubi.Tools.Oasis.WebServices/2013/08/Types" />
+  <xs:import schemaLocation="http://newoasis.ubisoft.org/Demo/v4.00/WebServices/OasisService.svc?xsd=xsd6" namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
+  <xs:complexType name="ArrayOfLineLocalizationPreset">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="LineLocalizationPreset" nillable="true" type="tns:LineLocalizationPreset" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfLineLocalizationPreset" nillable="true" type="tns:ArrayOfLineLocalizationPreset" />
+  <xs:complexType name="LineLocalizationPreset">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:Object">
+        <xs:sequence>
+          <xs:element name="LineId" type="xs:int">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="LocalizationPresetId" type="xs:int">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="LineLocalizationPreset" nillable="true" type="tns:LineLocalizationPreset" />
+  <xs:complexType name="Object">
+    <xs:sequence />
+  </xs:complexType>
+  <xs:element name="Object" nillable="true" type="tns:Object" />
+  <xs:complexType name="ArrayOfProp">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="Prop" nillable="true" type="tns:Prop" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfProp" nillable="true" type="tns:ArrayOfProp" />
+  <xs:complexType name="Prop">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:Object">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="AvailableQuantity" type="xs:int">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+          <xs:element minOccurs="0" name="Description" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="FolderId" type="xs:int">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+          <xs:element xmlns:q1="http://Ubi.Tools.Oasis.WebServices/2013/08/Types" minOccurs="0" name="FolderType" type="q1:FolderType" />
+          <xs:element minOccurs="0" name="FolderTypeId" type="xs:int" />
+          <xs:element name="Name" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="PictureSha" nillable="true" type="xs:base64Binary" />
+          <xs:element minOccurs="0" name="PropId" type="xs:int">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+          <xs:element minOccurs="0" name="Provider" nillable="true" type="xs:string" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="Prop" nillable="true" type="tns:Prop" />
+  <xs:complexType name="ArrayOfSection">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="Section" nillable="true" type="tns:Section" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfSection" nillable="true" type="tns:ArrayOfSection" />
+  <xs:complexType name="Section">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:Object">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="Author" nillable="true" type="xs:string" />
+          <xs:element name="Name" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="OrderIndex" type="xs:int">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+          <xs:element minOccurs="0" name="ParentId" type="xs:int">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+          <xs:element minOccurs="0" name="SectionId" type="xs:int">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+          <xs:element minOccurs="0" name="Summary" nillable="true" type="xs:string" />
+          <xs:element name="Tag" nillable="true" type="xs:string" />
+          <xs:element xmlns:q2="http://Ubi.Tools.Oasis.WebServices/2013/08/Types" name="Type" type="q2:SectionType" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="Section" nillable="true" type="tns:Section" />
+  <xs:complexType name="ArrayOfShoot">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="Shoot" nillable="true" type="tns:Shoot" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfShoot" nillable="true" type="tns:ArrayOfShoot" />
+  <xs:complexType name="Shoot">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:WorkOrder">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="DeliveryPath" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="ShootId" type="xs:int">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="Shoot" nillable="true" type="tns:Shoot" />
+  <xs:complexType name="WorkOrder">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:Object">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="AdditionalInformation" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="Description" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="EndDate" nillable="true" type="xs:dateTime" />
+          <xs:element minOccurs="0" name="FolderId" type="xs:int">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+          <xs:element xmlns:q3="http://Ubi.Tools.Oasis.WebServices/2013/08/Types" minOccurs="0" name="FolderType" type="q3:FolderType">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+          <xs:element minOccurs="0" name="FolderTypeId" type="xs:int">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+          <xs:element minOccurs="0" name="LanguageId" type="xs:int" />
+          <xs:element minOccurs="0" name="Location" nillable="true" type="xs:string" />
+          <xs:element name="Name" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="StartDate" nillable="true" type="xs:dateTime" />
+          <xs:element xmlns:q4="http://Ubi.Tools.Oasis.WebServices/2013/08/Types" minOccurs="0" name="Type" type="q4:WorkOrderType">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="WorkOrder" nillable="true" type="tns:WorkOrder" />
+  <xs:complexType name="ArrayOfShot">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="Shot" nillable="true" type="tns:Shot" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfShot" nillable="true" type="tns:ArrayOfShot" />
+  <xs:complexType name="Shot">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:Object">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="Description" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="EndTime" nillable="true" type="xs:dateTime" />
+          <xs:element minOccurs="0" name="Name" nillable="true" type="xs:string">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+          <xs:element minOccurs="0" name="OrderIndex" type="xs:int">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+          <xs:element xmlns:q5="http://Ubi.Tools.Oasis.WebServices/2013/08/Types" name="Phase" type="q5:ShotPhaseType" />
+          <xs:element name="SceneId" type="xs:int" />
+          <xs:element minOccurs="0" name="SetId" type="xs:int">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="ShootId" type="xs:int" />
+          <xs:element minOccurs="0" name="ShotId" type="xs:int">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+          <xs:element minOccurs="0" name="StartTime" nillable="true" type="xs:dateTime" />
+          <xs:element minOccurs="0" name="Suffix" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="Timing" type="xs:int">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="Shot" nillable="true" type="tns:Shot" />
+  <xs:complexType name="ArrayOfShotCharacter">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="ShotCharacter" nillable="true" type="tns:ShotCharacter" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfShotCharacter" nillable="true" type="tns:ArrayOfShotCharacter" />
+  <xs:complexType name="ShotCharacter">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="ActorId" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="CharacterId" type="xs:int">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="Comment" nillable="true" type="xs:string">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="HeadCam" type="xs:boolean" />
+      <xs:element minOccurs="0" name="IsSpeaking" type="xs:boolean" />
+      <xs:element minOccurs="0" name="ShotId" type="xs:int">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element xmlns:q6="http://Ubi.Tools.Oasis.WebServices/2013/08/Types" minOccurs="0" name="VoiceRecord" type="q6:VoiceRecordType" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ShotCharacter" nillable="true" type="tns:ShotCharacter" />
+  <xs:complexType name="ArrayOfShotProp">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="ShotProp" nillable="true" type="tns:ShotProp" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfShotProp" nillable="true" type="tns:ArrayOfShotProp" />
+  <xs:complexType name="ShotProp">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Comment" nillable="true" type="xs:string">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="PropId" type="xs:int">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="Quantity" type="xs:int">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="ShotId" type="xs:int">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ShotProp" nillable="true" type="tns:ShotProp" />
+  <xs:complexType name="ArrayOfTeam">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="Team" nillable="true" type="tns:Team" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfTeam" nillable="true" type="tns:ArrayOfTeam" />
+  <xs:complexType name="Team">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:Object">
+        <xs:sequence>
+          <xs:element xmlns:q7="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="CharacterIds" nillable="true" type="q7:ArrayOfint" />
+          <xs:element minOccurs="0" name="Description" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="FolderId" type="xs:int">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+          <xs:element xmlns:q8="http://Ubi.Tools.Oasis.WebServices/2013/08/Types" minOccurs="0" name="FolderType" type="q8:FolderType" />
+          <xs:element minOccurs="0" name="FolderTypeId" type="xs:int" />
+          <xs:element minOccurs="0" name="Name" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="Tag" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="TeamId" type="xs:int">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="Team" nillable="true" type="tns:Team" />
+  <xs:complexType name="Folder">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:Object">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="FolderId" type="xs:int">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+          <xs:element xmlns:q9="http://Ubi.Tools.Oasis.WebServices/2013/08/Types" name="FolderType" type="q9:FolderType" />
+          <xs:element minOccurs="0" name="FolderTypeId" type="xs:int">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="Name" nillable="true" type="xs:string" />
+          <xs:element name="ParentId" type="xs:int">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="Folder" nillable="true" type="tns:Folder" />
+  <xs:complexType name="Line">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:Object">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="CharacterId" type="xs:int">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+          <xs:element minOccurs="0" name="Extension" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="LineId" type="xs:int">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+          <xs:element minOccurs="0" name="OrderIndex" type="xs:int">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+          <xs:element minOccurs="0" name="Parenthetical" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="SceneId" type="xs:int">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+          <xs:element minOccurs="0" name="Text" nillable="true" type="xs:string" />
+          <xs:element xmlns:q10="http://Ubi.Tools.Oasis.WebServices/2013/08/Types" minOccurs="0" name="Type" type="q10:LineType" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="Line" nillable="true" type="tns:Line" />
+  <xs:complexType name="LineCustomDataValue">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:Object">
+        <xs:sequence>
+          <xs:element name="CustomDataId" type="xs:int">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="LineId" type="xs:int">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="Value" nillable="true" type="xs:anyType" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="LineCustomDataValue" nillable="true" type="tns:LineCustomDataValue" />
+  <xs:complexType name="CustomValue">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:Object">
+        <xs:sequence>
+          <xs:element name="CustomPropertyId" type="xs:int">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+          <xs:element minOccurs="0" name="CustomValueId" type="xs:int">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="Name" nillable="true" type="xs:string" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="CustomValue" nillable="true" type="tns:CustomValue" />
+  <xs:complexType name="CustomPreset">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:Object">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="CustomPresetId" type="xs:int">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="CustomPresetTypeId" type="xs:int">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+          <xs:element minOccurs="0" name="Description" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="FolderId" type="xs:int">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+          <xs:element xmlns:q11="http://Ubi.Tools.Oasis.WebServices/2013/08/Types" minOccurs="0" name="FolderType" type="q11:FolderType" />
+          <xs:element minOccurs="0" name="FolderTypeId" type="xs:int" />
+          <xs:element name="Name" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="Values" nillable="true" type="tns:ArrayOfCustomPresetProperty" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="CustomPreset" nillable="true" type="tns:CustomPreset" />
+  <xs:complexType name="ArrayOfCustomPresetProperty">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="CustomPresetProperty" nillable="true" type="tns:CustomPresetProperty" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfCustomPresetProperty" nillable="true" type="tns:ArrayOfCustomPresetProperty" />
+  <xs:complexType name="CustomPresetProperty">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:Object">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="CustomPresetId" type="xs:int">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+          <xs:element minOccurs="0" name="CustomPresetTypeId" type="xs:int">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+          <xs:element minOccurs="0" name="CustomPropertyId" type="xs:int">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="Name" nillable="true" type="xs:string" />
+          <xs:element name="Value" nillable="true" type="xs:anyType" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="CustomPresetProperty" nillable="true" type="tns:CustomPresetProperty" />
+  <xs:complexType name="CustomProperty">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:Object">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="CustomPropertyId" type="xs:int">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+          <xs:element xmlns:q12="http://Ubi.Tools.Oasis.WebServices/2013/08/Types" name="CustomPropertyType" type="q12:CustomPropertyType" />
+          <xs:element name="Name" nillable="true" type="xs:string" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="CustomProperty" nillable="true" type="tns:CustomProperty" />
+  <xs:complexType name="AIElementSection">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:Object">
+        <xs:sequence>
+          <xs:element name="AIElementId" type="xs:int" />
+          <xs:element minOccurs="0" name="AIElementSectionId" type="xs:int">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="Name" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="ParentId" type="xs:int">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="Tag" nillable="true" type="xs:string" />
+          <xs:element xmlns:q13="http://Ubi.Tools.Oasis.WebServices/2013/08/Types" name="Type" type="q13:AIElementType" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="AIElementSection" nillable="true" type="tns:AIElementSection" />
+  <xs:complexType name="AIElement">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:Object">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="AIElementId" type="xs:int">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+          <xs:element minOccurs="0" name="AIElementTypeId" type="xs:int">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+          <xs:element minOccurs="0" name="Description" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="FolderId" type="xs:int">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+          <xs:element xmlns:q14="http://Ubi.Tools.Oasis.WebServices/2013/08/Types" minOccurs="0" name="FolderType" type="q14:FolderType" />
+          <xs:element minOccurs="0" name="FolderTypeId" type="xs:int" />
+          <xs:element name="Name" nillable="true" type="xs:string" />
+          <xs:element name="Tag" nillable="true" type="xs:string" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="AIElement" nillable="true" type="tns:AIElement" />
+  <xs:complexType name="AIElementType">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:Object">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="AIElementTypeId" type="xs:int">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+          <xs:element minOccurs="0" name="Description" nillable="true" type="xs:string" />
+          <xs:element name="Name" nillable="true" type="xs:string" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="AIElementType" nillable="true" type="tns:AIElementType" />
+  <xs:complexType name="Character">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:Object">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="Age" type="xs:int" />
+          <xs:element minOccurs="0" name="CharacterId" type="xs:int">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+          <xs:element xmlns:q15="http://Ubi.Tools.Oasis.WebServices/2013/08/Types" name="CharacterType" type="q15:CharacterType" />
+          <xs:element minOccurs="0" name="Description" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="FolderId" type="xs:int">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+          <xs:element xmlns:q16="http://Ubi.Tools.Oasis.WebServices/2013/08/Types" minOccurs="0" name="FolderType" type="q16:FolderType" />
+          <xs:element minOccurs="0" name="FolderTypeId" type="xs:int" />
+          <xs:element xmlns:q17="http://Ubi.Tools.Oasis.WebServices/2013/08/Types" name="Gender" type="q17:GenderType" />
+          <xs:element name="Name" nillable="true" type="xs:string" />
+          <xs:element name="Tag" nillable="true" type="xs:string" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="Character" nillable="true" type="tns:Character" />
+  <xs:complexType name="Comment">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:Object">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="CommentId" type="xs:int">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="Creator" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="Date" type="xs:dateTime" />
+          <xs:element name="LineId" type="xs:int" />
+          <xs:element minOccurs="0" name="Text" nillable="true" type="xs:string" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="Comment" nillable="true" type="tns:Comment" />
+  <xs:complexType name="CustomData">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:Object">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="CustomDataId" type="xs:int">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+          <xs:element xmlns:q18="http://Ubi.Tools.Oasis.WebServices/2013/08/Types" name="CustomDataType" type="q18:CustomDataType" />
+          <xs:element xmlns:q19="http://Ubi.Tools.Oasis.WebServices/2013/08/Types" name="CustomOwnerType" type="q19:CustomOwnerType" />
+          <xs:element minOccurs="0" name="CustomPresetType" nillable="true" type="tns:CustomPresetType" />
+          <xs:element minOccurs="0" name="CustomProperty" nillable="true" type="tns:CustomProperty" />
+          <xs:element minOccurs="0" name="DefaultValue" nillable="true" type="xs:anyType" />
+          <xs:element name="IsReadonly" type="xs:boolean" />
+          <xs:element name="Name" nillable="true" type="xs:string" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="CustomData" nillable="true" type="tns:CustomData" />
+  <xs:complexType name="CustomPresetType">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:Object">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="CustomPresetTypeId" type="xs:int">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+          <xs:element minOccurs="0" name="Description" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="Fields" nillable="true" type="tns:ArrayOfCustomPresetTypeProperty" />
+          <xs:element name="Name" nillable="true" type="xs:string" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="CustomPresetType" nillable="true" type="tns:CustomPresetType" />
+  <xs:complexType name="ArrayOfCustomPresetTypeProperty">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="CustomPresetTypeProperty" nillable="true" type="tns:CustomPresetTypeProperty" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfCustomPresetTypeProperty" nillable="true" type="tns:ArrayOfCustomPresetTypeProperty" />
+  <xs:complexType name="CustomPresetTypeProperty">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:Object">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="CustomPresetTypeId" type="xs:int">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+          <xs:element minOccurs="0" name="CustomPropertyId" type="xs:int">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="Name" nillable="true" type="xs:string" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="CustomPresetTypeProperty" nillable="true" type="tns:CustomPresetTypeProperty" />
+  <xs:complexType name="Language">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:Object">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="IsMaster" type="xs:boolean">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+          <xs:element minOccurs="0" name="LanguageId" type="xs:int">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="Name" nillable="true" type="xs:string" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="Language" nillable="true" type="tns:Language" />
+  <xs:complexType name="LineCustomData">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:Object">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="LineCustomData" nillable="true" type="tns:LineCustomData" />
+  <xs:complexType name="LineSubtitle">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:Object">
+        <xs:sequence>
+          <xs:element name="HasSubtitle" type="xs:boolean" />
+          <xs:element name="LineId" type="xs:int">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="LineVersion" type="xs:int" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="LineSubtitle" nillable="true" type="tns:LineSubtitle" />
+  <xs:complexType name="LineTranslation">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:Object">
+        <xs:sequence>
+          <xs:element name="LanguageId" type="xs:int">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="LineId" type="xs:int">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+          <xs:element minOccurs="0" name="LineTranslationId" type="xs:int">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="Text" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="ValidationRequired" type="xs:boolean">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="LineTranslation" nillable="true" type="tns:LineTranslation" />
+  <xs:complexType name="LocalizationPreset">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:Object">
+        <xs:sequence>
+          <xs:element name="CanRecord" type="xs:boolean" />
+          <xs:element name="CanTranslate" type="xs:boolean" />
+          <xs:element minOccurs="0" name="Description" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="FolderId" type="xs:int">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+          <xs:element xmlns:q20="http://Ubi.Tools.Oasis.WebServices/2013/08/Types" minOccurs="0" name="FolderType" type="q20:FolderType" />
+          <xs:element minOccurs="0" name="FolderTypeId" type="xs:int" />
+          <xs:element minOccurs="0" name="IsDefaultForActionLines" type="xs:boolean" />
+          <xs:element minOccurs="0" name="IsDefaultForMenuControls" type="xs:boolean" />
+          <xs:element minOccurs="0" name="IsDefaultForSpokenLines" type="xs:boolean" />
+          <xs:element minOccurs="0" name="IsReadOnly" type="xs:boolean" />
+          <xs:element minOccurs="0" name="LanguagesNeedingRecording" nillable="true" type="tns:ArrayOfLanguage" />
+          <xs:element minOccurs="0" name="LanguagesNeedingTranslating" nillable="true" type="tns:ArrayOfLanguage" />
+          <xs:element minOccurs="0" name="LocalizationPresetId" type="xs:int">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="Name" nillable="true" type="xs:string" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="LocalizationPreset" nillable="true" type="tns:LocalizationPreset" />
+  <xs:complexType name="ArrayOfLanguage">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="Language" nillable="true" type="tns:Language" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfLanguage" nillable="true" type="tns:ArrayOfLanguage" />
+  <xs:complexType name="Control">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:Object">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="Comment" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="LineId" type="xs:int">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+          <xs:element minOccurs="0" name="Name" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="OrderIndex" type="xs:int" />
+          <xs:element minOccurs="0" name="SectionId" type="xs:int">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+          <xs:element minOccurs="0" name="Text" nillable="true" type="xs:string" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="Control" nillable="true" type="tns:Control" />
+  <xs:complexType name="SceneCustomDataValue">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:Object">
+        <xs:sequence>
+          <xs:element name="CustomDataId" type="xs:int">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="SceneId" type="xs:int">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="Value" nillable="true" type="xs:anyType" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="SceneCustomDataValue" nillable="true" type="tns:SceneCustomDataValue" />
+  <xs:complexType name="Scene">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:Object">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="AISectionId" type="xs:int">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+          <xs:element minOccurs="0" name="Context" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="Name" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="OrderIndex" type="xs:int">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+          <xs:element minOccurs="0" name="SceneId" type="xs:int">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+          <xs:element minOccurs="0" name="SectionId" type="xs:int">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+          <xs:element minOccurs="0" name="Tag" nillable="true" type="xs:string" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="Scene" nillable="true" type="tns:Scene" />
+  <xs:complexType name="AudioFile">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:Object">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="AudioFileId" type="xs:int">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+          <xs:element minOccurs="0" name="AudioTypeId" type="xs:int" />
+          <xs:element minOccurs="0" name="ImportedDate" type="xs:dateTime" />
+          <xs:element minOccurs="0" name="LineAudioAlternateId" type="xs:int" />
+          <xs:element minOccurs="0" name="RecordedDate" nillable="true" type="xs:dateTime" />
+          <xs:element minOccurs="0" name="RemoteFileStorageId" type="xs:int" />
+          <xs:element minOccurs="0" name="ReviewDescription" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="ReviewTypeId" type="xs:int" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="AudioFile" nillable="true" type="tns:AudioFile" />
+  <xs:complexType name="RemoteFileStorageSettings">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="BucketName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="MetadataUrl" nillable="true" type="xs:string">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="Url" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="RemoteFileStorageSettings" nillable="true" type="tns:RemoteFileStorageSettings" />
+  <xs:complexType name="ArrayOfSceneMove">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="SceneMove" nillable="true" type="tns:SceneMove" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfSceneMove" nillable="true" type="tns:ArrayOfSceneMove" />
+  <xs:complexType name="SceneMove">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:Object">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="AISectionId" type="xs:int">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+          <xs:element minOccurs="0" name="AfterSceneId" type="xs:int" />
+          <xs:element minOccurs="0" name="SceneId" type="xs:int">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+          <xs:element minOccurs="0" name="SectionId" type="xs:int">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="SceneMove" nillable="true" type="tns:SceneMove" />
+  <xs:complexType name="ArrayOfSectionMove">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="SectionMove" nillable="true" type="tns:SectionMove" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfSectionMove" nillable="true" type="tns:ArrayOfSectionMove" />
+  <xs:complexType name="SectionMove">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:Object">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="AfterSectionId" type="xs:int" />
+          <xs:element minOccurs="0" name="ParentId" type="xs:int">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+          <xs:element minOccurs="0" name="SectionId" type="xs:int">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="SectionMove" nillable="true" type="tns:SectionMove" />
+  <xs:complexType name="ArrayOfControlMove">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="ControlMove" nillable="true" type="tns:ControlMove" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfControlMove" nillable="true" type="tns:ArrayOfControlMove" />
+  <xs:complexType name="ControlMove">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:Object">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="AfterControlId" type="xs:int" />
+          <xs:element minOccurs="0" name="LineId" type="xs:int">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+          <xs:element minOccurs="0" name="SectionId" type="xs:int">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="ControlMove" nillable="true" type="tns:ControlMove" />
+  <xs:complexType name="ArrayOfActor">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="Actor" nillable="true" type="tns:Actor" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfActor" nillable="true" type="tns:ArrayOfActor" />
+  <xs:complexType name="Actor">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:Object">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="ActorId" type="xs:int">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+          <xs:element minOccurs="0" name="Birthdate" type="xs:dateTime" />
+          <xs:element minOccurs="0" name="Description" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="FolderId" type="xs:int">
+            <xs:annotation>
+              <xs:appinfo>
+                <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+          <xs:element xmlns:q21="http://Ubi.Tools.Oasis.WebServices/2013/08/Types" minOccurs="0" name="FolderType" type="q21:FolderType" />
+          <xs:element minOccurs="0" name="FolderTypeId" type="xs:int" />
+          <xs:element xmlns:q22="http://Ubi.Tools.Oasis.WebServices/2013/08/Types" name="Gender" type="q22:GenderType" />
+          <xs:element minOccurs="0" name="Name" nillable="true" type="xs:string" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="Actor" nillable="true" type="tns:Actor" />
+  <xs:complexType name="ArrayOfAIElement">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="AIElement" nillable="true" type="tns:AIElement" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfAIElement" nillable="true" type="tns:ArrayOfAIElement" />
+  <xs:complexType name="ArrayOfAIElementSection">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="AIElementSection" nillable="true" type="tns:AIElementSection" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfAIElementSection" nillable="true" type="tns:ArrayOfAIElementSection" />
+  <xs:complexType name="ArrayOfAIElementType">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="AIElementType" nillable="true" type="tns:AIElementType" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfAIElementType" nillable="true" type="tns:ArrayOfAIElementType" />
+  <xs:complexType name="ArrayOfAudioFile">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="AudioFile" nillable="true" type="tns:AudioFile" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfAudioFile" nillable="true" type="tns:ArrayOfAudioFile" />
+  <xs:complexType name="ArrayOfLineLanguageKey">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="LineLanguageKey" nillable="true" type="tns:LineLanguageKey" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfLineLanguageKey" nillable="true" type="tns:ArrayOfLineLanguageKey" />
+  <xs:complexType name="LineLanguageKey">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="LanguageId" type="xs:int">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="LineId" type="xs:int">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="LineLanguageKey" nillable="true" type="tns:LineLanguageKey" />
+  <xs:complexType name="ArrayOfCharacter">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="Character" nillable="true" type="tns:Character" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfCharacter" nillable="true" type="tns:ArrayOfCharacter" />
+  <xs:complexType name="ArrayOfComment">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="Comment" nillable="true" type="tns:Comment" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfComment" nillable="true" type="tns:ArrayOfComment" />
+  <xs:complexType name="ArrayOfCustomData">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="CustomData" nillable="true" type="tns:CustomData" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfCustomData" nillable="true" type="tns:ArrayOfCustomData" />
+  <xs:complexType name="ArrayOfCustomPreset">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="CustomPreset" nillable="true" type="tns:CustomPreset" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfCustomPreset" nillable="true" type="tns:ArrayOfCustomPreset" />
+  <xs:complexType name="ArrayOfCustomPresetType">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="CustomPresetType" nillable="true" type="tns:CustomPresetType" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfCustomPresetType" nillable="true" type="tns:ArrayOfCustomPresetType" />
+  <xs:complexType name="ArrayOfCustomProperty">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="CustomProperty" nillable="true" type="tns:CustomProperty" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfCustomProperty" nillable="true" type="tns:ArrayOfCustomProperty" />
+  <xs:complexType name="ArrayOfCustomValue">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="CustomValue" nillable="true" type="tns:CustomValue" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfCustomValue" nillable="true" type="tns:ArrayOfCustomValue" />
+  <xs:complexType name="ArrayOfScene">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="Scene" nillable="true" type="tns:Scene" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfScene" nillable="true" type="tns:ArrayOfScene" />
+  <xs:complexType name="ArrayOfFolder">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="Folder" nillable="true" type="tns:Folder" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfFolder" nillable="true" type="tns:ArrayOfFolder" />
+  <xs:complexType name="ArrayOfLine">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="Line" nillable="true" type="tns:Line" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfLine" nillable="true" type="tns:ArrayOfLine" />
+  <xs:complexType name="ArrayOfLineCustomDataValue">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="LineCustomDataValue" nillable="true" type="tns:LineCustomDataValue" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfLineCustomDataValue" nillable="true" type="tns:ArrayOfLineCustomDataValue" />
+  <xs:complexType name="ArrayOfSceneCustomDataValue">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="SceneCustomDataValue" nillable="true" type="tns:SceneCustomDataValue" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfSceneCustomDataValue" nillable="true" type="tns:ArrayOfSceneCustomDataValue" />
+  <xs:complexType name="ArrayOfLineSubtitle">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="LineSubtitle" nillable="true" type="tns:LineSubtitle" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfLineSubtitle" nillable="true" type="tns:ArrayOfLineSubtitle" />
+  <xs:complexType name="ArrayOfLineTranslation">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="LineTranslation" nillable="true" type="tns:LineTranslation" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfLineTranslation" nillable="true" type="tns:ArrayOfLineTranslation" />
+  <xs:complexType name="ArrayOfLocalizationPreset">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="LocalizationPreset" nillable="true" type="tns:LocalizationPreset" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfLocalizationPreset" nillable="true" type="tns:ArrayOfLocalizationPreset" />
+  <xs:complexType name="ArrayOfControl">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="Control" nillable="true" type="tns:Control" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfControl" nillable="true" type="tns:ArrayOfControl" />
+</xs:schema>

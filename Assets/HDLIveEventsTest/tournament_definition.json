@@ -1,0 +1,73 @@
+{  
+   "liveEventType":2,
+	"endTimestamp": 1578614400000,
+   "mods":[  
+      "midas",
+      "double_coins"
+   ],
+   "code":67,
+   "goal":{  
+      "area": {
+	  	  "spawnPoint" : "v2",
+		  "xp" : 10,
+		  "time": 100
+	  }
+		"tidDesc": "TID_EVENT_TOURNAMENT_NORMAL_FIRERUSH",
+      "icon":"icon_firerush",
+		"gameMode" : {
+	        "type" : "normal",
+	        "amount" : "20",
+			"seconds" : 60
+	    },
+      "type":"kill",
+      "params":["Canary01_Flock","Canary02_Flock","Canary03_Flock","Canary04_Flock"]
+   },
+  "build": {
+    "dragon": "dragon_electric",
+    "skin": "dragon_electric_0",
+    "pets": [ "pet_38" ],
+    "level": 60,
+    "stats": {
+      "health": 20,
+      "speed": 20,
+      "energy": 20
+    }
+  },
+   "name":"test",
+   "entrance":{  
+      "amount":18000,
+      "dailyFreeTimer":100,
+      "type":"hc"
+   },
+   "leaderboard" : {
+		"type" : 1,
+		"segmentation" : 20,
+		"matchmaker" : {
+			"type" : 1
+		}
+	},
+   "rewards":[  
+      {  
+         "amount":1,
+         "target":1,
+         "type":"pet",
+		 "sku":"pet_57"
+      },
+      {  
+         "amount":3,
+         "target":5,
+         "type":"egg",
+		 "sku":"egg_event"
+      },
+      {  
+         "amount":10,
+         "target":25,
+         "type":"hc"
+      },
+      {  
+         "amount":50000,
+         "target":100,
+         "type":"sc"
+      }
+   ]
+}
